@@ -1,0 +1,45 @@
+{#
+    wiki/action_attachments_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used to edit an existing attachment
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+
+{% do BREADCRUMB.append('Bearbeiten', page|url('edit'), True) %}
+{% set action = 'manage' %}
+{% set styles = ['editor-sprite'] %}
+{% set scripts = ['WikiEditor'] %}
+
+{% block wiki_content %}
+  <h1 class="pagetitle">Dateianhang bearbeiten</h1>
+
+  <div id="page">
+    <form action="{{ page|url('edit') }}" method="post"
+      enctype="multipart/form-data" id="form_addattachment">
+      <p><label for="id_attachment">Neuer Dateianhang:</label>
+      {{ form.attachment }}</p>
+      <p><label for="id_text">Beschreibung:</label><br style="clear:both" /></p>
+      <p>{{ form.text }}</p>
+        <p><label for="id_note">Änderungsnotiz:</label><br />
+        {{ form.note }}</p>
+      <p><input type="submit" value="Anhang bearbeiten" />
+         <input type="submit" name="cancel" value="Abbrechen" /></p>
+    </form>
+
+  </div>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script type="text/javascript">
+    /* <![CDATA[ */
+    var text = new WikiEditor('textarea[name="text"]');
+    /* ]]> */
+  </script>
+{% endblock %}

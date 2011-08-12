@@ -1,0 +1,23 @@
+{#
+    ikhaya/article_delete.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ensure that the user want to delete the selected article.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{#
+    NOTE: Since we do not use a generic view for deleting Ikhaya articles, all
+    Jinja2 references to the are still `article` and NOT `object` !
+#}
+
+<form action="{{ article|url('delete')|e }}" method="post">
+  <p>Möchtest du den Artikel „<a href="{{ article|url('show')|e }}">{{ article.subject }}</a>“ wirklich löschen?</p>
+  <p>
+    <input type="submit" value="Löschen" />
+    <input type="submit" name="unpublish" value="Veröffentlichung aufheben" />
+    <input type="submit" name="cancel" value="Abbrechen" />
+  </p>
+</form>

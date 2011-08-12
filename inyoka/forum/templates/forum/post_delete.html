@@ -1,0 +1,18 @@
+{#
+    forum/post_delete.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ensure that the user want to delete the selected post.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+
+<form action="{{ post|url(action)|e }}" method="post">
+  <p>Möchtest du den <a href="{{ post|url('show')|e }}">Beitrag von {{ post.author.username|e }}</a> {% if action=='delete' %}unwiderruflich löschen{% else %}verbergen{% endif %}?</p>
+  <p>
+    <input type="submit" value="{% if action=='delete' %}Löschen{% else %}Verbergen{% endif %}" />
+    <input type="submit" name="cancel" value="Abbrechen" />
+  </p>
+</form>

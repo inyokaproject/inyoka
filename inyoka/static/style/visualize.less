@@ -1,0 +1,130 @@
+.visualize {
+  border: 1px solid #888;
+  position: relative;
+  background: #fafafa;
+  margin-top: 20px;
+  canvas {
+    position: absolute;
+  }
+  .visualize-info {
+    padding: 3px 5px;
+    background: #fafafa;
+    border: 1px solid #888;
+    position: absolute;
+    top: -20px;
+    right: 10px;
+    opacity: .8;
+  }
+  .visualize-title {
+    display: block;
+    color: #333;
+    margin-bottom: 3px;
+    font-size: 1.1em;
+  }
+  ul.visualize-key {
+    list-style: none;
+    li {
+      list-style: none;
+      float: left;
+      margin-right: 10px;
+      padding-left: 10px;
+      position: relative;
+    }
+    .visualize-key-color {
+      width: 6px;
+      height: 6px;
+      left: 0;
+      position: absolute;
+      top: 50%;
+      margin-top: -3px;
+    }
+    .visualize-key-label {
+      color: #000;
+    }
+  }
+}
+.visualize ul,.visualize li {
+  margin: 0;
+  padding: 0;
+}
+.visualize-pie {
+  .visualize-labels {
+    list-style: none;
+  }
+  .visualize-label {
+    display: block;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1em;
+  }
+}
+.visualize-pie .visualize-label-pos, .visualize-pie .visualize-label {
+  position: absolute;
+  margin: 0;
+  padding:0;
+}
+.visualize-pie-outside {
+  .visualize-label {
+    color: #000;
+    font-weight: normal;
+  }
+}
+.visualize-labels-x,.visualize-labels-y {
+  position: absolute;
+  left: 0;
+  top: 0;
+  list-style: none;
+}
+.visualize-labels-x li, .visualize-labels-y li {
+  position: absolute;
+  bottom: 0;
+}
+.visualize-labels-x li span.label, .visualize-labels-y li span.label {
+  position: absolute;
+  color: #555;
+}
+.visualize-labels-x li span.line, .visualize-labels-y li span.line {
+  position: absolute;
+  border: 0 solid #ccc;
+}
+.visualize-labels-x {
+  li {
+    height: 100%;
+    span.label {
+      top: 100%;
+      margin-top: 5px;
+    }
+    span.line {
+      border-left-width: 1px;
+      height: 100%;
+      display: block;
+      border: 0;
+    }
+  }
+}
+.visualize-labels-y {
+  li {
+    width: 100%;
+    span.label {
+      right: 100%;
+      margin-right: 5px;
+      display: block;
+      width: 100px;
+      text-align: right;
+    }
+    span.line {
+      border-top-width: 1px;
+      width: 100%;
+    }
+  }
+}
+.visualize-bar {
+  .visualize-labels-x {
+    li {
+      span.label {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+}

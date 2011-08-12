@@ -1,0 +1,117 @@
+{#
+    portal/index.html
+    ~~~~~~~~~~~~~~~~~
+
+    This is ubuntuusers' main page that provides links to quite many pages.
+
+    It also displays some of the latest ikhaya messages.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+{%- do BREADCRUMB.append('Portal', href('portal'), True) -%}
+
+{% block pre_navigation %}
+  <div class="container get_ubuntu">
+    <div>
+      <h3><a href="{{ get_ubuntu_link }}">Hol dir Ubuntu!</a></h3>
+      <span><a href="{{ get_ubuntu_link }}">{{ get_ubuntu_description }}</a></span>
+    </div>
+  </div>
+  <div class="container calendar">
+    <div class="calendar link">
+      <h3><a href="{{ href('portal', 'calendar') }}">Kalender</a></h3>
+      <span><a href="/calendar/" class="calendar_link">Nächste Veranstaltungen</a></span>
+    </div>
+    <div class="calendar overview">
+    {% if calendar_events %}
+      <ul class="events">
+      {% for event in calendar_events %}
+        <li>{{ event.friendly_title(with_date=false, with_html_link=true) }}</li>
+      {%- endfor %}
+      </ul>
+    {% else %}
+    <p>Keine anstehenden Veranstaltungen.</p>
+    {% endif %}
+    </div>    
+  </div>
+{% endblock %}
+
+{% block portal_content %}
+  <h3>Hallo</h3>
+  <img src="{{ href('static', 'img', 'portal', 'ubuntu.png') }}" alt="Ubuntu" class="cat" />
+  <p>
+    Hier findest du freundliche Hilfe für Ubuntu, Kubuntu, Xubuntu und die
+    anderen Ubuntu-Derivate. In unserem <a href="{{ href('forum') }}">Forum</a> beantworten
+    hilfsbereite Forumsbenutzer gerne deine Fragen und im
+    <a href="{{ href('wiki') }}">Wiki</a> findest du viele Anleitungen und Erklärungen.
+    Falls du neu bei Ubuntu bist, findest du dort auch eine Seite für 
+    <a href="{{ href('wiki', 'Einsteiger') }}">Einsteiger</a>. Außerdem existiert noch
+    <a href="{{ href('ikhaya') }}">Ikhaya</a>, unser Magazin, in dem Neuigkeiten aus der
+    Ubuntu- und Linuxwelt gemeldet werden. Unser <a href="{{ href('planet') }}">Planet</a>
+    stellt Nachrichten der Ubuntu-Gemeinschaft zusammen. Wenn du auch unsere <a href="{{
+    href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') }}">Regeln</a> beachtest,
+    kann nichts schiefgehen ;-)
+  </p>
+  {%- if ikhaya_latest %}
+  {{ feed_button(href('portal', 'feeds', _anchor='ikhaya')) }}
+  <h3>Neues von ubuntuusers.de</h3>
+  <div class="articles">
+    {%- for article in ikhaya_latest %}
+    <div class="article">
+      <div class="meta">
+        {%- if article.pub_datetime == article.updated %}
+        <a href="{{ article|url }}">{{ article.updated|datetimeformat }}</a>
+        {%- else %}
+        <a href="{{ article|url }}" title="Letzte Aktualisierung {{article.updated|specificdatetimeformat(true) 
+           }} / Erstellt am {{ article.pub_datetime|datetimeformat }}">{{ article.updated|datetimeformat }}</a>
+        {%- endif %}
+        {%- if article.comments_enabled %}
+          <br /><a href="{{ article|url('comments') }}" class="comments">
+          {%- if article.comment_count == 0 %} Keine Kommentare
+          {%- elif article.comment_count == 1 %} Ein Kommentar
+          {%- else %} {{ article.comment_count|hnumber|capitalize }} Kommentare
+          {%- endif %}  
+          </a>
+        {%- endif %}
+      </div>
+      <a href="{{ article|url }}">{{ article.subject|e }}</a>
+      <p class="text">
+        {{ article.simplified_intro|truncate(250, true)|e }}
+      </p>
+    </div>
+    {%- endfor %}
+  </div>
+  {%- endif %}
+  <h3>Wer ist online?</h3>
+  <p>
+    {% trans all=sessions.all %}
+    Momentan ist <strong>{{ all }}</strong> Benutzer online,
+    {% pluralize %}
+    Momentan sind <strong>{{ all }}</strong> Benutzer online,
+    {% endtrans %}
+    davon
+    {% trans registered=sessions.registered %}
+    <strong>{{ registered }}</strong> Angemeldeter
+    {% pluralize %}
+    <strong>{{ registered }}</strong> Angemeldete
+    {% endtrans %}
+    und
+    {% trans guests=sessions.anonymous %}
+    <strong>{{ guests }}</strong> Gast.
+    {% pluralize %}
+    <strong>{{ guests }}</strong> Gäste.
+  {% endtrans %}<br />
+  Der Rekord liegt bei <strong>{{ record }}</strong> Benutzern {{ record_time|specificdatetimeformat(true) }}.
+  </p>
+  <p>Registrierte Benutzer:
+  {% for session in sessions.registered_sessions %}
+    {%- if session.link -%}
+      <a href="{{ session.link|e }}" class="{{ session.type }}">{{ session.text|e }}</a>{% else %}
+      <span class="{{ session.type }}">{{ session.text|e }}</span>{%- endif %}{%- if not loop.last %}, {% endif %}
+  {%- else %}
+    keine
+  {%- endfor %}
+  </p>
+{% endblock %}

@@ -1,0 +1,48 @@
+{#
+    portal/user_edit_profile.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Change a userprofile
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+
+{% do BREADCRUMB.append('Profil', href('portal', 'user', user.urlsafe_username, 'edit', 'profile'), True) %}
+{% do BREADCRUMB.append('Bearbeiten', href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
+{% do BREADCRUMB.append(user.username, user|url, True) %}
+{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+
+{% block content %}
+{{ super() }}
+<form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+  {{ render_form(form, ['username'], inline=true) }}
+  <dt>Benutzertitel:</dt>
+  <dd>{{ form.member_title }}
+    {% if user.groups.all() %}
+    <div class="group_titles">
+    {% for group in user.groups.all() %}
+      <input type="checkbox" name="group_titles" value="{{ group }}" /> {{ group }}
+    {% endfor %}
+    </div>
+    {%- endif %}
+  </dd>
+  <h3>Avatareinstellungen</h3>
+  <dt>{{ form.avatar.label }}</dt>
+  <dd><img class="usercp_avatar" src="{{ user.avatar_url }}" alt="Avatar" /></dd>
+  <dd>{{ form.avatar }}</dd>
+  <dd>{{ form.delete_avatar }} {{ form.delete_avatar.label }}</dd>
+  <dd class="note">(Wird auf {{ avatar_height }}x{{ avatar_width }} skaliert)</dd>
+  <h3>Kontakt-Adressen</h3>
+  {{ render_form(form, ['email', 'jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone', 'sip']) }}
+  <h3>Sonstige Einstellungen</h3>
+  {{ render_form(form, ['occupation', 'interests', 'website',
+                        'launchpad', 'gpgkey']) }}
+  <h4>Geographische Lage</h4>
+  {{ render_form(form, ['location', 'coordinates_long', 'coordinates_lat']) }}
+  <h3>Signatur</h3>
+  <p>{{ form.signature }}</p>
+  <p><input type="submit" value="Speichern" /></p>
+</form>
+{% endblock %}

@@ -1,0 +1,28 @@
+{#
+    forum/delete_topic.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ensure that the user want to delete the selected topic.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+
+<form action="{{ topic|url(action)|e }}" method="post">
+  <p>
+    Möchtest du das Thema „<a href="{{ topic|url('show')|e }}">{{ topic.title|e }}</a>“ wirklich 
+    {% if action=='delete' %}löschen{% else %}verbergen{% endif %}?
+    {% if action=='delete' %}<br/> Dabei gehen alle Beiträge unwiderruflich verloren!{% endif %}
+  </p>
+  {% if action=='delete' %}
+  <p>
+    <label for="delete_topic_reason">Grund:</label>
+    <input name="reason" id="delete_topic_reason" />
+  </p>
+  {% endif %}
+  <p>
+    <input type="submit" value="{% if action=='delete' %}Löschen{% else %}Verbergen{% endif %}" />
+    <input type="submit" name="cancel" value="Abbrechen" />
+  </p>
+</form>

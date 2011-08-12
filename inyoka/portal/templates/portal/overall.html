@@ -1,0 +1,87 @@
+{#
+    portal/overall.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    This is the base layout for all portal pages.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'overall.html' %}
+{% if not active_app %}
+  {% set active_app = 'portal' %}
+{% endif %}
+{% if not navi_type %}
+{% set navi_type  = 'both' %}
+{% endif %}
+{% set styles = ['portal'] + styles|default([]) %}
+
+{% macro feed_button(link) -%}
+  <a href="{{ link }}" class="feed_icon"><img src="{{ href('static', 'img', 'feed.png') }}" alt="Newsfeed" /></a>
+{%- endmacro %}
+
+{% block content %}
+  {% block portal_content %}{% endblock %}
+{% endblock %}
+
+{% block sidebar %}
+  {%- block pre_navigation %}{% endblock -%}
+  <div class="container">
+    <h3 class="navi_ubuntu"><a href="http://www.ubuntu.com" class="extlink">Ubuntu</a></h3>
+    <ul>
+      <li><a href="{{ href('wiki', 'Was_ist_Ubuntu') }}">Was ist Ubuntu?</a></li>
+      <li><a href="{{ href('wiki', 'Ubuntu FAQ') }}">Häufig gestellte Fragen</a></li>
+      <li><a href="{{ href('wiki', 'Downloads') }}">Downloads</a></li>
+      <li><a href="http://verein.ubuntu-de.org/" class="extlink">Verein</a></li>
+      <li><a href="{{ href('portal', 'calendar') }}">Kalender</a></li>
+    </ul>
+    <h3 class="navi_ubuntuusers"><a href="{{ href('portal') }}">ubuntuusers.de</a></h3>
+    <ul>
+      <li><a href="{{ href('wiki', 'ubuntuusers') }}">Über ubuntuusers.de</a></li>
+      <li><a href="{{ href('portal', 'users') }}">Mitgliederliste</a></li>
+      <li><a href="{{ href('portal', 'groups') }}">Gruppenliste</a></li>
+      <li><a href="{{ href('wiki', 'ubuntuusers', 'Spenden') }}">Spenden</a></li>
+      <li><a href="{{ href('portal', 'kontakt') }}">Kontakt</a></li>
+      <li><a href="{{ href('portal', 'search') }}">Suche</a></li>
+      <li><a href="{% if USER.is_authenticated %}{{ href('pastebin') }}{% else %}{{ href('pastebin', 'browse') }}{% endif %}">Ablage</a></li>
+      <li><a href="{{ href('portal', 'whoisonline') }}">Wer ist online?</a></li>
+    </ul>
+    <h3 class="navi_forum">{{ feed_button(href('portal', 'feeds', 'forum')) }}<a href="{{ href('forum') }}">Forum</a></h3>
+    <ul>
+      <li><a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Forenregeln') }}">Forenregeln</a></li>
+      <li><a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Richtig_fragen') }}">Richtig fragen</a></li>
+      <li><a href="{{ href('wiki', 'Forum', 'Syntax') }}">Foren-Syntax</a></li>
+    </ul>
+    <h3 class="navi_wiki">{{ feed_button(href('portal', 'feeds', 'wiki')) }}<a href="{{ href('wiki') }}">Wiki</a></h3>
+    <ul>
+      <li><a href="{{ href('wiki', 'Galerie') }}">Galerie</a></li>
+      <li><a href="{{ href('wiki', 'Links') }}">Links</a></li>
+    </ul>
+    <h3 class="navi_ikhaya">{{ feed_button(href('portal', 'feeds', 'ikhaya')) }}<a href="{{ href('ikhaya') }}">Ikhaya</a></h3>
+    <ul>
+      <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">Artikel vorschlagen</a></li>
+      <li><a href="{{ href('ikhaya', 'event', 'suggest') }}">Veranstaltung vorschlagen</a></li>
+    </ul>
+    <h3 class="navi_planet">{{ feed_button(href('portal', 'feeds', 'planet')) }}<a href="{{ href('planet') }}">Planet</a></h3>
+    <ul>
+      <li><a href="{{ href('planet', 'suggest') }}">Blog vorschlagen</a></li>
+    </ul>
+    {%- if USER.can('static_page_edit') or USER.can('static_file_edit') or USER.can('configuration_edit') or USER.can('markup_css_edit') %}
+    <h3 class="navi_config">Konfiguration</h3>
+    <ul>
+    {%- if USER.can('configuration_edit') %}
+      <li><a href="{{ href('portal', 'config') }}">Allgemein</a></li>
+    {%- endif %}
+    {%- if USER.can('markup_css_edit') %}
+      <li><a href="{{ href('portal', 'styles') }}">Markup-Stylesheets</a></li>
+    {%- endif %}
+    {%- if USER.can('static_page_edit') %}
+      <li><a href="{{ href('portal', 'pages') }}">Statische Seiten</a></li>
+    {% endif %}
+    {%- if USER.can('static_file_edit') %}
+      <li><a href="{{ href('portal', 'files') }}">Statische Dateien</a></li>
+    {% endif %}
+    </ul>
+    {%- endif %}
+  </div>
+{% endblock %}

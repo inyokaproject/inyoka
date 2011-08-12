@@ -1,0 +1,21 @@
+{#
+    portal/privmsg/overall.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% do BREADCRUMB.append('Private Nachrichten', href('portal', 'privmsg'), True) %}
+{% set navi_type = 'both' %}
+
+{% block tabbar %}
+  <ul>
+    <li><a href="{{ href('portal', 'privmsg', 'inbox') }}"{{ selected == 'inbox' and ' class="active"' or '' }}>Posteingang</a></li>
+    <li><a href="{{ href('portal', 'privmsg', 'sent') }}"{{ selected == 'sent' and ' class="active"' or '' }}>Gesendet</a></li>
+    <li><a href="{{ href('portal', 'privmsg', 'archive') }}"{{ selected == 'archive' and ' class="active"' or '' }}>Archiv</a></li>
+    <li><a href="{{ href('portal', 'privmsg', 'trash') }}"{{ selected == 'trash' and ' class="active"' or '' }}>Papierkorb</a></li>
+    <li><a href="{{ href('portal', 'privmsg', 'new') }}"{{ selected == 'new' and ' class="active"' or '' }}>Neue Nachricht</a></li>
+  </ul>
+{% endblock %}

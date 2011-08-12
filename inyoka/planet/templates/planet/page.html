@@ -1,0 +1,78 @@
+{#
+    planet/page.html
+    ~~~~~~~~~~~~~~~~
+
+    This template is included by all planet templates and adds the elements
+    they all use (stylesheets etc).
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'overall.html' %}
+
+{% do BREADCRUMB.append('Planet', href('planet'), True) %}
+{% set active_app = 'planet' %}
+{% set navi_type  = 'sidebar' %}
+{% set styles = styles|default([]) + ['planet'] %}
+
+{%- block html_head %}
+  {{ super() }}
+  <script type="text/javascript">
+    /*<![CDATA[*/
+      var $SIDEBAR_HIDDEN = {{ USER.settings.planet_sidebar_hidden and 'true' or 'false' }};
+    /*]]>*/
+  </script>
+{%- endblock %}
+
+{% block sidebar %}
+  <div class="container">
+    <h3 class="navi_planet">Planet</h3>
+    <p>
+      Der Planet stellt Nachrichten aus Blogs der Ubuntu- und
+      Open-Source- Gemeinschaft zusammen.  Wenn du ein Ubuntu-bezogenes Blog
+      kennst oder selber führst, kannst du es beim Ikhayateam <a href="{{
+      href('planet', 'suggest') }}">vorschlagen</a> und eintragen lassen.
+      Bitte beachtet dabei die <a href="{{ href('wiki', 'ubuntuusers',
+      'Ikhayateam', 'Planetenregeln') }}">Planetenregeln</a>.
+    </p>
+    <h3 class="navi_blogs">Blogs exportieren</h3>
+    <ul class="export">
+      <li><img src="{{ href('static', 'img', 'opml.png') }}" /><a href="{{ href('planet', 'blogs', 'export', 'opml') }}">OPML</a>
+      <li><img src="{{ href('static', 'img', 'foaf.png') }}" /><a href="{{ href('planet', 'blogs', 'export', 'foaf') }}">FOAF</a>
+    </ul>
+
+    {%- if blogs %}
+    <h3 class="navi_blogs admin_link_hover">
+      {%- if USER.can('blog_edit') -%}
+        <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/ikhaya/category_new.png') }}" /></a>
+      {%- endif -%}Blogs
+    </h3>
+    <ul>
+    {%- for blog in blogs %}
+      <li class="admin_link_hover">
+        {%- if USER.can('category_edit') -%}
+          <a class="admin_link" href="{{ blog|url('edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" /></a>
+        {%- endif -%}
+        <a href="{{ blog|url|e }}">{{ blog.name|e }}</a>
+      </li>
+    {%- endfor %}
+    </ul>
+    {%- endif %}
+    {%- if USER.can('blog_edit') %}
+    <h3 class="navi_blogs admin_link_hover">
+      {%- if USER.can('blog_edit') -%}
+        <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/ikhaya/article_new.png') }}" /></a>
+      {%- endif -%}
+      Konfiguration
+    </h3>
+    <ul>
+      <li><a href="{{ href('planet', 'blogs') }}">Blogliste</a></li>
+    </ul>
+    {%- endif %}
+  </div>
+{% endblock %}
+
+{% block content %}
+  {%- block planet_content %}
+  {%- endblock %}
+{%- endblock %}

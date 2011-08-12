@@ -1,0 +1,20 @@
+{%- if failed %}
+  {%- if not inactive and not banned %}
+  <div class="errors">
+    Das eingegebene Passwort ist falsch oder der Benutzer existiert nicht.
+  </div>
+  {%- elif banned %}
+  <div class="errors">
+    Der Benutzer ist derzeit gebannt<br />
+    Du wurdest darüber informiert. Solltest du dem nicht zustimmen oder ein Irrtum vorliegen so schreibe
+    bitte eine Nachricht an <a href="mailto:team@ubuntuusers.de">team@ubuntuusers.de</a>.
+  </div>
+  {%- else %}
+  <div class="errors">
+    Das Benutzerkonto ist noch nicht aktiviert. Die Bestätigungsemail kannst du
+    <a href="{{- href('portal', 'register', 'resend', username|e) -}}">erneut anfordern</a>.
+    Falls es weiterhin nicht funktioniert, schreibe bitte eine Nachricht an
+    <a href="mailto:webteam@ubuntuusers.de">webteam@ubuntuusers.de</a>
+  </div>
+  {%- endif %}
+{%- endif %}

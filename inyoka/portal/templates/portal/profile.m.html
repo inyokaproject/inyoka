@@ -1,0 +1,84 @@
+{#
+    portal/profile.m.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows a user's profile.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.m.html' %}
+
+{% macro show_item(label, item, link=None) %}
+  {%- if user[item] -%}
+    <tr>
+      <th>{{ label }}</th>
+      <td>
+        {%- if link -%}
+          <a href="{{ link|e }}">{{ user[item]|e }}</a>
+        {%- else -%}
+          {{ user[item]|e }}
+        {%- endif -%}
+      </td>
+    </tr>
+  {%- endif -%}
+{% endmacro %}
+
+{% macro show_private_item(label, item) %}
+  {%- if user[item] and user.settings['show_'+item] -%}
+    <tr>
+      <th>{{ label }}</th>
+      <td>{{ user[item]|e }}</td>
+    </tr>
+  {%- elif user[item] and REQUEST.user.can('user_edit') -%}
+    <tr>
+      <th>{{ label }}</th>
+      <td class="hidden">{{ user[item]|e }}</td>
+    </tr>
+  {%- endif -%}
+{% endmacro %}
+
+{% block content %}
+  <h3>{{ user.username|e }}</h3>
+  {%- if user in (User.objects.get_system_user(), User.objects.get_anonymous_user()) %}
+    {{ user.username|e }} ist ein Systembenutzer.
+  {%- elif user.is_deleted or user.is_banned %}
+    {{ user.username|e }} ist nicht mehr verfügbar.
+  {%- else %}
+  <table class="userinfo admin_link_hover">
+    {{ show_item('Name', 'username') }}
+    {{ show_private_item('E-Mail-Adresse', 'email') }}
+    {{ show_item('Webseite', 'website') }}
+    {{ show_item('Launchpad', 'launchpad', user.launchpad_url) }}
+    {{ show_item('Anmeldungsdatum', 'date_joined') }}
+    {{ show_item('Beiträge', 'post_count', href('forum', 'author', user.urlsafe_username)) }}
+    {{ show_item('GPG-Schlüssel', 'gpgkey') }}
+    {{ show_item('Wohnort', 'location') }}
+    {{ show_item('Beruf', 'occupation') }}
+    {{ show_item('Interessen', 'interests') }}
+    {{ show_item('MSN', 'msn') }}
+    {{ show_item('ICQ', 'icq') }}
+    {{ show_item('AIM', 'aim') }}
+    {{ show_item('YIM', 'yim') }}
+    {{ show_item('SIP', 'sip') }}
+    {{ show_item('Skype', 'skype') }}
+    {{ show_item('WengoPhone', 'wengophone') }}
+    {{ show_private_item('Jabber', 'jabber') }}
+    </tr>
+      <th>Kontakt</th>
+      <td><a href="{{ user|url('privmsg') }}">Private Nachricht</a></td>
+    </tr>
+    {% if groups -%}
+    <tr>
+      <th>Gruppenmitgliedschaften</th>
+      <td>
+        {%- for group in groups -%}
+          <a href="{{ group|url }}"{% if not group.is_public %} class="hidden"{% endif %}>{{ group.name|e }}</a>
+          {%- if not loop.last %}, {% endif %}
+        {%- endfor -%}
+      </td>
+    </tr>
+    {%- endif %}
+  </table>
+  {%- endif %}
+{% endblock %}

@@ -1,0 +1,36 @@
+{#
+    forum/forum.m.html
+    ~~~~~~~~~~~~~~~~
+
+    This template shows a forum with all subforums and topics inside.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'forum/page.m.html' %}
+
+{% set back = forum.parent|url %}
+
+{% block content %}
+  <h2>{{ forum.name }}</h2>
+  {% if subforums %}
+    <h3>Unterforen</h3>
+    <div class="forums">
+      {%- for subforum in subforums %}
+        <a href="{{ subforum|url }}"><div class="button">{{ subforum.name }}</div></a>
+      {%- endfor %}
+    </div>
+  {% endif %}
+  {# TODO: workaround for topics without first or last_post to not mess up with server errors #}
+  <div class="topics">
+    <h3>Themen</h3>
+    {%- for topic in topics if (topic.first_post and topic.last_post) %}
+      <a href="{{ topic|url }}">
+        <div class="button{% if not topic.get_read_status(USER) %} unread{% endif %}">
+          {{ topic.title|e }}
+        </div>
+      </a>
+    {%- endfor %}
+  </div>
+  {{ pagination.generate() }}
+{% endblock %}

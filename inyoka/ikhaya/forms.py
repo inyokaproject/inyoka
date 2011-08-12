@@ -1,0 +1,200 @@
+# -*- coding: utf-8 -*-
+"""
+    inyoka.ikhaya.forms
+    ~~~~~~~~~~~~~~~~~~~
+
+    Forms for the Ikhaya.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
+from django import forms
+import pytz
+from datetime import time as dt_time
+from inyoka.utils.forms import UserField, DateWidget, \
+    TimeWidget, DateTimeField
+from inyoka.utils.dates import datetime_to_timezone, get_user_timezone, \
+        date_time_to_datetime
+from inyoka.ikhaya.models import Article, Suggestion, Category, Event
+from inyoka.portal.models import StaticFile
+
+
+class SuggestArticleForm(forms.ModelForm):
+
+    def save(self, user, commit=True):
+        suggestion = super(SuggestArticleForm, self).save(commit=False)
+        suggestion.author = user
+        if commit:
+            suggestion.save()
+        return suggestion
+
+    class Meta:
+        model = Suggestion
+        fields = ('title', 'intro', 'text', 'notes')
+        widgets = {
+            'intro': forms.Textarea({'rows': 4})
+        }
+
+
+class EditCommentForm(forms.Form):
+    text = forms.CharField(label=u'Text', widget=forms.Textarea,
+             help_text=u'Um dich auf einen anderen Kommentar zu beziehen, '
+               u'kannst du <code>@kommentarnummer</code> verwenden.<br />'
+               u'Dies wird automatisch eingefügt, wenn du bei einem Beitrag '
+               u'auf „Antworten“ klickst.')
+
+    def clean_text(self):
+        text = self.cleaned_data.get('text', '')
+        if not text.strip():
+            raise forms.ValidationError('Text darf nicht leer sein')
+        return text
+
+
+class EditArticleForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')
+        if instance:
+            initial = kwargs.setdefault('initial', {})
+            initial['pub_date'] = instance.pub_datetime
+            if instance.pub_datetime != instance.updated:
+                initial['updated'] = instance.updated
+            initial['author'] = instance.author.username
+        super(EditArticleForm, self).__init__(*args, **kwargs)
+        # Following stuff is in __init__ to keep helptext etc intact.
+        self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
+
+    author = UserField(label=u'Autor', required=True)
+    pub_date = DateTimeField(label=u'Datum der Veröffentlichung',
+                help_text=u'Wenn das Datum in der Zukunft liegt, wird der Artikel '
+                    u'bis zu diesem Zeitpunkt nicht angezeigt.',
+                localize=True, required=True)
+    updated = DateTimeField(label=u'Zeitpunkt der letzten Aktualisierung',
+                help_text=u'Wenn du diesed Feld leer lässt, wird automatisch '
+                    u'das Veröffentlichungsdatum verwendet.',
+                localize=True, required=False)
+
+    def save(self):
+        instance = super(EditArticleForm, self).save(commit=False)
+        if 'pub_date' in self.cleaned_data and (not instance.pk or \
+                not instance.public or self.cleaned_data.get('public', None)):
+            instance.pub_date = self.cleaned_data['pub_date'].date()
+            instance.pub_time = self.cleaned_data['pub_date'].time()
+        if self.cleaned_data.get('updated', None):
+            instance.updated = self.cleaned_data['updated']
+        elif 'pub_date' in self.cleaned_data:
+            instance.updated = self.cleaned_data['pub_date']
+        instance.save()
+        return instance
+
+    def clean_slug(self):
+        slug = self.cleaned_data['slug']
+        pub_date = self.cleaned_data.get('pub_date', None)
+        if not pub_date:
+            return slug # invalid anyway as pub_date is required
+        pub_date = get_user_timezone().localize(pub_date) \
+                    .astimezone(pytz.utc).replace(tzinfo=None).date()
+        if slug:
+            q = Article.objects.filter(slug=slug, pub_date=pub_date)
+            if 'article_id' in self.cleaned_data:
+                q = q.exclude(id=self.cleaned_data['article_id'])
+            if q.exists():
+                raise forms.ValidationError(u'Es existiert schon ein Artikel '
+                                            u'mit diesem Slug!')
+        return slug
+
+    class Meta:
+        model = Article
+        exclude = ['pub_date', 'pub_time', 'updated', 'comment_count']
+        widgets = {
+            'subject': forms.TextInput(attrs={'size': 50}),
+            'intro': forms.Textarea(attrs={'rows': 3}),
+            'text': forms.Textarea(attrs={'rows': 15}),
+        }
+
+
+class EditPublicArticleForm(EditArticleForm):
+    def __init__(self, *args, **kwargs):
+        super(EditPublicArticleForm, self).__init__(*args, **kwargs)
+        del self.fields['pub_date']
+
+    class Meta(EditArticleForm.Meta):
+        exclude = EditArticleForm.Meta.exclude + ['slug']
+
+
+class EditCategoryForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(EditCategoryForm, self).__init__(*args, **kwargs)
+        # Following stuff is in __init__ to keep helptext etc intact.
+        self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
+
+    class Meta:
+        model = Category
+        exclude = ['slug']
+
+
+class NewEventForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        event = kwargs.get('instance', None)
+        if event: # Adjust datetime to local timezone
+            if event.date and event.time is not None:
+                dt = datetime_to_timezone(date_time_to_datetime(
+                    event.date, event.time or dt_time(0)))
+                event.date = dt.date()
+                event.time = dt.time()
+
+            if event.endtime is not None:
+                dt_end = datetime_to_timezone(date_time_to_datetime(
+                    event.enddate or event.date, event.endtime))
+                event.enddate = dt_end.date()
+                event.endtime = dt_end.time()
+
+        super(NewEventForm, self).__init__(*args, **kwargs)
+
+    def save(self, user):
+        event = super(NewEventForm, self).save(commit=False)
+        convert = (lambda v: get_user_timezone().localize(v) \
+                            .astimezone(pytz.utc).replace(tzinfo=None))
+        # Convert local timezone to unicode
+        if event.date and event.time is not None:
+            d = convert(date_time_to_datetime(
+                event.date, event.time or dt_time(0)
+            ))
+            event.date = d.date()
+            event.time = d.time()
+        if event.endtime is not None:
+            d = convert(date_time_to_datetime(
+                event.enddate or event.date, event.endtime
+            ))
+            event.enddate = d.date()
+            event.endtime = event.time is not None and d.time()
+
+        event.author = user
+        event.save()
+
+        return event
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        start = cleaned_data.get('date')
+        end = cleaned_data.get('enddate')
+        if end and end < start:
+            self._errors['enddate'] = self.error_class([u'Das Enddatum muss nach dem Startdatum liegen.'])
+            del cleaned_data['enddate']
+
+        return cleaned_data
+
+    class Meta:
+        model = Event
+        widgets = {
+            'date': DateWidget,
+            'time': TimeWidget,
+            'enddate': DateWidget,
+            'endtime': TimeWidget,
+        }
+        exclude = ['author', 'slug', 'visible']
+
+
+class EditEventForm(NewEventForm):
+    visible = forms.BooleanField(label=u'Kalendereintrag sichtbar?', required=False)
+    class Meta(NewEventForm.Meta):
+        exclude = ['author', 'slug']

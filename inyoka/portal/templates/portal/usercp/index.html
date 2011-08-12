@@ -1,0 +1,37 @@
+{#
+    portal/usercp/index.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows the user control panel index page.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends 'portal/usercp/overall.html' %}
+
+{% macro usercp_button(link, icon, name) %}
+  <li>
+    <span><a href="{{ link }}">
+      <img src="{{ href('static', 'img/usercp/usercp-%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
+      {{ name }}
+    </a></span>
+  </li>
+{% endmacro %}
+
+{% block portal_content %}
+  <div class="usercp_control">
+    <ul>
+      {{ usercp_button(href('portal', 'usercp', 'profile'), 'profile', 'Profilinformationen') }}
+      {{ usercp_button(href('portal', 'usercp', 'settings'), 'preferences', 'Benutzereinstellungen') }}
+      {{ usercp_button(href('portal', 'usercp', 'password'), 'password', 'Passwort ändern') }}
+      {{ usercp_button(href('portal', 'usercp', 'subscriptions'), 'subscriptions', 'Abonnements') }}
+      {{ usercp_button(href('portal', 'usercp', 'deactivate'), 'deactivate', 'Benutzer deaktivieren') }}
+      {% if user.has_wikipage -%}
+        {{ usercp_button(href('wiki', 'Benutzer', user.username|e, action='edit'), 'wikipage', 'Benutzerseite') }}
+      {%- else -%}
+        {{ usercp_button(href('wiki', 'Benutzerseite'), 'wikipage', 'Benutzerseite') }}
+      {%- endif %}
+    </ul>
+  </div>
+{% endblock %}

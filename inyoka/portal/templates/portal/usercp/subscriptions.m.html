@@ -1,0 +1,43 @@
+{#
+    portal/usercp/subscriptions.m.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows all subscriptions of the user and let him
+    manage them.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends 'portal/usercp/overall.m.html' %}
+
+{% block content %}
+<h3>Abonnements</h3>
+<table class="usercp_subscriptions">
+  {%- for sub in subscriptions %}
+  {%- if sub.can_read -%}
+    <tr class="item {% if sub.notified %}unread{% endif %}">
+      <td>
+      {%- set type = sub.content_type.model -%}
+      {%- set object = sub.content_object -%}
+
+      {%- if type == 'topic' -%}
+        Thema: <a href="{{ object|url('first_unread') }}">{{ object.title|e }}</a>
+      {%- elif type == 'page' -%}
+        Wiki-Seite: <a href="{{ object|url }}">{{ object.title|e }}</a>
+      {%- elif type == 'forum' -%}
+        Forum: <a href="{{ object|url }}">{{ object.name|e }}</a>
+      {%- elif type == 'user' -%}
+        Benutzer: <a href="{{ object|url }}">{{ object.username|e }}</a>
+      {%- elif type == 'article' -%}
+        Artikel: <a href="{{ object|url }}">{{ object.subject|e }}</a>
+      {%- endif -%}
+      </td>
+    </tr>
+  {%- endif -%}
+  {%- else -%}
+    <tr><td>Du hast bisher noch keine Themen oder Artikel abonniert</td></tr>
+  {%- endfor -%}
+  </table>
+  {{ pagination.generate() }}
+{% endblock %}

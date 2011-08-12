@@ -1,0 +1,52 @@
+{#
+    ikhaya/event_suggest.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    This page is for new calendar events.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{% set styles = ['editor-sprite', 'datetimefield'] %}
+{% set scripts = ['WikiEditor','DateTime'] %}
+
+{% do BREADCRUMB.append('Veranstaltung vorschlagen', href('ikhaya', 'event', 'suggest'), True) %}
+
+{% block content %}
+<h2>Veranstaltung vorschlagen</h2>
+<p>
+  Mit diesem Formular kannst du uns einen neuen Eintrag für unseren
+  <a href="{{ href('portal','calendar') }}">Kalender</a> vorschlagen. Ein Kollege vom
+  Ikhaya Team wird sich zeitnah um eine freischaltung des Eintrages bemühen.
+</p>
+<form action="" method="post" enctype="multipart/form-data">
+  {%- if form.errors %}
+  <ul>{{ form.errors }}</ul>
+  {%- endif %}
+  <dt><label for="id_name">Name:</label></dt>
+  <dd>{{ form.name }}</dd>
+  <dt>Zeitpunkt:</dt>
+  <dd><label for="id_date">Datum (von):</label> {{ form.date }}</dd>
+  <dd><label for="id_time">Uhrzeit (von):</label> {{ form.time }}</dd>
+  <dd><label for="id_enddate">Datum (bis):</label>{{ form.enddate }}</dd>
+  <dd><label for="id_endtime">Uhrzeit (bis):</label>{{ form.endtime }}</dd>
+  <dt><label for="id_description">Details:</label></dt>
+  <dd>{{ form.description }}</dd>
+  <dt>Ort:</dt>
+  <dd><label for="id_location_town">Stadt:</label> {{ form.location_town }}</dd>
+  <dd><label for="id_location">Veranstaltungsort:</label> {{ form.location }}</dd>
+
+  <dt>Koordinaten:</dt>
+  <dd><label for="id_location_long">Länge:</label> {{ form.location_long }}</dd>
+  <dd><label for="id_location_lat">Breite:</label> {{ form.location_lat }}</dd>
+
+  <p><input type="submit" value="Speichern" /></p>
+</form>
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+  var text = new WikiEditor('#id_description');
+  /* ]]> */
+</script>
+{% endblock %}

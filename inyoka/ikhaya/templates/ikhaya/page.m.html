@@ -1,0 +1,13 @@
+{#
+    ikhaya/page.m.html
+    ~~~~~~~~~~~~~~~~~~
+
+    Base mobile stylesheet for ikhaya templates.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'overall.m.html' %}
+{% if not active_app %}
+  {% set active_app = 'ikhaya' %}
+{% endif %}

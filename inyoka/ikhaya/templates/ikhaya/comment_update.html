@@ -1,0 +1,19 @@
+{#
+    ikhaya/comment_update.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ensure that the user want to change the report.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+
+<form action="{{ href('ikhaya', 'comment', comment.id, action) }}" method="post">
+   <p>Möchtest du den <a href="{{ comment|url('show')|e }}">Kommentar von {{ comment.author.username|e }}</a>
+      {% if action=='restore' %}wiederherstellen{% else %}verbergen{% endif %}?</p>
+   <p>
+     <input type="submit" value="{% if action=='restore' %}Wiederherstellen{% else %}Verbergen{% endif %}" />
+     <input type="submit" name="cancel" value="Abbrechen" />
+   </p>
+</form>

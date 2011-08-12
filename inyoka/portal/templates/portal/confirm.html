@@ -1,0 +1,32 @@
+{#
+    portal/confirm.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    The user can confirm various actions here. With the action flag the messages can be customized.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{% extends 'portal/overall.html' %}
+
+{% if action == 'reactivate_user' %}
+  {% set text = 'Hier kannst du deinen Benutzer wiederherstellen, wenn er gelöscht wurde. Bitte beachte, dass das nur einen Monat nach der Löschung möglich ist.' %}
+{% elif action == 'reset_email' %}
+  {% set text = 'Hier kannst du deine E-Mail-Adresse zurücksetzen, wenn sie unbeabsichtigt geändert wurde.' %}
+{% endif %}
+
+{%- block portal_content %}
+{%- if success %}
+  <p class="success">{{ success }}</p>
+{%- elif failed %}
+  <p class="fail">{{ failed }}</p>
+{%- else %}
+  {%- if text %}<p>{{ text }}</p>{% endif %}
+  <form method="post" action="">
+    <p>Bitte gib die Zeichenkette, die in der E-Mail enthalten war, hier ein:</p>
+    <p><textarea name="data" cols="80" rows="5"></textarea></p>
+    <p><input type="submit" value="Absenden" /></p>
+  </form>
+{% endif %}
+{% endblock %}

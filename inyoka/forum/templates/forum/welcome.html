@@ -1,0 +1,23 @@
+{#
+    forum/community_rules.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Show the rules for the community area.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'forum/page.html' %}
+
+{% set name = 'Community Regel' %}
+
+{% block forum_content %}
+  <h1>{{ message.title|e }}</h1>
+  {{ message.rendered_text }}
+  <form method="post" action="{{ forum|url('welcome') }}">
+    <input type="hidden" name="goto_url" value="{{ goto_url|e }}" />
+    <input type="submit" name="accept" value="Gelesen und akzeptiert" />
+    <input type="submit" name="cancel" value="Ablehnen" />
+  </form>
+  </p>
+{% endblock %}

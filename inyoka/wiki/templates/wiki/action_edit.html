@@ -1,0 +1,75 @@
+{#
+    wiki/action_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used if a user edits a page.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% set title = page.title if page else title %}
+{% do BREADCRUMB.append('Bearbeiten', page|url('edit') if page else href('wiki', title, action='edit'), True) %}
+{% set scripts = ['WikiEditor'] %}
+{% set styles = ['editor-sprite'] %}
+{% set action = 'edit' %}
+{% block wiki_content %}
+  <form enctype="multipart/form-data" action="?action=edit" method="post">
+    <p>
+      Durch Anklicken von „Speichern“ stellst du deine Änderungen unter unsere <a href="{{ href('wiki', 'Wiki/Lizenz') }}">Lizenz</a>. Wenn du das nicht willst, klicke auf „Abbrechen“, um deine Änderungen zu verwerfen. Hilfe zum Bearbeiten findest du unter <a href="{{ href('wiki', 'Wiki/Referenz') }}">Wiki/Referenz</a> und <a href="{{ href('wiki', 'Wiki/Syntax') }}">Wiki/Syntax</a>.
+    </p>
+    <div class="editor">{{ form.text }}</div>
+    {{ form.errors.text }}
+    {%- if storage['license_note_rendered'] %}
+    <div class="license_note">{{ storage['license_note_rendered'] }}</div>
+    {%- endif %}
+    <div class="actions">
+      Änderungsnotiz: {{ form.note }}
+      <input type="hidden" name="edit_time" value="{{ edit_time }}" />
+      <input type="hidden" name="rev" value="{{ rev }}" />
+      <input type="submit" name="preview" value="Vorschau" />
+      <input type="submit" value="Speichern" />
+      <input type="submit" name="cancel" value="Abbrechen" />
+    </div>
+    {{ form.errors.note }}
+  </form>
+  {%- if preview %}
+  <h2>Vorschau</h2>
+  <div class="preview">{{ preview }}</div>
+  {%- endif %}
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script type="text/javascript">
+    /*<![CDATA[*/
+      new WikiEditor('textarea[name="text"]', 'wiki');
+
+      (function() {
+        var
+          editor = $('textarea[name="text"]'),
+          output = $('<div class="preview"></div>');
+        var preview = $('<div></div>')
+          .hide()
+          .append('<h2>Vorschau</h2>')
+          .append(output);
+
+        $('form input[name="preview"]').click(function() {
+        $('body, input, textarea').css('cursor', 'progress');
+          preview.hide();
+          $.post('/?__service__=wiki.render_preview', {
+            page: {{ name|jsonencode }},
+            text: editor.val()
+          }, function(data) {
+            output.html(data);
+            preview.slideDown('fast');
+            $('body, input, textarea').css('cursor', 'auto');
+          });
+          return false;
+        }).parent().parent().append(preview);
+      })();
+    /*]]>*/
+  </script>
+{% endblock %}

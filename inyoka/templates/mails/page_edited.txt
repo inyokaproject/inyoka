@@ -1,0 +1,10 @@
+Hallo {{ username }},
+
+der Benutzer „{{ rev_username }}“ hat die Wiki-Seite „{{ page_name }}“ verändert.
+{% if rev_note %}
+Es wurde folgende Änderungsnotiz angegeben: „{{ rev_note }}“
+{% endif %}
+Du kannst dir die Änderungen hier ansehen: {{ href('wiki', page_name, action='diff', new_rev=rev_id, rev=old_rev_id) }}
+Oder dir hier alle Änderungen seit deinem letzten Besuch anzeigen lassen: {{ href('wiki', page_name, action='diff', rev=old_rev_id) }}
+
+Falls du bei Veränderungen an dieser Seite in Zukunft nicht mehr benachrichtigt werden willst, so kannst du das hier deaktivieren: {{ href('wiki', page_name, action='unsubscribe') }}

@@ -1,0 +1,35 @@
+{#
+    portal/new_user.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Create a new user.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+{% from 'macros.html' import render_form %}
+
+{% do BREADCRUMB.append('Benutzer anlegen', href('portal', 'user', 'new'), True) %}
+{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+
+{% block content %}
+<form action="" method="post" id="user_edit_form">
+  <h3>Neuen Benutzer erstellen</h3>
+  <dl>
+    {{ render_form(form, ['username', 'password', 'confirm_password', 'email'], inline=true) }}
+    <dt>Autentifizieren:</dt>
+    <dd>
+      {{ form.authenticate }}
+      <span class="note">{{ form.authenticate.help_text }}</span>
+    </dd>
+  </dl>
+  <br />
+  <p class="note">
+    Weitere Einstellungen sind verfügbar, nachdem der Benutzer gespeichert wurde.
+  </p>
+  <p>
+    <input type="submit" value="Speichern" />
+  </p>
+</form>
+{% endblock %}

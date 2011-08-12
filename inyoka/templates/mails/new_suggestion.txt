@@ -1,0 +1,4 @@
+Hallo {{ username }},
+
+der Benutzer {{ suggestion_author }} hat einen neuen Artikelvorschlag „{{ suggestion_title }}“ verfasst.
+Du kannst ihn dir hier ansehen: {{ suggestion_url }}

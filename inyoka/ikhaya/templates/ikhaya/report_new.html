@@ -1,0 +1,44 @@
+{#
+    ikhaya/report_new.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Formular to report a mistake in an article.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+{% set scripts = ['WikiEditor'] %}
+{% set styles = ['editor-sprite'] %}
+
+{% do BREADCRUMB.append('Neue Meldung', article|url('report_new'), True) %}
+{% do BREADCRUMB.append('Meldungen', article|url('reports')) %}
+{% do BREADCRUMB.append(article.subject, article|url, True) %}
+
+{% block ikhaya_content %}
+  {{ form.errors.text }}
+  <h2>Neue Meldung zum Artikel <a href="{{ article|url|e }}">{{ article.subject|e }}</a></h2>
+  <p>Beschreibe hier kurze deinen gefunden Fehler im Artikel. Bitte achte darauf, dass der Fehler
+     nicht bereits <a href="{{ article|url|e + 'reports/' }}">gemeldet wurde</a>.</p>
+  <form action="" method="post" id="new_report">
+    {{ form.text }}
+    <p>
+      <input type="submit" value="Vorschau" name="preview" />
+      <input type="submit" value="Speichern" name="send"/>
+    </p>
+  </form>
+  {%- if preview %}
+    <div class="preview_wrapper">
+      <h2 class="title">Vorschau</h2>
+      <div class="preview">{{ preview }}</div>
+    </div>
+  {%- endif %}
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script type="text/javascript">
+    /*<![CDATA[*/
+      new WikiEditor('textarea[name="text"]', 'forum');
+  </script>
+{% endblock %}

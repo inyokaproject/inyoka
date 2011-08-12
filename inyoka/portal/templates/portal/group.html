@@ -1,0 +1,47 @@
+{#
+    portal/group.html
+    ~~~~~~~~~~~~~~~~~
+
+    This page shows details about a group.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% do BREADCRUMB.append(group.name, group|url, True) %}
+{% do BREADCRUMB.append('Gruppen', href('portal', 'groups'), True) %}
+{% block content %}
+  <h3>{{ group.name|e }}</h3>
+  <p>
+    Die Gruppe „{{ group.name|e }}“ hat insgesamt
+    {%- trans count=user_count %}
+      <strong>{{ count }}</strong> Mitglied:
+    {%- pluralize %}
+      <strong>{{ count }}</strong> Mitglieder:
+    {%- endtrans %}
+  </p>
+  {%- if not group.is_public %}
+  <p>Diese Gruppe ist für normale Benutzer nicht sichtbar und die Mitgliedschaft wird nicht im Benutzerprofil angezeigt.</p>
+  {%- endif %}
+  <table>
+    <tr>
+      <th>{{ table.get_html('id', '#') }}</th>
+      <th>{{ table.get_html('username', 'Benutzername') }}</th>
+      <th>{{ table.get_html('location', 'Wohnort') }}</th>
+      <th>{{ table.get_html('date_joined', 'Anmeldungsdatum') }}</th>
+      <th>{{ table.get_html('post_count', 'Beiträge') }}</th>
+    </tr>
+    {%- for user in users %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>
+        <a href="{{ user|url }}">{{ user.username|e }}</a></td>
+      <td>{{ user.location }}</td>
+      <td>{{ user.date_joined.strftime('%d.%m.%Y, %H:%M') }}</td>
+      <td>{{ user.post_count }}</td>
+    </tr>
+    {%- endfor %}
+  </table>
+  {{ pagination.generate() }}
+{% endblock %}

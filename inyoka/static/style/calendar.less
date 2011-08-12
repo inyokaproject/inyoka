@@ -1,0 +1,48 @@
+/*** style.calendar* ~~~~~~~~~~~** The styles for the calendar.** :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.* :license: GNU GPL, see LICENSE for more details.*/ul.switcher li.active {
+  font-weight: bold;
+}
+ul.switcher {
+  text-align: center;
+  li {
+    list-style: none;
+    display: inline;
+  }
+  li:before {
+    content: ' | ';
+    color: #AAA;
+    font-weight: normal;
+  }
+  li:first-child:before {
+    content: '';
+  }
+}
+table.calendar_month {
+  margin-top: 1em;
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  tr.sunday {
+    td {
+      background-color: #FFD6D6;
+    }
+  }
+  tr.saturday {
+    td {
+      background-color: #FFEBEB;
+    }
+  }
+  tr.today {
+    td {
+      background-color: #FFFFC2;
+    }
+  }
+}
+table.calendar_month .weekday, table.calendar_month .day {
+  background-color: #F9F9F9;
+  width: 2em;
+  border-right: 1px solid #CCC;
+}
+table.calendar_event_inline {
+  position: relative;
+}

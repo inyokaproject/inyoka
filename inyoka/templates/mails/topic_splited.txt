@@ -1,0 +1,10 @@
+Hallo {{ username }},
+
+das Thema „{{ old_topic.title }}“ wurde von {{ mod }} nach „{{ new_topic.title }}“ aufgeteilt.
+
+Du kannst dir den abgetrennten Teil hier ansehen: {{ new_topic|url }}
+Das ursprüngliche Thema kannst du hier ansehen: {{ old_topic|url }}
+
+{# NOTE: Deaktiviert, weil das nicht notwendigerweise der Fall ist...
+Bitte beachte das du noch keine Benachrichtigungen für das neue Thema aktiviert hast!
+#}

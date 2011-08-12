@@ -1,0 +1,44 @@
+{#
+    portal/edit_user.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Just edit an user...
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+
+{% do BREADCRUMB.append('Bearbeiten', href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
+{% do BREADCRUMB.append(user.username, user|url, True) %}
+{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+
+{% macro user_edit_button(link, icon, name) %}
+  <li>
+    <span><a href="{{ link }}">
+      <img src="{{ href('static', 'img/portal/user_%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
+      {{ name }}
+    </a></span>
+  </li>
+{% endmacro %}
+
+{% block content %}
+{{ super() }}
+<form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+  <div class="usercp_control">
+    <ul>
+      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'profile'), 'profile', 'Profilinformationen') }}
+      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'settings'), 'settings', 'Benutzereinstellungen') }}
+      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'groups'), 'groups', 'Gruppen') }}
+      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'privileges'), 'privileges', 'Privilegien') }}
+      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'password'), 'password', 'Passwort ändern') }}
+      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'status'), 'status', 'Status') }}
+      {#
+      {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'subscriptions'), 'subscriptions', 'Abonnements') }}
+      {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'userpage'), 'wikipage', 'Benutzerseite') }}
+      #}
+    </ul>
+  </div>
+  <a href="{{ href('portal', 'user', user.username) }}">Öffentliches Profil ansehen</a>
+{% endblock %}
+</form>

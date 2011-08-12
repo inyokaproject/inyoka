@@ -1,0 +1,42 @@
+{#
+    portal/pages.html
+    ~~~~~~~~~~~~~~~~
+
+    This is the overview of the static pages configuration.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+
+{% do BREADCRUMB.append("Statische Seiten", href('portal', 'pages'), True) %}
+
+{% block content %}
+<h3>Statische Seiten</h3>
+<table class="static_pages">
+  <thead>
+  <tr>
+    <th>{{ table.get_html('key', 'Schlüssel') }}</th>
+    <th>{{ table.get_html('title', 'Titel') }}</th>
+    <th>Aktionen</th>
+  </tr>
+  </thead>
+  <tbody>
+  {%- for page in object_list %}
+  <tr>
+    <td class="pagekey"><a href="{{ page|url }}">{{ page.key }}</a></td>
+    <td class="title">{{ page.title }}</td>
+    <td class="actions">
+      <a href="{{ page|url('edit') }}">Bearbeiten</a>
+      <a href="{{ page|url('delete') }}">Löschen</a>
+    </td>
+  </tr>
+  {%- else %}
+  <tr>
+    <td colspan="3">Es existieren keine statischen Seiten, <a href="{{ href('portal', 'page', 'new') }}">erstelle</a> jetzt die erste!</td>
+  </tr>
+  {%- endfor %}
+  </tbody>
+</table>
+<a href="{{ href('portal', 'page', 'new') }}">Neue Seite erstellen</a>
+{% endblock %}

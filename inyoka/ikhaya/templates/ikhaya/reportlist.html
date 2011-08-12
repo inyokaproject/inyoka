@@ -1,0 +1,32 @@
+{#
+    ikhaya/reportlist.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Shows a list of all unsolved article reports.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+
+{% do BREADCRUMB.append('Meldungen', href('ikhaya', 'reports'), True) %}
+
+{% block ikhaya_content %}
+  {%- for report in reports %}
+    <div class="report" id="report_{{ report.id }}">
+      <div class="report_header">
+        <a href="#report_{{ report.id }}">#{{ report.id }}</a>
+      </div>
+      <div class="text">
+        {{ report.rendered_text }}
+      </div>
+      <p class="meta admin_link_hover">
+        Gemeldet von <a href="{{ report.author|url|e }}">{{ report.author.username|e }}</a>,
+        {{ report.pub_date|specificdatetimeformat(true) }}
+        | Betrifft Artikel <a href="{{ report.article|url|e }}">{{ report.article.subject|e }}</a>
+        <span class="admin_link">| <a href="{{ report|url('hide')|e }}" class="action action_hide">Verbergen</a>
+            | <a href="{{ report|url('solve')|e }}" class="action action_solve">Erledigt</a></span>
+      </p>
+    </div>
+  {%- endfor %}
+{% endblock %}

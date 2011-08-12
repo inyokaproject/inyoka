@@ -1,0 +1,54 @@
+{#
+    macros.html
+    ~~~~~~~~~~~
+
+    This is a file that contains all template parts that are used more than
+    once in macros.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{#
+    render_form
+    ===========
+
+    This macro renders a bunch of form fields automatically.
+    Set the `inline` parameter to `true`, if you want to add a field manually
+    to the <dl> element.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{% macro render_form(form, fields, inline=false) %}
+{%- if not inline %}
+<dl>
+{%- endif %}
+  {%- for field in fields %}
+  {%- if form[field] %}
+  <dt>
+    <label for="{{ form[field].auto_id }}">{{ form[field].label }}:</label>
+  </dt>
+  <dd>
+    {{ form[field] }} {{ form.errors[field] }}
+    {%- if form[field].help_text %}
+    <p class="note">{{ form[field].help_text }}</p>
+    {%- endif %}
+  </dd>
+  {%- endif %}
+  {%- endfor %}
+{%- if not inline %}
+</dl>
+{%- endif %}
+{%- endmacro %}
+
+{# render a list entry of the mod nav #}
+{% macro render_modnavi_li(label, href, icon, count=False) %}
+  <a href="{{ href|e }}">
+    {%- if count -%}
+    <span class="admin_menu_count">{{ count }}</span>
+    <img src="{{ icon|e }}" alt="{{ label }}" title="  {{ label }} ({{ count }}) " />
+    {%- else -%}
+    <img src="{{ icon|e }}" class="admin_menu_nothing" alt="{{ label }}" title="  {{ label }}  " />
+    {%- endif -%}
+  </a>
+{% endmacro %}

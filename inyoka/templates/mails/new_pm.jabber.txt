@@ -1,0 +1,1 @@
+Du hast eine neue private Nachricht von {{ sender.username }} mit dem Titel „{{ subject }}“ erhalten: {{ entry|url }}

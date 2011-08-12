@@ -1,0 +1,68 @@
+{% macro render_forum(forum, subforums, last_posts) %}
+  <tr class="entry category-{{ forum.parent_id }}">
+
+    <td class="icon">
+      {%- if forum.get_read_status(REQUEST.user) %}
+      <img src="{{ href('static', 'img', 'forum/forum.png') }}" alt="Forum gelesen" />
+      {%- else %}
+      <img src="{{ href('static', 'img', 'forum/forum_unread.png') }}" alt="Neue Beiträge im Forum" />
+      {%- endif %}
+    </td>
+    <td class="forum" colspan="3">
+      <p class="name">
+        <a href="{{ forum|url }}" class="title">{{ forum.name|e }}</a>
+        {%- if REQUEST.user.can('forum_edit') -%}
+          <a href="{{ href('forum', 'forum', forum.slug, 'edit') }}" class="admin_link"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" /></a>
+        {%- endif -%}
+      </p>
+
+      {%- if forum.description %}
+      <p class="description">{{ forum.description|e }}</p>
+      {%- endif %}
+      {%- if subforums %}
+      <p class="subforums">Unterforen:
+      {%- for subforum in subforums %}
+        {%- if not subforum.get_read_status(REQUEST.user) %}
+        <img src="{{ href('static', 'img/forum/subforum_unread.png') }}" alt="Neue Beiträge im Forum" />
+        {%- endif %}
+        <a href="{{ subforum|url }}">{{ subforum.name|e }}</a>{% if not loop.last %}, {% endif %}
+      {%- endfor %}
+      </p>
+      {%- endif %}
+    </td>
+    <td class="last_post">
+    {%- if forum.last_post_id in last_posts -%}
+      {% set last_post = last_posts[forum.last_post_id] %}
+      <a href="{{ last_post|url }}">{{ last_post.pub_date|datetimeformat }}</a><br />
+      von <a href="{{ last_post.author|url }}">{{ last_post.author|e }}</a>
+    {%- else %}---
+    {%- endif %}</td>
+  </tr>
+{% endmacro %}
+
+{% macro topic_icon(topic) -%}
+  {% set is_read = topic.get_read_status(USER) -%}
+  <img src="
+  {{- href('static', 'img', 'forum', 'topic' ) -}}
+  {%- if topic.sticky -%}-sticky
+  {%- else -%}
+    {%- if not is_read %}-new{% endif -%}
+    {%- if topic.solved %}-solved{% endif -%}
+    {%- if topic.locked %}-locked{% endif -%}
+    {%- if topic.hidden %}-hidden{% endif -%}
+    {%- if can_moderate and topic.reported %}-reported{% endif -%}
+  {%- endif -%}
+  .png" alt="
+  {%- if not is_read %}ungelesenes {% endif -%}
+  {%- if topic.solved %}gelöstes {% endif -%}
+  {%- if topic.locked %}gesperrtes {% endif -%}
+  {%- if topic.hidden %}verstecktes {% endif -%}
+  {%- if can_moderate and topic.reported %}gemeldetes {% endif -%}
+  Thema" title="
+  {%- if not is_read %}ungelesenes {% endif -%}
+  {%- if topic.solved %}gelöstes {% endif -%}
+  {%- if topic.locked %}gesperrtes {% endif -%}
+  {%- if topic.hidden %}verstecktes {% endif -%}
+  {%- if can_moderate and topic.reported %}gemeldetes {% endif -%}
+  Thema" />
+{%- endmacro %}

@@ -1,0 +1,29 @@
+{%- if failed %}
+{%- if not inactive and not banned %}
+<div class="errors">
+  Du konntest nicht eingeloggt werden, da das Passwort für den Benutzer
+  „{{ username|e }}“ falsch war oder der Benutzer nicht existiert.
+</div>
+{%- elif banned %}
+<div class="errors">
+  Du konntest nicht eingeloggt werden, da der Benutzer „{{ username|e }}“
+  derzeit gebannt ist.<br />
+  Du wurdest darüber weitgehend informiert.
+  Solltest du dem nicht zustimmen oder ein Irrtum vorliegen so schreibe
+  bitte eine Nachricht an <a href="mailto:team@ubuntuusers.de">
+  team@ubuntuusers.de</a>
+</div>
+{%- else %}
+<div class="errors">
+  Du konntest nicht eingeloggt werden, da der Benutzer „{{ username|e  }}“
+  derzeit inaktiv ist. Das liegt wahrscheinlich daran, dass du den
+  Aktivierungslink in der Bestätigungsmail, die dir nach der
+  Registrierung zugeschickt wurde, nicht aufgerufen hast. Solltest du
+  diese Mail nicht bekommen haben, kannst du sie <a href="
+  {{- href('portal', 'register', 'resend', username|e) -}}
+  ">erneut anfordern</a>. Falls es weiterhin nicht funktioniert, schreibe
+  bitte eine Nachricht an <a href="mailto:webteam@ubuntuusers.de">
+  webteam@ubuntuusers.de</a>
+</div>
+{%- endif %}
+{%- endif %}

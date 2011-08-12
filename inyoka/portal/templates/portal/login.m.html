@@ -1,0 +1,56 @@
+{#
+    portal/login.m.html
+    ~~~~~~~~~~~~~~~~~
+
+    This page displays a formular where the user can log in.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.m.html' %}
+{% from 'macros.html' import render_form %}
+{% do BREADCRUMB.append('Login', href('portal', 'login'), True) %}
+{% block content %}
+  <h3>Login</h3>
+  {%- if cookie_error %}
+  <div class="errors">
+    Aus Gründen der Sicherheit müssen Cookies im Browser aktiviert sein um
+    sich auf ubuntuusers.de anzumelden.  Bitte aktiviere Cookies im Browser
+    und klicke auf <a href="{{ retry_link|e }}">fortfahren</a>.
+  </div>
+  <p>
+    Nähere Informationen zu Cookies finden sich in
+    <a href="/datenschutz/">der Datenschutzerklärung</a>.
+  </p>
+  {%- else %}
+  <p>
+    Hier kannst du dich mit deinem Benutzer anmelden, wenn du dich schon 
+    <a href="{{ href('portal', 'register') }}">registriert hast</a>.
+    Falls du dein Passwort vergessen hast, kannst du dir <a href="
+    {{- href('portal', 'lost_password') }}">ein neues zuschicken lassen</a>.
+  </p>
+  {% include 'portal/login_text.m.html' with context %}
+  <form action="" method="post" class="loginform">
+    <dl>
+      {{ render_form(form, ['username', 'password'], inline=true) }}
+      <dd>
+        {{ form.permanent }} <label for="id_permanent">{{ form.permanent.label }}</label>
+      </dd>
+    </dl>
+    <div class="actions">
+      <input type="hidden" name="redirect" value="" />
+      <input type="submit" id="login" value="Login" tabindex="1" />
+    </div>
+
+  </form>
+
+  {%- endif %}
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script type="text/javascript">
+    var input = OpenIDHelper($('input[name="username"]'), {{ OPENID_PROVIDERS|jsonencode }});
+  </script>
+{% endblock %}

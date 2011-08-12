@@ -1,0 +1,32 @@
+{#
+    pastebin/browse.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    On this page the user can browse through old pastebin entries.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends 'pastebin/page.html' %}
+{% do BREADCRUMB.append('Einträge', href('pastebin', 'browse'), True) %}
+
+{% block paste_content %}
+  {%- if entries %}
+    <ul class="pastes">
+      {%- for entry in entries %}
+      <li>
+        <span class="number">#{{ entry.id }}</span>
+        <a href="{{ entry|url }}" class="title">{{ entry.title|e}}</a>
+        <small>von <a href="{{ entry.author|url }}" class="author">
+          {{- entry.author|e -}}
+        </a> — <span class="date">
+          {{- entry.pub_date|specificdatetimeformat(true) }}
+        </span></small>
+      </li>
+      {%- endfor %}
+    </ul>
+  {%- else %}
+    <p>Noch wurden keine Pastes erstellt.</p>
+  {%- endif %}
+{% endblock %}

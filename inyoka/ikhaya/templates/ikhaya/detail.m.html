@@ -1,0 +1,67 @@
+{#
+    ikhaya/detail.m.html
+    ~~~~~~~~~~~~~~~~~~
+
+    Show a single ikhaya article in mobile format.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.m.html' %}
+
+{% set back = href('ikhaya') %}
+
+{% block content %}
+  <article>
+    <h2 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h2>
+    <p class="meta">
+      <span>{{ article.pub_datetime|datetimeformat }}</span>
+      <span>Kategorie: <a href="{{ article.category|url }}">{{ article.category.name|e }}</a></span>
+      <span>Autor: <a href="{{ article.author|url }}">{{ article.author.username|e}}</a></span>
+    </p>
+    <div class="intro">
+      {{ article.rendered_intro }}
+    </div>
+    <div class="text">
+      {{ article.rendered_text }}
+    </div>
+  </article>
+  {%- if article.comments_enabled %}
+    <section id="comments">
+      <h3>Kommentare</h3>
+      {% for comment in comments %}
+        {% if not comment.deleted %}
+          <div class="comment" id="comment_{{ loop.index }}">
+            <p class="meta">
+              <span class="right">{{ comment.pub_date|datetimeformat }}</span>
+              <span class="left">
+                <a href="#comment_{{ loop.index }}">{{ loop.index }}.</a>
+                <a href="{{ comment.author|url }}">{{ comment.author.username|e }}</a></span>
+            </p>
+            <div class="text">{{ comment.rendered_text }}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </section>
+    <section class="write-comment">
+      {{ form.errors.text }}
+      <form action="{{ article|url }}#new_comment" method="post" id="new_comment">
+        {{ form.text }}
+        <div class="note">{{ form.fields.text.help_text }}</div>
+        {% if form.data.comment_id and USER.can('comment_edit') %}
+        {{ form.comment_id }}
+        {% endif %}
+        <p>
+          <input type="submit" name="preview" value="Vorschau" />
+          <input type="submit" value="Speichern" />
+        </p>
+        {%- if preview %}
+        <div class="preview_wrapper">
+          <h2 class="title">Vorschau</h2>
+          <div id="preview" class="preview">{{ preview }}</div>
+        </div>
+        {%- endif %}
+      </form>
+    </section>
+  {%- endif %}
+{% endblock %}

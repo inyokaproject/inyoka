@@ -1,0 +1,81 @@
+{#
+    ikhaya/index.html
+    ~~~~~~~~~~~~~~~~~
+
+    This page shows some of the latest ikhaya entries.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+
+{% if category %}
+  {% set name = 'Kategorie %s - '|format(category.name) %}
+  {% set feeds = [
+    (name + 'Nur Überschrift', href('ikhaya', 'feeds', category.slug, 'title/20')),
+    (name + 'Nur Einleitung', href('ikhaya', 'feeds', category.slug, 'short/20')),
+    (name + 'Ganzer Beitrag', href('ikhaya', 'feeds', category.slug, 'full/20')),
+  ] %}
+  {% do BREADCRUMB.append(category.name, category|url, True) %}
+{% else %}
+  {% set feeds = [
+    ('Ikhaya - Nur Überschrift', href('ikhaya', 'feeds/title/20')),
+    ('Ikhaya - Nur Einleitung', href('ikhaya', 'feeds/short/20')),
+    ('Ikhaya - Ganzer Beitrag', href('ikhaya', 'feeds/full/20')),
+    ('Kommentare - Nur Überschrift', href('ikhaya', 'feeds/comments/title/20')),
+    ('Kommentare - Nur Einleitung', href('ikhaya', 'feeds/comments/short/20')),
+    ('Kommentare - Ganzer Beitrag', href('ikhaya', 'feeds/comments/full/20')),
+    ] %}
+{% endif %}
+
+{% block ikhaya_content %}
+  {%- if articles %}
+  <ul class="articles">
+    {%- for article in articles %}
+    <li class="article{{ article.hidden and ' hidden' or '' }}">
+      <h3 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h3>
+      {%- if article.article_icon %}
+      <img class="icon" src="{{ article.article_icon|url }}" alt="{{ article.article_icon.identifier|e }}" />
+      {%- endif %}
+      {% if full %}
+      <div class="intro">
+        {{ article.rendered_intro }}
+      </div>
+      <div class="text">
+        {{ article.rendered_text }}
+      </div>
+      {% else %}
+      <div class="text">{{ article.rendered_intro }}</div>
+      {% endif %}
+      <p class="meta admin_link_hover">
+        geschrieben von <a href="{{ article.author|url }}">{{ article.author.username|e }}</a>
+        {{ article.pub_datetime|specificdatetimeformat(true) }}
+        {%- if article.updated > article.pub_datetime %}
+        (zuletzt aktualisiert {{ article.updated|specificdatetimeformat(true)}})
+        {%- endif %}
+        in <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
+        {%- if article.comments_enabled %} |
+          {%- if article.comment_count == 0 %} Keine <a href="{{ article|url }}#comments">Kommentare</a>
+          {%- elif article.comment_count == 1 %} Ein <a href="{{ article|url }}#comments">Kommentar</a>
+          {%- else %} {{ article.comment_count|hnumber|capitalize }} <a href="{{ article|url }}#comments">Kommentare</a>
+          {%- endif %}
+          {%- if article.id in subscription_ids and USER.is_authenticated %}
+              (<a href="{{ article|url('unsubscribe') }}">abbestellen</a>)
+          {%- elif article.id not in subscription_ids and USER.is_authenticated %}
+              (<a href="{{ article|url('subscribe') }}">abonnieren</a>)
+          {%- endif %}
+        {%- endif %}
+        | <a href="{{ article|url('id') }}">#</a>
+        {%- if USER.can('article_edit') -%}
+          <span class="admin_link"> | <a href="{{ article|url('edit') }}">bearbeiten</a></span>
+        {%- endif %}
+      </p>
+    </li>
+    {%- endfor %}
+  </ul>
+  {%- else %}
+  <p>Keine Artikel vorhanden.</p>
+  {%- endif %}
+
+  {{ pagination.generate('right') }}
+{% endblock %}

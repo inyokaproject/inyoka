@@ -1,0 +1,33 @@
+{#
+    templates.admin.styles
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    On this page the administrator can alter a global stylesheet for styling
+    wiki markup.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+
+{% do BREADCRUMB.append('Markup-Stylesheets', href('portal', ''), True) %}
+
+{% block content %}
+<h3>Markup-Stylesheets</h3>
+<p>
+  Hier kannst du das CSS-Stylesheet bearbeiten, das für die Formattierung von
+  Syntax-Elementen zuständig ist.
+  Es wird auf allen Seiten eingebunden.
+</p>
+<p>
+  Bitte trage hier nur Styles ein, die du schon vorher getestet hast, weil
+  sonst alle Nutzer ein möglicherweise fehlerhaftes Stylesheet sehen.
+</p>
+<form action="" method="post" class="ikhaya">
+  {{ render_form(form, ['styles']) }}
+  <p>
+    <input type="submit" value="Speichern" />
+  </p>
+</form>
+{% endblock %}

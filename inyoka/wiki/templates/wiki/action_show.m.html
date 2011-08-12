@@ -1,0 +1,17 @@
+{#
+    wiki/action_show.m.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is used to show a mobile page of the most recent revision or
+    of a specific revision.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{% extends 'wiki/page.m.html' %}
+
+{% block content %}
+  <h2>{{ page.title|e }}</h2>
+  <article>{{ page.rev.rendered_text }}</article>
+{% endblock %}

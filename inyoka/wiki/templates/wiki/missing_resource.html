@@ -1,0 +1,21 @@
+{#
+    wiki/missing_resource.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This is rendered if some resource does not exist. This most likely
+    will happen if someone
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% block wiki_content %}
+  <h2>Fehlende Ressource</h2>
+  <p>
+    Die gewünschte Ressource wurde nicht gefunden. Möglicherweise bist du
+    einem Link mit ungültigen Parametern gefolgt. Als Lösung für das Problem
+    kannst du versuchen die <a href="?">URL ohne Parameter</a> zu öffnen.
+  </p>
+{% endblock %}

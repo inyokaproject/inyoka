@@ -1,0 +1,285 @@
+﻿* {
+  margin: 0;
+  padding: 0;
+}
+
+article, aside, details, figure, footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+h1, h2, h3 {
+  padding: 0.3em 0 0.1em;
+}
+
+p {
+  padding: 0.3em 0;
+}
+
+.wrapper {
+  margin: 0 0.2em;
+}
+
+header nav {
+  background: #DD4814 url('../img/logo.m.png') 1px 0 no-repeat;
+}
+
+nav {
+  width: 100%;
+  float: right;
+}
+
+nav a {
+  display: block;
+  padding: 0.5em 0.2em;
+  margin: 0 0.3em;
+}
+
+nav ul {
+  float: right;
+}
+
+nav ul li {
+  list-style: none;
+  float: left;
+}
+
+.post .text ul, .post .text ol {
+  padding-left: 1.5em;
+}
+
+#latest_articles li {
+  margin: 0.625em 0;
+}
+
+article {
+  border-bottom: 1px dotted #848484;
+  margin: 0.3em 0;
+}
+
+article .intro {
+  margin: 0.5em;
+}
+
+.meta span {
+  padding: 0 0.3em;
+  white-space: nowrap;
+}
+
+#comments h3 {
+  text-align: center;
+  margin: 0.5em 0;
+  padding: 0.3em 0;
+}
+
+#comments .meta, #posts .meta {
+  margin: 0.2em 0 0;
+  padding: 0.2em;
+}
+
+#comments .text, #posts .text {
+  margin: 0 0 0.5em;
+  padding: 0.2em;
+}
+
+.button, .category, .post .attachments .title {
+  padding: 0.5em 0.2em;
+  margin: 0.2em 0;
+}
+
+.pagination, section.actions {
+  text-align: center;
+  padding: 0.5em 0.2em;
+  margin: 0.3em 0;
+}
+
+.pagination .comma {
+  display: none;
+}
+
+.pagination .pageselect, .pageination .prev, .pageination .next,
+section.actions span {
+  padding: 0.5em;
+  margin: 0 0.2em;
+}
+
+.poll .option {
+  clear: both;
+}
+
+.poll .option .name {
+  float: left;
+  max-width: 100px;
+}
+
+.poll .option .votes {
+  float: right;
+}
+
+.poll .option .vote_bar_wrapper {
+  position: absolute;
+  left: 100px;
+  right: 100px;
+  border-left: 1px dotted #848484;
+  border-right: 1px dotted #848484;
+}
+
+.poll .option .vote_bar {
+  height: 1em;
+}
+
+footer {
+  font-size: 10px;
+  border-top: 1px solid #848484;
+  padding: 0.5em 0;
+  margin: 0.3em 0;
+}
+
+.clear {
+  clear: both;
+}
+
+/*** Fonts ***/
+
+h1 {
+  font-size: 36px;
+  line-height: 40px;
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 28px;
+}
+
+h3 {
+  font-size: 18px;
+  line-height: 20px;
+}
+
+ul {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+small {
+  font-size: 10px;
+  line-height: 14px;
+}
+
+p {
+  font-size: 14px;
+}
+
+article .intro {
+  font-style: italic;
+}
+
+.meta {
+  font-size: 10px;
+}
+
+#posts .meta {
+  line-height: 18px;
+}
+
+/*** Colors, text decorations, shadows... ***/
+
+body {
+  background-color: #F7F7F7;
+  color: #333333;
+}
+
+a {
+  color: #DD4814;
+  text-decoration: none;
+}
+
+nav, .pagination, #comments h3, #comments .meta, .forums .forum, .post .meta,
+.post .attachments .title, section.actions {
+  background-color: #DD4814;
+}
+
+nav, nav a, nav a:link, nav a:visited,
+.pagination, .pagination a, .pagination a:link, .pagination a:visited,
+#comments h3, #comments .meta, #comments .meta a, #comments .meta a:link, 
+#comments .meta a:visited,
+#posts .meta , #posts .meta a, #posts .meta a:link, #posts .meta a:visited
+section.actions, section.actions a, section.actions a:link,
+section.actions a:visited, .post .attachments .title {
+  color: #FFFFFF;
+  text-decoration: none;
+  text-shadow: 1px 1px 1px #000000;
+}
+
+.meta span.right {
+  margin-right: 0.2em;
+  float: right;
+}
+
+.meta span.left {
+  margin-left: 0.2em;
+}
+
+nav ul li.active, .pagination .active {
+  background-color: #962D0C;
+}
+
+#comments .text, .category, .forums .empty, #posts .text, .button {
+  background-color: #e6e4e2;
+}
+
+.category h3 {
+  background-color: #DD4814;
+  padding: 0.5em;
+}
+.category h3 a {
+  color: #FFFFFF;
+  text-decoration: none;
+  text-shadow: 1px 1px 1px black;
+}
+
+.button.unread {
+  background-color: #F8DAD0;
+}
+
+.forums .empty {
+  color: #848484;
+}
+
+.poll .option .vote_bar {
+  background-color: #000000;
+}
+
+.pagination .disabled {
+  color: #333333;
+  text-shadow: 1px 1px 1px #848484;
+}
+
+footer, footer a, footer a:link, footer a:visited {
+  color: #333333;
+}
+
+textarea {
+  width: 100%;
+}
+
+img {
+  max-width: 100% !important;
+}
+
+blockquote {
+  padding-left: 0.5em;
+  border-left: 4px solid #DD4814;
+}
+
+.post .attachments {
+  margin: 0 0 1em 1em;
+}
+
+.post .attachments ul {
+  list-style: none;
+}
+
+.post:target .meta, .comment:target .meta {
+  background-color: #5E2750 !important;
+}
+

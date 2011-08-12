@@ -1,0 +1,30 @@
+{#
+    errors/400_csrf.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Rendered on CSRF attempts.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+
+{% block portal_content %}
+  <h2>Fehlerhafte Abfrage</h2>
+  <p>
+    Der Browser hat keinen oder einen fehlerhaften Kontrollschlüssel übertragen
+    und die Weiterverarbeitung wurde aus Sicherheitsgründen abgebrochen.
+  </p>
+  <p>
+    Dieser Fehler tritt normalerweise auf, wenn versucht wurde Daten
+    automatisiert auf den Server zu übertragen.  In seltenen Fällen kann dies
+    auch passieren, wenn die Browserkonfiguration verändert wurde, während die
+    Formulardaten übertragen wurden.
+  </p>
+  <p>
+    In manchen Browsern ist es möglich durch klicken auf "Zurück" und dann
+    "Aktualiseren" einen neuen Kontrollschlüssel anzufordern um das Absenden
+    erneut durchzuführen.
+  </p>
+{% endblock %}

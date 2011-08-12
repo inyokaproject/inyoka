@@ -1,0 +1,25 @@
+{#
+    forum/report.m.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    The user can report a topic to the moderators on this page.
+    It shows a text field where the user can describe the problem.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends 'forum/page.m.html' %}
+{% set back = topic|url %}
+
+{% block content %}
+  <form action="" method="post" enctype="multipart/form-data">
+    <h2>Thema „{{ topic.title|e }}“ melden</h2>
+    <p>
+      Hier kannst du den Moderatoren ein bestimmtes Thema melden, wenn es deiner Meinung nach gegen die <a href="{{ href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') }}">Forenregeln</a> verstößt (Beleidigungen o.ä.).
+      Bitte schreibe hier noch eine kurze Begründung:
+    </p>
+    <p>{{ form.text }}</p>
+    <p><input type="submit" value="Thema melden" /></p>
+  </form>
+{% endblock %}

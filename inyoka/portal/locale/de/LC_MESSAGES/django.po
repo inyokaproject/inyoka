@@ -1,0 +1,97 @@
+# German translations for PROJECT.
+# Copyright (C) 2010 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2010-07-15 16:30+0200\n"
+"PO-Revision-Date: 2010-07-18 19:12+0100\n"
+"Last-Translator: Florian Apolloner <apollo13@apolloner.eu>\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.5\n"
+
+#: inyoka/portal/forms.py:182
+#, python-format
+msgid "User “%s” does not exist!"
+msgstr "Einen Benutzer „%s“ gibt es nicht!"
+
+#: inyoka/portal/views.py:126
+msgid "schaut sich an, wer online ist"
+msgstr ""
+
+#: inyoka/portal/views.py:127
+msgid "Wer ist online"
+msgstr ""
+
+#: inyoka/portal/templates/portal/group.html:21
+#, python-format
+msgid ""
+"\n"
+"      <strong>%(count)s</strong> Mitglied:"
+msgid_plural ""
+"\n"
+"      <strong>%(count)s</strong> Mitglieder:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inyoka/portal/templates/portal/grouplist.html:21
+#, python-format
+msgid "<strong>%(count)s</strong> Gruppe"
+msgid_plural "<strong>%(count)s</strong> Gruppen"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inyoka/portal/templates/portal/index.html:87
+#: inyoka/portal/templates/portal/whoisonline.html:20
+#, python-format
+msgid ""
+"\n"
+"    Momentan ist <strong>%(all)s</strong> Benutzer online,\n"
+"    "
+msgid_plural ""
+"\n"
+"    Momentan sind <strong>%(all)s</strong> Benutzer online,\n"
+"    "
+msgstr[0] ""
+msgstr[1] ""
+
+#: inyoka/portal/templates/portal/index.html:93
+#: inyoka/portal/templates/portal/whoisonline.html:26
+#, python-format
+msgid ""
+"\n"
+"    <strong>%(registered)s</strong> Angemeldeter\n"
+"    "
+msgid_plural ""
+"\n"
+"    <strong>%(registered)s</strong> Angemeldete\n"
+"    "
+msgstr[0] ""
+msgstr[1] ""
+
+#: inyoka/portal/templates/portal/index.html:99
+#: inyoka/portal/templates/portal/whoisonline.html:32
+#, python-format
+msgid ""
+"\n"
+"    <strong>%(guests)s</strong> Gast.\n"
+"    "
+msgid_plural ""
+"\n"
+"    <strong>%(guests)s</strong> Gäste.\n"
+"  "
+msgstr[0] ""
+msgstr[1] ""
+
+#: inyoka/portal/templates/portal/lost_password.html:17
+#: inyoka/portal/templates/portal/lost_password.html:20
+msgid "Forgotten Password"
+msgstr "Passwort vergessen"
+

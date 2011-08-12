@@ -1,0 +1,36 @@
+{#
+    ikhaya/index.m.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    This page shows the latest ikhaya entries for mobiles.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.m.html' %}
+
+{% block content %}
+  {%- for article in articles %}
+    <article{% if article.hidden %} class="hidden"{% endif %}>
+      <h3 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h3>
+      <p class="meta">
+        <span>{{ article.pub_datetime|dateformat }}</span>
+        <span>Kategorie: <a href="{{ article.category|url }}">{{ article.category.name|e }}</a></span>
+        <span>
+          {%- if article.comments_enabled %}
+            {%- if article.comment_count == 1 %}
+              <a href="{{ article|url }}#comments">1 Kommentar</a>
+            {%- else %}
+              <a href="{{ article|url }}#comments">{{ article.comment_count }} Kommentare</a>
+            {%- endif %}
+          {%- endif %}
+        </span>
+      </p>
+      <div class="text">{{ article.rendered_intro }}</div>
+      <p><strong><a href="{{ article|url }}">Weiterlesen »</a></strong></p>
+    </article>
+  {%- else %}
+    <p>Keine Artikel vorhanden.</p>
+  {%- endfor %}
+  {{ pagination.generate() }}
+{% endblock %}

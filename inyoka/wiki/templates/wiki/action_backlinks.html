@@ -1,0 +1,47 @@
+{#
+    wiki/action_backlinks.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Display a list of backlinks to a page.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+
+{%- extends 'wiki/page.html' %}
+{% do BREADCRUMB.append('Backlinks', page|url('backlinks'), True) %}
+{% set action = 'backlinks' %}
+{% block wiki_content %}
+  {%- if page.backlinks %}
+    <p>
+      Folgende Seiten verweisen auf den Artikel „{{ page.title|e }}“ durch
+      manuelle Verlinkung:
+    </p>
+    <ul>
+    {%- for page in page.backlinks %}
+      <li><a href="{{ page|url|e }}">{{ page.title|e }}</a></li>
+    {%- endfor %}
+    </ul>
+  {%- endif %}
+  {%- if page.embedders %}
+    <p>
+      Folgende Seiten betten diesen Artikel als Anhang ein. {% if not
+      page.rev.attachment %}Allerdings wird der Artikel selbst nicht als
+      Attachment geführt,  möglicherweise verwenden diese Artikel die Seite
+      irrtümlich oder eine alte Revision war ein Attachment.{% endif %}
+    </p>
+    <ul>
+    {%- for page in page.embedders %}
+      <li><a href="{{ page|url|e }}">{{ page.title|e }}</a></li>
+    {%- endfor %}
+    </ul>
+  {%- endif %}
+  {%- if not page.backlinks and not page.embedders %}
+    <p>
+      {% if page.rev.attachment %}Dieser Anhang{% else
+      %}Dieser Artikel{% endif %} ist ein Waise und wird von keiner Seite
+      referenziert.
+    </p>
+  {%- endif %}
+{% endblock %}

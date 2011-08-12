@@ -1,0 +1,1 @@
+Neues Thema „{{ topic_title }}“ vom von dir beobachteten Benutzer „{{ author_username }}“ im Forum „{{ forum_name }}“: {{ post_url }}

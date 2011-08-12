@@ -1,0 +1,17 @@
+{#
+    wiki/action_mv_back.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is (unlike most other action templates) not a full HTML page
+    but flashed to the show action.  So keep it small, it's in a cookie!
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+-#}
+
+
+<form action="{{ href('wiki', page.name, action='mv_back')|e }}" method="post">
+  <p>Soll die Seite wirklich wiederhergestellt werden?</p>
+     <input type="submit" value="Wiederherstellen" />{#
+   #}<input type="submit" name="cancel" value="Abbrechen" /></p>
+</form>

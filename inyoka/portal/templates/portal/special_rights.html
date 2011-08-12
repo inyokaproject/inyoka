@@ -1,0 +1,34 @@
+{#
+    portal/special_rights.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    user administration interface.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'portal/overall.html' %}
+
+{% do BREADCRUMB.append('Benutzer mit Sonderrechten', href('portal', 'users', 'special_rights')) %}
+{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+
+{% block content %}
+  <p>{{ count }} Benutzer haben Sonderrechte:</p>
+  <table>
+    <tr>
+      <th>Benutzername</th>
+      <th>Wohnort</th>
+      <th>Anmeldungsdatum</th>
+      <th>Beiträge</th>
+    </tr>
+    {%- for user in users %}
+    <tr>
+      <td>
+        <a href="{{ href('portal', 'user', user.username, 'edit') }}">{{ user.username|e }}</a></td>
+      <td>{{ user.location }}</td>
+      <td>{{ user.date_joined|dateformat }}</td>
+      <td>{{ user.post_count }}</td>
+    </tr>
+    {%- endfor %}
+  </table>
+{% endblock %}

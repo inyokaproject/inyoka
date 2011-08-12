@@ -1,0 +1,57 @@
+#!/bin/sh
+
+USER=ubuntu_de
+NAME="inyoka"
+PYTHONPATH="/nfs/www/de/"
+DJANGO_SETTINGS_MODULE="inyoka_settings"
+PYTHON="/home/ubuntu_de/virtualenv/bin/python"
+GUNICORN_EXE="/home/ubuntu_de/virtualenv/bin/gunicorn"
+GUNICORN_RUN="-c gunicorn_conf.py inyoka.application:application"
+CONFDIR="/home/ubuntu_de/virtualenv/inyoka"
+VENV_ACTIVATION=". ../bin/activate && . init.sh"
+RETVAL=0
+PID="/tmp/gunicorn_"$NAME".pid"
+
+
+start()
+{
+    echo "Starting $NAME."
+    cd $CONFDIR;
+    su -c "PYTHONPATH=$PYTHONPATH DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE $PYTHON $GUNICORN_EXE $GUNICORN_RUN" $USER && echo "OK" || echo "failed";
+}
+
+stop()
+{
+    echo "Stopping $NAME"
+    kill -QUIT `cat $PID` && echo "OK" || echo "failed";
+}
+
+reload()
+{
+    echo "Reloading $NAME:"
+    if [ -f $PID ]
+    then kill -HUP `cat $PID` && echo "OK" || echo "failed";
+    fi
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        reload
+        ;;
+    reload)
+        reload
+        ;;
+    force-reload)
+        stop && start
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart}"
+        RETVAL=1
+esac
+exit $RETVAL

@@ -1,0 +1,54 @@
+{#
+    ikhaya/suggestionlist.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    The moderators can see all suggestions for ikhaya articles on this page.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+
+#}
+
+{%- extends 'ikhaya/page.html' %}
+{% do BREADCRUMB.append('Artikelvorschläge', href('ikhaya', 'suggestions'), True) %}
+{% block ikhaya_content %}
+<h3>Artikelvorschläge</h3>
+<p>
+  Hier siehst du alle {{ suggestion_count }} Artikelvorschläge, die noch nicht bearbeitet wurden. 
+  {%- if is_subscribed %}
+  <a href="{{ href('ikhaya', 'suggestions', 'unsubscribe') }}" class="action action_subscribe">Über neue Artikelvorschläge nicht mehr benachrichtigt werden</a>
+  {%- else -%}
+  <a href="{{ href('ikhaya', 'suggestions', 'subscribe') }}" class="action action_subscribe">Über neue Artikelvorschläge benachrichtigt werden</a>
+  {%- endif -%}
+</p>
+<form action="" method="post">
+  <div class="suggestionlist">
+      {%- for suggestion in suggestions %}
+        <div class="article" id="{{ suggestion.id }}">
+          <span class="articleinfo">
+            Verfasst: {{ suggestion.pub_date|datetimeformat }} von <a href="{{ suggestion.author|url }}">{{ suggestion.author.username|e }}</a>
+            <span class="linklist"> | </span>
+              <strong class="suggestion-{{ suggestion.pk }}">{% if suggestion.owner_id == none %}Niemand{% else %}{{ suggestion.owner.username|e }}{% endif %}</strong> kümmert sich um diesen Vorschlag
+              (<a href="{{ href('ikhaya', 'suggest', suggestion.id, 'assign', USER.username) }}" class="assign" id="{{ suggestion.id }}">Mir zuweisen</a>)<span> |
+              <a href="{{ href('ikhaya', 'suggest', suggestion.id, 'assign', '-') }}" class="unassign" id="{{ suggestion.id }}">Zuweisung löschen</a> |
+              <a href="{{ href('ikhaya', 'suggest', suggestion.id, 'delete') }}">Löschen</a> |
+              <a href="{{ href('ikhaya', 'article', 'new', suggestion.id) }}">Artikel erstellen</a> |
+              <a href="{{ href('portal', 'privmsg', 'new', reply_to='suggestion:%d' % suggestion.id) }}">PN schreiben</a> |
+              <a href="#{{ suggestion.id }}">#</a>
+            </span>
+          </span>
+          <h3 class="title">{{ suggestion.title|e }}</h3>
+          <div class="intro">{{ suggestion.rendered_intro }}</div>
+          <div class="text">{{ suggestion.rendered_text }}</div>
+          {%- if suggestion.rendered_notes %}
+            <hr />
+            <div>{{ suggestion.rendered_notes }}</div>
+          {%- endif %}
+        </div>
+      {%- else %}
+      <strong>Es gibt zur Zeit keine neuen Artikelvorschläge.</strong>
+      {%- endfor %}
+    </div>
+  </div>
+</form>
+{% endblock %}

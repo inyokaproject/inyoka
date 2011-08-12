@@ -1,0 +1,18 @@
+{#
+    ikhaya/report_update.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ensure that the user want to change the report.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+
+<form action="{{ report|url(action)|e }}" method="post">
+  <p>Möchtest du die <a href="{{ report|url()|e }}">Meldung von {{ report.author.username|e }}</a> {% if action=='hide' %}verbergen{% elif action=='restore' %}wiederherstellen{% elif action=='solve' %}als gelöst markieren{% elif action=='unsolve' %}als ungelöst markieren{% endif %}?</p>
+  <p>
+    <input type="submit" value="{% if action=='hide' %}Verbergen{% elif action=='restore' %}Wiederherstellen{% elif action =='unsolve' %}Als ungelöst markieren{% else %}Gelöst{% endif %}" />
+    <input type="submit" name="cancel" value="Abbrechen" />
+  </p>
+</form>

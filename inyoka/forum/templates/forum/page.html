@@ -1,0 +1,72 @@
+{#
+    forum/page.html
+    ~~~~~~~~~~~~~~~
+
+    This template is included by all forum templates and adds the elements
+    they all use (stylesheets etc).
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'overall.html' %}
+
+{% do BREADCRUMB.append('Forum', href('forum'), True) %}
+{% set active_app = 'forum' %}
+{% set styles = ['forum-sprite', 'highlight'] + styles|default([]) %}
+{% set scripts = ['forum'] + scripts|default([]) %}
+{% set navi_type = 'tabbar'%}
+
+
+{% block pathbar_extensions %}
+  <div class="dropdown">
+    <ul class="dropdown"><li><a href="{{ href('portal', 'search', advanced=True) }}">Erweiterte Suche</a></li><li><ul>
+      {%- if forum %}
+        {%- if USER.is_authenticated %}
+        <li><a href="{{ href('forum', 'egosearch') }}">Eigene Beiträge</a> (<a href="{{ href('forum', 'egosearch', forum.slug|e) }}" class="limited">nur hier</a>)</li>
+        <li><a href="{{ href('forum', 'topic_author', USER.urlsafe_username|e) }}">Eigene Themen</a> (<a href="{{ href('forum', 'topic_author', USER.urlsafe_username|e, forum.slug|e) }}" class="limited">nur hier</a>)</li>
+        {%- endif %}
+        <li><a href="{{ href('forum', 'newposts') }}">Neue Beiträge</a> (<a href="{{ href('forum', 'newposts', forum.slug|e) }}" class="limited">nur hier</a>)</li>
+        <li><a href="{{ href('forum', 'unanswered') }}">Unbeantwortete Themen</a> (<a href="{{ href('forum', 'unanswered', forum.slug|e) }}" class="limited">nur hier</a>)</li>
+        <li><a href="{{ href('forum', 'unsolved') }}">Ungelöste Themen</a> (<a href="{{ href('forum', 'unsolved', forum.slug|e) }}" class="limited">nur hier</a>)</li>
+        <li><a href="{{ href('forum', 'last24') }}">24 Stunden</a> (<a href="{{ href('forum', 'last24', forum.slug|e) }}" class="limited">nur hier</a>)</li>
+        <li><a href="{{ href('forum', 'last12') }}">12 Stunden</a> (<a href="{{ href('forum', 'last12', forum.slug|e) }}" class="limited">nur hier</a>)</li>
+        <li><a href="{{ href('forum', 'last6') }}">6 Stunden</a> (<a href="{{ href('forum', 'last6', forum.slug|e) }}" class="limited">nur hier</a>)</li>
+      {% else %}
+        {%- if USER.is_authenticated %}
+          <li><a href="{{ href('forum', 'egosearch') }}">Eigene Beiträge</a></li>
+          <li><a href="{{ href('forum', 'topic_author', USER.urlsafe_username)|e }}">Eigene Themen</a></li>
+        {%- endif %}
+        <li><a href="{{ href('forum', 'newposts') }}">Neue Beiträge</a></li>
+        <li><a href="{{ href('forum', 'unanswered') }}">Unbeantwortete Themen</a></li>
+        <li><a href="{{ href('forum', 'unsolved') }}">Ungelöste Themen</a></li>
+        <li><a href="{{ href('forum', 'last24') }}">24 Stunden</a></li>
+        <li><a href="{{ href('forum', 'last12') }}">12 Stunden</a></li>
+        <li><a href="{{ href('forum', 'last6') }}">6 Stunden</a></li>
+      {% endif %}
+    </ul></li></ul>
+  </div>
+
+  <div class="pathbar_extension">
+    {% if USER.can('forum_edit') %}
+      {% if forum %}
+        <a class="admin_link" href="{{ href('forum', 'forum', 'new', forum.id) }}">Neues Forum anlegen</a>
+      {% else %}
+        <a class="admin_link" href="{{ href('forum', 'forum', 'new') }}">Neues Forum anlegen</a>
+      {% endif %}
+    {% endif %}
+    <a href="{{ href('forum', 'markread') }}">Alle Foren als gelesen markieren</a>
+  </div>
+{% endblock %}
+
+
+{% block navigation %}
+  {%- block forum_navigation %}
+  
+  {%- endblock %}
+{% endblock %}
+
+{% block content %}
+  {%- block forum_content %}
+
+  {%- endblock %}
+{%- endblock %}

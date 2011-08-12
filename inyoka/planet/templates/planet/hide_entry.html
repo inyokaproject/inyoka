@@ -1,0 +1,12 @@
+{#
+    planet/hide_entry.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is (unlike the other action templates) not a full HTML page
+    but flashed to the show action.  So keep it small, it's in a cookie!
+-#}
+<form action="{{ href('planet', 'hide', entry.id)|e }}" method="post">
+  <p>Soll der Eintrag wirklich {% if entry.hidden %}wiederhergestellt{% else %}versteckt{% endif %} werden?</p>
+  <p> <input type="submit" value="Ja!" />{#
+   #} <input type="submit" name="cancel" value="Abbrechen" /></p>
+</form>

@@ -1,0 +1,174 @@
+/**
+ * style.editor
+ * ~~~~~~~~~~~~
+ *
+ * The style for the javascript-based wiki syntax editor.
+ *
+ * :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+ * :license: GNU GPL, see LICENSE for more details.
+ */
+ 
+/** sprite: editor; sprite-image: url('../img/icons/editor-sprite.png'); sprite-ie6-mode: none; sprite-image-uid: md5 */
+
+
+p.ubuntu_version {
+  font-size: 0.8em;
+}
+ul.toolbar {
+  margin: 0.5em 0 0.2em 0;
+  padding: 0px;
+  padding-left: 1px !important;
+  list-style: none;
+  height: 32px;
+  line-height: 28px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  position: relative;
+  top: 0;
+  left: 0;
+  li {
+    float: left;
+    margin: 0;
+    padding: 2px 1px 2px 1px;
+    a.button {
+      display: block;
+      width: 26px;
+      height: 26px;
+      background-position: center center;
+      background-repeat: no-repeat;
+      border: 1px solid #ddd;
+      span {
+        display: none;
+      }
+    }
+    a.button:hover {
+      background-color: #fff;
+      border: 1px solid #aaa;
+    }
+    a.button:focus {
+      outline: none;
+      border: 1px solid #888;
+    }
+    select {
+      margin: 0 4px 0 4px;
+      option.title {
+        font-weight: bold;
+        background-color: #eee;
+      }
+    }
+    #button-bold {
+      background-image: url(../img/icons/bold.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-italic {
+      background-image: url(../img/icons/italic.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-underlined {
+      background-image: url(../img/icons/underlined.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-code {
+      background-image: url(../img/icons/code.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-stroke {
+      background-image: url(../img/icons/stroke.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-monospace {
+      background-image: url(../img/icons/monospace.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-mark {
+      background-image: url(../img/icons/mark.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-wiki-link {
+      background-image: url(../img/icons/wikilink.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-external-link {
+      background-image: url(../img/icons/link.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-user-link {
+      background-image: url(../img/icons/user.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-quote {
+      background-image: url(../img/icons/quote.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-pre {
+      background-image: url(../img/icons/pre.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-picture {
+      background-image: url(../img/icons/picture.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-color {
+      background-image: url(../img/icons/color.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-smilies {
+      background-image: url(../img/icons/smiley.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-date {
+      background-image: url(../img/icons/date.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-sig {
+      background-image: url(../img/icons/sig.png); /** sprite-ref: editor; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 2px; sprite-margin-bottom: 2px; */
+    }
+    #button-shrink {
+      background-image: url(../img/icons/shrink.png); /** sprite-ref: editor; */
+      height: 12px;
+    }
+    #button-enlarge {
+      background-image: url(../img/icons/enlarge.png); /** sprite-ref: editor; */
+      height: 12px;
+      position: relative;
+      left:-30px;
+      top:15px;
+    }
+    table.codebox {
+      width: auto !important;
+      td {
+        cursor: pointer;
+        padding: 2px 10px;
+        background-color: #eee;
+        border: 1px solid #aaa;
+      }
+      td:hover {
+        background-color: #fff;
+      }
+    }
+    ul.smileybox {
+      width: 190px;
+      background-color: #eee;
+      li {
+        height: 24px;
+        background-color: #eee;
+        float: left;
+      }
+      li:hover {
+        background-color: #fff;
+      }
+    }
+    ul.colorbox {
+      li:hover {
+        padding: 0;
+        border: 1px solid white;
+      }
+    }
+    span.syntax_help {
+      position: absolute;
+      right: 5px;
+    }
+    span.toolbar_help {
+      text-align: center;
+      padding: 2px 6px 2px 6px;
+      border-left: 1px solid #c1c1c1;
+      border-right: 1px solid #c1c1c1;
+      background-color: #eee;
+    }
+  }
+}
+ul.toolbar li ul.colorbox,ul.toolbar li ul.smileybox,ul.toolbar li table.codebox {
+  list-style: none;
+  position: absolute;
+  border: 1px solid #aaa;
+  padding-left: 0;
+}
+ul.toolbar li ul.colorbox li,ul.toolbar li ul.smileybox li {
+  padding: 1px;
+  width: 24px;
+  cursor: pointer;
+}

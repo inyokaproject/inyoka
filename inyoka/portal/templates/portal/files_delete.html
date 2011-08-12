@@ -1,0 +1,18 @@
+{#
+    portal/files_delete.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ensure that the user want to delete the selected file.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+<form action="{{ object|url('delete')|e }}" method="post">
+  <p>Möchtest du die Datei „<a href="{{ object|url('show')|e }}">{{ object.identifier|e }}</a>“ wirklich löschen?</p>
+  <p>
+    <input type="submit" value="Löschen" />
+    <input type="submit" name="cancel" value="Abbrechen" />
+  </p>
+</form>
+

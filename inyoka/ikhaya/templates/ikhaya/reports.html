@@ -1,0 +1,64 @@
+{#
+    ikhaya/reports.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    Shows a list of suggested improved verions of an article.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'ikhaya/page.html' %}
+
+{% do BREADCRUMB.append('Meldungen', article|url('reports')) %}
+{% do BREADCRUMB.append(article.subject, article|url, True) %}
+
+{% block ikhaya_content %}
+  {%- for report in reports if not report.deleted or can_edit %}
+    <div class="report{% if report.solved %} solved{% endif%}{% if report.deleted %} hidden{% endif %}" id="report_{{ report.id }}">
+      <div class="report_header">
+        <a href="#report_{{ report.id }}">#{{ report.id }}</a>
+      </div>
+      <div class="text">
+        {{ report.rendered_text }}
+      </div>
+      <p class="meta admin_link_hover">
+        Gemeldet von <a href="{{ report.author|url|e }}">{{ report.author.username|e }}</a>,
+        {{ report.pub_date|specificdatetimeformat(true) }}
+        {%- if can_edit %}
+          <span class="admin_link">
+          {%- if report.deleted %}
+            | <a href="{{ report|url('restore')|e }}" class="action action_restore">Wiederherstellen</a>
+          {%- else %}
+            | <a href="{{ report|url('hide')|e }}" class="action action_hide">Verbergen</a>
+          {%- endif %}
+          {%- if not report.solved %}
+            | <a href="{{ report|url('solve')|e }}" class="action action_solve">Erledigt</a>
+          {%- else %}
+            | <a href="{{ report|url('unsolve')|e }}" class="action action_unsolve">Nicht erledigt</a>
+          {%- endif %}
+          </span>
+        {%- endif %}
+      </p>
+    </div>
+  {%- else -%}
+  <strong>Es existieren noch keine Fehlermeldungen.  Bitte benutze den unten stehenden Link um einen neuen Vorschlag zu machen</strong>
+  {%- endfor %}
+  <p>
+    <a href="{{ article|url('report_new')|e }}">Melde einen neuen Rechtschreibfehler</a>
+  </p>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script type="text/javascript">
+    /* <![CDATA[ */
+    $('.report .report_header').click(function() {
+      var report = $(this).parent('.report')
+      report.find('.text').toggle();
+      report.find('.meta').toggle();
+    });
+    $('.solved').find('.text').hide();
+    $('.solved .meta').hide();
+    /* ]]> */
+  </script>
+{% endblock %}

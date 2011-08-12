@@ -1,0 +1,72 @@
+{#
+    portal/privmsg/index.m.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Display a list of private messages.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{% extends 'portal/overall.m.html' %}
+{% set selected = folder.id %}
+
+{% block content %}
+  {%- if not folder %}
+    <a href="{{ href('portal', 'privmsg', 'inbox') }}"{{ selected == 'inbox' and ' class="active"' or '' }}>
+      <div class="button">Posteingang</div>
+    </a>
+    <a href="{{ href('portal', 'privmsg', 'sent') }}"{{ selected == 'sent' and ' class="active"' or '' }}>
+      <div class="button">Gesendet</div>
+    </a>
+    <a href="{{ href('portal', 'privmsg', 'archive') }}"{{ selected == 'archive' and ' class="active"' or '' }}>
+      <div class="button">Archiv</div>
+    </a>
+    <a href="{{ href('portal', 'privmsg', 'trash') }}"{{ selected == 'trash' and ' class="active"' or '' }}>
+      <div class="button">Papierkorb</div>
+    </a>
+    <a href="{{ href('portal', 'privmsg', 'new') }}"{{ selected == 'new' and ' class="active"' or '' }}>
+      <div class="button">Neue Nachricht</div>
+    </a>
+  {%- else %}
+    {%- if message %}
+      <a href="{{ href('portal', 'privmsg', folder.id ) }}">
+        <div class="button">« Zurück</div>
+      </a>
+      <h3>Nachricht von {{ message.author|e }}</h3>
+      <div class="meta">
+        {{ message.pub_date|datetimeformat }}
+        {% if message.recipients|length > 1 %}
+          , an
+          {% for recipient in message.recipients %}
+            <a href="{{ recipient|url }}">{{ recipient|e }}</a>
+            {% if not loop.last %}, {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="text">
+        {{ message.rendered_text }}
+      </div>
+      <section class="actions">
+        <a href="{{ message|url('reply') }}"><span>Antworten</span></a>
+        {% if message.recipients|length > 1 %}
+          <a href="{{ message|url('reply_to_all') }}"><span>An alle antworten</span></a>
+        {% endif %}
+        <a href="{{ message|url('forward') }}"><span>Weiterleiten</span></a>
+        <a href="?action=restore"><span>Wiederherstellen</span></a>
+        <a href="?action=archive"><span>Archivieren</span></a>
+        <a href="?action=delete"><span>Löschen</span></a>
+      </section>
+    {%- else %}
+      <a href="{{ href('portal', 'privmsg') }}">
+        <div class="button">« Nachrichten</div>
+      </a>
+      {% for entry in entries %}
+        <a href="{{ entry|url }}">
+          <div class="button{{ ' unread' if not entry.read }}">
+            {{ entry.message.subject|e }} von {{ entry.message.author|e }}
+          </div>
+        </a>
+      {% endfor %}
+    {%- endif %}
+  {%- endif %}
+{% endblock %}

@@ -1,0 +1,36 @@
+{#
+    pastebin/add.html
+    ~~~~~~~~~~~~~~~~~
+
+    On this page the user can add a new pastebin entry.
+
+    It's pastebin's index page.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends 'pastebin/page.html' %}
+{% from 'macros.html' import render_form %}
+{% do BREADCRUMB.append('Neuer Eintrag', href('pastebin', 'add'), True) %}
+
+{% block paste_content %}
+  <form action="" method="post">
+    <dl>
+      <dt>Funktion:</dt>
+      <dd>
+        Dies ist eine Ablage, wo du Fehlermeldungen, Logs, Konfigurationsdateien oder
+        Quelltexte speichern kannst, um Forenthreads oder IRC-Channels nicht unnötig unleserlich zu
+        machen. Dazu kopierst du den Text in das Textfeld und wählst die passende
+        Sprache aus. Dann kopierst du die URL in das Thema bzw. den Channel. Genaueres zu unserer
+        Ablage („No Paste Service“) findest du im <a href="{{ href('wiki', 'No_Paste_Service') }}">Wiki</a>.
+      </dd>
+      {{ render_form(form, ['title', 'lang', 'code'], inline=True) }}
+      {%- if not USER.is_authenticated %}
+      {{ render_form(form, ['captcha'], inline=True) }}
+      {%- endif %}
+      <dd>
+        <input type="submit" value="Hinzufügen" />
+      </dd>
+    </dl>
+  </form>
+{% endblock %}
