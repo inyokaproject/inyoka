@@ -1373,8 +1373,9 @@ def privmsg(request, folder=None, entry_id=None, page=1):
             else:
                 if action == 'archive':
                     msg = _('Do you want to archive the message?')
-                    confirm_label = pgettext('the verb "to archive", not the '
-                                             'noun.', 'Archive')
+                    #confirm_label = pgettext('the verb "to archive", not the '
+                    #                         'noun.', 'Archive')
+                    confirm_label = _('Archive it')
                 elif action == 'restore':
                     msg = _('Do you want to restore the message?')
                     confirm_label = _('Restore')
