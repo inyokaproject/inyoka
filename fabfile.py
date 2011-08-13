@@ -113,3 +113,11 @@ def compile_css(file=None):
 def compile_static():
     compile_js()
     compile_css()
+
+_APPS = ['forum', 'portal', 'wiki', 'ikhaya', 'utils', 'pastebin', 'planet']
+
+def compile_translations():
+    """Build mo files from po"""
+    for app in _APPS:
+        local('pybabel compile -D django -d inyoka/%s/locale -l de' % app,
+              capture=False)
