@@ -1017,7 +1017,7 @@ def splittopic(request, topic_slug, page=1):
         return abort_access_denied(request)
 
     post_ids = request.session.get('_split_post_ids', {})
-    if not post_ids:
+    if not post_ids or not topic_slug in post_ids:
         flash(u'Du hast keine Beiträge ausgewählt.')
         return HttpResponseRedirect(old_topic.get_absolute_url())
     else:
