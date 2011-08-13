@@ -333,7 +333,7 @@ class PageManager(models.Manager):
         """
         rev = None
         key = 'wiki/page/' + name
-        if not nocache:
+        if not nocache and self.exists(name):
             rev = request_cache.get(key)
         if rev is None:
             try:
