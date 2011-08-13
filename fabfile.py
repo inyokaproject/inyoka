@@ -49,9 +49,10 @@ def bootstrap():
 @roles('web')
 def deploy():
     """Update Inyoka and touch the wsgi file"""
-    run('unset PYTHONPATH;'
-        'source {target_dir}/../bin/activate;'
-        'git fetch origin master')
+    with cd(env.target_dir):
+        run('unset PYTHONPATH;'
+            'source ../bin/activate;'
+            'git fetch origin master')
 
 
 @roles('static')
