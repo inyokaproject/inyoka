@@ -142,7 +142,9 @@ def forum(request, slug, page=1):
     if fmsg is not None:
         return welcome(request, fmsg.slug, request.path)
 
-    topic_ids = Topic.objects.filter(forum=forum).values_list('id', flat=True)
+    topic_ids = Topic.objects.filter(forum=forum)\
+                             .values_list('id', flat=True)\
+                             .order_by('-sticky', '-last_post')
     pagination = Pagination(request, topic_ids, page, TOPICS_PER_PAGE,
                             url_for(forum), total=forum.topic_count)
 
