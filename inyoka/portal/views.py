@@ -1476,6 +1476,8 @@ def privmsg_new(request, username=None):
                         break
                     elif not user.is_active:
                         recipients = None
+                        flash(_('You cannot send messages to this user.'),
+                              False)
                         flash(u'Der Benutzer %s %s.' % (
                             user.username, user.status_info), False)
                         break

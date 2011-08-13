@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-08-13 17:52+0200\n"
+"POT-Creation-Date: 2011-08-13 18:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -130,7 +130,7 @@ msgstr ""
 #: inyoka/portal/views.py:796 inyoka/portal/views.py:884
 #: inyoka/portal/views.py:995 inyoka/portal/views.py:1162
 #: inyoka/portal/views.py:1250 inyoka/portal/views.py:1281
-#: inyoka/portal/views.py:2086
+#: inyoka/portal/views.py:2090
 msgid "Errors occurred, please fix them."
 msgstr ""
 
@@ -274,7 +274,7 @@ msgstr ""
 msgid "The activationmail was resent."
 msgstr ""
 
-#: inyoka/portal/views.py:1301 inyoka/portal/views.py:1408
+#: inyoka/portal/views.py:1301 inyoka/portal/views.py:1410
 msgid "You need to be logged in to access your private messages."
 msgstr ""
 
@@ -305,52 +305,56 @@ msgstr ""
 msgid "Do you want to archive the message?"
 msgstr ""
 
-#: inyoka/portal/views.py:1376
-msgid "Archive"
+#: inyoka/portal/views.py:1378
+msgid "Archive it"
 msgstr ""
 
-#: inyoka/portal/views.py:1378
+#: inyoka/portal/views.py:1380
 msgid "Do you want to restore the message?"
 msgstr ""
 
-#: inyoka/portal/views.py:1379
+#: inyoka/portal/views.py:1381
 msgid "Restore"
 msgstr ""
 
-#: inyoka/portal/views.py:1381
+#: inyoka/portal/views.py:1383
 msgid "Do you want to delete the message?"
 msgstr ""
 
-#: inyoka/portal/views.py:1382
+#: inyoka/portal/views.py:1384
 msgid "Delete"
 msgstr ""
 
-#: inyoka/portal/views.py:1386
+#: inyoka/portal/views.py:1388
 msgid "Cancel"
 msgstr ""
 
-#: inyoka/portal/views.py:1434
+#: inyoka/portal/views.py:1436
 #, python-format
 msgid ""
 "You were automatically banned because you are probably sending spam. If "
 "this ban is not justified, contact us at %(email)s"
 msgstr ""
 
-#: inyoka/portal/views.py:1449
+#: inyoka/portal/views.py:1451
 msgid "You cannot send messages to groups."
 msgstr ""
 
-#: inyoka/portal/views.py:1458
+#: inyoka/portal/views.py:1460
 #, python-format
 msgid "The group \"%(group)s\" was not found."
 msgstr ""
 
-#: inyoka/portal/views.py:1467
+#: inyoka/portal/views.py:1469
 msgid "You cannot send messages to yourself."
 msgstr ""
 
-#: inyoka/portal/views.py:1472
+#: inyoka/portal/views.py:1474
 msgid "You cannot send messages to system users."
+msgstr ""
+
+#: inyoka/portal/views.py:1479
+msgid "You cannot send messages to this user."
 msgstr ""
 
 #: inyoka/portal/templates/portal/whoisonline.html:13
