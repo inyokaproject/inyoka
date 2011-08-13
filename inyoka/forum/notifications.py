@@ -19,6 +19,8 @@ def send_newtopic_notifications(user, post, topic, forum):
     # not visited, because unlike the posts you won't see
     # other new topics
 
+    version_number = topic.get_ubuntu_version()
+
     data={'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
           'author_username': post.author.username,
           'forum_id': forum.id,
@@ -27,7 +29,7 @@ def send_newtopic_notifications(user, post, topic, forum):
           'post_url': post.get_absolute_url(),
           'topic_title': topic.title,
           'topic_version': topic.get_ubuntu_version(),
-          'topic_version_number': topic.get_ubuntu_version().number}
+          'topic_version_number': version_number.number if version_number else None}
 
     queue_notifications.delay(user.id, 'user_new_topic',
         u'Neues Thema vom Benutzer %s' % data.get('author_username'),
