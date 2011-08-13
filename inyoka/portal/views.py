@@ -224,9 +224,9 @@ def register(request):
                 user.settings['timezone'] = timezone
                 user.save()
 
-            flash(_('The username „%(username)s“ was successfully registered. '
+            flash(_('The username "%(username)s" was successfully registered. '
                     'An email with an activationkey was sent to '
-                    '„%(email)s“.') % {
+                    '"%(email)s".') % {
                         'username': escape(user.username),
                         'email': escape(user.email)
                     }, True)
@@ -248,7 +248,7 @@ def activate(request, action='', username='', activation_key=''):
     try:
         user = User.objects.get(username)
     except User.DoesNotExist:
-        flash(_('The user „%(username)s” does not exist.') % {
+        flash(_('The user "%(username)s” does not exist.') % {
             'username': escape(username)}, False)
         return HttpResponseRedirect(href('portal'))
     if not redirect:
@@ -267,7 +267,7 @@ def activate(request, action='', username='', activation_key=''):
             if not user.is_active:
                 # Is it save to delete an inactive user?
                 #user.delete()
-                #flash(u'Der Benutzer „%s“ wurde gelöscht.' %
+                #flash(u'Der Benutzer "%s" wurde gelöscht.' %
                 #      escape(username), True)
                 flash(_('Your account was anonymized.'), True)
             else:
@@ -587,7 +587,7 @@ def user_mail(request, username):
             #    flash(u'Die Mail konnte nicht verschickt werden.')
             #    return HttpResponseRedirect(href('admin', 'users', 'mail',
             #                                 escape(username)))
-            flash(_('The email to „%(username)s“ was sent successfully.')
+            flash(_('The email to "%(username)s" was sent successfully.')
                   % {'username': escape(username)}, True)
             return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
         else:
@@ -608,7 +608,7 @@ def subscribe_user(request, username):
     except Subscription.DoesNotExist:
         # there's no such subscription yet, create a new one
         Subscription(user=request.user, content_object=user).save()
-        flash(_('You will now be notified about activities of „%(username)s”.')
+        flash(_('You will now be notified about activities of "%(username)s”.')
               % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
@@ -623,7 +623,7 @@ def unsubscribe_user(request, username):
     else:
         subscription.delete()
         flash(_('You will now not be notfied anymore about activities of '
-                '„%(username)s“.') % {'username': user.username})
+                '"%(username)s".') % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
 
@@ -986,7 +986,7 @@ def user_edit_profile(request, username):
                             })
 
             user.save()
-            flash(_('The profile of „%(username)s“ was changed successfully')
+            flash(_('The profile of "%(username)s" was changed successfully')
                     % {'username': escape(user.username)}, True)
             # redirect to the new username if given
             if user.username != username:
@@ -1048,7 +1048,7 @@ def user_edit_settings(request, username):
             for key, value in data.iteritems():
                 user.settings[key] = data[key]
             user.save()
-            flash(_('The setting of „%(username)s“ were successfully changed.')
+            flash(_('The setting of "%(username)s" were successfully changed.')
                   % {'username': escape(user.username)}, True)
     return {
         'user': user,
@@ -1072,7 +1072,7 @@ def user_edit_status(request, username):
             for key in ('status', 'banned_until',):
                 setattr(user, key, data[key])
             user.save()
-            flash(_('The status of „%(username)s” was successfully changed.')
+            flash(_('The status of "%(username)s” was successfully changed.')
                   % {'username': escape(user.username)}, True)
     if user.status > 0:
         activation_link = None
@@ -1096,7 +1096,7 @@ def user_edit_password(request, username):
         data = form.cleaned_data
         user.set_password(data['new_password'])
         user.save()
-        flash(_('The password of „%(username)s“ was successfully changed.')
+        flash(_('The password of "%(username)s" was successfully changed.')
               % {'username': escape(user.username)}, True)
     return {
         'user': user,
@@ -1483,7 +1483,7 @@ def privmsg_new(request, username=None):
                         recipients.add(user)
             except User.DoesNotExist:
                 recipients = None
-                flash(u'Der Benutzer „%s“ wurde nicht gefunden.'
+                flash(u'Der Benutzer "%s" wurde nicht gefunden.'
                       % escape(recipient), False)
 
             if recipients:
@@ -1596,7 +1596,7 @@ class MemberlistView(generic.ListView):
         try:
             user = User.objects.get_by_username_or_email(name)
         except User.DoesNotExist:
-            flash(u'Der Benutzer „%s“ existiert nicht.' % escape(name))
+            flash(u'Der Benutzer "%s" existiert nicht.' % escape(name))
             return HttpResponseRedirect(request.build_absolute_uri())
         else:
             return HttpResponseRedirect(user.get_absolute_url('admin'))
@@ -1669,7 +1669,7 @@ def group_edit(request, name=None):
         try:
             group = Group.objects.get(name=name)
         except Group.DoesNotExist:
-            flash(u'Die Gruppe „%s“ existiert nicht.'
+            flash(u'Die Gruppe "%s" existiert nicht.'
                   % escape(name), False)
             return HttpResponseRedirect(href('portal', 'groups'))
         form_class = EditGroupForm
@@ -1754,7 +1754,7 @@ def group_edit(request, name=None):
                 keys = ['user_permissions/%s' % uid for uid in user_ids]
                 cache.delete_many(keys)
 
-            flash(u'Die Gruppe „<a href="%s">%s</a>“ wurde erfolgreich %s.'
+            flash(u'Die Gruppe "<a href="%s">%s</a>" wurde erfolgreich %s.'
                   % (href('portal', 'group', escape(group.name)),
                      escape(group.name), new and 'erstellt' or 'bearbeitet'),
                   True)
@@ -2138,11 +2138,11 @@ def page_edit(request, page=None):
             if 'send' in request.POST:
                 page = form.save()
                 if new:
-                    flash(u'Die Seite „<a href="%s">%s</a>“ '
+                    flash(u'Die Seite "<a href="%s">%s</a>" '
                           u'wurde erfolgreich erstellt.' % (
                             url_for(page), escape(page.title)), True)
                 else:
-                    flash(u'Die Seite „<a href="%s">%s</a>“ '
+                    flash(u'Die Seite "<a href="%s">%s</a>" '
                           u'wurde erfolgreich bearbeitet.' % (
                             url_for(page), escape(page.title)), True)
                 return HttpResponseRedirect(href('portal', page.key))
