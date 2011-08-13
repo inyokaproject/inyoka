@@ -47,12 +47,18 @@ def bootstrap():
 
 
 @roles('web')
-def deploy():
-    """Update Inyoka and touch the wsgi file"""
+def deploy(tag):
+    """Update Inyoka to a specific tag"""
     with cd(env.target_dir):
-        run('unset PYTHONPATH;'
-            'source ../bin/activate;'
-            'git fetch origin master')
+        run('git fetch origin master --tags;'
+            'git checkout {tag}'.format(tag=tag))
+
+
+@roles('web')
+def rollback(tag):
+    """Rollback to a specific tag."""
+    with cd(env.target_dir):
+        run('git checkout {tag}'.format(tag=tag))
 
 
 @roles('static')
