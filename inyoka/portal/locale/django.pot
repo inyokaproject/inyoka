@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-08-13 14:47+0200\n"
+"POT-Creation-Date: 2011-08-13 16:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,8 +51,9 @@ msgid "Your account was anonymized."
 msgstr ""
 
 #: inyoka/portal/views.py:274 inyoka/portal/views.py:297
+#: inyoka/portal/views.py:1293
 #, python-format
-msgid "The account „%(username)s“ was already activated."
+msgid "The account \"%(username)s\" was already activated."
 msgstr ""
 
 #: inyoka/portal/views.py:277 inyoka/portal/views.py:287
@@ -129,7 +130,7 @@ msgstr ""
 #: inyoka/portal/views.py:796 inyoka/portal/views.py:884
 #: inyoka/portal/views.py:995 inyoka/portal/views.py:1162
 #: inyoka/portal/views.py:1250 inyoka/portal/views.py:1281
-#: inyoka/portal/views.py:2086
+#: inyoka/portal/views.py:2087
 msgid "Errors occurred, please fix them."
 msgstr ""
 
@@ -250,6 +251,102 @@ msgstr ""
 #: inyoka/portal/views.py:1099
 #, python-format
 msgid "The password of „%(username)s“ was successfully changed."
+msgstr ""
+
+#: inyoka/portal/views.py:1159
+#, python-format
+msgid "The privileges of \"%(username)s\" were successfully changed."
+msgstr ""
+
+#: inyoka/portal/views.py:1247
+#, python-format
+msgid "The groups of \"%(username)s\" were successfully changed."
+msgstr ""
+
+#: inyoka/portal/views.py:1275
+#, python-format
+msgid ""
+"The user \"%(username)s\" was successfully created. You can now edit more"
+" details."
+msgstr ""
+
+#: inyoka/portal/views.py:1297
+msgid "The activationmail was resent."
+msgstr ""
+
+#: inyoka/portal/views.py:1301 inyoka/portal/views.py:1409
+msgid "You need to be logged in to access your private messages."
+msgstr ""
+
+#: inyoka/portal/views.py:1336
+#, python-format
+msgid "A message was deleted."
+msgid_plural "%(n)d messages were deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: inyoka/portal/views.py:1360
+msgid "The messages was moved into you archive."
+msgstr ""
+
+#: inyoka/portal/views.py:1364
+msgid "The message was restored."
+msgstr ""
+
+#: inyoka/portal/views.py:1367
+msgid "The message was deleted."
+msgstr ""
+
+#: inyoka/portal/views.py:1369
+msgid "The message was moved into the trash."
+msgstr ""
+
+#: inyoka/portal/views.py:1375
+msgid "Do you want to archive the message?"
+msgstr ""
+
+#: inyoka/portal/views.py:1379
+msgid "Do you want to restore the message?"
+msgstr ""
+
+#: inyoka/portal/views.py:1380
+msgid "Restore"
+msgstr ""
+
+#: inyoka/portal/views.py:1382
+msgid "Do you want to delete the message?"
+msgstr ""
+
+#: inyoka/portal/views.py:1383
+msgid "Delete"
+msgstr ""
+
+#: inyoka/portal/views.py:1387
+msgid "Cancel"
+msgstr ""
+
+#: inyoka/portal/views.py:1435
+#, python-format
+msgid ""
+"You were automatically banned because you are probably sending spam. If "
+"this ban is not justified, contact us at %(email)s"
+msgstr ""
+
+#: inyoka/portal/views.py:1450
+msgid "You cannot send messages to groups"
+msgstr ""
+
+#: inyoka/portal/views.py:1459
+#, python-format
+msgid "The group \"%(group)s\" was not found."
+msgstr ""
+
+#: inyoka/portal/views.py:1468
+msgid "You cannot send messages to yourself."
+msgstr ""
+
+#: inyoka/portal/views.py:1473
+msgid "You cannot send messages to system users."
 msgstr ""
 
 #: inyoka/portal/templates/portal/whoisonline.html:13

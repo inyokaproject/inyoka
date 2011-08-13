@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-08-13 14:47+0200\n"
+"POT-Creation-Date: 2011-08-13 16:02+0200\n"
 "PO-Revision-Date: 2010-07-18 19:12+0100\n"
 "Last-Translator: Florian Apolloner <apollo13@apolloner.eu>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -53,8 +53,9 @@ msgid "Your account was anonymized."
 msgstr "Dein Konto wurde anonymisiert"
 
 #: inyoka/portal/views.py:274 inyoka/portal/views.py:297
+#: inyoka/portal/views.py:1293
 #, python-format
-msgid "The account „%(username)s“ was already activated."
+msgid "The account \"%(username)s\" was already activated."
 msgstr "Das Konto von „%(username)s“ wurde bereits aktiviert."
 
 #: inyoka/portal/views.py:277 inyoka/portal/views.py:287
@@ -133,7 +134,7 @@ msgstr "Die E-Mail an „%(username)s” wurde erfolgreich versendet."
 #: inyoka/portal/views.py:796 inyoka/portal/views.py:884
 #: inyoka/portal/views.py:995 inyoka/portal/views.py:1162
 #: inyoka/portal/views.py:1250 inyoka/portal/views.py:1281
-#: inyoka/portal/views.py:2086
+#: inyoka/portal/views.py:2087
 msgid "Errors occurred, please fix them."
 msgstr "Es sind Fehler aufgetreten, bitte behebe sie."
 
@@ -266,6 +267,102 @@ msgstr "Der Status von „%(username)s” wurde erfolgreich aktualisiert."
 #, python-format
 msgid "The password of „%(username)s“ was successfully changed."
 msgstr "Das Passwort von „%(username)s” wurde erfolgreich aktualisiert."
+
+#: inyoka/portal/views.py:1159
+#, python-format
+msgid "The privileges of \"%(username)s\" were successfully changed."
+msgstr "Die Privilegien von „%(username)s“ wurden erfolgreich aktualisiert."
+
+#: inyoka/portal/views.py:1247
+#, python-format
+msgid "The groups of \"%(username)s\" were successfully changed."
+msgstr "Die Gruppen von „%(username)s“ wurden erfolgreich aktualisiert."
+
+#: inyoka/portal/views.py:1275
+#, python-format
+msgid ""
+"The user \"%(username)s\" was successfully created. You can now edit more"
+" details."
+msgstr "Der Benutzer „%(username)s” wurde erfolgreich erstellt."
+
+#: inyoka/portal/views.py:1297
+msgid "The activationmail was resent."
+msgstr "Die Aktivierungsmail wurde erneut versendet."
+
+#: inyoka/portal/views.py:1301 inyoka/portal/views.py:1409
+msgid "You need to be logged in to access your private messages."
+msgstr "Du musst angemeldet sein, um dein privaten Nachrichten einsehen zu können."
+
+#: inyoka/portal/views.py:1336
+#, python-format
+msgid "A message was deleted."
+msgid_plural "%(n)d messages were deleted."
+msgstr[0] "Eine Nachricht wurde gelöscht."
+msgstr[1] "%(n)d Nachrichten wurden gelöscht."
+
+#: inyoka/portal/views.py:1360
+msgid "The messages was moved into you archive."
+msgstr "Die Nachricht wurde in dein Archiv verschoben."
+
+#: inyoka/portal/views.py:1364
+msgid "The message was restored."
+msgstr "Die Nachricht wurde wiederhergestellt"
+
+#: inyoka/portal/views.py:1367
+msgid "The message was deleted."
+msgstr "Die Nachricht wurde gelöscht."
+
+#: inyoka/portal/views.py:1369
+msgid "The message was moved into the trash."
+msgstr "Die Nachricht wurde in den Papierkorb verschoben."
+
+#: inyoka/portal/views.py:1375
+msgid "Do you want to archive the message?"
+msgstr "Möchtest du die Nachricht archivieren?"
+
+#: inyoka/portal/views.py:1379
+msgid "Do you want to restore the message?"
+msgstr "Möchtest du die Nachricht wiederherstellen?"
+
+#: inyoka/portal/views.py:1380
+msgid "Restore"
+msgstr "Wiederherstellen"
+
+#: inyoka/portal/views.py:1382
+msgid "Do you want to delete the message?"
+msgstr "Möchtest du die Nachricht löschen?"
+
+#: inyoka/portal/views.py:1383
+msgid "Delete"
+msgstr "Löschen"
+
+#: inyoka/portal/views.py:1387
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: inyoka/portal/views.py:1435
+#, python-format
+msgid ""
+"You were automatically banned because you are probably sending spam. If "
+"this ban is not justified, contact us at %(email)s"
+msgstr "Du wurdest automatisch wegen Spamverdachts gebannt. Spööte der Bann ungerechtfertigt sein, wende dich bitte per E-Mail an %(email)s."
+
+#: inyoka/portal/views.py:1450
+msgid "You cannot send messages to groups."
+msgstr "Du kannst keine Nachrichten an Gruppen senden."
+
+#: inyoka/portal/views.py:1459
+#, python-format
+msgid "The group \"%(group)s\" was not found."
+msgstr "Die Gruppe \"%(group)s\" wurde nicht gefunden."
+
+#: inyoka/portal/views.py:1468
+msgid "You cannot send messages to yourself."
+msgstr "Du kannst dir selbst keine Nachrichten senden."
+
+#: inyoka/portal/views.py:1473
+msgid "You cannot send messages to system users."
+msgstr "Du kannst einem Systemnutzer keine Nachrichten senden."
 
 #: inyoka/portal/templates/portal/whoisonline.html:13
 msgid "Who is online?"

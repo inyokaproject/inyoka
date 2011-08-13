@@ -24,7 +24,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.utils.decorators import method_decorator
-from django.utils.translation import ungettext
+from django.utils.translation import ungettext, pgettext
 from django.utils.translation import ugettext as _
 
 from django_openid.consumer import Consumer, SessionPersist
@@ -271,7 +271,7 @@ def activate(request, action='', username='', activation_key=''):
                 #      escape(username), True)
                 flash(_('Your account was anonymized.'), True)
             else:
-                flash(_('The account „%(username)s“ was already activated.') %
+                flash(_('The account "%(username)s" was already activated.') %
                       {'username': escape(username)}, False)
         else:
             flash(_('Your activationkey is invalid.'), False)
@@ -294,7 +294,7 @@ def resend_activation_mail(request, username):
     user = User.objects.get(username)
 
     if user.status > 0:
-        flash(_('The account „%(username)s“ was already activated.') %
+        flash(_('The account "%(username)s" was already activated.') %
               {'username': escape(user.username)}, False)
         return HttpResponseRedirect(href('portal'))
     send_activation_mail(user)
@@ -1156,8 +1156,8 @@ def user_edit_privileges(request, username):
             user.save()
             cache.delete('user_permissions/%s' % user.id)
 
-            flash(u'Die Privilegien von "%s" wurden erfolgreich aktualisiert!'
-                  % escape(user.username), True)
+            flash(_('The privileges of "%(username)s" were successfully '
+                    'changed.') % {'username': escape(user.username)}, True)
         else:
             flash(_('Errors occurred, please fix them.'), False)
     else:
@@ -1244,8 +1244,8 @@ def user_edit_groups(request, username):
             user._primary_group = primary
 
             user.save()
-            flash(u'Die Gruppen von "%s" wurden erfolgreich aktualisiert!'
-                  % escape(user.username), True)
+            flash(_('The groups of "%(username)s" were successfully changed.')
+                  % {'username': escape(user.username)}, True)
         else:
             flash(_('Errors occurred, please fix them.'), False)
     groups_joined, groups_not_joined = ([], [])
@@ -1272,9 +1272,9 @@ def user_new(request):
                 email=data['email'],
                 password=data['password'],
                 send_mail=data['authenticate'])
-            flash(u'Der Benutzer „%s“ wurde erfolgreich erstellt. '
-                  u'Du kannst nun weitere Details bearbeiten.'
-                  % escape(data['username']), True)
+            flash(_('The user "%(username)s" was successfully created. '
+                    'You can now edit more details.')
+                  % {'username': escape(data['username'])}, True)
             return HttpResponseRedirect(href('portal', 'user', \
                         escape(data['username']), 'edit'))
         else:
@@ -1290,15 +1290,16 @@ def user_new(request):
 def admin_resend_activation_mail(request):
     user = User.objects.get(request.GET.get('user'))
     if user.status != 0:
-        flash(u'Der Benutzer ist schon aktiviert.')
+        flash(_('The account "%(username)s" was already activated.')
+              % {'username': user.username})
     else:
         send_activation_mail(user)
-        flash(u'Die Aktivierungsmail wurde erneut versendet.', True)
+        flash(_('The activationmail was resent.'), True)
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
-@check_login(message=u'Du musst eingeloggt sein, um deine privaten '
-                     u'Nachrichten anzusehen')
+@check_login(message=_('You need to be logged in to access your private '
+                       'messages.'))
 @templated('portal/privmsg/index.html')
 def privmsg(request, folder=None, entry_id=None, page=1):
     page = int(page)
@@ -1330,11 +1331,11 @@ def privmsg(request, folder=None, entry_id=None, page=1):
         if form.is_valid():
             d = form.cleaned_data
             PrivateMessageEntry.delete_list(request.user.id, d['delete'])
-            if len(d['delete']) == 1:
-                flash(u'Es wurde eine Nachricht gelöscht.', success=True)
-            else:
-                flash(u'Es wurden %s Nachrichten gelöscht.'
-                      % human_number(len(d['delete'])), success=True)
+            msg = ungettext('A message was deleted.',
+                            '%(n)d messages were deleted.',
+                            len(d['delete']))
+            flash(msg % {'n': len(d['delete'])}, success=True)
+
             entries = filter(lambda s: str(s.id) not in d['delete'], entries)
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
@@ -1356,33 +1357,34 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                         folder, entry.id))
                 if action == 'archive':
                     if entry.archive():
-                        flash(u'Die Nachricht wurde in dein Archiv verschoben.', True)
+                        flash(_('The messages was moved into you archive.'), True)
                         return HttpResponseRedirect(href('portal', 'privmsg'))
                 elif action == 'restore':
                     if entry.restore():
-                        flash(u'Die Nachricht wurde wiederhergestellt.', True)
+                        flash(_('The message was restored.'), True)
                         return HttpResponseRedirect(href('portal', 'privmsg'))
                 elif action == 'delete':
-                    msg = u'Die Nachricht wurde endgültig gelöscht.' if \
+                    msg = _('The message was deleted.') if \
                           entry.folder == PRIVMSG_FOLDERS['trash'][0] else \
-                          u'Die Nachricht wurde in den Papierkorb verschoben.'
+                          _('The message was moved into the trash.')
                     if entry.delete():
                         flash(msg, True)
                         return HttpResponseRedirect(href('portal', 'privmsg'))
             else:
                 if action == 'archive':
-                    msg = u'Möchtest du die Nachricht archivieren?'
-                    confirm_label = u'Archivieren'
+                    msg = _('Do you want to archive the message?')
+                    confirm_label = pgettext('the verb "to archive", not the '
+                                             'noun.', 'Archive')
                 elif action == 'restore':
-                    msg = u'Möchtest du die Nachricht wiederherstellen?'
-                    confirm_label = u'Wiederherstellen'
+                    msg = _('Do you want to restore the message?')
+                    confirm_label = _('Restore')
                 elif action == 'delete':
-                    msg = u'Möchtest du die Nachricht löschen?'
-                    confirm_label = u'Löschen'
+                    msg = _('Do you want to delete the message?')
+                    confirm_label = _('Delete')
                 flash(render_template('confirm_action.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
-                    'cancel_label': u'Abbrechen',
+                    'cancel_label': _('Cancel'),
                 }, flash=True))
     else:
         message = None
@@ -1404,8 +1406,8 @@ def privmsg(request, folder=None, entry_id=None, page=1):
 
 
 @templated('portal/privmsg/new.html')
-@check_login(message=u'Du musst eingeloggt sein, um deine privaten '
-                     u'Nachrichten anzusehen')
+@check_login(message=_('You need to be logged in to access your private '
+                       'messages.'))
 def privmsg_new(request, username=None):
     # if the user has no posts in the forum and registered less than a week ago
     # he can only send one pm every 5 minutes
@@ -1430,9 +1432,10 @@ def privmsg_new(request, username=None):
                     request.user.status = 2
                     request.user.banned_until = None
                     request.user.save()
-                    flash(u'Du wurdest automatisch wegen Spamverdachts gebannt. '
-                          u'Sollte der Ban ungerechtfertigt sein, wende dich '
-                          u'bitte per E-Mail an webteam *at* ubuntuusers.de .')
+                    flash(_('You were automatically banned because you are '
+                          'probably sending spam. If this ban is not '
+                          'justified, contact us at %(email)s')
+                            % {'email': settings.INYOKA_CONTACT_EMAIL})
                     User.objects.logout(request)
                     return HttpResponseRedirect(href('portal'))
 
@@ -1444,8 +1447,7 @@ def privmsg_new(request, username=None):
             recipients = set()
 
             if d.get('group_recipient', None) and not request.user.can('send_group_pm'):
-                flash(u'Du darfst keine Nachrichten an'
-                      u'Gruppen schicken.', False)
+                flash(_('You cannot send messages to groups.'), False)
                 return HttpResponseRedirect(href('portal', 'privmsg'))
 
             for group in group_recipient_names:
@@ -1454,8 +1456,8 @@ def privmsg_new(request, username=None):
                         all().exclude(pk=request.user.id)
                     recipients.update(users)
                 except Group.DoesNotExist:
-                    flash(u'Die Gruppe „%s“ wurde nicht gefunden.'
-                          % escape(group), False)
+                    flash(_('The group "%(group)s" was not found.')
+                          % {'group': escape(group)}, False)
                     return HttpResponseRedirect(href('portal', 'privmsg'))
 
             try:
@@ -1463,14 +1465,13 @@ def privmsg_new(request, username=None):
                     user = User.objects.get(recipient)
                     if user.id == request.user.id:
                         recipients = None
-                        flash(u'Du kannst dir selber keine Nachrichten '
-                              u'schicken.', False)
+                        flash(_('You cannot send messages to yourself.'), False)
                         break
                     elif user in (User.objects.get_system_user(),
                                   User.objects.get_anonymous_user()):
                         recipients = None
-                        flash(u'Diesem Systemuser kannst du keine Nachrichten'
-                              u' schicken!', False)
+                        flash(_('You cannot send messages to system users.'),
+                              False)
                         break
                     elif not user.is_active:
                         recipients = None
