@@ -1478,8 +1478,6 @@ def privmsg_new(request, username=None):
                         recipients = None
                         flash(_('You cannot send messages to this user.'),
                               False)
-                        flash(u'Der Benutzer %s %s.' % (
-                            user.username, user.status_info), False)
                         break
                     else:
                         recipients.add(user)
