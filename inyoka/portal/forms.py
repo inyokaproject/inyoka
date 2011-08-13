@@ -11,10 +11,11 @@
 import datetime
 import Image
 from django import forms
+from django.db.models import Count
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
 from django.utils.safestring import mark_safe
-from django.db.models import Count
+from django.utils.translation import ugettext_lazy as _
 
 from inyoka.forum.constants import VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
@@ -119,7 +120,7 @@ class RegisterForm(forms.Form):
         widget=forms.PasswordInput(render_value=False))
     confirm_password = forms.CharField(label=u'Passwortbestätigung',
         widget=forms.PasswordInput(render_value=False))
-    captcha = CaptchaField(label='CAPTCHA')
+    captcha = CaptchaField(label=_('CAPTCHA'))
     hidden_captcha = HiddenCaptchaField(required=False)
     terms_of_usage = forms.BooleanField()
 
@@ -194,8 +195,8 @@ class LostPasswordForm(forms.Form):
     It's similar to the register form and uses
     a hidden and a visible image CAPTCHA too.
     """
-    username = forms.CharField(label=u'Benutzername oder E-Mail-Adresse')
-    captcha = CaptchaField(label='CAPTCHA')
+    username = forms.CharField(label=_('Username or email address'))
+    captcha = CaptchaField(label=_('CAPTCHA'))
     hidden_captcha = HiddenCaptchaField(required=False)
 
     def clean_username(self):

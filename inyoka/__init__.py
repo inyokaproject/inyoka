@@ -110,9 +110,9 @@ import os
 import socket
 from os.path import realpath, join, dirname
 from mercurial import ui as hgui
+from mercurial.error import RepoError
 from mercurial.localrepo import localrepository
 from mercurial.node import short as shorthex
-from mercurial.error import RepoError
 
 #: Inyoka revision present in the current mercurial working copy
 INYOKA_REVISION = 'unknown'
@@ -133,9 +133,8 @@ def _bootstrap():
         ctx = repository['tip']
         revision = '{num}:{id}'.format(num=ctx.rev(), id=shorthex(ctx.node()))
     except (TypeError, RepoError):
-        revision = INYOKA_REVISION
         # fail silently
-        pass
+        revision = INYOKA_REVISION
 
     # This value defines the timeout for sockets in seconds.  Per default
     # python sockets do never timeout and as such we have blocking workers.

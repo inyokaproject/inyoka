@@ -68,27 +68,30 @@
         <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.js') }}'>\x3C/script>")</script>
       {% else %}
         <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'>\x3C/script>")</script>
-      {% endif %} 
+      {% endif %}
     {%- endblock %}
   </head>
   <body>
-    {%- if USER.can('manage_topics') or USER.can('article_edit') or USER.can('event_edit') %} 
+    {%- if USER.can('manage_topics') or USER.can('article_edit') or USER.can('event_edit') %}
     <div id="admin_menu"><div>
       <a id="admin_layer_button"><img src="{{ href('static', '/img/portal/admin.png') }}" alt="Admin" title="Adminlinks ein/aus" /></a>
       {%- if USER.can('manage_topics') %}
-        {{ render_modnavi_li('Gemeldete Themen', href('forum', 'reported_topics'), href('static', 'img/portal/admin_new_topicreport.png'), report_count) }}
+        {{ render_modnavi_li(_('Reported topics'), href('forum', 'reported_topics'), href('static', 'img/portal/admin_new_topicreport.png'), report_count) }}
       {%- endif %}
       {%- if USER.can('article_edit') %}
-        {{ render_modnavi_li('Artikelvorschläge', href('ikhaya', 'suggestions'), href('static', 'img/portal/admin_new_article.png'), suggestion_count) }}
+        {% set label = _('Article suggestions') %}
+        {{ render_modnavi_li(label, href('ikhaya', 'suggestions'), href('static', 'img/portal/admin_new_article.png'), suggestion_count) }}
       {%- endif %}
       {%- if USER.can('article_edit') %}
-        {{ render_modnavi_li('Rechtschreibfehler', href('ikhaya', 'reports'), href('static', 'img/portal/admin_new_report.png'), article_report_count) }}
+        {% set label = _('Spelling mistakes') %}
+        {{ render_modnavi_li(label, href('ikhaya', 'reports'), href('static', 'img/portal/admin_new_report.png'), article_report_count) }}
       {%- endif %}
       {%- if USER.can('event_edit') %}
-        {{ render_modnavi_li('Veranstaltungsvorschläge', href('ikhaya', 'events', 'invisible'), href('static', 'img/portal/admin_new_event.png'), event_count) }}
+        {% set label = _('Event suggestions') %}
+        {{ render_modnavi_li(label, href('ikhaya', 'events', 'invisible'), href('static', 'img/portal/admin_new_event.png'), event_count) }}
       {%- endif %}
 
-    <noscript><strong class="nojs error">Bitte JavaScript aktivieren!</strong></noscript>
+    <noscript><strong class="nojs error">{{ _('Please turn on JavaScript!') }}</strong></noscript>
     </div></div>
     {%- endif %}
    <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">

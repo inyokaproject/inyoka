@@ -44,6 +44,7 @@ TIME_ZONE = None
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 LANGUAGE_CODE = 'de-de'
+LOCALE_PATHS = ('locale',)
 
 # the base url (without subdomain)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
@@ -172,6 +173,8 @@ MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.security.SecurityMiddleware',
     'django_mobile.middleware.MobileDetectionMiddleware',
     'django_mobile.middleware.SetFlavourMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
 )
 
 #: We only allow uploads via memory up to 2.5mb and do not stream into

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-07-15 16:30+0200\n"
+"POT-Creation-Date: 2011-08-07 19:31+0200\n"
 "PO-Revision-Date: 2010-07-18 19:12+0100\n"
 "Last-Translator: Florian Apolloner <apollo13@apolloner.eu>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -15,83 +15,330 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.5\n"
+"Generated-By: Babel 0.9.6\n"
 
-#: inyoka/portal/forms.py:182
+#: inyoka/portal/forms.py:123 inyoka/portal/forms.py:199
+msgid "CAPTCHA"
+msgstr ""
+
+#: inyoka/portal/forms.py:198
+msgid "Username or email address"
+msgstr "Benutzername oder E-Mail-Addresse"
+
+#: inyoka/portal/views.py:197 inyoka/portal/views.py:311
+#: inyoka/portal/views.py:369
+msgid "You are already logged in."
+msgstr "Du bist bereits angemeldet."
+
+#: inyoka/portal/views.py:226
 #, python-format
-msgid "User “%s” does not exist!"
+msgid ""
+"The username „%(username)s“ was successfully registered. An email with an"
+" activationkey was sent to „%(email)s“."
+msgstr ""
+"Der Benutzername „%(username)s“ wurde erfolgreich registriert. Eine "
+"E-Mail mit dem Aktivierungsschlüssel wurde an „%(email)s“ gesendet."
+
+#: inyoka/portal/views.py:250
+#, python-format
+msgid "The user „%(username)s” does not exist."
 msgstr "Einen Benutzer „%s“ gibt es nicht!"
 
-#: inyoka/portal/views.py:126
-msgid "schaut sich an, wer online ist"
+#: inyoka/portal/views.py:257
+msgid "You cannot enter an activationkey when you are logged in."
+msgstr "Du kannst keinen Aktivierungsschlüssel eingeben wenn du angemeldet bist."
+
+#: inyoka/portal/views.py:271
+msgid "Your account was anonymized."
+msgstr "Dein Konto wurde anonymisiert"
+
+#: inyoka/portal/views.py:273 inyoka/portal/views.py:296
+#, python-format
+msgid "The account „%(username)s“ was already activated."
+msgstr "Das Konto von „%(username)s“ wurde bereits aktiviert."
+
+#: inyoka/portal/views.py:276 inyoka/portal/views.py:286
+msgid "Your activationkey is invalid."
+msgstr "Dein Aktivierungsschlüssel ist ungültig."
+
+#: inyoka/portal/views.py:282
+msgid "Your account was successfully activated. You can now login."
+msgstr "Dein Konto wurde erfolgreich aktiviert und du kannst dich nun anmelden."
+
+#: inyoka/portal/views.py:300
+msgid "An email with the activationkey was sent to you."
+msgstr "Eine E-Mail mit dem Aktivierungsschlüssel wurde an dich gesendet."
+
+#: inyoka/portal/views.py:319
+msgid "An email with further instructions was sent to you."
+msgstr "Eine E-Mail mit weiteren Anweisungen wurde an dich gesendet."
+
+#: inyoka/portal/views.py:341
+msgid "You successfully changed your password and are now able to login."
+msgstr "Dein Passwort wurde erfolgreich geändert, du kannst dich nun anmelden."
+
+#: inyoka/portal/views.py:348
+msgid "This user does not exist."
+msgstr "Dieser Benutzer existiert nicht."
+
+#: inyoka/portal/views.py:407
+msgid "You have successfully logged in."
+msgstr "Du hast dich erfolgreich angemeldet."
+
+#: inyoka/portal/views.py:442
+msgid "You have successfully logged out."
+msgstr "Du hast dich erfolgreich abgemeldet."
+
+#: inyoka/portal/views.py:444
+msgid "You were not logged in."
+msgstr "Du warst nicht angemeldet."
+
+#: inyoka/portal/views.py:459
+msgid ""
+"An error occurred while processing your search request. Please check your"
+" input."
 msgstr ""
+"Es ist ein Fehler bei der Verarbeitung deiner Suchanfrage aufgetreten. "
+"Bitte überprüfe deine Eingabe."
 
-#: inyoka/portal/views.py:127
-msgid "Wer ist online"
+#: inyoka/portal/views.py:478
+msgid "« Previous"
+msgstr "« Zurück"
+
+#: inyoka/portal/views.py:481
+#, python-format
+msgid "Page %(page)d of about %(total)d"
+msgstr "Seite %(page)d von ungefähr %(total)d"
+
+#: inyoka/portal/views.py:487
+msgid "Next »"
+msgstr "Weiter »"
+
+#: inyoka/portal/views.py:521
+msgid "You need to be logged in to view a userprofile."
+msgstr "Du musst angemeldet sein, um ein Benutzerprofil einsehen zu können."
+
+#: inyoka/portal/views.py:579
+#, python-format
+msgid "%(sitename)s - Message from %(username)s"
+msgstr "%(sitename)s - Message from %(username)s"
+
+#: inyoka/portal/views.py:589
+#, python-format
+msgid "The email to „%(username)s“ was sent successfully."
+msgstr "Die E-Mail an „%(username)s” wurde erfolgreich versendet."
+
+#: inyoka/portal/views.py:593 inyoka/portal/views.py:687
+#: inyoka/portal/views.py:695 inyoka/portal/views.py:748
+#: inyoka/portal/views.py:795 inyoka/portal/views.py:881
+#: inyoka/portal/views.py:992 inyoka/portal/views.py:1159
+#: inyoka/portal/views.py:1247 inyoka/portal/views.py:1278
+#: inyoka/portal/views.py:2083
+msgid "Errors occurred, please fix them."
+msgstr "Es sind Fehler aufgetreten, bitte behebe sie."
+
+#: inyoka/portal/views.py:610
+#, python-format
+msgid "You will now be notified about activities of „%(username)s”."
+msgstr "Du wirst ab jetzt über Aktivitäten von „%(username)s“ benachrichtigt."
+
+#: inyoka/portal/views.py:624
+#, python-format
+msgid "You will now not be notfied anymore about activities of „%(username)s“."
 msgstr ""
+"Du wirst ab jetzt nicht mehr über Aktivitäten von „%(username)s“ "
+"benachrichtigt."
 
-#: inyoka/portal/templates/portal/group.html:21
+#: inyoka/portal/views.py:629
+msgid "You need to be logged in to access your controlpanel"
+msgstr "Du musst angemeldet sein, um dein Kontrollzentrum einsehen zu können."
+
+#: inyoka/portal/views.py:639
+msgid "You need to be logged in to change your profile"
+msgstr "Du musst angemeldet sein, um dein Profil ändern zu können."
+
+#: inyoka/portal/views.py:656
+msgid "An email was sent to you to confirm your new email address."
+msgstr ""
+"Dir wurde eine E-Mail geschickt, mit der du deine neue E-Mail-Adresse "
+"bestätigen kannst."
+
+#: inyoka/portal/views.py:669 inyoka/portal/views.py:978
+#, python-format
+msgid ""
+"The avatar you uploaded was scaled to %(w)dx%(h)d pixels. Please note "
+"that this may result in lower quality."
+msgstr ""
+"Der von dir hochgeladene Avatar wurde auf %(w)dx%(h)d Pixel skaliert. "
+"Bitte beachte, dass dadurch Qualitätseinbußen auftreten können."
+
+#: inyoka/portal/views.py:677
+msgid ""
+"The used fileformat is not supported, please choose another one for your "
+"avatar."
+msgstr ""
+"Das von dir benutzte Dateiformat wird nicht unterstützt, bitte wähle ein "
+"anderes für deinen Avatar"
+
+#: inyoka/portal/views.py:691
+msgid "Your profileinformation were updated successfully."
+msgstr "Deine Profilinformationen wurden erfolgreich aktualisiert."
+
+#: inyoka/portal/views.py:726
+msgid "You need to be logged in to change your settings."
+msgstr "Du musst angemeldet sein, um deine Einstellungen ändern zu können."
+
+#: inyoka/portal/views.py:746
+msgid "Your settings were successfully changed."
+msgstr "Deine Einstellungen wurden erfolgreich aktualisiert."
+
+#: inyoka/portal/views.py:775
+msgid "You need to be logged in to change your password."
+msgstr "Du musst angemeldet sein, um dein Passwort ändern zu können."
+
+#: inyoka/portal/views.py:787
+msgid "The password does not match your old password."
+msgstr "Das eingegebene Passwort stimmt nicht mit deinem alten Passwort überein"
+
+#: inyoka/portal/views.py:791
+msgid "Your password was changed successfully."
+msgstr "Dein Passwort wurden erfolgreich aktualisiert."
+
+#: inyoka/portal/views.py:841
+#, python-format
+msgid "A subscription was deleted."
+msgid_plural "%(n)d subscriptions were deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: inyoka/portal/views.py:851
+#, python-format
+msgid "A subscription was marked as read."
+msgid_plural "%(n)d subscriptions were marked as read."
+msgstr[0] ""
+msgstr[1] ""
+
+#: inyoka/portal/views.py:860
+msgid "You need to be logged in to deactivate your account."
+msgstr "Du musst angemeldet sein, um dein Konto deaktivieren zu können."
+
+#: inyoka/portal/views.py:873
+msgid "The entered password is wrong."
+msgstr "Das eingegebene Passwort ist falsch"
+
+#: inyoka/portal/views.py:878
+msgid "Your account was deactivated"
+msgstr "Dein Konto wurde deaktiviert"
+
+#: inyoka/portal/views.py:890
+msgid "You need to be logged in to change your userpage."
+msgstr "Du musst angemeldet sein, um deine Benutzerseite ändern zu können."
+
+#: inyoka/portal/views.py:896
+msgid ""
+"You were redirected to our wiki to change your userpage. To get back, use"
+" can use the link or your browsers \"back\" button."
+msgstr ""
+"Du wurdest in unser Wiki weitergeleitet, um die Benutzerseite zu "
+"bearbeiten. Um zurück zu kommen kannst du auf den Link oder auf „Zurück“ "
+"in deinem Browser klicken."
+
+#: inyoka/portal/views.py:959
+msgid "A user with this name already exists."
+msgstr "Ein Benutzer mit diesem Namen existiert bereits."
+
+#: inyoka/portal/views.py:986
+#, python-format
+msgid "The profile of „%(username)s“ was changed successfully"
+msgstr "Das Profil von „%(username)s” wurde erfolgreich aktualisiert."
+
+#: inyoka/portal/views.py:1048
+#, python-format
+msgid "The setting of „%(username)s“ were successfully changed."
+msgstr "Die Einstellungen von „%(username)s“ wurden erfolgreich aktualisiert."
+
+#: inyoka/portal/views.py:1072
+#, python-format
+msgid "The status of „%(username)s” was successfully changed."
+msgstr "Der Status von „%(username)s” wurde erfolgreich aktualisiert."
+
+#: inyoka/portal/views.py:1096
+#, python-format
+msgid "The password of „%(username)s“ was successfully changed."
+msgstr "Das Passwort von „%(username)s” wurde erfolgreich aktualisiert."
+
+#: inyoka/portal/templates/portal/whoisonline.html:13
+msgid "Who is online?"
+msgstr "Wer ist angemeldet?"
+
+#: inyoka/portal/templates/portal/whoisonline.html:15
 #, python-format
 msgid ""
 "\n"
-"      <strong>%(count)s</strong> Mitglied:"
+"      %(all)s User online:\n"
+"    "
 msgid_plural ""
 "\n"
-"      <strong>%(count)s</strong> Mitglieder:"
-msgstr[0] ""
-msgstr[1] ""
+"      %(all)s Users online:\n"
+"    "
+msgstr[0] "%(all)s Benutzer angemeldet:"
+msgstr[1] "%(all)s Benutzer angemeldet:"
 
-#: inyoka/portal/templates/portal/grouplist.html:21
-#, python-format
-msgid "<strong>%(count)s</strong> Gruppe"
-msgid_plural "<strong>%(count)s</strong> Gruppen"
-msgstr[0] ""
-msgstr[1] ""
-
-#: inyoka/portal/templates/portal/index.html:87
-#: inyoka/portal/templates/portal/whoisonline.html:20
+#: inyoka/portal/templates/portal/whoisonline.html:23
 #, python-format
 msgid ""
 "\n"
-"    Momentan ist <strong>%(all)s</strong> Benutzer online,\n"
+"      %(registered)s Registered user\n"
 "    "
 msgid_plural ""
 "\n"
-"    Momentan sind <strong>%(all)s</strong> Benutzer online,\n"
+"      %(registered)s Registered users\n"
 "    "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(registered)s Registrierte Benutzer"
+msgstr[1] "%(registered)s Registrierte Benutzer"
 
-#: inyoka/portal/templates/portal/index.html:93
-#: inyoka/portal/templates/portal/whoisonline.html:26
+#: inyoka/portal/templates/portal/whoisonline.html:31
 #, python-format
 msgid ""
 "\n"
-"    <strong>%(registered)s</strong> Angemeldeter\n"
+"      %(guests)s Guest\n"
 "    "
 msgid_plural ""
 "\n"
-"    <strong>%(registered)s</strong> Angemeldete\n"
+"      %(guests)s Guests\n"
 "    "
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(guests)s Gast"
+msgstr[1] "%(guests)s Gäste"
 
-#: inyoka/portal/templates/portal/index.html:99
-#: inyoka/portal/templates/portal/whoisonline.html:32
+#: inyoka/portal/templates/portal/whoisonline.html:38
 #, python-format
 msgid ""
 "\n"
-"    <strong>%(guests)s</strong> Gast.\n"
+"      Most users ever online was %(record)s on %(time)s.\n"
 "    "
-msgid_plural ""
-"\n"
-"    <strong>%(guests)s</strong> Gäste.\n"
-"  "
-msgstr[0] ""
-msgstr[1] ""
+msgstr "Der Rekord liegt bei %(record)s am %(time)s."
 
-#: inyoka/portal/templates/portal/lost_password.html:17
-#: inyoka/portal/templates/portal/lost_password.html:20
-msgid "Forgotten Password"
-msgstr "Passwort vergessen"
+#: inyoka/portal/templates/portal/whoisonline.html:41
+#, python-format
+msgid ""
+"\n"
+"      In total there are %(global_registered_users)s users registered.\n"
+"    "
+msgstr "Insgesamt sind %(global_registered_users)s registriert."
+
+#: inyoka/portal/templates/portal/whoisonline.html:47
+msgid "Registered users:"
+msgstr "Registrierte Benutzer:"
+
+#: inyoka/portal/templates/portal/whoisonline.html:53
+msgid "None"
+msgstr "Keine"
+
+#: inyoka/portal/templates/portal/whoisonline.html:57
+msgid "Legend:"
+msgstr "Legende:"
+
+#: inyoka/portal/templates/portal/whoisonline.html:58
+msgid "Members with green usernames belong to the team."
+msgstr "Benutzer mit grünem Benutzernamen gehören zum Team."
 

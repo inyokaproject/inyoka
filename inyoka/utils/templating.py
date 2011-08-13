@@ -245,7 +245,7 @@ class InyokaEnvironment(Environment):
                             href=href)
         self.filters.update(FILTERS)
 
-        self.install_gettext_translations(translation)
+        self.install_gettext_translations(translation, newstyle=True)
 
     def _compile(self, source, filename):
         filename = 'jinja:/' + filename if filename.startswith('/') else filename

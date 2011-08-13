@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-07-15 16:30+0200\n"
+"POT-Creation-Date: 2011-08-07 19:31+0200\n"
 "PO-Revision-Date: 2010-07-18 19:11+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -15,34 +15,22 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.5\n"
+"Generated-By: Babel 0.9.6\n"
 
-#: inyoka/utils/pingback.py:49
-msgid "source URL does not exist"
+#: inyoka/utils/forms.py:103
+msgid "Captcha"
 msgstr ""
 
-#: inyoka/utils/pingback.py:50
-msgid "The source URL does not contain a link to the target URL"
+#: inyoka/utils/forms.py:104
+msgid "Please type in the code from the graphic above"
 msgstr ""
 
-#: inyoka/utils/pingback.py:51
-msgid "The specified target URI does not exist"
+#: inyoka/utils/forms.py:106
+msgid "Generate new code"
 msgstr ""
 
-#: inyoka/utils/pingback.py:52
-msgid "The specified target URI cannot be used as a target"
-msgstr ""
-
-#: inyoka/utils/pingback.py:53
-msgid "The pingback has already been registered"
-msgstr ""
-
-#: inyoka/utils/pingback.py:54
-msgid "Access Denied"
-msgstr ""
-
-#: inyoka/utils/pingback.py:55
+#: inyoka/utils/generic.py:123
 #, python-format
-msgid "An unknown server error (%s) occoured"
+msgid "No %(verbose_name)s found matching the query"
 msgstr ""
 
