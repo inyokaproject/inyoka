@@ -1956,7 +1956,7 @@ def confirm(request, action=None):
         data = decode_confirm_data(data)
     except (ValueError, binascii.Error):
         return {
-            'failed': _('The given data is invalid.'),
+            'failed': _('The entered data is invalid.'),
             'action': action
         }
 
@@ -2086,7 +2086,7 @@ def config(request):
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
 
-            flash(u'Die Einstellungen wurden gespeichert.', True)
+            flash(u'Your settings were successfully changed.', True)
         else:
             flash(_('Errors occurred, please fix them.'), False)
     else:
@@ -2141,13 +2141,10 @@ def page_edit(request, page=None):
             if 'send' in request.POST:
                 page = form.save()
                 if new:
-                    flash(u'Die Seite "<a href="%s">%s</a>" '
-                          u'wurde erfolgreich erstellt.' % (
-                            url_for(page), escape(page.title)), True)
+                    msg = _('The page “%(page)“ was created successfully.')
                 else:
-                    flash(u'Die Seite "<a href="%s">%s</a>" '
-                          u'wurde erfolgreich bearbeitet.' % (
-                            url_for(page), escape(page.title)), True)
+                    msg = _('The page “%(page)“ was changed successfully.')
+                flash(msg % {'page': page.title}, True)
                 return HttpResponseRedirect(href('portal', page.key))
     else:
         form = EditStaticPageForm(instance=page)
@@ -2167,7 +2164,7 @@ def styles(request):
         form = EditStyleForm(request.POST)
         if form.is_valid():
             storage[key] = form.data['styles']
-            flash(u'Das Stylesheet wurde erfolgreich gespeichert.', True)
+            flash(_('The stylesheet was saved successfully.'), True)
     else:
         form = EditStyleForm(initial={'styles': storage.get(key, u'')})
     return {

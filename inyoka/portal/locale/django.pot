@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-08-14 16:34+0200\n"
+"POT-Creation-Date: 2011-08-14 17:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -399,11 +399,23 @@ msgid "All"
 msgstr ""
 
 #: inyoka/portal/views.py:1959
-msgid "The given data is invalid."
+msgid "The entered data is invalid."
 msgstr ""
 
 #: inyoka/portal/views.py:2008
 msgid "The OpenID was successfully linked to your account."
+msgstr ""
+
+#: inyoka/portal/views.py:2144
+msgid "The page “%(page)“ was created successfully."
+msgstr ""
+
+#: inyoka/portal/views.py:2146
+msgid "The page “%(page)“ was changed successfully."
+msgstr ""
+
+#: inyoka/portal/views.py:2167
+msgid "The stylesheet was saved successfully."
 msgstr ""
 
 #: inyoka/portal/templates/portal/whoisonline.html:13
