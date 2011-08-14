@@ -11,6 +11,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
+import unicodedata
 from itertools import izip
 from inyoka.utils.parsertools import TokenStream
 
@@ -483,6 +484,66 @@ def escape(text):
         text = text[:pos] + '\\' + text[pos:]
         offset += 1
     return text
+
+
+def unescape_string(string):
+    """
+    Unescape a string with python semantics but silent fallback.
+    """
+    result = []
+    write = result.append
+    simple_escapes = {
+        'a':    '\a',
+        'n':    '\n',
+        'r':    '\r',
+        'f':    '\f',
+        't':    '\t',
+        'v':    '\v',
+        '\\':   '\\',
+        '"':    '"',
+        "'":    "'",
+        '0':    '\x00'
+    }
+    unicode_escapes = {
+        'x':    2,
+        'u':    4,
+        'U':    8
+    }
+    chariter = iter(string)
+    next_char = chariter.next
+
+    try:
+        for char in chariter:
+            if char == '\\':
+                char = next_char()
+                if char in simple_escapes:
+                    write(simple_escapes[char])
+                elif char in unicode_escapes:
+                    seq = [next_char() for x in xrange(unicode_escapes[char])]
+                    try:
+                        write(unichr(int(''.join(seq), 16)))
+                    except ValueError:
+                        pass
+                elif char == 'N' and next_char() != '{':
+                    seq = []
+                    while True:
+                        char = next_char()
+                        if char == '}':
+                            break
+                        seq.append(char)
+                    try:
+                        write(unicodedata.lookup(u''.join(seq)))
+                    except KeyError:
+                        pass
+                else:
+                    write('\\' + char)
+            else:
+                write(char)
+    except StopIteration:
+        pass
+    return u''.join(result)
+
+
 
 
 class Lexer(object):

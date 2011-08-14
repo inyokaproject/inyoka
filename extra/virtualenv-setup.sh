@@ -2,7 +2,6 @@
 # A simple Script for creating virtual environments without magic things ;-)
 
 PIL_VERSION='1.1.7'
-XAPIAN_VERSION='1.2.5'
 BASE_DIRECTORY=`pwd`
 
 if [ ! -z $1 ]; then
@@ -32,24 +31,6 @@ if [ ! -d Imaging-$PIL_VERSION ]; then tar xzvf Imaging-$PIL_VERSION.tar.gz; fi
 cd "Imaging-$PIL_VERSION"
 python setup.py install
 cd ..
-
-# Step 3: Setup Xapian
-wget -c "http://oligarchy.co.uk/xapian/$XAPIAN_VERSION/xapian-core-$XAPIAN_VERSION.tar.gz"
-wget -c "http://oligarchy.co.uk/xapian/$XAPIAN_VERSION/xapian-bindings-$XAPIAN_VERSION.tar.gz"
-if [ ! -d xapian-core-$XAPIAN_VERSION.tar.gz ]; then
- tar xzvf xapian-core-$XAPIAN_VERSION.tar.gz;
-fi
-if [ ! -d xapian-bindings-$XAPIAN_VERSION.tar.gz ]; then
- tar xzvf xapian-bindings-$XAPIAN_VERSION.tar.gz;
-fi
-cd $VIRTUAL_ENV/src/xapian-core-$XAPIAN_VERSION
-./configure --prefix=$VIRTUAL_ENV
-make -j8
-make install
-cd $VIRTUAL_ENV/src/xapian-bindings-$XAPIAN_VERSION
-./configure --prefix=$VIRTUAL_ENV --with-python
-make -j8
-make install
 
 # Step 4: Install requirements via pip
 cd $BASE_DIRECTORY

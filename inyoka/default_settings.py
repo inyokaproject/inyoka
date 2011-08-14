@@ -231,12 +231,6 @@ OPENID_PROVIDERS = {
     }
 }
 
-# some terms to exclude by default to maintain readability
-SEARCH_DEFAULT_EXCLUDE = ['Cstammtisch']
-
-# Default blocksize to delmit queries to the search index
-SEARCH_INDEX_BLOCKSIZE = 5000
-
 # Set the default sentry site
 SENTRY_SITE = "ubuntuusers.de"
 

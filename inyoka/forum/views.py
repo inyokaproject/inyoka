@@ -576,7 +576,6 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
             topic.save()
             topic.forum.invalidate_topic_cache()
-            topic.reindex()
 
             if check_privilege(privileges, 'create_poll'):
                 for poll in polls:
@@ -676,7 +675,6 @@ def change_status(request, topic_slug, solved=None, locked=None):
     if solved is not None:
         topic.solved = solved
         topic.save()
-        topic.reindex()
         flash(u'Das Thema wurde als %s markiert.' % (solved and u'gelöst' or \
                                                     u'ungelöst'), True)
     if locked is not None:

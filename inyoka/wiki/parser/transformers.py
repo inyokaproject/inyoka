@@ -16,7 +16,6 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-from inyoka.wiki.parser import nodes
 
 
 _newline_re = re.compile(r'(\n)')
@@ -32,7 +31,7 @@ _smiley_re = None
 def get_smiley_re(smilies):
     global _smiley_re
     if _smiley_re is None:
-        helper = '|'.join(re.escape(s) for s in 
+        helper = '|'.join(re.escape(s) for s in
                           sorted(smilies, key=lambda x: -len(x)))
         regex = (u'(?<![\d\w])' # don't precede smileys with alnum chars
                  u'({helper})'
@@ -278,3 +277,6 @@ DEFAULT_TRANSFORMERS = [AutomaticParagraphs(),
                         SmileyInjector(), FootnoteSupport(),
                         HeadlineProcessor(), AutomaticStructure(),
                         KeyHandler()]
+
+
+from inyoka.wiki.parser import nodes
