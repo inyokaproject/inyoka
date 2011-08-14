@@ -21,6 +21,7 @@ django-kombu==0.9.4
 django-celery==2.2.4
 django==1.3
 django-hosts==0.2
+pyes==0.16
 https://github.com/alex/django-filter/tarball/master/#egg=django-filter
 https://github.com/simonw/django-openid/tarball/master#egg=django-openid
 https://github.com/django-debug-toolbar/django-debug-toolbar/tarball/master/#egg=django-debug-toolbar
