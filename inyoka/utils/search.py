@@ -15,7 +15,7 @@ from itertools import ifilter
 
 from django.conf import settings
 
-from pyes import ES
+from pyes import ES, Search, FilteredQuery, StringQuery
 
 
 
@@ -130,11 +130,20 @@ class SearchSystem(object):
 
     def refresh_indexes(self):
         connection = self.get_connection()
-        for index in self.indexes:
+        for index in self.indexes.itervalues():
             connection.create_index_if_missing(index.name)
             for doctype in index.types:
                 connection.put_mapping(doctype.name, doctype.mapping,
                                        [index.name])
+
+    def search(self, query, *args, **kwargs):
+        if isinstance(query, basestring):
+            query = StringQuery(query)
+        filter = kwargs.pop('filter', None)
+        if filter is not None:
+            query = FilteredQuery(query, filter=filter)
+        search = Search(query=query, *args, **kwargs)
+        return self.get_connection().search(query=search)
 
 
 #: Singleton that implements the search system
