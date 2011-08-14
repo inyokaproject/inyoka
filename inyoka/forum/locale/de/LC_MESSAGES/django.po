@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-08-13 22:16+0200\n"
+"POT-Creation-Date: 2011-08-14 19:55+0200\n"
 "PO-Revision-Date: 2010-07-18 19:11+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -16,4 +16,343 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+
+#: inyoka/forum/views.py:193
+msgid "This topic is not visible for regular users."
+msgstr ""
+
+#: inyoka/forum/views.py:223
+msgid "The poll already ended."
+msgstr ""
+
+#: inyoka/forum/views.py:229
+msgid "Your vote was saved."
+msgid_plural "Your %(n) votes were saved"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inyoka/forum/views.py:329
+msgid "The poll “%(poll)“ was added."
+msgstr ""
+
+#: inyoka/forum/views.py:342
+msgid "The poll “%(poll)“ was removed."
+msgstr ""
+
+#: inyoka/forum/views.py:386
+#, python-format
+msgid "An attachment “%(attachment)s“ does already exist."
+msgstr ""
+
+#: inyoka/forum/views.py:395
+#, python-format
+msgid "The attachment “%(attachment)s“ was added successfully."
+msgstr ""
+
+#: inyoka/forum/views.py:402
+#, python-format
+msgid "The attachment with the ID “%(id)d“ does not exist."
+msgstr ""
+
+#: inyoka/forum/views.py:410
+#, python-format
+msgid "The attachment “%(attachment)s“ was deleted"
+msgstr ""
+
+#: inyoka/forum/views.py:441
+#, python-format
+msgid "The article “%(article)s“ does not exist. You can create it now."
+msgstr ""
+
+#: inyoka/forum/views.py:445
+#, python-format
+msgid ""
+"There is no discussion linked with the article “%(article)s“ yet. You can"
+" create a discussion now or link an existing topic to the article."
+msgstr ""
+
+#: inyoka/forum/views.py:460
+msgid "This post is currently beeing edited by “%(user)“!"
+msgstr ""
+
+#: inyoka/forum/views.py:487 inyoka/forum/views.py:495
+msgid "You cannot edit this post."
+msgstr ""
+
+#: inyoka/forum/views.py:502
+msgid "You cannot reply to this topic because it was locked."
+msgstr ""
+
+#: inyoka/forum/views.py:505
+msgid ""
+"You are replying to a locked topic. Please note that this is often "
+"perceived as unpolite!"
+msgstr ""
+
+#: inyoka/forum/views.py:562
+msgid ""
+"This topic was already created. Please think about editing your topic "
+"before creating a new one."
+msgstr ""
+
+#: inyoka/forum/views.py:613
+msgid "The post was saved successfully."
+msgstr ""
+
+#: inyoka/forum/views.py:668
+msgid "Do you want to (un)lock the topic?"
+msgstr ""
+
+#: inyoka/forum/views.py:669
+msgid "(Un)lock"
+msgstr ""
+
+#: inyoka/forum/views.py:669 inyoka/forum/views.py:1120
+#: inyoka/forum/views.py:1137 inyoka/forum/views.py:1202
+#: inyoka/forum/views.py:1213
+msgid "Cancel"
+msgstr ""
+
+#: inyoka/forum/views.py:681
+msgid "The topic was marked as solved"
+msgstr ""
+
+#: inyoka/forum/views.py:683
+msgid "The topic was marked as unsolved"
+msgstr ""
+
+#: inyoka/forum/views.py:691
+msgid "The topic was locked"
+msgstr ""
+
+#: inyoka/forum/views.py:693
+msgid "The topic was unlocked"
+msgstr ""
+
+#: inyoka/forum/views.py:717 inyoka/forum/views.py:749
+msgid "There is no “%(slug)“ anymore."
+msgstr ""
+
+#: inyoka/forum/views.py:770
+msgid "You will now be notified about new topics in this forum."
+msgstr ""
+
+#: inyoka/forum/views.py:775
+msgid "You will now not be notified anymore about new topics in this forum."
+msgstr ""
+
+#: inyoka/forum/views.py:779
+msgid "You will now be notified about new posts in this topic."
+msgstr ""
+
+#: inyoka/forum/views.py:783
+msgid "You will now not be notified anymore about new posts in this topic."
+msgstr ""
+
+#: inyoka/forum/views.py:794
+msgid "This topic was already reported."
+msgstr ""
+
+#: inyoka/forum/views.py:809
+#, python-format
+msgid "Reported topic: “%(topic)s“"
+msgstr ""
+
+#: inyoka/forum/views.py:813
+msgid "The topic was reported."
+msgstr ""
+
+#: inyoka/forum/views.py:847
+msgid "You didn’t select any topics."
+msgstr ""
+
+#: inyoka/forum/views.py:855
+msgid "The selected topics have been marked as processed."
+msgstr ""
+
+#: inyoka/forum/views.py:878
+msgid "You will now be notified when a topic is reported."
+msgstr ""
+
+#: inyoka/forum/views.py:884
+msgid "You will not be notified anymore when a topic is reported."
+msgstr ""
+
+#: inyoka/forum/views.py:980
+msgid "Your topic “%(topic)“ was moved"
+msgstr ""
+
+#: inyoka/forum/views.py:994
+msgid "The topic “%(topic)“ was moved"
+msgstr ""
+
+#: inyoka/forum/views.py:1025
+msgid "You didn’t select any post."
+msgstr ""
+
+#: inyoka/forum/views.py:1046
+msgid "You cannot set this topic as target."
+msgstr ""
+
+#: inyoka/forum/views.py:1071
+msgid "You cannot move a topic into a category. Please choose a forum."
+msgstr ""
+
+#: inyoka/forum/views.py:1099
+msgid "The topic “%(topic)“ was split"
+msgstr ""
+
+#: inyoka/forum/views.py:1119
+msgid "Do you want to restore this post?"
+msgstr ""
+
+#: inyoka/forum/views.py:1120 inyoka/forum/views.py:1202
+#: inyoka/forum/views.py:1213
+msgid "Restore"
+msgstr ""
+
+#: inyoka/forum/views.py:1131
+#, python-format
+msgid "The post by “%(user)s“ was made visible."
+msgstr ""
+
+#: inyoka/forum/views.py:1136
+msgid "Do you really want to hide / delete this post?"
+msgstr ""
+
+#: inyoka/forum/views.py:1137
+msgid "Hide / Delete"
+msgstr ""
+
+#: inyoka/forum/views.py:1161
+msgid "The first post of a topic cannot be deleted."
+msgstr ""
+
+#: inyoka/forum/views.py:1163
+msgid "The first post of a topic cannot be hidden."
+msgstr ""
+
+#: inyoka/forum/views.py:1169
+#, python-format
+msgid "The post by “%(user)s“ was hidden"
+msgstr ""
+
+#: inyoka/forum/views.py:1175
+#, python-format
+msgid "The post by “%(user)s“ was deleted"
+msgstr ""
+
+#: inyoka/forum/views.py:1201
+msgid "Do you want to restore the revision of the post?"
+msgstr ""
+
+#: inyoka/forum/views.py:1208
+msgid "An old revision of the post was restored."
+msgstr ""
+
+#: inyoka/forum/views.py:1212
+msgid "Do you want to restore the topic?"
+msgstr ""
+
+#: inyoka/forum/views.py:1224
+#, python-format
+msgid "The topic “%(topic)s“ was restored."
+msgstr ""
+
+#: inyoka/forum/views.py:1249
+msgid "Action canceled."
+msgstr ""
+
+#: inyoka/forum/views.py:1255
+#, python-format
+msgid "The topic “%(topic)s“ was hidden."
+msgstr ""
+
+#: inyoka/forum/views.py:1265
+msgid "The topic “%(topic)“ was deleted successfully."
+msgstr ""
+
+#: inyoka/forum/views.py:1292
+#, python-format
+msgid "%(site)s topic – “%(topic)s“"
+msgstr ""
+
+#: inyoka/forum/views.py:1334
+#, python-format
+msgid "%(site)s forum – “%(forum)s“"
+msgstr ""
+
+#: inyoka/forum/views.py:1342
+#, python-format
+msgid "%(site)s forum"
+msgstr ""
+
+#: inyoka/forum/views.py:1386
+msgid "Please login to mark posts as read."
+msgstr ""
+
+#: inyoka/forum/views.py:1392
+msgid "The forum “%(forum)“ was marked as read"
+msgstr ""
+
+#: inyoka/forum/views.py:1397
+msgid "All forums were marked as read."
+msgstr ""
+
+#: inyoka/forum/views.py:1408
+#, python-format
+msgid "You can only display the last %(n)d pages."
+msgstr ""
+
+#: inyoka/forum/views.py:1422
+#, python-format
+msgid "Posts of the last %(n)d hours"
+msgstr ""
+
+#: inyoka/forum/views.py:1426
+msgid "Unanswered topics"
+msgstr ""
+
+#: inyoka/forum/views.py:1430
+msgid "Unsolved topics"
+msgstr ""
+
+#: inyoka/forum/views.py:1436
+#, python-format
+msgid "Topics by “%(user)s“"
+msgstr ""
+
+#: inyoka/forum/views.py:1445
+msgid "Posts by “%(user)“"
+msgstr ""
+
+#: inyoka/forum/views.py:1448
+msgid "My posts"
+msgstr ""
+
+#: inyoka/forum/views.py:1460
+msgid "New posts"
+msgstr ""
+
+#: inyoka/forum/views.py:1534
+msgid "There aren’t more recent topics in this forum."
+msgstr ""
+
+#: inyoka/forum/views.py:1547
+msgid "There aren’t any older topics in this forum."
+msgstr ""
+
+#: inyoka/forum/views.py:1618
+#, python-format
+msgid "The forum “%(forum)s“ was changed successfully."
+msgstr ""
+
+#: inyoka/forum/views.py:1620
+#, python-format
+msgid "The forum “%(forum)s“ was created successfully."
+msgstr ""
+
+#: inyoka/forum/views.py:1624
+msgid "Errors occurred, please fix them."
+msgstr "Es sind Fehler aufgetreten, bitte behebe sie."
 
