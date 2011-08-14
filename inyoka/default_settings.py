@@ -89,9 +89,7 @@ EMAIL_SUBJECT_PREFIX = u'ubuntuusers: '
 
 EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 
-# path to the xapian database
-# Examples: /path/to/inyoka.xapdb, or tcpsrv://localhost:3000/
-XAPIAN_DATABASE = join(BASE_PATH, 'inyoka.xapdb')
+SEARCH_NODES = []
 
 # imagemagick path. leave empty for auto detection
 IMAGEMAGICK_PATH = ''
