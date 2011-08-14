@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-08-13 22:16+0200\n"
+"POT-Creation-Date: 2011-08-14 16:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgid ""
 " activationkey was sent to “%(email)s“."
 msgstr ""
 
-#: inyoka/portal/views.py:251
+#: inyoka/portal/views.py:251 inyoka/portal/views.py:1486
 #, python-format
 msgid "The user “%(username)s“ does not exist."
 msgstr ""
@@ -80,7 +80,8 @@ msgstr ""
 msgid "This user does not exist."
 msgstr ""
 
-#: inyoka/portal/views.py:408
+#: inyoka/portal/views.py:408 inyoka/portal/views.py:2001
+#: inyoka/portal/views.py:2037
 msgid "You have successfully logged in."
 msgstr ""
 
@@ -130,7 +131,7 @@ msgstr ""
 #: inyoka/portal/views.py:796 inyoka/portal/views.py:884
 #: inyoka/portal/views.py:995 inyoka/portal/views.py:1162
 #: inyoka/portal/views.py:1250 inyoka/portal/views.py:1281
-#: inyoka/portal/views.py:2088
+#: inyoka/portal/views.py:2091
 msgid "Errors occurred, please fix them."
 msgstr ""
 
@@ -340,9 +341,9 @@ msgstr ""
 msgid "You cannot send messages to groups."
 msgstr ""
 
-#: inyoka/portal/views.py:1460
+#: inyoka/portal/views.py:1460 inyoka/portal/views.py:1672
 #, python-format
-msgid "The group “%(group)s“ was not found."
+msgid "The group “%(group)s“ does not exist."
 msgstr ""
 
 #: inyoka/portal/views.py:1469
@@ -355,6 +356,54 @@ msgstr ""
 
 #: inyoka/portal/views.py:1479
 msgid "You cannot send messages to this user."
+msgstr ""
+
+#: inyoka/portal/views.py:1510
+msgid "The private message was sent successfully."
+msgstr ""
+
+#: inyoka/portal/views.py:1598
+#, python-format
+msgid "The user “%(username)s“ does not exist"
+msgstr ""
+
+#: inyoka/portal/views.py:1694
+#, python-format
+msgid ""
+"The icon you uploaded was scaled to %(w)dx%(h)d pixels. Please note that "
+"this may result in lower quality."
+msgstr ""
+
+#: inyoka/portal/views.py:1711
+msgid "A global team icon was not yet defined"
+msgstr ""
+
+#: inyoka/portal/views.py:1759
+msgid "The group “%(group)“ was created successfully."
+msgstr ""
+
+#: inyoka/portal/views.py:1761
+msgid "The group “%(group)“ was changed successfully."
+msgstr ""
+
+#: inyoka/portal/views.py:1804
+msgid "The usermap was temporarily disabled."
+msgstr ""
+
+#: inyoka/portal/views.py:1829
+msgid "Please choose"
+msgstr ""
+
+#: inyoka/portal/views.py:1832 inyoka/portal/views.py:1839
+msgid "All"
+msgstr ""
+
+#: inyoka/portal/views.py:1959
+msgid "The given data is invalid."
+msgstr ""
+
+#: inyoka/portal/views.py:2008
+msgid "The OpenID was successfully linked to your account."
 msgstr ""
 
 #: inyoka/portal/templates/portal/whoisonline.html:13

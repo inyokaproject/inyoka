@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-08-13 22:16+0200\n"
+"POT-Creation-Date: 2011-08-14 16:34+0200\n"
 "PO-Revision-Date: 2010-07-18 19:12+0100\n"
 "Last-Translator: Florian Apolloner <apollo13@apolloner.eu>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -31,7 +31,7 @@ msgid "You are already logged in."
 msgstr "Du bist bereits angemeldet."
 
 #: inyoka/portal/views.py:227
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The username “%(username)s“ was successfully registered. An email with an"
 " activationkey was sent to “%(email)s“."
@@ -39,8 +39,8 @@ msgstr ""
 "Der Benutzername „%(username)s” wurde erfolgreich registriert. Eine "
 "E-Mail mit dem Aktivierungsschlüssel wurde an „%(email)s” gesendet."
 
-#: inyoka/portal/views.py:251
-#, fuzzy, python-format
+#: inyoka/portal/views.py:251 inyoka/portal/views.py:1486
+#, python-format
 msgid "The user “%(username)s“ does not exist."
 msgstr "Einen Benutzer „%s” gibt es nicht."
 
@@ -54,7 +54,7 @@ msgstr "Dein Konto wurde anonymisiert"
 
 #: inyoka/portal/views.py:274 inyoka/portal/views.py:297
 #: inyoka/portal/views.py:1293
-#, fuzzy, python-format
+#, python-format
 msgid "The account “%(username)s“ was already activated."
 msgstr "Das Konto von „%(username)s” wurde bereits aktiviert."
 
@@ -82,7 +82,8 @@ msgstr "Dein Passwort wurde erfolgreich geändert, du kannst dich nun anmelden."
 msgid "This user does not exist."
 msgstr "Dieser Benutzer existiert nicht."
 
-#: inyoka/portal/views.py:408
+#: inyoka/portal/views.py:408 inyoka/portal/views.py:2001
+#: inyoka/portal/views.py:2037
 msgid "You have successfully logged in."
 msgstr "Du hast dich erfolgreich angemeldet."
 
@@ -125,7 +126,7 @@ msgid "%(sitename)s - Message from %(username)s"
 msgstr "%(sitename)s - Message from %(username)s"
 
 #: inyoka/portal/views.py:590
-#, fuzzy, python-format
+#, python-format
 msgid "The email to “%(username)s“ was sent successfully."
 msgstr "Die E-Mail an „%(username)s” wurde erfolgreich versendet."
 
@@ -134,17 +135,17 @@ msgstr "Die E-Mail an „%(username)s” wurde erfolgreich versendet."
 #: inyoka/portal/views.py:796 inyoka/portal/views.py:884
 #: inyoka/portal/views.py:995 inyoka/portal/views.py:1162
 #: inyoka/portal/views.py:1250 inyoka/portal/views.py:1281
-#: inyoka/portal/views.py:2088
+#: inyoka/portal/views.py:2091
 msgid "Errors occurred, please fix them."
 msgstr "Es sind Fehler aufgetreten, bitte behebe sie."
 
 #: inyoka/portal/views.py:611
-#, fuzzy, python-format
+#, python-format
 msgid "You will now be notified about activities of “%(username)s“."
 msgstr "Du wirst ab jetzt über Aktivitäten von „%(username)s” benachrichtigt."
 
 #: inyoka/portal/views.py:625
-#, fuzzy, python-format
+#, python-format
 msgid "You will now not be notfied anymore about activities of “%(username)s“."
 msgstr ""
 "Du wirst ab jetzt nicht mehr über Aktivitäten von „%(username)s” "
@@ -249,37 +250,37 @@ msgid "A user with this name already exists."
 msgstr "Ein Benutzer mit diesem Namen existiert bereits."
 
 #: inyoka/portal/views.py:989
-#, fuzzy, python-format
+#, python-format
 msgid "The profile of “%(username)s“ was changed successfully"
 msgstr "Das Profil von „%(username)s” wurde erfolgreich aktualisiert."
 
 #: inyoka/portal/views.py:1051
-#, fuzzy, python-format
+#, python-format
 msgid "The setting of “%(username)s“ were successfully changed."
 msgstr "Die Einstellungen von „%(username)s” wurden erfolgreich aktualisiert."
 
 #: inyoka/portal/views.py:1075
-#, fuzzy, python-format
+#, python-format
 msgid "The status of “%(username)s“ was successfully changed."
 msgstr "Der Status von „%(username)s” wurde erfolgreich aktualisiert."
 
 #: inyoka/portal/views.py:1099
-#, fuzzy, python-format
+#, python-format
 msgid "The password of “%(username)s“ was successfully changed."
 msgstr "Das Passwort von „%(username)s” wurde erfolgreich aktualisiert."
 
 #: inyoka/portal/views.py:1159
-#, fuzzy, python-format
+#, python-format
 msgid "The privileges of “%(username)s“ were successfully changed."
 msgstr "Die Privilegien von „%(username)s” wurden erfolgreich aktualisiert."
 
 #: inyoka/portal/views.py:1247
-#, fuzzy, python-format
+#, python-format
 msgid "The groups of “%(username)s“ were successfully changed."
 msgstr "Die Gruppen von „%(username)s” wurden erfolgreich aktualisiert."
 
 #: inyoka/portal/views.py:1275
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "The user “%(username)s“ was successfully created. You can now edit more "
 "details."
@@ -357,9 +358,9 @@ msgstr ""
 msgid "You cannot send messages to groups."
 msgstr "Du kannst keine Nachrichten an Gruppen senden."
 
-#: inyoka/portal/views.py:1460
-#, fuzzy, python-format
-msgid "The group “%(group)s“ was not found."
+#: inyoka/portal/views.py:1460 inyoka/portal/views.py:1672
+#, python-format
+msgid "The group “%(group)s“ does not exist."
 msgstr "Die Gruppe „%(group)s” wurde nicht gefunden."
 
 #: inyoka/portal/views.py:1469
@@ -373,6 +374,56 @@ msgstr "Du kannst einem Systemnutzer keine Nachrichten senden."
 #: inyoka/portal/views.py:1479
 msgid "You cannot send messages to this user."
 msgstr "Du kannst diesem Benutzer keine Nachrichten senden."
+
+#: inyoka/portal/views.py:1510
+msgid "The private message was sent successfully."
+msgstr "Die Nachricht an wurde erfolgreich versendet."
+
+#: inyoka/portal/views.py:1598
+#, python-format
+msgid "The user “%(username)s“ does not exist"
+msgstr "Einen Benutzer „%(username)s” gibt es nicht."
+
+#: inyoka/portal/views.py:1694
+#, python-format
+msgid ""
+"The icon you uploaded was scaled to %(w)dx%(h)d pixels. Please note that "
+"this may result in lower quality."
+msgstr ""
+"Das von dir hochgeladene Icon wurde auf %(w)dx%(h)d Pixel skaliert. Bitte"
+" beachte, dass dadurch Qualitätseinbußen auftreten können."
+
+#: inyoka/portal/views.py:1711
+msgid "A global team icon was not yet defined"
+msgstr "Es wurde noch kein globales Team-Icon definiert."
+
+#: inyoka/portal/views.py:1759
+msgid "The group “%(group)“ was created successfully."
+msgstr "Die Gruppe „%(group)” wurde erfolgreich erstellt."
+
+#: inyoka/portal/views.py:1761
+msgid "The group “%(group)“ was changed successfully."
+msgstr "Die Gruppe „%(group)” wurde erfolgreich bearbeitet."
+
+#: inyoka/portal/views.py:1804
+msgid "The usermap was temporarily disabled."
+msgstr "Die Benutzerkarte wurde vorrübergehend deaktiviert."
+
+#: inyoka/portal/views.py:1829
+msgid "Please choose"
+msgstr "Bitte auswählen"
+
+#: inyoka/portal/views.py:1832 inyoka/portal/views.py:1839
+msgid "All"
+msgstr ""
+
+#: inyoka/portal/views.py:1959
+msgid "The given data is invalid."
+msgstr "Die eingegebenen Daten sind ungültig."
+
+#: inyoka/portal/views.py:2008
+msgid "The OpenID was successfully linked to your account."
+msgstr "Die OpenID wurde erfolgreich mit deinem Konto verknüpft."
 
 #: inyoka/portal/templates/portal/whoisonline.html:13
 msgid "Who is online?"

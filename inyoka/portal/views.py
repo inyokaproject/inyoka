@@ -1457,7 +1457,7 @@ def privmsg_new(request, username=None):
                         all().exclude(pk=request.user.id)
                     recipients.update(users)
                 except Group.DoesNotExist:
-                    flash(_('The group “%(group)s“ was not found.')
+                    flash(_('The group “%(group)s“ does not exist.')
                           % {'group': escape(group)}, False)
                     return HttpResponseRedirect(href('portal', 'privmsg'))
 
@@ -1483,8 +1483,8 @@ def privmsg_new(request, username=None):
                         recipients.add(user)
             except User.DoesNotExist:
                 recipients = None
-                flash(u'Der Benutzer "%s" wurde nicht gefunden.'
-                      % escape(recipient), False)
+                flash(_('The user “%(username)s“ does not exist.')
+                      % {'username': escape(recipient)}, False)
 
             if recipients:
                 msg = PrivateMessage()
@@ -1507,8 +1507,7 @@ def privmsg_new(request, username=None):
                                               'subject':  d['subject'],
                                               'entry':    entry,
                                           })
-                flash(u'Die persönliche Nachricht wurde erfolgreich '
-                      u'versendet.', True)
+                flash(_('The private message was sent successfully.'), True)
 
             return HttpResponseRedirect(href('portal', 'privmsg'))
     else:
@@ -1596,7 +1595,8 @@ class MemberlistView(generic.ListView):
         try:
             user = User.objects.get_by_username_or_email(name)
         except User.DoesNotExist:
-            flash(u'Der Benutzer "%s" existiert nicht.' % escape(name))
+            flash(_('The user “%(username)s“ does not exist')
+                  % {'username': escape(name)})
             return HttpResponseRedirect(request.build_absolute_uri())
         else:
             return HttpResponseRedirect(user.get_absolute_url('admin'))
@@ -1669,8 +1669,8 @@ def group_edit(request, name=None):
         try:
             group = Group.objects.get(name=name)
         except Group.DoesNotExist:
-            flash(u'Die Gruppe "%s" existiert nicht.'
-                  % escape(name), False)
+            flash(_('The group “%(group)s“ does not exist.'),
+                  % {'group': escape(name)}, False)
             return HttpResponseRedirect(href('portal', 'groups'))
         form_class = EditGroupForm
 
@@ -1691,11 +1691,12 @@ def group_edit(request, name=None):
             if data['icon'] and not data['import_icon_from_global']:
                 icon_resized = group.save_icon(data['icon'])
                 if icon_resized:
-                    flash(u'Das von dir hochgeladene Icon wurde auf '
-                          u'%sx%s Pixel skaliert, dadurch können '
-                          u'Qualitätseinbußen auftreten. Bitte beachte dies.'
-                          % (icon_mh, icon_mw))
-
+                    flash(_('The icon you uploaded was scaled to '
+                            '%(w)dx%(h)d pixels. Please note that this '
+                            'may result in lower quality.') % {
+                                'w': icon_mw,
+                                'h': icon_mh,
+                            })
             if data['import_icon_from_global']:
                 if group.icon:
                     group.icon.delete(save=False)
@@ -1707,7 +1708,7 @@ def group_edit(request, name=None):
                     group.icon.save(icon_path, gicon)
                     gicon.close()
                 else:
-                    flash(u'Es wurde noch kein globales Team-Icon definiert.', False)
+                    flash(_('A global team icon was not yet defined'), False)
 
             # permissions
             permissions = 0
@@ -1754,10 +1755,11 @@ def group_edit(request, name=None):
                 keys = ['user_permissions/%s' % uid for uid in user_ids]
                 cache.delete_many(keys)
 
-            flash(u'Die Gruppe "<a href="%s">%s</a>" wurde erfolgreich %s.'
-                  % (href('portal', 'group', escape(group.name)),
-                     escape(group.name), new and 'erstellt' or 'bearbeitet'),
-                  True)
+            if new:
+                msg = _('The group “%(group)“ was created successfully.')
+            else:
+                msg = _('The group “%(group)“ was changed successfully.')
+            flash(msg % {'group': group.name}, True)
             if new:
                 return HttpResponseRedirect(group.get_absolute_url('edit'))
     else:
@@ -1799,7 +1801,7 @@ def group_edit(request, name=None):
 
 
 def usermap(request):
-    flash(u'Die Benutzerkarte wurde vorrübergehend deaktiviert.')
+    flash(_('The usermap was temporarily disabled.'))
     return HttpResponseRedirect(href('portal'))
 
 
@@ -1824,17 +1826,17 @@ def feedselector(request, app=None):
             forms[fapp] = None
     if forms['forum'] is not None:
         forums = filter_invisible(anonymous_user, Forum.objects.get_cached())
-        forms['forum'].fields['forum'].choices = [('', u'Bitte auswählen')] + \
+        forms['forum'].fields['forum'].choices = [('', _('Please choose'))] + \
             [(f.slug, f.name) for f in forums]
     if forms['ikhaya'] is not None:
-        forms['ikhaya'].fields['category'].choices = [('*', u'Alle')] + \
+        forms['ikhaya'].fields['category'].choices = [('*', _('All'))] + \
             [(c.slug, c.name) for c in Category.objects.all()]
     if forms['wiki'] is not None:
         wiki_pages = cache.get('feedselector/wiki/pages')
         if not wiki_pages:
             wiki_pages = WikiPage.objects.get_page_list()
             cache.set('feedselector/wiki/pages', wiki_pages)
-        forms['wiki'].fields['page'].choices = [('*', u'Alle')] + \
+        forms['wiki'].fields['page'].choices = [('*', _('All'))] + \
             [(p, p) for p in wiki_pages]
 
     if request.method == 'POST':
@@ -1954,7 +1956,7 @@ def confirm(request, action=None):
         data = decode_confirm_data(data)
     except (ValueError, binascii.Error):
         return {
-            'failed': u'Die eingebenen Daten sind ungültig!',
+            'failed': _('The given data is invalid.'),
             'action': action
         }
 
@@ -1996,14 +1998,15 @@ class OpenIdConsumer(Consumer):
                 if user is not None:
                     if user.is_active:
                         # username matches password and user is active
-                        flash(u'Du hast dich erfolgreich angemeldet.', True)
+                        flash(_('You have successfully logged in.'), True)
                         user.login(request)
                         openid = request.session.pop('openid')
                         if not UserData.objects.filter(key='openid',
                                                        value=openid).count():
                             UserData.objects.create(user=user, key='openid',
                                                     value=openid)
-                            flash(u'OpenID erfolgreich verknüpft!', True)
+                            flash(_('The OpenID was successfully linked to '
+                                    'your account.'), True)
                         return HttpResponseRedirect(redirect)
                     inactive = True
                 failed = True
@@ -2031,7 +2034,7 @@ class OpenIdConsumer(Consumer):
                     key='openid',
                     value=openid_response.identity_url).user
             if not user.is_banned:
-                flash(u'Du hast dich erfolgreich angemeldet.', True)
+                flash(_('You have successfully logged in.'), True)
                 user.login(request)
             else:
                 flash(u'Dieser User ist aktuell gebannt!', False)
