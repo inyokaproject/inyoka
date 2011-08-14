@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-08-14 19:55+0200\n"
+"POT-Creation-Date: 2011-08-15 01:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,17 +26,20 @@ msgid "The poll already ended."
 msgstr ""
 
 #: inyoka/forum/views.py:229
+#, python-format
 msgid "Your vote was saved."
-msgid_plural "Your %(n) votes were saved"
+msgid_plural "Your %(n)d votes were saved"
 msgstr[0] ""
 msgstr[1] ""
 
 #: inyoka/forum/views.py:329
-msgid "The poll “%(poll)“ was added."
+#, python-format
+msgid "The poll “%(poll)d“ was added."
 msgstr ""
 
 #: inyoka/forum/views.py:342
-msgid "The poll “%(poll)“ was removed."
+#, python-format
+msgid "The poll “%(poll)s“ was removed."
 msgstr ""
 
 #: inyoka/forum/views.py:386
@@ -46,7 +49,7 @@ msgstr ""
 
 #: inyoka/forum/views.py:395
 #, python-format
-msgid "The attachment “%(attachment)s“ was added successfully."
+msgid "An attachment “%(attachment)s“ was added successfully."
 msgstr ""
 
 #: inyoka/forum/views.py:402
@@ -56,12 +59,12 @@ msgstr ""
 
 #: inyoka/forum/views.py:410
 #, python-format
-msgid "The attachment “%(attachment)s“ was deleted"
+msgid "The attachment “%(attachment)s“ was deleted."
 msgstr ""
 
 #: inyoka/forum/views.py:441
 #, python-format
-msgid "The article “%(article)s“ does not exist. You can create it now."
+msgid "The article “%(article)s“ does not exist. However, you can create it now."
 msgstr ""
 
 #: inyoka/forum/views.py:445
@@ -114,22 +117,27 @@ msgid "Cancel"
 msgstr ""
 
 #: inyoka/forum/views.py:681
-msgid "The topic was marked as solved"
+msgid "The topic was marked as solved."
 msgstr ""
 
 #: inyoka/forum/views.py:683
-msgid "The topic was marked as unsolved"
+msgid "The topic was marked as unsolved."
 msgstr ""
 
 #: inyoka/forum/views.py:691
-msgid "The topic was locked"
+msgid "The topic was locked."
 msgstr ""
 
 #: inyoka/forum/views.py:693
-msgid "The topic was unlocked"
+msgid "The topic was unlocked."
 msgstr ""
 
-#: inyoka/forum/views.py:717 inyoka/forum/views.py:749
+#: inyoka/forum/views.py:717
+#, python-format
+msgid "There is no “%(slug)s“ anymore."
+msgstr ""
+
+#: inyoka/forum/views.py:749
 msgid "There is no “%(slug)“ anymore."
 msgstr ""
 
@@ -179,11 +187,13 @@ msgid "You will not be notified anymore when a topic is reported."
 msgstr ""
 
 #: inyoka/forum/views.py:980
-msgid "Your topic “%(topic)“ was moved"
+#, python-format
+msgid "Your topic “%(topic)s“ was moved."
 msgstr ""
 
 #: inyoka/forum/views.py:994
-msgid "The topic “%(topic)“ was moved"
+#, python-format
+msgid "The topic “%(topic)s“ was moved."
 msgstr ""
 
 #: inyoka/forum/views.py:1025
@@ -199,7 +209,8 @@ msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr ""
 
 #: inyoka/forum/views.py:1099
-msgid "The topic “%(topic)“ was split"
+#, python-format
+msgid "The topic “%(topic)s“ was split."
 msgstr ""
 
 #: inyoka/forum/views.py:1119
@@ -234,12 +245,12 @@ msgstr ""
 
 #: inyoka/forum/views.py:1169
 #, python-format
-msgid "The post by “%(user)s“ was hidden"
+msgid "The post by “%(user)s“ was hidden."
 msgstr ""
 
 #: inyoka/forum/views.py:1175
 #, python-format
-msgid "The post by “%(user)s“ was deleted"
+msgid "The post by “%(user)s“ was deleted."
 msgstr ""
 
 #: inyoka/forum/views.py:1201
@@ -292,7 +303,8 @@ msgid "Please login to mark posts as read."
 msgstr ""
 
 #: inyoka/forum/views.py:1392
-msgid "The forum “%(forum)“ was marked as read"
+#, python-format
+msgid "The forum “%(forum)s“ was marked as read."
 msgstr ""
 
 #: inyoka/forum/views.py:1397
@@ -323,7 +335,8 @@ msgid "Topics by “%(user)s“"
 msgstr ""
 
 #: inyoka/forum/views.py:1445
-msgid "Posts by “%(user)“"
+#, python-format
+msgid "Posts by “%(user)s“"
 msgstr ""
 
 #: inyoka/forum/views.py:1448

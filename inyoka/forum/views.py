@@ -226,7 +226,7 @@ def viewtopic(request, topic_slug, page=1):
                     poll.options.filter(id__in=votes) \
                                 .update(votes=F('votes') + 1)
             msg = ungettext('Your vote was saved.',
-                            'Your %(n) votes were saved', len(polls))
+                            'Your %(n)d votes were saved', len(polls))
             flash(msg % {'n': len(polls)})
 
     post_ids = Post.objects.filter(topic=topic) \
@@ -326,7 +326,7 @@ def handle_polls(request, topic, poll_ids):
             option.save()
         poll_form = AddPollForm()
         poll_options = ['', '']
-        flash(_('The poll “%(poll)“ was added.') % {'poll': poll.question},
+        flash(_('The poll “%(poll)d“ was added.') % {'poll': poll.question},
               True)
         poll_ids.append(poll.id)
     elif 'add_option' in request.POST:
@@ -339,7 +339,7 @@ def handle_polls(request, topic, poll_ids):
         except Poll.DoesNotExist:
             pass
         else:
-            flash(_('The poll “%(poll)“ was removed.')
+            flash(_('The poll “%(poll)s“ was removed.')
                   % {'poll': poll.question}, True)
             topic.has_poll = Poll.objects \
                 .filter(Q(topic=topic) & ~Q(id=poll.id)) \
@@ -392,7 +392,7 @@ def handle_attachments(request, post, att_ids):
                 att_ids.append(attachment.id)
                 flash(u'Der Anhang „%s“ wurde erfolgreich hinzugefügt.'
                       % att_name, True)
-                flash(_('The attachment “%(attachment)s“ was added '
+                flash(_('An attachment “%(attachment)s“ was added '
                         'successfully.') % {'attachment': att_name}, False)
 
     elif 'delete_attachment' in request.POST:
@@ -407,7 +407,7 @@ def handle_attachments(request, post, att_ids):
             attachments.remove(attachment)
             if attachment.id in att_ids:
                 att_ids.remove(attachment.id)
-            flash(_('The attachment “%(attachment)s“ was deleted')
+            flash(_('The attachment “%(attachment)s“ was deleted.')
                     % {'attachment': attachment.name}, False)
     return attach_form, attachments
 
@@ -438,8 +438,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         try:
             page = Page.objects.get(name=norm_page_name)
         except Page.DoesNotExist:
-            flash(_('The article “%(article)s“ does not exist. You can create '
-                    'it now.') % {'article': norm_page_name}, False)
+            flash(_('The article “%(article)s“ does not exist. However, you '
+                    'can create it now.') % {'article': norm_page_name}, False)
             return HttpResponseRedirect(href('wiki', norm_page_name))
         forum_slug = settings.WIKI_DISCUSSION_FORUM
         flash(_('There is no discussion linked with the article “%(article)s“ '
@@ -678,9 +678,9 @@ def change_status(request, topic_slug, solved=None, locked=None):
         topic.save()
         topic.reindex()
         if solved:
-            msg = _('The topic was marked as solved')
+            msg = _('The topic was marked as solved.')
         else:
-            msg = _('The topic was marked as unsolved')
+            msg = _('The topic was marked as unsolved.')
         flash(msg, True)
     if locked is not None:
         if not have_privilege(request.user, topic.forum, CAN_MODERATE):
@@ -688,9 +688,9 @@ def change_status(request, topic_slug, solved=None, locked=None):
         topic.locked = locked
         topic.save()
         if locked:
-            msg = _('The topic was locked')
+            msg = _('The topic was locked.')
         else:
-            msg = _('The topic was unlocked')
+            msg = _('The topic was unlocked.')
         flash(msg)
     topic.forum.invalidate_topic_cache()
 
@@ -714,7 +714,7 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
         try:
             obj = cls.objects.get(slug=slug)
         except ObjectDoesNotExist:
-            flash(_('There is no “%(slug)“ anymore.') % {'slug': slug}, False)
+            flash(_('There is no “%(slug)s“ anymore.') % {'slug': slug}, False)
             return HttpResponseRedirect(href('forum'))
 
         if not have_privilege(request.user, obj, CAN_READ):
@@ -977,7 +977,7 @@ def movetopic(request, topic_slug):
             user_notifications = topic.author.settings.get('notifications', ('topic_move',))
             if 'topic_move' in user_notifications and topic.author.username != request.user.username:
                 send_notification(topic.author, 'topic_moved',
-                    _('Your topic “%(topic)“ was moved')
+                    _('Your topic “%(topic)s“ was moved.')
                     % {'topic': topic.title}, nargs)
 
             users_done = set([topic.author.id, request.user.id])
@@ -991,7 +991,7 @@ def movetopic(request, topic_slug):
                     continue
                 nargs['username'] = subscription.user.username
                 notify_about_subscription(subscription, 'topic_moved',
-                    _('The topic “%(topic)“ was moved')
+                    _('The topic “%(topic)s“ was moved.')
                     % {'topic': topic.title}, nargs)
                 users_done.add(subscription.user.id)
             return HttpResponseRedirect(url_for(topic))
@@ -1096,7 +1096,7 @@ def splittopic(request, topic_slug, page=1):
                     continue
                 nargs['username'] = subscription.user.username
                 notify_about_subscription(subscription, 'topic_splited',
-                    _('The topic “%(topic)“ was split')
+                    _('The topic “%(topic)s“ was split.')
                     % {'topic': old_topic.title}, nargs)
                 users_done.add(subscription.user.id)
             return HttpResponseRedirect(url_for(new_topic))
@@ -1166,13 +1166,13 @@ def delete_post(request, post_id, action='hide'):
         if action == 'hide':
             post.hidden = True
             post.save()
-            flash(_('The post by “%(user)s“ was hidden')
+            flash(_('The post by “%(user)s“ was hidden.')
                   % {'user': post.author.username}, True)
             return HttpResponseRedirect(url_for(post))
         elif action == 'delete':
             position = post.position
             wost.delete()
-            flash(_('The post by “%(user)s“ was deleted')
+            flash(_('The post by “%(user)s“ was deleted.')
                   % {'user': post.author.username}, True)
             page = max(0, position) // POSTS_PER_PAGE + 1
             url = href('forum', 'topic', topic.slug, *(page != 1 and (page,) or ()))
@@ -1389,7 +1389,7 @@ def markread(request, slug=None):
         forum = Forum.objects.get(slug=slug)
         forum.mark_read(user)
         user.save()
-        flash(_('The forum “%(forum)“ was marked as read') %
+        flash(_('The forum “%(forum)s“ was marked as read.') %
               {'forum': forum.name}, True)
         return HttpResponseRedirect(url_for(forum))
     else:
@@ -1442,7 +1442,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         topics = topics.filter(posts__author=user).distinct()
 
         if user != request.user:
-            title = _('Posts by “%(user)“') % {'user': user.username}
+            title = _('Posts by “%(user)s“') % {'user': user.username}
             url = href('forum', 'author', user.username, forum)
         else:
             title = _('My posts')
