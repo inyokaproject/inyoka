@@ -26,7 +26,17 @@
     <h3>Themen</h3>
     {%- for topic in topics if (topic.first_post and topic.last_post) %}
       <a href="{{ topic|url }}">
-        <div class="button{% if not topic.get_read_status(USER) %} unread{% endif %}">
+        <div class="button
+            {% if not topic.get_read_status(USER) %} unread{% endif %}
+            {% if topic.solved %} solved{% endif %}
+            {% if topic.hidden %} hidden{% endif %}
+            {% if topic.reported %} reported{% endif %}
+            {% if topic.sticky %} sticky{% endif %}
+            {% if topic.locked %} locked{% endif %}">
+          {% if topic.sticky %}<strong>Wichtig: </strong>{% endif %}
+          {% if topic.has_poll %}<strong>[Umfrage]</strong>{% endif %}
+          {% if topic.hidden %}[Verborgen]{% endif %}
+          {% if topic.reported %}[Gemeldet]{% endif %}
           {{ topic.title|e }}
         </div>
       </a>
