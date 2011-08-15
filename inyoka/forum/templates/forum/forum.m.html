@@ -32,11 +32,9 @@
             {% if topic.hidden %} hidden{% endif %}
             {% if topic.reported %} reported{% endif %}
             {% if topic.sticky %} sticky{% endif %}
+            {% if topic.has_poll %} poll{% endif %}
             {% if topic.locked %} locked{% endif %}">
           {% if topic.sticky %}<strong>Wichtig: </strong>{% endif %}
-          {% if topic.has_poll %}<strong>[Umfrage]</strong>{% endif %}
-          {% if topic.hidden %}[Verborgen]{% endif %}
-          {% if topic.reported %}[Gemeldet]{% endif %}
           {{ topic.title|e }}
         </div>
       </a>

@@ -239,40 +239,67 @@ nav ul li.active, .pagination .active {
 
 .topics .locked {
   background-image: url('../img/forum_mobile/locked.png');
-  background-position: 15px 0;
+  background-position: 15px bottom;
   background-repeat: no-repeat;
 }
 
 .topics .reported {
   background-image: url('../img/forum_mobile/reported.png');
-  background-position: 15px 0;
+  background-position: 15px bottom;
   background-repeat: no-repeat;
 }
 
 .topics .solved {
   background-image: url('../img/forum_mobile/solved.png');
-  background-position: 15px 0;
+  background-position: 15px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .poll {
+  background-image: url('../img/forum_mobile/poll.png');
+  background-position: 15px bottom;
   background-repeat: no-repeat;
 }
 
 .topics .reported.locked {
   background-image: url('../img/forum_mobile/reported.png'),
                     url('../img/forum_mobile/locked.png');
-  background-position: 15px 0, 80px 0;
+  background-position: 15px bottom, 80px bottom;
   background-repeat: no-repeat;
 }
 
 .topics .reported.solved {
   background-image: url('../img/forum_mobile/reported.png'),
                     url('../img/forum_mobile/solved.png');
-  background-position: 15px 0, 80px 0;
+  background-position: 15px bottom, 80px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported.poll {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/poll.png');
+  background-position: 15px bottom, 80px bottom;
   background-repeat: no-repeat;
 }
 
 .topics .solved.locked {
   background-image: url('../img/forum_mobile/locked.png'),
                     url('../img/forum_mobile/solved.png');
-  background-position: 15px 0, 80px 0;
+  background-position: 15px bottom, 80px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .solved.poll {
+  background-image: url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .locked.poll {
+  background-image: url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/locked.png');
+  background-position: 15px bottom, 80px bottom;
   background-repeat: no-repeat;
 }
 
@@ -280,12 +307,45 @@ nav ul li.active, .pagination .active {
   background-image: url('../img/forum_mobile/reported.png'),
                     url('../img/forum_mobile/locked.png'),
                     url('../img/forum_mobile/solved.png');
-  background-position: 15px 0, 80px 0, 145px 0;
+  background-position: 15px bottom, 80px bottom, 145px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported.solved.poll {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom, 145px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported.locked.poll {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/locked.png');
+  background-position: 15px bottom, 80px bottom, 145px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .solved.locked.poll {
+  background-image: url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/locked.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom, 145px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .solved.locked.reported.poll {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/locked.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom, 145px bottom, 210px bottom;
   background-repeat: no-repeat;
 }
 
 .topics .sticky {
-  background: #E6E4E2 url('../img/forum_mobile/sticky.png') 15px 0 no-repeat;
+  background: #E6E4E2 url('../img/forum_mobile/sticky.png') 15px bottom no-repeat;
 }
 
 .topics .hidden {
