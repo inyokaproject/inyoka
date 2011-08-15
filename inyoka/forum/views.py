@@ -1605,7 +1605,7 @@ def forum_edit(request, slug=None, parent=None):
             if not form.errors and not errors:
                 forum.save()
                 keys = ['forum/index'] + ['forum/forums/' + f.slug
-                                          for f in forum.parents]
+                                          for f in Forum.objects.get_cached()]
                 if old_slug is not None:
                     keys.append('forum/forums/' + old_slug)
                 cache.delete_many(keys)
