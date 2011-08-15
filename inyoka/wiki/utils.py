@@ -17,7 +17,6 @@ from itertools import ifilter
 
 from django.utils.http import urlquote
 
-from inyoka.wiki.storage import storage
 from inyoka.utils.urls import href
 from inyoka.portal.user import User
 
@@ -83,6 +82,7 @@ def get_smilies(full=False):
     Per default for multiple codes only the first one is returend, if you want
     all codes set the full parameter to `True`.
     """
+    from inyoka.wiki.storage import storage
     if full:
         return storage.smilies[:]
     result = []
@@ -100,6 +100,7 @@ def resolve_interwiki_link(wiki, page):
     Resolve an interwiki link. If no such wiki exists the return value
     will be `None`.
     """
+    from inyoka.wiki.storage import storage
     if wiki == 'user':
         return href('portal', 'user', page)
     if wiki == 'attachment':
@@ -194,3 +195,5 @@ class ArgumentCollector(type):
             new_init.__module__ = old_init.__module__
         d['__init__'] = new_init
         return type.__new__(cls, name, bases, d)
+
+

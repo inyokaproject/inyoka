@@ -55,7 +55,7 @@ from inyoka.forum.constants import UBUNTU_VERSIONS
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.forum.acl import filter_invisible, split_bits, PRIVILEGES_DETAILS, \
      REVERSED_PRIVILEGES_BITS, split_negative_positive
-from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
+from inyoka.portal.forms import LoginForm, RegisterForm, \
      UserCPSettingsForm, PrivateMessageForm, DeactivateUserForm, \
      LostPasswordForm, ChangePasswordForm, SubscriptionForm, \
      UserCPProfileForm, SetNewPasswordForm, ForumFeedSelectorForm, \
@@ -446,77 +446,6 @@ def logout(request):
     else:
         flash(u'Du warst nicht eingeloggt.', False)
     return HttpResponseRedirect(redirect)
-
-
-@templated('portal/search.html')
-def search(request):
-    """Search dialog for the Xapian search engine."""
-    if 'query' in request.GET:
-        f = SearchForm(request.REQUEST, user=request.user)
-    else:
-        f = SearchForm(user=request.user)
-
-    if f.is_valid():
-        results = f.search()
-        if not results or not results.success:
-            flash(u'Es ist ein Fehler bei der Verarbeitung deiner Suchanfrage '
-                  u'aufgetreten. Bitte überprüfe deine Eingaben.', False)
-
-        normal = u'<a href="%(href)s" class="pageselect">%(text)s</a>'
-        disabled = u'<span class="disabled next">%(text)s</span>'
-        active = u'<span class="pageselect active">%(text)s</span>'
-        pagination = [u'<div class="pagination pagination_right">']
-        add = pagination.append
-
-        d = f.cleaned_data
-
-        def _link(page):
-            return href('portal', 'search', page=page, query=d['query'],
-                        area=d['area'], per_page=results.per_page,
-                        sort=d['sort'], forums=d['forums'])
-
-        if results:
-            add(((results.page == 1) and disabled or normal) % {
-                'href': _link(results.page - 1),
-                'text': u'« Zurück',
-            })
-            add(active % {
-                'text': u'Seite %d von ungefähr %d' % (results.page, results.page_count)
-            })
-            add(((results.page < results.page_count) and normal or disabled) % {
-                'href': _link(results.page + 1),
-                'text': u'Weiter »'
-            })
-            add(u'<div style="clear: both"></div></div>')
-
-        # only highlight for users with that setting enabled.
-        highlight = None
-        if request.user.settings.get('highlight_search', True) and results:
-            highlight = results.highlight_string
-        wiki_result = None
-        if d['area'] in ('wiki', 'all'):
-            try:
-                wiki_result = WikiPage.objects.filter(
-                              name__iexact=normalize_pagename(d['query'])).get()
-            except WikiPage.DoesNotExist:
-                pass
-        rv = {
-            'area':             d['area'].lower(),
-            'query':            d['query'],
-            'highlight':        highlight,
-            'results':          results,
-            'wiki_result':      wiki_result,
-            'pagination':       u''.join(pagination),
-            'sort':             d['sort'],
-        }
-    else:
-        rv = {'area': (request.GET.get('area') or 'all').lower()}
-
-    rv.update({
-        'searchform':   f,
-        'advanced':     request.GET.get('advanced')
-    })
-    return rv
 
 
 @check_login(message=u'Du musst eingeloggt sein, um ein Benutzerprofil zu '

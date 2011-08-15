@@ -35,7 +35,6 @@ from inyoka.utils.database import LockableObject
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.html import escape
 from inyoka.utils.urls import href
-from inyoka.utils.search import search
 from inyoka.utils.local import current_request
 from inyoka.utils.decorators import deferred
 from inyoka.utils.imaging import get_thumbnail
@@ -481,7 +480,6 @@ class Topic(models.Model):
 
         forum.invalidate_topic_cache()
         self.forum.invalidate_topic_cache()
-        self.reindex()
 
     def get_absolute_url(self, action='show'):
         if action in ('show',):
@@ -550,12 +548,6 @@ class Topic(models.Model):
             user._readstatus = ReadStatus(user.forum_read_status)
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
-
-    def reindex(self):
-        """Mark the whole topic for reindexing."""
-        posts = Post.objects.filter(topic__id=self.id).values_list('id', flat=True)
-        for post in posts:
-            search.queue('f', post)
 
     def __unicode__(self):
         return self.title
@@ -646,12 +638,6 @@ class Post(models.Model, LockableObject):
             return fix_plaintext(self.text)
         return self.rendered_text
 
-    def update_search(self):
-        """
-        This updates the xapian search index.
-        """
-        search.queue('f', self.id)
-
     def get_absolute_url(self, action='show'):
         if action == 'show':
             return href('forum', 'post', self.id)
@@ -669,13 +655,6 @@ class Post(models.Model, LockableObject):
         page = max(0, position) // POSTS_PER_PAGE + 1
         url = href('forum', 'topic', slug, *(page != 1 and (page,) or ()))
         return u''.join((url, paramstr and '?%s' % paramstr or '', '#post-%d' % id))
-
-    @staticmethod
-    def multi_update_search(ids):
-        """
-        Updates the search index for quite a lot of posts with a single query.
-        """
-        SearchQueue.objects.multi_insert('f', ids)
 
     def edit(self, request, text, is_plaintext=False):
         """
@@ -817,9 +796,6 @@ class Post(models.Model, LockableObject):
 #            cursor.execute("""set @rownum:=-1;
 #                update forum_post set position=(@rownum:=@rownum+1)
 #                where topic_id=%s order by id;""", [new_topic.id])
-
-        # update the search index which has the post --> topic mapping indexed
-        Post.multi_update_search([post.id for post in posts])
 
         new_topic.forum.invalidate_topic_cache()
         old_topic.forum.invalidate_topic_cache()
@@ -1250,7 +1226,6 @@ def mark_all_forums_read(user):
 
 # Circular imports
 from inyoka.wiki.parser import parse, RenderContext
-from inyoka.portal.models import SearchQueue
 from inyoka.utils.highlight import highlight_code
 
 # register signal handlers

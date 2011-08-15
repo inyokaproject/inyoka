@@ -140,7 +140,7 @@ from urlparse import urlsplit
 from inyoka.utils.css import filter_style
 from inyoka.utils.urls import href
 from inyoka.utils.storage import storage
-from inyoka.wiki.parser.lexer import escape, Lexer
+from inyoka.wiki.parser.lexer import escape, unescape_string, Lexer
 from inyoka.wiki.parser.machine import Renderer, RenderContext
 from inyoka.wiki.parser.transformers import DEFAULT_TRANSFORMERS
 from inyoka.wiki.parser.constants import HTML_COLORS
@@ -237,64 +237,6 @@ def validate_signature(signature):
     if sig_lines >= 0 and len(text.splitlines()) > sig_lines:
         raise SignatureError(u'Deine Signatur darf maximal aus %d '
                              u'Zeilen bestehen' % sig_lines)
-
-
-def unescape_string(string):
-    """
-    Unescape a string with python semantics but silent fallback.
-    """
-    result = []
-    write = result.append
-    simple_escapes = {
-        'a':    '\a',
-        'n':    '\n',
-        'r':    '\r',
-        'f':    '\f',
-        't':    '\t',
-        'v':    '\v',
-        '\\':   '\\',
-        '"':    '"',
-        "'":    "'",
-        '0':    '\x00'
-    }
-    unicode_escapes = {
-        'x':    2,
-        'u':    4,
-        'U':    8
-    }
-    chariter = iter(string)
-    next_char = chariter.next
-
-    try:
-        for char in chariter:
-            if char == '\\':
-                char = next_char()
-                if char in simple_escapes:
-                    write(simple_escapes[char])
-                elif char in unicode_escapes:
-                    seq = [next_char() for x in xrange(unicode_escapes[char])]
-                    try:
-                        write(unichr(int(''.join(seq), 16)))
-                    except ValueError:
-                        pass
-                elif char == 'N' and next_char() != '{':
-                    seq = []
-                    while True:
-                        char = next_char()
-                        if char == '}':
-                            break
-                        seq.append(char)
-                    try:
-                        write(unicodedata.lookup(u''.join(seq)))
-                    except KeyError:
-                        pass
-                else:
-                    write('\\' + char)
-            else:
-                write(char)
-    except StopIteration:
-        pass
-    return u''.join(result)
 
 
 def _parse_align_args(args, kwargs):

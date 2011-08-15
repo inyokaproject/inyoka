@@ -89,9 +89,7 @@ EMAIL_SUBJECT_PREFIX = u'ubuntuusers: '
 
 EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 
-# path to the xapian database
-# Examples: /path/to/inyoka.xapdb, or tcpsrv://localhost:3000/
-XAPIAN_DATABASE = join(BASE_PATH, 'inyoka.xapdb')
+SEARCH_NODES = []
 
 # imagemagick path. leave empty for auto detection
 IMAGEMAGICK_PATH = ''
@@ -230,12 +228,6 @@ OPENID_PROVIDERS = {
       'url': 'https://www.google.com/accounts/o8/id'
     }
 }
-
-# some terms to exclude by default to maintain readability
-SEARCH_DEFAULT_EXCLUDE = ['Cstammtisch']
-
-# Default blocksize to delmit queries to the search index
-SEARCH_INDEX_BLOCKSIZE = 5000
 
 # Set the default sentry site
 SENTRY_SITE = "ubuntuusers.de"
