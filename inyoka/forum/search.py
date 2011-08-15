@@ -7,7 +7,6 @@ from inyoka.utils.urls import url_for, href
 
 
 
-
 class PostDocumentType(DocumentType):
     name = 'post'
     model = Post

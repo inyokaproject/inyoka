@@ -15,12 +15,25 @@ from itertools import ifilter
 
 from django.conf import settings
 
-from pyes import ES, Search, FilteredQuery, StringQuery
+from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ANDFilter, ORFilter
 
 
 
 SIMPLE_TYPES = (int, long, str, list, dict, tuple, bool,
                 float, bool, unicode, type(None))
+
+
+class TypeFilter(Filter):
+    _internal_name = "type"
+
+    def __init__(self, type, **kwargs):
+        super(TypeFilter, self).__init__(**kwargs)
+        self._type = type
+
+    def serialize(self):
+        if not self._type:
+            raise RuntimeError("A least a field/value pair must be added")
+        return {self._internal_name : {'value': self._type}}
 
 
 def _get_attrs(obj):
@@ -136,12 +149,23 @@ class SearchSystem(object):
                 connection.put_mapping(doctype.name, doctype.mapping,
                                        [index.name])
 
-    def search(self, query, *args, **kwargs):
+    def search(self, query, indexes=None, *args, **kwargs):
         if isinstance(query, basestring):
             query = StringQuery(query)
-        filter = kwargs.pop('filter', None)
-        if filter is not None:
-            query = FilteredQuery(query, filter=filter)
+
+        if indexes is None:
+            indexes = self.indexes
+
+        user = kwargs.pop('user', None)
+        filters = []
+
+        if user:
+            for name, index in indexes.iteritems():
+                for type in index.types:
+                    filters.append(ANDFilter((TypeFilter('post'), type().get_filter(user))))
+
+        if filters:
+            query = FilteredQuery(query, filter=ORFilter(filters))
         search = Search(query=query, *args, **kwargs)
         return self.get_connection().search(query=search)
 
