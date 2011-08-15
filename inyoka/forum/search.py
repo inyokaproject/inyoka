@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-from pyes import ScriptFilter
+from pyes import TermsFilter
 from inyoka.utils.search import search, Index, DocumentType
 from inyoka.forum.acl import get_privileges, check_privilege
 from inyoka.forum.models import Post, Forum
@@ -33,8 +33,7 @@ class PostDocumentType(DocumentType):
         privs = get_privileges(user, Forum.objects.get_cached())
         forums = [id for id, priv in privs.iteritems()
                                   if check_privilege(priv, 'read')]
-        return ScriptFilter("forums contains doc['forum_pk'].value",
-                            {'forums': forums})
+        return TermsFilter('forum_pk', forums)
 
     @classmethod
     def serialize(cls, post):
