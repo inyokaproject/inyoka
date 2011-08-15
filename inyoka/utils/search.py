@@ -8,10 +8,7 @@
     :copyright: (c) 2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import inspect
-import datetime
 from functools import partial
-from itertools import ifilter
 
 from django.conf import settings
 
@@ -68,14 +65,17 @@ class Index(object):
     #: A list of document types
     types = []
 
+    def __init__(self, search):
+        self.search = search
+
     def store_object(self, obj, type):
         """Store `obj`.
 
         :param obj: The object to store in the elastic search index.
         :param type: The document type class that describes `obj`.
         """
-        search.get_connection().index(type.serialize(obj), self.name,
-                                      type.name, obj.pk)
+        self.search.get_connection().index(type.serialize(obj), self.name,
+                                           type.name, obj.pk)
 
     def get_type_map(self):
         return dict((t.name, t) for t in self.types)
@@ -126,41 +126,52 @@ class SearchSystem(object):
     def __init__(self):
         if not settings.SEARCH_NODES:
             raise RuntimeError('You must specify search nodes!')
-        self.indexes = {}
+        self.indices = {}
 
     def register(self, index):
-        """Register a index for indexing and retrieving."""
+        """Register an index for indexing and retrieving."""
         assert index.name is not None
-        self.indexes[index.name] = index
+        self.indices[index.name] = index(self)
 
     def store(self, index, type, obj):
         if isinstance(index, basestring):
-            index = self.indexes[index]()
+            index = self.indices[index]
         index.store_object(obj, index.get_type_map()[type])
 
     def get_connection(self, *args, **kwargs):
         return ES(settings.SEARCH_NODES, *args, **kwargs)
 
-    def refresh_indexes(self):
+    def refresh_indices(self, recreate_mapping=False):
         connection = self.get_connection()
-        for index in self.indexes.itervalues():
+        for index in self.indices.itervalues():
             connection.create_index_if_missing(index.name)
             for doctype in index.types:
+                if recreate_mapping:
+                    # delete_mapping deletes data + mapping
+                    connection.delete_mapping(index.name, doctype.name)
                 connection.put_mapping(doctype.name, doctype.mapping,
                                        [index.name])
 
-    def search(self, query, indexes=None, *args, **kwargs):
+    def reindex(self):
+        self.refresh_indices(True)
+        connection = self.get_connection()
+        for index in self.indices.itervalues():
+            for doctype in index.types:
+                for obj in doctype.model.objects.all():
+                    self.store(index, doctype.name, obj)
+
+    def search(self, query, indices=None, *args, **kwargs):
         if isinstance(query, basestring):
             query = StringQuery(query)
 
-        if indexes is None:
-            indexes = self.indexes
+        if indices is None:
+            indices = self.indices
 
         user = kwargs.pop('user', None)
         filters = []
 
         if user:
-            for name, index in indexes.iteritems():
+            for name, index in indices.iteritems():
                 for type in index.types:
                     filters.append(ANDFilter((TypeFilter('post'), type().get_filter(user))))
 
