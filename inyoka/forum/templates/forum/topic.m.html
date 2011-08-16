@@ -70,6 +70,9 @@
         </div>
         <div class="text">
           {{ post.get_text() }}
+          {% if can_edit(post) %}
+            <a href="{{ post|url('edit') }}"><div class="button">Bearbeiten</div></a>
+          {% endif %}
         </div>
         {% if post.has_attachments %}
           <div class="attachments">
