@@ -157,6 +157,10 @@ def forum(request, slug, page=1):
     #FIXME: Filter topics with no last_post or first_post
     topics = [topic for topic in qs
                     if topic.first_post and topic.last_post]
+
+    if not check_privilege(privs[forum.pk], 'moderate'):
+        topics = [topic for topic in topics if not topic.hidden]
+
     for topic in topics:
         topic.forum = forum
 
