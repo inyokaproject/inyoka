@@ -38,17 +38,28 @@ def _get_attrs(obj):
     return not_underscore(obj._meta.get_all_field_names())
 
 
-def serialize_instance(instance, doctype):
-    """Serialize a django model instance with taking `doctype` into account."""
+def serialize_instance(instance, doctype, extra):
+    """Serializes a django model instance using the `mapping` supplied by the
+    `doctype`. Data in `extra` takes precedence over field values. If the
+    `doctype` has a `prepare_fieldname` attribute the data for this mapping 
+    field is run through that function (Useful for m2m relations etc).
+    """
     data = {}
 
-    for field_name in _get_attrs(instance):
-        if doctype.fields and field_name not in doctype.fields:
-            continue
-        if doctype.excludes and field_name in excludes:
-            continue
+    instance_fields = dir(instance)
+    prepared_fields = [x[8:] for x in dir(doctype) if x.startswith('prepare_')]
 
-        obj = getattr(instance, field_name)
+    for field_name in doctype.mapping['properties']:
+        if extra and field_name in extra:
+            obj = extra[field_name]
+        elif field_name in instance_fields:
+            obj = getattr(instance, field_name)
+        else:
+            raise ValueError('Field not found in `extra` or on the instance.')
+
+        if field_name in prepared_fields:
+            obj = getattr(doctype, 'prepare_%s' % field_name)(obj)
+
         if not isinstance(obj, SIMPLE_TYPES) :
             raise ValueError('%r is not supported yet.' % obj)
         data[field_name] = obj
@@ -68,16 +79,17 @@ class Index(object):
     def __init__(self, search):
         self.search = search
 
-    def store_object(self, obj, type):
+    def store_object(self, obj, type, extra):
         """Store `obj`.
 
         :param obj: The object to store in the elastic search index.
         :param type: The document type class that describes `obj`.
         """
-        self.search.get_connection().index(type.serialize(obj), self.name,
+        self.search.get_connection().index(type.serialize(obj, extra), self.name,
                                            type.name, obj.pk)
 
-    def get_type_map(self):
+    @property
+    def type_map(self):
         return dict((t.name, t) for t in self.types)
 
 
@@ -90,31 +102,25 @@ class DocumentType(object):
     #: The name of this document type
     name = None
 
-    #: The model this document type implements.  This is currently unused
+    #: The model this document type implements. This is currently unused
     #: but can be used for documentation.
     model = None
-
-    #: A list of fields to store. Optional.
-    fields = None
-
-    #: A list of fields not to store. Optional.
-    excludes = None
 
     #: A dictionary to describe a elastic search mapping.
     #: Example:
     #:
-    #:     mapping = {'properties': {
-    #:           'name': {
-    #:               'type': 'string',
-    #:               'store': 'yes',
-    #:               'index': 'analyzed'
-    #:           }
-    #:     }}
+    #: mapping = {'properties': {
+    #: 'name': {
+    #: 'type': 'string',
+    #: 'store': 'yes',
+    #: 'index': 'analyzed'
+    #: }
+    #: }}
     mapping = {}
 
     @classmethod
-    def serialize(cls, obj):
-        return serialize_instance(obj, cls)
+    def serialize(cls, obj, extra):
+        return serialize_instance(obj, cls, extra)
 
 
 class SearchSystem(object):
@@ -133,10 +139,10 @@ class SearchSystem(object):
         assert index.name is not None
         self.indices[index.name] = index(self)
 
-    def store(self, index, type, obj):
+    def store(self, index, type, obj, extra=None):
         if isinstance(index, basestring):
             index = self.indices[index]
-        index.store_object(obj, index.get_type_map()[type])
+        index.store_object(obj, index.type_map[type], extra)
 
     def get_connection(self, *args, **kwargs):
         return ES(settings.SEARCH_NODES, *args, **kwargs)
@@ -179,6 +185,30 @@ class SearchSystem(object):
             query = FilteredQuery(query, filter=ORFilter(filters))
         search = Search(query=query, *args, **kwargs)
         return self.get_connection().search(query=search)
+
+
+def autodiscover():
+    """
+    Auto-discover INSTALLED_APPS search.py modules and fail silently when
+    not present. This forces an import on them to register any search bits they
+    may want.
+    """
+
+    from django.conf import settings
+    from django.utils.importlib import import_module
+    from django.utils.module_loading import module_has_submodule
+
+    for app in settings.INSTALLED_APPS:
+        mod = import_module(app)
+        # Attempt to import the app's search module.
+        try:
+            import_module('%s.search' % app)
+        except:
+            # Decide whether to bubble up this error. If the app just
+            # doesn't have a search module, we can ignore the error
+            # attempting to import it, otherwise we want it to bubble up.
+            if module_has_submodule(mod, 'search'):
+                raise
 
 
 #: Singleton that implements the search system
