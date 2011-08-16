@@ -11,6 +11,11 @@ h1, h2, h3 {
   padding: 0.3em 0 0.1em;
 }
 
+h3 {
+  border-bottom: 1px #DDDDDD solid;
+  margin-bottom: 0.5em;
+}
+
 p {
   padding: 0.3em 0;
 }
@@ -398,3 +403,18 @@ blockquote {
   background-color: #5E2750 !important;
 }
 
+.userinfo dt {
+  font-weight: bold;
+}
+
+.userinfo dd {
+  margin-bottom: 1em;
+}
+
+.userinfo .hidden {
+  color: #BABABA;
+}
+
+.userinfo.avatar {
+  float: right;
+}
