@@ -71,6 +71,7 @@
         <div class="text">
           {{ post.get_text() }}
           {% if can_edit(post) %}
+            <hr />
             <a href="{{ post|url('edit') }}"><div class="button">Bearbeiten</div></a>
           {% endif %}
         </div>
