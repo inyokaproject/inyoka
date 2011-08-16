@@ -30,7 +30,7 @@
             {% if not topic.get_read_status(USER) %} unread{% endif %}
             {% if topic.solved %} solved{% endif %}
             {% if topic.hidden %} hidden{% endif %}
-            {% if topic.reported %} reported{% endif %}
+            {% if can_moderate and topic.reported %} reported{% endif %}
             {% if topic.sticky %} sticky{% endif %}
             {% if topic.has_poll %} poll{% endif %}
             {% if topic.locked %} locked{% endif %}">
