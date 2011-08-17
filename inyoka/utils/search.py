@@ -11,8 +11,10 @@
 from functools import partial
 
 from django.conf import settings
+from django.db.models import signals
 
-from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ANDFilter, ORFilter
+from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ANDFilter, \
+    ORFilter
 
 
 
@@ -67,6 +69,13 @@ def serialize_instance(instance, doctype, extra):
     return data
 
 
+def _get_remove_instance_handler(search, index, type):
+    def handler(sender, instance, using, type_name=type.name, **kwargs):
+        conn =  search.get_connection()
+        conn.delete(index.name, type_name, instance.pk)
+    return handler
+
+
 class Index(object):
     """Index type that containes `DocumentType` objects to define actual objects"""
 
@@ -78,6 +87,11 @@ class Index(object):
 
     def __init__(self, search):
         self.search = search
+        for type in self.types:
+            if type.autodelete:
+                handler = _get_remove_instance_handler(search, self, type)
+                signals.post_delete.connect(handler, sender=type.model,
+                                            weak=False)
 
     def store_object(self, obj, type, extra):
         """Store `obj`.
@@ -117,6 +131,9 @@ class DocumentType(object):
     #: }
     #: }}
     mapping = {}
+
+    #: Automatically delete the entry if the model is deleted
+    autodelete = True
 
     @classmethod
     def get_filter(cls, user):
@@ -185,7 +202,7 @@ class SearchSystem(object):
                 for type in index.types:
                     filter = type.get_filter(user)
                     if filter is not None:
-                        filters.append(ANDFilter((TypeFilter('post'), filter)))
+                        filters.append(filter)
 
         if filters:
             query = FilteredQuery(query, filter=ORFilter(filters))
