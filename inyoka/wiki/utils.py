@@ -195,5 +195,3 @@ class ArgumentCollector(type):
             new_init.__module__ = old_init.__module__
         d['__init__'] = new_init
         return type.__new__(cls, name, bases, d)
-
-

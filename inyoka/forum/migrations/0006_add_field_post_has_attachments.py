@@ -7,13 +7,13 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding field 'Post.has_attachments'
         db.add_column('forum_post', 'has_attachments', self.gf('django.db.models.fields.BooleanField')(default=False), keep_default=False)
 
 
     def backwards(self, orm):
-        
+
         # Deleting field 'Post.has_attachments'
         db.delete_column('forum_post', 'has_attachments')
 

@@ -242,7 +242,7 @@ def viewtopic(request, topic_slug, page=1):
     attachments = MultiDict((a.post_id, a) for a in
                             Attachment.objects.filter(post__id__in=post_ids))
 
-    # assign the current topic to the posts to prevent 
+    # assign the current topic to the posts to prevent
     # extra queries in check_ownpost_limit.  Also do that
     # with attachments.
     for p in posts:

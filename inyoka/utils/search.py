@@ -41,7 +41,7 @@ def _get_attrs(obj):
 def serialize_instance(instance, doctype, extra):
     """Serializes a django model instance using the `mapping` supplied by the
     `doctype`. Data in `extra` takes precedence over field values. If the
-    `doctype` has a `prepare_fieldname` attribute the data for this mapping 
+    `doctype` has a `prepare_fieldname` attribute the data for this mapping
     field is run through that function (Useful for m2m relations etc).
     """
     data = {}
