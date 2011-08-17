@@ -167,7 +167,7 @@ class SearchSystem(object):
         connection = self.get_connection()
         for index in self.indices.itervalues():
             for doctype in index.types:
-                for obj in doctype.model.objects.all():
+                for obj in doctype.model.objects.iterator():
                     self.store(index, doctype.name, obj)
 
     def search(self, query, indices=None, *args, **kwargs):
