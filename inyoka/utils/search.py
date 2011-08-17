@@ -203,7 +203,7 @@ def autodiscover():
         # Attempt to import the app's search module.
         try:
             import_module('%s.search' % app)
-        except:
+        except Exception:
             # Decide whether to bubble up this error. If the app just
             # doesn't have a search module, we can ignore the error
             # attempting to import it, otherwise we want it to bubble up.

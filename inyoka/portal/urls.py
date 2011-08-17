@@ -10,6 +10,7 @@
 """
 from django.conf.urls.defaults import patterns
 
+
 urlpatterns = patterns('inyoka.portal.views',
     (r'^$', 'index'),
     (r'^404/$', 'not_found'),
