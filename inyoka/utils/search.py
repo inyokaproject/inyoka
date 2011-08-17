@@ -179,7 +179,9 @@ class SearchSystem(object):
         if user:
             for name, index in indices.iteritems():
                 for type in index.types:
-                    filters.append(ANDFilter((TypeFilter('post'), type().get_filter(user))))
+                    filter = type().get_filter(user)
+                    if filter is not None:
+                        filters.append(ANDFilter((TypeFilter('post'), filter)))
 
         if filters:
             query = FilteredQuery(query, filter=ORFilter(filters))
