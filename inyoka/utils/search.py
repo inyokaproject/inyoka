@@ -119,6 +119,10 @@ class DocumentType(object):
     mapping = {}
 
     @classmethod
+    def get_filter(cls, user):
+        return None
+
+    @classmethod
     def serialize(cls, obj, extra):
         return serialize_instance(obj, cls, extra)
 
@@ -179,7 +183,7 @@ class SearchSystem(object):
         if user:
             for name, index in indices.iteritems():
                 for type in index.types:
-                    filter = type().get_filter(user)
+                    filter = type.get_filter(user)
                     if filter is not None:
                         filters.append(ANDFilter((TypeFilter('post'), filter)))
 

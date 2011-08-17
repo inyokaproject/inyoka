@@ -28,7 +28,8 @@ class PostDocumentType(DocumentType):
         'last_post_url': {'type': 'string', 'store': 'yes'}
     }}
 
-    def get_filter(self, user):
+    @classmethod
+    def get_filter(cls, user):
         privs = get_privileges(user, Forum.objects.get_cached())
         forums = [id for id, priv in privs.iteritems()
                                   if check_privilege(priv, 'read')]
