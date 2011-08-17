@@ -35,7 +35,7 @@ class PostDocumentType(DocumentType):
         return TermsFilter('forum_pk', forums)
 
     @classmethod
-    def serialize(cls, post):
+    def serialize(cls, post, extra):
         forum = post.topic.cached_forum()
         categories = [f.slug for f in forum.parents] + [forum.slug]
         return {'pk': post.pk,
