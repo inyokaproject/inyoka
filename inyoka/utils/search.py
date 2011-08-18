@@ -93,14 +93,14 @@ class Index(object):
                 signals.post_delete.connect(handler, sender=type.model,
                                             weak=False)
 
-    def store_object(self, obj, type, extra):
+    def store_object(self, obj, type, extra, bulk=False):
         """Store `obj`.
 
         :param obj: The object to store in the elastic search index.
         :param type: The document type class that describes `obj`.
         """
         self.search.get_connection().index(type.serialize(obj, extra), self.name,
-                                           type.name, obj.pk)
+                                           type.name, obj.pk, bulk=bulk)
 
     @property
     def type_map(self):
@@ -160,10 +160,10 @@ class SearchSystem(object):
         assert index.name is not None
         self.indices[index.name] = index(self)
 
-    def store(self, index, type, obj, extra=None):
+    def store(self, index, type, obj, extra=None, bulk=False):
         if isinstance(index, basestring):
             index = self.indices[index]
-        index.store_object(obj, index.type_map[type], extra)
+        index.store_object(obj, index.type_map[type], extra, bulk=bulk)
 
     def get_connection(self, *args, **kwargs):
         return ES(settings.SEARCH_NODES, *args, **kwargs)
@@ -178,6 +178,7 @@ class SearchSystem(object):
                     connection.delete_mapping(index.name, doctype.name)
                 connection.put_mapping(doctype.name, doctype.mapping,
                                        [index.name])
+        connection.refresh(self.indices.iterkeys())
 
     def reindex(self):
         self.refresh_indices(True)
@@ -185,7 +186,9 @@ class SearchSystem(object):
         for index in self.indices.itervalues():
             for doctype in index.types:
                 for obj in doctype.model.objects.iterator():
-                    self.store(index, doctype.name, obj)
+                    self.store(index, doctype.name, obj, bulk=True)
+            connection.force_bulk()
+        connection.refresh(self.indices.iterkeys())
 
     def search(self, query, indices=None, *args, **kwargs):
         if isinstance(query, basestring):
