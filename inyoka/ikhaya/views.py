@@ -585,6 +585,7 @@ def suggest_edit(request):
     A Page to suggest a new ikhaya article.  It just sends an email to the
     ikhaya administrators.
     """
+    preview = None
     if request.method == 'POST':
         form = SuggestArticleForm(request.POST)
         if 'preview' in request.POST:
@@ -602,7 +603,6 @@ def suggest_edit(request):
             return HttpResponseRedirect(href('ikhaya'))
     else:
         form = SuggestArticleForm()
-        preview = None
     return {
         'form': form,
         'preview': preview
