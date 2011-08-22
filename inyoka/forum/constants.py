@@ -65,6 +65,7 @@ UBUNTU_DISTROS_LEGACY = {
     'server': 'Server',
     'ubuntu': 'Ubuntu',
     'xubuntu': 'Xubuntu',
+    'lubuntu': 'Lubuntu',
     'unity': 'Unity',
 }
 
@@ -75,6 +76,7 @@ UBUNTU_DISTROS = [
     ('server', 'Server'),
     ('ubuntu', 'Ubuntu'),
     ('xubuntu', 'Xubuntu'),
+    ('lubuntu', 'Lubuntu'),
     ('unity', 'Unity'),
 ]
 
