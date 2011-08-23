@@ -83,4 +83,6 @@ UBUNTU_DISTROS = [
 
 VERSION_CHOICES = [('', 'Version')] + \
                   [(v.number, str(v)) for v in filter(lambda v: v.active, UBUNTU_VERSIONS)]
+SIMPLE_VERSION_CHOICES = [(v.number, str(v)) for v
+                          in filter(lambda v: v.active, UBUNTU_VERSIONS)]
 DISTRO_CHOICES = [('', 'Distribution')] + UBUNTU_DISTROS

@@ -16,7 +16,7 @@ from django.core.validators import EMPTY_VALUES
 from django.utils.safestring import mark_safe
 from django.db.models import Count
 
-from inyoka.forum.constants import VERSION_CHOICES
+from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
 from inyoka.forum.models import Forum
 from inyoka.utils.dates import datetime_to_timezone
@@ -266,7 +266,7 @@ class UserCPSettingsForm(forms.Form):
         widget=forms.CheckboxSelectMultiple)
     ubuntu_version = forms.MultipleChoiceField(
         label='Benachrichtigung bei neuen Topics mit bestimmter Ubuntu Version',
-        required=False, choices=VERSION_CHOICES,
+        required=False, choices=SIMPLE_VERSION_CHOICES,
         widget=forms.CheckboxSelectMultiple)
     timezone = forms.ChoiceField(label='Zeitzone', required=True,
         choices=zip(TIMEZONES, TIMEZONES))
