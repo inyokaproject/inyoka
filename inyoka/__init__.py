@@ -109,33 +109,31 @@
 import os
 import socket
 from os.path import realpath, join, dirname
-from mercurial import ui as hgui
-from mercurial.localrepo import localrepository
-from mercurial.node import short as shorthex
-from mercurial.error import RepoError
+import subprocess
 
 #: Inyoka revision present in the current mercurial working copy
 INYOKA_REVISION = 'unknown'
-
-# Don't read ~/.hgrc, as extensions aren't available in the venvs
-os.environ['HGRCPATH'] = ''
-
 
 def _bootstrap():
     """Get the Inyoka version and store it."""
     # the path to the contents of the Inyoka module
     conts = realpath(join(dirname(__file__)))
 
-    # get the `INYOKA_REVISION` using the mercurial python api
+    # get the `INYOKA_REVISION` using git subprocess.
+    # TODO: once the git-ctypes port is finished switch!
+
     try:
-        ui = hgui.ui()
-        repository = localrepository(ui, join(conts, '..'))
-        ctx = repository['tip']
-        revision = '{num}:{id}'.format(num=ctx.rev(), id=shorthex(ctx.node()))
-    except (TypeError, RepoError):
+        process = subprocess.Popen(['git', 'describe', '--tags'],
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,
+                                   cwd=conts, shell=False,
+                                   env=os.environ.copy())
+        revision, stderro = process.communicate()
+    except Exception:
         revision = INYOKA_REVISION
-        # fail silently
-        pass
+
+    revision = revision.strip()
+
 
     # This value defines the timeout for sockets in seconds.  Per default
     # python sockets do never timeout and as such we have blocking workers.
