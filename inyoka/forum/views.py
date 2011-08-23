@@ -672,6 +672,11 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 @confirm_action(message=u'Möchtest du das Thema (ent)sperren?',
                 confirm=u'(Ent)sperren', cancel=u'Abbrechen')
 @simple_check_login
+def change_lock_status(request, topic_slug, solved=None, locked=None):
+    return change_status(request, topic_slug, solved, locked)
+
+
+@simple_check_login
 def change_status(request, topic_slug, solved=None, locked=None):
     """Change the status of a topic and redirect to it"""
     topic = Topic.objects.get(slug=topic_slug)
