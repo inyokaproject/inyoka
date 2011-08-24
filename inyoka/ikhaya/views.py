@@ -160,7 +160,7 @@ def detail(request, year, month, day, slug):
             return AccessDeniedResponse()
         flash(u'Dieser Artikel ist für reguläre Benutzer nicht sichtbar.')
 
-    if request.method == 'POST' and not article.comments_enabled or not request.user.is_authenticated:
+    if request.method == 'POST' and (not article.comments_enabled or not request.user.is_authenticated):
         return AccessDeniedResponse()
 
     # clear notification status
