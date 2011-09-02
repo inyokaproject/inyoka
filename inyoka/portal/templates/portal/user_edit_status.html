@@ -30,7 +30,7 @@
         {{ user.username }} eine <a href="{{ href('portal', 'user', user.username, 'mail', next=CURRENT_URL) }}">E-Mail schreiben</a>.
       </div>
       {%- if activation_link %}
-      <div class="note"><a href="{{ href('portal', 'user', 'resend_activation_mail', user=user, next=CURRENT_URL) }}">Aktivierungsmail erneut senden.</a></div>
+      <div class="note"><a href="{{ href('portal', 'users', 'resend_activation_mail', user=user, next=CURRENT_URL) }}">Aktivierungsmail erneut senden.</a></div>
       <div class="note">Aktivierungslink: <a href="{{ activation_link }}">{{ activation_link }}</a></div>
       {%- endif %}
     </dd>
