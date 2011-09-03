@@ -1,8 +1,6 @@
 #-*- coding: utf-8 -*-
-from django.db import connection
 from django.core.cache import cache
 from django.test import TestCase, TransactionTestCase
-from django.conf import settings
 
 from inyoka.forum.models import Forum, Topic, Post
 from inyoka.portal.user import User

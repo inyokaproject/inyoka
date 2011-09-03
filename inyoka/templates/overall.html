@@ -188,9 +188,9 @@
         <li class="poweredby">
           <a href="{{ href('portal', 'inyoka')|e }}">Inyoka</a> unter der Haube {% if not USER.is_anonymous or SETTINGS.DEBUG %}(in {{ REQUEST.watch.duration|round(2) }}s gerendert){% endif %}<br />
           {%- if INYOKA_REVISION %}
-            inyoka r{{ INYOKA_REVISION }}
+            Inyoka {{ INYOKA_REVISION }}
           {%- else %}
-            inyoka revision unavailable
+            Inyoka revision unavailable
           {%- endif %}
           (<a href="{{ href('wiki', 'ubuntuusers/Fehler melden') }}">Fehler in Inyoka melden</a>)
         </li>

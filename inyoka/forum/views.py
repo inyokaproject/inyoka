@@ -17,7 +17,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils.text import truncate_html_words
 from django.db import transaction
-from django.db.models import Q, F, Count
+from django.db.models import Q, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
@@ -157,6 +157,10 @@ def forum(request, slug, page=1):
     #FIXME: Filter topics with no last_post or first_post
     topics = [topic for topic in qs
                     if topic.first_post and topic.last_post]
+
+    if not check_privilege(privs[forum.pk], 'moderate'):
+        topics = [topic for topic in topics if not topic.hidden]
+
     for topic in topics:
         topic.forum = forum
 
@@ -666,6 +670,11 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
 @confirm_action(message=u'Möchtest du das Thema (ent)sperren?',
                 confirm=u'(Ent)sperren', cancel=u'Abbrechen')
+@simple_check_login
+def change_lock_status(request, topic_slug, solved=None, locked=None):
+    return change_status(request, topic_slug, solved, locked)
+
+
 @simple_check_login
 def change_status(request, topic_slug, solved=None, locked=None):
     """Change the status of a topic and redirect to it"""
@@ -1603,7 +1612,7 @@ def forum_edit(request, slug=None, parent=None):
             if not form.errors and not errors:
                 forum.save()
                 keys = ['forum/index'] + ['forum/forums/' + f.slug
-                                          for f in forum.parents]
+                                          for f in Forum.objects.get_cached()]
                 if old_slug is not None:
                     keys.append('forum/forums/' + old_slug)
                 cache.delete_many(keys)

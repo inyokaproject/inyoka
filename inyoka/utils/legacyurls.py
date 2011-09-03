@@ -10,7 +10,7 @@
 """
 import re
 from django.core.exceptions import ObjectDoesNotExist
-from inyoka.utils.http import HttpResponsePermanentRedirect, PageNotFound
+from inyoka.utils.http import HttpResponsePermanentRedirect
 
 
 def test_legacy_url(request, test_func):

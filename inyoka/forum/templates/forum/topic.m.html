@@ -65,7 +65,15 @@
     {%- for post in posts if not post.hidden %}
       <div class="post" id="post-{{ post.id }}">
         <div class="meta">
-          <span class="right"><a href="{{ post|url }}">{{ post.pub_date|datetimeformat }}</a></span>
+          <span class="right">
+            {% if can_reply and not topic.locked %}
+              <a href="{{ post|url('quote') }}" class="action">zitieren</a> |
+            {% endif %}
+            {% if can_edit(post) %}
+              <a href="{{ post|url('edit') }}" class="action">bearbeiten</a> |
+            {% endif %}
+            <a href="{{ post|url }}">{{ post.pub_date|datetimeformat }}</a>
+          </span>
           <span class="left"><a href="{{ post.author|url }}">{{ post.author.username|e }}</a></span>
         </div>
         <div class="text">

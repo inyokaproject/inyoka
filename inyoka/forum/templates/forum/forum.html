@@ -84,7 +84,7 @@
       <th class="last_post">Letzter Beitrag</th>
     </tr>
     {# TODO: workaround for topics without first or last_post to not mess up with server errors #}
-    {%- for topic in topics if not (topic.hidden and not can_moderate) -%}
+    {%- for topic in topics  -%}
       {%- if not topic.hidden or can_moderate %}
       {%- set classes = [] %}
       {%- if can_moderate and topic.hidden %}{% do classes.append('hidden') %}{% endif %}

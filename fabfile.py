@@ -22,7 +22,7 @@ env.roledefs.update({
     'static': ['apollo13@lisa.ubuntu-eu.org']
 })
 
-env.repository = 'git@github.com:inyokaproject/inykoa'
+env.repository = 'git@github.com:inyokaproject/inyoka'
 env.target_dir = '~/virtualenv/inyoka'
 
 STATIC_DIRECTORY = '/home/ubuntu_de_static'

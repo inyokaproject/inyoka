@@ -65,6 +65,7 @@ UBUNTU_DISTROS_LEGACY = {
     'server': 'Server',
     'ubuntu': 'Ubuntu',
     'xubuntu': 'Xubuntu',
+    'lubuntu': 'Lubuntu',
     'unity': 'Unity',
 }
 
@@ -75,10 +76,13 @@ UBUNTU_DISTROS = [
     ('server', 'Server'),
     ('ubuntu', 'Ubuntu'),
     ('xubuntu', 'Xubuntu'),
+    ('lubuntu', 'Lubuntu'),
     ('unity', 'Unity'),
 ]
 
 
 VERSION_CHOICES = [('', 'Version')] + \
                   [(v.number, str(v)) for v in filter(lambda v: v.active, UBUNTU_VERSIONS)]
+SIMPLE_VERSION_CHOICES = [(v.number, str(v)) for v
+                          in filter(lambda v: v.active, UBUNTU_VERSIONS)]
 DISTRO_CHOICES = [('', 'Distribution')] + UBUNTU_DISTROS
