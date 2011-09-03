@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-08-14 17:07+0200\n"
+"POT-Creation-Date: 2011-09-03 23:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,39 +32,44 @@ msgstr ""
 #: inyoka/portal/views.py:227
 #, python-format
 msgid ""
-"The username “%(username)s“ was successfully registered. An email with an"
-" activationkey was sent to “%(email)s“."
+"The username “%(username)s“ was successfully registered. An email with "
+"the activation key was sent to “%(email)s“."
 msgstr ""
 
 #: inyoka/portal/views.py:251 inyoka/portal/views.py:1486
+#: inyoka/portal/views.py:1598
 #, python-format
 msgid "The user “%(username)s“ does not exist."
 msgstr ""
 
 #: inyoka/portal/views.py:258
-msgid "You cannot enter an activationkey when you are logged in."
+msgid "You cannot enter an activation key when you are logged in."
 msgstr ""
 
 #: inyoka/portal/views.py:272
 msgid "Your account was anonymized."
 msgstr ""
 
-#: inyoka/portal/views.py:274 inyoka/portal/views.py:297
-#: inyoka/portal/views.py:1293
+#: inyoka/portal/views.py:274 inyoka/portal/views.py:1293
 #, python-format
-msgid "The account “%(username)s“ was already activated."
+msgid "The account of “%(username)s“ was already activated."
 msgstr ""
 
 #: inyoka/portal/views.py:277 inyoka/portal/views.py:287
-msgid "Your activationkey is invalid."
+msgid "Your activation key is invalid."
 msgstr ""
 
 #: inyoka/portal/views.py:283
 msgid "Your account was successfully activated. You can now login."
 msgstr ""
 
+#: inyoka/portal/views.py:297
+#, python-format
+msgid "The account “%(username)s“ was already activated."
+msgstr ""
+
 #: inyoka/portal/views.py:301
-msgid "An email with the activationkey was sent to you."
+msgid "An email with the activation key was sent to you."
 msgstr ""
 
 #: inyoka/portal/views.py:320
@@ -142,11 +146,13 @@ msgstr ""
 
 #: inyoka/portal/views.py:625
 #, python-format
-msgid "You will now not be notfied anymore about activities of “%(username)s“."
+msgid ""
+"From now on you won’t be notfied anymore about activities of "
+"“%(username)s“."
 msgstr ""
 
 #: inyoka/portal/views.py:630
-msgid "You need to be logged in to access your controlpanel"
+msgid "You need to be logged in to access your control panel"
 msgstr ""
 
 #: inyoka/portal/views.py:640
@@ -154,7 +160,7 @@ msgid "You need to be logged in to change your profile"
 msgstr ""
 
 #: inyoka/portal/views.py:657
-msgid "An email was sent to you to confirm your new email address."
+msgid "You’ve been sent an email to confirm your new email address."
 msgstr ""
 
 #: inyoka/portal/views.py:670 inyoka/portal/views.py:981
@@ -166,8 +172,8 @@ msgstr ""
 
 #: inyoka/portal/views.py:678
 msgid ""
-"The used fileformat is not supported, please choose another one for your "
-"avatar."
+"The used file format is not supported, please choose another one for your"
+" avatar."
 msgstr ""
 
 #: inyoka/portal/views.py:692
@@ -187,7 +193,7 @@ msgid "You need to be logged in to change your password."
 msgstr ""
 
 #: inyoka/portal/views.py:788
-msgid "The password does not match your old password."
+msgid "The entered password did not match your old password."
 msgstr ""
 
 #: inyoka/portal/views.py:792
@@ -217,7 +223,7 @@ msgid "The entered password is wrong."
 msgstr ""
 
 #: inyoka/portal/views.py:881
-msgid "Your account was deactivated"
+msgid "Your account was deactivated."
 msgstr ""
 
 #: inyoka/portal/views.py:893
@@ -226,8 +232,8 @@ msgstr ""
 
 #: inyoka/portal/views.py:899
 msgid ""
-"You were redirected to our wiki to change your userpage. To get back, use"
-" can use the link or your browsers \"back\" button."
+"You were redirected to our wiki to change your userpage. To get back, you"
+" can use the link or your browser’s “back“ button."
 msgstr ""
 
 #: inyoka/portal/views.py:962
@@ -272,7 +278,7 @@ msgid ""
 msgstr ""
 
 #: inyoka/portal/views.py:1297
-msgid "The activationmail was resent."
+msgid "The email with the activation key was resent."
 msgstr ""
 
 #: inyoka/portal/views.py:1301 inyoka/portal/views.py:1410
@@ -299,7 +305,7 @@ msgid "The message was deleted."
 msgstr ""
 
 #: inyoka/portal/views.py:1369
-msgid "The message was moved into the trash."
+msgid "The message was moved in the trash."
 msgstr ""
 
 #: inyoka/portal/views.py:1375
@@ -319,7 +325,7 @@ msgid "Restore"
 msgstr ""
 
 #: inyoka/portal/views.py:1383
-msgid "Do you want to delete the message?"
+msgid "Do you really want to delete the message?"
 msgstr ""
 
 #: inyoka/portal/views.py:1384
@@ -333,8 +339,8 @@ msgstr ""
 #: inyoka/portal/views.py:1436
 #, python-format
 msgid ""
-"You were automatically banned because you are probably sending spam. If "
-"this ban is not justified, contact us at %(email)s"
+"You were automatically banned because we suspect you are sending spam. If"
+" this ban is not justified, contact us at %(email)s"
 msgstr ""
 
 #: inyoka/portal/views.py:1451
@@ -359,12 +365,7 @@ msgid "You cannot send messages to this user."
 msgstr ""
 
 #: inyoka/portal/views.py:1510
-msgid "The private message was sent successfully."
-msgstr ""
-
-#: inyoka/portal/views.py:1598
-#, python-format
-msgid "The user “%(username)s“ does not exist"
+msgid "The message was sent successfully."
 msgstr ""
 
 #: inyoka/portal/views.py:1694
@@ -375,7 +376,7 @@ msgid ""
 msgstr ""
 
 #: inyoka/portal/views.py:1711
-msgid "A global team icon was not yet defined"
+msgid "A global team icon was not yet defined."
 msgstr ""
 
 #: inyoka/portal/views.py:1759
