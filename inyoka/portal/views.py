@@ -2033,11 +2033,11 @@ class OpenIdConsumer(Consumer):
             user = UserData.objects.select_related('user').get(
                     key='openid',
                     value=openid_response.identity_url).user
-            if not user.is_banned:
-                flash(_('You have successfully logged in.'), True)
+            if user.is_active:
+                flash(_(u'You have successfully logged in.'), True)
                 user.login(request)
             else:
-                flash(u'Dieser User ist aktuell gebannt!', False)
+                flash(u'Dieser Benutzer ist nicht aktiviert.', False)
         except UserData.DoesNotExist:
             request.session['openid'] = identity_url
             response = HttpResponseRedirect(href('portal', 'openid', 'connect',

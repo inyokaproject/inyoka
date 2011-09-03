@@ -43,6 +43,7 @@
         {% endif %}
       {% endfor %}
     </section>
+    {% if can_post_comment %}
     <section class="write-comment">
       {{ form.errors.text }}
       <form action="{{ article|url }}#new_comment" method="post" id="new_comment">
@@ -63,5 +64,6 @@
         {%- endif %}
       </form>
     </section>
+    {% endif %}
   {%- endif %}
 {% endblock %}

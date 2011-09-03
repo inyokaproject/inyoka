@@ -106,7 +106,7 @@
       <dd>{{ poll_form.options.errors }}</dd>
       {%- endif %}
       {%- for option in options %}
-      <dd class="newtopic_polls_replies">Antwort {{ loop.index }}: <input type="text" name="options" value="{{ option }}" />
+      <dd class="newtopic_polls_replies">Antwort {{ loop.index }}: <input type="text" name="options" maxlength="250" size="40" value="{{ option }}" />
         {%- if loop.last %}
         <input type="submit" name="add_option" value="Weitere Antwort" id="id_add_option" />
         {%- endif -%}

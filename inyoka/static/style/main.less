@@ -1078,20 +1078,23 @@ table.filterable {
   }
 }
 ul.dropdown {
-  width: 200px;
+  width: 225px;
   list-style:none;
   position: relative;
   z-index: 99;
+  border:#f5f5f5 1px solid;
+
   li {
     margin: 0 3px 3px;
   }
+
   ul {
     display: none;
     list-style: none;
   }
+
   > li:first-child {
     a {
-      text-decoration: none;
       padding-left: 15px;
       background-image: url(../img/arrow-down.gif);
       background-position: left;
@@ -1099,18 +1102,21 @@ ul.dropdown {
     }
   }
 }
+
 ul.dropdown:hover {
+  width: 225px;
   margin: 0px;
   background-color: #f5f5f5;
   border:#cccccc 1px solid;
+
   ul {
     display: block;
   }
+
   > li:first-child {
     padding: 0 0 0.5em 0;
     border-bottom: 1px solid #d4d4d4;
     a {
-      text-decoration: underline;
       background-image: url(../img/arrow-up.gif);
     }
   }
@@ -1122,19 +1128,18 @@ div.pathbar_extension, div.dropdown {
   margin: 1px 20px 1px 2px;
   padding: 3px 5px;
 
-  a {
-    text-decoration: none;
-    margin-bottom: 3px;
-    margin-right: 15px;
-  }
-
   a.limited {
-    margin-right: 0px;
+    margin-left: 15px;
+    float: right;
   }
 }
 
 div.pathbar_extension {
   text-align: right;
+
+  a {
+    margin: 3px 10px;
+  }
 
   ul {
     list-style:none;

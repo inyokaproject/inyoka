@@ -22,15 +22,39 @@
     <ul class="dropdown"><li><a href="{{ href('portal', 'search', advanced=True) }}">Erweiterte Suche</a></li><li><ul>
       {%- if forum %}
         {%- if USER.is_authenticated %}
-        <li><a href="{{ href('forum', 'egosearch') }}">Eigene Beiträge</a> (<a href="{{ href('forum', 'egosearch', forum.slug|e) }}" class="limited">nur hier</a>)</li>
-        <li><a href="{{ href('forum', 'topic_author', USER.urlsafe_username|e) }}">Eigene Themen</a> (<a href="{{ href('forum', 'topic_author', USER.urlsafe_username|e, forum.slug|e) }}" class="limited">nur hier</a>)</li>
+          <li>
+            <a href="{{ href('forum', 'egosearch') }}">Eigene Beiträge</a>
+            <a href="{{ href('forum', 'egosearch', forum.slug|e) }}" class="limited">nur hier</a>
+          </li>
+          <li>
+            <a href="{{ href('forum', 'topic_author', USER.urlsafe_username|e) }}">Eigene Themen</a>
+            <a href="{{ href('forum', 'topic_author', USER.urlsafe_username|e, forum.slug|e) }}" class="limited">nur hier</a>
+          </li>
         {%- endif %}
-        <li><a href="{{ href('forum', 'newposts') }}">Neue Beiträge</a> (<a href="{{ href('forum', 'newposts', forum.slug|e) }}" class="limited">nur hier</a>)</li>
-        <li><a href="{{ href('forum', 'unanswered') }}">Unbeantwortete Themen</a> (<a href="{{ href('forum', 'unanswered', forum.slug|e) }}" class="limited">nur hier</a>)</li>
-        <li><a href="{{ href('forum', 'unsolved') }}">Ungelöste Themen</a> (<a href="{{ href('forum', 'unsolved', forum.slug|e) }}" class="limited">nur hier</a>)</li>
-        <li><a href="{{ href('forum', 'last24') }}">24 Stunden</a> (<a href="{{ href('forum', 'last24', forum.slug|e) }}" class="limited">nur hier</a>)</li>
-        <li><a href="{{ href('forum', 'last12') }}">12 Stunden</a> (<a href="{{ href('forum', 'last12', forum.slug|e) }}" class="limited">nur hier</a>)</li>
-        <li><a href="{{ href('forum', 'last6') }}">6 Stunden</a> (<a href="{{ href('forum', 'last6', forum.slug|e) }}" class="limited">nur hier</a>)</li>
+        <li>
+          <a href="{{ href('forum', 'newposts') }}">Neue Beiträge</a>
+          <a href="{{ href('forum', 'newposts', forum.slug|e) }}" class="limited">nur hier</a>
+        </li>
+        <li>
+          <a href="{{ href('forum', 'unanswered') }}">Unbeantwortete Themen</a>
+          <a href="{{ href('forum', 'unanswered', forum.slug|e) }}" class="limited">nur hier</a>
+        </li>
+        <li>
+          <a href="{{ href('forum', 'unsolved') }}">Ungelöste Themen</a>
+          <a href="{{ href('forum', 'unsolved', forum.slug|e) }}" class="limited">nur hier</a>
+        </li>
+        <li>
+          <a href="{{ href('forum', 'last24') }}">24 Stunden</a>
+          <a href="{{ href('forum', 'last24', forum.slug|e) }}" class="limited">nur hier</a>
+        </li>
+        <li>
+          <a href="{{ href('forum', 'last12') }}">12 Stunden</a>
+          <a href="{{ href('forum', 'last12', forum.slug|e) }}" class="limited">nur hier</a>
+        </li>
+        <li>
+          <a href="{{ href('forum', 'last6') }}">6 Stunden</a>
+          <a href="{{ href('forum', 'last6', forum.slug|e) }}" class="limited">nur hier</a>
+        </li>
       {% else %}
         {%- if USER.is_authenticated %}
           <li><a href="{{ href('forum', 'egosearch') }}">Eigene Beiträge</a></li>

@@ -7,8 +7,18 @@ article, aside, details, figure, footer, header, hgroup, menu, nav, section {
   display: block;
 }
 
+ul {
+  list-style-type: disc;
+  padding-left: 25px;
+}
+
 h1, h2, h3 {
   padding: 0.3em 0 0.1em;
+}
+
+h3 {
+  border-bottom: 1px #DDDDDD solid;
+  margin-bottom: 0.5em;
 }
 
 p {
@@ -237,7 +247,122 @@ nav ul li.active, .pagination .active {
   text-shadow: 1px 1px 1px black;
 }
 
-.button.unread {
+.topics .locked {
+  background-image: url('../img/forum_mobile/locked.png');
+  background-position: 15px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported {
+  background-image: url('../img/forum_mobile/reported.png');
+  background-position: 15px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .solved {
+  background-image: url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .poll {
+  background-image: url('../img/forum_mobile/poll.png');
+  background-position: 15px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported.locked {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/locked.png');
+  background-position: 15px bottom, 80px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported.solved {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported.poll {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/poll.png');
+  background-position: 15px bottom, 80px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .solved.locked {
+  background-image: url('../img/forum_mobile/locked.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .solved.poll {
+  background-image: url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .locked.poll {
+  background-image: url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/locked.png');
+  background-position: 15px bottom, 80px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported.solved.locked {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/locked.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom, 145px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported.solved.poll {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom, 145px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .reported.locked.poll {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/locked.png');
+  background-position: 15px bottom, 80px bottom, 145px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .solved.locked.poll {
+  background-image: url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/locked.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom, 145px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .solved.locked.reported.poll {
+  background-image: url('../img/forum_mobile/reported.png'),
+                    url('../img/forum_mobile/poll.png'),
+                    url('../img/forum_mobile/locked.png'),
+                    url('../img/forum_mobile/solved.png');
+  background-position: 15px bottom, 80px bottom, 145px bottom, 210px bottom;
+  background-repeat: no-repeat;
+}
+
+.topics .sticky {
+  background: #E6E4E2 url('../img/forum_mobile/sticky.png') 15px bottom no-repeat;
+}
+
+.topics .hidden {
+  color: #BABABA;
+}
+
+.topics .unread {
   background-color: #F8DAD0;
 }
 
@@ -283,3 +408,18 @@ blockquote {
   background-color: #5E2750 !important;
 }
 
+.userinfo dt {
+  font-weight: bold;
+}
+
+.userinfo dd {
+  margin-bottom: 1em;
+}
+
+.userinfo .hidden {
+  color: #BABABA;
+}
+
+.userinfo.avatar {
+  float: right;
+}

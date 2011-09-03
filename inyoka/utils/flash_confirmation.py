@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from inyoka.utils.decorators import patch_wrapper
-from inyoka.utils.flashing import flash
 from inyoka.utils.http import HttpResponseRedirect, TemplateResponse
-from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 
 def confirm_action(message=None, confirm=None, cancel=None):

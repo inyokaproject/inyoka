@@ -160,6 +160,9 @@ def detail(request, year, month, day, slug):
             return AccessDeniedResponse()
         flash(u'Dieser Artikel ist für reguläre Benutzer nicht sichtbar.')
 
+    if request.method == 'POST' and (not article.comments_enabled or not request.user.is_authenticated):
+        return AccessDeniedResponse()
+
     # clear notification status
     subscribed = Subscription.objects.user_subscribed(request.user, article, clear_notified=True)
 
@@ -585,6 +588,7 @@ def suggest_edit(request):
     A Page to suggest a new ikhaya article.  It just sends an email to the
     ikhaya administrators.
     """
+    preview = None
     if request.method == 'POST':
         form = SuggestArticleForm(request.POST)
         if 'preview' in request.POST:
@@ -602,7 +606,6 @@ def suggest_edit(request):
             return HttpResponseRedirect(href('ikhaya'))
     else:
         form = SuggestArticleForm()
-        preview = None
     return {
         'form': form,
         'preview': preview

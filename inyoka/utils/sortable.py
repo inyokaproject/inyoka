@@ -68,7 +68,6 @@
 """
 from inyoka.utils.urls import href
 from inyoka.utils.flashing import flash
-from inyoka.utils.templating import render_template
 from inyoka.utils.html import escape
 
 

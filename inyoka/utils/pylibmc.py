@@ -9,11 +9,6 @@
 from django.core.cache.backends.memcached import PyLibMCCache
 
 
-try:
-    from pylibmc import Client as PyLibMCClient
-except ImportError:
-    Client = type('Client', (object,), {})
-
 MIN_COMPRESS_LEN = 150000
 
 

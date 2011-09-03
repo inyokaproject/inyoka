@@ -61,7 +61,7 @@ def pre_delete_topic(sender, **kwargs):
 
     # set a new last_post_id because of integrity errors and
     # decrease the topic_count
-    # FIXME: This might set wrong values if the parent forum has topics too 
+    # FIXME: This might set wrong values if the parent forum has topics too
     # and isn't just a category
     last_forum_post = Post.objects.only('id') \
         .filter(forum__id__in=ids) \
