@@ -569,14 +569,14 @@ def do_mv_baustelle(request, name):
                     return HttpResponseRedirect(url_for(page))
             else:
                 flash(u'In der Baustelle befindet sich bereits eine Seite '
-                      u'mit dem Namen „%s”.' % new_name, False)
+                      u'mit dem Namen „%s”.' % data['new_name'], False)
                 return HttpResponseRedirect(url_for(page))
 
             # Create copy (and include box)
             if not discontinued:
                 copy_text = '[[Vorlage(Kopie, %s)]]\n' % name + text
-                copy = Page.objects.create(
-                    name=name, text=copy_text, user=request.user,
+                Page.objects.create(name=name, text=copy_text,
+                    user=request.user,
                     note=u'Kopie; Original in der Baustelle')
             return HttpResponseRedirect(url_for(page))
 
