@@ -24,7 +24,7 @@ from operator import attrgetter
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files.storage import default_storage
-from django.db import models, transaction, connection
+from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
 

@@ -1,9 +1,6 @@
 # encoding: utf-8
-import datetime
 from south.db import db
 from south.v2 import DataMigration
-from django.db import models
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import management
 from inyoka.forum.models import Topic, Forum
 from inyoka.wiki.models import Page

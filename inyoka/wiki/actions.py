@@ -25,7 +25,6 @@ from inyoka.utils.urls import href, url_for
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse, PageNotFound, \
      HttpResponseRedirect, HttpResponse
-from inyoka.utils.feeds import AtomFeed
 from inyoka.utils.flashing import flash
 from inyoka.utils.diff3 import merge
 from inyoka.utils.templating import render_template

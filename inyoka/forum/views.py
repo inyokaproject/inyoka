@@ -17,7 +17,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils.text import truncate_html_words
 from django.db import transaction
-from django.db.models import Q, F, Count
+from django.db.models import Q, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
@@ -246,7 +246,7 @@ def viewtopic(request, topic_slug, page=1):
     attachments = MultiDict((a.post_id, a) for a in
                             Attachment.objects.filter(post__id__in=post_ids))
 
-    # assign the current topic to the posts to prevent 
+    # assign the current topic to the posts to prevent
     # extra queries in check_ownpost_limit.  Also do that
     # with attachments.
     for p in posts:

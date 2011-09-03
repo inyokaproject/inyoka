@@ -1,9 +1,7 @@
 # encoding: utf-8
 import re
-import datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 _re = re.compile(r'  UNIQUE KEY `([a-z0-9_].*?)` \(`[a-z_]+`\),\n')

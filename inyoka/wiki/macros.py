@@ -49,7 +49,6 @@ from inyoka.utils.dates import parse_iso8601, format_datetime, format_time, \
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.parsertools import MultiMap, flatten_iterator
 from inyoka.utils.imaging import get_thumbnail, parse_dimensions
-from inyoka.utils.local import current_request
 
 
 def get_macro(name, args, kwargs):

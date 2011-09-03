@@ -24,7 +24,7 @@ from inyoka.utils.html import escape
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.text import join_pagename, normalize_pagename
 from inyoka.utils.http import templated, PageNotFound, HttpResponseRedirect, \
-    AccessDeniedResponse, HttpResponse
+    AccessDeniedResponse
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.flashing import flash
