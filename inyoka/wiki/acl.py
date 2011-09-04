@@ -178,6 +178,34 @@ def get_privilege_flags(user, page_name, groups=None):
     return privileges
 
 
+def get_all_pages_without_privilege(user, privilege):
+    if user is None:
+        user = User.objects.get_anonymous_user()
+    elif isinstance(user, basestring):
+        user = User.objects.get(user)
+
+    rules = storage.acl
+    if not rules:
+        return {}
+
+    groups = set(x.name for x in user.get_groups())
+    atlist = Page.objects.get_attachment_list()
+    plist = (pn for pn in Page.objects.get_page_list() if pn[:9] != 'Benutzer/' and
+                                                          pn[:10] != 'Baustelle/')
+    username = user.username
+    pages = set()
+
+    for page_name in plist:
+        privs = PRIV_NONE
+        for pattern, subject, add_privs, del_privs in rules:
+            if (subject == username or subject[0] == '@'
+                 and subject[1:] in groups) and pattern.match(page_name):
+                privs = (privs | add_privs) & ~del_privs
+        if privs & privilege == 0:
+            pages.add(page_name)
+    return pages
+
+
 def get_privileges(user, page_name, groups=None):
     """
     Get a dict with the privileges a user has for a page (or doesn't).  `user`
