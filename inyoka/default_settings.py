@@ -91,6 +91,9 @@ EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 
 SEARCH_NODES = []
 
+# Default blocksize to delmit queries to the search index
+SEARCH_INDEX_BLOCKSIZE = 5000
+
 # imagemagick path. leave empty for auto detection
 IMAGEMAGICK_PATH = ''
 

@@ -6,22 +6,6 @@ from inyoka.utils.search import search, Index, DocumentType
 from inyoka.utils.urls import url_for, href
 
 
-class ArticleSearchAuthDecider(object):
-    """Decides whether a user can display a search result or not."""
-
-    def __init__(self, user):
-        self.now = datetime.utcnow()
-        self.priv = user.can('article_read')
-
-    def __call__(self, auth):
-        if not isinstance(auth[1], datetime):
-            # this is a workaround for old data in search-index.
-            auth = list(auth)
-            auth[1] = datetime(auth[1].year, auth[1].month, auth[1].day)
-            auth = tuple(auth)
-        return self.priv or ((not auth[0]) and auth[1] <= self.now)
-
-
 class ArticleDocumentType(DocumentType):
     name = 'article'
     model = Article
@@ -48,6 +32,18 @@ class ArticleDocumentType(DocumentType):
                 'intro': article.simplified_intro,
                 'text': article.simplified_text,
                 'user_url': url_for(article.author)}
+
+    @classmethod
+    def get_objects(cls, docids):
+        related = ('author', 'category')
+        return Article.objects.select_related(*related) \
+                      .filter(id__in=docids).all()
+
+    @classmethod
+    def get_doc_ids(cls):
+        ids = Article.objects.values_list('id', flat=True).all()
+        for id in ids:
+            yield id
 
 
 class IkhayaIndex(Index):

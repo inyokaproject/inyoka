@@ -8,6 +8,7 @@
     :copyright: (c) 2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import datetime
 from functools import partial
 
 from django.conf import settings
@@ -16,6 +17,8 @@ from django.db.models import signals
 from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ANDFilter, \
     ORFilter
 
+from inyoka.utils.terminal import show
+from inyoka.tasks import update_index
 
 
 SIMPLE_TYPES = (int, long, str, list, dict, tuple, bool,
@@ -181,14 +184,15 @@ class SearchSystem(object):
         connection.refresh(self.indices.iterkeys())
 
     def reindex(self):
+        block_size = settings.SEARCH_INDEX_BLOCKSIZE
         self.refresh_indices(True)
         connection = self.get_connection()
         for index in self.indices.itervalues():
             for doctype in index.types:
-                for obj in doctype.model.objects.iterator():
-                    self.store(index, doctype.name, obj, bulk=True)
-            connection.force_bulk()
-        connection.refresh(self.indices.iterkeys())
+                docids = list(doctype.get_doc_ids())
+                for idx in xrange(0, len(docids), block_size):
+                    update_index.delay(docids[idx:idx+block_size],
+                                       doctype.name, index.name)
 
     def search(self, query, indices=None, *args, **kwargs):
         if isinstance(query, basestring):

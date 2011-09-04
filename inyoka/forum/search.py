@@ -54,6 +54,17 @@ class PostDocumentType(DocumentType):
                 'forum_pk': forum.pk,
                 'last_post_url': url_for(post.topic.last_post)}
 
+    @classmethod
+    def get_objects(cls, docids):
+        return Post.objects.select_related('topic', 'author') \
+                           .filter(id__in=docids).all()
+
+    @classmethod
+    def get_doc_ids(cls):
+        pids = Post.objects.values_list('id', flat=True)
+        for pid in pids:
+            yield pid
+
 
 class ForumIndex(Index):
     name = 'forum'
