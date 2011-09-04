@@ -35,7 +35,7 @@ from inyoka.utils.gravatar import get_gravatar
 
 
 UNUSABLE_PASSWORD = '!$!'
-_ANONYMOUS_USER = _SYSTEM_USER = None
+_ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
 DEFAULT_GROUP_ID = 1 # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
     ('admin_panel', u'Portal | darf Administrationsbereich betreten'),
@@ -252,7 +252,6 @@ def send_new_user_password(user):
 class Group(models.Model):
     name = models.CharField('Name', max_length=80, unique=True, db_index=True)
     is_public = models.BooleanField(u'Öffentliches Profil')
-    _default_group = None
     permissions = models.IntegerField('Berechtigungen', default=0)
     icon = models.ImageField('Teamicon', upload_to='portal/team_icons',
                              blank=True, null=True)
@@ -305,9 +304,10 @@ class Group(models.Model):
     @classmethod
     def get_default_group(self):
         """Return a default group for all registered users."""
-        if not Group._default_group:
-            Group._default_group = Group.objects.get(id=DEFAULT_GROUP_ID)
-        return Group._default_group
+        global _DEFAULT_GROUP
+        if not _DEFAULT_GROUP:
+            _DEFAULT_GROUP = Group.objects.get(id=DEFAULT_GROUP_ID)
+        return _DEFAULT_GROUP
 
 
 class UserManager(models.Manager):
