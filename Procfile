@@ -1,2 +1,2 @@
 web: python manage.py runserver
-worker: python manage.py celeryd -l INFO --purge -B --autoscale=4,1
+worker: python manage.py celeryd -l INFO -B --autoscale=4,1
