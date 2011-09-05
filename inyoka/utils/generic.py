@@ -8,9 +8,6 @@
     :copyright: (c) 2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from pyes.highlight import HighLighter
-from pyes.query import MatchAllQuery, StringQuery
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.views.generic import edit, base, list
@@ -25,7 +22,6 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
-from inyoka.utils.search import search
 
 
 
@@ -279,83 +275,3 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
 
 class ListView(LoginMixin, PermissionMixin, BaseListView):
     pass
-
-
-class SearchView(TemplateView):
-    indices = None
-
-    def get_context_data(self, **kwargs):
-        request = self.request
-        c = super(SearchView, self).get_context_data(**kwargs)
-        conn = search_system.get_connection()
-        if request.GET.get('q'):
-            query = StringQuery(request.GET['q'], default_operator='AND')
-        else:
-            query = MatchAllQuery()
-        search = query.search()
-        search.highlight = HighLighter(['<em class="hl">'], ['</em>'])
-        self.search_modifiers(search, query)
-        search_type = 'count' if not request.GET.get('q') else 'query_then_fetch'
-        res = conn.search(search, indices=self.indices, search_type=search_type)
-        try:
-            res._do_search()
-            res.fix_keys()
-            res = res.hits
-        except SearchPhaseExecutionException:
-            res = []
-        c.update({
-            'results': res,
-            'search_form': SearchForm(request.GET)
-        })
-        return c
-
-    def get_template_names(self):
-        name = super(SearchView, self).get_template_names()[0]
-        if self.request.is_ajax():
-            name = name.replace('.html', '.blank.html')
-        return [name]
-
-    def search_modifiers(self, search, query):
-        pass
-
-
-#class ESAutocompleteSettings(AutocompleteSettings):
-#    indices = []
-#    label_field = ''
-#
-#    def __init__(self, id, current_app, **kwargs):
-#        for (k, v) in kwargs.items():
-#            setattr(self, k, v)
-#        self.id = id
-#        self.current_app = current_app
-#        self.path = self.id.replace('.', '/')
-#
-#    def label(self, obj):
-#        return obj['_source'][self.label_field]
-#
-#    def value(self, obj):
-#        return obj['_id']
-#
-#    def view(self, request):
-#        query = request.GET.get('term', None)
-#
-#        if query is None:
-#            raise Http404
-#
-#        if not self.has_permission(request):
-#            return self.forbidden(request)
-#
-#        conn = search_system.get_connection()
-#        query = StringQuery(query)
-#        search = query.search()
-#        res = conn.search(search, indices=self.indices)
-#
-#        data = []
-#        for o in res.hits:
-#            data.append(dict(
-#                id = o['_id'],
-#                value = self.value(o),
-#                label = self.label(o),
-#            ))
-#
-#        return HttpResponse(simplejson.dumps(data), mimetype='application/json')
