@@ -13,19 +13,17 @@ class PostDocumentType(DocumentType):
 
     mapping = {'properties': {
         'pk': {'type': 'integer', 'store': 'yes'},
-        'title': {'type': 'string', 'store': 'yes'},
+        'title': {'type': 'string', 'store': 'yes', 'boost': 4.0},
         'author': {'type': 'string', 'store': 'yes'},
         'author_url': {'type': 'string', 'store': 'yes'},
         'date': {'type': 'date', 'store': 'yes'},
-        'category': {'type': 'string', 'store': 'yes'},
+        'categories': {'type': 'string', 'store': 'yes', 'index_name': 'category'},
         'hidden': {'type': 'boolean', 'store': 'yes'},
         'text': {'type': 'string', 'store': 'yes'},
         'solved': {'type': 'boolean', 'store': 'yes'},
         'version': {'type': 'string', 'store': 'yes'},
-        'url': {'type': 'string', 'store': 'yes'},
         'forum': {'type': 'string', 'store': 'yes'},
         'forum_pk': {'type': 'integer', 'store': 'yes'},
-        'last_post_url': {'type': 'string', 'store': 'yes'}
     }}
 
     @classmethod

@@ -11,6 +11,15 @@ class PageDocumentType(DocumentType):
     name = 'page'
     model = Page
 
+    mapping = {'properties': {
+        'pk': {'type': 'integer', 'store': 'yes'},
+        'title': {'type': 'string', 'store': 'yes', 'boost': 10.0},
+        'author': {'type': 'string', 'store': 'yes'},
+        'date': {'type': 'date', 'store': 'yes'},
+        'text': {'type': 'string', 'store': 'yes', 'boost': 2.0},
+        'blog': {'type': 'string', 'store': 'yes'}
+    }}
+
     @classmethod
     def get_filter(cls, user):
         pages = get_all_pages_without_privilege(user, PRIV_READ)
@@ -22,8 +31,8 @@ class PageDocumentType(DocumentType):
         return {
             'pk': page.pk,
             'title': page.title,
-            'user': user.username,
-            'user_url': url_for(user),
+            'author': user.username,
+            'author_url': url_for(user),
             'date': page.last_rev.change_date,
             'url': url_for(page),
             'text': page.last_rev.text.parse().text,

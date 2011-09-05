@@ -9,15 +9,26 @@ class BlogEntryDocumentType(DocumentType):
     name = 'blog_entry'
     model = Entry
 
+    mapping = {'properties': {
+        'pk': {'type': 'integer', 'store': 'yes'},
+        'title': {'type': 'string', 'store': 'yes', 'boost': 4.0},
+        'author': {'type': 'string', 'store': 'yes'},
+        'date': {'type': 'date', 'store': 'yes'},
+        'intro': {'type': 'string', 'store': 'yes', 'boost': 2.0},
+        'text': {'type': 'string', 'store': 'yes'},
+        'blog': {'type': 'string', 'store': 'yes'}
+    }}
+
     @classmethod
     def get_filter(cls, user):
         return TermFilter('hidden', False)
 
     @classmethod
     def serialize(cls, entry, extra):
-        return {'title': entry.title,
-                'user': entry.blog.name,
-                'user_url': entry.blog.blog_url,
+        return {'pk': entry.pk,
+                'title': entry.title,
+                'author': entry.blog.name,
+                'author_url': entry.blog.blog_url,
                 'date': entry.pub_date,
                 'url': url_for(entry),
                 'blog': entry.blog.name,

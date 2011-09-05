@@ -10,6 +10,16 @@ class ArticleDocumentType(DocumentType):
     name = 'article'
     model = Article
 
+    mapping = {'properties': {
+        'pk': {'type': 'integer', 'store': 'yes'},
+        'title': {'type': 'string', 'store': 'yes', 'boost': 4.0},
+        'author': {'type': 'string', 'store': 'yes'},
+        'date': {'type': 'date', 'store': 'yes'},
+        'intro': {'type': 'string', 'store': 'yes', 'boost': 2.0},
+        'text': {'type': 'string', 'store': 'yes'},
+        'category': {'type': 'string', 'store': 'yes'}
+    }}
+
     @classmethod
     def get_filter(cls, user):
         now = datetime.utcnow()
@@ -23,15 +33,15 @@ class ArticleDocumentType(DocumentType):
     def serialize(cls, article, extra):
         return {'pk': article.pk,
                 'title': article.subject,
-                'user': article.author.username,
+                'author': article.author.username,
+                'author_url': url_for(article.author),
                 'date': article.pub_datetime,
                 'hidden': article.hidden,
                 'category': article.category.slug,
                 'url': url_for(article),
                 'category_url': url_for(article.category),
                 'intro': article.simplified_intro,
-                'text': article.simplified_text,
-                'user_url': url_for(article.author)}
+                'text': article.simplified_text}
 
     @classmethod
     def get_objects(cls, docids):

@@ -755,3 +755,10 @@ class ConfigurationForm(forms.Form):
 class EditStyleForm(forms.Form):
     styles = forms.CharField(label=u'Styles', widget=forms.Textarea(
                              attrs={'rows': 20}), required=False)
+
+
+class SearchForm(forms.Form):
+    q = forms.CharField(label=_('Search'), max_length=100,
+            widget=forms.TextInput(attrs={'placeholder':_('Search'),
+                                          'autocomplete':'off',
+                                          'spellcheck':'off'}))

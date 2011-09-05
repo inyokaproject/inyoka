@@ -1874,6 +1874,18 @@ def open_search(request, app):
     }
 
 
+
+class PortalSearchView(SearchView):
+    template_name = 'portal/search.html'
+    indices = ['wiki', 'forum', 'planet', 'ikhaya']
+
+    def search_modifiers(self, search, query):
+        search.add_highlight('text', number_of_fragments = 0)
+
+
+search = TelSearchView.as_view()
+
+
 @templated('portal/confirm.html')
 def confirm(request, action=None):
     ACTIONS = {
