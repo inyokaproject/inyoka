@@ -28,3 +28,5 @@ GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4B
 # uncomment to activate debug toolbar support
 #MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
 #INSTALLED_APPS += ('debug_toolbar',)
+
+SEARCH_NODES = ['127.0.0.1:9200']
