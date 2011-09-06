@@ -11,10 +11,10 @@ class BlogEntryDocumentType(DocumentType):
 
     mapping = {'properties': {
         'pk': {'type': 'integer', 'store': 'yes'},
-        'title': {'type': 'string', 'store': 'yes', 'boost': 4.0},
+        'title': {'type': 'string', 'store': 'yes'},
         'author': {'type': 'string', 'store': 'yes'},
         'date': {'type': 'date', 'store': 'yes'},
-        'intro': {'type': 'string', 'store': 'yes', 'boost': 2.0},
+        'intro': {'type': 'string', 'store': 'yes'},
         'text': {'type': 'string', 'store': 'yes'},
         'blog': {'type': 'string', 'store': 'yes'}
     }}
