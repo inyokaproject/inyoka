@@ -13,7 +13,7 @@ class PostDocumentType(DocumentType):
 
     mapping = {'properties': {
         'pk': {'type': 'integer', 'store': 'yes'},
-        'title': {'type': 'string', 'store': 'yes', 'boost': 4.0},
+        'title': {'type': 'string', 'store': 'yes', 'boost': 2.0},
         'author': {'type': 'string', 'store': 'yes'},
         'author_url': {'type': 'string', 'store': 'yes'},
         'date': {'type': 'date', 'store': 'yes'},

@@ -13,17 +13,18 @@ class PageDocumentType(DocumentType):
 
     mapping = {'properties': {
         'pk': {'type': 'integer', 'store': 'yes'},
-        'title': {'type': 'string', 'store': 'yes', 'boost': 10.0},
+        'title': {'type': 'string', 'store': 'yes', 'boost': '2.0'},
         'author': {'type': 'string', 'store': 'yes'},
         'date': {'type': 'date', 'store': 'yes'},
-        'text': {'type': 'string', 'store': 'yes', 'boost': 2.0},
+        'text': {'type': 'string', 'store': 'yes'},
         'blog': {'type': 'string', 'store': 'yes'}
     }}
 
     @classmethod
     def get_filter(cls, user):
         pages = get_all_pages_without_privilege(user, PRIV_READ)
-        return NotFilter(TermsFilter('title', pages))
+        return ANDFilter((NotFilter(TermsFilter('title', pages)),
+                          NotFilter(TermsFilter('attachment', True))))
 
     @classmethod
     def serialize(cls, page, extra):
@@ -36,7 +37,8 @@ class PageDocumentType(DocumentType):
             'date': page.last_rev.change_date,
             'url': url_for(page),
             'text': page.last_rev.text.parse().text,
-            'hidden': page.last_rev.deleted
+            'hidden': page.last_rev.deleted,
+            'attachment': page.last_rev.attachment_id is not None
         }
 
     @classmethod
