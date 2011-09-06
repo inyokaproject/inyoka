@@ -1,10 +1,16 @@
-from django.core.management.base import NoArgsCommand
+from optparse import make_option
+from django.core.management.base import BaseCommand
 from inyoka.utils.search import search as search_system, autodiscover
 autodiscover()
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = "Reindexes everything into elasticsearch"
 
-    def handle_noargs(self, **options):
-        search_system.reindex()
+    option_list = BaseCommand.option_list + (
+        make_option('-i', '--index', action='store',
+                    dest='index', default=None),
+    )
+
+    def handle(self, *args, **options):
+        search_system.reindex(options['index'])

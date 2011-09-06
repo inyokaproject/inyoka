@@ -176,18 +176,22 @@ class SearchSystem(object):
         for index in self.indices.itervalues():
             connection.create_index_if_missing(index.name)
             for doctype in index.types:
-                if recreate_mapping:
+                if recreate_mapping == index.name:
                     # delete_mapping deletes data + mapping
                     connection.delete_mapping(index.name, doctype.name)
                 connection.put_mapping(doctype.name, doctype.mapping,
                                        [index.name])
         connection.refresh(self.indices.iterkeys())
 
-    def reindex(self):
+    def reindex(self, index=None):
         block_size = settings.SEARCH_INDEX_BLOCKSIZE
-        self.refresh_indices(True)
+        self.refresh_indices(True if index is not None else index)
         connection = self.get_connection()
-        for index in self.indices.itervalues():
+        if index is None:
+            indices = [self.indices.itervalues()]
+        else:
+            indices = [self.indices[index]]
+        for index in indices:
             for doctype in index.types:
                 docids = list(doctype.get_doc_ids())
                 for idx in xrange(0, len(docids), block_size):
