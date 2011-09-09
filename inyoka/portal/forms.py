@@ -758,7 +758,7 @@ class EditStyleForm(forms.Form):
 
 
 class SearchForm(forms.Form):
-    q = forms.CharField(label=_('Search'), max_length=100,
-            widget=forms.TextInput(attrs={'placeholder':_('Search'),
+    q = forms.CharField(label='Suche', max_length=100,
+            widget=forms.TextInput(attrs={'placeholder': 'Suche',
                                           'autocomplete':'off',
                                           'spellcheck':'off'}))
