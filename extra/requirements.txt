@@ -12,7 +12,6 @@ mercurial==1.8.3
 python-openid==2.2.5
 django-sentry==1.8.5
 django-mobile==0.2.0
-django-nose==0.1.2
 celery==2.2.7
 django-kombu==0.9.4
 django-celery==2.2.4
@@ -21,5 +20,6 @@ django-hosts==0.2
 pyes==0.16
 https://github.com/alex/django-filter/tarball/master/#egg=django-filter
 https://github.com/simonw/django-openid/tarball/master#egg=django-openid
+https://github.com/jbalogh/django-nose/tarball/master#egg=django-nose
 # Because of http://south.aeracode.org/ticket/747 that is already fixed in trunk
 hg+https://bitbucket.org/andrewgodwin/south#egg=django-south

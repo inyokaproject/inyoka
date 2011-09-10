@@ -205,6 +205,13 @@ INSTALLED_APPS = (
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_PLUGINS = [
+    'inyoka.testing.UnitTestPlugin',
+    'inyoka.testing.InyokaElasticPlugin'
+]
+
+NOSE_ARGS = ['--with-unittest']
+
 
 # don't use migrations but just syncdb
 SOUTH_TESTS_MIGRATE = False

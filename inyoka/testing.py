@@ -5,10 +5,13 @@ import logging
 import shutil
 import subprocess
 import tempfile
+import unittest
 
 import nose
 from nose.plugins import Plugin
+from nose.plugins.skip import SkipTest
 import pyes.exceptions
+import pyes.urllib3
 from django.test import TestCase, TransactionTestCase
 
 
@@ -29,6 +32,11 @@ def get_case_class(nose_test):
 
 
 class InyokaElasticPlugin(Plugin):
+    """
+    Starts an ElasticSearch instance to properly test our search.
+    """
+
+    enabled = True
     activation_parameter = "--with-elastic"
     name = "elastic"
     score = 80
@@ -53,7 +61,6 @@ class InyokaElasticPlugin(Plugin):
                 '-D', 'es.http.port=' + hostname.split(':', 1)[-1],
                 ], stdout=open(logfile, 'w'), stderr=subprocess.STDOUT)
 
-        log.info('\n    Starting elasticsearch server')
         start = time.time()
 
         while True:
@@ -62,12 +69,11 @@ class InyokaElasticPlugin(Plugin):
             with open(logfile, 'r') as f:
                 contents = f.read()
                 if 'started' in contents:
-                    log.info(' done.\n  ')
                     return
 
                 if time.time() - start > START_TIMEOUT:
-                    log.error(' failed, log output follows:\n%s' % contents)
-                    raise SystemExit
+                    log.info('ElasticSearch could be started: :\n%s' % contents)
+                    raise SkipTest
 
     def startTest(self, test):
         """Starts the server."""
@@ -96,6 +102,29 @@ class InyokaElasticPlugin(Plugin):
             shutil.rmtree(self.tmpdir)
 
 
+class UnitTestPlugin(Plugin):
+    """
+    Enables unittest compatibility mode (dont test functions, only TestCase
+    subclasses, and only methods that start with [Tt]est).
+    """
+    enabled = True
+    name = "unittest"
+    score = 90
+
+    def wantClass(self, cls):
+        if not issubclass(cls, unittest.TestCase):
+            return False
+
+    def wantMethod(self, method):
+        if not issubclass(method.im_class, unittest.TestCase):
+            return False
+        if not method.__name__.lower().startswith('test'):
+            return False
+
+    def wantFunction(self, function):
+        return False
+
+
 class SearchTestCase(TestCase):
 
     require_search = True
@@ -104,5 +133,6 @@ class SearchTestCase(TestCase):
         self.elastic = pyes.ES(os.environ['ELASTIC_HOSTNAME'])
         try:
             self.elastic.delete_index('_all')
-        except pyes.exceptions.ElasticSearchException:
-            pass
+        except (pyes.exceptions.ElasticSearchException,
+                pyes.urllib3.MaxRetryError):
+            raise SkipTest('No ElasticSearch started')
