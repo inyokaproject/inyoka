@@ -13,22 +13,12 @@ from nose.plugins.skip import SkipTest
 import pyes.exceptions
 import pyes.urllib3
 from django.test import TestCase
+from inyoka.utils.search import autodiscover, SearchSystem
 
 
 START_TIMEOUT = 15
 
 log = logging.getLogger('nose.plugins.elastic')
-
-
-def get_case_class(nose_test):
-    """
-    Extracts the class from the nose tests that depends on whether it's a
-    method test case or a function test case.
-    """
-    if isinstance(nose_test.test, nose.case.MethodTestCase):
-        return nose_test.test.test.im_class
-    else:
-        return nose_test.test.__class__
 
 
 class InyokaElasticPlugin(Plugin):
@@ -73,30 +63,25 @@ class InyokaElasticPlugin(Plugin):
 
                 if time.time() - start > START_TIMEOUT:
                     log.info('ElasticSearch could be started: :\n%s' % contents)
-                    raise SkipTest
+                    return
 
-    def startTest(self, test):
+    def prepareTestRunner(self, test):
         """Starts the server."""
         from django.conf import settings
-        test_case = get_case_class(test)
-
-        if not self.started and getattr(test_case, 'require_search', False):
+        if not self.started:
             # Raises an exception if not.
             settings.TEST_MODE = True
-
+            autodiscover()
             self.start_server()
             self.started = True
-            setattr(test_case, 'search_plugin_started', True)
 
     def stop_server(self):
         self.process.terminate()
         self.process.wait()
 
-    def stopTest(self, test):
+    def finalize(self, result):
         """Stops the server if necessary."""
-        test_case = get_case_class(test)
-        if self.started and \
-           getattr(test_case, 'search_plugin_started', False):
+        if self.started:
             self.stop_server()
             self.started = False
             shutil.rmtree(self.tmpdir)
@@ -127,12 +112,20 @@ class UnitTestPlugin(Plugin):
 
 class SearchTestCase(TestCase):
 
-    require_search = True
-
     def setUp(self):
-        self.elastic = pyes.ES(os.environ['ELASTIC_HOSTNAME'])
+        self.search = SearchSystem(os.environ['ELASTIC_HOSTNAME'])
+        autodiscover()
+        from inyoka.utils.search import search
+        self.search.indices = search.indices
         try:
-            self.elastic.delete_index('_all')
+            self.search.get_connection().delete_index('_all')
         except (pyes.exceptions.ElasticSearchException,
                 pyes.urllib3.MaxRetryError):
             raise SkipTest('No ElasticSearch started')
+
+    def tearDown(self):
+        try:
+            self.search.get_connection().delete_index('_all')
+        except (pyes.exceptions.ElasticSearchException,
+                pyes.urllib3.MaxRetryError):
+            pass

@@ -150,9 +150,10 @@ class SearchSystem(object):
     search interfaces.
     """
 
-    def __init__(self):
-        if not settings.SEARCH_NODES:
+    def __init__(self, server=None):
+        if not settings.SEARCH_NODES and not server:
             raise RuntimeError('You must specify search nodes!')
+        self.server = server or settings.SEARCH_NODES
         self.indices = {}
 
     def register(self, index):
@@ -161,12 +162,15 @@ class SearchSystem(object):
         self.indices[index.name] = index(self)
 
     def store(self, index, type, obj, extra=None, bulk=False):
+        print self.indices
         if isinstance(index, basestring):
             index = self.indices[index]
-        index.store_object(obj, index.type_map[type], extra, bulk=bulk)
+        if isinstance(type, basestring):
+            type = index.type_map[type]
+        index.store_object(obj, type, extra, bulk=bulk)
 
     def get_connection(self, *args, **kwargs):
-        return ES(settings.SEARCH_NODES, *args, **kwargs)
+        return ES(self.server, *args, **kwargs)
 
     def refresh_indices(self, recreate_mapping=False):
         connection = self.get_connection()
@@ -214,7 +218,10 @@ class SearchSystem(object):
         if filters:
             query = FilteredQuery(query, filter=ORFilter(filters))
         search = Search(query=query, *args, **kwargs)
-        return self.get_connection().search(query=search)
+        result = self.get_connection().search(query=search)
+        result._do_search()
+        result.fix_keys()
+        return result
 
 
 def autodiscover():
