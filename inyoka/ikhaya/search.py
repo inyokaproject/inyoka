@@ -1,9 +1,10 @@
 #-*- coding: utf-8 -*-
 from datetime import datetime
-from pyes import TermsFilter, ORFilter, TermFilter
+from pyes import TermFilter, NotFilter, TypeFilter, ANDFilter, \
+    RangeFilter
 from inyoka.ikhaya.models import Article
 from inyoka.utils.search import search, Index, DocumentType
-from inyoka.utils.urls import url_for, href
+from inyoka.utils.urls import url_for
 
 
 class ArticleDocumentType(DocumentType):
@@ -23,7 +24,6 @@ class ArticleDocumentType(DocumentType):
     @classmethod
     def get_filter(cls, user):
         now = datetime.utcnow()
-        priv = user.can('article_read')
         if not user.can('article_read'):
             return NotFilter(TypeFilter('article'))
         return ANDFilter((TermFilter('hidden', False),

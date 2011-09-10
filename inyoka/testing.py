@@ -12,7 +12,7 @@ from nose.plugins import Plugin
 from nose.plugins.skip import SkipTest
 import pyes.exceptions
 import pyes.urllib3
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase
 
 
 START_TIMEOUT = 15

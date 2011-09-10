@@ -22,7 +22,7 @@ from inyoka.portal.models import StaticFile
 from inyoka.wiki.parser import render, parse, RenderContext
 from inyoka.utils.text import slugify
 from inyoka.utils.html import escape, striptags
-from inyoka.utils.urls import href, url_for
+from inyoka.utils.urls import href
 from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone, \
      natural_date, format_time, format_datetime
 from inyoka.utils.local import current_request

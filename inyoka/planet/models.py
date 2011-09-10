@@ -12,7 +12,7 @@ from django.core.cache import cache
 from django.conf import settings
 from django.db import models
 
-from inyoka.utils.urls import href, url_for
+from inyoka.utils.urls import href
 from inyoka.utils.html import striptags
 from inyoka.portal.user import User
 
@@ -100,10 +100,6 @@ class Entry(models.Model):
             return href(*{
                 'hide':     ('planet', 'hide', self.id),
             }[action])
-
-    def save(self, *args, **kwargs):
-        super(Entry, self).save(*args, **kwargs)
-        blog = self.blog
 
     class Meta:
         verbose_name = 'Eintrag'

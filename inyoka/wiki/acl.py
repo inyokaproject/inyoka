@@ -189,7 +189,6 @@ def get_all_pages_without_privilege(user, privilege):
         return {}
 
     groups = set(x.name for x in user.get_groups())
-    atlist = Page.objects.get_attachment_list()
     plist = (pn for pn in Page.objects.get_page_list() if pn[:9] != 'Benutzer/' and
                                                           pn[:10] != 'Baustelle/')
     username = user.username

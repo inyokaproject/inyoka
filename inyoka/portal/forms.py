@@ -11,15 +11,11 @@
 import datetime
 import Image
 from django import forms
-from django.conf import settings
 from django.core.validators import EMPTY_VALUES
 from django.utils.safestring import mark_safe
 from django.db.models import Count
 
 from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
-from inyoka.forum.acl import filter_invisible
-from inyoka.forum.models import Forum
-from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href, is_safe_domain

@@ -1,10 +1,10 @@
 #-*- coding: utf-8 -*-
-from pyes import TermsFilter, NotFilter
+from pyes import TermsFilter, NotFilter, ANDFilter
 from inyoka.utils.search import search, Index, DocumentType
 from inyoka.wiki.acl import get_all_pages_without_privilege, PRIV_READ
 from inyoka.wiki.models import Page
 from inyoka.portal.user import User
-from inyoka.utils.urls import url_for, href
+from inyoka.utils.urls import url_for
 
 
 class PageDocumentType(DocumentType):

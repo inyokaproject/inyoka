@@ -101,7 +101,7 @@ from inyoka.utils.highlight import highlight_code
 from inyoka.utils.templating import render_template
 from inyoka.utils.parsertools import MultiMap
 from inyoka.utils.local import current_request
-from inyoka.utils.html import escape, striptags
+from inyoka.utils.html import escape
 from inyoka.utils.text import join_pagename, get_pagetitle, normalize_pagename
 from inyoka.utils.diff3 import generate_udiff, prepare_udiff, \
     get_close_matches

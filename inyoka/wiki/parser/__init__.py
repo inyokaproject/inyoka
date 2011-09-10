@@ -133,7 +133,6 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-import unicodedata
 from functools import partial
 from urlparse import urlsplit
 

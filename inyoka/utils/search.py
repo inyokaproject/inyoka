@@ -8,16 +8,13 @@
     :copyright: (c) 2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import datetime
 from functools import partial
 
 from django.conf import settings
 from django.db.models import signals
 
-from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ANDFilter, \
-    ORFilter
+from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ORFilter
 
-from inyoka.utils.terminal import show
 from inyoka.tasks import update_index
 
 
@@ -186,7 +183,6 @@ class SearchSystem(object):
     def reindex(self, index=None):
         block_size = settings.SEARCH_INDEX_BLOCKSIZE
         self.refresh_indices(True if index is not None else index)
-        connection = self.get_connection()
         if index is None:
             indices = [self.indices.itervalues()]
         else:
