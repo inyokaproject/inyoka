@@ -49,7 +49,7 @@ class PostDocumentType(DocumentType):
                 'version': post.topic.get_version_info(default=None),
                 'url': href('forum', 'post', post.pk),
                 'forum': forum.name,
-                'forum_pk': forum.pk,
+                'forum_slug': forum.slug,
                 'last_post_url': url_for(post.topic.last_post)}
 
     @classmethod
