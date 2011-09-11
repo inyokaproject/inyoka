@@ -1,5 +1,7 @@
 #-*- coding: utf-8 -*-
 from django.core.cache import cache
+from django.db import router
+from django.contrib.admin.util import NestedObjects
 from django.test import TestCase, TransactionTestCase
 
 from inyoka.forum.models import Forum, Topic, Post
@@ -7,7 +9,7 @@ from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
 
 
-class TestForumModel(TestCase):
+class TestForumModel(TransactionTestCase):
 
     def setUp(self):
         self.parent1 = Forum(name='This is a test')
@@ -16,6 +18,11 @@ class TestForumModel(TestCase):
         self.parent2.save()
         self.forum = Forum(name='This rocks damnit', parent=self.parent2)
         self.forum.save()
+
+    def tearDown(self):
+        collector = NestedObjects(using=router.db_for_write(Forum))
+        collector.collect((self.forum, self.parent2, self.parent1))
+        collector.delete()
 
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
@@ -76,6 +83,7 @@ class TestForumModel(TestCase):
         self.assertEqual(cache.get('forum/forums/yeha'), None)
         self.assertEqual(Forum.objects.get_all_forums_cached(), new_map)
         self.assertEqual(cache.get('forum/forums/yeha'), new_forum)
+        new_forum.delete()
 
 
 class TestPostSplit(TransactionTestCase):
@@ -103,6 +111,11 @@ class TestPostSplit(TransactionTestCase):
         self.topic1.posts.add(self.lp1)
         self.fp2 = Post(text=u'test4', author=self.user)
         self.topic2.posts.add(self.fp2)
+
+    def tearDown(self):
+        collector = NestedObjects(using=router.db_for_write(Forum))
+        collector.collect((self.forum, self.forum2, self.category))
+        collector.delete()
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
@@ -165,6 +178,12 @@ class TestPostSplit(TransactionTestCase):
         post_ids = [p.pk for p in list(posts)]
         self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
 
+        # cleanup
+        #
+        collector = NestedObjects(using=router.db_for_write(Forum))
+        collector.collect((new_topic,))
+        collector.delete()
+
     def test_split_post_remove_topic(self):
         posts = Post.objects.filter(text__in=(u'test1', u'test2', u'test3')).all()
         Post.split(posts, self.topic1, self.topic2)
@@ -180,7 +199,7 @@ class TestPostSplit(TransactionTestCase):
         self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
 
 
-class TestPostMove(TestCase):
+class TestPostMove(TransactionTestCase):
 
     def setUp(self):
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
@@ -202,6 +221,11 @@ class TestPostMove(TestCase):
         self.topic1.posts.add(Post(text=u'test2', author=self.user))
         self.topic1.posts.add(Post(text=u'test3', author=self.user))
         self.topic2.posts.add(Post(text=u'test4', author=self.user))
+
+    def tearDown(self):
+        collector = NestedObjects(using=router.db_for_write(Forum))
+        collector.collect((self.forum, self.forum2, self.category))
+        collector.delete()
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
