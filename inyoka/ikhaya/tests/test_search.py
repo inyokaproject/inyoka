@@ -8,19 +8,11 @@ from inyoka.portal.user import User
 
 
 class IkhayaSearchTest(SearchTestCase):
+    fixtures = ['base.json']
 
     def test_ikhaya_index(self):
-        user = User.objects.create_user('test', 'test@bla.com')
-        category = Category.objects.create(name='Testcategory')
-        now = datetime.utcnow()
-        article = Article(author=user, subject=u'Some test article',
-                          intro='Yea!', text=u'And more testing',
-                          public=True,
-                          pub_date=now.date(),
-                          pub_time=now.time(),
-                          category=category)
-        article.save()
+        article = Article.objects.get(slug='well-this-is-some-article')
         self.search.store('ikhaya', 'article', article)
         time.sleep(1)
-        results = self.search.search('test article')
-        self.assertEqual('Yea!', results.hits[0].source.intro.strip())
+        results = self.search.search('some article')
+        self.assertEqual('Some intro', results.hits[0].source.intro.strip())

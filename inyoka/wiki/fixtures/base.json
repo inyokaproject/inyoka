@@ -1,0 +1,323 @@
+[
+  {
+    "pk": 1,
+    "model": "portal.group",
+    "fields": {
+      "is_public": false,
+      "icon": "",
+      "name": "Registriert",
+      "permissions": 0
+    }
+  },
+  {
+    "pk": 1,
+    "model": "portal.user",
+    "fields": {
+      "status": 1,
+      "groups": [],
+      "coordinates_long": null,
+      "skype": "",
+      "jabber": "",
+      "date_joined": "2011-09-11 05:34:16",
+      "sip": "",
+      "launchpad": "",
+      "post_count": 0,
+      "_settings": "(dp1\n.",
+      "gpgkey": "",
+      "website": "",
+      "msn": "",
+      "last_login": "2011-09-11 05:34:16",
+      "location": "",
+      "icq": "",
+      "occupation": "",
+      "new_password_key": null,
+      "_permissions": 0,
+      "username": "anonymous",
+      "coordinates_lat": null,
+      "forum_last_read": 0,
+      "forum_welcome": "",
+      "_primary_group": null,
+      "forum_read_status": "",
+      "wengophone": "",
+      "member_title": null,
+      "password": "!",
+      "interests": "",
+      "email": "anonymous@ubuntuusers.de",
+      "aim": "",
+      "yim": "",
+      "avatar": "",
+      "signature": "",
+      "banned_until": null
+    }
+  },
+  {
+    "pk": 2,
+    "model": "portal.user",
+    "fields": {
+      "status": 1,
+      "groups": [],
+      "coordinates_long": null,
+      "skype": "",
+      "jabber": "",
+      "date_joined": "2011-09-11 05:34:16",
+      "sip": "",
+      "launchpad": "",
+      "post_count": 0,
+      "_settings": "(dp1\n.",
+      "gpgkey": "",
+      "website": "",
+      "msn": "",
+      "last_login": "2011-09-11 05:34:16",
+      "location": "",
+      "icq": "",
+      "occupation": "",
+      "new_password_key": null,
+      "_permissions": 0,
+      "username": "ubuntuusers.de",
+      "coordinates_lat": null,
+      "forum_last_read": 0,
+      "forum_welcome": "",
+      "_primary_group": null,
+      "forum_read_status": "",
+      "wengophone": "",
+      "member_title": null,
+      "password": "!",
+      "interests": "",
+      "email": "system@ubuntuusers.de",
+      "aim": "",
+      "yim": "",
+      "avatar": "",
+      "signature": "",
+      "banned_until": null
+    }
+  },
+  {
+    "pk": 3,
+    "model": "portal.user",
+    "fields": {
+      "status": 1,
+      "groups": [],
+      "coordinates_long": null,
+      "skype": "",
+      "jabber": "",
+      "date_joined": "2011-09-11 05:36:21",
+      "sip": "",
+      "launchpad": "",
+      "post_count": 0,
+      "_settings": "(dp1\n.",
+      "gpgkey": "",
+      "website": "",
+      "msn": "",
+      "last_login": "2011-09-11 08:24:03",
+      "location": "",
+      "icq": "",
+      "occupation": "",
+      "new_password_key": null,
+      "_permissions": 1048575,
+      "username": "admin",
+      "coordinates_lat": null,
+      "forum_last_read": 0,
+      "forum_welcome": "",
+      "_primary_group": null,
+      "forum_read_status": "",
+      "wengophone": "",
+      "member_title": null,
+      "password": "06119$91f004584b44d3f41b9f78dab36220d2193f8259",
+      "interests": "",
+      "email": "webteam@ubuntuusers.de",
+      "aim": "",
+      "yim": "",
+      "avatar": "",
+      "signature": "",
+      "banned_until": null
+    }
+  },
+  {
+    "pk": 1,
+    "model": "portal.sessioninfo",
+    "fields": {
+      "category": null,
+      "subject_type": "anonymous",
+      "key": "154",
+      "action_link": null,
+      "subject_link": null,
+      "subject_text": null,
+      "action": "",
+      "last_change": "2011-09-11 08:24:03"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "portal.sessioninfo",
+    "fields": {
+      "category": null,
+      "subject_type": "team",
+      "key": "user:3",
+      "action_link": null,
+      "subject_link": "http://ubuntuusers.local:8080/user/admin/",
+      "subject_text": "admin",
+      "action": "",
+      "last_change": "2011-09-11 08:28:40"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "portal.storage",
+    "fields": {
+      "value": "",
+      "key": "blocked_hosts"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "portal.storage",
+    "fields": {
+      "value": "8.04 \u201eHardy Heron\u201c",
+      "key": "get_ubuntu_description"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "portal.storage",
+    "fields": {
+      "value": "",
+      "key": "wiki_newpage_template"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "portal.storage",
+    "fields": {
+      "value": "400",
+      "key": "max_signature_length"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "portal.storage",
+    "fields": {
+      "value": "28",
+      "key": "team_icon_height"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "portal.storage",
+    "fields": {
+      "value": "80",
+      "key": "max_avatar_width"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "portal.storage",
+    "fields": {
+      "value": "",
+      "key": "team_icon"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "portal.storage",
+    "fields": {
+      "value": "",
+      "key": "get_ubuntu_link"
+    }
+  },
+  {
+    "pk": 9,
+    "model": "portal.storage",
+    "fields": {
+      "value": "100",
+      "key": "max_avatar_height"
+    }
+  },
+  {
+    "pk": 10,
+    "model": "portal.storage",
+    "fields": {
+      "value": "4",
+      "key": "max_signature_lines"
+    }
+  },
+  {
+    "pk": 11,
+    "model": "portal.storage",
+    "fields": {
+      "value": "",
+      "key": "reported_topics_subscribers"
+    }
+  },
+  {
+    "pk": 12,
+    "model": "portal.storage",
+    "fields": {
+      "value": "",
+      "key": "markup_styles"
+    }
+  },
+  {
+    "pk": 13,
+    "model": "portal.storage",
+    "fields": {
+      "value": "38",
+      "key": "team_icon_width"
+    }
+  },
+  {
+    "pk": 14,
+    "model": "portal.storage",
+    "fields": {
+      "value": "",
+      "key": "global_message"
+    }
+  },
+  {
+    "pk": 15,
+    "model": "portal.storage",
+    "fields": {
+      "value": "Baustelle",
+      "key": "wiki_newpage_root"
+    }
+  },
+  {
+    "pk": 16,
+    "model": "portal.storage",
+    "fields": {
+      "value": "30",
+      "key": "max_avatar_size"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "wiki.text",
+    "fields": {
+      "hash": "08b4c2796f35cd8b5bbbbe4c87a8db8ff922b479",
+      "html_render_instructions": "UychaHRtbFx4MDA8cD5Tb21lIEZhbmN5IHN0YXJ0IHBhZ2UgOi0pPC9wPicKcDAKLg==\n",
+      "value": "Some Fancy start page :-)"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "wiki.page",
+    "fields": {
+      "topic": null,
+      "name": "Startseite",
+      "last_rev": 1
+    }
+  },
+  {
+    "pk": 1,
+    "model": "wiki.revision",
+    "fields": {
+      "remote_addr": "127.0.0.1",
+      "deleted": false,
+      "text": 1,
+      "note": "yea!",
+      "user": 3,
+      "change_date": "2011-09-11 08:26:43",
+      "page": 1,
+      "attachment": null
+    }
+  }
+]
