@@ -21,5 +21,4 @@ class ForumSearchTest(SearchTestCase):
         self.search.store('forum', 'post', post)
         time.sleep(1)
         results = self.search.search('More Fancy')
-        print results.hits
         self.assertEqual('test-sub', results.hits[0].source.forum_slug)

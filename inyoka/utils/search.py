@@ -162,7 +162,6 @@ class SearchSystem(object):
         self.indices[index.name] = index(self)
 
     def store(self, index, type, obj, extra=None, bulk=False):
-        print self.indices
         if isinstance(index, basestring):
             index = self.indices[index]
         if isinstance(type, basestring):
