@@ -113,15 +113,16 @@ class UnitTestPlugin(Plugin):
 class SearchTestCase(TestCase):
 
     def setUp(self):
-        self.search = SearchSystem(os.environ['ELASTIC_HOSTNAME'])
-        autodiscover()
-        from inyoka.utils.search import search
-        self.search.indices = search.indices
         try:
+            self.search = SearchSystem(os.environ['ELASTIC_HOSTNAME'])
+            autodiscover()
+            from inyoka.utils.search import search
+            self.search.indices = search.indices
             self.search.get_connection().delete_index('_all')
         except (pyes.exceptions.ElasticSearchException,
-                pyes.urllib3.MaxRetryError):
-            raise SkipTest('No ElasticSearch started')
+                pyes.urllib3.MaxRetryError,
+                KeyError):
+            raise SkipTest('No ElasticSearch started or environment variables missing')
 
     def tearDown(self):
         try:
