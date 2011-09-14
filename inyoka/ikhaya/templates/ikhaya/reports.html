@@ -33,6 +33,7 @@
           {%- endif %}
           {%- if not report.solved %}
             | <a href="{{ report|url('solve')|e }}" class="action action_solve">Erledigt</a>
+            | <a href="{{ report.article|url('edit')|e }}" class="action action_edit">Artikel bearbeiten</a>
           {%- else %}
             | <a href="{{ report|url('unsolve')|e }}" class="action action_unsolve">Nicht erledigt</a>
           {%- endif %}
