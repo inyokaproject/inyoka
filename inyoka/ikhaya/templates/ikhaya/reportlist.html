@@ -24,8 +24,10 @@
         Gemeldet von <a href="{{ report.author|url|e }}">{{ report.author.username|e }}</a>,
         {{ report.pub_date|specificdatetimeformat(true) }}
         | Betrifft Artikel <a href="{{ report.article|url|e }}">{{ report.article.subject|e }}</a>
-        <span class="admin_link">| <a href="{{ report|url('hide')|e }}" class="action action_hide">Verbergen</a>
-            | <a href="{{ report|url('solve')|e }}" class="action action_solve">Erledigt</a></span>
+        <span class="admin_link">
+            | <a href="{{ report|url('hide')|e }}" class="action action_hide">Verbergen</a>
+            | <a href="{{ report|url('solve')|e }}" class="action action_solve">Erledigt</a>
+            | <a href="{{ report.article|url('edit')|e }}" class="action action_edit">Artikel bearbeiten</a></span>
       </p>
     </div>
   {%- endfor %}
