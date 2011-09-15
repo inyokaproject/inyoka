@@ -867,7 +867,7 @@ def reportlist(request):
         form = ReportListForm()
         _add_field_choices()
 
-    subscribers = storage['reported_topic_subscribers'] or u''
+    subscribers = storage['reported_topics_subscribers'] or u''
     subscribed = str(request.user.id) in subscribers.split(',')
 
     return {
@@ -877,7 +877,7 @@ def reportlist(request):
     }
 
 def reported_topics_subscription(request, mode):
-    subscribers = storage['reported_topic_subscribers'] or u''
+    subscribers = storage['reported_topics_subscribers'] or u''
     users = set(int(i) for i in subscribers.split(',') if i)
 
     if mode == 'subscribe':
