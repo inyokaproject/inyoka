@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-17 00:14+0200\n"
+"POT-Creation-Date: 2011-09-17 00:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -132,14 +132,16 @@ msgid "From now on you won’t be notfied anymore about suggestions."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:706
-msgid "The event with the id %{id}s does not exist, so it can’t be copied"
+msgid ""
+"The event with the id %{id}s could not be used as draft for a new event "
+"because it does not exist."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:719
+#: inyoka/ikhaya/views.py:720
 msgid "The event was saved."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:775
+#: inyoka/ikhaya/views.py:776
 msgid "The event was saved. It will be reviewed by the team soon."
 msgstr ""
 

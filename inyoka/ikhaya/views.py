@@ -703,8 +703,9 @@ def event_edit(request, pk=None):
         try:
             base_event = Event.objects.get(pk=int(request.GET['copy_from']))
         except Event.DoesNotExist:
-            flash(_('The event with the id %{id}s does not exist, so it can’t '
-                    'be copied') % {'id': request.GET['copy_from']}, False)
+            flash(_('The event with the id %{id}s could not be used as draft '
+                    'for a new event because it does not exist.')
+                    % {'id': request.GET['copy_from']}, False)
         else:
             for key in ('name', 'changed', 'created', 'date', 'time', 'enddate',
                 'endtime', 'description', 'author_id', 'location',
