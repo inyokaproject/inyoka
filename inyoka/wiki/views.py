@@ -88,7 +88,7 @@ def redirect_new_page(request):
             options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
-    flash(_('A site with the name “%{title}s“ does already exist.')
+    flash(_('A site with the name “%(title)s“ does already exist.')
             % {'title': escape(page.title)}, True)
     return HttpResponseRedirect(backref)
 
@@ -188,7 +188,7 @@ def feed(request, page_name=None, count=10):
     the given criteria in an atom feed.
     """
     if page_name:
-        feed = AtomFeed(title=_('%{sitename}s wiki – %{pagename}s') % {
+        feed = AtomFeed(title=_('%(sitename)s wiki – %(pagename)s') % {
                                     'sitename': settings.BASE_DOMAIN_NAME,
                                     'pagename': page_name
                                 },
@@ -199,7 +199,7 @@ def feed(request, page_name=None, count=10):
                         icon=href('static', 'img', 'favicon.ico'))
     else:
         #TODO: remove hardcoded (wiki)pages
-        feed = AtomFeed(_('%{sitename}s wiki – last changes')
+        feed = AtomFeed(_('%(sitename)s wiki – last changes')
                           % {'sitename': settings.BASE_DOMAIN_NAME},
                         url=href('wiki', u'Letzte_Änderungen'),
                         feed_url=request.build_absolute_uri(),
@@ -214,18 +214,18 @@ def feed(request, page_name=None, count=10):
 
         if rev.user:
             if rev.deleted:
-                text = _('%{user} had deleted the article “%{article}s“ on '
-                         '%{date}s. Summary: %{summary}s')
+                text = _('%(user) had deleted the article “%(article)s“ on '
+                         '%(date)s. Summary: %(summary)s')
             else:
-                text = _('%{user} had changed the article “%{article}s“ on '
-                         '%{date}s. Summary: %{summary}s')
+                text = _('%(user) had changed the article “%(article)s“ on '
+                         '%(date)s. Summary: %(summary)s')
         else:
             if rev.deleted:
                 text = _('An anonymous user had deleted the article '
-                         '“%{article}s“ on %{date}s. Summary: %{summary}s')
+                         '“%(article)s“ on %(date)s. Summary: %(summary)s')
             else:
                 text = _('An anonymous user had changed the article '
-                         '“%{article}s“ on %{date}s. Summary: %{summary}s')
+                         '“%(article)s“ on %(date)s. Summary: %(summary)s')
 
         kwargs['summary'] = text % {
             'user': rev.user,

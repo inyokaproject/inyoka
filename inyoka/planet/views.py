@@ -106,7 +106,7 @@ def suggest(request):
                 flash(_('No user is registered as a planet administrator.'),
                       False)
                 return HttpResponseRedirect(href('planet'))
-            flash(_('The blog “%{title}“ was suggested') %
+            flash(_('The blog “%(title)“ was suggested') %
                   {'title': escape(form.cleaned_data['name'])}, True)
             return HttpResponseRedirect(href('planet'))
     else:
@@ -117,7 +117,7 @@ def suggest(request):
 @atom_feed(name='planet_feed')
 def feed(request, mode='short', count=10):
     """show the feeds for the planet"""
-    title = _('%{sitename}s planet') % {'sitename': settings.BASE_DOMAIN_NAME}
+    title = _('%(sitename)s planet') % {'sitename': settings.BASE_DOMAIN_NAME}
     feed = AtomFeed(title, url=href('planet'),
                     feed_url=request.build_absolute_uri(),
                     id=href('planet'),
@@ -168,9 +168,9 @@ def hide_entry(request, id):
                 entry.hidden_by = request.user
             entry.save()
             if entry.hidden:
-                msg = _('The entry “%{title}s“ was successfully hidden.')
+                msg = _('The entry “%(title)s“ was successfully hidden.')
             else:
-                msg = _('The entry “%{title}s“ was successfully restored.')
+                msg = _('The entry “%(title)s“ was successfully restored.')
             flash(msg % {'title': entry.title}, success=True)
     else:
         flash(render_template('planet/hide_entry.html', {'entry': entry}))

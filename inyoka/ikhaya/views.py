@@ -272,7 +272,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             raise PageNotFound()
         locked = article.lock(request)
         if locked:
-            flash(_('This article is currently beeing edited by “%{user}s“!')
+            flash(_('This article is currently beeing edited by “%(user)s“!')
                     % {'user': locked }, False)
     else:
         article = None
@@ -292,11 +292,11 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 if suggestion_id:
                     Suggestion.objects.delete([suggestion_id])
                 if new:
-                    flash(_('The article “%{title}s“ was created.')
+                    flash(_('The article “%(title)s“ was created.')
                           % {'title': escape(article.subject)}, True)
                     return HttpResponseRedirect(url_for(article, 'edit'))
                 else:
-                    flash(_('The article “%{title}s“ was saved.')
+                    flash(_('The article “%(title)s“ was saved.')
                           % {'title': escape(article.subject)}, True)
                     cache.delete('ikhaya/article/%s/%s' %
                                  (article.pub_date, article.slug))
@@ -513,7 +513,7 @@ def suggest_assign_to(request, suggestion, username):
     try:
         suggestion = Suggestion.objects.get(id=suggestion)
     except Suggestion.DoesNotExist:
-        flash(_('The suggestion “%{title}s“ does not exist')
+        flash(_('The suggestion “%(title)s“ does not exist')
                 % {'title': suggestion})
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
     if username == '-':
@@ -526,7 +526,7 @@ def suggest_assign_to(request, suggestion, username):
         except User.DoesNotExist:
             raise PageNotFound
         suggestion.save()
-        flash(_('The suggestion was assigned to “%{user}s“.')
+        flash(_('The suggestion was assigned to “%(user)s“.')
                 % {'user': username}, True)
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
@@ -561,8 +561,8 @@ def suggest_delete(request, suggestion):
                         .filter(message=msg, user=recipient)[0]
                     if 'pm_new' in recipient.settings.get('notifications',
                                                           ('pm_new',)):
-                        title = _('New private message from %{user}s: '
-                                  '%{subject}s') % {
+                        title = _('New private message from %(user)s: '
+                                  '%(subject)s') % {
                                       'user': request.user.username,
                                       'subject': msg.subject,
                                   }
@@ -703,7 +703,7 @@ def event_edit(request, pk=None):
         try:
             base_event = Event.objects.get(pk=int(request.GET['copy_from']))
         except Event.DoesNotExist:
-            flash(_('The event with the id %{id}s could not be used as draft '
+            flash(_('The event with the id %(id)s could not be used as draft '
                     'for a new event because it does not exist.')
                     % {'id': request.GET['copy_from']}, False)
         else:
