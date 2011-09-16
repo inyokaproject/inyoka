@@ -332,7 +332,7 @@ def handle_polls(request, topic, poll_ids):
             option.save()
         poll_form = AddPollForm()
         poll_options = ['', '']
-        flash(_('The poll “%(poll)d“ was added.') % {'poll': poll.question},
+        flash(_('The poll “%(poll)s“ was added.') % {'poll': poll.question},
               True)
         poll_ids.append(poll.id)
     elif 'add_option' in request.POST:

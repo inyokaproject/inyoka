@@ -1669,7 +1669,7 @@ def group_edit(request, name=None):
         try:
             group = Group.objects.get(name=name)
         except Group.DoesNotExist:
-            flash(_('The group “%(group)s“ does not exist.'),
+            flash(_('The group “%(group)s“ does not exist.')
                   % {'group': escape(name)}, False)
             return HttpResponseRedirect(href('portal', 'groups'))
         form_class = EditGroupForm

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-17 00:28+0200\n"
+"POT-Creation-Date: 2011-09-17 01:37+0200\n"
 "PO-Revision-Date: 2010-07-18 19:11+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -30,18 +30,21 @@ msgid "No user is registered as a planet administrator."
 msgstr ""
 
 #: inyoka/planet/views.py:109
-msgid "The blog “%{title}“ was suggested"
+msgid "The blog “%(title)“ was suggested"
 msgstr ""
 
 #: inyoka/planet/views.py:120
-msgid "%{sitename}s planet"
+#, python-format
+msgid "%(sitename)s planet"
 msgstr ""
 
 #: inyoka/planet/views.py:171
-msgid "The entry “%{title}s“ was successfully hidden."
+#, python-format
+msgid "The entry “%(title)s“ was successfully hidden."
 msgstr ""
 
 #: inyoka/planet/views.py:173
-msgid "The entry “%{title}s“ was successfully restored."
+#, python-format
+msgid "The entry “%(title)s“ was successfully restored."
 msgstr ""
 

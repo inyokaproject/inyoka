@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-17 01:26+0200\n"
+"POT-Creation-Date: 2011-09-17 01:37+0200\n"
 "PO-Revision-Date: 2010-07-18 19:11+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -22,39 +22,46 @@ msgid "The page could not be created because no sitename was entered"
 msgstr ""
 
 #: inyoka/wiki/views.py:91
-msgid "A site with the name “%{title}s“ does already exist."
+#, python-format
+msgid "A site with the name “%(title)s“ does already exist."
 msgstr ""
 
 #: inyoka/wiki/views.py:191
-msgid "%{sitename}s wiki – %{pagename}s"
+#, python-format
+msgid "%(sitename)s wiki – %(pagename)s"
 msgstr ""
 
 #: inyoka/wiki/views.py:202
-msgid "%{sitename}s wiki – last changes"
+#, python-format
+msgid "%(sitename)s wiki – last changes"
 msgstr ""
 
 #: inyoka/wiki/views.py:217
+#, python-format
 msgid ""
-"%{user} had deleted the article “%{article}s“ on %{date}s. Summary: "
-"%{summary}s"
+"%(user) had deleted the article “%(article)s“ on %(date)s. Summary: "
+"%(summary)s"
 msgstr ""
 
 #: inyoka/wiki/views.py:220
+#, python-format
 msgid ""
-"%{user} had changed the article “%{article}s“ on %{date}s. Summary: "
-"%{summary}s"
+"%(user) had changed the article “%(article)s“ on %(date)s. Summary: "
+"%(summary)s"
 msgstr ""
 
 #: inyoka/wiki/views.py:224
+#, python-format
 msgid ""
-"An anonymous user had deleted the article “%{article}s“ on %{date}s. "
-"Summary: %{summary}s"
+"An anonymous user had deleted the article “%(article)s“ on %(date)s. "
+"Summary: %(summary)s"
 msgstr ""
 
 #: inyoka/wiki/views.py:227
+#, python-format
 msgid ""
-"An anonymous user had changed the article “%{article}s“ on %{date}s. "
-"Summary: %{summary}s"
+"An anonymous user had changed the article “%(article)s“ on %(date)s. "
+"Summary: %(summary)s"
 msgstr ""
 
 #: inyoka/wiki/views.py:239 inyoka/wiki/views.py:242

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-17 00:56+0200\n"
+"POT-Creation-Date: 2011-09-17 01:37+0200\n"
 "PO-Revision-Date: 2010-07-18 19:11+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -30,15 +30,18 @@ msgid "Your comment was created"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:275
-msgid "This article is currently beeing edited by “%{user}s“!"
+#, python-format
+msgid "This article is currently beeing edited by “%(user)s“!"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:295
-msgid "The article “%{title}s“ was created."
+#, python-format
+msgid "The article “%(title)s“ was created."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:299
-msgid "The article “%{title}s“ was saved."
+#, python-format
+msgid "The article “%(title)s“ was saved."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:332
@@ -88,7 +91,8 @@ msgid "The comment was restored"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:516
-msgid "The suggestion “%{title}s“ does not exist"
+#, python-format
+msgid "The suggestion “%(title)s“ does not exist"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:522
@@ -96,7 +100,8 @@ msgid "The suggestion was assigned to nobody."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:529
-msgid "The suggestion was assigned to “%{user}s“."
+#, python-format
+msgid "The suggestion was assigned to “%(user)s“."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:541 inyoka/ikhaya/views.py:586
@@ -104,7 +109,8 @@ msgid "This suggestion does not exist."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:564
-msgid "New private message from %{user}s: %{subject}s"
+#, python-format
+msgid "New private message from %(user)s: %(subject)s"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:578
@@ -132,8 +138,9 @@ msgid "From now on you won’t be notfied anymore about suggestions."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:706
+#, python-format
 msgid ""
-"The event with the id %{id}s could not be used as draft for a new event "
+"The event with the id %(id)s could not be used as draft for a new event "
 "because it does not exist."
 msgstr ""
 
