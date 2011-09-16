@@ -15,11 +15,15 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import os
 from hashlib import sha1
+import os
 from urlparse import urljoin
+
 from django.conf import settings
 from django.utils.encoding import force_unicode
+from django.utils.translation import ungettext
+from django.utils.translation import ugettext as _
+
 from inyoka.utils.html import escape
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.text import join_pagename, normalize_pagename
@@ -72,8 +76,8 @@ def redirect_new_page(request):
         backref = href('wiki', settings.WIKI_MAIN_PAGE)
 
     if not page:
-        flash(u'Die Seite konnte nicht erstellt werden, da kein Seitenname '
-              'angegeben wurde.', success=False)
+        flash(_('The page could not be created because no sitename was '
+                'entered'), True)
         return HttpResponseRedirect(backref)
     if base:
         page = join_pagename(base, "./" + page)
@@ -84,8 +88,8 @@ def redirect_new_page(request):
             options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
-    flash(u'Eine Seite mit dem Namen <a href="%s">%s</a> existiert '
-          u'bereits.' % (url_for(page), escape(page.title)), success=False)
+    flash(_('A site with the name “%{title}s“ does already exist.')
+            % {'title': escape(page.title)}, True)
     return HttpResponseRedirect(backref)
 
 
@@ -184,14 +188,19 @@ def feed(request, page_name=None, count=10):
     the given criteria in an atom feed.
     """
     if page_name:
-        feed = AtomFeed(title=u'ubuntuusers Wiki – %s' % page_name,
+        feed = AtomFeed(title=_('%{sitename}s wiki – %{pagename}s') % {
+                                    'sitename': settings.BASE_DOMAIN_NAME,
+                                    'pagename': page_name
+                                },
                         url=href('wiki', page_name),
                         feed_url=request.build_absolute_uri(),
                         id=href('wiki', page_name),
                         rights=href('portal', 'lizenz'),
                         icon=href('static', 'img', 'favicon.ico'))
     else:
-        feed = AtomFeed(u'ubuntuusers Wiki – Letzte Änderungen',
+        #TODO: remove hardcoded (wiki)pages
+        feed = AtomFeed(_('%{sitename}s wiki – last changes')
+                          % {'sitename': settings.BASE_DOMAIN_NAME},
                         url=href('wiki', u'Letzte_Änderungen'),
                         feed_url=request.build_absolute_uri(),
                         id=href('wiki', u'Letzte_Änderungen'),
@@ -202,19 +211,35 @@ def feed(request, page_name=None, count=10):
 
     for rev in revisions:
         kwargs = {}
-        text = (u'%s hat am %s den Wikiartikel „%s“ %s.%s' % (
-                rev.user or u'Ein anonymer Benutzer', rev.change_date,
-                rev.page.title, rev.deleted and u'gelöscht' or u'geändert',
-                rev.note and (u' Zusammenfassung: \n%s' % rev.note) or ''))
 
-        kwargs['summary'] = text
+        if rev.user:
+            if rev.deleted:
+                text = _('%{user} had deleted the article “%{article}s“ on '
+                         '%{date}s. Summary: %{summary}s')
+            else:
+                text = _('%{user} had changed the article “%{article}s“ on '
+                         '%{date}s. Summary: %{summary}s')
+        else:
+            if rev.deleted:
+                text = _('An anonymous user had deleted the article '
+                         '“%{article}s“ on %{date}s. Summary: %{summary}s')
+            else:
+                text = _('An anonymous user had changed the article '
+                         '“%{article}s“ on %{date}s. Summary: %{summary}s')
+
+        kwargs['summary'] = text % {
+            'user': rev.user,
+            'article': rev.page.title,
+            'date': rev.changed_date,
+            'summary': rev.note or '-',
+        }
         kwargs['summary_type'] = None
         author = rev.user \
             and {'name': rev.user.username, 'uri': url_for(rev.user)} \
-            or u'Anonymous'
+            or _('Anonymous')
         feed.add(
             title=u'%s (%s)' % (
-                rev.user or 'Anonymous',
+                rev.user or _('Anonymous'),
                 format_datetime(rev.change_date),
             ),
             url=url_for(rev),

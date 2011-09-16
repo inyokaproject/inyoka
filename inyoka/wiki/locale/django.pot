@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-03 23:59+0200\n"
+"POT-Creation-Date: 2011-09-17 01:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,4 +16,48 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+
+#: inyoka/wiki/views.py:79
+msgid "The page could not be created because no sitename was entered"
+msgstr ""
+
+#: inyoka/wiki/views.py:91
+msgid "A site with the name “%{title}s“ does already exist."
+msgstr ""
+
+#: inyoka/wiki/views.py:191
+msgid "%{sitename}s wiki – %{pagename}s"
+msgstr ""
+
+#: inyoka/wiki/views.py:202
+msgid "%{sitename}s wiki – last changes"
+msgstr ""
+
+#: inyoka/wiki/views.py:217
+msgid ""
+"%{user} had deleted the article “%{article}s“ on %{date}s. Summary: "
+"%{summary}s"
+msgstr ""
+
+#: inyoka/wiki/views.py:220
+msgid ""
+"%{user} had changed the article “%{article}s“ on %{date}s. Summary: "
+"%{summary}s"
+msgstr ""
+
+#: inyoka/wiki/views.py:224
+msgid ""
+"An anonymous user had deleted the article “%{article}s“ on %{date}s. "
+"Summary: %{summary}s"
+msgstr ""
+
+#: inyoka/wiki/views.py:227
+msgid ""
+"An anonymous user had changed the article “%{article}s“ on %{date}s. "
+"Summary: %{summary}s"
+msgstr ""
+
+#: inyoka/wiki/views.py:239 inyoka/wiki/views.py:242
+msgid "Anonymous"
+msgstr ""
 
