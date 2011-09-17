@@ -439,6 +439,22 @@ class EditUserProfileForm(UserCPProfileForm):
     username = forms.CharField(label=u'Benutzername', max_length=30)
     member_title = forms.CharField(label=u'Benutzer-Titel', required=False)
 
+    def clean_username(self):
+        """
+        Validates that the username is alphanumeric and is not already
+        in use.
+        """
+        data = self.cleaned_data
+        username = data['username']
+        if not is_valid_username(username):
+            raise forms.ValidationError(u'Der Benutzername enthält '
+                                        u'nicht benutzbare Zeichen')
+        if (self.user.username != username and
+            User.objects.filter(username=username).exists()):
+                raise forms.ValidationError(
+                    u'Ein Benutzer mit diesem Namen existiert bereits')
+        return username
+
 
 class EditUserGroupsForm(forms.Form):
     primary_group = forms.CharField(label=u'Primäre Gruppe', required=False,
