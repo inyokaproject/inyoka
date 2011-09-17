@@ -181,14 +181,14 @@ def detail(request, year, month, day, slug):
             if data.get('comment_id') and request.user.can('comment_edit'):
                 c = Comment.objects.get(id=data['comment_id'])
                 c.text = data['text']
-                flash(_('The comment was edited successfully'), True)
+                flash(_('The comment was edited successfully.'), True)
             else:
                 send_subscribe = True
                 c = Comment(text=data['text'])
                 c.article = article
                 c.author = request.user
                 c.pub_date = datetime.utcnow()
-                flash(_('Your comment was created'), True)
+                flash(_('Your comment was created.'), True)
             c.save()
             if send_subscribe:
                 # Send a message to users who subscribed to the article
@@ -432,9 +432,9 @@ def report_update(action, text):
     return do
 
 report_hide = report_update('hide', _('The report was hidden.'))
-report_restore = report_update('restore', _('The report was restored'))
+report_restore = report_update('restore', _('The report was restored.'))
 report_solve = report_update('solve', _('The report was marked as solved.'))
-report_unsolve = report_update('unsolve', _('The report was marked as unsolved'))
+report_unsolve = report_update('unsolve', _('The report was marked as unsolved.'))
 
 @templated('ikhaya/reports.html', modifier=context_modifier)
 def reports(request, year, month, day, slug):
@@ -496,8 +496,8 @@ def comment_update(boolean, text):
     return do
 
 
-comment_hide = comment_update(True, _('The comment was hidden'))
-comment_restore = comment_update(False, _('The comment was restored'))
+comment_hide = comment_update(True, _('The comment was hidden.'))
+comment_restore = comment_update(False, _('The comment was restored.'))
 
 
 @templated('ikhaya/archive.html', modifier=context_modifier)
@@ -513,7 +513,7 @@ def suggest_assign_to(request, suggestion, username):
     try:
         suggestion = Suggestion.objects.get(id=suggestion)
     except Suggestion.DoesNotExist:
-        flash(_('The suggestion “%(title)s“ does not exist')
+        flash(_('The suggestion “%(title)s“ does not exist.')
                 % {'title': suggestion})
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
     if username == '-':
@@ -575,9 +575,9 @@ def suggest_delete(request, suggestion):
 
             cache.delete('ikhaya/suggestion_count')
             s.delete()
-            flash(_('The suggestion was deleted'), True)
+            flash(_('The suggestion was deleted.'), True)
         else:
-            flash(_('The suggestion was not deleted'))
+            flash(_('The suggestion was not deleted.'))
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
     else:
         try:
@@ -608,7 +608,7 @@ def suggest_edit(request):
             suggestion = form.save(request.user)
             cache.delete('ikhaya/suggestion_count')
             flash(_('Thank you, your article suggestion was sent - the team '
-                    'will contact you'), True)
+                    'will contact you.'), True)
 
             # Send a notification message
             send_new_suggestion_notifications(request.user, suggestion)

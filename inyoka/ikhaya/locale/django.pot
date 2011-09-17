@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-17 01:37+0200\n"
+"POT-Creation-Date: 2011-09-17 18:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,11 +22,11 @@ msgid "This article is not visible for regular users."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:184
-msgid "The comment was edited successfully"
+msgid "The comment was edited successfully."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:191
-msgid "Your comment was created"
+msgid "Your comment was created."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:275
@@ -71,7 +71,7 @@ msgid "The report was hidden."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:435
-msgid "The report was restored"
+msgid "The report was restored."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:436
@@ -79,20 +79,20 @@ msgid "The report was marked as solved."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:437
-msgid "The report was marked as unsolved"
+msgid "The report was marked as unsolved."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:499
-msgid "The comment was hidden"
+msgid "The comment was hidden."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:500
-msgid "The comment was restored"
+msgid "The comment was restored."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:516
 #, python-format
-msgid "The suggestion “%(title)s“ does not exist"
+msgid "The suggestion “%(title)s“ does not exist."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:522
@@ -114,11 +114,11 @@ msgid "New private message from %(user)s: %(subject)s"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:578
-msgid "The suggestion was deleted"
+msgid "The suggestion was deleted."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:580
-msgid "The suggestion was not deleted"
+msgid "The suggestion was not deleted."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:593
@@ -126,7 +126,7 @@ msgid "Please login to suggest an article."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:610
-msgid "Thank you, your article suggestion was sent - the team will contact you"
+msgid "Thank you, your article suggestion was sent - the team will contact you."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:673
