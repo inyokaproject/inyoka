@@ -99,14 +99,14 @@ def suggest(request):
             text = render_template('mails/planet_suggest.txt',
                                    form.cleaned_data)
             for user in users:
-                send_mail(_('A new blog was suggested'), text,
+                send_mail(_('A new blog was suggested.'), text,
                           settings.INYOKA_SYSTEM_USER_EMAIL,
                           [user.email])
             if not users:
                 flash(_('No user is registered as a planet administrator.'),
                       False)
                 return HttpResponseRedirect(href('planet'))
-            flash(_('The blog “%(title)“ was suggested') %
+            flash(_('The blog “%(title)s“ was suggested.') %
                   {'title': escape(form.cleaned_data['name'])}, True)
             return HttpResponseRedirect(href('planet'))
     else:
