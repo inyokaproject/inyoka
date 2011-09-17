@@ -389,7 +389,7 @@ class UserCPProfileForm(forms.Form):
         except User.DoesNotExist:
             return email
         else:
-            if other_user.id != current_request.user.id:
+            if other_user.id != self.user.id:
                 raise forms.ValidationError(u'Diese E-Mail-Adresse wird schon verwendet!')
             return email
 
