@@ -962,16 +962,6 @@ def user_edit_profile(request, username):
         form = EditUserProfileForm(request.POST, request.FILES, user=user)
         if form.is_valid():
             data = form.cleaned_data
-            if data['username'] != user.username:
-                try:
-                    User.objects.get(data['username'])
-                except User.DoesNotExist:
-                    user.username = data['username']
-                else:
-                    form.errors['username'] = ErrorList(
-                        [u'Ein Benutzer mit diesem Namen existiert bereits']
-                    )
-        if form.is_valid():
             lat = data.get('coordinates_lat', None)
             long = data.get('coordinates_long', None)
             data['coordinates'] = '%s, %s' % (lat, long) if lat and long else ''
