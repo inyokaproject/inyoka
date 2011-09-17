@@ -214,10 +214,10 @@ def feed(request, page_name=None, count=10):
 
         if rev.user:
             if rev.deleted:
-                text = _('%(user) had deleted the article “%(article)s“ on '
+                text = _('%(user)s had deleted the article “%(article)s“ on '
                          '%(date)s. Summary: %(summary)s')
             else:
-                text = _('%(user) had changed the article “%(article)s“ on '
+                text = _('%(user)s had changed the article “%(article)s“ on '
                          '%(date)s. Summary: %(summary)s')
         else:
             if rev.deleted:

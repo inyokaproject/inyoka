@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-17 01:37+0200\n"
+"POT-Creation-Date: 2011-09-17 17:59+0200\n"
 "PO-Revision-Date: 2010-07-18 19:11+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -19,36 +19,40 @@ msgstr ""
 
 #: inyoka/wiki/views.py:79
 msgid "The page could not be created because no sitename was entered"
-msgstr ""
+msgstr "Die Seite konnte nicht erstellt werden, da kein Seitenname gewählt wurde"
 
 #: inyoka/wiki/views.py:91
 #, python-format
 msgid "A site with the name “%(title)s“ does already exist."
-msgstr ""
+msgstr "Eine Seite mit dem Namen „%(title)s” existiert bereits."
 
 #: inyoka/wiki/views.py:191
 #, python-format
 msgid "%(sitename)s wiki – %(pagename)s"
-msgstr ""
+msgstr "%(sitename)s Wiki – %(pagename)s"
 
 #: inyoka/wiki/views.py:202
 #, python-format
 msgid "%(sitename)s wiki – last changes"
-msgstr ""
+msgstr "%(sitename)s Wiki – Letzte Änderungen"
 
 #: inyoka/wiki/views.py:217
 #, python-format
 msgid ""
-"%(user) had deleted the article “%(article)s“ on %(date)s. Summary: "
+"%(user)s had deleted the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
+"%(user)s hat am %(date)s den Wikiartikel „%(article)s” gelöscht. "
+"Zusammenfassung: %(summary)s"
 
 #: inyoka/wiki/views.py:220
 #, python-format
 msgid ""
-"%(user) had changed the article “%(article)s“ on %(date)s. Summary: "
+"%(user)s had changed the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
+"%(user)s hat am %(date)s den Wikiartikel „%(article)s” geändert. "
+"Zusammenfassung: %(summary)s"
 
 #: inyoka/wiki/views.py:224
 #, python-format
@@ -56,6 +60,8 @@ msgid ""
 "An anonymous user had deleted the article “%(article)s“ on %(date)s. "
 "Summary: %(summary)s"
 msgstr ""
+"Ein anonymer Benutzer hat am %(date)s den Wikiartikel „%(article)s” "
+"gelöscht. Zusammenfassung: %(summary)s"
 
 #: inyoka/wiki/views.py:227
 #, python-format
@@ -63,8 +69,10 @@ msgid ""
 "An anonymous user had changed the article “%(article)s“ on %(date)s. "
 "Summary: %(summary)s"
 msgstr ""
+"Ein anonymer Benutzer hat am %(date)s den Wikiartikel „%(article)s” "
+"geändert. Zusammenfassung: %(summary)s"
 
 #: inyoka/wiki/views.py:239 inyoka/wiki/views.py:242
 msgid "Anonymous"
-msgstr ""
+msgstr "Anonymous"
 
