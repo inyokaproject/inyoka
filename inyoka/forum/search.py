@@ -44,7 +44,7 @@ class PostDocumentType(DocumentType):
                 'title': post.topic.title,
                 'author': post.author.username,
                 'author_url': url_for(post.author),
-                'created': post.pub_date,
+                'date': post.pub_date,
                 'category': categories,
                 'hidden': post.hidden or post.topic.hidden,
                 'text': post.get_text(),
