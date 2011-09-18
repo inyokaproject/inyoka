@@ -9,18 +9,18 @@
 #}
 {%- extends 'portal/overall.html' %}
 
-{% do BREADCRUMB.append('Statische Dateien', href('portal', 'files')) %}
+{% do BREADCRUMB.append(_('Static files'), href('portal', 'files')) %}
 
 {% block content %}
-<h3>Statische Dateien</h3>
-<p><a href="{{ href('portal', 'files', 'new') }}">Neue statische Datei erstellen</a></p>
+<h3>{% trans %}Static files{% endtrans %}</h3>
+<p><a href="{{ href('portal', 'files', 'new') }}">{% trans %}Create new static file{% endtrans %}</a></p>
 {{ pagination.generate(position='right') }}
 <table>
   <thead>
   <tr>
-    <th>{{ table.get_html('identifier', 'Bezeichner') }}</th>
+    <th>{{ table.get_html('identifier', _('Identifier')) }}</th>
     <th>{{ table.get_html('is_ikhaya_icon', 'Ist Ikhaya-Icon') }}</th>
-    <th>Aktionen</th>
+    <th>{% trans %}Actions{% endtrans %}</th>
   </tr>
   </thead>
   <tbody>
@@ -29,13 +29,13 @@
     <td><a href="{{ file|url('edit') }}">{{ file.identifier|e }}</a></td>
     <td>{{ file.is_ikhaya_icon and 'ja' or 'nein' }}</td>
     <td class="actions">
-      <a href="{{ file|url('edit') }}">Bearbeiten</a>
-      <a href="{{ file|url('delete') }}">Löschen</a>
+      <a href="{{ file|url('edit') }}">{% trans %}Edit{% endtrans %}</a>
+      <a href="{{ file|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
     </td>
   </tr>
   {%- else %}
   <tr>
-    <td colspan="3">Es existieren keine statischen Dateien, <a href="{{ href('portal', 'files', 'new') }}">erstelle</a> jetzt die erste!</td>
+    <td colspan="3">{% trans %}There are no static files, create the first one now!{% endtrans %}</td>
   </tr>
   {%- endfor %}
   </tbody>

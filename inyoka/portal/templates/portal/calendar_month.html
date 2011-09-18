@@ -31,7 +31,7 @@
 <table class="calendar_month">
   <tr>
     <th colspan="2">Tag</th>
-    <th>Veranstaltungen</th>
+    <th>{% trans %}Events{% endtrans %}</th>
   </tr>
   {% for day, events in days %}
   <tr {#- #FIXME: if it's weekend today there is only the `today` class, but atm it's not used by the css, so *plonk* :) #}
@@ -57,5 +57,5 @@
   </tr>
   {% endfor %}
 </table>
-<p><a href="{{ href('ikhaya', 'event', 'suggest') }}">Neue Veranstaltung vorschlagen</a></p>
+<p><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest a new event{% endtrans %}</a></p>
 {% endblock %}

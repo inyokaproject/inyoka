@@ -10,21 +10,19 @@
 
 {% extends 'portal/overall.html' %}
 
-{% if action == 'reactivate_user' %}
-  {% set text = 'Hier kannst du deinen Benutzer wiederherstellen, wenn er gelöscht wurde. Bitte beachte, dass das nur einen Monat nach der Löschung möglich ist.' %}
-{% elif action == 'reset_email' %}
-  {% set text = 'Hier kannst du deine E-Mail-Adresse zurücksetzen, wenn sie unbeabsichtigt geändert wurde.' %}
-{% endif %}
-
 {%- block portal_content %}
 {%- if success %}
   <p class="success">{{ success }}</p>
 {%- elif failed %}
   <p class="fail">{{ failed }}</p>
 {%- else %}
-  {%- if text %}<p>{{ text }}</p>{% endif %}
+  {% if action == 'reactivate_user' %}
+    <p>{% trans %}You can restore your account here if you deleted it. Please note that this is only possible one month after the deletion.{% endtrans %}</p>
+  {% elif action == 'reset_email' %}
+    <p>{% trans %}You can reset your e-mail address here if you changed it accidently.{% endtrans %}</p>
+  {% endif %}
   <form method="post" action="">
-    <p>Bitte gib die Zeichenkette, die in der E-Mail enthalten war, hier ein:</p>
+    <p>{% trans %}Please enter the string which was sent to you by e-mail below:{% endtrans %}</p>
     <p><textarea name="data" cols="80" rows="5"></textarea></p>
     <p><input type="submit" value="Absenden" /></p>
   </form>

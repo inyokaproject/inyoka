@@ -272,7 +272,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             raise PageNotFound()
         locked = article.lock(request)
         if locked:
-            flash(_('This article is currently beeing edited by “%(user)s“!')
+            flash(_(u'This article is currently beeing edited by “%(user)s“!')
                     % {'user': locked }, False)
     else:
         article = None
@@ -292,11 +292,11 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 if suggestion_id:
                     Suggestion.objects.delete([suggestion_id])
                 if new:
-                    flash(_('The article “%(title)s“ was created.')
+                    flash(_(u'The article “%(title)s“ was created.')
                           % {'title': escape(article.subject)}, True)
                     return HttpResponseRedirect(url_for(article, 'edit'))
                 else:
-                    flash(_('The article “%(title)s“ was saved.')
+                    flash(_(u'The article “%(title)s“ was saved.')
                           % {'title': escape(article.subject)}, True)
                     cache.delete('ikhaya/article/%s/%s' %
                                  (article.pub_date, article.slug))

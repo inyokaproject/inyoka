@@ -12,10 +12,10 @@
 {% block portal_content %}
   <h3>{% trans %}Who is online?{% endtrans %}</h3>
   <p>
-    {% trans all=sessions.all %}
-      {{ all }} User online:
+    {% trans n=sessions.all %}
+      {{ n }} User online
     {% pluralize %}
-      {{ all }} Users online:
+      {{ n }} Users online
     {% endtrans %}
 
     <br />

@@ -10,7 +10,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.html' %}
-{%- do BREADCRUMB.append('Portal', href('portal'), True) -%}
+{%- do BREADCRUMB.append(_('Portal'), href('portal'), True) -%}
 
 {% block pre_navigation %}
   <div class="container get_ubuntu">
@@ -21,8 +21,8 @@
   </div>
   <div class="container calendar">
     <div class="calendar link">
-      <h3><a href="{{ href('portal', 'calendar') }}">Kalender</a></h3>
-      <span><a href="/calendar/" class="calendar_link">Nächste Veranstaltungen</a></span>
+      <h3><a href="{{ href('portal', 'calendar') }}">{% trans %}Calendar{% endtrans %}</a></h3>
+      <span><a href="/calendar/" class="calendar_link">{% trans %}Upcoming events{% endtrans %}</a></span>
     </div>
     <div class="calendar overview">
     {% if calendar_events %}
@@ -32,9 +32,9 @@
       {%- endfor %}
       </ul>
     {% else %}
-    <p>Keine anstehenden Veranstaltungen.</p>
+    <p>{% trans %}There are no upcoming events.{% endtrans %}</p>
     {% endif %}
-    </div>    
+    </div>
   </div>
 {% endblock %}
 
@@ -62,17 +62,19 @@
     <div class="article">
       <div class="meta">
         {%- if article.pub_datetime == article.updated %}
-        <a href="{{ article|url }}">{{ article.updated|datetimeformat }}</a>
+          <a href="{{ article|url }}">{{ article.updated|datetimeformat }}</a>
         {%- else %}
-        <a href="{{ article|url }}" title="Letzte Aktualisierung {{article.updated|specificdatetimeformat(true) 
-           }} / Erstellt am {{ article.pub_datetime|datetimeformat }}">{{ article.updated|datetimeformat }}</a>
+          <a href="{{ article|url }}" title="{% trans %}Last update:{% endtrans %} {{ article.updated|specificdatetimeformat(true)
+             }} / {% trans %}Created:{% endtrans %} {{ article.pub_datetime|datetimeformat }}">{{ article.updated|datetimeformat }}</a>
         {%- endif %}
         {%- if article.comments_enabled %}
-          <br /><a href="{{ article|url('comments') }}" class="comments">
-          {%- if article.comment_count == 0 %} Keine Kommentare
-          {%- elif article.comment_count == 1 %} Ein Kommentar
-          {%- else %} {{ article.comment_count|hnumber|capitalize }} Kommentare
-          {%- endif %}  
+          <br />
+          <a href="{{ article|url('comments') }}" class="comments">
+            {% trans count=article.comment_count %}
+              {{ count }} comment
+            {% pluralize %}
+              {{ count }} comments
+            {% endtrans %}
           </a>
         {%- endif %}
       </div>
@@ -84,34 +86,4 @@
     {%- endfor %}
   </div>
   {%- endif %}
-  <h3>Wer ist online?</h3>
-  <p>
-    {% trans all=sessions.all %}
-    Momentan ist <strong>{{ all }}</strong> Benutzer online,
-    {% pluralize %}
-    Momentan sind <strong>{{ all }}</strong> Benutzer online,
-    {% endtrans %}
-    davon
-    {% trans registered=sessions.registered %}
-    <strong>{{ registered }}</strong> Angemeldeter
-    {% pluralize %}
-    <strong>{{ registered }}</strong> Angemeldete
-    {% endtrans %}
-    und
-    {% trans guests=sessions.anonymous %}
-    <strong>{{ guests }}</strong> Gast.
-    {% pluralize %}
-    <strong>{{ guests }}</strong> Gäste.
-  {% endtrans %}<br />
-  Der Rekord liegt bei <strong>{{ record }}</strong> Benutzern {{ record_time|specificdatetimeformat(true) }}.
-  </p>
-  <p>Registrierte Benutzer:
-  {% for session in sessions.registered_sessions %}
-    {%- if session.link -%}
-      <a href="{{ session.link|e }}" class="{{ session.type }}">{{ session.text|e }}</a>{% else %}
-      <span class="{{ session.type }}">{{ session.text|e }}</span>{%- endif %}{%- if not loop.last %}, {% endif %}
-  {%- else %}
-    keine
-  {%- endfor %}
-  </p>
 {% endblock %}

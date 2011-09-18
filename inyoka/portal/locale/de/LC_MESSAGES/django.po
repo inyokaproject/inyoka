@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-17 18:19+0200\n"
+"POT-Creation-Date: 2011-09-18 03:45+0200\n"
 "PO-Revision-Date: 2010-07-18 19:12+0100\n"
 "Last-Translator: Florian Apolloner <apollo13@apolloner.eu>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -347,10 +347,12 @@ msgid "Do you really want to delete the message?"
 msgstr "Möchtest du die Nachricht wirklich löschen?"
 
 #: inyoka/portal/views.py:1384
+#: inyoka/portal/templates/portal/files_delete.html:15
 msgid "Delete"
 msgstr "Löschen"
 
 #: inyoka/portal/views.py:1388
+#: inyoka/portal/templates/portal/files_delete.html:16
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -418,6 +420,7 @@ msgid "Please choose"
 msgstr "Bitte auswählen"
 
 #: inyoka/portal/views.py:1832 inyoka/portal/views.py:1839
+#: inyoka/portal/templates/portal/feedselector.html:36
 msgid "All"
 msgstr ""
 
@@ -441,22 +444,85 @@ msgstr "Die Seite „%(page)” wurde erfolgreich bearbeitet."
 msgid "The stylesheet was saved successfully."
 msgstr "Das Stylesheet wurde erfolgreich gespeichert."
 
+#: inyoka/portal/templates/portal/confirm.html:20
+msgid ""
+"You can restore your account here if you deleted it. Please note that "
+"this is only possible one month after the deletion."
+msgstr ""
+
+#: inyoka/portal/templates/portal/confirm.html:22
+msgid "You can reset your e-mail address here if you changed it accidently."
+msgstr ""
+
+#: inyoka/portal/templates/portal/confirm.html:25
+msgid "Please enter the string which was sent to you by e-mail below:"
+msgstr ""
+
+#: inyoka/portal/templates/portal/feedselector.html:19
+#: inyoka/portal/templates/portal/feedselector.html:28
+msgid "Forum"
+msgstr ""
+
+#: inyoka/portal/templates/portal/feedselector.html:21
+#: inyoka/portal/templates/portal/feedselector.html:85
+msgid "Planet"
+msgstr ""
+
+#: inyoka/portal/templates/portal/feedselector.html:22
+#: inyoka/portal/templates/portal/feedselector.html:101
+msgid "Wiki"
+msgstr ""
+
+#: inyoka/portal/templates/portal/feedselector.html:31
+#: inyoka/portal/templates/portal/feedselector.html:69
+#: inyoka/portal/templates/portal/feedselector.html:103
+msgid "What"
+msgstr ""
+
+#: inyoka/portal/templates/portal/feedselector.html:40
+msgid "For the following forum:"
+msgstr ""
+
+#: inyoka/portal/templates/portal/feedselector.html:45
+msgid "For a topic"
+msgstr ""
+
+#: inyoka/portal/templates/portal/feedselector.html:46
+msgid ""
+"Please click on the link in the topic, there are too much topics to list "
+"all of them here"
+msgstr ""
+
+#: inyoka/portal/templates/portal/feedselector.html:51
+#: inyoka/portal/templates/portal/feedselector.html:71
+#: inyoka/portal/templates/portal/feedselector.html:87
+msgid "How"
+msgstr ""
+
+#: inyoka/portal/templates/portal/files_delete.html:12
+#, fuzzy, python-format
+msgid ""
+"\n"
+"    Do you really want to delete the file “%(file)s“?\n"
+"  "
+msgstr "Möchtest du die Nachricht wirklich löschen?"
+
 #: inyoka/portal/templates/portal/whoisonline.html:13
 msgid "Who is online?"
 msgstr "Wer ist gerade angemeldet?"
 
 #: inyoka/portal/templates/portal/whoisonline.html:15
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
-"      %(all)s User online:\n"
+"      %(n)s User online\n"
 "    "
 msgid_plural ""
 "\n"
-"      %(all)s Users online:\n"
+"      %(n)s Users online\n"
 "    "
-msgstr[0] "%(all)s Benutzer angemeldet:"
-msgstr[1] "%(all)s Benutzer angemeldet:"
+msgstr[0] "%(n)s Benutzer angemeldet:"
+msgstr[1] "%(n)s Benutzer angemeldet:"
 
 #: inyoka/portal/templates/portal/whoisonline.html:23
 #, python-format
