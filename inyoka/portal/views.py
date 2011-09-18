@@ -2141,9 +2141,9 @@ def page_edit(request, page=None):
             if 'send' in request.POST:
                 page = form.save()
                 if new:
-                    msg = _('The page “%(page)“ was created successfully.')
+                    msg = _(u'The page “%(page)“ was created successfully.')
                 else:
-                    msg = _('The page “%(page)“ was changed successfully.')
+                    msg = _(u'The page “%(page)“ was changed successfully.')
                 flash(msg % {'page': page.title}, True)
                 return HttpResponseRedirect(href('portal', page.key))
     else:

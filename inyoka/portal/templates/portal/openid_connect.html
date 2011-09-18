@@ -10,13 +10,16 @@
 {% from 'macros.html' import render_form %}
 
 {%- block portal_content %}
-  <h3>OpenID verknüpfen</h3>
-  <p>Zu deiner OpenID ({{ openid }}) existiert noch keine Benutzerzuordnung. Logg dich bitte nun mit deinem Benutzernamen und Passwort ein um die OpenID zuzuordnen:</p>
+  <h3>{% trans %}Connect OpenID{% endtrans %}</h3>
+  <p>{% trans %}
+    There is no account with this OpenID (“{{ openid }}“). Please log in with
+    your username and password to connect the OpenID with your account:
+  {% endtrans %}</p>
   {% include 'portal/login_text.html' with context %}
   <form method="post" action="">
-  <div>
-    {{ render_form(form, ['username', 'password'])  }}
-    <input type="submit" id="login" value="Verknüpfen" />
-  </div>
+    <div>
+      {{ render_form(form, ['username', 'password'])  }}
+      <input type="submit" id="login" value="{% trans %}Connect{% endtrans %}" />
+    </div>
   </form>
 {% endblock %}

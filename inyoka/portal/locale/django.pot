@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-18 03:45+0200\n"
+"POT-Creation-Date: 2011-09-18 21:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -322,6 +322,7 @@ msgid "Do you want to restore the message?"
 msgstr ""
 
 #: inyoka/portal/views.py:1381
+#: inyoka/portal/templates/portal/privmsg/index.m.html:55
 msgid "Restore"
 msgstr ""
 
@@ -331,6 +332,7 @@ msgstr ""
 
 #: inyoka/portal/views.py:1384
 #: inyoka/portal/templates/portal/files_delete.html:15
+#: inyoka/portal/templates/portal/privmsg/index.m.html:57
 msgid "Delete"
 msgstr ""
 
@@ -439,6 +441,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/feedselector.html:19
 #: inyoka/portal/templates/portal/feedselector.html:28
+#: inyoka/portal/templates/portal/overall.html:49
 msgid "Forum"
 msgstr ""
 
@@ -486,8 +489,135 @@ msgid ""
 "  "
 msgstr ""
 
+#: inyoka/portal/templates/portal/index.m.html:18
+msgid "Messages"
+msgstr ""
+
+#: inyoka/portal/templates/portal/index.m.html:19
+msgid "Subscriptions"
+msgstr ""
+
+#: inyoka/portal/templates/portal/login_text.html:4
+#: inyoka/portal/templates/portal/login_text.m.html:4
+#, python-format
+msgid ""
+"\n"
+"        Login failed because the password for the user “%(name)s“\n"
+"        was wrong or the user does not exist.\n"
+"      "
+msgstr ""
+
+#: inyoka/portal/templates/portal/login_text.html:11
+#: inyoka/portal/templates/portal/login_text.m.html:11
+#, python-format
+msgid ""
+"\n"
+"        Login failed because the user “%(name)s“ is currently banned.\n"
+"        You were informed about that. If you don’t agree with the ban or "
+"if it\n"
+"        is a mistake, please contact <a href=\"%(mailto)s\">%(mail)s</a>."
+"\n"
+"      "
+msgstr ""
+
+#: inyoka/portal/templates/portal/login_text.html:20
+#: inyoka/portal/templates/portal/login_text.m.html:20
+#, python-format
+msgid ""
+"\n"
+"        Login failed because the user “%(name)s“ is inactive. You "
+"probably\n"
+"        didn’t click on the link in the activation mail which was sent to"
+" you\n"
+"        after your registration. If you didn’t received that mail, you "
+"can\n"
+"        <a href=\"%(resend)s\">request a new one</a>. If it is still not "
+"working,\n"
+"        contact us: <a href=\"%(mailto)s\">%(mail)s</a>\n"
+"      "
+msgstr ""
+
+#: inyoka/portal/templates/portal/openid_connect.html:13
+msgid "Connect OpenID"
+msgstr ""
+
+#: inyoka/portal/templates/portal/openid_connect.html:14
+#, python-format
+msgid ""
+"\n"
+"    There is no account with this OpenID (“%(openid)s“). Please log in "
+"with\n"
+"    your username and password to connect the OpenID with your account:\n"
+"  "
+msgstr ""
+
+#: inyoka/portal/templates/portal/openid_connect.html:22
+msgid "Connect"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:33
+msgid "FAQ"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:34
+msgid "Downloads"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:36
+msgid "Calendar"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:41
+msgid "Memberlist"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:42
+msgid "Grouplist"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:44
+msgid "Contact"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:45
+msgid "Search"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:47
 #: inyoka/portal/templates/portal/whoisonline.html:13
 msgid "Who is online?"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:62
+msgid "Suggest an article"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:63
+msgid "Suggest an event"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:67
+msgid "Suggest a blog"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:70
+msgid "Configuration"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:73
+msgid "General"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:76
+msgid "Stylesheets"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:79
+msgid "Static pages"
+msgstr ""
+
+#: inyoka/portal/templates/portal/overall.html:82
+msgid "Static files"
 msgstr ""
 
 #: inyoka/portal/templates/portal/whoisonline.html:15
@@ -559,5 +689,72 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/whoisonline.html:58
 msgid "Members with green usernames belong to the team."
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:16
+msgid "Inbox"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:19
+msgid "Sent mail"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:22
+#: inyoka/portal/templates/portal/privmsg/index.m.html:56
+msgid "Archive"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:25
+msgid "Trash"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:28
+msgid "Compose mail"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:33
+msgid "« Back"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:35
+#, python-format
+msgid "Message from %(name)s"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:39
+msgid "To:"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:50
+msgid "Reply"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:52
+msgid "Reply to all"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:54
+msgid "Forward"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:61
+msgid "« Messages"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/index.m.html:66
+#, python-format
+msgid ""
+"\n"
+"              %(subject)s from %(author)s\n"
+"            "
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/new.m.html:23
+#: inyoka/portal/templates/portal/privmsg/new.m.html:29
+msgid "Preview"
+msgstr ""
+
+#: inyoka/portal/templates/portal/privmsg/new.m.html:24
+msgid "Send"
 msgstr ""
 

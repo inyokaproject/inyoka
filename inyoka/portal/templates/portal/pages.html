@@ -9,34 +9,36 @@
 #}
 {%- extends 'portal/overall.html' %}
 
-{% do BREADCRUMB.append("Statische Seiten", href('portal', 'pages'), True) %}
+{% do BREADCRUMB.append(_('Static pages'), href('portal', 'pages'), True) %}
 
 {% block content %}
-<h3>Statische Seiten</h3>
+<h3>{% trans %}Static pages{% endtrans %}</h3>
+<p><a href="{{ href('portal', 'page', 'new') }}">{% trans %}Create a new page{% endtrans %}</a></p>
 <table class="static_pages">
   <thead>
-  <tr>
-    <th>{{ table.get_html('key', 'Schlüssel') }}</th>
-    <th>{{ table.get_html('title', 'Titel') }}</th>
-    <th>Aktionen</th>
-  </tr>
+    <tr>
+      <th>{{ table.get_html('key', _('Key')) }}</th>
+      <th>{{ table.get_html('title', _('Title')) }}</th>
+      <th>{% trans %}Actions{% endtrans %}</th>
+    </tr>
   </thead>
   <tbody>
-  {%- for page in object_list %}
-  <tr>
-    <td class="pagekey"><a href="{{ page|url }}">{{ page.key }}</a></td>
-    <td class="title">{{ page.title }}</td>
-    <td class="actions">
-      <a href="{{ page|url('edit') }}">Bearbeiten</a>
-      <a href="{{ page|url('delete') }}">Löschen</a>
-    </td>
-  </tr>
-  {%- else %}
-  <tr>
-    <td colspan="3">Es existieren keine statischen Seiten, <a href="{{ href('portal', 'page', 'new') }}">erstelle</a> jetzt die erste!</td>
-  </tr>
-  {%- endfor %}
+    {%- for page in object_list %}
+      <tr>
+        <td class="pagekey"><a href="{{ page|url }}">{{ page.key }}</a></td>
+        <td class="title">{{ page.title }}</td>
+        <td class="actions">
+          <a href="{{ page|url('edit') }}">{% trans %}Edit{% endtrans %}</a>
+          <a href="{{ page|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
+        </td>
+      </tr>
+    {%- else %}
+      <tr>
+        <td colspan="3">
+          {% trans %}There are no static pages, create the first one now!{% endtrans %}
+        </td>
+      </tr>
+    {%- endfor %}
   </tbody>
 </table>
-<a href="{{ href('portal', 'page', 'new') }}">Neue Seite erstellen</a>
 {% endblock %}

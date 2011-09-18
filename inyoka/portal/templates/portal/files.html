@@ -13,31 +13,33 @@
 
 {% block content %}
 <h3>{% trans %}Static files{% endtrans %}</h3>
-<p><a href="{{ href('portal', 'files', 'new') }}">{% trans %}Create new static file{% endtrans %}</a></p>
 {{ pagination.generate(position='right') }}
-<table>
+<p><a href="{{ href('portal', 'files', 'new') }}">{% trans %}Create new static file{% endtrans %}</a></p>
+<table class="static_files">
   <thead>
-  <tr>
-    <th>{{ table.get_html('identifier', _('Identifier')) }}</th>
-    <th>{{ table.get_html('is_ikhaya_icon', 'Ist Ikhaya-Icon') }}</th>
-    <th>{% trans %}Actions{% endtrans %}</th>
-  </tr>
+    <tr>
+      <th>{{ table.get_html('identifier', _('Identifier')) }}</th>
+      <th>{{ table.get_html('is_ikhaya_icon', 'Ist Ikhaya-Icon') }}</th>
+      <th>{% trans %}Actions{% endtrans %}</th>
+    </tr>
   </thead>
   <tbody>
-  {%- for file in object_list %}
-  <tr>
-    <td><a href="{{ file|url('edit') }}">{{ file.identifier|e }}</a></td>
-    <td>{{ file.is_ikhaya_icon and 'ja' or 'nein' }}</td>
-    <td class="actions">
-      <a href="{{ file|url('edit') }}">{% trans %}Edit{% endtrans %}</a>
-      <a href="{{ file|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
-    </td>
-  </tr>
-  {%- else %}
-  <tr>
-    <td colspan="3">{% trans %}There are no static files, create the first one now!{% endtrans %}</td>
-  </tr>
-  {%- endfor %}
+    {%- for file in object_list %}
+      <tr>
+        <td><a href="{{ file|url('edit') }}">{{ file.identifier|e }}</a></td>
+        <td>{{ file.is_ikhaya_icon and 'ja' or 'nein' }}</td>
+        <td class="actions">
+          <a href="{{ file|url('edit') }}">{% trans %}Edit{% endtrans %}</a>
+          <a href="{{ file|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
+        </td>
+      </tr>
+    {%- else %}
+      <tr>
+        <td colspan="3">
+          {% trans %}There are no static files, create the first one now!{% endtrans %}
+        </td>
+      </tr>
+    {%- endfor %}
   </tbody>
 </table>
 {{ pagination.generate(position='right') }}
