@@ -23,6 +23,8 @@ class PageDocumentType(DocumentType):
     @classmethod
     def get_filter(cls, user):
         pages = get_all_pages_without_privilege(user, PRIV_READ)
+        if not pages:
+            return NotFilter(TermsFilter('attachment', True))
         return ANDFilter((NotFilter(TermsFilter('title', pages)),
                           NotFilter(TermsFilter('attachment', True))))
 
