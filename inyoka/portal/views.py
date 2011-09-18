@@ -2095,3 +2095,11 @@ def styles(request):
     return {
         'form': form
     }
+
+
+class SearchView(generic.SearchView):
+    template_name = 'portal/search.html'
+    indices = ['forum', 'wiki', 'planet', 'ikhaya']
+
+
+search = SearchView.as_view()

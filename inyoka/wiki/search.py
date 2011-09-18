@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-from pyes import TermsFilter, NotFilter, ANDFilter
+from pyes import TermsFilter, NotFilter, ANDFilter, FieldQuery
 from inyoka.utils.search import search, Index, DocumentType
 from inyoka.wiki.acl import get_all_pages_without_privilege, PRIV_READ
 from inyoka.wiki.models import Page
@@ -25,6 +25,12 @@ class PageDocumentType(DocumentType):
         pages = get_all_pages_without_privilege(user, PRIV_READ)
         return ANDFilter((NotFilter(TermsFilter('title', pages)),
                           NotFilter(TermsFilter('attachment', True))))
+
+    @classmethod
+    def get_boost_query(cls, original_query):
+        query = FieldQuery(boost=100)
+        query.add('title', original_query)
+        return query
 
     @classmethod
     def serialize(cls, page, extra):

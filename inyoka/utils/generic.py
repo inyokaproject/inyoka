@@ -9,7 +9,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404
+from django.http import Http404, HttpResponse
+from django.utils import simplejson
 from django.views.generic import edit, base, list
 from django.utils.translation import ugettext as _
 
@@ -22,7 +23,11 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
+from inyoka.utils.search import search as search_system
 
+from pyes.exceptions import SearchPhaseExecutionException
+from pyes.highlight import HighLighter
+from pyes.query import MatchAllQuery, StringQuery
 
 
 class TemplateResponseMixin(base.TemplateResponseMixin):
@@ -39,6 +44,10 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
         """
         template_name = self.get_template_names()[0]
         return self.response_class(template_name=template_name, context=context)
+
+
+class TemplateView(TemplateResponseMixin, base.TemplateView):
+    pass
 
 
 class EditMixin(object):
@@ -275,3 +284,39 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
 
 class ListView(LoginMixin, PermissionMixin, BaseListView):
     pass
+
+
+class SearchView(LoginMixin, TemplateView):
+    indices = None
+
+    def get_context_data(self, **kwargs):
+        from inyoka.portal.forms import SearchForm
+        request = self.request
+        c = super(SearchView, self).get_context_data(**kwargs)
+        conn = search_system.get_connection()
+        query = search_system.parse_query(request.GET.get('query', ''))
+        search = query.search()
+        search.highlight = HighLighter(['<em class="hl">'], ['</em>'])
+        self.search_modifiers(search, query)
+        search_type = 'count' if not request.GET.get('query') else 'query_then_fetch'
+        res = conn.search(query=search, indices=self.indices, search_type=search_type)
+
+        try:
+            res._do_search()
+            res.fix_keys()
+            hits = res.hits
+        except SearchPhaseExecutionException, exc:
+            res = None
+            hits = []
+
+        c.update({
+            'results': hits,
+            'search_form': SearchForm(request.GET)
+        })
+
+        return c
+
+    def search_modifiers(self, search, query):
+        pass
+
+

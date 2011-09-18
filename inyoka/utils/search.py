@@ -13,7 +13,8 @@ from functools import partial
 from django.conf import settings
 from django.db.models import signals
 
-from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ORFilter
+from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ORFilter, \
+    MatchAllQuery, DisMaxQuery
 
 from inyoka.tasks import update_index
 
@@ -140,6 +141,10 @@ class DocumentType(object):
         return None
 
     @classmethod
+    def get_boost_query(cls, query):
+        return None
+
+    @classmethod
     def serialize(cls, obj, extra):
         return serialize_instance(obj, cls, extra)
 
@@ -191,31 +196,46 @@ class SearchSystem(object):
         else:
             indices = [self.indices[index]]
         for index in indices:
+            self.get_connection().delete_index_if_exists(index.name)
+            self.get_connection().create_index_if_missing(index.name)
             for doctype in index.types:
                 docids = list(doctype.get_doc_ids())
                 for idx in xrange(0, len(docids), block_size):
                     update_index.delay(docids[idx:idx+block_size],
                                        doctype.name, index.name)
 
-    def search(self, query, indices=None, *args, **kwargs):
-        if isinstance(query, basestring):
-            query = StringQuery(query)
-
+    def parse_query(self, query, indices=None, user=None):
+        original_query = ''
+        filters = []
+        boost_queries = []
+        if not query:
+            query = MatchAllQuery()
+        elif isinstance(query, basestring):
+            original_query = query
+            query = StringQuery(query, default_operator='AND')
         if indices is None:
             indices = self.indices
 
-        user = kwargs.pop('user', None)
-        filters = []
-
-        if user:
-            for name, index in indices.iteritems():
-                for type in index.types:
+        for name, index in indices.iteritems():
+            for type in index.types:
+                if user:
                     filter = type.get_filter(user)
                     if filter is not None:
                         filters.append(filter)
+                boost_query = type.get_boost_query(original_query)
+                if boost_query:
+                    boost_queries.append(boost_query)
 
-        if filters:
+        if boost_queries:
+            query = DisMaxQuery(query)
+            query.add(boost_queries)
+
+        if filters and user:
             query = FilteredQuery(query, filter=ORFilter(filters))
+        return query
+
+    def search(self, query, indices=None, *args, **kwargs):
+        query = self.parse_query(query, indices, kwargs.pop('user', None))
         search = Search(query=query, *args, **kwargs)
         result = self.get_connection().search(query=search)
         result._do_search()
@@ -249,3 +269,4 @@ def autodiscover():
 
 #: Singleton that implements the search system
 search = SearchSystem()
+autodiscover()

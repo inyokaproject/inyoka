@@ -1,0 +1,12 @@
+{% extends "portal/overall.html" %}
+
+{% do BREADCRUMB.append('Suche', href('portal', 'search')) %}
+
+{% block content %}
+<form method="GET" id="search_form" class="quick_search">
+  {{ search_form.query }}
+</form>
+<div id="search_results">
+  {% include 'portal/search_content.html' %}
+</div>
+{% endblock %}

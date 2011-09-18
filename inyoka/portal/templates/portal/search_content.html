@@ -1,0 +1,18 @@
+<div class="search_results">
+{%- if results %}
+<ul class="search_results">
+  {%- for doc in results %}
+  <li>
+    <h2>
+      <img src="{{ href('static', 'img/icons/small/%s.png' % doc.index) }}" />
+      <a href="{{ doc.source.url }}">
+        {{ doc.source.title }}
+      </a>
+    </p>
+  </li>
+  {%- else %}
+    <li class="no_results">Es wurden keine passenden Ergebnisse gefunden.</li>
+  {%- endfor %}
+</ul>
+{% endif %}
+</div>
