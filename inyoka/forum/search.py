@@ -23,14 +23,17 @@ class PostDocumentType(DocumentType):
         'solved': {'type': 'boolean', 'store': 'yes'},
         'version': {'type': 'string', 'store': 'yes'},
         'forum': {'type': 'string', 'store': 'yes'},
-        'forum_pk': {'type': 'integer', 'store': 'yes'},
+        'forum_slug': {'type': 'string', 'store': 'yes'},
+        'forum_pks': {'type': 'integer', 'store': 'yes', 'index_name': 'forum_pk'}
     }}
 
     @classmethod
     def get_filter(cls, user):
         privs = get_privileges(user, Forum.objects.get_cached())
         forums = [id for id, priv in privs.iteritems()
-                                  if check_privilege(priv, 'read')]
+                                  if not check_privilege(priv, 'read')]
+        if not forums:
+            return None
         return TermsFilter('forum_pk', forums)
 
     @classmethod
@@ -41,7 +44,7 @@ class PostDocumentType(DocumentType):
                 'title': post.topic.title,
                 'author': post.author.username,
                 'author_url': url_for(post.author),
-                'date': post.pub_date,
+                'created': post.pub_date,
                 'category': categories,
                 'hidden': post.hidden or post.topic.hidden,
                 'text': post.get_text(),
@@ -50,6 +53,7 @@ class PostDocumentType(DocumentType):
                 'url': href('forum', 'post', post.pk),
                 'forum': forum.name,
                 'forum_slug': forum.slug,
+                'forum_pk': forum.pk,
                 'last_post_url': url_for(post.topic.last_post)}
 
     @classmethod

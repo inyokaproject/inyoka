@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 from datetime import datetime
-from pyes import TermFilter, NotFilter, ANDFilter, RangeFilter
+from pyes import TermFilter, NotFilter, ANDFilter, RangeFilter, ESRangeOp, ORFilter
 from inyoka.ikhaya.models import Article
 from inyoka.utils.search import search, Index, DocumentType, TypeFilter
 from inyoka.utils.urls import url_for
@@ -17,16 +17,17 @@ class ArticleDocumentType(DocumentType):
         'date': {'type': 'date', 'store': 'yes'},
         'intro': {'type': 'string', 'store': 'yes'},
         'text': {'type': 'string', 'store': 'yes'},
-        'category': {'type': 'string', 'store': 'yes'}
+        'category': {'type': 'string', 'store': 'yes'},
+        'hidden': {'type': 'boolean', 'store': 'yes'}
     }}
 
     @classmethod
     def get_filter(cls, user):
         now = datetime.utcnow()
         if not user.can('article_read'):
-            return NotFilter(TypeFilter('article'))
-        return ANDFilter((TermFilter('hidden', False),
-                          RangeFilter('date', {'from': now, 'gte': True})))
+            return ANDFilter((TermFilter('hidden', True),
+                              RangeFilter(ESRangeOp('date', 'lte', now))))
+        return None
 
     @classmethod
     def serialize(cls, article, extra):

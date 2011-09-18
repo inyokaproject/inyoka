@@ -294,7 +294,13 @@ class SearchView(LoginMixin, TemplateView):
         request = self.request
         c = super(SearchView, self).get_context_data(**kwargs)
         conn = search_system.get_connection()
-        query = search_system.parse_query(request.GET.get('query', ''))
+        string = request.GET.get('query', '')
+
+        indices = (search_system.indices.keys() if request.GET.get('area', 'all') == 'all'
+                                                else self.indices)
+
+        query = search_system.parse_query(request.GET.get('query', ''),
+                                          user=request.user)
         search = query.search()
         search.highlight = HighLighter(['<em class="hl">'], ['</em>'])
         self.search_modifiers(search, query)

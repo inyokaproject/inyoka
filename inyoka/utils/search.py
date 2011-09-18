@@ -14,7 +14,7 @@ from django.conf import settings
 from django.db.models import signals
 
 from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ORFilter, \
-    MatchAllQuery, DisMaxQuery
+    MatchAllQuery, DisMaxQuery, ANDFilter, NotFilter
 
 from inyoka.tasks import update_index
 
@@ -216,15 +216,24 @@ class SearchSystem(object):
         if indices is None:
             indices = self.indices
 
+        filtered_indices = []
+
         for name, index in indices.iteritems():
             for type in index.types:
                 if user:
                     filter = type.get_filter(user)
                     if filter is not None:
-                        filters.append(filter)
+                        filters.append(ANDFilter((TypeFilter(type.name), NotFilter(filter))))
+                        filtered_indices.append(type.name)
                 boost_query = type.get_boost_query(original_query)
                 if boost_query:
                     boost_queries.append(boost_query)
+
+        if filtered_indices:
+            for index in self.indices.values():
+                for type in index.types:
+                    if not type.name in filtered_indices:
+                        filters.append(TypeFilter(type.name))
 
         if boost_queries:
             query = DisMaxQuery(query)
