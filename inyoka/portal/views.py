@@ -1756,9 +1756,9 @@ def group_edit(request, name=None):
                 cache.delete_many(keys)
 
             if new:
-                msg = _(u'The group “%(group)“ was created successfully.')
+                msg = _(u'The group “%(group)s“ was created successfully.')
             else:
-                msg = _(u'The group “%(group)“ was changed successfully.')
+                msg = _(u'The group “%(group)s“ was changed successfully.')
             flash(msg % {'group': group.name}, True)
             if new:
                 return HttpResponseRedirect(group.get_absolute_url('edit'))
@@ -2141,9 +2141,9 @@ def page_edit(request, page=None):
             if 'send' in request.POST:
                 page = form.save()
                 if new:
-                    msg = _(u'The page “%(page)“ was created successfully.')
+                    msg = _(u'The page “%(page)s“ was created successfully.')
                 else:
-                    msg = _(u'The page “%(page)“ was changed successfully.')
+                    msg = _(u'The page “%(page)s“ was changed successfully.')
                 flash(msg % {'page': page.title}, True)
                 return HttpResponseRedirect(href('portal', page.key))
     else:
