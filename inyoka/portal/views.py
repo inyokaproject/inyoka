@@ -195,7 +195,7 @@ def register(request):
     """Register a new user."""
     redirect = request.GET.get('next') or href('portal')
     if request.user.is_authenticated:
-        flash(_('You are already logged in.'), False)
+        flash(_(u'You are already logged in.'), False)
         return HttpResponseRedirect(redirect)
 
     redirect_needed, result = test_session_cookie(request)
@@ -224,7 +224,7 @@ def register(request):
                 user.settings['timezone'] = timezone
                 user.save()
 
-            flash(_('The username “%(username)s“ was successfully registered. '
+            flash(_(u'The username “%(username)s“ was successfully registered. '
                     'An email with the activation key was sent to '
                     '“%(email)s“.') % {
                         'username': escape(user.username),
@@ -248,14 +248,14 @@ def activate(request, action='', username='', activation_key=''):
     try:
         user = User.objects.get(username)
     except User.DoesNotExist:
-        flash(_('The user “%(username)s“ does not exist.') % {
+        flash(_(u'The user “%(username)s“ does not exist.') % {
             'username': escape(username)}, False)
         return HttpResponseRedirect(href('portal'))
     if not redirect:
         redirect = href('portal', 'login', username=user.username)
 
     if request.user.is_authenticated:
-        flash(_('You cannot enter an activation key when you are logged in.'),
+        flash(_(u'You cannot enter an activation key when you are logged in.'),
               False)
         return HttpResponseRedirect(href('portal'))
 
@@ -269,22 +269,22 @@ def activate(request, action='', username='', activation_key=''):
                 #user.delete()
                 #flash(u'Der Benutzer "%s" wurde gelöscht.' %
                 #      escape(username), True)
-                flash(_('Your account was anonymized.'), True)
+                flash(_(u'Your account was anonymized.'), True)
             else:
-                flash(_('The account of “%(username)s“ was already activated.') %
+                flash(_(u'The account of “%(username)s“ was already activated.') %
                       {'username': escape(username)}, False)
         else:
-            flash(_('Your activation key is invalid.'), False)
+            flash(_(u'Your activation key is invalid.'), False)
         return HttpResponseRedirect(href('portal'))
     else:
         if check_activation_key(user, activation_key):
             user.status = 1
             user.save()
-            flash(_('Your account was successfully activated. You can now '
+            flash(_(u'Your account was successfully activated. You can now '
                     'login.'), True)
             return HttpResponseRedirect(redirect)
         else:
-            flash(_('Your activation key is invalid.'), False)
+            flash(_(u'Your activation key is invalid.'), False)
             return HttpResponseRedirect(href('portal'))
 
 
@@ -294,11 +294,11 @@ def resend_activation_mail(request, username):
     user = User.objects.get(username)
 
     if user.status > 0:
-        flash(_('The account “%(username)s“ was already activated.') %
+        flash(_(u'The account “%(username)s“ was already activated.') %
               {'username': escape(user.username)}, False)
         return HttpResponseRedirect(href('portal'))
     send_activation_mail(user)
-    flash(_('An email with the activation key was sent to you.'), True)
+    flash(_(u'An email with the activation key was sent to you.'), True)
     return HttpResponseRedirect(href('portal'))
 
 
@@ -309,7 +309,7 @@ def lost_password(request):
     It generates a new random password and sends it via mail.
     """
     if request.user.is_authenticated:
-        flash(_('You are already logged in.'), False)
+        flash(_(u'You are already logged in.'), False)
         return HttpResponseRedirect(href('portal'))
 
     if request.method == 'POST':
@@ -317,7 +317,7 @@ def lost_password(request):
         form.captcha_solution = request.session.get('captcha_solution')
         if form.is_valid():
             send_new_user_password(form.user)
-            flash(_('An email with further instructions was sent to you.'),
+            flash(_(u'An email with further instructions was sent to you.'),
                   True)
 
             # clean up request.session
@@ -339,14 +339,14 @@ def set_new_password(request, username, new_password_key):
             data['user'].set_password(data['password'])
             data['user'].new_password_key = ''
             data['user'].save()
-            flash(_('You successfully changed your password and are now '
+            flash(_(u'You successfully changed your password and are now '
                     'able to login.'), True)
             return HttpResponseRedirect(href('portal', 'login'))
     else:
         try:
             user = User.objects.get(username)
         except User.DoesNotExist:
-            flash(_('This user does not exist.'), False)
+            flash(_(u'This user does not exist.'), False)
             return HttpResponseRedirect(href())
         if user.new_password_key != new_password_key:
             flash(u'Invalid activation key.', False)
@@ -367,7 +367,7 @@ def login(request):
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('portal')
     if request.user.is_authenticated:
-        flash(_('You are already logged in.'), False)
+        flash(_(u'You are already logged in.'), False)
         return HttpResponseRedirect(redirect)
 
     # enforce an existing session
@@ -405,7 +405,7 @@ def login(request):
                         if data['permanent']:
                             make_permanent(request)
                         # username matches password and user is active
-                        flash(_('You have successfully logged in.'), True)
+                        flash(_(u'You have successfully logged in.'), True)
                         user.login(request)
                         return HttpResponseRedirect(redirect)
                     inactive = True
@@ -440,9 +440,9 @@ def logout(request):
                 forum.mark_read(request.user)
             request.user.save()
         User.objects.logout(request)
-        flash(_('You have successfully logged out.'), True)
+        flash(_(u'You have successfully logged out.'), True)
     else:
-        flash(_('You were not logged in.', False))
+        flash(_(u'You were not logged in.', False))
     return HttpResponseRedirect(redirect)
 
 
@@ -457,7 +457,7 @@ def search(request):
     if f.is_valid():
         results = f.search()
         if not results or not results.success:
-            flash(_('An error occurred while processing your search request. '
+            flash(_(u'An error occurred while processing your search request. '
                     'Please check your input.'), False)
 
         normal = u'<a href="%(href)s" class="pageselect">%(text)s</a>'
@@ -476,16 +476,16 @@ def search(request):
         if results:
             add(((results.page == 1) and disabled or normal) % {
                 'href': _link(results.page - 1),
-                'text': _('« Previous'),
+                'text': _(u'« Previous'),
             })
             add(active % {
-                'text': _('Page %(page)d of about %(total)d') % {
+                'text': _(u'Page %(page)d of about %(total)d') % {
                             'page': results.page,
                             'total': results.page_count}
             })
             add(((results.page < results.page_count) and normal or disabled) % {
                 'href': _link(results.page + 1),
-                'text': _('Next »')
+                'text': _(u'Next »')
             })
             add(u'<div style="clear: both"></div></div>')
 
@@ -519,7 +519,7 @@ def search(request):
     return rv
 
 
-@check_login(message=_('You need to be logged in to view a userprofile.'))
+@check_login(message=_(u'You need to be logged in to view a userprofile.'))
 @templated('portal/profile.html')
 def profile(request, username):
     """Show the user profile if the user is logged in."""
@@ -577,7 +577,7 @@ def user_mail(request, username):
             })
             #try:
             send_mail(
-                _('%(sitename)s - Message from %(username)s') % {
+                _(u'%(sitename)s - Message from %(username)s') % {
                     'sitename': settings.BASE_DOMAIN_NAME,
                     'username': request.user.username},
                 message,
@@ -587,11 +587,11 @@ def user_mail(request, username):
             #    flash(u'Die Mail konnte nicht verschickt werden.')
             #    return HttpResponseRedirect(href('admin', 'users', 'mail',
             #                                 escape(username)))
-            flash(_('The email to “%(username)s“ was sent successfully.')
+            flash(_(u'The email to “%(username)s“ was sent successfully.')
                   % {'username': escape(username)}, True)
             return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     else:
         form = UserMailForm()
     return {
@@ -608,7 +608,7 @@ def subscribe_user(request, username):
     except Subscription.DoesNotExist:
         # there's no such subscription yet, create a new one
         Subscription(user=request.user, content_object=user).save()
-        flash(_('You will now be notified about activities of “%(username)s“.')
+        flash(_(u'You will now be notified about activities of “%(username)s“.')
               % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
@@ -622,12 +622,12 @@ def unsubscribe_user(request, username):
         pass
     else:
         subscription.delete()
-        flash(_('From now on you won’t be notfied anymore about activities of '
+        flash(_(u'From now on you won’t be notfied anymore about activities of '
                 '“%(username)s“.') % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
 
-@check_login(message=_('You need to be logged in to access your control panel'))
+@check_login(message=_(u'You need to be logged in to access your control panel'))
 @templated('portal/usercp/index.html')
 def usercp(request):
     """User control panel index page"""
@@ -637,7 +637,7 @@ def usercp(request):
     }
 
 
-@check_login(message=_('You need to be logged in to change your profile'))
+@check_login(message=_(u'You need to be logged in to change your profile'))
 @templated('portal/usercp/profile.html')
 def usercp_profile(request):
     """User control panel view for changing the user's profile"""
@@ -654,7 +654,7 @@ def usercp_profile(request):
                 setattr(user, key, data[key] or '')
             if data['email'] != user.email:
                 send_new_email_confirmation(user, data['email'])
-                flash(_('You’ve been sent an email to confirm your new email '
+                flash(_(u'You’ve been sent an email to confirm your new email '
                         'address.'))
             if data['coordinates']:
                 user.coordinates_lat, user.coordinates_long = \
@@ -667,7 +667,7 @@ def usercp_profile(request):
                     if avatar_resized:
                         ava_mh, ava_mw = storage.get_many(('max_avatar_height',
                             'max_avatar_width')).itervalues()
-                        flash(_('The avatar you uploaded was scaled to '
+                        flash(_(u'The avatar you uploaded was scaled to '
                                 '%(w)dx%(h)d pixels. Please note that this '
                                 'may result in lower quality.') % {
                                     'w': ava_mw,
@@ -685,15 +685,15 @@ def usercp_profile(request):
 
 
             if form.errors:
-                flash(_('Errors occurred, please fix them.'), False)
+                flash(_(u'Errors occurred, please fix them.'), False)
             else:
                 openids = map(int, request.POST.getlist('openids'))
                 UserData.objects.filter(user=user, pk__in = openids).delete()
-                flash(_('Your profileinformation were updated successfully.'),
+                flash(_(u'Your profileinformation were updated successfully.'),
                       True)
                 return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     else:
         values = model_to_dict(user)
         lat = values.pop('coordinates_lat')
@@ -724,7 +724,7 @@ def usercp_profile(request):
     }
 
 
-@check_login(message=_('You need to be logged in to change your settings.'))
+@check_login(message=_(u'You need to be logged in to change your settings.'))
 @templated('portal/usercp/settings.html')
 def usercp_settings(request):
     """User control panel view for changing various user settings"""
@@ -744,9 +744,9 @@ def usercp_settings(request):
             for key, value in data.iteritems():
                 request.user.settings[key] = data[key]
             request.user.save()
-            flash(_('Your settings were successfully changed.'), True)
+            flash(_(u'Your settings were successfully changed.'), True)
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     else:
         settings = request.user.settings
         ubuntu_version = [s.ubuntu_version for s in Subscription.objects.\
@@ -773,7 +773,7 @@ def usercp_settings(request):
     }
 
 
-@check_login(message=_('You need to be logged in to change your password.'))
+@check_login(message=_(u'You need to be logged in to change your password.'))
 @templated('portal/usercp/change_password.html')
 def usercp_password(request):
     """User control panel view for changing the password."""
@@ -785,15 +785,15 @@ def usercp_password(request):
             user = request.user
             if not user.check_password(data['old_password']):
                 form.errors['old_password'] = ErrorList(
-                    [_('The entered password did not match your old password.')])
+                    [_(u'The entered password did not match your old password.')])
         if form.is_valid():
             user.set_password(data['new_password'])
             user.save()
-            flash(_('Your password was changed successfully.'),
+            flash(_(u'Your password was changed successfully.'),
                   success=True)
             return HttpResponseRedirect(href('portal', 'usercp'))
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     else:
         if 'random' in request.GET:
             random_pw = get_random_password()
@@ -860,7 +860,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
 usercp_subscriptions = UserCPSubscriptions.as_view()
 
 
-@check_login(message=_('You need to be logged in to deactivate your account.'))
+@check_login(message=_(u'You need to be logged in to deactivate your account.'))
 @templated('portal/usercp/deactivate.html')
 def usercp_deactivate(request):
     """
@@ -873,15 +873,15 @@ def usercp_deactivate(request):
             check = data['password_confirmation']
             if not request.user.check_password(check):
                 form.errors['password_confirmation'] = ErrorList(
-                    [_('The entered password is wrong.')])
+                    [_(u'The entered password is wrong.')])
 
         if form.is_valid():
             deactivate_user(request.user)
             User.objects.logout(request)
-            flash(_('Your account was deactivated.'), True)
+            flash(_(u'Your account was deactivated.'), True)
             return HttpResponseRedirect(href('portal'))
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     else:
         form = DeactivateUserForm()
     return {
@@ -890,13 +890,13 @@ def usercp_deactivate(request):
     }
 
 
-@check_login(message=_('You need to be logged in to change your userpage.'))
+@check_login(message=_(u'You need to be logged in to change your userpage.'))
 def usercp_userpage(request):
     """
     Redirect page that shows a small flash message that
     the user was redirected
     """
-    flash(_('You were redirected to our wiki to change your userpage. To get '
+    flash(_(u'You were redirected to our wiki to change your userpage. To get '
             'back, you can use the link or your browser’s “back“ button.'))
     # TODO: hardcoded wikipage
     return HttpResponseRedirect(href('wiki', 'Benutzer', request.user.username, action='edit'))
@@ -959,7 +959,7 @@ def user_edit_profile(request, username):
                     user.username = data['username']
                 else:
                     form.errors['username'] = ErrorList(
-                        [_('A user with this name already exists.')]
+                        [_(u'A user with this name already exists.')]
                     )
         if form.is_valid():
             lat = data.get('coordinates_lat', None)
@@ -978,7 +978,7 @@ def user_edit_profile(request, username):
                 if avatar_resized:
                     ava_mh, ava_mw = storage.get_many(('max_avatar_height',
                         'max_avatar_width')).itervalues()
-                    flash(_('The avatar you uploaded was scaled to '
+                    flash(_(u'The avatar you uploaded was scaled to '
                             '%(w)dx%(h)d pixels. Please note that this '
                             'may result in lower quality.') % {
                                 'w': ava_mw,
@@ -986,13 +986,13 @@ def user_edit_profile(request, username):
                             })
 
             user.save()
-            flash(_('The profile of “%(username)s“ was changed successfully')
+            flash(_(u'The profile of “%(username)s“ was changed successfully')
                     % {'username': escape(user.username)}, True)
             # redirect to the new username if given
             if user.username != username:
                 return HttpResponseRedirect(href('portal', 'user', user.username, 'edit', 'profile'))
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     storage_data = storage.get_many(('max_avatar_height', 'max_avatar_width'))
     return {
         'user': user,
@@ -1048,7 +1048,7 @@ def user_edit_settings(request, username):
             for key, value in data.iteritems():
                 user.settings[key] = data[key]
             user.save()
-            flash(_('The setting of “%(username)s“ were successfully changed.')
+            flash(_(u'The setting of “%(username)s“ were successfully changed.')
                   % {'username': escape(user.username)}, True)
     return {
         'user': user,
@@ -1072,7 +1072,7 @@ def user_edit_status(request, username):
             for key in ('status', 'banned_until',):
                 setattr(user, key, data[key])
             user.save()
-            flash(_('The status of “%(username)s“ was successfully changed.')
+            flash(_(u'The status of “%(username)s“ was successfully changed.')
                   % {'username': escape(user.username)}, True)
     if user.status > 0:
         activation_link = None
@@ -1096,7 +1096,7 @@ def user_edit_password(request, username):
         data = form.cleaned_data
         user.set_password(data['new_password'])
         user.save()
-        flash(_('The password of “%(username)s“ was successfully changed.')
+        flash(_(u'The password of “%(username)s“ was successfully changed.')
               % {'username': escape(user.username)}, True)
     return {
         'user': user,
@@ -1156,10 +1156,10 @@ def user_edit_privileges(request, username):
             user.save()
             cache.delete('user_permissions/%s' % user.id)
 
-            flash(_('The privileges of “%(username)s“ were successfully '
+            flash(_(u'The privileges of “%(username)s“ were successfully '
                     'changed.') % {'username': escape(user.username)}, True)
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     else:
         initial = model_to_dict(user)
         if initial['_primary_group']:
@@ -1244,10 +1244,10 @@ def user_edit_groups(request, username):
             user._primary_group = primary
 
             user.save()
-            flash(_('The groups of “%(username)s“ were successfully changed.')
+            flash(_(u'The groups of “%(username)s“ were successfully changed.')
                   % {'username': escape(user.username)}, True)
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     groups_joined, groups_not_joined = ([], [])
     groups_joined = groups_joined or user.groups.all()
     groups_not_joined = groups_not_joined or \
@@ -1272,13 +1272,13 @@ def user_new(request):
                 email=data['email'],
                 password=data['password'],
                 send_mail=data['authenticate'])
-            flash(_('The user “%(username)s“ was successfully created. '
+            flash(_(u'The user “%(username)s“ was successfully created. '
                     'You can now edit more details.')
                   % {'username': escape(data['username'])}, True)
             return HttpResponseRedirect(href('portal', 'user', \
                         escape(data['username']), 'edit'))
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     else:
         form = CreateUserForm()
     return {
@@ -1290,15 +1290,15 @@ def user_new(request):
 def admin_resend_activation_mail(request):
     user = User.objects.get(request.GET.get('user'))
     if user.status != 0:
-        flash(_('The account of “%(username)s“ was already activated.')
+        flash(_(u'The account of “%(username)s“ was already activated.')
               % {'username': user.username})
     else:
         send_activation_mail(user)
-        flash(_('The email with the activation key was resent.'), True)
+        flash(_(u'The email with the activation key was resent.'), True)
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
-@check_login(message=_('You need to be logged in to access your private '
+@check_login(message=_(u'You need to be logged in to access your private '
                        'messages.'))
 @templated('portal/privmsg/index.html')
 def privmsg(request, folder=None, entry_id=None, page=1):
@@ -1357,35 +1357,35 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                         folder, entry.id))
                 if action == 'archive':
                     if entry.archive():
-                        flash(_('The messages was moved into you archive.'), True)
+                        flash(_(u'The messages was moved into you archive.'), True)
                         return HttpResponseRedirect(href('portal', 'privmsg'))
                 elif action == 'restore':
                     if entry.restore():
-                        flash(_('The message was restored.'), True)
+                        flash(_(u'The message was restored.'), True)
                         return HttpResponseRedirect(href('portal', 'privmsg'))
                 elif action == 'delete':
-                    msg = _('The message was deleted.') if \
+                    msg = _(u'The message was deleted.') if \
                           entry.folder == PRIVMSG_FOLDERS['trash'][0] else \
-                          _('The message was moved in the trash.')
+                          _(u'The message was moved in the trash.')
                     if entry.delete():
                         flash(msg, True)
                         return HttpResponseRedirect(href('portal', 'privmsg'))
             else:
                 if action == 'archive':
-                    msg = _('Do you want to archive the message?')
+                    msg = _(u'Do you want to archive the message?')
                     #confirm_label = pgettext('the verb "to archive", not the '
                     #                         'noun.', 'Archive')
-                    confirm_label = _('Archive it')
+                    confirm_label = _(u'Archive it')
                 elif action == 'restore':
-                    msg = _('Do you want to restore the message?')
-                    confirm_label = _('Restore')
+                    msg = _(u'Do you want to restore the message?')
+                    confirm_label = _(u'Restore')
                 elif action == 'delete':
-                    msg = _('Do you really want to delete the message?')
-                    confirm_label = _('Delete')
+                    msg = _(u'Do you really want to delete the message?')
+                    confirm_label = _(u'Delete')
                 flash(render_template('confirm_action.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
-                    'cancel_label': _('Cancel'),
+                    'cancel_label': _(u'Cancel'),
                 }, flash=True))
     else:
         message = None
@@ -1407,7 +1407,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
 
 
 @templated('portal/privmsg/new.html')
-@check_login(message=_('You need to be logged in to access your private '
+@check_login(message=_(u'You need to be logged in to access your private '
                        'messages.'))
 def privmsg_new(request, username=None):
     # if the user has no posts in the forum and registered less than a week ago
@@ -1433,7 +1433,7 @@ def privmsg_new(request, username=None):
                     request.user.status = 2
                     request.user.banned_until = None
                     request.user.save()
-                    flash(_('You were automatically banned because we suspect '
+                    flash(_(u'You were automatically banned because we suspect '
                           'you are sending spam. If this ban is not '
                           'justified, contact us at %(email)s')
                             % {'email': settings.INYOKA_CONTACT_EMAIL})
@@ -1448,7 +1448,7 @@ def privmsg_new(request, username=None):
             recipients = set()
 
             if d.get('group_recipient', None) and not request.user.can('send_group_pm'):
-                flash(_('You cannot send messages to groups.'), False)
+                flash(_(u'You cannot send messages to groups.'), False)
                 return HttpResponseRedirect(href('portal', 'privmsg'))
 
             for group in group_recipient_names:
@@ -1457,7 +1457,7 @@ def privmsg_new(request, username=None):
                         all().exclude(pk=request.user.id)
                     recipients.update(users)
                 except Group.DoesNotExist:
-                    flash(_('The group “%(group)s“ does not exist.')
+                    flash(_(u'The group “%(group)s“ does not exist.')
                           % {'group': escape(group)}, False)
                     return HttpResponseRedirect(href('portal', 'privmsg'))
 
@@ -1466,24 +1466,24 @@ def privmsg_new(request, username=None):
                     user = User.objects.get(recipient)
                     if user.id == request.user.id:
                         recipients = None
-                        flash(_('You cannot send messages to yourself.'), False)
+                        flash(_(u'You cannot send messages to yourself.'), False)
                         break
                     elif user in (User.objects.get_system_user(),
                                   User.objects.get_anonymous_user()):
                         recipients = None
-                        flash(_('You cannot send messages to system users.'),
+                        flash(_(u'You cannot send messages to system users.'),
                               False)
                         break
                     elif not user.is_active:
                         recipients = None
-                        flash(_('You cannot send messages to this user.'),
+                        flash(_(u'You cannot send messages to this user.'),
                               False)
                         break
                     else:
                         recipients.add(user)
             except User.DoesNotExist:
                 recipients = None
-                flash(_('The user “%(username)s“ does not exist.')
+                flash(_(u'The user “%(username)s“ does not exist.')
                       % {'username': escape(recipient)}, False)
 
             if recipients:
@@ -1507,7 +1507,7 @@ def privmsg_new(request, username=None):
                                               'subject':  d['subject'],
                                               'entry':    entry,
                                           })
-                flash(_('The message was sent successfully.'), True)
+                flash(_(u'The message was sent successfully.'), True)
 
             return HttpResponseRedirect(href('portal', 'privmsg'))
     else:
@@ -1595,7 +1595,7 @@ class MemberlistView(generic.ListView):
         try:
             user = User.objects.get_by_username_or_email(name)
         except User.DoesNotExist:
-            flash(_('The user “%(username)s“ does not exist.')
+            flash(_(u'The user “%(username)s“ does not exist.')
                   % {'username': escape(name)})
             return HttpResponseRedirect(request.build_absolute_uri())
         else:
@@ -1669,7 +1669,7 @@ def group_edit(request, name=None):
         try:
             group = Group.objects.get(name=name)
         except Group.DoesNotExist:
-            flash(_('The group “%(group)s“ does not exist.')
+            flash(_(u'The group “%(group)s“ does not exist.')
                   % {'group': escape(name)}, False)
             return HttpResponseRedirect(href('portal', 'groups'))
         form_class = EditGroupForm
@@ -1691,7 +1691,7 @@ def group_edit(request, name=None):
             if data['icon'] and not data['import_icon_from_global']:
                 icon_resized = group.save_icon(data['icon'])
                 if icon_resized:
-                    flash(_('The icon you uploaded was scaled to '
+                    flash(_(u'The icon you uploaded was scaled to '
                             '%(w)dx%(h)d pixels. Please note that this '
                             'may result in lower quality.') % {
                                 'w': icon_mw,
@@ -1708,7 +1708,7 @@ def group_edit(request, name=None):
                     group.icon.save(icon_path, gicon)
                     gicon.close()
                 else:
-                    flash(_('A global team icon was not yet defined.'), False)
+                    flash(_(u'A global team icon was not yet defined.'), False)
 
             # permissions
             permissions = 0
@@ -1756,9 +1756,9 @@ def group_edit(request, name=None):
                 cache.delete_many(keys)
 
             if new:
-                msg = _('The group “%(group)“ was created successfully.')
+                msg = _(u'The group “%(group)“ was created successfully.')
             else:
-                msg = _('The group “%(group)“ was changed successfully.')
+                msg = _(u'The group “%(group)“ was changed successfully.')
             flash(msg % {'group': group.name}, True)
             if new:
                 return HttpResponseRedirect(group.get_absolute_url('edit'))
@@ -1801,7 +1801,7 @@ def group_edit(request, name=None):
 
 
 def usermap(request):
-    flash(_('The usermap was temporarily disabled.'))
+    flash(_(u'The usermap was temporarily disabled.'))
     return HttpResponseRedirect(href('portal'))
 
 
@@ -1826,17 +1826,17 @@ def feedselector(request, app=None):
             forms[fapp] = None
     if forms['forum'] is not None:
         forums = filter_invisible(anonymous_user, Forum.objects.get_cached())
-        forms['forum'].fields['forum'].choices = [('', _('Please choose'))] + \
+        forms['forum'].fields['forum'].choices = [('', _(u'Please choose'))] + \
             [(f.slug, f.name) for f in forums]
     if forms['ikhaya'] is not None:
-        forms['ikhaya'].fields['category'].choices = [('*', _('All'))] + \
+        forms['ikhaya'].fields['category'].choices = [('*', _(u'All'))] + \
             [(c.slug, c.name) for c in Category.objects.all()]
     if forms['wiki'] is not None:
         wiki_pages = cache.get('feedselector/wiki/pages')
         if not wiki_pages:
             wiki_pages = WikiPage.objects.get_page_list()
             cache.set('feedselector/wiki/pages', wiki_pages)
-        forms['wiki'].fields['page'].choices = [('*', _('All'))] + \
+        forms['wiki'].fields['page'].choices = [('*', _(u'All'))] + \
             [(p, p) for p in wiki_pages]
 
     if request.method == 'POST':
@@ -1956,7 +1956,7 @@ def confirm(request, action=None):
         data = decode_confirm_data(data)
     except (ValueError, binascii.Error):
         return {
-            'failed': _('The entered data is invalid.'),
+            'failed': _(u'The entered data is invalid.'),
             'action': action
         }
 
@@ -1998,14 +1998,14 @@ class OpenIdConsumer(Consumer):
                 if user is not None:
                     if user.is_active:
                         # username matches password and user is active
-                        flash(_('You have successfully logged in.'), True)
+                        flash(_(u'You have successfully logged in.'), True)
                         user.login(request)
                         openid = request.session.pop('openid')
                         if not UserData.objects.filter(key='openid',
                                                        value=openid).count():
                             UserData.objects.create(user=user, key='openid',
                                                     value=openid)
-                            flash(_('The OpenID was successfully linked to '
+                            flash(_(u'The OpenID was successfully linked to '
                                     'your account.'), True)
                         return HttpResponseRedirect(redirect)
                     inactive = True
@@ -2088,7 +2088,7 @@ def config(request):
 
             flash(u'Your settings were successfully changed.', True)
         else:
-            flash(_('Errors occurred, please fix them.'), False)
+            flash(_(u'Errors occurred, please fix them.'), False)
     else:
         form = ConfigurationForm(initial=storage.get_many(keys +
                                                 ['global_message']))
@@ -2164,7 +2164,7 @@ def styles(request):
         form = EditStyleForm(request.POST)
         if form.is_valid():
             storage[key] = form.data['styles']
-            flash(_('The stylesheet was saved successfully.'), True)
+            flash(_(u'The stylesheet was saved successfully.'), True)
     else:
         form = EditStyleForm(initial={'styles': storage.get(key, u'')})
     return {
