@@ -324,5 +324,3 @@ class SearchView(LoginMixin, TemplateView):
 
     def search_modifiers(self, search, query):
         pass
-
-
