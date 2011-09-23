@@ -225,8 +225,8 @@ def register(request):
                 user.save()
 
             flash(_(u'The username “%(username)s“ was successfully registered. '
-                    'An email with the activation key was sent to '
-                    '“%(email)s“.') % {
+                    u'An email with the activation key was sent to '
+                    u'“%(email)s“.') % {
                         'username': escape(user.username),
                         'email': escape(user.email)
                     }, True)
@@ -623,7 +623,7 @@ def unsubscribe_user(request, username):
     else:
         subscription.delete()
         flash(_(u'From now on you won’t be notfied anymore about activities of '
-                '“%(username)s“.') % {'username': user.username})
+                u'“%(username)s“.') % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
 
@@ -897,7 +897,7 @@ def usercp_userpage(request):
     the user was redirected
     """
     flash(_(u'You were redirected to our wiki to change your userpage. To get '
-            'back, you can use the link or your browser’s “back“ button.'))
+            u'back, you can use the link or your browser’s “back“ button.'))
     # TODO: hardcoded wikipage
     return HttpResponseRedirect(href('wiki', 'Benutzer', request.user.username, action='edit'))
 
