@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-18 21:08+0200\n"
+"POT-Creation-Date: 2011-09-23 23:11+0200\n"
 "PO-Revision-Date: 2010-07-18 19:12+0100\n"
 "Last-Translator: Florian Apolloner <apollo13@apolloner.eu>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -267,8 +267,8 @@ msgid "The setting of “%(username)s“ were successfully changed."
 msgstr "Die Einstellungen von „%(username)s” wurden erfolgreich aktualisiert."
 
 #: inyoka/portal/views.py:1075
-#, python-format
-msgid "The status of “%(username)s“ was successfully changed."
+#, fuzzy, python-format
+msgid "The state of “%(username)s“ was successfully changed."
 msgstr "Der Status von „%(username)s” wurde erfolgreich aktualisiert."
 
 #: inyoka/portal/views.py:1099
@@ -406,11 +406,13 @@ msgid "A global team icon was not yet defined."
 msgstr "Es wurde noch kein globales Team-Icon definiert."
 
 #: inyoka/portal/views.py:1759
-msgid "The group “%(group)“ was created successfully."
+#, fuzzy, python-format
+msgid "The group “%(group)s“ was created successfully."
 msgstr "Die Gruppe „%(group)” wurde erfolgreich erstellt."
 
 #: inyoka/portal/views.py:1761
-msgid "The group “%(group)“ was changed successfully."
+#, fuzzy, python-format
+msgid "The group “%(group)s“ was changed successfully."
 msgstr "Die Gruppe „%(group)” wurde erfolgreich bearbeitet."
 
 #: inyoka/portal/views.py:1804
@@ -435,11 +437,13 @@ msgid "The OpenID was successfully linked to your account."
 msgstr "Die OpenID wurde erfolgreich mit deinem Konto verknüpft."
 
 #: inyoka/portal/views.py:2144
-msgid "The page “%(page)“ was created successfully."
+#, fuzzy, python-format
+msgid "The page “%(page)s“ was created successfully."
 msgstr "Die Seite „%(page)” wurde erfolgreich erstellt."
 
 #: inyoka/portal/views.py:2146
-msgid "The page “%(page)“ was changed successfully."
+#, fuzzy, python-format
+msgid "The page “%(page)s“ was changed successfully."
 msgstr "Die Seite „%(page)” wurde erfolgreich bearbeitet."
 
 #: inyoka/portal/views.py:2167
@@ -515,7 +519,9 @@ msgid "Messages"
 msgstr ""
 
 #: inyoka/portal/templates/portal/index.m.html:19
-#, fuzzy, python-format
+#: inyoka/portal/templates/portal/usercp/index.html:28
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:15
+#, fuzzy
 msgid "Subscriptions"
 msgstr "Ein Abonnement wurde gelöscht."
 
@@ -642,6 +648,14 @@ msgstr ""
 msgid "Static files"
 msgstr ""
 
+#: inyoka/portal/templates/portal/user_admin.html:17
+#, python-format
+msgid ""
+"\n"
+"    Attention: You are currently editing “%(name)s“.\n"
+"  "
+msgstr ""
+
 #: inyoka/portal/templates/portal/whoisonline.html:15
 #, fuzzy, python-format
 msgid ""
@@ -732,7 +746,7 @@ msgid "Trash"
 msgstr ""
 
 #: inyoka/portal/templates/portal/privmsg/index.m.html:28
-msgid "Compose mail"
+msgid "Compose message"
 msgstr ""
 
 #: inyoka/portal/templates/portal/privmsg/index.m.html:33
@@ -779,5 +793,53 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/privmsg/new.m.html:24
 msgid "Send"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/index.html:25
+msgid "Profile"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/index.html:26
+msgid "Settings"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/index.html:27
+msgid "Change password"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/index.html:29
+msgid "Deactivate account"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/index.html:31
+#: inyoka/portal/templates/portal/usercp/index.html:33
+msgid "Userpage"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:25
+msgid "Topic:"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:27
+msgid "Wiki page:"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:29
+msgid "Forum:"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:31
+msgid "User:"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:33
+msgid "Article:"
+msgstr ""
+
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:39
+msgid ""
+"\n"
+"      You did not yet subscribed to any posts or articles.\n"
+"    "
 msgstr ""
 

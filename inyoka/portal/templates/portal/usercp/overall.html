@@ -9,24 +9,24 @@
 #}
 
 {%- extends 'portal/overall.html' %}
-{% do BREADCRUMB.append('Kontrollzentrum', href('portal', 'usercp'), True) %}
+{% do BREADCRUMB.append(_('Control panel'), href('portal', 'usercp'), True) %}
 
 {% block sidebar %}
   <div class="container noh3">
     <ul>
-      <li><a href="{{ href('portal', 'usercp') }}"{{ selected == None and ' class="active"' or '' }}>Übersicht</a></li>
-      <li><a href="{{ href('portal', 'usercp', 'profile') }}"{{ selected == 'profile' and ' class="active"' or '' }}>Profilinformationen</a></li>
-      <li><a href="{{ href('portal', 'usercp', 'settings') }}"{{ selected == 'settings' and ' class="active"' or '' }}>Benutzereinstellungen</a></li>
-      <li><a href="{{ href('portal', 'usercp', 'password') }}"{{ selected == 'password' and ' class="active"' or '' }}>Passwort ändern</a></li>
-      <li><a href="{{ href('portal', 'usercp', 'subscriptions') }}"{{ selected == 'subscriptions' and ' class="active"' or '' }}>Abonnements</a></li>
-      <li><a href="{{ href('portal', 'usercp', 'deactivate') }}"{{ selected == 'deactivate' and ' class="active"' or '' }}>Deaktivieren</a></li>
+      <li><a href="{{ href('portal', 'usercp') }}"{{ selected == None and ' class="active"' or '' }}>{% trans %}Overview{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'profile') }}"{{ selected == 'profile' and ' class="active"' or '' }}>{% trans %}Profile{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'settings') }}"{{ selected == 'settings' and ' class="active"' or '' }}>{% trans %}Settings{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'password') }}"{{ selected == 'password' and ' class="active"' or '' }}>{% trans %}Change password{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'subscriptions') }}"{{ selected == 'subscriptions' and ' class="active"' or '' }}>{% trans %}Subscriptions{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'usercp', 'deactivate') }}"{{ selected == 'deactivate' and ' class="active"' or '' }}>{% trans %}Deactivate account{% endtrans %}</a></li>
       <li>
         {%- if USER.has_wikipage -%}
           <a href="{{ href('wiki', 'Benutzer', USER.username|e, action='edit') }}">
         {%- else -%}
           <a href="{{ href('wiki', 'Benutzerseite') }}">
         {%- endif -%}
-        Benutzerseite</a>
+        {% trans %}Userpage{% endtrans %}</a>
       </li>
     </ul>
   </div>

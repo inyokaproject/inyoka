@@ -9,33 +9,41 @@
 #}
 {%- extends 'portal/user_admin.html' %}
 
-{% do BREADCRUMB.append('Status', href('portal', 'user', user.urlsafe_username, 'edit', 'status'), True) %}
-{% do BREADCRUMB.append('Bearbeiten', href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
+{% do BREADCRUMB.append(_('State'), href('portal', 'user', user.urlsafe_username, 'edit', 'status'), True) %}
+{% do BREADCRUMB.append(_('Edit'), href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
 {% do BREADCRUMB.append(user.username, user|url, True) %}
-{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+{% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 
 {% block content %}
-{{ super() }}
-<form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
-  <h3>Status</h3>
-    <dt>{{ form.status.label }}</dt>
-    <dd>{{ form.status }} {{ form.errors.status }}
-      <div class="note">
-        Der Benutzer hat sich {{ user.last_login|specificdatetimeformat(true) }} das letzte Mal eingeloggt.
-      </div>
-      <div class="note">
-        Der Benutzer hat sich {{ user.date_joined|specificdatetimeformat(true) }} registriert.
-      </div>
-      <div class="note">
-        {{ user.username }} eine <a href="{{ href('portal', 'user', user.username, 'mail', next=CURRENT_URL) }}">E-Mail schreiben</a>.
-      </div>
-      {%- if activation_link %}
-      <div class="note"><a href="{{ href('portal', 'users', 'resend_activation_mail', user=user, next=CURRENT_URL) }}">Aktivierungsmail erneut senden.</a></div>
-      <div class="note">Aktivierungslink: <a href="{{ activation_link }}">{{ activation_link }}</a></div>
-      {%- endif %}
-    </dd>
-    {{ render_form(form, ['banned_until'], inline=true) }}
-  {{ render_form(form, ['gpgkey']) }}
-  <p><input type="submit" value="Speichern" /></p>
-</form>
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+    <h3>{% trans %}State{% endtrans %}</h3>
+      <dt>{{ form.status.label }}</dt>
+      <dd>{{ form.status }} {{ form.errors.status }}
+        <div class="note">{% trans date=user.last_login|datetimeformat %}
+          Last login: {{ date }}
+        {% endtrans %}</div>
+        <div class="note">{% trans date=user.date_joined|datetimeformat %}
+          Member since: {{ date }}
+        {% endtrans %}</div>
+        <div class="note">
+          {% trans link=href('portal', 'user', user.username, 'mail', next=CURRENT_URL),
+                   name=user.username %}
+            <a href="{{ link }}">Send an email</a> to {{ name }}
+          {% endtrans %}
+        </div>
+        {%- if activation_link %}
+          <div class="note">
+            <a href="{{ href('portal', 'users', 'resend_activation_mail', user=user, next=CURRENT_URL) }}">{% trans %}Resend activation mail{% endtrans %}</a>
+          </div>
+          <div class="note">
+            {% trans %} Activation link:{% endtrans %}
+            <a href="{{ activation_link }}">{{ activation_link }}</a>
+          </div>
+        {%- endif %}
+      </dd>
+      {{ render_form(form, ['banned_until'], inline=true) }}
+    {{ render_form(form, ['gpgkey']) }}
+    <p><input type="submit" value="{% trans %}Submit{% endtrans %}" /></p>
+  </form>
 {% endblock %}

@@ -1072,7 +1072,7 @@ def user_edit_status(request, username):
             for key in ('status', 'banned_until',):
                 setattr(user, key, data[key])
             user.save()
-            flash(_(u'The status of “%(username)s“ was successfully changed.')
+            flash(_(u'The state of “%(username)s“ was successfully changed.')
                   % {'username': escape(user.username)}, True)
     if user.status > 0:
         activation_link = None
