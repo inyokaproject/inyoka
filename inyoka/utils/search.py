@@ -15,6 +15,7 @@ from django.db.models import signals
 
 from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ORFilter, \
     MatchAllQuery, DisMaxQuery, ANDFilter, NotFilter
+from pyes.exceptions import NotFoundException
 
 from inyoka.tasks import update_index
 
@@ -73,7 +74,10 @@ def serialize_instance(instance, doctype, extra):
 def _get_remove_instance_handler(search, index, type):
     def handler(sender, instance, using, type_name=type.name, **kwargs):
         conn =  search.get_connection()
-        conn.delete(index.name, type_name, instance.pk)
+        try:
+            conn.delete(index.name, type_name, instance.pk)
+        except NotFoundException:
+            pass
     return handler
 
 
