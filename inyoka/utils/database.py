@@ -98,7 +98,7 @@ def resolve_expression_node(instance, node):
 
 
 # Partially copied from https://github.com/andymccurdy/django-tips-and-tricks/blob/master/model_update.py
-def update(instance, **kwargs):
+def update_model(instance, **kwargs):
     """Atomically update instance, setting field/value pairs from kwargs"""
     # fields that use auto_now=True should be updated corrected, too!
     for field in instance._meta.fields:
