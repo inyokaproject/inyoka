@@ -6,13 +6,10 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import datetime
 import unittest
 from datetime import datetime, timedelta
-from StringIO import StringIO
 from django.test import TestCase
 from inyoka.portal.user import User, Group, reactivate_user, deactivate_user
-from django.conf import settings
 
 
 class TestUserModel(TestCase):

@@ -32,7 +32,7 @@ _smiley_re = None
 def get_smiley_re(smilies):
     global _smiley_re
     if _smiley_re is None:
-        helper = '|'.join(re.escape(s) for s in 
+        helper = '|'.join(re.escape(s) for s in
                           sorted(smilies, key=lambda x: -len(x)))
         regex = (u'(?<![\d\w])' # don't precede smileys with alnum chars
                  u'({helper})'

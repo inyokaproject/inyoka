@@ -17,7 +17,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils.text import truncate_html_words
 from django.db import transaction
-from django.db.models import Q, F, Count
+from django.db.models import Q, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
@@ -157,6 +157,10 @@ def forum(request, slug, page=1):
     #FIXME: Filter topics with no last_post or first_post
     topics = [topic for topic in qs
                     if topic.first_post and topic.last_post]
+
+    if not check_privilege(privs[forum.pk], 'moderate'):
+        topics = [topic for topic in topics if not topic.hidden]
+
     for topic in topics:
         topic.forum = forum
 
@@ -242,7 +246,7 @@ def viewtopic(request, topic_slug, page=1):
     attachments = MultiDict((a.post_id, a) for a in
                             Attachment.objects.filter(post__id__in=post_ids))
 
-    # assign the current topic to the posts to prevent 
+    # assign the current topic to the posts to prevent
     # extra queries in check_ownpost_limit.  Also do that
     # with attachments.
     for p in posts:
@@ -668,6 +672,11 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 @confirm_action(message=u'Möchtest du das Thema (ent)sperren?',
                 confirm=u'(Ent)sperren', cancel=u'Abbrechen')
 @simple_check_login
+def change_lock_status(request, topic_slug, solved=None, locked=None):
+    return change_status(request, topic_slug, solved, locked)
+
+
+@simple_check_login
 def change_status(request, topic_slug, solved=None, locked=None):
     """Change the status of a topic and redirect to it"""
     topic = Topic.objects.get(slug=topic_slug)
@@ -858,7 +867,7 @@ def reportlist(request):
         form = ReportListForm()
         _add_field_choices()
 
-    subscribers = storage['reported_topic_subscribers'] or u''
+    subscribers = storage['reported_topics_subscribers'] or u''
     subscribed = str(request.user.id) in subscribers.split(',')
 
     return {
@@ -868,7 +877,7 @@ def reportlist(request):
     }
 
 def reported_topics_subscription(request, mode):
-    subscribers = storage['reported_topic_subscribers'] or u''
+    subscribers = storage['reported_topics_subscribers'] or u''
     users = set(int(i) for i in subscribers.split(',') if i)
 
     if mode == 'subscribe':
@@ -1605,7 +1614,7 @@ def forum_edit(request, slug=None, parent=None):
             if not form.errors and not errors:
                 forum.save()
                 keys = ['forum/index'] + ['forum/forums/' + f.slug
-                                          for f in forum.parents]
+                                          for f in Forum.objects.get_cached()]
                 if old_slug is not None:
                     keys.append('forum/forums/' + old_slug)
                 cache.delete_many(keys)
