@@ -796,28 +796,6 @@ class Post(models.Model, LockableObject):
             Topic.objects.filter(pk=new_topic.pk).update(**values)
             Post.objects.filter(pk=values['first_post'].pk).update(position=0)
 
-# TODO: for now this kills transaction in MySQL somehow...
-#        cursor = connection.cursor()
-#        if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-##            cursor.execute("""select topic_id from forum_post where text='a2'""")
-#            cursor.execute("""update forum_post p set position=f.pos from
-#                (select id, (row_number() over (order by id)) + %s as pos from forum_post where topic_id=%s
-#                    and position > %s) as f
-#                where p.id=f.id and p.position is distinct from f.pos;""",
-#                [posts[0].position - 1, old_topic.id, posts[0].position])
-#            cursor.execute("""update forum_post p set position=f.pos from
-#                (select id, (row_number() over (order by id)) -1 as pos from forum_post where topic_id=%s)
-#                as f where p.id=f.id and p.position is distinct from f.pos;""",
-#                [new_topic.id])
-#        else:
-#            cursor.execute("""set @rownum:=%s;
-#                update forum_post set position=(@rownum:=@rownum+1)
-#                    where topic_id=%s and position > %s order by id;""",
-#                [posts[0].position - 1, old_topic.id, posts[0].position])
-#            cursor.execute("""set @rownum:=-1;
-#                update forum_post set position=(@rownum:=@rownum+1)
-#                where topic_id=%s order by id;""", [new_topic.id])
-
         # update the search index which has the post --> topic mapping indexed
         Post.multi_update_search([post.id for post in posts])
 
