@@ -204,7 +204,8 @@
       $('form input[name="preview"]').click(function() {
         $('body, input, textarea').css('cursor', 'progress');
         preview.hide();
-        var values = {text: editor.val()};
+        var values = {text: editor.val(),
+                      attachments: $('input[name="attachments"]').val()};
         {% if post %}
         values['post'] = "{{ post.pk }}";
         {% endif %}

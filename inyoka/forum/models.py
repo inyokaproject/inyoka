@@ -462,10 +462,8 @@ class Topic(models.Model):
             self.save()
 
             # and find a new last post id for the new forum
-            new_ids = [p.id for p in self.forum.parents[:-1]]
-            new_ids.append(self.forum.id)
-            old_ids = [p.id for p in old_forum.parents[:-1]]
-            old_ids.append(old_forum.id)
+            new_ids = [p.id for p in new_forums]
+            old_ids = [p.id for p in old_forums]
 
             # search for a new last post in the old and the new forum
             new_post_query = Post.objects.filter(
@@ -473,10 +471,12 @@ class Topic(models.Model):
                 topic__forum__id=F('topic__forum__id'))
 
             Forum.objects.filter(id__in=new_ids).update(
-                last_post=new_post_query._clone().aggregate(count=Max('id'))['count'])
+                last_post=new_post_query._clone().filter(forum__id__in=new_ids) \
+                                                 .aggregate(count=Max('id'))['count'])
 
             Forum.objects.filter(id__in=old_ids).update(
-                last_post=new_post_query._clone().aggregate(count=Max('id'))['count'])
+                last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
+                                                 .aggregate(count=Max('id'))['count'])
 
         forum.invalidate_topic_cache()
         self.forum.invalidate_topic_cache()
@@ -648,7 +648,7 @@ class Post(models.Model, LockableObject):
     @staticmethod
     def url_for_post(id, paramstr=None):
         post = Post.objects.get(id=id)
-        if post is None or post.topic is None:
+        if post is None or post.topic_id is None:
             return
 
         position, slug = post.position, post.topic.slug
@@ -709,6 +709,11 @@ class Post(models.Model, LockableObject):
         remove_topic = False
         posts = list(posts)
 
+        old_forums = [parent for parent in old_topic.forum.parents]
+        old_forums.append(old_topic.forum)
+        new_forums = [parent for parent in new_topic.forum.parents]
+        new_forums.append(new_topic.forum)
+
         if len(posts) == old_topic.posts.count():
             # The user selected to split all posts out of the topic -->
             # delete the topic.
@@ -729,17 +734,6 @@ class Post(models.Model, LockableObject):
                 # one are handled by signals)
                 old_topic.forum.post_count -= len(posts)
 
-                for forum in [old_topic.forum] + old_topic.forum.parents:
-                    if forum.last_post == posts[-1]:
-                        try:
-                            last_topic = old_topic.forum.topics.order_by('-last_post__id')[0]
-                        except IndexError:
-                            last_topic = None
-
-                        Forum.objects.filter(pk=forum.pk) \
-                                     .update(last_post=last_topic and last_topic.last_post or None)
-
-                # Decrement or the user post count regarding posts are counted in
                 # the new forum or not.
                 new_forum, old_forum = new_topic.forum, old_topic.forum
                 if old_forum.user_count_posts != new_forum.user_count_posts:
@@ -775,27 +769,22 @@ class Post(models.Model, LockableObject):
             Topic.objects.filter(pk=new_topic.pk).update(**values)
             Post.objects.filter(pk=values['first_post'].pk).update(position=0)
 
-# TODO: for now this kills transaction in MySQL somehow...
-#        cursor = connection.cursor()
-#        if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-##            cursor.execute("""select topic_id from forum_post where text='a2'""")
-#            cursor.execute("""update forum_post p set position=f.pos from
-#                (select id, (row_number() over (order by id)) + %s as pos from forum_post where topic_id=%s
-#                    and position > %s) as f
-#                where p.id=f.id and p.position is distinct from f.pos;""",
-#                [posts[0].position - 1, old_topic.id, posts[0].position])
-#            cursor.execute("""update forum_post p set position=f.pos from
-#                (select id, (row_number() over (order by id)) -1 as pos from forum_post where topic_id=%s)
-#                as f where p.id=f.id and p.position is distinct from f.pos;""",
-#                [new_topic.id])
-#        else:
-#            cursor.execute("""set @rownum:=%s;
-#                update forum_post set position=(@rownum:=@rownum+1)
-#                    where topic_id=%s and position > %s order by id;""",
-#                [posts[0].position - 1, old_topic.id, posts[0].position])
-#            cursor.execute("""set @rownum:=-1;
-#                update forum_post set position=(@rownum:=@rownum+1)
-#                where topic_id=%s order by id;""", [new_topic.id])
+            # and find a new last post id for the new forum
+            new_ids = [p.id for p in new_forums]
+            old_ids = [p.id for p in old_forums]
+
+            # search for a new last post in the old and the new forum
+            new_post_query = Post.objects.filter(
+                topic__id=F('topic__id'),
+                topic__forum__id=F('topic__forum__id'))
+
+            Forum.objects.filter(id__in=new_ids).update(
+                last_post=new_post_query._clone().filter(forum__id__in=new_ids) \
+                                                 .aggregate(count=Max('id'))['count'])
+
+            Forum.objects.filter(id__in=old_ids).update(
+                last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
+                                                 .aggregate(count=Max('id'))['count'])
 
         new_topic.forum.invalidate_topic_cache()
         old_topic.forum.invalidate_topic_cache()

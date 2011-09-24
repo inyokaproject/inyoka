@@ -865,7 +865,7 @@ def reportlist(request):
         form = ReportListForm()
         _add_field_choices()
 
-    subscribers = storage['reported_topic_subscribers'] or u''
+    subscribers = storage['reported_topics_subscribers'] or u''
     subscribed = str(request.user.id) in subscribers.split(',')
 
     return {
@@ -875,7 +875,7 @@ def reportlist(request):
     }
 
 def reported_topics_subscription(request, mode):
-    subscribers = storage['reported_topic_subscribers'] or u''
+    subscribers = storage['reported_topics_subscribers'] or u''
     users = set(int(i) for i in subscribers.split(',') if i)
 
     if mode == 'subscribe':
@@ -1026,7 +1026,7 @@ def splittopic(request, topic_slug, page=1):
         return abort_access_denied(request)
 
     post_ids = request.session.get('_split_post_ids', {})
-    if not post_ids or not topic_slug in post_ids:
+    if not post_ids.get(topic_slug, None):
         flash(u'Du hast keine Beiträge ausgewählt.')
         return HttpResponseRedirect(old_topic.get_absolute_url())
     else:
