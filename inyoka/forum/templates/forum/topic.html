@@ -61,7 +61,7 @@
         {%- endif %}
         {%- if topic.hidden %}
         <a href="{{ topic|url('restore') }}" class="action action_restore adminlink">wiederherstellen</a> |
-        <a href="" class="action action_delete adminlink">löschen</a>
+        <a href="{{ topic|url('delete') }}" class="action action_delete adminlink">löschen</a>
         {%- else %}
         <a href="{{ topic|url('hide') }}" class="action action_hide admin_link">verbergen</a>
         {%- endif %}
@@ -186,7 +186,7 @@
           <div class="postinfo">
             <div class="linklist">
               {%- if can_delete(post) %}
-              <a href="" class="action action_delete">löschen</a> |
+              <a href="{{ post|url('hide') }}" class="action action_delete">löschen</a> |
               {%- endif %}
               {%- if can_moderate %}
                 {%- if post.has_revision %}
@@ -195,7 +195,7 @@
                 {%- if post.hidden %}
                   <span class="admin_link"><a href="{{ post|url('restore') }}" class="action action_restore">wiederherstellen</a> |</span>
                   {%- if not can_delete(post) %}
-                    <span class="admin_link"><a href="" class="action action_delete">endgültig löschen</a> |</span>
+                    <span class="admin_link"><a href="{{ post|url('delete') }}" class="action action_delete">endgültig löschen</a> |</span>
                   {%- endif %}
                 {%- else %}
                   <span class="admin_link"><a href="{{ post|url('hide') }}" class="action action_hide">verbergen</a> |</span>
