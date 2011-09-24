@@ -8,9 +8,26 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import operator
+
 from django.core.cache import cache
+from django.db.models.expressions import F, ExpressionNode
 
 from inyoka.utils.text import get_next_increment
+
+EXPRESSION_NODE_CALLBACKS = {
+    ExpressionNode.ADD: operator.add,
+    ExpressionNode.SUB: operator.sub,
+    ExpressionNode.MUL: operator.mul,
+    ExpressionNode.DIV: operator.div,
+    ExpressionNode.MOD: operator.mod,
+    ExpressionNode.AND: operator.and_,
+    ExpressionNode.OR: operator.or_,
+}
+
+
+class CannotResolve(Exception):
+    pass
 
 
 def _strip_ending_nums(string):
@@ -60,6 +77,47 @@ def get_simplified_queryset(queryset):
     cqry.query.related_select_cols = []
     cqry.query.related_select_fields = []
     return cqry
+
+
+def _resolve(instance, node):
+    if isinstance(node, F):
+        return getattr(instance, node.name)
+    elif isinstance(node, ExpressionNode):
+        return _resolve(instance, node)
+    return node
+
+
+def resolve_expression_node(instance, node):
+    op = EXPRESSION_NODE_CALLBACKS.get(node.connector, None)
+    if not op:
+        raise CannotResolve
+    runner = _resolve(instance, node.children[0])
+    for n in node.children[1:]:
+        runner = op(runner, _resolve(instance, n))
+    return runner
+
+
+# Partially copied from https://github.com/andymccurdy/django-tips-and-tricks/blob/master/model_update.py
+def update(instance, **kwargs):
+    """Atomically update instance, setting field/value pairs from kwargs"""
+    # fields that use auto_now=True should be updated corrected, too!
+    for field in instance._meta.fields:
+        if hasattr(field, 'auto_now') and field.auto_now and field.name not in kwargs:
+            kwargs[field.name] = field.pre_save(instance, False)
+
+    qset = instance.__class__._default_manager.filter(pk=instance.pk)
+    rows_affected = qset.update(**kwargs)
+
+    # apply the updated args to the instance to mimic the change
+    # note that these might slightly differ from the true database values
+    # as the DB could have been updated by another thread. callers should
+    # retrieve a new copy of the object if up-to-date values are required
+    for k,v in kwargs.iteritems():
+        if isinstance(v, ExpressionNode):
+            v = resolve_expression_node(instance, v)
+        setattr(instance, k, v)
+
+    return rows_affected
 
 
 class LockableObject(object):
