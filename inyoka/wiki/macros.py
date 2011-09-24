@@ -350,8 +350,8 @@ class TableOfContents(TreeMacro):
     def build_node(self, tree):
         result = nodes.List(self.list_type)
         stack = [result]
-        normalized_level = 1
-        last_level = 1
+        normalized_level = 0
+        last_level = 0
         for headline in tree.query.by_type(nodes.Headline):
             if not headline.level == last_level:
                 if headline.level > normalized_level:
@@ -371,7 +371,7 @@ class TableOfContents(TreeMacro):
             elif normalized_level < len(stack):
                 for x in xrange(len(stack) - normalized_level):
                     stack.pop()
-            ml = normalized_level*((45-self.depth-normalized_level)/normalized_level)
+            ml = normalized_level*((45-self.depth-normalized_level)/(normalized_level or 1))
             text = len(headline.text)>ml and headline.text[:ml]+'...' or \
                    headline.text
             caption = [nodes.Text(text)]
