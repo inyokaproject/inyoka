@@ -78,6 +78,24 @@
       {% endif %}
     </ul>
     {% endif %}
+    {%- if USER.can('static_page_edit') or USER.can('static_file_edit') or USER.can('configuration_edit') or USER.can('markup_css_edit') %}
+    <h3 class="navi_config">Konfiguration</h3>
+    <ul>
+    {%- if USER.can('configuration_edit') %}
+      <li><a href="{{ href('portal', 'config') }}">Allgemein</a></li>
+    {%- endif %}
+    {%- if USER.can('markup_css_edit') %}
+      <li><a href="{{ href('portal', 'styles') }}">Markup-Stylesheets</a></li>
+    {%- endif %}
+    {%- if USER.can('static_page_edit') %}
+      <li><a href="{{ href('portal', 'pages') }}">Statische Seiten</a></li>
+    {% endif %}
+    {%- if USER.can('static_file_edit') %}
+      <li><a href="{{ href('portal', 'files') }}">Statische Dateien</a></li>
+    {% endif %}
+    </ul>
+    {%- endif %}
+
   </div>
 {% endblock %}
 

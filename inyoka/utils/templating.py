@@ -168,7 +168,7 @@ def populate_context_defaults(context, flash=False):
     global_message = storage['global_message']
     if global_message and request:
         if user.settings.get('global_message_hidden', 0) > \
-                float(storage['global_message_time']):
+                float(storage['global_message_time'] or 0.0):
             global_message = None
 
     if request:

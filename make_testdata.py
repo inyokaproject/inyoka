@@ -21,9 +21,11 @@ from inyoka.portal.user import User, Group
 from inyoka.forum.models import Forum, Topic, Post
 from inyoka.ikhaya.models import Category, Article, Comment
 from inyoka.wiki.models import Page
+from inyoka.planet.models import Blog
 from inyoka.utils.captcha import generate_word
 from inyoka.utils.text import increment_string
 from inyoka.utils.terminal import ProgressBar, percentize, show
+from inyoka.scripts.planet_sync import sync
 
 
 MARKS = ('.', ';', '!', '?')
@@ -43,6 +45,25 @@ MAX_TOPIC_POST_COUNT = 2
 IKHAYA_CATEGORY_COUNT = 5
 WIKI_PAGES_COUNT = 20
 MAX_WIKI_REVISIONS = 5
+
+BLOGS = {
+    ## Just a few blogs taken from the uu.de planet
+    '[ENC]BladeXPs Blog': ('http://blog.stefan-betz.net/',
+        'http://blog.stefan-betz.net/categories/ubuntu/feed.atom'),
+    'Dirk Deimeke': ('http://www.deimeke.net/dirk/blog/',
+        'http://www.deimeke.net/dirk/blog/rss.php?serendipity[tag]=planet-ubuntuusersdeimeke'),
+    'Helenas Blog': ('http://www.helena-morzuch.de/',
+        'http://www.helena-morzuch.de/ubuntuusers.xml'),
+    'Martin Gräßlin': ('http://blog.martin-graesslin.com/blog/',
+        'http://blog.martin-graesslin.com/blog/?cat=6&feed=rss2'),
+    'serenitys blog': ('http://beyondserenity.wordpress.com/',
+        'http://beyondserenity.wordpress.com/category/kde-oss-it/feed'),
+    'ubuntuusers-Webteam': ('http://behind.ubuntuusers.de/',
+        'http://behind.ubuntuusers.de/feed.atom'),
+    ## Meta!
+    'Ikhaya': ('http://ubuntuusers.ikhaya.de',
+        'http://ikhaya.ubuntuusers.de/feeds/full/10/')
+}
 
 
 def create_names(count, func=lambda: choice(NAME_WORDS)):
@@ -231,6 +252,18 @@ def make_wiki():
     show('\n')
 
 
+def make_planet():
+    print "Creating planet test data"
+    pb = ProgressBar(40)
+    for percent, (name, (blogurl, feedurl)) in izip(percentize(len(BLOGS)),
+                                                    BLOGS.iteritems()):
+        Blog(name=name, blog_url=blogurl, feed_url=feedurl,
+            description=sentences(min=3, max=10)).save()
+        pb.update(percent)
+    ## Syncing once
+    sync()
+    show('\n')
+
 
 if __name__ == '__main__':
     page_names = ['Startseite'] + list(create_names(WIKI_PAGES_COUNT))
@@ -239,4 +272,5 @@ if __name__ == '__main__':
     make_wiki()
     make_ikhaya()
     make_forum()
+    make_planet()
     print "created test data"
