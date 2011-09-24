@@ -136,7 +136,9 @@ class TestPostSplit(TransactionTestCase):
         self.assertEqual(t1.first_post, self.fp1)
         self.assertEqual(t2.first_post, self.fp2)
         self.assertEqual(t1.last_post, self.fp1)
+        self.assertEqual(t1.forum.last_post, self.lp1)
         self.assertEqual(t2.last_post, Post.objects.get(text='test3'))
+        self.assertEqual(t2.forum.last_post, self.fp2)
         post_ids = [p.pk for p in [self.fp2] + list(posts)]
         self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
 
@@ -200,8 +202,10 @@ class TestPostMove(TestCase):
 
         self.topic1.posts.add(Post(text=u'test1', author=self.user))
         self.topic1.posts.add(Post(text=u'test2', author=self.user))
-        self.topic1.posts.add(Post(text=u'test3', author=self.user))
-        self.topic2.posts.add(Post(text=u'test4', author=self.user))
+        self.lp1 = Post(text=u'test3', author=self.user)
+        self.topic1.posts.add(self.lp1)
+        self.lp2 = Post(text=u'test4', author=self.user)
+        self.topic2.posts.add(self.lp2)
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
@@ -214,5 +218,9 @@ class TestPostMove(TestCase):
     def test_topic_move(self):
         Topic.objects.get(id=self.topic1.id).move(self.forum2)
         user = User.objects.get(id=self.user.id)
+        topic = Topic.objects.get(id=self.topic1.id)
         self.assertEqual(user.post_count, 0)
-        self.assertEqual(Topic.objects.get(id=self.topic1.id).post_count, 3)
+        self.assertEqual(topic.post_count, 3)
+        self.assertEqual(topic.last_post, self.lp1)
+        self.assertEqual(topic.forum.last_post, self.lp2)
+        self.assertEqual(Forum.objects.get(id=self.forum.id).last_post, None)
