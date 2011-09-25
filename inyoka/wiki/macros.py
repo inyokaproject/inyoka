@@ -835,7 +835,7 @@ class Picture(Macro):
                 else:
                     file = ForumAttachment.objects.get(name=target, post=context.forum_post)
                     return nodes.HTML(file.html_representation)
-            except (ForumAttachment.DoesNotExist, IndexError), exc:
+            except (ForumAttachment.DoesNotExist, IndexError):
                 pass
 
         img = nodes.Image(source, self.alt, class_='image-' +

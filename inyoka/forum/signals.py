@@ -1,15 +1,12 @@
 #-*- coding: utf-8 -*-
 from django.core.cache import cache
-from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.db.models import Max, F
-from django.db.models.signals import post_save, post_delete, pre_delete, pre_save
+from django.db.models.signals import post_save, post_delete, pre_save
 
 from inyoka.utils.database import find_next_increment
 from inyoka.utils.text import slugify
-from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
-from inyoka.wiki.models import Page
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 
 
@@ -45,43 +42,6 @@ def post_save_topic(sender, **kwargs):
     if kwargs.get('created', False):
         Forum.objects.filter(id=instance.forum.id) \
                      .update(topic_count=F('topic_count') + 1)
-
-
-@receiver(pre_delete, sender=Topic)
-def pre_delete_topic(sender, **kwargs):
-    instance = kwargs.get('instance')
-    if not instance.forum:
-        return
-
-    ids = [p.id for p in instance.forum.parents[:-1]]
-    ids.append(instance.forum_id)
-    if not ids:
-        return
-
-    # set a new last_post_id because of integrity errors and
-    # decrease the topic_count
-    # FIXME: This might set wrong values if the parent forum has topics too
-    # and isn't just a category
-    last_forum_post = Post.objects.only('id') \
-        .filter(forum__id__in=ids) \
-        .exclude(topic=instance) \
-        .aggregate(id=Max('id'))['id']
-    Forum.objects.filter(id__in=ids).update(last_post=last_forum_post)
-
-    Topic.objects.filter(id=instance.id).update(
-        last_post=None,
-        first_post=None)
-
-    for post in instance.posts.all():
-        post.delete()
-
-    Forum.objects.filter(id=instance.forum.id).update(
-        topic_count=F('topic_count') - 1)
-
-    # Delete subscriptions and remove wiki page discussions
-    ctype = ContentType.objects.get_for_model(Topic)
-    Subscription.objects.filter(content_type=ctype, object_id=instance.id).delete()
-    Page.objects.filter(topic=instance).update(topic=None)
 
 
 @receiver(post_delete, sender=Topic)

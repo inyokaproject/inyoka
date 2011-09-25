@@ -122,7 +122,7 @@ def update_model(instance, **kwargs):
     # note that these might slightly differ from the true database values
     # as the DB could have been updated by another thread. callers should
     # retrieve a new copy of the object if up-to-date values are required
-    for k,v in kwargs.iteritems():
+    for k, v in kwargs.iteritems():
         if isinstance(v, ExpressionNode):
             v = resolve_expression_node(instance, v)
         for instance in instances:

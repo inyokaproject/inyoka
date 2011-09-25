@@ -22,7 +22,7 @@ from inyoka.utils.storage import storage
 class TestStorage(TestCase):
     def test_set(self):
         def _compare(key, value):
-            result = Storage.objects.get(key=key)
+            Storage.objects.get(key=key)
             self.assertEqual(value, cache.get('storage/' + key))
             self.assertEqual(value, storage[key])
         storage['test'] = 'foo'
