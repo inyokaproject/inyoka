@@ -11,7 +11,7 @@
 {% from 'macros.html' import render_form %}
 {% set styles = ['editor-sprite'] %}
 {% set scripts = ['WikiEditor', 'jquery.autocomplete', 'jquery.tokenfield'] %}
-{% do BREADCRUMB.append(_('New message'), href('portal', 'privmsg', 'new'), True) %}
+{% do BREADCRUMB.append(_('Compose message'), href('portal', 'privmsg', 'new'), True) %}
 {% set selected = 'new' %}
 
 {% block portal_content %}
