@@ -11,8 +11,7 @@
 from django.test import TestCase
 from inyoka.wiki.parser import Parser, nodes
 from inyoka.wiki.parser.transformers import AutomaticParagraphs, \
-     SmileyInjector, FootnoteSupport, HeadlineProcessor, AutomaticStructure, \
-     get_smiley_re, _smiley_re
+     FootnoteSupport, HeadlineProcessor, get_smiley_re, _smiley_re
 
 
 def parse(source, transformer):

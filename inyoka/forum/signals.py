@@ -1,6 +1,5 @@
 #-*- coding: utf-8 -*-
 from django.core.cache import cache
-from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.db.models import Max, F
 from django.db.models.signals import post_save, post_delete, pre_save
@@ -8,9 +7,7 @@ from django.db.models.signals import post_save, post_delete, pre_save
 from inyoka.utils.search import search
 from inyoka.utils.database import find_next_increment
 from inyoka.utils.text import slugify
-from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
-from inyoka.wiki.models import Page
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 
 
