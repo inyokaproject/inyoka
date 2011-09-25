@@ -100,6 +100,9 @@ def resolve_expression_node(instance, node):
 # Partially copied from https://github.com/andymccurdy/django-tips-and-tricks/blob/master/model_update.py
 def update_model(instance, **kwargs):
     """Atomically update instance, setting field/value pairs from kwargs"""
+    if not instance:
+        return []
+
     instances = instance if isinstance(instance, (set, list, tuple)) else [instance]
 
     for instance in instances:
@@ -108,7 +111,7 @@ def update_model(instance, **kwargs):
             if hasattr(field, 'auto_now') and field.auto_now and field.name not in kwargs:
                 kwargs[field.name] = field.pre_save(instance, False)
 
-    manager = instance.__class__._default_manager
+    manager = instances[0].__class__._default_manager
     if len(instances) == 1:
         qset = manager.filter(pk=instances[0].pk)
     else:
@@ -126,6 +129,15 @@ def update_model(instance, **kwargs):
             setattr(instance, k, v)
 
     return rows_affected
+
+
+def model_or_none(pk, reference):
+    if not reference or pk == reference.pk:
+        return None
+    try:
+        return reference.__class__.objects.get(pk=pk)
+    except reference.DoesNotExist:
+        return None
 
 
 class LockableObject(object):

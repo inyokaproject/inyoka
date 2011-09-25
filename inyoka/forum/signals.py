@@ -73,6 +73,9 @@ def pre_delete_topic(sender, **kwargs):
         last_post=None,
         first_post=None)
 
+    for post in instance.posts.all():
+        post.delete()
+
     Forum.objects.filter(id=instance.forum.id).update(
         topic_count=F('topic_count') - 1)
 
@@ -129,67 +132,6 @@ def post_save_post(sender, **kwargs):
         instance.topic.forum.invalidate_topic_cache()
 
     search.queue('f', instance.id)
-
-
-@receiver(pre_delete, sender=Post)
-def pre_delete_post(sender, **kwargs):
-    instance = kwargs.get('instance')
-    if not instance.topic:
-        return
-
-    # This is crazy shit.  To increment or decrement we need the forums
-    # up to the root (the category!) but to find a new last_post_id
-    # we *only* have to search in the current forum and it's parents.
-    # If we search in the category for a new last_post_id it's not save
-    # to say that we get some out of the forum we need but also from
-    # others if we have luck :-)
-    forums_to_root = instance.topic.forum.parents
-    forums_to_root.append(instance.topic.forum)
-    forums = instance.topic.forum.parents[:-1]
-    forums.append(instance.topic.forum)
-
-    # and now the ids...
-    forums_to_root_ids = [p.id for p in forums_to_root]
-
-    # degrade user post count
-    if instance.topic.forum.user_count_posts:
-        User.objects.filter(id=instance.author.id) \
-                    .update(post_count=F('post_count') - 1)
-        cache.delete('portal/user/%d' % instance.author.id)
-
-    try:
-        new_last_post = Post.objects.filter(topic=instance.topic) \
-            .exclude(id=instance.id).order_by('-id')[0]
-    except IndexError:
-        new_last_post = None
-
-    if instance == instance.topic.last_post:
-        Topic.objects.filter(id=instance.topic.id, last_post=instance) \
-            .update(last_post=new_last_post)
-
-    if instance == instance.topic.forum.last_post:
-        # we cannot loop over all posts in the forum so we cheat a bit
-        # with selecting the last post from the current topic.
-        # Everything else would kill the server...
-        Forum.objects.filter(id__in=forums_to_root_ids, last_post=instance) \
-                     .update(last_post=new_last_post)
-        cache.delete('forum/forums/%s' % instance.topic.forum.slug)
-
-    # decrement post_counts
-    Topic.objects.filter(id=instance.topic.id) \
-                 .update(post_count=F('post_count') - 1)
-    Forum.objects.filter(id__in=forums_to_root_ids) \
-                 .update(post_count=F('post_count') - 1)
-
-    # decrement position
-    Post.objects.filter(position__gt=instance.position,
-                        topic=instance.topic) \
-                .update(position=F('position') - 1)
-
-
-@receiver(post_delete, sender=Post)
-def post_delete_post(sender, **kwargs):
-    search.queue('f', kwargs['instance'].id)
 
 
 @receiver(post_save, sender=Privilege)

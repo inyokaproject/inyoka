@@ -27,11 +27,12 @@ from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
 from inyoka.utils.files import get_filename
 from inyoka.utils.text import get_new_unique_filename
-from inyoka.utils.database import LockableObject
+from inyoka.utils.database import LockableObject, update_model, model_or_none
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.html import escape
 from inyoka.utils.urls import href
@@ -245,11 +246,11 @@ class Forum(models.Model):
         if action == 'edit':
             return href('forum', 'forum', self.slug, 'edit')
 
-    @property
-    def parents(self):
+    def get_parents(self, cached=True):
         """Return a list of all parent forums up to the root level."""
         parents = []
-        forums = Forum.objects.get_cached()
+        forums = Forum.objects.get_cached() if cached else \
+                 Forum.objects.all()
         qdct = dict((f.id, f) for f in forums)
 
         forum = qdct[self.id]
@@ -257,6 +258,10 @@ class Forum(models.Model):
             forum = qdct[forum.parent_id]
             parents.append(forum)
         return parents
+
+    @property
+    def parents(self):
+        return self.get_parents(True)
 
     @property
     def children(self):
@@ -483,6 +488,30 @@ class Topic(models.Model):
         self.forum.invalidate_topic_cache()
         self.reindex()
 
+    def delete(self, *args, **kwargs):
+        if not self.forum:
+            return
+
+        forums = self.forum.parents + [self]
+        pks = [f.pk for f in forums]
+
+        last_post = Post.objects.filter(topic__id=F('topic__id'),
+                                        topic__forum__pk__in=pks) \
+                                .aggregate(count=Max('id'))['count']
+
+        update_model(forums, last_post=model_or_none(last_post, self.last_post))
+        update_model(self, last_post=None, first_post=None)
+        update_model(self.forum, topic_count=F('topic_count') - 1)
+
+        for post in self.posts.all():
+            post.delete()
+
+        # Delete subscriptions and remove wiki page discussions
+        ctype = ContentType.objects.get_for_model(Topic)
+        Subscription.objects.filter(content_type=ctype, object_id=self.id).delete()
+        WikiPage.objects.filter(topic=self).update(topic=None)
+        return super(Topic, self).delete()
+
     def get_absolute_url(self, action='show'):
         if action in ('show',):
             return href('forum', 'topic', self.slug)
@@ -708,6 +737,43 @@ class Post(models.Model, LockableObject):
             self.rendered_text = None
         self.is_plaintext = is_plaintext
         self.save()
+
+    def delete(self, *args, **kwargs):
+        if not self.topic:
+            return
+
+        forums = self.topic.forum.parents + [self.topic.forum]
+
+        # degrade user post count
+        if self.topic.forum.user_count_posts:
+            update_model(self.author, post_count=F('post_count') - 1)
+            cache.delete('portal/user/%d' % self.author.id)
+
+        # search for a new last post in the old and the new forum
+        new_post_query = Post.objects.filter(
+            topic__id=F('topic__id'),
+            topic__forum__id=F('topic__forum__id'))
+
+        if self == self.topic.last_post:
+            new_post = new_post_query.filter(topic=self.topic) \
+                                     .aggregate(last=Max('id'))['last']
+            update_model(self.topic, last_post=model_or_none(new_post, self))
+
+        lpf = list(Forum.objects.filter(last_post=self).all())
+        new_post = new_post_query.filter(forum__in=lpf) \
+                                 .aggregate(last=Max('id'))['last']
+        update_model(lpf, last_post=model_or_none(new_post, self))
+
+        # decrement post_counts
+        update_model(self.topic, post_count=F('post_count') - 1)
+        update_model(forums, post_count=F('post_count') - 1)
+
+        # decrement position
+        Post.objects.filter(position__gt=self.position,
+                            topic=self.topic) \
+                    .update(position=F('position') - 1)
+
+        return super(Post, self).delete()
 
     @property
     def page(self):
@@ -1239,7 +1305,8 @@ def mark_all_forums_read(user):
 
 # Circular imports
 from inyoka.wiki.parser import parse, RenderContext
-from inyoka.portal.models import SearchQueue
+from inyoka.wiki.models import Page as WikiPage
+from inyoka.portal.models import SearchQueue, Subscription
 from inyoka.utils.highlight import highlight_code
 
 # register signal handlers
