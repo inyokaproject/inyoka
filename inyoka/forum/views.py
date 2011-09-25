@@ -1032,7 +1032,7 @@ def splittopic(request, topic_slug, page=1):
         return abort_access_denied(request)
 
     post_ids = request.session.get('_split_post_ids', {})
-    if not post_ids:
+    if not post_ids.get(topic_slug, None):
         flash(_('You didn’t select any post.'))
         return HttpResponseRedirect(old_topic.get_absolute_url())
     else:
@@ -1268,10 +1268,7 @@ def delete_topic(request, topic_slug, action='hide'):
 
             elif action == 'delete':
                 send_deletion_notification(request.user, topic, request.POST.get('reason', None))
-                # TODO: We have to update `Forum.last_post` here!
-                #for p in topic.posts.all():
-                #     p.delete()
-                #topic.delete()
+                topic.delete()
                 redirect = url_for(topic.forum)
                 flash(_('The topic “%(topic)“ was deleted successfully.')
                       % {'topic': topic.title}, True)

@@ -10,6 +10,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.db import transaction
+from django.utils.datastructures import MultiValueDictKeyError
 
 from inyoka.forum.models import Topic, Post, Forum
 from inyoka.forum.constants import UBUNTU_VERSIONS
@@ -108,10 +109,10 @@ def on_change_status(request, solved=None):
 
 
 def on_get_version_details(request):
-    version = request.GET['version']
     try:
+        version = request.GET['version']
         obj = [x for x in UBUNTU_VERSIONS if x.number == version][0]
-    except IndexError:
+    except (IndexError, KeyError, MultiValueDictKeyError):
         return {}
 
     return {

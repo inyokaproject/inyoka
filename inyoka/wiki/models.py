@@ -740,7 +740,8 @@ class Page(models.Model):
     """
     objects = PageManager()
     name = models.CharField(max_length=200, unique=True, db_index=True)
-    topic = models.ForeignKey('forum.Topic', null=True)
+    topic = models.ForeignKey('forum.Topic', null=True,
+                              on_delete=models.PROTECT)
     last_rev = models.ForeignKey('Revision', null=True, related_name='+')
 
     #: this points to a revision if created with a query method
