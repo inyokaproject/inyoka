@@ -1235,6 +1235,8 @@ def restore_topic(request, topic_slug):
     return HttpResponseRedirect(url_for(topic))
 
 
+@confirm_action(message=u'Möchtest dieses Topic wirklich verbergen / löschen?',
+                confirm=u'Verbergen / Löschen', cancel=u'Abbrechen')
 def delete_topic(request, topic_slug, action='hide'):
     """
     Sets the hidden flag of a topic to True if action=='hide', which has the
