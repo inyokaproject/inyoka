@@ -1,14 +1,13 @@
 #-*- coding: utf-8 -*-
 from django.core.cache import cache
-from django.db import router
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase
 
 from inyoka.forum.models import Forum, Topic, Post
 from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
 
 
-class TestForumModel(TransactionTestCase):
+class TestForumModel(TestCase):
 
     def setUp(self):
         self.parent1 = Forum(name='This is a test')
@@ -84,7 +83,7 @@ class TestForumModel(TransactionTestCase):
         new_forum.delete()
 
 
-class TestPostSplit(TransactionTestCase):
+class TestPostSplit(TestCase):
 
     def setUp(self):
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
@@ -200,7 +199,7 @@ class TestPostSplit(TransactionTestCase):
         self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
 
 
-class TestPostMove(TransactionTestCase):
+class TestPostMove(TestCase):
 
     def setUp(self):
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)

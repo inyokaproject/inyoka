@@ -51,7 +51,7 @@ def get_dtd():
     try:
         if 'msie' in current_request.META['HTTP_USER_AGENT'].lower():
             return inyoka_dtd
-    except:
+    except Exception:
         pass
     return u'<?xml version="1.0" encoding="utf-8"?>\n' + inyoka_dtd
 
@@ -74,7 +74,7 @@ class Breadcrumb(object):
 
     def render(self, target='breadcrumb'):
         if not self.final:
-            base_name = settings.BASE_DOMAIN_NAME.rsplit(':',1)[0]
+            base_name = settings.BASE_DOMAIN_NAME.rsplit(':', 1)[0]
             self.path.append((base_name, href('portal'), True))
             self.path.reverse()
             self.final = True

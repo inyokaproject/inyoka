@@ -81,7 +81,7 @@ def delete(request, entry_id):
     else:
         flash(render_template('pastebin/delete_entry.html',
                               {'entry': entry}))
-    return HttpResponseRedirect(href('pastebin',entry.id))
+    return HttpResponseRedirect(href('pastebin', entry.id))
 
 
 def raw(request, entry_id):
