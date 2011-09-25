@@ -1,7 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.core.cache import cache
 from django.db import router
-from django.contrib.admin.util import NestedObjects
 from django.test import TestCase, TransactionTestCase
 
 from inyoka.forum.models import Forum, Topic, Post
@@ -20,9 +19,8 @@ class TestForumModel(TransactionTestCase):
         self.forum.save()
 
     def tearDown(self):
-        collector = NestedObjects(using=router.db_for_write(Forum))
-        collector.collect((self.forum, self.parent2, self.parent1))
-        collector.delete()
+        for object in (self.forum, self.parent2, self.parent1):
+            object.delete()
 
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
@@ -113,9 +111,13 @@ class TestPostSplit(TransactionTestCase):
         self.topic2.posts.add(self.fp2)
 
     def tearDown(self):
-        collector = NestedObjects(using=router.db_for_write(Forum))
-        collector.collect((self.forum, self.forum2, self.category))
-        collector.delete()
+        objects = [self.topic1, self.topic2, self.forum, self.forum2,
+                   self.category]
+        for object in objects:
+            if object.pk:
+                # We delete a topic in test_split_post_remove_topic, so
+                # we do not have a pk here for everything...
+                object.delete()
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
@@ -181,10 +183,7 @@ class TestPostSplit(TransactionTestCase):
         self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
 
         # cleanup
-        #
-        collector = NestedObjects(using=router.db_for_write(Forum))
-        collector.collect((new_topic,))
-        collector.delete()
+        new_topic.delete()
 
     def test_split_post_remove_topic(self):
         posts = Post.objects.filter(text__in=(u'test1', u'test2', u'test3')).all()
@@ -227,9 +226,10 @@ class TestPostMove(TransactionTestCase):
         self.topic2.posts.add(self.lp2)
 
     def tearDown(self):
-        collector = NestedObjects(using=router.db_for_write(Forum))
-        collector.collect((self.forum, self.forum2, self.category))
-        collector.delete()
+        objects = [self.topic1, self.topic2, self.forum, self.forum2,
+                   self.category]
+        for obj in objects:
+            obj.delete()
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)

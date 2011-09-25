@@ -1263,10 +1263,7 @@ def delete_topic(request, topic_slug, action='hide'):
 
             elif action == 'delete':
                 send_deletion_notification(request.user, topic, request.POST.get('reason', None))
-                # TODO: We have to update `Forum.last_post` here!
-                #for p in topic.posts.all():
-                #     p.delete()
-                #topic.delete()
+                topic.delete()
                 redirect = url_for(topic.forum)
                 flash(u'Das Thema „%s“ wurde erfolgreich gelöscht.' % topic.title,
                       success=True)

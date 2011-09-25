@@ -422,8 +422,8 @@ class EditUserProfileForm(UserCPProfileForm):
                                         u'nicht benutzbare Zeichen')
         if (self.user.username != username and
             User.objects.filter(username=username).exists()):
-                raise forms.ValidationError(
-                    u'Ein Benutzer mit diesem Namen existiert bereits')
+            raise forms.ValidationError(
+                u'Ein Benutzer mit diesem Namen existiert bereits')
         return username
 
 
