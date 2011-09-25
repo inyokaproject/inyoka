@@ -28,7 +28,7 @@
     {{ render_form(form, ['name'], inline=true) }}
     <dd>
       {{ form.is_public }} <label for="id_is_public">{% trans %}Public{% endtrans %}</label>
-      <span class="help_text">{% trans %}will be shown in the groupoverview an the userprofile{% endtrans %}</span>
+      <span class="help_text">{% trans %}will be shown in the groupoverview and the userprofile{% endtrans %}</span>
       {{- form.is_public.errors }}
     </dd>
     <dl>

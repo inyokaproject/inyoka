@@ -14,15 +14,19 @@
 {% block content %}
   <h3>{{ group.name|e }}</h3>
   <p>
+    {% if not group.is_public %}
+      {% trans %}This group is private and the membership is not shown public.{% endtrans %}
+    {% else %}
+      {% trans %}This is a public group.{% endtrans %}
+    {%- endif %}
+  </p>
+  <p>
     {% trans count=user_count, name=group.name|e %}
       The group “{{ name }}“ has {{ count }} member:
     {% pluralize %}
       The group “{{ name }}“ has {{ count }} members:
     {% endtrans %}
   </p>
-  {% if not group.is_public %}
-    <p>{% trans %}This group is private and the membership is not shown public.{% endtrans %}</p>
-  {%- endif %}
   <table>
     <tr>
       <th>{{ table.get_html('id', '#') }}</th>

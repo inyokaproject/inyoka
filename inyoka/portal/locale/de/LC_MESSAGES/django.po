@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-25 13:20+0200\n"
+"POT-Creation-Date: 2011-09-25 13:41+0200\n"
 "PO-Revision-Date: 2010-07-18 19:12+0100\n"
 "Last-Translator: Florian Apolloner <apollo13@apolloner.eu>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -501,6 +501,7 @@ msgid "Separate multiple names by semicolon"
 msgstr ""
 
 #: inyoka/portal/forms.py:691 inyoka/portal/user.py:485
+#: inyoka/portal/templates/portal/overall.html:42
 msgid "Groups"
 msgstr ""
 
@@ -1368,11 +1369,7 @@ msgid "Calendar"
 msgstr ""
 
 #: inyoka/portal/templates/portal/overall.html:41
-msgid "Memberlist"
-msgstr ""
-
-#: inyoka/portal/templates/portal/overall.html:42
-msgid "Grouplist"
+msgid "Members"
 msgstr ""
 
 #: inyoka/portal/templates/portal/overall.html:44
@@ -1610,4 +1607,10 @@ msgid ""
 "      You did not yet subscribed to any posts or articles.\n"
 "    "
 msgstr ""
+
+#~ msgid "Memberlist"
+#~ msgstr ""
+
+#~ msgid "Grouplist"
+#~ msgstr ""
 

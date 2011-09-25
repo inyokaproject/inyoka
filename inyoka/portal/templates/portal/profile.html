@@ -10,7 +10,7 @@
 {%- extends 'portal/overall.html' %}
 
 {% do BREADCRUMB.append(user.username, user|url, True) %}
-{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+{% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 {% set styles = ['portal', 'highlight'] %}
 
 {% macro show_item(item) %}

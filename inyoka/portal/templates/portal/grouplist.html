@@ -13,7 +13,6 @@
 {% block content %}
   <h3>{% trans %}Groups{% endtrans %}</h3>
   <p>
-    Insgesamt gibt es
     {% trans count=group_count, usercount=user_groups.count() -%}
       In total there is {{ count }} group, you are in {{ usercount }} group.
     {%- pluralize -%}
