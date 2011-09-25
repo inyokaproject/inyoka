@@ -100,12 +100,19 @@ def resolve_expression_node(instance, node):
 # Partially copied from https://github.com/andymccurdy/django-tips-and-tricks/blob/master/model_update.py
 def update_model(instance, **kwargs):
     """Atomically update instance, setting field/value pairs from kwargs"""
-    # fields that use auto_now=True should be updated corrected, too!
-    for field in instance._meta.fields:
-        if hasattr(field, 'auto_now') and field.auto_now and field.name not in kwargs:
-            kwargs[field.name] = field.pre_save(instance, False)
+    instances = instance if isinstance(instance, (set, list, tuple)) else [instance]
 
-    qset = instance.__class__._default_manager.filter(pk=instance.pk)
+    for instance in instances:
+        # fields that use auto_now=True should be updated corrected, too!
+        for field in instance._meta.fields:
+            if hasattr(field, 'auto_now') and field.auto_now and field.name not in kwargs:
+                kwargs[field.name] = field.pre_save(instance, False)
+
+    manager = instance.__class__._default_manager
+    if len(instances) == 1:
+        qset = manager.filter(pk=instances[0].pk)
+    else:
+        qset = manager.filter(pk__in=[i.pk for i in instances])
     rows_affected = qset.update(**kwargs)
 
     # apply the updated args to the instance to mimic the change
@@ -115,7 +122,8 @@ def update_model(instance, **kwargs):
     for k,v in kwargs.iteritems():
         if isinstance(v, ExpressionNode):
             v = resolve_expression_node(instance, v)
-        setattr(instance, k, v)
+        for instance in instances:
+            setattr(instance, k, v)
 
     return rows_affected
 
