@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+    inyoka.hosts
+    ~~~~~~~~~~~~
+
+    Subdomain specifications.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
 import sys
 
 from django.conf import settings
@@ -8,8 +18,7 @@ from inyoka.utils.http import HttpResponsePermanentRedirect
 
 def redirect_www(request):
     """Redirects www. to settings.BASE_DOMAIN_NAME"""
-    host = request.get_host()
-    host = host[4:]
+    host = request.get_host()[4:]
     return HttpResponsePermanentRedirect('//%s%s' % (host, request.path))
 
 
