@@ -350,8 +350,8 @@ class TableOfContents(TreeMacro):
     def build_node(self, tree):
         result = nodes.List(self.list_type)
         stack = [result]
-        normalized_level = 1
-        last_level = 1
+        normalized_level = 0
+        last_level = 0
         for headline in tree.query.by_type(nodes.Headline):
             if not headline.level == last_level:
                 if headline.level > normalized_level:
@@ -371,7 +371,7 @@ class TableOfContents(TreeMacro):
             elif normalized_level < len(stack):
                 for x in xrange(len(stack) - normalized_level):
                     stack.pop()
-            ml = normalized_level*((45-self.depth-normalized_level)/normalized_level)
+            ml = normalized_level*((45-self.depth-normalized_level)/(normalized_level or 1))
             text = len(headline.text)>ml and headline.text[:ml]+'...' or \
                    headline.text
             caption = [nodes.Text(text)]
@@ -820,9 +820,22 @@ class Picture(Macro):
                 pass
         if context.application == 'forum':
             try:
-                file = ForumAttachment.objects.get(name=target, post=context.forum_post)
-                return nodes.HTML(file.html_representation)
-            except ForumAttachment.DoesNotExist:
+                # There are times when two users upload a attachment with the same
+                # name, both have post=None, so we cannot .get() here
+                # and need to filter for attachments that are session related.
+                # THIS IS A HACK and should go away once we found a way
+                # to upload attachments directly to bound posts in a sane way...
+                if context.request is not None and 'attachments' in context.request.POST:
+                    att_ids = map(int, filter(bool,
+                        context.request.POST.get('attachments', '').split(',')
+                    ))
+                    files = ForumAttachment.objects.filter(name=target, post=context.forum_post,
+                                                           id__in=att_ids)
+                    return nodes.HTML(files[0].html_representation)
+                else:
+                    file = ForumAttachment.objects.get(name=target, post=context.forum_post)
+                    return nodes.HTML(file.html_representation)
+            except (ForumAttachment.DoesNotExist, IndexError):
                 pass
 
         img = nodes.Image(source, self.alt, class_='image-' +
