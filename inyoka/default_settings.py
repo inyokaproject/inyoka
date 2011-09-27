@@ -28,7 +28,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'database.db',
-    }
+    },
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -176,7 +176,9 @@ MIDDLEWARE_CLASSES = (
 
 #: We only allow uploads via memory up to 2.5mb and do not stream into
 #: temporary files.
-FILE_UPLOAD_HANDLERS = ('django.core.files.uploadhandler.MemoryFileUploadHandler',)
+FILE_UPLOAD_HANDLERS = (
+    'django.core.files.uploadhandler.MemoryFileUploadHandler',
+)
 
 TEMPLATE_DIRS = (
     join(BASE_PATH, 'templates'),
@@ -209,10 +211,6 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 SOUTH_TESTS_MIGRATE = False
 
 OPENID_PROVIDERS = {
-#    'myopenid': {
-#        'name': 'MyOpenID',
-#        'url': 'http://{username}.myopenid.com/'
-#    },
     'openid': {
       'name': 'OpenID',
       'url': None
@@ -228,7 +226,7 @@ OPENID_PROVIDERS = {
     'google': {
       'name': 'Google',
       'url': 'https://www.google.com/accounts/o8/id'
-    }
+    },
 }
 
 # some terms to exclude by default to maintain readability
