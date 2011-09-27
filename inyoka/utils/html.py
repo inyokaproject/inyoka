@@ -6,27 +6,20 @@
     This module implements various HTML/XHTML utility functions.  Some parts
     of this module require the lxml and html5lib libraries.
 
-    **TODO**: switch to lxml.etree for the internal tree representation once
-    the bug with ``<DOCUMENT_ROOT>`` is fixed.
-
-
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
 import re
+import lxml.html.clean
+from lxml.html.defs import empty_tags
 from markupsafe import escape
 from htmlentitydefs import name2codepoint
 from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders
 from html5lib.serializer import XHTMLSerializer, HTMLSerializer
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
-from html5lib.filters import sanitizer
 
-
-#: set of tags that don't want child elements.
-EMPTY_TAGS = set(['br', 'img', 'area', 'hr', 'param', 'meta', 'link', 'base',
-                  'input', 'embed', 'col', 'frame', 'spacer'])
 
 _entity_re = re.compile(r'&([^;]+);')
 _strip_re = re.compile(r'<!--.*?-->|<[^>]*>(?s)')
@@ -38,6 +31,11 @@ html_entities = name2codepoint.copy()
 html_entities['apos'] = 39
 del name2codepoint
 
+SERIALIZERS = {
+    'html': HTMLSerializer,
+    'xhtml': XHTMLSerializer,
+}
+
 
 def _build_html_tag(tag, attrs):
     """Build an HTML opening tag."""
@@ -48,8 +46,8 @@ def _build_html_tag(tag, attrs):
 
     return u'<%s%s%s>' % (
         tag, attrs and ' ' + attrs or '',
-        tag in EMPTY_TAGS and ' /' or '',
-    ), tag not in EMPTY_TAGS and u'</%s>' % tag or u''
+        tag in empty_tags and ' /' or '',
+    ), tag not in empty_tags and u'</%s>' % tag or u''
 
 
 def build_html_tag(tag, class_=None, classes=None, **attrs):
@@ -59,18 +57,6 @@ def build_html_tag(tag, class_=None, classes=None, **attrs):
     if class_:
         attrs['class'] = class_
     return _build_html_tag(tag, attrs)[0]
-
-
-def color_fade(c1, c2, percent):
-    """Fades two html colors"""
-    new_color = []
-    for i in xrange(3):
-        part1 = int(c1[i * 2:i * 2 + 2], 16)
-        part2 = int(c2[i * 2:i * 2 + 2], 16)
-        diff = part1 - part2
-        new = int(part2 + diff * percent / 100)
-        new_color.append(hex(new)[2:])
-    return ''.join(new_color)
 
 
 def _handle_match(match):
@@ -128,46 +114,18 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     """Clean up some html and convert it to HTML/XHTML."""
     if not string.strip():
         return u''
+    if sanitize:
+        string = lxml.html.clean.clean_html(string)
     tree = parse_html(string, fragment)
     walker = treewalkers.getTreeWalker('simpletree')(tree)
     walker = CleanupFilter(walker, id_prefix, update_anchor_links)
     if filter_optional_tags:
         walker = OptionalTagsFilter(walker)
-    if sanitize:
-        walker = SanitizerFilter(walker)
-    serializer = {
-        'html':         HTMLSerializer,
-        'xhtml':        XHTMLSerializer
-    }[output_format]()
+    serializer = SERIALIZERS[output_format]()
     rv = serializer.serialize(walker)
     if stream:
         return rv
     return u''.join(rv)
-
-
-class SanitizerFilter(sanitizer.Filter):
-    """
-    Nonstandard sanitizer filter that strips <script> tags instead of escaping
-    them.  While this is against the what-wg proposal it makes more sense for
-    aggregated blog contents which tend to use reddit/digg buttons we don't
-    want to have in escaped form.
-
-    We also disallow <style> *blocks* here because they are not valid in non
-    head sections.
-    """
-
-    def __iter__(self):
-        sourceiter = iter(self.source)
-        for t in sourceiter:
-            if t['type'] == 'StartTag' and t['name'] in ('script', 'style'):
-                needle = t['name']
-                for t2 in sourceiter:
-                    if t2['type'] == 'EndTag' and t2['name'] == needle:
-                        break
-                continue
-            token = self.sanitize_token(t)
-            if token:
-                yield token
 
 
 class CleanupFilter(object):
