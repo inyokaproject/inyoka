@@ -44,11 +44,11 @@ def _build_html_tag(tag, attrs):
     attrs = u' '.join(iter(
         u'%s=%s' % (k, quoteattr(unicode(v)))
         for k, v in attrs.iteritems()
-        if v is not None
-    ))
+        if v is not None))
+
     return u'<%s%s%s>' % (
         tag, attrs and ' ' + attrs or '',
-        tag in EMPTY_TAGS and ' /' or ''
+        tag in EMPTY_TAGS and ' /' or '',
     ), tag not in EMPTY_TAGS and u'</%s>' % tag or u''
 
 
@@ -73,6 +73,23 @@ def color_fade(c1, c2, percent):
     return ''.join(new_color)
 
 
+def _handle_match(match):
+    name = match.group(1)
+    if name in html_entities:
+        return unichr(html_entities[name])
+    if name[:2] in ('#x', '#X'):
+        try:
+            return unichr(int(name[2:], 16))
+        except ValueError:
+            return u''
+    elif name.startswith('#'):
+        try:
+            return unichr(int(name[1:]))
+        except ValueError:
+            return u''
+    return u''
+
+
 def replace_entities(string):
     """
     Replace HTML entities in a string:
@@ -82,22 +99,7 @@ def replace_entities(string):
     """
     if string is None:
         return u''
-    def handle_match(m):
-        name = m.group(1)
-        if name in html_entities:
-            return unichr(html_entities[name])
-        if name[:2] in ('#x', '#X'):
-            try:
-                return unichr(int(name[2:], 16))
-            except ValueError:
-                return u''
-        elif name.startswith('#'):
-            try:
-                return unichr(int(name[1:]))
-            except ValueError:
-                return u''
-        return u''
-    return _entity_re.sub(handle_match, string)
+    return _entity_re.sub(_handle_match, string)
 
 
 def striptags(string):
