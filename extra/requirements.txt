@@ -10,7 +10,7 @@ Fabric==1.2.2
 South==0.7.3
 python-openid==2.2.5
 django-sentry==1.8.5
-django-mobile==0.2.0
+django-mobile==0.2.1
 django-nose==0.1.2
 celery==2.3.3
 django-kombu==0.9.4

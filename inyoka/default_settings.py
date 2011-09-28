@@ -170,7 +170,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.http.ConditionalGetMiddleware',
     'inyoka.middlewares.highlighter.HighlighterMiddleware',
     'inyoka.middlewares.security.SecurityMiddleware',
-    'django_mobile.middleware.MobileDetectionMiddleware',
+    'inyoka.middlewares.common.MobileDetectionMiddleware',
     'django_mobile.middleware.SetFlavourMiddleware',
 )
 
