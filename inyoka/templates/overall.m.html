@@ -46,6 +46,13 @@
               <a href="{{ href(app) }}">{{ app|capitalize }}</a>
             </li>
           {%- endfor %}
+					<li>
+						{%- if USER.is_authenticated %}
+							<a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">Logout</a>
+						{%- else %}
+							<a href="{{ href('portal', 'login', next=CURRENT_URL) }}">Login</a>
+						{%- endif %}
+					</li>
         </ul>
       </nav>
       <div class="clear"></div>
@@ -61,11 +68,6 @@
       <a href="{{ href('portal', 'datenschutz') }}">Datenschutz</a> •
       <a href="{{ href('portal', 'impressum') }}">Impressum</a> •
       <a href="?flavour=full">Zur klassischen Version</a> •
-      {%- if USER.is_authenticated %}
-        <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">Logout</a>
-      {%- else %}
-        <a href="{{ href('portal', 'login', next=CURRENT_URL) }}">Login</a>
-      {%- endif %}
     </footer>
   </div>
 </body>
