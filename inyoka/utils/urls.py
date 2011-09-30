@@ -50,7 +50,8 @@ def href(_module='portal', *parts, **query):
             'static': settings.STATIC_URL,
         }[_module].rstrip('/')
     else:
-        subdomain = get_host(_module).regex + ('.' if subdomain else '')
+        subdomain = get_host(_module).regex
+        subdomain = subdomain + '.' if subdomain else ''
         base_url = 'http://%s%s' % (subdomain, settings.BASE_DOMAIN_NAME)
 
     return '%s/%s%s%s%s' % (
