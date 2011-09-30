@@ -146,6 +146,7 @@ CACHES = {
     },
     'request': {
         'BACKEND': 'inyoka.utils.cache.RequestCache',
+        'KEY_PREFIX': CACHE_PREFIX
     }
 }
 
