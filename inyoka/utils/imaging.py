@@ -10,7 +10,6 @@
 """
 import os
 from contextlib import closing
-from hashlib import sha1
 
 from django.conf import settings
 from django.utils.encoding import force_unicode
