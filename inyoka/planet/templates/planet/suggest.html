@@ -9,9 +9,10 @@
 #}
 {%- extends 'planet/page.html' %}
 {% from 'macros.html' import render_form %}
-{% do BREADCRUMB.append('Blog vorschlagen', href('planet', 'suggest'), True) %}
+{% do BREADCRUMB.append(_('Suggest blog'), href('planet', 'suggest'), True) %}
 
 {% block planet_content %}
+  {# TODO: Text should be changeable via interface #}
   <p>Hier kannst du einen Blog für den Planeten vorschlagen.</p>
   <p>Die wichtigsten Kriterien sind:</p>
   <ul>
@@ -28,8 +29,8 @@
       <dd>{{ form.mine }} <label for="id_mine">{{ form.mine.label|e }}</label></dd>
     </dl>
     <p>
-      <input type="submit" value="Abschicken" />
-      <input type="submit" name="abort" value="Abbrechen" />
+      <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+      <input type="submit" name="abort" value="{% trans %}Cancel{% endtrans %}" />
     </p>
   </form>
 {% endblock %}

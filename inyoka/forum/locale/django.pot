@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-25 13:41+0200\n"
+"POT-Creation-Date: 2011-10-01 01:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -279,93 +279,93 @@ msgstr ""
 msgid "The topic “%(topic)s“ was hidden."
 msgstr ""
 
-#: inyoka/forum/views.py:1276
+#: inyoka/forum/views.py:1273
 msgid "The topic “%(topic)“ was deleted successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1303
+#: inyoka/forum/views.py:1300
 #, python-format
 msgid "%(site)s topic – “%(topic)s“"
 msgstr ""
 
-#: inyoka/forum/views.py:1345
+#: inyoka/forum/views.py:1342
 #, python-format
 msgid "%(site)s forum – “%(forum)s“"
 msgstr ""
 
-#: inyoka/forum/views.py:1353
+#: inyoka/forum/views.py:1350
 #, python-format
 msgid "%(site)s forum"
 msgstr ""
 
-#: inyoka/forum/views.py:1397
+#: inyoka/forum/views.py:1394
 msgid "Please login to mark posts as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1403
+#: inyoka/forum/views.py:1400
 #, python-format
 msgid "The forum “%(forum)s“ was marked as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1408
+#: inyoka/forum/views.py:1405
 msgid "All forums were marked as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1419
+#: inyoka/forum/views.py:1416
 #, python-format
 msgid "You can only display the last %(n)d pages."
 msgstr ""
 
-#: inyoka/forum/views.py:1433
+#: inyoka/forum/views.py:1430
 #, python-format
 msgid "Posts of the last %(n)d hours"
 msgstr ""
 
-#: inyoka/forum/views.py:1437
+#: inyoka/forum/views.py:1434
 msgid "Unanswered topics"
 msgstr ""
 
-#: inyoka/forum/views.py:1441
+#: inyoka/forum/views.py:1438
 msgid "Unsolved topics"
 msgstr ""
 
-#: inyoka/forum/views.py:1447
+#: inyoka/forum/views.py:1444
 #, python-format
 msgid "Topics by “%(user)s“"
 msgstr ""
 
-#: inyoka/forum/views.py:1456
+#: inyoka/forum/views.py:1453
 #, python-format
 msgid "Posts by “%(user)s“"
 msgstr ""
 
-#: inyoka/forum/views.py:1459
+#: inyoka/forum/views.py:1456
 msgid "My posts"
 msgstr ""
 
-#: inyoka/forum/views.py:1471
+#: inyoka/forum/views.py:1468
 msgid "New posts"
 msgstr ""
 
-#: inyoka/forum/views.py:1545
+#: inyoka/forum/views.py:1542
 msgid "There aren’t more recent topics in this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1558
+#: inyoka/forum/views.py:1555
 msgid "There aren’t any older topics in this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1629
+#: inyoka/forum/views.py:1626
 #, python-format
 msgid "The forum “%(forum)s“ was changed successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1631
+#: inyoka/forum/views.py:1628
 #, python-format
 msgid "The forum “%(forum)s“ was created successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1635
+#: inyoka/forum/views.py:1632
 msgid "Errors occurred, please fix them."
 msgstr ""
 

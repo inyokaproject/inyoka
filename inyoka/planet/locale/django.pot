@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-25 13:41+0200\n"
+"POT-Creation-Date: 2011-10-01 01:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,30 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+
+#: inyoka/planet/forms.py:21
+msgid "Name of the blog"
+msgstr ""
+
+#: inyoka/planet/forms.py:22
+msgid "URL"
+msgstr ""
+
+#: inyoka/planet/forms.py:23
+msgid "Feed URL"
+msgstr ""
+
+#: inyoka/planet/forms.py:24
+msgid "Description"
+msgstr ""
+
+#: inyoka/planet/forms.py:26
+msgid "This is my own blog"
+msgstr ""
+
+#: inyoka/planet/forms.py:28
+msgid "Email address of the blog author"
+msgstr ""
 
 #: inyoka/planet/views.py:84
 msgid "You need to be logged in to suggest a blog"
@@ -47,5 +71,75 @@ msgstr ""
 #: inyoka/planet/views.py:173
 #, python-format
 msgid "The entry “%(title)s“ was successfully restored."
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:11
+msgid "Are you sure you want to restore the entry?"
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:13
+msgid "Are you sure you want to hide the entry?"
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:16
+msgid "Restore"
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:16
+msgid "Hide"
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:17
+msgid "Cancel"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:13
+msgid "Planet - Only headings"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:14
+msgid "Planet - Only introduction"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:15
+msgid "Planet - Full article"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:22
+msgid "Recent articles"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:53
+msgid "« Prev"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:56
+msgid "Next »"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:65
+#: inyoka/planet/templates/planet/index.m.html:22
+msgid "Permanent link"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:68
+#, python-format
+msgid ""
+"\n"
+"                            Hidden by: <a href=\"%(link)s\">%(name)s</a>\n"
+"                          "
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:72
+msgid "restore"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:72
+msgid "hide"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:87
+#: inyoka/planet/templates/planet/index.m.html:31
+msgid "No articles were aggregated"
 msgstr ""
 
