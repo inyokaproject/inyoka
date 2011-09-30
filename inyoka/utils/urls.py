@@ -23,11 +23,11 @@ from django_hosts.reverse import get_host
 # extended at runtime with module introspection information
 _append_slash_map = {'static': False, 'media': False}
 _schema_re = re.compile(r'[a-z]+://')
-acceptable_protocols = set([
+acceptable_protocols = frozenset((
     'ed2k', 'ftp', 'http', 'https', 'irc', 'mailto', 'news', 'gopher',
     'nntp', 'telnet', 'webcal', 'xmpp', 'callto', 'feed', 'urn',
     'aim', 'rsync', 'tag', 'ssh', 'sftp', 'rtsp', 'afs', 'git', 'msn'
-])
+))
 
 
 def href(_module='portal', *parts, **query):
@@ -50,8 +50,8 @@ def href(_module='portal', *parts, **query):
             'static': settings.STATIC_URL,
         }[_module].rstrip('/')
     else:
-        subdomain = get_host(_module).regex
-        base_url = 'http://%s%s' % (subdomain + '.' if subdomain else '', settings.BASE_DOMAIN_NAME)
+        subdomain = get_host(_module).regex + ('.' if subdomain else '')
+        base_url = 'http://%s%s' % (subdomain, settings.BASE_DOMAIN_NAME)
 
     return '%s/%s%s%s%s' % (
         base_url,

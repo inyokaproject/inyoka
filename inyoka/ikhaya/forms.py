@@ -12,7 +12,7 @@ from django import forms
 import pytz
 from datetime import time as dt_time
 from inyoka.utils.forms import UserField, DateWidget, \
-    TimeWidget, DateTimeField
+    TimeWidget, DateTimeField, StrippedCharField
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone, \
         date_time_to_datetime
 from inyoka.ikhaya.models import Article, Suggestion, Category, Event
@@ -37,17 +37,11 @@ class SuggestArticleForm(forms.ModelForm):
 
 
 class EditCommentForm(forms.Form):
-    text = forms.CharField(label=u'Text', widget=forms.Textarea,
+    text = StrippedCharField(label=u'Text', widget=forms.Textarea,
              help_text=u'Um dich auf einen anderen Kommentar zu beziehen, '
                u'kannst du <code>@kommentarnummer</code> verwenden.<br />'
                u'Dies wird automatisch eingefügt, wenn du bei einem Beitrag '
                u'auf „Antworten“ klickst.')
-
-    def clean_text(self):
-        text = self.cleaned_data.get('text', '')
-        if not text.strip():
-            raise forms.ValidationError('Text darf nicht leer sein')
-        return text
 
 
 class EditArticleForm(forms.ModelForm):

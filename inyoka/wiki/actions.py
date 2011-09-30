@@ -289,6 +289,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
     cache.delete('wiki/object_list')
     return True
 
+
 @require_privilege('manage')
 @does_not_exist_is_404
 def do_rename(request, name):
@@ -305,7 +306,7 @@ def do_rename(request, name):
             try:
                 Page.objects.get_by_name(new_name)
             except Page.DoesNotExist:
-                if _rename(request, page, data['new_name'], force):
+                if _rename(request, page, new_name, force):
                     flash(u'Die Seite wurde erfolgreich umbenannt.', success=True)
             else:
                 flash(u'Eine Seite mit diesem Namen existiert bereits.', False)

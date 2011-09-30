@@ -75,7 +75,7 @@ def rule(regexp, tokentype=None, enter=None, leave=None):
     return (re.compile(regexp, re.U), tokentype, statechange)
 
 
-number_re = re.compile(r'\d+(?:\.\d*)?')
+number_re = re.compile(r'^\d+(?:\.\d*)?$')
 
 
 class Lexer(object):
@@ -651,7 +651,7 @@ class Value(Expr):
         if isinstance(this, (int, long, float)):
             return float(this)
         elif isinstance(this, basestring):
-            m = number_re.search(this)
+            m = number_re.search(this.strip())
             if m:
                 return float(m.group())
         return default

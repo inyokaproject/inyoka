@@ -835,7 +835,7 @@ class Picture(Macro):
                 else:
                     file = ForumAttachment.objects.get(name=target, post=context.forum_post)
                     return nodes.HTML(file.html_representation)
-            except (ForumAttachment.DoesNotExist, IndexError), exc:
+            except (ForumAttachment.DoesNotExist, IndexError):
                 pass
 
         img = nodes.Image(source, self.alt, class_='image-' +
@@ -1059,7 +1059,7 @@ class FilterByMetaData(Macro):
             mapping.extend(map(lambda x: (key, x), values))
         mapping = MultiMap(mapping)
 
-        pages = set([])
+        pages = set()
 
         for key in mapping.keys():
             values = list(flatten_iterator(mapping[key]))
@@ -1070,7 +1070,7 @@ class FilterByMetaData(Macro):
             pages = pages.union(res)
 
         # filter the pages with `AND`
-        res = set([])
+        res = set()
         for key in mapping.keys():
             for page in pages:
                 e = [x[4:] for x in mapping[key] if x.startswith('NOT ')]

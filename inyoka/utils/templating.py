@@ -42,16 +42,18 @@ def get_dtd():
     """
     global inyoka_dtd
     if inyoka_dtd is None:
-        inyoka_dtd = u'<!DOCTYPE html SYSTEM "%s">' % (
-            settings.DEBUG and os.path.realpath(
-                os.path.join(os.path.dirname(__file__), '..',
-                             'static', 'xhtml1-strict-uu.dtd'))
-            or href('static', 'xhtml1-strict-uu.dtd')
-        )
+        if settings.DEBUG:
+            path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+                                                 'static',
+                                                 'xhtml1-strict-uu.dtd'))
+        else:
+            path = href('static', 'xhtml1-strict-uu.dtd')
+        inyoka_dtd = u'<!DOCTYPE html SYSTEM "%s">' % path
+
     try:
         if 'msie' in current_request.META['HTTP_USER_AGENT'].lower():
             return inyoka_dtd
-    except:
+    except Exception:
         pass
     return u'<?xml version="1.0" encoding="utf-8"?>\n' + inyoka_dtd
 
@@ -74,14 +76,15 @@ class Breadcrumb(object):
 
     def render(self, target='breadcrumb'):
         if not self.final:
-            base_name = settings.BASE_DOMAIN_NAME.rsplit(':',1)[0]
+            base_name = settings.BASE_DOMAIN_NAME.rsplit(':', 1)[0]
             self.path.append((base_name, href('portal'), True))
             self.path.reverse()
             self.final = True
         if target == 'breadcrumb':
             result = []
             for element in self.path:
-                result.append(u'<a href="{0}">{1}</a>'.format(element[1], element[0]))
+                result.append(u'<a href="{0}">{1}</a>'.format(element[1],
+                                                              element[0]))
             return u' › '.join(result)
         elif target == 'appheader':
             if len(self.path) < 2:
@@ -134,13 +137,15 @@ def populate_context_defaults(context, flash=False):
         pms = cached_values.get(key)
         if pms is None:
             pms = PrivateMessageEntry.objects \
-                .filter(user__id=user.id, read=False).exclude(folder=None).count()
+                .filter(user__id=user.id, read=False) \
+                .exclude(folder=None).count()
             to_update[key] = pms
         if can['manage_topics']:
             key = 'forum/reported_topic_count'
             reported = cached_values.get(key)
             if reported is None:
-                reported = Topic.objects.filter(reporter__id__isnull=False).count()
+                reported = Topic.objects.filter(reporter__id__isnull=False) \
+                                        .count()
                 to_update[key] = reported
         if can['article_edit']:
             key = 'ikhaya/suggestion_count'
@@ -248,7 +253,8 @@ class InyokaEnvironment(Environment):
         self.install_gettext_translations(translation, newstyle=True)
 
     def _compile(self, source, filename):
-        filename = 'jinja:/' + filename if filename.startswith('/') else filename
+        filename = 'jinja:/' + filename if filename.startswith('/') \
+                                        else filename
         code = compile(source, filename, 'exec')
         return code
 
@@ -283,7 +289,7 @@ FILTERS = {
     'url':
         partial(url_for),
     'urlencode': urlencode_filter,
-    'jsonencode': simplejson.dumps
+    'jsonencode': simplejson.dumps,
 }
 
 # setup the template environment

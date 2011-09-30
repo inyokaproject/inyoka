@@ -28,11 +28,7 @@ def email_hash(string):
 
 
 def get_gravatar(email, secure=False, rating='g', size=80, default='mm'):
-    """Generate a link to the users' Gravatar.
-
-    >>> get_gravatar('gridaphobe@gmail.com')
-    'http://www.gravatar.com/avatar/16b87da510d278999c892cdbdd55c1b6?s=80&r=g&d=mm'
-    """
+    """Generate a link to the users' Gravatar."""
     assert rating.lower() in RATINGS
     assert MIN_SIZE <= size <= MAX_SIZE
 

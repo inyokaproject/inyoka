@@ -43,6 +43,12 @@ def clear_surge_protection(request, form):
             del request.session['sp']
 
 
+def validate_empty_text(value):
+    if not value.strip():
+        raise forms.ValidationError('Text darf nicht leer sein', code='invalid')
+    return value
+
+
 class MultiField(forms.Field):
     """
     This field validates a bunch of values using zero, one or more fields.
@@ -174,6 +180,10 @@ class CaptchaField(forms.Field):
                                     u'korrekt')
 
 
+class StrippedCharField(forms.CharField):
+    default_validators = [validate_empty_text]
+
+
 class HiddenCaptchaField(forms.Field):
     widget = forms.HiddenInput
 
@@ -188,7 +198,7 @@ class HiddenCaptchaField(forms.Field):
 class EmailField(forms.CharField):
 
     def clean(self, value):
-        value = super(forms.CharField, self).clean(value)
+        value = super(EmailField, self).clean(value)
         value = value.strip()
         if is_blocked_host(value):
             raise forms.ValidationError(u'''
