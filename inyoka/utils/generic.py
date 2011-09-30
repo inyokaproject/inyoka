@@ -43,6 +43,7 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
 class EditMixin(object):
     """Provides a flash message and success url"""
     urlgroup_name = ''
+    message = u'{verbose_name} “{object_name}” wurde erfolgreich {action}!'
 
     def form_valid(self, form):
         model = self.model or self.queryset.query.model
@@ -50,8 +51,7 @@ class EditMixin(object):
         format_args = {'verbose_name': model._meta.verbose_name,
                        'object_name': escape(unicode(self.object))}
         format_args['action'] = u'erstellt' if self.create else u'geändert'
-        message = u'{verbose_name} “{object_name}” wurde erfolgreich {action}!'
-        flash(message.format(**format_args), True)
+        flash(self.message.format(**format_args), True)
         return response
 
     def get_success_url(self):
@@ -126,7 +126,9 @@ class FilterMixin(object):
     filtersets = []
 
     def render_to_response(self, context, **kwargs):
-        context['filtersets'] = [filter(self.request.GET or None) for filter in self.filtersets]
+        req = self.request
+        filters = [filter(req.GET or None) for filter in self.filtersets]
+        context['filtersets'] = filters
         return TemplateResponseMixin.render_to_response(self, context, **kwargs)
 
     def get_queryset(self):
@@ -188,6 +190,7 @@ class BaseDeleteView(edit.BaseDeleteView):
     """
     redirect_url = None
     template_name = None
+    message = u'Die {verbose_name} „{object_name}“ wurde erfolgreich gelöscht!'
 
     def get_success_url(self):
         self.sucess_url = self.redirect_url
@@ -211,8 +214,7 @@ class BaseDeleteView(edit.BaseDeleteView):
                 'verbose_name': self.model._meta.verbose_name,
                 'object_name': escape(unicode(self.object)),
             }
-            flash(u'Die {verbose_name} „{object_name}“ wurde erfolgreich gelöscht!'\
-                    .format(**format_args), True)
+            flash(self.message.format(**format_args), True)
         return HttpResponseRedirect(self.redirect_url)
 
 
