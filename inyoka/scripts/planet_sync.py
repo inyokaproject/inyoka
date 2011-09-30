@@ -31,7 +31,7 @@ import socket
 socket.setdefaulttimeout(20.0)
 
 
-HTML_MIMETYPES = set(['text/html', 'application/xml+xhtml', 'application/xhtml+xml'])
+HTML_MIMETYPES = frozenset(('text/html', 'application/xml+xhtml', 'application/xhtml+xml'))
 _par_re = re.compile(r'\n{2,}')
 
 

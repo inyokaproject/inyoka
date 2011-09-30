@@ -1084,7 +1084,7 @@ def splittopic(request, topic_slug, page=1):
                      'new_topic': new_topic,
                      'old_topic': old_topic,
                      'mod': request.user.username}
-            users_done = set([request.user.id])
+            users_done = set(request.user.id)
             filter = Q(topic_id=old_topic.id)
             if data['action'] == 'new':
                 filter |= Q(forum_id=new_forum.id)

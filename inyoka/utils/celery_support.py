@@ -10,11 +10,11 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import base64
-from djkombu.transport import Channel as KChannel, DatabaseTransport as KDatabaseTransport
+from djkombu.transport import Channel as KChannel, \
+    DatabaseTransport as KDatabaseTransport
 from anyjson import serialize, deserialize
 from Queue import Empty
 from djkombu.models import Queue
-
 
 
 class Channel(KChannel):

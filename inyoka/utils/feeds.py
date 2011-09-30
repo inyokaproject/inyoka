@@ -3,7 +3,8 @@
     inyoka.utils.feeds
     ~~~~~~~~~~~~~~~~~~~
 
-    Utils for creating an atom feed.  This module relies in :mod:`werkzeug.contrib.atom`.
+    Utils for creating an atom feed.  This module relies on
+    :mod:`werkzeug.contrib.atom`.
 
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
@@ -15,10 +16,13 @@ from django.utils.cache import patch_response_headers
 from inyoka.utils.http import HttpResponse, PageNotFound
 
 
+MODES = frozenset(('full', 'short', 'title'))
+
+
 def atom_feed(name=None, supports_modes=True):
     def _wrapper(func):
         def real_func(*args, **kwargs):
-            if supports_modes and kwargs.get('mode') not in ('full', 'short', 'title'):
+            if supports_modes and kwargs.get('mode') not in MODES:
                 raise PageNotFound()
 
             kwargs['count'] = count = int(kwargs['count'])
@@ -38,7 +42,7 @@ def atom_feed(name=None, supports_modes=True):
                 # ret is a HttpResponse object
                 return rv
             content = rv.to_string()
-            content_type='application/atom+xml; charset=utf-8'
+            content_type = 'application/atom+xml; charset=utf-8'
             response = HttpResponse(content, content_type=content_type)
             patch_response_headers(response, 60 * 30)
             return response

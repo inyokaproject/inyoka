@@ -13,17 +13,23 @@
 import time
 
 from django.test import TestCase
-from django.core.cache import cache
+from django.core.cache import get_cache
 
 from inyoka.portal.models import Storage
 from inyoka.utils.storage import storage
+from inyoka.utils.local import local
 
 
 class TestStorage(TestCase):
+
+    def setUp(self):
+        local.cache = {}
+        self.cache = get_cache('default')
+
     def test_set(self):
         def _compare(key, value):
             Storage.objects.get(key=key)
-            self.assertEqual(value, cache.get('storage/' + key))
+            self.assertEqual(value, self.cache.get('storage/' + key))
             self.assertEqual(value, storage[key])
         storage['test'] = 'foo'
         storage['test'] = 'bar'
@@ -31,7 +37,7 @@ class TestStorage(TestCase):
         storage.set('test', 'boo', 1)
         _compare('test', 'boo')
         time.sleep(3)
-        self.assertTrue(cache.get('storage/test') is None)
+        self.assertTrue(self.cache.get('storage/test') is None)
         storage['foo'] = 'bar'
         storage['boo'] = 'far'
         self.assertEqual(storage.get_many(['foo', 'boo', 'nonexisting']), {

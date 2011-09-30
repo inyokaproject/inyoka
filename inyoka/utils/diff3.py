@@ -20,7 +20,7 @@ from inyoka.utils.html import escape
 DEFAULT_MARKERS = (
     '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<',
     '========================================',
-    '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',
 )
 
 
@@ -316,7 +316,7 @@ def generate_udiff(old, new, old_title='', new_title='',
         fromfile=old_title,
         tofile=new_title,
         lineterm='',
-        n=context_lines
+        n=context_lines,
     ))
 
 
@@ -326,6 +326,20 @@ def prepare_udiff(udiff):
     an udiff into a HTML table.
     """
     return DiffRenderer(udiff).prepare()
+
+
+def process_line(line, start, end):
+    last = end + len(line['line'])
+    if line['action'] == 'add':
+        tag = 'ins'
+    else:
+        tag = 'del'
+    line['line'] = u'%s<%s>%s</%s>%s' % (
+        line['line'][:start],
+        tag,
+        line['line'][start:last],
+        tag,
+        line['line'][last:])
 
 
 class DiffRenderer(object):
@@ -364,21 +378,8 @@ class DiffRenderer(object):
             end -= 1
         end += 1
         if start or end:
-            def do(l):
-                last = end + len(l['line'])
-                if l['action'] == 'add':
-                    tag = 'ins'
-                else:
-                    tag = 'del'
-                l['line'] = u'%s<%s>%s</%s>%s' % (
-                    l['line'][:start],
-                    tag,
-                    l['line'][start:last],
-                    tag,
-                    l['line'][last:]
-                )
-            do(line)
-            do(next)
+            process_line(line, start, end)
+            process_line(next, start, end)
 
     def _parse_udiff(self):
         """Parse the diff an return data for the template."""
@@ -399,7 +400,7 @@ class DiffRenderer(object):
                     'filename':         filename,
                     'old_revision':     old_rev,
                     'new_revision':     new_rev,
-                    'chunks':           chunks
+                    'chunks':           chunks,
                 })
 
                 line = lineiter.next()
@@ -444,7 +445,7 @@ class DiffRenderer(object):
                             'old_lineno':   affects_old and old_line or u'',
                             'new_lineno':   affects_new and new_line or u'',
                             'action':       action,
-                            'line':         line
+                            'line':         line,
                         })
                         line = lineiter.next()
 

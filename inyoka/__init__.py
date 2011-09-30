@@ -114,6 +114,7 @@ import subprocess
 #: Inyoka revision present in the current mercurial working copy
 INYOKA_REVISION = 'unknown'
 
+
 def _dummy(*args, **kwargs):
     return None
 
@@ -137,7 +138,6 @@ def _bootstrap():
         revision = INYOKA_REVISION
 
     revision = revision.strip()
-
 
     # This value defines the timeout for sockets in seconds.  Per default
     # python sockets do never timeout and as such we have blocking workers.

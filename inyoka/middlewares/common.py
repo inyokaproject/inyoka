@@ -20,6 +20,8 @@ from django.conf import settings
 from django.middleware.common import CommonMiddleware
 
 from django_hosts.middleware import HostsMiddleware
+from django_mobile.middleware import \
+    MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
 from inyoka import INYOKA_REVISION
 from inyoka.utils.flashing import has_flashed_messages
@@ -94,6 +96,10 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
         local_manager.cleanup()
 
         return response
+
+
+class MobileDetectionMiddleware(BaseMobileDetectionMiddleware):
+        user_agents_test_search = "(?:up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|windows ce|pda|mobile|mini|palm|netfront|fennec)"
 
 
 # import all application modules so that we get bootstrapping
