@@ -65,19 +65,19 @@ class PermissionMixin(object):
     """
     Like the `permission_required` decorator, but for generic views.
     The check can be explicitely disabled by setting `required_permission`
-    to 'no_permission'.
+    to False
     """
     required_permission = None
 
     def get(self, *args, **kwargs):
         func = super(PermissionMixin, self).get
-        if self.required_permission and not self.required_permission == 'no_permission':
+        if self.required_permission:
             func = require_permission(self.required_permission)(func)
         return func(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         func = super(PermissionMixin, self).post
-        if self.required_permission and not self.required_permission == 'no_permission':
+        if self.required_permission:
             func = require_permission(self.required_permission)(func)
         return func(*args, **kwargs)
 
