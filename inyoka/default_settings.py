@@ -163,7 +163,6 @@ AVAILABLE_FEED_COUNTS = {
 
 MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.common.CommonServicesMiddleware',
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'inyoka.middlewares.session.AdvancedSessionMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
@@ -201,7 +200,6 @@ INSTALLED_APPS = (
     'django_nose',
     'djcelery',
     'djkombu',
-#    'debug_toolbar',
     'django_mobile',
     'django_hosts',
 )
@@ -275,22 +273,6 @@ BROKER_PORT = 5672
 BROKER_USER = ''
 BROKER_PASSWORD = ''
 BROKER_VHOST = ''
-
-DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
-}
-
-DEBUG_TOOLBAR_PANELS = (
-    'debug_toolbar.panels.version.VersionDebugPanel',
-    'debug_toolbar.panels.timer.TimerDebugPanel',
-    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-    'debug_toolbar.panels.headers.HeaderDebugPanel',
-    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-    'debug_toolbar.panels.sql.SQLDebugPanel',
-#    'debug_toolbar.panels.cache.CacheDebugPanel',
-    'debug_toolbar.panels.signals.SignalDebugPanel',
-    'debug_toolbar.panels.logger.LoggingPanel',
-)
 
 INTERNAL_IPS = ('127.0.0.1',)
 
