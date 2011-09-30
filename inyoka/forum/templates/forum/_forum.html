@@ -3,9 +3,9 @@
 
     <td class="icon">
       {%- if forum.get_read_status(REQUEST.user) %}
-      <img src="{{ href('static', 'img', 'forum/forum.png') }}" alt="Forum gelesen" />
+      <img src="{{ href('static', 'img', 'forum/forum.png') }}" alt="{% trans %}Forum read{% endtrans %}" />
       {%- else %}
-      <img src="{{ href('static', 'img', 'forum/forum_unread.png') }}" alt="Neue Beiträge im Forum" />
+      <img src="{{ href('static', 'img', 'forum/forum_unread.png') }}" alt="{% trans %}Unread posts{% endtrans %}" />
       {%- endif %}
     </td>
     <td class="forum" colspan="3">
@@ -17,26 +17,30 @@
       </p>
 
       {%- if forum.description %}
-      <p class="description">{{ forum.description|e }}</p>
+        <p class="description">{{ forum.description|e }}</p>
       {%- endif %}
       {%- if subforums %}
-      <p class="subforums">Unterforen:
-      {%- for subforum in subforums %}
-        {%- if not subforum.get_read_status(REQUEST.user) %}
-        <img src="{{ href('static', 'img/forum/subforum_unread.png') }}" alt="Neue Beiträge im Forum" />
-        {%- endif %}
-        <a href="{{ subforum|url }}">{{ subforum.name|e }}</a>{% if not loop.last %}, {% endif %}
-      {%- endfor %}
-      </p>
+        <p class="subforums">{% trans %}Subforums:{% endtrans %}
+          {%- for subforum in subforums %}
+            {%- if not subforum.get_read_status(REQUEST.user) %}
+              <img src="{{ href('static', 'img/forum/subforum_unread.png') }}" alt="{% trans %}Unread posts{% endtrans %}" />
+            {%- endif %}
+              <a href="{{ subforum|url }}">{{ subforum.name|e }}</a>{% if not loop.last %}, {% endif %}
+          {%- endfor %}
+        </p>
       {%- endif %}
     </td>
     <td class="last_post">
-    {%- if forum.last_post_id in last_posts -%}
-      {% set last_post = last_posts[forum.last_post_id] %}
-      <a href="{{ last_post|url }}">{{ last_post.pub_date|datetimeformat }}</a><br />
-      von <a href="{{ last_post.author|url }}">{{ last_post.author|e }}</a>
-    {%- else %}---
-    {%- endif %}</td>
+      {%- if forum.last_post_id in last_posts -%}
+        {% set last_post = last_posts[forum.last_post_id] %}
+        <a href="{{ last_post|url }}">{{ last_post.pub_date|datetimeformat }}</a><br />
+        {% trans link=last_post.author|url, name=last_post.author|e %}
+          by <a href="{{ link }}">{{ name }}</a>
+        {% endtrans %}
+      {%- else %}
+        ---
+      {%- endif %}
+    </td>
   </tr>
 {% endmacro %}
 
@@ -53,16 +57,16 @@
     {%- if can_moderate and topic.reported %}-reported{% endif -%}
   {%- endif -%}
   .png" alt="
-  {%- if not is_read %}ungelesenes {% endif -%}
-  {%- if topic.solved %}gelöstes {% endif -%}
-  {%- if topic.locked %}gesperrtes {% endif -%}
-  {%- if topic.hidden %}verstecktes {% endif -%}
-  {%- if can_moderate and topic.reported %}gemeldetes {% endif -%}
-  Thema" title="
-  {%- if not is_read %}ungelesenes {% endif -%}
-  {%- if topic.solved %}gelöstes {% endif -%}
-  {%- if topic.locked %}gesperrtes {% endif -%}
-  {%- if topic.hidden %}verstecktes {% endif -%}
-  {%- if can_moderate and topic.reported %}gemeldetes {% endif -%}
-  Thema" />
+  {%- if not is_read %}{% trans %}unread topic{% endtrans %}{% endif -%}
+  {%- if topic.solved %}{% trans %}solved topic{% endtrans %}{% endif -%}
+  {%- if topic.locked %}{% trans %}locked topic{% endtrans %}{% endif -%}
+  {%- if topic.hidden %}{% trans %}hidden topic{% endtrans %}{% endif -%}
+  {%- if can_moderate and topic.reported %}{% trans %}reported topic{% endtrans %}{% endif -%}
+  " title="
+  {%- if not is_read %}{% trans %}unread topic{% endtrans %}{% endif -%}
+  {%- if topic.solved %}{% trans %}solved topic{% endtrans %}{% endif -%}
+  {%- if topic.locked %}{% trans %}locked topic{% endtrans %}{% endif -%}
+  {%- if topic.hidden %}{% trans %}hidden topic{% endtrans %}{% endif -%}
+  {%- if can_moderate and topic.reported %}{% trans %}reported topic{% endtrans %}{% endif -%}
+  " />
 {%- endmacro %}
