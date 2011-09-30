@@ -44,7 +44,7 @@ class RequestCache(BaseCache):
         key_mapping = {}
 
         # fetch keys that are not yet in the thread local cache
-        keys_to_fetch = set(keys).difference(set(self.request_cache))
+        keys_to_fetch = set(keys).difference(set(self.request_cache.keys()))
         key_mapping.update(self.real_cache.get_many(keys_to_fetch, version))
 
         # pull in remaining keys from thread local cache.
@@ -69,5 +69,6 @@ class RequestCache(BaseCache):
         if local_has_key('cache') and key in self.request_cache:
             self.request_cache.pop(key)
         self.real_cache.delete(key, version)
+
 
 request_cache = get_cache('request')
