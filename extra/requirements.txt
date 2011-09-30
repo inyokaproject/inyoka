@@ -1,6 +1,6 @@
 Jinja2==2.6
 MarkupSafe==0.12
-Werkzeug==0.7.1
+Werkzeug==0.8.1
 Pygments==1.4
 simplejson==2.2.1
 pytz==2010o
