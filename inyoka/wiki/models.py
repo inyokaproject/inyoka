@@ -279,7 +279,7 @@ class PageManager(models.Manager):
         of unicode strings, not the actual page object.  This ignores
         attachments!
         """
-        ignore = set([settings.WIKI_MAIN_PAGE])
+        ignore = set(settings.WIKI_MAIN_PAGE)
         pages = set(self.get_page_list())
         linked_pages = set(MetaData.objects.values_list('value', flat=True) \
                                            .filter(key='X-Link').all())

@@ -93,7 +93,7 @@ def create_snapshot(folder):
     percents = list(percentize(len(todo)))
     pb = ProgressBar(40)
 
-    processed = set([])
+    processed = set()
 
     for percent, name in izip(percents, todo):
 
