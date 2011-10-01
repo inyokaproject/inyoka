@@ -86,82 +86,57 @@
     {# TODO: workaround for topics without first or last_post to not mess up with server errors #}
     {%- for topic in topics  -%}
       {%- if not topic.hidden or can_moderate %}
-      {%- set classes = [] %}
-      {%- if can_moderate and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
-      {%- if can_moderate and topic.reported %}{% do classes.append('reported') %}{% endif %}
-      {%- if topic.get_ubuntu_version().class_ %}{% do classes.append(topic.get_ubuntu_version().class_) %}{% endif %}
-      <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
-        {%- if topic.author_id == USER.id %}
-        <td class="icon" style="background-color: #F6F4EF">
-        {%- else %}
-        <td class="icon">
-        {%- endif %}
-          {{ topic_icon(topic) }}
-        </td>
-        {%- if topic.author_id == USER.id %}
-        <td class="topic" style="background-color: #F8F6F1">
-        {%- else %}
-        <td class="topic">
-        {%- endif %}
-          <p class="topic_title">
-            {%- if topic.sticky %}<strong>Wichtig: </strong>{% endif -%}
-            {%- if topic.has_poll %} <strong>[Umfrage]</strong> {% endif -%}
-            {%- if can_moderate and topic.hidden %} [Verborgen] {% endif -%}
-            {%- if can_moderate and topic.reported %} [Gemeldet] {% endif -%}
-            <a href="{{ topic|url }}">{{ topic.title|e }}</a>
-            {%- if topic.get_version_info(False) %}
-            » <span class="ubuntu_version">{{ topic.get_version_info() }}</span>
-            {%- endif %}
-            {%- if not topic.get_read_status(USER) %}
-            <a href="{{ topic|url('first_unread') }}" title="Zeige ungelesene Beiträge">
-              <img src="{{ href('static', 'img/forum/goto.png') }}" alt="Zeige ungelesene Beiträge" />
-            </a>
-            {%- endif %}
-          </p>
-          <p class="description note">
-            von <a href="{{ topic.author|url }}">{{ topic.author.username|e }}</a> am {{ topic.first_post.pub_date|datetimeformat }}
-            {%- if topic.paginated %} &#160; &#160; [
-              Gehe zu Seite {{ topic.get_pagination() }}
-            ]{% endif -%}
-          </p>
-        </td>
-        {%- if topic.author_id == USER.id %}
-        <td class="view_count" style="background-color: #F8F6F1">
-        {%- else %}
-        <td class="view_count">
-        {%- endif %}
-         {{ topic.view_count }}</td>
-        {%- if topic.author_id == USER.id %}
-        <td class="post_count" style="background-color: #F8F6F1">
-        {%- else %}
-        <td class="post_count">
-        {%- endif %}
-         {{ topic.post_count - 1 }}</td>
-        {%- if topic.author_id == USER.id %}
-        <td class="last_post" style="background-color: #F8F6F1">
-        {%- else %}
-        <td class="last_post">
-        {%- endif %}
-          {%- if topic.last_post_id %}
-          <a href="{{ topic.last_post|url}}" class="date">{{
-              topic.last_post.pub_date|datetimeformat }}</a><br />
-          von <a href="{{ topic.last_post.author|url}}">{{ topic.last_post.author }}</a>
-        {%- else %}---{% endif %}</td>
-      </tr>
+        {% set classes = [] %}
+        {% if can_moderate and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
+        {% if can_moderate and topic.reported %}{% do classes.append('reported') %}{% endif %}
+        {% if topic.get_ubuntu_version().class_ %}{% do classes.append(topic.get_ubuntu_version().class_) %}{% endif %}
+        {% if topic.author == USER %}{% do classes.append('own') %}{% endif %}
+        <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
+          <td class="icon">{{ topic_icon(topic) }}</td>
+          <td class="topic">
+            <p class="topic_title">
+              {% if topic.sticky %}<strong>Wichtig:</strong>{% endif %}
+              {% if topic.has_poll %}<strong>[Umfrage]</strong>{% endif %}
+              {% if can_moderate and topic.hidden %}[Verborgen]{% endif %}
+              {% if can_moderate and topic.reported %}[Gemeldet]{% endif %}
+              <a href="{{ topic|url }}">{{ topic.title|e }}</a>
+              {% if topic.get_version_info(False) %}
+                » <span class="ubuntu_version">{{ topic.get_version_info() }}</span>
+              {%- endif %}
+              {%- if not topic.get_read_status(USER) %}
+                <a href="{{ topic|url('first_unread') }}" title="Zeige ungelesene Beiträge">
+                  <img src="{{ href('static', 'img/forum/goto.png') }}" alt="Zeige ungelesene Beiträge" />
+                </a>
+              {%- endif %}
+            </p>
+            <p class="description note">
+              von <a href="{{ topic.author|url }}">{{ topic.author.username|e }}</a> am {{ topic.first_post.pub_date|datetimeformat }}
+              {%- if topic.paginated %} &#160; &#160; [
+                Gehe zu Seite {{ topic.get_pagination() }}
+              ]{% endif -%}
+            </p>
+          </td>
+          <td class="view_count">{{ topic.view_count }}</td>
+          <td class="post_count">{{ topic.post_count - 1 }}</td>
+          <td class="last_post">
+            {%- if topic.last_post_id %}
+              <a href="{{ topic.last_post|url}}" class="date">
+                {{ topic.last_post.pub_date|datetimeformat }}
+              </a><br />
+              von <a href="{{ topic.last_post.author|url}}">{{ topic.last_post.author }}</a>
+            {%- else %}
+              ---
+            {% endif %}
+          </td>
+        </tr>
       {%- endif %}
-    {%- else %}
-      <tr>
-
-        <td colspan="5">
-          Es existieren noch keine Themen. <a href="{{ forum|url('newtopic') }}">Erstelle</a> doch das Erste!</td>
-      </tr>
-    {%- endfor %}
+    {% endfor %}
     </tbody>
     <thead>
       <tr>
         <td colspan="5">
           {%- if forum.description %}
-          <p class="description">{{ forum.description|e }}</p>
+            <p class="description">{{ forum.description|e }}</p>
           {%- endif %}
           {{ pagination.generate('right') }}
           {{ forum_actions() }}
@@ -170,4 +145,3 @@
     </thead>
   </table>
 {% endblock %}
-
