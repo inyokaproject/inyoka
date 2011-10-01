@@ -183,7 +183,8 @@ class Article(models.Model, LockableObject):
 
     pub_date = models.DateField('Datum', db_index=True)
     pub_time = models.TimeField('Zeit')
-    updated = models.DateTimeField('Letzte Änderung', blank=True, null=True, db_index=True)
+    updated = models.DateTimeField('Letzte Änderung', blank=True, null=True, 
+                                   db_index=True)
     author = models.ForeignKey(User, related_name='article_set',
                                verbose_name='Autor')
     subject = models.CharField('Überschrift', max_length=180)
@@ -270,26 +271,30 @@ class Article(models.Model, LockableObject):
         """This returns all the comments for this article"""
         return Comment.objects.filter(article=self)
 
+    @property
+    def stamp(self):
+        """Return the year/month/day part of an article url"""
+        return datetime_safe.new_date(self.pub_date).strftime('%Y/%m/%d')
+
     def get_absolute_url(self, action='show'):
-        stamp = datetime_safe.new_date(self.pub_date).strftime('%Y/%m/%d')
         if action == 'comments':
-            return href('ikhaya', stamp, self.slug, _anchor='comments')
+            return href('ikhaya', self.stamp, self.slug, _anchor='comments')
         if action in ('subscribe', 'unsubscribe'):
             if current_request:
                 current = current_request.build_absolute_uri()
                 if not self.get_absolute_url() in current:
                     # We may be at the ikhaya index page.
-                    return href('ikhaya', stamp, self.slug, action,
+                    return href('ikhaya', self.stamp, self.slug, action,
                                 next=current_request.build_absolute_uri())
-            return href('ikhaya', stamp, self.slug, action)
+            return href('ikhaya', self.stamp, self.slug, action)
 
         links = {
-            'delete':     ('ikhaya', stamp, self.slug, 'delete'),
-            'edit':       ('ikhaya', stamp, self.slug, 'edit'),
+            'delete':     ('ikhaya', self.stamp, self.slug, 'delete'),
+            'edit':       ('ikhaya', self.stamp, self.slug, 'edit'),
             'id':         ('portal', 'ikhaya',  self.id),
-            'report_new': ('ikhaya', stamp, self.slug, 'new_report'),
-            'reports':    ('ikhaya', stamp, self.slug, 'reports'),
-            'show':       ('ikhaya', stamp, self.slug),
+            'report_new': ('ikhaya', self.stamp, self.slug, 'new_report'),
+            'reports':    ('ikhaya', self.stamp, self.slug, 'reports'),
+            'show':       ('ikhaya', self.stamp, self.slug),
         }
 
         return href(*links[action if action in links.keys() else 'show'])
@@ -372,9 +377,7 @@ class Report(models.Model):
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
-            stamp = datetime_safe.new_date(self.article.pub_date) \
-                                 .strftime('%Y/%m/%d')
-            return href('ikhaya', stamp, self.article.slug, 'reports')
+            return href('ikhaya', self.article.stamp, self.article.slug, 'reports')
         return href('ikhaya', 'report', self.id, action)
 
     def save(self, *args, **kwargs):
@@ -447,9 +450,7 @@ class Comment(models.Model):
     def get_absolute_url(self, action='show'):
         if action in ['hide', 'restore', 'edit']:
             return href('ikhaya', 'comment', self.id, action)
-        stamp = datetime_safe.new_date(self.article.pub_date) \
-                             .strftime('%Y/%m/%d')
-        return href('ikhaya', stamp, self.article.slug,
+        return href('ikhaya', self.article.stamp, self.article.slug,
                     _anchor='comment_%s' % self.article.comment_count)
 
     def save(self, *args, **kwargs):
