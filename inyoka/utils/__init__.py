@@ -9,8 +9,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import math
-import itertools
 import cPickle
+from itertools import groupby as igroupby
 from hashlib import sha1
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -105,7 +105,7 @@ def get_significant_digits(value, lower, upper):
 
 def groupby(input, keyfunc):
     result = {}
-    for key, valuesiter in itertools.groupby(sorted(input, key=keyfunc), keyfunc):
+    for key, valuesiter in igroupby(sorted(input, key=keyfunc), keyfunc):
         result[key] = list(v[0] for v in valuesiter)
     return result
 

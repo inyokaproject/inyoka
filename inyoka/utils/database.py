@@ -15,6 +15,7 @@ from django.db.models.expressions import F, ExpressionNode
 
 from inyoka.utils.text import get_next_increment
 
+
 EXPRESSION_NODE_CALLBACKS = {
     ExpressionNode.ADD: operator.add,
     ExpressionNode.SUB: operator.sub,
@@ -48,12 +49,15 @@ def find_next_increment(model, column, string, stripdate=False, **query_opts):
     max_length = field.max_length if hasattr(field, 'max_length') else None
     string = _strip_ending_nums(string)
     slug = string[:max_length - 4] if max_length is not None else string
-    slug_taken = model.objects.filter(**{column: slug}).filter(**query_opts).exists()
+    filter = {column: slug}
+    filter.update(query_opts)
+    slug_taken = model.objects.filter(**filter).exists()
     if not slug_taken:
         return slug
     filter = {'%s__startswith' % column: slug + '-'}
     filter.update(query_opts)
-    existing =  list(model.objects.filter(**filter).values_list(column, flat=True))
+    existing =  list(model.objects.filter(**filter) \
+                                  .values_list(column, flat=True))
     return get_next_increment([slug] + existing, slug, max_length,
                               stripdate=stripdate)
 
@@ -97,13 +101,15 @@ def resolve_expression_node(instance, node):
     return runner
 
 
-# Partially copied from https://github.com/andymccurdy/django-tips-and-tricks/blob/master/model_update.py
+# Partially copied from
+# https://github.com/andymccurdy/django-tips-and-tricks/
 def update_model(instance, **kwargs):
     """Atomically update instance, setting field/value pairs from kwargs"""
     if not instance:
         return []
 
-    instances = instance if isinstance(instance, (set, list, tuple)) else [instance]
+    instances = instance if isinstance(instance, (set, list, tuple)) \
+                         else [instance]
 
     for instance in instances:
         # fields that use auto_now=True should be updated corrected, too!

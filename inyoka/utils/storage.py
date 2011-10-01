@@ -52,7 +52,7 @@ class CachedStorage(object):
         Get many cached values with just one cache hit or database query.
         """
         from inyoka.portal.models import Storage
-        objects = request_cache.get_many('storage/%s' % key for key in keys)
+        objects = request_cache.get_many(['storage/%s' % key for key in keys])
         values = {}
         for key, value in objects.iteritems():
             values[key[8:]] = value
