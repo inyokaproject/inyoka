@@ -114,6 +114,11 @@ import subprocess
 #: Inyoka revision present in the current mercurial working copy
 INYOKA_REVISION = 'unknown'
 
+
+def _dummy(*args, **kwargs):
+    return None
+
+
 def _bootstrap():
     """Get the Inyoka version and store it."""
     # the path to the contents of the Inyoka module
@@ -134,7 +139,6 @@ def _bootstrap():
 
     revision = revision.strip()
 
-
     # This value defines the timeout for sockets in seconds.  Per default
     # python sockets do never timeout and as such we have blocking workers.
     # Socket timeouts are set globally within the whole application.
@@ -143,7 +147,7 @@ def _bootstrap():
 
     # Silence logging output of openid library
     from openid import oidutil
-    oidutil.log = lambda message, level=0: None
+    oidutil.log = _dummy
 
     return revision
 

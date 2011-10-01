@@ -8,9 +8,27 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import operator
+
 from django.core.cache import cache
+from django.db.models.expressions import F, ExpressionNode
 
 from inyoka.utils.text import get_next_increment
+
+
+EXPRESSION_NODE_CALLBACKS = {
+    ExpressionNode.ADD: operator.add,
+    ExpressionNode.SUB: operator.sub,
+    ExpressionNode.MUL: operator.mul,
+    ExpressionNode.DIV: operator.div,
+    ExpressionNode.MOD: operator.mod,
+    ExpressionNode.AND: operator.and_,
+    ExpressionNode.OR: operator.or_,
+}
+
+
+class CannotResolve(Exception):
+    pass
 
 
 def _strip_ending_nums(string):
@@ -31,12 +49,15 @@ def find_next_increment(model, column, string, stripdate=False, **query_opts):
     max_length = field.max_length if hasattr(field, 'max_length') else None
     string = _strip_ending_nums(string)
     slug = string[:max_length - 4] if max_length is not None else string
-    slug_taken = model.objects.filter(**{column: slug}).filter(**query_opts).exists()
+    filter = {column: slug}
+    filter.update(query_opts)
+    slug_taken = model.objects.filter(**filter).exists()
     if not slug_taken:
         return slug
     filter = {'%s__startswith' % column: slug + '-'}
     filter.update(query_opts)
-    existing =  list(model.objects.filter(**filter).values_list(column, flat=True))
+    existing =  list(model.objects.filter(**filter) \
+                                  .values_list(column, flat=True))
     return get_next_increment([slug] + existing, slug, max_length,
                               stripdate=stripdate)
 
@@ -60,6 +81,69 @@ def get_simplified_queryset(queryset):
     cqry.query.related_select_cols = []
     cqry.query.related_select_fields = []
     return cqry
+
+
+def _resolve(instance, node):
+    if isinstance(node, F):
+        return getattr(instance, node.name)
+    elif isinstance(node, ExpressionNode):
+        return _resolve(instance, node)
+    return node
+
+
+def resolve_expression_node(instance, node):
+    op = EXPRESSION_NODE_CALLBACKS.get(node.connector, None)
+    if not op:
+        raise CannotResolve
+    runner = _resolve(instance, node.children[0])
+    for n in node.children[1:]:
+        runner = op(runner, _resolve(instance, n))
+    return runner
+
+
+# Partially copied from
+# https://github.com/andymccurdy/django-tips-and-tricks/
+def update_model(instance, **kwargs):
+    """Atomically update instance, setting field/value pairs from kwargs"""
+    if not instance:
+        return []
+
+    instances = instance if isinstance(instance, (set, list, tuple)) \
+                         else [instance]
+
+    for instance in instances:
+        # fields that use auto_now=True should be updated corrected, too!
+        for field in instance._meta.fields:
+            if hasattr(field, 'auto_now') and field.auto_now and field.name not in kwargs:
+                kwargs[field.name] = field.pre_save(instance, False)
+
+    manager = instances[0].__class__._default_manager
+    if len(instances) == 1:
+        qset = manager.filter(pk=instances[0].pk)
+    else:
+        qset = manager.filter(pk__in=[i.pk for i in instances])
+    rows_affected = qset.update(**kwargs)
+
+    # apply the updated args to the instance to mimic the change
+    # note that these might slightly differ from the true database values
+    # as the DB could have been updated by another thread. callers should
+    # retrieve a new copy of the object if up-to-date values are required
+    for k, v in kwargs.iteritems():
+        if isinstance(v, ExpressionNode):
+            v = resolve_expression_node(instance, v)
+        for instance in instances:
+            setattr(instance, k, v)
+
+    return rows_affected
+
+
+def model_or_none(pk, reference):
+    if not reference or pk == reference.pk:
+        return None
+    try:
+        return reference.__class__.objects.get(pk=pk)
+    except reference.DoesNotExist:
+        return None
 
 
 class LockableObject(object):

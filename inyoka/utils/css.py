@@ -9,7 +9,7 @@
 import re
 
 
-acceptable_css_properties = frozenset([
+acceptable_css_properties = frozenset((
     'azimuth', 'background-color', 'border-bottom-color',
     'border-collapse', 'border-color', 'border-left-color',
     'border-right-color', 'border-top-color', 'clear', 'color',
@@ -21,16 +21,16 @@ acceptable_css_properties = frozenset([
     'speak-punctuation', 'speech-rate', 'stress', 'text-align',
     'text-decoration', 'text-indent', 'unicode-bidi', 'vertical-align',
     'voice-family', 'volume', 'white-space', 'width', 'max-width',
-])
+))
 
-acceptable_css_keywords = frozenset([
+acceptable_css_keywords = frozenset((
     'auto', 'aqua', 'black', 'block', 'blue', 'bold', 'both', 'bottom',
     'brown', 'center', 'collapse', 'dashed', 'dotted', 'fuchsia',
     'gray', 'green', '!important', 'italic', 'left', 'lime', 'maroon',
     'medium', 'none', 'navy', 'normal', 'nowrap', 'olive', 'pointer',
     'purple', 'red', 'right', 'solid', 'silver', 'teal', 'top',
     'transparent', 'underline', 'white', 'yellow'
-])
+))
 
 _css_url_re = re.compile(r'url\s*\(\s*[^\s)]+?\s*\)\s*')
 _css_sanity_check_re = re.compile(r'''(?x)

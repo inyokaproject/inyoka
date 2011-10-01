@@ -67,7 +67,7 @@ def get_inactive_users(excludes=None):
     current_datetime = datetime.fromtimestamp(time.time())
     delta = timedelta(days=settings.USER_INACTIVE_DAYS)
 
-    excludes = set(u.id for u in excludes) if excludes else set([])
+    excludes = set(u.id for u in excludes) if excludes else set()
 
     for user in User.objects.filter(status=1).exclude(id__in=excludes).all():
         if user.last_login and (current_datetime - user.last_login) < delta:

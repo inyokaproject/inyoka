@@ -36,7 +36,11 @@
         {% endif %}
       {%- endfor %}
       <link rel="stylesheet" type="text/css" href="{{ href('portal', 'markup.css') }}" />
-      <link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'print.css') }}" media="print" />
+			{%- if SETTINGS.DEBUG %}
+				<link rel="stylesheet/less" type="text/css" href="{{ href('static', 'style', 'print.less') }}" media="print" />
+			{%- else %}
+				<link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'print.css') }}" media="print" />
+			{%- endif %}
       {%- for title, url in feeds %}
         <link rel="alternate" href="{{ url|e }}" title="{{ title|e }}" type="application/atom+xml" />
       {%- endfor %}

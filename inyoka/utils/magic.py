@@ -46,7 +46,6 @@ class Magic(object):
 
         magic_load(self.cookie, magic_file)
 
-
     def from_buffer(self, buf):
         """
         Identify the contents of `buf`
@@ -72,8 +71,10 @@ class Magic(object):
             magic_close(self.cookie)
             self.cookie = None
 
+
 _magic_mime = None
 _magic = None
+
 
 def _get_magic_mime():
     global _magic_mime
@@ -81,11 +82,13 @@ def _get_magic_mime():
         _magic_mime = Magic(mime=True)
     return _magic_mime
 
+
 def _get_magic():
     global _magic
     if not _magic:
         _magic = Magic()
     return _magic
+
 
 def _get_magic_type(mime):
     if mime:
@@ -93,24 +96,26 @@ def _get_magic_type(mime):
     else:
         return _get_magic()
 
+
 def from_file(filename, mime=False):
     m = _get_magic_type(mime)
     return m.from_file(filename)
+
 
 def from_buffer(buffer, mime=False):
     m = _get_magic_type(mime)
     return m.from_buffer(buffer)
 
 
-
+MAC_PATHS = frozenset(('/opt/local/lib/libmagic.dylib',
+                       '/usr/local/Cellar/libmagic/5.04/lib/libmagic.dylib'))
 
 libmagic = CDLL(util.find_library('magic'))
 if not libmagic or not libmagic._name:
     import sys
     if sys.platform == "darwin":
         # try mac ports location
-        paths = ('/opt/local/lib/libmagic.dylib', '/usr/local/Cellar/libmagic/5.04/lib/libmagic.dylib')
-        for path in paths:
+        for path in MAC_PATHS:
             if os.path.exists(path):
                 libmagic = CDLL(path)
                 break
@@ -120,7 +125,9 @@ if not libmagic or not libmagic._name:
 if not libmagic or not libmagic._name:
     raise Exception('failed to find libmagic.  Check your installation')
 
+
 magic_t = c_void_p
+
 
 def errorcheck(result, func, args):
     err = magic_error(args[0])
@@ -177,7 +184,6 @@ magic_check.argtypes = [magic_t, c_char_p]
 magic_compile = libmagic.magic_compile
 magic_compile.restype = c_int
 magic_compile.argtypes = [magic_t, c_char_p]
-
 
 
 MAGIC_NONE = 0x000000 # No flags

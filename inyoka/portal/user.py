@@ -32,6 +32,7 @@ from inyoka.utils.local import current_request
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.gravatar import get_gravatar
+from inyoka.utils.database import update_model
 
 
 UNUSABLE_PASSWORD = '!$!'
@@ -85,18 +86,25 @@ def reactivate_user(id, email, status, time):
         return {
             'failed': u'Seit der Löschung ist mehr als ein Monat vergangen!',
         }
+
+    email_exists = User.objects.filter(email=email).exists()
+    if email_exists:
+        msg = u'Die E-Mail Adresse ist bereits vergeben.'
+        return {'failed': msg}
+
     user = User.objects.get(id=id)
     if not user.is_deleted:
         return {
             'failed': u'Der Benutzer %s wurde schon wiederhergestellt!' %
                 escape(user.username),
         }
-    user.email = email
-    user.status = status
+    values = {'email': email,
+              'status': status}
     if user.banned_until and user.banned_until < datetime.utcnow():
-        user.status = 1
-        user.banned_until = None
-    user.save()
+        values['status'] = 1
+        values['banned_until'] = None
+
+    update_model(user, **values)
     send_new_user_password(user)
 
     # reactivate user page
@@ -744,6 +752,11 @@ class User(models.Model):
         if self.new_password_key:
             self.new_password_key = None
         self.save()
+
+    def get_and_delete_messages(self, *args, **kwargs):
+        """Stub for to fix openid integration as it's calling the django.messages API"""
+        #TODO: this method does not exist in Django 1.4 anymore, so remove it if we upgrade!
+        return []
 
     @classproperty
     def SYSTEM_USER(cls):

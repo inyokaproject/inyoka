@@ -279,7 +279,7 @@ class PageManager(models.Manager):
         of unicode strings, not the actual page object.  This ignores
         attachments!
         """
-        ignore = set([settings.WIKI_MAIN_PAGE])
+        ignore = set(settings.WIKI_MAIN_PAGE)
         pages = set(self.get_page_list())
         linked_pages = set(MetaData.objects.values_list('value', flat=True) \
                                            .filter(key='X-Link').all())
@@ -740,7 +740,8 @@ class Page(models.Model):
     """
     objects = PageManager()
     name = models.CharField(max_length=200, unique=True, db_index=True)
-    topic = models.ForeignKey('forum.Topic', null=True)
+    topic = models.ForeignKey('forum.Topic', null=True,
+                              on_delete=models.PROTECT)
     last_rev = models.ForeignKey('Revision', null=True, related_name='+')
 
     #: this points to a revision if created with a query method

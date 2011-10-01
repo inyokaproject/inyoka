@@ -36,10 +36,13 @@ def increment_string(s):
     """Increment a number in a string or add a number."""
     m = _str_num_re.search(s)
     if m:
-        next = str(int(m.group(1))+1)
+        next = str(int(m.group(1)) + 1)
         start, end = m.span(1)
         if start or end:
-            return u'%s-%s%s' % (s[:max(end - len(next), start)], next, s[end:])
+            return u'{0}-{1}{2}'.format(
+                s[:max(end - len(next), start)],
+                next,
+                s[end:])
     return s + u'-2'
 
 
@@ -180,26 +183,7 @@ def get_new_unique_filename(name, path='', shorten=True, length=20):
 
 
 def get_next_increment(values, string, max_length=None, stripdate=False):
-    """Return the next usable incremented string.
-
-    Usage Example::
-
-        >>> get_next_increment(['cat', 'cat10', 'cat2'], u'cat')
-        u'cat-11'
-        >>> get_next_increment(['cat', 'cat2'], u'cat')
-        u'cat-3'
-        >>> get_next_increment(['cat', 'cat1'], u'cat')
-        u'cat-2'
-        >>> get_next_increment([], u'cat')
-        u'cat'
-        >>> get_next_increment(['cat'], u'cat')
-        u'cat-2'
-        >>> get_next_increment(['cat', 'cat10', 'cat2'], u'cat', 3)
-        u'-11'
-        >>> get_next_increment(['cat', 'cat100'], u'cat', 3)
-        u'-101'
-
-    """
+    """Return the next usable incremented string."""
     def _stripdate(value):
         parts = value.split('/')
         return parts[:-1], parts[-1]
@@ -207,7 +191,8 @@ def get_next_increment(values, string, max_length=None, stripdate=False):
     def _get_value(value):
         if stripdate:
             stripped = _stripdate(value)
-            return u'%s/%s' % (u'/'.join(stripped[0]), increment_string(stripped[1]))
+            return u'{0}/{1}'.format((u'/'.join(stripped[0]),
+                                     increment_string(stripped[1])))
         return increment_string(value)
 
     values = list(_stripdate(x)[1] if stripdate else x for x in values)

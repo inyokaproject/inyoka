@@ -18,8 +18,8 @@ from django.conf import settings
 SESSION_KEY = '_auth_user_id'
 
 
-_username_re = re.compile(ur'^[@\-\.a-z0-9 öäüß]{1,30}$', re.I|re.U)
-_username_url_re = re.compile(ur'^[@\-\._a-z0-9 öäüß]{1,30}$', re.I|re.U)
+_username_re = re.compile(ur'^[@\-\.a-z0-9 öäüß]{1,30}$', re.I | re.U)
+_username_url_re = re.compile(ur'^[@\-\._a-z0-9 öäüß]{1,30}$', re.I | re.U)
 _username_split_re = re.compile(ur'[\s_]+')
 
 
@@ -51,7 +51,7 @@ def gen_activation_key(user):
     return sha1(('%d%s%s%s' % (
         user.id, user.username,
         settings.SECRET_KEY,
-        user.email
+        user.email,
     )).encode('utf8')).digest()[:9].encode('base64') \
         .strip('\n=').replace('/', '_').replace('+', '-')
 

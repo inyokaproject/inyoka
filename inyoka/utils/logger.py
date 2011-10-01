@@ -21,10 +21,9 @@ if not settings.DEBUG:
     logging_handler = SentryHandler()
     logging_handler.setLevel(logging.WARNING)
 else:
+    tmpl = '[%(asctime)s] %(levelname)s:%(name)s: %(message)s'
     logging_handler = logging.StreamHandler()
-    logging_handler.setFormatter(logging.Formatter(
-        '[%(asctime)s] %(levelname)s:%(name)s: %(message)s'
-    ))
+    logging_handler.setFormatter(logging.Formatter(tmpl))
     logging_handler.setLevel(logging.DEBUG)
 logger.addHandler(logging_handler)
 

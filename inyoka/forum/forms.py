@@ -9,7 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
-from inyoka.utils.forms import MultiField, SlugField
+from inyoka.utils.forms import MultiField, SlugField, StrippedCharField
 from inyoka.utils.html import escape
 from inyoka.forum.models import Topic, Forum
 from inyoka.forum.constants import VERSION_CHOICES, DISTRO_CHOICES
@@ -23,13 +23,7 @@ class NewPostForm(SurgeProtectionMixin, forms.Form):
         The text for the post.
     It's generally used together with `AddAttachmentForm`.
     """
-    text = forms.CharField(widget=forms.Textarea)
-
-    def clean_text(self):
-        text = self.cleaned_data.get('text', '')
-        if not text.strip():
-            raise forms.ValidationError('Text darf nicht leer sein')
-        return text
+    text = StrippedCharField(widget=forms.Textarea)
 
 
 class EditPostForm(forms.Form):
@@ -38,7 +32,7 @@ class EditPostForm(forms.Form):
     This form takes the additional keyword argument `is_first_post`.
     It's generally used together with `AddAttachmentForm`.
     """
-    text = forms.CharField(widget=forms.Textarea)
+    text = StrippedCharField(widget=forms.Textarea)
     # the following fields only appear if the post is the first post of the
     # topic.
     #: the user can select, whether the post's topic should be sticky or not.
@@ -59,12 +53,6 @@ class EditPostForm(forms.Form):
                 self._errors.pop(k, None)
         return data
 
-    def clean_text(self):
-        text = self.cleaned_data.get('text', '')
-        if not text.strip():
-            raise forms.ValidationError('Text darf nicht leer sein')
-        return text
-
 
 class NewTopicForm(SurgeProtectionMixin, forms.Form):
     """
@@ -82,25 +70,13 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
         The ubuntu distribution the user has.
     It's used together with `AddAttachmentForm` in general.
     """
-    title = forms.CharField(widget=forms.TextInput(attrs={'size':60}),
+    title = StrippedCharField(widget=forms.TextInput(attrs={'size':60}),
                             max_length=100)
-    text = forms.CharField(widget=forms.Textarea)
+    text = StrippedCharField(widget=forms.Textarea)
     ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
                                                 required=False)
     ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
     sticky = forms.BooleanField(required=False)
-
-    def clean_text(self):
-        text = self.cleaned_data.get('text', '')
-        if not text.strip():
-            raise forms.ValidationError('Text darf nicht leer sein')
-        return text
-
-    def clean_title(self):
-        title = self.cleaned_data.get('title', '')
-        if not title.strip():
-            raise forms.ValidationError('Titel darf nicht leer sein')
-        return title
 
     def clean_ubuntu_version(self):
         ubuntu_version = self.cleaned_data.get('ubuntu_version', None)
