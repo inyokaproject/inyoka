@@ -50,7 +50,7 @@
     {%- if topic.solved %}-solved{% endif -%}
     {%- if topic.locked %}-locked{% endif -%}
     {%- if topic.hidden %}-hidden{% endif -%}
-    {%- if can_moderate(topic) and topic.reported %}-reported{% endif -%}
+    {%- if can_moderate and topic.reported %}-reported{% endif -%}
   {%- endif -%}
   .png" alt="
   {%- if not is_read %}ungelesenes {% endif -%}
