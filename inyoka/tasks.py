@@ -18,8 +18,10 @@ import inyoka.utils.notification
 # register forum notification tasks
 import inyoka.forum.notifications
 
-# register forum notification tasks
+# register ikhaya notification tasks
 import inyoka.ikhaya.notifications
 
-# register forum notification tasks
+# register wiki notification tasks
 import inyoka.wiki.notifications
+
+import inyoka.portal.tasks
