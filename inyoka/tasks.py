@@ -3,25 +3,14 @@
     inyoka.tasks
     ~~~~~~~~~~~~
 
-    Module that implements various `Celery <http://celeryproject.org>`_ backed
-    tasks like email notifications.
-
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-# register special logging
-import inyoka.utils.logger
+from celery.task import periodic_task
+from celery.task.schedules import crontab
 
-# register queue_notification task
-import inyoka.utils.notification
 
-# register forum notification tasks
-import inyoka.forum.notifications
-
-# register ikhaya notification tasks
-import inyoka.ikhaya.notifications
-
-# register wiki notification tasks
-import inyoka.wiki.notifications
-
-import inyoka.portal.tasks
+@periodic_task(run_every=crontab(minute='*/1'))
+def activity_monitor():
+    """This task just does nothing but runs to get a simple monitoring"""
+    return
