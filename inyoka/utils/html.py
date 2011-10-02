@@ -19,6 +19,7 @@ from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders
 from html5lib.serializer import XHTMLSerializer, HTMLSerializer
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
+from django.utils.encoding import smart_str
 
 
 _entity_re = re.compile(r'&([^;]+);')
@@ -104,7 +105,7 @@ def parse_html(string, fragment=True):
     later so do not use this function until this is solved.  For cleaning up
     markup you can use the `cleanup_html` function.
     """
-    parser = HTMLParser(tree=treebuilders.getTreeBuilder('simpletree'))
+    parser = HTMLParser(tree=treebuilders.getTreeBuilder('lxml'))
     return (fragment and parser.parseFragment or parser.parse)(string)
 
 
@@ -115,17 +116,17 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     if not string.strip():
         return u''
     if sanitize:
-        string = lxml.html.clean.clean_html(string)
+        string = lxml.html.clean.clean_html(smart_str(string))
     tree = parse_html(string, fragment)
-    walker = treewalkers.getTreeWalker('simpletree')(tree)
+    walker = treewalkers.getTreeWalker('lxml')(tree)
     walker = CleanupFilter(walker, id_prefix, update_anchor_links)
     if filter_optional_tags:
         walker = OptionalTagsFilter(walker)
     serializer = SERIALIZERS[output_format]()
-    rv = serializer.serialize(walker)
+    rv = serializer.serialize(walker, 'utf-8')
     if stream:
         return rv
-    return u''.join(rv)
+    return (u''.join(rv)).decode('utf-8')
 
 
 class CleanupFilter(object):
@@ -171,7 +172,9 @@ class CleanupFilter(object):
 
         for token in self.source:
             if token['type'] == 'StartTag':
-                attrs = dict(reversed(token.get('data', ())))
+                attrs = token.get('data', ())
+                if not isinstance(attrs, dict):
+                    attrs = dict(reversed(attrs))
                 if token['name'] in self.tag_conversions:
                     new_tag, new_style = self.tag_conversions[token['name']]
                     token['name'] = new_tag
@@ -227,7 +230,7 @@ class CleanupFilter(object):
                         element_id = self.id_prefix + element_id
                     attrs['id'] = element_id
                     id_map[original_id] = element_id
-                token['data'] = [list(item) for item in attrs.items()]
+                token['data'] = dict(list(item) for item in attrs.items())
             elif token['type'] == 'EndTag' and \
                  token['name'] in self.end_tags:
                 token['name'] = self.end_tags[token['name']]

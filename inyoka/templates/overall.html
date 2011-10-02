@@ -202,18 +202,14 @@
           (<a href="{{ href('wiki', 'ubuntuusers/Fehler melden') }}">Fehler in Inyoka melden</a>)
         </li>
         <li class="license">
+          <a href="?flavour=mobile" class="flavour_switch" >Zur mobilen Version</a><br />
           <img src="{{ href('static', 'img/copyleft.png') }}" alt="Copyleft" />
           2004 – 2011 ubuntuusers.de • Einige Rechte vorbehalten<br />
           <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/de/deed.de" rel="license">CC</a> •
           <a href="{{ href('portal', 'lizenz') }}" rel="cc:morePermissions">Lizenz</a> •
           <a href="{{ href('portal', 'kontakt') }}">Kontakt</a> •
           <a href="{{ href('portal', 'datenschutz') }}">Datenschutz</a> •
-          <a href="{{ href('portal', 'impressum') }}">Impressum</a> •
-          {% if MOBILE %}
-            <a href="?flavour=full">Desktop</a>
-          {% else %}
-            <a href="?flavour=mobile">Zur mobilen Version</a>
-          {% endif %}
+          <a href="{{ href('portal', 'impressum') }}">Impressum</a>
         </li>
         <li class="housing">
           <span title="Unterbringung und Netzanbindung eines Servers">Serverhousing</span> gespendet von<br />

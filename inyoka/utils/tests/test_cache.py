@@ -6,13 +6,10 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import time
-
 from django.test import TestCase
-from django.core.cache import cache
 
 from inyoka.utils.cache import get_cache
-from inyoka.utils.local import local, _request_cache
+from inyoka.utils.local import local
 
 
 class TestCache(TestCase):
