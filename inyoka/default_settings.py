@@ -211,7 +211,7 @@ NOSE_PLUGINS = [
     'inyoka.testing.InyokaElasticPlugin'
 ]
 
-NOSE_ARGS = ['--with-unittest']
+NOSE_ARGS = ['--with-unittest', '--with-elastic']
 
 
 # don't use migrations but just syncdb
