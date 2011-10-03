@@ -24,6 +24,11 @@
   {% else %}
     <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'>\x3C/script>")</script>
   {% endif %}
+  <script type="text/javascript">
+  /*<![CDATA[*/
+    var $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }};
+  /*]]>*/
+  </script>
   {% for script in scripts %}
     {% if SETTINGS.DEBUG %}
       <script type="text/javascript" src="{{ href('static', 'js/%s.m.js'|format(script)) }}"></script>
@@ -31,10 +36,17 @@
       <script type="text/javascript" src="{{ href('static', 'js/%s.m.min.js'|format(script)) }}"></script>
     {% endif %}
   {% endfor %}
+  <script type="text/javascript" src="{{ href('static', 'js/mobile.js') }}"></script>
 </head>
 
 <body>
   <div class="wrapper">
+    <div id="mobile-notice">
+        <span><a onclick="hide_mobile_notice()" href="#" title="Diesen Hinweis ausblenden">x</a></span>
+        Dies ist die mobile Version von ubuntuusers. Klicke auf den Link um
+        <a href="?flavour=full">zur klassischen Version</a> zu gelangen. Dieser
+        Link findet sich auch am Ende der Seite wieder.
+    </div>
     <header>
       <nav>
         <ul>
