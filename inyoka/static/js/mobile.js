@@ -19,13 +19,13 @@ function hide_mobile_notice() {
   } else {
     dom = "domain=." + $BASE_DOMAIN_NAME;
   }
-  document.cookie = "hide_mobile_notice=0; " + exp + "; " + dom + "; path=/";
+  document.cookie = "hide_mobile_notice=1; " + exp + "; " + dom + "; path=/";
   $("#mobile-notice").slideUp("slow");
 }
 $(document).ready(function () {
   (function () {
     var result = /hide_mobile_notice\=([01])/.exec(document.cookie);
-    if (result != null) {
+    if (result[1] == 1) {
       $("#mobile-notice").slideUp("fast");
     }
   })();
