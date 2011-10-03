@@ -101,25 +101,30 @@
           <td class="icon">{{ topic_icon(topic) }}</td>
           <td class="topic">
             <p class="topic_title">
-              {% if topic.sticky %}<strong>Wichtig:</strong>{% endif %}
-              {% if topic.has_poll %}<strong>[Umfrage]</strong>{% endif %}
-              {% if can_moderate and topic.hidden %}[Verborgen]{% endif %}
-              {% if can_moderate and topic.reported %}[Gemeldet]{% endif %}
+              {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
+              {% if topic.has_poll %}<strong>{% trans %}[Poll]{% endtrans %}</strong>{% endif %}
+              {% if can_moderate and topic.hidden %}{% trans %}[Hidden]{% endtrans %}{% endif %}
+              {% if can_moderate and topic.reported %}{% trans %}[Reported]{% endtrans %}{% endif %}
               <a href="{{ topic|url }}">{{ topic.title|e }}</a>
               {% if topic.get_version_info(False) %}
                 » <span class="ubuntu_version">{{ topic.get_version_info() }}</span>
               {%- endif %}
               {%- if not topic.get_read_status(USER) %}
-                <a href="{{ topic|url('first_unread') }}" title="Zeige ungelesene Beiträge">
-                  <img src="{{ href('static', 'img/forum/goto.png') }}" alt="Zeige ungelesene Beiträge" />
+                <a href="{{ topic|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">
+                  <img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />
                 </a>
               {%- endif %}
             </p>
             <p class="description note">
-              von <a href="{{ topic.author|url }}">{{ topic.author.username|e }}</a> am {{ topic.first_post.pub_date|datetimeformat }}
-              {%- if topic.paginated %} &#160; &#160; [
-                Gehe zu Seite {{ topic.get_pagination() }}
-              ]{% endif -%}
+              {% trans author=topic.author.username|e, link=topic.author|url %}
+                by <a href="{{ link }}">{{ author }}</a>
+              {% endtrans %} |
+              {{ topic.first_post.pub_date|datetimeformat }}
+              {%- if topic.paginated %} |
+                {% trans pagination=topic.get_pagination() %}
+                  Go to page {{ pagination }}
+                {% endtrans %}
+              {% endif -%}
             </p>
           </td>
           <td class="view_count">{{ topic.view_count }}</td>
@@ -129,7 +134,9 @@
               <a href="{{ topic.last_post|url}}" class="date">
                 {{ topic.last_post.pub_date|datetimeformat }}
               </a><br />
-              von <a href="{{ topic.last_post.author|url}}">{{ topic.last_post.author }}</a>
+              {% trans author=topic.last_post.author|e, link=topic.last_post.author|url %}
+                by <a href="{{ link }}">{{ author }}</a>
+              {% endtrans %}
             {%- else %}
               ---
             {% endif %}

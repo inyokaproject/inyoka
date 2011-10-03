@@ -8,7 +8,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
-{% do BREADCRUMB.append('Verschieben', topic|url('move'), True) %}
+{% do BREADCRUMB.append(_('Move'), topic|url('move'), True) %}
 {% do BREADCRUMB.append(topic.title, topic|url, True) %}
 {% do BREADCRUMB.append(topic.forum.name, topic.forum|url) %}
 {% for parent in topic.forum.parents[:-1] %}
@@ -17,20 +17,12 @@
 
 {% block forum_content %}
   <form action="" method="post" class="new_topic">
-    <h2>„{{ topic.title|e }}“ verschieben</h2>
-    <p>
-      Hier kannst du ein Topic in ein neues Forum verschieben.
-    </p>
+    <h2>{% trans topic=topic.title|e %}Move “{{ topic }}“</h2>
+    <p>{% trans %}Here you can move a topic into another forum.{% endtrans %}</p>
     <dl>
-      <dt>
-        Forum des neuen Topics:
-      </dt>
-      <dd>
-        {{ form.forum_id }}{{ form.errors.forum_id }}
-      </dd>
-      <dd>
-        <input type="submit" value="Verschieben" />
-      </dd>
+      <dt>{% trans %}New forum of the topic:{% endtrans %}</dt>
+      <dd>{{ form.forum_id }}{{ form.errors.forum_id }}</dd>
+      <dd><input type="submit" value="{% trans %}Move{% endtrans %}" /></dd>
     </dl>
   </form>
 {% endblock %}
