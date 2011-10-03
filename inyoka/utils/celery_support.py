@@ -10,11 +10,11 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import base64
+from Queue import Empty
 from djkombu.transport import Channel as KChannel, \
     DatabaseTransport as KDatabaseTransport
-from anyjson import serialize, deserialize
-from Queue import Empty
 from djkombu.models import Queue
+from django.utils import simplejson as json
 
 
 class Channel(KChannel):
@@ -26,13 +26,13 @@ class Channel(KChannel):
 
     def _put(self, queue, message, **kwargs):
         message['body'] = base64.b64encode(message['body'])
-        Queue.objects.publish(queue, serialize(message))
+        Queue.objects.publish(queue, json.dumps(message))
 
     def _get(self, queue):
         self.refresh_connection()
         message = Queue.objects.fetch(queue)
         if message:
-            message = deserialize(message)
+            message = json.loads(message)
             message['body'] = base64.b64decode(message['body'])
             return message
         raise Empty()
