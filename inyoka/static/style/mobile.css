@@ -210,7 +210,7 @@ nav, .pagination, #comments h3, #comments .meta, .forums .forum, .post .meta,
 
 nav, nav a, nav a:link, nav a:visited,
 .pagination, .pagination a, .pagination a:link, .pagination a:visited,
-#comments h3, #comments .meta, #comments .meta a, #comments .meta a:link, 
+#comments h3, #comments .meta, #comments .meta a, #comments .meta a:link,
 #comments .meta a:visited,
 #posts .meta , #posts .meta a, #posts .meta a:link, #posts .meta a:visited
 section.actions, section.actions a, section.actions a:link,
@@ -422,4 +422,19 @@ blockquote {
 
 .userinfo.avatar {
   float: right;
+}
+
+#mobile-notice {
+  border: 1px #DD4814 solid;
+  margin: 5px 0;
+  font-size: 0.8em;
+  background-color: #e6e4e2;
+}
+#mobile-notice span {
+  float: right;
+  padding: 0 3px 2px 5px;
+  border-width: 0 0 1px 1px;
+  border-style: solid;
+  border-color: #DD4814;
+  border-bottom-left-radius: 7px;
 }
