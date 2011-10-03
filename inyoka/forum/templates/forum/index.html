@@ -16,8 +16,8 @@
   {% do BREADCRUMB.append(categories[0].name, categories[0]|url, True) %}
 {% else %}
   {% set feeds = [
-    (_('Forum - Only headings'), href('forum', 'feeds/title/20')),
-    (_('Forum - Only introduction'), href('forum', 'feeds/short/20')),
+    (_('Forum - Captions'), href('forum', 'feeds/title/20')),
+    (_('Forum - Teaser'), href('forum', 'feeds/short/20')),
     (_('Forum - Full post'), href('forum', 'feeds/full/20'))
   ] %}
 {% endif %}

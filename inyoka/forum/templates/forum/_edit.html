@@ -1,6 +1,0 @@
-{% macro render_article_list(discussions) %}
-  {%- for article in discussions %}
-    <strong><a href="{{ article|url }}">{{ article.name|e }}</a></strong>
-  {%- if not loop.last %},{% endif %}
-  {%- endfor -%}
-{% endmacro %}

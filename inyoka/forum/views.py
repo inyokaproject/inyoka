@@ -332,7 +332,7 @@ def handle_polls(request, topic, poll_ids):
             option.save()
         poll_form = AddPollForm()
         poll_options = ['', '']
-        flash(_('The poll “%(poll)s“ was added.') % {'poll': poll.question},
+        flash(_(u'The poll “%(poll)s“ was added.') % {'poll': poll.question},
               True)
         poll_ids.append(poll.id)
     elif 'add_option' in request.POST:
@@ -345,7 +345,7 @@ def handle_polls(request, topic, poll_ids):
         except Poll.DoesNotExist:
             pass
         else:
-            flash(_('The poll “%(poll)s“ was removed.')
+            flash(_(u'The poll “%(poll)s“ was removed.')
                   % {'poll': poll.question}, True)
             topic.has_poll = Poll.objects \
                 .filter(Q(topic=topic) & ~Q(id=poll.id)) \
@@ -855,7 +855,7 @@ def reportlist(request):
         if form.is_valid():
             d = form.cleaned_data
             if not d['selected']:
-                flash(_('You didn’t select any topics.'), False)
+                flash(_(u'You didn’t select any topics.'), False)
             else:
                 Topic.objects.filter(id__in=d['selected']).update(
                     reported=None,
@@ -863,7 +863,7 @@ def reportlist(request):
                     report_claimed_by=None)
                 cache.delete('forum/reported_topic_count')
                 topics = filter(lambda t: str(t.id) not in d['selected'], topics)
-                flash(_('The selected topics have been marked as processed.'),
+                flash(_(u'The selected tickets have been closed.'),
                       True)
     else:
         form = ReportListForm()
@@ -1169,21 +1169,21 @@ def delete_post(request, post_id, action='hide'):
             return HttpResponseRedirect(href('forum', 'topic',
                                              topic.slug, action))
         if action == 'delete':
-            msg = _('The first post of a topic cannot be deleted.')
+            msg = _(u'The first post of a topic cannot be deleted.')
         else:
-            msg = _('The first post of a topic cannot be hidden.')
+            msg = _(u'The first post of a topic cannot be hidden.')
         flash(msg, False)
     else:
         if action == 'hide':
             post.hidden = True
             post.save()
-            flash(_('The post by “%(user)s“ was hidden.')
+            flash(_(u'The post by “%(user)s“ was hidden.')
                   % {'user': post.author.username}, True)
             return HttpResponseRedirect(url_for(post))
         elif action == 'delete':
             position = post.position
             wost.delete()
-            flash(_('The post by “%(user)s“ was deleted.')
+            flash(_(u'The post by “%(user)s“ was deleted.')
                   % {'user': post.author.username}, True)
             page = max(0, position) // POSTS_PER_PAGE + 1
             url = href('forum', 'topic', topic.slug, *(page != 1 and (page,) or ()))
