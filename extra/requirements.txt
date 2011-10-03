@@ -11,7 +11,6 @@ South==0.7.3
 python-openid==2.2.5
 django-sentry==1.8.5
 django-mobile==0.2.1
-django-nose==0.1.2
 celery==2.3.3
 django-kombu==0.9.4
 django-celery==2.3.3
@@ -24,4 +23,6 @@ https://github.com/simonw/django-openid/tarball/master#egg=django-openid
 https://github.com/jbalogh/django-nose/tarball/master#egg=django-nose
 # Because of http://south.aeracode.org/ticket/747 that is already fixed in trunk
 hg+https://bitbucket.org/andrewgodwin/south#egg=django-south
+# To have proper tests.models support and fixture bundling
+https://github.com/jbalogh/django-nose/tarball/master#egg=django-nose
 lxml

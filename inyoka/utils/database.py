@@ -8,10 +8,14 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import cPickle
 import operator
 
 from django.core.cache import cache
 from django.db.models.expressions import F, ExpressionNode
+from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import simplejson as json
+from django.db import models
 
 from inyoka.utils.text import get_next_increment
 
@@ -165,3 +169,50 @@ class LockableObject(object):
 
     def unlock(self):
         cache.delete(self._get_lock_key())
+
+
+class SimpleDescriptor(object):
+    def __init__(self, field):
+        self.field = field
+
+    def __get__(self, obj, owner):
+        value = obj.__dict__[self.field.name]
+        # we don't try to deserialize empty strings
+        if value and isinstance(value, basestring):
+            value = self.field.loads(value)
+            obj.__dict__[self.field.name] = value
+        return value
+
+    def __set__(self, obj, value):
+        obj.__dict__[self.field.name] = value
+
+
+class JSONField(models.TextField):
+    def loads(self, s):
+        return json.loads(s)
+
+    def dumps(self, obj):
+        return json.dumps(obj, cls=DjangoJSONEncoder)
+
+    def pre_save(self, obj, create):
+        value = obj.__dict__[self.name]
+        if not isinstance(value, basestring):
+            value = self.dumps(value)
+        return value
+
+    def contribute_to_class(self, cls, name):
+        super(JSONField, self).contribute_to_class(cls, name)
+        setattr(cls, self.name, SimpleDescriptor(self))
+
+    def south_field_triple(self):
+        from south.modelsinspector import introspector
+        args, kwargs = introspector(self)
+        return 'django.db.models.TextField', args, kwargs
+
+
+class PickleField(JSONField):
+    def loads(self, s):
+        return cPickle.loads(str(s).decode('base64'))
+
+    def dumps(self, obj):
+        return cPickle.dumps(obj).encode('base64')

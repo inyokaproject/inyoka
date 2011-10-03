@@ -15,9 +15,6 @@ from hashlib import md5, sha1
 from django.conf import settings
 
 
-SESSION_KEY = '_auth_user_id'
-
-
 _username_re = re.compile(ur'^[@\-\.a-z0-9 öäüß]{1,30}$', re.I | re.U)
 _username_url_re = re.compile(ur'^[@\-\._a-z0-9 öäüß]{1,30}$', re.I | re.U)
 _username_split_re = re.compile(ur'[\s_]+')

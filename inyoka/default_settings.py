@@ -255,8 +255,18 @@ CELERY_RESULT_DBURI = 'sqlite://'
 
 # Modules that hold task definitions
 CELERY_IMPORTS = [
+    # register special celery task logger
+    'inyoka.utils.logger',
+    # general (e.g monitoring) tasks
     'inyoka.tasks',
+    # Application specific tasks
+    'inyoka.portal.tasks',
     'inyoka.wiki.tasks',
+    # Notification specific tasks
+    'inyoka.wiki.notifications',
+    'inyoka.utils.notification',
+    'inyoka.forum.notifications',
+    'inyoka.ikhaya.notifications',
 ]
 
 CELERY_SEND_TASK_ERROR_EMAILS = False
@@ -266,6 +276,8 @@ CELERY_ALWAYS_EAGER = DEBUG
 
 # Do not hijack the root logger, avoids unicode errors
 CELERYD_HIJACK_ROOT_LOGGER = False
+
+SEND_EVENTS = True
 
 # http://ask.github.com/kombu/introduction.html#transport-comparison
 BROKER_BACKEND = 'inyoka.utils.celery_support.DatabaseTransport'
