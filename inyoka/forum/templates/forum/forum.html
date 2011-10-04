@@ -102,7 +102,7 @@
           <td class="topic">
             <p class="topic_title">
               {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
-              {% if topic.has_poll %}<strong>{% trans %}[Poll]{% endtrans %}</strong>{% endif %}
+              {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
               {% if can_moderate and topic.hidden %}{% trans %}[Hidden]{% endtrans %}{% endif %}
               {% if can_moderate and topic.reported %}{% trans %}[Reported]{% endtrans %}{% endif %}
               <a href="{{ topic|url }}">{{ topic.title|e }}</a>
