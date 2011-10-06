@@ -11,7 +11,7 @@
 from urllib import urlencode
 from urllib2 import urlopen, HTTPError
 from hashlib import md5
-from simplejson import load
+from django.utils import simplejson as json
 
 
 BASE_URL = 'http://www.gravatar.com/avatar/'
@@ -47,7 +47,7 @@ def get_profile(email):
     profile = None
     try:
         url = u'%s%s.json' % (PROFILE_URL, email_hash(email))
-        profile = load(urlopen(url))['entry'][0]
+        profile = json.load(urlopen(url))['entry'][0]
     except (HTTPError, IndexError):
         pass
     return profile
