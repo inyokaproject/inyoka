@@ -12,14 +12,14 @@ class Migration(DataMigration):
     def forwards(self, orm):
         "Write your forwards methods here."
         if not db.dry_run:
-            for user in orm.User.objects.all():
+            for user in orm.User.objects.iterator():
                 user.settings = simplejson.dumps(cPickle.loads(smart_str(user._settings)))
                 user.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."
         if not db.dry_run:
-            for user in orm.User.objects.all():
+            for user in orm.User.objects.iterator():
                 user._settings = cPickle.dumps(simplejson.loads(user.settings))
                 user.save()
 
