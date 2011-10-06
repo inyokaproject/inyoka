@@ -47,7 +47,7 @@ class SecurityMiddleware(object):
 
     def process_response(self, request, response):
         if response['content-type'].startswith('text/html') and \
-           response._is_string and hasattr(request, 'session'):
+           hasattr(request, 'session'):
             token = []
             def add_csrf_field(match):
                 if not token:
