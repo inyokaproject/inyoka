@@ -15,7 +15,7 @@
   {%- if message %}
     <div class="prvmsg">
       <img class="avatar" src="{{ message.author.avatar_url|e }}"
-           alt="{%- trans name=message.author.username|e %}Avatar of {{ name }}{% endtrans %}" />
+           alt="{%- trans user=message.author.username|e %}Avatar of {{ user }}{% endtrans %}" />
       <dl class="prvmsg_header">
         <dt>{% trans %}From:{% endtrans %}</dt>
         <dd><a{% if not message.author.is_active %} class="user_inactive"{% endif %} href="{{ message.author|url }}">

@@ -54,7 +54,7 @@
         <td>{{ user.username|e }}</td>
         <td rowspan="6">
           <img class="userinfo_avatar" src="{{ user.avatar_url|e }}"
-               alt="{% trans name=user.username|e %}Avatar of {{ name }}{% endtrans %}" />
+               alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
         </td>
       </tr>
       <tr>

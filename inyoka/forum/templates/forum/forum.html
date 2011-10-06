@@ -32,8 +32,8 @@
 
 {% set name = 'Forum „%s“ - ' % forum.name|e %}
 {% set feeds = [
-  (name + _('Only headings'), href('forum', 'feeds/forum', forum.slug, 'title/20')),
-  (name + _('Only introduction'), href('forum', 'feeds/forum', forum.slug, 'short/20')),
+  (name + _('Captions'), href('forum', 'feeds/forum', forum.slug, 'title/20')),
+  (name + _('Teaser'), href('forum', 'feeds/forum', forum.slug, 'short/20')),
   (name + _('Full post'), href('forum', 'feeds/forum', forum.slug, 'full/20'))
 ] %}
 {% do BREADCRUMB.append(forum.name, forum|url, True) %}
@@ -146,8 +146,9 @@
     {%- else -%}
       <tr>
         <td colspan="5">
-          Es existieren noch keine Themen.
-          <a href="{{ forum|url('newtopic') }}">Erstelle</a> doch das Erste!
+          {% trans link=forum|url('newtopic') %}
+            There are no topics. <a href="{{ link }}">Create</a> the first one now!
+          {% endtrans %}
         </td>
       </tr>
     {% endfor %}
