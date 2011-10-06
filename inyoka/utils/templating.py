@@ -9,12 +9,12 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import os
-import simplejson
 from functools import partial
 from glob import glob
 
 from django.conf import settings
 from django.utils import translation
+from django.utils import simplejson as json
 from django_mobile import get_flavour
 from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound
 
@@ -289,7 +289,7 @@ FILTERS = {
     'url':
         partial(url_for),
     'urlencode': urlencode_filter,
-    'jsonencode': simplejson.dumps,
+    'jsonencode': json.dumps,
 }
 
 # setup the template environment

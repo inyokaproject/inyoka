@@ -12,7 +12,6 @@
 import os
 import random
 import string
-import cPickle
 from datetime import datetime
 from os import path
 from PIL import Image
@@ -33,7 +32,7 @@ from inyoka.utils.local import current_request
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.gravatar import get_gravatar
-from inyoka.utils.database import update_model
+from inyoka.utils.database import update_model, JSONField
 
 
 UNUSABLE_PASSWORD = '!$!'
@@ -518,7 +517,7 @@ class User(models.Model):
     interests = models.CharField(_('Interests'), max_length=200, blank=True)
     website = models.URLField(_(u'Website'), blank=True)
     launchpad = models.CharField(_(u'Launchpad username'), max_length=50, blank=True)
-    _settings = models.TextField(_(u'Settings'), default=cPickle.dumps({}))
+    settings = JSONField(_('Settings'), default={})
     _permissions = models.IntegerField(_(u'Privileges'), default=0)
 
     # forum attribues
@@ -540,10 +539,9 @@ class User(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Save method that pickles `self.settings` before and cleanup
+        Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        self._settings = cPickle.dumps(self.settings)
         super(User, self).save(*args, **kwargs)
         cache.delete('portal/user/%s/signature' % self.id)
         cache.delete('portal/user/%s' % self.id)
@@ -598,10 +596,6 @@ class User(models.Model):
         groups = self.is_authenticated and [Group.get_default_group()] or []
         groups.extend(self.groups.all())
         return groups
-
-    @deferred
-    def settings(self):
-        return cPickle.loads(str(self._settings))
 
     @deferred
     def permissions(self):

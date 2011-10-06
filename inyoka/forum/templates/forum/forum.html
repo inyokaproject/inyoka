@@ -143,6 +143,13 @@
           </td>
         </tr>
       {%- endif %}
+    {%- else -%}
+      <tr>
+        <td colspan="5">
+          Es existieren noch keine Themen.
+          <a href="{{ forum|url('newtopic') }}">Erstelle</a> doch das Erste!
+        </td>
+      </tr>
     {% endfor %}
     </tbody>
     <thead>
