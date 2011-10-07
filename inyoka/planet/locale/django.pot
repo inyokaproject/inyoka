@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-10-01 01:19+0200\n"
+"POT-Creation-Date: 2011-10-07 19:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,34 +69,34 @@ msgstr ""
 msgid "Entries"
 msgstr ""
 
-#: inyoka/planet/views.py:84
+#: inyoka/planet/views.py:76
 msgid "You need to be logged in to suggest a blog"
 msgstr ""
 
-#: inyoka/planet/views.py:102
+#: inyoka/planet/views.py:94
 msgid "A new blog was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:106
+#: inyoka/planet/views.py:98
 msgid "No user is registered as a planet administrator."
 msgstr ""
 
-#: inyoka/planet/views.py:109
+#: inyoka/planet/views.py:101
 #, python-format
 msgid "The blog “%(title)s“ was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:120
+#: inyoka/planet/views.py:112
 #, python-format
 msgid "%(sitename)s planet"
 msgstr ""
 
-#: inyoka/planet/views.py:171
+#: inyoka/planet/views.py:163
 #, python-format
 msgid "The entry “%(title)s“ was successfully hidden."
 msgstr ""
 
-#: inyoka/planet/views.py:173
+#: inyoka/planet/views.py:165
 #, python-format
 msgid "The entry “%(title)s“ was successfully restored."
 msgstr ""
@@ -122,11 +122,11 @@ msgid "Cancel"
 msgstr ""
 
 #: inyoka/planet/templates/planet/index.html:13
-msgid "Planet - Only headings"
+msgid "Planet - Captions"
 msgstr ""
 
 #: inyoka/planet/templates/planet/index.html:14
-msgid "Planet - Only introduction"
+msgid "Planet - Teaser"
 msgstr ""
 
 #: inyoka/planet/templates/planet/index.html:15
