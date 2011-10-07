@@ -30,25 +30,36 @@
       {%- for style in styles %}
         {%- if SETTINGS.DEBUG %}
           {% set style = style.split('-sprite', 1)[0] %}
-          <link rel="stylesheet/less" type="text/css" href="{{ href('static', 'style', '%s.less'|format(style)) }}" />
+          <link rel="stylesheet/less" type="text/css"
+                href="{{ href('static', 'style', '%s.less'|format(style)) }}" />
         {%- else %}
-          <link rel="stylesheet" type="text/css" href="{{ href('static', 'style', '%s.css'|format(style)) }}" />
+          <link rel="stylesheet" type="text/css"
+                href="{{ href('static', 'style', '%s.css'|format(style)) }}" />
         {% endif %}
       {%- endfor %}
-      <link rel="stylesheet" type="text/css" href="{{ href('portal', 'markup.css') }}" />
-			{%- if SETTINGS.DEBUG %}
-				<link rel="stylesheet/less" type="text/css" href="{{ href('static', 'style', 'print.less') }}" media="print" />
-			{%- else %}
-				<link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'print.css') }}" media="print" />
-			{%- endif %}
+
+      <link rel="stylesheet" type="text/css"
+            href="{{ href('portal', 'markup.css') }}" />
+      {%- if SETTINGS.DEBUG %}
+        <link rel="stylesheet/less" type="text/css"
+              href="{{ href('static', 'style', 'print.less') }}" media="print" />
+      {%- else %}
+        <link rel="stylesheet" type="text/css"
+              href="{{ href('static', 'style', 'print.css') }}" media="print" />
+      {%- endif %}
+
       {%- for title, url in feeds %}
-        <link rel="alternate" href="{{ url|e }}" title="{{ title|e }}" type="application/atom+xml" />
+        <link rel="alternate" href="{{ url|e }}" title="{{ title|e }}"
+              type="application/atom+xml" />
       {%- endfor %}
       <link rel="shortcut icon" href="{{ href('static', 'img', 'favicon.ico') }}" />
-      <link rel="search" type="application/opensearchdescription+xml" title="ubuntuusers" href="{{ href('portal', 'opensearch', 'portal') }}" /> 
+      <link rel="search" type="application/opensearchdescription+xml"
+            title="ubuntuusers" href="{{ href('portal', 'opensearch', 'portal') }}" />
       {%- for app in ('forum', 'wiki', 'ikhaya', 'planet') %}
         {%- if app == active_app %}
-          <link rel="search" type="application/opensearchdescription+xml" title="ubuntuusers - {{ app|capitalize }}" href="{{ href('portal', 'opensearch', app) }}" /> 
+          <link rel="search" type="application/opensearchdescription+xml"
+                title="{{ SETTINGS.BASE_DOMAIN_NAME }} - {{ app|capitalize }}"
+                href="{{ href('portal', 'opensearch', app) }}" />
         {%- endif -%}
       {%- endfor %}
       <script type="text/javascript" src="{{ href('static', 'jsi18n') }}"></script>
@@ -65,7 +76,8 @@
       </script>
       {%- if SETTINGS.DEBUG %}
         {% set suffix = SETTINGS.DEBUG and '.js' or '.min.js' %}
-        <script type="text/javascript" src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
+        <script type="text/javascript"
+                src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
       {% endif %}
 
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
@@ -101,12 +113,13 @@
     {%- endif %}
    <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">
     <div class="header">
-      <h1><a href="/"><span>ubuntuusers.de</span></a></h1>
+      <h1><a href="/"><span>{{ SETTINGS.BASE_DOMAIN_NAME }}</span></a></h1>
       <ul class="tabbar">
         {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
         <li class="{{ app }}{% if app == active_app %} active{% endif
           %}"><a href="{{ href(app) }}">{{ app|capitalize }}</a></li>
         {%- endfor %}
+        {# TODO: uu specific #}
         <li class="community"><a href="{{ href('wiki','Mitmachen') }}">Helfen</a></li>
       </ul>{# .tabbar #}
     </div>{# .header #}
@@ -114,44 +127,78 @@
     <div class="body">
       <div class="appheader">
         {%- if not hide_quicklinks %}
-        <ul class="navi_global">
-          {%- if USER.is_authenticated %}
-          <li><a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">Logout [{{ USER.username|e }}]</a></li>
-          <li><a href="{{ href('portal', 'usercp') }}">Kontrollzentrum</a></li>
-          <li>
-            {%- if pm_count -%}
-              <strong><a href="{{ href('portal', 'privmsg')}}">Private Nachrichten ({{ pm_count }})</a></strong>
-            {%- else -%}
-              <a href="{{ href('portal', 'privmsg') }}">Private Nachrichten</a>
-            {%- endif -%}
-          </li>
-          {%- else %}
-          <li><a href="{{ href('portal', 'login', next=CURRENT_URL) }}" id="login_link">Login</a></li>
-          <li><a href="{{ href('portal', 'register') }}">Registrieren</a></li>
-          {%- endif %}
-        </ul>{# .navi_global #}
+          <ul class="navi_global">
+            {%- if USER.is_authenticated %}
+              <li>
+                <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
+                  {% trans user=USER.username|e %}Logout [{{ user }}]{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ href('portal', 'usercp') }}">
+                  {% trans %}Controlpanel{% endtrans %}
+                </a>
+              </li>
+              <li>
+                {%- if pm_count -%}
+                  <strong>
+                    <a href="{{ href('portal', 'privmsg')}}">
+                      {% trans count=pm_count %}Private messages ({{ count }}){% endtrans %}
+                    </a>
+                  </strong>
+                {%- else -%}
+                  <a href="{{ href('portal', 'privmsg') }}">
+                    {% trans %}Private messages{% endtrans %}
+                  </a>
+                {%- endif -%}
+              </li>
+            {%- else %}
+              <li>
+                <a href="{{ href('portal', 'login', next=CURRENT_URL) }}" id="login_link">
+                  {% trans %}Login{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ href('portal', 'register') }}">
+                  {% trans %}Register{% endtrans %}
+                </a>
+              </li>
+            {%- endif %}
+          </ul>{# .navi_global #}
         {%- endif %}
         {{ BREADCRUMB.render('appheader') }}
       </div>{# .appheader #}
 
       <div class="pathbar">
 
-        <form action="{{ href('portal', 'search') }}" method="get" class="search"><div>
-          <input type="text" name="query" class="search_query" value="{{ query|e }}" />
+        <form action="{{ href('portal', 'search') }}" method="get" class="search">
+          <div>
+            <input type="text" name="query" class="search_query" value="{{ query|e }}" />
             {%- if topic %}
               <input type="hidden" name="topic_id" value="{{ topic.id }}" />
             {%- elif forum %}
               <input type="hidden" name="forum_id" value="{{ forum.id }}" />
             {%- endif %}
             <select name="area" class="search_area">
-              <option value="all"{% if active_app == 'portal' %} selected="selected"{% endif %}>Überall</option>
-              <option value="forum"{% if active_app == 'forum' %} selected="selected"{% endif %}>Forum</option>
-              <option value="wiki"{% if active_app == 'wiki' %} selected="selected"{% endif %}>Wiki</option>
-              <option value="ikhaya"{% if active_app == 'ikhaya' %} selected="selected"{% endif %}>Ikhaya</option>
-              <option value="planet"{% if active_app == 'planet' %} selected="selected"{% endif %}>Planet</option>
+              <option value="all"{% if active_app == 'portal' %} selected="selected"{% endif %}>
+                {% trans %}Overall{% endtrans %}
+              </option>
+              <option value="forum"{% if active_app == 'forum' %} selected="selected"{% endif %}>
+                {% trans %}Forum{% endtrans %}
+              </option>
+              <option value="wiki"{% if active_app == 'wiki' %} selected="selected"{% endif %}>
+                {% trans %}Wiki{% endtrans %}
+              </option>
+              <option value="ikhaya"{% if active_app == 'ikhaya' %} selected="selected"{% endif %}>
+                {% trans %}News{% endtrans %}
+              </option>
+              <option value="planet"{% if active_app == 'planet' %} selected="selected"{% endif %}>
+                {% trans %}Planet{% endtrans %}
+              </option>
             </select>
-            <input type="submit" value="Suchen" class="search_submit" />
-        </div></form>{# .search #}
+            <input type="submit" value="{% trans %}Search{% endtrans %}" class="search_submit" />
+          </div>
+        </form>{# .search #}
 
         {% block pathbar_extensions %}
         {% endblock %}
@@ -194,16 +241,23 @@
     <div class="footer" style="clear: both;">
       <ul>
         <li class="poweredby">
-          <a href="{{ href('portal', 'inyoka')|e }}">Inyoka</a> unter der Haube {% if not USER.is_anonymous or SETTINGS.DEBUG %}(in {{ REQUEST.watch.duration|round(2) }}s gerendert){% endif %}<br />
+          {% trans link=href('portal', 'inyoka') %}
+            Powered by <a href="{{ link }}">Inyoka</a>
+          {% endtrans %}
+          {% if SETTINGS.DEBUG %}
+            {% trans seconds=REQUEST.watch.duration|round(2) %}
+              (rendered in {{ seconds }} seconds)
+            {% endtrans %}
+          {% endif %}
+          <br />
           {%- if INYOKA_REVISION %}
             Inyoka {{ INYOKA_REVISION }}
           {%- else %}
             Inyoka revision unavailable
           {%- endif %}
-          (<a href="{{ href('wiki', 'ubuntuusers/Fehler melden') }}">Fehler in Inyoka melden</a>)
         </li>
         <li class="license">
-          <a href="?flavour=mobile" class="flavour_switch" >Zur mobilen Version</a><br />
+          <a href="?flavour=mobile" class="flavour_switch" >{% trans %}To mobile version{% endtrans %}</a><br />
           <img src="{{ href('static', 'img/copyleft.png') }}" alt="Copyleft" />
           2004 – 2011 ubuntuusers.de • Einige Rechte vorbehalten<br />
           <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/de/deed.de" rel="license">CC</a> •
@@ -246,13 +300,18 @@
     {%- if not USER.is_authenticated %}
     <form action="{{ href('portal', 'login', next=CURRENT_URL) }}" method="post" id="js_login_form">
       <div>
-        <label for="js_login_username">Benutzername</label>
+        <label for="js_login_username">
+          {% trans %}Username or email address{% endtrans %}
+        </label>
         <input name="username" id="js_login_username" />
-        <label for="js_login_password">Passwort</label>
+        <label for="js_login_password">{% trans %}Password{% endtrans %}</label>
         <input type="password" name="password" id="js_login_password" />
-        <label for="js_login_permanent" title="Wähle dies nicht aus, wenn du dich von einem öffentlichen Computer aus anmeldest">dauerhaft?</label>
+        <label for="js_login_permanent"
+               title="{% trans %}Don’t choose this option if you are using a public computer.{% endtrans %}">
+          {% trans %}Keep me logged in{% endtrans %}
+        </label>
         <input type="checkbox" name="permanent" id="js_login_permanent" />
-        <a href="{{ href('portal', 'lost_password') }}">Passwort vergessen?</a>
+        <a href="{{ href('portal', 'lost_password') }}">{% trans %}Lost password?{% endtrans %}</a>
         <input type="submit" value="Login" class="submit" />
         <input type="hidden" name="redirect" value="{{ CURRENT_URL|e }}" />
       </div>

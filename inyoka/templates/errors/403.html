@@ -15,11 +15,11 @@
 {% block portal_content %}
   <div class="error">
     <p>
-      Du bist nicht berechtigt, diese Seite aufzurufen.
+      {% trans %}You do not have permissions to access this page.{% endtrans %}
     </p>
     {% if not USER.is_authenticated %}
       <p>
-        Das liegt möglicherweise daran, dass du nicht eingeloggt bist.
+        {% trans %}This may be because you are not logged in.{% endtrans %}
       </p>
     {% endif %}
   </div>
