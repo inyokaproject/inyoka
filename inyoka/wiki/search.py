@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-from pyes import TermsFilter, NotFilter, ANDFilter, FieldQuery
+from pyes import TermsFilter, NotFilter, ANDFilter, FieldQuery, FieldParameter
 from inyoka.utils.search import search, Index, DocumentType
 from inyoka.wiki.acl import get_all_pages_without_privilege, PRIV_READ
 from inyoka.wiki.models import Page
@@ -30,8 +30,7 @@ class PageDocumentType(DocumentType):
 
     @classmethod
     def get_boost_query(cls, original_query):
-        query = FieldQuery(boost=100)
-        query.add('title', original_query)
+        query = FieldQuery(FieldParameter('title', original_query, boost=100.0))
         return query
 
     @classmethod

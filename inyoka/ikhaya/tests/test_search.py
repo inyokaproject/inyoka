@@ -13,6 +13,6 @@ class IkhayaSearchTest(SearchTestCase):
     def test_ikhaya_index(self):
         article = Article.objects.get(slug='well-this-is-some-article')
         self.search.store('ikhaya', 'article', article)
-        time.sleep(1)
+        self.flush_indices('ikhaya')
         results = self.search.search('some article')
         self.assertEqual('Some intro', results.hits[0].source.intro.strip())

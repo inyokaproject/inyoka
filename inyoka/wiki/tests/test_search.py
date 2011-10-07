@@ -11,6 +11,6 @@ class WikiSearchTest(SearchTestCase):
         page = Page.objects.create('SearchTest', 'Some Search Text',
                                    note=u'Created for unittest purposes')
         self.search.store('wiki', 'page', page)
-        time.sleep(1)
+        self.flush_indices('wiki')
         results = self.search.search('Search Text')
         self.assertEqual('SearchTest', results.hits[0].source.title)

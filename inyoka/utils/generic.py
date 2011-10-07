@@ -26,8 +26,7 @@ from inyoka.utils.urls import href
 from inyoka.utils.search import search as search_system
 
 from pyes.exceptions import SearchPhaseExecutionException
-from pyes.highlight import HighLighter
-from pyes.query import MatchAllQuery, StringQuery
+from pyes.query import MatchAllQuery, StringQuery, HighLighter
 
 
 class TemplateResponseMixin(base.TemplateResponseMixin):

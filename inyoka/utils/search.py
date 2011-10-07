@@ -14,7 +14,7 @@ from django.conf import settings
 from django.db.models import signals
 
 from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ORFilter, \
-    MatchAllQuery, DisMaxQuery, ANDFilter, NotFilter
+    MatchAllQuery, DisMaxQuery, ANDFilter, NotFilter, TypeFilter
 from pyes.exceptions import NotFoundException
 
 from inyoka.tasks import update_index
@@ -22,19 +22,6 @@ from inyoka.tasks import update_index
 
 SIMPLE_TYPES = (int, long, str, list, dict, tuple, bool,
                 float, bool, unicode, type(None))
-
-
-class TypeFilter(Filter):
-    _internal_name = "type"
-
-    def __init__(self, type, **kwargs):
-        super(TypeFilter, self).__init__(**kwargs)
-        self._type = type
-
-    def serialize(self):
-        if not self._type:
-            raise RuntimeError("A least a field/value pair must be added")
-        return {self._internal_name : {'value': self._type}}
 
 
 def _get_attrs(obj):

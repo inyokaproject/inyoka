@@ -19,6 +19,6 @@ class ForumSearchTest(SearchTestCase):
                     pub_date=datetime.utcnow(), position=0)
         post.save()
         self.search.store('forum', 'post', post)
-        time.sleep(1)
+        self.flush_indices('forum')
         results = self.search.search('More Fancy')
         self.assertEqual('test-sub', results.hits[0].source.forum_slug)

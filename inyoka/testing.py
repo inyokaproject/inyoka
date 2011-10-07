@@ -130,3 +130,10 @@ class SearchTestCase(TestCase):
         except (pyes.exceptions.ElasticSearchException,
                 pyes.urllib3.MaxRetryError):
             pass
+
+    def flush_indices(self, indices=None):
+        if indices is None:
+            indices = self.search.indices.iterkeys()
+        if not isinstance(indices, (list, set, tuple)):
+            indices = [indices]
+        return self.search.get_connection().flush(indices)
