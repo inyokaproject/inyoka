@@ -20,14 +20,6 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.urls import global_not_found, href
 
 
-def not_found(request, err_message=None):
-    """
-    Displayed if a url does not match or a view tries to display a not
-    exising resource.
-    """
-    return global_not_found(request, 'pastebin', err_message)
-
-
 @templated('pastebin/add.html')
 def index(request):
     if request.method == 'POST':

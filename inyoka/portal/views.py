@@ -39,7 +39,7 @@ from inyoka.utils.http import templated, HttpResponse, \
      PageNotFound, does_not_exist_is_404, HttpResponseRedirect
 from inyoka.utils.sessions import get_sessions, make_permanent, \
     get_user_record, test_session_cookie
-from inyoka.utils.urls import href, url_for, is_safe_domain, global_not_found
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.html import escape
 from inyoka.utils.flashing import flash
 from inyoka.utils.sortable import Sortable
@@ -90,17 +90,6 @@ tmp = dict(PRIVILEGES_DETAILS)
 PRIVILEGE_DICT = dict((bits, tmp[key]) for  bits, key in
                     REVERSED_PRIVILEGES_BITS.iteritems())
 del tmp
-
-
-def not_found(request, err_message=None):
-    """
-    This is called if no URL matches or a view returned a `PageNotFound`.
-    """
-    from inyoka.portal.legacyurls import test_legacy_url
-    response = test_legacy_url(request)
-    if response is not None:
-        return response
-    return global_not_found(request, 'portal', err_message)
 
 
 page_delete = generic.DeleteView.as_view(model=StaticPage,

@@ -25,18 +25,10 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.mail import send_mail
 from inyoka.utils.dates import group_by_day
-from inyoka.utils.urls import global_not_found
 from inyoka.planet.models import Blog, Entry
 from inyoka.planet.forms import SuggestBlogForm, EditBlogForm
 from inyoka.utils.feeds import atom_feed, AtomFeed
 
-
-def not_found(request, err_message=None):
-    """
-    Displayed if a url does not match or a view tries to display a not
-    exising resource.
-    """
-    return global_not_found(request, 'planet', err_message)
 
 
 def context_modifier(request, context):
