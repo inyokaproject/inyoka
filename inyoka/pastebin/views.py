@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from inyoka.utils.urls import global_not_found, href
+from inyoka.utils.urls import href
 from inyoka.utils.http import templated, HttpResponseRedirect, HttpResponse, \
         PageNotFound
 from inyoka.utils.flashing import flash
@@ -16,14 +16,6 @@ from inyoka.utils.templating import render_template
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
 from inyoka.portal.utils import require_permission
-
-
-def not_found(request, err_message=None):
-    """
-    Displayed if a url does not match or a view tries to display a not
-    exising resource.
-    """
-    return global_not_found(request, 'pastebin', err_message)
 
 
 @templated('pastebin/add.html')

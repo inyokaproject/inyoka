@@ -65,8 +65,6 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^lost_password/(?P<username>[^/]+)/(?P<new_password_key>[a-z0-9]+)/$', 'set_new_password'),
     (r'^confirm/$', 'confirm'),
     (r'^confirm/(?P<action>[^/]+)/$', 'confirm'),
-    (r'^usercp/reactivate/$', 'confirm', {'action':'reactivate_user'}),
-    # ^ legacy support, can be removed after september 15th
     (r'^feeds/$', 'feedselector'),
     (r'^feeds/(?P<app>[^/]+)/$', 'feedselector'),
     (r'^calendar/$', 'calendar_overview'),
@@ -90,4 +88,4 @@ urlpatterns = patterns('inyoka.portal.views',
 )
 
 
-handler404 = 'inyoka.portal.views.not_found'
+handler404 = 'inyoka.utils.urls.global_not_found'

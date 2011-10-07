@@ -24,4 +24,4 @@ urlpatterns = patterns('inyoka.planet.views',
 )
 
 
-handler404 = 'inyoka.planet.views.not_found'
+handler404 = 'inyoka.utils.urls.global_not_found'
