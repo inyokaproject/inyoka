@@ -22,7 +22,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
-from inyoka.utils.urls import global_not_found, href, url_for, is_safe_domain
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.html import escape
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.http import templated, PageNotFound, HttpResponseRedirect, AccessDeniedResponse, \
@@ -57,20 +57,6 @@ from inyoka.forum.acl import filter_invisible, get_forum_privileges, \
 from inyoka.forum.notifications import send_discussion_notification, \
     send_edit_notifications, send_newtopic_notifications, \
     send_deletion_notification
-
-
-_legacy_forum_re = re.compile(r'^/forum/(\d+)(?:/(\d+))?/?$')
-
-
-def not_found(request, err_message=None):
-    """
-    This is called if no URL matches or a view returned a `PageNotFound`.
-    """
-    from inyoka.forum.legacyurls import test_legacy_url
-    response = test_legacy_url(request)
-    if response is not None:
-        return response
-    return global_not_found(request, 'forum', err_message)
 
 
 @templated('forum/index.html')

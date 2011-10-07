@@ -17,7 +17,7 @@ from django.utils.text import truncate_html_words
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils import ctype
-from inyoka.utils.urls import href, url_for, global_not_found, is_safe_domain
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, AccessDeniedResponse, \
      HttpResponseRedirect, PageNotFound, does_not_exist_is_404
 from inyoka.utils.feeds import atom_feed, AtomFeed
@@ -46,17 +46,6 @@ from inyoka.ikhaya.notifications import send_comment_notifications, \
 IKHAYA_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
     u'Community. Hier werden Nachrichten und Berichte rund um Ubuntu, Linux' \
     u' und OpenSource-Software veröffentlicht.'
-
-
-def not_found(request, err_message=None):
-    """
-    This is called if no URL matches or a view returned a `PageNotFound`.
-    """
-    from inyoka.ikhaya.legacyurls import test_legacy_url
-    response = test_legacy_url(request)
-    if response is not None:
-        return response
-    return global_not_found(request, 'ikhaya', err_message)
 
 
 def context_modifier(request, context):
