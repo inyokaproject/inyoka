@@ -135,7 +135,7 @@ class MultiPrivilegeTest(object):
 
     def get_groups(self, page_name):
         if page_name in self.owned_pages:
-            return self.groups & set(GROUP_OWNER)
+            return self.groups & set([GROUP_OWNER])
         return self.groups
 
     def get_privilege_flags(self, page_name):
