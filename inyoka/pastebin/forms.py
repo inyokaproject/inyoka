@@ -19,7 +19,7 @@ from inyoka.pastebin.models import Entry
 # lexers because that is just insane ;-)
 LANGUAGES = [
     ('text', _('Plain text')),
-    ('apache', _('Apache Config (.htaccess)'))),
+    ('apache', _('Apache Config (.htaccess)')),
     ('bash', _('Bash')),
     ('bat', _('Batch (.bat)')),
     ('c', _('C')),
@@ -56,7 +56,7 @@ LANGUAGES = [
     ('tex', _('TeX / LaTeX')),
     ('diff', _('Unified Diff')),
     ('vim', _('Vim Scripts')),
-    ('xml', _('XML')
+    ('xml', _('XML')),
 ]
 
 
