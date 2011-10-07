@@ -16,9 +16,9 @@
 {% do BREADCRUMB.append(topic.title, topic|url, True) %}
 {% set name = topic.title|e %}
 {% set feeds = [
-  (name + _('Captions'), href('forum', 'feeds/topic', topic.slug, 'title/20')),
-  (name + _('Teaser'), href('forum', 'feeds/topic', topic.slug, 'short/20')),
-  (name + _('Full post'), href('forum', 'feeds/topic', topic.slug, 'full/20'))
+  (name + ' - ' + _('Captions'), href('forum', 'feeds/topic', topic.slug, 'title/20')),
+  (name + ' - ' + _('Teaser'), href('forum', 'feeds/topic', topic.slug, 'short/20')),
+  (name + ' - ' + _('Full'), href('forum', 'feeds/topic', topic.slug, 'full/20'))
 ] %}
 {% do BREADCRUMB.append(forum.name, forum|url, True) %}
 {% for parent in forum.parents[:-1] %}

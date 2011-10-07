@@ -13,7 +13,7 @@
 {% set scripts = ['WikiEditor', 'DateTime'] %}
 
 {% if not article %}
-  {% do BREADCRUMB.append(_('Write article'), href('ikhaya', 'new'), True) %}
+  {% do BREADCRUMB.append(_('New Article'), href('ikhaya', 'new'), True) %}
 {% else %}
   {% do BREADCRUMB.append(_('Edit'), article|url('edit'), True) %}
   {% do BREADCRUMB.append(article.subject, article|url, True) %}
@@ -27,7 +27,7 @@
       {% endtrans %}
     </h3>
   {%- else %}
-    <h3>{% trans %}Write article{% endtrans %}</h3>
+    <h3>{% trans %}New Article{% endtrans %}</h3>
   {% endif %}
 
   <form action="" method="post" class="ikhaya">

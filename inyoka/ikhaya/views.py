@@ -496,8 +496,8 @@ def comment_update(boolean, text):
     return do
 
 
-comment_hide = comment_update(True, _('The comment was hidden.'))
-comment_restore = comment_update(False, _('The comment was restored.'))
+comment_hide = comment_update(True, _(u'The comment was hidden.'))
+comment_restore = comment_update(False, _(u'The comment was restored.'))
 
 
 @templated('ikhaya/archive.html', modifier=context_modifier)
@@ -513,20 +513,20 @@ def suggest_assign_to(request, suggestion, username):
     try:
         suggestion = Suggestion.objects.get(id=suggestion)
     except Suggestion.DoesNotExist:
-        flash(_('The suggestion “%(title)s“ does not exist.')
+        flash(_(u'The suggestion “%(title)s“ does not exist.')
                 % {'title': suggestion})
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
     if username == '-':
         suggestion.owner = None
         suggestion.save()
-        flash(_('The suggestion was assigned to nobody.'), True)
+        flash(_(u'The suggestion was assigned to nobody.'), True)
     else:
         try:
             suggestion.owner = User.objects.get(username)
         except User.DoesNotExist:
             raise PageNotFound
         suggestion.save()
-        flash(_('The suggestion was assigned to “%(user)s“.')
+        flash(_(u'The suggestion was assigned to “%(user)s“.')
                 % {'user': username}, True)
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
@@ -670,7 +670,7 @@ def suggestions_subscribe(request):
     except Subscription.DoesNotExist:
         ct = ContentType.objects.get_by_natural_key(*ct_query)
         Subscription(user=request.user, content_type=ct).save()
-        flash(_('You will now be notified about new suggestions.'))
+        flash(_(u'You will now be notified about new suggestions.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
@@ -686,7 +686,7 @@ def suggestions_unsubscribe(request):
         pass
     else:
         subscription.delete()
-        flash(_('From now on you won’t be notfied anymore about suggestions.'))
+        flash(_(u'From now on you won’t be notfied anymore about suggestions.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
@@ -703,7 +703,7 @@ def event_edit(request, pk=None):
         try:
             base_event = Event.objects.get(pk=int(request.GET['copy_from']))
         except Event.DoesNotExist:
-            flash(_('The event with the id %(id)s could not be used as draft '
+            flash(_(u'The event with the id %(id)s could not be used as draft '
                     'for a new event because it does not exist.')
                     % {'id': request.GET['copy_from']}, False)
         else:
@@ -717,7 +717,7 @@ def event_edit(request, pk=None):
         form = EditEventForm(request.POST, instance=event)
         if form.is_valid():
             event = form.save(request.user)
-            flash(_('The event was saved.'), True)
+            flash(_(u'The event was saved.'), True)
             if new:
                 cache.delete('ikhaya/event_count')
             return HttpResponseRedirect(url_for(event))

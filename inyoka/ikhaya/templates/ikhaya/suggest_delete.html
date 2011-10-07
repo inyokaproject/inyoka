@@ -1,6 +1,6 @@
 {#
     ikhaya/suggest_delete.html
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This template is flashed to ask the user if he really wants to delete a
     suggestion.
@@ -12,9 +12,14 @@
 
 
 <form action="{{ href('ikhaya', 'suggest', s.id, 'delete') }}" method="post">
-  <p>Begründung für den Autor des Vorschlags:</p>
+  <p>{% trans %}Explanation for the author of the suggestion:{% endtrans %}</p>
   <p><textarea name="note"></textarea></p>
-  <p class="note">Lasse dieses Feld leer, wenn der Vorschlag ohne Begründung gelöscht werden soll.</p>
-  <p><input type="submit" value="Löschen" />{#
-   #}<input type="submit" name="cancel" value="Abbrechen" /></p>
+  <p class="note">
+    {% trans %}
+      Leave this field empty if the suggestion should be deleted without an
+      explanation.
+    {% endtrans %}
+  </p>
+  <p><input type="submit" value="{% trans %}Delete{% endtrans %}" />{#
+   #}<input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" /></p>
 </form>
