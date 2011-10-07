@@ -59,7 +59,7 @@
             <p class="description">{{ forum.description|e }}</p>
           {%- endif %}
           <p class="description">
-            {%- if supporters and false %}
+            {%- if supporters %}
               {% trans count=supporters|count %}Supporter:{% pluralize %}Supporters:{% endtrans %}
               {%- for supporter in supporters %}
                 <a href="{{supporter|url }}">{{ supporter.username|e }}</a>
