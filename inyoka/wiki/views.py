@@ -76,8 +76,8 @@ def redirect_new_page(request):
         backref = href('wiki', settings.WIKI_MAIN_PAGE)
 
     if not page:
-        flash(_('The page could not be created because no sitename was '
-                'entered'), True)
+        flash(_('The page could not be created because no site name was '
+                'entered.'), True)
         return HttpResponseRedirect(backref)
     if base:
         page = join_pagename(base, "./" + page)
@@ -88,7 +88,7 @@ def redirect_new_page(request):
             options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
-    flash(_('A site with the name “%(title)s“ does already exist.')
+    flash(_('Another site already exists at “%(title)s“.')
             % {'title': escape(page.title)}, True)
     return HttpResponseRedirect(backref)
 
@@ -217,14 +217,14 @@ def feed(request, page_name=None, count=10):
                 text = _('%(user)s had deleted the article “%(article)s“ on '
                          '%(date)s. Summary: %(summary)s')
             else:
-                text = _('%(user)s had changed the article “%(article)s“ on '
+                text = _('%(user)s changed the article “%(article)s“ on '
                          '%(date)s. Summary: %(summary)s')
         else:
             if rev.deleted:
-                text = _('An anonymous user had deleted the article '
+                text = _('An anonymous user deleted the article '
                          '“%(article)s“ on %(date)s. Summary: %(summary)s')
             else:
-                text = _('An anonymous user had changed the article '
+                text = _('An anonymous user changed the article '
                          '“%(article)s“ on %(date)s. Summary: %(summary)s')
 
         kwargs['summary'] = text % {

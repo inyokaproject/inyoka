@@ -333,8 +333,7 @@ def article_subscribe(request, year, month, day, slug):
         Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
         Subscription(user=request.user, content_object=article).save()
-        flash(_('You will now be notified about new comments for this '
-                'article.'))
+        flash(_('You will be notified of new comments to this article.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
@@ -355,8 +354,8 @@ def article_unsubscribe(request, year, month, day, slug):
         pass
     else:
         subscription.delete()
-        flash(_('From now on you won’t be notified anymore about new comments '
-                'for this article.'))
+        flash(_('You will no longer be notified of new comments for this '
+                'article.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
@@ -386,7 +385,7 @@ def report_new(request, year, month, day, slug):
                 report.author = request.user
                 report.pub_date = datetime.utcnow()
                 report.save()
-                flash(_('Thanks for your report.'), True)
+                flash(_('Thank you for your report.'), True)
                 return HttpResponseRedirect(url_for(report))
     else:
         form = EditCommentForm()
@@ -596,8 +595,8 @@ def suggest_edit(request):
         elif form.is_valid():
             suggestion = form.save(request.user)
             cache.delete('ikhaya/suggestion_count')
-            flash(_('Thank you, your article suggestion was sent - the team '
-                    'will contact you.'), True)
+            flash(_('Thank you, your article suggestion was submitted. A team '
+                    'member will contact you shortly.'), True)
 
             # Send a notification message
             send_new_suggestion_notifications(request.user, suggestion)
@@ -659,7 +658,7 @@ def suggestions_subscribe(request):
     except Subscription.DoesNotExist:
         ct = ContentType.objects.get_by_natural_key(*ct_query)
         Subscription(user=request.user, content_type=ct).save()
-        flash(_(u'You will now be notified about new suggestions.'))
+        flash(_(u'You will be notified of new suggestions.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
@@ -675,7 +674,7 @@ def suggestions_unsubscribe(request):
         pass
     else:
         subscription.delete()
-        flash(_(u'From now on you won’t be notfied anymore about suggestions.'))
+        flash(_(u'You will no longer be notified of suggestions.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
@@ -762,7 +761,7 @@ def event_suggest(request):
                 event.location_long = data['location_long']
             event.save()
             cache.delete('ikhaya/event_count')
-            flash(_('The event was saved. It will be reviewed by the team '
+            flash(_('The event has been saved. A team member will review it '
                     'soon.'), True)
             event = Event.objects.get(id=event.id) # get truncated slug
             return HttpResponseRedirect(url_for(event))

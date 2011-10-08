@@ -434,7 +434,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                     'can create it now.') % {'article': norm_page_name}, False)
             return HttpResponseRedirect(href('wiki', norm_page_name))
         forum_slug = settings.WIKI_DISCUSSION_FORUM
-        flash(_('There is no discussion linked with the article “%(article)s“ '
+        flash(_('There is no discussion linked to the article “%(article)s“ '
                 'yet. You can create a discussion now or link an existing '
                 'topic to the article.') % {'article': page_name})
     if topic_slug:
@@ -495,7 +495,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 return HttpResponseRedirect(url_for(topic))
             else:
                 flash(_('You are replying to a locked topic. Please note that '
-                        'this is often perceived as unpolite!'), False)
+                        'this is often perceived as impolite!'), False)
         elif topic.hidden:
             if not check_privilege(privileges, 'moderate'):
                 flash(u'Du kannst auf in diesem Thema nicht antworten, da es '
@@ -764,20 +764,20 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
 
 subscribe_forum = _generate_subscriber(Forum,
     'slug', 'forum',
-    (_('You will now be notified about new topics in this forum.')))
+    (_('You will be notified of new topics in this forum.')))
 
 
 unsubscribe_forum = _generate_unsubscriber(Forum,
     'slug', 'forum',
-    (_('You will now not be notified anymore about new topics in this forum.')))
+    (_('You will not be notified of new topics in this forum anymore.')))
 
 subscribe_topic = _generate_subscriber(Topic,
     'topic_slug', 'topic',
-    (_('You will now be notified about new posts in this topic.')))
+    (_('You will be notified of new posts in this topic.')))
 
 unsubscribe_topic = _generate_unsubscriber(Topic,
     'topic_slug', 'topic',
-    (_('You will now not be notified anymore about new posts in this topic.')))
+    (_('You will not be notified of new posts in this topic anymore.')))
 
 
 @simple_check_login
@@ -841,7 +841,7 @@ def reportlist(request):
         if form.is_valid():
             d = form.cleaned_data
             if not d['selected']:
-                flash(_(u'You didn’t select any topics.'), False)
+                flash(_(u'You did not select any topics.'), False)
             else:
                 Topic.objects.filter(id__in=d['selected']).update(
                     reported=None,
@@ -872,7 +872,7 @@ def reported_topics_subscription(request, mode):
         if not request.user.can('manage_topics'):
             return AccessDeniedResponse()
         users.add(request.user.id)
-        flash(_('You will now be notified when a topic is reported.'), True)
+        flash(_('You will be notified when a topic is reported.'), True)
     elif mode == 'unsubscribe':
         try:
             users.remove(request.user.id)
@@ -1019,7 +1019,7 @@ def splittopic(request, topic_slug, page=1):
 
     post_ids = request.session.get('_split_post_ids', {})
     if not post_ids.get(topic_slug, None):
-        flash(_('You didn’t select any post.'))
+        flash(_('You did not select any post.'))
         return HttpResponseRedirect(old_topic.get_absolute_url())
     else:
         post_ids = post_ids[topic_slug]
@@ -1525,7 +1525,7 @@ def next_topic(request, topic_slug):
                                 last_post__gt=this.last_post) \
                         .order_by('last_post').all()
     if not next.exists():
-        flash(_('There aren’t more recent topics in this forum.'))
+        flash(_('There are no more recent topics in this forum.'))
         next = [this.forum]
     return HttpResponseRedirect(url_for(next[0]))
 
@@ -1538,7 +1538,7 @@ def previous_topic(request, topic_slug):
                                     last_post__lt=this.last_post) \
                             .order_by('-last_post').all()
     if not previous.exists():
-        flash(_('There aren’t any older topics in this forum.'))
+        flash(_('There are no older topics in this forum.'))
         previous = [this.forum]
     return HttpResponseRedirect(url_for(previous[0]))
 
