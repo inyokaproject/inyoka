@@ -35,6 +35,9 @@ class SessionMiddleware(middleware.SessionMiddleware):
     """
 
     def process_response(self, request, response):
+        if not hasattr(request, 'session'):
+            return response
+
         # expire the surge protection information if there is one.
         # this keeps the cookie small
         surge_protection = request.session.get('sp')
