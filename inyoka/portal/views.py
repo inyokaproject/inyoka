@@ -36,7 +36,7 @@ from inyoka.utils.dates import MONTHS, WEEKDAYS, DEFAULT_TIMEZONE, \
 from inyoka.utils.http import templated, HttpResponse, \
      PageNotFound, does_not_exist_is_404, HttpResponseRedirect
 from inyoka.utils.sessions import get_sessions, make_permanent, \
-    get_user_record, test_session_cookie
+    get_user_record
 from inyoka.utils.urls import href, url_for, is_safe_domain, global_not_found
 from inyoka.utils.html import escape
 from inyoka.utils.flashing import flash
@@ -196,45 +196,45 @@ def register(request):
         flash(u'Du bist bereits angemeldet.', False)
         return HttpResponseRedirect(redirect)
 
-    redirect_needed, result = test_session_cookie(request)
-    if redirect_needed:
-        return result
-    else:
-        cookie_error_link = result
+    cookie_error = False
 
-
-    form = RegisterForm()
-    if request.method == 'POST' and cookie_error_link is None and \
-       'renew_captcha' not in request.POST:
+    if request.method == 'POST' and 'renew_captcha' not in request.POST:
         form = RegisterForm(request.POST)
-        form.captcha_solution = request.session.get('captcha_solution')
-        if form.is_valid():
-            data = form.cleaned_data
-            user = User.objects.register_user(
-                username=data['username'],
-                email=data['email'],
-                password=data['password'])
+        if not request.session.test_cookie_worked():
+            cookie_error = True
+        else:
+            request.session.delete_test_cookie()
 
-            timezone = find_best_timezone(request)
+            form.captcha_solution = request.session.get('captcha_solution')
+            if form.is_valid():
+                data = form.cleaned_data
+                user = User.objects.register_user(
+                    username=data['username'],
+                    email=data['email'],
+                    password=data['password'])
 
-            # utc is default, no need for another update statement
-            if timezone != DEFAULT_TIMEZONE:
-                user.settings['timezone'] = timezone
-                user.save()
+                timezone = find_best_timezone(request)
 
-            flash(u'Der Benutzer „%s“ wurde erfolgreich registriert. '
-                  u'Es wurde eine E-Mail an „%s“ gesendet, mit der du dein '
-                  u'Konto aktivieren kannst.' % (
-                        escape(user.username), escape(user.email)), True)
+                # utc is default, no need for another update statement
+                if timezone != DEFAULT_TIMEZONE:
+                    user.settings['timezone'] = timezone
+                    user.save()
 
-            # clean up request.session
-            request.session.pop('captcha_solution', None)
-            return HttpResponseRedirect(redirect)
+                flash(u'Der Benutzer „%s“ wurde erfolgreich registriert. '
+                      u'Es wurde eine E-Mail an „%s“ gesendet, mit der du dein '
+                      u'Konto aktivieren kannst.' % (
+                            escape(user.username), escape(user.email)), True)
+
+                # clean up request.session
+                request.session.pop('captcha_solution', None)
+                return HttpResponseRedirect(redirect)
+    else:
+        form = RegisterForm()
+        request.session.set_test_cookie()
 
     return {
         'form':         form,
-        'cookie_error': cookie_error_link is not None,
-        'retry_link':   cookie_error_link
+        'cookie_error': cookie_error,
     }
 
 
@@ -371,16 +371,10 @@ def login(request):
         flash(u'Du bist bereits angemeldet!', False)
         return HttpResponseRedirect(redirect)
 
-    # enforce an existing session
-    redirect_needed, result = test_session_cookie(request)
-    if redirect_needed:
-        return result
-    else:
-        cookie_error_link = result
-
+    # FIXME: Check if cookies are enabled!
 
     failed = inactive = banned = False
-    if request.method == 'POST' and cookie_error_link is None:
+    if request.method == 'POST':# and cookie_error_link is None:
         form = LoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
@@ -423,8 +417,8 @@ def login(request):
         'failed':       failed,
         'inactive':     inactive,
         'banned':       banned,
-        'cookie_error': cookie_error_link is not None,
-        'retry_link':   cookie_error_link
+        'cookie_error': False, #cookie_error_link is not None,
+        'retry_link':   None #cookie_error_link
     }
     if failed:
         d['username'] = data['username']

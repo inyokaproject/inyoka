@@ -47,7 +47,11 @@ LANGUAGE_CODE = 'de-de'
 
 # the base url (without subdomain)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_DOMAIN = '.%s' % BASE_DOMAIN_NAME.split(':')[0]
+SESSION_COOKIE_NAME = 'session'
+SESSION_COOKIE_HTTPONLY = True
 
 # this url conf is used for contrib stuff like the auth system
 ROOT_URLCONF = 'inyoka.portal.urls'
@@ -163,7 +167,7 @@ AVAILABLE_FEED_COUNTS = {
 
 MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.common.CommonServicesMiddleware',
-    'inyoka.middlewares.session.AdvancedSessionMiddleware',
+    'inyoka.middlewares.session.SessionMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
@@ -187,6 +191,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
+    'django.contrib.sessions',
     'inyoka.portal',
     'inyoka.wiki',
     'inyoka.forum',
