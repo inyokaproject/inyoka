@@ -53,6 +53,8 @@ SESSION_COOKIE_DOMAIN = '.%s' % BASE_DOMAIN_NAME.split(':')[0]
 SESSION_COOKIE_NAME = 'session'
 SESSION_COOKIE_HTTPONLY = True
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
 # this url conf is used for contrib stuff like the auth system
 ROOT_URLCONF = 'inyoka.portal.urls'
 # host conf for subdomain dispatching
@@ -168,6 +170,7 @@ AVAILABLE_FEED_COUNTS = {
 MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.common.CommonServicesMiddleware',
     'inyoka.middlewares.session.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
@@ -192,6 +195,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'django.contrib.sessions',
+    'django.contrib.messages',
     'inyoka.portal',
     'inyoka.wiki',
     'inyoka.forum',

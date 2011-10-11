@@ -161,9 +161,7 @@
       {%- endif %}
 
       {%- for message in MESSAGES %}
-        <div class="message{% if message.success == true %} success{% elif message.success == false %} fail{% endif %}">
-          {{ message.text }}
-        </div>
+				<div class="message {{ message.tags }}">{{ message }}</div>
       {%- endfor %}
 
       <div class="page_content">

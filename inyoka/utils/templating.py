@@ -13,6 +13,7 @@ from functools import partial
 from glob import glob
 
 from django.conf import settings
+from django.contrib import messages
 from django.utils import translation
 from django.utils import simplejson as json
 from django_mobile import get_flavour
@@ -186,7 +187,7 @@ def populate_context_defaults(context, flash=False):
         )
 
         if not flash:
-            context['MESSAGES'] = get_flashed_messages()
+            context['MESSAGES'] = messages.get_messages(request)
 
     context.update(
         GLOBAL_MESSAGE=global_message,
