@@ -1282,7 +1282,7 @@ def mark_all_forums_read(user):
 # Circular imports
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
-from inyoka.portal.models import SearchQueue, Subscription
+from inyoka.portal.models import Subscription
 
 # register signal handlers
 from inyoka.forum import signals

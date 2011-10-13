@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from datetime import datetime
-from pyes import TermFilter, NotFilter, ANDFilter, RangeFilter, ESRangeOp, ORFilter
+from pyes import TermFilter, NotFilter, ANDFilter, RangeFilter, ESRangeOp, \
+    ORFilter, TypeFilter
 from inyoka.ikhaya.models import Article
 from inyoka.utils.search import search, Index, DocumentType, TypeFilter
 from inyoka.utils.urls import url_for
