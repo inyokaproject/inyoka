@@ -18,6 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from inyoka.ikhaya.models import Article, Comment
 from inyoka.portal.models import Subscription
 
+
 @receiver(pre_delete, sender=Article)
 def remove_subscriptons(sender, **kwargs):
     """

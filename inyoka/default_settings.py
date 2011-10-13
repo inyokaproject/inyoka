@@ -28,7 +28,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'database.db',
-    }
+    },
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -147,6 +147,7 @@ CACHES = {
     },
     'request': {
         'BACKEND': 'inyoka.utils.cache.RequestCache',
+        'KEY_PREFIX': CACHE_PREFIX
     }
 }
 
@@ -163,7 +164,6 @@ AVAILABLE_FEED_COUNTS = {
 
 MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.common.CommonServicesMiddleware',
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'inyoka.middlewares.session.AdvancedSessionMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
@@ -171,13 +171,15 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.http.ConditionalGetMiddleware',
     'inyoka.middlewares.highlighter.HighlighterMiddleware',
     'inyoka.middlewares.security.SecurityMiddleware',
-    'django_mobile.middleware.MobileDetectionMiddleware',
+    'inyoka.middlewares.common.MobileDetectionMiddleware',
     'django_mobile.middleware.SetFlavourMiddleware',
 )
 
 #: We only allow uploads via memory up to 2.5mb and do not stream into
 #: temporary files.
-FILE_UPLOAD_HANDLERS = ('django.core.files.uploadhandler.MemoryFileUploadHandler',)
+FILE_UPLOAD_HANDLERS = (
+    'django.core.files.uploadhandler.MemoryFileUploadHandler',
+)
 
 TEMPLATE_DIRS = (
     join(BASE_PATH, 'templates'),
@@ -199,7 +201,6 @@ INSTALLED_APPS = (
     'django_nose',
     'djcelery',
     'djkombu',
-#    'debug_toolbar',
     'django_mobile',
     'django_hosts',
 )
@@ -210,17 +211,13 @@ NOSE_PLUGINS = [
     'inyoka.testing.InyokaElasticPlugin'
 ]
 
-NOSE_ARGS = ['--with-unittest']
+NOSE_ARGS = ['--with-unittest', '--with-elastic']
 
 
 # don't use migrations but just syncdb
 SOUTH_TESTS_MIGRATE = False
 
 OPENID_PROVIDERS = {
-#    'myopenid': {
-#        'name': 'MyOpenID',
-#        'url': 'http://{username}.myopenid.com/'
-#    },
     'openid': {
       'name': 'OpenID',
       'url': None
@@ -236,7 +233,7 @@ OPENID_PROVIDERS = {
     'google': {
       'name': 'Google',
       'url': 'https://www.google.com/accounts/o8/id'
-    }
+    },
 }
 
 # Set the default sentry site
@@ -258,8 +255,18 @@ CELERY_RESULT_DBURI = 'sqlite://'
 
 # Modules that hold task definitions
 CELERY_IMPORTS = [
+    # register special celery task logger
+    'inyoka.utils.logger',
+    # general (e.g monitoring) tasks
     'inyoka.tasks',
+    # Application specific tasks
+    'inyoka.portal.tasks',
     'inyoka.wiki.tasks',
+    # Notification specific tasks
+    'inyoka.wiki.notifications',
+    'inyoka.utils.notification',
+    'inyoka.forum.notifications',
+    'inyoka.ikhaya.notifications',
 ]
 
 CELERY_SEND_TASK_ERROR_EMAILS = False
@@ -270,6 +277,8 @@ CELERY_ALWAYS_EAGER = DEBUG
 # Do not hijack the root logger, avoids unicode errors
 CELERYD_HIJACK_ROOT_LOGGER = False
 
+SEND_EVENTS = True
+
 # http://ask.github.com/kombu/introduction.html#transport-comparison
 BROKER_BACKEND = 'inyoka.utils.celery_support.DatabaseTransport'
 
@@ -278,22 +287,6 @@ BROKER_PORT = 5672
 BROKER_USER = ''
 BROKER_PASSWORD = ''
 BROKER_VHOST = ''
-
-DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
-}
-
-DEBUG_TOOLBAR_PANELS = (
-    'debug_toolbar.panels.version.VersionDebugPanel',
-    'debug_toolbar.panels.timer.TimerDebugPanel',
-    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-    'debug_toolbar.panels.headers.HeaderDebugPanel',
-    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-    'debug_toolbar.panels.sql.SQLDebugPanel',
-#    'debug_toolbar.panels.cache.CacheDebugPanel',
-    'debug_toolbar.panels.signals.SignalDebugPanel',
-    'debug_toolbar.panels.logger.LoggingPanel',
-)
 
 INTERNAL_IPS = ('127.0.0.1',)
 

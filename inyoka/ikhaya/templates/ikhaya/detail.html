@@ -41,7 +41,7 @@
 {% endmacro %}
 
 {% block ikhaya_content %}
-  <div class="article">
+  <div class="article" id="page">
     <h3 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h3>
     {%- if article.article_icon -%}
     <img class="icon" src="{{ article.article_icon|url }}" alt="{{ article.article_icon.identifier|e }}" />

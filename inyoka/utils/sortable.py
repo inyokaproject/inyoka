@@ -83,10 +83,9 @@ class Sortable(object):
 
     def get_html(self, key, value):
         if key == self.order_column:
-            new_order = '%s%s' % (
-                not self.order.startswith('-') and '-' or '',
-                self.order_column
-            )
+            args = (not self.order.startswith('-') and '-' or '',
+                    self.order_column)
+            new_order = '%s%s' % args
             img = '<img src="%s" alt="" />' % href('static', 'img',
                 '%s.png' % (self.order.startswith('-') and 'down' or 'up'))
         else:

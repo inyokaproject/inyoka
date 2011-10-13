@@ -27,11 +27,12 @@ from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
 from inyoka.utils.files import get_filename
 from inyoka.utils.text import get_new_unique_filename
-from inyoka.utils.database import LockableObject
+from inyoka.utils.database import LockableObject, update_model, model_or_none
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.html import escape
 from inyoka.utils.urls import href
@@ -244,11 +245,11 @@ class Forum(models.Model):
         if action == 'edit':
             return href('forum', 'forum', self.slug, 'edit')
 
-    @property
-    def parents(self):
+    def get_parents(self, cached=True):
         """Return a list of all parent forums up to the root level."""
         parents = []
-        forums = Forum.objects.get_cached()
+        forums = Forum.objects.get_cached() if cached else \
+                 Forum.objects.all()
         qdct = dict((f.id, f) for f in forums)
 
         forum = qdct[self.id]
@@ -256,6 +257,10 @@ class Forum(models.Model):
             forum = qdct[forum.parent_id]
             parents.append(forum)
         return parents
+
+    @property
+    def parents(self):
+        return self.get_parents(True)
 
     @property
     def children(self):
@@ -353,7 +358,7 @@ class Forum(models.Model):
                              .values_list('user__id', 'positive')
             subset = [priv[0] for priv in query if check_privilege(priv[1], 'moderate')]
             if subset:
-                supporters = list(User.objects.defer('_settings', 'forum_read_status') \
+                supporters = list(User.objects.defer('settings', 'forum_read_status') \
                     .filter(id__in=subset).order_by('username').all())
             cache.set('forum/forum/supporters-%s' % self.id, supporters, 86400)
         return supporters
@@ -462,10 +467,8 @@ class Topic(models.Model):
             self.save()
 
             # and find a new last post id for the new forum
-            new_ids = [p.id for p in self.forum.parents[:-1]]
-            new_ids.append(self.forum.id)
-            old_ids = [p.id for p in old_forum.parents[:-1]]
-            old_ids.append(old_forum.id)
+            new_ids = [p.id for p in new_forums]
+            old_ids = [p.id for p in old_forums]
 
             # search for a new last post in the old and the new forum
             new_post_query = Post.objects.filter(
@@ -473,13 +476,39 @@ class Topic(models.Model):
                 topic__forum__id=F('topic__forum__id'))
 
             Forum.objects.filter(id__in=new_ids).update(
-                last_post=new_post_query._clone().aggregate(count=Max('id'))['count'])
+                last_post=new_post_query._clone().filter(forum__id__in=new_ids) \
+                                                 .aggregate(count=Max('id'))['count'])
 
             Forum.objects.filter(id__in=old_ids).update(
-                last_post=new_post_query._clone().aggregate(count=Max('id'))['count'])
+                last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
+                                                 .aggregate(count=Max('id'))['count'])
 
         forum.invalidate_topic_cache()
         self.forum.invalidate_topic_cache()
+
+    def delete(self, *args, **kwargs):
+        if not self.forum:
+            return
+
+        forums = self.forum.parents + [self]
+        pks = [f.pk for f in forums]
+
+        last_post = Post.objects.filter(topic__id=F('topic__id'),
+                                        topic__forum__pk__in=pks) \
+                                .aggregate(count=Max('id'))['count']
+
+        update_model(forums, last_post=model_or_none(last_post, self.last_post))
+        update_model(self, last_post=None, first_post=None)
+        update_model(self.forum, topic_count=F('topic_count') - 1)
+
+        for post in self.posts.all():
+            post.delete()
+
+        # Delete subscriptions and remove wiki page discussions
+        ctype = ContentType.objects.get_for_model(Topic)
+        Subscription.objects.filter(content_type=ctype, object_id=self.id).delete()
+        WikiPage.objects.filter(topic=self).update(topic=None)
+        return super(Topic, self).delete()
 
     def get_absolute_url(self, action='show'):
         if action in ('show',):
@@ -648,7 +677,7 @@ class Post(models.Model, LockableObject):
     @staticmethod
     def url_for_post(id, paramstr=None):
         post = Post.objects.get(id=id)
-        if post is None or post.topic is None:
+        if post is None or post.topic_id is None:
             return
 
         position, slug = post.position, post.topic.slug
@@ -688,6 +717,43 @@ class Post(models.Model, LockableObject):
         self.is_plaintext = is_plaintext
         self.save()
 
+    def delete(self, *args, **kwargs):
+        if not self.topic:
+            return
+
+        forums = self.topic.forum.parents + [self.topic.forum]
+
+        # degrade user post count
+        if self.topic.forum.user_count_posts:
+            update_model(self.author, post_count=F('post_count') - 1)
+            cache.delete('portal/user/%d' % self.author.id)
+
+        # search for a new last post in the old and the new forum
+        new_post_query = Post.objects.filter(
+            topic__id=F('topic__id'),
+            topic__forum__id=F('topic__forum__id'))
+
+        if self == self.topic.last_post:
+            new_post = new_post_query.filter(topic=self.topic) \
+                                     .aggregate(last=Max('id'))['last']
+            update_model(self.topic, last_post=model_or_none(new_post, self))
+
+        lpf = list(Forum.objects.filter(last_post=self).all())
+        new_post = new_post_query.filter(forum__in=lpf) \
+                                 .aggregate(last=Max('id'))['last']
+        update_model(lpf, last_post=model_or_none(new_post, self))
+
+        # decrement post_counts
+        update_model(self.topic, post_count=F('post_count') - 1)
+        update_model(forums, post_count=F('post_count') - 1)
+
+        # decrement position
+        Post.objects.filter(position__gt=self.position,
+                            topic=self.topic) \
+                    .update(position=F('position') - 1)
+
+        return super(Post, self).delete()
+
     @property
     def page(self):
         """
@@ -709,6 +775,11 @@ class Post(models.Model, LockableObject):
         remove_topic = False
         posts = list(posts)
 
+        old_forums = [parent for parent in old_topic.forum.parents]
+        old_forums.append(old_topic.forum)
+        new_forums = [parent for parent in new_topic.forum.parents]
+        new_forums.append(new_topic.forum)
+
         if len(posts) == old_topic.posts.count():
             # The user selected to split all posts out of the topic -->
             # delete the topic.
@@ -729,17 +800,6 @@ class Post(models.Model, LockableObject):
                 # one are handled by signals)
                 old_topic.forum.post_count -= len(posts)
 
-                for forum in [old_topic.forum] + old_topic.forum.parents:
-                    if forum.last_post == posts[-1]:
-                        try:
-                            last_topic = old_topic.forum.topics.order_by('-last_post__id')[0]
-                        except IndexError:
-                            last_topic = None
-
-                        Forum.objects.filter(pk=forum.pk) \
-                                     .update(last_post=last_topic and last_topic.last_post or None)
-
-                # Decrement or the user post count regarding posts are counted in
                 # the new forum or not.
                 new_forum, old_forum = new_topic.forum, old_topic.forum
                 if old_forum.user_count_posts != new_forum.user_count_posts:
@@ -775,27 +835,22 @@ class Post(models.Model, LockableObject):
             Topic.objects.filter(pk=new_topic.pk).update(**values)
             Post.objects.filter(pk=values['first_post'].pk).update(position=0)
 
-# TODO: for now this kills transaction in MySQL somehow...
-#        cursor = connection.cursor()
-#        if settings.DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-##            cursor.execute("""select topic_id from forum_post where text='a2'""")
-#            cursor.execute("""update forum_post p set position=f.pos from
-#                (select id, (row_number() over (order by id)) + %s as pos from forum_post where topic_id=%s
-#                    and position > %s) as f
-#                where p.id=f.id and p.position is distinct from f.pos;""",
-#                [posts[0].position - 1, old_topic.id, posts[0].position])
-#            cursor.execute("""update forum_post p set position=f.pos from
-#                (select id, (row_number() over (order by id)) -1 as pos from forum_post where topic_id=%s)
-#                as f where p.id=f.id and p.position is distinct from f.pos;""",
-#                [new_topic.id])
-#        else:
-#            cursor.execute("""set @rownum:=%s;
-#                update forum_post set position=(@rownum:=@rownum+1)
-#                    where topic_id=%s and position > %s order by id;""",
-#                [posts[0].position - 1, old_topic.id, posts[0].position])
-#            cursor.execute("""set @rownum:=-1;
-#                update forum_post set position=(@rownum:=@rownum+1)
-#                where topic_id=%s order by id;""", [new_topic.id])
+            # and find a new last post id for the new forum
+            new_ids = [p.id for p in new_forums]
+            old_ids = [p.id for p in old_forums]
+
+            # search for a new last post in the old and the new forum
+            new_post_query = Post.objects.filter(
+                topic__id=F('topic__id'),
+                topic__forum__id=F('topic__forum__id'))
+
+            Forum.objects.filter(id__in=new_ids).update(
+                last_post=new_post_query._clone().filter(forum__id__in=new_ids) \
+                                                 .aggregate(count=Max('id'))['count'])
+
+            Forum.objects.filter(id__in=old_ids).update(
+                last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
+                                                 .aggregate(count=Max('id'))['count'])
 
         new_topic.forum.invalidate_topic_cache()
         old_topic.forum.invalidate_topic_cache()
@@ -1226,7 +1281,8 @@ def mark_all_forums_read(user):
 
 # Circular imports
 from inyoka.wiki.parser import parse, RenderContext
-from inyoka.utils.highlight import highlight_code
+from inyoka.wiki.models import Page as WikiPage
+from inyoka.portal.models import SearchQueue, Subscription
 
 # register signal handlers
 from inyoka.forum import signals

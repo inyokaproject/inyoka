@@ -289,6 +289,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
     cache.delete('wiki/object_list')
     return True
 
+
 @require_privilege('manage')
 @does_not_exist_is_404
 def do_rename(request, name):
@@ -556,8 +557,8 @@ def do_mv_baustelle(request, name):
             # Move from 'Baustelle/Verlassen' to 'Baustelle'
             if text.startswith('[[Vorlage(Verlassen'):
                 text = text[text.find('\n')+1:]
-            new_text = '[[Vorlage(Baustelle, %s%s)]]\n%s' % (date, data['user'],
-                                                             text)
+            new_text = u'[[Vorlage(Überarbeitung, %s%s, %s)]]\n%s' % (date,
+                       name, data['user'], text)
             try:
                 Page.objects.get_by_name(data['new_name'])
             except Page.DoesNotExist:
@@ -573,7 +574,7 @@ def do_mv_baustelle(request, name):
 
             # Create copy (and include box)
             if not discontinued:
-                copy_text = '[[Vorlage(Kopie, %s)]]\n' % name + text
+                copy_text = u'[[Vorlage(Kopie, %s)]]\n' % name + text
                 Page.objects.create(name=name, text=copy_text,
                     user=request.user,
                     note=u'Kopie; Original in der Baustelle')
@@ -604,7 +605,7 @@ def do_mv_discontinued(request, name):
             text = page.revisions.latest().text.value
             if text.startswith('[[Vorlage(Baustelle'):
                 text = text[text.find('\n')+1:]
-            text = '[[Vorlage(Verlassen)]]\n' + text
+            text = 'u[[Vorlage(Verlassen)]]\n' + text
             try:
                 Page.objects.get_by_name(new_name)
             except Page.DoesNotExist:
@@ -659,14 +660,15 @@ def do_mv_back(request, name):
                     return HttpResponseRedirect(url_for(page))
             ## Remove box
             text = page.revisions.latest().text.value
-            if text.startswith('[[Vorlage(Baustelle'):
+            if text.startswith(u'[[Vorlage(Baustelle') or \
+                text.startswith(u'[[Vorlage(Überarbeitung'):
                 text = text[text.find('\n')+1:]
             ## Rename
             if not _rename(request, page, new_name, new_text=text):
                 flash(u'Beim Verschieben ist ein Fehler aufgereten.', False)
                 return HttpResponseRedirect(url_for(page))
 
-            flash(u'Seite wurde erfolgreich wiederhergestellt.', success=True)
+            flash(u'Seite wurde erfolgreich ins Wiki verschoben.', success=True)
             return HttpResponseRedirect(url_for(page))
     else:
         flash(render_template('wiki/action_mv_back.html', {'page': page}))

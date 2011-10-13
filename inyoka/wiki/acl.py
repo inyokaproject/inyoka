@@ -32,7 +32,7 @@ from inyoka.wiki.models import Page
 
 
 #: metadata users without the `PRIV_MANAGE` privilege can edit.
-LENIENT_METADATA_KEYS = set(['X-Link', 'X-Attach', 'X-Redirect'])
+LENIENT_METADATA_KEYS = frozenset(('X-Link', 'X-Attach', 'X-Redirect'))
 
 
 #: the internal privilege representations. because we try to keep

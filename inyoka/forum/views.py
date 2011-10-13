@@ -22,7 +22,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
-from inyoka.utils.urls import global_not_found, href, url_for, is_safe_domain
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.html import escape
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.http import templated, PageNotFound, HttpResponseRedirect, AccessDeniedResponse, \
@@ -57,20 +57,6 @@ from inyoka.forum.acl import filter_invisible, get_forum_privileges, \
 from inyoka.forum.notifications import send_discussion_notification, \
     send_edit_notifications, send_newtopic_notifications, \
     send_deletion_notification
-
-
-_legacy_forum_re = re.compile(r'^/forum/(\d+)(?:/(\d+))?/?$')
-
-
-def not_found(request, err_message=None):
-    """
-    This is called if no URL matches or a view returned a `PageNotFound`.
-    """
-    from inyoka.forum.legacyurls import test_legacy_url
-    response = test_legacy_url(request)
-    if response is not None:
-        return response
-    return global_not_found(request, 'forum', err_message)
 
 
 @templated('forum/index.html')
@@ -865,7 +851,7 @@ def reportlist(request):
         form = ReportListForm()
         _add_field_choices()
 
-    subscribers = storage['reported_topic_subscribers'] or u''
+    subscribers = storage['reported_topics_subscribers'] or u''
     subscribed = str(request.user.id) in subscribers.split(',')
 
     return {
@@ -875,7 +861,7 @@ def reportlist(request):
     }
 
 def reported_topics_subscription(request, mode):
-    subscribers = storage['reported_topic_subscribers'] or u''
+    subscribers = storage['reported_topics_subscribers'] or u''
     users = set(int(i) for i in subscribers.split(',') if i)
 
     if mode == 'subscribe':
@@ -1026,7 +1012,7 @@ def splittopic(request, topic_slug, page=1):
         return abort_access_denied(request)
 
     post_ids = request.session.get('_split_post_ids', {})
-    if not post_ids or not topic_slug in post_ids:
+    if not post_ids.get(topic_slug, None):
         flash(u'Du hast keine Beiträge ausgewählt.')
         return HttpResponseRedirect(old_topic.get_absolute_url())
     else:
@@ -1263,10 +1249,7 @@ def delete_topic(request, topic_slug, action='hide'):
 
             elif action == 'delete':
                 send_deletion_notification(request.user, topic, request.POST.get('reason', None))
-                # TODO: We have to update `Forum.last_post` here!
-                #for p in topic.posts.all():
-                #     p.delete()
-                #topic.delete()
+                topic.delete()
                 redirect = url_for(topic.forum)
                 flash(u'Das Thema „%s“ wurde erfolgreich gelöscht.' % topic.title,
                       success=True)

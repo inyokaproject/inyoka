@@ -12,10 +12,9 @@ from django.conf.urls.defaults import patterns, url
 
 
 urlpatterns = patterns('',
-    url(r'^(?P<path>.*)$', 'django.contrib.staticfiles.views.serve', {
-            'insecure': True
-        }),
+    url(r'^(?P<path>.*)$', 'django.contrib.staticfiles.views.serve',
+        {'insecure': True}),
 )
 
 
-handler404 = 'inyoka.portal.views.not_found'
+handler404 = 'inyoka.utils.urls.global_not_found'

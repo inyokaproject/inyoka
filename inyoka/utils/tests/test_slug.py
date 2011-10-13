@@ -6,11 +6,10 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf import settings
 from django.test import TestCase
 from inyoka.forum.models import Forum, Topic
 from inyoka.portal.user import User
-from inyoka.utils.database import _strip_ending_nums, find_next_increment
+from inyoka.utils.database import _strip_ending_nums
 
 
 class TestUtilsSlug(TestCase):
@@ -51,7 +50,6 @@ class TestUtilsSlug(TestCase):
         self.topic6 = Topic(title='a', author=self.user,
                 forum=self.forum3)
         self.topic6.save()
-        # validate inyoka.utils.database._strip_ending_nums
 
     def test_ending_nums(self):
         map = [

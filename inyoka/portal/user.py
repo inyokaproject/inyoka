@@ -12,7 +12,6 @@
 import os
 import random
 import string
-import cPickle
 from datetime import datetime
 from os import path
 from PIL import Image
@@ -32,6 +31,7 @@ from inyoka.utils.local import current_request
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.gravatar import get_gravatar
+from inyoka.utils.database import update_model, JSONField
 
 
 UNUSABLE_PASSWORD = '!$!'
@@ -85,18 +85,25 @@ def reactivate_user(id, email, status, time):
         return {
             'failed': u'Seit der Löschung ist mehr als ein Monat vergangen!',
         }
+
+    email_exists = User.objects.filter(email=email).exists()
+    if email_exists:
+        msg = u'Die E-Mail Adresse ist bereits vergeben.'
+        return {'failed': msg}
+
     user = User.objects.get(id=id)
     if not user.is_deleted:
         return {
             'failed': u'Der Benutzer %s wurde schon wiederhergestellt!' %
                 escape(user.username),
         }
-    user.email = email
-    user.status = status
+    values = {'email': email,
+              'status': status}
     if user.banned_until and user.banned_until < datetime.utcnow():
-        user.status = 1
-        user.banned_until = None
-    user.save()
+        values['status'] = 1
+        values['banned_until'] = None
+
+    update_model(user, **values)
     send_new_user_password(user)
 
     # reactivate user page
@@ -500,7 +507,7 @@ class User(models.Model):
     interests = models.CharField('Interessen', max_length=200, blank=True)
     website = models.URLField('Webseite', blank=True)
     launchpad = models.CharField('Launchpad-Benutzername', max_length=50, blank=True)
-    _settings = models.TextField('Einstellungen', default=cPickle.dumps({}))
+    settings = JSONField('Einstellungen', default={})
     _permissions = models.IntegerField('Rechte', default=0)
 
     # forum attribues
@@ -522,10 +529,9 @@ class User(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Save method that pickles `self.settings` before and cleanup
+        Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        self._settings = cPickle.dumps(self.settings)
         super(User, self).save(*args, **kwargs)
         cache.delete('portal/user/%s/signature' % self.id)
         cache.delete('portal/user/%s' % self.id)
@@ -590,10 +596,6 @@ class User(models.Model):
         groups = self.is_authenticated and [Group.get_default_group()] or []
         groups.extend(self.groups.all())
         return groups
-
-    @deferred
-    def settings(self):
-        return cPickle.loads(str(self._settings))
 
     @deferred
     def permissions(self):
@@ -744,6 +746,11 @@ class User(models.Model):
         if self.new_password_key:
             self.new_password_key = None
         self.save()
+
+    def get_and_delete_messages(self, *args, **kwargs):
+        """Stub for to fix openid integration as it's calling the django.messages API"""
+        #TODO: this method does not exist in Django 1.4 anymore, so remove it if we upgrade!
+        return []
 
     @classproperty
     def SYSTEM_USER(cls):
