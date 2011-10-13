@@ -11,6 +11,8 @@
 {% from 'macros.html' import render_form %}
 
 {% do BREADCRUMB.append('Konfiguration', href('portal', 'config'), True) %}
+{% set styles = ['datetimefield'] %}
+{% set scripts = ['DateTime'] %}
 
 {% block content %}
 <form enctype="multipart/form-data" action="" method="post" id="configuration">
@@ -35,6 +37,9 @@
   </dl>
   <h3>Get-Ubuntu-Link</h3>
   {{ render_form(form, ['get_ubuntu_link', 'get_ubuntu_description']) }}
+  <h3>Release-Countdown</h3>
+  {{ render_form(form, ['countdown_active', 'countdown_deadline',
+  'countdown_wiki_page', 'countdown_image_base_url'], inline=true) }}
   <br />
   <p>
     <input type="submit" value="Speichern" />

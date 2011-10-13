@@ -23,7 +23,7 @@ from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href, is_safe_domain
-from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
+from inyoka.utils.forms import CaptchaField, DateTimeWidget, DateWidget, \
                                HiddenCaptchaField, EmailField, JabberField
 from inyoka.utils.local import current_request
 from inyoka.utils.html import escape, cleanup_html
@@ -854,12 +854,21 @@ class ConfigurationForm(forms.Form):
         label=u'Unter welcher Wikiseite sollen neue Seiten erstellt werden?')
     wiki_newpage_infopage = forms.CharField(required=False,
         label=u'Infoseite für neue Seiten.',
-        help_text=u'Infoseite auf die ein "erstellen" Link zeigen soll.'
-                  u' Wenn leer wird ein Standardlink benutzt.')
+        help_text=u'Infoseite auf die ein "erstellen" Link zeigen soll. '
+                  u'Wenn leer wird ein Standardlink benutzt.')
     team_icon_width = forms.IntegerField(min_value=1, required=False)
     team_icon_height = forms.IntegerField(min_value=1, required=False)
     license_note = forms.CharField(required=False, label=u'Lizenzhinweis',
                                    widget=forms.Textarea(attrs={'rows': 2}))
+    countdown_active = forms.BooleanField(required=False,
+        label=u'Countdown anzeigen')
+    countdown_deadline = forms.DateField(required=False,
+        label=u'Release Datum', widget=DateWidget)
+    countdown_wiki_page = forms.CharField(required=False,
+        label=u'Name der Wiki Seite')
+    countdown_image_base_url = forms.CharField(required=False,
+        label=u'Basis Bild Pfad', help_text=u'Der Pfad ist relative zur '
+              u'statischen URL und ohne Identifier anzugeben.')
 
     def clean_global_message(self):
         return cleanup_html(self.cleaned_data.get('global_message', ''))
