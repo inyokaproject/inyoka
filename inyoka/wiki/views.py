@@ -27,7 +27,6 @@ from inyoka.utils.http import templated, PageNotFound, HttpResponseRedirect, \
     AccessDeniedResponse
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import atom_feed, AtomFeed
-from inyoka.utils.flashing import flash
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.actions import PAGE_ACTIONS
@@ -72,8 +71,9 @@ def redirect_new_page(request):
         backref = href('wiki', settings.WIKI_MAIN_PAGE)
 
     if not page:
-        flash(u'Die Seite konnte nicht erstellt werden, da kein Seitenname '
-              'angegeben wurde.', success=False)
+        messages.error(request,
+            u'Die Seite konnte nicht erstellt werden, da kein Seitenname '
+            u'angegeben wurde.')
         return HttpResponseRedirect(backref)
     if base:
         page = join_pagename(base, "./" + page)
@@ -84,8 +84,9 @@ def redirect_new_page(request):
             options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
-    flash(u'Eine Seite mit dem Namen <a href="%s">%s</a> existiert '
-          u'bereits.' % (url_for(page), escape(page.title)), success=False)
+    messages.error(request,
+        u'Eine Seite mit dem Namen <a href="%s">%s</a> existiert '
+        u'bereits.' % (url_for(page), escape(page.title)))
     return HttpResponseRedirect(backref)
 
 

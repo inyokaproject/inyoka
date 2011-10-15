@@ -15,7 +15,6 @@ from django.utils.translation import ugettext as _
 
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
-from inyoka.utils.flashing import flash
 from inyoka.utils.html import escape
 from inyoka.utils.http import TemplateResponse, HttpResponseRedirect
 from inyoka.utils.pagination import Pagination
@@ -51,7 +50,7 @@ class EditMixin(object):
         format_args = {'verbose_name': model._meta.verbose_name,
                        'object_name': escape(unicode(self.object))}
         format_args['action'] = u'erstellt' if self.create else u'geändert'
-        flash(self.message.format(**format_args), True)
+        messages.success(self.request, self.message.format(**format_args))
         return response
 
     def get_success_url(self):
@@ -198,7 +197,8 @@ class BaseDeleteView(edit.BaseDeleteView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        flash(render_template(self.template_name, {'object': self.object}))
+        messages.info(request,
+            render_template(self.template_name, {'object': self.object}))
         return HttpResponseRedirect(self.redirect_url)
 
     def delete(self, request, *args, **kwargs):
@@ -207,14 +207,14 @@ class BaseDeleteView(edit.BaseDeleteView):
 
     def post(self, request, *args, **kwargs):
         if 'cancel' in request.POST:
-            flash(u'Löschen abgebrochen!')
+            messages.info(request, u'Löschen abgebrochen!')
         else:
             super(BaseDeleteView, self).post(request, *args, **kwargs)
             format_args = {
                 'verbose_name': self.model._meta.verbose_name,
                 'object_name': escape(unicode(self.object)),
             }
-            flash(self.message.format(**format_args), True)
+            messages.success(request, self.message.format(**format_args))
         return HttpResponseRedirect(self.redirect_url)
 
 
