@@ -252,9 +252,7 @@ class HeadlineProcessor(Transformer):
 class AutomaticStructure(Transformer):
     """
     This transformer adds additional structure information.  Each headline
-    adds either a new section or subsection depending on its level.  This is
-    required for docbook, but might be useful for HTML too, if you want to
-    indent paragraphs depending on their level.
+    adds either a new section or subsection depending on its level.
     """
 
     def transform(self, tree):

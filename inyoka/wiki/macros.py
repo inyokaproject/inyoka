@@ -313,7 +313,7 @@ class RecentChanges(Macro):
             cache.set(cache_key, data)
 
         # if rendering to html we add a pagination, pagination is stupid for
-        # docbook and other static representations ;)
+        # other static representations ;)
         if format == 'html':
             return u'<div class="recent_changes">%s%s</div>' % (
                 data['nodes'].render(context, format),
