@@ -19,7 +19,7 @@ from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders
 from html5lib.serializer import XHTMLSerializer, HTMLSerializer
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
-from django.utils.encoding import smart_str
+from django.utils.encoding import smart_str, force_unicode
 
 
 _entity_re = re.compile(r'&([^;]+);')
@@ -126,7 +126,7 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     rv = serializer.serialize(walker, 'utf-8')
     if stream:
         return rv
-    return (u''.join(rv)).decode('utf-8')
+    return force_unicode(''.join(rv))
 
 
 class CleanupFilter(object):
