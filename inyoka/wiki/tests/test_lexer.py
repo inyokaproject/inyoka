@@ -73,6 +73,7 @@ class TestLexer(TestCase):
             u'[foo:bar:baz]'
             u'[?action=edit]'
             u'[http://example.com example]'
+            u'[http://example.com] ]'
         ).expect
 
         expect('wiki_link_begin')
@@ -97,6 +98,11 @@ class TestLexer(TestCase):
         expect('link_target', 'http://example.com')
         expect('text', 'example')
         expect('external_link_end')
+
+        expect('external_link_begin')
+        expect('link_target', 'http://example.com')
+        expect('external_link_end')
+        expect('text', ' ]')
 
         expect('eof')
 
