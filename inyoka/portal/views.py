@@ -1617,7 +1617,7 @@ def group(request, name, page=1):
     group = Group.objects.get(name__iexact=name)
     if not (group.is_public or request.user.can('group_edit') or request.user.can('user_edit')):
         raise PageNotFound
-    users = group.user_set
+    users = group.user_set.all()
 
     table = Sortable(users, request.GET, 'id',
         columns=['id', 'username', 'location', 'date_joined', 'post_count'])
