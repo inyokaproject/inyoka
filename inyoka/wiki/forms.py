@@ -108,7 +108,7 @@ class ManageDiscussionForm(forms.Form):
     topic = forms.CharField(label=_('Slug of the topic'), max_length=50,
         help_text= _(u'You can find the slug of a topic in the URL (e.g. '
                      u'<var>example</var> when <em>%(example)s</em>') % {
-                         'example': href('forum', 'topic'. 'example')},
+                         'example': href('forum', 'topic', 'example')},
                      required=False)
 
     def clean_topic(self):

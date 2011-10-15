@@ -743,7 +743,7 @@ class Page(models.Model):
     name = models.CharField(max_length=200, unique=True, db_index=True)
     topic = models.ForeignKey('forum.Topic', null=True,
                               on_delete=models.PROTECT)
-    last_rev = models.ForeignKey(_(u'Revision'), null=True, related_name='+')
+    last_rev = models.ForeignKey('Revision', null=True, related_name='+')
 
     #: this points to a revision if created with a query method
     #: that attaches revisions. Also creating a page object using
@@ -1169,7 +1169,7 @@ class Revision(models.Model):
         return u'%(rev)s (Revision %(date)s)' % {
             'rev': self.page.title,
             'date': format_specific_datetime(self.change_date)
-        )
+        }
 
     @property
     def rendered_text(self):
@@ -1222,16 +1222,16 @@ class Revision(models.Model):
         self.text.touch_html_render_instructions()
 
     def __unicode__(self):
-        return _('Revision %(id)d (%(title)s)' % (
+        return _('Revision %(id)d (%(title)s)') % {
             'id': self.id, 'title': self.page.title
-        )
+        }
 
     def __repr__(self):
-        return '<%s %r rev %r>' % (
+        return '<%s %r rev %r>' % {
             self.__class__.__name__,
             self.page.name,
             self.id
-        )
+        }
 
     class Meta:
         get_latest_by = 'change_date'
