@@ -630,13 +630,21 @@ class Link(Element):
                 title = url
         Element.__init__(self, children, id, style, class_)
         self.title = title
-        self.scheme, self.netloc, self.path, self.params, self.querystring, \
-            self.anchor = urlparse(url)
+        try:
+            self.scheme, self.netloc, self.path, self.params, self.querystring, \
+                self.anchor = urlparse(url)
+            self.valid_url = True
+        except ValueError:
+            self.valid_url = False
+
 
     @property
     def href(self):
-        return get_url((self.scheme, self.netloc, self.path, self.params,
-                        self.querystring, self.anchor))
+        if not self.valid_url:
+            return 'invalid-url'
+        else:
+            return get_url((self.scheme, self.netloc, self.path, self.params,
+                            self.querystring, self.anchor))
 
     def generate_markup(self, w):
         if self.text == self.href:
