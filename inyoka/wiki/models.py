@@ -1001,7 +1001,7 @@ class Page(models.Model):
         self.last_rev = self.rev
         self.save(update_meta=update_meta)
 
-        update_object_list.delay(rev, deleted)
+        update_object_list.delay(rev)
 
     def get_absolute_url(self, action='show', **kwargs):
         if action in ('edit', 'subscribe', 'unsubscribe', 'log', 'backlinks',

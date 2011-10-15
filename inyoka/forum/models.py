@@ -358,7 +358,7 @@ class Forum(models.Model):
                              .values_list('user__id', 'positive')
             subset = [priv[0] for priv in query if check_privilege(priv[1], 'moderate')]
             if subset:
-                supporters = list(User.objects.defer('_settings', 'forum_read_status') \
+                supporters = list(User.objects.defer('settings', 'forum_read_status') \
                     .filter(id__in=subset).order_by('username').all())
             cache.set('forum/forum/supporters-%s' % self.id, supporters, 86400)
         return supporters

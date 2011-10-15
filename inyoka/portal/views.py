@@ -37,7 +37,7 @@ from inyoka.utils.http import templated, HttpResponse, \
      PageNotFound, does_not_exist_is_404, HttpResponseRedirect
 from inyoka.utils.sessions import get_sessions, make_permanent, \
     get_user_record, test_session_cookie
-from inyoka.utils.urls import href, url_for, is_safe_domain, global_not_found
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.html import escape
 from inyoka.utils.flashing import flash
 from inyoka.utils.sortable import Sortable
@@ -88,17 +88,6 @@ tmp = dict(PRIVILEGES_DETAILS)
 PRIVILEGE_DICT = dict((bits, tmp[key]) for  bits, key in
                     REVERSED_PRIVILEGES_BITS.iteritems())
 del tmp
-
-
-def not_found(request, err_message=None):
-    """
-    This is called if no URL matches or a view returned a `PageNotFound`.
-    """
-    from inyoka.portal.legacyurls import test_legacy_url
-    response = test_legacy_url(request)
-    if response is not None:
-        return response
-    return global_not_found(request, 'portal', err_message)
 
 
 page_delete = generic.DeleteView.as_view(model=StaticPage,
@@ -287,11 +276,6 @@ def activate(request, action='', username='', activation_key=''):
 def resend_activation_mail(request, username):
     """Resend the activation mail if the user is not already activated."""
     user = User.objects.get(username)
-
-    if request.GET.get('legacy', False):
-        flash(u'Da wir kürzlich auf eine neue Portalsoftware umgestellt '
-              u'haben, sind die alten Aktivierungslink nicht mehr gültig, '
-              u'du erhältst deshalb eine weitere Mail mit einem neuen Link.')
 
     if user.status > 0:
         flash(u'Das Benutzerkonto von „%s“ ist schon aktiviert worden!' %
@@ -1306,7 +1290,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                 elif action == 'delete':
                     msg = u'Möchtest du die Nachricht löschen?'
                     confirm_label = u'Löschen'
-                flash(render_template('confirm_action.html', {
+                flash(render_template('confirm_action_flash.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
                     'cancel_label': u'Abbrechen',
@@ -1562,7 +1546,7 @@ def group(request, name, page=1):
     group = Group.objects.get(name__iexact=name)
     if not (group.is_public or request.user.can('group_edit') or request.user.can('user_edit')):
         raise PageNotFound
-    users = group.user_set
+    users = group.user_set.all()
 
     table = Sortable(users, request.GET, 'id',
         columns=['id', 'username', 'location', 'date_joined', 'post_count'])

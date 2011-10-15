@@ -103,4 +103,4 @@ urlpatterns = patterns('inyoka.forum.views',
 )
 
 
-handler404 = 'inyoka.forum.views.not_found'
+handler404 = 'inyoka.utils.urls.global_not_found'
