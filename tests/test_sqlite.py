@@ -27,3 +27,5 @@ SEARCH_NODES = ['127.0.0.1:9500']
 
 # WORKAROUND for fancy django-nose that does not yet load models in tests properly
 INSTALLED_APPS = list(INSTALLED_APPS) + ['inyoka.utils.tests']
+
+SEARCH_NODES = ['127.0.0.1:9200']
