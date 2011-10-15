@@ -31,6 +31,7 @@ from inyoka.utils.text import normalize_pagename
 from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.templating import Breadcrumb
 from inyoka.wiki.models import Page
+from inyoka.wiki.views import fetch_real_target
 from inyoka.wiki.acl import has_privilege
 from inyoka.portal.user import User
 
@@ -57,6 +58,7 @@ TAB_RE = re.compile(r'(<div class="navi_tabbar navigation">).+?(</div>)', re.DOT
 META_RE = re.compile(r'(<p class="meta">).+?(</p>)\s*', re.DOTALL)
 NAVI_RE = re.compile(r'(<ul class="navi_global">).+?(</ul>)\s*', re.DOTALL)
 IMG_RE = re.compile(r'href="%s\?target=([^"]+)"' % href('wiki', '_image'))
+REAL_MEDIA_RE = re.compile(r'href="%s\?target=([^"]+)"' % settings.MEDIA_URL)
 REAL_IMG_RE = re.compile(r'href="%s.*?"' % settings.STATIC_URL)
 LINK_RE = re.compile(r'href="%s([^"]+)"' % URL)
 STARTPAGE_RE = re.compile(r'href="(%s)"' % URL)
@@ -179,7 +181,7 @@ def handle_src(match, pre, is_main_page, page_name):
 def handle_img(match, pre, is_main_page, page_name):
     if not INCLUDE_IMAGES:
         return u'href="%s%s"' % (pre, os.path.join('_', '1px.png'))
-    return u'href="%s%s"' % (pre, save_file(href('wiki', '_image', target=url_unquote(match.groups()[0].encode('utf8'))), is_main_page))
+    return u'href="%s%s"' % (pre, save_file(fetch_real_target(target=url_unquote(match.groups()[0].encode('utf8'))), is_main_page))
 
 
 def handle_style(match, pre, is_main_page, page_name):
@@ -244,6 +246,7 @@ REPLACERS = (
     (JS_LOGIN,          ''),
     (OPENSEARCH_RE,     ''),
     (REAL_IMG_RE,       ''),
+    (REAL_MEDIA_RE,     ''),
     (LOGO_RE,           handle_logo),
     (TABBAR_RE,         handle_tabbar),
     (FOOTER_RE,         handle_footer),
