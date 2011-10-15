@@ -11,78 +11,97 @@
 
 
 {%- extends 'wiki/page.html' %}
-{% do BREADCRUMB.append('Versionen', page|url('log'), True) %}
+{% do BREADCRUMB.append(_('Revisions'), page|url('log'), True) %}
 {% set action = 'log' %}
 {% set feeds = [
-  ('Seitenrevisionen', '?action=log&format=atom')
+  (_('Page revisions'), '?action=log&format=atom')
 ] %}
 {% block wiki_content %}
   <div class="main_content">
-  {% set latest_rev = revisions[0] -%}
-  <p>
-    Der Artikel „<a href="{{ page|url|e }}">{{ page.title|e }}</a>“ hat
-    bislang {% trans count=pagination.total, h_count=pagination.total|hnumber('feminine')
-    %}{{ h_count }} Revision{% pluralize %}{{ h_count
-    }} Revisionen{% endtrans %}.
-    Die <a href="{{ latest_rev|url|e }}">jüngste Revision</a> ist {{
-    latest_rev.change_date|specificdatetimeformat|e }} und wurde von
-    {% if latest_rev.user %}
-    <a href="{{ latest_rev.user|url }}">{{ latest_rev.user.username|e
-    }}</a>
-    {% else %}
-    einem anonymen Benutzer über die IP {{ latest_rev.remote_addr|e }}
-    {% endif %} erstellt.
-  </p>
-  <p>
-    Um immer auf dem neuesten Stand zu sein, kannst du die Änderungen an
-    diesem Artikel als <a href="?action=log&amp;format=atom">Atom-Feed
-    abonnieren</a> oder dich <a href="?action=subscribe">benachrichtigen lassen</a>.
-  </p>
-  <form action="" method="get" class="nosubmitprotect">
-    <input type="submit" value="Vergleichen" />
-    <input type="hidden" name="action" value="diff" />
+    {% set latest_rev = revisions[0] -%}
+    <p>
+      {% trans count=pagination.total, link=page|url, article=page.title|e %}
+        The article “<a href="{{ link }}">{{ article }}</a>“ has currently
+        {{ count }} revision.
+      {% pluralize %}
+        The article “<a href="{{ link }}">{{ article }}</a>“ has currently
+        {{ count }} revisions.
+      {% endtrans %}
 
-    <table class="revisions">
-    {%- for revision in revisions %}
-      <tr class="{{ loop.cycle('odd', 'even') }}">
-        <td class="compare">
-          <input type="radio" name="rev" value="{{ revision.id }}"{% if loop.index == 2 or revisions|count == 1 %} checked="checked"{% endif %} />
-          <input type="radio" name="new_rev" value="{{ revision.id }}"{% if loop.index == 1 %} checked="checked"{% endif %} />
-        </td>
-          <td class="author">
-            {%- if revision.user %}
-              <a href="{{ revision.user|url|e }}">
-                <img src="{{ revision.user.avatar_url|e }}" width="16" height="16" alt="{{ revision.user.username|e }}" />
-                <span class="username">{{ revision.user.username|e }}</span>
-              </a>
-            {% else %}
-            {{ revision.remote_addr|e }}
-            {% endif %}
-          </td>
-        <td class="changeset">
-          <span class="time-elapsed"><abbr title="{{ revision.change_date|timedeltaformat(short=True) }}">{{ revision.change_date|datetimeformat }}</abbr>{% if revision.note %}:{% endif %}</span>&nbsp;
-          {% if revision.note %}{{ revision.note|e }}{% endif %}
-          <span class="actions">
-            <a href="{{ revision|url|e }}" class="view" title="Ansehen"><span>ansehen</span></a>
-            {%- if can.manage %}
-            <a href="?action=revert&amp;rev={{ revision.id }}" class="revert"
-               title="Wiederherstellen"><span>wiederherstellen</span></a>
-            {%- endif %}
-            <a href="?action=export&amp;format=raw&amp;rev={{ revision.id }}" class="raw"
-               title="Rohformat"><span>Rohformat</span></a>
-          </span>
-        </td>
-      </tr>
-    {%- endfor %}
-    </table>
-    {% if revisions|count > 10 %}<input type="submit" class="compare_bottom" value="Vergleichen" />{% endif %}
-  </form>
+      {% if latest_rev.user %}
+        {% trans rev_link=latest_rev|url, rev=latest_rev.change_date|datetimeformat,
+                 author_link=latest_rev.user|url, author=latest_rev.user.username|e %}
+          The <a href="{{ rev_link }}">most recent revision</a> is {{ rev }} and
+          was created by <a href="{{ author_link }}">{{ author }}</a>.
+        {% endtrans %}
+      {% else %}
+        {% trans rev_link=latest_rev|url, rev=latest_rev.change_date|datetimeformat,
+                 author=latest_rev.remote_addr|e %}
+          The <a href="{{ rev_link }}">most recent revision</a> is {{ rev }} and
+          was created by {{ author }}.
+        {% endtrans %}
+    </p>
+    <p>
+      {% trans feed_link='?action=log&amp;format=atom',
+               subscribe_link='?action=subscribe' %}
+        To be always up to date you can read the <a href="{{ feed_link }}">atom
+        feed</a> or <a href="{{ subscribe_link }}">subscribe</a>.
+      {% endtrans %}
+      {#
+      Um immer auf dem neuesten Stand zu sein, kannst du die Änderungen an
+      diesem Artikel als <a href="?action=log&amp;format=atom">Atom-Feed
+      abonnieren</a> oder dich <a href="?action=subscribe">benachrichtigen lassen</a>.
+      #}
+    </p>
+    <form action="" method="get" class="nosubmitprotect">
+      <input type="submit" value="{% trans %}Compare{% endtrans %}" />
+      <input type="hidden" name="action" value="diff" />
 
-  <br />
+      <table class="revisions">
+        {%- for revision in revisions %}
+          <tr class="{{ loop.cycle('odd', 'even') }}">
+            <td class="compare">
+              <input type="radio" name="rev" value="{{ revision.id }}"{% if loop.index == 2 or revisions|count == 1 %} checked="checked"{% endif %} />
+              <input type="radio" name="new_rev" value="{{ revision.id }}"{% if loop.index == 1 %} checked="checked"{% endif %} />
+            </td>
+            <td class="author">
+              {%- if revision.user %}
+                <a href="{{ revision.user|url|e }}">
+                  <img src="{{ revision.user.avatar_url|e }}" width="16" height="16"
+                       alt="{{ revision.user.username|e }}" />
+                  <span class="username">{{ revision.user.username|e }}</span>
+                </a>
+              {% else %}
+                {{ revision.remote_addr|e }}
+              {% endif %}
+            </td>
+            <td class="changeset">
+              <span class="time-elapsed">
+                <abbr title="{{ revision.change_date|timedeltaformat(short=True) }}">{{ revision.change_date|datetimeformat }}</abbr>
+                {% if revision.note %}:{% endif %}</span>
+              &nbsp;
+              {% if revision.note %}{{ revision.note|e }}{% endif %}
+              <span class="actions">
+                <a href="{{ revision|url|e }}" class="view" title="Ansehen"><span>ansehen</span></a>
+                {%- if can.manage %}
+                  <a href="?action=revert&amp;rev={{ revision.id }}" class="revert"
+                     title="{% trans %}Restore{% endtrans %}"><span>{% trans %}Restore{% endtrans %}</span></a>
+                {%- endif %}
+                <a href="?action=export&amp;format=raw&amp;rev={{ revision.id }}" class="raw"
+                   title="{% trans %}Raw{% endtrans %}"><span>{% trans %}Raw{% endtrans %}</span></a>
+              </span>
+            </td>
+          </tr>
+        {%- endfor %}
+      </table>
+      {% if revisions|count > 10 %}<input type="submit" class="compare_bottom" value="{% trans %}Compare{% endtrans %}" />{% endif %}
+    </form>
 
-  <div class="pagination left_pagination">
-    {{ pagination.generate() }}
-    <div style="clear: both"></div>
+    <br />
+
+    <div class="pagination left_pagination">
+      {{ pagination.generate() }}
+      <div style="clear: both"></div>
+    </div>
   </div>
-</div>
 {% endblock %}
