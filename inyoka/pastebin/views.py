@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from inyoka.utils.urls import href
+from inyoka.utils.urls import href, global_not_found
 from inyoka.utils.http import templated, HttpResponseRedirect, HttpResponse, \
         PageNotFound
 from inyoka.utils.flashing import flash
@@ -44,7 +44,7 @@ def display(request, entry_id):
     try:
         entry = Entry.objects.get(id=entry_id)
     except Entry.DoesNotExist:
-        return not_found(request, u'Paste Nummer %s konnte nicht gefunden '
+        return global_not_found(request, u'Paste Nummer %s konnte nicht gefunden '
                                   u'werden' % entry_id)
     referrer = request.META.get('HTTP_REFERER')
     if referrer and entry.add_referrer(referrer):
