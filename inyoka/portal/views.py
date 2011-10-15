@@ -1361,7 +1361,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                 elif action == 'delete':
                     msg = u'Möchtest du die Nachricht löschen?'
                     confirm_label = u'Löschen'
-                flash(render_template('confirm_action.html', {
+                flash(render_template('confirm_action_flash.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
                     'cancel_label': u'Abbrechen',
