@@ -16,7 +16,7 @@
   <h1 class="pagetitle"><a href="{{ href('wiki', page.name, action='backlinks')|e }}">{{ page.short_title|e }}</a></h1>
 
   {% if page.rev.attachment %}
-  <div id="attachment">{{ page.rev.attachment.html_representation }}</div>
+    <div id="attachment">{{ page.rev.attachment.html_representation }}</div>
   {% endif %}
 
   <div id="page">{{ page.rev.rendered_text }}</div>
