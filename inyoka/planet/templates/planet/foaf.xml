@@ -18,7 +18,6 @@
       <foaf:name>{{ blog.name|e }}</foaf:name>
       <foaf:weblog>
         <foaf:Document rdf:about="{{ blog.blog_url|e }}">
-          <dc:title>{{ blog.description|e }}</dc:title>
           <rdfs:seeAlso>
             <rss:channel rdf:about="{{ blog.feed_url|e }}" />
           </rdfs:seeAlso>
