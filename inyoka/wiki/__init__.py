@@ -12,7 +12,7 @@
     also used by other applications in the `inyoka` package.  Most important
     is that contrary to MoinMoin the parser produces `nodes` of the input
     text which that know how to render their contents into multiple output
-    formats such as HTML and docbook.
+    formats such as HTML and probably others in the future.
 
     The `views` are pretty nonexistent, in fact there is only one view which
     dispatches the `actions` and a second view to redirect from the url index

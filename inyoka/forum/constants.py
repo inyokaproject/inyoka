@@ -53,8 +53,9 @@ UBUNTU_VERSIONS = [
     UbuntuVersion('9.10', 'Karmic Koala'),
     UbuntuVersion('10.04', 'Lucid Lynx', lts=True, active=True),
     UbuntuVersion('10.10', 'Maverick Meerkat', active=True),
-    UbuntuVersion('11.04', 'Natty Narwhal', current=True),
-    UbuntuVersion('11.10', 'Oneiric Ocelot', class_='unstable', current=True),
+    UbuntuVersion('11.04', 'Natty Narwhal', active=True),
+    UbuntuVersion('11.10', 'Oneiric Ocelot', current=True),
+    UbuntuVersion('12.04', 'Precise Pangolin', class_='unstable', current=True),
 ]
 
 UBUNTU_DISTROS_LEGACY = {

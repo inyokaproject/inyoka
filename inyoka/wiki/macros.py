@@ -40,6 +40,7 @@ from inyoka.wiki.utils import simple_filter, debug_repr, dump_argstring, \
     ArgumentCollector
 from inyoka.wiki.models import Page, Revision, MetaData
 from inyoka.wiki.templates import expand_page_template
+from inyoka.wiki.views import fetch_real_target
 from inyoka.utils.css import filter_style
 from inyoka.utils.urls import is_external_target
 from inyoka.utils.text import human_number, join_pagename, normalize_pagename, \
@@ -312,7 +313,7 @@ class RecentChanges(Macro):
             cache.set(cache_key, data)
 
         # if rendering to html we add a pagination, pagination is stupid for
-        # docbook and other static representations ;)
+        # other static representations ;)
         if format == 'html':
             return u'<div class="recent_changes">%s%s</div>' % (
                 data['nodes'].render(context, format),
@@ -794,8 +795,7 @@ class Picture(Macro):
         if context.wiki_page:
             target = join_pagename(context.wiki_page.name, target)
 
-        source = href('wiki', '_image', target=target,
-                      width=self.width, height=self.height)
+        source = fetch_real_target(target, width=self.width, height=self.height)
         file = None
 
         if context.application == 'ikhaya':
@@ -841,7 +841,7 @@ class Picture(Macro):
         img = nodes.Image(source, self.alt, class_='image-' +
                           (self.align or 'default'), title=self.title)
         if (self.width or self.height) and context.wiki_page is not None:
-            return nodes.Link(href('wiki', '_image', target=target), [img])
+            return nodes.Link(fetch_real_target(target), [img])
         elif (self.width or self.height) and not context.application == 'wiki' and file is not None:
             return nodes.Link(url_for(file), [img])
         return img

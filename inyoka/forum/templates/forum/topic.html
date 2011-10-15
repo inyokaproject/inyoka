@@ -230,7 +230,7 @@
                          class="action action_review">{% trans %}Show revisions{% endtrans %}</a> |
                     </span>
                   {%- endif %}
-                  {% if not loop.first %}
+                  {% if not post.topic.first_post == post %}
                     {%- if post.hidden %}
                       <span class="admin_link">
                         <a href="{{ post|url('restore') }}"

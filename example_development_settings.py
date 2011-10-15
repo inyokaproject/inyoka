@@ -24,6 +24,10 @@ INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 INYOKA_CONTACT_EMAIL = '@'.join(['webteam', BASE_DOMAIN_NAME])
 GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4BQQM-N93TqupJwysf0dHBu_LfF6AQ'
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 # Django Debug Toolbar Integration
 #
 # uncomment to activate debug toolbar support

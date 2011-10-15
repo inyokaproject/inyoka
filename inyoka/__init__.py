@@ -83,8 +83,8 @@
 
     `wiki`
         Moin inspired wiki engine.  It's not yet as advanced as moin 1.7 but
-        has revisioned pages a better parser which can savely generate docbook
-        and other XML based output formats.  The wiki parser also has some
+        has revisioned pages and a better parser which can savely generate XML
+        based output formats.  The wiki parser also has some
         BBCode elements for compatibility with the old phpBB syntax and is
         used in other components (`forum`, `ikhaya`, ...) as well.
 

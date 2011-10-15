@@ -1361,7 +1361,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                 elif action == 'delete':
                     msg = _(u'Do you really want to delete the message?')
                     confirm_label = _(u'Delete')
-                flash(render_template('confirm_action.html', {
+                flash(render_template('confirm_action_flash.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
                     'cancel_label': _(u'Cancel'),
@@ -1616,7 +1616,7 @@ def group(request, name, page=1):
     group = Group.objects.get(name__iexact=name)
     if not (group.is_public or request.user.can('group_edit') or request.user.can('user_edit')):
         raise PageNotFound
-    users = group.user_set
+    users = group.user_set.all()
 
     table = Sortable(users, request.GET, 'id',
         columns=['id', 'username', 'location', 'date_joined', 'post_count'])
