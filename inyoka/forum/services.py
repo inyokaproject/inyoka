@@ -97,7 +97,8 @@ def subscription_action(request, action=None):
 @never_cache
 @permit_methods(('POST',))
 def on_change_status(request, solved=None):
-    topic = Topic.objects.get(slug=request.POST['slug'])
+    if not 'slug' in request.POST:
+        return
     can_read = have_privilege(request.user, topic.forum, 'read')
     if request.user.is_anonymous or not can_read:
         return abort_access_denied(request)
