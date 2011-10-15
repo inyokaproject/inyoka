@@ -41,6 +41,7 @@ from inyoka.wiki.acl import require_privilege, has_privilege, PrivilegeTest
 from inyoka.portal.models import Subscription
 from inyoka.portal.utils import simple_check_login
 from inyoka.wiki.notifications import send_edit_notifications
+from inyoka.wiki.tasks import update_object_list
 
 
 def context_modifier(request, context):
@@ -285,8 +286,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
         ap.edit(note=u'Umbenannt von %s' % old_attachment_name,
                 remote_addr=request.META.get('REMOTE_ADDR'))
 
-    cache.delete('wiki/page/' + name)
-    cache.delete('wiki/object_list')
+    update_object_list.delay(page.last_rev)
     return True
 
 
