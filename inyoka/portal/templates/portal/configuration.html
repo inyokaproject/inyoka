@@ -11,6 +11,7 @@
 {% from 'macros.html' import render_form %}
 
 {% do BREADCRUMB.append('Konfiguration', href('portal', 'config'), True) %}
+{% set scripts = ['portal'] %}
 
 {% block content %}
 <form enctype="multipart/form-data" action="" method="post" id="configuration">
@@ -36,6 +37,36 @@
   <h3>Get-Ubuntu-Link</h3>
   {{ render_form(form, ['get_ubuntu_link', 'get_ubuntu_description']) }}
   <br />
+  <h3>Distributions Versionen</h3>
+<table id="dv">
+  <thead>
+    <td>Version</td>
+    <td>Name</td>
+    <td>LTS</td>
+    <td>Aktiv</td>
+    <td>Aktuell</td>
+    <td>Entwicklung</td>
+    <td colspan="2"></td>
+  </thead>
+  <tfoot>
+    <td colspan="8"><a href="#dv" name="dv-add">Hinzufügen</a></td>
+  </tfoot>
+  <tbody>
+    {%- for version in versions -%}
+    <tr id="dv-{{ version.number|e }}">
+      <td id="dv-number-{{ version.number|e }}">{{ version.number|e }}</td>
+      <td id="dv-name-{{ version.number|e }}">{{ version.name|e }}</td>
+      <td id="dv-lts-{{ version.number|e }}"{% if version.lts == 'true'%} class="dv-yes{% endif %}">{{ version.lts|e }}</td>
+      <td id="dv-active-{{ version.number|e }}"{% if version.active == 'true'%} class="dv-yes{% endif %}">{{ version.active|e }}</td>
+      <td id="dv-current-{{ version.number|e }}"{% if version.current == 'true'%} class="dv-yes{% endif %}">{{ version.current|e }}</td>
+      <td id="dv-dev-{{ version.number|e }}"{% if version.dev == 'true'%} class="dv-yes{% endif %}">{{ version.dev|e }}</td>
+      <td><a href="#dv" id="dv-edit-{{ version.number|e }}">Ändern</a></td>
+      <td><a href="#dv" id="dv-delete-{{ version.number|e }}">Löschen</a></td>
+    </tr>
+    {%- endfor -%}
+  </tbody>
+</table>
+{{ form.distri_versions }}
   <p>
     <input type="submit" value="Speichern" />
   </p>
