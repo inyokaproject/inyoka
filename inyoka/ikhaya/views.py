@@ -333,7 +333,8 @@ def article_subscribe(request, year, month, day, slug):
         Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
         Subscription(user=request.user, content_object=article).save()
-        flash(_('You will be notified of new comments to this article.'))
+        flash(_(u'Notifications on new comments to this article will be sent '
+                u'to you.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
@@ -385,7 +386,7 @@ def report_new(request, year, month, day, slug):
                 report.author = request.user
                 report.pub_date = datetime.utcnow()
                 report.save()
-                flash(_('Thank you for your report.'), True)
+                flash(_('Thanks for your report.'), True)
                 return HttpResponseRedirect(url_for(report))
     else:
         form = EditCommentForm()
@@ -658,7 +659,7 @@ def suggestions_subscribe(request):
     except Subscription.DoesNotExist:
         ct = ContentType.objects.get_by_natural_key(*ct_query)
         Subscription(user=request.user, content_type=ct).save()
-        flash(_(u'You will be notified of new suggestions.'))
+        flash(_(u'Notifications on new suggestions will be sent to you.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
@@ -674,7 +675,7 @@ def suggestions_unsubscribe(request):
         pass
     else:
         subscription.delete()
-        flash(_(u'You will no longer be notified of suggestions.'))
+        flash(_(u'No notifications on suggestions will be sent to you any more.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
