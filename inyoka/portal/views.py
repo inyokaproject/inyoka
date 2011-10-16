@@ -24,6 +24,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.utils.decorators import method_decorator
+from django.utils import simplejson
 
 from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
@@ -2036,14 +2037,16 @@ def config(request):
             'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
             'license_note', 'get_ubuntu_description', 'blocked_hosts',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
-            'team_icon_height', 'team_icon_width']
+            'team_icon_height', 'team_icon_width', 'distri_versions']
 
     team_icon = storage['team_icon']
 
     if request.method == 'POST':
         form = ConfigurationForm(request.POST, request.FILES)
         if form.is_valid():
+            print form.cleaned_data
             data = form.cleaned_data
+            print data
             for k in keys:
                 storage[k] = data[k]
 
@@ -2067,11 +2070,14 @@ def config(request):
         else:
             flash(u'Es sind Fehler aufgetreten! Bitte behebe sie.', False)
     else:
+        storage['distri_versions'] = storage['distri_versions'] or u'[]'
         form = ConfigurationForm(initial=storage.get_many(keys +
                                                 ['global_message']))
+
     return {
         'form': form,
-        'team_icon_url': team_icon and href('media', team_icon) or None
+        'team_icon_url': team_icon and href('media', team_icon) or None,
+        'versions': simplejson.loads(storage['distri_versions']),
     }
 
 
