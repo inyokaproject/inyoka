@@ -1471,8 +1471,8 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         return topic.forum_id not in moderatable_forums
 
     if topic_ids:
-        related = ('forum', 'author', 'last_post', 'last_post.author',
-                   'first_post', 'first_post.author')
+        related = ('forum', 'author', 'last_post', 'last_post__author',
+                   'first_post')
         topics = Topic.objects.filter(id__in=topic_ids).select_related(*related) \
                               .order_by('-last_post__id')
     else:
