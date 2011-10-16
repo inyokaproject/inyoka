@@ -218,7 +218,7 @@ def viewtopic(request, topic_slug, page=1):
                     poll.options.filter(id__in=votes) \
                                 .update(votes=F('votes') + 1)
             msg = ungettext('Your vote was saved.',
-                            'Your %(n)d votes were saved', len(polls))
+                            'Your %(n)d votes were saved.', len(polls))
             flash(msg % {'n': len(polls)})
 
     post_ids = Post.objects.filter(topic=topic) \
@@ -449,7 +449,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         post = Post.objects.get(id=int(post_id))
         locked = post.lock(request)
         if locked:
-            flash(_('This post is currently beeing edited by “%(user)“!')
+            flash(_('This post is currently beeing edited by “%(user)s“!')
                   % {'user': locked}, False)
         topic = post.topic
         forum = topic.forum
