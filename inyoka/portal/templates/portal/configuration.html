@@ -40,13 +40,13 @@
   <h3>Distributions Versionen</h3>
 <table id="dv">
   <thead>
-    <td>Version</td>
-    <td>Name</td>
-    <td>LTS</td>
-    <td>Aktiv</td>
-    <td>Aktuell</td>
-    <td>Entwicklung</td>
-    <td colspan="2"></td>
+    <td class="dv-number">Version</td>
+    <td class="dv-name">Name</td>
+    <td class="dv-lts">LTS</td>
+    <td class="dv-active">Aktiv</td>
+    <td class="dv-current">Aktuell</td>
+    <td class="dv-dev">Entwicklung</td>
+    <td class="dv-command" colspan="2"></td>
   </thead>
   <tfoot>
     <td colspan="8"><a href="#dv" name="dv-add">Hinzufügen</a></td>
@@ -56,10 +56,10 @@
     <tr id="dv-{{ version.number|e }}">
       <td name="dv-number">{{ version.number|e }}</td>
       <td name="dv-name">{{ version.name|e }}</td>
-      <td name="dv-lts" class="dv-{% if version.lts == 'true' %}yes{% else %}no{% endif %}">{{ version.lts|e }}</td>
-      <td name="dv-active" class="dv-{% if version.active == 'true' %}yes{% else %}no{% endif %}">{{ version.active|e }}</td>
-      <td name="dv-current" class="dv-{% if version.current == 'true' %}yes{% else %}no{% endif %}">{{ version.current|e }}</td>
-      <td name="dv-dev" class="dv-{% if version.dev == 'true' %}yes{% else %}no{% endif %}">{{ version.dev|e }}</td>
+      <td name="dv-lts" class="dv-{% if version.lts == 'true' %}yes{% else %}no{% endif %}"></td>
+      <td name="dv-active" class="dv-{% if version.active == 'true' %}yes{% else %}no{% endif %}"></td>
+      <td name="dv-current" class="dv-{% if version.current == 'true' %}yes{% else %}no{% endif %}"></td>
+      <td name="dv-dev" class="dv-{% if version.dev == 'true' %}yes{% else %}no{% endif %}"></td>
       <td><a href="#dv" id="dv-edit">Ändern</a></td>
       <td><a href="#dv" id="dv-delete">Löschen</a></td>
     </tr>
