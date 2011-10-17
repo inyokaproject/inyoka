@@ -448,3 +448,37 @@ ul.permissions {
     }
   }
 }
+#dv {
+  width: 60%;
+  td.dv-yes {
+    background-image: url('../img/forum/solve.png');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  td.dv-no {
+    background-image: url('../img/forum/unsolve.png');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  input[name=dv-number] {
+    width: 100%;
+  }
+  input[name=dv-name] {
+    width: 100%;
+  }
+  thead {
+    font-weight: bold;
+    .dv-number {
+      width: 20%;
+    }
+    .dv-name {
+      width: 40%;
+    }
+    .dv-lts, .dv-active, .dv-current, .dv-dev {
+      width: 5%;
+    }
+    .dv-command {
+      width: 20%;
+    }
+  }
+}
