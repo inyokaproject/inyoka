@@ -873,11 +873,9 @@ class ConfigurationForm(forms.Form):
         try:
             data[key] = data.get(key, '[]')
             # is there a way to validate a JSON string?
-            print simplejson.loads(data[key])
+            simplejson.loads(data[key])
         except simplejson.JSONDecodeError:
-            print u'[]'
             return u'[]'
-        print data[key]
         return data[key]
 
 

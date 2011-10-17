@@ -54,12 +54,12 @@
   <tbody>
     {%- for version in versions -%}
     <tr id="dv-{{ version.number|e }}">
-      <td id="dv-number-{{ version.number|e }}">{{ version.number|e }}</td>
-      <td id="dv-name-{{ version.number|e }}">{{ version.name|e }}</td>
-      <td id="dv-lts-{{ version.number|e }}"{% if version.lts == 'true'%} class="dv-yes{% endif %}">{{ version.lts|e }}</td>
-      <td id="dv-active-{{ version.number|e }}"{% if version.active == 'true'%} class="dv-yes{% endif %}">{{ version.active|e }}</td>
-      <td id="dv-current-{{ version.number|e }}"{% if version.current == 'true'%} class="dv-yes{% endif %}">{{ version.current|e }}</td>
-      <td id="dv-dev-{{ version.number|e }}"{% if version.dev == 'true'%} class="dv-yes{% endif %}">{{ version.dev|e }}</td>
+      <td name="dv-number-{{ version.number|e }}">{{ version.number|e }}</td>
+      <td name="dv-name-{{ version.number|e }}">{{ version.name|e }}</td>
+      <td name="dv-lts-{{ version.number|e }}" value="true"{% if version.lts == 'true'%} class="dv-yes"{% endif %}>{{ version.lts|e }}</td>
+      <td name="dv-active-{{ version.number|e }}" value="true"{% if version.active == 'true'%} class="dv-yes"{% endif %}>{{ version.active|e }}</td>
+      <td name="dv-current-{{ version.number|e }}" value="true"{% if version.current == 'true'%} class="dv-yes"{% endif %}>{{ version.current|e }}</td>
+      <td name="dv-dev-{{ version.number|e }}" value="true"{% if version.dev == 'true'%} class="dv-yes"{% endif %}>{{ version.dev|e }}</td>
       <td><a href="#dv" id="dv-edit-{{ version.number|e }}">Ändern</a></td>
       <td><a href="#dv" id="dv-delete-{{ version.number|e }}">Löschen</a></td>
     </tr>
