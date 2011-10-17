@@ -2044,9 +2044,7 @@ def config(request):
     if request.method == 'POST':
         form = ConfigurationForm(request.POST, request.FILES)
         if form.is_valid():
-            print form.cleaned_data
             data = form.cleaned_data
-            print data
             for k in keys:
                 storage[k] = data[k]
 
