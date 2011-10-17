@@ -7,16 +7,13 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 */
-var added
 $(function () { 
     (function () {
         var number_re = /^\d\d?\.\d\d$/;
-        var delete_row = function (event) {
-            event.preventDefault();
-            $(this).parent().parent().remove();
-        }
+        var revert = {};
+        //var editing = {}; //reserved for further use
 
-        $('a[name="dv-add"]').click(function (event) {
+        var add_row = function (event) {
             event.preventDefault();
             var $row = $('<tr name="dv-new">' +
                 '<td><input type="text" name="dv-number"/></td>' +
@@ -28,38 +25,80 @@ $(function () {
                 '<td></td>' +
                 '</tr>');
             var $td_del = $('<td></td>');
-            var $a_del = $('<a href="#dv" name="dv-delete-new">Löschen</a>');
+            var $a_del = $('<a href="#dv" name="dv-delete">Löschen</a>');
             $a_del.click(delete_row).appendTo($td_del);
             $td_del.appendTo($row);
             $row.appendTo('#dv > tbody');
-        });
+        };
 
-        $('a[id|="dv-edit"]').click(function (event) {
+        var delete_row = function (event) {
+            event.preventDefault();
+            $(this).parent().parent().remove();
+        };
+
+        var revert_row = function (event) {
+            event.preventDefault();
+            var $row = $(this).parent().parent();
+            var version = $row.attr('id').substring(3);
+            $row.find("[name|=dv]").each(function () {
+                var $p = $(this).parent();
+                var key = $(this).attr('name').substr(3);
+                if (key == 'number' || key == 'name') {
+                    $p.attr('name', 'dv-' + key).empty();
+                    $p.text(revert[version][key]);
+                } else if (key == 'lts' || key == 'active' || key == 'current' || key == 'dev') {
+                    $p.attr('name', 'dv-' + key).empty();
+                    $p.addClass('dv-' + (revert[version][key] ? 'yes' : 'no'));
+                } else if (key == 'revert') {
+                    $p.empty();
+                    var $a_edit = $('<a href="#dv" name="dv-edit">Ändern</a>');
+                    $a_edit.click(edit_row).appendTo($p);
+                }
+            });
+            delete revert[version];
+            // delete editing[version];
+        };
+
+        var edit_row = function (event) {
             event.preventDefault();
             var $row = $(this).parent().parent();
             var version = $row.attr('id').substring(3); //strip the dv- from the version
+            var dataset = new Object();
             $row.find('[name^="dv"]').each(function () {
                 // iterate over all <td> elements.
                 var key = $(this).attr('name').substr(3);
                 if (key == 'number' || key == 'name') {
                     var $e = $('<input type="text" name="dv-' + key + '"/>');
+                    dataset[key] = $(this).text();
                     $e.val($(this).text());
                     $(this).removeAttr('name').empty();
                     $e.appendTo(this);
                 } else if (key == 'lts' || key == 'active' || key == 'current' || key == 'dev') {
                     var $e = $('<input type="checkbox" name="dv-' + key + '"/>');
                     if ($(this).hasClass('dv-yes')) {
+                        dataset[key] = 1;
                         $e.attr('checked', 'checked');
                         $e.val('true');
+                    } else {
+                        dataset[key] = 0;
                     }
                     $(this).removeAttr('name').empty();
                     $e.appendTo(this);
                 }
             });
+            revert[version] = dataset;
+            //editing[version] = true;
+            var $p = $(this).parent();
             $(this).remove();
-        });
+            var $a_revert = $('<a href="#dv" name="dv-revert">Abbrechen</a>');
+            $a_revert.click(revert_row).appendTo($p);
+        };
 
-        $('a[id|="dv-delete"]').click(delete_row);
+        $('a[name="dv-add"]').click(add_row);
+
+        $('a[name|="dv-edit"]').click(edit_row);
+
+        $('a[name|="dv-delete"]').click(delete_row);
 
         $('input[type="submit"]').click(function (event) {
             var distri_versions = new Array();

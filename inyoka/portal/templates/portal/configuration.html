@@ -60,8 +60,8 @@
       <td name="dv-active" class="dv-{% if version.active == 'true' %}yes{% else %}no{% endif %}"></td>
       <td name="dv-current" class="dv-{% if version.current == 'true' %}yes{% else %}no{% endif %}"></td>
       <td name="dv-dev" class="dv-{% if version.dev == 'true' %}yes{% else %}no{% endif %}"></td>
-      <td><a href="#dv" id="dv-edit">Ändern</a></td>
-      <td><a href="#dv" id="dv-delete">Löschen</a></td>
+      <td><a href="#dv" name="dv-edit">Ändern</a></td>
+      <td><a href="#dv" name="dv-delete">Löschen</a></td>
     </tr>
     {%- endfor -%}
   </tbody>
