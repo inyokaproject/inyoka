@@ -743,7 +743,7 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
         try:
             obj = cls.objects.get(slug=slug)
         except ObjectDoesNotExist:
-            flash(_('There is no “%(slug)“ anymore.') % {'slug': slug}, False)
+            flash(_('There is no “%(slug)s“ anymore.') % {'slug': slug}, False)
             return HttpResponseRedirect(href('forum'))
 
         try:
