@@ -34,6 +34,26 @@ $(function () {
             return null;
         }
 
+        var blurNumber = function (event) {
+            if (!number_re.test($(this).val())) {
+                $(this).css('background-color', '#FF8080');
+                return false;
+            } else {
+                $(this).css('background-color', '');
+                return true;
+            }
+        };
+
+        var blurName = function (event) {
+            if (jQuery.trim(val) == '') {
+                $(this).css('background-color', '#FF8080');
+                return false;
+            } else {
+                $(this).css('background-color', '');
+                return true;
+            }
+        };
+
         var keys = ['number', 'name', 'lts', 'active', 'current', 'dev'];
         var number_re = /^\d\d?\.\d\d$/;
         var revert = {};
@@ -41,12 +61,15 @@ $(function () {
 
         var add_row = function (event) {
             event.preventDefault();
-            var $row = $('<tr name="dv-new">' +
-                '<td><input type="text" name="dv-number"/></td>' +
-                '<td><input type="text" name="dv-name"/></td>' +
-                '</tr>');
+            var $row = $('<tr name="dv-new"></tr>');
+            var $td_number = $('<td></td>');
+            var $td_name = $('<td></td>');
+            $('<input/>').attr('name', 'dv-' + keys[0]).attr('type', 'text').blur(blurNumber).appendTo($td_number);
+            $('<input/>').attr('name', 'dv-' + keys[1]).attr('type', 'text').blur(blurName).appendTo($td_name);
+            $td_number.appendTo($row);
+            $td_name.appendTo($row);
             for (var i = 2; i < keys.length; i++) {
-                $('<td></td>').attr('name', keys[i]).addClass('dv-no').click(toggleBoolean).appendTo($row);
+                $('<td></td>').attr('name', 'dv-' + keys[i]).addClass('dv-no').click(toggleBoolean).appendTo($row);
             }
             $('<td></td>').appendTo($row);
             var $e = $('<td></td>');
@@ -100,6 +123,11 @@ $(function () {
                 var key = $(this).attr('name').substr(3);
                 if (key == 'number' || key == 'name') {
                     var $e = $('<input type="text" name="dv-' + key + '"/>');
+                    if (key == 'number') {
+                        $e.blur(blurNumber);
+                    } else {
+                        $e.blur(blurName);
+                    }
                     dataset[key] = $(this).text();
                     $e.val($(this).text());
                     $(this).removeAttr('name').empty();
@@ -127,6 +155,7 @@ $(function () {
             var distri_versions = new Array();
             $('tr[id|="dv"],tr[name="dv-new"]').each(function () {
                 var values = new Array(); //{number:'', name:'', lts:'', active:'', current:'', dev:''};
+                var stopSaving = false;
                 for (i = 0; i < keys.length; i++) {
                     var k = keys[i];
                     var $e = $(this).find('[name="dv-' + k +'"]');
@@ -138,6 +167,7 @@ $(function () {
                         val = (val == null) ? $e.text() : val;
                     }
                     if (k == 'number' && !number_re.test(val) || k == 'name' && jQuery.trim(val) == '') {
+                        event.preventDefault();
                         return true; // return true to skip this loop but continue in `each()`
                     }
                     values.push('"' + k + '":"' + val + '"');
