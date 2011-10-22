@@ -10,6 +10,7 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from itertools import imap
 from inyoka.utils.http import HttpResponse
 from inyoka.utils.decorators import patch_wrapper
 
@@ -38,8 +39,9 @@ def permit_methods(methods=('GET',)):
     """Helper method to only permit a few HTTP Methods"""
     def decorate(func):
         def oncall(request, *args, **kwargs):
-            if not request.method.lower() in [method.lower() for method in methods]:
-                return HttpResponse('Method %s not allowed' % request.method, status=400)
+            if not request.method.lower() in imap(str.lower, methods):
+                return HttpResponse('Method %s not allowed' % request.method,
+                                    status=400)
             return func(request, *args, **kwargs)
         return patch_wrapper(oncall, func)
     return decorate

@@ -38,5 +38,5 @@ host_patterns = patterns('',
 if len(sys.argv) and 'manage' in sys.argv[0]:
     host_patterns += patterns('',
         host('static', 'inyoka.static_urls', name='static'),
-        host('media', 'inyoka.media_urls', name='media')
+        host('media', 'inyoka.media_urls', name='media'),
     )

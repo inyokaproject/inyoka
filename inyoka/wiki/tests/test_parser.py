@@ -194,8 +194,8 @@ class TestParser(TestCase):
 
     def test_external_links(self):
         """Test all kind of external links."""
-        tree = parse('[http://example.org :blub:][?action=edit]')
+        tree = parse('[http://example.org :blub:][?action=edit][http://[bla]')
         self.assertEqual(tree, nodes.Document([
             nodes.Link('http://example.org', [nodes.Text(':blub:')]),
-            nodes.Link('?action=edit')
+            nodes.Link('?action=edit'), nodes.Link('http://[bla')
         ]))

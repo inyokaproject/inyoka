@@ -5,8 +5,8 @@
 
     The nodes for the parse tree of the parser.
 
-    Nodes also provide the formatting methods to generate HTML, docbook or
-    whatever.  If you want to add new formatting methods don't forget to
+    Nodes also provide the formatting methods to generate HTML or whatever.
+    If you want to add new formatting methods don't forget to
     register it in the dispatching functions.  Also in the other modules
     and especially in macro and parser baseclasses.
 
@@ -143,23 +143,15 @@ class Node(BaseNode, NodeRenderer, NodeCompiler, NodeQueryInterface):
         used by the renderer and node compiler.
         """
         return {
-            'html':     self.prepare_html,
-            'docbook':  self.prepare_docbook
+            'html':     self.prepare_html
         }[format]()
 
     def prepare_html(self):
         """
         The AST itself never survives the parsing process.  At the end
-        of parsing `prepare_html` (or `prepare_docbook` if one wants to
-        implement that) is called and the iterator returned is converted
-        into an active cacheable object (pickled if it contains dynamic
-        rendering parts, otherwise dumped as utf-8 string).
-        """
-        return iter(())
-
-    def prepare_docbook(self):
-        """
-        The prepare function for docbook.
+        of parsing `prepare_html` is called and the iterator returned is
+        converted into an active cacheable object (pickled if it contains
+        dynamic rendering parts, otherwise dumped as utf-8 string).
         """
         return iter(())
 
@@ -179,9 +171,6 @@ class Text(Node):
         w.text(self.text)
 
     def prepare_html(self):
-        yield escape(self.text)
-
-    def prepare_docbook(self):
         yield escape(self.text)
 
 
@@ -215,10 +204,6 @@ class HTMLOnly(HTML):
     def __init__(self, html, fallback, block_level=True):
         HTML.__init__(self, html, block_level)
         self.fallback = fallback
-
-    def prepare_docbook(self):
-        for item in self.fallback.prepare_docbook():
-            yield item
 
 
 class MetaData(Node):
@@ -320,9 +305,6 @@ class Macro(Node):
     def prepare_html(self):
         yield self.macro
 
-    def prepare_docbook(self):
-        yield self.macro
-
 
 class Parser(object):
     """
@@ -346,17 +328,12 @@ class Parser(object):
     def prepare_html(self):
         yield self.parser
 
-    def prepare_docbook(self):
-        yield self.parser
-
 
 class Image(Node):
     """
     Holds a reference to an image.  Because images are quite problematic for
     alternative output formats it's supported to replace it with the alt tag
-    on rendering.  So far images targets are always absolute urls, however
-    in the future a pseudourl "attachment:" could be added so that a docbook
-    formatter could bundle images and refer to them.
+    on rendering.  So far images targets are always absolute urls.
     """
 
     def __init__(self, href, alt, id=None, class_=None, style=None, title=None):
@@ -374,11 +351,6 @@ class Image(Node):
         yield build_html_tag(u'img', src=self.href, alt=self.alt, id=self.id,
                              class_=self.class_, style=self.style,
                              title=self.title)
-
-    def prepare_docbook(self):
-        yield u'<mediaobject><imageobject>'
-        yield u'<imagedata fileref="%s"/>' % escape(self.href)
-        yield u'</imageobject></mediaobject>'
 
     def __setstate__(self, dict):
         self.__dict__ = dict
@@ -435,11 +407,6 @@ class Container(Node):
     def prepare_html(self):
         for child in self.children:
             for item in child.prepare_html():
-                yield item
-
-    def prepare_docbook(self):
-        for child in self.children:
-            for item in child.prepare_docbook():
                 yield item
 
 
@@ -552,12 +519,6 @@ class InternalLink(Element):
             yield item
         yield u'</a>'
 
-    def prepare_docbook(self):
-        yield u'<ulink url="/%s">' % self.page
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</ulink>'
-
 
 class InterWikiLink(Element):
     """
@@ -630,13 +591,21 @@ class Link(Element):
                 title = url
         Element.__init__(self, children, id, style, class_)
         self.title = title
-        self.scheme, self.netloc, self.path, self.params, self.querystring, \
-            self.anchor = urlparse(url)
+        try:
+            self.scheme, self.netloc, self.path, self.params, self.querystring, \
+                self.anchor = urlparse(url)
+            self.valid_url = True
+        except ValueError:
+            self.valid_url = False
+
 
     @property
     def href(self):
-        return get_url((self.scheme, self.netloc, self.path, self.params,
-                        self.querystring, self.anchor))
+        if not self.valid_url:
+            return 'invalid-url'
+        else:
+            return get_url((self.scheme, self.netloc, self.path, self.params,
+                            self.querystring, self.anchor))
 
     def generate_markup(self, w):
         if self.text == self.href:
@@ -674,12 +643,6 @@ class Link(Element):
             yield item
         yield u'</a>'
 
-    def prepare_docbook(self):
-        yield u'<ulink url="%s">' % escape(self.href)
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</ulink>'
-
 
 class Section(Element):
 
@@ -699,12 +662,6 @@ class Section(Element):
         for item in Element.prepare_html(self):
             yield item
         yield u'</div>'
-
-    def prepare_docbook(self):
-        yield u'<sect%d>' % self.level
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</sect%d>' % self.level
 
 
 class Paragraph(Element):
@@ -731,12 +688,6 @@ class Paragraph(Element):
         for item in Element.prepare_html(self):
             yield item
         yield u'</p>'
-
-    def prepare_docbook(self):
-        yield u'<para>'
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</para>'
 
 
 class Error(Element):
@@ -805,12 +756,6 @@ class Quote(Element):
     def prepare_html(self):
         yield build_html_tag(u'blockquote', id=self.id, style=self.style,
                              class_=self.class_)
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</blockquote>'
-
-    def prepare_docbook(self):
-        yield u'<blockquote>'
         for item in Element.prepare_html(self):
             yield item
         yield u'</blockquote>'
@@ -903,12 +848,6 @@ class Preformatted(Element):
             yield item
         yield u'</pre>'
 
-    def prepare_docbook(self):
-        yield u'<screen>'
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</screen>'
-
 
 class Headline(Element):
     """
@@ -939,12 +878,6 @@ class Headline(Element):
         yield u'<a href="#%s" class="headerlink">¶</a>' % self.id
         yield u'</h%d>' % (self.level + 1)
 
-    def prepare_docbook(self):
-        yield u'<title>'
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</title>'
-
 
 class Strong(Element):
     """
@@ -967,12 +900,6 @@ class Strong(Element):
         for item in Element.prepare_html(self):
             yield item
         yield u'</strong>'
-
-    def prepare_docbook(self):
-        yield u'<emphasis role="bold">'
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</emphasis>'
 
 
 class Highlighted(Strong):
@@ -1020,12 +947,6 @@ class Emphasized(Element):
             yield item
         yield u'</em>'
 
-    def prepare_docbook(self):
-        yield u'<emphasis>'
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</emphasis>'
-
 
 class SourceLink(Element):
 
@@ -1052,9 +973,6 @@ class SourceLink(Element):
             yield item
         yield u'</a></sup>'
 
-    def prepare_docbook(self):
-        yield self.text
-
 
 class Code(Element):
     """
@@ -1079,19 +997,12 @@ class Code(Element):
             yield item
         yield u'</code>'
 
-    def prepare_docbook(self):
-        yield u'<literal>'
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</literal>'
-
 
 class Underline(Element):
     """
     This element exists for backwards compatibility to MoinMoin and should
     not be used.  It generates a span tag with an "underline" class for
-    HTML and could generate something similar for docbook or others.  It's
-    also allowed to not render this element in a special way.
+    HTML.  It's also allowed to not render this element in a special way.
     """
 
     allowed_in_signatures = True
@@ -1112,12 +1023,6 @@ class Underline(Element):
         for item in Element.prepare_html(self):
             yield item
         yield u'</span>'
-
-    def prepare_docbook(self):
-        yield u'<emphasis role="underline">'
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</emphasis>'
 
 
 class Stroke(Element):
@@ -1208,12 +1113,6 @@ class Sub(Element):
             yield item
         yield u'</sub>'
 
-    def prepare_docbook(self):
-        yield u'<subscript>'
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</subscript>'
-
 
 class Sup(Element):
     """
@@ -1235,12 +1134,6 @@ class Sup(Element):
         for item in Element.prepare_html(self):
             yield item
         yield u'</sup>'
-
-    def prepare_docbook(self):
-        yield u'<superscript>'
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</superscript>'
 
 
 class Color(Element):
@@ -1415,16 +1308,6 @@ class List(Element):
             yield item
         yield u'</%s>' % tag
 
-    def prepare_docbook(self):
-        if self.type == 'unordered':
-            tag = u'itemizedlist'
-        else:
-            tag = u'orderedlist'
-        yield u'<%s>' % tag
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</%s>' % tag
-
 
 class ListItem(Element):
     """
@@ -1444,12 +1327,6 @@ class ListItem(Element):
         for item in Element.prepare_html(self):
             yield item
         yield u'</li>'
-
-    def prepare_docbook(self):
-        yield u'<listitem>'
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</listitem>'
 
 
 class Box(Element):
@@ -1523,19 +1400,6 @@ class Table(Element):
             yield item
         yield u'</table>'
 
-    def prepare_docbook(self):
-        cols = 1
-        for row in self.query.by_type(TableRow):
-            cols = max(cols, len(list(row.query.by_type(TableCell))))
-        yield u'<informaltable>'
-        yield u'<tgroup cols="%d">' % cols
-        yield u'<tbody>'
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</tbody>'
-        yield u'</tgroup>'
-        yield u'</informaltable>'
-
 
 class TableRow(Element):
     """
@@ -1553,12 +1417,6 @@ class TableRow(Element):
         for item in Element.prepare_html(self):
             yield item
         yield u'</tr>'
-
-    def prepare_docbook(self):
-        yield u'<row>'
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</row>'
 
 
 class TableCell(Element):
@@ -1596,15 +1454,6 @@ class TableCell(Element):
         for item in Element.prepare_html(self):
             yield item
         yield u'</%s>' % self._html_tag
-
-    def prepare_docbook(self):
-        yield build_html_tag('entry',
-            morerows=(self.rowspan and self.rowspan - 1) or None,
-            align=self.align,
-        )
-        for item in Element.prepare_docbook(self):
-            yield item
-        yield u'</entry>'
 
 
 class TableHeader(TableCell):

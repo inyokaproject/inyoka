@@ -43,7 +43,7 @@ _referrer_re = re.compile(
 
 _tag_re = re.compile(r'(<!--.*?-->|<[^>]*>)(?s)')
 _tagname_re = re.compile(r'<(/)?([a-zA-Z0-9]+)(?=\s|>)')
-_isolated = set(('script', 'head', 'style', 'textarea', 'option'))
+_isolated = frozenset(('script', 'head', 'style', 'textarea', 'option'))
 _umlaut_choices = [
     ('a',   ur'(?:a|ä)'),
     ('e',   ur'(?:e|é|è)'),

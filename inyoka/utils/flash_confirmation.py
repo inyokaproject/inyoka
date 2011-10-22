@@ -3,6 +3,7 @@ from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import HttpResponseRedirect, TemplateResponse
 from inyoka.utils.urls import href
 
+
 def confirm_action(message=None, confirm=None, cancel=None):
     """Decorator to render and handle "Are you sure?" flash messages.
 

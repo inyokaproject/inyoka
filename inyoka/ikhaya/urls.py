@@ -85,4 +85,4 @@ urlpatterns = patterns('inyoka.ikhaya.views',
 )
 
 
-handler404 = 'inyoka.ikhaya.views.not_found'
+handler404 = 'inyoka.utils.urls.global_not_found'

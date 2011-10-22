@@ -8,7 +8,33 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
-{% from 'forum/_forum.html' import topic_icon with context %}
+
+{% macro topic_icon(topic) -%}
+  {% set is_read = topic.get_read_status(USER) -%}
+  <img src="
+  {{- href('static', 'img', 'forum', 'topic' ) -}}
+  {%- if topic.sticky -%}-sticky
+  {%- else -%}
+    {%- if not is_read %}-new{% endif -%}
+    {%- if topic.solved %}-solved{% endif -%}
+    {%- if topic.locked %}-locked{% endif -%}
+    {%- if topic.hidden %}-hidden{% endif -%}
+    {%- if can_moderate(topic) and topic.reported %}-reported{% endif -%}
+  {%- endif -%}
+  .png" alt="
+  {%- if not is_read %}ungelesenes {% endif -%}
+  {%- if topic.solved %}gelöstes {% endif -%}
+  {%- if topic.locked %}gesperrtes {% endif -%}
+  {%- if topic.hidden %}verstecktes {% endif -%}
+  {%- if can_moderate(topic) and topic.reported %}gemeldetes {% endif -%}
+  Thema" title="
+  {%- if not is_read %}ungelesenes {% endif -%}
+  {%- if topic.solved %}gelöstes {% endif -%}
+  {%- if topic.locked %}gesperrtes {% endif -%}
+  {%- if topic.hidden %}verstecktes {% endif -%}
+  {%- if can_moderate(topic) and topic.reported %}gemeldetes {% endif -%}
+  Thema" />
+{%- endmacro %}
 
 {% block forum_content %}
   <table class="forum">

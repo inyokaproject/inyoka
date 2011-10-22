@@ -8,12 +8,17 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import cPickle
 import operator
 
 from django.core.cache import cache
 from django.db.models.expressions import F, ExpressionNode
+from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import simplejson as json
+from django.db import models
 
 from inyoka.utils.text import get_next_increment
+
 
 EXPRESSION_NODE_CALLBACKS = {
     ExpressionNode.ADD: operator.add,
@@ -48,12 +53,15 @@ def find_next_increment(model, column, string, stripdate=False, **query_opts):
     max_length = field.max_length if hasattr(field, 'max_length') else None
     string = _strip_ending_nums(string)
     slug = string[:max_length - 4] if max_length is not None else string
-    slug_taken = model.objects.filter(**{column: slug}).filter(**query_opts).exists()
+    filter = {column: slug}
+    filter.update(query_opts)
+    slug_taken = model.objects.filter(**filter).exists()
     if not slug_taken:
         return slug
     filter = {'%s__startswith' % column: slug + '-'}
     filter.update(query_opts)
-    existing =  list(model.objects.filter(**filter).values_list(column, flat=True))
+    existing =  list(model.objects.filter(**filter) \
+                                  .values_list(column, flat=True))
     return get_next_increment([slug] + existing, slug, max_length,
                               stripdate=stripdate)
 
@@ -66,7 +74,7 @@ def get_simplified_queryset(queryset):
      * .only('id')
      * no order_by
 
-    The resultung QuerySet cann be used for efficient .count() queries.
+    The resultung QuerySet can be used for efficient .count() queries.
     """
     cqry = queryset._clone().only('id')
     cqry.query.clear_select_fields()
@@ -97,13 +105,15 @@ def resolve_expression_node(instance, node):
     return runner
 
 
-# Partially copied from https://github.com/andymccurdy/django-tips-and-tricks/blob/master/model_update.py
+# Partially copied from
+# https://github.com/andymccurdy/django-tips-and-tricks/
 def update_model(instance, **kwargs):
     """Atomically update instance, setting field/value pairs from kwargs"""
     if not instance:
         return []
 
-    instances = instance if isinstance(instance, (set, list, tuple)) else [instance]
+    instances = instance if isinstance(instance, (set, list, tuple)) \
+                         else [instance]
 
     for instance in instances:
         # fields that use auto_now=True should be updated corrected, too!
@@ -159,3 +169,50 @@ class LockableObject(object):
 
     def unlock(self):
         cache.delete(self._get_lock_key())
+
+
+class SimpleDescriptor(object):
+    def __init__(self, field):
+        self.field = field
+
+    def __get__(self, obj, owner):
+        value = obj.__dict__[self.field.name]
+        # we don't try to deserialize empty strings
+        if value and isinstance(value, basestring):
+            value = self.field.loads(value)
+            obj.__dict__[self.field.name] = value
+        return value
+
+    def __set__(self, obj, value):
+        obj.__dict__[self.field.name] = value
+
+
+class JSONField(models.TextField):
+    def loads(self, s):
+        return json.loads(s)
+
+    def dumps(self, obj):
+        return json.dumps(obj, cls=DjangoJSONEncoder)
+
+    def pre_save(self, obj, create):
+        value = obj.__dict__[self.name]
+        if not isinstance(value, basestring):
+            value = self.dumps(value)
+        return value
+
+    def contribute_to_class(self, cls, name):
+        super(JSONField, self).contribute_to_class(cls, name)
+        setattr(cls, self.name, SimpleDescriptor(self))
+
+    def south_field_triple(self):
+        from south.modelsinspector import introspector
+        args, kwargs = introspector(self)
+        return 'django.db.models.TextField', args, kwargs
+
+
+class PickleField(JSONField):
+    def loads(self, s):
+        return cPickle.loads(str(s).decode('base64'))
+
+    def dumps(self, obj):
+        return cPickle.dumps(obj).encode('base64')
