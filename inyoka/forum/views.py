@@ -947,7 +947,7 @@ def movetopic(request, topic_slug):
 
     forums = [forum for forum in Forum.objects.get_cached()
                     if forum.parent is not None and forum.id != topic.forum.id]
-    mapping = dict((forum.id, forum) for forum in filter_invisible(request.user, forums))
+    mapping = {forum.id: forum for forum in filter_invisible(request.user, forums)}
 
     if not mapping:
         return abort_access_denied(request)

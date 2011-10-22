@@ -1130,4 +1130,4 @@ ALL_MACROS = {
 
 
 #: automatically updated reverse mapping of macros
-REVERSE_MACROS = dict((v, k) for k, v in ALL_MACROS.iteritems())
+REVERSE_MACROS = {value: key for key, value in ALL_MACROS.iteritems()}
