@@ -302,5 +302,7 @@ LOGGING = {
     'disable_existing_loggers': False,
 }
 
+WSGI_APPLICATION = 'inyoka.wsgi.application'
+
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
