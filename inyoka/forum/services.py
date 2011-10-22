@@ -61,7 +61,7 @@ def on_toggle_categories(request):
     if not hidden_categories:
         request.user.settings.pop('hidden_forum_categories', None)
     else:
-        request.user.settings['hidden_forum_categories'] = hidden_categories
+        request.user.settings['hidden_forum_categories'] = tuple(hidden_categories)
     request.user.save()
     return True
 
