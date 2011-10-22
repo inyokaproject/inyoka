@@ -17,7 +17,7 @@ $(function () {
             element.addClass('dv-yes').removeClass('dv-no');
         }
 
-        var toggleBoolean = function (event) {
+        function toggleBoolean(event) {
             if ($(this).hasClass('dv-yes')) {
                 setFalse($(this));
             } else if ($(this).hasClass('dv-no')) {
@@ -34,7 +34,7 @@ $(function () {
             return null;
         }
 
-        var blurNumber = function (event) {
+        function blurNumber(event) {
             if (!number_re.test($(this).val())) {
                 $(this).css('background-color', '#FF8080');
                 return false;
@@ -44,7 +44,7 @@ $(function () {
             }
         };
 
-        var blurName = function (event) {
+        function blurName(event) {
             if (jQuery.trim(val) == '') {
                 $(this).css('background-color', '#FF8080');
                 return false;
@@ -59,7 +59,7 @@ $(function () {
         var revert = {};
         var editing = {};
 
-        var add_row = function (event) {
+        function add_row(event) {
             event.preventDefault();
             var $row = $('<tr name="dv-new"></tr>');
             var $td_number = $('<td></td>');
@@ -79,12 +79,12 @@ $(function () {
             $row.appendTo('#dv > tbody');
         };
 
-        var delete_row = function (event) {
+        function delete_row(event) {
             event.preventDefault();
             $(this).parent().parent().remove();
         };
 
-        var revert_row = function (event) {
+        function revert_row(event) {
             event.preventDefault();
             var $row = $(this).parent().parent();
             var version = $row.attr('id').substring(3);
@@ -112,7 +112,7 @@ $(function () {
             delete editing[version];
         };
 
-        var edit_row = function (event) {
+        function edit_row(event) {
             event.preventDefault();
             var $row = $(this).parent().parent();
             var version = $row.attr('id').substring(3); //strip the dv- from the version
