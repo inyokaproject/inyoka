@@ -13,7 +13,10 @@ class Migration(DataMigration):
         "Write your forwards methods here."
         if not db.dry_run:
             for user in orm.User.objects.iterator():
-                user.settings = simplejson.dumps(cPickle.loads(smart_str(user._settings)))
+                settings = cPickle.loads(smart_str(user._settings))
+                if 'hidden_forum_categories' in settings:
+                    settings['hidden_forum_categories'] = list(settings['hidden_forum_categories'])
+                user.settings = simplejson.dumps(settings)
                 user.save()
 
     def backwards(self, orm):
