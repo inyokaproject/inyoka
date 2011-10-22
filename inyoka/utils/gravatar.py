@@ -10,6 +10,7 @@
 """
 import requests
 from hashlib import md5
+from urllib import urlencode
 from django.utils import simplejson as json
 
 
