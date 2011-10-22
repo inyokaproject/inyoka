@@ -141,7 +141,7 @@ class CleanupFilter(object):
         'strike':       ('del', None)
     }
 
-    end_tags = dict((k, v[0]) for k, v in tag_conversions.iteritems())
+    end_tags = {key: value[0] for key, value in tag_conversions.iteritems()}
     end_tags['font'] = 'span'
 
     def __init__(self, source, id_prefix=None, update_anchor_links=False):

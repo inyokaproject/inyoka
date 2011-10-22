@@ -102,7 +102,7 @@ class ForumManager(models.Manager):
         it is stored in the cache afterwards.
         """
         slugs = self.get_slugs()
-        reverted = dict((str(y), x) for x, y in slugs.iteritems())
+        reverted = {str(y): x for x, y in slugs.iteritems()}
         cache_keys = ['forum/forums/%s' % s for s in reverted]
         forums = cache.get_many(cache_keys)
 
@@ -251,7 +251,7 @@ class Forum(models.Model):
         parents = []
         forums = Forum.objects.get_cached() if cached else \
                  Forum.objects.all()
-        qdct = dict((f.id, f) for f in forums)
+        qdct = {forum.id: forum for forum in forums}
 
         forum = qdct[self.id]
         while forum.parent_id is not None:

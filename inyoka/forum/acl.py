@@ -25,9 +25,9 @@ PRIVILEGES_DETAILS = [
 ]
 
 PRIVILEGES = [x[0] for x in PRIVILEGES_DETAILS]
-PRIVILEGES_BITS = dict((PRIVILEGES[i-1], 2**i)
-                       for i in xrange(1, len(PRIVILEGES_DETAILS) + 1))
-REVERSED_PRIVILEGES_BITS = dict((y,x) for x,y in PRIVILEGES_BITS.iteritems())
+PRIVILEGES_BITS = {PRIVILEGES[i-1]: 2 ** i
+                   for i in xrange(1, len(PRIVILEGES_DETAILS) + 1)}
+REVERSED_PRIVILEGES_BITS = {y: x for x, y in PRIVILEGES_BITS.iteritems()}
 
 #: create some constants for easy access
 g = globals()

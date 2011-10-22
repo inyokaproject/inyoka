@@ -192,4 +192,4 @@ ALL_PARSERS = {
 }
 
 #: reverse mapping of the parsers
-REVERSE_PARSERS = dict((v, k) for k, v in ALL_PARSERS.iteritems())
+REVERSE_PARSERS = {value: key for key, value in ALL_PARSERS.iteritems()}
