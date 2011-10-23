@@ -176,6 +176,10 @@ class SearchSystem(object):
             type = index.type_map[type]
         index.store_object(obj, type, extra, bulk=bulk)
 
+    def get_indices(self, *names):
+        return {name: index for name, index in self.indices.iteritems()
+                if name in names}
+
     def get_connection(self, *args, **kwargs):
         return ES(self.server, *args, **kwargs)
 
@@ -216,6 +220,8 @@ class SearchSystem(object):
         elif isinstance(query, basestring):
             original_query = query
             query = StringQuery(query, default_operator='AND')
+
+
         if indices is None:
             indices = self.indices
 
@@ -235,7 +241,7 @@ class SearchSystem(object):
         if filtered_indices:
             for index in self.indices.values():
                 for type in index.types:
-                    if not type.name in filtered_indices:
+                    if type.name in filtered_indices:
                         filters.append(TypeFilter(type.name))
 
         if boost_queries:
