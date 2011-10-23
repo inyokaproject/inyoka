@@ -105,7 +105,7 @@ def parse_html(string, fragment=True):
     later so do not use this function until this is solved.  For cleaning up
     markup you can use the `cleanup_html` function.
     """
-    parser = HTMLParser(tree=treebuilders.getTreeBuilder('lxml'))
+    parser = HTMLParser(tree=treebuilders.getTreeBuilder('dom'))
     return (fragment and parser.parseFragment or parser.parse)(string)
 
 
@@ -115,10 +115,11 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     """Clean up some html and convert it to HTML/XHTML."""
     if not string.strip():
         return u''
+    string = force_unicode(string)
     if sanitize:
-        string = lxml.html.clean.clean_html(smart_str(string))
+        string = lxml.html.clean.clean_html(string)
     tree = parse_html(string, fragment)
-    walker = treewalkers.getTreeWalker('lxml')(tree)
+    walker = treewalkers.getTreeWalker('dom')(tree)
     walker = CleanupFilter(walker, id_prefix, update_anchor_links)
     if filter_optional_tags:
         walker = OptionalTagsFilter(walker)
