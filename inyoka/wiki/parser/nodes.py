@@ -591,11 +591,15 @@ class Link(Element):
                 title = url
         Element.__init__(self, children, id, style, class_)
         self.title = title
-        try:
-            self.scheme, self.netloc, self.path, self.params, self.querystring, \
-                self.anchor = urlparse(url)
-            self.valid_url = True
-        except ValueError:
+        self.scheme = self.netloc = None
+        if url is not None:
+            try:
+                self.scheme, self.netloc, self.path, self.params, self.querystring, \
+                    self.anchor = urlparse(url)
+                self.valid_url = True
+            except ValueError:
+                self.valid_url = False
+        else:
             self.valid_url = False
 
 
