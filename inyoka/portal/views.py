@@ -85,8 +85,8 @@ AUTOBAN_SPAMMER_WORDS = (
 # autoban gets active if all words of a tuple match
 
 tmp = dict(PRIVILEGES_DETAILS)
-PRIVILEGE_DICT = dict((bits, tmp[key]) for  bits, key in
-                    REVERSED_PRIVILEGES_BITS.iteritems())
+PRIVILEGE_DICT = {bits: tmp[key]
+                  for bits, key in REVERSED_PRIVILEGES_BITS.iteritems()}
 del tmp
 
 
@@ -1129,7 +1129,7 @@ def user_edit_groups(request, username):
             'primary_group': Group.objects.get(id=initial['_primary_group']).name
         })
     form = EditUserGroupsForm(initial=initial)
-    groups = dict((g.name, g) for g in Group.objects.all())
+    groups = {group.name: group for group in Group.objects.all()}
     if request.method == 'POST':
         form = EditUserGroupsForm(request.POST)
         if form.is_valid():

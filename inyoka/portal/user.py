@@ -59,8 +59,8 @@ PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
     ('manage_pastebin', u'Portal | darf Ablage verwalten'),
     ('subscribe_to_users', u'Portal | darf Benutzer beobachten')
 ])]
-PERMISSION_NAMES = dict((i, desc) for i, name, desc in PERMISSIONS)
-PERMISSION_MAPPING = dict((name, i) for i, name, desc in PERMISSIONS)
+PERMISSION_NAMES = {val: desc for val, name, desc in PERMISSIONS}
+PERMISSION_MAPPING = {name: val for val, name, desc in PERMISSIONS}
 
 USER_STATUSES = {
     0: 'inactive', #not yet activated

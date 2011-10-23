@@ -49,7 +49,7 @@ class RequestCache(BaseCache):
 
         # pull in remaining keys from thread local cache.
         missing = set(keys).difference(keys_to_fetch)
-        key_mapping.update(dict((k, self.request_cache[k]) for k in missing))
+        key_mapping.update({key: self.request_cache[key] for key in missing})
 
         # Update the request cache
         self.request_cache.update(key_mapping)

@@ -12,9 +12,9 @@ import sys
 from itertools import cycle
 
 
-_colors = dict((c, '3%d' % x) for x, c in zip(xrange(8),
-    ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white')
-))
+_color_mapping = zip(xrange(8),
+    ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'))
+_colors = {code: '3%d' % idx for idx, code in _color_mapping}
 _formats = {
     'bold':         '1',
     'underscore':   '4',
