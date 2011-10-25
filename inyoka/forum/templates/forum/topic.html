@@ -192,7 +192,7 @@
                 {%- if post.has_revision %}
                   <span class="admin_link"><a href="{{ post|url('revisions') }}" class="action action_review">Versionen anzeigen</a> |</span>
                 {%- endif %}
-                {% if not loop.first %}
+                {% if not post.topic.first_post == post %}
                   {%- if post.hidden %}
                     <span class="admin_link"><a href="{{ post|url('restore') }}" class="action action_restore">wiederherstellen</a> |</span>
                     {%- if not can_delete(post) %}

@@ -19,7 +19,7 @@ from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders
 from html5lib.serializer import XHTMLSerializer, HTMLSerializer
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
-from django.utils.encoding import smart_str
+from django.utils.encoding import smart_str, force_unicode
 
 
 _entity_re = re.compile(r'&([^;]+);')
@@ -105,7 +105,7 @@ def parse_html(string, fragment=True):
     later so do not use this function until this is solved.  For cleaning up
     markup you can use the `cleanup_html` function.
     """
-    parser = HTMLParser(tree=treebuilders.getTreeBuilder('lxml'))
+    parser = HTMLParser(tree=treebuilders.getTreeBuilder('dom'))
     return (fragment and parser.parseFragment or parser.parse)(string)
 
 
@@ -115,10 +115,11 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     """Clean up some html and convert it to HTML/XHTML."""
     if not string.strip():
         return u''
+    string = force_unicode(string)
     if sanitize:
-        string = lxml.html.clean.clean_html(smart_str(string))
+        string = lxml.html.clean.clean_html(string)
     tree = parse_html(string, fragment)
-    walker = treewalkers.getTreeWalker('lxml')(tree)
+    walker = treewalkers.getTreeWalker('dom')(tree)
     walker = CleanupFilter(walker, id_prefix, update_anchor_links)
     if filter_optional_tags:
         walker = OptionalTagsFilter(walker)
@@ -126,7 +127,7 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     rv = serializer.serialize(walker, 'utf-8')
     if stream:
         return rv
-    return (u''.join(rv)).decode('utf-8')
+    return force_unicode(''.join(rv))
 
 
 class CleanupFilter(object):
@@ -141,7 +142,7 @@ class CleanupFilter(object):
         'strike':       ('del', None)
     }
 
-    end_tags = dict((k, v[0]) for k, v in tag_conversions.iteritems())
+    end_tags = {key: value[0] for key, value in tag_conversions.iteritems()}
     end_tags['font'] = 'span'
 
     def __init__(self, source, id_prefix=None, update_anchor_links=False):

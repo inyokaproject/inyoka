@@ -74,7 +74,7 @@ def get_simplified_queryset(queryset):
      * .only('id')
      * no order_by
 
-    The resultung QuerySet cann be used for efficient .count() queries.
+    The resultung QuerySet can be used for efficient .count() queries.
     """
     cqry = queryset._clone().only('id')
     cqry.query.clear_select_fields()

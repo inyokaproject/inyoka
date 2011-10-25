@@ -61,7 +61,7 @@ def on_toggle_categories(request):
     if not hidden_categories:
         request.user.settings.pop('hidden_forum_categories', None)
     else:
-        request.user.settings['hidden_forum_categories'] = hidden_categories
+        request.user.settings['hidden_forum_categories'] = tuple(hidden_categories)
     request.user.save()
     return True
 
@@ -97,6 +97,8 @@ def subscription_action(request, action=None):
 @never_cache
 @permit_methods(('POST',))
 def on_change_status(request, solved=None):
+    if not 'slug' in request.POST:
+        return
     topic = Topic.objects.get(slug=request.POST['slug'])
     can_read = have_privilege(request.user, topic.forum, 'read')
     if request.user.is_anonymous or not can_read:
