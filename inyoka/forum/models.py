@@ -42,10 +42,11 @@ from inyoka.utils.decorators import deferred
 from inyoka.utils.imaging import get_thumbnail
 
 from inyoka.portal.user import User, Group
+from inyoka.portal.utils import UBUNTU_VERSIONS
 from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \
     filter_visible, check_privilege
 from inyoka.forum.constants import CACHE_PAGES_COUNT, VERSION_CHOICES, \
-    DISTRO_CHOICES, POSTS_PER_PAGE, UBUNTU_VERSIONS, UBUNTU_DISTROS_LEGACY, \
+    DISTRO_CHOICES, POSTS_PER_PAGE, UBUNTU_DISTROS_LEGACY, \
     SUPPORTED_IMAGE_TYPES
 
 

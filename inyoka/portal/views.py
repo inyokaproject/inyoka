@@ -24,7 +24,6 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.utils.decorators import method_decorator
-from django.utils import simplejson
 
 from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
@@ -52,7 +51,6 @@ from inyoka.wiki.utils import quote_text
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.forum.models import Forum, Topic, Post, Privilege
-from inyoka.forum.constants import UBUNTU_VERSIONS
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.forum.acl import filter_invisible, split_bits, PRIVILEGES_DETAILS, \
      REVERSED_PRIVILEGES_BITS, split_negative_positive
@@ -73,7 +71,7 @@ from inyoka.portal.user import User, Group, UserBanned, UserData, \
     send_new_email_confirmation, reset_email, send_activation_mail, \
     send_new_user_password, PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
-     require_permission, google_calendarize
+     require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
 
 
@@ -2075,7 +2073,7 @@ def config(request):
     return {
         'form': form,
         'team_icon_url': team_icon and href('media', team_icon) or None,
-        'versions': simplejson.loads(storage['distri_versions']),
+        'versions': list(sorted(UbuntuVersionList())),
     }
 
 

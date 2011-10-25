@@ -11,6 +11,7 @@
 import calendar
 from datetime import date, time
 
+from django.utils import simplejson
 from django.utils.http import urlquote_plus
 from django.db.models import Q
 
@@ -19,6 +20,7 @@ from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.flashing import flash
 from inyoka.utils.http import AccessDeniedResponse, HttpResponseRedirect
 from inyoka.utils.dates import date_time_to_datetime
+from inyoka.utils.storage import storage
 
 
 def check_login(message=None):
@@ -141,3 +143,88 @@ def google_calendarize(event):
         s = s + '&location=' + urlquote_plus(event.simple_coordinates)
 
     return s + '&trp=false'
+
+
+class UbuntuVersion(object):
+    """
+    This class holds a single Ubuntu version. Based on the settings for
+    :py:attribute:`lts`, :py:attribute:`active`, :py:attribute:`current`,
+    :py:attribute:`dev`, a different notification appears in the forum
+    front-end while selecting the topic version.
+
+    The attributes :py:attribute:`number` and :py:attribute:`name` have to be
+    given.
+    """
+
+    def __init__(self, number, name, lts=False, active=False,
+                 current=False, dev=False):
+        self.number = number
+        self.name = name
+        self.lts = lts
+        self.active = active
+        self.current = current
+        self.dev = dev
+        self.link = href('wiki', name)
+
+    def is_active(self):
+        """
+        This function allows a simple access where the version is active, or
+        will be active, or if its support range is outdated.
+        """
+        return self.active == 'true' or self.current == 'true' or \
+                self.dev == 'true'
+
+    def __str__(self):
+        return u'%s (%s)' % (self.number, self.name)
+
+    def __eq__(self, other):
+        return self.number == other.number
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __lt__(self, other):
+        s = map(int, self.number.split('.'))
+        o = map(int, other.number.split('.'))
+        #: Sort by major number and if they are the same, by minor version
+        return s[0] < o[0] or s[0] == o[0] and s[1] < o[1]
+
+    def __gt__(self, other):
+        s = map(int, self.number.split('.'))
+        o = map(int, other.number.split('.'))
+        #: Sort by major number and if they are the same, by minor version
+        return s[0] > o[0] or s[0] == o[0] and s[1] > o[1]
+
+    def as_json(self):
+        json = [
+                '"number":"%s"' % self.number,
+                '"name":"%s"' % self.name,
+                '"lts":"%s"' % str(self.lts).lower(),
+                '"acitve":"%s"' % str(self.active).lower(),
+                '"current":"%s"' % str(self.current).lower(),
+                '"dev":"%s"' % str(self.dev).lower(),
+            ]
+        return '{' + ','.join(json) + '}'
+
+
+class UbuntuVersionList(set):
+    """
+    This class holds a set of :py:class:`UbuntuVersion`. We are using a set to
+    avoid duplicate entries. But accessing this class with all its version
+    should be done by :py:var:`UBUNTU_VERSIONS`.
+    """
+
+    def __init__(self, json=u''):
+        super(set, self).__init__()
+        #: we need that try-except block to avoid failing `./manage syncdb`
+        try:
+            value = json or storage['distri_versions']
+            jsonobjs = simplejson.loads(value)
+            for obj in jsonobjs:
+                version = UbuntuVersion(**obj)
+                self.add(version)
+        except:
+            pass
+
+
+UBUNTU_VERSIONS = list(sorted(UbuntuVersionList()))
