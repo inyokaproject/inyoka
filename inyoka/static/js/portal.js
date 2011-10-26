@@ -45,7 +45,7 @@ $(function () {
         };
 
         function blurName(event) {
-            if (jQuery.trim(val) == '') {
+            if (jQuery.trim($(this).val()) == '') {
                 $(this).css('background-color', '#FF8080');
                 return false;
             } else {
