@@ -77,7 +77,7 @@
   </head>
   <body>
     {%- if USER.can('manage_topics') or USER.can('article_edit') or USER.can('event_edit') %} 
-    <div id="admin_menu"><div>
+    <div id="admin_menu">
       <a id="admin_layer_button"><img src="{{ href('static', '/img/portal/admin.png') }}" alt="Admin" title="Adminlinks ein/aus" /></a>
       {%- if USER.can('manage_topics') %}
         {{ render_modnavi_li('Gemeldete Themen', href('forum', 'reported_topics'), href('static', 'img/portal/admin_new_topicreport.png'), report_count) }}
@@ -93,7 +93,7 @@
       {%- endif %}
 
     <noscript><strong class="nojs error">Bitte JavaScript aktivieren!</strong></noscript>
-    </div></div>
+    </div>
     {%- endif %}
    <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">
     <div class="header">
