@@ -23,6 +23,23 @@ DEFAULT_STORAGE_VALUES = {
     # move to wiki
     'wiki_newpage_template':    u'',
     'wiki_newpage_root':        'Baustelle',
+    'distri_versions':          '[' \
+        '{"number":"4.10","name":"Warty Warthog","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"5.04","name":"Hoary Hedgehog","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"5.10","name":"Breezy Badger","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"6.06","name":"Dapper Drake","lts":"true","active":"false","current":"false","dev":"false"},' \
+        '{"number":"6.10","name":"Edgy Eft","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"7.04","name":"Feisty Fawn","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"7.10","name":"Gutsy Gibbon","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"8.04","name":"Hardy Heron","lts":"true","active":"true","current":"false","dev":"false"},' \
+        '{"number":"8.10","name":"Intrepid Ibex","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"9.04","name":"Jaunty Jackalope","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"9.10","name":"Karmic Koala","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"10.04","name":"Lucid Lynx","lts":"true","active":"true","current":"false","dev":"false"},' \
+        '{"number":"10.10","name":"Maverick Meerkat","lts":"false","active":"false","current":"false","dev":"false"},' \
+        '{"number":"11.04","name":"Natty Narwhal","lts":"false","active":"true","current":"false","dev":"false"},' \
+        '{"number":"11.10","name":"Oneiric Ocelot","lts":"false","active":"true","current":"true","dev":"false"},' \
+        '{"number":"12.04","name":"Precise Pangolin","lts":"false","active":"false","current":"false","dev":"true"}]',
 }
 
 
