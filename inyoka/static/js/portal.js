@@ -42,22 +42,17 @@ $(function () {
                 $(this).css('background-color', '');
                 return true;
             }
-        };
+        }
 
         function blurName(event) {
-            if (jQuery.trim($(this).val()) == '') {
+            if (!name_re.test(jQuery.trim($(this).val()))) {
                 $(this).css('background-color', '#FF8080');
                 return false;
             } else {
                 $(this).css('background-color', '');
                 return true;
             }
-        };
-
-        var keys = ['number', 'name', 'lts', 'active', 'current', 'dev'];
-        var number_re = /^\d\d?\.\d\d$/;
-        var revert = {};
-        var editing = {};
+        }
 
         function add_row(event) {
             event.preventDefault();
@@ -77,12 +72,12 @@ $(function () {
             $a_del.click(delete_row).appendTo($e);
             $e.appendTo($row);
             $row.appendTo('#dv > tbody');
-        };
+        }
 
         function delete_row(event) {
             event.preventDefault();
             $(this).parent().parent().remove();
-        };
+        }
 
         function revert_row(event) {
             event.preventDefault();
@@ -110,7 +105,7 @@ $(function () {
             });
             delete revert[version];
             delete editing[version];
-        };
+        }
 
         function edit_row(event) {
             event.preventDefault();
@@ -143,15 +138,9 @@ $(function () {
             $(this).remove();
             var $a_revert = $('<a href="#dv" name="dv-revert">Abbrechen</a>');
             $a_revert.click(revert_row).appendTo($p);
-        };
+        }
 
-        $('a[name="dv-add"]').click(add_row);
-
-        $('a[name|="dv-edit"]').click(edit_row);
-
-        $('a[name|="dv-delete"]').click(delete_row);
-
-        $('input[type="submit"]').click(function (event) {
+        function submit_config(event) {
             var distri_versions = new Array();
             $('tr[id|="dv"],tr[name="dv-new"]').each(function () {
                 var values = new Array(); //{number:'', name:'', lts:'', active:'', current:'', dev:''};
@@ -175,6 +164,20 @@ $(function () {
                 distri_versions.push('{' + values.join(',') + '}');
             });
             $('#id_distri_versions').val('[' + distri_versions.toString() + ']');
-        });
+        }
+
+        var keys = ['number', 'name', 'lts', 'active', 'current', 'dev'];
+        var number_re = /^\d\d?\.\d\d$/;
+        var name_re = /^[A-Z][a-z]+ [A-Z][a-z]+$/;
+        var revert = {};
+        var editing = {};
+
+        $('a[name="dv-add"]').click(add_row);
+
+        $('a[name|="dv-edit"]').click(edit_row);
+
+        $('a[name|="dv-delete"]').click(delete_row);
+
+        $('input[type="submit"]').click(submit_config);
     })();
 });
