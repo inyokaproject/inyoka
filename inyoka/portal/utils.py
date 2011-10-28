@@ -196,15 +196,15 @@ class UbuntuVersion(object):
         return s[0] > o[0] or s[0] == o[0] and s[1] > o[1]
 
     def as_json(self):
-        json = [
-                '"number":"%s"' % self.number,
-                '"name":"%s"' % self.name,
-                '"lts":"%s"' % str(self.lts).lower(),
-                '"acitve":"%s"' % str(self.active).lower(),
-                '"current":"%s"' % str(self.current).lower(),
-                '"dev":"%s"' % str(self.dev).lower(),
-            ]
-        return '{' + ','.join(json) + '}'
+        json = {
+                'number': self.number,
+                'name': self.name,
+                'lts': self.lts,
+                'acitve': self.active,
+                'current': self.current,
+                'dev': self.dev,
+            }
+        return simplejson.dumps(json)
 
 
 class UbuntuVersionList(set):
