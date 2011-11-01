@@ -38,30 +38,31 @@
   {{ render_form(form, ['get_ubuntu_link', 'get_ubuntu_description']) }}
   <br />
   <h3>Distributions Versionen</h3>
-<table id="dv">
-  <thead>
-    <td class="dv-number">Version</td>
-    <td class="dv-name">Name</td>
-    <td class="dv-lts">LTS</td>
-    <td class="dv-active">Aktiv</td>
-    <td class="dv-current">Aktuell</td>
-    <td class="dv-dev">Entwicklung</td>
-    <td class="dv-command" colspan="2"></td>
-  </thead>
-  <tfoot>
-    <td colspan="8"><a href="#dv" name="dv-add">Hinzufügen</a></td>
-  </tfoot>
+<table id="jstableform">
+  <thead><tr>
+    <td class="jstableform-key-number jstableform-type-string jstableform-validate-versionnumber">Version</td>
+    <td class="jstableform-key-name jstableform-type-string jstableform-validate-versionname">Name</td>
+    <td class="jstableform-key-lts jstableform-type-boolean">LTS</td>
+    <td class="jstableform-key-active jstableform-type-boolean">Aktiv</td>
+    <td class="jstableform-key-current jstableform-type-boolean">Aktuell</td>
+    <td class="jstableform-key-dev jstableform-type-boolean">Entwicklung</td>
+    <td class="jstableform-key-_cmdedit"></td>
+    <td class="jstableform-key-_cmddel"></td>
+  </tr></thead>
+  <tfoot><tr>
+    <td colspan="8"><a href="#jstableform" name="jstableform-add">Hinzufügen</a></td>
+  </tr></tfoot>
   <tbody>
     {%- for version in versions -%}
-    <tr id="dv-{{ version.number|e }}">
-      <td name="dv-number">{{ version.number|e }}</td>
-      <td name="dv-name">{{ version.name|e }}</td>
-      <td name="dv-lts" class="dv-{% if version.lts == 'true' %}yes{% else %}no{% endif %}"></td>
-      <td name="dv-active" class="dv-{% if version.active == 'true' %}yes{% else %}no{% endif %}"></td>
-      <td name="dv-current" class="dv-{% if version.current == 'true' %}yes{% else %}no{% endif %}"></td>
-      <td name="dv-dev" class="dv-{% if version.dev == 'true' %}yes{% else %}no{% endif %}"></td>
-      <td><a href="#dv" name="dv-edit">Ändern</a></td>
-      <td><a href="#dv" name="dv-delete">Löschen</a></td>
+    <tr name="jstableform-{{ version.number|e }}">
+      <td name="jstableform-key-number">{{ version.number|e }}</td>
+      <td name="jstableform-key-name">{{ version.name|e }}</td>
+      <td name="jstableform-key-lts" class="jstableform-status-{% if version.lts == 'true' %}yes{% else %}no{% endif %}"></td>
+      <td name="jstableform-key-active" class="jstableform-status-{% if version.active == 'true' %}yes{% else %}no{% endif %}"></td>
+      <td name="jstableform-key-current" class="jstableform-status-{% if version.current == 'true' %}yes{% else %}no{% endif %}"></td>
+      <td name="jstableform-key-dev" class="jstableform-status-{% if version.dev == 'true' %}yes{% else %}no{% endif %}"></td>
+      <td name="jstableform-key-_cmdedit"><a href="#jstableform">Ändern</a></td>
+      <td name="jstableform-key-_cmddel"><a href="#jstableform">Löschen</a></td>
     </tr>
     {%- endfor -%}
   </tbody>

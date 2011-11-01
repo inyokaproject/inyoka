@@ -448,37 +448,25 @@ ul.permissions {
     }
   }
 }
-#dv {
+#jstableform {
   width: 100%;
-  td.dv-yes {
+  td.jstableform-status-yes {
     background-image: url('../img/forum/solve.png');
     background-repeat: no-repeat;
     background-position: center;
   }
-  td.dv-no {
+  td.jstableform-status-no {
     background-image: url('../img/forum/unsolve.png');
     background-repeat: no-repeat;
     background-position: center;
   }
-  input[name=dv-number] {
-    width: 100%;
-  }
-  input[name=dv-name] {
+  input, textarea {
     width: 100%;
   }
   thead {
     font-weight: bold;
-    .dv-number {
-      width: 20%;
-    }
-    .dv-name {
-      width: 40%;
-    }
-    .dv-lts, .dv-active, .dv-current, .dv-dev {
-      width: 5%;
-    }
-    .dv-command {
-      width: 20%;
+    .jstableform-type-boolean {
+      width: 40px;
     }
   }
   .pointer {
