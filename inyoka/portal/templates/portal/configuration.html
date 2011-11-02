@@ -11,7 +11,7 @@
 {% from 'macros.html' import render_form %}
 
 {% do BREADCRUMB.append('Konfiguration', href('portal', 'config'), True) %}
-{% set scripts = ['portal'] %}
+{% set scripts = ['jstableform'] %}
 
 {% block content %}
 <form enctype="multipart/form-data" action="" method="post" id="configuration">

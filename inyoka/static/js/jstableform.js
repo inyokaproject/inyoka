@@ -1,7 +1,8 @@
 /*
-    js.portal
-    ~~~~~~~~~
-    JavaScript for the portal.
+    js.jstableform
+    ~~~~~~~~~~~~~~
+    JavaScript Table Form. This is an independent script to create fancy JS
+    table forms. An example can be seen in the portal configuration.
 
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
@@ -12,7 +13,7 @@ $(function () {
         /**
          * To use the JavaScript Table Form call this function with two
          * parameters:
-         * 
+         *
          *  1. The jQuery object of the table to use
          *  2. The jQuery object where to resulting JSON string should be
          *     written into
@@ -108,9 +109,9 @@ $(function () {
             var validator = columns[key].validator;
             if (validator != null) {
                 if (validator($(this).val())) {
-                    $(this).addClass('invalid');
-                } else {
                     $(this).removeClass('invalid');
+                } else {
+                    $(this).addClass('invalid');
                 }
             }
         }
