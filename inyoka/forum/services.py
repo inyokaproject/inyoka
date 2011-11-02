@@ -13,11 +13,10 @@ from django.db import transaction
 from django.utils.datastructures import MultiValueDictKeyError
 
 from inyoka.forum.models import Topic, Post, Forum
-from inyoka.forum.constants import UBUNTU_VERSIONS
 from inyoka.forum.acl import get_forum_privileges, check_privilege, \
     have_privilege
 from inyoka.portal.models import Subscription
-from inyoka.portal.utils import abort_access_denied
+from inyoka.portal.utils import abort_access_denied, UBUNTU_VERSIONS
 from inyoka.utils.http import HttpResponse
 from inyoka.utils.services import SimpleDispatcher, permit_methods, never_cache
 from inyoka.utils.templating import render_template
@@ -119,12 +118,12 @@ def on_get_version_details(request):
 
     return {
         'number': obj.number,
-        'codename': obj.codename,
+        'name': obj.name,
         'lts': obj.lts,
         'active': obj.active,
-        'class_': obj.class_,
         'current': obj.current,
-        'link': obj.link
+        'dev': obj.dev,
+        'link': obj.link,
     }
 
 

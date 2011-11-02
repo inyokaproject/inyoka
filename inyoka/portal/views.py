@@ -51,7 +51,6 @@ from inyoka.wiki.utils import quote_text
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.forum.models import Forum, Topic, Post, Privilege
-from inyoka.forum.constants import UBUNTU_VERSIONS
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.forum.acl import filter_invisible, split_bits, PRIVILEGES_DETAILS, \
      REVERSED_PRIVILEGES_BITS, split_negative_positive
@@ -72,7 +71,7 @@ from inyoka.portal.user import User, Group, UserBanned, UserData, \
     send_new_email_confirmation, reset_email, send_activation_mail, \
     send_new_user_password, PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
-     require_permission, google_calendarize
+     require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
 
 
@@ -2036,7 +2035,7 @@ def config(request):
             'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
             'license_note', 'get_ubuntu_description', 'blocked_hosts',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
-            'team_icon_height', 'team_icon_width']
+            'team_icon_height', 'team_icon_width', 'distri_versions']
 
     team_icon = storage['team_icon']
 
@@ -2067,11 +2066,14 @@ def config(request):
         else:
             flash(u'Es sind Fehler aufgetreten! Bitte behebe sie.', False)
     else:
+        storage['distri_versions'] = storage['distri_versions'] or u'[]'
         form = ConfigurationForm(initial=storage.get_many(keys +
                                                 ['global_message']))
+
     return {
         'form': form,
-        'team_icon_url': team_icon and href('media', team_icon) or None
+        'team_icon_url': team_icon and href('media', team_icon) or None,
+        'versions': list(sorted(UbuntuVersionList())),
     }
 
 
