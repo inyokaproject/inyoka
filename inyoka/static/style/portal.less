@@ -448,8 +448,12 @@ ul.permissions {
     }
   }
 }
-#jstableform {
+table.jstableform {
   width: 100%;
+  td.jstableform-_jswarning {
+    background-color: #D40000;
+    color: #FFFFFF;
+  }
   td.jstableform-status-yes {
     background-image: url('../img/forum/solve.png');
     background-repeat: no-repeat;
@@ -468,6 +472,9 @@ ul.permissions {
     .jstableform-type-boolean {
       width: 40px;
     }
+  }
+  .invalid {
+    background-color: #FF8080;
   }
   .pointer {
       cursor: pointer;
