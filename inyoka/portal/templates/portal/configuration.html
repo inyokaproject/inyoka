@@ -38,19 +38,26 @@
   {{ render_form(form, ['get_ubuntu_link', 'get_ubuntu_description']) }}
   <br />
   <h3>Distributions Versionen</h3>
-<table id="jstableform">
-  <thead><tr>
-    <td class="jstableform-key-number jstableform-type-string jstableform-validate-versionnumber">Version</td>
-    <td class="jstableform-key-name jstableform-type-string jstableform-validate-versionname">Name</td>
-    <td class="jstableform-key-lts jstableform-type-boolean">LTS</td>
-    <td class="jstableform-key-active jstableform-type-boolean">Aktiv</td>
-    <td class="jstableform-key-current jstableform-type-boolean">Aktuell</td>
-    <td class="jstableform-key-dev jstableform-type-boolean">Entwicklung</td>
-    <td class="jstableform-key-_cmdedit"></td>
-    <td class="jstableform-key-_cmddel"></td>
-  </tr></thead>
+<table id="distri-table" class="jstableform">
+  <thead>
+    <tr>
+      <td class="jstableform-_jswarning" colspan="8">
+        Um diese Funktion nutzen zu können muss JavaScript aktiviert sein!
+      </td>
+    </tr>
+    <tr>
+      <td class="jstableform-key-number jstableform-type-string jstableform-validate-versionnumber">Version</td>
+      <td class="jstableform-key-name jstableform-type-string jstableform-validate-versionname">Name</td>
+      <td class="jstableform-key-lts jstableform-type-boolean">LTS</td>
+      <td class="jstableform-key-active jstableform-type-boolean">Aktiv</td>
+      <td class="jstableform-key-current jstableform-type-boolean">Aktuell</td>
+      <td class="jstableform-key-dev jstableform-type-boolean">Entwicklung</td>
+      <td class="jstableform-key-_cmdedit"></td>
+      <td class="jstableform-key-_cmddel"></td>
+    </tr>
+  </thead>
   <tfoot><tr>
-    <td colspan="8"><a href="#jstableform" name="jstableform-add">Hinzufügen</a></td>
+    <td colspan="8"><a href="#distri-table" name="jstableform-add">Hinzufügen</a></td>
   </tr></tfoot>
   <tbody>
     {%- for version in versions -%}
@@ -61,8 +68,8 @@
       <td name="jstableform-key-active" class="jstableform-status-{% if version.active == 'true' %}yes{% else %}no{% endif %}"></td>
       <td name="jstableform-key-current" class="jstableform-status-{% if version.current == 'true' %}yes{% else %}no{% endif %}"></td>
       <td name="jstableform-key-dev" class="jstableform-status-{% if version.dev == 'true' %}yes{% else %}no{% endif %}"></td>
-      <td name="jstableform-key-_cmdedit"><a href="#jstableform">Ändern</a></td>
-      <td name="jstableform-key-_cmddel"><a href="#jstableform">Löschen</a></td>
+      <td name="jstableform-key-_cmdedit"><a href="#distri-table">Ändern</a></td>
+      <td name="jstableform-key-_cmddel"><a href="#distri-table">Löschen</a></td>
     </tr>
     {%- endfor -%}
   </tbody>
@@ -72,4 +79,12 @@
     <input type="submit" value="Speichern" />
   </p>
 </form>
+{% endblock %}
+
+{% block additional_scripts %}
+<script type="text/javascript">
+  $(function() {
+    JSTableForm($('#distri-table'), $('#id_distri_versions'));
+  });
+</script>
 {% endblock %}

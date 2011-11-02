@@ -1,7 +1,6 @@
 /*
     js.portal
     ~~~~~~~~~
-
     JavaScript for the portal.
 
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
@@ -9,9 +8,14 @@
 */
 $(function () {
     (function () {
+    JSTableForm = function ($table, $returnfield) {
         /**
-         * To use the JavaScript Table Form the table has to get an attribute
-         * `id` with the content 'jstableform'!
+         * To use the JavaScript Table Form call this function with two
+         * parameters:
+         * 
+         *  1. The jQuery object of the table to use
+         *  2. The jQuery object where to resulting JSON string should be
+         *     written into
          *
          * The definition takes place in the table cells of the thead. EVERY td
          * cell needs to get a class of the form `jstableform-key-NAME` where
@@ -39,6 +43,11 @@ $(function () {
          * that run a validation on the content of the input field when the
          * JavaScript event onblur is invoked on this element or when the
          * formula is send.
+         *
+         * Optionally a <td> element with the class 'jstableform-_jswarning'
+         * can be added to the table with a warning message that the table
+         * requires JavaScript. The parent HTML element of this cell, normally
+         * an <tr> tag, will be removed if JavaScript is activated.
          */
         var int_re = /^\d+$/
         var float_re = /^\d+|\d+\.\d+|\.\d+$/
@@ -46,6 +55,7 @@ $(function () {
         var versionname_re = /^[A-Z][a-z]+ [A-Z][a-z]+$/;
         var revert = {};
         var editing = {};
+        var anchor = $table.attr('id') || '';
 
         function setFalse(element) {
             element.addClass('jstableform-status-no').removeClass('jstableform-status-yes');
@@ -98,9 +108,9 @@ $(function () {
             var validator = columns[key].validator;
             if (validator != null) {
                 if (validator($(this).val())) {
-                    $(this).css('background-color', '');
+                    $(this).addClass('invalid');
                 } else {
-                    $(this).css('background-color', '#FF8080');
+                    $(this).removeClass('invalid');
                 }
             }
         }
@@ -143,7 +153,7 @@ $(function () {
                 } else if (obj.type == '_delete') {
                     // Since each row that we add can be deleted we add the
                     // regarding link here.
-                    $e = $('<a href="#jstableform">Löschen</a>');
+                    $e = $('<a href="#' + anchor + '">Löschen</a>');
                     $e.click(delete_row);
                     $e.appendTo($td);
                 }
@@ -151,7 +161,7 @@ $(function () {
                 $td.appendTo($row);
             });
             // And finally we add the row to the table body
-            $row.appendTo('#jstableform > tbody');
+            $row.appendTo('tbody', $table);
         }
 
         function delete_row(event) {
@@ -185,7 +195,7 @@ $(function () {
                     $td.unbind('click');
                     $td.removeClass('pointer');
                 } else if (obj.type == '_edit') {
-                    var $e = $('<a href="#jstableform">Ändern</a>');
+                    var $e = $('<a href="#' + anchor + '">Ändern</a>');
                     $td.empty();
                     $e.click(edit_row).appendTo($td);
                 } else if (obj.type == '_delete') {
@@ -230,7 +240,7 @@ $(function () {
                     $td.addClass('pointer');
                     $td.click(toggleBooleanStatus);
                 } else if (obj.type == '_edit') {
-                    var $e = $('<a href="#jstableform">Abbrechen</a>');
+                    var $e = $('<a href="#' + anchor + '">Abbrechen</a>');
                     $td.empty();
                     $e.click(revert_row);
                     $e.appendTo($td);
@@ -291,15 +301,17 @@ $(function () {
                 }
                 distri_versions.push(values);
             });
-            $('#id_distri_versions').val(window.JSON.stringify(distri_versions));
+            $returnfield.val(window.JSON.stringify(distri_versions));
         }
 
         var columns = {};
         var keys = [];
 
+        $('td[class="jstableform-_jswarning"]', $table).parent().remove();
+
         // Let's try to get the different columns of the table
         // with all their properties, such as type and validators
-        $('#jstableform thead tr td').each(function () {
+        $('thead tr td', $table).each(function () {
             classes = $(this).attr('class').split(' ');
             var key;
             var obj = {key: null, type: null, validator: null};
@@ -340,12 +352,13 @@ $(function () {
             keys.push(key);
         });
 
-        $('a[name="jstableform-add"]').click(add_row);
+        $('a[name="jstableform-add"]', $table).click(add_row);
 
-        $('td[name|="jstableform-key-_cmdedit"] a').click(edit_row);
+        $('td[name|="jstableform-key-_cmdedit"] a', $table).click(edit_row);
 
-        $('td[name|="jstableform-key-_cmddel"] a').click(delete_row);
+        $('td[name|="jstableform-key-_cmddel"] a', $table).click(delete_row);
 
         $('input[type="submit"]').click(submit_config);
+    }
     })();
 });
