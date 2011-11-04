@@ -945,7 +945,7 @@ def movetopic(request, topic_slug):
 
     forums = [forum for forum in Forum.objects.get_cached()
                     if forum.parent is not None and forum.id != topic.forum.id]
-    mapping = dict((forum.id, forum) for forum in filter_invisible(request.user, forums))
+    mapping = {forum.id: forum for forum in filter_invisible(request.user, forums)}
 
     if not mapping:
         return abort_access_denied(request)
@@ -1469,8 +1469,8 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         return topic.forum_id not in moderatable_forums
 
     if topic_ids:
-        related = ('forum', 'author', 'last_post', 'last_post.author',
-                   'first_post', 'first_post.author')
+        related = ('forum', 'author', 'last_post', 'last_post__author',
+                   'first_post')
         topics = Topic.objects.filter(id__in=topic_ids).select_related(*related) \
                               .order_by('-last_post__id')
     else:

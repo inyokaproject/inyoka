@@ -41,10 +41,11 @@ from inyoka.utils.decorators import deferred
 from inyoka.utils.imaging import get_thumbnail
 
 from inyoka.portal.user import User, Group
+from inyoka.portal.utils import UBUNTU_VERSIONS
 from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \
     filter_visible, check_privilege
 from inyoka.forum.constants import CACHE_PAGES_COUNT, VERSION_CHOICES, \
-    DISTRO_CHOICES, POSTS_PER_PAGE, UBUNTU_VERSIONS, UBUNTU_DISTROS_LEGACY, \
+    DISTRO_CHOICES, POSTS_PER_PAGE, UBUNTU_DISTROS_LEGACY, \
     SUPPORTED_IMAGE_TYPES
 
 
@@ -101,7 +102,7 @@ class ForumManager(models.Manager):
         it is stored in the cache afterwards.
         """
         slugs = self.get_slugs()
-        reverted = dict((str(y), x) for x, y in slugs.iteritems())
+        reverted = {str(y): x for x, y in slugs.iteritems()}
         cache_keys = ['forum/forums/%s' % s for s in reverted]
         forums = cache.get_many(cache_keys)
 
@@ -250,7 +251,7 @@ class Forum(models.Model):
         parents = []
         forums = Forum.objects.get_cached() if cached else \
                  Forum.objects.all()
-        qdct = dict((f.id, f) for f in forums)
+        qdct = {forum.id: forum for forum in forums}
 
         forum = qdct[self.id]
         while forum.parent_id is not None:

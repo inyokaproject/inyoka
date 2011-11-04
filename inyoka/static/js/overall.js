@@ -27,7 +27,7 @@ $(document).ready(function () {
     var release = new Date ("October 13, 2011");
     var diff = release.getTime() - now.getTime();
     var days = Math.floor(diff / (1000*60*60*24))+1;
-    var block = $("#counter")
+    var block = $("#counter");
     if (days > 21) {
       block.html('<a href="http://wiki.ubuntuusers.de/Oneiric_Ocelot"><img src="' + $STATIC_URL + 'img/portal/countdown/oneiricbanner_start.png" alt="Ubuntu 11.10"></a>');
     }

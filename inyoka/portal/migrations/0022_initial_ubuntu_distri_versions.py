@@ -1,30 +1,34 @@
 # encoding: utf-8
-import cPickle
-import datetime
-from south.db import db
 from south.v2 import DataMigration
-from django.db import models
-from django.utils import simplejson
-from django.utils.encoding import smart_str
+
+KEY = 'distri_versions'
+VALUE = '[{"number":"4.10","name":"Warty Warthog","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"5.04","name":"Hoary Hedgehog","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"5.10","name":"Breezy Badger","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"6.06","name":"Dapper Drake","lts":"true","active":"false","current":"false","dev":"false"},' \
+    '{"number":"6.10","name":"Edgy Eft","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"7.04","name":"Feisty Fawn","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"7.10","name":"Gutsy Gibbon","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"8.04","name":"Hardy Heron","lts":"true","active":"true","current":"false","dev":"false"},' \
+    '{"number":"8.10","name":"Intrepid Ibex","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"9.04","name":"Jaunty Jackalope","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"9.10","name":"Karmic Koala","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"10.04","name":"Lucid Lynx","lts":"true","active":"true","current":"false","dev":"false"},' \
+    '{"number":"10.10","name":"Maverick Meerkat","lts":"false","active":"false","current":"false","dev":"false"},' \
+    '{"number":"11.04","name":"Natty Narwhal","lts":"false","active":"true","current":"false","dev":"false"},' \
+    '{"number":"11.10","name":"Oneiric Ocelot","lts":"false","active":"true","current":"true","dev":"false"},' \
+    '{"number":"12.04","name":"Precise Pangolin","lts":"false","active":"false","current":"false","dev":"true"}]'
+
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        "Write your forwards methods here."
-        if not db.dry_run:
-            for user in orm.User.objects.iterator():
-                settings = cPickle.loads(smart_str(user._settings))
-                if 'hidden_forum_categories' in settings:
-                    settings['hidden_forum_categories'] = list(settings['hidden_forum_categories'])
-                user.settings = simplejson.dumps(settings)
-                user.save()
+
+        orm.Storage.objects.create(key=KEY, value=VALUE)
 
     def backwards(self, orm):
-        "Write your backwards methods here."
-        if not db.dry_run:
-            for user in orm.User.objects.iterator():
-                user._settings = cPickle.dumps(simplejson.loads(user.settings))
-                user.save()
+
+        orm.Storage.objects.filter(key=KEY).delete()
 
     models = {
         'contenttypes.contenttype': {
@@ -128,7 +132,6 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'User'},
             '_permissions': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             '_primary_group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'primary_users_set'", 'null': 'True', 'db_column': "'primary_group_id'", 'to': "orm['portal.Group']"}),
-            '_settings': ('django.db.models.fields.TextField', [], {'default': "'(d.'"}),
             'aim': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'banned_until': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
@@ -174,4 +177,3 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['portal']
-    symmetrical = True

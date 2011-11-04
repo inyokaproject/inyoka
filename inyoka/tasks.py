@@ -26,9 +26,3 @@ def update_index(docids, doctype_name, index_name):
             search.store(index, doctype_name, obj, bulk=True)
     connection.force_bulk()
     connection.refresh(index_name)
-
-
-@periodic_task(run_every=crontab(minute='*/1'))
-def activity_monitor():
-    """This task just does nothing but runs to get a simple monitoring"""
-    return

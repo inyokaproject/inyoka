@@ -51,7 +51,6 @@ from inyoka.wiki.utils import quote_text
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.forum.models import Forum, Topic, Post, Privilege
-from inyoka.forum.constants import UBUNTU_VERSIONS
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.forum.acl import filter_invisible, split_bits, PRIVILEGES_DETAILS, \
      REVERSED_PRIVILEGES_BITS, split_negative_positive
@@ -72,7 +71,7 @@ from inyoka.portal.user import User, Group, UserBanned, UserData, \
     send_new_email_confirmation, reset_email, send_activation_mail, \
     send_new_user_password, PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
-     require_permission, google_calendarize
+     require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
 
 
@@ -85,8 +84,8 @@ AUTOBAN_SPAMMER_WORDS = (
 # autoban gets active if all words of a tuple match
 
 tmp = dict(PRIVILEGES_DETAILS)
-PRIVILEGE_DICT = dict((bits, tmp[key]) for  bits, key in
-                    REVERSED_PRIVILEGES_BITS.iteritems())
+PRIVILEGE_DICT = {bits: tmp[key]
+                  for bits, key in REVERSED_PRIVILEGES_BITS.iteritems()}
 del tmp
 
 
@@ -1129,7 +1128,7 @@ def user_edit_groups(request, username):
             'primary_group': Group.objects.get(id=initial['_primary_group']).name
         })
     form = EditUserGroupsForm(initial=initial)
-    groups = dict((g.name, g) for g in Group.objects.all())
+    groups = {group.name: group for group in Group.objects.all()}
     if request.method == 'POST':
         form = EditUserGroupsForm(request.POST)
         if form.is_valid():
@@ -1290,7 +1289,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                 elif action == 'delete':
                     msg = u'Möchtest du die Nachricht löschen?'
                     confirm_label = u'Löschen'
-                flash(render_template('confirm_action.html', {
+                flash(render_template('confirm_action_flash.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
                     'cancel_label': u'Abbrechen',
@@ -1546,7 +1545,7 @@ def group(request, name, page=1):
     group = Group.objects.get(name__iexact=name)
     if not (group.is_public or request.user.can('group_edit') or request.user.can('user_edit')):
         raise PageNotFound
-    users = group.user_set
+    users = group.user_set.all()
 
     table = Sortable(users, request.GET, 'id',
         columns=['id', 'username', 'location', 'date_joined', 'post_count'])
@@ -1965,7 +1964,7 @@ def config(request):
             'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
             'license_note', 'get_ubuntu_description', 'blocked_hosts',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
-            'team_icon_height', 'team_icon_width']
+            'team_icon_height', 'team_icon_width', 'distri_versions']
 
     team_icon = storage['team_icon']
 
@@ -1996,11 +1995,14 @@ def config(request):
         else:
             flash(u'Es sind Fehler aufgetreten! Bitte behebe sie.', False)
     else:
+        storage['distri_versions'] = storage['distri_versions'] or u'[]'
         form = ConfigurationForm(initial=storage.get_many(keys +
                                                 ['global_message']))
+
     return {
         'form': form,
-        'team_icon_url': team_icon and href('media', team_icon) or None
+        'team_icon_url': team_icon and href('media', team_icon) or None,
+        'versions': list(sorted(UbuntuVersionList())),
     }
 
 

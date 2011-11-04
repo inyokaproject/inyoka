@@ -78,9 +78,8 @@ class AdvancedSessionMiddleware(object):
         surge_protection = request.session.get('sp')
         if surge_protection is not None:
             now = time()
-            surge_protection = dict((key, timeout) for key, timeout in
-                                    surge_protection.iteritems()
-                                    if timeout > now)
+            surge_protection = {key: timeout for key, timeout in
+                                surge_protection.iteritems() if timeout > now}
             if surge_protection:
                 request.session['sp'] = surge_protection
             else:

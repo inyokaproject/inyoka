@@ -31,13 +31,19 @@ class TestStorage(TestCase):
             Storage.objects.get(key=key)
             self.assertEqual(value, self.cache.get('storage/' + key))
             self.assertEqual(value, storage[key])
+        storage['xyz'] = 'test'
+        _compare('xyz', 'test')
+
         storage['test'] = 'foo'
         storage['test'] = 'bar'
         _compare('test', 'bar')
+
         storage.set('test', 'boo', 1)
         _compare('test', 'boo')
+
         time.sleep(3)
         self.assertTrue(self.cache.get('storage/test') is None)
+
         storage['foo'] = 'bar'
         storage['boo'] = 'far'
         self.assertEqual(storage.get_many(['foo', 'boo', 'nonexisting']), {
