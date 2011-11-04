@@ -8,9 +8,9 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from urllib import urlencode
-from urllib2 import urlopen, HTTPError
+import requests
 from hashlib import md5
+from urllib import urlencode
 from django.utils import simplejson as json
 
 
@@ -42,12 +42,11 @@ def get_gravatar(email, secure=False, rating='g', size=80, default='mm'):
 def get_profile(email):
     """Retrieves the profile data of the user.
 
-    :return: A dictionary representing the profile.
+    :return: A dictionary representing the profile or `None` if nothing found.
     """
     profile = None
-    try:
-        url = u'%s%s.json' % (PROFILE_URL, email_hash(email))
-        profile = json.load(urlopen(url))['entry'][0]
-    except (HTTPError, IndexError):
-        pass
+    url = u'%s%s.json' % (PROFILE_URL, email_hash(email))
+    response = requests.get(url)
+    if response.status_code == 200:
+        profile = json.loads(response.content)['entry'][0]
     return profile

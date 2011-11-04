@@ -43,7 +43,8 @@ blog_list = generic.ListView.as_view(default_column='-latest_update',
     queryset=Blog.objects.annotate(latest_update=Max('entry__pub_date')),
     template_name='planet/blog_list.html',
     columns=['name', 'user', 'latest_update', 'active'],
-    required_permission='blog_edit')
+    required_permission='blog_edit',
+    base_link = href('planet', 'blogs'))
 
 
 blog_edit = generic.CreateUpdateView(model=Blog,

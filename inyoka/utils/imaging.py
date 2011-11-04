@@ -101,9 +101,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
     if os.path.exists(fn):
         return destination
 
-    # get the source stream. if the location is an url we load it using
-    # the urllib2 and convert it into a StringIO so that we can fetch the
-    # data multiple times. If we are operating on a wiki page we load the
+    # get the source stream. If we are operating on a wiki page we load the
     # most recent revision and get the attachment as stream.
     try:
         src = open(os.path.join(settings.MEDIA_ROOT, location), 'rb')

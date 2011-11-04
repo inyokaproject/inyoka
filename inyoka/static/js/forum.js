@@ -168,11 +168,11 @@ $(function () { /* collapsable elements for the input forms */
       $.getJSON(url, {
         version: version_str
       }, function (data) {
-        if (data.class_ == 'unstable') {
+        if (data.dev == 'true') {
           $('span#version_info').attr('class', 'unstable').html(with_link(text_unstable, data));
-        } else if (data.lts) {
+        } else if (data.lts == 'true') {
           $('span#version_info').attr('class', 'lts').html(with_link(text_lts, data));
-        } else if (data.current) {
+        } else if (data.current == 'true') {
           $('span#version_info').attr('class', 'current').html(with_link(text_current, data));
         } else {
           $('span#version_info').attr('class', '').text('');
