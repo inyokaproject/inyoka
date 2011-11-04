@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-10-07 19:46+0200\n"
+"POT-Creation-Date: 2011-11-05 00:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,54 +17,319 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: inyoka/wiki/views.py:79
-msgid "The page could not be created because no sitename was entered"
+#: inyoka/wiki/forms.py:50
+msgid "The text contains too much nested elements."
 msgstr ""
 
-#: inyoka/wiki/views.py:91
+#: inyoka/wiki/forms.py:53
+msgid "The text contains conflict markers"
+msgstr ""
+
+#: inyoka/wiki/forms.py:57
+msgid "You are not permitted to make this changes"
+msgstr ""
+
+#: inyoka/wiki/forms.py:90 inyoka/wiki/forms.py:101
+msgid "Description"
+msgstr ""
+
+#: inyoka/wiki/forms.py:108
+msgid "Slug of the topic"
+msgstr ""
+
+#: inyoka/wiki/forms.py:109
 #, python-format
-msgid "A site with the name “%(title)s“ does already exist."
+msgid ""
+"You can find the slug of a topic in the URL (e.g. <var>example</var> when"
+" <em>%(example)s</em>"
 msgstr ""
 
-#: inyoka/wiki/views.py:191
+#: inyoka/wiki/forms.py:121
+msgid "This topic does not exist."
+msgstr ""
+
+#: inyoka/wiki/forms.py:128
+msgid "Edited by"
+msgstr ""
+
+#: inyoka/wiki/forms.py:129
+msgid "Completion date"
+msgstr ""
+
+#: inyoka/wiki/models.py:1034
+msgid "Wikipage"
+msgstr ""
+
+#: inyoka/wiki/models.py:1035
+msgid "Wikipages"
+msgstr ""
+
+#: inyoka/wiki/models.py:1089 inyoka/wiki/models.py:1092
+msgid "Download attachment"
+msgstr ""
+
+#: inyoka/wiki/models.py:1201
+#, python-format
+msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
+msgstr ""
+
+#: inyoka/wiki/models.py:1225
+#, python-format
+msgid "Revision %(id)d (%(title)s)"
+msgstr ""
+
+#: inyoka/wiki/views.py:79
+msgid "No site name was entered, the page could not be created."
+msgstr ""
+
+#: inyoka/wiki/views.py:90
+#, python-format
+msgid "Another site named “%(title)s“ already exists."
+msgstr ""
+
+#: inyoka/wiki/views.py:201
 #, python-format
 msgid "%(sitename)s wiki – %(pagename)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:202
+#: inyoka/wiki/views.py:212
 #, python-format
 msgid "%(sitename)s wiki – last changes"
 msgstr ""
 
-#: inyoka/wiki/views.py:217
+#: inyoka/wiki/views.py:227
 #, python-format
 msgid ""
 "%(user)s had deleted the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:220
+#: inyoka/wiki/views.py:230
 #, python-format
 msgid ""
-"%(user)s had changed the article “%(article)s“ on %(date)s. Summary: "
+"%(user)s edited the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:224
+#: inyoka/wiki/views.py:234
 #, python-format
 msgid ""
-"An anonymous user had deleted the article “%(article)s“ on %(date)s. "
-"Summary: %(summary)s"
+"An anonymous user deleted the article “%(article)s“ on %(date)s. Summary:"
+" %(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:227
+#: inyoka/wiki/views.py:237
 #, python-format
 msgid ""
-"An anonymous user had changed the article “%(article)s“ on %(date)s. "
-"Summary: %(summary)s"
+"An anonymous user edited the article “%(article)s“ on %(date)s. Summary: "
+"%(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:239 inyoka/wiki/views.py:242
+#: inyoka/wiki/views.py:249 inyoka/wiki/views.py:252
 msgid "Anonymous"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/_diff.html:32
+msgid "The two revisions are identical."
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/_new_page_macro.html:16
+msgid "Create page"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_delete.html:14
+msgid "Are you sure you want to delete this page?"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_delete.html:15
+#: inyoka/wiki/templates/wiki/action_revert.html:15
+msgid "Note:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_delete.html:17
+msgid "Delete"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_delete.html:18
+#: inyoka/wiki/templates/wiki/action_mv_back.html:18
+#: inyoka/wiki/templates/wiki/action_mv_discontinued.html:18
+#: inyoka/wiki/templates/wiki/action_revert.html:18
+msgid "Cancel"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_back.html:15
+msgid "Are you sure you want to move the page into the wiki?"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_back.html:17
+msgid "Move"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_baustelle.html:20
+#, python-format
+msgid ""
+"\n"
+"      Mark page “%(page)s“ as “under construction“\n"
+"    "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_baustelle.html:30
+msgid "Mark"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_discontinued.html:15
+msgid "Are you sure you want to mark the page as discontinued?"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_discontinued.html:17
+msgid "Mark as discontinued"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:15
+msgid ""
+"\n"
+"      If you rename this page, all revisions will be renamed. The old "
+"page\n"
+"      will redirect to the new one.\n"
+"    "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:20
+msgid "New page name:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:24
+msgid "Set redirect to new page"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:28
+msgid "Rename"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:32
+msgid ""
+"\n"
+"        Duplicate attachments on the target page will be overwritten!\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_revert.html:17
+msgid "Restore"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_show.html:26
+#, python-format
+msgid ""
+"\n"
+"        <a href=\"%(rev_link)s\">This revision</a> was created on "
+"%(date)s by\n"
+"        <a href=\"%(author_link)s\">%(author)s</a>.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_show.html:32
+#, python-format
+msgid ""
+"\n"
+"        <a href=\"%(rev_link)s\">This revision</a> was created on "
+"%(date)s by\n"
+"        %(author)s.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_show.html:40
+msgid ""
+"\n"
+"        At this page the following tags have been assigned:\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:17
+#: inyoka/wiki/templates/wiki/missing_page.m.html:16
+msgid "Missing article"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:20
+#: inyoka/wiki/templates/wiki/missing_page.m.html:19
+#, python-format
+msgid ""
+"\n"
+"        The article “%(title)s“ does not exist yet.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:26
+#: inyoka/wiki/templates/wiki/missing_page.m.html:25
+#, python-format
+msgid ""
+"\n"
+"        The article “%(title)s“ was deleted. You can restore it or create"
+"\n"
+"        a new one in the action menu.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:34
+#: inyoka/wiki/templates/wiki/missing_page.m.html:33
+msgid ""
+"\n"
+"        The article is already under construction, help improving and "
+"finishing\n"
+"        it!\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:47
+#: inyoka/wiki/templates/wiki/missing_page.m.html:46
+msgid ""
+"\n"
+"        The following pages are referring this article:\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:60
+#: inyoka/wiki/templates/wiki/missing_page.m.html:57
+msgid ""
+"\n"
+"      Check if you have a typo in the URL.\n"
+"    "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:64
+#: inyoka/wiki/templates/wiki/missing_page.m.html:61
+msgid ""
+"\n"
+"        The following pages have a similar name:\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:79
+#, python-format
+msgid ""
+"\n"
+"        You can also <a href=\"%(link)s\">create</a> this article.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:85
+msgid ""
+"\n"
+"      However, you are missing the permissions to create this article.\n"
+"    "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_resource.html:15
+msgid "Missing resource"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_resource.html:17
+#, python-format
+msgid ""
+"\n"
+"      The requested resource could not be found. Maybe you have followed "
+"a link\n"
+"      with invalid parameters. You can try to open the\n"
+"      <a href=\"%(link)s\">URL without parameters</a>.\n"
+"    "
 msgstr ""
 

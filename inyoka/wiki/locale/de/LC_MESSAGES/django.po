@@ -1,78 +1,387 @@
-# German translations for PROJECT.
-# Copyright (C) 2010 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# German translations for .
+# Copyright (C) 2011 ORGANIZATION
+# This file is distributed under the same license as the  project.
 #
+# Translators:
+# Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-10-07 19:46+0200\n"
-"PO-Revision-Date: 2010-07-18 19:11+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: de <LL@li.org>\n"
+"Project-Id-Version:  Inyoka\n"
+"Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
+"POT-Creation-Date: 2011-11-05 00:30+0100\n"
+"PO-Revision-Date: 2011-11-04 23:21+0000\n"
+"Last-Translator: soeren <wegener92@googlemail.com>\n"
+"Language-Team: German (Germany) "
+"(http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: inyoka/wiki/views.py:79
-msgid "The page could not be created because no sitename was entered"
-msgstr "Die Seite konnte nicht erstellt werden, da kein Seitenname gewählt wurde"
+#: inyoka/wiki/forms.py:50
+msgid "The text contains too much nested elements."
+msgstr "Der Text enthält zu viele verschachtelte Elemente."
 
-#: inyoka/wiki/views.py:91
+#: inyoka/wiki/forms.py:53
+msgid "The text contains conflict markers"
+msgstr "Der Text enthält Konfliktmarkierungen"
+
+#: inyoka/wiki/forms.py:57
+msgid "You are not permitted to make this changes"
+msgstr "Du bist nicht dazu berechtigt, diese Änderung vorzunehmen"
+
+#: inyoka/wiki/forms.py:90 inyoka/wiki/forms.py:101
+msgid "Description"
+msgstr "Beschreibung"
+
+#: inyoka/wiki/forms.py:108
+msgid "Slug of the topic"
+msgstr "Slug des Themas"
+
+#: inyoka/wiki/forms.py:109
 #, python-format
-msgid "A site with the name “%(title)s“ does already exist."
-msgstr "Eine Seite mit dem Namen „%(title)s” existiert bereits."
+msgid ""
+"You can find the slug of a topic in the URL (e.g. <var>example</var> when"
+" <em>%(example)s</em>"
+msgstr ""
+"Den Slug eines Themas findest du in der URL (z. B. <var>example</var> bei"
+" <em>%(example)s</em>)"
 
-#: inyoka/wiki/views.py:191
+#: inyoka/wiki/forms.py:121
+msgid "This topic does not exist."
+msgstr "Dieses Thema existiert nicht."
+
+#: inyoka/wiki/forms.py:128
+msgid "Edited by"
+msgstr "Bearbeitet von"
+
+#: inyoka/wiki/forms.py:129
+msgid "Completion date"
+msgstr "Fertigstellungsdatum"
+
+#: inyoka/wiki/models.py:1034
+msgid "Wikipage"
+msgstr "Wikiseite"
+
+#: inyoka/wiki/models.py:1035
+msgid "Wikipages"
+msgstr "Wikiseiten"
+
+#: inyoka/wiki/models.py:1089 inyoka/wiki/models.py:1092
+msgid "Download attachment"
+msgstr "Anhang herunterladen"
+
+#: inyoka/wiki/models.py:1201
+#, python-format
+msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
+msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
+
+#: inyoka/wiki/models.py:1225
+#, python-format
+msgid "Revision %(id)d (%(title)s)"
+msgstr "Revision %(id)d (%(title)s)"
+
+#: inyoka/wiki/views.py:79
+msgid "No site name was entered, the page could not be created."
+msgstr ""
+"Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben "
+"wurde."
+
+#: inyoka/wiki/views.py:90
+#, python-format
+msgid "Another site named “%(title)s“ already exists."
+msgstr "Eine andere Seite mit dem Namen „%(title)s“ existiert bereits."
+
+#: inyoka/wiki/views.py:201
 #, python-format
 msgid "%(sitename)s wiki – %(pagename)s"
 msgstr "%(sitename)s Wiki – %(pagename)s"
 
-#: inyoka/wiki/views.py:202
+#: inyoka/wiki/views.py:212
 #, python-format
 msgid "%(sitename)s wiki – last changes"
 msgstr "%(sitename)s Wiki – Letzte Änderungen"
 
-#: inyoka/wiki/views.py:217
+#: inyoka/wiki/views.py:227
 #, python-format
 msgid ""
 "%(user)s had deleted the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
-"%(user)s hat am %(date)s den Wikiartikel „%(article)s” gelöscht. "
+"%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. "
 "Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:220
+#: inyoka/wiki/views.py:230
 #, python-format
 msgid ""
-"%(user)s had changed the article “%(article)s“ on %(date)s. Summary: "
+"%(user)s edited the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
-"%(user)s hat am %(date)s den Wikiartikel „%(article)s” geändert. "
+"%(user)s hat den Artikel „%(article)s” am %(date)s bearbeitet. "
 "Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:224
+#: inyoka/wiki/views.py:234
 #, python-format
 msgid ""
-"An anonymous user had deleted the article “%(article)s“ on %(date)s. "
-"Summary: %(summary)s"
+"An anonymous user deleted the article “%(article)s“ on %(date)s. Summary:"
+" %(summary)s"
 msgstr ""
-"Ein anonymer Benutzer hat am %(date)s den Wikiartikel „%(article)s” "
-"gelöscht. Zusammenfassung: %(summary)s"
+"Ein anonymer Benutzer hat den Artikel „%(article)s“ am %(date)s gelöscht."
+" Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:227
+#: inyoka/wiki/views.py:237
 #, python-format
 msgid ""
-"An anonymous user had changed the article “%(article)s“ on %(date)s. "
-"Summary: %(summary)s"
+"An anonymous user edited the article “%(article)s“ on %(date)s. Summary: "
+"%(summary)s"
 msgstr ""
-"Ein anonymer Benutzer hat am %(date)s den Wikiartikel „%(article)s” "
-"geändert. Zusammenfassung: %(summary)s"
+"Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s "
+"bearbeitet. Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:239 inyoka/wiki/views.py:242
+#: inyoka/wiki/views.py:249 inyoka/wiki/views.py:252
 msgid "Anonymous"
 msgstr "Anonymous"
+
+#: inyoka/wiki/templates/wiki/_diff.html:32
+msgid "The two revisions are identical."
+msgstr "Die beiden Revisionen sind identisch."
+
+#: inyoka/wiki/templates/wiki/_new_page_macro.html:16
+msgid "Create page"
+msgstr "Seite erstellen"
+
+#: inyoka/wiki/templates/wiki/action_delete.html:14
+msgid "Are you sure you want to delete this page?"
+msgstr "Bist du sicher, dass du diese Seite löschen möchtest?"
+
+#: inyoka/wiki/templates/wiki/action_delete.html:15
+#: inyoka/wiki/templates/wiki/action_revert.html:15
+msgid "Note:"
+msgstr "Notiz:"
+
+#: inyoka/wiki/templates/wiki/action_delete.html:17
+msgid "Delete"
+msgstr "Löschen"
+
+#: inyoka/wiki/templates/wiki/action_delete.html:18
+#: inyoka/wiki/templates/wiki/action_mv_back.html:18
+#: inyoka/wiki/templates/wiki/action_mv_discontinued.html:18
+#: inyoka/wiki/templates/wiki/action_revert.html:18
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: inyoka/wiki/templates/wiki/action_mv_back.html:15
+msgid "Are you sure you want to move the page into the wiki?"
+msgstr "Bist du sicher, dass du diese Seite in das Wiki verschieben möchtest?"
+
+#: inyoka/wiki/templates/wiki/action_mv_back.html:17
+msgid "Move"
+msgstr "Verschieben"
+
+#: inyoka/wiki/templates/wiki/action_mv_baustelle.html:20
+#, python-format
+msgid ""
+"\n"
+"      Mark page “%(page)s“ as “under construction“\n"
+"    "
+msgstr ""
+"\n"
+"Verschiebe „%(page)s“ in die Baustelle"
+
+#: inyoka/wiki/templates/wiki/action_mv_baustelle.html:30
+msgid "Mark"
+msgstr "Verschieben"
+
+#: inyoka/wiki/templates/wiki/action_mv_discontinued.html:15
+msgid "Are you sure you want to mark the page as discontinued?"
+msgstr "Bist du sicher, dass du den Artikel als „Verlassen“ markieren möchtest?"
+
+#: inyoka/wiki/templates/wiki/action_mv_discontinued.html:17
+msgid "Mark as discontinued"
+msgstr "Als Verlassen markieren"
+
+#: inyoka/wiki/templates/wiki/action_rename.html:15
+msgid ""
+"\n"
+"      If you rename this page, all revisions will be renamed. The old "
+"page\n"
+"      will redirect to the new one.\n"
+"    "
+msgstr ""
+"\n"
+"Beim Umbenennen wird die Seite über alle Revisionen hinweg umbenannt als "
+"hätte sie diesen Namen immer gehabt. Unter der alten Seite wird dann eine"
+" Weiterleitung zum neuen Namen eingerichtet."
+
+#: inyoka/wiki/templates/wiki/action_rename.html:20
+msgid "New page name:"
+msgstr "Neuer Seitenname:"
+
+#: inyoka/wiki/templates/wiki/action_rename.html:24
+msgid "Set redirect to new page"
+msgstr "Umleitung auf neue Seite setzen"
+
+#: inyoka/wiki/templates/wiki/action_rename.html:28
+msgid "Rename"
+msgstr "Umbenennen"
+
+#: inyoka/wiki/templates/wiki/action_rename.html:32
+msgid ""
+"\n"
+"        Duplicate attachments on the target page will be overwritten!\n"
+"      "
+msgstr ""
+"\n"
+"Doppelte Anhänge der Zielseite werden überschrieben!"
+
+#: inyoka/wiki/templates/wiki/action_revert.html:17
+msgid "Restore"
+msgstr "Wiederherstelle"
+
+#: inyoka/wiki/templates/wiki/action_show.html:26
+#, python-format
+msgid ""
+"\n"
+"        <a href=\"%(rev_link)s\">This revision</a> was created on "
+"%(date)s by\n"
+"        <a href=\"%(author_link)s\">%(author)s</a>.\n"
+"      "
+msgstr ""
+"\n"
+"<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von <a "
+"href=\"%(author_link)s\">%(author)s</a> erstellt."
+
+#: inyoka/wiki/templates/wiki/action_show.html:32
+#, python-format
+msgid ""
+"\n"
+"        <a href=\"%(rev_link)s\">This revision</a> was created on "
+"%(date)s by\n"
+"        %(author)s.\n"
+"      "
+msgstr ""
+"\n"
+"<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von "
+"%(author)s erstellt."
+
+#: inyoka/wiki/templates/wiki/action_show.html:40
+msgid ""
+"\n"
+"        At this page the following tags have been assigned:\n"
+"      "
+msgstr ""
+"\n"
+"Die folgenden Schlagworte wurden dem Artikel zugewiesen:"
+
+#: inyoka/wiki/templates/wiki/missing_page.html:17
+#: inyoka/wiki/templates/wiki/missing_page.m.html:16
+msgid "Missing article"
+msgstr "Fehlender Artikel"
+
+#: inyoka/wiki/templates/wiki/missing_page.html:20
+#: inyoka/wiki/templates/wiki/missing_page.m.html:19
+#, python-format
+msgid ""
+"\n"
+"        The article “%(title)s“ does not exist yet.\n"
+"      "
+msgstr ""
+"\n"
+"Der Artikel „%(title)s“ existiert noch nicht."
+
+#: inyoka/wiki/templates/wiki/missing_page.html:26
+#: inyoka/wiki/templates/wiki/missing_page.m.html:25
+#, python-format
+msgid ""
+"\n"
+"        The article “%(title)s“ was deleted. You can restore it or create"
+"\n"
+"        a new one in the action menu.\n"
+"      "
+msgstr ""
+"\n"
+"Der Artikel „%(title)s” wurde gelöscht. Du kannst ihn wiederherstellen "
+"oder über das Aktionsmenü einen neuen erstellen."
+
+#: inyoka/wiki/templates/wiki/missing_page.html:34
+#: inyoka/wiki/templates/wiki/missing_page.m.html:33
+msgid ""
+"\n"
+"        The article is already under construction, help improving and "
+"finishing\n"
+"        it!\n"
+"      "
+msgstr ""
+"\n"
+"Dieser Artikel existiert bereits in der Baustelle, helfe dabei mit ihn zu"
+" verbessern und fertigzustellen!"
+
+#: inyoka/wiki/templates/wiki/missing_page.html:47
+#: inyoka/wiki/templates/wiki/missing_page.m.html:46
+msgid ""
+"\n"
+"        The following pages are referring this article:\n"
+"      "
+msgstr ""
+"\n"
+"Die folgenden Seiten verweisen auf diesen Artikel:"
+
+#: inyoka/wiki/templates/wiki/missing_page.html:60
+#: inyoka/wiki/templates/wiki/missing_page.m.html:57
+msgid ""
+"\n"
+"      Check if you have a typo in the URL.\n"
+"    "
+msgstr ""
+"\n"
+"Bitte überprüfe, ob du einen Tippfehler in der URL hast."
+
+#: inyoka/wiki/templates/wiki/missing_page.html:64
+#: inyoka/wiki/templates/wiki/missing_page.m.html:61
+msgid ""
+"\n"
+"        The following pages have a similar name:\n"
+"      "
+msgstr ""
+"\n"
+"Die folgenden Seiten haben einen ähnlichen Namen:"
+
+#: inyoka/wiki/templates/wiki/missing_page.html:79
+#, python-format
+msgid ""
+"\n"
+"        You can also <a href=\"%(link)s\">create</a> this article.\n"
+"      "
+msgstr ""
+"\n"
+"Du kannst diesen Artikel auch <a href=\"%(link)s\">erstellen</a>"
+
+#: inyoka/wiki/templates/wiki/missing_page.html:85
+msgid ""
+"\n"
+"      However, you are missing the permissions to create this article.\n"
+"    "
+msgstr ""
+"\n"
+"Allerdings fehlen dir die Berechtigungen, um diesen Artikel zu erstellen."
+
+#: inyoka/wiki/templates/wiki/missing_resource.html:15
+msgid "Missing resource"
+msgstr "Fehlende Ressource"
+
+#: inyoka/wiki/templates/wiki/missing_resource.html:17
+#, python-format
+msgid ""
+"\n"
+"      The requested resource could not be found. Maybe you have followed "
+"a link\n"
+"      with invalid parameters. You can try to open the\n"
+"      <a href=\"%(link)s\">URL without parameters</a>.\n"
+"    "
+msgstr ""
+"\n"
+"Die gewünschte Ressource wurde nicht gefunden. Möglicherweise bist du "
+"einem Link mit ungültigen Parametern gefolgt. Du kannst versuchen, die <a"
+" href=\"%(link)s\">URL ohne Parameter</a> aufzurufen."
 

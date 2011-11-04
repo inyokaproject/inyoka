@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-10-07 19:46+0200\n"
+"POT-Creation-Date: 2011-11-05 00:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgid "You need to be logged in to subscribe to comments."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:336
-msgid "You will now be notified about new comments for this article."
+msgid "Notifications on new comments to this article will be sent to you."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:343
@@ -57,9 +57,7 @@ msgid "You need to be logged in to unsubscribe from comments."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:358
-msgid ""
-"From now on you won’t be notified anymore about new comments for this "
-"article."
+msgid "You will no longer be notified of new comments for this article."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:389
@@ -126,15 +124,17 @@ msgid "Please login to suggest an article."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:599
-msgid "Thank you, your article suggestion was sent - the team will contact you."
+msgid ""
+"Thank you, your article suggestion was submitted. A team member will "
+"contact you shortly."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:662
-msgid "You will now be notified about new suggestions."
+msgid "Notifications on new suggestions will be sent to you."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:678
-msgid "From now on you won’t be notfied anymore about suggestions."
+msgid "No notifications on suggestions will be sent to you any more."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:695
@@ -149,7 +149,7 @@ msgid "The event was saved."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:765
-msgid "The event was saved. It will be reviewed by the team soon."
+msgid "The event has been saved. A team member will review it soon."
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/article_delete.html:18
