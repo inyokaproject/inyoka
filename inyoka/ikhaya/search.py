@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 from datetime import datetime
 from pyes import TermFilter, NotFilter, ANDFilter, RangeFilter, ESRangeOp, \
-    ORFilter, TypeFilter
+    ORFilter
 from inyoka.ikhaya.models import Article
 from inyoka.utils.search import search, Index, DocumentType, TypeFilter
 from inyoka.utils.urls import url_for
@@ -27,7 +27,7 @@ class ArticleDocumentType(DocumentType):
         now = datetime.utcnow()
         if not user.can('article_read'):
             return ANDFilter((TermFilter('hidden', True),
-                              RangeFilter(ESRangeOp('date', 'lte', now))))
+                              RangeFilter([ESRangeOp('date', 'lte', now)])))
         return None
 
     @classmethod

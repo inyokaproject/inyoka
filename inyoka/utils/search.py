@@ -14,7 +14,7 @@ from django.conf import settings
 from django.db.models import signals
 
 from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ORFilter, \
-    MatchAllQuery, DisMaxQuery, ANDFilter, NotFilter, TypeFilter
+    MatchAllQuery, DisMaxQuery, ANDFilter, NotFilter
 from pyes.exceptions import NotFoundException
 
 from inyoka.tasks import update_index
@@ -22,6 +22,18 @@ from inyoka.tasks import update_index
 
 SIMPLE_TYPES = (int, long, str, list, dict, tuple, bool,
                 float, bool, unicode, type(None))
+
+
+class TypeFilter(Filter):
+    _internal_name = "type"
+    def __init__(self, type, **kwargs):
+        super(TypeFilter, self).__init__(**kwargs)
+        self._type = type
+
+    def serialize(self):
+        if not self._type:
+            raise RuntimeError("A least a field/value pair must be added")
+        return {self._internal_name : {'value': self._type}}
 
 
 def _get_attrs(obj):
@@ -164,6 +176,10 @@ class SearchSystem(object):
             type = index.type_map[type]
         index.store_object(obj, type, extra, bulk=bulk)
 
+    def get_indices(self, *names):
+        return {name: index for name, index in self.indices.iteritems()
+                if name in names}
+
     def get_connection(self, *args, **kwargs):
         return ES(self.server, *args, **kwargs)
 
@@ -204,6 +220,8 @@ class SearchSystem(object):
         elif isinstance(query, basestring):
             original_query = query
             query = StringQuery(query, default_operator='AND')
+
+
         if indices is None:
             indices = self.indices
 
@@ -223,7 +241,7 @@ class SearchSystem(object):
         if filtered_indices:
             for index in self.indices.values():
                 for type in index.types:
-                    if not type.name in filtered_indices:
+                    if type.name in filtered_indices:
                         filters.append(TypeFilter(type.name))
 
         if boost_queries:
