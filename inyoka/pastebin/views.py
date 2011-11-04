@@ -26,10 +26,11 @@ def index(request):
         form = AddPasteForm(request.POST)
         if form.is_valid() and 'renew_captcha' not in request.POST:
             entry = form.save(request.user)
-            flash(_(u'Your entry was successfully saved. You can use the '
-                    u'following code to include it in your post: '
-                    u'<code>[paste:%(id)d:%(title)s]</code>') % {
-                        'id': entry.id, 'title': entry.title}, True)
+            description = _(u'Your entry was successfully saved. You can use '
+                            u'the following code to include it in your post:')
+            example = u'<code>[paste:%(id)d:%(title)s]</code>' % {
+                      'id': entry.id, 'title': entry.title}
+            flash(u' '.join([description, example]), True)
             return HttpResponseRedirect(href('pastebin', entry.id))
         if 'renew_captcha' in request.POST and 'captcha' in form.errors:
             del form.errors['captcha']
