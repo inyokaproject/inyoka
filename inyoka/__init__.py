@@ -83,8 +83,8 @@
 
     `wiki`
         Moin inspired wiki engine.  It's not yet as advanced as moin 1.7 but
-        has revisioned pages a better parser which can savely generate docbook
-        and other XML based output formats.  The wiki parser also has some
+        has revisioned pages and a better parser which can savely generate XML
+        based output formats.  The wiki parser also has some
         BBCode elements for compatibility with the old phpBB syntax and is
         used in other components (`forum`, `ikhaya`, ...) as well.
 
@@ -114,6 +114,7 @@ import subprocess
 #: Inyoka revision present in the current mercurial working copy
 INYOKA_REVISION = 'unknown'
 
+
 def _dummy(*args, **kwargs):
     return None
 
@@ -137,7 +138,6 @@ def _bootstrap():
         revision = INYOKA_REVISION
 
     revision = revision.strip()
-
 
     # This value defines the timeout for sockets in seconds.  Per default
     # python sockets do never timeout and as such we have blocking workers.

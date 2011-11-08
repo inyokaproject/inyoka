@@ -23,13 +23,9 @@ def flash(message, success=None, classifier=None, session=None):
         if session is None:
             return False
     if not 'flmsg' in session:
-        session['flmsg'] = [
-            (message, success, classifier)
-        ]
+        session['flmsg'] = [(message, success, classifier)]
     else:
-        session['flmsg'].append(
-            (message, success, classifier)
-        )
+        session['flmsg'].append((message, success, classifier))
         session.modified = True
     return True
 
@@ -39,9 +35,8 @@ def unflash(classifier):
     session = getattr(current_request, 'session', None)
     if session is None:
         return
-    session['flmsg'] = [item for item in session.get(
-                                   'flmsg', ())
-                                   if item[2] != classifier]
+    messages = session.get('flmsg', ())
+    session['flmsg'] = [msg for msg in messages if msg[2] != classifier]
     if not session['flmsg']:
         del session['flmsg']
 
@@ -86,5 +81,5 @@ class FlashMessage(object):
         return '<%s(%s:%s)>' % (
             self.__class__.__name__,
             self.text,
-            self.success
+            self.success,
         )

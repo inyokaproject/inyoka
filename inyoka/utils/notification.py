@@ -66,7 +66,7 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
     if exclude is not None:
         subscriptions = subscriptions.exclude(**exclude)
 
-    notified_users = set([])
+    notified_users = set()
 
     notified = set()
     for subscription in subscriptions.all():

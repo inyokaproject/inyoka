@@ -17,11 +17,11 @@ urlpatterns = patterns('inyoka.planet.views',
     (r'^hide/(?P<id>\d+)/$', 'hide_entry'),
     (r'^suggest/$', 'suggest'),
     (r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', 'feed'),
-    (r'^blogs/$', 'blog_list'),
+    (r'^blogs/(?:(?P<blog>\d+)/)?$', 'blog_list'),
     (r'^blogs/export/(?P<export_type>[a-z]+)/$', 'export'),
     (r'^blog/new/$', 'blog_edit'),
     (r'^blog/(?P<blog>\d+)/edit/$', 'blog_edit'),
 )
 
 
-handler404 = 'inyoka.planet.views.not_found'
+handler404 = 'inyoka.utils.urls.global_not_found'

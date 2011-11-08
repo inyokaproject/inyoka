@@ -8,10 +8,10 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from urllib import urlencode
-from urllib2 import urlopen, HTTPError
+import requests
 from hashlib import md5
-from simplejson import load
+from urllib import urlencode
+from django.utils import simplejson as json
 
 
 BASE_URL = 'http://www.gravatar.com/avatar/'
@@ -28,11 +28,7 @@ def email_hash(string):
 
 
 def get_gravatar(email, secure=False, rating='g', size=80, default='mm'):
-    """Generate a link to the users' Gravatar.
-
-    >>> get_gravatar('gridaphobe@gmail.com')
-    'http://www.gravatar.com/avatar/16b87da510d278999c892cdbdd55c1b6?s=80&r=g&d=mm'
-    """
+    """Generate a link to the users' Gravatar."""
     assert rating.lower() in RATINGS
     assert MIN_SIZE <= size <= MAX_SIZE
 
@@ -46,12 +42,11 @@ def get_gravatar(email, secure=False, rating='g', size=80, default='mm'):
 def get_profile(email):
     """Retrieves the profile data of the user.
 
-    :return: A dictionary representing the profile.
+    :return: A dictionary representing the profile or `None` if nothing found.
     """
     profile = None
-    try:
-        url = u'%s%s.json' % (PROFILE_URL, email_hash(email))
-        profile = load(urlopen(url))['entry'][0]
-    except (HTTPError, IndexError):
-        pass
+    url = u'%s%s.json' % (PROFILE_URL, email_hash(email))
+    response = requests.get(url)
+    if response.status_code == 200:
+        profile = json.loads(response.content)['entry'][0]
     return profile

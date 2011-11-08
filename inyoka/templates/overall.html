@@ -36,7 +36,11 @@
         {% endif %}
       {%- endfor %}
       <link rel="stylesheet" type="text/css" href="{{ href('portal', 'markup.css') }}" />
-      <link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'print.css') }}" media="print" />
+			{%- if SETTINGS.DEBUG %}
+				<link rel="stylesheet/less" type="text/css" href="{{ href('static', 'style', 'print.less') }}" media="print" />
+			{%- else %}
+				<link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'print.css') }}" media="print" />
+			{%- endif %}
       {%- for title, url in feeds %}
         <link rel="alternate" href="{{ url|e }}" title="{{ title|e }}" type="application/atom+xml" />
       {%- endfor %}
@@ -73,7 +77,7 @@
   </head>
   <body>
     {%- if USER.can('manage_topics') or USER.can('article_edit') or USER.can('event_edit') %} 
-    <div id="admin_menu"><div>
+    <div id="admin_menu">
       <a id="admin_layer_button"><img src="{{ href('static', '/img/portal/admin.png') }}" alt="Admin" title="Adminlinks ein/aus" /></a>
       {%- if USER.can('manage_topics') %}
         {{ render_modnavi_li('Gemeldete Themen', href('forum', 'reported_topics'), href('static', 'img/portal/admin_new_topicreport.png'), report_count) }}
@@ -89,7 +93,7 @@
       {%- endif %}
 
     <noscript><strong class="nojs error">Bitte JavaScript aktivieren!</strong></noscript>
-    </div></div>
+    </div>
     {%- endif %}
    <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">
     <div class="header">
@@ -195,18 +199,14 @@
           (<a href="{{ href('wiki', 'ubuntuusers/Fehler melden') }}">Fehler in Inyoka melden</a>)
         </li>
         <li class="license">
+          <a href="?flavour=mobile" class="flavour_switch" >Zur mobilen Version</a><br />
           <img src="{{ href('static', 'img/copyleft.png') }}" alt="Copyleft" />
           2004 – 2011 ubuntuusers.de • Einige Rechte vorbehalten<br />
           <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/de/deed.de" rel="license">CC</a> •
           <a href="{{ href('portal', 'lizenz') }}" rel="cc:morePermissions">Lizenz</a> •
           <a href="{{ href('portal', 'kontakt') }}">Kontakt</a> •
           <a href="{{ href('portal', 'datenschutz') }}">Datenschutz</a> •
-          <a href="{{ href('portal', 'impressum') }}">Impressum</a> •
-          {% if MOBILE %}
-            <a href="?flavour=full">Desktop</a>
-          {% else %}
-            <a href="?flavour=mobile">Zur mobilen Version</a>
-          {% endif %}
+          <a href="{{ href('portal', 'impressum') }}">Impressum</a>
         </li>
         <li class="housing">
           <span title="Unterbringung und Netzanbindung eines Servers">Serverhousing</span> gespendet von<br />
