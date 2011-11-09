@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2011-11-05 00:31+0100\n"
+"POT-Creation-Date: 2011-11-09 23:23+0100\n"
 "PO-Revision-Date: 2011-11-04 22:54+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -51,7 +51,7 @@ msgstr "URL des Blogs"
 msgid "URL of the feed"
 msgstr "URL des Feeds"
 
-#: inyoka/planet/models.py:39
+#: inyoka/planet/models.py:39 inyoka/planet/templates/planet/blog_list.html:27
 msgid "User"
 msgstr "Benutzer"
 
@@ -103,6 +103,46 @@ msgstr "Der Eintrag „%(title)s” wurde erfolgreich verborgen."
 msgid "The entry “%(title)s“ was successfully restored."
 msgstr "Der Eintrag „%(title)s” wurde erfolgreich wiederhergestellt."
 
+#: inyoka/planet/templates/planet/blog_edit.html:15
+msgid "Add blog"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_edit.html:26
+#: inyoka/planet/templates/planet/suggest.html:32
+msgid "Submit"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:12
+#: inyoka/planet/templates/planet/page.html:70
+msgid "Bloglist"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:15
+#: inyoka/planet/templates/planet/page.html:48
+msgid "Blogs"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:16
+msgid "Add new blog"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:26
+msgid "Name"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:28
+msgid "Latest update"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:29
+msgid "Activ"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:37
+#, fuzzy
+msgid "No entry"
+msgstr "Eintrag"
+
 #: inyoka/planet/templates/planet/hide_entry.html:11
 msgid "Are you sure you want to restore the entry?"
 msgstr "Bist du sicher, dass du diesen Eintrag wiederherstellen möchtest?"
@@ -122,6 +162,7 @@ msgid "Hide"
 msgstr "Verbergen"
 
 #: inyoka/planet/templates/planet/hide_entry.html:17
+#: inyoka/planet/templates/planet/suggest.html:33
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -168,4 +209,22 @@ msgstr ""
 #: inyoka/planet/templates/planet/index.m.html:31
 msgid "No articles were aggregated"
 msgstr "Es wurden keine Artikel aggregiert."
+
+#: inyoka/planet/templates/planet/page.html:13
+#: inyoka/planet/templates/planet/page.html:29
+msgid "Planet"
+msgstr ""
+
+#: inyoka/planet/templates/planet/page.html:38
+#, fuzzy
+msgid "Export blogs"
+msgstr "Index des Blogs"
+
+#: inyoka/planet/templates/planet/page.html:66
+msgid "Configuration"
+msgstr ""
+
+#: inyoka/planet/templates/planet/suggest.html:12
+msgid "Suggest blog"
+msgstr ""
 

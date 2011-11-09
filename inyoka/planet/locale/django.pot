@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-05 00:31+0100\n"
+"POT-Creation-Date: 2011-11-09 23:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "URL of the feed"
 msgstr ""
 
-#: inyoka/planet/models.py:39
+#: inyoka/planet/models.py:39 inyoka/planet/templates/planet/blog_list.html:27
 msgid "User"
 msgstr ""
 
@@ -101,6 +101,45 @@ msgstr ""
 msgid "The entry “%(title)s“ was successfully restored."
 msgstr ""
 
+#: inyoka/planet/templates/planet/blog_edit.html:15
+msgid "Add blog"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_edit.html:26
+#: inyoka/planet/templates/planet/suggest.html:32
+msgid "Submit"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:12
+#: inyoka/planet/templates/planet/page.html:70
+msgid "Bloglist"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:15
+#: inyoka/planet/templates/planet/page.html:48
+msgid "Blogs"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:16
+msgid "Add new blog"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:26
+msgid "Name"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:28
+msgid "Latest update"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:29
+msgid "Activ"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:37
+msgid "No entry"
+msgstr ""
+
 #: inyoka/planet/templates/planet/hide_entry.html:11
 msgid "Are you sure you want to restore the entry?"
 msgstr ""
@@ -120,6 +159,7 @@ msgid "Hide"
 msgstr ""
 
 #: inyoka/planet/templates/planet/hide_entry.html:17
+#: inyoka/planet/templates/planet/suggest.html:33
 msgid "Cancel"
 msgstr ""
 
@@ -163,5 +203,22 @@ msgstr ""
 #: inyoka/planet/templates/planet/index.html:87
 #: inyoka/planet/templates/planet/index.m.html:31
 msgid "No articles were aggregated"
+msgstr ""
+
+#: inyoka/planet/templates/planet/page.html:13
+#: inyoka/planet/templates/planet/page.html:29
+msgid "Planet"
+msgstr ""
+
+#: inyoka/planet/templates/planet/page.html:38
+msgid "Export blogs"
+msgstr ""
+
+#: inyoka/planet/templates/planet/page.html:66
+msgid "Configuration"
+msgstr ""
+
+#: inyoka/planet/templates/planet/suggest.html:12
+msgid "Suggest blog"
 msgstr ""
 
