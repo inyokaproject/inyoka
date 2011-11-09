@@ -11,7 +11,7 @@
 {% set styles = ['editor-sprite', 'datetimefield'] %}
 {% set scripts = ['WikiEditor','DateTime'] %}
 
-{% do BREADCRUMB.append({% trans %}Suggest event{% endtrans %}, href('ikhaya', 'event', 'suggest'), True) %}
+{% do BREADCRUMB.append(_('Suggest event'), href('ikhaya', 'event', 'suggest'), True) %}
 
 {% block content %}
   <h2>{% trans %}Suggest event{% endtrans %}</h2>

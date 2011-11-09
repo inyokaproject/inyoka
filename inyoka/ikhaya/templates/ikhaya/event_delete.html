@@ -9,8 +9,10 @@
 #}
 
 <form action="{{ object|url('delete')|e }}" method="post">
-  <p>{% trans link=object|url('show'), event=object.name|e %}
-    Do you really want to delete the event <a href="{{ link }}">{{ event }}</a>?
+  <p>
+    {%- trans link=object|url('show'), event=object.name|e -%}
+      Do you really want to delete the event <a href="{{ link }}">{{ event }}</a>?
+    {%- endtrans -%}
   <p>
     <input type="submit" value="{% trans %}Delete{% endtrans %}" />
     <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" />
