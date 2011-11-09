@@ -508,7 +508,7 @@ class AuthMatchDecider(xapian.MatchDecider):
 
     def __init__(self, user, deciders):
         xapian.MatchDecider.__init__(self)
-        self.deciders = dict((k, d(user)) for k, d in deciders.iteritems())
+        self.deciders = {key: dec(user) for key, dec in deciders.iteritems()}
 
     def __call__(self, doc):
         component = doc.get_value(0).split(':')[0]

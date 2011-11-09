@@ -41,6 +41,7 @@ from inyoka.wiki.acl import require_privilege, has_privilege, PrivilegeTest
 from inyoka.portal.models import Subscription
 from inyoka.portal.utils import simple_check_login
 from inyoka.wiki.notifications import send_edit_notifications
+from inyoka.wiki.tasks import update_object_list
 
 
 def context_modifier(request, context):
@@ -285,8 +286,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
         ap.edit(note=u'Umbenannt von %s' % old_attachment_name,
                 remote_addr=request.META.get('REMOTE_ADDR'))
 
-    cache.delete('wiki/page/' + name)
-    cache.delete('wiki/object_list')
+    update_object_list.delay(page.last_rev)
     return True
 
 
@@ -768,14 +768,13 @@ def do_backlinks(request, name):
 def do_export(request, name):
     """
     Export the given revision or the most recent one to the specified format
-    (raw, html, ast or docbook so far).
+    (raw, html or ast so far).
 
     =============== ======= ==================================================
     Format          Partial Full    Description
     =============== ======= ==================================================
     ``raw``         yes     no      The raw wiki markup exported.
     ``HTML``        yes     yes     The wiki markup converted to HTML4.
-    ``Docbook``     yes     yes     The wiki markup converted to docbook.
     ``AST``         yes     no      The wiki markup as internal abstract
                                     syntax tree.  Useful for debugging.
     =============== ======= ==================================================
@@ -784,7 +783,6 @@ def do_export(request, name):
     **Template**
         Depending on the output format either no template at all or one of
         the following ones:
-        -   ``'wiki/export_docbook.xml'``
         -   ``'wiki/export.html'``
 
     **Context**
@@ -808,11 +806,7 @@ def do_export(request, name):
         'page':     page
     }
     format = request.GET.get('format', 'raw').lower()
-    if format == 'docbook':
-        return TemplateResponse('wiki/export_docbook.xml', ctx,
-                                content_type='application/docbook+xml; '
-                                'charset=utf-8')
-    elif format == 'html':
+    if format == 'html':
         return TemplateResponse('wiki/export.html', ctx,
                                 content_type='text/html; charset=utf-8')
     elif format == 'ast':

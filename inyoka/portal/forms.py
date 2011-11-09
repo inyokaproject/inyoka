@@ -14,7 +14,9 @@ from django import forms
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
 from django.utils.safestring import mark_safe
+from django.utils import simplejson
 from django.db.models import Count
+from django.forms import HiddenInput
 
 from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
@@ -860,9 +862,22 @@ class ConfigurationForm(forms.Form):
     team_icon_height = forms.IntegerField(min_value=1, required=False)
     license_note = forms.CharField(required=False, label=u'Lizenzhinweis',
                                    widget=forms.Textarea(attrs={'rows': 2}))
+    distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     def clean_global_message(self):
         return cleanup_html(self.cleaned_data.get('global_message', ''))
+
+    def clean_distri_versions(self):
+        data = self.cleaned_data
+        key = 'distri_versions'
+        try:
+            data[key] = data.get(key, '[]')
+            # is there a way to validate a JSON string?
+            simplejson.loads(data[key])
+        except simplejson.JSONDecodeError:
+            return u'[]'
+        return data[key]
+
 
 
 class EditStyleForm(forms.Form):

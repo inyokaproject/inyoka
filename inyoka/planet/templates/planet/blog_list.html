@@ -13,7 +13,7 @@
 
 {% block content %}
 <h3>Blogs</h3>
-<a href="{{ href('planet', 'blog', 'new') }}">Neuen Blog eintragen</a>
+<a href="{{ href('planet', 'blog', 'new') }}">Neuen Blog eintragen</a>{{ pagination.generate(position='right') }}
 <table class="static_pages">
    <colgroup>
       <col width="40%"/>
@@ -44,4 +44,5 @@
   {%- endfor %}
   </tbody>
 </table>
+{{ pagination.generate(position='right') }}
 {% endblock %}

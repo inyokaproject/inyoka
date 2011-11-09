@@ -127,37 +127,17 @@ def get_attachment(request):
     return HttpResponseRedirect(target)
 
 
-def get_image_resource(request):
-    """
-    Deliver the attachment  as image.  This is used by the `Picture` macro
-    mainly.  The idea is that we can still check privileges
-    and that the image URL does not change if a new revision is uploaded.
-    """
-    try:
-        width = int(request.GET['width'])
-    except (KeyError, ValueError):
-        width = None
-    try:
-        height = int(request.GET['height'])
-    except (KeyError, ValueError):
-        height = None
-    target = request.GET.get('target')
-    if not target:
-        raise PageNotFound()
-
-    target = normalize_pagename(target)
-    if not has_privilege(request.user, target, 'read'):
-        return AccessDeniedResponse()
+def fetch_real_target(target, width=None, height=None, force=False):
+    """Return the uri to a image"""
 
     if height or width:
         page_filename = Page.objects.attachment_for_page(target)
         if page_filename is None:
-            raise PageNotFound()
+            return
 
         page_filename = force_unicode(page_filename).encode('utf-8')
         partial_hash = sha1(page_filename).hexdigest()
 
-        force = request.GET.get('force') == 'yes'
         dimension = '%sx%s%s' % (width or '',
                                  height or '',
                                  force and '!' or '')
@@ -171,10 +151,41 @@ def get_image_resource(request):
     else:
         target = Page.objects.attachment_for_page(target)
         if not target:
-            raise PageNotFound()
+            return None
         target = href('media', target)
     if not target:
+        return None
+    return target
+
+
+def get_image_resource(request):
+    """
+    Deliver the attachment  as image.  This is used by the `Picture` macro
+    mainly.  The idea is that we can still check privileges
+    and that the image URL does not change if a new revision is uploaded.
+    """
+    target = request.GET.get('target')
+    if not target:
         raise PageNotFound()
+
+    target = normalize_pagename(target)
+    if not has_privilege(request.user, target, 'read'):
+        return AccessDeniedResponse()
+
+    try:
+        width = int(request.GET['width'])
+    except (KeyError, ValueError):
+        width = None
+    try:
+        height = int(request.GET['height'])
+    except (KeyError, ValueError):
+        height = None
+
+    force = request.GET.get('force') == 'yes'
+    target = fetch_real_target(target, width=width, height=height, force=force)
+    if target is None:
+        raise PageNotFound()
+
     return HttpResponseRedirect(target)
 
 

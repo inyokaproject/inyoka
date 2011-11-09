@@ -41,7 +41,8 @@ class CachedStorage(object):
         *timeout*.
         """
         from inyoka.portal.models import Storage
-        row, created = Storage.objects.get_or_create(key=key)
+        row, created = Storage.objects.get_or_create(key=key,
+                defaults={'value': value})
         if not created:
             row.value = value
             row.save()

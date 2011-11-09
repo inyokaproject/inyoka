@@ -13,11 +13,10 @@ from django.db import transaction
 from django.utils.datastructures import MultiValueDictKeyError
 
 from inyoka.forum.models import Topic, Post, Forum
-from inyoka.forum.constants import UBUNTU_VERSIONS
 from inyoka.forum.acl import get_forum_privileges, check_privilege, \
     have_privilege
 from inyoka.portal.models import Subscription
-from inyoka.portal.utils import abort_access_denied
+from inyoka.portal.utils import abort_access_denied, UBUNTU_VERSIONS
 from inyoka.utils.http import HttpResponse
 from inyoka.utils.services import SimpleDispatcher, permit_methods, never_cache
 from inyoka.utils.templating import render_template
@@ -61,7 +60,7 @@ def on_toggle_categories(request):
     if not hidden_categories:
         request.user.settings.pop('hidden_forum_categories', None)
     else:
-        request.user.settings['hidden_forum_categories'] = hidden_categories
+        request.user.settings['hidden_forum_categories'] = tuple(hidden_categories)
     request.user.save()
     return True
 
@@ -97,6 +96,8 @@ def subscription_action(request, action=None):
 @never_cache
 @permit_methods(('POST',))
 def on_change_status(request, solved=None):
+    if not 'slug' in request.POST:
+        return
     topic = Topic.objects.get(slug=request.POST['slug'])
     can_read = have_privilege(request.user, topic.forum, 'read')
     if request.user.is_anonymous or not can_read:
@@ -117,12 +118,12 @@ def on_get_version_details(request):
 
     return {
         'number': obj.number,
-        'codename': obj.codename,
+        'name': obj.name,
         'lts': obj.lts,
         'active': obj.active,
-        'class_': obj.class_,
         'current': obj.current,
-        'link': obj.link
+        'dev': obj.dev,
+        'link': obj.link,
     }
 
 

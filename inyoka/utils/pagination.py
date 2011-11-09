@@ -123,8 +123,8 @@ class Pagination(object):
         # that try to fuzz the pagination with some extremly invalid unicode data.
         # Catching those here fixes vulerabilty of the whole application.
         _get_v = lambda v: force_unicode(v).encode('utf-8') if isinstance(v, basestring) else v
-        params = dict((force_unicode(k).encode('utf-8'), _get_v(v))
-                       for k, v in self.parameters.iteritems())
+        params = {force_unicode(k).encode('utf-8'): _get_v(v)
+                  for k, v in self.parameters.iteritems()}
 
         half_threshold = max(math.ceil(threshold / 2.0), 2)
         for num in xrange(1, pages + 1):

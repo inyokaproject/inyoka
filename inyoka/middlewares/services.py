@@ -17,7 +17,7 @@
 """
 from inyoka.utils.http import HttpResponse
 from django.utils.cache import add_never_cache_headers
-from django.utils import simplejson as json
+from django.utils import simplejson
 
 
 JSON_CONTENTTYPE = 'application/json'
@@ -40,7 +40,7 @@ class ServiceMiddleware(object):
             if isinstance(response, HttpResponse):
                 retval = response
             else:
-                json = json.dumps(response, encoding='utf-8')
+                json = simplejson.dumps(response, encoding='utf-8')
                 retval = HttpResponse(json, content_type=JSON_CONTENTTYPE)
             if getattr(call, '__never_cache__', False):
                 add_never_cache_headers(response)
