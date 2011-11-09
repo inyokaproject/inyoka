@@ -12,6 +12,9 @@
 
 <form action="{{ href('wiki', page.name, action='mv_back')|e }}" method="post">
   <p>Soll die Seite wirklich ins Wiki verschoben werden?</p>
+  <p>
+    <strong>Hinweis:</strong> Das ACL muss nachträglich manuell angepasst werden!
+  </p>
      <input type="submit" value="Verschieben" />{#
    #}<input type="submit" name="cancel" value="Abbrechen" /></p>
 </form>
