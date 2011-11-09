@@ -9,6 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
+from django.contrib import messages
 from django.utils.text import truncate_html_words
 from django.db.models import Max
 from inyoka.portal.user import Group
@@ -18,7 +19,6 @@ from inyoka.utils.urls import href
 from inyoka.utils.http import templated, HttpResponseRedirect, \
                               does_not_exist_is_404, HttpResponse
 from inyoka.utils.html import escape
-from inyoka.utils.flashing import flash
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.mail import send_mail
@@ -95,11 +95,11 @@ def suggest(request):
                           settings.INYOKA_SYSTEM_USER_EMAIL,
                           [user.email])
             if not users:
-                flash(u'Es sind keine Benutzer als Planet-Administratoren '\
-                      u'eingetragen.', False)
+                messages.error(request, u'Es sind keine Benutzer als '
+                               u'Planet-Administratoren eingetragen.')
                 return HttpResponseRedirect(href('planet'))
-            flash(u'Der Blog „%s“ wurde vorgeschlagen.' %
-                  escape(form.cleaned_data['name']), True)
+            messages.info(request, u'Der Blog „%s“ wurde vorgeschlagen.' %
+                  escape(form.cleaned_data['name']))
             return HttpResponseRedirect(href('planet'))
     else:
         form = SuggestBlogForm()
@@ -152,7 +152,7 @@ def hide_entry(request, id):
     entry = Entry.objects.get(id=id)
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(u'Aktion wurde abgebrochen.')
+            messages.info(request, u'Aktion wurde abgebrochen.')
         else:
             entry.hidden = False if entry.hidden else True
             if entry.hidden:
@@ -161,9 +161,10 @@ def hide_entry(request, id):
             msg = (u'Der Eintrag „%s” wurde erfolgreich %s.' %
                 (entry.title, 'versteckt' if entry.hidden
                                           else 'wiederhergestellt'))
-            flash(msg, success=True)
+            messages.success(request, msg)
     else:
-        flash(render_template('planet/hide_entry.html', {'entry': entry}))
+        messages.info(request, render_template('planet/hide_entry.html',
+                      {'entry': entry}))
     return HttpResponseRedirect(href('planet'))
 
 
