@@ -17,6 +17,7 @@
 """
 import re
 from django.conf import settings
+from django.contrib import messages
 from django.middleware.common import CommonMiddleware
 
 from django_hosts.middleware import HostsMiddleware
@@ -24,7 +25,6 @@ from django_mobile.middleware import \
     MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
 from inyoka import INYOKA_REVISION
-from inyoka.utils.flashing import has_flashed_messages
 from inyoka.utils.local import local, _request_cache, local_manager
 from inyoka.utils.timer import StopWatch
 from inyoka.utils.logger import logger
@@ -75,7 +75,7 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
 
         # update the cache control
         if hasattr(request, 'user') and request.user.is_authenticated \
-           or has_flashed_messages():
+           or len(messages.get_messages(request)):
             response['Cache-Control'] = 'no-cache'
 
         path = request.path

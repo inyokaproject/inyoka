@@ -8,10 +8,11 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.contrib import messages
+
 from inyoka.utils.urls import href, global_not_found
 from inyoka.utils.http import templated, HttpResponseRedirect, HttpResponse, \
         PageNotFound
-from inyoka.utils.flashing import flash
 from inyoka.utils.templating import render_template
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
@@ -24,10 +25,10 @@ def index(request):
         form = AddPasteForm(request.POST)
         if form.is_valid() and 'renew_captcha' not in request.POST:
             entry = form.save(request.user)
-            flash(u'Dein Eintrag wurde erfolgreich gespeichert. Du kannst '
-                  u'folgenden Code verwenden, um ihn einzubinden: '
-                  u'<code>[paste:%s:%s]</code>' % (entry.id, entry.title),
-                  True)
+            messages.success(request,
+                u'Dein Eintrag wurde erfolgreich gespeichert. Du kannst '
+                u'folgenden Code verwenden, um ihn einzubinden: '
+                u'<code>[paste:%s:%s]</code>' % (entry.id, entry.title))
             return HttpResponseRedirect(href('pastebin', entry.id))
         if 'renew_captcha' in request.POST and 'captcha' in form.errors:
             del form.errors['captcha']
@@ -65,14 +66,14 @@ def delete(request, entry_id):
         raise PageNotFound
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(u'Das Löschen wurde abgebrochen.')
+            messages.info(request, u'Das Löschen wurde abgebrochen.')
         else:
             entry.delete()
-            flash(u'Der Eintrag in der Ablage wurde gelöscht.')
+            messages.info(request, u'Der Eintrag in der Ablage wurde gelöscht.')
             return HttpResponseRedirect(href('pastebin'))
     else:
-        flash(render_template('pastebin/delete_entry.html',
-                              {'entry': entry}))
+        messages.info(request, render_template('pastebin/delete_entry.html',
+                      {'entry': entry}))
     return HttpResponseRedirect(href('pastebin', entry.id))
 
 

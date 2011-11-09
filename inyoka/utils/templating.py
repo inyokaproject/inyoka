@@ -24,7 +24,6 @@ from inyoka.utils.cache import request_cache
 from inyoka.utils.dates import format_timedelta, natural_date, \
      format_datetime, format_specific_datetime, format_time
 from inyoka.utils.text import human_number
-from inyoka.utils.flashing import get_flashed_messages
 from inyoka.utils.local import current_request
 
 # path to the dtd.  In debug mode we refer to the file system, otherwise

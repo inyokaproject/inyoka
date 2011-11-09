@@ -11,13 +11,13 @@
 import calendar
 from datetime import date, time
 
+from django.contrib import messages
+from django.db.models import Q
 from django.utils import simplejson
 from django.utils.http import urlquote_plus
-from django.db.models import Q
 
 from inyoka.utils.urls import href
 from inyoka.utils.decorators import patch_wrapper
-from inyoka.utils.flashing import flash
 from inyoka.utils.http import AccessDeniedResponse, HttpResponseRedirect
 from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.storage import storage
@@ -35,7 +35,7 @@ def check_login(message=None):
             if req.user.is_authenticated:
                 return func(*args, **kwargs)
             if message is not None:
-                flash(message)
+                messages.info(req, message)
             args = {'next': 'http://%s%s' % (req.get_host(), req.path)}
             return HttpResponseRedirect(href('portal', 'login', **args))
         return patch_wrapper(decorator, func)

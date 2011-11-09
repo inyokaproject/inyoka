@@ -13,17 +13,19 @@ import sys
 import pytz
 from hashlib import md5
 from random import randrange
+
 from django import forms
 from django.conf import settings
+from django.contrib import messages
 from django.core import validators
 from django.forms.widgets import Input
+
 from inyoka.portal.user import User
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
 from inyoka.utils.urls import href
 from inyoka.utils.local import current_request
 from inyoka.utils.mail import may_be_valid_mail, is_blocked_host
 from inyoka.utils.jabber import may_be_valid_jabber
-from inyoka.utils.flashing import flash
 from inyoka.utils.text import slugify
 
 
@@ -164,7 +166,7 @@ class CaptchaField(forms.Field):
             return True
         solution = current_request.session.get('captcha_solution')
         if not solution:
-            flash(u'Du musst Cookies aktivieren!', False)
+            messages.error(current_request, u'Du musst Cookies aktivieren!')
         elif value:
             h = md5(settings.SECRET_KEY)
             if isinstance(value, unicode):

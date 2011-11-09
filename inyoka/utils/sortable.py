@@ -66,8 +66,10 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.contrib import messages
+
+from inyoka.utils.local import current_request
 from inyoka.utils.urls import href
-from inyoka.utils.flashing import flash
 from inyoka.utils.html import escape
 
 
@@ -99,8 +101,9 @@ class Sortable(object):
         ocol = escape(order.lstrip('-'))
         if self.columns and not ocol in self.columns:
             # safes us for some bad usage that raises an exception
-            flash(u'Das ausgewählte Kriterium zum Sortieren („%s“) ist '
-                  u'nicht verfügbar.' % ocol)
+            messages.info(current_request,
+                u'Das ausgewählte Kriterium zum Sortieren („%s“) ist '
+                u'nicht verfügbar.' % ocol)
             return self.objects
 
         q = self.objects.order_by(order)
