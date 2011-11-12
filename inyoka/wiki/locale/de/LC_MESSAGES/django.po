@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2011-11-09 23:22+0100\n"
-"PO-Revision-Date: 2011-11-04 23:21+0000\n"
+"POT-Creation-Date: 2011-11-12 15:16+0100\n"
+"PO-Revision-Date: 2011-11-12 14:05+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
@@ -152,23 +152,19 @@ msgid "Create page"
 msgstr "Seite erstellen"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:21
-#, fuzzy
 msgid "Add attachment"
-msgstr "Anhang herunterladen"
+msgstr "Anlage hinzufügen"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:28
-#, fuzzy
 msgid "Attachment:"
-msgstr "Anhang herunterladen"
+msgstr "Anlage:"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:30
-#, fuzzy
 msgid "Rename to:"
-msgstr "Umbenennen"
+msgstr "Umbennen zu:"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:32
 #: inyoka/wiki/templates/wiki/action_attach_edit.html:30
-#, fuzzy
 msgid "Description:"
 msgstr "Beschreibung"
 
@@ -182,12 +178,11 @@ msgstr "Notiz:"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:39
 msgid "Overwrite exisiting attachments with same name:"
-msgstr ""
+msgstr "Anhang mit gleichem Namen überschreiben:"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:42
-#, fuzzy
 msgid "Upload attachments"
-msgstr "Anhang herunterladen"
+msgstr "Anhänge hochladen"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:43
 #: inyoka/wiki/templates/wiki/action_attach_edit.html:41
@@ -200,9 +195,8 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:46
-#, fuzzy
 msgid "Existing attachments"
-msgstr "Anhang herunterladen"
+msgstr "Bestehende Anhänge"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:49
 #, python-format
@@ -212,7 +206,8 @@ msgid ""
 "        "
 msgid_plural ""
 "\n"
-"          %(h_count)s Dateianhänge\n"
+"          To this page there are currently %(count)s attachment assigned."
+"\n"
 "        "
 msgstr[0] ""
 msgstr[1] ""
@@ -225,6 +220,10 @@ msgid ""
 "          wikipage or include it with the <code>[[Bild()]]</code> macro.\n"
 "        "
 msgstr ""
+"\n"
+"Um auf einen Anhang zu verweisen, kannst du entweder zu der "
+"entsprechenden Wikiseite verlinkten oder mit dem <code>[[Bild()]]</code> "
+"Makro einbinden."
 
 #: inyoka/wiki/templates/wiki/action_attach.html:65
 #, python-format
@@ -234,6 +233,8 @@ msgid ""
 "href=\"%(link)s\">%(author)s</a>)\n"
 "              "
 msgstr ""
+"\n"
+"(zuletzt bearbeitet am %(date)s von <a href=\"%(link)s\">%(author)s</a>)"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:71
 #, python-format
@@ -242,35 +243,35 @@ msgid ""
 "                (last modified on %(date)s by %(author)s)\n"
 "              "
 msgstr ""
+"\n"
+"(zuletzt bearbeitet am %(date)s von %(author)s)"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:80
 msgid "There are no attachments yet for this site."
-msgstr ""
+msgstr "Es gibt noch keine Anhänge für diese Seite"
 
 #: inyoka/wiki/templates/wiki/action_attach_edit.html:14
 #: inyoka/wiki/templates/wiki/action_edit.html:14
 #: inyoka/wiki/templates/wiki/page.html:48
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: inyoka/wiki/templates/wiki/action_attach_edit.html:20
 #: inyoka/wiki/templates/wiki/action_attach_edit.html:40
-#, fuzzy
 msgid "Edit attachment"
-msgstr "Anhang herunterladen"
+msgstr "Anhang bearbeiten"
 
 #: inyoka/wiki/templates/wiki/action_attach_edit.html:26
-#, fuzzy
 msgid "New attachment:"
-msgstr "Anhang herunterladen"
+msgstr "Neuer Anhang:"
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:13
 #: inyoka/wiki/templates/wiki/page.html:50
 msgid "Backlinks"
-msgstr ""
+msgstr "Backlinks"
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:18
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "        The following pages are referring to the article ”%(title)s” by\n"
@@ -278,17 +279,17 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"Die folgenden Seiten verweisen auf diesen Artikel:"
+"Die folgenden Seiten beziehen sich auf den Artikel „%(title)s“ durch "
+"manuelle Verlinkung:"
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:31
-#, fuzzy
 msgid ""
 "\n"
 "        The following pages are embedding this articles as attachment.\n"
 "      "
 msgstr ""
 "\n"
-"Die folgenden Seiten verweisen auf diesen Artikel:"
+"Die folgenden Seiten binden diesen Artikel als Anhang ein:"
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:35
 msgid ""
@@ -300,18 +301,22 @@ msgid ""
 "          attachment.\n"
 "        "
 msgstr ""
+"\n"
+"Aber der Artikel selbst ist nicht als Anhang aufgeführt, vielleicht "
+"verwenden diese Seiten den Artikel versehentlich oder eine alte Revision "
+"war ein Anhang."
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:55
 msgid ""
 "\n"
-"          This attachment is an orphan and not referecned by any site.\n"
+"          This attachment is an orphan and not referenced by any site.\n"
 "        "
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:59
 msgid ""
 "\n"
-"          This article is an orphan and not referecned by any site.\n"
+"          This article is an orphan and not referenced by any site.\n"
 "        "
 msgstr ""
 
@@ -325,7 +330,7 @@ msgstr "Löschen"
 
 #: inyoka/wiki/templates/wiki/action_diff.html:16
 msgid "Difference"
-msgstr ""
+msgstr "Unterschied"
 
 #: inyoka/wiki/templates/wiki/action_diff.html:22
 #, python-format
@@ -373,25 +378,25 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_diff.html:59
 msgid "Current revision"
-msgstr ""
+msgstr "Aktuelle Revision"
 
 #: inyoka/wiki/templates/wiki/action_edit.html:36
 #: inyoka/wiki/templates/wiki/action_edit.html:43
 #: inyoka/wiki/templates/wiki/action_edit.html:60
 msgid "Preview"
-msgstr ""
+msgstr "Vorschau"
 
 #: inyoka/wiki/templates/wiki/action_edit.html:37
 msgid "Submit"
-msgstr ""
+msgstr "Absenden"
 
 #: inyoka/wiki/templates/wiki/action_log.html:14
 msgid "Revisions"
-msgstr ""
+msgstr "Revisionen"
 
 #: inyoka/wiki/templates/wiki/action_log.html:17
 msgid "Page revisions"
-msgstr ""
+msgstr "Seitenrevisionen"
 
 #: inyoka/wiki/templates/wiki/action_log.html:23
 #, python-format
@@ -409,7 +414,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: inyoka/wiki/templates/wiki/action_log.html:32
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "          The <a href=\"%(rev_link)s\">most recent revision</a> is "
@@ -417,12 +422,9 @@ msgid ""
 "          was created by <a href=\"%(author_link)s\">%(author)s</a>.\n"
 "        "
 msgstr ""
-"\n"
-"<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von <a "
-"href=\"%(author_link)s\">%(author)s</a> erstellt."
 
 #: inyoka/wiki/templates/wiki/action_log.html:38
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "          The <a href=\"%(rev_link)s\">most recent revision</a> is "
@@ -430,9 +432,6 @@ msgid ""
 "          was created by %(author)s.\n"
 "        "
 msgstr ""
-"\n"
-"<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von "
-"%(author)s erstellt."
 
 #: inyoka/wiki/templates/wiki/action_log.html:46
 #, python-format
@@ -447,7 +446,7 @@ msgstr ""
 #: inyoka/wiki/templates/wiki/action_log.html:58
 #: inyoka/wiki/templates/wiki/action_log.html:98
 msgid "Compare"
-msgstr ""
+msgstr "Vergleichen"
 
 #: inyoka/wiki/templates/wiki/action_log.html:89
 #: inyoka/wiki/templates/wiki/action_revert.html:17
@@ -457,7 +456,7 @@ msgstr "Wiederherstelle"
 #: inyoka/wiki/templates/wiki/action_log.html:92
 #: inyoka/wiki/templates/wiki/action_manage.html:45
 msgid "Raw"
-msgstr ""
+msgstr "Rohformat"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:15
 msgid "The following features are available for this page:"
@@ -465,78 +464,69 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_manage.html:18
 msgid "Show page"
-msgstr ""
+msgstr "Seite anzeigen"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:21
-#, fuzzy
 msgid "Edit page"
-msgstr "Seite erstellen"
+msgstr "Seite bearbeiten"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:24
-#, fuzzy
 msgid "Rename page"
-msgstr "Seite erstellen"
+msgstr "Seite umbenennen"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:27
-#, fuzzy
 msgid "Delete page"
-msgstr "Seite erstellen"
+msgstr "Seite löschen"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:31
 #: inyoka/wiki/templates/wiki/action_manage.html:36
-#, fuzzy, python-format
 msgid "Mark page as “under construction“"
-msgstr ""
-"\n"
-"Verschiebe „%(page)s“ in die Baustelle"
+msgstr "Seite in die Baustelle verschieben"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:33
-#, fuzzy
 msgid "Move page to “discontinued“"
-msgstr "Als Verlassen markieren"
+msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_manage.html:34
 msgid "Move page back to the wiki"
-msgstr ""
+msgstr "Seite zurück ins Wiki verschieben"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:40
 msgid "Show log"
-msgstr ""
+msgstr "Verlauf anzeigen"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:41
 msgid "Show backlinks"
-msgstr ""
+msgstr "Backlinks anzeigen"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:44
-#, fuzzy
 msgid "Export page:"
-msgstr "Seite erstellen"
+msgstr "Seite exportieren:"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:46
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:47
 msgid "AST"
-msgstr ""
+msgstr "AST"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:48
 msgid "Export metadata"
-msgstr ""
+msgstr "Metadaten exportieren"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:51
-#, fuzzy
 msgid "Manage attachments"
-msgstr "Anhang herunterladen"
+msgstr "Anhänge verwalten"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:54
 msgid "Prune cache"
-msgstr ""
+msgstr "Cache leeren"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:57
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:13
 msgid "Link discussions"
-msgstr ""
+msgstr "Diskussionen verlinken"
 
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:17
 msgid ""
@@ -544,15 +534,16 @@ msgid ""
 "        You can choose a topic as the discussion topic of this article.\n"
 "      "
 msgstr ""
+"\n"
+"Du kannst ein Thema als Diskussionsthema dieses Artikels wählen."
 
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:21
-#, fuzzy
 msgid "Slug of the topic:"
 msgstr "Slug des Themas"
 
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:25
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: inyoka/wiki/templates/wiki/action_mv_back.html:15
 msgid "Are you sure you want to move the page into the wiki?"
@@ -766,42 +757,41 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/page.html:24
 msgid "Wiki"
-msgstr ""
+msgstr "Wik"
 
 #: inyoka/wiki/templates/wiki/page.html:32
 msgid "Advanced search"
-msgstr ""
+msgstr "Erweiterte Suche"
 
 #: inyoka/wiki/templates/wiki/page.html:35
 msgid "Recent changes"
-msgstr ""
+msgstr "Letzte Änderungen"
 
 #: inyoka/wiki/templates/wiki/page.html:36
 msgid "Tag cloud"
-msgstr ""
+msgstr "Tagwolke"
 
 #: inyoka/wiki/templates/wiki/page.html:47
-#, fuzzy
 msgid "Article"
-msgstr "Fehlender Artikel"
+msgstr "Artikel"
 
 #: inyoka/wiki/templates/wiki/page.html:49
 msgid "Log"
-msgstr ""
+msgstr "Verlauf"
 
 #: inyoka/wiki/templates/wiki/page.html:51
 msgid "More"
-msgstr ""
+msgstr "Mehr"
 
 #: inyoka/wiki/templates/wiki/page.html:58
 msgid "Discussion"
-msgstr ""
+msgstr "Diskussion"
 
 #: inyoka/wiki/templates/wiki/page.html:61
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Abbestellen"
 
 #: inyoka/wiki/templates/wiki/page.html:63
 msgid "Subscribe"
-msgstr ""
+msgstr "Abonnieren"
 

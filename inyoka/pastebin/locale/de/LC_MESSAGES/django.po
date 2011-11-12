@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2011-11-09 23:23+0100\n"
-"PO-Revision-Date: 2011-11-04 22:52+0000\n"
+"POT-Creation-Date: 2011-11-12 15:16+0100\n"
+"PO-Revision-Date: 2011-11-12 12:48+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
@@ -228,23 +228,23 @@ msgstr ""
 "Dein Eintrag wurde erfolgreich gespeichert. Du kannst den folgenden Code "
 "verwenden, um ihn in deinen Beitrag einzubinden:"
 
-#: inyoka/pastebin/views.py:51
+#: inyoka/pastebin/views.py:50
 #, python-format
 msgid "Paste number %(id)d could not be found"
 msgstr "Eintrag Nummer %(id)d konnte nicht gefunden werden."
 
-#: inyoka/pastebin/views.py:76
+#: inyoka/pastebin/views.py:71
 msgid "The deletion was canceled"
 msgstr "Das Löschen wurde abgebrochen."
 
-#: inyoka/pastebin/views.py:79
+#: inyoka/pastebin/views.py:74
 msgid "The entry in the pastebin was deleted."
 msgstr "Der Eintrag in der Ablage wurde gelöscht."
 
 #: inyoka/pastebin/templates/pastebin/add.html:14
 #: inyoka/pastebin/templates/pastebin/page.html:29
 msgid "New paste"
-msgstr ""
+msgstr "Neuer Eintrag"
 
 #: inyoka/pastebin/templates/pastebin/add.html:19
 msgid "About:"
@@ -263,10 +263,16 @@ msgid ""
 "        the channel.\n"
 "      "
 msgstr ""
+"\n"
+"Dies ist eine Ablage, wo du Fehlermeldungen, Logs, Konfigurationsdateien "
+"oder Quelltexte speichern kannst, um Forenthemen oder IRC-Kanäle nicht "
+"unnötig unleserlich zu machen. Dazu kopierst du den Text in das Textfeld "
+"und wählst die passende Sprache aus. Dann kopierst du die URL in das "
+"Thema bzw. den Kanal."
 
 #: inyoka/pastebin/templates/pastebin/add.html:32
 msgid "Submit"
-msgstr ""
+msgstr "Absenden"
 
 #: inyoka/pastebin/templates/pastebin/browse.html:20
 #, python-format
@@ -276,10 +282,13 @@ msgid ""
 "            by <a href=\"%(author_link)s\">%(author)s</a>\n"
 "          "
 msgstr ""
+"\n"
+"<a href=\"%(entry_link)s\">%(title)s</a>\n"
+"von <a href=\"%(author_link)s\">%(author)s</a>"
 
 #: inyoka/pastebin/templates/pastebin/browse.html:33
 msgid "No pastes were created yet."
-msgstr ""
+msgstr "Es wurden noch keine Einträge erstellt."
 
 #: inyoka/pastebin/templates/pastebin/delete_entry.html:15
 #, python-format
@@ -302,46 +311,42 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 #: inyoka/pastebin/templates/pastebin/display.html:23
-#, fuzzy
 msgid "Title:"
-msgstr "Titel"
+msgstr "Titel:"
 
 #: inyoka/pastebin/templates/pastebin/display.html:26
-#, fuzzy
 msgid "Author:"
-msgstr "Autor"
+msgstr "Autor:"
 
 #: inyoka/pastebin/templates/pastebin/display.html:29
-#, fuzzy
 msgid "Date:"
-msgstr "Datum"
+msgstr "Datum:"
 
 #: inyoka/pastebin/templates/pastebin/display.html:31
 msgid "Actions:"
-msgstr ""
+msgstr "Aktionen:"
 
 #: inyoka/pastebin/templates/pastebin/display.html:34
 msgid "Display entry as raw text"
-msgstr ""
+msgstr "Zeige Eintrag in Rohformat an"
 
 #: inyoka/pastebin/templates/pastebin/display.html:36
 msgid "Delete entry"
-msgstr ""
+msgstr "Eintrag löschen"
 
 #: inyoka/pastebin/templates/pastebin/display.html:41
 msgid "Pages that are referencing this entry:"
-msgstr ""
+msgstr "Seiten, die auf diesen Eintrag verweisen:"
 
 #: inyoka/pastebin/templates/pastebin/display.html:48
-#, fuzzy
 msgid "Code:"
-msgstr "Code"
+msgstr "Code:"
 
 #: inyoka/pastebin/templates/pastebin/page.html:13
 msgid "Pastebin"
-msgstr ""
+msgstr "Ablage"
 
 #: inyoka/pastebin/templates/pastebin/page.html:30
 msgid "Browse pastes"
-msgstr ""
+msgstr "Einträge durchstöbern"
 

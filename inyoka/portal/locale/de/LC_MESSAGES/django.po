@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2011-11-09 23:22+0100\n"
-"PO-Revision-Date: 2011-11-04 23:13+0000\n"
+"POT-Creation-Date: 2011-11-12 15:16+0100\n"
+"PO-Revision-Date: 2011-11-12 14:06+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
@@ -1313,34 +1313,34 @@ msgid ""
 "    Event “%(title)s“\n"
 "  "
 msgstr ""
+"\n"
+"Veranstaltung \"%(title)s\""
 
 #: inyoka/portal/templates/portal/calendar_detail.html:43
-#, fuzzy
 msgid "Details"
-msgstr "Gesendet"
+msgstr "Details"
 
 #: inyoka/portal/templates/portal/calendar_detail.html:46
 #: inyoka/portal/templates/portal/profile.html:169
 msgid "edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: inyoka/portal/templates/portal/calendar_detail.html:54
-#, fuzzy
 msgid "Download ICal"
-msgstr "Downloads"
+msgstr "ICal herunterladen"
 
 #: inyoka/portal/templates/portal/calendar_detail.html:55
 msgid "Enter in Google Calendar"
-msgstr ""
+msgstr "In Google Kalender eintragen"
 
 #: inyoka/portal/templates/portal/calendar_month.html:34
 msgid "Events"
-msgstr ""
+msgstr "Veranstaltungen"
 
 #: inyoka/portal/templates/portal/calendar_month.html:60
-#, fuzzy
-msgid "Suggest a new event"
-msgstr "Eine Veranstaltung vorschlagen"
+#: inyoka/portal/templates/portal/calendar_overview.html:53
+msgid "Suggest new event"
+msgstr "Eine neue Veranstaltung vorschlagen"
 
 #: inyoka/portal/templates/portal/calendar_overview.html:12
 #: inyoka/portal/templates/portal/index.html:29
@@ -1351,16 +1351,11 @@ msgstr "Kalender"
 #: inyoka/portal/templates/portal/calendar_overview.html:43
 #: inyoka/portal/templates/portal/index.html:30
 msgid "Upcoming events"
-msgstr ""
+msgstr "Anstehende Veranstaltungen"
 
 #: inyoka/portal/templates/portal/calendar_overview.html:51
 msgid "Currently there are no events listed."
-msgstr ""
-
-#: inyoka/portal/templates/portal/calendar_overview.html:53
-#, fuzzy
-msgid "Suggest new event"
-msgstr "Eine Veranstaltung vorschlagen"
+msgstr "Momentan stehen keine Veranstaltungen an."
 
 #: inyoka/portal/templates/portal/configuration.html:13
 #: inyoka/portal/templates/portal/overall.html:70
@@ -1369,29 +1364,28 @@ msgstr "Konfiguration"
 
 #: inyoka/portal/templates/portal/configuration.html:18
 msgid "General settings"
-msgstr ""
+msgstr "Allgemeine Einstellungen"
 
 #: inyoka/portal/templates/portal/configuration.html:25
 msgid "Various limits"
-msgstr ""
+msgstr "Diverse Limits"
 
 #: inyoka/portal/templates/portal/configuration.html:28
-#, fuzzy
 msgid "Maximum avatarsize"
-msgstr "Avatare ausblenden"
+msgstr "Maximale Avatargröße"
 
 #: inyoka/portal/templates/portal/configuration.html:29
 #: inyoka/portal/templates/portal/configuration.html:34
 msgid "Pixel"
-msgstr ""
+msgstr "Pixel"
 
 #: inyoka/portal/templates/portal/configuration.html:30
 msgid "KiB (0 = unlimited)"
-msgstr ""
+msgstr "KiB (0 = unbegrenzt)"
 
 #: inyoka/portal/templates/portal/configuration.html:33
 msgid "Maximum teamicon size"
-msgstr ""
+msgstr "Maximale Teamicon Größe"
 
 #: inyoka/portal/templates/portal/configuration.html:79
 #: inyoka/portal/templates/portal/file_edit.html:36
@@ -1408,7 +1402,7 @@ msgstr ""
 #: inyoka/portal/templates/portal/usercp/profile.html:104
 #: inyoka/portal/templates/portal/usercp/settings.html:75
 msgid "Submit"
-msgstr ""
+msgstr "Absenden"
 
 #: inyoka/portal/templates/portal/confirm.html:20
 msgid ""
@@ -1460,9 +1454,8 @@ msgid "How"
 msgstr "Wie"
 
 #: inyoka/portal/templates/portal/file_edit.html:14
-#, fuzzy
 msgid "Create"
-msgstr "Datum"
+msgstr "Erstellen"
 
 #: inyoka/portal/templates/portal/file_edit.html:18
 #: inyoka/portal/templates/portal/files.html:12
@@ -1476,36 +1469,34 @@ msgid ""
 "CAUTION: A change of the file destroys all links from articles to this "
 "file!"
 msgstr ""
+"VORSICHT: Eine Änderung der Datei zerstört alle Links von Artikel, die "
+"auf diese Datei verweisen!"
 
 #: inyoka/portal/templates/portal/file_edit.html:26
 msgid "URL:"
-msgstr ""
+msgstr "URL:"
 
 #: inyoka/portal/templates/portal/file_edit.html:28
-#, fuzzy
 msgid "Usage:"
-msgstr "Nachricht"
+msgstr "Verwendung:"
 
 #: inyoka/portal/templates/portal/file_edit.html:32
-#, fuzzy
 msgid "Description"
-msgstr "Ausführliche Beschreibung"
+msgstr "Beschreibung"
 
 #: inyoka/portal/templates/portal/files.html:17
-#, fuzzy
 msgid "Create new static file"
-msgstr "Portal | kann statische Dateien bearbeiten"
+msgstr "Neue statische Datei erstellen"
 
 #: inyoka/portal/templates/portal/files.html:21
 msgid "Identifier"
-msgstr ""
+msgstr "Bezeichner"
 
 #: inyoka/portal/templates/portal/files.html:23
 #: inyoka/portal/templates/portal/pages.html:22
 #: inyoka/portal/templates/portal/privmsg/index.html:70
-#, fuzzy
 msgid "Actions"
-msgstr "Wohnort"
+msgstr "Aktionen"
 
 #: inyoka/portal/templates/portal/files.html:32
 #: inyoka/portal/templates/portal/group_edit.html:17
@@ -1519,11 +1510,11 @@ msgstr "Wohnort"
 #: inyoka/portal/templates/portal/user_edit_status.html:13
 #: inyoka/portal/templates/portal/user_overview.html:12
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: inyoka/portal/templates/portal/files.html:39
 msgid "There are no static files, create the first one now!"
-msgstr ""
+msgstr "Es gibt keine statischen Dateien, erstelle jetzt die erste!"
 
 #: inyoka/portal/templates/portal/files_delete.html:12
 #, python-format
@@ -1538,10 +1529,12 @@ msgstr ""
 #: inyoka/portal/templates/portal/group.html:18
 msgid "This group is private and the membership is not shown public."
 msgstr ""
+"Diese Gruppe ist privat, die Mitgliedschaft wird nicht öffentlich "
+"angezeigt."
 
 #: inyoka/portal/templates/portal/group.html:20
 msgid "This is a public group."
-msgstr ""
+msgstr "Diese Gruppe ist öffentlich"
 
 #: inyoka/portal/templates/portal/group.html:24
 #, python-format
@@ -1554,25 +1547,27 @@ msgid_plural ""
 "      The group “%(name)s“ has %(count)s members:\n"
 "    "
 msgstr[0] ""
+"\n"
+"Die Gruppe „%(name)s” hat %(count)s Mitglied:"
 msgstr[1] ""
+"\n"
+"Die Gruppe „%(name)s” hat %(count)s Mitglieder:"
 
 #: inyoka/portal/templates/portal/group_edit.html:15
 msgid "New group"
-msgstr ""
+msgstr "Neue Gruppe"
 
 #: inyoka/portal/templates/portal/group_edit.html:25
-#, fuzzy
 msgid "Groupconfiguration"
-msgstr "Konfiguration"
+msgstr "Gruppenkonfiguration"
 
 #: inyoka/portal/templates/portal/group_edit.html:31
 msgid "will be shown in the groupoverview and the userprofile"
-msgstr ""
+msgstr "wird in der Gruppenübersicht und im Benutzerprofil angezeigt"
 
 #: inyoka/portal/templates/portal/group_edit.html:35
-#, fuzzy
 msgid "Teamicon:"
-msgstr "Teamicon"
+msgstr "Teamicon:"
 
 #: inyoka/portal/templates/portal/group_edit.html:40
 #, python-format
@@ -1584,20 +1579,22 @@ msgid ""
 "resized.\n"
 "        "
 msgstr ""
+"\n"
+"Bitte beachte, dass das Teamicon nicht größer als %(width)sx%(height)s "
+"Pixel sein darf.\n"
+"Alles, was dieses Limit überschreitet, wird automatische verkleinert."
 
 #: inyoka/portal/templates/portal/group_edit.html:48
-#, fuzzy
 msgid "Delete teamicon"
-msgstr "Team-Icon löschen"
+msgstr "Teamicon löschen"
 
 #: inyoka/portal/templates/portal/group_edit.html:53
-#, fuzzy
 msgid "Forum privileges:"
-msgstr "Forumsprivilegien"
+msgstr "Forenberechtigungen:"
 
 #: inyoka/portal/templates/portal/group_edit.html:54
 msgid "Please turn javascript on to edit the privileges."
-msgstr ""
+msgstr "Bitte aktiviere JavaScript, um die Berechtigungen zu änder."
 
 #: inyoka/portal/templates/portal/grouplist.html:16
 #, python-format
@@ -1605,36 +1602,36 @@ msgid "In total there is %(count)s group, you are in %(usercount)s group."
 msgid_plural ""
 "In total there are %(count)s groups, you are in %(usercount)s of them "
 "(printed bold)."
-msgstr[0] ""
+msgstr[0] "Insgesamt gibt es %(count)s Gruppe, du bist in %(usercount)s Gruppe."
 msgstr[1] ""
+"Insgesamt gibt es %(count)s Gruppen, du bist in %(usercount)s davon (fett"
+" gedruckt)."
 
 #: inyoka/portal/templates/portal/grouplist.html:24
 msgid "Create new group"
-msgstr ""
+msgstr "Neue Gruppe erstellen"
 
 #: inyoka/portal/templates/portal/grouplist.html:29
 #: inyoka/portal/templates/portal/profile.html:53
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:39
-#, fuzzy
 msgid "Name"
-msgstr "Benutzername"
+msgstr "Name"
 
 #: inyoka/portal/templates/portal/index.html:13
 msgid "Portal"
-msgstr ""
+msgstr "Portal"
 
 #: inyoka/portal/templates/portal/index.html:40
 msgid "There are no upcoming events."
-msgstr ""
+msgstr "Es stehen keine Veranstaltungen bevor."
 
 #: inyoka/portal/templates/portal/index.html:72
 msgid "Last update:"
-msgstr ""
+msgstr "Letzte Aktualisierung:"
 
 #: inyoka/portal/templates/portal/index.html:73
-#, fuzzy
 msgid "Created:"
-msgstr "Bereich:"
+msgstr "Erstellt:"
 
 #: inyoka/portal/templates/portal/index.html:78
 #, python-format
@@ -1647,7 +1644,11 @@ msgid_plural ""
 "              %(count)s comments\n"
 "            "
 msgstr[0] ""
+"\n"
+"%(count)s Kommentar"
 msgstr[1] ""
+"\n"
+"%(count)s Kommentare"
 
 #: inyoka/portal/templates/portal/index.m.html:18
 msgid "Messages"
@@ -1666,9 +1667,8 @@ msgstr "Abonnements"
 #: inyoka/portal/templates/portal/login.html:15
 #: inyoka/portal/templates/portal/login.html:50
 #: inyoka/portal/templates/portal/login.m.html:46
-#, fuzzy
 msgid "Login"
-msgstr "Letzte Anmeldung"
+msgstr "Anmelden"
 
 #: inyoka/portal/templates/portal/login.html:18
 #: inyoka/portal/templates/portal/login.m.html:18
@@ -1680,6 +1680,10 @@ msgid ""
 "      cookies and <a href=\"%(link)s\">reload the page</a>.\n"
 "    "
 msgstr ""
+"\n"
+"Aus Sicherheitsgründen musst du Cookies erlauben, um dich anzumelden. "
+"Bitte aktiviere Cookies und <a href=\"%(link)s\">lade die Seite "
+"erneut</a>."
 
 #: inyoka/portal/templates/portal/login.html:24
 #: inyoka/portal/templates/portal/login.m.html:24
@@ -1691,6 +1695,9 @@ msgid ""
 "      privacy policy</a>.\n"
 "    "
 msgstr ""
+"\n"
+"Weitere Informationen zu Cookies findest du in unserer <a "
+"href=\"%(link)s\">Datenschutzbestimmung</a>."
 
 #: inyoka/portal/templates/portal/login.html:31
 #: inyoka/portal/templates/portal/login.m.html:31
@@ -1703,6 +1710,11 @@ msgid ""
 "href=\"%(lost_password)s\">request a new one</a>.\n"
 "    "
 msgstr ""
+"\n"
+"Du kannst dich hier anmelden, wenn du bereits <a "
+"href=\"%(register)s\">registriert bist</a>.\n"
+"Falls du dein Passwort verloren hast, kannst du dir <a "
+"href=\"%(lost_password)s\">ein neues zusenden lassen</a>."
 
 #: inyoka/portal/templates/portal/login.html:42
 msgid ""
@@ -1711,6 +1723,10 @@ msgid ""
 "          Otherwise, unauthorized persons may enter your account.\n"
 "        "
 msgstr ""
+"\n"
+"Wähle diese Option nicht aus, wenn du dich an einem öffentlichen "
+"befindest, da sonst fremde Personen möglicherweise Zugang zu deinem Konto"
+" erhalten."
 
 #: inyoka/portal/templates/portal/login_text.html:4
 #: inyoka/portal/templates/portal/login_text.m.html:4
@@ -1771,18 +1787,17 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/lost_password.html:14
 #: inyoka/portal/templates/portal/lost_password.html:16
-#, fuzzy
-msgid "Forgotten Password"
-msgstr "Neues Passwort"
+#: inyoka/portal/templates/portal/set_new_password.html:12
+msgid "Lost password"
+msgstr "Passwort vergessen"
 
 #: inyoka/portal/templates/portal/lost_password.html:18
-msgid "You have forgotten your password? You can obtain a new one here"
+msgid "You have forgotten your password? You can obtain a new one here."
 msgstr ""
 
 #: inyoka/portal/templates/portal/lost_password.html:26
-#, fuzzy
 msgid "Request new password"
-msgstr "Neues Passwort bestätigen"
+msgstr "Neues Passwort anfordern"
 
 #: inyoka/portal/templates/portal/memberlist.html:12
 #: inyoka/portal/templates/portal/memberlist.html:16
@@ -1803,32 +1818,32 @@ msgstr "Mitglieder"
 
 #: inyoka/portal/templates/portal/memberlist.html:18
 msgid "Choose the user you want to edit:"
-msgstr ""
+msgstr "Wähle den Benutzer aus, den du bearbeiten möchtest:"
 
 #: inyoka/portal/templates/portal/memberlist.html:22
-#, fuzzy
 msgid "Select"
-msgstr "Löschen"
+msgstr "Auswählen"
 
 #: inyoka/portal/templates/portal/memberlist.html:23
-#, fuzzy
 msgid ""
 "\n"
 "          You can also enter an e-mail address instead of a username.\n"
 "        "
-msgstr "Du musst eine E-Mail-Adresse angeben"
+msgstr ""
+"\n"
+"Du kannst auch eine E-Mail Adresse anstelle eines Benutzernamens angeben."
 
 #: inyoka/portal/templates/portal/memberlist.html:29
 msgid "Show users with special rights"
-msgstr ""
+msgstr "Zeige Nutzer mit Sonderrechten"
 
 #: inyoka/portal/templates/portal/memberlist.html:32
 msgid "Create a new user"
-msgstr ""
+msgstr "Einen neuen Benutzer erstellen."
 
 #: inyoka/portal/templates/portal/memberlist.html:56
 msgid "No users were found."
-msgstr ""
+msgstr "Es wurden keine Benutzer gefunden."
 
 #: inyoka/portal/templates/portal/openid_connect.html:13
 msgid "Connect OpenID"
@@ -1904,16 +1919,14 @@ msgid "Static pages"
 msgstr "Statische Seiten"
 
 #: inyoka/portal/templates/portal/page_delete.html:14
-#, fuzzy, python-format
+#, python-format
 msgid "Do you really want to delete the page “%(title)s“?"
-msgstr ""
-"\n"
-"Möchtest du die Datei „%(file)s“ wirklich löschen?"
+msgstr "Möchtest du die Seite „%(title)s“ wirklich löschen?"
 
 #: inyoka/portal/templates/portal/page_edit.html:17
-#, fuzzy
+#: inyoka/portal/templates/portal/pages.html:16
 msgid "Create new page"
-msgstr "Ort neuer Wiki-Seiten"
+msgstr "Neue Seite erstellen"
 
 #: inyoka/portal/templates/portal/page_edit.html:26
 #: inyoka/portal/templates/portal/page_edit.html:32
@@ -1925,64 +1938,57 @@ msgstr "Ort neuer Wiki-Seiten"
 msgid "Preview"
 msgstr "Vorschau"
 
-#: inyoka/portal/templates/portal/pages.html:16
-#, fuzzy
-msgid "Create a new page"
-msgstr "Ort neuer Wiki-Seiten"
-
 #: inyoka/portal/templates/portal/pages.html:20
-#, fuzzy
 msgid "Key"
-msgstr "GPG Schlüssel"
+msgstr "Schlüssel"
 
 #: inyoka/portal/templates/portal/pages.html:38
 msgid "There are no static pages, create the first one now!"
-msgstr ""
+msgstr "Es gibt keine statischen Seiten, erstelle jetzt die erste!"
 
 #: inyoka/portal/templates/portal/profile.html:34
 msgid "Edit user"
-msgstr ""
+msgstr "Benutzer bearbeiten"
 
 #: inyoka/portal/templates/portal/profile.html:39
 msgid "Don’t watch anymore"
-msgstr ""
+msgstr "Nicht mehr beobachten"
 
 #: inyoka/portal/templates/portal/profile.html:42
 msgid "Watch"
-msgstr ""
+msgstr "Beobachten"
 
 #: inyoka/portal/templates/portal/profile.html:47
 #, python-format
 msgid "%(name)s is a system user."
-msgstr ""
+msgstr "%(name)s ist ein Systembenutzer"
 
 #: inyoka/portal/templates/portal/profile.html:49
 #, python-format
 msgid "%(name)s is not available."
-msgstr ""
+msgstr "%(name)s ist nicht verfügbar."
 
 #: inyoka/portal/templates/portal/profile.html:57
 #: inyoka/portal/templates/portal/privmsg/index.html:18
 #, python-format
 msgid "Avatar of %(user)s"
-msgstr ""
+msgstr "Avatar von %(user)s"
 
 #: inyoka/portal/templates/portal/profile.html:91
 msgid "show"
-msgstr ""
+msgstr "anzeigen"
 
 #: inyoka/portal/templates/portal/profile.html:143
 #: inyoka/portal/templates/portal/privmsg/overall.html:10
-#, fuzzy
 msgid "Private message"
-msgstr "Ich eine Nachricht erhalten habe"
+msgstr "Private Nachricht"
 
 #: inyoka/portal/templates/portal/profile.html:147
 #: inyoka/portal/templates/portal/user_edit_groups.html:12
 #: inyoka/portal/templates/portal/user_edit_groups.html:20
 #: inyoka/portal/templates/portal/user_overview.html:32
 msgid "Group memberships"
-msgstr ""
+msgstr "Gruppenmitgliedschaften"
 
 #: inyoka/portal/templates/portal/profile.html:158
 #, python-format
@@ -1991,17 +1997,13 @@ msgid ""
 "            “%(name)s“ is no member of any group.\n"
 "           "
 msgstr ""
-
-#: inyoka/portal/templates/portal/set_new_password.html:12
-#, fuzzy
-msgid "Lost password"
-msgstr "Altes Passwort"
+"\n"
+"„%(name)s” ist kein Mitglied einer Gruppe."
 
 #: inyoka/portal/templates/portal/set_new_password.html:14
 #: inyoka/portal/templates/portal/set_new_password.html:30
-#, fuzzy
 msgid "Set new password"
-msgstr "Neues Passwort"
+msgstr "Neues Passwort erstellen"
 
 #: inyoka/portal/templates/portal/set_new_password.html:16
 #, python-format
@@ -2010,19 +2012,20 @@ msgid ""
 "    You can set a new password for your account “%(name)s“ here.\n"
 "  "
 msgstr ""
+"\n"
+"Du kannst hier ein neues Passwort für dein Konto „%(name)s“ erstellen."
 
 #: inyoka/portal/templates/portal/set_new_password.html:21
-#, fuzzy
 msgid "New password:"
-msgstr "Neues Passwort"
+msgstr "Neues Passwort:"
 
 #: inyoka/portal/templates/portal/set_new_password.html:25
 msgid "Confirm:"
-msgstr ""
+msgstr "Bestätigen:"
 
 #: inyoka/portal/templates/portal/special_rights.html:12
 msgid "User with special privileges"
-msgstr ""
+msgstr "Nutzer mit Sonderrechten"
 
 #: inyoka/portal/templates/portal/special_rights.html:17
 #, python-format
@@ -2035,7 +2038,11 @@ msgid_plural ""
 "      %(n)s users have special privileges:\n"
 "    "
 msgstr[0] ""
+"\n"
+"%(n)s Benutzer hat besondere Berechtigungen:"
 msgstr[1] ""
+"\n"
+"%(n)s Benutzer haben besondere Berechtigungen:"
 
 #: inyoka/portal/templates/portal/styles.html:18
 msgid ""
@@ -2061,27 +2068,23 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/user_edit_groups.html:23
 msgid "Available groups"
-msgstr ""
+msgstr "Verfügbare Gruppen"
 
 #: inyoka/portal/templates/portal/user_edit_groups.html:25
-#, fuzzy
 msgid "Add group"
-msgstr "Primäre Gruppe"
+msgstr "Gruppe hinzufügen"
 
 #: inyoka/portal/templates/portal/user_edit_groups.html:26
-#, fuzzy
 msgid "Remove group"
-msgstr "Primäre Gruppe"
+msgstr "Gruppe entfernen"
 
 #: inyoka/portal/templates/portal/user_edit_groups.html:28
-#, fuzzy
 msgid "Membership"
-msgstr "Mitglieder"
+msgstr "Mitgliedschaft"
 
 #: inyoka/portal/templates/portal/user_edit_groups.html:38
-#, fuzzy
 msgid "delete"
-msgstr "Löschen"
+msgstr "löschen"
 
 #: inyoka/portal/templates/portal/user_edit_password.html:12
 #: inyoka/portal/templates/portal/user_edit_password.html:20
@@ -2101,10 +2104,14 @@ msgid ""
 "            (Derived from %(grouplist)s)\n"
 "          "
 msgstr ""
+"\n"
+"(Von %(grouplist)s geerbt)"
 
 #: inyoka/portal/templates/portal/user_edit_privileges.html:38
 msgid "Sorry, you need to enable javascript to edit forum privileges."
 msgstr ""
+"Entschuldige, du musst JavaScript aktivieren, um Forenberechtigungen zu "
+"bearbeiten."
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:12
 #: inyoka/portal/templates/portal/user_overview.html:30
@@ -2115,15 +2122,13 @@ msgid "Profile"
 msgstr "Profil"
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:21
-#, fuzzy
 msgid "Usertitle:"
-msgstr "Artikel:"
+msgstr "Benutzertitel:"
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:31
 #: inyoka/portal/templates/portal/usercp/profile.html:20
-#, fuzzy
 msgid "Avatar settings"
-msgstr "Einstellungen"
+msgstr "Avatar Einstellungen"
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:36
 #, python-format
@@ -2132,44 +2137,48 @@ msgid ""
 "      (Will be scaled to %(width)sx%(height)s)\n"
 "    "
 msgstr ""
+"\n"
+"(Wird auf %(width)sx%(height)s skaliert)"
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:39
 #: inyoka/portal/templates/portal/usercp/profile.html:46
-#, fuzzy
 msgid "Contact addresses"
-msgstr "E-Mail Adresse"
+msgstr "Kontaktadressen"
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:41
 #: inyoka/portal/templates/portal/usercp/profile.html:69
-#, fuzzy
 msgid "Miscellaneous settings"
-msgstr "Portal | kann diverse Einstellungen bearbeiten"
+msgstr "Verschiedene Einstellungen"
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:44
 #: inyoka/portal/templates/portal/usercp/profile.html:72
 msgid "Geographical location"
-msgstr ""
+msgstr "Geographische Lage"
 
 #: inyoka/portal/templates/portal/user_edit_settings.html:25
 #: inyoka/portal/templates/portal/usercp/settings.html:27
 msgid "Interface"
-msgstr ""
+msgstr "Oberfläche"
 
 #: inyoka/portal/templates/portal/user_edit_status.html:23
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "          Last login: %(date)s\n"
 "        "
-msgstr "Letzte Anmeldung"
+msgstr ""
+"\n"
+"Letzte Anmeldung: %(date)s"
 
 #: inyoka/portal/templates/portal/user_edit_status.html:26
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "          Member since: %(date)s\n"
 "        "
-msgstr "Mitglied seit"
+msgstr ""
+"\n"
+"Mitglied seit: %(date)s"
 
 #: inyoka/portal/templates/portal/user_edit_status.html:30
 #, python-format
@@ -2178,39 +2187,34 @@ msgid ""
 "            <a href=\"%(link)s\">Send an email</a> to %(name)s\n"
 "          "
 msgstr ""
+"\n"
+"<a href=\"%(link)s\">Eine E-Mail</a> an %(name)s senden"
 
 #: inyoka/portal/templates/portal/user_edit_status.html:37
 msgid "Resend activation mail"
-msgstr ""
+msgstr "Aktivierungsmail erneut zusenden"
 
 #: inyoka/portal/templates/portal/user_edit_status.html:40
-#, fuzzy
 msgid " Activation link:"
-msgstr "Aktivierungsstatus"
+msgstr "Aktivierungslink:"
 
 #: inyoka/portal/templates/portal/user_mail.html:13
 #: inyoka/portal/templates/portal/user_mail.html:19
-#, fuzzy
 msgid "Compose mail"
-msgstr "Nachricht verfassen"
+msgstr "E-Mail verfassen"
 
 #: inyoka/portal/templates/portal/user_mail.html:24
-#, fuzzy
 msgid "Send mail"
-msgstr "Gesendet"
+msgstr "E-Mail absenden"
 
 #: inyoka/portal/templates/portal/user_new.html:13
-msgid "Create user"
-msgstr ""
-
 #: inyoka/portal/templates/portal/user_new.html:18
-msgid "Create a user"
-msgstr ""
+msgid "Create user"
+msgstr "Nutzer erstellen"
 
 #: inyoka/portal/templates/portal/user_new.html:21
-#, fuzzy
 msgid "Authentification:"
-msgstr "Authentifizieren"
+msgstr "Authentifizierung:"
 
 #: inyoka/portal/templates/portal/user_new.html:28
 msgid ""
@@ -2218,17 +2222,18 @@ msgid ""
 "      Note: More settings will be available after creating the user.\n"
 "    "
 msgstr ""
+"\n"
+"Hinweis: Nach der Erstellung des Benutzers werden mehr Einstellungen "
+"verfügbar sein."
 
 #: inyoka/portal/templates/portal/user_overview.html:35
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:41
-#, fuzzy
 msgid "State"
-msgstr "Datum"
+msgstr "Status"
 
 #: inyoka/portal/templates/portal/user_overview.html:42
-#, fuzzy
 msgid "View public profile"
-msgstr "Öffentliches Profi"
+msgstr "Öffentliches Profil ansehen"
 
 #: inyoka/portal/templates/portal/whoisonline.html:15
 #, python-format
@@ -2319,7 +2324,7 @@ msgstr "Benutzer mit grünem Benutzernamen gehören zum Team."
 
 #: inyoka/portal/templates/portal/privmsg/index.html:20
 msgid "From:"
-msgstr ""
+msgstr "Von:"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:23
 #: inyoka/portal/templates/portal/privmsg/index.m.html:39
@@ -2327,14 +2332,12 @@ msgid "To:"
 msgstr "An:"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:27
-#, fuzzy
 msgid "Subject:"
-msgstr "Betreff"
+msgstr "Betreff:"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:29
-#, fuzzy
 msgid "Date:"
-msgstr "Datum"
+msgstr "Datum:"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:38
 #: inyoka/portal/templates/portal/privmsg/index.html:103
@@ -2367,9 +2370,8 @@ msgid "Archive"
 msgstr "Archiv"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:50
-#, fuzzy
 msgid "Delete message"
-msgstr "Willkommensnachricht lesen"
+msgstr "Nachricht löschen"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:55
 #, python-format
@@ -2379,22 +2381,25 @@ msgid ""
 "        <a href=\"%(moderators)s\">moderator</a>.\n"
 "      "
 msgstr ""
+"\n"
+"Wenn du eine Spam Nachricht erhalten hast, leite diese bitte an einen <a "
+"href=\"%(moderators)s\">Moderator</a> weiter."
 
 #: inyoka/portal/templates/portal/privmsg/index.html:67
 msgid "From"
-msgstr ""
+msgstr "Von"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:129
 msgid "Currently there are no messages in this folder."
-msgstr ""
+msgstr "Momentan befinden sich keine Nachrichten in diesem Ordner."
 
 #: inyoka/portal/templates/portal/privmsg/index.html:142
 msgid "Split messages into multiple pages"
-msgstr ""
+msgstr "Nachrict auf mehrere Seiten aufteilen"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:146
 msgid "Display all messages on one page"
-msgstr ""
+msgstr "Alle Nachrichten auf einer Seite anzeigen"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:152
 #: inyoka/portal/templates/portal/privmsg/index.m.html:28
@@ -2404,9 +2409,8 @@ msgid "Compose message"
 msgstr "Nachricht verfassen"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:153
-#, fuzzy
 msgid "Delete marked messages"
-msgstr "Willkommensnachricht lesen"
+msgstr "Markierte Nachrichten löschen"
 
 #: inyoka/portal/templates/portal/privmsg/index.m.html:16
 #: inyoka/portal/templates/portal/privmsg/overall.html:17
@@ -2447,9 +2451,8 @@ msgstr ""
 "%(subject)s von %(author)s"
 
 #: inyoka/portal/templates/portal/privmsg/new.html:27
-#, fuzzy
 msgid "Send message"
-msgstr "Nachricht verfassen"
+msgstr "Nachricht versenden"
 
 #: inyoka/portal/templates/portal/privmsg/new.m.html:24
 msgid "Send"
@@ -2463,21 +2466,23 @@ msgid ""
 "      need to enter your old password.\n"
 "    "
 msgstr ""
+"\n"
+"Du kannst mit diesem Formular dein Passwort ändern. Aus "
+"Sicherheitsgründen musst du dein altes Passwort eingeben."
 
 #: inyoka/portal/templates/portal/usercp/change_password.html:26
 #: inyoka/portal/templates/portal/usercp/change_password.html:59
-#, fuzzy
 msgid "Generated password:"
-msgstr "Passwort ändern"
+msgstr "Generiertes Passwort:"
 
 #: inyoka/portal/templates/portal/usercp/change_password.html:31
 #: inyoka/portal/templates/portal/usercp/change_password.html:58
 msgid "Generate a new one"
-msgstr ""
+msgstr "Ein neues generieren"
 
 #: inyoka/portal/templates/portal/usercp/change_password.html:33
 msgid "Generate a random password"
-msgstr ""
+msgstr "Generiere ein zufälliges Passwort"
 
 #: inyoka/portal/templates/portal/usercp/deactivate.html:12
 #: inyoka/portal/templates/portal/usercp/deactivate.html:16
@@ -2497,6 +2502,10 @@ msgid ""
 "    will remain.\n"
 "  "
 msgstr ""
+"\n"
+"Du kannst hier dein Konto „%(name)s“ deaktivieren. Wenn du das tust, "
+"werden wir alle deine persönlichen Daten löschen. Forenbeiträge und "
+"Wikiartikel werden allerdings erhalten bleiben."
 
 #: inyoka/portal/templates/portal/usercp/deactivate.html:22
 #, python-format
@@ -2508,6 +2517,10 @@ msgid ""
 "    again.\n"
 "  "
 msgstr ""
+"\n"
+"Bitte beachte, dass die Deaktivierung deines Kontos nicht rückgängig "
+"gemacht werden kann. Du wirst danach nicht mehr in der Lage sein, dich "
+"mit deinem Konto „%(name)s” wieder anzumelden."
 
 #: inyoka/portal/templates/portal/usercp/deactivate.html:28
 msgid ""
@@ -2515,11 +2528,13 @@ msgid ""
 "      To deactivate your account, you need to enter your password.\n"
 "    "
 msgstr ""
+"\n"
+"Bitte gib dein Passwort ein, um dein Konto zu deaktivieren."
 
 #: inyoka/portal/templates/portal/usercp/deactivate.html:33
-#, fuzzy, python-format
+#, python-format
 msgid "Deactivate my account “%(name)s“"
-msgstr "Konto deaktivieren"
+msgstr "Deaktiviere mein Konto „%(name)s“"
 
 #: inyoka/portal/templates/portal/usercp/index.html:31
 #: inyoka/portal/templates/portal/usercp/index.html:33
@@ -2529,17 +2544,15 @@ msgstr "Benutzerseite"
 
 #: inyoka/portal/templates/portal/usercp/overall.html:12
 msgid "Control panel"
-msgstr ""
+msgstr "Kontrollzentrum"
 
 #: inyoka/portal/templates/portal/usercp/overall.html:17
-#, fuzzy
 msgid "Overview"
-msgstr "Vorschau"
+msgstr "Übersicht"
 
 #: inyoka/portal/templates/portal/usercp/profile.html:22
-#, fuzzy
 msgid "Avatar:"
-msgstr "Avatar"
+msgstr "Avatar:"
 
 #: inyoka/portal/templates/portal/usercp/profile.html:27
 #, python-format
@@ -2550,11 +2563,14 @@ msgid ""
 "          exceeds this limit will automatically be resized.\n"
 "        "
 msgstr ""
+"\n"
+"Bitte beachte, dass die maximale Größe eines Avatars %(width)sx%(height)s"
+" Pixel und %(size)s KiB beträgt. Avatare, die dieses Limit überschreiten,"
+" werden automatisch verkleinert."
 
 #: inyoka/portal/templates/portal/usercp/profile.html:37
-#, fuzzy
 msgid "Gravatar:"
-msgstr "Gravatar benutzen"
+msgstr "Gravatar:"
 
 #: inyoka/portal/templates/portal/usercp/profile.html:49
 msgid ""
@@ -2565,24 +2581,26 @@ msgid ""
 "          “show in profile“ box.\n"
 "        "
 msgstr ""
+"\n"
+"Standardmäßig werden deine E-Mail und Jabber Adresse nicht öffentlich "
+"angezeigt. Um sie zu veröffentlichen, aktiviere die \"Im Profil "
+"anzeigen\" Box."
 
 #: inyoka/portal/templates/portal/usercp/profile.html:62
-#, fuzzy
 msgid "Show in profile"
-msgstr "Öffentliches Profi"
+msgstr "Im Profil anzeigen"
 
 #: inyoka/portal/templates/portal/usercp/profile.html:74
 msgid "OpenIDs"
-msgstr ""
+msgstr "OpenIDs"
 
 #: inyoka/portal/templates/portal/usercp/profile.html:77
 msgid "Selected openIDs will be removed!"
-msgstr ""
+msgstr "Die gewählten OpenIDs werden gelöscht!"
 
 #: inyoka/portal/templates/portal/usercp/profile.html:79
-#, fuzzy
 msgid "No openID is associated with your account."
-msgstr "Die OpenID wurde erfolgreich mit deinem Konto verknüpft."
+msgstr "Es ist keine OpenID mit deinem Konto verknüpft."
 
 #: inyoka/portal/templates/portal/usercp/profile.html:82
 msgid ""
@@ -2590,6 +2608,9 @@ msgid ""
 "      To associate an openID with your account, login with your openID.\n"
 "    "
 msgstr ""
+"\n"
+"Um eine OpenID mit deinem Konto zu verknüpfen, melde dich mit deine "
+"OpenID an."
 
 #: inyoka/portal/templates/portal/usercp/profile.html:94
 #, python-format
@@ -2601,54 +2622,50 @@ msgid ""
 "      rules</a>.\n"
 "    "
 msgstr ""
+"\n"
+"Die Signatur wird an jeden Beitrag angehangen. Sie kann nicht länger als "
+"%(n)s Zeichen sein. Bitte beachte die <a "
+"href=\"%(link)s\">Signaturregeln</a>."
 
 #: inyoka/portal/templates/portal/usercp/settings.html:24
-#, fuzzy
 msgid "Edit your subscriptions"
-msgstr "Abonnements"
+msgstr "Bearbeite deine Abonnements."
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:19
-#, fuzzy
 msgid "Filter"
-msgstr "Profil"
+msgstr "Filter"
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:38
 msgid "(De)select all"
-msgstr ""
+msgstr "Alle an- / abwählen"
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:40
-#, fuzzy
 msgid "Read"
-msgstr "Bereich:"
+msgstr "Lesen"
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:55
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:56
-#, fuzzy
 msgid "Show unread posts"
-msgstr "Letzer gelesener Beitrag"
+msgstr "Zeige ungelesene Beiträge"
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:64
 msgid "Changes since last visit"
-msgstr ""
+msgstr "Änderungen seit meinem letzten Besuch"
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:76
-#, fuzzy
 msgid ""
 "\n"
-"              You did not yet subscribed to any posts or articles.\n"
+"              You did not yet subscribed to any topics or articles.\n"
 "            "
 msgstr ""
-"\n"
-"Du hast bisher keine Themen oder Artikel abonniert."
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:84
 msgid "Delete selected subscriptions"
-msgstr ""
+msgstr "Lösche gewählte Abonnements"
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:85
-#, fuzzy, python-format
 msgid "Mark selected subscriptions as read"
-msgstr "Ein Abonnement wurde als gelesen markiert."
+msgstr "Markiere gewählte Abonnements als gelesen"
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.m.html:25
 msgid "Topic:"

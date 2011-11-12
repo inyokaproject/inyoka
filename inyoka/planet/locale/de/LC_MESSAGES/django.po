@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2011-11-09 23:23+0100\n"
-"PO-Revision-Date: 2011-11-04 22:54+0000\n"
+"POT-Creation-Date: 2011-11-12 15:16+0100\n"
+"PO-Revision-Date: 2011-11-12 12:49+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
@@ -105,43 +105,42 @@ msgstr "Der Eintrag „%(title)s” wurde erfolgreich wiederhergestellt."
 
 #: inyoka/planet/templates/planet/blog_edit.html:15
 msgid "Add blog"
-msgstr ""
+msgstr "Blog hinzufügen"
 
 #: inyoka/planet/templates/planet/blog_edit.html:26
 #: inyoka/planet/templates/planet/suggest.html:32
 msgid "Submit"
-msgstr ""
+msgstr "Absenden"
 
 #: inyoka/planet/templates/planet/blog_list.html:12
 #: inyoka/planet/templates/planet/page.html:70
 msgid "Bloglist"
-msgstr ""
+msgstr "Blogliste"
 
 #: inyoka/planet/templates/planet/blog_list.html:15
 #: inyoka/planet/templates/planet/page.html:48
 msgid "Blogs"
-msgstr ""
+msgstr "Blogs"
 
 #: inyoka/planet/templates/planet/blog_list.html:16
 msgid "Add new blog"
-msgstr ""
+msgstr "Neuen Blog hinzufügen"
 
 #: inyoka/planet/templates/planet/blog_list.html:26
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: inyoka/planet/templates/planet/blog_list.html:28
 msgid "Latest update"
-msgstr ""
+msgstr "Letzte Aktualisierung"
 
 #: inyoka/planet/templates/planet/blog_list.html:29
 msgid "Activ"
-msgstr ""
+msgstr "Aktiv"
 
 #: inyoka/planet/templates/planet/blog_list.html:37
-#, fuzzy
 msgid "No entry"
-msgstr "Eintrag"
+msgstr "Kein Eintrag"
 
 #: inyoka/planet/templates/planet/hide_entry.html:11
 msgid "Are you sure you want to restore the entry?"
@@ -213,18 +212,17 @@ msgstr "Es wurden keine Artikel aggregiert."
 #: inyoka/planet/templates/planet/page.html:13
 #: inyoka/planet/templates/planet/page.html:29
 msgid "Planet"
-msgstr ""
+msgstr "Planet"
 
 #: inyoka/planet/templates/planet/page.html:38
-#, fuzzy
 msgid "Export blogs"
-msgstr "Index des Blogs"
+msgstr "Blogs exportieren"
 
 #: inyoka/planet/templates/planet/page.html:66
 msgid "Configuration"
-msgstr ""
+msgstr "Konfiguration"
 
 #: inyoka/planet/templates/planet/suggest.html:12
 msgid "Suggest blog"
-msgstr ""
+msgstr "Ein Blog vorschlagen"
 

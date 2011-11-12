@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-09 23:23+0100\n"
+"POT-Creation-Date: 2011-11-12 15:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -224,16 +224,16 @@ msgid ""
 "include it in your post:"
 msgstr ""
 
-#: inyoka/pastebin/views.py:51
+#: inyoka/pastebin/views.py:50
 #, python-format
 msgid "Paste number %(id)d could not be found"
 msgstr ""
 
-#: inyoka/pastebin/views.py:76
+#: inyoka/pastebin/views.py:71
 msgid "The deletion was canceled"
 msgstr ""
 
-#: inyoka/pastebin/views.py:79
+#: inyoka/pastebin/views.py:74
 msgid "The entry in the pastebin was deleted."
 msgstr ""
 

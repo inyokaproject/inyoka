@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-09 23:22+0100\n"
+"POT-Creation-Date: 2011-11-12 15:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1286,7 +1286,8 @@ msgid "Events"
 msgstr ""
 
 #: inyoka/portal/templates/portal/calendar_month.html:60
-msgid "Suggest a new event"
+#: inyoka/portal/templates/portal/calendar_overview.html:53
+msgid "Suggest new event"
 msgstr ""
 
 #: inyoka/portal/templates/portal/calendar_overview.html:12
@@ -1302,10 +1303,6 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/calendar_overview.html:51
 msgid "Currently there are no events listed."
-msgstr ""
-
-#: inyoka/portal/templates/portal/calendar_overview.html:53
-msgid "Suggest new event"
 msgstr ""
 
 #: inyoka/portal/templates/portal/configuration.html:13
@@ -1676,11 +1673,12 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/lost_password.html:14
 #: inyoka/portal/templates/portal/lost_password.html:16
-msgid "Forgotten Password"
+#: inyoka/portal/templates/portal/set_new_password.html:12
+msgid "Lost password"
 msgstr ""
 
 #: inyoka/portal/templates/portal/lost_password.html:18
-msgid "You have forgotten your password? You can obtain a new one here"
+msgid "You have forgotten your password? You can obtain a new one here."
 msgstr ""
 
 #: inyoka/portal/templates/portal/lost_password.html:26
@@ -1806,6 +1804,7 @@ msgid "Do you really want to delete the page “%(title)s“?"
 msgstr ""
 
 #: inyoka/portal/templates/portal/page_edit.html:17
+#: inyoka/portal/templates/portal/pages.html:16
 msgid "Create new page"
 msgstr ""
 
@@ -1817,10 +1816,6 @@ msgstr ""
 #: inyoka/portal/templates/portal/privmsg/new.m.html:23
 #: inyoka/portal/templates/portal/privmsg/new.m.html:29
 msgid "Preview"
-msgstr ""
-
-#: inyoka/portal/templates/portal/pages.html:16
-msgid "Create a new page"
 msgstr ""
 
 #: inyoka/portal/templates/portal/pages.html:20
@@ -1881,10 +1876,6 @@ msgid ""
 "\n"
 "            “%(name)s“ is no member of any group.\n"
 "           "
-msgstr ""
-
-#: inyoka/portal/templates/portal/set_new_password.html:12
-msgid "Lost password"
 msgstr ""
 
 #: inyoka/portal/templates/portal/set_new_password.html:14
@@ -2075,11 +2066,8 @@ msgid "Send mail"
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_new.html:13
-msgid "Create user"
-msgstr ""
-
 #: inyoka/portal/templates/portal/user_new.html:18
-msgid "Create a user"
+msgid "Create user"
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_new.html:21
@@ -2473,7 +2461,7 @@ msgstr ""
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:76
 msgid ""
 "\n"
-"              You did not yet subscribed to any posts or articles.\n"
+"              You did not yet subscribed to any topics or articles.\n"
 "            "
 msgstr ""
 
