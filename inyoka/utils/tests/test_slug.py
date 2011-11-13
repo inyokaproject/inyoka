@@ -51,6 +51,14 @@ class TestUtilsSlug(TestCase):
                 forum=self.forum3)
         self.topic6.save()
 
+        self.topic7 = Topic(title='Erwartungen an ubuntuusers.de wurden nicht erfüllt',
+                author=self.user, forum=self.forum1)
+        self.topic7.save()
+
+        self.topic8 = Topic(title='Erwartungen an ubuntuusers.de wurden nicht erfüllt',
+                author=self.user, forum=self.forum1)
+        self.topic8.save()
+
     def test_ending_nums(self):
         map = [
             ('test', 'test'),
@@ -79,3 +87,11 @@ class TestUtilsSlug(TestCase):
         self.assertEqual(self.topic4.slug, 'a')
         self.assertEqual(self.topic5.slug, 'apo')
         self.assertEqual(self.topic6.slug, 'a-2')
+
+        self.assertEqual(self.topic7.slug, 'erwartungen-an-ubuntuusers-de-wurden-nicht-erfuellt')
+        self.assertEqual(self.topic8.slug, 'erwartungen-an-ubuntuusers-de-wurden-nicht-erfuellt-2')
+
+        # Make sure slugs aren't longer than 50 chars, sqlite testsuite won't pick that up
+        print len(self.topic7.slug), len(self.topic8.slug)
+        self.assertTrue(len(self.topic7.slug) <= 50)
+        self.assertTrue(len(self.topic8.slug) <= 50)
