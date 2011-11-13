@@ -20,7 +20,7 @@
 """
 from datetime import datetime
 
-from djagno.contrib import messages
+from django.contrib import messages
 from django.core.cache import cache
 from django.db import models
 
