@@ -32,4 +32,4 @@ for resource in resources:
         print 'Downloading "{0}"'.format(url)
         urlretrieve(url, file_path)
 
-print 'Done, don´t forget to run manage.py compilemessages'
+print 'Done, don\'t forget to run python manage.py compilemessages'

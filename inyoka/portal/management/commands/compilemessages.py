@@ -9,4 +9,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for app in APPS:
             call(['pybabel', 'compile', '-D', 'django', '-d',
-                  'inyoka/%s/locale' % app, '-l', 'de'])
+                  'inyoka/%s/locale' % app, '-l', 'de_DE'])

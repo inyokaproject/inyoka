@@ -12,4 +12,4 @@ class Command(BaseCommand):
                   'inyoka/%s/locale/django.pot' % app, 'inyoka/%s' % app])
             call(['pybabel', 'update', '-D', 'django', '-i',
                   'inyoka/%s/locale/django.pot' % app, '-d',
-                  'inyoka/%s/locale' % app, '-l', 'de'])
+                  'inyoka/%s/locale' % app, '-l', 'de_DE'])
