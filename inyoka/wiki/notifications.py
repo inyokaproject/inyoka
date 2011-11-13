@@ -22,7 +22,7 @@ def send_edit_notifications(user, rev, old_rev):
           'page_title': rev.page.title,
           'rev_id': rev.id,
           'rev_note': rev.note,
-          'rev_username': rev.user.username}
+          'rev_username': rev.user.username if rev.user else 'Anonymous'}
     queue_notifications.delay(user.id, 'page_edited',
         u'Die Seite „%s” wurde geändert' % data.get('page_title'),
         data,
