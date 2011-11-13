@@ -23,6 +23,7 @@ from django.core.files.storage import default_storage
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ungettext, pgettext
 from django.utils.translation import ugettext as _
@@ -2151,3 +2152,8 @@ def styles(request):
     return {
         'form': form
     }
+
+
+def ikhaya_redirect(request, id):
+    article = get_object_or_404(Article, pk=int(id))
+    return HttpResponseRedirect(url_for(article))
