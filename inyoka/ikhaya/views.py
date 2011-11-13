@@ -151,7 +151,7 @@ def detail(request, year, month, day, slug):
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.can('article_read'):
             return AccessDeniedResponse()
-        flash(_('This article is not visible for regular users.'))
+        flash(_(u'This article is not visible for regular users.'))
 
     if request.method == 'POST' and (not article.comments_enabled or not request.user.is_authenticated):
         return AccessDeniedResponse()
@@ -170,14 +170,14 @@ def detail(request, year, month, day, slug):
             if data.get('comment_id') and request.user.can('comment_edit'):
                 c = Comment.objects.get(id=data['comment_id'])
                 c.text = data['text']
-                flash(_('The comment was edited successfully.'), True)
+                flash(_(u'The comment was edited successfully.'), True)
             else:
                 send_subscribe = True
                 c = Comment(text=data['text'])
                 c.article = article
                 c.author = request.user
                 c.pub_date = datetime.utcnow()
-                flash(_('Your comment was created.'), True)
+                flash(_(u'Your comment was created.'), True)
             c.save()
             if send_subscribe:
                 # Send a message to users who subscribed to the article
@@ -318,7 +318,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
     }
 
 
-@check_login(message=_('You need to be logged in to subscribe to comments.'))
+@check_login(message=_(u'You need to be logged in to subscribe to comments.'))
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
     try:
@@ -340,7 +340,7 @@ def article_subscribe(request, year, month, day, slug):
     return HttpResponseRedirect(redirect)
 
 
-@check_login(message=_('You need to be logged in to unsubscribe from '
+@check_login(message=_(u'You need to be logged in to unsubscribe from '
                        'comments.'))
 def article_unsubscribe(request, year, month, day, slug):
     """Unsubscribe from article."""
@@ -355,7 +355,7 @@ def article_unsubscribe(request, year, month, day, slug):
         pass
     else:
         subscription.delete()
-        flash(_('You will no longer be notified of new comments for this '
+        flash(_(u'You will no longer be notified of new comments for this '
                 'article.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or url_for(article)
@@ -386,7 +386,7 @@ def report_new(request, year, month, day, slug):
                 report.author = request.user
                 report.pub_date = datetime.utcnow()
                 report.save()
-                flash(_('Thanks for your report.'), True)
+                flash(_(u'Thanks for your report.'), True)
                 return HttpResponseRedirect(url_for(report))
     else:
         form = EditCommentForm()
@@ -420,10 +420,10 @@ def report_update(action, text):
         return HttpResponseRedirect(url_for(report))
     return do
 
-report_hide = report_update('hide', _('The report was hidden.'))
-report_restore = report_update('restore', _('The report was restored.'))
-report_solve = report_update('solve', _('The report was marked as solved.'))
-report_unsolve = report_update('unsolve', _('The report was marked as unsolved.'))
+report_hide = report_update('hide', _(u'The report was hidden.'))
+report_restore = report_update('restore', _(u'The report was restored.'))
+report_solve = report_update('solve', _(u'The report was marked as solved.'))
+report_unsolve = report_update('unsolve', _(u'The report was marked as unsolved.'))
 
 @templated('ikhaya/reports.html', modifier=context_modifier)
 def reports(request, year, month, day, slug):
@@ -527,7 +527,7 @@ def suggest_delete(request, suggestion):
             try:
                 s = Suggestion.objects.get(id=suggestion)
             except Suggestion.DoesNotExist:
-                flash(_('This suggestion does not exist.'), False)
+                flash(_(u'This suggestion does not exist.'), False)
                 return HttpResponseRedirect(href('ikhaya', 'suggestions'))
             if request.POST.get('note'):
                 args = {'title':    s.title,
@@ -550,7 +550,7 @@ def suggest_delete(request, suggestion):
                         .filter(message=msg, user=recipient)[0]
                     if 'pm_new' in recipient.settings.get('notifications',
                                                           ('pm_new',)):
-                        title = _('New private message from %(user)s: '
+                        title = _(u'New private message from %(user)s: '
                                   '%(subject)s') % {
                                       'user': request.user.username,
                                       'subject': msg.subject,
@@ -564,22 +564,22 @@ def suggest_delete(request, suggestion):
 
             cache.delete('ikhaya/suggestion_count')
             s.delete()
-            flash(_('The suggestion was deleted.'), True)
+            flash(_(u'The suggestion was deleted.'), True)
         else:
-            flash(_('The suggestion was not deleted.'))
+            flash(_(u'The suggestion was not deleted.'))
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
     else:
         try:
             s = Suggestion.objects.get(id=suggestion)
         except Suggestion.DoesNotExist:
-            flash(_('This suggestion does not exist.'), False)
+            flash(_(u'This suggestion does not exist.'), False)
             return HttpResponseRedirect(href('ikhaya', 'suggestions'))
         flash(render_template('ikhaya/suggest_delete.html',
               {'s': s}))
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
-@check_login(message=_('Please login to suggest an article.'))
+@check_login(message=_(u'Please login to suggest an article.'))
 @templated('ikhaya/suggest_new.html', modifier=context_modifier)
 def suggest_edit(request):
     """A Page to suggest a new article.
@@ -596,7 +596,7 @@ def suggest_edit(request):
         elif form.is_valid():
             suggestion = form.save(request.user)
             cache.delete('ikhaya/suggestion_count')
-            flash(_('Thank you, your article suggestion was submitted. A team '
+            flash(_(u'Thank you, your article suggestion was submitted. A team '
                     'member will contact you shortly.'), True)
 
             # Send a notification message
@@ -762,7 +762,7 @@ def event_suggest(request):
                 event.location_long = data['location_long']
             event.save()
             cache.delete('ikhaya/event_count')
-            flash(_('The event has been saved. A team member will review it '
+            flash(_(u'The event has been saved. A team member will review it '
                     'soon.'), True)
             event = Event.objects.get(id=event.id) # get truncated slug
             return HttpResponseRedirect(url_for(event))

@@ -87,7 +87,7 @@ def redirect_new_page(request):
             options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
-    flash(_('Another site named “%(title)s“ already exists.')
+    flash(_(u'Another site named “%(title)s“ already exists.')
             % {'title': escape(page.title)}, True)
     return HttpResponseRedirect(backref)
 
@@ -198,7 +198,7 @@ def feed(request, page_name=None, count=10):
     the given criteria in an atom feed.
     """
     if page_name:
-        feed = AtomFeed(title=_('%(sitename)s wiki – %(pagename)s') % {
+        feed = AtomFeed(title=_(u'%(sitename)s wiki – %(pagename)s') % {
                                     'sitename': settings.BASE_DOMAIN_NAME,
                                     'pagename': page_name
                                 },
@@ -209,7 +209,7 @@ def feed(request, page_name=None, count=10):
                         icon=href('static', 'img', 'favicon.ico'))
     else:
         #TODO: remove hardcoded (wiki)pages
-        feed = AtomFeed(_('%(sitename)s wiki – last changes')
+        feed = AtomFeed(_(u'%(sitename)s wiki – last changes')
                           % {'sitename': settings.BASE_DOMAIN_NAME},
                         url=href('wiki', u'Letzte_Änderungen'),
                         feed_url=request.build_absolute_uri(),
@@ -224,17 +224,17 @@ def feed(request, page_name=None, count=10):
 
         if rev.user:
             if rev.deleted:
-                text = _('%(user)s had deleted the article “%(article)s“ on '
+                text = _(u'%(user)s had deleted the article “%(article)s“ on '
                          '%(date)s. Summary: %(summary)s')
             else:
-                text = _('%(user)s edited the article “%(article)s“ on '
+                text = _(u'%(user)s edited the article “%(article)s“ on '
                          '%(date)s. Summary: %(summary)s')
         else:
             if rev.deleted:
-                text = _('An anonymous user deleted the article '
+                text = _(u'An anonymous user deleted the article '
                          '“%(article)s“ on %(date)s. Summary: %(summary)s')
             else:
-                text = _('An anonymous user edited the article '
+                text = _(u'An anonymous user edited the article '
                          '“%(article)s“ on %(date)s. Summary: %(summary)s')
 
         kwargs['summary'] = text % {
@@ -246,10 +246,10 @@ def feed(request, page_name=None, count=10):
         kwargs['summary_type'] = None
         author = rev.user \
             and {'name': rev.user.username, 'uri': url_for(rev.user)} \
-            or _('Anonymous')
+            or _(u'Anonymous')
         feed.add(
             title=u'%s (%s)' % (
-                rev.user or _('Anonymous'),
+                rev.user or _(u'Anonymous'),
                 format_datetime(rev.change_date),
             ),
             url=url_for(rev),

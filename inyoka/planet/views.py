@@ -74,7 +74,7 @@ def index(request, page=1):
     }
 
 
-@check_login(message=_('You need to be logged in to suggest a blog'))
+@check_login(message=_(u'You need to be logged in to suggest a blog'))
 @templated('planet/suggest.html', modifier=context_modifier)
 def suggest(request):
     """
@@ -92,14 +92,14 @@ def suggest(request):
             text = render_template('mails/planet_suggest.txt',
                                    form.cleaned_data)
             for user in users:
-                send_mail(_('A new blog was suggested.'), text,
+                send_mail(_(u'A new blog was suggested.'), text,
                           settings.INYOKA_SYSTEM_USER_EMAIL,
                           [user.email])
             if not users:
-                flash(_('No user is registered as a planet administrator.'),
+                flash(_(u'No user is registered as a planet administrator.'),
                       False)
                 return HttpResponseRedirect(href('planet'))
-            flash(_('The blog “%(title)s“ was suggested.') %
+            flash(_(u'The blog “%(title)s“ was suggested.') %
                   {'title': escape(form.cleaned_data['name'])}, True)
             return HttpResponseRedirect(href('planet'))
     else:
@@ -110,7 +110,7 @@ def suggest(request):
 @atom_feed(name='planet_feed')
 def feed(request, mode='short', count=10):
     """show the feeds for the planet"""
-    title = _('%(sitename)s planet') % {'sitename': settings.BASE_DOMAIN_NAME}
+    title = _(u'%(sitename)s planet') % {'sitename': settings.BASE_DOMAIN_NAME}
     feed = AtomFeed(title, url=href('planet'),
                     feed_url=request.build_absolute_uri(),
                     id=href('planet'),
@@ -161,9 +161,9 @@ def hide_entry(request, id):
                 entry.hidden_by = request.user
             entry.save()
             if entry.hidden:
-                msg = _('The entry “%(title)s“ was successfully hidden.')
+                msg = _(u'The entry “%(title)s“ was successfully hidden.')
             else:
-                msg = _('The entry “%(title)s“ was successfully restored.')
+                msg = _(u'The entry “%(title)s“ was successfully restored.')
             flash(msg % {'title': entry.title}, success=True)
     else:
         flash(render_template('planet/hide_entry.html', {'entry': entry}))
