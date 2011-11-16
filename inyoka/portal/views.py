@@ -24,6 +24,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404
 
 from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
@@ -2089,3 +2090,8 @@ class SearchView(generic.SearchView):
 
 
 search = SearchView.as_view()
+
+
+def ikhaya_redirect(request, id):
+    article = get_object_or_404(Article, pk=int(id))
+    return HttpResponseRedirect(url_for(article))
