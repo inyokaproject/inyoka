@@ -88,8 +88,8 @@ class TestUtilsSlug(TestCase):
         self.assertEqual(self.topic5.slug, 'apo')
         self.assertEqual(self.topic6.slug, 'a-2')
 
-        self.assertEqual(self.topic7.slug, 'erwartungen-an-ubuntuusers-de-wurden-nicht-erfuellt')
-        self.assertEqual(self.topic8.slug, 'erwartungen-an-ubuntuusers-de-wurden-nicht-erfuellt-2')
+        self.assertEqual(self.topic7.slug, 'erwartungen-an-ubuntuusers-de-wurden-nicht-erf')
+        self.assertEqual(self.topic8.slug, 'erwartungen-an-ubuntuusers-de-wurden-nicht-erf-2')
 
         # Make sure slugs aren't longer than 50 chars, sqlite testsuite won't pick that up
         print len(self.topic7.slug), len(self.topic8.slug)
