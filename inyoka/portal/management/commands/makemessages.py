@@ -13,3 +13,9 @@ class Command(BaseCommand):
             call(['pybabel', 'update', '-D', 'django', '-i',
                   'inyoka/%s/locale/django.pot' % app, '-d',
                   'inyoka/%s/locale' % app, '-l', 'de_DE'])
+        # global templates
+        call(['pybabel', 'extract', '-F', 'extra/babel.cfg', '-o',
+              'inyoka/locale/django.pot', 'inyoka/templates'])
+        call(['pybabel', 'update', '-D', 'django', '-i',
+              'inyoka/locale/django.pot', '-d',
+              'inyoka/locale', '-l', 'de_DE'])

@@ -1,0 +1,196 @@
+# Translations template for PROJECT.
+# Copyright (C) 2011 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2011-11-13 23:13+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: inyoka/templates/appheader.html:2
+msgid "Portal"
+msgstr ""
+
+#: inyoka/templates/overall.html:96
+msgid "Reported topics"
+msgstr ""
+
+#: inyoka/templates/overall.html:99
+msgid "Article suggestions"
+msgstr ""
+
+#: inyoka/templates/overall.html:103
+msgid "Spelling mistakes"
+msgstr ""
+
+#: inyoka/templates/overall.html:107
+msgid "Event suggestions"
+msgstr ""
+
+#: inyoka/templates/overall.html:111
+msgid "Please turn on JavaScript!"
+msgstr ""
+
+#: inyoka/templates/overall.html:134
+#, python-format
+msgid "Logout [%(user)s]"
+msgstr ""
+
+#: inyoka/templates/overall.html:139
+msgid "Controlpanel"
+msgstr ""
+
+#: inyoka/templates/overall.html:146
+#, python-format
+msgid "Private messages (%(count)s)"
+msgstr ""
+
+#: inyoka/templates/overall.html:151
+msgid "Private messages"
+msgstr ""
+
+#: inyoka/templates/overall.html:158 inyoka/templates/overall.m.html:71
+msgid "Login"
+msgstr ""
+
+#: inyoka/templates/overall.html:163
+msgid "Register"
+msgstr ""
+
+#: inyoka/templates/overall.html:184
+msgid "Overall"
+msgstr ""
+
+#: inyoka/templates/overall.html:187
+msgid "Forum"
+msgstr ""
+
+#: inyoka/templates/overall.html:190
+msgid "Wiki"
+msgstr ""
+
+#: inyoka/templates/overall.html:193
+msgid "News"
+msgstr ""
+
+#: inyoka/templates/overall.html:196
+msgid "Planet"
+msgstr ""
+
+#: inyoka/templates/overall.html:199
+msgid "Search"
+msgstr ""
+
+#: inyoka/templates/overall.html:244
+#, python-format
+msgid ""
+"\n"
+"            Powered by <a href=\"%(link)s\">Inyoka</a>\n"
+"          "
+msgstr ""
+
+#: inyoka/templates/overall.html:248
+#, python-format
+msgid ""
+"\n"
+"              (rendered in %(seconds)s seconds)\n"
+"            "
+msgstr ""
+
+#: inyoka/templates/overall.html:260
+msgid "To mobile version"
+msgstr ""
+
+#: inyoka/templates/overall.html:304
+msgid "Username or email address"
+msgstr ""
+
+#: inyoka/templates/overall.html:307
+msgid "Password"
+msgstr ""
+
+#: inyoka/templates/overall.html:310
+msgid "Don’t choose this option if you are using a public computer."
+msgstr ""
+
+#: inyoka/templates/overall.html:311
+msgid "Keep me logged in"
+msgstr ""
+
+#: inyoka/templates/overall.html:314
+msgid "Lost password?"
+msgstr ""
+
+#: inyoka/templates/overall.m.html:47
+#, python-format
+msgid ""
+"\n"
+"          This is the version for mobile clients. To get to the\n"
+"          <a href=\"%(link)s\">classical layout</a> click on the link in "
+"the\n"
+"          footer of the page.\n"
+"        "
+msgstr ""
+
+#: inyoka/templates/overall.m.html:67
+msgid "Logout"
+msgstr ""
+
+#: inyoka/templates/overall.m.html:85
+msgid "To classic version"
+msgstr ""
+
+#: inyoka/templates/errors/400_csrf.html:14
+msgid "Bad request"
+msgstr ""
+
+#: inyoka/templates/errors/400_csrf.html:16
+msgid ""
+"\n"
+"      The browser did not transmit a valid control key and therefore the\n"
+"      processing has been canceled for security reasons.\n"
+"    "
+msgstr ""
+
+#: inyoka/templates/errors/400_csrf.html:22
+msgid ""
+"\n"
+"      This error usually occurs when you are trying to transfer data\n"
+"      automatically to the server. In rare cases this can also happen if "
+"the\n"
+"      browser configuration was changed while the form data is "
+"transmitted.\n"
+"    "
+msgstr ""
+
+#: inyoka/templates/errors/400_csrf.html:29
+msgid ""
+"\n"
+"      In some browsers it is possible to click on the \"back\" or the "
+"\"reload\"\n"
+"      button to request a new control key the sending the page again.\n"
+"    "
+msgstr ""
+
+#: inyoka/templates/errors/403.html:18
+msgid "You do not have permissions to access this page."
+msgstr ""
+
+#: inyoka/templates/errors/403.html:22
+msgid "This may be because you are not logged in."
+msgstr ""
+
+#: inyoka/templates/errors/404.html:19
+msgid "Page not found"
+msgstr ""
+

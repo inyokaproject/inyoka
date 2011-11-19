@@ -261,7 +261,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             raise PageNotFound()
         locked = article.lock(request)
         if locked:
-            flash(_(u'This article is currently beeing edited by “%(user)s“!')
+            flash(_(u'This article is currently being edited by “%(user)s“!')
                     % {'user': locked }, False)
     else:
         article = None
