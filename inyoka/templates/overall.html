@@ -107,9 +107,8 @@
         {% set label = _('Event suggestions') %}
         {{ render_modnavi_li(label, href('ikhaya', 'events', 'invisible'), href('static', 'img/portal/admin_new_event.png'), event_count) }}
       {%- endif %}
-
-    <noscript><strong class="nojs error">{{ _('Please turn on JavaScript!') }}</strong></noscript>
     </div>
+    <noscript><strong class="nojs error">{{ _('Please turn on JavaScript!') }}</strong></noscript>
     {%- endif %}
    <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">
     <div class="header">
