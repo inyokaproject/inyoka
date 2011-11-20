@@ -1303,12 +1303,20 @@ div#database_debug_table ul li pre,div#database_debug_table table {
     img {
       opacity: 0.3;
       vertical-align: middle;
+      transition: opacity .20s linear;
+      -webkit-transition: opacity .20s linear;
+      -moz-transition: opacity .20s linear;
+      -o-transition: opacity .20s linear;
     }
     .count {
       font-size: 18px;
       font-weight: bold;
       margin: 5px;
     }
+    transition: color .20s linear, background-color .20s linear;
+    -webkit-transition: color .20s linear, background-color .20s linear;
+    -moz-transition: color .20s linear, background-color .20s linear;
+    -o-transition: color .20s linear, background-color .20s linear;
   }
   a.highlight, a:hover {
     color: #4F4F4F;
@@ -1317,13 +1325,13 @@ div#database_debug_table ul li pre,div#database_debug_table table {
     }
   }
   a.highlight {
-    background-color: #FF9C9C;
+    background-color: #E8C989;
   }
   a:hover {
     background-color: #E4E4E4;
   }
   a.highlight:hover {
-    background-color: #EF8C8C;
+    background-color: #D8B979;
   }
   a:first-child {
     .left-rounded(5px);
