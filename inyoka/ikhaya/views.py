@@ -11,9 +11,12 @@
 import pytz
 from datetime import datetime, date, time as dt_time
 
+from django.conf import settings
 from django.core.cache import cache
 from django.utils.http import urlencode
 from django.utils.text import truncate_html_words
+from django.utils.translation import ungettext
+from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils import ctype
@@ -43,6 +46,7 @@ from inyoka.ikhaya.notifications import send_comment_notifications, \
     send_new_suggestion_notifications
 
 
+#TODO: move to settings or provide a form in the interface.
 IKHAYA_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
     u'Community. Hier werden Nachrichten und Berichte rund um Ubuntu, Linux' \
     u' und OpenSource-Software veröffentlicht.'
@@ -147,7 +151,7 @@ def detail(request, year, month, day, slug):
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.can('article_read'):
             return AccessDeniedResponse()
-        flash(u'Dieser Artikel ist für reguläre Benutzer nicht sichtbar.')
+        flash(_(u'This article is not visible for regular users.'))
 
     if request.method == 'POST' and (not article.comments_enabled or not request.user.is_authenticated):
         return AccessDeniedResponse()
@@ -166,14 +170,14 @@ def detail(request, year, month, day, slug):
             if data.get('comment_id') and request.user.can('comment_edit'):
                 c = Comment.objects.get(id=data['comment_id'])
                 c.text = data['text']
-                flash(u'Der Kommentar wurde erfolgreich bearbeitet.', True)
+                flash(_(u'The comment was edited successfully.'), True)
             else:
                 send_subscribe = True
                 c = Comment(text=data['text'])
                 c.article = article
                 c.author = request.user
                 c.pub_date = datetime.utcnow()
-                flash(u'Dein Kommentar wurde erstellt.', True)
+                flash(_(u'Your comment was created.'), True)
             c.save()
             if send_subscribe:
                 # Send a message to users who subscribed to the article
@@ -201,6 +205,7 @@ def detail(request, year, month, day, slug):
     }
 
 
+#TODO: is this view used ANYWHERE? i guess it can be removed
 @require_permission('article_edit')
 def article_delete(request, year, month, day, slug):
     try:
@@ -256,7 +261,8 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             raise PageNotFound()
         locked = article.lock(request)
         if locked:
-            flash(u'Dieser Artikel wird bereits von „%s” bearbeitet!' % locked, False)
+            flash(_(u'This article is currently being edited by “%(user)s“!')
+                    % {'user': locked }, False)
     else:
         article = None
 
@@ -275,12 +281,12 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 if suggestion_id:
                     Suggestion.objects.delete([suggestion_id])
                 if new:
-                    flash(u'Der Artikel „%s“ wurde erstellt.'
-                          % escape(article.subject), True)
+                    flash(_(u'The article “%(title)s“ was created.')
+                          % {'title': escape(article.subject)}, True)
                     return HttpResponseRedirect(url_for(article, 'edit'))
                 else:
-                    flash(u'Der Artikel „%s“ wurde gespeichert.'
-                          % escape(article.subject), True)
+                    flash(_(u'The article “%(title)s“ was saved.')
+                          % {'title': escape(article.subject)}, True)
                     cache.delete('ikhaya/article/%s/%s' %
                                  (article.pub_date, article.slug))
                     return HttpResponseRedirect(url_for(article))
@@ -312,8 +318,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
     }
 
 
-@check_login(message=u'Du musst angemeldet sein um Kommentare abonnieren '
-                     u'zu können')
+@check_login(message=_(u'You need to be logged in to subscribe to comments.'))
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
     try:
@@ -328,15 +333,15 @@ def article_subscribe(request, year, month, day, slug):
         Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
         Subscription(user=request.user, content_object=article).save()
-        flash(u'Du wirst ab nun über neue Kommentare zu diesem Artikel '
-              u'benachrichtigt.')
+        flash(_(u'Notifications on new comments to this article will be sent '
+                u'to you.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
 
 
-@check_login(message=u'Du musst angemeldet sein um Kommentare abonnieren '
-                     u'zu können')
+@check_login(message=_(u'You need to be logged in to unsubscribe from '
+                       'comments.'))
 def article_unsubscribe(request, year, month, day, slug):
     """Unsubscribe from article."""
     try:
@@ -350,8 +355,8 @@ def article_unsubscribe(request, year, month, day, slug):
         pass
     else:
         subscription.delete()
-        flash(u'Du wirst nun nicht mehr über neue Kommentare zu diesem '
-              u'Artikel benachrichtigt.')
+        flash(_(u'You will no longer be notified of new comments for this '
+                'article.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
@@ -381,7 +386,7 @@ def report_new(request, year, month, day, slug):
                 report.author = request.user
                 report.pub_date = datetime.utcnow()
                 report.save()
-                flash(u'Vielen Dank für deine Meldung.', True)
+                flash(_(u'Thanks for your report.'), True)
                 return HttpResponseRedirect(url_for(report))
     else:
         form = EditCommentForm()
@@ -415,10 +420,10 @@ def report_update(action, text):
         return HttpResponseRedirect(url_for(report))
     return do
 
-report_hide = report_update('hide', u'Die Meldung wurde verborgen.')
-report_restore = report_update('restore', u'Die Meldung wurde wiederhergestellt.')
-report_solve = report_update('solve', u'Die Meldung wurde als erledigt markiert.')
-report_unsolve = report_update('unsolve', u'Die Meldung wurde als nicht erledigt markiert.')
+report_hide = report_update('hide', _(u'The report was hidden.'))
+report_restore = report_update('restore', _(u'The report was restored.'))
+report_solve = report_update('solve', _(u'The report was marked as solved.'))
+report_unsolve = report_update('unsolve', _(u'The report was marked as unsolved.'))
 
 @templated('ikhaya/reports.html', modifier=context_modifier)
 def reports(request, year, month, day, slug):
@@ -454,7 +459,7 @@ def comment_edit(request, comment_id):
             if form.is_valid():
                 comment.text = form.cleaned_data['text']
                 comment.save()
-                flash('Der Kommentar wurde gespeichert', True)
+                flash('The comment was saved.', True)
                 return HttpResponseRedirect(comment.get_absolute_url())
         else:
             form = EditCommentForm(initial={'text': comment.text})
@@ -480,8 +485,8 @@ def comment_update(boolean, text):
     return do
 
 
-comment_hide = comment_update(True, u'Der Kommentar wurde verborgen.')
-comment_restore = comment_update(False, u'Der Kommentar wurde wiederhergestellt.')
+comment_hide = comment_update(True, _(u'The comment was hidden.'))
+comment_restore = comment_update(False, _(u'The comment was restored.'))
 
 
 @templated('ikhaya/archive.html', modifier=context_modifier)
@@ -497,19 +502,21 @@ def suggest_assign_to(request, suggestion, username):
     try:
         suggestion = Suggestion.objects.get(id=suggestion)
     except Suggestion.DoesNotExist:
-        flash(u'Der Vorschlag „%s” existiert nicht.' % suggestion)
+        flash(_(u'The suggestion “%(title)s“ does not exist.')
+                % {'title': suggestion})
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
     if username == '-':
         suggestion.owner = None
         suggestion.save()
-        flash(u'Der Vorschlag wurde niemand zugewiesen.', True)
+        flash(_(u'The suggestion was assigned to nobody.'), True)
     else:
         try:
             suggestion.owner = User.objects.get(username)
         except User.DoesNotExist:
             raise PageNotFound
         suggestion.save()
-        flash(u'Der Vorschlag wurde %s zugewiesen.' % username, True)
+        flash(_(u'The suggestion was assigned to “%(user)s“.')
+                % {'user': username}, True)
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
@@ -520,7 +527,7 @@ def suggest_delete(request, suggestion):
             try:
                 s = Suggestion.objects.get(id=suggestion)
             except Suggestion.DoesNotExist:
-                flash('Diesen Vorschlag gibt es nicht.', False)
+                flash(_(u'This suggestion does not exist.'), False)
                 return HttpResponseRedirect(href('ikhaya', 'suggestions'))
             if request.POST.get('note'):
                 args = {'title':    s.title,
@@ -543,9 +550,12 @@ def suggest_delete(request, suggestion):
                         .filter(message=msg, user=recipient)[0]
                     if 'pm_new' in recipient.settings.get('notifications',
                                                           ('pm_new',)):
-                        send_notification(recipient, 'new_pm', u'Neue private '
-                                          u'Nachricht von %s: %s' %
-                                          (request.user.username, msg.subject), {
+                        title = _(u'New private message from %(user)s: '
+                                  '%(subject)s') % {
+                                      'user': request.user.username,
+                                      'subject': msg.subject,
+                                  }
+                        send_notification(recipient, 'new_pm', title, {
                                               'user':     recipient,
                                               'sender':   request.user,
                                               'subject':  msg.subject,
@@ -554,28 +564,28 @@ def suggest_delete(request, suggestion):
 
             cache.delete('ikhaya/suggestion_count')
             s.delete()
-            flash(u'Der Vorschlag wurde gelöscht.', True)
+            flash(_(u'The suggestion was deleted.'), True)
         else:
-            flash(u'Der Vorschlag wurde nicht gelöscht.')
+            flash(_(u'The suggestion was not deleted.'))
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
     else:
         try:
             s = Suggestion.objects.get(id=suggestion)
         except Suggestion.DoesNotExist:
-            flash('Diesen Vorschlag gibt es nicht.', False)
+            flash(_(u'This suggestion does not exist.'), False)
             return HttpResponseRedirect(href('ikhaya', 'suggestions'))
         flash(render_template('ikhaya/suggest_delete.html',
               {'s': s}))
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
-@check_login(message=u'Bitte melde dich an, um einen Ikhaya-Artikel '
-                     u'vorzuschlagen.')
+@check_login(message=_(u'Please login to suggest an article.'))
 @templated('ikhaya/suggest_new.html', modifier=context_modifier)
 def suggest_edit(request):
-    """
-    A Page to suggest a new ikhaya article.  It just sends an email to the
-    ikhaya administrators.
+    """A Page to suggest a new article.
+
+    It just sends an email to the administrators.
+
     """
     preview = None
     if request.method == 'POST':
@@ -586,9 +596,8 @@ def suggest_edit(request):
         elif form.is_valid():
             suggestion = form.save(request.user)
             cache.delete('ikhaya/suggestion_count')
-            flash(u'Dein Artikelvorschlag wurde versendet, das Ikhayateam '
-                  u'wird sich sobald wie möglich darum kümmern.',
-                  success=True)
+            flash(_(u'Thank you, your article suggestion was submitted. A team '
+                    'member will contact you shortly.'), True)
 
             # Send a notification message
             send_new_suggestion_notifications(request.user, suggestion)
@@ -650,8 +659,7 @@ def suggestions_subscribe(request):
     except Subscription.DoesNotExist:
         ct = ContentType.objects.get_by_natural_key(*ct_query)
         Subscription(user=request.user, content_type=ct).save()
-        flash(u'Du wirst ab nun über neue Artikelvorschläge '
-              u'benachrichtigt.')
+        flash(_(u'Notifications on new suggestions will be sent to you.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
@@ -667,8 +675,7 @@ def suggestions_unsubscribe(request):
         pass
     else:
         subscription.delete()
-        flash(u'Du wirst nun nicht mehr über neue Artikelvorschläge '
-              u'benachrichtigt.')
+        flash(_(u'No notifications on suggestions will be sent to you any more.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
@@ -685,10 +692,9 @@ def event_edit(request, pk=None):
         try:
             base_event = Event.objects.get(pk=int(request.GET['copy_from']))
         except Event.DoesNotExist:
-            flash(u'Die Veranstaltung mit der ID %s existiert nicht und kann '
-                  u'daher nicht als Basis des Kopiervorgangs benutzt werden.' %
-                      request.GET['copy_from'],
-                  False)
+            flash(_(u'The event with the id %(id)s could not be used as draft '
+                    'for a new event because it does not exist.')
+                    % {'id': request.GET['copy_from']}, False)
         else:
             for key in ('name', 'changed', 'created', 'date', 'time', 'enddate',
                 'endtime', 'description', 'author_id', 'location',
@@ -700,7 +706,7 @@ def event_edit(request, pk=None):
         form = EditEventForm(request.POST, instance=event)
         if form.is_valid():
             event = form.save(request.user)
-            flash(u'Die Veranstaltung wurde gespeichert.', True)
+            flash(_(u'The event was saved.'), True)
             if new:
                 cache.delete('ikhaya/event_count')
             return HttpResponseRedirect(url_for(event))
@@ -756,8 +762,8 @@ def event_suggest(request):
                 event.location_long = data['location_long']
             event.save()
             cache.delete('ikhaya/event_count')
-            flash(u'Die Veranstaltung wurde gespeichert. Sie wird demnächst '
-                  u'von einem Moderator freigeschaltet.', True)
+            flash(_(u'The event has been saved. A team member will review it '
+                    'soon.'), True)
             event = Event.objects.get(id=event.id) # get truncated slug
             return HttpResponseRedirect(url_for(event))
     else:
@@ -774,10 +780,10 @@ def feed_article(request, slug=None, mode='short', count=10):
     Shows the ikhaya entries that match the given criteria in an atom feed.
     """
     if slug:
-        title = u'ubuntuusers Ikhaya – %s' % slug
+        title = u'%s Ikhaya – %s' % (BASE_DOMAIN_NAME, slug)
         url = href('ikhaya', 'category', slug)
     else:
-        title = u'ubuntuusers Ikhaya'
+        title = u'%s Ikhaya' % settings.BASE_DOMAIN_NAME
         url = href('ikhaya')
 
     articles = Article.objects.get_latest_articles(slug, count)
@@ -820,10 +826,11 @@ def feed_comment(request, id=None, mode='short', count=10):
     article = None
     if id:
         article = Article.published.get(id=id)
-        title = u'ubuntuusers Ikhaya-Kommentare – %s' % article.subject
+        title = u'%s Ikhaya-Kommentare – %s' % (settings.BASE_DOMAIN_NAME,
+                                                article.subject)
         url = url_for(article)
     else:
-        title = u'ubuntuusers Ikhaya-Kommentare'
+        title = u'%s Ikhaya-Kommentare' % settings.BASE_DOMAIN_NAME
         url = href('ikhaya')
 
     comments = Comment.objects.get_latest_comments(article.id if article else None, count)

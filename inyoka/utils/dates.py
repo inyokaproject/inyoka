@@ -248,6 +248,7 @@ def natural_date(value, prefix=False, enforce_utc=False):
     else:
         value = datetime_to_timezone(value, enforce_utc)
         delta = datetime.utcnow().replace(tzinfo=pytz.UTC) - value
+    #TODO: I'm not sure if writing tomorrow, today, yesterday is enough
     if -1 <= delta.days <= 1:
         return (u'morgen', u'heute', u'gestern')[delta.days + 1]
     return (prefix and 'am ' or '') + DateFormat(value).format('j. F Y')

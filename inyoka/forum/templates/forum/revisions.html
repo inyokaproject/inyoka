@@ -10,27 +10,30 @@
 #}
 
 {%- extends 'forum/page.html' %}
-{% do BREADCRUMB.append('Alte Versionen', post|url('revisions'), True) %}
+{% do BREADCRUMB.append(_('Old revisions'), post|url('revisions'), True) %}
 {% do BREADCRUMB.append(post.topic.title, post.topic|url, True) %}
 
 {% block forum_content %}
-<table class="topic">
-<tbody>
-{%- for rev in revisions %}
-  <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>
-    <td class="post admin_link_hover">
-      <div class="postinfo">
-        <div class="linklist">
-          <a href="{{ rev|url('restore') }}" class="action action_review admin_link">Wiederherstellen</a>
-        </div>
-        Bearbeitet: {{ rev.store_date|datetimeformat }}{% if post.rendered_text == rev.rendered_text %} | (Text entspricht der aktuellen Revision){% endif %}
-      </div>
-      <div class="text">
-        {{ rev.rendered_text }}
-      </div>
-    </td>
-  </tr>
-{%- endfor %}
-</tbody>
-</table>
+  <table class="topic">
+    <tbody>
+      {%- for rev in revisions %}
+        <tr id="post-{{ post.id }}"{% if post.hidden %} class="hidden"{% endif %}>
+          <td class="post admin_link_hover">
+            <div class="postinfo">
+              <div class="linklist">
+                <a href="{{ rev|url('restore') }}" class="action action_review admin_link">{% trans %}Restore{% endtrans %}</a>
+              </div>
+              {% trans date=rev.store_date|datetimeformat %}Edited: {{ date }}{% endtrans %}
+              {% if post.rendered_text == rev.rendered_text %}
+                | {% trans %}Current revision{% endtrans %}
+              {% endif %}
+            </div>
+            <div class="text">
+              {{ rev.rendered_text }}
+            </div>
+          </td>
+        </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
 {% endblock %}

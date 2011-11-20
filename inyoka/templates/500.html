@@ -10,14 +10,15 @@
 {% endcomment %}
 
 <html>
-<head>
-  <title>Serverfehler</title>
-</head>
-<body>
-  <h1>Serverfehler</h1>
-  <p>
-    Es ist ein interner Serverfehler aufgetreten. Die Administratoren wurden
-    bereits über dieses Problem informiert.
-  </p>
-</body>
+  <head>
+    <title>{% trans %}Servererror{% endtrans %}</title>
+  </head>
+  <body>
+    <h1>{% trans %}Servererror{% endtrans %}</h1>
+    <p>
+      {% trans %}
+        An internal error occurred. The administration was already notified.
+      {% endtrans %}
+    </p>
+  </body>
 </html>

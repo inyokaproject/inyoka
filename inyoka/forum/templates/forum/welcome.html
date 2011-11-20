@@ -9,15 +9,14 @@
 #}
 {%- extends 'forum/page.html' %}
 
-{% set name = 'Community Regel' %}
+{% set name = _('Rules') %}
 
 {% block forum_content %}
   <h1>{{ message.title|e }}</h1>
   {{ message.rendered_text }}
   <form method="post" action="{{ forum|url('welcome') }}">
     <input type="hidden" name="goto_url" value="{{ goto_url|e }}" />
-    <input type="submit" name="accept" value="Gelesen und akzeptiert" />
-    <input type="submit" name="cancel" value="Ablehnen" />
+    <input type="submit" name="accept" value="{% trans %}Read and accepted{% endtrans %}" />
+    <input type="submit" name="cancel" value="{% trans %}Reject{% endtrans %}" />
   </form>
-  </p>
 {% endblock %}

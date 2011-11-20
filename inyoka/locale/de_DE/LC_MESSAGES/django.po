@@ -1,0 +1,220 @@
+# German (Germany) translations for .
+# Copyright (C) 2011 ORGANIZATION
+# This file is distributed under the same license as the  project.
+#
+# Translators:
+# Sören Wegener <wegener92@googlemail.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version:  Inyoka\n"
+"Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
+"POT-Creation-Date: 2011-11-20 19:25+0100\n"
+"PO-Revision-Date: 2011-11-20 15:35+0000\n"
+"Last-Translator: soeren <wegener92@googlemail.com>\n"
+"Language-Team: German (Germany) "
+"(http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: inyoka/templates/appheader.html:2
+msgid "Portal"
+msgstr "Portal"
+
+#: inyoka/templates/overall.html:96
+msgid "Reported topics"
+msgstr "Gemeldete Themen"
+
+#: inyoka/templates/overall.html:99
+msgid "Article suggestions"
+msgstr "Artikelvorschläge"
+
+#: inyoka/templates/overall.html:103
+msgid "Spelling mistakes"
+msgstr "Rechtschreibfehler"
+
+#: inyoka/templates/overall.html:107
+msgid "Event suggestions"
+msgstr "Veranstaltungsvorschläge"
+
+#: inyoka/templates/overall.html:111
+msgid "Please turn on JavaScript!"
+msgstr "Bitte aktiviere JavaScript!"
+
+#: inyoka/templates/overall.html:133
+#, python-format
+msgid "Logout [%(user)s]"
+msgstr "Abmelden [%(user)s]"
+
+#: inyoka/templates/overall.html:138
+msgid "Controlpanel"
+msgstr "Kontrollzentrum"
+
+#: inyoka/templates/overall.html:145
+#, python-format
+msgid "Private messages (%(count)s)"
+msgstr "Private Nachrichten (%(count)s)"
+
+#: inyoka/templates/overall.html:150
+msgid "Private messages"
+msgstr "Private Nachrichten"
+
+#: inyoka/templates/overall.html:157 inyoka/templates/overall.m.html:71
+msgid "Login"
+msgstr "Anmelden"
+
+#: inyoka/templates/overall.html:162
+msgid "Register"
+msgstr "Registrieren"
+
+#: inyoka/templates/overall.html:183
+msgid "Overall"
+msgstr "Überal"
+
+#: inyoka/templates/overall.html:186
+msgid "Forum"
+msgstr "Forum"
+
+#: inyoka/templates/overall.html:189
+msgid "Wiki"
+msgstr "Wiki"
+
+#: inyoka/templates/overall.html:192
+msgid "News"
+msgstr "Ikhaya"
+
+#: inyoka/templates/overall.html:195
+msgid "Planet"
+msgstr "Planet"
+
+#: inyoka/templates/overall.html:198
+msgid "Search"
+msgstr "Suche"
+
+#: inyoka/templates/overall.html:243
+#, python-format
+msgid ""
+"\n"
+"            Powered by <a href=\"%(link)s\">Inyoka</a>\n"
+"          "
+msgstr ""
+"\n"
+"Powered by <a href=\"%(link)s\">Inyoka</a>"
+
+#: inyoka/templates/overall.html:247
+#, python-format
+msgid ""
+"\n"
+"              (rendered in %(seconds)s seconds)\n"
+"            "
+msgstr ""
+"\n"
+"(in %(seconds)s Sekunden gerendert)"
+
+#: inyoka/templates/overall.html:259
+msgid "To mobile version"
+msgstr "Zur mobilen Version"
+
+#: inyoka/templates/overall.html:303
+msgid "Username or email address"
+msgstr "Benutzername oder E-Mail-Adresse"
+
+#: inyoka/templates/overall.html:306
+msgid "Password"
+msgstr "Passwort"
+
+#: inyoka/templates/overall.html:309
+msgid "Don’t choose this option if you are using a public computer."
+msgstr ""
+"Wähle diese Option nicht an, wenn du dich an einem öffentlichen Computer "
+"befindest."
+
+#: inyoka/templates/overall.html:310
+msgid "Keep me logged in"
+msgstr "Angemeldet bleiben"
+
+#: inyoka/templates/overall.html:313
+msgid "Lost password?"
+msgstr "Passwort vergessen?"
+
+#: inyoka/templates/overall.m.html:47
+#, python-format
+msgid ""
+"\n"
+"          This is the version for mobile clients. To get to the\n"
+"          <a href=\"%(link)s\">classical layout</a> click on the link in "
+"the\n"
+"          footer of the page.\n"
+"        "
+msgstr ""
+"\n"
+"Dies ist die mobile Version. Um zum <a href=\"%(link)s\">klassischen "
+"Layout</a> zurückzukehren, klicke auf den Link am Ende der Seite."
+
+#: inyoka/templates/overall.m.html:67
+msgid "Logout"
+msgstr "Abmelden"
+
+#: inyoka/templates/overall.m.html:85
+msgid "To classic version"
+msgstr "Zur klassischen Version"
+
+#: inyoka/templates/errors/400_csrf.html:14
+msgid "Bad request"
+msgstr "Fehlerhafte Abfrage"
+
+#: inyoka/templates/errors/400_csrf.html:16
+msgid ""
+"\n"
+"      The browser did not transmit a valid control key and therefore the\n"
+"      processing has been canceled for security reasons.\n"
+"    "
+msgstr ""
+"\n"
+"Der Browser hat keinen oder einen fehlerhaften Kontrollschlüssel "
+"übertragen und die Weiterverarbeitung wurde aus Sicherheitsgründen "
+"abgebrochen."
+
+#: inyoka/templates/errors/400_csrf.html:22
+msgid ""
+"\n"
+"      This error usually occurs when you are trying to transfer data\n"
+"      automatically to the server. In rare cases this can also happen if "
+"the\n"
+"      browser configuration was changed while the form data is "
+"transmitted.\n"
+"    "
+msgstr ""
+"\n"
+"Dieser Fehler tritt normalerweise auf, wenn versucht wurde Daten "
+"automatisiert auf den Server zu übertragen. In seltenen Fällen kann dies "
+"auch passieren, wenn die Browserkonfiguration verändert wurde, während "
+"die Formulardaten übertragen wurden."
+
+#: inyoka/templates/errors/400_csrf.html:29
+msgid ""
+"\n"
+"      In some browsers it is possible to click on the \"back\" or the "
+"\"reload\"\n"
+"      button to request a new control key the sending the page again.\n"
+"    "
+msgstr ""
+"\n"
+"In manchen Browsern ist es möglich durch klicken auf \"Zurück\" und dann "
+"\"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern um das "
+"Absenden erneut durchzuführen."
+
+#: inyoka/templates/errors/403.html:18
+msgid "You do not have permissions to access this page."
+msgstr "Du bist nicht berechtigt, diese Seite aufzurufen."
+
+#: inyoka/templates/errors/403.html:22
+msgid "This may be because you are not logged in."
+msgstr "Das könnte daran liegen, dass du nicht angemeldet bist."
+
+#: inyoka/templates/errors/404.html:19
+msgid "Page not found"
+msgstr "Seite nicht gefunden"
+

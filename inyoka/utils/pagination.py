@@ -36,9 +36,10 @@
 from __future__ import division
 import math
 
+from django.utils.encoding import force_unicode
+from django.utils.translation import ugettext as _
 from django_mobile import get_flavour
 
-from django.utils.encoding import force_unicode
 from inyoka.utils.html import escape
 from inyoka.utils.http import PageNotFound, HttpResponseRedirect
 from inyoka.utils.urls import urlencode
@@ -153,13 +154,15 @@ class Pagination(object):
                 if mobile:
                     tmpl = u'<a href="%s" class="next">»</a>'
                 else:
-                    tmpl = u'<a href="%s" class="next">Weiter »</a>'
+                    tmpl = u''.join([u'<a href="%s" class="next">',
+                                    _(u'Next »'), u'</a>'])
                 add(tmpl % escape(link))
             else:
                 if mobile:
                     add(u'<span class="disabled next">»</span>')
                 else:
-                    add(u'<span class="disabled next">Weiter »</span>')
+                    add(u''.join([u'<span class="disabled next">',
+                                    _(u'Next »'), u'</span>']))
 
         if show_prev_link:
             if self.page > 1:
@@ -167,13 +170,15 @@ class Pagination(object):
                 if mobile:
                     tmpl = u'<a href="%s" class="prev">«</a>'
                 else:
-                    tmpl = u'<a href="%s" class="prev">« Zurück</a>'
+                    tmpl = u''.join([u'<a href="%s" class="prev">',
+                                    _(u'« Prev'), u'</a>'])
                 result.insert(0, tmpl % escape(link))
             else:
                 if mobile:
                     result.insert(0, (u'<span class="disabled prev">«</span>'))
                 else:
-                    result.insert(0, (u'<span class="disabled prev">« Zurück</span>'))
+                    result.insert(0, (u''.join([u'<span class="disabled prev">',
+                                    _(u'« Prev'), u'</span>'])))
 
         class_ = 'pagination'
         if position:
