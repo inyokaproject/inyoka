@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
 "POT-Creation-Date: 2011-11-12 15:05+0100\n"
-"PO-Revision-Date: 2011-11-12 14:06+0000\n"
+"PO-Revision-Date: 2011-11-13 19:26+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -1768,7 +1768,7 @@ msgstr "Passwort vergessen"
 
 #: inyoka/portal/templates/portal/lost_password.html:18
 msgid "You have forgotten your password? You can obtain a new one here."
-msgstr ""
+msgstr "Du hast dein Passwort vergessen? Lasse dir hier ein neues zusenden."
 
 #: inyoka/portal/templates/portal/lost_password.html:26
 msgid "Request new password"
@@ -2025,6 +2025,9 @@ msgid ""
 "    get a corrupt stylesheet.\n"
 "  "
 msgstr ""
+"\n"
+"Hier kannst du das Stylesheet bearbeiten, das für die Formatierung von Syntax-Elementen zuständig ist. Es wird auf allen Seiten eingebunden.\n"
+"Bitte trage hier nur Styles ein, die du schon vorher getestet hast, da sonst alle Nutzer ein möglicherweise fehlerhaftes Stylesheet sehen."
 
 #: inyoka/portal/templates/portal/user_admin.html:17
 #, python-format
@@ -2608,6 +2611,8 @@ msgid ""
 "              You did not yet subscribed to any topics or articles.\n"
 "            "
 msgstr ""
+"\n"
+"Du hast bisher keine Themen oder Artikel abonniert."
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:84
 msgid "Delete selected subscriptions"

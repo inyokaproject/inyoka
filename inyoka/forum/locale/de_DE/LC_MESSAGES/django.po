@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
 "POT-Creation-Date: 2011-11-12 15:05+0100\n"
-"PO-Revision-Date: 2011-11-13 17:17+0000\n"
+"PO-Revision-Date: 2011-11-13 19:50+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -547,7 +547,7 @@ msgstr ""
 
 #: inyoka/forum/templates/forum/edit.html:38
 msgid "Paste"
-msgstr ""
+msgstr "Ablage"
 
 #: inyoka/forum/templates/forum/edit.html:44
 #, python-format
@@ -881,7 +881,7 @@ msgstr "Hier kannst du ein Thema in ein anderes Forum verschieben."
 
 #: inyoka/forum/templates/forum/movetopic.html:23
 msgid "New forum of the topic:"
-msgstr ""
+msgstr "Neues Forum des Themas:"
 
 #: inyoka/forum/templates/forum/page.html:23
 msgid "Advanced search"
@@ -998,7 +998,7 @@ msgstr "Aktionen"
 
 #: inyoka/forum/templates/forum/reportlist.html:49
 msgid "(undo)"
-msgstr ""
+msgstr "(rückgängig)"
 
 #: inyoka/forum/templates/forum/reportlist.html:52
 msgid "Assign to me"
@@ -1087,7 +1087,7 @@ msgstr "Beiträge abtrennen"
 
 #: inyoka/forum/templates/forum/topic.html:21
 msgid "Full"
-msgstr ""
+msgstr "Vollständig"
 
 #: inyoka/forum/templates/forum/topic.html:35
 #: inyoka/forum/templates/forum/topic.html:38
@@ -1142,7 +1142,11 @@ msgid_plural ""
 "        This topic is the discussion of the articles %(article_list)s.\n"
 "      "
 msgstr[0] ""
+"\n"
+"Dieses Thema ist die Diskussion des Artikels %(article_list)s."
 msgstr[1] ""
+"\n"
+"Dieses Thema ist die Diskussion der Artikel %(article_list)s."
 
 #: inyoka/forum/templates/forum/topic.html:164
 #, python-format
@@ -1151,6 +1155,8 @@ msgid ""
 "              The poll was started on %(start_date)s and it ended on %(end_date)s.\n"
 "            "
 msgstr ""
+"\n"
+"Die Umfrage wurde am %(start_date)s gestartet und endete am %(end_date)s."
 
 #: inyoka/forum/templates/forum/topic.html:169
 #, python-format
@@ -1159,6 +1165,8 @@ msgid ""
 "              The poll was started on %(start_date)s and it will end on %(end_date)s.\n"
 "            "
 msgstr ""
+"\n"
+"Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s enden."
 
 #: inyoka/forum/templates/forum/topic.html:175
 #, python-format

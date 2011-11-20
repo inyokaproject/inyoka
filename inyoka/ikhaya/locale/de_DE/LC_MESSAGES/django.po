@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
 "POT-Creation-Date: 2011-11-12 15:05+0100\n"
-"PO-Revision-Date: 2011-11-10 21:59+0000\n"
-"Last-Translator: soeren <wegener92@googlemail.com>\n"
+"PO-Revision-Date: 2011-11-13 20:40+0000\n"
+"Last-Translator: MarkusH <info@markusholtermann.eu>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -175,6 +175,9 @@ msgid ""
 "      most recent articles on <a href=\"%(link)s\">the front page</a>.\n"
 "    "
 msgstr ""
+"\n"
+"      Hier finden sich alle Artikel in chronologischer Reihenfolge. Die       aktuellsten Artikel sind auf der <a href=\"%(link)s\">Startseite</a>      zu sehen.\n"
+"    "
 
 #: inyoka/ikhaya/templates/ikhaya/article_delete.html:18
 #, python-format
@@ -185,7 +188,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Bist du sicher, dass du den Artikel <a href=\"%(link)s\">%(article)s</a> löschen möchtest?"
+"Bist du sicher, dass du den Artikel <a href=\"%(link)s\">%(article)s</a> löschen möchtest?\n"
+"    "
 
 #: inyoka/ikhaya/templates/ikhaya/article_delete.html:24
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:52
@@ -509,6 +513,10 @@ msgid ""
 "      as soon as possible.\n"
 "    "
 msgstr ""
+"\n"
+"      Mit diesem Formular kannst du einen neuen Eintrag in unsern \n"
+"      <a href=\"%(link)s\">Kalender</a> eintragen. Ein Teammitglied wird sich      deinen Vorschlag so schnell wie möglich ansehen.\n"
+"    "
 
 #: inyoka/ikhaya/templates/ikhaya/events.html:17
 #: inyoka/ikhaya/templates/ikhaya/page.html:41
@@ -554,6 +562,8 @@ msgid ""
 "            No event was added yet, <a href=\"%(link)s\">create</a> the first one now!\n"
 "          "
 msgstr ""
+"\n"
+"Es wurde noch keine Veranstaltung hinzugefügt, <a href=\"%(link)s\">erstelle</a> jetzt die erste!"
 
 #: inyoka/ikhaya/templates/ikhaya/index.html:15
 #: inyoka/ikhaya/templates/ikhaya/index.html:22
@@ -851,15 +861,21 @@ msgid_plural ""
 "      Here are %(count)s article suggestions which were not yet reviewed.\n"
 "    "
 msgstr[0] ""
+"\n"
+"      Es gibt noch einen Artikelvorschlag zum Bearbeiten.\n"
+"    "
 msgstr[1] ""
+"\n"
+"      Es gibt noch %(count)s Artikelvorschläge zum Bearbeiten.\n"
+"    "
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:24
 msgid "Do not notify me anymore about new article suggestions"
-msgstr ""
+msgstr "Benachrichtige mich nicht mehr bei neuen Artikelvorschlägen"
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:26
 msgid "Notify me about new article suggestions"
-msgstr ""
+msgstr "Benachrichtige mich bei neuen Artikelvorschlägen"
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:34
 #, python-format
@@ -868,26 +884,28 @@ msgid ""
 "                Suggested by <a href=\"%(link)s\">%(author)s</a>\n"
 "              "
 msgstr ""
+"\n"
+"Vorgeschlagen von <a href=\"%(link)s\">%(author)s</a>"
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:39
 msgid "Assigned to:"
-msgstr ""
+msgstr "Zugewiesen an:"
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:46
 msgid "Assign to me"
-msgstr ""
+msgstr "Mir zuweisen"
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:48
 msgid "Delete assignment"
-msgstr ""
+msgstr "Zuweisung löschen"
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:54
 #, python-format
 msgid "Write message to %(author)s"
-msgstr ""
+msgstr "%(author)s eine Nachricht schreiben"
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:67
 msgid "There are currently no article suggestions."
-msgstr ""
+msgstr "Es gibt momentan keine Artikelvorschläge"
 
 
