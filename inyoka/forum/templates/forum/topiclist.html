@@ -22,18 +22,18 @@
     {%- if can_moderate(topic) and topic.reported %}-reported{% endif -%}
   {%- endif -%}
   .png" alt="
-  {%- if not is_read %}ungelesenes {% endif -%}
-  {%- if topic.solved %}gelöstes {% endif -%}
-  {%- if topic.locked %}gesperrtes {% endif -%}
-  {%- if topic.hidden %}verstecktes {% endif -%}
-  {%- if can_moderate(topic) and topic.reported %}gemeldetes {% endif -%}
-  Thema" title="
-  {%- if not is_read %}ungelesenes {% endif -%}
-  {%- if topic.solved %}gelöstes {% endif -%}
-  {%- if topic.locked %}gesperrtes {% endif -%}
-  {%- if topic.hidden %}verstecktes {% endif -%}
-  {%- if can_moderate(topic) and topic.reported %}gemeldetes {% endif -%}
-  Thema" />
+  {%- if not is_read %}{% trans %}unread topic{% endtrans %}{% endif -%}
+  {%- if topic.solved %}{% trans %}solved topic{% endtrans %}{% endif -%}
+  {%- if topic.locked %}{% trans %}locked topic{% endtrans %}{% endif -%}
+  {%- if topic.hidden %}{% trans %}hidden topic{% endtrans %}{% endif -%}
+  {%- if can_moderate(topic) and topic.reported %}{% trans %}reported topic{% endtrans %}{% endif -%}
+  " title="
+  {%- if not is_read %}{% trans %}unread topic{% endtrans %}{% endif -%}
+  {%- if topic.solved %}{% trans %}solved topic{% endtrans %}{% endif -%}
+  {%- if topic.locked %}{% trans %}locked topic{% endtrans %}{% endif -%}
+  {%- if topic.hidden %}{% trans %}hidden topic{% endtrans %}{% endif -%}
+  {%- if can_moderate(topic) and topic.reported %}{% trans %}reported topic{% endtrans %}{% endif -%}
+  " />
 {%- endmacro %}
 
 {% block forum_content %}
@@ -43,61 +43,70 @@
     </thead>
     <tbody>
       <tr>
-        <th class="topic" colspan="2">Thema</th>
-        <th class="forum">Forum</th>
-        <th class="view_count">Aufrufe</th>
-        <th class="post_count">Antworten</th>
-        <th class="last_post">Letzte Antwort</th>
+        <th class="topic" colspan="2">{% trans %}Topic{% endtrans %}</th>
+        <th class="forum">{% trans %}Forum{% endtrans %}</th>
+        <th class="view_count">{% trans %}Views{% endtrans %}</th>
+        <th class="post_count">{% trans %}Replies{% endtrans %}</th>
+        <th class="last_post">{% trans %}Last reply{% endtrans %}</th>
       </tr>
 
-      {%- for topic in topics if not (topic.hidden and not can_moderate(topic)) and not (hide_sticky and topic.sticky) %}
-      {%- set classes = [] %}
-      {%- if can_moderate(topic) and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
-      {%- if can_moderate(topic) and topic.reported %}{% do classes.append('reported') %}{% endif %}
-      {%- if topic.get_ubuntu_version().class_ %}{% do classes.append(topic.get_ubuntu_version().class_) %}{% endif %}
-      <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
-        <td class="icon">
-          {{ topic_icon(topic) }}
-        </td>
-        <td class="topic">
-          <p class="topic_title">
-            {%- if topic.sticky %}<strong>Wichtig: </strong>{% endif -%}
-            {%- if topic.has_poll %} <strong>[Umfrage]</strong> {% endif -%}
-            {%- if can_moderate(topic) and topic.hidden %} [Verborgen] {% endif %}
-            {%- if can_moderate(topic) and topic.reported %} [Gemeldet] {% endif %}
-            <a href="{{ topic|url }}">{{ topic.title|e }}</a>
-            {%- if not topic.get_read_status(USER) %}
-            <a href="{{ topic|url('first_unread') }}" title="Zeige ungelesene Beiträge">
-              <img src="{{ href('static', 'img/forum/goto.png') }}" alt="Zeige ungelesene Beiträge" />
-            </a>
+      {%- for topic in topics if not (topic.hidden and not can_moderate(topic))
+                             and not (hide_sticky and topic.sticky) %}
+        {%- set classes = [] %}
+        {%- if can_moderate(topic) and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
+        {%- if can_moderate(topic) and topic.reported %}{% do classes.append('reported') %}{% endif %}
+        {%- if topic.get_ubuntu_version().class_ %}{% do classes.append(topic.get_ubuntu_version().class_) %}{% endif %}
+        <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
+          <td class="icon">
+            {{ topic_icon(topic) }}
+          </td>
+          <td class="topic">
+            <p class="topic_title">
+              {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
+              {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
+              {% if can_moderate(topic) and topic.hidden %}{% trans %}[Hidden]{% endtrans %}{% endif %}
+              {% if can_moderate(topic) and topic.reported %}{% trans %}[Reported]{% endtrans %}{% endif %}
+              <a href="{{ topic|url }}">{{ topic.title|e }}</a>
+              {%- if not topic.get_read_status(USER) %}
+                <a href="{{ topic|url('first_unread') }}"
+                   title="{% trans %}Show unread posts{% endtrans %}">
+                  <img src="{{ href('static', 'img/forum/goto.png') }}"
+                       alt="{% trans %}Show unread posts{% endtrans %}" />
+                </a>
+              {%- endif %}
+            </p>
+            <p class="description note">
+              {% trans author=topic.author.username|e, link=topic.author|url %}
+                by <a href="{{ link }}">{{ author }}</a>
+              {% endtrans %} |
+              {{ topic.first_post.pub_date|datetimeformat }}
+              {%- if topic.paginated %} |
+                {% trans pagination=topic.get_pagination() %}
+                  Go to page {{ pagination }}
+                {% endtrans %}
+              {% endif -%}
+            </p>
+          </td>
+          <td><a href="{{ topic.forum|url }}">{{ topic.forum.name|e }}</a></td>
+          <td class="view_count">{{ topic.view_count }}</td>
+          <td class="post_count">{{ topic.post_count - 1 }}</td>
+          <td class="last_post">
+            {%- if topic.last_post %}
+              <a href="{{ topic.last_post|url}}" class="date">{{
+                topic.last_post.pub_date|datetimeformat }}</a><br />
+              <a href="{{ topic.last_post.author|url}}">{{ topic.last_post.author }}</a>
+            {%- else %}
+              –
             {%- endif %}
-          </p>
-          <p class="description note">
-            von <a href="{{ topic.author|url }}">{{ topic.author.username|e }}</a> am {{ topic.first_post.pub_date|datetimeformat }}
-            {%- if topic.paginated %} &#160; &#160; [
-              Gehe zu Seite {{topic.get_pagination() }}
-            ]{% endif -%}
-          </p>
-        </td>
-        <td><a href="{{ topic.forum|url }}">{{ topic.forum.name|e }}</a></td>
-        <td class="view_count">{{ topic.view_count }}</td>
-        <td class="post_count">{{ topic.post_count - 1 }}</td>
-        <td class="last_post">
-          {%- if topic.last_post %}
-            <a href="{{ topic.last_post|url}}" class="date">{{
-              topic.last_post.pub_date|datetimeformat }}</a><br />
-            <a href="{{ topic.last_post.author|url}}">{{ topic.last_post.author }}</a>
-          {%- else %}
-            –
-          {%- endif %}
-        </td>
-      </tr>
-    {%- else %}
-      <tr>
-        <td colspan="6">
-          Es wurden keine entsprechenden Beiträge gefunden.
-      </tr>
-    {%- endfor %}
+          </td>
+        </tr>
+      {%- else %}
+        <tr>
+          <td colspan="6">
+            {% trans %}No topics were found.{% endtrans %}
+          </td>
+        </tr>
+      {%- endfor %}
     </tbody>
   </table>
   <div class="forum_offset_pagination">

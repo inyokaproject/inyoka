@@ -17,24 +17,24 @@
 {% macro forum_actions() %}
   <p class="actions linklist">
     {% if can_create %}
-      <a href="{{ forum|url('newtopic') }}" class="action action_reply">Neues Thema</a> |
+      <a href="{{ forum|url('newtopic') }}" class="action action_reply">{% trans %}New topic{% endtrans %}</a> |
     {%- endif %}
     {% if USER.is_authenticated %}
       {%- if is_subscribed %}
-      <a href="{{ generate_subscription_link(do='unsubscribe') }}" class="action action_subscribe subscribe_forum" id="{{ forum.slug }}">abbestellen</a>
+        <a href="{{ generate_subscription_link(do='unsubscribe') }}" class="action action_subscribe subscribe_forum" id="{{ forum.slug }}">{% trans %}Unsubscribe{% endtrans %}</a>
       {%- else %}
-      <a href="{{ generate_subscription_link() }}" class="action action_subscribe subscribe_forum" id="{{ forum.slug }}">abonnieren</a>
+        <a href="{{ generate_subscription_link() }}" class="action action_subscribe subscribe_forum" id="{{ forum.slug }}">{% trans %}Subscribe{% endtrans %}</a>
       {%- endif %}
-      | <a href="{{ forum|url('markread') }}">als gelesen markieren</a>
+      | <a href="{{ forum|url('markread') }}">{% trans %}Mark as read{% endtrans %}</a>
     {%- endif %}
   </p>
 {% endmacro %}
 
 {% set name = 'Forum „%s“ - ' % forum.name|e %}
 {% set feeds = [
-  (name + 'Nur Überschrift', href('forum', 'feeds/forum', forum.slug, 'title/20')),
-  (name + 'Nur Einleitung', href('forum', 'feeds/forum', forum.slug, 'short/20')),
-  (name + 'Ganzer Beitrag', href('forum', 'feeds/forum', forum.slug, 'full/20'))
+  (name + _('Captions'), href('forum', 'feeds/forum', forum.slug, 'title/20')),
+  (name + _('Teaser'), href('forum', 'feeds/forum', forum.slug, 'short/20')),
+  (name + _('Full post'), href('forum', 'feeds/forum', forum.slug, 'full/20'))
 ] %}
 {% do BREADCRUMB.append(forum.name, forum|url, True) %}
 {% for parent in forum.parents %}
@@ -42,7 +42,7 @@
 {% endfor %}
 
 {% block search_areas %}
-  <option value="current_forum" selected="selected">Dieses Forum</option>
+  <option value="current_forum" selected="selected">{% trans %}Current forum{% endtrans %}</option>
 {% endblock %}
 
 {% block forum_content %}
@@ -50,23 +50,29 @@
     <thead>
       <tr><th colspan="5" class="category">{{ forum.name|e }}
         {%- if USER.can('forum_edit') -%}
-        <a href="{{ href('forum', 'forum', forum.slug, 'edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" class="admin_link right" /></a>
+          <a href="{{ href('forum', 'forum', forum.slug, 'edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" class="admin_link right" /></a>
         {%- endif -%}
         </th></tr>
       <tr>
         <td colspan="5">
           {%- if forum.description %}
-          <p class="description">{{ forum.description|e }}</p>
+            <p class="description">{{ forum.description|e }}</p>
           {%- endif %}
-          {%- if supporters %}
-          <p class="description">Supporter:
-          {%- for supporter in supporters %}
-            <a href="{{supporter|url }}">{{ supporter.username|e }}</a>
-            {%- if not loop.last %}, {% endif %}
-          {%- endfor %}
-          <span class="description" style="float: right;">Themen: <b>{{ forum.topic_count }}</b> | Beiträge: <b>{{ forum.post_count }}</b></span>
+          <p class="description">
+            {%- if supporters %}
+              {% trans count=supporters|count %}Supporter:{% pluralize %}Supporters:{% endtrans %}
+              {%- for supporter in supporters %}
+                <a href="{{supporter|url }}">{{ supporter.username|e }}</a>
+                {%- if not loop.last %}, {% endif %}
+              {%- endfor %}
+            {%- else %}
+              &nbsp;
+            {%- endif %}
+            <span class="description" style="float: right;">
+              {% trans n=forum.topic_count %}Topics: <strong>{{ n }}</strong>{% endtrans %} |
+              {% trans n=forum.post_count %}Posts: <strong>{{ n }}</strong>{% endtrans %}
+            </span>
           </p>
-          {%- endif %}
           {{ pagination.generate('right') }}
           {{ forum_actions() }}
         </td>
@@ -77,11 +83,11 @@
       {{ render_forum(subforum, subforum.children, last_posts) }}
     {%- endfor %}
     <tr>
-      <th class="topic" colspan="2">Thema</th>
-      <th class="view_count">Aufrufe</th>
-      <th class="post_count">Antworten</th>
+      <th class="topic" colspan="2">{% trans %}Topic{% endtrans %}</th>
+      <th class="view_count">{% trans %}Views{% endtrans %}</th>
+      <th class="post_count">{% trans %}Replies{% endtrans%}</th>
 
-      <th class="last_post">Letzter Beitrag</th>
+      <th class="last_post">{% trans %}Last post{% endtrans %}</th>
     </tr>
     {# TODO: workaround for topics without first or last_post to not mess up with server errors #}
     {%- for topic in topics  -%}
@@ -95,25 +101,30 @@
           <td class="icon">{{ topic_icon(topic) }}</td>
           <td class="topic">
             <p class="topic_title">
-              {% if topic.sticky %}<strong>Wichtig:</strong>{% endif %}
-              {% if topic.has_poll %}<strong>[Umfrage]</strong>{% endif %}
-              {% if can_moderate and topic.hidden %}[Verborgen]{% endif %}
-              {% if can_moderate and topic.reported %}[Gemeldet]{% endif %}
+              {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
+              {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
+              {% if can_moderate and topic.hidden %}{% trans %}[Hidden]{% endtrans %}{% endif %}
+              {% if can_moderate and topic.reported %}{% trans %}[Reported]{% endtrans %}{% endif %}
               <a href="{{ topic|url }}">{{ topic.title|e }}</a>
               {% if topic.get_version_info(False) %}
                 » <span class="ubuntu_version">{{ topic.get_version_info() }}</span>
               {%- endif %}
               {%- if not topic.get_read_status(USER) %}
-                <a href="{{ topic|url('first_unread') }}" title="Zeige ungelesene Beiträge">
-                  <img src="{{ href('static', 'img/forum/goto.png') }}" alt="Zeige ungelesene Beiträge" />
+                <a href="{{ topic|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">
+                  <img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />
                 </a>
               {%- endif %}
             </p>
             <p class="description note">
-              von <a href="{{ topic.author|url }}">{{ topic.author.username|e }}</a> am {{ topic.first_post.pub_date|datetimeformat }}
-              {%- if topic.paginated %} &#160; &#160; [
-                Gehe zu Seite {{ topic.get_pagination() }}
-              ]{% endif -%}
+              {% trans author=topic.author.username|e, link=topic.author|url %}
+                by <a href="{{ link }}">{{ author }}</a>
+              {% endtrans %} |
+              {{ topic.first_post.pub_date|datetimeformat }}
+              {%- if topic.paginated %} |
+                {% trans pagination=topic.get_pagination() %}
+                  Go to page {{ pagination }}
+                {% endtrans %}
+              {% endif -%}
             </p>
           </td>
           <td class="view_count">{{ topic.view_count }}</td>
@@ -123,7 +134,9 @@
               <a href="{{ topic.last_post|url}}" class="date">
                 {{ topic.last_post.pub_date|datetimeformat }}
               </a><br />
-              von <a href="{{ topic.last_post.author|url}}">{{ topic.last_post.author }}</a>
+              {% trans author=topic.last_post.author|e, link=topic.last_post.author|url %}
+                by <a href="{{ link }}">{{ author }}</a>
+              {% endtrans %}
             {%- else %}
               ---
             {% endif %}
@@ -133,8 +146,9 @@
     {%- else -%}
       <tr>
         <td colspan="5">
-          Es existieren noch keine Themen.
-          <a href="{{ forum|url('newtopic') }}">Erstelle</a> doch das Erste!
+          {% trans link=forum|url('newtopic') %}
+            There are no topics. <a href="{{ link }}">Create</a> the first one now!
+          {% endtrans %}
         </td>
       </tr>
     {% endfor %}

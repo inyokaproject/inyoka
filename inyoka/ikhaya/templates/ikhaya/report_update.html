@@ -1,6 +1,6 @@
 {#
     ikhaya/report_update.html
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This template is flashed to ensure that the user want to change the report.
 
@@ -10,9 +10,31 @@
 
 
 <form action="{{ report|url(action)|e }}" method="post">
-  <p>Möchtest du die <a href="{{ report|url()|e }}">Meldung von {{ report.author.username|e }}</a> {% if action=='hide' %}verbergen{% elif action=='restore' %}wiederherstellen{% elif action=='solve' %}als gelöst markieren{% elif action=='unsolve' %}als ungelöst markieren{% endif %}?</p>
   <p>
-    <input type="submit" value="{% if action=='hide' %}Verbergen{% elif action=='restore' %}Wiederherstellen{% elif action =='unsolve' %}Als ungelöst markieren{% else %}Gelöst{% endif %}" />
-    <input type="submit" name="cancel" value="Abbrechen" />
+    {% if action == 'hide' %}
+      {% trans link=report|url, author=report.author.username|e %}
+        Do you want to hide the <a href="{{ link }}">report from {{ author }}</a>?
+      {% endtrans %}
+    {% elif action == 'restore' %}
+      {% trans link=report|url, author=report.author.username|e %}
+        Do you want to restore the <a href="{{ link }}">report from {{ author }}</a>?
+      {% endtrans %}
+    {% elif action == 'solve' %}
+      {% trans link=report|url, author=report.author.username|e %}
+        Do you want to mark the <a href="{{ link }}">report from {{ author }}</a> as solved?
+      {% endtrans %}
+    {% elif action == 'unsolve' %}
+      {% trans link=report|url, author=report.author.username|e %}
+        Do you want to mark the <a href="{{ link }}">report from {{ author }}</a> as unsolved?
+      {% endtrans %}
+    {% endif %}
+  </p>
+  <p>
+    <input type="submit" value="{% if action=='hide' -%}{% trans %}Hide{% endtrans %}
+                                {%- elif action=='restore' -%}{% trans %}Restore{% endtrans %}
+                                {%- elif action =='solve' -%}{% trans %}Mark as solved{% endtrans %}
+                                {%- elif action =='unsolve' -%}{% trans %}Mark as unsolved{% endtrans %}
+                                {%- endif %}" />
+    <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" />
   </p>
 </form>

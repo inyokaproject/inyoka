@@ -17,14 +17,15 @@ from django import forms
 from django.conf import settings
 from django.core import validators
 from django.forms.widgets import Input
+from django.utils.translation import ugettext as _
 from inyoka.portal.user import User
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
-from inyoka.utils.urls import href
+from inyoka.utils.flashing import flash
+from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request
 from inyoka.utils.mail import may_be_valid_mail, is_blocked_host
-from inyoka.utils.jabber import may_be_valid_jabber
-from inyoka.utils.flashing import flash
 from inyoka.utils.text import slugify
+from inyoka.utils.urls import href
 
 
 def clear_surge_protection(request, form):
@@ -102,13 +103,14 @@ class CaptchaWidget(Input):
     input_type = 'text'
 
     def render(self, name, value, attrs=None):
-        input = Input.render(self, name, u'', attrs)
-        return (u'<img src="%s" class="captcha" alt="Captcha" /><br />'
-                u'Bitte gib den Code des obigen Bildes hier ein: <br />%s '
-                u'<input type="submit" name="renew_captcha" value="Neuen Code'
-                u' erzeugen" />') % (
-            href('portal', __service__='portal.get_captcha',
-                 rnd=randrange(1, sys.maxint)), input)
+        input_ = Input.render(self, name, u'', attrs)
+        img = '<img src="%s" class="captcha" alt="%s" />' % (
+              href('portal', __service__='portal.get_captcha',
+                   rnd=randrange(1, sys.maxint)), _('Captcha'))
+        text = '%s:' % _('Please type in the code from the graphic above')
+        input_tag = '<input type="submit" name="renew_captcha" value="%s" />' % (
+                    _('Generate new code'))
+        return '<br />'.join([img, text, input_tag])
 
 
 class DateTimeWidget(Input):

@@ -11,29 +11,29 @@
 {% from 'macros.html' import render_form %}
 
 {% if not file %}
-  {% do BREADCRUMB.append('Erstellen', href('portal', 'files', 'new'), True) %}
+  {% do BREADCRUMB.append(_('Create'), href('portal', 'files', 'new'), True) %}
 {% else %}
   {% do BREADCRUMB.append(file.identifier|e, file|url('edit'), True) %}
 {% endif %}
-{% do BREADCRUMB.append('Statische Dateien', href('portal', 'files'), True) %}
+{% do BREADCRUMB.append(_('Static files'), href('portal', 'files'), True) %}
 
 {% block content %}
 <form action="" method="post" enctype="multipart/form-data">
   <dl>
     {{ render_form(form, ['is_ikhaya_icon', 'file'], inline=true) }}
     {%- if file %}
-    <span style="color:red;">ACHTUNG: Ein Ändern der Datei vernichtet alle Links aus Ikhaya Artikeln auf diese Datei.</span>
-    <dt>URL:</dt>
+    <span style="color:red;">{% trans %}CAUTION: A change of the file destroys all links from articles to this file!{% endtrans %}</span>
+    <dt>{% trans %}URL:{% endtrans %}</dt>
     <dd><tt>{{ file|url }}</tt></dd>
-    <dt>Verwendung:</dt>
+    <dt>{% trans %}Usage:{% endtrans %}</dt>
     <dd><tt>{%- if ' ' in file.identifier|e %}[[Bild("{{ file.identifier|e }}")]]{%- else -%}
             [[Bild({{ file.identifier|e}})]]{% endif %}</tt></dd>
     <dd><tt>{%- if ' ' in file.identifier|e %}[[Vorlage(Ikhayabild, "{{ file.identifier|e }}", Link oder Größe, "Beschreibung", left|right)]]{%- else %}
-            [[Vorlage(Ikhayabild, {{ file.identifier|e }}, Link oder Größe, "Beschreibung", left|right)]]{% endif %}</tt></dd>
+            [[Vorlage(Ikhayabild, {{ file.identifier|e }}, Link oder Größe, "{% trans %}Description{% endtrans %}", left|right)]]{% endif %}</tt></dd>
     {%- endif %}
   </dl>
   <p>
-    <input type="submit" value="Speichern" />
+    <input type="submit" value="{% trans %}Submit{% endtrans %}" />
   </p>
 </form>
 {% endblock %}

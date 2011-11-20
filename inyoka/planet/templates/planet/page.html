@@ -10,7 +10,7 @@
 #}
 {%- extends 'overall.html' %}
 
-{% do BREADCRUMB.append('Planet', href('planet'), True) %}
+{% do BREADCRUMB.append(_('Planet'), href('planet'), True) %}
 {% set active_app = 'planet' %}
 {% set navi_type  = 'sidebar' %}
 {% set styles = styles|default([]) + ['planet'] %}
@@ -26,7 +26,7 @@
 
 {% block sidebar %}
   <div class="container">
-    <h3 class="navi_planet">Planet</h3>
+    <h3 class="navi_planet">{% trans %}Planet{% endtrans %}</h3>
     <p>
       Der Planet stellt Nachrichten aus Blogs der Ubuntu- und
       Open-Source- Gemeinschaft zusammen.  Wenn du ein Ubuntu-bezogenes Blog
@@ -35,39 +35,41 @@
       Bitte beachtet dabei die <a href="{{ href('wiki', 'ubuntuusers',
       'Ikhayateam', 'Planetenregeln') }}">Planetenregeln</a>.
     </p>
-    <h3 class="navi_blogs">Blogs exportieren</h3>
+    <h3 class="navi_blogs">{% trans %}Export blogs{% endtrans %}</h3>
     <ul class="export">
       <li><img src="{{ href('static', 'img', 'opml.png') }}" /><a href="{{ href('planet', 'blogs', 'export', 'opml') }}">OPML</a>
       <li><img src="{{ href('static', 'img', 'foaf.png') }}" /><a href="{{ href('planet', 'blogs', 'export', 'foaf') }}">FOAF</a>
     </ul>
 
     {%- if blogs %}
-    <h3 class="navi_blogs admin_link_hover">
-      {%- if USER.can('blog_edit') -%}
-        <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/ikhaya/category_new.png') }}" /></a>
-      {%- endif -%}Blogs
-    </h3>
-    <ul>
-    {%- for blog in blogs %}
-      <li class="admin_link_hover">
-        {%- if USER.can('category_edit') -%}
-          <a class="admin_link" href="{{ blog|url('edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" /></a>
-        {%- endif -%}
-        <a href="{{ blog|url|e }}">{{ blog.name|e }}</a>
-      </li>
-    {%- endfor %}
-    </ul>
+      <h3 class="navi_blogs admin_link_hover">
+        {%- if USER.can('blog_edit') -%}
+          <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/ikhaya/category_new.png') }}" /></a>
+        {%- endif -%}{% trans %}Blogs{% endtrans %}
+      </h3>
+      <ul>
+        {%- for blog in blogs %}
+          <li class="admin_link_hover">
+            {%- if USER.can('category_edit') -%}
+              <a class="admin_link" href="{{ blog|url('edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" /></a>
+            {%- endif -%}
+            <a href="{{ blog|url|e }}">{{ blog.name|e }}</a>
+          </li>
+        {%- endfor %}
+      </ul>
     {%- endif %}
     {%- if USER.can('blog_edit') %}
-    <h3 class="navi_blogs admin_link_hover">
-      {%- if USER.can('blog_edit') -%}
-        <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/ikhaya/article_new.png') }}" /></a>
-      {%- endif -%}
-      Konfiguration
-    </h3>
-    <ul>
-      <li><a href="{{ href('planet', 'blogs') }}">Blogliste</a></li>
-    </ul>
+      <h3 class="navi_blogs admin_link_hover">
+        {%- if USER.can('blog_edit') -%}
+          <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/ikhaya/article_new.png') }}" /></a>
+        {%- endif -%}
+        {% trans %}Configuration{% endtrans %}
+      </h3>
+      <ul>
+        <li>
+          <a href="{{ href('planet', 'blogs') }}">{% trans %}Bloglist{% endtrans %}</a>
+        </li>
+      </ul>
     {%- endif %}
   </div>
 {% endblock %}

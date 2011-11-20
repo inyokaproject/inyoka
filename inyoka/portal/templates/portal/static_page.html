@@ -12,10 +12,10 @@
 {% do BREADCRUMB.append(title, href('portal', key), True) %}
 
 {% block content %}
-<h3>{{ title|e }}
-{%- if USER.can('static_page_edit') %}
-<a href="{{ page|url('edit') }}"><img src="{{ href('static', 'img', 'ikhaya', 'category_edit.png') }}" /></a><a href="{{ page|url('delete') }}"><img src="{{ href('static', 'img', 'forum', 'delete.png') }}" /></a>
-{%- endif %}
-</h3>
-{{ content|safe }}
+  <h3>{{ title|e }}
+    {%- if USER.can('static_page_edit') %}
+      <a href="{{ page|url('edit') }}"><img src="{{ href('static', 'img', 'ikhaya', 'category_edit.png') }}" /></a><a href="{{ page|url('delete') }}"><img src="{{ href('static', 'img', 'forum', 'delete.png') }}" /></a>
+    {%- endif %}
+  </h3>
+  {{ content|safe }}
 {% endblock %}

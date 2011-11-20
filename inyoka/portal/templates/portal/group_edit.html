@@ -12,47 +12,48 @@
 {% from 'macros.html' import render_form %}
 
 {% if is_new %}
-  {% do BREADCRUMB.append('neue Gruppe', href('portal', 'group', 'new'), True) %}
+  {% do BREADCRUMB.append(_('New group'), href('portal', 'group', 'new'), True) %}
 {% else %}
-  {% do BREADCRUMB.append('Bearbeiten', href('portal', 'group', group_name, 'edit'), True) %}
+  {% do BREADCRUMB.append(_('Edit'), href('portal', 'group', group_name, 'edit'), True) %}
   {% do BREADCRUMB.append(group.name, group|url, True) %}
 {% endif %}
-{% do BREADCRUMB.append('Gruppen', href('portal', 'groups'), True) %}
+{% do BREADCRUMB.append(_('Groups'), href('portal', 'groups'), True) %}
 
 {% set scripts = ['PrivilegeBox'] %}
 
 {% block content %}
-<h3>Gruppenkonfiguration</h3>
+<h3>{% trans %}Groupconfiguration{% endtrans %}</h3>
 <form enctype="multipart/form-data" action="" method="post">
   <dl>
     {{ render_form(form, ['name'], inline=true) }}
     <dd>
-      {{ form.is_public }} <label for="id_is_public">Öffentlich</label>
-      <span class="help_text">wird in der Gruppenübersicht und im Benutzerprofil angezeigt</span>
+      {{ form.is_public }} <label for="id_is_public">{% trans %}Public{% endtrans %}</label>
+      <span class="help_text">{% trans %}will be shown in the groupoverview and the userprofile{% endtrans %}</span>
       {{- form.is_public.errors }}
     </dd>
     <dl>
-      <dt>Team-Icon:</dt>
+      <dt>{% trans %}Teamicon:{% endtrans %}</dt>
       {% if group.icon %}<dd><img class="admin_teamicon" src="{{ group.icon_url }}" alt="Team-Icon" /></dd>{% endif %}
       <dd>{{ form.icon }}</dd>
       {%- if team_icon_height >= 0 and team_icon_width >= 0 %}
       <dd class="note">
-        Beachte, dass das Team-Icon maximal <strong>{{ team_icon_width }} x {{ team_icon_height }}</strong> Pixel groß sein darf.<br />
-        Alles, was größer ist, wird automatisch auf diese Größe skaliert.<br />
-        Um also eine gute Bildqualität zu erreichen, darf der Avatar diese Größe nicht überschreiten.
+        {% trans width=team_icon_width, height=team_icon_height %}
+          Please note that the teamicon can not be bigger than {{ width }}x{{ height }} pixel.
+          Everything that exceeds this limit will automatically be resized.
+        {% endtrans %}
       </dd>
       {%- endif %}
       <dd>{{ form.import_icon_from_global }} <label for="id_import_icon_from_global">Globales Team-Icon importieren</label></dd>
       {%- if group.icon %}
-      <dd>{{ form.delete_icon }} <label for="id_delete_icon">Team-Icon löschen</label></dd>
+      <dd>{{ form.delete_icon }} <label for="id_delete_icon">{% trans %}Delete teamicon{% endtrans %}</label></dd>
       {%- endif %}
       {%- if form.errors.avatar or form.errors.delete_avatar %}<dd>{{ form.errors.avatar }}{{ form.errors.delete_avatar }}</dd>{% endif %}
     </dl>
     {{ render_form(form, ['permissions']) }}
-    <dt>Forum-Privilegien:</dt>
-    <dd id="forum_rights">Javascript muss aktiviert sein, um die Privilegien zu bearbeiten!</dd>
+    <dt>{% trans %}Forum privileges:{% endtrans %}</dt>
+    <dd id="forum_rights">{% trans %}Please turn javascript on to edit the privileges.{% endtrans %}</dd>
   </dl>
-  <input type="submit" value="Speichern" />
+  <input type="submit" value="{% trans %}Submit{% endtrans %}" />
 </form>
 {% endblock %}
 

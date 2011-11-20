@@ -10,77 +10,88 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 <!doctype html>
-<head>
-  <meta charset="utf-8">
-  <title>{{ BREADCRUMB.render('title') }}</title>
-  <meta name="HandheldFriendly" content="True" />
-  <meta name="MobileOptimized" content="320" />
-  <meta name="viewport" content="width=device-width; initial-scale=1.0" />
-  <meta http-equiv="cleartype" content="on" />
-  <link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'mobile.css') }}" />
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
-  {% if SETTINGS.DEBUG %}
-    <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.js') }}'>\x3C/script>")</script>
-  {% else %}
-    <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'>\x3C/script>")</script>
-  {% endif %}
-  <script type="text/javascript">
-  /*<![CDATA[*/
-    var $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }};
-  /*]]>*/
-  </script>
-  {% for script in scripts %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ BREADCRUMB.render('title') }}</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width; initial-scale=1.0" />
+    <meta http-equiv="cleartype" content="on" />
+    <link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'mobile.css') }}" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
     {% if SETTINGS.DEBUG %}
-      <script type="text/javascript" src="{{ href('static', 'js/%s.m.js'|format(script)) }}"></script>
+      <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.js') }}'>\x3C/script>")</script>
     {% else %}
-      <script type="text/javascript" src="{{ href('static', 'js/%s.m.min.js'|format(script)) }}"></script>
+      <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'>\x3C/script>")</script>
     {% endif %}
-  {% endfor %}
-  <script type="text/javascript" src="{{ href('static', 'js/mobile.js') }}"></script>
-</head>
+    <script type="text/javascript">
+    /*<![CDATA[*/
+      var $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }};
+    /*]]>*/
+    </script>
+    {% for script in scripts %}
+      {% if SETTINGS.DEBUG %}
+        <script type="text/javascript" src="{{ href('static', 'js/%s.m.js'|format(script)) }}"></script>
+      {% else %}
+        <script type="text/javascript" src="{{ href('static', 'js/%s.m.min.js'|format(script)) }}"></script>
+      {% endif %}
+    {% endfor %}
+    <script type="text/javascript" src="{{ href('static', 'js/mobile.js') }}"></script>
+  </head>
 
-<body>
-  <div class="wrapper">
-    <div id="mobile-notice">
+  <body>
+    <div class="wrapper">
+      <div id="mobile-notice">
         <span><a onclick="hide_mobile_notice()" href="#" title="Diesen Hinweis ausblenden">x</a></span>
-        Dies ist die mobile Version von ubuntuusers. Klicke auf den Link um
-        <a href="?flavour=full">zur klassischen Version</a> zu gelangen. Dieser
-        Link findet sich auch am Ende der Seite wieder.
-    </div>
-    <header>
-      <nav>
-        <ul>
-          {% if back %}
-            <li class="back"><a href="{{ back }}">«</a></li>
-          {% endif %}
-          {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
-            <li{% if app == active_app %} class="active"{% endif %}>
-              <a href="{{ href(app) }}">{{ app|capitalize }}</a>
+        {% trans link="?flavour=full" %}
+          This is the version for mobile clients. To get to the
+          <a href="{{ link }}">classical layout</a> click on the link in the
+          footer of the page.
+        {% endtrans %}
+      </div>
+      <header>
+        <nav>
+          <ul>
+            {% if back %}
+              <li class="back"><a href="{{ back }}">«</a></li>
+            {% endif %}
+            {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
+              <li{% if app == active_app %} class="active"{% endif %}>
+                <a href="{{ href(app) }}">{{ app|capitalize }}</a>
+              </li>
+            {%- endfor %}
+            <li>
+              {%- if USER.is_authenticated %}
+                <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
+                  {% trans %}Logout{% endtrans %}
+                </a>
+              {%- else %}
+                <a href="{{ href('portal', 'login', next=CURRENT_URL) }}">
+                  {% trans %}Login{% endtrans %}
+                </a>
+              {%- endif %}
             </li>
-          {%- endfor %}
-					<li>
-						{%- if USER.is_authenticated %}
-							<a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">Logout</a>
-						{%- else %}
-							<a href="{{ href('portal', 'login', next=CURRENT_URL) }}">Login</a>
-						{%- endif %}
-					</li>
-        </ul>
-      </nav>
-      <div class="clear"></div>
-    </header>
-    <div id="content">
-      {%- block content -%}{%- endblock -%}
+          </ul>
+        </nav>
+        <div class="clear"></div>
+      </header>
+      <div id="content">
+        {%- block content -%}{%- endblock -%}
+      </div>
+      <footer>
+        <p>
+          <a href="?flavour=full" class="flavour_switch" >
+            {% trans %}To classic version{% endtrans %}
+          </a>
+        </p>
+        2004 – 2011 ubuntuusers.de • Einige Rechte vorbehalten<br />
+        <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/de/deed.de" rel="license">CC</a> •
+        <a href="{{ href('portal', 'lizenz') }}" rel="cc:morePermissions">Lizenz</a> •
+        <a href="{{ href('portal', 'kontakt') }}">Kontakt</a> •
+        <a href="{{ href('portal', 'datenschutz') }}">Datenschutz</a> •
+        <a href="{{ href('portal', 'impressum') }}">Impressum</a> •
+      </footer>
     </div>
-    <footer>
-      <p><a href="?flavour=full" class="flavour_switch" >Zur klassischen Version</a></p>
-      2004 – 2011 ubuntuusers.de • Einige Rechte vorbehalten<br />
-      <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/de/deed.de" rel="license">CC</a> •
-      <a href="{{ href('portal', 'lizenz') }}" rel="cc:morePermissions">Lizenz</a> •
-      <a href="{{ href('portal', 'kontakt') }}">Kontakt</a> •
-      <a href="{{ href('portal', 'datenschutz') }}">Datenschutz</a> •
-      <a href="{{ href('portal', 'impressum') }}">Impressum</a> •
-    </footer>
-  </div>
-</body>
+  </body>
 </html>

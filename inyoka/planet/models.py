@@ -11,6 +11,7 @@
 from django.core.cache import cache
 from django.conf import settings
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from inyoka.utils.urls import href, url_for
 from inyoka.utils.search import search, SearchAdapter
@@ -31,15 +32,15 @@ class EntryManager(models.Manager):
 
 
 class Blog(models.Model):
-    name = models.CharField(u'Name des Blogs', max_length=40)
-    description = models.TextField(u'Beschreibung', blank=True, null=True)
-    blog_url = models.URLField(u'URL des Blogs', verify_exists=False)
-    feed_url = models.URLField(u'URL des Feeds', verify_exists=False)
-    user = models.ForeignKey(User, verbose_name=u'Benutzer',
+    name = models.CharField(_(u'Name of the blog'), max_length=40)
+    description = models.TextField(_(u'Description'), blank=True, null=True)
+    blog_url = models.URLField(_(u'URL of the blog'), verify_exists=False)
+    feed_url = models.URLField(_(u'URL of the feed'), verify_exists=False)
+    user = models.ForeignKey(User, verbose_name=_(u'User'),
                              blank=True, null=True)
-    icon = models.ImageField(u'Icon', upload_to='planet/icons', blank=True)
+    icon = models.ImageField(_(u'Icon'), upload_to='planet/icons', blank=True)
     last_sync = models.DateTimeField(blank=True, null=True)
-    active = models.BooleanField(u'Blog indizieren', default=True)
+    active = models.BooleanField(_(u'Index the blog'), default=True)
 
     @property
     def icon_url(self):
@@ -120,8 +121,8 @@ class Entry(models.Model):
         self.update_search()
 
     class Meta:
-        verbose_name = 'Eintrag'
-        verbose_name_plural = u'Einträge'
+        verbose_name = _(u'Entry')
+        verbose_name_plural = _(u'Entries')
         get_latest_by = 'pub_date'
         ordering = ('-pub_date',)
 

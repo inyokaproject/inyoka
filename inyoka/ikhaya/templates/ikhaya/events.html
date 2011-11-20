@@ -1,6 +1,6 @@
 {#
     ikhaya/events.html
-    ~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~
 
     This is the overview of the events.
 
@@ -9,48 +9,51 @@
 #}
 {%- extends 'ikhaya/page.html' %}
 
-{% do BREADCRUMB.append('Veranstaltungen', href('ikhaya', 'events'), True) %}
+{% do BREADCRUMB.append(_('Events'), href('ikhaya', 'events'), True) %}
 
 {% block content %}
-<h3>Veranstaltungen</h3>
-<p class="linklist">
-<a href="{{ href('ikhaya', 'event', 'new') }}">Neue Veranstaltung eintragen</a>
-{%- if not show_all %}
-| <a href="{{ href('ikhaya', 'events', 'all') }}">Auch vergangene Veranstaltungen anzeigen</a>
-{%- endif %}
-{%- if not invisible %}
-| <a href="{{ href('ikhaya', 'events', 'invisible') }}">Nur nicht sichtbare Veranstaltungen anzeigen</a>
-{%- endif %}
-{%- if invisible or show_all %}
-| <a href="{{ href('ikhaya', 'events') }}">Nur zukünftige Veranstaltungen anzeigen</a>
-{%- endif %}
-</p>
-<table class="events">
-  <thead>
-  <tr>
-    <th class="name">{{ table.get_html('name', 'Name') }}</th>
-    <th class="date">{{ table.get_html('date', 'Zeitpunkt') }}</th>
-    <th class="author">{{ table.get_html('author', 'Ersteller') }}</th>
-    <th class="actions">Aktionen</th>
-  </tr>
-  </thead>
-  <tbody>
-  {%- for event in events %}
-  <tr>
-    <td class="name"><a href="{{ event|url }}">{{ event.name|e }}</a></td>
-    <td class="date">{{ event.date|e }}</td>
-    <td class="author"><a href="{{ event.author|url }}">{{ event.author|e }}</a></th>
-    <td class="actions">
-      <a href="{{ event|url('edit') }}" class="event_edit" title="Editieren"></a>
-      <a href="{{ event|url('delete') }}" class="event_delete" title="Löschen"></a>
-      <a href="{{ event|url('copy') }}" class="event_copy" title="Kopieren"></a>
-    </td>
-  </tr>
-  {%- else %}
-  <tr>
-    <td colspan="4">Es wurden noch keine Veranstaltungen eingetragen, <a href="{{ href('ikhaya', 'event', 'new') }}">erstelle</a> jetzt die erste!</td>
-  </tr>
-  {%- endfor %}
-  </tbody>
-</table>
+  <h3>{% trans %}Events{% endtrans %}</h3>
+  <p class="linklist">
+  <a href="{{ href('ikhaya', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a>
+  {%- if not show_all %}
+    | <a href="{{ href('ikhaya', 'events', 'all') }}">{% trans %}Display past events{% endtrans %}</a>
+  {%- endif %}
+  {%- if not invisible %}
+    | <a href="{{ href('ikhaya', 'events', 'invisible') }}">{% trans %}Show only invisible events{% endtrans %}</a>
+  {%- endif %}
+  {%- if invisible or show_all %}
+    | <a href="{{ href('ikhaya', 'events') }}">{% trans %}Show only upcoming events{% endtrans %}</a>
+  {%- endif %}
+  </p>
+  <table class="events">
+    <thead>
+      <tr>
+        <th class="name">{{ table.get_html('name', _('Name')) }}</th>
+        <th class="date">{{ table.get_html('date', _('Date')) }}</th>
+        <th class="author">{{ table.get_html('author', _('Author')) }}</th>
+        <th class="actions">{% trans %}Actions{% endtrans %}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {%- for event in events %}
+      <tr>
+        <td class="name"><a href="{{ event|url }}">{{ event.name|e }}</a></td>
+        <td class="date">{{ event.date|e }}</td>
+        <td class="author"><a href="{{ event.author|url }}">{{ event.author|e }}</a></th>
+        <td class="actions">
+          <a href="{{ event|url('edit') }}" class="event_edit" title="{% trans %}Edit{% endtrans %}"></a>
+          <a href="{{ event|url('delete') }}" class="event_delete" title="{% trans %}Delete{% endtrans %}"></a>
+          <a href="{{ event|url('copy') }}" class="event_copy" title="{% trans %}Copy{% endtrans %}"></a>
+        </td>
+      </tr>
+    {%- else %}
+      <tr>
+        <td colspan="4">
+          {% trans link=href('ikhaya', 'event', 'new') %}
+            No event was added yet, <a href="{{ link }}">create</a> the first one now!
+          {% endtrans %}
+      </tr>
+    {%- endfor %}
+    </tbody>
+  </table>
 {% endblock %}

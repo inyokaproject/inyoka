@@ -22,15 +22,15 @@
 {% block portal_content %}
   <div class="usercp_control">
     <ul>
-      {{ usercp_button(href('portal', 'usercp', 'profile'), 'profile', 'Profilinformationen') }}
-      {{ usercp_button(href('portal', 'usercp', 'settings'), 'preferences', 'Benutzereinstellungen') }}
-      {{ usercp_button(href('portal', 'usercp', 'password'), 'password', 'Passwort ändern') }}
-      {{ usercp_button(href('portal', 'usercp', 'subscriptions'), 'subscriptions', 'Abonnements') }}
-      {{ usercp_button(href('portal', 'usercp', 'deactivate'), 'deactivate', 'Benutzer deaktivieren') }}
+      {{ usercp_button(href('portal', 'usercp', 'profile'), 'profile', _('Profile')) }}
+      {{ usercp_button(href('portal', 'usercp', 'settings'), 'preferences', _('Settings')) }}
+      {{ usercp_button(href('portal', 'usercp', 'password'), 'password', _('Change password')) }}
+      {{ usercp_button(href('portal', 'usercp', 'subscriptions'), 'subscriptions', _('Subscriptions')) }}
+      {{ usercp_button(href('portal', 'usercp', 'deactivate'), 'deactivate', _('Deactivate account')) }}
       {% if user.has_wikipage -%}
-        {{ usercp_button(href('wiki', 'Benutzer', user.username|e, action='edit'), 'wikipage', 'Benutzerseite') }}
+        {{ usercp_button(href('wiki', 'Benutzer', user.username|e, action='edit'), 'wikipage', _('Userpage')) }}
       {%- else -%}
-        {{ usercp_button(href('wiki', 'Benutzerseite'), 'wikipage', 'Benutzerseite') }}
+        {{ usercp_button(href('wiki', 'Benutzerseite'), 'wikipage', _('Userpage')) }}
       {%- endif %}
     </ul>
   </div>

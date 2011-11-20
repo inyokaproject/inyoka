@@ -21,12 +21,16 @@
 {% do BREADCRUMB.append('Kalender', href('portal', 'calendar')) %}
 
 {% block portal_content %}
-<h3>Veranstaltung „<span class="summary">{{ event.name|e }}</span>“</h3>
+<h3>
+  {% trans title=event.name|e %}
+    Event “{{ title }}“
+  {% endtrans %}
+</h3>
 <table class="vevent admin_link_hover">
-  <tr><th>Zeitpunkt</th><td>{{ event.natural_datetime }}</td></tr>
+  <tr><th>{% trans %}Date{% endtrans %}</th><td>{{ event.natural_datetime }}</td></tr>
   {%- if event.location_town %}
   <tr>
-    <th>Ort</th>
+    <th>{% trans %}Location{% endtrans %}</th>
     <td>
       {% if event.location %}<span class="location">{{ event.location|e }} in {% endif %}{{ event.location_town|e }}</span>
       {%- if event.location_lat and event.location_long %}
@@ -35,12 +39,19 @@
     </td>
   </tr>
   {%- endif %}
-  <tr><th colspan="2">Details
-    {%- if USER.can('event_edit') %} <small class="admin_link">(<a href="{{ event|url('edit') }}">bearbeiten</a>)</small>{% endif %}</th></tr>
+  <tr>
+    <th colspan="2">{% trans %}Details{% endtrans %}
+      {%- if USER.can('event_edit') %}
+        <small class="admin_link">
+          (<a href="{{ event|url('edit') }}">{% trans %}edit{% endtrans %}</a>)
+        </small>
+      {% endif %}
+    </th>
+  </tr>
   <tr><td colspan="2"><span class="description">{{ event.rendered_description or '–' }}</span></td></tr>
 </table>
 <span class="hcal-downloads extension-note">
-  <a href="{{ "http://h2vx.com/ics/%s"|format(CURRENT_URL) }}">ICal herunterladen</a> |
-  <a href="{{ google_link }}">In Google Calendar eintragen</a>
+  <a href="{{ "http://h2vx.com/ics/%s"|format(CURRENT_URL) }}">{% trans %}Download ICal{% endtrans %}</a> |
+  <a href="{{ google_link }}">{% trans %}Enter in Google Calendar{% endtrans %}</a>
 </span>
 {% endblock %}
