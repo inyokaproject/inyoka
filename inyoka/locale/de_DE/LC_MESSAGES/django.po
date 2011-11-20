@@ -1,23 +1,23 @@
-# Translations template for PROJECT.
+# German (Germany) translations for .
 # Copyright (C) 2011 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# 
+# This file is distributed under the same license as the  project.
+#
 # Translators:
 # Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2011-11-20 15:30+0100\n"
+"POT-Creation-Date: 2011-11-20 19:25+0100\n"
 "PO-Revision-Date: 2011-11-20 15:35+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
-"Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
+"Language-Team: German (Germany) "
+"(http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: inyoka/templates/appheader.html:2
 msgid "Portal"
@@ -144,12 +144,14 @@ msgstr "Passwort vergessen?"
 msgid ""
 "\n"
 "          This is the version for mobile clients. To get to the\n"
-"          <a href=\"%(link)s\">classical layout</a> click on the link in the\n"
+"          <a href=\"%(link)s\">classical layout</a> click on the link in "
+"the\n"
 "          footer of the page.\n"
 "        "
 msgstr ""
 "\n"
-"Dies ist die mobile Version. Um zum <a href=\"%(link)s\">klassischen Layout</a> zurückzukehren, klicke auf den Link am Ende der Seite."
+"Dies ist die mobile Version. Um zum <a href=\"%(link)s\">klassischen "
+"Layout</a> zurückzukehren, klicke auf den Link am Ende der Seite."
 
 #: inyoka/templates/overall.m.html:67
 msgid "Logout"
@@ -171,28 +173,38 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"Der Browser hat keinen oder einen fehlerhaften Kontrollschlüssel übertragen und die Weiterverarbeitung wurde aus Sicherheitsgründen abgebrochen."
+"Der Browser hat keinen oder einen fehlerhaften Kontrollschlüssel "
+"übertragen und die Weiterverarbeitung wurde aus Sicherheitsgründen "
+"abgebrochen."
 
 #: inyoka/templates/errors/400_csrf.html:22
 msgid ""
 "\n"
 "      This error usually occurs when you are trying to transfer data\n"
-"      automatically to the server. In rare cases this can also happen if the\n"
-"      browser configuration was changed while the form data is transmitted.\n"
+"      automatically to the server. In rare cases this can also happen if "
+"the\n"
+"      browser configuration was changed while the form data is "
+"transmitted.\n"
 "    "
 msgstr ""
 "\n"
-"Dieser Fehler tritt normalerweise auf, wenn versucht wurde Daten automatisiert auf den Server zu übertragen. In seltenen Fällen kann dies auch passieren, wenn die Browserkonfiguration verändert wurde, während die Formulardaten übertragen wurden."
+"Dieser Fehler tritt normalerweise auf, wenn versucht wurde Daten "
+"automatisiert auf den Server zu übertragen. In seltenen Fällen kann dies "
+"auch passieren, wenn die Browserkonfiguration verändert wurde, während "
+"die Formulardaten übertragen wurden."
 
 #: inyoka/templates/errors/400_csrf.html:29
 msgid ""
 "\n"
-"      In some browsers it is possible to click on the \"back\" or the \"reload\"\n"
+"      In some browsers it is possible to click on the \"back\" or the "
+"\"reload\"\n"
 "      button to request a new control key the sending the page again.\n"
 "    "
 msgstr ""
 "\n"
-"In manchen Browsern ist es möglich durch klicken auf \"Zurück\" und dann \"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern um das Absenden erneut durchzuführen."
+"In manchen Browsern ist es möglich durch klicken auf \"Zurück\" und dann "
+"\"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern um das "
+"Absenden erneut durchzuführen."
 
 #: inyoka/templates/errors/403.html:18
 msgid "You do not have permissions to access this page."
@@ -205,5 +217,4 @@ msgstr "Das könnte daran liegen, dass du nicht angemeldet bist."
 #: inyoka/templates/errors/404.html:19
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
-
 

@@ -1,23 +1,23 @@
-# Translations template for PROJECT.
+# German (Germany) translations for .
 # Copyright (C) 2011 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# 
+# This file is distributed under the same license as the  project.
+#
 # Translators:
 # Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2011-11-12 15:05+0100\n"
+"POT-Creation-Date: 2011-11-20 19:25+0100\n"
 "PO-Revision-Date: 2011-11-13 19:50+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
-"Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
+"Language-Team: German (Germany) "
+"(http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: inyoka/forum/views.py:185
 msgid "This topic is not visible for regular users."
@@ -66,8 +66,7 @@ msgstr "Der Anhang „%(attachment)s” wurde gelöscht."
 
 #: inyoka/forum/views.py:433
 #, python-format
-msgid ""
-"The article “%(article)s“ does not exist. However, you can create it now."
+msgid "The article “%(article)s“ does not exist. However, you can create it now."
 msgstr ""
 "Der Artikel „%(article)s” existiert nicht, du kannst ihn jedoch jetzt "
 "erstellen."
@@ -75,12 +74,12 @@ msgstr ""
 #: inyoka/forum/views.py:437
 #, python-format
 msgid ""
-"No discussion is linked yet to the article “%(article)s“. You can create a "
-"discussion now or link an existing topic to the article."
+"No discussion is linked yet to the article “%(article)s“. You can create "
+"a discussion now or link an existing topic to the article."
 msgstr ""
-"Es wurde noch keine Diskussion mit dem Artikel „%(article)s” verknüpft. Du "
-"kannst eine Diskussion erstellen oder ein vorhandenes Thema mit dem Artikel "
-"verknüpfen."
+"Es wurde noch keine Diskussion mit dem Artikel „%(article)s” verknüpft. "
+"Du kannst eine Diskussion erstellen oder ein vorhandenes Thema mit dem "
+"Artikel verknüpfen."
 
 #: inyoka/forum/views.py:452
 #, python-format
@@ -97,8 +96,8 @@ msgstr "Du kannst auf dieses Thema nicht antworten, da es gesperrt wurde."
 
 #: inyoka/forum/views.py:497
 msgid ""
-"You are replying to a locked topic. Please note that this may be considered "
-"as impolite!"
+"You are replying to a locked topic. Please note that this may be "
+"considered as impolite!"
 msgstr ""
 "Du antwortest auf ein bereits geschlossenes Thema. Dies wird oft als "
 "unhöflich aufgefasst, bitte sei dir dessen bewusst!"
@@ -111,8 +110,8 @@ msgstr ""
 
 #: inyoka/forum/views.py:554
 msgid ""
-"This topic was already created. Please think about editing your topic before"
-" creating a new one."
+"This topic was already created. Please think about editing your topic "
+"before creating a new one."
 msgstr ""
 "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen "
 "vorherigen Beitrag bearbeiten möchtest. "
@@ -131,8 +130,7 @@ msgstr "(Ent)sperren"
 
 #: inyoka/forum/views.py:661 inyoka/forum/views.py:1119
 #: inyoka/forum/views.py:1136 inyoka/forum/views.py:1201
-#: inyoka/forum/views.py:1212
-#: inyoka/forum/templates/forum/delete_topic.html:33
+#: inyoka/forum/views.py:1212 inyoka/forum/templates/forum/delete_topic.html:33
 #: inyoka/forum/templates/forum/edit.html:155
 #: inyoka/forum/templates/forum/edit.m.html:72
 #: inyoka/forum/templates/forum/post_delete.html:25
@@ -169,16 +167,15 @@ msgid ""
 "No notifications on new topics within this forum will be sent to you any "
 "more."
 msgstr ""
-"Du erhälst ab sofort keine Benachrichtigungen mehr zu neuen Themen in diesem"
-" Forum."
+"Du erhälst ab sofort keine Benachrichtigungen mehr zu neuen Themen in "
+"diesem Forum."
 
 #: inyoka/forum/views.py:777
 msgid "Notifications on new posts in this topic will be sent to you."
 msgstr "Du wirst ab nun über neue Beiträge in diesem Thema benachrichtigt."
 
 #: inyoka/forum/views.py:781
-msgid ""
-"No notifications on new posts in this topic will be sent to you any more"
+msgid "No notifications on new posts in this topic will be sent to you any more"
 msgstr ""
 "Du wirst ab nun nicht mehr über neue Beiträge in diesem Thema "
 "benachrichtigt."
@@ -232,8 +229,7 @@ msgstr "Du kannst dieses Thema nicht als Ziel auswählen."
 
 #: inyoka/forum/views.py:1070
 msgid "You cannot move a topic into a category. Please choose a forum."
-msgstr ""
-"Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."
+msgstr "Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."
 
 #: inyoka/forum/views.py:1098
 #, python-format
@@ -487,7 +483,8 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"Möchtest du das Thema „%(title)s” wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!"
+"Möchtest du das Thema „%(title)s” wirklich löschen? Diese Aktion kann "
+"nicht rückgängig gemacht werden!"
 
 #: inyoka/forum/templates/forum/delete_topic.html:20
 #, python-format
@@ -539,8 +536,8 @@ msgstr "Neue Antwort"
 
 #: inyoka/forum/templates/forum/edit.html:37
 msgid ""
-"Please save long code snippets or program outputs in our paste service and "
-"link to the respective entry."
+"Please save long code snippets or program outputs in our paste service "
+"and link to the respective entry."
 msgstr ""
 "Bitte speichere lange Code Ausschnitte oder Programmausgaben in unserer "
 "Ablage und verlinke den entsprechenden Beitrag."
@@ -609,7 +606,8 @@ msgstr "Dauer der Umfrage: %(duration)s Tage"
 #: inyoka/forum/templates/forum/edit.html:117
 msgid "Leave that feel empty for an endless duration"
 msgstr ""
-"Lasse dieses Feld frei, um die Umfrage zeitlich unbegrenzt offen zu lassen."
+"Lasse dieses Feld frei, um die Umfrage zeitlich unbegrenzt offen zu "
+"lassen."
 
 #: inyoka/forum/templates/forum/edit.html:118
 msgid "Add poll"
@@ -665,11 +663,13 @@ msgstr "Neue Beiträge"
 #, python-format
 msgid ""
 "\n"
-"            This topic is the discussion of the article %(article_list)s.\n"
+"            This topic is the discussion of the article %(article_list)s."
+"\n"
 "          "
 msgid_plural ""
 "\n"
-"            This topic is the discussion of the articles %(article_list)s.\n"
+"            This topic is the discussion of the articles "
+"%(article_list)s.\n"
 "          "
 msgstr[0] ""
 "\n"
@@ -803,7 +803,8 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"            There are no topics. <a href=\"%(link)s\">Create</a> the first one now!\n"
+"            There are no topics. <a href=\"%(link)s\">Create</a> the "
+"first one now!\n"
 "          "
 msgstr ""
 "\n"
@@ -931,7 +932,8 @@ msgstr "Alle Foren als gelesen markieren"
 #, python-format
 msgid ""
 "\n"
-"        Do you want to delete the <a href=\"%(link)s\">post from %(author)s</a>?\n"
+"        Do you want to delete the <a href=\"%(link)s\">post from "
+"%(author)s</a>?\n"
 "      "
 msgstr ""
 "\n"
@@ -941,7 +943,8 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"        Do you want to hide the <a href=\"%(link)s\">post from %(author)s</a>?\n"
+"        Do you want to hide the <a href=\"%(link)s\">post from "
+"%(author)s</a>?\n"
 "      "
 msgstr ""
 "\n"
@@ -964,12 +967,15 @@ msgstr "Thema „%(topic)s“ melden"
 #, python-format
 msgid ""
 "\n"
-"        Here you can report a topic to the moderators if it is against our\n"
+"        Here you can report a topic to the moderators if it is against "
+"our\n"
 "        <a href=\"%(link)s\">rules</a>. Please add a short explanation:\n"
 "      "
 msgstr ""
 "\n"
-"Hier kannst du ein Thema den Moderatoren melden, falls es gegen unsere <a href=\"%(link)s\">Forenregeln</a> verstößt. Bitte füge eine kurze Beschreibung hinzu:"
+"Hier kannst du ein Thema den Moderatoren melden, falls es gegen unsere <a"
+" href=\"%(link)s\">Forenregeln</a> verstößt. Bitte füge eine kurze "
+"Beschreibung hinzu:"
 
 #: inyoka/forum/templates/forum/report.html:27
 #: inyoka/forum/templates/forum/report.m.html:25
@@ -1152,7 +1158,8 @@ msgstr[1] ""
 #, python-format
 msgid ""
 "\n"
-"              The poll was started on %(start_date)s and it ended on %(end_date)s.\n"
+"              The poll was started on %(start_date)s and it ended on "
+"%(end_date)s.\n"
 "            "
 msgstr ""
 "\n"
@@ -1162,11 +1169,13 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"              The poll was started on %(start_date)s and it will end on %(end_date)s.\n"
+"              The poll was started on %(start_date)s and it will end on "
+"%(end_date)s.\n"
 "            "
 msgstr ""
 "\n"
-"Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s enden."
+"Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s "
+"enden."
 
 #: inyoka/forum/templates/forum/topic.html:175
 #, python-format
@@ -1234,7 +1243,8 @@ msgstr "Nächtes Thema »"
 #, python-format
 msgid ""
 "\n"
-"                  The poll was started on %(start_date)s and it ended on %(end_date)s.\n"
+"                  The poll was started on %(start_date)s and it ended on "
+"%(end_date)s.\n"
 "                "
 msgstr ""
 "\n"
@@ -1244,11 +1254,13 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"                  The poll was started on %(start_date)s and it will end on %(end_date)s.\n"
+"                  The poll was started on %(start_date)s and it will end "
+"on %(end_date)s.\n"
 "                "
 msgstr ""
 "\n"
-"Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s enden."
+"Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s "
+"enden."
 
 #: inyoka/forum/templates/forum/topic.m.html:58
 #, python-format
@@ -1290,5 +1302,4 @@ msgstr "Gelesen und akzeptiert"
 #: inyoka/forum/templates/forum/welcome.html:20
 msgid "Reject"
 msgstr "Ablehnen"
-
 
