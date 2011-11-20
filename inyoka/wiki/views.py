@@ -225,17 +225,17 @@ def feed(request, page_name=None, count=10):
         if rev.user:
             if rev.deleted:
                 text = _(u'%(user)s had deleted the article “%(article)s“ on '
-                         '%(date)s. Summary: %(summary)s')
+                         u'%(date)s. Summary: %(summary)s')
             else:
                 text = _(u'%(user)s edited the article “%(article)s“ on '
-                         '%(date)s. Summary: %(summary)s')
+                         u'%(date)s. Summary: %(summary)s')
         else:
             if rev.deleted:
                 text = _(u'An anonymous user deleted the article '
-                         '“%(article)s“ on %(date)s. Summary: %(summary)s')
+                         u'“%(article)s“ on %(date)s. Summary: %(summary)s')
             else:
                 text = _(u'An anonymous user edited the article '
-                         '“%(article)s“ on %(date)s. Summary: %(summary)s')
+                         u'“%(article)s“ on %(date)s. Summary: %(summary)s')
 
         kwargs['summary'] = text % {
             'user': rev.user,
