@@ -23,7 +23,8 @@ resources = json.load(urlopen('/'.join([BASE_URL, 'resources'])))
 for resource in resources:
     app = resource['slug']
     for language in LANGUAGES:
-        file_path = '/'.join([base_path, app, 'locale', language, 'LC_MESSAGES',
+        app_path = '/'.join([base_path, app]) if app != 'global' else base_path
+        file_path = '/'.join([app_path, 'locale', language, 'LC_MESSAGES',
                              'django.po'])
         url = '/'.join([BASE_URL, 'resource', app, 'translation', language]) + '?file'
         dir_path = os.path.split(file_path)[0]
