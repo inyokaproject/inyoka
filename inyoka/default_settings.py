@@ -174,8 +174,6 @@ MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.security.SecurityMiddleware',
     'inyoka.middlewares.common.MobileDetectionMiddleware',
     'django_mobile.middleware.SetFlavourMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
 )
 
 #: We only allow uploads via memory up to 2.5mb and do not stream into
