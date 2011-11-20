@@ -1,159 +1,167 @@
-# German (Germany) translations for PROJECT.
+# Translations template for PROJECT.
 # Copyright (C) 2011 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
-#
-#, fuzzy
+# 
+# Translators:
+# Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-13 23:13+0100\n"
-"PO-Revision-Date: 2011-11-13 23:07+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: de_DE <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Project-Id-Version: Inyoka\n"
+"Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
+"POT-Creation-Date: 2011-11-20 15:30+0100\n"
+"PO-Revision-Date: 2011-11-20 15:35+0000\n"
+"Last-Translator: soeren <wegener92@googlemail.com>\n"
+"Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: inyoka/templates/appheader.html:2
 msgid "Portal"
-msgstr ""
+msgstr "Portal"
 
 #: inyoka/templates/overall.html:96
 msgid "Reported topics"
-msgstr ""
+msgstr "Gemeldete Themen"
 
 #: inyoka/templates/overall.html:99
 msgid "Article suggestions"
-msgstr ""
+msgstr "Artikelvorschläge"
 
 #: inyoka/templates/overall.html:103
 msgid "Spelling mistakes"
-msgstr ""
+msgstr "Rechtschreibfehler"
 
 #: inyoka/templates/overall.html:107
 msgid "Event suggestions"
-msgstr ""
+msgstr "Veranstaltungsvorschläge"
 
 #: inyoka/templates/overall.html:111
 msgid "Please turn on JavaScript!"
-msgstr ""
+msgstr "Bitte aktiviere JavaScript!"
 
-#: inyoka/templates/overall.html:134
+#: inyoka/templates/overall.html:133
 #, python-format
 msgid "Logout [%(user)s]"
-msgstr ""
+msgstr "Abmelden [%(user)s]"
 
-#: inyoka/templates/overall.html:139
+#: inyoka/templates/overall.html:138
 msgid "Controlpanel"
-msgstr ""
+msgstr "Kontrollzentrum"
 
-#: inyoka/templates/overall.html:146
+#: inyoka/templates/overall.html:145
 #, python-format
 msgid "Private messages (%(count)s)"
-msgstr ""
+msgstr "Private Nachrichten (%(count)s)"
 
-#: inyoka/templates/overall.html:151
+#: inyoka/templates/overall.html:150
 msgid "Private messages"
-msgstr ""
+msgstr "Private Nachrichten"
 
-#: inyoka/templates/overall.html:158 inyoka/templates/overall.m.html:71
+#: inyoka/templates/overall.html:157 inyoka/templates/overall.m.html:71
 msgid "Login"
-msgstr ""
+msgstr "Anmelden"
 
-#: inyoka/templates/overall.html:163
+#: inyoka/templates/overall.html:162
 msgid "Register"
-msgstr ""
+msgstr "Registrieren"
 
-#: inyoka/templates/overall.html:184
+#: inyoka/templates/overall.html:183
 msgid "Overall"
-msgstr ""
+msgstr "Überal"
 
-#: inyoka/templates/overall.html:187
+#: inyoka/templates/overall.html:186
 msgid "Forum"
-msgstr ""
+msgstr "Forum"
 
-#: inyoka/templates/overall.html:190
+#: inyoka/templates/overall.html:189
 msgid "Wiki"
-msgstr ""
+msgstr "Wiki"
 
-#: inyoka/templates/overall.html:193
+#: inyoka/templates/overall.html:192
 msgid "News"
-msgstr ""
+msgstr "Ikhaya"
 
-#: inyoka/templates/overall.html:196
+#: inyoka/templates/overall.html:195
 msgid "Planet"
-msgstr ""
+msgstr "Planet"
 
-#: inyoka/templates/overall.html:199
+#: inyoka/templates/overall.html:198
 msgid "Search"
-msgstr ""
+msgstr "Suche"
 
-#: inyoka/templates/overall.html:244
+#: inyoka/templates/overall.html:243
 #, python-format
 msgid ""
 "\n"
 "            Powered by <a href=\"%(link)s\">Inyoka</a>\n"
 "          "
 msgstr ""
+"\n"
+"Powered by <a href=\"%(link)s\">Inyoka</a>"
 
-#: inyoka/templates/overall.html:248
+#: inyoka/templates/overall.html:247
 #, python-format
 msgid ""
 "\n"
 "              (rendered in %(seconds)s seconds)\n"
 "            "
 msgstr ""
+"\n"
+"(in %(seconds)s Sekunden gerendert)"
 
-#: inyoka/templates/overall.html:260
+#: inyoka/templates/overall.html:259
 msgid "To mobile version"
-msgstr ""
+msgstr "Zur mobilen Version"
 
-#: inyoka/templates/overall.html:304
+#: inyoka/templates/overall.html:303
 msgid "Username or email address"
-msgstr ""
+msgstr "Benutzername oder E-Mail-Adresse"
 
-#: inyoka/templates/overall.html:307
+#: inyoka/templates/overall.html:306
 msgid "Password"
-msgstr ""
+msgstr "Passwort"
 
-#: inyoka/templates/overall.html:310
+#: inyoka/templates/overall.html:309
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
+"Wähle diese Option nicht an, wenn du dich an einem öffentlichen Computer "
+"befindest."
 
-#: inyoka/templates/overall.html:311
+#: inyoka/templates/overall.html:310
 msgid "Keep me logged in"
-msgstr ""
+msgstr "Angemeldet bleiben"
 
-#: inyoka/templates/overall.html:314
+#: inyoka/templates/overall.html:313
 msgid "Lost password?"
-msgstr ""
+msgstr "Passwort vergessen?"
 
 #: inyoka/templates/overall.m.html:47
 #, python-format
 msgid ""
 "\n"
 "          This is the version for mobile clients. To get to the\n"
-"          <a href=\"%(link)s\">classical layout</a> click on the link in "
-"the\n"
+"          <a href=\"%(link)s\">classical layout</a> click on the link in the\n"
 "          footer of the page.\n"
 "        "
 msgstr ""
+"\n"
+"Dies ist die mobile Version. Um zum <a href=\"%(link)s\">klassischen Layout</a> zurückzukehren, klicke auf den Link am Ende der Seite."
 
 #: inyoka/templates/overall.m.html:67
 msgid "Logout"
-msgstr ""
+msgstr "Abmelden"
 
 #: inyoka/templates/overall.m.html:85
 msgid "To classic version"
-msgstr ""
+msgstr "Zur klassischen Version"
 
 #: inyoka/templates/errors/400_csrf.html:14
 msgid "Bad request"
-msgstr ""
+msgstr "Fehlerhafte Abfrage"
 
 #: inyoka/templates/errors/400_csrf.html:16
 msgid ""
@@ -162,1542 +170,40 @@ msgid ""
 "      processing has been canceled for security reasons.\n"
 "    "
 msgstr ""
+"\n"
+"Der Browser hat keinen oder einen fehlerhaften Kontrollschlüssel übertragen und die Weiterverarbeitung wurde aus Sicherheitsgründen abgebrochen."
 
 #: inyoka/templates/errors/400_csrf.html:22
 msgid ""
 "\n"
 "      This error usually occurs when you are trying to transfer data\n"
-"      automatically to the server. In rare cases this can also happen if "
-"the\n"
-"      browser configuration was changed while the form data is "
-"transmitted.\n"
+"      automatically to the server. In rare cases this can also happen if the\n"
+"      browser configuration was changed while the form data is transmitted.\n"
 "    "
 msgstr ""
+"\n"
+"Dieser Fehler tritt normalerweise auf, wenn versucht wurde Daten automatisiert auf den Server zu übertragen. In seltenen Fällen kann dies auch passieren, wenn die Browserkonfiguration verändert wurde, während die Formulardaten übertragen wurden."
 
 #: inyoka/templates/errors/400_csrf.html:29
 msgid ""
 "\n"
-"      In some browsers it is possible to click on the \"back\" or the "
-"\"reload\"\n"
+"      In some browsers it is possible to click on the \"back\" or the \"reload\"\n"
 "      button to request a new control key the sending the page again.\n"
 "    "
 msgstr ""
+"\n"
+"In manchen Browsern ist es möglich durch klicken auf \"Zurück\" und dann \"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern um das Absenden erneut durchzuführen."
 
 #: inyoka/templates/errors/403.html:18
 msgid "You do not have permissions to access this page."
-msgstr ""
+msgstr "Du bist nicht berechtigt, diese Seite aufzurufen."
 
 #: inyoka/templates/errors/403.html:22
 msgid "This may be because you are not logged in."
-msgstr ""
+msgstr "Das könnte daran liegen, dass du nicht angemeldet bist."
 
 #: inyoka/templates/errors/404.html:19
 msgid "Page not found"
-msgstr ""
+msgstr "Seite nicht gefunden"
 
-#~ msgid "This topic is not visible for regular users."
-#~ msgstr ""
-
-#~ msgid "The poll already ended."
-#~ msgstr ""
-
-#~ msgid "Your vote was saved."
-#~ msgid_plural "Your %(n)d votes were saved."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "The poll “%(poll)s“ was added."
-#~ msgstr ""
-
-#~ msgid "The poll “%(poll)s“ was removed."
-#~ msgstr ""
-
-#~ msgid "An attachment “%(attachment)s“ does already exist."
-#~ msgstr ""
-
-#~ msgid "An attachment “%(attachment)s“ was added successfully."
-#~ msgstr ""
-
-#~ msgid "The attachment with the ID “%(id)d“ does not exist."
-#~ msgstr ""
-
-#~ msgid "The attachment “%(attachment)s“ was deleted."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The article “%(article)s“ does not "
-#~ "exist. However, you can create it "
-#~ "now."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "No discussion is linked yet to the"
-#~ " article “%(article)s“. You can create "
-#~ "a discussion now or link an "
-#~ "existing topic to the article."
-#~ msgstr ""
-
-#~ msgid "This post is currently beeing edited by “%(user)s“!"
-#~ msgstr ""
-
-#~ msgid "You cannot edit this post."
-#~ msgstr ""
-
-#~ msgid "You cannot reply to this topic because it was locked."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "You are replying to a locked "
-#~ "topic. Please note that this may "
-#~ "be considered as impolite!"
-#~ msgstr ""
-
-#~ msgid "You cannot reply in this topic because it was deleted by a moderator."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "This topic was already created. Please"
-#~ " think about editing your topic "
-#~ "before creating a new one."
-#~ msgstr ""
-
-#~ msgid "The post was saved successfully."
-#~ msgstr ""
-
-#~ msgid "Do you want to (un)lock the topic?"
-#~ msgstr ""
-
-#~ msgid "(Un)lock"
-#~ msgstr ""
-
-#~ msgid "Cancel"
-#~ msgstr ""
-
-#~ msgid "The topic was marked as solved."
-#~ msgstr ""
-
-#~ msgid "The topic was marked as unsolved."
-#~ msgstr ""
-
-#~ msgid "The topic was locked."
-#~ msgstr ""
-
-#~ msgid "The topic was unlocked."
-#~ msgstr ""
-
-#~ msgid "There is no “%(slug)s“ anymore."
-#~ msgstr ""
-
-#~ msgid "Notifications on new topics within this forum will be sent to you."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "No notifications on new topics within"
-#~ " this forum will be sent to you"
-#~ " any more."
-#~ msgstr ""
-
-#~ msgid "Notifications on new posts in this topic will be sent to you."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "No notifications on new posts in "
-#~ "this topic will be sent to you "
-#~ "any more"
-#~ msgstr ""
-
-#~ msgid "This topic was already reported."
-#~ msgstr ""
-
-#~ msgid "Reported topic: “%(topic)s“"
-#~ msgstr ""
-
-#~ msgid "The topic was reported."
-#~ msgstr ""
-
-#~ msgid "No topics selected."
-#~ msgstr ""
-
-#~ msgid "The selected tickets have been closed."
-#~ msgstr ""
-
-#~ msgid "A notification will be sent when a topic is reported."
-#~ msgstr ""
-
-#~ msgid "You will not be notified anymore when a topic is reported."
-#~ msgstr ""
-
-#~ msgid "Your topic “%(topic)s“ was moved."
-#~ msgstr ""
-
-#~ msgid "The topic “%(topic)s“ was moved."
-#~ msgstr ""
-
-#~ msgid "No post selected."
-#~ msgstr ""
-
-#~ msgid "You cannot set this topic as target."
-#~ msgstr ""
-
-#~ msgid "You cannot move a topic into a category. Please choose a forum."
-#~ msgstr ""
-
-#~ msgid "The topic “%(topic)s“ was split."
-#~ msgstr ""
-
-#~ msgid "Do you want to restore this post?"
-#~ msgstr ""
-
-#~ msgid "Restore"
-#~ msgstr ""
-
-#~ msgid "The post by “%(user)s“ was made visible."
-#~ msgstr ""
-
-#~ msgid "Do you really want to hide / delete this post?"
-#~ msgstr ""
-
-#~ msgid "Hide / Delete"
-#~ msgstr ""
-
-#~ msgid "The first post of a topic cannot be deleted."
-#~ msgstr ""
-
-#~ msgid "The first post of a topic cannot be hidden."
-#~ msgstr ""
-
-#~ msgid "The post by “%(user)s“ was hidden."
-#~ msgstr ""
-
-#~ msgid "The post by “%(user)s“ was deleted."
-#~ msgstr ""
-
-#~ msgid "Do you want to restore the revision of the post?"
-#~ msgstr ""
-
-#~ msgid "An old revision of the post was restored."
-#~ msgstr ""
-
-#~ msgid "Do you want to restore the topic?"
-#~ msgstr ""
-
-#~ msgid "The topic “%(topic)s“ was restored."
-#~ msgstr ""
-
-#~ msgid "Action canceled."
-#~ msgstr ""
-
-#~ msgid "The topic “%(topic)s“ was hidden."
-#~ msgstr ""
-
-#~ msgid "The topic “%(topic)“ was deleted successfully."
-#~ msgstr ""
-
-#~ msgid "%(site)s topic – “%(topic)s“"
-#~ msgstr ""
-
-#~ msgid "%(site)s forum – “%(forum)s“"
-#~ msgstr ""
-
-#~ msgid "%(site)s forum"
-#~ msgstr ""
-
-#~ msgid "Please login to mark posts as read."
-#~ msgstr ""
-
-#~ msgid "The forum “%(forum)s“ was marked as read."
-#~ msgstr ""
-
-#~ msgid "All forums were marked as read."
-#~ msgstr ""
-
-#~ msgid "You can only display the last %(n)d pages."
-#~ msgstr ""
-
-#~ msgid "Posts of the last %(n)d hours"
-#~ msgstr ""
-
-#~ msgid "Unanswered topics"
-#~ msgstr ""
-
-#~ msgid "Unsolved topics"
-#~ msgstr ""
-
-#~ msgid "Topics by “%(user)s“"
-#~ msgstr ""
-
-#~ msgid "Posts by “%(user)s“"
-#~ msgstr ""
-
-#~ msgid "My posts"
-#~ msgstr ""
-
-#~ msgid "New posts"
-#~ msgstr ""
-
-#~ msgid "No recent topics within this forum."
-#~ msgstr ""
-
-#~ msgid "No older topics within this forum."
-#~ msgstr ""
-
-#~ msgid "The forum “%(forum)s“ was changed successfully."
-#~ msgstr ""
-
-#~ msgid "The forum “%(forum)s“ was created successfully."
-#~ msgstr ""
-
-#~ msgid "Errors occurred, please fix them."
-#~ msgstr ""
-
-#~ msgid "This article is not visible for regular users."
-#~ msgstr ""
-
-#~ msgid "The comment was edited successfully."
-#~ msgstr ""
-
-#~ msgid "Your comment was created."
-#~ msgstr ""
-
-#~ msgid "This article is currently being edited by “%(user)s“!"
-#~ msgstr ""
-
-#~ msgid "The article “%(title)s“ was created."
-#~ msgstr ""
-
-#~ msgid "The article “%(title)s“ was saved."
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to subscribe to comments."
-#~ msgstr ""
-
-#~ msgid "Notifications on new comments to this article will be sent to you."
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to unsubscribe from comments."
-#~ msgstr ""
-
-#~ msgid "You will no longer be notified of new comments for this article."
-#~ msgstr ""
-
-#~ msgid "Thanks for your report."
-#~ msgstr ""
-
-#~ msgid "The report was hidden."
-#~ msgstr ""
-
-#~ msgid "The report was restored."
-#~ msgstr ""
-
-#~ msgid "The report was marked as solved."
-#~ msgstr ""
-
-#~ msgid "The report was marked as unsolved."
-#~ msgstr ""
-
-#~ msgid "The comment was hidden."
-#~ msgstr ""
-
-#~ msgid "The comment was restored."
-#~ msgstr ""
-
-#~ msgid "The suggestion “%(title)s“ does not exist."
-#~ msgstr ""
-
-#~ msgid "The suggestion was assigned to nobody."
-#~ msgstr ""
-
-#~ msgid "The suggestion was assigned to “%(user)s“."
-#~ msgstr ""
-
-#~ msgid "This suggestion does not exist."
-#~ msgstr ""
-
-#~ msgid "New private message from %(user)s: %(subject)s"
-#~ msgstr ""
-
-#~ msgid "The suggestion was deleted."
-#~ msgstr ""
-
-#~ msgid "The suggestion was not deleted."
-#~ msgstr ""
-
-#~ msgid "Please login to suggest an article."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Thank you, your article suggestion was"
-#~ " submitted. A team member will "
-#~ "contact you shortly."
-#~ msgstr ""
-
-#~ msgid "Notifications on new suggestions will be sent to you."
-#~ msgstr ""
-
-#~ msgid "No notifications on suggestions will be sent to you any more."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The event with the id %(id)s could"
-#~ " not be used as draft for a "
-#~ "new event because it does not "
-#~ "exist."
-#~ msgstr ""
-
-#~ msgid "The event was saved."
-#~ msgstr ""
-
-#~ msgid "The event has been saved. A team member will review it soon."
-#~ msgstr ""
-
-#~ msgid "Plain text"
-#~ msgstr ""
-
-#~ msgid "Apache Config (.htaccess)"
-#~ msgstr ""
-
-#~ msgid "Bash"
-#~ msgstr ""
-
-#~ msgid "Batch (.bat)"
-#~ msgstr ""
-
-#~ msgid "C"
-#~ msgstr ""
-
-#~ msgid "C#"
-#~ msgstr ""
-
-#~ msgid "C++"
-#~ msgstr ""
-
-#~ msgid "CSS"
-#~ msgstr ""
-
-#~ msgid "D"
-#~ msgstr ""
-
-#~ msgid "Django / Jinja Templates"
-#~ msgstr ""
-
-#~ msgid "eRuby / rhtml"
-#~ msgstr ""
-
-#~ msgid "Genshi Templates"
-#~ msgstr ""
-
-#~ msgid "Haskell"
-#~ msgstr ""
-
-#~ msgid "HTML"
-#~ msgstr ""
-
-#~ msgid "IRC Logs"
-#~ msgstr ""
-
-#~ msgid "Java"
-#~ msgstr ""
-
-#~ msgid "JavaScript"
-#~ msgstr ""
-
-#~ msgid "JSP"
-#~ msgstr ""
-
-#~ msgid "Lua"
-#~ msgstr ""
-
-#~ msgid "Mako Templates"
-#~ msgstr ""
-
-#~ msgid "MiniD"
-#~ msgstr ""
-
-#~ msgid "Myghty Templates"
-#~ msgstr ""
-
-#~ msgid "OCaml"
-#~ msgstr ""
-
-#~ msgid "Perl"
-#~ msgstr ""
-
-#~ msgid "PHP"
-#~ msgstr ""
-
-#~ msgid "Python"
-#~ msgstr ""
-
-#~ msgid "Python Console Sessions"
-#~ msgstr ""
-
-#~ msgid "Python Tracebacks"
-#~ msgstr ""
-
-#~ msgid "reStructuredText"
-#~ msgstr ""
-
-#~ msgid "Ruby"
-#~ msgstr ""
-
-#~ msgid "Scheme"
-#~ msgstr ""
-
-#~ msgid "Smarty"
-#~ msgstr ""
-
-#~ msgid "sources.list"
-#~ msgstr ""
-
-#~ msgid "SQL"
-#~ msgstr ""
-
-#~ msgid "SquidConf"
-#~ msgstr ""
-
-#~ msgid "TeX / LaTeX"
-#~ msgstr ""
-
-#~ msgid "Unified Diff"
-#~ msgstr ""
-
-#~ msgid "Vim Scripts"
-#~ msgstr ""
-
-#~ msgid "XML"
-#~ msgstr ""
-
-#~ msgid "Title"
-#~ msgstr ""
-
-#~ msgid "Language"
-#~ msgstr ""
-
-#~ msgid "CAPTCHA"
-#~ msgstr ""
-
-#~ msgid "Untitled"
-#~ msgstr ""
-
-#~ msgid "Code"
-#~ msgstr ""
-
-#~ msgid "Rendered code"
-#~ msgstr ""
-
-#~ msgid "Date"
-#~ msgstr ""
-
-#~ msgid "Author"
-#~ msgstr ""
-
-#~ msgid "Referencing pages"
-#~ msgstr ""
-
-#~ msgid "Entry"
-#~ msgstr ""
-
-#~ msgid "Entries"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Your entry was successfully saved. You"
-#~ " can use the following code to "
-#~ "include it in your post:"
-#~ msgstr ""
-
-#~ msgid "Paste number %(id)d could not be found"
-#~ msgstr ""
-
-#~ msgid "The deletion was canceled"
-#~ msgstr ""
-
-#~ msgid "The entry in the pastebin was deleted."
-#~ msgstr ""
-
-#~ msgid "Name of the blog"
-#~ msgstr ""
-
-#~ msgid "URL"
-#~ msgstr ""
-
-#~ msgid "Feed URL"
-#~ msgstr ""
-
-#~ msgid "Description"
-#~ msgstr ""
-
-#~ msgid "This is my own blog"
-#~ msgstr ""
-
-#~ msgid "Email address of the blog author"
-#~ msgstr ""
-
-#~ msgid "URL of the blog"
-#~ msgstr ""
-
-#~ msgid "URL of the feed"
-#~ msgstr ""
-
-#~ msgid "User"
-#~ msgstr ""
-
-#~ msgid "Icon"
-#~ msgstr ""
-
-#~ msgid "Index the blog"
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to suggest a blog"
-#~ msgstr ""
-
-#~ msgid "A new blog was suggested."
-#~ msgstr ""
-
-#~ msgid "No user is registered as a planet administrator."
-#~ msgstr ""
-
-#~ msgid "The blog “%(title)s“ was suggested."
-#~ msgstr ""
-
-#~ msgid "%(sitename)s planet"
-#~ msgstr ""
-
-#~ msgid "The entry “%(title)s“ was successfully hidden."
-#~ msgstr ""
-
-#~ msgid "The entry “%(title)s“ was successfully restored."
-#~ msgstr ""
-
-#~ msgid "Mail"
-#~ msgstr ""
-
-#~ msgid "Jabber"
-#~ msgstr ""
-
-#~ msgid "A subscribed topic was moved"
-#~ msgstr ""
-
-#~ msgid "A subscribed topic was splitted"
-#~ msgstr ""
-
-#~ msgid "I received a message"
-#~ msgstr ""
-
-#~ msgid "Everywhere"
-#~ msgstr ""
-
-#~ msgid "Relevance"
-#~ msgstr ""
-
-#~ msgid "Date and relevance"
-#~ msgstr ""
-
-#~ msgid "Username, email address or openID"
-#~ msgstr ""
-
-#~ msgid "Leave this field empty if you are using openID."
-#~ msgstr ""
-
-#~ msgid "Keep logged in"
-#~ msgstr ""
-
-#~ msgid "This field is required"
-#~ msgstr ""
-
-#~ msgid "Username"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "We need your email address to send"
-#~ " you a new password if you "
-#~ "forgot it. It is not visible for"
-#~ " other users. For more information, "
-#~ "check out our <a href=\"%(link)s\">privacy "
-#~ "police</a>."
-#~ msgstr ""
-
-#~ msgid "Confirm password"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Your username contains invalid characters. "
-#~ "Only alphanumeric chars and “-” and "
-#~ "“ “ are allowed."
-#~ msgstr ""
-
-#~ msgid "This username is not available, please try another one."
-#~ msgstr ""
-
-#~ msgid "The password must match the password confirmation."
-#~ msgstr ""
-
-#~ msgid "You need to enter a password and a password confirmation."
-#~ msgstr ""
-
-#~ msgid "You need to read and accept our terms and conditions."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The given email address is already "
-#~ "in use. If you forgot your "
-#~ "password, you can <a href=\"%(link)s\">restore"
-#~ " it</a>."
-#~ msgstr ""
-
-#~ msgid "A user with the email address “%(mail)s“ does not exist."
-#~ msgstr ""
-
-#~ msgid "The user “%(name)s“ does not exist."
-#~ msgstr ""
-
-#~ msgid "New password"
-#~ msgstr ""
-
-#~ msgid "Confirm new password"
-#~ msgstr ""
-
-#~ msgid "The user does not exist or the confirmation key is invalid"
-#~ msgstr ""
-
-#~ msgid "Old password"
-#~ msgstr ""
-
-#~ msgid "Notify via"
-#~ msgstr ""
-
-#~ msgid "Notify me if"
-#~ msgstr ""
-
-#~ msgid "Timezone"
-#~ msgstr ""
-
-#~ msgid "Hide online status"
-#~ msgstr ""
-
-#~ msgid "Hide avatars"
-#~ msgstr ""
-
-#~ msgid "Hide signatures"
-#~ msgstr ""
-
-#~ msgid "Subscribe to a topic when replying"
-#~ msgstr ""
-
-#~ msgid "Attachment preview"
-#~ msgstr ""
-
-#~ msgid "Picture preview"
-#~ msgstr ""
-
-#~ msgid "No effect if “Attachment preview“ is disabled"
-#~ msgstr ""
-
-#~ msgid "Highlight search"
-#~ msgstr ""
-
-#~ msgid "Mark all forums as “read“ on logout"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "You need to <a href=\"%(link)s\"> enter"
-#~ " a valid jabber address</a> to use"
-#~ " our jabber service."
-#~ msgstr ""
-
-#~ msgid "Avatar"
-#~ msgstr ""
-
-#~ msgid "Remove avatar"
-#~ msgstr ""
-
-#~ msgid "Use Gravatar"
-#~ msgstr ""
-
-#~ msgid "Email"
-#~ msgstr ""
-
-#~ msgid "ICQ"
-#~ msgstr ""
-
-#~ msgid "MSN"
-#~ msgstr ""
-
-#~ msgid "AIM"
-#~ msgstr ""
-
-#~ msgid "Yahoo Messenger"
-#~ msgstr ""
-
-#~ msgid "Skype"
-#~ msgstr ""
-
-#~ msgid "WengoPhone"
-#~ msgstr ""
-
-#~ msgid "SIP"
-#~ msgstr ""
-
-#~ msgid "Signature"
-#~ msgstr ""
-
-#~ msgid "Coordinates (latitude, longitude)"
-#~ msgstr ""
-
-#~ msgid "Location"
-#~ msgstr ""
-
-#~ msgid "Job"
-#~ msgstr ""
-
-#~ msgid "Interests"
-#~ msgstr ""
-
-#~ msgid "Website"
-#~ msgstr ""
-
-#~ msgid "Launchpad username"
-#~ msgstr ""
-
-#~ msgid "GPG key"
-#~ msgstr ""
-
-#~ msgid "Coordinates needs to be passed in the format “latitude, longitude“"
-#~ msgstr ""
-
-#~ msgid "Coordinates needs to decimal numbers."
-#~ msgstr ""
-
-#~ msgid "Latitude needs to be between -90 and 90."
-#~ msgstr ""
-
-#~ msgid "Longitude needs to be between -180 and 180."
-#~ msgstr ""
-
-#~ msgid "You entered no email address."
-#~ msgstr ""
-
-#~ msgid "This email address is already in use."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The chosen avatar could not be "
-#~ "uploaded, it is to large. Please "
-#~ "choose another avatar."
-#~ msgstr ""
-
-#~ msgid "This openID is already in use."
-#~ msgstr ""
-
-#~ msgid "A user with this name does already exist."
-#~ msgstr ""
-
-#~ msgid "Primary group"
-#~ msgstr ""
-
-#~ msgid "Will be used for displaying the team icon"
-#~ msgstr ""
-
-#~ msgid "Authenticate"
-#~ msgstr ""
-
-#~ msgid "The user will be send a confirmation mail and set to “inactive“."
-#~ msgstr ""
-
-#~ msgid "You need to enter a email address"
-#~ msgstr ""
-
-#~ msgid "Activation status"
-#~ msgstr ""
-
-#~ msgid "not yet activated"
-#~ msgstr ""
-
-#~ msgid "active"
-#~ msgstr ""
-
-#~ msgid "banned"
-#~ msgstr ""
-
-#~ msgid "deleted himself"
-#~ msgstr ""
-
-#~ msgid "Banned until"
-#~ msgstr ""
-
-#~ msgid "leave empty to ban permanent"
-#~ msgstr ""
-
-#~ msgid "The user is not banned"
-#~ msgstr ""
-
-#~ msgid "The point of time is in the past."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The message will be send as “plain"
-#~ " text“. Your username will be noted"
-#~ " as sender."
-#~ msgstr ""
-
-#~ msgid "Group name"
-#~ msgstr ""
-
-#~ msgid "Public"
-#~ msgstr ""
-
-#~ msgid "Privileges"
-#~ msgstr ""
-
-#~ msgid "Forum privileges"
-#~ msgstr ""
-
-#~ msgid "Team icon"
-#~ msgstr ""
-
-#~ msgid "Delete team icon"
-#~ msgstr ""
-
-#~ msgid "Use global team icon"
-#~ msgstr ""
-
-#~ msgid "The groupname contains invalid chars"
-#~ msgstr ""
-
-#~ msgid "The groupname is not available. Please choose another one."
-#~ msgstr ""
-
-#~ msgid "You need to enter a groupname"
-#~ msgstr ""
-
-#~ msgid "All support forums"
-#~ msgstr ""
-
-#~ msgid "All forums"
-#~ msgstr ""
-
-#~ msgid "Searchterms:"
-#~ msgstr ""
-
-#~ msgid "Area:"
-#~ msgstr ""
-
-#~ msgid "Order by"
-#~ msgstr ""
-
-#~ msgid "Forums"
-#~ msgstr ""
-
-#~ msgid "Show attachments"
-#~ msgstr ""
-
-#~ msgid "To"
-#~ msgstr ""
-
-#~ msgid "Separate multiple names by semicolon"
-#~ msgstr ""
-
-#~ msgid "Groups"
-#~ msgstr ""
-
-#~ msgid "Separate multiple groups by semicolon"
-#~ msgstr ""
-
-#~ msgid "Subject"
-#~ msgstr ""
-
-#~ msgid "Message"
-#~ msgstr ""
-
-#~ msgid "Please enter at least one receiver."
-#~ msgstr ""
-
-#~ msgid "Short description"
-#~ msgstr ""
-
-#~ msgid "Long description"
-#~ msgstr ""
-
-#~ msgid "URL of the site the ticket refers to"
-#~ msgstr ""
-
-#~ msgid "Invalid URL"
-#~ msgstr ""
-
-#~ msgid "Number of entrys in the feed"
-#~ msgstr ""
-
-#~ msgid "The number will be round off to keep the server load low."
-#~ msgstr ""
-
-#~ msgid "Full article"
-#~ msgstr ""
-
-#~ msgid "Only introduction"
-#~ msgstr ""
-
-#~ msgid "Only title"
-#~ msgstr ""
-
-#~ msgid "Please select a forum"
-#~ msgstr ""
-
-#~ msgid "Category"
-#~ msgstr ""
-
-#~ msgid "Page name"
-#~ msgstr ""
-
-#~ msgid "If not given, the last changes will be displayed."
-#~ msgstr ""
-
-#~ msgid "Global Message"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "This message will displayed on every "
-#~ "page in the header. To disable it,"
-#~ " leave the field empty. Needs to "
-#~ "be valid XHTML."
-#~ msgstr ""
-
-#~ msgid "Blocked hosts for email addresses"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Users cannot use email addresses from"
-#~ " these hosts to register an account."
-#~ msgstr ""
-
-#~ msgid "Global teamicon"
-#~ msgstr ""
-
-#~ msgid "Please note the details on the maximum size below."
-#~ msgstr ""
-
-#~ msgid "Maximum signature length"
-#~ msgstr ""
-
-#~ msgid "Maximum number of lines in signature"
-#~ msgstr ""
-
-#~ msgid "Default text of new wikipages"
-#~ msgstr ""
-
-#~ msgid "Location of new wikipages"
-#~ msgstr ""
-
-#~ msgid "Information page about new wikipages"
-#~ msgstr ""
-
-#~ msgid "Information page to which a “create“ link should redirect to."
-#~ msgstr ""
-
-#~ msgid "License note"
-#~ msgstr ""
-
-#~ msgid "Styles"
-#~ msgstr ""
-
-#~ msgid "Planet | can edti blogs"
-#~ msgstr ""
-
-#~ msgid "Portal | can edit miscellaneous settings"
-#~ msgstr ""
-
-#~ msgid "Portal | can edit static pages"
-#~ msgstr ""
-
-#~ msgid "Portal | can edit stylesheets"
-#~ msgstr ""
-
-#~ msgid "Portal | can edit static files"
-#~ msgstr ""
-
-#~ msgid "Portal | can edit users"
-#~ msgstr ""
-
-#~ msgid "Portal | can edit groups"
-#~ msgstr ""
-
-#~ msgid "Portal | can send messages to groups"
-#~ msgstr ""
-
-#~ msgid "Forum | can edit forums"
-#~ msgstr ""
-
-#~ msgid "Forum | can manage reported topics"
-#~ msgstr ""
-
-#~ msgid "Forum | can delete every topic and post"
-#~ msgstr ""
-
-#~ msgid "Admin | can manage statistics"
-#~ msgstr ""
-
-#~ msgid "Portal | can manage pastebin"
-#~ msgstr ""
-
-#~ msgid "Portal | can watch users"
-#~ msgstr ""
-
-#~ msgid "Sorry, more than one month passed since the deletion of the account"
-#~ msgstr ""
-
-#~ msgid "The account “%(name)s“ was already reactivated."
-#~ msgstr ""
-
-#~ msgid "The user “%(name)s“ has reactivated his account."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The account “%(name)s“ was reactivated. "
-#~ "You will receive an email to set"
-#~ " the new password."
-#~ msgstr ""
-
-#~ msgid "Deactivation of your account “%(name)s“ on %(sitename)s"
-#~ msgstr ""
-
-#~ msgid "The user “%(name)s“ has deactivated his account."
-#~ msgstr ""
-
-#~ msgid "%(sitename)s – Confirm email address"
-#~ msgstr ""
-
-#~ msgid "The link is too old."
-#~ msgstr ""
-
-#~ msgid "%(sitename)s – Email address changed"
-#~ msgstr ""
-
-#~ msgid "Your new email address was saved."
-#~ msgstr ""
-
-#~ msgid "Your email address was reset."
-#~ msgstr ""
-
-#~ msgid "%(sitename)s – Activation of the user “%(name)s“"
-#~ msgstr ""
-
-#~ msgid "%(sitename)s – New password for “%(name)s“"
-#~ msgstr ""
-
-#~ msgid "Public profile"
-#~ msgstr ""
-
-#~ msgid "Teamicon"
-#~ msgstr ""
-
-#~ msgid "Email address"
-#~ msgstr ""
-
-#~ msgid "Status"
-#~ msgstr ""
-
-#~ msgid "Last login"
-#~ msgstr ""
-
-#~ msgid "Member since"
-#~ msgstr ""
-
-#~ msgid "Confirmation key for a new password"
-#~ msgstr ""
-
-#~ msgid "Posts"
-#~ msgstr ""
-
-#~ msgid "Coordinates (longitude)"
-#~ msgstr ""
-
-#~ msgid "Coordinates (latitude)"
-#~ msgstr ""
-
-#~ msgid "Settings"
-#~ msgstr ""
-
-#~ msgid "Last read post"
-#~ msgstr ""
-
-#~ msgid "Read posts"
-#~ msgstr ""
-
-#~ msgid "Read welcome message"
-#~ msgstr ""
-
-#~ msgid "Member title"
-#~ msgstr ""
-
-#~ msgid "You are already logged in."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The username “%(username)s“ was successfully"
-#~ " registered. An email with the "
-#~ "activation key was sent to “%(email)s“."
-#~ msgstr ""
-
-#~ msgid "The user “%(username)s“ does not exist."
-#~ msgstr ""
-
-#~ msgid "You cannot enter an activation key when you are logged in."
-#~ msgstr ""
-
-#~ msgid "Your account was anonymized."
-#~ msgstr ""
-
-#~ msgid "The account of “%(username)s“ was already activated."
-#~ msgstr ""
-
-#~ msgid "Your activation key is invalid."
-#~ msgstr ""
-
-#~ msgid "Your account was successfully activated. You can now login."
-#~ msgstr ""
-
-#~ msgid "The account “%(username)s“ was already activated."
-#~ msgstr ""
-
-#~ msgid "An email with the activation key was sent to you."
-#~ msgstr ""
-
-#~ msgid "An email with further instructions was sent to you."
-#~ msgstr ""
-
-#~ msgid "You successfully changed your password and are now able to login."
-#~ msgstr ""
-
-#~ msgid "This user does not exist."
-#~ msgstr ""
-
-#~ msgid "You have successfully logged in."
-#~ msgstr ""
-
-#~ msgid "You have successfully logged out."
-#~ msgstr ""
-
-#~ msgid "You were not logged in."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "An error occurred while processing your"
-#~ " search request. Please check your "
-#~ "input."
-#~ msgstr ""
-
-#~ msgid "« Previous"
-#~ msgstr ""
-
-#~ msgid "Page %(page)d of about %(total)d"
-#~ msgstr ""
-
-#~ msgid "Next »"
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to view a userprofile."
-#~ msgstr ""
-
-#~ msgid "%(sitename)s - Message from %(username)s"
-#~ msgstr ""
-
-#~ msgid "The email to “%(username)s“ was sent successfully."
-#~ msgstr ""
-
-#~ msgid "You will now be notified about activities of “%(username)s“."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "From now on you won’t be notfied"
-#~ " anymore about activities of "
-#~ "“%(username)s“."
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to access your control panel"
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to change your profile"
-#~ msgstr ""
-
-#~ msgid "You’ve been sent an email to confirm your new email address."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The avatar you uploaded was scaled "
-#~ "to %(w)dx%(h)d pixels. Please note that"
-#~ " this may result in lower quality."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The used file format is not "
-#~ "supported, please choose another one for"
-#~ " your avatar."
-#~ msgstr ""
-
-#~ msgid "Your profileinformation were updated successfully."
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to change your settings."
-#~ msgstr ""
-
-#~ msgid "Your settings were successfully changed."
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to change your password."
-#~ msgstr ""
-
-#~ msgid "The entered password did not match your old password."
-#~ msgstr ""
-
-#~ msgid "Your password was changed successfully."
-#~ msgstr ""
-
-#~ msgid "A subscription was deleted."
-#~ msgid_plural "%(n)d subscriptions were deleted."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "A subscription was marked as read."
-#~ msgid_plural "%(n)d subscriptions were marked as read."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "You need to be logged in to deactivate your account."
-#~ msgstr ""
-
-#~ msgid "The entered password is wrong."
-#~ msgstr ""
-
-#~ msgid "Your account was deactivated."
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to change your userpage."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "You were redirected to our wiki to"
-#~ " change your userpage. To get back,"
-#~ " you can use the link or your"
-#~ " browser’s “back“ button."
-#~ msgstr ""
-
-#~ msgid "The profile of “%(username)s“ was changed successfully"
-#~ msgstr ""
-
-#~ msgid "The setting of “%(username)s“ were successfully changed."
-#~ msgstr ""
-
-#~ msgid "The state of “%(username)s“ was successfully changed."
-#~ msgstr ""
-
-#~ msgid "The password of “%(username)s“ was successfully changed."
-#~ msgstr ""
-
-#~ msgid "The privileges of “%(username)s“ were successfully changed."
-#~ msgstr ""
-
-#~ msgid "The groups of “%(username)s“ were successfully changed."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The user “%(username)s“ was successfully "
-#~ "created. You can now edit more "
-#~ "details."
-#~ msgstr ""
-
-#~ msgid "The email with the activation key was resent."
-#~ msgstr ""
-
-#~ msgid "You need to be logged in to access your private messages."
-#~ msgstr ""
-
-#~ msgid "A message was deleted."
-#~ msgid_plural "%(n)d messages were deleted."
-#~ msgstr[0] ""
-#~ msgstr[1] ""
-
-#~ msgid "The messages was moved into you archive."
-#~ msgstr ""
-
-#~ msgid "The message was restored."
-#~ msgstr ""
-
-#~ msgid "The message was deleted."
-#~ msgstr ""
-
-#~ msgid "The message was moved in the trash."
-#~ msgstr ""
-
-#~ msgid "Do you want to archive the message?"
-#~ msgstr ""
-
-#~ msgid "Archive it"
-#~ msgstr ""
-
-#~ msgid "Do you want to restore the message?"
-#~ msgstr ""
-
-#~ msgid "Do you really want to delete the message?"
-#~ msgstr ""
-
-#~ msgid "Delete"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "You were automatically banned because we"
-#~ " suspect you are sending spam. If "
-#~ "this ban is not justified, contact "
-#~ "us at %(email)s"
-#~ msgstr ""
-
-#~ msgid "You cannot send messages to groups."
-#~ msgstr ""
-
-#~ msgid "The group “%(group)s“ does not exist."
-#~ msgstr ""
-
-#~ msgid "You cannot send messages to yourself."
-#~ msgstr ""
-
-#~ msgid "You cannot send messages to system users."
-#~ msgstr ""
-
-#~ msgid "You cannot send messages to this user."
-#~ msgstr ""
-
-#~ msgid "The message was sent successfully."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The icon you uploaded was scaled "
-#~ "to %(w)dx%(h)d pixels. Please note that"
-#~ " this may result in lower quality."
-#~ msgstr ""
-
-#~ msgid "A global team icon was not yet defined."
-#~ msgstr ""
-
-#~ msgid "The group “%(group)s“ was created successfully."
-#~ msgstr ""
-
-#~ msgid "The group “%(group)s“ was changed successfully."
-#~ msgstr ""
-
-#~ msgid "The usermap was temporarily disabled."
-#~ msgstr ""
-
-#~ msgid "Please choose"
-#~ msgstr ""
-
-#~ msgid "All"
-#~ msgstr ""
-
-#~ msgid "The entered data is invalid."
-#~ msgstr ""
-
-#~ msgid "The OpenID was successfully linked to your account."
-#~ msgstr ""
-
-#~ msgid "The page “%(page)s“ was created successfully."
-#~ msgstr ""
-
-#~ msgid "The page “%(page)s“ was changed successfully."
-#~ msgstr ""
-
-#~ msgid "The stylesheet was saved successfully."
-#~ msgstr ""
-
-#~ msgid "Captcha"
-#~ msgstr ""
-
-#~ msgid "Please type in the code from the graphic above"
-#~ msgstr ""
-
-#~ msgid "Generate new code"
-#~ msgstr ""
-
-#~ msgid "No %(verbose_name)s found matching the query"
-#~ msgstr ""
-
-#~ msgid "« Prev"
-#~ msgstr ""
-
-#~ msgid "The text contains too much nested elements."
-#~ msgstr ""
-
-#~ msgid "The text contains conflict markers"
-#~ msgstr ""
-
-#~ msgid "You are not permitted to make this changes"
-#~ msgstr ""
-
-#~ msgid "Slug of the topic"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "You can find the slug of a "
-#~ "topic in the URL (e.g. "
-#~ "<var>example</var> when <em>%(example)s</em>"
-#~ msgstr ""
-
-#~ msgid "This topic does not exist."
-#~ msgstr ""
-
-#~ msgid "Edited by"
-#~ msgstr ""
-
-#~ msgid "Completion date"
-#~ msgstr ""
-
-#~ msgid "Wikipage"
-#~ msgstr ""
-
-#~ msgid "Wikipages"
-#~ msgstr ""
-
-#~ msgid "Download attachment"
-#~ msgstr ""
-
-#~ msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
-#~ msgstr ""
-
-#~ msgid "Revision %(id)d (%(title)s)"
-#~ msgstr ""
-
-#~ msgid "No site name was entered, the page could not be created."
-#~ msgstr ""
-
-#~ msgid "Another site named “%(title)s“ already exists."
-#~ msgstr ""
-
-#~ msgid "%(sitename)s wiki – %(pagename)s"
-#~ msgstr ""
-
-#~ msgid "%(sitename)s wiki – last changes"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "%(user)s had deleted the article "
-#~ "“%(article)s“ on %(date)s. Summary: "
-#~ "%(summary)s"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "%(user)s edited the article “%(article)s“ "
-#~ "on %(date)s. Summary: %(summary)s"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "An anonymous user deleted the article"
-#~ " “%(article)s“ on %(date)s. Summary: "
-#~ "%(summary)s"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "An anonymous user edited the article "
-#~ "“%(article)s“ on %(date)s. Summary: "
-#~ "%(summary)s"
-#~ msgstr ""
-
-#~ msgid "Anonymous"
-#~ msgstr ""
 

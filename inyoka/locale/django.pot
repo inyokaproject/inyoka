@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-13 23:13+0100\n"
+"POT-Creation-Date: 2011-11-20 15:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,57 +41,57 @@ msgstr ""
 msgid "Please turn on JavaScript!"
 msgstr ""
 
-#: inyoka/templates/overall.html:134
+#: inyoka/templates/overall.html:133
 #, python-format
 msgid "Logout [%(user)s]"
 msgstr ""
 
-#: inyoka/templates/overall.html:139
+#: inyoka/templates/overall.html:138
 msgid "Controlpanel"
 msgstr ""
 
-#: inyoka/templates/overall.html:146
+#: inyoka/templates/overall.html:145
 #, python-format
 msgid "Private messages (%(count)s)"
 msgstr ""
 
-#: inyoka/templates/overall.html:151
+#: inyoka/templates/overall.html:150
 msgid "Private messages"
 msgstr ""
 
-#: inyoka/templates/overall.html:158 inyoka/templates/overall.m.html:71
+#: inyoka/templates/overall.html:157 inyoka/templates/overall.m.html:71
 msgid "Login"
 msgstr ""
 
-#: inyoka/templates/overall.html:163
+#: inyoka/templates/overall.html:162
 msgid "Register"
 msgstr ""
 
-#: inyoka/templates/overall.html:184
+#: inyoka/templates/overall.html:183
 msgid "Overall"
 msgstr ""
 
-#: inyoka/templates/overall.html:187
+#: inyoka/templates/overall.html:186
 msgid "Forum"
 msgstr ""
 
-#: inyoka/templates/overall.html:190
+#: inyoka/templates/overall.html:189
 msgid "Wiki"
 msgstr ""
 
-#: inyoka/templates/overall.html:193
+#: inyoka/templates/overall.html:192
 msgid "News"
 msgstr ""
 
-#: inyoka/templates/overall.html:196
+#: inyoka/templates/overall.html:195
 msgid "Planet"
 msgstr ""
 
-#: inyoka/templates/overall.html:199
+#: inyoka/templates/overall.html:198
 msgid "Search"
 msgstr ""
 
-#: inyoka/templates/overall.html:244
+#: inyoka/templates/overall.html:243
 #, python-format
 msgid ""
 "\n"
@@ -99,7 +99,7 @@ msgid ""
 "          "
 msgstr ""
 
-#: inyoka/templates/overall.html:248
+#: inyoka/templates/overall.html:247
 #, python-format
 msgid ""
 "\n"
@@ -107,27 +107,27 @@ msgid ""
 "            "
 msgstr ""
 
-#: inyoka/templates/overall.html:260
+#: inyoka/templates/overall.html:259
 msgid "To mobile version"
 msgstr ""
 
-#: inyoka/templates/overall.html:304
+#: inyoka/templates/overall.html:303
 msgid "Username or email address"
 msgstr ""
 
-#: inyoka/templates/overall.html:307
+#: inyoka/templates/overall.html:306
 msgid "Password"
 msgstr ""
 
-#: inyoka/templates/overall.html:310
+#: inyoka/templates/overall.html:309
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
 
-#: inyoka/templates/overall.html:311
+#: inyoka/templates/overall.html:310
 msgid "Keep me logged in"
 msgstr ""
 
-#: inyoka/templates/overall.html:314
+#: inyoka/templates/overall.html:313
 msgid "Lost password?"
 msgstr ""
 
