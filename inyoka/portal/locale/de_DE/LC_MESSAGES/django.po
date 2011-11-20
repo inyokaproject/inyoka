@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
 "POT-Creation-Date: 2011-11-12 15:05+0100\n"
-"PO-Revision-Date: 2011-11-13 19:26+0000\n"
+"PO-Revision-Date: 2011-11-20 16:19+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -32,11 +32,11 @@ msgstr "Jabber"
 
 #: inyoka/portal/forms.py:48
 msgid "A subscribed topic was moved"
-msgstr "Ein abonniertes Thema wurde verschoben"
+msgstr "Ein abonniertes Thema verschoben wurde"
 
 #: inyoka/portal/forms.py:49
 msgid "A subscribed topic was splitted"
-msgstr "Ein abonniertes Thema wurde aufgeteilt"
+msgstr "Ein abonniertes Thema aufgeteilt wurde"
 
 #: inyoka/portal/forms.py:50
 msgid "I received a message"
