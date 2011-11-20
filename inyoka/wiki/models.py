@@ -1227,11 +1227,11 @@ class Revision(models.Model):
         }
 
     def __repr__(self):
-        return '<%s %r rev %r>' % {
+        return '<%s %r rev %r>' % (
             self.__class__.__name__,
             self.page.name,
             self.id
-        }
+        )
 
     class Meta:
         get_latest_by = 'change_date'
