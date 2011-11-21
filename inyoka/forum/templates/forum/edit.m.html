@@ -11,7 +11,7 @@
 #}
 {% extends 'forum/page.m.html' %}
 
-{% from 'forum/_edit.html' import render_article_list %}
+{% from 'forum/_forum.html' import render_article_list %}
 {% if topic %}
   {% set back = topic|url %}
 {% else %}
