@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
     errors/500.html
     ~~~~~~~~~~~~~~~
@@ -11,14 +12,12 @@
 
 <html>
   <head>
-    <title>{% trans %}Servererror{% endtrans %}</title>
+    <title>{% trans "Servererror" %}</title>
   </head>
   <body>
-    <h1>{% trans %}Servererror{% endtrans %}</h1>
+    <h1>{% trans "Servererror" %}</h1>
     <p>
-      {% trans %}
-        An internal error occurred. The administration was already notified.
-      {% endtrans %}
+      {% trans "An internal error occurred. The administration was already notified." %}
     </p>
   </body>
 </html>
