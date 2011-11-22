@@ -120,7 +120,7 @@ $(function () {
             'int': validateInt,
             'float': validateFloat,
             'versionnumber': validateVersionNumber,
-            'versionname': validateVersionName,
+            'versionname': validateVersionName
         };
 
         function add_row(event) {
