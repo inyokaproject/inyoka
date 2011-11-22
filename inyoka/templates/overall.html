@@ -89,31 +89,6 @@
     {%- endblock %}
   </head>
   <body>
-    {%- if USER.can('manage_topics') or USER.can('article_edit') or USER.can('event_edit') %}
-      <div id="admin_menu">
-        <div class="bar">
-          <a id="admin_layer_button"><img src="{{ href('static', '/img/portal/admin.png') }}" alt="Admin" title="Adminlinks ein/aus" /></a>
-        </div>
-        <div class="bar">
-          {%- if USER.can('manage_topics') %}
-            {{ render_modnavi_li(_('Reported topics'), href('forum', 'reported_topics'), href('static', 'img/portal/admin_new_topicreport.png'), report_count) }}
-          {%- endif %}
-          {%- if USER.can('article_edit') %}
-            {% set label = _('Article suggestions') %}
-            {{ render_modnavi_li(label, href('ikhaya', 'suggestions'), href('static', 'img/portal/admin_new_article.png'), suggestion_count) }}
-          {%- endif %}
-          {%- if USER.can('article_edit') %}
-            {% set label = _('Spelling mistakes') %}
-            {{ render_modnavi_li(label, href('ikhaya', 'reports'), href('static', 'img/portal/admin_new_report.png'), article_report_count) }}
-          {%- endif %}
-          {%- if USER.can('event_edit') %}
-            {% set label = _('Event suggestions') %}
-            {{ render_modnavi_li(label, href('ikhaya', 'events', 'invisible'), href('static', 'img/portal/admin_new_event.png'), event_count) }}
-          {%- endif %}
-        </div>
-      <noscript><strong class="nojs error">{{ _('Please turn on JavaScript!') }}</strong></noscript>
-      </div>
-    {%- endif %}
    <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">
     <div class="header">
       <h1><a href="/"><span>{{ SETTINGS.BASE_DOMAIN_NAME }}</span></a></h1>
@@ -168,6 +143,31 @@
               </li>
             {%- endif %}
           </ul>{# .navi_global #}
+        {%- endif %}
+        {%- if USER.can('manage_topics') or USER.can('article_edit') or USER.can('event_edit') %}
+          <div id="admin_menu">
+            <div class="bar">
+              <a id="admin_layer_button"><img src="{{ href('static', '/img/portal/admin.png') }}" alt="Admin" title="Adminlinks ein/aus" /></a>
+            </div>
+            <div class="bar">
+              {%- if USER.can('manage_topics') %}
+                {{ render_modnavi_li(_('Reported topics'), href('forum', 'reported_topics'), href('static', 'img/portal/admin_new_topicreport.png'), report_count) }}
+              {%- endif %}
+              {%- if USER.can('article_edit') %}
+                {% set label = _('Article suggestions') %}
+                {{ render_modnavi_li(label, href('ikhaya', 'suggestions'), href('static', 'img/portal/admin_new_article.png'), suggestion_count) }}
+              {%- endif %}
+              {%- if USER.can('article_edit') %}
+                {% set label = _('Spelling mistakes') %}
+                {{ render_modnavi_li(label, href('ikhaya', 'reports'), href('static', 'img/portal/admin_new_report.png'), article_report_count) }}
+              {%- endif %}
+              {%- if USER.can('event_edit') %}
+                {% set label = _('Event suggestions') %}
+                {{ render_modnavi_li(label, href('ikhaya', 'events', 'invisible'), href('static', 'img/portal/admin_new_event.png'), event_count) }}
+              {%- endif %}
+            </div>
+          <noscript><strong class="nojs error">{{ _('Please turn on JavaScript!') }}</strong></noscript>
+          </div>
         {%- endif %}
         {{ BREADCRUMB.render('appheader') }}
       </div>{# .appheader #}

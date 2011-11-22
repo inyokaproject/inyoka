@@ -1284,29 +1284,30 @@ div#database_debug_table ul li pre,div#database_debug_table table {
 }
 
 #admin_menu {
+  float: right;
+  clear: both;
   color: #DDDDDD;
-  margin: 5px 12px -5px;
-  text-align: center;
-  min-width: 780px;
+  text-align: right;
+  margin: 5px 0;
 
   .rounded(5px);
 
   .bar {
     display: inline-block;
     margin: 0 15px;
+    float: right;
+    height: 30px;
 
     a {
-      border-right: 1px solid #A4A4A4;
-      display: inline-block;
+      border: 1px solid #A4A4A4;
+      border-left: none;
+      display: block;
+      float: left;
       background: #F4F4F4;
-      background: -webkit-linear-gradient(top, #FFFFFF 0%, #FFFFFF 40%, #F4F4F4 65%, #EAEAEA 100%);
-      background: -moz-linear-gradient(top, #FFFFFF 0%, #FFFFFF 40%, #F4F4F4 65%, #EAEAEA 100%);
-      background: -o-linear-gradient(top, #FFFFFF 0%, #FFFFFF 40%, #F4F4F4 65%, #EAEAEA 100%);
       color: #D4D4D4;
-      padding: 5px 10px;
-      margin-right: -5px;
+      padding: 2px 10px;
       text-decoration: none;
-      min-width: 64px;
+      height: 100%;
       img {
         opacity: 0.3;
         vertical-align: middle;
@@ -1333,21 +1334,14 @@ div#database_debug_table ul li pre,div#database_debug_table table {
     }
     a.highlight {
       background: #E8C989;
-      background: -webkit-linear-gradient(top, #E8C989 0%, #E8C989 40%, #DDBE7E 65%, #D3B474 100%);
-      background: -moz-linear-gradient(top, #E8C989 0%, #E8C989 40%, #DDBE7E 65%, #D3B474 100%);
-      background: -o-linear-gradient(top, #E8C989 0%, #E8C989 40%, #DDBE7E 65%, #D3B474 100%);
     }
     a:hover {
-      .gradient(#E4E4E4, #E4E4E4, #E4E4E4);
+      background: #E4E4E4;
     }
     a.highlight:hover {
-      .gradient(#D8B979, #D8B979, #D8B979);
-    }
-    a:first-child {
-      .left-rounded(5px);
+      background: #D8B979;
     }
     a:last-child {
-      .right-rounded(5px);
       border-right: none;
     }
   }
