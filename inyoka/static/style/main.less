@@ -1290,10 +1290,8 @@ div#database_debug_table ul li pre,div#database_debug_table table {
   text-align: right;
   margin: 5px 0;
 
-  .rounded(5px);
-
   .bar {
-    display: inline-block;
+    display: block;
     margin-left: 15px;
     float: right;
     height: 30px;
@@ -1309,7 +1307,7 @@ div#database_debug_table ul li pre,div#database_debug_table table {
       text-decoration: none;
       height: 100%;
       img {
-        opacity: 0.3;
+        opacity: 0.5;
         vertical-align: middle;
         transition: opacity .20s linear;
         -webkit-transition: opacity .20s linear;
@@ -1342,11 +1340,11 @@ div#database_debug_table ul li pre,div#database_debug_table table {
       background: #D8B979;
     }
     a:first-child {
-      .left-rounded(5px);
+      .left-rounded();
     }
     a:last-child {
       border-right: 1px solid #A4A4A4;
-      .right-rounded(5px);
+      .right-rounded();
     }
   }
 }
