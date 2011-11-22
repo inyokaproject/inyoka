@@ -108,8 +108,8 @@ class CaptchaWidget(Input):
               href('portal', __service__='portal.get_captcha',
                    rnd=randrange(1, sys.maxint)), _('Captcha'))
         text = '%s:' % _('Please type in the code from the graphic above')
-        input_tag = '<input type="submit" name="renew_captcha" value="%s" />' % (
-                    _('Generate new code'))
+        input_tag = '%s <input type="submit" name="renew_captcha" value="%s" />' % (
+                    input_, _('Generate new code'))
         return '<br />'.join([img, text, input_tag])
 
 
