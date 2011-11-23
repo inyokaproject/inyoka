@@ -147,7 +147,11 @@
         {%- if USER.can('manage_topics') or USER.can('article_edit') or USER.can('event_edit') %}
           <div id="admin_menu">
             <div class="bar">
-              <a id="admin_layer_button"><img src="{{ href('static', '/img/portal/admin.png') }}" alt="Admin" title="Adminlinks ein/aus" /></a>
+              <a id="admin_layer_button">
+                <img src="{{ href('static', '/img/portal/admin.png') }}"
+                     alt="Admin" title="Adminlinks ein/aus" />
+                <span class="description"></span>
+              </a>
             </div>
             <div class="bar">
               {%- if USER.can('manage_topics') %}
