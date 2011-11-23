@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-20 19:25+0100\n"
+"POT-Creation-Date: 2011-11-23 21:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -642,13 +642,13 @@ msgstr[1] ""
 
 #: inyoka/forum/templates/forum/forum.html:24
 #: inyoka/forum/templates/forum/topic.html:45
-#: inyoka/forum/templates/forum/topic.m.html:120
+#: inyoka/forum/templates/forum/topic.m.html:121
 msgid "Unsubscribe"
 msgstr ""
 
 #: inyoka/forum/templates/forum/forum.html:26
 #: inyoka/forum/templates/forum/topic.html:49
-#: inyoka/forum/templates/forum/topic.m.html:124
+#: inyoka/forum/templates/forum/topic.m.html:125
 msgid "Subscribe"
 msgstr ""
 
@@ -711,7 +711,7 @@ msgid "Last post"
 msgstr ""
 
 #: inyoka/forum/templates/forum/forum.html:104
-#: inyoka/forum/templates/forum/forum.m.html:37
+#: inyoka/forum/templates/forum/forum.m.html:38
 #: inyoka/forum/templates/forum/topiclist.html:65
 msgid "Sticky:"
 msgstr ""
@@ -770,7 +770,7 @@ msgstr ""
 msgid "Subforums"
 msgstr ""
 
-#: inyoka/forum/templates/forum/forum.m.html:26
+#: inyoka/forum/templates/forum/forum.m.html:27
 msgid "Topics"
 msgstr ""
 
@@ -781,7 +781,7 @@ msgstr ""
 #: inyoka/forum/templates/forum/forum_edit.html:18
 #: inyoka/forum/templates/forum/topic.html:254
 #: inyoka/forum/templates/forum/topic.html:258
-#: inyoka/forum/templates/forum/topic.m.html:89
+#: inyoka/forum/templates/forum/topic.m.html:90
 msgid "Edit"
 msgstr ""
 
@@ -904,7 +904,7 @@ msgstr ""
 
 #: inyoka/forum/templates/forum/report.html:13
 #: inyoka/forum/templates/forum/topic.html:61
-#: inyoka/forum/templates/forum/topic.m.html:128
+#: inyoka/forum/templates/forum/topic.m.html:129
 msgid "Report"
 msgstr ""
 
@@ -1045,7 +1045,7 @@ msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:35
 #: inyoka/forum/templates/forum/topic.html:38
-#: inyoka/forum/templates/forum/topic.m.html:116
+#: inyoka/forum/templates/forum/topic.m.html:117
 msgid "Reply"
 msgstr ""
 
@@ -1154,7 +1154,7 @@ msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:263
 #: inyoka/forum/templates/forum/topic.html:266
-#: inyoka/forum/templates/forum/topic.m.html:85
+#: inyoka/forum/templates/forum/topic.m.html:86
 msgid "Quote"
 msgstr ""
 
@@ -1205,7 +1205,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/forum/templates/forum/topic.m.html:102
+#: inyoka/forum/templates/forum/topic.m.html:103
 msgid "Attachments"
 msgstr ""
 
