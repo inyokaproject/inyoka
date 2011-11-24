@@ -14,7 +14,6 @@ from django.utils.translation import ugettext as _
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
 from inyoka.portal.utils import require_permission
-from inyoka.utils.flashing import flash
 from inyoka.utils.http import templated, HttpResponseRedirect, HttpResponse, \
      PageNotFound
 from inyoka.utils.templating import render_template

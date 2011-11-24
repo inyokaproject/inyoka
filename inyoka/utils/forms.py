@@ -23,7 +23,6 @@ from django.utils.translation import ugettext as _
 
 from inyoka.portal.user import User
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
-from inyoka.utils.flashing import flash
 from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request
 from inyoka.utils.mail import may_be_valid_mail, is_blocked_host
