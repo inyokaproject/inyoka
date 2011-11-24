@@ -120,3 +120,7 @@ def compile_css(file=None):
 def compile_static():
     compile_js()
     compile_css()
+
+def compile_translations():
+    """Build mo files from po"""
+    local('python manage.py compilemessages', capture=False)

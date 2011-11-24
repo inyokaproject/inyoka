@@ -1084,6 +1084,7 @@ ul.dropdown {
   list-style:none;
   position: relative;
   z-index: 99;
+  border:#ffffff 1px solid;
 
   li {
     margin: 0 3px 3px;
@@ -1283,36 +1284,71 @@ div#database_debug_table ul li pre,div#database_debug_table table {
 }
 
 #admin_menu {
-  border: 1px solid #CCCCCC;
   color: #DDDDDD;
   margin: 5px 12px -5px;
   text-align: center;
+  min-width: 780px;
 
   .rounded(5px);
-  .table-header-gradient;
 
-  a {
+  .bar {
     display: inline-block;
-    padding: 5px 10px 0 10px;
-    text-decoration: none;
-    img {
-      width: 32px;
-    }
-    img.admin_menu_nothing {
-      opacity: 0.3;
-    }
-    img.admin_menu_nothing:hover {
-      opacity: 1;
-    }
-    .admin_menu_count {
-      color: #000000;
-      font-size: 16px;
-      font-weight: bold;
-      margin-left: 12px;
-      padding: 0;
-      position: absolute;
+    margin: 0 15px;
+
+    a {
+      border-right: 1px solid #A4A4A4;
+      display: inline-block;
+      background: #F4F4F4;
+      background: -webkit-linear-gradient(top, #FFFFFF 0%, #FFFFFF 40%, #F4F4F4 65%, #EAEAEA 100%);
+      background: -moz-linear-gradient(top, #FFFFFF 0%, #FFFFFF 40%, #F4F4F4 65%, #EAEAEA 100%);
+      background: -o-linear-gradient(top, #FFFFFF 0%, #FFFFFF 40%, #F4F4F4 65%, #EAEAEA 100%);
+      color: #D4D4D4;
+      padding: 5px 10px;
+      margin-right: -5px;
       text-decoration: none;
-      top: 16px;
+      min-width: 64px;
+      img {
+        opacity: 0.3;
+        vertical-align: middle;
+        transition: opacity .20s linear;
+        -webkit-transition: opacity .20s linear;
+        -moz-transition: opacity .20s linear;
+        -o-transition: opacity .20s linear;
+      }
+      .count {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 5px;
+      }
+      transition: color .20s linear, background .20s linear;
+      -webkit-transition: color .20s linear, background .20s linear;
+      -moz-transition: color .20s linear, background .20s linear;
+      -o-transition: color .20s linear, background .20s linear;
+    }
+    a.highlight, a:hover {
+      color: #4F4F4F;
+      img {
+        opacity: 1;
+      }
+    }
+    a.highlight {
+      background: #E8C989;
+      background: -webkit-linear-gradient(top, #E8C989 0%, #E8C989 40%, #DDBE7E 65%, #D3B474 100%);
+      background: -moz-linear-gradient(top, #E8C989 0%, #E8C989 40%, #DDBE7E 65%, #D3B474 100%);
+      background: -o-linear-gradient(top, #E8C989 0%, #E8C989 40%, #DDBE7E 65%, #D3B474 100%);
+    }
+    a:hover {
+      .gradient(#E4E4E4, #E4E4E4, #E4E4E4);
+    }
+    a.highlight:hover {
+      .gradient(#D8B979, #D8B979, #D8B979);
+    }
+    a:first-child {
+      .left-rounded(5px);
+    }
+    a:last-child {
+      .right-rounded(5px);
+      border-right: none;
     }
   }
 }

@@ -17,19 +17,27 @@
 
 {% block ikhaya_content %}
   {{ form.errors.text }}
-  <h2>Neue Meldung zum Artikel <a href="{{ article|url|e }}">{{ article.subject|e }}</a></h2>
-  <p>Beschreibe hier kurze deinen gefunden Fehler im Artikel. Bitte achte darauf, dass der Fehler
-     nicht bereits <a href="{{ article|url|e + 'reports/' }}">gemeldet wurde</a>.</p>
+  <h2>
+    {% trans link=article|url, article=article.subject|e %}
+      New report for the article ”<a href="{{ link }}">{{ article }}</a>”
+    {% endtrans %}
+  </h2>
+  <p>
+    {% trans link=article|url + 'reports/' %}
+      Describe here briefly the discovered mistake. Please make sure that the
+      mistake was not <a href="{{ link }}">already reported</a>.
+    {% endtrans %}
+  </p>
   <form action="" method="post" id="new_report">
     {{ form.text }}
     <p>
-      <input type="submit" value="Vorschau" name="preview" />
-      <input type="submit" value="Speichern" name="send"/>
+      <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}"/>
+      <input type="submit" name="send" value="{% trans %}Submit{% endtrans %}"/>
     </p>
   </form>
   {%- if preview %}
     <div class="preview_wrapper">
-      <h2 class="title">Vorschau</h2>
+      <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
       <div class="preview">{{ preview }}</div>
     </div>
   {%- endif %}

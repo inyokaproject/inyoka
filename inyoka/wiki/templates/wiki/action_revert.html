@@ -12,8 +12,8 @@
 
 <form action="{{ href('wiki', page.name, rev=page.rev.id, action='revert')|e
       }}" method="post">
-  <p>Wiederherstellungsnotiz:</p>
+  <p>{% trans %}Note:{% endtrans %}</p>
   <p><input type="text" name="note" size="30" />
-     <input type="submit" value="Wiederherstellen" />{#
-   #}<input type="submit" name="cancel" value="Abbrechen" /></p>
+     <input type="submit" value="{% trans %}Restore{% endtrans %}" />{#
+   #}<input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" /></p>
 </form>

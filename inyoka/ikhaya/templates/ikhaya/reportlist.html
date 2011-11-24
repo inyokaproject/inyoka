@@ -1,6 +1,6 @@
 {#
     ikhaya/reportlist.html
-    ~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~
 
     Shows a list of all unsolved article reports.
 
@@ -9,7 +9,7 @@
 #}
 {%- extends 'ikhaya/page.html' %}
 
-{% do BREADCRUMB.append('Meldungen', href('ikhaya', 'reports'), True) %}
+{% do BREADCRUMB.append(_('Reports'), href('ikhaya', 'reports'), True) %}
 
 {% block ikhaya_content %}
   {%- for report in reports %}
@@ -21,13 +21,23 @@
         {{ report.rendered_text }}
       </div>
       <p class="meta admin_link_hover">
-        Gemeldet von <a href="{{ report.author|url|e }}">{{ report.author.username|e }}</a>,
-        {{ report.pub_date|specificdatetimeformat(true) }}
-        | Betrifft Artikel <a href="{{ report.article|url|e }}">{{ report.article.subject|e }}</a>
+        {% trans link=report.author|url, author=report.author.username|e %}
+          Reported by <a href="{{ link }}">{{ author }}</a>
+        {% endtrans %}
+        <span class="linklist"> | </span>
+        {{ report.pub_date|datetimeformat }}
+        <span class="linklist"> | </span>
+        {% trans link=report.article|url, article=report.article.subject|e %}
+          Concerns article “<a href="{{ link }}">{{ article }}</a>“
+        {% endtrans %}
+        <span class="linklist"> | </span>
         <span class="admin_link">
-            | <a href="{{ report|url('hide')|e }}" class="action action_hide">Verbergen</a>
-            | <a href="{{ report|url('solve')|e }}" class="action action_solve">Erledigt</a>
-            | <a href="{{ report.article|url('edit')|e }}" class="action action_edit">Artikel bearbeiten</a></span>
+          <a href="{{ report|url('hide')|e }}" class="action action_hide">{% trans %}Hide{% endtrans %}</a>
+        <span class="linklist"> | </span>
+          <a href="{{ report|url('solve')|e }}" class="action action_solve">{% trans %}Solved{% endtrans %}</a>
+        <span class="linklist"> | </span>
+          <a href="{{ report.article|url('edit')|e }}" class="action action_edit">{% trans %}Edit article{% endtrans %}</a>
+        </span>
       </p>
     </div>
   {%- endfor %}

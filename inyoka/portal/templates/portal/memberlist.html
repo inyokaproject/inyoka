@@ -9,50 +9,52 @@
 #}
 
 {%- extends 'portal/overall.html' %}
-{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+{% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 {% set scripts = ['DateTime'] %}
 {% set styles = ['datetimefield'] %}
 {% block content %}
-  <h3>Mitglieder</h3>
-  <p>
-    Hier siehst du alle registrierten Benutzer, die ubuntuusers.de zur Zeit hat.
-    Die Benutzer, die im Moment online sind, kannst du auf
-    <a href="{{ href('portal', 'whoisonline') }}">dieser Seite</a> sehen.
-  </p>
-{% if USER.can('user_edit') %}
-  <p>Wähle den Benutzer aus, den du bearbeiten möchtest:</p>
-  <form action="" method="post">
-    <p>
-      <input type="text" id="user_query" name="user" />
-      <input type="submit" value="Auswählen" />
-      <span class="help_text">Du kannst statt eines Benutzernamens auch eine E-Mail-Adresse eingeben.</span>
-    </p>
-    <p>
-      Oder: <a href="{{ href('portal', 'users', 'special_rights') }}">Zeige Benutzer mit Sonderrechten</a> | <a href="{{ href('portal', 'user', 'new') }}">erstelle einen neuen Benutzer</a>
-    </p>
-  </form>
-{% endif %}
+  <h3>{% trans %}Members{% endtrans %}</h3>
+  {% if USER.can('user_edit') %}
+    <p>{% trans %}Choose the user you want to edit:{% endtrans %}</p>
+    <form action="" method="post">
+      <p>
+        <input type="text" id="user_query" name="user" />
+        <input type="submit" value="{% trans %}Select{% endtrans %}" />
+        <span class="help_text">{% trans %}
+          You can also enter an e-mail address instead of a username.
+        {% endtrans %}</span>
+      </p>
+      <p>
+        <a href="{{ href('portal', 'users', 'special_rights') }}">
+          {%- trans %}Show users with special rights{% endtrans -%}
+        </a> |
+        <a href="{{ href('portal', 'user', 'new') }}">
+          {%- trans %}Create a new user{% endtrans -%}
+        </a>
+      </p>
+    </form>
+  {% endif %}
   <table>
     <tr>
       <th>{{ table.get_html('id', '#') }}</th>
-      <th>{{ table.get_html('username', 'Benutzername') }}</th>
-      <th>{{ table.get_html('location', 'Wohnort') }}</th>
-      <th>{{ table.get_html('date_joined', 'Anmeldungsdatum') }}</th>
-      <th>{{ table.get_html('post_count', 'Beiträge') }}</th>
+      <th>{{ table.get_html('username', _('Username')) }}</th>
+      <th>{{ table.get_html('location', _('Location')) }}</th>
+      <th>{{ table.get_html('date_joined', _('Member since')) }}</th>
+      <th>{{ table.get_html('post_count', _('Posts')) }}</th>
     </tr>
     {%- for user in users %}
-    <tr>
-      <td>{{ user.id }}</td>
-      <td>
-        <a href="{{ user|url }}">{{ user.username|e }}</a></td>
-      <td>{{ user.location }}</td>
-      <td>{{ user.date_joined|dateformat }}</td>
-      <td>{{ user.post_count }}</td>
-    </tr>
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>
+          <a href="{{ user|url }}">{{ user.username|e }}</a></td>
+        <td>{{ user.location }}</td>
+        <td>{{ user.date_joined|dateformat }}</td>
+        <td>{{ user.post_count }}</td>
+      </tr>
     {% else %}
-    <tr>
-      <td colspan="5">Es wurden keine Benutzer gefunden!</td>
-    </tr>
+      <tr>
+        <td colspan="5">{% trans %}No users were found.{% endtrans %}</td>
+      </tr>
     {%- endfor %}
   </table>
   {{ pagination.generate() }}

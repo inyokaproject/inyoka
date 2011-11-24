@@ -9,15 +9,15 @@
 {% from 'macros.html' import render_form %}
 
 {% set article = comment.article %}
-{% do BREADCRUMB.append('Kommentar bearbeiten', comment|url('edit'), True) %}
+{% do BREADCRUMB.append(_('Edit comment'), comment|url('edit'), True) %}
 {% do BREADCRUMB.append(article.subject, article|url, True) %}
 
 {% block ikhaya_content %}
-<div class="content_sidebar_bk">
-  <h2>Kommentar bearbeiten</h2>
-  <form action="" method="post">
-    {{ render_form(form, ['text']) }}
-    <input type="submit" value="Absenden">
-  </form>
-</div>
+  <div class="content_sidebar_bk">
+    <h2>{% trans %}Edit comment{% endtrans %}</h2>
+    <form action="" method="post">
+      {{ render_form(form, ['text']) }}
+      <input type="submit" value="{% trans %}Submit{% endtrans %}">
+    </form>
+  </div>
 {% endblock %}

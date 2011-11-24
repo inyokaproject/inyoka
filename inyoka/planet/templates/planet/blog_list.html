@@ -9,40 +9,36 @@
 #}
 {%- extends 'planet/page.html' %}
 
-{% do BREADCRUMB.append('Blogliste', href('planet', 'bloglist'), True) %}
+{% do BREADCRUMB.append(_('Bloglist'), href('planet', 'bloglist'), True) %}
 
 {% block content %}
-<h3>Blogs</h3>
-<a href="{{ href('planet', 'blog', 'new') }}">Neuen Blog eintragen</a>{{ pagination.generate(position='right') }}
-<table class="static_pages">
-   <colgroup>
-      <col width="40%"/>
-      <col width="40%"/>
-      <col width="15%"/>
-      <col width="5%"/>
+  <h3>{% trans %}Blogs{% endtrans %}</h3>
+  <a href="{{ href('planet', 'blog', 'new') }}">{% trans %}Add new blog{% endtrans %}</a>
+  <table class="static_pages">
+    <colgroup>
+      <col width="40%" />
+      <col width="40%" />
+      <col width="15%" />
+      <col width="5%" />
     </colgroup>
-  <thead>
-  <tr>
-    <th>{{ table.get_html('name', 'Name') }}</th>
-    <th>{{ table.get_html('user', 'Nutzer') }}</th>
-    <th>{{ table.get_html('latest_update', 'Letzte Aktualisierung') }}</th>
-    <th>{{ table.get_html('active', 'Aktiv') }}</th>
-  </tr>
-  </thead>
-  <tbody>
-  {%- for blog in object_list %}
-  <tr{% if not blog.active %} class="not_published"{% endif %}>
-    <td><a href="{{ blog|url('edit') }}">{{ blog.name|e }}</a></td>
-    <td>{% if blog.user %}<a href="{{ href('portal', 'user', blog.user) }}">{{ blog.user }}</a>{%else%} - {% endif %}</td>
-    <td>{{ blog.latest_update|datetimeformat if blog.latest_update else "Kein Eintrag" }}</td>
-    <td><img src="{{ href('static', 'img', blog.active and 'check.png' or 'hide.png') }}" /></td>
-  </tr>
-  {%- else %}
-  <tr>
-    <td colspan="4">Es existiert noch kein Blog, <a href="{{ href('planet', 'blog', 'new') }}">trage jetzt den ersten ein!</a></td>
-  </tr>
-  {%- endfor %}
-  </tbody>
-</table>
-{{ pagination.generate(position='right') }}
+    <thead>
+      <tr>
+        <th>{{ table.get_html('name', _('Name')) }}</th>
+        <th>{{ table.get_html('user', _('User')) }}</th>
+        <th>{{ table.get_html('latest_update', _('Latest update')) }}</th>
+        <th>{{ table.get_html('active', _('Activ')) }}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {%- for blog in object_list %}
+      <tr{% if not blog.active %} class="not_published"{% endif %}>
+        <td><a href="{{ blog|url('edit') }}">{{ blog.name|e }}</a></td>
+        <td>{% if blog.user %}<a href="{{ href('portal', 'user', blog.user) }}">{{ blog.user }}</a>{%else%} - {% endif %}</td>
+        <td>{{ blog.latest_update|datetimeformat if blog.latest_update else _('No entry') }}</td>
+        <td><img src="{{ href('static', 'img', blog.active and 'check.png' or 'hide.png') }}" /></td>
+      </tr>
+    {%- endfor %}
+    </tbody>
+  </table>
+  {{ pagination.generate(position='right') }}
 {% endblock %}

@@ -1102,10 +1102,10 @@ class Attachment(models.Model):
             if thumb:
                 return u'<a href="%s"><img class="preview" src="%s" ' \
                        u'alt="%s" title="%s"></a>' \
-                       % (url, thumb, self.comment, self.comment)
+                       % (url, thumb, escape(self.comment), escape(self.comment))
             else:
                 return u'<a href="%s" type="%s" title="%s">%s ansehen</a>' \
-                          % (url, self.mimetype, self.comment, self.name)
+                          % (url, self.mimetype, escape(self.comment), self.name)
         elif show_preview and istext():
             contents = self.contents
             if contents is not None:
@@ -1116,7 +1116,7 @@ class Attachment(models.Model):
                     pass
 
         return u'<a href="%s" type="%s" title="%s">%s herunterladen</a>' \
-                    % (url, self.mimetype, self.comment, self.name)
+                    % (url, self.mimetype, escape(self.comment), self.name)
 
     def get_absolute_url(self, action=None):
         return href('media', self.file)

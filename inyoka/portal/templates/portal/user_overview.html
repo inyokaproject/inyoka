@@ -9,9 +9,9 @@
 #}
 {%- extends 'portal/user_admin.html' %}
 
-{% do BREADCRUMB.append('Bearbeiten', href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
+{% do BREADCRUMB.append(_('Edit'), href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
 {% do BREADCRUMB.append(user.username, user|url, True) %}
-{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+{% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 
 {% macro user_edit_button(link, icon, name) %}
   <li>
@@ -23,22 +23,22 @@
 {% endmacro %}
 
 {% block content %}
-{{ super() }}
-<form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
-  <div class="usercp_control">
-    <ul>
-      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'profile'), 'profile', 'Profilinformationen') }}
-      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'settings'), 'settings', 'Benutzereinstellungen') }}
-      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'groups'), 'groups', 'Gruppen') }}
-      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'privileges'), 'privileges', 'Privilegien') }}
-      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'password'), 'password', 'Passwort ändern') }}
-      {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'status'), 'status', 'Status') }}
-      {#
-      {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'subscriptions'), 'subscriptions', 'Abonnements') }}
-      {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'userpage'), 'wikipage', 'Benutzerseite') }}
-      #}
-    </ul>
-  </div>
-  <a href="{{ href('portal', 'user', user.username) }}">Öffentliches Profil ansehen</a>
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+    <div class="usercp_control">
+      <ul>
+        {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'profile'), 'profile', _('Profile')) }}
+        {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'settings'), 'settings', _('Settings')) }}
+        {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'groups'), 'groups', _('Group memberships')) }}
+        {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'privileges'), 'privileges', _('Privileges')) }}
+        {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'password'), 'password', _('Change password')) }}
+        {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'status'), 'status', _('State')) }}
+        {#
+        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'subscriptions'), 'subscriptions', 'Abonnements') }}
+        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'userpage'), 'wikipage', 'Benutzerseite') }}
+        #}
+      </ul>
+    </div>
+    <a href="{{ href('portal', 'user', user.username) }}">{% trans %}View public profile{% endtrans %}</a>
+  </form>
 {% endblock %}
-</form>
