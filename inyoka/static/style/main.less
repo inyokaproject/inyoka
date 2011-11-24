@@ -773,7 +773,7 @@ button.navi_toggle_down:hover, button.navi_toggle_up:hover {
   margin-left: 5px;
 }
 .pathbar {
-  padding: 5px 5px 5px 8px;
+  padding: 5px 0 8px;
   font-size: 0.85em;
   margin: 0 20px 10px;
   position:relative;
@@ -1274,51 +1274,47 @@ div#database_debug_table ul li pre,div#database_debug_table table {
   display: none;
 }
 
-.admin_link_js {
-  display: relative;
-}
-
 .admin_link.right, .admin_link_js.right {
   float: right;
   margin: 0 5px 0 0;
 }
 
 #admin_menu {
+  float: right;
+  clear: both;
   color: #DDDDDD;
-  margin: 5px 12px -5px;
-  text-align: center;
-  min-width: 780px;
-
-  .rounded(5px);
+  text-align: right;
+  margin: 5px 0;
 
   .bar {
-    display: inline-block;
-    margin: 0 15px;
+    display: block;
+    margin-left: 16px;
+    float: right;
+    height: 30px;
 
     a {
-      border-right: 1px solid #A4A4A4;
-      display: inline-block;
+      border: 1px solid #A4A4A4;
+      border-right: none;
+      display: block;
+      float: left;
       background: #F4F4F4;
-      background: -webkit-linear-gradient(top, #FFFFFF 0%, #FFFFFF 40%, #F4F4F4 65%, #EAEAEA 100%);
-      background: -moz-linear-gradient(top, #FFFFFF 0%, #FFFFFF 40%, #F4F4F4 65%, #EAEAEA 100%);
-      background: -o-linear-gradient(top, #FFFFFF 0%, #FFFFFF 40%, #F4F4F4 65%, #EAEAEA 100%);
       color: #D4D4D4;
-      padding: 5px 10px;
-      margin-right: -5px;
+      padding: 4px 10px 2px;
       text-decoration: none;
-      min-width: 64px;
+      height: 100%;
       img {
-        opacity: 0.3;
+        opacity: 0.5;
         vertical-align: middle;
         transition: opacity .20s linear;
         -webkit-transition: opacity .20s linear;
         -moz-transition: opacity .20s linear;
         -o-transition: opacity .20s linear;
       }
-      .count {
+      .description {
         font-size: 18px;
         font-weight: bold;
         margin: 5px;
+        vertical-align: middle;
       }
       transition: color .20s linear, background .20s linear;
       -webkit-transition: color .20s linear, background .20s linear;
@@ -1333,22 +1329,25 @@ div#database_debug_table ul li pre,div#database_debug_table table {
     }
     a.highlight {
       background: #E8C989;
-      background: -webkit-linear-gradient(top, #E8C989 0%, #E8C989 40%, #DDBE7E 65%, #D3B474 100%);
-      background: -moz-linear-gradient(top, #E8C989 0%, #E8C989 40%, #DDBE7E 65%, #D3B474 100%);
-      background: -o-linear-gradient(top, #E8C989 0%, #E8C989 40%, #DDBE7E 65%, #D3B474 100%);
     }
     a:hover {
-      .gradient(#E4E4E4, #E4E4E4, #E4E4E4);
+      background: #E4E4E4;
     }
     a.highlight:hover {
-      .gradient(#D8B979, #D8B979, #D8B979);
+      background: #D8B979;
+    }
+    a#admin_layer_button.highlight {
+      background: #F2E7CE;
+    }
+    a#admin_layer_button.highlight:hover {
+      background: #E2D7B3;
     }
     a:first-child {
-      .left-rounded(5px);
+      .left-rounded(3px);
     }
     a:last-child {
-      .right-rounded(5px);
-      border-right: none;
+      border-right: 1px solid #A4A4A4;
+      .right-rounded(3px);
     }
   }
 }
