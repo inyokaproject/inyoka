@@ -433,7 +433,7 @@ def do_edit(request, name):
     # form validation and handling
     if request.method == 'POST':
         if request.POST.get('cancel'):
-            message.info(request, u'Bearbeitungsvorgang wurde abgebrochen.')
+            messages.info(request, u'Bearbeitungsvorgang wurde abgebrochen.')
             if page and page.metadata.get('redirect'):
                 url = href('wiki', page.name, redirect='no')
             else:
@@ -631,7 +631,7 @@ def do_mv_discontinued(request, name):
                         u'Beim Verschieben ist ein Fehler aufgereten.')
                     return HttpResponseRedirect(url_for(page))
             else:
-                message.error(request,
+                messages.error(request,
                     u'Die Seite „%s” existiert bereits.' % new_name)
                 return HttpResponseRedirect(url_for(page))
             messages.success(request,

@@ -20,6 +20,7 @@ import os
 from urlparse import urljoin
 
 from django.conf import settings
+from django.contrib import messages
 from django.utils.encoding import force_unicode
 from django.utils.translation import ungettext
 from django.utils.translation import ugettext as _

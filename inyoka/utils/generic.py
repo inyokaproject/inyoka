@@ -13,6 +13,7 @@ from django.http import Http404
 from django.views.generic import edit, base, list
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
+from django.contrib import messages
 
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset

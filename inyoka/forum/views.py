@@ -218,7 +218,6 @@ def viewtopic(request, topic_slug, page=1):
                     poll.votings.add(PollVote(voter=request.user))
                     poll.options.filter(id__in=votes) \
                                 .update(votes=F('votes') + 1)
-            messages.success(request, msg % {'n': len(polls)})
 
     post_ids = Post.objects.filter(topic=topic) \
                            .values_list('id', flat=True)
@@ -1175,7 +1174,7 @@ def delete_post(request, post_id, action='hide'):
             return HttpResponseRedirect(url_for(post))
         elif action == 'delete':
             position = post.position
-            wost.delete()
+            post.delete()
             messages.success(request, _(u'The post by “%(user)s“ was deleted.')
                                         % {'user': post.author.username})
             page = max(0, position) // POSTS_PER_PAGE + 1

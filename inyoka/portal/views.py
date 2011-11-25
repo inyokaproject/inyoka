@@ -362,12 +362,6 @@ def login(request):
         return HttpResponseRedirect(redirect)
 
     # FIXME: Check if cookies are enabled!
-    # enforce an existing session
-    redirect_needed, result = test_session_cookie(request)
-    if redirect_needed:
-        return result
-    else:
-        cookie_error_link = result
 
     failed = inactive = banned = False
     if request.method == 'POST':# and cookie_error_link is None:
@@ -1685,7 +1679,7 @@ def group_edit(request, name=None):
             if data['icon'] and not data['import_icon_from_global']:
                 icon_resized = group.save_icon(data['icon'])
                 if icon_resized:
-                    messages.info(reqiest,
+                    messages.info(request,
                         _(u'The icon you uploaded was scaled to '
                           '%(w)dx%(h)d pixels. Please note that this '
                           'may result in lower quality.') % {
