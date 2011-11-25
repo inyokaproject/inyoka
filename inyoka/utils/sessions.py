@@ -16,7 +16,6 @@ from django.forms import ValidationError
 from inyoka.portal.models import SessionInfo
 from inyoka.utils.urls import url_for
 from inyoka.utils.storage import storage
-from inyoka.utils.http import HttpResponseRedirect
 from inyoka.utils.local import current_request
 
 
@@ -146,4 +145,3 @@ def make_permanent(request):
 def close_with_browser(request):
     """Close the session with the end of the browser session."""
     request.session.pop('_perm', None)
-

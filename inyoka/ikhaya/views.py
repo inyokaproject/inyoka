@@ -528,7 +528,7 @@ def suggest_assign_to(request, suggestion, username):
         except User.DoesNotExist:
             raise PageNotFound
         suggestion.save()
-        message.ssuccess(request, _(u'The suggestion was assigned to “%(user)s“.')
+        messages.ssuccess(request, _(u'The suggestion was assigned to “%(user)s“.')
                                     % {'user': username})
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
@@ -796,7 +796,7 @@ def feed_article(request, slug=None, mode='short', count=10):
     Shows the ikhaya entries that match the given criteria in an atom feed.
     """
     if slug:
-        title = u'%s Ikhaya – %s' % (BASE_DOMAIN_NAME, slug)
+        title = u'%s Ikhaya – %s' % (settings.BASE_DOMAIN_NAME, slug)
         url = href('ikhaya', 'category', slug)
     else:
         title = u'%s Ikhaya' % settings.BASE_DOMAIN_NAME

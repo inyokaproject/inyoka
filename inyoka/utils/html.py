@@ -18,7 +18,7 @@ from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders
 from html5lib.serializer import XHTMLSerializer, HTMLSerializer
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
-from django.utils.encoding import smart_str, force_unicode
+from django.utils.encoding import force_unicode
 
 
 _entity_re = re.compile(r'&([^;]+);')

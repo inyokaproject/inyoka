@@ -27,10 +27,10 @@ else:
     logging_handler.setLevel(logging.DEBUG)
 logger.addHandler(logging_handler)
 
+
 sentry_logger = logging.getLogger('sentry.errors')
 sentry_logger.addHandler(logging.StreamHandler())
 
-# Advanced Celery Logging
 
 def process_failure_signal(sender, task_id, exception, args, kwargs, traceback,
                            einfo, signal=None):
