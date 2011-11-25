@@ -1,6 +1,6 @@
 {#
     wiki/missing_page.m.html
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~
 
     This page is displayed if a wiki page does not exist yet but
     it was requested with the show action. We do not show a normal
@@ -13,25 +13,39 @@
 
 {%- extends 'wiki/page.m.html' %}
 {% block content %}
-  <h2>Fehlender Artikel</h2>
+  <h2>{% trans %}Missing article{% endtrans %}</h2>
   {%- if not page %}
-  <p>
-    Der Artikel mit dem Namen „{{ title|e }}“ existiert noch nicht.
-  </p>
+    <p>
+      {% trans title=title|e %}
+        The article “{{ title }}“ does not exist yet.
+      {% endtrans %}
+    </p>
   {%- else %}
-  <p>
-    Der Artikel mit dem Namen „{{ title|e }}” wurde gelöscht.
-  </p>
+    <p>
+      {% trans title=title|e %}
+        The article “{{ title }}“ was deleted. You can restore it or create
+        a new one in the action menu.
+      {% endtrans %}
+    </p>
   {%- endif %}
   {%- if not_finished %}
-  <p>
-    Der Artikel existiert bereits in der
-    <a href="{{ href('wiki', not_finished.name)|e }}">„Baustelle”</a>.
-  </p>
+    <p>
+      {% trans %}
+        The article is already under construction, help improving and finishing
+        it!
+      {% endtrans %}
+    </p>
+    <ul>
+      <li>
+        <a href="{{ href('wiki', not_finished.name)|e }}">{{ not_finished.title|e }}</a>
+      </li>
+    </ul>
   {%- endif %}
   {%- if backlinks %}
     <p>
-      Die folgenden Seiten verweisen auf diese Seite:
+      {% trans %}
+        The following pages are referring this article:
+      {% endtrans %}
     </p>
     <ul>
     {%- for link in backlinks %}
@@ -40,10 +54,14 @@
     </ul>
   {%- endif %}
   <p>
-    Kontrolliere, ob du nicht eventuell einen Tippfehler in der URL hast.
-    {%- if similar %}
-    Die folgenden Seiten mit ähnlichem Seitennamen existieren:
-    {%- endif %}
+    {% trans %}
+      Check if you have a typo in the URL.
+    {% endtrans %}
+    {% if similar %}
+      {% trans %}
+        The following pages have a similar name:
+      {% endtrans %}
+    {% endif %}
   </p>
   {%- if similar %}
     <ul>

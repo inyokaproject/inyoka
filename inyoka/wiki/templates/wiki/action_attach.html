@@ -18,49 +18,66 @@
 {% set scripts = ['WikiEditor'] %}
 
 {% block wiki_content %}
-  <h1 class="pagetitle">Dateianhang hinzufügen</h1>
+  <h1 class="pagetitle">{% trans %}Add attachment{% endtrans %}</h1>
 
   <div id="page">
     <form action="?action=attach" method="post"
       enctype="multipart/form-data" id="form_addattachment">
       <p>
         {{ form.attachment.errors }}
-        <label for="id_attachment">Dateianhang:</label>
+        <label for="id_attachment">{% trans %}Attachment:{% endtrans %}</label>
         {{ form.attachment }}</p>
-      <p><label for="id_filename">Umbenennen in:</label>
+      <p><label for="id_filename">{% trans %}Rename to:{% endtrans %}</label>
         {{ form.filename }}</p>
-      <p><label for="id_text">Beschreibung:</label><br style="clear: both" /></p>
+      <p><label for="id_text">{% trans %}Description:{% endtrans %}</label><br style="clear: both" /></p>
         <p>{{ form.text }}</p>
-      <p><label for="id_note">Änderungsnotiz:</label>
+      <p><label for="id_note">{% trans %}Note:{% endtrans %}</label>
         {{ form.note }}</p>
-      <p>{{ form.override }} <label for="id_override">Bestehenden Anhang
-        gleichen Namens überschreiben</label></p>
-      <p><input type="submit" value="Anhang hochladen" />
-         <input type="submit" name="cancel" value="Abbrechen" /></p>
+      <p>
+        {{ form.override }}
+        <label for="id_override">
+          {% trans %}Overwrite exisiting attachments with same name:{% endtrans %}
+        </label>
+      </p>
+      <p><input type="submit" value="{% trans %}Upload attachments{% endtrans %}" />
+         <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" /></p>
     </form>
 
-    <h2>Vorhandene Dateianhänge</h2>
+    <h2>{% trans %}Existing attachments{% endtrans %}</h2>
     {%- if attachments %}
-    <p>Zu dieser Seite sind momentan {% trans count=attachments|
-    count, h_count=attachments|count|hnumber('masculine')%}{{ h_count }}
-    Dateianhang{% pluralize %}{{ h_count }} Dateianhänge{% endtrans %}
-    gespeichert. Um auf einen Anhang zu verweisen kannst du entweder
-    auf die entprechende Wikiseite verlinken oder das Bild mit dem
-    <code>[[Bild()]]</code>-Makro direkt einbinden.</p>
-    <ul class="attachments">
-    {%- for attachment in attachments %}
-      <li>
-        <a href="{{ attachment|url }}">{{ attachment.title|e }}</a> {{ attachment.rev.attachment.file.size|filesizeformat(true) }}
-        (zuletzt geändert am {{ attachment.rev.change_date|datetimeformat }}
-        von {% if attachment.rev.user -%}
-        <a href="{{ attachment.rev.user|url|e }}">{{
-            attachment.rev.user.username|e }}</a>{% else -%}
-            {{ attachment.rev.remote_addr|e }}{% endif %})
-      </li>
-    {%- endfor %}
-    </ul>
+      <p>
+        {% trans count=attachments|count %}
+          To this page there is currently {{ count }} attachment assigned.
+        {% pluralize %}
+          To this page there are currently {{ count }} attachment assigned.
+        {% endtrans %}
+        {% trans %}
+          To refer to an attachment you can either link to the corresponding
+          wikipage or include it with the <code>[[Bild()]]</code> macro.
+        {% endtrans %}
+      </p>
+      <ul class="attachments">
+        {%- for attachment in attachments %}
+          <li>
+            <a href="{{ attachment|url }}">{{ attachment.title|e }}</a>
+            {{ attachment.rev.attachment.file.size|filesizeformat(true) }}
+            {% if attachment.rev.user %}
+              {% trans date=attachment.rev.change_date|datetimeformat,
+                       author=attachment.rev.user.username|e,
+                       link=attachment.rev.user|url %}
+                (last modified on {{ date }} by <a href="{{ link }}">{{ author }}</a>)
+              {% endtrans %}
+            {% else %}
+              {% trans date=attachment.rev.change_date|datetimeformat,
+                       author=attachment.rev.remote_addr|e %}
+                (last modified on {{ date }} by {{ author }})
+              {% endtrans %}
+            {% endif %}
+          </li>
+        {%- endfor %}
+      </ul>
     {%- else %}
-    <p>Derzeit gibt es noch keine Dateianhänge zu dieser Seite.</p>
+      <p>{% trans %}There are no attachments yet for this site.{% endtrans %}</p>
     {%- endif %}
   </div>
 {% endblock %}

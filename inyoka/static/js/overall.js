@@ -412,8 +412,8 @@ $(document).ready(function () {
   var menu_status = (result != null) ? result[1] : 1;
   if (menu_status == 1) {
     $('.admin_link').removeClass('admin_link').addClass('admin_link_js').show();
+    $('#admin_layer_button').addClass('highlight');
   } else {
-    $('#admin_layer_button img').addClass('admin_menu_nothing');
     $('.admin_link').removeClass('admin_link').addClass('admin_link_js').hide();
   }
   $('.admin_link_hover').removeClass('admin_link_hover');
@@ -427,9 +427,9 @@ $(document).ready(function () {
     });
     menu_status = (menu_status == 0) ? 1 : 0;
     if (menu_status == 1) {
-      $('#admin_layer_button img').removeClass('admin_menu_nothing');
+      $('#admin_layer_button').addClass('highlight');
     } else {
-      $('#admin_layer_button img').addClass('admin_menu_nothing');
+      $('#admin_layer_button').removeClass('highlight');
     }
     var admin_cookie = new Date();
     var admin_cookie_expires = admin_cookie.getTime() + (365 * 24 * 60 * 60 * 1000);

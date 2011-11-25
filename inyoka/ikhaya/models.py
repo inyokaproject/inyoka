@@ -526,6 +526,7 @@ class Event(models.Model):
             ret = summary + s_date + s_location
         return u'<span class="vevent">%s</span>' % ret
 
+    #TODO: This property is too language specific, remove it.
     @property
     def natural_datetime(self):
         def _convert(d, t=None, time_only=False, prefix=True, end=False):

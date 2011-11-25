@@ -1,35 +1,726 @@
 # Translations template for PROJECT.
-# Copyright (C) 2010 ORGANIZATION
+# Copyright (C) 2011 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-07-18 19:11+0200\n"
+"POT-Creation-Date: 2011-11-23 21:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.5\n"
+"Generated-By: Babel 0.9.6\n"
 
-#: inyoka/wiki/templates/wiki/action_attach.html:48
+#: inyoka/wiki/forms.py:50
+msgid "The text contains too much nested elements."
+msgstr ""
+
+#: inyoka/wiki/forms.py:53
+msgid "The text contains conflict markers"
+msgstr ""
+
+#: inyoka/wiki/forms.py:57
+msgid "You are not permitted to make this changes"
+msgstr ""
+
+#: inyoka/wiki/forms.py:90 inyoka/wiki/forms.py:101
+msgid "Description"
+msgstr ""
+
+#: inyoka/wiki/forms.py:108
+msgid "Slug of the topic"
+msgstr ""
+
+#: inyoka/wiki/forms.py:109
 #, python-format
 msgid ""
-"%(h_count)s\n"
-"    Dateianhang"
-msgid_plural "%(h_count)s Dateianhänge"
+"You can find the slug of a topic in the URL (e.g. <var>example</var> when"
+" <em>%(example)s</em>"
+msgstr ""
+
+#: inyoka/wiki/forms.py:121
+msgid "This topic does not exist."
+msgstr ""
+
+#: inyoka/wiki/forms.py:128
+msgid "Edited by"
+msgstr ""
+
+#: inyoka/wiki/forms.py:129
+msgid "Completion date"
+msgstr ""
+
+#: inyoka/wiki/models.py:1034
+msgid "Wikipage"
+msgstr ""
+
+#: inyoka/wiki/models.py:1035
+msgid "Wikipages"
+msgstr ""
+
+#: inyoka/wiki/models.py:1089 inyoka/wiki/models.py:1092
+msgid "Download attachment"
+msgstr ""
+
+#: inyoka/wiki/models.py:1201
+#, python-format
+msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
+msgstr ""
+
+#: inyoka/wiki/models.py:1225
+#, python-format
+msgid "Revision %(id)d (%(title)s)"
+msgstr ""
+
+#: inyoka/wiki/views.py:79
+msgid "No site name was entered, the page could not be created."
+msgstr ""
+
+#: inyoka/wiki/views.py:90
+#, python-format
+msgid "Another site named “%(title)s“ already exists."
+msgstr ""
+
+#: inyoka/wiki/views.py:201
+#, python-format
+msgid "%(sitename)s wiki – %(pagename)s"
+msgstr ""
+
+#: inyoka/wiki/views.py:212
+#, python-format
+msgid "%(sitename)s wiki – last changes"
+msgstr ""
+
+#: inyoka/wiki/views.py:227
+#, python-format
+msgid ""
+"%(user)s had deleted the article “%(article)s“ on %(date)s. Summary: "
+"%(summary)s"
+msgstr ""
+
+#: inyoka/wiki/views.py:230
+#, python-format
+msgid ""
+"%(user)s edited the article “%(article)s“ on %(date)s. Summary: "
+"%(summary)s"
+msgstr ""
+
+#: inyoka/wiki/views.py:234
+#, python-format
+msgid ""
+"An anonymous user deleted the article “%(article)s“ on %(date)s. Summary:"
+" %(summary)s"
+msgstr ""
+
+#: inyoka/wiki/views.py:237
+#, python-format
+msgid ""
+"An anonymous user edited the article “%(article)s“ on %(date)s. Summary: "
+"%(summary)s"
+msgstr ""
+
+#: inyoka/wiki/views.py:249 inyoka/wiki/views.py:252
+msgid "Anonymous"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/_diff.html:32
+msgid "The two revisions are identical."
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/_new_page_macro.html:16
+msgid "Create page"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:21
+msgid "Add attachment"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:28
+msgid "Attachment:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:30
+msgid "Rename to:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:32
+#: inyoka/wiki/templates/wiki/action_attach_edit.html:30
+msgid "Description:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:34
+#: inyoka/wiki/templates/wiki/action_attach_edit.html:35
+#: inyoka/wiki/templates/wiki/action_delete.html:15
+#: inyoka/wiki/templates/wiki/action_edit.html:33
+#: inyoka/wiki/templates/wiki/action_revert.html:15
+msgid "Note:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:39
+msgid "Overwrite exisiting attachments with same name:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:42
+msgid "Upload attachments"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:43
+#: inyoka/wiki/templates/wiki/action_attach_edit.html:41
+#: inyoka/wiki/templates/wiki/action_delete.html:18
+#: inyoka/wiki/templates/wiki/action_edit.html:38
+#: inyoka/wiki/templates/wiki/action_mv_back.html:18
+#: inyoka/wiki/templates/wiki/action_mv_discontinued.html:18
+#: inyoka/wiki/templates/wiki/action_revert.html:18
+msgid "Cancel"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:46
+msgid "Existing attachments"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:49
+#, python-format
+msgid ""
+"\n"
+"          To this page there is currently %(count)s attachment assigned.\n"
+"        "
+msgid_plural ""
+"\n"
+"          To this page there are currently %(count)s attachment assigned."
+"\n"
+"        "
 msgstr[0] ""
 msgstr[1] ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:54
+msgid ""
+"\n"
+"          To refer to an attachment you can either link to the "
+"corresponding\n"
+"          wikipage or include it with the <code>[[Bild()]]</code> macro.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:65
+#, python-format
+msgid ""
+"\n"
+"                (last modified on %(date)s by <a "
+"href=\"%(link)s\">%(author)s</a>)\n"
+"              "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:71
+#, python-format
+msgid ""
+"\n"
+"                (last modified on %(date)s by %(author)s)\n"
+"              "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach.html:80
+msgid "There are no attachments yet for this site."
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach_edit.html:14
+#: inyoka/wiki/templates/wiki/action_edit.html:14
+#: inyoka/wiki/templates/wiki/page.html:48
+msgid "Edit"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach_edit.html:20
+#: inyoka/wiki/templates/wiki/action_attach_edit.html:40
+msgid "Edit attachment"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_attach_edit.html:26
+msgid "New attachment:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_backlinks.html:13
+#: inyoka/wiki/templates/wiki/page.html:50
+msgid "Backlinks"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_backlinks.html:18
+#, python-format
+msgid ""
+"\n"
+"        The following pages are referring to the article ”%(title)s” by\n"
+"        manual linking:\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_backlinks.html:31
+msgid ""
+"\n"
+"        The following pages are embedding this articles as attachment.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_backlinks.html:35
+msgid ""
+"\n"
+"          But the article itself is not listed as an attachment, perhaps "
+"these\n"
+"          pages are using the article mistakenly or an old revision was "
+"an\n"
+"          attachment.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_backlinks.html:55
+msgid ""
+"\n"
+"          This attachment is an orphan and not referenced by any site.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_backlinks.html:59
+msgid ""
+"\n"
+"          This article is an orphan and not referenced by any site.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_delete.html:14
+msgid "Are you sure you want to delete this page?"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_delete.html:17
+msgid "Delete"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_diff.html:16
+msgid "Difference"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_diff.html:22
+#, python-format
+msgid ""
+"\n"
+"          You are trying to compare two equal revision of the article\n"
+"          “<a href=\"%(link)s\">%(article)s</a>. For this reason no "
+"change\n"
+"          is displayed.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_diff.html:29
+#, python-format
+msgid ""
+"\n"
+"          But you can display <a href=\"%(link)s\">a list of changes</a> "
+"of\n"
+"          this page and compare individual revisions.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_diff.html:36
+#, python-format
+msgid ""
+"\n"
+"          The following table shows the difference of the article\n"
+"          “<a href=\"%(article_link)s\">%(article)s</a>“ between\n"
+"          <a href=\"%(old_rev_link)s\">revision %(old_rev)s</a> and\n"
+"          <a href=\"%(new_rev_link)s\">revision %(new_rev)s</a>.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_diff.html:48
+#, python-format
+msgid ""
+"\n"
+"          You can also download the changes as <a "
+"href=\"%(link_diff)s\">unified\n"
+"          diff</a> or display a <a href=\"%(link_list)s\">list of the "
+"last\n"
+"          changes</a> and compare individual revisions.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_diff.html:59
+msgid "Current revision"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_edit.html:36
+#: inyoka/wiki/templates/wiki/action_edit.html:43
+#: inyoka/wiki/templates/wiki/action_edit.html:60
+msgid "Preview"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_edit.html:37
+msgid "Submit"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_log.html:14
+msgid "Revisions"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_log.html:17
+msgid "Page revisions"
+msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_log.html:23
 #, python-format
-msgid "%(h_count)s Revision"
-msgid_plural "%(h_count)s Revisionen"
+msgid ""
+"\n"
+"        The article “<a href=\"%(link)s\">%(article)s</a>“ has currently\n"
+"        %(count)s revision.\n"
+"      "
+msgid_plural ""
+"\n"
+"        The article “<a href=\"%(link)s\">%(article)s</a>“ has currently\n"
+"        %(count)s revisions.\n"
+"      "
 msgstr[0] ""
 msgstr[1] ""
+
+#: inyoka/wiki/templates/wiki/action_log.html:32
+#, python-format
+msgid ""
+"\n"
+"          The <a href=\"%(rev_link)s\">most recent revision</a> is "
+"%(rev)s and\n"
+"          was created by <a href=\"%(author_link)s\">%(author)s</a>.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_log.html:38
+#, python-format
+msgid ""
+"\n"
+"          The <a href=\"%(rev_link)s\">most recent revision</a> is "
+"%(rev)s and\n"
+"          was created by %(author)s.\n"
+"        "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_log.html:46
+#, python-format
+msgid ""
+"\n"
+"        To be always up to date you can read the <a "
+"href=\"%(feed_link)s\">atom\n"
+"        feed</a> or <a href=\"%(subscribe_link)s\">subscribe</a>.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_log.html:58
+#: inyoka/wiki/templates/wiki/action_log.html:98
+msgid "Compare"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_log.html:89
+#: inyoka/wiki/templates/wiki/action_revert.html:17
+msgid "Restore"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_log.html:92
+#: inyoka/wiki/templates/wiki/action_manage.html:45
+msgid "Raw"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:15
+msgid "The following features are available for this page:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:18
+msgid "Show page"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:21
+msgid "Edit page"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:24
+msgid "Rename page"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:27
+msgid "Delete page"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:31
+#: inyoka/wiki/templates/wiki/action_manage.html:36
+msgid "Mark page as “under construction“"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:33
+msgid "Move page to “discontinued“"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:34
+msgid "Move page back to the wiki"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:40
+msgid "Show log"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:41
+msgid "Show backlinks"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:44
+msgid "Export page:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:46
+msgid "HTML"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:47
+msgid "AST"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:48
+msgid "Export metadata"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:51
+msgid "Manage attachments"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:54
+msgid "Prune cache"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage.html:57
+#: inyoka/wiki/templates/wiki/action_manage_discussion.html:13
+msgid "Link discussions"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage_discussion.html:17
+msgid ""
+"\n"
+"        You can choose a topic as the discussion topic of this article.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage_discussion.html:21
+msgid "Slug of the topic:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_manage_discussion.html:25
+msgid "Link"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_back.html:15
+msgid "Are you sure you want to move the page into the wiki?"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_back.html:17
+msgid "Move"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_baustelle.html:20
+#, python-format
+msgid ""
+"\n"
+"      Mark page “%(page)s“ as “under construction“\n"
+"    "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_baustelle.html:30
+msgid "Mark"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_discontinued.html:15
+msgid "Are you sure you want to mark the page as discontinued?"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_mv_discontinued.html:17
+msgid "Mark as discontinued"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:15
+msgid ""
+"\n"
+"      If you rename this page, all revisions will be renamed. The old "
+"page\n"
+"      will redirect to the new one.\n"
+"    "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:20
+msgid "New page name:"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:24
+msgid "Set redirect to new page"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:28
+msgid "Rename"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_rename.html:32
+msgid ""
+"\n"
+"        Duplicate attachments on the target page will be overwritten!\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_show.html:26
+#, python-format
+msgid ""
+"\n"
+"        <a href=\"%(rev_link)s\">This revision</a> was created on "
+"%(date)s by\n"
+"        <a href=\"%(author_link)s\">%(author)s</a>.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_show.html:32
+#, python-format
+msgid ""
+"\n"
+"        <a href=\"%(rev_link)s\">This revision</a> was created on "
+"%(date)s by\n"
+"        %(author)s.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_show.html:40
+msgid ""
+"\n"
+"        At this page the following tags have been assigned:\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:17
+#: inyoka/wiki/templates/wiki/missing_page.m.html:16
+msgid "Missing article"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:20
+#: inyoka/wiki/templates/wiki/missing_page.m.html:19
+#, python-format
+msgid ""
+"\n"
+"        The article “%(title)s“ does not exist yet.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:26
+#: inyoka/wiki/templates/wiki/missing_page.m.html:25
+#, python-format
+msgid ""
+"\n"
+"        The article “%(title)s“ was deleted. You can restore it or create"
+"\n"
+"        a new one in the action menu.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:34
+#: inyoka/wiki/templates/wiki/missing_page.m.html:33
+msgid ""
+"\n"
+"        The article is already under construction, help improving and "
+"finishing\n"
+"        it!\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:47
+#: inyoka/wiki/templates/wiki/missing_page.m.html:46
+msgid ""
+"\n"
+"        The following pages are referring this article:\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:60
+#: inyoka/wiki/templates/wiki/missing_page.m.html:57
+msgid ""
+"\n"
+"      Check if you have a typo in the URL.\n"
+"    "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:64
+#: inyoka/wiki/templates/wiki/missing_page.m.html:61
+msgid ""
+"\n"
+"        The following pages have a similar name:\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:79
+#, python-format
+msgid ""
+"\n"
+"        You can also <a href=\"%(link)s\">create</a> this article.\n"
+"      "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_page.html:85
+msgid ""
+"\n"
+"      However, you are missing the permissions to create this article.\n"
+"    "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_resource.html:15
+msgid "Missing resource"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/missing_resource.html:17
+#, python-format
+msgid ""
+"\n"
+"      The requested resource could not be found. Maybe you have followed "
+"a link\n"
+"      with invalid parameters. You can try to open the\n"
+"      <a href=\"%(link)s\">URL without parameters</a>.\n"
+"    "
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:24
+msgid "Wiki"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:32
+msgid "Advanced search"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:35
+msgid "Recent changes"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:36
+msgid "Tag cloud"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:47
+msgid "Article"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:49
+msgid "Log"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:51
+msgid "More"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:58
+msgid "Discussion"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:61
+msgid "Unsubscribe"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/page.html:63
+msgid "Subscribe"
+msgstr ""
 

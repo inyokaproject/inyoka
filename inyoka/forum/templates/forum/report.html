@@ -10,18 +10,20 @@
 #}
 
 {%- extends 'forum/page.html' %}
-{% do BREADCRUMB.append('Melden', topic|url('report'), True) %}
+{% do BREADCRUMB.append(_('Report'), topic|url('report'), True) %}
 {% do BREADCRUMB.append(topic.title, topic|url, True) %}
 {% do BREADCRUMB.append(topic.forum.name, topic.forum|url) %}
 
 {% block forum_content %}
   <form action="" method="post" enctype="multipart/form-data" class="new_topic">
-    <h2>Thema „{{ topic.title|e }}“ melden</h2>
+    <h2>{% trans topic=topic.title|e %}Report topic “{{ topic }}“{% endtrans %}</h2>
     <p>
-      Hier kannst du den Moderatoren ein bestimmtes Thema melden, wenn es deiner Meinung nach gegen die <a href="{{ href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') }}">Forenregeln</a> verstößt (Beleidigungen o.ä.).
-      Bitte schreibe hier noch eine kurze Begründung:
+      {% trans link=href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') %}
+        Here you can report a topic to the moderators if it is against our
+        <a href="{{ link }}">rules</a>. Please add a short explanation:
+      {% endtrans %}
     </p>
     <p>{{ form.text }}</p>
-    <p><input type="submit" value="Thema melden" /></p>
+    <p><input type="submit" value="{% trans %}Report topic{% endtrans %}" /></p>
   </form>
 {% endblock %}

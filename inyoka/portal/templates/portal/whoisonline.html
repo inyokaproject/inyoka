@@ -10,41 +10,51 @@
 {%- extends 'portal/overall.html' %}
 
 {% block portal_content %}
-  <h3>Wer ist online?</h3>
+  <h3>{% trans %}Who is online?{% endtrans %}</h3>
   <p>
-    {% trans all=sessions.all %}
-    Momentan ist <strong>{{ all }}</strong> Benutzer online,
+    {% trans n=sessions.all %}
+      {{ n }} User online
     {% pluralize %}
-    Momentan sind <strong>{{ all }}</strong> Benutzer online,
+      {{ n }} Users online
     {% endtrans %}
-    davon
+
+    <br />
+
     {% trans registered=sessions.registered %}
-    <strong>{{ registered }}</strong> Angemeldeter
+      {{ registered }} Registered user
     {% pluralize %}
-    <strong>{{ registered }}</strong> Angemeldete
-    {% endtrans %}    und
+      {{ registered }} Registered users
+    {% endtrans %}
+
+    <br />
+
     {% trans guests=sessions.anonymous %}
-    <strong>{{ guests }}</strong> Gast.
+      {{ guests }} Guest
     {% pluralize %}
-    <strong>{{ guests }}</strong> Gäste.
+      {{ guests }} Guests
     {% endtrans %}
   </p>
   <p>
-    Der Rekord liegt bei <strong>{{ record }}</strong> Benutzern, die
-    {{ record_time|specificdatetimeformat(true) }} gleichzeitig online waren.<br />
-    Insgesamt sind {{ global_registered_users }} Benutzer auf ubuntuusers.de registriert.<br />
+    {% trans time=record_time|datetimeformat %}
+      Most users ever online was {{ record }} on {{ time }}.
+    {% endtrans %}
+    {% trans %}
+      In total there are {{ global_registered_users }} users registered.
+    {% endtrans %}
+    <br />
   </p>
 
-  <p>Registrierte Benutzer:
+  <p>{% trans %}Registered users:{% endtrans %}
   {% for session in sessions.registered_sessions %}
     {%- if session.link -%}
       <a href="{{ session.link|e }}" class="{{ session.type }}">{{ session.text|e }}</a>{% else %}
       <span class="{{ session.type }}">{{ session.text|e }}</span>{%- endif %}{%- if not loop.last %}, {% endif %}
   {%- else %}
-    keine
+    {% trans %}None{% endtrans %}
   {%- endfor %}
   </p>
   <p>
-    <strong>Legende:</strong> Benutzernamen in grün gehören zum Ubuntuusers.de Team.
+    <strong>{% trans %}Legend:{% endtrans %}</strong>
+    {% trans %}Members with green usernames belong to the team.{% endtrans %}
   </p>
 {% endblock %}

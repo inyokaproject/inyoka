@@ -1,0 +1,344 @@
+# Translations template for PROJECT.
+# Copyright (C) 2011 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# 
+# Translators:
+# Sören Wegener <wegener92@googlemail.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: Inyoka\n"
+"Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
+"POT-Creation-Date: 2011-11-12 15:05+0100\n"
+"PO-Revision-Date: 2011-11-13 19:56+0000\n"
+"Last-Translator: soeren <wegener92@googlemail.com>\n"
+"Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: inyoka/pastebin/forms.py:21
+msgid "Plain text"
+msgstr "Klartext"
+
+#: inyoka/pastebin/forms.py:22
+msgid "Apache Config (.htaccess)"
+msgstr "Apache Config (.htaccess)"
+
+#: inyoka/pastebin/forms.py:23
+msgid "Bash"
+msgstr "Bash"
+
+#: inyoka/pastebin/forms.py:24
+msgid "Batch (.bat)"
+msgstr "Batch (.bat)"
+
+#: inyoka/pastebin/forms.py:25
+msgid "C"
+msgstr "C"
+
+#: inyoka/pastebin/forms.py:26
+msgid "C#"
+msgstr "C#"
+
+#: inyoka/pastebin/forms.py:27
+msgid "C++"
+msgstr "C++"
+
+#: inyoka/pastebin/forms.py:28
+msgid "CSS"
+msgstr "CSS"
+
+#: inyoka/pastebin/forms.py:29
+msgid "D"
+msgstr "D"
+
+#: inyoka/pastebin/forms.py:30
+msgid "Django / Jinja Templates"
+msgstr "Django / Jinja Templates"
+
+#: inyoka/pastebin/forms.py:31
+msgid "eRuby / rhtml"
+msgstr "eRuby / rhtml"
+
+#: inyoka/pastebin/forms.py:32
+msgid "Genshi Templates"
+msgstr "Genshi Templates"
+
+#: inyoka/pastebin/forms.py:33
+msgid "Haskell"
+msgstr "Haskell"
+
+#: inyoka/pastebin/forms.py:34
+msgid "HTML"
+msgstr "HTML"
+
+#: inyoka/pastebin/forms.py:35
+msgid "IRC Logs"
+msgstr "IRC Logs"
+
+#: inyoka/pastebin/forms.py:36
+msgid "Java"
+msgstr "Java"
+
+#: inyoka/pastebin/forms.py:37
+msgid "JavaScript"
+msgstr "JavaScript"
+
+#: inyoka/pastebin/forms.py:38
+msgid "JSP"
+msgstr "JSP"
+
+#: inyoka/pastebin/forms.py:39
+msgid "Lua"
+msgstr "Lua"
+
+#: inyoka/pastebin/forms.py:40
+msgid "Mako Templates"
+msgstr "Mako Templates"
+
+#: inyoka/pastebin/forms.py:41
+msgid "MiniD"
+msgstr "MiniD"
+
+#: inyoka/pastebin/forms.py:42
+msgid "Myghty Templates"
+msgstr "Myghty Templates"
+
+#: inyoka/pastebin/forms.py:43
+msgid "OCaml"
+msgstr "OCaml"
+
+#: inyoka/pastebin/forms.py:44
+msgid "Perl"
+msgstr "Perl"
+
+#: inyoka/pastebin/forms.py:45
+msgid "PHP"
+msgstr "PHP"
+
+#: inyoka/pastebin/forms.py:46
+msgid "Python"
+msgstr "Pytho"
+
+#: inyoka/pastebin/forms.py:47
+msgid "Python Console Sessions"
+msgstr "Python Console Sessions"
+
+#: inyoka/pastebin/forms.py:48
+msgid "Python Tracebacks"
+msgstr "Python Tracebacks"
+
+#: inyoka/pastebin/forms.py:49
+msgid "reStructuredText"
+msgstr "reStructuredText"
+
+#: inyoka/pastebin/forms.py:50
+msgid "Ruby"
+msgstr "Ruby"
+
+#: inyoka/pastebin/forms.py:51
+msgid "Scheme"
+msgstr "Scheme"
+
+#: inyoka/pastebin/forms.py:52
+msgid "Smarty"
+msgstr "Smarty"
+
+#: inyoka/pastebin/forms.py:53
+msgid "sources.list"
+msgstr "sources.list"
+
+#: inyoka/pastebin/forms.py:54
+msgid "SQL"
+msgstr "SQL"
+
+#: inyoka/pastebin/forms.py:55
+msgid "SquidConf"
+msgstr "SquidConf"
+
+#: inyoka/pastebin/forms.py:56
+msgid "TeX / LaTeX"
+msgstr "TeX / LaTeX"
+
+#: inyoka/pastebin/forms.py:57
+msgid "Unified Diff"
+msgstr "Unified Diff"
+
+#: inyoka/pastebin/forms.py:58
+msgid "Vim Scripts"
+msgstr "Vim Scripts"
+
+#: inyoka/pastebin/forms.py:59
+msgid "XML"
+msgstr "XML"
+
+#: inyoka/pastebin/forms.py:64 inyoka/pastebin/models.py:23
+msgid "Title"
+msgstr "Titel"
+
+#: inyoka/pastebin/forms.py:65 inyoka/pastebin/models.py:24
+msgid "Language"
+msgstr "Sprache"
+
+#: inyoka/pastebin/forms.py:67
+msgid "CAPTCHA"
+msgstr "CAPTCHA"
+
+#: inyoka/pastebin/forms.py:72
+msgid "Untitled"
+msgstr "Unbenannt"
+
+#: inyoka/pastebin/models.py:25
+msgid "Code"
+msgstr "Code"
+
+#: inyoka/pastebin/models.py:26
+msgid "Rendered code"
+msgstr "Gerenderte Code"
+
+#: inyoka/pastebin/models.py:27
+msgid "Date"
+msgstr "Datum"
+
+#: inyoka/pastebin/models.py:29
+msgid "Author"
+msgstr "Autor"
+
+#: inyoka/pastebin/models.py:30
+msgid "Referencing pages"
+msgstr "Verweisende Seiten"
+
+#: inyoka/pastebin/models.py:33
+msgid "Entry"
+msgstr "Eintrag"
+
+#: inyoka/pastebin/models.py:34
+#: inyoka/pastebin/templates/pastebin/browse.html:12
+msgid "Entries"
+msgstr "Einträge"
+
+#: inyoka/pastebin/views.py:29
+msgid ""
+"Your entry was successfully saved. You can use the following code to include"
+" it in your post:"
+msgstr ""
+"Dein Eintrag wurde erfolgreich gespeichert. Du kannst den folgenden Code "
+"verwenden, um ihn in deinen Beitrag einzubinden:"
+
+#: inyoka/pastebin/views.py:50
+#, python-format
+msgid "Paste number %(id)d could not be found"
+msgstr "Eintrag Nummer %(id)d konnte nicht gefunden werden."
+
+#: inyoka/pastebin/views.py:71
+msgid "The deletion was canceled"
+msgstr "Das Löschen wurde abgebrochen."
+
+#: inyoka/pastebin/views.py:74
+msgid "The entry in the pastebin was deleted."
+msgstr "Der Eintrag in der Ablage wurde gelöscht."
+
+#: inyoka/pastebin/templates/pastebin/add.html:14
+#: inyoka/pastebin/templates/pastebin/page.html:29
+msgid "New paste"
+msgstr "Neuer Eintrag"
+
+#: inyoka/pastebin/templates/pastebin/add.html:19
+msgid "About:"
+msgstr "Funktion:"
+
+#: inyoka/pastebin/templates/pastebin/add.html:20
+msgid ""
+"\n"
+"        This is a pastebin where you can save error messages, logs,\n"
+"        configuration files or source codes to keep threads or IRC channels\n"
+"        clean. To do this, just copy the text in the box below and choose the\n"
+"        appropriate language. After that, you copy the URL into the topic or\n"
+"        the channel.\n"
+"      "
+msgstr ""
+"\n"
+"Dies ist eine Ablage, wo du Fehlermeldungen, Logs, Konfigurationsdateien oder Quelltexte speichern kannst, um Forenthemen oder IRC-Kanäle nicht unnötig unleserlich zu machen. Dazu kopierst du den Text in das Textfeld und wählst die passende Sprache aus. Dann kopierst du die URL in das Thema bzw. den Kanal."
+
+#: inyoka/pastebin/templates/pastebin/add.html:32
+msgid "Submit"
+msgstr "Absenden"
+
+#: inyoka/pastebin/templates/pastebin/browse.html:20
+#, python-format
+msgid ""
+"\n"
+"            <a href=\"%(entry_link)s\">%(title)s</a>\n"
+"            by <a href=\"%(author_link)s\">%(author)s</a>\n"
+"          "
+msgstr ""
+"\n"
+"<a href=\"%(entry_link)s\">%(title)s</a>\n"
+"von <a href=\"%(author_link)s\">%(author)s</a>"
+
+#: inyoka/pastebin/templates/pastebin/browse.html:33
+msgid "No pastes were created yet."
+msgstr "Es wurden noch keine Einträge erstellt."
+
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:15
+#, python-format
+msgid ""
+"\n"
+"      Do you really want to delete the entry <a href=\"%(link)s\">%(entry)s</a>?\n"
+"    "
+msgstr ""
+"\n"
+"Möchtest du den Eintrag <a href=\"%(link)s\">%(entry)s</a> wirklich löschen?"
+
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:20
+msgid "Delete"
+msgstr "Löschen"
+
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:21
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: inyoka/pastebin/templates/pastebin/display.html:23
+msgid "Title:"
+msgstr "Titel:"
+
+#: inyoka/pastebin/templates/pastebin/display.html:26
+msgid "Author:"
+msgstr "Autor:"
+
+#: inyoka/pastebin/templates/pastebin/display.html:29
+msgid "Date:"
+msgstr "Datum:"
+
+#: inyoka/pastebin/templates/pastebin/display.html:31
+msgid "Actions:"
+msgstr "Aktionen:"
+
+#: inyoka/pastebin/templates/pastebin/display.html:34
+msgid "Display entry as raw text"
+msgstr "Zeige Eintrag in Rohformat an"
+
+#: inyoka/pastebin/templates/pastebin/display.html:36
+msgid "Delete entry"
+msgstr "Eintrag löschen"
+
+#: inyoka/pastebin/templates/pastebin/display.html:41
+msgid "Pages that are referencing this entry:"
+msgstr "Seiten, die auf diesen Eintrag verweisen:"
+
+#: inyoka/pastebin/templates/pastebin/display.html:48
+msgid "Code:"
+msgstr "Code:"
+
+#: inyoka/pastebin/templates/pastebin/page.html:13
+msgid "Pastebin"
+msgstr "Ablage"
+
+#: inyoka/pastebin/templates/pastebin/page.html:30
+msgid "Browse pastes"
+msgstr "Einträge durchstöbern"
+
+

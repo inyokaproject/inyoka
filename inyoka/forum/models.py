@@ -547,7 +547,10 @@ class Topic(models.Model):
 
     def get_ubuntu_version(self):
         if self.ubuntu_version:
-            return filter(lambda v: v.number == self.ubuntu_version, UBUNTU_VERSIONS)[0]
+            version = filter(lambda v: v.number == self.ubuntu_version, UBUNTU_VERSIONS)
+            if len(version) > 0:
+                return version[0]
+            return ''
 
     def get_version_info(self, default=u'Nicht angegeben'):
         if not (self.ubuntu_version or self.ubuntu_distro):

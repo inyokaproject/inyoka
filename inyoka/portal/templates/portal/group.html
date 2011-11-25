@@ -10,27 +10,30 @@
 
 {%- extends 'portal/overall.html' %}
 {% do BREADCRUMB.append(group.name, group|url, True) %}
-{% do BREADCRUMB.append('Gruppen', href('portal', 'groups'), True) %}
+{% do BREADCRUMB.append(_('Groups'), href('portal', 'groups'), True) %}
 {% block content %}
   <h3>{{ group.name|e }}</h3>
   <p>
-    Die Gruppe „{{ group.name|e }}“ hat insgesamt
-    {%- trans count=user_count %}
-      <strong>{{ count }}</strong> Mitglied:
-    {%- pluralize %}
-      <strong>{{ count }}</strong> Mitglieder:
-    {%- endtrans %}
+    {% if not group.is_public %}
+      {% trans %}This group is private and the membership is not shown public.{% endtrans %}
+    {% else %}
+      {% trans %}This is a public group.{% endtrans %}
+    {%- endif %}
   </p>
-  {%- if not group.is_public %}
-  <p>Diese Gruppe ist für normale Benutzer nicht sichtbar und die Mitgliedschaft wird nicht im Benutzerprofil angezeigt.</p>
-  {%- endif %}
+  <p>
+    {% trans count=user_count, name=group.name|e %}
+      The group “{{ name }}“ has {{ count }} member:
+    {% pluralize %}
+      The group “{{ name }}“ has {{ count }} members:
+    {% endtrans %}
+  </p>
   <table>
     <tr>
       <th>{{ table.get_html('id', '#') }}</th>
-      <th>{{ table.get_html('username', 'Benutzername') }}</th>
-      <th>{{ table.get_html('location', 'Wohnort') }}</th>
-      <th>{{ table.get_html('date_joined', 'Anmeldungsdatum') }}</th>
-      <th>{{ table.get_html('post_count', 'Beiträge') }}</th>
+      <th>{{ table.get_html('username', _('Username')) }}</th>
+      <th>{{ table.get_html('location', _('Location')) }}</th>
+      <th>{{ table.get_html('date_joined', _('Member since')) }}</th>
+      <th>{{ table.get_html('post_count', _('Posts')) }}</th>
     </tr>
     {%- for user in users %}
     <tr>
@@ -38,7 +41,7 @@
       <td>
         <a href="{{ user|url }}">{{ user.username|e }}</a></td>
       <td>{{ user.location }}</td>
-      <td>{{ user.date_joined.strftime('%d.%m.%Y, %H:%M') }}</td>
+      <td>{{ user.date_joined|datetimeformat }}</td>
       <td>{{ user.post_count }}</td>
     </tr>
     {%- endfor %}

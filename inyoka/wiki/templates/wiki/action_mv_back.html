@@ -11,7 +11,9 @@
 
 
 <form action="{{ href('wiki', page.name, action='mv_back')|e }}" method="post">
-  <p>Soll die Seite wirklich ins Wiki verschoben werden?</p>
-     <input type="submit" value="Verschieben" />{#
-   #}<input type="submit" name="cancel" value="Abbrechen" /></p>
+  <p>
+    {% trans %}Are you sure you want to move the page into the wiki?{% endtrans %}
+  </p>
+     <input type="submit" value="{% trans %}Move{% endtrans %}" />{#
+   #}<input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" /></p>
 </form>

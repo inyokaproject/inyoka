@@ -20,6 +20,7 @@ from StringIO import StringIO
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from inyoka.utils import encode_confirm_data, classproperty
 from inyoka.utils.decorators import deferred
@@ -38,26 +39,26 @@ UNUSABLE_PASSWORD = '!$!'
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
 DEFAULT_GROUP_ID = 1 # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
-    ('admin_panel', u'Portal | darf Administrationsbereich betreten'),
+    ('admin_panel', u'Not in use anymore'), #TODO: DEPRECATED
     ('article_edit', u'Ikhaya | kann Artikel bearbeiten'),
     ('category_edit', u'Ikhaya | kann Kategorien verändern'),
     ('event_edit', u'Ikhaya | kann Veranstaltungen eintragen'),
     ('comment_edit', u'Ikhaya | kann Kommentare administrieren'),
-    ('blog_edit', u'Planet | kann Blogs verändern'),
-    ('configuration_edit', u'Portal | darf allgemeine Einstellungen verändern'),
-    ('static_page_edit', u'Portal | darf statische Seiten verändern'),
-    ('markup_css_edit', u'Portal | darf die Markup-Stylesheets bearbeiten'),
-    ('static_file_edit', u'Portal | darf statische Dateien verändern'),
-    ('user_edit', u'Portal | darf Benutzer verändern'),
-    ('group_edit', u'Portal | darf Gruppen bearbeiten'),
-    ('send_group_pm', u'Portal | darf PN an Gruppen versenden'),
-    ('forum_edit', u'Forum | darf Foren verändern'),
-    ('manage_topics', u'Forum | darf gemeldete Themen verwalten'),
-    ('delete_topic', u'Forum | darf global Themen und Beiträge löschen'),
+    ('blog_edit', _(u'Planet | can edti blogs')),
+    ('configuration_edit', _(u'Portal | can edit miscellaneous settings')),
+    ('static_page_edit', _(u'Portal | can edit static pages')),
+    ('markup_css_edit', _(u'Portal | can edit stylesheets')),
+    ('static_file_edit', _(u'Portal | can edit static files')),
+    ('user_edit', _(u'Portal | can edit users')),
+    ('group_edit', _(u'Portal | can edit groups')),
+    ('send_group_pm', _(u'Portal | can send messages to groups')),
+    ('forum_edit', _(u'Forum | can edit forums')),
+    ('manage_topics', _(u'Forum | can manage reported topics')),
+    ('delete_topic', _(u'Forum | can delete every topic and post')),
     ('article_read', u'Ikhaya | darf unveröffentlichten Artikel lesen'),
-    ('manage_stats', u'Admin | darf Statistiken verwalten'),
-    ('manage_pastebin', u'Portal | darf Ablage verwalten'),
-    ('subscribe_to_users', u'Portal | darf Benutzer beobachten')
+    ('manage_stats', _(u'Admin | can manage statistics')),
+    ('manage_pastebin', _(u'Portal | can manage pastebin')),
+    ('subscribe_to_users', _(u'Portal | can watch users'))
 ])]
 PERMISSION_NAMES = {val: desc for val, name, desc in PERMISSIONS}
 PERMISSION_MAPPING = {name: val for val, name, desc in PERMISSIONS}
@@ -83,7 +84,8 @@ def reactivate_user(id, email, status, time):
 
     if (datetime.utcnow() - time).days > 33:
         return {
-            'failed': u'Seit der Löschung ist mehr als ein Monat vergangen!',
+            'failed': _(u'Sorry, more than one month passed since the deletion '
+                        u'of the account'),
         }
 
     email_exists = User.objects.filter(email=email).exists()
@@ -94,8 +96,8 @@ def reactivate_user(id, email, status, time):
     user = User.objects.get(id=id)
     if not user.is_deleted:
         return {
-            'failed': u'Der Benutzer %s wurde schon wiederhergestellt!' %
-                escape(user.username),
+            'failed': _(u'The account “%(name)s“ was already reactivated.') %
+                {'name': escape(user.username)},
         }
     values = {'email': email,
               'status': status}
@@ -110,14 +112,15 @@ def reactivate_user(id, email, status, time):
     try:
         userpage = WikiPage.objects.get_by_name('Benutzer/%s' % escape(user.username))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
-                      note=u'Benutzer „%s” hat sein Benutzerkonto reaktiviert' % escape(user.username))
+                      note=_(u'The user “%(name)s“ has reactivated his account.')
+                             % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
 
     return {
-        'success': u'Der Benutzer %s wurde wiederhergestellt. Dir wurde '
-                   u'eine E-Mail geschickt, mit der du dir ein neues Passwort '
-                   u'setzen kannst.' % escape(user.username),
+        'success': _(u'The account “%(name)s“ was reactivated. You will '
+                     u'receive an email to set the new password.')
+                     % {'name': escape(user.username)},
     }
 
 
@@ -139,8 +142,9 @@ def deactivate_user(user):
 
     userdata = encode_confirm_data(userdata)
 
-    subject = u'Deaktivierung deines Accounts „%s“ auf ubuntuusers.de' % \
-              escape(user.username)
+    subject = _(u'Deactivation of your account “%(name)s“ on %(sitename)s') \
+                % {'name': escape(user.username),
+                   'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
         'user': user,
         'userdata': userdata,
@@ -151,7 +155,8 @@ def deactivate_user(user):
     try:
         userpage = WikiPage.objects.get_by_name('Benutzer/%s' % escape(user.username))
         userpage.edit(user=User.objects.get_system_user(), deleted=True,
-                      note=u'Benutzer „%s” hat sein Benutzerkonto deaktiviert' % escape(user.username))
+                      note=_(u'The user “%(name)s“ has deactivated his account.')
+                             % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
 
@@ -183,8 +188,9 @@ def send_new_email_confirmation(user, email):
         'user': user,
         'data': encode_confirm_data(data),
     })
-    send_mail('ubuntuusers.de – E-Mail-Adresse bestätigen', text,
-              settings.INYOKA_SYSTEM_USER_EMAIL, [email])
+    subject = _(u'%(sitename)s – Confirm email address') \
+              % {'sitename': settings.BASE_DOMAIN_NAME}
+    send_mail(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL, [email])
 
 
 def set_new_email(id, email, time):
@@ -193,7 +199,7 @@ def set_new_email(id, email, time):
     his old address where he can reset it to protect against abuse.
     """
     if (datetime.utcnow() - time).days > 8:
-        return {'failed': u'Link zu alt!'}
+        return {'failed': _(u'The link is too old.')}
     user = User.objects.get(id=id)
 
     data = {
@@ -207,26 +213,27 @@ def set_new_email(id, email, time):
         'new_email': email,
         'data': encode_confirm_data(data),
     })
-    user.email_user('ubuntuusers.de – E-Mail-Adresse geändert', text,
-                    settings.INYOKA_SYSTEM_USER_EMAIL)
+    subject = _(u'%(sitename)s – Email address changed') \
+              % {'sitename': settings.BASE_DOMAIN_NAME}
+    user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
     user.email = email
     user.save()
     return {
-        'success': u'Deine neue E-Mail-Adresse wurde gespeichert!'
+        'success': _(u'Your new email address was saved.')
     }
 
 
 def reset_email(id, email, time):
     if (datetime.utcnow() - time).days > 33:
-        return {'failed': u'Link zu alt!'}
+        return {'failed': _(u'The link is too old.')}
 
     user = User.objects.get(id=id)
     user.email = email
     user.save()
 
     return {
-        'success': u'Deine E-Mail-Adresse wurde zurückgesetzt.'
+        'success': _('Your email address was reset.')
     }
 
 def send_activation_mail(user):
@@ -236,9 +243,10 @@ def send_activation_mail(user):
         'email':            user.email,
         'activation_key':   gen_activation_key(user)
     })
-    send_mail('ubuntuusers.de - Aktivierung des Benutzers %s'
-              % user.username,
-              message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
+    subject = _(u'%(sitename)s – Activation of the user “%(name)s“') \
+              % {'sitename': settings.BASE_DOMAIN_NAME,
+                 'name': user.username}
+    send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
 def send_new_user_password(user):
@@ -252,15 +260,17 @@ def send_new_user_password(user):
         'new_password_url': href('portal', 'lost_password',
                                  user.urlsafe_username, new_password_key),
     })
-    send_mail(u'ubuntuusers.de – Neues Passwort für %s' % user.username,
-              message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
+    subject = _(u'%(sitename)s – New password for “%(name)s“') \
+              % {'sitename': settings.BASE_DOMAIN_NAME,
+                 'name': user.username}
+    send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
 class Group(models.Model):
     name = models.CharField('Name', max_length=80, unique=True, db_index=True)
-    is_public = models.BooleanField(u'Öffentliches Profil')
-    permissions = models.IntegerField('Berechtigungen', default=0)
-    icon = models.ImageField('Teamicon', upload_to='portal/team_icons',
+    is_public = models.BooleanField(_(u'Public profile'))
+    permissions = models.IntegerField(_(u'Privileges'), default=0)
+    icon = models.ImageField(_(u'Teamicon'), upload_to='portal/team_icons',
                              blank=True, null=True)
 
     @property
@@ -473,52 +483,52 @@ class User(models.Model):
     """User model that contains all informations about an user."""
     objects = UserManager()
 
-    username = models.CharField('Benutzername', max_length=30, unique=True, db_index=True)
-    email = models.EmailField('E-Mail-Adresse', unique=True, max_length=50, db_index=True)
-    password = models.CharField('Passwort', max_length=128)
-    status = models.IntegerField('Aktiv', default=0)
-    last_login = models.DateTimeField('Letzter Login', default=datetime.utcnow)
-    date_joined = models.DateTimeField('Anmeldedatum', default=datetime.utcnow)
-    groups = models.ManyToManyField(Group, verbose_name='Gruppen', blank=True,
+    username = models.CharField(_(u'Username'), max_length=30, unique=True, db_index=True)
+    email = models.EmailField(_(u'Email address'), unique=True, max_length=50, db_index=True)
+    password = models.CharField(_(u'Password'), max_length=128)
+    status = models.IntegerField(_('Status'), default=0)
+    last_login = models.DateTimeField(_(u'Last login'), default=datetime.utcnow)
+    date_joined = models.DateTimeField(_(u'Member since'), default=datetime.utcnow)
+    groups = models.ManyToManyField(Group, verbose_name=_('Groups'), blank=True,
                                     related_name='user_set')
-    new_password_key = models.CharField(u'Bestätigungskey für ein neues '
-        u'Passwort', blank=True, null=True, max_length=32)
+    new_password_key = models.CharField(_('Confirmation key for a new password'),
+                                        blank=True, null=True, max_length=32)
 
-    banned_until = models.DateTimeField('Gesperrt bis', null=True)
+    banned_until = models.DateTimeField(_(u'Banned until'), null=True)
 
     # profile attributes
-    post_count = models.IntegerField(u'Beiträge', default=0)
-    avatar = models.ImageField('Avatar', upload_to='portal/avatars',
+    post_count = models.IntegerField(_(u'Posts'), default=0)
+    avatar = models.ImageField(_(u'Avatar'), upload_to='portal/avatars',
                                blank=True, null=True)
-    jabber = models.CharField('Jabber', max_length=200, blank=True)
-    icq = models.CharField('ICQ', max_length=16, blank=True)
-    msn = models.CharField('MSN', max_length=200, blank=True)
-    aim = models.CharField('AIM', max_length=200, blank=True)
-    yim = models.CharField('YIM', max_length=200, blank=True)
-    skype = models.CharField('Skype', max_length=200, blank=True)
-    wengophone = models.CharField('WengoPhone', max_length=200, blank=True)
+    jabber = models.CharField(_(u'Jabber'), max_length=200, blank=True)
+    icq = models.CharField(_(u'ICQ'), max_length=16, blank=True)
+    msn = models.CharField(_(u'MSN'), max_length=200, blank=True)
+    aim = models.CharField(_(u'AIM'), max_length=200, blank=True)
+    yim = models.CharField(_(u'Yahoo Messenger'), max_length=200, blank=True)
+    skype = models.CharField(_(u'Skype'), max_length=200, blank=True)
+    wengophone = models.CharField(_(u'WengoPhone'), max_length=200, blank=True)
     sip = models.CharField('SIP', max_length=200, blank=True)
-    signature = models.TextField('Signatur', blank=True)
-    coordinates_long = models.FloatField('Koordinaten (Länge)', blank=True, null=True)
-    coordinates_lat = models.FloatField(u'Koordinaten (Breite)', blank=True, null=True)
-    location = models.CharField('Wohnort', max_length=200, blank=True)
-    gpgkey = models.CharField('GPG-Key', max_length=8, blank=True)
-    occupation = models.CharField('Beruf', max_length=200, blank=True)
-    interests = models.CharField('Interessen', max_length=200, blank=True)
-    website = models.URLField('Webseite', blank=True)
-    launchpad = models.CharField('Launchpad-Benutzername', max_length=50, blank=True)
-    settings = JSONField('Einstellungen', default={})
-    _permissions = models.IntegerField('Rechte', default=0)
+    signature = models.TextField(_(u'Signature'), blank=True)
+    coordinates_long = models.FloatField(_(u'Coordinates (longitude)'), blank=True, null=True)
+    coordinates_lat = models.FloatField(_(u'Coordinates (latitude)'), blank=True, null=True)
+    location = models.CharField(_(u'Location'), max_length=200, blank=True)
+    gpgkey = models.CharField(_(u'GPG key'), max_length=8, blank=True)
+    occupation = models.CharField(_(u'Job'), max_length=200, blank=True)
+    interests = models.CharField(_('Interests'), max_length=200, blank=True)
+    website = models.URLField(_(u'Website'), blank=True)
+    launchpad = models.CharField(_(u'Launchpad username'), max_length=50, blank=True)
+    settings = JSONField(_('Settings'), default={})
+    _permissions = models.IntegerField(_(u'Privileges'), default=0)
 
     # forum attribues
-    forum_last_read = models.IntegerField('Letzter gelesener Post',
+    forum_last_read = models.IntegerField(_(u'Last read post'),
                                           default=0, blank=True)
-    forum_read_status = models.TextField('Gelesene Beiträge', blank=True)
-    forum_welcome = models.TextField('Gelesene Willkommensnachrichten',
+    forum_read_status = models.TextField(_('Read posts'), blank=True)
+    forum_welcome = models.TextField(_('Read welcome message'),
                                      blank=True)
 
     # member title
-    member_title = models.CharField('Benutzertitel', blank=True, null=True,
+    member_title = models.CharField(_(u'Member title'), blank=True, null=True,
                                     max_length=200)
 
     # primary group from which the user gets some settings
@@ -544,16 +554,6 @@ class User(models.Model):
     is_active = property(lambda x: x.status == 1)
     is_banned = property(lambda x: x.status == 2)
     is_deleted = property(lambda x: x.status == 3)
-
-    @property
-    def status_info(self):
-        """return user.status in words"""
-        return [
-            u'hat sich noch nicht aktiviert',
-            u'ist aktiv',
-            u'wurde gesperrt',
-            u'hat seinen Account gelöscht',
-        ][self.status]
 
     def set_password(self, raw_password):
         """Set a new sha1 generated password hash"""

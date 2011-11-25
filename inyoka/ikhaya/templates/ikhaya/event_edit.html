@@ -12,47 +12,50 @@
 {% set scripts = ['WikiEditor', 'DateTime'] %}
 
 {% if not event %}
-  {% do BREADCRUMB.append('Eintragen', href('ikhaya', 'event', 'new'), True) %}
+  {% do BREADCRUMB.append(_('Add'), href('ikhaya', 'event', 'new'), True) %}
 {% else %}
-  {% do BREADCRUMB.append('Bearbeiten', event|url('edit'), True) %}
+  {% do BREADCRUMB.append(_('Edit'), event|url('edit'), True) %}
   {% do BREADCRUMB.append(event.name, event|url, True) %}
 {% endif %}
-{% do BREADCRUMB.append('Veranstaltungen', href('ikhaya', 'events'), True) %}
+{% do BREADCRUMB.append(_('Events'), href('ikhaya', 'events'), True) %}
 
 {% block content %}
 <form action="" method="post" enctype="multipart/form-data">
   {%- if form.errors %}
-  <ul>{{ form.errors }}</ul>
+    <ul>{{ form.errors }}</ul>
   {%- endif %}
   {% if event.author %}
-    <dt>Vorgeschlagen von: <a href="{{ event.author|url }}">{{ event.author|e }}</a></dt>
+    <dt>
+      {% trans %}Suggested by:{% endtrans %}
+      <a href="{{ event.author|url }}">{{ event.author|e }}</a>
+    </dt>
   {% endif %}
-  <dt><label for="id_name">Name:</label></dt>
+  <dt><label for="id_name">{% trans %}Name:{% endtrans %}</label></dt>
   <dd>{{ form.name }}</dd>
-  <dt>Zeitpunkt:</dt>
-  <dd><label for="id_date">Datum (von):</label> {{ form.date }}</dd>
-  <dd><label for="id_time">Uhrzeit (von):</label> {{ form.time }}</dd>
-  <dd><label for="id_enddate">Datum (bis):</label> {{ form.enddate }}</dd>
-  <dd><label for="id_endtime">Uhrzeit (bis):</label> {{ form.endtime }}</dd>
-  <dt><label for="id_description">Details:</label></dt>
+  <dt>{% trans %}Time:{% endtrans %}</dt>
+  <dd><label for="id_date">{% trans %}Date (from):{% endtrans %}</label> {{ form.date }}</dd>
+  <dd><label for="id_time">{% trans %}Time (from):{% endtrans %}</label> {{ form.time }}</dd>
+  <dd><label for="id_enddate">{% trans %}Date (to):{% endtrans %}</label> {{ form.enddate }}</dd>
+  <dd><label for="id_endtime">{% trans %}Time (to):{% endtrans %}</label> {{ form.endtime }}</dd>
+  <dt><label for="id_description">{% trans %}Description:{% endtrans %}</label></dt>
   <dd>{{ form.description }}</dd>
-  <dt>Ort:</dt>
-  <dd><label for="id_location_town">Stadt:</label> {{ form.location_town }}</dd>
-  <dd><label for="id_location">Veranstaltungsort:</label> {{ form.location }}</dd>
+  <dt>{% trans %}Location:{% endtrans %}</dt>
+  <dd><label for="id_location_town">{% trans %}Town:{% endtrans %}</label> {{ form.location_town }}</dd>
+  <dd><label for="id_location">{% trans %}Location:{% endtrans %}</label> {{ form.location }}</dd>
 
-  <dt>Koordinaten:</dt>
-  <dd><label for="id_location_long">Länge:</label> {{ form.location_long }}</dd>
-  <dd><label for="id_location_lat">Breite:</label> {{ form.location_lat }}</dd>
-  <dt>Allgemeines:</dt>
-  <dd><label for="id_visible">Eintrag sichtbar:</label> {{ form.visible }}</dd>
+  <dt>{% trans %}Coordinates:{% endtrans %}</dt>
+  <dd><label for="id_location_long">{% trans %}Longitude:{% endtrans %}</label> {{ form.location_long }}</dd>
+  <dd><label for="id_location_lat">{% trans %}Latitude:{% endtrans %}</label> {{ form.location_lat }}</dd>
+  <dt>{% trans %}General{% endtrans %}</dt>
+  <dd><label for="id_visible">{% trans %}Entry visible:{% endtrans %}</label> {{ form.visible }}</dd>
 
   <p>
-    <input type="submit" value="Speichern" />
+    <input type="submit" value="{% trans %}Submit{% endtrans %}" />
     {%- if event %}
-    <span class="linklist">|
-      <a href="{{ event|url() }}">Veranstaltung anzeigen</a> |
-      <a href="{{ event|url('delete') }}">Löschen</a>
-    </span>
+      <span class="linklist">|
+        <a href="{{ event|url() }}">{% trans %}Show event{% endtrans %}</a> |
+        <a href="{{ event|url('delete') }}">{% trans %}Delete{% endtrans %}</a>
+      </span>
     {%- endif %}
   </p>
 </form>

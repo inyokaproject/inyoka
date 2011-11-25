@@ -10,23 +10,23 @@
 """
 from django import forms
 from django.core.validators import URLValidator
+from django.utils.translation import ugettext_lazy as _
+
 from inyoka.utils.forms import UserField
 from inyoka.planet.models import Blog
 
 
 class SuggestBlogForm(forms.Form):
     """Form to suggest a new blog url for the planet."""
-    name = forms.CharField(label=u'Name des Blogs')
-    url =  forms.URLField(label=u'URL')
-    feed_url =  forms.URLField(label=u'Feed-URL', required=False)
-    description = forms.CharField(label=u'Beschreibung',
-        widget=forms.Textarea,
-        help_text=(u'Die Beschreibung dient dem Ikhaya-Team '
-              u'sich einen besseren Überblick zu verschaffen.'))
-    mine = forms.BooleanField(label=u'Dieser Blog ist mein eigener',
+    name = forms.CharField(label=_(u'Name of the blog'))
+    url =  forms.URLField(label=_(u'URL'))
+    feed_url =  forms.URLField(label=_(u'Feed URL'), required=False)
+    description = forms.CharField(label=_(u'Description'),
+        widget=forms.Textarea)
+    mine = forms.BooleanField(label=_(u'This is my own blog'),
                               required=False)
-    contact_email = forms.EmailField(label=u'E-Mail-Adresse des Autors des '
-                                           u'Blogs', required=False)
+    contact_email = forms.EmailField(label=_(u'Email address of the blog '
+                                             u'author'), required=False)
 
 
 

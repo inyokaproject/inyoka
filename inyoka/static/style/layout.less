@@ -28,6 +28,24 @@
   border-bottom-left-radius: @radius;
 }
 
+.left-rounded(@radius: 5px) {
+  -webkit-border-bottom-left-radius: @radius;
+  -webkit-border-top-left-radius: @radius;
+  -moz-border-radius-bottomleft: @radius;
+  -moz-border-radius-topleft: @radius;
+  border-bottom-left-radius: @radius;
+  border-top-left-radius: @radius;
+}
+
+.right-rounded(@radius: 5px) {
+  -webkit-border-top-right-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -moz-border-radius-topright: @radius;
+  -moz-border-radius-bottomright: @radius;
+  border-top-right-radius: @radius;
+  border-bottom-right-radius: @radius;
+}
+
 .gradient(@from: #ccc, @to: #000, @default: #999) {
   /* non-css3 browsers */
   background: repeat-x @default;

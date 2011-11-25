@@ -1,20 +1,30 @@
 {%- if failed %}
   {%- if not inactive and not banned %}
-  <div class="errors">
-    Das eingegebene Passwort ist falsch oder der Benutzer existiert nicht.
-  </div>
+    <div class="errors">
+      {% trans name=username|e %}
+        Login failed because the password for the user “{{ name }}“
+        was wrong or the user does not exist.
+      {% endtrans %}
+    </div>
   {%- elif banned %}
-  <div class="errors">
-    Der Benutzer ist derzeit gebannt<br />
-    Du wurdest darüber informiert. Solltest du dem nicht zustimmen oder ein Irrtum vorliegen so schreibe
-    bitte eine Nachricht an <a href="mailto:team@ubuntuusers.de">team@ubuntuusers.de</a>.
-  </div>
+    <div class="errors">
+      {% trans name=username|e, mail='team@ubuntuusers.de',
+               mailto='mailto:team@ubuntuusers.de' %}
+        Login failed because the user “{{ name }}“ is currently banned.
+        You were informed about that. If you don’t agree with the ban or if it
+        is a mistake, please contact <a href="{{ mailto }}">{{ mail }}</a>.
+      {% endtrans %}
+    </div>
   {%- else %}
-  <div class="errors">
-    Das Benutzerkonto ist noch nicht aktiviert. Die Bestätigungsemail kannst du
-    <a href="{{- href('portal', 'register', 'resend', username|e) -}}">erneut anfordern</a>.
-    Falls es weiterhin nicht funktioniert, schreibe bitte eine Nachricht an
-    <a href="mailto:webteam@ubuntuusers.de">webteam@ubuntuusers.de</a>
-  </div>
+    <div class="errors">
+      {% trans name=username|e, resend=href('portal', 'register', 'resend', username|e),
+               mail='webteam@ubuntuusers.de', mailto='mailto:webteam@ubuntuusers.de' %}
+        Login failed because the user “{{ name }}“ is inactive. You probably
+        didn’t click on the link in the activation mail which was sent to you
+        after your registration. If you didn’t received that mail, you can
+        <a href="{{ resend }}">request a new one</a>. If it is still not working,
+        contact us: <a href="{{ mailto }}">{{ mail }}</a>
+      {% endtrans %}
+    </div>
   {%- endif %}
 {%- endif %}

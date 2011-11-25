@@ -1,6 +1,6 @@
 {#
     forum/topic.m.html
-    ~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~
 
     This page shows a single topic for mobiles.
 
@@ -42,46 +42,65 @@
           <div class="clear"></div>
           <div class="meta">
             <span>
-              Die Umfrage wurde {{ poll.start_time|dateformat(true) }} gestartet
-              {%- if poll.ended %} und endete {{ poll.end_time|dateformat(true) }}
-              {%- elif poll.end_time %} und wird {{ poll.end_time|dateformat(true) }} enden{%- endif -%}.
+              {% if poll.ended %}
+                {% trans start_date=poll.start_time|dateformat,
+                         end_date=poll.end_time|dateformat %}
+                  The poll was started on {{ start_date }} and it ended on {{ end_date }}.
+                {% endtrans %}
+              {%- elif poll.end_time %}
+                {% trans start_date=poll.start_time|dateformat,
+                         end_date=poll.end_time|dateformat %}
+                  The poll was started on {{ start_date }} and it will end on {{ end_date }}.
+                {% endtrans %}
+              {% endif %}
             </span><br />
-            <span>Abgegebene Stimmen: {{ poll.votes }}</span>
+            <span>
+              {% trans count=poll.votes %}
+                Votes: {{ count }}
+              {% pluralize %}
+                Votes: {{ count }}
+              {% endtrans %}
+            </span>
           </div>
       {%- endfor %}
       {%- if can_vote and not voted_all %}
-      <p>
-        {% if show_vote_results %}
-        <a href="?">Ergebnisse verbergen</a>
-        {% else %}
-        <input type="submit" name="vote" value="Abstimmen" />
-        <a href="?action=vote_results">Ergebnisse anzeigen</a>
-        {% endif %}
-      </p>
-      {% endif %}
+        <p>
+          {%- if show_vote_results %}
+            <a href="?">{% trans %}Hide results{% endtrans %}</a>
+          {%- else %}
+            <input type="submit" name="vote" value="{% trans %}Vote{% endtrans %}" />
+            <a href="?action=vote_results">{% trans %}Show results{% endtrans %}</a>
+          {%- endif %}
+        </p>
+      {%- endif %}
     </form>
   {% endif %}
+  {{ pagination.generate() }}
   <section id="posts">
     {%- for post in posts if not post.hidden %}
       <div class="post" id="post-{{ post.id }}">
         <div class="meta">
           <span class="right">
             {% if can_reply and not topic.locked %}
-              <a href="{{ post|url('quote') }}" class="action">zitieren</a> |
+              <a href="{{ post|url('quote') }}"
+                 class="action">{% trans %}Quote{% endtrans %}</a> |
             {% endif %}
             {% if can_edit(post) %}
-              <a href="{{ post|url('edit') }}" class="action">bearbeiten</a> |
+              <a href="{{ post|url('edit') }}"
+                 class="action">{% trans %}Edit{% endtrans %}</a> |
             {% endif %}
             <a href="{{ post|url }}">{{ post.pub_date|datetimeformat }}</a>
           </span>
-          <span class="left"><a href="{{ post.author|url }}">{{ post.author.username|e }}</a></span>
+          <span class="left">
+            <a href="{{ post.author|url }}">{{ post.author.username|e }}</a>
+          </span>
         </div>
         <div class="text">
           {{ post.get_text() }}
         </div>
         {% if post.has_attachments %}
           <div class="attachments">
-            <div class="title">Anhänge</div>
+            <div class="title">{% trans %}Attachments{% endtrans %}</div>
             <ul>
               {% for att in post.attachments.all() %}
                 <a href="{{ att|url }}"><li class="button">{{ att.name }}</li></a>
@@ -94,12 +113,20 @@
   </section>
   {{ pagination.generate() }}
   <section class="actions">
-    <a href="{{ topic|url('reply')}}"><span>Antworten</span></a>
+    <a href="{{ topic|url('reply')}}">
+      <span>{% trans %}Reply{% endtrans %}</span>
+    </a>
     {% if is_subscribed %}
-      <a href="{{ topic|url('unsubscribe')}}"><span>Abbestellen</span></a>
+      <a href="{{ topic|url('unsubscribe')}}">
+        <span>{% trans %}Unsubscribe{% endtrans %}</span>
+      </a>
     {% else %}
-      <a href="{{ topic|url('subscribe')}}"><span>Abonnieren</span></a>
+      <a href="{{ topic|url('subscribe')}}">
+        <span>{% trans %}Subscribe{% endtrans %}</span>
+      </a>
     {% endif %}
-    <a href="{{ topic|url('report')}}"><span>Melden</span></a>
+    <a href="{{ topic|url('report')}}">
+      <span>{% trans %}Report{% endtrans %}</span>
+    </a>
   </section>
 {% endblock %}
