@@ -14,7 +14,7 @@
 import re
 import heapq
 import difflib
-from inyoka.utils.html import escape
+from django.utils.html import escape
 
 
 DEFAULT_MARKERS = (

@@ -19,6 +19,7 @@ from django.core.validators import EMPTY_VALUES
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 
 from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
@@ -30,7 +31,7 @@ from inyoka.utils.urls import href, is_safe_domain
 from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
                                HiddenCaptchaField, EmailField, JabberField
 from inyoka.utils.local import current_request
-from inyoka.utils.html import escape, cleanup_html
+from inyoka.utils.html import cleanup_html
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.search import search as search_system

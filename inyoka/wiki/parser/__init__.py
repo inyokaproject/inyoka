@@ -52,7 +52,7 @@
         >>> gen.next()
         u'<p>'
         >>> gen.next()
-        Markup(u'Hello World!')
+        u'Hello World!'
         >>> gen.next()
         u'</p>'
 

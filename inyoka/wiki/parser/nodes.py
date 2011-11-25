@@ -19,9 +19,12 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from urlparse import urlparse
+
 from django.conf import settings
+from django.utils.html import escape
+
 from inyoka.utils.text import slugify, normalize_pagename, get_pagetitle
-from inyoka.utils.html import build_html_tag, striptags, escape
+from inyoka.utils.html import build_html_tag, striptags
 from inyoka.utils.urls import href, urlquote_plus, get_url
 from inyoka.utils.templating import render_template
 from inyoka.wiki.utils import debug_repr, resolve_interwiki_link

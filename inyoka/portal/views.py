@@ -28,6 +28,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ungettext, pgettext
 from django.utils.translation import ugettext as _
+from django.utils.html import escape
 
 from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
@@ -42,7 +43,6 @@ from inyoka.utils.http import templated, HttpResponse, \
 from inyoka.utils.sessions import get_sessions, make_permanent, \
     get_user_record
 from inyoka.utils.urls import href, url_for, is_safe_domain
-from inyoka.utils.html import escape
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.notification import send_notification

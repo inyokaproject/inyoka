@@ -9,8 +9,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
+from django.utils.html import escape
 from inyoka.utils.forms import MultiField, SlugField, StrippedCharField
-from inyoka.utils.html import escape
 from inyoka.forum.models import Topic, Forum
 from inyoka.forum.constants import VERSION_CHOICES, DISTRO_CHOICES
 from inyoka.utils.sessions import SurgeProtectionMixin

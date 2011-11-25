@@ -67,10 +67,10 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.contrib import messages
+from django.utils.html import escape
 
 from inyoka.utils.local import current_request
 from inyoka.utils.urls import href
-from inyoka.utils.html import escape
 
 
 class Sortable(object):

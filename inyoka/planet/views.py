@@ -9,18 +9,19 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
-from django.contrib import messages
+from django.db.models import Max
 from django.utils.text import truncate_html_words
 from django.utils.translation import ungettext
 from django.utils.translation import ugettext as _
-from django.db.models import Max
+from django.utils.html import escape
+from django.contrib import messages
+
 from inyoka.portal.user import Group
 from inyoka.portal.utils import check_login, require_permission
 from inyoka.utils import generic
 from inyoka.utils.urls import href
 from inyoka.utils.http import templated, HttpResponseRedirect, \
                               does_not_exist_is_404, HttpResponse
-from inyoka.utils.html import escape
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.mail import send_mail

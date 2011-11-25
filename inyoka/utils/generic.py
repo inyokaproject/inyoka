@@ -12,10 +12,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.views.generic import edit, base, list
 from django.utils.translation import ugettext as _
+from django.utils.html import escape
 
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
-from inyoka.utils.html import escape
 from inyoka.utils.http import TemplateResponse, HttpResponseRedirect
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable

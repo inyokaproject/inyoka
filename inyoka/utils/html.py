@@ -13,7 +13,6 @@ from __future__ import division
 import re
 import lxml.html.clean
 from lxml.html.defs import empty_tags
-from markupsafe import escape
 from htmlentitydefs import name2codepoint
 from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders

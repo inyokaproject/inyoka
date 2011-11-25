@@ -19,6 +19,7 @@ from django.utils.http import urlencode
 from django.utils.text import truncate_html_words
 from django.utils.translation import ungettext
 from django.utils.translation import ugettext as _
+from django.utils.html import escape
 
 from inyoka.utils import ctype
 from inyoka.utils.urls import href, url_for, is_safe_domain
@@ -31,7 +32,6 @@ from inyoka.utils.dates import MONTHS, get_user_timezone, date_time_to_datetime
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.notification import send_notification
-from inyoka.utils.html import escape
 from inyoka.portal.utils import check_login, require_permission
 from inyoka.portal.user import User
 from inyoka.portal.models import PrivateMessage, PrivateMessageEntry, \

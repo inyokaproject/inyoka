@@ -27,6 +27,7 @@ from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.utils.html import escape
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
@@ -34,7 +35,6 @@ from inyoka.utils.files import get_filename
 from inyoka.utils.text import get_new_unique_filename
 from inyoka.utils.database import LockableObject, update_model, model_or_none
 from inyoka.utils.dates import timedelta_to_seconds
-from inyoka.utils.html import escape
 from inyoka.utils.urls import href
 from inyoka.utils.search import search
 from inyoka.utils.local import current_request

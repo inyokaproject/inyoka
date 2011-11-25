@@ -32,9 +32,9 @@
 import re
 from werkzeug import url_decode
 
+from django.utils.html import escape
 from django.contrib import messages
 
-from inyoka.utils.html import escape
 from inyoka.utils.http import HttpResponseRedirect
 
 

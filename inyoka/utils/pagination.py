@@ -38,9 +38,10 @@ import math
 
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext as _
+from django.utils.html import escape
+
 from django_mobile import get_flavour
 
-from inyoka.utils.html import escape
 from inyoka.utils.http import PageNotFound, HttpResponseRedirect
 from inyoka.utils.urls import urlencode
 

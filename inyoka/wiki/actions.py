@@ -20,9 +20,10 @@
 """
 from datetime import datetime
 
-from django.contrib import messages
 from django.core.cache import cache
 from django.db import models
+from django.contrib import messages
+from django.utils.html import escape
 
 from inyoka.utils.urls import href, url_for
 from inyoka.utils.http import templated, does_not_exist_is_404, \
@@ -32,7 +33,6 @@ from inyoka.utils.diff3 import merge
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.text import normalize_pagename, get_pagetitle, join_pagename
-from inyoka.utils.html import escape
 from inyoka.utils.urls import urlencode
 from inyoka.utils.storage import storage
 from inyoka.wiki.models import Page, Revision

@@ -23,8 +23,8 @@ from django.conf import settings
 from django.utils.encoding import force_unicode
 from django.utils.translation import ungettext
 from django.utils.translation import ugettext as _
+from django.utils.html import escape
 
-from inyoka.utils.html import escape
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.text import join_pagename, normalize_pagename
 from inyoka.utils.http import templated, PageNotFound, HttpResponseRedirect, \

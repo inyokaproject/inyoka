@@ -88,6 +88,7 @@ from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from werkzeug import cached_property
 
 from inyoka.wiki.storage import storage
@@ -104,7 +105,7 @@ from inyoka.utils.highlight import highlight_code
 from inyoka.utils.templating import render_template
 from inyoka.utils.parsertools import MultiMap
 from inyoka.utils.local import current_request
-from inyoka.utils.html import escape, striptags
+from inyoka.utils.html import striptags
 from inyoka.utils.text import join_pagename, get_pagetitle, normalize_pagename
 from inyoka.utils.diff3 import generate_udiff, prepare_udiff, \
     get_close_matches

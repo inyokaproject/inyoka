@@ -21,11 +21,11 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 
 from inyoka.utils import encode_confirm_data, classproperty
 from inyoka.utils.decorators import deferred
 from inyoka.utils.mail import send_mail
-from inyoka.utils.html import escape
 from inyoka.utils.user import normalize_username, get_hexdigest,\
     check_password, gen_activation_key
 from inyoka.utils.local import current_request
