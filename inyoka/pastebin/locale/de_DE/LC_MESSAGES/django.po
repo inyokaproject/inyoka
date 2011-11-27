@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PROJECT project.
 # 
 # Translators:
+#   <eule_stern@web.de>, 2011.
 # Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
 "POT-Creation-Date: 2011-11-12 15:05+0100\n"
-"PO-Revision-Date: 2011-11-13 19:56+0000\n"
-"Last-Translator: soeren <wegener92@googlemail.com>\n"
+"PO-Revision-Date: 2011-11-26 23:55+0000\n"
+"Last-Translator: katze_sonne <eule_stern@web.de>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -121,7 +122,7 @@ msgstr "PHP"
 
 #: inyoka/pastebin/forms.py:46
 msgid "Python"
-msgstr "Pytho"
+msgstr "Python"
 
 #: inyoka/pastebin/forms.py:47
 msgid "Python Console Sessions"
@@ -197,7 +198,7 @@ msgstr "Code"
 
 #: inyoka/pastebin/models.py:26
 msgid "Rendered code"
-msgstr "Gerenderte Code"
+msgstr "Gerenderter Code"
 
 #: inyoka/pastebin/models.py:27
 msgid "Date"
@@ -225,8 +226,8 @@ msgid ""
 "Your entry was successfully saved. You can use the following code to include"
 " it in your post:"
 msgstr ""
-"Dein Eintrag wurde erfolgreich gespeichert. Du kannst den folgenden Code "
-"verwenden, um ihn in deinen Beitrag einzubinden:"
+"Dein Eintrag wurde erfolgreich gespeichert. Du kannst ihn mit dem folgenden "
+"Code in deinen Beitrag einbinden:"
 
 #: inyoka/pastebin/views.py:50
 #, python-format
@@ -319,7 +320,7 @@ msgstr "Aktionen:"
 
 #: inyoka/pastebin/templates/pastebin/display.html:34
 msgid "Display entry as raw text"
-msgstr "Zeige Eintrag in Rohformat an"
+msgstr "Zeige Eintrag als Rohtext an"
 
 #: inyoka/pastebin/templates/pastebin/display.html:36
 msgid "Delete entry"
