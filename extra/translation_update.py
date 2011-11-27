@@ -29,7 +29,7 @@ for resource in resources:
         url = '/'.join([BASE_URL, 'resource', app, 'translation', language]) + '?file'
         dir_path = os.path.split(file_path)[0]
         if not os.path.exists(dir_path):
-            os.makedirs(dirpath)
+            os.makedirs(dir_path)
         print 'Downloading "{0}"'.format(url)
         urlretrieve(url, file_path)
 
