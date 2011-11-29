@@ -34,10 +34,10 @@
       {%- if forum.last_post_id in last_posts -%}
         {% set last_post = last_posts[forum.last_post_id] %}
         <a href="{{ last_post|url }}">{{ last_post.pub_date|datetimeformat }}</a><br />
-        {% trans link=last_post.author|url, name=last_post.author|e %}
+        {%- trans link=last_post.author|url, name=last_post.author|e -%}
           by <a href="{{ link }}">{{ name }}</a>
-        {% endtrans %}
-      {%- else %}
+        {%- endtrans -%}
+      {%- else -%}
         ---
       {%- endif %}
     </td>

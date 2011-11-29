@@ -50,11 +50,11 @@
       {%- endif %}
       {%- if discussions %}
       <div class="topic_box discussion_info">
-        {% trans count=discussions|count, article_list=render_article_list(discussions) %}
+        {%- trans count=discussions|count, article_list=render_article_list(discussions) -%}
           This topic is the discussion of the article {{ article_list }}.
-        {% pluralize %}
+        {%- pluralize -%}
           This topic is the discussion of the articles {{ article_list }}.
-        {% endtrans %}
+        {%- endtrans -%}
       </div>
       {%- endif %}
     {%- else %}
@@ -136,8 +136,8 @@
           {{ attach_form.filename }}{{ attach_form.errors.filename }}</p>
         <p><label for="id_text">{% trans %}Description:{% endtrans %}</label>
           {{ attach_form.comment }}{{ attach_form.errors.comment }}</p>
-        <p>{{ attach_form.override }} <label for="id_override">{% trans %}
-          Overwrite existing attachment with the same name.{% endtrans %}</label></p>
+        <p>{{ attach_form.override }} <label for="id_override">{% trans -%}
+          Overwrite existing attachment with the same name.{%- endtrans %}</label></p>
         <p><input type="submit" value="Anhang hochladen" name="attach" /></p>
       </dd>
       {%- endif %}

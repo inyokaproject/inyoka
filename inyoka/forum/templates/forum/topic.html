@@ -116,11 +116,11 @@
 
   {%- if discussions %}
     <div class="topic_box discussion_info">
-      {% trans count=discussions|count, article_list=render_article_list(discussions) %}
+      {%- trans count=discussions|count, article_list=render_article_list(discussions) -%}
         This topic is the discussion of the article {{ article_list }}.
-      {% pluralize %}
+      {%- pluralize -%}
         This topic is the discussion of the articles {{ article_list }}.
-      {% endtrans %}
+      {%- endtrans -%}
     </div>
   {%- endif %}
 
@@ -160,23 +160,17 @@
           {%- endfor %}
         </table>
         <div>
-          {% if poll.ended %}
-            {% trans start_date=poll.start_time|dateformat,
-                     end_date=poll.end_time|dateformat %}
+          {%- if poll.ended -%}
+            {% trans start_date=poll.start_time|dateformat, end_date=poll.end_time|dateformat -%}
               The poll was started on {{ start_date }} and it ended on {{ end_date }}.
-            {% endtrans %}
-          {%- elif poll.end_time %}
-            {% trans start_date=poll.start_time|dateformat,
-                     end_date=poll.end_time|dateformat %}
+            {%- endtrans %}
+          {%- elif poll.end_time -%}
+            {% trans start_date=poll.start_time|dateformat, end_date=poll.end_time|dateformat -%}
               The poll was started on {{ start_date }} and it will end on {{ end_date }}.
-            {% endtrans %}
-          {% endif %}
+            {%- endtrans %}
+          {%- endif -%}
         </div>
-        {% trans count=poll.votes %}
-          Votes: {{ count }}
-        {% pluralize %}
-          Votes: {{ count }}
-        {% endtrans %}
+        {% trans count=poll.votes %}Votes: {{ count }}{% pluralize %}Votes: {{ count }}{% endtrans %}
       {%- endfor %}
       {%- if can_vote and not voted_all %}
         <p>
