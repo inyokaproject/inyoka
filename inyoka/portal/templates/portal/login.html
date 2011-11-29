@@ -15,23 +15,20 @@
   <h3>{% trans %}Login{% endtrans %}</h3>
   {%- if cookie_error %}
   <div class="errors">
-    {% trans link=retry_link|e %}
-      For security reasons you need to allow cookies to login. Please enable
-      cookies and <a href="{{ link }}">reload the page</a>.
-    {% endtrans %}
+    {%- trans link=retry_link|e -%}
+      For security reasons you need to allow cookies to login. Please enable cookies and <a href="{{ link }}">reload the page</a>.
+    {%- endtrans -%}
   </div>
   <p>
-    {% trans link='/datenschutz' %}
-      You can find more information about cookies in our <a href="{{ link }}">
-      privacy policy</a>.
-    {% endtrans %}
+    {%- trans link='/datenschutz' -%}
+      You can find more information about cookies in our <a href="{{ link }}">privacy policy</a>.
+    {%- endtrans -%}
   </p>
   {%- else %}
   <p>
-    {% trans register=href('portal', 'register'), lost_password=href('portal', 'lost_password') %}
-      You can login here if you are already <a href="{{ register }}">registered</a>.
-      If you lost your password, you can <a href="{{ lost_password }}">request a new one</a>.
-    {% endtrans %}
+    {%- trans register=href('portal', 'register'), lost_password=href('portal', 'lost_password') -%}
+      You can login here if you are already <a href="{{ register }}">registered</a>. If you lost your password, you can <a href="{{ lost_password }}">request a new one</a>.
+    {%- endtrans -%}
   </p>
   {% include 'portal/login_text.html' with context %}
   <form action="" method="post" class="loginform">
@@ -39,10 +36,9 @@
       {{ render_form(form, ['username', 'password'], inline=true) }}
       <dd>
         {{ form.permanent }} <label for="id_permanent">{{ form.permanent.label }}</label>
-        <div class="help_text">{% trans %}
-          Don’t choose this option if you are using a public computer.
-          Otherwise, unauthorized persons may enter your account.
-        {% endtrans %}</div>
+        <div class="help_text">{% trans -%}
+          Don’t choose this option if you are using a public computer. Otherwise, unauthorized persons may enter your account.
+        {%- endtrans %}</div>
       </dd>
     </dl>
     <div class="actions">
