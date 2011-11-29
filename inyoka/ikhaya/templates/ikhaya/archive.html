@@ -13,10 +13,9 @@
 
 {% block ikhaya_content %}
   <p>
-    {% trans link=href('ikhaya') %}
-      Here are all published articles in chronological order. You can find the
-      most recent articles on <a href="{{ link }}">the front page</a>.
-    {% endtrans %}
+    {%- trans link=href('ikhaya') -%}
+      Here are all published articles in chronological order. You can find the most recent articles on <a href="{{ link }}">the front page</a>.
+    {%- endtrans -%}
   </p>
   {% for year in months|groupby('year') %}
     <h3>{{ year.grouper }}</h3>

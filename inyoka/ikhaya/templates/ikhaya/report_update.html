@@ -11,23 +11,23 @@
 
 <form action="{{ report|url(action)|e }}" method="post">
   <p>
-    {% if action == 'hide' %}
-      {% trans link=report|url, author=report.author.username|e %}
+    {%- if action == 'hide' -%}
+      {% trans link=report|url, author=report.author.username|e -%}
         Do you want to hide the <a href="{{ link }}">report from {{ author }}</a>?
-      {% endtrans %}
-    {% elif action == 'restore' %}
-      {% trans link=report|url, author=report.author.username|e %}
+      {%- endtrans %}
+    {%- elif action == 'restore' -%}
+      {% trans link=report|url, author=report.author.username|e -%}
         Do you want to restore the <a href="{{ link }}">report from {{ author }}</a>?
-      {% endtrans %}
-    {% elif action == 'solve' %}
-      {% trans link=report|url, author=report.author.username|e %}
+      {%- endtrans %}
+    {%- elif action == 'solve' -%}
+      {% trans link=report|url, author=report.author.username|e -%}
         Do you want to mark the <a href="{{ link }}">report from {{ author }}</a> as solved?
-      {% endtrans %}
-    {% elif action == 'unsolve' %}
-      {% trans link=report|url, author=report.author.username|e %}
+      {%- endtrans %}
+    {%- elif action == 'unsolve' -%}
+      {% trans link=report|url, author=report.author.username|e -%}
         Do you want to mark the <a href="{{ link }}">report from {{ author }}</a> as unsolved?
-      {% endtrans %}
-    {% endif %}
+      {%- endtrans %}
+    {%- endif -%}
   </p>
   <p>
     <input type="submit" value="{% if action=='hide' -%}{% trans %}Hide{% endtrans %}

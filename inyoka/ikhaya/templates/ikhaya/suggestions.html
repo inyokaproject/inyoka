@@ -15,11 +15,11 @@
 {% block ikhaya_content %}
   <h3>{% trans %}Article suggestions{% endtrans %}</h3>
   <p>
-    {% trans count=suggestion_count%}
+    {%- trans count=suggestion_count -%}
       Here is one article suggestion which was not yet reviewed.
-    {% pluralize %}
+    {%- pluralize -%}
       Here are {{ count }} article suggestions which were not yet reviewed.
-    {% endtrans %}
+    {%- endtrans %}
     {%- if is_subscribed %}
       <a href="{{ href('ikhaya', 'suggestions', 'unsubscribe') }}" class="action action_subscribe">{% trans %}Do not notify me anymore about new article suggestions{% endtrans %}</a>
     {%- else -%}
@@ -31,14 +31,14 @@
         {%- for suggestion in suggestions %}
           <div class="article" id="{{ suggestion.id }}">
             <span class="articleinfo">
-              {% trans link=suggestion.author|url, author=suggestion.author.username|e %}
+              {%- trans link=suggestion.author|url, author=suggestion.author.username|e -%}
                 Suggested by <a href="{{ link }}">{{ author }}</a>
-              {% endtrans %}
+              {%- endtrans %}
               <span class="linklist"> | </span>
               <span class="suggestion-{{ suggestion.pk }}">
                 {% trans %}Assigned to:{% endtrans %}
                 {% if suggestion.owner_id == none %}
-                  Nobody
+                  {% trans %}Nobody{% endtrans %}
                 {% else %}
                   <a href="{{ suggestion.owner|url }}">{{ suggestion.owner.username|e }}</a>
                 {% endif %}

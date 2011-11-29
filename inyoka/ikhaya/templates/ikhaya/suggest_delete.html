@@ -15,10 +15,9 @@
   <p>{% trans %}Explanation for the author of the suggestion:{% endtrans %}</p>
   <p><textarea name="note"></textarea></p>
   <p class="note">
-    {% trans %}
-      Leave this field empty if the suggestion should be deleted without an
-      explanation.
-    {% endtrans %}
+    {%- trans -%}
+      Leave this field empty if the suggestion should be deleted without an explanation.
+    {%- endtrans -%}
   </p>
   <p><input type="submit" value="{% trans %}Delete{% endtrans %}" />{#
    #}<input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" /></p>

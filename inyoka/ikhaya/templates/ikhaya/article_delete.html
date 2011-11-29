@@ -15,10 +15,9 @@
 
 <form action="{{ article|url('delete')|e }}" method="post">
   <p>
-    {% trans link=article|url('show')|e, article=article.subject %}
-      Are you sure you want to delete the article
-      <a href="{{ link }}">{{ article }}</a>?
-    {% endtrans %}
+    {%- trans link=article|url('show')|e, article=article.subject -%}
+      Are you sure you want to delete the article <a href="{{ link }}">{{ article }}</a>?
+    {%- endtrans -%}
   </p>
   <p>
     <input type="submit" value="{% trans %}Delete{% endtrans %}" />
