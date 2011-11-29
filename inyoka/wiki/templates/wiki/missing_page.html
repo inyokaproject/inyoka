@@ -17,24 +17,22 @@
   <h2>{% trans %}Missing article{% endtrans %}</h2>
   {%- if not page %}
     <p>
-      {% trans title=title|e %}
+      {%- trans title=title|e -%}
         The article “{{ title }}“ does not exist yet.
-      {% endtrans %}
+      {%- endtrans -%}
     </p>
   {%- else %}
     <p>
-      {% trans title=title|e %}
-        The article “{{ title }}“ was deleted. You can restore it or create
-        a new one in the action menu.
-      {% endtrans %}
+      {%- trans title=title|e -%}
+        The article “{{ title }}“ was deleted. You can restore it or create a new one in the action menu.
+      {%- endtrans -%}
     </p>
   {%- endif %}
   {%- if not_finished %}
     <p>
-      {% trans %}
-        The article is already under construction, help improving and finishing
-        it!
-      {% endtrans %}
+      {%- trans -%}
+        The article is already under construction, help improving and finishing it!
+      {%- endtrans -%}
     </p>
     <ul>
       <li>
@@ -44,9 +42,9 @@
   {%- endif %}
   {%- if backlinks %}
     <p>
-      {% trans %}
+      {%- trans -%}
         The following pages are referring this article:
-      {% endtrans %}
+      {%- endtrans -%}
     </p>
     <ul>
       {%- for link in backlinks %}
@@ -57,14 +55,14 @@
     </ul>
   {%- endif %}
   <p>
-    {% trans %}
+    {%- trans -%}
       Check if you have a typo in the URL.
-    {% endtrans %}
-    {% if similar %}
-      {% trans %}
-        The following pages have a similar name:
-      {% endtrans %}
-    {% endif %}
+    {%- endtrans %}
+    {% if similar -%}
+      {% trans -%}
+        The following pages have similar names:
+      {%- endtrans %}
+    {%- endif -%}
   </p>
   {%- if similar %}
     <ul>
@@ -76,15 +74,15 @@
   {%- endif %}
   {%- if create_link %}
     <p>
-      {% trans link=create_link %}
+      {%- trans link=create_link -%}
         You can also <a href="{{ link }}">create</a> this article.
-      {% endtrans %}
+      {%- endtrans -%}
     </p>
   {%- else %}
   <p>
-    {% trans %}
+    {%- trans -%}
       However, you are missing the permissions to create this article.
-    {% endtrans %}
+    {%- endtrans -%}
   </p>
   {%- endif %}
 {% endblock %}

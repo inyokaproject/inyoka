@@ -14,9 +14,7 @@
 {% block wiki_content %}
   <form action="?action=manage_discussion" method="post">
     <p>
-      {% trans %}
-        You can choose a topic as the discussion topic of this article.
-      {% endtrans %}
+      {%- trans %}You can choose a topic as the discussion topic of this article.{% endtrans -%}
     <p>
       <label for="id_topic">{% trans %}Slug of the topic:{% endtrans %}</label> {{ form.topic }}
       <span class="help_text">{{ form.topic.help_text }}</span>

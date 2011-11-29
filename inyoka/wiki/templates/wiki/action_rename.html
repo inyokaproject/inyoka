@@ -12,10 +12,9 @@
 
 <form action="{{ href('wiki', page.name, action='rename')|e }}" method="post">
   <p><small>
-    {% trans %}
-      If you rename this page, all revisions will be renamed. The old page
-      will redirect to the new one.
-    {% endtrans %}
+    {%- trans -%}
+      If you rename this page, all revisions will be renamed. The old page will redirect to the new one.
+    {%- endtrans -%}
   </small></p>
   <p>{% trans %}New page name:{% endtrans %}</p>
   <p>
@@ -29,9 +28,9 @@
   </p>
   {% if force %}
     <strong>
-      {% trans %}
+      {%- trans -%}
         Duplicate attachments on the target page will be overwritten!
-      {% endtrans %}
+      {%- endtrans -%}
     </strong>
   {% endif %}
 </form>

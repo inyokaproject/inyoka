@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-27 01:29+0100\n"
+"POT-Creation-Date: 2011-11-30 00:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -186,45 +186,28 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_attach.html:49
 #, python-format
-msgid ""
-"\n"
-"          To this page there is currently %(count)s attachment assigned.\n"
-"        "
-msgid_plural ""
-"\n"
-"          To this page there are currently %(count)s attachment assigned."
-"\n"
-"        "
+msgid "To this page there is currently %(count)s attachment assigned."
+msgid_plural "To this page there are currently %(count)s attachment assigned."
 msgstr[0] ""
 msgstr[1] ""
 
 #: inyoka/wiki/templates/wiki/action_attach.html:54
 msgid ""
-"\n"
-"          To refer to an attachment you can either link to the "
-"corresponding\n"
-"          wikipage or include it with the <code>[[Bild()]]</code> macro.\n"
-"        "
+"To refer to an attachment you can either link to the corresponding wiki "
+"page or include it with the <code>[[Bild()]]</code> macro."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_attach.html:65
+#: inyoka/wiki/templates/wiki/action_attach.html:64
 #, python-format
-msgid ""
-"\n"
-"                (last modified on %(date)s by <a "
-"href=\"%(link)s\">%(author)s</a>)\n"
-"              "
+msgid "(last modified on %(date)s by <a href=\"%(link)s\">%(author)s</a>)"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_attach.html:71
+#: inyoka/wiki/templates/wiki/action_attach.html:70
 #, python-format
-msgid ""
-"\n"
-"                (last modified on %(date)s by %(author)s)\n"
-"              "
+msgid "(last modified on %(date)s by %(author)s)"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_attach.html:80
+#: inyoka/wiki/templates/wiki/action_attach.html:79
 msgid "There are no attachments yet for this site."
 msgstr ""
 
@@ -251,42 +234,27 @@ msgstr ""
 #: inyoka/wiki/templates/wiki/action_backlinks.html:18
 #, python-format
 msgid ""
-"\n"
-"        The following pages are referring to the article ”%(title)s” by\n"
-"        manual linking:\n"
-"      "
+"The following pages are referring to the article ”%(title)s” by manual "
+"linking:"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_backlinks.html:31
-msgid ""
-"\n"
-"        The following pages are embedding this articles as attachment.\n"
-"      "
+#: inyoka/wiki/templates/wiki/action_backlinks.html:30
+msgid "The following pages are embedding this articles as attachment."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_backlinks.html:35
+#: inyoka/wiki/templates/wiki/action_backlinks.html:34
 msgid ""
-"\n"
-"          But the article itself is not listed as an attachment, perhaps "
-"these\n"
-"          pages are using the article mistakenly or an old revision was "
-"an\n"
-"          attachment.\n"
-"        "
+"But the article itself is not listed as an attachment, perhaps these "
+"pages are using the article mistakenly or an old revision was an "
+"attachment."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_backlinks.html:55
-msgid ""
-"\n"
-"          This attachment is an orphan and not referenced by any site.\n"
-"        "
+#: inyoka/wiki/templates/wiki/action_backlinks.html:52
+msgid "This attachment is an orphan and not referenced by any site."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_backlinks.html:59
-msgid ""
-"\n"
-"          This article is an orphan and not referenced by any site.\n"
-"        "
+#: inyoka/wiki/templates/wiki/action_backlinks.html:56
+msgid "This article is an orphan and not referenced by any site."
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_delete.html:14
@@ -304,48 +272,36 @@ msgstr ""
 #: inyoka/wiki/templates/wiki/action_diff.html:22
 #, python-format
 msgid ""
-"\n"
-"          You are trying to compare two equal revision of the article\n"
-"          “<a href=\"%(link)s\">%(article)s</a>. For this reason no "
-"change\n"
-"          is displayed.\n"
-"        "
+"You are trying to compare two equal revision of the article “<a "
+"href=\"%(link)s\">%(article)s</a>. For this reason no change is "
+"displayed."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_diff.html:29
+#: inyoka/wiki/templates/wiki/action_diff.html:27
 #, python-format
 msgid ""
-"\n"
-"          But you can display <a href=\"%(link)s\">a list of changes</a> "
-"of\n"
-"          this page and compare individual revisions.\n"
-"        "
+"But you can display <a href=\"%(link)s\">a list of changes</a> of this "
+"page and compare individual revisions."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_diff.html:36
+#: inyoka/wiki/templates/wiki/action_diff.html:33
 #, python-format
 msgid ""
-"\n"
-"          The following table shows the difference of the article\n"
-"          “<a href=\"%(article_link)s\">%(article)s</a>“ between\n"
-"          <a href=\"%(old_rev_link)s\">revision %(old_rev)s</a> and\n"
-"          <a href=\"%(new_rev_link)s\">revision %(new_rev)s</a>.\n"
-"        "
+"The following table shows the difference of the article “<a "
+"href=\"%(article_link)s\">%(article)s</a>“ between <a "
+"href=\"%(old_rev_link)s\">revision %(old_rev)s</a> and <a "
+"href=\"%(new_rev_link)s\">revision %(new_rev)s</a>."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_diff.html:48
+#: inyoka/wiki/templates/wiki/action_diff.html:42
 #, python-format
 msgid ""
-"\n"
-"          You can also download the changes as <a "
-"href=\"%(link_diff)s\">unified\n"
-"          diff</a> or display a <a href=\"%(link_list)s\">list of the "
-"last\n"
-"          changes</a> and compare individual revisions.\n"
-"        "
+"You can also download the changes as <a href=\"%(link_diff)s\">unified "
+"diff</a> or display a <a href=\"%(link_list)s\">list of the last "
+"changes</a> and compare individual revisions."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_diff.html:59
+#: inyoka/wiki/templates/wiki/action_diff.html:51
 msgid "Current revision"
 msgstr ""
 
@@ -370,59 +326,46 @@ msgstr ""
 #: inyoka/wiki/templates/wiki/action_log.html:23
 #, python-format
 msgid ""
-"\n"
-"        The article “<a href=\"%(link)s\">%(article)s</a>“ has currently\n"
-"        %(count)s revision.\n"
-"      "
+"The article “<a href=\"%(link)s\">%(article)s</a>“ has currently "
+"%(count)s revision."
 msgid_plural ""
-"\n"
-"        The article “<a href=\"%(link)s\">%(article)s</a>“ has currently\n"
-"        %(count)s revisions.\n"
-"      "
+"The article “<a href=\"%(link)s\">%(article)s</a>“ has currently "
+"%(count)s revisions."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:32
+#: inyoka/wiki/templates/wiki/action_log.html:30
 #, python-format
 msgid ""
-"\n"
-"          The <a href=\"%(rev_link)s\">most recent revision</a> is "
-"%(rev)s and\n"
-"          was created by <a href=\"%(author_link)s\">%(author)s</a>.\n"
-"        "
+"The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was "
+"created by <a href=\"%(author_link)s\">%(author)s</a>."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:38
+#: inyoka/wiki/templates/wiki/action_log.html:35
 #, python-format
 msgid ""
-"\n"
-"          The <a href=\"%(rev_link)s\">most recent revision</a> is "
-"%(rev)s and\n"
-"          was created by %(author)s.\n"
-"        "
+"The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was "
+"created by %(author)s."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:46
+#: inyoka/wiki/templates/wiki/action_log.html:42
 #, python-format
 msgid ""
-"\n"
-"        To be always up to date you can read the <a "
-"href=\"%(feed_link)s\">atom\n"
-"        feed</a> or <a href=\"%(subscribe_link)s\">subscribe</a>.\n"
-"      "
+"To be always up to date you can read the <a href=\"%(feed_link)s\">atom "
+"feed</a> or <a href=\"%(subscribe_link)s\">subscribe</a>."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:58
-#: inyoka/wiki/templates/wiki/action_log.html:98
+#: inyoka/wiki/templates/wiki/action_log.html:48
+#: inyoka/wiki/templates/wiki/action_log.html:88
 msgid "Compare"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:89
+#: inyoka/wiki/templates/wiki/action_log.html:79
 #: inyoka/wiki/templates/wiki/action_revert.html:17
 msgid "Restore"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:92
+#: inyoka/wiki/templates/wiki/action_log.html:82
 #: inyoka/wiki/templates/wiki/action_manage.html:45
 msgid "Raw"
 msgstr ""
@@ -498,17 +441,14 @@ msgid "Link discussions"
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:17
-msgid ""
-"\n"
-"        You can choose a topic as the discussion topic of this article.\n"
-"      "
+msgid "You can choose a topic as the discussion topic of this article."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_manage_discussion.html:21
+#: inyoka/wiki/templates/wiki/action_manage_discussion.html:19
 msgid "Slug of the topic:"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_manage_discussion.html:25
+#: inyoka/wiki/templates/wiki/action_manage_discussion.html:23
 msgid "Link"
 msgstr ""
 
@@ -522,13 +462,10 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_mv_baustelle.html:20
 #, python-format
-msgid ""
-"\n"
-"      Mark page “%(page)s“ as “under construction“\n"
-"    "
+msgid "Mark page “%(page)s“ as “under construction“"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_mv_baustelle.html:30
+#: inyoka/wiki/templates/wiki/action_mv_baustelle.html:28
 msgid "Mark"
 msgstr ""
 
@@ -542,57 +479,42 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_rename.html:15
 msgid ""
-"\n"
-"      If you rename this page, all revisions will be renamed. The old "
-"page\n"
-"      will redirect to the new one.\n"
-"    "
+"If you rename this page, all revisions will be renamed. The old page will"
+" redirect to the new one."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_rename.html:20
+#: inyoka/wiki/templates/wiki/action_rename.html:19
 msgid "New page name:"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_rename.html:24
+#: inyoka/wiki/templates/wiki/action_rename.html:23
 msgid "Set redirect to new page"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_rename.html:28
+#: inyoka/wiki/templates/wiki/action_rename.html:27
 msgid "Rename"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_rename.html:32
-msgid ""
-"\n"
-"        Duplicate attachments on the target page will be overwritten!\n"
-"      "
+#: inyoka/wiki/templates/wiki/action_rename.html:31
+msgid "Duplicate attachments on the target page will be overwritten!"
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_show.html:26
 #, python-format
 msgid ""
-"\n"
-"        <a href=\"%(rev_link)s\">This revision</a> was created on "
-"%(date)s by\n"
-"        <a href=\"%(author_link)s\">%(author)s</a>.\n"
-"      "
+"<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by <a "
+"href=\"%(author_link)s\">%(author)s</a>."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_show.html:32
+#: inyoka/wiki/templates/wiki/action_show.html:31
 #, python-format
 msgid ""
-"\n"
-"        <a href=\"%(rev_link)s\">This revision</a> was created on "
-"%(date)s by\n"
-"        %(author)s.\n"
-"      "
+"<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by "
+"%(author)s."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_show.html:40
-msgid ""
-"\n"
-"        At this page the following tags have been assigned:\n"
-"      "
+#: inyoka/wiki/templates/wiki/action_show.html:38
+msgid "At this page the following tags have been assigned:"
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/missing_page.html:17
@@ -603,70 +525,46 @@ msgstr ""
 #: inyoka/wiki/templates/wiki/missing_page.html:20
 #: inyoka/wiki/templates/wiki/missing_page.m.html:19
 #, python-format
-msgid ""
-"\n"
-"        The article “%(title)s“ does not exist yet.\n"
-"      "
+msgid "The article “%(title)s“ does not exist yet."
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/missing_page.html:26
 #: inyoka/wiki/templates/wiki/missing_page.m.html:25
 #, python-format
 msgid ""
-"\n"
-"        The article “%(title)s“ was deleted. You can restore it or create"
-"\n"
-"        a new one in the action menu.\n"
-"      "
+"The article “%(title)s“ was deleted. You can restore it or create a new "
+"one in the action menu."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/missing_page.html:34
-#: inyoka/wiki/templates/wiki/missing_page.m.html:33
+#: inyoka/wiki/templates/wiki/missing_page.html:33
+#: inyoka/wiki/templates/wiki/missing_page.m.html:32
 msgid ""
-"\n"
-"        The article is already under construction, help improving and "
-"finishing\n"
-"        it!\n"
-"      "
+"The article is already under construction, help improving and finishing "
+"it!"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/missing_page.html:47
-#: inyoka/wiki/templates/wiki/missing_page.m.html:46
-msgid ""
-"\n"
-"        The following pages are referring this article:\n"
-"      "
+#: inyoka/wiki/templates/wiki/missing_page.html:45
+#: inyoka/wiki/templates/wiki/missing_page.m.html:44
+msgid "The following pages are referring this article:"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/missing_page.html:60
-#: inyoka/wiki/templates/wiki/missing_page.m.html:57
-msgid ""
-"\n"
-"      Check if you have a typo in the URL.\n"
-"    "
+#: inyoka/wiki/templates/wiki/missing_page.html:58
+#: inyoka/wiki/templates/wiki/missing_page.m.html:55
+msgid "Check if you have a typo in the URL."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/missing_page.html:64
-#: inyoka/wiki/templates/wiki/missing_page.m.html:61
-msgid ""
-"\n"
-"        The following pages have a similar name:\n"
-"      "
+#: inyoka/wiki/templates/wiki/missing_page.html:62
+#: inyoka/wiki/templates/wiki/missing_page.m.html:59
+msgid "The following pages have similar names:"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/missing_page.html:79
+#: inyoka/wiki/templates/wiki/missing_page.html:77
 #, python-format
-msgid ""
-"\n"
-"        You can also <a href=\"%(link)s\">create</a> this article.\n"
-"      "
+msgid "You can also <a href=\"%(link)s\">create</a> this article."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/missing_page.html:85
-msgid ""
-"\n"
-"      However, you are missing the permissions to create this article.\n"
-"    "
+#: inyoka/wiki/templates/wiki/missing_page.html:83
+msgid "However, you are missing the permissions to create this article."
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/missing_resource.html:15
@@ -676,12 +574,9 @@ msgstr ""
 #: inyoka/wiki/templates/wiki/missing_resource.html:17
 #, python-format
 msgid ""
-"\n"
-"      The requested resource could not be found. Maybe you have followed "
-"a link\n"
-"      with invalid parameters. You can try to open the\n"
-"      <a href=\"%(link)s\">URL without parameters</a>.\n"
-"    "
+"The requested resource could not be found. Maybe you have followed a link"
+" with invalid parameters. You can try to open the <a "
+"href=\"%(link)s\">URL without parameters</a>."
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/page.html:24
