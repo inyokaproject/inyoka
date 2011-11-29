@@ -13,22 +13,18 @@
 {% block portal_content %}
   <h2>{% trans %}Bad request{% endtrans %}</h2>
   <p>
-    {% trans %}
-      The browser did not transmit a valid control key and therefore the
-      processing has been canceled for security reasons.
-    {% endtrans %}
+    {%- trans -%}
+      The browser did not transmit a valid control key and therefore the processing has been canceled for security reasons.
+    {%- endtrans -%}
   </p>
   <p>
-    {% trans %}
-      This error usually occurs when you are trying to transfer data
-      automatically to the server. In rare cases this can also happen if the
-      browser configuration was changed while the form data is transmitted.
-    {% endtrans %}
+    {%- trans -%}
+      This error usually occurs when you are trying to transfer data automatically to the server. In rare cases this can also happen if the browser configuration was changed while the form data is transmitted.
+    {%- endtrans -%}
   </p>
   <p>
-    {% trans %}
-      In some browsers it is possible to click on the "back" or the "reload"
-      button to request a new control key the sending the page again.
-    {% endtrans %}
+    {%- trans -%}
+      In some browsers it is possible to click on the "back" or the "reload" button to request a new control key the sending the page again.
+    {%- endtrans -%}
   </p>
 {% endblock %}

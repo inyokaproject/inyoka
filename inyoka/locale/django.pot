@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-27 01:29+0100\n"
+"POT-Creation-Date: 2011-11-29 22:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "Private messages"
 msgstr ""
 
-#: inyoka/templates/overall.html:136 inyoka/templates/overall.m.html:71
+#: inyoka/templates/overall.html:136 inyoka/templates/overall.m.html:69
 msgid "Login"
 msgstr ""
 
@@ -101,60 +101,51 @@ msgstr ""
 
 #: inyoka/templates/overall.html:252
 #, python-format
-msgid ""
-"\n"
-"            Powered by <a href=\"%(link)s\">Inyoka</a>\n"
-"          "
+msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr ""
 
-#: inyoka/templates/overall.html:256
+#: inyoka/templates/overall.html:254
 #, python-format
-msgid ""
-"\n"
-"              (rendered in %(seconds)s seconds)\n"
-"            "
+msgid "(rendered in %(seconds)s seconds)"
 msgstr ""
 
-#: inyoka/templates/overall.html:268
+#: inyoka/templates/overall.html:266
 msgid "To mobile version"
 msgstr ""
 
-#: inyoka/templates/overall.html:312
+#: inyoka/templates/overall.html:310
 msgid "Username or email address"
 msgstr ""
 
-#: inyoka/templates/overall.html:315
+#: inyoka/templates/overall.html:313
 msgid "Password"
 msgstr ""
 
-#: inyoka/templates/overall.html:318
+#: inyoka/templates/overall.html:316
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
 
-#: inyoka/templates/overall.html:319
+#: inyoka/templates/overall.html:317
 msgid "Keep me logged in"
 msgstr ""
 
-#: inyoka/templates/overall.html:322
+#: inyoka/templates/overall.html:320
 msgid "Lost password?"
 msgstr ""
 
 #: inyoka/templates/overall.m.html:47
 #, python-format
 msgid ""
-"\n"
-"          This is the version for mobile clients. To get to the\n"
-"          <a href=\"%(link)s\">classical layout</a> click on the link in "
-"the\n"
-"          footer of the page.\n"
-"        "
+"This is the version for mobile clients. To get to the <a "
+"href=\"%(link)s\">classical layout</a> click on the link in the footer of"
+" the page."
 msgstr ""
 
-#: inyoka/templates/overall.m.html:67
+#: inyoka/templates/overall.m.html:65
 msgid "Logout"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:85
+#: inyoka/templates/overall.m.html:83
 msgid "To classic version"
 msgstr ""
 
@@ -164,30 +155,22 @@ msgstr ""
 
 #: inyoka/templates/errors/400_csrf.html:16
 msgid ""
-"\n"
-"      The browser did not transmit a valid control key and therefore the\n"
-"      processing has been canceled for security reasons.\n"
-"    "
+"The browser did not transmit a valid control key and therefore the "
+"processing has been canceled for security reasons."
 msgstr ""
 
-#: inyoka/templates/errors/400_csrf.html:22
+#: inyoka/templates/errors/400_csrf.html:21
 msgid ""
-"\n"
-"      This error usually occurs when you are trying to transfer data\n"
-"      automatically to the server. In rare cases this can also happen if "
-"the\n"
-"      browser configuration was changed while the form data is "
-"transmitted.\n"
-"    "
+"This error usually occurs when you are trying to transfer data "
+"automatically to the server. In rare cases this can also happen if the "
+"browser configuration was changed while the form data is transmitted."
 msgstr ""
 
-#: inyoka/templates/errors/400_csrf.html:29
+#: inyoka/templates/errors/400_csrf.html:26
 msgid ""
-"\n"
-"      In some browsers it is possible to click on the \"back\" or the "
-"\"reload\"\n"
-"      button to request a new control key the sending the page again.\n"
-"    "
+"In some browsers it is possible to click on the \"back\" or the "
+"\"reload\" button to request a new control key the sending the page "
+"again."
 msgstr ""
 
 #: inyoka/templates/errors/403.html:18
