@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2011-11-30 00:13+0100\n"
+"POT-Creation-Date: 2011-11-30 21:51+0100\n"
 "PO-Revision-Date: 2011-11-13 21:41+0000\n"
 "Last-Translator: MarkusH <info@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -20,7 +20,7 @@ msgstr ""
 "Generated-By: Babel 0.9.6\n"
 
 #: inyoka/wiki/forms.py:50
-msgid "The text contains too much nested elements."
+msgid "The text contains too many nested elements."
 msgstr "Der Text enthält zu viele verschachtelte Elemente."
 
 #: inyoka/wiki/forms.py:53
@@ -43,7 +43,7 @@ msgstr "Slug des Themas"
 #, python-format
 msgid ""
 "You can find the slug of a topic in the URL (e.g. <var>example</var> when"
-" <em>%(example)s</em>"
+" <em>%(example)s</em>)"
 msgstr ""
 "Den Slug eines Themas findest du in der URL (z. B. <var>example</var> bei"
 " <em>%(example)s</em>)"
@@ -83,7 +83,7 @@ msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"
 
 #: inyoka/wiki/views.py:79
-msgid "No site name was entered, the page could not be created."
+msgid "A site name needs to be entered to create this page."
 msgstr ""
 "Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben "
 "wurde."
@@ -106,7 +106,7 @@ msgstr "%(sitename)s Wiki – Letzte Änderungen"
 #: inyoka/wiki/views.py:227
 #, python-format
 msgid ""
-"%(user)s had deleted the article “%(article)s“ on %(date)s. Summary: "
+"%(user)s deleted the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 "%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. "

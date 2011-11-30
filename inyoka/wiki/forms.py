@@ -47,7 +47,7 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
         try:
             tree = parse(self.cleaned_data['text'], catch_stack_errors=False)
         except StackExhaused:
-            raise forms.ValidationError(_(u'The text contains too much nested '
+            raise forms.ValidationError(_(u'The text contains too many nested '
                                           u'elements.'))
         if has_conflicts(tree):
             raise forms.ValidationError(_(u'The text contains conflict markers'))
@@ -107,7 +107,7 @@ class ManageDiscussionForm(forms.Form):
     """Let the user set an existing thread as discussion of a page"""
     topic = forms.CharField(label=_('Slug of the topic'), max_length=50,
         help_text= _(u'You can find the slug of a topic in the URL (e.g. '
-                     u'<var>example</var> when <em>%(example)s</em>') % {
+                     u'<var>example</var> when <em>%(example)s</em>)') % {
                          'example': href('forum', 'topic', 'example')},
                      required=False)
 

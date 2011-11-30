@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-30 00:13+0100\n"
+"POT-Creation-Date: 2011-11-30 21:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Generated-By: Babel 0.9.6\n"
 
 #: inyoka/wiki/forms.py:50
-msgid "The text contains too much nested elements."
+msgid "The text contains too many nested elements."
 msgstr ""
 
 #: inyoka/wiki/forms.py:53
@@ -41,7 +41,7 @@ msgstr ""
 #, python-format
 msgid ""
 "You can find the slug of a topic in the URL (e.g. <var>example</var> when"
-" <em>%(example)s</em>"
+" <em>%(example)s</em>)"
 msgstr ""
 
 #: inyoka/wiki/forms.py:121
@@ -79,7 +79,7 @@ msgid "Revision %(id)d (%(title)s)"
 msgstr ""
 
 #: inyoka/wiki/views.py:79
-msgid "No site name was entered, the page could not be created."
+msgid "A site name needs to be entered to create this page."
 msgstr ""
 
 #: inyoka/wiki/views.py:90
@@ -100,7 +100,7 @@ msgstr ""
 #: inyoka/wiki/views.py:227
 #, python-format
 msgid ""
-"%(user)s had deleted the article “%(article)s“ on %(date)s. Summary: "
+"%(user)s deleted the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 
