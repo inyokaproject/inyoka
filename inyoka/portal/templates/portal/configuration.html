@@ -75,6 +75,17 @@
     </tbody>
   </table>
   {{ form.distri_versions }}
+  <h3>{%- trans -%}Profile fields{%- endtrans -%}</h3>
+  {# if fields #}
+    <ul>
+      {# for #}
+        <li>Title (<a href="#">Edit</a>)</li>
+      {# endfor #}
+    </ul>
+  {# else #}
+    <div>{%- trans -%}There are no profile fields yet, add the first one now!{%- endtrans -%}</div>
+  {# endif #}
+  <a href="#">{%- trans -%}Add a profile field{%- endtrans -%}</a>
   <p>
     <input type="submit" value="{% trans %}Submit{% endtrans %}" />
   </p>
