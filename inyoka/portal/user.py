@@ -479,6 +479,10 @@ class UserManager(models.Manager):
         return _SYSTEM_USER
 
 
+class ProfileField(models.Model):
+    """Contains the profile fields which are available for the users."""
+    title = models.CharField(max_length=255)
+
 class User(models.Model):
     """User model that contains all informations about an user."""
     objects = UserManager()
@@ -497,6 +501,9 @@ class User(models.Model):
     banned_until = models.DateTimeField(_(u'Banned until'), null=True)
 
     # profile attributes
+    profile_fields = models.ManyToManyField(ProfileField, through='ProfileData')
+    #TODO: remove the majority of the fields below and use the new
+    #      ProfileField model
     post_count = models.IntegerField(_(u'Posts'), default=0)
     avatar = models.ImageField(_(u'Avatar'), upload_to='portal/avatars',
                                blank=True, null=True)
@@ -759,6 +766,17 @@ class User(models.Model):
     @classproperty
     def ANONYMOUS_USER(cls):
         return cls.objects.get_anonymous_user()
+
+
+class ProfileData(models.Model):
+    """Intermediary between Profile and User.
+
+    Stores the data a user enters for a profile.
+
+    """
+    user = models.ForeignKey(User)
+    profile_field = models.ForeignKey(ProfileField)
+    data = models.CharField(max_length=255)
 
 
 class UserData(models.Model):
