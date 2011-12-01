@@ -72,7 +72,7 @@ from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
     deactivate_user, reactivate_user, set_new_email, \
     send_new_email_confirmation, reset_email, send_activation_mail, \
-    send_new_user_password, PERMISSION_NAMES
+    send_new_user_password, PERMISSION_NAMES, ProfileField
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
@@ -2072,11 +2072,13 @@ def config(request):
         storage['distri_versions'] = storage['distri_versions'] or u'[]'
         form = ConfigurationForm(initial=storage.get_many(keys +
                                                 ['global_message']))
+    profile_fields = ProfileField.objects.all()
 
     return {
         'form': form,
         'team_icon_url': team_icon and href('media', team_icon) or None,
         'versions': list(sorted(UbuntuVersionList())),
+        'profile_fields': profile_fields,
     }
 
 
