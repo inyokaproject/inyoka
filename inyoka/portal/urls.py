@@ -74,6 +74,8 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^openid/(.*)', 'openid_consumer'),
     (r'^config/$', 'config'),
     (r'^styles/$', 'styles'),
+    # shortcuts
+    (r'^ikhaya/(\d+)/$', 'ikhaya_redirect'),
     # static pages
     (r'^files/$', 'files'),
     (r'^files/(?P<page>\d+)/$', 'files'),
