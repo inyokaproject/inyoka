@@ -18,15 +18,14 @@
 {% block ikhaya_content %}
   {{ form.errors.text }}
   <h2>
-    {% trans link=article|url, article=article.subject|e %}
+    {%- trans link=article|url, article=article.subject|e -%}
       New report for the article ”<a href="{{ link }}">{{ article }}</a>”
-    {% endtrans %}
+    {%- endtrans -%}
   </h2>
   <p>
-    {% trans link=article|url + 'reports/' %}
-      Describe here briefly the discovered mistake. Please make sure that the
-      mistake was not <a href="{{ link }}">already reported</a>.
-    {% endtrans %}
+    {%- trans link=article|url + 'reports/' -%}
+      Describe here briefly the discovered mistake. Please make sure that the mistake was not <a href="{{ link }}">already reported</a>.
+    {%- endtrans -%}
   </p>
   <form action="" method="post" id="new_report">
     {{ form.text }}

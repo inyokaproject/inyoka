@@ -76,15 +76,15 @@
               {%- endif %}
             </p>
             <p class="description note">
-              {% trans author=topic.author.username|e, link=topic.author|url %}
+              {%- trans author=topic.author.username|e, link=topic.author|url -%}
                 by <a href="{{ link }}">{{ author }}</a>
-              {% endtrans %} |
+              {%- endtrans %} |
               {{ topic.first_post.pub_date|datetimeformat }}
               {%- if topic.paginated %} |
-                {% trans pagination=topic.get_pagination() %}
+                {% trans pagination=topic.get_pagination() -%}
                   Go to page {{ pagination }}
-                {% endtrans %}
-              {% endif -%}
+                {%- endtrans %}
+              {%- endif -%}
             </p>
           </td>
           <td><a href="{{ topic.forum|url }}">{{ topic.forum.name|e }}</a></td>

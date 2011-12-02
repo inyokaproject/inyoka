@@ -49,9 +49,9 @@
             <div class="text">{{ article.rendered_intro }}</div>
           {% endif %}
           <p class="meta admin_link_hover">
-            {% trans link=article.author|url, author=article.author.username|e %}
+            {% trans link=article.author|url, author=article.author.username|e -%}
               Written by <a href="{{ link }}">{{ author }}</a>
-            {% endtrans %} |
+            {%- endtrans %} |
             {{ article.pub_datetime|datetimeformat }} |
             {% trans %}Category:{% endtrans %}
             <a href="{{ article.category|url }}">{{ article.category.name|e }}</a> |
@@ -59,11 +59,11 @@
               {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }}
             {%- endif %}
             {%- if article.comments_enabled %} |
-              {% trans count=article.comment_count, link=article|url + '#comments' %}
+              {% trans count=article.comment_count, link=article|url + '#comments' -%}
                 {{ count }} <a href="{{ link }}">Comment</a>
-              {% pluralize %}
+              {%- pluralize -%}
                 {{ count }} <a href="{{ link }}">Comments</a>
-              {% endtrans %}
+              {%- endtrans %}
               {%- if article.id in subscription_ids and USER.is_authenticated %}
                 (<a href="{{ article|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a>)
               {%- elif article.id not in subscription_ids and USER.is_authenticated %}

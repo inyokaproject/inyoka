@@ -37,10 +37,9 @@
       <dd>{{ form.icon }}</dd>
       {%- if team_icon_height >= 0 and team_icon_width >= 0 %}
       <dd class="note">
-        {% trans width=team_icon_width, height=team_icon_height %}
-          Please note that the teamicon can not be bigger than {{ width }}x{{ height }} pixel.
-          Everything that exceeds this limit will automatically be resized.
-        {% endtrans %}
+        {%- trans width=team_icon_width, height=team_icon_height -%}
+          Please note that the teamicon can not be bigger than {{ width }}x{{ height }} pixel. Everything that exceeds this limit will automatically be resized.
+        {%- endtrans -%}
       </dd>
       {%- endif %}
       <dd>{{ form.import_icon_from_global }} <label for="id_import_icon_from_global">Globales Team-Icon importieren</label></dd>

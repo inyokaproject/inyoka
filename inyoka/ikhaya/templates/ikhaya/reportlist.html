@@ -21,15 +21,15 @@
         {{ report.rendered_text }}
       </div>
       <p class="meta admin_link_hover">
-        {% trans link=report.author|url, author=report.author.username|e %}
+        {% trans link=report.author|url, author=report.author.username|e -%}
           Reported by <a href="{{ link }}">{{ author }}</a>
-        {% endtrans %}
+        {%- endtrans %}
         <span class="linklist"> | </span>
         {{ report.pub_date|datetimeformat }}
         <span class="linklist"> | </span>
-        {% trans link=report.article|url, article=report.article.subject|e %}
+        {% trans link=report.article|url, article=report.article.subject|e -%}
           Concerns article “<a href="{{ link }}">{{ article }}</a>“
-        {% endtrans %}
+        {%- endtrans %}
         <span class="linklist"> | </span>
         <span class="admin_link">
           <a href="{{ report|url('hide')|e }}" class="action action_hide">{% trans %}Hide{% endtrans %}</a>

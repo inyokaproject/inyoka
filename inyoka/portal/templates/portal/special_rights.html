@@ -14,11 +14,11 @@
 
 {% block content %}
   <p>
-    {% trans n=count %}
+    {%- trans n=count -%}
       {{ n }} user has special privileges:
-    {% pluralize %}
+    {%- pluralize -%}
       {{ n }} users have special privileges:
-    {% endtrans %}
+    {%- endtrans -%}
   </p>
   <table>
     <tr>

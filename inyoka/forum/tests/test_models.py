@@ -156,6 +156,22 @@ class TestPostSplit(TestCase):
         post_ids = [p.pk for p in [self.fp2] + list(posts)]
         self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
 
+    def test_split_renumber_old_positions(self):
+        topic = Topic(title='positions', author=self.user)
+        self.forum.topics.add(topic)
+        for i in range(10):
+            topic.posts.add(Post(text='test', author=self.user, position=i))
+
+        posts = Post.objects.filter(topic=topic, position__in=[1,2,4,5,6,8])
+
+        Post.split(posts, topic, self.topic2)
+
+        old_positions = Post.objects.filter(topic=topic).order_by('position')\
+            .values_list('position', flat=True)
+        self.assertEqual(list(old_positions), [0,1,2,3])
+        topic.delete()
+
+
     def test_split_new_topic(self):
         posts = Post.objects.filter(text__in=(u'test2', u'test3')).all()
         new_topic = Topic(title='topic', author=self.user)

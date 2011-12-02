@@ -34,11 +34,11 @@
       {%- endif %}
       {%- if discussions %}
         <div class="topic_box discussion_info">
-          {% trans count=discussions|count, article_list=render_article_list(discussions) %}
+          {%- trans count=discussions|count, article_list=render_article_list(discussions) -%}
             This topic is the discussion of the article {{ article_list }}.
-          {% pluralize %}
+          {%- pluralize -%}
             This topic is the discussion of the articles {{ article_list }}.
-          {% endtrans %}
+          {%- endtrans -%}
         </div>
       {%- endif %}
     {%- else %}

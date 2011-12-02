@@ -27,9 +27,9 @@
                {%- if checked %} checked="checked"{% endif %} />
         <label for="perm_{{ id }}">{{ name|e }}</label>
         {%- if derived %}
-          <span class="note">{% trans grouplist=render_grouplist(derived) %}
+          <span class="note">{% trans grouplist=render_grouplist(derived) -%}
             (Derived from {{ grouplist }})
-          {% endtrans %}</span>
+          {%- endtrans %}</span>
         {%- endif -%}
         <br />
       {%- endfor %}

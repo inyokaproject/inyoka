@@ -22,9 +22,9 @@
         {{ report.rendered_text }}
       </div>
       <p class="meta admin_link_hover">
-        {% trans link=report.author|url, author=report.author.username|e %}
+        {% trans link=report.author|url, author=report.author.username|e -%}
           Reported by <a href="{{ link }}">{{ author }}</a>
-        {% endtrans %}
+        {%- endtrans %}
         <span class="linklist"> | </span>
         {{ report.pub_date|datetimeformat }}
         {%- if can_edit %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-23 21:02+0100\n"
+"POT-Creation-Date: 2011-11-29 22:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,10 +194,7 @@ msgstr ""
 
 #: inyoka/planet/templates/planet/index.html:68
 #, python-format
-msgid ""
-"\n"
-"                            Hidden by: <a href=\"%(link)s\">%(name)s</a>\n"
-"                          "
+msgid "Hidden by: <a href=\"%(link)s\">%(name)s</a>"
 msgstr ""
 
 #: inyoka/planet/templates/planet/index.html:87

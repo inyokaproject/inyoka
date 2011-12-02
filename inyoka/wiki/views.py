@@ -76,7 +76,7 @@ def redirect_new_page(request):
         backref = href('wiki', settings.WIKI_MAIN_PAGE)
 
     if not page:
-        flash(_(u'No site name was entered, the page could not be created.'), True)
+        flash(_(u'A site name needs to be entered to create this page.'), True)
         return HttpResponseRedirect(backref)
     if base:
         page = join_pagename(base, "./" + page)
@@ -224,7 +224,7 @@ def feed(request, page_name=None, count=10):
 
         if rev.user:
             if rev.deleted:
-                text = _(u'%(user)s had deleted the article “%(article)s“ on '
+                text = _(u'%(user)s deleted the article “%(article)s“ on '
                          u'%(date)s. Summary: %(summary)s')
             else:
                 text = _(u'%(user)s edited the article “%(article)s“ on '

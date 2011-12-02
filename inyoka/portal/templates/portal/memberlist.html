@@ -20,9 +20,9 @@
       <p>
         <input type="text" id="user_query" name="user" />
         <input type="submit" value="{% trans %}Select{% endtrans %}" />
-        <span class="help_text">{% trans %}
+        <span class="help_text">{% trans -%}
           You can also enter an e-mail address instead of a username.
-        {% endtrans %}</span>
+        {%- endtrans %}</span>
       </p>
       <p>
         <a href="{{ href('portal', 'users', 'special_rights') }}">
