@@ -871,6 +871,8 @@ class ConfigurationForm(forms.Form):
         return data[key]
 
 
+class EditProfileFieldForm(forms.Form):
+    title = forms.CharField(label=_('Title'), required=True)
 
 class EditStyleForm(forms.Form):
     styles = forms.CharField(label=_(u'Styles'), widget=forms.Textarea(

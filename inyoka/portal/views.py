@@ -66,7 +66,8 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
      OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
      EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
      EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
-     CreateUserForm, UserMailForm, EditGroupForm, CreateGroupForm
+     CreateUserForm, UserMailForm, EditGroupForm, CreateGroupForm, \
+     EditProfileFieldForm
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
@@ -2089,8 +2090,25 @@ def profile_field_edit(request, field_id=None):
         field = None
     else:
         field = ProfileField.objects.get(id=field_id)
+
+    if request.method == 'POST':
+        form = EditProfileFieldForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+            if not field:
+                field = ProfileField()
+            field.title = data['title']
+            field.save()
+            return HttpResponseRedirect(href('portal', 'config'))
+    else:
+        if field:
+            form = EditProfileFieldForm(initial={'title': field.title})
+        else:
+            form = EditProfileFieldForm()
+
     return {
         'field': field,
+        'form': form,
     }
 
 @templated('portal/static_page.html')
