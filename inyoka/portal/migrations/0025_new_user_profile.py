@@ -1,29 +1,62 @@
 # -*- coding: utf-8 -*-
 import datetime
+import json
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
-SERVICES = ['E-Mail', 'Jabber', 'Beruf', 'Interessen', 'Webseite',
-            'Launchpad-Name', u'GPG-Schlüssel', 'Wohnort', 'Geburtstag',
-            'Ubuntu-Version', 'Skype', 'ICQ', 'Twitter', 'Identi.ca',
-            'Freenode', 'Diaspora', 'Facebook', 'last.fm', 'libre.fm']
+SERVICES = ['Beruf', 'Interessen', 'Webseite', 'Launchpad-Name',
+            u'GPG-Schlüssel', 'Wohnort', 'Skype', 'ICQ']
+ATTRS = {
+    'Beruf': 'occupation',
+     'Interessen': 'interests',
+     'Webseite': 'website',
+     'Launchpad-Name': 'launchpad',
+     u'GPG-Schlüssel': 'gpgkey',
+     'Wohnort': 'location',
+     'Skype': 'skype',
+     'ICQ': 'icq'
+}
+
 class Migration(DataMigration):
+
     def forwards(self, orm):
-        """Adds default profile fields.
+        """Copys the old user profile to the new models."""
+        for user in orm.User.objects.all():
+            user.profile_fields.clear()
+            settings = json.loads(user.settings)
+            for field in orm.ProfileField.objects.all():
+                if field.title in SERVICES:
+                    data = getattr(user, ATTRS[field.title])
+                    if data:
+                        orm.ProfileData(user=user, profile_field=field,
+                                        data=getattr(user, ATTRS[field.title])).save()
+                if field.title == 'E-Mail' and settings.has_key('show_email') \
+                   and settings['show_email'] and user.email:
+                    orm.ProfileData(user=user, profile_field=field,
+                                    data=user.email).save()
+                if field.title == 'Jabber' and settings.has_key('show_jabber') \
+                   and settings['show_jabber'] and user.jabber:
+                    orm.ProfileData(user=user, profile_field=field,
+                                    data=user.jabber).save()
 
-        Adds the default profile fields as decided in
-        http://forum.ubuntuusers.de/post/2764248/
-
-        """
-        for service in SERVICES:
-            field = orm.ProfileField(title=service)
-            field.save()
 
     def backwards(self, orm):
-        for field in orm.ProfileField.objects.all():
-            if field.title in SERVICES:
-                field.delete()
+        for user in orm.User.objects.all():
+            for field in orm.ProfileField.objects.all():
+                if field.title in SERVICES:
+                    try:
+                        fields = orm.ProfileData.objects.filter(user=user, profile_field=field)
+                        # the old profile only supported one value per profile
+                        # field, so we might loose some data by migrating backwards
+                        if len(fields) >= 1:
+                            data = fields[0].data
+                        else:
+                            data = ''
+                    except orm.ProfileData.DoesNotExist:
+                        data = ''
+                    setattr(user, ATTRS[field.title], data)
+            user.save()
 
     models = {
         'contenttypes.contenttype': {
