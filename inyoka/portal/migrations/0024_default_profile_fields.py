@@ -4,10 +4,10 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
-SERVICES = ['E-Mail', 'Jabber', 'Beruf', 'Interessen', 'Webseite',
-            'Launchpad-Name', u'GPG-Schlüssel', 'Wohnort', 'Geburtstag',
-            'Ubuntu-Version', 'Skype', 'ICQ', 'Twitter', 'Identi.ca',
-            'Freenode', 'Diaspora', 'Facebook', 'last.fm', 'libre.fm']
+SERVICES = [u'E-Mail', u'Jabber', u'Beruf', u'Interessen', u'Webseite',
+            u'Launchpad-Name', u'GPG-Schlüssel', u'Wohnort', u'Geburtstag',
+            u'Ubuntu-Version', u'Skype', u'ICQ', u'Twitter', u'Identi.ca',
+            u'Freenode', u'Diaspora', u'Facebook', u'last.fm', u'libre.fm']
 class Migration(DataMigration):
     def forwards(self, orm):
         """Adds default profile fields.

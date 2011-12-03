@@ -5,17 +5,17 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
-SERVICES = ['Beruf', 'Interessen', 'Webseite', 'Launchpad-Name',
-            u'GPG-Schlüssel', 'Wohnort', 'Skype', 'ICQ']
+SERVICES = [u'Beruf', u'Interessen', u'Webseite', u'Launchpad-Name',
+            u'GPG-Schlüssel', u'Wohnort', u'Skype', u'ICQ']
 ATTRS = {
-    'Beruf': 'occupation',
-     'Interessen': 'interests',
-     'Webseite': 'website',
-     'Launchpad-Name': 'launchpad',
-     u'GPG-Schlüssel': 'gpgkey',
-     'Wohnort': 'location',
-     'Skype': 'skype',
-     'ICQ': 'icq'
+    u'Beruf': 'occupation',
+    u'Interessen': 'interests',
+    u'Webseite': 'website',
+    u'Launchpad-Name': 'launchpad',
+    u'GPG-Schlüssel': 'gpgkey',
+    u'Wohnort': 'location',
+    u'Skype': 'skype',
+    u'ICQ': 'icq'
 }
 
 class Migration(DataMigration):
