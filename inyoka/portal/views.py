@@ -2107,10 +2107,13 @@ def profile_field_edit(request, field_id=None):
         form = EditProfileFieldForm(request.POST, request.FILES)
         if form.is_valid():
             data = form.cleaned_data
-            if not field:
-                field = ProfileField()
-            field.title = data['title']
-            field.save()
+            if field and request.POST.get('delete'):
+                field.delete()
+            else:
+                if not field:
+                    field = ProfileField()
+                field.title = data['title']
+                field.save()
             return HttpResponseRedirect(href('portal', 'config'))
     else:
         if field:

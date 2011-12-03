@@ -22,5 +22,8 @@
   <form method="post">
     {{ render_form(form, ['title']) }}
     <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+    {% if field %}
+      <input type="submit" name="delete" value="{% trans %}Delete{% endtrans %}" />
+    {% endif %}
   </form>
 {% endblock %}
