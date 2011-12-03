@@ -11,6 +11,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import binascii
+import json
 import pytz
 import time
 from PIL import Image
@@ -73,7 +74,7 @@ from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
     deactivate_user, reactivate_user, set_new_email, \
     send_new_email_confirmation, reset_email, send_activation_mail, \
-    send_new_user_password, PERMISSION_NAMES, ProfileField
+    send_new_user_password, PERMISSION_NAMES, ProfileField, ProfileData
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
@@ -636,6 +637,15 @@ def usercp_profile(request):
         form = UserCPProfileForm(request.POST, request.FILES, user=user)
         if form.is_valid():
             data = form.cleaned_data
+            user.profile_fields.clear()
+            for key in request.POST.keys():
+                if key.startswith('profile_field_') and request.POST[key]:
+                    field_id = int(key.partition('.')[2])
+                    field = ProfileField.objects.get(id=field_id)
+                    field_data = ProfileData(user=user, profile_field=field,
+                                             data=request.POST[key])
+                    field_data.save()
+
             for key in ('jabber', 'icq', 'msn', 'aim', 'yim',
                         'skype', 'wengophone', 'sip',
                         'signature', 'location', 'occupation',
@@ -702,15 +712,18 @@ def usercp_profile(request):
     storage_keys = storage.get_many(('max_avatar_width',
         'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
 
+    profile_fields = json.dumps([{'id': field.id, 'title': field.title} for field in ProfileField.objects.all()])
     return {
-        'form':                 form,
-        'user':                 request.user,
-        'gmaps_apikey':         settings.GOOGLE_MAPS_APIKEY,
-        'max_avatar_width':     storage_keys.get('max_avatar_width', -1),
-        'max_avatar_height':    storage_keys.get('max_avatar_height', -1),
-        'max_avatar_size':      storage_keys.get('max_avatar_size', -1),
-        'max_sig_length':       storage_keys.get('max_signature_length'),
-        'openids':              UserData.objects.filter(user=user, key='openid'),
+        'form': form,
+        'user': request.user,
+        'gmaps_apikey': settings.GOOGLE_MAPS_APIKEY,
+        'max_avatar_width': storage_keys.get('max_avatar_width', -1),
+        'max_avatar_height': storage_keys.get('max_avatar_height', -1),
+        'max_avatar_size': storage_keys.get('max_avatar_size', -1),
+        'max_sig_length': storage_keys.get('max_signature_length'),
+        'openids': UserData.objects.filter(user=user, key='openid'),
+        'profile_fields': profile_fields,
+        'profile_data': ProfileData.objects.filter(user=user),
     }
 
 
@@ -2073,13 +2086,12 @@ def config(request):
         storage['distri_versions'] = storage['distri_versions'] or u'[]'
         form = ConfigurationForm(initial=storage.get_many(keys +
                                                 ['global_message']))
-    profile_fields = ProfileField.objects.all()
 
     return {
         'form': form,
         'team_icon_url': team_icon and href('media', team_icon) or None,
         'versions': list(sorted(UbuntuVersionList())),
-        'profile_fields': profile_fields,
+        'profile_fields': ProfileField.objects.all(),
     }
 
 

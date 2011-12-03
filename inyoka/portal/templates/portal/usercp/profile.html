@@ -73,11 +73,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Jabber</td>
-          <td><input type="text" value="admin@ubuntuusers.local" name="jabber" /></td>
-          <td><a class="delete">Delete</a></td>
-        </tr>
+        {% for data in profile_data %}
+          <tr>
+            <td>{{ data.profile_field.title }}</td>
+            <td>
+              <input type="text" value="{{ data.data }}"
+                     name="profile_field_{{ loop.index0 }}.{{ data.profile_field.id }}" />
+              </td>
+            <td><a class="delete">Delete</a></td>
+          </tr>
+        {% endfor %}
       </tbody>
       <tfoot>
         <tr>
@@ -168,7 +173,8 @@
       $('#profile_fields tbody')
       .append($('<tr>')
         .append($('<td>')
-          .text('My field')
+          .append($('<select>')
+          )
         )
         .append($('<td>')
           .append($('<input>')
@@ -185,6 +191,21 @@
           )
         )
       )
+
+      var profile_fields = eval('({{ profile_fields }})');
+      var select = $('#profile_fields tbody tr:last td select')
+      select.append($('<option>'));
+      for (i in profile_fields) {
+        select.append($('<option>')
+          .attr('value', profile_fields[i].id)
+          .text(profile_fields[i].title)
+        );
+      }
+      select.change(function() {
+        var row = select.parent().parent()
+        var name = 'profile_field_' + row.index() + '.' + select.val();
+        row.find('input').attr('name', name);
+      });
     });
     $('.delete').click(function() {
       $(this).parent().parent().remove();
