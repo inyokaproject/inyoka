@@ -207,6 +207,10 @@ a {
   text-decoration: none;
 }
 
+.hidden *, .hidden {
+  color: #888888 !important;
+}
+
 nav, .pagination, #comments h3, #comments .meta, .forums .forum, .post .meta,
 .post .attachments .title, section.actions {
   background-color: #DD4814;
