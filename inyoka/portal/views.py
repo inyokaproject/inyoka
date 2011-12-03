@@ -2082,6 +2082,17 @@ def config(request):
     }
 
 
+@require_permission('configuration_edit')
+@templated('portal/profile_field_edit.html')
+def profile_field_edit(request, field_id=None):
+    if not field_id:
+        field = None
+    else:
+        field = ProfileField.objects.get(id=field_id)
+    return {
+        'field': field,
+    }
+
 @templated('portal/static_page.html')
 def static_page(request, page):
     """Renders static pages"""

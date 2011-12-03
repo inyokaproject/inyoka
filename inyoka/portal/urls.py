@@ -73,6 +73,8 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^opensearch/(?P<app>[a-z]+)/$', 'open_search'),
     (r'^openid/(.*)', 'openid_consumer'),
     (r'^config/$', 'config'),
+    (r'^config/profile_field/new/$', 'profile_field_edit'),
+    (r'^config/profile_field/(?P<field_id>\d+)/$', 'profile_field_edit'),
     (r'^styles/$', 'styles'),
     # shortcuts
     (r'^ikhaya/(\d+)/$', 'ikhaya_redirect'),

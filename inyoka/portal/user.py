@@ -483,6 +483,9 @@ class ProfileField(models.Model):
     """Contains the profile fields which are available for the users."""
     title = models.CharField(max_length=255)
 
+    def __unicode__(self):
+        return self.title
+
 class User(models.Model):
     """User model that contains all informations about an user."""
     objects = UserManager()

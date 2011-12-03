@@ -1,6 +1,6 @@
 {#
-    templates.admin.configuration
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    portal/configuration.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
 
     On this page the administrator can set general configuration values.
 
@@ -79,13 +79,16 @@
   {% if profile_fields %}
     <ul>
       {% for field in profile_fields %}
-        <li>{{ field.title }} (<a href="#">Edit</a>)</li>
+        <li>
+          {{ field.title }}
+          (<a href="{{ href('portal', 'config', 'profile_field', field.id) }}">Edit</a>)
+        </li>
       {% endfor %}
     </ul>
   {% else %}
     <div>{%- trans -%}There are no profile fields yet, add the first one now!{%- endtrans -%}</div>
   {% endif %}
-  <a href="#">{%- trans -%}Add a profile field{%- endtrans -%}</a>
+  <a href="{{ href('portal', 'config', 'profile_field', 'new') }}">{%- trans -%}Add a profile field{%- endtrans -%}</a>
   <p>
     <input type="submit" value="{% trans %}Submit{% endtrans %}" />
   </p>

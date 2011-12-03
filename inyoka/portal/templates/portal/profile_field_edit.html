@@ -1,0 +1,20 @@
+{#
+    portal/profile_field_edit.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Administrationpage to edit user profile fields.
+
+#}
+{% extends 'portal/overall.html' %}
+{%- do BREADCRUMB.append(_('Profile field'), href('portal', 'config', 'profile_field', field.id or 'new'), True) %}
+{%- do BREADCRUMB.append(_('Configuration'), href('portal', 'config'), True) %}
+
+{% block content %}
+  <h3>
+    {% if field %}
+      {%- trans field=field.title -%}Edit profile field “{{ field }}”{%- endtrans -%}
+    {% else %}
+      {%- trans -%}New profile field{%- endtrans -%}
+    {% endif %}
+  </h3>
+{% endblock %}
