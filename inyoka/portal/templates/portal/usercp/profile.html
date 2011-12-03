@@ -62,6 +62,29 @@
         {%- if form.errors[item] %}<dd>{{ form.errors[item] }}</dd>{% endif %}
       {% endfor %}
     </dl>
+    <h3>{% trans %}Public information{% endtrans %}</h3>
+    <p>{%- trans -%}You can customize your public profile with the following fields.{%- endtrans -%}</p>
+    <table id="profile_fields">
+      <thead>
+        <tr>
+          <td class="field">{% trans %}Field{% endtrans %}</td>
+          <td class="data">{% trans %}Data{% endtrans %}</td>
+          <td class="delete"></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jabber</td>
+          <td><input type="text" value="admin@ubuntuusers.local" name="jabber" /></td>
+          <td><a class="delete">Delete</a></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="add"><a id="add_profile_field">Add a field</a></td>
+        </tr>
+      </tfoot>
+    </table>
     <h3>{% trans %}Miscellaneous settings{% endtrans %}</h3>
     {{ render_form(form, ['occupation', 'interests', 'website',
                           'launchpad', 'gpgkey']) }}
@@ -137,6 +160,35 @@
       });
     }
 
+    /*]]>*/
+  </script>
+  <script type="text/javascript">
+    /*<![CDATA[*/
+    $('#add_profile_field').click(function() {
+      $('#profile_fields tbody')
+      .append($('<tr>')
+        .append($('<td>')
+          .text('My field')
+        )
+        .append($('<td>')
+          .append($('<input>')
+            .attr('type', 'text')
+          )
+        )
+        .append($('<td>')
+          .append($('<a>')
+            .attr('class', 'delete')
+            .text('Delete')
+            .click(function() {
+              $(this).parent().parent().remove();
+            })
+          )
+        )
+      )
+    });
+    $('.delete').click(function() {
+      $(this).parent().parent().remove();
+    });
     /*]]>*/
   </script>
 {% endblock %}
