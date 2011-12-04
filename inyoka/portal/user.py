@@ -505,28 +505,13 @@ class User(models.Model):
 
     # profile attributes
     profile_fields = models.ManyToManyField(ProfileField, through='ProfileData')
-    #TODO: remove the majority of the fields below and use the new
-    #      ProfileField model
     post_count = models.IntegerField(_(u'Posts'), default=0)
     avatar = models.ImageField(_(u'Avatar'), upload_to='portal/avatars',
                                blank=True, null=True)
     jabber = models.CharField(_(u'Jabber'), max_length=200, blank=True)
-    icq = models.CharField(_(u'ICQ'), max_length=16, blank=True)
-    msn = models.CharField(_(u'MSN'), max_length=200, blank=True)
-    aim = models.CharField(_(u'AIM'), max_length=200, blank=True)
-    yim = models.CharField(_(u'Yahoo Messenger'), max_length=200, blank=True)
-    skype = models.CharField(_(u'Skype'), max_length=200, blank=True)
-    wengophone = models.CharField(_(u'WengoPhone'), max_length=200, blank=True)
-    sip = models.CharField('SIP', max_length=200, blank=True)
     signature = models.TextField(_(u'Signature'), blank=True)
     coordinates_long = models.FloatField(_(u'Coordinates (longitude)'), blank=True, null=True)
     coordinates_lat = models.FloatField(_(u'Coordinates (latitude)'), blank=True, null=True)
-    location = models.CharField(_(u'Location'), max_length=200, blank=True)
-    gpgkey = models.CharField(_(u'GPG key'), max_length=8, blank=True)
-    occupation = models.CharField(_(u'Job'), max_length=200, blank=True)
-    interests = models.CharField(_('Interests'), max_length=200, blank=True)
-    website = models.URLField(_(u'Website'), blank=True)
-    launchpad = models.CharField(_(u'Launchpad username'), max_length=50, blank=True)
     settings = JSONField(_('Settings'), default={})
     _permissions = models.IntegerField(_(u'Privileges'), default=0)
 

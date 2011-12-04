@@ -646,11 +646,7 @@ def usercp_profile(request):
                                              data=request.POST[key])
                     field_data.save()
 
-            for key in ('jabber', 'icq', 'msn', 'aim', 'yim',
-                        'skype', 'wengophone', 'sip',
-                        'signature', 'location', 'occupation',
-                        'interests', 'website', 'gpgkey',
-                        'launchpad'):
+            for key in ('jabber', 'signature'):
                 setattr(user, key, data[key] or '')
             if data['email'] != user.email:
                 send_new_email_confirmation(user, data['email'])
@@ -679,7 +675,7 @@ def usercp_profile(request):
                         'The used file format is not supported, please choose '
                         'another one for your avatar.')).messages
 
-            for key in ('show_email', 'show_jabber', 'use_gravatar'):
+            for key in ('use_gravatar',):
                 user.settings[key] = data[key]
             user.save()
 

@@ -31,7 +31,6 @@
       </dd>
       {%- endif %}
       {%- if form.errors.avatar %}<dd>{{ form.errors.avatar }}</dd>{% endif %}
-      <hr style="clear: both;" />
       <dt>{% trans %}Gravatar:{% endtrans %}</dt>
       {% if user.settings.use_gravatar %}
       <dd><img class="usercp_avatar" src="{{ user.gravatar_url }}" alt="Gravatar" /></dd>
@@ -45,25 +44,20 @@
     <dl>
       <dd>
         <p class="note">{% trans -%}
-          By default, the email and jabber addresses are not displayed in your public profile. To publish them, you need to check the “show in profile“ box.
+          The email and jabber addresses are not displayed in your public profile.
+          If you want to make them public, add them to your public information.
         {%- endtrans %}</p>
       </dd>
-      {% for item in ['email', 'jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone', 'sip'] %}
+      {% for item in ['email', 'jabber'] %}
         <dt>
           <label for="{{ form[item].auto_id }}">{{ form[item].label }}</label>
         </dt>
-        <dd>{{ form[item] }}
-          {%- if item in ['email', 'jabber'] %}
-            <span class="note">{{ form['show_' + item] }}
-              <label for="id_show_{{ item }}">{% trans %}Show in profile{% endtrans %}</label>
-            </span>
-          {%- endif -%}
-        </dd>
+        <dd>{{ form[item] }}</dd>
         {%- if form.errors[item] %}<dd>{{ form.errors[item] }}</dd>{% endif %}
       {% endfor %}
     </dl>
     <h3>{% trans %}Public information{% endtrans %}</h3>
-    <p>{%- trans -%}You can customize your public profile with the following fields.{%- endtrans -%}</p>
+    <p class="note">{%- trans -%}You can customize your <em>public</em> profile with the fields below.{%- endtrans -%}</p>
     <table id="profile_fields">
       <thead>
         <tr>
@@ -90,11 +84,8 @@
         </tr>
       </tfoot>
     </table>
-    <h3>{% trans %}Miscellaneous settings{% endtrans %}</h3>
-    {{ render_form(form, ['occupation', 'interests', 'website',
-                          'launchpad', 'gpgkey']) }}
     <h4>{% trans %}Geographical location{% endtrans %}</h4>
-    {{ render_form(form, ['location', 'coordinates']) }}
+    {{ render_form(form, ['coordinates']) }}
     <h3>{% trans %}OpenIDs{% endtrans %}</h3>
     <p>
       {% if openids %}
