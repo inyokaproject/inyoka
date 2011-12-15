@@ -12,6 +12,10 @@
 
 {% from 'macros.html' import render_form %}
 
+{% do BREADCRUMB.append(_('Profile field'), href('portal', 'usercp', 'profile', 'add_field'), True) %}
+{% do BREADCRUMB.append(_('Profile'), href('portal', 'usercp', 'profile')) %}
+{% set selected = 'profile' %}
+
 {% block portal_content %}
   <form enctype="multipart/form-data" method="post" action="">
     <h3>{% trans %}Add profile field{% endtrans %}</h3>
