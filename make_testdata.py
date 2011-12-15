@@ -148,13 +148,7 @@ def make_users():
         u.groups = list(set(choice(groups) for _ in xrange(randint(0, 5))))
         u.post_count = randint(0, 1000)
         u.jabber = '%s@%s.local' % (word(markup=False), word(markup=False))
-        u.icq = word(markup=False)[:16]
-        u.msn = word(markup=False)
-        u.aim = word(markup=False)
         u.signature = words()
-        u.occupation = word(markup=False)
-        u.interests = word(markup=False)
-        u.website = u'http://%s.de' % word(markup=False)
         if not randint(0, 3):
             u.status = 0
         u.save()

@@ -308,31 +308,10 @@ class UserCPProfileForm(forms.Form):
     use_gravatar = forms.BooleanField(label=_(u'Use Gravatar'), required=False)
     email = EmailField(label=_(u'Email'), required=True)
     jabber = JabberField(label=_(u'Jabber'), required=False)
-    icq = forms.IntegerField(label=_(u'ICQ'), required=False,
-                             min_value=1, max_value=1000000000)
-    msn = forms.CharField(label=_(u'MSN'), required=False)
-    aim = forms.CharField(label=_(u'AIM'), required=False, max_length=25)
-    yim = forms.CharField(label=_(u'Yahoo Messenger'), required=False,
-                         max_length=25)
-    skype = forms.CharField(label=_(u'Skype'), required=False, max_length=25)
-    wengophone = forms.CharField(label=_(u'WengoPhone'), required=False,
-                                 max_length=25)
-    sip = forms.CharField(label=_(u'SIP'), required=False, max_length=25)
-    show_email = forms.BooleanField(required=False)
-    show_jabber = forms.BooleanField(required=False)
     signature = forms.CharField(widget=forms.Textarea, label=_(u'Signature'),
                                required=False)
     coordinates = forms.CharField(label=_(u'Coordinates (latitude, longitude)'),
                                   required=False)
-    location = forms.CharField(label=_(u'Location'), required=False, max_length=50)
-    occupation = forms.CharField(label=_(u'Job'), required=False, max_length=50)
-    interests = forms.CharField(label=_(u'Interests'), required=False,
-                                max_length=100)
-    website = forms.URLField(label=_(u'Website'), required=False)
-    launchpad = forms.CharField(label=_(u'Launchpad username'), required=False,
-                                max_length=50)
-    gpgkey = forms.RegexField('^(0x)?[0-9a-f]{8}$(?i)', label=_(u'GPG key'),
-                 max_length=10, required=False)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')

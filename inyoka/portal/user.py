@@ -160,6 +160,8 @@ def deactivate_user(user):
     except WikiPage.DoesNotExist:
         pass
 
+    # TODO: user.status = 3 equals "user.is_deleted", i dont get the following
+    # lines (see also line 550)
     user.status = 3
     if not user.is_banned:
         user.email = 'user%d@ubuntuusers.de.invalid' % user.id
@@ -167,10 +169,8 @@ def deactivate_user(user):
     user.groups.remove(*user.groups.all())
     user.avatar = user.coordinates_long = user.coordinates_lat = \
         user.new_password_key = user._primary_group = None
-    user.icq = user.jabber = user.msn = user.aim = user.yim = user.skype = \
-        user.wengophone = user.sip = user.location = user.signature = \
-        user.gpgkey = user.location = user.occupation = user.interests = \
-        user.website = user.launchpad = user.member_title = ''
+    user.jabber = user.signature = user.member_title = ''
+    user.profile_fields.clear()
     user.save()
 
 
