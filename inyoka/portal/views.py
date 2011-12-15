@@ -44,6 +44,7 @@ from inyoka.utils.sessions import get_sessions, make_permanent, \
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.html import escape
 from inyoka.utils.flashing import flash
+from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.notification import send_notification
@@ -751,13 +752,24 @@ def usercp_add_profile_field(request):
 
 
 @check_login(message=_(u'You need to be logged in to change your profile'))
-@templated('portal/usercp/profile.html')
-def usercp_delete_profile_field(request):
+@confirm_action(message=_(u'Du you want to remove the profile field?'),
+                confirm=_(u'Delete'), cancel=_(u'Cancel'))
+def usercp_delete_profile_field(request, field_id):
     """View to delete a profile field.
 
     Only used as fallback if the user disabled JavaScript.
 
     """
+    user = request.user
+    # filter by user to prevent deleting other users profile fields
+    try:
+        data = ProfileData.objects.filter(user=user).get(id=field_id)
+    except ProfileData.DoesNotExist:
+        raise PageNotFound()
+    data.delete()
+
+    flash(_(u'The profile field was deleted successfully.'), True)
+    return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
 
 
 @check_login(message=_(u'You need to be logged in to change your settings.'))
