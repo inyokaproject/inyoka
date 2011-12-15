@@ -1,5 +1,0 @@
-ul.pastes{margin:1em 0 1em 0;padding:0;list-style:none;}
-ul.pastes li{clear:both;margin:0.2em 0 0.2em 0;padding:0.4em;border:1px solid #ddd;background-color:white;}ul.pastes li span.number{display:block;float:left;font-weight:bold;width:5em;padding-right:12px;}
-ul.pastes li:hover{background-color:#eee;}
-ul.pastes li.date{color:#777;}
-div.code,pre{max-height:none;}
