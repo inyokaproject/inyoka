@@ -1,8 +1,8 @@
 {#
-    portal/usercp/settings.html
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    portal/usercp/profile.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    This page shows the user control panel settings page.
+    This page shows the user the configuration of his profile.
 
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
@@ -74,13 +74,18 @@
               <input type="text" value="{{ data.data }}"
                      name="profile_field_{{ loop.index0 }}.{{ data.profile_field.id }}" />
               </td>
-            <td><a class="delete">Delete</a></td>
+            <td>
+              <a class="delete"
+                 href="{{ href('portal', 'usercp', 'profile', 'delete_field', data.profile_field.id) }}">Delete</a></td>
           </tr>
         {% endfor %}
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="3" class="add"><a id="add_profile_field">Add a field</a></td>
+          <td colspan="3" class="add">
+            <a id="add_profile_field"
+               href="{{ href('portal', 'usercp', 'profile', 'add_field') }}">Add a field</a>
+          </td>
         </tr>
       </tfoot>
     </table>
@@ -197,9 +202,11 @@
         var name = 'profile_field_' + row.index() + '.' + select.val();
         row.find('input').attr('name', name);
       });
+      return false;
     });
     $('.delete').click(function() {
       $(this).parent().parent().remove();
+      return false;
     });
     /*]]>*/
   </script>

@@ -34,7 +34,7 @@ from inyoka.utils.html import escape, cleanup_html
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.search import search as search_system
-from inyoka.portal.user import User, UserData, Group
+from inyoka.portal.user import User, UserData, Group, ProfileField
 from inyoka.portal.models import StaticPage, StaticFile
 from inyoka.wiki.parser import validate_signature, SignatureError
 
@@ -448,6 +448,12 @@ class EditUserProfileForm(UserCPProfileForm):
                     _(u'A user with this name does already exist.')
                 )
         return username
+
+
+class UserCPAddProfileFieldForm(forms.Form):
+    field = forms.ModelChoiceField(label=_(u'Field'),
+                                   queryset=ProfileField.objects.all())
+    data = forms.CharField(label=_(u'Data'))
 
 
 class EditUserGroupsForm(forms.Form):

@@ -1,0 +1,21 @@
+{#
+    portal/usercp/add_field.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Users with disabled JavaScript can add profile fields here.
+
+    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{% extends 'portal/usercp/overall.html' %}
+
+{% from 'macros.html' import render_form %}
+
+{% block portal_content %}
+  <form enctype="multipart/form-data" method="post" action="">
+    <h3>{% trans %}Add profile field{% endtrans %}</h3>
+    {{ render_form(form, ['field', 'data']) }}
+    <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+  </form>
+{% endblock %}

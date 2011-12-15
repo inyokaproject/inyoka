@@ -68,7 +68,7 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
      EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
      EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
      CreateUserForm, UserMailForm, EditGroupForm, CreateGroupForm, \
-     EditProfileFieldForm
+     EditProfileFieldForm, UserCPAddProfileFieldForm
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
@@ -631,7 +631,7 @@ def usercp(request):
 @check_login(message=_(u'You need to be logged in to change your profile'))
 @templated('portal/usercp/profile.html')
 def usercp_profile(request):
-    """User control panel view for changing the user's profile"""
+    """User control panel view for changing the user's profile."""
     user = request.user
     if request.method == 'POST':
         form = UserCPProfileForm(request.POST, request.FILES, user=user)
@@ -721,6 +721,43 @@ def usercp_profile(request):
         'profile_fields': profile_fields,
         'profile_data': ProfileData.objects.filter(user=user),
     }
+
+
+@check_login(message=_(u'You need to be logged in to change your profile'))
+@templated('portal/usercp/add_field.html')
+def usercp_add_profile_field(request):
+    """View to add a profile field.
+
+    Only used as fallback if the user disabled JavaScript.
+
+    """
+    user = request.user
+    if request.method == 'POST':
+        form = UserCPAddProfileFieldForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            field_data = ProfileData(user=user, profile_field=data['field'],
+                                     data=data['data'])
+            field_data.save()
+            flash(_(u'The profile field was added successfully.'), True)
+            return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
+        else:
+            flash(_(u'Errors occurred, please fix them.'), False)
+    else:
+        form = UserCPAddProfileFieldForm()
+    return {
+        'form': form,
+    }
+
+
+@check_login(message=_(u'You need to be logged in to change your profile'))
+@templated('portal/usercp/profile.html')
+def usercp_delete_profile_field(request):
+    """View to delete a profile field.
+
+    Only used as fallback if the user disabled JavaScript.
+
+    """
 
 
 @check_login(message=_(u'You need to be logged in to change your settings.'))
