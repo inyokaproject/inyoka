@@ -537,14 +537,16 @@ def profile(request, username):
         groups = user.groups.filter(is_public=True)
 
     subscribed = Subscription.objects.user_subscribed(request.user, user)
+    profile_fields = ProfileData.objects.filter(user=user).order_by('profile_field').all()
 
     return {
-        'user':          user,
-        'groups':        groups,
-        'wikipage':      content,
-        'User':          User,
+        'user': user,
+        'groups': groups,
+        'wikipage': content,
+        'User': User,
         'is_subscribed': subscribed,
-        'request':       request
+        'request': request,
+        'profile_fields': profile_fields,
     }
 
 
@@ -709,7 +711,7 @@ def usercp_profile(request):
     storage_keys = storage.get_many(('max_avatar_width',
         'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
 
-    profile_fields = json.dumps([{'id': field.id, 'title': field.title} for field in ProfileField.objects.all()])
+    profile_fields = json.dumps([{'id': field.id, 'title': field.title} for field in ProfileField.objects.order_by('title').all()])
     return {
         'form': form,
         'user': request.user,
@@ -720,7 +722,7 @@ def usercp_profile(request):
         'max_sig_length': storage_keys.get('max_signature_length'),
         'openids': UserData.objects.filter(user=user, key='openid'),
         'profile_fields': profile_fields,
-        'profile_data': ProfileData.objects.filter(user=user),
+        'profile_data': ProfileData.objects.filter(user=user).order_by('profile_field__title'),
     }
 
 

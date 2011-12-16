@@ -7,7 +7,7 @@ from django.db import models
 SERVICES = [u'E-Mail', u'Jabber', u'Beruf', u'Interessen', u'Webseite',
             u'Launchpad-Name', u'GPG-Schlüssel', u'Wohnort', u'Geburtstag',
             u'Ubuntu-Version', u'Skype', u'ICQ', u'Twitter', u'Identi.ca',
-            u'Freenode', u'Diaspora', u'Facebook', u'last.fm', u'libre.fm']
+            u'Freenode', u'Diaspora', u'Facebook', u'Last.fm', u'Libre.fm']
 class Migration(DataMigration):
     def forwards(self, orm):
         """Adds default profile fields.
