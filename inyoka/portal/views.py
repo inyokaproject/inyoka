@@ -537,7 +537,7 @@ def profile(request, username):
         groups = user.groups.filter(is_public=True)
 
     subscribed = Subscription.objects.user_subscribed(request.user, user)
-    profile_fields = ProfileData.objects.filter(user=user).order_by('profile_field').all()
+    profile_fields = ProfileData.objects.filter(user=user).order_by('profile_field__title').all()
 
     return {
         'user': user,
@@ -2135,7 +2135,7 @@ def config(request):
         'form': form,
         'team_icon_url': team_icon and href('media', team_icon) or None,
         'versions': list(sorted(UbuntuVersionList())),
-        'profile_fields': ProfileField.objects.all(),
+        'profile_fields': ProfileField.objects.order_by('title').all(),
     }
 
 
