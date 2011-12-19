@@ -102,10 +102,7 @@
         {{ _('Solved') if topic.solved else _('Unsolved') }}
       </span>
       <span class="linklist">|</span>
-      <span class="ubuntu_version
-        {%- if topic.get_ubuntu_version().class_ %}
-          {{ topic.get_ubuntu_version().class_ }}
-        {% endif %}">
+      <span class="ubuntu_version{%- if topic.get_ubuntu_version().dev %} unstable{% endif %}">
         <strong>Ubuntu-Version:</strong>
         {{ topic.get_version_info() }}
       </span>
