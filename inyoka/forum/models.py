@@ -163,6 +163,11 @@ class ForumManager(models.Manager):
     def get_categories(self):
         return self.get_query_set().filter(parent=None)
 
+    def get_sorted(self, reverse=False):
+        forums = self.get_cached()
+        compare = lambda x,y: cmp(x.position, y.position)
+        fsorted = sorted(forums, cmp=compare, reverse=reverse)
+        return fsorted
 
 class TopicManager(models.Manager):
 
