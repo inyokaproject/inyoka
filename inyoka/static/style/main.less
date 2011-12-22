@@ -476,69 +476,93 @@ table.syntaxtable {
   right: 10px;
   top:5px;
   float:right;
+
   li {
     list-style: none;
     float: left;
     padding: 4px 0 6px 0;
     background-position: center bottom;
     background-repeat: no-repeat;
+
     a {
       display: block;
       color: #673B1A !important;
       font-weight: bold;
       text-decoration: none !important;
-      padding-bottom: 28px;
-      width: 80px;
       background-repeat: no-repeat;
       background-position: top center;
       text-align: center;
+      height: 64px;
+      padding: 0 5px;
+    }
+
+    div {
+      float: left;
+      height: 59px;
+      min-width: 12px;
     }
   }
+
   li:hover {
-    background-image: url(../img/tabbar_border_hover.png); /** sprite-ref: header; sprite-alignment: bottom; */
     opacity: 0.8;
+
+    .tab_left {
+      background-image: url(../img/tabbar_left_hover.png);
+    }
+
+    .tab_center {
+      background-image: url(../img/tabbar_center_hover.png);
+    }
+
+    .tab_right {
+      background-image: url(../img/tabbar_right_hover.png);
+    }
+
     a {
       color: black !important;
     }
   }
-  li.portal {
-    a {
-      background-image: url(../img/icons/portal.png) !important; /** sprite-ref: header; */
-    }
+
+  li.portal a {
+    background-image: url(../img/icons/portal.png) !important; /** sprite-ref: header; */
   }
-  li.forum {
-    a {
+
+  li.forum a {
       background-image: url(../img/icons/forum.png) !important; /** sprite-ref: header; */
-    }
   }
-  li.wiki {
-    a {
+
+  li.wiki a {
       background-image: url(../img/icons/wiki.png) !important; /** sprite-ref: header; */
-    }
   }
-  li.ikhaya {
-    a {
+
+  li.ikhaya a {
       background-image: url(../img/icons/ikhaya.png) !important; /** sprite-ref: header; */
-    }
   }
-  li.planet {
-    a {
+
+  li.planet a {
       background-image: url(../img/icons/planet.png) !important; /** sprite-ref: header; */
-    }
   }
-  li.community {
-    a {
+
+  li.community a {
       background-image: url(../img/icons/community.png) !important; /** sprite-ref: header; */
-    }
   }
+
   li.active {
-    background-image: url(../img/tabbar_border.png); /** sprite-ref: header; sprite-alignment: bottom; */
+    .tab_left {
+      background-image: url(../img/tabbar_left.png);
+    }
+
+    .tab_center {
+      background-image: url(../img/tabbar_center.png);
+    }
+
+    .tab_right {
+      background-image: url(../img/tabbar_right.png);
+    }
+
     a {
       color: black !important;
     }
-  }
-  li.active:hover {
-    background-image: url(../img/tabbar_border.png); /** sprite-ref: header; sprite-alignment: bottom; */
   }
 }
 .page_content {
