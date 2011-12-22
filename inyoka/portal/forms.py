@@ -28,13 +28,14 @@ from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href, is_safe_domain
 from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
-                               HiddenCaptchaField, EmailField, JabberField
+     HiddenCaptchaField, EmailField, JabberField
 from inyoka.utils.local import current_request
 from inyoka.utils.html import escape, cleanup_html
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.search import search as search_system
-from inyoka.portal.user import User, UserData, Group, ProfileField
+from inyoka.portal.user import User, UserData, Group, ProfileField, \
+     ProfileCategory
 from inyoka.portal.models import StaticPage, StaticFile
 from inyoka.wiki.parser import validate_signature, SignatureError
 
@@ -858,6 +859,8 @@ class ConfigurationForm(forms.Form):
 
 class EditProfileFieldForm(forms.Form):
     title = forms.CharField(label=_('Title'), required=True)
+    category = forms.ModelChoiceField(label=_(u'Category'),
+                                      queryset=ProfileCategory.objects.all())
 
 class EditStyleForm(forms.Form):
     styles = forms.CharField(label=_(u'Styles'), widget=forms.Textarea(

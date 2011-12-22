@@ -479,12 +479,23 @@ class UserManager(models.Manager):
         return _SYSTEM_USER
 
 
-class ProfileField(models.Model):
-    """Contains the profile fields which are available for the users."""
-    title = models.CharField(max_length=255)
+class ProfileCategory(models.Model):
+    """Category for the profile fields."""
+    title = models.CharField(_(u'Title'), max_length=255)
+    weight = models.IntegerField(_(u'Weight'), default=0)
 
     def __unicode__(self):
         return self.title
+
+class ProfileField(models.Model):
+    """Contains the profile fields which are available for the users."""
+    title = models.CharField(max_length=255)
+    category = models.ForeignKey(ProfileCategory, related_name='fields',
+                                 blank=True, null=True)
+
+    def __unicode__(self):
+        return self.title
+
 
 class User(models.Model):
     """User model that contains all informations about an user."""

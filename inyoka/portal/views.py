@@ -34,13 +34,13 @@ from django_mobile import get_flavour
 
 from inyoka.utils import decode_confirm_data, generic
 from inyoka.utils.text import get_random_password, human_number, \
-    normalize_pagename
+     normalize_pagename
 from inyoka.utils.dates import MONTHS, WEEKDAYS, DEFAULT_TIMEZONE, \
-    get_user_timezone, find_best_timezone
+     get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, HttpResponse, \
      PageNotFound, does_not_exist_is_404, HttpResponseRedirect
 from inyoka.utils.sessions import get_sessions, make_permanent, \
-    get_user_record, test_session_cookie
+     get_user_record, test_session_cookie
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.html import escape
 from inyoka.utils.flashing import flash
@@ -73,9 +73,9 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
-    deactivate_user, reactivate_user, set_new_email, \
-    send_new_email_confirmation, reset_email, send_activation_mail, \
-    send_new_user_password, PERMISSION_NAMES, ProfileField, ProfileData
+     deactivate_user, reactivate_user, set_new_email, \
+     send_new_email_confirmation, reset_email, send_activation_mail, \
+     send_new_user_password, PERMISSION_NAMES, ProfileField, ProfileData
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter

@@ -20,7 +20,7 @@
     {% endif %}
   </h3>
   <form method="post">
-    {{ render_form(form, ['title']) }}
+    {{ render_form(form, ['title', 'category']) }}
     <input type="submit" value="{% trans %}Submit{% endtrans %}" />
     {% if field %}
       <input type="submit" name="delete" value="{% trans %}Delete{% endtrans %}" />
