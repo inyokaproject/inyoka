@@ -510,15 +510,16 @@ table.syntaxtable {
     opacity: 0.8;
 
     .tab_left {
-      background-image: url(../img/tabbar_left_hover.png);
+      background-image: url(../img/tabbar_left_hover.png); /** sprite-ref: header; */
     }
 
     .tab_center {
-      background-image: url(../img/tabbar_center_hover.png);
+      background-image: url(../img/tabbar_center_hover.png); /** sprite-ref: header; sprite-alignment: repeat; */
+      background-repeat: repeat-x;
     }
 
     .tab_right {
-      background-image: url(../img/tabbar_right_hover.png);
+      background-image: url(../img/tabbar_right_hover.png); /** sprite-ref: header; */
     }
 
     a {
@@ -552,15 +553,16 @@ table.syntaxtable {
 
   li.active {
     .tab_left {
-      background-image: url(../img/tabbar_left.png);
+      background-image: url(../img/tabbar_left.png); /** sprite-ref: header; */
     }
 
     .tab_center {
-      background-image: url(../img/tabbar_center.png);
+      background-image: url(../img/tabbar_center.png); /** sprite-ref: header; sprite-alignment: repeat; */
+      background-repeat: repeat-x;
     }
 
     .tab_right {
-      background-image: url(../img/tabbar_right.png);
+      background-image: url(../img/tabbar_right.png); /** sprite-ref: header; */
     }
 
     a {
