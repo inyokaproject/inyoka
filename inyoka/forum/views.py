@@ -1553,16 +1553,26 @@ def forum_edit(request, slug=None, parent=None):
     If `id` is given, the forum with id `id` will be edited.
     """
     def _add_field_choices():
+        """
+        Get all forums that can be the parent forum of the
+        selected and display them in a hierarchical view.
+        All forums that cannot be the parent of the selected
+        are not even displayed.
+        """
+        forums = Forum.objects.get_sorted()
+
         if forum is not None:
-            forbidden_ids = [forum.id]
-            for f in Forum.objects.get_cached():
+            forums.remove(forum)
+            for f in forums:
                 if forum in f.parents:
-                    forbidden_ids.append(f.id)
-            query = Forum.objects.exclude(id__in=forbidden_ids).all()
-        else:
-            query = Forum.objects.get_cached()
-        categories = [(c.id, c.name) for c in query]
-        form.fields['parent'].choices = [(-1, "-")] + categories
+                    forums.remove(f)
+
+        forums = Forum.get_children_recursive(forums)
+        choices = []
+        for offset, f in forums:
+            title = f.name[0] + u' ' + (u'   ' * offset) + f.name
+            choices.append((f.id, title))
+        form.fields['parent'].choices = [(-1, u'-')] + choices
 
     forum = None
     errors = False
@@ -1586,7 +1596,7 @@ def forum_edit(request, slug=None, parent=None):
             old_slug = forum.slug
             forum.slug = data['slug']
             forum.description = data['description']
-            if int(data['parent']) != -1:
+            if int(data['parent']) >= 0:
                 forum.parent = Forum.objects.get(id=int(data['parent']))
 
             if data['welcome_msg_subject']:
