@@ -514,7 +514,7 @@ def search(request):
 
 @check_login(message=_(u'You need to be logged in to view a userprofile.'))
 @templated('portal/profile.html')
-def profile(request, username):
+def profile(request, username, category=None):
     """Show the user profile if the user is logged in."""
 
     user = User.objects.get(username)
@@ -532,13 +532,26 @@ def profile(request, username):
         content = wikipage.rev.rendered_text
     except WikiPage.DoesNotExist:
         content = u''
+
     if request.user.can('group_edit') or request.user.can('user_edit'):
         groups = user.groups.all()
     else:
         groups = user.groups.filter(is_public=True)
 
     subscribed = Subscription.objects.user_subscribed(request.user, user)
-    profile_fields = ProfileData.objects.filter(user=user).order_by('profile_field__title').all()
+
+    categories = ProfileCategory.objects.order_by('weight').all()
+    profile_data = ProfileData.objects.filter(user=user)
+    if not category:
+        profile_data = profile_data.filter(profile_field__category=None)
+        profile_category = None
+    else:
+        try:
+            profile_category = categories.get(title=category)
+        except ProfileCategory.DoesNotExist:
+            raise PageNotFound()
+        profile_data = profile_data.filter(profile_field__category=profile_category)
+    profile_data = profile_data.order_by('profile_field__title').all()
 
     return {
         'user': user,
@@ -547,7 +560,9 @@ def profile(request, username):
         'User': User,
         'is_subscribed': subscribed,
         'request': request,
-        'profile_fields': profile_fields,
+        'profile_data': profile_data,
+        'categories': categories,
+        'category': profile_category,
     }
 
 

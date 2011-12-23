@@ -543,6 +543,9 @@ class User(models.Model):
                                        blank=True, null=True,
                                        db_column='primary_group_id')
 
+    def __unicode__(self):
+        return self.username
+
     def save(self, *args, **kwargs):
         """
         Save method that dumps `self.settings` before and cleanup
@@ -551,9 +554,6 @@ class User(models.Model):
         super(User, self).save(*args, **kwargs)
         cache.delete('portal/user/%s/signature' % self.id)
         cache.delete('portal/user/%s' % self.id)
-
-    def __unicode__(self):
-        return self.username
 
     is_anonymous = property(lambda x: x.username == settings.INYOKA_ANONYMOUS_USER)
     is_authenticated = property(lambda x: not x.is_anonymous)
@@ -726,8 +726,10 @@ class User(models.Model):
             os.remove(fn)
         self.avatar = None
 
-    def get_absolute_url(self, action='show', *args):
+    def get_absolute_url(self, action='show', category=None, *args):
         if action == 'show':
+            if category:
+                return href('portal', 'user', self.urlsafe_username, 'c', category.title)
             return href('portal', 'user', self.urlsafe_username)
         elif action == 'privmsg':
             return href('portal', 'privmsg', 'new',

@@ -27,6 +27,23 @@
   {{ href('portal', 'user', user.username, do)|e }}
 {% endmacro %}
 
+{% block tabbar %}
+  <ul>
+    <li>
+      <a href="{{ user|url }}"{% if not category %}class="active"{% endif %}>
+        General
+      </a>
+    </li>
+    {% for cat in categories %}
+      <li>
+        <a href="{{ user|url(category=cat) }}"{% if cat == category %}class="active"{% endif %}>
+          {{ cat.title|e }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
 {% block portal_content %}
   <h3>{{ user.username|e }}
   {%- if request.user.can('user_edit') %}
