@@ -19,7 +19,7 @@ from hashlib import md5
 from time import time
 from datetime import datetime
 from itertools import groupby
-from operator import attrgetter
+from operator import attrgetter, itemgetter
 
 from django.conf import settings
 from django.core.cache import cache
@@ -162,6 +162,11 @@ class ForumManager(models.Manager):
     def get_categories(self):
         return self.get_query_set().filter(parent=None)
 
+    def get_sorted(self, reverse=False):
+        forums = self.get_cached()
+        compare = lambda x,y: cmp(x.position, y.position)
+        fsorted = sorted(forums, cmp=compare, reverse=reverse)
+        return fsorted
 
 class TopicManager(models.Manager):
 
@@ -777,7 +782,7 @@ class Post(models.Model, LockableObject):
         ascending.
         """
         remove_topic = False
-        posts = list(posts)
+        posts = sorted(list(posts), key=attrgetter('position'))
 
         old_forums = [parent for parent in old_topic.forum.parents]
         old_forums.append(old_topic.forum)
@@ -798,6 +803,22 @@ class Post(models.Model, LockableObject):
             for post in posts:
                 maxpos += 1
                 Post.objects.filter(pk=post.pk).update(position=maxpos)
+
+            # adjust positions of the old topic.
+            # split the posts into continous groups
+            post_groups = [(v.position-k, v) for k,v in enumerate(posts)]
+            post_groups = groupby(post_groups, itemgetter(0))
+
+            adjust_start = 0
+            # decrement the old positions
+            for _, g in post_groups:
+                g = list(g)
+                dec = len(g)
+                # and don't forget that previous decrements already decremented our position
+                start = g[-1][1].position - adjust_start
+                Post.objects.filter(topic=old_topic, position__gt=start)\
+                    .update(position=F('position')-dec)
+                adjust_start += dec
 
             if old_topic.forum.id != new_topic.forum.id:
                 # Decrease the post counts in the old forum (counter in the new

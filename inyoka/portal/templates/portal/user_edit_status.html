@@ -20,17 +20,17 @@
     <h3>{% trans %}Status{% endtrans %}</h3>
       <dt>{{ form.status.label }}</dt>
       <dd>{{ form.status }} {{ form.errors.status }}
-        <div class="note">{% trans date=user.last_login|datetimeformat %}
+        <div class="note">{% trans date=user.last_login|datetimeformat -%}
           Last login: {{ date }}
-        {% endtrans %}</div>
-        <div class="note">{% trans date=user.date_joined|datetimeformat %}
+        {%- endtrans %}</div>
+        <div class="note">{% trans date=user.date_joined|datetimeformat -%}
           Member since: {{ date }}
-        {% endtrans %}</div>
+        {%- endtrans %}</div>
         <div class="note">
           {% trans link=href('portal', 'user', user.username, 'mail', next=CURRENT_URL),
-                   name=user.username %}
+                   name=user.username -%}
             <a href="{{ link }}">Send an email</a> to {{ name }}
-          {% endtrans %}
+          {%- endtrans %}
         </div>
         {%- if activation_link %}
           <div class="note">

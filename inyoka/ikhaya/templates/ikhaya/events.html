@@ -49,9 +49,9 @@
     {%- else %}
       <tr>
         <td colspan="4">
-          {% trans link=href('ikhaya', 'event', 'new') %}
+          {%- trans link=href('ikhaya', 'event', 'new') -%}
             No event was added yet, <a href="{{ link }}">create</a> the first one now!
-          {% endtrans %}
+          {%- endtrans -%}
       </tr>
     {%- endfor %}
     </tbody>

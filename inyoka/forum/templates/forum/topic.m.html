@@ -42,24 +42,18 @@
           <div class="clear"></div>
           <div class="meta">
             <span>
-              {% if poll.ended %}
-                {% trans start_date=poll.start_time|dateformat,
-                         end_date=poll.end_time|dateformat %}
+              {%- if poll.ended -%}
+                {% trans start_date=poll.start_time|dateformat, end_date=poll.end_time|dateformat -%}
                   The poll was started on {{ start_date }} and it ended on {{ end_date }}.
-                {% endtrans %}
+                {%- endtrans %}
               {%- elif poll.end_time %}
-                {% trans start_date=poll.start_time|dateformat,
-                         end_date=poll.end_time|dateformat %}
+                {% trans start_date=poll.start_time|dateformat, end_date=poll.end_time|dateformat -%}
                   The poll was started on {{ start_date }} and it will end on {{ end_date }}.
-                {% endtrans %}
-              {% endif %}
+                {%- endtrans %}
+              {%- endif -%}
             </span><br />
             <span>
-              {% trans count=poll.votes %}
-                Votes: {{ count }}
-              {% pluralize %}
-                Votes: {{ count }}
-              {% endtrans %}
+              {%- trans count=poll.votes %}Votes: {{ count }}{% pluralize %}Votes: {{ count }}{% endtrans -%}
             </span>
           </div>
       {%- endfor %}

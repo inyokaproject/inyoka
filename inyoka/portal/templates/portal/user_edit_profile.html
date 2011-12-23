@@ -33,9 +33,9 @@
     <dd><img class="usercp_avatar" src="{{ user.avatar_url }}" alt="Avatar" /></dd>
     <dd>{{ form.avatar }}</dd>
     <dd>{{ form.delete_avatar }} {{ form.delete_avatar.label }}</dd>
-    <dd class="note">{% trans height=avatar_height, width=avatar_width %}
+    <dd class="note">{% trans height=avatar_height, width=avatar_width -%}
       (Will be scaled to {{ width }}x{{ height }})
-    {% endtrans %}</dd>
+    {%- endtrans %}</dd>
     <h3>{% trans %}Contact addresses{% endtrans %}</h3>
     {{ render_form(form, ['email', 'jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone', 'sip']) }}
     <h3>{% trans %}Miscellaneous settings{% endtrans %}</h3>

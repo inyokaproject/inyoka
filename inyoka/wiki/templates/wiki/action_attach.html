@@ -46,15 +46,14 @@
     <h2>{% trans %}Existing attachments{% endtrans %}</h2>
     {%- if attachments %}
       <p>
-        {% trans count=attachments|count %}
+        {%- trans count=attachments|count -%}
           To this page there is currently {{ count }} attachment assigned.
-        {% pluralize %}
+        {%- pluralize -%}
           To this page there are currently {{ count }} attachment assigned.
-        {% endtrans %}
-        {% trans %}
-          To refer to an attachment you can either link to the corresponding
-          wikipage or include it with the <code>[[Bild()]]</code> macro.
-        {% endtrans %}
+        {%- endtrans %}
+        {% trans -%}
+          To refer to an attachment you can either link to the corresponding wiki page or include it with the <code>[[Bild()]]</code> macro.
+        {%- endtrans -%}
       </p>
       <ul class="attachments">
         {%- for attachment in attachments %}
@@ -64,14 +63,14 @@
             {% if attachment.rev.user %}
               {% trans date=attachment.rev.change_date|datetimeformat,
                        author=attachment.rev.user.username|e,
-                       link=attachment.rev.user|url %}
+                       link=attachment.rev.user|url -%}
                 (last modified on {{ date }} by <a href="{{ link }}">{{ author }}</a>)
-              {% endtrans %}
+              {%- endtrans %}
             {% else %}
               {% trans date=attachment.rev.change_date|datetimeformat,
-                       author=attachment.rev.remote_addr|e %}
+                       author=attachment.rev.remote_addr|e -%}
                 (last modified on {{ date }} by {{ author }})
-              {% endtrans %}
+              {%- endtrans %}
             {% endif %}
           </li>
         {%- endfor %}

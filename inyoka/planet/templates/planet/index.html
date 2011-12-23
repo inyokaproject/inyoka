@@ -65,9 +65,9 @@
                       <a href="{{ article|url|e }}">{% trans %}Permanent link{% endtrans %}</a>
                       {% if USER.can('blog_edit') %}
                         {% if article.hidden and article.hidden_by %} |
-                          {% trans link=article.hidden_by|url, name=article.hidden_by.username|e %}
+                          {% trans link=article.hidden_by|url, name=article.hidden_by.username|e -%}
                             Hidden by: <a href="{{ link }}">{{ name }}</a>
-                          {% endtrans %}
+                          {%- endtrans %}
                         {% endif %}
                         <span class="admin_link">| <a href="{{ article|url('hide')|e }}">{% if article.hidden %}{% trans %}Restore{% endtrans %}{% else %}{% trans %}Hide{% endtrans %}{% endif %}</a></span>
                       {% endif %}

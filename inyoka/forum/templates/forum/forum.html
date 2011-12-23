@@ -95,7 +95,7 @@
         {% set classes = [] %}
         {% if can_moderate and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
         {% if can_moderate and topic.reported %}{% do classes.append('reported') %}{% endif %}
-        {% if topic.get_ubuntu_version().class_ %}{% do classes.append(topic.get_ubuntu_version().class_) %}{% endif %}
+        {% if topic.get_ubuntu_version().dev %}{% do classes.append('unstable') %}{% endif %}
         {% if topic.author == USER %}{% do classes.append('own') %}{% endif %}
         <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
           <td class="icon">{{ topic_icon(topic) }}</td>
@@ -116,15 +116,15 @@
               {%- endif %}
             </p>
             <p class="description note">
-              {% trans author=topic.author.username|e, link=topic.author|url %}
+              {%- trans author=topic.author.username|e, link=topic.author|url -%}
                 by <a href="{{ link }}">{{ author }}</a>
-              {% endtrans %} |
+              {%- endtrans %} |
               {{ topic.first_post.pub_date|datetimeformat }}
               {%- if topic.paginated %} |
-                {% trans pagination=topic.get_pagination() %}
+                {% trans pagination=topic.get_pagination() -%}
                   Go to page {{ pagination }}
-                {% endtrans %}
-              {% endif -%}
+                {%- endtrans %}
+              {%- endif -%}
             </p>
           </td>
           <td class="view_count">{{ topic.view_count }}</td>
@@ -134,9 +134,9 @@
               <a href="{{ topic.last_post|url}}" class="date">
                 {{ topic.last_post.pub_date|datetimeformat }}
               </a><br />
-              {% trans author=topic.last_post.author|e, link=topic.last_post.author|url %}
+              {% trans author=topic.last_post.author|e, link=topic.last_post.author|url -%}
                 by <a href="{{ link }}">{{ author }}</a>
-              {% endtrans %}
+              {%- endtrans %}
             {%- else %}
               ---
             {% endif %}
@@ -146,9 +146,9 @@
     {%- else -%}
       <tr>
         <td colspan="5">
-          {% trans link=forum|url('newtopic') %}
+          {%- trans link=forum|url('newtopic') -%}
             There are no topics. <a href="{{ link }}">Create</a> the first one now!
-          {% endtrans %}
+          {%- endtrans -%}
         </td>
       </tr>
     {% endfor %}

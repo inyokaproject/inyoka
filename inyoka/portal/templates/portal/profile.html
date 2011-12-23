@@ -155,9 +155,9 @@
           {%- for group in groups -%}
             <a href="{{ group|url }}"{% if not group.is_public %} class="hidden"{% endif %}>{{ group.name|e }}</a>
             {%- if not loop.last %}, {% endif %}
-          {%- else %}{% trans name=user.username|e %}
+          {%- else %}{% trans name=user.username|e -%}
             “{{ name }}“ is no member of any group.
-           {% endtrans %}
+           {%- endtrans %}
           {%- endfor %}
         </td>
       </tr>

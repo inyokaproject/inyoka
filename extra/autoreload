@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+# Based on the reloader loop in werkzeug but modified to work
+# properly with gunicorn
+import os
+import sys
+import subprocess
+import time
+import signal
+import atexit
+
+def _reloader_stat_loop(process, fnames, interval=1):
+    mtimes = {}
+    try:
+        while 1:
+            if interval is not None:
+                for filename in fnames:
+                    try:
+                        mtime = os.stat(filename).st_mtime
+                    except OSError:
+                        continue
+
+                    old_time = mtimes.get(filename)
+                    if old_time is None:
+                        mtimes[filename] = mtime
+                        continue
+                    elif mtime > old_time:
+                        print "==> Detected change in %r, reloading" % filename
+                        mtimes[filename] = mtime
+                        process.send_signal(signal.SIGHUP)
+            time.sleep(interval or 1)
+    except KeyboardInterrupt:
+        print "==> Killling"
+        process.send_signal(signal.SIGTERM)
+        time.sleep((interval or 1) * 2)
+
+
+def find_files(top_level):
+    for root, dirs, files in os.walk(top_level):
+        for file in filter(lambda x: not x.startswith('.'), files):
+            yield os.path.join(root, file)
+
+
+def reloader_loop(process, extra_files=None, interval=1):
+    """When this function is run from the main thread, it will force other
+    threads to exit when any modules currently loaded change.
+
+    Copyright notice.  This function is based on the autoreload.py from
+    the CherryPy trac which originated from WSGIKit which is now dead.
+
+    :param extra_files: a list of additional files it should watch.
+    """
+    def iter_module_files():
+        for module in sys.modules.values():
+            filename = getattr(module, '__file__', None)
+            if filename:
+                old = None
+                while not os.path.isfile(filename):
+                    old = filename
+                    filename = os.path.dirname(filename)
+                    if filename == old:
+                        break
+                else:
+                    if filename[-4:] in ('.pyc', '.pyo'):
+                        filename = filename[:-1]
+                    yield filename
+
+    fnames = []
+    fnames.extend(iter_module_files())
+    fnames.extend(extra_files or ())
+
+    def kill(signum, frame):
+        print "==> Kill"
+        process.send_signal(signal.SIGTERM)
+        time.sleep(1)
+
+    signal.signal(signal.SIGTERM, kill)
+    _reloader_stat_loop(process, fnames, interval=interval)
+
+
+if __name__ == '__main__':
+    try:
+        import gunicorn
+        process = subprocess.Popen('python manage.py run_gunicorn %s' % u' '.join(sys.argv[1:]),
+                                   shell=True)
+        reloader_loop(process, list(find_files(os.path.abspath('.'))))
+    except ImportError:
+        process = subprocess.Popen('python manage.py runserver %s' % u' '.join(sys.argv[1:]),
+                                   shell=True)
+        reloader_loop(process, list(find_files(os.path.abspath('.'))), interval=None)
+

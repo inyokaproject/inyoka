@@ -22,9 +22,9 @@
 {% block content %}
   {%- if article %}
     <h3>
-      {% trans link=article|url, article=article.subject|e %}
+      {%- trans link=article|url, article=article.subject|e -%}
         Edit article “<a href="{{ link }}" title="Show article">{{ article }}</a>“
-      {% endtrans %}
+      {%- endtrans -%}
     </h3>
   {%- else %}
     <h3>{% trans %}New Article{% endtrans %}</h3>

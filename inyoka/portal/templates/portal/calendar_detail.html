@@ -22,9 +22,7 @@
 
 {% block portal_content %}
 <h3>
-  {% trans title=event.name|e %}
-    Event “{{ title }}“
-  {% endtrans %}
+  {%- trans title=event.name|e %}Event “{{ title }}“{% endtrans -%}
 </h3>
 <table class="vevent admin_link_hover">
   <tr><th>{% trans %}Date{% endtrans %}</th><td>{{ event.natural_datetime }}</td></tr>

@@ -63,9 +63,9 @@
       {% for entry in entries %}
         <a href="{{ entry|url }}">
           <div class="button{{ ' unread' if not entry.read }}">
-            {% trans subject=entry.message.subject|e, author=entry.message.author|e %}
+            {%- trans subject=entry.message.subject|e, author=entry.message.author|e -%}
               {{ subject }} from {{ author }}
-            {% endtrans %}
+            {%- endtrans -%}
           </div>
         </a>
       {% endfor %}

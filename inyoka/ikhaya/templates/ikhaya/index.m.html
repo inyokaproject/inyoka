@@ -15,9 +15,9 @@
       <h3 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h3>
       <p class="meta">
         <span>
-          {% trans link=article.author|url, author=article.author.username|e %}
+          {%- trans link=article.author|url, author=article.author.username|e -%}
             Written by <a href="{{ link }}">{{ author }}</a>
-          {% endtrans %}
+          {%- endtrans -%}
         </span> |
         <span>{{ article.pub_datetime|dateformat }}</span> |
         <span>
@@ -25,13 +25,13 @@
           <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
         </span> |
         <span>
-          {%- if article.comments_enabled %}
-            {% trans count=article.comment_count, link=article|url + '#comments' %}
+          {%- if article.comments_enabled -%}
+            {% trans count=article.comment_count, link=article|url + '#comments' -%}
               {{ count }} <a href="{{ link }}">Comment</a>
-            {% pluralize %}
+            {%- pluralize -%}
               {{ count }} <a href="{{ link }}">Comments</a>
-            {% endtrans %}
-          {%- endif %}
+            {%- endtrans %}
+          {%- endif -%}
         </span>
       </p>
       <div class="text">{{ article.rendered_intro }}</div>

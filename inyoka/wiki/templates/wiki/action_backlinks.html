@@ -15,10 +15,9 @@
 {% block wiki_content %}
   {%- if page.backlinks %}
     <p>
-      {% trans title=page.title|e %}
-        The following pages are referring to the article ”{{ title }}” by
-        manual linking:
-      {% endtrans %}
+      {%- trans title=page.title|e -%}
+        The following pages are referring to the article ”{{ title }}” by manual linking:
+      {%- endtrans -%}
     </p>
     <ul>
     {%- for page in page.backlinks %}
@@ -28,15 +27,13 @@
   {%- endif %}
   {%- if page.embedders %}
     <p>
-      {% trans %}
+      {%- trans -%}
         The following pages are embedding this articles as attachment.
-      {% endtrans %}
+      {%- endtrans %}
       {% if not page.rev.attachment %}
-        {% trans %}
-          But the article itself is not listed as an attachment, perhaps these
-          pages are using the article mistakenly or an old revision was an
-          attachment.
-        {% endtrans %}
+        {% trans -%}
+          But the article itself is not listed as an attachment, perhaps these pages are using the article mistakenly or an old revision was an attachment.
+        {%- endtrans %}
       {% endif %}
       {#Folgende Seiten betten diesen Artikel als Anhang ein. {% if not
       page.rev.attachment %}Allerdings wird der Artikel selbst nicht als
@@ -51,15 +48,15 @@
   {%- endif %}
   {%- if not page.backlinks and not page.embedders %}
     <p>
-      {% if page.rev.attachment %}
-        {% trans %}
+      {%- if page.rev.attachment -%}
+        {% trans -%}
           This attachment is an orphan and not referenced by any site.
-        {% endtrans %}
-      {% else %}
-        {% trans %}
+        {%- endtrans %}
+      {%- else -%}
+        {% trans -%}
           This article is an orphan and not referenced by any site.
-        {% endtrans %}
-      {% endif %}
+        {%- endtrans %}
+      {%- endif -%}
     </p>
   {%- endif %}
 {% endblock %}

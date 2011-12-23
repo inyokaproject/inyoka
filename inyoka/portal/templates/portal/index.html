@@ -75,11 +75,7 @@
         {%- if article.comments_enabled %}
           <br />
           <a href="{{ article|url('comments') }}" class="comments">
-            {% trans count=article.comment_count %}
-              {{ count }} comment
-            {% pluralize %}
-              {{ count }} comments
-            {% endtrans %}
+            {%- trans count=article.comment_count %}{{ count }} comment{% pluralize %}{{ count }} comments{% endtrans -%}
           </a>
         {%- endif %}
       </div>
