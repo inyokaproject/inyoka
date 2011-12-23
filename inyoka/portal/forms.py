@@ -858,9 +858,18 @@ class ConfigurationForm(forms.Form):
 
 
 class EditProfileFieldForm(forms.Form):
-    title = forms.CharField(label=_('Title'), required=True)
+    title = forms.CharField(label=_('Title'))
     category = forms.ModelChoiceField(label=_(u'Category'),
-                                      queryset=ProfileCategory.objects.all())
+                                      queryset=ProfileCategory.objects.all(),
+                                      required=False)
+    new_category = forms.CharField(label=_('New Category'), required=False)
+
+    def clean(self):
+        data = self.cleaned_data
+        if data['category'] and data['new_category']:
+            raise forms.ValidationError(_(u'Please select an existing category '
+                                          u'OR create a new one, but not both.'))
+        return data
 
 class EditStyleForm(forms.Form):
     styles = forms.CharField(label=_(u'Styles'), widget=forms.Textarea(

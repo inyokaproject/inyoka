@@ -75,7 +75,8 @@ from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
      deactivate_user, reactivate_user, set_new_email, \
      send_new_email_confirmation, reset_email, send_activation_mail, \
-     send_new_user_password, PERMISSION_NAMES, ProfileField, ProfileData
+     send_new_user_password, PERMISSION_NAMES, ProfileField, ProfileData, \
+     ProfileCategory
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
@@ -2136,6 +2137,7 @@ def config(request):
         'team_icon_url': team_icon and href('media', team_icon) or None,
         'versions': list(sorted(UbuntuVersionList())),
         'profile_fields': ProfileField.objects.order_by('title').all(),
+        'profile_categories': ProfileCategory.objects.order_by('weight').all(),
     }
 
 
@@ -2152,16 +2154,31 @@ def profile_field_edit(request, field_id=None):
         if form.is_valid():
             data = form.cleaned_data
             if field and request.POST.get('delete'):
+                category = field.category
                 field.delete()
+                if not category.fields.all():
+                    category.delete()
             else:
                 if not field:
                     field = ProfileField()
+                old_category = field.category
+                if data['category']:
+                    field.category = data['category']
+                elif data['new_category']:
+                    category = ProfileCategory(title=data['new_category'])
+                    category.save()
+                    field.category = category
                 field.title = data['title']
                 field.save()
+                if old_category and not old_category.fields.all():
+                    old_category.delete()
             return HttpResponseRedirect(href('portal', 'config'))
     else:
         if field:
-            form = EditProfileFieldForm(initial={'title': field.title})
+            form = EditProfileFieldForm(initial={
+                'title': field.title,
+                'category': field.category
+            })
         else:
             form = EditProfileFieldForm()
 
