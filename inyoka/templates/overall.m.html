@@ -44,11 +44,9 @@
     <div class="wrapper">
       <div id="mobile-notice">
         <span><a onclick="hide_mobile_notice()" href="#" title="Diesen Hinweis ausblenden">x</a></span>
-        {% trans link="?flavour=full" %}
-          This is the version for mobile clients. To get to the
-          <a href="{{ link }}">classical layout</a> click on the link in the
-          footer of the page.
-        {% endtrans %}
+        {%- trans link="?flavour=full" -%}
+          This is the version for mobile clients. To get to the <a href="{{ link }}">classical layout</a> click on the link in the footer of the page.
+        {%- endtrans -%}
       </div>
       <header>
         <nav>

@@ -11,15 +11,15 @@
 
 <form action="{{ href('ikhaya', 'comment', comment.id, action) }}" method="post">
    <p>
-    {% if action=='restore' %}
-      {% trans link=comment|url('show'), author=comment.author.username|e %}
+    {%- if action=='restore' -%}
+      {% trans link=comment|url('show'), author=comment.author.username|e -%}
         Do you want to restore the <a href="{{ link }}">comment from {{ author }}</a>?
-      {% endtrans %}
-    {% else %}
-      {% trans link=comment|url('show'), author=comment.author.username|e %}
+      {%- endtrans %}
+    {%- else -%}
+      {% trans link=comment|url('show'), author=comment.author.username|e -%}
         Do you want to hide the <a href="{{ link }}">comment from {{ author }}</a>?
-      {% endtrans %}
-    {% endif %}
+      {%- endtrans %}
+    {%- endif -%}
    <p>
      <input type="submit" value="{% if action=='restore' %}{% trans %}Restore{% endtrans %}{% else %}{% trans %}Hide{% endtrans %}{% endif %}" />
      <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" />

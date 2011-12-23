@@ -9,9 +9,9 @@
 #}
 
 <form action="{{ object|url('delete')|e }}" method="post">
-  <p></p>{% trans file=object.identifier|e %}
+  <p></p>{% trans file=object.identifier|e -%}
     Do you really want to delete the file “{{ file }}“?
-  {% endtrans %}</p>
+  {%- endtrans %}</p>
     <input type="submit" value="{% trans %}Delete{% endtrans %}" />
     <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" />
   </p>

@@ -24,12 +24,10 @@
       <dd>{{ form.avatar }}</dd>
       {%- if max_avatar_height >= 0 and max_avatar_width >= 0 %}
       <dd class="note">
-        {% trans width=max_avatar_width, height=max_avatar_height,
-                 size=max_avatar_size %}
-          Please note that the maximum size for the avatar is
-          {{ width }}x{{ height }} pixels and {{ size }} KiB. Everything that
-          exceeds this limit will automatically be resized.
-        {% endtrans %}
+        {%- trans width=max_avatar_width, height=max_avatar_height,
+                 size=max_avatar_size -%}
+          Please note that the maximum size for the avatar is {{ width }}x{{ height }} pixels and {{ size }} KiB. Everything that exceeds this limit will automatically be resized.
+        {%- endtrans -%}
       </dd>
       {%- endif %}
       {%- if form.errors.avatar %}<dd>{{ form.errors.avatar }}</dd>{% endif %}
@@ -46,11 +44,9 @@
     <h3>{% trans %}Contact addresses{% endtrans %}</h3>
     <dl>
       <dd>
-        <p class="note">{% trans %}
-          By default, the email and jabber addresses are not displayed in your
-          public profile. To publish them, you need to check the
-          “show in profile“ box.
-        {% endtrans %}</p>
+        <p class="note">{% trans -%}
+          By default, the email and jabber addresses are not displayed in your public profile. To publish them, you need to check the “show in profile“ box.
+        {%- endtrans %}</p>
       </dd>
       {% for item in ['email', 'jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone', 'sip'] %}
         <dt>
@@ -79,9 +75,9 @@
         {% trans %}No openID is associated with your account.{% endtrans %}
       {% endif %}
     </p>
-    <p>{% trans %}
+    <p>{% trans -%}
       To associate an openID with your account, login with your openID.
-    {% endtrans %}</p>
+    {%- endtrans %}</p>
     <ul>
       {% for openid in openids %}
         <li>
@@ -91,11 +87,9 @@
       {% endfor %}
     </ul>
     <h3>{% trans %}Signature{% endtrans %}</h3>
-    <p class="note">{% trans n=max_sig_length, link=href('wiki', 'ubuntuusers/Moderatoren/Forenregeln', _anchor='8-Signaturregeln') %}
-      The signature will be appended to every post. It cannot contain more than
-      {{ n }} characters. Please follow the <a href="{{ link }}">signature
-      rules</a>.
-    {% endtrans %}</p>
+    <p class="note">{% trans n=max_sig_length, link=href('wiki', 'ubuntuusers/Moderatoren/Forenregeln', _anchor='8-Signaturregeln') -%}
+      The signature will be appended to every post. It cannot contain more than {{ n }} characters. Please follow the <a href="{{ link }}">signature rules</a>.
+    {%- endtrans %}</p>
     <p>
       {{ form.signature }}
     </p>

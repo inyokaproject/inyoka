@@ -21,11 +21,11 @@
     {%- endif %}
   </p>
   <p>
-    {% trans count=user_count, name=group.name|e %}
+    {%- trans count=user_count, name=group.name|e -%}
       The group “{{ name }}“ has {{ count }} member:
-    {% pluralize %}
+    {%- pluralize -%}
       The group “{{ name }}“ has {{ count }} members:
-    {% endtrans %}
+    {%- endtrans -%}
   </p>
   <table>
     <tr>
