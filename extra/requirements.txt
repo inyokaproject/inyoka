@@ -14,7 +14,6 @@ django-mobile==0.2.1
 celery==2.4.0
 django-kombu==0.9.4
 django-celery==2.4.0
-django==1.3
 django-hosts==0.2
 requests==0.6.6
 https://github.com/alex/django-filter/tarball/master/#egg=django-filter
@@ -24,3 +23,5 @@ hg+https://bitbucket.org/andrewgodwin/south#egg=django-south
 # To have proper tests.models support and fixture bundling
 https://github.com/jbalogh/django-nose/tarball/master#egg=django-nose
 lxml
+#Django 1.4 dependency
+http://www.djangoproject.com/download/1.4-alpha-1/tarball/
