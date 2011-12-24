@@ -442,6 +442,7 @@ def search(request):
         f = SearchForm(request.REQUEST, user=request.user)
     else:
         f = SearchForm(user=request.user)
+    f.fields['forums'].refresh(add=[(u'support',_(u'All support forums'))])
 
     if f.is_valid():
         results = f.search()

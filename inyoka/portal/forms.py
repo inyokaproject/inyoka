@@ -22,6 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
+from inyoka.forum.forms import ForumField
 from inyoka.forum.models import Forum
 from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
@@ -637,7 +638,7 @@ class SearchForm(forms.Form):
     date_end = forms.DateTimeField(required=False, widget=DateTimeWidget)
     sort = forms.ChoiceField(label=_(u'Order by'), choices=SEARCH_SORT_CHOICES,
         required=False)
-    forums = forms.ChoiceField(label=_(u'Forums'), initial='support',
+    forums = ForumField(label=_(u'Forums'), initial='support',
         required=False)
     show_wiki_attachments = forms.BooleanField(label=_(u'Show attachments'),
         required=False)
