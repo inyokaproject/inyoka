@@ -1482,7 +1482,7 @@ def privmsg_new(request, username=None):
                 t = d['text']
                 if all(map(lambda x: x in t, group)):
                     if '>' in t:
-                        continue # User quoted, most likely a forward and no spam (good that inyoka isn't opensource)
+                        continue # User quoted, most likely a forward and no spam
                     request.user.status = 2
                     request.user.banned_until = None
                     request.user.save()
