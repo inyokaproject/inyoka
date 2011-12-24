@@ -20,6 +20,7 @@ from StringIO import StringIO
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from inyoka.utils import encode_confirm_data, classproperty
@@ -483,9 +484,15 @@ class ProfileCategory(models.Model):
     """Category for the profile fields."""
     title = models.CharField(_(u'Title'), max_length=255)
     weight = models.IntegerField(_(u'Weight'), default=0)
+    slug = models.SlugField(max_length=255, unique=True)
 
     def __unicode__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.title)
+        super(ProfileCategory, self).save(*args, **kwargs)
 
 class ProfileField(models.Model):
     """Contains the profile fields which are available for the users."""
@@ -729,7 +736,7 @@ class User(models.Model):
     def get_absolute_url(self, action='show', category=None, *args):
         if action == 'show':
             if category:
-                return href('portal', 'user', self.urlsafe_username, 'c', category.title)
+                return href('portal', 'user', self.urlsafe_username, 'c', category.slug)
             return href('portal', 'user', self.urlsafe_username)
         elif action == 'privmsg':
             return href('portal', 'privmsg', 'new',

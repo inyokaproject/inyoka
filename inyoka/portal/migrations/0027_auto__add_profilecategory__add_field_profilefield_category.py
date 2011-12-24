@@ -13,6 +13,7 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('weight', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=255)),
         ))
         db.send_create_signal('portal', ['ProfileCategory'])
 
@@ -83,6 +84,7 @@ class Migration(SchemaMigration):
         'portal.profilecategory': {
             'Meta': {'object_name': 'ProfileCategory'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '255'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'weight': ('django.db.models.fields.IntegerField', [], {'default': '0'})
         },

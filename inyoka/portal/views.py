@@ -547,7 +547,7 @@ def profile(request, username, category=None):
         profile_category = None
     else:
         try:
-            profile_category = categories.get(title=category)
+            profile_category = categories.get(slug=category)
         except ProfileCategory.DoesNotExist:
             raise PageNotFound()
         profile_data = profile_data.filter(profile_field__category=profile_category)
