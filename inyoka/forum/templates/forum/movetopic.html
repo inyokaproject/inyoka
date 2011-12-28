@@ -21,7 +21,7 @@
     <p>{% trans %}Here you can move a topic into another forum.{% endtrans %}</p>
     <dl>
       <dt>{% trans %}New forum of the topic:{% endtrans %}</dt>
-      <dd>{{ form.forum_id }}{{ form.errors.forum_id }}</dd>
+      <dd>{{ form.forum }}{{ form.errors.forum }}</dd>
       <dd><input type="submit" value="{% trans %}Move{% endtrans %}" /></dd>
     </dl>
   </form>
