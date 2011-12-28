@@ -859,11 +859,15 @@ class ConfigurationForm(forms.Form):
 
 
 class EditProfileFieldForm(forms.Form):
-    title = forms.CharField(label=_('Title'))
+    title = forms.CharField(label=_(u'Title'))
     category = forms.ModelChoiceField(label=_(u'Category'),
                                       queryset=ProfileCategory.objects.all(),
                                       required=False)
-    new_category = forms.CharField(label=_('New Category'), required=False)
+    new_category = forms.CharField(label=_(u'New Category'), required=False)
+    regex = forms.CharField(label=_(u'RegEx'), help_text=_(u'Regular '
+                            u'expression which restricts the value that users '
+                            u'can enter. Leave empty for no restriction.'),
+                            required=False)
 
     def clean(self):
         data = self.cleaned_data

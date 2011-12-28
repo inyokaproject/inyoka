@@ -11,11 +11,12 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import binascii
-import json
-import pytz
-import time
-from PIL import Image
 from datetime import datetime, date, timedelta
+import json
+from PIL import Image
+import pytz
+import re
+import time
 
 from django import forms
 from django.conf import settings
@@ -662,8 +663,15 @@ def usercp_profile(request):
                 if key.startswith('profile_field_') and request.POST[key]:
                     field_id = int(key.partition('.')[2])
                     field = ProfileField.objects.get(id=field_id)
+                    value = request.POST[key]
+                    if field.regex and not re.match(field.regex, value):
+                        flash(_(u'The value for the profile field %(field)s '
+                                u'could not be saved, it was invalid.') % {
+                                    'field': field.title
+                                }, False)
+                        continue
                     field_data = ProfileData(user=user, profile_field=field,
-                                             data=request.POST[key])
+                                             data=value)
                     field_data.save()
 
             for key in ('jabber', 'signature'):
@@ -2185,6 +2193,7 @@ def profile_field_edit(request, field_id=None):
                     category.save()
                     field.category = category
                 field.title = data['title']
+                field.regex = data['regex']
                 field.save()
                 if old_category and not old_category.fields.all():
                     old_category.delete()
@@ -2193,7 +2202,8 @@ def profile_field_edit(request, field_id=None):
         if field:
             form = EditProfileFieldForm(initial={
                 'title': field.title,
-                'category': field.category
+                'category': field.category,
+                'regex': field.regex,
             })
         else:
             form = EditProfileFieldForm()
