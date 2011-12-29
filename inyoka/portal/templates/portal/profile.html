@@ -41,30 +41,47 @@
         </a>
       </li>
     {% endfor %}
+    {% if wikipage %}
+      <li>
+        <a href="{{ href('wiki', 'Benutzer', user.username|e) }}">
+          {% trans %}Wikipage{% endtrans %}
+        </a>
+      </li>
+    {% endif %}
+    {%- if request.user.can('user_edit') %}
+      <li>
+        <a href="{{ href('portal', 'user', user.username, 'edit') }}"
+           class="admin_link">
+          {% trans %}Edit{% endtrans %}
+        </a>
+      </li>
+    {%- endif %}
+    {%- if request.user.can('subscribe_to_users') -%}
+      <li>
+        {%- if is_subscribed %}
+          <a href="{{ generate_subscription_link(do='unsubscribe') }}"
+             class="action action_subscribe subscribe_user admin_link">
+            {% trans %}Don’t watch anymore{% endtrans %}
+          </a>
+        {%- else %}
+          <a href="{{ generate_subscription_link() }}"
+             class="action action_subscribe subscribe_user admin_link">
+            {% trans %}Watch{% endtrans %}
+          </a>
+        {%- endif -%}
+      </li>
+    {%- endif %}
   </ul>
 {% endblock %}
 
 {% block portal_content %}
-  <h3>{{ user.username|e }}
-  {%- if request.user.can('user_edit') %}
-    <a href="{{ href('portal', 'user', user.username, 'edit') }}" class="admin_link"><img
-      src="{{ href('static', 'img/ikhaya/category_edit.png') }}" alt="{% trans %}Edit user{% endtrans %}" title="{% trans %}Edit user{% endtrans %}" /></a>
-  {%- endif %}
-  {%- if request.user.can('subscribe_to_users') -%}
-    {%- if is_subscribed %}
-      <a href="{{ generate_subscription_link(do='unsubscribe') }}" class="action action_subscribe subscribe_user admin link"><img
-      src="{{ href('static', 'img/forum/subscribe.png') }}" alt="{% trans %}Don’t watch anymore{% endtrans %}" title="{% trans %}Don’t watch anymore{% endtrans %}" /></a>
-    {%- else %}
-      <a href="{{ generate_subscription_link() }}" class="action action_subscribe subscribe_user admin_link"><img
-      src="{{ href('static', 'img/forum/subscribe.png') }}" alt="{% trans %}Watch{% endtrans %}" title="{% trans %}Watch{% endtrans %}" /></a>
-    {%- endif -%}
-  {%- endif %}
-  </h3>
+  <h3>{{ user.username|e }}</h3>
   {%- if user in (User.objects.get_system_user(), User.objects.get_anonymous_user()) %}
     {% trans name=user.username|e %}{{ name }} is a system user.{% endtrans %}
   {%- elif user.is_deleted or user.is_banned %}
     {% trans name=user.username|e %}{{ name }} is not available.{% endtrans %}
   {%- else %}
+    <!--
     <table class="userinfo admin_link_hover">
       <tr>
         <th>{% trans %}Name{% endtrans %}</th>
@@ -108,11 +125,17 @@
         </td>
       </tr>
     </table>
+    -->
+    <div class="userprofile_fields">
+      {% for data in profile_data %}
+        <div class="field">
+          <div class="field_left"></div>
+          <div class="field_right">
+            <div class="title">{{ data.profile_field.title|e }}</div>
+            <p>{{ data.data|e }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
   {% endif %}
-  {%- if wikipage %}
-    {{ wikipage }}
-    <p>
-      (<a href="{{ href('wiki', 'Benutzer', user.username|e, action='edit') }}">{% trans %}edit{% endtrans %}</a>)
-    </p>
-  {%- endif %}
 {% endblock %}
