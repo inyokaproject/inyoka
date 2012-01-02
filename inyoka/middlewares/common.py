@@ -52,9 +52,7 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
 
         # IMPORTANT: Since we run some setupcode (mainly locals), this middleware
         # needs to be the first one, hence we manually dispatch to HostsMiddleware
-        response = HostsMiddleware.process_request(self, request)
-        if response:
-            return response
+        HostsMiddleware.process_request(self, request)
 
         host = request.get_host()
         request.subdomain = host[:-len(settings.BASE_DOMAIN_NAME)].rstrip('.')
