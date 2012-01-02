@@ -556,7 +556,7 @@ class InterWikiLink(Element):
                 yield item
             return
         if self.anchor:
-            target += '#' + urlquote_plus(self.anchor)
+            target += '#' + self.anchor
         yield build_html_tag(u'a',
             href=target,
             id=self.id,

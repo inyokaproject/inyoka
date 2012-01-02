@@ -940,13 +940,6 @@ def first_unread_post(request, topic_slug):
 @templated('forum/movetopic.html')
 def movetopic(request, topic_slug):
     """Move a topic into another forum"""
-    def _add_field_choices():
-        """Add dynamic field choices to the move topic formular"""
-        forums = Forum.objects.get_forums_filtered(request.user, sort=True)
-        forums = Forum.get_children_recursive(forums)
-        form.fields['forum_id'].choices = (
-            (f.id, f.name[0] + u' ' + (u'   ' * offset) + f.name)
-            for offset, f in forums)
 
     topic = Topic.objects.get(slug=topic_slug)
     if not have_privilege(request.user, topic.forum, CAN_MODERATE):
@@ -961,10 +954,10 @@ def movetopic(request, topic_slug):
 
     if request.method == 'POST':
         form = MoveTopicForm(request.POST)
-        _add_field_choices()
+        form.fields['forum'].refresh()
         if form.is_valid():
             data = form.cleaned_data
-            forum = mapping.get(int(data['forum_id']))
+            forum = mapping.get(int(data['forum']))
             if forum is None:
                 return abort_access_denied(request)
             topic.move(forum)
@@ -998,7 +991,7 @@ def movetopic(request, topic_slug):
             return HttpResponseRedirect(url_for(topic))
     else:
         form = MoveTopicForm()
-        _add_field_choices()
+        form.fields['forum'].refresh()
     return {
         'form':  form,
         'topic': topic
@@ -1007,14 +1000,6 @@ def movetopic(request, topic_slug):
 
 @templated('forum/splittopic.html')
 def splittopic(request, topic_slug, page=1):
-    def _add_field_choices():
-        """Add dynamic field choices to the move topic formular"""
-        forums = Forum.objects.get_forums_filtered(request.user, sort=True)
-        forums = Forum.get_children_recursive(forums)
-        form.fields['forum'].choices = (
-            (f.id, f.name[0] + u' ' + (u'   ' * offset) + f.name)
-            for offset, f in forums)
-
     old_topic = Topic.objects.get(slug=topic_slug)
     old_posts = old_topic.posts.all()
 
@@ -1036,7 +1021,7 @@ def splittopic(request, topic_slug, page=1):
 
     if request.method == 'POST':
         form = SplitTopicForm(request.POST)
-        _add_field_choices()
+        form.fields['forum'].refresh()
 
         if form.is_valid():
             data = form.cleaned_data
@@ -1108,7 +1093,7 @@ def splittopic(request, topic_slug, page=1):
             'ubuntu_version': old_topic.ubuntu_version,
             'ubuntu_distro': old_topic.ubuntu_distro,
         })
-        _add_field_choices()
+        form.fields['forum'].refresh()
 
     return {
         'topic': old_topic,
@@ -1558,27 +1543,6 @@ def forum_edit(request, slug=None, parent=None):
     Display an interface to let the user create or edit an forum.
     If `id` is given, the forum with id `id` will be edited.
     """
-    def _add_field_choices():
-        """
-        Get all forums that can be the parent forum of the
-        selected and display them in a hierarchical view.
-        All forums that cannot be the parent of the selected
-        are not even displayed.
-        """
-        forums = Forum.objects.get_sorted()
-
-        if forum is not None:
-            forums.remove(forum)
-            for f in forums:
-                if forum in f.parents:
-                    forums.remove(f)
-
-        forums = Forum.get_children_recursive(forums)
-        choices = []
-        for offset, f in forums:
-            title = f.name[0] + u' ' + (u'   ' * offset) + f.name
-            choices.append((f.id, title))
-        form.fields['parent'].choices = [(-1, u'-')] + choices
 
     forum = None
     errors = False
@@ -1591,7 +1555,7 @@ def forum_edit(request, slug=None, parent=None):
 
     if request.method == 'POST':
         form = EditForumForm(request.POST, forum=forum)
-        _add_field_choices()
+        form.fields['parent'].refresh(add=[(0,u'-')], remove=[forum])
 
         if form.is_valid():
             data = form.cleaned_data
@@ -1602,8 +1566,10 @@ def forum_edit(request, slug=None, parent=None):
             old_slug = forum.slug
             forum.slug = data['slug']
             forum.description = data['description']
-            if int(data['parent']) >= 0:
+            if int(data['parent']) > 0:
                 forum.parent = Forum.objects.get(id=int(data['parent']))
+            else:
+                forum.parent = None
 
             if data['welcome_msg_subject']:
                 # subject and text are bound to each other, validation
@@ -1652,7 +1618,7 @@ def forum_edit(request, slug=None, parent=None):
                 'force_version': forum.force_version,
                 'count_posts': forum.user_count_posts,
             })
-        _add_field_choices()
+        form.fields['parent'].refresh(add=[(0,u'-')], remove=[forum])
     return {
         'form':  form,
         'forum': forum

@@ -150,24 +150,25 @@ class ForumManager(models.Manager):
                         that only visible forums are returned.
         :param sort: Sort the output by position.
         """
-        forums = self.get_cached()
+        if sort:
+            forums = self.get_sorted()
+        else:
+            forums = self.get_cached()
+
         privileges = get_privileges(user, forums)
         if reverse:
             forums = filter_visible(user, forums, priv, privileges)
         else:
             forums = filter_invisible(user, forums, priv, privileges)
-        if sort:
-            forums = sorted(forums, key=attrgetter('position'))
         return forums
 
     def get_categories(self):
         return self.get_query_set().filter(parent=None)
 
-    def get_sorted(self, reverse=False):
+    def get_sorted(self, reverse=False, attr='position'):
         forums = self.get_cached()
-        compare = lambda x,y: cmp(x.position, y.position)
-        fsorted = sorted(forums, cmp=compare, reverse=reverse)
-        return fsorted
+        forums = sorted(forums, key=attrgetter(attr))
+        return forums
 
 class TopicManager(models.Manager):
 

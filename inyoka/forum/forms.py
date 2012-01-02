@@ -9,12 +9,37 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
-from django.utils.html import escape
 from inyoka.utils.forms import MultiField, SlugField, StrippedCharField
+from inyoka.utils.html import escape
+from inyoka.forum.acl import CAN_READ
 from inyoka.forum.models import Topic, Forum
 from inyoka.forum.constants import VERSION_CHOICES, DISTRO_CHOICES
+from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 
+
+class ForumField(forms.ChoiceField):
+    def refresh(self, priv=CAN_READ, add=[], remove=[]):
+        """
+        Generates a hierarchical representation of all forums for a choice field.
+        Only forums with at least `priv` for the current user are taken into
+        account. Addtitional items can be prepanded as a list of tuples
+        `[(val1,repr1),(val2,repr2)]` with the `add` keyword. To remove items
+        from the list use a list of Forum objects in the `remove` keyword.
+        """
+        forums = Forum.objects.get_forums_filtered(current_request.user,
+            priv, sort=True)
+
+        for f in remove:
+            if f in forums:
+                forums.remove(f)
+
+        forums = Forum.get_children_recursive(forums)
+        choices = []
+        for offset, f in forums:
+            title = f.name[0] + u' ' + (u'   ' * offset) + f.name
+            choices.append((f.id, title))
+        self.choices = add + choices
 
 class NewPostForm(SurgeProtectionMixin, forms.Form):
     """
@@ -102,9 +127,8 @@ class MoveTopicForm(forms.Form):
     This form gives the user the possibility to select a new forum for a
     topic.
     """
-    forum_id = forms.ChoiceField(widget=forms.Select(attrs=
-        {'class':'firstletterselect'}))
-
+    forum = ForumField()
+ 
 
 class SplitTopicForm(forms.Form):
     """
@@ -115,7 +139,7 @@ class SplitTopicForm(forms.Form):
     #: the title of the new topic
     title = forms.CharField(max_length=200)
     #: the forum of the new topic
-    forum = forms.ChoiceField()
+    forum = ForumField()
     #: the slug of the existing topic
     topic = forms.CharField(max_length=200)
     #: version info. defaults to the values set in the old topic.
@@ -204,7 +228,7 @@ class EditForumForm(forms.Form):
     slug = SlugField(label=u'Slug', max_length=100, required=False)
     description = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}),
                                   label=u'Beschreibung', required=False)
-    parent = forms.ChoiceField(label=u'Elternforum', required=False)
+    parent = ForumField(label=u'Elternforum', required=False)
     position = forms.IntegerField(label=u'Position', initial=0)
 
     welcome_msg_subject = forms.CharField(label=u'Titel', max_length=120,

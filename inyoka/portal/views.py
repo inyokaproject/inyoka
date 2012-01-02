@@ -439,6 +439,7 @@ def search(request):
         f = SearchForm(request.REQUEST, user=request.user)
     else:
         f = SearchForm(user=request.user)
+    f.fields['forums'].refresh(add=[(u'support',_(u'All support forums'))])
 
     if f.is_valid():
         results = f.search()
@@ -1414,7 +1415,7 @@ def privmsg_new(request, username=None):
                 t = d['text']
                 if all(map(lambda x: x in t, group)):
                     if '>' in t:
-                        continue # User quoted, most likely a forward and no spam (good that inyoka isn't opensource)
+                        continue # User quoted, most likely a forward and no spam
                     request.user.status = 2
                     request.user.banned_until = None
                     request.user.save()
