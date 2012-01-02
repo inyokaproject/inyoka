@@ -173,6 +173,7 @@ MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.common.CommonServicesMiddleware',
     'inyoka.middlewares.session.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
@@ -306,6 +307,8 @@ LOGGING = {
 }
 
 WSGI_APPLICATION = 'inyoka.wsgi.application'
+
+X_FRAME_OPTIONS = 'DENY'
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
