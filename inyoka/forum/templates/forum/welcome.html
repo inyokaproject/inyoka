@@ -15,6 +15,7 @@
   <h1>{{ message.title|e }}</h1>
   {{ message.rendered_text }}
   <form method="post" action="{{ forum|url('welcome') }}">
+    {{ csrf_token() }}
     <input type="hidden" name="goto_url" value="{{ goto_url|e }}" />
     <input type="submit" name="accept" value="{% trans %}Read and accepted{% endtrans %}" />
     <input type="submit" name="cancel" value="{% trans %}Reject{% endtrans %}" />

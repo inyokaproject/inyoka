@@ -16,6 +16,7 @@
   {%- endtrans %}</p>
   {% include 'portal/login_text.html' with context %}
   <form method="post" action="">
+		{{ csrf_token() }}
     <div>
       {{ render_form(form, ['username', 'password'])  }}
       <input type="submit" id="login" value="{% trans %}Connect{% endtrans %}" />

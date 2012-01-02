@@ -19,6 +19,7 @@
     You can edit here the stylesheet which is responibly for formating the syntax elements. It is included on all pages. Please do only add already tested stylesheets, otherwise all users will get a corrupt stylesheet.
   {%- endtrans %}</p>
   <form action="" method="post" class="ikhaya">
+		{{ csrf_token() }}
     {{ render_form(form, ['styles']) }}
     <p>
       <input type="submit" value="{% trans %}Submit{% endtrans %}" />

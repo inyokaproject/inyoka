@@ -14,10 +14,12 @@ from glob import glob
 
 from django.conf import settings
 from django.contrib import messages
+from django.core.context_processors import csrf
 from django.utils import translation
 from django.utils import simplejson as json
 from django_mobile import get_flavour
-from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound
+from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound,\
+    contextfunction
 
 from inyoka import INYOKA_REVISION
 from inyoka.utils.cache import request_cache
@@ -183,6 +185,7 @@ def populate_context_defaults(context, flash=False):
             USER=user,
             BREADCRUMB=Breadcrumb(),
             MOBILE=get_flavour() == 'mobile',
+            _csrf_token=csrf(request)['csrf_token']
         )
 
         if not flash:
@@ -227,6 +230,16 @@ def urlencode_filter(value):
     return urlquote(value)
 
 
+@contextfunction
+def csrf_token(context):
+    csrf_token = context['_csrf_token']
+    if csrf_token == 'NOTPROVIDED':
+        return u''
+    else:
+        return ("<div style='display:none'><input type='hidden' "
+                "name='csrfmiddlewaretoken' value='%s' /></div>") % csrf_token
+
+
 class InyokaEnvironment(Environment):
     """
     Beefed up version of the jinja environment but without security features
@@ -247,7 +260,8 @@ class InyokaEnvironment(Environment):
         self.globals.update(INYOKA_REVISION=INYOKA_REVISION,
                             SETTINGS=settings,
                             REQUEST=current_request,
-                            href=href)
+                            href=href,
+                            csrf_token=csrf_token)
         self.filters.update(FILTERS)
 
         self.install_gettext_translations(translation, newstyle=True)

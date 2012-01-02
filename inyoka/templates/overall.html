@@ -310,6 +310,7 @@
 
     {%- if not USER.is_authenticated %}
     <form action="{{ href('portal', 'login', next=CURRENT_URL) }}" method="post" id="js_login_form">
+      {{ csrf_token() }}
       <div>
         <label for="js_login_username">
           {% trans %}Username or email address{% endtrans %}

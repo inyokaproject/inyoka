@@ -25,6 +25,7 @@
   </p>
   {%- else %}
   <form action="" method="post">
+		{{ csrf_token() }}
     {{ form.non_field_errors() }}
     <dl>
       {{ render_form(form, ['username', 'password', 'confirm_password',

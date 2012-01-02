@@ -20,6 +20,7 @@
 
 {% block content %}
   <form action="" method="post" enctype="multipart/form-data">
+    {{ csrf_token() }}
     {%- if topic %}
       <h2><a href="{{ topic|url }}">{{ topic.title|e }}</a></h2>
       {%- if post %}

@@ -23,6 +23,7 @@
     Dann schreibe Deinen Beitrag hier!
   </p>
   <form action="" method="post">
+    {{ csrf_token() }}
     {{ render_form(form, ['title', 'intro', 'text', 'notes']) }}
     <p>
       <input type="submit" value="Abschicken" />

@@ -17,6 +17,7 @@
   {% if USER.can('user_edit') %}
     <p>{% trans %}Choose the user you want to edit:{% endtrans %}</p>
     <form action="" method="post">
+			{{ csrf_token() }}
       <p>
         <input type="text" id="user_query" name="user" />
         <input type="submit" value="{% trans %}Select{% endtrans %}" />

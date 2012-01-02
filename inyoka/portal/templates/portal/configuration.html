@@ -15,6 +15,7 @@
 
 {% block content %}
 <form enctype="multipart/form-data" action="" method="post" id="configuration">
+  {{ csrf_token() }}
   <h3>{% trans %}General settings{% endtrans %}</h3>
   <dl>
     {{ render_form(form, ['global_message', 'blocked_hosts', 'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'license_note'], inline=true) }}

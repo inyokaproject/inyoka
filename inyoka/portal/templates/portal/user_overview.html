@@ -25,6 +25,7 @@
 {% block content %}
   {{ super() }}
   <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+		{{ csrf_token() }}
     <div class="usercp_control">
       <ul>
         {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'profile'), 'profile', _('Profile')) }}

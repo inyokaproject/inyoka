@@ -21,6 +21,7 @@
 {% block content %}
   {{ super() }}
   <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+		{{ csrf_token() }}
     <h3>{% trans %}Privileges{% endtrans %}</h3>
       {%- for id, name, checked, derived in permissions %}
         <input type="checkbox" name="permissions" value="{{ id }}" id="perm_{{ id }}"

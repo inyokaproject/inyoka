@@ -14,6 +14,7 @@
 
 {% block content %}
   <form action="" method="post" enctype="multipart/form-data">
+    {{ csrf_token() }}
     <h2>{% trans topic=topic.title|e %}Report topic “{{ topic }}“{% endtrans %}</h2>
     <p>
       {%- trans link=href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') -%}

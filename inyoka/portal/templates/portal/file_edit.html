@@ -19,6 +19,7 @@
 
 {% block content %}
 <form action="" method="post" enctype="multipart/form-data">
+	{{ csrf_token() }}
   <dl>
     {{ render_form(form, ['is_ikhaya_icon', 'file'], inline=true) }}
     {%- if file %}

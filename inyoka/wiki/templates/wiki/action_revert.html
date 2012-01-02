@@ -12,6 +12,7 @@
 
 <form action="{{ href('wiki', page.name, rev=page.rev.id, action='revert')|e
       }}" method="post">
+  {{ csrf_token() }}
   <p>{% trans %}Note:{% endtrans %}</p>
   <p><input type="text" name="note" size="30" />
      <input type="submit" value="{% trans %}Restore{% endtrans %}" />{#
