@@ -9,7 +9,10 @@ DJANGO_SETTINGS_MODULE
 .venv_hook
 .python_was_built
 *.min.js
-inyoka/static/*.css
+inyoka/static/style/*.css
+!inyoka/static/style/mobile.css
+*-sprite*.png
+*-sprite*.less
 *.swo
 *.swp
 *.orig
