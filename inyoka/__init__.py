@@ -110,9 +110,10 @@ import os
 import socket
 from os.path import realpath, join, dirname
 import subprocess
+from django.utils.translation import ugettext_lazy
 
 #: Inyoka revision present in the current mercurial working copy
-INYOKA_REVISION = 'unknown'
+INYOKA_REVISION = ugettext_lazy('unknown')
 
 
 def _dummy(*args, **kwargs):

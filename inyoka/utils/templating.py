@@ -22,7 +22,6 @@ from inyoka import INYOKA_REVISION
 from inyoka.utils.cache import request_cache
 from inyoka.utils.dates import format_timedelta, natural_date, \
      format_datetime, format_specific_datetime, format_time
-from inyoka.utils.text import human_number
 from inyoka.utils.flashing import get_flashed_messages
 from inyoka.utils.local import current_request
 
@@ -284,8 +283,6 @@ FILTERS = {
         partial(format_specific_datetime),
     'utcspecificdatetimeformat':
         partial(format_specific_datetime, enforce_utc=True),
-    'hnumber':
-        partial(human_number),
     'url':
         partial(url_for),
     'urlencode': urlencode_filter,
