@@ -11,7 +11,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.views.generic import edit, base, list
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
@@ -43,14 +43,14 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
 class EditMixin(object):
     """Provides a flash message and success url"""
     urlgroup_name = ''
-    message = u'{verbose_name} “{object_name}” wurde erfolgreich {action}!'
+    message = ugettext_lazy(u'{verbose_name} “{object_name}” was successfully {action}!')
 
     def form_valid(self, form):
         model = self.model or self.queryset.query.model
         response = super(EditMixin, self).form_valid(form)
         format_args = {'verbose_name': model._meta.verbose_name,
                        'object_name': escape(unicode(self.object))}
-        format_args['action'] = u'erstellt' if self.create else u'geändert'
+        format_args['action'] = _(u'created') if self.create else _(u'changed')
         flash(self.message.format(**format_args), True)
         return response
 
@@ -190,7 +190,7 @@ class BaseDeleteView(edit.BaseDeleteView):
     """
     redirect_url = None
     template_name = None
-    message = u'Die {verbose_name} „{object_name}“ wurde erfolgreich gelöscht!'
+    message = ugettext_lazy(u'The {verbose_name} “{object_name}” was deleted succeessfully!')
 
     def get_success_url(self):
         self.sucess_url = self.redirect_url
