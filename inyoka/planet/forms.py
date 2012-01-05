@@ -10,7 +10,7 @@
 """
 from django import forms
 from django.core.validators import URLValidator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy
 
 from inyoka.utils.forms import UserField
 from inyoka.planet.models import Blog
@@ -18,15 +18,16 @@ from inyoka.planet.models import Blog
 
 class SuggestBlogForm(forms.Form):
     """Form to suggest a new blog url for the planet."""
-    name = forms.CharField(label=_(u'Name of the blog'))
-    url =  forms.URLField(label=_(u'URL'))
-    feed_url =  forms.URLField(label=_(u'Feed URL'), required=False)
-    description = forms.CharField(label=_(u'Description'),
+    name = forms.CharField(label=ugettext_lazy(u'Name of the blog'))
+    url =  forms.URLField(label=ugettext_lazy(u'URL'))
+    feed_url =  forms.URLField(label=ugettext_lazy(u'Feed URL'), required=False)
+    description = forms.CharField(label=ugettext_lazy(u'Description'),
         widget=forms.Textarea)
-    mine = forms.BooleanField(label=_(u'This is my own blog'),
+    mine = forms.BooleanField(label=ugettext_lazy(u'This is my own blog'),
                               required=False)
-    contact_email = forms.EmailField(label=_(u'Email address of the blog '
-                                             u'author'), required=False)
+    contact_email = forms.EmailField(
+        label=ugettext_lazy(u'Email address of the blog author'),
+        required=False)
 
 
 
