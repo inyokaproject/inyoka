@@ -43,15 +43,18 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
 class EditMixin(object):
     """Provides a flash message and success url"""
     urlgroup_name = ''
-    message = ugettext_lazy(u'{verbose_name} “{object_name}” was successfully {action}!')
 
     def form_valid(self, form):
         model = self.model or self.queryset.query.model
         response = super(EditMixin, self).form_valid(form)
         format_args = {'verbose_name': model._meta.verbose_name,
                        'object_name': escape(unicode(self.object))}
-        format_args['action'] = _(u'created') if self.create else _(u'changed')
-        flash(self.message.format(**format_args), True)
+        if self.create:
+            message = _(u'{verbose_name} “{object_name}” was successfully created.')
+        else:
+            message = _(u'{verbose_name} “{object_name}” was successfully changed.')
+
+        flash(message.format(**format_args), True)
         return response
 
     def get_success_url(self):
