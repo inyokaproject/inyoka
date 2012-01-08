@@ -1046,20 +1046,18 @@ div.not_found {
   display: none;
   text-align: right;
   font-size: 0.8em;
-  color: #d0af76;
-  color: white;
+  color: black;
   padding: 0.3em 16px;
-  border-bottom: 1px solid #291c06;
-  background-image: url(../img/jslogin.png);
-  background-repeat: repeat-x;
+  border-bottom: darken(@main_background, 10%) 1px solid;
+  .gradient(lighten(@main_background, 20%), lighten(@main_background, 10%), lighten(@main_background, 20%));
   a {
-    color: white;
+    color: black;
   }
   input {
     vertical-align: middle;
-    background-color: #291c06;
-    color: #eee;
-    border: 1px solid #a4721b;
+    background-color: @main_background;
+    color: black;
+    border: darken(@main_background, 10%) 1px solid;
     margin-right: 0.5em;
   }
   input.submit:active {
