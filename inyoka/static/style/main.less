@@ -29,31 +29,16 @@ html, body {
 
 div.wrap {
   margin: 10px;
-  background-image: url(../img/float-left.jpg);
-  background-repeat: repeat-y;
+  background-image:url(../img/head.jpg);
+  background-repeat: no-repeat;
+  background-position: -3px -2px;
   background-color: #FFFFFF;
-  border-bottom: #aba393 1px solid;
+  border: darken(@main_background, 15%) 2px solid;
   min-width: 780px;
   max-width: 1900px;
+  .rounded();
 }
-div.wrap2 {
-  background-image:url(../img/float-top.jpg);
-  background-repeat:repeat-x;
-}
-div.wrap3 {
-  background-image:url(../img/head.jpg);
-  background-repeat:no-repeat;
-}
-div.wrap4 {
-  background-image:url(../img/float-right.jpg);
-  background-position:right;
-  background-repeat:repeat-y;
-}
-div.wrap5 {
-  background-image:url(../img/head-right.png);
-  background-position:top right;
-  background-repeat:no-repeat;
-}
+
 div.body {
   padding: 10px 0 20px 0;
 }
