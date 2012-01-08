@@ -924,7 +924,7 @@ def first_unread_post(request, topic_slug):
             query = query.filter(id__gt=post_id)
 
     try:
-        first_unread_post = query.order_by('id')[0]
+        first_unread_post = query.order_by('position')[0]
     except IndexError:
         # No new post, this also means the user called first_unread himself
         # as the icon won't show up in that case, hence we just return to
@@ -1268,7 +1268,7 @@ def topic_feed(request, slug=None, mode='short', count=10):
         return abort_access_denied(request)
 
     maxposts = max(settings.AVAILABLE_FEED_COUNTS['forum_topic_feed'])
-    posts = topic.posts.select_related('author').order_by('-id')[:maxposts]
+    posts = topic.posts.select_related('author').order_by('-position')[:maxposts]
 
     feed = AtomFeed(_(u'%(site)s topic – “%(topic)s“')
                     % {'topic': topic.title, 'site': settings.BASE_DOMAIN_NAME},
