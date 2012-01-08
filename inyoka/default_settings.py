@@ -110,7 +110,7 @@ FORUM_OWNPOST_DELETE_LIMIT = (0, 0)
 IKHAYA_GROUP_ID = 1
 
 # settings for the jabber bot
-JABBER_BOT_SERVER = '127.0.0.1:6203'
+JABBER_BOT_SERVER = 'tcp://127.0.0.1:6203'
 
 # hours for a user to activate the account
 ACTIVATION_HOURS = 48
