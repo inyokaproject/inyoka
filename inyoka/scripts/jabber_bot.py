@@ -24,6 +24,7 @@ class JabberBot(ClientXMPP):
         ClientXMPP.__init__(self, jid, password)
         self.add_event_handler('session_start', self.handle_session_start, True)
         self.add_event_handler('disconnected', self.handle_disconnected)
+        self.register_plugin('xep_0030') # Service Discovery
         self.register_plugin('xep_0199') # XMPP Ping
         self.zmq = zmq.Context()
         self.zeromq_bind = bind
@@ -38,16 +39,23 @@ class JabberBot(ClientXMPP):
         socket.bind(self.zeromq_bind)
 
         while True:
+            successfull = False
             try:
                 message = socket.recv_json()
                 self.send_message(mto=message['jid'], mtype='chat',
                                   mbody=message['body'])
-                socket.send_json({'successfull': True})
-            except zmq.ZMQError, exc:
-                if exc.errno == zmq.ETERM:
+                successfull = True
+            except zmq.ZMQError as exc:
+                if not exc.errno == zmq.ETERM:
+                    raise
+                break
+            finally:
+                try:
+                    socket.send_json({'successfull': successfull})
+                except zmq.ZMQError as exc:
+                    if not exc.errno == zmq.ETERM:
+                        raise
                     break
-                else:
-                    raise exc
 
     def handle_disconnected(self, data):
         logging.info('DISCONNECTED :: %s' % data)
@@ -65,7 +73,7 @@ def main():
                         required=True)
     parser.add_argument('--bind', metavar='bind', type=unicode,
                         help='Bind for the ZeroMQ endoint',
-                        default='tcp://0.0.0.0:9500')
+                        default='tcp://0.0.0.0:6203')
     parser.add_argument('--debug', action='store_true',
                         help='Activate debug mode')
     args = parser.parse_args()
