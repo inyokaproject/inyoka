@@ -1,13 +1,12 @@
 @import 'layout.less';
 
 h3 {
-  border-bottom: 1px solid #e0c99d;
+  border-bottom: 1px solid @orange_d_medium;
   color: #444;
 }
 h4 {
   font-size: 1.3em;
   color: #444;
-  border-bottom: 1px solid #ded2bb;
 }
 form.usercp_form {
   ul {
@@ -19,7 +18,7 @@ img.cat {
   margin: 0.5em 0 0.5em 0.5em;
 }
 .container.get_ubuntu {
-  background-color: #F2E7CE !important;
+  .gradient(@orange_d_light, darken(@orange_d_light, 10%), @orange_d_light);
 }
 .get_ubuntu {
   div {
@@ -27,7 +26,6 @@ img.cat {
     text-decoration: none;
     margin: 0 -1em -0.5em -0.5em;
     padding: 0.5em 1em 0.5em 45px;
-    color: #555;
     background-image: url(../img/download.png);
     background-repeat: no-repeat;
     background-position: center left;
@@ -48,7 +46,7 @@ img.cat {
   }
 }
 .container.calendar {
-  background-color: #E6E9F2 !important;
+  .gradient(@green_d_light, darken(@green_d_light, 10%), @green_d_light);
 }
 .calendar:hover {
   color: #666;
@@ -59,14 +57,13 @@ img.cat {
     text-decoration: none;
     margin: 0 -1em -0.5em -0.5em;
     padding: 0.5em 1em 0.5em 45px;
-    color: #555;
     background-image: url(../img/calendar.png);
     background-repeat: no-repeat;
     background-position: center left;
   }
   div.calendar.overview {
     margin-top: 10px;
-    border-top: 1px solid #000;
+    border-top: 1px solid @green_d_medium;
     .event_link {
       color: #555;
       text-decoration: underline;
@@ -81,21 +78,22 @@ img.cat {
   padding: 1em 0;
   background-position: top;
   background-repeat: repeat-x;
-  border-bottom: 1px dashed #d4d4d4;
   .meta {
     float: right;
     font-weight: bold;
     text-align: right;
-    padding-left: 1em;
-    padding-bottom: .5em;
+    margin: 0.8em 0 0 0.8em;
+    padding: 0.2em 1em;
     .comments {
       color: #666;
     }
+    border: 1px solid #D4D4D4;
+    .rounded();
+    .gradient(#F4F4F4, #EEE, #F4F4F4);
   }
   a {
     font-weight: bold;
     text-decoration: none;
-    border-bottom: 1px solid #D4D4D4;
   }
   p {
     color: #333;
@@ -427,7 +425,7 @@ ul.permissions {
       border-color: #ccc;
       margin-bottom: 0.4em;
       padding: 3px;
-      color: #956205;
+      color: @orange_s_medium;
       cursor: pointer;
       font-size: 0.9em;
       white-space: nowrap;
