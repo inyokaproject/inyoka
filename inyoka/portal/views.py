@@ -906,8 +906,8 @@ def get_user(username):
 @require_permission('user_edit')
 @templated('portal/special_rights.html')
 def users_with_special_rights(request):
-    users = User.objects.filter(privilege__user=None).distinct() \
-                        .order_by('username')
+    users = User.objects.filter(privilege__isnull=False).distinct()\
+                .order_by('username').defer('settings')
     return {
         'users': users,
         'count': len(users),
