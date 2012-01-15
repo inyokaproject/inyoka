@@ -1155,7 +1155,7 @@ def delete_post(request, post_id, action='hide'):
             return HttpResponseRedirect(url_for(post))
         elif action == 'delete':
             position = post.position
-            wost.delete()
+            post.delete()
             flash(_(u'The post by “%(user)s“ was deleted.')
                   % {'user': post.author.username}, True)
             page = max(0, position) // POSTS_PER_PAGE + 1
