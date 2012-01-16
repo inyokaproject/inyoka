@@ -761,7 +761,7 @@ class Post(models.Model, LockableObject):
         if self.pk == self.topic.last_post_id:
             new_lp_id = Post.objects.filter(topic=self.topic)\
                 .exclude(pk=self.pk).order_by('-position')\
-                .values_list('id', flat=True)[:1][0]
+                .values_list('id', flat=True)[0]
             update_model(self.topic, last_post=model_or_none(new_lp_id, self))
 
         # search for a new last post for al forums in the chain up.
@@ -770,7 +770,7 @@ class Post(models.Model, LockableObject):
         if self.pk == self.topic.forum.last_post_id:
             new_lp_id = Topic.objects.filter(forum=self.topic.forum)\
                 .exclude(last_post=self).order_by('-last_post')\
-                .values_list('last_post', flat=True)[:1][0]
+                .values_list('last_post', flat=True)[0]
             lpf = list(Forum.objects.filter(last_post=self).all())
             update_model(lpf, last_post=model_or_none(new_lp_id, self))
             cache.delete_many('forum/forums/%s' % f.slug for f in lpf)
