@@ -244,15 +244,8 @@ class TestPostMove(TestCase):
 class PostDeletionTest(TestCase):
     fixtures = ['test_post_delete']
 
-    def setUp(self):
-        # Fill the cache
-        Forum.objects.get_all_forums_cached()
-
     def test_post_delete_at_end(self):
-        # ensure cache is filled
         forum_cache_keys = Forum.objects.all().values_list('slug', flat=True)
-        data = cache.get_many(['forum/forums/%s' % i for i in forum_cache_keys])
-        self.assertEqual(len(data), 3)
         # trigger post deletion
         Post.objects.get(pk=3).delete()
         # ensure cache is properly pruned
