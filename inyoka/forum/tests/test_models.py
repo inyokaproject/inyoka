@@ -17,10 +17,6 @@ class TestForumModel(TestCase):
         self.forum = Forum(name='This rocks damnit', parent=self.parent2)
         self.forum.save()
 
-    def tearDown(self):
-        for object in (self.forum, self.parent2, self.parent1):
-            object.delete()
-
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
 
@@ -109,15 +105,6 @@ class TestPostSplit(TestCase):
         self.fp2 = Post(text=u'test4', author=self.user)
         self.topic2.posts.add(self.fp2)
 
-    def tearDown(self):
-        objects = [self.topic1, self.topic2, self.forum, self.forum2,
-                   self.category]
-        for object in objects:
-            if object.pk:
-                # We delete a topic in test_split_post_remove_topic, so
-                # we do not have a pk here for everything...
-                object.delete()
-
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
         self.assertEqual(user.post_count, 3)
@@ -169,8 +156,6 @@ class TestPostSplit(TestCase):
         old_positions = Post.objects.filter(topic=topic).order_by('position')\
             .values_list('position', flat=True)
         self.assertEqual(list(old_positions), [0,1,2,3])
-        topic.delete()
-
 
     def test_split_new_topic(self):
         posts = Post.objects.filter(text__in=(u'test2', u'test3')).all()
@@ -196,9 +181,6 @@ class TestPostSplit(TestCase):
         self.assertEqual(t2.forum.last_post, self.fp2)
         post_ids = [p.pk for p in list(posts)]
         self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
-
-        # cleanup
-        new_topic.delete()
 
     def test_split_post_remove_topic(self):
         posts = Post.objects.filter(text__in=(u'test1', u'test2', u'test3')).all()
@@ -239,12 +221,6 @@ class TestPostMove(TestCase):
         self.topic1.posts.add(self.lp1)
         self.lp2 = Post(text=u'test4', author=self.user)
         self.topic2.posts.add(self.lp2)
-
-    def tearDown(self):
-        objects = [self.topic1, self.topic2, self.forum, self.forum2,
-                   self.category]
-        for obj in objects:
-            obj.delete()
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
