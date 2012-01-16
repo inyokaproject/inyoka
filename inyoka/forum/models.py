@@ -497,7 +497,7 @@ class Topic(models.Model):
 
     def delete(self, *args, **kwargs):
         if not self.forum:
-            return
+            return super(Topic, self).delete()
 
         forums = self.forum.parents + [self]
         pks = [f.pk for f in forums]
@@ -773,6 +773,7 @@ class Post(models.Model, LockableObject):
                 .values_list('last_post', flat=True)[:1][0]
             lpf = list(Forum.objects.filter(last_post=self).all())
             update_model(lpf, last_post=model_or_none(new_lp_id, self))
+            cache.delete_many('forum/forums/%s' % f.slug for f in lpf)
 
         # decrement post_counts
         forums = self.topic.forum.parents + [self.topic.forum]
