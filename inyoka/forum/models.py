@@ -1199,7 +1199,7 @@ class Poll(models.Model):
 
     topic = models.ForeignKey(Topic, null=True, db_index=True, related_name='polls')
 
-    @property
+    @deferred
     def votes(self):
         """Calculate the total number of votes in this poll."""
         return sum(o.votes for o in self.options.all())
