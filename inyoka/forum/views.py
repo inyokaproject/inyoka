@@ -382,10 +382,8 @@ def handle_attachments(request, post, att_ids):
                 attachment.save()
                 attachments.append(attachment)
                 att_ids.append(attachment.id)
-                flash(u'Der Anhang „%s“ wurde erfolgreich hinzugefügt.'
-                      % att_name, True)
-                flash(_(u'An attachment “%(attachment)s“ was added '
-                        'successfully.') % {'attachment': att_name}, False)
+                flash(_(u'Attachment “%(attachment)s“ was added '
+                        'successfully.') % {'attachment': att_name}, True)
 
     elif 'delete_attachment' in request.POST:
         id = int(request.POST['delete_attachment'])

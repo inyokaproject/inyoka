@@ -30,7 +30,7 @@ def fix_extension(filename, mime):
     else:
         if mime == 'image/jpeg':
             ext = '.jpg'
-        elif mime == 'application/xml' and ext == '.svg':
+        elif mime == 'application/xml' and ext in ('.svg', '.html'):
             pass
         elif mime == 'application/octet-stream' and ext == '.mo':
             pass
