@@ -55,8 +55,7 @@
             <span>
               {% trans count=poll.votes %}{{ count }} vote{% pluralize %}{{ count }} votes{% endtrans %}
               {%- if poll.multiple_votes %},
-                {% set count = poll.votings.count() %}
-                {% trans count=count %}{{ count }} voter{% pluralize %}{{ count }} voters{% endtrans %}
+                {% trans count=poll.votings.count() %}{{ count }} voter{% pluralize %}{{ count }} voters{% endtrans %}
               {%- endif %}
             </span>
           </div>
