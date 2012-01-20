@@ -75,11 +75,12 @@ msgstr ""
 #, python-format
 msgid ""
 "No discussion is linked yet to the article “%(article)s“. You can create "
-"a discussion now or link an existing topic to the article."
+"a discussion now or <a href="%(link)s">link an existing topic</a> to the "
+"article."
 msgstr ""
 "Es wurde noch keine Diskussion mit dem Artikel „%(article)s” verknüpft. "
-"Du kannst eine Diskussion erstellen oder ein vorhandenes Thema mit dem "
-"Artikel verknüpfen."
+"Du kannst eine Diskussion erstellen oder <a href="%(link)s">ein vorhandenes "
+"Thema verknüpfen</a>."
 
 #: inyoka/forum/views.py:452
 #, python-format
