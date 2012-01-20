@@ -437,7 +437,7 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_manage.html:57
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:13
-msgid "Link discussions"
+msgid "Link discussion"
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:17
