@@ -427,11 +427,7 @@ def logout(request):
         User.objects.logout(request)
         messages.success(request, _(u'You have successfully logged out.'))
     else:
-<<<<<<< HEAD
         messages.error(request, _(u'You were not logged in.'))
-=======
-        flash(_(u'You were not logged in.'), False)
->>>>>>> staging
     return HttpResponseRedirect(redirect)
 
 
