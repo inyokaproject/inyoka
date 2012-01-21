@@ -754,11 +754,6 @@ class User(models.Model):
             self.new_password_key = None
         self.save()
 
-    def get_and_delete_messages(self, *args, **kwargs):
-        """Stub for to fix openid integration as it's calling the django.messages API"""
-        #TODO: this method does not exist in Django 1.4 anymore, so remove it if we upgrade!
-        return []
-
     @classproperty
     def SYSTEM_USER(cls):
         return cls.objects.get_system_user()
