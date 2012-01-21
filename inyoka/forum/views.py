@@ -1138,7 +1138,7 @@ def delete_post(request, post_id, action='hide'):
     if action == 'hide' and not can_hide:
         return abort_access_denied(request)
 
-    if post.id == topic.first_post.id:
+    if post.id == topic.first_post_id:
         if topic.post_count == 1:
             return HttpResponseRedirect(href('forum', 'topic',
                                              topic.slug, action))
