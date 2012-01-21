@@ -433,8 +433,11 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             return HttpResponseRedirect(href('wiki', norm_page_name))
         forum_slug = settings.WIKI_DISCUSSION_FORUM
         flash(_(u'No discussion is linked yet to the article “%(article)s“. '
-                'You can create a discussion now or link an existing '
-                'topic to the article.') % {'article': page_name})
+                'You can create a discussion now or <a href="%(link)s">link '
+                'an existing topic</a> to the article.') % {
+                    'article': page_name,
+                    'link': href('wiki', norm_page_name,
+                                 action='manage_discussion')})
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
         forum = topic.forum

@@ -71,7 +71,8 @@ msgstr ""
 #, python-format
 msgid ""
 "No discussion is linked yet to the article “%(article)s“. You can create "
-"a discussion now or link an existing topic to the article."
+"a discussion now or <a href="%(link)s">link an existing topic</a> to the "
+"article."
 msgstr ""
 
 #: inyoka/forum/views.py:452
