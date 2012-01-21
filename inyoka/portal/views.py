@@ -38,7 +38,8 @@ from inyoka.utils.text import get_random_password, normalize_pagename
 from inyoka.utils.dates import MONTHS, WEEKDAYS, DEFAULT_TIMEZONE, \
     get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, HttpResponse, \
-     PageNotFound, does_not_exist_is_404, HttpResponseRedirect
+     PageNotFound, does_not_exist_is_404, HttpResponseRedirect, \
+     TemplateResponse
 from inyoka.utils.sessions import get_sessions, make_permanent, \
     get_user_record
 from inyoka.utils.urls import href, url_for, is_safe_domain
@@ -2156,3 +2157,7 @@ def styles(request):
 def ikhaya_redirect(request, id):
     article = get_object_or_404(Article, pk=int(id))
     return HttpResponseRedirect(url_for(article))
+
+
+def csrf_failure(request, reason=None):
+    return TemplateResponse('errors/400_csrf.html', {}, 403)

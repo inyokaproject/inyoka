@@ -306,5 +306,7 @@ WSGI_APPLICATION = 'inyoka.wsgi.application'
 
 X_FRAME_OPTIONS = 'DENY'
 
+CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
+
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
