@@ -190,14 +190,8 @@ def register(request):
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
-    cookie_error = False
-
     if request.method == 'POST' and 'renew_captcha' not in request.POST:
         form = RegisterForm(request.POST)
-        if not request.session.test_cookie_worked():
-            cookie_error = True
-        else:
-            request.session.delete_test_cookie()
         form.captcha_solution = request.session.get('captcha_solution')
         if form.is_valid():
             data = form.cleaned_data
@@ -225,11 +219,9 @@ def register(request):
             return HttpResponseRedirect(redirect)
     else:
         form = RegisterForm()
-        request.session.set_test_cookie()
 
     return {
         'form':         form,
-        'cookie_error': cookie_error,
     }
 
 
@@ -360,10 +352,8 @@ def login(request):
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
-    # FIXME: Check if cookies are enabled!
-
     failed = inactive = banned = False
-    if request.method == 'POST':# and cookie_error_link is None:
+    if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
@@ -406,8 +396,6 @@ def login(request):
         'failed':       failed,
         'inactive':     inactive,
         'banned':       banned,
-        'cookie_error': False, #cookie_error_link is not None,
-        'retry_link':   None #cookie_error_link
     }
     if failed:
         d['username'] = data['username']

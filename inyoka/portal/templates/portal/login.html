@@ -13,18 +13,6 @@
 {% do BREADCRUMB.append(_('Login'), href('portal', 'login'), True) %}
 {% block portal_content %}
   <h3>{% trans %}Login{% endtrans %}</h3>
-  {%- if cookie_error %}
-  <div class="errors">
-    {%- trans link=retry_link|e -%}
-      For security reasons you need to allow cookies to login. Please enable cookies and <a href="{{ link }}">reload the page</a>.
-    {%- endtrans -%}
-  </div>
-  <p>
-    {%- trans link='/datenschutz' -%}
-      You can find more information about cookies in our <a href="{{ link }}">privacy policy</a>.
-    {%- endtrans -%}
-  </p>
-  {%- else %}
   <p>
     {%- trans register=href('portal', 'register'), lost_password=href('portal', 'lost_password') -%}
       You can login here if you are already <a href="{{ register }}">registered</a>. If you lost your password, you can <a href="{{ lost_password }}">request a new one</a>.
@@ -47,7 +35,6 @@
       <input type="submit" id="login" value="{% trans %}Login{% endtrans %}" tabindex="1" />
     </div>
   </form>
-  {%- endif %}
 {% endblock %}
 
 {% block additional_scripts %}
