@@ -27,6 +27,7 @@ from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.utils.translation import ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
@@ -240,8 +241,8 @@ class Forum(models.Model):
         blank=True, on_delete=models.SET_NULL)
 
     class Meta:
-        verbose_name = u'Forum'
-        verbose_name_plural = u'Forums'
+        verbose_name = ugettext_lazy(u'Forum')
+        verbose_name_plural = ugettext_lazy(u'Forums')
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
@@ -418,8 +419,8 @@ class Topic(models.Model):
         on_delete=models.PROTECT)
 
     class Meta:
-        verbose_name = 'Topic'
-        verbose_name_plural = 'Topics'
+        verbose_name = ugettext_lazy(u'Topic')
+        verbose_name_plural = ugettext_lazy(u'Topics')
 
     @property
     def rendered_report_text(self):
@@ -560,6 +561,7 @@ class Topic(models.Model):
                 return version[0]
             return ''
 
+    #: TODO fix translation: see inyoka.forum.constants
     def get_version_info(self, default=u'Nicht angegeben'):
         if not (self.ubuntu_version or self.ubuntu_distro):
             return default
@@ -672,8 +674,8 @@ class Post(models.Model, LockableObject):
         on_delete=models.PROTECT)
 
     class Meta:
-        verbose_name = u'Beitrag'
-        verbose_name_plural = u'Beiträge'
+        verbose_name = ugettext_lazy(u'Post')
+        verbose_name_plural = ugettext_lazy(u'Posts')
 
     def render_text(self, request=None, format='html', force_existing=False):
         context = RenderContext(request, forum_post=self, application='forum')
@@ -906,6 +908,7 @@ class Post(models.Model, LockableObject):
         new_topic.forum.invalidate_topic_cache()
         old_topic.forum.invalidate_topic_cache()
 
+    #: TODO fix translation
     @property
     def grouped_attachments(self):
         def expr(v):
