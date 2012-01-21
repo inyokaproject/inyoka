@@ -28,7 +28,7 @@ class Migration(DataMigration):
                 id, pos = values[0], flattened[idx]
                 if pos != values[1]:
                     orm.Post.objects.filter(id=id).update(position=pos)
-            if topic.last_post_id != mapping[-1][0]:
+            if mapping and topic.last_post_id != mapping[-1][0]:
                 orm.Topic.objects.filter(id=topic.id).update(last_post=mapping[-1][0])
             connection.queries = []
             gc.collect()
