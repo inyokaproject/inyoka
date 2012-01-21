@@ -25,7 +25,5 @@ https://github.com/alex/django-filter/tarball/master/#egg=django-filter
 https://github.com/simonw/django-openid/tarball/master#egg=django-openid
 # Because of http://south.aeracode.org/ticket/747 that is already fixed in trunk
 hg+https://bitbucket.org/andrewgodwin/south#egg=django-south
-# To have proper tests.models support and fixture bundling
-https://github.com/jbalogh/django-nose/tarball/master#egg=django-nose
 lxml
 dulwich
