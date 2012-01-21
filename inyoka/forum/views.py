@@ -372,16 +372,15 @@ def handle_attachments(request, post, att_ids):
                 attachments, override=d['override']
             )
             if not attachment:
-                messages.error(request, _(u'An attachment “%(attachment)s“ does already exist.')
+                messages.error(request, _(u'The attachment “%(attachment)s“ does already exist.')
                                % {'attachment': att_name})
             else:
                 attachment.comment = d['comment']
                 attachment.save()
                 attachments.append(attachment)
                 att_ids.append(attachment.id)
-                messages.success(request, _(u'An attachment “%(attachment)s“ was added '
+                messages.success(request, _(u'The attachment “%(attachment)s“ was added '
                                  'successfully.') % {'attachment': att_name})
-
     elif 'delete_attachment' in request.POST:
         id = int(request.POST['delete_attachment'])
         matching_attachments = filter(lambda a: a.id == id, attachments)
@@ -429,9 +428,13 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                            'can create it now.') % {'article': norm_page_name})
             return HttpResponseRedirect(href('wiki', norm_page_name))
         forum_slug = settings.WIKI_DISCUSSION_FORUM
-        messages.info(_(u'No discussion is linked yet to the article “%(article)s“. '
-                'You can create a discussion now or link an existing '
-                'topic to the article.') % {'article': page_name})
+        messages.info(request,
+            _(u'No discussion is linked yet to the article “%(article)s“. '
+               'You can create a discussion now or <a href="%(link)s">link '
+               'an existing topic</a> to the article.') % {
+                    'article': page_name,
+                    'link': href('wiki', norm_page_name,
+                            action='manage_discussion')})
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
         forum = topic.forum
@@ -926,7 +929,7 @@ def first_unread_post(request, topic_slug):
             query = query.filter(id__gt=post_id)
 
     try:
-        first_unread_post = query.order_by('id')[0]
+        first_unread_post = query.order_by('position')[0]
     except IndexError:
         # No new post, this also means the user called first_unread himself
         # as the icon won't show up in that case, hence we just return to
@@ -1141,7 +1144,7 @@ def delete_post(request, post_id, action='hide'):
     if action == 'hide' and not can_hide:
         return abort_access_denied(request)
 
-    if post.id == topic.first_post.id:
+    if post.id == topic.first_post_id:
         if topic.post_count == 1:
             return HttpResponseRedirect(href('forum', 'topic',
                                              topic.slug, action))
@@ -1273,7 +1276,7 @@ def topic_feed(request, slug=None, mode='short', count=10):
         return abort_access_denied(request)
 
     maxposts = max(settings.AVAILABLE_FEED_COUNTS['forum_topic_feed'])
-    posts = topic.posts.select_related('author').order_by('-id')[:maxposts]
+    posts = topic.posts.select_related('author').order_by('-position')[:maxposts]
 
     feed = AtomFeed(_(u'%(site)s topic – “%(topic)s“')
                     % {'topic': topic.title, 'site': settings.BASE_DOMAIN_NAME},

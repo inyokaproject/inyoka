@@ -87,7 +87,6 @@ class TestTransformers(TestCase):
         smileys = {':)': '', ':/': '', '8-o': '', '{de}': ''}
         assert _smiley_re is None
         smiley_re = get_smiley_re(smileys)
-        print smiley_re.pattern
         t = lambda x: smiley_re.findall(x)
         self.assertEqual(t(':) :/'), [':)', ':/'])
         self.assertEqual(t('(text:)'), [])

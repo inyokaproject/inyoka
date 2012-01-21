@@ -466,7 +466,7 @@ table.syntaxtable {
       margin: 15px 0 0 15px;
       padding: 0;
       text-decoration: none;
-      background-image: url(../img/logo.png); /** sprite-ref: header; sprite-margin-right: 5px; */
+      background-image: url(../img/logo.png);
     }
     span {
       display: none;
@@ -484,7 +484,6 @@ table.syntaxtable {
     list-style: none;
     float: left;
     padding: 4px 0 6px 0;
-    background-position: center bottom;
     background-repeat: no-repeat;
 
     a {
@@ -493,10 +492,15 @@ table.syntaxtable {
       font-weight: bold;
       text-decoration: none !important;
       background-repeat: no-repeat;
-      background-position: top center;
-      text-align: center;
       height: 64px;
-      padding: 0 5px;
+      padding: 3px 5px 0;
+
+      span {
+        display: block;
+        height: 24px;
+        width: 24px;
+        margin: 0 auto;
+      }
     }
 
     div {
@@ -527,27 +531,27 @@ table.syntaxtable {
     }
   }
 
-  li.portal a {
+  li.portal a span {
     background-image: url(../img/icons/portal.png) !important; /** sprite-ref: header; */
   }
 
-  li.forum a {
+  li.forum a span {
       background-image: url(../img/icons/forum.png) !important; /** sprite-ref: header; */
   }
 
-  li.wiki a {
+  li.wiki a span {
       background-image: url(../img/icons/wiki.png) !important; /** sprite-ref: header; */
   }
 
-  li.ikhaya a {
+  li.ikhaya a span {
       background-image: url(../img/icons/ikhaya.png) !important; /** sprite-ref: header; */
   }
 
-  li.planet a {
+  li.planet a span {
       background-image: url(../img/icons/planet.png) !important; /** sprite-ref: header; */
   }
 
-  li.community a {
+  li.community a span {
       background-image: url(../img/icons/community.png) !important; /** sprite-ref: header; */
   }
 

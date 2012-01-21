@@ -316,13 +316,13 @@ msgstr ""
 msgid ""
 "The following table shows the difference of the article “<a "
 "href=\"%(article_link)s\">%(article)s</a>“ between <a "
-"href=\"%(old_rev_link)s\">revision %(old_rev)s</a> and <a "
-"href=\"%(new_rev_link)s\">revision %(new_rev)s</a>."
+"href=\"%(old_rev_link)s\">revision %(old_rev)s</a> (%(old_rev_note)s) and "
+"<a href=\"%(new_rev_link)s\">revision %(new_rev)s</a> (%(new_rev_note)s)."
 msgstr ""
 "Die folgende Tabelle zeigt die Änderungen im Artikel “<a "
 "href=\"%(article_link)s\">%(article)s</a>“ zwischen <a "
-"href=\"%(old_rev_link)s\">Revision %(old_rev)s</a> und <a "
-"href=\"%(new_rev_link)s\">Revision %(new_rev)s</a> auf."
+"href=\"%(old_rev_link)s\">Revision %(old_rev)s</a> (%(old_rev_note)s) und "
+"<a href=\"%(new_rev_link)s\">Revision %(new_rev)s</a> (%(new_rev_note)s) auf."
 
 #: inyoka/wiki/templates/wiki/action_diff.html:42
 #, python-format
@@ -480,8 +480,8 @@ msgstr "Cache leeren"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:57
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:13
-msgid "Link discussions"
-msgstr "Diskussionen verlinken"
+msgid "Link discussion"
+msgstr "Diskussion verlinken"
 
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:17
 msgid "You can choose a topic as the discussion topic of this article."

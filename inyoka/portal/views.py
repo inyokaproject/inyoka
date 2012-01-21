@@ -34,8 +34,7 @@ from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
 
 from inyoka.utils import decode_confirm_data, generic
-from inyoka.utils.text import get_random_password, human_number, \
-    normalize_pagename
+from inyoka.utils.text import get_random_password, normalize_pagename
 from inyoka.utils.dates import MONTHS, WEEKDAYS, DEFAULT_TIMEZONE, \
     get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, HttpResponse, \
@@ -428,7 +427,11 @@ def logout(request):
         User.objects.logout(request)
         messages.success(request, _(u'You have successfully logged out.'))
     else:
+<<<<<<< HEAD
         messages.error(request, _(u'You were not logged in.'))
+=======
+        flash(_(u'You were not logged in.'), False)
+>>>>>>> staging
     return HttpResponseRedirect(redirect)
 
 
@@ -904,8 +907,8 @@ def get_user(username):
 @require_permission('user_edit')
 @templated('portal/special_rights.html')
 def users_with_special_rights(request):
-    users = User.objects.filter(privilege__user=None).distinct() \
-                        .order_by('username')
+    users = User.objects.filter(privilege__isnull=False).distinct()\
+                .order_by('username').defer('settings')
     return {
         'users': users,
         'count': len(users),

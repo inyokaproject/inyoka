@@ -30,7 +30,7 @@ def send_notification(user, template_name=None, subject=None, args=None):
 
     if 'jabber' in methods and user.jabber:
         message = render_template('mails/%s.jabber.txt' % template_name, args)
-        send_jabber(user.jabber, message, xhtml=False)
+        send_jabber(user.jabber, message)
     if 'mail' in methods:
         message = render_template('mails/%s.txt' % template_name, args)
         send_mail(settings.EMAIL_SUBJECT_PREFIX + subject, message,

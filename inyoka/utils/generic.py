@@ -8,12 +8,12 @@
     :copyright: (c) 2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.views.generic import edit, base, list
-from django.utils.translation import ugettext as _
 from django.utils.html import escape
-from django.contrib import messages
+from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
@@ -43,15 +43,18 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
 class EditMixin(object):
     """Provides a flash message and success url"""
     urlgroup_name = ''
-    message = u'{verbose_name} “{object_name}” wurde erfolgreich {action}!'
 
     def form_valid(self, form):
         model = self.model or self.queryset.query.model
         response = super(EditMixin, self).form_valid(form)
         format_args = {'verbose_name': model._meta.verbose_name,
                        'object_name': escape(unicode(self.object))}
-        format_args['action'] = u'erstellt' if self.create else u'geändert'
-        messages.success(self.request, self.message.format(**format_args))
+        if self.create:
+            message = _(u'{verbose_name} “{object_name}” was successfully created.')
+        else:
+            message = _(u'{verbose_name} “{object_name}” was successfully changed.')
+
+        messages.success(self.request, message.format(**format_args))
         return response
 
     def get_success_url(self):
@@ -190,7 +193,7 @@ class BaseDeleteView(edit.BaseDeleteView):
     """
     redirect_url = None
     template_name = None
-    message = u'Die {verbose_name} „{object_name}“ wurde erfolgreich gelöscht!'
+    message = ugettext_lazy(u'The {verbose_name} “{object_name}” was deleted succeessfully!')
 
     def get_success_url(self):
         self.sucess_url = self.redirect_url

@@ -1,5 +1,6 @@
 #Django 1.4 dependency
-http://www.djangoproject.com/download/1.4-alpha-1/tarball/
+http://www.djangoproject.com/download/1.4-alpha-1/tarball/#egg=django
+distribute
 Jinja2==2.6
 Babel==0.9.6
 Werkzeug==0.8.2
@@ -18,10 +19,11 @@ django-kombu==0.9.4
 django-celery==2.4.0
 django-hosts==0.4.1
 requests==0.6.6
-django-filter==0.5.3
+pyzmq==2.1.11
+sleekxmpp==1.0
+https://github.com/alex/django-filter/tarball/master/#egg=django-filter
 https://github.com/simonw/django-openid/tarball/master#egg=django-openid
 # Because of http://south.aeracode.org/ticket/747 that is already fixed in trunk
 hg+https://bitbucket.org/andrewgodwin/south#egg=django-south
-# To have proper tests.models support and fixture bundling
-https://github.com/jbalogh/django-nose/tarball/master#egg=django-nose
 lxml
+dulwich

@@ -1,0 +1,169 @@
+[
+  {
+    "pk": 1,
+    "model": "portal.user",
+    "fields": {
+      "status": 1,
+      "groups": [],
+      "coordinates_long": null,
+      "skype": "",
+      "jabber": "",
+      "date_joined": "2004-07-06 19:00:08",
+      "sip": "",
+      "launchpad": "",
+      "post_count": 3,
+      "gpgkey": "",
+      "website": "",
+      "msn": "",
+      "last_login": "1977-01-14 15:47:11",
+      "location": "",
+      "icq": "",
+      "occupation": "",
+      "new_password_key": null,
+      "_permissions": 0,
+      "username": "testuser",
+      "coordinates_lat": null,
+      "forum_last_read": 0,
+      "forum_welcome": "",
+      "_primary_group": null,
+      "forum_read_status": "",
+      "wengophone": "",
+      "member_title": null,
+      "password": "",
+      "interests": "",
+      "settings": "{}",
+      "email": "",
+      "aim": "",
+      "yim": "",
+      "avatar": "",
+      "signature": "",
+      "banned_until": null
+    }
+  },
+  {
+    "pk": 1,
+    "model": "forum.forum",
+    "fields": {
+      "description": "",
+      "parent": null,
+      "welcome_message": null,
+      "post_count": 0,
+      "topic_count": 0,
+      "newtopic_default_text": null,
+      "user_count_posts": true,
+      "position": 0,
+      "force_version": false,
+      "last_post": null,
+      "slug": "category",
+      "name": "category"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "forum.forum",
+    "fields": {
+      "description": "",
+      "parent": 1,
+      "welcome_message": null,
+      "post_count": 3,
+      "topic_count": 1,
+      "newtopic_default_text": null,
+      "user_count_posts": true,
+      "position": 0,
+      "force_version": false,
+      "last_post": 3,
+      "slug": "parent",
+      "name": "parent"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "forum.forum",
+    "fields": {
+      "description": "",
+      "parent": 2,
+      "welcome_message": null,
+      "post_count": 3,
+      "topic_count": 1,
+      "newtopic_default_text": null,
+      "user_count_posts": true,
+      "position": 0,
+      "force_version": false,
+      "last_post": 3,
+      "slug": "forum",
+      "name": "forum"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "forum.topic",
+    "fields": {
+      "ubuntu_distro": "",
+      "view_count": 0,
+      "locked": false,
+      "author": 1,
+      "forum": 3,
+      "title": "test",
+      "post_count": 3,
+      "reported": null,
+      "reporter": null,
+      "report_claimed_by": null,
+      "sticky": false,
+      "has_poll": false,
+      "solved": false,
+      "ubuntu_version": "",
+      "hidden": false,
+      "last_post": 3,
+      "slug": "test",
+      "first_post": 1
+    }
+  },
+  {
+    "pk": 1,
+    "model": "forum.post",
+    "fields": {
+      "rendered_text": "",
+      "author": 1,
+      "has_attachments": false,
+      "text": "",
+      "is_plaintext": false,
+      "topic": 1,
+      "has_revision": false,
+      "position": 0,
+      "hidden": false,
+      "pub_date": "2012-01-16 12:34:17"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "forum.post",
+    "fields": {
+      "rendered_text": "",
+      "author": 1,
+      "has_attachments": false,
+      "text": "",
+      "is_plaintext": false,
+      "topic": 1,
+      "has_revision": false,
+      "position": 1,
+      "hidden": false,
+      "pub_date": "2012-01-16 13:34:17"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "forum.post",
+    "fields": {
+      "rendered_text": "",
+      "author": 1,
+      "has_attachments": false,
+      "text": "",
+      "is_plaintext": false,
+      "topic": 1,
+      "has_revision": false,
+      "position": 2,
+      "hidden": false,
+      "pub_date": "2012-01-16 14:34:17"
+    }
+  }
+]

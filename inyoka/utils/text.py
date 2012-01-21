@@ -77,20 +77,6 @@ def slugify(string, convert_lowercase=True):
     return u'-'.join(result) or u'-'
 
 
-def human_number(number, genus=None):
-    """Numbers from 1 - 12 are words."""
-    if not 0 < number <= 12:
-        return str(number)
-    if number == 1:
-        return {
-            'masculine':    u'ein',
-            'feminine':     u'eine',
-            'neuter':       u'ein'
-        }.get(genus, u'eins')
-    return (u'zwei', u'drei', u'vier', u'fünf', u'sechs',
-            u'sieben', u'acht', u'neun', u'zehn', u'elf', u'zwölf')[number - 2]
-
-
 def join_pagename(name1, name2):
     """
     Join a page with another one.  This works similar to a normal filesystem

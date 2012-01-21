@@ -497,7 +497,7 @@ class Topic(models.Model):
 
     def delete(self, *args, **kwargs):
         if not self.forum:
-            return
+            return super(Topic, self).delete()
 
         forums = self.forum.parents + [self]
         pks = [f.pk for f in forums]
@@ -750,37 +750,38 @@ class Post(models.Model, LockableObject):
 
     def delete(self, *args, **kwargs):
         if not self.topic:
-            return
-
-        forums = self.topic.forum.parents + [self.topic.forum]
+            return super(Post, self).delete()
 
         # degrade user post count
         if self.topic.forum.user_count_posts:
             update_model(self.author, post_count=F('post_count') - 1)
             cache.delete('portal/user/%d' % self.author.id)
 
-        # search for a new last post in the old and the new forum
-        new_post_query = Post.objects.filter(
-            topic__id=F('topic__id'),
-            topic__forum__id=F('topic__forum__id'))
+        # update topic.last_post_id
+        if self.pk == self.topic.last_post_id:
+            new_lp_id = Post.objects.filter(topic=self.topic)\
+                .exclude(pk=self.pk).order_by('-position')\
+                .values_list('id', flat=True)[0]
+            update_model(self.topic, last_post=model_or_none(new_lp_id, self))
 
-        if self == self.topic.last_post:
-            new_post = new_post_query.filter(topic=self.topic) \
-                                     .aggregate(last=Max('id'))['last']
-            update_model(self.topic, last_post=model_or_none(new_post, self))
-
-        lpf = list(Forum.objects.filter(last_post=self).all())
-        new_post = new_post_query.filter(forum__in=lpf) \
-                                 .aggregate(last=Max('id'))['last']
-        update_model(lpf, last_post=model_or_none(new_post, self))
+        # search for a new last post for al forums in the chain up.
+        # We actually cheat here and set the newest post from the current
+        # forum for all forums.
+        if self.pk == self.topic.forum.last_post_id:
+            new_lp_id = Topic.objects.filter(forum=self.topic.forum)\
+                .exclude(last_post=self).order_by('-last_post')\
+                .values_list('last_post', flat=True)[0]
+            lpf = list(Forum.objects.filter(last_post=self).all())
+            update_model(lpf, last_post=model_or_none(new_lp_id, self))
+            cache.delete_many('forum/forums/%s' % f.slug for f in lpf)
 
         # decrement post_counts
+        forums = self.topic.forum.parents + [self.topic.forum]
         update_model(self.topic, post_count=F('post_count') - 1)
         update_model(forums, post_count=F('post_count') - 1)
 
         # decrement position
-        Post.objects.filter(position__gt=self.position,
-                            topic=self.topic) \
+        Post.objects.filter(position__gt=self.position, topic=self.topic) \
                     .update(position=F('position') - 1)
 
         return super(Post, self).delete()
@@ -1199,7 +1200,7 @@ class Poll(models.Model):
 
     topic = models.ForeignKey(Topic, null=True, db_index=True, related_name='polls')
 
-    @property
+    @deferred
     def votes(self):
         """Calculate the total number of votes in this poll."""
         return sum(o.votes for o in self.options.all())

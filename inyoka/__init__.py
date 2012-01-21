@@ -108,11 +108,13 @@
 """
 import os
 import socket
+from distutils.version import LooseVersion as V
 from os.path import realpath, join, dirname
-import subprocess
+from django.utils.translation import ugettext_lazy
+from dulwich.repo import Repo
 
 #: Inyoka revision present in the current mercurial working copy
-INYOKA_REVISION = 'unknown'
+INYOKA_REVISION = ugettext_lazy('unknown')
 
 
 def _dummy(*args, **kwargs):
@@ -122,18 +124,13 @@ def _dummy(*args, **kwargs):
 def _bootstrap():
     """Get the Inyoka version and store it."""
     # the path to the contents of the Inyoka module
-    conts = realpath(join(dirname(__file__)))
-
-    # get the `INYOKA_REVISION` using git subprocess.
-    # TODO: once the git-ctypes port is finished switch!
+    repo_path = realpath(join(dirname(__file__), '..'))
 
     try:
-        process = subprocess.Popen(['git', 'describe', '--tags'],
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE,
-                                   cwd=conts, shell=False,
-                                   env=os.environ.copy())
-        revision, stderro = process.communicate()
+        repo = Repo(repo_path)
+        tags = sorted([ref for ref in repo.get_refs() if ref.startswith('refs/tags')],
+                      key=lambda obj: V(obj))
+        revision = tags[-1][10:]
     except Exception:
         revision = INYOKA_REVISION
 
