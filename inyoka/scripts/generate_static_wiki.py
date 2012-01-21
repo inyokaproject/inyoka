@@ -67,7 +67,6 @@ POWERED_BY_RE = re.compile(r'<li class="poweredby">.*?</li>\s*', re.DOTALL)
 SEARCH_PATHBAR_RE = re.compile(r'<form .*? class="search">.+?</form>\s*', re.DOTALL)
 DROPDOWN_RE = re.compile(r'<div class="dropdown">.+?</div>\s*', re.DOTALL)
 PATHBAR_RE = re.compile(r'(<div class="pathbar">).*?(</div>)\s*', re.DOTALL)
-JS_LOGIN = re.compile(r'<form.*?id="js_login_form">.+?</form>\s*', re.DOTALL)
 LOGO_RE = re.compile(r'<h1><a href=".*?"><span>ubuntuusers.de</span></a></h1>', re.DOTALL)
 TABBAR_RE = re.compile(r'<li class="(portal|forum|wiki|ikhaya|planet|community).*?"><a href=".*?">(.*?)</a></li>', re.DOTALL)
 OPENSEARCH_RE = re.compile(r'<link rel="search".*? />\s*', re.DOTALL)
@@ -243,7 +242,6 @@ REPLACERS = (
     (SEARCH_PATHBAR_RE, ''),
     (DROPDOWN_RE,       ''),
     (PATHBAR_RE,        ''),
-    (JS_LOGIN,          ''),
     (OPENSEARCH_RE,     ''),
     (REAL_IMG_RE,       ''),
     (REAL_MEDIA_RE,     ''),
