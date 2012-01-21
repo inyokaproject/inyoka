@@ -199,14 +199,11 @@ INSTALLED_APPS = (
     'sentry.client',
     'south',
     # *must* be installed after south
-    'django_nose',
     'djcelery',
     'djkombu',
     'django_mobile',
     'django_hosts',
 )
-
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # don't use migrations but just syncdb
 SOUTH_TESTS_MIGRATE = False
