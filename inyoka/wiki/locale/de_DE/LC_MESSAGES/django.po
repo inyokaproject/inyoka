@@ -480,8 +480,8 @@ msgstr "Cache leeren"
 
 #: inyoka/wiki/templates/wiki/action_manage.html:57
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:13
-msgid "Link discussions"
-msgstr "Diskussionen verlinken"
+msgid "Link discussion"
+msgstr "Diskussion verlinken"
 
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:17
 msgid "You can choose a topic as the discussion topic of this article."
