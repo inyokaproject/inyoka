@@ -22,6 +22,7 @@ POSTS_PER_PAGE = 15
 TOPICS_PER_PAGE = 30
 CACHE_PAGES_COUNT = 5
 
+#: TODO fix translation
 UBUNTU_DISTROS_LEGACY = {
     'keine': 'Keine Angabe',
     'edubuntu': 'Edubuntu',
@@ -34,6 +35,7 @@ UBUNTU_DISTROS_LEGACY = {
     'unity': 'Unity',
 }
 
+#: TODO fix translation
 UBUNTU_DISTROS = [
     ('keine', 'Keine Angabe'),
     ('edubuntu', 'Edubuntu'),
@@ -47,5 +49,6 @@ UBUNTU_DISTROS = [
 
 SIMPLE_VERSION_CHOICES = [(v.number, str(v)) for v in UBUNTU_VERSIONS \
         if v.is_active()]
+#: TODO fix translation
 VERSION_CHOICES = [('', 'Version')] + SIMPLE_VERSION_CHOICES
 DISTRO_CHOICES = [('', 'Distribution')] + UBUNTU_DISTROS

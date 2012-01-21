@@ -375,14 +375,14 @@ def handle_attachments(request, post, att_ids):
                 attachments, override=d['override']
             )
             if not attachment:
-                flash(_(u'An attachment “%(attachment)s“ does already exist.')
+                flash(_(u'The attachment “%(attachment)s“ does already exist.')
                       % {'attachment': att_name}, False)
             else:
                 attachment.comment = d['comment']
                 attachment.save()
                 attachments.append(attachment)
                 att_ids.append(attachment.id)
-                flash(_(u'Attachment “%(attachment)s“ was added '
+                flash(_(u'The attachment “%(attachment)s“ was added '
                         'successfully.') % {'attachment': att_name}, True)
 
     elif 'delete_attachment' in request.POST:
