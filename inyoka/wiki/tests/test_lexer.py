@@ -261,3 +261,7 @@ class TestLexer(TestCase):
         expect('text', u'[url=')
         expect('free_link', u'http://digital-jockeys.de')
         expect('text', u']Digital Jockeys[/url]')
+
+    def test_basic_unicode_handling(self):
+        expect = lexer.tokenize(u'some @¹“”¹unicod€ stuff'.encode('utf-8')).expect
+        expect('text', u'some @¹“”¹unicod€ stuff')
