@@ -114,7 +114,7 @@ msgstr "„new” ist kein gültiger Slug"
 #: inyoka/forum/forms.py:274
 #, python-format
 msgid "Please select another slug, “%(slug)s“ is already in use."
-msgstr "Bitte einen anderen Slug angeben, „%(slug)“ ist schon vergeben."
+msgstr "Bitte einen anderen Slug angeben, „%(slug)s“ ist schon vergeben."
 
 #: inyoka/forum/models.py:244 inyoka/forum/search.py:69
 #: inyoka/forum/templates/forum/forum_edit.html:21
@@ -156,7 +156,7 @@ msgstr "Neues Thema vom Benutzer %(username)s"
 #: inyoka/forum/notifications.py:50
 #, python-format
 msgid "New topic in forum %(forum)s: “%(topic)s“"
-msgstr "Neues Thema in „%(forum)s”"
+msgstr "Neues Thema im Forum „%(forum)s”: „%(topic)s”"
 
 #: inyoka/forum/notifications.py:64
 #, python-format

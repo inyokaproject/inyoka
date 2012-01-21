@@ -206,11 +206,6 @@ msgstr ""
 msgid "The attachment “%(attachment)s“ does already exist."
 msgstr ""
 
-#: inyoka/forum/views.py:385
-#, python-format
-msgid "The ttachment “%(attachment)s“ was added successfully."
-msgstr ""
-
 #: inyoka/forum/views.py:392
 #, python-format
 msgid "The attachment with the ID “%(id)d“ does not exist."
