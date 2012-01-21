@@ -15,10 +15,8 @@
 import re
 from itertools import ifilter
 
-from django.utils.http import urlquote
-
 from inyoka.wiki.storage import storage
-from inyoka.utils.urls import href
+from inyoka.utils.urls import href, smart_urlquote
 from inyoka.portal.user import User
 
 
@@ -107,7 +105,7 @@ def resolve_interwiki_link(wiki, page):
     rule = storage.interwiki.get(wiki)
     if rule is None:
         return
-    quoted_page = urlquote(page)
+    quoted_page = smart_urlquote(page)
     if '$PAGE' not in rule:
         link = rule + quoted_page
     else:
