@@ -12,6 +12,7 @@
 """
 import re
 from itertools import izip
+from django.utils.encoding import smart_unicode
 from inyoka.utils.parsertools import TokenStream
 
 
@@ -496,7 +497,7 @@ class Lexer(object):
         open_blocks = [False]
 
         def tokenize_buffer():
-            for item in tokenize_block(u'\n'.join(buffer)):
+            for item in tokenize_block(u'\n'.join(smart_unicode(obj) for obj in buffer)):
                 yield item
             del buffer[:]
 
