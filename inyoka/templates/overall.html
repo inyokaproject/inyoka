@@ -226,9 +226,11 @@
         <div class="message global">{{ GLOBAL_MESSAGE }}</div>
       {%- endif %}
 
+      {%- if MESSAGES %}
       {%- for message in MESSAGES %}
 				<div class="message {{ message.tags }}">{{ message }}</div>
       {%- endfor %}
+      {%- endif %}
 
       <div class="page_content">
         {% set tabbar = navi_type in ['tabbar', 'both'] %}
