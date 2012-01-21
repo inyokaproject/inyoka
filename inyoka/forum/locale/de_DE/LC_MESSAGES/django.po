@@ -109,7 +109,7 @@ msgstr "Du musst einen Text für die Willkommensnachricht eingeben."
 
 #: inyoka/forum/forms.py:270
 msgid "“new“ is not a valid forum slug"
-msgstr "„new” is not a valid forum slug"
+msgstr "„new” ist kein gültiger Slug"
 
 #: inyoka/forum/forms.py:274
 #, python-format
@@ -205,13 +205,13 @@ msgstr "Die Umfrage „%(poll)s” wurde gelöscht."
 
 #: inyoka/forum/views.py:378
 #, python-format
-msgid "An attachment “%(attachment)s“ does already exist."
-msgstr "Ein Anhang „%(attachment)s” existiert bereits."
+msgid "The attachment “%(attachment)s“ does already exist."
+msgstr "Der Anhang „%(attachment)s” existiert bereits."
 
 #: inyoka/forum/views.py:385
 #, python-format
-msgid "Attachment “%(attachment)s“ was added successfully."
-msgstr "Ein Anhang „%(attachment)s” wurde erfolgreich hinzugefügt."
+msgid "The attachment “%(attachment)s“ was added successfully."
+msgstr "Der Anhang „%(attachment)s” wurde erfolgreich hinzugefügt."
 
 #: inyoka/forum/views.py:392
 #, python-format

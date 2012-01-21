@@ -203,12 +203,12 @@ msgstr ""
 
 #: inyoka/forum/views.py:378
 #, python-format
-msgid "An attachment “%(attachment)s“ does already exist."
+msgid "The attachment “%(attachment)s“ does already exist."
 msgstr ""
 
 #: inyoka/forum/views.py:385
 #, python-format
-msgid "Attachment “%(attachment)s“ was added successfully."
+msgid "The ttachment “%(attachment)s“ was added successfully."
 msgstr ""
 
 #: inyoka/forum/views.py:392
