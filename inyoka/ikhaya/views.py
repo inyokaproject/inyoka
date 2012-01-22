@@ -201,7 +201,6 @@ def detail(request, year, month, day, slug):
     }
 
 
-#TODO: is this view used ANYWHERE? i guess it can be removed
 @require_permission('article_edit')
 def article_delete(request, year, month, day, slug):
     try:
