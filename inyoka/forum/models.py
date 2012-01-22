@@ -909,19 +909,19 @@ class Post(models.Model, LockableObject):
         new_topic.forum.invalidate_topic_cache()
         old_topic.forum.invalidate_topic_cache()
 
-    #: TODO fix translation
     @property
     def grouped_attachments(self):
         def expr(v):
-            return u'Bilder' if v.mimetype.startswith('image') and v.mimetype \
-                in SUPPORTED_IMAGE_TYPES else u''
+            if not v.mime.startswith('image') and v.mimetype not in SUPPORTED_IMAGE_TYPES:
+                return u''
+            return _(u'Pictures')
 
         if hasattr(self, '_attachments_cache'):
             attachments = sorted(self._attachments_cache, key=expr)
         else:
             attachments = sorted(self.attachments.all(), key=expr)
 
-        grouped = [(x[0], list(x[1]), u'möglich' in x[0] and 'broken' or '') \
+        grouped = [(x[0], list(x[1]), 'broken' if not x[0] else '') \
                    for x in groupby(attachments, expr)]
         return grouped
 
