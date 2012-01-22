@@ -912,7 +912,7 @@ class Post(models.Model, LockableObject):
     @property
     def grouped_attachments(self):
         def expr(v):
-            if not v.mime.startswith('image') and v.mimetype not in SUPPORTED_IMAGE_TYPES:
+            if not v.mime.startswith('image') or v.mimetype not in SUPPORTED_IMAGE_TYPES:
                 return u''
             return _(u'Pictures')
 
