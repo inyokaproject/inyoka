@@ -45,7 +45,7 @@ def clear_surge_protection(request, form):
 
 def validate_empty_text(value):
     if not value.strip():
-        raise forms.ValidationError('Text darf nicht leer sein', code='invalid')
+        raise forms.ValidationError(_(u'Text must not be empty'), code='invalid')
     return value
 
 
@@ -96,7 +96,7 @@ class UserField(forms.CharField):
         try:
             return User.objects.get(username=value)
         except (User.DoesNotExist, ValueError):
-            raise forms.ValidationError(u'Diesen Benutzer gibt es nicht')
+            raise forms.ValidationError(_(u'This user does not exist'))
 
 
 class CaptchaWidget(Input):
@@ -166,7 +166,7 @@ class CaptchaField(forms.Field):
             return True
         solution = current_request.session.get('captcha_solution')
         if not solution:
-            flash((u'You have to accept cookies!'), False)
+            flash(_(u'You have to accept cookies!'), False)
         elif value:
             h = md5(settings.SECRET_KEY)
             if isinstance(value, unicode):
@@ -190,8 +190,9 @@ class HiddenCaptchaField(forms.Field):
         if not value:
             return True
         else:
-            raise forms.ValidationError(_(u'You have entered an invisible field '
-                    u'and are therefore classified as a bot.'))
+            raise forms.ValidationError(
+                _(u'You have entered an invisible field '
+                  u'and were therefore classified as a bot.'))
 
 
 class EmailField(forms.CharField):

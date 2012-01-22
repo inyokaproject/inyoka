@@ -210,7 +210,7 @@ class BaseDeleteView(edit.BaseDeleteView):
 
     def post(self, request, *args, **kwargs):
         if 'cancel' in request.POST:
-            flash(u'Löschen abgebrochen!')
+            flash(_(u'Canceled!'))
         else:
             super(BaseDeleteView, self).post(request, *args, **kwargs)
             format_args = {
