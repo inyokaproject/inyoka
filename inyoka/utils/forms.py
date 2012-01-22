@@ -19,6 +19,7 @@ from django.core import validators
 from django.forms.widgets import Input
 from django.utils.translation import ugettext as _
 from inyoka.portal.user import User
+from inyoka.wiki.parser import parse, StackExhaused
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
 from inyoka.utils.flashing import flash
 from inyoka.utils.jabber import may_be_valid_jabber
@@ -26,6 +27,7 @@ from inyoka.utils.local import current_request
 from inyoka.utils.mail import may_be_valid_mail, is_blocked_host
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
+from inyoka.utils.storage import storage
 
 
 def clear_surge_protection(request, form):
@@ -47,6 +49,31 @@ def validate_empty_text(value):
     if not value.strip():
         raise forms.ValidationError(_(u'Text must not be empty'), code='invalid')
     return value
+
+
+def validate_signature(signature):
+    """Parse a signature and check if it's valid."""
+    def _walk(node):
+        if node.is_container:
+            for n in node.children:
+                _walk(n)
+        if not node.allowed_in_signatures:
+            raise forms.ValidationError(_(u'Your signature contains not allowed elements'))
+        return node
+    try:
+        text = _walk(parse(signature, True, False)).text.strip()
+    except StackExhaused:
+        raise forms.ValidationError(_(u'Your signature contains too much nested elements'))
+    sig_len = int(storage.get('max_signature_length', -1))
+    sig_lines = int(storage.get('max_signature_lines', -1))
+    if sig_len >= 0 and len(text) > sig_len:
+        raise forms.ValidationError(
+            _(u'Your signature is too long, only %(length)s characters '
+              u'allowed') % {'length': sig_len})
+    if sig_lines >= 0 and len(text.splitlines()) > sig_lines:
+        raise forms.ValidationError(
+            _(u'Your signature can only contain mostly %(num)d lines') % {
+                'num': sig_lines})
 
 
 class MultiField(forms.Field):

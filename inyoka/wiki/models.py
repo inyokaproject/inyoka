@@ -476,7 +476,7 @@ class PageManager(models.Manager):
         if isinstance(text, basestring):
             text, created = Text.objects.get_or_create(value=text)
         if note is None:
-            note = 'Erstellt'
+            note = _(u'Created')
         if attachment is not None:
             att = Attachment()
             attachment_filename = get_filename(attachment_filename, attachment)
@@ -908,7 +908,7 @@ class Page(models.Model):
             .edit(deleted=True,
                   text=u'',
                   file=None,
-                  note=u'Von System gelöscht')
+                  note=_(u'Automatically deleted'))
 
     def edit(self, text=None, user=None, change_date=None,
              note=u'', attachment=None, attachment_filename=None,
@@ -1166,10 +1166,10 @@ class Revision(models.Model):
         The page title plus the revision date.  This is equivalent to
         `Page.full_title`.
         """
-        return u'%(rev)s (Revision %(date)s)' % {
+        return _(u'%(rev)s (Revision %(date)s)' % {
             'rev': self.page.title,
             'date': format_specific_datetime(self.change_date)
-        }
+        })
 
     @property
     def rendered_text(self):

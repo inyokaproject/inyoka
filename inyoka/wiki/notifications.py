@@ -8,6 +8,7 @@
     :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.utils.translate import ugettext as _
 from inyoka.utils import ctype
 from inyoka.utils.notification import queue_notifications
 
@@ -24,6 +25,6 @@ def send_edit_notifications(user, rev, old_rev):
           'rev_note': rev.note,
           'rev_username': rev.user.username if rev.user else 'Anonymous'}
     queue_notifications.delay(user.id, 'page_edited',
-        u'Die Seite „%s” wurde geändert' % data.get('page_title'),
+        _(u'The page “%(name)s” was changed') % {'name': data.get('page_title')},
         data,
         filter={'content_type': ctype(Page), 'object_id': data.get('page_id')})

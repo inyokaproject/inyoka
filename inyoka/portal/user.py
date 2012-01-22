@@ -90,7 +90,7 @@ def reactivate_user(id, email, status, time):
 
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
-        msg = u'Die E-Mail Adresse ist bereits vergeben.'
+        msg = _(u'This e-mail address is used by another user.')
         return {'failed': msg}
 
     user = User.objects.get(id=id)

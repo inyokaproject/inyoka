@@ -1419,7 +1419,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     elif action == 'author':
         user = user and User.objects.get(user) or request.user
         if user.is_anonymous:
-            flash_(u'You need to be logged in to use this function.')
+            flash(_(u'You need to be logged in to use this function.'))
             return abort_access_denied(request)
         topics = topics.filter(posts__author=user).distinct()
 

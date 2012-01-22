@@ -20,8 +20,10 @@ from hashlib import md5
 from time import time
 from random import random
 from django.conf import settings
+from django.utils.translate import ugettext as _
 from werkzeug import cookie_date
 from werkzeug.contrib.securecookie import SecureCookie
+from inyoka.utils.flashing import flash
 
 
 class Session(SecureCookie):
@@ -63,9 +65,8 @@ class AdvancedSessionMiddleware(object):
             session['_ex'] = time() + settings.SESSION_COOKIE_AGE
         request.session = session
         if expired:
-            from inyoka.utils.flashing import flash
-            flash(u'Deine Sitzung ist abgelaufen.  Du musst dich neu '
-                  u'anmelden.', session=session)
+            flash(_(u'Your session expired.  You need to login again'),
+                  session=session)
 
     def process_response(self, request, response):
         try:

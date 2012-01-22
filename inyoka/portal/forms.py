@@ -29,7 +29,7 @@ from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href, is_safe_domain
 from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
-                               HiddenCaptchaField, EmailField, JabberField
+    HiddenCaptchaField, EmailField, JabberField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import escape, cleanup_html
 from inyoka.utils.storage import storage
@@ -37,7 +37,6 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.search import search as search_system
 from inyoka.portal.user import User, UserData, Group
 from inyoka.portal.models import StaticPage, StaticFile
-from inyoka.wiki.parser import validate_signature, SignatureError
 
 #: Some constants used for ChoiceFields
 NOTIFY_BY_CHOICES = (
@@ -351,10 +350,7 @@ class UserCPProfileForm(forms.Form):
 
     def clean_signature(self):
         signature = self.cleaned_data.get('signature', '')
-        try:
-            validate_signature(signature)
-        except SignatureError, exc:
-            raise forms.ValidationError(exc.message)
+        validate_signature(signature)
         return signature
 
     def clean_coordinates(self):
