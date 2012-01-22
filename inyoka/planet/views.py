@@ -154,7 +154,7 @@ def hide_entry(request, id):
     entry = Entry.objects.get(id=id)
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(u'Aktion wurde abgebrochen.')
+            flash(_(u'Canceled'))
         else:
             entry.hidden = False if entry.hidden else True
             if entry.hidden:
