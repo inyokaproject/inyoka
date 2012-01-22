@@ -569,7 +569,7 @@ class SimilarPages(Macro):
             ignore = None
         if not name:
             msg = _(u'You must apply a page name because the macro is being '
-                    u'called outside of the wiki context')
+                    u'called outside the wiki context.')
             return nodes.error_box(_(u'Invalid arguments'), msg)
         result = nodes.List('unordered')
         for page in Page.objects.get_similar(name):

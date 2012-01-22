@@ -266,7 +266,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
     title = page.title
     page.name = new_name
     if new_text:
-        page.edit(note=_('Renamed from %(old_name)s') % {'old_name': title},
+        page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
                   user=request.user,
                   text=new_text, remote_addr=request.META.get('REMOTE_ADDR'))
     else:
@@ -305,15 +305,15 @@ def do_rename(request, name):
         force = request.POST.get('force', False)
         new_name = normalize_pagename(request.POST.get('new_name', ''))
         if not new_name:
-            flash(_(u'Pagename required!'), success=False)
+            flash(_(u'No page name given.'), success=False)
         else:
             try:
                 Page.objects.get_by_name(new_name)
             except Page.DoesNotExist:
                 if _rename(request, page, new_name, force):
-                    flash(_(u'Renamed the page successfully'), success=True)
+                    flash(_(u'Renamed the page successfully.'), success=True)
             else:
-                flash(_(u'A page with this name already exists'), False)
+                flash(_(u'A page with this name already exists.'), False)
                 return HttpResponseRedirect(href('wiki', name))
 
 
@@ -453,9 +453,9 @@ def do_edit(request, name):
                                   remote_addr=remote_addr,
                                   **form.cleaned_data)
                         if page.rev.deleted:
-                            msg = _(u'Created page <a href="%(link)s">%(name)s</a>.')
+                            msg = _(u'The page <a href="%(link)s">%(name)s</a> has been created.')
                         else:
-                            msg = _(u'Edited page <a href="%(link)s">%(name)s</a>.')
+                            msg = _(u'The page <a href="%(link)s">%(name)s</a> has been edited.')
 
                         flash(msg % {'link': escape(href('wiki', page.name)),
                                      'name': escape(page.title)}, True)
@@ -464,7 +464,7 @@ def do_edit(request, name):
                                                remote_addr=remote_addr,
                                                name=name,
                                                **form.cleaned_data)
-                    flash(u'Created page <a href="%(link)s">%(name)s</a>.' % {
+                    flash(u'The page <a href="%(link)s">%(name)s</a> has been created.' % {
                         'link': escape(href('wiki', page.name)),
                         'name': escape(page.title)
                     }, True)
@@ -486,14 +486,14 @@ def do_edit(request, name):
     elif not request.user.is_authenticated:
         flash(_(u'You are in the process of editing this page unauthenticated. '
                 u'If you save, your IP-Address will be recored in the '
-                u'revision history and is irrevocable publicly visible'))
+                u'revision history and is irrevocable publicly visible.'))
 
 
     # if we have merged this request we should inform the user about that,
     # and that we haven't saved the page yet.
     if merged_this_request:
         flash(_(u'Another user edited this page also.  '
-                u'Please check if the automatic merging was statisfactory'))
+                u'Please check if the automatic merging is satisfying.'))
 
     return {
         'name':         name,

@@ -58,12 +58,12 @@ def validate_signature(signature):
             for n in node.children:
                 _walk(n)
         if not node.allowed_in_signatures:
-            raise forms.ValidationError(_(u'Your signature contains not allowed elements'))
+            raise forms.ValidationError(_(u'Your signature contains illegal elements'))
         return node
     try:
         text = _walk(parse(signature, True, False)).text.strip()
     except StackExhaused:
-        raise forms.ValidationError(_(u'Your signature contains too much nested elements'))
+        raise forms.ValidationError(_(u'Your signature contains too many nested elements'))
     sig_len = int(storage.get('max_signature_length', -1))
     sig_lines = int(storage.get('max_signature_lines', -1))
     if sig_len >= 0 and len(text) > sig_len:
@@ -72,7 +72,7 @@ def validate_signature(signature):
               u'allowed') % {'length': sig_len})
     if sig_lines >= 0 and len(text.splitlines()) > sig_lines:
         raise forms.ValidationError(
-            _(u'Your signature can only contain mostly %(num)d lines') % {
+            _(u'Your signature can only contain up to %(num)d lines') % {
                 'num': sig_lines})
 
 

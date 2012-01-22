@@ -235,7 +235,7 @@ class StaticPage(models.Model):
     key = models.SlugField(ugettext_lazy(u'Key'),
         max_length=25, primary_key=True,
         unique=True, db_index=True,
-        help_text=ugettext_lazy(u'Will be used to generate the URL.  '
+        help_text=ugettext_lazy(u'Will be used to generate the URL. '
                                 u'Cannot be changed later.'))
     title = models.CharField(ugettext_lazy(u'Title'), max_length=200)
     content = models.TextField(ugettext_lazy(u'Content'),

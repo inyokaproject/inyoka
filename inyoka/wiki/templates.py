@@ -49,7 +49,7 @@ def expand_page_template(template, context, macro_behavior=False):
         if not macro_behavior:
             raise ValueError('no template given')
         return nodes.error_box(_(u'Wrong arguments'),
-                               _(u'The first argument must be the name of the template'))
+                               _(u'The first argument must be the name of the template.'))
     try:
         page = Page.objects.get_by_name(template, raise_on_deleted=True)
     except Page.DoesNotExist:
@@ -154,22 +154,22 @@ class Parser(object):
         self.stream.next()
         if not self.stream.test('variable'):
             raise TemplateSyntaxError(
-                _(u'Invalid syntax for this loop.  The first argument '
-                  u'must be a variable'))
+                _(u'Invalid syntax for this loop. The first argument '
+                  u'must be a variable.'))
         variable = self.stream.current.value[1:]
         self.stream.next()
         if not self.stream.test('raw', 'in'):
             raise TemplateSyntaxError(
-                _(u'Invalid syntax for this loop.  After the first variable '
+                _(u'Invalid syntax for this loop. After the first variable '
                   u'an “in” is required.'))
         self.stream.next()
         seq = self.parse_expr()
         if not self.stream.test('tag_end'):
-            raise TemplateSyntaxError(_(u'Loop header contains too much arguments'))
+            raise TemplateSyntaxError(_(u'Loop header contains too many arguments.'))
         self.stream.next()
         body = self.subparse(lambda: self.stream.test('raw', 'endfor'))
         if not self.stream.test('tag_end'):
-            raise TemplateSyntaxError(_(u'Loop end contains too much arguments'))
+            raise TemplateSyntaxError(_(u'Loop end contains too many arguments.'))
         self.stream.next()
         return For(variable, seq, body)
 
@@ -178,7 +178,7 @@ class Parser(object):
         expr = self.parse_expr()
         if not self.stream.test('tag_end'):
             raise TemplateSyntaxError(
-                _(u'Conditions allow only one expression per block'))
+                _(u'Conditions allow only one expression per block.'))
         self.stream.next()
         tests = [(expr, self.subparse(lambda: self.stream.test('raw',
                  ('endif', 'else', 'elseif')), drop_needle=False))]
@@ -352,7 +352,7 @@ class Parser(object):
                 node = self.parse_expr()
                 if not self.stream.test('operator', ')'):
                     raise TemplateSyntaxError(
-                        _(u'Brackets were not closed properly.'))
+                        _(u'Parentheses were not closed properly.'))
             elif value == '[':
                 items = {}
                 next_numeric = 0

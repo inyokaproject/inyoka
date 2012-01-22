@@ -196,7 +196,7 @@ def parse(markup, wiki_force_existing=False, catch_stack_errors=True,
             raise
         return nodes.Paragraph([
             nodes.Strong([nodes.Text(_(u'Internal error: '))]),
-            nodes.Text(_(u'The parser found too deeply nested elements'))
+            nodes.Text(_(u'The parser found too deeply nested elements.'))
         ])
 
 
@@ -886,7 +886,7 @@ class Parser(object):
         if macro is None:
             return nodes.error_box(
                 _(u'Missing macro'),
-                _(u'The macro “%(name)s does not exist') % {'name': name})
+                _(u'The macro “%(name)s” does not exist.') % {'name': name})
         elif macro.is_tree_processor:
             placeholder = nodes.DeferredNode(macro)
             self.deferred_macros[macro.stage].append((placeholder, macro))

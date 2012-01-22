@@ -77,8 +77,8 @@ class SurgeProtectionMixin(object):
 
     source_protection_timeout = 15
     source_protection_message = ugettext_lazy(
-        u'You canot send this form not so fast in a row. Please '
-        u'wait some time before sending the form again.')
+        u'You cannot send data that fast in a row. '
+        u'Please wait a bit until you submit the form again.')
     source_protection_identifier = None
 
     def clean(self):

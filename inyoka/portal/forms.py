@@ -119,9 +119,9 @@ class RegisterForm(forms.Form):
     email = EmailField(label=ugettext_lazy(u'E-mail'),
         help_text=ugettext_lazy(u'We need your email '
         u'address to send you a new password if you forgot it. It is not '
-        u'visible for other users. For more information, check out our '
-        u'<a href="%(link)s">privacy police</a>.') % {'link': href('portal',
-                                                             'datenschutz')})
+        u'visible to other users. For more information, check out our '
+        u'<a href="%(link)s">privacy police</a>.') % {
+            'link': href('portal', 'datenschutz')})
     password = forms.CharField(label=_('Password'),
         widget=forms.PasswordInput(render_value=False))
     confirm_password = forms.CharField(label=_('Confirm password'),
@@ -480,7 +480,7 @@ class CreateUserForm(forms.Form):
             )
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError(
-                _(u'The username is already in use.  Please take another one'))
+                _(u'The username is already in use. Please take another one.'))
         return username
 
     def clean_confirm_password(self):

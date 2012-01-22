@@ -2069,7 +2069,7 @@ def config(request):
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
 
-            flash(_(u'Your settings were successfully changed.'), True)
+            flash(_(u'Your settings have been successfully changed.'), True)
         else:
             flash(_(u'Errors occurred, please fix them.'), False)
     else:
