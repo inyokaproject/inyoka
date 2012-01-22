@@ -16,8 +16,7 @@ from django.core.cache import cache
 from django.utils.dates import MONTHS
 from django.utils.http import urlencode
 from django.utils.text import truncate_html_words
-from django.utils.translation import ungettext
-from django.utils.translation import ugettext as _
+from django.utils.translation import ungettext, ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils import ctype
@@ -222,16 +221,18 @@ def article_delete(request, year, month, day, slug):
         if 'unpublish' in request.POST:
             article.public = False
             article.save()
-            flash(u'Die Veröffentlichung des Artikels „<a href="%s">%s</a>“'
-                  ' wurde aufgehoben.'
-                  % (escape(url_for(article, 'show')), escape(article.subject)))
+            flash(_(u'The publication of the article “<a href="%(link)s">%(title)s</a>“'
+                    u' has been revoked.')
+                  % { 'link': escape(url_for(article, 'show')),
+                      'title': escape(article.subject)})
         elif 'cancel' in request.POST:
-            flash(u'Löschen des Artikels „<a href="%s">%s</a>“ wurde abgebrochen.'
-                  % (escape(url_for(article, 'show')), escape(article.subject)))
+            flash(_(u'Deletion of the article “<a href="%(link)s">%(title)s</a>“ was cancled.')
+                  % { 'link': escape(url_for(article, 'show')),
+                      'title': escape(article.subject)})
         else:
             article.delete()
-            flash(u'Der Artikel „%s“ wurde erfolgreich gelöscht.'
-                  % escape(article.subject), True)
+            flash(_(u'The article “%(title)s“ was deleted.')
+                    % {'title': escape(article.subject)}, True)
     else:
         flash(render_template('ikhaya/article_delete.html',
               {'article': article}))
@@ -460,7 +461,7 @@ def comment_edit(request, comment_id):
             if form.is_valid():
                 comment.text = form.cleaned_data['text']
                 comment.save()
-                flash('The comment was saved.', True)
+                flash(_(u'The comment was saved.'), True)
                 return HttpResponseRedirect(comment.get_absolute_url())
         else:
             form = EditCommentForm(initial={'text': comment.text})
@@ -535,12 +536,12 @@ def suggest_delete(request, suggestion):
                         'username': request.user.username,
                         'note':     request.POST['note']}
                 send_notification(s.author, u'suggestion_rejected',
-                    u'Ikhaya-Vorschlag gelöscht', args)
+                    _(u'Article suggestion deleted'), args)
 
                 # Send the user a private message
                 msg = PrivateMessage()
                 msg.author = request.user
-                msg.subject = u'Ikhaya-Vorschlag gelöscht'
+                msg.subject = _(u'Article suggestion deleted')
                 msg.text = render_template('mails/suggestion_rejected.txt', args)
                 msg.pub_date = datetime.utcnow()
                 recipients = [s.author]
@@ -827,11 +828,13 @@ def feed_comment(request, id=None, mode='short', count=10):
     article = None
     if id:
         article = Article.published.get(id=id)
-        title = u'%s Ikhaya-Kommentare – %s' % (settings.BASE_DOMAIN_NAME,
-                                                article.subject)
+        title = _(u'%(domain)s Ikhaya comments – %(title)s') % {
+                    'domain': settings.BASE_DOMAIN_NAME,
+                    'title': article.subject}
         url = url_for(article)
     else:
-        title = u'%s Ikhaya-Kommentare' % settings.BASE_DOMAIN_NAME
+        title = _(u'%(domain)s Ikhaya comments') % {
+                    'domain': settings.BASE_DOMAIN_NAME}
         url = href('ikhaya')
 
     comments = Comment.objects.get_latest_comments(article.id if article else None, count)
