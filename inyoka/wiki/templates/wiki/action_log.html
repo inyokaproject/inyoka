@@ -68,7 +68,7 @@
             </td>
             <td class="changeset">
               <span class="time-elapsed">
-                <abbr title="{{ revision.change_date|timedeltaformat(short=True) }}">{{ revision.change_date|datetimeformat }}</abbr>
+                <abbr title="{{ revision.change_date|timedeltaformat }}">{{ revision.change_date|datetimeformat }}</abbr>
                 {% if revision.note %}:{% endif %}</span>
               &nbsp;
               {% if revision.note %}{{ revision.note|e }}{% endif %}

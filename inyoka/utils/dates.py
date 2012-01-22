@@ -11,10 +11,11 @@
 import re
 import pytz
 from operator import attrgetter
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, time
+from django.contrib.humanize.templatetags.humanize import naturalday
 from django.utils import datetime_safe
 from django.utils.dateformat import DateFormat
-from django.utils.translation import get_language_from_request
+from django.utils.translation import get_language_from_request, ugettext as _
 from inyoka.utils.local import current_request
 
 
@@ -164,67 +165,6 @@ def format_iso8601(obj):
     return datetime_safe.new_datetime(obj).strftime('%Y-%d-%mT%H:%M:%SZ')
 
 
-def format_timedelta(d, now=None, use_since=False, short=False):
-    """
-    Format a timedelta.  Currently this method only works with
-    dates in the past.
-    """
-    chunks = (
-        (60 * 60 * 24 * 365, ('m', 'Jahr', 'Jahren')),
-        (60 * 60 * 24 * 30, ('m', 'Monat', 'Monaten')),
-        (60 * 60 * 24 * 7, ('f', 'Woche', 'Wochen')),
-        (60 * 60 * 24, ('m', 'Tag', 'Tagen')),
-        (60 * 60, ('f', 'Stunde', 'Stunden')),
-        (60, ('f', 'Minute', 'Minuten')),
-        (1, ('f', 'Sekunde', 'Sekunden'))
-    )
-    if now is None:
-        now = datetime.utcnow().replace(tzinfo=pytz.UTC)
-    elif now.tzinfo is not None:
-        now = d.astimezone(pytz.UTC)
-    else:
-        now = d.replace(tzinfo=pytz.UTC)
-    if isinstance(d, date):
-        d = datetime(d.year, d.month, d.day)
-    if d.tzinfo is None:
-        d = d.replace(tzinfo=pytz.UTC)
-    else:
-        d = d.astimezone(pytz.UTC)
-    delta = now - d
-
-    since = delta.days * 24 * 60 * 60 + delta.seconds
-    if since <= 0:
-        return 'gerade eben'
-
-    for idx, (seconds, detail) in enumerate(chunks):
-        count = since // seconds
-        if count != 0:
-            result = [(count, detail)]
-            break
-
-    if not short:
-        if idx + 1 < len(chunks):
-            seconds2, detail = chunks[idx + 1]
-            count = (since - (seconds * count)) // seconds2
-            if count != 0:
-                result.append((count, detail))
-
-    def format(num, genus, singular, plural):
-        if not 0 < num <= 12:
-            return '%d %s' % (num, plural)
-        elif num == 1:
-            return {
-                'm':        'einem',
-                'f':        'einer'
-            }[genus] + ' ' + singular
-        return ('zwei', 'drei', 'vier', u'fünf', 'sechs',
-                'sieben', 'acht', 'neun', 'zehn', 'elf',
-                u'zwölf')[num - 2] + ' ' + plural
-
-    return (use_since and 'seit' or 'vor') + ' ' + \
-           u' und '.join(format(a, *b) for a, b in result)
-
-
 def timedelta_to_seconds(t):
     """
     Convert a datetime.timedelta to Seconds.
@@ -232,43 +172,24 @@ def timedelta_to_seconds(t):
     return t.days * 86400 + t.seconds
 
 
-def natural_date(value, prefix=False, enforce_utc=False):
-    """
-    Format a value using dateformat but also use today, tomorrow and
-    yesterday.  If a date object is given no timezone logic is applied,
-    otherwise the usual timezone conversion rules apply.
-    """
-    if not isinstance(value, datetime):
-        value = datetime(value.year, value.month, value.day)
-        delta = datetime.utcnow() - value
-    else:
-        value = datetime_to_timezone(value, enforce_utc)
-        delta = datetime.utcnow().replace(tzinfo=pytz.UTC) - value
-    #TODO: I'm not sure if writing tomorrow, today, yesterday is enough
-    if -1 <= delta.days <= 1:
-        return (u'morgen', u'heute', u'gestern')[delta.days + 1]
-    return (prefix and 'am ' or '') + DateFormat(value).format('j. F Y')
-
-
-def format_time(value, enforce_utc=False):
+def format_time(value, daytime=False):
     """Format a datetime object for time."""
-    value = datetime_to_timezone(value, enforce_utc)
-    rv = DateFormat(value).format('H:i')
-    if enforce_utc:
-        rv += ' (UTC)'
-    return rv
+    if isinstance(value, time):
+        value = datetime.combine(datetime.utcnow().date(), value)
+    value = datetime_to_timezone(value)
+
+    format = 'H:i a' if daytime else 'H:i'
+    return DateFormat(value).format(format)
 
 
-def format_datetime(value, enforce_utc=False):
+def format_datetime(value):
     """Just format a datetime object."""
-    value = datetime_to_timezone(value, enforce_utc)
+    value = datetime_to_timezone(value)
     rv = DateFormat(value).format('j. F Y H:i')
-    if enforce_utc:
-        rv += ' (UTC)'
     return rv
 
 
-def format_specific_datetime(value, alt=False, enforce_utc=False):
+def format_specific_datetime(value):
     """
     Use German grammar to format a datetime object for a
     specific datetime.
@@ -276,15 +197,6 @@ def format_specific_datetime(value, alt=False, enforce_utc=False):
     if not isinstance(value, datetime):
         value = datetime(value.year, value.month, value.day)
 
-    delta = datetime.utcnow().replace(tzinfo=pytz.UTC).date() - \
-            datetime_to_timezone(value, True).date()
-    if -1 <= delta.days <= 1:
-        string = (
-            (u'von morgen ', u'morgen um '),
-            (u'von heute ', u'heute um '),
-            (u'von gestern ', 'gestern um ')
-        )[delta.days + 1][bool(alt)]
-    else:
-        string = (alt and u'am %s um ' or 'vom %s um ') % \
-            DateFormat(value).format('j. F Y')
-    return string + format_time(value, enforce_utc) + ' Uhr'
+    return _(u'%(date)s at %(time)s') % {
+        'date': naturalday(value),
+        'time': format_time(value, True)}

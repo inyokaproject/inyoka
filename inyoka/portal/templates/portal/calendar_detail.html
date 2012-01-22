@@ -25,7 +25,21 @@
   {%- trans title=event.name|e %}Event “{{ title }}“{% endtrans -%}
 </h3>
 <table class="vevent admin_link_hover">
-  <tr><th>{% trans %}Date{% endtrans %}</th><td>{{ event.natural_datetime }}</td></tr>
+  <tr><th>{% trans %}Date{% endtrans %}</th><td>
+    {{ _('from') }} {{ event.date|dateformat }}
+    {% if event.time %}
+      {{ event.time|timeformat }}
+    {% endif %}
+    {%- if event.enddate or event.endtime %}
+      {{ _('to') }}
+      {% if event.enddate %}
+        {{ event.enddate|dateformat }}
+      {% endif %}
+      {% if event.endtime %}
+        {{ event.endtime|timeformat }}
+      {% endif %}
+    {% endif %}
+  </td></tr>
   {%- if event.location_town %}
   <tr>
     <th>{% trans %}Location{% endtrans %}</th>
