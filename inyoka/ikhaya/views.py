@@ -13,6 +13,7 @@ from datetime import datetime, date, time as dt_time
 
 from django.conf import settings
 from django.core.cache import cache
+from django.utils.dates import MONTHS
 from django.utils.http import urlencode
 from django.utils.text import truncate_html_words
 from django.utils.translation import ungettext
@@ -27,7 +28,7 @@ from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.flashing import flash
 from inyoka.utils.pagination import Pagination
 from inyoka.utils import generic
-from inyoka.utils.dates import MONTHS, get_user_timezone, date_time_to_datetime
+from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.notification import send_notification
@@ -81,7 +82,7 @@ def context_modifier(request, context):
         cache.set('ikhaya/categories', categories)
 
     context.update(
-        MONTHS=dict(enumerate([''] + MONTHS)),
+        MONTHS=MONTHS,
         categories=categories,
         **data
     )
