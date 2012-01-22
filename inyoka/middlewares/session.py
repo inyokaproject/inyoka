@@ -20,7 +20,7 @@ from hashlib import md5
 from time import time
 from random import random
 from django.conf import settings
-from django.utils.translate import ugettext as _
+from django.utils.translation import ugettext as _
 from werkzeug import cookie_date
 from werkzeug.contrib.securecookie import SecureCookie
 from inyoka.utils.flashing import flash
