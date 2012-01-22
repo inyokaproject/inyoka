@@ -860,6 +860,11 @@ class ConfigurationForm(forms.Form):
                                    widget=forms.Textarea(attrs={'rows': 2}))
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
+    ikhaya_description = forms.CharField(required=False,
+        widget=forms.Textarea(attrs={'rows': 3}),
+        label=ugettext_lazy(u'Description about ikhaya that will be used '
+                            u'on the start page and in the feed aggregations.'))
+
     def clean_global_message(self):
         return cleanup_html(self.cleaned_data.get('global_message', ''))
 

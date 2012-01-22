@@ -2039,7 +2039,8 @@ def config(request):
             'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
             'license_note', 'get_ubuntu_description', 'blocked_hosts',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
-            'team_icon_height', 'team_icon_width', 'distri_versions']
+            'team_icon_height', 'team_icon_width', 'distri_versions',
+            'ikhaya_description']
 
     team_icon = storage['team_icon']
 

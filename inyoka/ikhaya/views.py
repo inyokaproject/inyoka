@@ -29,6 +29,7 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils import generic
 from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
 from inyoka.utils.sortable import Sortable
+from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.notification import send_notification
 from inyoka.utils.html import escape
@@ -44,12 +45,6 @@ from inyoka.ikhaya.models import Event, Category, Article, Suggestion, \
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.ikhaya.notifications import send_comment_notifications, \
     send_new_suggestion_notifications
-
-
-#TODO: move to settings or provide a form in the interface.
-IKHAYA_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
-    u'Community. Hier werden Nachrichten und Berichte rund um Ubuntu, Linux' \
-    u' und OpenSource-Software veröffentlicht.'
 
 
 def context_modifier(request, context):
@@ -83,6 +78,7 @@ def context_modifier(request, context):
     context.update(
         MONTHS=MONTHS,
         categories=categories,
+        ikhaya_description=storage['ikhaya_description'],
         **data
     )
 
@@ -793,7 +789,7 @@ def feed_article(request, slug=None, mode='short', count=10):
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
                     url=url, rights=href('portal', 'lizenz'), id=url,
                     icon=href('static', 'img', 'favicon.ico'),
-                    subtitle=IKHAYA_DESCRIPTION)
+                    subtitle=storage['ikhaya_description'])
 
     for article in articles:
         kwargs = {}
@@ -840,7 +836,8 @@ def feed_comment(request, id=None, mode='short', count=10):
     comments = Comment.objects.get_latest_comments(article.id if article else None, count)
 
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
-                    subtitle=IKHAYA_DESCRIPTION, rights=href('portal', 'lizenz'),
+                    subtitle=storage['ikhaya_description'],
+                    rights=href('portal', 'lizenz'),
                     id=url, url=url, icon=href('static', 'img', 'favicon.ico'),)
 
     for comment in comments[:count]:
