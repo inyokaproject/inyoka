@@ -24,6 +24,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.shortcuts import get_object_or_404
+from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.decorators import method_decorator
 from django.utils.translation import ungettext, pgettext
 from django.utils.translation import ugettext as _
@@ -33,7 +34,7 @@ from django_mobile import get_flavour
 
 from inyoka.utils import decode_confirm_data, generic
 from inyoka.utils.text import get_random_password, normalize_pagename
-from inyoka.utils.dates import MONTHS, WEEKDAYS, DEFAULT_TIMEZONE, \
+from inyoka.utils.dates import DEFAULT_TIMEZONE, \
     get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, HttpResponse, \
      PageNotFound, does_not_exist_is_404, HttpResponseRedirect
@@ -1879,8 +1880,8 @@ def calendar_month(request, year, month):
         'year': year,
         'month': month,
         'today': datetime.utcnow().date(),
-        'MONTHS': dict(list(enumerate([''] + MONTHS))[1:]),
-        'WEEKDAYS': dict(enumerate(WEEKDAYS)),
+        'MONTHS': MONTHS,
+        'WEEKDAYS': WEEKDAYS,
     }
 
 
@@ -1892,8 +1893,8 @@ def calendar_overview(request):
         'events': events,
         'year': datetime.utcnow().year,
         'month': datetime.utcnow().month,
-        'MONTHS': dict(list(enumerate([''] + MONTHS))[1:]),
-        'WEEKDAYS': dict(enumerate(WEEKDAYS)),
+        'MONTHS': MONTHS,
+        'WEEKDAYS': WEEKDAYS,
     }
 
 
@@ -1906,8 +1907,8 @@ def calendar_detail(request, slug):
     return {
         'google_link': google_calendarize(event),
         'event': event,
-        'MONTHS': dict(list(enumerate([''] + MONTHS))[1:]),
-        'WEEKDAYS': dict(enumerate(WEEKDAYS)),
+        'MONTHS': MONTHS,
+        'WEEKDAYS': WEEKDAYS,
     }
 
 

@@ -14,11 +14,11 @@ from hashlib import md5
 from urlparse import urlparse
 
 from django.conf import settings
+from django.utils.dates import MONTHS, WEEKDAYS
 from inyoka.portal.user import User, Group
 from inyoka.ikhaya.models import Event
 from inyoka.utils.text import get_random_password
 from inyoka.utils.http import PageNotFound
-from inyoka.utils.dates import MONTHS, WEEKDAYS
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.captcha import Captcha
 from inyoka.utils.templating import render_template
@@ -88,8 +88,8 @@ def on_get_calendar_entry(request):
 
     data = {
         'event': event,
-        'MONTHS': dict(list(enumerate(MONTHS))[1:]),
-        'WEEKDAYS': dict(enumerate(WEEKDAYS)),
+        'MONTHS': MONTHS,
+        'WEEKDAYS': WEEKDAYS,
     }
     return render_template('portal/_calendar_detail.html', data)
 
