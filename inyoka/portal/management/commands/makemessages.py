@@ -20,3 +20,16 @@ class Command(BaseCommand):
         call(['pybabel', 'update', '-D', 'django', '-i',
               'inyoka/locale/django.pot', '-d',
               'inyoka/locale', '-l', 'de_DE'])
+
+        for app in APPS:
+            call(['pybabel', 'extract', '-F', 'extra/babeljs.cfg', '-o',
+                  'inyoka/%s/locale/djangojs.pot' % app, 'inyoka/%s' % app])
+            call(['pybabel', 'update', '-D', 'djangojs', '-i',
+                  'inyoka/%s/locale/djangojs.pot' % app, '-d',
+                  'inyoka/%s/locale' % app, '-l', 'de_DE'])
+
+        call(['pybabel', 'extract', '-F', 'extra/babeljs.cfg', '-o',
+              'inyoka/locale/djangojs.pot', 'inyoka/templates', 'inyoka/static'])
+        call(['pybabel', 'update', '-D', 'djangojs', '-i',
+              'inyoka/locale/djangojs.pot', '-d',
+              'inyoka/locale', '-l', 'de_DE'])
