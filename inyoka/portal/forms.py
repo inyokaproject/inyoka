@@ -59,7 +59,7 @@ SEARCH_AREA_CHOICES = (
 )
 
 SEARCH_SORT_CHOICES = (
-    ('', 'Bereichsvorgabe verwenden'), #TODO: Bereichswas? Translation?
+    ('', ugettext_lazy(u'Use default value')),
     ('date', ugettext_lazy(u'Date')),
     ('relevance', ugettext_lazy(u'Relevance')),
     ('magic', ugettext_lazy(u'Date and relevance')),
@@ -116,7 +116,8 @@ class RegisterForm(forms.Form):
     for bots that just fill out everything.
     """
     username = forms.CharField(label=_('Username'), max_length=20)
-    email = EmailField(label='E-Mail', help_text=ugettext_lazy(u'We need your email '
+    email = EmailField(label=ugettext_lazy(u'E-mail'),
+        help_text=ugettext_lazy(u'We need your email '
         u'address to send you a new password if you forgot it. It is not '
         u'visible for other users. For more information, check out our '
         u'<a href="%(link)s">privacy police</a>.') % {'link': href('portal',
@@ -234,8 +235,7 @@ class SetNewPasswordForm(forms.Form):
         data = super(SetNewPasswordForm, self).clean()
         if 'password' not in data or 'password_confirm' not in data or \
            data['password'] != data['password_confirm']:
-            raise forms.ValidationError(u'Die Passwörter stimmen nicht '
-                                        u'überein!')
+            raise forms.ValidationError(_(u'The passwords do not match!'))
         try:
             data['user'] = User.objects.get(self['username'].data,
                                new_password_key=self['new_password_key'].data)
@@ -270,7 +270,7 @@ class UserCPSettingsForm(forms.Form):
         choices=NOTIFICATION_CHOICES,
         widget=forms.CheckboxSelectMultiple)
     ubuntu_version = forms.MultipleChoiceField(
-        label='Benachrichtigung bei neuen Topics mit bestimmter Ubuntu Version',
+        label=ugettext_lazy(u'Notifications on topics with a specific Ubuntu version'),
         required=False, choices=SIMPLE_VERSION_CHOICES,
         widget=forms.CheckboxSelectMultiple)
     timezone = forms.ChoiceField(label=ugettext_lazy(u'Timezone'), required=True,
@@ -287,7 +287,7 @@ class UserCPSettingsForm(forms.Form):
         label=ugettext_lazy(u'Attachment preview'))
     show_thumbnails = forms.BooleanField(required=False,
         label=ugettext_lazy(u'Picture preview'),
-        help_text=ugettext_lazy(u'No effect if “Attachment preview“ is disabled'))
+        help_text=ugettext_lazy(u'No effect if “attachment preview“ is disabled'))
     highlight_search = forms.BooleanField(required=False,
         label=ugettext_lazy(u'Highlight search'))
     mark_read_on_logout = forms.BooleanField(required=False,
@@ -443,17 +443,16 @@ class EditUserProfileForm(UserCPProfileForm):
                 _(u'Your username contains invalid characters. Only '
                   u'alphanumeric chars and “-” and “ “ are allowed.')
             )
-        if (self.user.username != username and
-            User.objects.filter(username=username).exists()):
-                raise forms.ValidationError(
-                    _(u'A user with this name does already exist.')
-                )
+        exists = User.objects.filter(username=username).exists()
+        if (self.user.username != username and exists):
+            raise forms.ValidationError(
+                _(u'A user with this name already exists.'))
         return username
 
 
 class EditUserGroupsForm(forms.Form):
     primary_group = forms.CharField(label=ugettext_lazy(u'Primary group'), required=False,
-        help_text=ugettext_lazy(u'Will be used for displaying the team icon'))
+        help_text=ugettext_lazy(u'Will be used to display the team icon'))
 
 
 class CreateUserForm(forms.Form):
@@ -481,8 +480,7 @@ class CreateUserForm(forms.Form):
             )
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError(
-                u'Der Benutzername ist leider schon vergeben. '
-                u'Bitte wähle einen anderen.')
+                _(u'The username is already in use.  Please take another one'))
         return username
 
     def clean_confirm_password(self):
@@ -570,12 +568,12 @@ class EditUserPasswordForm(forms.Form):
 
 
 class EditUserPrivilegesForm(forms.Form):
-    permissions = forms.MultipleChoiceField(label=u'Privilegien',
+    permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
                                             required=False)
 
 
 class UserMailForm(forms.Form):
-    text = forms.CharField(label=u'Text',
+    text = forms.CharField(label=ugettext_lazy(u'Text'),
         widget=forms.Textarea(),
         help_text=ugettext_lazy(u'The message will be send as “plain text“. Your username '
                     u'will be noted as sender.')
@@ -839,8 +837,8 @@ class ConfigurationForm(forms.Form):
     max_signature_lines = forms.IntegerField(min_value=1,
         label=ugettext_lazy(u'Maximum number of lines in signature'))
     get_ubuntu_link = forms.URLField(required=False,
-        label=u'Der Downloadlink für die Startseite')
-    get_ubuntu_description = forms.CharField(label=u'Beschreibung des Links')
+        label=ugettext_lazy(u'The download link for the start page'))
+    get_ubuntu_description = forms.CharField(label=ugettext_lazy(u'Description of the link'))
     wiki_newpage_template = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}),
         label=ugettext_lazy(u'Default text of new wikipages'))

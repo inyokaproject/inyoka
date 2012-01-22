@@ -10,6 +10,7 @@
 """
 from itertools import chain
 from django.utils.encoding import force_unicode
+from django.utils.translation import ugettext_lazy
 from django_filters import FilterSet, ChoiceFilter
 from django_filters.widgets import LinkWidget as BaseLinkWidget
 from inyoka.portal.models import Subscription
@@ -17,10 +18,10 @@ from inyoka.utils.urls import urlencode
 
 
 SUPPORTED_SUBSCRIPTION_TYPES = {
-    'topic': u'Topic',
-    'forum': u'Forum',
-    'article': u'Ikhaya-Artikel',
-    'page': u'Wikiseite'
+    'topic': ugettext_lazy(u'Topic'),
+    'forum': ugettext_lazy(u'Forum'),
+    'article': ugettext_lazy(u'Ikhaya article'),
+    'page': ugettext_lazy(u'Wiki page')
 }
 
 
@@ -57,7 +58,7 @@ class LinkWidget(BaseLinkWidget):
 
 class SubscriptionFilter(FilterSet):
     content_type = ChoiceFilter(name='content_type__name', label='',
-        choices=(('', u'Alle Typen'),) + tuple(SUPPORTED_SUBSCRIPTION_TYPES.iteritems()),
+        choices=(('', ugettext_lazy(u'All types')),) + tuple(SUPPORTED_SUBSCRIPTION_TYPES.iteritems()),
         widget=LinkWidget)
 
     class Meta:
