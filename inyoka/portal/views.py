@@ -2042,7 +2042,7 @@ def config(request):
             'license_note', 'get_ubuntu_description', 'blocked_hosts',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
             'team_icon_height', 'team_icon_width', 'distri_versions',
-            'ikhaya_description']
+            'ikhaya_description', 'planet_description']
 
     team_icon = storage['team_icon']
 

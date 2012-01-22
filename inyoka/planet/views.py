@@ -25,9 +25,10 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.mail import send_mail
 from inyoka.utils.dates import group_by_day
+from inyoka.utils.storage import storage
+from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.planet.models import Blog, Entry
 from inyoka.planet.forms import SuggestBlogForm, EditBlogForm
-from inyoka.utils.feeds import atom_feed, AtomFeed
 
 
 
@@ -114,8 +115,7 @@ def feed(request, mode='short', count=10):
     feed = AtomFeed(title, url=href('planet'),
                     feed_url=request.build_absolute_uri(),
                     id=href('planet'),
-                    subtitle=u'Der ubuntuusers-Planet sammelt '
-                             u'verschiedene Blogs zu Ubuntu und Linux',
+                    subtitle=storage['planet_description'],
                     rights=href('portal', 'lizenz'),
                     icon=href('static', 'img', 'favicon.ico'))
 
