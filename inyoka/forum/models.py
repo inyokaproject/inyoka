@@ -561,16 +561,17 @@ class Topic(models.Model):
                 return version[0]
             return ''
 
-    #: TODO fix translation: see inyoka.forum.constants
-    def get_version_info(self, default=u'Nicht angegeben'):
+    def get_version_info(self, default=None):
+        if default is None:
+            default = _(u'Not specified')
         if not (self.ubuntu_version or self.ubuntu_distro):
             return default
-        if self.ubuntu_distro == u'keine':
-            return u'Kein Ubuntu'
+        if self.ubuntu_distro == u'none':
+            return _(u'No Ubuntu')
         out = []
         if self.ubuntu_distro:
             out.append(UBUNTU_DISTROS_LEGACY[self.ubuntu_distro])
-        if self.ubuntu_version and self.ubuntu_version != u'keine':
+        if self.ubuntu_version and self.ubuntu_version != u'none':
             out.append(str(self.get_ubuntu_version()))
         return u' '.join(out)
 
