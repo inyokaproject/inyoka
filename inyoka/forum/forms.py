@@ -244,7 +244,7 @@ class EditForumForm(forms.Form):
     force_version = forms.BooleanField(label=ugettext_lazy(u'Require Ubuntu version'),
                                        required=False)
     count_posts = forms.BooleanField(label=ugettext_lazy(u'Count posts in this forum'),
-        help_text=ugettext_lazy_(u'This value can only be changed by the Webteam'),
+        help_text=ugettext_lazy(u'This value can only be changed by the Webteam'),
         required=False, widget=forms.CheckboxInput({'readonly': True}))
 
     def __init__(self, *args, **kwargs):
