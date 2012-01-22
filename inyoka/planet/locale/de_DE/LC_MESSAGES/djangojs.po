@@ -1,0 +1,142 @@
+# German (Germany) translations for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-01-22 13:07+0100\n"
+"PO-Revision-Date: 2012-01-22 13:07+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: de_DE <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: inyoka/planet/templates/planet/blog_edit.html:15
+msgid "Add blog"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_edit.html:26
+#: inyoka/planet/templates/planet/suggest.html:32
+msgid "Submit"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:12
+#: inyoka/planet/templates/planet/page.html:70
+msgid "Bloglist"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:15
+#: inyoka/planet/templates/planet/page.html:48
+msgid "Blogs"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:16
+msgid "Add new blog"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:26
+msgid "Name"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:27
+msgid "User"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:28
+msgid "Latest update"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:29
+msgid "Activ"
+msgstr ""
+
+#: inyoka/planet/templates/planet/blog_list.html:37
+msgid "No entry"
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:11
+msgid "Are you sure you want to restore the entry?"
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:13
+msgid "Are you sure you want to hide the entry?"
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:16
+#: inyoka/planet/templates/planet/index.html:72
+msgid "Restore"
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:16
+#: inyoka/planet/templates/planet/index.html:72
+msgid "Hide"
+msgstr ""
+
+#: inyoka/planet/templates/planet/hide_entry.html:17
+#: inyoka/planet/templates/planet/suggest.html:33
+msgid "Cancel"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:13
+msgid "Planet - Captions"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:14
+msgid "Planet - Teaser"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:15
+msgid "Planet - Full article"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:22
+msgid "Recent articles"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:53
+msgid "« Prev"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:56
+msgid "Next »"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:65
+#: inyoka/planet/templates/planet/index.m.html:22
+msgid "Permanent link"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:68
+#, python-format
+msgid "Hidden by: <a href=\"%(link)s\">%(name)s</a>"
+msgstr ""
+
+#: inyoka/planet/templates/planet/index.html:87
+#: inyoka/planet/templates/planet/index.m.html:31
+msgid "No articles were aggregated"
+msgstr ""
+
+#: inyoka/planet/templates/planet/page.html:13
+#: inyoka/planet/templates/planet/page.html:29
+msgid "Planet"
+msgstr ""
+
+#: inyoka/planet/templates/planet/page.html:38
+msgid "Export blogs"
+msgstr ""
+
+#: inyoka/planet/templates/planet/page.html:66
+msgid "Configuration"
+msgstr ""
+
+#: inyoka/planet/templates/planet/suggest.html:12
+msgid "Suggest blog"
+msgstr ""
+

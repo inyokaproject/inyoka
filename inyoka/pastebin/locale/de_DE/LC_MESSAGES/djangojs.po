@@ -1,0 +1,109 @@
+# German (Germany) translations for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-01-22 13:07+0100\n"
+"PO-Revision-Date: 2012-01-22 13:07+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: de_DE <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: inyoka/pastebin/templates/pastebin/add.html:14
+#: inyoka/pastebin/templates/pastebin/page.html:29
+msgid "New paste"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/add.html:19
+msgid "About:"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/add.html:20
+msgid ""
+"This is a pastebin where you can save error messages, logs, configuration"
+" files or source codes to keep threads or IRC channels clean. To do this,"
+" just copy the text in the box below and choose the appropriate language."
+" After that, you copy the URL into the topic or the channel."
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/add.html:28
+msgid "Submit"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/browse.html:12
+msgid "Entries"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/browse.html:20
+#, python-format
+msgid ""
+"<a href=\"%(entry_link)s\">%(title)s</a> by <a "
+"href=\"%(author_link)s\">%(author)s</a>"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/browse.html:32
+msgid "No pastes were created yet."
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:15
+#, python-format
+msgid "Do you really want to delete the entry <a href=\"%(link)s\">%(entry)s</a>?"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:20
+msgid "Delete"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:21
+msgid "Cancel"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/display.html:23
+msgid "Title:"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/display.html:26
+msgid "Author:"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/display.html:29
+msgid "Date:"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/display.html:31
+msgid "Actions:"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/display.html:34
+msgid "Display entry as raw text"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/display.html:36
+msgid "Delete entry"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/display.html:41
+msgid "Pages that are referencing this entry:"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/display.html:48
+msgid "Code:"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/page.html:13
+msgid "Pastebin"
+msgstr ""
+
+#: inyoka/pastebin/templates/pastebin/page.html:30
+msgid "Browse pastes"
+msgstr ""
+
