@@ -10,6 +10,7 @@
 """
 from django import forms
 from django.utils.html import escape
+from django.utils.translation import ugettext as _, ugettext_lazy
 from inyoka.utils.forms import MultiField, SlugField, StrippedCharField
 from inyoka.forum.acl import CAN_READ
 from inyoka.forum.models import Topic, Forum
@@ -128,7 +129,7 @@ class MoveTopicForm(forms.Form):
     topic.
     """
     forum = ForumField()
- 
+
 
 class SplitTopicForm(forms.Form):
     """
@@ -165,8 +166,8 @@ class SplitTopicForm(forms.Form):
             try:
                 topic = Topic.objects.get(slug=slug)
             except Topic.DoesNotExist:
-                raise forms.ValidationError(u'Ein Thema mit diesem Slug '
-                                            u'existiert nicht')
+                raise forms.ValidationError(ugettext_lazy(u'No topic with this '
+                                                          u'slug found.'))
             return topic
         return slug
 
@@ -195,7 +196,7 @@ class AddAttachmentForm(forms.Form):
     attachment = forms.FileField(required=True)
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
-    comment = forms.CharField(label='Beschreibung', required=False,
+    comment = forms.CharField(label=ugettext_lazy(u'Description'), required=False,
                   widget=forms.TextInput(attrs={'size':'60'}))
 
 
@@ -213,7 +214,7 @@ class ReportTopicForm(forms.Form):
     It's only field is a text field where the user can write why he thinks
     that the moderators should have a look at this topic.
     """
-    text = forms.CharField(label='Begründung', widget=forms.Textarea)
+    text = forms.CharField(label=ugettext_lazy(u'Reason'), widget=forms.Textarea)
 
 
 class ReportListForm(forms.Form):
@@ -224,23 +225,24 @@ class ReportListForm(forms.Form):
     selected = forms.MultipleChoiceField()
 
 class EditForumForm(forms.Form):
-    name = forms.CharField(label=u'Name', max_length=100)
-    slug = SlugField(label=u'Slug', max_length=100, required=False)
+    name = forms.CharField(label=ugettext_lazy(u'Name'), max_length=100)
+    slug = SlugField(label=ugettext_lazy(u'Slug'), max_length=100, required=False)
     description = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}),
-                                  label=u'Beschreibung', required=False)
-    parent = ForumField(label=u'Elternforum', required=False)
-    position = forms.IntegerField(label=u'Position', initial=0)
+                                  label=ugettext_lazy(u'Description'), required=False)
+    parent = ForumField(label=ugettext_lazy(u'Parent'), required=False)
+    position = forms.IntegerField(label=ugettext_lazy(u'Position'), initial=0)
 
-    welcome_msg_subject = forms.CharField(label=u'Titel', max_length=120,
+    welcome_msg_subject = forms.CharField(label=ugettext_lazy(u'Title'), max_length=120,
         required=False)
-    welcome_msg_text = forms.CharField(label=u'Text', required=False,
+    welcome_msg_text = forms.CharField(label=ugettext_lazy(u'Text'), required=False,
                                        widget=forms.Textarea(attrs={'rows': 3}))
-    newtopic_default_text = forms.CharField(label=u'Standardtext für neue Themen',
+    newtopic_default_text = forms.CharField(label=ugettext_lazy(u'Defaul text for new topics'),
                                             widget=forms.Textarea(attrs={'rows': 3}),
                                             required=False)
-    force_version = forms.BooleanField(label=u'Angabe der Ubuntu-Version erzwingen',
+    force_version = forms.BooleanField(label=ugettext_lazy(u'Require Ubuntu version'),
                                        required=False)
-    count_posts = forms.BooleanField(label=u'Beiträge in diesem Forum werden gezählt',
+    #: TODO fix translation: Change the help_text
+    count_posts = forms.BooleanField(label=ugettext_lazy(u'Count posts in this forum'),
         help_text=u'Dieser Wert ist nur über das Webteam veränderbar',
         required=False, widget=forms.CheckboxInput({'readonly': True}))
 
@@ -251,24 +253,24 @@ class EditForumForm(forms.Form):
     def clean_welcome_msg_subject(self):
         data = self.cleaned_data
         if data.get('welcome_msg_text') and not data.get('welcome_msg_subject'):
-            raise forms.ValidationError(u'Du musst einen Titel angeben für die'
-                u' Willkommensnachricht')
+            raise forms.ValidationError(ugettext_lazy(u'You must enter a title '
+                u'in order to set the welcome message'))
         return data['welcome_msg_subject']
 
     def clean_welcome_msg_text(self):
         data = self.cleaned_data
         if data.get('welcome_msg_subject') and not data.get('welcome_msg_text'):
-            raise forms.ValidationError(u'Du musst einen Text für die '
-                u'Willkommensnachricht eingeben.')
+            raise forms.ValidationError(ugettext_lazy(u'You must enter a text '
+                u'in order to set the welcome message'))
         return data['welcome_msg_text']
 
     def clean_slug(self):
         data = self.cleaned_data['slug']
         if data == 'new':
-            raise forms.ValidationError(u"new is not a valid forum slug")
+            raise forms.ValidationError(ugettext_lazy(u'“new“ is not a valid forum slug'))
 
         slug = self.forum.slug if self.forum else ''
         if data != slug and Forum.objects.filter(slug=data).exists():
-            raise forms.ValidationError(u"Bitte einen anderen Slug angeben, „%s“ ist schon "
-                     u"vergeben." % escape(data))
+            raise forms.ValidationError(_(u'Please select another slug, '
+                u'“%(slug)s“ is already in use.') % {'slug': escape(data)})
         return data

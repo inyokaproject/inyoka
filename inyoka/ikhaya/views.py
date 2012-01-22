@@ -15,11 +15,12 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.utils.dates import MONTHS
 from django.utils.http import urlencode
 from django.utils.text import truncate_html_words
-from django.utils.translation import ungettext
-from django.utils.translation import ugettext as _
+from django.utils.translation import ungettext, ugettext as _
 from django.utils.html import escape
+from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils import ctype
 from inyoka.utils.urls import href, url_for, is_safe_domain
@@ -28,7 +29,7 @@ from inyoka.utils.http import templated, AccessDeniedResponse, \
 from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.pagination import Pagination
 from inyoka.utils import generic
-from inyoka.utils.dates import MONTHS, get_user_timezone, date_time_to_datetime
+from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.notification import send_notification
@@ -81,7 +82,7 @@ def context_modifier(request, context):
         cache.set('ikhaya/categories', categories)
 
     context.update(
-        MONTHS=dict(enumerate([''] + MONTHS)),
+        MONTHS=MONTHS,
         categories=categories,
         **data
     )
@@ -221,19 +222,22 @@ def article_delete(request, year, month, day, slug):
         if 'unpublish' in request.POST:
             article.public = False
             article.save()
-            messages.info(request,
-                u'Die Veröffentlichung des Artikels „<a href="%s">%s</a>“'
-                 ' wurde aufgehoben.'
-                  % (escape(url_for(article, 'show')), escape(article.subject)))
+            messages.info(request, 
+                _(u'The publication of the article '
+                  u'“<a href="%(link)s">%(title)s</a>“ has been revoked.')
+                  % {'link': escape(url_for(article, 'show')),
+                     'title': escape(article.subject)})
         elif 'cancel' in request.POST:
             messages.info(request,
-                u'Löschen des Artikels „<a href="%s">%s</a>“ wurde abgebrochen.'
-                  % (escape(url_for(article, 'show')), escape(article.subject)))
+                _(u'Deletion of the article '
+                  u'“<a href="%(link)s">%(title)s</a>“ was cancled.')
+                  % {'link': escape(url_for(article, 'show')),
+                     'title': escape(article.subject)})
         else:
             article.delete()
-            messages.success(request,
-                u'Der Artikel „%s“ wurde erfolgreich gelöscht.'
-                  % escape(article.subject))
+            messsages.success(request,
+                _(u'The article “%(title)s“ was deleted.')
+                  % {'title': escape(article.subject)})
     else:
         messages.info(request,
             render_template('ikhaya/article_delete.html',
@@ -547,12 +551,12 @@ def suggest_delete(request, suggestion):
                         'username': request.user.username,
                         'note':     request.POST['note']}
                 send_notification(s.author, u'suggestion_rejected',
-                    u'Ikhaya-Vorschlag gelöscht', args)
+                    _(u'Article suggestion deleted'), args)
 
                 # Send the user a private message
                 msg = PrivateMessage()
                 msg.author = request.user
-                msg.subject = u'Ikhaya-Vorschlag gelöscht'
+                msg.subject = _(u'Article suggestion deleted')
                 msg.text = render_template('mails/suggestion_rejected.txt', args)
                 msg.pub_date = datetime.utcnow()
                 recipients = [s.author]
@@ -842,11 +846,13 @@ def feed_comment(request, id=None, mode='short', count=10):
     article = None
     if id:
         article = Article.published.get(id=id)
-        title = u'%s Ikhaya-Kommentare – %s' % (settings.BASE_DOMAIN_NAME,
-                                                article.subject)
+        title = _(u'%(domain)s Ikhaya comments – %(title)s') % {
+                    'domain': settings.BASE_DOMAIN_NAME,
+                    'title': article.subject}
         url = url_for(article)
     else:
-        title = u'%s Ikhaya-Kommentare' % settings.BASE_DOMAIN_NAME
+        title = _(u'%(domain)s Ikhaya comments') % {
+                    'domain': settings.BASE_DOMAIN_NAME}
         url = href('ikhaya')
 
     comments = Comment.objects.get_latest_comments(article.id if article else None, count)

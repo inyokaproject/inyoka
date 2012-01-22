@@ -18,10 +18,6 @@ from django.utils.translation import get_language_from_request
 from inyoka.utils.local import current_request
 
 
-MONTHS = ['Januar', 'Februar', u'März', 'April', 'Mai', 'Juni',
-          'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
-WEEKDAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag',
-            'Samstag', 'Sonntag']
 TIMEZONES = pytz.common_timezones
 DEFAULT_TIMEZONE = pytz.timezone('Europe/Berlin')
 

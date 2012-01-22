@@ -15,6 +15,7 @@ from django.core.cache import cache
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy
 from django.utils import datetime_safe
 from django.utils.html import escape
 
@@ -150,9 +151,10 @@ class CommentManager(models.Manager):
 
 class Category(models.Model):
     name = models.CharField(max_length=180)
-    slug = models.CharField('Slug', max_length=100, blank=True, unique=True, db_index=True)
+    slug = models.CharField(ugettext_lazy(u'Slug'), max_length=100,
+            blank=True, unique=True, db_index=True)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-                             verbose_name='Icon', on_delete=models.SET_NULL)
+                             verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
 
     def __unicode__(self):
         return self.name
@@ -171,8 +173,8 @@ class Category(models.Model):
         cache.delete('ikhaya/categories')
 
     class Meta:
-        verbose_name = 'Kategorie'
-        verbose_name_plural = 'Kategorien'
+        verbose_name = ugettext_lazy(u'Category')
+        verbose_name_plural = ugettext_lazy(u'Categories')
 
 
 class Article(models.Model, LockableObject):
@@ -182,24 +184,27 @@ class Article(models.Model, LockableObject):
     published = ArticleManager(public=True)
     drafts = ArticleManager(public=False)
 
-    pub_date = models.DateField('Datum', db_index=True)
-    pub_time = models.TimeField('Zeit')
-    updated = models.DateTimeField('Letzte Änderung', blank=True, null=True, 
-                                   db_index=True)
+    pub_date = models.DateField(ugettext_lazy(u'Date'), db_index=True)
+    pub_time = models.TimeField(ugettext_lazy(u'Time'))
+    updated = models.DateTimeField(ugettext_lazy(u'Last change'), blank=True,
+                null=True, db_index=True)
     author = models.ForeignKey(User, related_name='article_set',
-                               verbose_name='Autor')
-    subject = models.CharField('Überschrift', max_length=180)
-    category = models.ForeignKey(Category, verbose_name='Kategorie',
+                               verbose_name=ugettext_lazy(u'Author'))
+    subject = models.CharField(ugettext_lazy(u'Headline'), max_length=180)
+    category = models.ForeignKey(Category, verbose_name=ugettext_lazy(u'Category'),
                                  on_delete=models.PROTECT)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-                             verbose_name='Icon', on_delete=models.SET_NULL)
-    intro = models.TextField('Einleitung')
-    text = models.TextField('Text')
-    public = models.BooleanField('Veröffentlicht')
-    slug = models.SlugField('Slug', max_length=100, blank=True, db_index=True)
-    is_xhtml = models.BooleanField('XHTML Markup', default=False)
+            verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
+    intro = models.TextField(ugettext_lazy(u'Introduction'))
+    text = models.TextField(ugettext_lazy(u'Text'))
+    public = models.BooleanField(ugettext_lazy(u'Public'))
+    slug = models.SlugField(ugettext_lazy(u'Slug'), max_length=100,
+            blank=True, db_index=True)
+    is_xhtml = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
+                default=False)
     comment_count = models.IntegerField(default=0)
-    comments_enabled = models.BooleanField('Kommentare erlaubt', default=True)
+    comments_enabled = models.BooleanField(ugettext_lazy(u'Allow comments'),
+                        default=True)
 
     @property
     def article_icon(self):
@@ -355,8 +360,8 @@ class Article(models.Model, LockableObject):
         self.update_search()
 
     class Meta:
-        verbose_name = 'Artikel'
-        verbose_name_plural = 'Artikel'
+        verbose_name = ugettext_lazy('Article')
+        verbose_name_plural = ugettext_lazy('Articles')
         ordering = ['-pub_date', '-pub_time', 'author']
         unique_together = ('pub_date', 'slug')
 
@@ -394,16 +399,17 @@ class Suggestion(models.Model):
     objects = SuggestionManager()
     author = models.ForeignKey(User, related_name='suggestion_set')
     pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
-    title = models.CharField(u'Titel', max_length=100)
-    text = models.TextField(u'Text')
-    intro = models.TextField(u'Einleitung')
-    notes = models.TextField(u'Anmerkungen', blank=True, default=u'')
+    title = models.CharField(ugettext_lazy(u'Title'), max_length=100)
+    text = models.TextField(ugettext_lazy(u'Text'))
+    intro = models.TextField(ugettext_lazy(u'Introduction'))
+    notes = models.TextField(ugettext_lazy(u'Annotations'), blank=True,
+                default=u'')
     owner = models.ForeignKey(User, related_name='owned_suggestion_set',
                               null=True, blank=True)
 
     class Meta:
-        verbose_name = 'Artikelvorschlag'
-        verbose_name_plural = 'Artikelvorschläge'
+        verbose_name = ugettext_lazy(u'Article suggestion')
+        verbose_name_plural = ugettext_lazy(u'Article suggestions')
 
     @property
     def rendered_text(self):
@@ -484,9 +490,9 @@ class Event(models.Model):
     author = models.ForeignKey(User)
     location = models.CharField(max_length=128, blank=True)
     location_town = models.CharField(max_length=56, blank=True)
-    location_lat = models.FloatField(u'Koordinaten (Breite)',
+    location_lat = models.FloatField(ugettext_lazy(u'Degree of latitude'),
                                      blank=True, null=True)
-    location_long = models.FloatField('Koordinaten (Länge)',
+    location_long = models.FloatField(ugettext_lazy(u'Degree of longitude'),
                                       blank=True, null=True)
     visible = models.BooleanField(default=False)
 
@@ -538,6 +544,7 @@ class Event(models.Model):
         return u'<span class="vevent">%s</span>' % ret
 
     #TODO: This property is too language specific, remove it.
+    #: TODO fix translation
     @property
     def natural_datetime(self):
         def _convert(d, t=None, time_only=False, prefix=True, end=False):

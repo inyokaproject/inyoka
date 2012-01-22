@@ -168,7 +168,7 @@ class CaptchaField(forms.Field):
             return True
         solution = current_request.session.get('captcha_solution')
         if not solution:
-            messages.error(current_request, u'Du musst Cookies aktivieren!')
+            messages.error(current_request, _(u'You have to accept cookies!'))
         elif value:
             h = md5(settings.SECRET_KEY)
             if isinstance(value, unicode):
@@ -178,8 +178,7 @@ class CaptchaField(forms.Field):
                 h.update(value)
             if h.digest() == solution:
                 return True
-        raise forms.ValidationError(u'Die Eingabe des Captchas war nicht '
-                                    u'korrekt')
+        raise forms.ValidationError(_(u'The entered CAPTCHA was incorrect.'))
 
 
 class StrippedCharField(forms.CharField):
@@ -193,8 +192,8 @@ class HiddenCaptchaField(forms.Field):
         if not value:
             return True
         else:
-            raise forms.ValidationError(u'Du hast ein unsichtbares Feld '
-                    u'ausgefüllt und wurdest deshalb als Bot identifiziert.')
+            raise forms.ValidationError(_(u'You have entered an invisible field '
+                    u'and are therefore classified as a bot.'))
 
 
 class EmailField(forms.CharField):
@@ -203,16 +202,12 @@ class EmailField(forms.CharField):
         value = super(EmailField, self).clean(value)
         value = value.strip()
         if is_blocked_host(value):
-            raise forms.ValidationError(u'''
-                Die von dir angegebene E-Mail-Adresse gehört zu einem
-                Anbieter, den wir wegen Spamproblemen sperren mussten.
-                Bitte gebe eine andere Adresse an.
-            '''.strip())
+            raise forms.ValidationError(_(u'The entered e-mail address belongs to a '
+                u'e-mail provider we had to block because of SPAM problems. Please '
+                u'choose another e-mail address'))
         elif not may_be_valid_mail(value):
-            raise forms.ValidationError(u'''
-                Die von dir angebene E-Mail-Adresse ist ungültig.  Bitte
-                überpfüfe die Eingabe.
-            '''.strip())
+            raise forms.ValidationError(_(u'The entered e-mail address is invalid. '
+                u'Please check your input.'))
         return value
 
 
@@ -223,10 +218,8 @@ class JabberField(forms.CharField):
             return
         value = value.strip()
         if not may_be_valid_jabber(value):
-            raise forms.ValidationError(u'''
-                Die von dir angegebene Jabber-Adresse ist ungültig.  Bitte
-                überprüfe die Eingabe.
-            '''.strip())
+            raise forms.ValidationError(_(u'The entered Jabber address is invalid. '
+                u'Please check your input.'))
         return value
 
 

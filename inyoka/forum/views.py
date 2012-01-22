@@ -381,6 +381,7 @@ def handle_attachments(request, post, att_ids):
                 att_ids.append(attachment.id)
                 messages.success(request, _(u'The attachment “%(attachment)s“ was added '
                                  'successfully.') % {'attachment': att_name})
+
     elif 'delete_attachment' in request.POST:
         id = int(request.POST['delete_attachment'])
         matching_attachments = filter(lambda a: a.id == id, attachments)

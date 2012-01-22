@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2011-11-29 22:52+0100\n"
+"POT-Creation-Date: 2012-01-22 02:47+0100\n"
 "PO-Revision-Date: 2011-11-27 00:31+0000\n"
 "Last-Translator: soeren <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -23,117 +23,117 @@ msgstr ""
 msgid "Portal"
 msgstr "Portal"
 
-#: inyoka/templates/overall.html:112
+#: inyoka/templates/overall.html:119
 #, python-format
 msgid "Logout [%(user)s]"
 msgstr "Abmelden [%(user)s]"
 
-#: inyoka/templates/overall.html:117
+#: inyoka/templates/overall.html:124
 msgid "Controlpanel"
 msgstr "Kontrollzentrum"
 
-#: inyoka/templates/overall.html:124
+#: inyoka/templates/overall.html:131
 #, python-format
 msgid "Private messages (%(count)s)"
 msgstr "Private Nachrichten (%(count)s)"
 
-#: inyoka/templates/overall.html:129
+#: inyoka/templates/overall.html:136
 msgid "Private messages"
 msgstr "Private Nachrichten"
 
-#: inyoka/templates/overall.html:136 inyoka/templates/overall.m.html:69
+#: inyoka/templates/overall.html:143 inyoka/templates/overall.m.html:69
 msgid "Login"
 msgstr "Anmelden"
 
-#: inyoka/templates/overall.html:141
+#: inyoka/templates/overall.html:148
 msgid "Register"
 msgstr "Registrieren"
 
-#: inyoka/templates/overall.html:152
+#: inyoka/templates/overall.html:159
 msgid "Admin"
 msgstr "Admin"
 
-#: inyoka/templates/overall.html:153
+#: inyoka/templates/overall.html:160
 msgid "Turn adminlinks on/off"
 msgstr "Adminlinks ein/aus"
 
-#: inyoka/templates/overall.html:159
+#: inyoka/templates/overall.html:166
 msgid "Reported topics"
 msgstr "Gemeldete Themen"
 
-#: inyoka/templates/overall.html:162
+#: inyoka/templates/overall.html:169
 msgid "Article suggestions"
 msgstr "Artikelvorschläge"
 
-#: inyoka/templates/overall.html:166
+#: inyoka/templates/overall.html:173
 msgid "Spelling mistakes"
 msgstr "Rechtschreibfehler"
 
-#: inyoka/templates/overall.html:170
+#: inyoka/templates/overall.html:177
 msgid "Event suggestions"
 msgstr "Veranstaltungsvorschläge"
 
-#: inyoka/templates/overall.html:174
+#: inyoka/templates/overall.html:181
 msgid "Please turn on JavaScript!"
 msgstr "Bitte aktiviere JavaScript!"
 
-#: inyoka/templates/overall.html:192
+#: inyoka/templates/overall.html:199
 msgid "Overall"
 msgstr "Überall"
 
-#: inyoka/templates/overall.html:195
+#: inyoka/templates/overall.html:202
 msgid "Forum"
 msgstr "Forum"
 
-#: inyoka/templates/overall.html:198
+#: inyoka/templates/overall.html:205
 msgid "Wiki"
 msgstr "Wiki"
 
-#: inyoka/templates/overall.html:201
+#: inyoka/templates/overall.html:208
 msgid "News"
 msgstr "Ikhaya"
 
-#: inyoka/templates/overall.html:204
+#: inyoka/templates/overall.html:211
 msgid "Planet"
 msgstr "Planet"
 
-#: inyoka/templates/overall.html:207
+#: inyoka/templates/overall.html:214
 msgid "Search"
 msgstr "Suche"
 
-#: inyoka/templates/overall.html:252
+#: inyoka/templates/overall.html:259
 #, python-format
 msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr "Powered by <a href=\"%(link)s\">Inyoka</a>"
 
-#: inyoka/templates/overall.html:254
+#: inyoka/templates/overall.html:261
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr "(in %(seconds)s Sekunden gerendert)"
 
-#: inyoka/templates/overall.html:266
+#: inyoka/templates/overall.html:273
 msgid "To mobile version"
 msgstr "Zur mobilen Version"
 
-#: inyoka/templates/overall.html:310
+#: inyoka/templates/overall.html:317
 msgid "Username or email address"
 msgstr "Benutzername oder E-Mail-Adresse"
 
-#: inyoka/templates/overall.html:313
+#: inyoka/templates/overall.html:320
 msgid "Password"
 msgstr "Passwort"
 
-#: inyoka/templates/overall.html:316
+#: inyoka/templates/overall.html:323
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
 "Wähle diese Option nicht an, wenn du dich an einem öffentlichen Computer "
 "befindest."
 
-#: inyoka/templates/overall.html:317
+#: inyoka/templates/overall.html:324
 msgid "Keep me logged in"
 msgstr "Angemeldet bleiben"
 
-#: inyoka/templates/overall.html:320
+#: inyoka/templates/overall.html:327
 msgid "Lost password?"
 msgstr "Passwort vergessen?"
 
@@ -201,6 +201,18 @@ msgstr "Das könnte daran liegen, dass du nicht angemeldet bist."
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
+#: inyoka/utils/flash_confirmation.py:22
+msgid "Are you sure?"
+msgstr "Bist du sicher"
+
+#: inyoka/utils/flash_confirmation.py:23
+msgid "Yes"
+msgstr "Ja"
+
+#: inyoka/utils/flash_confirmation.py:24
+msgid "No"
+msgstr "Nein"
+
 #: inyoka/utils/forms.py:109
 msgid "Captcha"
 msgstr "Captcha"
@@ -213,10 +225,44 @@ msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
 msgid "Generate new code"
 msgstr "Neue Zeichenfolge generieren"
 
-#: inyoka/utils/generic.py:166
+#: inyoka/utils/forms.py:179
+msgid "The entered CAPTCHA was incorrect."
+msgstr "Die Eingabe des Captchas war nicht korrekt."
+
+#: inyoka/utils/forms.py:193
+msgid "You have entered an invisible field and are therefore classified as a bot."
+msgstr "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot identifiziert."
+
+#: inyoka/utils/forms.py:203
+msgid ""
+"The entered e-mail address belongs to a e-mail provider we had to block "
+"because of SPAM problems. Please choose another e-mail address"
+msgstr "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir wegen Spamproblemen sperren mussten. Bitte gebe eine andere Adresse an."
+
+#: inyoka/utils/forms.py:207
+msgid "The entered e-mail address is invalid. Please check your input."
+msgstr "Die von dir angegebene E-Mail-Adresse ist ungültig. Bitte überpfüfe die Eingabe."
+
+#: inyoka/utils/forms.py:219
+msgid "The entered Jabber address is invalid. Please check your input."
+msgstr "Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die Eingabe."
+
+#: inyoka/utils/generic.py:53
+msgid "{verbose_name} “{object_name}” was successfully created."
+msgstr "{verbose_name} “{object_name}” wurde erfolgreich erstellt."
+
+#: inyoka/utils/generic.py:55
+msgid "{verbose_name} “{object_name}” was successfully changed."
+msgstr "{verbose_name} “{object_name}” wurde erfolgreich geändert."
+
+#: inyoka/utils/generic.py:169
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
 msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
+
+#: inyoka/utils/generic.py:196
+msgid "{verbose_name} “{object_name}” was deleted succeessfully!"
+msgstr "{verbose_name} “{object_name}” erfolgreich gelöscht!"
 
 #: inyoka/utils/pagination.py:158 inyoka/utils/pagination.py:165
 msgid "Next »"
@@ -225,4 +271,9 @@ msgstr "Weiter »"
 #: inyoka/utils/pagination.py:174 inyoka/utils/pagination.py:181
 msgid "« Prev"
 msgstr "« Zurück"
+
+#: inyoka/utils/sortable.py:103
+#, python-format
+msgid "The chosen sort value (“%(value)s”) is not available"
+msgstr "Der ausgewählte Wert (“%(value)s”) ist nicht verfügbar"
 
