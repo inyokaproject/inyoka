@@ -263,11 +263,14 @@
             {%- endtrans %}
           {% endif %}
           <br />
-          {%- if INYOKA_REVISION %}
-            Inyoka {{ INYOKA_REVISION }}
-          {%- else %}
+          {%- if INYOKA_REVISION -%}
+          Inyoka {{ INYOKA_REVISION['tag'] }}
+            {%- if SETTINGS.DEBUG -%}
+              -{{ INYOKA_REVISION['commit'] }}
+            {%- endif -%}
+          {%- else -%}
             Inyoka revision unavailable
-          {%- endif %}
+          {%- endif -%}
         </li>
         <li class="license">
           <a href="?flavour=mobile" class="flavour_switch" >{% trans %}To mobile version{% endtrans %}</a><br />
