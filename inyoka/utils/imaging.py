@@ -5,7 +5,7 @@
 
     This module implements some helper methods to generate thumbnails
 
-    :copyright: 2011 by the Project Name Team, see AUTHORS for more details.
+    :copyright: 2011-2012 by the Project Name Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os
