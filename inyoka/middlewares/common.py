@@ -69,7 +69,9 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
         response = CommonMiddleware.process_response(self, request, response)
         powered_by = 'Inyoka'
         if INYOKA_REVISION:
-            powered_by += '/rev-%s' % INYOKA_REVISION
+            powered_by += '/rev-%s' % INYOKA_REVISION['tag']
+            if settings.DEBUG:
+                powered_by += '-%s' % INYOKA_REVISION['commit']
         response['X-Powered-By'] = powered_by
         response['X-Philosophy'] = 'Don\'t be hasty, open a ticket, get some holiday and let us relax. We\'re on it.'
 
