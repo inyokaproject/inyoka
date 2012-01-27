@@ -23,20 +23,21 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         settings.DEBUG=False
-        for topic in queryset_iterator(orm.Topic.objects.all(), 5000):
-            mapping = topic.posts.values_list('id', 'position').order_by('position', 'id').iterator()
-            pos = 0
-            values = None
-            for values in mapping:
-                if pos != values[1]:
-                    orm.Post.objects.filter(id=values[0]).update(position=pos)
-                pos += 1
-            if mapping and (topic.last_post_id != values[0] or
-                            topic.post_count != pos + 1):
-                orm.Topic.objects.filter(id=topic.id).update(
-                    last_post=values[0], post_count=pos+1)
-            del connection.queries[:]
-            gc.collect()
+        if orm.Topic.objects.exists():
+            for topic in queryset_iterator(orm.Topic.objects.all(), 5000):
+                mapping = topic.posts.values_list('id', 'position').order_by('position', 'id').iterator()
+                pos = 0
+                values = None
+                for values in mapping:
+                    if pos != values[1]:
+                        orm.Post.objects.filter(id=values[0]).update(position=pos)
+                    pos += 1
+                if mapping and (topic.last_post_id != values[0] or
+                                topic.post_count != pos + 1):
+                    orm.Topic.objects.filter(id=topic.id).update(
+                        last_post=values[0], post_count=pos+1)
+                del connection.queries[:]
+                gc.collect()
 
     def backwards(self, orm):
         """There is no backwards migration as we never relied on being broken"""
