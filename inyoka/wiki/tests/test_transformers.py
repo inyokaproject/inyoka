@@ -6,6 +6,7 @@
     This module tests the wiki ast transformers.
 
     :copyright: Copyright 2007 by Armin Ronacher.
+    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 from django.test import TestCase
