@@ -596,7 +596,7 @@ def do_mv_baustelle(request, name):
     }
 
 
-#TODO: This damn function is much too specific as translation would
+#TODO: This damn function is way too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
 @require_privilege('manage')
 @does_not_exist_is_404
@@ -627,7 +627,7 @@ def do_mv_discontinued(request, name):
     return HttpResponseRedirect(url_for(page))
 
 
-#TODO: This damn function is much too specific as translation would
+#TODO: This damn function is way too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
 @require_privilege('manage')
 @does_not_exist_is_404
