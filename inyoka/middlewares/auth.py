@@ -31,7 +31,7 @@ class AuthMiddleware(object):
                 flash(_(u'The user “%(name)s” was banned.  Your session has ended.') % {
                     'name': escape(user.username)}, False)
             elif user.is_deleted:
-                flash(_(u'The user “%(name)s” deleted it\'s profile. '
+                flash(_(u'The user “%(name)s” deleted his profile. '
                         u'Your session has ended.') % {'name': escape(user.username)},
                       False,
                       session=request.session)

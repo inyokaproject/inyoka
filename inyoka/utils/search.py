@@ -24,7 +24,7 @@ from django.utils.encoding import force_unicode
 from inyoka.utils import get_significant_digits
 
 #TODO: i18n note: This module will be rewritten and with this rewrite
-#                 i18n support will land in the search, for how it's
+#                 i18n support will land in the search, for now it's
 #                 german only.
 
 LANGUAGE = 'de'

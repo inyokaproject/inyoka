@@ -480,7 +480,7 @@ class CreateUserForm(forms.Form):
             )
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError(
-                _(u'The username is already in use. Please take another one.'))
+                _(u'The username is already in use. Please choose another one.'))
         return username
 
     def clean_confirm_password(self):
