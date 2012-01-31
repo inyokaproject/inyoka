@@ -74,7 +74,7 @@
     that is part of the `acl` system.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from hashlib import sha1
@@ -87,7 +87,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy, ugettext as _
 from werkzeug import cached_property
 
 from inyoka.wiki.storage import storage
@@ -1031,8 +1031,8 @@ class Page(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = _(u'Wikipage')
-        verbose_name_plural = _(u'Wikipages')
+        verbose_name = ugettext_lazy(u'Wikipage')
+        verbose_name_plural = ugettext_lazy(u'Wikipages')
 
 
 class Attachment(models.Model):

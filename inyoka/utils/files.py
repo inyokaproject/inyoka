@@ -5,7 +5,7 @@
 
     File related utilities.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from mimetypes import guess_all_extensions, guess_extension
@@ -30,7 +30,7 @@ def fix_extension(filename, mime):
     else:
         if mime == 'image/jpeg':
             ext = '.jpg'
-        elif mime == 'application/xml' and ext == '.svg':
+        elif mime == 'application/xml' and ext in ('.svg', '.html'):
             pass
         elif mime == 'application/octet-stream' and ext == '.mo':
             pass

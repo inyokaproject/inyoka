@@ -5,9 +5,10 @@
 
     Search interfaces for the forum.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.utils.translation import ugettext_lazy
 from inyoka.forum.acl import get_privileges, check_privilege
 from inyoka.forum.models import Post, Forum
 from inyoka.utils.urls import url_for, href
@@ -65,7 +66,7 @@ class ForumSearchAdapter(SearchAdapter):
                 'user': post.author.username,
                 'date': post.pub_date,
                 'url': href('forum', 'post', post.id),
-                'component': u'Forum',
+                'component': ugettext_lazy(u'Forum'),
                 'group': post.topic.cached_forum().name,
                 'group_url': url_for(post.topic.cached_forum()),
                 'highlight': True,

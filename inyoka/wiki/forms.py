@@ -5,11 +5,11 @@
 
     Contains all the forms we use in the wiki.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.wiki.utils import has_conflicts
 from inyoka.wiki.acl import test_changes_allowed
@@ -87,7 +87,8 @@ class AddAttachmentForm(forms.Form):
     attachment = forms.FileField(required=True)
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
-    text = forms.CharField(label=_(u'Description'), widget=forms.Textarea,
+    text = forms.CharField(label=ugettext_lazy(u'Description'),
+                           widget=forms.Textarea,
                            required=False)
     note = forms.CharField(max_length=512, required=False)
 
@@ -98,7 +99,8 @@ class EditAttachmentForm(forms.Form):
     description, have a look at the AddAttachmentForm.
     """
     attachment = forms.FileField(required=False)
-    text = forms.CharField(label=_(u'Description'), widget=forms.Textarea,
+    text = forms.CharField(label=ugettext_lazy(u'Description'),
+                           widget=forms.Textarea,
                            required=False)
     note = forms.CharField(max_length=512, required=False)
 
@@ -106,10 +108,10 @@ class EditAttachmentForm(forms.Form):
 class ManageDiscussionForm(forms.Form):
     """Let the user set an existing thread as discussion of a page"""
     topic = forms.CharField(label=_('Slug of the topic'), max_length=50,
-        help_text= _(u'You can find the slug of a topic in the URL (e.g. '
-                     u'<var>example</var> when <em>%(example)s</em>)') % {
-                         'example': href('forum', 'topic', 'example')},
-                     required=False)
+        help_text= ugettext_lazy(u'You can find the slug of a topic in the URL '
+            u'(e.g. <var>example</var> when <em>%(example)s</em>)') % {
+                'example': href('forum', 'topic', 'example')},
+            required=False)
 
     def clean_topic(self):
         d = self.cleaned_data
@@ -126,6 +128,6 @@ class MvBaustelleForm(forms.Form):
     """Move page to the "Baustelle"""
     new_name = forms.CharField(label='Neuer Seitenname', required=True)
     user = UserField(label=_('Edited by'), required=True)
-    completion_date = forms.DateField(label=_(u'Completion date'),
+    completion_date = forms.DateField(label=ugettext_lazy(u'Completion date'),
                                       required=False, widget=DateWidget,
                                       localize=True)

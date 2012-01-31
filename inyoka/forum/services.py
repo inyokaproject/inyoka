@@ -6,7 +6,7 @@
     Forum specific services.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.db import transaction
@@ -133,7 +133,7 @@ def on_get_new_latest_posts(request):
     post = Post.objects.get(id=post_id)
 
     posts = Post.objects.filter(id__gt=post.id, topic__id=post.topic.id) \
-                        .order_by('-id').all()
+                        .order_by('-position').all()
 
     code = render_template('forum/_edit_latestpost_row.html', {
         '__main__': True,

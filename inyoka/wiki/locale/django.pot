@@ -289,8 +289,8 @@ msgstr ""
 msgid ""
 "The following table shows the difference of the article “<a "
 "href=\"%(article_link)s\">%(article)s</a>“ between <a "
-"href=\"%(old_rev_link)s\">revision %(old_rev)s</a> and <a "
-"href=\"%(new_rev_link)s\">revision %(new_rev)s</a>."
+"href=\"%(old_rev_link)s\">revision %(old_rev)s</a> (%(old_rev_note)s) and "
+"<a href=\"%(new_rev_link)s\">revision %(new_rev)s</a> (%(new_rev_note)s)."
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_diff.html:42
@@ -437,7 +437,7 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_manage.html:57
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:13
-msgid "Link discussions"
+msgid "Link discussion"
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_manage_discussion.html:17

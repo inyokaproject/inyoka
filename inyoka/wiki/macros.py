@@ -22,7 +22,7 @@
     which implements all the builtin macros.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import os
@@ -32,6 +32,7 @@ from datetime import datetime, date, timedelta
 from collections import OrderedDict
 from django.conf import settings
 from django.core.cache import cache
+from django.utils.translation import ungettext
 from inyoka.utils.urls import href, urlencode, url_for
 from inyoka.portal.models import StaticFile
 from inyoka.forum.models import Attachment as ForumAttachment
@@ -43,8 +44,7 @@ from inyoka.wiki.templates import expand_page_template
 from inyoka.wiki.views import fetch_real_target
 from inyoka.utils.css import filter_style
 from inyoka.utils.urls import is_external_target
-from inyoka.utils.text import human_number, join_pagename, normalize_pagename, \
-    get_pagetitle
+from inyoka.utils.text import join_pagename, normalize_pagename, get_pagetitle
 from inyoka.utils.dates import parse_iso8601, format_datetime, format_time, \
     datetime_to_timezone
 from inyoka.utils.pagination import Pagination
@@ -604,10 +604,8 @@ class TagCloud(Macro):
 
         result = nodes.Layer(class_='tagcloud')
         for tag in Page.objects.get_tagcloud(self.max):
-            if tag['count'] == 1:
-                title = 'eine Seite'
-            else:
-                title = '%s Seiten' % human_number(tag['count'], 'feminine')
+            title = ungettext('%(count)d page', '%(count)d pages',
+                              tag['count']) % tag['count']
             result.children.extend((
                 nodes.Link('?' + urlencode({
                         'tag':  tag['name']

@@ -6,7 +6,7 @@
 
     It contains the design elements that are displayed on all pages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 -#}
 {% from 'macros.html' import breadcrumb, render_modnavi_li %}
@@ -96,14 +96,14 @@
         {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
           <li class="{{ app }}{% if app == active_app %} active{% endif %}">
             <div class="tab_left"></div>
-            <div class="tab_center"><a href="{{ href(app) }}">{{ app|capitalize }}</a></div>
+            <div class="tab_center"><a href="{{ href(app) }}">{{ app|capitalize }}<span></span></a></div>
             <div class="tab_right"></div>
           </li>
         {%- endfor %}
         {# TODO: uu specific #}
         <li class="community">
           <div class="tab_left"></div>
-          <div class="tab_center"><a href="{{ href('wiki','Mitmachen') }}">Mitmachen</a></div>
+          <div class="tab_center"><a href="{{ href('wiki','Mitmachen') }}">Mitmachen<span></span></a></div>
           <div class="tab_right"></div>
         </li>
       </ul>{# .tabbar #}
@@ -263,11 +263,14 @@
             {%- endtrans %}
           {% endif %}
           <br />
-          {%- if INYOKA_REVISION %}
-            Inyoka {{ INYOKA_REVISION }}
-          {%- else %}
+          {%- if INYOKA_REVISION -%}
+          Inyoka {{ INYOKA_REVISION['tag'] }}
+            {%- if SETTINGS.DEBUG -%}
+              -{{ INYOKA_REVISION['commit'] }}
+            {%- endif -%}
+          {%- else -%}
             Inyoka revision unavailable
-          {%- endif %}
+          {%- endif -%}
         </li>
         <li class="license">
           <a href="?flavour=mobile" class="flavour_switch" >{% trans %}To mobile version{% endtrans %}</a><br />

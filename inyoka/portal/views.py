@@ -7,7 +7,7 @@
     private messages, static pages and the login/register and search
     dialogs.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import binascii
@@ -26,6 +26,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.shortcuts import get_object_or_404
+from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.decorators import method_decorator
 from django.utils.translation import ungettext, pgettext
 from django.utils.translation import ugettext as _
@@ -34,10 +35,9 @@ from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
 
 from inyoka.utils import decode_confirm_data, generic
-from inyoka.utils.text import get_random_password, human_number, \
-     normalize_pagename
-from inyoka.utils.dates import MONTHS, WEEKDAYS, DEFAULT_TIMEZONE, \
-     get_user_timezone, find_best_timezone
+from inyoka.utils.text import get_random_password, normalize_pagename
+from inyoka.utils.dates import DEFAULT_TIMEZONE, \
+    get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, HttpResponse, \
      PageNotFound, does_not_exist_is_404, HttpResponseRedirect
 from inyoka.utils.sessions import get_sessions, make_permanent, \
@@ -436,7 +436,7 @@ def logout(request):
         User.objects.logout(request)
         flash(_(u'You have successfully logged out.'), True)
     else:
-        flash(_(u'You were not logged in.', False))
+        flash(_(u'You were not logged in.'), False)
     return HttpResponseRedirect(redirect)
 
 
@@ -992,8 +992,8 @@ def get_user(username):
 @require_permission('user_edit')
 @templated('portal/special_rights.html')
 def users_with_special_rights(request):
-    users = User.objects.filter(privilege__user=None).distinct() \
-                        .order_by('username')
+    users = User.objects.filter(privilege__isnull=False).distinct()\
+                .order_by('username').defer('settings')
     return {
         'users': users,
         'count': len(users),
@@ -1027,6 +1027,7 @@ def user_edit_profile(request, username):
         form = EditUserProfileForm(request.POST, request.FILES, user=user)
         if form.is_valid():
             data = form.cleaned_data
+
             lat = data.get('coordinates_lat', None)
             long = data.get('coordinates_long', None)
             data['coordinates'] = '%s, %s' % (lat, long) if lat and long else ''
@@ -1962,8 +1963,8 @@ def calendar_month(request, year, month):
         'year': year,
         'month': month,
         'today': datetime.utcnow().date(),
-        'MONTHS': dict(list(enumerate([''] + MONTHS))[1:]),
-        'WEEKDAYS': dict(enumerate(WEEKDAYS)),
+        'MONTHS': MONTHS,
+        'WEEKDAYS': WEEKDAYS,
     }
 
 
@@ -1975,8 +1976,8 @@ def calendar_overview(request):
         'events': events,
         'year': datetime.utcnow().year,
         'month': datetime.utcnow().month,
-        'MONTHS': dict(list(enumerate([''] + MONTHS))[1:]),
-        'WEEKDAYS': dict(enumerate(WEEKDAYS)),
+        'MONTHS': MONTHS,
+        'WEEKDAYS': WEEKDAYS,
     }
 
 
@@ -1989,8 +1990,8 @@ def calendar_detail(request, slug):
     return {
         'google_link': google_calendarize(event),
         'event': event,
-        'MONTHS': dict(list(enumerate([''] + MONTHS))[1:]),
-        'WEEKDAYS': dict(enumerate(WEEKDAYS)),
+        'MONTHS': MONTHS,
+        'WEEKDAYS': WEEKDAYS,
     }
 
 

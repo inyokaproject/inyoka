@@ -5,12 +5,13 @@
 
     Forms for the Ikhaya.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
 import pytz
 from datetime import time as dt_time
+from django.utils.translation import ugettext_lazy
 from inyoka.utils.forms import UserField, DateWidget, \
     TimeWidget, DateTimeField, StrippedCharField
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone, \
@@ -37,11 +38,10 @@ class SuggestArticleForm(forms.ModelForm):
 
 
 class EditCommentForm(forms.Form):
-    text = StrippedCharField(label=u'Text', widget=forms.Textarea,
-             help_text=u'Um dich auf einen anderen Kommentar zu beziehen, '
-               u'kannst du <code>@kommentarnummer</code> verwenden.<br />'
-               u'Dies wird automatisch eingefügt, wenn du bei einem Beitrag '
-               u'auf „Antworten“ klickst.')
+    text = StrippedCharField(label=ugettext_lazy(u'Text'), widget=forms.Textarea,
+             help_text=ugettext_lazy(u'To refer to another comment, you '
+               u'can write <code>@commentnumber</code>.<br />'
+               u'Clicking on “reply“ will automatically insert this code.'))
 
 
 class EditArticleForm(forms.ModelForm):
@@ -57,14 +57,14 @@ class EditArticleForm(forms.ModelForm):
         # Following stuff is in __init__ to keep helptext etc intact.
         self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
 
-    author = UserField(label=u'Autor', required=True)
-    pub_date = DateTimeField(label=u'Datum der Veröffentlichung',
-                help_text=u'Wenn das Datum in der Zukunft liegt, wird der Artikel '
-                    u'bis zu diesem Zeitpunkt nicht angezeigt.',
+    author = UserField(label=ugettext_lazy(u'Author'), required=True)
+    pub_date = DateTimeField(label=ugettext_lazy(u'Publication date'),
+                help_text=ugettext_lazy(u'If the date is in the future, '
+                    u'the article will not appear until then.'),
                 localize=True, required=True)
-    updated = DateTimeField(label=u'Zeitpunkt der letzten Aktualisierung',
-                help_text=u'Wenn du diesed Feld leer lässt, wird automatisch '
-                    u'das Veröffentlichungsdatum verwendet.',
+    updated = DateTimeField(label=ugettext_lazy(u'Last update'),
+                help_text=ugettext_lazy(u'If you keep this field empty, the '
+                    u'publication date will be used.'),
                 localize=True, required=False)
 
     def save(self):
@@ -92,8 +92,8 @@ class EditArticleForm(forms.ModelForm):
             if 'article_id' in self.cleaned_data:
                 q = q.exclude(id=self.cleaned_data['article_id'])
             if q.exists():
-                raise forms.ValidationError(u'Es existiert schon ein Artikel '
-                                            u'mit diesem Slug!')
+                raise forms.ValidationError(ugettext_lazy(u'There already '
+                            u'exists an article with this slug!'))
         return slug
 
     class Meta:
@@ -172,7 +172,8 @@ class NewEventForm(forms.ModelForm):
         start = cleaned_data.get('date')
         end = cleaned_data.get('enddate')
         if end and end < start:
-            self._errors['enddate'] = self.error_class([u'Das Enddatum muss nach dem Startdatum liegen.'])
+            self._errors['enddate'] = self.error_class([ugettext_lazy(u'The '
+                u'end date must occur after the start date.')])
             del cleaned_data['enddate']
 
         return cleaned_data
@@ -189,6 +190,7 @@ class NewEventForm(forms.ModelForm):
 
 
 class EditEventForm(NewEventForm):
-    visible = forms.BooleanField(label=u'Kalendereintrag sichtbar?', required=False)
+    visible = forms.BooleanField(label=ugettext_lazy(u'Display event?'),
+                required=False)
     class Meta(NewEventForm.Meta):
         exclude = ['author', 'slug']

@@ -12,10 +12,11 @@
     stage attribute set to 'final' are expanded after all the transformers
     finished their job.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
+from django.utils.encoding import smart_unicode
 from inyoka.wiki.parser import nodes
 
 
@@ -32,8 +33,8 @@ _smiley_re = None
 def get_smiley_re(smilies):
     global _smiley_re
     if _smiley_re is None:
-        helper = '|'.join(re.escape(s) for s in
-                          sorted(smilies, key=lambda x: -len(x)))
+        helper = u'|'.join(re.escape(smart_unicode(s)) for s in
+                           sorted(smilies, key=lambda x: -len(x)))
         regex = (u'(?<![\d\w])' # don't precede smileys with alnum chars
                  u'({helper})'
                  u'(?![\d\w])'.format(helper=helper))

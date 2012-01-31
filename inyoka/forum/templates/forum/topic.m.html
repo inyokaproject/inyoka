@@ -4,7 +4,7 @@
 
     This page shows a single topic for mobiles.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {% extends 'forum/page.m.html' %}
@@ -53,7 +53,10 @@
               {%- endif -%}
             </span><br />
             <span>
-              {%- trans count=poll.votes %}Votes: {{ count }}{% pluralize %}Votes: {{ count }}{% endtrans -%}
+              {% trans count=poll.votes %}{{ count }} vote{% pluralize %}{{ count }} votes{% endtrans %}
+              {%- if poll.multiple_votes %},
+                {% trans count=poll.votings.count() %}{{ count }} voter{% pluralize %}{{ count }} voters{% endtrans %}
+              {%- endif %}
             </span>
           </div>
       {%- endfor %}

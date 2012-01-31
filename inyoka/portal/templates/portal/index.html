@@ -6,7 +6,7 @@
 
     It also displays some of the latest news.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.html' %}
@@ -47,17 +47,15 @@
   <h3>Hallo</h3>
   <img src="{{ href('static', 'img', 'portal', 'ubuntu.png') }}" alt="Ubuntu" class="cat" />
   <p>
-    Hier findest du freundliche Hilfe für Ubuntu, Kubuntu, Xubuntu und die
-    anderen Ubuntu-Derivate. In unserem <a href="{{ href('forum') }}">Forum</a> beantworten
-    hilfsbereite Forumsbenutzer gerne deine Fragen und im
-    <a href="{{ href('wiki') }}">Wiki</a> findest du viele Anleitungen und Erklärungen.
-    Falls du neu bei Ubuntu bist, findest du dort auch eine Seite für 
-    <a href="{{ href('wiki', 'Einsteiger') }}">Einsteiger</a>. Außerdem existiert noch
-    <a href="{{ href('ikhaya') }}">Ikhaya</a>, unser Magazin, in dem Neuigkeiten aus der
-    Ubuntu- und Linuxwelt gemeldet werden. Unser <a href="{{ href('planet') }}">Planet</a>
-    stellt Nachrichten der Ubuntu-Gemeinschaft zusammen. Wenn du auch unsere <a href="{{
-    href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') }}">Regeln</a> beachtest,
-    kann nichts schiefgehen ;-)
+    Hier findest Du freundliche Hilfe zu Ubuntu. Im
+    <a href="{{ href('forum') }}">Forum</a> beantworten Dir hilfsbereite
+    Benutzer gerne Deine Fragen (siehe
+    <a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Forenregeln') }}">Regeln</a>).
+    Neben dem <a href="{{ href('wiki') }}">Wiki</a> mit einem
+    <a href="{{ href('wiki', 'Einsteiger') }}">Einsteigerbereich</a> gibt es
+    <a href="{{ href('ikhaya') }}">Ikhaya</a> (Nachrichten) und einen
+    <a href="{{ href('planet') }}">Planeten</a> (Blogsammlung der
+    Ubuntu-Gemeinschaft). Viel Spaß! :)
   </p>
   {%- if ikhaya_latest %}
   {{ feed_button(href('portal', 'feeds', _anchor='ikhaya')) }}
