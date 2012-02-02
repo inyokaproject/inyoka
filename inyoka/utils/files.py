@@ -41,14 +41,19 @@ def fix_extension(filename, mime):
     return retval
 
 
-def get_filename(filename, file):
+def get_filename(filename, file=None):
     """
     Returns a save filename (CAUTION: strips path components!) and adds a
     proper extension
     """
-    file.seek(0)
-    mime = magic.from_buffer(file.read(1024), mime=True)
-    file.seek(0)
+    mime = None
+    if file is not None:
+        file.seek(0)
+        mime = magic.from_buffer(file.read(1024), mime=True)
+        file.seek(0)
 
     filename = utils.secure_filename(filename) or 'Noname'
-    return fix_extension(filename, mime)
+    if mime:
+        return fix_extension(filename, mime)
+    else:
+        return filename
