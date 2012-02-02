@@ -26,6 +26,8 @@ class Migration(DataMigration):
         for attachment in Attachment.objects.all():
             new_path = 'forum/attachments/{0:02d}/{1:02d}/'.format(second, kw)
             old_path = attachment.file.name.replace('/attachments/', '/attachments_migrate/')
+            if not attachment.post_id: # ignore temp attachments
+                continue
             if not path.exists(path.join(settings.MEDIA_ROOT, old_path)):
                 print "skipping", attachment.file.name
                 attachment.delete()
