@@ -11,13 +11,31 @@
 import logging
 from django.conf import settings
 from celery.signals import task_failure
+from raven.contrib.django import DjangoClient
+
+
+class InyokaClient(DjangoClient):
+    """Sentry client for Inyoka."""
+    def get_user_info(self, request):
+        if request.user.is_authenticated:
+            user_info = {
+                'is_authenticated': True,
+                'id': request.user.pk,
+                'username': request.user.username,
+                'email': request.user.email,
+            }
+        else:
+            user_info = {
+                'is_authenticated': False,
+            }
+        return user_info
 
 
 logger = logging.getLogger(settings.INYOKA_LOGGER_NAME)
 
 
 if not settings.DEBUG:
-    from sentry.client.handlers import SentryHandler
+    from raven.contrib.django.handlers import SentryHandler
     logging_handler = SentryHandler()
     logging_handler.setLevel(logging.WARNING)
 else:

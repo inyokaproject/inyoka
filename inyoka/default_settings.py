@@ -196,7 +196,7 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'django_openid',
-    'sentry.client',
+    'raven.contrib.django',
     'south',
     # *must* be installed after south
     'djcelery',
@@ -234,7 +234,8 @@ SEARCH_DEFAULT_EXCLUDE = ['Cstammtisch']
 SEARCH_INDEX_BLOCKSIZE = 5000
 
 # Set the default sentry site
-SENTRY_SITE = "ubuntuusers.de"
+SENTRY_SITE = 'ubuntuusers.de'
+SENTRY_CLIENT = 'inyoka.utils.logger.InyokaClient'
 
 
 # Import and activate django-celery support
