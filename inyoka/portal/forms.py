@@ -856,7 +856,7 @@ class ConfigurationForm(forms.Form):
 
     ikhaya_description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 3}),
-        label=ugettext_lazy(u'Description about ikhaya that will be used '
+        label=ugettext_lazy(u'Description about Ikhaya that will be used '
                             u'on the start page and in the feed aggregations.'))
     planet_description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 3}),

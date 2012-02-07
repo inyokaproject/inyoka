@@ -223,7 +223,7 @@ def do_revert(request, name):
                                            request.user,
                                            request.META.get('REMOTE_ADDR'))
             page.last_rev = new_revision
-            flash(_(u'“%(title)s was reverted successfully') % {
+            flash(_(u'“%(title)s” was reverted successfully') % {
                 'title': escape(page.rev.title)}, success=True)
             url = href('wiki', name)
     else:
@@ -252,7 +252,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
             for name in duplicate)
         flash(_(u'These attachments are already attached to the new page name: %(names)s. '
                 u'Please make sure that they are not required anymore. '
-                u'<a href="%(link)s">Force rename and deletion of dublicate attachments</a>,') % {
+                u'<a href="%(link)s">Force rename and deletion of duplicate attachments</a>,') % {
                     'names': linklist,
                     'link': href('wiki', page.name, action='rename', force=True)},
               False)

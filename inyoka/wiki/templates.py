@@ -48,7 +48,7 @@ def expand_page_template(template, context, macro_behavior=False):
     if template is None:
         if not macro_behavior:
             raise ValueError('no template given')
-        return nodes.error_box(_(u'Wrong arguments'),
+        return nodes.error_box(_(u'Invalid arguments'),
                                _(u'The first argument must be the name of the template.'))
     try:
         page = Page.objects.get_by_name(template, raise_on_deleted=True)
@@ -56,7 +56,7 @@ def expand_page_template(template, context, macro_behavior=False):
         if not macro_behavior:
             raise
         return nodes.error_box(_(u'Missing template'),
-                               _(u'The template “%(name)s” could be found.')
+                               _(u'The template “%(name)s” could not be found.')
                                % {'name': template})
     doc = page.rev.text.parse(context)
     children, is_block_tag = doc.get_fragment_nodes(True)
@@ -434,7 +434,7 @@ class Parser(object):
                     result.append(self.parse_expr())
                     if not self.stream.test('tag_end'):
                         raise TemplateSyntaxError(
-                            _(u'Too much arguments for this value output'))
+                            _(u'Too many arguments for this value output'))
                     self.stream.next()
                 elif token_type == 'raw':
                     result.append(Data(self.stream.current.value))

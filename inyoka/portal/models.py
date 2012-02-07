@@ -244,7 +244,7 @@ class StaticPage(models.Model):
 
     class Meta:
         verbose_name = ugettext_lazy(u'Static page')
-        verbose_name_plural = ugettext_lazy(u'Statig pages')
+        verbose_name_plural = ugettext_lazy(u'Static pages')
 
     def __repr__(self):
         return '<%s:%s "%s">' % (
@@ -290,8 +290,8 @@ class StaticFile(models.Model):
                                 u'as a article or category icon possibility'))
 
     class Meta:
-        verbose_name = ugettext_lazy('static file')
-        verbose_name_plural = ugettext_lazy(u'static files')
+        verbose_name = ugettext_lazy('Static file')
+        verbose_name_plural = ugettext_lazy(u'Static files')
 
     def __unicode__(self):
         return self.identifier
