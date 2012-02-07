@@ -1,19 +1,18 @@
-# German (Germany) translations for .
-# Copyright (C) 2011 ORGANIZATION
-# This file is distributed under the same license as the  project.
+# German (Germany) translations for Inyoka.
+# Copyright (C) 2011 - 2012 Inyoka-Team
+# This file is distributed under the same license as the project.
 #
 # Translators:
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 # Sören Wegener <wegener92@googlemail.com>, 2011.
+# Markus Holtermann <inyoka@markusholtermann.eu>, 2011 - 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-01-21 23:32+0100\n"
+"POT-Creation-Date: 2012-02-07 23:54+0100\n"
 "PO-Revision-Date: 2012-01-21 20:40+0000\n"
-"Last-Translator: MarkusH <info@markusholtermann.eu>\n"
+"Last-Translator: MarkusH <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
-"(http://www.transifex.net/projects/p/inyoka/team/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -85,7 +84,7 @@ msgstr "Icon"
 msgid "Category"
 msgstr "Kategorie"
 
-#: inyoka/ikhaya/models.py:176 inyoka/ikhaya/templates/ikhaya/page.html:60
+#: inyoka/ikhaya/models.py:176 inyoka/ikhaya/templates/ikhaya/page.html:57
 msgid "Categories"
 msgstr "Kategorien"
 
@@ -165,19 +164,19 @@ msgstr "Neuer Artikelvorschlag „%(suggestion)s”"
 msgid "New comment on article “%(article)s“"
 msgstr "Neuer Kommentar zum Artikel „%(article)s”"
 
-#: inyoka/ikhaya/views.py:153
+#: inyoka/ikhaya/views.py:150
 msgid "This article is not visible for regular users."
 msgstr "Dieser Artikel ist für reguläre Benutzer unsichtbar."
 
-#: inyoka/ikhaya/views.py:172
+#: inyoka/ikhaya/views.py:169
 msgid "The comment was edited successfully."
 msgstr "Der Kommentar wurde erfolgreich bearbeitet."
 
-#: inyoka/ikhaya/views.py:179
+#: inyoka/ikhaya/views.py:176
 msgid "Your comment was created."
 msgstr "Dein Kommentar wurde erstellt."
 
-#: inyoka/ikhaya/views.py:223
+#: inyoka/ikhaya/views.py:219
 #, python-format
 msgid ""
 "The publication of the article “<a href=\"%(link)s\">%(title)s</a>“ has "
@@ -186,121 +185,121 @@ msgstr ""
 "Die Veröffentlichung des Artikels „<a href=\"%(link)s\">%(title)s</a>“ "
 "wurde aufgehoben."
 
-#: inyoka/ikhaya/views.py:228
+#: inyoka/ikhaya/views.py:224
 #, python-format
 msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>“ was cancled."
 msgstr ""
 "Löschen des Artikels „<a href=\"%(link)s\">%(title)s</a>“ wurde "
 "abgebrochen."
 
-#: inyoka/ikhaya/views.py:233
+#: inyoka/ikhaya/views.py:229
 #, python-format
 msgid "The article “%(title)s“ was deleted."
 msgstr "Der Artikel „%(title)s” wurde gelöscht."
 
-#: inyoka/ikhaya/views.py:265
+#: inyoka/ikhaya/views.py:261
 #, python-format
 msgid "This article is currently being edited by “%(user)s“!"
 msgstr "Dieser Artikel wird momentan von „%(user)s” bearbeitet!"
 
-#: inyoka/ikhaya/views.py:285
+#: inyoka/ikhaya/views.py:281
 #, python-format
 msgid "The article “%(title)s“ was created."
 msgstr "Der Artikel „%(title)s” wurde erstellt."
 
-#: inyoka/ikhaya/views.py:289
+#: inyoka/ikhaya/views.py:285
 #, python-format
 msgid "The article “%(title)s“ was saved."
 msgstr "Der Artikel „%(title)s” wurde gespeichert."
 
-#: inyoka/ikhaya/views.py:322
+#: inyoka/ikhaya/views.py:318
 msgid "You need to be logged in to subscribe to comments."
 msgstr "Du musst angemeldet sein, um Kommentare zu abonnieren."
 
-#: inyoka/ikhaya/views.py:337
+#: inyoka/ikhaya/views.py:333
 msgid "Notifications on new comments to this article will be sent to you."
 msgstr "Du wirst über neue Kommentare zu diesem Artikel benachrichtigt."
 
-#: inyoka/ikhaya/views.py:344
+#: inyoka/ikhaya/views.py:340
 msgid "You need to be logged in to unsubscribe from comments."
 msgstr "Du musst angemeldet sein, um Kommentare abzubestellen."
 
-#: inyoka/ikhaya/views.py:359
+#: inyoka/ikhaya/views.py:355
 msgid "You will no longer be notified of new comments for this article."
 msgstr "Du wirst über neue Kommentare zu diesem Artikel nicht mehr benachrichtigt."
 
-#: inyoka/ikhaya/views.py:390
+#: inyoka/ikhaya/views.py:386
 msgid "Thanks for your report."
 msgstr "Danke für deine Meldung."
 
-#: inyoka/ikhaya/views.py:424
+#: inyoka/ikhaya/views.py:420
 msgid "The report was hidden."
 msgstr "Die Meldung wurde verborgen."
 
-#: inyoka/ikhaya/views.py:425
+#: inyoka/ikhaya/views.py:421
 msgid "The report was restored."
 msgstr "Die Meldung wurde wiederhergestellt."
 
-#: inyoka/ikhaya/views.py:426
+#: inyoka/ikhaya/views.py:422
 msgid "The report was marked as solved."
 msgstr "Die Meldung wurde als erledigt markiert."
 
-#: inyoka/ikhaya/views.py:427
+#: inyoka/ikhaya/views.py:423
 msgid "The report was marked as unsolved."
 msgstr "Die Meldung wurde als nicht erledigt markiert."
 
-#: inyoka/ikhaya/views.py:463
+#: inyoka/ikhaya/views.py:459
 msgid "The comment was saved."
 msgstr "Die Kommentar wurde gespeichert."
 
-#: inyoka/ikhaya/views.py:489
+#: inyoka/ikhaya/views.py:485
 msgid "The comment was hidden."
 msgstr "Der Kommentar wurde verborgen."
 
-#: inyoka/ikhaya/views.py:490
+#: inyoka/ikhaya/views.py:486
 msgid "The comment was restored."
 msgstr "Der Kommentar wurde wiederhergestellt."
 
-#: inyoka/ikhaya/views.py:506
+#: inyoka/ikhaya/views.py:502
 #, python-format
 msgid "The suggestion “%(title)s“ does not exist."
 msgstr "Der Vorschlag „%(title)s” existiert nicht."
 
-#: inyoka/ikhaya/views.py:512
+#: inyoka/ikhaya/views.py:508
 msgid "The suggestion was assigned to nobody."
 msgstr "Der Vorschlag wurde niemandem zugewiesen."
 
-#: inyoka/ikhaya/views.py:519
+#: inyoka/ikhaya/views.py:515
 #, python-format
 msgid "The suggestion was assigned to “%(user)s“."
 msgstr "Der Vorschlag wurde „%(user)s” zugewiesen."
 
-#: inyoka/ikhaya/views.py:531 inyoka/ikhaya/views.py:576
+#: inyoka/ikhaya/views.py:527 inyoka/ikhaya/views.py:572
 msgid "This suggestion does not exist."
 msgstr "Dieser vorschlag existiert nicht."
 
-#: inyoka/ikhaya/views.py:538 inyoka/ikhaya/views.py:543
+#: inyoka/ikhaya/views.py:534 inyoka/ikhaya/views.py:539
 msgid "Article suggestion deleted"
 msgstr "Artikelvorschlag gelöscht"
 
-#: inyoka/ikhaya/views.py:554
+#: inyoka/ikhaya/views.py:550
 #, python-format
 msgid "New private message from %(user)s: %(subject)s"
 msgstr "Neue private Nachricht von %(user)s: %(subject)s"
 
-#: inyoka/ikhaya/views.py:568
+#: inyoka/ikhaya/views.py:564
 msgid "The suggestion was deleted."
 msgstr "Der Vorschlag wurde gelöscht."
 
-#: inyoka/ikhaya/views.py:570
+#: inyoka/ikhaya/views.py:566
 msgid "The suggestion was not deleted."
 msgstr "Der Vorschlag wurde nicht gelöscht."
 
-#: inyoka/ikhaya/views.py:583
+#: inyoka/ikhaya/views.py:579
 msgid "Please login to suggest an article."
 msgstr "Bitte melde dich an, um einen Artikel vorzuschlagen."
 
-#: inyoka/ikhaya/views.py:600
+#: inyoka/ikhaya/views.py:596
 msgid ""
 "Thank you, your article suggestion was submitted. A team member will "
 "contact you shortly."
@@ -308,15 +307,15 @@ msgstr ""
 "Vielen Dank, dein Artikelvorschlag wurde gespeichert. Ein Teammitglied "
 "wird dich sobald wie möglich kontaktieren."
 
-#: inyoka/ikhaya/views.py:663
+#: inyoka/ikhaya/views.py:659
 msgid "Notifications on new suggestions will be sent to you."
 msgstr "Du wirst über neue Vorschläge benachrichtigt."
 
-#: inyoka/ikhaya/views.py:679
+#: inyoka/ikhaya/views.py:675
 msgid "No notifications on suggestions will be sent to you any more."
 msgstr "Du wirst über neue Vorschläge nicht mehr benachrichtigt."
 
-#: inyoka/ikhaya/views.py:696
+#: inyoka/ikhaya/views.py:692
 #, python-format
 msgid ""
 "The event with the id %(id)s could not be used as draft for a new event "
@@ -325,28 +324,28 @@ msgstr ""
 "Die Veranstaltung mit der ID %(id)s existiert nicht und kann daher nicht "
 "als Basis für den Kopiervorgang benutzt werden."
 
-#: inyoka/ikhaya/views.py:710
+#: inyoka/ikhaya/views.py:706
 msgid "The event was saved."
 msgstr "Die Veranstaltung wurde gespeichert."
 
-#: inyoka/ikhaya/views.py:766
+#: inyoka/ikhaya/views.py:762
 msgid "The event has been saved. A team member will review it soon."
 msgstr ""
 "Die Veranstaltung wurde gespeichert. Ein Teammitglied wird sie demnächst "
 "prüfen."
 
-#: inyoka/ikhaya/views.py:830
+#: inyoka/ikhaya/views.py:826
 #, python-format
 msgid "%(domain)s Ikhaya comments – %(title)s"
 msgstr "%(domain)s Ikhaya Kommentare – %(title)s"
 
-#: inyoka/ikhaya/views.py:835
+#: inyoka/ikhaya/views.py:831
 #, python-format
 msgid "%(domain)s Ikhaya comments"
 msgstr "%(domain)s Ikhaya comments"
 
 #: inyoka/ikhaya/templates/ikhaya/archive.html:12
-#: inyoka/ikhaya/templates/ikhaya/page.html:44
+#: inyoka/ikhaya/templates/ikhaya/page.html:41
 msgid "Archive"
 msgstr "Archiv"
 
@@ -644,7 +643,7 @@ msgstr "Breitengrad:"
 
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:49
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:43
-#: inyoka/ikhaya/templates/ikhaya/page.html:89
+#: inyoka/ikhaya/templates/ikhaya/page.html:86
 msgid "General"
 msgstr "Allgemein"
 
@@ -659,7 +658,7 @@ msgstr "Veranstaltung anzeigen"
 
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:14
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:17
-#: inyoka/ikhaya/templates/ikhaya/page.html:36
+#: inyoka/ikhaya/templates/ikhaya/page.html:33
 msgid "Suggest event"
 msgstr "Veranstaltung vorschlagen"
 
@@ -675,7 +674,7 @@ msgstr ""
 "deinen Vorschlag so schnell wie möglich ansehen."
 
 #: inyoka/ikhaya/templates/ikhaya/events.html:17
-#: inyoka/ikhaya/templates/ikhaya/page.html:41
+#: inyoka/ikhaya/templates/ikhaya/page.html:38
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
@@ -760,52 +759,52 @@ msgstr "Es gibt keinen Artikel"
 msgid "More »"
 msgstr "Mehr »"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:35
+#: inyoka/ikhaya/templates/ikhaya/page.html:32
 msgid "Suggest article"
 msgstr "Artikel vorschlagen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:38
+#: inyoka/ikhaya/templates/ikhaya/page.html:35
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:52
 msgid "New article"
 msgstr "Neuer Artikel"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:46
+#: inyoka/ikhaya/templates/ikhaya/page.html:43
 msgid "Current articles"
 msgstr "Aktuelle Artikel"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:55
+#: inyoka/ikhaya/templates/ikhaya/page.html:52
 msgid "Entire archive"
 msgstr "Ganzes Archiv"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:63
+#: inyoka/ikhaya/templates/ikhaya/page.html:60
 msgid "Add category"
 msgstr "Kategorie hinzufügen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:76
+#: inyoka/ikhaya/templates/ikhaya/page.html:73
 msgid "Display options"
 msgstr "Anzeigeoptionen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:79
+#: inyoka/ikhaya/templates/ikhaya/page.html:76
 msgid "Show only teaser"
 msgstr "Nur Einleitung anzeigen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:81
+#: inyoka/ikhaya/templates/ikhaya/page.html:78
 msgid "Show full article"
 msgstr "Gesamten Artikel anzeigen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:86
+#: inyoka/ikhaya/templates/ikhaya/page.html:83
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:92
+#: inyoka/ikhaya/templates/ikhaya/page.html:89
 msgid "Stylesheets"
 msgstr "Stylesheets"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:95
+#: inyoka/ikhaya/templates/ikhaya/page.html:92
 msgid "Static pages"
 msgstr "Statische Seiten"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:98
+#: inyoka/ikhaya/templates/ikhaya/page.html:95
 msgid "Static files"
 msgstr "Statische Dateien"
 

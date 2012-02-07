@@ -1,14 +1,14 @@
-# Translations template for PROJECT.
-# Copyright (C) 2011 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+# Translations template for Inyoka.
+# German (Germany) translations for .
+# Copyright (C) 2011 - 2012 Inyoka-Team
+# This file is distributed under the same license as the project.
 #
-#, fuzzy
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-29 22:29+0100\n"
+"POT-Creation-Date: 2012-02-07 23:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "This is my own blog"
 msgstr ""
 
-#: inyoka/planet/forms.py:28
+#: inyoka/planet/forms.py:29
 msgid "Email address of the blog author"
 msgstr ""
 
@@ -69,26 +69,30 @@ msgstr ""
 msgid "Entries"
 msgstr ""
 
-#: inyoka/planet/views.py:77
+#: inyoka/planet/views.py:78
 msgid "You need to be logged in to suggest a blog"
 msgstr ""
 
-#: inyoka/planet/views.py:95
+#: inyoka/planet/views.py:96
 msgid "A new blog was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:99
+#: inyoka/planet/views.py:100
 msgid "No user is registered as a planet administrator."
 msgstr ""
 
-#: inyoka/planet/views.py:102
+#: inyoka/planet/views.py:103
 #, python-format
 msgid "The blog “%(title)s“ was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:113
+#: inyoka/planet/views.py:114
 #, python-format
 msgid "%(sitename)s planet"
+msgstr ""
+
+#: inyoka/planet/views.py:157
+msgid "Canceled"
 msgstr ""
 
 #: inyoka/planet/views.py:164
