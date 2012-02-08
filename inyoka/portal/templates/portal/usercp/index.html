@@ -27,8 +27,9 @@
       {{ usercp_button(href('portal', 'usercp', 'password'), 'password', _('Change password')) }}
       {{ usercp_button(href('portal', 'usercp', 'subscriptions'), 'subscriptions', _('Subscriptions')) }}
       {{ usercp_button(href('portal', 'usercp', 'deactivate'), 'deactivate', _('Deactivate account')) }}
+      {# TODO SETTING.??? #}
       {% if user.has_wikipage -%}
-        {{ usercp_button(href('wiki', 'Benutzer', user.username|e, action='edit'), 'wikipage', _('Userpage')) }}
+        {{ usercp_button(href('wiki', 'Benutzer', user.username|e, action='edit'), 'wikipage', _('User page')) }}
       {%- else -%}
         {{ usercp_button(href('wiki', 'Benutzerseite'), 'wikipage', _('Userpage')) }}
       {%- endif %}

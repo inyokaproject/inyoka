@@ -221,7 +221,7 @@ def article_delete(request, year, month, day, slug):
                   % { 'link': escape(url_for(article, 'show')),
                       'title': escape(article.subject)})
         elif 'cancel' in request.POST:
-            flash(_(u'Deletion of the article “<a href="%(link)s">%(title)s</a>“ was cancled.')
+            flash(_(u'Deletion of the article “<a href="%(link)s">%(title)s</a>“ was canceled.')
                   % { 'link': escape(url_for(article, 'show')),
                       'title': escape(article.subject)})
         else:
