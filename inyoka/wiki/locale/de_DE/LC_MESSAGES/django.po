@@ -237,7 +237,7 @@ msgstr "Parameterfehler"
 msgid "%(count)d page"
 msgid_plural "%(count)d pages"
 msgstr[0] "eine Seite"
-msgstr[1] "%(count)s Seiten"
+msgstr[1] "%(count)d Seiten"
 
 #: inyoka/wiki/macros.py:620
 msgid "Tags"
