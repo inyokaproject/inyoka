@@ -31,7 +31,7 @@
       {% if user.has_wikipage -%}
         {{ usercp_button(href('wiki', 'Benutzer', user.username|e, action='edit'), 'wikipage', _('User page')) }}
       {%- else -%}
-        {{ usercp_button(href('wiki', 'Benutzerseite'), 'wikipage', _('Userpage')) }}
+        {{ usercp_button(href('wiki', 'Benutzerseite'), 'wikipage', _('User page')) }}
       {%- endif %}
     </ul>
   </div>
