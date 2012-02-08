@@ -1031,8 +1031,8 @@ class Page(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = ugettext_lazy(u'Wikipage')
-        verbose_name_plural = ugettext_lazy(u'Wikipages')
+        verbose_name = ugettext_lazy(u'Wiki page')
+        verbose_name_plural = ugettext_lazy(u'Wiki pages')
 
 
 class Attachment(models.Model):

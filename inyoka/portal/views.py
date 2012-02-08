@@ -509,7 +509,7 @@ def search(request):
     return rv
 
 
-@check_login(message=_(u'You need to be logged in to view a userprofile.'))
+@check_login(message=_(u'You need to be logged in to view a user profile.'))
 @templated('portal/profile.html')
 def profile(request, username):
     """Show the user profile if the user is logged in."""
@@ -612,7 +612,7 @@ def unsubscribe_user(request, username):
         pass
     else:
         subscription.delete()
-        flash(_(u'From now on you won’t be notfied anymore about activities of '
+        flash(_(u'From now on you won’t be notified anymore about activities of '
                 u'“%(username)s“.') % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
@@ -679,7 +679,7 @@ def usercp_profile(request):
             else:
                 openids = map(int, request.POST.getlist('openids'))
                 UserData.objects.filter(user=user, pk__in = openids).delete()
-                flash(_(u'Your profileinformation were updated successfully.'),
+                flash(_(u'Your profile information were updated successfully.'),
                       True)
                 return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
@@ -880,13 +880,13 @@ def usercp_deactivate(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your userpage.'))
+@check_login(message=_(u'You need to be logged in to change your user page.'))
 def usercp_userpage(request):
     """
     Redirect page that shows a small flash message that
     the user was redirected
     """
-    flash(_(u'You were redirected to our wiki to change your userpage. To get '
+    flash(_(u'You were redirected to our wiki to change your user page. To get '
             u'back, you can use the link or your browser’s “back“ button.'))
     # TODO: hardcoded wikipage
     return HttpResponseRedirect(href('wiki', 'Benutzer', request.user.username, action='edit'))
@@ -1782,7 +1782,7 @@ def group_edit(request, name=None):
 
 
 def usermap(request):
-    flash(_(u'The usermap was temporarily disabled.'))
+    flash(_(u'The user map was temporarily disabled.'))
     return HttpResponseRedirect(href('portal'))
 
 

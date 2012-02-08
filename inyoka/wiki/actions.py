@@ -485,7 +485,7 @@ def do_edit(request, name):
                 return HttpResponseRedirect(url)
     elif not request.user.is_authenticated:
         flash(_(u'You are in the process of editing this page unauthenticated. '
-                u'If you save, your IP-Address will be recored in the '
+                u'If you save, your IP-Address will be recorded in the '
                 u'revision history and is irrevocable publicly visible.'))
 
 

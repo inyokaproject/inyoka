@@ -133,7 +133,7 @@ class CaptchaWidget(Input):
         input_ = Input.render(self, name, u'', attrs)
         img = '<img src="%s" class="captcha" alt="%s" />' % (
               href('portal', __service__='portal.get_captcha',
-                   rnd=randrange(1, sys.maxint)), _('Captcha'))
+                   rnd=randrange(1, sys.maxint)), _('CAPTCHA'))
         text = '%s:' % _('Please type in the code from the graphic above')
         input_tag = '%s <input type="submit" name="renew_captcha" value="%s" />' % (
                     input_, _('Generate new code'))
