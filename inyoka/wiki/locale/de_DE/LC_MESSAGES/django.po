@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-07 23:54+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: 2012-02-07 02:34+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -101,7 +101,7 @@ msgstr "Die Seite “<a href=\"%(link)s\">%(name)s</a>“ wurde bearbeitet."
 #: inyoka/wiki/actions.py:487
 msgid ""
 "You are in the process of editing this page unauthenticated. If you save,"
-" your IP-Address will be recored in the revision history and is "
+" your IP-Address will be recorded in the revision history and is "
 "irrevocable publicly visible."
 msgstr ""
 "Du bearbeitest diese Seite unangemeldet. Wenn du speicherst, wird deine "
@@ -296,11 +296,11 @@ msgid "Automatically deleted"
 msgstr "Von System gelöscht"
 
 #: inyoka/wiki/models.py:1034
-msgid "Wikipage"
+msgid "Wiki page"
 msgstr "Wikiseite"
 
 #: inyoka/wiki/models.py:1035
-msgid "Wikipages"
+msgid "Wiki pages"
 msgstr "Wikiseiten"
 
 #: inyoka/wiki/models.py:1089 inyoka/wiki/models.py:1092
@@ -542,7 +542,7 @@ msgid "Note:"
 msgstr "Notiz:"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:39
-msgid "Overwrite exisiting attachments with same name:"
+msgid "Overwrite existing attachments with same name:"
 msgstr "Anhang mit gleichem Namen überschreiben:"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:42

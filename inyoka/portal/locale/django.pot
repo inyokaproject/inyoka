@@ -1,14 +1,14 @@
-# Translations template for Inyoka.
-# German (Germany) translations for .
-# Copyright (C) 2011 - 2012 Inyoka-Team
-# This file is distributed under the same license as the project.
+# Translations template for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-07 23:54+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,7 +55,7 @@ msgid "A subscribed topic was moved"
 msgstr ""
 
 #: inyoka/portal/forms.py:49
-msgid "A subscribed topic was splitted"
+msgid "A subscribed topic was split"
 msgstr ""
 
 #: inyoka/portal/forms.py:50
@@ -105,7 +105,7 @@ msgid "All forums"
 msgstr ""
 
 #: inyoka/portal/forms.py:84
-msgid "Username, email address or openID"
+msgid "Username, email address or OpenID"
 msgstr ""
 
 #: inyoka/portal/forms.py:86 inyoka/portal/forms.py:103
@@ -115,7 +115,7 @@ msgid "Password"
 msgstr ""
 
 #: inyoka/portal/forms.py:88
-msgid "Leave this field empty if you are using openID."
+msgid "Leave this field empty if you are using OpenID."
 msgstr ""
 
 #: inyoka/portal/forms.py:89
@@ -406,7 +406,7 @@ msgid ""
 msgstr ""
 
 #: inyoka/portal/forms.py:425
-msgid "This openID is already in use."
+msgid "This OpenID is already in use."
 msgstr ""
 
 #: inyoka/portal/forms.py:432 inyoka/portal/models.py:108
@@ -509,11 +509,11 @@ msgstr ""
 msgid "Forum privileges"
 msgstr ""
 
-#: inyoka/portal/forms.py:591
+#: inyoka/portal/forms.py:591 inyoka/portal/user.py:274
 msgid "Team icon"
 msgstr ""
 
-#: inyoka/portal/forms.py:592
+#: inyoka/portal/forms.py:592 inyoka/portal/templates/portal/group_edit.html:47
 msgid "Delete team icon"
 msgstr ""
 
@@ -522,19 +522,19 @@ msgid "Use global team icon"
 msgstr ""
 
 #: inyoka/portal/forms.py:607
-msgid "The groupname contains invalid chars"
+msgid "The group name contains invalid chars"
 msgstr ""
 
 #: inyoka/portal/forms.py:610
-msgid "The groupname is not available. Please choose another one."
+msgid "The group name is not available. Please choose another one."
 msgstr ""
 
 #: inyoka/portal/forms.py:614
-msgid "You need to enter a groupname"
+msgid "You need to enter a group name"
 msgstr ""
 
 #: inyoka/portal/forms.py:629
-msgid "Searchterms:"
+msgid "Search terms:"
 msgstr ""
 
 #: inyoka/portal/forms.py:630
@@ -605,7 +605,7 @@ msgid "Invalid URL"
 msgstr ""
 
 #: inyoka/portal/forms.py:755
-msgid "Number of entrys in the feed"
+msgid "Number of entries in the feed"
 msgstr ""
 
 #: inyoka/portal/forms.py:756
@@ -659,7 +659,7 @@ msgid "Users cannot use email addresses from these hosts to register an account.
 msgstr ""
 
 #: inyoka/portal/forms.py:830
-msgid "Global teamicon"
+msgid "Global team icon"
 msgstr ""
 
 #: inyoka/portal/forms.py:831
@@ -683,15 +683,15 @@ msgid "Description of the link"
 msgstr ""
 
 #: inyoka/portal/forms.py:844
-msgid "Default text of new wikipages"
+msgid "Default text of new wiki pages"
 msgstr ""
 
 #: inyoka/portal/forms.py:846
-msgid "Location of new wikipages"
+msgid "Location of new wiki pages"
 msgstr ""
 
 #: inyoka/portal/forms.py:848
-msgid "Information page about new wikipages"
+msgid "Information page about new wiki pages"
 msgstr ""
 
 #: inyoka/portal/forms.py:849
@@ -788,7 +788,7 @@ msgid "File"
 msgstr ""
 
 #: inyoka/portal/models.py:287
-msgid "Is ikhaya icon"
+msgid "Is Ikhaya icon"
 msgstr ""
 
 #: inyoka/portal/models.py:289
@@ -959,10 +959,6 @@ msgstr ""
 msgid "Public profile"
 msgstr ""
 
-#: inyoka/portal/user.py:274
-msgid "Teamicon"
-msgstr ""
-
 #: inyoka/portal/user.py:489 inyoka/portal/templates/portal/profile.html:61
 msgid "Email address"
 msgstr ""
@@ -1127,7 +1123,7 @@ msgid "Next »"
 msgstr ""
 
 #: inyoka/portal/views.py:512
-msgid "You need to be logged in to view a userprofile."
+msgid "You need to be logged in to view a user profile."
 msgstr ""
 
 #: inyoka/portal/views.py:570
@@ -1157,7 +1153,7 @@ msgstr ""
 #: inyoka/portal/views.py:615
 #, python-format
 msgid ""
-"From now on you won’t be notfied anymore about activities of "
+"From now on you won’t be notified anymore about activities of "
 "“%(username)s“."
 msgstr ""
 
@@ -1187,7 +1183,7 @@ msgid ""
 msgstr ""
 
 #: inyoka/portal/views.py:682
-msgid "Your profileinformation were updated successfully."
+msgid "Your profile information were updated successfully."
 msgstr ""
 
 #: inyoka/portal/views.py:717
@@ -1237,13 +1233,13 @@ msgid "Your account was deactivated."
 msgstr ""
 
 #: inyoka/portal/views.py:883
-msgid "You need to be logged in to change your userpage."
+msgid "You need to be logged in to change your user page."
 msgstr ""
 
 #: inyoka/portal/views.py:889
 msgid ""
-"You were redirected to our wiki to change your userpage. To get back, you"
-" can use the link or your browser’s “back“ button."
+"You were redirected to our wiki to change your user page. To get back, "
+"you can use the link or your browser’s “back“ button."
 msgstr ""
 
 #: inyoka/portal/views.py:969
@@ -1410,7 +1406,7 @@ msgid "The group “%(group)s“ was changed successfully."
 msgstr ""
 
 #: inyoka/portal/views.py:1785
-msgid "The usermap was temporarily disabled."
+msgid "The user map was temporarily disabled."
 msgstr ""
 
 #: inyoka/portal/views.py:1810
@@ -1480,7 +1476,7 @@ msgid "edit"
 msgstr ""
 
 #: inyoka/portal/templates/portal/calendar_detail.html:66
-msgid "Download ICal"
+msgid "Download iCal"
 msgstr ""
 
 #: inyoka/portal/templates/portal/calendar_detail.html:67
@@ -1525,7 +1521,7 @@ msgid "Various limits"
 msgstr ""
 
 #: inyoka/portal/templates/portal/configuration.html:28
-msgid "Maximum avatarsize"
+msgid "Maximum avatar size"
 msgstr ""
 
 #: inyoka/portal/templates/portal/configuration.html:29
@@ -1538,7 +1534,7 @@ msgid "KiB (0 = unlimited)"
 msgstr ""
 
 #: inyoka/portal/templates/portal/configuration.html:33
-msgid "Maximum teamicon size"
+msgid "Maximum team icon size"
 msgstr ""
 
 #: inyoka/portal/templates/portal/configuration.html:79
@@ -1673,26 +1669,23 @@ msgid "New group"
 msgstr ""
 
 #: inyoka/portal/templates/portal/group_edit.html:25
-msgid "Groupconfiguration"
+msgid "Group configuration"
 msgstr ""
 
 #: inyoka/portal/templates/portal/group_edit.html:31
-msgid "will be shown in the groupoverview and the userprofile"
+msgid "will be shown in the group overview and the user profile"
 msgstr ""
 
 #: inyoka/portal/templates/portal/group_edit.html:35
-msgid "Teamicon:"
+msgid "Team icon:"
 msgstr ""
 
 #: inyoka/portal/templates/portal/group_edit.html:40
 #, python-format
 msgid ""
-"Please note that the teamicon can not be bigger than %(width)sx%(height)s"
-" pixel. Everything that exceeds this limit will automatically be resized."
-msgstr ""
-
-#: inyoka/portal/templates/portal/group_edit.html:47
-msgid "Delete teamicon"
+"Please note that the team icon can not be bigger than "
+"%(width)sx%(height)s pixel. Everything that exceeds this limit will "
+"automatically be resized."
 msgstr ""
 
 #: inyoka/portal/templates/portal/group_edit.html:52
@@ -1700,7 +1693,7 @@ msgid "Forum privileges:"
 msgstr ""
 
 #: inyoka/portal/templates/portal/group_edit.html:53
-msgid "Please turn javascript on to edit the privileges."
+msgid "Please turn JavaScript on to edit the privileges."
 msgstr ""
 
 #: inyoka/portal/templates/portal/grouplist.html:16
@@ -1864,7 +1857,7 @@ msgid "Select"
 msgstr ""
 
 #: inyoka/portal/templates/portal/memberlist.html:23
-msgid "You can also enter an e-mail address instead of a username."
+msgid "You can also enter an e-mail address instead of a user name."
 msgstr ""
 
 #: inyoka/portal/templates/portal/memberlist.html:29
@@ -1887,7 +1880,7 @@ msgstr ""
 #, python-format
 msgid ""
 "There is no account linked to the OpenID “%(openid)s“. Please log in with"
-" your username and password to connect the OpenID with your account:"
+" your user name and password to connect the OpenID with your account:"
 msgstr ""
 
 #: inyoka/portal/templates/portal/openid_connect.html:21
@@ -2042,7 +2035,7 @@ msgstr[1] ""
 
 #: inyoka/portal/templates/portal/styles.html:18
 msgid ""
-"You can edit here the stylesheet which is responibly for formating the "
+"You can edit here the stylesheet which is responsibly for formatting the "
 "syntax elements. It is included on all pages. Please do only add already "
 "tested stylesheets, otherwise all users will get a corrupt stylesheet."
 msgstr ""
@@ -2089,7 +2082,7 @@ msgid "(Derived from %(grouplist)s)"
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_edit_privileges.html:38
-msgid "Sorry, you need to enable javascript to edit forum privileges."
+msgid "Sorry, you need to enable JavaScript to edit forum privileges."
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:12
@@ -2101,7 +2094,7 @@ msgid "Profile"
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:21
-msgid "Usertitle:"
+msgid "User title:"
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_edit_profile.html:31
@@ -2172,7 +2165,7 @@ msgid "Create user"
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_new.html:21
-msgid "Authentification:"
+msgid "Authentication:"
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_new.html:28
@@ -2389,10 +2382,10 @@ msgstr ""
 msgid "Deactivate my account “%(name)s“"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/index.html:31
-#: inyoka/portal/templates/portal/usercp/index.html:33
-#: inyoka/portal/templates/portal/usercp/overall.html:29
-msgid "Userpage"
+#: inyoka/portal/templates/portal/usercp/index.html:32
+#: inyoka/portal/templates/portal/usercp/index.html:34
+#: inyoka/portal/templates/portal/usercp/overall.html:30
+msgid "User page"
 msgstr ""
 
 #: inyoka/portal/templates/portal/usercp/overall.html:12
@@ -2435,15 +2428,15 @@ msgid "OpenIDs"
 msgstr ""
 
 #: inyoka/portal/templates/portal/usercp/profile.html:73
-msgid "Selected openIDs will be removed!"
+msgid "Selected OpenIDs will be removed!"
 msgstr ""
 
 #: inyoka/portal/templates/portal/usercp/profile.html:75
-msgid "No openID is associated with your account."
+msgid "No OpenID is associated with your account."
 msgstr ""
 
 #: inyoka/portal/templates/portal/usercp/profile.html:78
-msgid "To associate an openID with your account, login with your openID."
+msgid "To associate an OpenID with your account, login with your OpenID."
 msgstr ""
 
 #: inyoka/portal/templates/portal/usercp/profile.html:90

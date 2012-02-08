@@ -1,14 +1,14 @@
-# Translations template for Inyoka.
-# German (Germany) translations for .
-# Copyright (C) 2011 - 2012 Inyoka-Team
-# This file is distributed under the same license as the project.
+# Translations template for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-07 23:54+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgid "Logout [%(user)s]"
 msgstr ""
 
 #: inyoka/templates/overall.html:124
-msgid "Controlpanel"
+msgid "Control panel"
 msgstr ""
 
 #: inyoka/templates/overall.html:131
@@ -52,7 +52,7 @@ msgid "Admin"
 msgstr ""
 
 #: inyoka/templates/overall.html:160
-msgid "Turn adminlinks on/off"
+msgid "Turn admin links on/off"
 msgstr ""
 
 #: inyoka/templates/overall.html:166
@@ -237,7 +237,7 @@ msgid "This user does not exist"
 msgstr ""
 
 #: inyoka/utils/forms.py:136
-msgid "Captcha"
+msgid "CAPTCHA"
 msgstr ""
 
 #: inyoka/utils/forms.py:137
@@ -290,7 +290,7 @@ msgid "No %(verbose_name)s found matching the query"
 msgstr ""
 
 #: inyoka/utils/generic.py:196
-msgid "{verbose_name} “{object_name}” was deleted succeessfully!"
+msgid "{verbose_name} “{object_name}” was deleted successfully!"
 msgstr ""
 
 #: inyoka/utils/generic.py:213
@@ -302,7 +302,7 @@ msgid "Next »"
 msgstr ""
 
 #: inyoka/utils/pagination.py:174 inyoka/utils/pagination.py:181
-msgid "« Prev"
+msgid "« Previous"
 msgstr ""
 
 #: inyoka/utils/sessions.py:79

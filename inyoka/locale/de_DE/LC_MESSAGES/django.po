@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-07 23:54+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: 2012-02-07 01:48+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -29,7 +29,7 @@ msgid "Logout [%(user)s]"
 msgstr "Abmelden [%(user)s]"
 
 #: inyoka/templates/overall.html:124
-msgid "Controlpanel"
+msgid "Control panel"
 msgstr "Kontrollzentrum"
 
 #: inyoka/templates/overall.html:131
@@ -54,7 +54,7 @@ msgid "Admin"
 msgstr "Admin"
 
 #: inyoka/templates/overall.html:160
-msgid "Turn adminlinks on/off"
+msgid "Turn admin links on/off"
 msgstr "Adminlinks ein/aus"
 
 #: inyoka/templates/overall.html:166
@@ -253,8 +253,8 @@ msgid "This user does not exist"
 msgstr "Diesen Benutzer gibt es nicht"
 
 #: inyoka/utils/forms.py:136
-msgid "Captcha"
-msgstr "Captcha"
+msgid "CAPTCHA"
+msgstr "CAPTCHA"
 
 #: inyoka/utils/forms.py:137
 msgid "Please type in the code from the graphic above"
@@ -314,7 +314,7 @@ msgid "No %(verbose_name)s found matching the query"
 msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
 
 #: inyoka/utils/generic.py:196
-msgid "{verbose_name} “{object_name}” was deleted succeessfully!"
+msgid "{verbose_name} “{object_name}” was deleted successfully!"
 msgstr "{verbose_name} “{object_name}” erfolgreich gelöscht!"
 
 #: inyoka/utils/generic.py:213
@@ -326,7 +326,7 @@ msgid "Next »"
 msgstr "Weiter »"
 
 #: inyoka/utils/pagination.py:174 inyoka/utils/pagination.py:181
-msgid "« Prev"
+msgid "« Previous"
 msgstr "« Zurück"
 
 #: inyoka/utils/sessions.py:79

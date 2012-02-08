@@ -1,14 +1,14 @@
-# Translations template for Inyoka.
-# German (Germany) translations for .
-# Copyright (C) 2011 - 2012 Inyoka-Team
-# This file is distributed under the same license as the project.
+# Translations template for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-07 23:54+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -175,7 +175,7 @@ msgstr ""
 
 #: inyoka/ikhaya/views.py:224
 #, python-format
-msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>“ was cancled."
+msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>“ was canceled."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:229
@@ -467,7 +467,7 @@ msgid "Comments - Full"
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/detail.html:29
-msgid "Teamicon"
+msgid "Team icon"
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/detail.html:37
