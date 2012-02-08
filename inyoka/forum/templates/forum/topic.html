@@ -194,14 +194,14 @@
               <a href="{{ post.author|url }}">{{ post.author.username|e }}</a>
               {%- if post.author.primary_group and post.author.primary_group.icon %}
                 <img class="teamicon" src="{{ post.author.primary_group.icon_url }}"
-                     alt="{% trans %}Teamicon{% endtrans %}" />
+                     alt="{% trans %}Team icon{% endtrans %}" />
               {%- endif %}
             </p>
             {%- if post.author.member_title %}
               <div class="member_title">{{ post.author.member_title|e }}</div>
             {%- endif %}
             {%- if post.author_id == topic.author_id and not (pagination.page == 1 and loop.first) %}
-              <div class="member_title">{% trans %}(Threadstarter){% endtrans %}</div>
+              <div class="member_title">{% trans %}(Topic starter){% endtrans %}</div>
             {%- endif %}
             {%- if post.author.has_avatar and not USER.settings['hide_avatars'] %}
               <img class="avatar" src="{{ post.author.avatar_url }}"
@@ -322,7 +322,7 @@
   <div class="pathbar">
     <div class="pagination pagination_right">
       <a href="{{ href('forum', 'topic', topic.slug, 'previous') }}"
-         rel="nofollow" class="prev">{% trans %}« Prev topic{% endtrans %}</a>
+         rel="nofollow" class="prev">{% trans %}« Previous topic{% endtrans %}</a>
       <a href="{{ href('forum', 'topic', topic.slug, 'next') }}"
          rel="nofollow" class="next">{% trans %}Next topic »{% endtrans %}</a>
     </div>

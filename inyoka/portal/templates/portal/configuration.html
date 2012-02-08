@@ -25,12 +25,12 @@
   <h3>{% trans %}Various limits{% endtrans %}</h3>
   <dl>
     {{ render_form(form, ['max_signature_length', 'max_signature_lines'], inline=true) }}
-    <dt>{% trans %}Maximum avatarsize{% endtrans %}</dt>
+    <dt>{% trans %}Maximum avatar size{% endtrans %}</dt>
     <dd>{{ form.max_avatar_width }} × {{ form.max_avatar_height }} {% trans %}Pixel{% endtrans %}
         {{ form.max_avatar_size }} {% trans %}KiB (0 = unlimited){% endtrans %}
         {{ form.errors.max_avatar_height }} {{ form.errors.max_avatar_width }}
         {{ form.errors.max_avatar_size }}</dd>
-    <dt>{% trans %}Maximum teamicon size{% endtrans %}</dt>
+    <dt>{% trans %}Maximum team icon size{% endtrans %}</dt>
     <dd>{{ form.team_icon_height }} x {{ form.team_icon_width }} {% trans %}Pixel{% endtrans %}
         {{ form.errors.team_icon_height }} {{ form.errors.team_icon_width }}</dd>
   </dl>

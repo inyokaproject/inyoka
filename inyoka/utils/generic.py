@@ -193,7 +193,7 @@ class BaseDeleteView(edit.BaseDeleteView):
     """
     redirect_url = None
     template_name = None
-    message = ugettext_lazy(u'{verbose_name} “{object_name}” was deleted succeessfully!')
+    message = ugettext_lazy(u'{verbose_name} “{object_name}” was deleted successfully!')
 
     def get_success_url(self):
         self.sucess_url = self.redirect_url

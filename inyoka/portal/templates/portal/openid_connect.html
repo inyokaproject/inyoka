@@ -12,7 +12,7 @@
 {%- block portal_content %}
   <h3>{% trans %}Connect OpenID{% endtrans %}</h3>
   <p>{% trans -%}
-    There is no account linked to the OpenID “{{ openid }}“. Please log in with your username and password to connect the OpenID with your account:
+    There is no account linked to the OpenID “{{ openid }}“. Please log in with your user name and password to connect the OpenID with your account:
   {%- endtrans %}</p>
   {% include 'portal/login_text.html' with context %}
   <form method="post" action="">

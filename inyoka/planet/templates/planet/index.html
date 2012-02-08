@@ -50,7 +50,7 @@
                 </h3>
                 <p class="easy-navigation">
                   {%- if not (dayloop.first and loop.first) %}
-                    <a href="#article_{{ article_index + loop.index0 - 1 }}">{% trans %}« Prev{% endtrans %}</a>
+                    <a href="#article_{{ article_index + loop.index0 - 1 }}">{% trans %}« Previous{% endtrans %}</a>
                   {%- endif %}
                   {%- if not (dayloop.last and loop.last) %}
                     <a href="#article_{{ article_index + loop.index0 + 1 }}">{% trans %}Next »{% endtrans %}</a>

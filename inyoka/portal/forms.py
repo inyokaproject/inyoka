@@ -46,7 +46,7 @@ NOTIFY_BY_CHOICES = (
 
 NOTIFICATION_CHOICES = (
     ('topic_move', ugettext_lazy(u'A subscribed topic was moved')),
-    ('topic_split', ugettext_lazy(u'A subscribed topic was splitted')),
+    ('topic_split', ugettext_lazy(u'A subscribed topic was split')),
     ('pm_new', ugettext_lazy(u'I received a message'))
 )
 
@@ -81,11 +81,11 @@ SEARCH_AREAS = {
 
 class LoginForm(forms.Form):
     """Simple form for the login dialog"""
-    username = forms.CharField(label=ugettext_lazy(u'Username, email address or openID'),
+    username = forms.CharField(label=ugettext_lazy(u'Username, email address or OpenID'),
         widget=forms.TextInput(attrs={'tabindex': '1'}))
     password = forms.CharField(label=ugettext_lazy(u'Password'), required=False,
         widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),
-        help_text=ugettext_lazy(u'Leave this field empty if you are using openID.'),)
+        help_text=ugettext_lazy(u'Leave this field empty if you are using OpenID.'),)
     permanent = forms.BooleanField(label=_('Keep logged in'),
         required=False, widget=forms.CheckboxInput(attrs={'tabindex':'1'}))
 
@@ -422,7 +422,7 @@ class UserCPProfileForm(forms.Form):
         openid = self.cleaned_data['openid']
         if UserData.objects.filter(key='openid', value=openid)\
                            .exclude(user=self.user).count():
-            raise forms.ValidationError(_(u'This openID is already in use.'))
+            raise forms.ValidationError(_(u'This OpenID is already in use.'))
         return openid
 
 
@@ -605,13 +605,13 @@ class CreateGroupForm(EditGroupForm):
                 name = normalize_username(data['name'])
             except ValueError:
                 raise forms.ValidationError(_(
-                    u'The groupname contains invalid chars'))
+                    u'The group name contains invalid chars'))
             if Group.objects.filter(name=name).exists():
                 raise forms.ValidationError(_(
-                    u'The groupname is not available. Please choose another one.'))
+                    u'The group name is not available. Please choose another one.'))
             return name
         else:
-            raise forms.ValidationError(_(u'You need to enter a groupname'))
+            raise forms.ValidationError(_(u'You need to enter a group name'))
 
 
 class SearchForm(forms.Form):
@@ -626,7 +626,7 @@ class SearchForm(forms.Form):
         for offset, forum in Forum.get_children_recursive(forums):
             self.fields['forums'].choices.append((forum.slug, u'  ' * offset + forum.name))
 
-    query = forms.CharField(label=ugettext_lazy(u'Searchterms:'), widget=forms.TextInput)
+    query = forms.CharField(label=ugettext_lazy(u'Search terms:'), widget=forms.TextInput)
     area = forms.ChoiceField(label=ugettext_lazy(u'Area:'), choices=SEARCH_AREA_CHOICES,
                       required=False, widget=forms.RadioSelect, initial='all')
     page = forms.IntegerField(required=False, widget=forms.HiddenInput)
@@ -752,7 +752,7 @@ class FeedSelectorForm(forms.Form):
     count = forms.IntegerField(initial=10,
                 widget=forms.TextInput(attrs={'size': 2, 'maxlength': 3,
                                               'class': 'feed_count'}),
-                label=ugettext_lazy(u'Number of entrys in the feed'),
+                label=ugettext_lazy(u'Number of entries in the feed'),
                 help_text=ugettext_lazy(u'The number will be round off to keep the server '
                             u'load low.'))
     mode = forms.ChoiceField(initial='short',
@@ -827,7 +827,7 @@ class ConfigurationForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
         help_text = ugettext_lazy(u'Users cannot use email addresses from these hosts to '
                       u'register an account.'))
-    team_icon = forms.ImageField(label=ugettext_lazy(u'Global teamicon'), required=False,
+    team_icon = forms.ImageField(label=ugettext_lazy(u'Global team icon'), required=False,
         help_text=ugettext_lazy(u'Please note the details on the maximum size below.'))
     max_avatar_width = forms.IntegerField(min_value=1)
     max_avatar_height = forms.IntegerField(min_value=1)
@@ -841,11 +841,11 @@ class ConfigurationForm(forms.Form):
     get_ubuntu_description = forms.CharField(label=ugettext_lazy(u'Description of the link'))
     wiki_newpage_template = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}),
-        label=ugettext_lazy(u'Default text of new wikipages'))
+        label=ugettext_lazy(u'Default text of new wiki pages'))
     wiki_newpage_root = forms.CharField(required=False,
-        label=ugettext_lazy(u'Location of new wikipages'))
+        label=ugettext_lazy(u'Location of new wiki pages'))
     wiki_newpage_infopage = forms.CharField(required=False,
-        label=ugettext_lazy(u'Information page about new wikipages'),
+        label=ugettext_lazy(u'Information page about new wiki pages'),
         help_text=ugettext_lazy(u'Information page to which a “create“ link should '
                     u'redirect to.'))
     team_icon_width = forms.IntegerField(min_value=1, required=False)

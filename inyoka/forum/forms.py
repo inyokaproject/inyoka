@@ -238,7 +238,7 @@ class EditForumForm(forms.Form):
         required=False)
     welcome_msg_text = forms.CharField(label=ugettext_lazy(u'Text'), required=False,
                                        widget=forms.Textarea(attrs={'rows': 3}))
-    newtopic_default_text = forms.CharField(label=ugettext_lazy(u'Defaul text for new topics'),
+    newtopic_default_text = forms.CharField(label=ugettext_lazy(u'Default text for new topics'),
                                             widget=forms.Textarea(attrs={'rows': 3}),
                                             required=False)
     force_version = forms.BooleanField(label=ugettext_lazy(u'Require Ubuntu version'),

@@ -62,7 +62,7 @@
                 <div class="member_title">{{ post.author.member_title|e }}</div>
               {%- endif %}
               {%- if post.author == topic.author and not loop.first %}
-                <div class="member_title">{% trans %}(Threadstarter){% endtrans %}</div>
+                <div class="member_title">{% trans %}(Topic starter){% endtrans %}</div>
               {%- endif %}
               {%- if post.author.has_avatar and not USER.settings['hide_avatars'] %}
                 <img class="avatar" src="{{ post.author.avatar_url }}" alt="{% trans user=post.author.username|e %}Avatar of {{ user }}{% endtrans %}" />
