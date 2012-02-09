@@ -820,7 +820,7 @@ msgid ""
 "Describe here briefly the discovered mistake. Please make sure that the "
 "mistake was not <a href=\"%(link)s\">already reported</a>."
 msgstr ""
-"Beschreibe hier kurze deinen gefunden Fehler im Artikel. Bitte achte "
+"Bitte beschreibe hier kurz die im Artikel gefundenen Fehler. Bitte achte "
 "darauf, dass der Fehler nicht bereits <a href=\"%(link)s\">gemeldet "
 "wurde</a>."
 
@@ -900,7 +900,7 @@ msgstr "Es existieren noch keine Fehlermeldungen."
 
 #: inyoka/ikhaya/templates/ikhaya/reports.html:54
 msgid "Report a new spelling mistake"
-msgstr "Melde einen neune Rechtschreibfehler"
+msgstr "Einen Rechtschreibfehler melden!"
 
 #: inyoka/ikhaya/templates/ikhaya/suggest_delete.html:15
 msgid "Explanation for the author of the suggestion:"
