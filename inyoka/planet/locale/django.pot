@@ -1,14 +1,13 @@
-# Translations template for Inyoka.
-# German (Germany) translations for .
-# Copyright (C) 2011 - 2012 Inyoka-Team
-# This file is distributed under the same license as the project.
-#
+# Translations template for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-07 23:54+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -137,7 +136,7 @@ msgid "Latest update"
 msgstr ""
 
 #: inyoka/planet/templates/planet/blog_list.html:29
-msgid "Activ"
+msgid "Active"
 msgstr ""
 
 #: inyoka/planet/templates/planet/blog_list.html:37
@@ -184,7 +183,7 @@ msgid "Recent articles"
 msgstr ""
 
 #: inyoka/planet/templates/planet/index.html:53
-msgid "« Prev"
+msgid "« Previous"
 msgstr ""
 
 #: inyoka/planet/templates/planet/index.html:56

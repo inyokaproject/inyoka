@@ -1,14 +1,13 @@
-# Translations template for Inyoka.
-# German (Germany) translations for .
-# Copyright (C) 2011 - 2012 Inyoka-Team
-# This file is distributed under the same license as the project.
-#
+# Translations template for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-07 23:54+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -131,7 +130,7 @@ msgid "Text"
 msgstr ""
 
 #: inyoka/forum/forms.py:241
-msgid "Defaul text for new topics"
+msgid "Default text for new topics"
 msgstr ""
 
 #: inyoka/forum/forms.py:244
@@ -293,7 +292,7 @@ msgstr ""
 
 #: inyoka/forum/views.py:453
 #, python-format
-msgid "This post is currently beeing edited by “%(user)s“!"
+msgid "This post is currently being edited by “%(user)s“!"
 msgstr ""
 
 #: inyoka/forum/views.py:480 inyoka/forum/views.py:488
@@ -1175,7 +1174,7 @@ msgstr ""
 
 #: inyoka/forum/templates/forum/splittopic.html:65
 #: inyoka/forum/templates/forum/topic.html:204
-msgid "(Threadstarter)"
+msgid "(Topic starter)"
 msgstr ""
 
 #: inyoka/forum/templates/forum/splittopic.html:68
@@ -1278,7 +1277,7 @@ msgid "Show results"
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:197
-msgid "Teamicon"
+msgid "Team icon"
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:224
@@ -1300,7 +1299,7 @@ msgid "From here:"
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:325
-msgid "« Prev topic"
+msgid "« Previous topic"
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:327

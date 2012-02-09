@@ -1,14 +1,13 @@
-# Translations template for Inyoka.
-# German (Germany) translations for .
-# Copyright (C) 2011 - 2012 Inyoka-Team
-# This file is distributed under the same license as the project.
-#
+# Translations template for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-07 23:54+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,7 +92,7 @@ msgstr ""
 #: inyoka/wiki/actions.py:487
 msgid ""
 "You are in the process of editing this page unauthenticated. If you save,"
-" your IP-Address will be recored in the revision history and is "
+" your IP-Address will be recorded in the revision history and is "
 "irrevocable publicly visible."
 msgstr ""
 
@@ -276,11 +275,11 @@ msgid "Automatically deleted"
 msgstr ""
 
 #: inyoka/wiki/models.py:1034
-msgid "Wikipage"
+msgid "Wiki page"
 msgstr ""
 
 #: inyoka/wiki/models.py:1035
-msgid "Wikipages"
+msgid "Wiki pages"
 msgstr ""
 
 #: inyoka/wiki/models.py:1089 inyoka/wiki/models.py:1092
@@ -506,7 +505,7 @@ msgid "Note:"
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_attach.html:39
-msgid "Overwrite exisiting attachments with same name:"
+msgid "Overwrite existing attachments with same name:"
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_attach.html:42

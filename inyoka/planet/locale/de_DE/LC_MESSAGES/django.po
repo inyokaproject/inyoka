@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-07 23:54+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: 2012-02-07 23:06+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -139,7 +139,7 @@ msgid "Latest update"
 msgstr "Letzte Aktualisierung"
 
 #: inyoka/planet/templates/planet/blog_list.html:29
-msgid "Activ"
+msgid "Active"
 msgstr "Aktiv"
 
 #: inyoka/planet/templates/planet/blog_list.html:37
@@ -186,7 +186,7 @@ msgid "Recent articles"
 msgstr "Neuste Artikel"
 
 #: inyoka/planet/templates/planet/index.html:53
-msgid "« Prev"
+msgid "« Previous"
 msgstr "« Zurück"
 
 #: inyoka/planet/templates/planet/index.html:56
