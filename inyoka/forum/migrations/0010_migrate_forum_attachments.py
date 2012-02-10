@@ -30,13 +30,16 @@ class Migration(DataMigration):
                 continue
             if not path.exists(path.join(settings.MEDIA_ROOT, old_path)):
                 print "skipping", attachment.file.name
-                attachment.delete()
                 continue
             old_name = old_path.split('/')[-1]
             new_path = path.join(new_path, u'%d-%s' % (attachment.post_id, old_name))
-            shutil.move(path.join(settings.MEDIA_ROOT, old_path),
-                        path.join(settings.MEDIA_ROOT, new_path))
-            print "%s -> %s" % (old_path, new_path)
+            try:
+                shutil.move(path.join(settings.MEDIA_ROOT, old_path),
+                            path.join(settings.MEDIA_ROOT, new_path))
+            except Exception as e:
+                print "%s -> %s %s" % (old_path, new_path, e)
+            else:
+                print "%s -> %s" % (old_path, new_path)
             Attachment.objects.filter(pk=attachment.pk).update(file=new_path)
             if second == 60:
                 kw = (kw + 1) % 54
