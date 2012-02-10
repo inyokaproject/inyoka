@@ -30,6 +30,7 @@ import operator
 import math
 import random
 from django.utils.encoding import smart_unicode
+from django.utils.translation import ugettext as _
 from inyoka.wiki.parser import unescape_string, escape
 from inyoka.wiki.utils import debug_repr, simple_match
 from inyoka.utils.parsertools import TokenStream
@@ -47,16 +48,16 @@ def expand_page_template(template, context, macro_behavior=False):
     if template is None:
         if not macro_behavior:
             raise ValueError('no template given')
-        return nodes.error_box(u'Parameterfehler', 'Das erste Argument '
-                               u'muss der Name des Templates sein.')
+        return nodes.error_box(_(u'Invalid arguments'),
+                               _(u'The first argument must be the name of the template.'))
     try:
         page = Page.objects.get_by_name(template, raise_on_deleted=True)
     except Page.DoesNotExist:
         if not macro_behavior:
             raise
-        return nodes.error_box(u'Fehlende Vorlage', u'Das gewünschte '
-                               u'Template „%s“ existiert nicht.' %
-                               template)
+        return nodes.error_box(_(u'Missing template'),
+                               _(u'The template “%(name)s” could not be found.')
+                               % {'name': template})
     doc = page.rev.text.parse(context)
     children, is_block_tag = doc.get_fragment_nodes(True)
 
@@ -152,25 +153,23 @@ class Parser(object):
     def parse_for(self):
         self.stream.next()
         if not self.stream.test('variable'):
-            raise TemplateSyntaxError(u'Ungültige Syntax für For-Schleife. '
-                                      u'Erstes Argument muss eine Variable '
-                                      u'sein.')
+            raise TemplateSyntaxError(
+                _(u'Invalid syntax for this loop. The first argument '
+                  u'must be a variable.'))
         variable = self.stream.current.value[1:]
         self.stream.next()
         if not self.stream.test('raw', 'in'):
-            raise TemplateSyntaxError(u'Ungültige Syntax für For-Schleife. '
-                                      u'Auf erste Variable muss das "in" '
-                                      u'Schlüsselwort folgen.')
+            raise TemplateSyntaxError(
+                _(u'Invalid syntax for this loop. After the first variable '
+                  u'an “in” is required.'))
         self.stream.next()
         seq = self.parse_expr()
         if not self.stream.test('tag_end'):
-            raise TemplateSyntaxError(u'Schleifenkopf enthält zu viele '
-                                      u'Argumente.')
+            raise TemplateSyntaxError(_(u'Loop header contains too many arguments.'))
         self.stream.next()
         body = self.subparse(lambda: self.stream.test('raw', 'endfor'))
         if not self.stream.test('tag_end'):
-            raise TemplateSyntaxError(u'Schleifenende enthält zu viele '
-                                      u'Argumente.')
+            raise TemplateSyntaxError(_(u'Loop end contains too many arguments.'))
         self.stream.next()
         return For(variable, seq, body)
 
@@ -178,8 +177,8 @@ class Parser(object):
         self.stream.next()
         expr = self.parse_expr()
         if not self.stream.test('tag_end'):
-            raise TemplateSyntaxError(u'Bedingungen erlauben nur einen '
-                                      u'Ausdruck pro Block')
+            raise TemplateSyntaxError(
+                _(u'Conditions allow only one expression per block.'))
         self.stream.next()
         tests = [(expr, self.subparse(lambda: self.stream.test('raw',
                  ('endif', 'else', 'elseif')), drop_needle=False))]
@@ -189,10 +188,9 @@ class Parser(object):
             if self.stream.test('raw', 'else'):
                 self.stream.next()
                 if not self.stream.test('tag_end'):
-                    raise TemplateSyntaxError(u'„else“ Block erlaubt keinen '
-                                              u'Ausdruck. Möglicherweise '
-                                              u'wolltest du einen „elseif“ '
-                                              u'Block verwenden.')
+                    raise TemplateSyntaxError(
+                        _(u'The “else” block does not allow any expressions. '
+                          u'Maybe you wanted to use the “elseif” block.'))
                 self.stream.next()
                 else_body = self.subparse(lambda:
                                            self.stream.test('raw', 'endif'),
@@ -201,8 +199,8 @@ class Parser(object):
                 self.stream.next()
                 expr = self.parse_expr()
                 if not self.stream.test('tag_end'):
-                    raise TemplateSyntaxError(u'Bedingungen erlauben nur '
-                                              u'einen Ausdruck pro Block.')
+                    raise TemplateSyntaxError(
+                        _(u'Conditions allow only one expression per block'))
                 self.stream.next()
                 tests.append((expr, self.subparse(lambda:
                              self.stream.test('raw', ('endif', 'elseif')),
@@ -211,7 +209,7 @@ class Parser(object):
             break
         self.stream.next()
         if not self.stream.test('tag_end'):
-            raise TemplateSyntaxError(u'„endif“ erlaubt keine Argumente.')
+            raise TemplateSyntaxError(_(u'“endif” does not allow any arguments'))
         self.stream.next()
         return If(tests, else_body)
 
@@ -246,8 +244,8 @@ class Parser(object):
         if self.stream.test('raw', 'as'):
             self.stream.next()
             if not self.stream.test('raw', tuple(CONVERTER)):
-                raise TemplateSyntaxError(u'Unbekannter Ausdruck nach '
-                                          u'„as“ Operator.')
+                raise TemplateSyntaxError(
+                    _(u'Unknown expression after “as” operator.'))
             func = CONVERTER[self.stream.current.value]
             self.stream.next()
             left = ConverterFunction(left, func)
@@ -263,8 +261,8 @@ class Parser(object):
             else:
                 negated = False
             if not self.stream.test('raw', tuple(TESTS)):
-                raise TemplateSyntaxError(u'Unbekannter Ausdruck nach '
-                                          u'„is“ Operator.')
+                raise TemplateSyntaxError(
+                    _(u'Unknown expression after “is” operator'))
             func = TESTS[self.stream.current.value]
             self.stream.next()
             left = TestFunction(left, func, negated)
@@ -342,7 +340,7 @@ class Parser(object):
         token_type, value = self.stream.current
         self.stream.next()
         if token_type == 'eof':
-            node = TemplateSyntaxError(u'Unerwartetes Ausdrucksende')
+            node = TemplateSyntaxError(_(u'Unexpected end of expression'))
         elif token_type == 'number':
             node = Value(float(value))
         elif token_type == 'variable':
@@ -353,17 +351,16 @@ class Parser(object):
             if value == '(':
                 node = self.parse_expr()
                 if not self.stream.test('operator', ')'):
-                    raise TemplateSyntaxError(u'Klammerausdruck wurde '
-                                              u'nicht geschlossen.')
+                    raise TemplateSyntaxError(
+                        _(u'Parentheses were not closed properly.'))
             elif value == '[':
                 items = {}
                 next_numeric = 0
                 while self.stream.current.value != ']':
                     if items:
                         if not self.stream.test('operator', ','):
-                            raise TemplateSyntaxError(u'fehlender Beistrich '
-                                                      u'zwischen Array '
-                                                      u'Einträgen.')
+                            raise TemplateSyntaxError(
+                                _(u'Missing comma between array entries'))
                         self.stream.next()
                     value = self.parse_expr()
                     if self.stream.test('operator', '=>'):
@@ -405,8 +402,8 @@ class Parser(object):
             item = Value(float(self.stream.current.value))
             self.stream.next()
         else:
-            raise TemplateSyntaxError(u'Variable, Zahl oder Attribut '
-                                      u'erwartet.')
+            raise TemplateSyntaxError(
+                _(u'expected variable, integer or attribute'))
         return GetItem(node, item)
 
     def subparse(self, test, drop_needle=True):
@@ -436,8 +433,8 @@ class Parser(object):
                             continue
                     result.append(self.parse_expr())
                     if not self.stream.test('tag_end'):
-                        raise TemplateSyntaxError(u'Zu viele Argumente für '
-                                                  u'Wertausgabe.')
+                        raise TemplateSyntaxError(
+                            _(u'Too many arguments for this value output'))
                     self.stream.next()
                 elif token_type == 'raw':
                     result.append(Data(self.stream.current.value))
@@ -462,7 +459,8 @@ class TemplateSyntaxError(Exception):
         Exception.__init__(self, message)
 
     def get_node(self):
-        return Data(u"\n\n'''Syntaxfehler:''' %s\n\n" % self.message)
+        msg = _(u'Invalid syntax: ')
+        return Data(u"\n\n'''%s''' %s\n\n" % (msg, self.message))
 
 
 class Context(object):

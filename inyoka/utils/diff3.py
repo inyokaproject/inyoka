@@ -14,6 +14,7 @@
 import re
 import heapq
 import difflib
+from django.utils.translation import ugettext as _
 from inyoka.utils.html import escape
 
 
@@ -361,7 +362,7 @@ class DiffRenderer(object):
         try:
             if line1.startswith('--- ') and line2.startswith('+++ '):
                 filename = line1[4:].split(None, 1)[0]
-                return filename, 'Alt', 'Neu'
+                return filename, _('Old'), _('New')
         except (ValueError, IndexError):
             pass
         return None, None, None
