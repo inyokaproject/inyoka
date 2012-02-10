@@ -193,7 +193,7 @@ class BaseDeleteView(edit.BaseDeleteView):
     """
     redirect_url = None
     template_name = None
-    message = ugettext_lazy(u'{verbose_name} “{object_name}” was deleted succeessfully!')
+    message = ugettext_lazy(u'{verbose_name} “{object_name}” was deleted successfully!')
 
     def get_success_url(self):
         self.sucess_url = self.redirect_url
@@ -210,7 +210,7 @@ class BaseDeleteView(edit.BaseDeleteView):
 
     def post(self, request, *args, **kwargs):
         if 'cancel' in request.POST:
-            flash(u'Löschen abgebrochen!')
+            flash(_(u'Canceled!'))
         else:
             super(BaseDeleteView, self).post(request, *args, **kwargs)
             format_args = {

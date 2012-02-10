@@ -27,7 +27,7 @@ from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import ugettext_lazy, ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
@@ -561,16 +561,17 @@ class Topic(models.Model):
                 return version[0]
             return ''
 
-    #: TODO fix translation: see inyoka.forum.constants
-    def get_version_info(self, default=u'Nicht angegeben'):
+    def get_version_info(self, default=None):
+        if default is None:
+            default = _(u'Not specified')
         if not (self.ubuntu_version or self.ubuntu_distro):
             return default
-        if self.ubuntu_distro == u'keine':
-            return u'Kein Ubuntu'
+        if self.ubuntu_distro == u'none':
+            return _(u'No Ubuntu')
         out = []
         if self.ubuntu_distro:
             out.append(UBUNTU_DISTROS_LEGACY[self.ubuntu_distro])
-        if self.ubuntu_version and self.ubuntu_version != u'keine':
+        if self.ubuntu_version and self.ubuntu_version != u'none':
             out.append(str(self.get_ubuntu_version()))
         return u' '.join(out)
 
@@ -908,19 +909,19 @@ class Post(models.Model, LockableObject):
         new_topic.forum.invalidate_topic_cache()
         old_topic.forum.invalidate_topic_cache()
 
-    #: TODO fix translation
     @property
     def grouped_attachments(self):
         def expr(v):
-            return u'Bilder' if v.mimetype.startswith('image') and v.mimetype \
-                in SUPPORTED_IMAGE_TYPES else u''
+            if not v.mime.startswith('image') or v.mimetype not in SUPPORTED_IMAGE_TYPES:
+                return u''
+            return _(u'Pictures')
 
         if hasattr(self, '_attachments_cache'):
             attachments = sorted(self._attachments_cache, key=expr)
         else:
             attachments = sorted(self.attachments.all(), key=expr)
 
-        grouped = [(x[0], list(x[1]), u'möglich' in x[0] and 'broken' or '') \
+        grouped = [(x[0], list(x[1]), 'broken' if not x[0] else '') \
                    for x in groupby(attachments, expr)]
         return grouped
 

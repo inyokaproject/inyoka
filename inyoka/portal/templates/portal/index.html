@@ -33,7 +33,7 @@
     {% if calendar_events %}
       <ul class="events">
       {% for event in calendar_events %}
-        <li>{{ event.friendly_title(with_date=false, with_html_link=true) }}</li>
+        <li>{{ event.friendly_title(with_html_link=true) }}</li>
       {%- endfor %}
       </ul>
     {% else %}

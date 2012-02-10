@@ -20,6 +20,7 @@
 """
 from urlparse import urlparse
 from django.conf import settings
+from django.utils.translation import ugettext as _
 from inyoka.utils.text import slugify, normalize_pagename, get_pagetitle
 from inyoka.utils.html import build_html_tag, striptags, escape
 from inyoka.utils.urls import href, urlquote_plus, get_url
@@ -273,9 +274,9 @@ class ConflictMarker(Node):
     def prepare_html(self):
         yield u'<div class="conflict conflict-%s">' % self.type
         yield {
-            'left':     u'<strong>Konflikt</strong> — andere Version',
-            'middle':   u'<strong>Konflikt</strong> — eigene Version',
-            'right':    u'<strong>Konlikt Ende</strong>'
+            'left':     _(u'<strong>Conflict</strong> – remote version'),
+            'middle':   _(u'<strong>Conflict</strong> — local Version'),
+            'right':    _(u'<strong>Conflict End</strong>')
         }[self.type]
         yield u'</div>'
 
@@ -786,10 +787,12 @@ class Moderated(Element):
         w.markup(u'[/mod]')
 
     def prepare_html(self):
+        msg = _(u'Moderated by')
         yield u'<div class="moderated">'
-        yield u'<p><strong>Moderiert von <a class="crosslink user" href="%s">' \
-              u'%s</a>:</strong></p> ' % (href('portal', 'user', self.username),
-                                    self.username)
+        yield u'<p><strong>%s <a class="crosslink user" href="%s">' \
+              u'%s</a>:</strong></p> ' % (msg,
+                href('portal', 'user', self.username),
+                self.username)
         for item in Element.prepare_html(self):
             yield item
         yield u'</div>'
@@ -816,10 +819,12 @@ class Edited(Element):
         w.markup(u'[/edit]')
 
     def prepare_html(self):
+        msg = _(u'Edited by')
         yield u'<div class="edited">'
-        yield u'<p><strong>Bearbeitet von <a class="crosslink user" href="%s">' \
-              u'%s</a>:</strong></p> ' % (href('portal', 'user', self.username),
-                                    self.username)
+        yield u'<p><strong>%s <a class="crosslink user" href="%s">' \
+              u'%s</a>:</strong></p> ' % (msg,
+                href('portal', 'user', self.username),
+                self.username)
         for item in Element.prepare_html(self):
             yield item
         yield u'</div>'
