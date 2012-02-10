@@ -21,11 +21,10 @@
       <li><a href="{{ href('portal', 'usercp', 'subscriptions') }}"{{ selected == 'subscriptions' and ' class="active"' or '' }}>{% trans %}Subscriptions{% endtrans %}</a></li>
       <li><a href="{{ href('portal', 'usercp', 'deactivate') }}"{{ selected == 'deactivate' and ' class="active"' or '' }}>{% trans %}Deactivate account{% endtrans %}</a></li>
       <li>
-        {#- TODO SETTING.??? -#}
         {%- if USER.has_wikipage -%}
-          <a href="{{ href('wiki', 'Benutzer', USER.username|e, action='edit') }}">
+          <a href="{{ href('wiki', SETTINGS.WIKI_USER_BASE, USER.username|e, action='edit') }}">
         {%- else -%}
-          <a href="{{ href('wiki', 'Benutzerseite') }}">
+          <a href="{{ href('wiki', SETTINGS.WIKI_USERPAGE_INFO) }}">
         {%- endif -%}
         {% trans %}User page{% endtrans %}</a>
       </li>
