@@ -166,7 +166,7 @@
   {%- if wikipage %}
     {{ wikipage }}
     <p>
-      (<a href="{{ href('wiki', 'Benutzer', user.username|e, action='edit') }}">{% trans %}edit{% endtrans %}</a>)
+      (<a href="{{ href('wiki', SETTINGS.WIKI_USER_BASE, user.username|e, action='edit') }}">{% trans %}edit{% endtrans %}</a>)
     </p>
   {%- endif %}
 {% endblock %}
