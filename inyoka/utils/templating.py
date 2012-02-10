@@ -13,15 +13,17 @@ from functools import partial
 from glob import glob
 
 from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import naturalday
 from django.utils import translation
 from django.utils import simplejson as json
+from django.utils.timesince import timesince
 from django_mobile import get_flavour
 from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound
 
 from inyoka import INYOKA_REVISION
 from inyoka.utils.cache import request_cache
-from inyoka.utils.dates import format_timedelta, natural_date, \
-     format_datetime, format_specific_datetime, format_time
+from inyoka.utils.dates import format_datetime, format_specific_datetime, \
+    format_time
 from inyoka.utils.flashing import get_flashed_messages
 from inyoka.utils.local import current_request
 
@@ -264,25 +266,15 @@ from inyoka.utils.urls import href, url_for, urlencode, urlquote
 #: Filters that are globally available in the template environment
 FILTERS = {
     'timedeltaformat':
-        partial(format_timedelta),
-    'utctimedeltaformat':
-        partial(format_timedelta, enforce_utc=True),
+        partial(timesince),
     'datetimeformat':
         partial(format_datetime),
-    'utcdatetimeformat':
-        partial(format_datetime, enforce_utc=True),
     'dateformat':
-        partial(natural_date),
-    'utcdateformat':
-        partial(natural_date, enforce_utc=True),
+        partial(naturalday),
     'timeformat':
         partial(format_time),
-    'utctimeformat':
-        partial(format_time, enforce_utc=True),
     'specificdatetimeformat':
         partial(format_specific_datetime),
-    'utcspecificdatetimeformat':
-        partial(format_specific_datetime, enforce_utc=True),
     'url':
         partial(url_for),
     'urlencode': urlencode_filter,

@@ -90,7 +90,7 @@ def reactivate_user(id, email, status, time):
 
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
-        msg = u'Die E-Mail Adresse ist bereits vergeben.'
+        msg = _(u'This e-mail address is used by another user.')
         return {'failed': msg}
 
     user = User.objects.get(id=id)
@@ -271,7 +271,7 @@ class Group(models.Model):
     is_public = models.BooleanField(ugettext_lazy(u'Public profile'))
     _default_group = None
     permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
-    icon = models.ImageField(ugettext_lazy(u'Teamicon'),
+    icon = models.ImageField(ugettext_lazy(u'Team icon'),
                              upload_to='portal/team_icons',
                              blank=True, null=True)
 

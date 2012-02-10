@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-01-21 16:05+0100\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,67 +48,116 @@ msgstr ""
 msgid "can moderate"
 msgstr ""
 
-#: inyoka/forum/forms.py:169
+#: inyoka/forum/constants.py:27 inyoka/forum/constants.py:39
+#: inyoka/forum/models.py:566
+msgid "Not specified"
+msgstr ""
+
+#: inyoka/forum/constants.py:28 inyoka/forum/constants.py:40
+msgid "Edubuntu"
+msgstr ""
+
+#: inyoka/forum/constants.py:29 inyoka/forum/constants.py:41
+msgid "Kubuntu"
+msgstr ""
+
+#: inyoka/forum/constants.py:30
+msgid "Kubuntu (KDE 4)"
+msgstr ""
+
+#: inyoka/forum/constants.py:31 inyoka/forum/constants.py:42
+msgid "Server"
+msgstr ""
+
+#: inyoka/forum/constants.py:32 inyoka/forum/constants.py:43
+msgid "Ubuntu"
+msgstr ""
+
+#: inyoka/forum/constants.py:33 inyoka/forum/constants.py:44
+msgid "Xubuntu"
+msgstr ""
+
+#: inyoka/forum/constants.py:34 inyoka/forum/constants.py:45
+msgid "Lubuntu"
+msgstr ""
+
+#: inyoka/forum/constants.py:46
+msgid "Unity"
+msgstr ""
+
+#: inyoka/forum/constants.py:52
+msgid "Version"
+msgstr ""
+
+#: inyoka/forum/constants.py:53
+msgid "Distribution"
+msgstr ""
+
+#: inyoka/forum/forms.py:170
 msgid "No topic with this slug found."
 msgstr ""
 
-#: inyoka/forum/forms.py:199 inyoka/forum/forms.py:231
+#: inyoka/forum/forms.py:200 inyoka/forum/forms.py:233
 msgid "Description"
 msgstr ""
 
-#: inyoka/forum/forms.py:217
+#: inyoka/forum/forms.py:218
 msgid "Reason"
 msgstr ""
 
-#: inyoka/forum/forms.py:228
+#: inyoka/forum/forms.py:230
 msgid "Name"
 msgstr ""
 
-#: inyoka/forum/forms.py:229
+#: inyoka/forum/forms.py:231
 msgid "Slug"
 msgstr ""
 
-#: inyoka/forum/forms.py:232
+#: inyoka/forum/forms.py:234
 msgid "Parent"
 msgstr ""
 
-#: inyoka/forum/forms.py:233
+#: inyoka/forum/forms.py:235
 msgid "Position"
 msgstr ""
 
-#: inyoka/forum/forms.py:235
+#: inyoka/forum/forms.py:237
 msgid "Title"
 msgstr ""
 
-#: inyoka/forum/forms.py:237
+#: inyoka/forum/forms.py:239
 msgid "Text"
 msgstr ""
 
-#: inyoka/forum/forms.py:239
-msgid "Defaul text for new topics"
+#: inyoka/forum/forms.py:241
+msgid "Default text for new topics"
 msgstr ""
 
-#: inyoka/forum/forms.py:242
+#: inyoka/forum/forms.py:244
 msgid "Require Ubuntu version"
 msgstr ""
 
-#: inyoka/forum/forms.py:245
+#: inyoka/forum/forms.py:246
 msgid "Count posts in this forum"
 msgstr ""
 
-#: inyoka/forum/forms.py:256
+#: inyoka/forum/forms.py:247
+msgid "This value can only be changed by the Webteam"
+msgstr ""
+
+#: inyoka/forum/forms.py:257
 msgid "You must enter a title in order to set the welcome message"
 msgstr ""
 
-#: inyoka/forum/forms.py:263
+#: inyoka/forum/forms.py:264
 msgid "You must enter a text in order to set the welcome message"
 msgstr ""
 
-#: inyoka/forum/forms.py:270
+#: inyoka/forum/forms.py:271
 msgid "“new“ is not a valid forum slug"
 msgstr ""
 
-#: inyoka/forum/forms.py:274
+#: inyoka/forum/forms.py:275
 #, python-format
 msgid "Please select another slug, “%(slug)s“ is already in use."
 msgstr ""
@@ -135,15 +183,23 @@ msgstr ""
 msgid "Topics"
 msgstr ""
 
-#: inyoka/forum/models.py:677
+#: inyoka/forum/models.py:570
+msgid "No Ubuntu"
+msgstr ""
+
+#: inyoka/forum/models.py:678
 #: inyoka/forum/templates/forum/_edit_latestpost_row.html:20
 #: inyoka/forum/templates/forum/splittopic.html:78
 #: inyoka/forum/templates/forum/topic.html:264
 msgid "Post"
 msgstr ""
 
-#: inyoka/forum/models.py:678
+#: inyoka/forum/models.py:679
 msgid "Posts"
+msgstr ""
+
+#: inyoka/forum/models.py:917
+msgid "Pictures"
 msgstr ""
 
 #: inyoka/forum/notifications.py:36
@@ -206,6 +262,11 @@ msgstr ""
 msgid "The attachment “%(attachment)s“ does already exist."
 msgstr ""
 
+#: inyoka/forum/views.py:385
+#, python-format
+msgid "The attachment “%(attachment)s“ was added successfully."
+msgstr ""
+
 #: inyoka/forum/views.py:392
 #, python-format
 msgid "The attachment with the ID “%(id)d“ does not exist."
@@ -231,7 +292,7 @@ msgstr ""
 
 #: inyoka/forum/views.py:453
 #, python-format
-msgid "This post is currently beeing edited by “%(user)s“!"
+msgid "This post is currently being edited by “%(user)s“!"
 msgstr ""
 
 #: inyoka/forum/views.py:480 inyoka/forum/views.py:488
@@ -497,6 +558,10 @@ msgstr ""
 #: inyoka/forum/views.py:1418
 #, python-format
 msgid "Topics by “%(user)s“"
+msgstr ""
+
+#: inyoka/forum/views.py:1422
+msgid "You need to be logged in to use this function."
 msgstr ""
 
 #: inyoka/forum/views.py:1427
@@ -1109,7 +1174,7 @@ msgstr ""
 
 #: inyoka/forum/templates/forum/splittopic.html:65
 #: inyoka/forum/templates/forum/topic.html:204
-msgid "(Threadstarter)"
+msgid "(Topic starter)"
 msgstr ""
 
 #: inyoka/forum/templates/forum/splittopic.html:68
@@ -1212,7 +1277,7 @@ msgid "Show results"
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:197
-msgid "Teamicon"
+msgid "Team icon"
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:224
@@ -1234,7 +1299,7 @@ msgid "From here:"
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:325
-msgid "« Prev topic"
+msgid "« Previous topic"
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:327
