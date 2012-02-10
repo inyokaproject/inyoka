@@ -523,8 +523,8 @@ def profile(request, username):
         raise PageNotFound()
 
     try:
-        # TODO: remove hardcoded wikipage
-        key = 'Benutzer/' + normalize_pagename(user.username)
+        key = '%s/%s' % (settings.WIKI_USER_BASE,
+                         normalize_pagename(user.username))
         wikipage = WikiPage.objects.get_by_name(key, raise_on_deleted=True)
         content = wikipage.rev.rendered_text
     except WikiPage.DoesNotExist:
@@ -888,8 +888,8 @@ def usercp_userpage(request):
     """
     flash(_(u'You were redirected to our wiki to change your user page. To get '
             u'back, you can use the link or your browser’s “back“ button.'))
-    # TODO: hardcoded wikipage
-    return HttpResponseRedirect(href('wiki', 'Benutzer', request.user.username, action='edit'))
+    return HttpResponseRedirect(href('wiki', settings.WIKI_USER_BASE,
+                                     request.user.username, action='edit'))
 
 
 def get_user(username):
