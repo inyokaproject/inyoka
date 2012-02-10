@@ -6,7 +6,7 @@
 
     It contains the design elements that are displayed on all pages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 -#}
 {% from 'macros.html' import breadcrumb, render_modnavi_li %}
@@ -263,11 +263,14 @@
             {%- endtrans %}
           {% endif %}
           <br />
-          {%- if INYOKA_REVISION %}
-            Inyoka {{ INYOKA_REVISION }}
-          {%- else %}
+          {%- if INYOKA_REVISION -%}
+          Inyoka {{ INYOKA_REVISION['tag'] }}
+            {%- if SETTINGS.DEBUG -%}
+              -{{ INYOKA_REVISION['commit'] }}
+            {%- endif -%}
+          {%- else -%}
             Inyoka revision unavailable
-          {%- endif %}
+          {%- endif -%}
         </li>
         <li class="license">
           <a href="?flavour=mobile" class="flavour_switch" >{% trans %}To mobile version{% endtrans %}</a><br />

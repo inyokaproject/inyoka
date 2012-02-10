@@ -7,7 +7,7 @@
     private messages, static pages and the login/register and search
     dialogs.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import binascii
@@ -942,13 +942,14 @@ def user_edit_profile(request, username):
         form = EditUserProfileForm(request.POST, request.FILES, user=user)
         if form.is_valid():
             data = form.cleaned_data
+
             lat = data.get('coordinates_lat', None)
             long = data.get('coordinates_long', None)
             data['coordinates'] = '%s, %s' % (lat, long) if lat and long else ''
             for key in ('website', 'interests', 'location', 'jabber', 'icq',
                          'msn', 'aim', 'yim', 'signature', 'coordinates',
                          'gpgkey', 'email', 'skype', 'sip', 'wengophone',
-                         'launchpad', 'member_title'):
+                         'launchpad', 'member_title', 'username'):
                 setattr(user, key, data[key] or '')
             if data['delete_avatar']:
                 user.delete_avatar()

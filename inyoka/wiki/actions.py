@@ -15,7 +15,7 @@
     normalized.  The database models do not do this on their own!
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
