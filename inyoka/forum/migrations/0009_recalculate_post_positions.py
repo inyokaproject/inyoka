@@ -18,6 +18,7 @@ def queryset_iterator(queryset, chunksize=1000):
         for row in queryset.filter(pk__gt=pk)[:chunksize]:
             pk = row.pk
             yield row
+        gc.collect()
 
 class Migration(DataMigration):
 
@@ -32,12 +33,11 @@ class Migration(DataMigration):
                     if pos != values[1]:
                         orm.Post.objects.filter(id=values[0]).update(position=pos)
                     pos += 1
-                if mapping and (topic.last_post_id != values[0] or
-                                topic.post_count != pos + 1):
+                if values and (topic.last_post_id != values[0] or
+                               topic.post_count != pos + 1):
                     orm.Topic.objects.filter(id=topic.id).update(
                         last_post=values[0], post_count=pos+1)
                 del connection.queries[:]
-                gc.collect()
 
     def backwards(self, orm):
         """There is no backwards migration as we never relied on being broken"""
