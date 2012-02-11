@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import os.path as path
+import re
 import shutil
 import datetime
 from south.db import db
@@ -8,23 +9,29 @@ from south.v2 import DataMigration
 from django.db import models
 from django.conf import settings
 
+_new_path_re = re.compile('forum/attachments/\d{2}/\d{2}/')
+_attachment_max_length = 100
+
 class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        shutil.move(path.join(settings.MEDIA_ROOT, 'forum/attachments'),
-                    path.join(settings.MEDIA_ROOT, 'forum/attachments_migrate'))
-        # prepare the new folderstructure:
-        for i in range(61):
-            for j in range(54):
-                p = path.join(settings.MEDIA_ROOT, 'forum/attachments/{0:02d}/{1:02d}'.format(i,j))
-                if not path.exists(p):
-                    os.makedirs(p)
+        if not os.path.exists(path.join(settings.MEDIA_ROOT, 'forum/attachments_migrate')):
+            shutil.move(path.join(settings.MEDIA_ROOT, 'forum/attachments'),
+                        path.join(settings.MEDIA_ROOT, 'forum/attachments_migrate'))
+            # prepare the new folderstructure:
+            for i in range(61):
+                for j in range(54):
+                    p = path.join(settings.MEDIA_ROOT, 'forum/attachments/{0:02d}/{1:02d}'.format(i,j))
+                    if not path.exists(p):
+                        os.makedirs(p)
         Attachment = orm['forum.attachment']
         second = 0
         kw = 0
         for attachment in Attachment.objects.all():
             new_path = 'forum/attachments/{0:02d}/{1:02d}/'.format(second, kw)
+            if _new_path_re.match(attachment.file.name):
+                continue
             old_path = attachment.file.name.replace('/attachments/', '/attachments_migrate/')
             if not attachment.post_id: # ignore temp attachments
                 continue
@@ -33,13 +40,18 @@ class Migration(DataMigration):
                 continue
             old_name = old_path.split('/')[-1]
             new_path = path.join(new_path, u'%d-%s' % (attachment.post_id, old_name))
+            if len(new_path) > _attachment_max_length:
+                data = new_path.rsplit('.', 1)
+                if len(data) == 2:
+                    p, ext = data
+                    new_path = p[:_attachment_max_length - 1 - len(ext)] + '.' + ext
+                else:
+                    new_path = data[0][:_attachment_max_length]
             try:
                 shutil.move(path.join(settings.MEDIA_ROOT, old_path),
                             path.join(settings.MEDIA_ROOT, new_path))
             except Exception as e:
                 print "%s -> %s %s" % (old_path, new_path, e)
-            else:
-                print "%s -> %s" % (old_path, new_path)
             Attachment.objects.filter(pk=attachment.pk).update(file=new_path)
             if second == 60:
                 kw = (kw + 1) % 54
