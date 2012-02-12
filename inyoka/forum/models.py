@@ -912,7 +912,7 @@ class Post(models.Model, LockableObject):
     @property
     def grouped_attachments(self):
         def expr(v):
-            if not v.mime.startswith('image') or v.mimetype not in SUPPORTED_IMAGE_TYPES:
+            if not v.mimetype.startswith('image') or v.mimetype not in SUPPORTED_IMAGE_TYPES:
                 return u''
             return _(u'Pictures')
 
@@ -963,7 +963,7 @@ class Post(models.Model, LockableObject):
 class Attachment(models.Model):
     """Represents an attachment associated to a post."""
 
-    file = models.FileField(upload_to='forum/attachments/temp', max_length=100)
+    file = models.FileField(upload_to='forum/attachments/temp')
     name = models.CharField(max_length=255)
     comment = models.TextField(null=True, blank=True)
     mimetype = models.CharField(max_length=100, null=True)
@@ -1037,29 +1037,23 @@ class Attachment(models.Model):
         attachments = Attachment.objects.filter(id__in=att_ids, post=None).all()
 
         base_path = datetime.utcnow().strftime('forum/attachments/%S/%W')
-        if attachments and not path.exists(path.join(settings.MEDIA_ROOT, base_path)):
-            os.makedirs(path.join(settings.MEDIA_ROOT, base_path))
 
         for attachment in attachments:
             new_name = get_filename('%d-%s' % (post.pk, attachment.name))
             new_name = path.join(base_path, new_name)
-            old_name = attachment.file.name
-            shutil.move(path.join(settings.MEDIA_ROOT, old_name),
-                        path.join(settings.MEDIA_ROOT, new_name))
+
+            storage = attachment.file.storage
+            new_name = storage.save(new_name, attachment.file)
+            storage.delete(attachment.file.name)
+
             Attachment.objects.filter(pk=attachment.pk).update(file=new_name,
                 post=post.pk)
-
 
     @property
     def size(self):
         """The size of the attachment in bytes."""
         f = self.file
         return f.size if f.storage.exists(f.name) else 0.0
-
-    @property
-    def filename(self):
-        """The filename of the attachment on the filesystem."""
-        return path.join(settings.MEDIA_ROOT, self.file.name)
 
     @property
     def contents(self):
@@ -1115,7 +1109,7 @@ class Attachment(models.Model):
             ff = self.file.name.encode('utf-8')
             img_path = path.join(settings.MEDIA_ROOT,
                 'forum/thumbnails/%s-%s' % (self.id, ff.split('/')[-1]))
-            thumb = get_thumbnail(self.filename.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
+            thumb = get_thumbnail(self.file.path.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
             if thumb:
                 return href('media', 'forum/thumbnails/%s' % thumb.split('/')[-1])
             return thumb

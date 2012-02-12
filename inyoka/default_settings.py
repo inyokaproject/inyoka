@@ -291,5 +291,7 @@ LOGGING = {
     'disable_existing_loggers': False,
 }
 
+DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
+
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

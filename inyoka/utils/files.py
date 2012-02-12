@@ -8,6 +8,10 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import itertools
+import os.path
+
+from django.core.files.storage import FileSystemStorage
 from mimetypes import guess_all_extensions, guess_extension
 from werkzeug import utils
 
@@ -44,7 +48,7 @@ def fix_extension(filename, mime):
 def get_filename(filename, file=None):
     """
     Returns a save filename (CAUTION: strips path components!) and adds a
-    proper extension
+    proper extension.
     """
     mime = None
     if file is not None:
@@ -57,3 +61,44 @@ def get_filename(filename, file=None):
         return fix_extension(filename, mime)
     else:
         return filename
+
+
+class MaxLengthStorageMixin(object):
+    """
+    Mixin for Django's storage system to ensure max_length is taken into
+    account.
+    """
+    max_length = 100 # Default FileField length.
+
+    def get_available_name(self, name):
+        """
+        Returns a filename that's free on the target storage system, and
+        available for new content to be written to.
+        """
+        if '../' in name or '../' in os.path.normpath(name):
+            raise ValueError('Invalid Path.')
+
+        dir_name, file_name = os.path.split(name)
+        file_root, file_ext = os.path.splitext(file_name)
+
+        if len(name) > self.max_length:
+            length = self.max_length - len(file_ext) - len(dir_name) - 1
+            name = os.path.join(dir_name, file_root[:length] + file_ext)
+
+        # If the filename already exists, add an underscore and a number (before
+        # the file extension, if one exists) to the filename until the generated
+        # filename doesn't exist.
+        count = itertools.count(1)
+        while self.exists(name):
+            # file_ext includes the dot.
+            c = count.next()
+            length = self.max_length - len(file_ext) - len(str(c)) - 1 - len(dir_name) - 1
+            name = os.path.join(dir_name, "%s_%s%s" % (file_root[:length], c, file_ext))
+
+        return name
+
+
+class InyokaFSStorage(MaxLengthStorageMixin, FileSystemStorage):
+    """
+    Default storage backend for Inyoka.
+    """
