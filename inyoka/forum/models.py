@@ -912,7 +912,7 @@ class Post(models.Model, LockableObject):
     @property
     def grouped_attachments(self):
         def expr(v):
-            if not v.mime.startswith('image') or v.mimetype not in SUPPORTED_IMAGE_TYPES:
+            if not v.mimetype.startswith('image') or v.mimetype not in SUPPORTED_IMAGE_TYPES:
                 return u''
             return _(u'Pictures')
 
@@ -963,7 +963,7 @@ class Post(models.Model, LockableObject):
 class Attachment(models.Model):
     """Represents an attachment associated to a post."""
 
-    file = models.CharField(max_length=100, unique=True)
+    file = models.FileField(upload_to='forum/attachments/temp')
     name = models.CharField(max_length=255)
     comment = models.TextField(null=True, blank=True)
     mimetype = models.CharField(max_length=100, null=True)
@@ -1008,11 +1008,9 @@ class Attachment(models.Model):
         if not exists:
             # create a temporary filename so we can identify the attachment
             # on binding to the posts
-            fn = path.join('forum', 'attachments', 'temp',
-                md5((str(time()) + name).encode('utf-8')).hexdigest())
-            fn = default_storage.save(fn, uploaded_file)
-            attachment = Attachment(name=name, file=fn, mimetype=mime,
-                                    **kwargs)
+            fn = md5((str(time()) + name).encode('utf-8')).hexdigest()
+            attachment = Attachment(name=name, mimetype=mime, **kwargs)
+            attachment.file.save(fn, uploaded_file)
             return attachment
 
     def delete(self):
@@ -1020,8 +1018,7 @@ class Attachment(models.Model):
         Delete the attachment from the filesystem and
         also mark the database-object for deleting.
         """
-        if path.exists(self.filename):
-            os.remove(self.filename)
+        self.file.delete(save=False)
         super(Attachment, self).delete()
 
     @staticmethod
@@ -1036,38 +1033,27 @@ class Attachment(models.Model):
         """
         if not att_ids or not post:
             return False
-        new_path = path.join('forum', 'attachments', str(post.id))
-        new_abs_path = path.join(settings.MEDIA_ROOT, new_path)
-
-        if not path.exists(new_abs_path):
-            os.mkdir(new_abs_path)
 
         attachments = Attachment.objects.filter(id__in=att_ids, post=None).all()
 
-        for attachment in attachments:
-            name = os.path.basename(get_new_unique_filename(
-                attachment.name, path=new_abs_path,
-                length=100-len(new_path) - len(os.sep)))
-            # move the temp file to the new path
-            shutil.move(path.join(settings.MEDIA_ROOT, attachment.file),
-                        path.join(new_abs_path, name))
+        base_path = datetime.utcnow().strftime('forum/attachments/%S/%W')
 
-            attachment.file = '%s/%s' % (new_path, name)
-            post.attachments.add(attachment)
+        for attachment in attachments:
+            new_name = get_filename('%d-%s' % (post.pk, attachment.name))
+            new_name = path.join(base_path, new_name)
+
+            storage = attachment.file.storage
+            new_name = storage.save(new_name, attachment.file)
+            storage.delete(attachment.file.name)
+
+            Attachment.objects.filter(pk=attachment.pk).update(file=new_name,
+                post=post.pk)
 
     @property
     def size(self):
         """The size of the attachment in bytes."""
-        fn = self.filename
-        if not os.path.exists(fn):
-            return 0.0
-        stat = os.stat(fn)
-        return stat.st_size
-
-    @property
-    def filename(self):
-        """The filename of the attachment on the filesystem."""
-        return path.join(settings.MEDIA_ROOT, self.file)
+        f = self.file
+        return f.size if f.storage.exists(f.name) else 0.0
 
     @property
     def contents(self):
@@ -1079,11 +1065,12 @@ class Attachment(models.Model):
         This method only opens files that are less than 1KB great, if the
         file is greater we return None.
         """
-        if (self.size / 1024) > 1 or not os.path.exists(self.filename):
+        f = self.file
+        if (self.size / 1024) > 1 and f.storage.exists(f.name):
             return
 
         data = None
-        with open(self.filename, 'rb') as fobj:
+        with f.open() as fobj:
             data = fobj.read()
         return data
 
@@ -1119,10 +1106,10 @@ class Attachment(models.Model):
             This helper returns the thumbnail url of this attachment or None
             if there is no way to create a thumbnail.
             """
-            ff = self.file.encode('utf-8')
+            ff = self.file.name.encode('utf-8')
             img_path = path.join(settings.MEDIA_ROOT,
                 'forum/thumbnails/%s-%s' % (self.id, ff.split('/')[-1]))
-            thumb = get_thumbnail(self.filename.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
+            thumb = get_thumbnail(self.file.path.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
             if thumb:
                 return href('media', 'forum/thumbnails/%s' % thumb.split('/')[-1])
             return thumb
@@ -1149,7 +1136,7 @@ class Attachment(models.Model):
                     % (url, self.mimetype, escape(self.comment), self.name)
 
     def get_absolute_url(self, action=None):
-        return href('media', self.file)
+        return self.file.url
 
 
 class Privilege(models.Model):

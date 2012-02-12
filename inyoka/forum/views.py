@@ -372,14 +372,13 @@ def handle_attachments(request, post, att_ids):
             attachment = Attachment.create(
                 att_name, d['attachment'],
                 request.FILES['attachment'].content_type,
-                attachments, override=d['override']
+                attachments, override=d['override'],
+                comment=d['comment']
             )
             if not attachment:
                 flash(_(u'The attachment “%(attachment)s“ does already exist.')
                       % {'attachment': att_name}, False)
             else:
-                attachment.comment = d['comment']
-                attachment.save()
                 attachments.append(attachment)
                 att_ids.append(attachment.id)
                 flash(_(u'The attachment “%(attachment)s“ was added '
