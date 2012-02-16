@@ -36,7 +36,7 @@ class Migration(DataMigration):
                 if values and (topic.last_post_id != values[0] or
                                topic.post_count != pos + 1):
                     orm.Topic.objects.filter(id=topic.id).update(
-                        last_post=values[0], post_count=pos+1)
+                        last_post=values[0], post_count=pos)
                 del connection.queries[:]
 
     def backwards(self, orm):
