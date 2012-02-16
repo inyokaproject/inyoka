@@ -9,7 +9,6 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import os
-from functools import partial
 from glob import glob
 
 from django.conf import settings
@@ -265,18 +264,12 @@ from inyoka.utils.urls import href, url_for, urlencode, urlquote
 
 #: Filters that are globally available in the template environment
 FILTERS = {
-    'timedeltaformat':
-        partial(timesince),
-    'datetimeformat':
-        partial(format_datetime),
-    'dateformat':
-        partial(naturalday),
-    'timeformat':
-        partial(format_time),
-    'specificdatetimeformat':
-        partial(format_specific_datetime),
-    'url':
-        partial(url_for),
+    'timedeltaformat': timesince,
+    'datetimeformat': format_datetime,
+    'dateformat': naturalday,
+    'timeformat': format_time,
+    'specificdatetimeformat': format_specific_datetime,
+    'url': url_for,
     'urlencode': urlencode_filter,
     'jsonencode': json.dumps,
 }
