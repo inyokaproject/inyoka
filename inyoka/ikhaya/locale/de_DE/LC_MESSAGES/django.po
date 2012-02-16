@@ -32,8 +32,8 @@ msgid ""
 "insert this code."
 msgstr ""
 "Um dich auf einen anderen Kommentar zu beziehen, kannst du "
-"<code>@kommentarnummer</code> verwenden.<br />\"\n"
-"\"Dies wird automatisch eingefügt, wenn du bei einem Beitrag auf "
+"<code>@kommentarnummer</code> verwenden.<br />"
+"Dies wird automatisch eingefügt, wenn du bei einem Beitrag auf "
 "„Antworten“ klickst."
 
 #: inyoka/ikhaya/forms.py:60 inyoka/ikhaya/models.py:191
@@ -58,7 +58,7 @@ msgstr "Letzte Aktualisierung"
 #: inyoka/ikhaya/forms.py:66
 msgid "If you keep this field empty, the publication date will be used."
 msgstr ""
-"Wenn du diesed Feld leer lässt, wird automatisch das "
+"Wenn du dieses Feld leer lässt, wird automatisch das "
 "Veröffentlichungsdatum verwendet."
 
 #: inyoka/ikhaya/forms.py:95
@@ -251,7 +251,7 @@ msgstr "Die Meldung wurde als nicht erledigt markiert."
 
 #: inyoka/ikhaya/views.py:459
 msgid "The comment was saved."
-msgstr "Die Kommentar wurde gespeichert."
+msgstr "Der Kommentar wurde gespeichert."
 
 #: inyoka/ikhaya/views.py:485
 msgid "The comment was hidden."
@@ -277,7 +277,7 @@ msgstr "Der Vorschlag wurde „%(user)s” zugewiesen."
 
 #: inyoka/ikhaya/views.py:527 inyoka/ikhaya/views.py:572
 msgid "This suggestion does not exist."
-msgstr "Dieser vorschlag existiert nicht."
+msgstr "Dieser Vorschlag existiert nicht."
 
 #: inyoka/ikhaya/views.py:534 inyoka/ikhaya/views.py:539
 msgid "Article suggestion deleted"
@@ -343,7 +343,7 @@ msgstr "%(domain)s Ikhaya Kommentare – %(title)s"
 #: inyoka/ikhaya/views.py:831
 #, python-format
 msgid "%(domain)s Ikhaya comments"
-msgstr "%(domain)s Ikhaya comments"
+msgstr "%(domain)s Ikhaya Kommentare"
 
 #: inyoka/ikhaya/templates/ikhaya/archive.html:12
 #: inyoka/ikhaya/templates/ikhaya/page.html:41
@@ -670,7 +670,7 @@ msgid ""
 "href=\"%(link)s\">calendar</a>. A team member will review your suggestion"
 " as soon as possible."
 msgstr ""
-"Mit diesem Formular kannst du einen neuen Eintrag in unsern <a "
+"Mit diesem Formular kannst du einen neuen Eintrag in unseren <a "
 "href=\"%(link)s\">Kalender</a> eintragen. Ein Teammitglied wird sich "
 "deinen Vorschlag so schnell wie möglich ansehen."
 
@@ -754,7 +754,7 @@ msgstr "Abonnieren"
 #: inyoka/ikhaya/templates/ikhaya/index.html:84
 #: inyoka/ikhaya/templates/ikhaya/index.m.html:41
 msgid "There is no article."
-msgstr "Es gibt keinen Artikel"
+msgstr "Es gibt keinen Artikel."
 
 #: inyoka/ikhaya/templates/ikhaya/index.m.html:38
 msgid "More »"
@@ -957,5 +957,5 @@ msgstr "%(author)s eine Nachricht schreiben"
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:67
 msgid "There are currently no article suggestions."
-msgstr "Es gibt momentan keine Artikelvorschläge"
+msgstr "Es gibt momentan keine Artikelvorschläge."
 
