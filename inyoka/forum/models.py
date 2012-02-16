@@ -572,8 +572,8 @@ class Topic(models.Model):
         if self.ubuntu_distro:
             out.append(UBUNTU_DISTROS_LEGACY[self.ubuntu_distro])
         if self.ubuntu_version and self.ubuntu_version != u'none':
-            out.append(str(self.get_ubuntu_version()))
-        return u' '.join(out)
+            out.append(force_unicode(self.get_ubuntu_version()))
+        return u' '.join(force_unicode(x) for x in out)
 
     def get_read_status(self, user):
         if user.is_anonymous:
