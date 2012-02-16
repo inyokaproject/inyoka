@@ -55,7 +55,7 @@
         {%- set classes = [] %}
         {%- if can_moderate(topic) and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
         {%- if can_moderate(topic) and topic.reported %}{% do classes.append('reported') %}{% endif %}
-        {%- if topic.get_ubuntu_version().dev %}{% do classes.append('unstable') %}{% endif %}
+        {%- if topic.get_ubuntu_version().dev == 'true' %}{% do classes.append('unstable') %}{% endif %}
         <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
           <td class="icon">
             {{ topic_icon(topic) }}

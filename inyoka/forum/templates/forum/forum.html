@@ -95,7 +95,7 @@
         {% set classes = [] %}
         {% if can_moderate and topic.hidden %}{% do classes.append('hidden') %}{% endif %}
         {% if can_moderate and topic.reported %}{% do classes.append('reported') %}{% endif %}
-        {% if topic.get_ubuntu_version().dev %}{% do classes.append('unstable') %}{% endif %}
+        {% if topic.get_ubuntu_version().dev == 'dev' %}{% do classes.append('unstable') %}{% endif %}
         {% if topic.author == USER %}{% do classes.append('own') %}{% endif %}
         <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
           <td class="icon">{{ topic_icon(topic) }}</td>
