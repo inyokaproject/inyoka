@@ -241,7 +241,7 @@ def feed(request, page_name=None, count=10):
         kwargs['summary'] = text % {
             'user': rev.user,
             'article': rev.page.title,
-            'date': rev.changed_date,
+            'date': rev.change_date,
             'summary': rev.note or '-',
         }
         kwargs['summary_type'] = None
