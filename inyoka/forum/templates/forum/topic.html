@@ -261,8 +261,8 @@
                 {%- endif %}
               </div>
               <a href="{{ post|url }}" title="Kopiere diesen Link, um auf diesen Beitrag zu verweisen" onclick="alert(this.title + '\n\n' + this.href); return false">
-                <img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" />
-              </a>
+                <img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" />{#
+              #}</a>
               {{ post.pub_date|datetimeformat }}
             </div>
             {% if can_moderate %}
