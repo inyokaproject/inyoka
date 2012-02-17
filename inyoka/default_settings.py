@@ -192,6 +192,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'inyoka.portal',
     'inyoka.wiki',
     'inyoka.forum',
