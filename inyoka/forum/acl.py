@@ -11,18 +11,18 @@
 import operator as ops
 from django.core.cache import cache
 from django.db.models import Q
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
 
 
 PRIVILEGES_DETAILS = [
-    ('read', _(u'can read')),
-    ('vote', _(u'can vote')),
-    ('create', _(u'can create topics')),
-    ('reply', _(u'can reply')),
-    ('upload', _(u'can upload attachments')),
-    ('create_poll', _(u'can create polls')),
-    ('sticky', _(u'can make sticky')),
-    ('moderate', _(u'can moderate'))
+    ('read', ugettext_lazy(u'can read')),
+    ('vote', ugettext_lazy(u'can vote')),
+    ('create', ugettext_lazy(u'can create topics')),
+    ('reply', ugettext_lazy(u'can reply')),
+    ('upload', ugettext_lazy(u'can upload attachments')),
+    ('create_poll', ugettext_lazy(u'can create polls')),
+    ('sticky', ugettext_lazy(u'can make sticky')),
+    ('moderate', ugettext_lazy(u'can moderate'))
 ]
 
 PRIVILEGES = [x[0] for x in PRIVILEGES_DETAILS]
