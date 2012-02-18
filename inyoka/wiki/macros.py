@@ -606,7 +606,7 @@ class TagCloud(Macro):
         result = nodes.Layer(class_='tagcloud')
         for tag in Page.objects.get_tagcloud(self.max):
             title = ungettext('%(count)d page', '%(count)d pages',
-                              tag['count']) % tag['count']
+                              tag['count']) % tag
             result.children.extend((
                 nodes.Link('?' + urlencode({
                         'tag':  tag['name']
