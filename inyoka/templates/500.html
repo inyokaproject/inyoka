@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
     errors/500.html
     ~~~~~~~~~~~~~~~
@@ -5,19 +6,18 @@
     This template is shown if the users requested page was moved to another
     location.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 {% endcomment %}
 
 <html>
-<head>
-  <title>Serverfehler</title>
-</head>
-<body>
-  <h1>Serverfehler</h1>
-  <p>
-    Es ist ein interner Serverfehler aufgetreten. Die Administratoren wurden
-    bereits über dieses Problem informiert.
-  </p>
-</body>
+  <head>
+    <title>{% trans "Servererror" %}</title>
+  </head>
+  <body>
+    <h1>{% trans "Servererror" %}</h1>
+    <p>
+      {% trans "An internal error occurred. The administration was already notified." %}
+    </p>
+  </body>
 </html>

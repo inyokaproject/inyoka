@@ -1,0 +1,344 @@
+# German (Germany) translations for Inyoka.
+# Copyright (C) 2011 - 2012 Inyoka-Team
+# This file is distributed under the same license as the project.
+#
+# Translators:
+# Sören Wegener <wegener92@googlemail.com>, 2011.
+# Markus Holtermann <inyoka@markusholtermann.eu>, 2011 - 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version:  Inyoka\n"
+"Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
+"POT-Creation-Date: 2012-02-08 20:17+0100\n"
+"PO-Revision-Date: 2012-02-07 01:48+0100\n"
+"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
+"Language-Team: German (German)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: inyoka/templates/appheader.html:2
+msgid "Portal"
+msgstr "Portal"
+
+#: inyoka/templates/overall.html:119
+#, python-format
+msgid "Logout [%(user)s]"
+msgstr "Abmelden [%(user)s]"
+
+#: inyoka/templates/overall.html:124
+msgid "Control panel"
+msgstr "Kontrollzentrum"
+
+#: inyoka/templates/overall.html:131
+#, python-format
+msgid "Private messages (%(count)s)"
+msgstr "Private Nachrichten (%(count)s)"
+
+#: inyoka/templates/overall.html:136
+msgid "Private messages"
+msgstr "Private Nachrichten"
+
+#: inyoka/templates/overall.html:143 inyoka/templates/overall.m.html:69
+msgid "Login"
+msgstr "Anmelden"
+
+#: inyoka/templates/overall.html:148
+msgid "Register"
+msgstr "Registrieren"
+
+#: inyoka/templates/overall.html:159
+msgid "Admin"
+msgstr "Admin"
+
+#: inyoka/templates/overall.html:160
+msgid "Turn admin links on/off"
+msgstr "Adminlinks ein/aus"
+
+#: inyoka/templates/overall.html:166
+msgid "Reported topics"
+msgstr "Gemeldete Themen"
+
+#: inyoka/templates/overall.html:169
+msgid "Article suggestions"
+msgstr "Artikelvorschläge"
+
+#: inyoka/templates/overall.html:173
+msgid "Spelling mistakes"
+msgstr "Rechtschreibfehler"
+
+#: inyoka/templates/overall.html:177
+msgid "Event suggestions"
+msgstr "Veranstaltungsvorschläge"
+
+#: inyoka/templates/overall.html:181
+msgid "Please turn on JavaScript!"
+msgstr "Bitte aktiviere JavaScript!"
+
+#: inyoka/templates/overall.html:199
+msgid "Overall"
+msgstr "Überall"
+
+#: inyoka/templates/overall.html:202
+msgid "Forum"
+msgstr "Forum"
+
+#: inyoka/templates/overall.html:205
+msgid "Wiki"
+msgstr "Wiki"
+
+#: inyoka/templates/overall.html:208
+msgid "News"
+msgstr "Ikhaya"
+
+#: inyoka/templates/overall.html:211
+msgid "Planet"
+msgstr "Planet"
+
+#: inyoka/templates/overall.html:214
+msgid "Search"
+msgstr "Suche"
+
+#: inyoka/templates/overall.html:259
+#, python-format
+msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
+msgstr "Powered by <a href=\"%(link)s\">Inyoka</a>"
+
+#: inyoka/templates/overall.html:261
+#, python-format
+msgid "(rendered in %(seconds)s seconds)"
+msgstr "(in %(seconds)s Sekunden gerendert)"
+
+#: inyoka/templates/overall.html:273
+msgid "To mobile version"
+msgstr "Zur mobilen Version"
+
+#: inyoka/templates/overall.html:317
+msgid "Username or email address"
+msgstr "Benutzername oder E-Mail-Adresse"
+
+#: inyoka/templates/overall.html:320
+msgid "Password"
+msgstr "Passwort"
+
+#: inyoka/templates/overall.html:323
+msgid "Don’t choose this option if you are using a public computer."
+msgstr ""
+"Wähle diese Option nicht an, wenn du dich an einem öffentlichen Computer "
+"befindest."
+
+#: inyoka/templates/overall.html:324
+msgid "Keep me logged in"
+msgstr "Angemeldet bleiben"
+
+#: inyoka/templates/overall.html:327
+msgid "Lost password?"
+msgstr "Passwort vergessen?"
+
+#: inyoka/templates/overall.m.html:47
+#, python-format
+msgid ""
+"This is the version for mobile clients. To get to the <a "
+"href=\"%(link)s\">classical layout</a> click on the link in the footer of"
+" the page."
+msgstr ""
+"Dies ist die mobile Version. Um zum <a href=\"%(link)s\">klassischen "
+"Layout</a> zurückzukehren, klicke auf den Link am Ende der Seite."
+
+#: inyoka/templates/overall.m.html:65
+msgid "Logout"
+msgstr "Abmelden"
+
+#: inyoka/templates/overall.m.html:83
+msgid "To classic version"
+msgstr "Zur klassischen Version"
+
+#: inyoka/templates/errors/400_csrf.html:14
+msgid "Bad request"
+msgstr "Fehlerhafte Abfrage"
+
+#: inyoka/templates/errors/400_csrf.html:16
+msgid ""
+"The browser did not transmit a valid control key and therefore the "
+"processing has been canceled for security reasons."
+msgstr ""
+"Der Browser hat keinen oder einen fehlerhaften Kontrollschlüssel "
+"übertragen und die Weiterverarbeitung wurde aus Sicherheitsgründen "
+"abgebrochen."
+
+#: inyoka/templates/errors/400_csrf.html:21
+msgid ""
+"This error usually occurs when you are trying to transfer data "
+"automatically to the server. In rare cases this can also happen if the "
+"browser configuration was changed while the form data is transmitted."
+msgstr ""
+"Dieser Fehler tritt normalerweise auf, wenn versucht wurde Daten "
+"automatisiert auf den Server zu übertragen. In seltenen Fällen kann dies "
+"auch passieren, wenn die Browserkonfiguration verändert wurde, während "
+"die Formulardaten übertragen wurden."
+
+#: inyoka/templates/errors/400_csrf.html:26
+msgid ""
+"In some browsers it is possible to click on the \"back\" or the "
+"\"reload\" button to request a new control key the sending the page "
+"again."
+msgstr ""
+"In manchen Browsern ist es möglich durch klicken auf \"Zurück\" und dann "
+"\"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern um das "
+"Absenden erneut durchzuführen."
+
+#: inyoka/templates/errors/403.html:18
+msgid "You do not have permissions to access this page."
+msgstr "Du bist nicht berechtigt, diese Seite aufzurufen."
+
+#: inyoka/templates/errors/403.html:22
+msgid "This may be because you are not logged in."
+msgstr "Das könnte daran liegen, dass du nicht angemeldet bist."
+
+#: inyoka/templates/errors/404.html:19
+msgid "Page not found"
+msgstr "Seite nicht gefunden"
+
+#: inyoka/utils/dates.py:200
+#, python-format
+msgid "%(date)s at %(time)s"
+msgstr "%(date)s um %(time)s"
+
+#: inyoka/utils/diff3.py:365
+msgid "Old"
+msgstr "Alt"
+
+#: inyoka/utils/diff3.py:365
+msgid "New"
+msgstr "Neu"
+
+#: inyoka/utils/flash_confirmation.py:22
+msgid "Are you sure?"
+msgstr "Bist du sicher"
+
+#: inyoka/utils/flash_confirmation.py:23
+msgid "Yes"
+msgstr "Ja"
+
+#: inyoka/utils/flash_confirmation.py:24
+msgid "No"
+msgstr "Nein"
+
+#: inyoka/utils/forms.py:50
+msgid "Text must not be empty"
+msgstr "Text darf nicht leer sein"
+
+#: inyoka/utils/forms.py:61
+msgid "Your signature contains illegal elements"
+msgstr "Deine Signatur enthält ungültige Elemente"
+
+#: inyoka/utils/forms.py:66
+msgid "Your signature contains too many nested elements"
+msgstr "Deine Signatur enthält zu viele verschachtelte Elemente"
+
+#: inyoka/utils/forms.py:71
+#, python-format
+msgid "Your signature is too long, only %(length)s characters allowed"
+msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
+
+#: inyoka/utils/forms.py:75
+#, python-format
+msgid "Your signature can only contain up to %(num)d lines"
+msgstr "Deine Signatur nicht mehr als %(num)d Zeilen haben"
+
+#: inyoka/utils/forms.py:126
+msgid "This user does not exist"
+msgstr "Diesen Benutzer gibt es nicht"
+
+#: inyoka/utils/forms.py:136
+msgid "CAPTCHA"
+msgstr "CAPTCHA"
+
+#: inyoka/utils/forms.py:137
+msgid "Please type in the code from the graphic above"
+msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
+
+#: inyoka/utils/forms.py:139
+msgid "Generate new code"
+msgstr "Neue Zeichenfolge generieren"
+
+#: inyoka/utils/forms.py:196
+msgid "You have to accept cookies!"
+msgstr "Du musst Cookies aktivieren!"
+
+#: inyoka/utils/forms.py:206
+msgid "The entered CAPTCHA was incorrect."
+msgstr "Die Eingabe des Captchas war nicht korrekt."
+
+#: inyoka/utils/forms.py:221
+msgid ""
+"You have entered an invisible field and were therefore classified as a "
+"bot."
+msgstr ""
+"Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot "
+"identifiziert."
+
+#: inyoka/utils/forms.py:231
+msgid ""
+"The entered e-mail address belongs to a e-mail provider we had to block "
+"because of SPAM problems. Please choose another e-mail address"
+msgstr ""
+"Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir "
+"wegen Spamproblemen sperren mussten. Bitte gebe eine andere Adresse an."
+
+#: inyoka/utils/forms.py:235
+msgid "The entered e-mail address is invalid. Please check your input."
+msgstr ""
+"Die von dir angegebene E-Mail-Adresse ist ungültig. Bitte überpfüfe die "
+"Eingabe."
+
+#: inyoka/utils/forms.py:247
+msgid "The entered Jabber address is invalid. Please check your input."
+msgstr ""
+"Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die "
+"Eingabe."
+
+#: inyoka/utils/generic.py:53
+msgid "{verbose_name} “{object_name}” was successfully created."
+msgstr "{verbose_name} “{object_name}” wurde erfolgreich erstellt."
+
+#: inyoka/utils/generic.py:55
+msgid "{verbose_name} “{object_name}” was successfully changed."
+msgstr "{verbose_name} “{object_name}” wurde erfolgreich geändert."
+
+#: inyoka/utils/generic.py:169
+#, python-format
+msgid "No %(verbose_name)s found matching the query"
+msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
+
+#: inyoka/utils/generic.py:196
+msgid "{verbose_name} “{object_name}” was deleted successfully!"
+msgstr "{verbose_name} “{object_name}” erfolgreich gelöscht!"
+
+#: inyoka/utils/generic.py:213
+msgid "Canceled!"
+msgstr "Abgebrochen"
+
+#: inyoka/utils/pagination.py:158 inyoka/utils/pagination.py:165
+msgid "Next »"
+msgstr "Weiter »"
+
+#: inyoka/utils/pagination.py:174 inyoka/utils/pagination.py:181
+msgid "« Previous"
+msgstr "« Zurück"
+
+#: inyoka/utils/sessions.py:79
+msgid ""
+"You cannot send data that fast in a row. Please wait a bit until you "
+"submit the form again."
+msgstr ""
+"Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte "
+"noch einige Zeit bis du das Formular erneut absendest."
+
+#: inyoka/utils/sortable.py:103
+#, python-format
+msgid "The chosen sort value (“%(value)s”) is not available"
+msgstr "Der ausgewählte Wert (“%(value)s”) ist nicht verfügbar"
+

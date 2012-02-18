@@ -4,12 +4,12 @@
 
     The moderators can see all reported topics on this page.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 {%- extends 'forum/page.html' %}
-{% do BREADCRUMB.append('Gemeldete Themen', href('forum', 'reported_topics'), True) %}
+{% do BREADCRUMB.append(_('Reported topics'), href('forum', 'reported_topics'), True) %}
 
 {% block forum_content %}
 <form action="" method="post">
@@ -23,11 +23,11 @@
     </colgroup>
     <thead>
       <tr>
-        <th>#</th>
-        <th>Thema</th>
-        <th>Gemeldet von</th>
-        <th>In Bearbeitung von</th>
-        <th>Aktionen</th>
+        <th>{% trans %}#{% endtrans %}</th>
+        <th>{% trans %}Topic{% endtrans %}</th>
+        <th>{% trans %}Reported by{% endtrans %}</th>
+        <th>{% trans %}Assigned to{% endtrans %}</th>
+        <th>{% trans %}Action{% endtrans %}</th>
       </tr>
     </thead>
     <tbody>
@@ -46,14 +46,14 @@
           {% if topic.report_claimed_by %}
             <a href="{{ topic.report_claimed_by|url }}">{{ topic.report_claimed_by.username }}</a>
             {% if topic.report_claimed_by.username == USER.username %}
-              <a href="{{ href('forum', 'reported_topics', unassign=USER, topic=topic.slug) }}">(Rückgängig)</a>
+              <a href="{{ href('forum', 'reported_topics', unassign=USER, topic=topic.slug) }}">{% trans %}(undo){% endtrans %}</a>
             {% endif %}
           {% else %}
-            <a href="{{ href('forum', 'reported_topics', assign=USER, topic=topic.slug) }}">Mir zuweisen</a>
+            <a href="{{ href('forum', 'reported_topics', assign=USER, topic=topic.slug) }}">{% trans %}Assign to me{% endtrans %}</a>
           {% endif %}
         </td>
         <td>
-          <a href="{{ href('portal', 'privmsg', 'new', reply_to='reportedtopic:%s' % topic.slug) }}">PN schreiben</a>
+          <a href="{{ href('portal', 'privmsg', 'new', reply_to='reportedtopic:%s' % topic.slug) }}">{% trans %}Write a pm{% endtrans %}</a>
         </td>
       </tr>
       <tr>
@@ -62,18 +62,22 @@
       {%- else %}
       <tr>
         <td colspan="5">
-          Es gibt zurzeit keine gemeldeten Themen.
+          {% trans %}Currently there are no reported topics.{% endtrans %}
         </td>
       </tr>
       {%- endfor %}
     </tbody>
   </table>
   <div class="linklist">
-    <input type="submit" value="Ausgewählte Themen als bearbeitet markieren" /> |
+    <input type="submit" value="{% trans %}Close selected tickets{% endtrans %}" /> |
     {%- if subscribed %}
-    <a href="{{ href('forum', 'reported_topics', 'unsubscribe') }}">Themenmeldungen abbestellen</a>
+      <a href="{{ href('forum', 'reported_topics', 'unsubscribe') }}">
+        {% trans %}Unsubscribe from topic reports{% endtrans %}
+      </a>
     {%- else %}
-    <a href="{{ href('forum', 'reported_topics', 'subscribe') }}">Themenmeldungen abonnieren</a>
+      <a href="{{ href('forum', 'reported_topics', 'subscribe') }}">
+        {% trans %}Subscribe to topic reports{% endtrans %}
+      </a>
     {%- endif %}
   </div>
 </form>

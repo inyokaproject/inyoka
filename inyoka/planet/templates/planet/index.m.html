@@ -4,7 +4,7 @@
 
     This page shows some of the latest planet entries.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'planet/page.m.html' %}
@@ -19,7 +19,7 @@
         <article{% if article.hidden %} class="hidden"{% endif %}>
           <h3 class="title"><a href="{{ article|url|e }}">{{ article.title|e }}</a></h3>
           <p class="meta">
-            <span class="right"><a href="{{ article|url|e }}">Permalink</a></span>
+            <span class="right"><a href="{{ article|url|e }}">{% trans %}Permanent link{% endtrans %}</a></span>
             <span class="left"><a href="{{ article.blog|url|e }}">{{ article.blog.name|e }}</a></span>
           </p>
           <div class="text">{{ article.text }}</div>
@@ -28,7 +28,7 @@
       {% set article_index = article_index + day.articles|length %}
     </section>
   {%- else %}
-    <p>Keine Einträge vorhanden.</p>
+    <p>{% trans %}No articles were aggregated{% endtrans %}</p>
   {%- endfor %}
   {{ pagination.generate() }}
 {% endblock %}

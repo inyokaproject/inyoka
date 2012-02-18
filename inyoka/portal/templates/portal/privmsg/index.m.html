@@ -4,7 +4,7 @@
 
     Display a list of private messages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {% extends 'portal/overall.m.html' %}
@@ -13,30 +13,30 @@
 {% block content %}
   {%- if not folder %}
     <a href="{{ href('portal', 'privmsg', 'inbox') }}"{{ selected == 'inbox' and ' class="active"' or '' }}>
-      <div class="button">Posteingang</div>
+      <div class="button">{% trans %}Inbox{% endtrans %}</div>
     </a>
     <a href="{{ href('portal', 'privmsg', 'sent') }}"{{ selected == 'sent' and ' class="active"' or '' }}>
-      <div class="button">Gesendet</div>
+      <div class="button">{% trans %}Sent mail{% endtrans %}</div>
     </a>
     <a href="{{ href('portal', 'privmsg', 'archive') }}"{{ selected == 'archive' and ' class="active"' or '' }}>
-      <div class="button">Archiv</div>
+      <div class="button">{% trans %}Archive{% endtrans %}</div>
     </a>
     <a href="{{ href('portal', 'privmsg', 'trash') }}"{{ selected == 'trash' and ' class="active"' or '' }}>
-      <div class="button">Papierkorb</div>
+      <div class="button">{% trans %}Trash{% endtrans %}</div>
     </a>
     <a href="{{ href('portal', 'privmsg', 'new') }}"{{ selected == 'new' and ' class="active"' or '' }}>
-      <div class="button">Neue Nachricht</div>
+      <div class="button">{% trans %}Compose message{% endtrans %}</div>
     </a>
   {%- else %}
     {%- if message %}
       <a href="{{ href('portal', 'privmsg', folder.id ) }}">
-        <div class="button">« Zurück</div>
+        <div class="button">{% trans %}« Back{% endtrans %}</div>
       </a>
-      <h3>Nachricht von {{ message.author|e }}</h3>
+      <h3>{% trans name=message.author|e %}Message from {{ name }}{% endtrans %}</h3>
       <div class="meta">
-        {{ message.pub_date|datetimeformat }}
+        {{ message.pub_date|datetimeformat }} |
         {% if message.recipients|length > 1 %}
-          , an
+          {% trans %}To:{% endtrans %}
           {% for recipient in message.recipients %}
             <a href="{{ recipient|url }}">{{ recipient|e }}</a>
             {% if not loop.last %}, {% endif %}
@@ -47,23 +47,25 @@
         {{ message.rendered_text }}
       </div>
       <section class="actions">
-        <a href="{{ message|url('reply') }}"><span>Antworten</span></a>
+        <a href="{{ message|url('reply') }}"><span>{% trans %}Reply{% endtrans %}</span></a>
         {% if message.recipients|length > 1 %}
-          <a href="{{ message|url('reply_to_all') }}"><span>An alle antworten</span></a>
+          <a href="{{ message|url('reply_to_all') }}"><span>{% trans %}Reply to all{% endtrans %}</span></a>
         {% endif %}
-        <a href="{{ message|url('forward') }}"><span>Weiterleiten</span></a>
-        <a href="?action=restore"><span>Wiederherstellen</span></a>
-        <a href="?action=archive"><span>Archivieren</span></a>
-        <a href="?action=delete"><span>Löschen</span></a>
+        <a href="{{ message|url('forward') }}"><span>{% trans %}Forward{% endtrans %}</span></a>
+        <a href="?action=restore"><span>{% trans %}Restore{% endtrans %}</span></a>
+        <a href="?action=archive"><span>{% trans %}Archive{% endtrans %}</span></a>
+        <a href="?action=delete"><span>{% trans %}Delete{% endtrans %}</span></a>
       </section>
     {%- else %}
       <a href="{{ href('portal', 'privmsg') }}">
-        <div class="button">« Nachrichten</div>
+        <div class="button">{% trans %}« Messages{% endtrans %}</div>
       </a>
       {% for entry in entries %}
         <a href="{{ entry|url }}">
           <div class="button{{ ' unread' if not entry.read }}">
-            {{ entry.message.subject|e }} von {{ entry.message.author|e }}
+            {%- trans subject=entry.message.subject|e, author=entry.message.author|e -%}
+              {{ subject }} from {{ author }}
+            {%- endtrans -%}
           </div>
         </a>
       {% endfor %}

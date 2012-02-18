@@ -4,12 +4,12 @@
 
     Shows a list of suggested improved verions of an article.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
 
-{% do BREADCRUMB.append('Meldungen', article|url('reports')) %}
+{% do BREADCRUMB.append(_('Reports'), article|url('reports')) %}
 {% do BREADCRUMB.append(article.subject, article|url, True) %}
 
 {% block ikhaya_content %}
@@ -22,30 +22,36 @@
         {{ report.rendered_text }}
       </div>
       <p class="meta admin_link_hover">
-        Gemeldet von <a href="{{ report.author|url|e }}">{{ report.author.username|e }}</a>,
-        {{ report.pub_date|specificdatetimeformat(true) }}
+        {% trans link=report.author|url, author=report.author.username|e -%}
+          Reported by <a href="{{ link }}">{{ author }}</a>
+        {%- endtrans %}
+        <span class="linklist"> | </span>
+        {{ report.pub_date|datetimeformat }}
         {%- if can_edit %}
           <span class="admin_link">
-          {%- if report.deleted %}
-            | <a href="{{ report|url('restore')|e }}" class="action action_restore">Wiederherstellen</a>
-          {%- else %}
-            | <a href="{{ report|url('hide')|e }}" class="action action_hide">Verbergen</a>
-          {%- endif %}
-          {%- if not report.solved %}
-            | <a href="{{ report|url('solve')|e }}" class="action action_solve">Erledigt</a>
-            | <a href="{{ report.article|url('edit')|e }}" class="action action_edit">Artikel bearbeiten</a>
-          {%- else %}
-            | <a href="{{ report|url('unsolve')|e }}" class="action action_unsolve">Nicht erledigt</a>
-          {%- endif %}
+            <span class="linklist"> |</span>
+            {%- if report.deleted %}
+              <a href="{{ report|url('restore')|e }}" class="action action_restore">{% trans %}Restore{% endtrans %}</a>
+            {%- else %}
+              <a href="{{ report|url('hide')|e }}" class="action action_hide">{% trans %}Hide{% endtrans %}</a>
+            {%- endif %}
+            <span class="linklist"> | </span>
+            {%- if not report.solved %}
+              <a href="{{ report|url('solve')|e }}" class="action action_solve">{% trans %}Solved{% endtrans %}</a>
+            {%- else %}
+              <a href="{{ report|url('unsolve')|e }}" class="action action_unsolve">{% trans %}Unsolved{% endtrans %}</a>
+            {%- endif %}
+            <span class="linklist"> | </span>
+            <a href="{{ report.article|url('edit')|e }}" class="action action_edit">{% trans %}Edit article{% endtrans %}</a>
           </span>
         {%- endif %}
       </p>
     </div>
   {%- else -%}
-  <strong>Es existieren noch keine Fehlermeldungen.  Bitte benutze den unten stehenden Link um einen neuen Vorschlag zu machen</strong>
+    <strong>{% trans %}There are no reports yet.{% endtrans %}</strong>
   {%- endfor %}
   <p>
-    <a href="{{ article|url('report_new')|e }}">Melde einen neuen Rechtschreibfehler</a>
+    <a href="{{ article|url('report_new')|e }}">{% trans %}Report a new spelling mistake{% endtrans %}</a>
   </p>
 {% endblock %}
 

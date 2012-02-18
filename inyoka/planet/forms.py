@@ -5,28 +5,29 @@
 
     Formular for suggesting a new article.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
 from django.core.validators import URLValidator
+from django.utils.translation import ugettext_lazy
+
 from inyoka.utils.forms import UserField
 from inyoka.planet.models import Blog
 
 
 class SuggestBlogForm(forms.Form):
     """Form to suggest a new blog url for the planet."""
-    name = forms.CharField(label=u'Name des Blogs')
-    url =  forms.URLField(label=u'URL')
-    feed_url =  forms.URLField(label=u'Feed-URL', required=False)
-    description = forms.CharField(label=u'Beschreibung',
-        widget=forms.Textarea,
-        help_text=(u'Die Beschreibung dient dem Ikhaya-Team '
-              u'sich einen besseren Überblick zu verschaffen.'))
-    mine = forms.BooleanField(label=u'Dieser Blog ist mein eigener',
+    name = forms.CharField(label=ugettext_lazy(u'Name of the blog'))
+    url =  forms.URLField(label=ugettext_lazy(u'URL'))
+    feed_url =  forms.URLField(label=ugettext_lazy(u'Feed URL'), required=False)
+    description = forms.CharField(label=ugettext_lazy(u'Description'),
+        widget=forms.Textarea)
+    mine = forms.BooleanField(label=ugettext_lazy(u'This is my own blog'),
                               required=False)
-    contact_email = forms.EmailField(label=u'E-Mail-Adresse des Autors des '
-                                           u'Blogs', required=False)
+    contact_email = forms.EmailField(
+        label=ugettext_lazy(u'Email address of the blog author'),
+        required=False)
 
 
 

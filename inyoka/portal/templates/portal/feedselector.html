@@ -4,7 +4,7 @@
 
     A template for the feed selector
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -16,39 +16,39 @@
   <h3>Feed generieren</h3>
   {%- if not app %}
   <ul class="toc">
-    <li><a href="#forum">Forum</a></li>
+    <li><a href="#forum">{% trans %}Forum{% endtrans %}</a></li>
     <li><a href="#ikhaya">Ikhaya</a></li>
-    <li><a href="#planet">Planet</a></li>
-    <li><a href="#wiki">Wiki</a></li>
+    <li><a href="#planet">{% trans %}Planet{% endtrans %}</a></li>
+    <li><a href="#wiki">{% trans %}Wiki{% endtrans %}</a></li>
   </ul>
   {%- endif %}
   
   {%- if forum_form %}
   <form action="/feeds/forum/" method="post" id="forum">
-  <h4>Forum</h4>
+  <h4>{% trans %}Forum{% endtrans %}m</h4>
   
   <dl>
-    <dt>Was</dt>
+    <dt>{% trans %}What{% endtrans %}</dt>
     <dd>
       <ul class="radio">
         <li>
           <input type="radio" name="component" value="*" id="id_forum_component_all"{% if forum_form.component == '*' %} checked="checked"{% endif %} />
-          <label for="id_forum_component_all">Alles</label>
+          <label for="id_forum_component_all">{% trans %}All{% endtrans %}</label>
         </li>
         <li>
           <input type="radio" name="component" value="forum" id="id_forum_component_forum"{% if forum_form.component == 'forum' %} checked="checked"{% endif %} />
-          <label for="id_forum_component_forum">Für folgendes Forum: </label>
+          <label for="id_forum_component_forum">{% trans %}For the following forum:{% endtrans %}</label>
           {{ forum_form.forum }}{{ forum_form.errors.forum }}
         </li>
         <li> {#- TODO: allow a topic to be passed by url #}
           <input type="radio" name="component" value="topic" id="id_forum_component_topic" disabled="disabled" />
-          <label for="id_forum_component_topic">Für ein Thema</label>
-          <span class="help_text">Bitte im Thema auf den Link klicken, es gibt zu viele Themen um sie alle hier aufzulisten.</span>
+          <label for="id_forum_component_topic">{% trans %}For a topic{% endtrans %}</label>
+          <span class="help_text">{% trans %}Please click on the link in the topic, there are too much topics to list all of them here.{% endtrans %}</span>
         </li>
       </ul>
       {{ forum_form.errors.component }}
     </dd>
-    <dt>Wie</dt>
+    <dt>{% trans %}How{% endtrans %}</dt>
     <dd class="radiolist">
       {{ forum_form.mode }}{{ forum_form.errors.mode }}
       <p>
@@ -66,9 +66,9 @@
   <h4>Ikhaya</h4>
   
   <dl>
-    <dt>Was</dt>
+    <dt>{% trans %}What{% endtrans %}</dt>
     <dd>{{ ikhaya_form.category.label_tag() }}: {{ ikhaya_form.category }}</dd>
-    <dt>Wie</dt>
+    <dt>{% trans %}How{% endtrans %}</dt>
     <dd class="radiolist">
       {{ ikhaya_form.mode }}{{ ikhaya_form.errors.mode }}
       <p>
@@ -82,9 +82,9 @@
   {%- endif %}
   {%- if planet_form %}
   <form action="/feeds/planet/" method="post" id="planet">
-  <h4>Planet</h4>
+  <h4>{% trans %}Planet{% endtrans %}</h4>
   <dl>
-    <dt>Wie</dt>
+    <dt>{% trans %}How{% endtrans %}</dt>
     <dd class="radiolist">
       {{ planet_form.mode }}{{ planet_form.errors.mode }}
       <p>
@@ -98,9 +98,9 @@
   {%- endif %}
   {%- if wiki_form %}
   <form action="/feeds/wiki/" method="post" id="wiki">
-  <h4>Wiki</h4>
+  <h4>{% trans %}Wiki{% endtrans %}</h4>
   <dl>
-    <dt>Was</dt>
+    <dt>{% trans %}What{% endtrans %}</dt>
     <dd>{{ wiki_form.page.label_tag() }}: {{ wiki_form.page }}</dd>
     <dd class="help_text">{{ wiki_form.page.help_text }}</dd>
     <p>

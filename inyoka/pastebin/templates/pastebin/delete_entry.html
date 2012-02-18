@@ -5,17 +5,19 @@
     This template is flashed to ensure that the user want to delete the
     selected pastebin entry.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 
 <form action="{{ entry|url('delete')|e }}" method="post">
   <p>
-    Möchtest du den Eintrag <a href="{{ entry|url('show')|e }}">#{{ entry.id|e }}</a> wirklich löschen?
+    {%- trans link=entry|url, entry=entry.title|e -%}
+      Do you really want to delete the entry <a href="{{ link }}">{{ entry }}</a>?
+    {%- endtrans -%}
   </p>
   <p>
-    <input type="submit" value="Löschen" />
-    <input type="submit" name="cancel" value="Abbrechen" />
+    <input type="submit" value="{% trans %}Delete{% endtrans %}" />
+    <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" />
   </p>
 </form>

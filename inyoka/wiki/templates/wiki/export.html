@@ -4,22 +4,24 @@
 
     A minimalistic html template for exporting wiki pages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 {%- if not fragment -%}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="robots" content="noindex" />
-    <title>{{ page.title|e }}</title>
-  </head>
-  <body>
-    <h1 class="title">{{ page.title|e }}</h1>
-{% endif %}{{ page.rev.text.render(request=request, format='html') }}{% if not fragment %}
-  </body>
-</html>
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta name="robots" content="noindex" />
+      <title>{{ page.title|e }}</title>
+    </head>
+    <body>
+      <h1 class="title">{{ page.title|e }}</h1>
+      {{ page.rev.text.render(request=request, format='html') }}
+    </body>
+  </html>
+{% else %}
+  {{ page.rev.text.render(request=request, format='html') }}
 {% endif %}

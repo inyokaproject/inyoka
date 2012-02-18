@@ -5,14 +5,14 @@
     This page shows all subscriptions of the user and let him
     manage them.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 {%- extends 'portal/usercp/overall.m.html' %}
 
 {% block content %}
-<h3>Abonnements</h3>
+<h3>{% trans %}Subscriptions{% endtrans %}</h3>
 <table class="usercp_subscriptions">
   {%- for sub in subscriptions %}
   {%- if sub.can_read -%}
@@ -22,21 +22,21 @@
       {%- set object = sub.content_object -%}
 
       {%- if type == 'topic' -%}
-        Thema: <a href="{{ object|url('first_unread') }}">{{ object.title|e }}</a>
+        {% trans %}Topic:{% endtrans %} <a href="{{ object|url('first_unread') }}">{{ object.title|e }}</a>
       {%- elif type == 'page' -%}
-        Wiki-Seite: <a href="{{ object|url }}">{{ object.title|e }}</a>
+        {% trans %}Wiki page:{% endtrans %} <a href="{{ object|url }}">{{ object.title|e }}</a>
       {%- elif type == 'forum' -%}
-        Forum: <a href="{{ object|url }}">{{ object.name|e }}</a>
+        {% trans %}Forum:{% endtrans %} <a href="{{ object|url }}">{{ object.name|e }}</a>
       {%- elif type == 'user' -%}
-        Benutzer: <a href="{{ object|url }}">{{ object.username|e }}</a>
+        {% trans %}User:{% endtrans %} <a href="{{ object|url }}">{{ object.username|e }}</a>
       {%- elif type == 'article' -%}
-        Artikel: <a href="{{ object|url }}">{{ object.subject|e }}</a>
+        {% trans %}Article:{% endtrans %} <a href="{{ object|url }}">{{ object.subject|e }}</a>
       {%- endif -%}
       </td>
     </tr>
   {%- endif -%}
   {%- else -%}
-    <tr><td>Du hast bisher noch keine Themen oder Artikel abonniert</td></tr>
+    <tr><td>{% trans %}You did not yet subscribed to any topics or articles.{% endtrans %}</td></tr>
   {%- endfor -%}
   </table>
   {{ pagination.generate() }}

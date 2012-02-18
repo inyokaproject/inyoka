@@ -4,15 +4,24 @@
 
     This template is flashed to ensure that the user want to delete the selected post.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 
 <form action="{{ post|url(action)|e }}" method="post">
-  <p>Möchtest du den <a href="{{ post|url('show')|e }}">Beitrag von {{ post.author.username|e }}</a> {% if action=='delete' %}unwiderruflich löschen{% else %}verbergen{% endif %}?</p>
   <p>
-    <input type="submit" value="{% if action=='delete' %}Löschen{% else %}Verbergen{% endif %}" />
-    <input type="submit" name="cancel" value="Abbrechen" />
+    {%- if action=='delete' -%}
+      {% trans link=post|url('show')|e, author=post.author.username|e -%}
+        Do you want to delete the <a href="{{ link }}">post from {{ author }}</a>?
+      {%- endtrans %}
+    {%- else -%}
+      {% trans link=post|url('show')|e, author=post.author.username|e -%}
+        Do you want to hide the <a href="{{ link }}">post from {{ author }}</a>?
+      {%- endtrans %}
+    {%- endif -%}
+  <p>
+    <input type="submit" value="{% if action=='delete' %}{% trans %}Delete{% endtrans %}{% else %}{% trans %}Hide{% endtrans %}{% endif %}" />
+    <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" />
   </p>
 </form>

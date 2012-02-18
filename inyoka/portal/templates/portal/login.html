@@ -4,31 +4,31 @@
 
     This page displays a formular where the user can log in.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 {%- extends 'portal/overall.html' %}
 {% from 'macros.html' import render_form %}
-{% do BREADCRUMB.append('Login', href('portal', 'login'), True) %}
+{% do BREADCRUMB.append(_('Login'), href('portal', 'login'), True) %}
 {% block portal_content %}
-  <h3>Login</h3>
+  <h3>{% trans %}Login{% endtrans %}</h3>
   {%- if cookie_error %}
   <div class="errors">
-    Aus Gründen der Sicherheit müssen Cookies im Browser aktiviert sein um
-    sich auf ubuntuusers.de anzumelden.  Bitte aktiviere Cookies im Browser
-    und klicke auf <a href="{{ retry_link|e }}">fortfahren</a>.
+    {%- trans link=retry_link|e -%}
+      For security reasons you need to allow cookies to login. Please enable cookies and <a href="{{ link }}">reload the page</a>.
+    {%- endtrans -%}
   </div>
   <p>
-    Nähere Informationen zu Cookies finden sich in
-    <a href="/datenschutz/">der Datenschutzerklärung</a>.
+    {%- trans link='/datenschutz' -%}
+      You can find more information about cookies in our <a href="{{ link }}">privacy policy</a>.
+    {%- endtrans -%}
   </p>
   {%- else %}
   <p>
-    Hier kannst du dich mit deinem Benutzer anmelden, wenn du dich schon 
-    <a href="{{ href('portal', 'register') }}">registriert hast</a>.
-    Falls du dein Passwort vergessen hast, kannst du dir <a href="
-    {{- href('portal', 'lost_password') }}">ein neues zuschicken lassen</a>.
+    {%- trans register=href('portal', 'register'), lost_password=href('portal', 'lost_password') -%}
+      You can login here if you are already <a href="{{ register }}">registered</a>. If you lost your password, you can <a href="{{ lost_password }}">request a new one</a>.
+    {%- endtrans -%}
   </p>
   {% include 'portal/login_text.html' with context %}
   <form action="" method="post" class="loginform">
@@ -36,14 +36,14 @@
       {{ render_form(form, ['username', 'password'], inline=true) }}
       <dd>
         {{ form.permanent }} <label for="id_permanent">{{ form.permanent.label }}</label>
-        <div class="help_text">Wähle dies nicht aus, wenn du dich von einem öffentlichen
-          Computer aus anmeldest, da sonst andere Zugriff auf dein Benutzerkonto erhalten
-          können.</div>
+        <div class="help_text">{% trans -%}
+          Don’t choose this option if you are using a public computer. Otherwise, unauthorized persons may enter your account.
+        {%- endtrans %}</div>
       </dd>
     </dl>
     <div class="actions">
       <input type="hidden" name="redirect" value="" />
-      <input type="submit" id="login" value="Login" tabindex="1" />
+      <input type="submit" id="login" value="{% trans %}Login{% endtrans %}" tabindex="1" />
     </div>
   </form>
   {%- endif %}
@@ -54,7 +54,7 @@
     /*<![CDATA[*/
     if ( $('#id_username')[0].value )
       $('#id_password').select().focus();
-    else 
+    else
       $('#id_username')[0].focus();
 
     var input = OpenIDHelper($('input[name="username"]'), {{ OPENID_PROVIDERS|jsonencode }});

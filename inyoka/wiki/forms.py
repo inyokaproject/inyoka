@@ -5,10 +5,12 @@
 
     Contains all the forms we use in the wiki.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
+from django.utils.translation import ugettext_lazy, ugettext as _
+
 from inyoka.wiki.utils import has_conflicts
 from inyoka.wiki.acl import test_changes_allowed
 from inyoka.wiki.parser import parse, StackExhaused
@@ -45,17 +47,18 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
         try:
             tree = parse(self.cleaned_data['text'], catch_stack_errors=False)
         except StackExhaused:
-            raise forms.ValidationError(u'Im Text befinden sich zu tief '
-                                        u'verschachtelte Elemente.')
+            raise forms.ValidationError(_(u'The text contains too many nested '
+                                          u'elements.'))
         if has_conflicts(tree):
-            raise forms.ValidationError(u'Im Text befinden sich Konflikt-'
-                                        u'Markierungen.')
+            raise forms.ValidationError(_(u'The text contains conflict markers'))
         elif self.user is not None and not \
              test_changes_allowed(self.user, self.page_name, self.old_text,
                                   self.cleaned_data['text']):
-            raise forms.ValidationError(u'Du hast Änderungen vorgenommen, '
-                                        u'die dir durch die Zugriffsrechte '
-                                        u'verwehrt werden.')
+            raise forms.ValidationError(_(u'You are not permitted to make '
+                                          u'this changes'))
+                                       # Du hast Änderungen vorgenommen, '
+                                       # u'die dir durch die Zugriffsrechte '
+                                       # u'verwehrt werden.')
         return self.cleaned_data['text']
 
 
@@ -84,7 +87,8 @@ class AddAttachmentForm(forms.Form):
     attachment = forms.FileField(required=True)
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
-    text = forms.CharField(label='Description', widget=forms.Textarea,
+    text = forms.CharField(label=ugettext_lazy(u'Description'),
+                           widget=forms.Textarea,
                            required=False)
     note = forms.CharField(max_length=512, required=False)
 
@@ -95,17 +99,19 @@ class EditAttachmentForm(forms.Form):
     description, have a look at the AddAttachmentForm.
     """
     attachment = forms.FileField(required=False)
-    text = forms.CharField(label='Description', widget=forms.Textarea,
+    text = forms.CharField(label=ugettext_lazy(u'Description'),
+                           widget=forms.Textarea,
                            required=False)
     note = forms.CharField(max_length=512, required=False)
 
 
 class ManageDiscussionForm(forms.Form):
     """Let the user set an existing thread as discussion of a page"""
-    topic = forms.CharField(label='Slug des Themas', max_length=50,
-        help_text=u'Den Slug eines Themas findest du in der URL (z. B. <var>'
-        u'beispiel</var> bei <em>%s</em>)' %
-        href('forum', 'topic', 'beispiel'), required=False)
+    topic = forms.CharField(label=_('Slug of the topic'), max_length=50,
+        help_text= ugettext_lazy(u'You can find the slug of a topic in the URL '
+            u'(e.g. <var>example</var> when <em>%(example)s</em>)') % {
+                'example': href('forum', 'topic', 'example')},
+            required=False)
 
     def clean_topic(self):
         d = self.cleaned_data
@@ -114,14 +120,14 @@ class ManageDiscussionForm(forms.Form):
         try:
             topic = Topic.objects.get(slug=d['topic'])
         except Topic.DoesNotExist:
-            raise forms.ValidationError(u'Dieses Thema existiert nicht!')
+            raise forms.ValidationError(_(u'This topic does not exist.'))
         return topic
 
 
 class MvBaustelleForm(forms.Form):
     """Move page to the "Baustelle"""
-    new_name = forms.CharField(label='Neuer Seitenname', required=True)
-    user = UserField(label='Bearbeitet von', required=True)
-    completion_date = forms.DateField(label='Fertigstellungsdatum',
+    new_name = forms.CharField(label=ugettext_lazy(u'New page name'), required=True)
+    user = UserField(label=ugettext_lazy('Edited by'), required=True)
+    completion_date = forms.DateField(label=ugettext_lazy(u'Completion date'),
                                       required=False, widget=DateWidget,
                                       localize=True)

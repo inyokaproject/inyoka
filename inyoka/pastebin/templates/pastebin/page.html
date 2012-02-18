@@ -5,12 +5,12 @@
     This template is included by all pastebin templates and adds the elements
     they all use (stylesheets etc).
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'overall.html' %}
 
-{% do BREADCRUMB.append('Ablage', href('pastebin'), True) %}
+{% do BREADCRUMB.append(_('Pastebin'), href('pastebin'), True) %}
 {% set styles = styles|default([]) + ['pastebin'] %}
 {% set active_app = 'paste' %}
 {% set navi_type  = 'tabbar' %}
@@ -26,7 +26,7 @@
 
 {% block tabbar %}
   <ul>
-    <li><a href="{{ href('pastebin') }}"{{ page == 'add' and ' class="active"' or '' }}>Neuer Eintrag</a></li>
-    <li><a href="{{ href('pastebin', 'browse') }}"{{ page == 'browse' and ' class="active"' or '' }}>Einträge Durchstöbern</a></li>
+    <li><a href="{{ href('pastebin') }}"{{ page == 'add' and ' class="active"' or '' }}>{% trans %}New paste{% endtrans %}</a></li>
+    <li><a href="{{ href('pastebin', 'browse') }}"{{ page == 'browse' and ' class="active"' or '' }}>{% trans %}Browse pastes{% endtrans %}</a></li>
   </ul>
 {% endblock %}

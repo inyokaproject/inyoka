@@ -5,12 +5,13 @@
     This page shows displays a formular where the user can create either
     create a new thread or write / edit a post.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 
 #}
 {% extends 'forum/page.m.html' %}
 
+{% from 'forum/_forum.html' import render_article_list %}
 {% if topic %}
   {% set back = topic|url %}
 {% else %}
@@ -22,9 +23,9 @@
     {%- if topic %}
       <h2><a href="{{ topic|url }}">{{ topic.title|e }}</a></h2>
       {%- if post %}
-        <h3>Beitrag bearbeiten</h3>
+        <h3>{% trans %}Edit post{% endtrans %}</h3>
       {%- else %}
-        <h3>Neue Antwort</h3>
+        <h3>{% trans %}New reply{% endtrans %}</h3>
       {%- endif %}
       {%- if topic.get_version_info() and not (isfirstpost or isnewtopic) %}
         <p class="ubuntu_version">
@@ -33,23 +34,21 @@
       {%- endif %}
       {%- if discussions %}
         <div class="topic_box discussion_info">
-          Dieses Thema ist die Diskussion
-          {%- if discussions|count == 1 %} des Artikels
-          {%- else %} der Artikel
-          {%- endif %}
-          {%- for article in discussions %}
-          <strong><a href="{{ article|url }}">{{ article.name|e }}</a></strong>
-          {%- if not loop.last %},{% endif %}
-          {%- endfor %}.
+          {%- trans count=discussions|count, article_list=render_article_list(discussions) -%}
+            This topic is the discussion of the article {{ article_list }}.
+          {%- pluralize -%}
+            This topic is the discussion of the articles {{ article_list }}.
+          {%- endtrans -%}
         </div>
       {%- endif %}
     {%- else %}
       <h2><a href="{{ forum|url }}">{{ forum.name|e }}</a></h2>
-      <h3>Neues Thema</h3>
+      <h3>{% trans %}New topic{% endtrans %}</h3>
     {%- endif %}
     {% if isnewtopic or isfirstpost %}
       <div>
-        <strong>Titel</strong> {{ form.title }}{{ form.errors.title }}
+        <strong>{% trans %}Title:{% endtrans %}</strong>
+        {{ form.title }}{{ form.errors.title }}
         <p class="version_chooser">
           {{ form.ubuntu_distro }}{{ form.errors.ubuntu_distro }}
           {{ form.ubuntu_version }}{{ form.errors.ubuntu_version }}
@@ -68,14 +67,14 @@
     </div>
     {{ form.errors.__all__ }}
     <div>
-      <input type="submit" value="Vorschau" name="preview" />
-      <input type="submit" value="Veröffentlichen" name="send" />
-      <input type="submit" value="Abbrechen" name="cancel" />
+      <input type="submit" value="{% trans %}Preview{% endtrans %}" name="preview" />
+      <input type="submit" value="{% trans %}Publish{% endtrans %}" name="send" />
+      <input type="submit" value="{% trans %}Cancel{% endtrans %}" name="cancel" />
     </div>
   </form>
   {% if preview %}
     <div class="preview_wrapper">
-      <h2 class="title">Vorschau</h2>
+      <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
       <div class="preview">{{ preview }}</div>
     </div>
   {% endif %}

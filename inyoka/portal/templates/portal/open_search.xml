@@ -4,14 +4,14 @@
 
     This template is used for OpenSearch discovery.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 -#}
 
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
-  <ShortName>ubuntuusers ({{ app|capitalize }})</ShortName>
-  <Description>ubuntuusers ({{ app|capitalize }})</Description>
+  <ShortName>{{ SETTINGS.BASE_DOMAIN_NAME }} ({{ app|capitalize }})</ShortName>
+  <Description>{{ SETTINGS.BASE_DOMAIN_NAME }} ({{ app|capitalize }})</Description>
   <Tags></Tags>
   <Contact></Contact>
   <Url type="text/html" template="{{ href('portal', 'search/') }}?query={searchTerms}{% if app != 'portal' %}&amp;area={{ app }}{% endif %}" />

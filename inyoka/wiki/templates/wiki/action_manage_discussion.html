@@ -4,21 +4,22 @@
 
     Let the user set the discussion of a page.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 
 {%- extends 'wiki/page.html' %}
-{% do BREADCRUMB.append('Diskussion verknüpfen', page|url('manage_discussion'), True) %}
+{% do BREADCRUMB.append(_('Link discussion'), page|url('manage_discussion'), True) %}
 {% block wiki_content %}
-<form action="?action=manage_discussion" method="post">
-  <p>Hier kannst du ein Thema als Diskussion dieses Wiki-Artikels auswählen.</p>
-  <p>
-    <label for="id_topic">Slug des Themas:</label> {{ form.topic }}
-    <span class="help_text">{{ form.topic.help_text }}</span>
-    {{ form.topic.errors }}
-  </p>
-  <p><input type="submit" value="Verknüpfen" /></p>
-</form>
+  <form action="?action=manage_discussion" method="post">
+    <p>
+      {%- trans %}You can choose a topic as the discussion topic of this article.{% endtrans -%}
+    <p>
+      <label for="id_topic">{% trans %}Slug of the topic:{% endtrans %}</label> {{ form.topic }}
+      <span class="help_text">{{ form.topic.help_text }}</span>
+      {{ form.topic.errors }}
+    </p>
+    <p><input type="submit" value="{% trans %}Link{% endtrans %}" /></p>
+  </form>
 {% endblock %}

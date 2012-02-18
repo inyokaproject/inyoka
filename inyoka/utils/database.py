@@ -5,7 +5,7 @@
 
     This module provides some helpers to work with the database.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import cPickle
@@ -49,7 +49,7 @@ def find_next_increment(model, column, string, stripdate=False, **query_opts):
 
         find_next_increment(Article, 'slug', 'article name')
     """
-    field = model._meta.get_field_by_name(column)
+    field = model._meta.get_field_by_name(column)[0]
     max_length = field.max_length if hasattr(field, 'max_length') else None
     string = _strip_ending_nums(string)
     slug = string[:max_length - 4] if max_length is not None else string

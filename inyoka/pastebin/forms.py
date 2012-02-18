@@ -5,10 +5,11 @@
 
     "Add new paste" formular.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
+from django.utils.translation import ugettext_lazy
 
 from inyoka.utils.forms import CaptchaField
 from inyoka.pastebin.models import Entry
@@ -17,58 +18,58 @@ from inyoka.pastebin.models import Entry
 # languages for highlighting. We do not use the full list of pygments
 # lexers because that is just insane ;-)
 LANGUAGES = [
-    ('text', 'Einfacher Text'),
-    ('apache', 'Apache Config (.htaccess)'),
-    ('bash', 'Bash'),
-    ('bat', 'Batch (.bat)'),
-    ('c', 'C'),
-    ('csharp', 'C#'),
-    ('cpp', 'C++'),
-    ('css', 'CSS'),
-    ('d', 'D'),
-    ('html+django', 'Django / Jinja Templates'),
-    ('rhtml', 'eRuby / rhtml'),
-    ('html+genshi', 'Genshi Templates'),
-    ('haskell', 'Haskell'),
-    ('html', 'HTML'),
-    ('irc', 'IRC Logs'),
-    ('java', 'Java'),
-    ('js', 'JavaScript'),
-    ('jsp', 'JSP'),
-    ('lua', 'Lua'),
-    ('html+mako', 'Mako Templates'),
-    ('minid', 'MiniD'),
-    ('html+myghty', 'Myghty Templates'),
-    ('ocaml', 'OCaml'),
-    ('perl', 'Perl'),
-    ('html+php', 'PHP'),
-    ('python', 'Python'),
-    ('pycon', 'Python Console Sessions'),
-    ('pytb', 'Python Tracebacks'),
-    ('rst', 'reStructuredText'),
-    ('ruby', 'Ruby'),
-    ('scheme', 'Scheme'),
-    ('smarty', 'Smarty'),
-    ('sourceslist', 'sources.list'),
-    ('sql', 'SQL'),
-    ('squidconf', 'SquidConf'),
-    ('tex', 'TeX / LaTeX'),
-    ('diff', 'Unified Diff'),
-    ('vim', 'Vim Scripts'),
-    ('xml', 'XML')
+    ('text', ugettext_lazy('Plain text')),
+    ('apache', ugettext_lazy('Apache Config (.htaccess)')),
+    ('bash', ugettext_lazy('Bash')),
+    ('bat', ugettext_lazy('Batch (.bat)')),
+    ('c', ugettext_lazy('C')),
+    ('csharp', ugettext_lazy('C#')),
+    ('cpp', ugettext_lazy('C++')),
+    ('css', ugettext_lazy('CSS')),
+    ('d', ugettext_lazy('D')),
+    ('html+django', ugettext_lazy('Django / Jinja Templates')),
+    ('rhtml', ugettext_lazy('eRuby / rhtml')),
+    ('html+genshi', ugettext_lazy('Genshi Templates')),
+    ('haskell', ugettext_lazy('Haskell')),
+    ('html', ugettext_lazy('HTML')),
+    ('irc', ugettext_lazy('IRC Logs')),
+    ('java', ugettext_lazy('Java')),
+    ('js', ugettext_lazy('JavaScript')),
+    ('jsp', ugettext_lazy('JSP')),
+    ('lua', ugettext_lazy('Lua')),
+    ('html+mako', ugettext_lazy('Mako Templates')),
+    ('minid', ugettext_lazy('MiniD')),
+    ('html+myghty', ugettext_lazy('Myghty Templates')),
+    ('ocaml', ugettext_lazy('OCaml')),
+    ('perl', ugettext_lazy('Perl')),
+    ('html+php', ugettext_lazy('PHP')),
+    ('python', ugettext_lazy('Python')),
+    ('pycon', ugettext_lazy('Python Console Sessions')),
+    ('pytb', ugettext_lazy('Python Tracebacks')),
+    ('rst', ugettext_lazy('reStructuredText')),
+    ('ruby', ugettext_lazy('Ruby')),
+    ('scheme', ugettext_lazy('Scheme')),
+    ('smarty', ugettext_lazy('Smarty')),
+    ('sourceslist', ugettext_lazy('sources.list')),
+    ('sql', ugettext_lazy('SQL')),
+    ('squidconf', ugettext_lazy('SquidConf')),
+    ('tex', ugettext_lazy('TeX / LaTeX')),
+    ('diff', ugettext_lazy('Unified Diff')),
+    ('vim', ugettext_lazy('Vim Scripts')),
+    ('xml', ugettext_lazy('XML')),
 ]
 
 
 class AddPasteForm(forms.ModelForm):
-    title = forms.CharField(max_length=40, required=False, label='Titel')
-    lang = forms.ChoiceField(widget=forms.Select, label='Sprache',
+    title = forms.CharField(max_length=40, required=False, label=ugettext_lazy('Title'))
+    lang = forms.ChoiceField(widget=forms.Select, label=ugettext_lazy('Language'),
                              choices=LANGUAGES)
-    captcha = CaptchaField(label='CAPTCHA', only_anonymous=True)
+    captcha = CaptchaField(label=ugettext_lazy(u'CAPTCHA'), only_anonymous=True)
 
     def save(self, user, commit=True):
         entry = super(AddPasteForm, self).save(commit=False)
         entry.author = user
-        entry.title = entry.title or 'Unbenannt'
+        entry.title = entry.title or ugettext_lazy('Untitled')
         if commit:
             entry.save()
         return entry

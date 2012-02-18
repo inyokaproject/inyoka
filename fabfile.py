@@ -6,6 +6,7 @@
     This script is used by fabric for easy deployment.
 
     :copyright: Copyright 2008-2011 by Florian Apolloner.
+    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 import os
@@ -120,3 +121,7 @@ def compile_css(file=None):
 def compile_static():
     compile_js()
     compile_css()
+
+def compile_translations():
+    """Build mo files from po"""
+    local('python manage.py compilemessages', capture=False)

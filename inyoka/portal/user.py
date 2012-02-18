@@ -6,7 +6,7 @@
     Our own user model used for implementing our own
     permission system and our own administration center.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import os
@@ -20,6 +20,7 @@ from StringIO import StringIO
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
+from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.utils import encode_confirm_data, classproperty
 from inyoka.utils.decorators import deferred
@@ -38,26 +39,26 @@ UNUSABLE_PASSWORD = '!$!'
 _ANONYMOUS_USER = _SYSTEM_USER = None
 DEFAULT_GROUP_ID = 1 # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
-    ('admin_panel', u'Portal | darf Administrationsbereich betreten'),
-    ('article_edit', u'Ikhaya | kann Artikel bearbeiten'),
-    ('category_edit', u'Ikhaya | kann Kategorien verändern'),
-    ('event_edit', u'Ikhaya | kann Veranstaltungen eintragen'),
-    ('comment_edit', u'Ikhaya | kann Kommentare administrieren'),
-    ('blog_edit', u'Planet | kann Blogs verändern'),
-    ('configuration_edit', u'Portal | darf allgemeine Einstellungen verändern'),
-    ('static_page_edit', u'Portal | darf statische Seiten verändern'),
-    ('markup_css_edit', u'Portal | darf die Markup-Stylesheets bearbeiten'),
-    ('static_file_edit', u'Portal | darf statische Dateien verändern'),
-    ('user_edit', u'Portal | darf Benutzer verändern'),
-    ('group_edit', u'Portal | darf Gruppen bearbeiten'),
-    ('send_group_pm', u'Portal | darf PN an Gruppen versenden'),
-    ('forum_edit', u'Forum | darf Foren verändern'),
-    ('manage_topics', u'Forum | darf gemeldete Themen verwalten'),
-    ('delete_topic', u'Forum | darf global Themen und Beiträge löschen'),
-    ('article_read', u'Ikhaya | darf unveröffentlichten Artikel lesen'),
-    ('manage_stats', u'Admin | darf Statistiken verwalten'),
-    ('manage_pastebin', u'Portal | darf Ablage verwalten'),
-    ('subscribe_to_users', u'Portal | darf Benutzer beobachten')
+    ('admin_panel', u'Not in use anymore'), #TODO: DEPRECATED
+    ('article_edit', ugettext_lazy(u'Ikhaya | can edit articles')),
+    ('category_edit', ugettext_lazy(u'Ikhaya | can edit categories')),
+    ('event_edit', ugettext_lazy(u'Ikhaya | can create new events')),
+    ('comment_edit', ugettext_lazy(u'Ikhaya | can manage comments')),
+    ('blog_edit', ugettext_lazy(u'Planet | can edit blogs')),
+    ('configuration_edit', ugettext_lazy(u'Portal | can edit miscellaneous settings')),
+    ('static_page_edit', ugettext_lazy(u'Portal | can edit static pages')),
+    ('markup_css_edit', ugettext_lazy(u'Portal | can edit stylesheets')),
+    ('static_file_edit', ugettext_lazy(u'Portal | can edit static files')),
+    ('user_edit', ugettext_lazy(u'Portal | can edit users')),
+    ('group_edit', ugettext_lazy(u'Portal | can edit groups')),
+    ('send_group_pm', ugettext_lazy(u'Portal | can send messages to groups')),
+    ('forum_edit', ugettext_lazy(u'Forum | can edit forums')),
+    ('manage_topics', ugettext_lazy(u'Forum | can manage reported topics')),
+    ('delete_topic', ugettext_lazy(u'Forum | can delete every topic and post')),
+    ('article_read', ugettext_lazy(u'Ikhaya | can read unpublished articles')),
+    ('manage_stats', ugettext_lazy(u'Admin | can manage statistics')),
+    ('manage_pastebin', ugettext_lazy(u'Portal | can manage pastebin')),
+    ('subscribe_to_users', ugettext_lazy(u'Portal | can watch users'))
 ])]
 PERMISSION_NAMES = {val: desc for val, name, desc in PERMISSIONS}
 PERMISSION_MAPPING = {name: val for val, name, desc in PERMISSIONS}
@@ -83,19 +84,20 @@ def reactivate_user(id, email, status, time):
 
     if (datetime.utcnow() - time).days > 33:
         return {
-            'failed': u'Seit der Löschung ist mehr als ein Monat vergangen!',
+            'failed': _(u'Sorry, more than one month passed since the deletion '
+                        u'of the account'),
         }
 
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
-        msg = u'Die E-Mail Adresse ist bereits vergeben.'
+        msg = _(u'This e-mail address is used by another user.')
         return {'failed': msg}
 
     user = User.objects.get(id=id)
     if not user.is_deleted:
         return {
-            'failed': u'Der Benutzer %s wurde schon wiederhergestellt!' %
-                escape(user.username),
+            'failed': _(u'The account “%(name)s“ was already reactivated.') %
+                {'name': escape(user.username)},
         }
     values = {'email': email,
               'status': status}
@@ -108,16 +110,18 @@ def reactivate_user(id, email, status, time):
 
     # reactivate user page
     try:
-        userpage = WikiPage.objects.get_by_name('Benutzer/%s' % escape(user.username))
+        userpage = WikiPage.objects.get_by_name('%s/%s' % (
+                settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
-                      note=u'Benutzer „%s” hat sein Benutzerkonto reaktiviert' % escape(user.username))
+                      note=_(u'The user “%(name)s“ has reactivated his account.')
+                             % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
 
     return {
-        'success': u'Der Benutzer %s wurde wiederhergestellt. Dir wurde '
-                   u'eine E-Mail geschickt, mit der du dir ein neues Passwort '
-                   u'setzen kannst.' % escape(user.username),
+        'success': _(u'The account “%(name)s“ was reactivated. You will '
+                     u'receive an email to set the new password.')
+                     % {'name': escape(user.username)},
     }
 
 
@@ -139,8 +143,9 @@ def deactivate_user(user):
 
     userdata = encode_confirm_data(userdata)
 
-    subject = u'Deaktivierung deines Accounts „%s“ auf ubuntuusers.de' % \
-              escape(user.username)
+    subject = _(u'Deactivation of your account “%(name)s“ on %(sitename)s') \
+                % {'name': escape(user.username),
+                   'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
         'user': user,
         'userdata': userdata,
@@ -149,9 +154,11 @@ def deactivate_user(user):
 
     # delete user wiki page
     try:
-        userpage = WikiPage.objects.get_by_name('Benutzer/%s' % escape(user.username))
+        userpage = WikiPage.objects.get_by_name('%s/%s' % (
+                settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=True,
-                      note=u'Benutzer „%s” hat sein Benutzerkonto deaktiviert' % escape(user.username))
+                      note=_(u'The user “%(name)s“ has deactivated his account.')
+                             % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
 
@@ -183,8 +190,9 @@ def send_new_email_confirmation(user, email):
         'user': user,
         'data': encode_confirm_data(data),
     })
-    send_mail('ubuntuusers.de – E-Mail-Adresse bestätigen', text,
-              settings.INYOKA_SYSTEM_USER_EMAIL, [email])
+    subject = _(u'%(sitename)s – Confirm email address') \
+              % {'sitename': settings.BASE_DOMAIN_NAME}
+    send_mail(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL, [email])
 
 
 def set_new_email(id, email, time):
@@ -193,7 +201,7 @@ def set_new_email(id, email, time):
     his old address where he can reset it to protect against abuse.
     """
     if (datetime.utcnow() - time).days > 8:
-        return {'failed': u'Link zu alt!'}
+        return {'failed': _(u'The link is too old.')}
     user = User.objects.get(id=id)
 
     data = {
@@ -207,26 +215,27 @@ def set_new_email(id, email, time):
         'new_email': email,
         'data': encode_confirm_data(data),
     })
-    user.email_user('ubuntuusers.de – E-Mail-Adresse geändert', text,
-                    settings.INYOKA_SYSTEM_USER_EMAIL)
+    subject = _(u'%(sitename)s – Email address changed') \
+              % {'sitename': settings.BASE_DOMAIN_NAME}
+    user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
     user.email = email
     user.save()
     return {
-        'success': u'Deine neue E-Mail-Adresse wurde gespeichert!'
+        'success': _(u'Your new email address was saved.')
     }
 
 
 def reset_email(id, email, time):
     if (datetime.utcnow() - time).days > 33:
-        return {'failed': u'Link zu alt!'}
+        return {'failed': _(u'The link is too old.')}
 
     user = User.objects.get(id=id)
     user.email = email
     user.save()
 
     return {
-        'success': u'Deine E-Mail-Adresse wurde zurückgesetzt.'
+        'success': _('Your email address was reset.')
     }
 
 def send_activation_mail(user):
@@ -236,9 +245,10 @@ def send_activation_mail(user):
         'email':            user.email,
         'activation_key':   gen_activation_key(user)
     })
-    send_mail('ubuntuusers.de - Aktivierung des Benutzers %s'
-              % user.username,
-              message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
+    subject = _(u'%(sitename)s – Activation of the user “%(name)s“') \
+              % {'sitename': settings.BASE_DOMAIN_NAME,
+                 'name': user.username}
+    send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
 def send_new_user_password(user):
@@ -252,16 +262,19 @@ def send_new_user_password(user):
         'new_password_url': href('portal', 'lost_password',
                                  user.urlsafe_username, new_password_key),
     })
-    send_mail(u'ubuntuusers.de – Neues Passwort für %s' % user.username,
-              message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
+    subject = _(u'%(sitename)s – New password for “%(name)s“') \
+              % {'sitename': settings.BASE_DOMAIN_NAME,
+                 'name': user.username}
+    send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
 class Group(models.Model):
     name = models.CharField('Name', max_length=80, unique=True, db_index=True)
-    is_public = models.BooleanField(u'Öffentliches Profil')
+    is_public = models.BooleanField(ugettext_lazy(u'Public profile'))
     _default_group = None
-    permissions = models.IntegerField('Berechtigungen', default=0)
-    icon = models.ImageField('Teamicon', upload_to='portal/team_icons',
+    permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
+    icon = models.ImageField(ugettext_lazy(u'Team icon'),
+                             upload_to='portal/team_icons',
                              blank=True, null=True)
 
     @property
@@ -307,7 +320,7 @@ class Group(models.Model):
         return self.name
 
     def __repr__(self):
-        return self.__unicode__().encode('utf-8')
+        return unicode(self).encode('utf-8')
 
     @classmethod
     def get_default_group(self):
@@ -473,52 +486,58 @@ class User(models.Model):
     """User model that contains all informations about an user."""
     objects = UserManager()
 
-    username = models.CharField('Benutzername', max_length=30, unique=True, db_index=True)
-    email = models.EmailField('E-Mail-Adresse', unique=True, max_length=50, db_index=True)
-    password = models.CharField('Passwort', max_length=128)
-    status = models.IntegerField('Aktiv', default=0)
-    last_login = models.DateTimeField('Letzter Login', default=datetime.utcnow)
-    date_joined = models.DateTimeField('Anmeldedatum', default=datetime.utcnow)
-    groups = models.ManyToManyField(Group, verbose_name='Gruppen', blank=True,
+    username = models.CharField(ugettext_lazy(u'Username'),
+                                max_length=30, unique=True, db_index=True)
+    email = models.EmailField(ugettext_lazy(u'Email address'),
+                              unique=True, max_length=50, db_index=True)
+    password = models.CharField(ugettext_lazy(u'Password'), max_length=128)
+    status = models.IntegerField(ugettext_lazy(u'Status'), default=0)
+    last_login = models.DateTimeField(ugettext_lazy(u'Last login'),
+                                      default=datetime.utcnow)
+    date_joined = models.DateTimeField(ugettext_lazy(u'Member since'),
+                                       default=datetime.utcnow)
+    groups = models.ManyToManyField(Group,
+                                    verbose_name=ugettext_lazy(u'Groups'),
+                                    blank=True,
                                     related_name='user_set')
-    new_password_key = models.CharField(u'Bestätigungskey für ein neues '
-        u'Passwort', blank=True, null=True, max_length=32)
+    new_password_key = models.CharField(ugettext_lazy(u'Confirmation key for a new password'),
+                                        blank=True, null=True, max_length=32)
 
-    banned_until = models.DateTimeField('Gesperrt bis', null=True)
+    banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'), null=True)
 
     # profile attributes
-    post_count = models.IntegerField(u'Beiträge', default=0)
-    avatar = models.ImageField('Avatar', upload_to='portal/avatars',
+    post_count = models.IntegerField(ugettext_lazy(u'Posts'), default=0)
+    avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to='portal/avatars',
                                blank=True, null=True)
-    jabber = models.CharField('Jabber', max_length=200, blank=True)
-    icq = models.CharField('ICQ', max_length=16, blank=True)
-    msn = models.CharField('MSN', max_length=200, blank=True)
-    aim = models.CharField('AIM', max_length=200, blank=True)
-    yim = models.CharField('YIM', max_length=200, blank=True)
-    skype = models.CharField('Skype', max_length=200, blank=True)
-    wengophone = models.CharField('WengoPhone', max_length=200, blank=True)
+    jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
+    icq = models.CharField(ugettext_lazy(u'ICQ'), max_length=16, blank=True)
+    msn = models.CharField(ugettext_lazy(u'MSN'), max_length=200, blank=True)
+    aim = models.CharField(ugettext_lazy(u'AIM'), max_length=200, blank=True)
+    yim = models.CharField(ugettext_lazy(u'Yahoo Messenger'), max_length=200, blank=True)
+    skype = models.CharField(ugettext_lazy(u'Skype'), max_length=200, blank=True)
+    wengophone = models.CharField(ugettext_lazy(u'WengoPhone'), max_length=200, blank=True)
     sip = models.CharField('SIP', max_length=200, blank=True)
-    signature = models.TextField('Signatur', blank=True)
-    coordinates_long = models.FloatField('Koordinaten (Länge)', blank=True, null=True)
-    coordinates_lat = models.FloatField(u'Koordinaten (Breite)', blank=True, null=True)
-    location = models.CharField('Wohnort', max_length=200, blank=True)
-    gpgkey = models.CharField('GPG-Key', max_length=8, blank=True)
-    occupation = models.CharField('Beruf', max_length=200, blank=True)
-    interests = models.CharField('Interessen', max_length=200, blank=True)
-    website = models.URLField('Webseite', blank=True)
-    launchpad = models.CharField('Launchpad-Benutzername', max_length=50, blank=True)
-    settings = JSONField('Einstellungen', default={})
-    _permissions = models.IntegerField('Rechte', default=0)
+    signature = models.TextField(ugettext_lazy(u'Signature'), blank=True)
+    coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
+    coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
+    location = models.CharField(ugettext_lazy(u'Location'), max_length=200, blank=True)
+    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=8, blank=True)
+    occupation = models.CharField(ugettext_lazy(u'Job'), max_length=200, blank=True)
+    interests = models.CharField(ugettext_lazy(u'Interests'), max_length=200, blank=True)
+    website = models.URLField(ugettext_lazy(u'Website'), blank=True)
+    launchpad = models.CharField(ugettext_lazy(u'Launchpad username'), max_length=50, blank=True)
+    settings = JSONField(ugettext_lazy(u'Settings'), default={})
+    _permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
 
     # forum attribues
-    forum_last_read = models.IntegerField('Letzter gelesener Post',
+    forum_last_read = models.IntegerField(ugettext_lazy(u'Last read post'),
                                           default=0, blank=True)
-    forum_read_status = models.TextField('Gelesene Beiträge', blank=True)
-    forum_welcome = models.TextField('Gelesene Willkommensnachrichten',
+    forum_read_status = models.TextField(ugettext_lazy(u'Read posts'), blank=True)
+    forum_welcome = models.TextField(ugettext_lazy(u'Read welcome message'),
                                      blank=True)
 
     # member title
-    member_title = models.CharField('Benutzertitel', blank=True, null=True,
+    member_title = models.CharField(ugettext_lazy(u'Member title'), blank=True, null=True,
                                     max_length=200)
 
     # primary group from which the user gets some settings
@@ -544,16 +563,6 @@ class User(models.Model):
     is_active = property(lambda x: x.status == 1)
     is_banned = property(lambda x: x.status == 2)
     is_deleted = property(lambda x: x.status == 3)
-
-    @property
-    def status_info(self):
-        """return user.status in words"""
-        return [
-            u'hat sich noch nicht aktiviert',
-            u'ist aktiv',
-            u'wurde gesperrt',
-            u'hat seinen Account gelöscht',
-        ][self.status]
 
     def set_password(self, raw_password):
         """Set a new sha1 generated password hash"""
@@ -584,7 +593,8 @@ class User(models.Model):
         Returns the rendered wikipage if it exists, otherwise None
         """
         from inyoka.wiki.models import Page as WikiPage
-        key = 'Benutzer/' + normalize_pagename(self.username)
+        key = '%s/%s' % (settings.WIKI_USER_BASE,
+                         normalize_pagename(self.username))
         return WikiPage.objects.exists(key)
 
     def email_user(self, subject, message, from_email=None):

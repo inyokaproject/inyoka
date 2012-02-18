@@ -4,30 +4,29 @@
 
     This page shows all existing groups.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 {%- extends 'portal/overall.html' %}
-{% do BREADCRUMB.append('Gruppen', href('portal', 'groups'), True) %}
+{% do BREADCRUMB.append(_('Groups'), href('portal', 'groups'), True) %}
 {% block content %}
-  <h3>Gruppen</h3>
+  <h3>{% trans %}Groups{% endtrans %}</h3>
   <p>
-    Insgesamt gibt es
-    {% trans count=group_count -%}
-      <strong>{{ count }}</strong> Gruppe
+    {% trans count=group_count, usercount=user_groups.count() -%}
+      In total there is {{ count }} group, you are in {{ usercount }} group.
     {%- pluralize -%}
-      <strong>{{ count }}</strong> Gruppen
-    {%- endtrans %} von denen du in <strong>{{ user_groups.count() }}</strong> Mitglied bist (fett gedruckt).
+      In total there are {{ count }} groups, you are in {{ usercount }} of them (printed bold).
+    {%- endtrans %}
   </p>
   {%- if USER.can('group_edit') -%}
     <p>
-      <a href="{{ href('portal', 'group', 'new') }}">Eine neue Grupppe anlegen</a>.
+      <a href="{{ href('portal', 'group', 'new') }}">{% trans %}Create new group{% endtrans %}</a>.
     </p>
   {%- endif -%}
   <table class="admin_link_hover">
     <tr>
-      <th>{{ table.get_html('name', 'Name') }}</th>
+      <th>{{ table.get_html('name', _('Name')) }}</th>
     </tr>
     {%- for group in groups %}
     <tr>

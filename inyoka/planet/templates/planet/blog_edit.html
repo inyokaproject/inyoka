@@ -4,7 +4,7 @@
 
     Formular for editing or creating a new blog.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'planet/page.html' %}
@@ -12,7 +12,7 @@
 {% set scripts = ['jquery.autocomplete'] %}
 
 {% if not blog %}
-  {% do BREADCRUMB.append('Blog eintragen', href('planet', 'blog', 'new'), True) %}
+  {% do BREADCRUMB.append(_('Add blog'), href('planet', 'blog', 'new'), True) %}
 {% else %}
   {% do BREADCRUMB.append(blog.name|e, blog|url('edit'), True) %}
 {% endif %}
@@ -23,7 +23,7 @@
       {{ render_form(form, ['name', 'description', 'blog_url', 'feed_url', 'active', 'user', 'icon'], inline=True) }}
     </dl>
     <p>
-      <input type="submit" value="Speichern" />
+      <input type="submit" value="{% trans %}Submit{% endtrans %}" />
     </p>
   </form>
 {% endblock %}

@@ -1,54 +1,54 @@
 {#
     portal/user_edit_groups.html
-    ~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Edit the groups of user
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'portal/user_admin.html' %}
+{% extends 'portal/user_admin.html' %}
 
-{% do BREADCRUMB.append('Gruppen', href('portal', 'user', user.urlsafe_username, 'edit', 'groups'), True) %}
-{% do BREADCRUMB.append('Bearbeiten', href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
+{% do BREADCRUMB.append(_('Group memberships'), href('portal', 'user', user.urlsafe_username, 'edit', 'groups'), True) %}
+{% do BREADCRUMB.append(_('Edit'), href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
 {% do BREADCRUMB.append(user.username, user|url, True) %}
-{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+{% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 
 {% block content %}
-{{ super() }}
-<form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
-  <h3>Gruppenzugehörigkeiten</h3>
-  <table class="user_groups">
-    <tr>
-      <th>nicht zugehörige Gruppen</th>
-      <th class="actions">
-        <img src="{{ href('static', 'img/portal/add_item.png') }}" alt="Gruppen hinzufügen" class="item_add" />
-        <img src="{{ href('static', 'img/portal/remove_item.png') }}" alt="Gruppen entfernen" class="item_remove" />
-      </th>
-      <th>zugehörige Gruppen</th>
-    </tr>
-    <tr>
-     <td><select multiple="multiple" size="5" name="user_groups_not_joined"></select></td>
-      <td></td>
-      <td><select multiple="multiple" size="5" name="user_groups_joined"></select></td>
-    </tr>
-  </table>
-  <dt>{{ form.primary_group.label }}</dt>
-  <dd>
-    {{ form.primary_group }} <a href="" class="delete_primary_group">löschen</a>
-    <p class="note">{{ form.primary_group.help_text }}</p>
-  </dd>
-  <p><input type="submit" value="Speichern" /></p>
-</form>
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+    <h3>{% trans %}Group memberships{% endtrans %}</h3>
+    <table class="user_groups">
+      <tr>
+        <th>{% trans %}Available groups{% endtrans %}</th>
+        <th class="actions">
+          <img src="{{ href('static', 'img/portal/add_item.png') }}" alt="{% trans %}Add group{% endtrans %}" class="item_add" />
+          <img src="{{ href('static', 'img/portal/remove_item.png') }}" alt="{% trans %}Remove group{% endtrans %}" class="item_remove" />
+        </th>
+        <th>{% trans %}Membership{% endtrans %}</th>
+      </tr>
+      <tr>
+       <td><select multiple="multiple" size="5" name="user_groups_not_joined"></select></td>
+        <td></td>
+        <td><select multiple="multiple" size="5" name="user_groups_joined"></select></td>
+      </tr>
+    </table>
+    <dt>{{ form.primary_group.label }}</dt>
+    <dd>
+      {{ form.primary_group }} <a href="" class="delete_primary_group">{% trans %}delete{% endtrans %}</a>
+      <p class="note">{{ form.primary_group.help_text }}</p>
+    </dd>
+    <p><input type="submit" value="{% trans %}Submit{% endtrans %}" /></p>
+  </form>
 {% endblock %}
 
 {% block additional_scripts %}
-<script type="text/javascript">
-  /* <![CDATA[ */
-  var select_form = new GroupBox('#user_edit_box',
-    {{ joined_groups|sort|jsonencode }},
-    {{ not_joined_groups|sort|jsonencode }}
-  );
-  /* ]]> */
-</script>
+  <script type="text/javascript">
+    /* <![CDATA[ */
+    var select_form = new GroupBox('#user_edit_box',
+      {{ joined_groups|sort|jsonencode }},
+      {{ not_joined_groups|sort|jsonencode }}
+    );
+    /* ]]> */
+  </script>
 {% endblock %}

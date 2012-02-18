@@ -352,10 +352,10 @@ a.user_inactive {
   color: #444;
   text-decoration: line-through;
 }
-table.static_pages .pagekey,table.static_pages .title {
+table.static_pages .pagekey, table.static_pages .title {
   width: 25%;
 }
-table.static_pages {
+table.static_pages, table.static_files {
   tbody {
     tr {
       td {
@@ -446,5 +446,37 @@ ul.permissions {
     label {
       margin: 0 1em 0 0.5em;
     }
+  }
+}
+table.jstableform {
+  width: 100%;
+  td.jstableform-_jswarning {
+    background-color: #D40000;
+    color: #FFFFFF;
+  }
+  td.jstableform-status-yes {
+    background-image: url('../img/forum/solve.png');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  td.jstableform-status-no {
+    background-image: url('../img/forum/unsolve.png');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  input, textarea {
+    width: 100%;
+  }
+  thead {
+    font-weight: bold;
+    .jstableform-type-boolean {
+      width: 40px;
+    }
+  }
+  .invalid {
+    background-color: #FF8080;
+  }
+  .pointer {
+      cursor: pointer;
   }
 }

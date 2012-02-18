@@ -4,7 +4,7 @@
 
     Show all management links on this page.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -12,49 +12,49 @@
 {% do BREADCRUMB.append('Weitere Aktionen', page|url('manage'), True) %}
 {% set action = 'manage' %}
 {% block wiki_content %}
-  <p>Die folgenden Funktionen stehen für diese Seite zur Verfügung:</p>
+  <p>{% trans %}The following features are available for this page:{% endtrans %}</p>
   <ul>
     {%- if can.read %}
-    <li><a href="?action=show">Seite anzeigen</a></li>
+      <li><a href="?action=show">{% trans %}Show page{% endtrans %}</a></li>
     {%- endif %}
     {%- if can.edit %}
-    <li><a href="?action=edit">Seite bearbeiten</a></li>
+      <li><a href="?action=edit">{% trans %}Edit page{% endtrans %}</a></li>
     {%- endif %}
     {%- if can.manage %}
-    <li><a href="?action=rename">Seite umbenennen</a></li>
+      <li><a href="?action=rename">{% trans %}Rename page{% endtrans %}</a></li>
     {%- endif %}
     {%- if can.delete %}
-    <li><a href="?action=delete">Seite löschen</a></li>
+      <li><a href="?action=delete">{% trans %}Delete page{% endtrans %}</a></li>
     {%- endif %}
     {%- if can.manage %}
-    {%- if page.name.startswith('Baustelle/Verlassen') %}
-    <li><a href="?action=mv_baustelle">Seite wieder in Baustelle verschieben</a></li>
-    {%- elif page.name.startswith('Baustelle') %}
-    <li><a href="?action=mv_discontinued">Seite nach „Baustelle/Verlassen/“ verschieben</a></li>
-    <li><a href="?action=mv_back">Seite (wieder) ins Wiki verschieben</a></li>
-    {%- else %}
-    <li><a href="?action=mv_baustelle">Seite in Baustelle verschieben</a></li>
-    {%- endif %}
-    {%- endif %}
-    {%- if can.read %}
-    <li><a href="?action=log">Versionen anzeigen</a></li>
-    <li><a href="?action=backlinks">Backlinks anzeigen</a></li>
+      {%- if page.name.startswith('Baustelle/Verlassen') %}
+        <li><a href="?action=mv_baustelle">{% trans %}Mark page as “under construction“{% endtrans %}</a></li>
+      {%- elif page.name.startswith('Baustelle') %}
+        <li><a href="?action=mv_discontinued">{% trans %}Move page to “discontinued“{% endtrans %}</a></li>
+        <li><a href="?action=mv_back">{% trans %}Move page back to the wiki{% endtrans %}</a></li>
+      {%- else %}
+        <li><a href="?action=mv_baustelle">{% trans %}Mark page as “under construction“{% endtrans %}</a></li>
+      {%- endif %}
     {%- endif %}
     {%- if can.read %}
-    <li>Seite exportieren:
-      <a href="?action=export&amp;format=raw">Rohformat</a>,
-      <a href="?action=export&amp;format=html">HTML</a>,
-      <a href="?action=export&amp;format=ast">AST</a></li>
-    <li><a href="?action=metaexport">Metadaten exportieren</a></li>
+    <li><a href="?action=log">{% trans %}Show log{% endtrans %}</a></li>
+    <li><a href="?action=backlinks">{% trans %}Show backlinks{% endtrans %}</a></li>
+    {%- endif %}
+    {%- if can.read %}
+      <li>{% trans %}Export page:{% endtrans %}
+        <a href="?action=export&amp;format=raw">{% trans %}Raw{% endtrans %}</a>,
+        <a href="?action=export&amp;format=html">{% trans %}HTML{% endtrans %}</a>,
+        <a href="?action=export&amp;format=ast">{% trans %}AST{% endtrans %}</a></li>
+      <li><a href="?action=metaexport">{% trans %}Export metadata{% endtrans %}</a></li>
     {%- endif %}
     {%- if can.attach %}
-    <li><a href="?action=attach">Dateianhänge verwalten</a></li>
+      <li><a href="?action=attach">{% trans %}Manage attachments{% endtrans %}</a></li>
     {%- endif %}
     {%- if can.manage %}
-    <li><a href="?action=prune">Cache leeren</a></li>
+      <li><a href="?action=prune">{% trans %}Prune cache{% endtrans %}</a></li>
     {%- endif %}
     {%- if can.edit %}
-    <li><a href="?action=manage_discussion">Diskussion verknüpfen</a></li>
+      <li><a href="?action=manage_discussion">{% trans %}Link discussion{% endtrans %}</a></li>
     {%- endif %}
   </ul>
 {% endblock %}

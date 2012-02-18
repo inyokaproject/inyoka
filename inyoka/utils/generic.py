@@ -5,13 +5,13 @@
 
     Generic view classes.
 
-    :copyright: (c) 2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.views.generic import edit, base, list
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
@@ -43,15 +43,18 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
 class EditMixin(object):
     """Provides a flash message and success url"""
     urlgroup_name = ''
-    message = u'{verbose_name} “{object_name}” wurde erfolgreich {action}!'
 
     def form_valid(self, form):
         model = self.model or self.queryset.query.model
         response = super(EditMixin, self).form_valid(form)
         format_args = {'verbose_name': model._meta.verbose_name,
                        'object_name': escape(unicode(self.object))}
-        format_args['action'] = u'erstellt' if self.create else u'geändert'
-        flash(self.message.format(**format_args), True)
+        if self.create:
+            message = _(u'{verbose_name} “{object_name}” was successfully created.')
+        else:
+            message = _(u'{verbose_name} “{object_name}” was successfully changed.')
+
+        flash(message.format(**format_args), True)
         return response
 
     def get_success_url(self):
@@ -190,7 +193,7 @@ class BaseDeleteView(edit.BaseDeleteView):
     """
     redirect_url = None
     template_name = None
-    message = u'Die {verbose_name} „{object_name}“ wurde erfolgreich gelöscht!'
+    message = ugettext_lazy(u'{verbose_name} “{object_name}” was deleted successfully!')
 
     def get_success_url(self):
         self.sucess_url = self.redirect_url
@@ -207,7 +210,7 @@ class BaseDeleteView(edit.BaseDeleteView):
 
     def post(self, request, *args, **kwargs):
         if 'cancel' in request.POST:
-            flash(u'Löschen abgebrochen!')
+            flash(_(u'Canceled!'))
         else:
             super(BaseDeleteView, self).post(request, *args, **kwargs)
             format_args = {

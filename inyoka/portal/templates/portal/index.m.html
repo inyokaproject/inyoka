@@ -6,7 +6,7 @@
 
     It also displays some of the latest ikhaya messages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.m.html' %}
@@ -15,24 +15,22 @@
     <hr />
     <nav>
       <ul>
-        <li><a href="{{ href('portal', 'privmsg') }}">Nachrichten</a></li>
-        <li><a href="{{ href('portal', 'usercp', 'subscriptions') }}">Abonnements</a></li>
+        <li><a href="{{ href('portal', 'privmsg') }}">{% trans %}Messages{% endtrans %}</a></li>
+        <li><a href="{{ href('portal', 'usercp', 'subscriptions') }}">{% trans %}Subscriptions{% endtrans %}</a></li>
       </ul>
     </nav>
   {%- endif %}
   <h1>Willkommen</h1>
   <p>
-    Hier findest du freundliche Hilfe für Ubuntu, Kubuntu, Xubuntu und die
-    anderen Ubuntu-Derivate. In unserem <a href="{{ href('forum') }}">Forum</a> beantworten
-    hilfsbereite Forumsbenutzer gerne deine Fragen und im
-    <a href="{{ href('wiki') }}">Wiki</a> findest du viele Anleitungen und Erklärungen.
-    Falls du neu bei Ubuntu bist, findest du dort auch eine Seite für 
-    <a href="{{ href('wiki', 'Einsteiger') }}">Einsteiger</a>. Außerdem existiert noch
-    <a href="{{ href('ikhaya') }}">Ikhaya</a>, unser Magazin, in dem Neuigkeiten aus der
-    Ubuntu- und Linuxwelt gemeldet werden. Unser <a href="{{ href('planet') }}">Planet</a>
-    stellt Nachrichten der Ubuntu-Gemeinschaft zusammen. Wenn du auch unsere <a href="{{
-    href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') }}">Regeln</a> beachtest,
-    kann nichts schiefgehen ;-)
+    Hier findest Du freundliche Hilfe zu Ubuntu. Im
+    <a href="{{ href('forum') }}">Forum</a> beantworten Dir hilfsbereite
+    Benutzer gerne Deine Fragen (siehe
+    <a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Forenregeln') }}">Regeln</a>).
+    Neben dem <a href="{{ href('wiki') }}">Wiki</a> mit einem
+    <a href="{{ href('wiki', 'Einsteiger') }}">Einsteigerbereich</a> gibt es
+    <a href="{{ href('ikhaya') }}">Ikhaya</a> (Nachrichten) und einen
+    <a href="{{ href('planet') }}">Planeten</a> (Blogsammlung der
+    Ubuntu-Gemeinschaft). Viel Spaß! :)
   </p>
   <h2>Neues von ubuntuusers.de</h2>
   <section id="latest_articles">

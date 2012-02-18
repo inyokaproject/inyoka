@@ -4,25 +4,25 @@
 
     Change the settings of a user.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/user_admin.html' %}
 
-{% do BREADCRUMB.append('Einstellungen', href('portal', 'user', user.urlsafe_username, 'edit', 'settings'), True) %}
-{% do BREADCRUMB.append('Bearbeiten', href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
+{% do BREADCRUMB.append(_('Settings'), href('portal', 'user', user.urlsafe_username, 'edit', 'settings'), True) %}
+{% do BREADCRUMB.append(_('Edit'), href('portal', 'user', user.urlsafe_username, 'edit'), True) %}
 {% do BREADCRUMB.append(user.username, user|url, True) %}
-{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+{% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 
 {% block content %}
 {{ super() }}
 <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
-  <h3>Benutzereinstellungen</h3>
+  <h3>{% trans %}Settings{% endtrans %}</h3>
   <dl>
     {{ render_form(form, ['notify', 'notifications', 'ubuntu_version'], inline=True) }}
     {#<p class="note"><a href="{{ href('portal', 'user', user.urlsafe_username, 'edit', 'subscriptions') }}">Abonnements ansehen/bearbeiten</a></p>#}
     {{ render_form(form, ['timezone'], inline=true) }}
-    <dt>Oberfläche</dt>
+    <dt>{% trans %}Interface{% endtrans %}</dt>
     <dd>{{ form.hide_avatars }} <label for="id_hide_avatars">{{ form.hide_avatars.label }}</label>
         {{ form.errors.hide_avatar }}</dd>
     <dd>{{ form.hide_signatures }} <label for="id_hide_signatures">{{ form.hide_signatures.label }}</label>
@@ -32,7 +32,7 @@
     <dd>{{ form.highlight_search }} <label for="id_highlight_search">{{ form.highlight_search.label }}</label><br />
         <span class="note"> {{ form.highlight_search.help_text }}</span>
         {{ form.errors.highlight_search }}</dd>
-    <dt>Forum</dt>
+    <dt>{% trans %}Forum{% endtrans %}</dt>
     <dd>{{ form.mark_read_on_logout }} <label for="id_mark_read_on_logout">{{ form.mark_read_on_logout.label }}</label>
         {{ form.errors.mark_read_on_logout }}</dd>
     <dd>{{ form.autosubscribe }} <label for="id_autosubscribe">{{ form.autosubscribe.label }}</label>
@@ -45,7 +45,7 @@
     </dd>
   </dl>
   <p>
-    <input type="submit" value="Speichern" />
+    <input type="submit" value="{% trans %}Submit{% endtrans %}" />
   </p>
 </script>
 {% endblock %}

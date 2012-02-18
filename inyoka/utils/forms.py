@@ -6,7 +6,7 @@
     This file contains extensions for the django forms like special form
     fields.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import sys
@@ -17,14 +17,17 @@ from django import forms
 from django.conf import settings
 from django.core import validators
 from django.forms.widgets import Input
+from django.utils.translation import ugettext as _
 from inyoka.portal.user import User
+from inyoka.wiki.parser import parse, StackExhaused
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
-from inyoka.utils.urls import href
+from inyoka.utils.flashing import flash
+from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request
 from inyoka.utils.mail import may_be_valid_mail, is_blocked_host
-from inyoka.utils.jabber import may_be_valid_jabber
-from inyoka.utils.flashing import flash
 from inyoka.utils.text import slugify
+from inyoka.utils.urls import href
+from inyoka.utils.storage import storage
 
 
 def clear_surge_protection(request, form):
@@ -44,8 +47,33 @@ def clear_surge_protection(request, form):
 
 def validate_empty_text(value):
     if not value.strip():
-        raise forms.ValidationError('Text darf nicht leer sein', code='invalid')
+        raise forms.ValidationError(_(u'Text must not be empty'), code='invalid')
     return value
+
+
+def validate_signature(signature):
+    """Parse a signature and check if it's valid."""
+    def _walk(node):
+        if node.is_container:
+            for n in node.children:
+                _walk(n)
+        if not node.allowed_in_signatures:
+            raise forms.ValidationError(_(u'Your signature contains illegal elements'))
+        return node
+    try:
+        text = _walk(parse(signature, True, False)).text.strip()
+    except StackExhaused:
+        raise forms.ValidationError(_(u'Your signature contains too many nested elements'))
+    sig_len = int(storage.get('max_signature_length', -1))
+    sig_lines = int(storage.get('max_signature_lines', -1))
+    if sig_len >= 0 and len(text) > sig_len:
+        raise forms.ValidationError(
+            _(u'Your signature is too long, only %(length)s characters '
+              u'allowed') % {'length': sig_len})
+    if sig_lines >= 0 and len(text.splitlines()) > sig_lines:
+        raise forms.ValidationError(
+            _(u'Your signature can only contain up to %(num)d lines') % {
+                'num': sig_lines})
 
 
 class MultiField(forms.Field):
@@ -95,20 +123,21 @@ class UserField(forms.CharField):
         try:
             return User.objects.get(username=value)
         except (User.DoesNotExist, ValueError):
-            raise forms.ValidationError(u'Diesen Benutzer gibt es nicht')
+            raise forms.ValidationError(_(u'This user does not exist'))
 
 
 class CaptchaWidget(Input):
     input_type = 'text'
 
     def render(self, name, value, attrs=None):
-        input = Input.render(self, name, u'', attrs)
-        return (u'<img src="%s" class="captcha" alt="Captcha" /><br />'
-                u'Bitte gib den Code des obigen Bildes hier ein: <br />%s '
-                u'<input type="submit" name="renew_captcha" value="Neuen Code'
-                u' erzeugen" />') % (
-            href('portal', __service__='portal.get_captcha',
-                 rnd=randrange(1, sys.maxint)), input)
+        input_ = Input.render(self, name, u'', attrs)
+        img = '<img src="%s" class="captcha" alt="%s" />' % (
+              href('portal', __service__='portal.get_captcha',
+                   rnd=randrange(1, sys.maxint)), _('CAPTCHA'))
+        text = '%s:' % _('Please type in the code from the graphic above')
+        input_tag = '%s <input type="submit" name="renew_captcha" value="%s" />' % (
+                    input_, _('Generate new code'))
+        return '<br />'.join([img, text, input_tag])
 
 
 class DateTimeWidget(Input):
@@ -164,7 +193,7 @@ class CaptchaField(forms.Field):
             return True
         solution = current_request.session.get('captcha_solution')
         if not solution:
-            flash(u'Du musst Cookies aktivieren!', False)
+            flash(_(u'You have to accept cookies!'), False)
         elif value:
             h = md5(settings.SECRET_KEY)
             if isinstance(value, unicode):
@@ -174,8 +203,7 @@ class CaptchaField(forms.Field):
                 h.update(value)
             if h.digest() == solution:
                 return True
-        raise forms.ValidationError(u'Die Eingabe des Captchas war nicht '
-                                    u'korrekt')
+        raise forms.ValidationError(_(u'The entered CAPTCHA was incorrect.'))
 
 
 class StrippedCharField(forms.CharField):
@@ -189,8 +217,9 @@ class HiddenCaptchaField(forms.Field):
         if not value:
             return True
         else:
-            raise forms.ValidationError(u'Du hast ein unsichtbares Feld '
-                    u'ausgefüllt und wurdest deshalb als Bot identifiziert.')
+            raise forms.ValidationError(
+                _(u'You have entered an invisible field '
+                  u'and were therefore classified as a bot.'))
 
 
 class EmailField(forms.CharField):
@@ -199,16 +228,12 @@ class EmailField(forms.CharField):
         value = super(EmailField, self).clean(value)
         value = value.strip()
         if is_blocked_host(value):
-            raise forms.ValidationError(u'''
-                Die von dir angegebene E-Mail-Adresse gehört zu einem
-                Anbieter, den wir wegen Spamproblemen sperren mussten.
-                Bitte gebe eine andere Adresse an.
-            '''.strip())
+            raise forms.ValidationError(_(u'The entered e-mail address belongs to a '
+                u'e-mail provider we had to block because of SPAM problems. Please '
+                u'choose another e-mail address'))
         elif not may_be_valid_mail(value):
-            raise forms.ValidationError(u'''
-                Die von dir angebene E-Mail-Adresse ist ungültig.  Bitte
-                überpfüfe die Eingabe.
-            '''.strip())
+            raise forms.ValidationError(_(u'The entered e-mail address is invalid. '
+                u'Please check your input.'))
         return value
 
 
@@ -219,10 +244,8 @@ class JabberField(forms.CharField):
             return
         value = value.strip()
         if not may_be_valid_jabber(value):
-            raise forms.ValidationError(u'''
-                Die von dir angegebene Jabber-Adresse ist ungültig.  Bitte
-                überprüfe die Eingabe.
-            '''.strip())
+            raise forms.ValidationError(_(u'The entered Jabber address is invalid. '
+                u'Please check your input.'))
         return value
 
 

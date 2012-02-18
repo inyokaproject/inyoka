@@ -5,7 +5,7 @@
     This template shows a single pastebin entry and displays a list of actions
     the user can execute.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'pastebin/page.html' %}
@@ -20,32 +20,32 @@
 
 {% block paste_content %}
   <dl>
-    <dt>Titel:</dt>
+    <dt>{% trans %}Title:{% endtrans %}</dt>
     <dd>{{ entry.title|e }}</dd>
     {%- if not entry.author.is_anonymous %}
-    <dt>Autor:</dt>
-    <dd><a href="{{ entry.author|url }}">{{ entry.author.username|e }}</a></dd>
+      <dt>{% trans %}Author:{% endtrans %}</dt>
+      <dd><a href="{{ entry.author|url }}">{{ entry.author.username|e }}</a></dd>
     {%- endif %}
-    <dt>Datum:</dt>
+    <dt>{% trans %}Date:{% endtrans %}</dt>
     <dd>{{ entry.pub_date|datetimeformat }}</dd>
-    <dt>Aktionen:</dt>
+    <dt>{% trans %}Actions:{% endtrans %}</dt>
     <dd class="paste_actions">
       <ul>
-        <li><a href="{{ entry|url('raw') }}">Eintrag als Text anzeigen</a></li>
+        <li><a href="{{ entry|url('raw') }}">{% trans %}Display entry as raw text{% endtrans %}</a></li>
         {%- if USER.can('manage_pastebin') %}
-        <li><a href="{{ entry|url('delete') }}">Eintrag löschen</a></li>
+          <li><a href="{{ entry|url('delete') }}" class="admin_link">{% trans %}Delete entry{% endtrans %}</a></li>
       {%- endif %}
       </ul>
     </dd>
     {%- if entry.referrer|length %}
-    <dt>Seiten, die auf diesen Eintrag verweisen:</dt>
-    <dd><ul>
-    {%- for link in entry.referrer_list %}
-      <li>{{ link|urlize(60) }}</li>
-    {%- endfor %}
-    </ul></dd>
+      <dt>{% trans %}Pages that are referencing this entry:{% endtrans %}</dt>
+      <dd><ul>
+      {%- for link in entry.referrer_list %}
+        <li>{{ link|urlize(60) }}</li>
+      {%- endfor %}
+      </ul></dd>
     {%- endif %}
-    <dt>Code:</dt>
+    <dt>{% trans %}Code:{% endtrans %}</dt>
     <dd>
       {{ entry.rendered_code }}
     </dd>

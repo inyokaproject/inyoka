@@ -4,11 +4,11 @@
 
     they all use (stylesheets etc).
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'overall.html' %}
-{% do BREADCRUMB.append('Ikhaya', href('ikhaya'), True) %}
+{% do BREADCRUMB.append(_('News'), href('ikhaya'), True) %}
 {% set styles = styles|default([]) + ['ikhaya', 'highlight'] %}
 {% set scripts = scripts|default([]) + ['ikhaya'] %}
 {% set active_app = 'ikhaya' %}
@@ -26,74 +26,75 @@
 {% block sidebar %}
   <div class="container">
     <h3 class="navi_about_ikhaya">Über Ikhaya</h3>
-    <p>
-      Ikhaya ist der Nachrichtenblog der ubuntuusers-Community. Hier werden Nachrichten und
-      Berichte rund um Ubuntu, Linux und Open Source-Software veröffentlicht.
-    </p>
+    <p>{{ ikhaya_description }}</p>
     <h3 class="navi_new_article admin_link_hover">Vorschlagen</h3>
     <ul>
-      <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">Artikel vorschlagen</a></li>
-      <li><a href="{{ href('ikhaya', 'event', 'suggest') }}">Veranstaltung vorschlagen</a></li>
+      <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest article{% endtrans %}</a></li>
+      <li><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest event{% endtrans %}</a></li>
       {%- if USER.can('article_edit') -%}
-        <li class="admin_link"><a href="{{ href('ikhaya', 'article', 'new') }}">Artikel schreiben</a></li>
+        <li class="admin_link"><a href="{{ href('ikhaya', 'article', 'new') }}">{% trans %}New article{% endtrans %}</a></li>
       {%- endif -%}
       {%- if USER.can('event_edit') -%}
-        <li class="admin_link"><a href="{{ href('ikhaya', 'event', 'new') }}">Veranstaltung eintragen</a></li>
+        <li class="admin_link"><a href="{{ href('ikhaya', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a></li>
       {%- endif -%}
     </ul>
-    <h3 class="navi_archive">Archiv</h3>
+    <h3 class="navi_archive">{% trans %}Archive{% endtrans %}</h3>
     <ul>
-      <li><a href="{{ href('ikhaya') }}">Aktuelle Artikel</a></li>
+      <li><a href="{{ href('ikhaya') }}">{% trans %}Current articles{% endtrans %}</a></li>
       {%- for date in archive -%}
-        <li><a href="{{ href('ikhaya', date.strftime('%Y/%m')) }}">{{-
-            MONTHS[date.month] }} {{ date.strftime('%Y') }}</a></li>
+        <li>
+          <a href="{{ href('ikhaya', date.strftime('%Y/%m')) }}">{{-
+            MONTHS[date.month] }} {{ date.strftime('%Y') }}</a>
+        </li>
       {%- endfor %}
       {%- if short_archive %}
-      <li><a href="{{ href('ikhaya', 'archive') }}">Komplettes Archiv</a></li>
+        <li>
+          <a href="{{ href('ikhaya', 'archive') }}">{% trans %}Entire archive{% endtrans %}</a>
+        </li>
       {% endif -%}
     </ul>
     {% if categories or USER.can('category_edit') %}
-    <h3 class="navi_categories admin_link_hover{% if not categories %} admin_link{% endif %}">Kategorien</h3>
-    <ul>
-      {%- if USER.can('category_edit') -%}
-        <li class="admin_link"><a href="{{ href('ikhaya', 'category', 'new') }}">Kategorie anlegen</a></li>
-      {%- endif -%}
-      {%- for category in categories -%}
-        <li class="admin_link_hover">
-          {%- if USER.can('category_edit') -%}
-            <a class="admin_link" href="{{ href('ikhaya', 'category', category.slug, 'edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" /></a>
-          {%- endif -%}
-          <a href="{{ category|url }}">{{ category.name|e }}</a>
-        </li>
-      {%- endfor %}
-    </ul>
+      <h3 class="navi_categories admin_link_hover{% if not categories %} admin_link{% endif %}">{% trans %}Categories{% endtrans %}</h3>
+      <ul>
+        {%- if USER.can('category_edit') -%}
+          <li class="admin_link"><a href="{{ href('ikhaya', 'category', 'new') }}">{% trans %}Add category{% endtrans %}</a></li>
+        {%- endif -%}
+        {%- for category in categories -%}
+          <li class="admin_link_hover">
+            {%- if USER.can('category_edit') -%}
+              <a class="admin_link" href="{{ href('ikhaya', 'category', category.slug, 'edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" /></a>
+            {%- endif -%}
+            <a href="{{ category|url }}">{{ category.name|e }}</a>
+          </li>
+        {%- endfor %}
+      </ul>
     {% endif %}
     {% if show_full_choice %}
-    <h3 class="navi_full_articles">Anzeigeoptionen</h3>
-    <ul>
-      {% if '/full/' in CURRENT_URL %}
-      <li><a href="{{ CURRENT_URL[:-6] }}">nur Einleitung anzeigen</a></li>
-      {% else %}
-      <li><a href="{{ [CURRENT_URL[:-1], 'full', '']|join('/') }}">Vollständige Artikel anzeigen</a></li>
-      {% endif %}
-    </ul>
+      <h3 class="navi_full_articles">{% trans %}Display options{% endtrans %}</h3>
+      <ul>
+        {% if '/full/' in CURRENT_URL %}
+          <li><a href="{{ CURRENT_URL[:-6] }}">{% trans %}Show only teaser{% endtrans %}</a></li>
+        {% else %}
+          <li><a href="{{ [CURRENT_URL[:-1], 'full', '']|join('/') }}">{% trans %}Show full article{% endtrans %}</a></li>
+        {% endif %}
+      </ul>
     {% endif %}
     {%- if USER.can('static_page_edit') or USER.can('static_file_edit') or USER.can('configuration_edit') or USER.can('markup_css_edit') %}
-    <h3 class="navi_config">Konfiguration</h3>
-    <ul>
-    {%- if USER.can('configuration_edit') %}
-      <li><a href="{{ href('portal', 'config') }}">Allgemein</a></li>
-    {%- endif %}
-    {%- if USER.can('markup_css_edit') %}
-      <li><a href="{{ href('portal', 'styles') }}">Markup-Stylesheets</a></li>
-    {%- endif %}
-    {%- if USER.can('static_page_edit') %}
-      <li><a href="{{ href('portal', 'pages') }}">Statische Seiten</a></li>
-    {% endif %}
-    {%- if USER.can('static_file_edit') %}
-      <li><a href="{{ href('portal', 'files') }}">Statische Dateien</a></li>
-    {% endif %}
-    </ul>
+      <h3 class="navi_config">{% trans %}Configuration{% endtrans %}</h3>
+      <ul>
+        {%- if USER.can('configuration_edit') %}
+          <li><a href="{{ href('portal', 'config') }}">{% trans %}General{% endtrans %}</a></li>
+        {%- endif %}
+        {%- if USER.can('markup_css_edit') %}
+          <li><a href="{{ href('portal', 'styles') }}">{% trans %}Stylesheets{% endtrans %}</a></li>
+        {%- endif %}
+        {%- if USER.can('static_page_edit') %}
+          <li><a href="{{ href('portal', 'pages') }}">{% trans %}Static pages{% endtrans %}</a></li>
+        {% endif %}
+        {%- if USER.can('static_file_edit') %}
+          <li><a href="{{ href('portal', 'files') }}">{% trans %}Static files{% endtrans %}</a></li>
+        {% endif %}
+      </ul>
     {%- endif %}
 
   </div>

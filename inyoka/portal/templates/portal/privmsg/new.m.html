@@ -4,7 +4,7 @@
 
     Template for writing and sending new private messages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.m.html' %}
@@ -20,13 +20,13 @@
       {{ render_form(form, ['recipient', 'subject', 'text']) }}
     {% endif %}
     <p>
-      <input type="submit" name="preview" value="Vorschau" />
-      <input type="submit" value="Absenden" />
+      <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}" />
+      <input type="submit" value="{% trans %}Send{% endtrans %}" />
     </p>
   </form>
   {%- if preview %}
     <div class="preview_wrapper">
-      <h2 class="title">Vorschau</h2>
+      <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
       <div id="preview" class="preview">{{ preview }}</div>
     </div>
   {%- endif %}

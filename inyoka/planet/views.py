@@ -5,11 +5,13 @@
 
     Views for the planet.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
 from django.utils.text import truncate_html_words
+from django.utils.translation import ungettext
+from django.utils.translation import ugettext as _
 from django.db.models import Max
 from inyoka.portal.user import Group
 from inyoka.portal.utils import check_login, require_permission
@@ -23,9 +25,10 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.mail import send_mail
 from inyoka.utils.dates import group_by_day
+from inyoka.utils.storage import storage
+from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.planet.models import Blog, Entry
 from inyoka.planet.forms import SuggestBlogForm, EditBlogForm
-from inyoka.utils.feeds import atom_feed, AtomFeed
 
 
 
@@ -41,7 +44,8 @@ blog_list = generic.ListView.as_view(default_column='-latest_update',
     queryset=Blog.objects.annotate(latest_update=Max('entry__pub_date')),
     template_name='planet/blog_list.html',
     columns=['name', 'user', 'latest_update', 'active'],
-    required_permission='blog_edit')
+    required_permission='blog_edit',
+    base_link = href('planet', 'blogs'))
 
 
 blog_edit = generic.CreateUpdateView(model=Blog,
@@ -71,8 +75,7 @@ def index(request, page=1):
     }
 
 
-@check_login(message=u'Du musst eingeloggt sein, um einen Blog'
-                     u' vorzuschlagen.')
+@check_login(message=_(u'You need to be logged in to suggest a blog'))
 @templated('planet/suggest.html', modifier=context_modifier)
 def suggest(request):
     """
@@ -90,15 +93,15 @@ def suggest(request):
             text = render_template('mails/planet_suggest.txt',
                                    form.cleaned_data)
             for user in users:
-                send_mail('Neuer Blogvorschlag', text,
+                send_mail(_(u'A new blog was suggested.'), text,
                           settings.INYOKA_SYSTEM_USER_EMAIL,
                           [user.email])
             if not users:
-                flash(u'Es sind keine Benutzer als Planet-Administratoren '\
-                      u'eingetragen.', False)
+                flash(_(u'No user is registered as a planet administrator.'),
+                      False)
                 return HttpResponseRedirect(href('planet'))
-            flash(u'Der Blog „%s“ wurde vorgeschlagen.' %
-                  escape(form.cleaned_data['name']), True)
+            flash(_(u'The blog “%(title)s“ was suggested.') %
+                  {'title': escape(form.cleaned_data['name'])}, True)
             return HttpResponseRedirect(href('planet'))
     else:
         form = SuggestBlogForm()
@@ -108,11 +111,11 @@ def suggest(request):
 @atom_feed(name='planet_feed')
 def feed(request, mode='short', count=10):
     """show the feeds for the planet"""
-    feed = AtomFeed(u'ubuntuusers Planet', url=href('planet'),
+    title = _(u'%(sitename)s planet') % {'sitename': settings.BASE_DOMAIN_NAME}
+    feed = AtomFeed(title, url=href('planet'),
                     feed_url=request.build_absolute_uri(),
                     id=href('planet'),
-                    subtitle=u'Der ubuntuusers-Planet sammelt '
-                             u'verschiedene Blogs zu Ubuntu und Linux',
+                    subtitle=storage['planet_description'],
                     rights=href('portal', 'lizenz'),
                     icon=href('static', 'img', 'favicon.ico'))
 
@@ -151,16 +154,17 @@ def hide_entry(request, id):
     entry = Entry.objects.get(id=id)
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(u'Aktion wurde abgebrochen.')
+            flash(_(u'Canceled'))
         else:
             entry.hidden = False if entry.hidden else True
             if entry.hidden:
                 entry.hidden_by = request.user
             entry.save()
-            msg = (u'Der Eintrag „%s” wurde erfolgreich %s.' %
-                (entry.title, 'versteckt' if entry.hidden
-                                          else 'wiederhergestellt'))
-            flash(msg, success=True)
+            if entry.hidden:
+                msg = _(u'The entry “%(title)s“ was successfully hidden.')
+            else:
+                msg = _(u'The entry “%(title)s“ was successfully restored.')
+            flash(msg % {'title': entry.title}, success=True)
     else:
         flash(render_template('planet/hide_entry.html', {'entry': entry}))
     return HttpResponseRedirect(href('planet'))

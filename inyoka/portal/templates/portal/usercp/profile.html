@@ -4,34 +4,35 @@
 
     This page shows the user control panel settings page.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 {%- extends 'portal/usercp/overall.html' %}
 {% from 'macros.html' import render_form %}
-{% do BREADCRUMB.append('Profilinformationen', href('portal', 'usercp', 'profile'), True) %}
+{% do BREADCRUMB.append(_('Profile'), href('portal', 'usercp', 'profile'), True) %}
 {% set scripts = ['WikiEditor'] %}
 {% set styles = ['editor-sprite'] %}
 {% set selected = 'profile' %}
 
 {% block portal_content %}
   <form enctype="multipart/form-data" class="usercp_form" method="post" action="">
-    <h3>Avatareinstellungen</h3>
+    <h3>{% trans %}Avatar settings{% endtrans %}</h3>
     <dl>
-      <dt>Avatar:</dt>
+      <dt>{% trans %}Avatar:{% endtrans %}</dt>
       <dd><img class="usercp_avatar" src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{{ href('static', 'img', 'portal', 'no_avatar.png') }}{% endif %}" alt="Avatar" /></dd>
       <dd>{{ form.avatar }}</dd>
       {%- if max_avatar_height >= 0 and max_avatar_width >= 0 %}
       <dd class="note">
-        Beachte, dass der Avatar maximal <strong>{{ max_avatar_width }} × {{ max_avatar_height }}</strong> Pixel {% if max_avatar_size %}und <strong>{{ max_avatar_size }}</strong> KiB {% endif %}groß sein darf.<br />
-        Alles, was größer ist, wird automatisch auf diese Größe skaliert.<br />
-        Um also eine gute Bildqualität zu erreichen, darf der Avatar diese Größe nicht überschreiten.
+        {%- trans width=max_avatar_width, height=max_avatar_height,
+                 size=max_avatar_size -%}
+          Please note that the maximum size for the avatar is {{ width }}x{{ height }} pixels and {{ size }} KiB. Everything that exceeds this limit will automatically be resized.
+        {%- endtrans -%}
       </dd>
       {%- endif %}
       {%- if form.errors.avatar %}<dd>{{ form.errors.avatar }}</dd>{% endif %}
       <hr style="clear: both;" />
-      <dt>Gravatar:</dt>
+      <dt>{% trans %}Gravatar:{% endtrans %}</dt>
       {% if user.settings.use_gravatar %}
       <dd><img class="usercp_avatar" src="{{ user.gravatar_url }}" alt="Gravatar" /></dd>
       {% endif %}
@@ -40,51 +41,64 @@
       </dd>
       <br style="clear: both;" />
     </dl>
-    <h3>Kontakt-Adressen</h3>
+    <h3>{% trans %}Contact addresses{% endtrans %}</h3>
     <dl>
       <dd>
-        <p class="note">
-          Die E-Mail- und die Jabber-Adresse werden standardmäßig nicht im öffentlichen Profil angezeigt.<br />
-          Um diese anzuzeigen, musst du das Feld „im Profil anzeigen“ neben den Adressfeldern aktivieren.
-        </p>
+        <p class="note">{% trans -%}
+          By default, the email and jabber addresses are not displayed in your public profile. To publish them, you need to check the “show in profile“ box.
+        {%- endtrans %}</p>
       </dd>
       {% for item in ['email', 'jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone', 'sip'] %}
-      <dt><label for="{{ form[item].auto_id }}">{{ form[item].label }}</label></dt>
-      <dd>{{ form[item] }}
-      {%- if item in ['email', 'jabber'] %} <span class="note">{{ form['show_' + item] }} <label for="id_show_{{ item }}">im Profil anzeigen</label></span>
-      {%- endif -%}
-      </dd>
-      {%- if form.errors[item] %}<dd>{{ form.errors[item] }}</dd>{% endif %}
+        <dt>
+          <label for="{{ form[item].auto_id }}">{{ form[item].label }}</label>
+        </dt>
+        <dd>{{ form[item] }}
+          {%- if item in ['email', 'jabber'] %}
+            <span class="note">{{ form['show_' + item] }}
+              <label for="id_show_{{ item }}">{% trans %}Show in profile{% endtrans %}</label>
+            </span>
+          {%- endif -%}
+        </dd>
+        {%- if form.errors[item] %}<dd>{{ form.errors[item] }}</dd>{% endif %}
       {% endfor %}
     </dl>
-    <h3>Sonstige Einstellungen</h3>
+    <h3>{% trans %}Miscellaneous settings{% endtrans %}</h3>
     {{ render_form(form, ['occupation', 'interests', 'website',
-                          'launchpad', 'gpgkey']) }} 
-    <h4>Geographische Lage</h4>
+                          'launchpad', 'gpgkey']) }}
+    <h4>{% trans %}Geographical location{% endtrans %}</h4>
     {{ render_form(form, ['location', 'coordinates']) }}
-    <h3>OpenIDs</h3>
-    {% if openids %}Selektierte OpenIDs werden gelöscht!
-    {% else %}Keine OpenIDs verknüpft.{% endif %}
-     Gib beim Login deine OpenID ein um sie mit deinem Benutzer zu verknüpfen.
+    <h3>{% trans %}OpenIDs{% endtrans %}</h3>
+    <p>
+      {% if openids %}
+        {% trans %}Selected OpenIDs will be removed!{% endtrans %}
+      {% else %}
+        {% trans %}No OpenID is associated with your account.{% endtrans %}
+      {% endif %}
+    </p>
+    <p>{% trans -%}
+      To associate an OpenID with your account, login with your OpenID.
+    {%- endtrans %}</p>
     <ul>
       {% for openid in openids %}
-      <li><input type="checkbox" name="openids" value="{{ openid.id }}"> {{ openid.value }}</li>
+        <li>
+          <input type="checkbox" name="openids" value="{{ openid.id }}" />
+          {{ openid.value }}
+        </li>
       {% endfor %}
     </ul>
-    <h3>Signatur</h3>
-    <p class="note">
-      Dieser Text wird an jeden Beitrag von dir angehängt.<br />
-      Er darf nicht mehr als {{ max_sig_length }} Zeichen enthalten.<br />
-	  Bitte die <a href="{{ href('wiki', 'ubuntuusers/Moderatoren/Forenregeln', _anchor='8-Signaturregeln') }}">Signaturregeln</a> beachten.
-    </p>
+    <h3>{% trans %}Signature{% endtrans %}</h3>
+    <p class="note">{% trans n=max_sig_length, link=href('wiki', 'ubuntuusers/Moderatoren/Forenregeln', _anchor='8-Signaturregeln') -%}
+      The signature will be appended to every post. It cannot contain more than {{ n }} characters. Please follow the <a href="{{ link }}">signature rules</a>.
+    {%- endtrans %}</p>
     <p>
       {{ form.signature }}
-
     </p>
     {{ form.errors.signature }}
     <p>
-      <input type="submit" value="Speichern" />
-      <a href="{{ href('portal', 'user', user.username ) }}">Eigenes Profil anzeigen</a>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+    </p>
+    <p>
+      <a href="{{ href('portal', 'user', user.username ) }}">Show my profile</a>
     </p>
   </form>
 {% endblock %}

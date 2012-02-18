@@ -5,10 +5,10 @@
 
     The urls for the main portal (index page, error pages, login page etc.)
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('inyoka.portal.views',
     (r'^$', 'index'),
@@ -74,6 +74,8 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^openid/(.*)', 'openid_consumer'),
     (r'^config/$', 'config'),
     (r'^styles/$', 'styles'),
+    # shortcuts
+    (r'^ikhaya/(\d+)/$', 'ikhaya_redirect'),
     # static pages
     (r'^files/$', 'files'),
     (r'^files/(?P<page>\d+)/$', 'files'),
@@ -85,6 +87,16 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^([-A-Za-z_]+)/$', 'static_page'),
     (r'^([-A-Za-z_]+)/edit/$', 'page_edit'),
     (r'^(?P<pk>[-A-Za-z_]+)/delete/$', 'page_delete'),
+)
+
+
+js_info_dict = {
+    'packages': ('inyoka.portal', 'inyoka.wiki', 'inyoka.pastebin',
+                 'inyoka.ikhaya', 'inyoka.planet', 'inyoka.forum'),
+}
+
+urlpatterns += patterns('',
+    url(r'jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict)
 )
 
 

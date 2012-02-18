@@ -6,7 +6,7 @@
     revisions of a page. The class can work with diffs between different
     pages too, so does this template, but there are no query methods so far.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -29,5 +29,5 @@
     {% endfor %}
   </table>
 {% else %}
-  <p>Die zwei Revisionen sind identisch.</p>
+  <p>{% trans %}The two revisions are identical.{% endtrans %}</p>
 {% endif %}

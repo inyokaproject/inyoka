@@ -5,7 +5,7 @@
 
     Database models for ikhaya.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
@@ -15,6 +15,7 @@ from django.core.cache import cache
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy
 from django.utils import datetime_safe
 
 from inyoka.portal.user import User
@@ -24,7 +25,7 @@ from inyoka.utils.text import slugify
 from inyoka.utils.html import escape, striptags
 from inyoka.utils.urls import href, url_for
 from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone, \
-     natural_date, format_time, format_datetime
+     format_time, format_datetime
 from inyoka.utils.search import search, SearchAdapter
 from inyoka.utils.local import current_request
 from inyoka.utils.decorators import deferred
@@ -149,9 +150,10 @@ class CommentManager(models.Manager):
 
 class Category(models.Model):
     name = models.CharField(max_length=180)
-    slug = models.CharField('Slug', max_length=100, blank=True, unique=True, db_index=True)
+    slug = models.CharField(ugettext_lazy(u'Slug'), max_length=100,
+            blank=True, unique=True, db_index=True)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-                             verbose_name='Icon', on_delete=models.SET_NULL)
+                             verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
 
     def __unicode__(self):
         return self.name
@@ -170,8 +172,8 @@ class Category(models.Model):
         cache.delete('ikhaya/categories')
 
     class Meta:
-        verbose_name = 'Kategorie'
-        verbose_name_plural = 'Kategorien'
+        verbose_name = ugettext_lazy(u'Category')
+        verbose_name_plural = ugettext_lazy(u'Categories')
 
 
 class Article(models.Model, LockableObject):
@@ -181,24 +183,27 @@ class Article(models.Model, LockableObject):
     published = ArticleManager(public=True)
     drafts = ArticleManager(public=False)
 
-    pub_date = models.DateField('Datum', db_index=True)
-    pub_time = models.TimeField('Zeit')
-    updated = models.DateTimeField('Letzte Änderung', blank=True, null=True, 
-                                   db_index=True)
+    pub_date = models.DateField(ugettext_lazy(u'Date'), db_index=True)
+    pub_time = models.TimeField(ugettext_lazy(u'Time'))
+    updated = models.DateTimeField(ugettext_lazy(u'Last change'), blank=True,
+                null=True, db_index=True)
     author = models.ForeignKey(User, related_name='article_set',
-                               verbose_name='Autor')
-    subject = models.CharField('Überschrift', max_length=180)
-    category = models.ForeignKey(Category, verbose_name='Kategorie',
+                               verbose_name=ugettext_lazy(u'Author'))
+    subject = models.CharField(ugettext_lazy(u'Headline'), max_length=180)
+    category = models.ForeignKey(Category, verbose_name=ugettext_lazy(u'Category'),
                                  on_delete=models.PROTECT)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-                             verbose_name='Icon', on_delete=models.SET_NULL)
-    intro = models.TextField('Einleitung')
-    text = models.TextField('Text')
-    public = models.BooleanField('Veröffentlicht')
-    slug = models.SlugField('Slug', max_length=100, blank=True, db_index=True)
-    is_xhtml = models.BooleanField('XHTML Markup', default=False)
+            verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
+    intro = models.TextField(ugettext_lazy(u'Introduction'))
+    text = models.TextField(ugettext_lazy(u'Text'))
+    public = models.BooleanField(ugettext_lazy(u'Public'))
+    slug = models.SlugField(ugettext_lazy(u'Slug'), max_length=100,
+            blank=True, db_index=True)
+    is_xhtml = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
+                default=False)
     comment_count = models.IntegerField(default=0)
-    comments_enabled = models.BooleanField('Kommentare erlaubt', default=True)
+    comments_enabled = models.BooleanField(ugettext_lazy(u'Allow comments'),
+                        default=True)
 
     @property
     def article_icon(self):
@@ -354,8 +359,8 @@ class Article(models.Model, LockableObject):
         self.update_search()
 
     class Meta:
-        verbose_name = 'Artikel'
-        verbose_name_plural = 'Artikel'
+        verbose_name = ugettext_lazy('Article')
+        verbose_name_plural = ugettext_lazy('Articles')
         ordering = ['-pub_date', '-pub_time', 'author']
         unique_together = ('pub_date', 'slug')
 
@@ -393,16 +398,17 @@ class Suggestion(models.Model):
     objects = SuggestionManager()
     author = models.ForeignKey(User, related_name='suggestion_set')
     pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
-    title = models.CharField(u'Titel', max_length=100)
-    text = models.TextField(u'Text')
-    intro = models.TextField(u'Einleitung')
-    notes = models.TextField(u'Anmerkungen', blank=True, default=u'')
+    title = models.CharField(ugettext_lazy(u'Title'), max_length=100)
+    text = models.TextField(ugettext_lazy(u'Text'))
+    intro = models.TextField(ugettext_lazy(u'Introduction'))
+    notes = models.TextField(ugettext_lazy(u'Annotations'), blank=True,
+                default=u'')
     owner = models.ForeignKey(User, related_name='owned_suggestion_set',
                               null=True, blank=True)
 
     class Meta:
-        verbose_name = 'Artikelvorschlag'
-        verbose_name_plural = 'Artikelvorschläge'
+        verbose_name = ugettext_lazy(u'Article suggestion')
+        verbose_name_plural = ugettext_lazy(u'Article suggestions')
 
     @property
     def rendered_text(self):
@@ -483,9 +489,9 @@ class Event(models.Model):
     author = models.ForeignKey(User)
     location = models.CharField(max_length=128, blank=True)
     location_town = models.CharField(max_length=56, blank=True)
-    location_lat = models.FloatField(u'Koordinaten (Breite)',
+    location_lat = models.FloatField(ugettext_lazy(u'Degree of latitude'),
                                      blank=True, null=True)
-    location_long = models.FloatField('Koordinaten (Länge)',
+    location_long = models.FloatField(ugettext_lazy(u'Degree of longitude'),
                                       blank=True, null=True)
     visible = models.BooleanField(default=False)
 
@@ -518,77 +524,18 @@ class Event(models.Model):
         cache.delete('ikhaya/event/%s' % self.id)
         cache.delete('ikhaya/event_count')
 
-    def friendly_title(self, with_date=True, with_html_link=False):
-        if with_date:
-            s_date = self.natural_datetime
-        else:
-            s_date = ''
+    def friendly_title(self, with_html_link=False):
         s_location = '<span class="location">%s</span>' % (
              self.location_town and u' in %s' % self.location_town or '')
         summary = u'<span class="summary">%s</span>' % escape(self.name)
         if with_html_link:
-            ret = u'<a href="%s" class="event_link">%s</a>%s%s' % (
+            ret = u'<a href="%s" class="event_link">%s</a>%s' % (
                 escape(self.get_absolute_url()),
                 summary,
-                s_date,
                 s_location)
         else:
-            ret = summary + s_date + s_location
+            ret = summary + s_location
         return u'<span class="vevent">%s</span>' % ret
-
-    @property
-    def natural_datetime(self):
-        def _convert(d, t=None, time_only=False, prefix=True, end=False):
-            if t is None:
-                return natural_date(d, prefix)
-            class_ = 'dtend' if end else 'dtstart'
-            format_ = format_time if time_only else format_datetime
-            dt = date_time_to_datetime(d, t)
-            return '<abbr title="%s" class="%s">%s</abbr>' % (dt.isoformat(),
-                  class_, format_(dt))
-
-        """
-        SD  ST  ED  ET
-        x   -   -   -   am dd.mm.yyyy
-        x   -   x   -   vom dd.mm.yyyy bis dd.mm.yyyy
-        x   -   -   x   am dd.mm.yyyy                               ignore the ET
-        x   -   x   x   vom dd.mm.yyyy bis dd.mm.yyyy               ignore the ET
-        x   x   -   -   dd.mm.yyyy HH:MM
-        x   x   x   -   dd.mm.yyyy HH:MM bis dd.mm.yyyy HH:MM       set ET to ST by convention
-        x   x   -   x   dd.mm.yyyy HH:MM bis HH:MM
-        x   x   x   x   dd.mm.yyyy HH:MM bis dd.mm.yyyy HH:MM
-        """
-
-        if self.time is None:
-            if self.enddate is None or self.enddate <= self.date:
-                return ' ' + _convert(self.date)
-            else:
-                prefix = ' von ' if -1 <= (self.enddate - self.date).days <= 1 else ' vom '
-                return prefix + _convert(self.date, None, False, False) + ' bis ' + _convert(self.enddate, None, False, False, True)
-        else:
-            if self.enddate is None and self.endtime is None:
-                return ' ' + _convert(self.date, self.time)
-            else:
-                """
-                since, one endpoint information is given, we calculate the duration:
-                if no enddate is set, we take the startdate as enddate, too
-                if no endtime is set, we take the starttime as endtime, too
-                """
-                #self.enddate = self.enddate or self.date
-                self.endtime = self.endtime or self.time
-                start = date_time_to_datetime(self.date, self.time)
-                end = date_time_to_datetime(self.enddate or self.date, self.endtime)
-                if end > start:
-                    delta = end - start
-                else:
-                    # return the same as if no endpoint is given
-                    return " " + _convert(self.date, self.time)
-
-                if not delta.days:
-                    # duration < 1 day
-                    return " am " + _convert(self.date, self.time, False) + ' bis ' + _convert(self.date, self.endtime, True, False, True)
-                else:
-                    return " " + _convert(self.date, self.time, False, False) + ' bis ' + _convert(self.enddate, self.endtime, False, False, True)
 
     @property
     def natural_coordinates(self):

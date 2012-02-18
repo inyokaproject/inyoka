@@ -4,13 +4,13 @@
 
     This page shows all dates of a specific month.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 {%- extends 'portal/overall.html' %}
 {% set styles = ['calendar'] %}
-{% do BREADCRUMB.append('%s %d' % (MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month), True) %}
+{% do BREADCRUMB.append('%s %d'|format(MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month), True) %}
 {% do BREADCRUMB.append('Kalender', href('portal', 'calendar'), True) %}
 {% block portal_content %}
 <ul class="switcher">
@@ -31,7 +31,7 @@
 <table class="calendar_month">
   <tr>
     <th colspan="2">Tag</th>
-    <th>Veranstaltungen</th>
+    <th>{% trans %}Events{% endtrans %}</th>
   </tr>
   {% for day, events in days %}
   <tr {#- #FIXME: if it's weekend today there is only the `today` class, but atm it's not used by the css, so *plonk* :) #}
@@ -49,7 +49,7 @@
       {%- if events %}
       <ul>
         {%- for event in events %}
-        <li>{{ event.friendly_title(with_date=false, with_html_link=true) }}</li>
+        <li>{{ event.friendly_title(with_html_link=true) }}</li>
         {%- endfor %}
       </ul>
     {% endif -%}
@@ -57,5 +57,5 @@
   </tr>
   {% endfor %}
 </table>
-<p><a href="{{ href('ikhaya', 'event', 'suggest') }}">Neue Veranstaltung vorschlagen</a></p>
+<p><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest new event{% endtrans %}</a></p>
 {% endblock %}

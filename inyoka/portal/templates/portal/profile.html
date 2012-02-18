@@ -4,22 +4,22 @@
 
     This page shows a user's profile.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.html' %}
 
 {% do BREADCRUMB.append(user.username, user|url, True) %}
-{% do BREADCRUMB.append('Mitglieder', href('portal', 'users')) %}
+{% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 {% set styles = ['portal', 'highlight'] %}
 
 {% macro show_item(item) %}
   {%- if user[item] and user.settings['show_'+item] -%}
-  <td>{{ user[item]|e }}</td>
+    <td>{{ user[item]|e }}</td>
   {%- elif user[item] and REQUEST.user.can('user_edit') -%}
-  <td class="hidden">{{ user[item]|e }}</td>
+    <td class="hidden">{{ user[item]|e }}</td>
   {%- else -%}
-  <td>–</td>
+    <td>–</td>
   {%- endif -%}
 {% endmacro %}
 
@@ -31,140 +31,142 @@
   <h3>{{ user.username|e }}
   {%- if request.user.can('user_edit') %}
     <a href="{{ href('portal', 'user', user.username, 'edit') }}" class="admin_link"><img
-      src="{{ href('static', 'img/ikhaya/category_edit.png') }}" alt="Nutzer bearbeiten" title="Nutzer bearbeiten" /></a>
+      src="{{ href('static', 'img/ikhaya/category_edit.png') }}" alt="{% trans %}Edit user{% endtrans %}" title="{% trans %}Edit user{% endtrans %}" /></a>
   {%- endif %}
   {%- if request.user.can('subscribe_to_users') -%}
     {%- if is_subscribed %}
       <a href="{{ generate_subscription_link(do='unsubscribe') }}" class="action action_subscribe subscribe_user admin link"><img
-      src="{{ href('static', 'img/forum/subscribe.png') }}" alt="Nicht mehr beobachten" title="Nicht mehr beobachten" /></a>
+      src="{{ href('static', 'img/forum/subscribe.png') }}" alt="{% trans %}Don’t watch anymore{% endtrans %}" title="{% trans %}Don’t watch anymore{% endtrans %}" /></a>
     {%- else %}
       <a href="{{ generate_subscription_link() }}" class="action action_subscribe subscribe_user admin_link"><img
-      src="{{ href('static', 'img/forum/subscribe.png') }}" alt="Beobachten" title="Beobachten" /></a>
+      src="{{ href('static', 'img/forum/subscribe.png') }}" alt="{% trans %}Watch{% endtrans %}" title="{% trans %}Watch{% endtrans %}" /></a>
     {%- endif -%}
   {%- endif %}
   </h3>
   {%- if user in (User.objects.get_system_user(), User.objects.get_anonymous_user()) %}
-  {{ user.username|e }} ist ein Systembenutzer.
+    {% trans name=user.username|e %}{{ name }} is a system user.{% endtrans %}
   {%- elif user.is_deleted or user.is_banned %}
-  {{ user.username|e }} ist nicht mehr verfügbar.
+    {% trans name=user.username|e %}{{ name }} is not available.{% endtrans %}
   {%- else %}
-  <table class="userinfo admin_link_hover">
-    <tr>
-      <th>Name</th>
-      <td>{{ user.username|e }}</td>
-      <td rowspan="6"><img class="userinfo_avatar" src="{{ user.avatar_url|e }}" alt="Avatar von „{{ user.username|e }}“" /></td>
-    </tr>
-    <tr>
-      <th>E-Mail-Adresse</th>
-      {{ show_item('email') }}
-    </tr>
-    <tr>
-      <th>Website</th>
-      <td>
-        {%- if user.website -%}
-          <a href="{{ user.website|e }}">{{ user.website|e }}</a>
+    <table class="userinfo admin_link_hover">
+      <tr>
+        <th>{% trans %}Name{% endtrans %}</th>
+        <td>{{ user.username|e }}</td>
+        <td rowspan="6">
+          <img class="userinfo_avatar" src="{{ user.avatar_url|e }}"
+               alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
+        </td>
+      </tr>
+      <tr>
+        <th>{% trans %}Email address{% endtrans %}</th>
+        {{ show_item('email') }}
+      </tr>
+      <tr>
+        <th>{% trans %}Website{% endtrans %}</th>
+        <td>
+          {%- if user.website -%}
+            <a href="{{ user.website|e }}">{{ user.website|e }}</a>
+          {%- else -%}
+            –
+          {%- endif -%}
+        </td>
+      </tr>
+      <tr>
+        <th>{% trans %}Launchpad username{% endtrans %}</th>
+        <td>
+          {%- if user.launchpad -%}
+            <a href="{{ user.launchpad_url|e }}">{{ user.launchpad|e }}</a>
+          {%- else -%}
+            –
+          {% endif %}
+        </td>
+      <tr>
+        <th>{% trans %}Member since{% endtrans %}</th>
+        <td>{{ user.date_joined|datetimeformat }}</td>
+      </tr>
+      <tr>
+        <th>{% trans %}Posts{% endtrans %}</th>
+        <td>
+          {{ user.post_count }}
+          (<a href="{{ href('forum', 'author', user.username) }}">{% trans %}show{% endtrans %}</a>)
+        </td>
+      </tr>
+      <tr>
+        <th>{% trans %}GPG key{% endtrans %}</th>
+        <td>{% if user.gpgkey %}0x{{ user.gpgkey|e }}{% else %}–{% endif %}</td>
+      </tr>
+      <tr>
+        <th>{% trans %}Location{% endtrans %}</th>
+        <th>{% trans %}Job{% endtrans %}</th>
+        <th>{% trans %}Interests{% endtrans %}</th>
+      </tr>
+      <tr>
+        <td>{{ user.location|e or '–' }}</td>
+        <td>{{ user.occupation|e or '–' }}</td>
+        <td>{{ user.interests|e or '–' }}</td>
+      </tr>
+      <tr>
+        <th>{% trans %}MSN{% endtrans %}</th>
+        <th>{% trans %}ICQ{% endtrans %}</th>
+        <th>{% trans %}AIM{% endtrans %}</th>
+      </tr>
+      <tr>
+        <td>{{ user.msn|e or '–' }}</td>
+        <td>{{ user.icq|e or '–' }}</td>
+        <td>{{ user.aim|e or '–' }}</td>
+      </tr>
+      <tr>
+        <th>{% trans %}Yahoo Messenger{% endtrans %}</th>
+        <th>{% trans %}Skype{% endtrans %}</th>
+        <th>{% trans %}WengoPhone{% endtrans %}</th>
+      </tr>
+      <tr>
+        <td>{{ user.yim|e or '–' }}</td>
+        <td>{{ user.skype|e or '–' }}</td>
+        <td>{{ user.wengophone|e or '–' }}</td>
+      </tr>
+      <tr>
+        <th>{% trans %}SIP{% endtrans %}</th>
+        <th>{% trans %}Jabber{% endtrans %}</th>
+        <th>{% trans %}Contact{% endtrans %}</th>
+      </tr>
+      <tr>
+        <td>{{ user.sip|e or '–' }}</td>
+        {% if user.jabber and user.settings['show_jabber'] -%}
+        <td><a href="{{ user.jabber_url|e }}">{{ user.jabber|e }}</a></td>
+        {%- elif user.jabber and REQUEST.user.can('user_edit') -%}
+        <td class="hidden"><a href="{{ user.jabber_url|e }}">{{ user.jabber|e }}</a></td>
         {%- else -%}
-          –
+        <td>–</td>
         {%- endif -%}
-      </td>
-    </tr>
-    <tr>
-      <th>Launchpad-Benutzername</th>
-      <td>
-        {%- if user.launchpad -%}
-          <a href="{{ user.launchpad_url|e }}">{{ user.launchpad|e }}</a>
-        {%- else -%}
-          –
-        {% endif %}
-      </td>
-    <tr>
-      <th>Anmeldungsdatum</th>
-      <td>{{ user.date_joined|datetimeformat }}</td>
-    </tr>
-    <tr>
-      <th>Beiträge</th>
-      <td>{{ user.post_count }} (<a href="{{ href('forum', 'author', user.username) }}">anzeigen</a>)</td>
-    </tr>
-    <tr>
-      <th>GPG-Schlüssel</th>
-      <td>{% if user.gpgkey %}0x{{ user.gpgkey|e }}{% else %}–{% endif %}</td>
-    </tr>
-    <tr>
-      <th>Wohnort</th>
-      <th>Beruf</th>
-      <th>Interessen</th>
-    </tr>
-    <tr>
-      <td>{{ user.location|e or '–' }}</td>
-      <td>{{ user.occupation|e or '–' }}</td>
-      <td>{{ user.interests|e or '–' }}</td>
-    </tr>
-    <tr>
-      <th>MSN Messenger</th>
-      <th>ICQ-Nummer</th>
-      <th>AIM-Adresse</th>
-    </tr>
-    <tr>
-      <td>{{ user.msn|e or '–' }}</td>
-      <td>{{ user.icq|e or '–' }}</td>
-      <td>{{ user.aim|e or '–' }}</td>
-    </tr>
-    <tr>
-      <th>Yahoo Messenger</th>
-      <th>Skype</th>
-      <th>WengoPhone</th>
-    </tr>
-    <tr>
-      <td>{{ user.yim|e or '–' }}</td>
-      <td>{{ user.skype|e or '–' }}</td>
-      <td>{{ user.wengophone|e or '–' }}</td>
-    </tr>
-    <tr>
-      <th>SIP</th>
-      <th>Jabber</th>
-      <th>Kontakt</th>
-    </tr>
-    <tr>
-      <td>{{ user.sip|e or '–' }}</td>
-      {% if user.jabber and user.settings['show_jabber'] -%}
-      <td><a href="{{ user.jabber_url|e }}">{{ user.jabber|e }}</a></td>
-      {%- elif user.jabber and REQUEST.user.can('user_edit') -%}
-      <td class="hidden"><a href="{{ user.jabber_url|e }}">{{ user.jabber|e }}</a></td>
-      {%- else -%}
-      <td>–</td>
-      {%- endif -%}
-      <td>
-        <a href="{{ user|url('privmsg') }}">Private Nachricht</a>
-      </td>
-    </tr>
-    <tr>
-      <th colspan="3">Gruppenmitgliedschaften 
-        {% if REQUEST.user.can('user_edit') %}
-        <a href="{{ href('portal', 'user', user.username, 'edit', 'groups') }}" class="admin_link"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}"></a>
-        {% endif %}
-      </th>
-    </tr>
-    <tr>
-      <td colspan="3">
-        {%- for group in groups -%}
-        <a href="{{ group|url }}"{% if not group.is_public %} class="hidden"{% endif %}>{{ group.name|e }}</a>
-        {%- if not loop.last %}, {% endif %}
-        {%- else %}
-        „{{ user.username|e }}“ ist in keiner Gruppe Mitglied.
-        {%- endfor %}
-      </td>
-    </tr>
-  </table>
+        <td>
+          <a href="{{ user|url('privmsg') }}">{% trans %}Private message{% endtrans %}</a>
+        </td>
+      </tr>
+      <tr>
+        <th colspan="3">{% trans %}Group memberships{% endtrans %}
+          {% if REQUEST.user.can('user_edit') %}
+          <a href="{{ href('portal', 'user', user.username, 'edit', 'groups') }}" class="admin_link"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}"></a>
+          {% endif %}
+        </th>
+      </tr>
+      <tr>
+        <td colspan="3">
+          {%- for group in groups -%}
+            <a href="{{ group|url }}"{% if not group.is_public %} class="hidden"{% endif %}>{{ group.name|e }}</a>
+            {%- if not loop.last %}, {% endif %}
+          {%- else %}{% trans name=user.username|e -%}
+            “{{ name }}“ is no member of any group.
+           {%- endtrans %}
+          {%- endfor %}
+        </td>
+      </tr>
+    </table>
+  {% endif %}
   {%- if wikipage %}
-  {{ wikipage }}
-  <p>
-    (<a href="{{ href('wiki', 'Benutzer', user.username|e, action='edit') }}">bearbeiten</a>)
-  </p>
-  {%- else %}
-  <p>
-    Der Benutzer „{{ user.username|e }}“ hat noch keine eigene Benutzerseite.
-    <a href="{{ href('wiki', 'Benutzerseite') }}">Anlegen</a>
-  </p>
-  {%- endif %}
+    {{ wikipage }}
+    <p>
+      (<a href="{{ href('wiki', SETTINGS.WIKI_USER_BASE, user.username|e, action='edit') }}">{% trans %}edit{% endtrans %}</a>)
+    </p>
   {%- endif %}
 {% endblock %}

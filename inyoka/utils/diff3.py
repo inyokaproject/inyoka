@@ -7,13 +7,14 @@
     MoinMoin wiki engine and some other diff/udiff stuff.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :copyright: (c) by Florian Festi.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
 import heapq
 import difflib
+from django.utils.translation import ugettext as _
 from inyoka.utils.html import escape
 
 
@@ -361,7 +362,7 @@ class DiffRenderer(object):
         try:
             if line1.startswith('--- ') and line2.startswith('+++ '):
                 filename = line1[4:].split(None, 1)[0]
-                return filename, 'Alt', 'Neu'
+                return filename, _('Old'), _('New')
         except (ValueError, IndexError):
             pass
         return None, None, None

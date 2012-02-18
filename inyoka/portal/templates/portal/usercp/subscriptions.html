@@ -5,19 +5,18 @@
     This page shows all subscriptions of the user and let him
     manage them.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 {%- extends 'portal/usercp/overall.html' %}
-{% do BREADCRUMB.append('Abonnements', href('portal', 'usercp', 'subscriptions'), True) %}
+{% do BREADCRUMB.append(_('Subscriptions'), href('portal', 'usercp', 'subscriptions'), True) %}
 {% set selected = 'subscriptions' %}
-
 
 {% block sidebar %}
   {{ super() }}
 
-  <h3>Filter</h3>
+  <h3>{% trans %}Filter{% endtrans %}</h3>
   <div class="container noh3">
     {{ filtersets[0].form.content_type }}
   </div>
@@ -25,70 +24,74 @@
 
 
 {% block portal_content %}
-<h3>Abonnements <span class="note">(<a href="{{ href('portal', 'usercp', 'settings') }}">erweiterte Einstellungen</a>)</span></h3>
-<form class="usercp_form" method="post" action="">
-  <table class="usercp_subscriptions">
-   <colgroup>
-      <col width="1%">
-      <col width="84%">
-      <col width="10%">
-      <col width="5%">
-    </colgroup>
-    <thead>
-      <tr>
-        <th class="checkboxes"><input type="checkbox" id="check_all" title="Alle aus-/abwählen" /></th>
-        <th class="name">Name</th>
-        <th class="read">{{ table.get_html('notified', 'Gelesen') }}</th>
-        <th class="status">Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {%- for sub in subscriptions -%}
-        {%- set type = sub.content_type.model -%}
-        {%- set object = sub.content_object -%}
-        {%- if type != 'suggestion' and object -%}
+  <h3>{% trans %}Subscriptions{% endtrans %}</h3>
+  <form class="usercp_form" method="post" action="">
+    <table class="usercp_subscriptions">
+     <colgroup>
+        <col width="1%">
+        <col width="84%">
+        <col width="10%">
+        <col width="5%">
+      </colgroup>
+      <thead>
         <tr>
-          <td class="checkboxes"><input type="checkbox" name="select" value="{{ sub.id }}" /></td>
-          <td class="items{% if not sub.can_read %} unreadable{% endif %}">
-            {{ object._meta.verbose_name }}: <a href="{{ object|url }}">{{ object|e }}</a>
-            {%- if type == 'topic' -%}
-              {%- if sub.notified %}
-                <a href="{{ object|url('first_unread') }}" title="Zeige ungelesene Beiträge"><img src="{{ href('static', 'img/forum/goto.png') }}" alt="Zeige ungelesene Beiträge" /></a>
-              {%- endif %}
-              {%- if object.paginated %} &#160; &#160; [{{ object.get_pagination() }}]{% endif -%}
-            {%- endif %}
-          </td>
-          <td class="read">{%- if sub.notified %}<img src="{{ href('static', 'img', 'icons', 'new.png') }}" alt="neu" title="Änderungen seit letztem Besuch" /> {% endif %}</td>
-          <td class="status">
-            {% if type == 'topic' %}
-              <span class="status_{{ object.solved and 'solved' or 'unsolved' }}"></span>
-            {% endif %} 
-          </td>
+          <th class="checkboxes"><input type="checkbox" id="check_all" title="{% trans %}(De)select all{% endtrans %}" /></th>
+          <th class="name">{% trans %}Name{% endtrans %}</th>
+          <th class="read">{{ table.get_html('notified', _('Read')) }}</th>
+          <th class="status">{% trans %}State{% endtrans %}</th>
         </tr>
-        {%- endif %}
-      {%- else %}
-      <tr>
-        <td colspan="4">
-          Du hast bisher noch keine Themen oder Artikel abonniert
-        </td>
-      </tr>
-      {%- endfor %}
-    </tbody>
-  </table>
-  <div>
-    <input type="submit" name="delete" value="Ausgewählte Abonnements löschen" />
-    <input type="submit" name="mark_read" value="Ausgewählte Abonnements als gelesen markieren" />
-  </div>
-</form>
-{{ pagination.generate(position='right') }}
-<script type="text/javascript">
-  /* <![CDATA[ */
-  $('#check_all').click(function() {
-    var checked = this.checked
-    $('input[name="select"]').each(function() {
-      this.checked = checked;
+      </thead>
+      <tbody>
+        {%- for sub in subscriptions -%}
+          {%- set type = sub.content_type.model -%}
+          {%- set object = sub.content_object -%}
+          {%- if type != 'suggestion' and object -%}
+            <tr>
+              <td class="checkboxes"><input type="checkbox" name="select" value="{{ sub.id }}" /></td>
+              <td class="items{% if not sub.can_read %} unreadable{% endif %}">
+                {{ object._meta.verbose_name }}: <a href="{{ object|url }}">{{ object|e }}</a>
+                {%- if type == 'topic' -%}
+                  {%- if not object.get_read_status(USER) %}
+                    <a href="{{ object|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">
+                      <img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />
+                    </a>
+                  {%- endif %}
+                  {%- if object.paginated %} &#160; &#160; [{{ object.get_pagination() }}]{% endif -%}
+                {%- endif %}
+              </td>
+              <td class="read">
+                {%- if sub.notified %}
+                  <img src="{{ href('static', 'img', 'icons', 'new.png') }}" alt="neu" title="{% trans %}Changes since last visit{% endtrans %}" />
+                {%- endif %}
+              </td>
+              <td class="status">
+                {% if type == 'topic' %}
+                  <span class="status_{{ object.solved and 'solved' or 'unsolved' }}"></span>
+                {% endif %}
+              </td>
+            </tr>
+          {%- endif %}
+        {%- else %}
+          <tr>
+            <td colspan="4">{% trans %}You did not yet subscribed to any topics or articles.{% endtrans %}</td>
+          </tr>
+        {%- endfor %}
+      </tbody>
+    </table>
+    <div>
+      <input type="submit" name="delete" value="{% trans %}Delete selected subscriptions{% endtrans %}" />
+      <input type="submit" name="mark_read" value="{% trans %}Mark selected subscriptions as read{% endtrans %}" />
+    </div>
+  </form>
+  {{ pagination.generate(position='right') }}
+  <script type="text/javascript">
+    /* <![CDATA[ */
+    $('#check_all').click(function() {
+      var checked = this.checked
+      $('input[name="select"]').each(function() {
+        this.checked = checked;
+      });
     });
-  });
-  /* ]]> */
-</script>
+    /* ]]> */
+  </script>
 {% endblock %}

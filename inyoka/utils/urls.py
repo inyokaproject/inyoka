@@ -7,13 +7,15 @@
     to build urls for different subdomains using the `href` function.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-from urlparse import urlparse
+import urllib
+from urlparse import urlparse, urlsplit, urlunsplit
 
 from django.conf import settings
+from django.utils.encoding import force_unicode, smart_str
 from django.utils.importlib import import_module
 from django.utils.http import urlencode, urlquote, urlquote_plus
 
@@ -23,6 +25,7 @@ from django_hosts.reverse import get_host
 # extended at runtime with module introspection information
 _append_slash_map = {'static': False, 'media': False}
 _schema_re = re.compile(r'[a-z]+://')
+_unquoted_percents_re = re.compile(r'%(?![0-9A-Fa-f]{2})')
 acceptable_protocols = frozenset((
     'ed2k', 'ftp', 'http', 'https', 'irc', 'mailto', 'news', 'gopher',
     'nntp', 'telnet', 'webcal', 'xmpp', 'callto', 'feed', 'urn',
@@ -132,6 +135,27 @@ def clean_openid_url(url):
     if parts.path == '':
         return url + '/'
     return url
+
+
+def smart_urlquote(url):
+    """Quotes an URL if it isn't already quoted."""
+    # FIXME: django 1.4 ships with this function!
+    # Handle IDN before quoting.
+    scheme, netloc, path, query, fragment = urlsplit(url)
+    try:
+        netloc = netloc.encode('idna') # IDN -> ACE
+    except UnicodeError: # invalid domain part
+        pass
+    else:
+        url = urlunsplit((scheme, netloc, path, query, fragment))
+
+    # An URL is considered unquoted if it contains no % character, or if it
+    # contains a % not followed by two hexadecimal digits. See #9655.
+    if '%' not in url or _unquoted_percents_re.search(url):
+        # See http://bugs.python.org/issue2637
+        url = urllib.quote(smart_str(url), safe='!*\'();:@&=+$,/?#[]~')
+
+    return force_unicode(url)
 
 
 from inyoka.utils.http import TemplateResponse

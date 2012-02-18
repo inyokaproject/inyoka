@@ -5,7 +5,7 @@
     This is the base layout for all wiki detail pages except of partial
     templates (prefixed with an underscore)
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'overall.html' %}
@@ -21,17 +21,22 @@
     {% do BREADCRUMB.append(part, link, True, 0) %}
   {% endfor %}
 {%- endif %}
-{% do BREADCRUMB.append('Wiki', href('wiki'), True) %}
+{% do BREADCRUMB.append(_('Wiki'), href('wiki'), True) %}
 {% set styles = styles|default([]) + ['wiki', 'highlight'] %}
 {% set active_app = 'wiki' %}
 {% set navi_type  = 'tabbar' %}
 
 {% block pathbar_extensions %}
   <div class="dropdown">
-    <ul class="dropdown"><li><a href="{{ href('portal', 'search') }}">Erweiterte Suche</a></li><li><ul>
-      <li><a href="{{ href('wiki', 'Wiki', 'Letzte Änderungen') }}">Letzte Änderungen</a></li>
-      <li><a href="{{ href('wiki', 'Wiki', 'Tags') }}">Tag-Wolke</a></li>
-    </ul></li></ul>
+    <ul class="dropdown">
+      <li><a href="{{ href('portal', 'search') }}">{% trans %}Advanced search{% endtrans %}</a></li>
+      <li>
+        <ul>
+          <li><a href="{{ href('wiki', 'Wiki', 'Letzte Änderungen') }}">{% trans %}Recent changes{% endtrans %}</a></li>
+          <li><a href="{{ href('wiki', 'Wiki', 'Tags') }}">{% trans %}Tag cloud{% endtrans %}</a></li>
+        </ul>
+      </li>
+    </ul>
   </div>
 {% endblock %}
 
@@ -39,21 +44,23 @@
   {%- if can and can.read %}
     <ul>
       {%- for action_, title in (
-        ('show', 'Artikel'),
-        ('edit', 'Bearbeiten'),
-        ('log', 'Versionen'),
-        ('backlinks', 'Backlinks'),
-        ('manage', 'Weitere Aktionen')
+        ('show', _('Article')),
+        ('edit', _('Edit')),
+        ('log', _('Log')),
+        ('backlinks', _('Backlinks')),
+        ('manage', _('More'))
       ) %}
         {%- if action_ != 'edit' or (action_ == 'edit' and (can.edit or USER.is_anonymous)) %}
         <li><a href="{{ page|url(action_) }}"{% if action == action_ %} class="active"{% endif %}>{{ title }}</a></li>
         {%- endif %}
       {%- endfor %}
-      <li{% if not page.topic %} class="disabled"{% endif %}><a href="{{ page.topic and page.topic|url or href('forum', 'new_discussion', page.title) }}">Diskussion</a></li>
+      <li{% if not page.topic %} class="disabled"{% endif %}>
+        <a href="{{ page.topic and page.topic|url or href('forum', 'new_discussion', page.title) }}">{% trans %}Discussion{% endtrans %}</a>
+      </li>
       {%- if is_subscribed %}
-        <li><a href="{{ page|url('unsubscribe') }}">Abbestellen</a></li>
+        <li><a href="{{ page|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a></li>
       {%- else %}
-        <li><a href="{{ page|url('subscribe') }}">Abonnieren</a></li>
+        <li><a href="{{ page|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a></li>
       {%- endif %}
     </ul>
   {%- endif %}

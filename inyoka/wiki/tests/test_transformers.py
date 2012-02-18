@@ -6,6 +6,7 @@
     This module tests the wiki ast transformers.
 
     :copyright: Copyright 2007 by Armin Ronacher.
+    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 from django.test import TestCase
@@ -87,7 +88,6 @@ class TestTransformers(TestCase):
         smileys = {':)': '', ':/': '', '8-o': '', '{de}': ''}
         assert _smiley_re is None
         smiley_re = get_smiley_re(smileys)
-        print smiley_re.pattern
         t = lambda x: smiley_re.findall(x)
         self.assertEqual(t(':) :/'), [':)', ':/'])
         self.assertEqual(t('(text:)'), [])

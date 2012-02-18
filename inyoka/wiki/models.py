@@ -74,7 +74,7 @@
     that is part of the `acl` system.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from hashlib import sha1
@@ -87,6 +87,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
+from django.utils.translation import ugettext_lazy, ugettext as _
 from werkzeug import cached_property
 
 from inyoka.wiki.storage import storage
@@ -333,7 +334,7 @@ class PageManager(models.Manager):
         """
         rev = None
         key = 'wiki/page/' + name
-        if not nocache and self.exists(name):
+        if not nocache:
             rev = request_cache.get(key)
         if rev is None:
             try:
@@ -475,7 +476,7 @@ class PageManager(models.Manager):
         if isinstance(text, basestring):
             text, created = Text.objects.get_or_create(value=text)
         if note is None:
-            note = 'Erstellt'
+            note = _(u'Created')
         if attachment is not None:
             att = Attachment()
             attachment_filename = get_filename(attachment_filename, attachment)
@@ -907,7 +908,7 @@ class Page(models.Model):
             .edit(deleted=True,
                   text=u'',
                   file=None,
-                  note=u'Von System gelöscht')
+                  note=_(u'Automatically deleted'))
 
     def edit(self, text=None, user=None, change_date=None,
              note=u'', attachment=None, attachment_filename=None,
@@ -1030,8 +1031,8 @@ class Page(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Wikiseite'
-        verbose_name_plural = 'Wikiseiten'
+        verbose_name = ugettext_lazy(u'Wiki page')
+        verbose_name_plural = ugettext_lazy(u'Wiki pages')
 
 
 class Attachment(models.Model):
@@ -1085,9 +1086,10 @@ class Attachment(models.Model):
                    u'alt="%s"></a>' % ((url,) * 3)
         elif self.mimetype.startswith('text/'):
             return highlight_code(self.contents, filename=self.filename) + \
-                   u'<a href="%s">Anhang herunterladen</a>' % url
+                   u''.join([u'<a href="%s">', _(u'Download attachment'),
+                            u'</a>']) % url
         else:
-            return u'<a href="%s">Anhang herunterladen</a>' % url
+            return u''.join([u'<a href="%s">', _(u'Download attachment'), u'</a>']) % url
 
     def open(self, mode='rb'):
         """
@@ -1164,10 +1166,10 @@ class Revision(models.Model):
         The page title plus the revision date.  This is equivalent to
         `Page.full_title`.
         """
-        return u'%s (Revision %s)' % (
-            self.page.title,
-            format_specific_datetime(self.change_date)
-        )
+        return _(u'%(rev)s (Revision %(date)s)' % {
+            'rev': self.page.title,
+            'date': format_specific_datetime(self.change_date)
+        })
 
     @property
     def rendered_text(self):
@@ -1193,11 +1195,12 @@ class Revision(models.Model):
     def revert(self, note=None, user=None, remote_addr=None):
         """Revert this revision and make it the current one."""
         # no relative date information, because it stays in the note forever
-        note = (note and note + ' ' or '') + '[Revision vom ' + \
-               datetime_to_timezone(self.change_date).strftime(
-                   '%d.%m.%Y %H:%M %Z') + \
-               (' von %s wiederhergestellt]' % (
-                   self.user.username if self.user else self.remote_addr))
+
+        note = _(u'%(note)s [Revision from %(date)s restored by %(user)s]' % {
+                'note': note,
+                'date': datetime_to_timezone(self.change_date).strftime(
+                    '%d.%m.%Y %H:%M %Z'),
+                'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
                            user=(user if user.is_authenticated else None),
                            change_date=datetime.utcnow(),
@@ -1219,10 +1222,9 @@ class Revision(models.Model):
         self.text.touch_html_render_instructions()
 
     def __unicode__(self):
-        return 'Revision %d (%s)' % (
-            self.id,
-            self.page.title
-        )
+        return _('Revision %(id)d (%(title)s)') % {
+            'id': self.id, 'title': self.page.title
+        }
 
     def __repr__(self):
         return '<%s %r rev %r>' % (

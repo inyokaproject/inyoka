@@ -5,7 +5,7 @@
 
     URL list for the planet.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf.urls.defaults import patterns
@@ -17,7 +17,8 @@ urlpatterns = patterns('inyoka.planet.views',
     (r'^hide/(?P<id>\d+)/$', 'hide_entry'),
     (r'^suggest/$', 'suggest'),
     (r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', 'feed'),
-    (r'^blogs/(?:(?P<blog>\d+)/)?$', 'blog_list'),
+    (r'^blogs/$', 'blog_list'),
+    (r'^blogs/(?P<page>\d)/$', 'blog_list'),
     (r'^blogs/export/(?P<export_type>[a-z]+)/$', 'export'),
     (r'^blog/new/$', 'blog_edit'),
     (r'^blog/(?P<blog>\d+)/edit/$', 'blog_edit'),

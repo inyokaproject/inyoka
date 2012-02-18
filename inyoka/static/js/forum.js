@@ -4,7 +4,7 @@
 
     JavaScript for the forum.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 */
 
@@ -103,49 +103,49 @@ $(function () { /* collapsable elements for the input forms */
     });
   }
 
-  (function () {
-    $('a.action_subscribe.subscribe_topic').each(function () {
-      $(this).click(function () {
-        doAction('topic', $(this).attr('id'), $('a.action_subscribe.subscribe_topic'));
-        return false;
-      });
-    });
-
-    $('a.action_subscribe.subscribe_forum').each(function () {
-      $(this).click(function () {
-        doAction('forum', $(this).attr('id'), $('a.action_subscribe.subscribe_forum'));
-        return false;
-      });
-    });
-
-    $('a.solve_topic').each(function () {
-      $(this).click(function () {
-        doAction('topic', $(this).attr('id'), $('a.solve_topic'), function () {
-          // switch classes
-          if ($('a.solve_topic').hasClass('action_solve')) {
-            $('a.solve_topic').removeClass('action_solve');
-            $('a.solve_topic').addClass('action_unsolve');
-            var span = $('span.status_unsolved');
-            span.fadeOut('fast');
-            span.removeClass('status_unsolved');
-            span.addClass('status_solved');
-            span.text('gelöst');
-            span.fadeIn('fast');
-          } else {
-            $('a.solve_topic').removeClass('action_unsolve');
-            $('a.solve_topic').addClass('action_solve');
-            var span = $('span.status_solved');
-            span.fadeOut('fast');
-            span.removeClass('status_solved');
-            span.addClass('status_unsolved');
-            span.text('ungelöst');
-            span.fadeIn('fast');
-          }
-        });
-        return false;
-      });
-    });
-  })();
+//  (function () {
+//    $('a.action_subscribe.subscribe_topic').each(function () {
+//      $(this).click(function () {
+//        doAction('topic', $(this).attr('id'), $('a.action_subscribe.subscribe_topic'));
+//        return false;
+//      });
+//    });
+//
+//    $('a.action_subscribe.subscribe_forum').each(function () {
+//      $(this).click(function () {
+//        doAction('forum', $(this).attr('id'), $('a.action_subscribe.subscribe_forum'));
+//        return false;
+//      });
+//    });
+//
+//    $('a.solve_topic').each(function () {
+//      $(this).click(function () {
+//        doAction('topic', $(this).attr('id'), $('a.solve_topic'), function () {
+//          // switch classes
+//          if ($('a.solve_topic').hasClass('action_solve')) {
+//            $('a.solve_topic').removeClass('action_solve');
+//            $('a.solve_topic').addClass('action_unsolve');
+//            var span = $('span.status_unsolved');
+//            span.fadeOut('fast');
+//            span.removeClass('status_unsolved');
+//            span.addClass('status_solved');
+//            span.text('gelöst');
+//            span.fadeIn('fast');
+//          } else {
+//            $('a.solve_topic').removeClass('action_unsolve');
+//            $('a.solve_topic').addClass('action_solve');
+//            var span = $('span.status_solved');
+//            span.fadeOut('fast');
+//            span.removeClass('status_solved');
+//            span.addClass('status_unsolved');
+//            span.text('ungelöst');
+//            span.fadeIn('fast');
+//          }
+//        });
+//        return false;
+//      });
+//    });
+//  })();
 
   /* Display some more informations about the ubuntu version */
   (function () {
@@ -168,11 +168,11 @@ $(function () { /* collapsable elements for the input forms */
       $.getJSON(url, {
         version: version_str
       }, function (data) {
-        if (data.class_ == 'unstable') {
+        if (data.dev == 'true') {
           $('span#version_info').attr('class', 'unstable').html(with_link(text_unstable, data));
-        } else if (data.lts) {
+        } else if (data.lts == 'true') {
           $('span#version_info').attr('class', 'lts').html(with_link(text_lts, data));
-        } else if (data.current) {
+        } else if (data.current == 'true') {
           $('span#version_info').attr('class', 'current').html(with_link(text_current, data));
         } else {
           $('span#version_info').attr('class', '').text('');

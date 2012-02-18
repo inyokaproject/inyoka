@@ -4,7 +4,7 @@
 
     Show a single ikhaya article.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
@@ -15,27 +15,26 @@
 {% set scripts = ['WikiEditor'] %}
 {% set feed = 'feeds/comments/%s/%%s/20'|format(article.id) %}
 {% set feeds = [
-  ('Kommentare - Nur Überschrift', href('ikhaya', feed|format('title'))),
-  ('Kommentare - Nur Einleitung', href('ikhaya', feed|format('short'))),
-  ('Kommentare - Ganzer Beitrag', href('ikhaya', feed|format('full'))),
+  (_('Comments - Captions'), href('ikhaya', feed|format('title'))),
+  (_('Comments - Teaser'), href('ikhaya', feed|format('short'))),
+  (_('Comments - Full'), href('ikhaya', feed|format('full'))),
   ] %}
 
 
 {% macro user_column(user) %}
-  <td class="author"
-  {%- if user.id == USER.id %} style="background-color: #F6F4EF"
-  {%- endif %}>
+  <td class="author"{%- if user.id == USER.id %} style="background-color: #F6F4EF"{%- endif %}>
     <p class="username{% if not user.is_active %} inactive{% endif %}">
       <a href="{{ user|url }}">{{ user.username|e }}</a>
       {%- if user.primary_group_id and user.primary_group.icon %}
-      <img class="teamicon" src="{{ user.primary_group.icon_url }}" alt="Teamicon" />
+        <img class="teamicon" src="{{ user.primary_group.icon_url }}" alt="{% trans %}Team icon{% endtrans %}" />
       {%- endif %}
       {%- if user.member_title %}
-      <div class="member_title">{{ user.member_title|e }}</div>
+        <div class="member_title">{{ user.member_title|e }}</div>
       {%- endif %}
     </p>
     {%- if user.avatar and not USER.settings['hide_avatars'] %}
-    <img class="avatar" src="{{ user.avatar_url }}" alt="Avatar von {{ user.username|e }}" />
+      <img class="avatar" src="{{ user.avatar_url }}"
+           alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
     {%- endif %}
   </td>
 {% endmacro %}
@@ -44,7 +43,7 @@
   <div class="article" id="page">
     <h3 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h3>
     {%- if article.article_icon -%}
-    <img class="icon" src="{{ article.article_icon|url }}" alt="{{ article.article_icon.identifier|e }}" />
+      <img class="icon" src="{{ article.article_icon|url }}" alt="{{ article.article_icon.identifier|e }}" />
     {%- endif -%}
     <div class="intro">
       {{ article.rendered_intro }}
@@ -53,89 +52,91 @@
       {{ article.rendered_text }}
     </div>
     <p class="meta admin_link_hover">
-      geschrieben von <a href="{{ article.author|url }}">
-      {{ article.author.username|e}}</a> {{ article.pub_datetime|specificdatetimeformat(true) }}
-      in <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
+      {% trans link=article.author|url, author=article.author.username|e -%}
+        Written by <a href="{{ link }}">{{ author }}</a>
+      {%- endtrans %} |
+      {{ article.pub_datetime|datetimeformat }} |
+      {% trans %}Category:{% endtrans %} <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
       {%- if article.updated > article.pub_datetime %}
-      – zuletzt aktualisiert {{ article.updated|specificdatetimeformat(true) }}
+        | {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }}
       {%- endif %}
-      {% if can_edit_article %}<span class="admin_link"> – <a href="{{ article|url('edit') }}">bearbeiten</a></span>{% endif %}
+      {% if can_edit_article %}
+        <span class="admin_link">|
+          <a href="{{ article|url('edit') }}">{% trans %}Edit{% endtrans %}</a></span>
+      {% endif %}
       {%- if can_subscribe and article.comments_enabled %}
         {%- if is_subscribed %}
-        <a href="{{ article|url('unsubscribe') }}" class="action action_unsubscribe">Kommentare abbestellen</a>
+          <a href="{{ article|url('unsubscribe') }}" class="action action_unsubscribe">{% trans %}Unsubscribe comments{% endtrans %}</a>
         {%- else %}
-        <a href="{{ article|url('subscribe') }}" class="action action_subscribe">Kommentare abonnieren</a>
+          <a href="{{ article|url('subscribe') }}" class="action action_subscribe">{% trans %}Subscribe comments{% endtrans %}</a>
         {%- endif %}
       {%- endif %}
-      <a href="{{ article|url('reports') }}" class="action action_report">Rechtschreibfehler melden</a>
+      <a href="{{ article|url('reports') }}" class="action action_report">{% trans %}Report misspelling{% endtrans %}</a>
     </p>
     {%- if article.comments_enabled %}
       <table id="comments" class="comments">
         {%- for comment in comments %}
-        {%- if comment.deleted and not can_admin_comment %}
-        {%- else %}
-        <tr id="comment_{{ loop.index }}" class="admin_link_hover{% if comment.deleted %} hidden{% endif %}">
-          {{ user_column(comment.author) }}
-          {%- if comment.author_id == USER.id %}
-          <td class="comment" style="background-color: #F8F6F1">
+          {%- if comment.deleted and not can_admin_comment %}
           {%- else %}
-          <td class="comment">
+            <tr id="comment_{{ loop.index }}" class="admin_link_hover{% if comment.deleted %} hidden{% endif %}">
+              {{ user_column(comment.author) }}
+              <td class="comment"{% if comment.author == USER %} style="background-color: #F8F6F1"{% endif %}>
+                <div class="commentinfo">
+                  <div class="linklist">
+                    {%- if comment.author_id == USER.id %}
+                      <a href="{{ comment|url('edit') }}" class="action action_edit">{% trans %}Edit{% endtrans %}</a> |
+                    {% endif %}
+                    {%- if can_admin_comment %}
+                      <span class="admin_link">
+                        {% if comment.author_id != USER.id %}
+                          <a href="{{ comment|url('edit') }}" class="admin_link action action_edit">{% trans %}Edit{% endtrans %}</a> |
+                        {% endif %}
+                        {% if comment.deleted %}
+                          <a href="{{ comment|url('restore') }}" class="action action_restore">{% trans %}Restore{% endtrans %}</a> |
+                        {%- else %}
+                          <a href="{{ comment|url('hide') }}" class="action action_hide">{% trans %}Hide{% endtrans %}</a> |
+                        {% endif %}
+                      </span>
+                    {%- endif -%}
+                    {%- if can_post_comment %}
+                      <a href="#new_comment" onclick="$('#id_text').val($('#id_text').val() + '@' + {{ loop.index }} + ': ')"
+                         class="action action_quote">{% trans %}Reply{% endtrans %}</a>
+                    {%- endif %}
+                  </div>
+                  <a href="#comment_{{ loop.index }}"><strong>{{ loop.index }}</strong></a>
+                  {{ comment.pub_date|datetimeformat }}
+                </div>
+                <div class="text">
+                  {{ comment.rendered_text }}
+                </div>
+              </td>
+            </tr>
           {%- endif %}
-            <div class="commentinfo">
-              <div class="linklist">
-                {%- if comment.author_id == USER.id %}
-                <a href="{{ comment|url('edit') }}" class="action action_edit">bearbeiten</a> |
-                {% endif %}
-                {%- if can_admin_comment %}
-                  <span class="admin_link">
-                  {% if comment.author_id != USER.id %}
-                    <a href="{{ comment|url('edit') }}" class="admin_link action action_edit">bearbeiten</a> |
-                  {% endif %}
-                  {% if comment.deleted %}
-                    <a href="{{ comment|url('restore') }}" class="action action_restore">wiederherstellen</a> |
-                  {%- else %}
-                    <a href="{{ comment|url('hide') }}" class="action action_hide">verbergen</a> |
-                  {% endif %}
-                  </span>
-                {%- endif -%}
-                {%- if can_post_comment %}
-                  <a href="#new_comment" onclick="$('#id_text').val($('#id_text').val() + '@' + {{ loop.index }} + ': ')" class="action action_quote">antworten</a>
-                {%- endif %}
-              </div>
-              <a href="#comment_{{ loop.index }}" title="Kopiere diesen Link, um auf diesen Beitrag zu verweisen" onclick="alert(this.title + '\n\n' + this.href); return false"><strong>{{ loop.index }}.</strong></a>
-              Verfasst: {{ comment.pub_date|datetimeformat }}
-            </div>
-            <div class="text">
-              {{ comment.rendered_text }}
-            </div>
-          </td>
-        </tr>
-        {%- endif %}
         {%- endfor %}
         {%- if can_post_comment %}
-        <tr id="new_comment">
-          {{ user_column(USER) }}
-          <td>
-            {{ form.errors.text }}
-            <form action="{{ article|url }}#new_comment" method="post" id="new_comment">
-              {{ form.text }}
-              <div class="note">{{ form.fields.text.help_text }}</div>
-              {% if form.data.comment_id and USER.can('comment_edit') %}
-              {{ form.comment_id }}
-              {% endif %}
-              <p>
-                <input type="submit" name="preview" value="Vorschau" />
-                <input type="submit" value="Speichern" />
-              </p>
-              {%- if preview %}
-              <div class="preview_wrapper">
-                <h2 class="title">Vorschau</h2>
-                <div id="preview" class="preview">{{ preview }}</div>
-              </div>
-              {%- endif %}
-            </form>
-          </td>
-        </tr>
+          <tr id="new_comment">
+            {{ user_column(USER) }}
+            <td>
+              {{ form.errors.text }}
+              <form action="{{ article|url }}#new_comment" method="post" id="new_comment">
+                {{ form.text }}
+                <div class="note">{{ form.fields.text.help_text }}</div>
+                {% if form.data.comment_id and USER.can('comment_edit') %}
+                  {{ form.comment_id }}
+                {% endif %}
+                <p>
+                  <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}" />
+                  <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+                </p>
+                {%- if preview %}
+                  <div class="preview_wrapper">
+                    <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
+                    <div id="preview" class="preview">{{ preview }}</div>
+                  </div>
+                {%- endif %}
+              </form>
+            </td>
+          </tr>
         {%- endif %}
       </table>
     {%- endif %}
@@ -153,9 +154,9 @@
 
   {% if article.comments_enabled %}
     {%- if article.comment_count %}
-      var txt = 'Kommentare ({{ article.comment_count }})'
+      var txt = '{% trans count=article.comment_count %} Comments ({{ count }}){% endtrans %}'
     {%- else %}
-      var txt = 'Kommentar schreiben'
+      var txt = '{% trans %}Write comment{% endtrans %}'
     {%- endif %}
     if (document.location.href.search('#comment') == -1) {
       $('#comments').hide().before(
@@ -176,7 +177,7 @@
         output = $('<div class="preview" />')
       var preview = $('<div class="preview_wrapper"  />')
         .hide()
-        .append('<h2 class="title">Vorschau<\/h2>')
+        .append('<h2 class="title">{% trans %}Preview{% endtrans %}<\/h2>')
         .append(output);
 
       $('form input[name="preview"]').click(function() {
@@ -195,6 +196,5 @@
     })();
   {% endif %}
   /* ]]> */
-</script>
-
+  </script>
 {% endblock %}

@@ -6,30 +6,26 @@
 
     It's pastebin's index page.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'pastebin/page.html' %}
 {% from 'macros.html' import render_form %}
-{% do BREADCRUMB.append('Neuer Eintrag', href('pastebin', 'add'), True) %}
+{% do BREADCRUMB.append(_('New paste'), href('pastebin', 'add'), True) %}
 
 {% block paste_content %}
   <form action="" method="post">
     <dl>
-      <dt>Funktion:</dt>
-      <dd>
-        Dies ist eine Ablage, wo du Fehlermeldungen, Logs, Konfigurationsdateien oder
-        Quelltexte speichern kannst, um Forenthreads oder IRC-Channels nicht unnötig unleserlich zu
-        machen. Dazu kopierst du den Text in das Textfeld und wählst die passende
-        Sprache aus. Dann kopierst du die URL in das Thema bzw. den Channel. Genaueres zu unserer
-        Ablage („No Paste Service“) findest du im <a href="{{ href('wiki', 'No_Paste_Service') }}">Wiki</a>.
-      </dd>
+      <dt>{% trans %}About:{% endtrans %}</dt>
+      <dd>{% trans -%}
+        This is a pastebin where you can save error messages, logs, configuration files or source codes to keep threads or IRC channels clean. To do this, just copy the text in the box below and choose the appropriate language. After that, you copy the URL into the topic or the channel.
+      {%- endtrans %}</dd>
       {{ render_form(form, ['title', 'lang', 'code'], inline=True) }}
       {%- if not USER.is_authenticated %}
       {{ render_form(form, ['captcha'], inline=True) }}
       {%- endif %}
       <dd>
-        <input type="submit" value="Hinzufügen" />
+        <input type="submit" value="{% trans %}Submit{% endtrans %}" />
       </dd>
     </dl>
   </form>
