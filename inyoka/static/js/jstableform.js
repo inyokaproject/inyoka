@@ -284,7 +284,7 @@ $(function () {
                             }
                             values[k] = val;
                         } else if (obj.type == 'boolean') {
-                            values[k] = getBooleanStatus($td).toString();
+                            values[k] = getBooleanStatus($td);
                         }
                     });
                 } else {
@@ -296,7 +296,7 @@ $(function () {
                         if (obj.type == 'string' || obj.type == 'int' || obj.type == 'float' || obj.type == 'text') {
                             values[k] = $td.text();
                         } else if (obj.type == 'boolean') {
-                            values[k] = getBooleanStatus($td).toString();
+                            values[k] = getBooleanStatus($td);
                         }
                     });
                 }
