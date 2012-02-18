@@ -21,7 +21,6 @@ from urlparse import urljoin
 
 from django.conf import settings
 from django.utils.encoding import force_unicode
-from django.utils.translation import ungettext
 from django.utils.translation import ugettext as _
 
 from inyoka.utils.html import escape

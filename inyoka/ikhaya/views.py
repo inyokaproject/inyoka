@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.utils.dates import MONTHS
 from django.utils.http import urlencode
 from django.utils.text import truncate_html_words
-from django.utils.translation import ungettext, ugettext as _
+from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils import ctype

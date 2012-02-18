@@ -10,7 +10,6 @@
 """
 from django.conf import settings
 from django.utils.text import truncate_html_words
-from django.utils.translation import ungettext
 from django.utils.translation import ugettext as _
 from django.db.models import Max
 from inyoka.portal.user import Group
