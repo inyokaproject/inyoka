@@ -31,7 +31,7 @@ $(document).ready(function () {
       var image = $("#counter > a > img");
       var url = $STATIC_URL + $COUNTDOWN_IMAGE_BASE_URL;
       if (days > 14) {
-        url = url + 'start.png';
+        url = url + 'start';
       } else if (days >= 1) {
         url = url + days;
       } else {

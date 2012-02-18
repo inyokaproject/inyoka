@@ -860,8 +860,11 @@ class ConfigurationForm(forms.Form):
         label=ugettext_lazy(u'Name of wiki page'))
     countdown_image_base_url = forms.CharField(required=False,
         label=ugettext_lazy(u'Base path to images'),
-        help_text=ugettext_lazy(u'The path must be relative to STATIC_URL and
-            without identifier.'))
+        help_text=ugettext_lazy(u'The path must be relative to STATIC_URL and '
+            'without identifier. To get '
+            '<code>http://static.example.com/images/cd_start.png</code> '
+            'only <code>images/cd_</code> needs to be provided. The base url '
+            'is expanded by either "start", 1-14 or "here" plus ".png".'))
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,
