@@ -22,35 +22,35 @@
 {% set scripts = ['PrivilegeBox'] %}
 
 {% block content %}
-<h3>{% trans %}Groupconfiguration{% endtrans %}</h3>
+<h3>{% trans %}Group configuration{% endtrans %}</h3>
 <form enctype="multipart/form-data" action="" method="post">
   <dl>
     {{ render_form(form, ['name'], inline=true) }}
     <dd>
       {{ form.is_public }} <label for="id_is_public">{% trans %}Public{% endtrans %}</label>
-      <span class="help_text">{% trans %}will be shown in the groupoverview and the userprofile{% endtrans %}</span>
+      <span class="help_text">{% trans %}will be shown in the group overview and the user profile{% endtrans %}</span>
       {{- form.is_public.errors }}
     </dd>
     <dl>
-      <dt>{% trans %}Teamicon:{% endtrans %}</dt>
+      <dt>{% trans %}Team icon:{% endtrans %}</dt>
       {% if group.icon %}<dd><img class="admin_teamicon" src="{{ group.icon_url }}" alt="Team-Icon" /></dd>{% endif %}
       <dd>{{ form.icon }}</dd>
       {%- if team_icon_height >= 0 and team_icon_width >= 0 %}
       <dd class="note">
         {%- trans width=team_icon_width, height=team_icon_height -%}
-          Please note that the teamicon can not be bigger than {{ width }}x{{ height }} pixel. Everything that exceeds this limit will automatically be resized.
+          Please note that the team icon can not be bigger than {{ width }}x{{ height }} pixel. Everything that exceeds this limit will automatically be resized.
         {%- endtrans -%}
       </dd>
       {%- endif %}
       <dd>{{ form.import_icon_from_global }} <label for="id_import_icon_from_global">Globales Team-Icon importieren</label></dd>
       {%- if group.icon %}
-      <dd>{{ form.delete_icon }} <label for="id_delete_icon">{% trans %}Delete teamicon{% endtrans %}</label></dd>
+      <dd>{{ form.delete_icon }} <label for="id_delete_icon">{% trans %}Delete team icon{% endtrans %}</label></dd>
       {%- endif %}
       {%- if form.errors.avatar or form.errors.delete_avatar %}<dd>{{ form.errors.avatar }}{{ form.errors.delete_avatar }}</dd>{% endif %}
     </dl>
     {{ render_form(form, ['permissions']) }}
     <dt>{% trans %}Forum privileges:{% endtrans %}</dt>
-    <dd id="forum_rights">{% trans %}Please turn javascript on to edit the privileges.{% endtrans %}</dd>
+    <dd id="forum_rights">{% trans %}Please turn JavaScript on to edit the privileges.{% endtrans %}</dd>
   </dl>
   <input type="submit" value="{% trans %}Submit{% endtrans %}" />
 </form>

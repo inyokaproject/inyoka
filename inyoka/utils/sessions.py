@@ -13,6 +13,7 @@ from time import time
 from datetime import datetime, timedelta
 from django.db import transaction
 from django.forms import ValidationError
+from django.utils.translation import ugettext_lazy
 from inyoka.portal.models import SessionInfo
 from inyoka.utils.urls import url_for
 from inyoka.utils.storage import storage
@@ -75,10 +76,9 @@ class SurgeProtectionMixin(object):
     """
 
     source_protection_timeout = 15
-    source_protection_message = '''
-        Du kannst Daten nicht so schnell hintereinander absenden.  Bitte
-        warte noch einige Zeit bis du das Formular erneut absendest.
-    '''
+    source_protection_message = ugettext_lazy(
+        u'You cannot send data that fast in a row. '
+        u'Please wait a bit until you submit the form again.')
     source_protection_identifier = None
 
     def clean(self):

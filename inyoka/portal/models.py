@@ -12,6 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic, models as gmodels
 from django.core.cache import cache
 from django.db import models, transaction
+from django.utils.translation import ugettext as _, ugettext_lazy
 
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
@@ -87,10 +88,11 @@ class SessionInfo(models.Model):
 
 
 PRIVMSG_FOLDERS_DATA = (
-    (0, 'sent', u'Gesendet'),
-    (1, 'inbox', u'Posteingang'),
-    (2, 'trash', u'Papierkorb'),
-    (3, 'archive', u'Archiv'))
+    (0, 'sent', ugettext_lazy(u'Send')),
+    (1, 'inbox', ugettext_lazy(u'Inbox')),
+    (2, 'trash', ugettext_lazy(u'Trash')),
+    (3, 'archive', ugettext_lazy(u'Archive')))
+
 
 PRIVMSG_FOLDERS = {}
 for folder in PRIVMSG_FOLDERS_DATA:
@@ -103,9 +105,9 @@ class PrivateMessage(models.Model):
     This model represent one of these messages.
     """
     author = models.ForeignKey(User)
-    subject = models.CharField(u'Titel', max_length=255)
-    pub_date = models.DateTimeField(u'Datum')
-    text = models.TextField(u'Text')
+    subject = models.CharField(ugettext_lazy(u'Title'), max_length=255)
+    pub_date = models.DateTimeField(ugettext_lazy(u'Date'))
+    text = models.TextField(ugettext_lazy(u'Text'))
 
     class Meta:
         ordering = ('-pub_date',)
@@ -155,9 +157,10 @@ class PrivateMessageEntry(models.Model):
     """
     message = models.ForeignKey('PrivateMessage')
     user = models.ForeignKey(User)
-    read = models.BooleanField(u'Gelesen')
-    folder = models.SmallIntegerField(u'Ordner', null=True,
-                 choices=[(f[0], f[1]) for f in PRIVMSG_FOLDERS_DATA])
+    read = models.BooleanField(ugettext_lazy(u'Read'))
+    folder = models.SmallIntegerField(ugettext_lazy(u'Folder'),
+        null=True,
+        choices=[(f[0], f[1]) for f in PRIVMSG_FOLDERS_DATA])
 
     @property
     def folder_name(self):
@@ -229,17 +232,19 @@ class StaticPage(models.Model):
     """
     Stores static pages (imprint, license, etc.)
     """
-    key = models.SlugField(u'Schlüssel', max_length=25, primary_key=True,
-          unique=True, db_index=True,
-          help_text=u'Wird für die URL verwendet. Kann nicht verändert werden.')
-    title = models.CharField(u'Titel', max_length=200)
-    content = models.TextField(u'Inhalt',
-        help_text=(u'Muss Inyokasyntax sein.')
+    key = models.SlugField(ugettext_lazy(u'Key'),
+        max_length=25, primary_key=True,
+        unique=True, db_index=True,
+        help_text=ugettext_lazy(u'Will be used to generate the URL. '
+                                u'Cannot be changed later.'))
+    title = models.CharField(ugettext_lazy(u'Title'), max_length=200)
+    content = models.TextField(ugettext_lazy(u'Content'),
+        help_text=ugettext_lazy(u'Inyoka syntax required.')
     )
 
     class Meta:
-        verbose_name = 'statische Seite'
-        verbose_name_plural = 'statische Seiten'
+        verbose_name = ugettext_lazy(u'Static page')
+        verbose_name_plural = ugettext_lazy(u'Static pages')
 
     def __repr__(self):
         return '<%s:%s "%s">' % (
@@ -275,15 +280,18 @@ class StaticPage(models.Model):
 
 
 class StaticFile(models.Model):
-    identifier = models.CharField('Identifier', max_length=100, unique=True, db_index=True)
-    file = models.FileField('Datei', upload_to='portal/files')
-    is_ikhaya_icon = models.BooleanField('Ist Ikhaya-Icon', default=False,
-            help_text=u'Wähle dieses Feld aus, wenn die Datei im Auswahlfeld '
-                      u'für Artikel- und Kategorie-Icons erscheinen soll.')
+    identifier = models.CharField(ugettext_lazy('Identifier'),
+        max_length=100, unique=True, db_index=True)
+    file = models.FileField(ugettext_lazy('File'), upload_to='portal/files')
+    is_ikhaya_icon = models.BooleanField(
+        ugettext_lazy(u'Is Ikhaya icon'),
+        default=False,
+        help_text=ugettext_lazy(u'Choose this if the file should appear '
+                                u'as a article or category icon possibility'))
 
     class Meta:
-        verbose_name = 'statische Datei'
-        verbose_name_plural = 'statische Dateien'
+        verbose_name = ugettext_lazy('Static file')
+        verbose_name_plural = ugettext_lazy(u'Static files')
 
     def __unicode__(self):
         return self.identifier
@@ -304,8 +312,9 @@ class StaticFile(models.Model):
 class Subscription(models.Model):
     objects = SubscriptionManager()
     user = models.ForeignKey(User)
-    notified = models.BooleanField('User was already notified',
-                                   default=False)
+    notified = models.BooleanField(
+        ugettext_lazy('User was already notified'),
+        default=False)
     ubuntu_version = models.CharField(max_length=5, null=True)
 
     content_type = models.ForeignKey(ContentType, null=True)

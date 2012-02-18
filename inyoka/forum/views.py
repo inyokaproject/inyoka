@@ -372,14 +372,13 @@ def handle_attachments(request, post, att_ids):
             attachment = Attachment.create(
                 att_name, d['attachment'],
                 request.FILES['attachment'].content_type,
-                attachments, override=d['override']
+                attachments, override=d['override'],
+                comment=d['comment']
             )
             if not attachment:
                 flash(_(u'The attachment “%(attachment)s“ does already exist.')
                       % {'attachment': att_name}, False)
             else:
-                attachment.comment = d['comment']
-                attachment.save()
                 attachments.append(attachment)
                 att_ids.append(attachment.id)
                 flash(_(u'The attachment “%(attachment)s“ was added '
@@ -450,7 +449,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         post = Post.objects.get(id=int(post_id))
         locked = post.lock(request)
         if locked:
-            flash(_(u'This post is currently beeing edited by “%(user)s“!')
+            flash(_(u'This post is currently being edited by “%(user)s“!')
                   % {'user': locked}, False)
         topic = post.topic
         forum = topic.forum
@@ -1419,7 +1418,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     elif action == 'author':
         user = user and User.objects.get(user) or request.user
         if user.is_anonymous:
-            flash_(u'You need to be logged in to use this function.')
+            flash(_(u'You need to be logged in to use this function.'))
             return abort_access_denied(request)
         topics = topics.filter(posts__author=user).distinct()
 
