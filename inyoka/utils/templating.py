@@ -15,6 +15,8 @@ from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import naturalday
 from django.utils import translation
 from django.utils import simplejson as json
+from django.utils.functional import Promise
+from django.utils.encoding import force_unicode
 from django.utils.timesince import timesince
 from django_mobile import get_flavour
 from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound
@@ -227,6 +229,22 @@ def urlencode_filter(value):
     return urlquote(value)
 
 
+class LazyJSONEncoder(json.JSONEncoder):
+    """
+    Encode a given object as JSON string, taking care of lazy objects. Lazy
+    objects, such as ``ugettext_lazy()`` will be forced to unicode.
+    """
+    def default(self, obj):
+        if isinstance(obj, Promise):
+            return force_unicode(obj)
+        return super(LazyJSONEncoder, self).default(obj)
+
+
+def json_filter(value):
+    """"A wrapper function that uses the ``LazyJSONEncoder``"""
+    return LazyJSONEncoder().encode(value)
+
+
 class InyokaEnvironment(Environment):
     """
     Beefed up version of the jinja environment but without security features
@@ -271,7 +289,7 @@ FILTERS = {
     'specificdatetimeformat': format_specific_datetime,
     'url': url_for,
     'urlencode': urlencode_filter,
-    'jsonencode': json.dumps,
+    'jsonencode': json_filter,
 }
 
 # setup the template environment
