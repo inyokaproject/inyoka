@@ -25,4 +25,4 @@ https://github.com/simonw/django-openid/tarball/master#egg=django-openid
 https://bitbucket.org/andrewgodwin/south/get/64fdcc52cd01.tar.bz2
 lxml
 dulwich
-raven>=1.3.6
+raven==1.4.3

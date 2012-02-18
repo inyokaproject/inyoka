@@ -239,7 +239,6 @@ SEARCH_INDEX_BLOCKSIZE = 5000
 
 # Set the default sentry site
 SENTRY_SITE = 'example.com'
-SENTRY_CLIENT = 'inyoka.utils.logger.InyokaClient'
 
 
 # Import and activate django-celery support
