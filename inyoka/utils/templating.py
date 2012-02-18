@@ -230,7 +230,10 @@ def urlencode_filter(value):
 
 
 class LazyJSONEncoder(json.JSONEncoder):
-    """Encode ``value`` as JSON an take cate of lazy objects."""
+    """
+    Encode a given object as JSON string, taking care of lazy objects. Lazy
+    objects, such as ``ugettext_lazy()`` will be forced to unicode.
+    """
     def default(self, obj):
         if isinstance(obj, Promise):
             return force_unicode(obj)
