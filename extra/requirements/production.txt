@@ -10,7 +10,6 @@ html5lib==0.90
 feedparser==5.0.1
 Fabric==1.2.2
 python-openid==2.2.5
-django-sentry==1.8.5
 django-mobile==0.2.1
 celery==2.4.0
 django-kombu==0.9.4
@@ -26,3 +25,4 @@ https://github.com/simonw/django-openid/tarball/master#egg=django-openid
 https://bitbucket.org/andrewgodwin/south/get/64fdcc52cd01.tar.bz2
 lxml
 dulwich
+raven==1.4.3

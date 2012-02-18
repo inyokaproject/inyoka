@@ -200,7 +200,7 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'django_openid',
-    'sentry.client',
+    'raven.contrib.django',
     'south',
     # *must* be installed after south
     'djcelery',
@@ -238,7 +238,7 @@ SEARCH_DEFAULT_EXCLUDE = []
 SEARCH_INDEX_BLOCKSIZE = 5000
 
 # Set the default sentry site
-SENTRY_SITE = "example.com"
+SENTRY_SITE = 'example.com'
 
 
 # Import and activate django-celery support
