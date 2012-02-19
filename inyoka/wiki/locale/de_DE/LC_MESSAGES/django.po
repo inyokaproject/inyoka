@@ -26,7 +26,7 @@ msgstr "Von „<a href=\"%(link)s\">%(title)s</a>“ weitergeleitet."
 
 #: inyoka/wiki/actions.py:216
 msgid "Revision is the latest one, revert aborted."
-msgstr "Keine Änderungen durchgeführt, da die Revision bereits die Aktuelle ist."
+msgstr "Keine Änderungen durchgeführt, da die Revision bereits die aktuelle ist."
 
 #: inyoka/wiki/actions.py:219
 msgid "Revert aborted"
@@ -45,7 +45,7 @@ msgid ""
 "href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
 msgstr ""
 "Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: "
-"%(names)s. Bitte stelle sicher das diese nicht mehr benötigt werden. <a "
+"%(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a "
 "href=\"%(link)s\">Umbenennen und Löschung doppelter Anhänge "
 "erzwingen</a>."
 
@@ -70,7 +70,7 @@ msgstr "Die Seite wurde erfolgreich umbenannt."
 
 #: inyoka/wiki/actions.py:316
 msgid "A page with this name already exists."
-msgstr "Eine andere Seite mit dem Namen existiert bereits."
+msgstr "Eine andere Seite mit diesem Namen existiert bereits."
 
 #: inyoka/wiki/actions.py:400
 #, python-format
@@ -225,7 +225,7 @@ msgid ""
 "You must apply a page name because the macro is being called outside the "
 "wiki context."
 msgstr ""
-"Du musst eine Seite angeben, wenn das Makro außerhalb des Wikis verwendet"
+"Du musst eine Seite angeben, weil das Makro außerhalb des Wikis verwendet"
 " wird."
 
 #: inyoka/wiki/macros.py:573 inyoka/wiki/templates.py:51
@@ -241,7 +241,7 @@ msgstr[1] "%(count)d Seiten"
 
 #: inyoka/wiki/macros.py:620
 msgid "Tags"
-msgstr "Tag-Wolke"
+msgstr "Tags"
 
 #: inyoka/wiki/macros.py:659
 #, python-format
@@ -267,7 +267,7 @@ msgstr "Zirkulärer Import"
 
 #: inyoka/wiki/macros.py:884
 msgid "Invalid date"
-msgstr "ungültiges Datum"
+msgstr "Ungültiges Datum"
 
 #: inyoka/wiki/macros.py:1024
 msgid "Key not defined"
@@ -343,7 +343,7 @@ msgstr "Das gewünschte Template „%(name)s“ existiert nicht."
 #: inyoka/wiki/templates.py:157
 msgid "Invalid syntax for this loop. The first argument must be a variable."
 msgstr ""
-"Ungültige Syntax für For-Schleife. Erstes Argument muss eine Variable "
+"Ungültige Schleifen-Syntax. Erstes Argument muss eine Variable "
 "sein."
 
 #: inyoka/wiki/templates.py:163
@@ -351,8 +351,8 @@ msgid ""
 "Invalid syntax for this loop. After the first variable an “in” is "
 "required."
 msgstr ""
-"Ungültige Syntax für For-Schleife. Auf erste Variable muss das \"in\" "
-"Schlüsselwort folgen."
+"Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort \"in\" "
+"folgen."
 
 #: inyoka/wiki/templates.py:168
 msgid "Loop header contains too many arguments."
@@ -371,8 +371,8 @@ msgid ""
 "The “else” block does not allow any expressions. Maybe you wanted to use "
 "the “elseif” block."
 msgstr ""
-"„else“ Block erlaubt keinen Ausdruck. Möglicherweise wolltest du einen "
-"„elseif“ Block verwenden."
+"„else“-Block erlaubt keinen Ausdruck. Möglicherweise wolltest du einen "
+"„elseif“-Block verwenden."
 
 #: inyoka/wiki/templates.py:203
 msgid "Conditions allow only one expression per block"
@@ -391,8 +391,8 @@ msgid "Unknown expression after “is” operator"
 msgstr "Unbekannter Ausdruck nach „is“ Operator."
 
 #: inyoka/wiki/templates.py:343
-msgid "Unexpected end of expression"
-msgstr "Unerwartetes Ausdrucksende"
+msgid "Unexpected end of expression."
+msgstr "Unerwartetes Ausdrucksende."
 
 #: inyoka/wiki/templates.py:355
 msgid "Parentheses were not closed properly."
@@ -400,7 +400,7 @@ msgstr "Klammerausdruck wurde nicht geschlossen."
 
 #: inyoka/wiki/templates.py:363
 msgid "Missing comma between array entries"
-msgstr "Fehlender Beistrich zwischen Array Einträgen."
+msgstr "Fehlendes Komma zwischen Array Einträgen."
 
 #: inyoka/wiki/templates.py:406
 msgid "expected variable, integer or attribute"
@@ -494,11 +494,11 @@ msgstr "Das Makro „%(name)s“ konnte nicht gefunden werden."
 
 #: inyoka/wiki/parser/nodes.py:277
 msgid "<strong>Conflict</strong> – remote version"
-msgstr "<strong>Konflikt</strong> — andere Version"
+msgstr "<strong>Konflikt</strong> – vorherige Version"
 
 #: inyoka/wiki/parser/nodes.py:278
-msgid "<strong>Conflict</strong> — local Version"
-msgstr "<strong>Konflikt</strong> — eigene Version"
+msgid "<strong>Conflict</strong> – local Version"
+msgstr "<strong>Konflikt</strong> – eigene Version"
 
 #: inyoka/wiki/parser/nodes.py:279
 msgid "<strong>Conflict End</strong>"
@@ -565,8 +565,8 @@ msgstr "Bestehende Anhänge"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:49
 #, python-format
-msgid "To this page there is currently %(count)s attachment assigned."
-msgid_plural "To this page there are currently %(count)s attachment assigned."
+msgid "There is currently %(count)s attachment assigned to this page."
+msgid_plural "There are currently %(count)s attachments assigned to this page."
 msgstr[0] "Diese Seite hat aktuell einen Anhang."
 msgstr[1] "Diese Seite hat aktuell %(count)s Anhänge."
 
@@ -576,7 +576,7 @@ msgid ""
 "page or include it with the <code>[[Bild()]]</code> macro."
 msgstr ""
 "Um auf einen Anhang zu verweisen, kannst du entweder zu der "
-"entsprechenden Wikiseite verlinkten oder mit dem <code>[[Bild()]]</code> "
+"entsprechenden Wikiseite verlinken oder diese mit dem <code>[[Bild()]]</code> "
 "Makro einbinden."
 
 #: inyoka/wiki/templates/wiki/action_attach.html:64
@@ -632,7 +632,7 @@ msgid ""
 "pages are using the article mistakenly or an old revision was an "
 "attachment."
 msgstr ""
-"Aber der Artikel selbst ist nicht als Anhang aufgeführt, vielleicht "
+"Aber der Artikel selbst ist nicht als Anhang aufgeführt; vielleicht "
 "verwenden diese Seiten den Artikel versehentlich oder eine alte Revision "
 "war ein Anhang."
 
@@ -773,7 +773,7 @@ msgstr "Vergleichen"
 #: inyoka/wiki/templates/wiki/action_log.html:79
 #: inyoka/wiki/templates/wiki/action_revert.html:17
 msgid "Restore"
-msgstr "Wiederherstelle"
+msgstr "Wiederherstellen"
 
 #: inyoka/wiki/templates/wiki/action_log.html:82
 #: inyoka/wiki/templates/wiki/action_manage.html:45
@@ -892,9 +892,8 @@ msgid ""
 "If you rename this page, all revisions will be renamed. The old page will"
 " redirect to the new one."
 msgstr ""
-"Beim Umbenennen wird die Seite über alle Revisionen hinweg umbenannt als "
-"hätte sie diesen Namen immer gehabt. Unter der alten Seite wird dann eine"
-" Weiterleitung zum neuen Namen eingerichtet."
+"Beim Umbenennen dieser Seite werden auch alle ihre Revisionen umbenannt. "
+"Unter der alten Seite wird dann eine Weiterleitung zum neuen Namen eingerichtet."
 
 #: inyoka/wiki/templates/wiki/action_rename.html:19
 msgid "New page name:"
@@ -961,7 +960,7 @@ msgid ""
 "The article is already under construction, help improving and finishing "
 "it!"
 msgstr ""
-"Dieser Artikel existiert bereits in der Baustelle, helfe dabei mit ihn zu"
+"Dieser Artikel existiert bereits in der Baustelle; hilf dabei ihn zu"
 " verbessern und fertigzustellen!"
 
 #: inyoka/wiki/templates/wiki/missing_page.html:45
@@ -1005,7 +1004,7 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/page.html:24
 msgid "Wiki"
-msgstr "Wik"
+msgstr "Wiki"
 
 #: inyoka/wiki/templates/wiki/page.html:32
 msgid "Advanced search"
@@ -1016,8 +1015,8 @@ msgid "Recent changes"
 msgstr "Letzte Änderungen"
 
 #: inyoka/wiki/templates/wiki/page.html:36
-msgid "Tag cloud"
-msgstr "Tagwolke"
+msgid "Tags"
+msgstr "Tags"
 
 #: inyoka/wiki/templates/wiki/page.html:47
 msgid "Article"

@@ -165,7 +165,7 @@ msgid ""
 "processing has been canceled for security reasons."
 msgstr ""
 "Der Browser hat keinen oder einen fehlerhaften Kontrollschlüssel "
-"übertragen und die Weiterverarbeitung wurde aus Sicherheitsgründen "
+"übertragen; die Weiterverarbeitung wurde aus Sicherheitsgründen "
 "abgebrochen."
 
 #: inyoka/templates/errors/400_csrf.html:21
@@ -185,8 +185,8 @@ msgid ""
 "\"reload\" button to request a new control key the sending the page "
 "again."
 msgstr ""
-"In manchen Browsern ist es möglich durch klicken auf \"Zurück\" und dann "
-"\"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern um das "
+"In manchen Browsern ist es möglich durch Klicken auf \"Zurück\" und dann "
+"\"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern, um das "
 "Absenden erneut durchzuführen."
 
 #: inyoka/templates/errors/403.html:18
@@ -246,7 +246,7 @@ msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
 #: inyoka/utils/forms.py:75
 #, python-format
 msgid "Your signature can only contain up to %(num)d lines"
-msgstr "Deine Signatur nicht mehr als %(num)d Zeilen haben"
+msgstr "Deine Signatur darf nicht mehr als %(num)d Zeilen haben"
 
 #: inyoka/utils/forms.py:126
 msgid "This user does not exist"
@@ -286,7 +286,7 @@ msgid ""
 "because of SPAM problems. Please choose another e-mail address"
 msgstr ""
 "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir "
-"wegen Spamproblemen sperren mussten. Bitte gebe eine andere Adresse an."
+"wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
 
 #: inyoka/utils/forms.py:235
 msgid "The entered e-mail address is invalid. Please check your input."
@@ -335,7 +335,7 @@ msgid ""
 "submit the form again."
 msgstr ""
 "Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte "
-"noch einige Zeit bis du das Formular erneut absendest."
+"noch einige Zeit, bevor du das Formular erneut absendest."
 
 #: inyoka/utils/sortable.py:103
 #, python-format
