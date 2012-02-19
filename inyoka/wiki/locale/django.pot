@@ -219,6 +219,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: inyoka/wiki/macros.py:620
+#: inyoka/wiki/templates/wiki/page.html:36
 msgid "Tags"
 msgstr ""
 
@@ -364,7 +365,7 @@ msgid "Unknown expression after “is” operator"
 msgstr ""
 
 #: inyoka/wiki/templates.py:343
-msgid "Unexpected end of expression"
+msgid "Unexpected end of expression."
 msgstr ""
 
 #: inyoka/wiki/templates.py:355
@@ -460,7 +461,7 @@ msgid "<strong>Conflict</strong> – remote version"
 msgstr ""
 
 #: inyoka/wiki/parser/nodes.py:278
-msgid "<strong>Conflict</strong> — local Version"
+msgid "<strong>Conflict</strong> – local Version"
 msgstr ""
 
 #: inyoka/wiki/parser/nodes.py:279
@@ -528,8 +529,8 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_attach.html:49
 #, python-format
-msgid "To this page there is currently %(count)s attachment assigned."
-msgid_plural "To this page there are currently %(count)s attachment assigned."
+msgid "There is currently %(count)s attachment assigned to this page."
+msgid_plural "There are currently %(count)s attachments assigned to this page."
 msgstr[0] ""
 msgstr[1] ""
 
@@ -932,10 +933,6 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/page.html:35
 msgid "Recent changes"
-msgstr ""
-
-#: inyoka/wiki/templates/wiki/page.html:36
-msgid "Tag cloud"
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/page.html:47

@@ -240,6 +240,7 @@ msgstr[0] "eine Seite"
 msgstr[1] "%(count)d Seiten"
 
 #: inyoka/wiki/macros.py:620
+#: inyoka/wiki/templates/wiki/page.html:36
 msgid "Tags"
 msgstr "Tags"
 
@@ -1013,10 +1014,6 @@ msgstr "Erweiterte Suche"
 #: inyoka/wiki/templates/wiki/page.html:35
 msgid "Recent changes"
 msgstr "Letzte Änderungen"
-
-#: inyoka/wiki/templates/wiki/page.html:36
-msgid "Tags"
-msgstr "Tags"
 
 #: inyoka/wiki/templates/wiki/page.html:47
 msgid "Article"
