@@ -529,7 +529,7 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_attach.html:49
 #, python-format
-msgid "There is currently %(count)s attachment assigned to this page."
+msgid "There is currently one attachment assigned to this page."
 msgid_plural "There are currently %(count)s attachments assigned to this page."
 msgstr[0] ""
 msgstr[1] ""
