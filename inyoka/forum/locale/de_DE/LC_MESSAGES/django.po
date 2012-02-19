@@ -1309,6 +1309,10 @@ msgstr "Ergebnisse anzeigen"
 msgid "Team icon"
 msgstr "Teamicon"
 
+#: inyoka/forum/templates/forum/topic.html:213
+msgid "Location:"
+msgstr "Wohnort:"
+
 #: inyoka/forum/templates/forum/topic.html:224
 msgid "Show revisions"
 msgstr "Revisionen anzeigen"
