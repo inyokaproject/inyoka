@@ -5,11 +5,13 @@
 
     The inyoka default settings.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from os.path import dirname, join
 from django.conf.global_settings import *
+
+gettext_noop = lambda x: x
 
 #: Base path of this application
 BASE_PATH = dirname(__file__)
@@ -87,7 +89,7 @@ INYOKA_LOGGER_NAME = u'inyoka'
 USE_ETAGS = True
 
 # prefix for the system mails
-EMAIL_SUBJECT_PREFIX = u'ubuntuusers: '
+EMAIL_SUBJECT_PREFIX = u'%s: ' % BASE_DOMAIN_NAME
 
 EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 
@@ -110,7 +112,7 @@ FORUM_OWNPOST_DELETE_LIMIT = (0, 0)
 IKHAYA_GROUP_ID = 1
 
 # settings for the jabber bot
-JABBER_BOT_SERVER = '127.0.0.1:6203'
+JABBER_BOT_SERVER = 'tcp://127.0.0.1:6203'
 
 # hours for a user to activate the account
 ACTIVATION_HOURS = 48
@@ -122,16 +124,20 @@ USER_INACTIVE_DAYS = 365
 GOOGLE_MAPS_APIKEY = ''
 
 # wiki settings
-WIKI_MAIN_PAGE = 'Startseite'
+WIKI_MAIN_PAGE = 'Welcome'
 
 # The forum that should contain the wiki discussions
-WIKI_DISCUSSION_FORUM = 'diskussionen'
+WIKI_DISCUSSION_FORUM = 'discussions'
 
 # the page below we have our templates.  The template the
 # user specifies in the macro or in the parser is then
 # joined with this page name according to our weird joining
 # rules
-WIKI_TEMPLATE_BASE = 'Wiki/Vorlagen'
+WIKI_TEMPLATE_BASE = 'Wiki/Templates'
+
+# the base page of all user wiki pages
+WIKI_USER_BASE = 'User'
+WIKI_USERPAGE_INFO = 'Userpage'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'b)l0ju3erxs)od$g&l_0i1za^l+2dwgxuay(nwv$q4^*c#tdwt'
@@ -140,15 +146,12 @@ SECRET_KEY = 'b)l0ju3erxs)od$g&l_0i1za^l+2dwgxuay(nwv$q4^*c#tdwt'
 # You won't notice anything of it at all but it makes it possible to run more
 # than one application on a single memcached server without the risk of cache
 # key collision.
-CACHE_PREFIX = 'ubuntu_de/'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'KEY_PREFIX': CACHE_PREFIX,
     },
     'request': {
         'BACKEND': 'inyoka.utils.cache.RequestCache',
-        'KEY_PREFIX': CACHE_PREFIX
     }
 }
 
@@ -189,6 +192,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'inyoka.portal',
     'inyoka.wiki',
     'inyoka.forum',
@@ -196,48 +200,45 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'django_openid',
-    'sentry.client',
+    'raven.contrib.django',
     'south',
     # *must* be installed after south
-    'django_nose',
     'djcelery',
     'djkombu',
     'django_mobile',
     'django_hosts',
 )
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
 # don't use migrations but just syncdb
 SOUTH_TESTS_MIGRATE = False
 
 OPENID_PROVIDERS = {
     'openid': {
-      'name': 'OpenID',
+      'name': gettext_noop('OpenID'),
       'url': None
     },
     'launchpad': {
-        'name': 'Launchpad',
+        'name': gettext_noop('Launchpad'),
         'url': 'https://launchpad.net/~{username}'
     },
     'claimid': {
-      'name': 'ClaimID',
+      'name': gettext_noop('ClaimID'),
       'url': 'http://claimid.com/{username}'
     },
     'google': {
-      'name': 'Google',
+      'name': gettext_noop('Google'),
       'url': 'https://www.google.com/accounts/o8/id'
     },
 }
 
 # some terms to exclude by default to maintain readability
-SEARCH_DEFAULT_EXCLUDE = ['Cstammtisch']
+SEARCH_DEFAULT_EXCLUDE = []
 
 # Default blocksize to delmit queries to the search index
 SEARCH_INDEX_BLOCKSIZE = 5000
 
 # Set the default sentry site
-SENTRY_SITE = "ubuntuusers.de"
+SENTRY_SITE = 'example.com'
 
 
 # Import and activate django-celery support
@@ -294,6 +295,8 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
 }
+
+DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

@@ -74,7 +74,7 @@
     that is part of the `acl` system.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from hashlib import sha1
@@ -476,7 +476,7 @@ class PageManager(models.Manager):
         if isinstance(text, basestring):
             text, created = Text.objects.get_or_create(value=text)
         if note is None:
-            note = 'Erstellt'
+            note = _(u'Created')
         if attachment is not None:
             att = Attachment()
             attachment_filename = get_filename(attachment_filename, attachment)
@@ -908,7 +908,7 @@ class Page(models.Model):
             .edit(deleted=True,
                   text=u'',
                   file=None,
-                  note=u'Von System gelöscht')
+                  note=_(u'Automatically deleted'))
 
     def edit(self, text=None, user=None, change_date=None,
              note=u'', attachment=None, attachment_filename=None,
@@ -1031,8 +1031,8 @@ class Page(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = ugettext_lazy(u'Wikipage')
-        verbose_name_plural = ugettext_lazy(u'Wikipages')
+        verbose_name = ugettext_lazy(u'Wiki page')
+        verbose_name_plural = ugettext_lazy(u'Wiki pages')
 
 
 class Attachment(models.Model):
@@ -1166,10 +1166,10 @@ class Revision(models.Model):
         The page title plus the revision date.  This is equivalent to
         `Page.full_title`.
         """
-        return u'%(rev)s (Revision %(date)s)' % {
+        return _(u'%(rev)s (Revision %(date)s)' % {
             'rev': self.page.title,
             'date': format_specific_datetime(self.change_date)
-        }
+        })
 
     @property
     def rendered_text(self):

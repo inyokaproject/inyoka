@@ -4,13 +4,13 @@
 
     Let the user set the discussion of a page.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
 
 {%- extends 'wiki/page.html' %}
-{% do BREADCRUMB.append(_('Link discussions'), page|url('manage_discussion'), True) %}
+{% do BREADCRUMB.append(_('Link discussion'), page|url('manage_discussion'), True) %}
 {% block wiki_content %}
   <form action="?action=manage_discussion" method="post">
     <p>

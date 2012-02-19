@@ -6,7 +6,7 @@
     It displays the posts and some informations about their authors.
     It is "paginated".
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
@@ -167,7 +167,10 @@
             {%- endtrans %}
           {%- endif -%}
         </div>
-        {% trans count=poll.votes %}Votes: {{ count }}{% pluralize %}Votes: {{ count }}{% endtrans %}
+        {% trans count=poll.votes %}{{ count }} vote{% pluralize %}{{ count }} votes{% endtrans %}
+        {%- if poll.multiple_votes %},
+          {% trans count=poll.votings.count() %}{{ count }} voter{% pluralize %}{{ count }} voters{% endtrans %}
+        {%- endif %}
       {%- endfor %}
       {%- if can_vote and not voted_all %}
         <p>
@@ -191,14 +194,14 @@
               <a href="{{ post.author|url }}">{{ post.author.username|e }}</a>
               {%- if post.author.primary_group and post.author.primary_group.icon %}
                 <img class="teamicon" src="{{ post.author.primary_group.icon_url }}"
-                     alt="{% trans %}Teamicon{% endtrans %}" />
+                     alt="{% trans %}Team icon{% endtrans %}" />
               {%- endif %}
             </p>
             {%- if post.author.member_title %}
               <div class="member_title">{{ post.author.member_title|e }}</div>
             {%- endif %}
             {%- if post.author_id == topic.author_id and not (pagination.page == 1 and loop.first) %}
-              <div class="member_title">{% trans %}(Threadstarter){% endtrans %}</div>
+              <div class="member_title">{% trans %}(Topic starter){% endtrans %}</div>
             {%- endif %}
             {%- if post.author.has_avatar and not USER.settings['hide_avatars'] %}
               <img class="avatar" src="{{ post.author.avatar_url }}"
@@ -258,8 +261,8 @@
                 {%- endif %}
               </div>
               <a href="{{ post|url }}" title="Kopiere diesen Link, um auf diesen Beitrag zu verweisen" onclick="alert(this.title + '\n\n' + this.href); return false">
-                <img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" />
-              </a>
+                <img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" />{#
+              #}</a>
               {{ post.pub_date|datetimeformat }}
             </div>
             {% if can_moderate %}
@@ -319,7 +322,7 @@
   <div class="pathbar">
     <div class="pagination pagination_right">
       <a href="{{ href('forum', 'topic', topic.slug, 'previous') }}"
-         rel="nofollow" class="prev">{% trans %}« Prev topic{% endtrans %}</a>
+         rel="nofollow" class="prev">{% trans %}« Previous topic{% endtrans %}</a>
       <a href="{{ href('forum', 'topic', topic.slug, 'next') }}"
          rel="nofollow" class="next">{% trans %}Next topic »{% endtrans %}</a>
     </div>

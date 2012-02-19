@@ -4,7 +4,7 @@
 
     Just edit an user...
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/user_admin.html' %}
@@ -33,10 +33,6 @@
         {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'privileges'), 'privileges', _('Privileges')) }}
         {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'password'), 'password', _('Change password')) }}
         {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'status'), 'status', _('State')) }}
-        {#
-        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'subscriptions'), 'subscriptions', 'Abonnements') }}
-        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'userpage'), 'wikipage', 'Benutzerseite') }}
-        #}
       </ul>
     </div>
     <a href="{{ href('portal', 'user', user.username) }}">{% trans %}View public profile{% endtrans %}</a>

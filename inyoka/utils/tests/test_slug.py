@@ -3,7 +3,7 @@
     inyoka.utils.tests.test_slug
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.test import TestCase
@@ -92,6 +92,5 @@ class TestUtilsSlug(TestCase):
         self.assertEqual(self.topic8.slug, 'erwartungen-an-ubuntuusers-de-wurden-nicht-erf-2')
 
         # Make sure slugs aren't longer than 50 chars, sqlite testsuite won't pick that up
-        print len(self.topic7.slug), len(self.topic8.slug)
         self.assertTrue(len(self.topic7.slug) <= 50)
         self.assertTrue(len(self.topic8.slug) <= 50)

@@ -4,7 +4,7 @@
 
     This page shows the "splittopic" form. 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
@@ -62,7 +62,7 @@
                 <div class="member_title">{{ post.author.member_title|e }}</div>
               {%- endif %}
               {%- if post.author == topic.author and not loop.first %}
-                <div class="member_title">{% trans %}(Threadstarter){% endtrans %}</div>
+                <div class="member_title">{% trans %}(Topic starter){% endtrans %}</div>
               {%- endif %}
               {%- if post.author.has_avatar and not USER.settings['hide_avatars'] %}
                 <img class="avatar" src="{{ post.author.avatar_url }}" alt="{% trans user=post.author.username|e %}Avatar of {{ user }}{% endtrans %}" />

@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand
 
 APPS = ['forum', 'portal', 'wiki', 'ikhaya', 'pastebin', 'planet']
 
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):

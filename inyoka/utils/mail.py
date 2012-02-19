@@ -5,7 +5,7 @@
 
     This module provides various e-mail related functionality.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -93,7 +93,7 @@ class SendmailEmailBackend(BaseEmailBackend):
         if not email_message.recipients():
             return False
         try:
-            proc = Popen(['/usr/sbin/sendmail', '-t'], stdin=PIPE)
+            proc = Popen(['/usr/sbin/sendmail', '-f', settings.INYOKA_SYSTEM_USER_EMAIL, '-t'], stdin=PIPE)
             proc.stdin.write(email_message.message().as_string())
             proc.stdin.flush()
             proc.stdin.close()

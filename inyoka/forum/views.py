@@ -5,7 +5,7 @@
 
     The views for the forum.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -372,20 +372,17 @@ def handle_attachments(request, post, att_ids):
             attachment = Attachment.create(
                 att_name, d['attachment'],
                 request.FILES['attachment'].content_type,
-                attachments, override=d['override']
+                attachments, override=d['override'],
+                comment=d['comment']
             )
             if not attachment:
-                flash(_(u'An attachment “%(attachment)s“ does already exist.')
+                flash(_(u'The attachment “%(attachment)s“ does already exist.')
                       % {'attachment': att_name}, False)
             else:
-                attachment.comment = d['comment']
-                attachment.save()
                 attachments.append(attachment)
                 att_ids.append(attachment.id)
-                flash(u'Der Anhang „%s“ wurde erfolgreich hinzugefügt.'
-                      % att_name, True)
-                flash(_(u'An attachment “%(attachment)s“ was added '
-                        'successfully.') % {'attachment': att_name}, False)
+                flash(_(u'The attachment “%(attachment)s“ was added '
+                        'successfully.') % {'attachment': att_name}, True)
 
     elif 'delete_attachment' in request.POST:
         id = int(request.POST['delete_attachment'])
@@ -435,8 +432,11 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             return HttpResponseRedirect(href('wiki', norm_page_name))
         forum_slug = settings.WIKI_DISCUSSION_FORUM
         flash(_(u'No discussion is linked yet to the article “%(article)s“. '
-                'You can create a discussion now or link an existing '
-                'topic to the article.') % {'article': page_name})
+                'You can create a discussion now or <a href="%(link)s">link '
+                'an existing topic</a> to the article.') % {
+                    'article': page_name,
+                    'link': href('wiki', norm_page_name,
+                                 action='manage_discussion')})
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
         forum = topic.forum
@@ -449,7 +449,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         post = Post.objects.get(id=int(post_id))
         locked = post.lock(request)
         if locked:
-            flash(_(u'This post is currently beeing edited by “%(user)s“!')
+            flash(_(u'This post is currently being edited by “%(user)s“!')
                   % {'user': locked}, False)
         topic = post.topic
         forum = topic.forum
@@ -924,7 +924,7 @@ def first_unread_post(request, topic_slug):
             query = query.filter(id__gt=post_id)
 
     try:
-        first_unread_post = query.order_by('id')[0]
+        first_unread_post = query.order_by('position')[0]
     except IndexError:
         # No new post, this also means the user called first_unread himself
         # as the icon won't show up in that case, hence we just return to
@@ -1137,7 +1137,7 @@ def delete_post(request, post_id, action='hide'):
     if action == 'hide' and not can_hide:
         return abort_access_denied(request)
 
-    if post.id == topic.first_post.id:
+    if post.id == topic.first_post_id:
         if topic.post_count == 1:
             return HttpResponseRedirect(href('forum', 'topic',
                                              topic.slug, action))
@@ -1155,7 +1155,7 @@ def delete_post(request, post_id, action='hide'):
             return HttpResponseRedirect(url_for(post))
         elif action == 'delete':
             position = post.position
-            wost.delete()
+            post.delete()
             flash(_(u'The post by “%(user)s“ was deleted.')
                   % {'user': post.author.username}, True)
             page = max(0, position) // POSTS_PER_PAGE + 1
@@ -1268,7 +1268,7 @@ def topic_feed(request, slug=None, mode='short', count=10):
         return abort_access_denied(request)
 
     maxposts = max(settings.AVAILABLE_FEED_COUNTS['forum_topic_feed'])
-    posts = topic.posts.select_related('author').order_by('-id')[:maxposts]
+    posts = topic.posts.select_related('author').order_by('-position')[:maxposts]
 
     feed = AtomFeed(_(u'%(site)s topic – “%(topic)s“')
                     % {'topic': topic.title, 'site': settings.BASE_DOMAIN_NAME},
@@ -1418,7 +1418,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     elif action == 'author':
         user = user and User.objects.get(user) or request.user
         if user.is_anonymous:
-            flash_(u'You need to be logged in to use this function.')
+            flash(_(u'You need to be logged in to use this function.'))
             return abort_access_denied(request)
         topics = topics.filter(posts__author=user).distinct()
 

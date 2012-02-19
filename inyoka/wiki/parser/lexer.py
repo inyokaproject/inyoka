@@ -7,11 +7,12 @@
     scanner with an internal stack.  Inspired by pygments.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
 from itertools import izip
+from django.utils.encoding import smart_unicode
 from inyoka.utils.parsertools import TokenStream
 
 
@@ -496,7 +497,7 @@ class Lexer(object):
         open_blocks = [False]
 
         def tokenize_buffer():
-            for item in tokenize_block(u'\n'.join(buffer)):
+            for item in tokenize_block(u'\n'.join(smart_unicode(obj) for obj in buffer)):
                 yield item
             del buffer[:]
 

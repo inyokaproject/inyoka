@@ -5,7 +5,7 @@
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
@@ -27,6 +27,7 @@ from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.utils.translation import ugettext_lazy, ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
@@ -240,8 +241,8 @@ class Forum(models.Model):
         blank=True, on_delete=models.SET_NULL)
 
     class Meta:
-        verbose_name = u'Forum'
-        verbose_name_plural = u'Forums'
+        verbose_name = ugettext_lazy(u'Forum')
+        verbose_name_plural = ugettext_lazy(u'Forums')
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
@@ -418,8 +419,8 @@ class Topic(models.Model):
         on_delete=models.PROTECT)
 
     class Meta:
-        verbose_name = 'Topic'
-        verbose_name_plural = 'Topics'
+        verbose_name = ugettext_lazy(u'Topic')
+        verbose_name_plural = ugettext_lazy(u'Topics')
 
     @property
     def rendered_report_text(self):
@@ -497,7 +498,7 @@ class Topic(models.Model):
 
     def delete(self, *args, **kwargs):
         if not self.forum:
-            return
+            return super(Topic, self).delete()
 
         forums = self.forum.parents + [self]
         pks = [f.pk for f in forums]
@@ -560,17 +561,19 @@ class Topic(models.Model):
                 return version[0]
             return ''
 
-    def get_version_info(self, default=u'Nicht angegeben'):
+    def get_version_info(self, default=None):
+        if default is None:
+            default = _(u'Not specified')
         if not (self.ubuntu_version or self.ubuntu_distro):
             return default
-        if self.ubuntu_distro == u'keine':
-            return u'Kein Ubuntu'
+        if self.ubuntu_distro == u'none':
+            return _(u'No Ubuntu')
         out = []
         if self.ubuntu_distro:
             out.append(UBUNTU_DISTROS_LEGACY[self.ubuntu_distro])
-        if self.ubuntu_version and self.ubuntu_version != u'keine':
-            out.append(str(self.get_ubuntu_version()))
-        return u' '.join(out)
+        if self.ubuntu_version and self.ubuntu_version != u'none':
+            out.append(force_unicode(self.get_ubuntu_version()))
+        return u' '.join(force_unicode(x) for x in out)
 
     def get_read_status(self, user):
         if user.is_anonymous:
@@ -672,8 +675,8 @@ class Post(models.Model, LockableObject):
         on_delete=models.PROTECT)
 
     class Meta:
-        verbose_name = u'Beitrag'
-        verbose_name_plural = u'Beiträge'
+        verbose_name = ugettext_lazy(u'Post')
+        verbose_name_plural = ugettext_lazy(u'Posts')
 
     def render_text(self, request=None, format='html', force_existing=False):
         context = RenderContext(request, forum_post=self, application='forum')
@@ -750,37 +753,38 @@ class Post(models.Model, LockableObject):
 
     def delete(self, *args, **kwargs):
         if not self.topic:
-            return
-
-        forums = self.topic.forum.parents + [self.topic.forum]
+            return super(Post, self).delete()
 
         # degrade user post count
         if self.topic.forum.user_count_posts:
             update_model(self.author, post_count=F('post_count') - 1)
             cache.delete('portal/user/%d' % self.author.id)
 
-        # search for a new last post in the old and the new forum
-        new_post_query = Post.objects.filter(
-            topic__id=F('topic__id'),
-            topic__forum__id=F('topic__forum__id'))
+        # update topic.last_post_id
+        if self.pk == self.topic.last_post_id:
+            new_lp_id = Post.objects.filter(topic=self.topic)\
+                .exclude(pk=self.pk).order_by('-position')\
+                .values_list('id', flat=True)[0]
+            update_model(self.topic, last_post=model_or_none(new_lp_id, self))
 
-        if self == self.topic.last_post:
-            new_post = new_post_query.filter(topic=self.topic) \
-                                     .aggregate(last=Max('id'))['last']
-            update_model(self.topic, last_post=model_or_none(new_post, self))
-
-        lpf = list(Forum.objects.filter(last_post=self).all())
-        new_post = new_post_query.filter(forum__in=lpf) \
-                                 .aggregate(last=Max('id'))['last']
-        update_model(lpf, last_post=model_or_none(new_post, self))
+        # search for a new last post for al forums in the chain up.
+        # We actually cheat here and set the newest post from the current
+        # forum for all forums.
+        if self.pk == self.topic.forum.last_post_id:
+            new_lp_id = Topic.objects.filter(forum=self.topic.forum)\
+                .exclude(last_post=self).order_by('-last_post')\
+                .values_list('last_post', flat=True)[0]
+            lpf = list(Forum.objects.filter(last_post=self).all())
+            update_model(lpf, last_post=model_or_none(new_lp_id, self))
+            cache.delete_many('forum/forums/%s' % f.slug for f in lpf)
 
         # decrement post_counts
+        forums = self.topic.forum.parents + [self.topic.forum]
         update_model(self.topic, post_count=F('post_count') - 1)
         update_model(forums, post_count=F('post_count') - 1)
 
         # decrement position
-        Post.objects.filter(position__gt=self.position,
-                            topic=self.topic) \
+        Post.objects.filter(position__gt=self.position, topic=self.topic) \
                     .update(position=F('position') - 1)
 
         return super(Post, self).delete()
@@ -908,15 +912,16 @@ class Post(models.Model, LockableObject):
     @property
     def grouped_attachments(self):
         def expr(v):
-            return u'Bilder' if v.mimetype.startswith('image') and v.mimetype \
-                in SUPPORTED_IMAGE_TYPES else u''
+            if not v.mimetype.startswith('image') or v.mimetype not in SUPPORTED_IMAGE_TYPES:
+                return u''
+            return _(u'Pictures')
 
         if hasattr(self, '_attachments_cache'):
             attachments = sorted(self._attachments_cache, key=expr)
         else:
             attachments = sorted(self.attachments.all(), key=expr)
 
-        grouped = [(x[0], list(x[1]), u'möglich' in x[0] and 'broken' or '') \
+        grouped = [(x[0], list(x[1]), 'broken' if not x[0] else '') \
                    for x in groupby(attachments, expr)]
         return grouped
 
@@ -958,7 +963,7 @@ class Post(models.Model, LockableObject):
 class Attachment(models.Model):
     """Represents an attachment associated to a post."""
 
-    file = models.CharField(max_length=100, unique=True)
+    file = models.FileField(upload_to='forum/attachments/temp')
     name = models.CharField(max_length=255)
     comment = models.TextField(null=True, blank=True)
     mimetype = models.CharField(max_length=100, null=True)
@@ -1003,11 +1008,9 @@ class Attachment(models.Model):
         if not exists:
             # create a temporary filename so we can identify the attachment
             # on binding to the posts
-            fn = path.join('forum', 'attachments', 'temp',
-                md5((str(time()) + name).encode('utf-8')).hexdigest())
-            fn = default_storage.save(fn, uploaded_file)
-            attachment = Attachment(name=name, file=fn, mimetype=mime,
-                                    **kwargs)
+            fn = md5((str(time()) + name).encode('utf-8')).hexdigest()
+            attachment = Attachment(name=name, mimetype=mime, **kwargs)
+            attachment.file.save(fn, uploaded_file)
             return attachment
 
     def delete(self):
@@ -1015,8 +1018,7 @@ class Attachment(models.Model):
         Delete the attachment from the filesystem and
         also mark the database-object for deleting.
         """
-        if path.exists(self.filename):
-            os.remove(self.filename)
+        self.file.delete(save=False)
         super(Attachment, self).delete()
 
     @staticmethod
@@ -1031,38 +1033,27 @@ class Attachment(models.Model):
         """
         if not att_ids or not post:
             return False
-        new_path = path.join('forum', 'attachments', str(post.id))
-        new_abs_path = path.join(settings.MEDIA_ROOT, new_path)
-
-        if not path.exists(new_abs_path):
-            os.mkdir(new_abs_path)
 
         attachments = Attachment.objects.filter(id__in=att_ids, post=None).all()
 
-        for attachment in attachments:
-            name = os.path.basename(get_new_unique_filename(
-                attachment.name, path=new_abs_path,
-                length=100-len(new_path) - len(os.sep)))
-            # move the temp file to the new path
-            shutil.move(path.join(settings.MEDIA_ROOT, attachment.file),
-                        path.join(new_abs_path, name))
+        base_path = datetime.utcnow().strftime('forum/attachments/%S/%W')
 
-            attachment.file = '%s/%s' % (new_path, name)
-            post.attachments.add(attachment)
+        for attachment in attachments:
+            new_name = get_filename('%d-%s' % (post.pk, attachment.name))
+            new_name = path.join(base_path, new_name)
+
+            storage = attachment.file.storage
+            new_name = storage.save(new_name, attachment.file)
+            storage.delete(attachment.file.name)
+
+            Attachment.objects.filter(pk=attachment.pk).update(file=new_name,
+                post=post.pk)
 
     @property
     def size(self):
         """The size of the attachment in bytes."""
-        fn = self.filename
-        if not os.path.exists(fn):
-            return 0.0
-        stat = os.stat(fn)
-        return stat.st_size
-
-    @property
-    def filename(self):
-        """The filename of the attachment on the filesystem."""
-        return path.join(settings.MEDIA_ROOT, self.file)
+        f = self.file
+        return f.size if f.storage.exists(f.name) else 0.0
 
     @property
     def contents(self):
@@ -1074,11 +1065,12 @@ class Attachment(models.Model):
         This method only opens files that are less than 1KB great, if the
         file is greater we return None.
         """
-        if (self.size / 1024) > 1 or not os.path.exists(self.filename):
+        f = self.file
+        if (self.size / 1024) > 1 and f.storage.exists(f.name):
             return
 
         data = None
-        with open(self.filename, 'rb') as fobj:
+        with f.open() as fobj:
             data = fobj.read()
         return data
 
@@ -1114,10 +1106,10 @@ class Attachment(models.Model):
             This helper returns the thumbnail url of this attachment or None
             if there is no way to create a thumbnail.
             """
-            ff = self.file.encode('utf-8')
+            ff = self.file.name.encode('utf-8')
             img_path = path.join(settings.MEDIA_ROOT,
                 'forum/thumbnails/%s-%s' % (self.id, ff.split('/')[-1]))
-            thumb = get_thumbnail(self.filename.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
+            thumb = get_thumbnail(self.file.path.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
             if thumb:
                 return href('media', 'forum/thumbnails/%s' % thumb.split('/')[-1])
             return thumb
@@ -1144,7 +1136,7 @@ class Attachment(models.Model):
                     % (url, self.mimetype, escape(self.comment), self.name)
 
     def get_absolute_url(self, action=None):
-        return href('media', self.file)
+        return self.file.url
 
 
 class Privilege(models.Model):
@@ -1199,7 +1191,7 @@ class Poll(models.Model):
 
     topic = models.ForeignKey(Topic, null=True, db_index=True, related_name='polls')
 
-    @property
+    @deferred
     def votes(self):
         """Calculate the total number of votes in this poll."""
         return sum(o.votes for o in self.options.all())

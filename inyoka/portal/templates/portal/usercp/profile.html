@@ -4,7 +4,7 @@
 
     This page shows the user control panel settings page.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -70,13 +70,13 @@
     <h3>{% trans %}OpenIDs{% endtrans %}</h3>
     <p>
       {% if openids %}
-        {% trans %}Selected openIDs will be removed!{% endtrans %}
+        {% trans %}Selected OpenIDs will be removed!{% endtrans %}
       {% else %}
-        {% trans %}No openID is associated with your account.{% endtrans %}
+        {% trans %}No OpenID is associated with your account.{% endtrans %}
       {% endif %}
     </p>
     <p>{% trans -%}
-      To associate an openID with your account, login with your openID.
+      To associate an OpenID with your account, login with your OpenID.
     {%- endtrans %}</p>
     <ul>
       {% for openid in openids %}

@@ -103,14 +103,15 @@
         diffing yet but allows to download pastes.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import os
 import socket
+from distutils.version import LooseVersion as V
 from os.path import realpath, join, dirname
-import subprocess
 from django.utils.translation import ugettext_lazy
+from dulwich.repo import Repo
 
 #: Inyoka revision present in the current mercurial working copy
 INYOKA_REVISION = ugettext_lazy('unknown')
@@ -123,22 +124,17 @@ def _dummy(*args, **kwargs):
 def _bootstrap():
     """Get the Inyoka version and store it."""
     # the path to the contents of the Inyoka module
-    conts = realpath(join(dirname(__file__)))
-
-    # get the `INYOKA_REVISION` using git subprocess.
-    # TODO: once the git-ctypes port is finished switch!
+    repo_path = realpath(join(dirname(__file__), '..'))
 
     try:
-        process = subprocess.Popen(['git', 'describe', '--tags'],
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE,
-                                   cwd=conts, shell=False,
-                                   env=os.environ.copy())
-        revision, stderro = process.communicate()
+        repo = Repo(repo_path)
+        tags = sorted([ref for ref in repo.get_refs() if ref.startswith('refs/tags')],
+                      key=lambda obj: V(obj))
+        tag = tags[-1][10:].strip()
+        commit = repo.head()[:8]
+        revision = {'tag': tag, 'commit': commit}
     except Exception:
-        revision = INYOKA_REVISION
-
-    revision = revision.strip()
+        revision = {'tag': INYOKA_REVISION, 'commit': ''}
 
     # This value defines the timeout for sockets in seconds.  Per default
     # python sockets do never timeout and as such we have blocking workers.
