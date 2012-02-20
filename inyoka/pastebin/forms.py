@@ -9,7 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import ugettext_lazy, ugettext
 
 from inyoka.utils.forms import CaptchaField
 from inyoka.pastebin.models import Entry
@@ -69,7 +69,7 @@ class AddPasteForm(forms.ModelForm):
     def save(self, user, commit=True):
         entry = super(AddPasteForm, self).save(commit=False)
         entry.author = user
-        entry.title = entry.title or ugettext_lazy('Untitled')
+        entry.title = entry.title or ugettext('Untitled')
         if commit:
             entry.save()
         return entry

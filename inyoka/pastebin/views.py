@@ -84,7 +84,7 @@ def raw(request, entry_id):
         entry = Entry.objects.get(id=entry_id)
     except Entry.DoesNotExist:
         raise PageNotFound
-    return HttpResponse(entry.code, content_type='text/plain')
+    return HttpResponse(entry.code, content_type='text/plain; charset=utf-8')
 
 
 @templated('pastebin/browse.html')
