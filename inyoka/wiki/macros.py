@@ -999,8 +999,8 @@ class RandomKeyValue(Macro):
         stack = OrderedDict()
         last_cat = None
         buffer = []
-        for _ in doc.query.by_type(nodes.Section):
-            for node in _.children:
+        for i in doc.query.by_type(nodes.Section):
+            for node in i.children:
                 if isinstance(node, nodes.Headline) and node.level == 1:
                     buffer = []
                     id = node.id
