@@ -741,7 +741,7 @@ msgid ""
 "Please save long code snippets or program outputs in our paste service "
 "and link to the respective entry."
 msgstr ""
-"Bitte speichere lange Code Ausschnitte oder Programmausgaben in unserer "
+"Bitte speichere lange Code-Ausschnitte oder Programmausgaben in unserer "
 "Ablage und verlinke den entsprechenden Beitrag."
 
 #: inyoka/forum/templates/forum/edit.html:38
@@ -887,7 +887,7 @@ msgstr "Aktuelles Forum"
 msgid "Supporter:"
 msgid_plural "Supporters:"
 msgstr[0] "Supporter:"
-msgstr[1] "Supporter"
+msgstr[1] "Supporter:"
 
 #: inyoka/forum/templates/forum/forum.html:72
 #, python-format
@@ -1135,7 +1135,7 @@ msgstr "Mir zuweisen"
 
 #: inyoka/forum/templates/forum/reportlist.html:56
 msgid "Write a pm"
-msgstr "Eine Nachricht schreiben"
+msgstr "Eine persönliche Nachricht schreiben"
 
 #: inyoka/forum/templates/forum/reportlist.html:65
 msgid "Currently there are no reported topics."
@@ -1307,7 +1307,11 @@ msgstr "Ergebnisse anzeigen"
 
 #: inyoka/forum/templates/forum/topic.html:197
 msgid "Team icon"
-msgstr "Teamicon"
+msgstr "Team-Icon"
+
+#: inyoka/forum/templates/forum/topic.html:213
+msgid "Location:"
+msgstr "Wohnort:"
 
 #: inyoka/forum/templates/forum/topic.html:224
 msgid "Show revisions"

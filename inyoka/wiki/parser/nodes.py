@@ -274,9 +274,9 @@ class ConflictMarker(Node):
     def prepare_html(self):
         yield u'<div class="conflict conflict-%s">' % self.type
         yield {
-            'left':     _(u'<strong>Conflict</strong> – remote version'),
-            'middle':   _(u'<strong>Conflict</strong> — local Version'),
-            'right':    _(u'<strong>Conflict End</strong>')
+            'left':   _(u'<strong>Conflict</strong> – remote version'),
+            'middle': _(u'<strong>Conflict</strong> – local Version'),
+            'right':  _(u'<strong>Conflict End</strong>')
         }[self.type]
         yield u'</div>'
 

@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Um dich auf einen anderen Kommentar zu beziehen, kannst du "
 "<code>@kommentarnummer</code> verwenden.<br />"
-"Dies wird automatisch eingefügt, wenn du bei einem Beitrag auf "
+"Dieser wird automatisch eingefügt, wenn du bei einem Beitrag auf "
 "„Antworten“ klickst."
 
 #: inyoka/ikhaya/forms.py:60 inyoka/ikhaya/models.py:191
@@ -139,7 +139,7 @@ msgstr "Anmerkungen"
 
 #: inyoka/ikhaya/models.py:410
 msgid "Article suggestion"
-msgstr "Artikelvorschläge"
+msgstr "Artikelvorschlag"
 
 #: inyoka/ikhaya/models.py:411
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:13
@@ -500,7 +500,7 @@ msgstr "Kommentare - Vollständig"
 
 #: inyoka/ikhaya/templates/ikhaya/detail.html:29
 msgid "Team icon"
-msgstr "Teamicon"
+msgstr "Team-Icon"
 
 #: inyoka/ikhaya/templates/ikhaya/detail.html:37
 #, python-format

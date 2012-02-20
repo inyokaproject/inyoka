@@ -1280,6 +1280,10 @@ msgstr ""
 msgid "Team icon"
 msgstr ""
 
+#: inyoka/forum/templates/forum/topic.html:213
+msgid "Location:"
+msgstr ""
+
 #: inyoka/forum/templates/forum/topic.html:224
 msgid "Show revisions"
 msgstr ""

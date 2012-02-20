@@ -56,9 +56,9 @@
             {% trans %}Category:{% endtrans %}
             <a href="{{ article.category|url }}">{{ article.category.name|e }}</a> |
             {%- if article.updated > article.pub_datetime %}
-              {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }}
+              {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }} |
             {%- endif %}
-            {%- if article.comments_enabled %} |
+            {%- if article.comments_enabled %}
               {% trans count=article.comment_count, link=article|url + '#comments' -%}
                 {{ count }} <a href="{{ link }}">Comment</a>
               {%- pluralize -%}

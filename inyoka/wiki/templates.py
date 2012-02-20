@@ -340,7 +340,7 @@ class Parser(object):
         token_type, value = self.stream.current
         self.stream.next()
         if token_type == 'eof':
-            node = TemplateSyntaxError(_(u'Unexpected end of expression'))
+            node = TemplateSyntaxError(_(u'Unexpected end of expression.'))
         elif token_type == 'number':
             node = Value(float(value))
         elif token_type == 'variable':
