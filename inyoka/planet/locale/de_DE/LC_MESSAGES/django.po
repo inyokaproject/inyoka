@@ -21,7 +21,7 @@ msgstr ""
 
 #: inyoka/planet/forms.py:21 inyoka/planet/models.py:35
 msgid "Name of the blog"
-msgstr "Names des Blogs"
+msgstr "Name des Blogs"
 
 #: inyoka/planet/forms.py:22
 msgid "URL"
@@ -41,7 +41,7 @@ msgstr "Das ist mein Blog"
 
 #: inyoka/planet/forms.py:29
 msgid "Email address of the blog author"
-msgstr "E-Mail Adresse des Blog-Autors"
+msgstr "E-Mail-Adresse des Blog-Autors"
 
 #: inyoka/planet/models.py:37
 msgid "URL of the blog"
@@ -183,7 +183,7 @@ msgstr "Planet - Ganzer Artikel"
 
 #: inyoka/planet/templates/planet/index.html:22
 msgid "Recent articles"
-msgstr "Neuste Artikel"
+msgstr "Neueste Artikel"
 
 #: inyoka/planet/templates/planet/index.html:53
 msgid "« Previous"
