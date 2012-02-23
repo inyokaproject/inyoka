@@ -495,7 +495,7 @@ table.syntaxtable {
     }
   }
 
-  li.active {
+  li:hover, li.active {
     opacity: 1.0;
 
     .tab_left {
@@ -540,9 +540,18 @@ table.syntaxtable {
       background-image: url(../img/icons/community.png) !important; /** sprite-ref: header; */
   }
 
-  li.active {
-    a {
-      color: black !important;
+  li:active {
+    .tab_left {
+      background-image: url(../img/tabbar_left.png); /** sprite-ref: header; */
+    }
+
+    .tab_center {
+      background-image: url(../img/tabbar_center.png); /** sprite-ref: header; sprite-alignment: repeat; */
+      background-repeat: repeat-x;
+    }
+
+    .tab_right {
+      background-image: url(../img/tabbar_right.png); /** sprite-ref: header; */
     }
   }
 }
