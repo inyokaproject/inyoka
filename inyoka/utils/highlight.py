@@ -75,8 +75,11 @@ class Highlighter(object):
 
     def __init__(self, query, **kwargs):
         self.query = query
+        # ignore short words (since we actually search in the text and not
+        # for whole words).
         self.query_words = set([word.lower() for word in query.split()
-                                             if not word.startswith('-')])
+                                             if not word.startswith('-')
+                                                and len(word) > 2])
 
     def highlight(self, text_block):
         self.text_block = striptags(text_block)
@@ -115,10 +118,6 @@ class Highlighter(object):
     def find_window(self, highlight_locations):
         best_start = 0
         best_end = self.max_length
-
-        # Ignore short words
-        highlight_locations = dict((k,v) for k,v in highlight_locations.items()
-                                   if len(k) > 2)
 
         # First, make sure we have words.
         if not len(highlight_locations):
