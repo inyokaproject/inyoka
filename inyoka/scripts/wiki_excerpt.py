@@ -14,23 +14,27 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import sys
+import os
 import re
 import csv
 
 from itertools import izip
 
+from django.conf import settings
+
 from inyoka.portal.user import User
-from inyoka.utils.terminal import ProgressBar, percentize
+from inyoka.utils.terminal import ProgressBar, percentize, show
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page
 from inyoka.wiki.parser.nodes import Box, Document, MetaData, Node
 
 
-EXCLUDE_PAGES = [u'Benutzer/', u'Anwendertreffen/', u'Baustelle/',
-                 u'LocoTeam/', u'Wiki/Vorlagen', u'Vorlage/', u'Verwaltung/',
-                 u'Galerie', u'Trash/', u'Messen/', u'UWN-Team/',
-                 u'Mitmachen/', u'ubuntuusers/']
-EXCERPT_LENGTH = 200
+EXCERPT_FILE = 'wiki-excerpt.csv'
+EXCERPT_LENGTH = 400
+EXCLUDE_PAGES = [ u'Anwendertreffen/', u'Baustelle/', u'Benutzer/', u'Galerie',
+                  u'LocoTeam/', u'Messen/', u'Mitmachen/', u'Trash/',
+                  u'ubuntuusers/', u'UWN-Team/', u'Verwaltung/', u'Vorlage/',
+                  u'Vorlagen/', u'Wiki/Vorlagen',]
 USER = User.objects.get_anonymous_user()
 WHITESPACE_REPLACE_RE = re.compile("\s+")
 
@@ -62,10 +66,8 @@ def truncate(s, max_length):
 
 
 def extract(pname, writer):
-    """
-    Extract the first ``EXCERPT_LENGTH`` characters from the the wiki page
-    ``pname`` and write it to the csv writer ``writer``.
-    """
+    """ Extract the first ``EXCERPT_LENGTH`` characters from the the wiki page
+    ``pname`` and write it to the csv writer ``writer``.  """
     if not has_privilege(USER, pname, 'read'):
         return
 
@@ -79,11 +81,14 @@ def extract(pname, writer):
     clean(doc)
     txt = doc.text.strip()
     out = WHITESPACE_REPLACE_RE.sub(u" ", txt)
-    writer.writerow([p.name.encode('utf-8'), truncate(out, EXCERPT_LENGTH).encode('utf-8')])
+    writer.writerow([p.name.encode('utf-8'),
+                     p.get_absolute_url(action='show'),
+                     truncate(out, EXCERPT_LENGTH).encode('utf-8')])
 
 
 def run():
-    excerpt_writer = csv.writer(open('wiki-excerpt.csv', 'wb'), delimiter=';',
+    excerpt_file = open(EXCERPT_FILE, 'wb')
+    excerpt_writer = csv.writer(excerpt_file, delimiter=';',
             quotechar='"', quoting=csv.QUOTE_ALL)
 
     unsorted = Page.objects.get_page_list(existing_only=True)
@@ -99,13 +104,21 @@ def run():
 
     page_names = pages - excluded_pages
 
-    pb = ProgressBar(40)
-    percents = list(percentize(len(page_names)))
-    for percent, pname in izip(percents, page_names):
-        extract(pname, excerpt_writer)
-        pb.update(percent)
-    pb.update(100)
-    print "Created excerpt on file "
+    if settings.DEBUG:
+        print "Creating wiki excerpts to file '%s'" % \
+            os.path.abspath(excerpt_file.name)
+        pb = ProgressBar(40)
+        percents = list(percentize(len(page_names)))
+        for percent, pname in izip(percents, page_names):
+            extract(pname, excerpt_writer)
+            pb.update(percent)
+        pb.update(100)
+        show('\n')
+    else:
+        for pname in page_names:
+            extract(pname, excerpt_writer)
+
+    excerpt_file.close()
 
 
 if __name__ == '__main__':
