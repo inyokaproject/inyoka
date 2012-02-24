@@ -31,10 +31,10 @@ from inyoka.wiki.parser.nodes import Box, Document, MetaData, Node
 
 EXCERPT_FILE = 'wiki-excerpt.csv'
 EXCERPT_LENGTH = 400
-EXCLUDE_PAGES = [ u'Anwendertreffen/', u'Baustelle/', u'Benutzer/', u'Galerie',
-                  u'LocoTeam/', u'Messen/', u'Mitmachen/', u'Trash/',
-                  u'ubuntuusers/', u'UWN-Team/', u'Verwaltung/', u'Vorlage/',
-                  u'Vorlagen/', u'Wiki/Vorlagen',]
+EXCLUDE_PAGES = [ u'Anwendertreffen/', u'Baustelle/', u'Benutzer/',
+                  u'Galerie/', u'LocoTeam/', u'Messen/', u'Trash/',
+                  u'ubuntuusers/', u'UWN-Team/', u'Verwaltung/',
+                  u'Vorlage/', u'Vorlagen', u'Wiki/']
 USER = User.objects.get_anonymous_user()
 WHITESPACE_REPLACE_RE = re.compile("\s+")
 
@@ -97,7 +97,7 @@ def run():
     # sort out excluded pages
     for page in unsorted:
         for exclude in EXCLUDE_PAGES:
-            if exclude.lower() in page.lower():
+            if page.lower().startswith(exclude.lower()):
                 excluded_pages.add(page)
             else:
                 pages.add(page)
