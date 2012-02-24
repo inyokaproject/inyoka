@@ -29,7 +29,7 @@ from inyoka.wiki.models import Page
 from inyoka.wiki.parser.nodes import Box, Document, MetaData, Node
 
 
-EXCERPT_FILE = 'wiki-excerpt.csv'
+DEFAULT_EXCERPT_FILE = 'wiki-excerpt.csv'
 EXCERPT_LENGTH = 400
 EXCLUDE_PAGES = [ u'Anwendertreffen/', u'Baustelle/', u'Benutzer/',
                   u'Galerie/', u'LocoTeam/', u'Messen/', u'Trash/',
@@ -86,8 +86,8 @@ def extract(pname, writer):
                      truncate(out, EXCERPT_LENGTH).encode('utf-8')])
 
 
-def run():
-    excerpt_file = open(EXCERPT_FILE, 'wb')
+def run(output):
+    excerpt_file = open(output, 'wb')
     excerpt_writer = csv.writer(excerpt_file, delimiter=';',
             quotechar='"', quoting=csv.QUOTE_ALL)
 
@@ -122,4 +122,7 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    if len(sys.argv) > 1:
+        run(sys.argv[1])
+    else:
+        run(DEFAULT_EXCERPT_FILE)
