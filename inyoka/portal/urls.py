@@ -12,7 +12,6 @@ from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('inyoka.portal.views',
     (r'^$', 'index'),
-    (r'^404/$', 'not_found'),
     (r'^markup.css', 'markup_styles'),
     (r'^login/$', 'login'),
     (r'^logout/$', 'logout'),
