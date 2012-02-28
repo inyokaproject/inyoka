@@ -891,17 +891,26 @@ class Post(models.Model, LockableObject):
             old_ids = [p.id for p in old_forums]
 
             # search for a new last post in the old and the new forum
-            new_post_query = Post.objects.filter(
-                topic__id=F('topic__id'),
-                topic__forum__id=F('topic__forum__id'))
+           post_query = Post.objects.all()
 
+            # Update last_post forums
+            # NOTE: last_post of a forum is expected to be the most recent post,
+            # as such the following two updates ignore the splitted posts
+            # completly and just sets the highest id (== max recent posts) as
+            # last_post.
             Forum.objects.filter(id__in=new_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=new_ids) \
-                                                 .aggregate(count=Max('id'))['count'])
+                last_post=post_query.filter(forum__id__in=new_ids) \
+                                    .aggregate(count=Max('id'))['count'])
 
             Forum.objects.filter(id__in=old_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
-                                                 .aggregate(count=Max('id'))['count'])
+                last_post=post_query.filter(forum__id__in=old_ids) \
+                                    .aggregate(count=Max('id'))['count'])
+
+            # Update post_count of the forums
+            Forum.objects.filter(id__in=new_ids)\
+                .update(post_count = F('post_count') + len(posts))
+            Forum.objects.filter(id__in=old_ids)\
+                .update(post_count = F('post_count') - len(posts))
 
         # update the search index which has the post --> topic mapping indexed
         Post.multi_update_search([post.id for post in posts])
