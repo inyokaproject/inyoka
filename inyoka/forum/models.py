@@ -899,12 +899,12 @@ class Post(models.Model, LockableObject):
             # completly and just set the highest id (== max recent posts) as
             # last_post.
             Forum.objects.filter(id__in=new_ids).update(
-                last_post=post_query.filter(forum__id__in=new_ids) \
-                                    .aggregate(count=Max('id'))['count'])
+                last_post=Topic.objects.filter(forum__id__in=new_ids) \
+                            .aggregate(count=Max('last_post'))['count'])
 
             Forum.objects.filter(id__in=old_ids).update(
-                last_post=post_query.filter(forum__id__in=old_ids) \
-                                    .aggregate(count=Max('id'))['count'])
+                last_post=Topic.objects.filter(forum__id__in=old_ids) \
+                            .aggregate(count=Max('last_post'))['count'])
 
             # Update post_count of the forums
             Forum.objects.filter(id__in=new_ids)\
