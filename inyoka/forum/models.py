@@ -891,7 +891,7 @@ class Post(models.Model, LockableObject):
             old_ids = [p.id for p in old_forums]
 
             # search for a new last post in the old and the new forum
-           post_query = Post.objects.all()
+            post_query = Post.objects.all()
 
             # Update last_post forums
             # NOTE: last_post of a forum is expected to be the most recent post,
