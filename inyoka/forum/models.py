@@ -837,7 +837,7 @@ class Post(models.Model, LockableObject):
 
             adjust_start = 0
             # decrement the old positions
-            for _, g in post_groups:
+            for x, g in post_groups:
                 g = list(g)
                 dec = len(g)
                 # and don't forget that previous decrements already decremented our position
@@ -870,12 +870,12 @@ class Post(models.Model, LockableObject):
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \
                              .update(post_count=F('post_count') - len(posts),
-                                     last_post=old_topic.posts.reverse()[0])
+                                     last_post=old_topic.posts.order_by('-position')[0])
             else:
                 if old_topic.has_poll:
                     new_topic.has_poll = True
                     Poll.objects.filter(topic=old_topic).update(topic=new_topic)
-                new_topic.last_post = new_topic.posts.reverse()[0]
+                new_topic.last_post = new_topic.posts.order_by('-position')[0]
                 old_topic.delete()
 
             values = {'last_post': sorted(posts, key=lambda o: o.position)[-1],
