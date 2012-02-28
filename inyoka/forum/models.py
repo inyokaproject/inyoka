@@ -893,10 +893,10 @@ class Post(models.Model, LockableObject):
             # search for a new last post in the old and the new forum
             post_query = Post.objects.all()
 
-            # Update last_post forums
+            # Update last_post of the forums
             # NOTE: last_post of a forum is expected to be the most recent post,
             # as such the following two updates ignore the splitted posts
-            # completly and just sets the highest id (== max recent posts) as
+            # completly and just set the highest id (== max recent posts) as
             # last_post.
             Forum.objects.filter(id__in=new_ids).update(
                 last_post=post_query.filter(forum__id__in=new_ids) \
