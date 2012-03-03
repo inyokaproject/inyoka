@@ -284,6 +284,8 @@ class Article(models.Model, LockableObject):
     def get_absolute_url(self, action='show'):
         if action == 'comments':
             return href('ikhaya', self.stamp, self.slug, _anchor='comments')
+        if action == 'last_comment':
+            return href('ikhaya', self.stamp, self.slug, _anchor='comment_%d' % self.comment_count)
         if action in ('subscribe', 'unsubscribe'):
             if current_request:
                 current = current_request.build_absolute_uri()
