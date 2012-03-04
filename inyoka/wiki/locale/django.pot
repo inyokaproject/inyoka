@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-08 20:17+0100\n"
+"POT-Creation-Date: 2012-02-26 13:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -218,8 +218,7 @@ msgid_plural "%(count)d pages"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/wiki/macros.py:620
-#: inyoka/wiki/templates/wiki/page.html:36
+#: inyoka/wiki/macros.py:620 inyoka/wiki/templates/wiki/page.html:36
 msgid "Tags"
 msgstr ""
 
@@ -388,54 +387,54 @@ msgstr ""
 msgid "Invalid syntax: "
 msgstr ""
 
-#: inyoka/wiki/views.py:79
+#: inyoka/wiki/views.py:78
 msgid "A site name needs to be entered to create this page."
 msgstr ""
 
-#: inyoka/wiki/views.py:90
+#: inyoka/wiki/views.py:89
 #, python-format
 msgid "Another site named “%(title)s“ already exists."
 msgstr ""
 
-#: inyoka/wiki/views.py:203
+#: inyoka/wiki/views.py:202
 #, python-format
 msgid "%(sitename)s wiki – %(pagename)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:213
+#: inyoka/wiki/views.py:212
 #, python-format
 msgid "%(sitename)s wiki – last changes"
 msgstr ""
 
-#: inyoka/wiki/views.py:228
+#: inyoka/wiki/views.py:227
 #, python-format
 msgid ""
 "%(user)s deleted the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:231
+#: inyoka/wiki/views.py:230
 #, python-format
 msgid ""
 "%(user)s edited the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:235
+#: inyoka/wiki/views.py:234
 #, python-format
 msgid ""
 "An anonymous user deleted the article “%(article)s“ on %(date)s. Summary:"
 " %(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:238
+#: inyoka/wiki/views.py:237
 #, python-format
 msgid ""
 "An anonymous user edited the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:250 inyoka/wiki/views.py:253
+#: inyoka/wiki/views.py:249 inyoka/wiki/views.py:252
 msgid "Anonymous"
 msgstr ""
 

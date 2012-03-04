@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-08 20:17+0100\n"
+"POT-Creation-Date: 2012-02-26 13:44+0100\n"
 "PO-Revision-Date: 2012-02-07 02:34+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -45,8 +45,8 @@ msgid ""
 "href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
 msgstr ""
 "Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: "
-"%(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a "
-"href=\"%(link)s\">Umbenennen und Löschung doppelter Anhänge "
+"%(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a"
+" href=\"%(link)s\">Umbenennen und Löschung doppelter Anhänge "
 "erzwingen</a>."
 
 #: inyoka/wiki/actions.py:269 inyoka/wiki/actions.py:273
@@ -239,8 +239,7 @@ msgid_plural "%(count)d pages"
 msgstr[0] "eine Seite"
 msgstr[1] "%(count)d Seiten"
 
-#: inyoka/wiki/macros.py:620
-#: inyoka/wiki/templates/wiki/page.html:36
+#: inyoka/wiki/macros.py:620 inyoka/wiki/templates/wiki/page.html:36
 msgid "Tags"
 msgstr "Tags"
 
@@ -343,17 +342,15 @@ msgstr "Das gewünschte Template „%(name)s“ existiert nicht."
 
 #: inyoka/wiki/templates.py:157
 msgid "Invalid syntax for this loop. The first argument must be a variable."
-msgstr ""
-"Ungültige Schleifen-Syntax. Erstes Argument muss eine Variable "
-"sein."
+msgstr "Ungültige Schleifen-Syntax. Erstes Argument muss eine Variable sein."
 
 #: inyoka/wiki/templates.py:163
 msgid ""
 "Invalid syntax for this loop. After the first variable an “in” is "
 "required."
 msgstr ""
-"Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort \"in\" "
-"folgen."
+"Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort "
+"\"in\" folgen."
 
 #: inyoka/wiki/templates.py:168
 msgid "Loop header contains too many arguments."
@@ -415,28 +412,28 @@ msgstr "Zu viele Argumente für Wertausgabe."
 msgid "Invalid syntax: "
 msgstr "Syntaxfehler: "
 
-#: inyoka/wiki/views.py:79
+#: inyoka/wiki/views.py:78
 msgid "A site name needs to be entered to create this page."
 msgstr ""
 "Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben "
 "wurde."
 
-#: inyoka/wiki/views.py:90
+#: inyoka/wiki/views.py:89
 #, python-format
 msgid "Another site named “%(title)s“ already exists."
 msgstr "Eine andere Seite mit dem Namen „%(title)s“ existiert bereits."
 
-#: inyoka/wiki/views.py:203
+#: inyoka/wiki/views.py:202
 #, python-format
 msgid "%(sitename)s wiki – %(pagename)s"
 msgstr "%(sitename)s Wiki – %(pagename)s"
 
-#: inyoka/wiki/views.py:213
+#: inyoka/wiki/views.py:212
 #, python-format
 msgid "%(sitename)s wiki – last changes"
 msgstr "%(sitename)s Wiki – Letzte Änderungen"
 
-#: inyoka/wiki/views.py:228
+#: inyoka/wiki/views.py:227
 #, python-format
 msgid ""
 "%(user)s deleted the article “%(article)s“ on %(date)s. Summary: "
@@ -445,7 +442,7 @@ msgstr ""
 "%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. "
 "Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:231
+#: inyoka/wiki/views.py:230
 #, python-format
 msgid ""
 "%(user)s edited the article “%(article)s“ on %(date)s. Summary: "
@@ -454,7 +451,7 @@ msgstr ""
 "%(user)s hat den Artikel „%(article)s” am %(date)s bearbeitet. "
 "Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:235
+#: inyoka/wiki/views.py:234
 #, python-format
 msgid ""
 "An anonymous user deleted the article “%(article)s“ on %(date)s. Summary:"
@@ -463,7 +460,7 @@ msgstr ""
 "Ein anonymer Benutzer hat den Artikel „%(article)s“ am %(date)s gelöscht."
 " Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:238
+#: inyoka/wiki/views.py:237
 #, python-format
 msgid ""
 "An anonymous user edited the article “%(article)s“ on %(date)s. Summary: "
@@ -472,7 +469,7 @@ msgstr ""
 "Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s "
 "bearbeitet. Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:250 inyoka/wiki/views.py:253
+#: inyoka/wiki/views.py:249 inyoka/wiki/views.py:252
 msgid "Anonymous"
 msgstr "Anonymous"
 
@@ -577,8 +574,8 @@ msgid ""
 "page or include it with the <code>[[Bild()]]</code> macro."
 msgstr ""
 "Um auf einen Anhang zu verweisen, kannst du entweder zu der "
-"entsprechenden Wikiseite verlinken oder diese mit dem <code>[[Bild()]]</code> "
-"Makro einbinden."
+"entsprechenden Wikiseite verlinken oder diese mit dem "
+"<code>[[Bild()]]</code> Makro einbinden."
 
 #: inyoka/wiki/templates/wiki/action_attach.html:64
 #, python-format
@@ -894,7 +891,8 @@ msgid ""
 " redirect to the new one."
 msgstr ""
 "Beim Umbenennen dieser Seite werden auch alle ihre Revisionen umbenannt. "
-"Unter der alten Seite wird dann eine Weiterleitung zum neuen Namen eingerichtet."
+"Unter der alten Seite wird dann eine Weiterleitung zum neuen Namen "
+"eingerichtet."
 
 #: inyoka/wiki/templates/wiki/action_rename.html:19
 msgid "New page name:"
@@ -961,8 +959,8 @@ msgid ""
 "The article is already under construction, help improving and finishing "
 "it!"
 msgstr ""
-"Dieser Artikel existiert bereits in der Baustelle; hilf dabei ihn zu"
-" verbessern und fertigzustellen!"
+"Dieser Artikel existiert bereits in der Baustelle; hilf dabei ihn zu "
+"verbessern und fertigzustellen!"
 
 #: inyoka/wiki/templates/wiki/missing_page.html:45
 #: inyoka/wiki/templates/wiki/missing_page.m.html:44
