@@ -934,6 +934,18 @@ def first_unread_post(request, topic_slug):
         redirect = Post.url_for_post(first_unread_post.id)
     return HttpResponseRedirect(redirect)
 
+def last_post(request, topic_slug):
+    """
+    Redirect to the last post of the given topic.
+    """
+    try:
+        last = Topic.objects.values_list('last_post', flat=True)\
+                    .get(slug=topic_slug)
+        url = Post.url_for_post(last,
+            paramstr=request.GET and request.GET.urlencode())
+        return HttpResponseRedirect(url)
+    except Topic.DoesNotExist:
+        raise PageNotFound()
 
 @templated('forum/movetopic.html')
 def movetopic(request, topic_slug):

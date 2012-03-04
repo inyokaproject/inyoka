@@ -55,7 +55,7 @@
         {%- endif %}
       {%- endfor %}
       <li{% if not page.topic %} class="disabled"{% endif %}>
-        <a href="{{ page.topic and page.topic|url or href('forum', 'new_discussion', page.title) }}">{% trans %}Discussion{% endtrans %}</a>
+        <a href="{{ page.topic and page.topic|url('last_post') or href('forum', 'new_discussion', page.title) }}">{% trans %}Discussion{% endtrans %}</a>
       </li>
       {%- if is_subscribed %}
         <li><a href="{{ page|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a></li>
