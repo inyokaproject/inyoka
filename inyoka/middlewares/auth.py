@@ -28,7 +28,7 @@ class AuthMiddleware(object):
         # check for bann/deletion
         if user.is_banned or user.is_deleted:
             if user.is_banned:
-                flash(_(u'The user “%(name)s” was banned.  Your session has ended.') % {
+                flash(_(u'The user “%(name)s” was banned. Your session has ended.') % {
                     'name': escape(user.username)}, False)
             elif user.is_deleted:
                 flash(_(u'The user “%(name)s” deleted his profile. '
