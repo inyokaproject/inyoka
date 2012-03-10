@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-26 13:44+0100\n"
+"POT-Creation-Date: 2012-03-10 11:18+0100\n"
 "PO-Revision-Date: 2012-01-21 20:40+0000\n"
 "Last-Translator: MarkusH <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) Plural-Forms: nplurals=2; plural=(n != 1)"
@@ -20,8 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: inyoka/news/forms.py:41 inyoka/news/models.py:198
-#: inyoka/news/models.py:402
+#: inyoka/news/forms.py:41 inyoka/news/models.py:198 inyoka/news/models.py:402
 msgid "Text"
 msgstr "Text"
 
@@ -140,8 +139,7 @@ msgstr "Anmerkungen"
 msgid "Article suggestion"
 msgstr "Artikelvorschlag"
 
-#: inyoka/news/models.py:411
-#: inyoka/news/templates/news/suggestions.html:13
+#: inyoka/news/models.py:411 inyoka/news/templates/news/suggestions.html:13
 #: inyoka/news/templates/news/suggestions.html:16
 msgid "Article suggestions"
 msgstr "Artikelvorschläge"
