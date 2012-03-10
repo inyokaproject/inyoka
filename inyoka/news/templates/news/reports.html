@@ -1,5 +1,5 @@
 {#
-    ikhaya/reports.html
+    news/reports.html
     ~~~~~~~~~~~~~~~~~~~
 
     Shows a list of suggested improved verions of an article.
@@ -7,12 +7,12 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 
 {% do BREADCRUMB.append(_('Reports'), article|url('reports')) %}
 {% do BREADCRUMB.append(article.subject, article|url, True) %}
 
-{% block ikhaya_content %}
+{% block news_content %}
   {%- for report in reports if not report.deleted or can_edit %}
     <div class="report{% if report.solved %} solved{% endif%}{% if report.deleted %} hidden{% endif %}" id="report_{{ report.id }}">
       <div class="report_header">

@@ -798,7 +798,7 @@ class Picture(Macro):
         source = fetch_real_target(target, width=self.width, height=self.height)
         file = None
 
-        if context.application == 'ikhaya':
+        if context.application == 'news':
             try:
                 file = StaticFile.objects.get(identifier=target)
                 if (self.width or self.height) and os.path.exists(file.file.path):

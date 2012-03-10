@@ -54,7 +54,7 @@ from inyoka.wiki.utils import quote_text
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.forum.models import Forum, Topic, Post, Privilege
-from inyoka.ikhaya.models import Event, Article, Category, Suggestion
+from inyoka.news.models import Event, Article, Category, Suggestion
 from inyoka.forum.acl import filter_invisible, split_bits, PRIVILEGES_DETAILS, \
      REVERSED_PRIVILEGES_BITS, split_negative_positive
 from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
@@ -101,7 +101,7 @@ page_delete = generic.DeleteView.as_view(model=StaticPage,
 files = generic.ListView.as_view(model=StaticFile,
     default_column='identifier',
     template_name='portal/files.html',
-    columns=['identifier', 'is_ikhaya_icon'],
+    columns=['identifier', 'is_news_icon'],
     required_permission='static_file_edit',
     base_link = href('portal', 'files'))
 
@@ -123,10 +123,10 @@ file_delete = generic.DeleteView.as_view(model=StaticFile,
 @templated('portal/index.html')
 def index(request):
     """
-    Startpage that shows the latest ikhaya articles
+    Startpage that shows the latest news articles
     and some records of ubuntuusers.de
     """
-    ikhaya_latest = Article.objects.get_latest_articles()
+    news_latest = Article.objects.get_latest_articles()
 
     # filter events that are either in the future or are ongoing
     events = Event.objects.filter(Q(visible=True) & (
@@ -142,7 +142,7 @@ def index(request):
     })
 
     return {
-        'ikhaya_latest':            list(ikhaya_latest),
+        'news_latest':            list(news_latest),
         'sessions':                 get_sessions(),
         'record':                   record,
         'record_time':              record_time,
@@ -1789,7 +1789,7 @@ def usermap(request):
 
 app_feed_forms = {
     'forum': ForumFeedSelectorForm,
-    'ikhaya': NewsFeedSelectorForm,
+    'news': NewsFeedSelectorForm,
     'planet': PlanetFeedSelectorForm,
     'wiki': WikiFeedSelectorForm
 }
@@ -1799,7 +1799,7 @@ app_feed_forms = {
 def feedselector(request, app=None):
     anonymous_user = User.objects.get_anonymous_user()
     forms = {}
-    for fapp in ('forum', 'ikhaya', 'planet', 'wiki'):
+    for fapp in ('forum', 'news', 'planet', 'wiki'):
         if app in (fapp, None):
             args = {'data': request.POST, 'auto_id': 'id_%s_%%s' % fapp}
             forms[fapp] = (request.POST and app_feed_forms[fapp](**args)
@@ -1810,8 +1810,8 @@ def feedselector(request, app=None):
         forums = filter_invisible(anonymous_user, Forum.objects.get_cached())
         forms['forum'].fields['forum'].choices = [('', _(u'Please choose'))] + \
             [(f.slug, f.name) for f in forums]
-    if forms['ikhaya'] is not None:
-        forms['ikhaya'].fields['category'].choices = [('*', _(u'All'))] + \
+    if forms['news'] is not None:
+        forms['news'].fields['category'].choices = [('*', _(u'All'))] + \
             [(c.slug, c.name) for c in Category.objects.all()]
     if forms['wiki'] is not None:
         wiki_pages = cache.get('feedselector/wiki/pages')
@@ -1833,12 +1833,12 @@ def feedselector(request, app=None):
                     return HttpResponseRedirect(href('forum', 'feeds', 'forum',
                            data['forum'], data['mode'], data['count']))
 
-            elif app == 'ikhaya':
+            elif app == 'news':
                 if data['category'] == '*':
-                    return HttpResponseRedirect(href('ikhaya', 'feeds',
+                    return HttpResponseRedirect(href('news', 'feeds',
                            data['mode'], data['count']))
                 else:
-                    return HttpResponseRedirect(href('ikhaya', 'feeds',
+                    return HttpResponseRedirect(href('news', 'feeds',
                            data['category'], data['mode'], data['count']))
 
             elif app == 'planet':
@@ -1856,7 +1856,7 @@ def feedselector(request, app=None):
     return {
         'app':         app,
         'forum_form':  forms['forum'],
-        'ikhaya_form': forms['ikhaya'],
+        'news_form': forms['news'],
         'planet_form': forms['planet'],
         'wiki_form':   forms['wiki'],
     }
@@ -1916,7 +1916,7 @@ def calendar_detail(request, slug):
 
 @templated('portal/open_search.xml', content_type='text/xml; charset=utf-8')
 def open_search(request, app):
-    if app not in ('wiki', 'forum', 'planet', 'ikhaya'):
+    if app not in ('wiki', 'forum', 'planet', 'news'):
         app='portal'
     return {
         'app': app
@@ -2043,7 +2043,7 @@ def config(request):
             'license_note', 'get_ubuntu_description', 'blocked_hosts',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
             'team_icon_height', 'team_icon_width', 'distri_versions',
-            'ikhaya_description', 'planet_description']
+            'news_description', 'planet_description']
 
     team_icon = storage['team_icon']
 
@@ -2159,6 +2159,6 @@ def styles(request):
     }
 
 
-def ikhaya_redirect(request, id):
+def news_redirect(request, id):
     article = get_object_or_404(Article, pk=int(id))
     return HttpResponseRedirect(url_for(article))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.ikhaya.forms
+    inyoka.news.forms
     ~~~~~~~~~~~~~~~~~~~
 
     Forms for the News.
@@ -16,7 +16,7 @@ from inyoka.utils.forms import UserField, DateWidget, \
     TimeWidget, DateTimeField, StrippedCharField
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone, \
         date_time_to_datetime
-from inyoka.ikhaya.models import Article, Suggestion, Category, Event
+from inyoka.news.models import Article, Suggestion, Category, Event
 from inyoka.portal.models import StaticFile
 
 
@@ -55,7 +55,7 @@ class EditArticleForm(forms.ModelForm):
             initial['author'] = instance.author.username
         super(EditArticleForm, self).__init__(*args, **kwargs)
         # Following stuff is in __init__ to keep helptext etc intact.
-        self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
+        self.fields['icon'].queryset = StaticFile.objects.filter(is_news_icon=True)
 
     author = UserField(label=ugettext_lazy(u'Author'), required=True)
     pub_date = DateTimeField(label=ugettext_lazy(u'Publication date'),
@@ -119,7 +119,7 @@ class EditCategoryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EditCategoryForm, self).__init__(*args, **kwargs)
         # Following stuff is in __init__ to keep helptext etc intact.
-        self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
+        self.fields['icon'].queryset = StaticFile.objects.filter(is_news_icon=True)
 
     class Meta:
         model = Category

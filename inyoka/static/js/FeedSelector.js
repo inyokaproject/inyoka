@@ -14,7 +14,7 @@
   var FEED_COUNTS = [10, 20, 30, 50, 75, 100];
   var FORUM_URL = 'http://forum.' + $BASE_DOMAIN_NAME + '/';
   var WIKI_URL = 'http://wiki.' + $BASE_DOMAIN_NAME + '/';
-  var NEWS_URL = 'http://ikhaya.' + $BASE_DOMAIN_NAME + '/';
+  var NEWS_URL = 'http://news.' + $BASE_DOMAIN_NAME + '/';
   var PLANET_URL = 'http://planet.' + $BASE_DOMAIN_NAME + '/';
 
   $(document).ready(function () {
@@ -22,7 +22,7 @@
       $('#id_forum_component_forum')[0].checked = true;
     });
     $('#forum').change(makeForumFeedURL);
-    $('#ikhaya').change(makeNewsFeedURL);
+    $('#news').change(makeNewsFeedURL);
     $('#planet').change(makePlanetFeedURL);
     $('.feed_count').after(' <span class="feed_count_adjust">');
     $('.feed_count_adjust').append('<img class="feed_count_increase" src="' + $STATIC_URL + 'img/arrow-up.gif" />')
@@ -73,7 +73,7 @@
   function makeNewsFeedURL() {
     var errors = {};
     var data = {};
-    var form = document.getElementById('ikhaya');
+    var form = document.getElementById('news');
 
     data.category = form.category.options[form.category.options.selectedIndex].value;
     _getCountMode(form, data, errors);
@@ -86,10 +86,10 @@
     if (OK) {
       if (data.category == '*') feed_url = NEWS_URL + 'feeds/' + data.mode + '/' + data.count + '/';
       else feed_url = NEWS_URL + 'feeds/' + data.category + '/' + data.mode + '/' + data.count + '/';
-      if (!$('#ikhaya_feed_url').length) {
-        $('#ikhaya_submit_p').prepend('<strong>Adresse des Feeds:</strong> ' + '<a id="ikhaya_feed_url" href="about:blank">-</a></span><br/>');
+      if (!$('#news_feed_url').length) {
+        $('#news_submit_p').prepend('<strong>Adresse des Feeds:</strong> ' + '<a id="news_feed_url" href="about:blank">-</a></span><br/>');
       }
-      $('#ikhaya_feed_url').text(feed_url).attr('href', feed_url);
+      $('#news_feed_url').text(feed_url).attr('href', feed_url);
       return feed_url;
     } else
     return false;

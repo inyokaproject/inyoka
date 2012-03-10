@@ -1,5 +1,5 @@
 {#
-    ikhaya/page.html
+    news/page.html
     ~~~~~~~~~~~~~~~~
 
     they all use (stylesheets etc).
@@ -8,48 +8,48 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'overall.html' %}
-{% do BREADCRUMB.append(_('News'), href('ikhaya'), True) %}
-{% set styles = styles|default([]) + ['ikhaya', 'highlight'] %}
-{% set scripts = scripts|default([]) + ['ikhaya'] %}
-{% set active_app = 'ikhaya' %}
+{% do BREADCRUMB.append(_('News'), href('news'), True) %}
+{% set styles = styles|default([]) + ['news', 'highlight'] %}
+{% set scripts = scripts|default([]) + ['news'] %}
+{% set active_app = 'news' %}
 {% set navi_type  = 'sidebar' %}
 
 {%- block html_head %}
   {{ super() }}
   <script type="text/javascript">
     /*<![CDATA[*/
-      var $SIDEBAR_HIDDEN = {{ USER.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
+      var $SIDEBAR_HIDDEN = {{ USER.settings.news_sidebar_hidden and 'true' or 'false' }};
     /*]]>*/
   </script>
 {%- endblock %}
 
 {% block sidebar %}
   <div class="container">
-    <h3 class="navi_about_ikhaya">Über News</h3>
-    <p>{{ ikhaya_description }}</p>
+    <h3 class="navi_about_news">Über News</h3>
+    <p>{{ news_description }}</p>
     <h3 class="navi_new_article admin_link_hover">Vorschlagen</h3>
     <ul>
-      <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest article{% endtrans %}</a></li>
-      <li><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest event{% endtrans %}</a></li>
+      <li><a href="{{ href('news', 'suggest', 'new') }}">{% trans %}Suggest article{% endtrans %}</a></li>
+      <li><a href="{{ href('news', 'event', 'suggest') }}">{% trans %}Suggest event{% endtrans %}</a></li>
       {%- if USER.can('article_edit') -%}
-        <li class="admin_link"><a href="{{ href('ikhaya', 'article', 'new') }}">{% trans %}New article{% endtrans %}</a></li>
+        <li class="admin_link"><a href="{{ href('news', 'article', 'new') }}">{% trans %}New article{% endtrans %}</a></li>
       {%- endif -%}
       {%- if USER.can('event_edit') -%}
-        <li class="admin_link"><a href="{{ href('ikhaya', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a></li>
+        <li class="admin_link"><a href="{{ href('news', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a></li>
       {%- endif -%}
     </ul>
     <h3 class="navi_archive">{% trans %}Archive{% endtrans %}</h3>
     <ul>
-      <li><a href="{{ href('ikhaya') }}">{% trans %}Current articles{% endtrans %}</a></li>
+      <li><a href="{{ href('news') }}">{% trans %}Current articles{% endtrans %}</a></li>
       {%- for date in archive -%}
         <li>
-          <a href="{{ href('ikhaya', date.strftime('%Y/%m')) }}">{{-
+          <a href="{{ href('news', date.strftime('%Y/%m')) }}">{{-
             MONTHS[date.month] }} {{ date.strftime('%Y') }}</a>
         </li>
       {%- endfor %}
       {%- if short_archive %}
         <li>
-          <a href="{{ href('ikhaya', 'archive') }}">{% trans %}Entire archive{% endtrans %}</a>
+          <a href="{{ href('news', 'archive') }}">{% trans %}Entire archive{% endtrans %}</a>
         </li>
       {% endif -%}
     </ul>
@@ -57,12 +57,12 @@
       <h3 class="navi_categories admin_link_hover{% if not categories %} admin_link{% endif %}">{% trans %}Categories{% endtrans %}</h3>
       <ul>
         {%- if USER.can('category_edit') -%}
-          <li class="admin_link"><a href="{{ href('ikhaya', 'category', 'new') }}">{% trans %}Add category{% endtrans %}</a></li>
+          <li class="admin_link"><a href="{{ href('news', 'category', 'new') }}">{% trans %}Add category{% endtrans %}</a></li>
         {%- endif -%}
         {%- for category in categories -%}
           <li class="admin_link_hover">
             {%- if USER.can('category_edit') -%}
-              <a class="admin_link" href="{{ href('ikhaya', 'category', category.slug, 'edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" /></a>
+              <a class="admin_link" href="{{ href('news', 'category', category.slug, 'edit') }}"><img src="{{ href('static', 'img/news/category_edit.png') }}" /></a>
             {%- endif -%}
             <a href="{{ category|url }}">{{ category.name|e }}</a>
           </li>
@@ -101,6 +101,6 @@
 {% endblock %}
 
 {% block content %}
-  {%- block ikhaya_content %}
+  {%- block news_content %}
   {%- endblock %}
 {%- endblock %}

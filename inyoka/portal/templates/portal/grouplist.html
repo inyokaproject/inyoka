@@ -35,7 +35,7 @@
         <a href="{{ group|url }}">{{ group.name|e }}</a>
         {%- if group in user_groups %}</strong>{% endif -%}
         {%- if USER.can('group_edit') -%}
-          <a href="{{ href('portal', 'group', group.name|e, 'edit') }}" class="admin_link"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" /></a>
+          <a href="{{ href('portal', 'group', group.name|e, 'edit') }}" class="admin_link"><img src="{{ href('static', 'img/news/category_edit.png') }}" /></a>
         {%- endif -%}
       </td>
     </tr>

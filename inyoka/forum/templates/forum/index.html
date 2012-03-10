@@ -30,7 +30,7 @@
           <th colspan="5"><a href="{{ category|url
             }}">{{ category.name|e }}</a>
             {%- if USER.can('forum_edit') -%}
-              <a href="{{ href('forum', 'forum', category.slug, 'edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" class="admin_link right" /></a>
+              <a href="{{ href('forum', 'forum', category.slug, 'edit') }}"><img src="{{ href('static', 'img/news/category_edit.png') }}" class="admin_link right" /></a>
             {%- endif -%}
           </th>
         </tr>

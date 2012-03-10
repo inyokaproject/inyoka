@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.ikhaya.views
+    inyoka.news.views
     ~~~~~~~~~~~~~~~~~~~
 
     Views for News.
@@ -37,25 +37,25 @@ from inyoka.portal.utils import check_login, require_permission
 from inyoka.portal.user import User
 from inyoka.portal.models import PrivateMessage, PrivateMessageEntry, \
      Subscription
-from inyoka.ikhaya.forms import SuggestArticleForm, EditCommentForm, \
+from inyoka.news.forms import SuggestArticleForm, EditCommentForm, \
      EditArticleForm, EditPublicArticleForm, EditCategoryForm, \
      EditEventForm, NewEventForm
-from inyoka.ikhaya.models import Event, Category, Article, Suggestion, \
+from inyoka.news.models import Event, Category, Article, Suggestion, \
      Comment, Report
 from inyoka.wiki.parser import parse, RenderContext
-from inyoka.ikhaya.notifications import send_comment_notifications, \
+from inyoka.news.notifications import send_comment_notifications, \
     send_new_suggestion_notifications
 
 
 def context_modifier(request, context):
     """
-    This function adds two things to the context of all ikhaya pages:
+    This function adds two things to the context of all news pages:
     `archive`
-        A list of the latest months with ikhaya articles.
+        A list of the latest months with news articles.
     `categories`
-        A list of all ikhaya categories.
+        A list of all news categories.
     """
-    key = 'ikhaya/archive'
+    key = 'news/archive'
     data = cache.get(key)
     if data is None:
         archive = list(Article.published.dates('pub_date', 'month', order='DESC'))
@@ -70,26 +70,26 @@ def context_modifier(request, context):
         }
         cache.set(key, data)
 
-    categories = cache.get('ikhaya/categories')
+    categories = cache.get('news/categories')
     if categories is None:
         categories = list(Category.objects.all())
-        cache.set('ikhaya/categories', categories)
+        cache.set('news/categories', categories)
 
     context.update(
         MONTHS=MONTHS,
         categories=categories,
-        ikhaya_description=storage['ikhaya_description'],
+        news_description=storage['news_description'],
         **data
     )
 
 
 event_delete = generic.DeleteView.as_view(model=Event,
-    template_name='ikhaya/event_delete.html',
-    redirect_url=href('ikhaya', 'events'),
+    template_name='news/event_delete.html',
+    redirect_url=href('news', 'events'),
     required_permission='event_edit')
 
 
-@templated('ikhaya/index.html', modifier=context_modifier)
+@templated('news/index.html', modifier=context_modifier)
 def index(request, year=None, month=None, category_slug=None, page=1, full=False):
     """Shows a few articles by different criteria"""
     def _generate_link(page, params):
@@ -114,7 +114,7 @@ def index(request, year=None, month=None, category_slug=None, page=1, full=False
     else:
         link = tuple()
 
-    link = href('ikhaya', *link)
+    link = href('news', *link)
     articles = articles.order_by('public', '-updated').only('pub_date', 'slug')
     pagination = Pagination(request, articles, page, 15, _generate_link)
     articles = Article.objects.get_cached([(a.pub_date, a.slug) for a in
@@ -135,7 +135,7 @@ def index(request, year=None, month=None, category_slug=None, page=1, full=False
     }
 
 
-@templated('ikhaya/detail.html', modifier=context_modifier)
+@templated('news/detail.html', modifier=context_modifier)
 def detail(request, year, month, day, slug):
     """Shows a single article."""
     try:
@@ -229,17 +229,17 @@ def article_delete(request, year, month, day, slug):
             flash(_(u'The article “%(title)s“ was deleted.')
                     % {'title': escape(article.subject)}, True)
     else:
-        flash(render_template('ikhaya/article_delete.html',
+        flash(render_template('news/article_delete.html',
               {'article': article}))
-    return HttpResponseRedirect(href('ikhaya'))
+    return HttpResponseRedirect(href('news'))
 
 
 @require_permission('article_edit')
-@templated('ikhaya/article_edit.html', modifier=context_modifier)
+@templated('news/article_edit.html', modifier=context_modifier)
 def article_edit(request, year=None, month=None, day=None, slug=None, suggestion_id=None):
     """
     Display an interface to let the user create or edit an article.
-    If `suggestion_id` is given, the new ikhaya article is based on a special
+    If `suggestion_id` is given, the new news article is based on a special
     article suggestion made by a user. After saving it, the suggestion will be
     deleted automatically.
     """
@@ -284,7 +284,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 else:
                     flash(_(u'The article “%(title)s“ was saved.')
                           % {'title': escape(article.subject)}, True)
-                    cache.delete('ikhaya/article/%s/%s' %
+                    cache.delete('news/article/%s/%s' %
                                  (article.pub_date, article.slug))
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
@@ -360,7 +360,7 @@ def article_unsubscribe(request, year, month, day, slug):
 
 
 @check_login()
-@templated('ikhaya/report_new.html', modifier=context_modifier)
+@templated('news/report_new.html', modifier=context_modifier)
 def report_new(request, year, month, day, slug):
     """Report a mistake in an article."""
     preview = None
@@ -412,7 +412,7 @@ def report_update(action, text):
             report.save()
             flash(text, True)
         else:
-            flash(render_template('ikhaya/report_update.html',
+            flash(render_template('news/report_update.html',
                 {'report': report, 'action': action}))
         return HttpResponseRedirect(url_for(report))
     return do
@@ -422,7 +422,7 @@ report_restore = report_update('restore', _(u'The report was restored.'))
 report_solve = report_update('solve', _(u'The report was marked as solved.'))
 report_unsolve = report_update('unsolve', _(u'The report was marked as unsolved.'))
 
-@templated('ikhaya/reports.html', modifier=context_modifier)
+@templated('news/reports.html', modifier=context_modifier)
 def reports(request, year, month, day, slug):
     """Shows a list of suggested improved versions of the article."""
     try:
@@ -437,7 +437,7 @@ def reports(request, year, month, day, slug):
     }
 
 @require_permission('article_edit')
-@templated('ikhaya/reportlist.html', modifier=context_modifier)
+@templated('news/reportlist.html', modifier=context_modifier)
 def reportlist(request):
     """Get a list of all unsolved article reports."""
     reports = Report.objects.filter(solved=False).filter(deleted=False)
@@ -446,7 +446,7 @@ def reportlist(request):
     }
 
 
-@templated('ikhaya/comment_edit.html', modifier=context_modifier)
+@templated('news/comment_edit.html', modifier=context_modifier)
 def comment_edit(request, comment_id):
     comment = Comment.objects.get(id=comment_id)
     user = request.user
@@ -476,7 +476,7 @@ def comment_update(boolean, text):
             c.save()
             flash(text, True)
         else:
-            flash(render_template('ikhaya/comment_update.html',
+            flash(render_template('news/comment_update.html',
                  {'comment': c, 'action': 'hide' if boolean else 'restore'}))
         return HttpResponseRedirect(url_for(c.article))
     return do
@@ -486,7 +486,7 @@ comment_hide = comment_update(True, _(u'The comment was hidden.'))
 comment_restore = comment_update(False, _(u'The comment was restored.'))
 
 
-@templated('ikhaya/archive.html', modifier=context_modifier)
+@templated('news/archive.html', modifier=context_modifier)
 def archive(request):
     """Shows the archive index."""
     months = Article.published.dates('pub_date', 'month')
@@ -501,7 +501,7 @@ def suggest_assign_to(request, suggestion, username):
     except Suggestion.DoesNotExist:
         flash(_(u'The suggestion “%(title)s“ does not exist.')
                 % {'title': suggestion})
-        return HttpResponseRedirect(href('ikhaya', 'suggestions'))
+        return HttpResponseRedirect(href('news', 'suggestions'))
     if username == '-':
         suggestion.owner = None
         suggestion.save()
@@ -514,7 +514,7 @@ def suggest_assign_to(request, suggestion, username):
         suggestion.save()
         flash(_(u'The suggestion was assigned to “%(user)s“.')
                 % {'user': username}, True)
-    return HttpResponseRedirect(href('ikhaya', 'suggestions'))
+    return HttpResponseRedirect(href('news', 'suggestions'))
 
 
 @require_permission('article_edit')
@@ -525,7 +525,7 @@ def suggest_delete(request, suggestion):
                 s = Suggestion.objects.get(id=suggestion)
             except Suggestion.DoesNotExist:
                 flash(_(u'This suggestion does not exist.'), False)
-                return HttpResponseRedirect(href('ikhaya', 'suggestions'))
+                return HttpResponseRedirect(href('news', 'suggestions'))
             if request.POST.get('note'):
                 args = {'title':    s.title,
                         'username': request.user.username,
@@ -559,25 +559,25 @@ def suggest_delete(request, suggestion):
                                               'entry':    entry,
                                           })
 
-            cache.delete('ikhaya/suggestion_count')
+            cache.delete('news/suggestion_count')
             s.delete()
             flash(_(u'The suggestion was deleted.'), True)
         else:
             flash(_(u'The suggestion was not deleted.'))
-        return HttpResponseRedirect(href('ikhaya', 'suggestions'))
+        return HttpResponseRedirect(href('news', 'suggestions'))
     else:
         try:
             s = Suggestion.objects.get(id=suggestion)
         except Suggestion.DoesNotExist:
             flash(_(u'This suggestion does not exist.'), False)
-            return HttpResponseRedirect(href('ikhaya', 'suggestions'))
-        flash(render_template('ikhaya/suggest_delete.html',
+            return HttpResponseRedirect(href('news', 'suggestions'))
+        flash(render_template('news/suggest_delete.html',
               {'s': s}))
-        return HttpResponseRedirect(href('ikhaya', 'suggestions'))
+        return HttpResponseRedirect(href('news', 'suggestions'))
 
 
 @check_login(message=_(u'Please login to suggest an article.'))
-@templated('ikhaya/suggest_new.html', modifier=context_modifier)
+@templated('news/suggest_new.html', modifier=context_modifier)
 def suggest_edit(request):
     """A Page to suggest a new article.
 
@@ -592,13 +592,13 @@ def suggest_edit(request):
             preview = parse(request.POST.get('text', '')).render(ctx, 'html')
         elif form.is_valid():
             suggestion = form.save(request.user)
-            cache.delete('ikhaya/suggestion_count')
+            cache.delete('news/suggestion_count')
             flash(_(u'Thank you, your article suggestion was submitted. A team '
                     'member will contact you shortly.'), True)
 
             # Send a notification message
             send_new_suggestion_notifications(request.user, suggestion)
-            return HttpResponseRedirect(href('ikhaya'))
+            return HttpResponseRedirect(href('news'))
     else:
         form = SuggestArticleForm()
     return {
@@ -608,12 +608,12 @@ def suggest_edit(request):
 
 
 @require_permission('article_edit')
-@templated('ikhaya/suggestions.html', modifier=context_modifier)
+@templated('news/suggestions.html', modifier=context_modifier)
 def suggestions(request):
     """Get a list of all article suggestions"""
     # clear notification status
     subscribed = Subscription.objects.user_subscribed(request.user,
-                 None, ['ikhaya', 'suggestion'], clear_notified=True)
+                 None, ['news', 'suggestion'], clear_notified=True)
     suggestions = Suggestion.objects.all()
     return {
         'suggestions': list(suggestions),
@@ -623,14 +623,14 @@ def suggestions(request):
 
 category_edit = generic.CreateUpdateView(
                         model=Category, form_class=EditCategoryForm,
-                        template_name='ikhaya/category_edit.html',
+                        template_name='news/category_edit.html',
                         context_object_name='category',
                         urlgroup_name='category_slug',
                         required_permission='category_edit')
 
 
 @require_permission('event_edit')
-@templated('ikhaya/events.html', modifier=context_modifier)
+@templated('news/events.html', modifier=context_modifier)
 def events(request, show_all=False, invisible=False):
     if show_all:
         objects = Event.objects.filter(visible=True).all()
@@ -650,7 +650,7 @@ def events(request, show_all=False, invisible=False):
 @require_permission('article_edit')
 def suggestions_subscribe(request):
     """Subscribe to new suggestions."""
-    ct_query = ['ikhaya', 'suggestion']
+    ct_query = ['news', 'suggestion']
     try:
         Subscription.objects.get_for_user(request.user, None, ct_query)
     except Subscription.DoesNotExist:
@@ -658,7 +658,7 @@ def suggestions_subscribe(request):
         Subscription(user=request.user, content_type=ct).save()
         flash(_(u'Notifications on new suggestions will be sent to you.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('ikhaya', 'suggestions')
+               request.GET['next'] or href('news', 'suggestions')
     return HttpResponseRedirect(redirect)
 
 
@@ -667,18 +667,18 @@ def suggestions_unsubscribe(request):
     """Unsubscribe from new suggestions."""
     try:
         subscription = Subscription.objects.get_for_user(request.user,
-                       None, ['ikhaya', 'suggestion'])
+                       None, ['news', 'suggestion'])
     except Subscription.DoesNotExist:
         pass
     else:
         subscription.delete()
         flash(_(u'No notifications on suggestions will be sent to you any more.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('ikhaya', 'suggestions')
+               request.GET['next'] or href('news', 'suggestions')
     return HttpResponseRedirect(redirect)
 
 @require_permission('event_edit')
-@templated('ikhaya/event_edit.html', modifier=context_modifier)
+@templated('news/event_edit.html', modifier=context_modifier)
 def event_edit(request, pk=None):
     new = not pk
     event = Event.objects.get(id=pk) if not new else None
@@ -705,7 +705,7 @@ def event_edit(request, pk=None):
             event = form.save(request.user)
             flash(_(u'The event was saved.'), True)
             if new:
-                cache.delete('ikhaya/event_count')
+                cache.delete('news/event_count')
             return HttpResponseRedirect(url_for(event))
     else:
         form = EditEventForm(instance=event)
@@ -717,7 +717,7 @@ def event_edit(request, pk=None):
     }
 
 
-@templated('ikhaya/event_suggest.html', modifier=context_modifier)
+@templated('news/event_suggest.html', modifier=context_modifier)
 def event_suggest(request):
     """
     User form which creates to suggest new events for the calendar.
@@ -758,7 +758,7 @@ def event_suggest(request):
                 event.location_lat = data['location_lat']
                 event.location_long = data['location_long']
             event.save()
-            cache.delete('ikhaya/event_count')
+            cache.delete('news/event_count')
             flash(_(u'The event has been saved. A team member will review it '
                     'soon.'), True)
             event = Event.objects.get(id=event.id) # get truncated slug
@@ -771,24 +771,24 @@ def event_suggest(request):
     }
 
 
-@atom_feed(name='ikhaya_feed_article')
+@atom_feed(name='news_feed_article')
 def feed_article(request, slug=None, mode='short', count=10):
     """
-    Shows the ikhaya entries that match the given criteria in an atom feed.
+    Shows the news entries that match the given criteria in an atom feed.
     """
     if slug:
         title = u'%s News – %s' % (settings.BASE_DOMAIN_NAME, slug)
-        url = href('ikhaya', 'category', slug)
+        url = href('news', 'category', slug)
     else:
         title = u'%s News' % settings.BASE_DOMAIN_NAME
-        url = href('ikhaya')
+        url = href('news')
 
     articles = Article.objects.get_latest_articles(slug, count)
 
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
                     url=url, rights=href('portal', 'lizenz'), id=url,
                     icon=href('static', 'img', 'favicon.ico'),
-                    subtitle=storage['ikhaya_description'])
+                    subtitle=storage['news_description'])
 
     for article in articles:
         kwargs = {}
@@ -814,11 +814,11 @@ def feed_article(request, slug=None, mode='short', count=10):
     return feed
 
 
-@atom_feed(name='ikhaya_feed_comment')
+@atom_feed(name='news_feed_comment')
 @does_not_exist_is_404
 def feed_comment(request, id=None, mode='short', count=10):
     """
-    Shows the ikhaya comments that match the given criteria in an atom feed.
+    Shows the news comments that match the given criteria in an atom feed.
     """
     article = None
     if id:
@@ -830,12 +830,12 @@ def feed_comment(request, id=None, mode='short', count=10):
     else:
         title = _(u'%(domain)s News comments') % {
                     'domain': settings.BASE_DOMAIN_NAME}
-        url = href('ikhaya')
+        url = href('news')
 
     comments = Comment.objects.get_latest_comments(article.id if article else None, count)
 
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
-                    subtitle=storage['ikhaya_description'],
+                    subtitle=storage['news_description'],
                     rights=href('portal', 'lizenz'),
                     id=url, url=url, icon=href('static', 'img', 'favicon.ico'),)
 

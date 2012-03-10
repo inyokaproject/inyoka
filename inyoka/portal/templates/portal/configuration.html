@@ -17,7 +17,7 @@
 <form enctype="multipart/form-data" action="" method="post" id="configuration">
   <h3>{% trans %}General settings{% endtrans %}</h3>
   <dl>
-    {{ render_form(form, ['global_message', 'blocked_hosts', 'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'license_note', 'ikhaya_description', 'planet_description'], inline=true) }}
+    {{ render_form(form, ['global_message', 'blocked_hosts', 'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'license_note', 'news_description', 'planet_description'], inline=true) }}
     {% if team_icon_url %}<dd><img class="admin_teamicon" src="{{ team_icon_url }}" alt="Team Icon" /></dd>{% endif %}
     <dt>{{ form.team_icon.label }}</dt>
     <dd>{{ form.team_icon }} {{ form.errors.team_icon }}</dd>

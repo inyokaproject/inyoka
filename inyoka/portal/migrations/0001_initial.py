@@ -114,7 +114,7 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('identifier', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
             ('file', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
-            ('is_ikhaya_icon', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
+            ('is_news_icon', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
         ))
         db.send_create_signal('portal', ['StaticFile'])
 
@@ -257,7 +257,7 @@ class Migration(SchemaMigration):
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
-            'is_ikhaya_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'})
+            'is_news_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'})
         },
         'portal.staticpage': {
             'Meta': {'object_name': 'StaticPage'},

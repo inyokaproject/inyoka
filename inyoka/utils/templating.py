@@ -107,7 +107,7 @@ def populate_context_defaults(context, flash=False):
     from inyoka.forum.models import Topic
     from inyoka.portal.models import PrivateMessageEntry
     from inyoka.utils.storage import storage
-    from inyoka.ikhaya.models import Suggestion, Event, Report
+    from inyoka.news.models import Suggestion, Event, Report
 
     try:
         request = current_request._get_current_object()
@@ -127,10 +127,10 @@ def populate_context_defaults(context, flash=False):
         if can['manage_topics']:
             keys.append('forum/reported_topic_count')
         if can['article_edit']:
-            keys.append('ikhaya/suggestion_count')
-            keys.append('ikhaya/reported_article_count')
+            keys.append('news/suggestion_count')
+            keys.append('news/reported_article_count')
         if can['event_edit']:
-            keys.append('ikhaya/event_count')
+            keys.append('news/event_count')
 
         cached_values = request_cache.get_many(keys)
         to_update = {}
@@ -150,19 +150,19 @@ def populate_context_defaults(context, flash=False):
                                         .count()
                 to_update[key] = reported
         if can['article_edit']:
-            key = 'ikhaya/suggestion_count'
+            key = 'news/suggestion_count'
             suggestions = cached_values.get(key)
             if suggestions is None:
                 suggestions = Suggestion.objects.all().count()
                 to_update[key] = suggestions
-            key = 'ikhaya/reported_article_count'
+            key = 'news/reported_article_count'
             reported_articles = cached_values.get(key)
             if reported_articles is None:
                 reported_articles = Report.objects\
                     .filter(solved=False, deleted=False).count()
                 to_update[key] = reported_articles
         if can['event_edit']:
-            key = 'ikhaya/event_count'
+            key = 'news/event_count'
             events = cached_values.get(key)
             if events is None:
                 events = Event.objects.filter(visible=False).all().count()

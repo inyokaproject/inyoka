@@ -1,13 +1,13 @@
 {#
-    ikhaya/detail.html
+    news/detail.html
     ~~~~~~~~~~~~~~~~~~
 
-    Show a single ikhaya article.
+    Show a single news article.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 {% from 'macros.html' import render_form %}
 
 {% do BREADCRUMB.append(article.subject, article|url, True) %}
@@ -15,9 +15,9 @@
 {% set scripts = ['WikiEditor'] %}
 {% set feed = 'feeds/comments/%s/%%s/20'|format(article.id) %}
 {% set feeds = [
-  (_('Comments - Captions'), href('ikhaya', feed|format('title'))),
-  (_('Comments - Teaser'), href('ikhaya', feed|format('short'))),
-  (_('Comments - Full'), href('ikhaya', feed|format('full'))),
+  (_('Comments - Captions'), href('news', feed|format('title'))),
+  (_('Comments - Teaser'), href('news', feed|format('short'))),
+  (_('Comments - Full'), href('news', feed|format('full'))),
   ] %}
 
 
@@ -39,7 +39,7 @@
   </td>
 {% endmacro %}
 
-{% block ikhaya_content %}
+{% block news_content %}
   <div class="article" id="page">
     <h3 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h3>
     {%- if article.article_icon -%}

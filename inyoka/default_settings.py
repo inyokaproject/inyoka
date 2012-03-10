@@ -108,7 +108,7 @@ FORUM_THUMBNAIL_SIZE = (64, 64)
 FORUM_OWNPOST_EDIT_LIMIT = (-1, 1800)
 FORUM_OWNPOST_DELETE_LIMIT = (0, 0)
 
-# the id of the ikhaya team group
+# the id of the news team group
 NEWS_GROUP_ID = 1
 
 # settings for the jabber bot
@@ -158,8 +158,8 @@ CACHES = {
 
 AVAILABLE_FEED_COUNTS = {
     None: (10, 25),
-    'ikhaya_feed_article': (10, 20, 25),
-    'ikhaya_feed_comment': (10, 20, 25),
+    'news_feed_article': (10, 20, 25),
+    'news_feed_comment': (10, 20, 25),
     'forum_topic_feed': (10, 20, 25, 50),
     'forum_forum_feed': (10, 20, 25, 50, 75, 100),
     'planet_feed': (10, 20, 25, 50),
@@ -196,7 +196,7 @@ INSTALLED_APPS = (
     'inyoka.portal',
     'inyoka.wiki',
     'inyoka.forum',
-    'inyoka.ikhaya',
+    'inyoka.news',
     'inyoka.pastebin',
     'inyoka.planet',
     'django_openid',
@@ -267,7 +267,7 @@ CELERY_IMPORTS = [
     'inyoka.wiki.notifications',
     'inyoka.utils.notification',
     'inyoka.forum.notifications',
-    'inyoka.ikhaya.notifications',
+    'inyoka.news.notifications',
 ]
 
 CELERY_SEND_TASK_ERROR_EMAILS = False

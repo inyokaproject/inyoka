@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from datetime import date, time
 
-from inyoka.ikhaya.models import Article, Category
+from inyoka.news.models import Article, Category
 from inyoka.portal.user import User
 
 

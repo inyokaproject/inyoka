@@ -31,7 +31,7 @@
   <h3>{{ user.username|e }}
   {%- if request.user.can('user_edit') %}
     <a href="{{ href('portal', 'user', user.username, 'edit') }}" class="admin_link"><img
-      src="{{ href('static', 'img/ikhaya/category_edit.png') }}" alt="{% trans %}Edit user{% endtrans %}" title="{% trans %}Edit user{% endtrans %}" /></a>
+      src="{{ href('static', 'img/news/category_edit.png') }}" alt="{% trans %}Edit user{% endtrans %}" title="{% trans %}Edit user{% endtrans %}" /></a>
   {%- endif %}
   {%- if request.user.can('subscribe_to_users') -%}
     {%- if is_subscribed %}
@@ -146,7 +146,7 @@
       <tr>
         <th colspan="3">{% trans %}Group memberships{% endtrans %}
           {% if REQUEST.user.can('user_edit') %}
-          <a href="{{ href('portal', 'user', user.username, 'edit', 'groups') }}" class="admin_link"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}"></a>
+          <a href="{{ href('portal', 'user', user.username, 'edit', 'groups') }}" class="admin_link"><img src="{{ href('static', 'img/news/category_edit.png') }}"></a>
           {% endif %}
         </th>
       </tr>

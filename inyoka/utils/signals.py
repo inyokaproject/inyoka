@@ -15,7 +15,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_delete
 from django.contrib.contenttypes.models import ContentType
 
-from inyoka.ikhaya.models import Article, Comment
+from inyoka.news.models import Article, Comment
 from inyoka.portal.models import Subscription
 
 

@@ -38,15 +38,15 @@ def _user_has_content(user):
     counters = (
         # private messages
         user.privatemessageentry_set.count() > 0,
-        # ikhaya articles
+        # news articles
         user.article_set.count() > 0,
-        # ikhaya article comments
+        # news article comments
         user.comment_set.count() > 0,
         # pastes
         user.entry_set.count() > 0,
         # created events
         user.event_set.count() > 0,
-        # active suggestions to ikhaya articles
+        # active suggestions to news articles
         user.suggestion_set.count() > 0,
         # user posts
         user.post_count > 0,

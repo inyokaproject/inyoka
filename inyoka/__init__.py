@@ -72,7 +72,7 @@
 
     `portal`
         The index application.  On no subdomain and the portal page.
-        Aggregates recent ikhaya posts and similar stuff.  Also shows the
+        Aggregates recent news posts and similar stuff.  Also shows the
         number of online users.
 
     `forum`
@@ -86,17 +86,17 @@
         has revisioned pages and a better parser which can savely generate XML
         based output formats.  The wiki parser also has some
         BBCode elements for compatibility with the old phpBB syntax and is
-        used in other components (`forum`, `ikhaya`, ...) as well.
+        used in other components (`forum`, `news`, ...) as well.
 
     `planet`
         A planet planet like feed aggregator.  It has archives and santized
         input data thanks to feedparser.
 
-    `ikhaya`
+    `news`
         News is zulu for `home` and a blog application.  It's used on the
         German ubuntuusers portal for site wide annoucements and other news.
         It doesn't show up on the planet automatically, for that you have to
-        add the ikhaya feed to it like for any other blog too.
+        add the news feed to it like for any other blog too.
 
     `pastebin`
         A pastebin that uses Pygments for highlighting.  It does not support

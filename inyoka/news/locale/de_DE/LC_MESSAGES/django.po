@@ -20,12 +20,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: inyoka/ikhaya/forms.py:41 inyoka/ikhaya/models.py:198
-#: inyoka/ikhaya/models.py:402
+#: inyoka/news/forms.py:41 inyoka/news/models.py:198
+#: inyoka/news/models.py:402
 msgid "Text"
 msgstr "Text"
 
-#: inyoka/ikhaya/forms.py:42
+#: inyoka/news/forms.py:42
 msgid ""
 "To refer to another comment, you can write "
 "<code>@commentnumber</code>.<br />Clicking on “reply“ will automatically "
@@ -35,148 +35,148 @@ msgstr ""
 "<code>@kommentarnummer</code> verwenden.<br />Dieser wird automatisch "
 "eingefügt, wenn du bei einem Beitrag auf „Antworten“ klickst."
 
-#: inyoka/ikhaya/forms.py:60 inyoka/ikhaya/models.py:191
-#: inyoka/ikhaya/templates/ikhaya/events.html:33
+#: inyoka/news/forms.py:60 inyoka/news/models.py:191
+#: inyoka/news/templates/news/events.html:33
 msgid "Author"
 msgstr "Autor"
 
-#: inyoka/ikhaya/forms.py:61
+#: inyoka/news/forms.py:61
 msgid "Publication date"
 msgstr "Datum der Veröffentlichung"
 
-#: inyoka/ikhaya/forms.py:62
+#: inyoka/news/forms.py:62
 msgid "If the date is in the future, the article will not appear until then."
 msgstr ""
 "Wenn das Datum in der Zukunft liegt, wird der Artikel bis zu diesem "
 "Zeitpunkt nicht angezeigt."
 
-#: inyoka/ikhaya/forms.py:65
+#: inyoka/news/forms.py:65
 msgid "Last update"
 msgstr "Letzte Aktualisierung"
 
-#: inyoka/ikhaya/forms.py:66
+#: inyoka/news/forms.py:66
 msgid "If you keep this field empty, the publication date will be used."
 msgstr ""
 "Wenn du dieses Feld leer lässt, wird automatisch das "
 "Veröffentlichungsdatum verwendet."
 
-#: inyoka/ikhaya/forms.py:95
+#: inyoka/news/forms.py:95
 msgid "There already exists an article with this slug!"
 msgstr "Es existiert schon ein Artikel mit diesem Slug!"
 
-#: inyoka/ikhaya/forms.py:175
+#: inyoka/news/forms.py:175
 msgid "The end date must occur after the start date."
 msgstr "Das Enddatum muss nach dem Startdatum liegen."
 
-#: inyoka/ikhaya/forms.py:193
+#: inyoka/news/forms.py:193
 msgid "Display event?"
 msgstr "Kalendereintrag sichtbar?"
 
-#: inyoka/ikhaya/models.py:153 inyoka/ikhaya/models.py:200
+#: inyoka/news/models.py:153 inyoka/news/models.py:200
 msgid "Slug"
 msgstr "Slug"
 
-#: inyoka/ikhaya/models.py:156 inyoka/ikhaya/models.py:196
+#: inyoka/news/models.py:156 inyoka/news/models.py:196
 msgid "Icon"
 msgstr "Icon"
 
-#: inyoka/ikhaya/models.py:175 inyoka/ikhaya/models.py:193
+#: inyoka/news/models.py:175 inyoka/news/models.py:193
 msgid "Category"
 msgstr "Kategorie"
 
-#: inyoka/ikhaya/models.py:176 inyoka/ikhaya/templates/ikhaya/page.html:57
+#: inyoka/news/models.py:176 inyoka/news/templates/news/page.html:57
 msgid "Categories"
 msgstr "Kategorien"
 
-#: inyoka/ikhaya/models.py:186 inyoka/ikhaya/templates/ikhaya/events.html:32
+#: inyoka/news/models.py:186 inyoka/news/templates/news/events.html:32
 msgid "Date"
 msgstr "Datum"
 
-#: inyoka/ikhaya/models.py:187
+#: inyoka/news/models.py:187
 msgid "Time"
 msgstr "Zeit"
 
-#: inyoka/ikhaya/models.py:188
+#: inyoka/news/models.py:188
 msgid "Last change"
 msgstr "Letzte Änderung"
 
-#: inyoka/ikhaya/models.py:192
+#: inyoka/news/models.py:192
 msgid "Headline"
 msgstr "Überschrift"
 
-#: inyoka/ikhaya/models.py:197 inyoka/ikhaya/models.py:403
+#: inyoka/news/models.py:197 inyoka/news/models.py:403
 msgid "Introduction"
 msgstr "Einleitung"
 
-#: inyoka/ikhaya/models.py:199
+#: inyoka/news/models.py:199
 msgid "Public"
 msgstr "Veröffentlicht"
 
-#: inyoka/ikhaya/models.py:202
+#: inyoka/news/models.py:202
 msgid "XHTML Markup"
 msgstr "XHTML Markup"
 
-#: inyoka/ikhaya/models.py:205
+#: inyoka/news/models.py:205
 msgid "Allow comments"
 msgstr "Kommentare erlauben"
 
-#: inyoka/ikhaya/models.py:362
+#: inyoka/news/models.py:362
 msgid "Article"
 msgstr "Artikel"
 
-#: inyoka/ikhaya/models.py:363
+#: inyoka/news/models.py:363
 msgid "Articles"
 msgstr "Artikel"
 
-#: inyoka/ikhaya/models.py:401
+#: inyoka/news/models.py:401
 msgid "Title"
 msgstr "Titel"
 
-#: inyoka/ikhaya/models.py:404
+#: inyoka/news/models.py:404
 msgid "Annotations"
 msgstr "Anmerkungen"
 
-#: inyoka/ikhaya/models.py:410
+#: inyoka/news/models.py:410
 msgid "Article suggestion"
 msgstr "Artikelvorschlag"
 
-#: inyoka/ikhaya/models.py:411
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:13
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:16
+#: inyoka/news/models.py:411
+#: inyoka/news/templates/news/suggestions.html:13
+#: inyoka/news/templates/news/suggestions.html:16
 msgid "Article suggestions"
 msgstr "Artikelvorschläge"
 
-#: inyoka/ikhaya/models.py:492
+#: inyoka/news/models.py:492
 msgid "Degree of latitude"
 msgstr "Breitengrad"
 
-#: inyoka/ikhaya/models.py:494
+#: inyoka/news/models.py:494
 msgid "Degree of longitude"
 msgstr "Längengrad"
 
-#: inyoka/ikhaya/notifications.py:23
+#: inyoka/news/notifications.py:23
 #, python-format
 msgid "New article suggestion “%(suggestion)s“"
 msgstr "Neuer Artikelvorschlag „%(suggestion)s”"
 
-#: inyoka/ikhaya/notifications.py:38
+#: inyoka/news/notifications.py:38
 #, python-format
 msgid "New comment on article “%(article)s“"
 msgstr "Neuer Kommentar zum Artikel „%(article)s”"
 
-#: inyoka/ikhaya/views.py:150
+#: inyoka/news/views.py:150
 msgid "This article is not visible for regular users."
 msgstr "Dieser Artikel ist für reguläre Benutzer unsichtbar."
 
-#: inyoka/ikhaya/views.py:169
+#: inyoka/news/views.py:169
 msgid "The comment was edited successfully."
 msgstr "Der Kommentar wurde erfolgreich bearbeitet."
 
-#: inyoka/ikhaya/views.py:176
+#: inyoka/news/views.py:176
 msgid "Your comment was created."
 msgstr "Dein Kommentar wurde erstellt."
 
-#: inyoka/ikhaya/views.py:219
+#: inyoka/news/views.py:219
 #, python-format
 msgid ""
 "The publication of the article “<a href=\"%(link)s\">%(title)s</a>“ has "
@@ -185,121 +185,121 @@ msgstr ""
 "Die Veröffentlichung des Artikels „<a href=\"%(link)s\">%(title)s</a>“ "
 "wurde aufgehoben."
 
-#: inyoka/ikhaya/views.py:224
+#: inyoka/news/views.py:224
 #, python-format
 msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>“ was canceled."
 msgstr ""
 "Löschen des Artikels „<a href=\"%(link)s\">%(title)s</a>“ wurde "
 "abgebrochen."
 
-#: inyoka/ikhaya/views.py:229
+#: inyoka/news/views.py:229
 #, python-format
 msgid "The article “%(title)s“ was deleted."
 msgstr "Der Artikel „%(title)s” wurde gelöscht."
 
-#: inyoka/ikhaya/views.py:261
+#: inyoka/news/views.py:261
 #, python-format
 msgid "This article is currently being edited by “%(user)s“!"
 msgstr "Dieser Artikel wird momentan von „%(user)s” bearbeitet!"
 
-#: inyoka/ikhaya/views.py:281
+#: inyoka/news/views.py:281
 #, python-format
 msgid "The article “%(title)s“ was created."
 msgstr "Der Artikel „%(title)s” wurde erstellt."
 
-#: inyoka/ikhaya/views.py:285
+#: inyoka/news/views.py:285
 #, python-format
 msgid "The article “%(title)s“ was saved."
 msgstr "Der Artikel „%(title)s” wurde gespeichert."
 
-#: inyoka/ikhaya/views.py:318
+#: inyoka/news/views.py:318
 msgid "You need to be logged in to subscribe to comments."
 msgstr "Du musst angemeldet sein, um Kommentare zu abonnieren."
 
-#: inyoka/ikhaya/views.py:333
+#: inyoka/news/views.py:333
 msgid "Notifications on new comments to this article will be sent to you."
 msgstr "Du wirst über neue Kommentare zu diesem Artikel benachrichtigt."
 
-#: inyoka/ikhaya/views.py:340
+#: inyoka/news/views.py:340
 msgid "You need to be logged in to unsubscribe from comments."
 msgstr "Du musst angemeldet sein, um Kommentare abzubestellen."
 
-#: inyoka/ikhaya/views.py:355
+#: inyoka/news/views.py:355
 msgid "You will no longer be notified of new comments for this article."
 msgstr "Du wirst über neue Kommentare zu diesem Artikel nicht mehr benachrichtigt."
 
-#: inyoka/ikhaya/views.py:386
+#: inyoka/news/views.py:386
 msgid "Thanks for your report."
 msgstr "Danke für deine Meldung."
 
-#: inyoka/ikhaya/views.py:420
+#: inyoka/news/views.py:420
 msgid "The report was hidden."
 msgstr "Die Meldung wurde verborgen."
 
-#: inyoka/ikhaya/views.py:421
+#: inyoka/news/views.py:421
 msgid "The report was restored."
 msgstr "Die Meldung wurde wiederhergestellt."
 
-#: inyoka/ikhaya/views.py:422
+#: inyoka/news/views.py:422
 msgid "The report was marked as solved."
 msgstr "Die Meldung wurde als erledigt markiert."
 
-#: inyoka/ikhaya/views.py:423
+#: inyoka/news/views.py:423
 msgid "The report was marked as unsolved."
 msgstr "Die Meldung wurde als nicht erledigt markiert."
 
-#: inyoka/ikhaya/views.py:459
+#: inyoka/news/views.py:459
 msgid "The comment was saved."
 msgstr "Der Kommentar wurde gespeichert."
 
-#: inyoka/ikhaya/views.py:485
+#: inyoka/news/views.py:485
 msgid "The comment was hidden."
 msgstr "Der Kommentar wurde verborgen."
 
-#: inyoka/ikhaya/views.py:486
+#: inyoka/news/views.py:486
 msgid "The comment was restored."
 msgstr "Der Kommentar wurde wiederhergestellt."
 
-#: inyoka/ikhaya/views.py:502
+#: inyoka/news/views.py:502
 #, python-format
 msgid "The suggestion “%(title)s“ does not exist."
 msgstr "Der Vorschlag „%(title)s” existiert nicht."
 
-#: inyoka/ikhaya/views.py:508
+#: inyoka/news/views.py:508
 msgid "The suggestion was assigned to nobody."
 msgstr "Der Vorschlag wurde niemandem zugewiesen."
 
-#: inyoka/ikhaya/views.py:515
+#: inyoka/news/views.py:515
 #, python-format
 msgid "The suggestion was assigned to “%(user)s“."
 msgstr "Der Vorschlag wurde „%(user)s” zugewiesen."
 
-#: inyoka/ikhaya/views.py:527 inyoka/ikhaya/views.py:572
+#: inyoka/news/views.py:527 inyoka/news/views.py:572
 msgid "This suggestion does not exist."
 msgstr "Dieser Vorschlag existiert nicht."
 
-#: inyoka/ikhaya/views.py:534 inyoka/ikhaya/views.py:539
+#: inyoka/news/views.py:534 inyoka/news/views.py:539
 msgid "Article suggestion deleted"
 msgstr "Artikelvorschlag gelöscht"
 
-#: inyoka/ikhaya/views.py:550
+#: inyoka/news/views.py:550
 #, python-format
 msgid "New private message from %(user)s: %(subject)s"
 msgstr "Neue private Nachricht von %(user)s: %(subject)s"
 
-#: inyoka/ikhaya/views.py:564
+#: inyoka/news/views.py:564
 msgid "The suggestion was deleted."
 msgstr "Der Vorschlag wurde gelöscht."
 
-#: inyoka/ikhaya/views.py:566
+#: inyoka/news/views.py:566
 msgid "The suggestion was not deleted."
 msgstr "Der Vorschlag wurde nicht gelöscht."
 
-#: inyoka/ikhaya/views.py:579
+#: inyoka/news/views.py:579
 msgid "Please login to suggest an article."
 msgstr "Bitte melde dich an, um einen Artikel vorzuschlagen."
 
-#: inyoka/ikhaya/views.py:596
+#: inyoka/news/views.py:596
 msgid ""
 "Thank you, your article suggestion was submitted. A team member will "
 "contact you shortly."
@@ -307,15 +307,15 @@ msgstr ""
 "Vielen Dank, dein Artikelvorschlag wurde gespeichert. Ein Teammitglied "
 "wird dich sobald wie möglich kontaktieren."
 
-#: inyoka/ikhaya/views.py:659
+#: inyoka/news/views.py:659
 msgid "Notifications on new suggestions will be sent to you."
 msgstr "Du wirst über neue Vorschläge benachrichtigt."
 
-#: inyoka/ikhaya/views.py:675
+#: inyoka/news/views.py:675
 msgid "No notifications on suggestions will be sent to you any more."
 msgstr "Du wirst über neue Vorschläge nicht mehr benachrichtigt."
 
-#: inyoka/ikhaya/views.py:692
+#: inyoka/news/views.py:692
 #, python-format
 msgid ""
 "The event with the id %(id)s could not be used as draft for a new event "
@@ -324,32 +324,32 @@ msgstr ""
 "Die Veranstaltung mit der ID %(id)s existiert nicht und kann daher nicht "
 "als Basis für den Kopiervorgang benutzt werden."
 
-#: inyoka/ikhaya/views.py:706
+#: inyoka/news/views.py:706
 msgid "The event was saved."
 msgstr "Die Veranstaltung wurde gespeichert."
 
-#: inyoka/ikhaya/views.py:762
+#: inyoka/news/views.py:762
 msgid "The event has been saved. A team member will review it soon."
 msgstr ""
 "Die Veranstaltung wurde gespeichert. Ein Teammitglied wird sie demnächst "
 "prüfen."
 
-#: inyoka/ikhaya/views.py:826
+#: inyoka/news/views.py:826
 #, python-format
 msgid "%(domain)s News comments – %(title)s"
 msgstr "%(domain)s News Kommentare – %(title)s"
 
-#: inyoka/ikhaya/views.py:831
+#: inyoka/news/views.py:831
 #, python-format
 msgid "%(domain)s News comments"
 msgstr "%(domain)s News Kommentare"
 
-#: inyoka/ikhaya/templates/ikhaya/archive.html:12
-#: inyoka/ikhaya/templates/ikhaya/page.html:41
+#: inyoka/news/templates/news/archive.html:12
+#: inyoka/news/templates/news/page.html:41
 msgid "Archive"
 msgstr "Archiv"
 
-#: inyoka/ikhaya/templates/ikhaya/archive.html:16
+#: inyoka/news/templates/news/archive.html:16
 #, python-format
 msgid ""
 "Here are all published articles in chronological order. You can find the "
@@ -359,7 +359,7 @@ msgstr ""
 "aktuellsten Artikel sind auf der <a href=\"%(link)s\">Startseite</a> zu "
 "sehen."
 
-#: inyoka/ikhaya/templates/ikhaya/article_delete.html:18
+#: inyoka/news/templates/news/article_delete.html:18
 #, python-format
 msgid ""
 "Are you sure you want to delete the article <a "
@@ -368,93 +368,93 @@ msgstr ""
 "Bist du sicher, dass du den Artikel <a href=\"%(link)s\">%(article)s</a> "
 "löschen möchtest?"
 
-#: inyoka/ikhaya/templates/ikhaya/article_delete.html:23
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:52
-#: inyoka/ikhaya/templates/ikhaya/event_delete.html:17
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:57
-#: inyoka/ikhaya/templates/ikhaya/events.html:45
-#: inyoka/ikhaya/templates/ikhaya/suggest_delete.html:22
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:50
+#: inyoka/news/templates/news/article_delete.html:23
+#: inyoka/news/templates/news/article_edit.html:52
+#: inyoka/news/templates/news/event_delete.html:17
+#: inyoka/news/templates/news/event_edit.html:57
+#: inyoka/news/templates/news/events.html:45
+#: inyoka/news/templates/news/suggest_delete.html:22
+#: inyoka/news/templates/news/suggestions.html:50
 msgid "Delete"
 msgstr "Löschen"
 
-#: inyoka/ikhaya/templates/ikhaya/article_delete.html:24
+#: inyoka/news/templates/news/article_delete.html:24
 msgid "Unpublish"
 msgstr "Veröffentlichung aufheben"
 
-#: inyoka/ikhaya/templates/ikhaya/article_delete.html:25
-#: inyoka/ikhaya/templates/ikhaya/comment_update.html:25
-#: inyoka/ikhaya/templates/ikhaya/event_delete.html:18
-#: inyoka/ikhaya/templates/ikhaya/report_update.html:38
-#: inyoka/ikhaya/templates/ikhaya/suggest_delete.html:23
+#: inyoka/news/templates/news/article_delete.html:25
+#: inyoka/news/templates/news/comment_update.html:25
+#: inyoka/news/templates/news/event_delete.html:18
+#: inyoka/news/templates/news/report_update.html:38
+#: inyoka/news/templates/news/suggest_delete.html:23
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:16
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:30
+#: inyoka/news/templates/news/article_edit.html:16
+#: inyoka/news/templates/news/article_edit.html:30
 msgid "New Article"
 msgstr "Neuer Artikel"
 
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:18
-#: inyoka/ikhaya/templates/ikhaya/category_edit.html:16
-#: inyoka/ikhaya/templates/ikhaya/detail.html:65
-#: inyoka/ikhaya/templates/ikhaya/detail.html:87
-#: inyoka/ikhaya/templates/ikhaya/detail.html:92
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:17
-#: inyoka/ikhaya/templates/ikhaya/events.html:44
-#: inyoka/ikhaya/templates/ikhaya/index.html:76
+#: inyoka/news/templates/news/article_edit.html:18
+#: inyoka/news/templates/news/category_edit.html:16
+#: inyoka/news/templates/news/detail.html:65
+#: inyoka/news/templates/news/detail.html:87
+#: inyoka/news/templates/news/detail.html:92
+#: inyoka/news/templates/news/event_edit.html:17
+#: inyoka/news/templates/news/events.html:44
+#: inyoka/news/templates/news/index.html:76
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:25
+#: inyoka/news/templates/news/article_edit.html:25
 #, python-format
 msgid "Edit article “<a href=\"%(link)s\" title=\"Show article\">%(article)s</a>“"
 msgstr ""
 "Bearbeite Artikel „<a href=\"%(link)s\" title=\"Artikel "
 "anzeigen\">%(article)s</a>”"
 
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:46
-#: inyoka/ikhaya/templates/ikhaya/category_edit.html:24
-#: inyoka/ikhaya/templates/ikhaya/comment_edit.html:20
-#: inyoka/ikhaya/templates/ikhaya/detail.html:129
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:63
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:53
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:46
-#: inyoka/ikhaya/templates/ikhaya/report_new.html:34
+#: inyoka/news/templates/news/article_edit.html:46
+#: inyoka/news/templates/news/category_edit.html:24
+#: inyoka/news/templates/news/comment_edit.html:20
+#: inyoka/news/templates/news/detail.html:129
+#: inyoka/news/templates/news/detail.m.html:63
+#: inyoka/news/templates/news/event_edit.html:53
+#: inyoka/news/templates/news/event_suggest.html:46
+#: inyoka/news/templates/news/report_new.html:34
 msgid "Submit"
 msgstr "Speichern"
 
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:47
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:59
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:90
-#: inyoka/ikhaya/templates/ikhaya/detail.html:128
-#: inyoka/ikhaya/templates/ikhaya/detail.html:133
-#: inyoka/ikhaya/templates/ikhaya/detail.html:180
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:62
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:67
-#: inyoka/ikhaya/templates/ikhaya/report_new.html:33
-#: inyoka/ikhaya/templates/ikhaya/report_new.html:39
+#: inyoka/news/templates/news/article_edit.html:47
+#: inyoka/news/templates/news/article_edit.html:59
+#: inyoka/news/templates/news/article_edit.html:90
+#: inyoka/news/templates/news/detail.html:128
+#: inyoka/news/templates/news/detail.html:133
+#: inyoka/news/templates/news/detail.html:180
+#: inyoka/news/templates/news/detail.m.html:62
+#: inyoka/news/templates/news/detail.m.html:67
+#: inyoka/news/templates/news/report_new.html:33
+#: inyoka/news/templates/news/report_new.html:39
 msgid "Preview"
 msgstr "Vorschau"
 
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:50
+#: inyoka/news/templates/news/article_edit.html:50
 msgid "Show article"
 msgstr "Artikel anzeigen"
 
-#: inyoka/ikhaya/templates/ikhaya/article_edit.html:51
+#: inyoka/news/templates/news/article_edit.html:51
 msgid "Short URL"
 msgstr "Kurz-URL"
 
-#: inyoka/ikhaya/templates/ikhaya/category_edit.html:14
+#: inyoka/news/templates/news/category_edit.html:14
 msgid "Create category"
 msgstr "Kategorie erstellen"
 
-#: inyoka/ikhaya/templates/ikhaya/comment_edit.html:12
-#: inyoka/ikhaya/templates/ikhaya/comment_edit.html:17
+#: inyoka/news/templates/news/comment_edit.html:12
+#: inyoka/news/templates/news/comment_edit.html:17
 msgid "Edit comment"
 msgstr "Kommentar bearbeiten"
 
-#: inyoka/ikhaya/templates/ikhaya/comment_update.html:15
+#: inyoka/news/templates/news/comment_update.html:15
 #, python-format
 msgid ""
 "Do you want to restore the <a href=\"%(link)s\">comment from "
@@ -463,206 +463,206 @@ msgstr ""
 "Möchtest du den <a href=\"%(link)s\">Kommentar von %(author)s</a> "
 "wiederherstellen?"
 
-#: inyoka/ikhaya/templates/ikhaya/comment_update.html:19
+#: inyoka/news/templates/news/comment_update.html:19
 #, python-format
 msgid "Do you want to hide the <a href=\"%(link)s\">comment from %(author)s</a>?"
 msgstr ""
 "Möchtest du den <a href=\"%(link)s\">Kommentar von %(author)s</a> "
 "verbergen?"
 
-#: inyoka/ikhaya/templates/ikhaya/comment_update.html:24
-#: inyoka/ikhaya/templates/ikhaya/detail.html:95
-#: inyoka/ikhaya/templates/ikhaya/report_update.html:34
-#: inyoka/ikhaya/templates/ikhaya/reports.html:34
+#: inyoka/news/templates/news/comment_update.html:24
+#: inyoka/news/templates/news/detail.html:95
+#: inyoka/news/templates/news/report_update.html:34
+#: inyoka/news/templates/news/reports.html:34
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: inyoka/ikhaya/templates/ikhaya/comment_update.html:24
-#: inyoka/ikhaya/templates/ikhaya/detail.html:97
-#: inyoka/ikhaya/templates/ikhaya/report_update.html:33
-#: inyoka/ikhaya/templates/ikhaya/reportlist.html:35
-#: inyoka/ikhaya/templates/ikhaya/reports.html:36
+#: inyoka/news/templates/news/comment_update.html:24
+#: inyoka/news/templates/news/detail.html:97
+#: inyoka/news/templates/news/report_update.html:33
+#: inyoka/news/templates/news/reportlist.html:35
+#: inyoka/news/templates/news/reports.html:36
 msgid "Hide"
 msgstr "Verbergen"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:18
+#: inyoka/news/templates/news/detail.html:18
 msgid "Comments - Captions"
 msgstr "Kommentare - Überschriften"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:19
+#: inyoka/news/templates/news/detail.html:19
 msgid "Comments - Teaser"
 msgstr "Kommentare - Einleitung"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:20
+#: inyoka/news/templates/news/detail.html:20
 msgid "Comments - Full"
 msgstr "Kommentare - Vollständig"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:29
+#: inyoka/news/templates/news/detail.html:29
 msgid "Team icon"
 msgstr "Team-Icon"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:37
+#: inyoka/news/templates/news/detail.html:37
 #, python-format
 msgid "Avatar of %(user)s"
 msgstr "Avatar von %(user)s"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:55
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:19
-#: inyoka/ikhaya/templates/ikhaya/index.html:52
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:18
+#: inyoka/news/templates/news/detail.html:55
+#: inyoka/news/templates/news/detail.m.html:19
+#: inyoka/news/templates/news/index.html:52
+#: inyoka/news/templates/news/index.m.html:18
 #, python-format
 msgid "Written by <a href=\"%(link)s\">%(author)s</a>"
 msgstr "Verfasst von <a href=\"%(link)s\">%(author)s</a>"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:59
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:25
-#: inyoka/ikhaya/templates/ikhaya/index.html:56
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:24
+#: inyoka/news/templates/news/detail.html:59
+#: inyoka/news/templates/news/detail.m.html:25
+#: inyoka/news/templates/news/index.html:56
+#: inyoka/news/templates/news/index.m.html:24
 msgid "Category:"
 msgstr "Kategorie:"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:61
-#: inyoka/ikhaya/templates/ikhaya/index.html:59
+#: inyoka/news/templates/news/detail.html:61
+#: inyoka/news/templates/news/index.html:59
 msgid "Last update:"
 msgstr "Letzte Aktualisierung:"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:69
+#: inyoka/news/templates/news/detail.html:69
 msgid "Unsubscribe comments"
 msgstr "Kommentare abbestellen"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:71
+#: inyoka/news/templates/news/detail.html:71
 msgid "Subscribe comments"
 msgstr "Kommentare abonnieren"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:74
+#: inyoka/news/templates/news/detail.html:74
 msgid "Report misspelling"
 msgstr "Rechtschreibfehler melden"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:103
+#: inyoka/news/templates/news/detail.html:103
 msgid "Reply"
 msgstr "Antworten"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:157
+#: inyoka/news/templates/news/detail.html:157
 #, python-format
 msgid " Comments (%(count)s)"
 msgstr " Kommentare (%(count)s)"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:159
+#: inyoka/news/templates/news/detail.html:159
 msgid "Write comment"
 msgstr "Kommentar schreiben"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:37
-#: inyoka/ikhaya/templates/ikhaya/index.html:25
-#: inyoka/ikhaya/templates/ikhaya/index.html:26
-#: inyoka/ikhaya/templates/ikhaya/index.html:27
+#: inyoka/news/templates/news/detail.m.html:37
+#: inyoka/news/templates/news/index.html:25
+#: inyoka/news/templates/news/index.html:26
+#: inyoka/news/templates/news/index.html:27
 msgid "Comments"
 msgstr "Kommentare"
 
-#: inyoka/ikhaya/templates/ikhaya/event_delete.html:13
+#: inyoka/news/templates/news/event_delete.html:13
 #, python-format
 msgid "Do you really want to delete the event <a href=\"%(link)s\">%(event)s</a>?"
 msgstr ""
 "Möchtest du die Veranstaltung <a href=\"%(link)s\">%(event)s</a> wirklich"
 " löschen?"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:15
+#: inyoka/news/templates/news/event_edit.html:15
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:20
-#: inyoka/ikhaya/templates/ikhaya/events.html:12
-#: inyoka/ikhaya/templates/ikhaya/events.html:15
+#: inyoka/news/templates/news/event_edit.html:20
+#: inyoka/news/templates/news/events.html:12
+#: inyoka/news/templates/news/events.html:15
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:29
+#: inyoka/news/templates/news/event_edit.html:29
 msgid "Suggested by:"
 msgstr "Vorgeschlagen von:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:33
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:27
+#: inyoka/news/templates/news/event_edit.html:33
+#: inyoka/news/templates/news/event_suggest.html:27
 msgid "Name:"
 msgstr "Name:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:35
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:29
+#: inyoka/news/templates/news/event_edit.html:35
+#: inyoka/news/templates/news/event_suggest.html:29
 msgid "Time:"
 msgstr "Zeit:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:36
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:30
+#: inyoka/news/templates/news/event_edit.html:36
+#: inyoka/news/templates/news/event_suggest.html:30
 msgid "Date (from):"
 msgstr "Datum (von):"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:37
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:31
+#: inyoka/news/templates/news/event_edit.html:37
+#: inyoka/news/templates/news/event_suggest.html:31
 msgid "Time (from):"
 msgstr "Zeit (von):"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:38
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:32
+#: inyoka/news/templates/news/event_edit.html:38
+#: inyoka/news/templates/news/event_suggest.html:32
 msgid "Date (to):"
 msgstr "Datum (bis):"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:39
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:33
+#: inyoka/news/templates/news/event_edit.html:39
+#: inyoka/news/templates/news/event_suggest.html:33
 msgid "Time (to):"
 msgstr "Zeit (bis):"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:40
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:34
+#: inyoka/news/templates/news/event_edit.html:40
+#: inyoka/news/templates/news/event_suggest.html:34
 msgid "Description:"
 msgstr "Beschreibung:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:42
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:44
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:36
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:38
+#: inyoka/news/templates/news/event_edit.html:42
+#: inyoka/news/templates/news/event_edit.html:44
+#: inyoka/news/templates/news/event_suggest.html:36
+#: inyoka/news/templates/news/event_suggest.html:38
 msgid "Location:"
 msgstr "Ort:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:43
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:37
+#: inyoka/news/templates/news/event_edit.html:43
+#: inyoka/news/templates/news/event_suggest.html:37
 msgid "Town:"
 msgstr "Stadt:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:46
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:40
+#: inyoka/news/templates/news/event_edit.html:46
+#: inyoka/news/templates/news/event_suggest.html:40
 msgid "Coordinates:"
 msgstr "Koordinaten:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:47
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:41
+#: inyoka/news/templates/news/event_edit.html:47
+#: inyoka/news/templates/news/event_suggest.html:41
 msgid "Longitude:"
 msgstr "Längengrad:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:48
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:42
+#: inyoka/news/templates/news/event_edit.html:48
+#: inyoka/news/templates/news/event_suggest.html:42
 msgid "Latitude:"
 msgstr "Breitengrad:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:49
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:43
-#: inyoka/ikhaya/templates/ikhaya/page.html:86
+#: inyoka/news/templates/news/event_edit.html:49
+#: inyoka/news/templates/news/event_suggest.html:43
+#: inyoka/news/templates/news/page.html:86
 msgid "General"
 msgstr "Allgemein"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:50
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:44
+#: inyoka/news/templates/news/event_edit.html:50
+#: inyoka/news/templates/news/event_suggest.html:44
 msgid "Entry visible:"
 msgstr "Eintrag sichtbar:"
 
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:56
+#: inyoka/news/templates/news/event_edit.html:56
 msgid "Show event"
 msgstr "Veranstaltung anzeigen"
 
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:14
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:17
-#: inyoka/ikhaya/templates/ikhaya/page.html:33
+#: inyoka/news/templates/news/event_suggest.html:14
+#: inyoka/news/templates/news/event_suggest.html:17
+#: inyoka/news/templates/news/page.html:33
 msgid "Suggest event"
 msgstr "Veranstaltung vorschlagen"
 
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:19
+#: inyoka/news/templates/news/event_suggest.html:19
 #, python-format
 msgid ""
 "Using this form you can suggest a new entry for our <a "
@@ -673,147 +673,147 @@ msgstr ""
 "href=\"%(link)s\">Kalender</a> eintragen. Ein Teammitglied wird sich "
 "deinen Vorschlag so schnell wie möglich ansehen."
 
-#: inyoka/ikhaya/templates/ikhaya/events.html:17
-#: inyoka/ikhaya/templates/ikhaya/page.html:38
+#: inyoka/news/templates/news/events.html:17
+#: inyoka/news/templates/news/page.html:38
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
-#: inyoka/ikhaya/templates/ikhaya/events.html:19
+#: inyoka/news/templates/news/events.html:19
 msgid "Display past events"
 msgstr "Zeige vergangene Veranstaltungen an"
 
-#: inyoka/ikhaya/templates/ikhaya/events.html:22
+#: inyoka/news/templates/news/events.html:22
 msgid "Show only invisible events"
 msgstr "Zeige nur unsichtbare Veranstaltungen an"
 
-#: inyoka/ikhaya/templates/ikhaya/events.html:25
+#: inyoka/news/templates/news/events.html:25
 msgid "Show only upcoming events"
 msgstr "Zeige nur kommende Veranstaltungen an"
 
-#: inyoka/ikhaya/templates/ikhaya/events.html:31
+#: inyoka/news/templates/news/events.html:31
 msgid "Name"
 msgstr "Name"
 
-#: inyoka/ikhaya/templates/ikhaya/events.html:34
+#: inyoka/news/templates/news/events.html:34
 msgid "Actions"
 msgstr "Aktionen"
 
-#: inyoka/ikhaya/templates/ikhaya/events.html:46
+#: inyoka/news/templates/news/events.html:46
 msgid "Copy"
 msgstr "Kopieren"
 
-#: inyoka/ikhaya/templates/ikhaya/events.html:52
+#: inyoka/news/templates/news/events.html:52
 #, python-format
 msgid "No event was added yet, <a href=\"%(link)s\">create</a> the first one now!"
 msgstr ""
 "Es wurde noch keine Veranstaltung hinzugefügt, <a "
 "href=\"%(link)s\">erstelle</a> jetzt die erste!"
 
-#: inyoka/ikhaya/templates/ikhaya/index.html:15
-#: inyoka/ikhaya/templates/ikhaya/index.html:22
+#: inyoka/news/templates/news/index.html:15
+#: inyoka/news/templates/news/index.html:22
 msgid "Captions"
 msgstr "Überschriften"
 
-#: inyoka/ikhaya/templates/ikhaya/index.html:16
-#: inyoka/ikhaya/templates/ikhaya/index.html:23
+#: inyoka/news/templates/news/index.html:16
+#: inyoka/news/templates/news/index.html:23
 msgid "Teaser"
 msgstr "Einleitung"
 
-#: inyoka/ikhaya/templates/ikhaya/index.html:17
-#: inyoka/ikhaya/templates/ikhaya/index.html:24
-#: inyoka/ikhaya/templates/ikhaya/index.html:25
-#: inyoka/ikhaya/templates/ikhaya/index.html:26
-#: inyoka/ikhaya/templates/ikhaya/index.html:27
+#: inyoka/news/templates/news/index.html:17
+#: inyoka/news/templates/news/index.html:24
+#: inyoka/news/templates/news/index.html:25
+#: inyoka/news/templates/news/index.html:26
+#: inyoka/news/templates/news/index.html:27
 msgid "Full"
 msgstr "Komplett"
 
-#: inyoka/ikhaya/templates/ikhaya/index.html:22
-#: inyoka/ikhaya/templates/ikhaya/index.html:23
-#: inyoka/ikhaya/templates/ikhaya/index.html:24
-#: inyoka/ikhaya/templates/ikhaya/page.html:11
+#: inyoka/news/templates/news/index.html:22
+#: inyoka/news/templates/news/index.html:23
+#: inyoka/news/templates/news/index.html:24
+#: inyoka/news/templates/news/page.html:11
 msgid "News"
 msgstr "Nachrichten"
 
-#: inyoka/ikhaya/templates/ikhaya/index.html:62
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:29
+#: inyoka/news/templates/news/index.html:62
+#: inyoka/news/templates/news/index.m.html:29
 #, python-format
 msgid "%(count)s <a href=\"%(link)s\">Comment</a>"
 msgid_plural "%(count)s <a href=\"%(link)s\">Comments</a>"
 msgstr[0] "%(count)s <a href=\"%(link)s\">Kommentar</a>"
 msgstr[1] "%(count)s <a href=\"%(link)s\">Kommentare</a>"
 
-#: inyoka/ikhaya/templates/ikhaya/index.html:68
+#: inyoka/news/templates/news/index.html:68
 msgid "Unsubscribe"
 msgstr "Abbestellen"
 
-#: inyoka/ikhaya/templates/ikhaya/index.html:70
+#: inyoka/news/templates/news/index.html:70
 msgid "Subscribe"
 msgstr "Abonnieren"
 
-#: inyoka/ikhaya/templates/ikhaya/index.html:84
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:41
+#: inyoka/news/templates/news/index.html:84
+#: inyoka/news/templates/news/index.m.html:41
 msgid "There is no article."
 msgstr "Es gibt keinen Artikel."
 
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:38
+#: inyoka/news/templates/news/index.m.html:38
 msgid "More »"
 msgstr "Mehr »"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:32
+#: inyoka/news/templates/news/page.html:32
 msgid "Suggest article"
 msgstr "Artikel vorschlagen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:35
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:52
+#: inyoka/news/templates/news/page.html:35
+#: inyoka/news/templates/news/suggestions.html:52
 msgid "New article"
 msgstr "Neuer Artikel"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:43
+#: inyoka/news/templates/news/page.html:43
 msgid "Current articles"
 msgstr "Aktuelle Artikel"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:52
+#: inyoka/news/templates/news/page.html:52
 msgid "Entire archive"
 msgstr "Ganzes Archiv"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:60
+#: inyoka/news/templates/news/page.html:60
 msgid "Add category"
 msgstr "Kategorie hinzufügen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:73
+#: inyoka/news/templates/news/page.html:73
 msgid "Display options"
 msgstr "Anzeigeoptionen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:76
+#: inyoka/news/templates/news/page.html:76
 msgid "Show only teaser"
 msgstr "Nur Einleitung anzeigen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:78
+#: inyoka/news/templates/news/page.html:78
 msgid "Show full article"
 msgstr "Gesamten Artikel anzeigen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:83
+#: inyoka/news/templates/news/page.html:83
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:89
+#: inyoka/news/templates/news/page.html:89
 msgid "Stylesheets"
 msgstr "Stylesheets"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:92
+#: inyoka/news/templates/news/page.html:92
 msgid "Static pages"
 msgstr "Statische Seiten"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:95
+#: inyoka/news/templates/news/page.html:95
 msgid "Static files"
 msgstr "Statische Dateien"
 
-#: inyoka/ikhaya/templates/ikhaya/report_new.html:21
+#: inyoka/news/templates/news/report_new.html:21
 #, python-format
 msgid "New report for the article ”<a href=\"%(link)s\">%(article)s</a>”"
 msgstr "Neue Meldung zum Artikel „<a href=\"%(link)s\">%(article)s</a>“"
 
-#: inyoka/ikhaya/templates/ikhaya/report_new.html:26
+#: inyoka/news/templates/news/report_new.html:26
 #, python-format
 msgid ""
 "Describe here briefly the discovered mistake. Please make sure that the "
@@ -823,12 +823,12 @@ msgstr ""
 "darauf, dass der Fehler nicht bereits <a href=\"%(link)s\">gemeldet "
 "wurde</a>."
 
-#: inyoka/ikhaya/templates/ikhaya/report_update.html:15
+#: inyoka/news/templates/news/report_update.html:15
 #, python-format
 msgid "Do you want to hide the <a href=\"%(link)s\">report from %(author)s</a>?"
 msgstr "Möchtest du die <a href=\"%(link)s\">Meldung von %(author)s</a> verbergen?"
 
-#: inyoka/ikhaya/templates/ikhaya/report_update.html:19
+#: inyoka/news/templates/news/report_update.html:19
 #, python-format
 msgid ""
 "Do you want to restore the <a href=\"%(link)s\">report from "
@@ -837,7 +837,7 @@ msgstr ""
 "Möchtest du die <a href=\"%(link)s\">Meldung von %(author)s</a> "
 "wiederherstellen?"
 
-#: inyoka/ikhaya/templates/ikhaya/report_update.html:23
+#: inyoka/news/templates/news/report_update.html:23
 #, python-format
 msgid ""
 "Do you want to mark the <a href=\"%(link)s\">report from %(author)s</a> "
@@ -846,7 +846,7 @@ msgstr ""
 "Möchtest du die <a href=\"%(link)s\">Meldung von %(author)s</a> als "
 "gelöst markieren?"
 
-#: inyoka/ikhaya/templates/ikhaya/report_update.html:27
+#: inyoka/news/templates/news/report_update.html:27
 #, python-format
 msgid ""
 "Do you want to mark the <a href=\"%(link)s\">report from %(author)s</a> "
@@ -855,57 +855,57 @@ msgstr ""
 "Möchtest du die <a href=\"%(link)s\">Meldung von %(author)s</a> als "
 "ungelöst markieren?"
 
-#: inyoka/ikhaya/templates/ikhaya/report_update.html:35
+#: inyoka/news/templates/news/report_update.html:35
 msgid "Mark as solved"
 msgstr "Als gelöst markieren"
 
-#: inyoka/ikhaya/templates/ikhaya/report_update.html:36
+#: inyoka/news/templates/news/report_update.html:36
 msgid "Mark as unsolved"
 msgstr "Als ungelöst markieren"
 
-#: inyoka/ikhaya/templates/ikhaya/reportlist.html:12
-#: inyoka/ikhaya/templates/ikhaya/reports.html:12
+#: inyoka/news/templates/news/reportlist.html:12
+#: inyoka/news/templates/news/reports.html:12
 msgid "Reports"
 msgstr "Meldungen"
 
-#: inyoka/ikhaya/templates/ikhaya/reportlist.html:24
-#: inyoka/ikhaya/templates/ikhaya/reports.html:25
+#: inyoka/news/templates/news/reportlist.html:24
+#: inyoka/news/templates/news/reports.html:25
 #, python-format
 msgid "Reported by <a href=\"%(link)s\">%(author)s</a>"
 msgstr "Gemeldet von <a href=\"%(link)s\">%(author)s</a>"
 
-#: inyoka/ikhaya/templates/ikhaya/reportlist.html:30
+#: inyoka/news/templates/news/reportlist.html:30
 #, python-format
 msgid "Concerns article “<a href=\"%(link)s\">%(article)s</a>“"
 msgstr "Betrifft Artikel „<a href=\"%(link)s\">%(article)s</a>“"
 
-#: inyoka/ikhaya/templates/ikhaya/reportlist.html:37
-#: inyoka/ikhaya/templates/ikhaya/reports.html:40
+#: inyoka/news/templates/news/reportlist.html:37
+#: inyoka/news/templates/news/reports.html:40
 msgid "Solved"
 msgstr "Gelöst"
 
-#: inyoka/ikhaya/templates/ikhaya/reportlist.html:39
-#: inyoka/ikhaya/templates/ikhaya/reports.html:45
+#: inyoka/news/templates/news/reportlist.html:39
+#: inyoka/news/templates/news/reports.html:45
 msgid "Edit article"
 msgstr "Artikel bearbeiten"
 
-#: inyoka/ikhaya/templates/ikhaya/reports.html:42
+#: inyoka/news/templates/news/reports.html:42
 msgid "Unsolved"
 msgstr "Ungelöst"
 
-#: inyoka/ikhaya/templates/ikhaya/reports.html:51
+#: inyoka/news/templates/news/reports.html:51
 msgid "There are no reports yet."
 msgstr "Es existieren noch keine Fehlermeldungen."
 
-#: inyoka/ikhaya/templates/ikhaya/reports.html:54
+#: inyoka/news/templates/news/reports.html:54
 msgid "Report a new spelling mistake"
 msgstr "Einen Rechtschreibfehler melden!"
 
-#: inyoka/ikhaya/templates/ikhaya/suggest_delete.html:15
+#: inyoka/news/templates/news/suggest_delete.html:15
 msgid "Explanation for the author of the suggestion:"
 msgstr "Erläuterung für den Autor des Vorschlages:"
 
-#: inyoka/ikhaya/templates/ikhaya/suggest_delete.html:18
+#: inyoka/news/templates/news/suggest_delete.html:18
 msgid ""
 "Leave this field empty if the suggestion should be deleted without an "
 "explanation."
@@ -913,48 +913,48 @@ msgstr ""
 "Lasse dieses Feld leer, wenn du den Vorschlag ohne eine Erläuterung "
 "löschen möchtest."
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:18
+#: inyoka/news/templates/news/suggestions.html:18
 #, python-format
 msgid "Here is one article suggestion which was not yet reviewed."
 msgid_plural "Here are %(count)s article suggestions which were not yet reviewed."
 msgstr[0] "Es gibt noch einen Artikelvorschlag zum Bearbeiten."
 msgstr[1] "Es gibt noch %(count)s Artikelvorschläge zum Bearbeiten."
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:24
+#: inyoka/news/templates/news/suggestions.html:24
 msgid "Do not notify me anymore about new article suggestions"
 msgstr "Benachrichtige mich nicht mehr bei neuen Artikelvorschlägen"
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:26
+#: inyoka/news/templates/news/suggestions.html:26
 msgid "Notify me about new article suggestions"
 msgstr "Benachrichtige mich bei neuen Artikelvorschlägen"
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:34
+#: inyoka/news/templates/news/suggestions.html:34
 #, python-format
 msgid "Suggested by <a href=\"%(link)s\">%(author)s</a>"
 msgstr "Vorgeschlagen von <a href=\"%(link)s\">%(author)s</a>"
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:39
+#: inyoka/news/templates/news/suggestions.html:39
 msgid "Assigned to:"
 msgstr "Zugewiesen an:"
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:41
+#: inyoka/news/templates/news/suggestions.html:41
 msgid "Nobody"
 msgstr "Niemanden"
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:46
+#: inyoka/news/templates/news/suggestions.html:46
 msgid "Assign to me"
 msgstr "Mir zuweisen"
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:48
+#: inyoka/news/templates/news/suggestions.html:48
 msgid "Delete assignment"
 msgstr "Zuweisung löschen"
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:54
+#: inyoka/news/templates/news/suggestions.html:54
 #, python-format
 msgid "Write message to %(author)s"
 msgstr "%(author)s eine Nachricht schreiben"
 
-#: inyoka/ikhaya/templates/ikhaya/suggestions.html:67
+#: inyoka/news/templates/news/suggestions.html:67
 msgid "There are currently no article suggestions."
 msgstr "Es gibt momentan keine Artikelvorschläge."
 

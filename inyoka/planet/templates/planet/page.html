@@ -44,14 +44,14 @@
     {%- if blogs %}
       <h3 class="navi_blogs admin_link_hover">
         {%- if USER.can('blog_edit') -%}
-          <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/ikhaya/category_new.png') }}" /></a>
+          <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/news/category_new.png') }}" /></a>
         {%- endif -%}{% trans %}Blogs{% endtrans %}
       </h3>
       <ul>
         {%- for blog in blogs %}
           <li class="admin_link_hover">
             {%- if USER.can('category_edit') -%}
-              <a class="admin_link" href="{{ blog|url('edit') }}"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}" /></a>
+              <a class="admin_link" href="{{ blog|url('edit') }}"><img src="{{ href('static', 'img/news/category_edit.png') }}" /></a>
             {%- endif -%}
             <a href="{{ blog|url|e }}">{{ blog.name|e }}</a>
           </li>
@@ -61,7 +61,7 @@
     {%- if USER.can('blog_edit') %}
       <h3 class="navi_blogs admin_link_hover">
         {%- if USER.can('blog_edit') -%}
-          <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/ikhaya/article_new.png') }}" /></a>
+          <a class="admin_link" href="{{ href('planet', 'blog', 'new') }}"><img src="{{ href('static', 'img/news/article_new.png') }}" /></a>
         {%- endif -%}
         {% trans %}Configuration{% endtrans %}
       </h3>

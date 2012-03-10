@@ -29,7 +29,7 @@ from inyoka.utils.terminal import show
 import inyoka.forum.search
 import inyoka.planet.models
 import inyoka.wiki.search
-import inyoka.ikhaya.models
+import inyoka.news.models
 
 
 

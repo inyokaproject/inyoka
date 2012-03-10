@@ -3,7 +3,7 @@
 
 load("extra/jslint.js");
 
-var files = ["DateTime.js", "FeedSelector.js", "forum.js", "ikhaya.js",
+var files = ["DateTime.js", "FeedSelector.js", "forum.js", "news.js",
              "jquery.extensions.js", "NewTopic.js", "overall.js",
              "Pastebin.js", "PrivilegeBox.js",
              "UserGroupBox.js", "WikiEditor.js"]

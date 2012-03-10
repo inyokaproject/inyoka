@@ -7,9 +7,9 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Adding model 'Report'
-        db.create_table('ikhaya_report', (
+        db.create_table('news_report', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('article', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['ikhaya.Article'], null=True)),
+            ('article', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['news.Article'], null=True)),
             ('text', self.gf('django.db.models.fields.TextField')()),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['portal.User'])),
             ('pub_date', self.gf('django.db.models.fields.DateTimeField')()),
@@ -17,20 +17,20 @@ class Migration(SchemaMigration):
             ('solved', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('rendered_text', self.gf('django.db.models.fields.TextField')()),
         ))
-        db.send_create_signal('ikhaya', ['Report'])
+        db.send_create_signal('news', ['Report'])
 
 
     def backwards(self, orm):
 
         # Deleting model 'Report'
-        db.delete_table('ikhaya_report')
+        db.delete_table('news_report')
 
 
     models = {
-        'ikhaya.article': {
+        'news.article': {
             'Meta': {'ordering': "['-pub_date', '-pub_time', 'author']", 'unique_together': "(('pub_date', 'slug'),)", 'object_name': 'Article'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'article_set'", 'to': "orm['portal.User']"}),
-            'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['ikhaya.Category']"}),
+            'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['news.Category']"}),
             'comment_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'comments_enabled': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.StaticFile']", 'null': 'True', 'blank': 'True'}),
@@ -45,16 +45,16 @@ class Migration(SchemaMigration):
             'text': ('django.db.models.fields.TextField', [], {}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'})
         },
-        'ikhaya.category': {
+        'news.category': {
             'Meta': {'object_name': 'Category'},
             'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.StaticFile']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '180'}),
             'slug': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'unique': 'True', 'max_length': '100', 'blank': 'True'})
         },
-        'ikhaya.comment': {
+        'news.comment': {
             'Meta': {'object_name': 'Comment'},
-            'article': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['ikhaya.Article']", 'null': 'True'}),
+            'article': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['news.Article']", 'null': 'True'}),
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.User']"}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -62,9 +62,9 @@ class Migration(SchemaMigration):
             'rendered_text': ('django.db.models.fields.TextField', [], {}),
             'text': ('django.db.models.fields.TextField', [], {})
         },
-        'ikhaya.report': {
+        'news.report': {
             'Meta': {'object_name': 'Report'},
-            'article': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['ikhaya.Article']", 'null': 'True'}),
+            'article': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['news.Article']", 'null': 'True'}),
             'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.User']"}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -73,7 +73,7 @@ class Migration(SchemaMigration):
             'solved': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'text': ('django.db.models.fields.TextField', [], {})
         },
-        'ikhaya.suggestion': {
+        'news.suggestion': {
             'Meta': {'object_name': 'Suggestion'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'suggestion_set'", 'to': "orm['portal.User']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -97,7 +97,7 @@ class Migration(SchemaMigration):
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'}),
-            'is_ikhaya_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+            'is_news_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         'portal.user': {
             'Meta': {'object_name': 'User'},
@@ -140,4 +140,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['ikhaya']
+    complete_apps = ['news']

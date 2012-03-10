@@ -1,34 +1,34 @@
 {#
-    ikhaya/index.html
+    news/index.html
     ~~~~~~~~~~~~~~~~~
 
-    This page shows some of the latest ikhaya entries.
+    This page shows some of the latest news entries.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 
 {% if category %}
   {% set name = category.name %}
   {% set feeds = [
-    (name + _('Captions'), href('ikhaya', 'feeds', category.slug, 'title/20')),
-    (name + _('Teaser'), href('ikhaya', 'feeds', category.slug, 'short/20')),
-    (name + _('Full'), href('ikhaya', 'feeds', category.slug, 'full/20')),
+    (name + _('Captions'), href('news', 'feeds', category.slug, 'title/20')),
+    (name + _('Teaser'), href('news', 'feeds', category.slug, 'short/20')),
+    (name + _('Full'), href('news', 'feeds', category.slug, 'full/20')),
   ] %}
   {% do BREADCRUMB.append(category.name, category|url, True) %}
 {% else %}
   {% set feeds = [
-    (_('News') + ' - ' + _('Captions'), href('ikhaya', 'feeds/title/20')),
-    (_('News') + ' - ' + _('Teaser'), href('ikhaya', 'feeds/short/20')),
-    (_('News') + ' - ' + _('Full'), href('ikhaya', 'feeds/full/20')),
-    (_('Comments') + ' - ' + _('Full'), href('ikhaya', 'feeds/comments/title/20')),
-    (_('Comments') + ' - ' + _('Full'), href('ikhaya', 'feeds/comments/short/20')),
-    (_('Comments') + ' - ' + _('Full'), href('ikhaya', 'feeds/comments/full/20')),
+    (_('News') + ' - ' + _('Captions'), href('news', 'feeds/title/20')),
+    (_('News') + ' - ' + _('Teaser'), href('news', 'feeds/short/20')),
+    (_('News') + ' - ' + _('Full'), href('news', 'feeds/full/20')),
+    (_('Comments') + ' - ' + _('Full'), href('news', 'feeds/comments/title/20')),
+    (_('Comments') + ' - ' + _('Full'), href('news', 'feeds/comments/short/20')),
+    (_('Comments') + ' - ' + _('Full'), href('news', 'feeds/comments/full/20')),
     ] %}
 {% endif %}
 
-{% block ikhaya_content %}
+{% block news_content %}
   {%- if articles %}
     <ul class="articles">
       {%- for article in articles %}

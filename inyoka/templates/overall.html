@@ -55,7 +55,7 @@
       <link rel="shortcut icon" href="{{ href('static', 'img', 'favicon.ico') }}" />
       <link rel="search" type="application/opensearchdescription+xml"
             title="ubuntuusers" href="{{ href('portal', 'opensearch', 'portal') }}" />
-      {%- for app in ('forum', 'wiki', 'ikhaya', 'planet') %}
+      {%- for app in ('forum', 'wiki', 'news', 'planet') %}
         {%- if app == active_app %}
           <link rel="search" type="application/opensearchdescription+xml"
                 title="{{ SETTINGS.BASE_DOMAIN_NAME }} - {{ app|capitalize }}"
@@ -93,7 +93,7 @@
     <div class="header">
       <h1><a href="/"><span>{{ SETTINGS.BASE_DOMAIN_NAME }}</span></a></h1>
       <ul class="tabbar">
-        {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
+        {%- for app in ('portal', 'forum', 'wiki', 'news', 'planet') %}
           <li class="{{ app }}{% if app == active_app %} active{% endif %}">
             <div class="tab_left"></div>
             <div class="tab_center"><a href="{{ href(app) }}">{{ app|capitalize }}<span></span></a></div>
@@ -167,15 +167,15 @@
               {%- endif %}
               {%- if USER.can('article_edit') %}
                 {% set label = _('Article suggestions') %}
-                {{ render_modnavi_li(label, href('ikhaya', 'suggestions'), href('static', 'img/admin/article.png'), suggestion_count) }}
+                {{ render_modnavi_li(label, href('news', 'suggestions'), href('static', 'img/admin/article.png'), suggestion_count) }}
               {%- endif %}
               {%- if USER.can('article_edit') %}
                 {% set label = _('Spelling mistakes') %}
-                {{ render_modnavi_li(label, href('ikhaya', 'reports'), href('static', 'img/admin/spelling.png'), article_report_count) }}
+                {{ render_modnavi_li(label, href('news', 'reports'), href('static', 'img/admin/spelling.png'), article_report_count) }}
               {%- endif %}
               {%- if USER.can('event_edit') %}
                 {% set label = _('Event suggestions') %}
-                {{ render_modnavi_li(label, href('ikhaya', 'events', 'invisible'), href('static', 'img/admin/event.png'), event_count) }}
+                {{ render_modnavi_li(label, href('news', 'events', 'invisible'), href('static', 'img/admin/event.png'), event_count) }}
               {%- endif %}
             </div>
           <noscript><strong class="nojs error">{{ _('Please turn on JavaScript!') }}</strong></noscript>
@@ -204,7 +204,7 @@
               <option value="wiki"{% if active_app == 'wiki' %} selected="selected"{% endif %}>
                 {% trans %}Wiki{% endtrans %}
               </option>
-              <option value="ikhaya"{% if active_app == 'ikhaya' %} selected="selected"{% endif %}>
+              <option value="news"{% if active_app == 'news' %} selected="selected"{% endif %}>
                 {% trans %}News{% endtrans %}
               </option>
               <option value="planet"{% if active_app == 'planet' %} selected="selected"{% endif %}>

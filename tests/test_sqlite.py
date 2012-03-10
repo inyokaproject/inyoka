@@ -31,7 +31,7 @@ INSTALLED_APPS = (
     'inyoka.portal',
     'inyoka.wiki',
     'inyoka.forum',
-    'inyoka.ikhaya',
+    'inyoka.news',
     'inyoka.pastebin',
     'inyoka.planet',
     'inyoka.utils.tests',

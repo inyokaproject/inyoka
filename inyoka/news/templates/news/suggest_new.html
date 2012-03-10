@@ -1,18 +1,18 @@
 {#
-    ikhaya/suggest_new.html
+    news/suggest_new.html
     ~~~~~~~~~~~~~~~~~
 
-    This page shows some of the latest ikhaya entries.
+    This page shows some of the latest news entries.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 {% from 'macros.html' import render_form %}
-{% do BREADCRUMB.append('Artikel vorschlagen', href('ikhaya', 'suggest'), True) %}
+{% do BREADCRUMB.append('Artikel vorschlagen', href('news', 'suggest'), True) %}
 {% set scripts = ['WikiEditor'] %}
 {% set styles = ['editor-sprite'] %}
-{% block ikhaya_content %}
+{% block news_content %}
 <div class="content_sidebar_bk">
   <h2>Artikel vorschlagen</h2>
   <p>

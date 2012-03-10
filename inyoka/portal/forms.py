@@ -54,7 +54,7 @@ SEARCH_AREA_CHOICES = (
     ('all', ugettext_lazy(u'Everywhere')),
     ('forum', ugettext_lazy(u'Forum')),
     ('wiki', ugettext_lazy(u'Wiki')),
-    ('ikhaya', 'News'),
+    ('news', 'News'),
     ('planet', ugettext_lazy(u'Planet')),
 )
 
@@ -74,7 +74,7 @@ DEFAULT_SEARCH_PARAMETER = 'magic'
 SEARCH_AREAS = {
     'wiki': 'w',
     'forum': 'f',
-    'ikhaya': 'i',
+    'news': 'i',
     'planet': 'p'
 }
 
@@ -854,7 +854,7 @@ class ConfigurationForm(forms.Form):
                                    widget=forms.Textarea(attrs={'rows': 2}))
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
-    ikhaya_description = forms.CharField(required=False,
+    news_description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 3}),
         label=ugettext_lazy(u'Description about News that will be used '
                             u'on the start page and in the feed aggregations.'))

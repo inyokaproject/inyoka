@@ -1,5 +1,5 @@
 {#
-    ikhaya/reportlist.html
+    news/reportlist.html
     ~~~~~~~~~~~~~~~~~~~~~~
 
     Shows a list of all unsolved article reports.
@@ -7,11 +7,11 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 
-{% do BREADCRUMB.append(_('Reports'), href('ikhaya', 'reports'), True) %}
+{% do BREADCRUMB.append(_('Reports'), href('news', 'reports'), True) %}
 
-{% block ikhaya_content %}
+{% block news_content %}
   {%- for report in reports %}
     <div class="report" id="report_{{ report.id }}">
       <div class="report_header">

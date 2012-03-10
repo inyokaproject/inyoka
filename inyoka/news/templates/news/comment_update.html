@@ -1,5 +1,5 @@
 {#
-    ikhaya/comment_update.html
+    news/comment_update.html
     ~~~~~~~~~~~~~~~~~~~~~~
 
     This template is flashed to ensure that the user want to change the report.
@@ -9,7 +9,7 @@
 #}
 
 
-<form action="{{ href('ikhaya', 'comment', comment.id, action) }}" method="post">
+<form action="{{ href('news', 'comment', comment.id, action) }}" method="post">
    <p>
     {%- if action=='restore' -%}
       {% trans link=comment|url('show'), author=comment.author.username|e -%}

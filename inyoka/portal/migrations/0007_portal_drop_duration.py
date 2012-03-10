@@ -90,7 +90,7 @@ class Migration(SchemaMigration):
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'}),
-            'is_ikhaya_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+            'is_news_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         'portal.staticpage': {
             'Meta': {'object_name': 'StaticPage'},

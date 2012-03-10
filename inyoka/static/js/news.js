@@ -1,8 +1,8 @@
 /**
- * js.ikhaya
+ * js.news
  * ~~~~~~~~~~
  *
- * Some javascript functions for the ikhaya application.
+ * Some javascript functions for the news application.
  *
  * :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
  * :license: GNU GPL, see LICENSE for more details.
@@ -35,7 +35,7 @@ $(function () {
 
 
   var doAssignmentAction = function (tag, username) {
-    var url = "/?__service__=ikhaya.change_suggestion_assignment";
+    var url = "/?__service__=news.change_suggestion_assignment";
     if (username == '-')
       text = 'Niemand';
     else

@@ -20,7 +20,7 @@
 {% block content %}
 <form action="" method="post" enctype="multipart/form-data">
   <dl>
-    {{ render_form(form, ['is_ikhaya_icon', 'file'], inline=true) }}
+    {{ render_form(form, ['is_news_icon', 'file'], inline=true) }}
     {%- if file %}
     <span style="color:red;">{% trans %}CAUTION: A change of the file destroys all links from articles to this file!{% endtrans %}</span>
     <dt>{% trans %}URL:{% endtrans %}</dt>

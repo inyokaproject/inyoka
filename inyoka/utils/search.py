@@ -318,7 +318,7 @@ class SearchSystem(object):
                 map = {
                     'forum': 'f',
                     'wiki': 'w',
-                    'ikhaya': 'i',
+                    'news': 'i',
                     'planet': 'p',
                 }
                 return u'component_id:%s' % map.get(data.lower())

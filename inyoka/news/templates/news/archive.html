@@ -1,19 +1,19 @@
 {#
-    ikhaya/archive.html
+    news/archive.html
     ~~~~~~~~~~~~~~~~~~~
 
-    This page shows links to all months of ikhaya articles.
+    This page shows links to all months of news articles.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 
-{% do BREADCRUMB.append(_('Archive'), href('ikhaya', 'archive'), True) %}
+{% do BREADCRUMB.append(_('Archive'), href('news', 'archive'), True) %}
 
-{% block ikhaya_content %}
+{% block news_content %}
   <p>
-    {%- trans link=href('ikhaya') -%}
+    {%- trans link=href('news') -%}
       Here are all published articles in chronological order. You can find the most recent articles on <a href="{{ link }}">the front page</a>.
     {%- endtrans -%}
   </p>
@@ -22,7 +22,7 @@
     <ul>
       {%- for month in year.list %}
         <li>
-          <a href="{{ href('ikhaya', month.strftime('%Y/%m')) }}">{{ MONTHS[month.month] }}</a>
+          <a href="{{ href('news', month.strftime('%Y/%m')) }}">{{ MONTHS[month.month] }}</a>
         </li>
       {%- endfor %}
     </ul>

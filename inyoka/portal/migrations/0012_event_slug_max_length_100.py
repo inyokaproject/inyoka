@@ -17,10 +17,10 @@ class Migration(SchemaMigration):
 
 
     models = {
-        'ikhaya.article': {
+        'news.article': {
             'Meta': {'ordering': "['-pub_date', '-pub_time', 'author']", 'unique_together': "(('pub_date', 'slug'),)", 'object_name': 'Article'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'article_set'", 'to': "orm['portal.User']"}),
-            'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['ikhaya.Category']"}),
+            'category': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['news.Category']"}),
             'comment_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'comments_enabled': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.StaticFile']", 'null': 'True', 'blank': 'True'}),
@@ -35,7 +35,7 @@ class Migration(SchemaMigration):
             'text': ('django.db.models.fields.TextField', [], {}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'})
         },
-        'ikhaya.category': {
+        'news.category': {
             'Meta': {'object_name': 'Category'},
             'icon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.StaticFile']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -109,7 +109,7 @@ class Migration(SchemaMigration):
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'}),
-            'is_ikhaya_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+            'is_news_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         'portal.staticpage': {
             'Meta': {'object_name': 'StaticPage'},
@@ -125,7 +125,7 @@ class Migration(SchemaMigration):
         },
         'portal.subscription': {
             'Meta': {'unique_together': "(('topic_id', 'user'), ('forum_id', 'user'), ('wiki_page', 'user'), ('member', 'user'), ('article', 'user'))", 'object_name': 'Subscription'},
-            'article': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['ikhaya.Article']", 'null': 'True'}),
+            'article': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['news.Article']", 'null': 'True'}),
             'forum_id': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'member'", 'null': 'True', 'to': "orm['portal.User']"}),

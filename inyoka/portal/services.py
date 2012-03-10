@@ -16,7 +16,7 @@ from urlparse import urlparse
 from django.conf import settings
 from django.utils.dates import MONTHS, WEEKDAYS
 from inyoka.portal.user import User, Group
-from inyoka.ikhaya.models import Event
+from inyoka.news.models import Event
 from inyoka.utils.text import get_random_password
 from inyoka.utils.http import PageNotFound
 from inyoka.utils.services import SimpleDispatcher
@@ -98,7 +98,7 @@ def on_toggle_sidebar(request):
     if not request.user.is_authenticated:
         return False
     component = request.GET.get('component')
-    if component not in ('ikhaya', 'planet', 'admin'):
+    if component not in ('news', 'planet', 'admin'):
         component = 'portal'
     component = '_'.join([component, 'sidebar_hidden'])
     if request.GET.get('hide') == 'true':

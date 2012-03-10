@@ -24,7 +24,7 @@ settings.DEBUG = settings.DATABASE_DEBUG = False # for nice progressbar output ;
 
 from inyoka.portal.user import User, Group
 from inyoka.forum.models import Forum, Topic, Post
-from inyoka.ikhaya.models import Category, Article, Comment
+from inyoka.news.models import Category, Article, Comment
 from inyoka.wiki.models import Page
 from inyoka.planet.models import Blog
 from inyoka.utils.captcha import generate_word
@@ -66,8 +66,8 @@ BLOGS = {
     'ubuntuusers-Webteam': ('http://behind.ubuntuusers.de/',
         'http://behind.ubuntuusers.de/feed.atom'),
     ## Meta!
-    'News': ('http://ubuntuusers.ikhaya.de',
-        'http://ikhaya.ubuntuusers.de/feeds/full/10/')
+    'News': ('http://ubuntuusers.news.de',
+        'http://news.ubuntuusers.de/feeds/full/10/')
 }
 
 
@@ -206,8 +206,8 @@ def make_forum():
     show('\n')
 
 
-def make_ikhaya():
-    print 'Creating ikhaya test data'
+def make_news():
+    print 'Creating news test data'
     pb = ProgressBar(40)
     for percent, name in izip(percentize(NEWS_CATEGORY_COUNT), create_names(NEWS_CATEGORY_COUNT, title)):
         c = Category(name=name)
@@ -275,7 +275,7 @@ if __name__ == '__main__':
     make_groups()
     make_users()
     make_wiki()
-    make_ikhaya()
+    make_news()
     make_forum()
     make_planet()
     print "created test data"

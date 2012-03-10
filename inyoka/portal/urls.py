@@ -74,7 +74,7 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^config/$', 'config'),
     (r'^styles/$', 'styles'),
     # shortcuts
-    (r'^ikhaya/(\d+)/$', 'ikhaya_redirect'),
+    (r'^news/(\d+)/$', 'news_redirect'),
     # static pages
     (r'^files/$', 'files'),
     (r'^files/(?P<page>\d+)/$', 'files'),
@@ -91,7 +91,7 @@ urlpatterns = patterns('inyoka.portal.views',
 
 js_info_dict = {
     'packages': ('inyoka.portal', 'inyoka.wiki', 'inyoka.pastebin',
-                 'inyoka.ikhaya', 'inyoka.planet', 'inyoka.forum'),
+                 'inyoka.news', 'inyoka.planet', 'inyoka.forum'),
 }
 
 urlpatterns += patterns('',

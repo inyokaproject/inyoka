@@ -1,2 +1,2 @@
 #-*- coding: utf-8 -*-
-from inyoka.ikhaya.tests.test_models import *
+from inyoka.news.tests.test_models import *

@@ -1,5 +1,5 @@
 {#
-    ikhaya/suggest_delete.html
+    news/suggest_delete.html
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This template is flashed to ask the user if he really wants to delete a
@@ -11,7 +11,7 @@
 -#}
 
 
-<form action="{{ href('ikhaya', 'suggest', s.id, 'delete') }}" method="post">
+<form action="{{ href('news', 'suggest', s.id, 'delete') }}" method="post">
   <p>{% trans %}Explanation for the author of the suggestion:{% endtrans %}</p>
   <p><textarea name="note"></textarea></p>
   <p class="note">

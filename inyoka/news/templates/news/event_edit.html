@@ -1,5 +1,5 @@
 {#
-    ikhaya/event_edit.html
+    news/event_edit.html
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Template for editing or creating an event.
@@ -7,17 +7,17 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 {% set styles = ['editor-sprite', 'datetimefield'] %}
 {% set scripts = ['WikiEditor', 'DateTime'] %}
 
 {% if not event %}
-  {% do BREADCRUMB.append(_('Add'), href('ikhaya', 'event', 'new'), True) %}
+  {% do BREADCRUMB.append(_('Add'), href('news', 'event', 'new'), True) %}
 {% else %}
   {% do BREADCRUMB.append(_('Edit'), event|url('edit'), True) %}
   {% do BREADCRUMB.append(event.name, event|url, True) %}
 {% endif %}
-{% do BREADCRUMB.append(_('Events'), href('ikhaya', 'events'), True) %}
+{% do BREADCRUMB.append(_('Events'), href('news', 'events'), True) %}
 
 {% block content %}
 <form action="" method="post" enctype="multipart/form-data">

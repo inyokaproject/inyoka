@@ -4,7 +4,7 @@
 
     This is ubuntuusers' main page that provides links to quite many pages.
 
-    It also displays some of the latest ikhaya messages.
+    It also displays some of the latest news messages.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
@@ -28,14 +28,14 @@
     <a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Forenregeln') }}">Regeln</a>).
     Neben dem <a href="{{ href('wiki') }}">Wiki</a> mit einem
     <a href="{{ href('wiki', 'Einsteiger') }}">Einsteigerbereich</a> gibt es
-    <a href="{{ href('ikhaya') }}">News</a> (Nachrichten) und einen
+    <a href="{{ href('news') }}">News</a> (Nachrichten) und einen
     <a href="{{ href('planet') }}">Planeten</a> (Blogsammlung der
     Ubuntu-Gemeinschaft). Viel Spaß! :)
   </p>
   <h2>Neues von ubuntuusers.de</h2>
   <section id="latest_articles">
     <ul>
-      {%- for article in ikhaya_latest %}
+      {%- for article in news_latest %}
         <li><a href="{{ article|url }}">{{ article.subject|e }}</a></li>
       {%- endfor %}
     </ul>

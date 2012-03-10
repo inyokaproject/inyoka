@@ -31,7 +31,7 @@ class Migration(SchemaMigration):
         db.add_column('portal_subscription', 'forum_id', self.gf('django.db.models.fields.IntegerField')(null=True), keep_default=False)
 
         # Adding field 'Subscription.article'
-        db.add_column('portal_subscription', 'article', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['ikhaya.Article'], null=True), keep_default=False)
+        db.add_column('portal_subscription', 'article', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['news.Article'], null=True), keep_default=False)
 
         # Adding field 'Subscription.member'
         db.add_column('portal_subscription', 'member', self.gf('django.db.models.fields.related.ForeignKey')(related_name='member', null=True, to=orm['portal.User']), keep_default=False)
@@ -115,7 +115,7 @@ class Migration(SchemaMigration):
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'}),
-            'is_ikhaya_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+            'is_news_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         'portal.staticpage': {
             'Meta': {'object_name': 'StaticPage'},

@@ -1,5 +1,5 @@
 {#
-    ikhaya/event_suggest.html
+    news/event_suggest.html
     ~~~~~~~~~~~~~~~~~~~~
 
     This page is for new calendar events.
@@ -7,11 +7,11 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 {% set styles = ['editor-sprite', 'datetimefield'] %}
 {% set scripts = ['WikiEditor','DateTime'] %}
 
-{% do BREADCRUMB.append(_('Suggest event'), href('ikhaya', 'event', 'suggest'), True) %}
+{% do BREADCRUMB.append(_('Suggest event'), href('news', 'event', 'suggest'), True) %}
 
 {% block content %}
   <h2>{% trans %}Suggest event{% endtrans %}</h2>

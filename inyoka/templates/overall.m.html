@@ -54,7 +54,7 @@
             {% if back %}
               <li class="back"><a href="{{ back }}">«</a></li>
             {% endif %}
-            {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
+            {%- for app in ('portal', 'forum', 'wiki', 'news', 'planet') %}
               <li{% if app == active_app %} class="active"{% endif %}>
                 <a href="{{ href(app) }}">{{ app|capitalize }}</a>
               </li>

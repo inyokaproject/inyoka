@@ -155,19 +155,19 @@ __all__ = ['parse', 'render', 'stream', 'escape']
 # the maximum depth of stack-protected nodes
 MAXIMUM_DEPTH = 200
 
-def _ikhaya_id(x):
+def _news_id(x):
     try:
         id = int(x)
-        return href('portal', 'ikhaya', id)
+        return href('portal', 'news', id)
     except ValueError:
-        return href('ikhaya', x)
+        return href('news', x)
 
 # the default inter-"wiki"s
 STANDARD_WIKI_MAP = {
     'user':   lambda x: href('portal', 'user', x),
     'paste':  lambda x: href('pastebin', x),
     'topic':  lambda x: href('forum', 'topic', x),
-    'ikhaya': _ikhaya_id,
+    'news': _news_id,
     'search': lambda x: href('portal', 'search', query=x),
     'post':   lambda x: href('forum', 'post', x),
 }

@@ -283,7 +283,7 @@ class StaticFile(models.Model):
     identifier = models.CharField(ugettext_lazy('Identifier'),
         max_length=100, unique=True, db_index=True)
     file = models.FileField(ugettext_lazy('File'), upload_to='portal/files')
-    is_ikhaya_icon = models.BooleanField(
+    is_news_icon = models.BooleanField(
         ugettext_lazy(u'Is News icon'),
         default=False,
         help_text=ugettext_lazy(u'Choose this if the file should appear '

@@ -114,7 +114,7 @@ def get_request_context(request):
     if not request:
         return None
 
-    mapping = {'ikhaya': 'ikhaya',
+    mapping = {'news': 'news',
                'planet': 'planet',
                'wiki': 'wiki',
                'paste': 'pastebin',

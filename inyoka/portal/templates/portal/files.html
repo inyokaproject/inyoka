@@ -2,7 +2,7 @@
     portal/files.html
     ~~~~~~~~~~~~~~~~
 
-    This is the overview of the ikhaya files.
+    This is the overview of the news files.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
@@ -19,7 +19,7 @@
   <thead>
     <tr>
       <th>{{ table.get_html('identifier', _('Identifier')) }}</th>
-      <th>{{ table.get_html('is_ikhaya_icon', 'Ist News-Icon') }}</th>
+      <th>{{ table.get_html('is_news_icon', 'Ist News-Icon') }}</th>
       <th>{% trans %}Actions{% endtrans %}</th>
     </tr>
   </thead>
@@ -27,7 +27,7 @@
     {%- for file in object_list %}
       <tr>
         <td><a href="{{ file|url('edit') }}">{{ file.identifier|e }}</a></td>
-        <td>{{ file.is_ikhaya_icon and 'ja' or 'nein' }}</td>
+        <td>{{ file.is_news_icon and 'ja' or 'nein' }}</td>
         <td class="actions">
           <a href="{{ file|url('edit') }}">{% trans %}Edit{% endtrans %}</a>
           <a href="{{ file|url('delete') }}">{% trans %}Delete{% endtrans %}</a>

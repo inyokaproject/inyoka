@@ -57,10 +57,10 @@
       <li><a href="{{ href('wiki', 'Galerie') }}">Galerie</a></li>
       <li><a href="{{ href('wiki', 'Links') }}">Links</a></li>
     </ul>
-    <h3 class="navi_ikhaya">{{ feed_button(href('portal', 'feeds', 'ikhaya')) }}<a href="{{ href('ikhaya') }}">News</a></h3>
+    <h3 class="navi_news">{{ feed_button(href('portal', 'feeds', 'news')) }}<a href="{{ href('news') }}">News</a></h3>
     <ul>
-      <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest an article{% endtrans %}</a></li>
-      <li><a href="{{ href('ikhaya', 'event', 'suggest') }}">{% trans %}Suggest an event{% endtrans %}</a></li>
+      <li><a href="{{ href('news', 'suggest', 'new') }}">{% trans %}Suggest an article{% endtrans %}</a></li>
+      <li><a href="{{ href('news', 'event', 'suggest') }}">{% trans %}Suggest an event{% endtrans %}</a></li>
     </ul>
     <h3 class="navi_planet">{{ feed_button(href('portal', 'feeds', 'planet')) }}<a href="{{ href('planet') }}">Planet</a></h3>
     <ul>

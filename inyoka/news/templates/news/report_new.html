@@ -1,5 +1,5 @@
 {#
-    ikhaya/report_new.html
+    news/report_new.html
     ~~~~~~~~~~~~~~~~~~~
 
     Formular to report a mistake in an article.
@@ -7,7 +7,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 {% set scripts = ['WikiEditor'] %}
 {% set styles = ['editor-sprite'] %}
 
@@ -15,7 +15,7 @@
 {% do BREADCRUMB.append('Meldungen', article|url('reports')) %}
 {% do BREADCRUMB.append(article.subject, article|url, True) %}
 
-{% block ikhaya_content %}
+{% block news_content %}
   {{ form.errors.text }}
   <h2>
     {%- trans link=article|url, article=article.subject|e -%}

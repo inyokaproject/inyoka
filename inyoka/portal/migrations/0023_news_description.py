@@ -13,10 +13,10 @@ NEWS_DESCRIPTION = u'News ist der Nachrichtenblog der ubuntuusers-' \
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        orm.Storage.objects.create(key='ikhaya_description', value=NEWS_DESCRIPTION)
+        orm.Storage.objects.create(key='news_description', value=NEWS_DESCRIPTION)
 
     def backwards(self, orm):
-        orm.Storage.objects.filter(key='ikhaya_description').delete()
+        orm.Storage.objects.filter(key='news_description').delete()
 
     models = {
         'contenttypes.contenttype': {
@@ -93,7 +93,7 @@ class Migration(DataMigration):
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'}),
-            'is_ikhaya_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+            'is_news_icon': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         'portal.staticpage': {
             'Meta': {'object_name': 'StaticPage'},

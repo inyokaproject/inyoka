@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.ikhaya.urls
+    inyoka.news.urls
     ~~~~~~~~~~~~~~~~~~
 
-    URL list for ikhaya.
+    URL list for news.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
@@ -11,7 +11,7 @@
 from django.conf.urls.defaults import patterns
 
 
-urlpatterns = patterns('inyoka.ikhaya.views',
+urlpatterns = patterns('inyoka.news.views',
     (r'^$', 'index'),
     (r'^full/$', 'index', {'full': True}),
     (r'^(?P<page>\d+)/$', 'index'),

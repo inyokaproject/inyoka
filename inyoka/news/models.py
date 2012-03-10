@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.ikhaya.models
+    inyoka.news.models
     ~~~~~~~~~~~~~~~~~~~~
 
-    Database models for ikhaya.
+    Database models for news.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
@@ -69,7 +69,7 @@ class ArticleManager(models.Manager):
         and rendered_intro). So do NEVER save any article returned by
         this function.
         """
-        keys = map(lambda x: ('ikhaya/article/%s/%s' % x, x[0], x[1]), keys)
+        keys = map(lambda x: ('news/article/%s/%s' % x, x[0], x[1]), keys)
         cache_values = cache.get_many(map(itemgetter(0), keys))
         dates, slugs = _get_not_cached_articles(keys, cache_values)
 
@@ -78,7 +78,7 @@ class ArticleManager(models.Manager):
                                          'category__icon').order_by()
         new_cache_values = {}
         for article in objects:
-            key = 'ikhaya/article/%s/%s' % (article.pub_date, article.slug)
+            key = 'news/article/%s/%s' % (article.pub_date, article.slug)
             # render text and intro (and replace the getter to make caching
             # possible)
             article._rendered_text = unicode(article.rendered_text)
@@ -98,9 +98,9 @@ class ArticleManager(models.Manager):
         return unpublished + published
 
     def get_latest_articles(self, category=None, count=10):
-        key = 'ikhaya/latest_articles'
+        key = 'news/latest_articles'
         if category is not None:
-            key = 'ikhaya/latest_articles/%s' % category
+            key = 'news/latest_articles/%s' % category
 
         articles = cache.get(key)
         if articles is None:
@@ -108,7 +108,7 @@ class ArticleManager(models.Manager):
                                         .values_list('pub_date', 'slug')
             if category:
                 articles.filter(category__slug=category)
-            maxcount = max(settings.AVAILABLE_FEED_COUNTS['ikhaya_feed_article'])
+            maxcount = max(settings.AVAILABLE_FEED_COUNTS['news_feed_article'])
             articles = list(articles[:maxcount])
             cache.set(key, articles, 1200)
 
@@ -122,17 +122,17 @@ class SuggestionManager(models.Manager):
         Deletes a list of suggestions with only one query and refresh the caches.
         """
         Suggestion.objects.filter(id__in=ids).delete()
-        cache.delete('ikhaya/suggestion_count')
+        cache.delete('news/suggestion_count')
 
 
 class CommentManager(models.Manager):
 
     def get_latest_comments(self, article=None, count=10):
-        key = 'ikhaya/latest_comments'
+        key = 'news/latest_comments'
         if article is not None:
-            key = 'ikhaya/latest_comments/%s' % article
+            key = 'news/latest_comments/%s' % article
 
-        maxcount = max(settings.AVAILABLE_FEED_COUNTS['ikhaya_feed_comment'])
+        maxcount = max(settings.AVAILABLE_FEED_COUNTS['news_feed_comment'])
         comment_ids = cache.get(key)
         if comment_ids is None:
             comment_ids = Comment.objects.filter(article__public=True, deleted=False)
@@ -160,8 +160,8 @@ class Category(models.Model):
 
     def get_absolute_url(self, action='show'):
         return href(*{
-            'show': ('ikhaya', 'category', self.slug),
-            'edit': ('ikhaya', 'category', self.slug, 'edit')
+            'show': ('news', 'category', self.slug),
+            'edit': ('news', 'category', self.slug, 'edit')
         }[action])
 
     def save(self, *args, **kwargs):
@@ -169,7 +169,7 @@ class Category(models.Model):
         if not self.pk:
             self.slug = find_next_increment(Category, 'slug', slugify(self.name))
         super(Category, self).save(*args, **kwargs)
-        cache.delete('ikhaya/categories')
+        cache.delete('news/categories')
 
     class Meta:
         verbose_name = ugettext_lazy(u'Category')
@@ -177,7 +177,7 @@ class Category(models.Model):
 
 
 class Article(models.Model, LockableObject):
-    lock_key_base = 'ikhaya/article_lock'
+    lock_key_base = 'news/article_lock'
 
     objects = ArticleManager(all=True)
     published = ArticleManager(public=True)
@@ -233,32 +233,32 @@ class Article(models.Model, LockableObject):
         """Render a text that belongs to this Article to HTML"""
         if self.is_xhtml:
             return text
-        context = RenderContext(current_request, application='ikhaya')
+        context = RenderContext(current_request, application='news')
         instructions = parse(text).compile('html')
         return render(instructions, context)
 
     @property
     def rendered_text(self):
         if not hasattr(self, '_rendered_text'):
-            self._rendered_text = self._render(self.text, 'ikhaya/article_text/%s' % self.id)
+            self._rendered_text = self._render(self.text, 'news/article_text/%s' % self.id)
         return self._rendered_text
 
     @property
     def rendered_intro(self):
         if not hasattr(self, '_rendered_intro'):
-            self._rendered_intro = self._render(self.intro, 'ikhaya/article_intro/%s' % self.id)
+            self._rendered_intro = self._render(self.intro, 'news/article_intro/%s' % self.id)
         return self._rendered_intro
 
     @property
     def simplified_text(self):
         if not hasattr(self, '_simplified_text'):
-            self._simplified_text = self._simplify(self.text, 'ikhaya/simple_text/%s' % self.id)
+            self._simplified_text = self._simplify(self.text, 'news/simple_text/%s' % self.id)
         return self._simplified_text
 
     @property
     def simplified_intro(self):
         if not hasattr(self, '_simplified_intro'):
-            self._simplified_intro = self._simplify(self.intro, 'ikhaya/simple_intro/%s' % self.id)
+            self._simplified_intro = self._simplify(self.intro, 'news/simple_intro/%s' % self.id)
         return self._simplified_intro
 
     @property
@@ -283,23 +283,23 @@ class Article(models.Model, LockableObject):
 
     def get_absolute_url(self, action='show'):
         if action == 'comments':
-            return href('ikhaya', self.stamp, self.slug, _anchor='comments')
+            return href('news', self.stamp, self.slug, _anchor='comments')
         if action in ('subscribe', 'unsubscribe'):
             if current_request:
                 current = current_request.build_absolute_uri()
                 if not self.get_absolute_url() in current:
-                    # We may be at the ikhaya index page.
-                    return href('ikhaya', self.stamp, self.slug, action,
+                    # We may be at the news index page.
+                    return href('news', self.stamp, self.slug, action,
                                 next=current_request.build_absolute_uri())
-            return href('ikhaya', self.stamp, self.slug, action)
+            return href('news', self.stamp, self.slug, action)
 
         links = {
-            'delete':     ('ikhaya', self.stamp, self.slug, 'delete'),
-            'edit':       ('ikhaya', self.stamp, self.slug, 'edit'),
-            'id':         ('portal', 'ikhaya',  self.id),
-            'report_new': ('ikhaya', self.stamp, self.slug, 'new_report'),
-            'reports':    ('ikhaya', self.stamp, self.slug, 'reports'),
-            'show':       ('ikhaya', self.stamp, self.slug),
+            'delete':     ('news', self.stamp, self.slug, 'delete'),
+            'edit':       ('news', self.stamp, self.slug, 'edit'),
+            'id':         ('portal', 'news',  self.id),
+            'report_new': ('news', self.stamp, self.slug, 'new_report'),
+            'reports':    ('news', self.stamp, self.slug, 'reports'),
+            'show':       ('news', self.stamp, self.slug),
         }
 
         return href(*links[action if action in links.keys() else 'show'])
@@ -342,10 +342,10 @@ class Article(models.Model, LockableObject):
         if suffix_id:
             self.slug = '%s-%s' % (self.slug, self.id)
             Article.objects.filter(id=self.id).update(slug=self.slug)
-        cache.delete('ikhaya/archive')
-        cache.delete('ikhaya/article_text/%s' % self.id)
-        cache.delete('ikhaya/article_intro/%s' % self.id)
-        cache.delete('ikhaya/article/%s' % self.slug)
+        cache.delete('news/archive')
+        cache.delete('news/article_text/%s' % self.id)
+        cache.delete('news/article_intro/%s' % self.id)
+        cache.delete('news/article/%s' % self.slug)
 
     def delete(self):
         """
@@ -382,8 +382,8 @@ class Report(models.Model):
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
-            return href('ikhaya', self.article.stamp, self.article.slug, 'reports')
-        return href('ikhaya', 'report', self.id, action)
+            return href('news', self.article.stamp, self.article.slug, 'reports')
+        return href('news', 'report', self.id, action)
 
     def save(self, *args, **kwargs):
         context = RenderContext(current_request)
@@ -391,7 +391,7 @@ class Report(models.Model):
         self.rendered_text = node.render(context, 'html')
         super(Report, self).save(*args, **kwargs)
         if self.id:
-            cache.delete('ikhaya/report/%d' % self.id)
+            cache.delete('news/report/%d' % self.id)
 
 
 class Suggestion(models.Model):
@@ -413,7 +413,7 @@ class Suggestion(models.Model):
     @property
     def rendered_text(self):
         context = RenderContext(current_request)
-        key = 'ikhaya/suggestion_text/%s' % self.id
+        key = 'news/suggestion_text/%s' % self.id
         instructions = cache.get(key)
         if instructions is None:
             instructions = parse(self.text).compile('html')
@@ -423,7 +423,7 @@ class Suggestion(models.Model):
     @property
     def rendered_intro(self):
         context = RenderContext(current_request)
-        key = 'ikhaya/suggestion_intro/%s' % self.id
+        key = 'news/suggestion_intro/%s' % self.id
         instructions = cache.get(key)
         if instructions is None:
             instructions = parse(self.intro).compile('html')
@@ -433,7 +433,7 @@ class Suggestion(models.Model):
     @property
     def rendered_notes(self):
         context = RenderContext(current_request)
-        key = 'ikhaya/suggestion_notes/%s' % self.id
+        key = 'news/suggestion_notes/%s' % self.id
         instructions = cache.get(key)
         if instructions is None:
             instructions = parse(self.notes).compile('html')
@@ -441,7 +441,7 @@ class Suggestion(models.Model):
         return render(instructions, context)
 
     def get_absolute_url(self):
-        return href('ikhaya', 'suggestions', anchor=self.id)
+        return href('news', 'suggestions', anchor=self.id)
 
 
 class Comment(models.Model):
@@ -455,8 +455,8 @@ class Comment(models.Model):
 
     def get_absolute_url(self, action='show'):
         if action in ['hide', 'restore', 'edit']:
-            return href('ikhaya', 'comment', self.id, action)
-        return href('ikhaya', self.article.stamp, self.article.slug,
+            return href('news', 'comment', self.id, action)
+        return href('news', self.article.stamp, self.article.slug,
                     _anchor='comment_%s' % self.article.comment_count)
 
     def save(self, *args, **kwargs):
@@ -469,7 +469,7 @@ class Comment(models.Model):
         self.rendered_text = node.render(context, 'html')
         super(Comment, self).save(*args, **kwargs)
         if self.id:
-            cache.delete('ikhaya/comment/%d' % self.id)
+            cache.delete('news/comment/%d' % self.id)
 
 
 class Event(models.Model):
@@ -497,18 +497,18 @@ class Event(models.Model):
 
     def get_absolute_url(self, action='show'):
         if action == 'copy':
-            return href('ikhaya', 'event', 'new', copy_from=self.id)
+            return href('news', 'event', 'new', copy_from=self.id)
         return href(*{
             'show':   ('portal', 'calendar', self.slug),
-            'delete': ('ikhaya', 'event', self.id, 'delete'),
-            'edit':   ('ikhaya', 'event', self.id, 'edit'),
-            'new':    ('ikhaya', 'event', 'new'),
+            'delete': ('news', 'event', self.id, 'delete'),
+            'edit':   ('news', 'event', self.id, 'edit'),
+            'new':    ('news', 'event', 'new'),
         }[action])
 
     @property
     def rendered_description(self):
         context = RenderContext(current_request)
-        key = 'ikhaya/date/%s' % self.id
+        key = 'news/date/%s' % self.id
         instructions = cache.get(key)
         if instructions is None:
             instructions = parse(self.description).compile('html')
@@ -521,8 +521,8 @@ class Event(models.Model):
                                 .strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name, stripdate=True)
         super(self.__class__, self).save(*args, **kwargs)
-        cache.delete('ikhaya/event/%s' % self.id)
-        cache.delete('ikhaya/event_count')
+        cache.delete('news/event/%s' % self.id)
+        cache.delete('news/event_count')
 
     def friendly_title(self, with_html_link=False):
         s_location = '<span class="location">%s</span>' % (

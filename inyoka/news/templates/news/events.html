@@ -1,5 +1,5 @@
 {#
-    ikhaya/events.html
+    news/events.html
     ~~~~~~~~~~~~~~~~~~
 
     This is the overview of the events.
@@ -7,22 +7,22 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'ikhaya/page.html' %}
+{%- extends 'news/page.html' %}
 
-{% do BREADCRUMB.append(_('Events'), href('ikhaya', 'events'), True) %}
+{% do BREADCRUMB.append(_('Events'), href('news', 'events'), True) %}
 
 {% block content %}
   <h3>{% trans %}Events{% endtrans %}</h3>
   <p class="linklist">
-  <a href="{{ href('ikhaya', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a>
+  <a href="{{ href('news', 'event', 'new') }}">{% trans %}Add event{% endtrans %}</a>
   {%- if not show_all %}
-    | <a href="{{ href('ikhaya', 'events', 'all') }}">{% trans %}Display past events{% endtrans %}</a>
+    | <a href="{{ href('news', 'events', 'all') }}">{% trans %}Display past events{% endtrans %}</a>
   {%- endif %}
   {%- if not invisible %}
-    | <a href="{{ href('ikhaya', 'events', 'invisible') }}">{% trans %}Show only invisible events{% endtrans %}</a>
+    | <a href="{{ href('news', 'events', 'invisible') }}">{% trans %}Show only invisible events{% endtrans %}</a>
   {%- endif %}
   {%- if invisible or show_all %}
-    | <a href="{{ href('ikhaya', 'events') }}">{% trans %}Show only upcoming events{% endtrans %}</a>
+    | <a href="{{ href('news', 'events') }}">{% trans %}Show only upcoming events{% endtrans %}</a>
   {%- endif %}
   </p>
   <table class="events">
@@ -49,7 +49,7 @@
     {%- else %}
       <tr>
         <td colspan="4">
-          {%- trans link=href('ikhaya', 'event', 'new') -%}
+          {%- trans link=href('news', 'event', 'new') -%}
             No event was added yet, <a href="{{ link }}">create</a> the first one now!
           {%- endtrans -%}
       </tr>
