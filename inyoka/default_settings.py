@@ -109,7 +109,7 @@ FORUM_OWNPOST_EDIT_LIMIT = (-1, 1800)
 FORUM_OWNPOST_DELETE_LIMIT = (0, 0)
 
 # the id of the ikhaya team group
-IKHAYA_GROUP_ID = 1
+NEWS_GROUP_ID = 1
 
 # settings for the jabber bot
 JABBER_BOT_SERVER = 'tcp://127.0.0.1:6203'

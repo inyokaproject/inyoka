@@ -14,7 +14,7 @@
   var FEED_COUNTS = [10, 20, 30, 50, 75, 100];
   var FORUM_URL = 'http://forum.' + $BASE_DOMAIN_NAME + '/';
   var WIKI_URL = 'http://wiki.' + $BASE_DOMAIN_NAME + '/';
-  var IKHAYA_URL = 'http://ikhaya.' + $BASE_DOMAIN_NAME + '/';
+  var NEWS_URL = 'http://ikhaya.' + $BASE_DOMAIN_NAME + '/';
   var PLANET_URL = 'http://planet.' + $BASE_DOMAIN_NAME + '/';
 
   $(document).ready(function () {
@@ -84,8 +84,8 @@
       break;
     }
     if (OK) {
-      if (data.category == '*') feed_url = IKHAYA_URL + 'feeds/' + data.mode + '/' + data.count + '/';
-      else feed_url = IKHAYA_URL + 'feeds/' + data.category + '/' + data.mode + '/' + data.count + '/';
+      if (data.category == '*') feed_url = NEWS_URL + 'feeds/' + data.mode + '/' + data.count + '/';
+      else feed_url = NEWS_URL + 'feeds/' + data.category + '/' + data.mode + '/' + data.count + '/';
       if (!$('#ikhaya_feed_url').length) {
         $('#ikhaya_submit_p').prepend('<strong>Adresse des Feeds:</strong> ' + '<a id="ikhaya_feed_url" href="about:blank">-</a></span><br/>');
       }

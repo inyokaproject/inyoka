@@ -87,7 +87,7 @@ def suggest(request):
     if request.method == 'POST':
         form = SuggestBlogForm(request.POST)
         if form.is_valid():
-            ikhaya_group = Group.objects.get(id=settings.IKHAYA_GROUP_ID)
+            ikhaya_group = Group.objects.get(id=settings.NEWS_GROUP_ID)
             users = ikhaya_group.user_set.all()
             text = render_template('mails/planet_suggest.txt',
                                    form.cleaned_data)

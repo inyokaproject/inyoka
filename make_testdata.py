@@ -47,7 +47,7 @@ USERS_COUNT = 15
 FORUMS_COUNT = 2
 MAX_TOPIC_COUNT = 10
 MAX_TOPIC_POST_COUNT = 2
-IKHAYA_CATEGORY_COUNT = 5
+NEWS_CATEGORY_COUNT = 5
 WIKI_PAGES_COUNT = 20
 MAX_WIKI_REVISIONS = 5
 
@@ -209,7 +209,7 @@ def make_forum():
 def make_ikhaya():
     print 'Creating ikhaya test data'
     pb = ProgressBar(40)
-    for percent, name in izip(percentize(IKHAYA_CATEGORY_COUNT), create_names(IKHAYA_CATEGORY_COUNT, title)):
+    for percent, name in izip(percentize(NEWS_CATEGORY_COUNT), create_names(NEWS_CATEGORY_COUNT, title)):
         c = Category(name=name)
         c.save()
         for name in create_names(6, title):

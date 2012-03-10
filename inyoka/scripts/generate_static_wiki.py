@@ -44,7 +44,7 @@ UU_DE = 'http://%subuntuusers.de/'
 UU_PORTAL = UU_DE % ''
 UU_FORUM = UU_DE % 'forum.'
 UU_WIKI = UU_DE % 'wiki.'
-UU_IKHAYA = UU_DE % 'ikhaya.'
+UU_NEWS = UU_DE % 'ikhaya.'
 UU_PLANET = UU_DE % 'planet.'
 UU_COMMUNITY = UU_DE % 'community.'
 URL = href('wiki')
@@ -211,7 +211,7 @@ def handle_tabbar(match, pre, is_main_page, page_name):
         'portal': ('', UU_PORTAL),
         'forum': ('', UU_FORUM),
         'wiki': (' active', UU_WIKI),
-        'ikhaya': ('', UU_IKHAYA),
+        'ikhaya': ('', UU_NEWS),
         'planet': ('', UU_PLANET),
         'community': ('', UU_COMMUNITY),
     }

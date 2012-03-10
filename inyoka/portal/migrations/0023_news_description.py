@@ -5,7 +5,7 @@ from south.v2 import DataMigration
 from django.db import models
 
 
-IKHAYA_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
+NEWS_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
     u'Community. Hier werden Nachrichten und Berichte rund um Ubuntu, Linux' \
     u' und OpenSource-Software veröffentlicht.'
 
@@ -13,7 +13,7 @@ IKHAYA_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        orm.Storage.objects.create(key='ikhaya_description', value=IKHAYA_DESCRIPTION)
+        orm.Storage.objects.create(key='ikhaya_description', value=NEWS_DESCRIPTION)
 
     def backwards(self, orm):
         orm.Storage.objects.filter(key='ikhaya_description').delete()
