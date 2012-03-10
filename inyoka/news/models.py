@@ -311,7 +311,7 @@ class Article(models.Model, LockableObject):
         """
         This updates the xapian search index.
         """
-        IkhayaSearchAdapter.queue(self.id)
+        NewsSearchAdapter.queue(self.id)
 
     def save(self, *args, **kwargs):
         """
@@ -578,7 +578,7 @@ class ArticleSearchAuthDecider(object):
         return self.priv or ((not auth[0]) and auth[1] <= self.now)
 
 
-class IkhayaSearchAdapter(SearchAdapter):
+class NewsSearchAdapter(SearchAdapter):
     type_id = 'i'
     auth_decider = ArticleSearchAuthDecider
 
@@ -603,7 +603,7 @@ class IkhayaSearchAdapter(SearchAdapter):
                 'user': article.author.username,
                 'date': article.pub_datetime,
                 'url': url_for(article),
-                'component': u'Ikhaya',
+                'component': u'News',
                 'group': article.category.name,
                 'group_url': url_for(article.category),
                 'highlight': True,
@@ -627,7 +627,7 @@ class IkhayaSearchAdapter(SearchAdapter):
 
 
 #: Register search adapter
-search.register(IkhayaSearchAdapter())
+search.register(NewsSearchAdapter())
 
 #: Register generic model signals
 from inyoka.utils import signals

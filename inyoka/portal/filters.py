@@ -20,7 +20,7 @@ from inyoka.utils.urls import urlencode
 SUPPORTED_SUBSCRIPTION_TYPES = {
     'topic': ugettext_lazy(u'Topic'),
     'forum': ugettext_lazy(u'Forum'),
-    'article': ugettext_lazy(u'Ikhaya article'),
+    'article': ugettext_lazy(u'News article'),
     'page': ugettext_lazy(u'Wiki page')
 }
 

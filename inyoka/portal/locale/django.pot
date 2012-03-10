@@ -29,7 +29,7 @@ msgid "Forum"
 msgstr ""
 
 #: inyoka/portal/filters.py:23
-msgid "Ikhaya article"
+msgid "News article"
 msgstr ""
 
 #: inyoka/portal/filters.py:24
@@ -703,7 +703,7 @@ msgstr ""
 
 #: inyoka/portal/forms.py:859
 msgid ""
-"Description about Ikhaya that will be used on the start page and in the "
+"Description about News that will be used on the start page and in the "
 "feed aggregations."
 msgstr ""
 
@@ -787,7 +787,7 @@ msgid "File"
 msgstr ""
 
 #: inyoka/portal/models.py:287
-msgid "Is Ikhaya icon"
+msgid "Is News icon"
 msgstr ""
 
 #: inyoka/portal/models.py:289
@@ -812,19 +812,19 @@ msgid "User was already notified"
 msgstr ""
 
 #: inyoka/portal/user.py:43
-msgid "Ikhaya | can edit articles"
+msgid "News | can edit articles"
 msgstr ""
 
 #: inyoka/portal/user.py:44
-msgid "Ikhaya | can edit categories"
+msgid "News | can edit categories"
 msgstr ""
 
 #: inyoka/portal/user.py:45
-msgid "Ikhaya | can create new events"
+msgid "News | can create new events"
 msgstr ""
 
 #: inyoka/portal/user.py:46
-msgid "Ikhaya | can manage comments"
+msgid "News | can manage comments"
 msgstr ""
 
 #: inyoka/portal/user.py:47
@@ -872,7 +872,7 @@ msgid "Forum | can delete every topic and post"
 msgstr ""
 
 #: inyoka/portal/user.py:58
-msgid "Ikhaya | can read unpublished articles"
+msgid "News | can read unpublished articles"
 msgstr ""
 
 #: inyoka/portal/user.py:59

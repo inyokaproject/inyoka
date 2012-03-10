@@ -315,12 +315,12 @@ msgstr ""
 
 #: inyoka/ikhaya/views.py:826
 #, python-format
-msgid "%(domain)s Ikhaya comments – %(title)s"
+msgid "%(domain)s News comments – %(title)s"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:831
 #, python-format
-msgid "%(domain)s Ikhaya comments"
+msgid "%(domain)s News comments"
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/archive.html:12

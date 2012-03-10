@@ -3,7 +3,7 @@
     inyoka.ikhaya.views
     ~~~~~~~~~~~~~~~~~~~
 
-    Views for Ikhaya.
+    Views for News.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
@@ -777,10 +777,10 @@ def feed_article(request, slug=None, mode='short', count=10):
     Shows the ikhaya entries that match the given criteria in an atom feed.
     """
     if slug:
-        title = u'%s Ikhaya – %s' % (settings.BASE_DOMAIN_NAME, slug)
+        title = u'%s News – %s' % (settings.BASE_DOMAIN_NAME, slug)
         url = href('ikhaya', 'category', slug)
     else:
-        title = u'%s Ikhaya' % settings.BASE_DOMAIN_NAME
+        title = u'%s News' % settings.BASE_DOMAIN_NAME
         url = href('ikhaya')
 
     articles = Article.objects.get_latest_articles(slug, count)
@@ -823,12 +823,12 @@ def feed_comment(request, id=None, mode='short', count=10):
     article = None
     if id:
         article = Article.published.get(id=id)
-        title = _(u'%(domain)s Ikhaya comments – %(title)s') % {
+        title = _(u'%(domain)s News comments – %(title)s') % {
                     'domain': settings.BASE_DOMAIN_NAME,
                     'title': article.subject}
         url = url_for(article)
     else:
-        title = _(u'%(domain)s Ikhaya comments') % {
+        title = _(u'%(domain)s News comments') % {
                     'domain': settings.BASE_DOMAIN_NAME}
         url = href('ikhaya')
 

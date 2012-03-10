@@ -22,7 +22,7 @@
       $('#id_forum_component_forum')[0].checked = true;
     });
     $('#forum').change(makeForumFeedURL);
-    $('#ikhaya').change(makeIkhayaFeedURL);
+    $('#ikhaya').change(makeNewsFeedURL);
     $('#planet').change(makePlanetFeedURL);
     $('.feed_count').after(' <span class="feed_count_adjust">');
     $('.feed_count_adjust').append('<img class="feed_count_increase" src="' + $STATIC_URL + 'img/arrow-up.gif" />')
@@ -70,7 +70,7 @@
     return false;
   }
 
-  function makeIkhayaFeedURL() {
+  function makeNewsFeedURL() {
     var errors = {};
     var data = {};
     var form = document.getElementById('ikhaya');

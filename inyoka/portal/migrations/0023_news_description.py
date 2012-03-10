@@ -5,7 +5,7 @@ from south.v2 import DataMigration
 from django.db import models
 
 
-NEWS_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
+NEWS_DESCRIPTION = u'News ist der Nachrichtenblog der ubuntuusers-' \
     u'Community. Hier werden Nachrichten und Berichte rund um Ubuntu, Linux' \
     u' und OpenSource-Software veröffentlicht.'
 

@@ -54,7 +54,7 @@ SEARCH_AREA_CHOICES = (
     ('all', ugettext_lazy(u'Everywhere')),
     ('forum', ugettext_lazy(u'Forum')),
     ('wiki', ugettext_lazy(u'Wiki')),
-    ('ikhaya', 'Ikhaya'),
+    ('ikhaya', 'News'),
     ('planet', ugettext_lazy(u'Planet')),
 )
 
@@ -779,7 +779,7 @@ class ForumFeedSelectorForm(FeedSelectorForm):
         return data['forum']
 
 
-class IkhayaFeedSelectorForm(FeedSelectorForm):
+class NewsFeedSelectorForm(FeedSelectorForm):
     category = forms.ChoiceField(label=ugettext_lazy(u'Category'))
 
 
@@ -856,7 +856,7 @@ class ConfigurationForm(forms.Form):
 
     ikhaya_description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 3}),
-        label=ugettext_lazy(u'Description about Ikhaya that will be used '
+        label=ugettext_lazy(u'Description about News that will be used '
                             u'on the start page and in the feed aggregations.'))
     planet_description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 3}),

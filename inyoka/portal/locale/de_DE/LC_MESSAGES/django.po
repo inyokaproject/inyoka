@@ -33,8 +33,8 @@ msgid "Forum"
 msgstr "Forum"
 
 #: inyoka/portal/filters.py:23
-msgid "Ikhaya article"
-msgstr "Ikhaya Artikel"
+msgid "News article"
+msgstr "News Artikel"
 
 #: inyoka/portal/filters.py:24
 msgid "Wiki page"
@@ -728,10 +728,10 @@ msgstr "Lizenzhinweis"
 
 #: inyoka/portal/forms.py:859
 msgid ""
-"Description about Ikhaya that will be used on the start page and in the "
+"Description about News that will be used on the start page and in the "
 "feed aggregations."
 msgstr ""
-"Beschreibung zu Ikhaya, die auf der Startseite und in den Feeds verwendet"
+"Beschreibung zu News, die auf der Startseite und in den Feeds verwendet"
 " wird."
 
 #: inyoka/portal/forms.py:863
@@ -814,8 +814,8 @@ msgid "File"
 msgstr "Datei"
 
 #: inyoka/portal/models.py:287
-msgid "Is Ikhaya icon"
-msgstr "Ist Ikhaya-Icon"
+msgid "Is News icon"
+msgstr "Ist News-Icon"
 
 #: inyoka/portal/models.py:289
 msgid ""
@@ -841,20 +841,20 @@ msgid "User was already notified"
 msgstr "Der Benutzer wurde bereits benachrichtigt"
 
 #: inyoka/portal/user.py:43
-msgid "Ikhaya | can edit articles"
-msgstr "Ikhaya | kann Artikel bearbeiten"
+msgid "News | can edit articles"
+msgstr "News | kann Artikel bearbeiten"
 
 #: inyoka/portal/user.py:44
-msgid "Ikhaya | can edit categories"
-msgstr "Ikhaya | kann Kategorien bearbeiten"
+msgid "News | can edit categories"
+msgstr "News | kann Kategorien bearbeiten"
 
 #: inyoka/portal/user.py:45
-msgid "Ikhaya | can create new events"
-msgstr "Ikhaya | kann neue Veranstaltungen erstellen"
+msgid "News | can create new events"
+msgstr "News | kann neue Veranstaltungen erstellen"
 
 #: inyoka/portal/user.py:46
-msgid "Ikhaya | can manage comments"
-msgstr "Ikhaya | kann Kommentare moderieren"
+msgid "News | can manage comments"
+msgstr "News | kann Kommentare moderieren"
 
 #: inyoka/portal/user.py:47
 msgid "Planet | can edit blogs"
@@ -901,8 +901,8 @@ msgid "Forum | can delete every topic and post"
 msgstr "Forum | kann jedes Thema und jeden Beitrag löschen"
 
 #: inyoka/portal/user.py:58
-msgid "Ikhaya | can read unpublished articles"
-msgstr "Ikhaya | kann nicht veröffentlichte Artikel lesen"
+msgid "News | can read unpublished articles"
+msgstr "News | kann nicht veröffentlichte Artikel lesen"
 
 #: inyoka/portal/user.py:59
 msgid "Admin | can manage statistics"

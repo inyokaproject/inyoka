@@ -61,7 +61,7 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
      UserCPSettingsForm, PrivateMessageForm, DeactivateUserForm, \
      LostPasswordForm, ChangePasswordForm, SubscriptionForm, \
      UserCPProfileForm, SetNewPasswordForm, ForumFeedSelectorForm, \
-     IkhayaFeedSelectorForm, PlanetFeedSelectorForm, WikiFeedSelectorForm, \
+     NewsFeedSelectorForm, PlanetFeedSelectorForm, WikiFeedSelectorForm, \
      NOTIFICATION_CHOICES, PrivateMessageIndexForm, PrivateMessageFormProtected, \
      OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
      EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
@@ -1789,7 +1789,7 @@ def usermap(request):
 
 app_feed_forms = {
     'forum': ForumFeedSelectorForm,
-    'ikhaya': IkhayaFeedSelectorForm,
+    'ikhaya': NewsFeedSelectorForm,
     'planet': PlanetFeedSelectorForm,
     'wiki': WikiFeedSelectorForm
 }

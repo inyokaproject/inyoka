@@ -40,10 +40,10 @@ _ANONYMOUS_USER = _SYSTEM_USER = None
 DEFAULT_GROUP_ID = 1 # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
     ('admin_panel', u'Not in use anymore'), #TODO: DEPRECATED
-    ('article_edit', ugettext_lazy(u'Ikhaya | can edit articles')),
-    ('category_edit', ugettext_lazy(u'Ikhaya | can edit categories')),
-    ('event_edit', ugettext_lazy(u'Ikhaya | can create new events')),
-    ('comment_edit', ugettext_lazy(u'Ikhaya | can manage comments')),
+    ('article_edit', ugettext_lazy(u'News | can edit articles')),
+    ('category_edit', ugettext_lazy(u'News | can edit categories')),
+    ('event_edit', ugettext_lazy(u'News | can create new events')),
+    ('comment_edit', ugettext_lazy(u'News | can manage comments')),
     ('blog_edit', ugettext_lazy(u'Planet | can edit blogs')),
     ('configuration_edit', ugettext_lazy(u'Portal | can edit miscellaneous settings')),
     ('static_page_edit', ugettext_lazy(u'Portal | can edit static pages')),
@@ -55,7 +55,7 @@ PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
     ('forum_edit', ugettext_lazy(u'Forum | can edit forums')),
     ('manage_topics', ugettext_lazy(u'Forum | can manage reported topics')),
     ('delete_topic', ugettext_lazy(u'Forum | can delete every topic and post')),
-    ('article_read', ugettext_lazy(u'Ikhaya | can read unpublished articles')),
+    ('article_read', ugettext_lazy(u'News | can read unpublished articles')),
     ('manage_stats', ugettext_lazy(u'Admin | can manage statistics')),
     ('manage_pastebin', ugettext_lazy(u'Portal | can manage pastebin')),
     ('subscribe_to_users', ugettext_lazy(u'Portal | can watch users'))

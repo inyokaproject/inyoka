@@ -131,7 +131,7 @@
         {% endif %}
       </p>
       <p class="meta">
-        {%- if doc.component in ('Forum', 'Ikhaya', 'Planet') %}
+        {%- if doc.component in ('Forum', 'News', 'Planet') %}
         geschrieben von <a href="{{ doc.user_url }}">{{ doc.user|e }}</a> {{ doc.date|specificdatetimeformat|e }}{% if not doc.component in ('Planet',) %} in <a href="{{ doc.group_url }}">{{ doc.group|e }}</a>{% endif %}
         {%- elif doc.component == 'Wiki' %}
         zuletzt bearbeitet von <a href="{{ doc.user_url }}">{{ doc.user|e }}</a> {{ doc.date|specificdatetimeformat }}

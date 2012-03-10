@@ -93,7 +93,7 @@
         input data thanks to feedparser.
 
     `ikhaya`
-        Ikhaya is zulu for `home` and a blog application.  It's used on the
+        News is zulu for `home` and a blog application.  It's used on the
         German ubuntuusers portal for site wide annoucements and other news.
         It doesn't show up on the planet automatically, for that you have to
         add the ikhaya feed to it like for any other blog too.

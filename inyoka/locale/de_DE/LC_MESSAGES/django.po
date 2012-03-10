@@ -91,7 +91,7 @@ msgstr "Wiki"
 
 #: inyoka/templates/overall.html:208
 msgid "News"
-msgstr "Ikhaya"
+msgstr "News"
 
 #: inyoka/templates/overall.html:211
 msgid "Planet"

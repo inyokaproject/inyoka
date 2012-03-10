@@ -66,7 +66,7 @@ BLOGS = {
     'ubuntuusers-Webteam': ('http://behind.ubuntuusers.de/',
         'http://behind.ubuntuusers.de/feed.atom'),
     ## Meta!
-    'Ikhaya': ('http://ubuntuusers.ikhaya.de',
+    'News': ('http://ubuntuusers.ikhaya.de',
         'http://ikhaya.ubuntuusers.de/feeds/full/10/')
 }
 

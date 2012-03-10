@@ -28,8 +28,8 @@
     <dt>{% trans %}Usage:{% endtrans %}</dt>
     <dd><tt>{%- if ' ' in file.identifier|e %}[[Bild("{{ file.identifier|e }}")]]{%- else -%}
             [[Bild({{ file.identifier|e}})]]{% endif %}</tt></dd>
-    <dd><tt>{%- if ' ' in file.identifier|e %}[[Vorlage(Ikhayabild, "{{ file.identifier|e }}", Link oder Größe, "Beschreibung", left|right)]]{%- else %}
-            [[Vorlage(Ikhayabild, {{ file.identifier|e }}, Link oder Größe, "{% trans %}Description{% endtrans %}", left|right)]]{% endif %}</tt></dd>
+    <dd><tt>{%- if ' ' in file.identifier|e %}[[Vorlage(Newsbild, "{{ file.identifier|e }}", Link oder Größe, "Beschreibung", left|right)]]{%- else %}
+            [[Vorlage(Newsbild, {{ file.identifier|e }}, Link oder Größe, "{% trans %}Description{% endtrans %}", left|right)]]{% endif %}</tt></dd>
     {%- endif %}
   </dl>
   <p>
