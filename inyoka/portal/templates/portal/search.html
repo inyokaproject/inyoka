@@ -104,7 +104,7 @@
         <p class="meta">
           zuletzt bearbeitet von
           <a href="{{ href('portal', 'user', wiki_result.last_rev.user|e) }}">
-            {{ wiki_result.last_rev.user|e }}
+            {{- wiki_result.last_rev.user|e -}}
           </a>
           {{ wiki_result.last_rev.change_date|specificdatetimeformat }}
         </p>
@@ -116,7 +116,7 @@
         <img src="{{ href('static', 'img/icons/small/%s.png' % doc.component|lower) }}"
           alt="{{ doc.component }}" title="{{ doc.component }}" />
         <a href="{{ doc.url }}{% if doc.highlight and highlight %}?highlight={{ highlight|urlencode|e }}{% endif %}">
-          {{ doc.title }}
+          {{- doc.title -}}
         </a>
         {%- if doc.solved %}
         <img src="{{ href('static', 'img/check.png') }}" alt="Gelöst" title="Gelöst" />
