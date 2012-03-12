@@ -520,7 +520,7 @@ class User(models.Model):
     signature = models.TextField(ugettext_lazy(u'Signature'), blank=True)
     coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
     coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
-    location = models.CharField(ugettext_lazy(u'Location'), max_length=200, blank=True)
+    location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
     gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=8, blank=True)
     occupation = models.CharField(ugettext_lazy(u'Job'), max_length=200, blank=True)
     interests = models.CharField(ugettext_lazy(u'Interests'), max_length=200, blank=True)
