@@ -2592,6 +2592,11 @@ msgstr "Alle an- / abwählen"
 msgid "Show unread posts"
 msgstr "Zeige ungelesene Beiträge"
 
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:61
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:62
+msgid "Go to last comment"
+msgstr "Zum letzten Kommentar springen"
+
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:64
 msgid "Changes since last visit"
 msgstr "Änderungen seit meinem letzten Besuch"

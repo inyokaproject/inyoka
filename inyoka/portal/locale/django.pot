@@ -2463,6 +2463,11 @@ msgstr ""
 msgid "Show unread posts"
 msgstr ""
 
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:61
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:62
+msgid "Go to last comment"
+msgstr ""
+
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:64
 msgid "Changes since last visit"
 msgstr ""
