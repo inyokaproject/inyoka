@@ -37,9 +37,9 @@
           {% for article in day.articles %}
             <div class="article admin_link_hover" id="article_{{ article_index + loop.index0 }}">
               <div class="head">
-                <a href="{{ article.blog|url|e }}">
-                  <img src="{{ article.blog.icon_url|e }}" alt="" /><br />
-                </a>
+                <a href="{{ article.blog|url|e }}">{#
+                  #}<img src="{{ article.blog.icon_url|e }}" alt="" /><br />{#
+                #}</a>
                 <p>
                   <a href="{{ article.blog|url|e }}">{{ article.blog.name|e }}</a>
                   {{ article.pub_date|datetimeformat }}

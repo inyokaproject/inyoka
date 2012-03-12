@@ -116,36 +116,36 @@
             {%- if USER.is_authenticated %}
               <li>
                 <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
-                  {% trans user=USER.username|e %}Logout [{{ user }}]{% endtrans %}
+                  {%- trans user=USER.username|e %}Logout [{{ user }}]{% endtrans -%}
                 </a>
               </li>
               <li>
                 <a href="{{ href('portal', 'usercp') }}">
-                  {% trans %}Control panel{% endtrans %}
+                  {%- trans %}Control panel{% endtrans -%}
                 </a>
               </li>
               <li>
                 {%- if pm_count -%}
                   <strong>
                     <a href="{{ href('portal', 'privmsg')}}">
-                      {% trans count=pm_count %}Private messages ({{ count }}){% endtrans %}
+                      {%- trans count=pm_count %}Private messages ({{ count }}){% endtrans -%}
                     </a>
                   </strong>
                 {%- else -%}
                   <a href="{{ href('portal', 'privmsg') }}">
-                    {% trans %}Private messages{% endtrans %}
+                    {%- trans %}Private messages{% endtrans -%}
                   </a>
                 {%- endif -%}
               </li>
             {%- else %}
               <li>
                 <a href="{{ href('portal', 'login', next=CURRENT_URL) }}" id="login_link">
-                  {% trans %}Login{% endtrans %}
+                  {%- trans %}Login{% endtrans -%}
                 </a>
               </li>
               <li>
                 <a href="{{ href('portal', 'register') }}">
-                  {% trans %}Register{% endtrans %}
+                  {%- trans %}Register{% endtrans -%}
                 </a>
               </li>
             {%- endif %}
@@ -154,12 +154,12 @@
         {%- if USER.can('manage_topics') or USER.can('article_edit') or USER.can('event_edit') %}
           <div id="admin_menu">
             <div class="bar">
-              <a id="admin_layer_button">
-                <img src="{{ href('static', 'img/admin/switch.png') }}"
-                     alt="{% trans %}Admin{% endtrans %}"
-                     title="{% trans %}Turn admin links on/off{% endtrans %}" />
-                <span class="description"></span>
-              </a>
+              <a id="admin_layer_button">{#
+                #}<img src="{{ href('static', 'img/admin/switch.png') }}"
+                       alt="{% trans %}Admin{% endtrans %}"
+                       title="{% trans %}Turn admin links on/off{% endtrans %}" />{#
+                #}<span class="description"></span>{#
+              #}</a>
             </div>
             <div class="bar">
               {%- if USER.can('manage_topics') %}
