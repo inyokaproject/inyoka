@@ -47,7 +47,7 @@
   <dd><label for="id_location_long">{% trans %}Longitude:{% endtrans %}</label> {{ form.location_long }}</dd>
   <dd><label for="id_location_lat">{% trans %}Latitude:{% endtrans %}</label> {{ form.location_lat }}</dd>
   <dt>{% trans %}General{% endtrans %}</dt>
-  <dd><label for="id_visible">{% trans %}Entry visible:{% endtrans %}</label> {{ form.visible }}</dd>
+  <dd><label for="id_visible">{{ form.visible.label }}</label> {{ form.visible }}</dd>
 
   <p>
     <input type="submit" value="{% trans %}Submit{% endtrans %}" />
