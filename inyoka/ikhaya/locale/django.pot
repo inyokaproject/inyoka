@@ -608,14 +608,8 @@ msgid "Latitude:"
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:49
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:43
 #: inyoka/ikhaya/templates/ikhaya/page.html:86
 msgid "General"
-msgstr ""
-
-#: inyoka/ikhaya/templates/ikhaya/event_edit.html:50
-#: inyoka/ikhaya/templates/ikhaya/event_suggest.html:44
-msgid "Entry visible:"
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:56
