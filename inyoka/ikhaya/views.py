@@ -284,6 +284,8 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 else:
                     flash(_(u'The article “%(title)s“ was saved.')
                           % {'title': escape(article.subject)}, True)
+                    cache.delete('ikhaya/latest_articles')
+                    cache.delete('ikhaya/latest_articles/%s' % article.category)
                     cache.delete('ikhaya/article/%s/%s' %
                                  (article.pub_date, article.slug))
                     return HttpResponseRedirect(url_for(article))
