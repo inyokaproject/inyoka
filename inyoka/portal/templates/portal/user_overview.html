@@ -15,9 +15,9 @@
 
 {% macro user_edit_button(link, icon, name) %}
   <li>
-    <span><a href="{{ link }}">
-      <img src="{{ href('static', 'img/portal/user_%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
-      {{ name }}
+    <span><a href="{{ link }}">{#
+      #}<img src="{{ href('static', 'img/portal/user_%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
+      {{- name -}}
     </a></span>
   </li>
 {% endmacro %}

@@ -43,8 +43,8 @@
 
 {# render a list entry of the mod nav #}
 {% macro render_modnavi_li(label, href, icon, count=False) %}
-  <a href="{{ href|e }}"{% if count %} class="highlight"{% endif %}>
-    <img src={{ icon|e }} alt="{{ label }}" title="{{ label }} ({{ count }})" />
-    <span class="description">{{ count }}</span>
-  </a>
+  <a href="{{ href|e }}"{% if count %} class="highlight"{% endif %}>{#
+    #}<img src={{ icon|e }} alt="{{ label }}" title="{{ label }} ({{ count }})" />{#
+    #}<span class="description">{{ count }}</span>{#
+  #}</a>
 {% endmacro %}
