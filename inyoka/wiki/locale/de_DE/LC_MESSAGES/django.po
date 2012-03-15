@@ -761,7 +761,7 @@ msgid ""
 msgstr ""
 "Um immer auf dem aktuellen Stand zu sein, kannst du den <a "
 "href=\"%(feed_link)s\">Atom Feed</a> lesen oder <a "
-"href=\"%(subscribe_link)s\">abbonieren</a>."
+"href=\"%(subscribe_link)s\">abonnieren</a>."
 
 #: inyoka/wiki/templates/wiki/action_log.html:48
 #: inyoka/wiki/templates/wiki/action_log.html:88
