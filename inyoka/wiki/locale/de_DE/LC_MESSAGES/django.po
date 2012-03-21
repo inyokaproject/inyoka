@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-26 13:44+0100\n"
+"POT-Creation-Date: 2012-03-21 12:59+0100\n"
 "PO-Revision-Date: 2012-02-07 02:34+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -80,7 +80,7 @@ msgstr ""
 "als Basis für die neue Seite verwendet."
 
 #: inyoka/wiki/actions.py:431 inyoka/wiki/actions.py:518
-#: inyoka/wiki/actions.py:863
+#: inyoka/wiki/actions.py:867
 msgid "Canceled"
 msgstr "Abgebrochen"
 
@@ -121,43 +121,43 @@ msgstr ""
 msgid "Page deleted"
 msgstr "Seite wurde gelöscht."
 
-#: inyoka/wiki/actions.py:852
+#: inyoka/wiki/actions.py:856
 msgid "Attachments within attachments are not allowed!"
 msgstr "Anhänge in Anhängen sind nicht erlaubt!"
 
-#: inyoka/wiki/actions.py:877
+#: inyoka/wiki/actions.py:881
 msgid "Please enter a name for this attachment."
 msgstr "Bitte gib einen Dateinamen für den Anhang an."
 
-#: inyoka/wiki/actions.py:887
+#: inyoka/wiki/actions.py:891
 msgid "Another page or attachment with the same name exists"
 msgstr "Es existiert bereits eine Seite oder ein Anhang mit diesem Namen."
 
-#: inyoka/wiki/actions.py:906
+#: inyoka/wiki/actions.py:910
 msgid "Attachment saved successfully."
 msgstr "Der Dateianhang wurde erfolgreich gespeichert."
 
-#: inyoka/wiki/actions.py:940
+#: inyoka/wiki/actions.py:944
 msgid "Attachment edited successfully."
 msgstr "Der Dateianhang wurde erfolgreich bearbeitet."
 
-#: inyoka/wiki/actions.py:954
+#: inyoka/wiki/actions.py:958
 msgid "Emptied the page cache."
 msgstr "Der Seitencache wurde geleert."
 
-#: inyoka/wiki/actions.py:981
+#: inyoka/wiki/actions.py:985
 msgid "You will be notified on changes on this page"
 msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite benachrichtigt."
 
-#: inyoka/wiki/actions.py:983
+#: inyoka/wiki/actions.py:987
 msgid "You are already subscribed"
 msgstr "Du wirst bereits benachrichtigt"
 
-#: inyoka/wiki/actions.py:996
+#: inyoka/wiki/actions.py:1000
 msgid "No subscription for this page found."
 msgstr "Du wirst über diese Seite gar nicht benachrichtigt!"
 
-#: inyoka/wiki/actions.py:999
+#: inyoka/wiki/actions.py:1003
 msgid "You won't be notified on changes on this page anymore"
 msgstr ""
 "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr "
@@ -764,16 +764,16 @@ msgstr ""
 "href=\"%(subscribe_link)s\">abonnieren</a>."
 
 #: inyoka/wiki/templates/wiki/action_log.html:48
-#: inyoka/wiki/templates/wiki/action_log.html:88
+#: inyoka/wiki/templates/wiki/action_log.html:87
 msgid "Compare"
 msgstr "Vergleichen"
 
-#: inyoka/wiki/templates/wiki/action_log.html:79
+#: inyoka/wiki/templates/wiki/action_log.html:78
 #: inyoka/wiki/templates/wiki/action_revert.html:17
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: inyoka/wiki/templates/wiki/action_log.html:82
+#: inyoka/wiki/templates/wiki/action_log.html:81
 #: inyoka/wiki/templates/wiki/action_manage.html:45
 msgid "Raw"
 msgstr "Rohformat"

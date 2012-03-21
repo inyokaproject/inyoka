@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-26 13:44+0100\n"
+"POT-Creation-Date: 2012-03-21 12:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +72,7 @@ msgid "Used the template “<a href=\"%(link)s\">%(name)s</a>” for this page"
 msgstr ""
 
 #: inyoka/wiki/actions.py:431 inyoka/wiki/actions.py:518
-#: inyoka/wiki/actions.py:863
+#: inyoka/wiki/actions.py:867
 msgid "Canceled"
 msgstr ""
 
@@ -106,43 +107,43 @@ msgstr ""
 msgid "Page deleted"
 msgstr ""
 
-#: inyoka/wiki/actions.py:852
+#: inyoka/wiki/actions.py:856
 msgid "Attachments within attachments are not allowed!"
 msgstr ""
 
-#: inyoka/wiki/actions.py:877
+#: inyoka/wiki/actions.py:881
 msgid "Please enter a name for this attachment."
 msgstr ""
 
-#: inyoka/wiki/actions.py:887
+#: inyoka/wiki/actions.py:891
 msgid "Another page or attachment with the same name exists"
 msgstr ""
 
-#: inyoka/wiki/actions.py:906
+#: inyoka/wiki/actions.py:910
 msgid "Attachment saved successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:940
+#: inyoka/wiki/actions.py:944
 msgid "Attachment edited successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:954
+#: inyoka/wiki/actions.py:958
 msgid "Emptied the page cache."
 msgstr ""
 
-#: inyoka/wiki/actions.py:981
+#: inyoka/wiki/actions.py:985
 msgid "You will be notified on changes on this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:983
+#: inyoka/wiki/actions.py:987
 msgid "You are already subscribed"
 msgstr ""
 
-#: inyoka/wiki/actions.py:996
+#: inyoka/wiki/actions.py:1000
 msgid "No subscription for this page found."
 msgstr ""
 
-#: inyoka/wiki/actions.py:999
+#: inyoka/wiki/actions.py:1003
 msgid "You won't be notified on changes on this page anymore"
 msgstr ""
 
@@ -699,16 +700,16 @@ msgid ""
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_log.html:48
-#: inyoka/wiki/templates/wiki/action_log.html:88
+#: inyoka/wiki/templates/wiki/action_log.html:87
 msgid "Compare"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:79
+#: inyoka/wiki/templates/wiki/action_log.html:78
 #: inyoka/wiki/templates/wiki/action_revert.html:17
 msgid "Restore"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:82
+#: inyoka/wiki/templates/wiki/action_log.html:81
 #: inyoka/wiki/templates/wiki/action_manage.html:45
 msgid "Raw"
 msgstr ""
