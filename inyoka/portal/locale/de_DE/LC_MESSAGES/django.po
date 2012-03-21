@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-26 13:44+0100\n"
+"POT-Creation-Date: 2012-03-12 19:53+0100\n"
 "PO-Revision-Date: 2012-02-07 02:01+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -358,12 +358,11 @@ msgid "Coordinates (latitude, longitude)"
 msgstr "Koordinaten (Breite, Länge)"
 
 #: inyoka/portal/forms.py:331 inyoka/portal/user.py:523
-#: inyoka/portal/templates/portal/calendar_detail.html:45
 #: inyoka/portal/templates/portal/group.html:34
 #: inyoka/portal/templates/portal/memberlist.html:41
 #: inyoka/portal/templates/portal/profile.html:99
 #: inyoka/portal/templates/portal/special_rights.html:26
-msgid "Location"
+msgid "Residence"
 msgstr "Wohnort"
 
 #: inyoka/portal/forms.py:332 inyoka/portal/user.py:525
@@ -1519,6 +1518,10 @@ msgstr "von"
 msgid "to"
 msgstr "bis"
 
+#: inyoka/portal/templates/portal/calendar_detail.html:45
+msgid "Venue"
+msgstr "Veranstaltungsort"
+
 #: inyoka/portal/templates/portal/calendar_detail.html:55
 msgid "Details"
 msgstr "Details"
@@ -2597,20 +2600,20 @@ msgstr "Zeige ungelesene Beiträge"
 msgid "Go to last comment"
 msgstr "Zum letzten Kommentar springen"
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:64
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:68
 msgid "Changes since last visit"
 msgstr "Änderungen seit meinem letzten Besuch"
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:76
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:80
 #: inyoka/portal/templates/portal/usercp/subscriptions.m.html:39
 msgid "You did not yet subscribed to any topics or articles."
 msgstr "Du hast bisher keine Themen oder Artikel abonniert."
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:82
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:86
 msgid "Delete selected subscriptions"
 msgstr "Lösche gewählte Abonnements"
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:83
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:87
 msgid "Mark selected subscriptions as read"
 msgstr "Markiere gewählte Abonnements als gelesen"
 

@@ -58,9 +58,8 @@
             <td class="author">
               {%- if revision.user %}
                 <a href="{{ revision.user|url|e }}">{#
-                  #}<img src="{{ revision.user.avatar_url|e }}" width="16" height="16"
-                         alt="{{ revision.user.username|e }}" />{#
-                  #}<span class="username">{{ revision.user.username|e }}</span>
+                  #}<img src="{{ revision.user.avatar_url|e }}" width="16" height="16" alt="{{ revision.user.username|e }}" />{#
+                  #}<span class="username">{{ revision.user.username|e }}</span>{#
                 #}</a>
               {% else %}
                 {{ revision.remote_addr|e }}

@@ -210,7 +210,7 @@
             <p>{% trans %}Member since:{% endtrans %}<br />{{ post.author.date_joined|dateformat }}</p>
             <p>{% trans %}Posts:{% endtrans %} {{ post.author.post_count }}</p>
             {%- if post.author.location %}
-              <p>{% trans %}Location:{% endtrans %} {{ post.author.location|e }}</p>
+              <p>{% trans %}Residence:{% endtrans %} {{ post.author.location|e }}</p>
             {%- endif %}
           </td>
           <td class="post"{%- if post.author_id == USER.id %} style="background-color: #F8F6F1"{% endif %}>
