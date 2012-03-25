@@ -69,10 +69,10 @@
               <a href="{{ topic|url }}">{{ topic.title|e }}</a>
               {%- if not topic.get_read_status(USER) %}
                 <a href="{{ topic|url('first_unread') }}"
-                   title="{% trans %}Show unread posts{% endtrans %}">
-                  <img src="{{ href('static', 'img/forum/goto.png') }}"
-                       alt="{% trans %}Show unread posts{% endtrans %}" />
-                </a>
+                   title="{% trans %}Show unread posts{% endtrans %}">{#
+                  #}<img src="{{ href('static', 'img/forum/goto.png') }}"
+                         alt="{% trans %}Show unread posts{% endtrans %}" />{#
+                #}</a>
               {%- endif %}
             </p>
             <p class="description note">

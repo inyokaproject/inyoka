@@ -14,6 +14,8 @@
 import re
 import heapq
 import difflib
+import itertools
+from django.utils.translation import ugettext as _
 from inyoka.utils.html import escape
 
 
@@ -310,14 +312,20 @@ def generate_udiff(old, new, old_title='', new_title='',
     used on the diff.  `context_lines` defaults to 5 and represents the
     number of lines used in an udiff around a changed line.
     """
-    return u'\n'.join(difflib.unified_diff(
-        old.splitlines(),
-        new.splitlines(),
-        fromfile=old_title,
-        tofile=new_title,
-        lineterm='',
-        n=context_lines,
-    ))
+    # NOTE: difflib doesn't like unicode filenames!
+    udiff = difflib.unified_diff(
+            old.splitlines(),
+            new.splitlines(),
+            fromfile=old_title.encode('utf-8'),
+            tofile=new_title.encode('utf-8'),
+            lineterm='',
+            n=context_lines)
+    try:
+        title_diff_1 = udiff.next().decode('utf-8')
+        title_diff_2 = udiff.next().decode('utf-8')
+        return u'\n'.join(itertools.chain([title_diff_1, title_diff_2], udiff))
+    except StopIteration: # Content didn't change.
+        return u''
 
 
 def prepare_udiff(udiff):
@@ -361,7 +369,7 @@ class DiffRenderer(object):
         try:
             if line1.startswith('--- ') and line2.startswith('+++ '):
                 filename = line1[4:].split(None, 1)[0]
-                return filename, 'Alt', 'Neu'
+                return filename, _('Old'), _('New')
         except (ValueError, IndexError):
             pass
         return None, None, None

@@ -33,7 +33,7 @@
     {% if calendar_events %}
       <ul class="events">
       {% for event in calendar_events %}
-        <li>{{ event.friendly_title(with_date=false, with_html_link=true) }}</li>
+        <li>{{ event.friendly_title(with_html_link=true) }}</li>
       {%- endfor %}
       </ul>
     {% else %}
@@ -67,7 +67,7 @@
         {%- if article.pub_datetime == article.updated %}
           <a href="{{ article|url }}">{{ article.updated|datetimeformat }}</a>
         {%- else %}
-          <a href="{{ article|url }}" title="{% trans %}Last update:{% endtrans %} {{ article.updated|specificdatetimeformat(true)
+          <a href="{{ article|url }}" title="{% trans %}Last update:{% endtrans %} {{ article.updated|specificdatetimeformat
              }} / {% trans %}Created:{% endtrans %} {{ article.pub_datetime|datetimeformat }}">{{ article.updated|datetimeformat }}</a>
         {%- endif %}
         {%- if article.comments_enabled %}

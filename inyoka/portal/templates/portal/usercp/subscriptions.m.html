@@ -30,7 +30,7 @@
       {%- elif type == 'user' -%}
         {% trans %}User:{% endtrans %} <a href="{{ object|url }}">{{ object.username|e }}</a>
       {%- elif type == 'article' -%}
-        {% trans %}Article:{% endtrans %} <a href="{{ object|url }}">{{ object.subject|e }}</a>
+        {% trans %}Article:{% endtrans %} <a href="{{ object|url('last_comment') }}">{{ object.subject|e }}</a>
       {%- endif -%}
       </td>
     </tr>

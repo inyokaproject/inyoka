@@ -10,7 +10,7 @@
 
 {%- extends 'portal/overall.html' %}
 {% set styles = ['calendar'] %}
-{% do BREADCRUMB.append('%s %d' % (MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month), True) %}
+{% do BREADCRUMB.append('%s %d'|format(MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month), True) %}
 {% do BREADCRUMB.append('Kalender', href('portal', 'calendar'), True) %}
 {% block portal_content %}
 <ul class="switcher">
@@ -49,7 +49,7 @@
       {%- if events %}
       <ul>
         {%- for event in events %}
-        <li>{{ event.friendly_title(with_date=false, with_html_link=true) }}</li>
+        <li>{{ event.friendly_title(with_html_link=true) }}</li>
         {%- endfor %}
       </ul>
     {% endif -%}

@@ -91,7 +91,7 @@ def reactivate_user(id, email, status, time):
 
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
-        msg = u'Die E-Mail Adresse ist bereits vergeben.'
+        msg = _(u'This e-mail address is used by another user.')
         return {'failed': msg}
 
     user = User.objects.get(id=id)
@@ -111,7 +111,8 @@ def reactivate_user(id, email, status, time):
 
     # reactivate user page
     try:
-        userpage = WikiPage.objects.get_by_name('Benutzer/%s' % escape(user.username))
+        userpage = WikiPage.objects.get_by_name('%s/%s' % (
+                settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
                       note=_(u'The user “%(name)s“ has reactivated his account.')
                              % {'name': escape(user.username)})
@@ -154,7 +155,8 @@ def deactivate_user(user):
 
     # delete user wiki page
     try:
-        userpage = WikiPage.objects.get_by_name('Benutzer/%s' % escape(user.username))
+        userpage = WikiPage.objects.get_by_name('%s/%s' % (
+                settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=True,
                       note=_(u'The user “%(name)s“ has deactivated his account.')
                              % {'name': escape(user.username)})
@@ -272,7 +274,7 @@ class Group(models.Model):
     is_public = models.BooleanField(ugettext_lazy(u'Public profile'))
     _default_group = None
     permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
-    icon = models.ImageField(ugettext_lazy(u'Teamicon'),
+    icon = models.ImageField(ugettext_lazy(u'Team icon'),
                              upload_to='portal/team_icons',
                              blank=True, null=True)
 
@@ -605,7 +607,8 @@ class User(models.Model):
         Returns the rendered wikipage if it exists, otherwise None
         """
         from inyoka.wiki.models import Page as WikiPage
-        key = 'Benutzer/' + normalize_pagename(self.username)
+        key = '%s/%s' % (settings.WIKI_USER_BASE,
+                         normalize_pagename(self.username))
         return WikiPage.objects.exists(key)
 
     def email_user(self, subject, message, from_email=None):

@@ -26,8 +26,8 @@
   <div class="topics">
     <h3>{% trans %}Topics{% endtrans %}</h3>
     {%- for topic in topics if (topic.first_post and topic.last_post) %}
-      <a href="{{ topic|url }}">
-        <div class="button
+      <a href="{{ topic|url }}">{#
+        #}<div class="button
             {% if not topic.get_read_status(USER) %} unread{% endif %}
             {% if topic.solved %} solved{% endif %}
             {% if topic.hidden %} hidden{% endif %}
@@ -35,10 +35,10 @@
             {% if topic.sticky %} sticky{% endif %}
             {% if topic.has_poll %} poll{% endif %}
             {% if topic.locked %} locked{% endif %}">
-          {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
-          {{ topic.title|e }}
-        </div>
-      </a>
+        {%- if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif -%}
+          {{ topic.title|e -}}
+        </div>{#
+      #}</a>
     {%- endfor %}
   </div>
   {{ pagination.generate() }}

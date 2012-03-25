@@ -1,47 +1,20 @@
-# encoding: utf-8
-import gc
+# -*- coding: utf-8 -*-
 import datetime
-
 from south.db import db
 from south.v2 import DataMigration
-
-from django.conf import settings
-from django.db import models, transaction, connection
-
-
-def queryset_iterator(queryset, chunksize=1000):
-    pk = 0
-    last_pk = queryset.order_by('-pk')[0].pk
-    queryset = queryset.order_by('pk')
-    while pk < last_pk:
-        print "started %s to %s %s" % (pk, pk + chunksize, datetime.datetime.utcnow())
-        for row in queryset.filter(pk__gt=pk)[:chunksize]:
-            pk = row.pk
-            yield row
+from django.db import models
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        settings.DEBUG=False
-        if orm.Topic.objects.exists():
-            for topic in queryset_iterator(orm.Topic.objects.all(), 5000):
-                mapping = topic.posts.values_list('id', 'position').order_by('position', 'id').iterator()
-                pos = 0
-                values = None
-                for values in mapping:
-                    if pos != values[1]:
-                        orm.Post.objects.filter(id=values[0]).update(position=pos)
-                    pos += 1
-                if mapping and (topic.last_post_id != values[0] or
-                                topic.post_count != pos + 1):
-                    orm.Topic.objects.filter(id=topic.id).update(
-                        last_post=values[0], post_count=pos+1)
-                del connection.queries[:]
-                gc.collect()
+        "Write your forwards methods here."
+        orm.Topic.objects.filter(ubuntu_version='keine') \
+                         .update(ubuntu_version='none')
 
     def backwards(self, orm):
-        """There is no backwards migration as we never relied on being broken"""
-
+        "Write your backwards methods here."
+        orm.Topic.objects.filter(ubuntu_version='none') \
+                         .update(ubuntu_version='keine')
 
     models = {
         'forum.attachment': {
@@ -200,3 +173,4 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['forum']
+    symmetrical = True

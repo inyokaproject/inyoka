@@ -25,7 +25,7 @@ from inyoka.utils.text import slugify
 from inyoka.utils.html import escape, striptags
 from inyoka.utils.urls import href, url_for
 from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone, \
-     natural_date, format_time, format_datetime
+     format_time, format_datetime
 from inyoka.utils.search import search, SearchAdapter
 from inyoka.utils.local import current_request
 from inyoka.utils.decorators import deferred
@@ -284,6 +284,8 @@ class Article(models.Model, LockableObject):
     def get_absolute_url(self, action='show'):
         if action == 'comments':
             return href('ikhaya', self.stamp, self.slug, _anchor='comments')
+        if action == 'last_comment':
+            return href('ikhaya', self.stamp, self.slug, _anchor='comment_%d' % self.comment_count)
         if action in ('subscribe', 'unsubscribe'):
             if current_request:
                 current = current_request.build_absolute_uri()
@@ -524,79 +526,18 @@ class Event(models.Model):
         cache.delete('ikhaya/event/%s' % self.id)
         cache.delete('ikhaya/event_count')
 
-    def friendly_title(self, with_date=True, with_html_link=False):
-        if with_date:
-            s_date = self.natural_datetime
-        else:
-            s_date = ''
+    def friendly_title(self, with_html_link=False):
         s_location = '<span class="location">%s</span>' % (
              self.location_town and u' in %s' % self.location_town or '')
         summary = u'<span class="summary">%s</span>' % escape(self.name)
         if with_html_link:
-            ret = u'<a href="%s" class="event_link">%s</a>%s%s' % (
+            ret = u'<a href="%s" class="event_link">%s</a>%s' % (
                 escape(self.get_absolute_url()),
                 summary,
-                s_date,
                 s_location)
         else:
-            ret = summary + s_date + s_location
+            ret = summary + s_location
         return u'<span class="vevent">%s</span>' % ret
-
-    #TODO: This property is too language specific, remove it.
-    #: TODO fix translation
-    @property
-    def natural_datetime(self):
-        def _convert(d, t=None, time_only=False, prefix=True, end=False):
-            if t is None:
-                return natural_date(d, prefix)
-            class_ = 'dtend' if end else 'dtstart'
-            format_ = format_time if time_only else format_datetime
-            dt = date_time_to_datetime(d, t)
-            return '<abbr title="%s" class="%s">%s</abbr>' % (dt.isoformat(),
-                  class_, format_(dt))
-
-        """
-        SD  ST  ED  ET
-        x   -   -   -   am dd.mm.yyyy
-        x   -   x   -   vom dd.mm.yyyy bis dd.mm.yyyy
-        x   -   -   x   am dd.mm.yyyy                               ignore the ET
-        x   -   x   x   vom dd.mm.yyyy bis dd.mm.yyyy               ignore the ET
-        x   x   -   -   dd.mm.yyyy HH:MM
-        x   x   x   -   dd.mm.yyyy HH:MM bis dd.mm.yyyy HH:MM       set ET to ST by convention
-        x   x   -   x   dd.mm.yyyy HH:MM bis HH:MM
-        x   x   x   x   dd.mm.yyyy HH:MM bis dd.mm.yyyy HH:MM
-        """
-
-        if self.time is None:
-            if self.enddate is None or self.enddate <= self.date:
-                return ' ' + _convert(self.date)
-            else:
-                prefix = ' von ' if -1 <= (self.enddate - self.date).days <= 1 else ' vom '
-                return prefix + _convert(self.date, None, False, False) + ' bis ' + _convert(self.enddate, None, False, False, True)
-        else:
-            if self.enddate is None and self.endtime is None:
-                return ' ' + _convert(self.date, self.time)
-            else:
-                """
-                since, one endpoint information is given, we calculate the duration:
-                if no enddate is set, we take the startdate as enddate, too
-                if no endtime is set, we take the starttime as endtime, too
-                """
-                #self.enddate = self.enddate or self.date
-                self.endtime = self.endtime or self.time
-                start = date_time_to_datetime(self.date, self.time)
-                end = date_time_to_datetime(self.enddate or self.date, self.endtime)
-                if end > start:
-                    delta = end - start
-                else:
-                    # return the same as if no endpoint is given
-                    return " " + _convert(self.date, self.time)
-
-                if not delta.days:
-                    # duration < 1 day
-                    return " am " + _convert(self.date, self.time, False) + ' bis ' + _convert(self.date, self.endtime, True, False, True)
-                else:
-                    return " " + _convert(self.date, self.time, False, False) + ' bis ' + _convert(self.enddate, self.endtime, False, False, True)
 
     @property
     def natural_coordinates(self):

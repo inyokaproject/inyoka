@@ -36,7 +36,7 @@
       <p>
         {{ form.override }}
         <label for="id_override">
-          {% trans %}Overwrite exisiting attachments with same name:{% endtrans %}
+          {% trans %}Overwrite existing attachments with same name:{% endtrans %}
         </label>
       </p>
       <p><input type="submit" value="{% trans %}Upload attachments{% endtrans %}" />
@@ -47,9 +47,9 @@
     {%- if attachments %}
       <p>
         {%- trans count=attachments|count -%}
-          To this page there is currently {{ count }} attachment assigned.
+          There is currently one attachment assigned to this page.
         {%- pluralize -%}
-          To this page there are currently {{ count }} attachment assigned.
+          There are currently {{ count }} attachments assigned to this page.
         {%- endtrans %}
         {% trans -%}
           To refer to an attachment you can either link to the corresponding wiki page or include it with the <code>[[Bild()]]</code> macro.

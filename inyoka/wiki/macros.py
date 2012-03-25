@@ -32,7 +32,7 @@ from datetime import datetime, date, timedelta
 from collections import OrderedDict
 from django.conf import settings
 from django.core.cache import cache
-from django.utils.translation import ungettext
+from django.utils.translation import ungettext, ugettext as _
 from inyoka.utils.urls import href, urlencode, url_for
 from inyoka.portal.models import StaticFile
 from inyoka.forum.models import Attachment as ForumAttachment
@@ -197,8 +197,7 @@ class RecentChanges(Macro):
     def build_node(self, context, format):
         if not context.request or not context.wiki_page:
             return nodes.Paragraph([
-                nodes.Text(u'Letzte Änderungen können von hier aus '
-                           u'nicht dargestellt werden.')
+                nodes.Text(_(u'Recent changes cannot be rendered on this page'))
             ])
 
         def make_int(s, default):
@@ -379,7 +378,7 @@ class TableOfContents(TreeMacro):
             link = nodes.Link('#' + headline.id, caption)
             stack[-1].children.append(nodes.ListItem([link]))
             last_level = headline.level
-        head = nodes.Layer(children=[nodes.Text(u'Inhaltsverzeichnis')],
+        head = nodes.Layer(children=[nodes.Text(_(u'Table of contents'))],
                            class_='head')
         result = nodes.Layer(class_='toc toc-depth-%d' % self.depth,
                              children=[head, result])
@@ -495,6 +494,8 @@ class RedirectPages(Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
+        #TODO i18n: bloody hell, this is crazy... requires some more thinking
+        #           and a migration as well as coordination with the wiki team...
         for page in Page.objects.find_by_metadata('weiterleitung'):
             target = page.metadata.get('weiterleitung')
             link = nodes.InternalLink(page.name, [nodes.Text(page.title)],
@@ -516,7 +517,7 @@ class PageName(Macro):
     def build_node(self, context, format):
         if context.wiki_page:
             return nodes.Text(context.wiki_page.title)
-        return nodes.Text('Unbekannte Seite')
+        return nodes.Text(_(u'Unknown page'))
 
 
 class NewPage(Macro):
@@ -567,9 +568,9 @@ class SimilarPages(Macro):
             name = self.page_name
             ignore = None
         if not name:
-            return nodes.error_box('Parameterfehler', u'Du musst eine '
-                                   u'Seite angeben, wenn das Makro '
-                                   u'außerhalb des Wikis verwendet wird.')
+            msg = _(u'You must apply a page name because the macro is being '
+                    u'called outside the wiki context.')
+            return nodes.error_box(_(u'Invalid arguments'), msg)
         result = nodes.List('unordered')
         for page in Page.objects.get_similar(name):
             if page == ignore:
@@ -605,7 +606,7 @@ class TagCloud(Macro):
         result = nodes.Layer(class_='tagcloud')
         for tag in Page.objects.get_tagcloud(self.max):
             title = ungettext('%(count)d page', '%(count)d pages',
-                              tag['count']) % tag['count']
+                              tag['count']) % tag
             result.children.extend((
                 nodes.Link('?' + urlencode({
                         'tag':  tag['name']
@@ -616,7 +617,7 @@ class TagCloud(Macro):
                 nodes.Text(' ')
             ))
 
-        head = nodes.Headline(2, children=[nodes.Text(u'Tag-Wolke')],
+        head = nodes.Headline(2, children=[nodes.Text(_(u'Tags'))],
                               class_='head')
         container = nodes.Layer(children=[head, result])
 
@@ -655,7 +656,9 @@ class TagList(Macro):
                 )
                 result.children.append(nodes.ListItem([link]))
         head = nodes.Headline(2, children=[
-            nodes.Text(u'Seiten mit Tag „%s“' % self.active_tag)
+            nodes.Text(_(u'Pages with tag “%(name)s”') % {
+                'name': self.active_tag
+            })
         ], class_='head')
         container = nodes.Layer(children=[head, result])
         return container
@@ -686,13 +689,12 @@ class Include(Macro):
         except Page.DoesNotExist:
             if self.silent:
                 return nodes.Text('')
-            return nodes.error_box(u'Seite nicht gefunden',
-                                   u'Die Seite „%s“ wurde nicht '
-                                   u'gefunden.' % self.page)
+            msg = _(u'The page “%(name)s” was not found') % {
+                'name': self.page}
+            return nodes.error_box(_(u'Page not found'), msg)
         if page.name in context.included_pages:
-            return nodes.error_box(u'Zirkulärer Import',
-                                   u'Rekursiver Aufruf des Include-'
-                                   u'Makros wurde erkannt.')
+            msg = _(u'Detected a circular include macro call')
+            return nodes.error_box(_(u'Circular import'), msg)
         context.included_pages.add(page.name)
         return page.rev.text.render(context=context, format=format)
 
@@ -879,7 +881,7 @@ class Date(Macro):
         else:
             date = self.date
         if date is None:
-            return nodes.Text(u'ungültiges Datum')
+            return nodes.Text(_(u'Invalid date'))
         return nodes.Text(format_datetime(date))
 
 
@@ -929,6 +931,8 @@ class RandomPageList(Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
+        #TODO i18n: Again this fancy meta data... wheeeey :-)
+        #           see RedirectPages for more infos.
         redirect_pages = Page.objects.find_by_metadata('weiterleitung')
         pagelist = filter(lambda p: not p in redirect_pages,
                           Page.objects.get_page_list())
@@ -986,16 +990,17 @@ class RandomKeyValue(Macro):
         try:
             page = Page.objects.get_by_name(self.page)
         except Page.DoesNotExist:
-            return nodes.error_box(u'Seite nicht gefunden',
-                                   u'Die Seite „%s“ wurde nicht '
-                                   u'gefunden.' % self.page)
+            return nodes.error_box(_(u'Page not found'),
+                _(u'The page “%(name)s” was not found') % {
+                    'name': self.page
+            })
 
         doc = page.rev.text.parse()
         stack = OrderedDict()
         last_cat = None
         buffer = []
-        for _ in doc.query.by_type(nodes.Section):
-            for node in _.children:
+        for i in doc.query.by_type(nodes.Section):
+            for node in i.children:
                 if isinstance(node, nodes.Headline) and node.level == 1:
                     buffer = []
                     id = node.id
@@ -1016,8 +1021,10 @@ class RandomKeyValue(Macro):
 
         if self.key:
             if not self.key in stack:
-                return nodes.error_box(u'Schlüssel nicht definiert',
-                    u'Der Schlüssel „%s” wurde nicht definiert.' % self.key)
+                return nodes.error_box(_(u'Key not defined'),
+                    _(u'The key “%(name)s” is not defined') % {
+                        'name': self.key
+                })
             cat = stack[self.key]
             node_type = self.node_type == 'list' and nodes.Link or nodes.Text
             return node_type(cat['desc'])
@@ -1083,9 +1090,9 @@ class FilterByMetaData(Macro):
         names = [p.name for p in res]
 
         if not names:
-            return nodes.error_box(u'Kein Ergebnis',
-                u'Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %s'
-                % u'; '.join(self.filters))
+            return nodes.error_box(_(u'No result'),
+                _(u'The metadata filter has found no results.  Query: %(query)s') % {
+                    'query':u'; '.join(self.filters)})
 
         # build the node
         result = nodes.List('unordered')

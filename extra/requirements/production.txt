@@ -9,9 +9,7 @@ pytz==2010o
 html5lib==0.90
 feedparser==5.0.1
 Fabric==1.2.2
-South==0.7.3
 python-openid==2.2.5
-django-sentry==1.8.5
 django-mobile==0.2.1
 celery==2.4.0
 django-kombu==0.9.4
@@ -24,6 +22,7 @@ sleekxmpp==1.0
 https://github.com/alex/django-filter/tarball/master/#egg=django-filter
 https://github.com/simonw/django-openid/tarball/master#egg=django-openid
 # Because of http://south.aeracode.org/ticket/747 that is already fixed in trunk
-hg+https://bitbucket.org/andrewgodwin/south#egg=django-south
+https://bitbucket.org/andrewgodwin/south/get/64fdcc52cd01.tar.bz2
 lxml
 dulwich
+raven==1.4.3

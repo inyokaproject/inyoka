@@ -15,9 +15,9 @@
 
 {% macro user_edit_button(link, icon, name) %}
   <li>
-    <span><a href="{{ link }}">
-      <img src="{{ href('static', 'img/portal/user_%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
-      {{ name }}
+    <span><a href="{{ link }}">{#
+      #}<img src="{{ href('static', 'img/portal/user_%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
+      {{- name -}}
     </a></span>
   </li>
 {% endmacro %}
@@ -33,10 +33,6 @@
         {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'privileges'), 'privileges', _('Privileges')) }}
         {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'password'), 'password', _('Change password')) }}
         {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'status'), 'status', _('State')) }}
-        {#
-        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'subscriptions'), 'subscriptions', 'Abonnements') }}
-        {{ user_edit_button(href('portal', 'user', user.username, 'edit', 'userpage'), 'wikipage', 'Benutzerseite') }}
-        #}
       </ul>
     </div>
     <a href="{{ href('portal', 'user', user.username) }}">{% trans %}View public profile{% endtrans %}</a>
