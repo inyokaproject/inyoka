@@ -485,8 +485,8 @@ class UserManager(models.Manager):
 
 class ProfileCategory(models.Model):
     """Category for the profile fields."""
-    title = models.CharField(_(u'Title'), max_length=255)
-    weight = models.IntegerField(_(u'Weight'), default=0)
+    title = models.CharField(ugettext_lazy(u'Title'), max_length=255)
+    weight = models.IntegerField(ugettext_lazy(u'Weight'), default=0)
     slug = models.SlugField(max_length=255, unique=True)
 
     def __unicode__(self):
