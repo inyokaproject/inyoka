@@ -136,219 +136,6 @@ class TestPostSplit(TestCase):
                     position=i)
             self.topic2.posts.add(self.t2_posts[i])
 
-    def test_split_single_last_post(self):
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-
-        Post.split((self.t1_posts[9],), t1, t2)
-
-        cache.delete('forum/forums/%s' % self.forum1.slug)
-        cache.delete('forum/forums/%s' % self.forum2.slug)
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-        f1 = Forum.objects.get(id=self.forum1.id)
-        f2 = Forum.objects.get(id=self.forum2.id)
-
-        self.assertEqual(t1.post_count, 9)
-        self.assertEqual(t2.post_count, 11)
-
-        self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
-        self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
-
-        self.assertEqual(t1.last_post_id, self.t1_posts[8].id)
-        self.assertEqual(t2.last_post_id, self.t1_posts[9].id)
-        
-        self.assertEqual(f1.post_count, 9)
-        self.assertEqual(f2.post_count, 11)
-
-        self.assertEqual(f1.last_post_id, self.t1_posts[8].id)
-        self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
-        
-        post_ids = [p.id for k,p in self.t1_posts.items()][:-1]
-        self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
-
-        post_ids = [p.id for k,p in self.t2_posts.items()] + [self.t1_posts[9].id]
-        self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
-
-    def test_split_multiple_last_posts(self):
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-
-        Post.split((self.t1_posts[8], self.t1_posts[9]), t1, t2)
-
-        cache.delete('forum/forums/%s' % self.forum1.slug)
-        cache.delete('forum/forums/%s' % self.forum2.slug)
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-        f1 = Forum.objects.get(id=self.forum1.id)
-        f2 = Forum.objects.get(id=self.forum2.id)
-
-        self.assertEqual(t1.post_count, 8)
-        self.assertEqual(t2.post_count, 12)
-
-        self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
-        self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
-
-        self.assertEqual(t1.last_post_id, self.t1_posts[7].id)
-        self.assertEqual(t2.last_post_id, self.t1_posts[9].id)
-        
-        self.assertEqual(f1.post_count, 8)
-        self.assertEqual(f2.post_count, 12)
-
-        self.assertEqual(f1.last_post_id, self.t1_posts[7].id)
-        self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
-        
-        post_ids = [p.id for k,p in self.t1_posts.items()][:-2]
-        self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
-
-        post_ids = [p.id for k,p in self.t2_posts.items()] + \
-            [self.t1_posts[8].id, self.t1_posts[9].id]
-        self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
-
-    def test_split_single_middle_post(self):
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-
-        Post.split((self.t1_posts[3],), t1, t2)
-
-        cache.delete('forum/forums/%s' % self.forum1.slug)
-        cache.delete('forum/forums/%s' % self.forum2.slug)
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-        f1 = Forum.objects.get(id=self.forum1.id)
-        f2 = Forum.objects.get(id=self.forum2.id)
-
-        self.assertEqual(t1.post_count, 9)
-        self.assertEqual(t2.post_count, 11)
-
-        self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
-        self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
-
-        self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
-        self.assertEqual(t2.last_post_id, self.t1_posts[3].id)
-        
-        self.assertEqual(f1.post_count, 9)
-        self.assertEqual(f2.post_count, 11)
-
-        self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
-        self.assertEqual(f2.last_post_id, self.t1_posts[3].id)
-        
-        ids = [p.id for k,p in self.t1_posts.items()]
-        post_ids = ids[:3] + ids[4:]
-        self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
-
-        post_ids = [p.id for k,p in self.t2_posts.items()] + [self.t1_posts[3].id]
-        self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
-
-    def test_split_single_consecutive_middle_posts(self):
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-
-        Post.split((self.t1_posts[5], self.t1_posts[6]), t1, t2)
-
-        cache.delete('forum/forums/%s' % self.forum1.slug)
-        cache.delete('forum/forums/%s' % self.forum2.slug)
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-        f1 = Forum.objects.get(id=self.forum1.id)
-        f2 = Forum.objects.get(id=self.forum2.id)
-
-        self.assertEqual(t1.post_count, 8)
-        self.assertEqual(t2.post_count, 12)
-
-        self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
-        self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
-
-        self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
-        self.assertEqual(t2.last_post_id, self.t1_posts[6].id)
-        
-        self.assertEqual(f1.post_count, 8)
-        self.assertEqual(f2.post_count, 12)
-
-        self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
-        self.assertEqual(f2.last_post_id, self.t1_posts[6].id)
-        
-        ids = [p.id for k,p in self.t1_posts.items()]
-        post_ids = ids[:5] + ids[7:]
-        self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
-
-        post_ids = [p.id for k,p in self.t2_posts.items()] + \
-                   [self.t1_posts[5].id, self.t1_posts[6].id]
-        self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
-
-    def test_split_multiple_middle_posts(self):
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-
-        Post.split((self.t1_posts[2],self.t1_posts[4],self.t1_posts[8]), t1, t2)
-
-        cache.delete('forum/forums/%s' % self.forum1.slug)
-        cache.delete('forum/forums/%s' % self.forum2.slug)
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-        f1 = Forum.objects.get(id=self.forum1.id)
-        f2 = Forum.objects.get(id=self.forum2.id)
-
-        self.assertEqual(t1.post_count, 7)
-        self.assertEqual(t2.post_count, 13)
-
-        self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
-        self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
-
-        self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
-        self.assertEqual(t2.last_post_id, self.t1_posts[8].id)
-        
-        self.assertEqual(f1.post_count, 7)
-        self.assertEqual(f2.post_count, 13)
-
-        self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
-        self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
-        
-        ids = [p.id for k,p in self.t1_posts.items()]
-        post_ids = ids[0:2] + ids[3:4] + ids[5:8] + ids[9:]
-        self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
-
-        post_ids = [p.id for k,p in self.t2_posts.items()] + \
-                   [self.t1_posts[2].id, self.t1_posts[4].id, self.t1_posts[8].id]
-        self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
-
-    def test_split_multiple_consecutive_middle_posts(self):
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-
-        Post.split((self.t1_posts[2], self.t1_posts[3], self.t1_posts[6],
-                    self.t1_posts[7], self.t1_posts[8]), t1, t2)
-
-        cache.delete('forum/forums/%s' % self.forum1.slug)
-        cache.delete('forum/forums/%s' % self.forum2.slug)
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=self.topic2.id)
-        f1 = Forum.objects.get(id=self.forum1.id)
-        f2 = Forum.objects.get(id=self.forum2.id)
-
-        self.assertEqual(t1.post_count, 5)
-        self.assertEqual(t2.post_count, 15)
-
-        self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
-        self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
-
-        self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
-        self.assertEqual(t2.last_post_id, self.t1_posts[8].id)
-        
-        self.assertEqual(f1.post_count, 5)
-        self.assertEqual(f2.post_count, 15)
-
-        self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
-        self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
-        
-        ids = [p.id for k,p in self.t1_posts.items()]
-        post_ids = ids[0:2] + ids[4:6] + ids[9:]
-        self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
-
-        post_ids = [p.id for k,p in self.t2_posts.items()] + \
-                ids[2:4] + ids[6:9]
-        self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
-
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
         self.assertEqual(user.post_count, 20)
@@ -368,7 +155,7 @@ class TestPostSplit(TestCase):
                          Post.objects.get(id=self.t1_posts[9].id))
         self.assertEqual(Topic.objects.get(id=self.topic2.id).last_post,
                          Post.objects.get(id=self.t2_posts[9].id))
-       
+
     def test_split_renumber_old_positions(self):
         topic = Topic(title='positions', author=self.user)
         self.forum1.topics.add(topic)
@@ -383,46 +170,20 @@ class TestPostSplit(TestCase):
             .values_list('position', flat=True)
         self.assertEqual(list(old_positions), [0,1,2,3])
 
-    """
-    def test_split_new_topic(self):
-        posts = Post.objects.filter(text__in=(u'test2', u'test3')).all()
-        new_topic = Topic(title='topic', author=self.user)
-        self.forum2.topics.add(new_topic)
-
-        t1 = Topic.objects.get(id=self.topic1.id)
-
-        Post.split(posts, t1, new_topic)
-
-        user = User.objects.get(id=self.user.id)
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=new_topic.id)
-
-        self.assertEqual(user.post_count, 1)
-        self.assertEqual(t1.post_count, 1)
-        self.assertEqual(t2.post_count, 2)
-        self.assertEqual(t1.first_post, self.fp1)
-        self.assertEqual(t2.first_post, Post.objects.get(text='test2'))
-        self.assertEqual(t1.last_post, self.fp1)
-        self.assertEqual(t1.forum.last_post, self.lp1)
-        self.assertEqual(t2.last_post, Post.objects.get(text='test3'))
-        self.assertEqual(t2.forum.last_post, self.fp2)
-        post_ids = [p.pk for p in list(posts)]
-        self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
-
     def test_split_post_remove_topic(self):
-        posts = Post.objects.filter(text__in=(u'test1', u'test2', u'test3')).all()
-        Post.split(posts, self.topic1, self.topic2)
+        Post.split(self.t1_posts.values(), self.topic1, self.topic2)
+        cache.delete('forum/forums/%s' % self.forum1.slug)
+        cache.delete('forum/forums/%s' % self.forum2.slug)
         user = User.objects.get(id=self.user.id)
         t2 = Topic.objects.get(id=self.topic2.id)
 
-        self.assertEqual(user.post_count, 0)
         self.assertEqual(Topic.objects.filter(id=self.topic1.id).count(), 0)
-        self.assertEqual(t2.post_count, 4)
-        self.assertEqual(t2.first_post, self.fp2)
-        self.assertEqual(t2.last_post, Post.objects.get(text='test3'))
-        post_ids = [p.pk for p in [self.fp2] + list(posts)]
-        self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
-    """
+        self.assertEqual(t2.post_count, 20)
+        self.assertEqual(t2.first_post, self.self.t2_posts[0].id)
+        self.assertEqual(t2.last_post, self.self.t1_posts[9].id)
+        post_ids = [p.id for k,p in self.t2_posts.items()] + \
+                   [p.id for k,p in self.t1_posts.items()]
+        self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
 class TestPostMove(TestCase):
 
@@ -490,7 +251,7 @@ class PostDeletionTest(TestCase):
     def test_post_delete_at_center(self):
         # trigger post deletion
         Post.objects.get(pk=2).delete()
-        # last post wans't changed
+        # last post wasn't changed
         topic = Topic.objects.get(pk=1)
         self.assertEqual(topic.last_post_id, 3)
         # postions are still correct
