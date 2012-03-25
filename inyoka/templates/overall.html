@@ -116,8 +116,11 @@
             {%- if USER.is_authenticated %}
               <li>
                 <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
-                  {%- trans user=USER.username|e %}Logout [{{ user }}]{% endtrans -%}
+                  {%- trans %}Logout{% endtrans %}
                 </a>
+              </li>
+              <li>
+                <a href="{{ USER.get_absolute_url() }}">[{{ USER.username|e }}]</a>
               </li>
               <li>
                 <a href="{{ href('portal', 'usercp') }}">

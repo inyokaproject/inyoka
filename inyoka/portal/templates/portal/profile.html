@@ -48,7 +48,13 @@
         </a>
       </li>
     {% endif %}
-    {%- if request.user.can('user_edit') %}
+    {%- if request.user == user %}
+      <li>
+        <a href="{{ href('portal', 'usercp', 'profile') }}">
+          {% trans %}Edit{% endtrans %}
+        </a>
+      </li>
+    {%- elif request.user.can('user_edit') %}
       <li>
         <a href="{{ href('portal', 'user', user.username, 'edit') }}"
            class="admin_link">
