@@ -706,9 +706,15 @@ class User(models.Model):
 
     @property
     def urlsafe_username(self):
-        '''return the username with space replaced by _ for urls'''
+        """return the username with space replaced by _ for urls"""
         return self.username.replace(' ', '_')
 
+    @property
+    def profile_data(self):
+        """Return a QuerySet with associated ProfileData."""
+
+        return ProfileData.objects.filter(user=self) \
+                                   .order_by('profile_field__title')
     def save_avatar(self, img):
         """
         Save `img` to the file system.

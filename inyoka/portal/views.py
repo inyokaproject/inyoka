@@ -543,8 +543,6 @@ def profile(request, username):
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
     categories = ProfileCategory.objects.order_by('weight').all()
-    profile_data = ProfileData.objects.filter(user=user) \
-                                      .order_by('profile_field__title')
 
     return {
         'user': user,
@@ -553,7 +551,6 @@ def profile(request, username):
         'User': User,
         'is_subscribed': subscribed,
         'request': request,
-        'profile_data': profile_data,
         'categories': categories,
     }
 

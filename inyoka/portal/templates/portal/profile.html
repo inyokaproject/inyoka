@@ -141,7 +141,7 @@
               (<a href="{{ href('forum', 'author', user.username) }}">{% trans %}show{% endtrans %}</a>)
             </td>
           </tr>
-          {% for data in profile_data.filter(profile_field__category=None) %}
+          {% for data in user.profile_data.filter(profile_field__category=None) %}
             <tr>
               <th>{{ data.profile_field.title|e }}</th>
               <td>{{ data.data|e }}</td>
@@ -161,7 +161,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for data in profile_data.filter(profile_field__category=category) %}
+              {% for data in user.profile_data.filter(profile_field__category=category) %}
                 <tr>
                   <th>{{ data.profile_field.title|e }}</th>
                   <td>{{ data.data|e }}</td>

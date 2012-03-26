@@ -212,6 +212,9 @@
             {%- if post.author.location %}
               <p>{% trans %}Residence:{% endtrans %} {{ post.author.location|e }}</p>
             {%- endif %}
+            {% for data in post.author.profile_data.filter(profile_field__category=None) %}
+              <p>{{ data.profile_field.title|e }}: {{ data.data|e }}</p>
+            {% endfor %}
           </td>
           <td class="post"{%- if post.author_id == USER.id %} style="background-color: #F8F6F1"{% endif %}>
             <div class="postinfo">
