@@ -516,7 +516,7 @@ def search(request):
 
 @check_login(message=_(u'You need to be logged in to view a user profile.'))
 @templated('portal/profile.html')
-def profile(request, username, category=None):
+def profile(request, username):
     """Show the user profile if the user is logged in."""
 
     user = User.objects.get(username)
@@ -543,17 +543,8 @@ def profile(request, username, category=None):
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
     categories = ProfileCategory.objects.order_by('weight').all()
-    profile_data = ProfileData.objects.filter(user=user)
-    if not category:
-        profile_data = profile_data.filter(profile_field__category=None)
-        profile_category = None
-    else:
-        try:
-            profile_category = categories.get(slug=category)
-        except ProfileCategory.DoesNotExist:
-            raise PageNotFound()
-        profile_data = profile_data.filter(profile_field__category=profile_category)
-    profile_data = profile_data.order_by('profile_field__title').all()
+    profile_data = ProfileData.objects.filter(user=user) \
+                                      .order_by('profile_field__title')
 
     return {
         'user': user,
@@ -564,7 +555,6 @@ def profile(request, username, category=None):
         'request': request,
         'profile_data': profile_data,
         'categories': categories,
-        'category': profile_category,
     }
 
 
@@ -2184,7 +2174,7 @@ def profile_field_edit(request, field_id=None):
             if field and request.POST.get('delete'):
                 category = field.category
                 field.delete()
-                if not category.fields.all():
+                if category and not category.fields.all():
                     category.delete()
             else:
                 if not field:

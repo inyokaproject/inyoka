@@ -30,17 +30,10 @@
 {% block tabbar %}
   <ul>
     <li>
-      <a href="{{ user|url }}"{% if not category %}class="active"{% endif %}>
-        General
+      <a href="{{ user|url }}" class="active">
+        {% trans %}Profile{% endtrans %}
       </a>
     </li>
-    {% for cat in categories %}
-      <li>
-        <a href="{{ user|url(category=cat) }}"{% if cat == category %}class="active"{% endif %}>
-          {{ cat.title|e }}
-        </a>
-      </li>
-    {% endfor %}
     {% if wikipage %}
       <li>
         <a href="{{ href('wiki', 'Benutzer', user.username|e) }}">
@@ -132,16 +125,41 @@
       </tr>
     </table>
     -->
-    <div class="userprofile_fields">
-      {% for data in profile_data %}
-        <div class="field">
-          <div class="field_left"></div>
-          <div class="field_right">
-            <div class="title">{{ data.profile_field.title|e }}</div>
-            <p>{{ data.data|e }}</p>
-          </div>
-        </div>
-      {% endfor %}
+    <div class="userprofile">
+      <div class="general"> {# left column #}
+        <img class="avatar" src="{{ user.avatar_url|e }}"
+             alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
+        <table>
+          {% for data in profile_data.filter(profile_field__category=None) %}
+            <tr>
+              <th>{{ data.profile_field.title|e }}</th>
+              <td>{{ data.data|e }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+      <div class="fields"> {# right column #}
+        {% for category in categories %}
+          <table>
+            <colgroup>
+              <col class="field" />
+              <col class="data" />
+            <thead>
+              <tr>
+                <th colspan="2">{{ category.title }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in profile_data.filter(profile_field__category=category) %}
+                <tr>
+                  <th>{{ data.profile_field.title|e }}</th>
+                  <td>{{ data.data|e }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endfor %}
+      </div>
     </div>
   {% endif %}
 {% endblock %}

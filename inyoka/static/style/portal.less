@@ -233,33 +233,57 @@ div.usercp_control {
     }
   }
 }
-div.userprofile_fields {
-  text-align: left;
-  vertical-align: middle;
-  .field {
-    display: inline-block;
-    height: 100px;
-    border: 1px solid #BBBBBB;
-    .rounded;
-    overflow: hidden;
-    margin: 5px;
-  }
-  .field_left {
-    float: left;
-    width: 100px;
-    height: 100%;
+div.userprofile {
+  div.general {
     background-color: #F4F4F4;
-    border-right: 1px solid #DDDDDD;
-  }
-  .field_right {
+    border: 1px solid #CCCCCC;
     float: left;
     width: 200px;
-    height: 100%;
-    padding: 0 5px;
-    .title {
-      font-weight: bold;
-      border-bottom: 1px solid #BBBBBB;
-      padding: 2px;
+    text-align: center;
+
+    img.avatar {
+      background-color: #FFFFFF;
+      margin: 15px 0 5px;
+      padding: 2px 45px;
+      border: 1px solid #DDDDDD;
+    }
+
+    table {
+      text-align: left;
+      border: none;
+      th, td {
+        background: none;
+        border: none;
+        padding: 5px;
+      }
+    }
+  }
+
+  div.fields {
+    position: absolute;
+    float: left;
+    margin-left: 205px;
+    table {
+      table-layout: fixed;
+      overflow: hidden;
+      max-width: 500px;
+      margin: 0 5px 10px;
+      float: left;
+      .rounded;
+
+      th {
+        background: #F4F4F4;
+        color: #000000;
+        padding: 5px;
+      }
+      col.field {
+        width: 150px;
+        border-right: 1px solid #CCCCCC;
+      }
+
+      tbody tr:hover {
+        background: #f8f4e9;
+      }
     }
   }
 }
