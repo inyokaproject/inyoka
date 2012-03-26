@@ -855,7 +855,7 @@ def reportlist(request):
                     reporter=None,
                     report_claimed_by=None)
                 cache.delete('forum/reported_topic_count')
-                topics = filter(lambda t: str(t.id) not in t_ids_mod, topics)
+                topics = filter(lambda t: t.id not in t_ids_mod, topics)
                 if len(topics_selected) == len(t_ids_mod):
                     flash(_(u'The selected tickets have been closed.'),
                           True)
