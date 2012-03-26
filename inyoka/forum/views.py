@@ -846,10 +846,29 @@ def reportlist(request):
             if not d['selected']:
                 flash(_(u'No topics selected.'), False)
             else:
-                topics_selected = topics.filter(id__in=d['selected'])
-                topics_mod = filter(lambda t: have_privilege(
-                    request.user, t, CAN_MODERATE), topics_selected)
-                t_ids_mod = map(attrgetter('id'), topics_mod)
+                # We select all topics that have been selected and also
+                # select the regarding forum, 'cause we will check for the
+                # moderation privilege.
+                topics_selected = topics.filter(id__in=d['selected']).select_related('forum')
+
+                forums = {}
+                # We group the topics by their forum, so we can limit the
+                # calls on `have_privilege()`
+                for t in topics_selected:
+                    if forums.has_key(t.forum):
+                        forums[t.forum].append(t)
+                    else:
+                        forums[t.forum] = [t]
+
+                t_ids_mod = []
+                # Check for the moderate privilege of the forums of selected
+                # reported topics and take only the topic IDs where the
+                # requesting user can moderate the forum.
+                for f, ts in forums.items():
+                    if have_privilege(request.user, f, CAN_MODERATE):
+                        t_ids_mod += map(attrgetter('id'), ts)
+
+                # Update the reported state.
                 Topic.objects.filter(id__in=t_ids_mod).update(
                     reported=None,
                     reporter=None,
