@@ -130,6 +130,17 @@
         <img class="avatar" src="{{ user.avatar_url|e }}"
              alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
         <table>
+          <tr>
+            <th>{% trans %}Member since{% endtrans %}</th>
+            <td>{{ user.date_joined|datetimeformat }}</td>
+          </tr>
+          <tr>
+            <th>{% trans %}Posts{% endtrans %}</th>
+            <td>
+              {{ user.post_count }}
+              (<a href="{{ href('forum', 'author', user.username) }}">{% trans %}show{% endtrans %}</a>)
+            </td>
+          </tr>
           {% for data in profile_data.filter(profile_field__category=None) %}
             <tr>
               <th>{{ data.profile_field.title|e }}</th>
