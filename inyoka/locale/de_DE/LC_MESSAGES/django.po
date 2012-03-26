@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-26 13:44+0100\n"
+"POT-Creation-Date: 2012-03-21 12:59+0100\n"
 "PO-Revision-Date: 2012-02-07 01:48+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -375,15 +375,18 @@ msgstr "Der Benutzer „%(name)s“ wurde gesperrt und dadurch deine Sitzung bee
 #: inyoka/middlewares/auth.py:34
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
-msgstr "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum abgemelet."
+msgstr ""
+"Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum "
+"abgemelet."
 
 #: inyoka/middlewares/highlighter.py:112
 #, python-format
 msgid ""
 "Search results are highlighted. <a class=\"hide_searchwords\" "
 "href=\"%(link)s\">Hide query terms</a>."
-msgstr "Suchergebnisse sind herorgehoben. <a class=\"hide_searchwords\" "
-"href=\"%(link)s\">Markierung ausblenden</a>."
+msgstr ""
+"Suchergebnisse sind herorgehoben. <a class=\"hide_searchwords\" \"\n"
+"\"href=\"%(link)s\">Markierung ausblenden</a>."
 
 #: inyoka/middlewares/session.py:68
 msgid "Your session expired. You need to login again"

@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-26 13:44+0100\n"
+"POT-Creation-Date: 2012-03-21 12:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -341,12 +342,11 @@ msgid "Coordinates (latitude, longitude)"
 msgstr ""
 
 #: inyoka/portal/forms.py:331 inyoka/portal/user.py:523
-#: inyoka/portal/templates/portal/calendar_detail.html:45
 #: inyoka/portal/templates/portal/group.html:34
 #: inyoka/portal/templates/portal/memberlist.html:41
 #: inyoka/portal/templates/portal/profile.html:99
 #: inyoka/portal/templates/portal/special_rights.html:26
-msgid "Location"
+msgid "Residence"
 msgstr ""
 
 #: inyoka/portal/forms.py:332 inyoka/portal/user.py:525
@@ -1465,6 +1465,10 @@ msgstr ""
 msgid "to"
 msgstr ""
 
+#: inyoka/portal/templates/portal/calendar_detail.html:45
+msgid "Venue"
+msgstr ""
+
 #: inyoka/portal/templates/portal/calendar_detail.html:55
 msgid "Details"
 msgstr ""
@@ -2468,20 +2472,20 @@ msgstr ""
 msgid "Go to last comment"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:64
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:68
 msgid "Changes since last visit"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:76
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:80
 #: inyoka/portal/templates/portal/usercp/subscriptions.m.html:39
 msgid "You did not yet subscribed to any topics or articles."
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:82
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:86
 msgid "Delete selected subscriptions"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:83
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:87
 msgid "Mark selected subscriptions as read"
 msgstr ""
 

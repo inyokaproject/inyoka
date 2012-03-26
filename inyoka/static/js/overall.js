@@ -17,7 +17,7 @@ $(document).ready(function () {
       height: 0,
       overflow: 'hidden'
     });
-    $.each(['img/tabbar_border_hover.png'], function () {
+    $.each([], function () {
       $('<img />').attr('src', $STATIC_URL + this).appendTo(container);
     });
   })();

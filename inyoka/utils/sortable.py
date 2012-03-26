@@ -100,7 +100,8 @@ class Sortable(object):
         ocol = escape(order.lstrip('-'))
         if self.columns and not ocol in self.columns:
             # safes us for some bad usage that raises an exception
-            flash(_(u'The chosen sort value (“%(value)s”) is not available') % ocol)
+            flash(_(u'The chosen sort value (“%(value)s”) is not available') %
+                    {'value': ocol})
             return self.objects
 
         q = self.objects.order_by(order)

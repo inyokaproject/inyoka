@@ -328,7 +328,7 @@ class UserCPProfileForm(forms.Form):
                                required=False)
     coordinates = forms.CharField(label=ugettext_lazy(u'Coordinates (latitude, longitude)'),
                                   required=False)
-    location = forms.CharField(label=ugettext_lazy(u'Location'), required=False, max_length=50)
+    location = forms.CharField(label=ugettext_lazy(u'Residence'), required=False, max_length=50)
     occupation = forms.CharField(label=ugettext_lazy(u'Job'), required=False, max_length=50)
     interests = forms.CharField(label=ugettext_lazy(u'Interests'), required=False,
                                 max_length=100)
