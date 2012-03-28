@@ -2183,6 +2183,8 @@ def profile_field_edit(request, field_id=None):
                     category = ProfileCategory(title=data['new_category'])
                     category.save()
                     field.category = category
+                else:
+                    field.category = None
                 field.title = data['title']
                 field.regex = data['regex']
                 field.important = data['important']
