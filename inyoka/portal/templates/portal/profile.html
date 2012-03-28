@@ -80,51 +80,6 @@
   {%- elif user.is_deleted or user.is_banned %}
     {% trans name=user.username|e %}{{ name }} is not available.{% endtrans %}
   {%- else %}
-    <!--
-    <table class="userinfo admin_link_hover">
-      <tr>
-        <th>{% trans %}Name{% endtrans %}</th>
-        <td>{{ user.username|e }}</td>
-        <td rowspan="6">
-          <img class="userinfo_avatar" src="{{ user.avatar_url|e }}"
-               alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
-        </td>
-      </tr>
-      <tr>
-        <th>{% trans %}Email address{% endtrans %}</th>
-        {{ show_item('email') }}
-      </tr>
-      <tr>
-        <th>{% trans %}Member since{% endtrans %}</th>
-        <td>{{ user.date_joined|datetimeformat }}</td>
-      </tr>
-      <tr>
-        <th>{% trans %}Posts{% endtrans %}</th>
-        <td>
-          {{ user.post_count }}
-          (<a href="{{ href('forum', 'author', user.username) }}">{% trans %}show{% endtrans %}</a>)
-        </td>
-      </tr>
-      <tr>
-        <th colspan="3">{% trans %}Group memberships{% endtrans %}
-          {% if REQUEST.user.can('user_edit') %}
-          <a href="{{ href('portal', 'user', user.username, 'edit', 'groups') }}" class="admin_link"><img src="{{ href('static', 'img/ikhaya/category_edit.png') }}"></a>
-          {% endif %}
-        </th>
-      </tr>
-      <tr>
-        <td colspan="3">
-          {%- for group in groups -%}
-            <a href="{{ group|url }}"{% if not group.is_public %} class="hidden"{% endif %}>{{ group.name|e }}</a>
-            {%- if not loop.last %}, {% endif %}
-          {%- else %}{% trans name=user.username|e -%}
-            “{{ name }}“ is no member of any group.
-           {%- endtrans %}
-          {%- endfor %}
-        </td>
-      </tr>
-    </table>
-    -->
     <div class="userprofile">
       <div class="general"> {# left column #}
         <img class="avatar" src="{{ user.avatar_url|e }}"
@@ -139,6 +94,11 @@
             <td>
               {{ user.post_count }}
               (<a href="{{ href('forum', 'author', user.username) }}">{% trans %}show{% endtrans %}</a>)
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <a href="{{ user|url('privmsg') }}">{% trans %}Private message{% endtrans %}</a>
             </td>
           </tr>
           {% for data in user.profile_data.filter(profile_field__category=None) %}
