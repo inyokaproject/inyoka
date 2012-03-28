@@ -150,7 +150,7 @@
         </table>
       </div>
       <div class="fields"> {# right column #}
-        {% for category in categories %}
+        {% for category in categories if user.profile_data.filter(profile_field__category=category) %}
           <table>
             <colgroup>
               <col class="field" />
