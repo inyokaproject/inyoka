@@ -750,10 +750,8 @@ class User(models.Model):
             os.remove(fn)
         self.avatar = None
 
-    def get_absolute_url(self, action='show', category=None, *args):
+    def get_absolute_url(self, action='show', *args):
         if action == 'show':
-            if category:
-                return href('portal', 'user', self.urlsafe_username, 'c', category.slug)
             return href('portal', 'user', self.urlsafe_username)
         elif action == 'privmsg':
             return href('portal', 'privmsg', 'new',
