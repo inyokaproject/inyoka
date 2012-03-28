@@ -230,6 +230,9 @@
         <div class="message{% if message.success == true %} success{% elif message.success == false %} fail{% endif %}">
           {{ message.text }}
         </div>
+        <!--[if lt IE 8]>
+        <div class="message fail">{{ _('Please install at least Internet Explorer 8.') }}</div>
+        <![endif]-->
       {%- endfor %}
 
       <div class="page_content">
