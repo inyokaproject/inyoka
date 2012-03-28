@@ -11,6 +11,7 @@
 import re
 from datetime import datetime, timedelta
 from operator import attrgetter
+from itertools import groupby
 
 from werkzeug.datastructures import MultiDict
 
@@ -851,29 +852,18 @@ def reportlist(request):
                 # moderation privilege.
                 topics_selected = topics.filter(id__in=d['selected']).select_related('forum')
 
-                forums = {}
-                # We group the topics by their forum, so we can limit the
-                # calls on `have_privilege()`
-                for t in topics_selected:
-                    if forums.has_key(t.forum):
-                        forums[t.forum].append(t)
-                    else:
-                        forums[t.forum] = [t]
-
                 t_ids_mod = []
                 # Check for the moderate privilege of the forums of selected
                 # reported topics and take only the topic IDs where the
                 # requesting user can moderate the forum.
-                for f, ts in forums.items():
+                for f, ts in groupby(topics_selected, attrgetter('forum')):
                     if have_privilege(request.user, f, CAN_MODERATE):
                         t_ids_mod += map(attrgetter('id'), ts)
 
                 # Update the reported state.
                 Topic.objects.filter(id__in=t_ids_mod).update(
-                    reported=None,
-                    reporter=None,
-                    report_claimed_by=None)
-                cache.delete('forum/reported_topic_count')
+                    reported=None, reporter=None, report_claimed_by=None)
+                cache.decr('forum/reported_topic_count', len(t_ids_mod))
                 topics = filter(lambda t: t.id not in t_ids_mod, topics)
                 if len(topics_selected) == len(t_ids_mod):
                     flash(_(u'The selected tickets have been closed.'),
