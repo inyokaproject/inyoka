@@ -37,16 +37,17 @@ class TestUserModel(TestCase):
         self.assertEqual(self.user.status, 3)
 
     def test_profile_data(self):
-        titles = ['One', 'Two', 'Three']
-        categories = [ProfileCategory(title=title) for title in titles]
+        categories = []
+        categories.append(ProfileCategory(title='One'))
+        categories.append(ProfileCategory(title='Two'))
+        categories[0].save()
+        categories[1].save()
         users = [User.objects.register_user(str(x), '{0}@example.com'.format(x),
                                             'pwd', False) for x in range(3)]
         ProfileField(title='A', category=categories[0]).save()
-        ProfileField(title='B', category=categories[0]).save()
-        ProfileField(title='C', category=categories[0]).save()
+        ProfileField(title='B', category=categories[1]).save()
+        ProfileField(title='C', category=categories[1]).save()
         ProfileField(title='D', category=categories[1]).save()
-        ProfileField(title='E', category=categories[2]).save()
-        ProfileField(title='F', category=categories[2]).save()
 
         ProfileData(user=users[0],
                     profile_field=ProfileField.objects.get(title='A'),
@@ -54,25 +55,54 @@ class TestUserModel(TestCase):
         ProfileData(user=users[0],
                     profile_field=ProfileField.objects.get(title='B'),
                     data='V').save()
-        ProfileData(user=users[1],
-                    profile_field=ProfileField.objects.get(title='E'),
+        ProfileData(user=users[0],
+                    profile_field=ProfileField.objects.get(title='D'),
+                    data='X').save()
+        ProfileData(user=users[0],
+                    profile_field=ProfileField.objects.get(title='C'),
+                    data='W').save()
+
+        ProfileData(user=users[2],
+                    profile_field=ProfileField.objects.get(title='D'),
                     data='X').save()
         ProfileData(user=users[2],
-                    profile_field=ProfileField.objects.get(title='E'),
+                    profile_field=ProfileField.objects.get(title='C'),
                     data='Y').save()
         ProfileData(user=users[2],
-                    profile_field=ProfileField.objects.get(title='F'),
-                    data='Y').save()
+                    profile_field=ProfileField.objects.get(title='A'),
+                    data='Z').save()
 
-        for user in users:
-            query_data = ProfileData.objects.filter(user=user) \
-                                      .order_by('profile_field__title').all()
-            user_data = user.profile_data.all()
-            for x, y in zip(query_data, user_data):
-                self.assertEqual(x.data, y.data)
-                self.assertEqual(x.profile_field, y.profile_field)
-                self.assertEqual(x.profile_field.category,
-                                 y.profile_field.category)
+        # should be ordered by title of ProfileField
+
+        data = users[0].profile_data.all()
+        self.assertEqual(len(data), 4)
+        self.assertEqual(data[0].data, 'U')
+        self.assertEqual(data[1].data, 'V')
+        self.assertEqual(data[2].data, 'W')
+        self.assertEqual(data[3].data, 'X')
+        self.assertEqual(data[0].profile_field.title, 'A')
+        self.assertEqual(data[1].profile_field.title, 'B')
+        self.assertEqual(data[2].profile_field.title, 'C')
+        self.assertEqual(data[3].profile_field.title, 'D')
+        self.assertEqual(data[0].profile_field.category.title, 'One')
+        self.assertEqual(data[1].profile_field.category.title, 'Two')
+        self.assertEqual(data[2].profile_field.category.title, 'Two')
+        self.assertEqual(data[3].profile_field.category.title, 'Two')
+
+        data = users[1].profile_data.all()
+        self.assertEqual(len(data), 0)
+
+        data = users[2].profile_data.all()
+        self.assertEqual(len(data), 3)
+        self.assertEqual(data[0].data, 'Z')
+        self.assertEqual(data[1].data, 'Y')
+        self.assertEqual(data[2].data, 'X')
+        self.assertEqual(data[0].profile_field.title, 'A')
+        self.assertEqual(data[1].profile_field.title, 'C')
+        self.assertEqual(data[2].profile_field.title, 'D')
+        self.assertEqual(data[0].profile_field.category.title, 'One')
+        self.assertEqual(data[1].profile_field.category.title, 'Two')
+        self.assertEqual(data[2].profile_field.category.title, 'Two')
 
 class TestGroupModel(unittest.TestCase):
     def setUp(self):
