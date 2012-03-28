@@ -863,7 +863,7 @@ def reportlist(request):
                 # Update the reported state.
                 Topic.objects.filter(id__in=t_ids_mod).update(
                     reported=None, reporter=None, report_claimed_by=None)
-                cache.decr('forum/reported_topic_count', len(t_ids_mod))
+                cache.delete('forum/reported_topic_count')
                 topics = filter(lambda t: t.id not in t_ids_mod, topics)
                 if len(topics_selected) == len(t_ids_mod):
                     flash(_(u'The selected tickets have been closed.'),
