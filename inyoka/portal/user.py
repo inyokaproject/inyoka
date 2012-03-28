@@ -482,8 +482,8 @@ class UserManager(models.Manager):
 
 class ProfileCategory(models.Model):
     """Category for the profile fields."""
-    title = models.CharField(ugettext_lazy(u'Title'), max_length=255)
-    weight = models.IntegerField(ugettext_lazy(u'Weight'), default=0)
+    title = models.CharField(ugettext_lazy(u'title'), max_length=255)
+    weight = models.IntegerField(ugettext_lazy(u'weight'), default=0)
     slug = models.SlugField(max_length=255, unique=True)
 
     def __unicode__(self):
@@ -496,10 +496,13 @@ class ProfileCategory(models.Model):
 
 class ProfileField(models.Model):
     """Contains the profile fields which are available for the users."""
-    title = models.CharField(max_length=255)
+    title = models.CharField(ugettext_lazy(u'title'), max_length=255)
     category = models.ForeignKey(ProfileCategory, related_name='fields',
                                  blank=True, null=True)
-    regex = models.CharField(max_length=255, blank=True, null=True)
+    regex = models.CharField(ugettext_lazy(u'regular expression'),
+                             max_length=255, blank=True, null=True)
+    important = models.BooleanField(ugettext_lazy(u'important field'),
+                                    default=False)
 
     def __unicode__(self):
         return self.title
@@ -509,46 +512,46 @@ class User(models.Model):
     """User model that contains all informations about an user."""
     objects = UserManager()
 
-    username = models.CharField(ugettext_lazy(u'Username'),
+    username = models.CharField(ugettext_lazy(u'username'),
                                 max_length=30, unique=True, db_index=True)
-    email = models.EmailField(ugettext_lazy(u'Email address'),
+    email = models.EmailField(ugettext_lazy(u'email address'),
                               unique=True, max_length=50, db_index=True)
-    password = models.CharField(ugettext_lazy(u'Password'), max_length=128)
-    status = models.IntegerField(ugettext_lazy(u'Status'), default=0)
-    last_login = models.DateTimeField(ugettext_lazy(u'Last login'),
+    password = models.CharField(ugettext_lazy(u'password'), max_length=128)
+    status = models.IntegerField(ugettext_lazy(u'status'), default=0)
+    last_login = models.DateTimeField(ugettext_lazy(u'last login'),
                                       default=datetime.utcnow)
-    date_joined = models.DateTimeField(ugettext_lazy(u'Member since'),
+    date_joined = models.DateTimeField(ugettext_lazy(u'member since'),
                                        default=datetime.utcnow)
     groups = models.ManyToManyField(Group,
-                                    verbose_name=ugettext_lazy(u'Groups'),
+                                    verbose_name=ugettext_lazy(u'groups'),
                                     blank=True,
                                     related_name='user_set')
-    new_password_key = models.CharField(ugettext_lazy(u'Confirmation key for a new password'),
+    new_password_key = models.CharField(ugettext_lazy(u'confirmation key for a new password'),
                                         blank=True, null=True, max_length=32)
 
-    banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'), null=True)
+    banned_until = models.DateTimeField(ugettext_lazy(u'banned until'), null=True)
 
     # profile attributes
     profile_fields = models.ManyToManyField(ProfileField, through='ProfileData')
-    post_count = models.IntegerField(ugettext_lazy(u'Posts'), default=0)
-    avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to='portal/avatars',
+    post_count = models.IntegerField(ugettext_lazy(u'posts'), default=0)
+    avatar = models.ImageField(ugettext_lazy(u'avatar'), upload_to='portal/avatars',
                                blank=True, null=True)
-    jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
-    signature = models.TextField(ugettext_lazy(u'Signature'), blank=True)
-    coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
-    coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
-    settings = JSONField(ugettext_lazy(u'Settings'), default={})
-    _permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
+    jabber = models.CharField(ugettext_lazy(u'jabber'), max_length=200, blank=True)
+    signature = models.TextField(ugettext_lazy(u'signature'), blank=True)
+    coordinates_long = models.FloatField(ugettext_lazy(u'coordinates (longitude)'), blank=True, null=True)
+    coordinates_lat = models.FloatField(ugettext_lazy(u'coordinates (latitude)'), blank=True, null=True)
+    settings = JSONField(ugettext_lazy(u'settings'), default={})
+    _permissions = models.IntegerField(ugettext_lazy(u'privileges'), default=0)
 
     # forum attribues
-    forum_last_read = models.IntegerField(ugettext_lazy(u'Last read post'),
+    forum_last_read = models.IntegerField(ugettext_lazy(u'last read post'),
                                           default=0, blank=True)
-    forum_read_status = models.TextField(ugettext_lazy(u'Read posts'), blank=True)
-    forum_welcome = models.TextField(ugettext_lazy(u'Read welcome message'),
+    forum_read_status = models.TextField(ugettext_lazy(u'read posts'), blank=True)
+    forum_welcome = models.TextField(ugettext_lazy(u'read welcome message'),
                                      blank=True)
 
     # member title
-    member_title = models.CharField(ugettext_lazy(u'Member title'), blank=True, null=True,
+    member_title = models.CharField(ugettext_lazy(u'member title'), blank=True, null=True,
                                     max_length=200)
 
     # primary group from which the user gets some settings

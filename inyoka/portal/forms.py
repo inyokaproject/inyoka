@@ -874,6 +874,10 @@ class EditProfileFieldForm(forms.Form):
                             u'expression which restricts the value that users '
                             u'can enter. Leave empty for no restriction.'),
                             required=False)
+    important = forms.BooleanField(label=_('Important field'), help_text=_(
+                                   u'”Imporant” fields are shown globally '
+                                   u'on the whole website, for example '
+                                   u'beside every forum posts.'))
 
     def clean(self):
         data = self.cleaned_data

@@ -42,7 +42,8 @@ class TestUserModel(TestCase):
         categories.append(ProfileCategory(title='Two'))
         categories[0].save()
         categories[1].save()
-        users = [User.objects.register_user(str(x), '{0}@example.com'.format(x),
+        users = [User.objects.register_user(str(x),
+                                            '{0}@example.com'.format(x),
                                             'pwd', False) for x in range(3)]
         ProfileField(title='A', category=categories[0]).save()
         ProfileField(title='B', category=categories[1]).save()

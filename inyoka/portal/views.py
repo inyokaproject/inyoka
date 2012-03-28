@@ -741,7 +741,7 @@ def usercp_profile(request):
 @check_login(message=_(u'You need to be logged in to change your profile'))
 @templated('portal/usercp/add_field.html')
 def usercp_add_profile_field(request):
-    """View to add a profile field.
+    """View to add a profile field to the own profile.
 
     Only used as fallback if the user disabled JavaScript.
 
@@ -2185,6 +2185,7 @@ def profile_field_edit(request, field_id=None):
                     field.category = category
                 field.title = data['title']
                 field.regex = data['regex']
+                field.important = data['important']
                 field.save()
                 if old_category and not old_category.fields.all():
                     old_category.delete()
