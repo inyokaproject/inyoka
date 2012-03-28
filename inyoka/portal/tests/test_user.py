@@ -67,9 +67,12 @@ class TestUserModel(TestCase):
         for user in users:
             query_data = ProfileData.objects.filter(user=user) \
                                       .order_by('profile_field__title').all()
-            for i, x in enumerate(user.profile_data.all()):
-                self.assertEqual(query_data[i].data, x.data)
-                self.assertEqual(query_data[i].profile_field, x.profile_field)
+            user_data = user.profile_data.all()
+            for x, y in zip(query_data, user_data):
+                self.assertEqual(x.data, y.data)
+                self.assertEqual(x.profile_field, y.profile_field)
+                self.assertEqual(x.profile_field.category,
+                                 y.profile_field.category)
 
 class TestGroupModel(unittest.TestCase):
     def setUp(self):
