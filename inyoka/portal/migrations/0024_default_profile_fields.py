@@ -17,13 +17,10 @@ class Migration(DataMigration):
 
         """
         for service in SERVICES:
-            field = orm.ProfileField(title=service)
-            field.save()
+            orm.ProfileField.objects.create(title=service)
 
     def backwards(self, orm):
-        for field in orm.ProfileField.objects.all():
-            if field.title in SERVICES:
-                field.delete()
+        orm.ProfileField.objects.filter(title__in=SERVICES).delete()
 
     models = {
         'contenttypes.contenttype': {
