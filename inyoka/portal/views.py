@@ -12,7 +12,6 @@
 """
 import binascii
 from datetime import datetime, date, timedelta
-import json
 from PIL import Image
 import pytz
 import re
@@ -26,6 +25,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.shortcuts import get_object_or_404
+from django.utils import simplejson as json
 from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.decorators import method_decorator
 from django.utils.translation import ungettext, pgettext
