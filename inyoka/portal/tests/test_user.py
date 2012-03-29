@@ -57,7 +57,7 @@ class TestUserModel(TestCase):
                     profile_field=ProfileField.objects.get(title='B'),
                     data='V').save()
         ProfileData(user=users[0],
-                    profile_field=ProfileField.objects.get(title='D'),
+                    profile_field=ProfileField.objects.get(title='B'),
                     data='X').save()
         ProfileData(user=users[0],
                     profile_field=ProfileField.objects.get(title='C'),
@@ -79,12 +79,12 @@ class TestUserModel(TestCase):
         self.assertEqual(len(data), 4)
         self.assertEqual(data[0].data, 'U')
         self.assertEqual(data[1].data, 'V')
-        self.assertEqual(data[2].data, 'W')
-        self.assertEqual(data[3].data, 'X')
+        self.assertEqual(data[2].data, 'X')
+        self.assertEqual(data[3].data, 'W')
         self.assertEqual(data[0].profile_field.title, 'A')
         self.assertEqual(data[1].profile_field.title, 'B')
-        self.assertEqual(data[2].profile_field.title, 'C')
-        self.assertEqual(data[3].profile_field.title, 'D')
+        self.assertEqual(data[2].profile_field.title, 'B')
+        self.assertEqual(data[3].profile_field.title, 'C')
         self.assertEqual(data[0].profile_field.category.title, 'One')
         self.assertEqual(data[1].profile_field.category.title, 'Two')
         self.assertEqual(data[2].profile_field.category.title, 'Two')
