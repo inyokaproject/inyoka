@@ -10,6 +10,8 @@
 """
 import re
 from datetime import datetime, timedelta
+from operator import attrgetter
+from itertools import groupby
 
 from werkzeug.datastructures import MultiDict
 
@@ -845,14 +847,31 @@ def reportlist(request):
             if not d['selected']:
                 flash(_(u'No topics selected.'), False)
             else:
-                Topic.objects.filter(id__in=d['selected']).update(
-                    reported=None,
-                    reporter=None,
-                    report_claimed_by=None)
+                # We select all topics that have been selected and also
+                # select the regarding forum, 'cause we will check for the
+                # moderation privilege.
+                topics_selected = topics.filter(id__in=d['selected']).select_related('forum')
+
+                t_ids_mod = []
+                # Check for the moderate privilege of the forums of selected
+                # reported topics and take only the topic IDs where the
+                # requesting user can moderate the forum.
+                for f, ts in groupby(topics_selected, attrgetter('forum')):
+                    if have_privilege(request.user, f, CAN_MODERATE):
+                        t_ids_mod += map(attrgetter('id'), ts)
+
+                # Update the reported state.
+                Topic.objects.filter(id__in=t_ids_mod).update(
+                    reported=None, reporter=None, report_claimed_by=None)
                 cache.delete('forum/reported_topic_count')
-                topics = filter(lambda t: str(t.id) not in d['selected'], topics)
-                flash(_(u'The selected tickets have been closed.'),
-                      True)
+                topics = filter(lambda t: t.id not in t_ids_mod, topics)
+                if len(topics_selected) == len(t_ids_mod):
+                    flash(_(u'The selected tickets have been closed.'),
+                          True)
+                else:
+                    flash(_(u'Only a subset of selected tickets has been '
+                        u'closed, considering your moderation privileges '
+                        u'for the regarding forums.'))
     else:
         form = ReportListForm()
         _add_field_choices()
