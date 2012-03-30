@@ -2198,9 +2198,8 @@ def profile_field_edit(request, field_id=None):
                     field.category = category
                 else:
                     field.category = None
-                field.title = data['title']
-                field.regex = data['regex']
-                field.important = data['important']
+                for attr in ['title', 'regex', 'important']:
+                    setattr(field, attr, data[attr])
                 field.save()
                 if old_category and not old_category.fields.all():
                     old_category.delete()
