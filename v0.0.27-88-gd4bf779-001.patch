@@ -1,0 +1,20 @@
+diff --git a/inyoka/portal/migrations/0024_default_profile_fields.py b/inyoka/portal/migrations/0024_default_profile_fields.py
+index 86b7bd5..1e10f79 100644
+--- a/inyoka/portal/migrations/0024_default_profile_fields.py
++++ b/inyoka/portal/migrations/0024_default_profile_fields.py
+@@ -17,13 +17,10 @@ class Migration(DataMigration):
+ 
+         """
+         for service in SERVICES:
+-            field = orm.ProfileField(title=service)
+-            field.save()
++            orm.ProfileField.objects.create(title=service)
+ 
+     def backwards(self, orm):
+-        for field in orm.ProfileField.objects.all():
+-            if field.title in SERVICES:
+-                field.delete()
++        orm.ProfileField.objects.filter(title__in=SERVICES).delete()
+ 
+     models = {
+         'contenttypes.contenttype': {

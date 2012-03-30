@@ -660,6 +660,10 @@ def usercp_profile(request):
                     field_data = ProfileData(user=user, profile_field=field,
                                              data=value)
                     field_data.save()
+                    cache.delete_many([
+                        'portal/user/{0}/profile_data'.format(user.id),
+                        'portal/usercp_profile/{0}'.format(user.id),
+                    ])
 
             for key in ('jabber', 'signature'):
                 setattr(user, key, data[key] or '')
@@ -723,7 +727,16 @@ def usercp_profile(request):
     storage_keys = storage.get_many(('max_avatar_width',
         'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
 
-    profile_fields = json.dumps([{'id': field.id, 'title': field.title} for field in ProfileField.objects.order_by('title').all()])
+    key = 'portal/usercp_profile/{0}'.format(user.id)
+    profile_fields = cache.get(key)
+    if profile_fields is None:
+        fields = ProfileField.objects.order_by('title').all()
+        profile_fields = json.dumps([{
+            'id': field.id,
+            'title': field.title
+        } for field in fields])
+        cache.set(key, profile_fields)
+
     return {
         'form': form,
         'user': request.user,

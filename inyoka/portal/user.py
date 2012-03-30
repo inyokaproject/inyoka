@@ -569,8 +569,11 @@ class User(models.Model):
         the cache after saving the model.
         """
         super(User, self).save(*args, **kwargs)
-        cache.delete('portal/user/%s/signature' % self.id)
-        cache.delete('portal/user/%s' % self.id)
+        cache.delete_many([
+            'portal/user/{0}/signature'.format(self.id),
+            'portal/user/{0}/profile_data'.format(self.id),
+            'portal/user/{0}'.format(self.id),
+        ])
 
     is_anonymous = property(lambda x: x.username == settings.INYOKA_ANONYMOUS_USER)
     is_authenticated = property(lambda x: not x.is_anonymous)
@@ -713,8 +716,14 @@ class User(models.Model):
     def profile_data(self):
         """Return a QuerySet with associated ProfileData."""
 
-        return ProfileData.objects.filter(user=self) \
-                                   .order_by('profile_field__title')
+        key = 'portal/user/{0}/profile_data'.format(self.id)
+        data = cache.get(key)
+        if data is None:
+            data = ProfileData.objects.filter(user=self) \
+                                      .order_by('profile_field__title')
+            cache.set(key, data)
+        return data
+
     def save_avatar(self, img):
         """
         Save `img` to the file system.
