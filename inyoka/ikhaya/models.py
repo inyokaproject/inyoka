@@ -98,6 +98,15 @@ class ArticleManager(models.Manager):
         return unpublished + published
 
     def get_latest_articles(self, category=None, count=10):
+        """Return `count` lastest articles for the category `category` or for
+        all categories if None.
+
+        :param category: Takes the slug of the category or None
+        :param count: maximum retrieve this many articles. Defaults to 10
+        :type category: string or None
+        :type count: integer
+
+        """
         key = 'ikhaya/latest_articles'
         if category is not None:
             key = 'ikhaya/latest_articles/%s' % category
