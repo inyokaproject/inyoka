@@ -12,7 +12,7 @@ including their development header files. Since Inyoka should run in its own
 virtual environment, you need the `Python setuptools
 <http://pypi.python.org/pypi/setuptools>`_. The database in the back-end can be
 any that is officially supported by :ref:`Django
-<django:database-installation>` but we currently recommend to use MySQL.
+<django:database-installation>`.
 
 Building virtual environment
 ============================
