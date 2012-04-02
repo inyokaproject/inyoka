@@ -11,10 +11,11 @@ variables. To use them, add the following line into your script::
 
 Every configuration directive can be overridden by using a custom settings file
 (see ``example_development_settings.py``) and setting the
-``DJANGO_SETTINGS_MODULE`` environment variabel::
+``DJANGO_SETTINGS_MODULE`` environment variabel:
+
+.. code-block:: console
 
     $ export DJANGO_SETTINGS_MODULE="settings"
-
 
 Generics
 ========
@@ -32,10 +33,8 @@ Generics
             }
         }
 
-    A prefix that is automatically added on every cache operation to the key.
-    You won't notice anything of it at all but it makes it possible to run more
-    than one application on a single memcached server without the risk of cache
-    key collision.
+    The caches that will be used by Inyoka and Django. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#caches
 
 .. py:data:: DATABASES
 
@@ -69,6 +68,9 @@ Generics
 
     Defaults to: ``'inyoka.utils.files.InyokaFSStorage'``
 
+    File storage that is used for every file related operation. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#default-file-storage
+
 .. py:data:: FILE_UPLOAD_HANDLERS
 
     Defaults to::
@@ -78,7 +80,8 @@ Generics
         )
 
     We only allow uploads via memory up to 2.5mb and do not stream into
-    temporary files.
+    temporary files. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#file-upload-handlers
 
 .. py:data:: INSTALLED_APPS
 
@@ -103,6 +106,9 @@ Generics
             'django_hosts',
         )
 
+    All applications that are used by Inyoka. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#installed-apps
+
 .. py:data:: MIDDLEWARE_CLASSES
 
     Defaults to::
@@ -120,13 +126,8 @@ Generics
             'django_mobile.middleware.SetFlavourMiddleware',
         )
 
-.. py:data:: TEMPLATE_DIRS
-
-    Defaults to::
-
-        (
-            join(BASE_PATH, 'templates'),
-        )
+    A tuple of middlewares. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#middleware-classes
 
 Installation settings
 =====================
@@ -142,16 +143,19 @@ Forum
 
     Defaults to: ``(0, 0)``
 
+    Time in seconds after posting a user is allowed to delete his own posts,
+    for posts (w/o, w/) replies. -1 for infinitely, 0 for never
+
 .. py:data:: FORUM_OWNPOST_EDIT_LIMIT
 
     Defaults to: ``(-1, 1800)``
 
+    Time in seconds after posting a user is allowed to edit his own posts, for
+    posts (w/o, w/) replies. -1 for infinitely, 0 for never
+
 .. py:data:: FORUM_THUMBNAIL_SIZE
 
     Defaults to: ``(64, 64)``
-
-    Time in seconds after posting a user is allowed to edit/delete his own
-    posts, for posts (without, with) replies. -1 for infinitely, 0 for never
 
 General
 -------
@@ -178,19 +182,25 @@ General
 
 .. py:data:: INYOKA_ANONYMOUS_USER
 
-    Defaults to: ``u'anonymous'``
+    Defaults to: ``'anonymous'``
 
 .. py:data:: INYOKA_CONTACT_EMAIL
 
-    Defaults to: ``'@'.join(['contact', BASE_DOMAIN_NAME])``
+    Defaults to: ``'contact@example.com'``
+
+    .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
 .. py:data:: INYOKA_SYSTEM_USER
 
-    Defaults to: ``u'ubuntuusers.de'``
+    Defaults to: ``'example.com'``
+
+    .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
 .. py:data:: INYOKA_SYSTEM_USER_EMAIL
 
-    Defaults to: ``'@'.join(['system', BASE_DOMAIN_NAME])``
+    Defaults to: ``'system@example.com'``
+
+    .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
 .. py:data:: USER_INACTIVE_DAYS
 
@@ -226,7 +236,7 @@ Wiki
 
     Defaults to: ``'Wiki/Templates'``
 
-    The page below we have our templates.  The template the user specifies in
+    The page below we have our templates. The template the user specifies in
     the macro or in the parser is then joined with this page name according to
     our weird joining rules
 
@@ -279,7 +289,7 @@ Logging
 
 .. py:data:: INYOKA_LOGGER_NAME
 
-    Defaults to: ``u'inyoka'``
+    Defaults to: ``'inyoka'``
 
     Logger name for remote exception logging
 
@@ -292,11 +302,15 @@ Logging
             'disable_existing_loggers': False,
         }
 
+    See https://docs.djangoproject.com/en/1.3/ref/settings/#logging
+
 .. py:data:: SENTRY_SITE
 
     Defaults to: ``'example.com'``
 
     Set the default sentry site
+
+    .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
 Notification
 ============
@@ -311,11 +325,15 @@ Notification
 
     Defaults to: ``'inyoka.utils.mail.SendmailEmailBackend'``
 
+    See https://docs.djangoproject.com/en/1.3/ref/settings/#email-backend
+
 .. py:data:: EMAIL_SUBJECT_PREFIX
 
-    Defaults to: ``u'%s: ' % BASE_DOMAIN_NAME``
+    Defaults to: ``'example.com: '``
 
     Prefix for the system mails
+
+    .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
 .. py:data:: JABBER_BOT_SERVER
 
@@ -414,21 +432,28 @@ Paths and URLs
 
 .. py:data:: ADMIN_MEDIA_PREFIX
 
-    Defaults to: ``STATIC_URL + '/_admin/'``
+    Defaults to: ``'http://static.example.com/_admin/'``
+
+    See https://docs.djangoproject.com/en/1.3/ref/settings/#admin-media-prefix
+
+    .. seealso:: :py:data:`STATIC_URL`
 
 .. py:data:: BASE_DOMAIN_NAME
 
-    Defaults to: ``'ubuntuusers.de'``
+    Defaults to: ``'example.com'``
 
     The base URL (without subdomain)
+
+    .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
 .. py:data:: BASE_PATH
 
     Defaults to: ``dirname(__file__)``
 
-    Refers to the directory name of the Inyoka module. Do not override this
-    option unless you know what you are doing. **All** paths are constructed by
-    this value.
+    Refers to the directory name of the Inyoka module. In case the
+    ``__init__.py`` file is at ``~/inyoka/inyoka/__init__.py``, this refers to
+    ``~/inyoka/inyoka/``. Do not override this option unless you know what you
+    are doing. **All** paths are constructed by this value.
 
 .. py:data:: DEFAULT_HOST
 
@@ -436,17 +461,28 @@ Paths and URLs
 
 .. py:data:: LOCALE_PATHS
 
-    Defaults to: ``(join(BASE_PATH, 'locale'),)``
+    Defaults to: ``('~/inyoka/inyoka/locale',)``
+
+    See https://docs.djangoproject.com/en/1.3/ref/settings/#locale-paths
+
+    .. seealso:: :py:data:`BASE_PATH`
 
 .. py:data:: MEDIA_ROOT
 
-    Defaults to: ``join(BASE_PATH, 'media')``
+    Defaults to: ``'~/inyoka/inyoka/media'``
 
-    Absolute path to the directory that holds media and the URL.
+    Absolute path to the directory that holds media and the URL. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#media-root
+
+    .. seealso:: :py:data:`BASE_PATH`
 
 .. py:data:: MEDIA_URL
 
-    Defaults to: ``'http://media.%s' % BASE_DOMAIN_NAME``
+    Defaults to: ``'http://media.example.com'``
+
+    See https://docs.djangoproject.com/en/1.3/ref/settings/#media-url
+
+    .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
 .. py:data:: ROOT_HOSTCONF
 
@@ -458,33 +494,56 @@ Paths and URLs
 
     Defaults to: ``'inyoka.portal.urls'``
 
-    This URL conf is used for contrib stuff like the auth system
+    This URL conf is used for contrib stuff like the auth system. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#root-urlconf
 
 .. py:data:: SESSION_COOKIE_DOMAIN
 
-    Defaults to: ``'.ubuntuusers.de'``
+    Defaults to: ``'.example.com'``
+
+    See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#session-cookie-domain
+
+    .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
 .. py:data:: STATIC_ROOT
 
-    Defaults to: ``join(BASE_PATH, 'static-collected')``
+    Defaults to: ``'~/inyoka/inyoka/static-collected'``
+
+    See https://docs.djangoproject.com/en/1.3/ref/settings/#static-root
+
+    .. seealso:: :py:data:`BASE_PATH`
 
 .. py:data:: STATIC_URL
 
-    Defaults to: ``'http://static.%s' % BASE_DOMAIN_NAME``
+    Defaults to: ``'http://static.example.com'``
+
+    See https://docs.djangoproject.com/en/1.3/ref/settings/#static-url
+
+    .. seealso:: :py:data:`BASE_DOMAIN_NAME`
 
 .. py:data:: STATICFILES_DIRS
 
-    Defaults to::
+    Defaults to: ``('~/inyoka/inyoka/static',)``
 
-        (
-            join(BASE_PATH, 'static'),
-        )
+    .. seealso:: :py:data:`BASE_PATH`
+
+.. py:data:: TEMPLATE_DIRS
+
+    Defaults to: ``('~/inyoka/inyoka/templates',)``
+
+    A tuple of template directories that are searched in order. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#template-dirs
+
+    .. seealso:: :py:data:`BASE_PATH`
 
 .. py:data:: XAPIAN_DATABASE
 
-    Defaults to: ``join(BASE_PATH, 'inyoka.xapdb')``
+    Defaults to: ``'~/inyoka/inyoka/inyoka.xapdb'``
 
     Path to the Xapian database. Examples: ``/path/to/inyoka.xapdb``, or ``tcpsrv://localhost:3000/``
+
+    .. seealso:: :py:data:`BASE_PATH`
 
 Security
 ========
@@ -522,13 +581,15 @@ Security
 
     Defaults to: ``'b)l0ju3erxs)od$g&l_0i1za^l+2dwgxuay(nwv$q4^*c#tdwt'``
 
-    Make this unique, and don't share it with anybody.
+    Make this unique, and don't share it with anybody. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#secret-key
 
 .. py:data:: USE_ETAGS
 
     Defaults to: ``True``
 
-    Use etags
+    Use etags. See
+    https://docs.djangoproject.com/en/1.3/ref/settings/#use-etags
 
 Search
 ======
@@ -547,10 +608,11 @@ Search
 
 
 ..
-
     .. py:data:: ADMINS
 
         Defaults to: ``()``
+
+        See https://docs.djangoproject.com/en/1.3/ref/settings/#admins
 
     .. py:data:: IMAGEMAGICK_PATH
 
@@ -565,6 +627,8 @@ Search
     .. py:data:: MANAGERS
 
         Defaults to: ``()``
+
+        See https://docs.djangoproject.com/en/1.3/ref/settings/#managers
 
     .. py:data:: SEND_EVENTS
 
