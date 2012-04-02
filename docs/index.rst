@@ -14,6 +14,7 @@ Overview
     :maxdepth: 2
 
     installation
+    inyoka
     settings
 
 Releases
