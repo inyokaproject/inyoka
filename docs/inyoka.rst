@@ -63,3 +63,12 @@ as moin 1.7 but has revisioned pages and a better parser which can savely
 generate XML based output formats. The wiki parser also has some BBCode
 elements for compatibility with the old phpBB syntax and is used in other
 components (`forum`, `ikhaya`, ...) as well.
+
+
+References
+==========
+
+.. toctree::
+    :maxdepth: 2
+
+    ref/ikhaya/index.rst
