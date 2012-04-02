@@ -9,7 +9,4 @@ Ikhaya component
 
     forms
     models
-    notifications
-    services
-    urls
     views
