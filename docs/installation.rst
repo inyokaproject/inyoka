@@ -14,6 +14,27 @@ virtual environment, you need the `Python setuptools
 any that is officially supported by :ref:`Django
 <django:database-installation>`.
 
+The code is mostly tested with MySQL but should work with PostgreSQL, SQLite or
+any other database Django supports.
+
+Additionally `Jinja 2.5 <http://jinja.pocoo.org/>`_ or higher is required as
+well as `Xapian <http://xapian.org/>`_ for the full text search facilities.
+For the planet application the `feedparser library
+<http://code.google.com/p/feedparser/>`_ must be installed. Additionally
+chardet is recommended so that it can better guess broken encodings of feeds.
+For the pastebin, wiki and some other parts `Pygments 1.4
+<http://pygments.org/>`_ or higher must be available. MySQL must support InnoDB
+or any other transaction engine like falcon (untested though). For incoming
+HTML data that is converted to XHTML we also need html5lib. To let the inyoka
+services run (required) you need also `simplejson
+<http://simplejson.readthedocs.org/en/latest/index.html>`_.
+
+We're using the recent stable `Django <https://www.djangoproject.com/>`_
+releases.
+
+For deployment memcached is the preferred caching system. Otherwise use many
+threads and few processes and enable `locmem`.
+
 Building virtual environment
 ============================
 

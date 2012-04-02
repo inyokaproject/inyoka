@@ -17,6 +17,17 @@ Every configuration directive can be overridden by using a custom settings file
 
     $ export DJANGO_SETTINGS_MODULE="settings"
 
+Any settings variable that is shown in the `Django settings documentation
+<https://docs.djangoproject.com/en/1.3/ref/settings/>`_ can be used.
+
+The development, test and production configuration files should start with::
+
+    from inyoka.default_settings import *
+
+This file is not referenced by the application code itself which means
+that you can import it as part of the Django setup without causing
+circular bootstrapping dependencies.
+
 Generics
 ========
 
