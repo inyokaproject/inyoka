@@ -1,1 +1,1 @@
-Das Thema „{{ topic.title }}“ ( {{ topic|url }} ) wurde von {{ mod }} in das Forum „{{ forum_name }}“ verschoben
+Das Thema „{{ topic.title }}“ ( {{ topic|url }} ) wurde von {{ mod }} aus dem Forum „{{ old_forum_name }}“ nach „{{ forum_name }}“ verschoben
