@@ -17,7 +17,7 @@ inyoka/static/style/*.css
 *.swp
 *.orig
 *~
-database.db
+*.db
 bootstrap.py
 *.sublime-project
 *.sublime-workspace

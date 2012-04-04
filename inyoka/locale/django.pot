@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-03-21 12:59+0100\n"
+"POT-Creation-Date: 2012-03-28 21:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -99,37 +99,41 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: inyoka/templates/overall.html:259
+#: inyoka/templates/overall.html:235
+msgid "Please install at least Internet Explorer 8."
+msgstr ""
+
+#: inyoka/templates/overall.html:262
 #, python-format
 msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr ""
 
-#: inyoka/templates/overall.html:261
+#: inyoka/templates/overall.html:264
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr ""
 
-#: inyoka/templates/overall.html:276
+#: inyoka/templates/overall.html:279
 msgid "To mobile version"
 msgstr ""
 
-#: inyoka/templates/overall.html:320
+#: inyoka/templates/overall.html:323
 msgid "Username or email address"
 msgstr ""
 
-#: inyoka/templates/overall.html:323
+#: inyoka/templates/overall.html:326
 msgid "Password"
 msgstr ""
 
-#: inyoka/templates/overall.html:326
+#: inyoka/templates/overall.html:329
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
 
-#: inyoka/templates/overall.html:327
+#: inyoka/templates/overall.html:330
 msgid "Keep me logged in"
 msgstr ""
 
-#: inyoka/templates/overall.html:330
+#: inyoka/templates/overall.html:333
 msgid "Lost password?"
 msgstr ""
 

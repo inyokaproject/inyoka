@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-03-21 12:59+0100\n"
+"POT-Creation-Date: 2012-03-31 15:34+0200\n"
 "PO-Revision-Date: 2012-02-07 02:34+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -88,7 +88,7 @@ msgstr "Abgebrochen"
 msgid "No changes"
 msgstr "Keine Änderungen"
 
-#: inyoka/wiki/actions.py:456
+#: inyoka/wiki/actions.py:456 inyoka/wiki/actions.py:467
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been created."
 msgstr "Die Seite “<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."

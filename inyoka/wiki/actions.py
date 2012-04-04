@@ -464,7 +464,7 @@ def do_edit(request, name):
                                                remote_addr=remote_addr,
                                                name=name,
                                                **form.cleaned_data)
-                    flash(u'The page <a href="%(link)s">%(name)s</a> has been created.' % {
+                    flash(_(u'The page <a href="%(link)s">%(name)s</a> has been created.') % {
                         'link': escape(href('wiki', page.name)),
                         'name': escape(page.title)
                     }, True)
