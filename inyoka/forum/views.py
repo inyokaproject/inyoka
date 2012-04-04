@@ -503,8 +503,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             else:
                 flash(_(u'You are replying to a locked topic. Please note that '
                         'this may be considered as impolite!'), False)
-        elif quote:
-            if quote.hidden and not check_privilege(privileges, 'moderate'):
+        elif quote and quote.hidden:
+            if not check_privilege(privileges, 'moderate'):
                 return abort_access_denied(request)
         else:
             if not check_privilege(privileges, 'reply'):
