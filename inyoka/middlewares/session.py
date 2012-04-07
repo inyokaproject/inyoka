@@ -65,7 +65,7 @@ class AdvancedSessionMiddleware(object):
             session['_ex'] = time() + settings.SESSION_COOKIE_AGE
         request.session = session
         if expired:
-            flash(_(u'Your session expired.  You need to login again'),
+            flash(_(u'Your session expired. You need to login again'),
                   session=session)
 
     def process_response(self, request, response):

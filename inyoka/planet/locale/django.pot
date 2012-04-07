@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-08 20:17+0100\n"
+"POT-Creation-Date: 2012-03-21 12:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,38 +69,38 @@ msgstr ""
 msgid "Entries"
 msgstr ""
 
-#: inyoka/planet/views.py:78
+#: inyoka/planet/views.py:77
 msgid "You need to be logged in to suggest a blog"
 msgstr ""
 
-#: inyoka/planet/views.py:96
+#: inyoka/planet/views.py:95
 msgid "A new blog was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:100
+#: inyoka/planet/views.py:99
 msgid "No user is registered as a planet administrator."
 msgstr ""
 
-#: inyoka/planet/views.py:103
+#: inyoka/planet/views.py:102
 #, python-format
 msgid "The blog “%(title)s“ was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:114
+#: inyoka/planet/views.py:113
 #, python-format
 msgid "%(sitename)s planet"
 msgstr ""
 
-#: inyoka/planet/views.py:157
+#: inyoka/planet/views.py:156
 msgid "Canceled"
 msgstr ""
 
-#: inyoka/planet/views.py:164
+#: inyoka/planet/views.py:163
 #, python-format
 msgid "The entry “%(title)s“ was successfully hidden."
 msgstr ""
 
-#: inyoka/planet/views.py:166
+#: inyoka/planet/views.py:165
 #, python-format
 msgid "The entry “%(title)s“ was successfully restored."
 msgstr ""

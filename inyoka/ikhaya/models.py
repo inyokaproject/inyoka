@@ -98,6 +98,15 @@ class ArticleManager(models.Manager):
         return unpublished + published
 
     def get_latest_articles(self, category=None, count=10):
+        """Return `count` lastest articles for the category `category` or for
+        all categories if None.
+
+        :param category: Takes the slug of the category or None
+        :param count: maximum retrieve this many articles. Defaults to 10
+        :type category: string or None
+        :type count: integer
+
+        """
         key = 'ikhaya/latest_articles'
         if category is not None:
             key = 'ikhaya/latest_articles/%s' % category
@@ -284,6 +293,8 @@ class Article(models.Model, LockableObject):
     def get_absolute_url(self, action='show'):
         if action == 'comments':
             return href('ikhaya', self.stamp, self.slug, _anchor='comments')
+        if action == 'last_comment':
+            return href('ikhaya', self.stamp, self.slug, _anchor='comment_%d' % self.comment_count)
         if action in ('subscribe', 'unsubscribe'):
             if current_request:
                 current = current_request.build_absolute_uri()

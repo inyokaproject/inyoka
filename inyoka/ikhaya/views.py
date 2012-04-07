@@ -284,8 +284,10 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 else:
                     flash(_(u'The article “%(title)s“ was saved.')
                           % {'title': escape(article.subject)}, True)
-                    cache.delete('ikhaya/article/%s/%s' %
-                                 (article.pub_date, article.slug))
+                    keys = ['ikhaya/latest_articles',
+                            'ikhaya/latest_articles/%s' % article.category.slug,
+                            'ikhaya/article/%s/%s' % (article.pub_date, article.slug)]
+                    cache.delete_many(keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
             ctx = RenderContext(request)

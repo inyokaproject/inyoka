@@ -10,6 +10,8 @@
 """
 import re
 from datetime import datetime, timedelta
+from operator import attrgetter
+from itertools import groupby
 
 from werkzeug.datastructures import MultiDict
 
@@ -489,18 +491,21 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
                                              post.page))
     elif topic:
-        if topic.locked:
+        if topic.hidden:
+            if not check_privilege(privileges, 'moderate'):
+                flash(_(u'You cannot reply in this topic because it was '
+                        u'deleted by a moderator.'), False)
+                return HttpResponseRedirect(url_for(topic))
+        elif topic.locked:
             if not check_privilege(privileges, 'moderate'):
                 flash(_(u'You cannot reply to this topic because it was locked.'))
                 return HttpResponseRedirect(url_for(topic))
             else:
                 flash(_(u'You are replying to a locked topic. Please note that '
                         'this may be considered as impolite!'), False)
-        elif topic.hidden:
+        elif quote and quote.hidden:
             if not check_privilege(privileges, 'moderate'):
-                flash(_(u'You cannot reply in this topic because it was '
-                        u'deleted by a moderator.'), False)
-                return HttpResponseRedirect(url_for(topic))
+                return abort_access_denied(request)
         else:
             if not check_privilege(privileges, 'reply'):
                 return abort_access_denied(request)
@@ -845,14 +850,31 @@ def reportlist(request):
             if not d['selected']:
                 flash(_(u'No topics selected.'), False)
             else:
-                Topic.objects.filter(id__in=d['selected']).update(
-                    reported=None,
-                    reporter=None,
-                    report_claimed_by=None)
+                # We select all topics that have been selected and also
+                # select the regarding forum, 'cause we will check for the
+                # moderation privilege.
+                topics_selected = topics.filter(id__in=d['selected']).select_related('forum')
+
+                t_ids_mod = []
+                # Check for the moderate privilege of the forums of selected
+                # reported topics and take only the topic IDs where the
+                # requesting user can moderate the forum.
+                for f, ts in groupby(topics_selected, attrgetter('forum')):
+                    if have_privilege(request.user, f, CAN_MODERATE):
+                        t_ids_mod += map(attrgetter('id'), ts)
+
+                # Update the reported state.
+                Topic.objects.filter(id__in=t_ids_mod).update(
+                    reported=None, reporter=None, report_claimed_by=None)
                 cache.delete('forum/reported_topic_count')
-                topics = filter(lambda t: str(t.id) not in d['selected'], topics)
-                flash(_(u'The selected tickets have been closed.'),
-                      True)
+                topics = filter(lambda t: t.id not in t_ids_mod, topics)
+                if len(topics_selected) == len(t_ids_mod):
+                    flash(_(u'The selected tickets have been closed.'),
+                          True)
+                else:
+                    flash(_(u'Only a subset of selected tickets has been '
+                        u'closed, considering your moderation privileges '
+                        u'for the regarding forums.'))
     else:
         form = ReportListForm()
         _add_field_choices()
@@ -889,7 +911,7 @@ def reported_topics_subscription(request, mode):
 
 
 def post(request, post_id):
-    """Redirect to the "real" post url" (see `PostManager.url_for_post`)"""
+    """Redirect to the "real" post url (see `PostManager.url_for_post`)"""
     try:
         url = Post.url_for_post(int(post_id),
             paramstr=request.GET and request.GET.urlencode())
@@ -934,6 +956,18 @@ def first_unread_post(request, topic_slug):
         redirect = Post.url_for_post(first_unread_post.id)
     return HttpResponseRedirect(redirect)
 
+def last_post(request, topic_slug):
+    """
+    Redirect to the last post of the given topic.
+    """
+    try:
+        last = Topic.objects.values_list('last_post', flat=True)\
+                    .get(slug=topic_slug)
+        url = Post.url_for_post(last,
+            paramstr=request.GET and request.GET.urlencode())
+        return HttpResponseRedirect(url)
+    except Topic.DoesNotExist:
+        raise PageNotFound()
 
 @templated('forum/movetopic.html')
 def movetopic(request, topic_slug):

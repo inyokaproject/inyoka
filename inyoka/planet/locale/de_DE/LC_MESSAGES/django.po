@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-08 20:17+0100\n"
+"POT-Creation-Date: 2012-03-21 12:59+0100\n"
 "PO-Revision-Date: 2012-02-07 23:06+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -71,38 +71,38 @@ msgstr "Eintrag"
 msgid "Entries"
 msgstr "Einträge"
 
-#: inyoka/planet/views.py:78
+#: inyoka/planet/views.py:77
 msgid "You need to be logged in to suggest a blog"
 msgstr "Du musst angemeldet sein, um ein Blog vorschlagen zu können."
 
-#: inyoka/planet/views.py:96
+#: inyoka/planet/views.py:95
 msgid "A new blog was suggested."
 msgstr "Ein neues Blog wurde vorgeschlagen."
 
-#: inyoka/planet/views.py:100
+#: inyoka/planet/views.py:99
 msgid "No user is registered as a planet administrator."
 msgstr "Es wurde kein Benutzer als Planet-Administrator eingetragen."
 
-#: inyoka/planet/views.py:103
+#: inyoka/planet/views.py:102
 #, python-format
 msgid "The blog “%(title)s“ was suggested."
 msgstr "Das Blog „%(title)s“ wurde vorgeschlagen."
 
-#: inyoka/planet/views.py:114
+#: inyoka/planet/views.py:113
 #, python-format
 msgid "%(sitename)s planet"
 msgstr "%(sitename)s Planet"
 
-#: inyoka/planet/views.py:157
+#: inyoka/planet/views.py:156
 msgid "Canceled"
 msgstr "Abgebrochen"
 
-#: inyoka/planet/views.py:164
+#: inyoka/planet/views.py:163
 #, python-format
 msgid "The entry “%(title)s“ was successfully hidden."
 msgstr "Der Eintrag „%(title)s” wurde erfolgreich verborgen."
 
-#: inyoka/planet/views.py:166
+#: inyoka/planet/views.py:165
 #, python-format
 msgid "The entry “%(title)s“ was successfully restored."
 msgstr "Der Eintrag „%(title)s” wurde erfolgreich wiederhergestellt."

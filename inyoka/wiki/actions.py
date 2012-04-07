@@ -20,13 +20,13 @@
 """
 from datetime import datetime
 from django.db import models
-from django.core.cache import cache
 from django.utils.translation import ugettext as _
 from inyoka.utils.urls import href, url_for
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse, PageNotFound, \
      HttpResponseRedirect, HttpResponse
 from inyoka.utils.flashing import flash
+from inyoka.utils.cache import request_cache
 from inyoka.utils.diff3 import merge
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
@@ -464,7 +464,7 @@ def do_edit(request, name):
                                                remote_addr=remote_addr,
                                                name=name,
                                                **form.cleaned_data)
-                    flash(u'The page <a href="%(link)s">%(name)s</a> has been created.' % {
+                    flash(_(u'The page <a href="%(link)s">%(name)s</a> has been created.') % {
                         'link': escape(href('wiki', page.name)),
                         'name': escape(page.title)
                     }, True)
@@ -611,7 +611,7 @@ def do_mv_discontinued(request, name):
             text = page.revisions.latest().text.value
             if text.startswith('[[Vorlage(Baustelle'):
                 text = text[text.find('\n')+1:]
-            text = 'u[[Vorlage(Verlassen)]]\n' + text
+            text = u'[[Vorlage(Verlassen)]]\n' + text
             try:
                 Page.objects.get_by_name(new_name)
             except Page.DoesNotExist:
@@ -621,6 +621,8 @@ def do_mv_discontinued(request, name):
             else:
                 flash(u'Die Seite „%s” existiert bereits.' % new_name, False)
                 return HttpResponseRedirect(url_for(page))
+
+            request_cache.delete('wiki/page/' + name)
             flash(u'Seite wurde erfolgreich verschoben.', success=True)
     else:
         flash(render_template('wiki/action_mv_discontinued.html', {'page': page}))
@@ -675,6 +677,8 @@ def do_mv_back(request, name):
             if not _rename(request, page, new_name, new_text=text):
                 flash(u'Beim Verschieben ist ein Fehler aufgereten.', False)
                 return HttpResponseRedirect(url_for(page))
+
+            request_cache.delete('wiki/page/' + name)
 
             flash(u'Seite wurde erfolgreich ins Wiki verschoben.', success=True)
             return HttpResponseRedirect(url_for(page))

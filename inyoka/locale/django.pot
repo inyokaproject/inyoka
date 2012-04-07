@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-08 20:17+0100\n"
+"POT-Creation-Date: 2012-03-28 21:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,37 +99,41 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: inyoka/templates/overall.html:259
+#: inyoka/templates/overall.html:235
+msgid "Please install at least Internet Explorer 8."
+msgstr ""
+
+#: inyoka/templates/overall.html:262
 #, python-format
 msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr ""
 
-#: inyoka/templates/overall.html:261
+#: inyoka/templates/overall.html:264
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr ""
 
-#: inyoka/templates/overall.html:273
+#: inyoka/templates/overall.html:279
 msgid "To mobile version"
 msgstr ""
 
-#: inyoka/templates/overall.html:317
+#: inyoka/templates/overall.html:323
 msgid "Username or email address"
 msgstr ""
 
-#: inyoka/templates/overall.html:320
+#: inyoka/templates/overall.html:326
 msgid "Password"
 msgstr ""
 
-#: inyoka/templates/overall.html:323
+#: inyoka/templates/overall.html:329
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
 
-#: inyoka/templates/overall.html:324
+#: inyoka/templates/overall.html:330
 msgid "Keep me logged in"
 msgstr ""
 
-#: inyoka/templates/overall.html:327
+#: inyoka/templates/overall.html:333
 msgid "Lost password?"
 msgstr ""
 
@@ -189,11 +194,11 @@ msgstr ""
 msgid "%(date)s at %(time)s"
 msgstr ""
 
-#: inyoka/utils/diff3.py:365
+#: inyoka/utils/diff3.py:372
 msgid "Old"
 msgstr ""
 
-#: inyoka/utils/diff3.py:365
+#: inyoka/utils/diff3.py:372
 msgid "New"
 msgstr ""
 
@@ -313,5 +318,51 @@ msgstr ""
 #: inyoka/utils/sortable.py:103
 #, python-format
 msgid "The chosen sort value (“%(value)s”) is not available"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:12
+#: inyoka/utils/tests/test_templating.py:13
+msgid "text"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:18
+#: inyoka/utils/tests/test_templating.py:19
+msgid "e1"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:18
+#: inyoka/utils/tests/test_templating.py:19
+msgid "e2"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:24
+#: inyoka/utils/tests/test_templating.py:25
+msgid "v1"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:24
+#: inyoka/utils/tests/test_templating.py:25
+msgid "v2"
+msgstr ""
+
+#: inyoka/middlewares/auth.py:31
+#, python-format
+msgid "The user “%(name)s” was banned. Your session has ended."
+msgstr ""
+
+#: inyoka/middlewares/auth.py:34
+#, python-format
+msgid "The user “%(name)s” deleted his profile. Your session has ended."
+msgstr ""
+
+#: inyoka/middlewares/highlighter.py:112
+#, python-format
+msgid ""
+"Search results are highlighted. <a class=\"hide_searchwords\" "
+"href=\"%(link)s\">Hide query terms</a>."
+msgstr ""
+
+#: inyoka/middlewares/session.py:68
+msgid "Your session expired. You need to login again"
 msgstr ""
 

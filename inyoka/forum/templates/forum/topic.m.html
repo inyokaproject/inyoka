@@ -110,20 +110,20 @@
   </section>
   {{ pagination.generate() }}
   <section class="actions">
-    <a href="{{ topic|url('reply')}}">
-      <span>{% trans %}Reply{% endtrans %}</span>
-    </a>
+    <a href="{{ topic|url('reply')}}">{#
+      #}<span>{% trans %}Reply{% endtrans %}</span>{#
+    #}</a>
     {% if is_subscribed %}
-      <a href="{{ topic|url('unsubscribe')}}">
-        <span>{% trans %}Unsubscribe{% endtrans %}</span>
-      </a>
+      <a href="{{ topic|url('unsubscribe')}}">{#
+        #}<span>{% trans %}Unsubscribe{% endtrans %}</span>{#
+      #}</a>
     {% else %}
-      <a href="{{ topic|url('subscribe')}}">
-        <span>{% trans %}Subscribe{% endtrans %}</span>
-      </a>
+      <a href="{{ topic|url('subscribe')}}">{#
+        #}<span>{% trans %}Subscribe{% endtrans %}</span>{#
+      #}</a>
     {% endif %}
-    <a href="{{ topic|url('report')}}">
-      <span>{% trans %}Report{% endtrans %}</span>
-    </a>
+    <a href="{{ topic|url('report')}}">{#
+      #}<span>{% trans %}Report{% endtrans %}</span>{#
+    #}</a>
   </section>
 {% endblock %}

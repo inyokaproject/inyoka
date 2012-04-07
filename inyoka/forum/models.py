@@ -526,7 +526,7 @@ class Topic(models.Model):
         if action in ('reply', 'delete', 'hide', 'restore', 'split', 'move',
                       'solve', 'unsolve', 'lock', 'unlock', 'report',
                       'report_done', 'subscribe', 'unsubscribe',
-                      'first_unread'):
+                      'first_unread', 'last_post'):
             return href('forum', 'topic', self.slug, action)
 
     def get_pagination(self, threshold=3):

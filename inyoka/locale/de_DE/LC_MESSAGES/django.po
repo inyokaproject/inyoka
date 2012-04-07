@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-02-08 20:17+0100\n"
+"POT-Creation-Date: 2012-03-28 21:42+0200\n"
 "PO-Revision-Date: 2012-02-07 01:48+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -101,39 +101,43 @@ msgstr "Planet"
 msgid "Search"
 msgstr "Suche"
 
-#: inyoka/templates/overall.html:259
+#: inyoka/templates/overall.html:235
+msgid "Please install at least Internet Explorer 8."
+msgstr "Bitte installiere den Internet Explorer 8 oder neuer."
+
+#: inyoka/templates/overall.html:262
 #, python-format
 msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr "Powered by <a href=\"%(link)s\">Inyoka</a>"
 
-#: inyoka/templates/overall.html:261
+#: inyoka/templates/overall.html:264
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr "(in %(seconds)s Sekunden gerendert)"
 
-#: inyoka/templates/overall.html:273
+#: inyoka/templates/overall.html:279
 msgid "To mobile version"
 msgstr "Zur mobilen Version"
 
-#: inyoka/templates/overall.html:317
+#: inyoka/templates/overall.html:323
 msgid "Username or email address"
 msgstr "Benutzername oder E-Mail-Adresse"
 
-#: inyoka/templates/overall.html:320
+#: inyoka/templates/overall.html:326
 msgid "Password"
 msgstr "Passwort"
 
-#: inyoka/templates/overall.html:323
+#: inyoka/templates/overall.html:329
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
 "Wähle diese Option nicht an, wenn du dich an einem öffentlichen Computer "
 "befindest."
 
-#: inyoka/templates/overall.html:324
+#: inyoka/templates/overall.html:330
 msgid "Keep me logged in"
 msgstr "Angemeldet bleiben"
 
-#: inyoka/templates/overall.html:327
+#: inyoka/templates/overall.html:333
 msgid "Lost password?"
 msgstr "Passwort vergessen?"
 
@@ -206,11 +210,11 @@ msgstr "Seite nicht gefunden"
 msgid "%(date)s at %(time)s"
 msgstr "%(date)s um %(time)s"
 
-#: inyoka/utils/diff3.py:365
+#: inyoka/utils/diff3.py:372
 msgid "Old"
 msgstr "Alt"
 
-#: inyoka/utils/diff3.py:365
+#: inyoka/utils/diff3.py:372
 msgid "New"
 msgstr "Neu"
 
@@ -341,4 +345,54 @@ msgstr ""
 #, python-format
 msgid "The chosen sort value (“%(value)s”) is not available"
 msgstr "Der ausgewählte Wert (“%(value)s”) ist nicht verfügbar"
+
+#: inyoka/utils/tests/test_templating.py:12
+#: inyoka/utils/tests/test_templating.py:13
+msgid "text"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:18
+#: inyoka/utils/tests/test_templating.py:19
+msgid "e1"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:18
+#: inyoka/utils/tests/test_templating.py:19
+msgid "e2"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:24
+#: inyoka/utils/tests/test_templating.py:25
+msgid "v1"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:24
+#: inyoka/utils/tests/test_templating.py:25
+msgid "v2"
+msgstr ""
+
+#: inyoka/middlewares/auth.py:31
+#, python-format
+msgid "The user “%(name)s” was banned. Your session has ended."
+msgstr "Der Benutzer „%(name)s“ wurde gesperrt und dadurch deine Sitzung beendet"
+
+#: inyoka/middlewares/auth.py:34
+#, python-format
+msgid "The user “%(name)s” deleted his profile. Your session has ended."
+msgstr ""
+"Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum "
+"abgemelet."
+
+#: inyoka/middlewares/highlighter.py:112
+#, python-format
+msgid ""
+"Search results are highlighted. <a class=\"hide_searchwords\" "
+"href=\"%(link)s\">Hide query terms</a>."
+msgstr ""
+"Suchergebnisse sind herorgehoben. <a class=\"hide_searchwords\" \"\n"
+"\"href=\"%(link)s\">Markierung ausblenden</a>."
+
+#: inyoka/middlewares/session.py:68
+msgid "Your session expired. You need to login again"
+msgstr "Deine Sitzung ist abgelaufen. Du musst dich neu anmelden."
 

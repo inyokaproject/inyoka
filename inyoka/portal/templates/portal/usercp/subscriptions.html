@@ -50,13 +50,17 @@
               <td class="checkboxes"><input type="checkbox" name="select" value="{{ sub.id }}" /></td>
               <td class="items{% if not sub.can_read %} unreadable{% endif %}">
                 {{ object._meta.verbose_name }}: <a href="{{ object|url }}">{{ object|e }}</a>
-                {%- if type == 'topic' -%}
+                {% if type == 'topic' -%}
                   {%- if not object.get_read_status(USER) %}
-                    <a href="{{ object|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">
-                      <img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />
-                    </a>
+                    <a href="{{ object|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">{#-
+                      -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />{#-
+                    -#}</a>
                   {%- endif %}
                   {%- if object.paginated %} &#160; &#160; [{{ object.get_pagination() }}]{% endif -%}
+                {% elif type == 'article' -%}
+                  <a href="{{ object|url('last_comment') }}" title="{% trans %}Go to last comment{% endtrans %}">{#-
+                    -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Go to last comment{% endtrans %}" />{#-
+                  -#}</a>
                 {%- endif %}
               </td>
               <td class="read">

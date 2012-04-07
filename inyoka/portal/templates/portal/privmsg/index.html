@@ -80,17 +80,17 @@
             </td>
             <td>
               <a{% if not entry.message.author.is_active %} class="user_inactive"{% endif %} href="{{ entry.message.author|url }}">
-                    {{- entry.message.author|e }}
+                    {{- entry.message.author|e -}}
               </a>
             </td>
             <td>
               {%- if entry.message.recipients|length == 0 %}
                 <a{% if not entry.message.author.is_active %} class="user_inactive"{% endif %} href="{{ entry.message.author|url }}">
-                  {{- entry.message.author|e }}
+                  {{- entry.message.author|e -}}
                 </a>
               {% else %}
                 <a{% if not entry.message.recipients[0].is_active %} class="user_inactive"{% endif %} href="{{ entry.message.recipients[0]|url }}">
-                  {{- entry.message.recipients[0]|e }}
+                  {{- entry.message.recipients[0]|e -}}
                 </a>
               {%- endif %}
               {%- if entry.message.recipients|length > 1 %}, …{% endif %}
@@ -99,23 +99,23 @@
             <td class="actions">
               {%- if not entry.is_own_message %}
                 {% if entry.message.author.is_active %}
-                  <a href="{{ entry|url('reply') }}" title="{% trans %}Reply{% endtrans %}">
-                    <img src="{{ href('static', 'img/icons/small/msg-reply.png') }}" alt="{% trans %}Reply{% endtrans %}" />
-                  </a>
+                  <a href="{{ entry|url('reply') }}" title="{% trans %}Reply{% endtrans %}">{#
+                    #}<img src="{{ href('static', 'img/icons/small/msg-reply.png') }}" alt="{% trans %}Reply{% endtrans %}" />{#
+                  #}</a>
                 {%- endif -%}
                 {%- if entry.message.recipients|length > 1 %}
-                  <a href="{{ entry|url('reply_to_all') }}" title="{% trans %}Reply to all{% endtrans %}">
-                    <img src="{{ href('static', 'img/icons/small/msg-reply-all.png') }}" alt="{% trans %}Reply to all{% endtrans %}" />
-                  </a>
+                  <a href="{{ entry|url('reply_to_all') }}" title="{% trans %}Reply to all{% endtrans %}">{#
+                    #}<img src="{{ href('static', 'img/icons/small/msg-reply-all.png') }}" alt="{% trans %}Reply to all{% endtrans %}" />{#
+                  #}</a>
                 {%- endif -%}
               {%- endif %}
-              <a href="{{ entry|url('forward') }}" title="{% trans %}Forward{% endtrans %}">
-                <img src="{{ href('static', 'img/icons/small/msg-forward.png') }}" alt="{% trans %}Forward{% endtrans %}" />
-              </a>
+              <a href="{{ entry|url('forward') }}" title="{% trans %}Forward{% endtrans %}">{#
+                #}<img src="{{ href('static', 'img/icons/small/msg-forward.png') }}" alt="{% trans %}Forward{% endtrans %}" />{#
+              #}</a>
               {%- if not entry.in_archive %}
-                <a href="{{ entry|url }}?action=archive" title="{% trans %}Archive{% endtrans %}">
-                  <img src="{{ href('static', 'img/icons/small/archive.png') }}" alt="{% trans %}Archive{% endtrans %}" />
-                </a>
+                <a href="{{ entry|url }}?action=archive" title="{% trans %}Archive{% endtrans %}">{#
+                  #}<img src="{{ href('static', 'img/icons/small/archive.png') }}" alt="{% trans %}Archive{% endtrans %}" />{#
+                #}</a>
               {%- endif %}
             </td>
             <td class="pn_delete">

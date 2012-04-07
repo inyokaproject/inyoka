@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-08 20:17+0100\n"
+"POT-Creation-Date: 2012-03-31 15:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +72,7 @@ msgid "Used the template “<a href=\"%(link)s\">%(name)s</a>” for this page"
 msgstr ""
 
 #: inyoka/wiki/actions.py:431 inyoka/wiki/actions.py:518
-#: inyoka/wiki/actions.py:863
+#: inyoka/wiki/actions.py:867
 msgid "Canceled"
 msgstr ""
 
@@ -79,7 +80,7 @@ msgstr ""
 msgid "No changes"
 msgstr ""
 
-#: inyoka/wiki/actions.py:456
+#: inyoka/wiki/actions.py:456 inyoka/wiki/actions.py:467
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been created."
 msgstr ""
@@ -106,43 +107,43 @@ msgstr ""
 msgid "Page deleted"
 msgstr ""
 
-#: inyoka/wiki/actions.py:852
+#: inyoka/wiki/actions.py:856
 msgid "Attachments within attachments are not allowed!"
 msgstr ""
 
-#: inyoka/wiki/actions.py:877
+#: inyoka/wiki/actions.py:881
 msgid "Please enter a name for this attachment."
 msgstr ""
 
-#: inyoka/wiki/actions.py:887
+#: inyoka/wiki/actions.py:891
 msgid "Another page or attachment with the same name exists"
 msgstr ""
 
-#: inyoka/wiki/actions.py:906
+#: inyoka/wiki/actions.py:910
 msgid "Attachment saved successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:940
+#: inyoka/wiki/actions.py:944
 msgid "Attachment edited successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:954
+#: inyoka/wiki/actions.py:958
 msgid "Emptied the page cache."
 msgstr ""
 
-#: inyoka/wiki/actions.py:981
+#: inyoka/wiki/actions.py:985
 msgid "You will be notified on changes on this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:983
+#: inyoka/wiki/actions.py:987
 msgid "You are already subscribed"
 msgstr ""
 
-#: inyoka/wiki/actions.py:996
+#: inyoka/wiki/actions.py:1000
 msgid "No subscription for this page found."
 msgstr ""
 
-#: inyoka/wiki/actions.py:999
+#: inyoka/wiki/actions.py:1003
 msgid "You won't be notified on changes on this page anymore"
 msgstr ""
 
@@ -218,8 +219,7 @@ msgid_plural "%(count)d pages"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/wiki/macros.py:620
-#: inyoka/wiki/templates/wiki/page.html:36
+#: inyoka/wiki/macros.py:620 inyoka/wiki/templates/wiki/page.html:36
 msgid "Tags"
 msgstr ""
 
@@ -388,54 +388,54 @@ msgstr ""
 msgid "Invalid syntax: "
 msgstr ""
 
-#: inyoka/wiki/views.py:79
+#: inyoka/wiki/views.py:78
 msgid "A site name needs to be entered to create this page."
 msgstr ""
 
-#: inyoka/wiki/views.py:90
+#: inyoka/wiki/views.py:89
 #, python-format
 msgid "Another site named “%(title)s“ already exists."
 msgstr ""
 
-#: inyoka/wiki/views.py:203
+#: inyoka/wiki/views.py:202
 #, python-format
 msgid "%(sitename)s wiki – %(pagename)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:213
+#: inyoka/wiki/views.py:212
 #, python-format
 msgid "%(sitename)s wiki – last changes"
 msgstr ""
 
-#: inyoka/wiki/views.py:228
+#: inyoka/wiki/views.py:227
 #, python-format
 msgid ""
 "%(user)s deleted the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:231
+#: inyoka/wiki/views.py:230
 #, python-format
 msgid ""
 "%(user)s edited the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:235
+#: inyoka/wiki/views.py:234
 #, python-format
 msgid ""
 "An anonymous user deleted the article “%(article)s“ on %(date)s. Summary:"
 " %(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:238
+#: inyoka/wiki/views.py:237
 #, python-format
 msgid ""
 "An anonymous user edited the article “%(article)s“ on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
 
-#: inyoka/wiki/views.py:250 inyoka/wiki/views.py:253
+#: inyoka/wiki/views.py:249 inyoka/wiki/views.py:252
 msgid "Anonymous"
 msgstr ""
 
@@ -700,16 +700,16 @@ msgid ""
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_log.html:48
-#: inyoka/wiki/templates/wiki/action_log.html:88
+#: inyoka/wiki/templates/wiki/action_log.html:87
 msgid "Compare"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:79
+#: inyoka/wiki/templates/wiki/action_log.html:78
 #: inyoka/wiki/templates/wiki/action_revert.html:17
 msgid "Restore"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:82
+#: inyoka/wiki/templates/wiki/action_log.html:81
 #: inyoka/wiki/templates/wiki/action_manage.html:45
 msgid "Raw"
 msgstr ""
