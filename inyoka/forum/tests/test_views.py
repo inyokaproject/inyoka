@@ -16,14 +16,14 @@ from inyoka.utils.test import InyokaClient
 class TestViews(TestCase):
 
     client_class = InyokaClient
+    permissions = sum(PERMISSION_NAMES.keys())
+    privileges = sum(PRIVILEGES_BITS.values())
 
     def setUp(self):
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.user = User.objects.register_user('user', 'user', 'user', False)
-        permissions = sum(PERMISSION_NAMES.keys())
-        self.admin._permissions = permissions
-
-        privileges = sum(PRIVILEGES_BITS.values())
+        self.admin._permissions = self.permissions
+        self.admin.save()
 
         self.forum1 = Forum.objects.create(name='Forum 1')
         self.forum2 = Forum.objects.create(name='Forum 2', parent=self.forum1)
@@ -33,15 +33,15 @@ class TestViews(TestCase):
 
         for f in forums:
             Privilege.objects.create(user=self.admin, forum=f,
-                    positive=privileges, negative=0)
+                    positive=self.privileges, negative=0)
 
         self.topic = Topic.objects.create(title='A test Topic', author=self.user,
                 forum=self.forum2)
         self.post = Post.objects.create(text=u'Post 1', author=self.user,
                 topic=self.topic)
 
-        self.client.set_host('forum.%s' % settings.BASE_DOMAIN_NAME)
-        self.client.login(self.admin)
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
 
     def test_reported_topics(self, *args):
         response = self.client.get('/reported_topics/')

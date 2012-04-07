@@ -24,9 +24,9 @@ class InyokaClient(Client):
     werkzeug's :class:`~werkzeug.contrib.securecookie.SecureCookie` to store
     the user's :attr:`~InyokaClient.session` on the client site.
 
-    Additionally, the :class:`InyokaClient` implements a method
-    :meth:`InyokaClient.set_host` to change the default host for the next
-    requests.
+    In order to change the requesting host, use::
+
+        client.defaults['HTTP_HOST'] = 'url.example.com'
 
     """
 
@@ -43,30 +43,35 @@ class InyokaClient(Client):
         """
         super(InyokaClient, self).__init__(enforce_csrf_checks, **defaults)
         if isinstance(host, basestring):
-            self.set_host(host)
+            self.defaults['HTTP_HOST'] = host
         else:
-            self.set_host(settings.BASE_DOMAIN_NAME)
+            self.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
         self.user = User.objects.get_anonymous_user()
 
-    def set_host(self, host):
-        """Set the default host for all further requests to ``host``.
+    def login(self, **credentials):
+        """Try to authenticate a user with username and password.
 
-        :param host: The default host
+        :param username: The username of the :class:`~inyoka.portal.user.User`
+            to login
+        :param password: The password of the user to login
+        :type username: string
+        :type password: string
+        :raise:
+            User.DoesNotExist
+                If the user with `username` does not exist
+            :class:`~inyoka.portal.user.UserBanned`
+                If the found user is banned
+        :return: ``True`` in case the described user can be logged in, and is
+            active, ``False`` otherwise.
 
         """
-        self.defaults['HTTP_HOST'] = host
 
-    def login(self, user):
-        """Try to Login ``user``
+        username = credentials.get('username', None)
+        password = credentials.get('password', None)
+        assert username is not None
+        assert password is not None
 
-        :param user: The user to login
-        :type user: :class:`inyoka.portal.user.User`
-        :return: ``True`` in case the user is active, ``False`` otherwise.
-
-        """
-
-        assert isinstance(user, User)
-
+        user = User.objects.authenticate(username, password)
         if user.is_active:
             request = HttpRequest()
             if self.session:
