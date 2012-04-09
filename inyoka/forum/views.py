@@ -491,18 +491,21 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
                                              post.page))
     elif topic:
-        if topic.locked:
+        if topic.hidden:
+            if not check_privilege(privileges, 'moderate'):
+                flash(_(u'You cannot reply in this topic because it was '
+                        u'deleted by a moderator.'), False)
+                return HttpResponseRedirect(url_for(topic))
+        elif topic.locked:
             if not check_privilege(privileges, 'moderate'):
                 flash(_(u'You cannot reply to this topic because it was locked.'))
                 return HttpResponseRedirect(url_for(topic))
             else:
                 flash(_(u'You are replying to a locked topic. Please note that '
                         'this may be considered as impolite!'), False)
-        elif topic.hidden:
+        elif quote and quote.hidden:
             if not check_privilege(privileges, 'moderate'):
-                flash(_(u'You cannot reply in this topic because it was '
-                        u'deleted by a moderator.'), False)
-                return HttpResponseRedirect(url_for(topic))
+                return abort_access_denied(request)
         else:
             if not check_privilege(privileges, 'reply'):
                 return abort_access_denied(request)
@@ -908,7 +911,7 @@ def reported_topics_subscription(request, mode):
 
 
 def post(request, post_id):
-    """Redirect to the "real" post url" (see `PostManager.url_for_post`)"""
+    """Redirect to the "real" post url (see `PostManager.url_for_post`)"""
     try:
         url = Post.url_for_post(int(post_id),
             paramstr=request.GET and request.GET.urlencode())

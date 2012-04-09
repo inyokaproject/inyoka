@@ -32,10 +32,10 @@ class JabberBot(ClientXMPP):
 
     def handle_session_start(self, event):
         self.send_presence()
-        self.get_roster()
 
         logging.debug('Starting ZeroMQ Connection')
         socket = self.zmq.socket(zmq.REP)
+        socket.setsockopt(zmq.LINGER, 0)
         logging.debug('Connecting to ZeroMQ Socket')
         socket.bind(self.zeromq_bind)
 
@@ -61,6 +61,8 @@ class JabberBot(ClientXMPP):
     def handle_disconnected(self, data):
         logging.info('DISCONNECTED :: %s' % data)
         self.zmq.term()
+        # reset the context, since the bot automatically reconnects!
+        self.zmq = zmq.Context()
 
 
 def main():
