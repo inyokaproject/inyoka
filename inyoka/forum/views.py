@@ -992,13 +992,15 @@ def movetopic(request, topic_slug):
             forum = mapping.get(int(data['forum']))
             if forum is None:
                 return abort_access_denied(request)
+            old_forum_name = topic.forum.name
             topic.move(forum)
             # send a notification to the topic author to inform him about
             # the new forum.
             nargs = {'username': topic.author.username,
                      'topic': topic,
                      'mod': request.user.username,
-                     'forum_name': forum.name}
+                     'forum_name': forum.name,
+                     'old_forum_name': old_forum_name}
 
             user_notifications = topic.author.settings.get('notifications', ('topic_move',))
             if 'topic_move' in user_notifications and topic.author.username != request.user.username:
