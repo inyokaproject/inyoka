@@ -837,7 +837,7 @@ class Post(models.Model, LockableObject):
 
             adjust_start = 0
             # decrement the old positions
-            for _, g in post_groups:
+            for x, g in post_groups:
                 g = list(g)
                 dec = len(g)
                 # and don't forget that previous decrements already decremented our position
@@ -870,12 +870,12 @@ class Post(models.Model, LockableObject):
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \
                              .update(post_count=F('post_count') - len(posts),
-                                     last_post=old_topic.posts.reverse()[0])
+                                     last_post=old_topic.posts.order_by('-position')[0])
             else:
                 if old_topic.has_poll:
                     new_topic.has_poll = True
                     Poll.objects.filter(topic=old_topic).update(topic=new_topic)
-                new_topic.last_post = new_topic.posts.reverse()[0]
+                new_topic.last_post = new_topic.posts.order_by('-position')[0]
                 old_topic.delete()
 
             values = {'last_post': sorted(posts, key=lambda o: o.position)[-1],
@@ -891,17 +891,26 @@ class Post(models.Model, LockableObject):
             old_ids = [p.id for p in old_forums]
 
             # search for a new last post in the old and the new forum
-            new_post_query = Post.objects.filter(
-                topic__id=F('topic__id'),
-                topic__forum__id=F('topic__forum__id'))
+            post_query = Post.objects.all()
 
+            # Update last_post of the forums
+            # NOTE: last_post of a forum is expected to be the most recent post,
+            # as such the following two updates ignore the splitted posts
+            # completly and just set the highest id (== max recent posts) as
+            # last_post.
             Forum.objects.filter(id__in=new_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=new_ids) \
-                                                 .aggregate(count=Max('id'))['count'])
+                last_post=Topic.objects.filter(forum__id__in=new_ids) \
+                            .aggregate(count=Max('last_post'))['count'])
 
             Forum.objects.filter(id__in=old_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
-                                                 .aggregate(count=Max('id'))['count'])
+                last_post=Topic.objects.filter(forum__id__in=old_ids) \
+                            .aggregate(count=Max('last_post'))['count'])
+
+            # Update post_count of the forums
+            Forum.objects.filter(id__in=new_ids)\
+                .update(post_count = F('post_count') + len(posts))
+            Forum.objects.filter(id__in=old_ids)\
+                .update(post_count = F('post_count') - len(posts))
 
         # update the search index which has the post --> topic mapping indexed
         Post.multi_update_search([post.id for post in posts])
