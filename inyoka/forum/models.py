@@ -1078,10 +1078,8 @@ class Attachment(models.Model):
         if (self.size / 1024) > 1 and f.storage.exists(f.name):
             return
 
-        data = None
-        with f.open() as fobj:
-            data = fobj.read()
-        return data
+        with f.file as fobj:
+            return f.read()
 
     @property
     def html_representation(self):
