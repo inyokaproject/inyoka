@@ -704,9 +704,6 @@ class Post(models.Model, LockableObject):
     @staticmethod
     def url_for_post(id, paramstr=None):
         post = Post.objects.get(id=id)
-        if post is None or post.topic_id is None:
-            return
-
         position, slug = post.position, post.topic.slug
         page = max(0, position) // POSTS_PER_PAGE + 1
         url = href('forum', 'topic', slug, *(page != 1 and (page,) or ()))

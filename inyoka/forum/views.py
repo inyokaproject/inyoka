@@ -915,7 +915,7 @@ def post(request, post_id):
     try:
         url = Post.url_for_post(int(post_id),
             paramstr=request.GET and request.GET.urlencode())
-    except Post.DoesNotExist:
+    except (Topic.DoesNotExist, Post.DoesNotExist):
         raise PageNotFound()
     return HttpResponseRedirect(url)
 
@@ -962,11 +962,11 @@ def last_post(request, topic_slug):
     """
     try:
         last = Topic.objects.values_list('last_post', flat=True)\
-                    .get(slug=topic_slug)
-        url = Post.url_for_post(last,
-            paramstr=request.GET and request.GET.urlencode())
+                            .get(slug=topic_slug)
+        params = request.GET and request.GET.urlencode()
+        url = Post.url_for_post(last, paramstr=params)
         return HttpResponseRedirect(url)
-    except Topic.DoesNotExist:
+    except (Post.DoesNotExist, Topic.DoesNotExist):
         raise PageNotFound()
 
 @templated('forum/movetopic.html')
