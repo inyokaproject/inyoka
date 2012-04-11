@@ -208,11 +208,3 @@ class JSONField(models.TextField):
         from south.modelsinspector import introspector
         args, kwargs = introspector(self)
         return 'django.db.models.TextField', args, kwargs
-
-
-class PickleField(JSONField):
-    def loads(self, s):
-        return cPickle.loads(str(s).decode('base64'))
-
-    def dumps(self, obj):
-        return cPickle.dumps(obj).encode('base64')

@@ -30,3 +30,6 @@ def send(jid, message):
     sender = context.socket(zmq.REQ)
     sender.connect(settings.JABBER_BOT_SERVER)
     sender.send_json({'jid': jid, 'body': message})
+    # 500 ms are long enough to try sending data.
+    sender.close(50)
+    context.term()

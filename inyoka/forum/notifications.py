@@ -45,7 +45,7 @@ def send_newtopic_notifications(user, post, topic, forum):
         callback=notify_forum_subscriptions.subtask(args=(user.id, data)))
 
 
-@task
+@task(ignore_result=True)
 def notify_forum_subscriptions(notified_users, request_user_id, data):
     from inyoka.forum.models import Forum
     prev_language = translation.get_language()
@@ -67,7 +67,7 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
         translation.activate(prev_language)
 
 
-@task
+@task(ignore_result=True)
 def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
     prev_language = translation.get_language()
     translation.activate(settings.LANGUAGE_CODE)
@@ -105,7 +105,7 @@ def send_edit_notifications(user, post, topic, forum):
         callback=notify_member_subscriptions.subtask(args=(user.id, data)))
 
 
-@task
+@task(ignore_result=True)
 def notify_member_subscriptions(notified_users, request_user_id, data):
     from inyoka.portal.models import User
     # notify about new answer in topic for member-subscriptions

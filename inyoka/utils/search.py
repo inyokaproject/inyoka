@@ -407,7 +407,7 @@ class SearchSystem(object):
                 mset = enq.get_mset(offset, per_page, per_page, None, auth)
                 return SearchResult(mset, enq, qry, original_query, page, per_page,
                                     self.adapters, success=True)
-            except xapian.DatabaseModifiedError:
+            except (xapian.DatabaseModifiedError, xapian.DatabaseError):
                 time.sleep(0.1)
                 connection.reopen()
                 _connection_attemts += 1
