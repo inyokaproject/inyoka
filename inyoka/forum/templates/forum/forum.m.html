@@ -27,6 +27,9 @@
   <div class="topics">
     <h3>{% trans %}Topics{% endtrans %}</h3>
     {%- for topic in topics if (topic.first_post and topic.last_post) %}
+      <a class="first_unread" href="{{ topic|url('first_unread') }}">
+        <img src="{{ href('static', 'img/forum/goto.m.png') }}" />
+      </a>
       <a href="{{ topic|url }}">{#
         #}<div class="button
             {% if not topic.get_read_status(USER) %} unread{% endif %}

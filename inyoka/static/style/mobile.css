@@ -233,6 +233,15 @@ section.actions a:visited, .post .attachments .title {
   margin-left: 0.2em;
 }
 
+.topics a.first_unread {
+  position: absolute;
+  right: 3px;
+}
+
+.topics a .button {
+  padding-right: 32px;
+}
+
 nav ul li.active, .pagination .active {
   background-color: #962D0C;
 }
