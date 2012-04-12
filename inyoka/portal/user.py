@@ -807,7 +807,7 @@ class ProfileData(models.Model):
 
     """
     user = models.ForeignKey(User)
-    profile_field = models.ForeignKey(ProfileField)
+    profile_field = models.ForeignKey(ProfileField, related_name='profile_data')
     data = models.CharField(max_length=255)
 
 

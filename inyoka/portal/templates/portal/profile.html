@@ -101,16 +101,16 @@
               <a href="{{ user|url('privmsg') }}">{% trans %}Private message{% endtrans %}</a>
             </td>
           </tr>
-          {% for data in user.profile_data.filter(profile_field__category=None) %}
+          {% for data in data_uncategorized %}
             <tr>
-              <th>{{ data.profile_field.title|e }}</th>
+              <th>{{ data.title|e }}</th>
               <td>{{ data.data|e }}</td>
             </tr>
           {% endfor %}
         </table>
       </div>
       <div class="fields"> {# right column #}
-        {% for category in categories if user.profile_data.filter(profile_field__category=category) %}
+        {% for category in categories %}
           <table>
             <colgroup>
               <col class="field" />
@@ -121,9 +121,9 @@
               </tr>
             </thead>
             <tbody>
-              {% for data in user.profile_data.filter(profile_field__category=category) %}
+              {% for data in category.data %}
                 <tr>
-                  <th>{{ data.profile_field.title|e }}</th>
+                  <th>{{ data.title|e }}</th>
                   <td>{{ data.data|e }}</td>
                 </tr>
               {% endfor %}

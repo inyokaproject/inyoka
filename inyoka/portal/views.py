@@ -542,7 +542,28 @@ def profile(request, username):
 
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
-    categories = ProfileCategory.objects.order_by('weight').all()
+    profile_categories = ProfileCategory.objects \
+                                        .select_related('fields', 'fields__profile_data') \
+                                        .order_by('weight') \
+                                        .filter(fields__profile_data__user=user)
+    categories = [{
+        'title': category.title,
+        'data': [{
+            'title': data.profile_field.title,
+            'data': data.data,
+            } for data in user.profile_data.select_related('profile_field',
+                                                           'profile_field__title') \
+                                           .filter(profile_field__category=category)
+        ]
+    } for category in profile_categories]
+
+    uncategorized = user.profile_data.select_related('profile_field',
+                                                     'profile_field__title') \
+                                     .filter(profile_field__category=None)
+    data_uncategorized = [{
+        'title': data.profile_field.title,
+        'data': data.data,
+    } for data in uncategorized]
 
     return {
         'user': user,
@@ -552,6 +573,7 @@ def profile(request, username):
         'is_subscribed': subscribed,
         'request': request,
         'categories': categories,
+        'data_uncategorized': data_uncategorized,
     }
 
 
