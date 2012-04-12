@@ -12,7 +12,10 @@ from inyoka.utils.cache import request_cache
 class TestAttachmentModel(TestCase):
     def test_regression_ticket760(self):
         a = Attachment.create('test.txt', ContentFile('test'), 'text/plain', [])
-        self.assertEqual(a.contents, 'test')
+        try:
+            self.assertEqual(a.contents, 'test')
+        finally:
+            a.delete() # Yank the file from the filesystem
 
 
 class TestForumModel(TestCase):
