@@ -1075,7 +1075,8 @@ class Attachment(models.Model):
         file is greater we return None.
         """
         f = self.file
-        if (self.size / 1024) > 1 and f.storage.exists(f.name):
+        size = self.size
+        if (size / 1024) > 1 or size == 0.0:
             return
 
         with f.file as fobj:
