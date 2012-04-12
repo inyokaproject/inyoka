@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-01-22 02:47+0100\n"
+"POT-Creation-Date: 2012-03-28 21:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgid "Logout [%(user)s]"
 msgstr ""
 
 #: inyoka/templates/overall.html:124
-msgid "Controlpanel"
+msgid "Control panel"
 msgstr ""
 
 #: inyoka/templates/overall.html:131
@@ -52,7 +52,7 @@ msgid "Admin"
 msgstr ""
 
 #: inyoka/templates/overall.html:160
-msgid "Turn adminlinks on/off"
+msgid "Turn admin links on/off"
 msgstr ""
 
 #: inyoka/templates/overall.html:166
@@ -99,37 +99,41 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: inyoka/templates/overall.html:259
+#: inyoka/templates/overall.html:235
+msgid "Please install at least Internet Explorer 8."
+msgstr ""
+
+#: inyoka/templates/overall.html:262
 #, python-format
 msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr ""
 
-#: inyoka/templates/overall.html:261
+#: inyoka/templates/overall.html:264
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr ""
 
-#: inyoka/templates/overall.html:273
+#: inyoka/templates/overall.html:279
 msgid "To mobile version"
 msgstr ""
 
-#: inyoka/templates/overall.html:317
+#: inyoka/templates/overall.html:323
 msgid "Username or email address"
 msgstr ""
 
-#: inyoka/templates/overall.html:320
+#: inyoka/templates/overall.html:326
 msgid "Password"
 msgstr ""
 
-#: inyoka/templates/overall.html:323
+#: inyoka/templates/overall.html:329
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
 
-#: inyoka/templates/overall.html:324
+#: inyoka/templates/overall.html:330
 msgid "Keep me logged in"
 msgstr ""
 
-#: inyoka/templates/overall.html:327
+#: inyoka/templates/overall.html:333
 msgid "Lost password?"
 msgstr ""
 
@@ -185,6 +189,19 @@ msgstr ""
 msgid "Page not found"
 msgstr ""
 
+#: inyoka/utils/dates.py:200
+#, python-format
+msgid "%(date)s at %(time)s"
+msgstr ""
+
+#: inyoka/utils/diff3.py:372
+msgid "Old"
+msgstr ""
+
+#: inyoka/utils/diff3.py:372
+msgid "New"
+msgstr ""
+
 #: inyoka/utils/flash_confirmation.py:22
 msgid "Are you sure?"
 msgstr ""
@@ -197,37 +214,69 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: inyoka/utils/forms.py:109
-msgid "Captcha"
+#: inyoka/utils/forms.py:50
+msgid "Text must not be empty"
 msgstr ""
 
-#: inyoka/utils/forms.py:110
+#: inyoka/utils/forms.py:61
+msgid "Your signature contains illegal elements"
+msgstr ""
+
+#: inyoka/utils/forms.py:66
+msgid "Your signature contains too many nested elements"
+msgstr ""
+
+#: inyoka/utils/forms.py:71
+#, python-format
+msgid "Your signature is too long, only %(length)s characters allowed"
+msgstr ""
+
+#: inyoka/utils/forms.py:75
+#, python-format
+msgid "Your signature can only contain up to %(num)d lines"
+msgstr ""
+
+#: inyoka/utils/forms.py:126
+msgid "This user does not exist"
+msgstr ""
+
+#: inyoka/utils/forms.py:136
+msgid "CAPTCHA"
+msgstr ""
+
+#: inyoka/utils/forms.py:137
 msgid "Please type in the code from the graphic above"
 msgstr ""
 
-#: inyoka/utils/forms.py:112
+#: inyoka/utils/forms.py:139
 msgid "Generate new code"
 msgstr ""
 
-#: inyoka/utils/forms.py:179
+#: inyoka/utils/forms.py:196
+msgid "You have to accept cookies!"
+msgstr ""
+
+#: inyoka/utils/forms.py:206
 msgid "The entered CAPTCHA was incorrect."
 msgstr ""
 
-#: inyoka/utils/forms.py:193
-msgid "You have entered an invisible field and are therefore classified as a bot."
+#: inyoka/utils/forms.py:221
+msgid ""
+"You have entered an invisible field and were therefore classified as a "
+"bot."
 msgstr ""
 
-#: inyoka/utils/forms.py:203
+#: inyoka/utils/forms.py:231
 msgid ""
 "The entered e-mail address belongs to a e-mail provider we had to block "
 "because of SPAM problems. Please choose another e-mail address"
 msgstr ""
 
-#: inyoka/utils/forms.py:207
+#: inyoka/utils/forms.py:235
 msgid "The entered e-mail address is invalid. Please check your input."
 msgstr ""
 
-#: inyoka/utils/forms.py:219
+#: inyoka/utils/forms.py:247
 msgid "The entered Jabber address is invalid. Please check your input."
 msgstr ""
 
@@ -245,7 +294,11 @@ msgid "No %(verbose_name)s found matching the query"
 msgstr ""
 
 #: inyoka/utils/generic.py:196
-msgid "{verbose_name} “{object_name}” was deleted succeessfully!"
+msgid "{verbose_name} “{object_name}” was deleted successfully!"
+msgstr ""
+
+#: inyoka/utils/generic.py:213
+msgid "Canceled!"
 msgstr ""
 
 #: inyoka/utils/pagination.py:158 inyoka/utils/pagination.py:165
@@ -253,11 +306,63 @@ msgid "Next »"
 msgstr ""
 
 #: inyoka/utils/pagination.py:174 inyoka/utils/pagination.py:181
-msgid "« Prev"
+msgid "« Previous"
+msgstr ""
+
+#: inyoka/utils/sessions.py:79
+msgid ""
+"You cannot send data that fast in a row. Please wait a bit until you "
+"submit the form again."
 msgstr ""
 
 #: inyoka/utils/sortable.py:103
 #, python-format
 msgid "The chosen sort value (“%(value)s”) is not available"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:12
+#: inyoka/utils/tests/test_templating.py:13
+msgid "text"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:18
+#: inyoka/utils/tests/test_templating.py:19
+msgid "e1"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:18
+#: inyoka/utils/tests/test_templating.py:19
+msgid "e2"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:24
+#: inyoka/utils/tests/test_templating.py:25
+msgid "v1"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:24
+#: inyoka/utils/tests/test_templating.py:25
+msgid "v2"
+msgstr ""
+
+#: inyoka/middlewares/auth.py:31
+#, python-format
+msgid "The user “%(name)s” was banned. Your session has ended."
+msgstr ""
+
+#: inyoka/middlewares/auth.py:34
+#, python-format
+msgid "The user “%(name)s” deleted his profile. Your session has ended."
+msgstr ""
+
+#: inyoka/middlewares/highlighter.py:112
+#, python-format
+msgid ""
+"Search results are highlighted. <a class=\"hide_searchwords\" "
+"href=\"%(link)s\">Hide query terms</a>."
+msgstr ""
+
+#: inyoka/middlewares/session.py:68
+msgid "Your session expired. You need to login again"
 msgstr ""
 

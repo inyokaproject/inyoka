@@ -5,7 +5,7 @@
 
     This module provides a logger.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import logging
@@ -17,7 +17,7 @@ logger = logging.getLogger(settings.INYOKA_LOGGER_NAME)
 
 
 if not settings.DEBUG:
-    from sentry.client.handlers import SentryHandler
+    from raven.contrib.django.handlers import SentryHandler
     logging_handler = SentryHandler()
     logging_handler.setLevel(logging.WARNING)
 else:

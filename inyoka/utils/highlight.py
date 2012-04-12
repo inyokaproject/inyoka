@@ -12,16 +12,19 @@
     `Haystack-Xapian <https://github.com/notanumber/xapian-haystack>`
     but heavily modified to fix soem bugs and to match inyoka search internals.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
+from itertools import chain
+
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, get_lexer_for_filename, \
     get_lexer_for_mimetype, TextLexer
 from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
 from pygments.styles.friendly import FriendlyStyle
+
 from inyoka.utils.html import striptags
 
 
@@ -72,8 +75,11 @@ class Highlighter(object):
 
     def __init__(self, query, **kwargs):
         self.query = query
+        # ignore short words (since we actually search in the text and not
+        # for whole words).
         self.query_words = set([word.lower() for word in query.split()
-                                             if not word.startswith('-')])
+                                             if not word.startswith('-')
+                                                and len(word) > 2])
 
     def highlight(self, text_block):
         self.text_block = striptags(text_block)
@@ -117,13 +123,8 @@ class Highlighter(object):
         if not len(highlight_locations):
             return (best_start, best_end)
 
-        words_found = []
-
-        # Next, make sure we found any words at all.
-        for word, offset_list in highlight_locations.items():
-            if len(offset_list):
-                # Add all of the locations to the list.
-                words_found.extend(offset_list)
+        # Next, make sure we found any words at all and sort them.
+        words_found = sorted(chain(*highlight_locations.values()))
 
         if not len(words_found):
             return (best_start, best_end)
@@ -131,33 +132,30 @@ class Highlighter(object):
         if len(words_found) == 1:
             return (words_found[0], words_found[0] + self.max_length)
 
-        # Sort the list so it's in ascending order.
-        words_found = sorted(words_found)
-
         # We now have a denormalized list of all positions were a word was
         # found. We'll iterate through and find the densest window we can by
         # counting the number of found offsets (-1 to fit in the window).
         highest_density = 0
 
-        if words_found[:-1][0] > self.max_length:
-            best_start = words_found[:-1][0]
+        if words_found[-1] > self.max_length:
+            best_start = words_found[-1]
             best_end = best_start + self.max_length
 
-        for count, start in enumerate(words_found[:-1]):
-            current_density = 1
-
-            for end in words_found[count + 1:]:
-                if end - start < self.max_length:
-                    current_density += 1
-                else:
-                    current_density = 0
-
-                # Only replace if we have a bigger (not equal density) so we
-                # give deference to windows earlier in the document.
-                if current_density > highest_density:
-                    best_start = start
-                    best_end = start + self.max_length
-                    highest_density = current_density
+        start = 0
+        end = 1
+        max_length = self.max_length
+        while start < len(words_found):
+            start_pos = words_found[start]
+            while end < len(words_found) and words_found[end] - start_pos < max_length:
+                end += 1
+            current_density = end - start
+            # Only replace if we have a bigger (not equal density) so we
+            # give deference to windows earlier in the document.
+            if current_density > highest_density:
+                best_start = start_pos
+                best_end = start_pos + max_length
+                highest_density = current_density
+            start += 1
 
         return (best_start, best_end)
 

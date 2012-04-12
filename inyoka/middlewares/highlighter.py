@@ -26,13 +26,15 @@
     be buffered and then processed.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
 from werkzeug import url_decode
 
 from django.utils.html import escape
+from django.utils.translation import ugettext as _
+
 from django.contrib import messages
 
 from inyoka.utils.http import HttpResponseRedirect
@@ -111,9 +113,9 @@ class HighlighterMiddleware(object):
             if search_words:
                 request.highlight_searchwords = search_words.lower().split()
                 messages.info(request,
-                    u'Suchergebnisse werden hervorgehoben. Suchwörter '
-                    u'<a class="hide_searchwords" href="%s">ausblenden</a>.'
-                    % escape(plain_url))
+                    _(u'Search results are highlighted. '
+                      u'<a class="hide_searchwords" href="%(link)s">Hide query terms</a>.') % {
+                            'link': escape(plain_url)})
             else:
                 return HttpResponseRedirect(plain_url)
 

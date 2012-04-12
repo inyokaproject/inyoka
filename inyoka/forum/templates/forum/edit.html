@@ -5,7 +5,7 @@
     This page shows a form where the user can either create a new thread or
     write / edit a post.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 
 #}
@@ -36,7 +36,7 @@
   <form action="" method="post" enctype="multipart/form-data" class="post_editor">
     {{ csrf_token() }}
     <a href="{{ href('pastebin') }}" class="pastelink" title="{% trans %}Please save long code snippets or program outputs in our paste service and link to the respective entry.{% endtrans %}">
-      {% trans %}Paste{% endtrans %}
+      {%- trans %}Paste{% endtrans -%}
     </a>
     {%- if topic %}
       {%- if post %}

@@ -5,11 +5,15 @@
 
     Utilities for forum notifications.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from celery.task import task
+from django.conf import settings
+from django.utils import translation
 from django.utils.translation import ugettext as _, ugettext_lazy
+
+from celery.task import task
+
 from inyoka.utils import ctype
 from inyoka.utils.notification import queue_notifications
 
@@ -41,33 +45,44 @@ def send_newtopic_notifications(user, post, topic, forum):
         callback=notify_forum_subscriptions.subtask(args=(user.id, data)))
 
 
-@task
+@task(ignore_result=True)
 def notify_forum_subscriptions(notified_users, request_user_id, data):
     from inyoka.forum.models import Forum
-
-    # Inform users who subscribed to the forum
-    queue_notifications.delay(request_user_id, 'new_topic',
-        _(u'New topic in forum %(forum)s: “%(topic)s“') % {
-            'forum': data.get('forum_name'),
-            'topic': data.get('topic_title')},
-        data,
-        include_notified=True,
-        filter={'content_type': ctype(Forum), 'object_id': data.get('forum_id')},
-        callback=notify_ubuntu_version_subscriptions.subtask(args=(request_user_id, data)),
-        exclude={'user__in': notified_users})
-
-
-@task
-def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
-    if data.get('topic_version') is not None:
-        queue_notifications.delay(request_user_id, 'new_topic_ubuntu_version',
-            _(u'New topic with version %(version)s: “%(topic)s“') % {
-                'version': data.get('topic_version'),
-                'topic': data.get('topic_title')},
+    prev_language = translation.get_language()
+    translation.activate(settings.LANGUAGE_CODE)
+    try:
+        # Inform users who subscribed to the forum
+        queue_notifications.delay(request_user_id, 'new_topic',
+            _(u'New topic in forum %(forum)s: “%(topic)s“') % {
+                    'forum': data.get('forum_name'),
+                    'topic': data.get('topic_title')},
             data,
             include_notified=True,
-            filter={'ubuntu_version': data.get('topic_version_number')},
-            exclude={'user__in': notified_users})
+            filter = {'content_type': ctype(Forum),
+                      'object_id': data.get('forum_id')},
+            callback = notify_ubuntu_version_subscriptions.subtask(
+                args=(request_user_id, data)),
+            exclude = {'user__in': notified_users})
+    finally:
+        translation.activate(prev_language)
+
+
+@task(ignore_result=True)
+def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
+    prev_language = translation.get_language()
+    translation.activate(settings.LANGUAGE_CODE)
+    try:
+        if data.get('topic_version') is not None:
+            queue_notifications.delay(request_user_id, 'new_topic_ubuntu_version',
+                _(u'New topic with version %(version)s: “%(topic)s“') % {
+                    'version': data.get('topic_version'),
+                    'topic': data.get('topic_title')},
+                data,
+                include_notified=True,
+                filter={'ubuntu_version': data.get('topic_version_number')},
+                exclude={'user__in': notified_users})
+    finally:
+        translation.activate(prev_language)
 
 
 def send_edit_notifications(user, post, topic, forum):
@@ -90,7 +105,7 @@ def send_edit_notifications(user, post, topic, forum):
         callback=notify_member_subscriptions.subtask(args=(user.id, data)))
 
 
-@task
+@task(ignore_result=True)
 def notify_member_subscriptions(notified_users, request_user_id, data):
     from inyoka.portal.models import User
     # notify about new answer in topic for member-subscriptions

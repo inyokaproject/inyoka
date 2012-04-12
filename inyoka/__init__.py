@@ -103,7 +103,7 @@
         diffing yet but allows to download pastes.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import os
@@ -130,11 +130,11 @@ def _bootstrap():
         repo = Repo(repo_path)
         tags = sorted([ref for ref in repo.get_refs() if ref.startswith('refs/tags')],
                       key=lambda obj: V(obj))
-        revision = tags[-1][10:]
+        tag = tags[-1][10:].strip()
+        commit = repo.head()[:8]
+        revision = {'tag': tag, 'commit': commit}
     except Exception:
-        revision = INYOKA_REVISION
-
-    revision = revision.strip()
+        revision = {'tag': INYOKA_REVISION, 'commit': ''}
 
     # This value defines the timeout for sockets in seconds.  Per default
     # python sockets do never timeout and as such we have blocking workers.

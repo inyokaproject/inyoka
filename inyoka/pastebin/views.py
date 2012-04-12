@@ -5,7 +5,7 @@
 
     Views for the pastebin.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.contrib import messages
@@ -48,7 +48,7 @@ def display(request, entry_id):
         entry = Entry.objects.get(id=entry_id)
     except Entry.DoesNotExist:
         return global_not_found(request, _(u'Paste number %(id)d could not be found')
-                                  % {'id': entry_id})
+                                  % {'id': int(entry_id)})
     referrer = request.META.get('HTTP_REFERER')
     if referrer and entry.add_referrer(referrer):
         entry.save()
@@ -84,7 +84,7 @@ def raw(request, entry_id):
         entry = Entry.objects.get(id=entry_id)
     except Entry.DoesNotExist:
         raise PageNotFound
-    return HttpResponse(entry.code, content_type='text/plain')
+    return HttpResponse(entry.code, content_type='text/plain; charset=utf-8')
 
 
 @templated('pastebin/browse.html')

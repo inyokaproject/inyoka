@@ -6,7 +6,7 @@
     Module that implements wiki related tasks that must be executed by
     our distributed queue implementation.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.core.cache import cache
@@ -16,13 +16,13 @@ from celery.task import task
 from inyoka.utils.cache import request_cache
 
 
-@task
+@task(ignore_result=True)
 def render_article(page):
     page.last_rev.text.update_html_render_instructions()
     cache.delete('wiki/page/%s' % page.name)
 
 
-@task
+@task(ignore_result=True)
 def update_related_pages(page, update_meta=True):
     from inyoka.wiki.models import MetaData, Text
     related_pages = set()
@@ -41,7 +41,7 @@ def update_related_pages(page, update_meta=True):
         page.update_meta()
 
 
-@task
+@task(ignore_result=True)
 def update_object_list(rev=None, deleted=False):
     """Refresh the wiki/object_list cache key"""
     from inyoka.wiki.models import Page

@@ -5,7 +5,7 @@
 
     Forms for the forum.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
@@ -41,6 +41,7 @@ class ForumField(forms.ChoiceField):
             title = f.name[0] + u' ' + (u'   ' * offset) + f.name
             choices.append((f.id, title))
         self.choices = add + choices
+
 
 class NewPostForm(SurgeProtectionMixin, forms.Form):
     """
@@ -145,7 +146,7 @@ class SplitTopicForm(forms.Form):
     topic = forms.CharField(max_length=200)
     #: version info. defaults to the values set in the old topic.
     ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
-                                                required=False)
+                                       required=False)
     ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
 
     def clean(self):
@@ -166,8 +167,8 @@ class SplitTopicForm(forms.Form):
             try:
                 topic = Topic.objects.get(slug=slug)
             except Topic.DoesNotExist:
-                raise forms.ValidationError(ugettext_lazy(u'No topic with this '
-                                                          u'slug found.'))
+                raise forms.ValidationError(_(u'No topic with this '
+                                              u'slug found.'))
             return topic
         return slug
 
@@ -224,6 +225,7 @@ class ReportListForm(forms.Form):
     """
     selected = forms.MultipleChoiceField()
 
+
 class EditForumForm(forms.Form):
     name = forms.CharField(label=ugettext_lazy(u'Name'), max_length=100)
     slug = SlugField(label=ugettext_lazy(u'Slug'), max_length=100, required=False)
@@ -236,14 +238,13 @@ class EditForumForm(forms.Form):
         required=False)
     welcome_msg_text = forms.CharField(label=ugettext_lazy(u'Text'), required=False,
                                        widget=forms.Textarea(attrs={'rows': 3}))
-    newtopic_default_text = forms.CharField(label=ugettext_lazy(u'Defaul text for new topics'),
+    newtopic_default_text = forms.CharField(label=ugettext_lazy(u'Default text for new topics'),
                                             widget=forms.Textarea(attrs={'rows': 3}),
                                             required=False)
     force_version = forms.BooleanField(label=ugettext_lazy(u'Require Ubuntu version'),
                                        required=False)
-    #: TODO fix translation: Change the help_text
     count_posts = forms.BooleanField(label=ugettext_lazy(u'Count posts in this forum'),
-        help_text=u'Dieser Wert ist nur über das Webteam veränderbar',
+        help_text=ugettext_lazy(u'This value can only be changed by the Webteam'),
         required=False, widget=forms.CheckboxInput({'readonly': True}))
 
     def __init__(self, *args, **kwargs):

@@ -4,7 +4,7 @@
 
     The moderators can see all reported topics on this page.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -73,11 +73,11 @@
     <input type="submit" value="{% trans %}Close selected tickets{% endtrans %}" /> |
     {%- if subscribed %}
       <a href="{{ href('forum', 'reported_topics', 'unsubscribe') }}">
-        {% trans %}Unsubscribe from topic reports{% endtrans %}
+        {%- trans %}Unsubscribe from topic reports{% endtrans -%}
       </a>
     {%- else %}
       <a href="{{ href('forum', 'reported_topics', 'subscribe') }}">
-        {% trans %}Subscribe to topic reports{% endtrans %}
+        {%- trans %}Subscribe to topic reports{% endtrans -%}
       </a>
     {%- endif %}
   </div>

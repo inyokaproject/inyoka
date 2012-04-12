@@ -5,11 +5,13 @@
 
     The views for the forum.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
 from datetime import datetime, timedelta
+from operator import attrgetter
+from itertools import groupby
 
 from werkzeug.datastructures import MultiDict
 
@@ -369,14 +371,13 @@ def handle_attachments(request, post, att_ids):
             attachment = Attachment.create(
                 att_name, d['attachment'],
                 request.FILES['attachment'].content_type,
-                attachments, override=d['override']
+                attachments, override=d['override'],
+                comment=d['comment']
             )
             if not attachment:
                 messages.error(request, _(u'The attachment “%(attachment)s“ does already exist.')
                                % {'attachment': att_name})
             else:
-                attachment.comment = d['comment']
-                attachment.save()
                 attachments.append(attachment)
                 att_ids.append(attachment.id)
                 messages.success(request, _(u'The attachment “%(attachment)s“ was added '
@@ -449,8 +450,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         locked = post.lock(request)
         if locked:
             messages.error(request,
-                _(u'This post is currently beeing '
-                  u'edited by “%(user)s“!')
+                _(u'This post is currently beeing edited by “%(user)s“!')
                   % {'user': locked})
         topic = post.topic
         forum = topic.forum
@@ -490,7 +490,13 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
                                              post.page))
     elif topic:
-        if topic.locked:
+        if topic.hidden:
+            if not check_privilege(privileges, 'moderate'):
+                messages.error(request,
+                    _(u'You cannot reply in this topic because it was '
+                      u'deleted by a moderator.'))
+                return HttpResponseRedirect(url_for(topic))
+        elif topic.locked:
             if not check_privilege(privileges, 'moderate'):
                 messages.error(request,
                     _(u'You cannot reply to this topic because '
@@ -500,12 +506,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 messages.error(request,
                     _(u'You are replying to a locked topic. '
                       u'Please note that this may be considered as impolite!'))
-        elif topic.hidden:
+        elif quote and quote.hidden:
             if not check_privilege(privileges, 'moderate'):
-                messages.error(request,
-                    _(u'You cannot reply in this topic because it was '
-                      u'deleted by a moderator.'))
-                return HttpResponseRedirect(url_for(topic))
+                return abort_access_denied(request)
         else:
             if not check_privilege(privileges, 'reply'):
                 return abort_access_denied(request)
@@ -853,13 +856,36 @@ def reportlist(request):
             if not d['selected']:
                 messages.error(request, _(u'No topics selected.'))
             else:
-                Topic.objects.filter(id__in=d['selected']).update(
-                    reported=None,
-                    reporter=None,
-                    report_claimed_by=None)
+                # We select all topics that have been selected and also
+                # select the regarding forum, 'cause we will check for the
+                # moderation privilege.
+                topics_selected = topics.filter(id__in=d['selected']).select_related('forum')
+
+                t_ids_mod = []
+                # Check for the moderate privilege of the forums of selected
+                # reported topics and take only the topic IDs where the
+                # requesting user can moderate the forum.
+                for f, ts in groupby(topics_selected, attrgetter('forum')):
+                    if have_privilege(request.user, f, CAN_MODERATE):
+                        t_ids_mod += map(attrgetter('id'), ts)
+
+                # Update the reported state.
+                Topic.objects.filter(id__in=t_ids_mod).update(
+                    reported=None, reporter=None, report_claimed_by=None)
                 cache.delete('forum/reported_topic_count')
+<<<<<<< HEAD
                 topics = filter(lambda t: str(t.id) not in d['selected'], topics)
                 messages.success(request, _(u'The selected tickets have been closed.'))
+=======
+                topics = filter(lambda t: t.id not in t_ids_mod, topics)
+                if len(topics_selected) == len(t_ids_mod):
+                    flash(_(u'The selected tickets have been closed.'),
+                          True)
+                else:
+                    flash(_(u'Only a subset of selected tickets has been '
+                        u'closed, considering your moderation privileges '
+                        u'for the regarding forums.'))
+>>>>>>> staging
     else:
         form = ReportListForm()
         _add_field_choices()
@@ -895,11 +921,11 @@ def reported_topics_subscription(request, mode):
 
 
 def post(request, post_id):
-    """Redirect to the "real" post url" (see `PostManager.url_for_post`)"""
+    """Redirect to the "real" post url (see `PostManager.url_for_post`)"""
     try:
         url = Post.url_for_post(int(post_id),
             paramstr=request.GET and request.GET.urlencode())
-    except Post.DoesNotExist:
+    except (Topic.DoesNotExist, Post.DoesNotExist):
         raise PageNotFound()
     return HttpResponseRedirect(url)
 
@@ -940,6 +966,18 @@ def first_unread_post(request, topic_slug):
         redirect = Post.url_for_post(first_unread_post.id)
     return HttpResponseRedirect(redirect)
 
+def last_post(request, topic_slug):
+    """
+    Redirect to the last post of the given topic.
+    """
+    try:
+        last = Topic.objects.values_list('last_post', flat=True)\
+                            .get(slug=topic_slug)
+        params = request.GET and request.GET.urlencode()
+        url = Post.url_for_post(last, paramstr=params)
+        return HttpResponseRedirect(url)
+    except (Post.DoesNotExist, Topic.DoesNotExist):
+        raise PageNotFound()
 
 @templated('forum/movetopic.html')
 def movetopic(request, topic_slug):
@@ -964,13 +1002,15 @@ def movetopic(request, topic_slug):
             forum = mapping.get(int(data['forum']))
             if forum is None:
                 return abort_access_denied(request)
+            old_forum_name = topic.forum.name
             topic.move(forum)
             # send a notification to the topic author to inform him about
             # the new forum.
             nargs = {'username': topic.author.username,
                      'topic': topic,
                      'mod': request.user.username,
-                     'forum_name': forum.name}
+                     'forum_name': forum.name,
+                     'old_forum_name': old_forum_name}
 
             user_notifications = topic.author.settings.get('notifications', ('topic_move',))
             if 'topic_move' in user_notifications and topic.author.username != request.user.username:
@@ -1428,7 +1468,11 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     elif action == 'author':
         user = user and User.objects.get(user) or request.user
         if user.is_anonymous:
+<<<<<<< HEAD
             messages.info(request, _(u'You need to be logged in to use this function.'))
+=======
+            flash(_(u'You need to be logged in to use this function.'))
+>>>>>>> staging
             return abort_access_denied(request)
         topics = topics.filter(posts__author=user).distinct()
 

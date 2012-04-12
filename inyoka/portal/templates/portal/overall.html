@@ -4,7 +4,7 @@
 
     This is the base layout for all portal pages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'overall.html' %}
@@ -25,6 +25,11 @@
 {% endblock %}
 
 {% block sidebar %}
+  <div class="container" style="text-align:center;padding-top:1em">
+    <a href="http://wiki.ubuntuusers.de/Precise_Pangolin">
+      <img src="http://www.ubuntu.com/countdown/banner2.png" alt="Die nächste Ubuntuversion kommt bald"/>
+    </a>
+  </div>
   {%- block pre_navigation %}{% endblock -%}
   <div class="container">
     <h3 class="navi_ubuntu"><a href="http://www.ubuntu.com" class="extlink">Ubuntu</a></h3>

@@ -35,7 +35,6 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'inyoka.utils.tests',
-    'sentry.client',
     'south',
     # *must* be installed after south
     'djcelery',

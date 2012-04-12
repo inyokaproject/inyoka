@@ -5,7 +5,7 @@
 
     Views for Ikhaya.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import pytz
@@ -31,6 +31,7 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils import generic
 from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
 from inyoka.utils.sortable import Sortable
+from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.notification import send_notification
 from inyoka.portal.utils import check_login, require_permission
@@ -45,12 +46,6 @@ from inyoka.ikhaya.models import Event, Category, Article, Suggestion, \
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.ikhaya.notifications import send_comment_notifications, \
     send_new_suggestion_notifications
-
-
-#TODO: move to settings or provide a form in the interface.
-IKHAYA_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
-    u'Community. Hier werden Nachrichten und Berichte rund um Ubuntu, Linux' \
-    u' und OpenSource-Software veröffentlicht.'
 
 
 def context_modifier(request, context):
@@ -84,6 +79,7 @@ def context_modifier(request, context):
     context.update(
         MONTHS=MONTHS,
         categories=categories,
+        ikhaya_description=storage['ikhaya_description'],
         **data
     )
 
@@ -206,7 +202,6 @@ def detail(request, year, month, day, slug):
     }
 
 
-#TODO: is this view used ANYWHERE? i guess it can be removed
 @require_permission('article_edit')
 def article_delete(request, year, month, day, slug):
     try:
@@ -222,17 +217,16 @@ def article_delete(request, year, month, day, slug):
         if 'unpublish' in request.POST:
             article.public = False
             article.save()
-            messages.info(request, 
+            messages.info(request,
                 _(u'The publication of the article '
                   u'“<a href="%(link)s">%(title)s</a>“ has been revoked.')
                   % {'link': escape(url_for(article, 'show')),
                      'title': escape(article.subject)})
         elif 'cancel' in request.POST:
             messages.info(request,
-                _(u'Deletion of the article '
-                  u'“<a href="%(link)s">%(title)s</a>“ was cancled.')
-                  % {'link': escape(url_for(article, 'show')),
-                     'title': escape(article.subject)})
+                _(u'Deletion of the article “<a href="%(link)s">%(title)s</a>“ was canceled.')
+                  % { 'link': escape(url_for(article, 'show')),
+                      'title': escape(article.subject)})
         else:
             article.delete()
             messsages.success(request,
@@ -300,6 +294,10 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                           % {'title': escape(article.subject)})
                     cache.delete('ikhaya/article/%s/%s' %
                                  (article.pub_date, article.slug))
+                    keys = ['ikhaya/latest_articles',
+                            'ikhaya/latest_articles/%s' % article.category.slug,
+                            'ikhaya/article/%s/%s' % (article.pub_date, article.slug)]
+                    cache.delete_many(keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
             ctx = RenderContext(request)
@@ -811,7 +809,7 @@ def feed_article(request, slug=None, mode='short', count=10):
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
                     url=url, rights=href('portal', 'lizenz'), id=url,
                     icon=href('static', 'img', 'favicon.ico'),
-                    subtitle=IKHAYA_DESCRIPTION)
+                    subtitle=storage['ikhaya_description'])
 
     for article in articles:
         kwargs = {}
@@ -858,7 +856,8 @@ def feed_comment(request, id=None, mode='short', count=10):
     comments = Comment.objects.get_latest_comments(article.id if article else None, count)
 
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
-                    subtitle=IKHAYA_DESCRIPTION, rights=href('portal', 'lizenz'),
+                    subtitle=storage['ikhaya_description'],
+                    rights=href('portal', 'lizenz'),
                     id=url, url=url, icon=href('static', 'img', 'favicon.ico'),)
 
     for comment in comments[:count]:

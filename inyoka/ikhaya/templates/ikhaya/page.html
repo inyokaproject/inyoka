@@ -4,7 +4,7 @@
 
     they all use (stylesheets etc).
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'overall.html' %}
@@ -26,10 +26,7 @@
 {% block sidebar %}
   <div class="container">
     <h3 class="navi_about_ikhaya">Über Ikhaya</h3>
-    <p>
-      Ikhaya ist der Nachrichtenblog der ubuntuusers-Community. Hier werden Nachrichten und
-      Berichte rund um Ubuntu, Linux und Open Source-Software veröffentlicht.
-    </p>
+    <p>{{ ikhaya_description }}</p>
     <h3 class="navi_new_article admin_link_hover">Vorschlagen</h3>
     <ul>
       <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest article{% endtrans %}</a></li>

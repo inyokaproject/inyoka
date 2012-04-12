@@ -4,7 +4,7 @@
 
     This page shows the user control panel index page.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -12,9 +12,9 @@
 
 {% macro usercp_button(link, icon, name) %}
   <li>
-    <span><a href="{{ link }}">
-      <img src="{{ href('static', 'img/usercp/usercp-%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
-      {{ name }}
+    <span><a href="{{ link }}">{#
+      #}<img src="{{ href('static', 'img/usercp/usercp-%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
+      {{- name -}}
     </a></span>
   </li>
 {% endmacro %}
@@ -28,9 +28,9 @@
       {{ usercp_button(href('portal', 'usercp', 'subscriptions'), 'subscriptions', _('Subscriptions')) }}
       {{ usercp_button(href('portal', 'usercp', 'deactivate'), 'deactivate', _('Deactivate account')) }}
       {% if user.has_wikipage -%}
-        {{ usercp_button(href('wiki', 'Benutzer', user.username|e, action='edit'), 'wikipage', _('Userpage')) }}
+        {{ usercp_button(href('wiki', SETTINGS.WIKI_USER_BASE, USER.username|e, action='edit'), 'wikipage', _('User page')) }}
       {%- else -%}
-        {{ usercp_button(href('wiki', 'Benutzerseite'), 'wikipage', _('Userpage')) }}
+        {{ usercp_button(href('wiki', SETTINGS.WIKI_USERPAGE_INFO), 'wikipage', _('User page')) }}
       {%- endif %}
     </ul>
   </div>

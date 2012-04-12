@@ -5,7 +5,7 @@
 
     Contains all the forms we use in the wiki.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
@@ -126,8 +126,8 @@ class ManageDiscussionForm(forms.Form):
 
 class MvBaustelleForm(forms.Form):
     """Move page to the "Baustelle"""
-    new_name = forms.CharField(label='Neuer Seitenname', required=True)
-    user = UserField(label=_('Edited by'), required=True)
+    new_name = forms.CharField(label=ugettext_lazy(u'New page name'), required=True)
+    user = UserField(label=ugettext_lazy('Edited by'), required=True)
     completion_date = forms.DateField(label=ugettext_lazy(u'Completion date'),
                                       required=False, widget=DateWidget,
                                       localize=True)
