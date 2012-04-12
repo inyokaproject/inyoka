@@ -30,7 +30,7 @@ p {
 }
 
 header nav {
-  background: #DD4814 url('../img/logo.m.png') 1px 0 no-repeat;
+  background: #956205 url('../img/logo.m.png') 1px 0 no-repeat;
 }
 
 nav {
@@ -203,13 +203,13 @@ body {
 }
 
 a {
-  color: #DD4814;
+  color: #956205;
   text-decoration: none;
 }
 
 nav, .pagination, #comments h3, #comments .meta, .forums .forum, .post .meta,
 .post .attachments .title, section.actions {
-  background-color: #DD4814;
+  background-color: #956205;
 }
 
 nav, nav a, nav a:link, nav a:visited,
@@ -243,7 +243,7 @@ section.actions a:visited, .post .attachments .title {
 }
 
 nav ul li.active, .pagination .active {
-  background-color: #962D0C;
+  background-color: #543A00;
 }
 
 #comments .text, .category, .forums .empty, #posts .text, .button {
@@ -251,7 +251,7 @@ nav ul li.active, .pagination .active {
 }
 
 .category h3 {
-  background-color: #DD4814;
+  background-color: #956205;
   padding: 0.5em;
 }
 .category h3 a {
@@ -406,7 +406,7 @@ img {
 
 blockquote {
   padding-left: 0.5em;
-  border-left: 4px solid #DD4814;
+  border-left: 4px solid #956205;
 }
 
 .post .attachments {
@@ -438,7 +438,7 @@ blockquote {
 }
 
 #mobile-notice {
-  border: 1px #DD4814 solid;
+  border: 1px #956205 solid;
   margin: 5px 0;
   font-size: 0.8em;
   background-color: #e6e4e2;
@@ -448,6 +448,6 @@ blockquote {
   padding: 0 3px 2px 5px;
   border-width: 0 0 1px 1px;
   border-style: solid;
-  border-color: #DD4814;
+  border-color: #956205;
   border-bottom-left-radius: 7px;
 }
