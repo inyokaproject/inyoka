@@ -18,8 +18,13 @@ from django.db import connection
 from django.http import HttpRequest
 from django.test.client import Client
 
-from inyoka.middlewares.session import Session
 from inyoka.portal.user import User
+
+# FIXME:
+class Session(object):
+    def __init__(self, d, secret_key):
+        self.data = d
+        self.secret_key = secret_key
 
 
 def profile_memory(func):

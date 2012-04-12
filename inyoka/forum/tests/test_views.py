@@ -81,4 +81,3 @@ class TestViews(TestCase):
 
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
                 self.forum3.id)
->>>>>>> staging

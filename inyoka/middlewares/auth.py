@@ -35,7 +35,7 @@ class AuthMiddleware(object):
             elif user.is_deleted:
                 messages.error(request,
                     _(u'The user “%(name)s” deleted his profile. '
-                        u'Your session has ended.') % {'name': escape(user.username))
+                        u'Your session has ended.') % {'name': escape(user.username)})
 
             request.session.pop('uid', None)
             user = User.objects.get_anonymous_user()

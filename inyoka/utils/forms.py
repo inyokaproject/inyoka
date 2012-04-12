@@ -194,7 +194,7 @@ class CaptchaField(forms.Field):
         if current_request.user.is_authenticated and self.only_anonymous:
             return True
         solution = current_request.session.get('captcha_solution')
-        elif value:
+        if value:
             h = md5(settings.SECRET_KEY)
             if isinstance(value, unicode):
                 # md5 doesn't like to have non-ascii containing unicode strings

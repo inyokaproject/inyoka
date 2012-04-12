@@ -873,19 +873,13 @@ def reportlist(request):
                 Topic.objects.filter(id__in=t_ids_mod).update(
                     reported=None, reporter=None, report_claimed_by=None)
                 cache.delete('forum/reported_topic_count')
-<<<<<<< HEAD
-                topics = filter(lambda t: str(t.id) not in d['selected'], topics)
-                messages.success(request, _(u'The selected tickets have been closed.'))
-=======
                 topics = filter(lambda t: t.id not in t_ids_mod, topics)
                 if len(topics_selected) == len(t_ids_mod):
-                    flash(_(u'The selected tickets have been closed.'),
-                          True)
+                    messages.success(request, _(u'The selected tickets have been closed.'))
                 else:
-                    flash(_(u'Only a subset of selected tickets has been '
+                    messages.success(request, _(u'Only a subset of selected tickets has been '
                         u'closed, considering your moderation privileges '
                         u'for the regarding forums.'))
->>>>>>> staging
     else:
         form = ReportListForm()
         _add_field_choices()
@@ -1468,11 +1462,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     elif action == 'author':
         user = user and User.objects.get(user) or request.user
         if user.is_anonymous:
-<<<<<<< HEAD
             messages.info(request, _(u'You need to be logged in to use this function.'))
-=======
-            flash(_(u'You need to be logged in to use this function.'))
->>>>>>> staging
             return abort_access_denied(request)
         topics = topics.filter(posts__author=user).distinct()
 
