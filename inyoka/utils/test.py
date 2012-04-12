@@ -17,14 +17,9 @@ from django.conf import settings, UserSettingsHolder
 from django.db import connection
 from django.http import HttpRequest
 from django.test.client import Client
+from django.utils.importlib import import_module
 
 from inyoka.portal.user import User
-
-# FIXME:
-class Session(object):
-    def __init__(self, d, secret_key):
-        self.data = d
-        self.secret_key = secret_key
 
 
 def profile_memory(func):
@@ -61,19 +56,12 @@ def profile_memory(func):
 
 
 class InyokaClient(Client):
-    """This test client inherits from :class:`django.test.client.Client` and
-    allows us to keep track of the Inyoka session handling. Inyoka uses
-    werkzeug's :class:`~werkzeug.contrib.securecookie.SecureCookie` to store
-    the user's :attr:`~InyokaClient.session` on the client site.
-
+    """
     In order to change the requesting host, use::
 
         client.defaults['HTTP_HOST'] = 'url.example.com'
 
     """
-
-    #: The session instance to be used in this client.
-    session = Session({}, secret_key=settings.SECRET_KEY)
 
     def __init__(self, enforce_csrf_checks=False, host=None, **defaults):
         """Update the default request variables with ``**defaults`` and disable
@@ -110,31 +98,34 @@ class InyokaClient(Client):
 
         username = credentials.get('username', None)
         password = credentials.get('password', None)
-        assert username is not None
-        assert password is not None
+        assert all((username, password))
 
         user = User.objects.authenticate(username, password)
         if user.is_active:
+            engine = import_module(settings.SESSION_ENGINE)
+
+            # Create a fake request to store login details.
             request = HttpRequest()
             if self.session:
                 request.session = self.session
             else:
-                request.session = Session({}, secret_key=settings.SECRET_KEY)
+                request.session = engine.SessionStore()
             user.login(request)
 
+            # Save the session values.
+            request.session.save()
+
+            # Set the cookie to represent the session.
             session_cookie = settings.SESSION_COOKIE_NAME
-            self.session = request.session
-            self.session['_ex'] = time() + 3600
-            self.cookies[session_cookie] = self.session.serialize()
+            self.cookies[session_cookie] = request.session.session_key
             cookie_data = {
-                'max-age': 999999999,
+                'max-age': None,
                 'path': '/',
                 'domain': settings.SESSION_COOKIE_DOMAIN,
                 'secure': settings.SESSION_COOKIE_SECURE or None,
                 'expires': None,
             }
             self.cookies[session_cookie].update(cookie_data)
-            self.user = user
 
             return True
         else:

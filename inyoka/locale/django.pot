@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-03-28 21:42+0200\n"
+"POT-Creation-Date: 2012-04-12 21:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -99,42 +99,22 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: inyoka/templates/overall.html:235
+#: inyoka/templates/overall.html:236
 msgid "Please install at least Internet Explorer 8."
 msgstr ""
 
-#: inyoka/templates/overall.html:262
+#: inyoka/templates/overall.html:263
 #, python-format
 msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr ""
 
-#: inyoka/templates/overall.html:264
+#: inyoka/templates/overall.html:265
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr ""
 
-#: inyoka/templates/overall.html:279
+#: inyoka/templates/overall.html:280
 msgid "To mobile version"
-msgstr ""
-
-#: inyoka/templates/overall.html:323
-msgid "Username or email address"
-msgstr ""
-
-#: inyoka/templates/overall.html:326
-msgid "Password"
-msgstr ""
-
-#: inyoka/templates/overall.html:329
-msgid "Don’t choose this option if you are using a public computer."
-msgstr ""
-
-#: inyoka/templates/overall.html:330
-msgid "Keep me logged in"
-msgstr ""
-
-#: inyoka/templates/overall.html:333
-msgid "Lost password?"
 msgstr ""
 
 #: inyoka/templates/overall.m.html:47
@@ -194,11 +174,11 @@ msgstr ""
 msgid "%(date)s at %(time)s"
 msgstr ""
 
-#: inyoka/utils/diff3.py:372
+#: inyoka/utils/diff3.py:373
 msgid "Old"
 msgstr ""
 
-#: inyoka/utils/diff3.py:372
+#: inyoka/utils/diff3.py:373
 msgid "New"
 msgstr ""
 
@@ -214,46 +194,42 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: inyoka/utils/forms.py:50
+#: inyoka/utils/forms.py:52
 msgid "Text must not be empty"
 msgstr ""
 
-#: inyoka/utils/forms.py:61
+#: inyoka/utils/forms.py:63
 msgid "Your signature contains illegal elements"
 msgstr ""
 
-#: inyoka/utils/forms.py:66
+#: inyoka/utils/forms.py:68
 msgid "Your signature contains too many nested elements"
 msgstr ""
 
-#: inyoka/utils/forms.py:71
+#: inyoka/utils/forms.py:73
 #, python-format
 msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr ""
 
-#: inyoka/utils/forms.py:75
+#: inyoka/utils/forms.py:77
 #, python-format
 msgid "Your signature can only contain up to %(num)d lines"
 msgstr ""
 
-#: inyoka/utils/forms.py:126
+#: inyoka/utils/forms.py:128
 msgid "This user does not exist"
 msgstr ""
 
-#: inyoka/utils/forms.py:136
+#: inyoka/utils/forms.py:138
 msgid "CAPTCHA"
 msgstr ""
 
-#: inyoka/utils/forms.py:137
+#: inyoka/utils/forms.py:139
 msgid "Please type in the code from the graphic above"
 msgstr ""
 
-#: inyoka/utils/forms.py:139
+#: inyoka/utils/forms.py:141
 msgid "Generate new code"
-msgstr ""
-
-#: inyoka/utils/forms.py:196
-msgid "You have to accept cookies!"
 msgstr ""
 
 #: inyoka/utils/forms.py:206
@@ -297,25 +273,25 @@ msgstr ""
 msgid "{verbose_name} “{object_name}” was deleted successfully!"
 msgstr ""
 
-#: inyoka/utils/generic.py:213
-msgid "Canceled!"
+#: inyoka/utils/generic.py:214
+msgid "Canceled."
 msgstr ""
 
-#: inyoka/utils/pagination.py:158 inyoka/utils/pagination.py:165
+#: inyoka/utils/pagination.py:159 inyoka/utils/pagination.py:166
 msgid "Next »"
 msgstr ""
 
-#: inyoka/utils/pagination.py:174 inyoka/utils/pagination.py:181
+#: inyoka/utils/pagination.py:175 inyoka/utils/pagination.py:182
 msgid "« Previous"
 msgstr ""
 
-#: inyoka/utils/sessions.py:79
+#: inyoka/utils/sessions.py:80
 msgid ""
 "You cannot send data that fast in a row. Please wait a bit until you "
 "submit the form again."
 msgstr ""
 
-#: inyoka/utils/sortable.py:103
+#: inyoka/utils/sortable.py:106
 #, python-format
 msgid "The chosen sort value (“%(value)s”) is not available"
 msgstr ""
@@ -345,24 +321,20 @@ msgstr ""
 msgid "v2"
 msgstr ""
 
-#: inyoka/middlewares/auth.py:31
+#: inyoka/middlewares/auth.py:33
 #, python-format
 msgid "The user “%(name)s” was banned. Your session has ended."
 msgstr ""
 
-#: inyoka/middlewares/auth.py:34
+#: inyoka/middlewares/auth.py:37
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
 msgstr ""
 
-#: inyoka/middlewares/highlighter.py:112
+#: inyoka/middlewares/highlighter.py:116
 #, python-format
 msgid ""
 "Search results are highlighted. <a class=\"hide_searchwords\" "
 "href=\"%(link)s\">Hide query terms</a>."
-msgstr ""
-
-#: inyoka/middlewares/session.py:68
-msgid "Your session expired. You need to login again"
 msgstr ""
 

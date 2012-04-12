@@ -4,6 +4,7 @@ from mock import patch
 from django.conf import settings
 from django.test import TestCase, Client
 from django.test.utils import override_settings
+from django.utils.translation import ugettext as _
 
 from inyoka.utils.test import profile_memory
 from inyoka.forum.acl import PRIVILEGES_BITS
@@ -74,7 +75,7 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(mock_send.call_count, 1) #only the topic author
         mock_send.assert_called_with(self.user, 'topic_moved',
-            u'Your topic “A test Topic“ was moved.', {
+            _(u'Your topic “%(topic)s“ was moved.') % {'topic': 'A test Topic'}, {
                 'username': self.user.username, 'topic': self.topic,
                 'mod': self.admin.username, 'forum_name': 'Forum 3',
                 'old_forum_name': 'Forum 2'})
