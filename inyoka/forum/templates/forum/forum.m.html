@@ -8,6 +8,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'forum/page.m.html' %}
+{% from 'forum/_forum.html' import generate_subscription_link with context %}
 
 {% set back = forum.parent|url %}
 
@@ -42,4 +43,16 @@
     {%- endfor %}
   </div>
   {{ pagination.generate() }}
+  <section class="actions">
+    <a href="{{ forum|url('newtopic') }}">{% trans %}New topic{% endtrans %}</a>
+    {% if is_subscribed %}
+      <a href="{{ generate_subscription_link(do='unsubscribe') }}">
+        <span>{% trans %}Unsubscribe{% endtrans %}</span>
+      </a>
+    {% else %}
+      <a href="{{ generate_subscription_link() }}">
+        <span>{% trans %}Subscribe{% endtrans %}</span>
+      </a>
+    {% endif %}
+  </section>
 {% endblock %}

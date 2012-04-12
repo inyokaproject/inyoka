@@ -77,3 +77,7 @@
   {%- if not loop.last %},{% endif %}
   {%- endfor -%}
 {% endmacro %}
+
+{% macro generate_subscription_link(do='subscribe') %}
+  {{ href('forum', 'forum', forum.slug, do, continue=CURRENT_URL)|e }}
+{% endmacro %}
