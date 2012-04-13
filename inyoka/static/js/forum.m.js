@@ -25,4 +25,10 @@ $(document).ready(function() {
     }); */
     return false;
   });
+
+  // toggle of top menu
+  $('a.toggle_menu').click(function() {
+    $('#top_menu').toggle();
+    return false;
+  });
 });

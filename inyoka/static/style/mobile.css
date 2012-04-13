@@ -63,6 +63,7 @@ nav ul li {
   background: #333333;
   margin: 0;
   border: 1px solid #333333;
+  display: none;
 }
 
 #top_menu a.button {
@@ -89,6 +90,10 @@ nav ul li {
 
 .post .text ul, .post .text ol {
   padding-left: 1.5em;
+}
+
+#content {
+  padding: 0.5em 0 0;
 }
 
 #latest_articles li {
@@ -131,7 +136,7 @@ article .intro {
 }
 
 .category {
-  margin: 0 0 1.5em 0;
+  margin: 0 0 0.5em 0;
 }
 
 .category h3, .category .collapse .button {
