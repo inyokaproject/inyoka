@@ -53,9 +53,14 @@
       <header>
         <nav>
           <ul>
+            <li>
+              <a href="#" class="toggle_menu">
+                <img src="{{ href('static', 'img/logo.m.png') }}" />
+              </a>
             {% if back %}
-              <li class="back"><a href="{{ back }}">«</a></li>
+              <li class="back"><a href="{{ back }}">{% trans %}« Back{% endtrans %}</a></li>
             {% endif %}
+            {#
             {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
               <li{% if app == active_app %} class="active"{% endif %}>
                 <a href="{{ href(app) }}">{{ app|capitalize }}</a>
@@ -72,10 +77,36 @@
                 </a>
               {%- endif %}
             </li>
+            #}
           </ul>
         </nav>
         <div class="clear"></div>
       </header>
+      <div id="top_menu">
+        <a class="button" href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
+          <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', 'search.png') }}" />
+          <div class="title">TODO: Suchfeld</div>
+        </a>
+        {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
+          <a class="button{% if app == active_app %} active{% endif %}" href="{{ href(app) }}">
+            <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', app + '.png') }}" />
+            <div class="title">{{ app|capitalize }}</div>
+          </a>
+          <div class="clear"></div>
+        {%- endfor %}
+        {%- if USER.is_authenticated %}
+          <a class="button" href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
+            <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', 'logout.png') }}" />
+            <div class="title">{%- trans %}Logout{% endtrans -%}</div>
+          </a>
+        {%- else %}
+          <a class="button" href="{{ href('portal', 'login', next=CURRENT_URL) }}">
+            <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', 'login.png') }}" />
+            <div class="title">{%- trans %}Login{% endtrans -%}</div>
+          </a>
+        {%- endif %}
+        <div class="clear"></div>
+      </div>
       <div id="content">
         {%- block content -%}{%- endblock -%}
       </div>

@@ -26,11 +26,11 @@ p {
 }
 
 .wrapper {
-  margin: 0 0.2em;
+  margin: 0;
 }
 
 header nav {
-  background: #956205 url('../img/logo.m.png') 1px 0 no-repeat;
+  background: #956205 url('../img/head.m.png') 1px 0 repeat-x;
 }
 
 nav {
@@ -40,17 +40,51 @@ nav {
 
 nav a {
   display: block;
-  padding: 0.5em 0.2em;
+  padding: 0.8em 0.2em;
   margin: 0 0.3em;
 }
 
+nav a.toggle_menu {
+  padding: 0.2em 0.5em 0.2em 0.2em;
+  margin: 0;
+}
+
 nav ul {
-  float: right;
+  float: left;
+  padding: 0;
 }
 
 nav ul li {
   list-style: none;
   float: left;
+}
+
+#top_menu {
+  background: #333333;
+  margin: 0;
+  border: 1px solid #333333;
+}
+
+#top_menu a.button {
+  display: block;
+  background: #444444;
+  margin: 0.1em 0;
+  color: #FFFFFF;
+  font-weight: bold;
+  height: 32px;
+}
+
+#top_menu a.button.active {
+  background: #333333;
+}
+
+#top_menu a.button div.title {
+  padding: 0.5em 0 0.5em 3em;
+  position: absolute;
+}
+
+#top_menu a.button img.icon {
+  position: absolute;
 }
 
 .post .text ul, .post .text ol {
@@ -213,6 +247,7 @@ nav, .pagination, #comments h3, #comments .meta, .forums .forum, .post .meta,
 }
 
 nav, nav a, nav a:link, nav a:visited,
+#top_menu, #top_menu a, #top_menu a:link, #top_menu a:visited,
 .pagination, .pagination a, .pagination a:link, .pagination a:visited,
 #comments h3, #comments .meta, #comments .meta a, #comments .meta a:link,
 #comments .meta a:visited,
