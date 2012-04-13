@@ -125,9 +125,22 @@ article .intro {
   padding: 0.2em;
 }
 
-.button, .category, .post .attachments .title {
-  padding: 0.5em 0.2em;
+.button, .post .attachments .title {
+  padding: 0.8em 0.2em;
   margin: 0.2em 0;
+}
+
+.category {
+  margin: 0 0 1.5em 0;
+}
+
+.category h3, .category .collapse .button {
+  margin: 0;
+  padding: 0;
+}
+
+.category .forums .button {
+  margin: 0 0 0.5em;
 }
 
 .pagination, section.actions {
@@ -281,11 +294,12 @@ nav ul li.active, .pagination .active {
   background-color: #543A00;
 }
 
-#comments .text, .category, .forums .empty, #posts .text, .button {
-  background-color: #e6e4e2;
+#comments .text, .forums .empty, #posts .text, .button {
+  background-color: #E6E4E2;
 }
 
 .category h3 {
+  color: #FFFFFF;
   background-color: #956205;
   padding: 0.5em;
 }

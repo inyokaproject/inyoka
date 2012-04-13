@@ -10,7 +10,7 @@
 {%- extends 'forum/page.m.html' %}
 {% from 'forum/_forum.html' import generate_subscription_link with context %}
 
-{% set back = forum.parent|url %}
+{% set back = href('forum') %}
 
 {% block content %}
   <h2>{{ forum.name }}</h2>

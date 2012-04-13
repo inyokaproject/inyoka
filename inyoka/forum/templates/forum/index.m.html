@@ -14,7 +14,11 @@
   {%- if categories %}
     {%- for category, forums in forum_hierarchy %}
       <div class="category" id="category-{{ category.id }}">
-        <h3><a href="{{ category|url }}">{{ category.name|e }}</a></h3>
+        <a href="#" class="collapse">
+          <div class="button">
+            <h3>{{ category.name|e }}</h3>
+          </div>
+        </a>
         <div class="forums">
           {%- for forum, subforums in forums %}
             <a href="{{ forum|url }}"><div class="button{% if not forum.get_read_status(USER) %} unread{% endif %}">{{ forum.name }}</div></a>
