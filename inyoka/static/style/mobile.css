@@ -59,8 +59,11 @@ nav ul li {
   float: left;
 }
 
+nav ul li img {
+  margin: 5px 0 0;
+}
+
 #top_menu {
-  background: #333333;
   margin: 0;
   border: 1px solid #333333;
   display: none;
@@ -68,16 +71,10 @@ nav ul li {
 
 #top_menu a.button {
   display: block;
-  background: #444444;
   margin: 0.1em 0;
-  color: #FFFFFF;
-  font-weight: bold;
   height: 32px;
 }
 
-#top_menu a.button.active {
-  background: #333333;
-}
 
 #top_menu a.button div.title {
   padding: 0.5em 0 0.5em 3em;
@@ -86,6 +83,10 @@ nav ul li {
 
 #top_menu a.button img.icon {
   position: absolute;
+}
+
+#top_menu .separator {
+  padding: 0.4em;
 }
 
 .post .text ul, .post .text ol {
@@ -275,6 +276,22 @@ section.actions a:visited, .post .attachments .title {
   color: #FFFFFF;
   text-decoration: none;
   text-shadow: 1px 1px 1px #000000;
+}
+
+#top_menu, #top_menu a.button.active, #top_menu a.button:active {
+  background: #333333;
+}
+
+#top_menu a.button {
+  background: #444444;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+#top_menu .separator {
+  font-size: 10px;
+  font-weight: bold;
+  background: #555555;
 }
 
 .meta span.right {
@@ -489,19 +506,4 @@ blockquote {
 
 .userinfo.avatar {
   float: right;
-}
-
-#mobile-notice {
-  border: 1px #956205 solid;
-  margin: 5px 0;
-  font-size: 0.8em;
-  background-color: #e6e4e2;
-}
-#mobile-notice span {
-  float: right;
-  padding: 0 3px 2px 5px;
-  border-width: 0 0 1px 1px;
-  border-style: solid;
-  border-color: #956205;
-  border-bottom-left-radius: 7px;
 }
