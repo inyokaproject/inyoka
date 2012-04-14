@@ -29,10 +29,6 @@ p {
   margin: 0;
 }
 
-header nav {
-  background: #956205 url('../img/head.m.png') 1px 0 repeat-x;
-}
-
 nav {
   width: 100%;
   float: right;
@@ -260,6 +256,11 @@ a {
   text-decoration: none;
 }
 
+
+header nav {
+  background: #956205 url('../img/head.m.png') 1px 0 repeat-x;
+}
+
 nav, .pagination, #comments h3, #comments .meta, .forums .forum, .post .meta,
 .post .attachments .title, section.actions {
   background-color: #956205;
@@ -325,6 +326,7 @@ nav ul li.active, .pagination .active {
   background-color: #956205;
   padding: 0.5em;
 }
+
 .category h3 a {
   color: #FFFFFF;
   text-decoration: none;
