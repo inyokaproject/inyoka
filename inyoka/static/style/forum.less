@@ -23,12 +23,71 @@ table.forum {
       margin: 0;
     }
   }
+  tr.hidden {
+    td.icon {
+      div {
+        opacity: 0.8;
+      }
+    }
+  }
   td.icon {
     background-color: #eee;
     border: 1px solid #ccc;
     width: 40px;
     text-align: center;
     vertical-align: middle;
+
+    div.icon {
+      position: relative;
+      background-image: url('../img/forum/topic.png');
+      background-position: 4px;
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      background-repeat: no-repeat;
+
+      div {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+      }
+
+      .sticky {
+        background-image: url('../img/forum/sticky.png'); /** sprite-ref: forum1; sprite-margin-bottom: 2px; */
+        top: 13px;
+        left: 13px;
+        z-index: 50;
+      }
+
+      .new {
+        background-image: url('../img/forum/new.png'); /** sprite-ref: forum1; sprite-margin-bottom: 2px; */
+        top: 0px;
+        left: 24px;
+        z-index: 20;
+      }
+      
+      .solved {
+        background-image: url('../img/forum/solved.png'); /** sprite-ref: forum1; sprite-margin-bottom: 2px; */
+        top: 24px;
+        left: 24px;
+        z-index: 10;
+      }
+      
+      .locked {
+        background-image: url('../img/forum/locked.png'); /** sprite-ref: forum1; sprite-margin-bottom: 2px; */
+        top: 0;
+        left: 0;
+        width: 13px;
+        z-index: 30;
+      }
+      
+      .reported {
+        background-image: url('../img/forum/reported.png'); /** sprite-ref: forum1; sprite-margin-bottom: 2px; */
+        top: 24px;
+        left: 0;
+        z-index: 40;
+      }
+    }
   }
   tr.entry {
     p.name {
