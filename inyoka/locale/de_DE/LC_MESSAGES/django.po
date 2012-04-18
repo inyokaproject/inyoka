@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-04-13 13:10+0200\n"
+"POT-Creation-Date: 2012-03-28 21:42+0200\n"
 "PO-Revision-Date: 2012-02-07 01:48+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (German)\n"
@@ -217,10 +217,6 @@ msgstr "Alt"
 #: inyoka/utils/diff3.py:372
 msgid "New"
 msgstr "Neu"
-
-#: inyoka/utils/files.py:107
-msgid "Available file name length too short!"
-msgstr "Die verfügbare Länge für den Dateinamen ist zu kurz!"
 
 #: inyoka/utils/flash_confirmation.py:22
 msgid "Are you sure?"
