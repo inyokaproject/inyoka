@@ -95,21 +95,18 @@ class MaxLengthStorageMixin(object):
         l_dir_name = len(dir_name)
         l_file_root = len(file_root)
         l_file_ext = len(file_ext)
-        length = len(name)
 
-        allowed_length = self.max_length - l_dir_name -l_file_ext
+        allowed_length = self.max_length - l_dir_name - l_file_ext
         if l_dir_name > 0:
             # We need to take care of '/' between dir_name and file_name
             allowed_length -= 1
 
         if allowed_length < self.min_file_root_length:
-            # Rais an exception
-            raise AssertionError(_(u'Available file name length too short!'))
+            raise AssertionError(u'Available file name length too short!')
 
-        if length > self.max_length:
-            length = length - (l_file_root - allowed_length) + 1 # +1='/'
+        if len(name) > self.max_length:
             file_root = file_root[:allowed_length]
-            l_file_root = len(file_root)
+            l_file_root = allowed_length
             name = os.path.join(dir_name, "%s%s" % (file_root, file_ext))
 
         # If the filename already exists, add an underscore and a number (before
