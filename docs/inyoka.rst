@@ -71,4 +71,5 @@ References
 .. toctree::
     :maxdepth: 2
 
-    ref/ikhaya/index.rst
+    ref/ikhaya/index
+    ref/utils/index
