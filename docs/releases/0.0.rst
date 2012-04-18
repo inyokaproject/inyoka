@@ -4,6 +4,72 @@
 Inyoka 0.0 release summary
 ==========================
 
+Inyoka DEV release summary
+==========================
+
+* Revert "Translations for 4c4bff9322". Unneeded.
+* small fixes and removal of uneeded variables.
+* Switch position of locked and solved status emblemes for topic icons and add
+  opacity for hidden topics
+* Put images for topic icons into sprite
+* Remove old icons
+* Flexible topic icons
+* Translations for 4c4bff9322
+* Rewrite MaxLengthStorageMixin in order to take really care of the max_length,
+  even if the directory is too long.
+* don't leave any files behind.
+* get rid of unneeded storage.exists call and add tests.
+* fix `#760 <http://trac.inyokaproject.org/ticket/760>`_, file.open returns
+  None and as such isn't useable as context manager.
+* Remove unused PickleEntry database field type
+* Speedup test_storage tests
+* Changed url_for_post behavior to make it easier to use.
+* Copied override_settings from Django 1.4
+* Include production.txt in test.txt requirements file
+* Switch to gunicorn#sync to properly support MySQLdb
+* try to reconnect to xapian database on common DatabaseErrors as well
+  (hopefully NFS corruption workaround, #group/66883)
+* Changes as recommended in
+  https://github.com/inyokaproject/inyoka/pull/57#issuecomment-5011192
+* Remove the ``set_host()`` function from the InyokaClient and make the
+  ``login()`` function to use the same parameters as
+* Add basic tests to show the usage of the InyokaClient for testing views.
+* Our own test client for testing views. This client implements our own
+  authorization, permission and session management a
+* Show the old forum name in notifications about topic movements. Fixes `#752
+  <http://trac.inyokaproject.org/ticket/752>`_.
+* add tests for splitting posts into a new topic; move tests for splitting
+  posts and appending them to an existing topic
+* Add some enhanced tests for topic split. But the forum unittest rewrite is
+  not yet done.
+* fix forum.last_post again in split
+* comment clarifications.
+* typo :(
+* Change Forum.post_count during splits.
+* fix wrong behavior of .reverse() in topic split by changing it to .order_by()
+
+Inyoka 0.0.33 release summary
+=============================
+
+* Update banner to include a link to the wiki.
+* Add Countdown for 12.04.
+
+Inyoka 0.0.32 release summary
+=============================
+
+* Only check moderation privileges if the quote is hidden, otherwise check
+  reply.
+
+Inyoka 0.0.31 release summary
+=============================
+
+* compile translations.
+* Fix errors during reconnects in the Jabber bot.
+* Ignore results from tasks we do not require.
+* Solve strange display width of Ikhaya article comments. The ``markup.css``
+  defines ``#page table { width: auto; }`` whic
+* Check for permissions when quoting. Fixes #751.
+
 
 Inyoka 0.0.30 release summary
 =============================
@@ -499,7 +565,7 @@ Inyoka 0.0.17 release summary
 * add a feature to revert changed rows
 * add some css to the table
 * verify agains valid version number and a given name
-* * editing a row of a table woks now. * removed debug prints
+* editing a row of a table woks now. removed debug prints
 * first changes for variable distribution releases.
 * Added test to check time of a request.
 * update celery to 2.4.0
@@ -539,7 +605,7 @@ Inyoka 0.0.17 release summary
 * add a feature to revert changed rows
 * add some css to the table
 * verify agains valid version number and a given name
-* * editing a row of a table woks now. * removed debug prints
+* editing a row of a table woks now. removed debug prints
 * first changes for variable distribution releases.
 
 Inyoka 0.0.16 release summary
