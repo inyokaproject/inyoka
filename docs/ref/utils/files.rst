@@ -13,6 +13,7 @@ File Utilities
 
     Adds a proper extension according to the mimetype
 
+
 .. py:function:: get_filename(filename[, file=None])
 
     Returns a save filename (CAUTION: strips path components!) and adds a
@@ -34,7 +35,7 @@ File Utilities
         assure a unique filename, even if it needs to be enumerated. Defaults
         to ``8``.
 
-    .. py:method:: get_available_name(self, name)
+    .. py:method:: get_available_name(name)
 
         Returns a filename that's free on the target storage system, and
         available for new content to be written to. The return value is not

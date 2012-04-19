@@ -19,10 +19,12 @@ Some parts are ported from the django auth-module.
 
     This regular expression validates the username.
 
+
 .. py:data:: _username_url_re
 
     Defaults to a case insensitive, unicode and compiled regular expression:
     ``ur'^[@\-\._a-z0-9 öäüß]{1,30}$'``
+
 
 .. py:data:: _username_split_re
 
