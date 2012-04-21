@@ -19,6 +19,7 @@ from StringIO import StringIO
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files.storage import default_storage
 from django.db import models
 from django.utils.translation import ugettext_lazy, ugettext as _
 
@@ -705,7 +706,6 @@ class User(models.Model):
         image = Image.open(StringIO(data))
         fn = 'portal/avatars/avatar_user%d.%s' % (self.id,
              image.format.lower())
-        image_path = path.join(settings.MEDIA_ROOT, fn)
         #: clear the file system
         self.delete_avatar()
 
@@ -715,10 +715,12 @@ class User(models.Model):
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
+            image_path = path.join(settings.MEDIA_ROOT, fn)
             image.save(image_path)
             resized = True
         else:
-            image.save(image_path)
+            img.seek(0)
+            default_storage.save(fn, img)
         self.avatar = fn
 
         return resized
