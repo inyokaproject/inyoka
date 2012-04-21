@@ -727,10 +727,7 @@ class User(models.Model):
 
     def delete_avatar(self):
         """Delete the avatar from the file system."""
-        fn = self.avatar.name
-        if fn is not None and path.exists(fn):
-            os.remove(fn)
-        self.avatar = None
+        self.avatar.delete(save=False)
 
     def get_absolute_url(self, action='show', *args):
         if action == 'show':
