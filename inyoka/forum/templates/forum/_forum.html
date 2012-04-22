@@ -46,12 +46,13 @@
 
 {% macro topic_icon(topic) -%}
   {% set is_read = topic.get_read_status(USER) -%}
-  <div class="icon{%- if topic.hidden %} hidden{% endif -%}">
+  <div class="icon{% if topic.hidden %} hidden{% endif %}"
+      {%- if topic.hidden %} title="{% trans %}hidden topic{% endtrans %}"{% endif %}>
   {%- if topic.sticky -%}
-    <div class="sticky" title="{% trans %}sticky topic{% endtrans -%}"></div>
+    <div class="sticky" title="{% trans %}sticky topic{% endtrans %}"></div>
   {%- endif -%}
   {%- if not is_read -%}
-    <div class="new" title="{% trans %}unread topic{% endtrans -%}"></div>
+    <div class="new" title="{% trans %}unread topic{% endtrans %}"></div>
   {%- endif -%}
   {%- if topic.solved -%}
     <div class="solved" title="{% trans %}solved topic{% endtrans %}"></div>
