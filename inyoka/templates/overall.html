@@ -89,7 +89,7 @@
     {%- endblock %}
   </head>
   <body>
-   <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">
+   <div class="wrap">
     <div class="header">
       <h1><a href="/"><span>{{ SETTINGS.BASE_DOMAIN_NAME }}</span></a></h1>
       <ul class="tabbar">
@@ -292,7 +292,7 @@
       </ul>
     </div>{# .footer #}
     <div style="clear: both;"></div>
-   </div></div></div></div></div>
+   </div>
 
    {%- for script in ['classy', 'jquery.extensions', 'overall'] + scripts|default([]) %}
      {%- if SETTINGS.DEBUG %}
