@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-03-21 12:59+0100\n"
+"POT-Creation-Date: 2012-04-22 16:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: inyoka/portal/filters.py:22 inyoka/portal/forms.py:55
 #: inyoka/portal/templates/portal/feedselector.html:19
 #: inyoka/portal/templates/portal/feedselector.html:28
-#: inyoka/portal/templates/portal/overall.html:49
+#: inyoka/portal/templates/portal/overall.html:54
 #: inyoka/portal/templates/portal/user_edit_settings.html:35
 msgid "Forum"
 msgstr ""
@@ -566,7 +566,7 @@ msgstr ""
 #: inyoka/portal/templates/portal/group_edit.html:20
 #: inyoka/portal/templates/portal/grouplist.html:12
 #: inyoka/portal/templates/portal/grouplist.html:14
-#: inyoka/portal/templates/portal/overall.html:42
+#: inyoka/portal/templates/portal/overall.html:47
 msgid "Groups"
 msgstr ""
 
@@ -771,7 +771,7 @@ msgstr ""
 msgid "Static page"
 msgstr ""
 
-#: inyoka/portal/models.py:247 inyoka/portal/templates/portal/overall.html:79
+#: inyoka/portal/models.py:247 inyoka/portal/templates/portal/overall.html:84
 #: inyoka/portal/templates/portal/page_edit.html:19
 #: inyoka/portal/templates/portal/pages.html:12
 #: inyoka/portal/templates/portal/pages.html:15
@@ -803,7 +803,7 @@ msgstr ""
 #: inyoka/portal/models.py:294 inyoka/portal/templates/portal/file_edit.html:18
 #: inyoka/portal/templates/portal/files.html:12
 #: inyoka/portal/templates/portal/files.html:15
-#: inyoka/portal/templates/portal/overall.html:82
+#: inyoka/portal/templates/portal/overall.html:87
 msgid "Static files"
 msgstr ""
 
@@ -1497,7 +1497,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/calendar_overview.html:12
 #: inyoka/portal/templates/portal/index.html:29
-#: inyoka/portal/templates/portal/overall.html:36
+#: inyoka/portal/templates/portal/overall.html:41
 msgid "Calendar"
 msgstr ""
 
@@ -1511,7 +1511,7 @@ msgid "Currently there are no events listed."
 msgstr ""
 
 #: inyoka/portal/templates/portal/configuration.html:13
-#: inyoka/portal/templates/portal/overall.html:70
+#: inyoka/portal/templates/portal/overall.html:75
 msgid "Configuration"
 msgstr ""
 
@@ -1836,7 +1836,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/memberlist.html:12
 #: inyoka/portal/templates/portal/memberlist.html:16
-#: inyoka/portal/templates/portal/overall.html:41
+#: inyoka/portal/templates/portal/overall.html:46
 #: inyoka/portal/templates/portal/profile.html:13
 #: inyoka/portal/templates/portal/special_rights.html:13
 #: inyoka/portal/templates/portal/user_edit_groups.html:15
@@ -1890,45 +1890,45 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:33
+#: inyoka/portal/templates/portal/overall.html:38
 msgid "FAQ"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:34
+#: inyoka/portal/templates/portal/overall.html:39
 msgid "Downloads"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:44
+#: inyoka/portal/templates/portal/overall.html:49
 #: inyoka/portal/templates/portal/profile.html:131
 msgid "Contact"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:45
+#: inyoka/portal/templates/portal/overall.html:50
 msgid "Search"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:47
+#: inyoka/portal/templates/portal/overall.html:52
 #: inyoka/portal/templates/portal/whoisonline.html:13
 msgid "Who is online?"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:62
+#: inyoka/portal/templates/portal/overall.html:67
 msgid "Suggest an article"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:63
+#: inyoka/portal/templates/portal/overall.html:68
 msgid "Suggest an event"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:67
+#: inyoka/portal/templates/portal/overall.html:72
 msgid "Suggest a blog"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:73
+#: inyoka/portal/templates/portal/overall.html:78
 msgid "General"
 msgstr ""
 
-#: inyoka/portal/templates/portal/overall.html:76
+#: inyoka/portal/templates/portal/overall.html:81
 #: inyoka/portal/templates/portal/styles.html:14
 #: inyoka/portal/templates/portal/styles.html:17
 msgid "Stylesheets"
