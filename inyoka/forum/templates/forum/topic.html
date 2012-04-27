@@ -158,12 +158,12 @@
         </table>
         <div>
           {%- if poll.ended -%}
-            {% trans start_date=poll.start_time|dateformat, end_date=poll.end_time|dateformat -%}
-              The poll was started on {{ start_date }} and it ended on {{ end_date }}.
+            {% trans start_date=poll.start_time|dateformatwithadverb, end_date=poll.end_time|dateformatwithadverb -%}
+              The poll was started {{ start_date }} and it ended {{ end_date }}.
             {%- endtrans %}
           {%- elif poll.end_time -%}
-            {% trans start_date=poll.start_time|dateformat, end_date=poll.end_time|dateformat -%}
-              The poll was started on {{ start_date }} and it will end on {{ end_date }}.
+            {% trans start_date=poll.start_time|dateformatwithadverb, end_date=poll.end_time|dateformatwithadverb -%}
+              The poll was started {{ start_date }} and it will end {{ end_date }}.
             {%- endtrans %}
           {%- endif -%}
         </div>

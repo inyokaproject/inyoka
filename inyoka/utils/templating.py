@@ -24,7 +24,7 @@ from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound
 from inyoka import INYOKA_REVISION
 from inyoka.utils.cache import request_cache
 from inyoka.utils.dates import format_datetime, format_specific_datetime, \
-    format_time
+    format_time, naturalday_with_adverb
 from inyoka.utils.flashing import get_flashed_messages
 from inyoka.utils.local import current_request
 
@@ -285,6 +285,7 @@ FILTERS = {
     'timedeltaformat': timesince,
     'datetimeformat': format_datetime,
     'dateformat': naturalday,
+    'dateformatwithadverb': naturalday_with_adverb,
     'timeformat': format_time,
     'specificdatetimeformat': format_specific_datetime,
     'url': url_for,
