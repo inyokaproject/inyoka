@@ -725,12 +725,14 @@ class Post(models.Model, LockableObject):
         .. note::
 
             This method saves the current state of the post and it's
-            revisions.  You do not have to do that yourself.
+            revisions. You do not have to do that yourself.
         """
         if self.text == text and self.is_plaintext == is_plaintext:
             return
 
-        if self.pk:
+        # We need to check for the empty text to prevent a initial empty
+        # revision
+        if self.pk and self.text.strip():
             # Create a first revision for the initial post
             if not self.has_revision:
                 PostRevision(post=self, store_date=self.pub_date,
