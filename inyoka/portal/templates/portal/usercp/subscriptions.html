@@ -62,6 +62,7 @@
                     -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Go to last comment{% endtrans %}" />{#-
                   -#}</a>
                 {%- endif %}
+                {%- if not sub.can_read %} <a href="{{ object|url('unsubscribe', next=CURRENT_URL) }}">({% trans %}Unsubscribe{% endtrans %})</a>{% endif %}
               </td>
               <td class="read">
                 {%- if sub.notified %}
