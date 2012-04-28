@@ -21,7 +21,7 @@
 from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext as _
-from inyoka.utils.urls import href, url_for
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse, PageNotFound, \
      HttpResponseRedirect, HttpResponse
@@ -1002,7 +1002,12 @@ def do_unsubscribe(request, page_name):
         subscription.delete()
         flash(_(u'You won\'t be notified on changes on this page anymore'),
               True)
-    return HttpResponseRedirect(url_for(page))
+    # redirect the user to the page he last watched
+    if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+        return HttpResponseRedirect(request.GET['next'])
+    else:
+        return HttpResponseRedirect(url_for(page))
+
 
 
 @require_privilege('edit')
