@@ -730,22 +730,22 @@ class User(models.Model):
             os.remove(fn)
         self.avatar = None
 
-    def get_absolute_url(self, action='show', *args):
+    def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
-            return href('portal', 'user', self.urlsafe_username)
+            return href('portal', 'user', self.urlsafe_username, **query)
         elif action == 'privmsg':
             return href('portal', 'privmsg', 'new',
-                        self.urlsafe_username)
+                        self.urlsafe_username, **query)
         elif action == 'activate':
             return href('portal', 'activate',
-                        self.urlsafe_username, gen_activation_key(self))
+                        self.urlsafe_username, gen_activation_key(self), **query)
         elif action == 'activate_delete':
             return href('portal', 'delete',
-                        self.urlsafe_username, gen_activation_key(self))
+                        self.urlsafe_username, gen_activation_key(self), **query)
         elif action == 'admin':
-            return href('portal', 'user', self.urlsafe_username, 'edit', *args)
+            return href('portal', 'user', self.urlsafe_username, 'edit', *args, **query)
         elif action in ('subscribe', 'unsubscribe'):
-            return href('portal', 'user', self.urlsafe_username, action)
+            return href('portal', 'user', self.urlsafe_username, action, **query)
 
     def login(self, request):
         self.last_login = datetime.utcnow()
