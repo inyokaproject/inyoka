@@ -1,4 +1,4 @@
-development_settings.py
+*_settings.py
 *.pyo
 *.pyc
 .DS_Store
