@@ -10,11 +10,20 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import os
+import time
+import logging
+import shutil
+import subprocess
+import tempfile
+import unittest
+
 from copy import copy
-from time import time
 from functools import wraps
 
 import nose
+import pyes
+import pyes.exceptions
+import pyes.urllib3
 
 from django.conf import settings, UserSettingsHolder
 from django.http import HttpRequest
@@ -24,6 +33,9 @@ from django.test.client import Client
 from inyoka.middlewares.session import Session
 from inyoka.portal.user import User
 from inyoka.utils.search import autodiscover, SearchSystem
+
+
+START_TIMEOUT = 15
 
 
 class InyokaClient(Client):
@@ -90,7 +102,7 @@ class InyokaClient(Client):
 
             session_cookie = settings.SESSION_COOKIE_NAME
             self.session = request.session
-            self.session['_ex'] = time() + 3600
+            self.session['_ex'] = time.time() + 3600
             self.cookies[session_cookie] = self.session.serialize()
             cookie_data = {
                 'max-age': 999999999,
@@ -161,6 +173,27 @@ class override_settings(object):
 
 class SearchTestCase(TestCase):
 
+    started = False
+
+    @classmethod
+    def setUpClass(cls):
+        """Starts the server."""
+        from django.conf import settings
+        if not cls.started:
+            # Raises an exception if not.
+            settings.TEST_MODE = True
+            autodiscover()
+            cls.start_server()
+            cls.started = True
+
+    @classmethod
+    def tearDownClass(cls):
+        """Stops the server if necessary."""
+        if cls.started:
+            cls.stop_server()
+            cls.started = False
+            shutil.rmtree(cls.tmpdir)
+
     def setUp(self):
         try:
             self.search = SearchSystem(os.environ['ELASTIC_HOSTNAME'])
@@ -171,7 +204,7 @@ class SearchTestCase(TestCase):
         except (pyes.exceptions.ElasticSearchException,
                 pyes.urllib3.MaxRetryError,
                 KeyError):
-            raise nose.plugins.skip.SkipTest('No ElasticSearch started or environment variables missing')
+            raise unittest.SkipTest('No ElasticSearch started or environment variables missing')
 
     def tearDown(self):
         try:
@@ -186,3 +219,38 @@ class SearchTestCase(TestCase):
         if not isinstance(indices, (list, set, tuple)):
             indices = [indices]
         return self.search.get_connection().flush(indices)
+
+    @classmethod
+    def start_server(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        logfile = 'elasticsearch-test.log'
+        hostname = os.environ['ELASTIC_HOSTNAME']
+        cls.process = subprocess.Popen([
+                os.path.join(
+                    os.environ['ELASTIC_HOME'], 'bin', 'elasticsearch'),
+                '-f',
+                '-D', 'es.path.data=' + os.path.join(cls.tmpdir, 'data'),
+                '-D', 'es.path.work=' + os.path.join(cls.tmpdir, 'work'),
+                '-D', 'es.path.logs=' + os.path.join(cls.tmpdir, 'logs'),
+                '-D', 'es.cluster.name=inyoka.testing',
+                '-D', 'es.http.port=' + hostname.split(':', 1)[-1],
+                ], stdout=open(logfile, 'w'), stderr=subprocess.STDOUT)
+
+        start = time.time()
+
+        while True:
+            time.sleep(0.5)
+
+            with open(logfile, 'r') as f:
+                contents = f.read()
+                if 'started' in contents:
+                    return
+
+                if time.time() - start > START_TIMEOUT:
+                    log.info('ElasticSearch could be started: :\n%s' % contents)
+                    return
+
+    @classmethod
+    def stop_server(cls):
+        cls.process.terminate()
+        cls.process.wait()

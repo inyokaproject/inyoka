@@ -210,13 +210,6 @@ INSTALLED_APPS = (
     'django_hosts',
 )
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_PLUGINS = [
-    'inyoka.utils.test.nosehelpers.UnitTestPlugin',
-    'inyoka.utils.test.nosehelpers.InyokaElasticPlugin'
-]
-
-NOSE_ARGS = ['--with-unittest', '--with-elastic']
 
 # don't use migrations but just syncdb
 SOUTH_TESTS_MIGRATE = False
