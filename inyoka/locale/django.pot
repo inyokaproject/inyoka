@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2011 ORGANIZATION
+# Copyright (C) 2012 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-29 22:52+0100\n"
+"POT-Creation-Date: 2012-04-22 16:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,115 +21,119 @@ msgstr ""
 msgid "Portal"
 msgstr ""
 
-#: inyoka/templates/overall.html:112
+#: inyoka/templates/overall.html:119
 #, python-format
 msgid "Logout [%(user)s]"
 msgstr ""
 
-#: inyoka/templates/overall.html:117
-msgid "Controlpanel"
+#: inyoka/templates/overall.html:124
+msgid "Control panel"
 msgstr ""
 
-#: inyoka/templates/overall.html:124
+#: inyoka/templates/overall.html:131
 #, python-format
 msgid "Private messages (%(count)s)"
 msgstr ""
 
-#: inyoka/templates/overall.html:129
+#: inyoka/templates/overall.html:136
 msgid "Private messages"
 msgstr ""
 
-#: inyoka/templates/overall.html:136 inyoka/templates/overall.m.html:69
+#: inyoka/templates/overall.html:143 inyoka/templates/overall.m.html:69
 msgid "Login"
 msgstr ""
 
-#: inyoka/templates/overall.html:141
+#: inyoka/templates/overall.html:148
 msgid "Register"
 msgstr ""
 
-#: inyoka/templates/overall.html:152
+#: inyoka/templates/overall.html:159
 msgid "Admin"
 msgstr ""
 
-#: inyoka/templates/overall.html:153
-msgid "Turn adminlinks on/off"
-msgstr ""
-
-#: inyoka/templates/overall.html:159
-msgid "Reported topics"
-msgstr ""
-
-#: inyoka/templates/overall.html:162
-msgid "Article suggestions"
+#: inyoka/templates/overall.html:160
+msgid "Turn admin links on/off"
 msgstr ""
 
 #: inyoka/templates/overall.html:166
+msgid "Reported topics"
+msgstr ""
+
+#: inyoka/templates/overall.html:169
+msgid "Article suggestions"
+msgstr ""
+
+#: inyoka/templates/overall.html:173
 msgid "Spelling mistakes"
 msgstr ""
 
-#: inyoka/templates/overall.html:170
+#: inyoka/templates/overall.html:177
 msgid "Event suggestions"
 msgstr ""
 
-#: inyoka/templates/overall.html:174
+#: inyoka/templates/overall.html:181
 msgid "Please turn on JavaScript!"
 msgstr ""
 
-#: inyoka/templates/overall.html:192
+#: inyoka/templates/overall.html:199
 msgid "Overall"
 msgstr ""
 
-#: inyoka/templates/overall.html:195
+#: inyoka/templates/overall.html:202
 msgid "Forum"
 msgstr ""
 
-#: inyoka/templates/overall.html:198
+#: inyoka/templates/overall.html:205
 msgid "Wiki"
 msgstr ""
 
-#: inyoka/templates/overall.html:201
+#: inyoka/templates/overall.html:208
 msgid "News"
 msgstr ""
 
-#: inyoka/templates/overall.html:204
+#: inyoka/templates/overall.html:211
 msgid "Planet"
 msgstr ""
 
-#: inyoka/templates/overall.html:207
+#: inyoka/templates/overall.html:214
 msgid "Search"
 msgstr ""
 
-#: inyoka/templates/overall.html:252
+#: inyoka/templates/overall.html:235
+msgid "Please install at least Internet Explorer 8."
+msgstr ""
+
+#: inyoka/templates/overall.html:262
 #, python-format
 msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr ""
 
-#: inyoka/templates/overall.html:254
+#: inyoka/templates/overall.html:264
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr ""
 
-#: inyoka/templates/overall.html:266
+#: inyoka/templates/overall.html:279
 msgid "To mobile version"
 msgstr ""
 
-#: inyoka/templates/overall.html:310
+#: inyoka/templates/overall.html:323
 msgid "Username or email address"
 msgstr ""
 
-#: inyoka/templates/overall.html:313
+#: inyoka/templates/overall.html:326
 msgid "Password"
 msgstr ""
 
-#: inyoka/templates/overall.html:316
+#: inyoka/templates/overall.html:329
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
 
-#: inyoka/templates/overall.html:317
+#: inyoka/templates/overall.html:330
 msgid "Keep me logged in"
 msgstr ""
 
-#: inyoka/templates/overall.html:320
+#: inyoka/templates/overall.html:333
 msgid "Lost password?"
 msgstr ""
 
@@ -185,21 +189,116 @@ msgstr ""
 msgid "Page not found"
 msgstr ""
 
-#: inyoka/utils/forms.py:109
-msgid "Captcha"
+#: inyoka/utils/dates.py:200
+#, python-format
+msgid "%(date)s at %(time)s"
 msgstr ""
 
-#: inyoka/utils/forms.py:110
+#: inyoka/utils/diff3.py:372
+msgid "Old"
+msgstr ""
+
+#: inyoka/utils/diff3.py:372
+msgid "New"
+msgstr ""
+
+#: inyoka/utils/flash_confirmation.py:22
+msgid "Are you sure?"
+msgstr ""
+
+#: inyoka/utils/flash_confirmation.py:23
+msgid "Yes"
+msgstr ""
+
+#: inyoka/utils/flash_confirmation.py:24
+msgid "No"
+msgstr ""
+
+#: inyoka/utils/forms.py:50
+msgid "Text must not be empty"
+msgstr ""
+
+#: inyoka/utils/forms.py:61
+msgid "Your signature contains illegal elements"
+msgstr ""
+
+#: inyoka/utils/forms.py:66
+msgid "Your signature contains too many nested elements"
+msgstr ""
+
+#: inyoka/utils/forms.py:71
+#, python-format
+msgid "Your signature is too long, only %(length)s characters allowed"
+msgstr ""
+
+#: inyoka/utils/forms.py:75
+#, python-format
+msgid "Your signature can only contain up to %(num)d lines"
+msgstr ""
+
+#: inyoka/utils/forms.py:126
+msgid "This user does not exist"
+msgstr ""
+
+#: inyoka/utils/forms.py:136
+msgid "CAPTCHA"
+msgstr ""
+
+#: inyoka/utils/forms.py:137
 msgid "Please type in the code from the graphic above"
 msgstr ""
 
-#: inyoka/utils/forms.py:112
+#: inyoka/utils/forms.py:139
 msgid "Generate new code"
 msgstr ""
 
-#: inyoka/utils/generic.py:166
+#: inyoka/utils/forms.py:196
+msgid "You have to accept cookies!"
+msgstr ""
+
+#: inyoka/utils/forms.py:206
+msgid "The entered CAPTCHA was incorrect."
+msgstr ""
+
+#: inyoka/utils/forms.py:221
+msgid ""
+"You have entered an invisible field and were therefore classified as a "
+"bot."
+msgstr ""
+
+#: inyoka/utils/forms.py:231
+msgid ""
+"The entered e-mail address belongs to a e-mail provider we had to block "
+"because of SPAM problems. Please choose another e-mail address"
+msgstr ""
+
+#: inyoka/utils/forms.py:235
+msgid "The entered e-mail address is invalid. Please check your input."
+msgstr ""
+
+#: inyoka/utils/forms.py:247
+msgid "The entered Jabber address is invalid. Please check your input."
+msgstr ""
+
+#: inyoka/utils/generic.py:53
+msgid "{verbose_name} “{object_name}” was successfully created."
+msgstr ""
+
+#: inyoka/utils/generic.py:55
+msgid "{verbose_name} “{object_name}” was successfully changed."
+msgstr ""
+
+#: inyoka/utils/generic.py:169
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
+msgstr ""
+
+#: inyoka/utils/generic.py:196
+msgid "{verbose_name} “{object_name}” was deleted successfully!"
+msgstr ""
+
+#: inyoka/utils/generic.py:213
+msgid "Canceled!"
 msgstr ""
 
 #: inyoka/utils/pagination.py:158 inyoka/utils/pagination.py:165
@@ -207,6 +306,63 @@ msgid "Next »"
 msgstr ""
 
 #: inyoka/utils/pagination.py:174 inyoka/utils/pagination.py:181
-msgid "« Prev"
+msgid "« Previous"
+msgstr ""
+
+#: inyoka/utils/sessions.py:79
+msgid ""
+"You cannot send data that fast in a row. Please wait a bit until you "
+"submit the form again."
+msgstr ""
+
+#: inyoka/utils/sortable.py:103
+#, python-format
+msgid "The chosen sort value (“%(value)s”) is not available"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:12
+#: inyoka/utils/tests/test_templating.py:13
+msgid "text"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:18
+#: inyoka/utils/tests/test_templating.py:19
+msgid "e1"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:18
+#: inyoka/utils/tests/test_templating.py:19
+msgid "e2"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:24
+#: inyoka/utils/tests/test_templating.py:25
+msgid "v1"
+msgstr ""
+
+#: inyoka/utils/tests/test_templating.py:24
+#: inyoka/utils/tests/test_templating.py:25
+msgid "v2"
+msgstr ""
+
+#: inyoka/middlewares/auth.py:31
+#, python-format
+msgid "The user “%(name)s” was banned. Your session has ended."
+msgstr ""
+
+#: inyoka/middlewares/auth.py:34
+#, python-format
+msgid "The user “%(name)s” deleted his profile. Your session has ended."
+msgstr ""
+
+#: inyoka/middlewares/highlighter.py:112
+#, python-format
+msgid ""
+"Search results are highlighted. <a class=\"hide_searchwords\" "
+"href=\"%(link)s\">Hide query terms</a>."
+msgstr ""
+
+#: inyoka/middlewares/session.py:68
+msgid "Your session expired. You need to login again"
 msgstr ""
 

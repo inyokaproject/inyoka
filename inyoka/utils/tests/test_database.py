@@ -3,7 +3,7 @@
     inyoka.utils.tests.test_database
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import datetime
@@ -11,7 +11,7 @@ from django.test import TestCase
 
 from inyoka.portal.user import User
 from inyoka.utils.database import update_model
-from inyoka.utils.tests.models import JSONEntry, PickleEntry
+from inyoka.utils.tests.models import JSONEntry
 
 
 
@@ -66,14 +66,3 @@ class JSONTest(TestCase):
         entry = self.manager.create(f={'k': u'åäö'})
         entry = self.manager.get(pk=entry.pk)
         self.assertEqual(entry.f, {'k': u'åäö'})
-
-
-class PickleTest(JSONTest):
-    def setUp(self):
-        self.model = PickleEntry
-        self.manager = self.model.objects
-
-    def test_simple_class(self):
-        entry = self.manager.create(f=A)
-        entry = self.manager.get(pk=entry.pk)
-        self.assertEqual(entry.f, A)

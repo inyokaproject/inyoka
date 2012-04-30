@@ -2,7 +2,7 @@ import os, sys
 import tempfile, shutil
 from os import path
 
-python_version = '2.7.1'
+python_version = '2.7.3'
 python_main_version = '2.7'
 pil_version = '1.1.7'
 
@@ -99,9 +99,10 @@ def adjust_options(options, args):
 
         # configure python
         call_subprocess(['./configure', '--prefix=%s' % dest_dir,
-                         '--enable-unicode=ucs4'],
-                        cwd=python_folder)
-        call_subprocess(['make'], cwd=python_folder)
+                         '--enable-unicode=ucs4', '--enable-ipv6',
+                         '--with-system-expat', '--with-system-ffi',
+                         '--with-fpectl'], cwd=python_folder)
+        call_subprocess(['make', 'OPT=-g'], cwd=python_folder)
         call_subprocess(['make', 'install'], cwd=python_folder)
 
     # touch a special file to indicate we have already build a python interpreter

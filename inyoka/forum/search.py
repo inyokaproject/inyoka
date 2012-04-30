@@ -1,8 +1,18 @@
 #-*- coding: utf-8 -*-
+"""
+    inyoka.forum.search
+    ~~~~~~~~~~~~~~~~~~~
+
+    Search interfaces for the forum.
+
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
+from django.utils.translation import ugettext_lazy
 from pyes import TermsFilter
-from inyoka.utils.search import search, Index, DocumentType
 from inyoka.forum.acl import get_privileges, check_privilege
 from inyoka.forum.models import Post, Forum
+from inyoka.utils.search import search, Index, DocumentType
 from inyoka.utils.urls import url_for, href
 
 

@@ -4,7 +4,7 @@
 
     Show a single ikhaya article.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
@@ -26,7 +26,7 @@
     <p class="username{% if not user.is_active %} inactive{% endif %}">
       <a href="{{ user|url }}">{{ user.username|e }}</a>
       {%- if user.primary_group_id and user.primary_group.icon %}
-        <img class="teamicon" src="{{ user.primary_group.icon_url }}" alt="{% trans %}Teamicon{% endtrans %}" />
+        <img class="teamicon" src="{{ user.primary_group.icon_url }}" alt="{% trans %}Team icon{% endtrans %}" />
       {%- endif %}
       {%- if user.member_title %}
         <div class="member_title">{{ user.member_title|e }}</div>

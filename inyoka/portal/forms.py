@@ -5,7 +5,7 @@
 
     Various forms for the portal.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import datetime
@@ -17,42 +17,45 @@ from django.conf import settings
 from django.core.validators import EMPTY_VALUES
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
+from inyoka.forum.acl import filter_invisible
+from inyoka.forum.forms import ForumField
+from inyoka.forum.models import Forum
+from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href, is_safe_domain
 from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
-                               HiddenCaptchaField, EmailField, JabberField
+    HiddenCaptchaField, EmailField, JabberField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import escape, cleanup_html
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.portal.user import User, UserData, Group
 from inyoka.portal.models import StaticPage, StaticFile
-from inyoka.wiki.parser import validate_signature, SignatureError
 
 #: Some constants used for ChoiceFields
 NOTIFY_BY_CHOICES = (
-    ('mail', _(u'Mail')),
-    ('jabber', _(u'Jabber')),
+    ('mail', ugettext_lazy(u'Mail')),
+    ('jabber', ugettext_lazy(u'Jabber')),
 )
 
 NOTIFICATION_CHOICES = (
-    ('topic_move', _(u'A subscribed topic was moved')),
-    ('topic_split', _(u'A subscribed topic was splitted')),
-    ('pm_new', _(u'I received a message'))
+    ('topic_move', ugettext_lazy(u'A subscribed topic was moved')),
+    ('topic_split', ugettext_lazy(u'A subscribed topic was split')),
+    ('pm_new', ugettext_lazy(u'I received a message'))
 )
 
 
 class LoginForm(forms.Form):
     """Simple form for the login dialog"""
-    username = forms.CharField(label=_(u'Username, email address or openID'),
+    username = forms.CharField(label=ugettext_lazy(u'Username, email address or OpenID'),
         widget=forms.TextInput(attrs={'tabindex': '1'}))
-    password = forms.CharField(label=_(u'Password'), required=False,
+    password = forms.CharField(label=ugettext_lazy(u'Password'), required=False,
         widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),
-        help_text=_(u'Leave this field empty if you are using openID.'),)
+        help_text=ugettext_lazy(u'Leave this field empty if you are using OpenID.'),)
     permanent = forms.BooleanField(label=_('Keep logged in'),
         required=False, widget=forms.CheckboxInput(attrs={'tabindex':'1'}))
 
@@ -66,7 +69,7 @@ class LoginForm(forms.Form):
 
 
 class OpenIDConnectForm(forms.Form):
-    username = forms.CharField(label=_(u'Username'))
+    username = forms.CharField(label=ugettext_lazy(u'Username'))
     password = forms.CharField(label=_('Password'),
         widget=forms.PasswordInput(render_value=False),
         required=True)
@@ -83,11 +86,12 @@ class RegisterForm(forms.Form):
     for bots that just fill out everything.
     """
     username = forms.CharField(label=_('Username'), max_length=20)
-    email = EmailField(label='E-Mail', help_text=_(u'We need your email '
+    email = EmailField(label=ugettext_lazy(u'E-mail'),
+        help_text=ugettext_lazy(u'We need your email '
         u'address to send you a new password if you forgot it. It is not '
-        u'visible for other users. For more information, check out our '
-        u'<a href="%(link)s">privacy police</a>.') % {'link': href('portal',
-                                                             'datenschutz')})
+        u'visible to other users. For more information, check out our '
+        u'<a href="%(link)s">privacy police</a>.') % {
+            'link': href('portal', 'datenschutz')})
     password = forms.CharField(label=_('Password'),
         widget=forms.PasswordInput(render_value=False))
     confirm_password = forms.CharField(label=_('Confirm password'),
@@ -192,17 +196,16 @@ class LostPasswordForm(forms.Form):
 class SetNewPasswordForm(forms.Form):
     username = forms.CharField(widget=forms.HiddenInput)
     new_password_key = forms.CharField(widget=forms.HiddenInput)
-    password = forms.CharField(label=_(u'New password'),
+    password = forms.CharField(label=ugettext_lazy(u'New password'),
                                widget=forms.PasswordInput)
-    password_confirm = forms.CharField(label=_(u'Confirm new password'),
+    password_confirm = forms.CharField(label=ugettext_lazy(u'Confirm new password'),
                                        widget=forms.PasswordInput)
 
     def clean(self):
         data = super(SetNewPasswordForm, self).clean()
         if 'password' not in data or 'password_confirm' not in data or \
            data['password'] != data['password_confirm']:
-            raise forms.ValidationError(u'Die Passwörter stimmen nicht '
-                                        u'überein!')
+            raise forms.ValidationError(_(u'The passwords do not match!'))
         try:
             data['user'] = User.objects.get(self['username'].data,
                                new_password_key=self['new_password_key'].data)
@@ -215,12 +218,12 @@ class SetNewPasswordForm(forms.Form):
 
 class ChangePasswordForm(forms.Form):
     """Simple form for changing the password."""
-    old_password = forms.CharField(label=_(u'Old password'),
+    old_password = forms.CharField(label=ugettext_lazy(u'Old password'),
                                    widget=forms.PasswordInput)
-    new_password = forms.CharField(label=_(u'New password'),
+    new_password = forms.CharField(label=ugettext_lazy(u'New password'),
                                    widget=forms.PasswordInput)
     new_password_confirm = forms.CharField(
-                                   label=_(u'Confirm new password'),
+                                   label=ugettext_lazy(u'Confirm new password'),
                                    widget=forms.PasswordInput)
 
 
@@ -229,36 +232,36 @@ class UserCPSettingsForm(forms.Form):
     Form used for the user control panel – dialog.
     """
     notify = forms.MultipleChoiceField(
-        label=_(u'Notify via'), required=False,
+        label=ugettext_lazy(u'Notify via'), required=False,
         choices=NOTIFY_BY_CHOICES,
         widget=forms.CheckboxSelectMultiple)
     notifications = forms.MultipleChoiceField(
-        label=_(u'Notify me if'), required=False,
+        label=ugettext_lazy(u'Notify me if'), required=False,
         choices=NOTIFICATION_CHOICES,
         widget=forms.CheckboxSelectMultiple)
     ubuntu_version = forms.MultipleChoiceField(
-        label='Benachrichtigung bei neuen Topics mit bestimmter Ubuntu Version',
+        label=ugettext_lazy(u'Notifications on topics with a specific Ubuntu version'),
         required=False, choices=SIMPLE_VERSION_CHOICES,
         widget=forms.CheckboxSelectMultiple)
-    timezone = forms.ChoiceField(label=_(u'Timezone'), required=True,
+    timezone = forms.ChoiceField(label=ugettext_lazy(u'Timezone'), required=True,
         choices=zip(TIMEZONES, TIMEZONES))
-    hide_profile = forms.BooleanField(label=_(u'Hide online status'),
+    hide_profile = forms.BooleanField(label=ugettext_lazy(u'Hide online status'),
                                       required=False)
-    hide_avatars = forms.BooleanField(label=_(u'Hide avatars'),
+    hide_avatars = forms.BooleanField(label=ugettext_lazy(u'Hide avatars'),
                                       required=False)
-    hide_signatures = forms.BooleanField(label=_(u'Hide signatures'),
+    hide_signatures = forms.BooleanField(label=ugettext_lazy(u'Hide signatures'),
                                          required=False)
     autosubscribe = forms.BooleanField(required=False,
-                        label=_(u'Subscribe to a topic when replying'))
+                        label=ugettext_lazy(u'Subscribe to a topic when replying'))
     show_preview = forms.BooleanField(required=False,
-        label=_(u'Attachment preview'))
+        label=ugettext_lazy(u'Attachment preview'))
     show_thumbnails = forms.BooleanField(required=False,
-        label=_(u'Picture preview'),
-        help_text=_(u'No effect if “Attachment preview“ is disabled'))
+        label=ugettext_lazy(u'Picture preview'),
+        help_text=ugettext_lazy(u'No effect if “attachment preview“ is disabled'))
     highlight_search = forms.BooleanField(required=False,
-        label=_(u'Highlight search'))
+        label=ugettext_lazy(u'Highlight search'))
     mark_read_on_logout = forms.BooleanField(required=False,
-        label=_(u'Mark all forums as “read“ on logout'))
+        label=ugettext_lazy(u'Mark all forums as “read“ on logout'))
 
 
     def clean_notify(self):
@@ -274,35 +277,35 @@ class UserCPSettingsForm(forms.Form):
 
 class UserCPProfileForm(forms.Form):
 
-    avatar = forms.ImageField(label=_(u'Avatar'), required=False)
-    delete_avatar = forms.BooleanField(label=_(u'Remove avatar'), required=False)
-    use_gravatar = forms.BooleanField(label=_(u'Use Gravatar'), required=False)
-    email = EmailField(label=_(u'Email'), required=True)
-    jabber = JabberField(label=_(u'Jabber'), required=False)
-    icq = forms.IntegerField(label=_(u'ICQ'), required=False,
+    avatar = forms.ImageField(label=ugettext_lazy(u'Avatar'), required=False)
+    delete_avatar = forms.BooleanField(label=ugettext_lazy(u'Remove avatar'), required=False)
+    use_gravatar = forms.BooleanField(label=ugettext_lazy(u'Use Gravatar'), required=False)
+    email = EmailField(label=ugettext_lazy(u'Email'), required=True)
+    jabber = JabberField(label=ugettext_lazy(u'Jabber'), required=False)
+    icq = forms.IntegerField(label=ugettext_lazy(u'ICQ'), required=False,
                              min_value=1, max_value=1000000000)
-    msn = forms.CharField(label=_(u'MSN'), required=False)
-    aim = forms.CharField(label=_(u'AIM'), required=False, max_length=25)
-    yim = forms.CharField(label=_(u'Yahoo Messenger'), required=False,
+    msn = forms.CharField(label=ugettext_lazy(u'MSN'), required=False)
+    aim = forms.CharField(label=ugettext_lazy(u'AIM'), required=False, max_length=25)
+    yim = forms.CharField(label=ugettext_lazy(u'Yahoo Messenger'), required=False,
                          max_length=25)
-    skype = forms.CharField(label=_(u'Skype'), required=False, max_length=25)
-    wengophone = forms.CharField(label=_(u'WengoPhone'), required=False,
+    skype = forms.CharField(label=ugettext_lazy(u'Skype'), required=False, max_length=25)
+    wengophone = forms.CharField(label=ugettext_lazy(u'WengoPhone'), required=False,
                                  max_length=25)
-    sip = forms.CharField(label=_(u'SIP'), required=False, max_length=25)
+    sip = forms.CharField(label=ugettext_lazy(u'SIP'), required=False, max_length=25)
     show_email = forms.BooleanField(required=False)
     show_jabber = forms.BooleanField(required=False)
-    signature = forms.CharField(widget=forms.Textarea, label=_(u'Signature'),
+    signature = forms.CharField(widget=forms.Textarea, label=ugettext_lazy(u'Signature'),
                                required=False)
-    coordinates = forms.CharField(label=_(u'Coordinates (latitude, longitude)'),
+    coordinates = forms.CharField(label=ugettext_lazy(u'Coordinates (latitude, longitude)'),
                                   required=False)
-    location = forms.CharField(label=_(u'Location'), required=False, max_length=50)
-    occupation = forms.CharField(label=_(u'Job'), required=False, max_length=50)
-    interests = forms.CharField(label=_(u'Interests'), required=False,
+    location = forms.CharField(label=ugettext_lazy(u'Residence'), required=False, max_length=50)
+    occupation = forms.CharField(label=ugettext_lazy(u'Job'), required=False, max_length=50)
+    interests = forms.CharField(label=ugettext_lazy(u'Interests'), required=False,
                                 max_length=100)
-    website = forms.URLField(label=_(u'Website'), required=False)
-    launchpad = forms.CharField(label=_(u'Launchpad username'), required=False,
+    website = forms.URLField(label=ugettext_lazy(u'Website'), required=False)
+    launchpad = forms.CharField(label=ugettext_lazy(u'Launchpad username'), required=False,
                                 max_length=50)
-    gpgkey = forms.RegexField('^(0x)?[0-9a-f]{8}$(?i)', label=_(u'GPG key'),
+    gpgkey = forms.RegexField('^(0x)?[0-9a-f]{8}$(?i)', label=ugettext_lazy(u'GPG key'),
                  max_length=10, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -317,10 +320,7 @@ class UserCPProfileForm(forms.Form):
 
     def clean_signature(self):
         signature = self.cleaned_data.get('signature', '')
-        try:
-            validate_signature(signature)
-        except SignatureError, exc:
-            raise forms.ValidationError(exc.message)
+        validate_signature(signature)
         return signature
 
     def clean_coordinates(self):
@@ -358,7 +358,7 @@ class UserCPProfileForm(forms.Form):
 
     def clean_avatar(self):
         """
-        Keep the user form setting avatar to a too big size.
+        Keep the user from setting an avatar to a too big size.
         """
         data = self.cleaned_data
         if data['avatar'] is None:
@@ -392,14 +392,14 @@ class UserCPProfileForm(forms.Form):
         openid = self.cleaned_data['openid']
         if UserData.objects.filter(key='openid', value=openid)\
                            .exclude(user=self.user).count():
-            raise forms.ValidationError(_(u'This openID is already in use.'))
+            raise forms.ValidationError(_(u'This OpenID is already in use.'))
         return openid
 
 
 
 class EditUserProfileForm(UserCPProfileForm):
-    username = forms.CharField(label=_(u'Username'), max_length=30)
-    member_title = forms.CharField(label=_(u'Title'), required=False)
+    username = forms.CharField(label=ugettext_lazy(u'Username'), max_length=30)
+    member_title = forms.CharField(label=ugettext_lazy(u'Title'), required=False)
 
     def clean_username(self):
         """
@@ -413,28 +413,27 @@ class EditUserProfileForm(UserCPProfileForm):
                 _(u'Your username contains invalid characters. Only '
                   u'alphanumeric chars and “-” and “ “ are allowed.')
             )
-        if (self.user.username != username and
-            User.objects.filter(username=username).exists()):
-                raise forms.ValidationError(
-                    _(u'A user with this name does already exist.')
-                )
+        exists = User.objects.filter(username=username).exists()
+        if (self.user.username != username and exists):
+            raise forms.ValidationError(
+                _(u'A user with this name already exists.'))
         return username
 
 
 class EditUserGroupsForm(forms.Form):
-    primary_group = forms.CharField(label=_(u'Primary group'), required=False,
-        help_text=_(u'Will be used for displaying the team icon'))
+    primary_group = forms.CharField(label=ugettext_lazy(u'Primary group'), required=False,
+        help_text=ugettext_lazy(u'Will be used to display the team icon'))
 
 
 class CreateUserForm(forms.Form):
-    username = forms.CharField(label=_(u'Username'), max_length=30)
-    password = forms.CharField(label=_(u'Password'),
+    username = forms.CharField(label=ugettext_lazy(u'Username'), max_length=30)
+    password = forms.CharField(label=ugettext_lazy(u'Password'),
         widget=forms.PasswordInput(render_value=False))
-    confirm_password = forms.CharField(label=_(u'Confirm password'),
+    confirm_password = forms.CharField(label=ugettext_lazy(u'Confirm password'),
         widget=forms.PasswordInput(render_value=False))
-    email = EmailField(label=_(u'Email'))
-    authenticate = forms.BooleanField(label=_(u'Authenticate'), initial=True,
-        required=False, help_text=(_(u'The user will be send a confirmation '
+    email = EmailField(label=ugettext_lazy(u'Email'))
+    authenticate = forms.BooleanField(label=ugettext_lazy(u'Authenticate'), initial=True,
+        required=False, help_text=(ugettext_lazy(u'The user will be send a confirmation '
             u'mail and set to “inactive“.')))
 
     def clean_username(self):
@@ -451,8 +450,7 @@ class CreateUserForm(forms.Form):
             )
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError(
-                u'Der Benutzername ist leider schon vergeben. '
-                u'Bitte wähle einen anderen.')
+                _(u'The username is already in use. Please choose another one.'))
         return username
 
     def clean_confirm_password(self):
@@ -485,16 +483,16 @@ class CreateUserForm(forms.Form):
 
 
 class EditUserStatusForm(forms.Form):
-    status = forms.ChoiceField(label=_(u'Activation status'), required=False,
-                                   choices=enumerate([
-                                       _(u'not yet activated'),
-                                       _(u'active'),
-                                       _(u'banned'),
-                                       _(u'deleted himself'),
-                                   ]))
-    banned_until = forms.DateTimeField(label=_(u'Banned until'), required=False,
+    status = forms.ChoiceField(label=ugettext_lazy(u'Activation status'),
+                               required=False,
+                               choices=enumerate([
+                                   ugettext_lazy(u'not yet activated'),
+                                   ugettext_lazy(u'active'),
+                                   ugettext_lazy(u'banned'),
+                                   ugettext_lazy(u'deleted himself')]))
+    banned_until = forms.DateTimeField(label=ugettext_lazy(u'Banned until'), required=False,
         widget=DateTimeWidget,
-        help_text=_(u'leave empty to ban permanent'),
+        help_text=ugettext_lazy(u'leave empty to ban permanent'),
         localize=True)
 
     def clean_banned_until(self):
@@ -517,7 +515,7 @@ class EditUserStatusForm(forms.Form):
 
 
 class EditUserPasswordForm(forms.Form):
-    new_password = forms.CharField(label=_(u'New password'),
+    new_password = forms.CharField(label=ugettext_lazy(u'New password'),
         required=False, widget=forms.PasswordInput(render_value=False))
     confirm_password = forms.CharField(label=_('Confirm new password'),
         required=False, widget=forms.PasswordInput(render_value=False))
@@ -540,29 +538,29 @@ class EditUserPasswordForm(forms.Form):
 
 
 class EditUserPrivilegesForm(forms.Form):
-    permissions = forms.MultipleChoiceField(label=u'Privilegien',
+    permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
                                             required=False)
 
 
 class UserMailForm(forms.Form):
-    text = forms.CharField(label=u'Text',
+    text = forms.CharField(label=ugettext_lazy(u'Text'),
         widget=forms.Textarea(),
-        help_text=_(u'The message will be send as “plain text“. Your username '
+        help_text=ugettext_lazy(u'The message will be send as “plain text“. Your username '
                     u'will be noted as sender.')
     )
 
 
 class EditGroupForm(forms.Form):
-    name = forms.CharField(label=_(u'Group name'), max_length=80)
-    is_public = forms.BooleanField(label=_(u'Public'), required=False)
-    permissions = forms.MultipleChoiceField(label=_(u'Privileges'),
+    name = forms.CharField(label=ugettext_lazy(u'Group name'), max_length=80)
+    is_public = forms.BooleanField(label=ugettext_lazy(u'Public'), required=False)
+    permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'permission'}),
         required=False)
-    forum_privileges = forms.MultipleChoiceField(label=_(u'Forum privileges'),
+    forum_privileges = forms.MultipleChoiceField(label=ugettext_lazy(u'Forum privileges'),
                                                  required=False)
-    icon = forms.ImageField(label=_(u'Team icon'), required=False)
-    delete_icon = forms.BooleanField(label=_(u'Delete team icon'), required=False)
-    import_icon_from_global = forms.BooleanField(label=_(u'Use global team icon'),
+    icon = forms.ImageField(label=ugettext_lazy(u'Team icon'), required=False)
+    delete_icon = forms.BooleanField(label=ugettext_lazy(u'Delete team icon'), required=False)
+    import_icon_from_global = forms.BooleanField(label=ugettext_lazy(u'Use global team icon'),
         required=False)
 
 
@@ -577,24 +575,24 @@ class CreateGroupForm(EditGroupForm):
                 name = normalize_username(data['name'])
             except ValueError:
                 raise forms.ValidationError(_(
-                    u'The groupname contains invalid chars'))
+                    u'The group name contains invalid chars'))
             if Group.objects.filter(name=name).exists():
                 raise forms.ValidationError(_(
-                    u'The groupname is not available. Please choose another one.'))
+                    u'The group name is not available. Please choose another one.'))
             return name
         else:
-            raise forms.ValidationError(_(u'You need to enter a groupname'))
+            raise forms.ValidationError(_(u'You need to enter a group name'))
 
 
 class PrivateMessageForm(forms.Form):
     """Form for writing a new private message"""
-    recipient = forms.CharField(label=_(u'To'), required=False,
-        help_text=_(u'Separate multiple names by semicolon'))
-    group_recipient = forms.CharField(label=_(u'Groups'), required=False,
-        help_text=_(u'Separate multiple groups by semicolon'))
-    subject = forms.CharField(label=_(u'Subject'),
+    recipient = forms.CharField(label=ugettext_lazy(u'To'), required=False,
+        help_text=ugettext_lazy(u'Separate multiple names by semicolon'))
+    group_recipient = forms.CharField(label=ugettext_lazy(u'Groups'), required=False,
+        help_text=ugettext_lazy(u'Separate multiple groups by semicolon'))
+    subject = forms.CharField(label=ugettext_lazy(u'Subject'),
                               widget=forms.TextInput(attrs={'size': 50}))
-    text = forms.CharField(label=_(u'Message'), widget=forms.Textarea)
+    text = forms.CharField(label=ugettext_lazy(u'Message'), widget=forms.Textarea)
 
     def clean(self):
         d = self.cleaned_data
@@ -623,12 +621,12 @@ class PrivateMessageIndexForm(forms.Form):
 
 
 class UserErrorReportForm(forms.Form):
-    title = forms.CharField(label=_(u'Short description'), max_length=50,
+    title = forms.CharField(label=ugettext_lazy(u'Short description'), max_length=50,
                             widget=forms.TextInput(attrs={'size':50}))
-    text = forms.CharField(label=_(u'Long description'),
+    text = forms.CharField(label=ugettext_lazy(u'Long description'),
                            widget=forms.Textarea(attrs={'rows': 3}))
     url = forms.URLField(widget=forms.HiddenInput, required=False,
-                         label=_(u'URL of the site the ticket refers to'))
+                         label=ugettext_lazy(u'URL of the site the ticket refers to'))
 
     def clean_url(self):
         data = self.cleaned_data
@@ -653,13 +651,13 @@ class FeedSelectorForm(forms.Form):
     count = forms.IntegerField(initial=10,
                 widget=forms.TextInput(attrs={'size': 2, 'maxlength': 3,
                                               'class': 'feed_count'}),
-                label=_(u'Number of entrys in the feed'),
-                help_text=_(u'The number will be round off to keep the server '
+                label=ugettext_lazy(u'Number of entries in the feed'),
+                help_text=ugettext_lazy(u'The number will be round off to keep the server '
                             u'load low.'))
     mode = forms.ChoiceField(initial='short',
-        choices=(('full',  _(u'Full article')),
-                 ('short', _(u'Only introduction')),
-                 ('title', _(u'Only title'))),
+        choices=(('full',  ugettext_lazy(u'Full article')),
+                 ('short', ugettext_lazy(u'Only introduction')),
+                 ('title', ugettext_lazy(u'Only title'))),
         widget=forms.RadioSelect(attrs={'class':'radioul'}))
 
     def clean(self):
@@ -681,7 +679,7 @@ class ForumFeedSelectorForm(FeedSelectorForm):
 
 
 class IkhayaFeedSelectorForm(FeedSelectorForm):
-    category = forms.ChoiceField(label=_(u'Category'))
+    category = forms.ChoiceField(label=ugettext_lazy(u'Category'))
 
 
 class PlanetFeedSelectorForm(FeedSelectorForm):
@@ -692,7 +690,7 @@ class WikiFeedSelectorForm(FeedSelectorForm):
     #: `mode` is never used but needs to be overwritten because of that.
     mode = forms.ChoiceField(required=False)
     page = forms.CharField(label=_('Page name'), required=False,
-                           help_text=(_(u'If not given, the last changes will '
+                           help_text=(ugettext_lazy(u'If not given, the last changes will '
                                         u'be displayed.')))
 
 
@@ -719,41 +717,50 @@ class EditFileForm(forms.ModelForm):
 
 
 class ConfigurationForm(forms.Form):
-    global_message = forms.CharField(label=_(u'Global Message'),
+    global_message = forms.CharField(label=ugettext_lazy(u'Global Message'),
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
-        help_text = _(u'This message will displayed on every page in the '
+        help_text = ugettext_lazy(u'This message will displayed on every page in the '
                       u'header. To disable it, leave the field empty. '
                       u'Needs to be valid XHTML.'))
-    blocked_hosts = forms.CharField(label=_(u'Blocked hosts for email addresses'),
+    blocked_hosts = forms.CharField(label=ugettext_lazy(u'Blocked hosts for email addresses'),
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
-        help_text = _(u'Users cannot use email addresses from these hosts to '
+        help_text = ugettext_lazy(u'Users cannot use email addresses from these hosts to '
                       u'register an account.'))
-    team_icon = forms.ImageField(label=_(u'Global teamicon'), required=False,
-        help_text=_(u'Please note the details on the maximum size below.'))
+    team_icon = forms.ImageField(label=ugettext_lazy(u'Global team icon'), required=False,
+        help_text=ugettext_lazy(u'Please note the details on the maximum size below.'))
     max_avatar_width = forms.IntegerField(min_value=1)
     max_avatar_height = forms.IntegerField(min_value=1)
     max_avatar_size = forms.IntegerField(min_value=0)
     max_signature_length = forms.IntegerField(min_value=1,
-        label=_(u'Maximum signature length'))
+        label=ugettext_lazy(u'Maximum signature length'))
     max_signature_lines = forms.IntegerField(min_value=1,
-        label=_(u'Maximum number of lines in signature'))
+        label=ugettext_lazy(u'Maximum number of lines in signature'))
     get_ubuntu_link = forms.URLField(required=False,
-        label=u'Der Downloadlink für die Startseite')
-    get_ubuntu_description = forms.CharField(label=u'Beschreibung des Links')
+        label=ugettext_lazy(u'The download link for the start page'))
+    get_ubuntu_description = forms.CharField(label=ugettext_lazy(u'Description of the link'))
     wiki_newpage_template = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}),
-        label=_(u'Default text of new wikipages'))
+        label=ugettext_lazy(u'Default text of new wiki pages'))
     wiki_newpage_root = forms.CharField(required=False,
-        label=_(u'Location of new wikipages'))
+        label=ugettext_lazy(u'Location of new wiki pages'))
     wiki_newpage_infopage = forms.CharField(required=False,
-        label=_(u'Information page about new wikipages'),
-        help_text=_(u'Information page to which a “create“ link should '
+        label=ugettext_lazy(u'Information page about new wiki pages'),
+        help_text=ugettext_lazy(u'Information page to which a “create“ link should '
                     u'redirect to.'))
     team_icon_width = forms.IntegerField(min_value=1, required=False)
     team_icon_height = forms.IntegerField(min_value=1, required=False)
-    license_note = forms.CharField(required=False, label=_(u'License note'),
+    license_note = forms.CharField(required=False, label=ugettext_lazy(u'License note'),
                                    widget=forms.Textarea(attrs={'rows': 2}))
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
+
+    ikhaya_description = forms.CharField(required=False,
+        widget=forms.Textarea(attrs={'rows': 3}),
+        label=ugettext_lazy(u'Description about Ikhaya that will be used '
+                            u'on the start page and in the feed aggregations.'))
+    planet_description = forms.CharField(required=False,
+        widget=forms.Textarea(attrs={'rows': 3}),
+        label=ugettext_lazy(u'Description about the planet that will be used '
+                            u'in the feed aggregations.'))
 
     def clean_global_message(self):
         return cleanup_html(self.cleaned_data.get('global_message', ''))
@@ -770,9 +777,8 @@ class ConfigurationForm(forms.Form):
         return data[key]
 
 
-
 class EditStyleForm(forms.Form):
-    styles = forms.CharField(label=_(u'Styles'), widget=forms.Textarea(
+    styles = forms.CharField(label=ugettext_lazy(u'Styles'), widget=forms.Textarea(
                              attrs={'rows': 20}), required=False)
 
 

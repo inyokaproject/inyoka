@@ -4,11 +4,11 @@
  *
  * Some global style definitions.
  *
- * :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+ * :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
  * :license: GNU GPL, see LICENSE for more details.
  */
 
-/** sprite: header; sprite-image: url('../img/header-sprite.png'); sprite-layout: horizontal; sprite-ie6-mode: none; sprite-image-uid: md5 */
+/** sprite: header; sprite-image: url('../img/header-sprite.png'); sprite-layout: vertical; sprite-ie6-mode: none; sprite-image-uid: md5 */
 @import 'layout.less';
 
 * {
@@ -25,6 +25,16 @@ body {
 
 html, body {
   background-color: @main_background;
+}
+
+#donation {
+  background-image: url(../img/donation.png);
+  height: 129px;
+  left: 220px;
+  position: absolute;
+  top: 20px;
+  width: 193px;
+  z-index: 999;
 }
 
 div.wrap {
@@ -355,8 +365,11 @@ table tr.head th,table thead th {
 table tbody th,table tbody td {
   border-color: #ccc;
   border-style: solid;
-  border-width: 1px 0 1px 0;
+  border-width: 1px 0;
   vertical-align: middle;
+}
+.preview table td {
+    border-width: 1px;
 }
 .feed_icon {
   float: right;
@@ -463,7 +476,7 @@ table.syntaxtable {
       margin: 15px 0 0 15px;
       padding: 0;
       text-decoration: none;
-      background-image: url(../img/logo.png); /** sprite-ref: header; sprite-margin-right: 5px; */
+      background-image: url(../img/logo.png);
     }
     span {
       display: none;
@@ -476,69 +489,99 @@ table.syntaxtable {
   right: 10px;
   top:5px;
   float:right;
+
   li {
     list-style: none;
     float: left;
     padding: 4px 0 6px 0;
-    background-position: center bottom;
     background-repeat: no-repeat;
+
     a {
       display: block;
       color: #673B1A !important;
       font-weight: bold;
       text-decoration: none !important;
-      padding-bottom: 28px;
-      width: 80px;
       background-repeat: no-repeat;
-      background-position: top center;
-      text-align: center;
+      height: 64px;
+      padding: 3px 5px 0;
+
+      span {
+        display: block;
+        height: 24px;
+        width: 24px;
+        margin: 0 auto;
+      }
+    }
+
+    div {
+      float: left;
+      height: 59px;
+      min-width: 12px;
     }
   }
+
   li:hover {
-    background-image: url(../img/tabbar_border_hover.png); /** sprite-ref: header; sprite-alignment: bottom; */
     opacity: 0.8;
+
+    .tab_left {
+      background-image: url(../img/tabbar_left_hover.png); /** sprite-ref: header; */
+    }
+
+    .tab_center {
+      background-image: url(../img/tabbar_center_hover.png); /** sprite-ref: header; sprite-alignment: repeat; */
+      background-repeat: repeat-x;
+    }
+
+    .tab_right {
+      background-image: url(../img/tabbar_right_hover.png); /** sprite-ref: header; */
+    }
+
     a {
       color: black !important;
     }
   }
-  li.portal {
-    a {
-      background-image: url(../img/icons/portal.png) !important; /** sprite-ref: header; */
-    }
+
+  li.portal a span {
+    background-image: url(../img/icons/portal.png) !important; /** sprite-ref: header; */
   }
-  li.forum {
-    a {
+
+  li.forum a span {
       background-image: url(../img/icons/forum.png) !important; /** sprite-ref: header; */
-    }
   }
-  li.wiki {
-    a {
+
+  li.wiki a span {
       background-image: url(../img/icons/wiki.png) !important; /** sprite-ref: header; */
-    }
   }
-  li.ikhaya {
-    a {
+
+  li.ikhaya a span {
       background-image: url(../img/icons/ikhaya.png) !important; /** sprite-ref: header; */
-    }
   }
-  li.planet {
-    a {
+
+  li.planet a span {
       background-image: url(../img/icons/planet.png) !important; /** sprite-ref: header; */
-    }
   }
-  li.community {
-    a {
+
+  li.community a span {
       background-image: url(../img/icons/community.png) !important; /** sprite-ref: header; */
-    }
   }
+
   li.active {
-    background-image: url(../img/tabbar_border.png); /** sprite-ref: header; sprite-alignment: bottom; */
+    .tab_left {
+      background-image: url(../img/tabbar_left.png); /** sprite-ref: header; */
+    }
+
+    .tab_center {
+      background-image: url(../img/tabbar_center.png); /** sprite-ref: header; sprite-alignment: repeat; */
+      background-repeat: repeat-x;
+    }
+
+    .tab_right {
+      background-image: url(../img/tabbar_right.png); /** sprite-ref: header; */
+    }
+
     a {
       color: black !important;
     }
-  }
-  li.active:hover {
-    background-image: url(../img/tabbar_border.png); /** sprite-ref: header; sprite-alignment: bottom; */
   }
 }
 .page_content {

@@ -1,10 +1,10 @@
 #-*- coding: utf-8 -*-
 import time
 from datetime import datetime
-from inyoka.testing import SearchTestCase
 from pyes.exceptions import ElasticSearchException
 from inyoka.forum.models import Forum, Topic, Post
 from inyoka.portal.user import User
+from inyoka.utils.test import SearchTestCase
 
 
 class ForumSearchTest(SearchTestCase):

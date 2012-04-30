@@ -6,6 +6,7 @@
     This script is used by fabric for easy deployment.
 
     :copyright: Copyright 2008-2011 by Florian Apolloner.
+    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 import os

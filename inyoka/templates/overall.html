@@ -6,7 +6,7 @@
 
     It contains the design elements that are displayed on all pages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 -#}
 {% from 'macros.html' import breadcrumb, render_modnavi_li %}
@@ -89,16 +89,24 @@
     {%- endblock %}
   </head>
   <body>
-   <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">
+    <a href="{{ href('portal', 'ikhaya', '3087') }}" id="donation"></a>
+    <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">
     <div class="header">
       <h1><a href="/"><span>{{ SETTINGS.BASE_DOMAIN_NAME }}</span></a></h1>
       <ul class="tabbar">
         {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
-        <li class="{{ app }}{% if app == active_app %} active{% endif
-          %}"><a href="{{ href(app) }}">{{ app|capitalize }}</a></li>
+          <li class="{{ app }}{% if app == active_app %} active{% endif %}">
+            <div class="tab_left"></div>
+            <div class="tab_center"><a href="{{ href(app) }}">{{ app|capitalize }}<span></span></a></div>
+            <div class="tab_right"></div>
+          </li>
         {%- endfor %}
         {# TODO: uu specific #}
-        <li class="community"><a href="{{ href('wiki','Mitmachen') }}">Helfen</a></li>
+        <li class="community">
+          <div class="tab_left"></div>
+          <div class="tab_center"><a href="{{ href('wiki','Mitmachen') }}">Mitmachen<span></span></a></div>
+          <div class="tab_right"></div>
+        </li>
       </ul>{# .tabbar #}
     </div>{# .header #}
 
@@ -109,36 +117,36 @@
             {%- if USER.is_authenticated %}
               <li>
                 <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
-                  {% trans user=USER.username|e %}Logout [{{ user }}]{% endtrans %}
+                  {%- trans user=USER.username|e %}Logout [{{ user }}]{% endtrans -%}
                 </a>
               </li>
               <li>
                 <a href="{{ href('portal', 'usercp') }}">
-                  {% trans %}Controlpanel{% endtrans %}
+                  {%- trans %}Control panel{% endtrans -%}
                 </a>
               </li>
               <li>
                 {%- if pm_count -%}
                   <strong>
                     <a href="{{ href('portal', 'privmsg')}}">
-                      {% trans count=pm_count %}Private messages ({{ count }}){% endtrans %}
+                      {%- trans count=pm_count %}Private messages ({{ count }}){% endtrans -%}
                     </a>
                   </strong>
                 {%- else -%}
                   <a href="{{ href('portal', 'privmsg') }}">
-                    {% trans %}Private messages{% endtrans %}
+                    {%- trans %}Private messages{% endtrans -%}
                   </a>
                 {%- endif -%}
               </li>
             {%- else %}
               <li>
                 <a href="{{ href('portal', 'login', next=CURRENT_URL) }}" id="login_link">
-                  {% trans %}Login{% endtrans %}
+                  {%- trans %}Login{% endtrans -%}
                 </a>
               </li>
               <li>
                 <a href="{{ href('portal', 'register') }}">
-                  {% trans %}Register{% endtrans %}
+                  {%- trans %}Register{% endtrans -%}
                 </a>
               </li>
             {%- endif %}
@@ -147,12 +155,12 @@
         {%- if USER.can('manage_topics') or USER.can('article_edit') or USER.can('event_edit') %}
           <div id="admin_menu">
             <div class="bar">
-              <a id="admin_layer_button">
-                <img src="{{ href('static', '/img/admin/switch.png') }}"
-                     alt="{% trans %}Admin{% endtrans %}"
-                     title="{% trans %}Turn adminlinks on/off{% endtrans %}" />
-                <span class="description"></span>
-              </a>
+              <a id="admin_layer_button">{#
+                #}<img src="{{ href('static', 'img/admin/switch.png') }}"
+                       alt="{% trans %}Admin{% endtrans %}"
+                       title="{% trans %}Turn admin links on/off{% endtrans %}" />{#
+                #}<span class="description"></span>{#
+              #}</a>
             </div>
             <div class="bar">
               {%- if USER.can('manage_topics') %}
@@ -224,6 +232,9 @@
           {{ message.text }}
         </div>
       {%- endfor %}
+      <!--[if lt IE 8]>
+      <div class="message fail">{{ _('Please install at least Internet Explorer 8.') }}</div>
+      <![endif]-->
 
       <div class="page_content">
         {% set tabbar = navi_type in ['tabbar', 'both'] %}
@@ -256,16 +267,19 @@
             {%- endtrans %}
           {% endif %}
           <br />
-          {%- if INYOKA_REVISION %}
-            Inyoka {{ INYOKA_REVISION }}
-          {%- else %}
+          {%- if INYOKA_REVISION -%}
+          Inyoka {{ INYOKA_REVISION['tag'] }}
+            {%- if SETTINGS.DEBUG -%}
+              -{{ INYOKA_REVISION['commit'] }}
+            {%- endif -%}
+          {%- else -%}
             Inyoka revision unavailable
-          {%- endif %}
+          {%- endif -%}
         </li>
         <li class="license">
           <a href="?flavour=mobile" class="flavour_switch" >{% trans %}To mobile version{% endtrans %}</a><br />
           <img src="{{ href('static', 'img/copyleft.png') }}" alt="Copyleft" />
-          2004 – 2011 ubuntuusers.de • Einige Rechte vorbehalten<br />
+          2004 – 2012 ubuntuusers.de • Einige Rechte vorbehalten<br />
           <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/de/deed.de" rel="license">CC</a> •
           <a href="{{ href('portal', 'lizenz') }}" rel="cc:morePermissions">Lizenz</a> •
           <a href="{{ href('portal', 'kontakt') }}">Kontakt</a> •

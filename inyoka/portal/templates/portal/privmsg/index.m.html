@@ -4,7 +4,7 @@
 
     Display a list of private messages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {% extends 'portal/overall.m.html' %}
@@ -12,26 +12,26 @@
 
 {% block content %}
   {%- if not folder %}
-    <a href="{{ href('portal', 'privmsg', 'inbox') }}"{{ selected == 'inbox' and ' class="active"' or '' }}>
-      <div class="button">{% trans %}Inbox{% endtrans %}</div>
-    </a>
-    <a href="{{ href('portal', 'privmsg', 'sent') }}"{{ selected == 'sent' and ' class="active"' or '' }}>
-      <div class="button">{% trans %}Sent mail{% endtrans %}</div>
-    </a>
-    <a href="{{ href('portal', 'privmsg', 'archive') }}"{{ selected == 'archive' and ' class="active"' or '' }}>
-      <div class="button">{% trans %}Archive{% endtrans %}</div>
-    </a>
-    <a href="{{ href('portal', 'privmsg', 'trash') }}"{{ selected == 'trash' and ' class="active"' or '' }}>
-      <div class="button">{% trans %}Trash{% endtrans %}</div>
-    </a>
-    <a href="{{ href('portal', 'privmsg', 'new') }}"{{ selected == 'new' and ' class="active"' or '' }}>
-      <div class="button">{% trans %}Compose message{% endtrans %}</div>
-    </a>
+    <a href="{{ href('portal', 'privmsg', 'inbox') }}"{{ selected == 'inbox' and ' class="active"' or '' }}>{#
+      #}<div class="button">{% trans %}Inbox{% endtrans %}</div>{#
+    #}</a>
+    <a href="{{ href('portal', 'privmsg', 'sent') }}"{{ selected == 'sent' and ' class="active"' or '' }}>{#
+      #}<div class="button">{% trans %}Sent mail{% endtrans %}</div>{#
+    #}</a>
+    <a href="{{ href('portal', 'privmsg', 'archive') }}"{{ selected == 'archive' and ' class="active"' or '' }}>{#
+      #}<div class="button">{% trans %}Archive{% endtrans %}</div>{#
+    #}</a>
+    <a href="{{ href('portal', 'privmsg', 'trash') }}"{{ selected == 'trash' and ' class="active"' or '' }}>{#
+      #}<div class="button">{% trans %}Trash{% endtrans %}</div>{#
+    #}</a>
+    <a href="{{ href('portal', 'privmsg', 'new') }}"{{ selected == 'new' and ' class="active"' or '' }}>{#
+      #}<div class="button">{% trans %}Compose message{% endtrans %}</div>{#
+    #}</a>
   {%- else %}
     {%- if message %}
-      <a href="{{ href('portal', 'privmsg', folder.id ) }}">
-        <div class="button">{% trans %}« Back{% endtrans %}</div>
-      </a>
+      <a href="{{ href('portal', 'privmsg', folder.id ) }}">{#
+        #}<div class="button">{% trans %}« Back{% endtrans %}</div>{#
+      #}</a>
       <h3>{% trans name=message.author|e %}Message from {{ name }}{% endtrans %}</h3>
       <div class="meta">
         {{ message.pub_date|datetimeformat }} |
@@ -57,17 +57,17 @@
         <a href="?action=delete"><span>{% trans %}Delete{% endtrans %}</span></a>
       </section>
     {%- else %}
-      <a href="{{ href('portal', 'privmsg') }}">
-        <div class="button">{% trans %}« Messages{% endtrans %}</div>
-      </a>
+      <a href="{{ href('portal', 'privmsg') }}">{#
+        #}<div class="button">{% trans %}« Messages{% endtrans %}</div>{#
+      #}</a>
       {% for entry in entries %}
-        <a href="{{ entry|url }}">
-          <div class="button{{ ' unread' if not entry.read }}">
+        <a href="{{ entry|url }}">{#
+          #}<div class="button{{ ' unread' if not entry.read }}">
             {%- trans subject=entry.message.subject|e, author=entry.message.author|e -%}
               {{ subject }} from {{ author }}
             {%- endtrans -%}
-          </div>
-        </a>
+          </div>{#
+        #}</a>
       {% endfor %}
     {%- endif %}
   {%- endif %}

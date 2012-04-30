@@ -1,10 +1,19 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+"""
+    inyoka.wiki.search
+    ~~~~~~~~~~~~~~~~~~
+
+    Search interfaces for the wiki.
+
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
 from pyes import TermsFilter, NotFilter, ANDFilter, FieldQuery, FieldParameter
-from inyoka.utils.search import search, Index, DocumentType
 from inyoka.wiki.acl import get_all_pages_without_privilege, PRIV_READ
 from inyoka.wiki.models import Page
 from inyoka.portal.user import User
 from inyoka.utils.urls import url_for
+from inyoka.utils.search import search, Index, DocumentType
 
 
 class PageDocumentType(DocumentType):

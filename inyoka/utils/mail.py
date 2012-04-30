@@ -5,11 +5,10 @@
 
     This module provides various e-mail related functionality.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-import threading
 from subprocess import Popen, PIPE
 from django.conf import settings
 from django.core.mail import send_mail as django_send_mail
@@ -62,7 +61,6 @@ def is_blocked_host(email_or_host):
 class SendmailEmailBackend(BaseEmailBackend):
     def __init__(self, fail_silently=False, **kwargs):
         super(SendmailEmailBackend, self).__init__(fail_silently=fail_silently)
-        self._lock = threading.RLock()
 
     def open(self):
         return True
@@ -77,15 +75,11 @@ class SendmailEmailBackend(BaseEmailBackend):
         """
         if not email_messages:
             return
-        self._lock.acquire()
-        try:
-            num_sent = 0
-            for message in email_messages:
-                sent = self._send(message)
-                if sent:
-                    num_sent += 1
-        finally:
-            self._lock.release()
+        num_sent = 0
+        for message in email_messages:
+            sent = self._send(message)
+            if sent:
+                num_sent += 1
         return num_sent
 
     def _send(self, email_message):
@@ -93,7 +87,7 @@ class SendmailEmailBackend(BaseEmailBackend):
         if not email_message.recipients():
             return False
         try:
-            proc = Popen(['/usr/sbin/sendmail', '-t'], stdin=PIPE)
+            proc = Popen(['/usr/sbin/sendmail', '-f', settings.INYOKA_SYSTEM_USER_EMAIL, '-t'], stdin=PIPE)
             proc.stdin.write(email_message.message().as_string())
             proc.stdin.flush()
             proc.stdin.close()

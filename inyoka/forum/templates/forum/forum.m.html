@@ -4,7 +4,7 @@
 
     This template shows a forum with all subforums and topics inside.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'forum/page.m.html' %}
@@ -26,8 +26,8 @@
   <div class="topics">
     <h3>{% trans %}Topics{% endtrans %}</h3>
     {%- for topic in topics if (topic.first_post and topic.last_post) %}
-      <a href="{{ topic|url }}">
-        <div class="button
+      <a href="{{ topic|url }}">{#
+        #}<div class="button
             {% if not topic.get_read_status(USER) %} unread{% endif %}
             {% if topic.solved %} solved{% endif %}
             {% if topic.hidden %} hidden{% endif %}
@@ -35,10 +35,10 @@
             {% if topic.sticky %} sticky{% endif %}
             {% if topic.has_poll %} poll{% endif %}
             {% if topic.locked %} locked{% endif %}">
-          {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
-          {{ topic.title|e }}
-        </div>
-      </a>
+        {%- if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif -%}
+          {{ topic.title|e -}}
+        </div>{#
+      #}</a>
     {%- endfor %}
   </div>
   {{ pagination.generate() }}

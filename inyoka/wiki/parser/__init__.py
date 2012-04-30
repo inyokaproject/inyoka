@@ -129,12 +129,14 @@
     are expanded at parse time can return `nodes.MetaData` metadata.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
 from functools import partial
 from urlparse import urlsplit
+
+from django.utils.translation import ugettext as _
 
 from inyoka.utils.css import filter_style
 from inyoka.utils.urls import href
@@ -192,9 +194,8 @@ def parse(markup, wiki_force_existing=False, catch_stack_errors=True,
         if not catch_stack_errors:
             raise
         return nodes.Paragraph([
-            nodes.Strong([nodes.Text('Interner Parserfehler: ')]),
-            nodes.Text(u'Der Parser konnte den Text nicht verarbeiten, weil '
-                       u'zu tief verschachtelte Elemente gefunden wurden.')
+            nodes.Strong([nodes.Text(_(u'Internal error: '))]),
+            nodes.Text(_(u'The parser found too deeply nested elements.'))
         ])
 
 
@@ -210,32 +211,6 @@ def stream(instructions, context=None, format=None):
     if context is None:
         context = RenderContext()
     return Renderer(instructions).stream(context, format)
-
-
-def validate_signature(signature):
-    """Parse a signature and check if it's valid."""
-    def _walk(node):
-        if node.is_container:
-            for n in node.children:
-                _walk(n)
-        if not node.allowed_in_signatures:
-            raise SignatureError(u'Deine Signatur enthält '
-                                 u'unerlaubte Syntax-Elemente.')
-        return node
-    try:
-        text = _walk(parse(signature, True, False)).text.strip()
-    except StackExhaused:
-        raise SignatureError(u'Deine Signatur enthält zu viele ver'
-                             u'schachtelte Elemente.')
-    sig_len = int(storage.get('max_signature_length', -1))
-    sig_lines = int(storage.get('max_signature_lines', -1))
-    if sig_len >= 0 and len(text) > sig_len:
-        raise SignatureError(u'Deine Signatur ist mit %d Zeichen um '
-                             u'%d Zeichen zu lang' % (len(text),
-                             len(text) - sig_len))
-    if sig_lines >= 0 and len(text.splitlines()) > sig_lines:
-        raise SignatureError(u'Deine Signatur darf maximal aus %d '
-                             u'Zeilen bestehen' % sig_lines)
 
 
 def _parse_align_args(args, kwargs):
@@ -286,14 +261,6 @@ class StackExhaused(ValueError):
     Raised if the parser recognizes nested structures that would hit the
     stack limit.
     """
-
-
-class SignatureError(ValueError):
-    """Represents a signature error."""
-
-    def __init__(self, message):
-        ValueError.__init__(self, message.encode('utf-8'))
-        self.message = message
 
 
 class Parser(object):
@@ -858,9 +825,9 @@ class Parser(object):
         stream.next()
         macro = get_macro(name, args, kwargs)
         if macro is None:
-            return nodes.error_box('Fehlendes Makro',
-                                   u'Das Makro „%s“ konnte nicht '
-                                   u'gefunden werden.' % name)
+            return nodes.error_box(
+                _(u'Missing macro'),
+                _(u'The macro “%(name)s” does not exist.') % {'name': name})
         elif macro.is_tree_processor:
             placeholder = nodes.DeferredNode(macro)
             self.deferred_macros[macro.stage].append((placeholder, macro))

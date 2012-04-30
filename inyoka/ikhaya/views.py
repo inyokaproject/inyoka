@@ -5,7 +5,7 @@
 
     Views for Ikhaya.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import pytz
@@ -13,9 +13,9 @@ from datetime import datetime, date, time as dt_time
 
 from django.conf import settings
 from django.core.cache import cache
+from django.utils.dates import MONTHS
 from django.utils.http import urlencode
 from django.utils.text import truncate_html_words
-from django.utils.translation import ungettext
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
@@ -27,8 +27,9 @@ from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.flashing import flash
 from inyoka.utils.pagination import Pagination
 from inyoka.utils import generic
-from inyoka.utils.dates import MONTHS, get_user_timezone, date_time_to_datetime
+from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
 from inyoka.utils.sortable import Sortable
+from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.notification import send_notification
 from inyoka.utils.html import escape
@@ -44,12 +45,6 @@ from inyoka.ikhaya.models import Event, Category, Article, Suggestion, \
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.ikhaya.notifications import send_comment_notifications, \
     send_new_suggestion_notifications
-
-
-#TODO: move to settings or provide a form in the interface.
-IKHAYA_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
-    u'Community. Hier werden Nachrichten und Berichte rund um Ubuntu, Linux' \
-    u' und OpenSource-Software veröffentlicht.'
 
 
 def context_modifier(request, context):
@@ -81,8 +76,9 @@ def context_modifier(request, context):
         cache.set('ikhaya/categories', categories)
 
     context.update(
-        MONTHS=dict(enumerate([''] + MONTHS)),
+        MONTHS=MONTHS,
         categories=categories,
+        ikhaya_description=storage['ikhaya_description'],
         **data
     )
 
@@ -205,7 +201,6 @@ def detail(request, year, month, day, slug):
     }
 
 
-#TODO: is this view used ANYWHERE? i guess it can be removed
 @require_permission('article_edit')
 def article_delete(request, year, month, day, slug):
     try:
@@ -221,16 +216,18 @@ def article_delete(request, year, month, day, slug):
         if 'unpublish' in request.POST:
             article.public = False
             article.save()
-            flash(u'Die Veröffentlichung des Artikels „<a href="%s">%s</a>“'
-                  ' wurde aufgehoben.'
-                  % (escape(url_for(article, 'show')), escape(article.subject)))
+            flash(_(u'The publication of the article “<a href="%(link)s">%(title)s</a>“'
+                    u' has been revoked.')
+                  % { 'link': escape(url_for(article, 'show')),
+                      'title': escape(article.subject)})
         elif 'cancel' in request.POST:
-            flash(u'Löschen des Artikels „<a href="%s">%s</a>“ wurde abgebrochen.'
-                  % (escape(url_for(article, 'show')), escape(article.subject)))
+            flash(_(u'Deletion of the article “<a href="%(link)s">%(title)s</a>“ was canceled.')
+                  % { 'link': escape(url_for(article, 'show')),
+                      'title': escape(article.subject)})
         else:
             article.delete()
-            flash(u'Der Artikel „%s“ wurde erfolgreich gelöscht.'
-                  % escape(article.subject), True)
+            flash(_(u'The article “%(title)s“ was deleted.')
+                    % {'title': escape(article.subject)}, True)
     else:
         flash(render_template('ikhaya/article_delete.html',
               {'article': article}))
@@ -287,8 +284,10 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 else:
                     flash(_(u'The article “%(title)s“ was saved.')
                           % {'title': escape(article.subject)}, True)
-                    cache.delete('ikhaya/article/%s/%s' %
-                                 (article.pub_date, article.slug))
+                    keys = ['ikhaya/latest_articles',
+                            'ikhaya/latest_articles/%s' % article.category.slug,
+                            'ikhaya/article/%s/%s' % (article.pub_date, article.slug)]
+                    cache.delete_many(keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
             ctx = RenderContext(request)
@@ -459,7 +458,7 @@ def comment_edit(request, comment_id):
             if form.is_valid():
                 comment.text = form.cleaned_data['text']
                 comment.save()
-                flash('The comment was saved.', True)
+                flash(_(u'The comment was saved.'), True)
                 return HttpResponseRedirect(comment.get_absolute_url())
         else:
             form = EditCommentForm(initial={'text': comment.text})
@@ -534,12 +533,12 @@ def suggest_delete(request, suggestion):
                         'username': request.user.username,
                         'note':     request.POST['note']}
                 send_notification(s.author, u'suggestion_rejected',
-                    u'Ikhaya-Vorschlag gelöscht', args)
+                    _(u'Article suggestion deleted'), args)
 
                 # Send the user a private message
                 msg = PrivateMessage()
                 msg.author = request.user
-                msg.subject = u'Ikhaya-Vorschlag gelöscht'
+                msg.subject = _(u'Article suggestion deleted')
                 msg.text = render_template('mails/suggestion_rejected.txt', args)
                 msg.pub_date = datetime.utcnow()
                 recipients = [s.author]
@@ -780,7 +779,7 @@ def feed_article(request, slug=None, mode='short', count=10):
     Shows the ikhaya entries that match the given criteria in an atom feed.
     """
     if slug:
-        title = u'%s Ikhaya – %s' % (BASE_DOMAIN_NAME, slug)
+        title = u'%s Ikhaya – %s' % (settings.BASE_DOMAIN_NAME, slug)
         url = href('ikhaya', 'category', slug)
     else:
         title = u'%s Ikhaya' % settings.BASE_DOMAIN_NAME
@@ -791,7 +790,7 @@ def feed_article(request, slug=None, mode='short', count=10):
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
                     url=url, rights=href('portal', 'lizenz'), id=url,
                     icon=href('static', 'img', 'favicon.ico'),
-                    subtitle=IKHAYA_DESCRIPTION)
+                    subtitle=storage['ikhaya_description'])
 
     for article in articles:
         kwargs = {}
@@ -826,17 +825,20 @@ def feed_comment(request, id=None, mode='short', count=10):
     article = None
     if id:
         article = Article.published.get(id=id)
-        title = u'%s Ikhaya-Kommentare – %s' % (settings.BASE_DOMAIN_NAME,
-                                                article.subject)
+        title = _(u'%(domain)s Ikhaya comments – %(title)s') % {
+                    'domain': settings.BASE_DOMAIN_NAME,
+                    'title': article.subject}
         url = url_for(article)
     else:
-        title = u'%s Ikhaya-Kommentare' % settings.BASE_DOMAIN_NAME
+        title = _(u'%(domain)s Ikhaya comments') % {
+                    'domain': settings.BASE_DOMAIN_NAME}
         url = href('ikhaya')
 
     comments = Comment.objects.get_latest_comments(article.id if article else None, count)
 
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
-                    subtitle=IKHAYA_DESCRIPTION, rights=href('portal', 'lizenz'),
+                    subtitle=storage['ikhaya_description'],
+                    rights=href('portal', 'lizenz'),
                     id=url, url=url, icon=href('static', 'img', 'favicon.ico'),)
 
     for comment in comments[:count]:

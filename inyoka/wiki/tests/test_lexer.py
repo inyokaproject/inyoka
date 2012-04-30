@@ -7,6 +7,7 @@
     not the parser.
 
     :copyright: Copyright 2007 by Armin Ronacher.
+    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 from django.test import TestCase
@@ -261,3 +262,7 @@ class TestLexer(TestCase):
         expect('text', u'[url=')
         expect('free_link', u'http://digital-jockeys.de')
         expect('text', u']Digital Jockeys[/url]')
+
+    def test_basic_unicode_handling(self):
+        expect = lexer.tokenize(u'some @¹“”¹unicod€ stuff'.encode('utf-8')).expect
+        expect('text', u'some @¹“”¹unicod€ stuff')

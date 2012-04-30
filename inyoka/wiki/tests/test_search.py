@@ -1,8 +1,8 @@
 #-*- coding: utf-8 -*-
 import time
-from inyoka.testing import SearchTestCase
 from pyes.exceptions import ElasticSearchException
 from inyoka.wiki.models import Page
+from inyoka.utils.test import SearchTestCase
 
 
 class WikiSearchTest(SearchTestCase):

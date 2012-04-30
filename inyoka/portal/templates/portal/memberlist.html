@@ -4,7 +4,7 @@
 
     This page shows all registered users.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -21,7 +21,7 @@
         <input type="text" id="user_query" name="user" />
         <input type="submit" value="{% trans %}Select{% endtrans %}" />
         <span class="help_text">{% trans -%}
-          You can also enter an e-mail address instead of a username.
+          You can also enter an e-mail address instead of a user name.
         {%- endtrans %}</span>
       </p>
       <p>
@@ -38,7 +38,7 @@
     <tr>
       <th>{{ table.get_html('id', '#') }}</th>
       <th>{{ table.get_html('username', _('Username')) }}</th>
-      <th>{{ table.get_html('location', _('Location')) }}</th>
+      <th>{{ table.get_html('location', _('Residence')) }}</th>
       <th>{{ table.get_html('date_joined', _('Member since')) }}</th>
       <th>{{ table.get_html('post_count', _('Posts')) }}</th>
     </tr>

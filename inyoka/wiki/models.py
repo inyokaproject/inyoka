@@ -74,7 +74,7 @@
     that is part of the `acl` system.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from hashlib import sha1
@@ -87,7 +87,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy, ugettext as _
 from werkzeug import cached_property
 
 from inyoka.wiki.tasks import update_related_pages, render_article, update_object_list
@@ -474,7 +474,7 @@ class PageManager(models.Manager):
         if isinstance(text, basestring):
             text, created = Text.objects.get_or_create(value=text)
         if note is None:
-            note = 'Erstellt'
+            note = _(u'Created')
         if attachment is not None:
             att = Attachment()
             attachment_filename = get_filename(attachment_filename, attachment)
@@ -903,7 +903,7 @@ class Page(models.Model):
             .edit(deleted=True,
                   text=u'',
                   file=None,
-                  note=u'Von System gelöscht')
+                  note=_(u'Automatically deleted'))
 
     def edit(self, text=None, user=None, change_date=None,
              note=u'', attachment=None, attachment_filename=None,
@@ -1026,8 +1026,8 @@ class Page(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = _(u'Wikipage')
-        verbose_name_plural = _(u'Wikipages')
+        verbose_name = ugettext_lazy(u'Wiki page')
+        verbose_name_plural = ugettext_lazy(u'Wiki pages')
 
 
 class Attachment(models.Model):
@@ -1161,10 +1161,10 @@ class Revision(models.Model):
         The page title plus the revision date.  This is equivalent to
         `Page.full_title`.
         """
-        return u'%(rev)s (Revision %(date)s)' % {
+        return _(u'%(rev)s (Revision %(date)s)' % {
             'rev': self.page.title,
             'date': format_specific_datetime(self.change_date)
-        }
+        })
 
     @property
     def rendered_text(self):

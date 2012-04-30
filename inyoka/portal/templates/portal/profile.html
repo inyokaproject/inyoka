@@ -4,7 +4,7 @@
 
     This page shows a user's profile.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.html' %}
@@ -96,7 +96,7 @@
         <td>{% if user.gpgkey %}0x{{ user.gpgkey|e }}{% else %}–{% endif %}</td>
       </tr>
       <tr>
-        <th>{% trans %}Location{% endtrans %}</th>
+        <th>{% trans %}Residence{% endtrans %}</th>
         <th>{% trans %}Job{% endtrans %}</th>
         <th>{% trans %}Interests{% endtrans %}</th>
       </tr>
@@ -166,7 +166,7 @@
   {%- if wikipage %}
     {{ wikipage }}
     <p>
-      (<a href="{{ href('wiki', 'Benutzer', user.username|e, action='edit') }}">{% trans %}edit{% endtrans %}</a>)
+      (<a href="{{ href('wiki', SETTINGS.WIKI_USER_BASE, user.username|e, action='edit') }}">{% trans %}edit{% endtrans %}</a>)
     </p>
   {%- endif %}
 {% endblock %}

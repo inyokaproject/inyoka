@@ -5,23 +5,24 @@
 
     Authentification systen for the forum.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import operator as ops
 from django.core.cache import cache
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy
 
 
 PRIVILEGES_DETAILS = [
-    ('read', 'kann lesen'),
-    ('vote', 'kann abstimmen'),
-    ('create', 'kann Themen erstellen'),
-    ('reply', 'kann antworten'),
-    ('upload', u'kann Anhänge erstellen'),
-    ('create_poll', 'kann Umfragen erstellen'),
-    ('sticky', 'kann Themen anpinnen'),
-    ('moderate', 'kann moderieren')
+    ('read', ugettext_lazy(u'can read')),
+    ('vote', ugettext_lazy(u'can vote')),
+    ('create', ugettext_lazy(u'can create topics')),
+    ('reply', ugettext_lazy(u'can reply')),
+    ('upload', ugettext_lazy(u'can upload attachments')),
+    ('create_poll', ugettext_lazy(u'can create polls')),
+    ('sticky', ugettext_lazy(u'can make sticky')),
+    ('moderate', ugettext_lazy(u'can moderate'))
 ]
 
 PRIVILEGES = [x[0] for x in PRIVILEGES_DETAILS]

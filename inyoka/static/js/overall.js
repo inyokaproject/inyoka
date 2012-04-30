@@ -4,7 +4,7 @@
  *
  * Some general scripts for the whole portal (requires jQuery).
  *
- * :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+ * :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
  * :license: GNU GPL, see LICENSE for more details.
  */
 
@@ -17,7 +17,7 @@ $(document).ready(function () {
       height: 0,
       overflow: 'hidden'
     });
-    $.each(['img/tabbar_border_hover.png'], function () {
+    $.each([], function () {
       $('<img />').attr('src', $STATIC_URL + this).appendTo(container);
     });
   })();

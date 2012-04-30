@@ -7,15 +7,17 @@ tree.Ruleset = function (selectors, rules) {
 };
 tree.Ruleset.prototype = {
     eval: function (env) {
-        var ruleset = new(tree.Ruleset)(this.selectors, this.rules.slice(0));
+        var selectors = this.selectors && this.selectors.map(function (s) { return s.eval(env) });
+        var ruleset = new(tree.Ruleset)(selectors, this.rules.slice(0));
 
         ruleset.root = this.root;
+        ruleset.allowImports = this.allowImports;
 
         // push the current ruleset to the frames stack
         env.frames.unshift(ruleset);
 
         // Evaluate imports
-        if (ruleset.root) {
+        if (ruleset.root || ruleset.allowImports) {
             for (var i = 0; i < ruleset.rules.length; i++) {
                 if (ruleset.rules[i] instanceof tree.Import) {
                     Array.prototype.splice
@@ -90,7 +92,7 @@ tree.Ruleset.prototype = {
             if (rule !== self) {
                 for (var j = 0; j < rule.selectors.length; j++) {
                     if (match = selector.match(rule.selectors[j])) {
-                        if (selector.elements.length > 1) {
+                        if (selector.elements.length > rule.selectors[j].elements.length) {
                             Array.prototype.push.apply(rules, rule.find(
                                 new(tree.Selector)(selector.elements.slice(1)), self));
                         } else {
@@ -120,11 +122,7 @@ tree.Ruleset.prototype = {
             if (context.length === 0) {
                 paths = this.selectors.map(function (s) { return [s] });
             } else {
-                for (var s = 0; s < this.selectors.length; s++) {
-                    for (var c = 0; c < context.length; c++) {
-                        paths.push(context[c].concat([this.selectors[s]]));
-                    }
-                }
+                this.joinSelectors(paths, context, this.selectors);
             }
         }
 
@@ -164,7 +162,8 @@ tree.Ruleset.prototype = {
                     return p.map(function (s) {
                         return s.toCSS(env);
                     }).join('').trim();
-                }).join(env.compress ? ',' : (paths.length > 3 ? ',\n' : ', '));
+                }).join( env.compress ? ',' : ',\n');
+
                 css.push(selector,
                         (env.compress ? '{' : ' {\n  ') +
                         rules.join(env.compress ? '' : '\n  ') +
@@ -174,6 +173,43 @@ tree.Ruleset.prototype = {
         css.push(rulesets);
 
         return css.join('') + (env.compress ? '\n' : '');
+    },
+
+    joinSelectors: function (paths, context, selectors) {
+        for (var s = 0; s < selectors.length; s++) {
+            this.joinSelector(paths, context, selectors[s]);
+        }
+    },
+
+    joinSelector: function (paths, context, selector) {
+        var before = [], after = [], beforeElements = [],
+            afterElements = [], hasParentSelector = false, el;
+
+        for (var i = 0; i < selector.elements.length; i++) {
+            el = selector.elements[i];
+            if (el.combinator.value.charAt(0) === '&') {
+                hasParentSelector = true;
+            }
+            if (hasParentSelector) afterElements.push(el);
+            else                   beforeElements.push(el);
+        }
+
+        if (! hasParentSelector) {
+            afterElements = beforeElements;
+            beforeElements = [];
+        }
+
+        if (beforeElements.length > 0) {
+            before.push(new(tree.Selector)(beforeElements));
+        }
+
+        if (afterElements.length > 0) {
+            after.push(new(tree.Selector)(afterElements));
+        }
+
+        for (var c = 0; c < context.length; c++) {
+            paths.push(before.concat(context[c]).concat(after));
+        }
     }
 };
-})(require('less/tree'));
+})(require('../tree'));

@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
-from inyoka.testing import SearchTestCase
 from pyes.exceptions import ElasticSearchException
+from inyoka.utils.test import SearchTestCase
 
 
 class ConnectionIntegrationTest(SearchTestCase):

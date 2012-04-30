@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.utils.translation import ugettext as _
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import HttpResponseRedirect, TemplateResponse
 from inyoka.utils.urls import href
@@ -18,9 +19,9 @@ def confirm_action(message=None, confirm=None, cancel=None):
                     return HttpResponseRedirect(href('portal'))
                 return func(request, *args, **kwargs)
             else:
-                msg = message or 'Bist du sicher?'
-                confirm_label = confirm or 'Ja'
-                cancel_label = cancel or 'Nein'
+                msg = message or _('Are you sure?')
+                confirm_label = confirm or _('Yes')
+                cancel_label = cancel or _('No')
 
                 return TemplateResponse('confirm_action.html', {
                     'action_url': request.build_absolute_uri(),

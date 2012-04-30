@@ -9,15 +9,13 @@
     renderer which might be useful for the pastebin too.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
 from itertools import ifilter
 
-from django.utils.http import urlquote
-
-from inyoka.utils.urls import href
+from inyoka.utils.urls import href, smart_urlquote
 from inyoka.portal.user import User
 
 
@@ -108,7 +106,7 @@ def resolve_interwiki_link(wiki, page):
     rule = storage.interwiki.get(wiki)
     if rule is None:
         return
-    quoted_page = urlquote(page)
+    quoted_page = smart_urlquote(page)
     if '$PAGE' not in rule:
         link = rule + quoted_page
     else:

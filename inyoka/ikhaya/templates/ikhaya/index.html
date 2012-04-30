@@ -4,7 +4,7 @@
 
     This page shows some of the latest ikhaya entries.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
@@ -56,9 +56,9 @@
             {% trans %}Category:{% endtrans %}
             <a href="{{ article.category|url }}">{{ article.category.name|e }}</a> |
             {%- if article.updated > article.pub_datetime %}
-              {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }}
+              {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }} |
             {%- endif %}
-            {%- if article.comments_enabled %} |
+            {%- if article.comments_enabled %}
               {% trans count=article.comment_count, link=article|url + '#comments' -%}
                 {{ count }} <a href="{{ link }}">Comment</a>
               {%- pluralize -%}

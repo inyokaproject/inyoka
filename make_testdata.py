@@ -5,16 +5,21 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     :copyright: 2007 by Benjamin Wiegand.
+    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
 import math
+import os
 import time
 from random import randint, choice
 from datetime import datetime
 from itertools import izip
 from jinja2.constants import LOREM_IPSUM_WORDS
 from django.conf import settings
+
+if not os.environ.has_key('DJANGO_SETTINGS_MODULE'):
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
 settings.DEBUG = settings.DATABASE_DEBUG = False # for nice progressbar output ;)
 
 from inyoka.portal.user import User, Group

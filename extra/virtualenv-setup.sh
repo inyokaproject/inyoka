@@ -34,4 +34,4 @@ cd ..
 
 # Step 4: Install requirements via pip
 cd $BASE_DIRECTORY
-pip install -r extra/requirements.txt
+pip install --upgrade -r extra/requirements/production.txt
