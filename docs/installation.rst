@@ -45,12 +45,11 @@ following commands:
 
 .. code-block:: console
 
-    $ python extra/make-bootstrap.py > ../venv/bootstrap.py
-    $ cd ../venv/
-    $ python bootstrap.py .
-    $ cd ../inyoka/
-    $ . ../venv/bin/activate
-    $ pip install -r extra/requirements/production.txt
+   $ mkdir ../venv
+   $ python extra/make-bootstrap.py > bootstrap.py
+   $ python bootstrap.py ../venv/
+   $ . ../venv/bin/activate
+   $ pip install -r extra/requirements/production.txt
 
 This will take some time, depending on your network connection and CPU and
 memory. Depending on your environment you need to install additional drivers
@@ -58,7 +57,7 @@ for you database. In case of MySQL run:
 
 .. code-block:: console
 
-    $ pip install MySQL-python
+   $ pip install MySQL-python
 
 Configuration
 =============
@@ -76,7 +75,7 @@ Now we need to tell Django about the settings file:
 
 .. code-block:: console
 
-    $ export DJANGO_SETTINGS_MODULE="settings"
+   $ export DJANGO_SETTINGS_MODULE="settings"
 
 Setup
 =====
@@ -85,5 +84,5 @@ The next step is the database initialization:
 
 .. code-block:: console
 
-    $ python manage.py syncdb
-    $ python manage.py migrate
+   $ python manage.py syncdb
+   $ python manage.py migrate
