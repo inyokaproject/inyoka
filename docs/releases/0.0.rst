@@ -7,6 +7,19 @@ Inyoka 0.0 release summary
 Inyoka DEV release summary
 ==========================
 
+* At least on Arch a system-wide Python update to 2.7.3 crashes the virtual
+  environments. Even rebuilding a 2.7.2 venv does not work. Hence we upgrade to
+  2.7.3.
+* use the storage system to delete old avatars.
+* Don't save images through PIL if no resizing is needed.
+
+Inyoka 0.0.34 release summary
+=============================
+
+* compile messages.
+* remove precise countdown banner
+* Add a donation postit and link it to the donation article
+* Fix `#764 <http://trac.inyokaproject.org/ticket/764>`_ and sync with transifex
 * Revert "Translations for 4c4bff9322". Unneeded.
 * small fixes and removal of uneeded variables.
 * Switch position of locked and solved status emblemes for topic icons and add
