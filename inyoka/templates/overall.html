@@ -295,7 +295,7 @@
     <div style="clear: both;"></div>
    </div></div></div></div></div>
 
-   {%- for script in ['classy', 'jquery.extensions', 'overall'] + scripts|default([]) %}
+   {%- for script in ['underscore', 'classy', 'jquery.extensions', 'overall'] + scripts|default([]) %}
      {%- if SETTINGS.DEBUG %}
        <script type="text/javascript" src="{{ href('static', 'js/%s.js'|format(script)) }}"></script>
      {%- else %}
