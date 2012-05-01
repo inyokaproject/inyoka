@@ -101,7 +101,7 @@ def compile_js(file=None):
     else:
         files = [file]
     for file in files:
-        local("%s --js %s > %s" % (minjar, file, file.split('.js')[0] + '.min.js'), capture=False)
+        local("%s --compilation_level ADVANCED_OPTIMIZATIONS --js %s > %s" % (minjar, file, file.split('.js')[0] + '.min.js'), capture=False)
 
 
 def compile_css(file=None):
