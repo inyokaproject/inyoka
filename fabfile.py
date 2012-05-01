@@ -97,7 +97,7 @@ def compile_js(file=None):
     else:
         files = [file]
     for file in files:
-        local("%s --js inyoka/static/js/%s --warning_level QUIET > inyoka/static/js/%s" %
+        local("%s --compilation_level ADVANCED_OPTIMIZATIONS --js inyoka/static/js/%s --warning_level QUIET > inyoka/static/js/%s" %
             (minjar, file, file.split('.js')[0] + '.min.js'), capture=False)
 
 
