@@ -14,7 +14,11 @@ import random
 import posixpath
 import unicodedata
 from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import apnumber
+from django.utils.translation import get_language
+from django.utils.translation import ungettext, ugettext as _
 
+from inyoka.utils.local import local
 
 _str_num_re = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 _path_crop = re.compile(r'^(\.\.?/)+')
@@ -202,3 +206,27 @@ def get_next_increment(values, string, max_length=None, stripdate=False):
         strip = max_length - len(poi)
         string = string[:strip]
     return _get_value(gs(string))
+    
+def human_number(value, gettext_gender_key=None):
+    if value == 10:
+        return _("ten")
+    if value == 11:
+        return _("eleven")
+    if value == 12:
+        return _("twelve")
+
+    try:
+        lang = local.request.LANGUAGE_CODE
+    except AttributeError:
+        lang = get_language()
+    if value == 1 and gettext_gender_key and 'en' not in lang:
+        return {
+                'masculine':    _(u'one.masculine'),
+                'feminine':     _(u'one.feminine'),
+                'neuter':       _(u'one.neuter')
+               }.get(_(gettext_gender_key), _(u'one.undefined_genus'))
+       
+    return apnumber(value)
+    
+    
+    
