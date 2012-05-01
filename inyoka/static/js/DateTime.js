@@ -17,7 +17,10 @@
    a global is the `DateTimeField`. */
 
 (function () {
-  var months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+  var months = [gettext('January'), gettext('February'), gettext('March'), gettext('April'),
+                gettext('May'), gettext('June'), gettext('July'), gettext('August'),
+                gettext('September'), gettext('October'),
+                gettext('November'), gettext('december')];
   var days_of_week = ['S', 'M', 'D', 'M', 'D', 'F', 'S'];
 
   function isLeapYear(year) {
@@ -110,15 +113,15 @@
     drawTimetable: function () {
       var self = this;
       var timetable = $('<table class="timetable"></table>').append(
-      $('<tr><th class="caption">Uhrzeit</th></tr>'));
+      $('<tr><th class="caption">' + gettext('Time') + '</th></tr>'));
       this.timetable.append(timetable);
       var now = new Date();
       var times = [
-        ['Jetzt', [now.getHours(), now.getMinutes(), now.getSeconds()].join(':'), (function (s) { s.container.hide(); })],
-        ['Mitternacht', '00:00:00'],
-        ['6 Uhr', '06:00:00'],
-        ['Mittag', '12:00:00'],
-        ['18 Uhr', '18:00:00']
+        [gettext('Now'), [now.getHours(), now.getMinutes(), now.getSeconds()].join(':'), (function (s) { s.container.hide(); })],
+        [gettext('Midnight'), '00:00:00'],
+        [gettext('6 am'), '06:00:00'],
+        [gettext('Midday'), '12:00:00'],
+        [gettext('6 pm'), '18:00:00']
       ];
       $.each(times, function (i, time) {
         timetable.append($('<tr></tr>').append($('<td></td>').append(
@@ -132,7 +135,7 @@
       });
       var col = $('<td></td>').appendTo($('<tr></tr>').appendTo(timetable));
       if (this.auto_show) {
-        $('<a class="close">Schließen</a>').click(function () {
+        $('<a class="close">' + gettext('Close') + '</a>').click(function () {
           self.container.hide();
           return false;
         }).appendTo(col);
@@ -175,7 +178,7 @@
           $(this).change();
         }));
         $(this).next().focus();
-      }).attr('title', 'Klicke hier, um schnell einen anderen Monat auszuwählen'))));
+      }).attr('title', gettext('Click here, to switch to another month quickly')))));
       var tbody = $('<tbody></tbody>').appendTo(calendar);
       var row = $('<tr></tr>').appendTo(tbody);
 

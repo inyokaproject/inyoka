@@ -20,9 +20,9 @@ $(function () { /* collapsable elements for the input forms */
   (function () {
     $('#id_add_option').click(function addReply() {
       count = $('.newtopic_polls_replies').length;
-      $($('.newtopic_polls_replies')[count - 1]).after('<dd class="newtopic_polls_replies collapse_enabled">Antwort ' + (count + 1) + ': <input type="text" name="options" value="" /></dd>');
+      $($('.newtopic_polls_replies')[count - 1]).after('<dd class="newtopic_polls_replies collapse_enabled">' + gettext('Reply ') + (count + 1) + ': <input type="text" name="options" value="" /></dd>');
       $('#id_add_option').remove();
-      $($('.newtopic_polls_replies')[count]).append(' <input type="submit" name="add_option" value="' gettext("More Answers") + ' id="id_add_option" />');
+      $($('.newtopic_polls_replies')[count]).append(' <input type="submit" name="add_option" value="' + gettext("More replies") + ' id="id_add_option" />');
       $('#id_add_option').click(addReply);
       return false;
     });
@@ -103,49 +103,49 @@ $(function () { /* collapsable elements for the input forms */
     });
   }
 
-//  (function () {
-//    $('a.action_subscribe.subscribe_topic').each(function () {
-//      $(this).click(function () {
-//        doAction('topic', $(this).attr('id'), $('a.action_subscribe.subscribe_topic'));
-//        return false;
-//      });
-//    });
-//
-//    $('a.action_subscribe.subscribe_forum').each(function () {
-//      $(this).click(function () {
-//        doAction('forum', $(this).attr('id'), $('a.action_subscribe.subscribe_forum'));
-//        return false;
-//      });
-//    });
-//
-//    $('a.solve_topic').each(function () {
-//      $(this).click(function () {
-//        doAction('topic', $(this).attr('id'), $('a.solve_topic'), function () {
-//          // switch classes
-//          if ($('a.solve_topic').hasClass('action_solve')) {
-//            $('a.solve_topic').removeClass('action_solve');
-//            $('a.solve_topic').addClass('action_unsolve');
-//            var span = $('span.status_unsolved');
-//            span.fadeOut('fast');
-//            span.removeClass('status_unsolved');
-//            span.addClass('status_solved');
-//            span.text('gelöst');
-//            span.fadeIn('fast');
-//          } else {
-//            $('a.solve_topic').removeClass('action_unsolve');
-//            $('a.solve_topic').addClass('action_solve');
-//            var span = $('span.status_solved');
-//            span.fadeOut('fast');
-//            span.removeClass('status_solved');
-//            span.addClass('status_unsolved');
-//            span.text('ungelöst');
-//            span.fadeIn('fast');
-//          }
-//        });
-//        return false;
-//      });
-//    });
-//  })();
+  (function () {
+    $('a.action_subscribe.subscribe_topic').each(function () {
+      $(this).click(function () {
+        doAction('topic', $(this).attr('id'), $('a.action_subscribe.subscribe_topic'));
+        return false;
+      });
+    });
+
+    $('a.action_subscribe.subscribe_forum').each(function () {
+      $(this).click(function () {
+        doAction('forum', $(this).attr('id'), $('a.action_subscribe.subscribe_forum'));
+        return false;
+      });
+    });
+
+    $('a.solve_topic').each(function () {
+      $(this).click(function () {
+        doAction('topic', $(this).attr('id'), $('a.solve_topic'), function () {
+          // switch classes
+          if ($('a.solve_topic').hasClass('action_solve')) {
+            $('a.solve_topic').removeClass('action_solve');
+            $('a.solve_topic').addClass('action_unsolve');
+            var span = $('span.status_unsolved');
+            span.fadeOut('fast');
+            span.removeClass('status_unsolved');
+            span.addClass('status_solved');
+            span.text('gelöst');
+            span.fadeIn('fast');
+          } else {
+            $('a.solve_topic').removeClass('action_unsolve');
+            $('a.solve_topic').addClass('action_solve');
+            var span = $('span.status_solved');
+            span.fadeOut('fast');
+            span.removeClass('status_solved');
+            span.addClass('status_unsolved');
+            span.text('ungelöst');
+            span.fadeIn('fast');
+          }
+        });
+        return false;
+      });
+    });
+  })();
 
   /* Display some more informations about the ubuntu version */
   (function () {
