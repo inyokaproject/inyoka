@@ -289,7 +289,7 @@
               src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
     {% endif %}
 
-   {%- for script in ['jquery-1.5.2', 'classy', 'jquery.extensions', 'overall'] + scripts|default([]) %}
+   {%- for script in ['jquery-1.5.2', 'underscore', 'classy', 'jquery.extensions', 'overall'] + scripts|default([]) %}
      {%- if SETTINGS.DEBUG %}
        <script type="text/javascript" src="{{ href('static', 'js/%s.js'|format(script)) }}"></script>
      {%- else %}
