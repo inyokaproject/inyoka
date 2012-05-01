@@ -22,7 +22,7 @@ $(function () { /* collapsable elements for the input forms */
       count = $('.newtopic_polls_replies').length;
       $($('.newtopic_polls_replies')[count - 1]).after('<dd class="newtopic_polls_replies collapse_enabled">Antwort ' + (count + 1) + ': <input type="text" name="options" value="" /></dd>');
       $('#id_add_option').remove();
-      $($('.newtopic_polls_replies')[count]).append(' <input type="submit" name="add_option" value="Weitere Antwort" ' + 'id="id_add_option" />');
+      $($('.newtopic_polls_replies')[count]).append(' <input type="submit" name="add_option" value="' gettext("More Answers") + ' id="id_add_option" />');
       $('#id_add_option').click(addReply);
       return false;
     });
