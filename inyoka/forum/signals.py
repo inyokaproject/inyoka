@@ -102,7 +102,7 @@ def post_save_post(sender, **kwargs):
 @receiver(post_save, sender=Privilege)
 @receiver(post_delete, sender=Privilege)
 def clear_anonymous_privilege_cache(sender, **kwargs):
-    if kwargs['raw']: return
+    if kwargs.get('raw'): return
     instance = kwargs.get('instance')
     if instance.user and instance.user.id == 1:
         # anonymous user, erase cache

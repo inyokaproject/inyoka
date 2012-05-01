@@ -12,7 +12,7 @@
     views too because they do not necessarily work on page objects.
 
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from hashlib import sha1
@@ -21,7 +21,6 @@ from urlparse import urljoin
 
 from django.conf import settings
 from django.utils.encoding import force_unicode
-from django.utils.translation import ungettext
 from django.utils.translation import ugettext as _
 
 from inyoka.utils.html import escape
@@ -197,6 +196,8 @@ def feed(request, page_name=None, count=10):
     Shows the wiki pages or all revisions of one page that match
     the given criteria in an atom feed.
     """
+    #TODO i18n: Find a better solution to hard coded wiki paths.
+    #           Maybe we need even more configuration values in the storage.
     if page_name:
         feed = AtomFeed(title=_(u'%(sitename)s wiki – %(pagename)s') % {
                                     'sitename': settings.BASE_DOMAIN_NAME,
@@ -208,7 +209,6 @@ def feed(request, page_name=None, count=10):
                         rights=href('portal', 'lizenz'),
                         icon=href('static', 'img', 'favicon.ico'))
     else:
-        #TODO: remove hardcoded (wiki)pages
         feed = AtomFeed(_(u'%(sitename)s wiki – last changes')
                           % {'sitename': settings.BASE_DOMAIN_NAME},
                         url=href('wiki', u'Letzte_Änderungen'),
@@ -240,7 +240,7 @@ def feed(request, page_name=None, count=10):
         kwargs['summary'] = text % {
             'user': rev.user,
             'article': rev.page.title,
-            'date': rev.changed_date,
+            'date': rev.change_date,
             'summary': rev.note or '-',
         }
         kwargs['summary_type'] = None

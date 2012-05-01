@@ -5,7 +5,7 @@
 
     This module provides some helpers to work with the database.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import cPickle
@@ -208,11 +208,3 @@ class JSONField(models.TextField):
         from south.modelsinspector import introspector
         args, kwargs = introspector(self)
         return 'django.db.models.TextField', args, kwargs
-
-
-class PickleField(JSONField):
-    def loads(self, s):
-        return cPickle.loads(str(s).decode('base64'))
-
-    def dumps(self, obj):
-        return cPickle.dumps(obj).encode('base64')

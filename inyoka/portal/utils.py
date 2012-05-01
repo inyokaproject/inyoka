@@ -5,7 +5,7 @@
 
     Utilities for the portal.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import calendar
@@ -171,8 +171,7 @@ class UbuntuVersion(object):
         This function allows a simple access where the version is active, or
         will be active, or if its support range is outdated.
         """
-        return self.active == 'true' or self.current == 'true' or \
-                self.dev == 'true'
+        return self.active or self.current or self.dev
 
     def __str__(self):
         return u'%s (%s)' % (self.number, self.name)

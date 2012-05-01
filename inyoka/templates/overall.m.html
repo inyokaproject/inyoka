@@ -6,7 +6,7 @@
 
     It contains the design elements that are displayed on all pages.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 <!doctype html>
@@ -62,11 +62,11 @@
             <li>
               {%- if USER.is_authenticated %}
                 <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
-                  {% trans %}Logout{% endtrans %}
+                  {%- trans %}Logout{% endtrans -%}
                 </a>
               {%- else %}
                 <a href="{{ href('portal', 'login', next=CURRENT_URL) }}">
-                  {% trans %}Login{% endtrans %}
+                  {%- trans %}Login{% endtrans -%}
                 </a>
               {%- endif %}
             </li>
@@ -80,10 +80,10 @@
       <footer>
         <p>
           <a href="?flavour=full" class="flavour_switch" >
-            {% trans %}To classic version{% endtrans %}
+            {%- trans %}To classic version{% endtrans -%}
           </a>
         </p>
-        2004 – 2011 ubuntuusers.de • Einige Rechte vorbehalten<br />
+        2004 – 2012 ubuntuusers.de • Einige Rechte vorbehalten<br />
         <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/de/deed.de" rel="license">CC</a> •
         <a href="{{ href('portal', 'lizenz') }}" rel="cc:morePermissions">Lizenz</a> •
         <a href="{{ href('portal', 'kontakt') }}">Kontakt</a> •

@@ -4,7 +4,7 @@
 
     This page shows a single topic for mobiles.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {% extends 'forum/page.m.html' %}
@@ -110,20 +110,20 @@
   </section>
   {{ pagination.generate() }}
   <section class="actions">
-    <a href="{{ topic|url('reply')}}">
-      <span>{% trans %}Reply{% endtrans %}</span>
-    </a>
+    <a href="{{ topic|url('reply')}}">{#
+      #}<span>{% trans %}Reply{% endtrans %}</span>{#
+    #}</a>
     {% if is_subscribed %}
-      <a href="{{ topic|url('unsubscribe')}}">
-        <span>{% trans %}Unsubscribe{% endtrans %}</span>
-      </a>
+      <a href="{{ topic|url('unsubscribe')}}">{#
+        #}<span>{% trans %}Unsubscribe{% endtrans %}</span>{#
+      #}</a>
     {% else %}
-      <a href="{{ topic|url('subscribe')}}">
-        <span>{% trans %}Subscribe{% endtrans %}</span>
-      </a>
+      <a href="{{ topic|url('subscribe')}}">{#
+        #}<span>{% trans %}Subscribe{% endtrans %}</span>{#
+      #}</a>
     {% endif %}
-    <a href="{{ topic|url('report')}}">
-      <span>{% trans %}Report{% endtrans %}</span>
-    </a>
+    <a href="{{ topic|url('report')}}">{#
+      #}<span>{% trans %}Report{% endtrans %}</span>{#
+    #}</a>
   </section>
 {% endblock %}

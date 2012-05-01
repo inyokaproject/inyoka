@@ -4,7 +4,7 @@
 
     Change a userprofile
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/user_admin.html' %}
@@ -18,7 +18,7 @@
   {{ super() }}
   <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
     {{ render_form(form, ['username'], inline=true) }}
-    <dt>{% trans %}Usertitle:{% endtrans %}</dt>
+    <dt>{% trans %}User title:{% endtrans %}</dt>
     <dd>{{ form.member_title }}
       {% if user.groups.all() %}
       <div class="group_titles">

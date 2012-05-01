@@ -6,7 +6,7 @@
     Helper functions to communicate with the bot.  The communication uses
     basic XMLRPC.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -30,3 +30,6 @@ def send(jid, message):
     sender = context.socket(zmq.REQ)
     sender.connect(settings.JABBER_BOT_SERVER)
     sender.send_json({'jid': jid, 'body': message})
+    # 500 ms are long enough to try sending data.
+    sender.close(50)
+    context.term()

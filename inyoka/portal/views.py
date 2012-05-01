@@ -7,7 +7,7 @@
     private messages, static pages and the login/register and search
     dialogs.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import binascii
@@ -338,7 +338,7 @@ def set_new_password(request, username, new_password_key):
             flash(_(u'This user does not exist.'), False)
             return HttpResponseRedirect(href())
         if user.new_password_key != new_password_key:
-            flash(u'Invalid activation key.', False)
+            flash(_(u'Invalid activation key.'), False)
             return HttpResponseRedirect(href())
         form = SetNewPasswordForm(initial={
             'username': user.username,
@@ -509,7 +509,7 @@ def search(request):
     return rv
 
 
-@check_login(message=_(u'You need to be logged in to view a userprofile.'))
+@check_login(message=_(u'You need to be logged in to view a user profile.'))
 @templated('portal/profile.html')
 def profile(request, username):
     """Show the user profile if the user is logged in."""
@@ -523,8 +523,8 @@ def profile(request, username):
         raise PageNotFound()
 
     try:
-        # TODO: remove hardcoded wikipage
-        key = 'Benutzer/' + normalize_pagename(user.username)
+        key = '%s/%s' % (settings.WIKI_USER_BASE,
+                         normalize_pagename(user.username))
         wikipage = WikiPage.objects.get_by_name(key, raise_on_deleted=True)
         content = wikipage.rev.rendered_text
     except WikiPage.DoesNotExist:
@@ -612,7 +612,7 @@ def unsubscribe_user(request, username):
         pass
     else:
         subscription.delete()
-        flash(_(u'From now on you won’t be notfied anymore about activities of '
+        flash(_(u'From now on you won’t be notified anymore about activities of '
                 u'“%(username)s“.') % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
@@ -679,7 +679,7 @@ def usercp_profile(request):
             else:
                 openids = map(int, request.POST.getlist('openids'))
                 UserData.objects.filter(user=user, pk__in = openids).delete()
-                flash(_(u'Your profileinformation were updated successfully.'),
+                flash(_(u'Your profile information were updated successfully.'),
                       True)
                 return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
@@ -880,16 +880,16 @@ def usercp_deactivate(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your userpage.'))
+@check_login(message=_(u'You need to be logged in to change your user page.'))
 def usercp_userpage(request):
     """
     Redirect page that shows a small flash message that
     the user was redirected
     """
-    flash(_(u'You were redirected to our wiki to change your userpage. To get '
+    flash(_(u'You were redirected to our wiki to change your user page. To get '
             u'back, you can use the link or your browser’s “back“ button.'))
-    # TODO: hardcoded wikipage
-    return HttpResponseRedirect(href('wiki', 'Benutzer', request.user.username, action='edit'))
+    return HttpResponseRedirect(href('wiki', settings.WIKI_USER_BASE,
+                                     request.user.username, action='edit'))
 
 
 def get_user(username):
@@ -942,13 +942,14 @@ def user_edit_profile(request, username):
         form = EditUserProfileForm(request.POST, request.FILES, user=user)
         if form.is_valid():
             data = form.cleaned_data
+
             lat = data.get('coordinates_lat', None)
             long = data.get('coordinates_long', None)
             data['coordinates'] = '%s, %s' % (lat, long) if lat and long else ''
             for key in ('website', 'interests', 'location', 'jabber', 'icq',
                          'msn', 'aim', 'yim', 'signature', 'coordinates',
                          'gpgkey', 'email', 'skype', 'sip', 'wengophone',
-                         'launchpad', 'member_title'):
+                         'launchpad', 'member_title', 'username'):
                 setattr(user, key, data[key] or '')
             if data['delete_avatar']:
                 user.delete_avatar()
@@ -1479,14 +1480,15 @@ def privmsg_new(request, username=None):
                                                             user=recipient)
                     if 'pm_new' in recipient.settings.get('notifications',
                                                           ('pm_new',)):
-                        send_notification(recipient, 'new_pm', u'Neue private '
-                                          u'Nachricht von %s: %s' %
-                                          (request.user.username, d['subject']), {
-                                              'user':     recipient,
-                                              'sender':   request.user,
-                                              'subject':  d['subject'],
-                                              'entry':    entry,
-                                          })
+                        send_notification(recipient, 'new_pm',
+                            _(u'New private message from %(username)s: %(subject)s')
+                            % {'username': request.user.username,
+                               'subject': d['subject']},
+                            {'user':     recipient,
+                             'sender':   request.user,
+                             'subject':  d['subject'],
+                             'entry':    entry,
+                        })
                 flash(_(u'The message was sent successfully.'), True)
 
             return HttpResponseRedirect(href('portal', 'privmsg'))
@@ -1781,7 +1783,7 @@ def group_edit(request, name=None):
 
 
 def usermap(request):
-    flash(_(u'The usermap was temporarily disabled.'))
+    flash(_(u'The user map was temporarily disabled.'))
     return HttpResponseRedirect(href('portal'))
 
 
@@ -2017,7 +2019,7 @@ class OpenIdConsumer(Consumer):
                 flash(_(u'You have successfully logged in.'), True)
                 user.login(request)
             else:
-                flash(u'Dieser Benutzer ist nicht aktiviert.', False)
+                flash(_(u'This user is not activated'), False)
         except UserData.DoesNotExist:
             request.session['openid'] = identity_url
             response = HttpResponseRedirect(href('portal', 'openid', 'connect',
@@ -2026,8 +2028,9 @@ class OpenIdConsumer(Consumer):
         return response
 
     def show_error(self, request, message, exception=None):
-        flash(u'Fehler bei OpenId-Login: %s' % message)
+        flash(_(u'Error on OpenID login: %(message)s') % {'message': message})
         return HttpResponseRedirect('/')
+
 
 openid_consumer = OpenIdConsumer(SessionPersist)
 
@@ -2039,7 +2042,8 @@ def config(request):
             'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
             'license_note', 'get_ubuntu_description', 'blocked_hosts',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
-            'team_icon_height', 'team_icon_width', 'distri_versions']
+            'team_icon_height', 'team_icon_width', 'distri_versions',
+            'ikhaya_description', 'planet_description']
 
     team_icon = storage['team_icon']
 
@@ -2066,7 +2070,7 @@ def config(request):
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
 
-            flash(u'Your settings were successfully changed.', True)
+            flash(_(u'Your settings have been changed successfully.'), True)
         else:
             flash(_(u'Errors occurred, please fix them.'), False)
     else:

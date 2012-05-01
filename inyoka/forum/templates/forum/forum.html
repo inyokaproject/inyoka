@@ -4,7 +4,7 @@
 
     This template shows a forum with all subforums and topics inside.
 
-    :copyright: (c) 2007-2011 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
@@ -110,9 +110,9 @@
                 » <span class="ubuntu_version">{{ topic.get_version_info() }}</span>
               {%- endif %}
               {%- if not topic.get_read_status(USER) %}
-                <a href="{{ topic|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">
-                  <img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />
-                </a>
+                <a href="{{ topic|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">{#
+                  #}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />{#
+                #}</a>
               {%- endif %}
             </p>
             <p class="description note">
@@ -132,7 +132,7 @@
           <td class="last_post">
             {%- if topic.last_post_id %}
               <a href="{{ topic.last_post|url}}" class="date">
-                {{ topic.last_post.pub_date|datetimeformat }}
+                {{- topic.last_post.pub_date|datetimeformat -}}
               </a><br />
               {% trans author=topic.last_post.author|e, link=topic.last_post.author|url -%}
                 by <a href="{{ link }}">{{ author }}</a>
