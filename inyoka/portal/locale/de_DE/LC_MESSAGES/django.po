@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-04-22 16:19+0200\n"
+"POT-Creation-Date: 2012-04-30 00:54+0200\n"
 "PO-Revision-Date: 2012-03-18 22:20+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -28,7 +28,7 @@ msgstr "Thema"
 #: inyoka/portal/filters.py:22 inyoka/portal/forms.py:55
 #: inyoka/portal/templates/portal/feedselector.html:19
 #: inyoka/portal/templates/portal/feedselector.html:28
-#: inyoka/portal/templates/portal/overall.html:54
+#: inyoka/portal/templates/portal/overall.html:49
 #: inyoka/portal/templates/portal/user_edit_settings.html:35
 msgid "Forum"
 msgstr "Forum"
@@ -587,7 +587,7 @@ msgstr "Mehrere Namen mit Semikolon getrennt eingeben"
 #: inyoka/portal/templates/portal/group_edit.html:20
 #: inyoka/portal/templates/portal/grouplist.html:12
 #: inyoka/portal/templates/portal/grouplist.html:14
-#: inyoka/portal/templates/portal/overall.html:47
+#: inyoka/portal/templates/portal/overall.html:42
 msgid "Groups"
 msgstr "Gruppen"
 
@@ -798,7 +798,7 @@ msgstr "Muss Inyoka-Syntax sein."
 msgid "Static page"
 msgstr "Statische Seite"
 
-#: inyoka/portal/models.py:247 inyoka/portal/templates/portal/overall.html:84
+#: inyoka/portal/models.py:247 inyoka/portal/templates/portal/overall.html:79
 #: inyoka/portal/templates/portal/page_edit.html:19
 #: inyoka/portal/templates/portal/pages.html:12
 #: inyoka/portal/templates/portal/pages.html:15
@@ -832,7 +832,7 @@ msgstr "Statische Datei"
 #: inyoka/portal/models.py:294 inyoka/portal/templates/portal/file_edit.html:18
 #: inyoka/portal/templates/portal/files.html:12
 #: inyoka/portal/templates/portal/files.html:15
-#: inyoka/portal/templates/portal/overall.html:87
+#: inyoka/portal/templates/portal/overall.html:82
 msgid "Static files"
 msgstr "Statische Dateien"
 
@@ -1551,7 +1551,7 @@ msgstr "Eine neue Veranstaltung vorschlagen"
 
 #: inyoka/portal/templates/portal/calendar_overview.html:12
 #: inyoka/portal/templates/portal/index.html:29
-#: inyoka/portal/templates/portal/overall.html:41
+#: inyoka/portal/templates/portal/overall.html:36
 msgid "Calendar"
 msgstr "Kalender"
 
@@ -1565,7 +1565,7 @@ msgid "Currently there are no events listed."
 msgstr "Momentan stehen keine Veranstaltungen an."
 
 #: inyoka/portal/templates/portal/configuration.html:13
-#: inyoka/portal/templates/portal/overall.html:75
+#: inyoka/portal/templates/portal/overall.html:70
 msgid "Configuration"
 msgstr "Konfiguration"
 
@@ -1933,7 +1933,7 @@ msgstr "Neues Passwort anfordern"
 
 #: inyoka/portal/templates/portal/memberlist.html:12
 #: inyoka/portal/templates/portal/memberlist.html:16
-#: inyoka/portal/templates/portal/overall.html:46
+#: inyoka/portal/templates/portal/overall.html:41
 #: inyoka/portal/templates/portal/profile.html:13
 #: inyoka/portal/templates/portal/special_rights.html:13
 #: inyoka/portal/templates/portal/user_edit_groups.html:15
@@ -1990,45 +1990,45 @@ msgstr ""
 msgid "Connect"
 msgstr "Verknüpfen"
 
-#: inyoka/portal/templates/portal/overall.html:38
+#: inyoka/portal/templates/portal/overall.html:33
 msgid "FAQ"
 msgstr "FAQ"
 
-#: inyoka/portal/templates/portal/overall.html:39
+#: inyoka/portal/templates/portal/overall.html:34
 msgid "Downloads"
 msgstr "Downloads"
 
-#: inyoka/portal/templates/portal/overall.html:49
+#: inyoka/portal/templates/portal/overall.html:44
 #: inyoka/portal/templates/portal/profile.html:131
 msgid "Contact"
 msgstr "Kontakt"
 
-#: inyoka/portal/templates/portal/overall.html:50
+#: inyoka/portal/templates/portal/overall.html:45
 msgid "Search"
 msgstr "Suche"
 
-#: inyoka/portal/templates/portal/overall.html:52
+#: inyoka/portal/templates/portal/overall.html:47
 #: inyoka/portal/templates/portal/whoisonline.html:13
 msgid "Who is online?"
 msgstr "Wer ist gerade angemeldet?"
 
-#: inyoka/portal/templates/portal/overall.html:67
+#: inyoka/portal/templates/portal/overall.html:62
 msgid "Suggest an article"
 msgstr "Einen Artikel vorschlagen"
 
-#: inyoka/portal/templates/portal/overall.html:68
+#: inyoka/portal/templates/portal/overall.html:63
 msgid "Suggest an event"
 msgstr "Eine Veranstaltung vorschlagen"
 
-#: inyoka/portal/templates/portal/overall.html:72
+#: inyoka/portal/templates/portal/overall.html:67
 msgid "Suggest a blog"
 msgstr "Ein Blog vorschlagen"
 
-#: inyoka/portal/templates/portal/overall.html:78
+#: inyoka/portal/templates/portal/overall.html:73
 msgid "General"
 msgstr "Allgemein"
 
-#: inyoka/portal/templates/portal/overall.html:81
+#: inyoka/portal/templates/portal/overall.html:76
 #: inyoka/portal/templates/portal/styles.html:14
 #: inyoka/portal/templates/portal/styles.html:17
 msgid "Stylesheets"
