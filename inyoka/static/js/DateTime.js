@@ -20,7 +20,7 @@
   var months = [gettext('January'), gettext('February'), gettext('March'), gettext('April'),
                 gettext('May'), gettext('June'), gettext('July'), gettext('August'),
                 gettext('September'), gettext('October'),
-                gettext('November'), gettext('december')];
+                gettext('November'), gettext('December')];
   var days_of_week = ['S', 'M', 'D', 'M', 'D', 'F', 'S'];
 
   function isLeapYear(year) {
