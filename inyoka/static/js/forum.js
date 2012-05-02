@@ -63,28 +63,27 @@ $(function () { /* collapsable elements for the input forms */
   function doAction(type, slug, tags, callback) {
     // Get the matching string for replacement. Since the two buttons (top and bottom)
     // are in the same macro we just need to check for one buttons text at all.
-    var action = "";
-    var new_text = "";
+    var
+      action = "",
+      new_text = "",
+      classes = [];
 
-    var text = $(tags[0]).text();
+    var obj = $(tags);
 
-    switch (text) {
-    case 'abbestellen':
+    if (obj.hasClass('action_unsubscribe')) {
       action = 'unsubscribe';
-      new_text = 'abonnieren';
-      break;
-    case 'abonnieren':
+      classes = ['action_unsubscribe', 'action_subscribe'];
+      new_text = gettext('Subscribe');
+    } else if (obj.hasClass('action_subscribe')) {
       action = 'subscribe';
-      new_text = 'abbestellen';
-      break;
-    case 'als ungelöst markieren':
+      classes = ['action_subscribe', 'action_unsubscribe'];
+      new_text = gettext('Unsubscribe');
+    } else if (obj.hasClass('action_unsolve')) {
       action = 'mark_unsolved';
-      new_text = 'als gelöst markieren';
-      break;
-    case 'als gelöst markieren':
+      new_text = gettext('Mark as solved');
+    } else if (obj.hasClass('action_solve')) {
       action = 'mark_solved';
-      new_text = 'als ungelöst markieren';
-      break;
+      new_text = gettext('Mark as unsolved');
     }
 
     var url = "/?__service__=forum." + action;
@@ -97,6 +96,10 @@ $(function () { /* collapsable elements for the input forms */
       if (xhr.status == 200) {
         $(tags).fadeOut('fast');
         $(tags).text(new_text);
+        if (classes.length > 0) {
+          obj.removeClass(classes[0]);
+          obj.addClass(classes[1]);
+        }
         $(tags).fadeIn('fast');
         if (typeof callback == 'function') callback();
       }
@@ -104,16 +107,16 @@ $(function () { /* collapsable elements for the input forms */
   }
 
   (function () {
-    $('a.action_subscribe.subscribe_topic').each(function () {
+    $('a.subscribe_topic').each(function () {
       $(this).click(function () {
-        doAction('topic', $(this).attr('id'), $('a.action_subscribe.subscribe_topic'));
+        doAction('topic', $(this).attr('id'), $('a.subscribe_topic'));
         return false;
       });
     });
 
-    $('a.action_subscribe.subscribe_forum').each(function () {
+    $('a.subscribe_forum').each(function () {
       $(this).click(function () {
-        doAction('forum', $(this).attr('id'), $('a.action_subscribe.subscribe_forum'));
+        doAction('forum', $(this).attr('id'), $('a.subscribe_forum'));
         return false;
       });
     });
@@ -129,7 +132,7 @@ $(function () { /* collapsable elements for the input forms */
             span.fadeOut('fast');
             span.removeClass('status_unsolved');
             span.addClass('status_solved');
-            span.text('gelöst');
+            span.text(gettext('solved'));
             span.fadeIn('fast');
           } else {
             $('a.solve_topic').removeClass('action_unsolve');
@@ -138,7 +141,7 @@ $(function () { /* collapsable elements for the input forms */
             span.fadeOut('fast');
             span.removeClass('status_solved');
             span.addClass('status_unsolved');
-            span.text('ungelöst');
+            span.text(gettext('unsolved'));
             span.fadeIn('fast');
           }
         });
