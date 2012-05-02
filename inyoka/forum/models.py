@@ -244,15 +244,15 @@ class Forum(models.Model):
         verbose_name = ugettext_lazy(u'Forum')
         verbose_name_plural = ugettext_lazy(u'Forums')
 
-    def get_absolute_url(self, action='show'):
+    def get_absolute_url(self, action='show', **query):
         if action == 'show':
             return href('forum', self.parent_id and 'forum' or 'category',
-                        self.slug)
+                        self.slug, **query)
         if action in ('newtopic', 'welcome', 'subscribe', 'unsubscribe',
                       'markread'):
-            return href('forum', 'forum', self.slug, action)
+            return href('forum', 'forum', self.slug, action, **query)
         if action == 'edit':
-            return href('forum', 'forum', self.slug, 'edit')
+            return href('forum', 'forum', self.slug, 'edit', **query)
 
     def get_parents(self, cached=True):
         """Return a list of all parent forums up to the root level."""
@@ -520,14 +520,14 @@ class Topic(models.Model):
         WikiPage.objects.filter(topic=self).update(topic=None)
         return super(Topic, self).delete()
 
-    def get_absolute_url(self, action='show'):
+    def get_absolute_url(self, action='show', **query):
         if action in ('show',):
-            return href('forum', 'topic', self.slug)
+            return href('forum', 'topic', self.slug, **query)
         if action in ('reply', 'delete', 'hide', 'restore', 'split', 'move',
                       'solve', 'unsolve', 'lock', 'unlock', 'report',
                       'report_done', 'subscribe', 'unsubscribe',
                       'first_unread', 'last_post'):
-            return href('forum', 'topic', self.slug, action)
+            return href('forum', 'topic', self.slug, action, **query)
 
     def get_pagination(self, threshold=3):
         pages = max(0, self.post_count - 1) // POSTS_PER_PAGE + 1
