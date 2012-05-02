@@ -41,7 +41,7 @@
     {% if USER.is_authenticated %}
       {%- if is_subscribed %}
         <a href="{{ generate_subscription_link(do='unsubscribe') }}"
-           class="action action_subscribe subscribe_topic"
+           class="action action_unsubscribe subscribe_topic"
            id="{{ topic.slug }}">{% trans %}Unsubscribe{% endtrans %}</a>
       {%- else %}
         <a href="{{ generate_subscription_link() }}"
