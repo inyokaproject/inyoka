@@ -726,8 +726,8 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
             Subscription(user=request.user, content_object=obj).save()
             flash(flasher)
         # redirect the user to the page he last watched
-        if request.GET.get('continue', False) and is_safe_domain(request.GET['continue']):
-            return HttpResponseRedirect(request.GET['continue'])
+        if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+            return HttpResponseRedirect(request.GET['next'])
         else:
             return HttpResponseRedirect(url_for(obj))
     return subscriber
@@ -760,8 +760,8 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
             subscription.delete()
             flash(flasher)
         # redirect the user to the page he last watched
-        if request.GET.get('continue', False) and is_safe_domain(request.GET['continue']):
-            return HttpResponseRedirect(request.GET['continue'])
+        if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+            return HttpResponseRedirect(request.GET['next'])
         else:
             return HttpResponseRedirect(url_for(obj))
     return unsubscriber
