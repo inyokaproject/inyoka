@@ -71,13 +71,12 @@
              }} / {% trans %}Created:{% endtrans %} {{ article.pub_datetime|datetimeformat }}">{{ article.updated|datetimeformat }}</a>
         {%- endif %}
         {%- if article.comments_enabled %}
-          <br />
           <a href="{{ article|url('comments') }}" class="comments">
             {%- trans count=article.comment_count %}{{ count }} comment{% pluralize %}{{ count }} comments{% endtrans -%}
           </a>
         {%- endif %}
       </div>
-      <a href="{{ article|url }}">{{ article.subject|e }}</a>
+      <h4><a href="{{ article|url }}">{{ article.subject|e }}</a></h4>
       <p class="text">
         {{ article.simplified_intro|truncate(250, true)|e }}
       </p>
