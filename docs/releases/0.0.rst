@@ -7,11 +7,43 @@ Inyoka 0.0 release summary
 Inyoka DEV release summary
 ==========================
 
-* At least on Arch a system-wide Python update to 2.7.3 crashes the virtual
-  environments. Even rebuilding a 2.7.2 venv does not work. Hence we upgrade to
-  2.7.3.
+* Updated translation files
+* Removed rounded meta bar for ikhaya posts to not distract the users eye
+  too much
+* Added tests for forum module
+* Fixed missing translation for mobile notice hiding
+* remove translation update script
+* Introduce the transifex client. Use ``tx help`` or look at
+  http://help.transifex.com/features/client/
+* Add unsubscribe link for unreadable subscriptions
+* Add handler for parameter 'next' for page-unsubscriptions and
+  user-unsubscriptions
+* Extend some get_absolute_url() functions to redirect keyword-args to
+  href() to become GET-Parameters
+* Renamed the GET-Parameter continue into next in the forum-module for
+  project-wide uniformity
+* At least on Arch a system-wide Python update to 2.7.3 crashes the
+  virtual environments. Even rebuilding a 2.7.2 venv does not work. Hence
+  we upgrade to 2.7.3.
+* Correctly render the ``Bild()`` macro during first save of a post. This
+  is achieved by first saving the empty post, then updating the post ids
+  for the attachments and finally save the post with the correct text
+  which will render the images as expected.
 * use the storage system to delete old avatars.
 * Don't save images through PIL if no resizing is needed.
+* remove gradient behind tabs in wiki
+* small design adjustions to integrate the ikhaya posts into the layout in
+  the portal index again
+* add a small :active effect to the app menu
+* add the :hover effect to the app menu again
+* underline the links for article date and article comments in portal
+* Bottom margin for message box
+* Wiki tabbar
+* Redesign portal page
+* Color palette
+* Light login bar
+* Tabbar: Subtle active state, no hover
+* Removed all wrapper divs but one
 
 Inyoka 0.0.34 release summary
 =============================
