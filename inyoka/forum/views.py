@@ -585,11 +585,17 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             post = Post(topic=topic, author_id=request.user.id)
             if newtopic:
                 post.position = 0
-        post.edit(request, d['text'])
 
-        if attachments and post.id:
+        # If there are attachments, we need to get a post id before we render
+        # the text in order to parse the ``Bild()`` macro during first save. We
+        # can set the ``has_attachments`` attribute lazily because the post is
+        # finally saved in ``post.edit()``.
+        if attachments:
+            if not post.id:
+                post.save()
             Attachment.update_post_ids(att_ids, post)
-            Post.objects.filter(pk=post.pk).update(has_attachments=True)
+            post.has_attachments = True
+        post.edit(request, d['text'])
 
         if newtopic:
             send_newtopic_notifications(request.user, post, topic, forum)
