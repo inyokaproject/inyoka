@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-05-01 08:36+0200\n"
+"POT-Creation-Date: 2012-05-02 09:43+0200\n"
 "PO-Revision-Date: 2012-01-22 13:07+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -18,7 +18,145 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: inyoka/static/js/forum.js:25
-msgid "Weitere Antwort"
+#: inyoka/static/js/DateTime.js:20 inyoka/static/js/DateTime.min.js:1
+msgid "January"
 msgstr ""
+
+#: inyoka/static/js/DateTime.js:20 inyoka/static/js/DateTime.min.js:1
+msgid "February"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:20 inyoka/static/js/DateTime.min.js:1
+msgid "March"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:20 inyoka/static/js/DateTime.min.js:1
+msgid "April"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:21 inyoka/static/js/DateTime.min.js:1
+msgid "May"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:21 inyoka/static/js/DateTime.min.js:1
+msgid "June"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:21 inyoka/static/js/DateTime.min.js:1
+msgid "July"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:21 inyoka/static/js/DateTime.min.js:1
+msgid "August"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:22 inyoka/static/js/DateTime.min.js:1
+msgid "September"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:22 inyoka/static/js/DateTime.min.js:1
+msgid "October"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:23 inyoka/static/js/DateTime.min.js:1
+msgid "November"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:23
+msgid "December"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:116 inyoka/static/js/DateTime.min.js:4
+msgid "Time"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:120 inyoka/static/js/DateTime.min.js:4
+msgid "Now"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:121 inyoka/static/js/DateTime.min.js:4
+msgid "Midnight"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:122 inyoka/static/js/DateTime.min.js:4
+msgid "6 am"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:123 inyoka/static/js/DateTime.min.js:4
+msgid "Midday"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:124 inyoka/static/js/DateTime.min.js:4
+msgid "6 pm"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:138 inyoka/static/js/DateTime.min.js:5
+msgid "Close"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:181 inyoka/static/js/DateTime.min.js:6
+msgid "Click here, to switch to another month quickly"
+msgstr ""
+
+#: inyoka/static/js/DateTime.min.js:1
+msgid "december"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:51 inyoka/static/js/FeedSelector.min.js:1
+msgid "Please choose a forum!"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:53 inyoka/static/js/FeedSelector.min.js:1
+msgid "Invalid choice"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:65 inyoka/static/js/FeedSelector.js:90
+#: inyoka/static/js/FeedSelector.js:113 inyoka/static/js/FeedSelector.min.js:1
+#: inyoka/static/js/FeedSelector.min.js:2
+#: inyoka/static/js/FeedSelector.min.js:3
+msgid "Feed URL:"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:146 inyoka/static/js/FeedSelector.min.js:4
+msgid "Please choose a feed type!"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:149 inyoka/static/js/FeedSelector.min.js:4
+msgid "Please choose a number between 10 and 100!"
+msgstr ""
+
+#: inyoka/static/js/forum.js:23 inyoka/static/js/forum.min.js:2
+msgid "Reply "
+msgstr ""
+
+#: inyoka/static/js/forum.js:25 inyoka/static/js/forum.min.js:3
+msgid "More replies"
+msgstr ""
+
+#: inyoka/static/js/forum.js:76
+msgid "Subscribe"
+msgstr ""
+
+#: inyoka/static/js/forum.js:80
+msgid "Unsubscribe"
+msgstr ""
+
+#: inyoka/static/js/forum.js:83
+msgid "Mark as solved"
+msgstr ""
+
+#: inyoka/static/js/forum.js:86
+msgid "Mark as unsolved"
+msgstr ""
+
+#: inyoka/static/js/forum.js:135
+msgid "solved"
+msgstr ""
+
+#: inyoka/static/js/forum.js:144
+msgid "unsolved"
+msgstr ""
+
+#~ msgid "Weitere Antwort"
+#~ msgstr ""
 
