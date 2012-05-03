@@ -21,3 +21,7 @@ inyoka/static/style/*.css
 bootstrap.py
 *.sublime-project
 *.sublime-workspace
+.settings
+.buildpath
+.project
+.pydevproject
