@@ -28,3 +28,4 @@ https://bitbucket.org/andrewgodwin/south/get/64fdcc52cd01.tar.bz2
 lxml
 dulwich
 raven==1.4.3
+transifex-client
