@@ -16,7 +16,7 @@ import unicodedata
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.utils.translation import get_language
-from django.utils.translation import ungettext, ugettext as _
+from django.utils.translation import pgettext, ugettext as _
 
 from inyoka.utils.local import local
 
@@ -207,7 +207,7 @@ def get_next_increment(values, string, max_length=None, stripdate=False):
         string = string[:strip]
     return _get_value(gs(string))
     
-def human_number(value, gettext_gender_key=None):
+def human_number(value, gender=None):
     if value == 10:
         return _("ten")
     if value == 11:
@@ -216,15 +216,15 @@ def human_number(value, gettext_gender_key=None):
         return _("twelve")
 
     try:
-        lang = local.request.LANGUAGE_CODE
+        lang = local.request.META['LANG'].lower()
     except AttributeError:
         lang = get_language()
-    if value == 1 and gettext_gender_key and 'en' not in lang:
+    if value == 1 and gender and 'en' not in lang.lower():
         return {
                 'masculine':    _(u'one.masculine'),
                 'feminine':     _(u'one.feminine'),
                 'neuter':       _(u'one.neuter')
-               }.get(_(gettext_gender_key), _(u'one.undefined_genus'))
+               }.get(gender, _(u'one'))
        
     return apnumber(value)
     
