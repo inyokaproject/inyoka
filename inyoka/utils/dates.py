@@ -16,6 +16,7 @@ from django.contrib.humanize.templatetags.humanize import naturalday
 from django.utils import datetime_safe
 from django.utils.dateformat import DateFormat
 from django.utils.translation import get_language_from_request, ugettext as _
+from django.template import defaultfilters
 from inyoka.utils.local import current_request
 
 
@@ -201,7 +202,7 @@ def format_specific_datetime(value):
         'date': naturalday(value),
         'time': format_time(value, True)}
 
-def naturalday_with_adverb(value):
+def naturalday_with_adverb(value, arg=None):
     """
     Format date according to german and english grammar. This function
     returns the date combined with the adverb `on`, if the return value
