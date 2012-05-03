@@ -1,7 +1,8 @@
 distribute
 Jinja2==2.6
 MarkupSafe==0.12
-Babel==0.9.6
+# Because Babel 0.9.6 does not extract pgettext
+https://github.com/Phaiax/python-babel/tarball/master#egg=Babel
 Werkzeug==0.8.1
 Pygments==1.4
 simplejson==2.2.1
@@ -27,4 +28,3 @@ https://bitbucket.org/andrewgodwin/south/get/64fdcc52cd01.tar.bz2
 lxml
 dulwich
 raven==1.4.3
-transifex-client
