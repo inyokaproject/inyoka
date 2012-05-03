@@ -829,8 +829,9 @@ class Picture(Macro):
                     att_ids = map(int, filter(bool,
                         context.request.POST.get('attachments', '').split(',')
                     ))
-                    files = ForumAttachment.objects.filter(name=target, post=context.forum_post,
-                                                           id__in=att_ids)
+                    post = context.forum_post.id if context.forum_post else None
+                    files = ForumAttachment.objects.filter(name=target,
+                            post=post, id__in=att_ids)
                     return nodes.HTML(files[0].html_representation)
                 else:
                     file = ForumAttachment.objects.get(name=target, post=context.forum_post)
