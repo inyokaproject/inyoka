@@ -221,9 +221,9 @@ def human_number(value, gender=None):
         lang = get_language()
     if value == 1 and gender and 'en' not in lang.lower():
         return {
-                'masculine':    _(u'one.masculine'),
-                'feminine':     _(u'one.feminine'),
-                'neuter':       _(u'one.neuter')
+                'masculine':    pgettext('masculine', u'one'),
+                'feminine':     pgettext('feminine', u'one'),
+                'neuter':       pgettext('neuter', u'one')
                }.get(gender, _(u'one'))
        
     return apnumber(value)
