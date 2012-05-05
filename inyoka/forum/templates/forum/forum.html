@@ -11,7 +11,7 @@
 {% from 'forum/_forum.html' import render_forum, topic_icon with context %}
 
 {% macro generate_subscription_link(do='subscribe') %}
-  {{ href('forum', 'forum', forum.slug, do, continue=CURRENT_URL)|e }}
+  {{ href('forum', 'forum', forum.slug, do, next=CURRENT_URL)|e }}
 {% endmacro %}
 
 {% macro forum_actions() %}

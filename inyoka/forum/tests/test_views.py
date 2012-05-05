@@ -7,6 +7,7 @@ from django.test import TestCase
 from inyoka.forum.acl import PRIVILEGES_BITS
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.portal.user import User, PERMISSION_NAMES
+from inyoka.portal.models import Subscription
 from inyoka.utils.test import InyokaClient
 
 
@@ -62,3 +63,41 @@ class TestViews(TestCase):
 
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
                 self.forum3.id)
+                
+    def test_subscribe(self):
+        self.client.login(username='user', password='user')
+        useraccess = Privilege.objects.create(user=self.user, forum=self.forum2,
+            positive=PRIVILEGES_BITS['read'], negative=0)
+            
+        self.client.get('/topic/%s/subscribe/' % self.topic.slug)
+        self.assertTrue(
+                   Subscription.objects.user_subscribed(self.user, self.topic))
+                   
+        # Test for unsubscribe-link in the usercp if the user has no more read 
+        # access to a subscription
+        useraccess.positive = 0
+        useraccess.save()
+        response = self.client.get('/usercp/subscriptions/', {}, False,
+                         HTTP_HOST='portal.%s' % settings.BASE_DOMAIN_NAME)
+        self.assertTrue(('/topic/%s/unsubscribe/?next=' % self.topic.slug)
+                         in response.content.decode("utf-8"))
+                   
+        forward_url = 'http://portal.%s/myfwd' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/topic/%s/unsubscribe/' % self.topic.slug, 
+                                    { 'next': forward_url })
+        self.assertFalse(
+                   Subscription.objects.user_subscribed(self.user, self.topic))
+        self.assertEqual(response['location'], forward_url)
+        
+    def test_continue(self):
+        """ The Parameter continue was renamed into next """
+
+        urls = ["/",
+                "/forum/%s/" % self.forum2.slug,
+                "/topic/%s/" % self.topic.slug]
+        for url in urls:
+            response = self.client.get(url)
+            self.assertFalse('?continue=' in response.content.decode("utf-8"))
+        
+        
+        

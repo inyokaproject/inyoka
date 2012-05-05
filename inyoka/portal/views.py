@@ -645,7 +645,11 @@ def unsubscribe_user(request, username):
         subscription.delete()
         flash(_(u'From now on you won’t be notified anymore about activities of '
                 u'“%(username)s“.') % {'username': user.username})
-    return HttpResponseRedirect(url_for(user))
+    # redirect the user to the page he last watched
+    if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+        return HttpResponseRedirect(request.GET['next'])
+    else:
+        return HttpResponseRedirect(url_for(user))
 
 
 @check_login(message=_(u'You need to be logged in to access your control panel'))

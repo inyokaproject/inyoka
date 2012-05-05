@@ -368,7 +368,7 @@ class UserCPProfileForm(forms.Form):
 
     def clean_avatar(self):
         """
-        Keep the user form setting avatar to a too big size.
+        Keep the user from setting an avatar to a too big size.
         """
         data = self.cleaned_data
         if data['avatar'] is None:
