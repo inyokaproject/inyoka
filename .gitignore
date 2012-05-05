@@ -1,6 +1,5 @@
 *_settings.py
-*.pyo
-*.pyc
+*.py[co]
 .DS_Store
 inyoka.xapdb/
 inyoka/media/
@@ -13,14 +12,21 @@ inyoka/static/style/*.css
 !inyoka/static/style/mobile.css
 *-sprite*.png
 *-sprite*.less
-*.swo
-*.swp
-*.orig
-*~
 *.db
 bootstrap.py
+
+## Editor / IDE specific ignores
+*~
+
+# vim
+*.sw[op]
+*.orig
+
+# sublime
 *.sublime-project
 *.sublime-workspace
+
+# eclipse
 .settings
 .buildpath
 .project
