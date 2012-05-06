@@ -37,44 +37,55 @@ class TestUserModel(TestCase):
         self.assertEqual(self.user.status, 3)
 
     def test_profile_data(self):
-        categories = []
-        categories.append(ProfileCategory(title='One'))
-        categories.append(ProfileCategory(title='Two'))
-        categories[0].save()
-        categories[1].save()
+        categories = [
+            ProfileCategory.objects.create(title='One'),
+            ProfileCategory.objects.create(title='Two'),
+        ]
         users = [User.objects.register_user(str(x),
                                             '{0}@example.com'.format(x),
                                             'pwd', False) for x in range(3)]
-        ProfileField(title='A', category=categories[0]).save()
-        ProfileField(title='B', category=categories[1]).save()
-        ProfileField(title='C', category=categories[1]).save()
-        ProfileField(title='D', category=categories[1]).save()
+        ProfileField.objects.create(title='A', category=categories[0])
+        ProfileField.objects.create(title='B', category=categories[1])
+        ProfileField.objects.create(title='C', category=categories[1])
+        ProfileField.objects.create(title='D', category=categories[1])
 
-        ProfileData(user=users[0],
-                    profile_field=ProfileField.objects.get(title='A'),
-                    data='U').save()
-        ProfileData(user=users[0],
-                    profile_field=ProfileField.objects.get(title='B'),
-                    data='V').save()
-        ProfileData(user=users[0],
-                    profile_field=ProfileField.objects.get(title='B'),
-                    data='X').save()
-        ProfileData(user=users[0],
-                    profile_field=ProfileField.objects.get(title='C'),
-                    data='W').save()
-
-        ProfileData(user=users[2],
-                    profile_field=ProfileField.objects.get(title='D'),
-                    data='X').save()
-        ProfileData(user=users[2],
-                    profile_field=ProfileField.objects.get(title='C'),
-                    data='Y').save()
-        ProfileData(user=users[2],
-                    profile_field=ProfileField.objects.get(title='A'),
-                    data='Z').save()
+        ProfileData.objects.create(
+            user=users[0],
+            profile_field=ProfileField.objects.get(title='A'),
+            data='U',
+        )
+        ProfileData.objects.create(
+            user=users[0],
+            profile_field=ProfileField.objects.get(title='B'),
+            data='V',
+        )
+        ProfileData.objects.create(
+            user=users[0],
+            profile_field=ProfileField.objects.get(title='B'),
+            data='X',
+        )
+        ProfileData.objects.create(
+            user=users[0],
+            profile_field=ProfileField.objects.get(title='C'),
+            data='W'
+        )
+        ProfileData.objects.create(
+            user=users[2],
+            profile_field=ProfileField.objects.get(title='D'),
+            data='X',
+        )
+        ProfileData.objects.create(
+            user=users[2],
+            profile_field=ProfileField.objects.get(title='C'),
+            data='Y'
+        )
+        ProfileData.objects.create(
+            user=users[2],
+            profile_field=ProfileField.objects.get(title='A'),
+            data='Z'
+        )
 
         # should be ordered by title of ProfileField
-
         data = users[0].profile_data.all()
         self.assertEqual(len(data), 4)
         self.assertEqual(data[0].data, 'U')
