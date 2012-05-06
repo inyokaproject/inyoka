@@ -12,6 +12,7 @@
 {% do BREADCRUMB.append(user.username, user|url, True) %}
 {% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 {% set styles = ['portal', 'highlight'] %}
+{% set navi_type = 'both' %}
 
 {% macro show_item(item) %}
   {%- if user[item] and user.settings['show_'+item] -%}

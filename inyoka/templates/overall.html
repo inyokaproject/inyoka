@@ -239,20 +239,21 @@
       <div class="message fail">{{ _('Please install at least Internet Explorer 8.') }}</div>
       <![endif]-->
 
+      {% set tabbar = navi_type in ['tabbar', 'both'] %}
+      {% set sidebar = navi_type in ['sidebar', 'both'] %}
+
       <div class="page_content">
-        {% set tabbar = navi_type in ['tabbar', 'both'] %}
-        {% set sidebar = navi_type in ['sidebar', 'both'] %}
-        {%- if tabbar %}
-        <div class="navi_tabbar navigation">
-          {%- block tabbar %}{% endblock -%}
-        </div>
-        {%- endif %}
         {%- if sidebar %}
-        <div class="navi_sidebar navigation">
-          {%- block sidebar %}{% endblock -%}
-        </div>
+          <div class="navi_sidebar navigation">
+            {%- block sidebar %}{% endblock -%}
+          </div>
         {%- endif %}
         <div class="content{{ tabbar and ' content_tabbar' or '' }}{{ sidebar and ' content_sidebar' or '' }}">
+          {%- if tabbar %}
+            <div class="navi_tabbar navigation">
+              {%- block tabbar %}{% endblock -%}
+            </div>
+          {%- endif %}
           {%- block content %}{% endblock -%}
         </div>
       </div>
