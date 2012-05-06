@@ -544,7 +544,6 @@ def profile(request, username):
 
     profile_categories = ProfileCategory.objects \
                                         .select_related('fields', 'fields__profile_data') \
-                                        .order_by('weight') \
                                         .filter(fields__profile_data__user=user) \
                                         .distinct()
     categories = [{
