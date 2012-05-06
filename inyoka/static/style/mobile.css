@@ -90,7 +90,7 @@ nav ul li img {
 }
 
 #content {
-  padding: 0.5em 0 0;
+  padding: 0.5em 0.1em 0;
 }
 
 #latest_articles li {
@@ -189,7 +189,7 @@ section.actions span {
 footer {
   font-size: 10px;
   border-top: 1px solid #848484;
-  padding: 0.5em 0;
+  padding: 0.5em 0.1em;
   margin: 0.3em 0;
 }
 
