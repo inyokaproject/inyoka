@@ -2603,7 +2603,7 @@ msgstr "Zum letzten Kommentar springen"
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:65
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Abbestellen"
 
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:69
 msgid "Changes since last visit"
