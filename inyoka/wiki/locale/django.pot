@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-05-02 07:51+0200\n"
+"POT-Creation-Date: 2012-05-13 10:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -228,12 +228,12 @@ msgstr ""
 msgid "Pages with tag “%(name)s”"
 msgstr ""
 
-#: inyoka/wiki/macros.py:692 inyoka/wiki/macros.py:994
+#: inyoka/wiki/macros.py:692 inyoka/wiki/macros.py:995
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr ""
 
-#: inyoka/wiki/macros.py:694 inyoka/wiki/macros.py:993
+#: inyoka/wiki/macros.py:694 inyoka/wiki/macros.py:994
 msgid "Page not found"
 msgstr ""
 
@@ -245,24 +245,24 @@ msgstr ""
 msgid "Circular import"
 msgstr ""
 
-#: inyoka/wiki/macros.py:884
+#: inyoka/wiki/macros.py:885
 msgid "Invalid date"
 msgstr ""
 
-#: inyoka/wiki/macros.py:1024
+#: inyoka/wiki/macros.py:1025
 msgid "Key not defined"
 msgstr ""
 
-#: inyoka/wiki/macros.py:1025
+#: inyoka/wiki/macros.py:1026
 #, python-format
 msgid "The key “%(name)s” is not defined"
 msgstr ""
 
-#: inyoka/wiki/macros.py:1093
+#: inyoka/wiki/macros.py:1094
 msgid "No result"
 msgstr ""
 
-#: inyoka/wiki/macros.py:1094
+#: inyoka/wiki/macros.py:1095
 #, python-format
 msgid "The metadata filter has found no results.  Query: %(query)s"
 msgstr ""

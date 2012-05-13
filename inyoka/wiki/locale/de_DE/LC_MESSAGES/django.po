@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-05-02 07:51+0200\n"
+"POT-Creation-Date: 2012-05-13 10:58+0200\n"
 "PO-Revision-Date: 2012-03-18 22:21+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -250,12 +250,12 @@ msgstr "Tags"
 msgid "Pages with tag “%(name)s”"
 msgstr "Seiten mit Tag „%(name)s“"
 
-#: inyoka/wiki/macros.py:692 inyoka/wiki/macros.py:994
+#: inyoka/wiki/macros.py:692 inyoka/wiki/macros.py:995
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr "Die Seite „%(name)s“ wurde nicht gefunden."
 
-#: inyoka/wiki/macros.py:694 inyoka/wiki/macros.py:993
+#: inyoka/wiki/macros.py:694 inyoka/wiki/macros.py:994
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
@@ -267,24 +267,24 @@ msgstr "Rekursiver Aufruf des Include-Makros wurde erkannt."
 msgid "Circular import"
 msgstr "Zirkulärer Import"
 
-#: inyoka/wiki/macros.py:884
+#: inyoka/wiki/macros.py:885
 msgid "Invalid date"
 msgstr "Ungültiges Datum"
 
-#: inyoka/wiki/macros.py:1024
+#: inyoka/wiki/macros.py:1025
 msgid "Key not defined"
 msgstr "Schlüssel nicht definiert"
 
-#: inyoka/wiki/macros.py:1025
+#: inyoka/wiki/macros.py:1026
 #, python-format
 msgid "The key “%(name)s” is not defined"
 msgstr "Der Schlüssel „%(name)s” wurde nicht definiert."
 
-#: inyoka/wiki/macros.py:1093
+#: inyoka/wiki/macros.py:1094
 msgid "No result"
 msgstr "Kein Ergebnis"
 
-#: inyoka/wiki/macros.py:1094
+#: inyoka/wiki/macros.py:1095
 #, python-format
 msgid "The metadata filter has found no results.  Query: %(query)s"
 msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
