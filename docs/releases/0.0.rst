@@ -7,6 +7,28 @@ Inyoka 0.0 release summary
 Inyoka DEV release summary
 ==========================
 
+Inyoka 0.0.37 release summary
+=============================
+
+* Compiled messages
+* Fixed unsubscribe bug
+
+Inyoka 0.0.36 release summary
+=============================
+
+* compile messages
+* makemessages
+* Added some comments to .gitignore.
+* Add eclipse projectfiles to ignored files
+
+Inyoka 0.0.35 release summary
+=============================
+
+* Finish donation, change picture to say thanks
+
+Inyoka 0.0.34 release summary
+=============================
+
 * Updated translation files
 * Removed rounded meta bar for ikhaya posts to not distract the users eye
   too much
