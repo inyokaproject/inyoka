@@ -705,22 +705,30 @@ button.navi_toggle_down:hover, button.navi_toggle_up:hover {
   }
 }
 .navi_tabbar {
-  font-size: 0.85em;
-  text-align: right;
+  &.navi_both {
+	clear: right;
+    margin: -8px 0px 20px 15em;
+  }
   margin: 0 -20px;
   padding: 0 20px;
+  text-align: right;
+  font-size: 0.85em;
+  border-bottom: #CCC 1px solid;
   ul {
     list-style-type: none;
     margin: 0;
-    padding-top: 20px;
+    padding-top: 17px;
     li {
       margin-left: 3px;
       display: inline;
       a {
+       .top-rounded(3px);
+        display: inline-block;
         background-color: #f2f2f2;
         border: 1px solid #ccc;
         border-bottom: none;
-        padding: 6px 12px 2px 12px;
+        padding: 5px 8px 2px;
+        margin: 0;
         text-decoration: none;
       }
       a.active {
@@ -728,6 +736,7 @@ button.navi_toggle_down:hover, button.navi_toggle_up:hover {
         background: white;
         border-color: #999;
         padding-bottom: 3px;
+        margin-bottom: -1px;
       }
       a:hover {
         color: #222;
