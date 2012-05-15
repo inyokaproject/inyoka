@@ -7,7 +7,7 @@ Installation
 Requirements
 ============
 
-The Inyoka installation requires at least `Python 2.4 <http://python.org>`_
+The Inyoka installation requires at least `Python 2.7 <http://python.org>`_
 including their development header files. Since Inyoka should run in its own
 virtual environment, you need the `Python setuptools
 <http://pypi.python.org/pypi/setuptools>`_. The database in the back-end can be
@@ -71,7 +71,8 @@ information to all configuration directives.
 Make sure that you have created the Inyoka database and the regarding user.
 Check that the Inyoka database user can ``CREATE`` and ``ALTER`` tables!
 
-Now we need to tell Django about the settings file:
+Now we need to tell Django about the settings file. Remember to omit the file
+extension ``.py`` here.
 
 .. code-block:: console
 
