@@ -19,6 +19,7 @@ from StringIO import StringIO
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files.storage import default_storage
 from django.db import models
 from django.utils.translation import ugettext_lazy, ugettext as _
 
@@ -705,7 +706,6 @@ class User(models.Model):
         image = Image.open(StringIO(data))
         fn = 'portal/avatars/avatar_user%d.%s' % (self.id,
              image.format.lower())
-        image_path = path.join(settings.MEDIA_ROOT, fn)
         #: clear the file system
         self.delete_avatar()
 
@@ -715,37 +715,36 @@ class User(models.Model):
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
+            image_path = path.join(settings.MEDIA_ROOT, fn)
             image.save(image_path)
             resized = True
         else:
-            image.save(image_path)
+            img.seek(0)
+            default_storage.save(fn, img)
         self.avatar = fn
 
         return resized
 
     def delete_avatar(self):
         """Delete the avatar from the file system."""
-        fn = self.avatar.name
-        if fn is not None and path.exists(fn):
-            os.remove(fn)
-        self.avatar = None
+        self.avatar.delete(save=False)
 
-    def get_absolute_url(self, action='show', *args):
+    def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
-            return href('portal', 'user', self.urlsafe_username)
+            return href('portal', 'user', self.urlsafe_username, **query)
         elif action == 'privmsg':
             return href('portal', 'privmsg', 'new',
-                        self.urlsafe_username)
+                        self.urlsafe_username, **query)
         elif action == 'activate':
             return href('portal', 'activate',
-                        self.urlsafe_username, gen_activation_key(self))
+                        self.urlsafe_username, gen_activation_key(self), **query)
         elif action == 'activate_delete':
             return href('portal', 'delete',
-                        self.urlsafe_username, gen_activation_key(self))
+                        self.urlsafe_username, gen_activation_key(self), **query)
         elif action == 'admin':
-            return href('portal', 'user', self.urlsafe_username, 'edit', *args)
+            return href('portal', 'user', self.urlsafe_username, 'edit', *args, **query)
         elif action in ('subscribe', 'unsubscribe'):
-            return href('portal', 'user', self.urlsafe_username, action)
+            return href('portal', 'user', self.urlsafe_username, action, **query)
 
     def login(self, request):
         self.last_login = datetime.utcnow()

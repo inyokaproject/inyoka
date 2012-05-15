@@ -26,7 +26,7 @@
 {% endfor %}
 
 {% macro generate_subscription_link(do='subscribe') %}
-  {{ href('forum', 'topic', topic.slug, do, continue=CURRENT_URL)|e }}
+  {{ href('forum', 'topic', topic.slug, do, next=CURRENT_URL)|e }}
 {% endmacro %}
 
 {% macro topic_actions() %}

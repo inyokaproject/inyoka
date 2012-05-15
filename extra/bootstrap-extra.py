@@ -2,7 +2,7 @@ import os, sys
 import tempfile, shutil
 from os import path
 
-python_version = '2.7.2'
+python_version = '2.7.3'
 python_main_version = '2.7'
 pil_version = '1.1.7'
 xapian_version = '1.2.4'
