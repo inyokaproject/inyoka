@@ -12,6 +12,11 @@
 {% do BREADCRUMB.append(_('Reports'), article|url('reports')) %}
 {% do BREADCRUMB.append(article.subject, article|url, True) %}
 
+{% block html_head %}
+  {{ super() }}
+  <meta name="robots" content="noindex"/>
+{% endblock %}
+
 {% block ikhaya_content %}
   {%- for report in reports if not report.deleted or can_edit %}
     <div class="report{% if report.solved %} solved{% endif%}{% if report.deleted %} hidden{% endif %}" id="report_{{ report.id }}">
