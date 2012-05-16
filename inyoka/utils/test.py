@@ -23,7 +23,8 @@ from functools import wraps
 import nose
 import pyes
 import pyes.exceptions
-import pyes.urllib3
+
+from requests.models import MaxRetryError
 
 from django.conf import settings, UserSettingsHolder
 from django.http import HttpRequest
@@ -202,7 +203,7 @@ class SearchTestCase(TestCase):
             self.search.indices = search.indices
             self.search.get_connection().delete_index('_all')
         except (pyes.exceptions.ElasticSearchException,
-                pyes.urllib3.MaxRetryError,
+                MaxRetryError,
                 KeyError):
             raise unittest.SkipTest('No ElasticSearch started or environment variables missing')
 
@@ -210,7 +211,7 @@ class SearchTestCase(TestCase):
         try:
             self.search.get_connection().delete_index('_all')
         except (pyes.exceptions.ElasticSearchException,
-                pyes.urllib3.MaxRetryError):
+                MaxRetryError):
             pass
 
     def flush_indices(self, indices=None):
