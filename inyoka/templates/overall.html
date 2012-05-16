@@ -239,14 +239,14 @@
       <div class="page_content">
         {% set tabbar = navi_type in ['tabbar', 'both'] %}
         {% set sidebar = navi_type in ['sidebar', 'both'] %}
-        {%- if tabbar %}
-        <div class="navi_tabbar navigation">
-          {%- block tabbar %}{% endblock -%}
-        </div>
-        {%- endif %}
         {%- if sidebar %}
         <div class="navi_sidebar navigation">
           {%- block sidebar %}{% endblock -%}
+        </div>
+        {%- endif %}
+        {%- if tabbar %}
+        <div class="navi_tabbar navigation">
+          {%- block tabbar %}{% endblock -%}
         </div>
         {%- endif %}
         <div class="content{{ tabbar and ' content_tabbar' or '' }}{{ sidebar and ' content_sidebar' or '' }}">
