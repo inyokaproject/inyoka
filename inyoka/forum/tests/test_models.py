@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.test import TestCase
@@ -116,6 +117,13 @@ class TestForumModel(TestCase):
         f = Forum.objects.get(id=self.forum.id)
         self.assertEqual(f.post_count, 10)
 
+    def test_get_absolute_url(self):
+        url1 = self.forum.get_absolute_url('show', foo='val1', bar='val2')
+        url1_target = ''.join(['http://forum.', settings.BASE_DOMAIN_NAME,
+                                       '/forum/', self.forum.slug, '/', 
+                                       '?foo=val1&bar=val2'])
+        self.assertEqual(url1, url1_target)
+    
 class TestPostSplit(TestCase):
 
     def setUp(self):

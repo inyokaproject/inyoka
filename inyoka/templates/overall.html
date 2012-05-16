@@ -89,8 +89,8 @@
     {%- endblock %}
   </head>
   <body>
-    <a href="{{ href('portal', 'ikhaya', '3087') }}" id="donation"></a>
-    <div class="wrap"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5">
+   <a href="{{ href('portal', 'ikhaya', '3087') }}" id="donation"></a>
+   <div class="wrap">
     <div class="header">
       <h1><a href="/"><span>{{ SETTINGS.BASE_DOMAIN_NAME }}</span></a></h1>
       <ul class="tabbar">
@@ -239,14 +239,14 @@
       <div class="page_content">
         {% set tabbar = navi_type in ['tabbar', 'both'] %}
         {% set sidebar = navi_type in ['sidebar', 'both'] %}
-        {%- if tabbar %}
-        <div class="navi_tabbar navigation">
-          {%- block tabbar %}{% endblock -%}
-        </div>
-        {%- endif %}
         {%- if sidebar %}
         <div class="navi_sidebar navigation">
           {%- block sidebar %}{% endblock -%}
+        </div>
+        {%- endif %}
+        {%- if tabbar %}
+        <div class="navi_tabbar navigation">
+          {%- block tabbar %}{% endblock -%}
         </div>
         {%- endif %}
         <div class="content{{ tabbar and ' content_tabbar' or '' }}{{ sidebar and ' content_sidebar' or '' }}">
@@ -293,7 +293,7 @@
       </ul>
     </div>{# .footer #}
     <div style="clear: both;"></div>
-   </div></div></div></div></div>
+   </div>
 
    {%- for script in ['classy', 'jquery.extensions', 'overall'] + scripts|default([]) %}
      {%- if SETTINGS.DEBUG %}

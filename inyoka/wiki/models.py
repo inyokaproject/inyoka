@@ -1004,14 +1004,14 @@ class Page(models.Model):
 
         update_object_list.delay(rev)
 
-    def get_absolute_url(self, action='show', **kwargs):
+    def get_absolute_url(self, action='show', **query):
         if action in ('edit', 'subscribe', 'unsubscribe', 'log', 'backlinks',
                       'manage', 'manage_discussion', 'attach', 'mv_baustelle'):
-            return href('wiki', self.name, action=action, **kwargs)
+            return href('wiki', self.name, action=action, **query)
         if action == 'show_no_redirect':
-            return href('wiki', self.name, redirect='no', **kwargs)
+            return href('wiki', self.name, redirect='no', **query)
         if action == 'show':
-            return href('wiki', self.name, **kwargs)
+            return href('wiki', self.name, **query)
         raise KeyError
 
     def __unicode__(self):

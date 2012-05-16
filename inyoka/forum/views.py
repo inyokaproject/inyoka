@@ -584,11 +584,17 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             post = Post(topic=topic, author_id=request.user.id)
             if newtopic:
                 post.position = 0
-        post.edit(request, d['text'])
 
-        if attachments and post.id:
+        # If there are attachments, we need to get a post id before we render
+        # the text in order to parse the ``Bild()`` macro during first save. We
+        # can set the ``has_attachments`` attribute lazily because the post is
+        # finally saved in ``post.edit()``.
+        if attachments:
+            if not post.id:
+                post.save()
             Attachment.update_post_ids(att_ids, post)
-            Post.objects.filter(pk=post.pk).update(has_attachments=True)
+            post.has_attachments = True
+        post.edit(request, d['text'])
 
         if newtopic:
             send_newtopic_notifications(request.user, post, topic, forum)
@@ -725,8 +731,8 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
             Subscription(user=request.user, content_object=obj).save()
             flash(flasher)
         # redirect the user to the page he last watched
-        if request.GET.get('continue', False) and is_safe_domain(request.GET['continue']):
-            return HttpResponseRedirect(request.GET['continue'])
+        if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+            return HttpResponseRedirect(request.GET['next'])
         else:
             return HttpResponseRedirect(url_for(obj))
     return subscriber
@@ -759,8 +765,8 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
             subscription.delete()
             flash(flasher)
         # redirect the user to the page he last watched
-        if request.GET.get('continue', False) and is_safe_domain(request.GET['continue']):
-            return HttpResponseRedirect(request.GET['continue'])
+        if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+            return HttpResponseRedirect(request.GET['next'])
         else:
             return HttpResponseRedirect(url_for(obj))
     return unsubscriber
