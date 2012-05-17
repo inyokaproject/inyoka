@@ -10,7 +10,7 @@ from inyoka.utils.test import SearchTestCase
 class ForumSearchTest(SearchTestCase):
     fixtures = ['base.json']
 
-    def test_ikhaya_index(self):
+    def test_forum_post_index(self):
         forum = Forum.objects.get(slug='test-sub')
         admin = User.objects.get('admin')
         topic = Topic(title='Fancy!', author=admin, forum=forum)
