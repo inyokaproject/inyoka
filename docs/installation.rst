@@ -46,8 +46,8 @@ following commands:
 .. code-block:: console
 
    $ mkdir ../venv
-   $ python extra/make-bootstrap.py > bootstrap.py
-   $ python bootstrap.py ../venv/
+   $ python2 extra/make-bootstrap.py > bootstrap.py
+   $ python2 bootstrap.py ../venv/
    $ . ../venv/bin/activate
    $ pip install -r extra/requirements/production.txt
 

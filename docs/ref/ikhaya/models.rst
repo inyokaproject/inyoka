@@ -467,7 +467,7 @@ Models
     .. py:attribute:: coordinates_url
 
         Property.
-        
+
         Creates the URL to the location using the `GeoHack
         <https://wiki.toolserver.org/view/GeoHack>`_ tool.
 
@@ -516,7 +516,7 @@ Models
     .. py:attribute:: natural_coordinates
 
         Property.
-        
+
         Format the coordinates :py:attr:`location_lat` and
         :py:attr:`location_long` as ``'52.5005° N, 13.3988° O'``
 
@@ -527,7 +527,7 @@ Models
     .. py:attribute:: simple_coordinates()
 
         Property.
-        
+
         Format the coordinates :py:attr:`location_lat` and
         :py:attr:`location_long` as ``'52.5005;13.3988'``
 

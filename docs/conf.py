@@ -251,4 +251,4 @@ intersphinx_mapping = {
     'django': ('https://docs.djangoproject.com/en/1.3', 'http://docs.djangoproject.com/en/1.3/_objects'),
     'python': ('http://docs.python.org/2.7', None),
     'sphinx': ('http://sphinx.pocoo.org/', None),
-}    
+}

@@ -590,7 +590,7 @@ Security
 
 .. py:data:: SECRET_KEY
 
-    Defaults to: ``'b)l0ju3erxs)od$g&l_0i1za^l+2dwgxuay(nwv$q4^*c#tdwt'``
+    Defaults to: ``None``
 
     Make this unique, and don't share it with anybody. See
     https://docs.djangoproject.com/en/1.3/ref/settings/#secret-key
