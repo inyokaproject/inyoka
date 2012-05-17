@@ -240,7 +240,7 @@ class SearchTestCase(TestCase):
         start = time.time()
 
         while True:
-            time.sleep(0.5)
+            time.sleep(0.1)
 
             with open(logfile, 'r') as f:
                 contents = f.read()
