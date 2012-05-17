@@ -7,6 +7,18 @@ Inyoka 0.0 release summary
 Inyoka DEV release summary
 ==========================
 
+Inyoka 0.0.38 release summary
+=============================
+
+* Fix jquery selector for assigning article suggestions.
+* don't let search engines index ikhaya typo reports.
+* fix `#767 <http://trac.inyokaproject.org/ticket/767>`_
+* Disabled editing of comments. Refers `#732
+  <http://trac.inyokaproject.org/ticket/732>`_.
+* disable highlighther middleware for now, till it's redirection problems are
+  fixed.
+* fix and simplify tabbar.
+
 Inyoka 0.0.37 release summary
 =============================
 
