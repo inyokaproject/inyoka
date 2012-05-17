@@ -50,12 +50,6 @@ class ArticleDocumentType(DocumentType):
         return Article.objects.select_related(*related) \
                       .filter(id__in=docids).all()
 
-    @classmethod
-    def get_doc_ids(cls):
-        ids = Article.objects.values_list('id', flat=True).all()
-        for id in ids:
-            yield id
-
 
 class IkhayaIndex(Index):
     name = 'ikhaya'

@@ -58,12 +58,6 @@ class PageDocumentType(DocumentType):
         }
 
     @classmethod
-    def get_doc_ids(cls):
-        pages = Page.objects.values_list('pk', flat=True).order_by('pk')
-        for row in pages:
-            yield row
-
-    @classmethod
     def get_objects(cls, docids):
         related = ('last_rev__text__value')
         return Page.objects.select_related(*related) \

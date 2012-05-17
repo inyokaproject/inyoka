@@ -15,7 +15,7 @@ from django.db.models import signals
 
 from pyes import ES, Search, FilteredQuery, StringQuery, Filter, ORFilter, \
     MatchAllQuery, DisMaxQuery, ANDFilter, NotFilter
-from pyes.exceptions import NotFoundException
+from pyes.exceptions import NotFoundException, NoServerAvailable, ElasticSearchException
 
 from inyoka.tasks import update_index
 
@@ -72,11 +72,23 @@ def serialize_instance(instance, doctype, extra):
 
 def _get_remove_instance_handler(search, index, type):
     def handler(sender, instance, using, type_name=type.name, **kwargs):
-        conn =  search.get_connection()
-        try:
-            conn.delete(index.name, type_name, instance.pk)
-        except NotFoundException:
-            pass
+        if search.has_connection():
+            try:
+                conn =  search.get_connection()
+                conn.delete(index.name, type_name, instance.pk)
+            except (NotFoundException, NoServerAvailable):
+                pass
+    return handler
+
+
+def _get_update_instance_handler(search, index, type):
+    def handler(sender, instance, using, type_name=type.name, **kwargs):
+        if search.has_connection() and not kwargs.get('created', False):
+            try:
+                conn = search.get_connection()
+                conn.update(type.serialize(instance, {}), index.name, type_name, instance.pk)
+            except (ElasticSearchException, instance.DoesNotExist):
+                return
     return handler
 
 
@@ -96,6 +108,10 @@ class Index(object):
                 handler = _get_remove_instance_handler(search, self, type)
                 signals.post_delete.connect(handler, sender=type.model,
                                             weak=False)
+            if type.autoupdate:
+                handler = _get_update_instance_handler(search, self, type)
+                signals.post_save.connect(handler, sender=type.model,
+                                          weak=False)
 
     def store_object(self, obj, type, extra, bulk=False):
         """Store `obj`.
@@ -139,9 +155,22 @@ class DocumentType(object):
     #: Automatically delete the entry if the model is deleted
     autodelete = True
 
+    #: Automatically update the entry if the model is saved
+    autoupdate = True
+
     @classmethod
     def get_filter(cls, user):
         return None
+
+    @classmethod
+    def get_objects(cls, docpks):
+        return self.model.objects.filter(pk__in=docpks).all()
+
+    @classmethod
+    def get_doc_ids(cls):
+        qry = self.model.objects.values_list('id', flat=True).oder_by('id')
+        for idx in qry:
+            yield idx
 
     @classmethod
     def get_boost_query(cls, query):
@@ -182,6 +211,9 @@ class SearchSystem(object):
 
     def get_connection(self, *args, **kwargs):
         return ES(self.server, *args, **kwargs)
+
+    def has_connection(self):
+        return self.get_connection().collect_info()
 
     def refresh_indices(self, recreate_mapping=False):
         connection = self.get_connection()

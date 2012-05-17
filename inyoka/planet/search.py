@@ -41,12 +41,6 @@ class BlogEntryDocumentType(DocumentType):
         return Entry.objects.select_related('blog') \
                     .filter(id__in=docids).all()
 
-    @classmethod
-    def get_doc_ids(cls):
-        ids = Entry.objects.values_list('id', flat=True)
-        for id in ids:
-            yield id
-
 
 class PlanetIndex(Index):
     name = 'planet'
