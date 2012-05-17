@@ -1,11 +1,14 @@
 #-*- coding: utf-8 -*-
 from mock import patch
+from random import randint
 
 from django.conf import settings
 from django.test import TestCase
 
 from inyoka.forum.acl import PRIVILEGES_BITS
+from inyoka.forum.constants import TOPICS_PER_PAGE
 from inyoka.forum.models import Forum, Topic, Post, Privilege
+from inyoka.forum.views import topiclist
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import Subscription
 from inyoka.utils.test import InyokaClient
@@ -41,12 +44,35 @@ class TestViews(TestCase):
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
+    def setUp_pagination(self):
+        """ Create enough topics for pagination test """
+
+        def newpost(position, topic):
+            Post.objects.create(topic=topic, text="More Posts " +
+                                randint(1000, 100000).__str__(),
+                                author=self.user, position=position)
+        def newtopic():
+            t = Topic.objects.create(title="Title " +
+                                     randint(1000, 100000).__str__(),
+                                     author=self.user, forum=self.forum3)
+            p = Post.objects.create(topic=t, text="Post " +
+                                    randint(1000, 100000).__str__(),
+                                    author=self.user, position=0)
+            t.first_post_id = p.id
+            t.save()
+            for i in xrange(1, 2):
+                newpost(i, t)
+
+        for i in xrange(1, 40):
+            newtopic()
+
+
     def test_reported_topics(self):
         response = self.client.get('/reported_topics/')
         self.assertEqual(response.status_code, 200)
 
     @patch('inyoka.middlewares.security.SecurityMiddleware._make_token',
-            return_value = 'csrf_key')
+            return_value='csrf_key')
     @patch('inyoka.forum.views.send_notification')
     def test_movetopic(self, mock_send, mock_security):
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
@@ -63,16 +89,16 @@ class TestViews(TestCase):
 
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
                 self.forum3.id)
-                
+
     def test_subscribe(self):
         self.client.login(username='user', password='user')
         useraccess = Privilege.objects.create(user=self.user, forum=self.forum2,
             positive=PRIVILEGES_BITS['read'], negative=0)
-            
+
         self.client.get('/topic/%s/subscribe/' % self.topic.slug)
         self.assertTrue(
                    Subscription.objects.user_subscribed(self.user, self.topic))
-                   
+
         # Test for unsubscribe-link in the usercp if the user has no more read 
         # access to a subscription
         useraccess.positive = 0
@@ -81,14 +107,14 @@ class TestViews(TestCase):
                          HTTP_HOST='portal.%s' % settings.BASE_DOMAIN_NAME)
         self.assertTrue(('/topic/%s/unsubscribe/?next=' % self.topic.slug)
                          in response.content.decode("utf-8"))
-                   
+
         forward_url = 'http://portal.%s/myfwd' % settings.BASE_DOMAIN_NAME
-        response = self.client.get('/topic/%s/unsubscribe/' % self.topic.slug, 
+        response = self.client.get('/topic/%s/unsubscribe/' % self.topic.slug,
                                     { 'next': forward_url })
         self.assertFalse(
                    Subscription.objects.user_subscribed(self.user, self.topic))
         self.assertEqual(response['location'], forward_url)
-        
+
     def test_continue(self):
         """ The Parameter continue was renamed into next """
 
@@ -98,6 +124,8 @@ class TestViews(TestCase):
         for url in urls:
             response = self.client.get(url)
             self.assertFalse('?continue=' in response.content.decode("utf-8"))
-        
-        
-        
+
+    def test_topiclist(self):
+        self.setUp_pagination()
+        response = self.client.get("/last24/")
+        self.assertEqual(len(response.tmpl_context['topics']), TOPICS_PER_PAGE)

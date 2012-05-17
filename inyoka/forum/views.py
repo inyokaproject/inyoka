@@ -1496,7 +1496,6 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     topics = topics.distinct()
     pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
                             total=total_topics)
-    raise ValueError
     topic_ids = [tid for tid in pagination.get_queryset()]
 
     pagination = pagination.generate()
