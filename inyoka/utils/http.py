@@ -60,14 +60,14 @@ def does_not_exist_is_404(f):
             raise PageNotFound()
     return patch_wrapper(proxy, f)
 
-
+PROPAGATE_TEMPLATE_CONTEXT = False
 class TemplateResponse(HttpResponse):
     """
     Returns a rendered template as response.
     """
     def __init__(self, template_name, context, status=200,
                  content_type='text/html; charset=utf-8'):
-        if settings.DEBUG:
+        if settings.DEBUG or PROPAGATE_TEMPLATE_CONTEXT:
             self.tmpl_context = context
         tmpl = render_template(template_name, context)
         HttpResponse.__init__(self, tmpl, status=status,
