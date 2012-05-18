@@ -46,17 +46,15 @@ class TestViews(TestCase):
     def _setup_pagination(self):
         """ Create enough topics for pagination test """
         def newtopic():
-            t = Topic.objects.create(title="Title %s" %
-                                     randint(1000, 100000).__str__(),
+            t = Topic.objects.create(title="Title %s" % randint(1, 100000),
                                      author=self.user, forum=self.forum3)
-            p = Post.objects.create(topic=t, text="Post %s" %
-                                    randint(1000, 100000).__str__(),
+            p = Post.objects.create(topic=t, text="Post %s" % randint(1, 100000),
                                     author=self.user, position=0)
             t.first_post_id = p.id
             t.save()
             for i in xrange(1, randint(2, 3)):
-                Post.objects.create(topic=t, author=self.user, position=i,
-                                text="More Posts %s" % randint(1000, 100000))
+                Post.objects.create(text="More Posts %s" % randint(1, 100000),
+                                    topic=t, author=self.user, position=i)
         self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
         for _ in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
