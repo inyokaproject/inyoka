@@ -20,7 +20,6 @@ import unittest
 from copy import copy
 from functools import wraps
 
-import nose
 import pyes
 import pyes.exceptions
 
