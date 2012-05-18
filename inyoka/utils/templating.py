@@ -260,7 +260,7 @@ class InyokaEnvironment(Environment):
         Environment.__init__(self, loader=loader,
                              extensions=['jinja2.ext.i18n', 'jinja2.ext.do'],
                              auto_reload=settings.DEBUG,
-                             cache_size=-1)
+                             cache_size = -1)
 
         self.globals.update(INYOKA_REVISION=INYOKA_REVISION,
                             SETTINGS=settings,
