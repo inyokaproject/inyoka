@@ -11,7 +11,7 @@ from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.forum.views import topiclist
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import Subscription
-from inyoka.utils.test import InyokaClient
+from inyoka.utils.test import InyokaClient, override_settings
 
 
 class TestViews(TestCase):
@@ -44,28 +44,23 @@ class TestViews(TestCase):
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
-    def setUp_pagination(self):
+    def _setup_pagination(self):
         """ Create enough topics for pagination test """
-
-        def newpost(position, topic):
-            Post.objects.create(topic=topic, text="More Posts " +
-                                randint(1000, 100000).__str__(),
-                                author=self.user, position=position)
         def newtopic():
-            t = Topic.objects.create(title="Title " +
+            t = Topic.objects.create(title="Title %s" %
                                      randint(1000, 100000).__str__(),
                                      author=self.user, forum=self.forum3)
-            p = Post.objects.create(topic=t, text="Post " +
+            p = Post.objects.create(topic=t, text="Post %s" %
                                     randint(1000, 100000).__str__(),
                                     author=self.user, position=0)
             t.first_post_id = p.id
             t.save()
-            for i in xrange(1, 2):
-                newpost(i, t)
-
-        for i in xrange(1, 40):
+            for i in xrange(1, randint(2, 3)):
+                Post.objects.create(topic=t, author=self.user, position=i,
+                                text="More Posts %s" % randint(1000, 100000))
+        self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
+        for _ in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
-
 
     def test_reported_topics(self):
         response = self.client.get('/reported_topics/')
@@ -125,7 +120,12 @@ class TestViews(TestCase):
             response = self.client.get(url)
             self.assertFalse('?continue=' in response.content.decode("utf-8"))
 
+    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     def test_topiclist(self):
-        self.setUp_pagination()
-        response = self.client.get("/last24/")
-        self.assertEqual(len(response.tmpl_context['topics']), TOPICS_PER_PAGE)
+        self._setup_pagination()
+        self.assertEqual(len(self.client.get("/last24/").tmpl_context['topics']),
+                         TOPICS_PER_PAGE)
+        self.assertEqual(len(self.client.get("/last24/3/").tmpl_context['topics']),
+                         TOPICS_PER_PAGE)
+        self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
+                         self.num_topics_on_last_page)
