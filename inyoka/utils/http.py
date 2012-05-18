@@ -60,6 +60,7 @@ def does_not_exist_is_404(f):
             raise PageNotFound()
     return patch_wrapper(proxy, f)
 
+
 class TemplateResponse(HttpResponse):
     """
     Returns a rendered template as response.

@@ -19,6 +19,7 @@ from django.test.client import Client
 from inyoka.middlewares.session import Session
 from inyoka.portal.user import User
 
+
 class InyokaClient(Client):
     """This test client inherits from :class:`django.test.client.Client` and
     allows us to keep track of the Inyoka session handling. Inyoka uses
@@ -48,7 +49,6 @@ class InyokaClient(Client):
         else:
             self.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
         self.user = User.objects.get_anonymous_user()
-
 
     def login(self, **credentials):
         """Try to authenticate a user with username and password.

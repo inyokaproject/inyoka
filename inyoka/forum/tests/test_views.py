@@ -8,7 +8,6 @@ from django.test import TestCase
 from inyoka.forum.acl import PRIVILEGES_BITS
 from inyoka.forum.constants import TOPICS_PER_PAGE
 from inyoka.forum.models import Forum, Topic, Post, Privilege
-from inyoka.forum.views import topiclist
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import Subscription
 from inyoka.utils.test import InyokaClient, override_settings
@@ -129,3 +128,4 @@ class TestViews(TestCase):
                          TOPICS_PER_PAGE)
         self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
                          self.num_topics_on_last_page)
+1
