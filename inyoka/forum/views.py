@@ -641,7 +641,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     if not newtopic:
         max = topic.post_count
         posts = topic.posts.select_related('author') \
-                           .filter(hidden=False, position__gt=max-15) \
+                           .filter(hidden=False, position__gt=max - 15) \
                            .order_by('-position')
         discussions = Page.objects.filter(topic=topic)
 
@@ -1493,6 +1493,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
             topics = topics.filter(forum=forum_obj)
 
     total_topics = get_simplified_queryset(topics).count()
+    topics = topics.distinct()
     pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
                             total=total_topics)
     topic_ids = [tid for tid in pagination.get_queryset()]
@@ -1591,7 +1592,7 @@ def forum_edit(request, slug=None, parent=None):
 
     if request.method == 'POST':
         form = EditForumForm(request.POST, forum=forum)
-        form.fields['parent'].refresh(add=[(0,u'-')], remove=[forum])
+        form.fields['parent'].refresh(add=[(0, u'-')], remove=[forum])
 
         if form.is_valid():
             data = form.cleaned_data
@@ -1654,7 +1655,7 @@ def forum_edit(request, slug=None, parent=None):
                 'force_version': forum.force_version,
                 'count_posts': forum.user_count_posts,
             })
-        form.fields['parent'].refresh(add=[(0,u'-')], remove=[forum])
+        form.fields['parent'].refresh(add=[(0, u'-')], remove=[forum])
     return {
         'form':  form,
         'forum': forum

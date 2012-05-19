@@ -67,7 +67,7 @@ class TemplateResponse(HttpResponse):
     """
     def __init__(self, template_name, context, status=200,
                  content_type='text/html; charset=utf-8'):
-        if settings.DEBUG:
+        if settings.DEBUG or settings.PROPAGATE_TEMPLATE_CONTEXT:
             self.tmpl_context = context
         tmpl = render_template(template_name, context)
         HttpResponse.__init__(self, tmpl, status=status,

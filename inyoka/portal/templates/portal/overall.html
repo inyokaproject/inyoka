@@ -12,7 +12,7 @@
   {% set active_app = 'portal' %}
 {% endif %}
 {% if not navi_type %}
-{% set navi_type  = 'both' %}
+  {% set navi_type  = 'sidebar' %}
 {% endif %}
 {% set styles = ['portal'] + styles|default([]) %}
 
