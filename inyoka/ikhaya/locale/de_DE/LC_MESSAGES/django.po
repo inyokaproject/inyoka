@@ -250,7 +250,7 @@ msgstr "Die Meldung wurde als nicht erledigt markiert."
 
 #: inyoka/ikhaya/views.py:455
 msgid "Sorry, editing comments is disabled for now."
-msgstr ""
+msgstr "Entschuldigung. Das Editieren von Kommentaren ist derzeit deaktiviert."
 
 #: inyoka/ikhaya/views.py:463
 msgid "The comment was saved."
