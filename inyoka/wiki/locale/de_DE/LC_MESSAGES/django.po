@@ -1,25 +1,26 @@
-# German (Germany) translations for .
+# Translations template for PROJECT.
 # Copyright (C) 2012 ORGANIZATION
-# This file is distributed under the same license as the  project.
+# This file is distributed under the same license as the PROJECT project.
 #
 # Translators:
 # <eule_stern@web.de>, 2011.
+#   <eule_stern@web.de>, 2011.
+# Markus  <inyoka@markusholtermann.eu>, 2012.
 # Sören Wegener <wegener92@googlemail.com>, 2011.
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2011 - 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version:  Inyoka\n"
+"Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-05-13 10:58+0200\n"
-"PO-Revision-Date: 2012-03-18 22:21+0000\n"
-"Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
-"Language-Team: German (Germany) "
-"(http://www.transifex.net/projects/p/inyoka/language/de_DE/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"POT-Creation-Date: 2012-05-18 19:48+0200\n"
+"PO-Revision-Date: 2012-05-19 22:24+0100\n"
+"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
+"Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: inyoka/wiki/actions.py:102
 #, python-format
@@ -41,17 +42,11 @@ msgstr "Die Seite “%(title)s“ wurde erfolgreich wiederhergestellt."
 
 #: inyoka/wiki/actions.py:253
 #, python-format
-msgid ""
-"These attachments are already attached to the new page name: %(names)s. "
-"Please make sure that they are not required anymore. <a "
-"href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
-msgstr ""
-"Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: "
-"%(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a"
-" href=\"%(link)s\">Umbenennen und Löschung doppelter Anhänge "
-"erzwingen</a>."
+msgid "These attachments are already attached to the new page name: %(names)s. Please make sure that they are not required anymore. <a href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
+msgstr "Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: %(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a href=\"%(link)s\">Umbenennen und Löschung doppelter Anhänge erzwingen</a>."
 
-#: inyoka/wiki/actions.py:269 inyoka/wiki/actions.py:273
+#: inyoka/wiki/actions.py:269
+#: inyoka/wiki/actions.py:273
 #: inyoka/wiki/actions.py:290
 #, python-format
 msgid "Renamed from %(old_name)s"
@@ -77,11 +72,10 @@ msgstr "Eine andere Seite mit diesem Namen existiert bereits."
 #: inyoka/wiki/actions.py:400
 #, python-format
 msgid "Used the template “<a href=\"%(link)s\">%(name)s</a>” for this page"
-msgstr ""
-"Die Vorlage “<a href=\"%(link)s\">%(name)s</a>” wurde geladen und wird "
-"als Basis für die neue Seite verwendet."
+msgstr "Die Vorlage “<a href=\"%(link)s\">%(name)s</a>” wurde geladen und wird als Basis für die neue Seite verwendet."
 
-#: inyoka/wiki/actions.py:431 inyoka/wiki/actions.py:518
+#: inyoka/wiki/actions.py:431
+#: inyoka/wiki/actions.py:518
 #: inyoka/wiki/actions.py:867
 msgid "Canceled"
 msgstr "Abgebrochen"
@@ -90,7 +84,8 @@ msgstr "Abgebrochen"
 msgid "No changes"
 msgstr "Keine Änderungen"
 
-#: inyoka/wiki/actions.py:456 inyoka/wiki/actions.py:467
+#: inyoka/wiki/actions.py:456
+#: inyoka/wiki/actions.py:467
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been created."
 msgstr "Die Seite “<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."
@@ -101,25 +96,15 @@ msgid "The page <a href=\"%(link)s\">%(name)s</a> has been edited."
 msgstr "Die Seite “<a href=\"%(link)s\">%(name)s</a>“ wurde bearbeitet."
 
 #: inyoka/wiki/actions.py:487
-msgid ""
-"You are in the process of editing this page unauthenticated. If you save,"
-" your IP-Address will be recorded in the revision history and is "
-"irrevocable publicly visible."
-msgstr ""
-"Du bearbeitest diese Seite unangemeldet. Wenn du speicherst, wird deine "
-"aktuelle IP-Adresse in der Versionsgeschichte aufgezeichnet und ist damit"
-" unwiderruflich öffentlich einsehbar."
+msgid "You are in the process of editing this page unauthenticated. If you save, your IP-Address will be recorded in the revision history and is irrevocable publicly visible."
+msgstr "Du bearbeitest diese Seite unangemeldet. Wenn du speicherst, wird deine aktuelle IP-Adresse in der Versionsgeschichte aufgezeichnet und ist damit unwiderruflich öffentlich einsehbar."
 
 #: inyoka/wiki/actions.py:495
-msgid ""
-"Another user edited this page also.  Please check if the automatic "
-"merging is satisfying."
-msgstr ""
-"Während du die Seite geöffnet hattest, wurde sie von einem anderen "
-"Benutzer ebenfalls bearbeitet. Bitte kontrolliere, ob das Zusammenführen "
-"der Änderungen zufriedenstellend funktioniert hat."
+msgid "Another user edited this page also.  Please check if the automatic merging is satisfying."
+msgstr "Während du die Seite geöffnet hattest, wurde sie von einem anderen Benutzer ebenfalls bearbeitet. Bitte kontrolliere, ob das Zusammenführen der Änderungen zufriedenstellend funktioniert hat."
 
-#: inyoka/wiki/actions.py:523 inyoka/wiki/actions.py:524
+#: inyoka/wiki/actions.py:523
+#: inyoka/wiki/actions.py:524
 msgid "Page deleted"
 msgstr "Seite wurde gelöscht."
 
@@ -161,9 +146,7 @@ msgstr "Du wirst über diese Seite gar nicht benachrichtigt!"
 
 #: inyoka/wiki/actions.py:1003
 msgid "You won't be notified on changes on this page anymore"
-msgstr ""
-"Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr "
-"benachrichtigt."
+msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachrichtigt."
 
 #: inyoka/wiki/forms.py:50
 msgid "The text contains too many nested elements."
@@ -177,7 +160,8 @@ msgstr "Der Text enthält Konfliktmarkierungen"
 msgid "You are not permitted to make this changes"
 msgstr "Du bist nicht dazu berechtigt, diese Änderung vorzunehmen"
 
-#: inyoka/wiki/forms.py:90 inyoka/wiki/forms.py:102
+#: inyoka/wiki/forms.py:90
+#: inyoka/wiki/forms.py:102
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -187,12 +171,8 @@ msgstr "Slug des Themas"
 
 #: inyoka/wiki/forms.py:111
 #, python-format
-msgid ""
-"You can find the slug of a topic in the URL (e.g. <var>example</var> when"
-" <em>%(example)s</em>)"
-msgstr ""
-"Den Slug eines Themas findest du in der URL (z. B. <var>example</var> bei"
-" <em>%(example)s</em>)"
+msgid "You can find the slug of a topic in the URL (e.g. <var>example</var> when <em>%(example)s</em>)"
+msgstr "Den Slug eines Themas findest du in der URL (z. B. <var>example</var> bei <em>%(example)s</em>)"
 
 #: inyoka/wiki/forms.py:123
 msgid "This topic does not exist."
@@ -202,7 +182,8 @@ msgstr "Dieses Thema existiert nicht."
 msgid "New page name"
 msgstr "Neuer Seitenname"
 
-#: inyoka/wiki/forms.py:130 inyoka/wiki/parser/nodes.py:822
+#: inyoka/wiki/forms.py:130
+#: inyoka/wiki/parser/nodes.py:822
 msgid "Edited by"
 msgstr "Bearbeitet von"
 
@@ -223,14 +204,11 @@ msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
 #: inyoka/wiki/macros.py:571
-msgid ""
-"You must apply a page name because the macro is being called outside the "
-"wiki context."
-msgstr ""
-"Du musst eine Seite angeben, weil das Makro außerhalb des Wikis verwendet"
-" wird."
+msgid "You must apply a page name because the macro is being called outside the wiki context."
+msgstr "Du musst eine Seite angeben, weil das Makro außerhalb des Wikis verwendet wird."
 
-#: inyoka/wiki/macros.py:573 inyoka/wiki/templates.py:51
+#: inyoka/wiki/macros.py:573
+#: inyoka/wiki/templates.py:51
 msgid "Invalid arguments"
 msgstr "Parameterfehler"
 
@@ -241,7 +219,8 @@ msgid_plural "%(count)d pages"
 msgstr[0] "eine Seite"
 msgstr[1] "%(count)d Seiten"
 
-#: inyoka/wiki/macros.py:620 inyoka/wiki/templates/wiki/page.html:36
+#: inyoka/wiki/macros.py:620
+#: inyoka/wiki/templates/wiki/page.html:36
 msgid "Tags"
 msgstr "Tags"
 
@@ -250,12 +229,14 @@ msgstr "Tags"
 msgid "Pages with tag “%(name)s”"
 msgstr "Seiten mit Tag „%(name)s“"
 
-#: inyoka/wiki/macros.py:692 inyoka/wiki/macros.py:995
+#: inyoka/wiki/macros.py:692
+#: inyoka/wiki/macros.py:995
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr "Die Seite „%(name)s“ wurde nicht gefunden."
 
-#: inyoka/wiki/macros.py:694 inyoka/wiki/macros.py:994
+#: inyoka/wiki/macros.py:694
+#: inyoka/wiki/macros.py:994
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
@@ -305,7 +286,8 @@ msgstr "Wikiseite"
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
-#: inyoka/wiki/models.py:1089 inyoka/wiki/models.py:1092
+#: inyoka/wiki/models.py:1089
+#: inyoka/wiki/models.py:1092
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
@@ -347,12 +329,8 @@ msgid "Invalid syntax for this loop. The first argument must be a variable."
 msgstr "Ungültige Schleifen-Syntax. Erstes Argument muss eine Variable sein."
 
 #: inyoka/wiki/templates.py:163
-msgid ""
-"Invalid syntax for this loop. After the first variable an “in” is "
-"required."
-msgstr ""
-"Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort "
-"\"in\" folgen."
+msgid "Invalid syntax for this loop. After the first variable an “in” is required."
+msgstr "Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort \"in\" folgen."
 
 #: inyoka/wiki/templates.py:168
 msgid "Loop header contains too many arguments."
@@ -367,12 +345,8 @@ msgid "Conditions allow only one expression per block."
 msgstr "Bedingungen erlauben nur einen Ausdruck pro Block."
 
 #: inyoka/wiki/templates.py:192
-msgid ""
-"The “else” block does not allow any expressions. Maybe you wanted to use "
-"the “elseif” block."
-msgstr ""
-"„else“-Block erlaubt keinen Ausdruck. Möglicherweise wolltest du einen "
-"„elseif“-Block verwenden."
+msgid "The “else” block does not allow any expressions. Maybe you wanted to use the “elseif” block."
+msgstr "„else“-Block erlaubt keinen Ausdruck. Möglicherweise wolltest du einen „elseif“-Block verwenden."
 
 #: inyoka/wiki/templates.py:203
 msgid "Conditions allow only one expression per block"
@@ -416,9 +390,7 @@ msgstr "Syntaxfehler: "
 
 #: inyoka/wiki/views.py:78
 msgid "A site name needs to be entered to create this page."
-msgstr ""
-"Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben "
-"wurde."
+msgstr "Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben wurde."
 
 #: inyoka/wiki/views.py:89
 #, python-format
@@ -437,41 +409,26 @@ msgstr "%(sitename)s Wiki – Letzte Änderungen"
 
 #: inyoka/wiki/views.py:227
 #, python-format
-msgid ""
-"%(user)s deleted the article “%(article)s“ on %(date)s. Summary: "
-"%(summary)s"
-msgstr ""
-"%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. "
-"Zusammenfassung: %(summary)s"
+msgid "%(user)s deleted the article “%(article)s“ on %(date)s. Summary: %(summary)s"
+msgstr "%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. Zusammenfassung: %(summary)s"
 
 #: inyoka/wiki/views.py:230
 #, python-format
-msgid ""
-"%(user)s edited the article “%(article)s“ on %(date)s. Summary: "
-"%(summary)s"
-msgstr ""
-"%(user)s hat den Artikel „%(article)s” am %(date)s bearbeitet. "
-"Zusammenfassung: %(summary)s"
+msgid "%(user)s edited the article “%(article)s“ on %(date)s. Summary: %(summary)s"
+msgstr "%(user)s hat den Artikel „%(article)s” am %(date)s bearbeitet. Zusammenfassung: %(summary)s"
 
 #: inyoka/wiki/views.py:234
 #, python-format
-msgid ""
-"An anonymous user deleted the article “%(article)s“ on %(date)s. Summary:"
-" %(summary)s"
-msgstr ""
-"Ein anonymer Benutzer hat den Artikel „%(article)s“ am %(date)s gelöscht."
-" Zusammenfassung: %(summary)s"
+msgid "An anonymous user deleted the article “%(article)s“ on %(date)s. Summary: %(summary)s"
+msgstr "Ein anonymer Benutzer hat den Artikel „%(article)s“ am %(date)s gelöscht. Zusammenfassung: %(summary)s"
 
 #: inyoka/wiki/views.py:237
 #, python-format
-msgid ""
-"An anonymous user edited the article “%(article)s“ on %(date)s. Summary: "
-"%(summary)s"
-msgstr ""
-"Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s "
-"bearbeitet. Zusammenfassung: %(summary)s"
+msgid "An anonymous user edited the article “%(article)s“ on %(date)s. Summary: %(summary)s"
+msgstr "Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s bearbeitet. Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:249 inyoka/wiki/views.py:252
+#: inyoka/wiki/views.py:249
+#: inyoka/wiki/views.py:252
 msgid "Anonymous"
 msgstr "Anonymous"
 
@@ -571,13 +528,8 @@ msgstr[0] "Diese Seite hat aktuell einen Anhang."
 msgstr[1] "Diese Seite hat aktuell %(count)s Anhänge."
 
 #: inyoka/wiki/templates/wiki/action_attach.html:54
-msgid ""
-"To refer to an attachment you can either link to the corresponding wiki "
-"page or include it with the <code>[[Bild()]]</code> macro."
-msgstr ""
-"Um auf einen Anhang zu verweisen, kannst du entweder zu der "
-"entsprechenden Wikiseite verlinken oder diese mit dem "
-"<code>[[Bild()]]</code> Makro einbinden."
+msgid "To refer to an attachment you can either link to the corresponding wiki page or include it with the <code>[[Bild()]]</code> macro."
+msgstr "Um auf einen Anhang zu verweisen, kannst du entweder zu der entsprechenden Wikiseite verlinken oder diese mit dem <code>[[Bild()]]</code> Makro einbinden."
 
 #: inyoka/wiki/templates/wiki/action_attach.html:64
 #, python-format
@@ -615,26 +567,16 @@ msgstr "Backlinks"
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:18
 #, python-format
-msgid ""
-"The following pages are referring to the article ”%(title)s” by manual "
-"linking:"
-msgstr ""
-"Die folgenden Seiten beziehen sich auf den Artikel „%(title)s“ durch "
-"manuelle Verlinkung:"
+msgid "The following pages are referring to the article ”%(title)s” by manual linking:"
+msgstr "Die folgenden Seiten beziehen sich auf den Artikel „%(title)s“ durch manuelle Verlinkung:"
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:30
 msgid "The following pages are embedding this articles as attachment."
 msgstr "Die folgenden Seiten binden diesen Artikel als Anhang ein:"
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:34
-msgid ""
-"But the article itself is not listed as an attachment, perhaps these "
-"pages are using the article mistakenly or an old revision was an "
-"attachment."
-msgstr ""
-"Aber der Artikel selbst ist nicht als Anhang aufgeführt; vielleicht "
-"verwenden diese Seiten den Artikel versehentlich oder eine alte Revision "
-"war ein Anhang."
+msgid "But the article itself is not listed as an attachment, perhaps these pages are using the article mistakenly or an old revision was an attachment."
+msgstr "Aber der Artikel selbst ist nicht als Anhang aufgeführt; vielleicht verwenden diese Seiten den Artikel versehentlich oder eine alte Revision war ein Anhang."
 
 #: inyoka/wiki/templates/wiki/action_backlinks.html:52
 msgid "This attachment is an orphan and not referenced by any site."
@@ -658,49 +600,23 @@ msgstr "Unterschied"
 
 #: inyoka/wiki/templates/wiki/action_diff.html:22
 #, python-format
-msgid ""
-"You are trying to compare two equal revision of the article “<a "
-"href=\"%(link)s\">%(article)s</a>. For this reason no change is "
-"displayed."
-msgstr ""
-"Du vergleichst zwei identische Revisionen des Arikels “<a "
-"href=\"%(link)s\">%(article)s</a>. Daher werden keine Änderungen "
-"angezeigt."
+msgid "You are trying to compare two equal revision of the article “<a href=\"%(link)s\">%(article)s</a>. For this reason no change is displayed."
+msgstr "Du vergleichst zwei identische Revisionen des Arikels “<a href=\"%(link)s\">%(article)s</a>. Daher werden keine Änderungen angezeigt."
 
 #: inyoka/wiki/templates/wiki/action_diff.html:27
 #, python-format
-msgid ""
-"But you can display <a href=\"%(link)s\">a list of changes</a> of this "
-"page and compare individual revisions."
-msgstr ""
-"Aber du kannst dir eine <a href=\"%(link)s\">Liste an Änderungen</a> "
-"dieser Seite anzeigen und einzelne Revisionen vergleichen."
+msgid "But you can display <a href=\"%(link)s\">a list of changes</a> of this page and compare individual revisions."
+msgstr "Aber du kannst dir eine <a href=\"%(link)s\">Liste an Änderungen</a> dieser Seite anzeigen und einzelne Revisionen vergleichen."
 
 #: inyoka/wiki/templates/wiki/action_diff.html:33
 #, python-format
-msgid ""
-"The following table shows the difference of the article “<a "
-"href=\"%(article_link)s\">%(article)s</a>“ between <a "
-"href=\"%(old_rev_link)s\">revision %(old_rev)s</a> (%(old_rev_note)s) and"
-" <a href=\"%(new_rev_link)s\">revision %(new_rev)s</a> "
-"(%(new_rev_note)s)."
-msgstr ""
-"Die folgende Tabelle zeigt die Änderungen im Artikel “<a "
-"href=\"%(article_link)s\">%(article)s</a>“ zwischen <a "
-"href=\"%(old_rev_link)s\">Revision %(old_rev)s</a> (%(old_rev_note)s) und"
-" <a href=\"%(new_rev_link)s\">Revision %(new_rev)s</a> (%(new_rev_note)s)"
-" auf."
+msgid "The following table shows the difference of the article “<a href=\"%(article_link)s\">%(article)s</a>“ between <a href=\"%(old_rev_link)s\">revision %(old_rev)s</a> (%(old_rev_note)s) and <a href=\"%(new_rev_link)s\">revision %(new_rev)s</a> (%(new_rev_note)s)."
+msgstr "Die folgende Tabelle zeigt die Änderungen im Artikel “<a href=\"%(article_link)s\">%(article)s</a>“ zwischen <a href=\"%(old_rev_link)s\">Revision %(old_rev)s</a> (%(old_rev_note)s) und <a href=\"%(new_rev_link)s\">Revision %(new_rev)s</a> (%(new_rev_note)s) auf."
 
 #: inyoka/wiki/templates/wiki/action_diff.html:44
 #, python-format
-msgid ""
-"You can also download the changes as <a href=\"%(link_diff)s\">unified "
-"diff</a> or display a <a href=\"%(link_list)s\">list of the last "
-"changes</a> and compare individual revisions."
-msgstr ""
-"Du kannst dir die Änderungen als <a href=\"%(link_diff)s\">unified "
-"diff</a> herunterladen oder dir eine <a href=\"%(link_list)s\">Liste an "
-"Änderungen</a> anzeigen und einzelne Revisionen vergleichen."
+msgid "You can also download the changes as <a href=\"%(link_diff)s\">unified diff</a> or display a <a href=\"%(link_list)s\">list of the last changes</a> and compare individual revisions."
+msgstr "Du kannst dir die Änderungen als <a href=\"%(link_diff)s\">unified diff</a> herunterladen oder dir eine <a href=\"%(link_list)s\">Liste an Änderungen</a> anzeigen und einzelne Revisionen vergleichen."
 
 #: inyoka/wiki/templates/wiki/action_diff.html:53
 msgid "Current revision"
@@ -726,44 +642,25 @@ msgstr "Seitenrevisionen"
 
 #: inyoka/wiki/templates/wiki/action_log.html:23
 #, python-format
-msgid ""
-"The article “<a href=\"%(link)s\">%(article)s</a>“ has currently "
-"%(count)s revision."
-msgid_plural ""
-"The article “<a href=\"%(link)s\">%(article)s</a>“ has currently "
-"%(count)s revisions."
+msgid "The article “<a href=\"%(link)s\">%(article)s</a>“ has currently %(count)s revision."
+msgid_plural "The article “<a href=\"%(link)s\">%(article)s</a>“ has currently %(count)s revisions."
 msgstr[0] "Der Artikel “<a href=\"%(link)s\">%(article)s</a>“ hat eine Revision."
-msgstr[1] ""
-"Der Artikel “<a href=\"%(link)s\">%(article)s</a>“ hat %(count)s "
-"Revisionen."
+msgstr[1] "Der Artikel “<a href=\"%(link)s\">%(article)s</a>“ hat %(count)s Revisionen."
 
 #: inyoka/wiki/templates/wiki/action_log.html:30
 #, python-format
-msgid ""
-"The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was "
-"created by <a href=\"%(author_link)s\">%(author)s</a>."
-msgstr ""
-"Die <a href=\"%(rev_link)s\">aktuelle Revision</a> ist %(rev)s und wurde "
-"durch <a href=\"%(author_link)s\">%(author)s</a> erstellt."
+msgid "The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was created by <a href=\"%(author_link)s\">%(author)s</a>."
+msgstr "Die <a href=\"%(rev_link)s\">aktuelle Revision</a> ist %(rev)s und wurde durch <a href=\"%(author_link)s\">%(author)s</a> erstellt."
 
 #: inyoka/wiki/templates/wiki/action_log.html:35
 #, python-format
-msgid ""
-"The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was "
-"created by %(author)s."
-msgstr ""
-"Die <a href=\"%(rev_link)s\">aktuelle Revision</a> ist %(rev)s und wurde "
-"durch %(author)s erstellt."
+msgid "The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was created by %(author)s."
+msgstr "Die <a href=\"%(rev_link)s\">aktuelle Revision</a> ist %(rev)s und wurde durch %(author)s erstellt."
 
 #: inyoka/wiki/templates/wiki/action_log.html:42
 #, python-format
-msgid ""
-"To be always up to date you can read the <a href=\"%(feed_link)s\">atom "
-"feed</a> or <a href=\"%(subscribe_link)s\">subscribe</a>."
-msgstr ""
-"Um immer auf dem aktuellen Stand zu sein, kannst du den <a "
-"href=\"%(feed_link)s\">Atom Feed</a> lesen oder <a "
-"href=\"%(subscribe_link)s\">abonnieren</a>."
+msgid "To be always up to date you can read the <a href=\"%(feed_link)s\">atom feed</a> or <a href=\"%(subscribe_link)s\">subscribe</a>."
+msgstr "Um immer auf dem aktuellen Stand zu sein, kannst du den <a href=\"%(feed_link)s\">Atom Feed</a> lesen oder <a href=\"%(subscribe_link)s\">abonnieren</a>."
 
 #: inyoka/wiki/templates/wiki/action_log.html:48
 #: inyoka/wiki/templates/wiki/action_log.html:87
@@ -888,13 +785,8 @@ msgid "Mark as discontinued"
 msgstr "Als Verlassen markieren"
 
 #: inyoka/wiki/templates/wiki/action_rename.html:15
-msgid ""
-"If you rename this page, all revisions will be renamed. The old page will"
-" redirect to the new one."
-msgstr ""
-"Beim Umbenennen dieser Seite werden auch alle ihre Revisionen umbenannt. "
-"Unter der alten Seite wird dann eine Weiterleitung zum neuen Namen "
-"eingerichtet."
+msgid "If you rename this page, all revisions will be renamed. The old page will redirect to the new one."
+msgstr "Beim Umbenennen dieser Seite werden auch alle ihre Revisionen umbenannt. Unter der alten Seite wird dann eine Weiterleitung zum neuen Namen eingerichtet."
 
 #: inyoka/wiki/templates/wiki/action_rename.html:19
 msgid "New page name:"
@@ -914,21 +806,13 @@ msgstr "Doppelte Anhänge der Zielseite werden überschrieben!"
 
 #: inyoka/wiki/templates/wiki/action_show.html:26
 #, python-format
-msgid ""
-"<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by <a "
-"href=\"%(author_link)s\">%(author)s</a>."
-msgstr ""
-"<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von <a "
-"href=\"%(author_link)s\">%(author)s</a> erstellt."
+msgid "<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by <a href=\"%(author_link)s\">%(author)s</a>."
+msgstr "<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von <a href=\"%(author_link)s\">%(author)s</a> erstellt."
 
 #: inyoka/wiki/templates/wiki/action_show.html:31
 #, python-format
-msgid ""
-"<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by "
-"%(author)s."
-msgstr ""
-"<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von "
-"%(author)s erstellt."
+msgid "<a href=\"%(rev_link)s\">This revision</a> was created on %(date)s by %(author)s."
+msgstr "<a href=\"%(rev_link)s\">Diese Revision</a> wurde am %(date)s von %(author)s erstellt."
 
 #: inyoka/wiki/templates/wiki/action_show.html:38
 msgid "At this page the following tags have been assigned:"
@@ -948,21 +832,13 @@ msgstr "Der Artikel „%(title)s“ existiert noch nicht."
 #: inyoka/wiki/templates/wiki/missing_page.html:26
 #: inyoka/wiki/templates/wiki/missing_page.m.html:25
 #, python-format
-msgid ""
-"The article “%(title)s“ was deleted. You can restore it or create a new "
-"one in the action menu."
-msgstr ""
-"Der Artikel „%(title)s” wurde gelöscht. Du kannst ihn wiederherstellen "
-"oder über das Aktionsmenü einen neuen erstellen."
+msgid "The article “%(title)s“ was deleted. You can restore it or create a new one in the action menu."
+msgstr "Der Artikel „%(title)s” wurde gelöscht. Du kannst ihn wiederherstellen oder über das Aktionsmenü einen neuen erstellen."
 
 #: inyoka/wiki/templates/wiki/missing_page.html:33
 #: inyoka/wiki/templates/wiki/missing_page.m.html:32
-msgid ""
-"The article is already under construction, help improving and finishing "
-"it!"
-msgstr ""
-"Dieser Artikel existiert bereits in der Baustelle; hilf dabei ihn zu "
-"verbessern und fertigzustellen!"
+msgid "The article is already under construction, help improving and finishing it!"
+msgstr "Dieser Artikel existiert bereits in der Baustelle; hilf dabei ihn zu verbessern und fertigzustellen!"
 
 #: inyoka/wiki/templates/wiki/missing_page.html:45
 #: inyoka/wiki/templates/wiki/missing_page.m.html:44
@@ -994,14 +870,8 @@ msgstr "Fehlende Ressource"
 
 #: inyoka/wiki/templates/wiki/missing_resource.html:17
 #, python-format
-msgid ""
-"The requested resource could not be found. Maybe you have followed a link"
-" with invalid parameters. You can try to open the <a "
-"href=\"%(link)s\">URL without parameters</a>."
-msgstr ""
-"Die gewünschte Ressource wurde nicht gefunden. Möglicherweise bist du "
-"einem Link mit ungültigen Parametern gefolgt. Du kannst versuchen, die <a"
-" href=\"%(link)s\">URL ohne Parameter</a> aufzurufen."
+msgid "The requested resource could not be found. Maybe you have followed a link with invalid parameters. You can try to open the <a href=\"%(link)s\">URL without parameters</a>."
+msgstr "Die gewünschte Ressource wurde nicht gefunden. Möglicherweise bist du einem Link mit ungültigen Parametern gefolgt. Du kannst versuchen, die <a href=\"%(link)s\">URL ohne Parameter</a> aufzurufen."
 
 #: inyoka/wiki/templates/wiki/page.html:24
 msgid "Wiki"

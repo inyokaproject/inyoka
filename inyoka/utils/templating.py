@@ -27,6 +27,7 @@ from inyoka.utils.dates import format_datetime, format_specific_datetime, \
     format_time
 from inyoka.utils.flashing import get_flashed_messages
 from inyoka.utils.local import current_request
+from inyoka.utils.text import human_number
 
 # path to the dtd.  In debug mode we refer to the file system, otherwise
 # URL.  We do that because the firefox validator extension is unable to
@@ -285,6 +286,7 @@ FILTERS = {
     'timedeltaformat': timesince,
     'datetimeformat': format_datetime,
     'dateformat': naturalday,
+    'hnumber': human_number,
     'timeformat': format_time,
     'specificdatetimeformat': format_specific_datetime,
     'url': url_for,

@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-05-13 10:58+0200\n"
+"POT-Creation-Date: 2012-05-18 19:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev\n"
 
 #: inyoka/templates/appheader.html:2
 msgid "Portal"
@@ -322,6 +322,37 @@ msgstr ""
 #: inyoka/utils/sortable.py:103
 #, python-format
 msgid "The chosen sort value (“%(value)s”) is not available"
+msgstr ""
+
+#: inyoka/utils/text.py:212
+msgid "ten"
+msgstr ""
+
+#: inyoka/utils/text.py:214
+msgid "eleven"
+msgstr ""
+
+#: inyoka/utils/text.py:216
+msgid "twelve"
+msgstr ""
+
+#: inyoka/utils/text.py:224
+msgctxt "masculine"
+msgid "one"
+msgstr ""
+
+#: inyoka/utils/text.py:225
+msgctxt "feminine"
+msgid "one"
+msgstr ""
+
+#: inyoka/utils/text.py:226
+msgctxt "neuter"
+msgid "one"
+msgstr ""
+
+#: inyoka/utils/text.py:227
+msgid "one"
 msgstr ""
 
 #: inyoka/utils/tests/test_templating.py:12
