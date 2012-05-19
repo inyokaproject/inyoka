@@ -1,7 +1,7 @@
 # Translations template for PROJECT.
 # Copyright (C) 2012 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# 
+#
 # Translators:
 # <eule_stern@web.de>, 2011.
 #   <eule_stern@web.de>, 2011.
@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
 "POT-Creation-Date: 2012-05-18 19:48+0200\n"
-"PO-Revision-Date: 2012-04-29 22:39+0000\n"
+"PO-Revision-Date: 2012-05-19 22:24+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -178,11 +178,13 @@ msgstr "Vim Scripts"
 msgid "XML"
 msgstr "XML"
 
-#: inyoka/pastebin/forms.py:64 inyoka/pastebin/models.py:23
+#: inyoka/pastebin/forms.py:64
+#: inyoka/pastebin/models.py:23
 msgid "Title"
 msgstr "Titel"
 
-#: inyoka/pastebin/forms.py:65 inyoka/pastebin/models.py:24
+#: inyoka/pastebin/forms.py:65
+#: inyoka/pastebin/models.py:24
 msgid "Language"
 msgstr "Sprache"
 
@@ -224,9 +226,7 @@ msgid "Entries"
 msgstr "Einträge"
 
 #: inyoka/pastebin/views.py:29
-msgid ""
-"Your entry was successfully saved. You can use the following code to include"
-" it in your post:"
+msgid "Your entry was successfully saved. You can use the following code to include it in your post:"
 msgstr "Dein Eintrag wurde erfolgreich gespeichert. Du kannst ihn mit dem folgenden Code in deinen Beitrag einbinden:"
 
 #: inyoka/pastebin/views.py:50
@@ -252,11 +252,7 @@ msgid "About:"
 msgstr "Funktion:"
 
 #: inyoka/pastebin/templates/pastebin/add.html:20
-msgid ""
-"This is a pastebin where you can save error messages, logs, configuration "
-"files or source codes to keep threads or IRC channels clean. To do this, "
-"just copy the text in the box below and choose the appropriate language. "
-"After that, you copy the URL into the topic or the channel."
+msgid "This is a pastebin where you can save error messages, logs, configuration files or source codes to keep threads or IRC channels clean. To do this, just copy the text in the box below and choose the appropriate language. After that, you copy the URL into the topic or the channel."
 msgstr "Dies ist eine Ablage, in der du Fehlermeldungen, Logs, Konfigurationsdateien oder Quelltexte speichern kannst, um Forenthemen oder IRC-Kanäle nicht unnötig unleserlich zu machen. Dazu kopierst du den Text in das Textfeld und wählst die passende Sprache aus. Dann kopierst du die URL in das Thema bzw. den Kanal."
 
 #: inyoka/pastebin/templates/pastebin/add.html:28
@@ -265,9 +261,7 @@ msgstr "Absenden"
 
 #: inyoka/pastebin/templates/pastebin/browse.html:20
 #, python-format
-msgid ""
-"<a href=\"%(entry_link)s\">%(title)s</a> by <a "
-"href=\"%(author_link)s\">%(author)s</a>"
+msgid "<a href=\"%(entry_link)s\">%(title)s</a> by <a href=\"%(author_link)s\">%(author)s</a>"
 msgstr "<a href=\"%(entry_link)s\">%(title)s</a> von <a href=\"%(author_link)s\">%(author)s</a>"
 
 #: inyoka/pastebin/templates/pastebin/browse.html:32
@@ -326,3 +320,4 @@ msgstr "Ablage"
 #: inyoka/pastebin/templates/pastebin/page.html:30
 msgid "Browse pastes"
 msgstr "Einträge durchstöbern"
+

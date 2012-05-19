@@ -1,7 +1,7 @@
 # Translations template for PROJECT.
 # Copyright (C) 2012 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# 
+#
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 # Markus  <inyoka@markusholtermann.eu>, 2012.
@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
 "POT-Creation-Date: 2012-05-18 19:48+0200\n"
-"PO-Revision-Date: 2012-05-18 17:57+0000\n"
+"PO-Revision-Date: 2012-05-19 22:24+0100\n"
 "Last-Translator: Phaiax <phaiax@invisibletower.de>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -22,18 +22,18 @@ msgstr ""
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: inyoka/ikhaya/forms.py:41 inyoka/ikhaya/models.py:207
+#: inyoka/ikhaya/forms.py:41
+#: inyoka/ikhaya/models.py:207
 #: inyoka/ikhaya/models.py:416
 msgid "Text"
 msgstr "Text"
 
 #: inyoka/ikhaya/forms.py:42
-msgid ""
-"To refer to another comment, you can write <code>@commentnumber</code>.<br "
-"/>Clicking on “reply“ will automatically insert this code."
+msgid "To refer to another comment, you can write <code>@commentnumber</code>.<br />Clicking on “reply“ will automatically insert this code."
 msgstr "Um dich auf einen anderen Kommentar zu beziehen, kannst du <code>@kommentarnummer</code> verwenden.<br />Dieser wird automatisch eingefügt, wenn du bei einem Beitrag auf „Antworten“ klickst."
 
-#: inyoka/ikhaya/forms.py:60 inyoka/ikhaya/models.py:200
+#: inyoka/ikhaya/forms.py:60
+#: inyoka/ikhaya/models.py:200
 #: inyoka/ikhaya/templates/ikhaya/events.html:33
 msgid "Author"
 msgstr "Autor"
@@ -66,23 +66,28 @@ msgstr "Das Enddatum muss nach dem Startdatum liegen."
 msgid "Display event?"
 msgstr "Kalendereintrag sichtbar?"
 
-#: inyoka/ikhaya/models.py:162 inyoka/ikhaya/models.py:209
+#: inyoka/ikhaya/models.py:162
+#: inyoka/ikhaya/models.py:209
 msgid "Slug"
 msgstr "Slug"
 
-#: inyoka/ikhaya/models.py:165 inyoka/ikhaya/models.py:205
+#: inyoka/ikhaya/models.py:165
+#: inyoka/ikhaya/models.py:205
 msgid "Icon"
 msgstr "Icon"
 
-#: inyoka/ikhaya/models.py:184 inyoka/ikhaya/models.py:202
+#: inyoka/ikhaya/models.py:184
+#: inyoka/ikhaya/models.py:202
 msgid "Category"
 msgstr "Kategorie"
 
-#: inyoka/ikhaya/models.py:185 inyoka/ikhaya/templates/ikhaya/page.html:57
+#: inyoka/ikhaya/models.py:185
+#: inyoka/ikhaya/templates/ikhaya/page.html:57
 msgid "Categories"
 msgstr "Kategorien"
 
-#: inyoka/ikhaya/models.py:195 inyoka/ikhaya/templates/ikhaya/events.html:32
+#: inyoka/ikhaya/models.py:195
+#: inyoka/ikhaya/templates/ikhaya/events.html:32
 msgid "Date"
 msgstr "Datum"
 
@@ -98,7 +103,8 @@ msgstr "Letzte Änderung"
 msgid "Headline"
 msgstr "Überschrift"
 
-#: inyoka/ikhaya/models.py:206 inyoka/ikhaya/models.py:417
+#: inyoka/ikhaya/models.py:206
+#: inyoka/ikhaya/models.py:417
 msgid "Introduction"
 msgstr "Einleitung"
 
@@ -172,9 +178,7 @@ msgstr "Dein Kommentar wurde erstellt."
 
 #: inyoka/ikhaya/views.py:219
 #, python-format
-msgid ""
-"The publication of the article “<a href=\"%(link)s\">%(title)s</a>“ has been"
-" revoked."
+msgid "The publication of the article “<a href=\"%(link)s\">%(title)s</a>“ has been revoked."
 msgstr "Die Veröffentlichung des Artikels „<a href=\"%(link)s\">%(title)s</a>“ wurde aufgehoben."
 
 #: inyoka/ikhaya/views.py:224
@@ -268,11 +272,13 @@ msgstr "Der Vorschlag wurde niemandem zugewiesen."
 msgid "The suggestion was assigned to “%(user)s“."
 msgstr "Der Vorschlag wurde „%(user)s” zugewiesen."
 
-#: inyoka/ikhaya/views.py:531 inyoka/ikhaya/views.py:576
+#: inyoka/ikhaya/views.py:531
+#: inyoka/ikhaya/views.py:576
 msgid "This suggestion does not exist."
 msgstr "Dieser Vorschlag existiert nicht."
 
-#: inyoka/ikhaya/views.py:538 inyoka/ikhaya/views.py:543
+#: inyoka/ikhaya/views.py:538
+#: inyoka/ikhaya/views.py:543
 msgid "Article suggestion deleted"
 msgstr "Artikelvorschlag gelöscht"
 
@@ -294,9 +300,7 @@ msgid "Please login to suggest an article."
 msgstr "Bitte melde dich an, um einen Artikel vorzuschlagen."
 
 #: inyoka/ikhaya/views.py:600
-msgid ""
-"Thank you, your article suggestion was submitted. A team member will contact"
-" you shortly."
+msgid "Thank you, your article suggestion was submitted. A team member will contact you shortly."
 msgstr "Vielen Dank, dein Artikelvorschlag wurde gespeichert. Ein Teammitglied wird dich sobald wie möglich kontaktieren."
 
 #: inyoka/ikhaya/views.py:663
@@ -309,9 +313,7 @@ msgstr "Du wirst über neue Vorschläge nicht mehr benachrichtigt."
 
 #: inyoka/ikhaya/views.py:696
 #, python-format
-msgid ""
-"The event with the id %(id)s could not be used as draft for a new event "
-"because it does not exist."
+msgid "The event with the id %(id)s could not be used as draft for a new event because it does not exist."
 msgstr "Die Veranstaltung mit der ID %(id)s existiert nicht und kann daher nicht als Basis für den Kopiervorgang benutzt werden."
 
 #: inyoka/ikhaya/views.py:710
@@ -339,16 +341,12 @@ msgstr "Archiv"
 
 #: inyoka/ikhaya/templates/ikhaya/archive.html:16
 #, python-format
-msgid ""
-"Here are all published articles in chronological order. You can find the "
-"most recent articles on <a href=\"%(link)s\">the front page</a>."
+msgid "Here are all published articles in chronological order. You can find the most recent articles on <a href=\"%(link)s\">the front page</a>."
 msgstr "Hier finden sich alle Artikel in chronologischer Reihenfolge. Die aktuellsten Artikel sind auf der <a href=\"%(link)s\">Startseite</a> zu sehen."
 
 #: inyoka/ikhaya/templates/ikhaya/article_delete.html:18
 #, python-format
-msgid ""
-"Are you sure you want to delete the article <a "
-"href=\"%(link)s\">%(article)s</a>?"
+msgid "Are you sure you want to delete the article <a href=\"%(link)s\">%(article)s</a>?"
 msgstr "Bist du sicher, dass du den Artikel <a href=\"%(link)s\">%(article)s</a> löschen möchtest?"
 
 #: inyoka/ikhaya/templates/ikhaya/article_delete.html:23
@@ -437,8 +435,7 @@ msgstr "Kommentar bearbeiten"
 
 #: inyoka/ikhaya/templates/ikhaya/comment_update.html:15
 #, python-format
-msgid ""
-"Do you want to restore the <a href=\"%(link)s\">comment from %(author)s</a>?"
+msgid "Do you want to restore the <a href=\"%(link)s\">comment from %(author)s</a>?"
 msgstr "Möchtest du den <a href=\"%(link)s\">Kommentar von %(author)s</a> wiederherstellen?"
 
 #: inyoka/ikhaya/templates/ikhaya/comment_update.html:19
@@ -632,10 +629,7 @@ msgstr "Veranstaltung vorschlagen"
 
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:19
 #, python-format
-msgid ""
-"Using this form you can suggest a new entry for our <a "
-"href=\"%(link)s\">calendar</a>. A team member will review your suggestion as"
-" soon as possible."
+msgid "Using this form you can suggest a new entry for our <a href=\"%(link)s\">calendar</a>. A team member will review your suggestion as soon as possible."
 msgstr "Mit diesem Formular kannst du einen neuen Eintrag in unseren <a href=\"%(link)s\">Kalender</a> eintragen. Ein Teammitglied wird sich deinen Vorschlag so schnell wie möglich ansehen."
 
 #: inyoka/ikhaya/templates/ikhaya/events.html:17
@@ -782,9 +776,7 @@ msgstr "Neue Meldung zum Artikel „<a href=\"%(link)s\">%(article)s</a>“"
 
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:26
 #, python-format
-msgid ""
-"Describe here briefly the discovered mistake. Please make sure that the "
-"mistake was not <a href=\"%(link)s\">already reported</a>."
+msgid "Describe here briefly the discovered mistake. Please make sure that the mistake was not <a href=\"%(link)s\">already reported</a>."
 msgstr "Bitte beschreibe hier kurz die im Artikel gefundenen Fehler. Bitte achte darauf, dass der Fehler nicht bereits <a href=\"%(link)s\">gemeldet wurde</a>."
 
 #: inyoka/ikhaya/templates/ikhaya/report_update.html:15
@@ -794,22 +786,17 @@ msgstr "Möchtest du die <a href=\"%(link)s\">Meldung von %(author)s</a> verberg
 
 #: inyoka/ikhaya/templates/ikhaya/report_update.html:19
 #, python-format
-msgid ""
-"Do you want to restore the <a href=\"%(link)s\">report from %(author)s</a>?"
+msgid "Do you want to restore the <a href=\"%(link)s\">report from %(author)s</a>?"
 msgstr "Möchtest du die <a href=\"%(link)s\">Meldung von %(author)s</a> wiederherstellen?"
 
 #: inyoka/ikhaya/templates/ikhaya/report_update.html:23
 #, python-format
-msgid ""
-"Do you want to mark the <a href=\"%(link)s\">report from %(author)s</a> as "
-"solved?"
+msgid "Do you want to mark the <a href=\"%(link)s\">report from %(author)s</a> as solved?"
 msgstr "Möchtest du die <a href=\"%(link)s\">Meldung von %(author)s</a> als gelöst markieren?"
 
 #: inyoka/ikhaya/templates/ikhaya/report_update.html:27
 #, python-format
-msgid ""
-"Do you want to mark the <a href=\"%(link)s\">report from %(author)s</a> as "
-"unsolved?"
+msgid "Do you want to mark the <a href=\"%(link)s\">report from %(author)s</a> as unsolved?"
 msgstr "Möchtest du die <a href=\"%(link)s\">Meldung von %(author)s</a> als ungelöst markieren?"
 
 #: inyoka/ikhaya/templates/ikhaya/report_update.html:35
@@ -863,16 +850,13 @@ msgid "Explanation for the author of the suggestion:"
 msgstr "Erläuterung für den Autor des Vorschlages:"
 
 #: inyoka/ikhaya/templates/ikhaya/suggest_delete.html:18
-msgid ""
-"Leave this field empty if the suggestion should be deleted without an "
-"explanation."
+msgid "Leave this field empty if the suggestion should be deleted without an explanation."
 msgstr "Lasse dieses Feld leer, wenn du den Vorschlag ohne eine Erläuterung löschen möchtest."
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:18
 #, python-format
 msgid "Here is one article suggestion which was not yet reviewed."
-msgid_plural ""
-"Here are %(count)s article suggestions which were not yet reviewed."
+msgid_plural "Here are %(count)s article suggestions which were not yet reviewed."
 msgstr[0] "Es gibt noch einen Artikelvorschlag zum Bearbeiten."
 msgstr[1] "Es gibt noch %(count)s Artikelvorschläge zum Bearbeiten."
 
@@ -913,3 +897,4 @@ msgstr "%(author)s eine Nachricht schreiben"
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:67
 msgid "There are currently no article suggestions."
 msgstr "Es gibt momentan keine Artikelvorschläge."
+

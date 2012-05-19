@@ -1,7 +1,7 @@
 # Translations template for PROJECT.
 # Copyright (C) 2012 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# 
+#
 # Translators:
 # <eule_stern@web.de>, 2011.
 #   <eule_stern@web.de>, 2011.
@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
 "POT-Creation-Date: 2012-05-18 19:48+0200\n"
-"PO-Revision-Date: 2012-05-18 17:58+0000\n"
+"PO-Revision-Date: 2012-05-19 22:24+0100\n"
 "Last-Translator: Phaiax <phaiax@invisibletower.de>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -46,7 +46,8 @@ msgstr "Private Nachrichten (%(count)s)"
 msgid "Private messages"
 msgstr "Private Nachrichten"
 
-#: inyoka/templates/overall.html:144 inyoka/templates/overall.m.html:69
+#: inyoka/templates/overall.html:144
+#: inyoka/templates/overall.m.html:69
 msgid "Login"
 msgstr "Anmelden"
 
@@ -150,10 +151,7 @@ msgstr "Diesen Hinweis ausblenden"
 
 #: inyoka/templates/overall.m.html:47
 #, python-format
-msgid ""
-"This is the version for mobile clients. To get to the <a "
-"href=\"%(link)s\">classical layout</a> click on the link in the footer of "
-"the page."
+msgid "This is the version for mobile clients. To get to the <a href=\"%(link)s\">classical layout</a> click on the link in the footer of the page."
 msgstr "Dies ist die mobile Version. Um zum <a href=\"%(link)s\">klassischen Layout</a> zurückzukehren, klicke auf den Link am Ende der Seite."
 
 #: inyoka/templates/overall.m.html:65
@@ -169,22 +167,15 @@ msgid "Bad request"
 msgstr "Fehlerhafte Abfrage"
 
 #: inyoka/templates/errors/400_csrf.html:16
-msgid ""
-"The browser did not transmit a valid control key and therefore the "
-"processing has been canceled for security reasons."
+msgid "The browser did not transmit a valid control key and therefore the processing has been canceled for security reasons."
 msgstr "Der Browser hat keinen oder einen fehlerhaften Kontrollschlüssel übertragen; die Weiterverarbeitung wurde aus Sicherheitsgründen abgebrochen."
 
 #: inyoka/templates/errors/400_csrf.html:21
-msgid ""
-"This error usually occurs when you are trying to transfer data automatically"
-" to the server. In rare cases this can also happen if the browser "
-"configuration was changed while the form data is transmitted."
+msgid "This error usually occurs when you are trying to transfer data automatically to the server. In rare cases this can also happen if the browser configuration was changed while the form data is transmitted."
 msgstr "Dieser Fehler tritt normalerweise auf, wenn versucht wurde Daten automatisiert auf den Server zu übertragen. In seltenen Fällen kann dies auch passieren, wenn die Browserkonfiguration verändert wurde, während die Formulardaten übertragen wurden."
 
 #: inyoka/templates/errors/400_csrf.html:26
-msgid ""
-"In some browsers it is possible to click on the \"back\" or the \"reload\" "
-"button to request a new control key the sending the page again."
+msgid "In some browsers it is possible to click on the \"back\" or the \"reload\" button to request a new control key the sending the page again."
 msgstr "In manchen Browsern ist es möglich durch Klicken auf \"Zurück\" und dann \"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern, um das Absenden erneut durchzuführen."
 
 #: inyoka/templates/errors/403.html:18
@@ -271,14 +262,11 @@ msgid "The entered CAPTCHA was incorrect."
 msgstr "Die Eingabe des Captchas war nicht korrekt."
 
 #: inyoka/utils/forms.py:221
-msgid ""
-"You have entered an invisible field and were therefore classified as a bot."
+msgid "You have entered an invisible field and were therefore classified as a bot."
 msgstr "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot identifiziert."
 
 #: inyoka/utils/forms.py:231
-msgid ""
-"The entered e-mail address belongs to a e-mail provider we had to block "
-"because of SPAM problems. Please choose another e-mail address"
+msgid "The entered e-mail address belongs to a e-mail provider we had to block because of SPAM problems. Please choose another e-mail address"
 msgstr "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
 
 #: inyoka/utils/forms.py:235
@@ -310,18 +298,18 @@ msgstr "{verbose_name} “{object_name}” erfolgreich gelöscht!"
 msgid "Canceled!"
 msgstr "Abgebrochen"
 
-#: inyoka/utils/pagination.py:158 inyoka/utils/pagination.py:165
+#: inyoka/utils/pagination.py:158
+#: inyoka/utils/pagination.py:165
 msgid "Next »"
 msgstr "Weiter »"
 
-#: inyoka/utils/pagination.py:174 inyoka/utils/pagination.py:181
+#: inyoka/utils/pagination.py:174
+#: inyoka/utils/pagination.py:181
 msgid "« Previous"
 msgstr "« Zurück"
 
 #: inyoka/utils/sessions.py:79
-msgid ""
-"You cannot send data that fast in a row. Please wait a bit until you submit "
-"the form again."
+msgid "You cannot send data that fast in a row. Please wait a bit until you submit the form again."
 msgstr "Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte noch einige Zeit, bevor du das Formular erneut absendest."
 
 #: inyoka/utils/sortable.py:103
@@ -397,11 +385,12 @@ msgstr "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum 
 
 #: inyoka/middlewares/highlighter.py:112
 #, python-format
-msgid ""
-"Search results are highlighted. <a class=\"hide_searchwords\" "
-"href=\"%(link)s\">Hide query terms</a>."
-msgstr "Suchergebnisse sind hervorgehoben. <a class=\"hide_searchwords\" \"\n\"href=\"%(link)s\">Markierung ausblenden</a>."
+msgid "Search results are highlighted. <a class=\"hide_searchwords\" href=\"%(link)s\">Hide query terms</a>."
+msgstr ""
+"Suchergebnisse sind hervorgehoben. <a class=\"hide_searchwords\" \"\n"
+"\"href=\"%(link)s\">Markierung ausblenden</a>."
 
 #: inyoka/middlewares/session.py:68
 msgid "Your session expired. You need to login again"
 msgstr "Deine Sitzung ist abgelaufen. Du musst dich neu anmelden."
+

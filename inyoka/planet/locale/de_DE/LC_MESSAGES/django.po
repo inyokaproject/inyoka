@@ -1,7 +1,7 @@
 # Translations template for PROJECT.
 # Copyright (C) 2012 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# 
+#
 # Translators:
 # Markus  <inyoka@markusholtermann.eu>, 2012.
 # Sören Wegener <wegener92@googlemail.com>, 2011.
@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
 "POT-Creation-Date: 2012-05-18 19:48+0200\n"
-"PO-Revision-Date: 2012-04-29 22:39+0000\n"
+"PO-Revision-Date: 2012-05-19 22:24+0100\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/inyoka/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,8 @@ msgstr ""
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: inyoka/planet/forms.py:21 inyoka/planet/models.py:35
+#: inyoka/planet/forms.py:21
+#: inyoka/planet/models.py:35
 msgid "Name of the blog"
 msgstr "Name des Blogs"
 
@@ -32,7 +33,8 @@ msgstr "URL"
 msgid "Feed URL"
 msgstr "Feed URL"
 
-#: inyoka/planet/forms.py:24 inyoka/planet/models.py:36
+#: inyoka/planet/forms.py:24
+#: inyoka/planet/models.py:36
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -52,7 +54,8 @@ msgstr "URL des Blogs"
 msgid "URL of the feed"
 msgstr "URL des Feeds"
 
-#: inyoka/planet/models.py:39 inyoka/planet/templates/planet/blog_list.html:27
+#: inyoka/planet/models.py:39
+#: inyoka/planet/templates/planet/blog_list.html:27
 msgid "User"
 msgstr "Benutzer"
 
@@ -225,3 +228,4 @@ msgstr "Konfiguration"
 #: inyoka/planet/templates/planet/suggest.html:12
 msgid "Suggest blog"
 msgstr "Ein Blog vorschlagen"
+
