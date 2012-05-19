@@ -126,4 +126,5 @@ class TestViews(TestCase):
                          TOPICS_PER_PAGE)
         self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
                          self.num_topics_on_last_page)
+        self.assertTrue(self.client.get("/last24/6/").status_code == 404)
 1

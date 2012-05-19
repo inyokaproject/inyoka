@@ -1492,8 +1492,8 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         if forum_obj and not forum_obj.id in invisible:
             topics = topics.filter(forum=forum_obj)
 
-    total_topics = get_simplified_queryset(topics).count()
     topics = topics.distinct()
+    total_topics = get_simplified_queryset(topics).count()
     pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
                             total=total_topics)
     topic_ids = [tid for tid in pagination.get_queryset()]
