@@ -152,9 +152,7 @@ class TestViews(TestCase):
             path = url[url.index(settings.BASE_DOMAIN_NAME) +
                       len(settings.BASE_DOMAIN_NAME):]
             response = self.client.get(path)
-            self.assertIsNot(-1,
-                    response.tmpl_context['pagination'].find('%s2/' % url),
+            self.assertIn('%s2/' % url, response.tmpl_context['pagination'],
                     "%s does not render pagination urls properly" % path)
-            self.assertIs(-1,
-                    response.tmpl_context['pagination'].find('%s6/' % url),
+            self.assertNotIn('%s6/' % url, response.tmpl_context['pagination'],
                     "%s does display more pages than available" % path)
