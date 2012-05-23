@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-05-23 20:27+0200\n"
+"POT-Creation-Date: 2012-05-23 20:35+0200\n"
 "PO-Revision-Date: 2012-03-26 18:34+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -1260,11 +1260,13 @@ msgid "Unsolved"
 msgstr "Ungelöst"
 
 #: inyoka/forum/templates/forum/topic.html:161
+#: inyoka/forum/templates/forum/topic.m.html:46
 #, python-format
 msgid "The poll was started %(start_date)s and it ended %(end_date)s."
 msgstr "Die Umfrage wurde %(start_date)s gestartet und endete %(end_date)s."
 
 #: inyoka/forum/templates/forum/topic.html:165
+#: inyoka/forum/templates/forum/topic.m.html:50
 #, python-format
 msgid "The poll was started %(start_date)s and it will end %(end_date)s."
 msgstr "Die Umfrage wurde %(start_date)s gestartet und wird  %(end_date)s enden."
@@ -1334,18 +1336,6 @@ msgstr "« Vorheriges Thema"
 msgid "Next topic »"
 msgstr "Nächstes Thema »"
 
-#: inyoka/forum/templates/forum/topic.m.html:46
-#, python-format
-msgid "The poll was started on %(start_date)s and it ended on %(end_date)s."
-msgstr "Die Umfrage wurde am %(start_date)s gestartet und endete am %(end_date)s."
-
-#: inyoka/forum/templates/forum/topic.m.html:50
-#, python-format
-msgid "The poll was started on %(start_date)s and it will end on %(end_date)s."
-msgstr ""
-"Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s "
-"enden."
-
 #: inyoka/forum/templates/forum/topic.m.html:100
 msgid "Attachments"
 msgstr "Anhänge"
@@ -1369,4 +1359,15 @@ msgstr "Gelesen und akzeptiert"
 #: inyoka/forum/templates/forum/welcome.html:20
 msgid "Reject"
 msgstr "Ablehnen"
+
+#~ msgid "The poll was started on %(start_date)s and it ended on %(end_date)s."
+#~ msgstr ""
+#~ "Die Umfrage wurde am %(start_date)s "
+#~ "gestartet und endete am %(end_date)s."
+
+#~ msgid "The poll was started on %(start_date)s and it will end on %(end_date)s."
+#~ msgstr ""
+#~ "Die Umfrage wurde am %(start_date)s "
+#~ "gestartet und wird am %(end_date)s "
+#~ "enden."
 
