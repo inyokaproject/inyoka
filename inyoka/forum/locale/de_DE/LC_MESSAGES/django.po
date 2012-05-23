@@ -1360,14 +1360,3 @@ msgstr "Gelesen und akzeptiert"
 msgid "Reject"
 msgstr "Ablehnen"
 
-#~ msgid "The poll was started on %(start_date)s and it ended on %(end_date)s."
-#~ msgstr ""
-#~ "Die Umfrage wurde am %(start_date)s "
-#~ "gestartet und endete am %(end_date)s."
-
-#~ msgid "The poll was started on %(start_date)s and it will end on %(end_date)s."
-#~ msgstr ""
-#~ "Die Umfrage wurde am %(start_date)s "
-#~ "gestartet und wird am %(end_date)s "
-#~ "enden."
-
