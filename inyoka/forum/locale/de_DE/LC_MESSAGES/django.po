@@ -1274,8 +1274,8 @@ msgstr "Die Umfrage wurde %(start_date)s gestartet und wird  %(end_date)s enden.
 #, python-format
 msgid "%(count)s vote"
 msgid_plural "%(count)s votes"
-msgstr[0] "%(count)s Stimgme"
-msgstr[1] "%(count)s Stimgmen"
+msgstr[0] "%(count)s Stimme"
+msgstr[1] "%(count)s Stimmen"
 
 #: inyoka/forum/templates/forum/topic.html:172
 #: inyoka/forum/templates/forum/topic.m.html:58
