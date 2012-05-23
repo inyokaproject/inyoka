@@ -1455,7 +1455,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     elif action == 'topic_author':
         user = User.objects.get(user)
         topics = topics.filter(author=user)
-        url = href('forum', 'topic_author', user.username)
+        url = href('forum', 'topic_author', user.username, forum)
         title = _(u'Topics by “%(user)s“') % {'user': user.username}
     elif action == 'author':
         user = user and User.objects.get(user) or request.user
@@ -1469,7 +1469,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
             url = href('forum', 'author', user.username, forum)
         else:
             title = _(u'My posts')
-            url = href('forum', 'egosearch')
+            url = href('forum', 'egosearch', forum)
     elif action == 'newposts':
         forum_ids = tuple(forum.id for forum in Forum.objects.get_cached())
         # get read status data
