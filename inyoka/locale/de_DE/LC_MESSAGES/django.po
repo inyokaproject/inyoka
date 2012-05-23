@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-05-13 10:58+0200\n"
+"POT-Creation-Date: 2012-05-23 20:27+0200\n"
 "PO-Revision-Date: 2012-03-28 20:00+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -19,7 +19,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev\n"
 
 #: inyoka/templates/appheader.html:2
 msgid "Portal"
@@ -211,10 +211,26 @@ msgstr "Das könnte daran liegen, dass du nicht angemeldet bist."
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: inyoka/utils/dates.py:200
+#: inyoka/utils/dates.py:201
 #, python-format
 msgid "%(date)s at %(time)s"
 msgstr "%(date)s um %(time)s"
+
+#: inyoka/utils/dates.py:223
+msgid "today"
+msgstr "heute"
+
+#: inyoka/utils/dates.py:225
+msgid "tomorrow"
+msgstr "morgen"
+
+#: inyoka/utils/dates.py:227
+msgid "yesterday"
+msgstr "gestern"
+
+#: inyoka/utils/dates.py:228
+msgid "on"
+msgstr "am"
 
 #: inyoka/utils/diff3.py:372
 msgid "Old"

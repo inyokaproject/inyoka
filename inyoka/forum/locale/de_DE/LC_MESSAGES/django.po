@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-05-13 10:58+0200\n"
+"POT-Creation-Date: 2012-05-23 20:27+0200\n"
 "PO-Revision-Date: 2012-03-26 18:34+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -18,7 +18,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev\n"
 
 #: inyoka/forum/acl.py:18
 msgid "can read"
@@ -606,25 +606,25 @@ msgstr "Eigene Beiträge"
 msgid "New posts"
 msgstr "Neue Beiträge"
 
-#: inyoka/forum/views.py:1557
+#: inyoka/forum/views.py:1558
 msgid "No recent topics within this forum."
 msgstr "Es existieren keine neueren Themen in diesem Forum."
 
-#: inyoka/forum/views.py:1570
+#: inyoka/forum/views.py:1571
 msgid "No older topics within this forum."
 msgstr "Es existieren keine älteren Themen in diesem Forum."
 
-#: inyoka/forum/views.py:1632
+#: inyoka/forum/views.py:1633
 #, python-format
 msgid "The forum “%(forum)s“ was changed successfully."
 msgstr "Das Forum „%(forum)s” wurde erfolgreich geändert."
 
-#: inyoka/forum/views.py:1634
+#: inyoka/forum/views.py:1635
 #, python-format
 msgid "The forum “%(forum)s“ was created successfully."
 msgstr "Das Forum „%(forum)s” wurde erfolgreich erstellt."
 
-#: inyoka/forum/views.py:1638
+#: inyoka/forum/views.py:1639
 msgid "Errors occurred, please fix them."
 msgstr "Es traten Fehler auf, bitte behebe sie."
 
@@ -1260,26 +1260,22 @@ msgid "Unsolved"
 msgstr "Ungelöst"
 
 #: inyoka/forum/templates/forum/topic.html:161
-#: inyoka/forum/templates/forum/topic.m.html:46
 #, python-format
-msgid "The poll was started on %(start_date)s and it ended on %(end_date)s."
-msgstr "Die Umfrage wurde am %(start_date)s gestartet und endete am %(end_date)s."
+msgid "The poll was started %(start_date)s and it ended %(end_date)s."
+msgstr "Die Umfrage wurde %(start_date)s gestartet und endete %(end_date)s."
 
 #: inyoka/forum/templates/forum/topic.html:165
-#: inyoka/forum/templates/forum/topic.m.html:50
 #, python-format
-msgid "The poll was started on %(start_date)s and it will end on %(end_date)s."
-msgstr ""
-"Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s "
-"enden."
+msgid "The poll was started %(start_date)s and it will end %(end_date)s."
+msgstr "Die Umfrage wurde %(start_date)s gestartet und wird  %(end_date)s enden."
 
 #: inyoka/forum/templates/forum/topic.html:170
 #: inyoka/forum/templates/forum/topic.m.html:56
 #, python-format
 msgid "%(count)s vote"
 msgid_plural "%(count)s votes"
-msgstr[0] "%(count)s Stimme"
-msgstr[1] "%(count)s Stimmen"
+msgstr[0] "%(count)s Stimgme"
+msgstr[1] "%(count)s Stimgmen"
 
 #: inyoka/forum/templates/forum/topic.html:172
 #: inyoka/forum/templates/forum/topic.m.html:58
@@ -1337,6 +1333,18 @@ msgstr "« Vorheriges Thema"
 #: inyoka/forum/templates/forum/topic.html:330
 msgid "Next topic »"
 msgstr "Nächstes Thema »"
+
+#: inyoka/forum/templates/forum/topic.m.html:46
+#, python-format
+msgid "The poll was started on %(start_date)s and it ended on %(end_date)s."
+msgstr "Die Umfrage wurde am %(start_date)s gestartet und endete am %(end_date)s."
+
+#: inyoka/forum/templates/forum/topic.m.html:50
+#, python-format
+msgid "The poll was started on %(start_date)s and it will end on %(end_date)s."
+msgstr ""
+"Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s "
+"enden."
 
 #: inyoka/forum/templates/forum/topic.m.html:100
 msgid "Attachments"
