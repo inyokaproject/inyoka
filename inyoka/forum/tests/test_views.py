@@ -11,6 +11,7 @@ from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import Subscription
 from inyoka.utils.test import InyokaClient, override_settings
+from inyoka.utils.urls import href
 
 
 class TestViews(TestCase):
@@ -55,6 +56,9 @@ class TestViews(TestCase):
             for i in xrange(1, randint(2, 3)):
                 Post.objects.create(text="More Posts %s" % randint(1, 100000),
                                     topic=t, author=self.user, position=i)
+            for i in xrange(1, randint(2, 3)):
+                Post.objects.create(text="More Posts %s" % randint(1, 100000),
+                                    topic=t, author=self.admin, position=i)
         self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
         for _ in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
@@ -127,3 +131,30 @@ class TestViews(TestCase):
         self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
+
+        action_paginationurl = [ href('forum', 'last%d' % 24, self.forum3.slug),
+                                 href('forum', 'last%d' % 24),
+                                 href('forum', 'egosearch', self.forum3.slug),
+                                 href('forum', 'egosearch'),
+                                 href('forum', 'author', self.user.username,
+                                      self.forum3.slug),
+                                 href('forum', 'author', self.user.username),
+                                 href('forum', 'unsolved', self.forum3.slug),
+                                 href('forum', 'unsolved'),
+                                 href('forum', 'topic_author',
+                                      self.user.username, self.forum3.slug),
+                                 href('forum', 'topic_author', self.user.username),
+                                 href('forum', 'newposts', self.forum3.slug),
+                                 href('forum', 'newposts'),
+                                 ]
+        for url in action_paginationurl:
+            # InyokaClient.get needs only the right part of the url
+            path = url[url.index(settings.BASE_DOMAIN_NAME) +
+                      len(settings.BASE_DOMAIN_NAME):]
+            response = self.client.get(path)
+            self.assertIsNot(-1,
+                    response.tmpl_context['pagination'].find('%s2/' % url),
+                    "%s does not render pagination urls properly" % path)
+            self.assertIs(-1,
+                    response.tmpl_context['pagination'].find('%s6/' % url),
+                    "%s does display more pages than available" % path)
