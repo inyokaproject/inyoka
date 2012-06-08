@@ -215,10 +215,7 @@ def human_number(value, gender=None):
         return _("eleven")
     if value == 12:
         return _("twelve")
-    try:
-        lang = local.request.META['LANG'].lower()
-    except AttributeError:
-        lang = get_language()
+    lang = get_language()
     if value == 1 and gender and 'en' not in lang.lower():
         return {
                 'masculine':    pgettext('masculine', u'one'),
