@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-05-13 10:58+0200\n"
+"POT-Creation-Date: 2012-05-19 22:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev\n"
 
 #: inyoka/forum/acl.py:18
 msgid "can read"
@@ -586,25 +586,25 @@ msgstr ""
 msgid "New posts"
 msgstr ""
 
-#: inyoka/forum/views.py:1557
+#: inyoka/forum/views.py:1558
 msgid "No recent topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1570
+#: inyoka/forum/views.py:1571
 msgid "No older topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1632
+#: inyoka/forum/views.py:1633
 #, python-format
 msgid "The forum “%(forum)s“ was changed successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1634
+#: inyoka/forum/views.py:1635
 #, python-format
 msgid "The forum “%(forum)s“ was created successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1638
+#: inyoka/forum/views.py:1639
 msgid "Errors occurred, please fix them."
 msgstr ""
 
