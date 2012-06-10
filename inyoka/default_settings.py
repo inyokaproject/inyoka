@@ -173,7 +173,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.transaction.TransactionMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    'inyoka.middlewares.highlighter.HighlighterMiddleware',
+#    'inyoka.middlewares.highlighter.HighlighterMiddleware',
     'inyoka.middlewares.security.SecurityMiddleware',
     'inyoka.middlewares.common.MobileDetectionMiddleware',
     'django_mobile.middleware.SetFlavourMiddleware',
@@ -279,6 +279,10 @@ CELERY_ALWAYS_EAGER = DEBUG
 CELERYD_HIJACK_ROOT_LOGGER = False
 
 SEND_EVENTS = True
+
+# Make the template context available as tmpl_context in the TemplateResponse.
+# Useful for tests in combination with override_settings.
+PROPAGATE_TEMPLATE_CONTEXT = False
 
 # http://ask.github.com/kombu/introduction.html#transport-comparison
 BROKER_BACKEND = 'inyoka.utils.celery_support.DatabaseTransport'

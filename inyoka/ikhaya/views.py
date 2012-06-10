@@ -451,8 +451,10 @@ def reportlist(request):
 @templated('ikhaya/comment_edit.html', modifier=context_modifier)
 def comment_edit(request, comment_id):
     comment = Comment.objects.get(id=comment_id)
-    user = request.user
-    if user.can('comment_edit') or user.id == comment.author.id:
+    if not request.user.can('comment_edit') and request.user == comment.author:
+        flash(_(u'Sorry, editing comments is disabled for now.'), False)
+        return HttpResponseRedirect(url_for(comment.article))
+    if request.user.can('comment_edit'):# or user == comment.author:
         if request.method == 'POST':
             form = EditCommentForm(request.POST)
             if form.is_valid():

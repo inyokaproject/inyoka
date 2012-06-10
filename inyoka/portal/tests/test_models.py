@@ -36,6 +36,11 @@ class TestUserModel(TestCase):
         self.user = User.objects.get(pk=self.user.id)
         self.assertEqual(self.user.status, 3)
 
+    def test_delete_empty_avatar(self):
+        self.user = User.objects.get(pk=self.user.id)
+        # Should not raise an OSError
+        self.user.delete_avatar()
+
     def test_profile_data(self):
         categories = [
             ProfileCategory.objects.create(title='One'),

@@ -756,7 +756,8 @@ class User(models.Model):
 
     def delete_avatar(self):
         """Delete the avatar from the file system."""
-        self.avatar.delete(save=False)
+        if self.avatar:
+            self.avatar.delete(save=False)
 
     def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':

@@ -46,9 +46,9 @@ $(function () {
     }, function (data, status, xhr) {
       // Bind new events and change button's text.
       if (xhr.status == 200) {
-        var info = $('.articleinfo strong.suggestion-' + $(tag).attr('id'));
+        var info = $('.articleinfo span.suggestion-' + $(tag).attr('id'));
         $(info).fadeOut('fast');
-        $(info).text(text);
+        $(info).text('Zugewiesen an: ' + text);
         $(info).fadeIn('fast');
       }
     });

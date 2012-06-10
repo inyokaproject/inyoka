@@ -27,16 +27,6 @@ html, body {
   background-color: @main_background;
 }
 
-#donation {
-  background-image: url(../img/donation.png);
-  height: 129px;
-  left: 220px;
-  position: absolute;
-  top: 20px;
-  width: 193px;
-  z-index: 999;
-}
-
 div.wrap {
   margin: 10px;
   background-image:url(../img/head.jpg);
@@ -704,42 +694,48 @@ button.navi_toggle_down:hover, button.navi_toggle_up:hover {
     }
   }
 }
+
 .navi_tabbar {
-  font-size: 0.85em;
   text-align: right;
+  border-bottom: #CCC 1px solid;
+  font-size: 0.85em;
   border-bottom: #CCC 1px solid;
   ul {
     list-style-type: none;
-    margin: 0;
-    padding-top: 20px;
+
     li {
-      margin-left: 3px;
       display: inline;
+
       a {
+        .top-rounded(3px);
+        text-decoration: none;
+        display: inline-block;
         background-color: #f2f2f2;
         border: 1px solid #ccc;
-        border-bottom: none;
-        padding: 6px 12px 2px 12px;
-        text-decoration: none;
-      }
-      a.active {
-        font-weight: bold;
-        background: white;
-        border-color: #999;
-        padding-bottom: 3px;
-      }
-      a:hover {
-        color: #222;
-        background: #f8f8f8;
+        margin-bottom: -1px;
+        padding: 5px 8px 2px;
+
+        &.active {
+          font-weight: bold;
+          background: white;
+          border-color: #999;
+          border-bottom-color: white;
+        }
+        &:hover {
+          color: #222;
+          background: #f8f8f8;
+        }
       }
     }
   }
+
   li.disabled {
     a {
       color: #aaa;
     }
   }
 }
+
 .appheader {
   margin: 0 20px 1.0em 20px;
   h1 {
