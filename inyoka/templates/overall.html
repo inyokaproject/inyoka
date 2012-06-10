@@ -249,11 +249,6 @@
             {%- block sidebar %}{% endblock -%}
           </div>
         {%- endif %}
-        {%- if tabbar %}
-        <div class="navi_tabbar navigation">
-          {%- block tabbar %}{% endblock -%}
-        </div>
-        {%- endif %}
         <div class="content{{ tabbar and ' content_tabbar' or '' }}{{ sidebar and ' content_sidebar' or '' }}">
           {%- if tabbar %}
             <div class="navi_tabbar navigation">
