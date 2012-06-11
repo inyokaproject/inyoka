@@ -28,7 +28,7 @@ def set_session_info(request):
 
     # Prevent extra queries for markup.css and jsi18n since they are loaded
     # with every request.
-    if request.path == '/markup.css/' or request.path == '/jsi18n/':
+    if request.path in ('/markup.css/', '/jsi18n/'):
         return
 
     # if the session is new we don't add an entry.  It could be that
@@ -65,7 +65,11 @@ def set_session_info(request):
     # race conditions here.
     affected_rows = SessionInfo.objects.filter(key=key).update(**args)
     if affected_rows == 0:
-        SessionInfo.objects.create(key=key, **args)
+        try:
+            sid = transaction.savepoint()
+            SessionInfo.objects.create(key=key, **args)
+        except Exception:
+            transaction.savepoint_rollback(sid)
 
 
 class SurgeProtectionMixin(object):
