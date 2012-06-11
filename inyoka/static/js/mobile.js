@@ -25,8 +25,8 @@ function hide_mobile_notice() {
 $(document).ready(function () {
   (function () {
     var result = /hide_mobile_notice\=([01])/.exec(document.cookie);
-    if (result[1] == 1) {
-      $("#mobile-notice").slideUp("fast");
+    if (result && result[1] == 1) {
+      $("#mobile-notice").hide();
     }
   })();
 });

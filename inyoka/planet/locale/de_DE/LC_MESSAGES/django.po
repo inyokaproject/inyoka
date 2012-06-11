@@ -1,6 +1,6 @@
-# German (Germany) translations for Inyoka.
-# Copyright (C) 2011 - 2012 Inyoka-Team
-# This file is distributed under the same license as the project.
+# German (Germany) translations for .
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the  project.
 #
 # Translators:
 # Sören Wegener <wegener92@googlemail.com>, 2011.
@@ -9,15 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-04-12 21:39+0200\n"
-"PO-Revision-Date: 2012-02-07 23:06+0100\n"
-"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
-"Language-Team: German (German)\n"
+"POT-Creation-Date: 2012-05-19 22:51+0200\n"
+"PO-Revision-Date: 2012-03-18 22:18+0000\n"
+"Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
+"Language-Team: German (Germany) "
+"(http://www.transifex.net/projects/p/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev\n"
 
 #: inyoka/planet/forms.py:21 inyoka/planet/models.py:35
 msgid "Name of the blog"
@@ -71,15 +72,15 @@ msgstr "Eintrag"
 msgid "Entries"
 msgstr "Einträge"
 
-#: inyoka/planet/views.py:78
+#: inyoka/planet/views.py:77
 msgid "You need to be logged in to suggest a blog"
 msgstr "Du musst angemeldet sein, um ein Blog vorschlagen zu können."
 
-#: inyoka/planet/views.py:96
+#: inyoka/planet/views.py:95
 msgid "A new blog was suggested."
 msgstr "Ein neues Blog wurde vorgeschlagen."
 
-#: inyoka/planet/views.py:100
+#: inyoka/planet/views.py:99
 msgid "No user is registered as a planet administrator."
 msgstr "Es wurde kein Benutzer als Planet-Administrator eingetragen."
 
@@ -111,8 +112,8 @@ msgstr "Der Eintrag „%(title)s” wurde erfolgreich wiederhergestellt."
 msgid "Add blog"
 msgstr "Blog hinzufügen"
 
-#: inyoka/planet/templates/planet/blog_edit.html:27
-#: inyoka/planet/templates/planet/suggest.html:33
+#: inyoka/planet/templates/planet/blog_edit.html:26
+#: inyoka/planet/templates/planet/suggest.html:32
 msgid "Submit"
 msgstr "Absenden"
 
@@ -146,26 +147,26 @@ msgstr "Aktiv"
 msgid "No entry"
 msgstr "Kein Eintrag"
 
-#: inyoka/planet/templates/planet/hide_entry.html:12
+#: inyoka/planet/templates/planet/hide_entry.html:11
 msgid "Are you sure you want to restore the entry?"
 msgstr "Bist du sicher, dass du diesen Eintrag wiederherstellen möchtest?"
 
-#: inyoka/planet/templates/planet/hide_entry.html:14
+#: inyoka/planet/templates/planet/hide_entry.html:13
 msgid "Are you sure you want to hide the entry?"
 msgstr "Bist du sicher, dass du diesen Eintrag verbergen möchtest?"
 
-#: inyoka/planet/templates/planet/hide_entry.html:17
+#: inyoka/planet/templates/planet/hide_entry.html:16
 #: inyoka/planet/templates/planet/index.html:72
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: inyoka/planet/templates/planet/hide_entry.html:17
+#: inyoka/planet/templates/planet/hide_entry.html:16
 #: inyoka/planet/templates/planet/index.html:72
 msgid "Hide"
 msgstr "Verbergen"
 
-#: inyoka/planet/templates/planet/hide_entry.html:18
-#: inyoka/planet/templates/planet/suggest.html:34
+#: inyoka/planet/templates/planet/hide_entry.html:17
+#: inyoka/planet/templates/planet/suggest.html:33
 msgid "Cancel"
 msgstr "Abbrechen"
 

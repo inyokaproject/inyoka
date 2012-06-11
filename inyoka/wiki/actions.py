@@ -26,7 +26,7 @@ from django.contrib import messages
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
-from inyoka.utils.urls import href, url_for
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse, PageNotFound, \
      HttpResponseRedirect, HttpResponse
@@ -1024,7 +1024,11 @@ def do_unsubscribe(request, page_name):
         subscription.delete()
         messages.success(request,
             _(u'You won\'t be notified for changes on this page anymore'))
-    return HttpResponseRedirect(url_for(page))
+    # redirect the user to the page he last watched
+    if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+        return HttpResponseRedirect(request.GET['next'])
+    else:
+        return HttpResponseRedirect(url_for(page))
 
 
 @require_privilege('edit')

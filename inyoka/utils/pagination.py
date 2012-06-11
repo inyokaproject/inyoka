@@ -80,7 +80,7 @@ class Pagination(object):
             self.generate_link = link
 
         self.needs_redirect_to = None
-        if self.total and self.total/per_page < 1 and page > 1:
+        if self.total and self.total / per_page < 1 and page > 1:
             url = self.generate_link(1, dict(request.GET.lists()))
             self.needs_redirect_to = lambda: HttpResponseRedirect(url)
 
@@ -99,7 +99,7 @@ class Pagination(object):
                     '%s__lt' % self.rownum_column: idx + self.per_page}
             result = self.query.filter(**expr)
         else:
-            result = self.query[idx:idx+self.per_page]
+            result = self.query[idx:idx + self.per_page]
         return result
 
     def generate_link(self, page, params):
@@ -167,7 +167,7 @@ class Pagination(object):
 
         if show_prev_link:
             if self.page > 1:
-                link = self.generate_link(self.page -1, params)
+                link = self.generate_link(self.page - 1, params)
                 if mobile:
                     tmpl = u'<a href="%s" class="prev">«</a>'
                 else:

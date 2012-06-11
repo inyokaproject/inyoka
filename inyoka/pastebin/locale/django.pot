@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-04-12 21:39+0200\n"
+"POT-Creation-Date: 2012-05-19 22:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.0dev\n"
 
 #: inyoka/pastebin/forms.py:21
 msgid "Plain text"
@@ -242,11 +242,11 @@ msgstr ""
 msgid "New paste"
 msgstr ""
 
-#: inyoka/pastebin/templates/pastebin/add.html:20
+#: inyoka/pastebin/templates/pastebin/add.html:19
 msgid "About:"
 msgstr ""
 
-#: inyoka/pastebin/templates/pastebin/add.html:21
+#: inyoka/pastebin/templates/pastebin/add.html:20
 msgid ""
 "This is a pastebin where you can save error messages, logs, configuration"
 " files or source codes to keep threads or IRC channels clean. To do this,"
@@ -254,7 +254,7 @@ msgid ""
 " After that, you copy the URL into the topic or the channel."
 msgstr ""
 
-#: inyoka/pastebin/templates/pastebin/add.html:29
+#: inyoka/pastebin/templates/pastebin/add.html:28
 msgid "Submit"
 msgstr ""
 
@@ -269,16 +269,16 @@ msgstr ""
 msgid "No pastes were created yet."
 msgstr ""
 
-#: inyoka/pastebin/templates/pastebin/delete_entry.html:16
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:15
 #, python-format
 msgid "Do you really want to delete the entry <a href=\"%(link)s\">%(entry)s</a>?"
 msgstr ""
 
-#: inyoka/pastebin/templates/pastebin/delete_entry.html:21
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:20
 msgid "Delete"
 msgstr ""
 
-#: inyoka/pastebin/templates/pastebin/delete_entry.html:22
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:21
 msgid "Cancel"
 msgstr ""
 

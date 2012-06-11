@@ -589,11 +589,17 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             post = Post(topic=topic, author_id=request.user.id)
             if newtopic:
                 post.position = 0
-        post.edit(request, d['text'])
 
-        if attachments and post.id:
+        # If there are attachments, we need to get a post id before we render
+        # the text in order to parse the ``Bild()`` macro during first save. We
+        # can set the ``has_attachments`` attribute lazily because the post is
+        # finally saved in ``post.edit()``.
+        if attachments:
+            if not post.id:
+                post.save()
             Attachment.update_post_ids(att_ids, post)
-            Post.objects.filter(pk=post.pk).update(has_attachments=True)
+            post.has_attachments = True
+        post.edit(request, d['text'])
 
         if newtopic:
             send_newtopic_notifications(request.user, post, topic, forum)
@@ -639,7 +645,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     if not newtopic:
         max = topic.post_count
         posts = topic.posts.select_related('author') \
-                           .filter(hidden=False, position__gt=max-15) \
+                           .filter(hidden=False, position__gt=max - 15) \
                            .order_by('-position')
         discussions = Page.objects.filter(topic=topic)
 
@@ -731,8 +737,8 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
             Subscription(user=request.user, content_object=obj).save()
             messages.info(request, flasher)
         # redirect the user to the page he last watched
-        if request.GET.get('continue', False) and is_safe_domain(request.GET['continue']):
-            return HttpResponseRedirect(request.GET['continue'])
+        if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+            return HttpResponseRedirect(request.GET['next'])
         else:
             return HttpResponseRedirect(url_for(obj))
     return subscriber
@@ -766,8 +772,8 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
             subscription.delete()
             messages.info(request, flasher)
         # redirect the user to the page he last watched
-        if request.GET.get('continue', False) and is_safe_domain(request.GET['continue']):
-            return HttpResponseRedirect(request.GET['continue'])
+        if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+            return HttpResponseRedirect(request.GET['next'])
         else:
             return HttpResponseRedirect(url_for(obj))
     return unsubscriber
@@ -1494,6 +1500,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         if forum_obj and not forum_obj.id in invisible:
             topics = topics.filter(forum=forum_obj)
 
+    topics = topics.distinct()
     total_topics = get_simplified_queryset(topics).count()
     pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
                             total=total_topics)
@@ -1593,7 +1600,7 @@ def forum_edit(request, slug=None, parent=None):
 
     if request.method == 'POST':
         form = EditForumForm(request.POST, forum=forum)
-        form.fields['parent'].refresh(add=[(0,u'-')], remove=[forum])
+        form.fields['parent'].refresh(add=[(0, u'-')], remove=[forum])
 
         if form.is_valid():
             data = form.cleaned_data
@@ -1656,7 +1663,7 @@ def forum_edit(request, slug=None, parent=None):
                 'force_version': forum.force_version,
                 'count_posts': forum.user_count_posts,
             })
-        form.fields['parent'].refresh(add=[(0,u'-')], remove=[forum])
+        form.fields['parent'].refresh(add=[(0, u'-')], remove=[forum])
     return {
         'form':  form,
         'forum': forum

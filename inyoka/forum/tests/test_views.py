@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from mock import patch
+from random import randint
 
 from django.conf import settings
 from django.test import TestCase, Client
@@ -8,9 +9,11 @@ from django.utils.translation import ugettext as _
 
 from inyoka.utils.test import profile_memory
 from inyoka.forum.acl import PRIVILEGES_BITS
+from inyoka.forum.constants import TOPICS_PER_PAGE
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.utils.test import InyokaClient
+from inyoka.portal.models import Subscription
+from inyoka.utils.test import InyokaClient, override_settings
 
 
 class TestForumViews(TestCase):
@@ -60,12 +63,28 @@ class TestViews(TestCase):
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
+    def _setup_pagination(self):
+        """ Create enough topics for pagination test """
+        def newtopic():
+            t = Topic.objects.create(title="Title %s" % randint(1, 100000),
+                                     author=self.user, forum=self.forum3)
+            p = Post.objects.create(topic=t, text="Post %s" % randint(1, 100000),
+                                    author=self.user, position=0)
+            t.first_post_id = p.id
+            t.save()
+            for i in xrange(1, randint(2, 3)):
+                Post.objects.create(text="More Posts %s" % randint(1, 100000),
+                                    topic=t, author=self.user, position=i)
+        self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
+        for _ in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
+            newtopic()
+
     def test_reported_topics(self):
         response = self.client.get('/reported_topics/')
         self.assertEqual(response.status_code, 200)
 
     @patch('inyoka.middlewares.security.SecurityMiddleware._make_token',
-            return_value = 'csrf_key')
+            return_value='csrf_key')
     @patch('inyoka.forum.views.send_notification')
     def test_movetopic(self, mock_send, mock_security):
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
@@ -82,3 +101,75 @@ class TestViews(TestCase):
 
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
                 self.forum3.id)
+
+    def test_subscribe(self):
+        self.client.login(username='user', password='user')
+        useraccess = Privilege.objects.create(user=self.user, forum=self.forum2,
+            positive=PRIVILEGES_BITS['read'], negative=0)
+
+        self.client.get('/topic/%s/subscribe/' % self.topic.slug)
+        self.assertTrue(
+                   Subscription.objects.user_subscribed(self.user, self.topic))
+
+        # Test for unsubscribe-link in the usercp if the user has no more read 
+        # access to a subscription
+        useraccess.positive = 0
+        useraccess.save()
+        response = self.client.get('/usercp/subscriptions/', {}, False,
+                         HTTP_HOST='portal.%s' % settings.BASE_DOMAIN_NAME)
+        self.assertTrue(('/topic/%s/unsubscribe/?next=' % self.topic.slug)
+                         in response.content.decode("utf-8"))
+
+        forward_url = 'http://portal.%s/myfwd' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/topic/%s/unsubscribe/' % self.topic.slug,
+                                    { 'next': forward_url })
+        self.assertFalse(
+                   Subscription.objects.user_subscribed(self.user, self.topic))
+        self.assertEqual(response['location'], forward_url)
+
+    def test_continue(self):
+        """ The Parameter continue was renamed into next """
+
+        urls = ["/",
+                "/forum/%s/" % self.forum2.slug,
+                "/topic/%s/" % self.topic.slug]
+        for url in urls:
+            response = self.client.get(url)
+            self.assertFalse('?continue=' in response.content.decode("utf-8"))
+
+    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
+    def test_topiclist(self):
+        self._setup_pagination()
+        self.assertEqual(len(self.client.get("/last24/").tmpl_context['topics']),
+                         TOPICS_PER_PAGE)
+        self.assertEqual(len(self.client.get("/last24/3/").tmpl_context['topics']),
+                         TOPICS_PER_PAGE)
+        self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
+                         self.num_topics_on_last_page)
+        self.assertTrue(self.client.get("/last24/6/").status_code == 404)
+
+    def test_service_splittopic(self):
+        t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
+                author=self.user, forum=self.forum2)
+        p1 = Post.objects.create(text=u'Post 1', author=self.user,
+                topic=t1)
+
+        t2 = Topic.objects.create(title='Another topic', author=self.user,
+                forum=self.forum2)
+        p2 = Post.objects.create(text=u'Post 1', author=self.user,
+                topic=t2)
+
+        response = self.client.get('/', {
+                    '__service__': 'forum.mark_topic_split_point',
+                    'post': p1.pk,
+                    'topic': 'a%3A-topic'})
+        response = self.client.get('/topic/a%3A-topic/split/')
+        self.assertEqual(response.status_code, 200) # was 302 before
+
+        response = self.client.get('/', {
+                    '__service__': 'forum.mark_topic_split_point',
+                    'post': p2.pk,
+                    'topic': t2.slug})
+        response = self.client.get('/topic/%s/split/' % t2.slug)
+        self.assertEqual(response.status_code, 200)
+
