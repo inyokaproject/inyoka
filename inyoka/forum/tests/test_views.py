@@ -13,7 +13,7 @@ from inyoka.forum.constants import TOPICS_PER_PAGE
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import Subscription
-from inyoka.utils.test import InyokaClient, override_settings
+from inyoka.utils.test import InyokaClient
 
 
 class TestForumViews(TestCase):
