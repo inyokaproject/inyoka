@@ -24,7 +24,6 @@ from django_hosts.middleware import HostsMiddleware
 from django_mobile.middleware import \
     MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
-from inyoka import INYOKA_REVISION
 from inyoka.utils.local import local, _request_cache, local_manager
 from inyoka.utils.timer import StopWatch
 from inyoka.utils.logger import logger
@@ -65,13 +64,6 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
         the werkzeug local.
         """
         response = CommonMiddleware.process_response(self, request, response)
-        powered_by = 'Inyoka'
-        if INYOKA_REVISION:
-            powered_by += '/rev-%s' % INYOKA_REVISION['tag']
-            if settings.DEBUG:
-                powered_by += '-%s' % INYOKA_REVISION['commit']
-        response['X-Powered-By'] = powered_by
-        response['X-Philosophy'] = 'Don\'t be hasty, open a ticket, get some holiday and let us relax. We\'re on it.'
 
         # update the cache control
         if hasattr(request, 'user') and request.user.is_authenticated \
