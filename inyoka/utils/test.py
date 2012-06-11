@@ -34,8 +34,6 @@ def profile_memory(func):
             gc.collect()
             samples[x] = len(gc.get_objects())
 
-        print "sample gc sizes:", samples
-
         for x in samples[-4:]:
             if x != samples[-5]:
                 flatline = False
