@@ -16,6 +16,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import uuid
 from time import time
 from random import random
 
@@ -33,6 +34,15 @@ class SessionMiddleware(middleware.SessionMiddleware):
     If a user ticks the "Remember Me" check-box on your login form create
     a persistent session, if they don't then create a browser-length session.
     """
+
+    def process_request(self, request):
+        super(SessionMiddleware, self).process_request(request)
+        # Force creation of a session key so every browser is id-able.
+        if not 'sid' in request.session:
+            request.session['sid'] = uuid.uuid4()
+            request.session.new = True
+        else:
+            request.session.new = False
 
     def process_response(self, request, response):
         if not hasattr(request, 'session'):

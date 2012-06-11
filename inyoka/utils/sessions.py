@@ -23,16 +23,18 @@ from inyoka.utils.local import current_request
 SESSION_DELTA = 300
 
 
-#@transaction.commit_manually
 def set_session_info(request):
     """Set the session info."""
-    return # FIXME: renable/rewrite
+
+    # Prevent extra queries for markup.css and jsi18n since they are loaded
+    # with every request.
+    if request.path == '/markup.css/' or request.path == '/jsi18n/':
+        return
 
     # if the session is new we don't add an entry.  It could be that
     # the user has no cookie support and that would fill our session
     # table with dozens of entries
     if request.session.new:
-        transaction.rollback()
         return
 
     if request.user.is_authenticated:
@@ -48,7 +50,7 @@ def set_session_info(request):
             'subject_link': url_for(request.user)
         }
     else:
-        key = request.session.session_key
+        key = request.session['sid']
         args = {
             'subject_text': None,
             'subject_type': 'anonymous',
@@ -59,15 +61,11 @@ def set_session_info(request):
         'last_change': datetime.utcnow(),
     })
 
+    # If the user requests the site multiple times he might cause
+    # race conditions here.
     affected_rows = SessionInfo.objects.filter(key=key).update(**args)
     if affected_rows == 0:
-        # No session info for the key exists, try an insert
-        try:
-            SessionInfo.objects.create(key=key, **args)
-        except:
-            transaction.rollback()
-
-    transaction.commit()
+        SessionInfo.objects.create(key=key, **args)
 
 
 class SurgeProtectionMixin(object):
