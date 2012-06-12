@@ -229,7 +229,7 @@ def article_delete(request, year, month, day, slug):
                       'title': escape(article.subject)})
         else:
             article.delete()
-            messsages.success(request,
+            messages.success(request,
                 _(u'The article “%(title)s“ was deleted.')
                   % {'title': escape(article.subject)})
     else:
@@ -465,7 +465,7 @@ def reportlist(request):
 def comment_edit(request, comment_id):
     comment = Comment.objects.get(id=comment_id)
     if not request.user.can('comment_edit') and request.user == comment.author:
-        flash(_(u'Sorry, editing comments is disabled for now.'), False)
+        messages.error(request, _(u'Sorry, editing comments is disabled for now.'))
         return HttpResponseRedirect(url_for(comment.article))
     if request.user.can('comment_edit'):# or user == comment.author:
         if request.method == 'POST':
