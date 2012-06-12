@@ -227,21 +227,18 @@ def viewtopic(request, topic_slug, page=1):
     post_ids = list(pagination.get_queryset())
     posts = Post.objects.filter(id__in=post_ids) \
                         .order_by('position') \
-                        .select_related('author')
-    attachments = MultiDict((a.post_id, a) for a in
-                            Attachment.objects.filter(post__id__in=post_ids))
+                        .select_related('author') \
+                        .prefetch_related('attachments')
 
     # assign the current topic to the posts to prevent
-    # extra queries in check_ownpost_limit.  Also do that
-    # with attachments.
+    # extra queries in check_ownpost_limit.
     for p in posts:
         p.topic = topic
-        if p.id in attachments:
-            p._attachments_cache = attachments.getlist(p.id)
 
     # clear read status and subscriptions
-    topic.mark_read(request.user)
-    request.user.save()
+    if request.user.is_authenticated:
+        topic.mark_read(request.user)
+        request.user.save()
 
     subscribed = Subscription.objects.user_subscribed(request.user, topic,
         ('forum', 'topic'), clear_notified=True)
