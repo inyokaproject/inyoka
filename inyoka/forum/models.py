@@ -9,9 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
-import os
 import re
-import shutil
 import cPickle
 import operator
 from os import path
@@ -23,7 +21,6 @@ from operator import attrgetter, itemgetter
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError

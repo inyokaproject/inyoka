@@ -9,12 +9,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import gc
-from copy import copy
-from time import time
-from functools import wraps
 
-from django.conf import settings, UserSettingsHolder
-from django.db import connection
+from django.conf import settings
 from django.http import HttpRequest
 from django.test.client import Client
 from django.utils.importlib import import_module

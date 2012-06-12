@@ -18,9 +18,7 @@
 """
 import uuid
 from time import time
-from random import random
 
-from django.conf import settings
 from django.contrib.sessions import middleware
 
 

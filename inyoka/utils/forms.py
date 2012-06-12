@@ -16,7 +16,6 @@ from random import randrange
 
 from django import forms
 from django.conf import settings
-from django.contrib import messages
 from django.core import validators
 from django.forms.widgets import Input
 from django.utils.translation import ugettext as _

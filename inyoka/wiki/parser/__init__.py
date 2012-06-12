@@ -141,7 +141,6 @@ from django.utils.translation import ugettext as _
 
 from inyoka.utils.css import filter_style
 from inyoka.utils.urls import href
-from inyoka.utils.storage import storage
 from inyoka.wiki.parser.lexer import escape, Lexer
 from inyoka.wiki.parser.machine import Renderer, RenderContext
 from inyoka.wiki.parser.transformers import DEFAULT_TRANSFORMERS

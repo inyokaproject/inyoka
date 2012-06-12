@@ -172,4 +172,3 @@ class TestViews(TestCase):
                     'topic': t2.slug})
         response = self.client.get('/topic/%s/split/' % t2.slug)
         self.assertEqual(response.status_code, 200)
-

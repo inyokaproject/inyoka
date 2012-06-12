@@ -15,9 +15,12 @@
 import re
 from itertools import ifilter
 
+from django.utils.html import smart_urlquote
+
 from inyoka.wiki.storage import storage
-from inyoka.utils.urls import href, smart_urlquote
+from inyoka.utils.urls import href
 from inyoka.portal.user import User
+
 
 
 def has_conflicts(text):

@@ -11,12 +11,10 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-import urllib
 from urlparse import urlparse
 
 from django.conf import settings
 from django.utils.importlib import import_module
-from django.utils.html import smart_urlquote
 from django.utils.http import urlencode, urlquote, urlquote_plus
 
 from django_hosts.reverse import get_host

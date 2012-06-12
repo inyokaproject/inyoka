@@ -26,7 +26,7 @@ from inyoka.utils.text import slugify
 from inyoka.utils.html import striptags
 from inyoka.utils.urls import href, url_for
 from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone, \
-     format_time, format_datetime
+     format_time
 from inyoka.utils.search import search, SearchAdapter
 from inyoka.utils.local import current_request
 from inyoka.utils.decorators import deferred

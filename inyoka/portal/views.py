@@ -27,8 +27,7 @@ from django.forms.util import ErrorList
 from django.shortcuts import get_object_or_404
 from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.decorators import method_decorator
-from django.utils.translation import ungettext, pgettext
-from django.utils.translation import ugettext as _
+from django.utils.translation import ungettext, ugettext as _
 from django.utils.html import escape
 
 from django_openid.consumer import Consumer, SessionPersist
