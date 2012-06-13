@@ -725,7 +725,7 @@ def do_log(request, name):
         return HttpResponseRedirect(href('wiki', '_feed', page.name, 20))
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
-                            20, link_func)
+                            100, link_func)
     return {
         'page':         page,
         'revisions':    pagination.get_queryset(),
