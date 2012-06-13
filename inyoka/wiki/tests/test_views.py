@@ -20,7 +20,7 @@ class TestViews(TestCase):
         self.client.login(username='admin', password='admin')
 
     @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
-    def test_topiclist(self):
+    def test_log(self):
         p50 = Page.objects.create('Testpage50', 'rev 0', user=self.admin, note='rev 0')
         p100 = Page.objects.create('Testpage100', 'rev 0', user=self.admin, note='rev 0')
         p250 = Page.objects.create('Testpage250', 'rev 0', user=self.admin, note='rev 0')
