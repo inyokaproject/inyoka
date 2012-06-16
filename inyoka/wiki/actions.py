@@ -670,8 +670,8 @@ def do_mv_back(request, name):
                     return HttpResponseRedirect(url_for(page))
             ## Remove box
             text = page.revisions.latest().text.value
-            if text.startswith(u'[[Vorlage(Baustelle') or \
-                text.startswith(u'[[Vorlage(Überarbeitung'):
+            while text.startswith(u'[[Vorlage(Baustelle') or \
+                    text.startswith(u'[[Vorlage(Überarbeitung'):
                 text = text[text.find('\n')+1:]
             ## Rename
             if not _rename(request, page, new_name, new_text=text):
