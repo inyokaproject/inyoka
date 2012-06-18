@@ -368,6 +368,37 @@ msgstr ""
 msgid "The chosen sort value (“%(value)s”) is not available"
 msgstr "Der ausgewählte Wert (“%(value)s”) ist nicht verfügbar"
 
+#: inyoka/utils/text.py:213
+msgid "ten"
+msgstr "zehn"
+
+#: inyoka/utils/text.py:215
+msgid "eleven"
+msgstr "elf"
+
+#: inyoka/utils/text.py:217
+msgid "twelve"
+msgstr "zwölf"
+
+#: inyoka/utils/text.py:224
+msgctxt "masculine"
+msgid "one"
+msgstr "ein"
+
+#: inyoka/utils/text.py:225
+msgctxt "feminine"
+msgid "one"
+msgstr "eine"
+
+#: inyoka/utils/text.py:226
+msgctxt "neuter"
+msgid "one"
+msgstr "ein"
+
+#: inyoka/utils/text.py:227
+msgid "one"
+msgstr "eins"
+
 #: inyoka/utils/tests/test_templating.py:12
 #: inyoka/utils/tests/test_templating.py:13
 msgid "text"
