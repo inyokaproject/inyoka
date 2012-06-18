@@ -27,16 +27,6 @@ html, body {
   background-color: @main_background;
 }
 
-#donation {
-  background-image: url(../img/donation_thanks.png);
-  height: 129px;
-  left: 220px;
-  position: absolute;
-  top: 20px;
-  width: 193px;
-  z-index: 999;
-}
-
 div.wrap {
   margin: 10px;
   background-image:url(../img/head.jpg);
@@ -353,8 +343,14 @@ table tbody th,table tbody td {
   border-width: 1px 0;
   vertical-align: middle;
 }
-.preview table td {
-    border-width: 1px;
+.preview {
+  table {
+    margin: 1em;
+    width: auto;
+    td {
+      border-width: 1px;
+    }
+  }
 }
 .feed_icon {
   float: right;
