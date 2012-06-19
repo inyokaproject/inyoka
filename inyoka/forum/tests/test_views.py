@@ -11,6 +11,7 @@ from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import Subscription
 from inyoka.utils.test import InyokaClient, override_settings
+from inyoka.utils.urls import href
 
 
 class TestViews(TestCase):
@@ -55,6 +56,9 @@ class TestViews(TestCase):
             for i in xrange(1, randint(2, 3)):
                 Post.objects.create(text="More Posts %s" % randint(1, 100000),
                                     topic=t, author=self.user, position=i)
+            for i in xrange(1, randint(2, 3)):
+                Post.objects.create(text="More Posts %s" % randint(1, 100000),
+                                    topic=t, author=self.admin, position=i)
         self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
         for _ in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
@@ -127,3 +131,52 @@ class TestViews(TestCase):
         self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
+
+        action_paginationurl = [
+            href('forum', 'last%d' % 24, self.forum3.slug),
+            href('forum', 'last%d' % 24),
+            href('forum', 'egosearch', self.forum3.slug),
+            href('forum', 'egosearch'),
+            href('forum', 'author', self.user.username, self.forum3.slug),
+            href('forum', 'author', self.user.username),
+            href('forum', 'unsolved', self.forum3.slug),
+            href('forum', 'unsolved'),
+            href('forum', 'topic_author', self.user.username, self.forum3.slug),
+            href('forum', 'topic_author', self.user.username),
+            href('forum', 'newposts', self.forum3.slug),
+            href('forum', 'newposts')]
+
+        for url in action_paginationurl:
+            # InyokaClient.get needs only the right part of the url
+            path = url[url.index(settings.BASE_DOMAIN_NAME) +
+                      len(settings.BASE_DOMAIN_NAME):]
+            response = self.client.get(path)
+            self.assertIn('%s2/' % url, response.tmpl_context['pagination'],
+                    "%s does not render pagination urls properly" % path)
+            self.assertNotIn('%s6/' % url, response.tmpl_context['pagination'],
+                    "%s does display more pages than available" % path)
+
+    def test_service_splittopic(self):
+        t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
+                author=self.user, forum=self.forum2)
+        p1 = Post.objects.create(text=u'Post 1', author=self.user,
+                topic=t1)
+
+        t2 = Topic.objects.create(title='Another topic', author=self.user,
+                forum=self.forum2)
+        p2 = Post.objects.create(text=u'Post 1', author=self.user,
+                topic=t2)
+
+        response = self.client.get('/', {
+                    '__service__': 'forum.mark_topic_split_point',
+                    'post': p1.pk,
+                    'topic': 'a%3A-topic'})
+        response = self.client.get('/topic/a%3A-topic/split/')
+        self.assertEqual(response.status_code, 200) # was 302 before
+
+        response = self.client.get('/', {
+                    '__service__': 'forum.mark_topic_split_point',
+                    'post': p2.pk,
+                    'topic': t2.slug})
+        response = self.client.get('/topic/%s/split/' % t2.slug)
+        self.assertEqual(response.status_code, 200)
