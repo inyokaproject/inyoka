@@ -553,8 +553,9 @@ class User(models.Model):
         the cache after saving the model.
         """
         super(User, self).save(*args, **kwargs)
-        cache.delete('portal/user/%s/signature' % self.id)
-        cache.delete('portal/user/%s' % self.id)
+        cache.delete_many(['portal/user/%s/signature' % self.id,
+                           'portal/user/%s' % self.id,
+                           'user_permissions/%s' % self.id])
 
     def __unicode__(self):
         return self.username
