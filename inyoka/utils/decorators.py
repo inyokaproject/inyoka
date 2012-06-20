@@ -9,6 +9,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 
+from inyoka.utils.local import current_request
+from django.utils.translation import get_language_from_request
+from django.conf import settings
 
 def patch_wrapper(decorator, base):
     decorator.__name__ = base.__name__
@@ -46,3 +49,37 @@ class deferred(object):
                     delattr(obj, key)
                 except AttributeError:
                     continue
+
+
+class try_localflavor(object):
+    """ Search for localized versions of this function before calling it """
+    def __init__(self, func):
+        self.func = func
+        self.__name__ = func.__name__
+        self.__module__ = func.__module__
+        self.__doc__ = func.__doc__
+
+    def __call__(self, *args, **kwargs):
+        # determine current language
+        ## Use this if dynamic language detection (LocaleMiddleware) is activated
+        # request = current_request._get_current_object()
+        # language = request.LANGUAGE_CODE[0:2]
+        ## This uses static language detection
+        # language = settings.LANGUAGE_CODE[0:2]
+        ## This uses gettext language detection
+        request = current_request._get_current_object()
+        language = get_language_from_request(request).lower()[0:2]
+
+        try:
+            module = __import__("inyoka.utils.localflavor.%s.%s" %
+                                (language, self.__module__.split('.')[-1]),
+                                globals(), locals(), self.__name__)
+            if self.__name__ in dir(module):
+                localized_func = getattr(module, self.__name__)
+                return localized_func(*args, **kwargs)
+        except ImportError:
+            pass
+
+        return self.func(*args, **kwargs)
+
+

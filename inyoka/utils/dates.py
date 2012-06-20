@@ -13,11 +13,13 @@ import pytz
 from operator import attrgetter
 from datetime import date, datetime, timedelta, time
 from django.contrib.humanize.templatetags.humanize import naturalday
+from django.template import defaultfilters
 from django.utils import datetime_safe
 from django.utils.dateformat import DateFormat
+from inyoka.utils.decorators import try_localflavor
 from django.utils.translation import get_language_from_request, ugettext as _
-from django.template import defaultfilters
 from inyoka.utils.local import current_request
+
 
 
 TIMEZONES = pytz.common_timezones
@@ -202,30 +204,10 @@ def format_specific_datetime(value):
         'date': naturalday(value),
         'time': format_time(value, True)}
 
-def naturalday_with_adverb(value, arg=None):
-    """
-    Format date according to german and english grammar. This function
-    returns the date combined with the adverb `on`, if the return value
-    is given in numeric date format. On the other hand it behaves like
-    django.contrib.humanize.templatetags.naturalday.
-    Examples: `on 27.4.12` or `tomorrow`.
-    """
-    try: 
-        value = date(value.year, value.month, value.day)
-    except AttributeError:
-        # Passed value wasn't a date object
-        return value
-    except ValueError:
-        # Date arguments out of range
-        return value
-    delta = value - date.today()
-    if delta.days == 0:
-        return _(u'today')
-    elif delta.days == 1:
-        return _(u'tomorrow')
-    elif delta.days == -1:
-        return _(u'yesterday')
-    return ' '.join([_(u'on'), defaultfilters.date(value, arg)])
+
+@try_localflavor
+def naturalday_in_running_text(value, arg=None):
+    return defaultfilters.date(value, arg)
 
 
    
