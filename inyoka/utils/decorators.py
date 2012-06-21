@@ -12,7 +12,7 @@
 from importlib import import_module
 
 from inyoka.utils.local import current_request
-from django.utils.translation import get_language_from_request
+from django.utils.translation import get_language
 from django.conf import settings
 
 def patch_wrapper(decorator, base):
@@ -61,8 +61,7 @@ class try_localflavor(object):
         self.__doc__ = func.__doc__
 
     def __call__(self, *args, **kwargs):
-        request = current_request._get_current_object()
-        language = get_language_from_request(request).lower()[0:2]
+        language = get_language().lower()[0:2]
         try:
             module = import_module("inyoka.utils.localflavor.%s.%s" %
                                 (language, self.__module__.split('.')[-1]))
