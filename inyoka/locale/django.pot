@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-05-23 20:27+0200\n"
+"POT-Creation-Date: 2012-06-21 12:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,119 +21,119 @@ msgstr ""
 msgid "Portal"
 msgstr ""
 
-#: inyoka/templates/overall.html:120
+#: inyoka/templates/overall.html:119
 #, python-format
 msgid "Logout [%(user)s]"
 msgstr ""
 
-#: inyoka/templates/overall.html:125
+#: inyoka/templates/overall.html:124
 msgid "Control panel"
 msgstr ""
 
-#: inyoka/templates/overall.html:132
+#: inyoka/templates/overall.html:131
 #, python-format
 msgid "Private messages (%(count)s)"
 msgstr ""
 
-#: inyoka/templates/overall.html:137
+#: inyoka/templates/overall.html:136
 msgid "Private messages"
 msgstr ""
 
-#: inyoka/templates/overall.html:144 inyoka/templates/overall.m.html:69
+#: inyoka/templates/overall.html:143 inyoka/templates/overall.m.html:69
 msgid "Login"
 msgstr ""
 
-#: inyoka/templates/overall.html:149
+#: inyoka/templates/overall.html:148
 msgid "Register"
 msgstr ""
 
-#: inyoka/templates/overall.html:160
+#: inyoka/templates/overall.html:159
 msgid "Admin"
 msgstr ""
 
-#: inyoka/templates/overall.html:161
+#: inyoka/templates/overall.html:160
 msgid "Turn admin links on/off"
 msgstr ""
 
-#: inyoka/templates/overall.html:167
+#: inyoka/templates/overall.html:166
 msgid "Reported topics"
 msgstr ""
 
-#: inyoka/templates/overall.html:170
+#: inyoka/templates/overall.html:169
 msgid "Article suggestions"
 msgstr ""
 
-#: inyoka/templates/overall.html:174
+#: inyoka/templates/overall.html:173
 msgid "Spelling mistakes"
 msgstr ""
 
-#: inyoka/templates/overall.html:178
+#: inyoka/templates/overall.html:177
 msgid "Event suggestions"
 msgstr ""
 
-#: inyoka/templates/overall.html:182
+#: inyoka/templates/overall.html:181
 msgid "Please turn on JavaScript!"
 msgstr ""
 
-#: inyoka/templates/overall.html:200
+#: inyoka/templates/overall.html:199
 msgid "Overall"
 msgstr ""
 
-#: inyoka/templates/overall.html:203
+#: inyoka/templates/overall.html:202
 msgid "Forum"
 msgstr ""
 
-#: inyoka/templates/overall.html:206
+#: inyoka/templates/overall.html:205
 msgid "Wiki"
 msgstr ""
 
-#: inyoka/templates/overall.html:209
+#: inyoka/templates/overall.html:208
 msgid "News"
 msgstr ""
 
-#: inyoka/templates/overall.html:212
+#: inyoka/templates/overall.html:211
 msgid "Planet"
 msgstr ""
 
-#: inyoka/templates/overall.html:215
+#: inyoka/templates/overall.html:214
 msgid "Search"
 msgstr ""
 
-#: inyoka/templates/overall.html:236
+#: inyoka/templates/overall.html:235
 msgid "Please install at least Internet Explorer 8."
 msgstr ""
 
-#: inyoka/templates/overall.html:263
+#: inyoka/templates/overall.html:262
 #, python-format
 msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr ""
 
-#: inyoka/templates/overall.html:265
+#: inyoka/templates/overall.html:264
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr ""
 
-#: inyoka/templates/overall.html:280
+#: inyoka/templates/overall.html:279
 msgid "To mobile version"
 msgstr ""
 
-#: inyoka/templates/overall.html:324
+#: inyoka/templates/overall.html:323
 msgid "Username or email address"
 msgstr ""
 
-#: inyoka/templates/overall.html:327
+#: inyoka/templates/overall.html:326
 msgid "Password"
 msgstr ""
 
-#: inyoka/templates/overall.html:330
+#: inyoka/templates/overall.html:329
 msgid "Don’t choose this option if you are using a public computer."
 msgstr ""
 
-#: inyoka/templates/overall.html:331
+#: inyoka/templates/overall.html:330
 msgid "Keep me logged in"
 msgstr ""
 
-#: inyoka/templates/overall.html:334
+#: inyoka/templates/overall.html:333
 msgid "Lost password?"
 msgstr ""
 
@@ -193,25 +193,9 @@ msgstr ""
 msgid "Page not found"
 msgstr ""
 
-#: inyoka/utils/dates.py:201
+#: inyoka/utils/dates.py:202
 #, python-format
 msgid "%(date)s at %(time)s"
-msgstr ""
-
-#: inyoka/utils/dates.py:223
-msgid "today"
-msgstr ""
-
-#: inyoka/utils/dates.py:225
-msgid "tomorrow"
-msgstr ""
-
-#: inyoka/utils/dates.py:227
-msgid "yesterday"
-msgstr ""
-
-#: inyoka/utils/dates.py:228
-msgid "on"
 msgstr ""
 
 #: inyoka/utils/diff3.py:372
@@ -352,23 +336,39 @@ msgstr ""
 msgid "twelve"
 msgstr ""
 
-#: inyoka/utils/text.py:224
+#: inyoka/utils/text.py:221
 msgctxt "masculine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:225
+#: inyoka/utils/text.py:222
 msgctxt "feminine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:226
+#: inyoka/utils/text.py:223
 msgctxt "neuter"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:227
+#: inyoka/utils/text.py:224
 msgid "one"
+msgstr ""
+
+#: inyoka/utils/localflavor/en/dates.py:34
+msgid "today"
+msgstr ""
+
+#: inyoka/utils/localflavor/en/dates.py:36
+msgid "tomorrow"
+msgstr ""
+
+#: inyoka/utils/localflavor/en/dates.py:38
+msgid "yesterday"
+msgstr ""
+
+#: inyoka/utils/localflavor/en/dates.py:39
+msgid "on"
 msgstr ""
 
 #: inyoka/utils/tests/test_templating.py:12
