@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.utils.localflavor.generic.dates
+    inyoka.utils.localflavor.en.dates
     ~~~~~~~~~~~~~~~~~~
 
     Various language specific utilities for datetime handling.
@@ -9,7 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 
-from datetime import date, datetime, timedelta, time
+from datetime import date
 from django.utils.translation import ugettext as _
 from django.template import defaultfilters
 

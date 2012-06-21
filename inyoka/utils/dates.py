@@ -21,7 +21,6 @@ from django.utils.translation import get_language_from_request, ugettext as _
 from inyoka.utils.local import current_request
 
 
-
 TIMEZONES = pytz.common_timezones
 DEFAULT_TIMEZONE = pytz.timezone('Europe/Berlin')
 
@@ -208,7 +207,3 @@ def format_specific_datetime(value):
 @try_localflavor
 def naturalday_in_running_text(value, arg=None):
     return defaultfilters.date(value, arg)
-
-
-   
-

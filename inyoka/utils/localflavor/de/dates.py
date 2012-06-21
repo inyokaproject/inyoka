@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.utils.localflavor.generic.dates
+    inyoka.utils.localflavor.de.dates
     ~~~~~~~~~~~~~~~~~~
 
     Various language specific utilities for datetime handling.
