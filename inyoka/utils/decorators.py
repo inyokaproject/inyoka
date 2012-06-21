@@ -52,7 +52,6 @@ class deferred(object):
                 except AttributeError:
                     continue
 
-
 class try_localflavor(object):
     """ Search for localized versions of this function before calling it """
     def __init__(self, func):
