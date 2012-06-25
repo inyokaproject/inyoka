@@ -8,14 +8,64 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'ProfileData'
+        db.create_table('portal_profiledata', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['portal.User'])),
+            ('profile_field', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['portal.ProfileField'])),
+            ('data', self.gf('django.db.models.fields.CharField')(max_length=255)),
+        ))
+        db.send_create_signal('portal', ['ProfileData'])
+
+        # Adding model 'ProfileField'
+        db.create_table('portal_profilefield', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
+        ))
+        db.send_create_signal('portal', ['ProfileField'])
+
+        # Adding model 'ProfileCategory'
+        db.create_table('portal_profilecategory', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('weight', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=255)),
+        ))
+        db.send_create_signal('portal', ['ProfileCategory'])
+
+        # Adding field 'ProfileField.category'
+        db.add_column('portal_profilefield', 'category',
+                      self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='fields', null=True, to=orm['portal.ProfileCategory']),
+                      keep_default=False)
+
         # Adding field 'ProfileField.regex'
         db.add_column('portal_profilefield', 'regex',
                       self.gf('django.db.models.fields.CharField')(max_length=255, null=True, blank=True),
                       keep_default=False)
 
+        # Adding field 'ProfileField.important'
+        db.add_column('portal_profilefield', 'important',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
     def backwards(self, orm):
+        # Deleting model 'ProfileCategory'
+        db.delete_table('portal_profilecategory')
+
+        # Deleting field 'ProfileField.category'
+        db.delete_column('portal_profilefield', 'category_id')
+
         # Deleting field 'ProfileField.regex'
         db.delete_column('portal_profilefield', 'regex')
+
+        # Deleting field 'ProfileField.important'
+        db.delete_column('portal_profilefield', 'important')
+
+        # Deleting model 'ProfileData'
+        db.delete_table('portal_profiledata')
+
+        # Deleting model 'ProfileField'
+        db.delete_table('portal_profilefield')
 
     models = {
         'contenttypes.contenttype': {
@@ -80,13 +130,14 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'ProfileData'},
             'data': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'profile_field': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.ProfileField']"}),
+            'profile_field': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'profile_data'", 'to': "orm['portal.ProfileField']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.User']"})
         },
         'portal.profilefield': {
             'Meta': {'object_name': 'ProfileField'},
             'category': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'fields'", 'null': 'True', 'to': "orm['portal.ProfileCategory']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'important': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'regex': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
@@ -140,6 +191,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'User'},
             '_permissions': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             '_primary_group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'primary_users_set'", 'null': 'True', 'db_column': "'primary_group_id'", 'to': "orm['portal.Group']"}),
+            'aim': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'banned_until': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'coordinates_lat': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
@@ -149,19 +201,31 @@ class Migration(SchemaMigration):
             'forum_last_read': ('django.db.models.fields.IntegerField', [], {'default': '0', 'blank': 'True'}),
             'forum_read_status': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'forum_welcome': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'gpgkey': ('django.db.models.fields.CharField', [], {'max_length': '8', 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'user_set'", 'blank': 'True', 'to': "orm['portal.Group']"}),
+            'icq': ('django.db.models.fields.CharField', [], {'max_length': '16', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'interests': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'jabber': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.utcnow'}),
+            'launchpad': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
+            'location': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'member_title': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'msn': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'new_password_key': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True', 'blank': 'True'}),
+            'occupation': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'post_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'profile_fields': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['portal.ProfileField']", 'through': "orm['portal.ProfileData']", 'symmetrical': 'False'}),
             'settings': ('django.db.models.TextField', [], {'default': '{}'}),
             'signature': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'sip': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'skype': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'status': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'db_index': 'True'})
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'db_index': 'True'}),
+            'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
+            'wengophone': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
+            'yim': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'})
         },
         'portal.userdata': {
             'Meta': {'object_name': 'UserData'},

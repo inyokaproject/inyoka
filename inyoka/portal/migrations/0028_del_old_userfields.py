@@ -1,26 +1,118 @@
+
 # -*- coding: utf-8 -*-
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-SERVICES = [u'E-Mail', u'Jabber', u'Beruf', u'Interessen', u'Webseite',
-            u'Launchpad-Name', u'GPG-Schlüssel', u'Wohnort', u'Geburtstag',
-            u'Ubuntu-Version', u'Skype', u'ICQ', u'Twitter', u'Identi.ca',
-            u'Freenode', u'Diaspora', u'Facebook', u'Last.fm', u'Libre.fm']
-class Migration(DataMigration):
+
+class Migration(SchemaMigration):
+
     def forwards(self, orm):
-        """Adds default profile fields.
+        # Deleting field 'User.interests'
+        db.delete_column('portal_user', 'interests')
 
-        Adds the default profile fields as decided in
-        http://forum.ubuntuusers.de/post/2764248/
+        # Deleting field 'User.website'
+        db.delete_column('portal_user', 'website')
 
-        """
-        for service in SERVICES:
-            orm.ProfileField.objects.create(title=service)
+        # Deleting field 'User.wengophone'
+        db.delete_column('portal_user', 'wengophone')
+
+        # Deleting field 'User.yim'
+        db.delete_column('portal_user', 'yim')
+
+        # Deleting field 'User.skype'
+        db.delete_column('portal_user', 'skype')
+
+        # Deleting field 'User.sip'
+        db.delete_column('portal_user', 'sip')
+
+        # Deleting field 'User.launchpad'
+        db.delete_column('portal_user', 'launchpad')
+
+        # Deleting field 'User.gpgkey'
+        db.delete_column('portal_user', 'gpgkey')
+
+        # Deleting field 'User.location'
+        db.delete_column('portal_user', 'location')
+
+        # Deleting field 'User.aim'
+        db.delete_column('portal_user', 'aim')
+
+        # Deleting field 'User.msn'
+        db.delete_column('portal_user', 'msn')
+
+        # Deleting field 'User.icq'
+        db.delete_column('portal_user', 'icq')
+
+        # Deleting field 'User.occupation'
+        db.delete_column('portal_user', 'occupation')
 
     def backwards(self, orm):
-        orm.ProfileField.objects.filter(title__in=SERVICES).delete()
+        # Adding field 'User.interests'
+        db.add_column('portal_user', 'interests',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.website'
+        db.add_column('portal_user', 'website',
+                      self.gf('django.db.models.fields.URLField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.wengophone'
+        db.add_column('portal_user', 'wengophone',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.yim'
+        db.add_column('portal_user', 'yim',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.skype'
+        db.add_column('portal_user', 'skype',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.sip'
+        db.add_column('portal_user', 'sip',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.launchpad'
+        db.add_column('portal_user', 'launchpad',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=50, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.gpgkey'
+        db.add_column('portal_user', 'gpgkey',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=8, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.location'
+        db.add_column('portal_user', 'location',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.aim'
+        db.add_column('portal_user', 'aim',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.msn'
+        db.add_column('portal_user', 'msn',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.icq'
+        db.add_column('portal_user', 'icq',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=16, blank=True),
+                      keep_default=False)
+
+        # Adding field 'User.occupation'
+        db.add_column('portal_user', 'occupation',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
 
     models = {
         'contenttypes.contenttype': {
@@ -74,16 +166,26 @@ class Migration(DataMigration):
             'read': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.User']"})
         },
+        'portal.profilecategory': {
+            'Meta': {'object_name': 'ProfileCategory'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '255'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'weight': ('django.db.models.fields.IntegerField', [], {'default': '0'})
+        },
         'portal.profiledata': {
             'Meta': {'object_name': 'ProfileData'},
             'data': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'profile_field': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.ProfileField']"}),
+            'profile_field': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'profile_data'", 'to': "orm['portal.ProfileField']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.User']"})
         },
         'portal.profilefield': {
             'Meta': {'object_name': 'ProfileField'},
+            'category': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'fields'", 'null': 'True', 'to': "orm['portal.ProfileCategory']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'important': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'regex': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
         'portal.searchqueue': {
@@ -136,7 +238,6 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'User'},
             '_permissions': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             '_primary_group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'primary_users_set'", 'null': 'True', 'db_column': "'primary_group_id'", 'to': "orm['portal.Group']"}),
-            'aim': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'banned_until': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'coordinates_lat': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
@@ -146,31 +247,19 @@ class Migration(DataMigration):
             'forum_last_read': ('django.db.models.fields.IntegerField', [], {'default': '0', 'blank': 'True'}),
             'forum_read_status': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'forum_welcome': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'gpgkey': ('django.db.models.fields.CharField', [], {'max_length': '8', 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'user_set'", 'blank': 'True', 'to': "orm['portal.Group']"}),
-            'icq': ('django.db.models.fields.CharField', [], {'max_length': '16', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'interests': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'jabber': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.utcnow'}),
-            'launchpad': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'location': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'member_title': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'msn': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'new_password_key': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True', 'blank': 'True'}),
-            'occupation': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'post_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'profile_fields': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['portal.ProfileField']", 'through': "orm['portal.ProfileData']", 'symmetrical': 'False'}),
             'settings': ('django.db.models.TextField', [], {'default': '{}'}),
             'signature': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'sip': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'skype': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'status': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'db_index': 'True'}),
-            'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
-            'wengophone': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'yim': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'})
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'db_index': 'True'})
         },
         'portal.userdata': {
             'Meta': {'object_name': 'UserData'},
@@ -182,4 +271,3 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['portal']
-    symmetrical = True

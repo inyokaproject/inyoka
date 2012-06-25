@@ -5,6 +5,13 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
+# new default services
+NEW_SERVICES = [u'E-Mail', u'Jabber', u'Beruf', u'Interessen', u'Webseite',
+            u'Launchpad-Name', u'GPG-Schlüssel', u'Wohnort', u'Geburtstag',
+            u'Ubuntu-Version', u'Skype', u'ICQ', u'Twitter', u'Identi.ca',
+            u'Freenode', u'Diaspora', u'Facebook', u'Last.fm', u'Libre.fm']
+
+# services which existed before and whose data should be copied to new system
 SERVICES = [u'Beruf', u'Interessen', u'Webseite', u'Launchpad-Name',
             u'GPG-Schlüssel', u'Wohnort', u'Skype', u'ICQ']
 ATTRS = {
@@ -21,7 +28,44 @@ ATTRS = {
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        """Copys the old user profile to the new models."""
+        """Copys the old user profile to the new models.
+
+        Also creates default categories and fields.
+
+        """
+
+        # create fields and categories
+
+        for service in NEW_SERVICES:
+            orm.ProfileField.objects.create(title=service)
+
+        category = orm.ProfileCategory(title=u'Persönliches',
+                                       slug=u'persoenliches')
+        category.save()
+        for title in [u'Beruf', u'Interessen', u'Webseite', u'Geburtstag']:
+            field = orm.ProfileField.objects.get(title=title)
+            field.category = category
+            field.save()
+
+        category = orm.ProfileCategory(title=u'Kontakt', slug=u'kontakt')
+        category.save()
+        for title in [u'E-Mail', u'Jabber', u'Skype', u'ICQ', u'Freenode',
+                      u'GPG-Schlüssel']:
+            field = orm.ProfileField.objects.get(title=title)
+            field.category = category
+            field.save()
+
+        category = orm.ProfileCategory(title=u'Soziale Netzwerke',
+                                       slug=u'soziale_netzwerke')
+        category.save()
+        for title in [u'Launchpad-Name', u'Twitter', u'Facebook', 'Last.fm',
+                      u'Libre.fm', u'Diaspora', u'Identi.ca']:
+            field = orm.ProfileField.objects.get(title=title)
+            field.category = category
+            field.save()
+
+        # migrate profiles
+
         for user in orm.User.objects.all():
             user.profile_fields.clear()
             settings = json.loads(user.settings)
@@ -57,6 +101,16 @@ class Migration(DataMigration):
                         data = ''
                     setattr(user, ATTRS[field.title], data)
             user.save()
+
+        # remove categories
+        for slug in [u'persoenliches', u'kontakt', u'soziale_netzwerke']:
+            try:
+                orm.ProfileCategory.objects.get(slug=slug).delete()
+            except orm.ProfileCategory.DoesNotExist, e:
+                pass
+
+        # remove fields
+        orm.ProfileField.objects.filter(title__in=NEW_SERVICES).delete()
 
     models = {
         'contenttypes.contenttype': {
@@ -110,16 +164,26 @@ class Migration(DataMigration):
             'read': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.User']"})
         },
+        'portal.profilecategory': {
+            'Meta': {'object_name': 'ProfileCategory'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '255'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'weight': ('django.db.models.fields.IntegerField', [], {'default': '0'})
+        },
         'portal.profiledata': {
             'Meta': {'object_name': 'ProfileData'},
             'data': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'profile_field': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.ProfileField']"}),
+            'profile_field': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'profile_data'", 'to': "orm['portal.ProfileField']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['portal.User']"})
         },
         'portal.profilefield': {
             'Meta': {'object_name': 'ProfileField'},
+            'category': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'fields'", 'null': 'True', 'to': "orm['portal.ProfileCategory']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'important': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'regex': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
         'portal.searchqueue': {
