@@ -74,7 +74,7 @@ class Migration(DataMigration):
                     data = getattr(user, ATTRS[field.title])
                     if data:
                         orm.ProfileData(user=user, profile_field=field,
-                                        data=getattr(user, ATTRS[field.title])).save()
+                                        data=data).save()
                 if field.title == 'E-Mail' and settings.has_key('show_email') \
                    and settings['show_email'] and user.email:
                     orm.ProfileData(user=user, profile_field=field,
