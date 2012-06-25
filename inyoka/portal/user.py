@@ -165,7 +165,8 @@ def deactivate_user(user):
         pass
 
     user.status = 3
-    user.email = 'user%d@ubuntuusers.de.invalid' % user.id
+    if not user.is_banned:
+        user.email = 'user%d@ubuntuusers.de.invalid' % user.id
     user.set_unusable_password()
     user.groups.remove(*user.groups.all())
     user.avatar = user.coordinates_long = user.coordinates_lat = \
@@ -574,7 +575,11 @@ class User(models.Model):
             'portal/user/{0}/signature'.format(self.id),
             'portal/user/{0}/profile_data'.format(self.id),
             'portal/user/{0}'.format(self.id),
+            'user_permissions/{0}'.format(self.id),
         ])
+
+    def __unicode__(self):
+        return self.username
 
     is_anonymous = property(lambda x: x.username == settings.INYOKA_ANONYMOUS_USER)
     is_authenticated = property(lambda x: not x.is_anonymous)
