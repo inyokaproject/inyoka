@@ -138,7 +138,7 @@
           {{ attach_form.comment }}{{ attach_form.errors.comment }}</p>
         <p>{{ attach_form.override }} <label for="id_override">{% trans -%}
           Overwrite existing attachment with the same name.{%- endtrans %}</label></p>
-        <p><input type="submit" value="Anhang hochladen" name="attach" /></p>
+        <p><input type="submit" value="{% trans %}upload attachment{% endtrans %}" name="attach" /></p>
       </dd>
       {%- endif %}
       {%- if can_sticky and (isnewtopic or isfirstpost) %}

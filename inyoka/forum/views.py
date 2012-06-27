@@ -626,6 +626,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         tt = request.POST.get('text', '')
         preview = parse(tt).render(ctx, 'html')
 
+    # the user has uploaded an attachment. already handled in handle_attachments 
+    elif 'attach' in request.POST:
+        pass
+
     # the user is going to edit an existing post/topic
     elif post:
         form = form.__class__({
