@@ -187,7 +187,7 @@
         )
       )
 
-      var profile_fields = eval('({{ profile_fields }})');
+      var profile_fields = JSON.parse('{{ profile_fields }}')
       var select = $('#profile_fields tbody tr:last td select')
       select.append($('<option>'));
       for (i in profile_fields) {
