@@ -261,11 +261,11 @@ div.userprofile {
   div.fields {
     position: absolute;
     float: left;
-    margin-left: 225px;
+    left: 495px;
+    right: 30px;
     table {
       table-layout: fixed;
-      overflow: hidden;
-      max-width: 500px;
+      width: 270px;
       margin: 0 5px 10px;
       float: left;
       .rounded;
@@ -276,8 +276,11 @@ div.userprofile {
         padding: 5px;
       }
       col.field {
-        width: 150px;
+        width: 100px;
         border-right: 1px solid #CCCCCC;
+      }
+      td {
+        overflow: hidden;
       }
 
       tbody tr:hover {
