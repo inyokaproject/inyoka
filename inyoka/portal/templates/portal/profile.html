@@ -37,8 +37,8 @@
     </li>
     {% if wikipage %}
       <li>
-        <a href="{{ href('wiki', 'Benutzer', user.username|e) }}">
-          {% trans %}Wikipage{% endtrans %}
+        <a href="{{ href('wiki', SETTINGS.WIKI_USER_BASE, user.username|e) }}">
+          {% trans %}User page{% endtrans %}
         </a>
       </li>
     {% endif %}

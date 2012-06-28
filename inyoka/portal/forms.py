@@ -877,7 +877,7 @@ class EditProfileFieldForm(forms.Form):
     important = forms.BooleanField(label=_('Important field'), help_text=_(
                                    u'”Imporant” fields are shown globally '
                                    u'on the whole website, for example '
-                                   u'beside every forum posts.'),
+                                   u'beside each forum posts.'),
                                    required=False)
 
     def clean(self):
