@@ -245,7 +245,6 @@ def viewtopic(request, topic_slug, page=1):
 
     # clear read status and subscriptions
     topic.mark_read(request.user)
-    request.user.save()
 
     subscribed = Subscription.objects.user_subscribed(request.user, topic,
         ('forum', 'topic'), clear_notified=True)
@@ -469,9 +468,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     elif quote:
         form = EditPostForm(request.POST or None, initial={
             'text': quote_text(quote.text, quote.author, 'post:%s:' % quote.id) + '\n',
-        })
+        }, is_first_post=firstpost)
     else:
-        form = EditPostForm(request.POST or None)
+        form = EditPostForm(request.POST or None, is_first_post=firstpost)
 
     # check privileges
     privileges = get_forum_privileges(request.user, forum)
@@ -569,7 +568,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 topic.ubuntu_distro = d.get('ubuntu_distro')
                 topic.ubuntu_version = d.get('ubuntu_version')
             if check_privilege(privileges, 'sticky'):
-                topic.sticky = d['sticky']
+                topic.sticky = d.get('sticky', False)
 
             topic.save()
             topic.forum.invalidate_topic_cache()
@@ -628,13 +627,13 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
     # the user is going to edit an existing post/topic
     elif post:
-        form = form.__class__({
+        form = form.__class__(request.POST or None, initial={
             'title': topic.title,
             'ubuntu_distro': topic.ubuntu_distro,
             'ubuntu_version': topic.ubuntu_version,
             'sticky': topic.sticky,
             'text': post.text,
-        })
+        }, is_first_post=firstpost)
         if not attachments:
             attachments = Attachment.objects.filter(post=post)
 
@@ -1411,7 +1410,6 @@ def markread(request, slug=None):
     if slug:
         forum = Forum.objects.get(slug=slug)
         forum.mark_read(user)
-        user.save()
         flash(_(u'The forum “%(forum)s“ was marked as read.') %
               {'forum': forum.name}, True)
         return HttpResponseRedirect(url_for(forum))

@@ -570,7 +570,13 @@ class User(models.Model):
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        super(User, self).save(*args, **kwargs)
+        if 'update_fields' in kwargs:
+            data = {}
+            for field in kwargs['update_fields']:
+                data[field] = getattr(self, field)
+            update_model(self, **data)
+        else:
+            super(User, self).save(*args, **kwargs)
         cache.delete_many([
             'portal/user/{0}/signature'.format(self.id),
             'portal/user/{0}/profile_data'.format(self.id),
