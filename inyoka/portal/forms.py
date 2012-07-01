@@ -335,8 +335,8 @@ class UserCPProfileForm(forms.Form):
     website = forms.URLField(label=ugettext_lazy(u'Website'), required=False)
     launchpad = forms.CharField(label=ugettext_lazy(u'Launchpad username'), required=False,
                                 max_length=50)
-    gpgkey = forms.RegexField('^(0x)?[0-9a-f]{8}$(?i)', label=ugettext_lazy(u'GPG key'),
-                 max_length=10, required=False)
+    gpgkey = forms.RegexField('^(0x)?[0-9a-f]+$(?i)',
+        label=ugettext_lazy(u'GPG key'), max_length=255, required=False)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
