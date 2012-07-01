@@ -626,17 +626,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         tt = request.POST.get('text', '')
         preview = parse(tt).render(ctx, 'html')
 
-    # the user has uploaded an attachment or changed a poll
-    # this is already handled in handle_attachments or handle_polls
-    elif (('attach' in request.POST) or ('delete_attachment' in request.POST) or
-            ('add_poll' in request.POST) or ('delete_poll' in request.POST) or
-            ('add_option' in request.POST)):
-        # persist changes
-        pass
-
     # the user is going to edit an existing post/topic
     elif post:
-        form = form.__class__({
+        form = form.__class__(request.POST or None, initial={
             'title': topic.title,
             'ubuntu_distro': topic.ubuntu_distro,
             'ubuntu_version': topic.ubuntu_version,
