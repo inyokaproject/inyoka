@@ -628,7 +628,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
     # the user is going to edit an existing post/topic
     elif post:
-        form = form.__class__({
+        form = form.__class__(request.POST or None, initial={
             'title': topic.title,
             'ubuntu_distro': topic.ubuntu_distro,
             'ubuntu_version': topic.ubuntu_version,
