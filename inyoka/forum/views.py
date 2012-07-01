@@ -245,7 +245,6 @@ def viewtopic(request, topic_slug, page=1):
 
     # clear read status and subscriptions
     topic.mark_read(request.user)
-    request.user.save()
 
     subscribed = Subscription.objects.user_subscribed(request.user, topic,
         ('forum', 'topic'), clear_notified=True)
@@ -1411,7 +1410,6 @@ def markread(request, slug=None):
     if slug:
         forum = Forum.objects.get(slug=slug)
         forum.mark_read(user)
-        user.save()
         flash(_(u'The forum “%(forum)s“ was marked as read.') %
               {'forum': forum.name}, True)
         return HttpResponseRedirect(url_for(forum))

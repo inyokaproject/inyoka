@@ -306,6 +306,7 @@ class Forum(models.Model):
             return
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
+            user.save(update_fields=('forum_read_status',))
 
     def find_welcome(self, user):
         """
@@ -334,7 +335,7 @@ class Forum(models.Model):
         else:
             status.discard(self.id)
         user.forum_welcome = ','.join(str(id) for id in status)
-        user.save()
+        user.save(update_fields=('forum_welcome',))
 
     def invalidate_topic_cache(self):
         cache.delete_many('forum/topics/%d/%d' % (self.id, page+1) for page in
@@ -470,8 +471,7 @@ class Topic(models.Model):
 
                 for user in post_counts:
                     user.post_count = op(user.post_count, user.pcount)
-                    cache.delete('portal/user/%d' % user.id)
-                    user.save()
+                    user.save(update_fields=('post_count',))
 
             self.save()
 
@@ -592,6 +592,7 @@ class Topic(models.Model):
             user._readstatus = ReadStatus(user.forum_read_status)
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
+            user.save(update_fields=('forum_read_status',))
 
     def reindex(self):
         """Mark the whole topic for reindexing."""
@@ -1325,7 +1326,7 @@ def mark_all_forums_read(user):
     for forum in Forum.objects.filter(parent=None):
         user._readstatus.mark(forum)
     user.forum_read_status = user._readstatus.serialize()
-    user.save()
+    user.save(update_fields=('forum_read_status',))
 
 
 # Circular imports
