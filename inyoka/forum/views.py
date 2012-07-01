@@ -468,9 +468,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     elif quote:
         form = EditPostForm(request.POST or None, initial={
             'text': quote_text(quote.text, quote.author, 'post:%s:' % quote.id) + '\n',
-        })
+        }, is_first_post=firstpost)
     else:
-        form = EditPostForm(request.POST or None)
+        form = EditPostForm(request.POST or None, is_first_post=firstpost)
 
     # check privileges
     privileges = get_forum_privileges(request.user, forum)
@@ -568,7 +568,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 topic.ubuntu_distro = d.get('ubuntu_distro')
                 topic.ubuntu_version = d.get('ubuntu_version')
             if check_privilege(privileges, 'sticky'):
-                topic.sticky = d['sticky']
+                topic.sticky = d.get('sticky', False)
 
             topic.save()
             topic.forum.invalidate_topic_cache()
@@ -633,7 +633,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             'ubuntu_version': topic.ubuntu_version,
             'sticky': topic.sticky,
             'text': post.text,
-        })
+        }, is_first_post=firstpost)
         if not attachments:
             attachments = Attachment.objects.filter(post=post)
 
