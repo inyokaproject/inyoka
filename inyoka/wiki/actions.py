@@ -659,7 +659,7 @@ def do_mv_back(request, name):
         if 'cancel' in request.POST:
             messages.info(request, u'Wiederherstellen wurde abgebrochen.')
         else:
-            new_name = name.lstrip('Baustelle/')
+            new_name = name[10:] # Remove the leading 'Baustelle/' from the name
             ## Move copy to Trash
             try:
                 copy = Page.objects.get_by_name(new_name)
@@ -687,8 +687,8 @@ def do_mv_back(request, name):
                     return HttpResponseRedirect(url_for(page))
             ## Remove box
             text = page.revisions.latest().text.value
-            if text.startswith(u'[[Vorlage(Baustelle') or \
-                text.startswith(u'[[Vorlage(Überarbeitung'):
+            while text.startswith(u'[[Vorlage(Baustelle') or \
+                    text.startswith(u'[[Vorlage(Überarbeitung'):
                 text = text[text.find('\n')+1:]
             ## Rename
             if not _rename(request, page, new_name, new_text=text):
@@ -743,7 +743,7 @@ def do_log(request, name):
         return HttpResponseRedirect(href('wiki', '_feed', page.name, 20))
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
-                            20, link_func)
+                            100, link_func)
     return {
         'page':         page,
         'revisions':    pagination.get_queryset(),

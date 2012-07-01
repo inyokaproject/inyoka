@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from mock import patch
 from random import randint
+from os import path
 
 from django.conf import settings
 from django.test import TestCase, Client
@@ -9,11 +10,13 @@ from django.utils.translation import ugettext as _
 
 from inyoka.utils.test import profile_memory
 from inyoka.forum.acl import PRIVILEGES_BITS
-from inyoka.forum.constants import TOPICS_PER_PAGE
+from inyoka.forum import constants
+from inyoka.forum.constants import TOPICS_PER_PAGE, VERSION_CHOICES, DISTRO_CHOICES
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import Subscription
 from inyoka.utils.test import InyokaClient
+from inyoka.utils.urls import href
 
 
 class TestForumViews(TestCase):
@@ -24,13 +27,13 @@ class TestForumViews(TestCase):
         resp = client.get('/')
         self.assertEqual(resp.status_code, 200)
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
-    def test_forum_index_memory(self):
-        client = Client(HTTP_HOST='forum.inyoka.local')
-        @profile_memory
-        def go():
-            resp = client.get('/')
-        go()
+#    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
+#    def test_forum_index_memory(self):
+#        client = Client(HTTP_HOST='forum.inyoka.local')
+#        @profile_memory
+#        def go():
+#            resp = client.get('/')
+#        go()
 
 
 class TestViews(TestCase):
@@ -75,6 +78,9 @@ class TestViews(TestCase):
             for i in xrange(1, randint(2, 3)):
                 Post.objects.create(text="More Posts %s" % randint(1, 100000),
                                     topic=t, author=self.user, position=i)
+            for i in xrange(1, randint(2, 3)):
+                Post.objects.create(text="More Posts %s" % randint(1, 100000),
+                                    topic=t, author=self.admin, position=i)
         self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
         for _ in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
@@ -148,6 +154,30 @@ class TestViews(TestCase):
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
 
+        action_paginationurl = [
+            href('forum', 'last%d' % 24, self.forum3.slug),
+            href('forum', 'last%d' % 24),
+            href('forum', 'egosearch', self.forum3.slug),
+            href('forum', 'egosearch'),
+            href('forum', 'author', self.user.username, self.forum3.slug),
+            href('forum', 'author', self.user.username),
+            href('forum', 'unsolved', self.forum3.slug),
+            href('forum', 'unsolved'),
+            href('forum', 'topic_author', self.user.username, self.forum3.slug),
+            href('forum', 'topic_author', self.user.username),
+            href('forum', 'newposts', self.forum3.slug),
+            href('forum', 'newposts')]
+
+        for url in action_paginationurl:
+            # InyokaClient.get needs only the right part of the url
+            path = url[url.index(settings.BASE_DOMAIN_NAME) +
+                      len(settings.BASE_DOMAIN_NAME):]
+            response = self.client.get(path)
+            self.assertIn('%s2/' % url, response.tmpl_context['pagination'],
+                    "%s does not render pagination urls properly" % path)
+            self.assertNotIn('%s6/' % url, response.tmpl_context['pagination'],
+                    "%s does display more pages than available" % path)
+
     def test_service_splittopic(self):
         t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
                 author=self.user, forum=self.forum2)
@@ -172,3 +202,47 @@ class TestViews(TestCase):
                     'topic': t2.slug})
         response = self.client.get('/topic/%s/split/' % t2.slug)
         self.assertEqual(response.status_code, 200)
+
+    @patch('inyoka.middlewares.security.SecurityMiddleware._make_token',
+            return_value='csrf_key')
+    def test_add_attachment(self, mock_send):
+        TEST_ATTACHMENT = 'test_attachment.png'
+
+        t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
+                author=self.user, forum=self.forum2,
+                ubuntu_distro=DISTRO_CHOICES[1][0])
+        p1 = Post.objects.create(text=u'Post 1', author=self.user,
+                topic=t1)
+
+        f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
+        postdata = {u'attachment': f,
+                    u'attach' : u'upload attachment',
+                    u'ubuntu_distro': DISTRO_CHOICES[2][0],
+                    u'comment': u'',
+                    u'attachments': u'',
+                    u'title': u'Tag124345637',
+                    u'text': u'Tag23562434',
+                    u'polls': u'',
+                    u'question': u'',
+                    u'filename': u'',
+                    u'duration': u'',
+                    u'options': u'',
+                    u'_form_token': u'csrf_key' }
+
+
+        response = self.client.post('/post/%s/edit/' % p1.pk, postdata)
+        content = unicode(response.__str__().decode(response._charset))
+
+        self.assertIn(postdata['title'], content)
+        self.assertIn(postdata['text'], content)
+        self.assertIn(u'value="%s" selected="selected"' % DISTRO_CHOICES[2][0],
+                      content)
+        self.assertIn(unicode(TEST_ATTACHMENT), content)
+
+        # Adding an attachment should not trigger save
+        t1_test = Topic.objects.get(pk=t1.pk)
+        self.assertEqual(t1_test.title, u'A: topic')
+        self.assertEqual(t1_test.ubuntu_distro, DISTRO_CHOICES[1][0])
+
+        p1_test = Post.objects.get(pk=p1.pk)
+        self.assertEqual(p1_test.text, u'Post 1')

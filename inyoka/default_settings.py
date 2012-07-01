@@ -71,11 +71,11 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media and the URL
 MEDIA_ROOT = join(BASE_PATH, 'media')
-MEDIA_URL = 'http://media.%s' % BASE_DOMAIN_NAME
+MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
 
 # same for static
 STATIC_ROOT = join(BASE_PATH, 'static-collected')
-STATIC_URL = 'http://static.%s' % BASE_DOMAIN_NAME
+STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
 ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 
 STATICFILES_DIRS = (
