@@ -201,7 +201,7 @@ class Migration(SchemaMigration):
             'forum_last_read': ('django.db.models.fields.IntegerField', [], {'default': '0', 'blank': 'True'}),
             'forum_read_status': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'forum_welcome': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'gpgkey': ('django.db.models.fields.CharField', [], {'max_length': '8', 'blank': 'True'}),
+            'gpgkey': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'user_set'", 'blank': 'True', 'to': "orm['portal.Group']"}),
             'icq': ('django.db.models.fields.CharField', [], {'max_length': '16', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
