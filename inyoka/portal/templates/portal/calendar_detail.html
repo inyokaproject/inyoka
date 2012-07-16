@@ -28,7 +28,7 @@
   <tr><th>{% trans %}Date{% endtrans %}</th><td>
     {{ _('from') }} {{ event.date|dateformat }}
     {% if event.time %}
-      {{ event.time|timeformat }}
+      {{ event.time|timeformat(event.date) }}
     {% endif %}
     {%- if event.enddate or event.endtime %}
       {{ _('to') }}
@@ -36,7 +36,7 @@
         {{ event.enddate|dateformat }}
       {% endif %}
       {% if event.endtime %}
-        {{ event.endtime|timeformat }}
+        {{ event.endtime|timeformat(event.date) }}
       {% endif %}
     {% endif %}
   </td></tr>
