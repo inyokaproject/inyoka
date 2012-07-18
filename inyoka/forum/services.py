@@ -9,6 +9,8 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from urllib import unquote
+
 from django.db import transaction
 from django.utils.datastructures import MultiValueDictKeyError
 
@@ -61,7 +63,7 @@ def on_toggle_categories(request):
         request.user.settings.pop('hidden_forum_categories', None)
     else:
         request.user.settings['hidden_forum_categories'] = tuple(hidden_categories)
-    request.user.save()
+    request.user.save(update_fields=('settings',))
     return True
 
 
@@ -153,6 +155,7 @@ def on_mark_topic_split_point(request):
     unchecked = False
 
     if topic and post_id:
+        topic = unquote(topic) # To replace quotes. e.g. the colon
         post_ids = post_ids if topic in post_ids else {topic: []}
 
         post_id_marked = '!%s' % post_id

@@ -24,8 +24,7 @@ from inyoka.wiki.parser import render, parse, RenderContext
 from inyoka.utils.text import slugify
 from inyoka.utils.html import escape, striptags
 from inyoka.utils.urls import href, url_for
-from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone, \
-     format_time, format_datetime
+from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
 from inyoka.utils.search import search, SearchAdapter
 from inyoka.utils.local import current_request
 from inyoka.utils.decorators import deferred
@@ -290,19 +289,22 @@ class Article(models.Model, LockableObject):
         """Return the year/month/day part of an article url"""
         return datetime_safe.new_date(self.pub_date).strftime('%Y/%m/%d')
 
-    def get_absolute_url(self, action='show'):
+    def get_absolute_url(self, action='show', **query):
         if action == 'comments':
-            return href('ikhaya', self.stamp, self.slug, _anchor='comments')
+            query['_anchor'] = 'comments'
+            return href('ikhaya', self.stamp, self.slug, **query)
         if action == 'last_comment':
-            return href('ikhaya', self.stamp, self.slug, _anchor='comment_%d' % self.comment_count)
+            query['_anchor'] = 'comment_%d' % self.comment_count
+            return href('ikhaya', self.stamp, self.slug, **query)
         if action in ('subscribe', 'unsubscribe'):
             if current_request:
                 current = current_request.build_absolute_uri()
                 if not self.get_absolute_url() in current:
                     # We may be at the ikhaya index page.
-                    return href('ikhaya', self.stamp, self.slug, action,
-                                next=current_request.build_absolute_uri())
-            return href('ikhaya', self.stamp, self.slug, action)
+                    if 'next' not in query:
+                        query['next'] = current_request.build_absolute_uri()
+                    return href('ikhaya', self.stamp, self.slug, action, **query)
+            return href('ikhaya', self.stamp, self.slug, action, **query)
 
         links = {
             'delete':     ('ikhaya', self.stamp, self.slug, 'delete'),
@@ -313,7 +315,7 @@ class Article(models.Model, LockableObject):
             'show':       ('ikhaya', self.stamp, self.slug),
         }
 
-        return href(*links[action if action in links.keys() else 'show'])
+        return href(*links[action if action in links.keys() else 'show'], **query)
 
     def __unicode__(self):
         return self.subject

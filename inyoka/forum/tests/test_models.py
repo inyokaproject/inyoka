@@ -1,10 +1,22 @@
 #-*- coding: utf-8 -*-
+from django.conf import settings
 from django.core.cache import cache
+from django.core.files.base import ContentFile
 from django.test import TestCase
 
-from inyoka.forum.models import Forum, Topic, Post
+from inyoka.forum.models import Forum, Topic, Post, Attachment
 from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
+
+
+
+class TestAttachmentModel(TestCase):
+    def test_regression_ticket760(self):
+        a = Attachment.create('test.txt', ContentFile('test'), 'text/plain', [])
+        try:
+            self.assertEqual(a.contents, 'test')
+        finally:
+            a.delete() # Yank the file from the filesystem
 
 
 class TestForumModel(TestCase):
@@ -87,9 +99,9 @@ class TestForumModel(TestCase):
         self.forum.topics.add(t2)
 
         for i in xrange(10):
-            t1.posts.add(Post(text='post%d t1' % i, 
+            t1.posts.add(Post(text='post%d t1' % i,
                 author=user, position=i))
-            t2.posts.add(Post(text='post%d t2' % i, 
+            t2.posts.add(Post(text='post%d t2' % i,
                 author=user, position=i))
 
         cache.delete('forum/forums/%s' % self.parent1.slug)
@@ -104,6 +116,13 @@ class TestForumModel(TestCase):
         f = Forum.objects.get(id=self.forum.id)
         self.assertEqual(f.post_count, 10)
 
+    def test_get_absolute_url(self):
+        url1 = self.forum.get_absolute_url('show', foo='val1', bar='val2')
+        url1_target = ''.join(['http://forum.', settings.BASE_DOMAIN_NAME,
+                                       '/forum/', self.forum.slug, '/', 
+                                       '?foo=val1&bar=val2'])
+        self.assertEqual(url1, url1_target)
+    
 class TestPostSplit(TestCase):
 
     def setUp(self):

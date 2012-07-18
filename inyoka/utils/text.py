@@ -13,8 +13,12 @@ import os
 import random
 import posixpath
 import unicodedata
-from django.conf import settings
 
+from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import apnumber
+from django.utils.translation import get_language
+from django.utils.translation import pgettext, ugettext as _
+from inyoka.utils.local import local
 
 _str_num_re = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 _path_crop = re.compile(r'^(\.\.?/)+')
@@ -177,8 +181,8 @@ def get_next_increment(values, string, max_length=None, stripdate=False):
     def _get_value(value):
         if stripdate:
             stripped = _stripdate(value)
-            return u'{0}/{1}'.format((u'/'.join(stripped[0]),
-                                     increment_string(stripped[1])))
+            return u'{0}/{1}'.format(u'/'.join(stripped[0]),
+                                     increment_string(stripped[1]))
         return increment_string(value)
 
     values = list(_stripdate(x)[1] if stripdate else x for x in values)
@@ -202,3 +206,20 @@ def get_next_increment(values, string, max_length=None, stripdate=False):
         strip = max_length - len(poi)
         string = string[:strip]
     return _get_value(gs(string))
+
+
+def human_number(value, gender=None):
+    if value == 10:
+        return _("ten")
+    if value == 11:
+        return _("eleven")
+    if value == 12:
+        return _("twelve")
+    lang = get_language()
+    if value == 1 and gender and 'en' not in lang.lower():
+        return {
+                'masculine':    pgettext('masculine', u'one'),
+                'feminine':     pgettext('feminine', u'one'),
+                'neuter':       pgettext('neuter', u'one')
+               }.get(gender, _(u'one'))
+    return apnumber(value)

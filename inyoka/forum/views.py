@@ -245,7 +245,6 @@ def viewtopic(request, topic_slug, page=1):
 
     # clear read status and subscriptions
     topic.mark_read(request.user)
-    request.user.save()
 
     subscribed = Subscription.objects.user_subscribed(request.user, topic,
         ('forum', 'topic'), clear_notified=True)
@@ -469,9 +468,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     elif quote:
         form = EditPostForm(request.POST or None, initial={
             'text': quote_text(quote.text, quote.author, 'post:%s:' % quote.id) + '\n',
-        })
+        }, is_first_post=firstpost)
     else:
-        form = EditPostForm(request.POST or None)
+        form = EditPostForm(request.POST or None, is_first_post=firstpost)
 
     # check privileges
     privileges = get_forum_privileges(request.user, forum)
@@ -569,7 +568,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 topic.ubuntu_distro = d.get('ubuntu_distro')
                 topic.ubuntu_version = d.get('ubuntu_version')
             if check_privilege(privileges, 'sticky'):
-                topic.sticky = d['sticky']
+                topic.sticky = d.get('sticky', False)
 
             topic.save()
             topic.forum.invalidate_topic_cache()
@@ -585,11 +584,17 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             post = Post(topic=topic, author_id=request.user.id)
             if newtopic:
                 post.position = 0
-        post.edit(request, d['text'])
 
-        if attachments and post.id:
+        # If there are attachments, we need to get a post id before we render
+        # the text in order to parse the ``Bild()`` macro during first save. We
+        # can set the ``has_attachments`` attribute lazily because the post is
+        # finally saved in ``post.edit()``.
+        if attachments:
+            if not post.id:
+                post.save()
             Attachment.update_post_ids(att_ids, post)
-            Post.objects.filter(pk=post.pk).update(has_attachments=True)
+            post.has_attachments = True
+        post.edit(request, d['text'])
 
         if newtopic:
             send_newtopic_notifications(request.user, post, topic, forum)
@@ -622,20 +627,20 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
     # the user is going to edit an existing post/topic
     elif post:
-        form = form.__class__({
+        form = form.__class__(request.POST or None, initial={
             'title': topic.title,
             'ubuntu_distro': topic.ubuntu_distro,
             'ubuntu_version': topic.ubuntu_version,
             'sticky': topic.sticky,
             'text': post.text,
-        })
+        }, is_first_post=firstpost)
         if not attachments:
             attachments = Attachment.objects.filter(post=post)
 
     if not newtopic:
         max = topic.post_count
         posts = topic.posts.select_related('author') \
-                           .filter(hidden=False, position__gt=max-15) \
+                           .filter(hidden=False, position__gt=max - 15) \
                            .order_by('-position')
         discussions = Page.objects.filter(topic=topic)
 
@@ -726,8 +731,8 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
             Subscription(user=request.user, content_object=obj).save()
             flash(flasher)
         # redirect the user to the page he last watched
-        if request.GET.get('continue', False) and is_safe_domain(request.GET['continue']):
-            return HttpResponseRedirect(request.GET['continue'])
+        if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+            return HttpResponseRedirect(request.GET['next'])
         else:
             return HttpResponseRedirect(url_for(obj))
     return subscriber
@@ -760,8 +765,8 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
             subscription.delete()
             flash(flasher)
         # redirect the user to the page he last watched
-        if request.GET.get('continue', False) and is_safe_domain(request.GET['continue']):
-            return HttpResponseRedirect(request.GET['continue'])
+        if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+            return HttpResponseRedirect(request.GET['next'])
         else:
             return HttpResponseRedirect(url_for(obj))
     return unsubscriber
@@ -1405,7 +1410,6 @@ def markread(request, slug=None):
     if slug:
         forum = Forum.objects.get(slug=slug)
         forum.mark_read(user)
-        user.save()
         flash(_(u'The forum “%(forum)s“ was marked as read.') %
               {'forum': forum.name}, True)
         return HttpResponseRedirect(url_for(forum))
@@ -1449,7 +1453,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     elif action == 'topic_author':
         user = User.objects.get(user)
         topics = topics.filter(author=user)
-        url = href('forum', 'topic_author', user.username)
+        url = href('forum', 'topic_author', user.username, forum)
         title = _(u'Topics by “%(user)s“') % {'user': user.username}
     elif action == 'author':
         user = user and User.objects.get(user) or request.user
@@ -1463,7 +1467,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
             url = href('forum', 'author', user.username, forum)
         else:
             title = _(u'My posts')
-            url = href('forum', 'egosearch')
+            url = href('forum', 'egosearch', forum)
     elif action == 'newposts':
         forum_ids = tuple(forum.id for forum in Forum.objects.get_cached())
         # get read status data
@@ -1486,6 +1490,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         if forum_obj and not forum_obj.id in invisible:
             topics = topics.filter(forum=forum_obj)
 
+    topics = topics.distinct()
     total_topics = get_simplified_queryset(topics).count()
     pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
                             total=total_topics)
@@ -1585,7 +1590,7 @@ def forum_edit(request, slug=None, parent=None):
 
     if request.method == 'POST':
         form = EditForumForm(request.POST, forum=forum)
-        form.fields['parent'].refresh(add=[(0,u'-')], remove=[forum])
+        form.fields['parent'].refresh(add=[(0, u'-')], remove=[forum])
 
         if form.is_valid():
             data = form.cleaned_data
@@ -1648,7 +1653,7 @@ def forum_edit(request, slug=None, parent=None):
                 'force_version': forum.force_version,
                 'count_posts': forum.user_count_posts,
             })
-        form.fields['parent'].refresh(add=[(0,u'-')], remove=[forum])
+        form.fields['parent'].refresh(add=[(0, u'-')], remove=[forum])
     return {
         'form':  form,
         'forum': forum

@@ -19,6 +19,7 @@ from StringIO import StringIO
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files.storage import default_storage
 from django.db import models
 from django.utils.translation import ugettext_lazy, ugettext as _
 
@@ -521,7 +522,7 @@ class User(models.Model):
     coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
     coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
     location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
-    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=8, blank=True)
+    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=255, blank=True)
     occupation = models.CharField(ugettext_lazy(u'Job'), max_length=200, blank=True)
     interests = models.CharField(ugettext_lazy(u'Interests'), max_length=200, blank=True)
     website = models.URLField(ugettext_lazy(u'Website'), blank=True)
@@ -551,9 +552,16 @@ class User(models.Model):
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        super(User, self).save(*args, **kwargs)
-        cache.delete('portal/user/%s/signature' % self.id)
-        cache.delete('portal/user/%s' % self.id)
+        if 'update_fields' in kwargs:
+            data = {}
+            for field in kwargs['update_fields']:
+                data[field] = getattr(self, field)
+            update_model(self, **data)
+        else:
+            super(User, self).save(*args, **kwargs)
+        cache.delete_many(['portal/user/%s/signature' % self.id,
+                           'portal/user/%s' % self.id,
+                           'user_permissions/%s' % self.id])
 
     def __unicode__(self):
         return self.username
@@ -705,7 +713,6 @@ class User(models.Model):
         image = Image.open(StringIO(data))
         fn = 'portal/avatars/avatar_user%d.%s' % (self.id,
              image.format.lower())
-        image_path = path.join(settings.MEDIA_ROOT, fn)
         #: clear the file system
         self.delete_avatar()
 
@@ -715,37 +722,37 @@ class User(models.Model):
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
+            image_path = path.join(settings.MEDIA_ROOT, fn)
             image.save(image_path)
             resized = True
         else:
-            image.save(image_path)
+            img.seek(0)
+            default_storage.save(fn, img)
         self.avatar = fn
 
         return resized
 
     def delete_avatar(self):
         """Delete the avatar from the file system."""
-        fn = self.avatar.name
-        if fn is not None and path.exists(fn):
-            os.remove(fn)
-        self.avatar = None
+        if self.avatar:
+            self.avatar.delete(save=False)
 
-    def get_absolute_url(self, action='show', *args):
+    def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
-            return href('portal', 'user', self.urlsafe_username)
+            return href('portal', 'user', self.urlsafe_username, **query)
         elif action == 'privmsg':
             return href('portal', 'privmsg', 'new',
-                        self.urlsafe_username)
+                        self.urlsafe_username, **query)
         elif action == 'activate':
             return href('portal', 'activate',
-                        self.urlsafe_username, gen_activation_key(self))
+                        self.urlsafe_username, gen_activation_key(self), **query)
         elif action == 'activate_delete':
             return href('portal', 'delete',
-                        self.urlsafe_username, gen_activation_key(self))
+                        self.urlsafe_username, gen_activation_key(self), **query)
         elif action == 'admin':
-            return href('portal', 'user', self.urlsafe_username, 'edit', *args)
+            return href('portal', 'user', self.urlsafe_username, 'edit', *args, **query)
         elif action in ('subscribe', 'unsubscribe'):
-            return href('portal', 'user', self.urlsafe_username, action)
+            return href('portal', 'user', self.urlsafe_username, action, **query)
 
     def login(self, request):
         self.last_login = datetime.utcnow()

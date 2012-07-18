@@ -1,7 +1,8 @@
 distribute
 Jinja2==2.6
 MarkupSafe==0.12
-Babel==0.9.6
+# Because Babel 0.9.6 does not extract pgettext
+https://github.com/Phaiax/python-babel/tarball/master#egg=Babel
 Werkzeug==0.8.1
 Pygments==1.4
 simplejson==2.2.1
@@ -21,9 +22,10 @@ pyzmq==2.1.11
 # Till 1.1 is released:
 https://github.com/fritzy/SleekXMPP/zipball/af13bea2b8abc0d8ff4d32c4c2554db550d473fd
 https://github.com/alex/django-filter/tarball/master/#egg=django-filter
-https://github.com/simonw/django-openid/tarball/master#egg=django-openid
+https://github.com/simonw/django-openid/tarball/master/
 # Because of http://south.aeracode.org/ticket/747 that is already fixed in trunk
 https://bitbucket.org/andrewgodwin/south/get/64fdcc52cd01.tar.bz2
 lxml
 dulwich
 raven==1.4.3
+transifex-client

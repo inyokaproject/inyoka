@@ -21,7 +21,7 @@
 from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext as _
-from inyoka.utils.urls import href, url_for
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse, PageNotFound, \
      HttpResponseRedirect, HttpResponse
@@ -643,7 +643,10 @@ def do_mv_back(request, name):
         if 'cancel' in request.POST:
             flash(u'Wiederherstellen wurde abgebrochen.')
         else:
-            new_name = name.lstrip('Baustelle/')
+            if name.startswith('Baustelle/'):
+                new_name = name[10:] # Remove the leading 'Baustelle/' from the name
+            else:
+                new_name = name
             ## Move copy to Trash
             try:
                 copy = Page.objects.get_by_name(new_name)
@@ -670,8 +673,8 @@ def do_mv_back(request, name):
                     return HttpResponseRedirect(url_for(page))
             ## Remove box
             text = page.revisions.latest().text.value
-            if text.startswith(u'[[Vorlage(Baustelle') or \
-                text.startswith(u'[[Vorlage(Überarbeitung'):
+            while text.startswith(u'[[Vorlage(Baustelle') or \
+                    text.startswith(u'[[Vorlage(Überarbeitung'):
                 text = text[text.find('\n')+1:]
             ## Rename
             if not _rename(request, page, new_name, new_text=text):
@@ -725,7 +728,7 @@ def do_log(request, name):
         return HttpResponseRedirect(href('wiki', '_feed', page.name, 20))
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
-                            20, link_func)
+                            100, link_func)
     return {
         'page':         page,
         'revisions':    pagination.get_queryset(),
@@ -1002,7 +1005,12 @@ def do_unsubscribe(request, page_name):
         subscription.delete()
         flash(_(u'You won\'t be notified on changes on this page anymore'),
               True)
-    return HttpResponseRedirect(url_for(page))
+    # redirect the user to the page he last watched
+    if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
+        return HttpResponseRedirect(request.GET['next'])
+    else:
+        return HttpResponseRedirect(url_for(page))
+
 
 
 @require_privilege('edit')

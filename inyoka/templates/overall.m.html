@@ -16,14 +16,13 @@
     <title>{{ BREADCRUMB.render('title') }}</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="MobileOptimized" content="320" />
-    <meta name="viewport" content="width=device-width; initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <meta http-equiv="cleartype" content="on" />
     <link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'mobile.css') }}" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
     {% if SETTINGS.DEBUG %}
-      <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.js') }}'>\x3C/script>")</script>
+      <script src='{{ href('static', 'js/jquery-1.5.2.js') }}'></script>
     {% else %}
-      <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'>\x3C/script>")</script>
+      <script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'></script>
     {% endif %}
     <script type="text/javascript">
     /*<![CDATA[*/
@@ -44,7 +43,7 @@
     <div class="wrapper">
       {#
       <div id="mobile-notice">
-        <span><a onclick="hide_mobile_notice()" href="#" title="Diesen Hinweis ausblenden">x</a></span>
+        <span><a onclick="hide_mobile_notice()" href="#" title="{{ _('Hide this notice') }}">x</a></span>
         {%- trans link="?flavour=full" -%}
           This is the version for mobile clients. To get to the <a href="{{ link }}">classical layout</a> click on the link in the footer of the page.
         {%- endtrans -%}

@@ -46,29 +46,25 @@
 
 {% macro topic_icon(topic) -%}
   {% set is_read = topic.get_read_status(USER) -%}
-  <img src="
-  {{- href('static', 'img', 'forum', 'topic' ) -}}
-  {%- if topic.sticky -%}-sticky
-  {%- else -%}
-    {%- if not is_read %}-new{% endif -%}
-    {%- if topic.solved %}-solved{% endif -%}
-    {%- if topic.locked %}-locked{% endif -%}
-    {%- if topic.hidden %}-hidden{% endif -%}
-    {%- if can_moderate and topic.reported %}-reported{% endif -%}
+  <div class="icon{% if topic.hidden %} hidden{% endif %}"
+      {%- if topic.hidden %} title="{% trans %}hidden topic{% endtrans %}"{% endif %}>
+  {%- if topic.sticky -%}
+    <div class="sticky" title="{% trans %}sticky topic{% endtrans %}"></div>
   {%- endif -%}
-  .png" alt="
-  {%- if not is_read %}{% trans %}unread topic{% endtrans %}{% endif -%}
-  {%- if topic.solved %}{% trans %}solved topic{% endtrans %}{% endif -%}
-  {%- if topic.locked %}{% trans %}locked topic{% endtrans %}{% endif -%}
-  {%- if topic.hidden %}{% trans %}hidden topic{% endtrans %}{% endif -%}
-  {%- if can_moderate and topic.reported %}{% trans %}reported topic{% endtrans %}{% endif -%}
-  " title="
-  {%- if not is_read %}{% trans %}unread topic{% endtrans %}{% endif -%}
-  {%- if topic.solved %}{% trans %}solved topic{% endtrans %}{% endif -%}
-  {%- if topic.locked %}{% trans %}locked topic{% endtrans %}{% endif -%}
-  {%- if topic.hidden %}{% trans %}hidden topic{% endtrans %}{% endif -%}
-  {%- if can_moderate and topic.reported %}{% trans %}reported topic{% endtrans %}{% endif -%}
-  " />
+  {%- if not is_read -%}
+    <div class="new" title="{% trans %}unread topic{% endtrans %}"></div>
+  {%- endif -%}
+  {%- if topic.solved -%}
+    <div class="solved" title="{% trans %}solved topic{% endtrans %}"></div>
+  {%- endif -%}
+  {%- if topic.locked -%}
+    <div class="locked" title="{% trans %}locked topic{% endtrans %}"></div>
+  {%- endif -%}
+  {#%- if can_moderate(topic) and topic.reported -%#}
+  {%- if topic.reported -%}
+    <div class="reported" title="{% trans %}reported topic{% endtrans %}"></div>
+  {%- endif -%}
+  </div>
 {%- endmacro %}
 
 {% macro render_article_list(discussions) %}
