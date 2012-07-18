@@ -9,6 +9,13 @@
 #}
 {% extends 'portal/overall.m.html' %}
 {% set selected = folder.id %}
+{% if folder and message %}
+  {% set back = href('portal', 'privmsg', folder.id) %}
+{% elif folder %}
+  {% set back = href('portal', 'privmsg') %}
+{% else %}
+  {% set back = href('portal') %}
+{% endif %}
 
 {% block content %}
   {%- if not folder %}
@@ -29,9 +36,6 @@
     #}</a>
   {%- else %}
     {%- if message %}
-      <a href="{{ href('portal', 'privmsg', folder.id ) }}">{#
-        #}<div class="button">{% trans %}« Back{% endtrans %}</div>{#
-      #}</a>
       <h3>{% trans name=message.author|e %}Message from {{ name }}{% endtrans %}</h3>
       <div class="meta">
         {{ message.pub_date|datetimeformat }} |
@@ -57,9 +61,6 @@
         <a href="?action=delete"><span>{% trans %}Delete{% endtrans %}</span></a>
       </section>
     {%- else %}
-      <a href="{{ href('portal', 'privmsg') }}">{#
-        #}<div class="button">{% trans %}« Messages{% endtrans %}</div>{#
-      #}</a>
       {% for entry in entries %}
         <a href="{{ entry|url }}">{#
           #}<div class="button{{ ' unread' if not entry.read }}">
