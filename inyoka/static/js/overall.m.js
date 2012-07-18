@@ -9,9 +9,17 @@
  */
 
 $(document).ready(function() {
-  // toggle of top menu
+  // toggle of top menu containing main navigation
   $('a.toggle_menu').click(function() {
-    $('#top_menu').toggle();
-    return false;
-  });
-});
+    $('#top_menu').toggle()
+  })
+
+  // watch hashchanges to make the back button on android work for the menu
+  $(window).hashchange(function() {
+    if (location.hash == '#menu') {
+      $('#top_menu').show()
+    } else if (location.hash == '') {
+      $('#top_menu').hide()
+    }
+  })
+})

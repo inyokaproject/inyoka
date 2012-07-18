@@ -21,8 +21,10 @@
     <link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'mobile.css') }}" />
     {% if SETTINGS.DEBUG %}
       <script src='{{ href('static', 'js/jquery-1.5.2.js') }}'></script>
+      <script src='{{ href('static', 'js/jquery.ba-hashchange.js') }}'></script>
     {% else %}
       <script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'></script>
+      <script src='{{ href('static', 'js/jquery.ba-hashchange.min.js') }}'></script>
     {% endif %}
     <script type="text/javascript">
     /*<![CDATA[*/
@@ -53,7 +55,7 @@
         <nav>
           <ul>
             <li>
-              <a href="#" class="toggle_menu">
+              <a href="#menu" class="toggle_menu">
                 <img src="{{ href('static', 'img/logo.m.png') }}" />
               </a>
             {% if back %}
