@@ -1054,6 +1054,26 @@ def user_edit_profile(request, username):
         if form.is_valid():
             data = form.cleaned_data
 
+            user.profile_fields.clear()
+            for key in request.POST.keys():
+                if key.startswith('profile_field_') and request.POST[key]:
+                    field_id = int(key.partition('.')[2])
+                    field = ProfileField.objects.get(id=field_id)
+                    value = request.POST[key]
+                    if field.regex and not re.match(field.regex, value):
+                        flash(_(u'The value for the profile field %(field)s '
+                                u'could not be saved, it was invalid.') % {
+                                    'field': field.title
+                                }, False)
+                        continue
+                    field_data = ProfileData(user=user, profile_field=field,
+                                             data=value)
+                    field_data.save()
+                    cache.delete_many([
+                        'portal/user/{0}/profile_data'.format(user.id),
+                        'portal/usercp_profile/{0}'.format(user.id),
+                    ])
+
             lat = data.get('coordinates_lat', None)
             long = data.get('coordinates_long', None)
             data['coordinates'] = '%s, %s' % (lat, long) if lat and long else ''
@@ -1083,11 +1103,24 @@ def user_edit_profile(request, username):
         else:
             flash(_(u'Errors occurred, please fix them.'), False)
     storage_data = storage.get_many(('max_avatar_height', 'max_avatar_width'))
+
+    key = 'portal/usercp_profile/{0}'.format(user.id)
+    profile_fields = cache.get(key)
+    if profile_fields is None:
+        fields = ProfileField.objects.order_by('title').all()
+        profile_fields = json.dumps([{
+            'id': field.id,
+            'title': field.title
+        } for field in fields])
+        cache.set(key, profile_fields)
+
     return {
         'user': user,
         'form': form,
         'avatar_height': storage_data['max_avatar_height'],
-        'avatar_width': storage_data['max_avatar_width']
+        'avatar_width': storage_data['max_avatar_width'],
+        'profile_fields': profile_fields,
+        'profile_data': ProfileData.objects.filter(user=user).order_by('profile_field__title'),
     }
 
 
