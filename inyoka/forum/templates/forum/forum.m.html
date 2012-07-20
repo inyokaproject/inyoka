@@ -29,7 +29,7 @@
     {%- for topic in topics if (topic.first_post and topic.last_post) %}
       {%- if not topic.get_read_status(USER) %}
         <a class="first_unread" href="{{ topic|url('first_unread') }}">
-          <img src="{{ href('static', 'img/forum/goto.m.png') }}" />
+          <img src="{{ href('static', 'img/forum/goto.png') }}" />
         </a>
       {%- endif %}
       <a href="{{ topic|url }}">{#

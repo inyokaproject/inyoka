@@ -13,6 +13,8 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
     <title>{{ BREADCRUMB.render('title') }}</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="MobileOptimized" content="320" />
@@ -66,10 +68,12 @@
         <div class="clear"></div>
       </header>
       <div id="top_menu">
-        <a class="button" href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
+        <div class="button">
           <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', 'search.png') }}" />
-          <div class="title">TODO: Suchfeld</div>
-        </a>
+          <form action="{{ href('portal', 'search') }}" class="search">
+            <div class="title"><input type="text" name="query" value="{{ query|e }}"></input></div>
+          </form>
+        </div>
         <div class="separator">{% trans %}Applications{% endtrans %}</div>
         {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
           <a class="button{% if app == active_app %} active{% endif %}" href="{{ href(app) }}">
