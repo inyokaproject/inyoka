@@ -70,14 +70,14 @@
           <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', 'search.png') }}" />
           <div class="title">TODO: Suchfeld</div>
         </a>
-        <div class="separator">ÄPPS</div> {# TODO: Label? #}
+        <div class="separator">{% trans %}Applications{% endtrans %}</div>
         {%- for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
           <a class="button{% if app == active_app %} active{% endif %}" href="{{ href(app) }}">
             <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', app + '.png') }}" />
             <div class="title">{{ app|capitalize }}</div>
           </a>
         {%- endfor %}
-        <div class="separator">Noch so anderes Zeugs</div> {# TODO: Label? #}
+        <div class="separator">{% trans %}More{% endtrans %}</div>
         {%- if USER.is_authenticated %}
           <a class="button" href="{{ href('portal', 'privmsg') }}">
             <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', 'messages.png') }}" />
