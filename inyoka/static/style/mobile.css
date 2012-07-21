@@ -57,6 +57,7 @@ nav ul li {
   display: table-cell;
   vertical-align: middle;
   height: 48px;
+  border-right: 1px solid #FFFFFF;
 }
 
 nav ul li a {
@@ -279,13 +280,13 @@ a {
 
 
 header nav {
-  background: #956205 url('../img/head.m.png') repeat-x;
+  background: #AF7200 url('../img/head.m.png') repeat-x;
   background-size: auto 48px;
 }
 
 nav, .pagination, #comments h3, #comments .meta, .forums .forum, .post .meta,
 .post .attachments .title, section.actions {
-  background-color: #956205;
+  background-color: #AF7200;
 }
 
 nav, nav a, nav a:link, nav a:visited,
@@ -361,7 +362,7 @@ nav ul li.active, .pagination .active {
 
 .category h3 {
   color: #FFFFFF;
-  background-color: #956205;
+  background-color: #AF7200;
   padding: 0.5em;
   text-shadow: 1px 1px 1px black;
 }
@@ -512,7 +513,7 @@ img {
 
 blockquote {
   padding-left: 0.5em;
-  border-left: 4px solid #956205;
+  border-left: 4px solid #AF7200;
 }
 
 .post .attachments {
