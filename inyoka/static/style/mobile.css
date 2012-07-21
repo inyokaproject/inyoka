@@ -268,7 +268,7 @@ article .intro {
 /*** Colors, text decorations, shadows... ***/
 
 body {
-  background-color: #F7F7F7;
+  background-color: #FFFFFF;
   color: #333333;
 }
 
@@ -279,7 +279,8 @@ a {
 
 
 header nav {
-  background: #956205 url('../img/head.m.png') 1px 0 repeat-x;
+  background: #956205 url('../img/head.m.png') repeat-x;
+  background-size: auto 48px;
 }
 
 nav, .pagination, #comments h3, #comments .meta, .forums .forum, .post .meta,
