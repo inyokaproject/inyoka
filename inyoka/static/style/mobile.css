@@ -361,10 +361,12 @@ nav ul li.active, .pagination .active {
 }
 
 .category h3 {
-  color: #FFFFFF;
-  background-color: #AF7200;
+  color: #673B1A;
+  background: -webkit-gradient(linear, left top, left bottom, from(#F4E7CE), to(#E8C989));
+  background: -moz-linear-gradient(top, #F4E7CE, #E8C989);
   padding: 0.5em;
-  text-shadow: 1px 1px 1px black;
+  border-top: 1px solid #CCC;
+  border-bottom: 1px solid #CCC;
 }
 
 .topics .locked {
