@@ -12,13 +12,12 @@
 <!doctype html>
 <html>
   <head>
+    <title>{{ BREADCRUMB.render('title') }}</title>
     <meta charset="utf-8">
     <meta name="viewport"
           content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
-    <title>{{ BREADCRUMB.render('title') }}</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="MobileOptimized" content="320" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <meta http-equiv="cleartype" content="on" />
     <link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'mobile.css') }}" />
     {% if SETTINGS.DEBUG %}
@@ -40,7 +39,6 @@
         <script type="text/javascript" src="{{ href('static', 'js/%s.m.min.js'|format(script)) }}"></script>
       {% endif %}
     {% endfor %}
-    <script type="text/javascript" src="{{ href('static', 'js/mobile.js') }}"></script>
   </head>
 
   <body>
