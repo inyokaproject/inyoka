@@ -263,7 +263,7 @@
                      class="action action_quote admin_link">{% trans %}Quote{% endtrans %}</a>
                 {%- endif %}
               </div>
-              <a href="{{ post|url }}" title="Kopiere diesen Link, um auf diesen Beitrag zu verweisen" onclick="alert(this.title + '\n\n' + this.href); return false">
+              <a href="{{ post|url }}" title="{% trans %}Permalink zum Beitrag{% endtrans %}">
                 <img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" />{#
               #}</a>
               {{ post.pub_date|datetimeformat }}
