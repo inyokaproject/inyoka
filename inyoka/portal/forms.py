@@ -13,7 +13,6 @@ import Image
 from django import forms
 from django.forms import HiddenInput
 from django.db.models import Count
-from django.db.models import Count
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
 from django.utils import simplejson

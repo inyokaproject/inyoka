@@ -20,7 +20,6 @@ from django.utils.http import urlencode
 from django.utils.text import truncate_html_words
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
-from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils import ctype
 from inyoka.utils.urls import href, url_for, is_safe_domain
@@ -763,7 +762,7 @@ def event_suggest(request):
                 event.date = data['date']
                 event.time = None
             if data['endtime']:
-                d = convert (date_time_to_datetime(
+                d = convert(date_time_to_datetime(
                     data['enddate'] or event.date,
                     data['endtime']
                 ))
