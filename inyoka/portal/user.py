@@ -521,7 +521,7 @@ class User(models.Model):
     coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
     coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
     location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
-    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=8, blank=True)
+    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=255, blank=True)
     occupation = models.CharField(ugettext_lazy(u'Job'), max_length=200, blank=True)
     interests = models.CharField(ugettext_lazy(u'Interests'), max_length=200, blank=True)
     website = models.URLField(ugettext_lazy(u'Website'), blank=True)
@@ -551,7 +551,13 @@ class User(models.Model):
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        super(User, self).save(*args, **kwargs)
+        if 'update_fields' in kwargs:
+            data = {}
+            for field in kwargs['update_fields']:
+                data[field] = getattr(self, field)
+            update_model(self, **data)
+        else:
+            super(User, self).save(*args, **kwargs)
         cache.delete_many(['portal/user/%s/signature' % self.id,
                            'portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])

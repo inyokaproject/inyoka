@@ -79,13 +79,11 @@
         <script type="text/javascript"
                 src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
       {% endif %}
-
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
-      {% if SETTINGS.DEBUG %}
-        <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.js') }}'>\x3C/script>")</script>
-      {% else %}
-        <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'>\x3C/script>")</script>
-      {% endif %}
+    {% if SETTINGS.DEBUG %}
+      <script src='{{ href('static', 'js/jquery-1.5.2.js') }}'></script>
+    {% else %}
+      <script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'></script>
+    {% endif %}
     {%- endblock %}
   </head>
   <body>

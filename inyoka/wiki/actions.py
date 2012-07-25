@@ -659,7 +659,10 @@ def do_mv_back(request, name):
         if 'cancel' in request.POST:
             messages.info(request, u'Wiederherstellen wurde abgebrochen.')
         else:
-            new_name = name[10:] # Remove the leading 'Baustelle/' from the name
+            if name.startswith('Baustelle/'):
+                new_name = name[10:] # Remove the leading 'Baustelle/' from the name
+            else:
+                new_name = name
             ## Move copy to Trash
             try:
                 copy = Page.objects.get_by_name(new_name)
