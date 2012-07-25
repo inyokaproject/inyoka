@@ -1640,7 +1640,7 @@ def forum_edit(request, slug=None, parent=None):
                 messages.success(request, msg % {'forum': forum.name})
                 return HttpResponseRedirect(href('forum'))
         else:
-            issue_fix_errors_message(request)
+            trigger_fix_errors_message(request)
 
     else:
         if slug is None:
