@@ -84,7 +84,7 @@ def index(request, category=None):
         if wmsg is not None:
             return welcome(request, wmsg.slug, request.path)
     else:
-        categories = tuple(forum for forum in forums if forum.parent_id == None)
+        categories = tuple(forum for forum in forums if forum.parent_id is None)
 
     hidden_categories = []
     if request.user.is_authenticated:
