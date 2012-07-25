@@ -24,6 +24,10 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 
 
+def trigger_fix_errors_message(request):
+    messages.error(request, _(u'Errors occurred, please fix them.'))
+
+
 class TemplateResponseMixin(base.TemplateResponseMixin):
     """A mixin that can be used to render a template.
 

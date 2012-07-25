@@ -92,10 +92,6 @@ PRIVILEGE_DICT = {bits: tmp[key]
 del tmp
 
 
-def fix_errors(request):
-    messages.error(request, _(u'Errors occurred, please fix them.'))
-
-
 page_delete = generic.DeleteView.as_view(model=StaticPage,
     template_name='portal/page_delete.html',
     redirect_url=href('portal', 'pages'),
@@ -563,7 +559,7 @@ def user_mail(request, username):
                   % {'username': escape(username)})
             return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
         else:
-            fix_errors(request)
+            generic.trigger_fix_errors_message(request)
     else:
         form = UserMailForm()
     return {
@@ -665,14 +661,14 @@ def usercp_profile(request):
 
 
             if form.errors:
-                fix_errors(request)
+                generic.trigger_fix_errors_message(request)
             else:
                 openids = map(int, request.POST.getlist('openids'))
                 UserData.objects.filter(user=user, pk__in = openids).delete()
                 messages.success(request, _(u'Your profile information were updated successfully.'))
                 return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
-            fix_errors(request)
+            generic.trigger_fix_errors_message(request)
     else:
         values = model_to_dict(user)
         lat = values.pop('coordinates_lat')
@@ -725,7 +721,7 @@ def usercp_settings(request):
             request.user.save()
             messages.success(request, _(u'Your settings were successfully changed.'))
         else:
-            messages.success(request, _(u'Errors occurred, please fix them.'))
+            issue_generic.trigger_fix_errors_message_message(request)
     else:
         settings = request.user.settings
         ubuntu_version = [s.ubuntu_version for s in Subscription.objects.\
@@ -771,7 +767,7 @@ def usercp_password(request):
             messages.success(request, _(u'Your password was changed successfully.'))
             return HttpResponseRedirect(href('portal', 'usercp'))
         else:
-            fix_errors(request)
+            generic.trigger_fix_errors_message(request)
     else:
         if 'random' in request.GET:
             random_pw = get_random_password()
@@ -859,7 +855,7 @@ def usercp_deactivate(request):
             messages.success(request, _(u'Your account was deactivated.'))
             return HttpResponseRedirect(href('portal'))
         else:
-            fix_errors(request)
+            generic.trigger_fix_errors_message(request)
     else:
         form = DeactivateUserForm()
     return {
@@ -964,7 +960,7 @@ def user_edit_profile(request, username):
             if user.username != username:
                 return HttpResponseRedirect(href('portal', 'user', user.username, 'edit', 'profile'))
         else:
-            fix_errors(request)
+            generic.trigger_fix_errors_message(request)
     storage_data = storage.get_many(('max_avatar_height', 'max_avatar_width'))
     return {
         'user': user,
@@ -1135,7 +1131,7 @@ def user_edit_privileges(request, username):
                 _(u'The privileges of “%(username)s“ were successfully '
                   u'changed.') % {'username': escape(user.username)})
         else:
-            fix_errors(request)
+            generic.trigger_fix_errors_message(request)
     else:
         initial = model_to_dict(user)
         if initial['_primary_group']:
@@ -1224,7 +1220,7 @@ def user_edit_groups(request, username):
                 _(u'The groups of “%(username)s“ were successfully changed.')
                   % {'username': escape(user.username)})
         else:
-            fix_errors(request)
+            generic.trigger_fix_errors_message(request)
     groups_joined, groups_not_joined = ([], [])
     groups_joined = groups_joined or user.groups.all()
     groups_not_joined = groups_not_joined or \
@@ -1256,7 +1252,7 @@ def user_new(request):
             return HttpResponseRedirect(href('portal', 'user', \
                         escape(data['username']), 'edit'))
         else:
-            fix_errors(request)
+            generic.trigger_fix_errors_message(request)
     else:
         form = CreateUserForm()
     return {
@@ -2076,7 +2072,7 @@ def config(request):
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:
-            fix_errors(request)
+            generic.trigger_fix_errors_message(request)
     else:
         storage['distri_versions'] = storage['distri_versions'] or u'[]'
         form = ConfigurationForm(initial=storage.get_many(keys +

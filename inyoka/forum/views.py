@@ -41,6 +41,7 @@ from inyoka.utils.dates import format_datetime
 from inyoka.utils.storage import storage
 from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.database import get_simplified_queryset
+from inyoka.utils.generic import trigger_fix_errors_message
 from inyoka.wiki.utils import quote_text
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page
@@ -1639,7 +1640,7 @@ def forum_edit(request, slug=None, parent=None):
                 messages.success(request, msg % {'forum': forum.name})
                 return HttpResponseRedirect(href('forum'))
         else:
-            messages.error(request, _(u'Errors occurred, please fix them.'))
+            issue_fix_errors_message(request)
 
     else:
         if slug is None:
