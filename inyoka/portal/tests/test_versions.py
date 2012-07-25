@@ -22,7 +22,6 @@ class TestVersions(TestCase):
             UbuntuVersion('12.04', 'Precise Pangolin', lts=True, dev=True),
             UbuntuVersion('6.10', 'Edgy Eft')]
 
-        versions_json = map(lambda v: v.as_json(), self.versions)
         self.versions_sorted = list(sorted(self.versions))
 
     def test_order(self):
