@@ -16,7 +16,6 @@ from mimetypes import guess_all_extensions, guess_extension
 from werkzeug import utils
 
 from inyoka.utils import magic
-from django.utils.translation import ugettext as _
 
 
 def fix_extension(filename, mime):

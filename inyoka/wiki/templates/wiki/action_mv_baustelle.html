@@ -20,6 +20,7 @@
     {%- trans page=page.name %}Mark page “{{ page }}“ as “under construction“{% endtrans -%}
   </h1>
   <form action="" method="post">
+    {{ csrf_token() }}
     {{ form.errors.__all__ }}
     <dl>
       {{ render_form(form, ['new_name', 'user', 'completion_date'], inline=true) }}

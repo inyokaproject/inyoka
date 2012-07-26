@@ -172,12 +172,15 @@ def timedelta_to_seconds(t):
     return t.days * 86400 + t.seconds
 
 
-def format_time(value, daytime=False):
+def format_time(value, day=None, daytime=False):
     """Format a datetime object for time."""
-    if isinstance(value, time):
+    if isinstance(value, time) and not day:
         value = datetime.combine(datetime.utcnow().date(), value)
+    elif day:
+        value = datetime.combine(day, value)
     value = datetime_to_timezone(value)
 
+    # WTF is daytime doing?!
     format = 'H:i a' if daytime else 'H:i'
     return DateFormat(value).format(format)
 
@@ -199,4 +202,4 @@ def format_specific_datetime(value):
 
     return _(u'%(date)s at %(time)s') % {
         'date': naturalday(value),
-        'time': format_time(value, True)}
+        'time': format_time(value, daytime=True)}

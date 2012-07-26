@@ -9,9 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
-import os
 import re
-import shutil
 import cPickle
 import operator
 from os import path
@@ -23,10 +21,10 @@ from operator import attrgetter, itemgetter
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
@@ -35,7 +33,6 @@ from inyoka.utils.files import get_filename
 from inyoka.utils.text import get_new_unique_filename
 from inyoka.utils.database import LockableObject, update_model, model_or_none
 from inyoka.utils.dates import timedelta_to_seconds
-from inyoka.utils.html import escape
 from inyoka.utils.urls import href
 from inyoka.utils.local import current_request
 from inyoka.utils.decorators import deferred
@@ -305,6 +302,7 @@ class Forum(models.Model):
             return
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
+            user.save(update_fields=('forum_read_status',))
 
     def find_welcome(self, user):
         """
@@ -333,7 +331,7 @@ class Forum(models.Model):
         else:
             status.discard(self.id)
         user.forum_welcome = ','.join(str(id) for id in status)
-        user.save()
+        user.save(update_fields=('forum_welcome',))
 
     def invalidate_topic_cache(self):
         cache.delete_many('forum/topics/%d/%d' % (self.id, page+1) for page in
@@ -469,8 +467,7 @@ class Topic(models.Model):
 
                 for user in post_counts:
                     user.post_count = op(user.post_count, user.pcount)
-                    cache.delete('portal/user/%d' % user.id)
-                    user.save()
+                    user.save(update_fields=('post_count',))
 
             self.save()
 
@@ -590,6 +587,7 @@ class Topic(models.Model):
             user._readstatus = ReadStatus(user.forum_read_status)
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
+            user.save(update_fields=('forum_read_status',))
 
     def __unicode__(self):
         return self.title
@@ -1301,7 +1299,7 @@ def mark_all_forums_read(user):
     for forum in Forum.objects.filter(parent=None):
         user._readstatus.mark(forum)
     user.forum_read_status = user._readstatus.serialize()
-    user.save()
+    user.save(update_fields=('forum_read_status',))
 
 
 # Circular imports

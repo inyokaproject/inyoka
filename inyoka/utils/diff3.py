@@ -15,8 +15,9 @@ import re
 import heapq
 import difflib
 import itertools
+
+from django.utils.html import escape
 from django.utils.translation import ugettext as _
-from inyoka.utils.html import escape
 
 
 DEFAULT_MARKERS = (

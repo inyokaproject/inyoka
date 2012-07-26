@@ -52,7 +52,7 @@
         >>> gen.next()
         u'<p>'
         >>> gen.next()
-        Markup(u'Hello World!')
+        u'Hello World!'
         >>> gen.next()
         u'</p>'
 
@@ -140,7 +140,6 @@ from django.utils.translation import ugettext as _
 
 from inyoka.utils.css import filter_style
 from inyoka.utils.urls import href
-from inyoka.utils.storage import storage
 from inyoka.wiki.parser.lexer import escape, unescape_string, Lexer
 from inyoka.wiki.parser.machine import Renderer, RenderContext
 from inyoka.wiki.parser.transformers import DEFAULT_TRANSFORMERS

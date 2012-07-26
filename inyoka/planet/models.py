@@ -11,7 +11,7 @@
 from django.core.cache import cache
 from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext_lazy, ugettext as _
+from django.utils.translation import ugettext_lazy
 
 from inyoka.utils.urls import href
 from inyoka.utils.html import striptags

@@ -27,16 +27,6 @@ html, body {
   background-color: @main_background;
 }
 
-#donation {
-  background-image: url(../img/donation_thanks.png);
-  height: 129px;
-  left: 220px;
-  position: absolute;
-  top: 20px;
-  width: 193px;
-  z-index: 999;
-}
-
 div.wrap {
   margin: 10px;
   background-image:url(../img/head.jpg);
@@ -353,8 +343,14 @@ table tbody th,table tbody td {
   border-width: 1px 0;
   vertical-align: middle;
 }
-.preview table td {
-    border-width: 1px;
+.preview {
+  table {
+    margin: 1em;
+    width: auto;
+    td {
+      border-width: 1px;
+    }
+  }
 }
 .feed_icon {
   float: right;
@@ -1064,29 +1060,6 @@ div.not_found {
   }
   input {
     border: none;
-  }
-}
-#js_login_form {
-  display: none;
-  text-align: right;
-  font-size: 0.8em;
-  color: black;
-  padding: 0.3em 16px;
-  border-bottom: darken(@main_background, 10%) 1px solid;
-  .gradient(lighten(@main_background, 20%), lighten(@main_background, 10%), lighten(@main_background, 20%));
-  a {
-    color: black;
-  }
-  input {
-    vertical-align: middle;
-    background-color: @main_background;
-    color: black;
-    border: darken(@main_background, 10%) 1px solid;
-    margin-right: 0.5em;
-  }
-  input.submit:active {
-    background-color: #47320f!important;
-    color: white;
   }
 }
 .openid_logo {

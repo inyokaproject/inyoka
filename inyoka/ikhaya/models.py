@@ -17,12 +17,13 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy
 from django.utils import datetime_safe
+from django.utils.html import escape
 
 from inyoka.portal.user import User
 from inyoka.portal.models import StaticFile
 from inyoka.wiki.parser import render, parse, RenderContext
 from inyoka.utils.text import slugify
-from inyoka.utils.html import escape, striptags
+from inyoka.utils.html import striptags
 from inyoka.utils.urls import href
 from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone, \
      format_time, format_datetime

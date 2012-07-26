@@ -1,2 +1,2 @@
-web: python manage.py run_gunicorn --log-level=DEBUG -b $(python -c 'from django.conf import settings; print settings.BASE_DOMAIN_NAME') -w 10 -k egg:gunicorn#sync
-worker: python manage.py celeryd -l INFO -B
+web: env PYTHONUNBUFFERED=true python manage.py runserver
+worker: env PYTHONUNBUFFERED=true python manage.py celeryd -l INFO

@@ -1,10 +1,9 @@
 #-*- coding: utf-8 -*-
-from django.core.cache import cache
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from inyoka.forum.models import Forum, Topic, Post
 from inyoka.portal.user import User
-from inyoka.utils.test import override_settings
 
 
 class TestPostModel(TestCase):

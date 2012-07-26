@@ -19,11 +19,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <meta http-equiv="cleartype" content="on" />
     <link rel="stylesheet" type="text/css" href="{{ href('static', 'style', 'mobile.css') }}" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
     {% if SETTINGS.DEBUG %}
-      <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.js') }}'>\x3C/script>")</script>
+      <script src='{{ href('static', 'js/jquery-1.5.2.js') }}'></script>
     {% else %}
-      <script>window.jQuery || document.write("<script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'>\x3C/script>")</script>
+      <script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'></script>
     {% endif %}
     <script type="text/javascript">
     /*<![CDATA[*/

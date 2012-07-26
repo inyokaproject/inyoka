@@ -19,19 +19,20 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
+
 from django.db import models
+from django.contrib import messages
+from django.utils.html import escape
 from django.utils.translation import ugettext as _
+
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse, PageNotFound, \
      HttpResponseRedirect, HttpResponse
-from inyoka.utils.flashing import flash
-from inyoka.utils.cache import request_cache
 from inyoka.utils.diff3 import merge
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.text import normalize_pagename, get_pagetitle, join_pagename
-from inyoka.utils.html import escape
 from inyoka.utils.urls import urlencode
 from inyoka.utils.storage import storage
 from inyoka.wiki.models import Page, Revision
@@ -99,7 +100,8 @@ def do_show(request, name):
     if request.GET.get('redirect') != 'no':
         redirect = page.metadata.get('X-Redirect')
         if redirect:
-            flash(_(u'Redirected from “<a href="%(link)s">%(title)s</a>“.') % {
+            messages.info(request,
+                _(u'Redirected from “<a href="%(link)s">%(title)s</a>“.') % {
                 'link': escape(href('wiki', page.name, redirect='no')),
                 'title': escape(page.title)
             })
@@ -213,21 +215,24 @@ def do_revert(request, name):
     page = Page.objects.get_by_name_and_rev(name, rev)
     latest_rev = page.revisions.latest()
     if latest_rev == page.rev:
-        flash(_(u'Revision is the latest one, revert aborted.'), success=False)
+        messages.error(request,
+            _(u'Revision is the latest one, revert aborted.'))
     elif request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(_(u'Revert aborted'))
+            messages.info(request, _(u'Revert aborted.'))
             url = href('wiki', name, rev=page.rev.id)
         else:
             new_revision = page.rev.revert(request.POST.get('note'),
                                            request.user,
                                            request.META.get('REMOTE_ADDR'))
             page.last_rev = new_revision
-            flash(_(u'“%(title)s” was reverted successfully') % {
-                'title': escape(page.rev.title)}, success=True)
+            messages.success(request,
+                _(u'“%(title)s” was reverted successfully') % {
+                'title': escape(page.rev.title)})
             url = href('wiki', name)
     else:
-        flash(render_template('wiki/action_revert.html', {'page': page}))
+        messages.info(request,
+            render_template('wiki/action_revert.html', {'page': page}))
     return HttpResponseRedirect(url)
 
 
@@ -250,12 +255,12 @@ def _rename(request, page, new_name, force=False, new_text=None):
         linklist = u', '.join('<a href="%s">%s</a>' %
             (join_pagename(new_name, name), name.split('/')[-1])
             for name in duplicate)
-        flash(_(u'These attachments are already attached to the new page name: %(names)s. '
-                u'Please make sure that they are not required anymore. '
-                u'<a href="%(link)s">Force rename and deletion of duplicate attachments</a>,') % {
-                    'names': linklist,
-                    'link': href('wiki', page.name, action='rename', force=True)},
-              False)
+        messages.error(request,
+            _(u'These attachments are already attached to the new page name: %(names)s. '
+              u'Please make sure that they are not required anymore. '
+              u'<a href="%(link)s">Force rename and deletion of duplicate attachments</a>,') % {
+                'names': linklist,
+                'link': href('wiki', page.name, action='rename', force=True)})
         return False
 
     elif duplicate and force:
@@ -305,20 +310,22 @@ def do_rename(request, name):
         force = request.POST.get('force', False)
         new_name = normalize_pagename(request.POST.get('new_name', ''))
         if not new_name:
-            flash(_(u'No page name given.'), success=False)
+            messages.error(request, _(u'No page name given.'))
         else:
             try:
                 Page.objects.get_by_name(new_name)
             except Page.DoesNotExist:
                 if _rename(request, page, new_name, force):
-                    flash(_(u'Renamed the page successfully.'), success=True)
+                    messages.success(request,
+                                     _(u'Renamed the page successfully.'))
             else:
-                flash(_(u'A page with this name already exists.'), False)
+                messages.error(request,
+                               _(u'A page with this name already exists.'))
                 return HttpResponseRedirect(href('wiki', name))
 
 
         return HttpResponseRedirect(url_for(page))
-    flash(render_template('wiki/action_rename.html', {
+    messages.info(request, render_template('wiki/action_rename.html', {
         'page':         page,
         'new_name':     new_name,
         'force':        force
@@ -397,7 +404,8 @@ def do_edit(request, name):
             pass
         else:
             form.initial['text'] = template.rev.text.value
-            flash(_(u'Used the template “<a href="%(link)s">%(name)s</a>” for this page') % {
+            messages.info(request,
+                _(u'Used the template “<a href="%(link)s">%(name)s</a>” for this page') % {
                 'link': url_for(template),
                 'name': escape(template.title)
             })
@@ -428,7 +436,7 @@ def do_edit(request, name):
     # form validation and handling
     if request.method == 'POST':
         if request.POST.get('cancel'):
-            flash(_(u'Canceled'))
+            messages.info(request, _(u'Canceled.'))
             if page and page.metadata.get('redirect'):
                 url = href('wiki', page.name, redirect='no')
             else:
@@ -446,7 +454,7 @@ def do_edit(request, name):
                 remote_addr = request.META.get('REMOTE_ADDR')
                 if page is not None:
                     if form.cleaned_data['text'] == page.rev.text.value:
-                        flash(_(u'No changes'))
+                        messages.info(request, _(u'No changes.'))
                     else:
                         page.edit(user=request.user,
                                   deleted=False,
@@ -457,17 +465,19 @@ def do_edit(request, name):
                         else:
                             msg = _(u'The page <a href="%(link)s">%(name)s</a> has been edited.')
 
-                        flash(msg % {'link': escape(href('wiki', page.name)),
-                                     'name': escape(page.title)}, True)
+
+                        messages.success(msg % {'link': escape(href('wiki', page.name)),
+                                                'name': escape(page.title)})
                 else:
                     page = Page.objects.create(user=request.user,
                                                remote_addr=remote_addr,
                                                name=name,
                                                **form.cleaned_data)
-                    flash(_(u'The page <a href="%(link)s">%(name)s</a> has been created.') % {
+                    messages.success(request,
+                        _(u'The page <a href="%(link)s">%(name)s</a> has been created.') % {
                         'link': escape(href('wiki', page.name)),
                         'name': escape(page.title)
-                    }, True)
+                    })
 
                 last_revisions = page.revisions.all()[:2]
                 if len(last_revisions) > 1:
@@ -484,16 +494,17 @@ def do_edit(request, name):
                     url = href('wiki', page.name)
                 return HttpResponseRedirect(url)
     elif not request.user.is_authenticated:
-        flash(_(u'You are in the process of editing this page unauthenticated. '
+        messages.info(request,
+            _(u'You are in the process of editing this page unauthenticated. '
                 u'If you save, your IP-Address will be recorded in the '
                 u'revision history and is irrevocable publicly visible.'))
-
 
     # if we have merged this request we should inform the user about that,
     # and that we haven't saved the page yet.
     if merged_this_request:
-        flash(_(u'Another user edited this page also.  '
-                u'Please check if the automatic merging is satisfying.'))
+        messages.info(request,
+            _(u'Another user edited this page also.  '
+              u'Please check if the automatic merging is satisfying.'))
 
     return {
         'name':         name,
@@ -515,15 +526,16 @@ def do_delete(request, name):
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(_(u'Canceled'))
+            messages.info(request, u'Canceled.')
         else:
             page.edit(user=request.user, deleted=True,
                       remote_addr=request.META.get('REMOTE_ADDR'),
                       note=request.POST.get('note', '') or
-                           _(u'Page deleted'))
-            flash(_(u'Page deleted'), success=True)
+                           u'Page deleted.')
+            messages.success(request, u'Page deleted successfully.')
     else:
-        flash(render_template('wiki/action_delete.html', {'page': page}))
+        messages.info(request,
+            render_template('wiki/action_delete.html', {'page': page}))
     return HttpResponseRedirect(url_for(page))
 
 
@@ -568,12 +580,14 @@ def do_mv_baustelle(request, name):
             except Page.DoesNotExist:
                 if not _rename(request, page, data['new_name'],
                                new_text=new_text):
-                    flash(u'Beim Verschieben in die Baustelle ist ein Fehler '
-                          u'aufgereten.', success=False)
+                    messages.error(request,
+                        u'Beim Verschieben in die Baustelle ist ein Fehler '
+                        u'aufgereten.')
                     return HttpResponseRedirect(url_for(page))
             else:
-                flash(u'In der Baustelle befindet sich bereits eine Seite '
-                      u'mit dem Namen „%s”.' % data['new_name'], False)
+                messages.error(request,
+                    u'In der Baustelle befindet sich bereits eine Seite '
+                    u'mit dem Namen „%s”.' % data['new_name'])
                 return HttpResponseRedirect(url_for(page))
 
             # Create copy (and include box)
@@ -605,7 +619,7 @@ def do_mv_discontinued(request, name):
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(u'Verschieben wurde abgebrochen.')
+            messages.info(request, u'Verschieben wurde abgebrochen.')
         else:
             new_name = name.replace('Baustelle', 'Baustelle/Verlassen')
             text = page.revisions.latest().text.value
@@ -616,16 +630,18 @@ def do_mv_discontinued(request, name):
                 Page.objects.get_by_name(new_name)
             except Page.DoesNotExist:
                 if not _rename(request, page, new_name, new_text=text):
-                    flash(u'Beim Verschieben ist ein Fehler aufgereten.', False)
+                    messages.error(request,
+                        u'Beim Verschieben ist ein Fehler aufgereten.')
                     return HttpResponseRedirect(url_for(page))
             else:
-                flash(u'Die Seite „%s” existiert bereits.' % new_name, False)
+                messages.error(request,
+                    u'Die Seite „%s” existiert bereits.' % new_name)
                 return HttpResponseRedirect(url_for(page))
-
-            request_cache.delete('wiki/page/' + name)
-            flash(u'Seite wurde erfolgreich verschoben.', success=True)
+            messages.success(request,
+                u'Seite wurde erfolgreich verschoben.')
     else:
-        flash(render_template('wiki/action_mv_discontinued.html', {'page': page}))
+        messages.info(request,
+            render_template('wiki/action_mv_discontinued.html', {'page': page}))
     return HttpResponseRedirect(url_for(page))
 
 
@@ -641,9 +657,12 @@ def do_mv_back(request, name):
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(u'Wiederherstellen wurde abgebrochen.')
+            messages.info(request, u'Wiederherstellen wurde abgebrochen.')
         else:
-            new_name = name.lstrip('Baustelle/')
+            if name.startswith('Baustelle/'):
+                new_name = name[10:] # Remove the leading 'Baustelle/' from the name
+            else:
+                new_name = name
             ## Move copy to Trash
             try:
                 copy = Page.objects.get_by_name(new_name)
@@ -666,24 +685,26 @@ def do_mv_back(request, name):
                         moved = True
                         break
                 if not moved:
-                    flash(u'Kopie konnte nicht nach Trash verschoben werden', False)
+                    messages.error(request,
+                        u'Kopie konnte nicht nach Trash verschoben werden')
                     return HttpResponseRedirect(url_for(page))
             ## Remove box
             text = page.revisions.latest().text.value
-            if text.startswith(u'[[Vorlage(Baustelle') or \
-                text.startswith(u'[[Vorlage(Überarbeitung'):
+            while text.startswith(u'[[Vorlage(Baustelle') or \
+                    text.startswith(u'[[Vorlage(Überarbeitung'):
                 text = text[text.find('\n')+1:]
             ## Rename
             if not _rename(request, page, new_name, new_text=text):
-                flash(u'Beim Verschieben ist ein Fehler aufgereten.', False)
+                messages.error(request,
+                    u'Beim Verschieben ist ein Fehler aufgereten.')
                 return HttpResponseRedirect(url_for(page))
 
-            request_cache.delete('wiki/page/' + name)
-
-            flash(u'Seite wurde erfolgreich ins Wiki verschoben.', success=True)
+            messages.success(request,
+                u'Seite wurde erfolgreich ins Wiki verschoben.')
             return HttpResponseRedirect(url_for(page))
     else:
-        flash(render_template('wiki/action_mv_back.html', {'page': page}))
+        messages.info(request,
+            render_template('wiki/action_mv_back.html', {'page': page}))
     return HttpResponseRedirect(url_for(page))
 
 
@@ -725,7 +746,7 @@ def do_log(request, name):
         return HttpResponseRedirect(href('wiki', '_feed', page.name, 20))
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
-                            20, link_func)
+                            100, link_func)
     return {
         'page':         page,
         'revisions':    pagination.get_queryset(),
@@ -853,7 +874,7 @@ def do_attach(request, name):
     """
     page = Page.objects.get_by_name(name)
     if page.rev.attachment_id is not None:
-        flash(_(u'Attachments within attachments are not allowed!'), False)
+        messages.error(request, _(u'Attachments within attachments are not allowed!'))
         return HttpResponseRedirect(url_for(page))
     attachments = Page.objects.get_attachment_list(page.name)
     attachments = [Page.objects.get_by_name(i) for i in attachments]
@@ -864,7 +885,7 @@ def do_attach(request, name):
     }
     if request.method == 'POST':
         if request.POST.get('cancel'):
-            flash(_(u'Canceled'))
+            messages.info(request, u'Canceled.')
             if page and page.metadata.get('redirect'):
                 url = href('wiki', page.name, redirect='no')
             else:
@@ -878,7 +899,8 @@ def do_attach(request, name):
         attachment_name = d.get('filename') or d['attachment'].name
         filename = d['attachment'].name or d.get('filename')
         if not attachment_name:
-            flash(_(u'Please enter a name for this attachment.'))
+            messages.info(request,
+                _(u'Please enter a name for this attachment.'))
             return context
         attachment_name = u'%s/%s' % (name, attachment_name)
         attachment_name = normalize_pagename(attachment_name.strip('/'))
@@ -888,8 +910,8 @@ def do_attach(request, name):
             ap = None
         if ap is not None and (ap.rev.attachment is None or
                                not d.get('override', False)):
-            flash(_(u'Another page or attachment with the same name exists'),
-                  False)
+            messages.error(request,
+                _(u'Another page or attachment with the same name exists'))
             return context
         remote_addr = request.META.get('REMOTE_ADDR')
         if ap is None:
@@ -907,7 +929,8 @@ def do_attach(request, name):
                     note=d.get('note', u''),
                     attachment_filename=filename,
                     attachment=d['attachment'])
-        flash(_(u'Attachment saved successfully.'), True)
+        messages.success(request,
+            _(u'Attachment saved successfully.'))
         if ap.metadata.get('weiterleitung'):
             url = href('wiki', ap, redirect='no')
         else:
@@ -941,7 +964,7 @@ def do_attach_edit(request, name):
                         note=d.get('note', u''),
                         attachment_filename=attachment_filename,
                         attachment=attachment)
-            flash(_(u'Attachment edited successfully.'), True)
+            messages.success(request, _(u'Attachment edited successfully.'))
             return HttpResponseRedirect(url_for(page))
     return {
         'form': form,
@@ -955,7 +978,7 @@ def do_prune(request, name):
     """Clear the page cache."""
     page = Page.objects.get_by_name(name)
     page.prune()
-    flash(_(u'Emptied the page cache.'), True)
+    messages.success(request, _(u'Emptied the page cache.'))
     return HttpResponseRedirect(url_for(page))
 
 
@@ -982,9 +1005,10 @@ def do_subscribe(request, page_name):
     if not Subscription.objects.user_subscribed(request.user, page):
         # there's no such subscription yet, create a new one
         Subscription(user=request.user, content_object=page).save()
-        flash(_(u'You will be notified on changes on this page'), True)
+        messages.success(request,
+            _(u'You will be notified on changes on this page'))
     else:
-        flash(_(u'You are already subscribed'))
+        messages.error(request, _(u'You are already subscribed'))
     return HttpResponseRedirect(url_for(page))
 
 
@@ -997,17 +1021,16 @@ def do_unsubscribe(request, page_name):
     try:
         subscription = Subscription.objects.get_for_user(request.user, page)
     except Subscription.DoesNotExist:
-        flash(_(u'No subscription for this page found.'), False)
+        messages.info(request, _(u'No subscription for this page found.'))
     else:
         subscription.delete()
-        flash(_(u'You won\'t be notified on changes on this page anymore'),
-              True)
+        messages.success(request,
+            _(u'You won\'t be notified for changes on this page anymore'))
     # redirect the user to the page he last watched
     if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
         return HttpResponseRedirect(request.GET['next'])
     else:
         return HttpResponseRedirect(url_for(page))
-
 
 
 @require_privilege('edit')
