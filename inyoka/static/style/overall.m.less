@@ -1,0 +1,134 @@
+@import 'layout.less';
+@import 'touch.less';
+
+@navbar-height: 48px;
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: @orange_s_medium;
+
+  &:link {
+    color: @orange_s_medium;
+  }
+
+  &:visited {
+    color: @orange_s_dark;
+  }
+}
+
+header{
+  display: block;
+  margin: 0;
+  padding: 0;
+
+  nav {
+    background-size: auto @navbar-height;
+    background: @orange_s_medium url('../img/head.m.png') repeat-x;
+    display: block;
+    height: @navbar-height;
+    line-height: @navbar-height;
+
+    a {
+      color: #FFFFFF;
+      display: block;
+      float: left;
+      height: @navbar-height;
+      margin: 0 2px;
+      padding: 0 5px;
+      text-decoration: none;
+      text-shadow: 1px 1px 1px #000000;
+      top: 50%;
+      vertical-align: middle;
+
+      &:visited, &:link {
+        color: #FFFFFF;
+        text-decoration: none;
+      }
+
+      &.toggle_menu {
+        .tap-highlight-color(rgba(0, 0, 0, 0));
+
+        img {
+          height: @navbar-height - 16;
+          padding: 8px 0;
+          width: 19px;
+        }
+      }
+    }
+  }
+}
+
+#top_menu {
+  background: #333333;
+  color: #FFFFFF;
+  display: none;
+  margin: 0;
+  text-decoration: none;
+  text-shadow: 1px 1px 1px #000000;
+
+  .button {
+    .tap-highlight-color(#333333);
+    background: #444444;
+    color: #FFFFFF;
+    display: block;
+    font-weight: bold;
+    height: 32px;
+    margin: 0.1em 0;
+    padding: 0.8em 0.2em;
+    text-decoration: none;
+    text-shadow: 1px 1px 1px #000000;
+
+    &.active {
+      background: #333333;
+    }
+
+    div.title {
+      height: 32px;
+      left: 3em;
+      line-height: 32px;
+      position: absolute;
+      right: 1em;
+    }
+
+    img.icon {
+      height: 32px;
+      position: absolute;
+      width: 32px;
+    }
+  }
+
+  .search input {
+    background: #DDDDDD;
+    border: 1px solid #000000;
+    font-size: 16px;
+    height: 32px;
+    width: 100%;
+  }
+
+  .separator {
+    background: #555555;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 0.4em;
+  }
+}
+
+#content {
+  padding: 0.2em;
+}
+
+footer {
+  border-top: 1px solid #848484;
+  color: #333333;
+  font-size: 10px;
+  margin: 0.5em 0 0.3em;
+  padding: 0.5em 0.1em;
+
+  .flavour_switch {
+    font-size: 18px;
+  }
+}
