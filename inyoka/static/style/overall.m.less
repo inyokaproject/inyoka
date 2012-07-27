@@ -121,6 +121,43 @@ header{
   padding: 0;
 }
 
+.pagination {
+  font-size: 20px;
+  margin: 0 32px;
+  text-align: center;
+
+  a {
+    text-decoration: none;
+  }
+
+  .comma {
+    display: none;
+  }
+
+  .pageselect {
+    background: #000000;
+    color: #FFFFFF;
+
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    margin: 0.5em 0.2em;
+    padding: 0 0.5em;
+  }
+
+  .next {
+    .pageselect;
+    position: absolute;
+    right: 0;
+  }
+
+  .prev {
+    .pageselect;
+    left: 0;
+    position: absolute;
+  }
+}
+
 footer {
   border-top: 1px solid #848484;
   color: #333333;
