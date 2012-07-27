@@ -36,19 +36,17 @@
           <img src="{{ href('static', 'img/forum/goto.png') }}" />
         </a>
       {%- endif %}
-      <a href="{{ topic|url }}">{#
-        #}<div class="button
-            {% if not topic.get_read_status(USER) %} unread{% endif %}
-            {% if topic.solved %} solved{% endif %}
-            {% if topic.hidden %} hidden{% endif %}
-            {% if can_moderate and topic.reported %} reported{% endif %}
-            {% if topic.sticky %} sticky{% endif %}
-            {% if topic.has_poll %} poll{% endif %}
-            {% if topic.locked %} locked{% endif %}">
-        {%- if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif -%}
-          {{ topic.title|e -}}
-        </div>{#
-      #}</a>
+      <a href="{{ topic|url }}" class="
+          {% if not topic.get_read_status(USER) %} unread{% endif %}
+          {% if topic.solved %} solved{% endif %}
+          {% if topic.hidden %} hidden{% endif %}
+          {% if can_moderate and topic.reported %} reported{% endif %}
+          {% if topic.sticky %} sticky{% endif %}
+          {% if topic.has_poll %} poll{% endif %}
+          {% if topic.locked %} locked{% endif %}">
+      {%- if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif -%}
+        {{ topic.title|e -}}
+      </a>
     {%- endfor %}
   </div>
   {{ pagination.generate() }}
