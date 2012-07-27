@@ -99,7 +99,6 @@ def index(request, year=None, month=None, category_slug=None, page=1, full=False
             url = u'%s%d/' % (link, page)
         return url + (full and 'full/' or '') + (params and u'?' + urlencode(params) or u'')
 
-
     category = None
     can_read = request.user.can('article_read')
     articles = Article.published if not can_read else Article.objects
@@ -224,8 +223,8 @@ def article_delete(request, year, month, day, slug):
         elif 'cancel' in request.POST:
             messages.info(request,
                 _(u'Deletion of the article “<a href="%(link)s">%(title)s</a>“ was canceled.')
-                  % { 'link': escape(url_for(article, 'show')),
-                      'title': escape(article.subject)})
+                  % {'link': escape(url_for(article, 'show')),
+                     'title': escape(article.subject)})
         else:
             article.delete()
             messages.success(request,
@@ -264,7 +263,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
         if locked:
             messages.error(request,
                 _(u'This article is currently being edited by “%(user)s“!')
-                  % {'user': locked })
+                  % {'user': locked})
     else:
         article = None
 
@@ -436,6 +435,7 @@ report_restore = report_update('restore', _(u'The report was restored.'))
 report_solve = report_update('solve', _(u'The report was marked as solved.'))
 report_unsolve = report_update('unsolve', _(u'The report was marked as unsolved.'))
 
+
 @templated('ikhaya/reports.html', modifier=context_modifier)
 def reports(request, year, month, day, slug):
     """Shows a list of suggested improved versions of the article."""
@@ -449,6 +449,7 @@ def reports(request, year, month, day, slug):
         'reports': article.report_set.select_related(),
         'can_edit': request.user.can('article_edit')
     }
+
 
 @require_permission('article_edit')
 @templated('ikhaya/reportlist.html', modifier=context_modifier)
@@ -466,7 +467,7 @@ def comment_edit(request, comment_id):
     if not request.user.can('comment_edit') and request.user == comment.author:
         messages.error(request, _(u'Sorry, editing comments is disabled for now.'))
         return HttpResponseRedirect(url_for(comment.article))
-    if request.user.can('comment_edit'):# or user == comment.author:
+    if request.user.can('comment_edit'):
         if request.method == 'POST':
             form = EditCommentForm(request.POST)
             if form.is_valid():
@@ -667,6 +668,7 @@ def events(request, show_all=False, invisible=False):
         'invisible': invisible,
     }
 
+
 @require_permission('article_edit')
 def suggestions_subscribe(request):
     """Subscribe to new suggestions."""
@@ -696,6 +698,7 @@ def suggestions_unsubscribe(request):
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
+
 
 @require_permission('event_edit')
 @templated('ikhaya/event_edit.html', modifier=context_modifier)
@@ -747,7 +750,7 @@ def event_suggest(request):
         form = NewEventForm(request.POST)
         if form.is_valid():
             event = Event()
-            convert = (lambda v: get_user_timezone().localize(v) \
+            convert = (lambda v: get_user_timezone().localize(v)
                                 .astimezone(pytz.utc).replace(tzinfo=None))
             data = form.cleaned_data
             event.name = data['name']

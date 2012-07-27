@@ -17,6 +17,7 @@ class TestUtilsUser(unittest.TestCase):
     def setUp(self):
         self.user = User.objects.register_user('testing', 'example@example.com',
                                                'pwd', False)
+
     def tearDown(self):
         self.user.delete()
 
