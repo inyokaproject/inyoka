@@ -2,7 +2,7 @@
 @import '../../style/touch.less';
 
 .buttons() {
-    background: #E6E4E2;
+    background: #EAEAEA;
     display: block;
     margin: 0.1em 0;
     padding: 0.8em 0.2em;
@@ -40,6 +40,7 @@
 }
 
 .topics {
+  background: #DDDDDD;
 
   a {
     .buttons;
@@ -61,8 +62,9 @@
   }
 
   h3 {
+    background: #FFFFFF;
     border-bottom: 1px solid #000000;
-    margin: 0.2em;
+    padding: 0.4em;
   }
 
   // combinations of different topic states, any ideas how to make this less
@@ -177,7 +179,7 @@
   }
 
   .sticky {
-    background: #E6E4E2 url('../img/sticky.png') 15px bottom no-repeat;
+    background: @red_d_light url('../img/sticky.png') 15px bottom no-repeat !important;
   }
 
   .hidden {

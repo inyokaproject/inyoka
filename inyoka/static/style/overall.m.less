@@ -130,29 +130,30 @@ header{
     text-decoration: none;
   }
 
-  .comma {
+  .comma, .pageselect, .ellipsis {
     display: none;
   }
 
-  .pageselect {
-    background: #000000;
-    color: #FFFFFF;
-
+  .active {
+    .rounded();
+    background: @orange_d_light;
+    border: 1px solid @orange_d_dark;
+    color: @orange_s_dark;
     display: inline-block;
     height: 32px;
     line-height: 32px;
-    margin: 0.5em 0.2em;
+    margin: 0.1em 0.2em;
     padding: 0 0.5em;
   }
 
   .next {
-    .pageselect;
+    .active;
     position: absolute;
     right: 0;
   }
 
   .prev {
-    .pageselect;
+    .active;
     left: 0;
     position: absolute;
   }
