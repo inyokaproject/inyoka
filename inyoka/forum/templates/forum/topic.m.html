@@ -100,7 +100,7 @@
             <div class="title">{% trans %}Attachments{% endtrans %}</div>
             <ul>
               {% for att in post.attachments.all() %}
-                <a href="{{ att|url }}"><li class="button">{{ att.name }}</li></a>
+                <a href="{{ att|url }}"><li>{{ att.name }}</li></a>
               {% endfor %}
             </ul>
           </div>
