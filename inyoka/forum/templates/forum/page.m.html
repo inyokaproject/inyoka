@@ -10,12 +10,28 @@
 {% extends 'overall.m.html' %}
 
 {% set active_app = 'forum' %}
-{% block head %}
+{% block styles %}
   {{ super() }}
-  <link rel="stylesheet" type="text/css" href="{{ href('static', 'forum', 'style', 'overall.m.css') }}" />
   {% if SETTINGS.DEBUG %}
-    <script type="text/javascript" src="{{ href('static', 'forum', 'js', 'overall.m.js') }}"></script>
+    <link rel="stylesheet/less"
+          type="text/css"
+          href="{{ href('static', 'forum', 'style', 'overall.m.less') }}" />
   {% else %}
-    <script type="text/javascript" src="{{ href('static', 'forum', 'js', 'overall.m.min.js') }}"></script>
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ href('static', 'forum', 'style', 'overall.m.css') }}" />
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {% if SETTINGS.DEBUG %}
+    <script type="text/javascript"
+            src="{{ href('static', 'forum', 'js', 'overall.m.js') }}">
+    </script>
+  {% else %}
+    <script type="text/javascript"
+            src="{{ href('static', 'forum', 'js', 'overall.m.min.js') }}">
+    </script>
   {% endif %}
 {% endblock %}

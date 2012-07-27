@@ -1,0 +1,36 @@
+@import '../../style/layout.less';
+@import '../../style/touch.less';
+
+.category {
+  background: #DDDDDD;
+  margin: 0 0 0.5em 0;
+
+  .collapse {
+    .tap-highlight-color(rgba(0, 0, 0, 0));
+  }
+
+  .forums a {
+    background: #EEEEEE;
+    display: block;
+    margin: 0.1em 0;
+    padding: 0.8em 0.2em;
+  }
+
+  a, a:link, a:visited {
+    text-decoration: none;
+  }
+
+  h3 {
+    .table-header-gradient;
+    color: @orange_d_dark;
+    margin: 0;
+    padding: 0.5em;
+  }
+}
+
+.subforums {
+  .category;
+  .forums {
+    display: none;
+  }
+}

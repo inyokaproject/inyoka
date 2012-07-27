@@ -15,11 +15,15 @@
 {% block content %}
   <h2>{{ forum.name }}</h2>
   {% if subforums %}
-    <h3>{% trans %}Subforums{% endtrans %}</h3>
-    <div class="forums">
-      {%- for subforum in subforums %}
-        <a href="{{ subforum|url }}"><div class="button">{{ subforum.name }}</div></a>
-      {%- endfor %}
+    <div class="subforums">
+      <a href="#" class="collapse">
+        <h3>{% trans %}Subforums{% endtrans %}</h3>
+      </a>
+      <div class="forums">
+        {%- for subforum in subforums %}
+          <a href="{{ subforum|url }}">{{ subforum.name }}</a>
+        {%- endfor %}
+      </div>
     </div>
   {% endif %}
   {{ pagination.generate() }}
