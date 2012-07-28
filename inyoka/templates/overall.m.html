@@ -33,7 +33,8 @@
     {% block scripts %}
       {% if SETTINGS.DEBUG %}
         <script type="text/javascript"
-                src="{{ href('static', 'js/less-1.1.3.js') }}"></script>
+                src="{{ href('static', 'js/less-1.1.3.js') }}">
+        </script>
         <script type="text/javascript"
                 src='{{ href('static', 'js/jquery-1.5.2.js') }}'>
         </script>

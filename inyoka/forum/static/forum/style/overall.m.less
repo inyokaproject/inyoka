@@ -6,17 +6,46 @@
 .actions {
   background: @orange_s_dark;
   clear: left;
-  font-size: 20px;
   line-height: 48px;
   min-height: 48px;
   text-align: center;
 
-  a {
+  a, input {
     background: @orange_s_dark - 20;
+    border: none;
     color: #FFFFFF;
     display: inline-block;
+    font-family: Times;
+    font-size: 18px;
+    font-weight: normal !important; // !important because of input
     height: 48px;
     padding: 0 0.5em;
     text-decoration: none;
+  }
+}
+
+blockquote {
+  border-left: 3px solid #888888;
+  color: #888888;
+  font-style: italic;
+  margin: 0.5em 0 0.5em 0.5em;
+  padding: 0 0 0 0.3em;
+}
+
+div.code {
+  font-size: 10px;
+
+  table {
+    table-layout: fixed;
+    width: 100%;
+
+    td.linenos {
+      width: 20px;
+    }
+
+    td.code {
+      background: #EEEEEE;
+      overflow: scroll;
+    }
   }
 }
