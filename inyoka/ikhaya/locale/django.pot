@@ -697,8 +697,8 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/index.html:62
 #: inyoka/ikhaya/templates/ikhaya/index.m.html:29
 #, python-format
-msgid "%(count)s <a href=\"%(link)s\">Comment</a>"
-msgid_plural "%(count)s <a href=\"%(link)s\">Comments</a>"
+msgid "%(count)s <a href=\"%(link)s\">comment</a>"
+msgid_plural "%(count)s <a href=\"%(link)s\">comments</a>"
 msgstr[0] ""
 msgstr[1] ""
 
