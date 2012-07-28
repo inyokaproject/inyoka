@@ -15,8 +15,9 @@ import re
 import heapq
 import difflib
 import itertools
+
+from django.utils.html import escape
 from django.utils.translation import ugettext as _
-from inyoka.utils.html import escape
 
 
 DEFAULT_MARKERS = (
@@ -324,7 +325,8 @@ def generate_udiff(old, new, old_title='', new_title='',
         title_diff_1 = udiff.next().decode('utf-8')
         title_diff_2 = udiff.next().decode('utf-8')
         return u'\n'.join(itertools.chain([title_diff_1, title_diff_2], udiff))
-    except StopIteration: # Content didn't change.
+    except StopIteration:
+        # Content did't cange
         return u''
 
 

@@ -69,7 +69,7 @@ class EditArticleForm(forms.ModelForm):
 
     def save(self):
         instance = super(EditArticleForm, self).save(commit=False)
-        if 'pub_date' in self.cleaned_data and (not instance.pk or \
+        if 'pub_date' in self.cleaned_data and (not instance.pk or
                 not instance.public or self.cleaned_data.get('public', None)):
             instance.pub_date = self.cleaned_data['pub_date'].date()
             instance.pub_time = self.cleaned_data['pub_date'].time()

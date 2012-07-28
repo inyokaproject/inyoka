@@ -1,5 +1,6 @@
 <div>
   <form action="{{ action_url|e }}" method="post">
+    {{ csrf_token() }}
     <p>{{ message|e }}</p>
     <p>
       <input type="submit" value="{{ confirm_label|e }}" />

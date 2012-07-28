@@ -9,9 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
-import os
 import re
-import shutil
 import cPickle
 import operator
 from os import path
@@ -23,10 +21,10 @@ from operator import attrgetter, itemgetter
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
@@ -35,7 +33,6 @@ from inyoka.utils.files import get_filename
 from inyoka.utils.text import get_new_unique_filename
 from inyoka.utils.database import LockableObject, update_model, model_or_none
 from inyoka.utils.dates import timedelta_to_seconds
-from inyoka.utils.html import escape
 from inyoka.utils.urls import href
 from inyoka.utils.search import search
 from inyoka.utils.local import current_request

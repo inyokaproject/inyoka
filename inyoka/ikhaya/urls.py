@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf.urls.defaults import patterns
+from django.conf.urls import patterns
 
 
 urlpatterns = patterns('inyoka.ikhaya.views',
@@ -76,7 +76,7 @@ urlpatterns = patterns('inyoka.ikhaya.views',
 
     (r'^events/$', 'events'),
     (r'^events/all/$', 'events', {'show_all': True}),
-    (r'^events/invisible/$', 'events', {'invisible':True}),
+    (r'^events/invisible/$', 'events', {'invisible': True}),
     #(r'^events/suggestions/$', 'events_suggestions'),
     (r'^event/suggest/$', 'event_suggest'),
     (r'^event/new/$', 'event_edit'),

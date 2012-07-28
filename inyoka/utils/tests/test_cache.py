@@ -34,7 +34,6 @@ class TestCache(TestCase):
         _compare('blah', None, False)
         _compare('bar', 'foo')
 
-
     def test_many(self):
         def _compare_many(keys, value):
             self.assertEqual(value, self.cache.get_many(keys))

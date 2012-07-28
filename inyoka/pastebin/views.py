@@ -8,12 +8,12 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.contrib import messages
 from django.utils.translation import ugettext as _
 
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
 from inyoka.portal.utils import require_permission
-from inyoka.utils.flashing import flash
 from inyoka.utils.http import templated, HttpResponseRedirect, HttpResponse, \
      PageNotFound
 from inyoka.utils.templating import render_template
@@ -30,7 +30,7 @@ def index(request):
                             u'the following code to include it in your post:')
             example = u'<code>[paste:%(id)d:%(title)s]</code>' % {
                       'id': entry.id, 'title': entry.title}
-            flash(u' '.join([description, example]), True)
+            messages.success(request, (u' '.join([description, example])))
             return HttpResponseRedirect(href('pastebin', entry.id))
         if 'renew_captcha' in request.POST and 'captcha' in form.errors:
             del form.errors['captcha']
@@ -68,14 +68,14 @@ def delete(request, entry_id):
         raise PageNotFound
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(_(u'The deletion was canceled'))
+            messages.info(request, _(u'The deletion was canceled'))
         else:
             entry.delete()
-            flash(_(u'The entry in the pastebin was deleted.'))
+            messages.success(request, _(u'The entry in the pastebin was deleted.'))
             return HttpResponseRedirect(href('pastebin'))
     else:
-        flash(render_template('pastebin/delete_entry.html',
-                              {'entry': entry}))
+        messages.info(request, render_template('pastebin/delete_entry.html',
+                      {'entry': entry}))
     return HttpResponseRedirect(href('pastebin', entry.id))
 
 

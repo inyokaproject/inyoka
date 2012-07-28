@@ -10,7 +10,7 @@
 """
 from django.conf import settings
 from django.utils import translation
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _
 
 from celery.task import task
 

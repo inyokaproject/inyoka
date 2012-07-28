@@ -10,6 +10,7 @@
 
 
 <form action="{{ href('ikhaya', 'comment', comment.id, action) }}" method="post">
+   {{ csrf_token() }}
    <p>
     {%- if action=='restore' -%}
       {% trans link=comment|url('show'), author=comment.author.username|e -%}
