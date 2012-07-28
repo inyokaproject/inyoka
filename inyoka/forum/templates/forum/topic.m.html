@@ -25,17 +25,19 @@
                        value="{{ option.id }}" />
                 <label for="option_{{ option.id }}">{{ option.name|e }}</label>
               {% else %}
-                <div class="name">{{ option.name|e }}</div>
+                {% if not (poll.can_vote and can_vote) or show_vote_results %}
+                  <div class="vote_bar_wrapper">
+                    <div class="vote_bar" style="width: {{ option.percentage }}%;"></div>
+                  </div>
+                {% endif %}
+                <span class="name">{{ option.name|e }}</span>
               {% endif %}
               {% if not (poll.can_vote and can_vote) or show_vote_results %}
                 {% set bc, ac = (option.percentage|string).split('.') %}
-                <div class="vote_bar_wrapper">
-                  <div class="vote_bar" style="width: {{ option.percentage }}%;"></div>
-                </div>
-                <div class="votes">
-                  <span>{{ bc }}{% if ac|int %}.{{ ac[:2] }}{% endif %}%</span>
-                  <span>[ {{ option.votes }} ]</span>
-                </div>
+                <span class="votes">
+                  {{ bc }}{% if ac|int %}.{{ ac[:2] }}{% endif %}%
+                  [ {{ option.votes }} ]
+                </span>
               {% endif %}
             </div>
           {%- endfor %}

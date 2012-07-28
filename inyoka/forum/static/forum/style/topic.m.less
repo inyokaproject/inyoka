@@ -1,0 +1,33 @@
+.poll {
+  .option {
+    border-bottom: 1px solid #DDDDDD;
+    line-height: 16px;
+    margin: 8px;
+    padding: 0 0 8px;
+
+    .name {
+      margin: 2px 120px 2px 0;
+    }
+
+    .votes {
+      position: absolute;
+      right: 8px;
+    }
+  }
+
+  .vote_bar_wrapper {
+    left: 8px;
+    position: absolute;
+    right: 8px;
+
+    .vote_bar {
+      background: @orange_s_light;
+      height: 20px;
+      opacity: 0.3;
+      position: relative;
+      top: -2px;
+      z-index: -10;
+    }
+  }
+
+}
