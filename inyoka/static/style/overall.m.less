@@ -1,4 +1,5 @@
 @import 'layout.less';
+@import 'mixins.m.less';
 @import 'touch.less';
 
 @navbar-height: 48px;
@@ -18,6 +19,10 @@ a {
   &:visited {
     color: @orange_s_dark;
   }
+}
+
+pre {
+  .codeblock;
 }
 
 header{
@@ -123,7 +128,7 @@ header{
 
 .pagination {
   font-size: 20px;
-  margin: 0 32px;
+  margin: 8px 32px;
   text-align: center;
 
   a {
@@ -156,6 +161,23 @@ header{
     .active;
     left: 0;
     position: absolute;
+  }
+}
+
+div.code {
+  font-size: 10px;
+
+  table {
+    table-layout: fixed;
+    width: 100%;
+
+    td.linenos {
+      width: 20px;
+    }
+
+    td.code {
+      .codeblock;
+    }
   }
 }
 

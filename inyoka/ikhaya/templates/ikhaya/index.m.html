@@ -12,8 +12,8 @@
 {% block content %}
   {{ pagination.generate() }}
   {%- for article in articles %}
-    <div{% if article.hidden %} class="hidden"{% endif %}>
-      <h3 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h3>
+    <div class="intro{% if article.hidden %} hidden{% endif %}">
+      <a href="{{ article|url }}"><h3 class="title">{{ article.subject|e }}</h3></a>
       <span class="meta">{{ article.pub_datetime|dateformat }}</span>
       <div class="text">{{ article.rendered_intro }}</div>
     </div>
