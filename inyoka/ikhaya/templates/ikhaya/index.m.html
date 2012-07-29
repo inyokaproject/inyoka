@@ -10,33 +10,13 @@
 {%- extends 'ikhaya/page.m.html' %}
 
 {% block content %}
+  {{ pagination.generate() }}
   {%- for article in articles %}
-    <article{% if article.hidden %} class="hidden"{% endif %}>
+    <div{% if article.hidden %} class="hidden"{% endif %}>
       <h3 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h3>
-      <p class="meta">
-        <span>
-          {%- trans link=article.author|url, author=article.author.username|e -%}
-            Written by <a href="{{ link }}">{{ author }}</a>
-          {%- endtrans -%}
-        </span> |
-        <span>{{ article.pub_datetime|dateformat }}</span> |
-        <span>
-          {% trans %}Category:{% endtrans %}
-          <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
-        </span> |
-        <span>
-          {%- if article.comments_enabled -%}
-            {% trans count=article.comment_count, link=article|url + '#comments' -%}
-              {{ count }} <a href="{{ link }}">comment</a>
-            {%- pluralize -%}
-              {{ count }} <a href="{{ link }}">comments</a>
-            {%- endtrans %}
-          {%- endif -%}
-        </span>
-      </p>
+      <span class="meta">{{ article.pub_datetime|dateformat }}</span>
       <div class="text">{{ article.rendered_intro }}</div>
-      <p><strong><a href="{{ article|url }}">{% trans %}More »{% endtrans %}</a></strong></p>
-    </article>
+    </div>
   {%- else %}
     <p>{% trans %}There is no article.{% endtrans %}</p>
   {%- endfor %}
