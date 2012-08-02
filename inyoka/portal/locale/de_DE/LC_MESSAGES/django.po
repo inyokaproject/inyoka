@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-08-02 13:36+0200\n"
+"POT-Creation-Date: 2012-08-02 13:39+0200\n"
 "PO-Revision-Date: 2012-03-18 22:20+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -2554,9 +2554,8 @@ msgstr ""
 "href=\"%(link)s\">Signaturregeln</a>."
 
 #: inyoka/portal/templates/portal/usercp/profile.html:101
-#, fuzzy
 msgid "Show my profile"
-msgstr "Im Profil anzeigen"
+msgstr "Mein Profil anzeigen"
 
 #: inyoka/portal/templates/portal/usercp/settings.html:24
 msgid "Edit your subscriptions"
@@ -2620,27 +2619,4 @@ msgstr "Benutzer:"
 #: inyoka/portal/templates/portal/usercp/subscriptions.m.html:33
 msgid "Article:"
 msgstr "Artikel:"
-
-#~ msgid "Errors occurred, please fix them."
-#~ msgstr "Es sind Fehler aufgetreten, bitte behebe sie."
-
-#~ msgid ""
-#~ "For security reasons you need to "
-#~ "allow cookies to login. Please enable"
-#~ " cookies and <a href=\"%(link)s\">reload "
-#~ "the page</a>."
-#~ msgstr ""
-#~ "Aus Sicherheitsgründen musst du Cookies "
-#~ "erlauben, um dich anzumelden. Bitte "
-#~ "aktiviere Cookies und <a "
-#~ "href=\"%(link)s\">lade die Seite erneut</a>."
-
-#~ msgid ""
-#~ "You can find more information about "
-#~ "cookies in our <a href=\"%(link)s\">privacy"
-#~ " policy</a>."
-#~ msgstr ""
-#~ "Weitere Informationen zu Cookies findest "
-#~ "du in unserer <a "
-#~ "href=\"%(link)s\">Datenschutzbestimmung</a>."
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-08-02 13:36+0200\n"
+"POT-Creation-Date: 2012-08-02 13:39+0200\n"
 "PO-Revision-Date: 2012-03-26 18:34+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -293,7 +293,7 @@ msgstr ""
 "vorhandenes Thema verknüpfen</a>."
 
 #: inyoka/forum/views.py:449
-#, fuzzy, python-format
+#, python-format
 msgid "This post is currently beeing edited by “%(user)s“!"
 msgstr "Diese Beitrag wird momentan von „%(user)s” bearbeitet!"
 
@@ -648,7 +648,6 @@ msgid "by <a href=\"%(link)s\">%(name)s</a>"
 msgstr "von <a href=\"%(link)s\">%(name)s</a>"
 
 #: inyoka/forum/templates/forum/_forum.html:50
-#, fuzzy
 msgid "hidden topic"
 msgstr "Verstecktes Thema"
 
@@ -1359,12 +1358,4 @@ msgstr "Gelesen und akzeptiert"
 #: inyoka/forum/templates/forum/welcome.html:21
 msgid "Reject"
 msgstr "Ablehnen"
-
-#~ msgid "Your vote was saved."
-#~ msgid_plural "Your %(n)d votes were saved."
-#~ msgstr[0] "Deine Stimme wurde gespeichert."
-#~ msgstr[1] "Deine %(n)d Stimmen wurden gespeichert."
-
-#~ msgid "Errors occurred, please fix them."
-#~ msgstr "Es traten Fehler auf, bitte behebe sie."
 

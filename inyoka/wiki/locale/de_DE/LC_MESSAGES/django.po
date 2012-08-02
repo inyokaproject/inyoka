@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-08-02 13:36+0200\n"
+"POT-Creation-Date: 2012-08-02 13:39+0200\n"
 "PO-Revision-Date: 2012-03-18 22:21+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -31,7 +31,6 @@ msgid "Revision is the latest one, revert aborted."
 msgstr "Keine Änderungen durchgeführt, da die Revision bereits die aktuelle ist."
 
 #: inyoka/wiki/actions.py:222
-#, fuzzy
 msgid "Revert aborted."
 msgstr "Wiederherstellen abgebrochen."
 
@@ -83,14 +82,12 @@ msgstr ""
 "als Basis für die neue Seite verwendet."
 
 #: inyoka/wiki/actions.py:439
-#, fuzzy
 msgid "Canceled."
-msgstr "Abgebrochen"
+msgstr "Abgebrochen."
 
 #: inyoka/wiki/actions.py:457
-#, fuzzy
 msgid "No changes."
-msgstr "Keine Änderungen"
+msgstr "Keine Änderungen."
 
 #: inyoka/wiki/actions.py:464 inyoka/wiki/actions.py:477
 #, python-format
@@ -158,11 +155,8 @@ msgid "No subscription for this page found."
 msgstr "Du wirst über diese Seite gar nicht benachrichtigt!"
 
 #: inyoka/wiki/actions.py:1028
-#, fuzzy
 msgid "You won't be notified for changes on this page anymore"
-msgstr ""
-"Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr "
-"benachrichtigt."
+msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachrichtigt"
 
 #: inyoka/wiki/forms.py:50
 msgid "The text contains too many nested elements."
@@ -1037,7 +1031,4 @@ msgstr "Abbestellen"
 #: inyoka/wiki/templates/wiki/page.html:66
 msgid "Subscribe"
 msgstr "Abonnieren"
-
-#~ msgid "Page deleted"
-#~ msgstr "Seite wurde gelöscht."
 

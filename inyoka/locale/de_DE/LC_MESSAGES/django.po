@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-08-02 13:36+0200\n"
+"POT-Creation-Date: 2012-08-02 13:39+0200\n"
 "PO-Revision-Date: 2012-03-28 20:00+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -306,9 +306,8 @@ msgid "{verbose_name} “{object_name}” was deleted successfully!"
 msgstr "{verbose_name} “{object_name}” erfolgreich gelöscht!"
 
 #: inyoka/utils/generic.py:219
-#, fuzzy
 msgid "Canceled."
-msgstr "Abgebrochen"
+msgstr "Abgebrochen."
 
 #: inyoka/utils/pagination.py:159 inyoka/utils/pagination.py:166
 msgid "Next »"
@@ -398,36 +397,4 @@ msgid "The user “%(name)s” deleted his profile. Your session has ended."
 msgstr ""
 "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum "
 "abgemelet."
-
-#~ msgid "Username or email address"
-#~ msgstr "Benutzername oder E-Mail-Adresse"
-
-#~ msgid "Password"
-#~ msgstr "Passwort"
-
-#~ msgid "Don’t choose this option if you are using a public computer."
-#~ msgstr ""
-#~ "Wähle diese Option nicht an, wenn "
-#~ "du dich an einem öffentlichen Computer"
-#~ " befindest."
-
-#~ msgid "Keep me logged in"
-#~ msgstr "Angemeldet bleiben"
-
-#~ msgid "Lost password?"
-#~ msgstr "Passwort vergessen?"
-
-#~ msgid "You have to accept cookies!"
-#~ msgstr "Du musst Cookies aktivieren!"
-
-#~ msgid ""
-#~ "Search results are highlighted. <a "
-#~ "class=\"hide_searchwords\" href=\"%(link)s\">Hide query"
-#~ " terms</a>."
-#~ msgstr ""
-#~ "Suchergebnisse sind hervorgehoben. <a class=\"hide_searchwords\" \"\n"
-#~ "\"href=\"%(link)s\">Markierung ausblenden</a>."
-
-#~ msgid "Your session expired. You need to login again"
-#~ msgstr "Deine Sitzung ist abgelaufen. Du musst dich neu anmelden."
 
