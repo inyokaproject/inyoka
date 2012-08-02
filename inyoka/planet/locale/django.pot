@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-05-19 22:51+0200\n"
+"POT-Creation-Date: 2012-08-02 13:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,15 +69,15 @@ msgstr ""
 msgid "Entries"
 msgstr ""
 
-#: inyoka/planet/views.py:77
+#: inyoka/planet/views.py:78
 msgid "You need to be logged in to suggest a blog"
 msgstr ""
 
-#: inyoka/planet/views.py:95
+#: inyoka/planet/views.py:96
 msgid "A new blog was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:99
+#: inyoka/planet/views.py:100
 msgid "No user is registered as a planet administrator."
 msgstr ""
 
@@ -109,8 +109,8 @@ msgstr ""
 msgid "Add blog"
 msgstr ""
 
-#: inyoka/planet/templates/planet/blog_edit.html:26
-#: inyoka/planet/templates/planet/suggest.html:32
+#: inyoka/planet/templates/planet/blog_edit.html:27
+#: inyoka/planet/templates/planet/suggest.html:33
 msgid "Submit"
 msgstr ""
 
@@ -144,26 +144,26 @@ msgstr ""
 msgid "No entry"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:11
+#: inyoka/planet/templates/planet/hide_entry.html:12
 msgid "Are you sure you want to restore the entry?"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:13
+#: inyoka/planet/templates/planet/hide_entry.html:14
 msgid "Are you sure you want to hide the entry?"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:16
+#: inyoka/planet/templates/planet/hide_entry.html:17
 #: inyoka/planet/templates/planet/index.html:72
 msgid "Restore"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:16
+#: inyoka/planet/templates/planet/hide_entry.html:17
 #: inyoka/planet/templates/planet/index.html:72
 msgid "Hide"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:17
-#: inyoka/planet/templates/planet/suggest.html:33
+#: inyoka/planet/templates/planet/hide_entry.html:18
+#: inyoka/planet/templates/planet/suggest.html:34
 msgid "Cancel"
 msgstr ""
 

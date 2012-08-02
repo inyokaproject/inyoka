@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-05-19 22:51+0200\n"
+"POT-Creation-Date: 2012-08-02 13:36+0200\n"
 "PO-Revision-Date: 2012-03-18 22:17+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -248,11 +248,11 @@ msgstr "Der Eintrag in der Ablage wurde gelöscht."
 msgid "New paste"
 msgstr "Neuer Eintrag"
 
-#: inyoka/pastebin/templates/pastebin/add.html:19
+#: inyoka/pastebin/templates/pastebin/add.html:20
 msgid "About:"
 msgstr "Funktion:"
 
-#: inyoka/pastebin/templates/pastebin/add.html:20
+#: inyoka/pastebin/templates/pastebin/add.html:21
 msgid ""
 "This is a pastebin where you can save error messages, logs, configuration"
 " files or source codes to keep threads or IRC channels clean. To do this,"
@@ -265,7 +265,7 @@ msgstr ""
 " Text in das Textfeld und wählst die passende Sprache aus. Dann kopierst "
 "du die URL in das Thema bzw. den Kanal."
 
-#: inyoka/pastebin/templates/pastebin/add.html:28
+#: inyoka/pastebin/templates/pastebin/add.html:29
 msgid "Submit"
 msgstr "Absenden"
 
@@ -282,18 +282,18 @@ msgstr ""
 msgid "No pastes were created yet."
 msgstr "Es wurden noch keine Einträge erstellt."
 
-#: inyoka/pastebin/templates/pastebin/delete_entry.html:15
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:16
 #, python-format
 msgid "Do you really want to delete the entry <a href=\"%(link)s\">%(entry)s</a>?"
 msgstr ""
 "Möchtest du den Eintrag <a href=\"%(link)s\">%(entry)s</a> wirklich "
 "löschen?"
 
-#: inyoka/pastebin/templates/pastebin/delete_entry.html:20
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:21
 msgid "Delete"
 msgstr "Löschen"
 
-#: inyoka/pastebin/templates/pastebin/delete_entry.html:21
+#: inyoka/pastebin/templates/pastebin/delete_entry.html:22
 msgid "Cancel"
 msgstr "Abbrechen"
 
