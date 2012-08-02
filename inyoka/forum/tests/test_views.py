@@ -89,14 +89,12 @@ class TestViews(TestCase):
         response = self.client.get('/reported_topics/')
         self.assertEqual(response.status_code, 200)
 
-    @patch('inyoka.middlewares.security.SecurityMiddleware._make_token',
-            return_value='csrf_key')
     @patch('inyoka.forum.views.send_notification')
-    def test_movetopic(self, mock_send, mock_security):
+    def test_movetopic(self, mock_send):
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
                 self.forum2.id)
         response = self.client.post('/topic/%s/move/' % self.topic.slug,
-                    {'_form_token': 'csrf_key', 'forum': self.forum3.id})
+                    {'forum': self.forum3.id})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(mock_send.call_count, 1) #only the topic author
         mock_send.assert_called_with(self.user, 'topic_moved',
@@ -203,9 +201,7 @@ class TestViews(TestCase):
         response = self.client.get('/topic/%s/split/' % t2.slug)
         self.assertEqual(response.status_code, 200)
 
-    @patch('inyoka.middlewares.security.SecurityMiddleware._make_token',
-            return_value='csrf_key')
-    def test_add_attachment(self, mock_send):
+    def test_add_attachment(self):
         TEST_ATTACHMENT = 'test_attachment.png'
 
         t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
@@ -226,8 +222,7 @@ class TestViews(TestCase):
                     u'question': u'',
                     u'filename': u'',
                     u'duration': u'',
-                    u'options': u'',
-                    u'_form_token': u'csrf_key' }
+                    u'options': u''}
 
 
         response = self.client.post('/post/%s/edit/' % p1.pk, postdata)
