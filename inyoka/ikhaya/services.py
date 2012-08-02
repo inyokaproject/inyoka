@@ -27,5 +27,5 @@ def on_change_suggestion_assignment(request):
 
 
 dispatcher = SimpleDispatcher(
-    change_suggestion_assignment = on_change_suggestion_assignment
+    change_suggestion_assignment=on_change_suggestion_assignment
 )

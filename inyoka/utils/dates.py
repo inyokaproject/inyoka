@@ -125,6 +125,7 @@ def datetime_to_naive_utc(dt):
 
 date_time_to_datetime = datetime.combine
 
+
 def parse_iso8601(value):
     """
     Parse an iso8601 date into a datetime object.

@@ -6,6 +6,7 @@
     but flashed to the show action.  So keep it small, it's in a cookie!
 -#}
 <form action="{{ href('planet', 'hide', entry.id)|e }}" method="post">
+  {{ csrf_token() }}
   <p>
     {% if entry.hidden %}
       {% trans %}Are you sure you want to restore the entry?{% endtrans %}

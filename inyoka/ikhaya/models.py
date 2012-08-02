@@ -17,12 +17,13 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy
 from django.utils import datetime_safe
+from django.utils.html import escape
 
 from inyoka.portal.user import User
 from inyoka.portal.models import StaticFile
 from inyoka.wiki.parser import render, parse, RenderContext
 from inyoka.utils.text import slugify
-from inyoka.utils.html import escape, striptags
+from inyoka.utils.html import striptags
 from inyoka.utils.urls import href, url_for
 from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
 from inyoka.utils.search import search, SearchAdapter
@@ -50,11 +51,13 @@ class ArticleManager(models.Manager):
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
-                q = q.filter(Q(pub_date__lt=datetime.utcnow().date())|
-                             Q(pub_date = datetime.utcnow().date(), pub_time__lte = datetime.utcnow().time()))
+                q = q.filter(Q(pub_date__lt=datetime.utcnow().date()) |
+                             Q(pub_date=datetime.utcnow().date(),
+                               pub_time__lte=datetime.utcnow().time()))
             else:
-                q = q.filter(Q(pub_date__gt=datetime.utcnow().date())|
-                             Q(pub_date = datetime.utcnow().date(), pub_time__gte = datetime.utcnow().time()))
+                q = q.filter(Q(pub_date__gt=datetime.utcnow().date()) |
+                             Q(pub_date=datetime.utcnow().date(),
+                               pub_time__gte=datetime.utcnow().time()))
         return q
 
     def get_cached(self, keys):
@@ -72,9 +75,9 @@ class ArticleManager(models.Manager):
         cache_values = cache.get_many(map(itemgetter(0), keys))
         dates, slugs = _get_not_cached_articles(keys, cache_values)
 
+        related = ('author__username', 'category', 'icon', 'category__icon')
         objects = Article.objects.filter(slug__in=slugs, pub_date__in=dates) \
-                         .select_related('author__username', 'category', 'icon',
-                                         'category__icon').order_by()
+                         .select_related(related).order_by()
         new_cache_values = {}
         for article in objects:
             key = 'ikhaya/article/%s/%s' % (article.pub_date, article.slug)
@@ -87,7 +90,8 @@ class ArticleManager(models.Manager):
             article.text = article.intro = None
             new_cache_values[key] = article
         if new_cache_values:
-            cache.set_many(new_cache_values, 24 * 60) # cache for 24 hours
+            # cache for 24 hours
+            cache.set_many(new_cache_values, 24 * 60)
         cache_values.update(new_cache_values)
         articles = filter(None, cache_values.values())
         unpublished = list(sorted([a for a in articles if not a.public],
@@ -150,8 +154,8 @@ class CommentManager(models.Manager):
             comment_ids = list(comment_ids.values_list('id', flat=True)[:maxcount])
             cache.set(key, comment_ids, 300)
 
-        comments = list(Comment.objects.filter(id__in=comment_ids) \
-                               .select_related('author__username', 'article__subject') \
+        comments = list(Comment.objects.filter(id__in=comment_ids)
+                               .select_related('author__username', 'article__subject')
                                .order_by('-id')[:maxcount])
         return comments[:count]
 

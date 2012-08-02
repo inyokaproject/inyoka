@@ -4,7 +4,6 @@ from django.test import TestCase
 
 from inyoka.forum.models import Forum, Topic, Post
 from inyoka.portal.user import User
-from inyoka.utils.cache import request_cache
 
 
 class TestPostSplitNewTopic(TestCase):

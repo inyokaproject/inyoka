@@ -8,7 +8,6 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import re
 from datetime import datetime, timedelta
 from operator import attrgetter
 from itertools import groupby
@@ -16,23 +15,23 @@ from itertools import groupby
 from werkzeug.datastructures import MultiDict
 
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.utils.text import truncate_html_words
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Q, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ungettext
 from django.utils.translation import ugettext as _
+from django.utils.text import truncate_html_words
 
 from inyoka.utils.cache import request_cache
 from inyoka.utils.urls import href, url_for, is_safe_domain
-from inyoka.utils.html import escape
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.http import templated, PageNotFound, HttpResponseRedirect, AccessDeniedResponse, \
     does_not_exist_is_404
 from inyoka.utils.feeds import atom_feed, AtomFeed
-from inyoka.utils.flashing import flash
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
@@ -42,6 +41,7 @@ from inyoka.utils.dates import format_datetime
 from inyoka.utils.storage import storage
 from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.database import get_simplified_queryset
+from inyoka.utils.generic import trigger_fix_errors_message
 from inyoka.wiki.utils import quote_text
 from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page
@@ -84,7 +84,7 @@ def index(request, category=None):
         if wmsg is not None:
             return welcome(request, wmsg.slug, request.path)
     else:
-        categories = tuple(forum for forum in forums if forum.parent_id == None)
+        categories = tuple(forum for forum in forums if forum.parent_id is None)
 
     hidden_categories = []
     if request.user.is_authenticated:
@@ -184,7 +184,7 @@ def viewtopic(request, topic_slug, page=1):
 
     if topic.hidden:
         if check_privilege(privileges, 'moderate'):
-            flash(_(u'This topic is not visible for regular users.'))
+            messages.info(request, _(u'This topic is not visible for regular users.'))
         else:
             return abort_access_denied(request)
 
@@ -214,14 +214,11 @@ def viewtopic(request, topic_slug, page=1):
                     if poll.participated:
                         continue
                     elif poll.ended:
-                        flash(_(u'The poll already ended.'), False)
+                        messages.error(request, _(u'The poll already ended.'))
                         continue
                     poll.votings.add(PollVote(voter=request.user))
                     poll.options.filter(id__in=votes) \
                                 .update(votes=F('votes') + 1)
-            msg = ungettext('Your vote was saved.',
-                            'Your %(n)d votes were saved.', len(polls))
-            flash(msg % {'n': len(polls)})
 
     post_ids = Post.objects.filter(topic=topic) \
                            .values_list('id', flat=True)
@@ -231,20 +228,18 @@ def viewtopic(request, topic_slug, page=1):
     post_ids = list(pagination.get_queryset())
     posts = Post.objects.filter(id__in=post_ids) \
                         .order_by('position') \
-                        .select_related('author')
-    attachments = MultiDict((a.post_id, a) for a in
-                            Attachment.objects.filter(post__id__in=post_ids))
+                        .select_related('author') \
+                        .prefetch_related('attachments')
 
     # assign the current topic to the posts to prevent
-    # extra queries in check_ownpost_limit.  Also do that
-    # with attachments.
+    # extra queries in check_ownpost_limit.
     for p in posts:
         p.topic = topic
-        if p.id in attachments:
-            p._attachments_cache = attachments.getlist(p.id)
 
     # clear read status and subscriptions
-    topic.mark_read(request.user)
+    if request.user.is_authenticated:
+        topic.mark_read(request.user)
+        request.user.save()
 
     subscribed = Subscription.objects.user_subscribed(request.user, topic,
         ('forum', 'topic'), clear_notified=True)
@@ -319,8 +314,7 @@ def handle_polls(request, topic, poll_ids):
             option.save()
         poll_form = AddPollForm()
         poll_options = ['', '']
-        flash(_(u'The poll “%(poll)s“ was added.') % {'poll': poll.question},
-              True)
+        messages.success(request, _(u'The poll “%(poll)s“ was added.') % {'poll': poll.question})
         poll_ids.append(poll.id)
     elif 'add_option' in request.POST:
         poll_options.append('')
@@ -332,8 +326,8 @@ def handle_polls(request, topic, poll_ids):
         except Poll.DoesNotExist:
             pass
         else:
-            flash(_(u'The poll “%(poll)s“ was removed.')
-                  % {'poll': poll.question}, True)
+            messages.info(request, _(u'The poll “%(poll)s“ was removed.')
+                                     % {'poll': poll.question})
             topic.has_poll = Poll.objects \
                 .filter(Q(topic=topic) & ~Q(id=poll.id)) \
                 .exists()
@@ -377,28 +371,28 @@ def handle_attachments(request, post, att_ids):
                 comment=d['comment']
             )
             if not attachment:
-                flash(_(u'The attachment “%(attachment)s“ does already exist.')
-                      % {'attachment': att_name}, False)
+                messages.error(request, _(u'The attachment “%(attachment)s“ does already exist.')
+                               % {'attachment': att_name})
             else:
                 attachments.append(attachment)
                 att_ids.append(attachment.id)
-                flash(_(u'The attachment “%(attachment)s“ was added '
-                        'successfully.') % {'attachment': att_name}, True)
+                messages.success(request, _(u'The attachment “%(attachment)s“ was added '
+                                 'successfully.') % {'attachment': att_name})
 
     elif 'delete_attachment' in request.POST:
         id = int(request.POST['delete_attachment'])
         matching_attachments = filter(lambda a: a.id == id, attachments)
         if not matching_attachments:
-            flash(_(u'The attachment with the ID “%(id)d“ does not exist.')
-                  % {'id': id}, False)
+            messages.info(request, _(u'The attachment with the ID “%(id)d“ does not exist.')
+                          % {'id': id}, False)
         else:
             attachment = matching_attachments[0]
             attachment.delete()
             attachments.remove(attachment)
             if attachment.id in att_ids:
                 att_ids.remove(attachment.id)
-            flash(_(u'The attachment “%(attachment)s“ was deleted.')
-                    % {'attachment': attachment.name}, False)
+            messages.info(_(u'The attachment “%(attachment)s“ was deleted.')
+                          % {'attachment': attachment.name}, False)
     return attach_form, attachments
 
 
@@ -428,16 +422,17 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         try:
             page = Page.objects.get(name=norm_page_name)
         except Page.DoesNotExist:
-            flash(_(u'The article “%(article)s“ does not exist. However, you '
-                    'can create it now.') % {'article': norm_page_name}, False)
+            messages.error(request, _(u'The article “%(article)s“ does not exist. However, you '
+                           'can create it now.') % {'article': norm_page_name})
             return HttpResponseRedirect(href('wiki', norm_page_name))
         forum_slug = settings.WIKI_DISCUSSION_FORUM
-        flash(_(u'No discussion is linked yet to the article “%(article)s“. '
-                'You can create a discussion now or <a href="%(link)s">link '
-                'an existing topic</a> to the article.') % {
+        messages.info(request,
+            _(u'No discussion is linked yet to the article “%(article)s“. '
+               'You can create a discussion now or <a href="%(link)s">link '
+               'an existing topic</a> to the article.') % {
                     'article': page_name,
                     'link': href('wiki', norm_page_name,
-                                 action='manage_discussion')})
+                            action='manage_discussion')})
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
         forum = topic.forum
@@ -450,8 +445,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         post = Post.objects.get(id=int(post_id))
         locked = post.lock(request)
         if locked:
-            flash(_(u'This post is currently being edited by “%(user)s“!')
-                  % {'user': locked}, False)
+            messages.error(request,
+                _(u'This post is currently beeing edited by “%(user)s“!')
+                  % {'user': locked})
         topic = post.topic
         forum = topic.forum
         firstpost = post.id == topic.first_post_id
@@ -477,7 +473,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     if post:
         if (topic.locked or topic.hidden or post.hidden) and \
            not check_privilege(privileges, 'moderate'):
-            flash(_(u'You cannot edit this post.'), False)
+            messages.error(request, _(u'You cannot edit this post.'))
             post.unlock()
             return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
                                         post.page))
@@ -485,23 +481,27 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 (post.author.id == request.user.id and
                  check_privilege(privileges, 'reply') and
                  post.check_ownpost_limit('edit'))):
-            flash(_(u'You cannot edit this post.'), False)
+            messages.error(request, _(u'You cannot edit this post.'))
             post.unlock()
             return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
                                              post.page))
     elif topic:
         if topic.hidden:
             if not check_privilege(privileges, 'moderate'):
-                flash(_(u'You cannot reply in this topic because it was '
-                        u'deleted by a moderator.'), False)
+                messages.error(request,
+                    _(u'You cannot reply in this topic because it was '
+                      u'deleted by a moderator.'))
                 return HttpResponseRedirect(url_for(topic))
         elif topic.locked:
             if not check_privilege(privileges, 'moderate'):
-                flash(_(u'You cannot reply to this topic because it was locked.'))
+                messages.error(request,
+                    _(u'You cannot reply to this topic because '
+                      u'it was locked.'))
                 return HttpResponseRedirect(url_for(topic))
             else:
-                flash(_(u'You are replying to a locked topic. Please note that '
-                        'this may be considered as impolite!'), False)
+                messages.error(request,
+                    _(u'You are replying to a locked topic. '
+                      u'Please note that this may be considered as impolite!'))
         elif quote and quote.hidden:
             if not check_privilege(privileges, 'moderate'):
                 return abort_access_denied(request)
@@ -555,8 +555,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             except IndexError:
                 pass
             else:
-                flash(_(u'This topic was already created. Please think about '
-                        'editing your topic before creating a new one.'))
+                messages.info(request,
+                    _(u'This topic was already created. Please think about '
+                      u'editing your topic before creating a new one.'))
                 return HttpResponseRedirect(url_for(doublepost.topic))
 
         if not topic and newtopic or firstpost:
@@ -612,7 +613,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             subscription = Subscription(user=request.user, content_object=topic)
             subscription.save()
 
-        flash(_(u'The post was saved successfully.'), True)
+        messages.success(request, _(u'The post was saved successfully.'))
         if newtopic:
             return HttpResponseRedirect(url_for(post.topic))
         else:
@@ -688,7 +689,7 @@ def change_status(request, topic_slug, solved=None, locked=None):
             msg = _(u'The topic was marked as solved.')
         else:
             msg = _(u'The topic was marked as unsolved.')
-        flash(msg, True)
+        messages.success(request, msg)
     if locked is not None:
         if not have_privilege(request.user, topic.forum, CAN_MODERATE):
             return AccessDeniedResponse()
@@ -698,7 +699,7 @@ def change_status(request, topic_slug, solved=None, locked=None):
             msg = _(u'The topic was locked.')
         else:
             msg = _(u'The topic was unlocked.')
-        flash(msg)
+        messages.info(request, msg)
     topic.forum.invalidate_topic_cache()
 
     return HttpResponseRedirect(url_for(topic))
@@ -721,7 +722,8 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
         try:
             obj = cls.objects.get(slug=slug)
         except ObjectDoesNotExist:
-            flash(_(u'There is no “%(slug)s“ anymore.') % {'slug': slug}, False)
+            messages.error(request,
+                _(u'There is no “%(slug)s“ anymore.') % {'slug': slug})
             return HttpResponseRedirect(href('forum'))
 
         if not have_privilege(request.user, obj, CAN_READ):
@@ -729,7 +731,7 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
         if not Subscription.objects.user_subscribed(request.user, obj):
             # there's no such subscription yet, create a new one
             Subscription(user=request.user, content_object=obj).save()
-            flash(flasher)
+            messages.info(request, flasher)
         # redirect the user to the page he last watched
         if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
             return HttpResponseRedirect(request.GET['next'])
@@ -753,7 +755,8 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
         try:
             obj = cls.objects.get(slug=slug)
         except ObjectDoesNotExist:
-            flash(_(u'There is no “%(slug)s“ anymore.') % {'slug': slug}, False)
+            messages.error(request, _(u'There is no “%(slug)s“ anymore.')
+                                      % {'slug': slug})
             return HttpResponseRedirect(href('forum'))
 
         try:
@@ -763,7 +766,7 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
         else:
             # there's already a subscription for this forum, remove it
             subscription.delete()
-            flash(flasher)
+            messages.info(request, flasher)
         # redirect the user to the page he last watched
         if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
             return HttpResponseRedirect(request.GET['next'])
@@ -800,7 +803,7 @@ def report(request, topic_slug):
     if not have_privilege(request.user, topic.forum, CAN_READ):
         return abort_access_denied(request)
     if topic.reported:
-        flash(_(u'This topic was already reported.'))
+        messages.info(request, _(u'This topic was already reported.'))
         return HttpResponseRedirect(url_for(topic))
 
     if request.method == 'POST':
@@ -819,7 +822,7 @@ def report(request, topic_slug):
                                   {'topic': topic, 'text': data['text']})
 
             cache.delete('forum/reported_topic_count')
-            flash(_(u'The topic was reported.'), True)
+            messages.success(request, _(u'The topic was reported.'))
             return HttpResponseRedirect(url_for(topic))
     else:
         form = ReportTopicForm()
@@ -853,7 +856,7 @@ def reportlist(request):
         if form.is_valid():
             d = form.cleaned_data
             if not d['selected']:
-                flash(_(u'No topics selected.'), False)
+                messages.error(request, _(u'No topics selected.'))
             else:
                 # We select all topics that have been selected and also
                 # select the regarding forum, 'cause we will check for the
@@ -874,10 +877,9 @@ def reportlist(request):
                 cache.delete('forum/reported_topic_count')
                 topics = filter(lambda t: t.id not in t_ids_mod, topics)
                 if len(topics_selected) == len(t_ids_mod):
-                    flash(_(u'The selected tickets have been closed.'),
-                          True)
+                    messages.success(request, _(u'The selected tickets have been closed.'))
                 else:
-                    flash(_(u'Only a subset of selected tickets has been '
+                    messages.success(request, _(u'Only a subset of selected tickets has been '
                         u'closed, considering your moderation privileges '
                         u'for the regarding forums.'))
     else:
@@ -901,14 +903,13 @@ def reported_topics_subscription(request, mode):
         if not request.user.can('manage_topics'):
             return AccessDeniedResponse()
         users.add(request.user.id)
-        flash(_(u'A notification will be sent when a topic is reported.'), True)
+        messages.success(request, _(u'A notification will be sent when a topic is reported.'))
     elif mode == 'unsubscribe':
         try:
             users.remove(request.user.id)
         except KeyError:
             pass
-        flash(_(u'You will not be notified anymore when a topic is '
-                'reported.'), True)
+        messages.success(request, _(u'You will not be notified anymore when a topic is reported.'))
 
     storage['reported_topics_subscribers'] = ','.join(str(i) for i in users)
 
@@ -1047,7 +1048,7 @@ def splittopic(request, topic_slug, page=1):
 
     post_ids = request.session.get('_split_post_ids', {})
     if not post_ids.get(topic_slug, None):
-        flash(_(u'No post selected.'))
+        messages.info(request, _(u'No post selected.'))
         return HttpResponseRedirect(old_topic.get_absolute_url())
     else:
         post_ids = post_ids[topic_slug]
@@ -1068,7 +1069,7 @@ def splittopic(request, topic_slug, page=1):
             # Sanity check to not circulary split topics to the same topic
             # (they get erased in that case)
             if data['action'] != 'new' and data['topic'].slug == old_topic.slug:
-                flash(_(u'You cannot set this topic as target.'), False)
+                messages.error(request, _(u'You cannot set this topic as target.'))
                 return HttpResponseRedirect(request.path)
 
             posts = list(posts)
@@ -1093,8 +1094,9 @@ def splittopic(request, topic_slug, page=1):
                 del request.session['_split_post_ids']
 
             except ValueError:
-                flash(_(u'You cannot move a topic into a category. '
-                        'Please choose a forum.'), False)
+                messages.error(request,
+                    _(u'You cannot move a topic into a category. '
+                      u'Please choose a forum.'))
                 return HttpResponseRedirect(request.path)
 
             new_forum = new_topic.forum
@@ -1153,8 +1155,9 @@ def restore_post(request, post_id):
         return abort_access_denied(request)
     post.hidden = False
     post.save()
-    flash(_(u'The post by “%(user)s“ was made visible.')
-          % {'user': post.author.username}, True)
+    messages.success(request,
+        _(u'The post by “%(user)s“ was made visible.')
+          % {'user': post.author.username})
     return HttpResponseRedirect(url_for(post))
 
 
@@ -1186,19 +1189,19 @@ def delete_post(request, post_id, action='hide'):
             msg = _(u'The first post of a topic cannot be deleted.')
         else:
             msg = _(u'The first post of a topic cannot be hidden.')
-        flash(msg, False)
+        messages.error(request, msg)
     else:
         if action == 'hide':
             post.hidden = True
             post.save()
-            flash(_(u'The post by “%(user)s“ was hidden.')
-                  % {'user': post.author.username}, True)
+            messages.success(request, _(u'The post by “%(user)s“ was hidden.')
+                                        % {'user': post.author.username})
             return HttpResponseRedirect(url_for(post))
         elif action == 'delete':
             position = post.position
             post.delete()
-            flash(_(u'The post by “%(user)s“ was deleted.')
-                  % {'user': post.author.username}, True)
+            messages.success(request, _(u'The post by “%(user)s“ was deleted.')
+                                        % {'user': post.author.username})
             page = max(0, position) // POSTS_PER_PAGE + 1
             url = href('forum', 'topic', topic.slug, *(page != 1 and (page,) or ()))
             return HttpResponseRedirect(url)
@@ -1230,7 +1233,7 @@ def restore_revision(request, rev_id):
     if not have_privilege(request.user, rev.post.topic.forum, CAN_MODERATE):
         return abort_access_denied(request)
     rev.restore(request)
-    flash(_(u'An old revision of the post was restored.'), True)
+    messages.success(request, _(u'An old revision of the post was restored.'))
     return HttpResponseRedirect(href('forum', 'post', rev.post_id))
 
 
@@ -1246,8 +1249,8 @@ def restore_topic(request, topic_slug):
         return abort_access_denied(request)
     topic.hidden = False
     topic.save()
-    flash(_(u'The topic “%(topic)s“ was restored.') % {'topic': topic.title},
-          True)
+    messages.success(request,
+        _(u'The topic “%(topic)s“ was restored.') % {'topic': topic.title})
     topic.forum.invalidate_topic_cache()
     return HttpResponseRedirect(url_for(topic))
 
@@ -1271,26 +1274,27 @@ def delete_topic(request, topic_slug, action='hide'):
 
     if request.method == 'POST':
         if 'cancel' in request.POST:
-            flash(_(u'Action canceled.'))
+            messages.info(request, _(u'Action canceled.'))
         else:
             if action == 'hide':
                 topic.hidden = True
                 topic.save()
                 redirect = url_for(topic)
-                flash(_(u'The topic “%(topic)s“ was hidden.')
-                      % {'topic': topic.title}, True)
+                messages.success(request, _(u'The topic “%(topic)s“ was hidden.')
+                                            % {'topic': topic.title})
 
             elif action == 'delete':
                 send_deletion_notification(request.user, topic, request.POST.get('reason', None))
                 topic.delete()
                 redirect = url_for(topic.forum)
-                flash(_(u'The topic “%(topic)“ was deleted successfully.')
-                      % {'topic': topic.title}, True)
+                messages.success(request,
+                    _(u'The topic “%(topic)“ was deleted successfully.')
+                      % {'topic': topic.title})
 
             topic.forum.invalidate_topic_cache()
             return HttpResponseRedirect(redirect)
     else:
-        flash(render_template('forum/delete_topic.html', {'topic': topic, 'action': action}))
+        messages.info(request, render_template('forum/delete_topic.html', {'topic': topic, 'action': action}))
 
     return HttpResponseRedirect(url_for(topic))
 
@@ -1405,17 +1409,19 @@ def markread(request, slug=None):
     """
     user = request.user
     if user.is_anonymous:
-        flash(_(u'Please login to mark posts as read.'))
+        messages.info(request, _(u'Please login to mark posts as read.'))
         return HttpResponseRedirect(href('forum'))
     if slug:
         forum = Forum.objects.get(slug=slug)
         forum.mark_read(user)
-        flash(_(u'The forum “%(forum)s“ was marked as read.') %
-              {'forum': forum.name}, True)
+        user.save()
+        messages.success(request,
+            _(u'The forum “%(forum)s“ was marked as read.') %
+              {'forum': forum.name})
         return HttpResponseRedirect(url_for(forum))
     else:
         mark_all_forums_read(user)
-        flash(_(u'All forums were marked as read.'), True)
+        messages.success(request, _(u'All forums were marked as read.'))
     return HttpResponseRedirect(href('forum'))
 
 
@@ -1426,8 +1432,8 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     page = int(page)
 
     if action != 'author' and page > MAX_PAGES_TOPICLIST:
-        flash(_(u'You can only display the last %(n)d pages.')
-              % {'n': MAX_PAGES_TOPICLIST})
+        messages.info(request, _(u'You can only display the last %(n)d pages.')
+                                 % {'n': MAX_PAGES_TOPICLIST})
         return HttpResponseRedirect(href('forum'))
 
     topics = Topic.objects.order_by('-last_post').values_list('id', flat=True)
@@ -1458,7 +1464,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     elif action == 'author':
         user = user and User.objects.get(user) or request.user
         if user.is_anonymous:
-            flash(_(u'You need to be logged in to use this function.'))
+            messages.info(request, _(u'You need to be logged in to use this function.'))
             return abort_access_denied(request)
         topics = topics.filter(posts__author=user).distinct()
 
@@ -1553,7 +1559,7 @@ def next_topic(request, topic_slug):
                                 last_post__gt=this.last_post) \
                         .order_by('last_post').all()
     if not next.exists():
-        flash(_(u'No recent topics within this forum.'))
+        messages.info(request, _(u'No recent topics within this forum.'))
         next = [this.forum]
     return HttpResponseRedirect(url_for(next[0]))
 
@@ -1566,7 +1572,7 @@ def previous_topic(request, topic_slug):
                                     last_post__lt=this.last_post) \
                             .order_by('-last_post').all()
     if not previous.exists():
-        flash(_(u'No older topics within this forum.'))
+        messages.info(request, _(u'No older topics within this forum.'))
         previous = [this.forum]
     return HttpResponseRedirect(url_for(previous[0]))
 
@@ -1631,10 +1637,10 @@ def forum_edit(request, slug=None, parent=None):
                     msg = _(u'The forum “%(forum)s“ was changed successfully.')
                 else:
                     msg = _(u'The forum “%(forum)s“ was created successfully.')
-                flash(msg % {'forum': forum.name}, True)
+                messages.success(request, msg % {'forum': forum.name})
                 return HttpResponseRedirect(href('forum'))
         else:
-            flash(_(u'Errors occurred, please fix them.'), False)
+            trigger_fix_errors_message(request)
 
     else:
         if slug is None:

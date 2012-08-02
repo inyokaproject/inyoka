@@ -11,6 +11,7 @@
 
 
 <form action="{{ href('wiki', page.name, action='rename')|e }}" method="post">
+  {{ csrf_token() }}
   <p><small>
     {%- trans -%}
       If you rename this page, all revisions will be renamed. The old page will redirect to the new one.
