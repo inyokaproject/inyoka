@@ -21,7 +21,8 @@ from pygments.util import ClassNotFound
 from pygments.styles.friendly import FriendlyStyle
 
 
-_pygments_formatter = HtmlFormatter(style='colorful', cssclass='notranslate syntax',
+_pygments_formatter = HtmlFormatter(style='colorful',
+                                    cssclass='notranslate syntax',
                                     linenos='table')
 
 # split string into words, spaces, punctuation and markup tags

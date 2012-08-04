@@ -46,7 +46,8 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
         Returns a response with a template rendered with the given context.
         """
         template_name = self.get_template_names()[0]
-        return self.response_class(template_name=template_name, context=context)
+        return self.response_class(template_name=template_name,
+                                   context=context)
 
 
 class TemplateView(TemplateResponseMixin, base.TemplateView):
