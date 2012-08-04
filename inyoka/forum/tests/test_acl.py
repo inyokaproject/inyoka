@@ -35,3 +35,12 @@ class TestForumAcl(TestCase):
         self.assertEqual(acl.PRIVILEGES_BITS['create_poll'], acl.CAN_CREATE_POLL)
         self.assertEqual(acl.PRIVILEGES_BITS['sticky'], acl.CAN_STICKY)
         self.assertEqual(acl.PRIVILEGES_BITS['moderate'], acl.CAN_MODERATE)
+
+    def test_join_flags(self):
+        self.assertEqual(acl.join_flags(), acl.DISALLOW_ALL)
+        self.assertEqual(acl.join_flags(acl.CAN_READ, acl.CAN_CREATE, acl.CAN_REPLY),
+                         26)
+        # convenience method to join by name
+        self.assertEqual(acl.join_flags('read', 'create', 'reply'), 26)
+        # once DISALLOW_ALL is there, everything get's disallowed
+        self.assertEqual(acl.join_flags('read', 'create', 'reply', acl.DISALLOW_ALL), 0)
