@@ -44,3 +44,15 @@ class TestForumAcl(TestCase):
         self.assertEqual(acl.join_flags('read', 'create', 'reply'), 26)
         # once DISALLOW_ALL is there, everything get's disallowed
         self.assertEqual(acl.join_flags('read', 'create', 'reply', acl.DISALLOW_ALL), 0)
+
+    def test_split_bits(self):
+        self.assertEqual(list(acl.split_bits()), [])
+        self.assertEqual(list(acl.split_bits(None)), [])
+        self.assertEqual(list(acl.split_bits(26)), [2, 8, 16])
+
+    def test_split_negative_positive(self):
+        self.assertEqual(acl.split_negative_positive('-2,-8,8'),
+                         (10, 8))
+        # ignores invalid numbers
+        self.assertEqual(acl.split_negative_positive('-2,-8,something,8'),
+                         (10, 8))
