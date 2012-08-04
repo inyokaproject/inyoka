@@ -133,7 +133,6 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-import unicodedata
 from functools import partial
 from urlparse import urlsplit
 
@@ -141,7 +140,7 @@ from django.utils.translation import ugettext as _
 
 from inyoka.utils.css import filter_style
 from inyoka.utils.urls import href
-from inyoka.wiki.parser.lexer import escape, Lexer
+from inyoka.wiki.parser.lexer import escape, unescape_string, Lexer
 from inyoka.wiki.parser.machine import Renderer, RenderContext
 from inyoka.wiki.parser.transformers import DEFAULT_TRANSFORMERS
 from inyoka.wiki.parser.constants import HTML_COLORS
@@ -211,64 +210,6 @@ def stream(instructions, context=None, format=None):
     if context is None:
         context = RenderContext()
     return Renderer(instructions).stream(context, format)
-
-
-def unescape_string(string):
-    """
-    Unescape a string with python semantics but silent fallback.
-    """
-    result = []
-    write = result.append
-    simple_escapes = {
-        'a':    '\a',
-        'n':    '\n',
-        'r':    '\r',
-        'f':    '\f',
-        't':    '\t',
-        'v':    '\v',
-        '\\':   '\\',
-        '"':    '"',
-        "'":    "'",
-        '0':    '\x00'
-    }
-    unicode_escapes = {
-        'x':    2,
-        'u':    4,
-        'U':    8
-    }
-    chariter = iter(string)
-    next_char = chariter.next
-
-    try:
-        for char in chariter:
-            if char == '\\':
-                char = next_char()
-                if char in simple_escapes:
-                    write(simple_escapes[char])
-                elif char in unicode_escapes:
-                    seq = [next_char() for x in xrange(unicode_escapes[char])]
-                    try:
-                        write(unichr(int(''.join(seq), 16)))
-                    except ValueError:
-                        pass
-                elif char == 'N' and next_char() != '{':
-                    seq = []
-                    while True:
-                        char = next_char()
-                        if char == '}':
-                            break
-                        seq.append(char)
-                    try:
-                        write(unicodedata.lookup(u''.join(seq)))
-                    except KeyError:
-                        pass
-                else:
-                    write('\\' + char)
-            else:
-                write(char)
-    except StopIteration:
-        pass
-    return u''.join(result)
 
 
 def _parse_align_args(args, kwargs):

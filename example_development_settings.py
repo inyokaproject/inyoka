@@ -33,3 +33,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # uncomment to activate debug toolbar support
 #MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
 #INSTALLED_APPS += ('debug_toolbar',)
+
+SEARCH_NODES = ['127.0.0.1:9200']

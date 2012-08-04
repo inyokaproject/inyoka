@@ -215,6 +215,7 @@ def split_negative_positive(value):
             negative |= abs(bit)
     return negative, positive
 
+
 # circular imports
 from inyoka.forum.models import Privilege, Forum
 from inyoka.portal.user import DEFAULT_GROUP_ID

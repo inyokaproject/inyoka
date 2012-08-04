@@ -277,3 +277,6 @@ DEFAULT_TRANSFORMERS = [AutomaticParagraphs(),
                         SmileyInjector(), FootnoteSupport(),
                         HeadlineProcessor(), AutomaticStructure(),
                         KeyHandler()]
+
+
+from inyoka.wiki.parser import nodes

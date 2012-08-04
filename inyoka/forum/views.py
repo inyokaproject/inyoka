@@ -573,7 +573,6 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
             topic.save()
             topic.forum.invalidate_topic_cache()
-            topic.reindex()
 
             if check_privilege(privileges, 'create_poll'):
                 for poll in polls:

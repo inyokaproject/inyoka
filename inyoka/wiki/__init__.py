@@ -59,10 +59,6 @@
         The parsers for the parser blocks.  Do not confuse this with the
         `parser` package which implements the wiki parser as such.
 
-    `search`
-        This module implements the search hooks for the search system from the
-        `inyoka.utils.search` module.
-
     `storage`
         The wiki storage system allows one to flag pages as behaving in a
         special way.  For example a page can act as inter wiki link mapping
@@ -85,6 +81,3 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-
-# register search auth decider
-import inyoka.wiki.search

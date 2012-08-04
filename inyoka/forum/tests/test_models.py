@@ -7,6 +7,7 @@ from django.test import TestCase
 from inyoka.forum.models import Forum, Topic, Post, Attachment
 from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
+from inyoka.utils.test import SearchTestCase
 
 
 
@@ -248,7 +249,7 @@ class TestPostMove(TestCase):
         self.assertEqual(Forum.objects.get(id=self.forum.id).last_post, None)
 
 
-class PostDeletionTest(TestCase):
+class PostDeletionTest(SearchTestCase):
     fixtures = ['test_post_delete']
 
     def test_post_delete_at_end(self):

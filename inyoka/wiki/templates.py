@@ -31,7 +31,7 @@ import math
 import random
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext as _
-from inyoka.wiki.parser import unescape_string, escape
+from inyoka.wiki.parser.lexer import unescape_string, escape
 from inyoka.wiki.utils import debug_repr, simple_match
 from inyoka.utils.parsertools import TokenStream
 

@@ -99,9 +99,10 @@ EMAIL_SUBJECT_PREFIX = u'%s: ' % BASE_DOMAIN_NAME
 
 EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 
-# path to the xapian database
-# Examples: /path/to/inyoka.xapdb, or tcpsrv://localhost:3000/
-XAPIAN_DATABASE = join(BASE_PATH, 'inyoka.xapdb')
+SEARCH_NODES = []
+
+# Default blocksize to delmit queries to the search index
+SEARCH_INDEX_BLOCKSIZE = 5000
 
 # imagemagick path. leave empty for auto detection
 IMAGEMAGICK_PATH = ''
@@ -217,6 +218,7 @@ INSTALLED_APPS = (
     'django_mobile',
     'django_hosts',
 )
+
 
 # don't use migrations but just syncdb
 SOUTH_TESTS_MIGRATE = False

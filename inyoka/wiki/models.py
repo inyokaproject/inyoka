@@ -91,7 +91,6 @@ from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 from werkzeug import cached_property
 
-from inyoka.wiki.storage import storage
 from inyoka.wiki.tasks import update_related_pages, render_article, update_object_list
 from inyoka.utils import magic
 from inyoka.utils.cache import request_cache
@@ -100,12 +99,10 @@ from inyoka.utils.dates import format_specific_datetime, format_datetime, \
     datetime_to_timezone
 from inyoka.utils.files import get_filename
 from inyoka.utils.urls import href
-from inyoka.utils.search import search
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.templating import render_template
 from inyoka.utils.parsertools import MultiMap
 from inyoka.utils.local import current_request
-from inyoka.utils.html import striptags
 from inyoka.utils.text import join_pagename, get_pagetitle, normalize_pagename
 from inyoka.utils.diff3 import generate_udiff, prepare_udiff, \
     get_close_matches
@@ -872,9 +869,6 @@ class Page(models.Model):
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
 
-        # searchindex
-        search.queue('w', self.id)
-
     def prune(self):
         """Clear the page cache."""
         render_article.delay(self)
@@ -1180,16 +1174,6 @@ class Revision(models.Model):
         """
         return self.text.render(page=self.page)
 
-    @property
-    def short_description(self):
-        """
-        Returns a short, stripped excerpt from the beginning of the article.
-        """
-        excerpt = striptags(self.rendered_text)
-        # search for space to not break up single words
-        pos = excerpt.find(' ', 200)
-        return excerpt[:pos]
-
     def get_absolute_url(self, action=None):
         return href('wiki', self.page.name, rev=self.id)
 
@@ -1256,3 +1240,4 @@ class MetaData(models.Model):
 # imported here because of circular references
 from inyoka.wiki import parser, templates
 from inyoka.wiki.parser import nodes
+from inyoka.wiki.storage import storage

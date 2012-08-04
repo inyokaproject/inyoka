@@ -8,14 +8,34 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import os
 import gc
+import time
+import logging
+import shutil
+import subprocess
+import tempfile
+import unittest
 
-from django.conf import settings
+from copy import copy
+from functools import wraps
+
+import pyes
+import pyes.exceptions
+
+from requests.models import MaxRetryError
+
+from django.conf import settings, UserSettingsHolder
 from django.http import HttpRequest
+from django.test import TestCase
 from django.test.client import Client
 from django.utils.importlib import import_module
 
 from inyoka.portal.user import User
+from inyoka.utils.search import autodiscover, SearchSystem
+
+
+START_TIMEOUT = 15
 
 
 def profile_memory(func):
@@ -124,3 +144,88 @@ class InyokaClient(Client):
             return True
         else:
             return False
+
+
+class SearchTestCase(TestCase):
+
+    started = False
+
+    @classmethod
+    def setUpClass(cls):
+        """Starts the server."""
+        from django.conf import settings
+        if not cls.started:
+            # Raises an exception if not.
+            settings.TEST_MODE = True
+            autodiscover()
+            cls.start_server()
+            cls.started = True
+
+    @classmethod
+    def tearDownClass(cls):
+        """Stops the server if necessary."""
+        if cls.started:
+            cls.stop_server()
+            cls.started = False
+            shutil.rmtree(cls.tmpdir)
+
+    def setUp(self):
+        try:
+            self.search = SearchSystem(os.environ['ELASTIC_HOSTNAME'])
+            autodiscover()
+            from inyoka.utils.search import search
+            self.search.indices = search.indices
+            self.search.get_connection().delete_index('_all')
+        except (pyes.exceptions.ElasticSearchException,
+                MaxRetryError,
+                KeyError):
+            raise unittest.SkipTest('No ElasticSearch started or environment variables missing')
+
+    def tearDown(self):
+        try:
+            self.search.get_connection().delete_index('_all')
+        except (pyes.exceptions.ElasticSearchException,
+                MaxRetryError):
+            pass
+
+    def flush_indices(self, indices=None):
+        if indices is None:
+            indices = self.search.indices.iterkeys()
+        if not isinstance(indices, (list, set, tuple)):
+            indices = [indices]
+        return self.search.get_connection().flush(indices)
+
+    @classmethod
+    def start_server(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        logfile = 'elasticsearch-test.log'
+        hostname = os.environ['ELASTIC_HOSTNAME']
+        cls.process = subprocess.Popen([
+                os.path.join(
+                    os.environ['ELASTIC_HOME'], 'bin', 'elasticsearch'),
+                '-f',
+                '-D', 'es.path.data=' + os.path.join(cls.tmpdir, 'data'),
+                '-D', 'es.path.work=' + os.path.join(cls.tmpdir, 'work'),
+                '-D', 'es.path.logs=' + os.path.join(cls.tmpdir, 'logs'),
+                '-D', 'es.cluster.name=inyoka.testing',
+                '-D', 'es.http.port=' + hostname.split(':', 1)[-1],
+                ], stdout=open(logfile, 'w'), stderr=subprocess.STDOUT)
+
+        start = time.time()
+
+        while True:
+            time.sleep(0.1)
+
+            with open(logfile, 'r') as f:
+                contents = f.read()
+                if 'started' in contents:
+                    return
+
+                if time.time() - start > START_TIMEOUT:
+                    log.info('ElasticSearch could be started: :\n%s' % contents)
+                    return
+
+    @classmethod
+    def stop_server(cls):
+        cls.process.terminate()
+        cls.process.wait()
