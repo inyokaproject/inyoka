@@ -72,7 +72,11 @@
         {%- endif %}
         {%- if article.comments_enabled %}
           <a href="{{ article|url('comments') }}" class="comments">
-            {%- trans count=article.comment_count %}{{ count }} comment{% pluralize %}{{ count }} comments{% endtrans -%}
+            {%- trans pluralindicator=article.comment_count, count=article.comment_count|hnumber(_('#Comment.Gender'))|capitalize -%}
+              {{ count }} comment
+            {%- pluralize pluralindicator -%}
+              {{ count }} comments
+            {%- endtrans -%}
           </a>
         {%- endif %}
       </div>

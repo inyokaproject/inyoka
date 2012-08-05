@@ -8,20 +8,24 @@
     :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.views.generic import edit, base, list
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
-from inyoka.utils.flashing import flash
-from inyoka.utils.html import escape
 from inyoka.utils.http import TemplateResponse, HttpResponseRedirect
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
+
+
+def trigger_fix_errors_message(request):
+    messages.error(request, _(u'Errors occurred, please fix them.'))
 
 
 class TemplateResponseMixin(base.TemplateResponseMixin):
@@ -37,7 +41,8 @@ class TemplateResponseMixin(base.TemplateResponseMixin):
         Returns a response with a template rendered with the given context.
         """
         template_name = self.get_template_names()[0]
-        return self.response_class(template_name=template_name, context=context)
+        return self.response_class(template_name=template_name,
+                                   context=context)
 
 
 class EditMixin(object):
@@ -54,7 +59,7 @@ class EditMixin(object):
         else:
             message = _(u'{verbose_name} “{object_name}” was successfully changed.')
 
-        flash(message.format(**format_args), True)
+        messages.success(self.request, message.format(**format_args))
         return response
 
     def get_success_url(self):
@@ -201,7 +206,8 @@ class BaseDeleteView(edit.BaseDeleteView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        flash(render_template(self.template_name, {'object': self.object}))
+        messages.info(request,
+            render_template(self.template_name, {'object': self.object}))
         return HttpResponseRedirect(self.redirect_url)
 
     def delete(self, request, *args, **kwargs):
@@ -210,14 +216,14 @@ class BaseDeleteView(edit.BaseDeleteView):
 
     def post(self, request, *args, **kwargs):
         if 'cancel' in request.POST:
-            flash(_(u'Canceled!'))
+            messages.info(request, _('Canceled.'))
         else:
             super(BaseDeleteView, self).post(request, *args, **kwargs)
             format_args = {
                 'verbose_name': self.model._meta.verbose_name,
                 'object_name': escape(unicode(self.object)),
             }
-            flash(self.message.format(**format_args), True)
+            messages.success(request, self.message.format(**format_args))
         return HttpResponseRedirect(self.redirect_url)
 
 

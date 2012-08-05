@@ -227,11 +227,12 @@
         <div class="message global">{{ GLOBAL_MESSAGE }}</div>
       {%- endif %}
 
+      {%- if MESSAGES %}
       {%- for message in MESSAGES %}
-        <div class="message{% if message.success == true %} success{% elif message.success == false %} fail{% endif %}">
-          {{ message.text }}
-        </div>
+				<div class="message {{ message.tags }}">{{ message }}</div>
       {%- endfor %}
+      {%- endif %}
+
       <!--[if lt IE 8]>
       <div class="message fail">{{ _('Please install at least Internet Explorer 8.') }}</div>
       <![endif]-->
@@ -320,29 +321,5 @@
    {% block additional_scripts %}
    {% endblock %}
 
-    {%- if not USER.is_authenticated %}
-    <form action="{{ href('portal', 'login', next=CURRENT_URL) }}" method="post" id="js_login_form">
-      <div>
-        <label for="js_login_username">
-          {% trans %}Username or email address{% endtrans %}
-        </label>
-        <input name="username" id="js_login_username" />
-        <label for="js_login_password">{% trans %}Password{% endtrans %}</label>
-        <input type="password" name="password" id="js_login_password" />
-        <label for="js_login_permanent"
-               title="{% trans %}Don’t choose this option if you are using a public computer.{% endtrans %}">
-          {% trans %}Keep me logged in{% endtrans %}
-        </label>
-        <input type="checkbox" name="permanent" id="js_login_permanent" />
-        <a href="{{ href('portal', 'lost_password') }}">{% trans %}Lost password?{% endtrans %}</a>
-        <input type="submit" value="Login" class="submit" />
-        <input type="hidden" name="redirect" value="{{ CURRENT_URL|e }}" />
-      </div>
-    </form>
-
-    <script type="text/javascript">
-      var input = OpenIDHelper($('input[id="js_login_username"]'), {{ OPENID_PROVIDERS|jsonencode }});
-    </script>
-    {%- endif %}
   </body>
 </html>

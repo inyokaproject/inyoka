@@ -68,6 +68,40 @@ def split_bits(mask=None):
             yield bits
 
 
+def join_bits(result, forum_ids, rows):
+    """
+    Join the positive bits of all forums and subtract the negative ones of
+    them.
+    """
+    negative_set = dict(map(lambda a: (a, set()), forum_ids))
+    for forum_id, _, __, positive, negative in rows:
+        result[forum_id] |= positive
+        negative_set[forum_id].add(negative)
+    for forum_id, bits in negative_set.iteritems():
+        for bit in bits:
+            if result[forum_id] & bit:
+                result[forum_id] -= bit
+    return result
+
+
+def split_negative_positive(value):
+    """Split a string into negative and positive permissions.
+
+    :return: A tuple of joined (negative, positive) permissions.
+    """
+    positive, negative = 0, 0
+    for bit in value.split(','):
+        try:
+            bit = int(bit)
+        except ValueError:
+            continue
+        if bit > 0:
+            positive |= abs(bit)
+        else:
+            negative |= abs(bit)
+    return negative, positive
+
+
 def get_forum_privileges(user, forum):
     """Get a dict of all the privileges for a user."""
     return get_privileges(user, forums=[forum])[forum.id]
@@ -127,26 +161,11 @@ def get_privileges(user, forums):
         forum_ids = forums.values_list('id', flat=True)
     privilege_map = _get_privilege_map(user, forum_ids)
 
-    def join_bits(result, rows):
-        """
-        Join the positive bits of all forums and subtract the negative ones of
-        them.
-        """
-        negative_set = dict(map(lambda a: (a, set()), forum_ids))
-        for forum_id, _, __, positive, negative in rows:
-            result[forum_id] |= positive
-            negative_set[forum_id].add(negative)
-        for forum_id, bits in negative_set.iteritems():
-            for bit in bits:
-                if result[forum_id] & bit:
-                    result[forum_id] -= bit
-        return result
-
     result = dict(map(lambda a: (a, DISALLOW_ALL), forum_ids))
     # first join the group privileges
-    result = join_bits(result, [row for row in privilege_map if not row[1]])
+    result = join_bits(result, forum_ids, [row for row in privilege_map if not row[1]])
     # now join the user privileges (this allows to override group privileges)
-    result = join_bits(result, [row for row in privilege_map if row[1]])
+    result = join_bits(result, forum_ids, [row for row in privilege_map if row[1]])
     return result
 
 
@@ -196,24 +215,6 @@ filter_visible = lambda u, f=None, priv=CAN_READ, perm=None: filter(u, f, priv, 
 
 #: Shortcut to filter all invisible forums
 filter_invisible = lambda u, f=None, priv=CAN_READ, perm=None: filter(u, f, priv, perm, ops.ne)
-
-
-def split_negative_positive(value):
-    """Split a string into negative and positive permissions.
-
-    :return: A tuple of joined (negative, positive) permissions.
-    """
-    positive, negative = 0, 0
-    for bit in value.split(','):
-        try:
-            bit = int(bit)
-        except ValueError:
-            continue
-        if bit > 0:
-            positive |= abs(bit)
-        else:
-            negative |= abs(bit)
-    return negative, positive
 
 # circular imports
 from inyoka.forum.models import Privilege, Forum

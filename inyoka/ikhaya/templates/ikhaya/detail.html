@@ -125,6 +125,7 @@
             <td>
               {{ form.errors.text }}
               <form action="{{ article|url }}#new_comment" method="post" id="new_comment">
+                {{ csrf_token() }}
                 {{ form.text }}
                 <div class="note">{{ form.fields.text.help_text }}</div>
                 {% if form.data.comment_id and USER.can('comment_edit') %}

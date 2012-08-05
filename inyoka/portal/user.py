@@ -9,7 +9,6 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import os
 import random
 import string
 from datetime import datetime
@@ -22,12 +21,12 @@ from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.utils import encode_confirm_data, classproperty
 from inyoka.utils.decorators import deferred
 from inyoka.utils.mail import send_mail
-from inyoka.utils.html import escape
 from inyoka.utils.user import normalize_username, get_hexdigest,\
     check_password, gen_activation_key
 from inyoka.utils.local import current_request
@@ -796,11 +795,6 @@ class User(models.Model):
         if self.new_password_key:
             self.new_password_key = None
         self.save()
-
-    def get_and_delete_messages(self, *args, **kwargs):
-        """Stub for to fix openid integration as it's calling the django.messages API"""
-        #TODO: this method does not exist in Django 1.4 anymore, so remove it if we upgrade!
-        return []
 
     @classproperty
     def SYSTEM_USER(cls):

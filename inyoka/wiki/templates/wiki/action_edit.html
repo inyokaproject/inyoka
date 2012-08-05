@@ -17,6 +17,7 @@
 {% set action = 'edit' %}
 {% block wiki_content %}
   <form enctype="multipart/form-data" action="?action=edit" method="post">
+    {{ csrf_token() }}
     <p>
       {#{% trans license_link=href('wiki', 'Wiki/Lizenz'),
                reference_link=href('wiki', 'Wiki/Referenz'),

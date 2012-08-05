@@ -11,7 +11,6 @@
 from PIL import Image
 from django.utils.translation import ugettext_lazy
 from inyoka.portal.utils import UBUNTU_VERSIONS
-from inyoka.utils.urls import href
 
 
 # initialize PIL to make Image.ID available

@@ -13,18 +13,8 @@
 {% do BREADCRUMB.append('Registrierung', href('portal', 'register'), True) %}
 {% block portal_content %}
   <h3>Registrierung</h3>
-  {%- if cookie_error %}
-  <div class="message fail">
-    Aus Gründen der Sicherheit müssen Cookies im Browser aktiviert sein um
-    sich auf ubuntuusers.de registrieren und anzumelden.  Bitte aktiviere
-    Cookies im Browser und klicke auf <a href="{{ retry_link|e }}">fortfahren</a>.
-  </div>
-  <p>
-    Nähere Informationen zu Cookies finden sich in <a href="
-    {{- href('portal', 'datenschutz') }}">der Datenschutzerklärung</a>.
-  </p>
-  {%- else %}
   <form action="" method="post">
+		{{ csrf_token() }}
     {{ form.non_field_errors() }}
     <dl>
       {{ render_form(form, ['username', 'password', 'confirm_password',
@@ -43,7 +33,6 @@
     </p>
 
   </form>
-  {%- endif %}
 {% endblock %}
 
 {% block additional_scripts %}

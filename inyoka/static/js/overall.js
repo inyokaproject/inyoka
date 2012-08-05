@@ -270,24 +270,6 @@ $(document).ready(function () {
     }), ' ', $('<a>apturl</a>').attr('href', 'apt://' + $.trim($(apt).text()).split(' ').slice(3).join(',')));
   });
 
-  // the javascript powered login form
-  (function () {
-    $('#login_link').click(function () {
-      if (loginForm == null) {
-        loginForm = $('#js_login_form').prependTo('body').submit(function (event) {
-          loginForm.slideDown();
-          return true;
-        }).click(function (event) {
-          event.stopPropagation();
-        });
-      }
-      loginForm.fadeIn();
-      $('#js_login_username').focus();
-      return false;
-    });
-  })();
-
-
   $('div.code').add('pre').each(function () {
     if (this.clientHeight < this.scrollHeight) {
       $(this).before('<div class="codeblock_resizer" title="vergrößern">vergrößern</div>')
