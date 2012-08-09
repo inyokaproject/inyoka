@@ -694,7 +694,7 @@ def suggestions_unsubscribe(request):
         pass
     else:
         subscription.delete()
-        messages.info(_(u'No notifications on suggestions will be sent to you any more.'))
+        messages.info(request, _(u'No notifications on suggestions will be sent to you any more.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
