@@ -45,6 +45,7 @@
       {%- endtrans -%}
     </p>
     <form action="" method="get" class="nosubmitprotect">
+      {{ csrf_token() }}
       <input type="submit" value="{% trans %}Compare{% endtrans %}" />
       <input type="hidden" name="action" value="diff" />
 

@@ -185,6 +185,7 @@
       <div class="pathbar">
 
         <form action="{{ href('portal', 'search') }}" method="get" class="search">
+          {{ csrf_token() }}
           <div>
             <input type="text" name="query" class="search_query" value="{{ query|e }}" />
             {%- if topic %}
