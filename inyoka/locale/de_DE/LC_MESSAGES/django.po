@@ -286,7 +286,7 @@ msgstr ""
 
 #: inyoka/utils/generic.py:28
 msgid "Errors occurred, please fix them."
-msgstr ""
+msgstr "Bitte die aufgetretenen Fehler beheben."
 
 #: inyoka/utils/generic.py:58
 msgid "{verbose_name} “{object_name}” was successfully created."

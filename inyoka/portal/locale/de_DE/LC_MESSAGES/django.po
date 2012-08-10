@@ -1806,7 +1806,7 @@ msgstr[1] "%(count)s Kommentare"
 
 #: inyoka/portal/templates/portal/index.html:75
 msgid "#Comment.Gender"
-msgstr ""
+msgstr "#Comment.Gender"
 
 #: inyoka/portal/templates/portal/index.m.html:18
 msgid "Messages"

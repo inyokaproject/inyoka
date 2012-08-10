@@ -1204,7 +1204,7 @@ msgstr "Avatar von %(user)s"
 #: inyoka/forum/templates/forum/splittopic.html:78
 #: inyoka/forum/templates/forum/topic.html:267
 msgid "Link to this post"
-msgstr ""
+msgstr "Permalink zu diesem Beitrag"
 
 #: inyoka/forum/templates/forum/splittopic.html:120
 msgid "Split posts"
