@@ -10,7 +10,6 @@
 
 
 <form action="/_newpage" method="get" class="new-page-macro"><div>
-  {{ csrf_token() }}
   <input type="hidden" name="template" value="{{ template|e }}" />
   <input type="hidden" name="base" value="{{ base|e }}" />
   <input type="text" name="page" value="{{ text|e }}" />

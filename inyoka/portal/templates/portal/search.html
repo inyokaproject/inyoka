@@ -29,7 +29,6 @@
   <strong>UND&nbsp;NICHT</strong> kombiniert werden, wobei gegebenenfalls
   eine Klammer zu setzen ist.  Weitere Informationen zur Suche auf ubuntuusers.de findet man im Wiki unter <a href="{{ href('wiki', 'Suchfunktion') }}">Suchfunktion</a>.</p>
   <form action="{{ href('portal', 'search') }}" method="GET" class="search_page">
-    {{ csrf_token() }}
     <p>{{ searchform.query }}</p>
     <div class="submit">
       <input type="submit" value="Suchen" />
