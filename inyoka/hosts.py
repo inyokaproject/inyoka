@@ -25,7 +25,7 @@ def redirect_www(request):
 # names refer to our app names (used in utils.urls)!
 # regex has to be a simple name (again due to utils.urls)!
 host_patterns = patterns('',
-    host('www', '', name='www', callback=redirect_www),
+    host('www', settings.ROOT_URLCONF, name='www', callback=redirect_www),
     host('', settings.ROOT_URLCONF, name='portal'),
     host('planet', 'inyoka.planet.urls', name='planet'),
     host('ikhaya', 'inyoka.ikhaya.urls', name='ikhaya'),
