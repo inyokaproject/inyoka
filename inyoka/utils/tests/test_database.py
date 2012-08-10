@@ -68,6 +68,7 @@ class JSONTest(TestCase):
     def test_date(self):
         d = datetime.date.today()
         entry = self.manager.create(f={'d': d})
+        self.assertEqual(entry.f, {'d': d})
 
     def test_unicode(self):
         entry = self.manager.create(f={'k': u'åäö'})

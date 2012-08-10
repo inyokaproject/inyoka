@@ -143,4 +143,3 @@ class TestFileStorage(TestCase):
         finally:
             for f in created_files:
                 self.s.delete(f)
-

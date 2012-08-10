@@ -13,15 +13,16 @@ import sys
 import pytz
 from hashlib import md5
 from random import randrange
+
 from django import forms
 from django.conf import settings
 from django.core import validators
 from django.forms.widgets import Input
 from django.utils.translation import ugettext as _
+
 from inyoka.portal.user import User
 from inyoka.wiki.parser import parse, StackExhaused
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
-from inyoka.utils.flashing import flash
 from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request
 from inyoka.utils.mail import may_be_valid_mail, is_blocked_host
@@ -192,9 +193,7 @@ class CaptchaField(forms.Field):
         if current_request.user.is_authenticated and self.only_anonymous:
             return True
         solution = current_request.session.get('captcha_solution')
-        if not solution:
-            flash(_(u'You have to accept cookies!'), False)
-        elif value:
+        if value:
             h = md5(settings.SECRET_KEY)
             if isinstance(value, unicode):
                 # md5 doesn't like to have non-ascii containing unicode strings

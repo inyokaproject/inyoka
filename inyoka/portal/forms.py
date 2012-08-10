@@ -13,7 +13,6 @@ import Image
 from django import forms
 from django.forms import HiddenInput
 from django.db.models import Count
-from django.db.models import Count
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
 from django.utils import simplejson
@@ -31,7 +30,7 @@ from inyoka.utils.urls import href, is_safe_domain
 from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
     HiddenCaptchaField, EmailField, JabberField, validate_signature
 from inyoka.utils.local import current_request
-from inyoka.utils.html import escape, cleanup_html
+from inyoka.utils.html import cleanup_html
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.search import search as search_system

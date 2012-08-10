@@ -11,14 +11,17 @@
 {%- extends 'overall.html' %}
 
 {%- if page %}
-  {# XXX may not work always #}
+  {% set breadcrumbs = [] %}
   {% for part in page.title.split('/') %}
-    {%- if loop.first %}
+    {% if loop.first %}
       {% set link = href('wiki', part) %}
-    {%- else %}
-      {% set link = '%s/%s' % (link, part) %}
-    {%- endif %}
-    {% do BREADCRUMB.append(part, link, True, 0) %}
+    {% else %}
+      {% set link = link + '/' + part %}
+    {% endif %}
+    {% do breadcrumbs.append((part, link)) %}
+  {% endfor %}
+  {% for breadcrumb in breadcrumbs[::-1] %}
+    {% do BREADCRUMB.append(breadcrumb[0], breadcrumb[1], True) %}
   {% endfor %}
 {%- endif %}
 {% do BREADCRUMB.append(_('Wiki'), href('wiki'), True) %}

@@ -18,7 +18,6 @@ from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.utils.translation import get_language
 from django.utils.translation import pgettext, ugettext as _
-from inyoka.utils.local import local
 
 _str_num_re = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 _path_crop = re.compile(r'^(\.\.?/)+')

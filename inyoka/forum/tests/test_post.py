@@ -1,10 +1,9 @@
 #-*- coding: utf-8 -*-
-from django.core.cache import cache
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from inyoka.forum.models import Forum, Topic, Post
 from inyoka.portal.user import User
-from inyoka.utils.test import override_settings
 
 
 class TestPostModel(TestCase):
@@ -24,7 +23,7 @@ class TestPostModel(TestCase):
         post = Post(text=u'test1', author=self.user)
         self.topic.posts.add(post)
         self.assertEqual(Post.url_for_post(post.pk),
-                         'http://forum.inyoka.local/topic/topic/#post-1')
+                         'http://forum.inyoka.local/topic/topic/#post-%s' % post.pk)
 
     @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_url_for_post_multiple_pages(self):
@@ -34,7 +33,7 @@ class TestPostModel(TestCase):
             self.topic.posts.add(post)
             posts.append(post.pk)
         self.assertEqual(Post.url_for_post(posts[-1]),
-                         'http://forum.inyoka.local/topic/topic/4/#post-45')
+                         'http://forum.inyoka.local/topic/topic/4/#post-%s' % post.pk)
 
     def test_url_for_post_not_existing_post(self):
         self.assertRaises(Post.DoesNotExist, Post.url_for_post, 250000913)
