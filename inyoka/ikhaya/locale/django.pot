@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-08-02 13:39+0200\n"
+"POT-Creation-Date: 2012-08-11 13:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -701,10 +701,6 @@ msgid "%(count)s <a href=\"%(link)s\">comment</a>"
 msgid_plural "%(count)s <a href=\"%(link)s\">comments</a>"
 msgstr[0] ""
 msgstr[1] ""
-
-#: inyoka/ikhaya/templates/ikhaya/index.html:62
-msgid "#Comment.Gender"
-msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/index.html:68
 msgid "Unsubscribe"

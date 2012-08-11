@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-08-02 13:39+0200\n"
+"POT-Creation-Date: 2012-08-11 13:16+0200\n"
 "PO-Revision-Date: 2012-03-18 22:16+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -739,10 +739,6 @@ msgid "%(count)s <a href=\"%(link)s\">comment</a>"
 msgid_plural "%(count)s <a href=\"%(link)s\">comments</a>"
 msgstr[0] "%(count)s <a href=\"%(link)s\">Kommentar</a>"
 msgstr[1] "%(count)s <a href=\"%(link)s\">Kommentare</a>"
-
-#: inyoka/ikhaya/templates/ikhaya/index.html:62
-msgid "#Comment.Gender"
-msgstr "masculine"
 
 #: inyoka/ikhaya/templates/ikhaya/index.html:68
 msgid "Unsubscribe"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-08-10 22:27+0200\n"
+"POT-Creation-Date: 2012-08-11 13:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1731,10 +1731,6 @@ msgid "%(count)s comment"
 msgid_plural "%(count)s comments"
 msgstr[0] ""
 msgstr[1] ""
-
-#: inyoka/portal/templates/portal/index.html:75
-msgid "#Comment.Gender"
-msgstr ""
 
 #: inyoka/portal/templates/portal/index.m.html:18
 msgid "Messages"
