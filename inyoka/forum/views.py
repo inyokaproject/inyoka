@@ -391,7 +391,7 @@ def handle_attachments(request, post, att_ids):
             attachments.remove(attachment)
             if attachment.id in att_ids:
                 att_ids.remove(attachment.id)
-            messages.info(_(u'The attachment “%(attachment)s“ was deleted.')
+            messages.info(request, _(u'The attachment “%(attachment)s“ was deleted.')
                           % {'attachment': attachment.name}, False)
     return attach_form, attachments
 

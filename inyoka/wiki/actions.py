@@ -466,8 +466,8 @@ def do_edit(request, name):
                             msg = _(u'The page <a href="%(link)s">%(name)s</a> has been edited.')
 
 
-                        messages.success(msg % {'link': escape(href('wiki', page.name)),
-                                                'name': escape(page.title)})
+                        messages.success(request, msg % {'link': escape(href('wiki', page.name)),
+                                                         'name': escape(page.title)})
                 else:
                     page = Page.objects.create(user=request.user,
                                                remote_addr=remote_addr,

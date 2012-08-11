@@ -17,8 +17,9 @@ class Migration(DataMigration):
     def forwards(self, orm):
         "Write your forwards methods here."
         if not os.path.exists(path.join(settings.MEDIA_ROOT, 'forum/attachments_migrate')):
-            shutil.move(path.join(settings.MEDIA_ROOT, 'forum/attachments'),
-                        path.join(settings.MEDIA_ROOT, 'forum/attachments_migrate'))
+            if os.path.exists(path.join(settings.MEDIA_ROOT, 'forum/attachments')):
+                shutil.move(path.join(settings.MEDIA_ROOT, 'forum/attachments'),
+                            path.join(settings.MEDIA_ROOT, 'forum/attachments_migrate'))
             # prepare the new folderstructure:
             for i in range(61):
                 for j in range(54):

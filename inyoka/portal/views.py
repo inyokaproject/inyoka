@@ -1495,7 +1495,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                 elif action == 'delete':
                     msg = _(u'Do you really want to delete the message?')
                     confirm_label = _(u'Delete')
-                messages.info(render_template('confirm_action_flash.html', {
+                messages.info(request, render_template('confirm_action_flash.html', {
                     'message': msg,
                     'confirm_label': confirm_label,
                     'cancel_label': _(u'Cancel'),
@@ -1562,7 +1562,7 @@ def privmsg_new(request, username=None):
             recipients = set()
 
             if d.get('group_recipient', None) and not request.user.can('send_group_pm'):
-                messages.error(_(u'You cannot send messages to groups.'))
+                messages.error(request, _(u'You cannot send messages to groups.'))
                 return HttpResponseRedirect(href('portal', 'privmsg'))
 
             for group in group_recipient_names:
@@ -1920,7 +1920,7 @@ def group_edit(request, name=None):
 
 
 def usermap(request):
-    messages.info(_(u'The user map was temporarily disabled.'))
+    messages.info(request, _(u'The user map was temporarily disabled.'))
     return HttpResponseRedirect(href('portal'))
 
 
