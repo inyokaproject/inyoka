@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-08-02 13:39+0200\n"
+"POT-Creation-Date: 2012-08-10 22:27+0200\n"
 "PO-Revision-Date: 2012-03-28 20:00+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -286,7 +286,7 @@ msgstr ""
 
 #: inyoka/utils/generic.py:28
 msgid "Errors occurred, please fix them."
-msgstr ""
+msgstr "Bitte die aufgetretenen Fehler beheben."
 
 #: inyoka/utils/generic.py:58
 msgid "{verbose_name} “{object_name}” was successfully created."

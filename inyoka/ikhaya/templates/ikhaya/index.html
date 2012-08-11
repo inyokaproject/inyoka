@@ -59,7 +59,7 @@
               {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }} |
             {%- endif %}
             {%- if article.comments_enabled %}
-              {% trans pluralindicator=article.comment_count, count=article.comment_count|hnumber(_('#Comment.Gender'))|capitalize, link=article|url + '#comments' -%}
+              {% trans pluralindicator=article.comment_count, count=article.comment_count|hnumber('masculine')|capitalize, link=article|url + '#comments' -%}
                 {{ count }} <a href="{{ link }}">comment</a>
               {%- pluralize pluralindicator -%}
                 {{ count }} <a href="{{ link }}">comments</a>
