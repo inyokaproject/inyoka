@@ -197,19 +197,19 @@
             {%- endif %}
             <select name="area" class="search_area">
               <option value="all"{% if active_app == 'portal' %} selected="selected"{% endif %}>
-                {% trans %}Overall{% endtrans %}
+                {%- trans %}Overall{% endtrans -%}
               </option>
               <option value="forum"{% if active_app == 'forum' %} selected="selected"{% endif %}>
-                {% trans %}Forum{% endtrans %}
+                {%- trans %}Forum{% endtrans -%}
               </option>
               <option value="wiki"{% if active_app == 'wiki' %} selected="selected"{% endif %}>
-                {% trans %}Wiki{% endtrans %}
+                {%- trans %}Wiki{% endtrans -%}
               </option>
               <option value="ikhaya"{% if active_app == 'ikhaya' %} selected="selected"{% endif %}>
-                {% trans %}News{% endtrans %}
+                {%- trans %}News{% endtrans -%}
               </option>
               <option value="planet"{% if active_app == 'planet' %} selected="selected"{% endif %}>
-                {% trans %}Planet{% endtrans %}
+                {%- trans %}Planet{% endtrans -%}
               </option>
             </select>
             <input type="submit" value="{% trans %}Search{% endtrans %}" class="search_submit" />
