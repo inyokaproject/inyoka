@@ -21,6 +21,7 @@
     Keep in mind that deactivating your account cannot be undone. After that, you will never be able to log in with the account “{{ name }}“ again.
   {%- endtrans %}</strong></p>
   <form autocomplete="off" method="post" action="">
+    {{ csrf_token() }}
     <p>{% trans %}To deactivate your account, you need to enter your password.{% endtrans %}</p>
     <p>
       {{ form.password_confirmation }}

@@ -87,7 +87,11 @@ class SendmailEmailBackend(BaseEmailBackend):
         if not email_message.recipients():
             return False
         try:
-            proc = Popen(['/usr/sbin/sendmail', '-f', settings.INYOKA_SYSTEM_USER_EMAIL, '-t'], stdin=PIPE)
+            cmd = ['/usr/sbin/sendmail',
+                   '-f',
+                   settings.INYOKA_SYSTEM_USER_EMAIL,
+                   '-t']
+            proc = Popen(cmd, stdin=PIPE)
             proc.stdin.write(email_message.message().as_string())
             proc.stdin.flush()
             proc.stdin.close()

@@ -21,9 +21,10 @@ from time import time
 from datetime import datetime
 from django.conf import settings
 from django.utils.encoding import force_unicode
+from django.utils.html import escape
 
-from inyoka.utils.html import escape, cleanup_html
 from inyoka.planet.models import Blog, Entry
+from inyoka.utils.html import cleanup_html
 
 # set a default timeout. Otherwise fetching some feeds might cause the script
 # to block forever

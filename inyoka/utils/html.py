@@ -13,13 +13,12 @@ from __future__ import division
 import re
 import lxml.html.clean
 from lxml.html.defs import empty_tags
-from markupsafe import escape
 from htmlentitydefs import name2codepoint
 from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders
 from html5lib.serializer import XHTMLSerializer, HTMLSerializer
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
-from django.utils.encoding import smart_str, force_unicode
+from django.utils.encoding import force_unicode
 
 
 _entity_re = re.compile(r'&([^;]+);')

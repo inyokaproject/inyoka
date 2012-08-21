@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.test import TestCase
-from inyoka.utils.text import get_next_increment
+from inyoka.utils.text import get_next_increment, human_number
 
 
 class TestText(TestCase):
@@ -20,3 +20,16 @@ class TestText(TestCase):
                          u'-11')
         self.assertEqual(get_next_increment(['cat', 'cat100'], u'cat', 3),
                          u'-101')
+
+    def test_human_number(self):
+        self.assertEqual(human_number(-1337), -1337)
+        self.assertEqual(human_number(0), 0)
+        self.assertEqual(human_number(1, 'masculine'), u'ein')
+        self.assertEqual(human_number(1, 'feminine'), u'eine')
+        self.assertEqual(human_number(1, 'neuter'), u'ein')
+        self.assertEqual(human_number(1), u'eins')
+        self.assertEqual(human_number(10), u'zehn')
+        self.assertEqual(human_number(11), u'elf')
+        self.assertEqual(human_number(12), u'zwölf')
+        self.assertEqual(human_number(13), 13)
+        self.assertEqual(human_number(42), 42)

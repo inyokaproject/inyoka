@@ -16,7 +16,6 @@ from mimetypes import guess_all_extensions, guess_extension
 from werkzeug import utils
 
 from inyoka.utils import magic
-from django.utils.translation import ugettext as _
 
 
 def fix_extension(filename, mime):
@@ -63,6 +62,7 @@ def get_filename(filename, file=None):
     else:
         return filename
 
+
 class MaxLengthStorageMixin(object):
     """
     Mixin for Django's storage system to ensure max_length is taken into
@@ -91,7 +91,8 @@ class MaxLengthStorageMixin(object):
             raise ValueError('Invalid Path.')
 
         dir_name, file_name = os.path.split(name)
-        file_root, file_ext = os.path.splitext(file_name) # file_ext incl '.'
+        # file_ext incl. '.'
+        file_root, file_ext = os.path.splitext(file_name)
         l_dir_name = len(dir_name)
         l_file_root = len(file_root)
         l_file_ext = len(file_ext)
@@ -109,21 +110,23 @@ class MaxLengthStorageMixin(object):
             l_file_root = allowed_length
             name = os.path.join(dir_name, "%s%s" % (file_root, file_ext))
 
-        # If the filename already exists, add an underscore and a number (before
-        # the file extension, if one exists) to the filename until the generated
-        # filename doesn't exist.
+        # If the filename already exists, add an underscore and a number
+        # (before the file extension, if one exists) to the filename until
+        # the generated filename doesn't exist.
         count = itertools.count(1)
         while self.exists(name):
             # file_ext includes the dot.
             c = count.next()
             cs = str(c)
-            strip = (l_file_root + len(cs) + 1) - allowed_length # +1 for '_'
+            # +1 for '_'
+            strip = (l_file_root + len(cs) + 1) - allowed_length
             if strip > 0:
                 new_file_root = file_root[:-strip]
             else:
                 new_file_root = file_root
 
-            name = os.path.join(dir_name, "%s_%s%s" % (new_file_root, cs, file_ext))
+            name = os.path.join(dir_name, "%s_%s%s" %
+                                (new_file_root, cs, file_ext))
 
         return name
 

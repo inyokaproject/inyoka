@@ -22,6 +22,7 @@
 
 {% block content %}
 <form action="" method="post" class="forum">
+  {{ csrf_token() }}
   {{ render_form(form, ['name', 'slug','description', 'parent', 'position', 'newtopic_default_text', 'force_version', 'count_posts']) }}
   <h3>{% trans %}Welcome message{% endtrans %}</h3>
   {{ render_form(form, ['welcome_msg_subject', 'welcome_msg_text']) }}

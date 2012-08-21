@@ -17,6 +17,7 @@
 {% block content %}
   {{ super() }}
   <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+		{{ csrf_token() }}
     <h3>{% trans %}Group memberships{% endtrans %}</h3>
     <table class="user_groups">
       <tr>

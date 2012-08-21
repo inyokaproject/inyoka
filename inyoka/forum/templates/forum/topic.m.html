@@ -14,6 +14,7 @@
   <h2>{{ topic.title|e }}</h2>
   {% if polls %}
     <form action="" method="post" class="poll">
+      {{ csrf_token() }}
       {%- for poll in polls %}
         <div class="poll">
           <div><strong>{{ poll.question|e }}</strong></div>
