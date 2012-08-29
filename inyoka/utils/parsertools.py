@@ -121,7 +121,7 @@ class TokenStream(object):
         """Test the current token."""
         return self.current.type == type and \
                (value is Ellipsis or self.current.value == value or
-                value.__class__ is tuple and \
+                value.__class__ is tuple and
                 self.current.value in value)
 
     def shift(self, token):

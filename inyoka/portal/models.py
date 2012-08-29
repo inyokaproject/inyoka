@@ -12,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic, models as gmodels
 from django.core.cache import cache
 from django.db import models, transaction
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy
 
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href

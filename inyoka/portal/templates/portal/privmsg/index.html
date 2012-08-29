@@ -59,6 +59,7 @@
   {%- endif %}
 
   <form action="" method="post">
+    {{ csrf_token() }}
     <table class="pms">
       <thead>
         <tr>

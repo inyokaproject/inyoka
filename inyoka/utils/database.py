@@ -8,7 +8,6 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import cPickle
 import operator
 
 from django.core.cache import cache
@@ -60,9 +59,8 @@ def find_next_increment(model, column, string, stripdate=False, **query_opts):
         return slug
     filter = {'%s__startswith' % column: slug + '-'}
     filter.update(query_opts)
-    existing =  list(model.objects.filter(**filter) \
-                                  .values_list(column, flat=True))
-    return get_next_increment([slug] + existing, slug, max_length,
+    existing = model.objects.filter(**filter).values_list(column, flat=True)
+    return get_next_increment([slug] + list(existing), slug, max_length,
                               stripdate=stripdate)
 
 
@@ -115,18 +113,22 @@ def update_model(instance, **kwargs):
     instances = instance if isinstance(instance, (set, list, tuple)) \
                          else [instance]
 
+    query_kwargs = kwargs.copy()
     for instance in instances:
         # fields that use auto_now=True should be updated corrected, too!
         for field in instance._meta.fields:
-            if hasattr(field, 'auto_now') and field.auto_now and field.name not in kwargs:
+            exists = hasattr(field, 'auto_now')
+            if exists and field.auto_now and field.name not in kwargs:
                 kwargs[field.name] = field.pre_save(instance, False)
+            if field.name in kwargs and isinstance(field, JSONField):
+                query_kwargs[field.name] = field.dumps(kwargs[field.name])
 
     manager = instances[0].__class__._default_manager
     if len(instances) == 1:
         qset = manager.filter(pk=instances[0].pk)
     else:
         qset = manager.filter(pk__in=[i.pk for i in instances])
-    rows_affected = qset.update(**kwargs)
+    rows_affected = qset.update(**query_kwargs)
 
     # apply the updated args to the instance to mimic the change
     # note that these might slightly differ from the true database values

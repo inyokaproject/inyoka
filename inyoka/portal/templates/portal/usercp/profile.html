@@ -17,6 +17,7 @@
 
 {% block portal_content %}
   <form enctype="multipart/form-data" class="usercp_form" method="post" action="">
+    {{ csrf_token() }}
     <h3>{% trans %}Avatar settings{% endtrans %}</h3>
     <dl>
       <dt>{% trans %}Avatar:{% endtrans %}</dt>
@@ -98,7 +99,7 @@
       <input type="submit" value="{% trans %}Submit{% endtrans %}" />
     </p>
     <p>
-      <a href="{{ href('portal', 'user', user.username ) }}">Show my profile</a>
+      <a href="{{ href('portal', 'user', user.username ) }}">{% trans %}Show my profile{% endtrans %}</a>
     </p>
   </form>
 {% endblock %}

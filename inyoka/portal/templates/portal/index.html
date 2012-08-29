@@ -18,15 +18,6 @@
     <div id="counter"></div>
   </div>
 #}
-  <div class="container" style="text-align:center;padding-top:1em">
-    <a href="{{ href('portal', 'ikhaya', '3232') }}"><img
-      src="{{ href('static', 'img', 'ipv6-badge.svg') }}"
-      alt="World IPv6 Launch Day - 6. Juni 2012. Auch ubuntuusers.de ist dabei."
-      title="World IPv6 Launch Day - 6. Juni 2012. Auch ubuntuusers.de ist dabei."
-      style="width: 13em;"
-    /></a><br />
-    <span>Lizenz: <a href="http://www.worldipv6launch.org/downloads/">CC BY 3.0</a></span>
-  </div>
   <div class="container get_ubuntu">
     <div>
       <h3><a href="{{ get_ubuntu_link }}">Hol dir Ubuntu!</a></h3>
@@ -81,7 +72,11 @@
         {%- endif %}
         {%- if article.comments_enabled %}
           <a href="{{ article|url('comments') }}" class="comments">
-            {%- trans count=article.comment_count %}{{ count }} comment{% pluralize %}{{ count }} comments{% endtrans -%}
+            {%- trans pluralindicator=article.comment_count, count=article.comment_count|hnumber('masculine')|capitalize -%}
+              {{ count }} comment
+            {%- pluralize pluralindicator -%}
+              {{ count }} comments
+            {%- endtrans -%}
           </a>
         {%- endif %}
       </div>

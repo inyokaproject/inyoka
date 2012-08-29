@@ -22,11 +22,12 @@
     <li><a href="#wiki">{% trans %}Wiki{% endtrans %}</a></li>
   </ul>
   {%- endif %}
-  
+
   {%- if forum_form %}
   <form action="/feeds/forum/" method="post" id="forum">
+  {{ csrf_token() }}
   <h4>{% trans %}Forum{% endtrans %}</h4>
-  
+
   <dl>
     <dt>{% trans %}What{% endtrans %}</dt>
     <dd>
@@ -57,12 +58,13 @@
       </p>
     </dd>
   </dl>
-  
+
   <p id="forum_submit_p"><input type="submit" value="Feed anzeigen" /></p>
   </form>
   {%- endif %}
   {%- if ikhaya_form %}
   <form action="/feeds/ikhaya/" method="post" id="ikhaya">
+	{{ csrf_token() }}
   <h4>Ikhaya</h4>
   
   <dl>
@@ -82,6 +84,7 @@
   {%- endif %}
   {%- if planet_form %}
   <form action="/feeds/planet/" method="post" id="planet">
+	{{ csrf_token() }}
   <h4>{% trans %}Planet{% endtrans %}</h4>
   <dl>
     <dt>{% trans %}How{% endtrans %}</dt>
@@ -98,6 +101,7 @@
   {%- endif %}
   {%- if wiki_form %}
   <form action="/feeds/wiki/" method="post" id="wiki">
+	{{ csrf_token() }}
   <h4>{% trans %}Wiki{% endtrans %}</h4>
   <dl>
     <dt>{% trans %}What{% endtrans %}</dt>

@@ -17,21 +17,24 @@ from django.utils.translation import ugettext_lazy
 from inyoka.portal.models import SessionInfo
 from inyoka.utils.urls import url_for
 from inyoka.utils.storage import storage
-from inyoka.utils.http import HttpResponseRedirect
 from inyoka.utils.local import current_request
 
 
 SESSION_DELTA = 300
 
 
-@transaction.commit_manually
 def set_session_info(request):
     """Set the session info."""
+
+    # Prevent extra queries for markup.css and jsi18n since they are loaded
+    # with every request.
+    if request.path in ('/markup.css/', '/jsi18n/'):
+        return
+
     # if the session is new we don't add an entry.  It could be that
     # the user has no cookie support and that would fill our session
     # table with dozens of entries
     if request.session.new:
-        transaction.rollback()
         return
 
     if request.user.is_authenticated:
@@ -47,7 +50,7 @@ def set_session_info(request):
             'subject_link': url_for(request.user)
         }
     else:
-        key = request.session.session_key
+        key = request.session['sid']
         args = {
             'subject_text': None,
             'subject_type': 'anonymous',
@@ -58,15 +61,15 @@ def set_session_info(request):
         'last_change': datetime.utcnow(),
     })
 
+    # If the user requests the site multiple times he might cause
+    # race conditions here.
     affected_rows = SessionInfo.objects.filter(key=key).update(**args)
     if affected_rows == 0:
-        # No session info for the key exists, try an insert
         try:
+            sid = transaction.savepoint()
             SessionInfo.objects.create(key=key, **args)
-        except:
-            transaction.rollback()
-
-    transaction.commit()
+        except Exception:
+            transaction.savepoint_rollback(sid)
 
 
 class SurgeProtectionMixin(object):
@@ -144,30 +147,3 @@ def make_permanent(request):
 def close_with_browser(request):
     """Close the session with the end of the browser session."""
     request.session.pop('_perm', None)
-
-
-def test_session_cookie(request):
-    """
-    Test if the session cookie works.  This is used in login and register
-    to inform the user about an inproperly configured browser.  If the
-    cookie doesn't work a link is returned to retry the configuration.
-    """
-    if request.session.new:
-        arguments = request.GET.copy()
-        if '_cookie_set' not in request.GET:
-            arguments['_cookie_set'] = 'yes'
-            this_url = 'http://%s%s%s' % (
-                request.get_host(),
-                request.path,
-                arguments and '?' + arguments.urlencode() or ''
-            )
-            return True, HttpResponseRedirect(this_url)
-        arguments.pop('_cookie_set', None)
-        retry_link = 'http://%s%s%s' % (
-            request.get_host(),
-            request.path,
-            arguments and '?' + arguments.urlencode() or ''
-        )
-    else:
-        retry_link = None
-    return False, retry_link

@@ -9,7 +9,6 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import os
 import random
 import string
 from datetime import datetime
@@ -21,12 +20,12 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.db import models
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.utils import encode_confirm_data, classproperty
 from inyoka.utils.decorators import deferred
 from inyoka.utils.mail import send_mail
-from inyoka.utils.html import escape
 from inyoka.utils.user import normalize_username, get_hexdigest,\
     check_password, gen_activation_key
 from inyoka.utils.local import current_request
@@ -522,7 +521,7 @@ class User(models.Model):
     coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
     coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
     location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
-    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=8, blank=True)
+    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=255, blank=True)
     occupation = models.CharField(ugettext_lazy(u'Job'), max_length=200, blank=True)
     interests = models.CharField(ugettext_lazy(u'Interests'), max_length=200, blank=True)
     website = models.URLField(ugettext_lazy(u'Website'), blank=True)
@@ -552,7 +551,13 @@ class User(models.Model):
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        super(User, self).save(*args, **kwargs)
+        if 'update_fields' in kwargs:
+            data = {}
+            for field in kwargs['update_fields']:
+                data[field] = getattr(self, field)
+            update_model(self, **data)
+        else:
+            super(User, self).save(*args, **kwargs)
         cache.delete_many(['portal/user/%s/signature' % self.id,
                            'portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])
@@ -757,11 +762,6 @@ class User(models.Model):
         if self.new_password_key:
             self.new_password_key = None
         self.save()
-
-    def get_and_delete_messages(self, *args, **kwargs):
-        """Stub for to fix openid integration as it's calling the django.messages API"""
-        #TODO: this method does not exist in Django 1.4 anymore, so remove it if we upgrade!
-        return []
 
     @classproperty
     def SYSTEM_USER(cls):

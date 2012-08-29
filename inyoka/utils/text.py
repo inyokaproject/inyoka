@@ -18,7 +18,6 @@ from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.utils.translation import get_language
 from django.utils.translation import pgettext, ugettext as _
-from inyoka.utils.local import local
 
 _str_num_re = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 _path_crop = re.compile(r'^(\.\.?/)+')
@@ -181,8 +180,8 @@ def get_next_increment(values, string, max_length=None, stripdate=False):
     def _get_value(value):
         if stripdate:
             stripped = _stripdate(value)
-            return u'{0}/{1}'.format((u'/'.join(stripped[0]),
-                                     increment_string(stripped[1])))
+            return u'{0}/{1}'.format(u'/'.join(stripped[0]),
+                                     increment_string(stripped[1]))
         return increment_string(value)
 
     values = list(_stripdate(x)[1] if stripdate else x for x in values)

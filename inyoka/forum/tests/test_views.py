@@ -1,17 +1,39 @@
 #-*- coding: utf-8 -*-
 from mock import patch
 from random import randint
+from os import path
 
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.test.utils import override_settings
+from django.utils.translation import ugettext as _
 
+from inyoka.utils.test import profile_memory
 from inyoka.forum.acl import PRIVILEGES_BITS
-from inyoka.forum.constants import TOPICS_PER_PAGE
+from inyoka.forum import constants
+from inyoka.forum.constants import TOPICS_PER_PAGE, VERSION_CHOICES, DISTRO_CHOICES
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import Subscription
-from inyoka.utils.test import InyokaClient, override_settings
+from inyoka.utils.test import InyokaClient
 from inyoka.utils.urls import href
+
+
+class TestForumViews(TestCase):
+
+    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
+    def test_forum_index(self):
+        client = Client(HTTP_HOST='forum.inyoka.local')
+        resp = client.get('/')
+        self.assertEqual(resp.status_code, 200)
+
+#    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
+#    def test_forum_index_memory(self):
+#        client = Client(HTTP_HOST='forum.inyoka.local')
+#        @profile_memory
+#        def go():
+#            resp = client.get('/')
+#        go()
 
 
 class TestViews(TestCase):
@@ -67,18 +89,16 @@ class TestViews(TestCase):
         response = self.client.get('/reported_topics/')
         self.assertEqual(response.status_code, 200)
 
-    @patch('inyoka.middlewares.security.SecurityMiddleware._make_token',
-            return_value='csrf_key')
     @patch('inyoka.forum.views.send_notification')
-    def test_movetopic(self, mock_send, mock_security):
+    def test_movetopic(self, mock_send):
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
                 self.forum2.id)
         response = self.client.post('/topic/%s/move/' % self.topic.slug,
-                    {'_form_token': 'csrf_key', 'forum': self.forum3.id})
+                    {'forum': self.forum3.id})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(mock_send.call_count, 1) #only the topic author
         mock_send.assert_called_with(self.user, 'topic_moved',
-            u'Your topic “A test Topic“ was moved.', {
+            _(u'Your topic “%(topic)s“ was moved.') % {'topic': 'A test Topic'}, {
                 'username': self.user.username, 'topic': self.topic,
                 'mod': self.admin.username, 'forum_name': 'Forum 3',
                 'old_forum_name': 'Forum 2'})
@@ -180,3 +200,44 @@ class TestViews(TestCase):
                     'topic': t2.slug})
         response = self.client.get('/topic/%s/split/' % t2.slug)
         self.assertEqual(response.status_code, 200)
+
+    def test_add_attachment(self):
+        TEST_ATTACHMENT = 'test_attachment.png'
+
+        t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
+                author=self.user, forum=self.forum2,
+                ubuntu_distro=DISTRO_CHOICES[1][0])
+        p1 = Post.objects.create(text=u'Post 1', author=self.user,
+                topic=t1)
+
+        f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
+        postdata = {u'attachment': f,
+                    u'attach' : u'upload attachment',
+                    u'ubuntu_distro': DISTRO_CHOICES[2][0],
+                    u'comment': u'',
+                    u'attachments': u'',
+                    u'title': u'Tag124345637',
+                    u'text': u'Tag23562434',
+                    u'polls': u'',
+                    u'question': u'',
+                    u'filename': u'',
+                    u'duration': u'',
+                    u'options': u''}
+
+
+        response = self.client.post('/post/%s/edit/' % p1.pk, postdata)
+        content = unicode(response.__str__().decode(response._charset))
+
+        self.assertIn(postdata['title'], content)
+        self.assertIn(postdata['text'], content)
+        self.assertIn(u'value="%s" selected="selected"' % DISTRO_CHOICES[2][0],
+                      content)
+        self.assertIn(unicode(TEST_ATTACHMENT), content)
+
+        # Adding an attachment should not trigger save
+        t1_test = Topic.objects.get(pk=t1.pk)
+        self.assertEqual(t1_test.title, u'A: topic')
+        self.assertEqual(t1_test.ubuntu_distro, DISTRO_CHOICES[1][0])
+
+        p1_test = Post.objects.get(pk=p1.pk)
+        self.assertEqual(p1_test.text, u'Post 1')
