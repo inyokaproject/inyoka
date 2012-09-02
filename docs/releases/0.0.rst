@@ -7,6 +7,225 @@ Inyoka 0.0 release summary
 Inyoka DEV release summary
 ==========================
 
+Inyoka 0.0.50 release summary
+=============================
+
+* Remove <p></p> from planet entry titles.
+* Remove leading and trailing whitespaces that break the javascript to display
+  the selected search area. Fixes `#799
+  <http://trac.inyokaproject.org/ticket/799>`_
+
+Inyoka 0.0.49 release summary
+=============================
+
+* Compile translations.
+* Tests for human_number
+* Set correct i18n context for comment count
+* update linenumbers in translation files
+* translate missing strings
+* Properly return the response in CommonMiddleware if the HostsMiddleware
+  returns one.
+* increase Django to 1.4.1
+
+Inyoka 0.0.48 release summary
+=============================
+
+* Properly return the response in CommonMiddleware if the HostsMiddleware
+  returns one.
+
+Inyoka 0.0.47 release summary
+=============================
+
+* increase Django to 1.4.1
+* A leading www. as part of the URL creates an server error
+  (https://app.getsentry.com/ubuntuusers-1/group/315434/). Add the ROOT_URLCONF
+  to this subdomain to fix it
+* The csrf_token should not appear in in GET requests
+* add a csrf_token to all template files containing a <form> tag.
+
+Inyoka 0.0.46 release summary
+=============================
+
+* Pin kombu to a working version. There might be a version after 2.1.1 but
+  unfortunately 2.3.2 does not work.
+* Only move the attachment directory in forum:0010 migration to a backup dir if
+  it exists.
+* During migrating from Inyoka's flashing to Django's integrated messaging
+  system, some functions lack the request parameter. This is exemplary shown in
+  https://app.getsentry.com/ubuntuusers-1/group/313850/ . This changeset fixes
+  this issue.
+* Add tests for split_bits, split_negative_positive
+* Restructured inyoka.forum.acl a bit to be more clear.
+* Add test for acl.join_flags
+* Started to add unittests for inyoka.forum.acl
+* Updated and fixed fuzzy translations
+* makemessages
+* select_related does not take a tuple
+* Fix view tests for new django1.4 way to handle csrf
+* Add config to run tests with postgresql
+* Add config for mysql test runner, fix tests
+* Security release, immediate deploy ahead.
+* Fixes `#700 <http://trac.inyokaproject.org/ticket/700>`_ again. Capitalize
+  the numbers for the number of Ikhaya comments and print the human numbers in
+  the portal view, too.
+* small pep08 changes, more cleanups to come
+* Remove highlighter middleware.
+* fixed name error
+* Fix small quirks, cleanups
+* fix comparision to None
+* versions_json is unused
+* fixed quirky test_date test in JSONTest
+* move fix_errors utility to utils.generic and reuse it everywhere
+* Fixed language of title attribute.
+* Removed alert which shows up when clicking on a link to a post.
+* Added "trans" to "Show my profile" string. Fixes `#797
+  <http://trac.inyokaproject.org/ticket/797>`_.
+* Correctly close <div> tags in the Ikhaya article suggestion list. Fixes `#796
+  <http://trac.inyokaproject.org/ticket/796>`_
+* Typofix in jabber notification.
+* Fixed the order of the breadcrumb elements in wiki articles.
+* update read status only for authenticated users.
+* Fixed flash messages in ikhaya
+* Removed unused imports, small cleanups
+* remove unproper debug message from profile_memory decorator
+* remove broken import from forum.test_views
+* remove X-* headers set by inyoka.
+* fix set_session_info for postgres.
+* restore pre django 1.4 session behavior.
+* fix remaining tests and compile messages.
+* follow up to the merge commit, Session object is still a big #FIXME
+* Added some very basic memory debugging tools, taken from SQLAlchemy with some
+  basic test.
+* Added very basic forum index view test
+* Move to latest known work django trunk to get smart_urlquote
+* Don't set message cookie on every request.
+* fix broken imports
+* remove Django 1.3 compatibility function
+* Remove a no longer needed method for Django comaptibility.
+* Display our CSRF failure view instead of Django's.
+* assume everyone has cookies enabled, if not CSRF kicks in either way.
+* Remove last conflict marker
+* get rid of the js powered login form
+* update url patterns import paths to django 1.4
+* update django-mobile to 0.2.2
+* remove SecurityMiddleware from default_settings.
+* Add protection against clickjacking
+* switch csrf protection over to django's builtin one.
+* fix import error.
+* update some requirements
+* Set django 1.4 dependency for better automatic tests
+* Small clenaups, and fixed imports
+* Fixed some Errors during merging
+* We no longer depend on MarkupSafe, but reuse django.utils.html
+* Removed inyoka.utils.flashing module, it was superseeded by
+  django.contrib.messages
+* fix typo
+* even more^3 django.contrib.messages fun
+* even more^2 django.contrib.messages fun
+* even more django.contrib.messages fun
+* convert planet to django.contrib.messages
+* clean up imports in wsgi.py
+* implement the new wsgi features of django 1.4.
+* more django.contrib.messages fun
+* ported ikhaya.views views over to django.contrib.messages
+* switched portal app to django's message framework
+* Don't access the session if it's not set.
+* Switched our session stuff to django's session framework
+* fixed compatibility with django 1.4's HttpResponse code
+
+Inyoka 0.0.45 release summary
+=============================
+
+* Security release, immediate deploy ahead.
+
+Inyoka 0.0.44 release summary
+=============================
+
+* Readd daytime flag for now, what is it doing?!
+
+Inyoka 0.0.43 release summary
+=============================
+
+* properly format times with a different dst setting in the calendar.
+
+Inyoka 0.0.42 release summary
+=============================
+
+* added missing migration.
+* check for `Baustelle/` before stripping it from the page name during
+  construction finish
+* Do not use any CDN for jQuery.
+* Revert "Add a IPv6 Badge."
+* fixed `#710 <http://trac.inyokaproject.org/ticket/710>`_ by incrementing gpg
+  key length to 255.
+* fixed title length validation on post edits.
+* compile translations.
+* Testcommit for GithubTrac, fixed `#782
+  <http://trac.inyokaproject.org/ticket/782>`_
+* simpler fix for the previous fix ;)
+* Fix other possible bugs and add test for attachment adding
+* Fix `#782 <http://trac.inyokaproject.org/ticket/782>`_ and add missing
+  translation
+* Removed "#egg=django-openid" from requirements/production.txt
+* implement partial fields saves like django 1.5 will support.
+* clean the permission cache when a user is saved.
+* Remove all leading occurrences of ``[[Vorlage(Baustelle`` and
+  ``[[Vorlage(Überarbeitung`` while moving a page back from the construction
+  area.
+* Correctly remove the leading 'Baustelle/' while moving a wiki page back from
+  the construction site.
+* Change the font color of highlighted text in bash codes to a dark tone. fixes
+  `#696 <http://trac.inyokaproject.org/ticket/696>`_
+* correctly align tables in the preview, e.g. Vorlage/Bildersammlung. fixes
+  `#224 <http://trac.inyokaproject.org/ticket/224>`_
+* fix function name for wiki log test
+* Increase the number of wiki revisions per page to 100 in the history/log
+  view. Fixes `#693 <http://trac.inyokaproject.org/ticket/693>`_
+* We don't read locale information from the browser (yet)
+* This commit fixes a problem in the post selection for topic split. If an old
+  topic slug contains a character that normally is percent-encoded (e.g. a
+  colon), the selection does not work. A request to ``split/`` page redirects
+  back to the topic, because the transmitted slug does not match the real slug
+  of the topic. URL unquoting solves that problem.
+* Code Style :) too much thinking in c
+* Add tests for pagination with topic_list
+* Fix another pagination bug
+* Add missing translation
+* Updated Translations
+* Languagespecific human numbers
+* Update Pybabel to trunk
+* Fix egosearch pagination. See `#646
+  <http://trac.inyokaproject.org/ticket/646>`_
+* Removed "Highlight" Middleware.
+* Disabled editing of comments. Refers `#732
+  <http://trac.inyokaproject.org/ticket/732>`_.
+
+Inyoka 0.0.41 release summary
+=============================
+
+* Add a IPv6 Badge.
+* remove the donation banner
+* A 1 to much
+* Fix empty pages in /last24/ regarding PR 76 and `#617
+  <http://trac.inyokaproject.org/ticket/617>`_
+
+Inyoka 0.0.40 release summary
+=============================
+
+* Make deletion of empty avatars a noop.
+* Code Style
+* Style and remove unused import
+* Improove context propagation and testing
+* Add test for /last24/
+* Add propagating context for using in tests
+* Fix `#617 <http://trac.inyokaproject.org/ticket/617>`_. Maybe performace
+  issues created
+
+Inyoka 0.0.39 release summary
+=============================
+
+* Updated Postit Link
+
 Inyoka 0.0.38 release summary
 =============================
 
