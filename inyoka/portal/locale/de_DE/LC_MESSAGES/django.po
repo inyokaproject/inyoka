@@ -56,11 +56,11 @@ msgstr "Jabber"
 
 #: inyoka/portal/forms.py:47
 msgid "A subscribed topic was moved"
-msgstr "Ein abonniertes Thema wurde verschoben"
+msgstr "Ein abonniertes Thema verschoben wurde"
 
 #: inyoka/portal/forms.py:48
 msgid "A subscribed topic was split"
-msgstr "Ein abonniertes Thema wurde aufgeteilt"
+msgstr "Ein abonniertes Thema aufgeteilt wurde"
 
 #: inyoka/portal/forms.py:49
 msgid "I received a message"
