@@ -290,11 +290,11 @@ msgstr "Bitte die aufgetretenen Fehler beheben."
 
 #: inyoka/utils/generic.py:58
 msgid "{verbose_name} “{object_name}” was successfully created."
-msgstr "{verbose_name} “{object_name}” wurde erfolgreich erstellt."
+msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
 
 #: inyoka/utils/generic.py:60
 msgid "{verbose_name} “{object_name}” was successfully changed."
-msgstr "{verbose_name} “{object_name}” wurde erfolgreich geändert."
+msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
 #: inyoka/utils/generic.py:174
 #, python-format
@@ -303,7 +303,7 @@ msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
 
 #: inyoka/utils/generic.py:201
 msgid "{verbose_name} “{object_name}” was deleted successfully!"
-msgstr "{verbose_name} “{object_name}” erfolgreich gelöscht!"
+msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
 
 #: inyoka/utils/generic.py:219
 msgid "Canceled."
@@ -328,7 +328,7 @@ msgstr ""
 #: inyoka/utils/sortable.py:106
 #, python-format
 msgid "The chosen sort value (“%(value)s”) is not available"
-msgstr "Der ausgewählte Wert (“%(value)s”) ist nicht verfügbar"
+msgstr "Der ausgewählte Wert („%(value)s“) ist nicht verfügbar"
 
 #: inyoka/utils/text.py:212
 msgid "ten"
