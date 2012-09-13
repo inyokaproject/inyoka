@@ -3,10 +3,10 @@
     inyoka.wiki.utils
     ~~~~~~~~~~~~~~~~~
 
-    Contains various helper functions for the wiki.  Most of them are only
-    usefor for the the wiki application itself, but there are use cases for
-    some of them outside of the wiki too.  Any example for that is the diff
-    renderer which might be useful for the pastebin too.
+    Contains various helper functions for the wiki.  Most of them are only used
+    for the wiki application itself, but there are use cases for some of them
+    outside of the wiki too.  Any example for that is the diff renderer which
+    might be useful for the pastebin too.
 
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
