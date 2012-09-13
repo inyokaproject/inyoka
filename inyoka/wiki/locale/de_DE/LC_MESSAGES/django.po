@@ -37,7 +37,7 @@ msgstr "Wiederherstellen abgebrochen."
 #: inyoka/wiki/actions.py:230
 #, python-format
 msgid "“%(title)s” was reverted successfully"
-msgstr "Die Seite “%(title)s“ wurde erfolgreich wiederhergestellt."
+msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
 
 #: inyoka/wiki/actions.py:259
 #, python-format
@@ -92,12 +92,12 @@ msgstr "Keine Änderungen."
 #: inyoka/wiki/actions.py:464 inyoka/wiki/actions.py:477
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been created."
-msgstr "Die Seite “<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."
+msgstr "Die Seite „<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."
 
 #: inyoka/wiki/actions.py:466
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been edited."
-msgstr "Die Seite “<a href=\"%(link)s\">%(name)s</a>“ wurde bearbeitet."
+msgstr "Die Seite „<a href=\"%(link)s\">%(name)s</a>“ wurde bearbeitet."
 
 #: inyoka/wiki/actions.py:498
 msgid ""
