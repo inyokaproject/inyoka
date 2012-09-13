@@ -173,8 +173,8 @@ msgid ""
 "\"reload\" button to request a new control key the sending the page "
 "again."
 msgstr ""
-"In manchen Browsern ist es möglich durch Klicken auf \"Zurück\" und dann "
-"\"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern, um das "
+"In manchen Browsern ist es möglich durch Klicken auf „Zurück“ und dann "
+"„Aktualiseren“ einen neuen Kontrollschlüssel anzufordern, um das "
 "Absenden erneut durchzuführen."
 
 #: inyoka/templates/errors/403.html:18
