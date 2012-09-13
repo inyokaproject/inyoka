@@ -101,12 +101,12 @@ msgstr "Abgebrochen"
 #: inyoka/planet/views.py:163
 #, python-format
 msgid "The entry “%(title)s“ was successfully hidden."
-msgstr "Der Eintrag „%(title)s” wurde erfolgreich verborgen."
+msgstr "Der Eintrag „%(title)s“ wurde erfolgreich verborgen."
 
 #: inyoka/planet/views.py:165
 #, python-format
 msgid "The entry “%(title)s“ was successfully restored."
-msgstr "Der Eintrag „%(title)s” wurde erfolgreich wiederhergestellt."
+msgstr "Der Eintrag „%(title)s“ wurde erfolgreich wiederhergestellt."
 
 #: inyoka/planet/templates/planet/blog_edit.html:15
 msgid "Add blog"

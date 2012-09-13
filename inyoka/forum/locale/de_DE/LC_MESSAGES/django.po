@@ -159,7 +159,7 @@ msgstr "Du musst einen Text für die Willkommensnachricht eingeben."
 
 #: inyoka/forum/forms.py:267
 msgid "“new“ is not a valid forum slug"
-msgstr "„new” ist kein gültiger Slug"
+msgstr "„new“ ist kein gültiger Slug"
 
 #: inyoka/forum/forms.py:271
 #, python-format
@@ -214,27 +214,27 @@ msgstr "Neues Thema vom Benutzer %(username)s"
 #: inyoka/forum/notifications.py:56
 #, python-format
 msgid "New topic in forum %(forum)s: “%(topic)s“"
-msgstr "Neues Thema im Forum „%(forum)s”: „%(topic)s”"
+msgstr "Neues Thema im Forum „%(forum)s“: „%(topic)s“"
 
 #: inyoka/forum/notifications.py:77
 #, python-format
 msgid "New topic with version %(version)s: “%(topic)s“"
-msgstr "Neues Thema mit der Version %(version)s: „%(topic)s”"
+msgstr "Neues Thema mit der Version %(version)s: „%(topic)s“"
 
 #: inyoka/forum/notifications.py:101
 #, python-format
 msgid "New reply in topic “%(topic)s“"
-msgstr "Neue Antwort in „%(topic)s”"
+msgstr "Neue Antwort in „%(topic)s“"
 
 #: inyoka/forum/notifications.py:132
 #, python-format
 msgid "New discussion regarding the page “%(page)s“ created"
-msgstr "Neue Diskussion für die Seite „%(page)s” wurde eröffnet"
+msgstr "Neue Diskussion für die Seite „%(page)s“ wurde eröffnet"
 
 #: inyoka/forum/notifications.py:146
 #, python-format
 msgid "The topic “%(topic)s“ has been deleted"
-msgstr "Das Thema „%(topic)s” wurde gelöscht."
+msgstr "Das Thema „%(topic)s“ wurde gelöscht."
 
 #: inyoka/forum/views.py:187
 msgid "This topic is not visible for regular users."
@@ -247,32 +247,32 @@ msgstr "Die Umfrage endete bereits."
 #: inyoka/forum/views.py:317
 #, python-format
 msgid "The poll “%(poll)s“ was added."
-msgstr "Die Umfrage „%(poll)s” wurde hinzugefügt."
+msgstr "Die Umfrage „%(poll)s“ wurde hinzugefügt."
 
 #: inyoka/forum/views.py:329
 #, python-format
 msgid "The poll “%(poll)s“ was removed."
-msgstr "Die Umfrage „%(poll)s” wurde gelöscht."
+msgstr "Die Umfrage „%(poll)s“ wurde gelöscht."
 
 #: inyoka/forum/views.py:374
 #, python-format
 msgid "The attachment “%(attachment)s“ does already exist."
-msgstr "Der Anhang „%(attachment)s” existiert bereits."
+msgstr "Der Anhang „%(attachment)s“ existiert bereits."
 
 #: inyoka/forum/views.py:379
 #, python-format
 msgid "The attachment “%(attachment)s“ was added successfully."
-msgstr "Der Anhang „%(attachment)s” wurde erfolgreich hinzugefügt."
+msgstr "Der Anhang „%(attachment)s“ wurde erfolgreich hinzugefügt."
 
 #: inyoka/forum/views.py:386
 #, python-format
 msgid "The attachment with the ID “%(id)d“ does not exist."
-msgstr "Der Anhang mit der ID „%(id)d” existiert nicht."
+msgstr "Der Anhang mit der ID „%(id)d“ existiert nicht."
 
 #: inyoka/forum/views.py:394
 #, python-format
 msgid "The attachment “%(attachment)s“ was deleted."
-msgstr "Der Anhang „%(attachment)s” wurde gelöscht."
+msgstr "Der Anhang „%(attachment)s“ wurde gelöscht."
 
 #: inyoka/forum/views.py:425
 #, python-format
@@ -295,7 +295,7 @@ msgstr ""
 #: inyoka/forum/views.py:449
 #, python-format
 msgid "This post is currently beeing edited by “%(user)s“!"
-msgstr "Diese Beitrag wird momentan von „%(user)s” bearbeitet!"
+msgstr "Diese Beitrag wird momentan von „%(user)s“ bearbeitet!"
 
 #: inyoka/forum/views.py:476 inyoka/forum/views.py:484
 msgid "You cannot edit this post."
@@ -367,7 +367,7 @@ msgstr "Das Thema wurde entsperrt"
 #: inyoka/forum/views.py:726 inyoka/forum/views.py:758
 #, python-format
 msgid "There is no “%(slug)s“ anymore."
-msgstr "Es gibt kein „%(slug)s” mehr."
+msgstr "Es gibt kein „%(slug)s“ mehr."
 
 #: inyoka/forum/views.py:780
 msgid "Notifications on new topics within this forum will be sent to you."
@@ -398,7 +398,7 @@ msgstr "Dieses Thema wurde bereits gemeldet."
 #: inyoka/forum/views.py:821
 #, python-format
 msgid "Reported topic: “%(topic)s“"
-msgstr "Gemeldetes Thema: „%(topic)s”"
+msgstr "Gemeldetes Thema: „%(topic)s“"
 
 #: inyoka/forum/views.py:825
 msgid "The topic was reported."
@@ -431,12 +431,12 @@ msgstr "Du wirst ab sofort nicht mehr bei gemeldeten Themen benachrichtigt."
 #: inyoka/forum/views.py:1014 inyoka/forum/tests/test_views.py:101
 #, python-format
 msgid "Your topic “%(topic)s“ was moved."
-msgstr "Dein Thema „%(topic)s” wurde verschoben."
+msgstr "Dein Thema „%(topic)s“ wurde verschoben."
 
 #: inyoka/forum/views.py:1028
 #, python-format
 msgid "The topic “%(topic)s“ was moved."
-msgstr "Das Thema „%(topic)s” wurde verschoben."
+msgstr "Das Thema „%(topic)s“ wurde verschoben."
 
 #: inyoka/forum/views.py:1051
 msgid "No post selected."
@@ -453,7 +453,7 @@ msgstr "Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein For
 #: inyoka/forum/views.py:1126
 #, python-format
 msgid "The topic “%(topic)s“ was split."
-msgstr "Das Thema „%(topic)s” wurde aufgeteilt."
+msgstr "Das Thema „%(topic)s“ wurde aufgeteilt."
 
 #: inyoka/forum/views.py:1146
 msgid "Do you want to restore this post?"
@@ -490,12 +490,12 @@ msgstr "Der erste Beitrag eines Themas kann nicht verborgen werden"
 #: inyoka/forum/views.py:1197
 #, python-format
 msgid "The post by “%(user)s“ was hidden."
-msgstr "Der Beitrag von „%(user)s” wurde verborgen."
+msgstr "Der Beitrag von „%(user)s“ wurde verborgen."
 
 #: inyoka/forum/views.py:1203
 #, python-format
 msgid "The post by “%(user)s“ was deleted."
-msgstr "Der Beitrag von „%(user)s” wurde gelöscht."
+msgstr "Der Beitrag von „%(user)s“ wurde gelöscht."
 
 #: inyoka/forum/views.py:1229
 msgid "Do you want to restore the revision of the post?"
@@ -512,7 +512,7 @@ msgstr "Möchtest du das Thema wiederherstellen?"
 #: inyoka/forum/views.py:1253
 #, python-format
 msgid "The topic “%(topic)s“ was restored."
-msgstr "Das Thema „%(topic)s” wurde wiederhergestellt."
+msgstr "Das Thema „%(topic)s“ wurde wiederhergestellt."
 
 #: inyoka/forum/views.py:1277
 msgid "Action canceled."
@@ -521,16 +521,16 @@ msgstr "Aktion abgebrochen."
 #: inyoka/forum/views.py:1283
 #, python-format
 msgid "The topic “%(topic)s“ was hidden."
-msgstr "Das Thema „%(topic)s” wurde verborgen."
+msgstr "Das Thema „%(topic)s“ wurde verborgen."
 
 #: inyoka/forum/views.py:1291
 msgid "The topic “%(topic)“ was deleted successfully."
-msgstr "Das Thema „%(topic)s” wurde gelöscht."
+msgstr "Das Thema „%(topic)s“ wurde gelöscht."
 
 #: inyoka/forum/views.py:1318
 #, python-format
 msgid "%(site)s topic – “%(topic)s“"
-msgstr "%(site)s Thema – „%(topic)s”"
+msgstr "%(site)s Thema – „%(topic)s“"
 
 #: inyoka/forum/views.py:1360
 #, python-format
@@ -549,7 +549,7 @@ msgstr "Bitte melde dich an, um Beiträge als gelesen zu markieren."
 #: inyoka/forum/views.py:1419
 #, python-format
 msgid "The forum “%(forum)s“ was marked as read."
-msgstr "Das Forum „%(forum)s” wurde als gelesen markiert."
+msgstr "Das Forum „%(forum)s“ wurde als gelesen markiert."
 
 #: inyoka/forum/views.py:1424
 msgid "All forums were marked as read."
@@ -578,7 +578,7 @@ msgstr "Ungelöste Themen"
 #: inyoka/forum/views.py:1463
 #, python-format
 msgid "Topics by “%(user)s“"
-msgstr "Themen von „%(user)s”"
+msgstr "Themen von „%(user)s“"
 
 #: inyoka/forum/views.py:1467
 msgid "You need to be logged in to use this function."
@@ -587,7 +587,7 @@ msgstr "Für diese Funktion musst du eingeloggt sein."
 #: inyoka/forum/views.py:1472
 #, python-format
 msgid "Posts by “%(user)s“"
-msgstr "Beiträge von „%(user)s”"
+msgstr "Beiträge von „%(user)s“"
 
 #: inyoka/forum/views.py:1475 inyoka/forum/templates/forum/page.html:30
 #: inyoka/forum/templates/forum/page.html:64
@@ -610,12 +610,12 @@ msgstr "Es existieren keine älteren Themen in diesem Forum."
 #: inyoka/forum/views.py:1637
 #, python-format
 msgid "The forum “%(forum)s“ was changed successfully."
-msgstr "Das Forum „%(forum)s” wurde erfolgreich geändert."
+msgstr "Das Forum „%(forum)s“ wurde erfolgreich geändert."
 
 #: inyoka/forum/views.py:1639
 #, python-format
 msgid "The forum “%(forum)s“ was created successfully."
-msgstr "Das Forum „%(forum)s” wurde erfolgreich erstellt."
+msgstr "Das Forum „%(forum)s“ wurde erfolgreich erstellt."
 
 #: inyoka/forum/templates/forum/_edit_latestpost_row.html:15
 #: inyoka/forum/templates/forum/splittopic.html:72
@@ -683,7 +683,7 @@ msgstr ""
 #: inyoka/forum/templates/forum/delete_topic.html:20
 #, python-format
 msgid "Do you really want to hide the topic “%(title)s“?"
-msgstr "Möchtest du das Thema „%(title)s” wirklich verbergen?"
+msgstr "Möchtest du das Thema „%(title)s“ wirklich verbergen?"
 
 #: inyoka/forum/templates/forum/delete_topic.html:27
 msgid "Reason:"
@@ -738,7 +738,7 @@ msgstr "Ablage"
 #: inyoka/forum/templates/forum/edit.html:45
 #, python-format
 msgid "New reply in “%(topic)s“"
-msgstr "Neue Antwort in „%(topic)s”"
+msgstr "Neue Antwort in „%(topic)s“"
 
 #: inyoka/forum/templates/forum/edit.html:54
 #: inyoka/forum/templates/forum/edit.m.html:38
@@ -752,7 +752,7 @@ msgstr[1] "Dieses Thema ist die Diskussion der Artikel %(article_list)s."
 #: inyoka/forum/templates/forum/edit.html:62
 #, python-format
 msgid "New topic in “%(forum)s“"
-msgstr "Neues Thema in „%(forum)s”"
+msgstr "Neues Thema in „%(forum)s“"
 
 #: inyoka/forum/templates/forum/edit.html:67
 #: inyoka/forum/templates/forum/edit.m.html:51
@@ -820,7 +820,7 @@ msgstr "Anhang hochladen"
 
 #: inyoka/forum/templates/forum/edit.html:147
 msgid "Mark topic as “Important:“"
-msgstr "Thema als „Wichtig:” markieren"
+msgstr "Thema als „Wichtig:“ markieren"
 
 #: inyoka/forum/templates/forum/edit.html:154
 #: inyoka/forum/templates/forum/edit.html:161
@@ -1004,7 +1004,7 @@ msgstr "Verschieben"
 #: inyoka/forum/templates/forum/movetopic.html:21
 #, python-format
 msgid "Move “%(topic)s“"
-msgstr "Verschiebe „%(topic)s”"
+msgstr "Verschiebe „%(topic)s“"
 
 #: inyoka/forum/templates/forum/movetopic.html:22
 msgid "Here you can move a topic into another forum."
