@@ -885,7 +885,7 @@ def do_attach(request, name):
     }
     if request.method == 'POST':
         if request.POST.get('cancel'):
-            messages.info(request, u'Canceled.')
+            messages.info(request, _(u'Canceled.'))
             if page and page.metadata.get('redirect'):
                 url = href('wiki', page.name, redirect='no')
             else:
