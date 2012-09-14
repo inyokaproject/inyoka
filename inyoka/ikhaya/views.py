@@ -489,6 +489,8 @@ def comment_update(boolean, text):
     def do(request, comment_id):
         c = Comment.objects.get(id=comment_id)
         if request.method == 'POST':
+            if 'cancel' in request.POST:
+                return HttpResponseRedirect(url_for(c.article))
             c.deleted = boolean
             c.save()
             messages.success(request, text)
