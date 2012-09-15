@@ -46,8 +46,8 @@ urlpatterns = patterns('inyoka.ikhaya.views',
 
     #: comment related urls
     (r'^comment/(?P<comment_id>\d+)/edit/$', 'comment_edit'),
-    (r'^comment/(?P<comment_id>\d+)/hide/$', 'comment_hide'),
-    (r'^comment/(?P<comment_id>\d+)/restore/$', 'comment_restore'),
+    (r'^comment/(?P<comment_id>\d+)/hide/$', 'comment_hide', {'hide': True}),
+    (r'^comment/(?P<comment_id>\d+)/restore/$', 'comment_restore', {'hide': False}),
 
     #: report related urls
     (r'^report/(?P<report_id>\d+)/hide/$', 'report_hide'),

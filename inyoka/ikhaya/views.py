@@ -29,6 +29,7 @@ from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.pagination import Pagination
 from inyoka.utils import generic
 from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
+from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
@@ -484,26 +485,29 @@ def comment_edit(request, comment_id):
     return AccessDeniedResponse()
 
 
-def comment_update(boolean, text):
-    @require_permission('comment_edit')
-    def do(request, comment_id):
-        c = Comment.objects.get(id=comment_id)
-        if request.method == 'POST':
-            if 'cancel' in request.POST:
-                return HttpResponseRedirect(url_for(c.article))
-            c.deleted = boolean
-            c.save()
-            messages.success(request, text)
-        else:
-            messages.info(request,
-                render_template('ikhaya/comment_update.html',
-                {'comment': c, 'action': 'hide' if boolean else 'restore'}))
-        return HttpResponseRedirect(url_for(c.article))
-    return do
+@require_permission('comment_edit')
+def _change_comment_status(request, comment_id, hide):
+    c = Comment.objects.get(id=comment_id)
+    c.deleted = hide
+    c.save()
+    #messages.success(request, text)
+    return HttpResponseRedirect(url_for(c.article))
 
 
-comment_hide = comment_update(True, _(u'The comment was hidden.'))
-comment_restore = comment_update(False, _(u'The comment was restored.'))
+#comment_hide = comment_update(True, _(u'The comment was hidden.'))
+#comment_restore = comment_update(False, _(u'The comment was restored.'))
+
+
+@confirm_action(_(u'Do you want to restore this comment?'),
+                confirm=_(u'Hide'), cancel=_(u'Cancel'))
+def comment_hide(*args, **kwargs):
+    return _change_comment_status(*args, **kwargs)
+
+
+@confirm_action(_(u'Do you want to restore this comment?'),
+                confirm=_(u'Restore'), cancel=_(u'Cancel'))
+def comment_restore(*args, **kwargs):
+    return _change_comment_status(*args, **kwargs)
 
 
 @templated('ikhaya/archive.html', modifier=context_modifier)
