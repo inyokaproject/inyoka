@@ -486,28 +486,26 @@ def comment_edit(request, comment_id):
 
 
 @require_permission('comment_edit')
-def _change_comment_status(request, comment_id, hide):
+def _change_comment_status(request, comment_id, hide, msg):
     c = Comment.objects.get(id=comment_id)
     c.deleted = hide
     c.save()
-    #messages.success(request, text)
+    messages.success(request, msg)
     return HttpResponseRedirect(url_for(c.article))
 
 
-#comment_hide = comment_update(True, _(u'The comment was hidden.'))
-#comment_restore = comment_update(False, _(u'The comment was restored.'))
-
-
-@confirm_action(_(u'Do you want to restore this comment?'),
+@confirm_action(_(u'Do you want to hide this comment?'),
                 confirm=_(u'Hide'), cancel=_(u'Cancel'))
-def comment_hide(*args, **kwargs):
-    return _change_comment_status(*args, **kwargs)
+def comment_hide(request, comment_id):
+    return _change_comment_status(request, comment_id, True,
+                _(u'The comment was hidden.'))
 
 
 @confirm_action(_(u'Do you want to restore this comment?'),
                 confirm=_(u'Restore'), cancel=_(u'Cancel'))
-def comment_restore(*args, **kwargs):
-    return _change_comment_status(*args, **kwargs)
+def comment_restore(request, comment_id):
+    return _change_comment_status(request, comment_id, False,
+                _(u'The comment was restored.'))
 
 
 @templated('ikhaya/archive.html', modifier=context_modifier)
