@@ -407,34 +407,48 @@ def report_new(request, year, month, day, slug):
     }
 
 
-def report_update(action, text):
-    @require_permission('article_edit')
-    def do(request, report_id):
-        report = Report.objects.get(id=report_id)
-        if request.method == 'POST':
-            if 'cancel' in request.POST:
-                return HttpResponseRedirect(url_for(report))
-            if action == 'hide':
-                report.deleted = True
-            elif action == 'restore':
-                report.deleted = False
-            elif action == 'solve':
-                report.solved = True
-            elif action == 'unsolve':
-                report.solved = False
-            report.save()
-            messages.success(request, text)
-        else:
-            messages.info(request,
-                render_template('ikhaya/report_update.html',
-                {'report': report, 'action': action}))
-        return HttpResponseRedirect(url_for(report))
-    return do
+@require_permission('article_edit')
+def _change_report_status(request, report_id, action, msg):
+    report = Report.objects.get(id=report_id)
+    if action == 'hide':
+        report.deleted = True
+    elif action == 'restore':
+        report.deleted = False
+    elif action == 'solve':
+        report.solved = True
+    elif action == 'unsolve':
+        report.solved = False
+    report.save()
+    messages.success(request, msg)
+    return HttpResponseRedirect(url_for(report))
 
-report_hide = report_update('hide', _(u'The report was hidden.'))
-report_restore = report_update('restore', _(u'The report was restored.'))
-report_solve = report_update('solve', _(u'The report was marked as solved.'))
-report_unsolve = report_update('unsolve', _(u'The report was marked as unsolved.'))
+
+@confirm_action(_(u'Do you want to hide this report?'),
+                confirm=_(u'Hide'), cancel=_(u'Cancel'))
+def report_hide(request, report_id):
+    return _change_report_status(request, report_id, 'hide',
+                _(u'The report was hidden.'))
+
+
+@confirm_action(_(u'Do you want to restore this report?'),
+                confirm=_(u'Restore'), cancel=_(u'Cancel'))
+def report_restore(request, report_id):
+    return _change_report_status(request, report_id, 'restore',
+                _(u'The report was restored.'))
+
+
+@confirm_action(_(u'Do you want to mark this report as solved?'),
+                confirm=_(u'Mark as solved'), cancel=_(u'Cancel'))
+def report_solve(request, report_id):
+    return _change_report_status(request, report_id, 'solve',
+                _(u'The report was marked as solved.'))
+
+
+@confirm_action(_(u'Do you want to mark this report as unsolved?'),
+                confirm=_(u'Mark as unsolved'), cancel=_(u'Cancel'))
+def report_unsolve(request, report_id):
+    return _change_report_status(request, report_id, 'unsolve',
+                _(u'The report was marked as unsolved.'))
 
 
 @templated('ikhaya/reports.html', modifier=context_modifier)
