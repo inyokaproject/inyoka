@@ -9,6 +9,11 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 
+from importlib import import_module
+
+from inyoka.utils.local import current_request
+from django.utils.translation import get_language
+from django.conf import settings
 
 def patch_wrapper(decorator, base):
     decorator.__name__ = base.__name__
@@ -46,3 +51,24 @@ class deferred(object):
                     delattr(obj, key)
                 except AttributeError:
                     continue
+
+class try_localflavor(object):
+    """ Search for localized versions of this function before calling it """
+    def __init__(self, func):
+        self.func = func
+        self.__name__ = func.__name__
+        self.__module__ = func.__module__
+        self.__doc__ = func.__doc__
+
+    def __call__(self, *args, **kwargs):
+        language = get_language().lower()[0:2]
+        try:
+            module = import_module("inyoka.utils.localflavor.%s.%s" %
+                                (language, self.__module__.split('.')[-1]))
+            localized_func = getattr(module, self.__name__)
+            return localized_func(*args, **kwargs)
+        except ImportError:
+            pass
+        except AttributeError:
+            pass
+        return self.func(*args, **kwargs)

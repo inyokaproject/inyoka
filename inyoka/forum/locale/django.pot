@@ -1230,13 +1230,13 @@ msgstr ""
 #: inyoka/forum/templates/forum/topic.html:162
 #: inyoka/forum/templates/forum/topic.m.html:47
 #, python-format
-msgid "The poll was started on %(start_date)s and it ended on %(end_date)s."
+msgid "The poll was started %(start_date)s and it ended %(end_date)s."
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:166
 #: inyoka/forum/templates/forum/topic.m.html:51
 #, python-format
-msgid "The poll was started on %(start_date)s and it will end on %(end_date)s."
+msgid "The poll was started %(start_date)s and it will end %(end_date)s."
 msgstr ""
 
 #: inyoka/forum/templates/forum/topic.html:171

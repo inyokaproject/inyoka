@@ -9,3 +9,5 @@ from inyoka.utils.tests.test_gravatar import *
 from inyoka.utils.tests.test_storage import *
 from inyoka.utils.tests.test_user import *
 from inyoka.utils.tests.test_files import *
+from inyoka.utils.tests.test_dates import *
+from inyoka.utils.tests.test_decorators import *

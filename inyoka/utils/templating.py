@@ -23,13 +23,13 @@ from django.core.context_processors import csrf
 from django.contrib.humanize.templatetags.humanize import naturalday
 
 from django_mobile import get_flavour
-from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound,\
+from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound, \
     contextfunction
 
 from inyoka import INYOKA_REVISION
 from inyoka.utils.cache import request_cache
 from inyoka.utils.dates import format_datetime, format_specific_datetime, \
-    format_time
+    format_time, naturalday_in_running_text
 from inyoka.utils.local import current_request
 from inyoka.utils.text import human_number
 
@@ -276,7 +276,7 @@ class InyokaEnvironment(Environment):
         Environment.__init__(self, loader=loader,
                              extensions=['jinja2.ext.i18n', 'jinja2.ext.do'],
                              auto_reload=settings.DEBUG,
-                             cache_size=-1)
+                             cache_size= -1)
 
         self.globals.update(INYOKA_REVISION=INYOKA_REVISION,
                             SETTINGS=settings,
@@ -302,6 +302,7 @@ FILTERS = {
     'timedeltaformat': timesince,
     'datetimeformat': format_datetime,
     'dateformat': naturalday,
+    'dateformatinrunningtext': naturalday_in_running_text,
     'hnumber': human_number,
     'timeformat': format_time,
     'specificdatetimeformat': format_specific_datetime,

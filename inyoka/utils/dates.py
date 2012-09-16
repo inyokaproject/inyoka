@@ -13,8 +13,10 @@ import pytz
 from operator import attrgetter
 from datetime import date, datetime, timedelta, time
 from django.contrib.humanize.templatetags.humanize import naturalday
+from django.template import defaultfilters
 from django.utils import datetime_safe
 from django.utils.dateformat import DateFormat
+from inyoka.utils.decorators import try_localflavor
 from django.utils.translation import get_language_from_request, ugettext as _
 from inyoka.utils.local import current_request
 
@@ -204,3 +206,8 @@ def format_specific_datetime(value):
     return _(u'%(date)s at %(time)s') % {
         'date': naturalday(value),
         'time': format_time(value, daytime=True)}
+
+
+@try_localflavor
+def naturalday_in_running_text(value, arg=None):
+    return defaultfilters.date(value, arg)

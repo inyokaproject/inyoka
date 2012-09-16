@@ -35,6 +35,7 @@ msgstr ""
 msgid "Private messages (%(count)s)"
 msgstr ""
 
+
 #: inyoka/templates/overall.html:134
 msgid "Private messages"
 msgstr ""
@@ -333,6 +334,22 @@ msgstr ""
 
 #: inyoka/utils/text.py:223
 msgid "one"
+msgstr ""
+
+#: inyoka/utils/localflavor/en/dates.py:34
+msgid "today"
+msgstr ""
+
+#: inyoka/utils/localflavor/en/dates.py:36
+msgid "tomorrow"
+msgstr ""
+
+#: inyoka/utils/localflavor/en/dates.py:38
+msgid "yesterday"
+msgstr ""
+
+#: inyoka/utils/localflavor/en/dates.py:39
+msgid "on"
 msgstr ""
 
 #: inyoka/utils/tests/test_templating.py:12
