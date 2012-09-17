@@ -190,7 +190,7 @@ def populate_context_defaults(context, flash=False):
             USER=user,
             BREADCRUMB=Breadcrumb(),
             MOBILE=get_flavour() == 'mobile',
-            _csrf_token=csrf(request)['csrf_token']
+            _csrf_token=force_unicode(csrf(request)['csrf_token'])
         )
 
         if not flash:
