@@ -1203,7 +1203,7 @@ class Revision(models.Model):
                     '%d.%m.%Y %H:%M %Z'),
                 'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
-                           user=(user if user.is_authenticated else None),
+                           user=(user if user.is_authenticated() else None),
                            change_date=datetime.utcnow(),
                            note=note, deleted=False, remote_addr=
                            remote_addr or '127.0.0.1',

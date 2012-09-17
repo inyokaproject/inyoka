@@ -18,6 +18,7 @@ from datetime import datetime, date, timedelta
 
 from django import forms
 from django.conf import settings
+from django.contrib import auth
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.files.storage import default_storage
@@ -158,7 +159,7 @@ def markup_styles(request):
     Its content is editable in the admin panel.
     """
     from django.utils.cache import patch_response_headers
-    response = HttpResponse(storage['markup_styles'], mimetype='text/css')
+    response = HttpResponse(storage['markup_styles'], content_type='text/css')
     patch_response_headers(response, 60 * 15)
     return response
 
@@ -183,7 +184,7 @@ def whoisonline(request):
 def register(request):
     """Register a new user."""
     redirect = request.GET.get('next') or href('portal')
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
@@ -235,7 +236,7 @@ def activate(request, action='', username='', activation_key=''):
     if not redirect:
         redirect = href('portal', 'login', username=user.username)
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         messages.error(request,
             _(u'You cannot enter an activation key when you are logged in.'))
         return HttpResponseRedirect(href('portal'))
@@ -288,7 +289,7 @@ def lost_password(request):
     View for the lost password dialog.
     It generates a new random password and sends it via mail.
     """
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(href('portal'))
 
@@ -345,7 +346,7 @@ def login(request):
     """Login dialog that supports permanent logins"""
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('portal')
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
@@ -378,7 +379,7 @@ def login(request):
                             make_permanent(request)
                         # username matches password and user is active
                         messages.success(request, _(u'You have successfully logged in.'))
-                        user.login(request)
+                        auth.login(request, user)
                         return HttpResponseRedirect(redirect)
                     inactive = True
                 failed = True
@@ -404,12 +405,12 @@ def logout(request):
     successfull or not (e.g if the user wasn't logged in)."""
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('portal')
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():
                 forum.mark_read(request.user)
             request.user.save()
-        User.objects.logout(request)
+        auth.logout(request)
         messages.success(request, _(u'You have successfully logged out.'))
     else:
         messages.error(request, _(u'You were not logged in.'))
@@ -851,7 +852,7 @@ def usercp_deactivate(request):
 
         if form.is_valid():
             deactivate_user(request.user)
-            User.objects.logout(request)
+            auth.logout(request)
             messages.success(request, _(u'Your account was deactivated.'))
             return HttpResponseRedirect(href('portal'))
         else:
@@ -1413,7 +1414,7 @@ def privmsg_new(request, username=None):
                           u'you are sending spam. If this ban is not '
                           u'justified, contact us at %(email)s')
                           % {'email': settings.INYOKA_CONTACT_EMAIL})
-                    User.objects.logout(request)
+                    auth.logout(request)
                     return HttpResponseRedirect(href('portal'))
 
             recipient_names = set(r.strip() for r in \
@@ -1980,7 +1981,7 @@ class OpenIdConsumer(Consumer):
                     if user.is_active:
                         # username matches password and user is active
                         messages.success(request, _(u'You have successfully logged in.'))
-                        user.login(request)
+                        auth.login(request, user)
                         openid = request.session.pop('openid')
                         if not UserData.objects.filter(key='openid',
                                                        value=openid).count():
@@ -2017,7 +2018,7 @@ class OpenIdConsumer(Consumer):
                     value=openid_response.identity_url).user
             if user.is_active:
                 messages.success(request, _(u'You have successfully logged in.'))
-                user.login(request)
+                auth.login(request, user)
             else:
                 messages.error(request, _(u'This user is not activated'))
         except UserData.DoesNotExist:

@@ -9,13 +9,14 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import datetime
+import json
 import Image
+
 from django import forms
 from django.forms import HiddenInput
 from django.db.models import Count
 from django.conf import settings
 from django.core.validators import EMPTY_VALUES
-from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
 
@@ -871,8 +872,8 @@ class ConfigurationForm(forms.Form):
         try:
             data[key] = data.get(key, '[]')
             # is there a way to validate a JSON string?
-            simplejson.loads(data[key])
-        except simplejson.JSONDecodeError:
+            json.loads(data[key])
+        except ValueError:
             return u'[]'
         return data[key]
 

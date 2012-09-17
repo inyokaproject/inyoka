@@ -8,12 +8,12 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import json
 import os
 from glob import glob
 
 from django.conf import settings
 from django.utils import translation
-from django.utils import simplejson as json
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 from django.utils.timesince import timesince
@@ -122,7 +122,7 @@ def populate_context_defaults(context, flash=False):
         user = None
 
     reported = pms = suggestions = events = reported_articles = 0
-    if request and user.is_authenticated:
+    if request and user.is_authenticated():
         can = {'manage_topics': user.can('manage_topics'),
                'article_edit': user.can('article_edit'),
                'event_edit': user.can('event_edit')}

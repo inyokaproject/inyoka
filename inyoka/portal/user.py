@@ -17,17 +17,20 @@ from PIL import Image
 from StringIO import StringIO
 
 from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, update_last_login
+from django.contrib.auth.signals import user_logged_in
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.db import models
+from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
+from django.utils import timezone
 
 from inyoka.utils import encode_confirm_data, classproperty
 from inyoka.utils.decorators import deferred
 from inyoka.utils.mail import send_mail
-from inyoka.utils.user import normalize_username, get_hexdigest,\
-    check_password, gen_activation_key
+from inyoka.utils.user import normalize_username, gen_activation_key
 from inyoka.utils.local import current_request
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
@@ -35,7 +38,6 @@ from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.database import update_model, JSONField
 
 
-UNUSABLE_PASSWORD = '!$!'
 _ANONYMOUS_USER = _SYSTEM_USER = None
 DEFAULT_GROUP_ID = 1 # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
@@ -413,10 +415,6 @@ class UserManager(models.Manager):
         user.save()
         return user
 
-    def logout(self, request):
-        request.session.pop('uid', None)
-        request.user = self.get_anonymous_user()
-
     def authenticate(self, username, password):
         """
         Authenticate a user with `username` (which can also be the email
@@ -451,7 +449,7 @@ class UserManager(models.Manager):
                     user.banned_until = None
                     user.save()
 
-        if user.check_password(password, auto_convert=True):
+        if user.check_password(password):
             return user
 
     def get_anonymous_user(self):
@@ -482,7 +480,7 @@ class UserManager(models.Manager):
         return _SYSTEM_USER
 
 
-class User(models.Model):
+class User(AbstractBaseUser):
     """User model that contains all informations about an user."""
     objects = UserManager()
 
@@ -490,10 +488,7 @@ class User(models.Model):
                                 max_length=30, unique=True, db_index=True)
     email = models.EmailField(ugettext_lazy(u'Email address'),
                               unique=True, max_length=50, db_index=True)
-    password = models.CharField(ugettext_lazy(u'Password'), max_length=128)
     status = models.IntegerField(ugettext_lazy(u'Status'), default=0)
-    last_login = models.DateTimeField(ugettext_lazy(u'Last login'),
-                                      default=datetime.utcnow)
     date_joined = models.DateTimeField(ugettext_lazy(u'Member since'),
                                        default=datetime.utcnow)
     groups = models.ManyToManyField(Group,
@@ -546,18 +541,15 @@ class User(models.Model):
                                        blank=True, null=True,
                                        db_column='primary_group_id')
 
+    USERNAME_FIELD = 'username'
+    backend = 'django.contrib.auth.backends.ModelBackend'  # TODO: Django 1.5, fixme?! (see django.contrib.auth.authenticate)
+
     def save(self, *args, **kwargs):
         """
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        if 'update_fields' in kwargs:
-            data = {}
-            for field in kwargs['update_fields']:
-                data[field] = getattr(self, field)
-            update_model(self, **data)
-        else:
-            super(User, self).save(*args, **kwargs)
+        super(User, self).save(*args, **kwargs)
         cache.delete_many(['portal/user/%s/signature' % self.id,
                            'portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])
@@ -566,33 +558,11 @@ class User(models.Model):
         return self.username
 
     is_anonymous = property(lambda x: x.username == settings.INYOKA_ANONYMOUS_USER)
-    is_authenticated = property(lambda x: not x.is_anonymous)
+    # No property to stay compatible with Django
+    is_authenticated = lambda x: not x.is_anonymous
     is_active = property(lambda x: x.status == 1)
     is_banned = property(lambda x: x.status == 2)
     is_deleted = property(lambda x: x.status == 3)
-
-    def set_password(self, raw_password):
-        """Set a new sha1 generated password hash"""
-        salt = get_hexdigest(str(random.random()), str(random.random()))[:5]
-        hsh = get_hexdigest(salt, raw_password)
-        self.password = '%s$%s' % (salt, hsh)
-        # invalidate the new_password_key
-        if self.new_password_key:
-            self.new_password_key = None
-
-    def check_password(self, raw_password, auto_convert=False):
-        """
-        Returns a boolean of whether the raw_password was correct.
-        """
-        return check_password(raw_password, self.password,
-                              convert_user=auto_convert and self or False)
-
-    def set_unusable_password(self):
-        """Sets a value that will never be a valid hash"""
-        self.password = UNUSABLE_PASSWORD
-
-    def has_usable_password(self):
-        return self.password != UNUSABLE_PASSWORD
 
     @property
     def has_wikipage(self):
@@ -610,13 +580,13 @@ class User(models.Model):
 
     def get_groups(self):
         """Get groups inclusive the default group for registered users"""
-        groups = self.is_authenticated and [Group.get_default_group()] or []
+        groups = self.is_authenticated() and [Group.get_default_group()] or []
         groups.extend(self.groups.all())
         return groups
 
     @deferred
     def permissions(self):
-        if not self.is_authenticated:
+        if not self.is_authenticated():
             return 0
         key = 'user_permissions/%s' % self.id
         result = cache.get(key)
@@ -753,16 +723,6 @@ class User(models.Model):
         elif action in ('subscribe', 'unsubscribe'):
             return href('portal', 'user', self.urlsafe_username, action, **query)
 
-    def login(self, request):
-        self.last_login = datetime.utcnow()
-        request.session['uid'] = self.id
-        request.session.pop('_sk', None)
-        request.user = self
-        # invalidate the new_password_key
-        if self.new_password_key:
-            self.new_password_key = None
-        self.save()
-
     @classproperty
     def SYSTEM_USER(cls):
         return cls.objects.get_system_user()
@@ -776,6 +736,19 @@ class UserData(models.Model):
     user = models.ForeignKey(User)
     key = models.CharField(max_length=255)
     value = models.CharField(max_length=255)
+
+
+@receiver(user_logged_in)
+def update_user_flags(sender, request, user, **kwargs):
+    update_fields = ['last_login']
+    user.last_login = timezone.now()
+    request.session.pop('_sk', None)
+    if user.new_password_key:
+        user.new_password_key = None
+        update_fields.append('new_password_key')
+    user.save(update_fields=update_fields)
+
+user_logged_in.disconnect(update_last_login)
 
 
 # circ imports

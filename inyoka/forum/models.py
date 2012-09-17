@@ -314,7 +314,7 @@ class Forum(models.Model):
         forums = self.parents
         forums.append(self)
         read = set()
-        if user.is_authenticated and user.forum_welcome:
+        if user.is_authenticated() and user.forum_welcome:
             read = set(int(i) for i in user.forum_welcome.split(','))
         for forum in forums:
             if forum.welcome_message is not None and forum.id not in read:

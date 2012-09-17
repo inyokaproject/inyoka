@@ -59,7 +59,7 @@
               </li>
             {%- endfor %}
             <li>
-              {%- if USER.is_authenticated %}
+              {%- if USER.is_authenticated() %}
                 <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
                   {%- trans %}Logout{% endtrans -%}
                 </a>

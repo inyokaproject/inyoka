@@ -11,7 +11,7 @@
 #}
 {%- extends 'portal/overall.m.html' %}
 {% block content %}
-  {%- if USER.is_authenticated %}
+  {%- if USER.is_authenticated() %}
     <hr />
     <nav>
       <ul>

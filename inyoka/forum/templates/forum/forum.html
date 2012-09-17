@@ -19,7 +19,7 @@
     {% if can_create %}
       <a href="{{ forum|url('newtopic') }}" class="action action_reply">{% trans %}New topic{% endtrans %}</a> |
     {%- endif %}
-    {% if USER.is_authenticated %}
+    {% if USER.is_authenticated() %}
       {%- if is_subscribed %}
         <a href="{{ generate_subscription_link(do='unsubscribe') }}" class="action action_subscribe subscribe_forum" id="{{ forum.slug }}">{% trans %}Unsubscribe{% endtrans %}</a>
       {%- else %}

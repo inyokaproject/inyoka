@@ -95,7 +95,7 @@ def on_get_calendar_entry(request):
 
 
 def on_toggle_sidebar(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         return False
     component = request.GET.get('component')
     if component not in ('ikhaya', 'planet', 'admin'):
@@ -110,7 +110,7 @@ def on_toggle_sidebar(request):
 
 
 def hide_global_message(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         request.user.settings['global_message_hidden'] = time.time()
         request.user.save()
         return True

@@ -76,7 +76,6 @@ MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
 # same for static
 STATIC_ROOT = join(BASE_PATH, 'static-collected')
 STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
-ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 
 STATICFILES_DIRS = (
     join(BASE_PATH, 'static'),
@@ -316,6 +315,14 @@ X_FRAME_OPTIONS = 'DENY'
 CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
+
+AUTH_USER_MODEL = 'portal.User'
+
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
+)
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
