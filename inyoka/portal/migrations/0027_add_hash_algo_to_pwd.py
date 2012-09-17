@@ -7,14 +7,12 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        "Write your forwards methods here."
         db.execute("UPDATE portal_user set password = '!' where password = '!$!'");
         db.execute("UPDATE portal_user set password = 'sha1$' || password WHERE password != '!' AND password NOT LIKE 'md5%%';")
 
     def backwards(self, orm):
-        "Write your backwards methods here."
         db.execute("UPDATE portal_user set password = '!$!' where password = '!'");
-        db.execute("UPDATE portal_user set password = replace(password, 'sha1$', '');")
+        db.execute("UPDATE portal_user set password = substring(password FROM 6) WHERE password LIKE 'sha1$%%';")
 
 
     models = {
