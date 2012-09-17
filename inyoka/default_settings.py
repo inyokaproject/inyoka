@@ -321,7 +321,7 @@ AUTH_USER_MODEL = 'portal.User'
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.SHA1PasswordHasher',
-    'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
+    'inyoka.utils.user.UnsaltedMD5PasswordHasher',
 )
 
 # export only uppercase keys

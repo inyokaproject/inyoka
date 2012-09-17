@@ -13,6 +13,7 @@
 import re
 from hashlib import md5, sha1
 from django.conf import settings
+from django.contrib.auth import hashers
 
 
 _username_re = re.compile(ur'^[@\-\.a-z0-9 öäüß]{1,30}$', re.I | re.U)
@@ -65,3 +66,7 @@ def check_activation_key(user, key):
             The key that needs to be checked for the *user*.
     """
     return key == gen_activation_key(user)
+
+
+class UnsaltedMD5PasswordHasher(hashers.UnsaltedMD5PasswordHasher):
+    algorithm = 'md5'
