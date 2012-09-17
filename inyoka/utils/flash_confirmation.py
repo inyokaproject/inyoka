@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from django.utils.translation import ugettext as _
-from django.views.decorators.csrf import csrf_protect
 
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import HttpResponseRedirect, TemplateResponse
@@ -14,7 +13,6 @@ def confirm_action(message=None, confirm=None, cancel=None):
     protection using :func:`django.views.decorators.csrf.csrf_protect`
     """
     def wrapper(func):
-        @csrf_protect
         def decorator(request, *args, **kwargs):
             if request.method == 'POST':
                 if 'confirm' in request.POST:
