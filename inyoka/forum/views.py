@@ -1059,6 +1059,9 @@ def splittopic(request, topic_slug, page=1):
     else:
         posts = old_posts.filter(id__in=[int(pid) for pid in post_ids])
 
+    # Order the posts in the same way as they will be attached to the new topic
+    posts = posts.order_by('position')
+
     if request.method == 'POST':
         form = SplitTopicForm(request.POST)
         form.fields['forum'].refresh()

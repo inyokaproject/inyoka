@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-08-02 13:39+0200\n"
+"POT-Creation-Date: 2012-09-14 00:25+0200\n"
 "PO-Revision-Date: 2012-03-18 22:21+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -37,7 +37,7 @@ msgstr "Wiederherstellen abgebrochen."
 #: inyoka/wiki/actions.py:230
 #, python-format
 msgid "“%(title)s” was reverted successfully"
-msgstr "Die Seite “%(title)s“ wurde erfolgreich wiederhergestellt."
+msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
 
 #: inyoka/wiki/actions.py:259
 #, python-format
@@ -81,7 +81,7 @@ msgstr ""
 "Die Vorlage “<a href=\"%(link)s\">%(name)s</a>” wurde geladen und wird "
 "als Basis für die neue Seite verwendet."
 
-#: inyoka/wiki/actions.py:439
+#: inyoka/wiki/actions.py:439 inyoka/wiki/actions.py:888
 msgid "Canceled."
 msgstr "Abgebrochen."
 
@@ -92,12 +92,12 @@ msgstr "Keine Änderungen."
 #: inyoka/wiki/actions.py:464 inyoka/wiki/actions.py:477
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been created."
-msgstr "Die Seite “<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."
+msgstr "Die Seite „<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."
 
 #: inyoka/wiki/actions.py:466
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been edited."
-msgstr "Die Seite “<a href=\"%(link)s\">%(name)s</a>“ wurde bearbeitet."
+msgstr "Die Seite „<a href=\"%(link)s\">%(name)s</a>“ wurde bearbeitet."
 
 #: inyoka/wiki/actions.py:498
 msgid ""
@@ -271,7 +271,7 @@ msgstr "Schlüssel nicht definiert"
 #: inyoka/wiki/macros.py:1026
 #, python-format
 msgid "The key “%(name)s” is not defined"
-msgstr "Der Schlüssel „%(name)s” wurde nicht definiert."
+msgstr "Der Schlüssel „%(name)s“ wurde nicht definiert."
 
 #: inyoka/wiki/macros.py:1094
 msgid "No result"
@@ -320,7 +320,7 @@ msgstr "Revision %(id)d (%(title)s)"
 #: inyoka/wiki/notifications.py:28
 #, python-format
 msgid "The page “%(name)s” was changed"
-msgstr "Die Seite „%(name)s” wurde geändert"
+msgstr "Die Seite „%(name)s“ wurde geändert"
 
 #: inyoka/wiki/templates.py:52
 msgid "The first argument must be the name of the template."
