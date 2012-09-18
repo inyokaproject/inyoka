@@ -357,7 +357,7 @@ class TableOfContents(TreeMacro):
                 if headline.level > normalized_level:
                     normalized_level += 1
                 elif headline.level < normalized_level:
-                    normalized_level -= 1
+                    normalized_level -= (normalized_level - headline.level)
             if normalized_level > self.depth:
                 continue
             elif normalized_level > len(stack):

@@ -829,7 +829,7 @@ def usercp_settings(request):
             request.user.save()
             messages.success(request, _(u'Your settings were successfully changed.'))
         else:
-            issue_generic.trigger_fix_errors_message_message(request)
+            generic.trigger_fix_errors_message(request)
     else:
         settings = request.user.settings
         ubuntu_version = [s.ubuntu_version for s in Subscription.objects.\

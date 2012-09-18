@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-08-11 13:16+0200\n"
+"POT-Creation-Date: 2012-09-14 00:25+0200\n"
 "PO-Revision-Date: 2012-03-18 22:16+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -157,12 +157,12 @@ msgstr "Längengrad"
 #: inyoka/ikhaya/notifications.py:23
 #, python-format
 msgid "New article suggestion “%(suggestion)s“"
-msgstr "Neuer Artikelvorschlag „%(suggestion)s”"
+msgstr "Neuer Artikelvorschlag „%(suggestion)s“"
 
 #: inyoka/ikhaya/notifications.py:38
 #, python-format
 msgid "New comment on article “%(article)s“"
-msgstr "Neuer Kommentar zum Artikel „%(article)s”"
+msgstr "Neuer Kommentar zum Artikel „%(article)s“"
 
 #: inyoka/ikhaya/views.py:149
 msgid "This article is not visible for regular users."
@@ -195,22 +195,22 @@ msgstr ""
 #: inyoka/ikhaya/views.py:231
 #, python-format
 msgid "The article “%(title)s“ was deleted."
-msgstr "Der Artikel „%(title)s” wurde gelöscht."
+msgstr "Der Artikel „%(title)s“ wurde gelöscht."
 
 #: inyoka/ikhaya/views.py:265
 #, python-format
 msgid "This article is currently being edited by “%(user)s“!"
-msgstr "Dieser Artikel wird momentan von „%(user)s” bearbeitet!"
+msgstr "Dieser Artikel wird momentan von „%(user)s“ bearbeitet!"
 
 #: inyoka/ikhaya/views.py:286
 #, python-format
 msgid "The article “%(title)s“ was created."
-msgstr "Der Artikel „%(title)s” wurde erstellt."
+msgstr "Der Artikel „%(title)s“ wurde erstellt."
 
 #: inyoka/ikhaya/views.py:291
 #, python-format
 msgid "The article “%(title)s“ was saved."
-msgstr "Der Artikel „%(title)s” wurde gespeichert."
+msgstr "Der Artikel „%(title)s“ wurde gespeichert."
 
 #: inyoka/ikhaya/views.py:328
 msgid "You need to be logged in to subscribe to comments."
@@ -267,7 +267,7 @@ msgstr "Der Kommentar wurde wiederhergestellt."
 #: inyoka/ikhaya/views.py:521
 #, python-format
 msgid "The suggestion “%(title)s“ does not exist."
-msgstr "Der Vorschlag „%(title)s” existiert nicht."
+msgstr "Der Vorschlag „%(title)s“ existiert nicht."
 
 #: inyoka/ikhaya/views.py:528
 msgid "The suggestion was assigned to nobody."
@@ -276,7 +276,7 @@ msgstr "Der Vorschlag wurde niemandem zugewiesen."
 #: inyoka/ikhaya/views.py:535
 #, python-format
 msgid "The suggestion was assigned to “%(user)s“."
-msgstr "Der Vorschlag wurde „%(user)s” zugewiesen."
+msgstr "Der Vorschlag wurde „%(user)s“ zugewiesen."
 
 #: inyoka/ikhaya/views.py:547 inyoka/ikhaya/views.py:592
 msgid "This suggestion does not exist."

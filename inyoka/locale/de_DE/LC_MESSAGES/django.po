@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-08-10 22:27+0200\n"
+"POT-Creation-Date: 2012-09-14 00:25+0200\n"
 "PO-Revision-Date: 2012-03-28 20:00+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -173,8 +173,8 @@ msgid ""
 "\"reload\" button to request a new control key the sending the page "
 "again."
 msgstr ""
-"In manchen Browsern ist es möglich durch Klicken auf \"Zurück\" und dann "
-"\"Aktualiseren\" einen neuen Kontrollschlüssel anzufordern, um das "
+"In manchen Browsern ist es möglich durch Klicken auf „Zurück“ und dann "
+"„Aktualiseren“ einen neuen Kontrollschlüssel anzufordern, um das "
 "Absenden erneut durchzuführen."
 
 #: inyoka/templates/errors/403.html:18
@@ -290,11 +290,11 @@ msgstr "Bitte die aufgetretenen Fehler beheben."
 
 #: inyoka/utils/generic.py:58
 msgid "{verbose_name} “{object_name}” was successfully created."
-msgstr "{verbose_name} “{object_name}” wurde erfolgreich erstellt."
+msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
 
 #: inyoka/utils/generic.py:60
 msgid "{verbose_name} “{object_name}” was successfully changed."
-msgstr "{verbose_name} “{object_name}” wurde erfolgreich geändert."
+msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
 #: inyoka/utils/generic.py:174
 #, python-format
@@ -303,7 +303,7 @@ msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
 
 #: inyoka/utils/generic.py:201
 msgid "{verbose_name} “{object_name}” was deleted successfully!"
-msgstr "{verbose_name} “{object_name}” erfolgreich gelöscht!"
+msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
 
 #: inyoka/utils/generic.py:219
 msgid "Canceled."
@@ -328,7 +328,7 @@ msgstr ""
 #: inyoka/utils/sortable.py:106
 #, python-format
 msgid "The chosen sort value (“%(value)s”) is not available"
-msgstr "Der ausgewählte Wert (“%(value)s”) ist nicht verfügbar"
+msgstr "Der ausgewählte Wert („%(value)s“) ist nicht verfügbar"
 
 #: inyoka/utils/text.py:212
 msgid "ten"

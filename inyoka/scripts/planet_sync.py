@@ -90,6 +90,8 @@ def sync():
                 if entry.title_detail.get('type') in HTML_MIMETYPES:
                     title = cleanup_html(title, id_prefix='entry-title-%x' %
                                          int(time()), output_format='xhtml')
+                    # cleanup_html adds <p> around the text, remove it again
+                    title = title[3:-4]
                 else:
                     title = escape(title)
             else:
