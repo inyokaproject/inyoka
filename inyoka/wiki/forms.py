@@ -11,13 +11,13 @@
 from django import forms
 from django.utils.translation import ugettext_lazy, ugettext as _
 
-from inyoka.wiki.utils import has_conflicts
-from inyoka.wiki.acl import test_changes_allowed
-from inyoka.wiki.parser import parse, StackExhaused
+from inyoka.markup import parse, StackExhaused
+from inyoka.utils.forms import UserField, DateWidget
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.urls import href
 from inyoka.forum.models import Topic
-from inyoka.utils.forms import UserField, DateWidget
+from inyoka.wiki.utils import has_conflicts
+from inyoka.wiki.acl import test_changes_allowed
 
 
 class PageEditForm(SurgeProtectionMixin, forms.Form):

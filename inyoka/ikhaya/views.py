@@ -29,10 +29,11 @@ from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.pagination import Pagination
 from inyoka.utils import generic
 from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
+from inyoka.utils.notification import send_notification
+from inyoka.markup import parse, RenderContext
+from inyoka.utils.templating import render_template
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import render_template
-from inyoka.utils.notification import send_notification
 from inyoka.portal.utils import check_login, require_permission
 from inyoka.portal.user import User
 from inyoka.portal.models import PrivateMessage, PrivateMessageEntry, \
@@ -42,7 +43,6 @@ from inyoka.ikhaya.forms import SuggestArticleForm, EditCommentForm, \
      EditEventForm, NewEventForm
 from inyoka.ikhaya.models import Event, Category, Article, Suggestion, \
      Comment, Report
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.ikhaya.notifications import send_comment_notifications, \
     send_new_suggestion_notifications
 
