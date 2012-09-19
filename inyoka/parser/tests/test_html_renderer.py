@@ -9,7 +9,8 @@
     :license: GNU GPL.
 """
 from django.test import TestCase
-from inyoka.wiki.parser import Parser, RenderContext
+
+from inyoka.parser import Parser, RenderContext
 
 
 def render(source):

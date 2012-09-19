@@ -26,6 +26,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 from django.utils.text import truncate_html_words
 
+from inyoka.parser import parse, RenderContext
+from inyoka.parser.parsertools import flatten_iterator
 from inyoka.utils.cache import request_cache
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.text import normalize_pagename
@@ -36,14 +38,12 @@ from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.notification import send_notification, notify_about_subscription
-from inyoka.utils.parsertools import flatten_iterator
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.storage import storage
 from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.generic import trigger_fix_errors_message
 from inyoka.wiki.utils import quote_text
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page
 from inyoka.portal.utils import simple_check_login, abort_access_denied, \
     require_permission
