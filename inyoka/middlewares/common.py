@@ -73,11 +73,7 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
             response['Cache-Control'] = 'no-cache'
 
         path = request.path
-        exclude = (any(x in path for x in ('.js', '.css'))
-                   or '__service__' in request.GET
-                   or 'Content-Disposition' in response
-                   or 'html' in response['Content-Type'])
-        if settings.DEBUG and not exclude:
+        if path.endswith('.less') and settings.DEBUG:
             response['Access-Control-Allow-Origin'] = '*'
 
         # warn of slow requests
