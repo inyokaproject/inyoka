@@ -7,7 +7,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.test import TestCase
-from inyoka.utils.css import filter_style
+from inyoka.parser.utils import filter_style
 
 
 class TestUtilsCss(TestCase):

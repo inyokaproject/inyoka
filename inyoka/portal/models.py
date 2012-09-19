@@ -14,11 +14,14 @@ from django.core.cache import cache
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy
 
+from werkzeug import cached_property
+
+from inyoka.parser import parse, render, RenderContext
+from inyoka.portal.user import User
+
+from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
-from inyoka.utils.local import current_request
-from inyoka.portal.user import User
-from werkzeug import cached_property
 
 
 class SubscriptionManager(gmodels.ContentTypeManager):
@@ -371,5 +374,4 @@ class Storage(models.Model):
 
 
 from inyoka.forum.acl import have_privilege as have_forum_privilege
-from inyoka.wiki.parser import parse, render, RenderContext
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege

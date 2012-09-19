@@ -24,15 +24,16 @@ from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.utils import encode_confirm_data, classproperty
+from inyoka.utils.database import update_model, JSONField
 from inyoka.utils.decorators import deferred
-from inyoka.utils.mail import send_mail
-from inyoka.utils.user import normalize_username, get_hexdigest,\
-    check_password, gen_activation_key
+from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.local import current_request
+from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
-from inyoka.utils.gravatar import get_gravatar
-from inyoka.utils.database import update_model, JSONField
+from inyoka.utils.user import normalize_username, get_hexdigest,\
+    check_password, gen_activation_key
+from inyoka.parser import parse, render, RenderContext
 
 
 UNUSABLE_PASSWORD = '!$!'
@@ -779,6 +780,5 @@ class UserData(models.Model):
 
 
 # circ imports
-from inyoka.wiki.parser import parse, render, RenderContext
 from inyoka.utils.urls import href
 from inyoka.utils.storage import storage

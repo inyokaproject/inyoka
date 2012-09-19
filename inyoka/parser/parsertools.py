@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.utils.parsertools
-    ~~~~~~~~~~~~~~~~~~~~~~~~
+    inyoka.parsertools
+    ~~~~~~~~~~~~~~~~~~
 
     Useful classes for parsers.
 

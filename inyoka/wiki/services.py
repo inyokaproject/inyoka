@@ -18,8 +18,8 @@
 from inyoka.utils.http import HttpResponse
 from inyoka.utils.services import SimpleDispatcher, permit_methods
 from inyoka.forum.models import Post as ForumPost
+from inyoka.parser import parse, RenderContext
 from inyoka.wiki.utils import get_smilies
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page
 
 

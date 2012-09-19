@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.wiki.parser.machine
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    inyoka.parser.machine
+    ~~~~~~~~~~~~~~~~~~~~~
 
     This implements the ast compiler and evaluator.  Most of the functionality
     here is available on the nodes itself because they mix those classes in,
@@ -13,7 +13,8 @@
 """
 import re
 from cPickle import loads, dumps, HIGHEST_PROTOCOL
-from inyoka.wiki.parser.lexer import escape
+
+from inyoka.parser.lexer import escape
 from inyoka.utils import get_request_context
 
 

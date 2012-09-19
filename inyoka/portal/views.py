@@ -33,6 +33,7 @@ from django.utils.html import escape
 from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
 
+from inyoka.parser import parse, RenderContext
 from inyoka.utils import decode_confirm_data, generic
 from inyoka.utils.text import get_random_password, normalize_pagename
 from inyoka.utils.dates import DEFAULT_TIMEZONE, \
@@ -51,7 +52,6 @@ from inyoka.utils.user import check_activation_key
 from inyoka.utils.templating import render_template
 from inyoka.utils.mail import send_mail
 from inyoka.wiki.utils import quote_text
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion

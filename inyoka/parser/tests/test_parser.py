@@ -10,7 +10,8 @@
     :license: GNU GPL.
 """
 from django.test import TestCase
-from inyoka.wiki.parser import Parser, nodes
+
+from inyoka.parser import Parser, nodes
 
 
 def parse(code):

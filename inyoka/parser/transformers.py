@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.wiki.parser.transformers
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    inyoka.parser.transformers
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This module holds ast transformers we use.  Transformers can assume that
     they always operate on complete trees, thus the outermost node is always
@@ -16,8 +16,10 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
+
 from django.utils.encoding import smart_unicode
-from inyoka.wiki.parser import nodes
+
+from inyoka.parser import nodes
 
 
 _newline_re = re.compile(r'(\n)')

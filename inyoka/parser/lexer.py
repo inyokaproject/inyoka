@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.wiki.parser.lexer
-    ~~~~~~~~~~~~~~~~~~~~~~~~
+    inyoka.parser.lexer
+    ~~~~~~~~~~~~~~~~~~~
 
     Tokenizes our wiki markup.  The lexer is implemented as some sort of
     scanner with an internal stack.  Inspired by pygments.
@@ -12,8 +12,10 @@
 """
 import re
 from itertools import izip
+
 from django.utils.encoding import smart_unicode
-from inyoka.utils.parsertools import TokenStream
+
+from inyoka.parser.parsertools import TokenStream
 
 
 def bygroups(*args):
