@@ -6,5 +6,6 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+# FIXME: Django 1.5 move to a sane location and add some loading stuff... (Circular imports :/)
 # register seach components
-from inyoka.forum import search
+#from inyoka.forum import search

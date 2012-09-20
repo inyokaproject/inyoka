@@ -21,6 +21,8 @@ from django.core.validators import EMPTY_VALUES
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
 
+from django.contrib.auth.forms import PasswordResetForm
+
 from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
 from inyoka.forum.forms import ForumField
@@ -193,35 +195,11 @@ class RegisterForm(forms.Form):
         return self.cleaned_data['email']
 
 
-class LostPasswordForm(forms.Form):
-    """
-    Form for the lost password form.
-
-    It's similar to the register form and uses
-    a hidden and a visible image CAPTCHA too.
-    """
-    username = forms.CharField(label=_('Username or email address'))
-    captcha = CaptchaField(label=_('CAPTCHA'))
-    hidden_captcha = HiddenCaptchaField(required=False)
-
-    def clean_username(self):
-        data = super(LostPasswordForm, self).clean()
-        if 'username' in data and '@' in data['username']:
-            try:
-                self.user = User.objects.get(email=data['username'])
-            except User.DoesNotExist:
-                raise forms.ValidationError(
-                    _(u'A user with the email address “%(mail)s“ does not exist.')
-                    % {'mail': data['username']}
-                )
-        else:
-            try:
-                self.user = User.objects.get(data['username'])
-            except User.DoesNotExist:
-                raise forms.ValidationError(
-                    _(u'The user “%(name)s“ does not exist.')
-                    % {'name': data['username']}
-                )
+class LostPasswordForm(PasswordResetForm):
+    def save(self, **opts):
+        request = opts['request']
+        messages.success(request, _(u'An email with further instructions was sent to you.'))
+        return super(PasswordResetForm, self).save(**opts)
 
 
 class SetNewPasswordForm(forms.Form):

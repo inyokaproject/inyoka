@@ -86,5 +86,6 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 
+# FIXME: Django 1.5 import errors and blabla...
 # register search auth decider
-import inyoka.wiki.search
+#import inyoka.wiki.search

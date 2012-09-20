@@ -283,30 +283,12 @@ def resend_activation_mail(request, username):
     return HttpResponseRedirect(href('portal'))
 
 
-@templated('portal/lost_password.html')
 def lost_password(request):
-    """
-    View for the lost password dialog.
-    It generates a new random password and sends it via mail.
-    """
-    if request.user.is_authenticated():
-        messages.error(request, _(u'You are already logged in.'))
-        return HttpResponseRedirect(href('portal'))
-
-    if request.method == 'POST':
-        form = LostPasswordForm(request.POST)
-        form.captcha_solution = request.session.get('captcha_solution')
-        if form.is_valid():
-            send_new_user_password(form.user)
-            messages.success(request, _(u'An email with further instructions was sent to you.'))
-            # clean up request.session
-            return HttpResponseRedirect(href('portal', 'login'))
-    else:
-        form = LostPasswordForm()
-
-    return {
-        'form': form
-    }
+    from django.contrib.auth.views import password_reset
+    return password_reset(request,
+        post_reset_redirect=href('portal', 'login'),
+        template_name='portal/lost_password.html',
+        password_reset_form=LostPasswordForm)
 
 
 @templated('portal/set_new_password.html')

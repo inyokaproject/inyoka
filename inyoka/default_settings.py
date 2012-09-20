@@ -201,9 +201,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.humanize',
+    'inyoka.forum',
     'inyoka.portal',
     'inyoka.wiki',
-    'inyoka.forum',
     'inyoka.ikhaya',
     'inyoka.pastebin',
     'inyoka.planet',
@@ -323,6 +323,13 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.SHA1PasswordHasher',
     'inyoka.utils.user.UnsaltedMD5PasswordHasher',
 )
+
+TEMPLATE_LOADERS = (
+    'inyoka.utils.templating.DjangoLoader',
+    'django.template.loaders.app_directories.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = ()
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
