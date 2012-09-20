@@ -251,7 +251,7 @@ $(document).ready(function () {
   })();
 
   // add links to the "package" macro
-  $('.package-list, .package-list2').each(function (i, elm) {
+  $('.package-list, .builddeps').each(function (i, elm) {
     var tmp = $('.bash', elm);
     var apt = tmp[0];
     var aptitude = tmp[1];
