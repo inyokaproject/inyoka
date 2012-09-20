@@ -592,11 +592,8 @@ class EditGroupForm(forms.Form):
     import_icon_from_global = forms.BooleanField(label=ugettext_lazy(u'Use global team icon'),
         required=False)
 
-
-class CreateGroupForm(EditGroupForm):
-
     def clean_name(self):
-        """Validates that the name is alphanumeric and is not already in use."""
+        """Validates that the name is alphanumeric"""
 
         data = self.cleaned_data
         if 'name' in data:
@@ -605,12 +602,22 @@ class CreateGroupForm(EditGroupForm):
             except ValueError:
                 raise forms.ValidationError(_(
                     u'The group name contains invalid chars'))
-            if Group.objects.filter(name=name).exists():
-                raise forms.ValidationError(_(
-                    u'The group name is not available. Please choose another one.'))
             return name
         else:
             raise forms.ValidationError(_(u'You need to enter a group name'))
+
+
+class CreateGroupForm(EditGroupForm):
+
+    def clean_name(self):
+        """Validates that the name is not already in use."""
+        super(CreateGroupForm, self).clean_name()
+
+        data = self.cleaned_data
+        if Group.objects.filter(name=data['name']).exists():
+            raise forms.ValidationError(_(
+                u'The group name is not available. Please choose another one.'))
+        return data['name']
 
 
 class SearchForm(forms.Form):
