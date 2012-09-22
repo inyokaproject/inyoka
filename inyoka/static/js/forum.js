@@ -10,7 +10,11 @@
 
 $(function () { /* collapsable elements for the input forms */
   $('dt.collapse').each(function () {
-    $(this).nextWhile('dd').hide().addClass('collapse_enabled');
+    if ($(this).hasClass('has_errors')) {
+      $(this).nextWhile('dd').addClass('collapse_enabled');
+    } else {
+      $(this).nextWhile('dd').hide().addClass('collapse_enabled');
+    }
     $(this).click(function () {
       $(this).toggleClass('collapsed').nextWhile('dd').toggle();
     }).addClass('collapse_enabled collapsed');
