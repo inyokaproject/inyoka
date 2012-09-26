@@ -42,7 +42,7 @@
       {%- if post %}
         <h2>{% trans %}Edit post{% endtrans %}</h2>
       {%- else %}
-        <h2>{% trans topic=topic.title|e %}New reply in “{{ topic }}“{% endtrans %}</h2>
+        <h2>{% trans topic=topic.title|e %}New reply in “{{ topic }}”{% endtrans %}</h2>
       {%- endif %}
       {%- if topic.get_version_info() and not (isfirstpost or isnewtopic) %}
         <p class="ubuntu_version">
@@ -59,7 +59,7 @@
       </div>
       {%- endif %}
     {%- else %}
-      <h2>{% trans forum=forum.name|e %}New topic in “{{ forum }}“{% endtrans %}</h2>
+      <h2>{% trans forum=forum.name|e %}New topic in “{{ forum }}”{% endtrans %}</h2>
     {%- endif %}
     <dl>
       {%- if isnewtopic or isfirstpost %}
@@ -144,7 +144,7 @@
       {%- endif %}
       {%- if can_sticky and (isnewtopic or isfirstpost) %}
       <dt>Optionen:</dt>
-      <dd>{{ form.sticky }} <label for="id_sticky">{% trans %}Mark topic as “Important:“{% endtrans %}</label></dd>
+      <dd>{{ form.sticky }} <label for="id_sticky">{% trans %}Mark topic as “Important:”{% endtrans %}</label></dd>
       {%- endif %}
     </dl>
     <p>

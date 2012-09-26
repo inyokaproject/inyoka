@@ -21,9 +21,9 @@
     {% set latest_rev = revisions[0] -%}
     <p>
       {%- trans count=pagination.total, link=page|url, article=page.title|e -%}
-        The article “<a href="{{ link }}">{{ article }}</a>“ has currently {{ count }} revision.
+        The article “<a href="{{ link }}">{{ article }}</a>” has currently {{ count }} revision.
       {%- pluralize -%}
-        The article “<a href="{{ link }}">{{ article }}</a>“ has currently {{ count }} revisions.
+        The article “<a href="{{ link }}">{{ article }}</a>” has currently {{ count }} revisions.
       {%- endtrans %}
 
       {% if latest_rev.user %}

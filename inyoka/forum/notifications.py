@@ -53,7 +53,7 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
     try:
         # Inform users who subscribed to the forum
         queue_notifications.delay(request_user_id, 'new_topic',
-            _(u'New topic in forum %(forum)s: “%(topic)s“') % {
+            _(u'New topic in forum “%(forum)s”: “%(topic)s”') % {
                     'forum': data.get('forum_name'),
                     'topic': data.get('topic_title')},
             data,
@@ -74,7 +74,7 @@ def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
     try:
         if data.get('topic_version') is not None:
             queue_notifications.delay(request_user_id, 'new_topic_ubuntu_version',
-                _(u'New topic with version %(version)s: “%(topic)s“') % {
+                _(u'New topic with version %(version)s: “%(topic)s”') % {
                     'version': data.get('topic_version'),
                     'topic': data.get('topic_title')},
                 data,
@@ -98,7 +98,7 @@ def send_edit_notifications(user, post, topic, forum):
 
     # notify about new answer in topic for topic-subscriptions
     queue_notifications.delay(user.id, 'new_post',
-        _(u'New reply in topic “%(topic)s“') % {
+        _(u'New reply in topic “%(topic)s”') % {
             'topic': data.get('topic_title')},
         data,
         filter={'content_type': ctype(Topic), 'object_id': data.get('topic_id')},
@@ -129,7 +129,7 @@ def send_discussion_notification(user, page):
     # also notify if the user has not yet visited the page,
     # since otherwise he would never know about the topic
     queue_notifications.delay(user.id, 'new_page_discussion',
-        _(u'New discussion regarding the page “%(page)s“ created') % {
+        _(u'New discussion regarding the page “%(page)s” created') % {
             'page': data.get('page_title')},
         data,
         filter={'content_type': ctype(Page), 'object_id': data.get('page_id')})
@@ -143,7 +143,7 @@ def send_deletion_notification(user, topic, reason):
           'topic_title': topic.title}
 
     queue_notifications.delay(user.id, 'topic_deleted',
-        _(u'The topic “%(topic)s“ has been deleted') % {
+        _(u'The topic “%(topic)s” has been deleted') % {
             'topic': data.get('topic_title')},
         data,
         filter={'content_type': ctype(Topic), 'object_id': data.get('topic_id')})

@@ -28,12 +28,12 @@
     {%- endif %}
     {%- if can.manage %}
       {%- if page.name.startswith('Baustelle/Verlassen') %}
-        <li><a href="?action=mv_baustelle">{% trans %}Mark page as “under construction“{% endtrans %}</a></li>
+        <li><a href="?action=mv_baustelle">{% trans %}Mark page as “under construction”{% endtrans %}</a></li>
       {%- elif page.name.startswith('Baustelle') %}
-        <li><a href="?action=mv_discontinued">{% trans %}Move page to “discontinued“{% endtrans %}</a></li>
+        <li><a href="?action=mv_discontinued">{% trans %}Move page to “discontinued”{% endtrans %}</a></li>
         <li><a href="?action=mv_back">{% trans %}Move page back to the wiki{% endtrans %}</a></li>
       {%- else %}
-        <li><a href="?action=mv_baustelle">{% trans %}Mark page as “under construction“{% endtrans %}</a></li>
+        <li><a href="?action=mv_baustelle">{% trans %}Mark page as “under construction”{% endtrans %}</a></li>
       {%- endif %}
     {%- endif %}
     {%- if can.read %}

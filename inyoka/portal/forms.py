@@ -138,7 +138,7 @@ class RegisterForm(forms.Form):
         if not is_valid_username(username):
             raise forms.ValidationError(
                 _(u'Your username contains invalid characters. Only '
-                  u'alphanumeric chars and “-” and “ “ are allowed.')
+                  u'alphanumeric chars and “-” and “ ” are allowed.')
             )
         try:
             User.objects.get(username)
@@ -209,7 +209,7 @@ class LostPasswordForm(forms.Form):
                 self.user = User.objects.get(email=data['username'])
             except User.DoesNotExist:
                 raise forms.ValidationError(
-                    _(u'A user with the email address “%(mail)s“ does not exist.')
+                    _(u'A user with the email address “%(mail)s” does not exist.')
                     % {'mail': data['username']}
                 )
         else:
@@ -217,7 +217,7 @@ class LostPasswordForm(forms.Form):
                 self.user = User.objects.get(data['username'])
             except User.DoesNotExist:
                 raise forms.ValidationError(
-                    _(u'The user “%(name)s“ does not exist.')
+                    _(u'The user “%(name)s” does not exist.')
                     % {'name': data['username']}
                 )
 
@@ -286,11 +286,11 @@ class UserCPSettingsForm(forms.Form):
         label=ugettext_lazy(u'Attachment preview'))
     show_thumbnails = forms.BooleanField(required=False,
         label=ugettext_lazy(u'Picture preview'),
-        help_text=ugettext_lazy(u'No effect if “attachment preview“ is disabled'))
+        help_text=ugettext_lazy(u'No effect if “attachment preview” is disabled'))
     highlight_search = forms.BooleanField(required=False,
         label=ugettext_lazy(u'Highlight search'))
     mark_read_on_logout = forms.BooleanField(required=False,
-        label=ugettext_lazy(u'Mark all forums as “read“ on logout'))
+        label=ugettext_lazy(u'Mark all forums as “read” on logout'))
 
 
     def clean_notify(self):
@@ -361,7 +361,7 @@ class UserCPProfileForm(forms.Form):
             if len(coords) != 2:
                 raise forms.ValidationError(_(
                     u'Coordinates needs to be passed in the format '
-                    u'“latitude, longitude“')
+                    u'“latitude, longitude”')
                 )
             lat, long = coords
         except ValueError:
@@ -440,7 +440,7 @@ class EditUserProfileForm(UserCPProfileForm):
         if not is_valid_username(username):
             raise forms.ValidationError(
                 _(u'Your username contains invalid characters. Only '
-                  u'alphanumeric chars and “-” and “ “ are allowed.')
+                  u'alphanumeric chars and “-” and “ ” are allowed.')
             )
         exists = User.objects.filter(username=username).exists()
         if (self.user.username != username and exists):
@@ -463,7 +463,7 @@ class CreateUserForm(forms.Form):
     email = EmailField(label=ugettext_lazy(u'Email'))
     authenticate = forms.BooleanField(label=ugettext_lazy(u'Authenticate'), initial=True,
         required=False, help_text=(ugettext_lazy(u'The user will be send a confirmation '
-            u'mail and set to “inactive“.')))
+            u'mail and set to “inactive”.')))
 
     def clean_username(self):
         """
@@ -475,7 +475,7 @@ class CreateUserForm(forms.Form):
         if not is_valid_username(username):
             raise forms.ValidationError(
                 _(u'Your username contains invalid characters. Only '
-                  u'alphanumeric chars and “-” and “ “ are allowed.')
+                  u'alphanumeric chars and “-” and “ ” are allowed.')
             )
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError(
@@ -574,7 +574,7 @@ class EditUserPrivilegesForm(forms.Form):
 class UserMailForm(forms.Form):
     text = forms.CharField(label=ugettext_lazy(u'Text'),
         widget=forms.Textarea(),
-        help_text=ugettext_lazy(u'The message will be send as “plain text“. Your username '
+        help_text=ugettext_lazy(u'The message will be send as “plain text”. Your username '
                     u'will be noted as sender.')
     )
 
@@ -845,7 +845,7 @@ class ConfigurationForm(forms.Form):
         label=ugettext_lazy(u'Location of new wiki pages'))
     wiki_newpage_infopage = forms.CharField(required=False,
         label=ugettext_lazy(u'Information page about new wiki pages'),
-        help_text=ugettext_lazy(u'Information page to which a “create“ link should '
+        help_text=ugettext_lazy(u'Information page to which a “create” link should '
                     u'redirect to.'))
     team_icon_width = forms.IntegerField(min_value=1, required=False)
     team_icon_height = forms.IntegerField(min_value=1, required=False)
