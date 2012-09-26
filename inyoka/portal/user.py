@@ -96,7 +96,7 @@ def reactivate_user(id, email, status, time):
     user = User.objects.get(id=id)
     if not user.is_deleted:
         return {
-            'failed': _(u'The account “%(name)s“ was already reactivated.') %
+            'failed': _(u'The account “%(name)s” was already reactivated.') %
                 {'name': escape(user.username)},
         }
     values = {'email': email,
@@ -113,13 +113,13 @@ def reactivate_user(id, email, status, time):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
-                      note=_(u'The user “%(name)s“ has reactivated his account.')
+                      note=_(u'The user “%(name)s” has reactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
 
     return {
-        'success': _(u'The account “%(name)s“ was reactivated. You will '
+        'success': _(u'The account “%(name)s” was reactivated. You will '
                      u'receive an email to set the new password.')
                      % {'name': escape(user.username)},
     }
@@ -143,7 +143,7 @@ def deactivate_user(user):
 
     userdata = encode_confirm_data(userdata)
 
-    subject = _(u'Deactivation of your account “%(name)s“ on %(sitename)s') \
+    subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
                 % {'name': escape(user.username),
                    'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
@@ -157,7 +157,7 @@ def deactivate_user(user):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=True,
-                      note=_(u'The user “%(name)s“ has deactivated his account.')
+                      note=_(u'The user “%(name)s” has deactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
@@ -245,7 +245,7 @@ def send_activation_mail(user):
         'email':            user.email,
         'activation_key':   gen_activation_key(user)
     })
-    subject = _(u'%(sitename)s – Activation of the user “%(name)s“') \
+    subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
@@ -262,7 +262,7 @@ def send_new_user_password(user):
         'new_password_url': href('portal', 'lost_password',
                                  user.urlsafe_username, new_password_key),
     })
-    subject = _(u'%(sitename)s – New password for “%(name)s“') \
+    subject = _(u'%(sitename)s – New password for “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])

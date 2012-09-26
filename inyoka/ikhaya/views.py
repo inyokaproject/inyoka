@@ -217,18 +217,18 @@ def article_delete(request, year, month, day, slug):
             article.save()
             messages.info(request,
                 _(u'The publication of the article '
-                  u'“<a href="%(link)s">%(title)s</a>“ has been revoked.')
+                  u'“<a href="%(link)s">%(title)s</a>” has been revoked.')
                   % {'link': escape(url_for(article, 'show')),
                      'title': escape(article.subject)})
         elif 'cancel' in request.POST:
             messages.info(request,
-                _(u'Deletion of the article “<a href="%(link)s">%(title)s</a>“ was canceled.')
+                _(u'Deletion of the article “<a href="%(link)s">%(title)s</a>” was canceled.')
                   % {'link': escape(url_for(article, 'show')),
                      'title': escape(article.subject)})
         else:
             article.delete()
             messages.success(request,
-                _(u'The article “%(title)s“ was deleted.')
+                _(u'The article “%(title)s” was deleted.')
                   % {'title': escape(article.subject)})
     else:
         messages.info(request,
@@ -262,7 +262,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
         locked = article.lock(request)
         if locked:
             messages.error(request,
-                _(u'This article is currently being edited by “%(user)s“!')
+                _(u'This article is currently being edited by “%(user)s”!')
                   % {'user': locked})
     else:
         article = None
@@ -283,12 +283,12 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                     Suggestion.objects.delete([suggestion_id])
                 if new:
                     messages.success(request,
-                        _(u'The article “%(title)s“ was created.')
+                        _(u'The article “%(title)s” was created.')
                           % {'title': escape(article.subject)})
                     return HttpResponseRedirect(url_for(article, 'edit'))
                 else:
                     messages.success(request,
-                        _(u'The article “%(title)s“ was saved.')
+                        _(u'The article “%(title)s” was saved.')
                           % {'title': escape(article.subject)})
                     cache.delete('ikhaya/article/%s/%s' %
                                  (article.pub_date, article.slug))
@@ -520,7 +520,7 @@ def suggest_assign_to(request, suggestion, username):
         suggestion = Suggestion.objects.get(id=suggestion)
     except Suggestion.DoesNotExist:
         messages.error(request,
-            _(u'The suggestion “%(title)s“ does not exist.')
+            _(u'The suggestion “%(title)s” does not exist.')
               % {'title': suggestion})
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
     if username == '-':
@@ -534,7 +534,7 @@ def suggest_assign_to(request, suggestion, username):
         except User.DoesNotExist:
             raise PageNotFound
         suggestion.save()
-        messages.ssuccess(request, _(u'The suggestion was assigned to “%(user)s“.')
+        messages.ssuccess(request, _(u'The suggestion was assigned to “%(user)s”.')
                                     % {'user': username})
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 

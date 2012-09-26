@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-09-14 00:25+0200\n"
+"POT-Creation-Date: 2012-09-27 00:21+0200\n"
 "PO-Revision-Date: 2012-03-18 22:18+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -18,7 +18,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.0dev\n"
+"Generated-By: Babel 1.0\n"
 
 #: inyoka/planet/forms.py:21 inyoka/planet/models.py:35
 msgid "Name of the blog"
@@ -86,7 +86,7 @@ msgstr "Es wurde kein Benutzer als Planet-Administrator eingetragen."
 
 #: inyoka/planet/views.py:102
 #, python-format
-msgid "The blog “%(title)s“ was suggested."
+msgid "The blog “%(title)s” was suggested."
 msgstr "Das Blog „%(title)s“ wurde vorgeschlagen."
 
 #: inyoka/planet/views.py:113
@@ -100,12 +100,12 @@ msgstr "Abgebrochen"
 
 #: inyoka/planet/views.py:163
 #, python-format
-msgid "The entry “%(title)s“ was successfully hidden."
+msgid "The entry “%(title)s” was successfully hidden."
 msgstr "Der Eintrag „%(title)s“ wurde erfolgreich verborgen."
 
 #: inyoka/planet/views.py:165
 #, python-format
-msgid "The entry “%(title)s“ was successfully restored."
+msgid "The entry “%(title)s” was successfully restored."
 msgstr "Der Eintrag „%(title)s“ wurde erfolgreich wiederhergestellt."
 
 #: inyoka/planet/templates/planet/blog_edit.html:15
