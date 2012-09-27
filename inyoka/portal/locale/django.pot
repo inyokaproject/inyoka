@@ -495,21 +495,9 @@ msgid ""
 "sender."
 msgstr ""
 
-#: inyoka/portal/forms.py:583
-msgid "Group name"
-msgstr ""
-
-#: inyoka/portal/forms.py:584 inyoka/portal/templates/portal/group_edit.html:31
-msgid "Public"
-msgstr ""
-
 #: inyoka/portal/forms.py:588
 #: inyoka/portal/templates/portal/user_edit_privileges.html:38
 msgid "Forum privileges"
-msgstr ""
-
-#: inyoka/portal/forms.py:590 inyoka/portal/user.py:276
-msgid "Team icon"
 msgstr ""
 
 #: inyoka/portal/forms.py:591 inyoka/portal/templates/portal/group_edit.html:48
@@ -522,14 +510,6 @@ msgstr ""
 
 #: inyoka/portal/forms.py:606
 msgid "The group name contains invalid chars"
-msgstr ""
-
-#: inyoka/portal/forms.py:609
-msgid "The group name is not available. Please choose another one."
-msgstr ""
-
-#: inyoka/portal/forms.py:613
-msgid "You need to enter a group name"
 msgstr ""
 
 #: inyoka/portal/forms.py:628
@@ -954,8 +934,32 @@ msgstr ""
 msgid "%(sitename)s – New password for “%(name)s”"
 msgstr ""
 
+#: inyoka/portal/user.py:272
+msgid "Group name"
+msgstr ""
+
+#: inyoka/portal/user.py:274
+msgid "This group name is already taken. Please choose another one."
+msgstr ""
+
 #: inyoka/portal/user.py:273
 msgid "Public profile"
+msgstr ""
+
+#: inyoka/portal/user.py:274
+msgid "Will be shown in the group overview and the user profile"
+msgstr ""
+
+#: inyoka/portal/user.py:278
+msgid "Team icon"
+msgstr ""
+
+#: inyoka/portal/user.py:283
+msgid "Usergroup"
+msgstr ""
+
+#: inyoka/portal/user.py:284
+msgid "Usergroups"
 msgstr ""
 
 #: inyoka/portal/user.py:491 inyoka/portal/templates/portal/profile.html:61
@@ -1666,15 +1670,11 @@ msgstr ""
 msgid "Group configuration"
 msgstr ""
 
-#: inyoka/portal/templates/portal/group_edit.html:32
-msgid "will be shown in the group overview and the user profile"
-msgstr ""
-
-#: inyoka/portal/templates/portal/group_edit.html:36
+#: inyoka/portal/templates/portal/group_edit.html:31
 msgid "Team icon:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/group_edit.html:41
+#: inyoka/portal/templates/portal/group_edit.html:36
 #, python-format
 msgid ""
 "Please note that the team icon can not be bigger than "

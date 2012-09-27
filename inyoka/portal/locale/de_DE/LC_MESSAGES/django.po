@@ -516,22 +516,10 @@ msgstr ""
 "Die Nachricht wird als „reiner Text“ abgeschickt. Dein Benutzername wird "
 "in der E-Mail als Absender vermerkt."
 
-#: inyoka/portal/forms.py:583
-msgid "Group name"
-msgstr "Gruppenname"
-
-#: inyoka/portal/forms.py:584 inyoka/portal/templates/portal/group_edit.html:31
-msgid "Public"
-msgstr "Öffentlich"
-
 #: inyoka/portal/forms.py:588
 #: inyoka/portal/templates/portal/user_edit_privileges.html:38
 msgid "Forum privileges"
 msgstr "Forumsprivilegien"
-
-#: inyoka/portal/forms.py:590 inyoka/portal/user.py:276
-msgid "Team icon"
-msgstr "Team-Icon"
 
 #: inyoka/portal/forms.py:591 inyoka/portal/templates/portal/group_edit.html:48
 msgid "Delete team icon"
@@ -544,14 +532,6 @@ msgstr "Globales Team-Icon benutzen"
 #: inyoka/portal/forms.py:606
 msgid "The group name contains invalid chars"
 msgstr "Der Gruppenname enthält ungültige Zeichen"
-
-#: inyoka/portal/forms.py:609
-msgid "The group name is not available. Please choose another one."
-msgstr "Der Gruppenname ist nicht verfügbar, bitte wähle einen anderen."
-
-#: inyoka/portal/forms.py:613
-msgid "You need to enter a group name"
-msgstr "Du musst einen Gruppennamen angeben"
 
 #: inyoka/portal/forms.py:628
 msgid "Search terms:"
@@ -987,9 +967,33 @@ msgstr "%(sitename)s – Aktivierung des Benutzers „%(name)s“"
 msgid "%(sitename)s – New password for “%(name)s”"
 msgstr "%(sitename)s – Neues Passwort für „%(name)s“"
 
-#: inyoka/portal/user.py:273
+#: inyoka/portal/user.py:272
+msgid "Group name"
+msgstr "Gruppenname"
+
+#: inyoka/portal/user.py:274
+msgid "This group name is already taken. Please choose another one."
+msgstr "Der Gruppenname ist bereits vergeben, bitte wähle einen anderen."
+
+#: inyoka/portal/user.py:275
 msgid "Public profile"
 msgstr "Öffentliches Profil"
+
+#: inyoka/portal/user.py:277
+msgid "Will be shown in the group overview and the user profile"
+msgstr "Wird in der Gruppenübersicht und im Benutzerprofil angezeigt"
+
+#: inyoka/portal/user.py:278
+msgid "Team icon"
+msgstr "Team-Icon"
+
+#: inyoka/portal/user.py:283
+msgid "Usergroup"
+msgstr "Benutzergruppe"
+
+#: inyoka/portal/user.py:284
+msgid "Usergroups"
+msgstr "Benutzerruppen"
 
 #: inyoka/portal/user.py:491 inyoka/portal/templates/portal/profile.html:61
 msgid "Email address"
@@ -1733,11 +1737,7 @@ msgstr "Neue Gruppe"
 msgid "Group configuration"
 msgstr "Gruppenkonfiguration"
 
-#: inyoka/portal/templates/portal/group_edit.html:32
-msgid "will be shown in the group overview and the user profile"
-msgstr "wird in der Gruppenübersicht und im Benutzerprofil angezeigt"
-
-#: inyoka/portal/templates/portal/group_edit.html:36
+#: inyoka/portal/templates/portal/group_edit.html:31
 msgid "Team icon:"
 msgstr "Teamicon:"
 

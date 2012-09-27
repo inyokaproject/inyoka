@@ -269,13 +269,22 @@ def send_new_user_password(user):
 
 
 class Group(models.Model):
-    name = models.CharField('Name', max_length=80, unique=True, db_index=True)
-    is_public = models.BooleanField(ugettext_lazy(u'Public profile'))
+    name = models.CharField(ugettext_lazy(u'Group name'), max_length=80,
+                unique=True, db_index=True, error_messages={
+                    'unique': ugettext_lazy(u'This group name is already taken. '
+                                u'Please choose another one.')})
+    is_public = models.BooleanField(ugettext_lazy(u'Public profile'),
+                default=False, help_text=ugettext_lazy(u'Will be shown in the '
+                                    u'group overview and the user profile'))
     _default_group = None
     permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
     icon = models.ImageField(ugettext_lazy(u'Team icon'),
                              upload_to='portal/team_icons',
                              blank=True, null=True)
+
+    class Meta:
+        verbose_name = ugettext_lazy(u'Usergroup')
+        verbose_name_plural = ugettext_lazy(u'Usergroups')
 
     @property
     def icon_url(self):
