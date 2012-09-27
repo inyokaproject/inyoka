@@ -591,8 +591,7 @@ class EditGroupForm(forms.ModelForm):
 
     class Meta:
         model = Group
-        fields = ('name', 'is_public', 'icon', 'delete_icon', 'import_icon_from_global',
-                  '_permissions', 'forum_privileges')
+        fields = ('name', 'is_public', 'icon')
 
     def clean_name(self):
         """Validates that the name is alphanumeric"""
