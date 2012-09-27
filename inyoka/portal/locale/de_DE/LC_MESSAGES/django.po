@@ -660,6 +660,10 @@ msgstr "Seitenname"
 msgid "If not given, the last changes will be displayed."
 msgstr "Wenn nicht angegeben, werden die letzten Änderungen angezeigt"
 
+#: inyoka/portal/forms.py:815
+msgid "Another file with this name already exists. Please edit this file."
+msgstr "Es existiert bereits eine andere Datei mit diesem Namen. Bitte ändere sie."
+
 #: inyoka/portal/forms.py:820
 msgid "Global Message"
 msgstr "Globale Nachricht"

@@ -639,6 +639,10 @@ msgstr ""
 msgid "If not given, the last changes will be displayed."
 msgstr ""
 
+#: inyoka/portal/forms.py:815
+msgid "Another file with this name already exists. Please edit this file."
+msgstr ""
+
 #: inyoka/portal/forms.py:820
 msgid "Global Message"
 msgstr ""
