@@ -66,7 +66,7 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
      OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
      EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
      EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
-     CreateUserForm, UserMailForm, EditGroupForm, CreateGroupForm
+     CreateUserForm, UserMailForm, EditGroupForm
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
@@ -1635,7 +1635,7 @@ def group(request, name, page=1):
 @templated('portal/group_edit.html')
 def group_edit(request, name=None):
     def _add_choices(form):
-        form.fields['permissions'].choices = sorted(
+        form.fields['_permissions'].choices = sorted(
             [(k, v) for k, v in PERMISSION_NAMES.iteritems()],
             key=lambda p: p[1]
         )
@@ -1643,7 +1643,6 @@ def group_edit(request, name=None):
     changed_permissions = False
     if new:
         group = Group()
-        form_class = CreateGroupForm
     else:
         try:
             group = Group.objects.get(name=name)
@@ -1652,18 +1651,16 @@ def group_edit(request, name=None):
                 _(u'The group “%(group)s“ does not exist.')
                   % {'group': escape(name)})
             return HttpResponseRedirect(href('portal', 'groups'))
-        form_class = EditGroupForm
 
     icon_mh, icon_mw = storage.get_many(('team_icon_height',
                                          'team_icon_width')).itervalues()
 
     if request.method == 'POST':
-        form = form_class(request.POST, request.FILES)
+        form = EditGroupForm(request.POST, request.FILES, instance=group)
         _add_choices(form)
         if form.is_valid():
             data = form.cleaned_data
-            group.name = data['name']
-            group.is_public = data['is_public']
+            group = form.save(commit=False)
 
             if data['delete_icon']:
                 group.icon.delete(save=False)
@@ -1693,7 +1690,7 @@ def group_edit(request, name=None):
 
             # permissions
             permissions = 0
-            for perm in data['permissions']:
+            for perm in data['_permissions']:
                 permissions |= int(perm)
             if permissions != group.permissions:
                 changed_permissions = True
@@ -1744,9 +1741,9 @@ def group_edit(request, name=None):
             if new:
                 return HttpResponseRedirect(group.get_absolute_url('edit'))
     else:
-        form = form_class(initial=not new and {
+        form = EditGroupForm(initial=not new and {
             'name': group.name,
-            'permissions': filter(lambda p: p & group.permissions, PERMISSION_NAMES.keys()),
+            '_permissions': filter(lambda p: p & group.permissions, PERMISSION_NAMES.keys()),
             'is_public': group.is_public,
         } or {
             'is_public': True,

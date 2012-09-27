@@ -27,9 +27,11 @@
 	{{ csrf_token() }}
   <dl>
     {{ render_form(form, ['name'], inline=true) }}
+    <dt>
+      <label for="{{ form.is_public.auto_id }}">{{ form.is_public.label }}</label>
+    </dt>
     <dd>
-      {{ form.is_public }} <label for="id_is_public">{% trans %}Public{% endtrans %}</label>
-      <span class="help_text">{% trans %}will be shown in the group overview and the user profile{% endtrans %}</span>
+      {{ form.is_public }} <span class="help_text">{{ form.is_public.help_text }}</span>
       {{- form.is_public.errors }}
     </dd>
     <dl>
@@ -49,7 +51,7 @@
       {%- endif %}
       {%- if form.errors.avatar or form.errors.delete_avatar %}<dd>{{ form.errors.avatar }}{{ form.errors.delete_avatar }}</dd>{% endif %}
     </dl>
-    {{ render_form(form, ['permissions']) }}
+    {{ render_form(form, ['_permissions']) }}
     <dt>{% trans %}Forum privileges:{% endtrans %}</dt>
     <dd id="forum_rights">{% trans %}Please turn JavaScript on to edit the privileges.{% endtrans %}</dd>
   </dl>

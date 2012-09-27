@@ -579,45 +579,39 @@ class UserMailForm(forms.Form):
     )
 
 
-class EditGroupForm(forms.Form):
-    name = forms.CharField(label=ugettext_lazy(u'Group name'), max_length=80)
-    is_public = forms.BooleanField(label=ugettext_lazy(u'Public'), required=False)
-    permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
+class EditGroupForm(forms.ModelForm):
+    _permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'permission'}),
         required=False)
     forum_privileges = forms.MultipleChoiceField(label=ugettext_lazy(u'Forum privileges'),
                                                  required=False)
-    icon = forms.ImageField(label=ugettext_lazy(u'Team icon'), required=False)
     delete_icon = forms.BooleanField(label=ugettext_lazy(u'Delete team icon'), required=False)
     import_icon_from_global = forms.BooleanField(label=ugettext_lazy(u'Use global team icon'),
         required=False)
 
+    class Meta:
+        model = Group
+        fields = ('name', 'is_public', 'icon', 'delete_icon', 'import_icon_from_global',
+                  '_permissions', 'forum_privileges')
+
     def clean_name(self):
         """Validates that the name is alphanumeric"""
-
         data = self.cleaned_data
-        if 'name' in data:
-            try:
-                name = normalize_username(data['name'])
-            except ValueError:
-                raise forms.ValidationError(_(
-                    u'The group name contains invalid chars'))
-            return name
-        else:
-            raise forms.ValidationError(_(u'You need to enter a group name'))
-
-
-class CreateGroupForm(EditGroupForm):
-
-    def clean_name(self):
-        """Validates that the name is not already in use."""
-        super(CreateGroupForm, self).clean_name()
-
-        data = self.cleaned_data
-        if Group.objects.filter(name=data['name']).exists():
+        try:
+            name = normalize_username(data['name'])
+        except ValueError:
             raise forms.ValidationError(_(
-                u'The group name is not available. Please choose another one.'))
-        return data['name']
+                u'The group name contains invalid chars'))
+        return name
+
+    def clean__permissions(self):
+        data = self.cleaned_data
+        if '_permissions' in data:
+            try:
+                return map(int, data['_permissions'])
+            except ValueError:
+                pass
+        return []
 
 
 class SearchForm(forms.Form):
