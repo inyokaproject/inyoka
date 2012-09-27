@@ -92,7 +92,7 @@
       {%- endif %}
       <dd style="display: none"><input type="submit" value="Absenden" name="send" /></dd>
       {%- if (isnewtopic or isfirstpost) and can_create_poll %}
-        <dt class="collapse">Umfragen:</dt>
+        <dt class="collapse{% if poll_form.errors %} has_errors{% endif %}">Umfragen:</dt>
         {%- if polls %}
           <dd>{% trans %}Existing polls:{% endtrans %}
             <ul>
@@ -119,7 +119,7 @@
         <dd><input type="submit" name="add_poll" value="{% trans %}Add poll{% endtrans %}" /></dd>
       {%- endif %}
       {%- if can_attach %}
-      <dt class="collapse">{% trans %}Attachments:{% endtrans %}</dt>
+      <dt class="collapse{% if attach_form.errors %} has_errors{% endif %}">{% trans %}Attachments:{% endtrans %}</dt>
       <dd>
         {%- if attachments %}
           <ul>
