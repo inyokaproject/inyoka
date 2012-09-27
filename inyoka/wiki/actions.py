@@ -101,7 +101,7 @@ def do_show(request, name):
         redirect = page.metadata.get('X-Redirect')
         if redirect:
             messages.info(request,
-                _(u'Redirected from “<a href="%(link)s">%(title)s</a>“.') % {
+                _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
                 'link': escape(href('wiki', page.name, redirect='no')),
                 'title': escape(page.title)
             })

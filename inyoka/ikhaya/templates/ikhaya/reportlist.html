@@ -28,7 +28,7 @@
         {{ report.pub_date|datetimeformat }}
         <span class="linklist"> | </span>
         {% trans link=report.article|url, article=report.article.subject|e -%}
-          Concerns article “<a href="{{ link }}">{{ article }}</a>“
+          Concerns article “<a href="{{ link }}">{{ article }}</a>”
         {%- endtrans %}
         <span class="linklist"> | </span>
         <span class="admin_link">

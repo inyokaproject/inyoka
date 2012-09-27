@@ -86,7 +86,7 @@ def redirect_new_page(request):
             options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
-    messages.error(request, _(u'Another site named “%(title)s“ already exists.')
+    messages.error(request, _(u'Another site named “%(title)s” already exists.')
                               % {'title': escape(page.title)})
     return HttpResponseRedirect(backref)
 
@@ -224,18 +224,18 @@ def feed(request, page_name=None, count=10):
 
         if rev.user:
             if rev.deleted:
-                text = _(u'%(user)s deleted the article “%(article)s“ on '
+                text = _(u'%(user)s deleted the article “%(article)s” on '
                          u'%(date)s. Summary: %(summary)s')
             else:
-                text = _(u'%(user)s edited the article “%(article)s“ on '
+                text = _(u'%(user)s edited the article “%(article)s” on '
                          u'%(date)s. Summary: %(summary)s')
         else:
             if rev.deleted:
                 text = _(u'An anonymous user deleted the article '
-                         u'“%(article)s“ on %(date)s. Summary: %(summary)s')
+                         u'“%(article)s” on %(date)s. Summary: %(summary)s')
             else:
                 text = _(u'An anonymous user edited the article '
-                         u'“%(article)s“ on %(date)s. Summary: %(summary)s')
+                         u'“%(article)s” on %(date)s. Summary: %(summary)s')
 
         kwargs['summary'] = text % {
             'user': rev.user,

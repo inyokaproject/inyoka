@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-09-14 00:25+0200\n"
+"POT-Creation-Date: 2012-09-27 00:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.0dev\n"
+"Generated-By: Babel 1.0\n"
 
 #: inyoka/portal/filters.py:21
 msgid "Topic"
@@ -158,7 +158,7 @@ msgstr ""
 #: inyoka/portal/forms.py:477
 msgid ""
 "Your username contains invalid characters. Only alphanumeric chars and "
-"“-” and “ “ are allowed."
+"“-” and “ ” are allowed."
 msgstr ""
 
 #: inyoka/portal/forms.py:153
@@ -192,12 +192,12 @@ msgstr ""
 
 #: inyoka/portal/forms.py:212
 #, python-format
-msgid "A user with the email address “%(mail)s“ does not exist."
+msgid "A user with the email address “%(mail)s” does not exist."
 msgstr ""
 
 #: inyoka/portal/forms.py:220
 #, python-format
-msgid "The user “%(name)s“ does not exist."
+msgid "The user “%(name)s” does not exist."
 msgstr ""
 
 #: inyoka/portal/forms.py:228 inyoka/portal/forms.py:252
@@ -263,7 +263,7 @@ msgid "Picture preview"
 msgstr ""
 
 #: inyoka/portal/forms.py:289
-msgid "No effect if “attachment preview“ is disabled"
+msgid "No effect if “attachment preview” is disabled"
 msgstr ""
 
 #: inyoka/portal/forms.py:291
@@ -271,7 +271,7 @@ msgid "Highlight search"
 msgstr ""
 
 #: inyoka/portal/forms.py:293
-msgid "Mark all forums as “read“ on logout"
+msgid "Mark all forums as “read” on logout"
 msgstr ""
 
 #: inyoka/portal/forms.py:300
@@ -375,7 +375,7 @@ msgid "GPG key"
 msgstr ""
 
 #: inyoka/portal/forms.py:362
-msgid "Coordinates needs to be passed in the format “latitude, longitude“"
+msgid "Coordinates needs to be passed in the format “latitude, longitude”"
 msgstr ""
 
 #: inyoka/portal/forms.py:368
@@ -430,7 +430,7 @@ msgid "Authenticate"
 msgstr ""
 
 #: inyoka/portal/forms.py:465
-msgid "The user will be send a confirmation mail and set to “inactive“."
+msgid "The user will be send a confirmation mail and set to “inactive”."
 msgstr ""
 
 #: inyoka/portal/forms.py:482
@@ -491,7 +491,7 @@ msgstr ""
 
 #: inyoka/portal/forms.py:577
 msgid ""
-"The message will be send as “plain text“. Your username will be noted as "
+"The message will be send as “plain text”. Your username will be noted as "
 "sender."
 msgstr ""
 
@@ -694,7 +694,7 @@ msgid "Information page about new wiki pages"
 msgstr ""
 
 #: inyoka/portal/forms.py:848
-msgid "Information page to which a “create“ link should redirect to."
+msgid "Information page to which a “create” link should redirect to."
 msgstr ""
 
 #: inyoka/portal/forms.py:852
@@ -897,29 +897,29 @@ msgstr ""
 
 #: inyoka/portal/user.py:99
 #, python-format
-msgid "The account “%(name)s“ was already reactivated."
+msgid "The account “%(name)s” was already reactivated."
 msgstr ""
 
 #: inyoka/portal/user.py:116
 #, python-format
-msgid "The user “%(name)s“ has reactivated his account."
+msgid "The user “%(name)s” has reactivated his account."
 msgstr ""
 
 #: inyoka/portal/user.py:122
 #, python-format
 msgid ""
-"The account “%(name)s“ was reactivated. You will receive an email to set "
+"The account “%(name)s” was reactivated. You will receive an email to set "
 "the new password."
 msgstr ""
 
 #: inyoka/portal/user.py:146
 #, python-format
-msgid "Deactivation of your account “%(name)s“ on %(sitename)s"
+msgid "Deactivation of your account “%(name)s” on %(sitename)s"
 msgstr ""
 
 #: inyoka/portal/user.py:160
 #, python-format
-msgid "The user “%(name)s“ has deactivated his account."
+msgid "The user “%(name)s” has deactivated his account."
 msgstr ""
 
 #: inyoka/portal/user.py:193
@@ -946,12 +946,12 @@ msgstr ""
 
 #: inyoka/portal/user.py:248
 #, python-format
-msgid "%(sitename)s – Activation of the user “%(name)s“"
+msgid "%(sitename)s – Activation of the user “%(name)s”"
 msgstr ""
 
 #: inyoka/portal/user.py:265
 #, python-format
-msgid "%(sitename)s – New password for “%(name)s“"
+msgid "%(sitename)s – New password for “%(name)s”"
 msgstr ""
 
 #: inyoka/portal/user.py:273
@@ -1033,14 +1033,14 @@ msgstr ""
 #: inyoka/portal/views.py:208
 #, python-format
 msgid ""
-"The username “%(username)s“ was successfully registered. An email with "
-"the activation key was sent to “%(email)s“."
+"The username “%(username)s” was successfully registered. An email with "
+"the activation key was sent to “%(email)s”."
 msgstr ""
 
 #: inyoka/portal/views.py:232 inyoka/portal/views.py:1462
 #: inyoka/portal/views.py:1577
 #, python-format
-msgid "The user “%(username)s“ does not exist."
+msgid "The user “%(username)s” does not exist."
 msgstr ""
 
 #: inyoka/portal/views.py:240
@@ -1053,7 +1053,7 @@ msgstr ""
 
 #: inyoka/portal/views.py:252 inyoka/portal/views.py:1268
 #, python-format
-msgid "The account of “%(username)s“ was already activated."
+msgid "The account of “%(username)s” was already activated."
 msgstr ""
 
 #: inyoka/portal/views.py:255 inyoka/portal/views.py:266
@@ -1066,7 +1066,7 @@ msgstr ""
 
 #: inyoka/portal/views.py:277
 #, python-format
-msgid "The account “%(username)s“ was already activated."
+msgid "The account “%(username)s” was already activated."
 msgstr ""
 
 #: inyoka/portal/views.py:281
@@ -1132,19 +1132,19 @@ msgstr ""
 
 #: inyoka/portal/views.py:558
 #, python-format
-msgid "The email to “%(username)s“ was sent successfully."
+msgid "The email to “%(username)s” was sent successfully."
 msgstr ""
 
 #: inyoka/portal/views.py:580
 #, python-format
-msgid "You will now be notified about activities of “%(username)s“."
+msgid "You will now be notified about activities of “%(username)s”."
 msgstr ""
 
 #: inyoka/portal/views.py:595
 #, python-format
 msgid ""
 "From now on you won’t be notified anymore about activities of "
-"“%(username)s“."
+"“%(username)s”."
 msgstr ""
 
 #: inyoka/portal/views.py:604
@@ -1229,43 +1229,43 @@ msgstr ""
 #: inyoka/portal/views.py:874
 msgid ""
 "You were redirected to our wiki to change your user page. To get back, "
-"you can use the link or your browser’s “back“ button."
+"you can use the link or your browser’s “back” button."
 msgstr ""
 
 #: inyoka/portal/views.py:957
 #, python-format
-msgid "The profile of “%(username)s“ was changed successfully"
+msgid "The profile of “%(username)s” was changed successfully"
 msgstr ""
 
 #: inyoka/portal/views.py:1020
 #, python-format
-msgid "The setting of “%(username)s“ were successfully changed."
+msgid "The setting of “%(username)s” were successfully changed."
 msgstr ""
 
 #: inyoka/portal/views.py:1045
 #, python-format
-msgid "The state of “%(username)s“ was successfully changed."
+msgid "The state of “%(username)s” was successfully changed."
 msgstr ""
 
 #: inyoka/portal/views.py:1070
 #, python-format
-msgid "The password of “%(username)s“ was successfully changed."
+msgid "The password of “%(username)s” was successfully changed."
 msgstr ""
 
 #: inyoka/portal/views.py:1131
 #, python-format
-msgid "The privileges of “%(username)s“ were successfully changed."
+msgid "The privileges of “%(username)s” were successfully changed."
 msgstr ""
 
 #: inyoka/portal/views.py:1220
 #, python-format
-msgid "The groups of “%(username)s“ were successfully changed."
+msgid "The groups of “%(username)s” were successfully changed."
 msgstr ""
 
 #: inyoka/portal/views.py:1249
 #, python-format
 msgid ""
-"The user “%(username)s“ was successfully created. You can now edit more "
+"The user “%(username)s” was successfully created. You can now edit more "
 "details."
 msgstr ""
 
@@ -1350,7 +1350,7 @@ msgstr ""
 
 #: inyoka/portal/views.py:1437 inyoka/portal/views.py:1652
 #, python-format
-msgid "The group “%(group)s“ does not exist."
+msgid "The group “%(group)s” does not exist."
 msgstr ""
 
 #: inyoka/portal/views.py:1446
@@ -1387,12 +1387,12 @@ msgstr ""
 
 #: inyoka/portal/views.py:1740
 #, python-format
-msgid "The group “%(group)s“ was created successfully."
+msgid "The group “%(group)s” was created successfully."
 msgstr ""
 
 #: inyoka/portal/views.py:1742
 #, python-format
-msgid "The group “%(group)s“ was changed successfully."
+msgid "The group “%(group)s” was changed successfully."
 msgstr ""
 
 #: inyoka/portal/views.py:1785
@@ -1431,12 +1431,12 @@ msgstr ""
 
 #: inyoka/portal/views.py:2131
 #, python-format
-msgid "The page “%(page)s“ was created successfully."
+msgid "The page “%(page)s” was created successfully."
 msgstr ""
 
 #: inyoka/portal/views.py:2133
 #, python-format
-msgid "The page “%(page)s“ was changed successfully."
+msgid "The page “%(page)s” was changed successfully."
 msgstr ""
 
 #: inyoka/portal/views.py:2154
@@ -1445,7 +1445,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/calendar_detail.html:25
 #, python-format
-msgid "Event “%(title)s“"
+msgid "Event “%(title)s”"
 msgstr ""
 
 #: inyoka/portal/templates/portal/calendar_detail.html:29
@@ -1640,7 +1640,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/files_delete.html:13
 #, python-format
-msgid "Do you really want to delete the file “%(file)s“?"
+msgid "Do you really want to delete the file “%(file)s”?"
 msgstr ""
 
 #: inyoka/portal/templates/portal/group.html:18
@@ -1653,8 +1653,8 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/group.html:24
 #, python-format
-msgid "The group “%(name)s“ has %(count)s member:"
-msgid_plural "The group “%(name)s“ has %(count)s members:"
+msgid "The group “%(name)s” has %(count)s member:"
+msgid_plural "The group “%(name)s” has %(count)s members:"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -1771,7 +1771,7 @@ msgstr ""
 #: inyoka/portal/templates/portal/login_text.m.html:4
 #, python-format
 msgid ""
-"Login failed because the password for the user “%(name)s“ was wrong or "
+"Login failed because the password for the user “%(name)s” was wrong or "
 "the user does not exist."
 msgstr ""
 
@@ -1779,7 +1779,7 @@ msgstr ""
 #: inyoka/portal/templates/portal/login_text.m.html:10
 #, python-format
 msgid ""
-"Login failed because the user “%(name)s“ is currently banned. You were "
+"Login failed because the user “%(name)s” is currently banned. You were "
 "informed about that. If you don’t agree with the ban or if it is a "
 "mistake, please contact <a href=\"%(mailto)s\">%(mail)s</a>."
 msgstr ""
@@ -1788,7 +1788,7 @@ msgstr ""
 #: inyoka/portal/templates/portal/login_text.m.html:17
 #, python-format
 msgid ""
-"Login failed because the user “%(name)s“ is inactive. You probably didn’t"
+"Login failed because the user “%(name)s” is inactive. You probably didn’t"
 " click on the link in the activation mail which was sent to you after "
 "your registration. If you didn’t received that mail, you can <a "
 "href=\"%(resend)s\">request a new one</a>. If it is still not working, "
@@ -1857,7 +1857,7 @@ msgstr ""
 #: inyoka/portal/templates/portal/openid_connect.html:14
 #, python-format
 msgid ""
-"There is no account linked to the OpenID “%(openid)s“. Please log in with"
+"There is no account linked to the OpenID “%(openid)s”. Please log in with"
 " your user name and password to connect the OpenID with your account:"
 msgstr ""
 
@@ -1911,7 +1911,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/page_delete.html:15
 #, python-format
-msgid "Do you really want to delete the page “%(title)s“?"
+msgid "Do you really want to delete the page “%(title)s”?"
 msgstr ""
 
 #: inyoka/portal/templates/portal/page_edit.html:17
@@ -1979,7 +1979,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/profile.html:158
 #, python-format
-msgid "“%(name)s“ is no member of any group."
+msgid "“%(name)s” is no member of any group."
 msgstr ""
 
 #: inyoka/portal/templates/portal/set_new_password.html:14
@@ -1989,7 +1989,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/set_new_password.html:17
 #, python-format
-msgid "You can set a new password for your account “%(name)s“ here."
+msgid "You can set a new password for your account “%(name)s” here."
 msgstr ""
 
 #: inyoka/portal/templates/portal/set_new_password.html:22
@@ -2020,7 +2020,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/user_admin.html:17
 #, python-format
-msgid "Attention: You are currently editing “%(name)s“."
+msgid "Attention: You are currently editing “%(name)s”."
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_edit_groups.html:24
@@ -2339,7 +2339,7 @@ msgstr ""
 #: inyoka/portal/templates/portal/usercp/deactivate.html:17
 #, python-format
 msgid ""
-"You can deactivate your account “%(name)s“ here. By doing this, we will "
+"You can deactivate your account “%(name)s” here. By doing this, we will "
 "remove all your personal data. All your forum posts and wiki articles "
 "will remain."
 msgstr ""
@@ -2348,7 +2348,7 @@ msgstr ""
 #, python-format
 msgid ""
 "Keep in mind that deactivating your account cannot be undone. After that,"
-" you will never be able to log in with the account “%(name)s“ again."
+" you will never be able to log in with the account “%(name)s” again."
 msgstr ""
 
 #: inyoka/portal/templates/portal/usercp/deactivate.html:25
@@ -2357,7 +2357,7 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/usercp/deactivate.html:28
 #, python-format
-msgid "Deactivate my account “%(name)s“"
+msgid "Deactivate my account “%(name)s”"
 msgstr ""
 
 #: inyoka/portal/templates/portal/usercp/index.html:31
@@ -2393,7 +2393,7 @@ msgstr ""
 #: inyoka/portal/templates/portal/usercp/profile.html:48
 msgid ""
 "By default, the email and jabber addresses are not displayed in your "
-"public profile. To publish them, you need to check the “show in profile“ "
+"public profile. To publish them, you need to check the “show in profile” "
 "box."
 msgstr ""
 

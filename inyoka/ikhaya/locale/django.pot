@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-09-14 00:25+0200\n"
+"POT-Creation-Date: 2012-09-27 00:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.0dev\n"
+"Generated-By: Babel 1.0\n"
 
 #: inyoka/ikhaya/forms.py:41 inyoka/ikhaya/models.py:210
 #: inyoka/ikhaya/models.py:419
@@ -25,7 +25,7 @@ msgstr ""
 #: inyoka/ikhaya/forms.py:42
 msgid ""
 "To refer to another comment, you can write "
-"<code>@commentnumber</code>.<br />Clicking on “reply“ will automatically "
+"<code>@commentnumber</code>.<br />Clicking on “reply” will automatically "
 "insert this code."
 msgstr ""
 
@@ -146,12 +146,12 @@ msgstr ""
 
 #: inyoka/ikhaya/notifications.py:23
 #, python-format
-msgid "New article suggestion “%(suggestion)s“"
+msgid "New article suggestion “%(suggestion)s”"
 msgstr ""
 
 #: inyoka/ikhaya/notifications.py:38
 #, python-format
-msgid "New comment on article “%(article)s“"
+msgid "New comment on article “%(article)s”"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:149
@@ -169,33 +169,33 @@ msgstr ""
 #: inyoka/ikhaya/views.py:219
 #, python-format
 msgid ""
-"The publication of the article “<a href=\"%(link)s\">%(title)s</a>“ has "
+"The publication of the article “<a href=\"%(link)s\">%(title)s</a>” has "
 "been revoked."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:225
 #, python-format
-msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>“ was canceled."
+msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>” was canceled."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:231
 #, python-format
-msgid "The article “%(title)s“ was deleted."
+msgid "The article “%(title)s” was deleted."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:265
 #, python-format
-msgid "This article is currently being edited by “%(user)s“!"
+msgid "This article is currently being edited by “%(user)s”!"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:286
 #, python-format
-msgid "The article “%(title)s“ was created."
+msgid "The article “%(title)s” was created."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:291
 #, python-format
-msgid "The article “%(title)s“ was saved."
+msgid "The article “%(title)s” was saved."
 msgstr ""
 
 #: inyoka/ikhaya/views.py:328
@@ -242,88 +242,88 @@ msgstr ""
 msgid "The comment was saved."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:503
+#: inyoka/ikhaya/views.py:505
 msgid "The comment was hidden."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:504
+#: inyoka/ikhaya/views.py:506
 msgid "The comment was restored."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:521
+#: inyoka/ikhaya/views.py:523
 #, python-format
-msgid "The suggestion “%(title)s“ does not exist."
+msgid "The suggestion “%(title)s” does not exist."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:528
+#: inyoka/ikhaya/views.py:530
 msgid "The suggestion was assigned to nobody."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:535
+#: inyoka/ikhaya/views.py:537
 #, python-format
-msgid "The suggestion was assigned to “%(user)s“."
+msgid "The suggestion was assigned to “%(user)s”."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:547 inyoka/ikhaya/views.py:592
+#: inyoka/ikhaya/views.py:549 inyoka/ikhaya/views.py:594
 msgid "This suggestion does not exist."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:554 inyoka/ikhaya/views.py:559
+#: inyoka/ikhaya/views.py:556 inyoka/ikhaya/views.py:561
 msgid "Article suggestion deleted"
 msgstr ""
 
-#: inyoka/ikhaya/views.py:570
+#: inyoka/ikhaya/views.py:572
 #, python-format
 msgid "New private message from %(user)s: %(subject)s"
 msgstr ""
 
-#: inyoka/ikhaya/views.py:584
+#: inyoka/ikhaya/views.py:586
 msgid "The suggestion was deleted."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:586
+#: inyoka/ikhaya/views.py:588
 msgid "The suggestion was not deleted."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:599
+#: inyoka/ikhaya/views.py:601
 msgid "Please login to suggest an article."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:617
+#: inyoka/ikhaya/views.py:619
 msgid ""
 "Thank you, your article suggestion was submitted. A team member will "
 "contact you shortly."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:681
+#: inyoka/ikhaya/views.py:683
 msgid "Notifications on new suggestions will be sent to you."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:697
+#: inyoka/ikhaya/views.py:699
 msgid "No notifications on suggestions will be sent to you any more."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:716
+#: inyoka/ikhaya/views.py:718
 #, python-format
 msgid ""
 "The event with the id %(id)s could not be used as draft for a new event "
 "because it does not exist."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:730
+#: inyoka/ikhaya/views.py:732
 msgid "The event was saved."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:787
+#: inyoka/ikhaya/views.py:789
 msgid "The event has been saved. A team member will review it soon."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:851
+#: inyoka/ikhaya/views.py:853
 #, python-format
 msgid "%(domain)s Ikhaya comments – %(title)s"
 msgstr ""
 
-#: inyoka/ikhaya/views.py:856
+#: inyoka/ikhaya/views.py:858
 #, python-format
 msgid "%(domain)s Ikhaya comments"
 msgstr ""
@@ -387,7 +387,7 @@ msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:25
 #, python-format
-msgid "Edit article “<a href=\"%(link)s\" title=\"Show article\">%(article)s</a>“"
+msgid "Edit article “<a href=\"%(link)s\" title=\"Show article\">%(article)s</a>”"
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:47
@@ -770,7 +770,7 @@ msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:21
 #, python-format
-msgid "New report for the article ”<a href=\"%(link)s\">%(article)s</a>”"
+msgid "New report for the article “<a href=\"%(link)s\">%(article)s</a>”"
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:26
@@ -827,7 +827,7 @@ msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/reportlist.html:30
 #, python-format
-msgid "Concerns article “<a href=\"%(link)s\">%(article)s</a>“"
+msgid "Concerns article “<a href=\"%(link)s\">%(article)s</a>”"
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/reportlist.html:37
