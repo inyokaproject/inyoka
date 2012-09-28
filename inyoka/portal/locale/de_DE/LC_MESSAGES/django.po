@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-09-28 10:02+0200\n"
+"POT-Creation-Date: 2012-09-28 10:07+0200\n"
 "PO-Revision-Date: 2012-03-18 22:20+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -664,11 +664,15 @@ msgstr "Seitenname"
 msgid "If not given, the last changes will be displayed."
 msgstr "Wenn nicht angegeben, werden die letzten Änderungen angezeigt"
 
-#: inyoka/portal/forms.py:822
+#: inyoka/portal/forms.py:817
+msgid "Another file with this name already exists. Please edit this file."
+msgstr "Es existiert bereits eine andere Datei mit diesem Namen. Bitte ändere sie."
+
+#: inyoka/portal/forms.py:830
 msgid "Global Message"
 msgstr "Globale Nachricht"
 
-#: inyoka/portal/forms.py:824
+#: inyoka/portal/forms.py:832
 msgid ""
 "This message will displayed on every page in the header. To disable it, "
 "leave the field empty. Needs to be valid XHTML."
@@ -676,62 +680,62 @@ msgstr ""
 "Diese Nachricht wird auf allen Seiten im Kopfbereich angezeigt. Um sie zu"
 " deaktivieren, lasse das Feld leer. Muss gültiges XHTML sein."
 
-#: inyoka/portal/forms.py:827
+#: inyoka/portal/forms.py:835
 msgid "Blocked hosts for email addresses"
 msgstr "Verbotene Hosts für E-Mail-Adressen"
 
-#: inyoka/portal/forms.py:829
+#: inyoka/portal/forms.py:837
 msgid "Users cannot use email addresses from these hosts to register an account."
 msgstr ""
 "Benutzer können keine E-Mail-Adressen dieser Hosts zur Registrierung "
 "verwenden."
 
-#: inyoka/portal/forms.py:831
+#: inyoka/portal/forms.py:839
 msgid "Global team icon"
 msgstr "Globales Team-Icon"
 
-#: inyoka/portal/forms.py:832
+#: inyoka/portal/forms.py:840
 msgid "Please note the details on the maximum size below."
 msgstr "Bitte beachte die untenstehenden Angaben zur Maximalgröße"
 
-#: inyoka/portal/forms.py:837
+#: inyoka/portal/forms.py:845
 msgid "Maximum signature length"
 msgstr "Maximale Signaturlänge"
 
-#: inyoka/portal/forms.py:839
+#: inyoka/portal/forms.py:847
 msgid "Maximum number of lines in signature"
 msgstr "Maximale Zeilenanzahl der Signatur"
 
-#: inyoka/portal/forms.py:841
+#: inyoka/portal/forms.py:849
 msgid "The download link for the start page"
 msgstr "Der Downloadlink für die Startseite"
 
-#: inyoka/portal/forms.py:842
+#: inyoka/portal/forms.py:850
 msgid "Description of the link"
 msgstr "Beschreibung des Links"
 
-#: inyoka/portal/forms.py:845
+#: inyoka/portal/forms.py:853
 msgid "Default text of new wiki pages"
 msgstr "Standardtext einer neuen Wiki-Seite"
 
-#: inyoka/portal/forms.py:847
+#: inyoka/portal/forms.py:855
 msgid "Location of new wiki pages"
 msgstr "Ort neuer Wiki-Seiten"
 
-#: inyoka/portal/forms.py:849
+#: inyoka/portal/forms.py:857
 msgid "Information page about new wiki pages"
 msgstr "Infoseite für neue Wiki-Seiten"
 
-#: inyoka/portal/forms.py:850
+#: inyoka/portal/forms.py:858
 #, fuzzy
 msgid "Information page to which a “create” link should redirect to."
 msgstr "Infoseite, auf die ein „erstellen“ Link verweisen soll."
 
-#: inyoka/portal/forms.py:854
+#: inyoka/portal/forms.py:862
 msgid "License note"
 msgstr "Lizenzhinweis"
 
-#: inyoka/portal/forms.py:860
+#: inyoka/portal/forms.py:868
 msgid ""
 "Description about Ikhaya that will be used on the start page and in the "
 "feed aggregations."
@@ -739,11 +743,11 @@ msgstr ""
 "Beschreibung zu Ikhaya, die auf der Startseite und in den Feeds verwendet"
 " wird."
 
-#: inyoka/portal/forms.py:864
+#: inyoka/portal/forms.py:872
 msgid "Description about the planet that will be used in the feed aggregations."
 msgstr "Beschreibung zum Planeten, die im Feed verwendet wird."
 
-#: inyoka/portal/forms.py:883
+#: inyoka/portal/forms.py:891
 msgid "Styles"
 msgstr "Stile"
 
