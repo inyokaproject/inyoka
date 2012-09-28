@@ -19,17 +19,18 @@ from django.utils.translation import ugettext_lazy
 from django.utils import datetime_safe
 from django.utils.html import escape
 
+from inyoka.markup import render, parse, RenderContext
 from inyoka.portal.user import User
 from inyoka.portal.models import StaticFile
-from inyoka.wiki.parser import render, parse, RenderContext
-from inyoka.utils.text import slugify
-from inyoka.utils.html import striptags
-from inyoka.utils.urls import href, url_for
+
 from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
-from inyoka.utils.search import search, SearchAdapter
-from inyoka.utils.local import current_request
-from inyoka.utils.decorators import deferred
 from inyoka.utils.database import find_next_increment, LockableObject
+from inyoka.utils.decorators import deferred
+from inyoka.utils.html import striptags
+from inyoka.utils.local import current_request
+from inyoka.utils.search import search, SearchAdapter
+from inyoka.utils.text import slugify
+from inyoka.utils.urls import href, url_for
 
 
 def _get_not_cached_articles(keys, cache_values):
