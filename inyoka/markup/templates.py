@@ -202,7 +202,7 @@ class Parser(object):
                 expr = self.parse_expr()
                 if not self.stream.test('tag_end'):
                     raise TemplateSyntaxError(
-                        _(u'Conditions allow only one expression per block'))
+                        _(u'Conditions allow only one expression per block.'))
                 self.stream.next()
                 tests.append((expr, self.subparse(lambda:
                              self.stream.test('raw', ('endif', 'elseif')),
