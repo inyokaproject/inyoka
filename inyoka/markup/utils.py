@@ -7,6 +7,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
+from itertools import ifilter
 
 
 acceptable_css_properties = frozenset((
