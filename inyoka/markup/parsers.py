@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.wiki.parsers
-    ~~~~~~~~~~~~~~~~~~~
+    inyoka.markup.parsers
+    ~~~~~~~~~~~~~~~~~~~~~
 
     Parsers can process contents inside parser blocks.  Unlike macros the
     possibilities of parsers regarding tree processing are very limited.  They
@@ -19,11 +19,14 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
-from inyoka.wiki.parser import nodes
-from inyoka.wiki.utils import ArgumentCollector, dump_argstring, debug_repr
-from inyoka.wiki.templates import expand_page_template
+
+from inyoka.markup import nodes
+from inyoka.markup.templates import expand_page_template
+
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.text import join_pagename, normalize_pagename
+from inyoka.markup.utils import debug_repr, ArgumentCollector, dump_argstring
+
 from pygments.util import ClassNotFound
 
 

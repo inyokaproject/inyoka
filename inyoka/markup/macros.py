@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.wiki.macros
-    ~~~~~~~~~~~~~~~~~~
+    inyoka.utils.macros
+    ~~~~~~~~~~~~~~~~~~~
 
     The module contains the core macros and the logic to find macros.
 
@@ -36,19 +36,19 @@ from django.utils.translation import ungettext, ugettext as _
 from inyoka.utils.urls import href, urlencode, url_for
 from inyoka.portal.models import StaticFile
 from inyoka.forum.models import Attachment as ForumAttachment
-from inyoka.wiki.parser import nodes
-from inyoka.wiki.utils import simple_filter, debug_repr, dump_argstring, \
-    ArgumentCollector
+from inyoka.markup import nodes
+from inyoka.markup.utils import debug_repr, dump_argstring, ArgumentCollector, \
+    simple_filter
 from inyoka.wiki.models import Page, Revision, MetaData
-from inyoka.wiki.templates import expand_page_template
+from inyoka.markup.templates import expand_page_template
 from inyoka.wiki.views import fetch_real_target
-from inyoka.utils.css import filter_style
+from inyoka.markup.utils import filter_style
 from inyoka.utils.urls import is_external_target
 from inyoka.utils.text import join_pagename, normalize_pagename, get_pagetitle
 from inyoka.utils.dates import parse_iso8601, format_datetime, format_time, \
     datetime_to_timezone
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.parsertools import MultiMap, flatten_iterator
+from inyoka.markup.parsertools import MultiMap, flatten_iterator
 from inyoka.utils.imaging import get_thumbnail, parse_dimensions
 
 

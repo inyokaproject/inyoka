@@ -11,7 +11,8 @@
     :license: GNU GPL.
 """
 from django.test import TestCase
-from inyoka.wiki.parser.lexer import Lexer
+
+from inyoka.markup.lexer import Lexer
 
 
 lexer = Lexer()

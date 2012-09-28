@@ -13,7 +13,7 @@
 	{{ csrf_token() }}
   <p>
     {%- trans title=object.title|e -%}
-      Do you really want to delete the page “{{ title }}“?
+      Do you really want to delete the page “{{ title }}”?
     {%- endtrans -%}
   <p>
     <input type="submit" value="{% trans %}Delete{% endtrans %}" />

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.wiki.parser
-    ~~~~~~~~~~~~~~~~~~
+    inyoka.markup
+    ~~~~~~~~~~~~~
 
     The package implements a rather complex parsers for the inyoka wiki
     syntax.  The parser is roughly divided into five more or less independent
@@ -36,7 +36,7 @@
 
     If you want to work with the node tree you just have to parse something::
 
-        >>> from inyoka.wiki.parser import parse, RenderContext
+        >>> from inyoka.markup import parse, RenderContext
         >>> context = RenderContext()
         >>> node = parse("Hello World!\\n\\n''foo bar spam''")
 
@@ -62,7 +62,7 @@
 
     And then render the compiled string using `render()`::
 
-        >>> from inyoka.wiki.parser import render
+        >>> from inyoka.markup import render
         >>> render(code, context)
         u'<p>Hello World!</p><p><em>foo bar spam</em></p>'
 
@@ -83,7 +83,7 @@
     the problem that exist in the moin syntax.
 
     This (from an implementors point of view) most obvious difference is that
-    the inyoka parser is not line based although many syntax elements are
+    the inyoka.markup is not line based although many syntax elements are
     newline aware.  One of the syntax elements that end at a newline are for
     example list items.  If however inline markup (such as bold text) is left
     opened the list item will not close until the bold markup is closed first.
@@ -139,13 +139,14 @@ from urlparse import urlsplit
 
 from django.utils.translation import ugettext as _
 
-from inyoka.utils.css import filter_style
+from inyoka.markup.lexer import escape, Lexer
+from inyoka.markup.machine import Renderer, RenderContext
+from inyoka.markup.transformers import DEFAULT_TRANSFORMERS
+from inyoka.markup.constants import HTML_COLORS
+from inyoka.markup.utils import filter_style
+from inyoka.markup import nodes
+
 from inyoka.utils.urls import href
-from inyoka.wiki.parser.lexer import escape, Lexer
-from inyoka.wiki.parser.machine import Renderer, RenderContext
-from inyoka.wiki.parser.transformers import DEFAULT_TRANSFORMERS
-from inyoka.wiki.parser.constants import HTML_COLORS
-from inyoka.wiki.parser import nodes
 
 
 __all__ = ['parse', 'render', 'stream', 'escape']
@@ -876,11 +877,12 @@ class Parser(object):
         that holds the already instanciated macro.  Because the macro *is*
         instanciate, dynamic macros have to ensure that they support pickle.
         """
-        from inyoka.wiki.macros import get_macro
         stream.expect('macro_begin')
         name = stream.expect('macro_name').value
         args, kwargs = self.parse_arguments(stream, 'macro_end')
         stream.next()
+        # FIXME: Circular Imports
+        from inyoka.markup.macros import get_macro
         macro = get_macro(name, args, kwargs)
         if macro is None:
             return nodes.error_box(
@@ -896,7 +898,8 @@ class Parser(object):
 
     def parse_template(self, stream):
         """Parse the template macro shortcut."""
-        from inyoka.wiki.macros import Template
+        # FIXME: Circular imports
+        from inyoka.markup.macros import Template
         stream.expect('template_begin')
         name = stream.expect('template_name').value
         args, kwargs = self.parse_arguments(stream, 'template_end')
@@ -913,7 +916,8 @@ class Parser(object):
         data is handled as preformatted block data and a `Preformatted` node
         is returned.
         """
-        from inyoka.wiki.parsers import get_parser
+        # FIXME: Circular imports
+        from inyoka.markup.parsers import get_parser
         stream.expect('pre_begin')
         if stream.current.type == 'parser_begin':
             name = stream.current.value

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    inyoka.wiki.parser.constants
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    inyoka.markup.constants
+    ~~~~~~~~~~~~~~~~~~~~~~~
 
     Constants the parser uses.
 

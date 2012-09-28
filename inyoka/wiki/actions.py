@@ -25,6 +25,7 @@ from django.contrib import messages
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
+from inyoka.markup import parse, RenderContext
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse, PageNotFound, \
@@ -32,16 +33,17 @@ from inyoka.utils.http import templated, does_not_exist_is_404, \
 from inyoka.utils.diff3 import merge
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
+from inyoka.utils.storage import storage
 from inyoka.utils.text import normalize_pagename, get_pagetitle, join_pagename
 from inyoka.utils.urls import urlencode
-from inyoka.utils.storage import storage
+
+from inyoka.portal.models import Subscription
+from inyoka.portal.utils import simple_check_login
+
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.forms import PageEditForm, AddAttachmentForm, \
     EditAttachmentForm, ManageDiscussionForm, MvBaustelleForm
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.acl import require_privilege, has_privilege, PrivilegeTest
-from inyoka.portal.models import Subscription
-from inyoka.portal.utils import simple_check_login
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.tasks import update_object_list
 
@@ -101,7 +103,7 @@ def do_show(request, name):
         redirect = page.metadata.get('X-Redirect')
         if redirect:
             messages.info(request,
-                _(u'Redirected from “<a href="%(link)s">%(title)s</a>“.') % {
+                _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
                 'link': escape(href('wiki', page.name, redirect='no')),
                 'title': escape(page.title)
             })
