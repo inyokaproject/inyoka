@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-09-14 00:25+0200\n"
+"POT-Creation-Date: 2012-09-28 09:20+0200\n"
 "PO-Revision-Date: 2012-03-26 18:34+0000\n"
 "Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -339,9 +339,9 @@ msgstr "Möchtest du das Thema (ent)sperren?"
 msgid "(Un)lock"
 msgstr "(Ent)sperren"
 
-#: inyoka/forum/views.py:672 inyoka/forum/views.py:1147
-#: inyoka/forum/views.py:1165 inyoka/forum/views.py:1230
-#: inyoka/forum/views.py:1241 inyoka/forum/templates/forum/delete_topic.html:33
+#: inyoka/forum/views.py:672 inyoka/forum/views.py:1150
+#: inyoka/forum/views.py:1168 inyoka/forum/views.py:1233
+#: inyoka/forum/views.py:1244 inyoka/forum/templates/forum/delete_topic.html:33
 #: inyoka/forum/templates/forum/edit.html:156
 #: inyoka/forum/templates/forum/edit.m.html:73
 #: inyoka/forum/templates/forum/post_delete.html:26
@@ -442,177 +442,177 @@ msgstr "Das Thema „%(topic)s“ wurde verschoben."
 msgid "No post selected."
 msgstr "Kein Beitrag ausgewählt."
 
-#: inyoka/forum/views.py:1072
+#: inyoka/forum/views.py:1075
 msgid "You cannot set this topic as target."
 msgstr "Du kannst dieses Thema nicht als Ziel auswählen."
 
-#: inyoka/forum/views.py:1098
+#: inyoka/forum/views.py:1101
 msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr "Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."
 
-#: inyoka/forum/views.py:1126
+#: inyoka/forum/views.py:1129
 #, python-format
 msgid "The topic “%(topic)s“ was split."
 msgstr "Das Thema „%(topic)s“ wurde aufgeteilt."
 
-#: inyoka/forum/views.py:1146
+#: inyoka/forum/views.py:1149
 msgid "Do you want to restore this post?"
 msgstr "Möchtest du diesen Beitrag wiederherstellen?"
 
-#: inyoka/forum/views.py:1147 inyoka/forum/views.py:1230
-#: inyoka/forum/views.py:1241 inyoka/forum/templates/forum/revisions.html:24
+#: inyoka/forum/views.py:1150 inyoka/forum/views.py:1233
+#: inyoka/forum/views.py:1244 inyoka/forum/templates/forum/revisions.html:24
 #: inyoka/forum/templates/forum/topic.html:80
 #: inyoka/forum/templates/forum/topic.html:235
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: inyoka/forum/views.py:1159
+#: inyoka/forum/views.py:1162
 #, python-format
 msgid "The post by “%(user)s“ was made visible."
 msgstr "Der Beitrag von %(user)s wurde verborgen."
 
-#: inyoka/forum/views.py:1164
+#: inyoka/forum/views.py:1167
 msgid "Do you really want to hide / delete this post?"
 msgstr "Möchtest du diesen Beitrag wirklich verbergen / löschen?"
 
-#: inyoka/forum/views.py:1165
+#: inyoka/forum/views.py:1168
 msgid "Hide / Delete"
 msgstr "Verbergen / Löschen"
 
-#: inyoka/forum/views.py:1189
+#: inyoka/forum/views.py:1192
 msgid "The first post of a topic cannot be deleted."
 msgstr "Der erste Beitrag eines Themas kann nicht gelöscht werden."
 
-#: inyoka/forum/views.py:1191
+#: inyoka/forum/views.py:1194
 msgid "The first post of a topic cannot be hidden."
 msgstr "Der erste Beitrag eines Themas kann nicht verborgen werden"
 
-#: inyoka/forum/views.py:1197
+#: inyoka/forum/views.py:1200
 #, python-format
 msgid "The post by “%(user)s“ was hidden."
 msgstr "Der Beitrag von „%(user)s“ wurde verborgen."
 
-#: inyoka/forum/views.py:1203
+#: inyoka/forum/views.py:1206
 #, python-format
 msgid "The post by “%(user)s“ was deleted."
 msgstr "Der Beitrag von „%(user)s“ wurde gelöscht."
 
-#: inyoka/forum/views.py:1229
+#: inyoka/forum/views.py:1232
 msgid "Do you want to restore the revision of the post?"
 msgstr "Möchtest du diese Revision des Beitrages wiederherstellen?"
 
-#: inyoka/forum/views.py:1236
+#: inyoka/forum/views.py:1239
 msgid "An old revision of the post was restored."
 msgstr "Eine ältere Revision des Beitrages wurde wiederhergestellt."
 
-#: inyoka/forum/views.py:1240
+#: inyoka/forum/views.py:1243
 msgid "Do you want to restore the topic?"
 msgstr "Möchtest du das Thema wiederherstellen?"
 
-#: inyoka/forum/views.py:1253
+#: inyoka/forum/views.py:1256
 #, python-format
 msgid "The topic “%(topic)s“ was restored."
 msgstr "Das Thema „%(topic)s“ wurde wiederhergestellt."
 
-#: inyoka/forum/views.py:1277
+#: inyoka/forum/views.py:1280
 msgid "Action canceled."
 msgstr "Aktion abgebrochen."
 
-#: inyoka/forum/views.py:1283
+#: inyoka/forum/views.py:1286
 #, python-format
 msgid "The topic “%(topic)s“ was hidden."
 msgstr "Das Thema „%(topic)s“ wurde verborgen."
 
-#: inyoka/forum/views.py:1291
+#: inyoka/forum/views.py:1294
 msgid "The topic “%(topic)“ was deleted successfully."
 msgstr "Das Thema „%(topic)s“ wurde gelöscht."
 
-#: inyoka/forum/views.py:1318
+#: inyoka/forum/views.py:1321
 #, python-format
 msgid "%(site)s topic – “%(topic)s“"
 msgstr "%(site)s Thema – „%(topic)s“"
 
-#: inyoka/forum/views.py:1360
+#: inyoka/forum/views.py:1363
 #, python-format
 msgid "%(site)s forum – “%(forum)s“"
 msgstr "%(site)s Forum – „%(forum)s“"
 
-#: inyoka/forum/views.py:1368
+#: inyoka/forum/views.py:1371
 #, python-format
 msgid "%(site)s forum"
 msgstr "%(site)s Forum"
 
-#: inyoka/forum/views.py:1412
+#: inyoka/forum/views.py:1415
 msgid "Please login to mark posts as read."
 msgstr "Bitte melde dich an, um Beiträge als gelesen zu markieren."
 
-#: inyoka/forum/views.py:1419
+#: inyoka/forum/views.py:1422
 #, python-format
 msgid "The forum “%(forum)s“ was marked as read."
 msgstr "Das Forum „%(forum)s“ wurde als gelesen markiert."
 
-#: inyoka/forum/views.py:1424
+#: inyoka/forum/views.py:1427
 msgid "All forums were marked as read."
 msgstr "Alle Foren wurden als gelesen markiert."
 
-#: inyoka/forum/views.py:1435
+#: inyoka/forum/views.py:1438
 #, python-format
 msgid "You can only display the last %(n)d pages."
 msgstr "Du kannst dir nur die letzten %(n)d Seiten anzeigen lassen."
 
-#: inyoka/forum/views.py:1449
+#: inyoka/forum/views.py:1452
 #, python-format
 msgid "Posts of the last %(n)d hours"
 msgstr "Beiträge der letzten %(n)d Stunden"
 
-#: inyoka/forum/views.py:1453 inyoka/forum/templates/forum/page.html:43
+#: inyoka/forum/views.py:1456 inyoka/forum/templates/forum/page.html:43
 #: inyoka/forum/templates/forum/page.html:68
 msgid "Unanswered topics"
 msgstr "Unbeantwortete Themen"
 
-#: inyoka/forum/views.py:1457 inyoka/forum/templates/forum/page.html:47
+#: inyoka/forum/views.py:1460 inyoka/forum/templates/forum/page.html:47
 #: inyoka/forum/templates/forum/page.html:69
 msgid "Unsolved topics"
 msgstr "Ungelöste Themen"
 
-#: inyoka/forum/views.py:1463
+#: inyoka/forum/views.py:1466
 #, python-format
 msgid "Topics by “%(user)s“"
 msgstr "Themen von „%(user)s“"
 
-#: inyoka/forum/views.py:1467
+#: inyoka/forum/views.py:1470
 msgid "You need to be logged in to use this function."
 msgstr "Für diese Funktion musst du eingeloggt sein."
 
-#: inyoka/forum/views.py:1472
+#: inyoka/forum/views.py:1475
 #, python-format
 msgid "Posts by “%(user)s“"
 msgstr "Beiträge von „%(user)s“"
 
-#: inyoka/forum/views.py:1475 inyoka/forum/templates/forum/page.html:30
+#: inyoka/forum/views.py:1478 inyoka/forum/templates/forum/page.html:30
 #: inyoka/forum/templates/forum/page.html:64
 msgid "My posts"
 msgstr "Eigene Beiträge"
 
-#: inyoka/forum/views.py:1487 inyoka/forum/templates/forum/page.html:39
+#: inyoka/forum/views.py:1490 inyoka/forum/templates/forum/page.html:39
 #: inyoka/forum/templates/forum/page.html:67
 msgid "New posts"
 msgstr "Neue Beiträge"
 
-#: inyoka/forum/views.py:1562
+#: inyoka/forum/views.py:1565
 msgid "No recent topics within this forum."
 msgstr "Es existieren keine neueren Themen in diesem Forum."
 
-#: inyoka/forum/views.py:1575
+#: inyoka/forum/views.py:1578
 msgid "No older topics within this forum."
 msgstr "Es existieren keine älteren Themen in diesem Forum."
 
-#: inyoka/forum/views.py:1637
+#: inyoka/forum/views.py:1640
 #, python-format
 msgid "The forum “%(forum)s“ was changed successfully."
 msgstr "Das Forum „%(forum)s“ wurde erfolgreich geändert."
 
-#: inyoka/forum/views.py:1639
+#: inyoka/forum/views.py:1642
 #, python-format
 msgid "The forum “%(forum)s“ was created successfully."
 msgstr "Das Forum „%(forum)s“ wurde erfolgreich erstellt."

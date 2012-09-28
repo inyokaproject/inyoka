@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-09-14 00:25+0200\n"
+"POT-Creation-Date: 2012-09-28 09:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.0dev\n"
 
-#: inyoka/ikhaya/forms.py:41 inyoka/ikhaya/models.py:210
-#: inyoka/ikhaya/models.py:419
+#: inyoka/ikhaya/forms.py:41 inyoka/ikhaya/models.py:211
+#: inyoka/ikhaya/models.py:420
 msgid "Text"
 msgstr ""
 
@@ -29,7 +29,7 @@ msgid ""
 "insert this code."
 msgstr ""
 
-#: inyoka/ikhaya/forms.py:60 inyoka/ikhaya/models.py:203
+#: inyoka/ikhaya/forms.py:60 inyoka/ikhaya/models.py:204
 #: inyoka/ikhaya/templates/ikhaya/events.html:33
 msgid "Author"
 msgstr ""
@@ -62,85 +62,85 @@ msgstr ""
 msgid "Display event?"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:165 inyoka/ikhaya/models.py:212
+#: inyoka/ikhaya/models.py:166 inyoka/ikhaya/models.py:213
 msgid "Slug"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:168 inyoka/ikhaya/models.py:208
+#: inyoka/ikhaya/models.py:169 inyoka/ikhaya/models.py:209
 msgid "Icon"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:187 inyoka/ikhaya/models.py:205
+#: inyoka/ikhaya/models.py:188 inyoka/ikhaya/models.py:206
 msgid "Category"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:188 inyoka/ikhaya/templates/ikhaya/page.html:57
+#: inyoka/ikhaya/models.py:189 inyoka/ikhaya/templates/ikhaya/page.html:57
 msgid "Categories"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:198 inyoka/ikhaya/templates/ikhaya/events.html:32
+#: inyoka/ikhaya/models.py:199 inyoka/ikhaya/templates/ikhaya/events.html:32
 msgid "Date"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:199
+#: inyoka/ikhaya/models.py:200
 msgid "Time"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:200
+#: inyoka/ikhaya/models.py:201
 msgid "Last change"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:204
+#: inyoka/ikhaya/models.py:205
 msgid "Headline"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:209 inyoka/ikhaya/models.py:420
+#: inyoka/ikhaya/models.py:210 inyoka/ikhaya/models.py:421
 msgid "Introduction"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:211
+#: inyoka/ikhaya/models.py:212
 msgid "Public"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:214
+#: inyoka/ikhaya/models.py:215
 msgid "XHTML Markup"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:217
+#: inyoka/ikhaya/models.py:218
 msgid "Allow comments"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:379
+#: inyoka/ikhaya/models.py:380
 msgid "Article"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:380
+#: inyoka/ikhaya/models.py:381
 msgid "Articles"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:418
+#: inyoka/ikhaya/models.py:419
 msgid "Title"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:421
+#: inyoka/ikhaya/models.py:422
 msgid "Annotations"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:427
+#: inyoka/ikhaya/models.py:428
 msgid "Article suggestion"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:428
+#: inyoka/ikhaya/models.py:429
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:13
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:16
 msgid "Article suggestions"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:509
+#: inyoka/ikhaya/models.py:510
 msgid "Degree of latitude"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:511
+#: inyoka/ikhaya/models.py:512
 msgid "Degree of longitude"
 msgstr ""
 
@@ -242,88 +242,88 @@ msgstr ""
 msgid "The comment was saved."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:503
+#: inyoka/ikhaya/views.py:505
 msgid "The comment was hidden."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:504
+#: inyoka/ikhaya/views.py:506
 msgid "The comment was restored."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:521
+#: inyoka/ikhaya/views.py:523
 #, python-format
 msgid "The suggestion “%(title)s“ does not exist."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:528
+#: inyoka/ikhaya/views.py:530
 msgid "The suggestion was assigned to nobody."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:535
+#: inyoka/ikhaya/views.py:537
 #, python-format
 msgid "The suggestion was assigned to “%(user)s“."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:547 inyoka/ikhaya/views.py:592
+#: inyoka/ikhaya/views.py:549 inyoka/ikhaya/views.py:594
 msgid "This suggestion does not exist."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:554 inyoka/ikhaya/views.py:559
+#: inyoka/ikhaya/views.py:556 inyoka/ikhaya/views.py:561
 msgid "Article suggestion deleted"
 msgstr ""
 
-#: inyoka/ikhaya/views.py:570
+#: inyoka/ikhaya/views.py:572
 #, python-format
 msgid "New private message from %(user)s: %(subject)s"
 msgstr ""
 
-#: inyoka/ikhaya/views.py:584
+#: inyoka/ikhaya/views.py:586
 msgid "The suggestion was deleted."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:586
+#: inyoka/ikhaya/views.py:588
 msgid "The suggestion was not deleted."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:599
+#: inyoka/ikhaya/views.py:601
 msgid "Please login to suggest an article."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:617
+#: inyoka/ikhaya/views.py:619
 msgid ""
 "Thank you, your article suggestion was submitted. A team member will "
 "contact you shortly."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:681
+#: inyoka/ikhaya/views.py:683
 msgid "Notifications on new suggestions will be sent to you."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:697
+#: inyoka/ikhaya/views.py:699
 msgid "No notifications on suggestions will be sent to you any more."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:716
+#: inyoka/ikhaya/views.py:718
 #, python-format
 msgid ""
 "The event with the id %(id)s could not be used as draft for a new event "
 "because it does not exist."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:730
+#: inyoka/ikhaya/views.py:732
 msgid "The event was saved."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:787
+#: inyoka/ikhaya/views.py:789
 msgid "The event has been saved. A team member will review it soon."
 msgstr ""
 
-#: inyoka/ikhaya/views.py:851
+#: inyoka/ikhaya/views.py:853
 #, python-format
 msgid "%(domain)s Ikhaya comments – %(title)s"
 msgstr ""
 
-#: inyoka/ikhaya/views.py:856
+#: inyoka/ikhaya/views.py:858
 #, python-format
 msgid "%(domain)s Ikhaya comments"
 msgstr ""
