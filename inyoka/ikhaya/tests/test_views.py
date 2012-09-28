@@ -4,6 +4,7 @@ from random import randint
 from datetime import datetime
 
 from django.conf import settings
+from django.test import TestCase
 
 from inyoka.ikhaya.models import Article, Category, Comment, Report
 from inyoka.portal.user import User, PERMISSION_NAMES
