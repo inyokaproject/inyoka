@@ -1,7 +1,8 @@
 #-*- coding: utf-8 -*-
 from django.test import TestCase
+
 from inyoka.wiki.models import Page
-from inyoka.wiki.parser import parse, RenderContext
+from inyoka.markup import parse, RenderContext
 
 
 class TestMacros(TestCase):
@@ -12,7 +13,6 @@ class TestMacros(TestCase):
                                               format='html')
 
     def test_toc_indention_ticket_688(self):
-        page = Page(name='Something')
         node = parse("""[[Inhaltsverzeichnis(10)]]
 = Stufe 1 (1) =
 text

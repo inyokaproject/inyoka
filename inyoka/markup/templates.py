@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 r"""
-    inyoka.wiki.templates
-    ~~~~~~~~~~~~~~~~~~~~~
+    inyoka.markup.templates
+    ~~~~~~~~~~~~~~~~~~~~~~~
 
     This module implements the templating language for the Wiki.  It's a
     very simple language with some syntax elements taken from both Python
@@ -29,11 +29,13 @@ import re
 import operator
 import math
 import random
+
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext as _
-from inyoka.wiki.parser import unescape_string, escape
-from inyoka.wiki.utils import debug_repr, simple_match
-from inyoka.utils.parsertools import TokenStream
+
+from inyoka.markup import unescape_string, escape
+from inyoka.markup.parsertools import TokenStream
+from inyoka.markup.utils import debug_repr, simple_match
 
 
 def process(source, context=()):
@@ -44,7 +46,7 @@ def process(source, context=()):
 def expand_page_template(template, context, macro_behavior=False):
     """A helper for the template macro and wiki-parser."""
     from inyoka.wiki.models import Page
-    from inyoka.wiki.parser import nodes
+    from inyoka.markup import nodes
     if template is None:
         if not macro_behavior:
             raise ValueError('no template given')

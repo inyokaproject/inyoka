@@ -9,7 +9,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import datetime
-import Image
+
+from PIL import Image
+
 from django import forms
 from django.forms import HiddenInput
 from django.db.models import Count
