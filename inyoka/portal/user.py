@@ -26,7 +26,6 @@ from django.db import models
 from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
-from django.utils import timezone
 
 from inyoka.utils import encode_confirm_data, classproperty
 from inyoka.utils.database import update_model, JSONField
@@ -110,7 +109,8 @@ def reactivate_user(id, email, status, time):
         values['banned_until'] = None
 
     update_model(user, **values)
-    send_new_user_password(user)
+    # FIXME: Django 1.5, this thing got nuked :þ
+    #send_new_user_password(user)
 
     # reactivate user page
     try:
@@ -172,7 +172,7 @@ def deactivate_user(user):
     user.set_unusable_password()
     user.groups.remove(*user.groups.all())
     user.avatar = user.coordinates_long = user.coordinates_lat = \
-        user.new_password_key = user._primary_group = None
+        user._primary_group = None
     user.icq = user.jabber = user.msn = user.aim = user.yim = user.skype = \
         user.wengophone = user.sip = user.location = user.signature = \
         user.gpgkey = user.location = user.occupation = user.interests = \
@@ -250,23 +250,6 @@ def send_activation_mail(user):
         'activation_key':   gen_activation_key(user)
     })
     subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
-              % {'sitename': settings.BASE_DOMAIN_NAME,
-                 'name': user.username}
-    send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
-
-
-def send_new_user_password(user):
-    new_password_key = ''.join(random.choice(string.lowercase + string.digits)
-                               for _ in range(24))
-    user.new_password_key = new_password_key
-    user.save()
-    message = render_template('mails/new_user_password.txt', {
-        'username':         user.username,
-        'email':            user.email,
-        'new_password_url': href('portal', 'lost_password',
-                                 user.urlsafe_username, new_password_key),
-    })
-    subject = _(u'%(sitename)s – New password for “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
@@ -494,8 +477,6 @@ class User(AbstractBaseUser):
                                     verbose_name=ugettext_lazy(u'Groups'),
                                     blank=True,
                                     related_name='user_set')
-    new_password_key = models.CharField(ugettext_lazy(u'Confirmation key for a new password'),
-                                        blank=True, null=True, max_length=32)
 
     banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'), null=True)
 
@@ -737,15 +718,11 @@ class UserData(models.Model):
     value = models.CharField(max_length=255)
 
 
+# TODO: The original signal can get reused as soon as we turn USE_TZ on.
 @receiver(user_logged_in)
 def update_user_flags(sender, request, user, **kwargs):
-    update_fields = ['last_login']
-    user.last_login = timezone.now()
-    request.session.pop('_sk', None)
-    if user.new_password_key:
-        user.new_password_key = None
-        update_fields.append('new_password_key')
-    user.save(update_fields=update_fields)
+    user.last_login = datetime.utcnow()
+    user.save(update_fields=['last_login'])
 
 user_logged_in.disconnect(update_last_login)
 
