@@ -21,7 +21,8 @@ from django.core.validators import EMPTY_VALUES
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
 
-from django.contrib.auth.forms import PasswordResetForm
+from django.contrib import messages
+from django.contrib.auth import forms as auth_forms
 
 from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
@@ -195,34 +196,32 @@ class RegisterForm(forms.Form):
         return self.cleaned_data['email']
 
 
-class LostPasswordForm(PasswordResetForm):
+class LostPasswordForm(auth_forms.PasswordResetForm):
+    def clean_email(self):  # Work around Django's check.
+        # FIXME: Check is_active and useable password.
+        email = self.cleaned_data['email']
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise forms.ValidationError(self.error_messages['unknown'])
+        if not user.has_usable_password() or not user.is_active:
+            raise forms.ValidationError(self.error_messages['unusable'])
+        self.users_cache = [user]  # For Django
+        return email
+
     def save(self, **opts):
         request = opts['request']
         messages.success(request, _(u'An email with further instructions was sent to you.'))
-        return super(PasswordResetForm, self).save(**opts)
+        return super(LostPasswordForm, self).save(**opts)
 
 
-class SetNewPasswordForm(forms.Form):
-    username = forms.CharField(widget=forms.HiddenInput)
-    new_password_key = forms.CharField(widget=forms.HiddenInput)
-    password = forms.CharField(label=ugettext_lazy(u'New password'),
-                               widget=forms.PasswordInput)
-    password_confirm = forms.CharField(label=ugettext_lazy(u'Confirm new password'),
-                                       widget=forms.PasswordInput)
-
-    def clean(self):
-        data = super(SetNewPasswordForm, self).clean()
-        if 'password' not in data or 'password_confirm' not in data or \
-           data['password'] != data['password_confirm']:
-            raise forms.ValidationError(_(u'The passwords do not match!'))
-        try:
-            data['user'] = User.objects.get(self['username'].data,
-                               new_password_key=self['new_password_key'].data)
-        except User.DoesNotExist:
-            raise forms.ValidationError(_(
-                u'The user does not exist or the confirmation key is invalid')
-            )
-        return data
+class SetNewPasswordForm(auth_forms.SetPasswordForm):
+    def save(self, commit=True):
+        instance = super(SetNewPasswordForm, self).save(commit)
+        messages.success(current_request,
+            _(u'You successfully changed your password and are now '
+              u'able to login.'))
+        return instance
 
 
 class ChangePasswordForm(forms.Form):

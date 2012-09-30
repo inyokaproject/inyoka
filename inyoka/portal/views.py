@@ -18,8 +18,6 @@ from datetime import datetime, date, timedelta
 
 from django import forms
 from django.conf import settings
-from django.contrib import auth
-from django.contrib import messages
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.db.models import Q
@@ -30,6 +28,10 @@ from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.decorators import method_decorator
 from django.utils.translation import ungettext, ugettext as _
 from django.utils.html import escape
+
+from django.contrib import auth
+from django.contrib import messages
+from django.contrib.auth.views import password_reset, password_reset_confirm
 
 from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
@@ -73,7 +75,7 @@ from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
     deactivate_user, reactivate_user, set_new_email, \
     send_new_email_confirmation, reset_email, send_activation_mail, \
-    send_new_user_password, PERMISSION_NAMES
+    PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
@@ -104,7 +106,7 @@ files = generic.ListView.as_view(model=StaticFile,
     template_name='portal/files.html',
     columns=['identifier', 'is_ikhaya_icon'],
     required_permission='static_file_edit',
-    base_link = href('portal', 'files'))
+    base_link=href('portal', 'files'))
 
 
 file_edit = generic.CreateUpdateView(model=StaticFile,
@@ -284,43 +286,19 @@ def resend_activation_mail(request, username):
 
 
 def lost_password(request):
-    from django.contrib.auth.views import password_reset
     return password_reset(request,
         post_reset_redirect=href('portal', 'login'),
         template_name='portal/lost_password.html',
+        email_template_name='mails/new_user_password.txt',
+        subject_template_name='mails/new_user_password_subject.txt',
         password_reset_form=LostPasswordForm)
 
 
-@templated('portal/set_new_password.html')
-def set_new_password(request, username, new_password_key):
-    if request.method == 'POST':
-        form = SetNewPasswordForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            data['user'].set_password(data['password'])
-            data['user'].new_password_key = ''
-            data['user'].save()
-            messages.success(request,
-                _(u'You successfully changed your password and are now '
-                  u'able to login.'))
-            return HttpResponseRedirect(href('portal', 'login'))
-    else:
-        try:
-            user = User.objects.get(username)
-        except User.DoesNotExist:
-            messages.error(request, _(u'This user does not exist.'))
-            return HttpResponseRedirect(href())
-        if user.new_password_key != new_password_key:
-            messages.error(request, _(u'Invalid activation key.'))
-            return HttpResponseRedirect(href())
-        form = SetNewPasswordForm(initial={
-            'username': user.username,
-            'new_password_key': new_password_key,
-        })
-    return {
-        'form': form,
-        'username': username,
-    }
+def set_new_password(request, uidb36, token):
+    return password_reset_confirm(request, uidb36, token,
+        post_reset_redirect=href('portal', 'login'),
+        template_name='portal/set_new_password.html',
+        set_password_form=SetNewPasswordForm)
 
 
 @templated('portal/login.html')
@@ -367,7 +345,7 @@ def login(request):
                 failed = True
     else:
         if 'username' in request.GET:
-            form = LoginForm(initial={'username':request.GET['username']})
+            form = LoginForm(initial={'username': request.GET['username']})
         else:
             form = LoginForm()
 
@@ -406,7 +384,7 @@ def search(request):
         f = SearchForm(request.REQUEST, user=request.user)
     else:
         f = SearchForm(user=request.user)
-    f.fields['forums'].refresh(add=[(u'support',_(u'All support forums'))])
+    f.fields['forums'].refresh(add=[(u'support', _(u'All support forums'))])
 
     if f.is_valid():
         results = f.search()
@@ -550,6 +528,7 @@ def user_mail(request, username):
         'user': user,
     }
 
+
 @require_permission('subscribe_to_users')
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
@@ -642,12 +621,11 @@ def usercp_profile(request):
                 user.settings[key] = data[key]
             user.save()
 
-
             if form.errors:
                 generic.trigger_fix_errors_message(request)
             else:
                 openids = map(int, request.POST.getlist('openids'))
-                UserData.objects.filter(user=user, pk__in = openids).delete()
+                UserData.objects.filter(user=user, pk__in=openids).delete()
                 messages.success(request, _(u'Your profile information were updated successfully.'))
                 return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
@@ -1264,7 +1242,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
     page = int(page)
     if folder is None:
         if get_flavour() == 'mobile':
-            return { 'folder': None}
+            return {'folder': None}
         if entry_id is None:
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS['inbox'][1]))
@@ -1297,7 +1275,6 @@ def privmsg(request, folder=None, entry_id=None, page=1):
             entries = filter(lambda s: str(s.id) not in d['delete'], entries)
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
-
 
     if entry_id is not None:
         entry = PrivateMessageEntry.objects.get(user=request.user,
@@ -1379,7 +1356,7 @@ def privmsg_new(request, username=None):
         form = form_class(request.POST)
         if 'preview' in request.POST:
             ctx = RenderContext(request)
-            preview = parse(request.POST.get('text','')).render(ctx, 'html')
+            preview = parse(request.POST.get('text', '')).render(ctx, 'html')
         elif form.is_valid():
             d = form.cleaned_data
 
@@ -1387,7 +1364,7 @@ def privmsg_new(request, username=None):
                 t = d['text']
                 if all(map(lambda x: x in t, group)):
                     if '>' in t:
-                        continue # User quoted, most likely a forward and no spam
+                        continue  # User quoted, most likely a forward and no spam
                     request.user.status = 2
                     request.user.banned_until = None
                     request.user.save()
@@ -1527,7 +1504,7 @@ def privmsg_new(request, username=None):
                     if not data['subject'].lower().startswith(u're: '):
                         data['subject'] = u'Re: %s' % data['subject']
                 if reply_to_all:
-                    data['recipient'] += ';'+';'.join(x.username for x in msg.recipients if x != request.user)
+                    data['recipient'] += ';' + ';'.join(x.username for x in msg.recipients if x != request.user)
                 if forward and not data['subject'].lower().startswith(u'fw: '):
                     data['subject'] = u'Fw: %s' % data['subject']
                 data['text'] = quote_text(msg.text, msg.author) + '\n'
@@ -1899,7 +1876,7 @@ def calendar_detail(request, slug):
 @templated('portal/open_search.xml', content_type='text/xml; charset=utf-8')
 def open_search(request, app):
     if app not in ('wiki', 'forum', 'planet', 'ikhaya'):
-        app='portal'
+        app = 'portal'
     return {
         'app': app
     }
@@ -1932,6 +1909,7 @@ def confirm(request, action=None):
     if isinstance(r, dict) and action:
         r['action'] = action
     return r
+
 
 class OpenIdConsumer(Consumer):
     on_complete_url = '/openid/complete/'

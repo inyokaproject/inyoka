@@ -62,6 +62,8 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^register/resend/(?P<username>[^/]+)/$', 'resend_activation_mail'),
     (r'^confirm/$', 'confirm'),
     (r'^confirm/(?P<action>[^/]+)/$', 'confirm'),
+    (r'^lost_password/$', 'lost_password'),
+    (r'^lost_password/(?P<uidb36>[0-9A-Za-z]{1,13})/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', 'set_new_password'),
     (r'^feeds/$', 'feedselector'),
     (r'^feeds/(?P<app>[^/]+)/$', 'feedselector'),
     (r'^calendar/$', 'calendar_overview'),
@@ -91,12 +93,6 @@ js_info_dict = {
 
 urlpatterns += patterns('',
     url(r'jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
-    (r'^lost_password/$', 'inyoka.portal.views.lost_password'),
-    (r'^lost_password/(?P<username>[^/]+)/(?P<new_password_key>[a-z0-9]+)/$', 'set_new_password'),
-    (r'^reset_password/(?P<uidb36>[0-9A-Za-z]{1,13})-(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        'django.contrib.auth.views.password_reset_confirm'),
-    (r'^reset_password/done/$', 'django.contrib.auth.views.password_reset_complete'),
-
 )
 
 urlpatterns += patterns('inyoka.portal.views',
