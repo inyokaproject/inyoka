@@ -9,7 +9,6 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import os
 import random
 import string
 from datetime import datetime
@@ -19,20 +18,22 @@ from StringIO import StringIO
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files.storage import default_storage
 from django.db import models
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.utils import encode_confirm_data, classproperty
+from inyoka.utils.database import update_model, JSONField
 from inyoka.utils.decorators import deferred
-from inyoka.utils.mail import send_mail
-from inyoka.utils.html import escape
-from inyoka.utils.user import normalize_username, get_hexdigest,\
-    check_password, gen_activation_key
+from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.local import current_request
+from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
-from inyoka.utils.gravatar import get_gravatar
-from inyoka.utils.database import update_model, JSONField
+from inyoka.utils.user import normalize_username, get_hexdigest,\
+    check_password, gen_activation_key
+from inyoka.markup import parse, render, RenderContext
 
 
 UNUSABLE_PASSWORD = '!$!'
@@ -96,7 +97,7 @@ def reactivate_user(id, email, status, time):
     user = User.objects.get(id=id)
     if not user.is_deleted:
         return {
-            'failed': _(u'The account “%(name)s“ was already reactivated.') %
+            'failed': _(u'The account “%(name)s” was already reactivated.') %
                 {'name': escape(user.username)},
         }
     values = {'email': email,
@@ -113,13 +114,13 @@ def reactivate_user(id, email, status, time):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
-                      note=_(u'The user “%(name)s“ has reactivated his account.')
+                      note=_(u'The user “%(name)s” has reactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
 
     return {
-        'success': _(u'The account “%(name)s“ was reactivated. You will '
+        'success': _(u'The account “%(name)s” was reactivated. You will '
                      u'receive an email to set the new password.')
                      % {'name': escape(user.username)},
     }
@@ -143,7 +144,7 @@ def deactivate_user(user):
 
     userdata = encode_confirm_data(userdata)
 
-    subject = _(u'Deactivation of your account “%(name)s“ on %(sitename)s') \
+    subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
                 % {'name': escape(user.username),
                    'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
@@ -157,7 +158,7 @@ def deactivate_user(user):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=True,
-                      note=_(u'The user “%(name)s“ has deactivated his account.')
+                      note=_(u'The user “%(name)s” has deactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
@@ -245,7 +246,7 @@ def send_activation_mail(user):
         'email':            user.email,
         'activation_key':   gen_activation_key(user)
     })
-    subject = _(u'%(sitename)s – Activation of the user “%(name)s“') \
+    subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
@@ -262,7 +263,7 @@ def send_new_user_password(user):
         'new_password_url': href('portal', 'lost_password',
                                  user.urlsafe_username, new_password_key),
     })
-    subject = _(u'%(sitename)s – New password for “%(name)s“') \
+    subject = _(u'%(sitename)s – New password for “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
@@ -520,8 +521,8 @@ class User(models.Model):
     signature = models.TextField(ugettext_lazy(u'Signature'), blank=True)
     coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
     coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
-    location = models.CharField(ugettext_lazy(u'Location'), max_length=200, blank=True)
-    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=8, blank=True)
+    location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
+    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=255, blank=True)
     occupation = models.CharField(ugettext_lazy(u'Job'), max_length=200, blank=True)
     interests = models.CharField(ugettext_lazy(u'Interests'), max_length=200, blank=True)
     website = models.URLField(ugettext_lazy(u'Website'), blank=True)
@@ -551,9 +552,16 @@ class User(models.Model):
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        super(User, self).save(*args, **kwargs)
-        cache.delete('portal/user/%s/signature' % self.id)
-        cache.delete('portal/user/%s' % self.id)
+        if 'update_fields' in kwargs:
+            data = {}
+            for field in kwargs['update_fields']:
+                data[field] = getattr(self, field)
+            update_model(self, **data)
+        else:
+            super(User, self).save(*args, **kwargs)
+        cache.delete_many(['portal/user/%s/signature' % self.id,
+                           'portal/user/%s' % self.id,
+                           'user_permissions/%s' % self.id])
 
     def __unicode__(self):
         return self.username
@@ -705,7 +713,6 @@ class User(models.Model):
         image = Image.open(StringIO(data))
         fn = 'portal/avatars/avatar_user%d.%s' % (self.id,
              image.format.lower())
-        image_path = path.join(settings.MEDIA_ROOT, fn)
         #: clear the file system
         self.delete_avatar()
 
@@ -715,37 +722,37 @@ class User(models.Model):
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
+            image_path = path.join(settings.MEDIA_ROOT, fn)
             image.save(image_path)
             resized = True
         else:
-            image.save(image_path)
+            img.seek(0)
+            default_storage.save(fn, img)
         self.avatar = fn
 
         return resized
 
     def delete_avatar(self):
         """Delete the avatar from the file system."""
-        fn = self.avatar.name
-        if fn is not None and path.exists(fn):
-            os.remove(fn)
-        self.avatar = None
+        if self.avatar:
+            self.avatar.delete(save=False)
 
-    def get_absolute_url(self, action='show', *args):
+    def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
-            return href('portal', 'user', self.urlsafe_username)
+            return href('portal', 'user', self.urlsafe_username, **query)
         elif action == 'privmsg':
             return href('portal', 'privmsg', 'new',
-                        self.urlsafe_username)
+                        self.urlsafe_username, **query)
         elif action == 'activate':
             return href('portal', 'activate',
-                        self.urlsafe_username, gen_activation_key(self))
+                        self.urlsafe_username, gen_activation_key(self), **query)
         elif action == 'activate_delete':
             return href('portal', 'delete',
-                        self.urlsafe_username, gen_activation_key(self))
+                        self.urlsafe_username, gen_activation_key(self), **query)
         elif action == 'admin':
-            return href('portal', 'user', self.urlsafe_username, 'edit', *args)
+            return href('portal', 'user', self.urlsafe_username, 'edit', *args, **query)
         elif action in ('subscribe', 'unsubscribe'):
-            return href('portal', 'user', self.urlsafe_username, action)
+            return href('portal', 'user', self.urlsafe_username, action, **query)
 
     def login(self, request):
         self.last_login = datetime.utcnow()
@@ -756,11 +763,6 @@ class User(models.Model):
         if self.new_password_key:
             self.new_password_key = None
         self.save()
-
-    def get_and_delete_messages(self, *args, **kwargs):
-        """Stub for to fix openid integration as it's calling the django.messages API"""
-        #TODO: this method does not exist in Django 1.4 anymore, so remove it if we upgrade!
-        return []
 
     @classproperty
     def SYSTEM_USER(cls):
@@ -778,6 +780,5 @@ class UserData(models.Model):
 
 
 # circ imports
-from inyoka.wiki.parser import parse, render, RenderContext
 from inyoka.utils.urls import href
 from inyoka.utils.storage import storage

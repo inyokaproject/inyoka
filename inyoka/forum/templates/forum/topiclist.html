@@ -9,32 +9,7 @@
 #}
 {%- extends 'forum/page.html' %}
 
-{% macro topic_icon(topic) -%}
-  {% set is_read = topic.get_read_status(USER) -%}
-  <img src="
-  {{- href('static', 'img', 'forum', 'topic' ) -}}
-  {%- if topic.sticky -%}-sticky
-  {%- else -%}
-    {%- if not is_read %}-new{% endif -%}
-    {%- if topic.solved %}-solved{% endif -%}
-    {%- if topic.locked %}-locked{% endif -%}
-    {%- if topic.hidden %}-hidden{% endif -%}
-    {%- if can_moderate(topic) and topic.reported %}-reported{% endif -%}
-  {%- endif -%}
-  .png" alt="
-  {%- if not is_read %}{% trans %}unread topic{% endtrans %}{% endif -%}
-  {%- if topic.solved %}{% trans %}solved topic{% endtrans %}{% endif -%}
-  {%- if topic.locked %}{% trans %}locked topic{% endtrans %}{% endif -%}
-  {%- if topic.hidden %}{% trans %}hidden topic{% endtrans %}{% endif -%}
-  {%- if can_moderate(topic) and topic.reported %}{% trans %}reported topic{% endtrans %}{% endif -%}
-  " title="
-  {%- if not is_read %}{% trans %}unread topic{% endtrans %}{% endif -%}
-  {%- if topic.solved %}{% trans %}solved topic{% endtrans %}{% endif -%}
-  {%- if topic.locked %}{% trans %}locked topic{% endtrans %}{% endif -%}
-  {%- if topic.hidden %}{% trans %}hidden topic{% endtrans %}{% endif -%}
-  {%- if can_moderate(topic) and topic.reported %}{% trans %}reported topic{% endtrans %}{% endif -%}
-  " />
-{%- endmacro %}
+{% from 'forum/_forum.html' import topic_icon with context %}
 
 {% block forum_content %}
   <table class="forum">
@@ -69,10 +44,10 @@
               <a href="{{ topic|url }}">{{ topic.title|e }}</a>
               {%- if not topic.get_read_status(USER) %}
                 <a href="{{ topic|url('first_unread') }}"
-                   title="{% trans %}Show unread posts{% endtrans %}">
-                  <img src="{{ href('static', 'img/forum/goto.png') }}"
-                       alt="{% trans %}Show unread posts{% endtrans %}" />
-                </a>
+                   title="{% trans %}Show unread posts{% endtrans %}">{#
+                  #}<img src="{{ href('static', 'img/forum/goto.png') }}"
+                         alt="{% trans %}Show unread posts{% endtrans %}" />{#
+                #}</a>
               {%- endif %}
             </p>
             <p class="description note">

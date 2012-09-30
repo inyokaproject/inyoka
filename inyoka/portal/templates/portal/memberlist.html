@@ -17,6 +17,7 @@
   {% if USER.can('user_edit') %}
     <p>{% trans %}Choose the user you want to edit:{% endtrans %}</p>
     <form action="" method="post">
+			{{ csrf_token() }}
       <p>
         <input type="text" id="user_query" name="user" />
         <input type="submit" value="{% trans %}Select{% endtrans %}" />
@@ -38,7 +39,7 @@
     <tr>
       <th>{{ table.get_html('id', '#') }}</th>
       <th>{{ table.get_html('username', _('Username')) }}</th>
-      <th>{{ table.get_html('location', _('Location')) }}</th>
+      <th>{{ table.get_html('location', _('Residence')) }}</th>
       <th>{{ table.get_html('date_joined', _('Member since')) }}</th>
       <th>{{ table.get_html('post_count', _('Posts')) }}</th>
     </tr>

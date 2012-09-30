@@ -19,7 +19,7 @@
   {{ form.errors.text }}
   <h2>
     {%- trans link=article|url, article=article.subject|e -%}
-      New report for the article ”<a href="{{ link }}">{{ article }}</a>”
+      New report for the article “<a href="{{ link }}">{{ article }}</a>”
     {%- endtrans -%}
   </h2>
   <p>
@@ -28,6 +28,7 @@
     {%- endtrans -%}
   </p>
   <form action="" method="post" id="new_report">
+    {{ csrf_token() }}
     {{ form.text }}
     <p>
       <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}"/>

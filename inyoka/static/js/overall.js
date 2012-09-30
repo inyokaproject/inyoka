@@ -17,7 +17,7 @@ $(document).ready(function () {
       height: 0,
       overflow: 'hidden'
     });
-    $.each(['img/tabbar_border_hover.png'], function () {
+    $.each([], function () {
       $('<img />').attr('src', $STATIC_URL + this).appendTo(container);
     });
   })();
@@ -251,42 +251,33 @@ $(document).ready(function () {
   })();
 
   // add links to the "package" macro
-  $('.package-list').each(function (i, elm) {
-    var tmp = $('.bash', elm),
-        apt = tmp[0],
-        aptitude = tmp[1];
+  $('.package-list, .builddeps').each(function (i, elm) {
+    var tmp = $('.bash', elm);
+    var apt = tmp[0];
+    var aptitude = tmp[1];
     $(aptitude).hide();
     $($('p', elm)[0]).append(
-    $('<a>apt-get</a>').click(function () {
-      $(this).parent().children().css('font-weight', '');
-      $(this).css('font-weight', 'bold');
-      $(apt).show();
-      $(aptitude).hide();
-    }).click(), ' ', $('<a>aptitude</a>').click(function () {
-      $(this).parent().children().css('font-weight', '');
-      $(this).css('font-weight', 'bold');
-      $(aptitude).show();
-      $(apt).hide();
-    }), ' ', $('<a>apturl</a>').attr('href', 'apt://' + $.trim($(apt).text()).split(' ').slice(3).join(',')));
+      $('<a>apt-get</a>').click(function () {
+        $(this).parent().children().css('font-weight', '');
+        $(this).css('font-weight', 'bold');
+        $(apt).show();
+        $(aptitude).hide();
+      }).click(),
+      ' ',
+      $('<a>aptitude</a>').click(function () {
+        $(this).parent().children().css('font-weight', '');
+        $(this).css('font-weight', 'bold');
+        $(aptitude).show();
+        $(apt).hide();
+     })
+    );
+    if ($(elm).hasClass('package-list')) {
+      $($('p', elm)[0]).append(
+        ' ',
+        $('<a>apturl</a>').attr('href', 'apt://' + $.trim($(apt).text()).split(' ').slice(3).join(','))
+      );
+    }
   });
-
-  // the javascript powered login form
-  (function () {
-    $('#login_link').click(function () {
-      if (loginForm == null) {
-        loginForm = $('#js_login_form').prependTo('body').submit(function (event) {
-          loginForm.slideDown();
-          return true;
-        }).click(function (event) {
-          event.stopPropagation();
-        });
-      }
-      loginForm.fadeIn();
-      $('#js_login_username').focus();
-      return false;
-    });
-  })();
-
 
   $('div.code').add('pre').each(function () {
     if (this.clientHeight < this.scrollHeight) {

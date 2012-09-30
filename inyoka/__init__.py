@@ -106,7 +106,6 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import os
 import socket
 from distutils.version import LooseVersion as V
 from os.path import realpath, join, dirname

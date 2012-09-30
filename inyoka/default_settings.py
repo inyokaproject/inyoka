@@ -50,7 +50,13 @@ LOCALE_PATHS = (join(BASE_PATH, 'locale'),)
 
 # the base url (without subdomain)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_DOMAIN = '.%s' % BASE_DOMAIN_NAME.split(':')[0]
+SESSION_COOKIE_NAME = 'session'
+SESSION_COOKIE_HTTPONLY = True
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 # this url conf is used for contrib stuff like the auth system
 ROOT_URLCONF = 'inyoka.portal.urls'
@@ -65,11 +71,11 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media and the URL
 MEDIA_ROOT = join(BASE_PATH, 'media')
-MEDIA_URL = 'http://media.%s' % BASE_DOMAIN_NAME
+MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
 
 # same for static
 STATIC_ROOT = join(BASE_PATH, 'static-collected')
-STATIC_URL = 'http://static.%s' % BASE_DOMAIN_NAME
+STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
 ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 
 STATICFILES_DIRS = (
@@ -168,13 +174,14 @@ AVAILABLE_FEED_COUNTS = {
 
 MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.common.CommonServicesMiddleware',
-    'inyoka.middlewares.session.AdvancedSessionMiddleware',
+    'inyoka.middlewares.session.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    'inyoka.middlewares.highlighter.HighlighterMiddleware',
-    'inyoka.middlewares.security.SecurityMiddleware',
     'inyoka.middlewares.common.MobileDetectionMiddleware',
     'django_mobile.middleware.SetFlavourMiddleware',
 )
@@ -192,6 +199,8 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
+    'django.contrib.sessions',
+    'django.contrib.messages',
     'django.contrib.humanize',
     'inyoka.portal',
     'inyoka.wiki',
@@ -280,6 +289,10 @@ CELERYD_HIJACK_ROOT_LOGGER = False
 
 SEND_EVENTS = True
 
+# Make the template context available as tmpl_context in the TemplateResponse.
+# Useful for tests in combination with override_settings.
+PROPAGATE_TEMPLATE_CONTEXT = False
+
 # http://ask.github.com/kombu/introduction.html#transport-comparison
 BROKER_BACKEND = 'inyoka.utils.celery_support.DatabaseTransport'
 
@@ -295,6 +308,12 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
 }
+
+WSGI_APPLICATION = 'inyoka.wsgi.application'
+
+X_FRAME_OPTIONS = 'DENY'
+
+CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
 

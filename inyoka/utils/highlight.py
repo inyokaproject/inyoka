@@ -28,7 +28,8 @@ from pygments.styles.friendly import FriendlyStyle
 from inyoka.utils.html import striptags
 
 
-_pygments_formatter = HtmlFormatter(style='colorful', cssclass='notranslate syntax',
+_pygments_formatter = HtmlFormatter(style='colorful',
+                                    cssclass='notranslate syntax',
                                     linenos='table')
 
 # split string into words, spaces, punctuation and markup tags

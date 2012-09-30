@@ -9,9 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
-import os
 import re
-import shutil
 import cPickle
 import operator
 from os import path
@@ -23,25 +21,25 @@ from operator import attrgetter, itemgetter
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files.storage import default_storage
 from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
-from inyoka.utils.files import get_filename
-from inyoka.utils.text import get_new_unique_filename
 from inyoka.utils.database import LockableObject, update_model, model_or_none
 from inyoka.utils.dates import timedelta_to_seconds
-from inyoka.utils.html import escape
-from inyoka.utils.urls import href
-from inyoka.utils.search import search
-from inyoka.utils.local import current_request
 from inyoka.utils.decorators import deferred
+from inyoka.utils.files import get_filename
 from inyoka.utils.imaging import get_thumbnail
+from inyoka.utils.local import current_request
+from inyoka.utils.search import search
+from inyoka.utils.text import get_new_unique_filename
+from inyoka.utils.urls import href
 
+from inyoka.markup import parse, RenderContext
 from inyoka.portal.user import User, Group
 from inyoka.portal.utils import UBUNTU_VERSIONS
 from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \
@@ -49,7 +47,6 @@ from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \
 from inyoka.forum.constants import CACHE_PAGES_COUNT, VERSION_CHOICES, \
     DISTRO_CHOICES, POSTS_PER_PAGE, UBUNTU_DISTROS_LEGACY, \
     SUPPORTED_IMAGE_TYPES
-
 
 _newline_re = re.compile(r'\r?\n')
 
@@ -244,15 +241,15 @@ class Forum(models.Model):
         verbose_name = ugettext_lazy(u'Forum')
         verbose_name_plural = ugettext_lazy(u'Forums')
 
-    def get_absolute_url(self, action='show'):
+    def get_absolute_url(self, action='show', **query):
         if action == 'show':
             return href('forum', self.parent_id and 'forum' or 'category',
-                        self.slug)
+                        self.slug, **query)
         if action in ('newtopic', 'welcome', 'subscribe', 'unsubscribe',
                       'markread'):
-            return href('forum', 'forum', self.slug, action)
+            return href('forum', 'forum', self.slug, action, **query)
         if action == 'edit':
-            return href('forum', 'forum', self.slug, 'edit')
+            return href('forum', 'forum', self.slug, 'edit', **query)
 
     def get_parents(self, cached=True):
         """Return a list of all parent forums up to the root level."""
@@ -306,6 +303,7 @@ class Forum(models.Model):
             return
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
+            user.save(update_fields=('forum_read_status',))
 
     def find_welcome(self, user):
         """
@@ -334,7 +332,7 @@ class Forum(models.Model):
         else:
             status.discard(self.id)
         user.forum_welcome = ','.join(str(id) for id in status)
-        user.save()
+        user.save(update_fields=('forum_welcome',))
 
     def invalidate_topic_cache(self):
         cache.delete_many('forum/topics/%d/%d' % (self.id, page+1) for page in
@@ -470,8 +468,7 @@ class Topic(models.Model):
 
                 for user in post_counts:
                     user.post_count = op(user.post_count, user.pcount)
-                    cache.delete('portal/user/%d' % user.id)
-                    user.save()
+                    user.save(update_fields=('post_count',))
 
             self.save()
 
@@ -520,14 +517,14 @@ class Topic(models.Model):
         WikiPage.objects.filter(topic=self).update(topic=None)
         return super(Topic, self).delete()
 
-    def get_absolute_url(self, action='show'):
+    def get_absolute_url(self, action='show', **query):
         if action in ('show',):
-            return href('forum', 'topic', self.slug)
+            return href('forum', 'topic', self.slug, **query)
         if action in ('reply', 'delete', 'hide', 'restore', 'split', 'move',
                       'solve', 'unsolve', 'lock', 'unlock', 'report',
                       'report_done', 'subscribe', 'unsubscribe',
-                      'first_unread'):
-            return href('forum', 'topic', self.slug, action)
+                      'first_unread', 'last_post'):
+            return href('forum', 'topic', self.slug, action, **query)
 
     def get_pagination(self, threshold=3):
         pages = max(0, self.post_count - 1) // POSTS_PER_PAGE + 1
@@ -592,6 +589,7 @@ class Topic(models.Model):
             user._readstatus = ReadStatus(user.forum_read_status)
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
+            user.save(update_fields=('forum_read_status',))
 
     def reindex(self):
         """Mark the whole topic for reindexing."""
@@ -704,9 +702,6 @@ class Post(models.Model, LockableObject):
     @staticmethod
     def url_for_post(id, paramstr=None):
         post = Post.objects.get(id=id)
-        if post is None or post.topic_id is None:
-            return
-
         position, slug = post.position, post.topic.slug
         page = max(0, position) // POSTS_PER_PAGE + 1
         url = href('forum', 'topic', slug, *(page != 1 and (page,) or ()))
@@ -728,12 +723,14 @@ class Post(models.Model, LockableObject):
         .. note::
 
             This method saves the current state of the post and it's
-            revisions.  You do not have to do that yourself.
+            revisions. You do not have to do that yourself.
         """
         if self.text == text and self.is_plaintext == is_plaintext:
             return
 
-        if self.pk:
+        # We need to check for the empty text to prevent a initial empty
+        # revision
+        if self.pk and self.text.strip():
             # Create a first revision for the initial post
             if not self.has_revision:
                 PostRevision(post=self, store_date=self.pub_date,
@@ -837,7 +834,7 @@ class Post(models.Model, LockableObject):
 
             adjust_start = 0
             # decrement the old positions
-            for _, g in post_groups:
+            for x, g in post_groups:
                 g = list(g)
                 dec = len(g)
                 # and don't forget that previous decrements already decremented our position
@@ -870,12 +867,12 @@ class Post(models.Model, LockableObject):
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \
                              .update(post_count=F('post_count') - len(posts),
-                                     last_post=old_topic.posts.reverse()[0])
+                                     last_post=old_topic.posts.order_by('-position')[0])
             else:
                 if old_topic.has_poll:
                     new_topic.has_poll = True
                     Poll.objects.filter(topic=old_topic).update(topic=new_topic)
-                new_topic.last_post = new_topic.posts.reverse()[0]
+                new_topic.last_post = new_topic.posts.order_by('-position')[0]
                 old_topic.delete()
 
             values = {'last_post': sorted(posts, key=lambda o: o.position)[-1],
@@ -891,17 +888,26 @@ class Post(models.Model, LockableObject):
             old_ids = [p.id for p in old_forums]
 
             # search for a new last post in the old and the new forum
-            new_post_query = Post.objects.filter(
-                topic__id=F('topic__id'),
-                topic__forum__id=F('topic__forum__id'))
+            post_query = Post.objects.all()
 
+            # Update last_post of the forums
+            # NOTE: last_post of a forum is expected to be the most recent post,
+            # as such the following two updates ignore the splitted posts
+            # completly and just set the highest id (== max recent posts) as
+            # last_post.
             Forum.objects.filter(id__in=new_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=new_ids) \
-                                                 .aggregate(count=Max('id'))['count'])
+                last_post=Topic.objects.filter(forum__id__in=new_ids) \
+                            .aggregate(count=Max('last_post'))['count'])
 
             Forum.objects.filter(id__in=old_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
-                                                 .aggregate(count=Max('id'))['count'])
+                last_post=Topic.objects.filter(forum__id__in=old_ids) \
+                            .aggregate(count=Max('last_post'))['count'])
+
+            # Update post_count of the forums
+            Forum.objects.filter(id__in=new_ids)\
+                .update(post_count = F('post_count') + len(posts))
+            Forum.objects.filter(id__in=old_ids)\
+                .update(post_count = F('post_count') - len(posts))
 
         # update the search index which has the post --> topic mapping indexed
         Post.multi_update_search([post.id for post in posts])
@@ -1066,13 +1072,12 @@ class Attachment(models.Model):
         file is greater we return None.
         """
         f = self.file
-        if (self.size / 1024) > 1 and f.storage.exists(f.name):
+        size = self.size
+        if (size / 1024) > 1 or size == 0.0:
             return
 
-        data = None
-        with f.open() as fobj:
-            data = fobj.read()
-        return data
+        with f.file as fobj:
+            return f.read()
 
     @property
     def html_representation(self):
@@ -1318,11 +1323,10 @@ def mark_all_forums_read(user):
     for forum in Forum.objects.filter(parent=None):
         user._readstatus.mark(forum)
     user.forum_read_status = user._readstatus.serialize()
-    user.save()
+    user.save(update_fields=('forum_read_status',))
 
 
 # Circular imports
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.portal.models import SearchQueue, Subscription
 from inyoka.utils.highlight import highlight_code

@@ -9,9 +9,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
+from django.utils.html import escape
 from django.utils.translation import ugettext as _, ugettext_lazy
 from inyoka.utils.forms import MultiField, SlugField, StrippedCharField
-from inyoka.utils.html import escape
 from inyoka.forum.acl import CAN_READ
 from inyoka.forum.models import Topic, Forum
 from inyoka.forum.constants import VERSION_CHOICES, DISTRO_CHOICES
@@ -70,15 +70,11 @@ class EditPostForm(forms.Form):
     ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
 
     def __init__(self, *args, **kwargs):
-        self.is_first_post = kwargs.pop('is_first_post', False)
+        is_first_post = kwargs.pop('is_first_post', False)
         forms.Form.__init__(self, *args, **kwargs)
-
-    def clean(self):
-        data = self.cleaned_data
-        if not self.is_first_post:
+        if not is_first_post:
             for k in ['sticky', 'title', 'ubuntu_version', 'ubuntu_distro']:
-                self._errors.pop(k, None)
-        return data
+                del self.fields[k]
 
 
 class NewTopicForm(SurgeProtectionMixin, forms.Form):
@@ -268,10 +264,10 @@ class EditForumForm(forms.Form):
     def clean_slug(self):
         data = self.cleaned_data['slug']
         if data == 'new':
-            raise forms.ValidationError(ugettext_lazy(u'“new“ is not a valid forum slug'))
+            raise forms.ValidationError(ugettext_lazy(u'“new” is not a valid forum slug'))
 
         slug = self.forum.slug if self.forum else ''
         if data != slug and Forum.objects.filter(slug=data).exists():
             raise forms.ValidationError(_(u'Please select another slug, '
-                u'“%(slug)s“ is already in use.') % {'slug': escape(data)})
+                u'“%(slug)s” is already in use.') % {'slug': escape(data)})
         return data

@@ -21,9 +21,10 @@ from time import time
 from datetime import datetime
 from django.conf import settings
 from django.utils.encoding import force_unicode
+from django.utils.html import escape
 
-from inyoka.utils.html import escape, cleanup_html
 from inyoka.planet.models import Blog, Entry
+from inyoka.utils.html import cleanup_html
 
 # set a default timeout. Otherwise fetching some feeds might cause the script
 # to block forever
@@ -89,6 +90,8 @@ def sync():
                 if entry.title_detail.get('type') in HTML_MIMETYPES:
                     title = cleanup_html(title, id_prefix='entry-title-%x' %
                                          int(time()), output_format='xhtml')
+                    # cleanup_html adds <p> around the text, remove it again
+                    title = title[3:-4]
                 else:
                     title = escape(title)
             else:

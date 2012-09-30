@@ -22,16 +22,16 @@
   </p>
   <p>
     {%- trans count=user_count, name=group.name|e -%}
-      The group “{{ name }}“ has {{ count }} member:
+      The group “{{ name }}” has {{ count }} member:
     {%- pluralize -%}
-      The group “{{ name }}“ has {{ count }} members:
+      The group “{{ name }}” has {{ count }} members:
     {%- endtrans -%}
   </p>
   <table>
     <tr>
       <th>{{ table.get_html('id', '#') }}</th>
       <th>{{ table.get_html('username', _('Username')) }}</th>
-      <th>{{ table.get_html('location', _('Location')) }}</th>
+      <th>{{ table.get_html('location', _('Residence')) }}</th>
       <th>{{ table.get_html('date_joined', _('Member since')) }}</th>
       <th>{{ table.get_html('post_count', _('Posts')) }}</th>
     </tr>

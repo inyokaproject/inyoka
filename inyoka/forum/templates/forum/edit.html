@@ -34,14 +34,15 @@
 
 {% block forum_content %}
   <form action="" method="post" enctype="multipart/form-data" class="post_editor">
+    {{ csrf_token() }}
     <a href="{{ href('pastebin') }}" class="pastelink" title="{% trans %}Please save long code snippets or program outputs in our paste service and link to the respective entry.{% endtrans %}">
-      {% trans %}Paste{% endtrans %}
+      {%- trans %}Paste{% endtrans -%}
     </a>
     {%- if topic %}
       {%- if post %}
         <h2>{% trans %}Edit post{% endtrans %}</h2>
       {%- else %}
-        <h2>{% trans topic=topic.title|e %}New reply in “{{ topic }}“{% endtrans %}</h2>
+        <h2>{% trans topic=topic.title|e %}New reply in “{{ topic }}”{% endtrans %}</h2>
       {%- endif %}
       {%- if topic.get_version_info() and not (isfirstpost or isnewtopic) %}
         <p class="ubuntu_version">
@@ -58,7 +59,7 @@
       </div>
       {%- endif %}
     {%- else %}
-      <h2>{% trans forum=forum.name|e %}New topic in “{{ forum }}“{% endtrans %}</h2>
+      <h2>{% trans forum=forum.name|e %}New topic in “{{ forum }}”{% endtrans %}</h2>
     {%- endif %}
     <dl>
       {%- if isnewtopic or isfirstpost %}
@@ -91,7 +92,7 @@
       {%- endif %}
       <dd style="display: none"><input type="submit" value="Absenden" name="send" /></dd>
       {%- if (isnewtopic or isfirstpost) and can_create_poll %}
-        <dt class="collapse">Umfragen:</dt>
+        <dt class="collapse{% if poll_form.errors %} has_errors{% endif %}">Umfragen:</dt>
         {%- if polls %}
           <dd>{% trans %}Existing polls:{% endtrans %}
             <ul>
@@ -118,7 +119,7 @@
         <dd><input type="submit" name="add_poll" value="{% trans %}Add poll{% endtrans %}" /></dd>
       {%- endif %}
       {%- if can_attach %}
-      <dt class="collapse">{% trans %}Attachments:{% endtrans %}</dt>
+      <dt class="collapse{% if attach_form.errors %} has_errors{% endif %}">{% trans %}Attachments:{% endtrans %}</dt>
       <dd>
         {%- if attachments %}
           <ul>
@@ -138,12 +139,12 @@
           {{ attach_form.comment }}{{ attach_form.errors.comment }}</p>
         <p>{{ attach_form.override }} <label for="id_override">{% trans -%}
           Overwrite existing attachment with the same name.{%- endtrans %}</label></p>
-        <p><input type="submit" value="Anhang hochladen" name="attach" /></p>
+        <p><input type="submit" value="{% trans %}upload attachment{% endtrans %}" name="attach" /></p>
       </dd>
       {%- endif %}
       {%- if can_sticky and (isnewtopic or isfirstpost) %}
       <dt>Optionen:</dt>
-      <dd>{{ form.sticky }} <label for="id_sticky">{% trans %}Mark topic as “Important:“{% endtrans %}</label></dd>
+      <dd>{{ form.sticky }} <label for="id_sticky">{% trans %}Mark topic as “Important:”{% endtrans %}</label></dd>
       {%- endif %}
     </dl>
     <p>

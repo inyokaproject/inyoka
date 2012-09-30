@@ -23,7 +23,7 @@
   {%- if article %}
     <h3>
       {%- trans link=article|url, article=article.subject|e -%}
-        Edit article “<a href="{{ link }}" title="Show article">{{ article }}</a>“
+        Edit article “<a href="{{ link }}" title="Show article">{{ article }}</a>”
       {%- endtrans -%}
     </h3>
   {%- else %}
@@ -31,6 +31,7 @@
   {% endif %}
 
   <form action="" method="post" class="ikhaya">
+    {{ csrf_token() }}
     {{ form.errors.__all__ }}
     {%- if article.article_icon %}
       <div class="icon"><img src="{{ article.article_icon|url }}" alt="{{ article.article_icon.identifier|e }}" /></div>

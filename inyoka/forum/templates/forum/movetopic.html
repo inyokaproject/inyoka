@@ -17,7 +17,8 @@
 
 {% block forum_content %}
   <form action="" method="post" class="new_topic">
-    <h2>{% trans topic=topic.title|e %}Move “{{ topic }}“{% endtrans %}</h2>
+    {{ csrf_token() }}
+    <h2>{% trans topic=topic.title|e %}Move “{{ topic }}”{% endtrans %}</h2>
     <p>{% trans %}Here you can move a topic into another forum.{% endtrans %}</p>
     <dl>
       <dt>{% trans %}New forum of the topic:{% endtrans %}</dt>

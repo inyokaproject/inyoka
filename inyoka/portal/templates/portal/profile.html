@@ -96,7 +96,7 @@
         <td>{% if user.gpgkey %}0x{{ user.gpgkey|e }}{% else %}–{% endif %}</td>
       </tr>
       <tr>
-        <th>{% trans %}Location{% endtrans %}</th>
+        <th>{% trans %}Residence{% endtrans %}</th>
         <th>{% trans %}Job{% endtrans %}</th>
         <th>{% trans %}Interests{% endtrans %}</th>
       </tr>
@@ -156,7 +156,7 @@
             <a href="{{ group|url }}"{% if not group.is_public %} class="hidden"{% endif %}>{{ group.name|e }}</a>
             {%- if not loop.last %}, {% endif %}
           {%- else %}{% trans name=user.username|e -%}
-            “{{ name }}“ is no member of any group.
+            “{{ name }}” is no member of any group.
            {%- endtrans %}
           {%- endfor %}
         </td>

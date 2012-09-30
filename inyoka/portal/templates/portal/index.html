@@ -59,7 +59,7 @@
   </p>
   {%- if ikhaya_latest %}
   {{ feed_button(href('portal', 'feeds', _anchor='ikhaya')) }}
-  <h3>Neues von ubuntuusers.de</h3>
+  <h3>Neuigkeiten rund um Ubuntu, Linux und Open Source</h3>
   <div class="articles">
     {%- for article in ikhaya_latest %}
     <div class="article">
@@ -71,13 +71,16 @@
              }} / {% trans %}Created:{% endtrans %} {{ article.pub_datetime|datetimeformat }}">{{ article.updated|datetimeformat }}</a>
         {%- endif %}
         {%- if article.comments_enabled %}
-          <br />
           <a href="{{ article|url('comments') }}" class="comments">
-            {%- trans count=article.comment_count %}{{ count }} comment{% pluralize %}{{ count }} comments{% endtrans -%}
+            {%- trans pluralindicator=article.comment_count, count=article.comment_count|hnumber('masculine')|capitalize -%}
+              {{ count }} comment
+            {%- pluralize pluralindicator -%}
+              {{ count }} comments
+            {%- endtrans -%}
           </a>
         {%- endif %}
       </div>
-      <a href="{{ article|url }}">{{ article.subject|e }}</a>
+      <h4><a href="{{ article|url }}">{{ article.subject|e }}</a></h4>
       <p class="text">
         {{ article.simplified_intro|truncate(250, true)|e }}
       </p>

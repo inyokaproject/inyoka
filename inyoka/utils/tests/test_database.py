@@ -11,7 +11,7 @@ from django.test import TestCase
 
 from inyoka.portal.user import User
 from inyoka.utils.database import update_model
-from inyoka.utils.tests.models import JSONEntry, PickleEntry
+from inyoka.utils.tests.models import JSONEntry
 
 
 
@@ -21,6 +21,13 @@ class TestDatabase(TestCase):
         user = User.objects.create_user('test123', 't@bla.xy', 'test123')
         update_model(user, email='another.bla')
         self.assertEqual(user.email, 'another.bla')
+        self.assertEqual(1, User.objects.filter(email='another.bla').count())
+
+        update_model(user, settings={'test': 123})
+        self.assertEqual(user.settings, {'test': 123})
+        # Refresh the user from the db (don't use .get to ignore the cache)
+        user = User.objects.filter(pk=user.pk)[0]
+        self.assertEqual(user.settings, {'test': 123})
 
 
 class A(object):
@@ -61,19 +68,9 @@ class JSONTest(TestCase):
     def test_date(self):
         d = datetime.date.today()
         entry = self.manager.create(f={'d': d})
+        self.assertEqual(entry.f, {'d': d})
 
     def test_unicode(self):
         entry = self.manager.create(f={'k': u'åäö'})
         entry = self.manager.get(pk=entry.pk)
         self.assertEqual(entry.f, {'k': u'åäö'})
-
-
-class PickleTest(JSONTest):
-    def setUp(self):
-        self.model = PickleEntry
-        self.manager = self.model.objects
-
-    def test_simple_class(self):
-        entry = self.manager.create(f=A)
-        entry = self.manager.get(pk=entry.pk)
-        self.assertEqual(entry.f, A)

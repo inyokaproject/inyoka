@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf.urls.defaults import patterns
+from django.conf.urls import patterns
 
 
 urlpatterns = patterns('inyoka.forum.views',
@@ -17,6 +17,7 @@ urlpatterns = patterns('inyoka.forum.views',
     (r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+)/$', 'viewtopic'),
     (r'^topic/(?P<topic_slug>[^/]+)/reply/$', 'edit'),
     (r'^topic/(?P<topic_slug>[^/]+)/first_unread/$', 'first_unread_post'),
+    (r'^topic/(?P<topic_slug>[^/]+)/last_post/$', 'last_post'),
     (r'^topic/(?P<topic_slug>[^/]+)/(?P<action>delete|hide)/$', 'delete_topic'),
     (r'^topic/(?P<topic_slug>[^/]+)/restore/$', 'restore_topic'),
     (r'^topic/(?P<topic_slug>[^/]+)/split/$', 'splittopic'),

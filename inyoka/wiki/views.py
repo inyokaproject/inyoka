@@ -20,17 +20,17 @@ import os
 from urlparse import urljoin
 
 from django.conf import settings
+from django.contrib import messages
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext as _
+from django.utils.html import escape
 
-from inyoka.utils.html import escape
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.text import join_pagename, normalize_pagename
 from inyoka.utils.http import templated, PageNotFound, HttpResponseRedirect, \
     AccessDeniedResponse
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import atom_feed, AtomFeed
-from inyoka.utils.flashing import flash
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.actions import PAGE_ACTIONS
@@ -75,7 +75,7 @@ def redirect_new_page(request):
         backref = href('wiki', settings.WIKI_MAIN_PAGE)
 
     if not page:
-        flash(_(u'A site name needs to be entered to create this page.'), True)
+        messages.error(request, _(u'A site name needs to be entered to create this page.'))
         return HttpResponseRedirect(backref)
     if base:
         page = join_pagename(base, "./" + page)
@@ -86,8 +86,8 @@ def redirect_new_page(request):
             options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
-    flash(_(u'Another site named “%(title)s“ already exists.')
-            % {'title': escape(page.title)}, True)
+    messages.error(request, _(u'Another site named “%(title)s” already exists.')
+                              % {'title': escape(page.title)})
     return HttpResponseRedirect(backref)
 
 
@@ -224,23 +224,23 @@ def feed(request, page_name=None, count=10):
 
         if rev.user:
             if rev.deleted:
-                text = _(u'%(user)s deleted the article “%(article)s“ on '
+                text = _(u'%(user)s deleted the article “%(article)s” on '
                          u'%(date)s. Summary: %(summary)s')
             else:
-                text = _(u'%(user)s edited the article “%(article)s“ on '
+                text = _(u'%(user)s edited the article “%(article)s” on '
                          u'%(date)s. Summary: %(summary)s')
         else:
             if rev.deleted:
                 text = _(u'An anonymous user deleted the article '
-                         u'“%(article)s“ on %(date)s. Summary: %(summary)s')
+                         u'“%(article)s” on %(date)s. Summary: %(summary)s')
             else:
                 text = _(u'An anonymous user edited the article '
-                         u'“%(article)s“ on %(date)s. Summary: %(summary)s')
+                         u'“%(article)s” on %(date)s. Summary: %(summary)s')
 
         kwargs['summary'] = text % {
             'user': rev.user,
             'article': rev.page.title,
-            'date': rev.changed_date,
+            'date': rev.change_date,
             'summary': rev.note or '-',
         }
         kwargs['summary_type'] = None

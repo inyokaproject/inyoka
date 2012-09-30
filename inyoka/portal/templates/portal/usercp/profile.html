@@ -17,6 +17,7 @@
 
 {% block portal_content %}
   <form enctype="multipart/form-data" class="usercp_form" method="post" action="">
+    {{ csrf_token() }}
     <h3>{% trans %}Avatar settings{% endtrans %}</h3>
     <dl>
       <dt>{% trans %}Avatar:{% endtrans %}</dt>
@@ -45,7 +46,7 @@
     <dl>
       <dd>
         <p class="note">{% trans -%}
-          By default, the email and jabber addresses are not displayed in your public profile. To publish them, you need to check the “show in profile“ box.
+          By default, the email and jabber addresses are not displayed in your public profile. To publish them, you need to check the “show in profile” box.
         {%- endtrans %}</p>
       </dd>
       {% for item in ['email', 'jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone', 'sip'] %}
@@ -98,7 +99,7 @@
       <input type="submit" value="{% trans %}Submit{% endtrans %}" />
     </p>
     <p>
-      <a href="{{ href('portal', 'user', user.username ) }}">Show my profile</a>
+      <a href="{{ href('portal', 'user', user.username ) }}">{% trans %}Show my profile{% endtrans %}</a>
     </p>
   </form>
 {% endblock %}

@@ -17,19 +17,20 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy
 from django.utils import datetime_safe
+from django.utils.html import escape
 
+from inyoka.markup import render, parse, RenderContext
 from inyoka.portal.user import User
 from inyoka.portal.models import StaticFile
-from inyoka.wiki.parser import render, parse, RenderContext
-from inyoka.utils.text import slugify
-from inyoka.utils.html import escape, striptags
-from inyoka.utils.urls import href, url_for
-from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone, \
-     format_time, format_datetime
-from inyoka.utils.search import search, SearchAdapter
-from inyoka.utils.local import current_request
-from inyoka.utils.decorators import deferred
+
+from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
 from inyoka.utils.database import find_next_increment, LockableObject
+from inyoka.utils.decorators import deferred
+from inyoka.utils.html import striptags
+from inyoka.utils.local import current_request
+from inyoka.utils.search import search, SearchAdapter
+from inyoka.utils.text import slugify
+from inyoka.utils.urls import href, url_for
 
 
 def _get_not_cached_articles(keys, cache_values):
@@ -51,11 +52,13 @@ class ArticleManager(models.Manager):
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
-                q = q.filter(Q(pub_date__lt=datetime.utcnow().date())|
-                             Q(pub_date = datetime.utcnow().date(), pub_time__lte = datetime.utcnow().time()))
+                q = q.filter(Q(pub_date__lt=datetime.utcnow().date()) |
+                             Q(pub_date=datetime.utcnow().date(),
+                               pub_time__lte=datetime.utcnow().time()))
             else:
-                q = q.filter(Q(pub_date__gt=datetime.utcnow().date())|
-                             Q(pub_date = datetime.utcnow().date(), pub_time__gte = datetime.utcnow().time()))
+                q = q.filter(Q(pub_date__gt=datetime.utcnow().date()) |
+                             Q(pub_date=datetime.utcnow().date(),
+                               pub_time__gte=datetime.utcnow().time()))
         return q
 
     def get_cached(self, keys):
@@ -73,9 +76,9 @@ class ArticleManager(models.Manager):
         cache_values = cache.get_many(map(itemgetter(0), keys))
         dates, slugs = _get_not_cached_articles(keys, cache_values)
 
+        related = ('author__username', 'category', 'icon', 'category__icon')
         objects = Article.objects.filter(slug__in=slugs, pub_date__in=dates) \
-                         .select_related('author__username', 'category', 'icon',
-                                         'category__icon').order_by()
+                         .select_related(*related).order_by()
         new_cache_values = {}
         for article in objects:
             key = 'ikhaya/article/%s/%s' % (article.pub_date, article.slug)
@@ -88,7 +91,8 @@ class ArticleManager(models.Manager):
             article.text = article.intro = None
             new_cache_values[key] = article
         if new_cache_values:
-            cache.set_many(new_cache_values, 24 * 60) # cache for 24 hours
+            # cache for 24 hours
+            cache.set_many(new_cache_values, 24 * 60)
         cache_values.update(new_cache_values)
         articles = filter(None, cache_values.values())
         unpublished = list(sorted([a for a in articles if not a.public],
@@ -98,6 +102,15 @@ class ArticleManager(models.Manager):
         return unpublished + published
 
     def get_latest_articles(self, category=None, count=10):
+        """Return `count` lastest articles for the category `category` or for
+        all categories if None.
+
+        :param category: Takes the slug of the category or None
+        :param count: maximum retrieve this many articles. Defaults to 10
+        :type category: string or None
+        :type count: integer
+
+        """
         key = 'ikhaya/latest_articles'
         if category is not None:
             key = 'ikhaya/latest_articles/%s' % category
@@ -142,8 +155,8 @@ class CommentManager(models.Manager):
             comment_ids = list(comment_ids.values_list('id', flat=True)[:maxcount])
             cache.set(key, comment_ids, 300)
 
-        comments = list(Comment.objects.filter(id__in=comment_ids) \
-                               .select_related('author__username', 'article__subject') \
+        comments = list(Comment.objects.filter(id__in=comment_ids)
+                               .select_related('author__username', 'article__subject')
                                .order_by('-id')[:maxcount])
         return comments[:count]
 
@@ -281,17 +294,22 @@ class Article(models.Model, LockableObject):
         """Return the year/month/day part of an article url"""
         return datetime_safe.new_date(self.pub_date).strftime('%Y/%m/%d')
 
-    def get_absolute_url(self, action='show'):
+    def get_absolute_url(self, action='show', **query):
         if action == 'comments':
-            return href('ikhaya', self.stamp, self.slug, _anchor='comments')
+            query['_anchor'] = 'comments'
+            return href('ikhaya', self.stamp, self.slug, **query)
+        if action == 'last_comment':
+            query['_anchor'] = 'comment_%d' % self.comment_count
+            return href('ikhaya', self.stamp, self.slug, **query)
         if action in ('subscribe', 'unsubscribe'):
             if current_request:
                 current = current_request.build_absolute_uri()
                 if not self.get_absolute_url() in current:
                     # We may be at the ikhaya index page.
-                    return href('ikhaya', self.stamp, self.slug, action,
-                                next=current_request.build_absolute_uri())
-            return href('ikhaya', self.stamp, self.slug, action)
+                    if 'next' not in query:
+                        query['next'] = current_request.build_absolute_uri()
+                    return href('ikhaya', self.stamp, self.slug, action, **query)
+            return href('ikhaya', self.stamp, self.slug, action, **query)
 
         links = {
             'delete':     ('ikhaya', self.stamp, self.slug, 'delete'),
@@ -302,7 +320,7 @@ class Article(models.Model, LockableObject):
             'show':       ('ikhaya', self.stamp, self.slug),
         }
 
-        return href(*links[action if action in links.keys() else 'show'])
+        return href(*links[action if action in links.keys() else 'show'], **query)
 
     def __unicode__(self):
         return self.subject

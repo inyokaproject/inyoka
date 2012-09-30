@@ -13,6 +13,7 @@
 
 {% block forum_content %}
 <form action="" method="post">
+  {{ csrf_token() }}
  <table>
    <colgroup>
       <col width="1%"/>
@@ -72,11 +73,11 @@
     <input type="submit" value="{% trans %}Close selected tickets{% endtrans %}" /> |
     {%- if subscribed %}
       <a href="{{ href('forum', 'reported_topics', 'unsubscribe') }}">
-        {% trans %}Unsubscribe from topic reports{% endtrans %}
+        {%- trans %}Unsubscribe from topic reports{% endtrans -%}
       </a>
     {%- else %}
       <a href="{{ href('forum', 'reported_topics', 'subscribe') }}">
-        {% trans %}Subscribe to topic reports{% endtrans %}
+        {%- trans %}Subscribe to topic reports{% endtrans -%}
       </a>
     {%- endif %}
   </div>

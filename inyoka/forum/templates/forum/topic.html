@@ -26,7 +26,7 @@
 {% endfor %}
 
 {% macro generate_subscription_link(do='subscribe') %}
-  {{ href('forum', 'topic', topic.slug, do, continue=CURRENT_URL)|e }}
+  {{ href('forum', 'topic', topic.slug, do, next=CURRENT_URL)|e }}
 {% endmacro %}
 
 {% macro topic_actions() %}
@@ -123,6 +123,7 @@
 
   {%- if polls %}
     <form action="" method="post" class="poll">
+      {{ csrf_token() }}
       {%- for poll in polls %}
         <div>
           <strong>{{ poll.question|e }}</strong>
@@ -210,7 +211,7 @@
             <p>{% trans %}Member since:{% endtrans %}<br />{{ post.author.date_joined|dateformat }}</p>
             <p>{% trans %}Posts:{% endtrans %} {{ post.author.post_count }}</p>
             {%- if post.author.location %}
-              <p>{% trans %}Location:{% endtrans %} {{ post.author.location|e }}</p>
+              <p>{% trans %}Residence:{% endtrans %} {{ post.author.location|e }}</p>
             {%- endif %}
           </td>
           <td class="post"{%- if post.author_id == USER.id %} style="background-color: #F8F6F1"{% endif %}>
@@ -263,7 +264,7 @@
                      class="action action_quote admin_link">{% trans %}Quote{% endtrans %}</a>
                 {%- endif %}
               </div>
-              <a href="{{ post|url }}" title="Kopiere diesen Link, um auf diesen Beitrag zu verweisen" onclick="alert(this.title + '\n\n' + this.href); return false">
+              <a href="{{ post|url }}" title="{% trans %}Link to this post{% endtrans %}">
                 <img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" />{#
               #}</a>
               {{ post.pub_date|datetimeformat }}

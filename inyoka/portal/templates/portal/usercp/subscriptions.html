@@ -26,6 +26,7 @@
 {% block portal_content %}
   <h3>{% trans %}Subscriptions{% endtrans %}</h3>
   <form class="usercp_form" method="post" action="">
+    {{ csrf_token() }}
     <table class="usercp_subscriptions">
      <colgroup>
         <col width="1%">
@@ -50,14 +51,19 @@
               <td class="checkboxes"><input type="checkbox" name="select" value="{{ sub.id }}" /></td>
               <td class="items{% if not sub.can_read %} unreadable{% endif %}">
                 {{ object._meta.verbose_name }}: <a href="{{ object|url }}">{{ object|e }}</a>
-                {%- if type == 'topic' -%}
+                {% if type == 'topic' -%}
                   {%- if not object.get_read_status(USER) %}
-                    <a href="{{ object|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">
-                      <img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />
-                    </a>
+                    <a href="{{ object|url('first_unread') }}" title="{% trans %}Show unread posts{% endtrans %}">{#-
+                      -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />{#-
+                    -#}</a>
                   {%- endif %}
                   {%- if object.paginated %} &#160; &#160; [{{ object.get_pagination() }}]{% endif -%}
+                {% elif type == 'article' -%}
+                  <a href="{{ object|url('last_comment') }}" title="{% trans %}Go to last comment{% endtrans %}">{#-
+                    -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Go to last comment{% endtrans %}" />{#-
+                  -#}</a>
                 {%- endif %}
+                {%- if not sub.can_read %} <a href="{{ object|url('unsubscribe', next=CURRENT_URL) }}">({% trans %}Unsubscribe{% endtrans %})</a>{% endif %}
               </td>
               <td class="read">
                 {%- if sub.notified %}

@@ -41,7 +41,7 @@ class EditCommentForm(forms.Form):
     text = StrippedCharField(label=ugettext_lazy(u'Text'), widget=forms.Textarea,
              help_text=ugettext_lazy(u'To refer to another comment, you '
                u'can write <code>@commentnumber</code>.<br />'
-               u'Clicking on “reply“ will automatically insert this code.'))
+               u'Clicking on “reply” will automatically insert this code.'))
 
 
 class EditArticleForm(forms.ModelForm):
@@ -69,7 +69,7 @@ class EditArticleForm(forms.ModelForm):
 
     def save(self):
         instance = super(EditArticleForm, self).save(commit=False)
-        if 'pub_date' in self.cleaned_data and (not instance.pk or \
+        if 'pub_date' in self.cleaned_data and (not instance.pk or
                 not instance.public or self.cleaned_data.get('public', None)):
             instance.pub_date = self.cleaned_data['pub_date'].date()
             instance.pub_time = self.cleaned_data['pub_date'].time()

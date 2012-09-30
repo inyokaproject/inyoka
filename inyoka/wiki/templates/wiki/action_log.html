@@ -21,9 +21,9 @@
     {% set latest_rev = revisions[0] -%}
     <p>
       {%- trans count=pagination.total, link=page|url, article=page.title|e -%}
-        The article “<a href="{{ link }}">{{ article }}</a>“ has currently {{ count }} revision.
+        The article “<a href="{{ link }}">{{ article }}</a>” has currently {{ count }} revision.
       {%- pluralize -%}
-        The article “<a href="{{ link }}">{{ article }}</a>“ has currently {{ count }} revisions.
+        The article “<a href="{{ link }}">{{ article }}</a>” has currently {{ count }} revisions.
       {%- endtrans %}
 
       {% if latest_rev.user %}
@@ -57,11 +57,10 @@
             </td>
             <td class="author">
               {%- if revision.user %}
-                <a href="{{ revision.user|url|e }}">
-                  <img src="{{ revision.user.avatar_url|e }}" width="16" height="16"
-                       alt="{{ revision.user.username|e }}" />
-                  <span class="username">{{ revision.user.username|e }}</span>
-                </a>
+                <a href="{{ revision.user|url|e }}">{#
+                  #}<img src="{{ revision.user.avatar_url|e }}" width="16" height="16" alt="{{ revision.user.username|e }}" />{#
+                  #}<span class="username">{{ revision.user.username|e }}</span>{#
+                #}</a>
               {% else %}
                 {{ revision.remote_addr|e }}
               {% endif %}

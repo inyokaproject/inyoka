@@ -17,8 +17,8 @@ DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = True
 # url settings
 BASE_DOMAIN_NAME = 'ubuntuusers.local:8080'
 SESSION_COOKIE_DOMAIN = '.ubuntuusers.local'
-MEDIA_URL = 'http://media.%s' % BASE_DOMAIN_NAME
-STATIC_URL = 'http://static.%s' % BASE_DOMAIN_NAME
+MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
+STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
 ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4BQQM-N93TqupJwysf0dHBu_LfF6AQ'
@@ -35,7 +35,7 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'inyoka.utils.tests',
-    'sentry.client',
+    'inyoka.markup',
     'south',
     # *must* be installed after south
     'djcelery',

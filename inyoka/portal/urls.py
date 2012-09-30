@@ -8,11 +8,10 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('inyoka.portal.views',
     (r'^$', 'index'),
-    (r'^404/$', 'not_found'),
     (r'^markup.css', 'markup_styles'),
     (r'^login/$', 'login'),
     (r'^logout/$', 'logout'),

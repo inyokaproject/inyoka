@@ -15,9 +15,9 @@
 
 {% macro user_edit_button(link, icon, name) %}
   <li>
-    <span><a href="{{ link }}">
-      <img src="{{ href('static', 'img/portal/user_%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
-      {{ name }}
+    <span><a href="{{ link }}">{#
+      #}<img src="{{ href('static', 'img/portal/user_%s.png'|format(icon)) }}" alt="{{ name }}" /><br />
+      {{- name -}}
     </a></span>
   </li>
 {% endmacro %}
@@ -25,6 +25,7 @@
 {% block content %}
   {{ super() }}
   <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+		{{ csrf_token() }}
     <div class="usercp_control">
       <ul>
         {{ user_edit_button(href('portal', 'user', user.urlsafe_username, 'edit', 'profile'), 'profile', _('Profile')) }}

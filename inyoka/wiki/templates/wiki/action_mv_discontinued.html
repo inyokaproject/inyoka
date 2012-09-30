@@ -11,8 +11,9 @@
 
 
 <form action="{{ href('wiki', page.name, action='mv_discontinued')|e }}" method="post">
+  {{ csrf_token() }}
   <p>
-    {% trans %}Are you sure you want to mark the page as discontinued?{% endtrans %}
+    {% trans %}Are you sure you want to mark the page as “discontinued”?{% endtrans %}
   </p>
      <input type="submit" value="{% trans %}Mark as discontinued{% endtrans %}" />{#
    #}<input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" /></p>

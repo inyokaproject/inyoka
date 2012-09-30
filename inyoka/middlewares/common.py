@@ -17,14 +17,13 @@
 """
 import re
 from django.conf import settings
+from django.contrib import messages
 from django.middleware.common import CommonMiddleware
 
 from django_hosts.middleware import HostsMiddleware
 from django_mobile.middleware import \
     MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
-from inyoka import INYOKA_REVISION
-from inyoka.utils.flashing import has_flashed_messages
 from inyoka.utils.local import local, _request_cache, local_manager
 from inyoka.utils.timer import StopWatch
 from inyoka.utils.logger import logger
@@ -53,7 +52,7 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
         # IMPORTANT: Since we run some setupcode (mainly locals), this middleware
         # needs to be the first one, hence we manually dispatch to HostsMiddleware
         response = HostsMiddleware.process_request(self, request)
-        if response:
+        if response is not None:
             return response
 
         host = request.get_host()
@@ -67,17 +66,10 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
         the werkzeug local.
         """
         response = CommonMiddleware.process_response(self, request, response)
-        powered_by = 'Inyoka'
-        if INYOKA_REVISION:
-            powered_by += '/rev-%s' % INYOKA_REVISION['tag']
-            if settings.DEBUG:
-                powered_by += '-%s' % INYOKA_REVISION['commit']
-        response['X-Powered-By'] = powered_by
-        response['X-Philosophy'] = 'Don\'t be hasty, open a ticket, get some holiday and let us relax. We\'re on it.'
 
         # update the cache control
         if hasattr(request, 'user') and request.user.is_authenticated \
-           or has_flashed_messages():
+           or len(messages.get_messages(request)):
             response['Cache-Control'] = 'no-cache'
 
         path = request.path

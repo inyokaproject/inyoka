@@ -59,10 +59,10 @@
               {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }} |
             {%- endif %}
             {%- if article.comments_enabled %}
-              {% trans count=article.comment_count, link=article|url + '#comments' -%}
-                {{ count }} <a href="{{ link }}">Comment</a>
-              {%- pluralize -%}
-                {{ count }} <a href="{{ link }}">Comments</a>
+              {% trans pluralindicator=article.comment_count, count=article.comment_count|hnumber('masculine')|capitalize, link=article|url + '#comments' -%}
+                {{ count }} <a href="{{ link }}">comment</a>
+              {%- pluralize pluralindicator -%}
+                {{ count }} <a href="{{ link }}">comments</a>
               {%- endtrans %}
               {%- if article.id in subscription_ids and USER.is_authenticated %}
                 (<a href="{{ article|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a>)

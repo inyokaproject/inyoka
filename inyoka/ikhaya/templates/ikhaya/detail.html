@@ -83,7 +83,8 @@
               <td class="comment"{% if comment.author == USER %} style="background-color: #F8F6F1"{% endif %}>
                 <div class="commentinfo">
                   <div class="linklist">
-                    {%- if comment.author_id == USER.id %}
+                    {# TODO: remove "can_admin_comment" if revision for comments is built in #}
+                    {%- if can_admin_comment and comment.author_id == USER.id %}
                       <a href="{{ comment|url('edit') }}" class="action action_edit">{% trans %}Edit{% endtrans %}</a> |
                     {% endif %}
                     {%- if can_admin_comment %}
@@ -119,6 +120,7 @@
             <td>
               {{ form.errors.text }}
               <form action="{{ article|url }}#new_comment" method="post" id="new_comment">
+                {{ csrf_token() }}
                 {{ form.text }}
                 <div class="note">{{ form.fields.text.help_text }}</div>
                 {% if form.data.comment_id and USER.can('comment_edit') %}
