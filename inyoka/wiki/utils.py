@@ -12,9 +12,6 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import re
-from itertools import ifilter
-
 from django.utils.html import smart_urlquote
 
 from inyoka.wiki.storage import storage
@@ -23,7 +20,7 @@ from inyoka.utils.urls import href
 
 def has_conflicts(text):
     """Returns `True` if there are conflict markers in the text."""
-    from inyoka.parser import parse, nodes
+    from inyoka.markup import parse, nodes
     if isinstance(text, basestring):
         text = parse(text)
     return text.query.all.by_type(nodes.ConflictMarker).has_any

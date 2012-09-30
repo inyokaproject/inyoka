@@ -25,7 +25,7 @@ from django.contrib import messages
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
-from inyoka.parser import parse, RenderContext
+from inyoka.markup import parse, RenderContext
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse, PageNotFound, \
@@ -103,7 +103,7 @@ def do_show(request, name):
         redirect = page.metadata.get('X-Redirect')
         if redirect:
             messages.info(request,
-                _(u'Redirected from “<a href="%(link)s">%(title)s</a>“.') % {
+                _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
                 'link': escape(href('wiki', page.name, redirect='no')),
                 'title': escape(page.title)
             })

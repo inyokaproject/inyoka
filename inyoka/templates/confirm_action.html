@@ -15,7 +15,7 @@
       {{ csrf_token() }}
       <p>{{ message|e }}</p>
       <p>
-        <input type="submit" value="{{ confirm_label|e }}" />
+        <input type="submit" name="confirm" value="{{ confirm_label|e }}" />
         <input type="submit" name="cancel" value="{{ cancel_label|e }}" />
       </p>
     </form>

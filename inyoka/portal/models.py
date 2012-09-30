@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy
 
 from werkzeug import cached_property
 
-from inyoka.parser import parse, render, RenderContext
+from inyoka.markup import parse, render, RenderContext
 from inyoka.portal.user import User
 
 from inyoka.utils.local import current_request

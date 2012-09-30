@@ -21,7 +21,7 @@ from django.forms.widgets import Input
 from django.utils.translation import ugettext as _
 
 from inyoka.portal.user import User
-from inyoka.parser import parse, StackExhaused
+from inyoka.markup import parse, StackExhaused
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
 from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request

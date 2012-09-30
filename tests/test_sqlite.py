@@ -35,7 +35,7 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'inyoka.utils.tests',
-    'inyoka.parser',
+    'inyoka.markup',
     'south',
     # *must* be installed after south
     'djcelery',

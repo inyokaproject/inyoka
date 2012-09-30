@@ -10,6 +10,7 @@
 """
 import gc
 
+from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.http import HttpRequest
 from django.test.client import Client
@@ -90,11 +91,7 @@ class InyokaClient(Client):
 
         """
 
-        username = credentials.get('username', None)
-        password = credentials.get('password', None)
-        assert all((username, password))
-
-        user = User.objects.authenticate(username, password)
+        user = authenticate(**credentials)
         if user.is_active:
             engine = import_module(settings.SESSION_ENGINE)
 
@@ -104,7 +101,7 @@ class InyokaClient(Client):
                 request.session = self.session
             else:
                 request.session = engine.SessionStore()
-            user.login(request)
+            login(request, user)
 
             # Save the session values.
             request.session.save()

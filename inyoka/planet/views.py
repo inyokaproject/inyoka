@@ -99,7 +99,7 @@ def suggest(request):
             if not users:
                 messages.error(request, _(u'No user is registered as a planet administrator.'))
                 return HttpResponseRedirect(href('planet'))
-            messages.success(request, _(u'The blog “%(title)s“ was suggested.')
+            messages.success(request, _(u'The blog “%(title)s” was suggested.')
                                         % {'title': escape(form.cleaned_data['name'])})
             return HttpResponseRedirect(href('planet'))
     else:
@@ -160,9 +160,9 @@ def hide_entry(request, id):
                 entry.hidden_by = request.user
             entry.save()
             if entry.hidden:
-                msg = _(u'The entry “%(title)s“ was successfully hidden.')
+                msg = _(u'The entry “%(title)s” was successfully hidden.')
             else:
-                msg = _(u'The entry “%(title)s“ was successfully restored.')
+                msg = _(u'The entry “%(title)s” was successfully restored.')
             messages.success(request, msg % {'title': entry.title})
     else:
         messages.info(request, render_template('planet/hide_entry.html',

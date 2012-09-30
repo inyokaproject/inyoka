@@ -39,7 +39,7 @@ from inyoka.utils.search import search
 from inyoka.utils.text import get_new_unique_filename
 from inyoka.utils.urls import href
 
-from inyoka.parser import parse, RenderContext
+from inyoka.markup import parse, RenderContext
 from inyoka.portal.user import User, Group
 from inyoka.portal.utils import UBUNTU_VERSIONS
 from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \

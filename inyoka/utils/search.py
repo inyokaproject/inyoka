@@ -118,7 +118,7 @@ def _marshal_datetime(dt):
 
 def simplify(text):
     """Remove markup of a text"""
-    from inyoka.parser import parse
+    from inyoka.markup import parse
     return parse(text).text
 
 

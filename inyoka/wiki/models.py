@@ -92,7 +92,7 @@ from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 from werkzeug import cached_property
 
-from inyoka.parser.parsertools import MultiMap
+from inyoka.markup.parsertools import MultiMap
 from inyoka.utils import magic
 from inyoka.utils.cache import request_cache
 from inyoka.utils.decorators import deferred
@@ -634,7 +634,7 @@ class Text(models.Model):
             value = templates.process(self.value, template_context)
         else:
             value = self.value
-        return parser.parse(value, transformers=transformers)
+        return markup.parse(value, transformers=transformers)
 
     def find_meta(self):
         """
@@ -680,13 +680,13 @@ class Text(models.Model):
                     # no request exists, that happens if we're generating
                     # the snapshot.
                     request = None
-            context = parser.RenderContext(request, page)
+            context = markup.RenderContext(request, page)
         if template_context is not None or format != 'html':
             return self.parse(template_context).render(context, format)
         self.touch_html_render_instructions()
         blob = self.html_render_instructions.decode('base64')
         instructions = pickle.loads(blob)
-        return parser.render(instructions, context)
+        return markup.render(instructions, context)
 
     def touch_html_render_instructions(self):
         """update the html render instructions if they are none."""
@@ -1254,5 +1254,5 @@ class MetaData(models.Model):
 
 
 # imported here because of circular references
-from inyoka import parser
-from inyoka.parser import nodes, templates
+from inyoka import markup
+from inyoka.markup import nodes, templates

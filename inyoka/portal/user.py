@@ -17,7 +17,8 @@ from PIL import Image
 from StringIO import StringIO
 
 from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, update_last_login
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,\
+    update_last_login
 from django.contrib.auth.signals import user_logged_in
 from django.core.cache import cache
 from django.core.files.storage import default_storage
@@ -36,7 +37,7 @@ from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.user import normalize_username, gen_activation_key
-from inyoka.parser import parse, render, RenderContext
+from inyoka.markup import parse, render, RenderContext
 
 
 _ANONYMOUS_USER = _SYSTEM_USER = None
@@ -99,7 +100,7 @@ def reactivate_user(id, email, status, time):
     user = User.objects.get(id=id)
     if not user.is_deleted:
         return {
-            'failed': _(u'The account “%(name)s“ was already reactivated.') %
+            'failed': _(u'The account “%(name)s” was already reactivated.') %
                 {'name': escape(user.username)},
         }
     values = {'email': email,
@@ -116,13 +117,13 @@ def reactivate_user(id, email, status, time):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
-                      note=_(u'The user “%(name)s“ has reactivated his account.')
+                      note=_(u'The user “%(name)s” has reactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
 
     return {
-        'success': _(u'The account “%(name)s“ was reactivated. You will '
+        'success': _(u'The account “%(name)s” was reactivated. You will '
                      u'receive an email to set the new password.')
                      % {'name': escape(user.username)},
     }
@@ -146,7 +147,7 @@ def deactivate_user(user):
 
     userdata = encode_confirm_data(userdata)
 
-    subject = _(u'Deactivation of your account “%(name)s“ on %(sitename)s') \
+    subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
                 % {'name': escape(user.username),
                    'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
@@ -160,7 +161,7 @@ def deactivate_user(user):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=True,
-                      note=_(u'The user “%(name)s“ has deactivated his account.')
+                      note=_(u'The user “%(name)s” has deactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
@@ -248,7 +249,7 @@ def send_activation_mail(user):
         'email':            user.email,
         'activation_key':   gen_activation_key(user)
     })
-    subject = _(u'%(sitename)s – Activation of the user “%(name)s“') \
+    subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
@@ -265,7 +266,7 @@ def send_new_user_password(user):
         'new_password_url': href('portal', 'lost_password',
                                  user.urlsafe_username, new_password_key),
     })
-    subject = _(u'%(sitename)s – New password for “%(name)s“') \
+    subject = _(u'%(sitename)s – New password for “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
@@ -333,7 +334,7 @@ class Group(models.Model):
         return Group._default_group
 
 
-class UserManager(models.Manager):
+class UserManager(BaseUserManager):
 
     def get(self, pk=None, **kwargs):
         if 'username' in kwargs:
@@ -376,12 +377,8 @@ class UserManager(models.Manager):
 
     def create_user(self, username, email, password=None):
         now = datetime.utcnow()
-        user = self.model(
-            None, username,
-            email.strip().lower(),
-            'placeholder', False,
-            now, now
-        )
+        user = self.model(username=username, email=email.strip().lower(),
+            status=0, date_joined=now, last_login=now)
         if password:
             user.set_password(password)
         else:
@@ -417,6 +414,7 @@ class UserManager(models.Manager):
         return user
 
     def authenticate(self, username, password):
+        # FIXME: Move into auth backend!!!!
         """
         Authenticate a user with `username` (which can also be the email
         address) and `password`.
