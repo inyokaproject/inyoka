@@ -26,30 +26,21 @@ from inyoka.portal.user import User
 from inyoka.utils.terminal import ProgressBar, percentize, show
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page
-from inyoka.wiki.parser.nodes import Box, Document, MetaData, Node
+from inyoka import markup
+from inyoka.markup.macros import TableOfContents
+from inyoka.markup.nodes import Box, Container, Error, Footnote, Headline, MetaData
 
 
 DEFAULT_EXCERPT_FILE = 'wiki-excerpt.csv'
 EXCERPT_LENGTH = 400
-EXCLUDE_PAGES = [ u'Anwendertreffen/', u'Baustelle/', u'Benutzer/',
-                  u'Galerie/', u'LocoTeam/', u'Messen/', u'Trash/',
-                  u'ubuntuusers/', u'UWN-Team/', u'Verwaltung/',
-                  u'Vorlage/', u'Vorlagen', u'Wiki/']
+EXCLUDE_PAGES = [settings.WIKI_MAIN_PAGE, settings.WIKI_TEMPLATE_BASE,
+    u'%s/' % settings.WIKI_USER_BASE, u'%s/' % settings.WIKI_USERPAGE_INFO,
+    u'Anwendertreffen/', u'Baustelle/', u'Galerie/', u'LocoTeam/', u'Messen/',
+    u'Trash/', u'ubuntuusers/', u'UWN-Team/', u'Verwaltung/', u'Vorlagen',
+    u'Wiki/']
+PRUNE_NODES = (Box, Container, Error, Footnote, Headline, MetaData, TableOfContents)
 USER = User.objects.get_anonymous_user()
 WHITESPACE_REPLACE_RE = re.compile("\s+")
-
-
-def clean(node):
-    """
-    Remove all ``Box`` and ``MetaData`` nodes from this node and all child
-    nodes.
-    """
-    if hasattr(node, 'children'):
-        for c in reversed(node.children):
-            if isinstance(c, (Box, MetaData)):
-                node.children.remove(c)
-            else:
-                clean(c)
 
 
 def truncate(s, max_length):
@@ -57,6 +48,8 @@ def truncate(s, max_length):
     Truncate the string ``s`` to a max length of ``max_length``. If ``s`` is
     empty, an empty string is returned.
     """
+    if max_length is None:
+        return s
     width = min(len(s) - 1, max_length)
     if width > 0:
         if s[width].isspace():
@@ -66,8 +59,10 @@ def truncate(s, max_length):
 
 
 def extract(pname, writer):
-    """ Extract the first ``EXCERPT_LENGTH`` characters from the the wiki page
-    ``pname`` and write it to the csv writer ``writer``.  """
+    """
+    Extract the first ``EXCERPT_LENGTH`` characters from the the wiki page
+    ``pname`` and write it to the csv writer ``writer``.
+    """
     if not has_privilege(USER, pname, 'read'):
         return
 
@@ -76,9 +71,9 @@ def extract(pname, writer):
                 raise_on_deleted=True)
     except Page.DoesNotExist:
         return
-
-    doc = p.last_rev.text.parse()
-    clean(doc)
+    if p.last_rev.attachment:
+        return
+    doc = markup.parse(p.last_rev.text.value, drop_nodes=PRUNE_NODES)
     txt = doc.text.strip()
     out = WHITESPACE_REPLACE_RE.sub(u" ", txt)
     writer.writerow([p.name.encode('utf-8'),
@@ -94,10 +89,11 @@ def run(output):
     unsorted = Page.objects.get_page_list(existing_only=True)
     pages = set()
     excluded_pages = set()
-    # sort out excluded pages
+    # drop excluded pages
+    exclude_pages = [x.lower() for x in EXCLUDE_PAGES]
     for page in unsorted:
-        for exclude in EXCLUDE_PAGES:
-            if page.lower().startswith(exclude.lower()):
+        for exclude in exclude_pages:
+            if page.lower().startswith(exclude):
                 excluded_pages.add(page)
             else:
                 pages.add(page)
