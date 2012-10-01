@@ -6,8 +6,8 @@
 
     The ``run`` method reads all wiki pages that are not listed in
     ``EXCLUDE_PAGES`` or its sub-pages. It checks that anonymous user has
-    *read* permissions. It cleans the pages from ``Box`` and ``MetaData``
-    nodes.  Afterwards all kind of whitespaces are replaced by a space.
+    *read* permissions. Afterwards all kind of whitespaces are replaced by a
+    space.
 
 
     :copyright: (c) 2012 by the Inyoka Team, see AUTHORS for more details.
@@ -21,6 +21,7 @@ import csv
 from itertools import izip
 
 from django.conf import settings
+from django.utils.text import Truncator
 
 from inyoka.portal.user import User
 from inyoka.utils.terminal import ProgressBar, percentize, show
@@ -32,7 +33,7 @@ from inyoka.markup.nodes import Box, Container, Error, Footnote, Headline, MetaD
 
 
 DEFAULT_EXCERPT_FILE = 'wiki-excerpt.csv'
-EXCERPT_LENGTH = 400
+EXCERPT_LENGTH = 50
 EXCLUDE_PAGES = [settings.WIKI_MAIN_PAGE, settings.WIKI_TEMPLATE_BASE,
     u'%s/' % settings.WIKI_USER_BASE, u'%s/' % settings.WIKI_USERPAGE_INFO,
     u'Anwendertreffen/', u'Baustelle/', u'Galerie/', u'LocoTeam/', u'Messen/',
@@ -43,24 +44,9 @@ USER = User.objects.get_anonymous_user()
 WHITESPACE_REPLACE_RE = re.compile("\s+")
 
 
-def truncate(s, max_length):
-    """
-    Truncate the string ``s`` to a max length of ``max_length``. If ``s`` is
-    empty, an empty string is returned.
-    """
-    if max_length is None:
-        return s
-    width = min(len(s) - 1, max_length)
-    if width > 0:
-        if s[width].isspace():
-            return s[0:width];
-        return s[0:width].rsplit(None, 1)[0]
-    return ""
-
-
 def extract(pname, writer):
     """
-    Extract the first ``EXCERPT_LENGTH`` characters from the the wiki page
+    Extract the first ``EXCERPT_LENGTH`` words from the the wiki page
     ``pname`` and write it to the csv writer ``writer``.
     """
     if not has_privilege(USER, pname, 'read'):
@@ -78,7 +64,7 @@ def extract(pname, writer):
     out = WHITESPACE_REPLACE_RE.sub(u" ", txt)
     writer.writerow([p.name.encode('utf-8'),
                      p.get_absolute_url(action='show'),
-                     truncate(out, EXCERPT_LENGTH).encode('utf-8')])
+                     Truncator(out).words(EXCERPT_LENGTH, truncate='').encode('utf-8')])
 
 
 def run(output):
