@@ -1663,9 +1663,6 @@ def group_edit(request, name=None):
             data = form.cleaned_data
             group = form.save(commit=False)
 
-            if data['delete_icon']:
-                group.icon.delete(save=False)
-
             if data['icon'] and not data['import_icon_from_global']:
                 icon_resized = group.save_icon(data['icon'])
                 if icon_resized:

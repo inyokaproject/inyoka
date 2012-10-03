@@ -585,13 +585,13 @@ class EditGroupForm(forms.ModelForm):
         required=False)
     forum_privileges = forms.MultipleChoiceField(label=ugettext_lazy(u'Forum privileges'),
                                                  required=False)
-    delete_icon = forms.BooleanField(label=ugettext_lazy(u'Delete team icon'), required=False)
     import_icon_from_global = forms.BooleanField(label=ugettext_lazy(u'Use global team icon'),
         required=False)
 
     class Meta:
         model = Group
         fields = ('name', 'is_public', 'icon')
+        widgets = {'icon': forms.ClearableFileInput}
 
     def clean_name(self):
         """Validates that the name is alphanumeric"""
