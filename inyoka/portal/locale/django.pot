@@ -500,15 +500,12 @@ msgstr ""
 msgid "Forum privileges"
 msgstr ""
 
-#: inyoka/portal/forms.py:591 inyoka/portal/templates/portal/group_edit.html:48
-msgid "Delete team icon"
-msgstr ""
-
 #: inyoka/portal/forms.py:592
 msgid "Use global team icon"
 msgstr ""
 
-#: inyoka/portal/forms.py:606
+#: inyoka/portal/forms.py:602 inyoka/portal/tests/test_views.py:35
+#: inyoka/portal/tests/test_views.py:41
 msgid "The group name contains invalid chars"
 msgstr ""
 
@@ -1674,12 +1671,16 @@ msgstr ""
 msgid "Team icon:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/group_edit.html:36
+#: inyoka/portal/templates/portal/group_edit.html:45
+msgid "Delete team icon"
+msgstr ""
+
+#: inyoka/portal/templates/portal/group_edit.html:51
 #, python-format
 msgid ""
 "Please note that the team icon can not be bigger than "
-"%(width)dx%(height)d pixel. Everything that exceeds this limit will "
-"automatically be resized."
+"%(width)sx%(height)s pixel. Images exceeding this limit will be resized "
+"automatically."
 msgstr ""
 
 #: inyoka/portal/templates/portal/group_edit.html:53
