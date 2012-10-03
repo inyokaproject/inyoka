@@ -29,11 +29,11 @@
     <dt>{% trans %}Maximum avatar size{% endtrans %}</dt>
     <dd>{{ form.max_avatar_width }} × {{ form.max_avatar_height }} {% trans %}Pixel{% endtrans %}
         {{ form.max_avatar_size }} {% trans %}KiB (0 = unlimited){% endtrans %}
-        {{ form.errors.max_avatar_height }} {{ form.errors.max_avatar_width }}
+        {{ form.errors.max_avatar_width }} {{ form.errors.max_avatar_height }}
         {{ form.errors.max_avatar_size }}</dd>
     <dt>{% trans %}Maximum team icon size{% endtrans %}</dt>
-    <dd>{{ form.team_icon_height }} x {{ form.team_icon_width }} {% trans %}Pixel{% endtrans %}
-        {{ form.errors.team_icon_height }} {{ form.errors.team_icon_width }}</dd>
+    <dd>{{ form.team_icon_width }} x {{ form.team_icon_height }} {% trans %}Pixel{% endtrans %}
+        {{ form.errors.team_icon_width }} {{ form.errors.team_icon_height }}</dd>
   </dl>
   <h3>Get-Ubuntu-Link</h3>
   {{ render_form(form, ['get_ubuntu_link', 'get_ubuntu_description']) }}

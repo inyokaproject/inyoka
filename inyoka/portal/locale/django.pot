@@ -1678,7 +1678,7 @@ msgstr ""
 #, python-format
 msgid ""
 "Please note that the team icon can not be bigger than "
-"%(width)sx%(height)s pixel. Everything that exceeds this limit will "
+"%(width)dx%(height)d pixel. Everything that exceeds this limit will "
 "automatically be resized."
 msgstr ""
 

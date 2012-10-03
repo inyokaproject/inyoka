@@ -1652,8 +1652,9 @@ def group_edit(request, name=None):
                   % {'group': escape(name)})
             return HttpResponseRedirect(href('portal', 'groups'))
 
-    icon_mh, icon_mw = storage.get_many(('team_icon_height',
-                                         'team_icon_width')).itervalues()
+    std = storage.get_many(('team_icon_width', 'team_icon_height'))
+    icon_mw = int(std['team_icon_width'])
+    icon_mh = int(std['team_icon_height'])
 
     if request.method == 'POST':
         form = EditGroupForm(request.POST, request.FILES, instance=group)

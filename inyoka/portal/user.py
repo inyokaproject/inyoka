@@ -306,9 +306,11 @@ class Group(models.Model):
         if self.icon:
             self.icon.delete(save=False)
 
-        std = storage.get_many(('team_icon_height', 'team_icon_width'))
-        max_size = (int(std['team_icon_height']),
-                    int(std['team_icon_width']))
+        std = storage.get_many(('team_icon_width', 'team_icon_height'))
+        # According to PIL.Image:
+        # "The requested size in pixels, as a 2-tuple: (width, height)."
+        max_size = (int(std['team_icon_width']),
+                    int(std['team_icon_height']))
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
@@ -724,9 +726,11 @@ class User(models.Model):
         #: clear the file system
         self.delete_avatar()
 
-        std = storage.get_many(('max_avatar_height', 'max_avatar_width'))
-        max_size = (int(std['max_avatar_height']),
-                    int(std['max_avatar_width']))
+        std = storage.get_many(('team_icon_width', 'team_icon_height'))
+        # According to PIL.Image:
+        # "The requested size in pixels, as a 2-tuple: (width, height)."
+        max_size = (int(std['team_icon_width']),
+                    int(std['team_icon_height']))
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
