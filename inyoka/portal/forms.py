@@ -11,10 +11,11 @@
 import datetime
 import Image
 from django import forms
+from django.core.cache import cache
+from django.core.validators import EMPTY_VALUES
 from django.forms import HiddenInput
 from django.db.models import Count
 from django.conf import settings
-from django.core.validators import EMPTY_VALUES
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
@@ -34,7 +35,7 @@ from inyoka.utils.html import cleanup_html
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.search import search as search_system
-from inyoka.portal.user import User, UserData, Group
+from inyoka.portal.user import User, UserData, Group, PERMISSION_NAMES
 from inyoka.portal.models import StaticPage, StaticFile
 
 #: Some constants used for ChoiceFields
@@ -580,7 +581,7 @@ class UserMailForm(forms.Form):
 
 
 class EditGroupForm(forms.ModelForm):
-    _permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
+    permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'permission'}),
         required=False)
     forum_privileges = forms.MultipleChoiceField(label=ugettext_lazy(u'Forum privileges'),
@@ -593,6 +594,19 @@ class EditGroupForm(forms.ModelForm):
         fields = ('name', 'is_public', 'icon')
         widgets = {'icon': forms.ClearableFileInput}
 
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')
+        initial = kwargs.setdefault('initial', {})
+        if instance:
+            initial['permissions'] = filter(lambda p: p & instance.permissions,
+                                            PERMISSION_NAMES.keys())
+
+        super(EditGroupForm, self).__init__(*args, **kwargs)
+        self.fields['permissions'].choices = sorted(
+            [(k, v) for k, v in PERMISSION_NAMES.iteritems()],
+            key=lambda p: p[1]
+        )
+
     def clean_name(self):
         """Validates that the name is alphanumeric"""
         data = self.cleaned_data
@@ -603,14 +617,54 @@ class EditGroupForm(forms.ModelForm):
                 u'The group name contains invalid chars'))
         return name
 
-    def clean__permissions(self):
+    def clean_import_icon_from_global(self):
+        import_from_global = self.cleaned_data['import_icon_from_global']
+        if import_from_global and not storage['team_icon']:
+            raise forms.ValidationError(_(u'A global team icon was not yet defined.'))
+
+    def save(self, commit=True):
+        group = super(EditGroupForm, self).save(commit=False)
         data = self.cleaned_data
-        if '_permissions' in data:
-            try:
-                return map(int, data['_permissions'])
-            except ValueError:
-                pass
-        return []
+
+        if data['icon'] and not data['import_icon_from_global']:
+            icon_resized = group.save_icon(data['icon'])
+# TODO: Reenable?!
+#            if icon_resized:
+#                messages.info(request,
+#                    _(u'The icon you uploaded was scaled to '
+#                      '%(w)dx%(h)d pixels. Please note that this '
+#                      'may result in lower quality.') % {
+#                          'w': icon_mw,
+#                          'h': icon_mh,
+#                      })
+
+        if data['import_icon_from_global']:
+            if group.icon:
+                group.icon.delete(save=False)
+
+            icon_path = 'portal/team_icons/team_%s.%s' % (group.name,
+                        storage['team_icon'].split('.')[-1])
+
+            icon = default_storage.open(storage['team_icon'])
+            group.icon.save(icon_path, icon)
+            icon.close()
+
+
+        # permissions
+        permissions = 0
+        for perm in data['permissions']:
+            permissions |= int(perm)
+        # clear permission cache of users if needed
+        if permissions != group.permissions:
+            group.permissions = permissions
+            user_ids = User.objects.filter(groups=group).values_list('id', flat=True)
+            keys = ['user_permissions/%s' % uid for uid in user_ids]
+            cache.delete_many(keys)
+
+        if commit:
+            group.save()
+
+        return group
 
 
 class SearchForm(forms.Form):

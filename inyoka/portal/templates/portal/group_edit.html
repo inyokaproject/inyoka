@@ -54,9 +54,10 @@
       </dd>
       {%- endif %}
       {%- if form.errors.icon %}<dd>{{ form.errors.icon }}</dd>{% endif %}
+      {%- if form.errors.import_icon_from_global %}<dd>{{ form.errors.import_icon_from_global }}</dd>{% endif %}
       <dd>{{ form.import_icon_from_global }} <label for="id_import_icon_from_global">Globales Team-Icon importieren</label></dd>
     </dl>
-    {{ render_form(form, ['_permissions']) }}
+    {{ render_form(form, ['permissions']) }}
     <dt>{% trans %}Forum privileges:{% endtrans %}</dt>
     <dd id="forum_rights">{% trans %}Please turn JavaScript on to edit the privileges.{% endtrans %}</dd>
   </dl>
