@@ -239,7 +239,6 @@ def viewtopic(request, topic_slug, page=1):
     # clear read status and subscriptions
     if request.user.is_authenticated():
         topic.mark_read(request.user)
-        request.user.save()
 
     subscribed = Subscription.objects.user_subscribed(request.user, topic,
         ('forum', 'topic'), clear_notified=True)

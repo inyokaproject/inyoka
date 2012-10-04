@@ -369,7 +369,6 @@ def logout(request):
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():
                 forum.mark_read(request.user)
-            request.user.save()
         auth.logout(request)
         messages.success(request, _(u'You have successfully logged out.'))
     else:
@@ -679,7 +678,7 @@ def usercp_settings(request):
                                                 ubuntu_version=version).delete()
             for key, value in data.iteritems():
                 request.user.settings[key] = data[key]
-            request.user.save()
+            request.user.save(update_fields=['settings'])
             messages.success(request, _(u'Your settings were successfully changed.'))
         else:
             generic.trigger_fix_errors_message(request)
@@ -1367,7 +1366,7 @@ def privmsg_new(request, username=None):
                         continue  # User quoted, most likely a forward and no spam
                     request.user.status = 2
                     request.user.banned_until = None
-                    request.user.save()
+                    request.user.save(update_fields=['status', 'banned_until'])
                     messages.info(request,
                         _(u'You were automatically banned because we suspect '
                           u'you are sending spam. If this ban is not '

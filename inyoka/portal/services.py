@@ -105,14 +105,14 @@ def on_toggle_sidebar(request):
         request.user.settings[component] = True
     else:
         request.user.settings.pop(component)
-    request.user.save()
+    request.user.save(update_fields=['settings'])
     return True
 
 
 def hide_global_message(request):
     if request.user.is_authenticated():
         request.user.settings['global_message_hidden'] = time.time()
-        request.user.save()
+        request.user.save(update_fields=['settings'])
         return True
     return False
 
