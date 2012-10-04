@@ -7,6 +7,7 @@ from inyoka.portal.user import User
 
 
 class TestPostSplitNewTopic(TestCase):
+    """Test for splitting posts and creating a new topic"""
 
     def setUp(self):
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
@@ -31,6 +32,7 @@ class TestPostSplitNewTopic(TestCase):
             self.topic1.posts.add(self.t1_posts[i])
 
     def test_single_last_post(self):
+        """Split the last post and create a new topic"""
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic(title='new topic', author=self.user)
         self.forum2.topics.add(t2)
@@ -67,6 +69,7 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_multiple_last_posts(self):
+        """Split multiple consecutive last posts and create a new topic"""
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic(title='new topic', author=self.user)
         self.forum2.topics.add(t2)
@@ -103,6 +106,7 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_single_middle_post(self):
+        """Split a single middle post and create a new topic"""
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic(title='new topic', author=self.user)
         self.forum2.topics.add(t2)
@@ -140,6 +144,9 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_single_consecutive_middle_posts(self):
+        """Split multiple consecutive posts from the middle and
+        create a new topic
+        """
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic(title='new topic', author=self.user)
         self.forum2.topics.add(t2)
@@ -177,6 +184,9 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_multiple_middle_posts(self):
+        """Split multiple single and non-consecutive posts from the middle
+        and create a new topic
+        """
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic(title='new topic', author=self.user)
         self.forum2.topics.add(t2)
@@ -214,6 +224,9 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_multiple_consecutive_middle_posts(self):
+        """Split groups of consecutives posts from the middle
+        and create a new topic
+        """
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic(title='new topic', author=self.user)
         self.forum2.topics.add(t2)
