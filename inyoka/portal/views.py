@@ -79,6 +79,7 @@ from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
 
+from social_auth.models import UserSocialAuth
 
 # TODO: move into some kind of config, but as a quick fix for now...
 AUTOBAN_SPAMMER_WORDS = (
@@ -618,6 +619,13 @@ def usercp_profile(request):
                 user.settings[key] = data[key]
             user.save()
 
+            accounts_to_delete = map(int, request.POST.getlist('delete_accounts'))
+            # Ensure that the user can only delete his own accounts
+            accounts_to_delete = UserSocialAuth.objects\
+                .filter(user=request.user, pk__in=accounts_to_delete)\
+                .values_list('pk', flat=True)
+            UserSocialAuth.objects.filter(pk__in=accounts_to_delete).delete()
+
             if form.errors:
                 generic.trigger_fix_errors_message(request)
             else:
@@ -640,17 +648,20 @@ def usercp_profile(request):
         values['use_gravatar'] = user.settings.get('use_gravatar', False)
         form = UserCPProfileForm(initial=values, user=user)
 
+    connected_accounts = UserSocialAuth.objects.filter(user=request.user)
     storage_keys = storage.get_many(('max_avatar_width',
         'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
 
     return {
         'form':                 form,
+        'connected_accounts':   connected_accounts,
         'user':                 request.user,
         'gmaps_apikey':         settings.GOOGLE_MAPS_APIKEY,
         'max_avatar_width':     storage_keys.get('max_avatar_width', -1),
         'max_avatar_height':    storage_keys.get('max_avatar_height', -1),
         'max_avatar_size':      storage_keys.get('max_avatar_size', -1),
         'max_sig_length':       storage_keys.get('max_signature_length'),
+        'OPENID_PROVIDERS':     settings.OPENID_PROVIDERS,
     }
 
 

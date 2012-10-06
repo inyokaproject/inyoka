@@ -68,25 +68,24 @@
                           'launchpad', 'gpgkey']) }}
     <h4>{% trans %}Geographical location{% endtrans %}</h4>
     {{ render_form(form, ['location', 'coordinates']) }}
-    <h3>{% trans %}OpenIDs{% endtrans %}</h3>
+    <h3>{% trans %}Connected accounts{% endtrans %}</h3>
     <p>
-      {% if openids %}
-        {% trans %}Selected OpenIDs will be removed!{% endtrans %}
+      {% if connected_accounts %}
+        {% trans %}Selected Accounts will be removed!{% endtrans %}
       {% else %}
-        {% trans %}No OpenID is associated with your account.{% endtrans %}
+        {% trans %}No accounts are connect with this account.{% endtrans %}
       {% endif %}
     </p>
-    <p>{% trans -%}
-      To associate an OpenID with your account, login with your OpenID.
-    {%- endtrans %}</p>
     <ul>
-      {% for openid in openids %}
+      {% for account in connected_accounts %}
         <li>
-          <input type="checkbox" name="openids" value="{{ openid.id }}" />
-          {{ openid.value }}
+          <input type="checkbox" name="delete_accounts" value="{{ account.id }}" />
+          {{ account.provider }}: {{ account.uid }}
         </li>
       {% endfor %}
     </ul>
+    <h3>{% trans %}Connect an account{% endtrans %}</h3>
+    {% include 'portal/login_options.html' with context %}
     <h3>{% trans %}Signature{% endtrans %}</h3>
     <p class="note">{% trans n=max_sig_length, link=href('wiki', 'ubuntuusers/Moderatoren/Forenregeln', _anchor='8-Signaturregeln') -%}
       The signature will be appended to every post. It cannot contain more than {{ n }} characters. Please follow the <a href="{{ link }}">signature rules</a>.
@@ -137,6 +136,7 @@
         $('#id_coordinates').val(p ? p.lat() + ', ' + p.lng() : '');
       });
     }
+    var input = OpenIDHelper($('input[name="openid_identifier"]'), {{ OPENID_PROVIDERS|jsonencode }});
 
     /*]]>*/
   </script>
