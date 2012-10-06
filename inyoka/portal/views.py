@@ -66,7 +66,7 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
      OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
      EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
      EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
-     CreateUserForm, UserMailForm, EditGroupForm, CreateGroupForm
+     CreateUserForm, UserMailForm, EditGroupForm
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
@@ -1634,17 +1634,9 @@ def group(request, name, page=1):
 @require_permission('group_edit')
 @templated('portal/group_edit.html')
 def group_edit(request, name=None):
-    def _add_choices(form):
-        form.fields['permissions'].choices = sorted(
-            [(k, v) for k, v in PERMISSION_NAMES.iteritems()],
-            key=lambda p: p[1]
-        )
     new = name is None
-    changed_permissions = False
-    if new:
-        group = Group()
-        form_class = CreateGroupForm
-    else:
+    group = None
+    if name:
         try:
             group = Group.objects.get(name=name)
         except Group.DoesNotExist:
@@ -1652,52 +1644,15 @@ def group_edit(request, name=None):
                 _(u'The group “%(group)s” does not exist.')
                   % {'group': escape(name)})
             return HttpResponseRedirect(href('portal', 'groups'))
-        form_class = EditGroupForm
 
-    icon_mh, icon_mw = storage.get_many(('team_icon_height',
-                                         'team_icon_width')).itervalues()
+    std = storage.get_many(('team_icon_width', 'team_icon_height'))
+    icon_mw = int(std['team_icon_width'])
+    icon_mh = int(std['team_icon_height'])
 
     if request.method == 'POST':
-        form = form_class(request.POST, request.FILES)
-        _add_choices(form)
+        form = EditGroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
-            data = form.cleaned_data
-            group.name = data['name']
-            group.is_public = data['is_public']
-
-            if data['delete_icon']:
-                group.icon.delete(save=False)
-
-            if data['icon'] and not data['import_icon_from_global']:
-                icon_resized = group.save_icon(data['icon'])
-                if icon_resized:
-                    messages.info(request,
-                        _(u'The icon you uploaded was scaled to '
-                          '%(w)dx%(h)d pixels. Please note that this '
-                          'may result in lower quality.') % {
-                              'w': icon_mw,
-                              'h': icon_mh,
-                          })
-            if data['import_icon_from_global']:
-                if group.icon:
-                    group.icon.delete(save=False)
-
-                icon_path = 'portal/team_icons/team_%s.%s' % (group.name,
-                            storage['team_icon'].split('.')[-1])
-                if storage['team_icon']:
-                    gicon = default_storage.open(storage['team_icon'])
-                    group.icon.save(icon_path, gicon)
-                    gicon.close()
-                else:
-                    messages.error(request, _(u'A global team icon was not yet defined.'))
-
-            # permissions
-            permissions = 0
-            for perm in data['permissions']:
-                permissions |= int(perm)
-            if permissions != group.permissions:
-                changed_permissions = True
-                group.permissions = permissions
+            group = form.save()
 
             #: forum privileges
             for key, value in request.POST.iteritems():
@@ -1727,15 +1682,6 @@ def group_edit(request, name=None):
                         else:
                             privilege.delete()
 
-            # save changes to the database
-            group.save()
-
-            # clear permission cache of users if needed
-            if changed_permissions:
-                user_ids = User.objects.filter(groups=group).values_list('id', flat=True)
-                keys = ['user_permissions/%s' % uid for uid in user_ids]
-                cache.delete_many(keys)
-
             if new:
                 msg = _(u'The group “%(group)s” was created successfully.')
             else:
@@ -1744,21 +1690,14 @@ def group_edit(request, name=None):
             if new:
                 return HttpResponseRedirect(group.get_absolute_url('edit'))
     else:
-        form = form_class(initial=not new and {
-            'name': group.name,
-            'permissions': filter(lambda p: p & group.permissions, PERMISSION_NAMES.keys()),
-            'is_public': group.is_public,
-        } or {
-            'is_public': True,
-        })
-        _add_choices(form)
+        form = EditGroupForm(instance=group)
 
     # collect forum privileges
     forum_privileges = []
     forums = Forum.objects.all()
     for forum in forums:
         try:
-            privilege = Privilege.objects.get(forum=forum, group=group)
+            privilege = Privilege.objects.get(forum=forum, group=group, user=None)
         except Privilege.DoesNotExist:
             privilege = None
 

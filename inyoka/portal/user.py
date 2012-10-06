@@ -270,13 +270,22 @@ def send_new_user_password(user):
 
 
 class Group(models.Model):
-    name = models.CharField('Name', max_length=80, unique=True, db_index=True)
-    is_public = models.BooleanField(ugettext_lazy(u'Public profile'))
+    name = models.CharField(ugettext_lazy(u'Group name'), max_length=80,
+                unique=True, db_index=True, error_messages={
+                    'unique': ugettext_lazy(u'This group name is already taken. '
+                                u'Please choose another one.')})
+    is_public = models.BooleanField(ugettext_lazy(u'Public profile'),
+                default=False, help_text=ugettext_lazy(u'Will be shown in the '
+                                    u'group overview and the user profile'))
     _default_group = None
     permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
     icon = models.ImageField(ugettext_lazy(u'Team icon'),
                              upload_to='portal/team_icons',
                              blank=True, null=True)
+
+    class Meta:
+        verbose_name = ugettext_lazy(u'Usergroup')
+        verbose_name_plural = ugettext_lazy(u'Usergroups')
 
     @property
     def icon_url(self):
@@ -298,9 +307,11 @@ class Group(models.Model):
         if self.icon:
             self.icon.delete(save=False)
 
-        std = storage.get_many(('team_icon_height', 'team_icon_width'))
-        max_size = (int(std['team_icon_height']),
-                    int(std['team_icon_width']))
+        std = storage.get_many(('team_icon_width', 'team_icon_height'))
+        # According to PIL.Image:
+        # "The requested size in pixels, as a 2-tuple: (width, height)."
+        max_size = (int(std['team_icon_width']),
+                    int(std['team_icon_height']))
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
@@ -716,9 +727,11 @@ class User(models.Model):
         #: clear the file system
         self.delete_avatar()
 
-        std = storage.get_many(('max_avatar_height', 'max_avatar_width'))
-        max_size = (int(std['max_avatar_height']),
-                    int(std['max_avatar_width']))
+        std = storage.get_many(('team_icon_width', 'team_icon_height'))
+        # According to PIL.Image:
+        # "The requested size in pixels, as a 2-tuple: (width, height)."
+        max_size = (int(std['team_icon_width']),
+                    int(std['team_icon_height']))
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
