@@ -93,14 +93,6 @@ class LoginForm(forms.Form):
         required=False, widget=forms.CheckboxInput(attrs={'tabindex':'1'}))
 
 
-# FIXME: social-auth
-#class OpenIDConnectForm(forms.Form):
-#    username = forms.CharField(label=ugettext_lazy(u'Username'))
-#    password = forms.CharField(label=_('Password'),
-#        widget=forms.PasswordInput(render_value=False),
-#        required=True)
-
-
 class RegisterForm(forms.Form):
     """
     Form for registering a new user account.

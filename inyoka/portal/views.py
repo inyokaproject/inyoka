@@ -351,6 +351,7 @@ def login(request):
         'failed':       failed,
         'inactive':     inactive,
         'banned':       banned,
+        'OPENID_PROVIDERS': settings.OPENID_PROVIDERS,
     }
     if failed:
         d['username'] = data['username']

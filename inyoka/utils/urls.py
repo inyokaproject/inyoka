@@ -123,17 +123,6 @@ def get_server_name(url, charset='utf-8'):
     return urlparse(url)[1].decode(charset, 'utf-8', 'ignore')
 
 
-def clean_openid_url(url):
-    """
-    Normalizes according to (only URLs though, not XRI):
-    http://openid.net/specs/openid-authentication-2_0.html#normalization_example
-    """
-    parts = urlparse(url)
-    if parts.path == '':
-        return url + '/'
-    return url
-
-
 from inyoka.utils.http import TemplateResponse
 def global_not_found(request, err_message=None):
     return TemplateResponse('errors/404.html', {
