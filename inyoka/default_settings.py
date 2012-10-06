@@ -321,14 +321,12 @@ SOCIAL_AUTH_USER_MODEL = AUTH_USER_MODEL = 'portal.User'
 
 SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.social_auth_user',
-#    'social_auth.backends.pipeline.user.get_username',
     'social_auth.backends.pipeline.misc.save_status_to_session',
     'inyoka.portal.social_auth.collect_registration_info',
     'inyoka.portal.social_auth.get_username',
-    'social_auth.backends.pipeline.user.create_user',
+    'inyoka.portal.social_auth.create_user',
+    'inyoka.portal.social_auth.clear_session',
     'social_auth.backends.pipeline.social.associate_user',
-#    'social_auth.backends.pipeline.social.load_extra_data',
-#    'social_auth.backends.pipeline.user.update_user_details',
 )
 
 LOGIN_URL = '/login/'
