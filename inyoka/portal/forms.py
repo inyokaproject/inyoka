@@ -101,12 +101,12 @@ class LoginForm(forms.Form):
             self._errors['password'] = self.error_class([msg])
         return data
 
-
-class OpenIDConnectForm(forms.Form):
-    username = forms.CharField(label=ugettext_lazy(u'Username'))
-    password = forms.CharField(label=_('Password'),
-        widget=forms.PasswordInput(render_value=False),
-        required=True)
+# FIXME: social-auth
+#class OpenIDConnectForm(forms.Form):
+#    username = forms.CharField(label=ugettext_lazy(u'Username'))
+#    password = forms.CharField(label=_('Password'),
+#        widget=forms.PasswordInput(render_value=False),
+#        required=True)
 
 
 class RegisterForm(forms.Form):
@@ -133,6 +133,13 @@ class RegisterForm(forms.Form):
     captcha = CaptchaField(label=_('CAPTCHA'))
     hidden_captcha = HiddenCaptchaField(required=False)
     terms_of_usage = forms.BooleanField()
+
+    def __init__(self, *args, **kwargs):
+        self.external = kwargs.pop('external')
+        super(RegisterForm, self).__init__(*args, **kwargs)
+        if self.external:
+            for i in ('password', 'confirm_password', 'email'):
+                del self.fields[i]
 
     def clean_username(self):
         """
@@ -162,6 +169,8 @@ class RegisterForm(forms.Form):
         """
         Validates that the two password inputs match.
         """
+        if self.external:
+            return self.cleaned_data
         if 'password' in self.cleaned_data and 'confirm_password' in self.cleaned_data:
             if self.cleaned_data['password'] == self.cleaned_data['confirm_password']:
                 return self.cleaned_data
@@ -394,15 +403,15 @@ class UserCPProfileForm(forms.Form):
             )
         return data['avatar']
 
-    def clean_openid(self):
-        if self.cleaned_data['openid'] in EMPTY_VALUES:
-            return
-        openid = self.cleaned_data['openid']
-        if UserData.objects.filter(key='openid', value=openid)\
-                           .exclude(user=self.user).count():
-            raise forms.ValidationError(_(u'This OpenID is already in use.'))
-        return openid
-
+# FIXME: social-auth
+#    def clean_openid(self):
+#        if self.cleaned_data['openid'] in EMPTY_VALUES:
+#            return
+#        openid = self.cleaned_data['openid']
+#        if UserData.objects.filter(key='openid', value=openid)\
+#                           .exclude(user=self.user).count():
+#            raise forms.ValidationError(_(u'This OpenID is already in use.'))
+#        return openid
 
 
 class EditUserProfileForm(UserCPProfileForm):

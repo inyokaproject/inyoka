@@ -1,4 +1,4 @@
-Django==1.4.1
+#Django==1.5.0
 distribute
 Jinja2==2.6
 MarkupSafe==0.12
@@ -18,15 +18,15 @@ celery==2.4.0
 kombu==2.1.1
 django-kombu==0.9.4
 django-celery==2.4.0
-django-hosts==0.4.1
+django-hosts==0.5
 requests==0.6.6
 pyzmq==2.1.11
 SleekXMPP==1.1.3
 https://github.com/alex/django-filter/tarball/master/#egg=django-filter
-https://github.com/simonw/django-openid/tarball/master/
 # Because of http://south.aeracode.org/ticket/747 that is already fixed in trunk
 https://bitbucket.org/andrewgodwin/south/get/64fdcc52cd01.tar.bz2
 lxml
 dulwich
 raven==1.4.3
 transifex-client
+django-social-auth==0.7.6

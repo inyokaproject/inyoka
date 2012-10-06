@@ -487,10 +487,6 @@ $(document).ready(function () {
           s2 = t.value.substring(end);
 
         t.value = s1 + text + s2;
-        if (start == -1) {
-          area.closest('form').submit();
-          return;
-        }
         t.focus();
         if (reselect) {
           t.selectionStart = start;
