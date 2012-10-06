@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-10-06 23:36+0200\n"
+"POT-Creation-Date: 2012-10-06 23:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1747,7 +1747,6 @@ msgstr ""
 #: inyoka/portal/templates/portal/login.html:15
 #: inyoka/portal/templates/portal/login.html:35
 #: inyoka/portal/templates/portal/login.m.html:32
-#: inyoka/portal/templates/portal/login_options.html:23
 msgid "Login"
 msgstr ""
 
@@ -1764,10 +1763,6 @@ msgstr ""
 msgid ""
 "Don’t choose this option if you are using a public computer. Otherwise, "
 "unauthorized persons may enter your account."
-msgstr ""
-
-#: inyoka/portal/templates/portal/login_options.html:16
-msgid "Login via OpenID"
 msgstr ""
 
 #: inyoka/portal/templates/portal/login_text.html:4
