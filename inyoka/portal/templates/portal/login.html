@@ -35,15 +35,30 @@
       <input type="submit" id="login" value="{% trans %}Login{% endtrans %}" tabindex="1" />
     </div>
   </form>
+  <h4>{% trans %}Login via a third party:{% endtrans %}</h4>
+  <form method="post" action="{{ href('portal', 'auth', 'login', 'openid') }}">
+  {{ csrf_token() }}
+  <dl>
+    <dt>OpenID:</dt>
+    <dd><input id="openid_identifier" type="text" name="openid_identifier" value=""></dd>
+  </dl>
+  <div class="actions">
+    <input type="submit" value="{% trans %}Login via OpenID{% endtrans %}"/>
+  </div>
+  </form>
   <form method="post" action="{{ href('portal', 'auth', 'complete', 'browserid') }}">
+  <dl>
     <input type="hidden" name="assertion" value="" />
-    <a rel="nofollow" id="browserid" href="#">BrowserID</a>
+    <dt>BrowserID:</dt>
+    <dd><a rel="nofollow" id="browserid" href="#" class="persona-button"><span>{% trans %}Login{% endtrans %}</span></a></dd>
+  </dl>
   </form>
 {% endblock %}
 
 {% block additional_scripts %}
   <script src="https://login.persona.org/include.js" type="text/javascript"></script>
   <script type="text/javascript">
+    /*<![CDATA[*/
       $(function () {
           $('#browserid').click(function (e) {
               e.preventDefault();
@@ -51,7 +66,7 @@
 
               navigator.id.get(function (assertion) {
                   if (assertion) {
-                      self.parent('form')
+                      self.closest('form')
                               .find('input[type=hidden]')
                                   .attr('value', assertion)
                                   .end()
@@ -62,17 +77,7 @@
               });
           });
       });
-  </script>
-<!--
-  <script type="text/javascript">
-    /*<![CDATA[*/
-    if ( $('#id_username')[0].value )
-      $('#id_password').select().focus();
-    else
-      $('#id_username')[0].focus();
-
-    var input = OpenIDHelper($('input[name="username"]'), {{ OPENID_PROVIDERS|jsonencode }});
+    var input = OpenIDHelper($('input[name="openid_identifier"]'), {{ OPENID_PROVIDERS|jsonencode }});
     /*]]>*/
   </script>
--->
 {% endblock %}

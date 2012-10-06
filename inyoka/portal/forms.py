@@ -85,21 +85,13 @@ SEARCH_AREAS = {
 
 class LoginForm(forms.Form):
     """Simple form for the login dialog"""
-    username = forms.CharField(label=ugettext_lazy(u'Username, email address or OpenID'),
+    username = forms.CharField(label=ugettext_lazy(u'Username or email address'),
         widget=forms.TextInput(attrs={'tabindex': '1'}))
-    password = forms.CharField(label=ugettext_lazy(u'Password'), required=False,
-        widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),
-        help_text=ugettext_lazy(u'Leave this field empty if you are using OpenID.'),)
+    password = forms.CharField(label=ugettext_lazy(u'Password'), required=True,
+        widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}))
     permanent = forms.BooleanField(label=_('Keep logged in'),
         required=False, widget=forms.CheckboxInput(attrs={'tabindex':'1'}))
 
-    def clean(self):
-        data = self.cleaned_data
-        if 'username' in data and not (data['username'].startswith('http://') or \
-         data['username'].startswith('https://')) and data['password'] == '':
-            msg = _(u'This field is required')
-            self._errors['password'] = self.error_class([msg])
-        return data
 
 # FIXME: social-auth
 #class OpenIDConnectForm(forms.Form):
@@ -138,8 +130,8 @@ class RegisterForm(forms.Form):
         self.external = kwargs.pop('external')
         super(RegisterForm, self).__init__(*args, **kwargs)
         if self.external:
-            for i in ('password', 'confirm_password', 'email'):
-                del self.fields[i]
+            del self.fields['password']
+            del self.fields['confirm_password']
 
     def clean_username(self):
         """

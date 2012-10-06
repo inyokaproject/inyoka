@@ -443,19 +443,6 @@ $(document).ready(function () {
       var self = this;
       var target = $(target);
 
-      // hide password field if it looks like we're getting and openid
-      var elements = ['input[name="password"]', 'label[for="id_password"]', 'label[for="js_login_password"]'];
-      $(target).keydown(function() {
-        if ($(target).val().slice(0, 4) == 'http') {
-          $('input[name="password"]').val('');
-          for (idx in elements)
-            $(elements[idx]).hide();
-        } else {
-          for (idx in elements)
-            $(elements[idx]).show();
-        }
-      });
-
       // Add common OpenID providers
       for (var provider in openid_providers) {
         var name = openid_providers[provider].name;
@@ -466,6 +453,8 @@ $(document).ready(function () {
             if (openid_providers[p]['url'] == null) {
               $(target).val('http://');
               $(target).focus();
+						} else if (openid_providers[p]['url'][0] == '/') {
+							window.location = openid_providers[p]['url']
             } else {
               self.setSelection($(target), openid_providers[p]['url'], '{username}', true);
             }

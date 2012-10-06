@@ -236,7 +236,7 @@ OPENID_PROVIDERS = {
     },
     'google': {
       'name': gettext_noop('Google'),
-      'url': '/login/google/'
+      'url': '/auth/login/google/'
     },
 }
 

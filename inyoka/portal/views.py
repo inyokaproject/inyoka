@@ -222,7 +222,7 @@ def register(request, external=False):
             request.session.pop('captcha_solution', None)
             return HttpResponseRedirect(redirect)
     else:
-        form = RegisterForm(external=external)
+        form = RegisterForm(initial=request.GET, external=external)
 
     return {
         'form': form,
