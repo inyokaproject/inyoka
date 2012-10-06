@@ -80,7 +80,7 @@
       {% for account in connected_accounts %}
         <li>
           <input type="checkbox" name="delete_accounts" value="{{ account.id }}" />
-          {{ account.provider }}: {{ account.uid }}
+          {{ account.provider }}: {{ account.uid|e }}
         </li>
       {% endfor %}
     </ul>
