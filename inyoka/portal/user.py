@@ -728,36 +728,6 @@ class User(models.Model):
         '''return the username with space replaced by _ for urls'''
         return self.username.replace(' ', '_')
 
-    def save_avatar(self, img):
-        """
-        Save `img` to the file system.
-
-        :return: boolean value if `img` was resized or not.
-        """
-        data = img.read()
-        image = Image.open(StringIO(data))
-        fn = 'portal/avatars/avatar_user%d.%s' % (self.id,
-             image.format.lower())
-        #: clear the file system
-        if self.avatar:
-            self.avatar.delete(save=False)
-
-        std = storage.get_many(('team_icon_width', 'team_icon_height'))
-        # According to PIL.Image:
-        # "The requested size in pixels, as a 2-tuple: (width, height)."
-        max_size = (int(std['team_icon_width']),
-                    int(std['team_icon_height']))
-        resized = False
-        if image.size > max_size:
-            image = image.resize(max_size)
-            image_path = path.join(settings.MEDIA_ROOT, fn)
-            image.save(image_path)
-            resized = True
-        else:
-            img.seek(0)
-            default_storage.save(fn, img)
-        self.avatar = fn
-
     def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
             return href('portal', 'user', self.urlsafe_username, **query)
