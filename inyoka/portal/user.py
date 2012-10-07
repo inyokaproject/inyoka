@@ -494,8 +494,19 @@ class UserManager(models.Manager):
         return _SYSTEM_USER
 
 
+def upload_to_avatar(instance, filename):
+    fn = 'portal/avatars/avatar_user%d.%s'
+    return fn % (instance.pk, filename.rsplit('.',1)[-1])
+
+
 class User(models.Model):
     """User model that contains all informations about an user."""
+
+    STATUS_CHOICES = enumerate([ugettext_lazy(u'not yet activated'),
+                                ugettext_lazy(u'active'),
+                                ugettext_lazy(u'banned'),
+                                ugettext_lazy(u'deleted himself')])
+
     objects = UserManager()
 
     username = models.CharField(ugettext_lazy(u'Username'),
@@ -503,7 +514,8 @@ class User(models.Model):
     email = models.EmailField(ugettext_lazy(u'Email address'),
                               unique=True, max_length=50, db_index=True)
     password = models.CharField(ugettext_lazy(u'Password'), max_length=128)
-    status = models.IntegerField(ugettext_lazy(u'Status'), default=0)
+    status = models.IntegerField(ugettext_lazy(u'Activation status'), default=0,
+                                 choices=STATUS_CHOICES)
     last_login = models.DateTimeField(ugettext_lazy(u'Last login'),
                                       default=datetime.utcnow)
     date_joined = models.DateTimeField(ugettext_lazy(u'Member since'),
@@ -515,11 +527,13 @@ class User(models.Model):
     new_password_key = models.CharField(ugettext_lazy(u'Confirmation key for a new password'),
                                         blank=True, null=True, max_length=32)
 
-    banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'), null=True)
+    banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'),
+                                        null=True, blank=True,
+                                        help_text=ugettext_lazy(u'leave empty to ban permanent'))
 
     # profile attributes
     post_count = models.IntegerField(ugettext_lazy(u'Posts'), default=0)
-    avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to='portal/avatars',
+    avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
     jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
     icq = models.CharField(ugettext_lazy(u'ICQ'), max_length=16, blank=True)
@@ -725,7 +739,8 @@ class User(models.Model):
         fn = 'portal/avatars/avatar_user%d.%s' % (self.id,
              image.format.lower())
         #: clear the file system
-        self.delete_avatar()
+        if self.avatar:
+            self.avatar.delete(save=False)
 
         std = storage.get_many(('team_icon_width', 'team_icon_height'))
         # According to PIL.Image:
@@ -742,13 +757,6 @@ class User(models.Model):
             img.seek(0)
             default_storage.save(fn, img)
         self.avatar = fn
-
-        return resized
-
-    def delete_avatar(self):
-        """Delete the avatar from the file system."""
-        if self.avatar:
-            self.avatar.delete(save=False)
 
     def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
