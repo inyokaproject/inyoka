@@ -563,8 +563,8 @@ class User(models.Model):
                                      blank=True)
 
     # member title
-    member_title = models.CharField(ugettext_lazy(u'Member title'), blank=True, null=True,
-                                    max_length=200)
+    member_title = models.CharField(ugettext_lazy(u'Team affiliation / Member title'),
+                                    blank=True, null=True, max_length=200)
 
     # primary group from which the user gets some settings
     # e.g the membericon

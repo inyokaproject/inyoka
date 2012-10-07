@@ -448,9 +448,6 @@ class UserCPProfileForm(forms.ModelForm):
 
 
 class EditUserProfileForm(UserCPProfileForm):
-    username = forms.CharField(label=ugettext_lazy(u'Username'), max_length=30)
-    member_title = forms.CharField(label=ugettext_lazy(u'Title'), required=False)
-
     class Meta(UserCPProfileForm.Meta):
         fields = UserCPProfileForm.Meta.fields + ['username', 'member_title']
 
