@@ -14,11 +14,11 @@
   <p>
     {%- if action=='delete' -%}
       {% trans title=topic.title|e -%}
-        Do you really want to delete the topic “{{ title }}“? This action cannot be undone!
+        Do you really want to delete the topic “{{ title }}”? This action cannot be undone!
       {%- endtrans %}
     {%- else -%}
       {% trans title=topic.title|e -%}
-        Do you really want to hide the topic “{{ title }}“?
+        Do you really want to hide the topic “{{ title }}”?
       {%- endtrans %}
     {%- endif -%}
   </p>

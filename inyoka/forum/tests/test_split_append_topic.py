@@ -7,6 +7,7 @@ from inyoka.portal.user import User
 
 
 class TestPostSplit(TestCase):
+    """Test for splitting posts and appending them to an existing topic"""
 
     def setUp(self):
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
@@ -39,6 +40,7 @@ class TestPostSplit(TestCase):
             self.topic2.posts.add(self.t2_posts[i])
 
     def test_single_last_post(self):
+        """Split the last post and append it"""
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic.objects.get(id=self.topic2.id)
 
@@ -73,6 +75,7 @@ class TestPostSplit(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_multiple_last_posts(self):
+        """Split multiple consecutive last posts and append them"""
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic.objects.get(id=self.topic2.id)
 
@@ -108,6 +111,7 @@ class TestPostSplit(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_single_middle_post(self):
+        """Split a single middle post and append it"""
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic.objects.get(id=self.topic2.id)
 
@@ -143,6 +147,7 @@ class TestPostSplit(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_single_consecutive_middle_posts(self):
+        """Split multiple consecutive posts from the middle and append them"""
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic.objects.get(id=self.topic2.id)
 
@@ -179,6 +184,9 @@ class TestPostSplit(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_multiple_middle_posts(self):
+        """Split multiple single and non-consecutive posts from the middle
+        and append them
+        """
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic.objects.get(id=self.topic2.id)
 
@@ -215,6 +223,7 @@ class TestPostSplit(TestCase):
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
     def test_multiple_consecutive_middle_posts(self):
+        """Split groups of consecutives posts from the middle and append them"""
         t1 = Topic.objects.get(id=self.topic1.id)
         t2 = Topic.objects.get(id=self.topic2.id)
 

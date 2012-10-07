@@ -24,15 +24,16 @@ from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.utils import encode_confirm_data, classproperty
+from inyoka.utils.database import update_model, JSONField
 from inyoka.utils.decorators import deferred
-from inyoka.utils.mail import send_mail
-from inyoka.utils.user import normalize_username, get_hexdigest,\
-    check_password, gen_activation_key
+from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.local import current_request
+from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
-from inyoka.utils.gravatar import get_gravatar
-from inyoka.utils.database import update_model, JSONField
+from inyoka.utils.user import normalize_username, get_hexdigest,\
+    check_password, gen_activation_key
+from inyoka.markup import parse, render, RenderContext
 
 
 UNUSABLE_PASSWORD = '!$!'
@@ -96,7 +97,7 @@ def reactivate_user(id, email, status, time):
     user = User.objects.get(id=id)
     if not user.is_deleted:
         return {
-            'failed': _(u'The account “%(name)s“ was already reactivated.') %
+            'failed': _(u'The account “%(name)s” was already reactivated.') %
                 {'name': escape(user.username)},
         }
     values = {'email': email,
@@ -113,13 +114,13 @@ def reactivate_user(id, email, status, time):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
-                      note=_(u'The user “%(name)s“ has reactivated his account.')
+                      note=_(u'The user “%(name)s” has reactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
 
     return {
-        'success': _(u'The account “%(name)s“ was reactivated. You will '
+        'success': _(u'The account “%(name)s” was reactivated. You will '
                      u'receive an email to set the new password.')
                      % {'name': escape(user.username)},
     }
@@ -143,7 +144,7 @@ def deactivate_user(user):
 
     userdata = encode_confirm_data(userdata)
 
-    subject = _(u'Deactivation of your account “%(name)s“ on %(sitename)s') \
+    subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
                 % {'name': escape(user.username),
                    'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
@@ -157,7 +158,7 @@ def deactivate_user(user):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=True,
-                      note=_(u'The user “%(name)s“ has deactivated his account.')
+                      note=_(u'The user “%(name)s” has deactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
@@ -245,7 +246,7 @@ def send_activation_mail(user):
         'email':            user.email,
         'activation_key':   gen_activation_key(user)
     })
-    subject = _(u'%(sitename)s – Activation of the user “%(name)s“') \
+    subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
@@ -262,20 +263,29 @@ def send_new_user_password(user):
         'new_password_url': href('portal', 'lost_password',
                                  user.urlsafe_username, new_password_key),
     })
-    subject = _(u'%(sitename)s – New password for “%(name)s“') \
+    subject = _(u'%(sitename)s – New password for “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
 class Group(models.Model):
-    name = models.CharField('Name', max_length=80, unique=True, db_index=True)
-    is_public = models.BooleanField(ugettext_lazy(u'Public profile'))
+    name = models.CharField(ugettext_lazy(u'Group name'), max_length=80,
+                unique=True, db_index=True, error_messages={
+                    'unique': ugettext_lazy(u'This group name is already taken. '
+                                u'Please choose another one.')})
+    is_public = models.BooleanField(ugettext_lazy(u'Public profile'),
+                default=False, help_text=ugettext_lazy(u'Will be shown in the '
+                                    u'group overview and the user profile'))
     _default_group = None
     permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
     icon = models.ImageField(ugettext_lazy(u'Team icon'),
                              upload_to='portal/team_icons',
                              blank=True, null=True)
+
+    class Meta:
+        verbose_name = ugettext_lazy(u'Usergroup')
+        verbose_name_plural = ugettext_lazy(u'Usergroups')
 
     @property
     def icon_url(self):
@@ -297,9 +307,11 @@ class Group(models.Model):
         if self.icon:
             self.icon.delete(save=False)
 
-        std = storage.get_many(('team_icon_height', 'team_icon_width'))
-        max_size = (int(std['team_icon_height']),
-                    int(std['team_icon_width']))
+        std = storage.get_many(('team_icon_width', 'team_icon_height'))
+        # According to PIL.Image:
+        # "The requested size in pixels, as a 2-tuple: (width, height)."
+        max_size = (int(std['team_icon_width']),
+                    int(std['team_icon_height']))
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
@@ -715,9 +727,11 @@ class User(models.Model):
         #: clear the file system
         self.delete_avatar()
 
-        std = storage.get_many(('max_avatar_height', 'max_avatar_width'))
-        max_size = (int(std['max_avatar_height']),
-                    int(std['max_avatar_width']))
+        std = storage.get_many(('team_icon_width', 'team_icon_height'))
+        # According to PIL.Image:
+        # "The requested size in pixels, as a 2-tuple: (width, height)."
+        max_size = (int(std['team_icon_width']),
+                    int(std['team_icon_height']))
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
@@ -779,6 +793,5 @@ class UserData(models.Model):
 
 
 # circ imports
-from inyoka.wiki.parser import parse, render, RenderContext
 from inyoka.utils.urls import href
 from inyoka.utils.storage import storage

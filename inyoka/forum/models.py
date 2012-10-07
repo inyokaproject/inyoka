@@ -29,16 +29,17 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
-from inyoka.utils.files import get_filename
-from inyoka.utils.text import get_new_unique_filename
 from inyoka.utils.database import LockableObject, update_model, model_or_none
 from inyoka.utils.dates import timedelta_to_seconds
-from inyoka.utils.urls import href
-from inyoka.utils.search import search
-from inyoka.utils.local import current_request
 from inyoka.utils.decorators import deferred
+from inyoka.utils.files import get_filename
 from inyoka.utils.imaging import get_thumbnail
+from inyoka.utils.local import current_request
+from inyoka.utils.search import search
+from inyoka.utils.text import get_new_unique_filename
+from inyoka.utils.urls import href
 
+from inyoka.markup import parse, RenderContext
 from inyoka.portal.user import User, Group
 from inyoka.portal.utils import UBUNTU_VERSIONS
 from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \
@@ -46,7 +47,6 @@ from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \
 from inyoka.forum.constants import CACHE_PAGES_COUNT, VERSION_CHOICES, \
     DISTRO_CHOICES, POSTS_PER_PAGE, UBUNTU_DISTROS_LEGACY, \
     SUPPORTED_IMAGE_TYPES
-
 
 _newline_re = re.compile(r'\r?\n')
 
@@ -1327,7 +1327,6 @@ def mark_all_forums_read(user):
 
 
 # Circular imports
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.portal.models import SearchQueue, Subscription
 from inyoka.utils.highlight import highlight_code

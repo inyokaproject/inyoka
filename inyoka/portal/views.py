@@ -33,6 +33,7 @@ from django.utils.html import escape
 from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
 
+from inyoka.markup import parse, RenderContext
 from inyoka.utils import decode_confirm_data, generic
 from inyoka.utils.text import get_random_password, normalize_pagename
 from inyoka.utils.dates import DEFAULT_TIMEZONE, \
@@ -51,7 +52,6 @@ from inyoka.utils.user import check_activation_key
 from inyoka.utils.templating import render_template
 from inyoka.utils.mail import send_mail
 from inyoka.wiki.utils import quote_text
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
@@ -66,7 +66,7 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
      OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
      EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
      EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
-     CreateUserForm, UserMailForm, EditGroupForm, CreateGroupForm
+     CreateUserForm, UserMailForm, EditGroupForm
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
@@ -205,9 +205,9 @@ def register(request):
                 user.save()
 
             messages.success(request,
-                _(u'The username “%(username)s“ was successfully registered. '
+                _(u'The username “%(username)s” was successfully registered. '
                   u'An email with the activation key was sent to '
-                  u'“%(email)s“.') % {
+                  u'“%(email)s”.') % {
                       'username': escape(user.username),
                       'email': escape(user.email)})
 
@@ -229,7 +229,7 @@ def activate(request, action='', username='', activation_key=''):
         user = User.objects.get(username)
     except User.DoesNotExist:
         messages.error(request,
-            _(u'The user “%(username)s“ does not exist.') % {
+            _(u'The user “%(username)s” does not exist.') % {
               u'username': escape(username)})
         return HttpResponseRedirect(href('portal'))
     if not redirect:
@@ -249,7 +249,7 @@ def activate(request, action='', username='', activation_key=''):
                 messages.success(request, _(u'Your account was anonymized.'))
             else:
                 messages.error(request,
-                    _(u'The account of “%(username)s“ was already activated.') %
+                    _(u'The account of “%(username)s” was already activated.') %
                       {'username': escape(username)})
         else:
             messages.error(request, _(u'Your activation key is invalid.'))
@@ -274,7 +274,7 @@ def resend_activation_mail(request, username):
 
     if user.status > 0:
         messages.error(request,
-            _(u'The account “%(username)s“ was already activated.') %
+            _(u'The account “%(username)s” was already activated.') %
               {'username': escape(user.username)})
         return HttpResponseRedirect(href('portal'))
     send_activation_mail(user)
@@ -555,7 +555,7 @@ def user_mail(request, username):
                 settings.INYOKA_SYSTEM_USER_EMAIL,
                 [user.email])
             messages.success(request,
-                _(u'The email to “%(username)s“ was sent successfully.')
+                _(u'The email to “%(username)s” was sent successfully.')
                   % {'username': escape(username)})
             return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
         else:
@@ -577,7 +577,7 @@ def subscribe_user(request, username):
         # there's no such subscription yet, create a new one
         Subscription(user=request.user, content_object=user).save()
         messages.info(request,
-            _(u'You will now be notified about activities of “%(username)s“.')
+            _(u'You will now be notified about activities of “%(username)s”.')
               % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
@@ -593,7 +593,7 @@ def unsubscribe_user(request, username):
         subscription.delete()
         messages.info(request,
             _(u'From now on you won’t be notified anymore about activities of '
-                u'“%(username)s“.') % {'username': user.username})
+                u'“%(username)s”.') % {'username': user.username})
     # redirect the user to the page he last watched
     if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
         return HttpResponseRedirect(request.GET['next'])
@@ -872,7 +872,7 @@ def usercp_userpage(request):
     """
     messages.info(request,
         _(u'You were redirected to our wiki to change your user page. To get '
-            u'back, you can use the link or your browser’s “back“ button.'))
+            u'back, you can use the link or your browser’s “back” button.'))
     return HttpResponseRedirect(href('wiki', settings.WIKI_USER_BASE,
                                      request.user.username, action='edit'))
 
@@ -954,7 +954,7 @@ def user_edit_profile(request, username):
 
             user.save()
             messages.success(request,
-                _(u'The profile of “%(username)s“ was changed successfully')
+                _(u'The profile of “%(username)s” was changed successfully')
                   % {'username': escape(user.username)})
             # redirect to the new username if given
             if user.username != username:
@@ -1017,7 +1017,7 @@ def user_edit_settings(request, username):
                 user.settings[key] = data[key]
             user.save()
             messages.success(request,
-                _(u'The setting of “%(username)s“ were successfully changed.')
+                _(u'The setting of “%(username)s” were successfully changed.')
                   % {'username': escape(user.username)})
     return {
         'user': user,
@@ -1042,7 +1042,7 @@ def user_edit_status(request, username):
                 setattr(user, key, data[key])
             user.save()
             messages.success(request,
-                _(u'The state of “%(username)s“ was successfully changed.')
+                _(u'The state of “%(username)s” was successfully changed.')
                   % {'username': escape(user.username)})
     if user.status > 0:
         activation_link = None
@@ -1067,7 +1067,7 @@ def user_edit_password(request, username):
         user.set_password(data['new_password'])
         user.save()
         messages.success(request,
-            _(u'The password of “%(username)s“ was successfully changed.')
+            _(u'The password of “%(username)s” was successfully changed.')
               % {'username': escape(user.username)})
     return {
         'user': user,
@@ -1128,7 +1128,7 @@ def user_edit_privileges(request, username):
             cache.delete('user_permissions/%s' % user.id)
 
             messages.success(request,
-                _(u'The privileges of “%(username)s“ were successfully '
+                _(u'The privileges of “%(username)s” were successfully '
                   u'changed.') % {'username': escape(user.username)})
         else:
             generic.trigger_fix_errors_message(request)
@@ -1217,7 +1217,7 @@ def user_edit_groups(request, username):
 
             user.save()
             messages.success(request,
-                _(u'The groups of “%(username)s“ were successfully changed.')
+                _(u'The groups of “%(username)s” were successfully changed.')
                   % {'username': escape(user.username)})
         else:
             generic.trigger_fix_errors_message(request)
@@ -1246,7 +1246,7 @@ def user_new(request):
                 password=data['password'],
                 send_mail=data['authenticate'])
             messages.success(request,
-                _(u'The user “%(username)s“ was successfully created. '
+                _(u'The user “%(username)s” was successfully created. '
                   u'You can now edit more details.')
                   % {'username': escape(data['username'])})
             return HttpResponseRedirect(href('portal', 'user', \
@@ -1265,7 +1265,7 @@ def admin_resend_activation_mail(request):
     user = User.objects.get(request.GET.get('user'))
     if user.status != 0:
         messages.error(request,
-            _(u'The account of “%(username)s“ was already activated.')
+            _(u'The account of “%(username)s” was already activated.')
               % {'username': user.username})
     else:
         send_activation_mail(user)
@@ -1434,7 +1434,7 @@ def privmsg_new(request, username=None):
                     recipients.update(users)
                 except Group.DoesNotExist:
                     messages.error(request,
-                        _(u'The group “%(group)s“ does not exist.')
+                        _(u'The group “%(group)s” does not exist.')
                           % {'group': escape(group)})
                     return HttpResponseRedirect(href('portal', 'privmsg'))
 
@@ -1459,7 +1459,7 @@ def privmsg_new(request, username=None):
             except User.DoesNotExist:
                 recipients = None
                 messages.error(request,
-                    _(u'The user “%(username)s“ does not exist.')
+                    _(u'The user “%(username)s” does not exist.')
                       % {'username': escape(recipient)})
 
             if recipients:
@@ -1574,7 +1574,7 @@ class MemberlistView(generic.ListView):
             user = User.objects.get_by_username_or_email(name)
         except User.DoesNotExist:
             messages.error(request,
-                _(u'The user “%(username)s“ does not exist.')
+                _(u'The user “%(username)s” does not exist.')
                   % {'username': escape(name)})
             return HttpResponseRedirect(request.build_absolute_uri())
         else:
@@ -1634,70 +1634,25 @@ def group(request, name, page=1):
 @require_permission('group_edit')
 @templated('portal/group_edit.html')
 def group_edit(request, name=None):
-    def _add_choices(form):
-        form.fields['permissions'].choices = sorted(
-            [(k, v) for k, v in PERMISSION_NAMES.iteritems()],
-            key=lambda p: p[1]
-        )
     new = name is None
-    changed_permissions = False
-    if new:
-        group = Group()
-        form_class = CreateGroupForm
-    else:
+    group = None
+    if name:
         try:
             group = Group.objects.get(name=name)
         except Group.DoesNotExist:
             messages.error(request,
-                _(u'The group “%(group)s“ does not exist.')
+                _(u'The group “%(group)s” does not exist.')
                   % {'group': escape(name)})
             return HttpResponseRedirect(href('portal', 'groups'))
-        form_class = EditGroupForm
 
-    icon_mh, icon_mw = storage.get_many(('team_icon_height',
-                                         'team_icon_width')).itervalues()
+    std = storage.get_many(('team_icon_width', 'team_icon_height'))
+    icon_mw = int(std['team_icon_width'])
+    icon_mh = int(std['team_icon_height'])
 
     if request.method == 'POST':
-        form = form_class(request.POST, request.FILES)
-        _add_choices(form)
+        form = EditGroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
-            data = form.cleaned_data
-            group.name = data['name']
-            group.is_public = data['is_public']
-
-            if data['delete_icon']:
-                group.icon.delete(save=False)
-
-            if data['icon'] and not data['import_icon_from_global']:
-                icon_resized = group.save_icon(data['icon'])
-                if icon_resized:
-                    messages.info(request,
-                        _(u'The icon you uploaded was scaled to '
-                          '%(w)dx%(h)d pixels. Please note that this '
-                          'may result in lower quality.') % {
-                              'w': icon_mw,
-                              'h': icon_mh,
-                          })
-            if data['import_icon_from_global']:
-                if group.icon:
-                    group.icon.delete(save=False)
-
-                icon_path = 'portal/team_icons/team_%s.%s' % (group.name,
-                            storage['team_icon'].split('.')[-1])
-                if storage['team_icon']:
-                    gicon = default_storage.open(storage['team_icon'])
-                    group.icon.save(icon_path, gicon)
-                    gicon.close()
-                else:
-                    messages.error(request, _(u'A global team icon was not yet defined.'))
-
-            # permissions
-            permissions = 0
-            for perm in data['permissions']:
-                permissions |= int(perm)
-            if permissions != group.permissions:
-                changed_permissions = True
-                group.permissions = permissions
+            group = form.save()
 
             #: forum privileges
             for key, value in request.POST.iteritems():
@@ -1727,38 +1682,22 @@ def group_edit(request, name=None):
                         else:
                             privilege.delete()
 
-            # save changes to the database
-            group.save()
-
-            # clear permission cache of users if needed
-            if changed_permissions:
-                user_ids = User.objects.filter(groups=group).values_list('id', flat=True)
-                keys = ['user_permissions/%s' % uid for uid in user_ids]
-                cache.delete_many(keys)
-
             if new:
-                msg = _(u'The group “%(group)s“ was created successfully.')
+                msg = _(u'The group “%(group)s” was created successfully.')
             else:
-                msg = _(u'The group “%(group)s“ was changed successfully.')
+                msg = _(u'The group “%(group)s” was changed successfully.')
             messages.success(request, (msg % {'group': group.name}))
             if new:
                 return HttpResponseRedirect(group.get_absolute_url('edit'))
     else:
-        form = form_class(initial=not new and {
-            'name': group.name,
-            'permissions': filter(lambda p: p & group.permissions, PERMISSION_NAMES.keys()),
-            'is_public': group.is_public,
-        } or {
-            'is_public': True,
-        })
-        _add_choices(form)
+        form = EditGroupForm(instance=group)
 
     # collect forum privileges
     forum_privileges = []
     forums = Forum.objects.all()
     for forum in forums:
         try:
-            privilege = Privilege.objects.get(forum=forum, group=group)
+            privilege = Privilege.objects.get(forum=forum, group=group, user=None)
         except Privilege.DoesNotExist:
             privilege = None
 
@@ -2128,9 +2067,9 @@ def page_edit(request, page=None):
             if 'send' in request.POST:
                 page = form.save()
                 if new:
-                    msg = _(u'The page “%(page)s“ was created successfully.')
+                    msg = _(u'The page “%(page)s” was created successfully.')
                 else:
-                    msg = _(u'The page “%(page)s“ was changed successfully.')
+                    msg = _(u'The page “%(page)s” was changed successfully.')
                 messages.success(request, msg % {'page': page.title})
                 return HttpResponseRedirect(href('portal', page.key))
     else:

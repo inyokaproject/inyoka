@@ -98,7 +98,7 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(mock_send.call_count, 1) #only the topic author
         mock_send.assert_called_with(self.user, 'topic_moved',
-            _(u'Your topic “%(topic)s“ was moved.') % {'topic': 'A test Topic'}, {
+            _(u'Your topic “%(topic)s” was moved.') % {'topic': 'A test Topic'}, {
                 'username': self.user.username, 'topic': self.topic,
                 'mod': self.admin.username, 'forum_name': 'Forum 3',
                 'old_forum_name': 'Forum 2'})

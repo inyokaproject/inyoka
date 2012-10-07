@@ -10,9 +10,10 @@
     :license: GNU GPL.
 """
 from django.test import TestCase
-from inyoka.wiki.parser import Parser, nodes
-from inyoka.wiki.parser.transformers import AutomaticParagraphs, \
+
+from inyoka.markup.transformers import AutomaticParagraphs, \
      FootnoteSupport, HeadlineProcessor, get_smiley_re, _smiley_re
+from inyoka.markup import Parser, nodes
 
 
 def parse(source, transformer):

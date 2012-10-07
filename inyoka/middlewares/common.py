@@ -61,10 +61,6 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
         return CommonMiddleware.process_request(self, request)
 
     def process_response(self, request, response):
-        """
-        Hook our X-Powered header in (and an easteregg header).  And clean up
-        the werkzeug local.
-        """
         response = CommonMiddleware.process_response(self, request, response)
 
         # update the cache control

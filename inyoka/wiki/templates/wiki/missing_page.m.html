@@ -17,13 +17,13 @@
   {%- if not page %}
     <p>
       {%- trans title=title|e -%}
-        The article “{{ title }}“ does not exist yet.
+        The article “{{ title }}” does not exist yet.
       {%- endtrans -%}
     </p>
   {%- else %}
     <p>
       {%- trans title=title|e -%}
-        The article “{{ title }}“ was deleted. You can restore it or create a new one in the action menu.
+        The article “{{ title }}” was deleted. You can restore it or create a new one in the action menu.
       {%- endtrans -%}
     </p>
   {%- endif %}

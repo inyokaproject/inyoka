@@ -264,10 +264,10 @@ class EditForumForm(forms.Form):
     def clean_slug(self):
         data = self.cleaned_data['slug']
         if data == 'new':
-            raise forms.ValidationError(ugettext_lazy(u'“new“ is not a valid forum slug'))
+            raise forms.ValidationError(ugettext_lazy(u'“new” is not a valid forum slug'))
 
         slug = self.forum.slug if self.forum else ''
         if data != slug and Forum.objects.filter(slug=data).exists():
             raise forms.ValidationError(_(u'Please select another slug, '
-                u'“%(slug)s“ is already in use.') % {'slug': escape(data)})
+                u'“%(slug)s” is already in use.') % {'slug': escape(data)})
         return data
