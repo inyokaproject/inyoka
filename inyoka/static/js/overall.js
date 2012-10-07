@@ -281,8 +281,9 @@ $(document).ready(function () {
 
   $('div.code').add('pre').each(function () {
     if (this.clientHeight < this.scrollHeight) {
-      $(this).before('<div class="codeblock_resizer" title="vergrößern">vergrößern</div>')
-             .css('height', '15em').css('max-height', 'none')
+			var div = $('<div><div class="codeblock_resizer">vergrößern</div></div>')
+				.css('width', $(this).width()).insertBefore($(this));
+      $(this).css('height', '15em').css('max-height', 'none')
              .data('original_height', this.clientHeight);
     }
   });
@@ -290,19 +291,19 @@ $(document).ready(function () {
   (function () {
     if (navigator.appName.toLowerCase() == 'konqueror') return;
     $('.codeblock_resizer').click(function () {
-      $codeblock = $(this).next();
+      $codeblock = $(this).parent().next();
       if (!$codeblock.hasClass('codeblock_expanded')) {
         $codeblock.addClass('codeblock_expanded');
         $codeblock.animate({
           'height': $codeblock[0].scrollHeight
         }, 500);
-        this.innerHTML = this.title = 'verkleinern';
+        $(this).text('verkleinern');
       } else {
         $codeblock.removeClass('codeblock_expanded');
         $codeblock.animate({
           'height': $codeblock.data('original_height')
         }, 500);
-        this.innerHTML = this.title = 'vergrößern';
+        $(this).text('vergrößern');
       }
     });
   })();
