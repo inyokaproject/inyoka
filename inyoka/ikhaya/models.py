@@ -240,7 +240,7 @@ class Article(models.Model, LockableObject):
             simple = striptags(text)
         else:
             simple = parse(text).text
-        return simple
+        return simple.strip()
 
     def _render(self, text, key):
         """Render a text that belongs to this Article to HTML"""
