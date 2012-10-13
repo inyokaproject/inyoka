@@ -52,6 +52,9 @@ from inyoka.markup.parsertools import MultiMap, flatten_iterator
 from inyoka.utils.imaging import get_thumbnail, parse_dimensions
 
 
+ALL_MACROS = {}
+
+
 def get_macro(name, args, kwargs):
     """
     Instanciate a new macro or return `None` if it doesn't exist.  This is
@@ -66,6 +69,15 @@ def get_macro(name, args, kwargs):
     return cls(args, kwargs)
 
 
+def register(cls):
+    global ALL_MACROS
+    names = cls.names
+    for name in names:
+        if name in ALL_MACROS:
+            raise RuntimeError(u'Macro name "%s" already registered' % name)
+        ALL_MACROS[name] = cls
+
+
 class Macro(object):
     """
     Baseclass for macros.  All macros should extend from that or implement
@@ -73,6 +85,10 @@ class Macro(object):
     """
 
     __metaclass__ = ArgumentCollector
+
+    #: The canonical names for this macro. A macro may have multiple aliases
+    #: e.g to support multiple languages.
+    names = ()
 
     #: if a macro is static this has to be true.
     is_static = False
@@ -99,23 +115,9 @@ class Macro(object):
     __repr__ = debug_repr
 
     @property
-    def macro_name(self):
-        """The name of the macro."""
-        return REVERSE_MACROS.get(self.__class__)
-
-    @property
     def argument_string(self):
         """The argument string."""
         return dump_argstring(self.argument_def)
-
-    @property
-    def wiki_representation(self):
-        """The macro in wiki markup."""
-        args = self.argument_string
-        return u'[[%s%s]]' % (
-            self.macro_name,
-            args and (u'(%s)' % args) or ''
-        )
 
     def render(self, context, format):
         """Dispatch to the correct render method."""
@@ -183,6 +185,8 @@ class RecentChanges(Macro):
     Show a table of the recent changes.  This macro does only work for HTML
     so far, all other formats just get an empty text back.
     """
+
+    names = (u'RecentChanges', u'LetzteÄnderungen')
 
     arguments = (
         ('per_page', int, 50),
@@ -328,6 +332,8 @@ class TableOfContents(TreeMacro):
     Show a table of contents.  We do not embedd the TOC in a DIV so far and
     there is also no title on it.
     """
+
+    names = (u'TableOfContents', u'Inhaltsverzeichnis')
     stage = 'final'
     is_block_tag = True
     arguments = (
@@ -389,6 +395,7 @@ class PageCount(Macro):
     """
     Return the number of existing pages.
     """
+    name = (u'PageCount', 'Seitenzahl')
 
     def build_node(self, context, format):
         return nodes.Text(unicode(Page.objects.get_page_count()))
@@ -398,7 +405,7 @@ class PageList(Macro):
     """
     Return a list of pages.
     """
-
+    names = ('PageList', 'Seitenliste')
     is_block_tag = True
     arguments = (
         ('pattern', unicode, ''),
@@ -430,7 +437,7 @@ class AttachmentList(Macro):
     Return a list of attachments or attachments below
     a given page.
     """
-
+    names = ('AttachmentList', 'Anhänge')
     is_block_tag = True
     arguments = (
         ('page', unicode, ''),
@@ -455,7 +462,7 @@ class OrphanedPages(Macro):
     """
     Return a list of orphaned pages.
     """
-
+    names = (u'OrphanedPages', u'VerwaisteSeiten')
     is_block_tag = True
 
     def build_node(self, context, format):
@@ -472,7 +479,7 @@ class MissingPages(Macro):
     """
     Return a list of missing pages.
     """
-
+    names = (u'MissingPages', u'FehlendeSeiten')
     is_block_tag = True
 
     def build_node(self, context, format):
@@ -489,7 +496,7 @@ class RedirectPages(Macro):
     """
     Return a list of pages that redirect to somewhere.
     """
-
+    names = (u'RedirectPages', u'Weiterleitungen')
     is_block_tag = True
 
     def build_node(self, context, format):
@@ -513,6 +520,7 @@ class PageName(Macro):
     knows about that.  This is only useful when rendered from
     a wiki page.
     """
+    names = (u'PageName', u'Seitenname')
 
     def build_node(self, context, format):
         if context.wiki_page:
@@ -525,7 +533,7 @@ class NewPage(Macro):
     Show a small form to create a new page below a page or in
     top level and with a given template.
     """
-
+    names = (u'NewPage', u'NeueSeite')
     is_static = True
     arguments = (
         ('base', unicode, ''),
@@ -551,7 +559,7 @@ class SimilarPages(Macro):
     Show a list of pages similar to the page name given or the
     page from the render context.
     """
-
+    names = (u'SimilarPages', u'ÄhnlicheSeiten')
     is_block_tag = True
     arguments = (
         ('page', unicode, ''),
@@ -587,7 +595,7 @@ class TagCloud(Macro):
     Show a tag cloud (or a tag list if the ?tag parameter is defined in
     the URL).
     """
-
+    names = (u'TagCloud', u'TagWolke')
     is_block_tag = True
     arguments = (
         ('max', int, 100),
@@ -628,7 +636,7 @@ class TagList(Macro):
     """
     Show a taglist.
     """
-
+    names = ('TagList', u'TagListe')
     is_block_tag = True
     arguments = (
         ('tag', unicode, ''),
@@ -669,7 +677,7 @@ class Include(Macro):
     Include a page.  This macro works dynamically thus the included headlines
     do not appear in the TOC.
     """
-
+    names = (u'Include', u'Einbinden')
     is_block_tag = True
     arguments = (
         ('page', unicode, ''),
@@ -703,7 +711,7 @@ class Template(Macro):
     """
     Include a page as template and expand it.
     """
-
+    names = (u'Template', u'Vorlage')
     has_argument_parser = True
     is_static = True
 
@@ -727,7 +735,7 @@ class Attachment(Macro):
     """
     This macro displays a download link for an attachment.
     """
-
+    names = (u'Attachment', u'Anhang')
     arguments = (
         ('attachment', unicode, u''),
         ('text', unicode, u''),
@@ -766,7 +774,7 @@ class Picture(Macro):
     by the fact that the parser does not know at parse time on which page
     it is operating.
     """
-
+    names = (u'Picture', u'Bild')
     arguments = (
         ('picture', unicode, u''),
         ('size', unicode, u''),
@@ -858,7 +866,7 @@ class Date(Macro):
     This macro accepts an `iso8601` string or unix timestamp (the latter in
     UTC) and formats it using the `format_datetime` function.
     """
-
+    names = (u'Date', u'Datum')
     arguments = (
         ('date', unicode, None),
     )
@@ -890,7 +898,7 @@ class Newline(Macro):
     """
     This macro just forces a new line.
     """
-
+    names = (u'BR',)
     is_static = True
 
     def build_node(self):
@@ -901,7 +909,7 @@ class Anchor(Macro):
     """
     This macro creates an anchor accessible by url.
     """
-
+    names = (u'Anchor', u'Anker')
     is_static = True
     arguments = (
         ('id', unicode, None),
@@ -919,7 +927,7 @@ class RandomPageList(Macro):
     """
     Return random a list of pages.
     """
-
+    names = (u'RandomPageList', u'Zufallsseite')
     is_block_tag = True
     arguments = (
         ('pages', int, 10),
@@ -955,6 +963,7 @@ class RandomPageList(Macro):
 
 
 class Span(Macro):
+    names = (u'SPAN',)
     is_static = True
     arguments = (
         ('content', unicode, ''),
@@ -973,6 +982,7 @@ class Span(Macro):
 
 
 class RandomKeyValue(Macro):
+    names = (u'RandomKeyValue', u'ZufallsZitat', u'ZufälligerServer')
     arguments = (
         ('page', unicode, u''),
         ('key', unicode, u''),
@@ -1048,8 +1058,8 @@ class FilterByMetaData(Macro):
     Filter pages by their metadata
     """
 
+    names = (u'FilterByMetaData', u'MetaFilter')
     is_block_tag = True
-
     arguments = (
         ('filters', unicode, ''),
     )
@@ -1104,36 +1114,28 @@ class FilterByMetaData(Macro):
 
         return result
 
-#: this mapping is used by the `get_macro()` function to map public
-#: macro names to the classes.
-ALL_MACROS = {
-    u'Anhänge':             AttachmentList,
-    u'Anker':               Anchor,
-    u'BR':                  Newline,
-    u'Bild':                Picture,
-    u'Anhang':              Attachment,
-    u'Datum':               Date,
-    u'Einbinden':           Include,
-    u'FehlendeSeiten':      MissingPages,
-    u'Inhaltsverzeichnis':  TableOfContents,
-    u'LetzteÄnderungen':    RecentChanges,
-    u'NeueSeite':           NewPage,
-    u'Seitenliste':         PageList,
-    u'Seitenname':          PageName,
-    u'Seitenzahl':          PageCount,
-    u'TagListe':            TagList,
-    u'TagWolke':            TagCloud,
-    u'VerwaisteSeiten':     OrphanedPages,
-    u'Vorlage':             Template,
-    u'Weiterleitungen':     RedirectPages,
-    u'Zufallsseite':        RandomPageList,
-    u'ÄhnlicheSeiten':      SimilarPages,
-    u'SPAN':                Span,
-    u'ZufallsZitat':        RandomKeyValue,
-    u'ZufälligerServer':    RandomKeyValue,
-    u'MetaFilter':          FilterByMetaData,
-}
 
-
-#: automatically updated reverse mapping of macros
-REVERSE_MACROS = {value: key for key, value in ALL_MACROS.iteritems()}
+register(AttachmentList)
+register(Anchor)
+register(Newline)
+register(Picture)
+register(Attachment)
+register(Date)
+register(Include)
+register(MissingPages)
+register(TableOfContents)
+register(RecentChanges)
+register(NewPage)
+register(PageList)
+register(PageName)
+register(PageCount)
+register(TagList)
+register(TagCloud)
+register(OrphanedPages)
+register(Template)
+register(RedirectPages)
+register(RandomPageList)
+register(SimilarPages)
+register(Span)
+register(RandomKeyValue)
+register(FilterByMetaData)
