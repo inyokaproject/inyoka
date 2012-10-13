@@ -150,6 +150,7 @@ class RenderContext(object):
     def __init__(self, request=None, wiki_page=None, simplified=False,
                  raw=False, application=None, forum_post=None):
         self.request = request
+        #TODO: kill wiki_page and forum_post
         self.wiki_page = wiki_page
         self.forum_post = forum_post
         self.simplified = simplified
