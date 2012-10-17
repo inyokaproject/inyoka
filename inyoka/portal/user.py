@@ -37,7 +37,7 @@ from inyoka.markup import parse, render, RenderContext
 
 
 UNUSABLE_PASSWORD = '!$!'
-_ANONYMOUS_USER = _SYSTEM_USER = None
+_ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
 DEFAULT_GROUP_ID = 1 # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
     ('admin_panel', u'Not in use anymore'), #TODO: DEPRECATED
@@ -277,7 +277,6 @@ class Group(models.Model):
     is_public = models.BooleanField(ugettext_lazy(u'Public profile'),
                 default=False, help_text=ugettext_lazy(u'Will be shown in the '
                                     u'group overview and the user profile'))
-    _default_group = None
     permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
     icon = models.ImageField(ugettext_lazy(u'Team icon'),
                              upload_to='portal/team_icons',
@@ -337,9 +336,9 @@ class Group(models.Model):
     @classmethod
     def get_default_group(self):
         """Return a default group for all registered users."""
-        if not Group._default_group:
-            Group._default_group = Group.objects.get(id=DEFAULT_GROUP_ID)
-        return Group._default_group
+        if not _DEFAULT_GROUP:
+            _DEFAULT_GROUP = Group.objects.get(id=DEFAULT_GROUP_ID)
+        return _DEFAULT_GROUP
 
 
 class UserManager(models.Manager):

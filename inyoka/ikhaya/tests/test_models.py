@@ -23,14 +23,15 @@ class TestArticleModel(TestCase):
                 category=self.category1, intro='Intro 1')
         self.article1.save()
 
-        self.article2 = Article(pub_date=date(2008, 7, 18), text='Text 2',
+        self.article2 = Article(pub_date=date(2008, 7, 18), text="'''Text 2'''",
                 pub_time=time(0, 0, 0), author=self.user, subject='Article 2',
                 category=self.category2, intro='Intro 2')
         self.article2.save()
 
-        self.article3 = Article(pub_date=date(2009, 4, 1), text='Text 3',
+        self.article3 = Article(pub_date=date(2009, 4, 1), text='<a>Text 3</a>',
                 pub_time=time(12, 34, 56), author=self.user,
-                subject='Article 3', category=self.category1, intro='Intro 3')
+                subject='Article 3', category=self.category1, intro='Intro 3',
+                is_xhtml=True)
         self.article3.save()
 
     def test_automatic_slugs(self):
@@ -46,3 +47,15 @@ class TestArticleModel(TestCase):
 
         self.assertEqual(self.article3.slug, 'article')
         self.assertEqual(self.article3.stamp, '2009/04/01')
+
+    def test_simplify_xhtml(self):
+        self.assertEqual(self.article3.simplified_text, 'Text 3')
+
+    def test_simplify_wiki_markup(self):
+        self.assertEqual(self.article2.simplified_text, 'Text 2')
+
+    def test_simplify_does_strip(self):
+        _old_text = self.article1.text
+        self.article1.text = 'Text 1   '
+        self.assertEqual(self.article1.simplified_text, 'Text 1')
+        self.article1.text = _old_text

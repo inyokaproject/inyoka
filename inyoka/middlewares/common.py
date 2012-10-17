@@ -89,7 +89,10 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
 
 
 class MobileDetectionMiddleware(BaseMobileDetectionMiddleware):
-        user_agents_test_search = "(?:up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|windows ce|pda|mobile|mini|palm|netfront|fennec)"
+    agents = ('up.browser', 'up.link', 'mmp', 'symbian', 'smartphone',
+              'midp', 'wap', 'phone', 'windows ce', 'pda', 'mobile',
+              'mini', 'palm', 'netfront', 'fennec')
+    user_agents_test_search = "(?:%(agents)s)" % {'agents': '|'.join(agents)}
 
 
 # import all application modules so that we get bootstrapping
