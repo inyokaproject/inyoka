@@ -1,9 +1,9 @@
 #-*- coding: utf-8 -*-
-from django.test import TestClient
+from django.test import TestCase
 from inyoka.markup import macros
 
 
-class TestWikiMacros(TestClient):
+class TestWikiMacros(TestCase):
 
     def test_recent_changes_registered(self):
         gm = macros.get_macro
