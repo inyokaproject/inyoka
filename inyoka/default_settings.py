@@ -318,5 +318,9 @@ CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
 
+TEST_RUNNER = 'discover_runner.DiscoverRunner'
+from os import path
+TEST_DISCOVER_TOP_LEVEL = path.dirname(path.dirname(__file__))
+
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
