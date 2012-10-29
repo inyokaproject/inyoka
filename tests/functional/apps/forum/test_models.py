@@ -198,8 +198,8 @@ class TestPostSplit(TestCase):
 
         self.assertEqual(Topic.objects.filter(id=self.topic1.id).count(), 0)
         self.assertEqual(t2.post_count, 20)
-        self.assertEqual(t2.first_post, self.self.t2_posts[0].id)
-        self.assertEqual(t2.last_post, self.self.t1_posts[9].id)
+        self.assertEqual(t2.first_post.id, self.t2_posts[0].id)
+        self.assertEqual(t2.last_post.id, self.t1_posts[9].id)
         post_ids = [p.id for k,p in self.t2_posts.items()] + \
                    [p.id for k,p in self.t1_posts.items()]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
@@ -265,7 +265,7 @@ class PostDeletionTest(TestCase):
         # forum.last_post is correct
         forums = [f for f in topic.forum.parents + [topic.forum] if f.last_post]
         last_post_ids = [f.last_post_id for f in forums]
-        self.assertEqual(last_post_ids, [2,2])
+        self.assertEqual(last_post_ids, [2, 2])
 
     def test_post_delete_at_center(self):
         # trigger post deletion
@@ -281,4 +281,4 @@ class PostDeletionTest(TestCase):
         # forum.last_post is correct
         forums = [f for f in topic.forum.parents + [topic.forum] if f.last_post]
         last_post_ids = [f.last_post_id for f in forums]
-        self.assertEqual(last_post_ids, [3,3])
+        self.assertEqual(last_post_ids, [3, 3])
