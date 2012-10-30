@@ -335,6 +335,7 @@ class UserCPProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
+        self.admin_mode = kwargs.pop('admin_mode', False)
         initial = kwargs['initial'] = {}
         lat = instance.coordinates_lat
         long = instance.coordinates_long
@@ -430,11 +431,14 @@ class UserCPProfileForm(forms.ModelForm):
         if self.old_avatar and self.change_avatar:
             default_storage.delete(self.old_avatar)
 
-        if data['email'] != self.old_email:
-            send_new_email_confirmation(user, data['email'])
-            messages.info(request,
-                _(u'You’ve been sent an email to confirm your new email '
-                  u'address.'))
+        if self.admin_mode:
+            user.email = data['email']
+        else:
+            if data['email'] != self.old_email:
+                send_new_email_confirmation(user, data['email'])
+                messages.info(request,
+                    _(u'You’ve been sent an email to confirm your new email '
+                      u'address.'))
 
         if data['coordinates']:
             user.coordinates_lat, user.coordinates_long = \
@@ -464,7 +468,7 @@ class EditUserProfileForm(UserCPProfileForm):
                   u'alphanumeric chars and “-” and “ ” are allowed.')
             )
         exists = User.objects.filter(username=username).exists()
-        if (self.user.username != username and exists):
+        if (self.instance.username != username and exists):
             raise forms.ValidationError(
                 _(u'A user with this name already exists.'))
         return username

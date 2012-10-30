@@ -867,9 +867,10 @@ def user_edit_profile(request, username):
     if username != user.urlsafe_username:
         return HttpResponseRedirect(user.get_absolute_url('admin', 'profile'))
 
-    form = EditUserProfileForm(instance=user)
+    form = EditUserProfileForm(instance=user, admin_mode=True)
     if request.method == 'POST':
-        form = EditUserProfileForm(request.POST, request.FILES, instance=user)
+        form = EditUserProfileForm(request.POST, request.FILES,
+                                   instance=user, admin_mode=True)
         if form.is_valid():
             user = form.save(request)
             messages.success(request,
