@@ -12,18 +12,21 @@ $(document).ready(function() {
   $('.attachments ul').hide()
   $('.attachments .title').click(function() {
     $(this).next('ul').toggle()
-  });
+  })
 
   // expand and collapse button for categories
   $('a.collapse').click(function() {
-    $(this).next().toggle();
+    $(this).next().toggle()
     // TODO: send the toggled categroy to the server and check for already
     // hidden ones
     /*$.get('/', {
       __service__: 'forum.toggle_categories',
       hidden:
     }); */
-    return false;
+    return false
   });
-
-});
+  // collapse all categories by default
+  $('a.collapse').each(function() {
+    $(this).next().toggle()
+  })
+})
