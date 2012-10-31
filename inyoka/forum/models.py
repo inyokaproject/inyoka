@@ -168,6 +168,7 @@ class ForumManager(models.Manager):
         forums = sorted(forums, key=attrgetter(attr))
         return forums
 
+
 class TopicManager(models.Manager):
 
     def prepare_for_overview(self, topic_ids):
@@ -759,20 +760,23 @@ class Post(models.Model, LockableObject):
 
         # update topic.last_post_id
         if self.pk == self.topic.last_post_id:
-            new_lp_id = Post.objects.filter(topic=self.topic)\
+            new_lp_ids = Post.objects.filter(topic=self.topic)\
                 .exclude(pk=self.pk).order_by('-position')\
-                .values_list('id', flat=True)[0]
+                .values_list('id', flat=True)
+            new_lp_id = new_lp_ids[0] if new_lp_ids else None
             update_model(self.topic, last_post=model_or_none(new_lp_id, self))
 
         # search for a new last post for al forums in the chain up.
         # We actually cheat here and set the newest post from the current
         # forum for all forums.
         if self.pk == self.topic.forum.last_post_id:
-            new_lp_id = Topic.objects.filter(forum=self.topic.forum)\
+            new_lp_ids = Topic.objects.filter(forum=self.topic.forum)\
                 .exclude(last_post=self).order_by('-last_post')\
-                .values_list('last_post', flat=True)[0]
+                .values_list('last_post', flat=True)
+            new_lp_id = new_lp_ids[0] if new_lp_ids else None
             lpf = list(Forum.objects.filter(last_post=self).all())
             update_model(lpf, last_post=model_or_none(new_lp_id, self))
+            self.topic.forum.last_post_id = new_lp_id
             cache.delete_many('forum/forums/%s' % f.slug for f in lpf)
 
         # decrement post_counts
