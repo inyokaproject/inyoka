@@ -22,4 +22,15 @@ $(document).ready(function() {
       $('#top_menu').hide()
     }
   })
+
+  $('.pagination').each(function() {
+    $(this).find('select').change(function() {
+      var page = $(this).find('option:selected').text()
+      url = $(this).parent().find('span.link_base').text()
+      if (page != '1') {
+        url += page
+      }
+      window.location = url
+    })
+  })
 })
