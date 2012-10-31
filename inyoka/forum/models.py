@@ -750,6 +750,14 @@ class Post(models.Model, LockableObject):
         self.save()
 
     def delete(self, *args, **kwargs):
+        """Delete the post and apply environmental changes.
+
+        This method recalculates the post_count, updates the
+        last and first posts of all parent forums.
+
+        Note: The cache for all parent forums is explicitely deleted
+              to update last/first post properly.
+        """
         if not self.topic:
             return super(Post, self).delete()
 
@@ -766,19 +774,6 @@ class Post(models.Model, LockableObject):
             new_lp_id = new_lp_ids[0] if new_lp_ids else None
             update_model(self.topic, last_post=model_or_none(new_lp_id, self))
 
-        # search for a new last post for al forums in the chain up.
-        # We actually cheat here and set the newest post from the current
-        # forum for all forums.
-        if self.pk == self.topic.forum.last_post_id:
-            new_lp_ids = Topic.objects.filter(forum=self.topic.forum)\
-                .exclude(last_post=self).order_by('-last_post')\
-                .values_list('last_post', flat=True)
-            new_lp_id = new_lp_ids[0] if new_lp_ids else None
-            lpf = list(Forum.objects.filter(last_post=self).all())
-            update_model(lpf, last_post=model_or_none(new_lp_id, self))
-            self.topic.forum.last_post_id = new_lp_id
-            cache.delete_many('forum/forums/%s' % f.slug for f in lpf)
-
         # decrement post_counts
         forums = self.topic.forum.parents + [self.topic.forum]
         update_model(self.topic, post_count=F('post_count') - 1)
@@ -787,6 +782,21 @@ class Post(models.Model, LockableObject):
         # decrement position
         Post.objects.filter(position__gt=self.position, topic=self.topic) \
                     .update(position=F('position') - 1)
+
+        forums = list(Forum.objects.filter(last_post=self).all())
+
+        # search for a new last post for al forums in the chain up.
+        # We actually cheat here and set the newest post from the current
+        # forum for all forums.
+        if self.pk == self.topic.forum.last_post_id:
+            new_lp_ids = Topic.objects.filter(forum=self.topic.forum)\
+                .exclude(last_post=self).order_by('-last_post')\
+                .values_list('last_post', flat=True)
+            new_lp_id = new_lp_ids[0] if new_lp_ids else None
+            update_model(forums, last_post=model_or_none(new_lp_id, self))
+            self.topic.forum.last_post_id = new_lp_id
+
+        cache.delete_many('forum/forums/%s' % f.slug for f in forums)
 
         return super(Post, self).delete()
 

@@ -278,7 +278,7 @@ class PostDeletionTest(TestCase):
         # trigger post deletion
         Post.objects.get(pk=3).delete()
         # ensure cache is properly pruned
-        data = cache.get_many(['forum/forums/%s' % s for s in forum_cache_keys])
+        data = cache.get_many(forum_cache_keys)
         self.assertEqual(data, {})
 
         # last post got changed

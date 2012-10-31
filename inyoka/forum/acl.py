@@ -108,6 +108,7 @@ def get_forum_privileges(user, forum):
 
 
 def _get_privilege_map(user, forum_ids):
+    from inyoka.forum.models import Privilege, Forum
     group_ids = user.groups.values_list('id', flat=True)
 
     cols = ('forum__id', 'user__id', 'group__id', 'positive', 'negative')
@@ -218,4 +219,3 @@ filter_invisible = lambda u, f=None, priv=CAN_READ, perm=None: filter(u, f, priv
 
 # circular imports
 from inyoka.portal.user import DEFAULT_GROUP_ID
-from inyoka.forum.models import Privilege, Forum
