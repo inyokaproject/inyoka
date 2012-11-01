@@ -188,36 +188,90 @@ class TableOfContents(TreeMacro):
         self.list_type = list_type
 
     def build_node(self, tree):
-        result = nodes.List(self.list_type)
-        stack = [result]
-        normalized_level = 0
-        last_level = 0
-        for headline in tree.query.by_type(nodes.Headline):
-            if not headline.level == last_level:
-                if headline.level > normalized_level:
-                    normalized_level += 1
-                elif headline.level < normalized_level:
-                    normalized_level -= (normalized_level - headline.level)
-            if normalized_level > self.depth:
-                continue
-            elif normalized_level > len(stack):
-                for x in xrange(normalized_level - len(stack)):
-                    node = nodes.List(self.list_type)
-                    if stack[-1].children:
-                        stack[-1].children[-1].children.append(node)
-                    else:
-                        result.children.append(nodes.ListItem([node]))
-                    stack.append(node)
-            elif normalized_level < len(stack):
-                for x in xrange(len(stack) - normalized_level):
-                    stack.pop()
-            ml = normalized_level*((45-self.depth-normalized_level)/(normalized_level or 1))
-            text = len(headline.text)>ml and headline.text[:ml]+'...' or \
+        """Queries for all :cls:`nodes.Headline` nodes and constructs a
+        :cls:`nodes.List` representing the headlines. The optimal result
+        will look like::
+
+            = Foo1 =
+            == Bar1 ==
+            == Bar2 ==
+            === Buz1 ===
+            = Foo2 =
+            == Bar3 ==
+
+            1. Foo1
+              1. Bar1
+              2. Bar2
+                1. Buz1
+            2. Foo2
+              1. Bar3
+
+        But due to some reasons, there are situations where the headlines
+        are not used as one would expect. The level is increased by something
+        larger 1 rather than 1::
+
+            = Foo1 =
+            === Buz1 ===
+            == Bar1 ==
+            === Buz1 ===
+            = Foo2 =
+            == Bar3 ==
+
+            1. Foo1
+                1. Buz1
+              2. Bar1
+                1. Baz1
+            2. Foo2
+              1. Bar3
+        """
+
+        def headline_to_listitem(headline):
+            ml = 42 - (headline.level - 1) * 2
+            text = len(headline.text) > ml and headline.text[:ml] + '...' or \
                    headline.text
             caption = [nodes.Text(text)]
             link = nodes.Link('#' + headline.id, caption)
-            stack[-1].children.append(nodes.ListItem([link]))
+            return nodes.ListItem([link])
+
+        result = nodes.List(self.list_type)
+        stack = [result]
+        last_level = 1
+        for headline in tree.query.by_type(nodes.Headline):
+            # we want to show headlines up to level self.depth; not more
+            if headline.level > self.depth:
+                continue
+
+            # the current headline has the same level as the previous one.
+            # So we append it to the most recent list on the stack.
+            if headline.level == last_level:
+                stack[-1].children.append(headline_to_listitem(headline))
+            # if the headline is indented compared to the previous one
+            # we need to check for the difference between those levels
+            # (see second example above)
+            elif headline.level > last_level:
+                for i in xrange(headline.level - last_level - 1):
+                    stack.append(nodes.List(self.list_type))
+                    stack[-1].children.append(nodes.ListItem(style='list-style: none'))
+                stack.append(nodes.List(self.list_type))
+                stack[-1].children.append(headline_to_listitem(headline))
+            # we are unindenting the headline level. All lists have to be
+            # popped from the stack up to the current level
+            else: # headline.level < last_level
+                for i in xrange(last_level - headline.level):
+                    n = stack.pop()
+                    if stack[-1].children:
+                        stack[-1].children[-1].children.append(n)
+                    else:
+                        stack[-1].children.append(nodes.ListItem([n], style='list-style: none'))
+                stack[-1].children.append(headline_to_listitem(headline))
             last_level = headline.level
+
+        for i in xrange(last_level - 1):
+            n = stack.pop()
+            if stack[-1].children:
+                stack[-1].children[-1].children.append(n)
+            else:
+                stack[-1].children.append(nodes.ListItem([n], style='list-style: none'))
         head = nodes.Layer(children=[nodes.Text(_(u'Table of contents'))],
                            class_='head')
         result = nodes.Layer(class_='toc toc-depth-%d' % self.depth,
