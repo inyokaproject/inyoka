@@ -331,11 +331,6 @@ class Picture(Macro):
             return nodes.Link(url_for(file), [img])
         return img
 
-    def __setstate__(self, dict):
-        self.__dict__ = dict
-        if 'title' not in dict:
-            self.title = None
-
 
 class Date(Macro):
     """
