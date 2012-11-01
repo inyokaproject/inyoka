@@ -235,79 +235,6 @@ class TableOfContents(TreeMacro):
         return result
 
 
-class PageName(Macro):
-    """
-    Return the name of the current page if the render context
-    knows about that.  This is only useful when rendered from
-    a wiki page.
-    """
-    names = (u'PageName', u'Seitenname')
-
-    def build_node(self, context, format):
-        wiki_page = context.kwargs('wiki_page', None)
-        if wiki_page:
-            return nodes.Text(wiki_page.title)
-        return nodes.Text(_(u'Unknown page'))
-
-
-class Template(Macro):
-    """
-    Include a page as template and expand it.
-    """
-    names = (u'Template', u'Vorlage')
-    has_argument_parser = True
-    is_static = True
-
-    def __init__(self, args, kwargs):
-        if not args:
-            self.template = None
-            self.context = []
-            return
-        items = kwargs.items()
-        for idx, arg in enumerate(args[1:]):
-            items.append(('arguments.%d' % idx, arg))
-        #TODO: kill WIKI_ prefix here
-        self.template = join_pagename(settings.WIKI_TEMPLATE_BASE,
-                                      normalize_pagename(args[0], False))
-        self.context = items
-
-    def build_node(self):
-        return expand_page_template(self.template, self.context, True)
-
-
-class Attachment(Macro):
-    """
-    This macro displays a download link for an attachment.
-    """
-    names = (u'Attachment', u'Anhang')
-    arguments = (
-        ('attachment', unicode, u''),
-        ('text', unicode, u''),
-    )
-
-    def __init__(self, target, text):
-        self.target = target
-        self.text = text
-        self.is_external = is_external_target(target)
-        if not self.is_external:
-            self.metadata = [nodes.MetaData('X-Attach', [target])]
-            target = normalize_pagename(target, True)
-        self.children = [nodes.Text(self.text or self.target)]
-
-    def build_node(self, context, format):
-        target = self.target
-        if self.is_external:
-            return nodes.Link(target, self.children)
-        else:
-            wiki_page = context.kwargs('wiki_page', None)
-            if wiki_page:
-                target = join_pagename(wiki_page.name, self.target)
-            source = href('wiki', '_attachment',
-                target=target,
-            )
-            return nodes.Link(source, self.children)
-
-
 class Picture(Macro):
     """
     This macro can display external images and attachments as images.  It
@@ -494,8 +421,6 @@ class Span(Macro):
 register(Anchor)
 register(Newline)
 register(Picture)
-register(Attachment)
 register(Date)
 register(TableOfContents)
-register(Template)
 register(Span)
