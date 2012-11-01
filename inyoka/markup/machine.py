@@ -147,22 +147,18 @@ class RenderContext(object):
     only that allows you to track circular page inclusions.
     """
 
-    def __init__(self, request=None, wiki_page=None, simplified=False,
-                 raw=False, application=None, forum_post=None):
+    def __init__(self, request=None, simplified=False,
+                 raw=False, application=None, **kwargs):
         self.request = request
-        #TODO: kill wiki_page and forum_post
-        self.wiki_page = wiki_page
-        self.forum_post = forum_post
         self.simplified = simplified
-        self.included_pages = set()
         self._application = application
+        self.kwargs = kwargs
 
     @property
     def application(self):
         if self._application is not None:
             return self._application
         return get_request_context(self.request)
-
 
 
 class Renderer(object):

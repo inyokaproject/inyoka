@@ -41,7 +41,8 @@ class RecentChanges(macros.Macro):
         self.default_days = days
 
     def build_node(self, context, format):
-        if not context.request or not context.wiki_page:
+        wiki_page = context.kwargs.get('wiki_page', None)
+        if not context.request or not wiki_page:
             return nodes.Paragraph([
                 nodes.Text(_(u'Recent changes cannot be rendered on this page'))
             ])
@@ -56,7 +57,7 @@ class RecentChanges(macros.Macro):
                 parameters.pop('page', None)
             else:
                 parameters['page'] = str(page_num)
-            rv = href('wiki', context.wiki_page.name)
+            rv = href('wiki', wiki_page.name)
             if parameters:
                 rv += '?' + urlencode(parameters)
             return rv
@@ -328,8 +329,9 @@ class SimilarPages(macros.Macro):
         self.page_name = page_name
 
     def build_node(self, context, format):
-        if context.wiki_page:
-            name = context.wiki_page.name
+        wiki_page = context.kwargs.get('wiki_page', None)
+        if wiki_page:
+            name = wiki_page.name
             ignore = name
         else:
             name = self.page_name
@@ -459,10 +461,11 @@ class Include(macros.Macro):
             msg = _(u'The page “%(name)s” was not found') % {
                 'name': self.page}
             return nodes.error_box(_(u'Page not found'), msg)
-        if page.name in context.included_pages:
+        context.kwargs.setdefault('included_pages', set())
+        if page.name in context.kwargs['included_pages']:
             msg = _(u'Detected a circular include macro call')
             return nodes.error_box(_(u'Circular import'), msg)
-        context.included_pages.add(page.name)
+        context.kwargs['included_pages'].add(page.name)
         return page.rev.text.render(context=context, format=format)
 
 

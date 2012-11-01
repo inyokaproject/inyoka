@@ -170,6 +170,7 @@ class TreeMacro(Macro):
         `nodes.Text`.
         """
 
+
 class TableOfContents(TreeMacro):
     """
     Show a table of contents.  We do not embedd the TOC in a DIV so far and
@@ -243,8 +244,9 @@ class PageName(Macro):
     names = (u'PageName', u'Seitenname')
 
     def build_node(self, context, format):
-        if context.wiki_page:
-            return nodes.Text(context.wiki_page.title)
+        wiki_page = context.kwargs('wiki_page', None)
+        if wiki_page:
+            return nodes.Text(wiki_page.title)
         return nodes.Text(_(u'Unknown page'))
 
 
@@ -297,8 +299,9 @@ class Attachment(Macro):
         if self.is_external:
             return nodes.Link(target, self.children)
         else:
-            if context.wiki_page:
-                target = join_pagename(context.wiki_page.name, self.target)
+            wiki_page = context.kwargs('wiki_page', None)
+            if wiki_page:
+                target = join_pagename(wiki_page.name, self.target)
             source = href('wiki', '_attachment',
                 target=target,
             )
@@ -344,8 +347,10 @@ class Picture(Macro):
         else:
             target = self.target
 
-        if context.wiki_page:
-            target = join_pagename(context.wiki_page.name, target)
+        wiki_page = context.kwargs.get('wiki_page', None)
+
+        if wiki_page:
+            target = join_pagename(wiki_page.name, target)
 
         source = fetch_real_target(target, width=self.width, height=self.height)
         file = None
@@ -381,19 +386,19 @@ class Picture(Macro):
                     att_ids = map(int, filter(bool,
                         context.request.POST.get('attachments', '').split(',')
                     ))
-                    post = context.forum_post.id if context.forum_post else None
+                    post = context.kwargs.get('forum_post', None).id if context.kwargs.get('forum_post', None) else None
                     files = ForumAttachment.objects.filter(name=target,
                             post=post, id__in=att_ids)
                     return nodes.HTML(files[0].html_representation)
                 else:
-                    file = ForumAttachment.objects.get(name=target, post=context.forum_post)
+                    file = ForumAttachment.objects.get(name=target, post=context.kwargs.get('forum_post', None))
                     return nodes.HTML(file.html_representation)
             except (ForumAttachment.DoesNotExist, IndexError):
                 pass
 
         img = nodes.Image(source, self.alt, class_='image-' +
                           (self.align or 'default'), title=self.title)
-        if (self.width or self.height) and context.wiki_page is not None:
+        if (self.width or self.height) and wiki_page is not None:
             return nodes.Link(fetch_real_target(target), [img])
         elif (self.width or self.height) and not context.application == 'wiki' and file is not None:
             return nodes.Link(url_for(file), [img])
