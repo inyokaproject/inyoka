@@ -31,13 +31,14 @@ from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href, is_safe_domain
 from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
-    HiddenCaptchaField, EmailField, JabberField, validate_signature
+     HiddenCaptchaField, EmailField, JabberField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.search import search as search_system
-from inyoka.portal.user import User, UserData, Group, PERMISSION_NAMES
+from inyoka.portal.user import User, UserData, Group, ProfileField, \
+     ProfileCategory, PERMISSION_NAMES
 from inyoka.portal.models import StaticPage, StaticFile
 
 #: Some constants used for ChoiceFields
@@ -314,31 +315,10 @@ class UserCPProfileForm(forms.Form):
     use_gravatar = forms.BooleanField(label=ugettext_lazy(u'Use Gravatar'), required=False)
     email = EmailField(label=ugettext_lazy(u'Email'), required=True)
     jabber = JabberField(label=ugettext_lazy(u'Jabber'), required=False)
-    icq = forms.IntegerField(label=ugettext_lazy(u'ICQ'), required=False,
-                             min_value=1, max_value=1000000000)
-    msn = forms.CharField(label=ugettext_lazy(u'MSN'), required=False)
-    aim = forms.CharField(label=ugettext_lazy(u'AIM'), required=False, max_length=25)
-    yim = forms.CharField(label=ugettext_lazy(u'Yahoo Messenger'), required=False,
-                         max_length=25)
-    skype = forms.CharField(label=ugettext_lazy(u'Skype'), required=False, max_length=25)
-    wengophone = forms.CharField(label=ugettext_lazy(u'WengoPhone'), required=False,
-                                 max_length=25)
-    sip = forms.CharField(label=ugettext_lazy(u'SIP'), required=False, max_length=25)
-    show_email = forms.BooleanField(required=False)
-    show_jabber = forms.BooleanField(required=False)
     signature = forms.CharField(widget=forms.Textarea, label=ugettext_lazy(u'Signature'),
                                required=False)
     coordinates = forms.CharField(label=ugettext_lazy(u'Coordinates (latitude, longitude)'),
                                   required=False)
-    location = forms.CharField(label=ugettext_lazy(u'Residence'), required=False, max_length=50)
-    occupation = forms.CharField(label=ugettext_lazy(u'Job'), required=False, max_length=50)
-    interests = forms.CharField(label=ugettext_lazy(u'Interests'), required=False,
-                                max_length=100)
-    website = forms.URLField(label=ugettext_lazy(u'Website'), required=False)
-    launchpad = forms.CharField(label=ugettext_lazy(u'Launchpad username'), required=False,
-                                max_length=50)
-    gpgkey = forms.RegexField('^(0x)?[0-9a-f]+$(?i)',
-        label=ugettext_lazy(u'GPG key'), max_length=255, required=False)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -450,6 +430,12 @@ class EditUserProfileForm(UserCPProfileForm):
             raise forms.ValidationError(
                 _(u'A user with this name already exists.'))
         return username
+
+
+class UserCPAddProfileFieldForm(forms.Form):
+    field = forms.ModelChoiceField(label=_(u'Field'),
+                                   queryset=ProfileField.objects.all())
+    data = forms.CharField(label=_(u'Data'))
 
 
 class EditUserGroupsForm(forms.Form):
@@ -939,6 +925,30 @@ class ConfigurationForm(forms.Form):
         except simplejson.JSONDecodeError:
             return u'[]'
         return data[key]
+
+
+class EditProfileFieldForm(forms.Form):
+    title = forms.CharField(label=_(u'Title'))
+    category = forms.ModelChoiceField(label=_(u'Category'),
+                                      queryset=ProfileCategory.objects.all(),
+                                      required=False)
+    new_category = forms.CharField(label=_(u'New Category'), required=False)
+    regex = forms.CharField(label=_(u'RegEx'), help_text=_(u'Regular '
+                            u'expression which restricts the value that users '
+                            u'can enter. Leave empty for no restriction.'),
+                            required=False)
+    important = forms.BooleanField(label=_('Important field'), help_text=_(
+                                   u'”Imporant” fields are shown globally '
+                                   u'on the whole website, for example '
+                                   u'beside each forum posts.'),
+                                   required=False)
+
+    def clean(self):
+        data = self.cleaned_data
+        if data['category'] and data['new_category']:
+            raise forms.ValidationError(_(u'Please select an existing category '
+                                          u'OR create a new one, but not both.'))
+        return data
 
 
 class EditStyleForm(forms.Form):

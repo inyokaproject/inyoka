@@ -12,6 +12,7 @@ import os
 from glob import glob
 
 from django.conf import settings
+from django.test.signals import template_rendered
 from django.utils import translation
 from django.utils import simplejson as json
 from django.utils.functional import Promise
@@ -220,6 +221,8 @@ def render_template(template_name, context, flash=False):
     except TemplateNotFound:
         tmpl = jinja_env.get_template(template_name)
     populate_context_defaults(context, flash=flash)
+    # signal required for custom testclient inyoka.utils.test.InyokaClient
+    template_rendered.send(sender=tmpl, template=tmpl, context=context)
     return tmpl.render(context)
 
 

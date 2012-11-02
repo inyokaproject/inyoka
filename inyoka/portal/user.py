@@ -20,6 +20,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.db import models
+from django.template.defaultfilters import slugify
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
@@ -170,10 +171,8 @@ def deactivate_user(user):
     user.groups.remove(*user.groups.all())
     user.avatar = user.coordinates_long = user.coordinates_lat = \
         user.new_password_key = user._primary_group = None
-    user.icq = user.jabber = user.msn = user.aim = user.yim = user.skype = \
-        user.wengophone = user.sip = user.location = user.signature = \
-        user.gpgkey = user.location = user.occupation = user.interests = \
-        user.website = user.launchpad = user.member_title = ''
+    user.jabber = user.signature = user.member_title = ''
+    user.profile_fields.clear()
     user.save()
 
 
@@ -493,62 +492,78 @@ class UserManager(models.Manager):
         return _SYSTEM_USER
 
 
+class ProfileCategory(models.Model):
+    """Category for the profile fields."""
+    title = models.CharField(ugettext_lazy(u'title'), max_length=255)
+    weight = models.IntegerField(ugettext_lazy(u'weight'), default=0)
+    slug = models.SlugField(max_length=255, unique=True)
+
+    def __unicode__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.title)
+        super(ProfileCategory, self).save(*args, **kwargs)
+
+class ProfileField(models.Model):
+    """Contains the profile fields which are available for the users."""
+    title = models.CharField(ugettext_lazy(u'title'), max_length=255)
+    category = models.ForeignKey(ProfileCategory, related_name='fields',
+                                 blank=True, null=True)
+    regex = models.CharField(ugettext_lazy(u'regular expression'),
+                             max_length=255, blank=True, null=True)
+    important = models.BooleanField(ugettext_lazy(u'important field'),
+                                    default=False)
+
+    def __unicode__(self):
+        return self.title
+
+
 class User(models.Model):
     """User model that contains all informations about an user."""
     objects = UserManager()
 
-    username = models.CharField(ugettext_lazy(u'Username'),
+    username = models.CharField(ugettext_lazy(u'username'),
                                 max_length=30, unique=True, db_index=True)
-    email = models.EmailField(ugettext_lazy(u'Email address'),
+    email = models.EmailField(ugettext_lazy(u'email address'),
                               unique=True, max_length=50, db_index=True)
-    password = models.CharField(ugettext_lazy(u'Password'), max_length=128)
-    status = models.IntegerField(ugettext_lazy(u'Status'), default=0)
-    last_login = models.DateTimeField(ugettext_lazy(u'Last login'),
+    password = models.CharField(ugettext_lazy(u'password'), max_length=128)
+    status = models.IntegerField(ugettext_lazy(u'status'), default=0)
+    last_login = models.DateTimeField(ugettext_lazy(u'last login'),
                                       default=datetime.utcnow)
-    date_joined = models.DateTimeField(ugettext_lazy(u'Member since'),
+    date_joined = models.DateTimeField(ugettext_lazy(u'member since'),
                                        default=datetime.utcnow)
     groups = models.ManyToManyField(Group,
-                                    verbose_name=ugettext_lazy(u'Groups'),
+                                    verbose_name=ugettext_lazy(u'groups'),
                                     blank=True,
                                     related_name='user_set')
-    new_password_key = models.CharField(ugettext_lazy(u'Confirmation key for a new password'),
+    new_password_key = models.CharField(ugettext_lazy(u'confirmation key for a new password'),
                                         blank=True, null=True, max_length=32)
 
-    banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'), null=True)
+    banned_until = models.DateTimeField(ugettext_lazy(u'banned until'), null=True)
 
     # profile attributes
-    post_count = models.IntegerField(ugettext_lazy(u'Posts'), default=0)
-    avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to='portal/avatars',
+    profile_fields = models.ManyToManyField(ProfileField, through='ProfileData')
+    post_count = models.IntegerField(ugettext_lazy(u'posts'), default=0)
+    avatar = models.ImageField(ugettext_lazy(u'avatar'), upload_to='portal/avatars',
                                blank=True, null=True)
-    jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
-    icq = models.CharField(ugettext_lazy(u'ICQ'), max_length=16, blank=True)
-    msn = models.CharField(ugettext_lazy(u'MSN'), max_length=200, blank=True)
-    aim = models.CharField(ugettext_lazy(u'AIM'), max_length=200, blank=True)
-    yim = models.CharField(ugettext_lazy(u'Yahoo Messenger'), max_length=200, blank=True)
-    skype = models.CharField(ugettext_lazy(u'Skype'), max_length=200, blank=True)
-    wengophone = models.CharField(ugettext_lazy(u'WengoPhone'), max_length=200, blank=True)
-    sip = models.CharField('SIP', max_length=200, blank=True)
-    signature = models.TextField(ugettext_lazy(u'Signature'), blank=True)
-    coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
-    coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
-    location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
-    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=255, blank=True)
-    occupation = models.CharField(ugettext_lazy(u'Job'), max_length=200, blank=True)
-    interests = models.CharField(ugettext_lazy(u'Interests'), max_length=200, blank=True)
-    website = models.URLField(ugettext_lazy(u'Website'), blank=True)
-    launchpad = models.CharField(ugettext_lazy(u'Launchpad username'), max_length=50, blank=True)
-    settings = JSONField(ugettext_lazy(u'Settings'), default={})
-    _permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
+    jabber = models.CharField(ugettext_lazy(u'jabber'), max_length=200, blank=True)
+    signature = models.TextField(ugettext_lazy(u'signature'), blank=True)
+    coordinates_long = models.FloatField(ugettext_lazy(u'coordinates (longitude)'), blank=True, null=True)
+    coordinates_lat = models.FloatField(ugettext_lazy(u'coordinates (latitude)'), blank=True, null=True)
+    settings = JSONField(ugettext_lazy(u'settings'), default={})
+    _permissions = models.IntegerField(ugettext_lazy(u'privileges'), default=0)
 
     # forum attribues
-    forum_last_read = models.IntegerField(ugettext_lazy(u'Last read post'),
+    forum_last_read = models.IntegerField(ugettext_lazy(u'last read post'),
                                           default=0, blank=True)
-    forum_read_status = models.TextField(ugettext_lazy(u'Read posts'), blank=True)
-    forum_welcome = models.TextField(ugettext_lazy(u'Read welcome message'),
+    forum_read_status = models.TextField(ugettext_lazy(u'read posts'), blank=True)
+    forum_welcome = models.TextField(ugettext_lazy(u'read welcome message'),
                                      blank=True)
 
     # member title
-    member_title = models.CharField(ugettext_lazy(u'Member title'), blank=True, null=True,
+    member_title = models.CharField(ugettext_lazy(u'member title'), blank=True, null=True,
                                     max_length=200)
 
     # primary group from which the user gets some settings
@@ -556,6 +571,9 @@ class User(models.Model):
     _primary_group = models.ForeignKey(Group, related_name='primary_users_set',
                                        blank=True, null=True,
                                        db_column='primary_group_id')
+
+    def __unicode__(self):
+        return self.username
 
     def save(self, *args, **kwargs):
         """
@@ -569,9 +587,12 @@ class User(models.Model):
             update_model(self, **data)
         else:
             super(User, self).save(*args, **kwargs)
-        cache.delete_many(['portal/user/%s/signature' % self.id,
-                           'portal/user/%s' % self.id,
-                           'user_permissions/%s' % self.id])
+        cache.delete_many([
+            'portal/user/{0}/signature'.format(self.id),
+            'portal/user/{0}/profile_data'.format(self.id),
+            'portal/user/{0}'.format(self.id),
+            'user_permissions/{0}'.format(self.id),
+        ])
 
     def __unicode__(self):
         return self.username
@@ -710,8 +731,20 @@ class User(models.Model):
 
     @property
     def urlsafe_username(self):
-        '''return the username with space replaced by _ for urls'''
+        """return the username with space replaced by _ for urls"""
         return self.username.replace(' ', '_')
+
+    @property
+    def profile_data(self):
+        """Return a QuerySet with associated ProfileData."""
+
+        key = 'portal/user/{0}/profile_data'.format(self.id)
+        data = cache.get(key)
+        if data is None:
+            data = ProfileData.objects.filter(user=self) \
+                                      .order_by('profile_field__title')
+            cache.set(key, data)
+        return data
 
     def save_avatar(self, img):
         """
@@ -783,6 +816,17 @@ class User(models.Model):
     @classproperty
     def ANONYMOUS_USER(cls):
         return cls.objects.get_anonymous_user()
+
+
+class ProfileData(models.Model):
+    """Intermediary between Profile and User.
+
+    Stores the data a user enters for a profile.
+
+    """
+    user = models.ForeignKey(User)
+    profile_field = models.ForeignKey(ProfileField, related_name='profile_data')
+    data = models.CharField(max_length=255)
 
 
 class UserData(models.Model):

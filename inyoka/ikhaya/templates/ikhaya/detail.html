@@ -36,6 +36,11 @@
       <img class="avatar" src="{{ user.avatar_url }}"
            alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
     {%- endif %}
+    <p>{% trans %}Member since:{% endtrans %}<br />{{ user.date_joined|dateformat }}</p>
+    <p>{% trans %}Posts:{% endtrans %} {{ user.post_count }}</p>
+    {% for data in user.profile_data.filter(profile_field__important=True) %}
+      <p>{{ data.profile_field.title|e }}: {{ data.data|e }}</p>
+    {% endfor %}
   </td>
 {% endmacro %}
 

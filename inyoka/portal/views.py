@@ -11,10 +11,11 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import binascii
-import pytz
-import time
-from PIL import Image
 from datetime import datetime, date, timedelta
+from PIL import Image
+import pytz
+import re
+import time
 
 from django import forms
 from django.conf import settings
@@ -25,6 +26,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.shortcuts import get_object_or_404
+from django.utils import simplejson as json
 from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.decorators import method_decorator
 from django.utils.translation import ungettext, ugettext as _
@@ -35,14 +37,15 @@ from django_mobile import get_flavour
 
 from inyoka.markup import parse, RenderContext
 from inyoka.utils import decode_confirm_data, generic
+from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.text import get_random_password, normalize_pagename
 from inyoka.utils.dates import DEFAULT_TIMEZONE, \
-    get_user_timezone, find_best_timezone
+     get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, HttpResponse, \
      PageNotFound, does_not_exist_is_404, HttpResponseRedirect, \
      TemplateResponse
 from inyoka.utils.sessions import get_sessions, make_permanent, \
-    get_user_record
+     get_user_record
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.pagination import Pagination
@@ -66,13 +69,15 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
      OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
      EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
      EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
-     CreateUserForm, UserMailForm, EditGroupForm
+     CreateUserForm, UserMailForm, EditGroupForm, \
+     EditProfileFieldForm, UserCPAddProfileFieldForm
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
-    deactivate_user, reactivate_user, set_new_email, \
-    send_new_email_confirmation, reset_email, send_activation_mail, \
-    send_new_user_password, PERMISSION_NAMES
+     deactivate_user, reactivate_user, set_new_email, \
+     send_new_email_confirmation, reset_email, send_activation_mail, \
+     send_new_user_password, PERMISSION_NAMES, ProfileField, ProfileData, \
+     ProfileCategory
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
@@ -511,6 +516,7 @@ def profile(request, username):
         content = wikipage.rev.rendered_text
     except WikiPage.DoesNotExist:
         content = u''
+
     if request.user.can('group_edit') or request.user.can('user_edit'):
         groups = user.groups.all()
     else:
@@ -518,13 +524,38 @@ def profile(request, username):
 
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
+    profile_categories = ProfileCategory.objects \
+                                        .select_related('fields', 'fields__profile_data') \
+                                        .filter(fields__profile_data__user=user) \
+                                        .distinct()
+    categories = [{
+        'title': category.title,
+        'data': [{
+            'title': data.profile_field.title,
+            'data': data.data,
+            } for data in user.profile_data.select_related('profile_field',
+                                                           'profile_field__title') \
+                                           .filter(profile_field__category=category)
+        ]
+    } for category in profile_categories]
+
+    uncategorized = user.profile_data.select_related('profile_field',
+                                                     'profile_field__title') \
+                                     .filter(profile_field__category=None)
+    data_uncategorized = [{
+        'title': data.profile_field.title,
+        'data': data.data,
+    } for data in uncategorized]
+
     return {
-        'user':          user,
-        'groups':        groups,
-        'wikipage':      content,
-        'User':          User,
+        'user': user,
+        'groups': groups,
+        'wikipage': content,
+        'User': User,
         'is_subscribed': subscribed,
-        'request':       request
+        'request': request,
+        'categories': categories,
+        'data_uncategorized': data_uncategorized,
     }
 
 
@@ -614,17 +645,33 @@ def usercp(request):
 @check_login(message=_(u'You need to be logged in to change your profile'))
 @templated('portal/usercp/profile.html')
 def usercp_profile(request):
-    """User control panel view for changing the user's profile"""
+    """User control panel view for changing the user's profile."""
     user = request.user
     if request.method == 'POST':
         form = UserCPProfileForm(request.POST, request.FILES, user=user)
         if form.is_valid():
             data = form.cleaned_data
-            for key in ('jabber', 'icq', 'msn', 'aim', 'yim',
-                        'skype', 'wengophone', 'sip',
-                        'signature', 'location', 'occupation',
-                        'interests', 'website', 'gpgkey',
-                        'launchpad'):
+            user.profile_fields.clear()
+            for key in request.POST.keys():
+                if key.startswith('profile_field_') and request.POST[key]:
+                    field_id = int(key.partition('.')[2])
+                    field = ProfileField.objects.get(id=field_id)
+                    value = request.POST[key]
+                    if field.regex and not re.match(field.regex, value):
+                        messages.error(request,
+                            _(u'The value for the profile field %(field)s '
+                              u'could not be saved, it was invalid.') % {
+                                    'field': field.title})
+                        continue
+                    field_data = ProfileData(user=user, profile_field=field,
+                                             data=value)
+                    field_data.save()
+                    cache.delete_many([
+                        'portal/user/{0}/profile_data'.format(user.id),
+                        'portal/usercp_profile/{0}'.format(user.id),
+                    ])
+
+            for key in ('jabber', 'signature'):
                 setattr(user, key, data[key] or '')
             if data['email'] != user.email:
                 send_new_email_confirmation(user, data['email'])
@@ -655,7 +702,7 @@ def usercp_profile(request):
                         'The used file format is not supported, please choose '
                         'another one for your avatar.')).messages
 
-            for key in ('show_email', 'show_jabber', 'use_gravatar'):
+            for key in ('use_gravatar',):
                 user.settings[key] = data[key]
             user.save()
 
@@ -687,16 +734,77 @@ def usercp_profile(request):
     storage_keys = storage.get_many(('max_avatar_width',
         'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
 
+    key = 'portal/usercp_profile/{0}'.format(user.id)
+    profile_fields = cache.get(key)
+    if profile_fields is None:
+        fields = ProfileField.objects.order_by('title').all()
+        profile_fields = json.dumps([{
+            'id': field.id,
+            'title': field.title
+        } for field in fields])
+        cache.set(key, profile_fields)
+
     return {
-        'form':                 form,
-        'user':                 request.user,
-        'gmaps_apikey':         settings.GOOGLE_MAPS_APIKEY,
-        'max_avatar_width':     storage_keys.get('max_avatar_width', -1),
-        'max_avatar_height':    storage_keys.get('max_avatar_height', -1),
-        'max_avatar_size':      storage_keys.get('max_avatar_size', -1),
-        'max_sig_length':       storage_keys.get('max_signature_length'),
-        'openids':              UserData.objects.filter(user=user, key='openid'),
+        'form': form,
+        'user': request.user,
+        'gmaps_apikey': settings.GOOGLE_MAPS_APIKEY,
+        'max_avatar_width': storage_keys.get('max_avatar_width', -1),
+        'max_avatar_height': storage_keys.get('max_avatar_height', -1),
+        'max_avatar_size': storage_keys.get('max_avatar_size', -1),
+        'max_sig_length': storage_keys.get('max_signature_length'),
+        'openids': UserData.objects.filter(user=user, key='openid'),
+        'profile_fields': profile_fields,
+        'profile_data': ProfileData.objects.filter(user=user).order_by('profile_field__title'),
     }
+
+
+@check_login(message=_(u'You need to be logged in to change your profile'))
+@templated('portal/usercp/add_field.html')
+def usercp_add_profile_field(request):
+    """View to add a profile field to the own profile.
+
+    Only used as fallback if the user disabled JavaScript.
+
+    """
+    user = request.user
+    if request.method == 'POST':
+        form = UserCPAddProfileFieldForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            field_data = ProfileData(user=user, profile_field=data['field'],
+                                     data=data['data'])
+            field_data.save()
+            messages.success(request,
+                _(u'The profile field was added successfully.'))
+            return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
+        else:
+            messages.error(request, _(u'Errors occurred, please fix them.'))
+    else:
+        form = UserCPAddProfileFieldForm()
+    return {
+        'form': form,
+    }
+
+
+@check_login(message=_(u'You need to be logged in to change your profile'))
+@confirm_action(message=_(u'Du you want to remove the profile field?'),
+                confirm=_(u'Delete'), cancel=_(u'Cancel'))
+def usercp_delete_profile_field(request, field_id):
+    """View to delete a profile field.
+
+    Only used as fallback if the user disabled JavaScript.
+
+    """
+    user = request.user
+    # filter by user to prevent deleting other users profile fields
+    try:
+        data = ProfileData.objects.filter(user=user).get(id=field_id)
+    except ProfileData.DoesNotExist:
+        raise PageNotFound()
+    data.delete()
+
+    message.success(request, _(u'The profile field was deleted successfully.'))
+    return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
 
 
 @check_login(message=_(u'You need to be logged in to change your settings.'))
@@ -928,13 +1036,30 @@ def user_edit_profile(request, username):
         if form.is_valid():
             data = form.cleaned_data
 
+            user.profile_fields.clear()
+            for key in request.POST.keys():
+                if key.startswith('profile_field_') and request.POST[key]:
+                    field_id = int(key.partition('.')[2])
+                    field = ProfileField.objects.get(id=field_id)
+                    value = request.POST[key]
+                    if field.regex and not re.match(field.regex, value):
+                        messages.error(request,
+                            _(u'The value for the profile field %(field)s '
+                              u'could not be saved, it was invalid.') % {
+                                    'field': field.title})
+                        continue
+                    field_data = ProfileData(user=user, profile_field=field,
+                                             data=value)
+                    field_data.save()
+                    cache.delete_many([
+                        'portal/user/{0}/profile_data'.format(user.id),
+                        'portal/usercp_profile/{0}'.format(user.id),
+                    ])
+
             lat = data.get('coordinates_lat', None)
             long = data.get('coordinates_long', None)
             data['coordinates'] = '%s, %s' % (lat, long) if lat and long else ''
-            for key in ('website', 'interests', 'location', 'jabber', 'icq',
-                         'msn', 'aim', 'yim', 'signature', 'coordinates',
-                         'gpgkey', 'email', 'skype', 'sip', 'wengophone',
-                         'launchpad', 'member_title', 'username'):
+            for key in ('signature', 'coordinates', 'email', 'member_title'):
                 setattr(user, key, data[key] or '')
             if data['delete_avatar']:
                 user.delete_avatar()
@@ -962,11 +1087,24 @@ def user_edit_profile(request, username):
         else:
             generic.trigger_fix_errors_message(request)
     storage_data = storage.get_many(('max_avatar_height', 'max_avatar_width'))
+
+    key = 'portal/usercp_profile/{0}'.format(user.id)
+    profile_fields = cache.get(key)
+    if profile_fields is None:
+        fields = ProfileField.objects.order_by('title').all()
+        profile_fields = json.dumps([{
+            'id': field.id,
+            'title': field.title
+        } for field in fields])
+        cache.set(key, profile_fields)
+
     return {
         'user': user,
         'form': form,
         'avatar_height': storage_data['max_avatar_height'],
-        'avatar_width': storage_data['max_avatar_width']
+        'avatar_width': storage_data['max_avatar_width'],
+        'profile_fields': profile_fields,
+        'profile_data': ProfileData.objects.filter(user=user).order_by('profile_field__title'),
     }
 
 
@@ -2021,8 +2159,60 @@ def config(request):
         'form': form,
         'team_icon_url': team_icon and href('media', team_icon) or None,
         'versions': list(sorted(UbuntuVersionList())),
+        'profile_fields': ProfileField.objects.order_by('title').all(),
+        'profile_categories': ProfileCategory.objects.order_by('weight').all(),
     }
 
+
+@require_permission('configuration_edit')
+@templated('portal/profile_field_edit.html')
+def profile_field_edit(request, field_id=None):
+    if not field_id:
+        field = None
+    else:
+        field = ProfileField.objects.get(id=field_id)
+
+    if request.method == 'POST':
+        form = EditProfileFieldForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+            if field and request.POST.get('delete'):
+                category = field.category
+                field.delete()
+                if category and not category.fields.all():
+                    category.delete()
+            else:
+                if not field:
+                    field = ProfileField()
+                old_category = field.category
+                if data['category']:
+                    field.category = data['category']
+                elif data['new_category']:
+                    category = ProfileCategory(title=data['new_category'])
+                    category.save()
+                    field.category = category
+                else:
+                    field.category = None
+                for attr in ['title', 'regex', 'important']:
+                    setattr(field, attr, data[attr])
+                field.save()
+                if old_category and not old_category.fields.all():
+                    old_category.delete()
+            return HttpResponseRedirect(href('portal', 'config'))
+    else:
+        if field:
+            form = EditProfileFieldForm(initial={
+                'title': field.title,
+                'category': field.category,
+                'regex': field.regex,
+            })
+        else:
+            form = EditProfileFieldForm()
+
+    return {
+        'field': field,
+        'form': form,
+    }
 
 @templated('portal/static_page.html')
 def static_page(request, page):

@@ -46,6 +46,88 @@
     {{ render_form(form, ['location', 'coordinates_long', 'coordinates_lat']) }}
     <h3>{% trans %}Signature{% endtrans %}</h3>
     <p>{{ form.signature }}</p>
+    <h3>{% trans %}Public information{% endtrans %}</h3>
+    <table id="profile_fields">
+      <thead>
+        <tr>
+          <td class="field">{% trans %}Field{% endtrans %}</td>
+          <td class="data">{% trans %}Data{% endtrans %}</td>
+          <td class="delete"></td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in profile_data %}
+          <tr>
+            <td>{{ data.profile_field.title }}</td>
+            <td>
+              <input type="text" value="{{ data.data }}"
+                     name="profile_field_{{ loop.index0 }}.{{ data.profile_field.id }}" />
+              </td>
+            <td>
+              <a class="delete">Delete</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="add">
+            <a id="add_profile_field">Add a field</a>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
     <p><input type="submit" value="{% trans %}Submit{% endtrans %}" /></p>
   </form>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+
+  <script type="text/javascript">
+    /*<![CDATA[*/
+    $('#add_profile_field').click(function() {
+      $('#profile_fields tbody')
+      .append($('<tr>')
+        .append($('<td>')
+          .append($('<select>')
+          )
+        )
+        .append($('<td>')
+          .append($('<input>')
+            .attr('type', 'text')
+          )
+        )
+        .append($('<td>')
+          .append($('<a>')
+            .attr('class', 'delete')
+            .text('Delete')
+            .click(function() {
+              $(this).parent().parent().remove();
+            })
+          )
+        )
+      )
+
+      var profile_fields = JSON.parse('{{ profile_fields }}')
+      var select = $('#profile_fields tbody tr:last td select')
+      select.append($('<option>'));
+      for (i in profile_fields) {
+        select.append($('<option>')
+          .attr('value', profile_fields[i].id)
+          .text(profile_fields[i].title)
+        );
+      }
+      select.change(function() {
+        var row = select.parent().parent()
+        var name = 'profile_field_' + row.index() + '.' + select.val();
+        row.find('input').attr('name', name);
+      });
+      return false;
+    });
+    $('.delete').click(function() {
+      $(this).parent().parent().remove();
+      return false;
+    });
+    /*]]>*/
+  </script>
 {% endblock %}

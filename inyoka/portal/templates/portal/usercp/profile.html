@@ -1,8 +1,8 @@
 {#
-    portal/usercp/settings.html
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    portal/usercp/profile.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    This page shows the user control panel settings page.
+    This page shows the user the configuration of his profile.
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
@@ -32,7 +32,6 @@
       </dd>
       {%- endif %}
       {%- if form.errors.avatar %}<dd>{{ form.errors.avatar }}</dd>{% endif %}
-      <hr style="clear: both;" />
       <dt>{% trans %}Gravatar:{% endtrans %}</dt>
       {% if user.settings.use_gravatar %}
       <dd><img class="usercp_avatar" src="{{ user.gravatar_url }}" alt="Gravatar" /></dd>
@@ -46,28 +45,52 @@
     <dl>
       <dd>
         <p class="note">{% trans -%}
-          By default, the email and jabber addresses are not displayed in your public profile. To publish them, you need to check the “show in profile” box.
+          The email and jabber addresses are not displayed in your public profile. If you want to make them public, add them to your public information.
         {%- endtrans %}</p>
       </dd>
-      {% for item in ['email', 'jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone', 'sip'] %}
+      {% for item in ['email', 'jabber'] %}
         <dt>
           <label for="{{ form[item].auto_id }}">{{ form[item].label }}</label>
         </dt>
-        <dd>{{ form[item] }}
-          {%- if item in ['email', 'jabber'] %}
-            <span class="note">{{ form['show_' + item] }}
-              <label for="id_show_{{ item }}">{% trans %}Show in profile{% endtrans %}</label>
-            </span>
-          {%- endif -%}
-        </dd>
+        <dd>{{ form[item] }}</dd>
         {%- if form.errors[item] %}<dd>{{ form.errors[item] }}</dd>{% endif %}
       {% endfor %}
     </dl>
-    <h3>{% trans %}Miscellaneous settings{% endtrans %}</h3>
-    {{ render_form(form, ['occupation', 'interests', 'website',
-                          'launchpad', 'gpgkey']) }}
+    <h3>{% trans %}Public information{% endtrans %}</h3>
+    <p class="note">{%- trans -%}You can customize your <em>public</em> profile with the fields below.{%- endtrans -%}</p>
+    <table id="profile_fields">
+      <thead>
+        <tr>
+          <td class="field">{% trans %}Field{% endtrans %}</td>
+          <td class="data">{% trans %}Data{% endtrans %}</td>
+          <td class="delete"></td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in profile_data %}
+          <tr>
+            <td>{{ data.profile_field.title }}</td>
+            <td>
+              <input type="text" value="{{ data.data }}"
+                     name="profile_field_{{ loop.index0 }}.{{ data.profile_field.id }}" />
+              </td>
+            <td>
+              <a class="delete"
+                 href="{{ href('portal', 'usercp', 'profile', 'delete_field', data.id) }}">Delete</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="add">
+            <a id="add_profile_field"
+               href="{{ href('portal', 'usercp', 'profile', 'add_field') }}">Add a field</a>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
     <h4>{% trans %}Geographical location{% endtrans %}</h4>
-    {{ render_form(form, ['location', 'coordinates']) }}
+    {{ render_form(form, ['coordinates']) }}
     <h3>{% trans %}OpenIDs{% endtrans %}</h3>
     <p>
       {% if openids %}
@@ -138,6 +161,53 @@
       });
     }
 
+    /*]]>*/
+  </script>
+  <script type="text/javascript">
+    /*<![CDATA[*/
+    $('#add_profile_field').click(function() {
+      $('#profile_fields tbody')
+      .append($('<tr>')
+        .append($('<td>')
+          .append($('<select>')
+          )
+        )
+        .append($('<td>')
+          .append($('<input>')
+            .attr('type', 'text')
+          )
+        )
+        .append($('<td>')
+          .append($('<a>')
+            .attr('class', 'delete')
+            .text('Delete')
+            .click(function() {
+              $(this).parent().parent().remove();
+            })
+          )
+        )
+      )
+
+      var profile_fields = JSON.parse('{{ profile_fields }}')
+      var select = $('#profile_fields tbody tr:last td select')
+      select.append($('<option>'));
+      for (i in profile_fields) {
+        select.append($('<option>')
+          .attr('value', profile_fields[i].id)
+          .text(profile_fields[i].title)
+        );
+      }
+      select.change(function() {
+        var row = select.parent().parent()
+        var name = 'profile_field_' + row.index() + '.' + select.val();
+        row.find('input').attr('name', name);
+      });
+      return false;
+    });
+    $('.delete').click(function() {
+      $(this).parent().parent().remove();
+      return false;
+    });
     /*]]>*/
   </script>
 {% endblock %}

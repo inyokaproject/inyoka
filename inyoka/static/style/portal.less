@@ -12,6 +12,17 @@ form.usercp_form {
   ul {
     list-style: none;
   }
+  #profile_fields {
+    .field {
+      width: 150px;
+    }
+    .delete {
+      width: 75px;
+    }
+    select {
+      width: 100%;
+    }
+  }
 }
 img.cat {
   float: right;
@@ -217,6 +228,63 @@ div.usercp_control {
         img {
           opacity: 0.6;
         }
+      }
+    }
+  }
+}
+div.userprofile {
+  div.general {
+    background-color: #F4F4F4;
+    border: 1px solid #CCCCCC;
+    float: left;
+    width: 220px;
+    text-align: center;
+
+    img.avatar {
+      background-color: #FFFFFF;
+      margin: 15px 0 5px;
+      padding: 2px 45px;
+      border: 1px solid #DDDDDD;
+    }
+
+    table {
+      text-align: left;
+      border: none;
+      th, td {
+        background: none;
+        border: none;
+        padding: 8px 5px;
+      }
+    }
+  }
+
+  div.fields {
+    position: absolute;
+    float: left;
+    left: 495px;
+    right: 30px;
+    table {
+      table-layout: fixed;
+      width: 270px;
+      margin: 0 5px 10px;
+      float: left;
+      .rounded;
+
+      th {
+        background: #F4F4F4;
+        color: #000000;
+        padding: 5px;
+      }
+      col.field {
+        width: 100px;
+        border-right: 1px solid #CCCCCC;
+      }
+      td {
+        overflow: hidden;
+      }
+
+      tbody tr:hover {
+        background: #f8f4e9;
       }
     }
   }

@@ -114,8 +114,11 @@
             {%- if USER.is_authenticated %}
               <li>
                 <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
-                  {%- trans user=USER.username|e %}Logout [{{ user }}]{% endtrans -%}
+                  {%- trans %}Logout{% endtrans %}
                 </a>
+              </li>
+              <li>
+                <a href="{{ USER.get_absolute_url() }}">[{{ USER.username|e }}]</a>
               </li>
               <li>
                 <a href="{{ href('portal', 'usercp') }}">
@@ -234,20 +237,23 @@
       <div class="message fail">{{ _('Please install at least Internet Explorer 8.') }}</div>
       <![endif]-->
 
+      {% set tabbar = navi_type in ['tabbar', 'both'] %}
+      {% set sidebar = navi_type in ['sidebar', 'both'] %}
+
       <div class="page_content">
         {% set tabbar = navi_type in ['tabbar', 'both'] %}
         {% set sidebar = navi_type in ['sidebar', 'both'] %}
         {%- if sidebar %}
-        <div class="navi_sidebar navigation">
-          {%- block sidebar %}{% endblock -%}
-        </div>
-        {%- endif %}
-        {%- if tabbar %}
-        <div class="navi_tabbar navigation">
-          {%- block tabbar %}{% endblock -%}
-        </div>
+          <div class="navi_sidebar navigation">
+            {%- block sidebar %}{% endblock -%}
+          </div>
         {%- endif %}
         <div class="content{{ tabbar and ' content_tabbar' or '' }}{{ sidebar and ' content_sidebar' or '' }}">
+          {%- if tabbar %}
+            <div class="navi_tabbar navigation">
+              {%- block tabbar %}{% endblock -%}
+            </div>
+          {%- endif %}
           {%- block content %}{% endblock -%}
         </div>
       </div>
