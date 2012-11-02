@@ -103,9 +103,6 @@ EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 # Examples: /path/to/inyoka.xapdb, or tcpsrv://localhost:3000/
 XAPIAN_DATABASE = join(BASE_PATH, 'inyoka.xapdb')
 
-# imagemagick path. leave empty for auto detection
-IMAGEMAGICK_PATH = ''
-
 # forum settings
 FORUM_LIMIT_UNREAD = 100
 FORUM_THUMBNAIL_SIZE = (64, 64)
