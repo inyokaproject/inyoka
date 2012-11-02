@@ -19,7 +19,8 @@
   <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
 		{{ csrf_token() }}
     <h3>{% trans %}Status{% endtrans %}</h3>
-      <dt>{{ form.status.label }}</dt>
+      {{ form.non_field_errors() }}
+      <dt>{{ form.status.label_tag() }}:</dt>
       <dd>{{ form.status }} {{ form.errors.status }}
         <div class="note">{% trans date=user.last_login|datetimeformat -%}
           Last login: {{ date }}

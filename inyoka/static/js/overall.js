@@ -22,25 +22,25 @@ $(document).ready(function () {
     });
   })();
   // Display the countdown
-  (function () {
-    var now = new Date ();
-    var release = new Date ("October 13, 2011");
-    var diff = release.getTime() - now.getTime();
-    var days = Math.floor(diff / (1000*60*60*24))+1;
-    var block = $("#counter");
-    if (days > 21) {
-      block.html('<a href="http://wiki.ubuntuusers.de/Oneiric_Ocelot"><img src="' + $STATIC_URL + 'img/portal/countdown/oneiricbanner_start.png" alt="Ubuntu 11.10"></a>');
-    }
-    if (days >= 1 && days<=21) {
-      block.html('<a href="http://wiki.ubuntuusers.de/Oneiric_Ocelot"><img src="' + $STATIC_URL + 'img/portal/countdown/oneiricbanner_' + days + '.png" alt="Ubuntu 11.10"></a>');
-    }
-    if (days == 0) {
-      block.html('<a href="http://wiki.ubuntuusers.de/Oneiric_Ocelot"><img src="' + $STATIC_URL + 'img/portal/countdown/oneiricbanner_soon.png" alt="Ubuntu 11.10"></a>');
-    }
-    if (days < 0) {
-      block.html('<a href="http://wiki.ubuntuusers.de/Oneiric_Ocelot"><img src="' + $STATIC_URL + 'img/portal/countdown/oneiricbanner_here.png" alt="Ubuntu 11.10"></a>');
-    }
-  })();
+  if (typeof $COUNTDOWN_ACTIVE == "boolean" && $COUNTDOWN_ACTIVE) {
+    (function () {
+      var now = new Date ();
+      var release = new Date ($COUNTDOWN_DEADLINE);
+      var diff = release.getTime() - now.getTime();
+      var days = Math.floor(diff / (1000*60*60*24))+1;
+      var image = $("#counter > a > img");
+      var url = $STATIC_URL + $COUNTDOWN_IMAGE_BASE_URL;
+      if (days > 14) {
+        url = url + 'start';
+      } else if (days >= 1) {
+        url = url + days;
+      } else {
+        url = url + 'here';
+      }
+      url = url + '.png';
+      image.attr('src', url);
+    })();
+  }
 
   // add a hide message link to all flash messages
   $.each($('div.message'), function (i, elm) {
@@ -281,7 +281,7 @@ $(document).ready(function () {
 
   $('div.code').add('pre').each(function () {
     if (this.clientHeight < this.scrollHeight) {
-      $(this).before('<div class="codeblock_resizer" title="vergrößern">vergrößern</div>')
+      $(this).before('<div class="codeblock_resizer">vergrößern</div>')
              .css('height', '15em').css('max-height', 'none')
              .data('original_height', this.clientHeight);
     }
@@ -296,13 +296,13 @@ $(document).ready(function () {
         $codeblock.animate({
           'height': $codeblock[0].scrollHeight
         }, 500);
-        this.innerHTML = this.title = 'verkleinern';
+        $(this).text('verkleinern');
       } else {
         $codeblock.removeClass('codeblock_expanded');
         $codeblock.animate({
           'height': $codeblock.data('original_height')
         }, 500);
-        this.innerHTML = this.title = 'vergrößern';
+        $(this).text('vergrößern');
       }
     });
   })();

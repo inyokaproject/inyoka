@@ -26,6 +26,7 @@ GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4B
 INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.contenttypes',
+    'inyoka.core',
     'inyoka.portal',
     'inyoka.wiki',
     'inyoka.forum',

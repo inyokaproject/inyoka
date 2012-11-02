@@ -12,8 +12,6 @@ from datetime import datetime, timedelta
 from operator import attrgetter
 from itertools import groupby
 
-from werkzeug.datastructures import MultiDict
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
@@ -583,6 +581,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
         if not post:
             post = Post(topic=topic, author_id=request.user.id)
+            #TODO: Move this somehow to model to ease unittesting!
             if newtopic:
                 post.position = 0
 

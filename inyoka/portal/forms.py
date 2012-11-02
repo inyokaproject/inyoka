@@ -9,18 +9,24 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import datetime
+import StringIO
 
 from PIL import Image
 
 from django import forms
 from django.core.cache import cache
 from django.core.validators import EMPTY_VALUES
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.forms import HiddenInput
 from django.db.models import Count
+from django.db.models.fields.files import ImageFieldFile
 from django.conf import settings
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
+
+from django.contrib import messages
 
 from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
@@ -30,14 +36,15 @@ from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href, is_safe_domain
-from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
+from inyoka.utils.forms import CaptchaField, DateTimeWidget, DateWidget, \
     HiddenCaptchaField, EmailField, JabberField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.search import search as search_system
-from inyoka.portal.user import User, UserData, Group, PERMISSION_NAMES
+from inyoka.portal.user import User, UserData, Group, PERMISSION_NAMES, \
+    send_new_email_confirmation
 from inyoka.portal.models import StaticPage, StaticFile
 
 #: Some constants used for ChoiceFields
@@ -307,41 +314,46 @@ class UserCPSettingsForm(forms.Form):
         return data
 
 
-class UserCPProfileForm(forms.Form):
-
-    avatar = forms.ImageField(label=ugettext_lazy(u'Avatar'), required=False)
-    delete_avatar = forms.BooleanField(label=ugettext_lazy(u'Remove avatar'), required=False)
+class UserCPProfileForm(forms.ModelForm):
     use_gravatar = forms.BooleanField(label=ugettext_lazy(u'Use Gravatar'), required=False)
     email = EmailField(label=ugettext_lazy(u'Email'), required=True)
-    jabber = JabberField(label=ugettext_lazy(u'Jabber'), required=False)
-    icq = forms.IntegerField(label=ugettext_lazy(u'ICQ'), required=False,
-                             min_value=1, max_value=1000000000)
-    msn = forms.CharField(label=ugettext_lazy(u'MSN'), required=False)
-    aim = forms.CharField(label=ugettext_lazy(u'AIM'), required=False, max_length=25)
-    yim = forms.CharField(label=ugettext_lazy(u'Yahoo Messenger'), required=False,
-                         max_length=25)
-    skype = forms.CharField(label=ugettext_lazy(u'Skype'), required=False, max_length=25)
-    wengophone = forms.CharField(label=ugettext_lazy(u'WengoPhone'), required=False,
-                                 max_length=25)
-    sip = forms.CharField(label=ugettext_lazy(u'SIP'), required=False, max_length=25)
+
     show_email = forms.BooleanField(required=False)
     show_jabber = forms.BooleanField(required=False)
-    signature = forms.CharField(widget=forms.Textarea, label=ugettext_lazy(u'Signature'),
-                               required=False)
+
     coordinates = forms.CharField(label=ugettext_lazy(u'Coordinates (latitude, longitude)'),
                                   required=False)
-    location = forms.CharField(label=ugettext_lazy(u'Residence'), required=False, max_length=50)
-    occupation = forms.CharField(label=ugettext_lazy(u'Job'), required=False, max_length=50)
-    interests = forms.CharField(label=ugettext_lazy(u'Interests'), required=False,
-                                max_length=100)
-    website = forms.URLField(label=ugettext_lazy(u'Website'), required=False)
-    launchpad = forms.CharField(label=ugettext_lazy(u'Launchpad username'), required=False,
-                                max_length=50)
     gpgkey = forms.RegexField('^(0x)?[0-9a-f]+$(?i)',
         label=ugettext_lazy(u'GPG key'), max_length=255, required=False)
 
+    class Meta:
+        model = User
+        fields = ['jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone',
+                  'sip', 'signature', 'location', 'occupation', 'interests',
+                  'website', 'gpgkey', 'launchpad', 'avatar', 'location',
+                  'launchpad']
+
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
+        instance = kwargs['instance']
+        self.admin_mode = kwargs.pop('admin_mode', False)
+        initial = kwargs['initial'] = {}
+        lat = instance.coordinates_lat
+        long = instance.coordinates_long
+        if lat and long:
+            initial['coordinates'] = '%s, %s' % (lat, long)
+        else:
+            initial['coordinates'] = ''
+
+        initial.update(dict(
+            ((k, v) for k, v in instance.settings.iteritems()
+             if k.startswith('show_'))
+        ))
+        initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
+        initial['email'] = instance.email
+
+        self.old_email = instance.email
+        self.old_avatar = instance.avatar.name if instance.avatar else None
+        self.change_avatar = False
         super(UserCPProfileForm, self).__init__(*args, **kwargs)
 
     def clean_gpgkey(self):
@@ -376,62 +388,72 @@ class UserCPProfileForm(forms.Form):
         return lat, long
 
     def clean_email(self):
-        email = (self.cleaned_data.get('email') or '').strip()
-        if not email:
-            raise forms.ValidationError(_(u'You entered no email address.'))
-        try:
-            other_user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return email
-        else:
-            if other_user.id != self.user.id:
-                raise forms.ValidationError(_(u'This email address is already in use.'))
-            return email
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError(
+                _(u'This email address is already in use.'))
+        return email
+
 
     def clean_avatar(self):
         """
         Keep the user from setting an avatar to a too big size.
         """
-        data = self.cleaned_data
-        if data['avatar'] is None:
-            return
-        if data['avatar'] is False:
-            return False
+        avatar = self.cleaned_data['avatar']
+        if avatar in (False, None):
+            return avatar
 
-        st = int(storage.get('max_avatar_size', 0))
-        if st and data['avatar'].size > st * 1024:
-            raise forms.ValidationError(
-                _(u'The chosen avatar could not be uploaded, it is to large. '
-                  u'Please choose another avatar.')
-            )
-        try:
-            image = Image.open(data['avatar'])
-        finally:
-            data['avatar'].seek(0)
+        # FileField falls back to the initial value if no data is provided.
+        # This happens when someone uploads a file larger than we do support,
+        # or when the data does not change!
+        if isinstance(avatar, ImageFieldFile):
+            return
+
+        # Resize the image if needed.
+        image = Image.open(avatar)
+        format = image.format
         max_size = (
             int(storage.get('max_avatar_width', 0)),
             int(storage.get('max_avatar_height', 0)))
         if any(length > max_length for max_length, length in zip(max_size, image.size)):
-            raise forms.ValidationError(
-                _(u'The chosen avatar could not be uploaded, it is to large. '
-                  u'Please choose another avatar.')
-            )
-        return data['avatar']
+            image = image.resize(max_size)
+        out = StringIO.StringIO()
+        image.save(out, format)
+        self.change_avatar = True
+        return ContentFile(out.getvalue(), 'avatar.' + format.lower())
 
-    def clean_openid(self):
-        if self.cleaned_data['openid'] in EMPTY_VALUES:
-            return
-        openid = self.cleaned_data['openid']
-        if UserData.objects.filter(key='openid', value=openid)\
-                           .exclude(user=self.user).count():
-            raise forms.ValidationError(_(u'This OpenID is already in use.'))
-        return openid
+    def save(self, request, commit=True):
+        data = self.cleaned_data
+        user = super(UserCPProfileForm, self).save(commit=False)
 
+        # Ensure that we delete the old avatar, otherwise Django will create
+        # a file with a different name.
+        if self.old_avatar and self.change_avatar:
+            default_storage.delete(self.old_avatar)
+
+        if self.admin_mode:
+            user.email = data['email']
+        else:
+            if data['email'] != self.old_email:
+                send_new_email_confirmation(user, data['email'])
+                messages.info(request,
+                    _(u'You’ve been sent an email to confirm your new email '
+                      u'address.'))
+
+        if data['coordinates']:
+            user.coordinates_lat, user.coordinates_long = \
+                data['coordinates']
+        for key in ('show_email', 'show_jabber', 'use_gravatar'):
+            user.settings[key] = data[key]
+
+        if commit:
+            user.save()
+        return user
 
 
 class EditUserProfileForm(UserCPProfileForm):
-    username = forms.CharField(label=ugettext_lazy(u'Username'), max_length=30)
-    member_title = forms.CharField(label=ugettext_lazy(u'Title'), required=False)
+    class Meta(UserCPProfileForm.Meta):
+        fields = UserCPProfileForm.Meta.fields + ['username', 'member_title']
 
     def clean_username(self):
         """
@@ -446,7 +468,7 @@ class EditUserProfileForm(UserCPProfileForm):
                   u'alphanumeric chars and “-” and “ ” are allowed.')
             )
         exists = User.objects.filter(username=username).exists()
-        if (self.user.username != username and exists):
+        if (self.instance.username != username and exists):
             raise forms.ValidationError(
                 _(u'A user with this name already exists.'))
         return username
@@ -514,36 +536,26 @@ class CreateUserForm(forms.Form):
             raise forms.ValidationError(_(u'You need to enter a email address'))
 
 
-class EditUserStatusForm(forms.Form):
-    status = forms.ChoiceField(label=ugettext_lazy(u'Activation status'),
-                               required=False,
-                               choices=enumerate([
-                                   ugettext_lazy(u'not yet activated'),
-                                   ugettext_lazy(u'active'),
-                                   ugettext_lazy(u'banned'),
-                                   ugettext_lazy(u'deleted himself')]))
-    banned_until = forms.DateTimeField(label=ugettext_lazy(u'Banned until'), required=False,
-        widget=DateTimeWidget,
-        help_text=ugettext_lazy(u'leave empty to ban permanent'),
-        localize=True)
+class EditUserStatusForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(EditUserStatusForm, self).__init__(*args, **kwargs)
+        self.fields['banned_until'].localize=True
 
-    def clean_banned_until(self):
-        """
-        Keep the user from setting banned_until if status is not banned.
-        This is to avoid confusion because this was previously possible.
+    class Meta:
+        model = User
+        fields = ['status', 'banned_until']
+
+    def clean(self):
+        """Keep the user from setting banned_until if status is not banned.
         """
         data = self.cleaned_data
-        if data['banned_until'] is None:
-            return
-        if data['status'] not in (2, '2'):
-            raise forms.ValidationError(
-                _(u'The user is not banned')
-            )
+        if not data.get('banned_until'):
+            return data
+        if int(data['status']) != 2:
+            raise forms.ValidationError(_(u'The user is not banned'))
         if data['banned_until'] < datetime.datetime.utcnow():
-            raise forms.ValidationError(
-                _(u'The point of time is in the past.')
-            )
-        return data['banned_until']
+            raise forms.ValidationError(_(u'The point of time is in the past.'))
+        return data
 
 
 class EditUserPasswordForm(forms.Form):
@@ -915,6 +927,19 @@ class ConfigurationForm(forms.Form):
     team_icon_height = forms.IntegerField(min_value=1, required=False)
     license_note = forms.CharField(required=False, label=ugettext_lazy(u'License note'),
                                    widget=forms.Textarea(attrs={'rows': 2}))
+    countdown_active = forms.BooleanField(required=False,
+        label=ugettext_lazy(u'Display countdown'))
+    countdown_deadline = forms.DateField(required=False,
+        label=ugettext_lazy(u'Release date'), widget=DateWidget)
+    countdown_target_page = forms.CharField(required=False,
+        label=ugettext_lazy(u'Full path to the target link page'))
+    countdown_image_base_url = forms.CharField(required=False,
+        label=ugettext_lazy(u'Base path to images'),
+        help_text=ugettext_lazy(u'The path must be relative to STATIC_URL and '
+            'without identifier. To get '
+            '<code>http://static.example.com/images/cd_start.png</code> '
+            'only <code>images/cd_</code> needs to be provided. The base url '
+            'is expanded by either "start", 1-14 or "here" plus ".png".'))
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,
