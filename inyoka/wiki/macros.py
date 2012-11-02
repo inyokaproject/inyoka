@@ -3,15 +3,17 @@ import string
 import random
 from datetime import datetime, timedelta, date
 from collections import OrderedDict
+from django.conf import settings
 from inyoka.wiki.models import Revision, Page, MetaData
 from inyoka.markup import macros, nodes
 from inyoka.markup.utils import simple_filter
+from inyoka.markup.templates import expand_page_template
 from inyoka.markup.parsertools import MultiMap, flatten_iterator
-from inyoka.utils.urls import href, urlencode, url_for
+from inyoka.utils.urls import href, urlencode, url_for, is_external_target
 from inyoka.utils.cache import cache
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.dates import datetime_to_timezone, format_time
-from inyoka.utils.text import normalize_pagename, get_pagetitle
+from inyoka.utils.text import normalize_pagename, get_pagetitle, join_pagename
 from django.utils.translation import ugettext as _, ungettext
 
 

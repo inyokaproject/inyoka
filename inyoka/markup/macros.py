@@ -26,6 +26,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import os
+import operator
+import itertools
 from datetime import datetime
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -36,6 +38,7 @@ from inyoka.markup import nodes
 from inyoka.markup.utils import debug_repr, dump_argstring, ArgumentCollector
 from inyoka.markup.templates import expand_page_template
 from inyoka.wiki.views import fetch_real_target
+from inyoka.wiki.signals import build_picture_node
 from inyoka.markup.utils import filter_style
 from inyoka.utils.urls import is_external_target
 from inyoka.utils.text import join_pagename, normalize_pagename
@@ -267,6 +270,17 @@ class Picture(Macro):
             self.align = None
 
     def build_node(self, context, format):
+        ret_ = build_picture_node.send(sender=self,
+                                       context=context,
+                                       format=format)
+        ret = filter(None, itertools.chain(
+            map(operator.itemgetter(1), ret_)
+        ))
+
+        if ret:
+            assert len(ret) == 1, "There must not be more than one node tree per context"
+            return ret[0]
+
         #TODO: refactor using signals on rendering
         #      to get proper application independence
         if context.application == 'wiki':
@@ -280,55 +294,11 @@ class Picture(Macro):
             target = join_pagename(wiki_page.name, target)
 
         source = fetch_real_target(target, width=self.width, height=self.height)
-        file = None
-
-        if context.application == 'ikhaya':
-            try:
-                file = StaticFile.objects.get(identifier=target)
-                if (self.width or self.height) and os.path.exists(file.file.path):
-                    tt = target.rsplit('.', 1)
-                    dimension = '%sx%s' % (self.width and int(self.width) or '',
-                                           self.height and int(self.height) or '')
-                    target = '%s%s.%s' % (tt[0], dimension, tt[1])
-
-                    destination = os.path.join(settings.MEDIA_ROOT, 'portal/thumbnails', target)
-                    thumb = get_thumbnail(file.file.path, destination, self.width, self.height)
-                    if thumb:
-                        source = os.path.join(settings.MEDIA_URL, 'portal/thumbnails', thumb.rsplit('/', 1)[1])
-                    else:
-                        # fallback to the orginal file
-                        source = os.path.join(settings.MEDIA_URL, file.file.name)
-                else:
-                    source = url_for(file)
-            except StaticFile.DoesNotExist:
-                pass
-        if context.application == 'forum':
-            try:
-                # There are times when two users upload a attachment with the same
-                # name, both have post=None, so we cannot .get() here
-                # and need to filter for attachments that are session related.
-                # THIS IS A HACK and should go away once we found a way
-                # to upload attachments directly to bound posts in a sane way...
-                if context.request is not None and 'attachments' in context.request.POST:
-                    att_ids = map(int, filter(bool,
-                        context.request.POST.get('attachments', '').split(',')
-                    ))
-                    post = context.kwargs.get('forum_post', None).id if context.kwargs.get('forum_post', None) else None
-                    files = ForumAttachment.objects.filter(name=target,
-                            post=post, id__in=att_ids)
-                    return nodes.HTML(files[0].html_representation)
-                else:
-                    file = ForumAttachment.objects.get(name=target, post=context.kwargs.get('forum_post', None))
-                    return nodes.HTML(file.html_representation)
-            except (ForumAttachment.DoesNotExist, IndexError):
-                pass
 
         img = nodes.Image(source, self.alt, class_='image-' +
                           (self.align or 'default'), title=self.title)
         if (self.width or self.height) and wiki_page is not None:
             return nodes.Link(fetch_real_target(target), [img])
-        elif (self.width or self.height) and not context.application == 'wiki' and file is not None:
-            return nodes.Link(url_for(file), [img])
         return img
 
 
