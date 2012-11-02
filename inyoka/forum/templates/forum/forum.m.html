@@ -8,17 +8,22 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'forum/page.m.html' %}
+{% from 'forum/_forum.html' import generate_subscription_link with context %}
 
-{% set back = forum.parent|url %}
+{% set back = href('forum') %}
 
 {% block content %}
   <h2>{{ forum.name }}</h2>
   {% if subforums %}
-    <h3>{% trans %}Subforums{% endtrans %}</h3>
-    <div class="forums">
-      {%- for subforum in subforums %}
-        <a href="{{ subforum|url }}"><div class="button">{{ subforum.name }}</div></a>
-      {%- endfor %}
+    <div class="subforums">
+      <a href="#" class="collapse">
+        <h3>{% trans %}Subforums{% endtrans %}</h3>
+      </a>
+      <div class="forums">
+        {%- for subforum in subforums %}
+          <a href="{{ subforum|url }}">{{ subforum.name }}</a>
+        {%- endfor %}
+      </div>
     </div>
   {% endif %}
   {{ pagination.generate() }}
@@ -26,20 +31,35 @@
   <div class="topics">
     <h3>{% trans %}Topics{% endtrans %}</h3>
     {%- for topic in topics if (topic.first_post and topic.last_post) %}
-      <a href="{{ topic|url }}">{#
-        #}<div class="button
-            {% if not topic.get_read_status(USER) %} unread{% endif %}
-            {% if topic.solved %} solved{% endif %}
-            {% if topic.hidden %} hidden{% endif %}
-            {% if can_moderate and topic.reported %} reported{% endif %}
-            {% if topic.sticky %} sticky{% endif %}
-            {% if topic.has_poll %} poll{% endif %}
-            {% if topic.locked %} locked{% endif %}">
-        {%- if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif -%}
-          {{ topic.title|e -}}
-        </div>{#
-      #}</a>
+      {%- if not topic.get_read_status(USER) %}
+        <a class="first_unread" href="{{ topic|url('first_unread') }}">
+          <img src="{{ href('static', 'img/forum/goto.png') }}" />
+        </a>
+      {%- endif %}
+      <a href="{{ topic|url }}" class="
+          {% if not topic.get_read_status(USER) %} unread{% endif %}
+          {% if topic.solved %} solved{% endif %}
+          {% if topic.hidden %} hidden{% endif %}
+          {% if can_moderate and topic.reported %} reported{% endif %}
+          {% if topic.sticky %} sticky{% endif %}
+          {% if topic.has_poll %} poll{% endif %}
+          {% if topic.locked %} locked{% endif %}">
+      {%- if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif -%}
+        {{ topic.title|e -}}
+      </a>
     {%- endfor %}
   </div>
   {{ pagination.generate() }}
+  <section class="actions">
+    <a href="{{ forum|url('newtopic') }}">{% trans %}New topic{% endtrans %}</a>
+    {% if is_subscribed %}
+      <a href="{{ generate_subscription_link(do='unsubscribe') }}">
+        {% trans %}Unsubscribe{% endtrans %}
+      </a>
+    {% else %}
+      <a href="{{ generate_subscription_link() }}">
+        {% trans %}Subscribe{% endtrans %}
+      </a>
+    {% endif %}
+  </section>
 {% endblock %}

@@ -14,12 +14,16 @@
   {%- if categories %}
     {%- for category, forums in forum_hierarchy %}
       <div class="category" id="category-{{ category.id }}">
-        <h3><a href="{{ category|url }}">{{ category.name|e }}</a></h3>
+        <a href="#" class="collapse">
+          <h3>{{ category.name|e }}</h3>
+        </a>
         <div class="forums">
           {%- for forum, subforums in forums %}
-            <a href="{{ forum|url }}"><div class="button{% if not forum.get_read_status(USER) %} unread{% endif %}">{{ forum.name }}</div></a>
+            <a href="{{ forum|url }}"{% if not forum.get_read_status(USER) %} class="unread"{% endif %}>
+              {{ forum.name }}
+            </a>
           {%- else %}
-            <div class="button empty">{% trans %}This category does not contain any forum.{% endtrans %}</div>
+            <div class="empty">{% trans %}This category does not contain any forum.{% endtrans %}</div>
           {%- endfor %}
         </div>
       </div>

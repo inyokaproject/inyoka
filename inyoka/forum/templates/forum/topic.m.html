@@ -26,21 +26,22 @@
                        value="{{ option.id }}" />
                 <label for="option_{{ option.id }}">{{ option.name|e }}</label>
               {% else %}
-                <div class="name">{{ option.name|e }}</div>
+                {% if not (poll.can_vote and can_vote) or show_vote_results %}
+                  <div class="vote_bar_wrapper">
+                    <div class="vote_bar" style="width: {{ option.percentage }}%;"></div>
+                  </div>
+                {% endif %}
+                <span class="name">{{ option.name|e }}</span>
               {% endif %}
               {% if not (poll.can_vote and can_vote) or show_vote_results %}
                 {% set bc, ac = (option.percentage|string).split('.') %}
-                <div class="vote_bar_wrapper">
-                  <div class="vote_bar" style="width: {{ option.percentage }}%;"></div>
-                </div>
-                <div class="votes">
-                  <span>{{ bc }}{% if ac|int %}.{{ ac[:2] }}{% endif %}%</span>
-                  <span>[ {{ option.votes }} ]</span>
-                </div>
+                <span class="votes">
+                  {{ bc }}{% if ac|int %}.{{ ac[:2] }}{% endif %}%
+                  [ {{ option.votes }} ]
+                </span>
               {% endif %}
             </div>
           {%- endfor %}
-          <div class="clear"></div>
           <div class="meta">
             <span>
               {%- if poll.ended -%}
@@ -60,16 +61,17 @@
               {%- endif %}
             </span>
           </div>
+        </div>
       {%- endfor %}
       {%- if can_vote and not voted_all %}
-        <p>
+        <div class="actions">
           {%- if show_vote_results %}
             <a href="?">{% trans %}Hide results{% endtrans %}</a>
           {%- else %}
             <input type="submit" name="vote" value="{% trans %}Vote{% endtrans %}" />
             <a href="?action=vote_results">{% trans %}Show results{% endtrans %}</a>
           {%- endif %}
-        </p>
+        </div>
       {%- endif %}
     </form>
   {% endif %}
@@ -78,20 +80,22 @@
     {%- for post in posts if not post.hidden %}
       <div class="post" id="post-{{ post.id }}">
         <div class="meta">
-          <span class="right">
-            {% if can_reply and not topic.locked %}
-              <a href="{{ post|url('quote') }}"
-                 class="action">{% trans %}Quote{% endtrans %}</a> |
-            {% endif %}
-            {% if can_edit(post) %}
-              <a href="{{ post|url('edit') }}"
-                 class="action">{% trans %}Edit{% endtrans %}</a> |
-            {% endif %}
-            <a href="{{ post|url }}">{{ post.pub_date|datetimeformat }}</a>
-          </span>
-          <span class="left">
-            <a href="{{ post.author|url }}">{{ post.author.username|e }}</a>
-          </span>
+          <a href="{{ post.author|url }}" class="author">
+            {{ post.author.username|e }}
+          </a>
+          {% if can_reply and not topic.locked %}
+            <a href="{{ post|url('quote') }}" class="action">
+              {% trans %}Quote{% endtrans %}
+            </a> |
+          {% endif %}
+          {% if can_edit(post) %}
+            <a href="{{ post|url('edit') }}" class="action">
+              {% trans %}Edit{% endtrans %}
+            </a> |
+          {% endif %}
+          <a href="{{ post|url }}" class="date">
+            {{ post.pub_date|datetimeformat }}
+          </a>
         </div>
         <div class="text">
           {{ post.get_text() }}
@@ -101,7 +105,7 @@
             <div class="title">{% trans %}Attachments{% endtrans %}</div>
             <ul>
               {% for att in post.attachments.all() %}
-                <a href="{{ att|url }}"><li class="button">{{ att.name }}</li></a>
+                <a href="{{ att|url }}"><li>{{ att.name }}</li></a>
               {% endfor %}
             </ul>
           </div>
@@ -110,7 +114,7 @@
     {%- endfor %}
   </section>
   {{ pagination.generate() }}
-  <section class="actions">
+  <div class="actions">
     <a href="{{ topic|url('reply')}}">{#
       #}<span>{% trans %}Reply{% endtrans %}</span>{#
     #}</a>
@@ -126,5 +130,5 @@
     <a href="{{ topic|url('report')}}">{#
       #}<span>{% trans %}Report{% endtrans %}</span>{#
     #}</a>
-  </section>
+  </div>
 {% endblock %}

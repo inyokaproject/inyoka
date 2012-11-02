@@ -8,11 +8,8 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
-{% from 'forum/_forum.html' import render_forum, topic_icon with context %}
-
-{% macro generate_subscription_link(do='subscribe') %}
-  {{ href('forum', 'forum', forum.slug, do, next=CURRENT_URL)|e }}
-{% endmacro %}
+{% from 'forum/_forum.html' import render_forum, topic_icon,
+                                   generate_subscription_link with context %}
 
 {% macro forum_actions() %}
   <p class="actions linklist">
