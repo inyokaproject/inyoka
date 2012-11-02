@@ -442,3 +442,13 @@ blockquote {
   border-color: #DD4814;
   border-bottom-left-radius: 7px;
 }
+div.code td.linenos {
+  padding-right: 10px;
+}
+div.bash, pre {
+  margin: 8px 0;
+}
+div.bash {
+  background-color: #CCC;
+  color: black;
+}

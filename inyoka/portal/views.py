@@ -134,7 +134,8 @@ def index(request):
         (Q(date__gte=datetime.utcnow()))))[:4]
 
     storage_values = storage.get_many(('get_ubuntu_link', 'get_ubuntu_description',
-        'session_record', 'session_record_time'))
+        'session_record', 'session_record_time', 'countdown_active',
+        'countdown_deadline', 'countdown_target_page', 'countdown_image_base_url'))
 
     record, record_time = get_user_record({
         'session_record': storage_values.get('session_record'),
@@ -142,13 +143,18 @@ def index(request):
     })
 
     return {
-        'ikhaya_latest':            list(ikhaya_latest),
-        'sessions':                 get_sessions(),
-        'record':                   record,
-        'record_time':              record_time,
-        'get_ubuntu_link':          storage_values.get('get_ubuntu_link', ''),
-        'get_ubuntu_description':   storage_values.get('get_ubuntu_description', ''),
-        'calendar_events':          events,
+        'ikhaya_latest': list(ikhaya_latest),
+        'sessions': get_sessions(),
+        'record': record,
+        'record_time': record_time,
+        'get_ubuntu_link': storage_values.get('get_ubuntu_link', ''),
+        'get_ubuntu_description': storage_values.get('get_ubuntu_description', ''),
+        'calendar_events': events,
+        'countdown_active': storage_values.get('countdown_active', None),
+        'countdown_deadline': storage_values.get('countdown_deadline', None),
+        'countdown_target_page': storage_values.get('countdown_target_page', None),
+        'countdown_image_base_url': storage_values.get('countdown_image_base_url',
+                                                       None),
     }
 
 
@@ -617,72 +623,17 @@ def usercp_profile(request):
     """User control panel view for changing the user's profile"""
     user = request.user
     if request.method == 'POST':
-        form = UserCPProfileForm(request.POST, request.FILES, user=user)
+        form = UserCPProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
-            data = form.cleaned_data
-            for key in ('jabber', 'icq', 'msn', 'aim', 'yim',
-                        'skype', 'wengophone', 'sip',
-                        'signature', 'location', 'occupation',
-                        'interests', 'website', 'gpgkey',
-                        'launchpad'):
-                setattr(user, key, data[key] or '')
-            if data['email'] != user.email:
-                send_new_email_confirmation(user, data['email'])
-                messages.info(request,
-                    _(u'You’ve been sent an email to confirm your new email '
-                      u'address.'))
-            if data['coordinates']:
-                user.coordinates_lat, user.coordinates_long = \
-                    data['coordinates']
-            if data['avatar'] is False:
-                user.delete_avatar()
-            elif data['avatar']:
-                try:
-                    avatar_resized = user.save_avatar(data['avatar'])
-                    if avatar_resized:
-                        ava_mh, ava_mw = storage.get_many(('max_avatar_height',
-                            'max_avatar_width')).itervalues()
-                        messages.info(request,
-                            _(u'The avatar you uploaded was scaled to '
-                              u'%(w)dx%(h)d pixels. Please note that this '
-                              u'may result in lower quality.') % {
-                                  'w': ava_mw,
-                                  'h': ava_mh
-                              })
-                except KeyError:
-                    # the image format is not supported though
-                    form._errors['avatar'] = forms.util.ValidationError(_(
-                        'The used file format is not supported, please choose '
-                        'another one for your avatar.')).messages
-
-            for key in ('show_email', 'show_jabber', 'use_gravatar'):
-                user.settings[key] = data[key]
-            user.save()
-
-
-            if form.errors:
-                generic.trigger_fix_errors_message(request)
-            else:
-                openids = map(int, request.POST.getlist('openids'))
-                UserData.objects.filter(user=user, pk__in = openids).delete()
-                messages.success(request, _(u'Your profile information were updated successfully.'))
-                return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
+            user = form.save(request)
+            openids = map(int, request.POST.getlist('openids'))
+            UserData.objects.filter(user=user, pk__in = openids).delete()
+            messages.success(request, _(u'Your profile information were updated successfully.'))
+            return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
             generic.trigger_fix_errors_message(request)
     else:
-        values = model_to_dict(user)
-        lat = values.pop('coordinates_lat')
-        long = values.pop('coordinates_long')
-        if lat is not None and long is not None:
-            values['coordinates'] = '%s, %s' % (lat, long)
-        else:
-            values['coordinates'] = ''
-        values.update(dict(
-            ((k, v) for k, v in user.settings.iteritems()
-             if k.startswith('show_'))
-        ))
-        values['use_gravatar'] = user.settings.get('use_gravatar', False)
-        form = UserCPProfileForm(initial=values, user=user)
+        form = UserCPProfileForm(instance=user)
 
     storage_keys = storage.get_many(('max_avatar_width',
         'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
@@ -917,42 +868,17 @@ def user_edit(request, username):
 @require_permission('user_edit')
 @templated('portal/user_edit_profile.html')
 def user_edit_profile(request, username):
+    # TODO: Merge with usercp_profile
     user = get_user(username)
     if username != user.urlsafe_username:
         return HttpResponseRedirect(user.get_absolute_url('admin', 'profile'))
 
-    initial = model_to_dict(user)
-    form = EditUserProfileForm(user=user, initial=initial)
+    form = EditUserProfileForm(instance=user, admin_mode=True)
     if request.method == 'POST':
-        form = EditUserProfileForm(request.POST, request.FILES, user=user)
+        form = EditUserProfileForm(request.POST, request.FILES,
+                                   instance=user, admin_mode=True)
         if form.is_valid():
-            data = form.cleaned_data
-
-            lat = data.get('coordinates_lat', None)
-            long = data.get('coordinates_long', None)
-            data['coordinates'] = '%s, %s' % (lat, long) if lat and long else ''
-            for key in ('website', 'interests', 'location', 'jabber', 'icq',
-                         'msn', 'aim', 'yim', 'signature', 'coordinates',
-                         'gpgkey', 'email', 'skype', 'sip', 'wengophone',
-                         'launchpad', 'member_title', 'username'):
-                setattr(user, key, data[key] or '')
-            if data['delete_avatar']:
-                user.delete_avatar()
-
-            if data['avatar']:
-                avatar_resized = user.save_avatar(data['avatar'])
-                if avatar_resized:
-                    ava_mh, ava_mw = storage.get_many(('max_avatar_height',
-                        'max_avatar_width')).itervalues()
-                    messages.info(request,
-                        _(u'The avatar you uploaded was scaled to '
-                          u'%(w)dx%(h)d pixels. Please note that this '
-                          u'may result in lower quality.') % {
-                              'w': ava_mw,
-                              'h': ava_mh
-                          })
-
-            user.save()
+            user = form.save(request)
             messages.success(request,
                 _(u'The profile of “%(username)s” was changed successfully')
                   % {'username': escape(user.username)})
@@ -1032,14 +958,10 @@ def user_edit_status(request, username):
     if username != user.urlsafe_username:
         return HttpResponseRedirect(user.get_absolute_url('admin', 'status'))
 
-    initial = model_to_dict(user)
-    form = EditUserStatusForm(initial=initial)
+    form = EditUserStatusForm(instance=user)
     if request.method == 'POST':
-        form = EditUserStatusForm(request.POST)
+        form = EditUserStatusForm(request.POST, instance=user)
         if form.is_valid():
-            data = form.cleaned_data
-            for key in ('status', 'banned_until',):
-                setattr(user, key, data[key])
             user.save()
             messages.success(request,
                 _(u'The state of “%(username)s” was successfully changed.')
@@ -1982,7 +1904,8 @@ def config(request):
             'license_note', 'get_ubuntu_description', 'blocked_hosts',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
             'team_icon_height', 'team_icon_width', 'distri_versions',
-            'ikhaya_description', 'planet_description']
+            'countdown_active', 'countdown_deadline', 'countdown_target_page',
+            'countdown_image_base_url', 'ikhaya_description', 'planet_description']
 
     team_icon = storage['team_icon']
 

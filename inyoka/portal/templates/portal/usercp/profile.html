@@ -20,7 +20,7 @@
     {{ csrf_token() }}
     <h3>{% trans %}Avatar settings{% endtrans %}</h3>
     <dl>
-      <dt>{% trans %}Avatar:{% endtrans %}</dt>
+      <dt>{{ form.avatar.label_tag() }}:</dt>
       <dd><img class="usercp_avatar" src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{{ href('static', 'img', 'portal', 'no_avatar.png') }}{% endif %}" alt="Avatar" /></dd>
       <dd>{{ form.avatar }}</dd>
       {%- if max_avatar_height >= 0 and max_avatar_width >= 0 %}
@@ -51,7 +51,7 @@
       </dd>
       {% for item in ['email', 'jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone', 'sip'] %}
         <dt>
-          <label for="{{ form[item].auto_id }}">{{ form[item].label }}</label>
+          <label for="{{ form[item].auto_id }}">{{ form[item].label_tag() }}:</label>
         </dt>
         <dd>{{ form[item] }}
           {%- if item in ['email', 'jabber'] %}
