@@ -1344,6 +1344,3 @@ def mark_all_forums_read(user):
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.portal.models import SearchQueue, Subscription
 from inyoka.utils.highlight import highlight_code
-
-# register signal handlers
-from inyoka.forum import signals

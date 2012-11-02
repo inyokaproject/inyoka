@@ -578,7 +578,3 @@ class Event(models.Model):
                                       or '%g_W' % -self.location_long
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
                '=de&params=%s_%s' % (lat, long)
-
-
-#: Register generic model signals
-from inyoka.utils import signals
