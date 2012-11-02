@@ -87,76 +87,91 @@ $(document).ready(function () {
       }
       if (typeof tocDepth === 'undefined') return;
 
+      style = toc.find('ol').first().attr('class');
       // mark old toc for later deletion
       toc.find('ol').addClass('originaltoc');
 
       // create first level
-      newtoc = $('<ol class="arabic"></ol>').hide().insertAfter(toc.find('.head'));
+      //newtoc = $('<ol class="arabic"></ol>').hide().insertAfter(toc.find('.head'));
 
-      // Create the whole tocTree
-      var
-      tocTree = "",
-           // becomes Elementtree
-          level = 1,
-           // which toc-level am I?
-          headerLinks = $('.headerlink'); // Give me all the headers
-      for (var i = 0; i < headerLinks.length; i++) {
-        var link = $(headerLinks[i]).parent().attr("id");
-        var linkText = $(headerLinks[i]).parent().text();
-        var linkText = linkText.substring(0, linkText.length - 1).htmlEscape();
-        var thisClass = $(headerLinks[i]).parent().parent().attr("class");
+      var ol = function(level) {
+        return $('<ol class="' + style + ' toc-item-depth-' + level + '"></ol>')
+      };
+      var li = $('<li></li>');
+      var li_no_number = $('<li style="list-style: none"></li>');
+      var headline_to_listitem = function(headerlink, level) {
+        var ml = 42 - (level - 1) * 2; // max text length of toc entry
+        var link = headerlink.parent().attr("id");
+        var linkText = headerlink.parent().clone().children().remove().end().text().substr(0, ml);
+        return li.clone().append($('<a href="#' + link + '" class="crosslink">' + linkText + '</a>'));
+      }
+      // will finally hold the whole tocTree
+      var tocTree = new Array();
+      tocTree.push(ol(1));
+      var last_level = 1;
+      // Iterate over all <a> tags in headlines
+      $('.headerlink').each(function(index) {
+        level_class = $(this).parent().parent().attr("class");
+        var level = parseInt(level_class.match(/^section_(\d+)$/)[1], 10);
 
-        if (i < headerLinks.length - 1) {
-          // we are not the last headline
-          nextClass = $(headerLinks[i + 1]).parent().parent().attr("class");
-        } else {
-          // after the last headline a first-level HL would follow
-          nextClass = "section_1";
-        }
-
-        nextLevel = parseInt(nextClass.match(/^section_(\d+)$/)[1], 10);
-        if (nextLevel > level) {
-          // append "<li><ol>" !! without closing tags !!
-          tocTree += '<li><a href="#' + link + '" class="crosslink">' + linkText + '</a>';
-          tocTree += '<ol class="arabic toc-item-depth-' + level + '">';
-          level++;
-        } else {
-          //  There is no deeper level
-          tocTree += '<li><a href="#' + link + '">' + linkText + '</a></li>';
-          while (nextLevel < level) {
-            tocTree += '</ol></li>';
-            level--;
+        if (level == last_level) {
+          // the current headline has the same level as the previous one.
+          // So we append it to the most recent list on the stack.
+          tocTree[tocTree.length - 1].append(headline_to_listitem($(this), level));
+        } else if (level > last_level) {
+          // if the headline is indented compared to the previous one
+          // we need to check for the difference between those levels
+          var limit = level - last_level;
+          for (var i = 1; i < limit; i++) {
+            tocTree.push(ol(last_level + i));
+            tocTree[tocTree.length - 1].append(li_no_number.clone());
           }
+          tocTree.push(ol(level));
+          tocTree[tocTree.length - 1].append(headline_to_listitem($(this), level));
+        } else { // headline.level < last_level
+          // we are unindenting the headline level. All lists have to be
+          // popped from the stack up to the current level
+          var limit = last_level - level;
+          for (var i = 0; i < limit; i++) {
+            var node = tocTree.pop();
+            var children = tocTree[tocTree.length - 1].children();
+            if (children.length > 0) {
+              children.last().append(node);
+            } else {
+              tocTree[tocTree.length - 1].append(li_no_number.clone().append(node));
+            }
+          }
+          tocTree[tocTree.length - 1].append(headline_to_listitem($(this), level));
+        }
+        last_level = level;
+      });
+      var limit = last_level - 1;
+      for (var i = 0; i < limit; i++) {
+        var node = tocTree.pop();
+        if (tocTree[tocTree.length - 1].children().length > 0) {
+          $(':last-child', tocTree[tocTree.length - 1]).append(node);
+        } else {
+          tocTree[tocTree.length - 1].append(li_no_number.clone().append(node));
         }
       }
-      newtoc.append(tocTree);
-
+      newtoc = tocTree[0].insertAfter(toc.find('.head'));
       toc.find('.originaltoc').remove();
-      newtoc.show();
       //we have to hide all sublevels, create [+/-], and the click-event
-      toc.find(":not(.originaltoc) ol").each(function () {
-        folder = $('<a class="toctoggle"> [-] </a>');
-        folder.insertBefore($(this));
-        folder.toggle(
-
-        function () {
-          $(this).text(' [+] ').next().slideUp('fast');
-        }, function () {
-          $(this).text(' [-] ').next().slideDown('fast');
-        });
-
-        var _classes = this.className.split(/\s+/);
-        for (var i = 0; i < _classes.length; i++) {
-          if (_classes[i].match(/^toc-item-depth-(\d+)$/)) {
-            curDepth = parseInt(_classes[i].slice(15), 10);
-            break;
+      var folder = $('<a class="toctoggle"> [–] </a>');
+      toc.find('ol ol').each(function () {
+        var f = folder.clone();
+        f.insertBefore($(this)).toggle(
+          function () {
+            $(this).text(' [+] ').next().slideUp('fast');
+          }, function () {
+            $(this).text(' [–] ').next().slideDown('fast');
           }
-        }
-        if (curDepth >= tocDepth) {
-          folder.click();
+        );
+        var classes = $(this).attr('class').split(/\s+/);
+        if (parseInt(classes[classes.length - 1].slice(15)) >= tocDepth) {
+          f.click();
         }
       });
-
     });
   }());
 
