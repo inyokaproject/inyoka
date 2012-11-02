@@ -25,13 +25,6 @@ from inyoka.utils import groupby
 from inyoka.utils.search import search
 from inyoka.utils.terminal import show
 
-# import required adapters
-import inyoka.forum.search
-import inyoka.planet.models
-import inyoka.wiki.search
-import inyoka.ikhaya.models
-
-
 
 def update_index(component, docids):
     connection = search.get_connection(True)

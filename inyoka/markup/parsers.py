@@ -68,16 +68,6 @@ class Parser(object):
         """The argument string."""
         return dump_argstring(self.argument_def)
 
-    @property
-    def wiki_representation(self):
-        """The macro in wiki markup."""
-        args = self.argument_string
-        return u'{{{\n#!%s%s\n%s\n}}}' % (
-            self.parser_name,
-            args and ('(%s)' % args) or '',
-            self.data
-        )
-
     def render(self, context, format):
         """Dispatch to the correct render method."""
         rv = self.build_node(context, format)

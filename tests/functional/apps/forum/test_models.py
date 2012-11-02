@@ -119,10 +119,11 @@ class TestForumModel(TestCase):
     def test_get_absolute_url(self):
         url1 = self.forum.get_absolute_url('show', foo='val1', bar='val2')
         url1_target = ''.join(['http://forum.', settings.BASE_DOMAIN_NAME,
-                                       '/forum/', self.forum.slug, '/', 
+                                       '/forum/', self.forum.slug, '/',
                                        '?foo=val1&bar=val2'])
         self.assertEqual(url1, url1_target)
-    
+
+
 class TestPostSplit(TestCase):
 
     def setUp(self):
@@ -181,7 +182,7 @@ class TestPostSplit(TestCase):
         for i in range(10):
             topic.posts.add(Post(text='test', author=self.user, position=i))
 
-        posts = Post.objects.filter(topic=topic, position__in=[1,2,4,5,6,8])
+        posts = Post.objects.filter(topic=topic, position__in=[1,2,4,5,6,8])    
 
         Post.split(posts, topic, self.topic2)
 
@@ -198,8 +199,8 @@ class TestPostSplit(TestCase):
 
         self.assertEqual(Topic.objects.filter(id=self.topic1.id).count(), 0)
         self.assertEqual(t2.post_count, 20)
-        self.assertEqual(t2.first_post, self.self.t2_posts[0].id)
-        self.assertEqual(t2.last_post, self.self.t1_posts[9].id)
+        self.assertEqual(t2.first_post.id, self.t2_posts[0].id)
+        self.assertEqual(t2.last_post.id, self.t1_posts[9].id)
         post_ids = [p.id for k,p in self.t2_posts.items()] + \
                    [p.id for k,p in self.t1_posts.items()]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
@@ -249,29 +250,59 @@ class TestPostMove(TestCase):
 
 
 class PostDeletionTest(TestCase):
-    fixtures = ['test_post_delete']
+
+    def setUp(self):
+        self.user = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.category = Forum.objects.create(name='category')
+        self.parent = Forum.objects.create(name='parent', parent=self.category)
+        self.forum = Forum.objects.create(name='forum', parent=self.parent)
+        topic = Topic.objects.create(forum=self.forum, title='test',
+                                     author=self.user)
+
+        Post.objects.create(text='', author=self.user, topic=topic, position=0)
+        Post.objects.create(text='', author=self.user, topic=topic)
+        Post.objects.create(text='', author=self.user, topic=topic)
+        cache.clear()
+
+    def tearDown(self):
+        cache.clear()
 
     def test_post_delete_at_end(self):
-        forum_cache_keys = Forum.objects.all().values_list('slug', flat=True)
+        # Warm up cache
+        forum_cache_keys = Forum.objects.get_all_forums_cached().keys()
+        data = cache.get_many(forum_cache_keys)
+        self.assertEqual(data['forum/forums/category'].last_post_id, 3)
+        self.assertEqual(data['forum/forums/parent'].last_post_id, 3)
+        self.assertEqual(data['forum/forums/forum'].last_post_id, 3)
+
         # trigger post deletion
         Post.objects.get(pk=3).delete()
         # ensure cache is properly pruned
-        data = cache.get_many(['forum/forums/%s' % i for i in forum_cache_keys])
-        self.assertEqual(data['forum/forums/parent'].last_post_id, 2)
-        self.assertEqual(data['forum/forums/forum'].last_post_id, 2)
+        data = cache.get_many(forum_cache_keys)
+        self.assertEqual(data, {})
+
         # last post got changed
         topic = Topic.objects.get(pk=1)
         self.assertEqual(topic.last_post_id, 2)
+
         # forum.last_post is correct
         forums = [f for f in topic.forum.parents + [topic.forum] if f.last_post]
         last_post_ids = [f.last_post_id for f in forums]
-        self.assertEqual(last_post_ids, [2,2])
+        self.assertEqual(last_post_ids, [2, 2, 2])
+
+        # refresh cache, check for proper last_post_id
+        Forum.objects.get_all_forums_cached()
+        data = cache.get_many(forum_cache_keys)
+        self.assertEqual(data['forum/forums/category'].last_post_id, 2)
+        self.assertEqual(data['forum/forums/parent'].last_post_id, 2)
+        self.assertEqual(data['forum/forums/forum'].last_post_id, 2)
 
     def test_post_delete_at_center(self):
-        # trigger post deletion
-        Post.objects.get(pk=2).delete()
         # last post wasn't changed
         topic = Topic.objects.get(pk=1)
+
+        # trigger post deletion
+        Post.objects.get(pk=2).delete()
         self.assertEqual(topic.last_post_id, 3)
         # postions are still correct
         p1 = Post.objects.get(pk=1)
@@ -281,4 +312,4 @@ class PostDeletionTest(TestCase):
         # forum.last_post is correct
         forums = [f for f in topic.forum.parents + [topic.forum] if f.last_post]
         last_post_ids = [f.last_post_id for f in forums]
-        self.assertEqual(last_post_ids, [3,3])
+        self.assertEqual(last_post_ids, [3, 3, 3])

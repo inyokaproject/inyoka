@@ -134,12 +134,6 @@ class Node(BaseNode, NodeRenderer, NodeCompiler, NodeQueryInterface):
     and `NodeCompiler` and sets some basic attributes every node must have.
     """
 
-    def generate_markup(self, w):
-        """
-        Generate markup from the node again.  The ``w`` argument is an
-        instance of the `MarkupWriter`.
-        """
-
     def prepare(self, format):
         """
         Public interface to the rendering functions.  This is only a
@@ -173,9 +167,6 @@ class Text(Node):
     def __init__(self, text=u''):
         self.text = text
 
-    def generate_markup(self, w):
-        w.text(self.text)
-
     def prepare_html(self):
         yield escape(self.text)
 
@@ -194,9 +185,6 @@ class HTML(Node):
     @property
     def text(self):
         return striptags(self.html)
-
-    def generate_markup(self, w):
-        w.text(self.text)
 
     def prepare_html(self):
         yield self.html
@@ -237,9 +225,6 @@ class Newline(Node):
     def text(self):
         return '\n'
 
-    def generate_markup(self, w):
-        w._break()
-
     def prepare_html(self):
         yield u'<br />'
 
@@ -250,11 +235,6 @@ class Ruler(Node):
     """
 
     is_block_tag = True
-
-    def generate_markup(self, w):
-        w.newline()
-        w.markup('----')
-        w.newline()
 
     def prepare_html(self):
         yield u'<hr />'
@@ -270,11 +250,6 @@ class ConflictMarker(Node):
 
     def __init__(self, type):
         self.type = type
-
-    def generate_markup(self, w):
-        w.newline()
-        w.markup({'left': '<', 'middle': '=', 'right': '>'}[self.type])
-        w.newline()
 
     def prepare_html(self):
         yield u'<div class="conflict conflict-%s">' % self.type
@@ -305,9 +280,6 @@ class Macro(Node):
     def is_block_tag(self):
         return self.macro.is_block_tag
 
-    def generate_markup(self, w):
-        w.markup(self.macro.wiki_representation)
-
     def prepare_html(self):
         yield self.macro
 
@@ -328,9 +300,6 @@ class Parser(object):
     def is_block_tag(self):
         return self.parser.is_block_tag
 
-    def generate_markup(self, w):
-        w.markup(self.parser.wiki_representation)
-
     def prepare_html(self):
         yield self.parser
 
@@ -349,9 +318,6 @@ class Image(Node):
         self.id = id
         self.class_ = class_
         self.style = style
-
-    def generate_markup(self, w):
-        w.markup('[[Bild("%s")]]' % self.href)
 
     def prepare_html(self):
         yield build_html_tag(u'img', src=self.href, alt=self.alt, id=self.id,
@@ -405,10 +371,6 @@ class Container(Node):
     @property
     def text(self):
         return u''.join(x.text for x in self.children)
-
-    def generate_markup(self, w):
-        for child in self.children:
-            child.generate_markup(w)
 
     def prepare_html(self):
         for child in self.children:
@@ -496,16 +458,6 @@ class InternalLink(Element):
         self.page = page
         self.anchor = anchor
 
-    def generate_markup(self, w):
-        target = self.page
-        if self.anchor:
-            target += '#' + self.anchor
-        w.markup(u'[:%s:' % target.replace(':', '::'))
-        w.start_escaping(']')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u']')
-
     def prepare_html(self):
         if self.force_existing:
             missing = False
@@ -541,16 +493,6 @@ class InterWikiLink(Element):
         self.wiki = wiki
         self.page = page
         self.anchor = anchor
-
-    def generate_markup(self, w):
-        target = self.page
-        if self.anchor:
-            target += '#' + self.anchor
-        w.markup(u'[%s:%s:' % (self.wiki, target.replace(':', '::')))
-        w.start_escaping(']')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u']')
 
     def prepare_html(self):
         # Circular imports
@@ -619,18 +561,6 @@ class Link(Element):
             return get_url((self.scheme, self.netloc, self.path, self.params,
                             self.querystring, self.anchor))
 
-    def generate_markup(self, w):
-        if self.text == self.href:
-            # generate a free link
-            return w.markup(self.href)
-        else:
-            w.markup(u'[%s' % self.href)
-            w.markup(' ')
-            w.start_escaping(']')
-            Element.generate_markup(self, w)
-            w.stop_escaping()
-            w.markup(u']')
-
     def prepare_html(self):
         if self.scheme == 'javascript':
             yield escape(self.caption)
@@ -690,10 +620,6 @@ class Paragraph(Element):
     def text(self):
         return Element.text.__get__(self).strip() + '\n\n'
 
-    def generate_markup(self, w):
-        Element.generate_markup(self, w)
-        w.paragraph()
-
     def prepare_html(self):
         yield build_html_tag(u'p', id=self.id, style=self.style,
                              class_=self.class_)
@@ -728,13 +654,6 @@ class Footnote(Element):
     If that transformer is not activated a <small> section is rendered.
     """
 
-    def generate_markup(self, w):
-        w.markup(u"((")
-        w.start_escaping('))')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u"))")
-
     def prepare_html(self):
         if self.id is None:
             yield build_html_tag(u'small',
@@ -759,12 +678,6 @@ class Quote(Element):
     allows_paragraphs = True
     allowed_in_signatures = True
 
-    def generate_markup(self, w):
-        w.newline()
-        w.quote()
-        Element.generate_markup(self, w)
-        w.unquote()
-
     def prepare_html(self):
         yield build_html_tag(u'blockquote', id=self.id, style=self.style,
                              class_=self.class_)
@@ -785,13 +698,6 @@ class Moderated(Element):
                  class_=None):
         Element.__init__(self, children, id, style, class_)
         self.username = username
-
-    def generate_markup(self, w):
-        w.markup(u'[mod=%s]' % self.username)
-        w.start_escaping('[/mod]')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u'[/mod]')
 
     def prepare_html(self):
         msg = _(u'Moderated by')
@@ -818,13 +724,6 @@ class Edited(Element):
         Element.__init__(self, children, id, style, class_)
         self.username = username
 
-    def generate_markup(self, w):
-        w.markup(u'[edit=%s]' % self.username)
-        w.start_escaping('[/edit]')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u'[/edit]')
-
     def prepare_html(self):
         msg = _(u'Edited by')
         yield u'<div class="edited">'
@@ -844,18 +743,6 @@ class Preformatted(Element):
     is_block_tag = True
     is_raw = True
     allowed_in_signatures = True
-
-    def generate_markup(self, w):
-        w.markup(u'{{{')
-        w.raw()
-        w.start_escaping('}}}')
-        Element.generate_markup(self, w)
-        if w._result[-1][-1] == u'}':
-            # prevent four }s
-            w.touch_whitespace()
-        w.stop_escaping()
-        w.endraw()
-        w.markup(u'}}}')
 
     def prepare_html(self):
         yield build_html_tag(u'pre', id=self.id, style=self.style,
@@ -877,12 +764,6 @@ class Headline(Element):
         if id is None:
             self.id = slugify(self.text, convert_lowercase=False)
 
-    def generate_markup(self, w):
-        w.markup(u'= ')
-        Element.generate_markup(self, w)
-        w.markup(u' =')
-        w.newline()
-
     def prepare_html(self):
         yield build_html_tag(u'h%d' % (self.level + 1),
             id=self.id,
@@ -903,13 +784,6 @@ class Strong(Element):
 
     allowed_in_signatures = True
 
-    def generate_markup(self, w):
-        w.markup(u"'''")
-        w.start_escaping(u"'''")
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u"'''")
-
     def prepare_html(self):
         yield build_html_tag(u'strong', id=self.id, style=self.style,
                              class_=self.class_)
@@ -922,13 +796,6 @@ class Highlighted(Strong):
     """
     Marks highlighted text.
     """
-
-    def generate_markup(self, w):
-        w.markup('[mark]')
-        w.start_escaping('[/mark]')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup('[/mark]')
 
     def prepare_html(self):
         classes = ['highlighted']
@@ -948,13 +815,6 @@ class Emphasized(Element):
     """
 
     allowed_in_signatures = True
-
-    def generate_markup(self, w):
-        w.markup(u"''")
-        w.start_escaping("''")
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u"''")
 
     def prepare_html(self):
         yield build_html_tag(u'em', id=self.id, style=self.style,
@@ -978,9 +838,6 @@ class SourceLink(Element):
     def text(self):
         return '[%d]' % self.target
 
-    def generate_markup(self, w):
-        w.markup(self.text)
-
     def prepare_html(self):
         yield build_html_tag(u'sup', id=self.id, style=self.style,
                              class_=self.class_)
@@ -999,13 +856,6 @@ class Code(Element):
     is_raw = True
     allowed_in_signatures = True
 
-    def generate_markup(self, w):
-        w.markup(u"``")
-        w.start_escaping('``')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u"``")
-
     def prepare_html(self):
         yield build_html_tag(u'code', id=self.id, style=self.style,
                              class_=self.class_)
@@ -1022,13 +872,6 @@ class Underline(Element):
     """
 
     allowed_in_signatures = True
-
-    def generate_markup(self, w):
-        w.markup(u"__")
-        w.start_escaping('__')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u"__")
 
     def prepare_html(self):
         yield build_html_tag(u'span',
@@ -1048,13 +891,6 @@ class Stroke(Element):
 
     allowed_in_signatures = True
 
-    def generate_markup(self, w):
-        w.markup(u"--(")
-        w.start_escaping(')--')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u")--")
-
     def prepare_html(self):
         yield build_html_tag(u'del', id=self.id, style=self.style,
                              class_=self.class_)
@@ -1071,13 +907,6 @@ class Small(Element):
 
     allowed_in_signatures = True
 
-    def generate_markup(self, w):
-        w.markup(u"~-(")
-        w.start_escaping(')-~')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u")-~")
-
     def prepare_html(self):
         yield build_html_tag(u'small', id=self.id, style=self.style,
                              class_=self.class_)
@@ -1092,13 +921,6 @@ class Big(Element):
     """
 
     allowed_in_signatures = True
-
-    def generate_markup(self, w):
-        w.markup(u"~+(")
-        w.start_escaping(')+~')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u")+~")
 
     def prepare_html(self):
         yield build_html_tag(u'big', id=self.id, style=self.style,
@@ -1115,13 +937,6 @@ class Sub(Element):
 
     allowed_in_signatures = True
 
-    def generate_markup(self, w):
-        w.markup(u',,(')
-        w.start_escaping('),,')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u'),,')
-
     def prepare_html(self):
         yield build_html_tag(u'sub', id=self.id, style=self.style,
                              class_=self.class_)
@@ -1136,13 +951,6 @@ class Sup(Element):
     """
 
     allowed_in_signatures = True
-
-    def generate_markup(self, w):
-        w.markup(u'^^(')
-        w.start_escaping(')^^')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u')^^')
 
     def prepare_html(self):
         yield build_html_tag(u'sup', id=self.id, style=self.style,
@@ -1164,13 +972,6 @@ class Color(Element):
                  class_=None):
         Element.__init__(self, children, id, style, class_)
         self.value = value
-
-    def generate_markup(self, w):
-        w.markup(u'[color=%s]' % self.value)
-        w.start_escaping('[/color]')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u'[/color]')
 
     def prepare_html(self):
         style = self.style and self.style + '; ' or ''
@@ -1195,13 +996,6 @@ class Size(Element):
                  class_=None):
         Element.__init__(self, children, id, style, class_)
         self.size = size
-
-    def generate_markup(self, w):
-        w.markup(u'[size=%s]' % self.size)
-        w.start_escaping('[/size]')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u'[/size]')
 
     def prepare_html(self):
         style = self.style and self.style + '; ' or ''
@@ -1228,13 +1022,6 @@ class Font(Element):
                  class_=None):
         Element.__init__(self, children, id, style, class_)
         self.faces = faces
-
-    def generate_markup(self, w):
-        w.markup(u'[font=%s]' % self.value)
-        w.start_escaping('[/font]')
-        Element.generate_markup(self, w)
-        w.stop_escaping()
-        w.markup(u'[/font]')
 
     def prepare_html(self):
         style = self.style and self.style + '; ' or ''
@@ -1278,12 +1065,6 @@ class DefinitionTerm(Element):
         Element.__init__(self, children, id, style, class_)
         self.term = term
 
-    def generate_markup(self, w):
-        w.markup('  %s:: ' % self.term)
-        w.oneline()
-        Element.generate_markup(self, w)
-        w.endblock()
-
     def prepare_html(self):
         yield build_html_tag(u'dt', class_=self.class_, style=self.style,
                              id=self.id)
@@ -1306,11 +1087,6 @@ class List(Element):
         Element.__init__(self, children, id, style, class_)
         self.type = type
 
-    def generate_markup(self, w):
-        w.list(self.type)
-        Element.generate_markup(self, w)
-        w.endlist()
-
     def prepare_html(self):
         if self.type == 'unordered':
             tag = u'ul'
@@ -1331,11 +1107,6 @@ class ListItem(Element):
     """
     is_block_tag = True
     allows_paragraphs = True
-
-    def generate_markup(self, w):
-        w.item()
-        Element.generate_markup(self, w)
-        w.enditem()
 
     def prepare_html(self):
         yield build_html_tag(u'li', id=self.id, style=self.style,
