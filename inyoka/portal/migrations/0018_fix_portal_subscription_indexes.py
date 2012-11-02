@@ -10,7 +10,7 @@ _re = re.compile(r'  UNIQUE KEY `([a-z0-9_].*?)` \(`[a-z_]+`\),\n')
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        if not db.dry_run:
+        if not db.dry_run and db.backend_name == 'mysql':
             unique_keys = _re.findall(db.execute('show create table portal_subscription')[0][1])
             for key in unique_keys:
                 db.execute('alter table portal_subscription drop index %s' % key)
