@@ -16,7 +16,7 @@
   {%- if countdown_active -%}
   <div class="container">
     <div id="counter">
-      <a href="http://wiki.ubuntuusers.de/{{ countdown_wiki_page|e }}"><img/></a>
+      <a href="{{ countdown_target_page|e }}"><img/></a>
     </div>
   </div>
   {%- endif -%}

@@ -931,7 +931,7 @@ class ConfigurationForm(forms.Form):
         label=ugettext_lazy(u'Display countdown'))
     countdown_deadline = forms.DateField(required=False,
         label=ugettext_lazy(u'Release date'), widget=DateWidget)
-    countdown_wiki_page = forms.CharField(required=False,
+    countdown_target_page = forms.CharField(required=False,
         label=ugettext_lazy(u'Name of wiki page'))
     countdown_image_base_url = forms.CharField(required=False,
         label=ugettext_lazy(u'Base path to images'),
