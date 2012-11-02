@@ -932,7 +932,7 @@ class ConfigurationForm(forms.Form):
     countdown_deadline = forms.DateField(required=False,
         label=ugettext_lazy(u'Release date'), widget=DateWidget)
     countdown_target_page = forms.CharField(required=False,
-        label=ugettext_lazy(u'Name of wiki page'))
+        label=ugettext_lazy(u'Full path to the target link page'))
     countdown_image_base_url = forms.CharField(required=False,
         label=ugettext_lazy(u'Base path to images'),
         help_text=ugettext_lazy(u'The path must be relative to STATIC_URL and '
