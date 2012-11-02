@@ -11,7 +11,7 @@ from django.test import TestCase
 
 from inyoka.portal.user import User
 from inyoka.utils.database import update_model
-from inyoka.utils.tests.models import JSONEntry
+from .models import JSONEntry
 
 
 

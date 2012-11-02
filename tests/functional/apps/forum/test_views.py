@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from mock import patch
 from random import randint
+from itertools import izip_longest
 from os import path
 
 from django.conf import settings
@@ -68,6 +69,7 @@ class TestViews(TestCase):
 
     def _setup_pagination(self):
         """ Create enough topics for pagination test """
+        posts = []
         def newtopic():
             t = Topic.objects.create(title="Title %s" % randint(1, 100000),
                                      author=self.user, forum=self.forum3)
@@ -76,14 +78,18 @@ class TestViews(TestCase):
             t.first_post_id = p.id
             t.save()
             for i in xrange(1, randint(2, 3)):
-                Post.objects.create(text="More Posts %s" % randint(1, 100000),
-                                    topic=t, author=self.user, position=i)
+                posts.append(Post(text="More Posts %s" % randint(1, 100000),
+                                    topic=t, author=self.user, position=i))
             for i in xrange(1, randint(2, 3)):
-                Post.objects.create(text="More Posts %s" % randint(1, 100000),
-                                    topic=t, author=self.admin, position=i)
+                posts.append(Post(text="More Posts %s" % randint(1, 100000),
+                                    topic=t, author=self.admin, position=i))
         self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
         for _ in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
+        #TODO: kill chunking in Django 1.5
+        chunks = izip_longest(*[iter(posts)]*50, fillvalue=None)
+        for chunk in chunks:
+            Post.objects.bulk_create(filter(None, chunk))
 
     def test_reported_topics(self):
         response = self.client.get('/reported_topics/')
