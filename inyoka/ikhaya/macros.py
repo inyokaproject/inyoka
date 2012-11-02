@@ -3,7 +3,6 @@ from django.conf import settings
 from django.dispatch import receiver
 from inyoka.wiki.signals import build_picture_node
 from inyoka.portal.models import StaticFile
-from inyoka.markup.macros import Picture
 from inyoka.markup import nodes
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.urls import url_for
@@ -33,6 +32,7 @@ def build_ikhaya_picture_node(sender, context, format, **kwargs):
         else:
             source = url_for(file)
     except StaticFile.DoesNotExist:
+        print "static file does not exist"
         pass
 
     img = nodes.Image(source, sender.alt, class_='image-' +

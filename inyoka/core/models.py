@@ -4,7 +4,7 @@ from django.db.models import loading
 from django.utils.importlib import import_module
 
 
-AUTOIMPORT_MODULES = ['search', 'macros']
+AUTOIMPORT_MODULES = ['search', 'macros', 'signals']
 
 
 def register_special_modules():
