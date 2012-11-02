@@ -134,7 +134,8 @@ def index(request):
         (Q(date__gte=datetime.utcnow()))))[:4]
 
     storage_values = storage.get_many(('get_ubuntu_link', 'get_ubuntu_description',
-        'session_record', 'session_record_time'))
+        'session_record', 'session_record_time', 'countdown_active',
+        'countdown_deadline', 'countdown_wiki_page', 'countdown_image_base_url'))
 
     record, record_time = get_user_record({
         'session_record': storage_values.get('session_record'),
@@ -142,13 +143,18 @@ def index(request):
     })
 
     return {
-        'ikhaya_latest':            list(ikhaya_latest),
-        'sessions':                 get_sessions(),
-        'record':                   record,
-        'record_time':              record_time,
-        'get_ubuntu_link':          storage_values.get('get_ubuntu_link', ''),
-        'get_ubuntu_description':   storage_values.get('get_ubuntu_description', ''),
-        'calendar_events':          events,
+        'ikhaya_latest': list(ikhaya_latest),
+        'sessions': get_sessions(),
+        'record': record,
+        'record_time': record_time,
+        'get_ubuntu_link': storage_values.get('get_ubuntu_link', ''),
+        'get_ubuntu_description': storage_values.get('get_ubuntu_description', ''),
+        'calendar_events': events,
+        'countdown_active': storage_values.get('countdown_active', None),
+        'countdown_deadline': storage_values.get('countdown_deadline', None),
+        'countdown_wiki_page': storage_values.get('countdown_wiki_page', None),
+        'countdown_image_base_url': storage_values.get('countdown_image_base_url',
+                                                       None),
     }
 
 
@@ -1898,7 +1904,8 @@ def config(request):
             'license_note', 'get_ubuntu_description', 'blocked_hosts',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
             'team_icon_height', 'team_icon_width', 'distri_versions',
-            'ikhaya_description', 'planet_description']
+            'countdown_active', 'countdown_deadline', 'countdown_wiki_page',
+            'countdown_image_base_url', 'ikhaya_description', 'planet_description']
 
     team_icon = storage['team_icon']
 

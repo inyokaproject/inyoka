@@ -36,7 +36,7 @@ from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href, is_safe_domain
-from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
+from inyoka.utils.forms import CaptchaField, DateTimeWidget, DateWidget, \
     HiddenCaptchaField, EmailField, JabberField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
@@ -927,6 +927,19 @@ class ConfigurationForm(forms.Form):
     team_icon_height = forms.IntegerField(min_value=1, required=False)
     license_note = forms.CharField(required=False, label=ugettext_lazy(u'License note'),
                                    widget=forms.Textarea(attrs={'rows': 2}))
+    countdown_active = forms.BooleanField(required=False,
+        label=ugettext_lazy(u'Display countdown'))
+    countdown_deadline = forms.DateField(required=False,
+        label=ugettext_lazy(u'Release date'), widget=DateWidget)
+    countdown_wiki_page = forms.CharField(required=False,
+        label=ugettext_lazy(u'Name of wiki page'))
+    countdown_image_base_url = forms.CharField(required=False,
+        label=ugettext_lazy(u'Base path to images'),
+        help_text=ugettext_lazy(u'The path must be relative to STATIC_URL and '
+            'without identifier. To get '
+            '<code>http://static.example.com/images/cd_start.png</code> '
+            'only <code>images/cd_</code> needs to be provided. The base url '
+            'is expanded by either "start", 1-14 or "here" plus ".png".'))
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,
