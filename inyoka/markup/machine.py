@@ -70,13 +70,6 @@ class NodeRenderer(object):
         """Constructs a renderer for this nodes and renders it."""
         return Renderer(self).render(context, format)
 
-    def to_markup(self, writer=None):
-        """Convert the node to markup."""
-        if writer is None:
-            writer = MarkupWriter()
-        self.generate_markup(writer)
-        return writer.finish().strip('\n').strip('\\\\')
-
 
 class NodeQueryInterface(object):
     """
@@ -154,21 +147,18 @@ class RenderContext(object):
     only that allows you to track circular page inclusions.
     """
 
-    def __init__(self, request=None, wiki_page=None, simplified=False,
-                 raw=False, application=None, forum_post=None):
+    def __init__(self, request=None, simplified=False,
+                 raw=False, application=None, **kwargs):
         self.request = request
-        self.wiki_page = wiki_page
-        self.forum_post = forum_post
         self.simplified = simplified
-        self.included_pages = set()
         self._application = application
+        self.kwargs = kwargs
 
     @property
     def application(self):
         if self._application is not None:
             return self._application
         return get_request_context(self.request)
-
 
 
 class Renderer(object):
@@ -234,155 +224,3 @@ class Renderer(object):
     def render(self, context, format=None):
         """Streams into a buffer and returns it as string."""
         return u''.join(self.stream(context, format))
-
-
-class MarkupWriter(object):
-    """
-    Helper function to generate Markup.  It's used to generate wiki markup
-    from nodes.  Note that not all nodes have markup associated.
-    """
-
-    def __init__(self):
-        self._result = []
-        self._indentation = []
-        self._blocks = []
-        self._lists = []
-        self._newline = False
-        self._new_paragraph = False
-        self._new_break = False
-        self._escapes = []
-
-    @property
-    def is_oneline(self):
-        return self._blocks and self._blocks[-1] == 'oneline' \
-               and not self.is_raw
-
-    @property
-    def is_raw(self):
-        return self._indentation and self._indentation[-1][0] == 'raw'
-
-    def touch_whitespace(self):
-        self.text(' ')
-
-    def finish(self):
-        return u''.join(self._result)
-
-    def flush(self):
-        def _indent():
-            indentation = []
-            for t, depth in self._indentation:
-                if t == 'raw':
-                    del indentation[:]
-                elif t == 'quote':
-                    if indentation and indentation[-1] == '> ':
-                        indentation[-1:] = ('>', '> ')
-                    else:
-                        indentation.append('> ')
-                elif t == 'indent':
-                    indentation.append(u' ' * depth)
-            self._result.append(u''.join(indentation))
-
-        if self._newline or self._new_paragraph or self._new_break:
-            if self._new_break:
-                self._result.append(u'\\\\\n')
-                _indent()
-            elif self._new_paragraph:
-                self._result.append(u'\n')
-                _indent()
-                self._result.append(u'\n')
-                _indent()
-            elif self._newline:
-                self._result.append(u'\n')
-                _indent()
-            self._newline = self._new_paragraph = self._new_break = False
-
-    def escape_text(self, text):
-        return escape(text)
-
-    def text(self, text):
-        self.flush()
-        for s in self._escapes:
-            text = text.replace(s, u'\\%s' % s)
-        if not self.is_raw:
-            text = self.escape_text(text)
-            text = _whitespace_re.sub(u' ', text)
-        self._result.append(text)
-
-    def markup(self, text):
-        self.flush()
-        self._result.append(text)
-
-    def newline(self):
-        if self.is_oneline:
-            self.touch_whitespace()
-        else:
-            self._newline = True
-
-    def _break(self):
-        if self.is_oneline:
-            self.touch_whitespace()
-        else:
-            if not self._new_break:
-                self._new_break = True
-            else:
-                self._new_break = False
-                self._new_paragraph = True
-
-    def paragraph(self):
-        if not self.is_oneline:
-            self._new_paragraph = True
-        else:
-            self.touch_whitespace()
-
-    def indent(self, step=2):
-        self._indentation.append(('indent', step))
-
-    def quote(self):
-        self._indentation.append(('quote', 1))
-
-    def raw(self):
-        self._indentation.append(('raw', 0))
-
-    def oneline(self):
-        self._blocks.append('oneline')
-
-    def block(self):
-        self._blocks.append('block')
-
-    def endblock(self):
-        self._blocks.pop()
-
-    def list(self, type):
-        self._newline = True
-        self._lists.append(type)
-        self.indent(2)
-
-    def endlist(self):
-        self._lists.pop()
-        self.outdent()
-
-    def item(self):
-        self.oneline()
-        return self.markup({
-            'unordered':        '*',
-            'arabiczero':       '0.',
-            'arabic':           '1.',
-            'alphalower':       'a.',
-            'alphaupper':       'A.',
-            'romanlower':       'i.',
-            'romanupper':       'I.'
-        }[self._lists[-1]] + ' ')
-
-    def enditem(self):
-        self.endblock()
-        self._newline = True
-
-    def outdent(self):
-        self._indentation.pop()
-    unquote = endraw = outdent
-
-    def start_escaping(self, chars):
-        self._escapes.append(chars)
-
-    def stop_escaping(self):
-        self._escapes.pop()
