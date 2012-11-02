@@ -255,7 +255,6 @@ class OrphanedPages(macros.Macro):
         return result
 
 
-
 class MissingPages(macros.Macro):
     """
     Return a list of missing pages.

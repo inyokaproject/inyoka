@@ -36,7 +36,6 @@ from inyoka.utils.files import get_filename
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
 from inyoka.utils.search import search
-from inyoka.utils.text import get_new_unique_filename
 from inyoka.utils.urls import href
 
 from inyoka.markup import parse, RenderContext
@@ -49,6 +48,7 @@ from inyoka.forum.constants import CACHE_PAGES_COUNT, VERSION_CHOICES, \
     SUPPORTED_IMAGE_TYPES
 
 _newline_re = re.compile(r'\r?\n')
+
 
 def fix_plaintext(text):
     text = escape(text)

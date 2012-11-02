@@ -25,25 +25,12 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import os
-import operator
-import itertools
 from datetime import datetime
-from django.conf import settings
 from django.utils.translation import ugettext as _
-from inyoka.utils.urls import href, url_for
-from inyoka.portal.models import StaticFile
-from inyoka.forum.models import Attachment as ForumAttachment
 from inyoka.markup import nodes
-from inyoka.markup.utils import debug_repr, dump_argstring, ArgumentCollector
-from inyoka.markup.templates import expand_page_template
-from inyoka.wiki.views import fetch_real_target
-from inyoka.wiki.signals import build_picture_node
-from inyoka.markup.utils import filter_style
-from inyoka.utils.urls import is_external_target
-from inyoka.utils.text import join_pagename, normalize_pagename
+from inyoka.markup.utils import (debug_repr, dump_argstring,
+    ArgumentCollector, filter_style)
 from inyoka.utils.dates import parse_iso8601, format_datetime
-from inyoka.utils.imaging import get_thumbnail, parse_dimensions
 
 
 ALL_MACROS = {}

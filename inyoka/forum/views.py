@@ -12,8 +12,6 @@ from datetime import datetime, timedelta
 from operator import attrgetter
 from itertools import groupby
 
-from werkzeug.datastructures import MultiDict
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType

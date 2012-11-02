@@ -1,5 +1,4 @@
 #-*- coding: utf-8 -*-
-from django.conf import settings
 from django.db.models import loading
 from django.utils.importlib import import_module
 
