@@ -336,6 +336,7 @@ class Group(models.Model):
     @classmethod
     def get_default_group(self):
         """Return a default group for all registered users."""
+        global _DEFAULT_GROUP
         if not _DEFAULT_GROUP:
             _DEFAULT_GROUP = Group.objects.get(id=DEFAULT_GROUP_ID)
         return _DEFAULT_GROUP
