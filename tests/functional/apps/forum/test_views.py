@@ -68,7 +68,7 @@ class TestViews(TestCase):
         self.client.login(username='admin', password='admin')
 
     def _setup_pagination(self):
-        """ Create enough topics for pagination test """
+        """Create enough topics for pagination test"""
         posts = []
         def newtopic():
             t = Topic.objects.create(title="Title %s" % randint(1, 100000),
@@ -137,15 +137,41 @@ class TestViews(TestCase):
                    Subscription.objects.user_subscribed(self.user, self.topic))
         self.assertEqual(response['location'], forward_url)
 
-    def test_continue(self):
-        """ The Parameter continue was renamed into next """
+    def test_continue_admin_index(self):
+        """The Parameter continue was renamed into next"""
+        response = self.client.get("/", follow=True)
+        self.assertEqual(response.status_code, 200)
 
-        urls = ["/",
-                "/forum/%s/" % self.forum2.slug,
-                "/topic/%s/" % self.topic.slug]
-        for url in urls:
-            response = self.client.get(url)
-            self.assertFalse('?continue=' in response.content.decode("utf-8"))
+    def test_continue_admin_forum(self):
+        """The Parameter continue was renamed into next"""
+        response = self.client.get("/forum/%s/" % self.forum2.slug, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_continue_admin_topic(self):
+        """The Parameter continue was renamed into next"""
+        response = self.client.get("/topic/%s/" % self.topic.slug, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_continue_user_index(self):
+        """The Parameter continue was renamed into next"""
+        self.client.logout()
+        self.client.login(username='user', password='user')
+        response = self.client.get("/", follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_continue_user_forum(self):
+        """The Parameter continue was renamed into next"""
+        self.client.logout()
+        self.client.login(username='user', password='user')
+        response = self.client.get("/forum/%s/" % self.forum2.slug, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_continue_user_topic(self):
+        """The Parameter continue was renamed into next"""
+        self.client.logout()
+        self.client.login(username='user', password='user')
+        response = self.client.get("/topic/%s/" % self.topic.slug, follow=True)
+        self.assertEqual(response.status_code, 403)
 
     @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     def test_topiclist(self):
