@@ -17,9 +17,13 @@ from PIL import Image
 from StringIO import StringIO
 
 from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,\
+    update_last_login
+from django.contrib.auth.signals import user_logged_in
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.db import models
+from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
@@ -31,12 +35,10 @@ from inyoka.utils.local import current_request
 from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
-from inyoka.utils.user import normalize_username, get_hexdigest,\
-    check_password, gen_activation_key
+from inyoka.utils.user import normalize_username, gen_activation_key
 from inyoka.markup import parse, render, RenderContext
 
 
-UNUSABLE_PASSWORD = '!$!'
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
 DEFAULT_GROUP_ID = 1 # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
@@ -107,7 +109,8 @@ def reactivate_user(id, email, status, time):
         values['banned_until'] = None
 
     update_model(user, **values)
-    send_new_user_password(user)
+    # FIXME: Django 1.5, this thing got nuked :þ
+    #send_new_user_password(user)
 
     # reactivate user page
     try:
@@ -169,7 +172,7 @@ def deactivate_user(user):
     user.set_unusable_password()
     user.groups.remove(*user.groups.all())
     user.avatar = user.coordinates_long = user.coordinates_lat = \
-        user.new_password_key = user._primary_group = None
+        user._primary_group = None
     user.icq = user.jabber = user.msn = user.aim = user.yim = user.skype = \
         user.wengophone = user.sip = user.location = user.signature = \
         user.gpgkey = user.location = user.occupation = user.interests = \
@@ -252,23 +255,6 @@ def send_activation_mail(user):
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
-def send_new_user_password(user):
-    new_password_key = ''.join(random.choice(string.lowercase + string.digits)
-                               for _ in range(24))
-    user.new_password_key = new_password_key
-    user.save()
-    message = render_template('mails/new_user_password.txt', {
-        'username':         user.username,
-        'email':            user.email,
-        'new_password_url': href('portal', 'lost_password',
-                                 user.urlsafe_username, new_password_key),
-    })
-    subject = _(u'%(sitename)s – New password for “%(name)s”') \
-              % {'sitename': settings.BASE_DOMAIN_NAME,
-                 'name': user.username}
-    send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
-
-
 class Group(models.Model):
     name = models.CharField(ugettext_lazy(u'Group name'), max_length=80,
                 unique=True, db_index=True, error_messages={
@@ -342,7 +328,7 @@ class Group(models.Model):
         return _DEFAULT_GROUP
 
 
-class UserManager(models.Manager):
+class UserManager(BaseUserManager):
 
     def get(self, pk=None, **kwargs):
         if 'username' in kwargs:
@@ -385,12 +371,8 @@ class UserManager(models.Manager):
 
     def create_user(self, username, email, password=None):
         now = datetime.utcnow()
-        user = self.model(
-            None, username,
-            email.strip().lower(),
-            'placeholder', False,
-            now, now
-        )
+        user = self.model(username=username, email=email.strip().lower(),
+            status=0, date_joined=now, last_login=now)
         if password:
             user.set_password(password)
         else:
@@ -425,11 +407,8 @@ class UserManager(models.Manager):
         user.save()
         return user
 
-    def logout(self, request):
-        request.session.pop('uid', None)
-        request.user = self.get_anonymous_user()
-
     def authenticate(self, username, password):
+        # FIXME: Move into auth backend!!!!
         """
         Authenticate a user with `username` (which can also be the email
         address) and `password`.
@@ -463,7 +442,7 @@ class UserManager(models.Manager):
                     user.banned_until = None
                     user.save()
 
-        if user.check_password(password, auto_convert=True):
+        if user.check_password(password):
             return user
 
     def get_anonymous_user(self):
@@ -524,8 +503,6 @@ class User(models.Model):
                                     verbose_name=ugettext_lazy(u'Groups'),
                                     blank=True,
                                     related_name='user_set')
-    new_password_key = models.CharField(ugettext_lazy(u'Confirmation key for a new password'),
-                                        blank=True, null=True, max_length=32)
 
     banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'),
                                         null=True, blank=True,
@@ -572,18 +549,15 @@ class User(models.Model):
                                        blank=True, null=True,
                                        db_column='primary_group_id')
 
+    USERNAME_FIELD = 'username'
+    backend = 'django.contrib.auth.backends.ModelBackend'  # TODO: Django 1.5, fixme?! (see django.contrib.auth.authenticate)
+
     def save(self, *args, **kwargs):
         """
         Save method that dumps `self.settings` before and cleanup
         the cache after saving the model.
         """
-        if 'update_fields' in kwargs:
-            data = {}
-            for field in kwargs['update_fields']:
-                data[field] = getattr(self, field)
-            update_model(self, **data)
-        else:
-            super(User, self).save(*args, **kwargs)
+        super(User, self).save(*args, **kwargs)
         cache.delete_many(['portal/user/%s/signature' % self.id,
                            'portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])
@@ -592,33 +566,11 @@ class User(models.Model):
         return self.username
 
     is_anonymous = property(lambda x: x.username == settings.INYOKA_ANONYMOUS_USER)
-    is_authenticated = property(lambda x: not x.is_anonymous)
+    # No property to stay compatible with Django
+    is_authenticated = lambda x: not x.is_anonymous
     is_active = property(lambda x: x.status == 1)
     is_banned = property(lambda x: x.status == 2)
     is_deleted = property(lambda x: x.status == 3)
-
-    def set_password(self, raw_password):
-        """Set a new sha1 generated password hash"""
-        salt = get_hexdigest(str(random.random()), str(random.random()))[:5]
-        hsh = get_hexdigest(salt, raw_password)
-        self.password = '%s$%s' % (salt, hsh)
-        # invalidate the new_password_key
-        if self.new_password_key:
-            self.new_password_key = None
-
-    def check_password(self, raw_password, auto_convert=False):
-        """
-        Returns a boolean of whether the raw_password was correct.
-        """
-        return check_password(raw_password, self.password,
-                              convert_user=auto_convert and self or False)
-
-    def set_unusable_password(self):
-        """Sets a value that will never be a valid hash"""
-        self.password = UNUSABLE_PASSWORD
-
-    def has_usable_password(self):
-        return self.password != UNUSABLE_PASSWORD
 
     @property
     def has_wikipage(self):
@@ -636,13 +588,13 @@ class User(models.Model):
 
     def get_groups(self):
         """Get groups inclusive the default group for registered users"""
-        groups = self.is_authenticated and [Group.get_default_group()] or []
+        groups = self.is_authenticated() and [Group.get_default_group()] or []
         groups.extend(self.groups.all())
         return groups
 
     @deferred
     def permissions(self):
-        if not self.is_authenticated:
+        if not self.is_authenticated():
             return 0
         key = 'user_permissions/%s' % self.id
         result = cache.get(key)
@@ -745,16 +697,6 @@ class User(models.Model):
         elif action in ('subscribe', 'unsubscribe'):
             return href('portal', 'user', self.urlsafe_username, action, **query)
 
-    def login(self, request):
-        self.last_login = datetime.utcnow()
-        request.session['uid'] = self.id
-        request.session.pop('_sk', None)
-        request.user = self
-        # invalidate the new_password_key
-        if self.new_password_key:
-            self.new_password_key = None
-        self.save()
-
     @classproperty
     def SYSTEM_USER(cls):
         return cls.objects.get_system_user()
@@ -768,6 +710,15 @@ class UserData(models.Model):
     user = models.ForeignKey(User)
     key = models.CharField(max_length=255)
     value = models.CharField(max_length=255)
+
+
+# TODO: The original signal can get reused as soon as we turn USE_TZ on.
+@receiver(user_logged_in)
+def update_user_flags(sender, request, user, **kwargs):
+    user.last_login = datetime.utcnow()
+    user.save(update_fields=['last_login'])
+
+user_logged_in.disconnect(update_last_login)
 
 
 # circ imports

@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns('inyoka.portal.views',
     (r'^$', 'index'),
@@ -60,10 +60,10 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^register/$', 'register'),
     (r'^(?P<action>activate|delete)/(?P<username>[^/]+)/(?P<activation_key>.*?)/$', 'activate'),
     (r'^register/resend/(?P<username>[^/]+)/$', 'resend_activation_mail'),
-    (r'^lost_password/$', 'lost_password'),
-    (r'^lost_password/(?P<username>[^/]+)/(?P<new_password_key>[a-z0-9]+)/$', 'set_new_password'),
     (r'^confirm/$', 'confirm'),
     (r'^confirm/(?P<action>[^/]+)/$', 'confirm'),
+    (r'^lost_password/$', 'lost_password'),
+    (r'^lost_password/(?P<uidb36>[0-9A-Za-z]{1,13})/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', 'set_new_password'),
     (r'^feeds/$', 'feedselector'),
     (r'^feeds/(?P<app>[^/]+)/$', 'feedselector'),
     (r'^calendar/$', 'calendar_overview'),
@@ -83,9 +83,6 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^files/(?P<slug>.+)/delete/$', 'file_delete'),
     (r'^pages/$', 'pages'),
     (r'^page/new/$', 'page_edit'),
-    (r'^([-A-Za-z_]+)/$', 'static_page'),
-    (r'^([-A-Za-z_]+)/edit/$', 'page_edit'),
-    (r'^(?P<pk>[-A-Za-z_]+)/delete/$', 'page_delete'),
 )
 
 
@@ -95,8 +92,13 @@ js_info_dict = {
 }
 
 urlpatterns += patterns('',
-    url(r'jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict)
+    url(r'jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
 )
 
+urlpatterns += patterns('inyoka.portal.views',
+    (r'^([-A-Za-z_]+)/$', 'static_page'),
+    (r'^([-A-Za-z_]+)/edit/$', 'page_edit'),
+    (r'^(?P<pk>[-A-Za-z_]+)/delete/$', 'page_delete'),
+)
 
 handler404 = 'inyoka.utils.urls.global_not_found'

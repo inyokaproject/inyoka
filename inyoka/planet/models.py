@@ -34,8 +34,8 @@ class EntryManager(models.Manager):
 class Blog(models.Model):
     name = models.CharField(ugettext_lazy(u'Name of the blog'), max_length=40)
     description = models.TextField(ugettext_lazy(u'Description'), blank=True, null=True)
-    blog_url = models.URLField(ugettext_lazy(u'URL of the blog'), verify_exists=False)
-    feed_url = models.URLField(ugettext_lazy(u'URL of the feed'), verify_exists=False)
+    blog_url = models.URLField(ugettext_lazy(u'URL of the blog'))
+    feed_url = models.URLField(ugettext_lazy(u'URL of the feed'))
     user = models.ForeignKey(User, verbose_name=ugettext_lazy(u'User'),
                              blank=True, null=True)
     icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to='planet/icons', blank=True)

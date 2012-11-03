@@ -43,7 +43,7 @@
       <li><a href="{{ href('wiki', 'ubuntuusers', 'Spenden') }}">Spenden</a></li>
       <li><a href="{{ href('portal', 'kontakt') }}">{% trans %}Contact{% endtrans %}</a></li>
       <li><a href="{{ href('portal', 'search') }}">{% trans %}Search{% endtrans %}</a></li>
-      <li><a href="{% if USER.is_authenticated %}{{ href('pastebin') }}{% else %}{{ href('pastebin', 'browse') }}{% endif %}">Ablage</a></li>
+      <li><a href="{% if USER.is_authenticated() %}{{ href('pastebin') }}{% else %}{{ href('pastebin', 'browse') }}{% endif %}">Ablage</a></li>
       <li><a href="{{ href('portal', 'whoisonline') }}">{% trans %}Who is online?{% endtrans %}</a></li>
     </ul>
     <h3 class="navi_forum">{{ feed_button(href('portal', 'feeds', 'forum')) }}<a href="{{ href('forum') }}">{% trans %}Forum{% endtrans %}</a></h3>

@@ -9,12 +9,13 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import json
 import base64
+
 from Queue import Empty
 from djkombu.transport import Channel as KChannel, \
     DatabaseTransport as KDatabaseTransport
 from djkombu.models import Queue
-from django.utils import simplejson as json
 
 
 class Channel(KChannel):

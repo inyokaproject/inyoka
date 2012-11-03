@@ -8,12 +8,12 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import json
 import operator
 
 from django.core.cache import cache
 from django.db.models.expressions import F, ExpressionNode
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import simplejson as json
 from django.db import models
 
 from inyoka.utils.text import get_next_increment

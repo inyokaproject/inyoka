@@ -31,14 +31,14 @@
 
 {% macro topic_actions() %}
   <span class="linklist">
-    {%- if not USER.is_authenticated or can_reply and not topic.locked %}
+    {%- if not USER.is_authenticated() or can_reply and not topic.locked %}
       <a href="{{ topic|url('reply') }}" class="action action_reply">{% trans %}Reply{% endtrans %}</a> |
     {%- elif can_moderate and topic.locked %}
       <span class="admin_link">
         <a href="{{ topic|url('reply') }}" class="action action_reply">{% trans %}Reply{% endtrans %}</a> |
       </span>
     {%- endif %}
-    {% if USER.is_authenticated %}
+    {% if USER.is_authenticated() %}
       {%- if is_subscribed %}
         <a href="{{ generate_subscription_link(do='unsubscribe') }}"
            class="action action_subscribe subscribe_topic"
@@ -256,7 +256,7 @@
                        class="action action_edit">{% trans %}Edit{% endtrans %}</a> |
                   </span>
                 {%- endif %}
-                {%- if not USER.is_authenticated or can_reply and not topic.locked %}
+                {%- if not USER.is_authenticated() or can_reply and not topic.locked %}
                   <a href="{{ post|url('quote') }}"
                      class="action action_quote">{% trans %}Quote{% endtrans %}</a>
                 {%- elif can_moderate and topic.locked %}

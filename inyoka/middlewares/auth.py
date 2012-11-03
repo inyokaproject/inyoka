@@ -8,6 +8,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.contrib import auth
 from django.contrib import messages
 
 from django.utils.html import escape
@@ -21,8 +22,10 @@ class AuthMiddleware(object):
 
     def process_request(self, request):
         try:
-            user_id = request.session['uid']
-            user = User.objects.get(pk=user_id)
+            user_id = request.session[auth.SESSION_KEY]
+            backend_path = request.session[auth.BACKEND_SESSION_KEY]
+            backend = auth.load_backend(backend_path)
+            user = backend.get_user(user_id) or User.objects.get_anonymous_user()
         except (User.DoesNotExist, KeyError):
             user = User.objects.get_anonymous_user()
 
@@ -37,7 +40,7 @@ class AuthMiddleware(object):
                     _(u'The user “%(name)s” deleted his profile. '
                         u'Your session has ended.') % {'name': escape(user.username)})
 
-            request.session.pop('uid', None)
+            request.session.pop('_auth_user_id', None)
             user = User.objects.get_anonymous_user()
 
         request.user = user
