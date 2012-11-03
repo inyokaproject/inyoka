@@ -91,9 +91,6 @@ $(document).ready(function () {
       // mark old toc for later deletion
       toc.find('ol').addClass('originaltoc');
 
-      // create first level
-      //newtoc = $('<ol class="arabic"></ol>').hide().insertAfter(toc.find('.head'));
-
       var ol = function(level) {
         return $('<ol class="' + style + ' toc-item-depth-' + level + '"></ol>')
       };
@@ -157,14 +154,14 @@ $(document).ready(function () {
       newtoc = tocTree[0].insertAfter(toc.find('.head'));
       toc.find('.originaltoc').remove();
       //we have to hide all sublevels, create [+/-], and the click-event
-      var folder = $('<a class="toctoggle"> [–] </a>');
+      var folder = $('<a class="toctoggle"> [-] </a>');
       toc.find('ol ol').each(function () {
         var f = folder.clone();
         f.insertBefore($(this)).toggle(
           function () {
             $(this).text(' [+] ').next().slideUp('fast');
           }, function () {
-            $(this).text(' [–] ').next().slideDown('fast');
+            $(this).text(' [-] ').next().slideDown('fast');
           }
         );
         var classes = $(this).attr('class').split(/\s+/);
