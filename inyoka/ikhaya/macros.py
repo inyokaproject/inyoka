@@ -31,12 +31,10 @@ def build_ikhaya_picture_node(sender, context, format, **kwargs):
                 source = os.path.join(settings.MEDIA_URL, file.file.name)
         else:
             source = url_for(file)
+        img = nodes.Image(source, sender.alt, class_='image-' +
+                          (sender.align or 'default'), title=sender.title)
+        if (width or height) and file is not None:
+            return nodes.Link(url_for(file), [img])
+        return img
     except StaticFile.DoesNotExist:
-        print "static file does not exist"
-        pass
-
-    img = nodes.Image(source, sender.alt, class_='image-' +
-                      (sender.align or 'default'), title=sender.title)
-    if (width or height) and file is not None:
-        return nodes.Link(url_for(file), [img])
-    return img
+        return
