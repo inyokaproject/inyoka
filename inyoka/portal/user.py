@@ -180,7 +180,6 @@ def deactivate_user(user):
     user.save()
 
 
-
 def send_new_email_confirmation(user, email):
     """Send the user an email where he can confirm his new email address"""
     data = {
@@ -241,6 +240,7 @@ def reset_email(id, email, time):
     return {
         'success': _('Your email address was reset.')
     }
+
 
 def send_activation_mail(user):
     """send an activation mail"""
@@ -478,7 +478,7 @@ def upload_to_avatar(instance, filename):
     return fn % (instance.pk, filename.rsplit('.',1)[-1])
 
 
-class User(models.Model):
+class User(AbstractBaseUser):
     """User model that contains all informations about an user."""
 
     STATUS_CHOICES = enumerate([ugettext_lazy(u'not yet activated'),
@@ -492,11 +492,8 @@ class User(models.Model):
                                 max_length=30, unique=True, db_index=True)
     email = models.EmailField(ugettext_lazy(u'Email address'),
                               unique=True, max_length=50, db_index=True)
-    password = models.CharField(ugettext_lazy(u'Password'), max_length=128)
     status = models.IntegerField(ugettext_lazy(u'Activation status'), default=0,
                                  choices=STATUS_CHOICES)
-    last_login = models.DateTimeField(ugettext_lazy(u'Last login'),
-                                      default=datetime.utcnow)
     date_joined = models.DateTimeField(ugettext_lazy(u'Member since'),
                                        default=datetime.utcnow)
     groups = models.ManyToManyField(Group,
