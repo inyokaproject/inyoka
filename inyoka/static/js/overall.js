@@ -96,12 +96,6 @@ $(document).ready(function () {
       };
       var li = $('<li></li>');
       var li_no_number = $('<li style="list-style: none"></li>');
-      var headline_to_listitem = function(headerlink, level) {
-        var ml = 42 - (level - 1) * 2; // max text length of toc entry
-        var link = headerlink.parent().attr("id");
-        var linkText = headerlink.parent().clone().children().remove().end().text().substr(0, ml);
-        return li.clone().append($('<a href="#' + link + '" class="crosslink">' + linkText + '</a>'));
-      }
       // will finally hold the whole tocTree
       var tocTree = new Array();
       tocTree.push(ol(1));
@@ -111,11 +105,7 @@ $(document).ready(function () {
         level_class = $(this).parent().parent().attr("class");
         var level = parseInt(level_class.match(/^section_(\d+)$/)[1], 10);
 
-        if (level == last_level) {
-          // the current headline has the same level as the previous one.
-          // So we append it to the most recent list on the stack.
-          tocTree[tocTree.length - 1].append(headline_to_listitem($(this), level));
-        } else if (level > last_level) {
+        if (level > last_level) {
           // if the headline is indented compared to the previous one
           // we need to check for the difference between those levels
           var limit = level - last_level;
@@ -124,8 +114,7 @@ $(document).ready(function () {
             tocTree[tocTree.length - 1].append(li_no_number.clone());
           }
           tocTree.push(ol(level));
-          tocTree[tocTree.length - 1].append(headline_to_listitem($(this), level));
-        } else { // headline.level < last_level
+        } else if (level < last_level) {
           // we are unindenting the headline level. All lists have to be
           // popped from the stack up to the current level
           var limit = last_level - level;
@@ -138,8 +127,13 @@ $(document).ready(function () {
               tocTree[tocTree.length - 1].append(li_no_number.clone().append(node));
             }
           }
-          tocTree[tocTree.length - 1].append(headline_to_listitem($(this), level));
         }
+
+        var ml = 42 - (level - 1) * 2; // max text length of toc entry
+        var link = $(this).parent().attr("id");
+        var linkText = $(this).parent().clone().children().remove().end().text().substr(0, ml);
+        tocTree[tocTree.length - 1].append(li.clone().append($('<a href="#' + link + '" class="crosslink">' + linkText + '</a>')));
+
         last_level = level;
       });
       var limit = last_level - 1;

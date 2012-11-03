@@ -225,14 +225,6 @@ class TableOfContents(TreeMacro):
               1. Bar3
         """
 
-        def headline_to_listitem(headline):
-            ml = 42 - (headline.level - 1) * 2
-            text = len(headline.text) > ml and headline.text[:ml] + '...' or \
-                   headline.text
-            caption = [nodes.Text(text)]
-            link = nodes.Link('#' + headline.id, caption)
-            return nodes.ListItem([link])
-
         result = nodes.List(self.list_type)
         stack = [result]
         last_level = 1
@@ -241,29 +233,33 @@ class TableOfContents(TreeMacro):
             if headline.level > self.depth:
                 continue
 
-            # the current headline has the same level as the previous one.
-            # So we append it to the most recent list on the stack.
-            if headline.level == last_level:
-                stack[-1].children.append(headline_to_listitem(headline))
             # if the headline is indented compared to the previous one
             # we need to check for the difference between those levels
             # (see second example above)
-            elif headline.level > last_level:
+            if headline.level > last_level:
                 for i in xrange(headline.level - last_level - 1):
                     stack.append(nodes.List(self.list_type))
                     stack[-1].children.append(nodes.ListItem(style='list-style: none'))
                 stack.append(nodes.List(self.list_type))
-                stack[-1].children.append(headline_to_listitem(headline))
             # we are unindenting the headline level. All lists have to be
             # popped from the stack up to the current level
-            else: # headline.level < last_level
+            elif headline.level < last_level:
                 for i in xrange(last_level - headline.level):
                     n = stack.pop()
                     if stack[-1].children:
                         stack[-1].children[-1].children.append(n)
                     else:
                         stack[-1].children.append(nodes.ListItem([n], style='list-style: none'))
-                stack[-1].children.append(headline_to_listitem(headline))
+
+            # in all cases we need to add the current headline to the children
+            # of recent stack element
+            ml = 42 - (headline.level - 1) * 2
+            text = len(headline.text) > ml and headline.text[:ml] + '...' or \
+                   headline.text
+            caption = [nodes.Text(text)]
+            link = nodes.Link('#' + headline.id, caption)
+            stack[-1].children.append(nodes.ListItem([link]))
+
             last_level = headline.level
 
         for i in xrange(last_level - 1):
