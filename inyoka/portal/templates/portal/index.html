@@ -14,10 +14,8 @@
 
 {% block pre_navigation %}
   {%- if countdown_active -%}
-  <div class="container">
-    <div id="counter">
-      <a href="{{ countdown_target_page|e }}"><img/></a>
-    </div>
+  <div class="container" id="counter" style="text-align:center; height: 150px; padding-top: 7px;">
+    <a href="{{ countdown_target_page|e }}"><img/></a>
   </div>
   {%- endif -%}
   <div class="container get_ubuntu">
@@ -98,8 +96,7 @@
   /* <![CDATA[ */
   var $COUNTDOWN_ACTIVE = {{ countdown_active|lower|e }};
   {% if countdown_active -%}
-  var $COUNTDOWN_DEADLINE = "{{ countdown_deadline|e }}",
-      $COUNTDOWN_IMAGE_BASE_URL = "{{ countdown_image_base_url|e }}";
+  var $COUNTDOWN_IMAGE_URL = "{{ countdown_image_url|e }}";
   {%- endif %}
   /* ]]> */
 </script>

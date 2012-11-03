@@ -23,23 +23,7 @@ $(document).ready(function () {
   })();
   // Display the countdown
   if (typeof $COUNTDOWN_ACTIVE == "boolean" && $COUNTDOWN_ACTIVE) {
-    (function () {
-      var now = new Date ();
-      var release = new Date ($COUNTDOWN_DEADLINE);
-      var diff = release.getTime() - now.getTime();
-      var days = Math.floor(diff / (1000*60*60*24))+1;
-      var image = $("#counter > a > img");
-      var url = $STATIC_URL + $COUNTDOWN_IMAGE_BASE_URL;
-      if (days > 14) {
-        url = url + 'start';
-      } else if (days >= 1) {
-        url = url + days;
-      } else {
-        url = url + 'here';
-      }
-      url = url + '.png';
-      image.attr('src', url);
-    })();
+    $("#counter > a > img").attr('src', $COUNTDOWN_IMAGE_URL);
   }
 
   // add a hide message link to all flash messages

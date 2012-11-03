@@ -3,22 +3,24 @@
 # This file is distributed under the same license as the  project.
 #
 # Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# Markus Holtermann <inyoka@markusholtermann.eu>, 2012.
+# <phaiax@invisibletower.de>, 2012.
 # Sören Wegener <wegener92@googlemail.com>, 2011.
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2011 - 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-10-06 23:40+0200\n"
-"PO-Revision-Date: 2012-03-18 22:16+0000\n"
-"Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
+"POT-Creation-Date: 2012-11-03 14:11+0100\n"
+"PO-Revision-Date: 2012-11-03 11:11+0000\n"
+"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
-"(http://www.transifex.net/projects/p/inyoka/language/de_DE/)\n"
+"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.0dev\n"
+"Generated-By: Babel 1.0dev-r0\n"
 
 #: inyoka/ikhaya/forms.py:41 inyoka/ikhaya/models.py:211
 #: inyoka/ikhaya/models.py:420
@@ -526,9 +528,8 @@ msgid "Avatar of %(user)s"
 msgstr "Avatar von %(user)s"
 
 #: inyoka/ikhaya/templates/ikhaya/detail.html:55
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:19
+#: inyoka/ikhaya/templates/ikhaya/detail.m.html:20
 #: inyoka/ikhaya/templates/ikhaya/index.html:52
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:18
 #, python-format
 msgid "Written by <a href=\"%(link)s\">%(author)s</a>"
 msgstr "Verfasst von <a href=\"%(link)s\">%(author)s</a>"
@@ -536,7 +537,6 @@ msgstr "Verfasst von <a href=\"%(link)s\">%(author)s</a>"
 #: inyoka/ikhaya/templates/ikhaya/detail.html:59
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:25
 #: inyoka/ikhaya/templates/ikhaya/index.html:56
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:24
 msgid "Category:"
 msgstr "Kategorie:"
 
@@ -748,7 +748,7 @@ msgid "News"
 msgstr "Nachrichten"
 
 #: inyoka/ikhaya/templates/ikhaya/index.html:62
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:29
+#: inyoka/ikhaya/templates/ikhaya/index.m.html:20
 #, python-format
 msgid "%(count)s <a href=\"%(link)s\">comment</a>"
 msgid_plural "%(count)s <a href=\"%(link)s\">comments</a>"
@@ -764,13 +764,9 @@ msgid "Subscribe"
 msgstr "Abonnieren"
 
 #: inyoka/ikhaya/templates/ikhaya/index.html:84
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:41
+#: inyoka/ikhaya/templates/ikhaya/index.m.html:30
 msgid "There is no article."
 msgstr "Es gibt keinen Artikel."
-
-#: inyoka/ikhaya/templates/ikhaya/index.m.html:38
-msgid "More »"
-msgstr "Mehr »"
 
 #: inyoka/ikhaya/templates/ikhaya/page.html:32
 msgid "Suggest article"

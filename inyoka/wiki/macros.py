@@ -380,7 +380,7 @@ class TagCloud(macros.Macro):
 
         result = nodes.Layer(class_='tagcloud')
         for tag in Page.objects.get_tagcloud(self.max):
-            title = ungettext('%(count)d page', '%(count)d pages',
+            title = ungettext('one page', '%(count)d pages',
                               tag['count']) % tag
             result.children.extend((
                 nodes.Link('?' + urlencode({
@@ -635,7 +635,7 @@ class FilterByMetaData(macros.Macro):
 
         if not names:
             return nodes.error_box(_(u'No result'),
-                _(u'The metadata filter has found no results.  Query: %(query)s') % {
+                _(u'The metadata filter has found no results. Query: %(query)s') % {
                     'query': u'; '.join(self.filters)})
 
         # build the node

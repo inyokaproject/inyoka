@@ -129,7 +129,7 @@ class RegisterForm(forms.Form):
         help_text=ugettext_lazy(u'We need your email '
         u'address to send you a new password if you forgot it. It is not '
         u'visible to other users. For more information, check out our '
-        u'<a href="%(link)s">privacy police</a>.') % {
+        u'<a href="%(link)s">privacy policy</a>.') % {
             'link': href('portal', 'datenschutz')})
     password = forms.CharField(label=_('Password'),
         widget=forms.PasswordInput(render_value=False))
@@ -308,7 +308,7 @@ class UserCPSettingsForm(forms.Form):
         if u'jabber' in data:
             if not current_request.user.jabber:
                 raise forms.ValidationError(mark_safe(_(u'You need to '
-                    u'<a href="%(link)s"> enter a valid jabber address</a> to '
+                    u'<a href="%(link)s">enter a valid jabber address</a> to '
                     u'use our jabber service.')
                     % {'link': href('portal', 'usercp', 'profile')}))
         return data
@@ -929,17 +929,11 @@ class ConfigurationForm(forms.Form):
                                    widget=forms.Textarea(attrs={'rows': 2}))
     countdown_active = forms.BooleanField(required=False,
         label=ugettext_lazy(u'Display countdown'))
-    countdown_deadline = forms.DateField(required=False,
-        label=ugettext_lazy(u'Release date'), widget=DateWidget)
     countdown_target_page = forms.CharField(required=False,
         label=ugettext_lazy(u'Full path to the target link page'))
-    countdown_image_base_url = forms.CharField(required=False,
-        label=ugettext_lazy(u'Base path to images'),
-        help_text=ugettext_lazy(u'The path must be relative to STATIC_URL and '
-            'without identifier. To get '
-            '<code>http://static.example.com/images/cd_start.png</code> '
-            'only <code>images/cd_</code> needs to be provided. The base url '
-            'is expanded by either "start", 1-14 or "here" plus ".png".'))
+    countdown_image_url = forms.CharField(required=False,
+        label=ugettext_lazy(u'Image URL'),
+        help_text=ugettext_lazy(u'The complete URL to the countdown banner.'))
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,

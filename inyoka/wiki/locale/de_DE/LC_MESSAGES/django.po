@@ -4,22 +4,22 @@
 #
 # Translators:
 # <eule_stern@web.de>, 2011.
+# Markus Holtermann <inyoka@markusholtermann.eu>, 2012.
 # Sören Wegener <wegener92@googlemail.com>, 2011.
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2011 - 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-10-06 23:40+0200\n"
-"PO-Revision-Date: 2012-03-18 22:21+0000\n"
-"Last-Translator: Markus <inyoka@markusholtermann.eu>\n"
+"POT-Creation-Date: 2012-11-03 14:11+0100\n"
+"PO-Revision-Date: 2012-11-03 13:01+0000\n"
+"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
-"(http://www.transifex.net/projects/p/inyoka/language/de_DE/)\n"
+"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.0dev\n"
+"Generated-By: Babel 1.0dev-r0\n"
 
 #: inyoka/wiki/actions.py:106
 #, python-format
@@ -202,6 +202,77 @@ msgstr "Bearbeitet von"
 #: inyoka/wiki/forms.py:131
 msgid "Completion date"
 msgstr "Fertigstellungsdatum"
+
+#: inyoka/wiki/macros.py:54
+msgid "Recent changes cannot be rendered on this page"
+msgstr "Letzte Änderungen können von hier aus nicht dargestellt werden."
+
+#: inyoka/wiki/macros.py:346
+msgid ""
+"You must apply a page name because the macro is being called outside the "
+"wiki context."
+msgstr ""
+"Du musst eine Seite angeben, weil das Makro außerhalb des Wikis verwendet"
+" wird."
+
+#: inyoka/wiki/macros.py:348
+msgid "Invalid arguments"
+msgstr "Parameterfehler"
+
+#: inyoka/wiki/macros.py:383
+#, python-format
+msgid "one page"
+msgid_plural "%(count)d pages"
+msgstr[0] "eine Seite"
+msgstr[1] "%(count)d Seiten"
+
+#: inyoka/wiki/macros.py:395 inyoka/wiki/templates/wiki/page.html:39
+msgid "Tags"
+msgstr "Tags"
+
+#: inyoka/wiki/macros.py:434
+#, python-format
+msgid "Pages with tag “%(name)s”"
+msgstr "Seiten mit Tag „%(name)s“"
+
+#: inyoka/wiki/macros.py:467 inyoka/wiki/macros.py:538
+#, python-format
+msgid "The page “%(name)s” was not found"
+msgstr "Die Seite „%(name)s“ wurde nicht gefunden."
+
+#: inyoka/wiki/macros.py:469 inyoka/wiki/macros.py:537
+msgid "Page not found"
+msgstr "Seite nicht gefunden"
+
+#: inyoka/wiki/macros.py:472
+msgid "Detected a circular include macro call"
+msgstr "Detected a circular include macro call"
+
+#: inyoka/wiki/macros.py:473
+msgid "Circular import"
+msgstr "Zirkulärer Import"
+
+#: inyoka/wiki/macros.py:568
+msgid "Key not defined"
+msgstr "Schlüssel nicht definiert"
+
+#: inyoka/wiki/macros.py:569
+#, python-format
+msgid "The key “%(name)s” is not defined"
+msgstr "Der Schlüssel „%(name)s“ wurde nicht definiert."
+
+#: inyoka/wiki/macros.py:637
+msgid "No result"
+msgstr "Kein Ergebnis"
+
+#: inyoka/wiki/macros.py:638
+#, python-format
+msgid "The metadata filter has found no results. Query: %(query)s"
+msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
+
+#: inyoka/wiki/macros.py:663
+msgid "Unknown page"
+msgstr "Unbekannte Seite"
 
 #: inyoka/wiki/models.py:479
 msgid "Created"
@@ -810,10 +881,6 @@ msgstr "Erweiterte Suche"
 #: inyoka/wiki/templates/wiki/page.html:38
 msgid "Recent changes"
 msgstr "Letzte Änderungen"
-
-#: inyoka/wiki/templates/wiki/page.html:39
-msgid "Tags"
-msgstr "Tags"
 
 #: inyoka/wiki/templates/wiki/page.html:50
 msgid "Article"

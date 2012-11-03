@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-10-06 23:40+0200\n"
+"POT-Creation-Date: 2012-11-03 14:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.0dev\n"
+"Generated-By: Babel 1.0dev-r0\n"
 
 #: inyoka/templates/appheader.html:2
 msgid "Portal"
@@ -39,7 +39,7 @@ msgstr ""
 msgid "Private messages"
 msgstr ""
 
-#: inyoka/templates/overall.html:141 inyoka/templates/overall.m.html:68
+#: inyoka/templates/overall.html:141 inyoka/templates/overall.m.html:103
 msgid "Login"
 msgstr ""
 
@@ -117,23 +117,31 @@ msgstr ""
 msgid "To mobile version"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:45
-msgid "Hide this notice"
+#: inyoka/templates/overall.m.html:68
+msgid "« Back"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:46
-#, python-format
-msgid ""
-"This is the version for mobile clients. To get to the <a "
-"href=\"%(link)s\">classical layout</a> click on the link in the footer of"
-" the page."
+#: inyoka/templates/overall.m.html:79
+msgid "Applications"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:64
+#: inyoka/templates/overall.m.html:86
+msgid "More"
+msgstr ""
+
+#: inyoka/templates/overall.m.html:90
+msgid "Messages"
+msgstr ""
+
+#: inyoka/templates/overall.m.html:94
+msgid "Subscriptions"
+msgstr ""
+
+#: inyoka/templates/overall.m.html:98
 msgid "Logout"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:82
+#: inyoka/templates/overall.m.html:113
 msgid "To classic version"
 msgstr ""
 
@@ -285,12 +293,22 @@ msgstr ""
 msgid "Canceled."
 msgstr ""
 
-#: inyoka/utils/pagination.py:159 inyoka/utils/pagination.py:166
+#: inyoka/utils/pagination.py:157 inyoka/utils/pagination.py:161
+#: inyoka/utils/pagination.py:196
 msgid "Next »"
 msgstr ""
 
-#: inyoka/utils/pagination.py:175 inyoka/utils/pagination.py:182
+#: inyoka/utils/pagination.py:167 inyoka/utils/pagination.py:171
+#: inyoka/utils/pagination.py:198
 msgid "« Previous"
+msgstr ""
+
+#: inyoka/utils/pagination.py:193
+msgid "Page"
+msgstr ""
+
+#: inyoka/utils/pagination.py:194
+msgid "Go to"
 msgstr ""
 
 #: inyoka/utils/sessions.py:82
@@ -333,31 +351,6 @@ msgstr ""
 
 #: inyoka/utils/text.py:223
 msgid "one"
-msgstr ""
-
-#: inyoka/utils/tests/test_templating.py:12
-#: inyoka/utils/tests/test_templating.py:13
-msgid "text"
-msgstr ""
-
-#: inyoka/utils/tests/test_templating.py:18
-#: inyoka/utils/tests/test_templating.py:19
-msgid "e1"
-msgstr ""
-
-#: inyoka/utils/tests/test_templating.py:18
-#: inyoka/utils/tests/test_templating.py:19
-msgid "e2"
-msgstr ""
-
-#: inyoka/utils/tests/test_templating.py:24
-#: inyoka/utils/tests/test_templating.py:25
-msgid "v1"
-msgstr ""
-
-#: inyoka/utils/tests/test_templating.py:24
-#: inyoka/utils/tests/test_templating.py:25
-msgid "v2"
 msgstr ""
 
 #: inyoka/middlewares/auth.py:33

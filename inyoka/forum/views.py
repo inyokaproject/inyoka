@@ -1290,7 +1290,7 @@ def delete_topic(request, topic_slug, action='hide'):
                 topic.delete()
                 redirect = url_for(topic.forum)
                 messages.success(request,
-                    _(u'The topic “%(topic)” was deleted successfully.')
+                    _(u'The topic “%(topic)s” was deleted successfully.')
                       % {'topic': topic.title})
 
             topic.forum.invalidate_topic_cache()
