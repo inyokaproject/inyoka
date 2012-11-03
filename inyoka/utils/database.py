@@ -25,8 +25,8 @@ EXPRESSION_NODE_CALLBACKS = {
     ExpressionNode.MUL: operator.mul,
     ExpressionNode.DIV: operator.div,
     ExpressionNode.MOD: operator.mod,
-    ExpressionNode.AND: operator.and_,
-    ExpressionNode.OR: operator.or_,
+    ExpressionNode.BITAND: operator.and_,
+    ExpressionNode.BITOR: operator.or_,
 }
 
 
