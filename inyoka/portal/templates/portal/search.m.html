@@ -25,7 +25,7 @@
         </div>
       </a>
     {% endif %}
-    {% for doc in results.results if not doc.hidden %}
+    {% for doc in wiki_result.results if not doc.hidden %}
       <a href="{{ doc.url }}">
         <div class="button">
           {{ doc.title }}
