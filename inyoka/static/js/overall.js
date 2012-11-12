@@ -241,7 +241,7 @@ $(document).ready(function () {
   })();
 
   // add links to the "package" macro
-  $('.package-list, .builddeps').each(function (i, elm) {
+  $('.package-list-apturl, .package-list').each(function (i, elm) {
     var tmp = $('.bash', elm);
     var apt = tmp[0];
     var aptitude = tmp[1];
@@ -261,7 +261,7 @@ $(document).ready(function () {
         $(apt).hide();
      })
     );
-    if ($(elm).hasClass('package-list')) {
+    if ($(elm).hasClass('package-list-apturl')) {
       $($('p', elm)[0]).append(
         ' ',
         $('<a>apturl</a>').attr('href', 'apt://' + $.trim($(apt).text()).split(' ').slice(3).join(','))
