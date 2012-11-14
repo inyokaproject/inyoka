@@ -23,4 +23,4 @@ with open(join(base_dir, 'bootstrap-extra.py'), 'r') as fobj:
     EXTRA_TEXT = fobj.read()
 
 if __name__ == '__main__':
-    print create_bootstrap_script(EXTRA_TEXT)
+    print(create_bootstrap_script(EXTRA_TEXT))
