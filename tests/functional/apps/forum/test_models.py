@@ -29,6 +29,11 @@ class TestForumModel(TestCase):
         self.forum = Forum(name='This rocks damnit', parent=self.parent2)
         self.forum.save()
 
+        request_cache.clear()
+
+    def tearDown(self):
+        request_cache.clear()
+
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
 
@@ -82,17 +87,15 @@ class TestForumModel(TestCase):
         request_cache.delete('forum/slugs')
         self.assertEqual(Forum.objects.get_all_forums_cached(), map)
         self.assertEqual(cache.get('forum/forums/this-is-a-test'), self.parent1)
-#       I am currently broken since request_cache isn't cleared and as such the
-#       slugs are still cached and old.
-#        new_forum = Forum(name='yeha')
-#        new_forum.save()
-#        new_map = map.copy()
-#        new_map.update({'forum/forums/yeha': new_forum})
-#        self.assertEqual(cache.get('forum/forums/yeha'), None)
-#        self.assertEqual(Forum.objects.get_all_forums_cached(), new_map)
-#        self.assertEqual(cache.get('forum/forums/yeha'), new_forum)
-#        new_forum.delete()
-#
+        new_forum = Forum(name='yeha')
+        new_forum.save()
+        new_map = map.copy()
+        new_map.update({'forum/forums/yeha': new_forum})
+        self.assertEqual(cache.get('forum/forums/yeha'), None)
+        self.assertEqual(Forum.objects.get_all_forums_cached(), new_map)
+        self.assertEqual(cache.get('forum/forums/yeha'), new_forum)
+        new_forum.delete()
+
     def test_post_count(self):
         user = User.objects.register_user('admin', 'admin', 'admin', False)
         t1 = Topic(title='topic', author=user)
