@@ -69,8 +69,8 @@
           $STATIC_URL = {{ href('static')|jsonencode }},
           $MEDIA_URL = {{ href('media')|jsonencode }},
           $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }},
-          $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated else 'null' }},
-          $IS_LOGGED_IN = {{ USER.is_authenticated and 'true' or 'false' }},
+          $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated() else 'null' }},
+          $IS_LOGGED_IN = {{ USER.is_authenticated() and 'true' or 'false' }},
           $SIDEBAR_HIDDEN = {{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }};
       /*]]>*/
       </script>
@@ -111,7 +111,7 @@
       <div class="appheader">
         {%- if not hide_quicklinks %}
           <ul class="navi_global">
-            {%- if USER.is_authenticated %}
+            {%- if USER.is_authenticated() %}
               <li>
                 <a href="{{ href('portal', 'logout', next=CURRENT_URL) }}">
                   {%- trans user=USER.username|e %}Logout [{{ user }}]{% endtrans -%}

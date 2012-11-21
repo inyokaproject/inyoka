@@ -8,10 +8,10 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import json
 import requests
 from hashlib import md5
 from urllib import urlencode
-from django.utils import simplejson as json
 
 
 BASE_URL = 'http://www.gravatar.com/avatar/'

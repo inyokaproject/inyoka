@@ -37,7 +37,7 @@ def set_session_info(request):
     if request.session.new:
         return
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         if request.user.settings.get('hide_profile', False):
             transaction.rollback()
             return
