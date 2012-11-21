@@ -1,4 +1,6 @@
-Django==1.4.2
+# Django 1.5 branch
+https://github.com/django/django/archive/stable/1.5.x.zip
+
 distribute
 Jinja2==2.6
 MarkupSafe==0.12
