@@ -71,7 +71,8 @@ class RequestCache(BaseCache):
         self.real_cache.delete(key, version)
 
     def clear(self):
-        self.request_cache.clear()
+        if local_has_key('cache'):
+            self.request_cache.clear()
         self.real_cache.clear()
 
 
