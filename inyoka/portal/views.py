@@ -150,7 +150,7 @@ def index(request):
         'get_ubuntu_link': storage_values.get('get_ubuntu_link', ''),
         'get_ubuntu_description': storage_values.get('get_ubuntu_description', ''),
         'calendar_events': events,
-        'countdown_active': storage_values.get('countdown_active', None),
+        'countdown_active': storage_values.get('countdown_active', False),
         'countdown_target_page': storage_values.get('countdown_target_page', None),
         'countdown_image_url': storage_values.get('countdown_image_url', None),
     }
