@@ -833,17 +833,20 @@ class Post(models.Model, LockableObject):
 
         with transaction.commit_on_success():
             maxpos = new_topic.posts.all()._clone() \
-                              .aggregate(count=Max('position'))['count'] or -1
+                              .aggregate(count=Max('position'))['count']
+            if maxpos is None:
+                # New topic. First post must get the position 0
+                maxpos = -1
 
             post_ids = map(lambda p: p.id, posts)
-            Post.objects.filter(pk__in = post_ids).update(topic=new_topic)
+            Post.objects.filter(pk__in=post_ids).update(topic=new_topic)
             for post in posts:
                 maxpos += 1
                 Post.objects.filter(pk=post.pk).update(position=maxpos)
 
             # adjust positions of the old topic.
             # split the posts into continous groups
-            post_groups = [(v.position-k, v) for k,v in enumerate(posts)]
+            post_groups = [(v.position - k, v) for k, v in enumerate(posts)]
             post_groups = groupby(post_groups, itemgetter(0))
 
             adjust_start = 0
@@ -854,7 +857,7 @@ class Post(models.Model, LockableObject):
                 # and don't forget that previous decrements already decremented our position
                 start = g[-1][1].position - adjust_start
                 Post.objects.filter(topic=old_topic, position__gt=start)\
-                    .update(position=F('position')-dec)
+                    .update(position=F('position') - dec)
                 adjust_start += dec
 
             if old_topic.forum.id != new_topic.forum.id:
@@ -876,7 +879,6 @@ class Post(models.Model, LockableObject):
                         User.objects.filter(pk=user['id']) \
                                 .update(post_count=op(F('post_count'), user['pcount']))
                     cache.delete_many('portal/user/%d' % user['id'] for user in post_counts)
-
 
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \
@@ -919,9 +921,9 @@ class Post(models.Model, LockableObject):
 
             # Update post_count of the forums
             Forum.objects.filter(id__in=new_ids)\
-                .update(post_count = F('post_count') + len(posts))
+                .update(post_count=F('post_count') + len(posts))
             Forum.objects.filter(id__in=old_ids)\
-                .update(post_count = F('post_count') - len(posts))
+                .update(post_count=F('post_count') - len(posts))
 
         # update the search index which has the post --> topic mapping indexed
         Post.multi_update_search([post.id for post in posts])
