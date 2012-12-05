@@ -235,13 +235,18 @@ class TestViews(TestCase):
 
     def test_splittopic(self):
 
-        def valuelist(topicid):
-            return list(Post.objects.filter(topic_id=topicid).values_list('id', flat=True).order_by('position'))
+        def valuelist(topicid, field='id'):
+            if isinstance(field, (list, tuple)):
+                return list(Post.objects.filter(topic_id=topicid)\
+                    .values_list(*field).order_by('position'))
+            else:
+                return list(Post.objects.filter(topic_id=topicid)\
+                    .values_list(field, flat=True).order_by('position'))
 
         t1 = Topic.objects.create(title='Topic 1', slug='topic-1',
                 author=self.user, forum=self.forum2)
         p11 = Post.objects.create(text=u'Post 1-1', author=self.user,
-                topic=t1)
+                topic=t1, position=0)
         p12 = Post.objects.create(text=u'Post 1-2', author=self.user,
                 topic=t1)
         p13 = Post.objects.create(text=u'Post 1-3', author=self.user,
@@ -250,7 +255,7 @@ class TestViews(TestCase):
         t2 = Topic.objects.create(title='Topic 2', slug='topic-2',
                 author=self.user, forum=self.forum2)
         p21 = Post.objects.create(text=u'Post 2-1', author=self.user,
-                topic=t2)
+                topic=t2, position=0)
         p22 = Post.objects.create(text=u'Post 2-2', author=self.user,
                 topic=t2)
         p23 = Post.objects.create(text=u'Post 2-3', author=self.user,
@@ -269,7 +274,10 @@ class TestViews(TestCase):
         # p21 p22 p23 p12 p13
         self.assertEqual(Post.objects.filter(topic_id=t1.pk).count(), 1)
         self.assertEqual(Post.objects.filter(topic_id=t2.pk).count(), 5)
+        self.assertEqual(valuelist(t1.pk), [p11.pk])
         self.assertEqual(valuelist(t2.pk), [p21.pk, p22.pk, p23.pk, p12.pk, p13.pk])
+        self.assertEqual(valuelist(t1.pk, 'position'), [0])
+        self.assertEqual(valuelist(t2.pk, 'position'), list(xrange(0, 5)))
 
         # We will now strip all posts beginning at p22 from t2
         self.client.get('/', {
@@ -285,16 +293,11 @@ class TestViews(TestCase):
         # Previously is was
         # for Topic 1 p11 p22 p23 and for Topic 2 p21 p12 p13
         self.assertEqual(Post.objects.filter(topic_id=t1.pk).count(), 5)
-        self.assertNotEqual(Post.objects.filter(topic_id=t1.pk).count(), 3)
-
         self.assertEqual(Post.objects.filter(topic_id=t2.pk).count(), 1)
-        self.assertNotEqual(Post.objects.filter(topic_id=t2.pk).count(), 3)
-
         self.assertEqual(valuelist(t1.pk), [p11.pk, p22.pk, p23.pk, p12.pk, p13.pk])
-        self.assertNotEqual(valuelist(t1.pk), [p11.pk, p22.pk, p23.pk])
-
         self.assertEqual(valuelist(t2.pk), [p21.pk])
-        self.assertNotEqual(valuelist(t2.pk), [p21.pk, p12.pk, p13.pk])
+        self.assertEqual(valuelist(t1.pk, 'position'), list(xrange(0, 5)))
+        self.assertEqual(valuelist(t2.pk, 'position'), [0])
 
     def test_add_attachment(self):
         TEST_ATTACHMENT = 'test_attachment.png'

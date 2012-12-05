@@ -31,6 +31,11 @@ class TestPostSplitNewTopic(TestCase):
                     position=i)
             self.topic1.posts.add(self.t1_posts[i])
 
+    def _test_position(self, topic_id, postcount):
+        vl = list(Post.objects.filter(topic_id=topic_id)\
+                    .values_list('position', flat=True).order_by('position'))
+        self.assertEqual(vl, list(xrange(postcount)))
+
     def test_single_last_post(self):
         """Split the last post and create a new topic"""
         t1 = Topic.objects.get(id=self.topic1.id)
@@ -62,11 +67,14 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[8].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
 
-        post_ids = [p.id for k,p in self.t1_posts.items()][:-1]
+        post_ids = [p.id for k, p in self.t1_posts.items()][:-1]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
         post_ids = [self.t1_posts[9].id]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
+
+        self._test_position(t1, 9)
+        self._test_position(t2, 1)
 
     def test_multiple_last_posts(self):
         """Split multiple consecutive last posts and create a new topic"""
@@ -99,11 +107,14 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[7].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
 
-        post_ids = [p.id for k,p in self.t1_posts.items()][:-2]
+        post_ids = [p.id for k, p in self.t1_posts.items()][:-2]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
         post_ids = [self.t1_posts[8].id, self.t1_posts[9].id]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
+
+        self._test_position(t1, 8)
+        self._test_position(t2, 2)
 
     def test_single_middle_post(self):
         """Split a single middle post and create a new topic"""
@@ -136,12 +147,15 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[3].id)
 
-        ids = [p.id for k,p in self.t1_posts.items()]
+        ids = [p.id for k, p in self.t1_posts.items()]
         post_ids = ids[:3] + ids[4:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
         post_ids = [self.t1_posts[3].id]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
+
+        self._test_position(t1, 9)
+        self._test_position(t2, 1)
 
     def test_single_consecutive_middle_posts(self):
         """Split multiple consecutive posts from the middle and
@@ -176,12 +190,15 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[6].id)
 
-        ids = [p.id for k,p in self.t1_posts.items()]
+        ids = [p.id for k, p in self.t1_posts.items()]
         post_ids = ids[:5] + ids[7:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
         post_ids = [self.t1_posts[5].id, self.t1_posts[6].id]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
+
+        self._test_position(t1, 8)
+        self._test_position(t2, 2)
 
     def test_multiple_middle_posts(self):
         """Split multiple single and non-consecutive posts from the middle
@@ -192,7 +209,7 @@ class TestPostSplitNewTopic(TestCase):
         self.forum2.topics.add(t2)
         t2_id = t2.id
 
-        Post.split((self.t1_posts[2],self.t1_posts[4],self.t1_posts[8]), t1, t2)
+        Post.split((self.t1_posts[2], self.t1_posts[4], self.t1_posts[8]), t1, t2)
 
         cache.delete('forum/forums/%s' % self.forum1.slug)
         cache.delete('forum/forums/%s' % self.forum2.slug)
@@ -216,12 +233,15 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
 
-        ids = [p.id for k,p in self.t1_posts.items()]
+        ids = [p.id for k, p in self.t1_posts.items()]
         post_ids = ids[0:2] + ids[3:4] + ids[5:8] + ids[9:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
         post_ids = [self.t1_posts[2].id, self.t1_posts[4].id, self.t1_posts[8].id]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
+
+        self._test_position(t1, 7)
+        self._test_position(t2, 3)
 
     def test_multiple_consecutive_middle_posts(self):
         """Split groups of consecutives posts from the middle
@@ -257,36 +277,12 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
 
-        ids = [p.id for k,p in self.t1_posts.items()]
+        ids = [p.id for k, p in self.t1_posts.items()]
         post_ids = ids[0:2] + ids[4:6] + ids[9:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
         post_ids = ids[2:4] + ids[6:9]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
-    """
-    def test_split_new_topic(self):
-        posts = Post.objects.filter(text__in=(u'test2', u'test3')).all()
-        new_topic = Topic(title='topic', author=self.user)
-        self.forum2.topics.add(new_topic)
-
-        t1 = Topic.objects.get(id=self.topic1.id)
-
-        Post.split(posts, t1, new_topic)
-
-        user = User.objects.get(id=self.user.id)
-        t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic.objects.get(id=new_topic.id)
-
-        self.assertEqual(user.post_count, 1)
-        self.assertEqual(t1.post_count, 1)
-        self.assertEqual(t2.post_count, 2)
-        self.assertEqual(t1.first_post, self.fp1)
-        self.assertEqual(t2.first_post, Post.objects.get(text='test2'))
-        self.assertEqual(t1.last_post, self.fp1)
-        self.assertEqual(t1.forum.last_post, self.lp1)
-        self.assertEqual(t2.last_post, Post.objects.get(text='test3'))
-        self.assertEqual(t2.forum.last_post, self.fp2)
-        post_ids = [p.pk for p in list(posts)]
-        self.assertEqual([p.pk for p in t2.posts.order_by('position')], post_ids)
-    """
+        self._test_position(t1, 5)
+        self._test_position(t2, 5)
