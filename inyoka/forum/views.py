@@ -1052,8 +1052,10 @@ def splittopic(request, topic_slug, page=1):
         post_ids = post_ids[topic_slug]
 
     if str(post_ids[0]).startswith('!'):
+        post_id = post_ids[0][1:]
+        firstpos = Post.objects.values_list('position', flat=True).get(id=post_id)
         # selected one post to split all following posts
-        posts = old_posts.filter(id__gte=int(post_ids[0][1:]))
+        posts = old_posts.filter(position__gte=firstpos)
     else:
         posts = old_posts.filter(id__in=[int(pid) for pid in post_ids])
 
