@@ -23,7 +23,6 @@ from django.forms import HiddenInput
 from django.db.models import Count
 from django.db.models.fields.files import ImageFieldFile
 from django.conf import settings
-from django.utils import simplejson
 from django.core.validators import EMPTY_VALUES
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
