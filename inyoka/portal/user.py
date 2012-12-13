@@ -486,6 +486,9 @@ class User(AbstractBaseUser):
                                 ugettext_lazy(u'banned'),
                                 ugettext_lazy(u'deleted himself')])
 
+    #: Assign the `username` field
+    USERNAME_FIELD = 'username'
+
     objects = UserManager()
 
     username = models.CharField(ugettext_lazy(u'Username'),
@@ -545,9 +548,6 @@ class User(AbstractBaseUser):
     _primary_group = models.ForeignKey(Group, related_name='primary_users_set',
                                        blank=True, null=True,
                                        db_column='primary_group_id')
-
-    USERNAME_FIELD = 'username'
-    backend = 'django.contrib.auth.backends.ModelBackend'  # TODO: Django 1.5, fixme?! (see django.contrib.auth.authenticate)
 
     def save(self, *args, **kwargs):
         """
