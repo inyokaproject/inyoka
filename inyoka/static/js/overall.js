@@ -87,7 +87,11 @@ $(document).ready(function () {
       // Iterate over all <a> tags in headlines
       $('.headerlink').each(function(index) {
         level_class = $(this).parent().parent().attr("class");
-        var level = parseInt(level_class.match(/^section_(\d+)$/)[1], 10);
+        var match = level_class.match(/^section_(\d+)$/);
+        if (match == null) { // not a section_* class
+          return true; // continue
+        }
+        var level = parseInt(match[1], 10);
 
         if (level > last_level) {
           // if the headline is indented compared to the previous one
