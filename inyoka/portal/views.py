@@ -327,15 +327,14 @@ def login(request):
                 return openid_consumer.start_openid_process(request, data['username'])
             else:
                 try:
-                    user = User.objects.authenticate(
-                        username=data['username'],
-                        password=data['password'])
-                except User.DoesNotExist:
-                    failed = True
-                    user = None
+                    user = auth.authenticate(username=data['username'],
+                                      password=data['password'])
                 except UserBanned:
-                    failed = banned = True
+                    banned = True
                     user = None
+
+                if user is None:
+                    failed = True
 
                 if user is not None:
                     if user.is_active:
@@ -1786,15 +1785,14 @@ class OpenIdConsumer(Consumer):
             if form.is_valid():
                 data = form.cleaned_data
                 try:
-                    user = User.objects.authenticate(
-                        username=data['username'],
-                        password=data['password'])
-                except User.DoesNotExist:
-                    failed = True
-                    user = None
+                    user = auth.authenticate(username=data['username'],
+                                             password=data['password'])
                 except UserBanned:
                     failed = banned = True
                     user = None
+
+                if user is None:
+                    failed = True
 
                 if user is not None:
                     if user.is_active:

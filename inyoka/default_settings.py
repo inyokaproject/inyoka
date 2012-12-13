@@ -320,6 +320,7 @@ TEST_RUNNER = 'discover_runner.DiscoverRunner'
 TEST_DISCOVER_TOP_LEVEL = path.dirname(path.dirname(__file__))
 
 AUTH_USER_MODEL = 'portal.User'
+AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',

@@ -407,43 +407,6 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
-    def authenticate(self, username, password):
-        # FIXME: Move into auth backend!!!!
-        """
-        Authenticate a user with `username` (which can also be the email
-        address) and `password`.
-
-        :Raises:
-            User.DoesNotExist
-                If the user with `username` does not exist
-            UserBanned
-                If the found user was banned by an admin.
-        """
-        try:
-            user = User.objects.get(username)
-        except User.DoesNotExist, exc:
-            # fallback to email login
-            if '@' in username:
-                user = User.objects.get(email__iexact=username)
-            else:
-                raise exc
-
-        if user.is_banned:
-            # gebannt für immer…
-            if user.banned_until is None:
-                raise UserBanned()
-            else:
-                # gebannt für zeitraum
-                if (user.banned_until >= datetime.utcnow()):
-                    raise UserBanned()
-                else:
-                    # zeitraum vorbei, bann zurücksetzen
-                    user.status = 1
-                    user.banned_until = None
-                    user.save()
-
-        if user.check_password(password):
-            return user
 
     def get_anonymous_user(self):
         global _ANONYMOUS_USER
