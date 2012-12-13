@@ -28,15 +28,15 @@ class TestViews(TestCase):
 
         for i in xrange(1, 50):
             p50.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
-            p50.save()
+        p50.save()
 
         for i in xrange(1, 100):
             p100.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
-            p100.save()
+        p100.save()
 
         for i in xrange(1, 250):
             p250.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
-            p250.save()
+        p250.save()
 
         req = self.client.get("/Testpage50?action=log").content
         self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 50)
