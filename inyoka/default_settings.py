@@ -200,7 +200,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.humanize',
     'inyoka.core',
-#    'django.contrib.auth', # TODO: renable for translations, doesn't work currently :/
+    'django.contrib.auth',
     'inyoka.forum',
     'inyoka.portal',
     'inyoka.wiki',
