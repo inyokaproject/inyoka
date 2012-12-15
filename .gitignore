@@ -9,7 +9,7 @@ DJANGO_SETTINGS_MODULE
 .python_was_built
 *.min.js
 inyoka/static/style/*.css
-!inyoka/static/style/mobile.css
+inyoka/*/static/*/style/*.css
 *-sprite*.png
 *-sprite*.less
 *.db
