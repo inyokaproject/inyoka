@@ -25,13 +25,15 @@
         </div>
       </a>
     {% endif %}
-    {% for doc in wiki_result.results if not doc.hidden %}
-      <a href="{{ doc.url }}">
-        <div class="button">
-          {{ doc.title }}
-        </div>
-      </a>
-    {% endfor %}
+    {%- if results -%}
+      {% for doc in results.results if not doc.hidden %}
+        <a href="{{ doc.url }}">
+          <div class="button">
+            {{ doc.title }}
+          </div>
+        </a>
+      {% endfor %}
+    {%- endif -%}
   </div>
   {{ pagination }}
 {% endblock %}
