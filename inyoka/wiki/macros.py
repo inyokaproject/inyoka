@@ -712,7 +712,7 @@ class Attachment(macros.Macro):
         if self.is_external:
             return nodes.Link(target, self.children)
         else:
-            wiki_page = context.kwargs('wiki_page', None)
+            wiki_page = context.kwargs.get('wiki_page', None)
             if wiki_page:
                 target = join_pagename(wiki_page.name, self.target)
             source = href('wiki', '_attachment',
