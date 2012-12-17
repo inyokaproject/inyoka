@@ -175,6 +175,27 @@ header{
   }
 }
 
+div.actions {
+  clear: left;
+  line-height: 48px;
+  min-height: 48px;
+  text-align: center;
+
+  a, input {
+    .rounded;
+    background: fadeout(@orange_s_medium, 80%);
+    border: 1px solid @orange_s_medium;
+    color: #000000;
+    display: inline-block;
+    font-family: Times;
+    font-size: 18px;
+    font-weight: normal !important; /* !important because of input */
+    height: 48px;
+    padding: 0 0.5em;
+    text-decoration: none;
+  }
+}
+
 div.code {
   font-size: 10px;
 
