@@ -446,7 +446,7 @@ def do_edit(request, name):
             return HttpResponseRedirect(url)
         elif request.POST.get('preview'):
             text = request.POST.get('text') or ''
-            context = RenderContext(request, page)
+            context = RenderContext(request, wiki_page=page)
             preview = parse(text).render(context, 'html')
             form.initial['text'] = text
         else:

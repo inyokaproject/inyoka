@@ -657,7 +657,7 @@ class PageName(macros.Macro):
     names = (u'PageName', u'Seitenname')
 
     def build_node(self, context, format):
-        wiki_page = context.kwargs('wiki_page', None)
+        wiki_page = context.kwargs.get('wiki_page', None)
         if wiki_page:
             return nodes.Text(wiki_page.title)
         return nodes.Text(_(u'Unknown page'))
