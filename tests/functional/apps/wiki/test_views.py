@@ -56,3 +56,9 @@ class TestViews(TestCase):
         self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 50)
         req = self.client.get("/Testpage250?action=log&page=4")
         self.assertEqual(req.status_code, 404)
+
+    def test_show_dynamic_macros(self):
+        Page.objects.create('BlaPage', '|[[PageName()]]|', user=self.admin, note='rev0')
+        resp = self.client.get('/BlaPage')
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('|BlaPage|', resp.content)

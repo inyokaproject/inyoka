@@ -680,7 +680,7 @@ class Text(models.Model):
                     # no request exists, that happens if we're generating
                     # the snapshot.
                     request = None
-            context = markup.RenderContext(request, page)
+            context = markup.RenderContext(request, wiki_page=page)
         if template_context is not None or format != 'html':
             return self.parse(template_context).render(context, format)
         self.touch_html_render_instructions()
