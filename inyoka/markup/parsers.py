@@ -58,16 +58,6 @@ class Parser(object):
 
     __repr__ = debug_repr
 
-    @property
-    def parser_name(self):
-        """The name of the parser."""
-        return REVERSE_PARSERS.get(self.__class__)
-
-    @property
-    def argument_string(self):
-        """The argument string."""
-        return dump_argstring(self.argument_def)
-
     def render(self, context, format):
         """Dispatch to the correct render method."""
         rv = self.build_node(context, format)

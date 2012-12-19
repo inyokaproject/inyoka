@@ -139,7 +139,6 @@ class ArgumentCollector(type):
                         assert 0, 'invalid typedef'
                 result.append(value)
                 argdef.append((kwarg, is_default, key, typedef, value))
-            self.argument_def = argdef
             if old_init:
                 old_init(self, *result, **orig_kw)
 
