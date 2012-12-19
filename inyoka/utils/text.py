@@ -138,39 +138,6 @@ def get_pagetitle(name, full=True):
     return u' '.join(x for x in name.split('_') if x)
 
 
-def shorten_filename(name, length=20, suffix=''):
-    """
-    Shorten the `name` to the specified `length`.
-    If `suffix` is given append it before the extension.
-
-    >>> shorten_filename("FoobarBaz.tar.gz", 15, "-2")
-    'Foobar-2.tar.gz'
-    >>> shorten_filename("Foobar.tar.gz", 9, "-1")
-    Traceback (most recent call last):
-      ...
-    ValueError: -1.tar.gz is >= 9 chars
-    """
-    try:
-        name, extension = name.split('.', 1)
-        dot = '.'
-    except ValueError:
-        extension = dot = ''
-    new_suffix = suffix + dot + extension
-    slice_index = length - len(new_suffix)
-    if slice_index <= 0:
-        raise ValueError("%s is >= %d chars" % (new_suffix, length))
-    return name[:length - len(new_suffix)] + new_suffix
-
-
-def get_new_unique_filename(name, path='', shorten=True, length=20):
-    counter = 0
-    new_name = shorten_filename(name, length)
-    while os.path.exists(os.path.join(path, new_name)):
-        counter += 1
-        new_name = shorten_filename(name, length, suffix="-" + str(counter))
-    return new_name
-
-
 def get_next_increment(values, string, max_length=None, stripdate=False):
     """Return the next usable incremented string."""
     def _stripdate(value):
