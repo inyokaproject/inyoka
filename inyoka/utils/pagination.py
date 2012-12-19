@@ -177,15 +177,10 @@ class Pagination(object):
                u'</div></div>' % (class_, u''.join(result))
 
     def generate_mobile(self):
-        select_options = ''.join(
-            ['<option{0}>{1}</option>'.format(
-                ' selected="selected"' if i == self.page else '', i
-            ) for i in range(1, self.max_pages+1)]
-        )
         return u"""
             <div class="pagination">
                 <a href="{prev_link}" class="prev">{prev_label}</a>
-                <span class="active">{current_label} <select>{select_options}</select></span>
+                <span class="active">{current_label} {page}</span>
                 <a href="{next_link}" class="next">{next_label}</a>
                 <span style="display: none;" class="link_base">{link_base}</span>
             </div>
@@ -197,5 +192,5 @@ class Pagination(object):
             next_link=self.generate_link(min(self.page + 1, self.max_pages), self.parameters),
             prev_label=_(u'« Previous'),
             prev_link=self.generate_link(max(self.page - 1, 1), self.parameters),
-            select_options=select_options
+            page=self.page
         )
