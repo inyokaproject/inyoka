@@ -7,11 +7,7 @@
     session time (permanent, non permanent) on a session basis.  So users
     can decide to have a permanent session on login.
 
-    To control the session system use the `make_permanet` and
-    `close_with_browser` functions of the `inyoka.utils.sessions` module.
-
     Uses client side storage.
-
 
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.

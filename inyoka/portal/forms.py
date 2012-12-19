@@ -370,7 +370,6 @@ class UserCPProfileForm(forms.ModelForm):
                 _(u'This email address is already in use.'))
         return email
 
-
     def clean_avatar(self):
         """
         Keep the user from setting an avatar to a too big size.

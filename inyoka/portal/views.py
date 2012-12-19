@@ -339,7 +339,7 @@ def login(request):
                 if user is not None:
                     if user.is_active:
                         if data['permanent']:
-                            make_permanent(request)
+                            request.session.set_expiry(None)
                         # username matches password and user is active
                         messages.success(request, _(u'You have successfully logged in.'))
                         auth.login(request, user)
