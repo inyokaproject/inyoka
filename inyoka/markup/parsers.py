@@ -173,6 +173,3 @@ ALL_PARSERS = {
     'csv':      CSVParser,
     'vorlage':  TemplateParser
 }
-
-#: reverse mapping of the parsers
-REVERSE_PARSERS = {value: key for key, value in ALL_PARSERS.iteritems()}
