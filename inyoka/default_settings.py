@@ -211,8 +211,8 @@ INSTALLED_APPS = (
     'raven.contrib.django',
     'south',
     # *must* be installed after south
+    'kombu.transport.django',
     'djcelery',
-    'djkombu',
     'django_mobile',
     'django_hosts',
 )
@@ -293,13 +293,9 @@ SEND_EVENTS = True
 PROPAGATE_TEMPLATE_CONTEXT = False
 
 # http://ask.github.com/kombu/introduction.html#transport-comparison
-BROKER_BACKEND = 'inyoka.utils.celery_support.DatabaseTransport'
+#BROKER_BACKEND = 'inyoka.utils.celery_support.DatabaseTransport'
+BROKER_URL = 'django://'
 
-BROKER_HOST = 'localhost'
-BROKER_PORT = 5672
-BROKER_USER = ''
-BROKER_PASSWORD = ''
-BROKER_VHOST = ''
 
 INTERNAL_IPS = ('127.0.0.1',)
 
