@@ -275,14 +275,6 @@ class Forum(models.Model):
         children = [forum for forum in forums if forum.parent_id == self.id]
         return children
 
-    def get_children_filtered(self, user, priv=CAN_READ, sort=False):
-        """
-        Same as children, but check for acls if a user is given.
-        If 1=`sort` is True, sort by the position attribute.
-        """
-        visible_forums = Forum.objects.get_forums_filtered(user, priv=priv, sort=sort)
-        return self.filter_children(visible_forums)
-
     def filter_children(self, forums):
         return [forum for forum in forums if forum.parent_id == self.id]
 
@@ -902,9 +894,6 @@ class Post(models.Model, LockableObject):
             # and find a new last post id for the new forum
             new_ids = [p.id for p in new_forums]
             old_ids = [p.id for p in old_forums]
-
-            # search for a new last post in the old and the new forum
-            post_query = Post.objects.all()
 
             # Update last_post of the forums
             # NOTE: last_post of a forum is expected to be the most recent post,
