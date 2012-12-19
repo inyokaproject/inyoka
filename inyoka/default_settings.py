@@ -293,9 +293,7 @@ SEND_EVENTS = True
 PROPAGATE_TEMPLATE_CONTEXT = False
 
 # http://ask.github.com/kombu/introduction.html#transport-comparison
-#BROKER_BACKEND = 'inyoka.utils.celery_support.DatabaseTransport'
 BROKER_URL = 'django://'
-
 
 INTERNAL_IPS = ('127.0.0.1',)
 
