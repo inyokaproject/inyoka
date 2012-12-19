@@ -194,7 +194,6 @@ class Article(models.Model, LockableObject):
 
     objects = ArticleManager(all=True)
     published = ArticleManager(public=True)
-    drafts = ArticleManager(public=False)
 
     pub_date = models.DateField(ugettext_lazy(u'Date'), db_index=True)
     pub_time = models.TimeField(ugettext_lazy(u'Time'))
