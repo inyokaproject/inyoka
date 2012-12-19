@@ -50,7 +50,7 @@
     {%- endfor %}
   </div>
   {{ pagination.generate() }}
-  <section class="actions">
+  <div class="actions">
     <a href="{{ forum|url('newtopic') }}">{% trans %}New topic{% endtrans %}</a>
     {% if is_subscribed %}
       <a href="{{ generate_subscription_link(do='unsubscribe') }}">
@@ -61,5 +61,5 @@
         {% trans %}Subscribe{% endtrans %}
       </a>
     {% endif %}
-  </section>
+  </div>
 {% endblock %}
