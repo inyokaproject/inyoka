@@ -1236,29 +1236,3 @@ class TableHeader(TableCell):
     Exactly like a table cell but renders to <th>
     """
     _html_tag = 'th'
-
-
-class TableHeadSection(Element):
-    """
-    Roughtly translates into a `<thead>` or similar thing.
-    """
-
-    def prepare_html(self):
-        yield build_html_tag('thead', style=self.style,
-                             id=self.id, class_=self.class_)
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</thead>'
-
-
-class TableBodySection(Element):
-    """
-    Roughtly translates into a `<tbody>` or similar thing.
-    """
-
-    def prepare_html(self):
-        yield build_html_tag('tbody', style=self.style,
-                             id=self.id, class_=self.class_)
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</tbody>'
