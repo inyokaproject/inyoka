@@ -9,7 +9,6 @@
 #}
 
 {%- extends 'portal/overall.html' %}
-{% set styles = ['about'] %}
 {% macro badge(link, alt, img) -%}
   <a href="{{ link|e }}"><img src="{{ href('static',
     'img/badges/' + img)|e }}" alt="{{ alt|e }}" /></a>
@@ -27,7 +26,7 @@
     -Bibliotheken und -Technologien auf:
   </p>
   <p class="badges">
-    {{ badge('http://ubuntu.com/', 'ubuntu', 'ubuntu.png') }}
+    {{ badge('http://ubuntu.com/', 'ubuntu', 'ubuntu.gif') }}
     {{ badge('http://python.org/', 'Python', 'python.png') }}
     {{ badge('http://djangoproject.com/', 'Django', 'django.gif') }}
     {{ badge('http://mysql.com/', 'MySQL', 'mysql.png') }}
