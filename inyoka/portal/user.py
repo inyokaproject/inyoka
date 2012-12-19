@@ -657,14 +657,6 @@ class User(AbstractBaseUser):
         elif action in ('subscribe', 'unsubscribe'):
             return href('portal', 'user', self.urlsafe_username, action, **query)
 
-    @classproperty
-    def SYSTEM_USER(cls):
-        return cls.objects.get_system_user()
-
-    @classproperty
-    def ANONYMOUS_USER(cls):
-        return cls.objects.get_anonymous_user()
-
 
 class UserData(models.Model):
     user = models.ForeignKey(User)
