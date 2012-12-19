@@ -43,16 +43,6 @@ class ForumField(forms.ChoiceField):
         self.choices = add + choices
 
 
-class NewPostForm(SurgeProtectionMixin, forms.Form):
-    """
-    Allows the user to create a new post.  It provides the following fields:
-    `text`
-        The text for the post.
-    It's generally used together with `AddAttachmentForm`.
-    """
-    text = StrippedCharField(widget=forms.Textarea)
-
-
 class EditPostForm(forms.Form):
     """
     Allows the user to edit the text of a post.
