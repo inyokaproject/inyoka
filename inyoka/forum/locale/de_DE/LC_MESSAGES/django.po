@@ -417,8 +417,8 @@ msgid ""
 "Only a subset of selected tickets has been closed, considering your "
 "moderation privileges for the regarding forums."
 msgstr ""
-"Es wurden nur ein paar der ausgewählten Tickets geschlossen, \"\n"
-"\"da du Moderationsrechte im jeweiligen Forum benötigst."
+"Es wurden nur ein paar der ausgewählten Meldungen geschlossen, "
+"da du Moderationsrechte im jeweiligen Forum benötigst."
 
 #: inyoka/forum/views.py:905
 msgid "A notification will be sent when a topic is reported."
