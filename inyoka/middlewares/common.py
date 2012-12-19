@@ -29,9 +29,6 @@ from inyoka.utils.timer import StopWatch
 from inyoka.utils.logger import logger
 
 
-re_htmlmime = re.compile(r'^text/x?html')
-
-
 class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
     """Hook in as first middleware for common tasks."""
 
@@ -77,7 +74,6 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
             logger.warning(u'Slow Request', extra={
                 'request': request, 'url': request.build_absolute_uri()
             })
-
 
         local_manager.cleanup()
 

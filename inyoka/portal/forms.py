@@ -764,21 +764,6 @@ class PrivateMessageIndexForm(forms.Form):
     delete = forms.MultipleChoiceField()
 
 
-class UserErrorReportForm(forms.Form):
-    title = forms.CharField(label=ugettext_lazy(u'Short description'), max_length=50,
-                            widget=forms.TextInput(attrs={'size':50}))
-    text = forms.CharField(label=ugettext_lazy(u'Long description'),
-                           widget=forms.Textarea(attrs={'rows': 3}))
-    url = forms.URLField(widget=forms.HiddenInput, required=False,
-                         label=ugettext_lazy(u'URL of the site the ticket refers to'))
-
-    def clean_url(self):
-        data = self.cleaned_data
-        if data.get('url') and not is_safe_domain(self.cleaned_data['url']):
-            raise forms.ValidationError(_(u'Invalid URL'))
-        return self.cleaned_data['url']
-
-
 def _feed_count_cleanup(n):
     COUNTS = (10, 20, 30, 50)
     if n in COUNTS:
