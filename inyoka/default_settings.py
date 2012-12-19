@@ -286,7 +286,7 @@ CELERY_ALWAYS_EAGER = DEBUG
 # Do not hijack the root logger, avoids unicode errors
 CELERYD_HIJACK_ROOT_LOGGER = False
 
-SEND_EVENTS = True
+CELERY_SEND_EVENTS = True
 
 # Make the template context available as tmpl_context in the TemplateResponse.
 # Useful for tests in combination with override_settings.
