@@ -33,7 +33,6 @@ from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.views import password_reset, password_reset_confirm
 
-from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
 
 from inyoka.markup import parse, RenderContext
@@ -66,7 +65,7 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
      UserCPProfileForm, SetNewPasswordForm, ForumFeedSelectorForm, \
      IkhayaFeedSelectorForm, PlanetFeedSelectorForm, WikiFeedSelectorForm, \
      NOTIFICATION_CHOICES, PrivateMessageIndexForm, PrivateMessageFormProtected, \
-     OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
+     EditUserProfileForm, EditUserGroupsForm, \
      EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
      EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
      CreateUserForm, UserMailForm, EditGroupForm
@@ -80,6 +79,7 @@ from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
 
+from social_auth.models import UserSocialAuth
 
 # TODO: move into some kind of config, but as a quick fix for now...
 AUTOBAN_SPAMMER_WORDS = (
@@ -187,7 +187,7 @@ def whoisonline(request):
 
 
 @templated('portal/register.html')
-def register(request):
+def register(request, external=False):
     """Register a new user."""
     redirect = request.GET.get('next') or href('portal')
     if request.user.is_authenticated():
@@ -195,9 +195,14 @@ def register(request):
         return HttpResponseRedirect(redirect)
 
     if request.method == 'POST' and 'renew_captcha' not in request.POST:
-        form = RegisterForm(request.POST)
+        form = RegisterForm(request.POST, external=external)
         form.captcha_solution = request.session.get('captcha_solution')
         if form.is_valid():
+            if external:
+                request.session['social_auth_data'] = form.cleaned_data
+                name = getattr(settings, 'SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
+                backend = request.session[name]['backend']
+                return HttpResponseRedirect(href('portal', 'auth', 'complete', backend))
             data = form.cleaned_data
             user = User.objects.register_user(
                 username=data['username'],
@@ -222,10 +227,10 @@ def register(request):
             request.session.pop('captcha_solution', None)
             return HttpResponseRedirect(redirect)
     else:
-        form = RegisterForm()
+        form = RegisterForm(initial=request.GET, external=external)
 
     return {
-        'form':         form,
+        'form': form,
     }
 
 
@@ -357,6 +362,7 @@ def login(request):
         'failed':       failed,
         'inactive':     inactive,
         'banned':       banned,
+        'OPENID_PROVIDERS': settings.OPENID_PROVIDERS,
     }
     if failed:
         d['username'] = data['username']
@@ -586,6 +592,14 @@ def usercp_profile(request):
             user = form.save(request)
             openids = map(int, request.POST.getlist('openids'))
             UserData.objects.filter(user=user, pk__in = openids).delete()
+
+            accounts_to_delete = map(int, request.POST.getlist('delete_accounts'))
+            # Ensure that the user can only delete his own accounts
+            accounts_to_delete = UserSocialAuth.objects\
+                .filter(user=request.user, pk__in=accounts_to_delete)\
+                .values_list('pk', flat=True)
+            UserSocialAuth.objects.filter(pk__in=accounts_to_delete).delete()
+
             messages.success(request, _(u'Your profile information were updated successfully.'))
             return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
@@ -593,18 +607,20 @@ def usercp_profile(request):
     else:
         form = UserCPProfileForm(instance=user)
 
+    connected_accounts = UserSocialAuth.objects.filter(user=request.user)
     storage_keys = storage.get_many(('max_avatar_width',
         'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
 
     return {
         'form':                 form,
+        'connected_accounts':   connected_accounts,
         'user':                 request.user,
         'gmaps_apikey':         settings.GOOGLE_MAPS_APIKEY,
         'max_avatar_width':     storage_keys.get('max_avatar_width', -1),
         'max_avatar_height':    storage_keys.get('max_avatar_height', -1),
         'max_avatar_size':      storage_keys.get('max_avatar_size', -1),
         'max_sig_length':       storage_keys.get('max_signature_length'),
-        'openids':              UserData.objects.filter(user=user, key='openid'),
+        'OPENID_PROVIDERS':     settings.OPENID_PROVIDERS,
     }
 
 
@@ -1767,90 +1783,6 @@ def confirm(request, action=None):
     if isinstance(r, dict) and action:
         r['action'] = action
     return r
-
-
-class OpenIdConsumer(Consumer):
-    on_complete_url = '/openid/complete/'
-    trust_root = 'http://*.' + settings.BASE_DOMAIN_NAME
-
-    @templated('portal/openid_connect.html')
-    def do_connect(self, request):
-        # TODO: This is mostly duplication of login, maybe merge those two
-        redirect = is_safe_domain(request.GET.get('next', '')) and \
-                   request.GET['next'] or href('portal')
-
-        failed = inactive = banned = False
-        if request.method == 'POST' and 'openid' in request.session:
-            form = OpenIDConnectForm(request.POST)
-            if form.is_valid():
-                data = form.cleaned_data
-                try:
-                    user = auth.authenticate(username=data['username'],
-                                             password=data['password'])
-                except UserBanned:
-                    failed = banned = True
-                    user = None
-
-                if user is None:
-                    failed = True
-
-                if user is not None:
-                    if user.is_active:
-                        # username matches password and user is active
-                        messages.success(request, _(u'You have successfully logged in.'))
-                        auth.login(request, user)
-                        openid = request.session.pop('openid')
-                        if not UserData.objects.filter(key='openid',
-                                                       value=openid).count():
-                            UserData.objects.create(user=user, key='openid',
-                                                    value=openid)
-                            messages.success(request,
-                                _(u'The OpenID was successfully linked to '
-                                  u'your account.'))
-                        return HttpResponseRedirect(redirect)
-                    inactive = True
-                failed = True
-        else:
-            form = OpenIDConnectForm()
-        return {
-            'form': form,
-            'openid': request.session.get('openid', None),
-            'failed':       failed,
-            'inactive':     inactive,
-            'banned':       banned,
-        }
-
-    def on_success(self, request, identity_url, openid_response):
-        response = self.redirect_if_valid_next(request)
-
-        # till https://github.com/simonw/django-openid/commit/5062aa93abc9a8d6f90837db690c26ace1c68672
-        # is resolved
-        next = request.session.pop('next', href('portal'))
-        if not response:
-            response = HttpResponseRedirect(next)
-
-        try:
-            user = UserData.objects.select_related('user').get(
-                    key='openid',
-                    value=openid_response.identity_url).user
-            if user.is_active:
-                messages.success(request, _(u'You have successfully logged in.'))
-                auth.login(request, user)
-            else:
-                messages.error(request, _(u'This user is not activated'))
-        except UserData.DoesNotExist:
-            request.session['openid'] = identity_url
-            response = HttpResponseRedirect(href('portal', 'openid', 'connect',
-                                                 next=next))
-
-        return response
-
-    def show_error(self, request, message, exception=None):
-        messages.error(request, _(u'Error on OpenID login: %(message)s') % {'message': message})
-        return HttpResponseRedirect('/')
-
-
-openid_consumer = OpenIdConsumer(SessionPersist)
 
 
 @require_permission('configuration_edit')

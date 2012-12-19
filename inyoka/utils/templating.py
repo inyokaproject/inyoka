@@ -200,7 +200,6 @@ def populate_context_defaults(context, flash=False):
 
     context.update(
         GLOBAL_MESSAGE=global_message,
-        OPENID_PROVIDERS=settings.OPENID_PROVIDERS,
         pm_count=pms,
         report_count=reported,
         article_report_count=reported_articles,

@@ -35,17 +35,16 @@
       <input type="submit" id="login" value="{% trans %}Login{% endtrans %}" tabindex="1" />
     </div>
   </form>
+  <h4>{% trans %}Login via a third party:{% endtrans %}</h4>
+  {% include 'portal/login_options.html' with context %}
 {% endblock %}
 
 {% block additional_scripts %}
+  {{ super() }}
+
   <script type="text/javascript">
     /*<![CDATA[*/
-    if ( $('#id_username')[0].value )
-      $('#id_password').select().focus();
-    else
-      $('#id_username')[0].focus();
-
-    var input = OpenIDHelper($('input[name="username"]'), {{ OPENID_PROVIDERS|jsonencode }});
+    var input = OpenIDHelper($('input[name="openid_identifier"]'), {{ OPENID_PROVIDERS|jsonencode }});
     /*]]>*/
   </script>
 {% endblock %}

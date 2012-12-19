@@ -1,0 +1,49 @@
+{#
+    portal/login_options.html
+    ~~~~~~~~~~~~~~~~~
+
+    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+<form method="post" action="{{ href('portal', 'auth', 'login', 'openid') }}">
+{{ csrf_token() }}
+<dl>
+  <dt>OpenID:</dt>
+  <dd><input id="openid_identifier" type="text" name="openid_identifier" value=""></dd>
+</dl>
+<div class="actions">
+  <input type="submit" value="{% trans %}Login via OpenID{% endtrans %}"/>
+</div>
+</form>
+<form method="post" action="{{ href('portal', 'auth', 'complete', 'browserid') }}">
+<dl>
+  <input type="hidden" name="assertion" value="" />
+  <dt>BrowserID:</dt>
+  <dd><a rel="nofollow" id="browserid" href="#" class="persona-button"><span>{% trans %}Login{% endtrans %}</span></a></dd>
+</dl>
+</form>
+  <script src="https://login.persona.org/include.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+/*<![CDATA[*/
+  $(function () {
+      $('#browserid').click(function (e) {
+          e.preventDefault();
+          var self = $(this);
+
+          navigator.id.get(function (assertion) {
+              if (assertion) {
+                  self.closest('form')
+                          .find('input[type=hidden]')
+                              .attr('value', assertion)
+                              .end()
+                          .submit();
+              } else {
+                  alert('Some error occurred');
+              }
+          });
+      });
+  });
+/*]]>*/
+</script>
