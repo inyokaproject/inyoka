@@ -269,7 +269,7 @@ $(document).ready(function () {
     }
   });
 
-  $('div.code').add('pre').each(function () {
+  $('div.code').add('pre.notranslate').each(function () {
     if (this.clientHeight < this.scrollHeight) {
       $(this).before('<div class="codeblock_resizer">vergrößern</div>')
              .css('height', '15em').css('max-height', 'none')
