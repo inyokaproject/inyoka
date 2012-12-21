@@ -21,10 +21,6 @@ $(document).ready(function () {
       $('<img />').attr('src', $STATIC_URL + this).appendTo(container);
     });
   })();
-  // Display the countdown
-  if (typeof $COUNTDOWN_ACTIVE == "boolean" && $COUNTDOWN_ACTIVE) {
-    $("#counter > a > img").attr('src', $COUNTDOWN_IMAGE_URL);
-  }
 
   // add a hide message link to all flash messages
   $.each($('div.message'), function (i, elm) {
