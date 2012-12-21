@@ -206,6 +206,7 @@ INSTALLED_APPS = (
     'inyoka.ikhaya',
     'inyoka.pastebin',
     'inyoka.planet',
+    'inyoka.markup',
     'django_openid',
     'raven.contrib.django',
     'south',
