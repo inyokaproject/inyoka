@@ -175,7 +175,7 @@ class PageCount(macros.Macro):
     """
     Return the number of existing pages.
     """
-    name = (u'PageCount', 'Seitenzahl')
+    names = (u'PageCount', 'Seitenzahl')
 
     def build_node(self, context, format):
         return nodes.Text(unicode(Page.objects.get_page_count()))
