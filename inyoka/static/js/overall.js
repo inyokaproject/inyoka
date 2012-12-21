@@ -72,19 +72,19 @@ $(document).ready(function () {
       toc.find('ol').addClass('originaltoc');
 
       var ol = function(level) {
-        return $('<ol class="' + style + ' toc-item-depth-' + level + '"></ol>')
+        return $('<ol class="' + style + ' toc-item-depth-' + level + '"></ol>');
       };
       var li = $('<li></li>');
       var li_no_number = $('<li style="list-style: none"></li>');
       // will finally hold the whole tocTree
-      var tocTree = new Array();
+      var tocTree = [];
       tocTree.push(ol(1));
       var last_level = 1;
       // Iterate over all <a> tags in headlines
       $('.headerlink').each(function(index) {
         level_class = $(this).parent().parent().attr("class");
         var match = level_class.match(/^section_(\d+)$/);
-        if (match == null) { // not a section_* class
+        if (match === null) { // not a section_* class
           return true; // continue
         }
         var level = parseInt(match[1], 10);
@@ -92,7 +92,7 @@ $(document).ready(function () {
         if (level > last_level) {
           // if the headline is indented compared to the previous one
           // we need to check for the difference between those levels
-          var limit = level - last_level;
+          limit = level - last_level;
           for (var i = 1; i < limit; i++) {
             tocTree.push(ol(last_level + i));
             tocTree[tocTree.length - 1].append(li_no_number.clone());
@@ -101,7 +101,7 @@ $(document).ready(function () {
         } else if (level < last_level) {
           // we are unindenting the headline level. All lists have to be
           // popped from the stack up to the current level
-          var limit = last_level - level;
+          limit = last_level - level;
           for (var i = 0; i < limit; i++) {
             var node = tocTree.pop();
             var children = tocTree[tocTree.length - 1].children();
@@ -143,7 +143,7 @@ $(document).ready(function () {
           }
         );
         var classes = $(this).attr('class').split(/\s+/);
-        if (parseInt(classes[classes.length - 1].slice(15)) >= tocDepth) {
+        if (parseInt(classes[classes.length - 1].slice(15), 10) >= tocDepth) {
           f.click();
         }
       });
