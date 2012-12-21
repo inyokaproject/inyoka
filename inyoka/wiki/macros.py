@@ -603,6 +603,9 @@ class FilterByMetaData(macros.Macro):
     def build_node(self, context, format):
         mapping = []
         for part in self.filters:
+            # TODO: Can we do something else instead of skipping?
+            if not ':' in part:
+                continue
             key = part.split(':')[0].strip()
             values = [x.strip() for x in part.split(':')[1].split(',')]
             mapping.extend(map(lambda x: (key, x), values))
@@ -614,7 +617,7 @@ class FilterByMetaData(macros.Macro):
             values = list(flatten_iterator(mapping[key]))
             includes = [x for x in values if not x.startswith('NOT ')]
             kwargs = {'key': key, 'value__in': includes}
-            q = MetaData.objects.select_related(depth=1).filter(**kwargs)
+            q = MetaData.objects.select_related('page').filter(**kwargs)
             res = set(x.page for x in q.all())
             pages = pages.union(res)
 
