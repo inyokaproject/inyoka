@@ -4,8 +4,7 @@ from os import path
 
 python_version = '2.7.3'
 python_main_version = '2.7'
-pil_version = '1.1.7'
-xapian_version = '1.2.4'
+xapian_version = '1.2.12'
 
 
 def install_requirements(home_dir, requirements):
@@ -15,29 +14,6 @@ def install_requirements(home_dir, requirements):
     cmd = [os.path.join(home_dir, 'bin', 'pip')]
     cmd.extend(['install', '-r', os.path.join(home_dir, requirements)])
     call_subprocess(cmd)
-
-
-def pil_install(home_dir):
-    folder = tempfile.mkdtemp(prefix='virtualenv')
-
-    call_subprocess(FETCH_CMD + ['http://effbot.org/downloads/Imaging-%s.tar.gz' % pil_version],
-                    cwd=folder)
-    call_subprocess(['tar', '-xzf', 'Imaging-%s.tar.gz' % pil_version],
-                    cwd=folder)
-
-    img_folder = path.join(folder, 'Imaging-%s' % pil_version)
-
-    f1 = path.join(img_folder, 'setup_new.py')
-    f2 = path.join(img_folder, 'setup.py')
-
-    open(f1, 'w').write(open(f2).read().replace('import _tkinter',
-                                                'raise ImportError()'))
-
-    cmd = [path.join(home_dir, 'bin', 'python')]
-    cmd.extend([path.join(os.getcwd(), f1), 'install'])
-    call_subprocess(cmd)
-
-    shutil.rmtree(folder)
 
 
 def install_xapian(home_dir):
@@ -80,7 +56,6 @@ def install_xapian(home_dir):
 def after_install(options, home_dir):
     easy_install('pip', home_dir)
     install_requirements(home_dir, options.requirements)
-    pil_install(home_dir)
     install_xapian(home_dir)
 
 

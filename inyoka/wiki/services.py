@@ -18,8 +18,8 @@
 from inyoka.utils.http import HttpResponse
 from inyoka.utils.services import SimpleDispatcher, permit_methods
 from inyoka.forum.models import Post as ForumPost
+from inyoka.markup import parse, RenderContext
 from inyoka.wiki.utils import get_smilies
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page
 
 
@@ -45,7 +45,8 @@ def on_render_preview(request):
 
     context = RenderContext(request, wiki_page=page, forum_post=post)
     html = parse(request.REQUEST.get('text', '')).render(context, 'html')
-    return HttpResponse(html, mimetype='text/plain') # TODO: return json.
+    # TODO: return json.
+    return HttpResponse(html, mimetype='text/plain')
 
 
 dispatcher = SimpleDispatcher(

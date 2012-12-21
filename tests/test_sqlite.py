@@ -28,13 +28,14 @@ GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4B
 INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.contenttypes',
+    'inyoka.core',
     'inyoka.portal',
     'inyoka.wiki',
     'inyoka.forum',
     'inyoka.ikhaya',
     'inyoka.pastebin',
     'inyoka.planet',
-    'inyoka.utils.tests',
+    'tests.functional.utils',
     'south',
     # *must* be installed after south
     'djcelery',

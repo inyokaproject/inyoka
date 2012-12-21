@@ -14,17 +14,17 @@
 {% block content %}
   <article>
     <h2 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h2>
-    <p class="meta">
-      <span>
+    <span class="meta">
+      <span class="date">{{ article.pub_datetime|datetimeformat }}</span> |
+      <span class="author">
         {%- trans link=article.author|url, author=article.author.username|e -%}
           Written by <a href="{{ link }}">{{ author }}</a>
         {%- endtrans -%}
       </span> |
-      <span>{{ article.pub_datetime|datetimeformat }}</span> |
-      <span>
+      <span class="category">
         {% trans %}Category:{% endtrans %} <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
       </span>
-    </p>
+    </span>
     <div class="intro">
       {{ article.rendered_intro }}
     </div>
@@ -59,10 +59,10 @@
           {% if form.data.comment_id and USER.can('comment_edit') %}
           {{ form.comment_id }}
           {% endif %}
-          <p>
+          <div class="actions">
             <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}" />
             <input type="submit" value="{% trans %}Submit{% endtrans %}" />
-          </p>
+          </div>
           {%- if preview %}
           <div class="preview_wrapper">
             <h2 class="title">{% trans %}Preview{% endtrans %}</h2>

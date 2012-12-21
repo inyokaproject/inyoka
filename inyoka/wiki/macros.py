@@ -1,188 +1,41 @@
-# -*- coding: utf-8 -*-
-"""
-    inyoka.wiki.macros
-    ~~~~~~~~~~~~~~~~~~
-
-    The module contains the core macros and the logic to find macros.
-
-    The term macro is derived from the MoinMoin wiki engine which refers to
-    macros as small pieces of dynamic snippets that are exanded at rendering
-    time.  For inyoka macros are pretty much the same just they are always
-    expanded at parsing time.  However, for the sake of dynamics macros can
-    mark themselves as runtime macros.  In that case during parsing the macro
-    is inserted directly into the parsing as as block (or inline, depending on
-    the macro settings) node and called once the data is loaded from the
-    serialized instructions.
-
-    This leads to the limitation that macros must be pickleable.  So if you
-    feel the urge of creating a closure or something similar in your macro
-    initializer remember that and move the code into the render method.
-
-    For example macro implementations have a look at this module's sourcecode
-    which implements all the builtin macros.
-
-
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
-"""
-import os
-import random
+#-*- coding: utf-8 -*-
 import string
-from datetime import datetime, date, timedelta
+import random
+import operator
+import itertools
+from datetime import datetime, timedelta, date
 from collections import OrderedDict
 from django.conf import settings
-from django.core.cache import cache
-from django.utils.translation import ungettext, ugettext as _
-from inyoka.utils.urls import href, urlencode, url_for
-from inyoka.portal.models import StaticFile
-from inyoka.forum.models import Attachment as ForumAttachment
-from inyoka.wiki.parser import nodes
-from inyoka.wiki.utils import simple_filter, debug_repr, dump_argstring, \
-    ArgumentCollector
-from inyoka.wiki.models import Page, Revision, MetaData
-from inyoka.wiki.templates import expand_page_template
 from inyoka.wiki.views import fetch_real_target
-from inyoka.utils.css import filter_style
-from inyoka.utils.urls import is_external_target
-from inyoka.utils.text import join_pagename, normalize_pagename, get_pagetitle
-from inyoka.utils.dates import parse_iso8601, format_datetime, format_time, \
-    datetime_to_timezone
+from inyoka.wiki.models import Revision, Page, MetaData
+from inyoka.wiki.signals import build_picture_node
+from inyoka.markup import macros, nodes
+from inyoka.markup.utils import simple_filter
+from inyoka.markup.templates import expand_page_template
+from inyoka.markup.parsertools import MultiMap, flatten_iterator
+from inyoka.utils.imaging import parse_dimensions
+from inyoka.utils.urls import href, urlencode, url_for, is_external_target
+from inyoka.utils.cache import cache
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.parsertools import MultiMap, flatten_iterator
-from inyoka.utils.imaging import get_thumbnail, parse_dimensions
+from inyoka.utils.dates import datetime_to_timezone, format_time
+from inyoka.utils.text import normalize_pagename, get_pagetitle, join_pagename
+from django.utils.translation import ugettext as _, ungettext
 
 
-def get_macro(name, args, kwargs):
-    """
-    Instanciate a new macro or return `None` if it doesn't exist.  This is
-    used by the parser when it encounters a `macro_begin` token.  Usually
-    there is no need to call this function from outside the parser.  There
-    may however be macros that want to extend the functionallity of an
-    already existing macro.
-    """
-    cls = ALL_MACROS.get(name)
-    if cls is None:
-        return
-    return cls(args, kwargs)
+def make_int(s, default):
+    try:
+        return int(s)
+    except (ValueError, TypeError):
+        return int(default)
 
 
-class Macro(object):
-    """
-    Baseclass for macros.  All macros should extend from that or implement
-    the same attributes.  The preferred way however is subclassing.
-    """
-
-    __metaclass__ = ArgumentCollector
-
-    #: if a macro is static this has to be true.
-    is_static = False
-
-    #: true if this macro returns a block level node in dynamic
-    #: rendering. This does not affect static rendering.
-    is_block_tag = False
-
-    #: unused in `Macro` but not `TreeMacro`.
-    is_tree_processor = False
-
-    #: set this to True if you want to do the argument parsing yourself.
-    has_argument_parser = False
-
-    #: if a macro is dynamic it's unable to emit metadata normally. This
-    #: slot allows one to store a list of nodes that are sent to the
-    #: stream before the macro itself is emited and removed from the
-    #: macro right afterwards so that it consumes less storage pickled.
-    metadata = None
-
-    #: the arguments this macro expects
-    arguments = ()
-
-    __repr__ = debug_repr
-
-    @property
-    def macro_name(self):
-        """The name of the macro."""
-        return REVERSE_MACROS.get(self.__class__)
-
-    @property
-    def argument_string(self):
-        """The argument string."""
-        return dump_argstring(self.argument_def)
-
-    @property
-    def wiki_representation(self):
-        """The macro in wiki markup."""
-        args = self.argument_string
-        return u'[[%s%s]]' % (
-            self.macro_name,
-            args and (u'(%s)' % args) or ''
-        )
-
-    def render(self, context, format):
-        """Dispatch to the correct render method."""
-        rv = self.build_node(context, format)
-        if isinstance(rv, basestring):
-            return rv
-        return rv.render(context, format)
-
-    def build_node(self, context=None, format=None):
-        """
-        If this is a static macro this method has to return a node.  If it's
-        a runtime node a context and format parameter is passed.
-
-        A static macro has to return a node, runtime macros can either have
-        a look at the passed format and return a string for that format or
-        return a normal node which is then rendered into that format.
-        """
-
-
-class TreeMacro(Macro):
-    """
-    Special macro that is processed after the whole tree was created.  This
-    is useful for a `TableOfContents` macro that has to look for headline
-    tags etc.
-
-    If a macro is a tree processor the `build_node` function is passed a
-    tree as only argument.  That being said it's impossible to use a tree
-    macro as runtime macro.
-    """
-
-    is_tree_processor = True
-    is_static = True
-
-    #: When the macro should be expanded. Possible values are:
-    #:
-    #: `final`
-    #:      the macro is expanded at the end of the transforming process.
-    #:
-    #: `initial`
-    #:      the macro is expanded at the end of the parsing process, before
-    #:      the transformers and other tree macro levels (default).
-    #:
-    #: `late`
-    #:      Like initial, but after initial macros.
-    stage = 'initial'
-
-    def render(self, context, format):
-        """A tree macro is not a runtime macro.  Never static"""
-        raise RuntimeError('tree macro is not allowed to be non static')
-
-    def build_node(self, tree):
-        """
-        Works like a normal `build_node` function but it's passed a node that
-        represents the syntax tree.  It can be queried using the query
-        interface attached to nodes.
-
-        The return value must be a node, even if the macro shouldn't output
-        anything.  In that situation it's recommended to return just an empty
-        `nodes.Text`.
-        """
-
-
-class RecentChanges(Macro):
+class RecentChanges(macros.Macro):
     """
     Show a table of the recent changes.  This macro does only work for HTML
     so far, all other formats just get an empty text back.
     """
+
+    names = (u'RecentChanges', u'LetzteÄnderungen')
 
     arguments = (
         ('per_page', int, 50),
@@ -195,16 +48,11 @@ class RecentChanges(Macro):
         self.default_days = days
 
     def build_node(self, context, format):
-        if not context.request or not context.wiki_page:
+        wiki_page = context.kwargs.get('wiki_page', None)
+        if not context.request or not wiki_page:
             return nodes.Paragraph([
                 nodes.Text(_(u'Recent changes cannot be rendered on this page'))
             ])
-
-        def make_int(s, default):
-            try:
-                return int(s)
-            except (ValueError, TypeError):
-                return int(default)
 
         max_days = make_int(context.request.GET.get('max_days'), self.default_days)
         page_num = make_int(context.request.GET.get('page'), 1)
@@ -216,7 +64,7 @@ class RecentChanges(Macro):
                 parameters.pop('page', None)
             else:
                 parameters['page'] = str(page_num)
-            rv = href('wiki', context.wiki_page.name)
+            rv = href('wiki', wiki_page.name)
             if parameters:
                 rv += '?' + urlencode(parameters)
             return rv
@@ -229,7 +77,7 @@ class RecentChanges(Macro):
         data = cache.get(cache_key)
         if data is None:
             revisions = Revision.objects.filter(
-                change_date__gt=(datetime.utcnow()-timedelta(days=max_days))
+                change_date__gt=(datetime.utcnow() -timedelta(days=max_days))
             ).select_related('user', 'page')
             pagination = Pagination(context.request, revisions,
                                     page_num, self.per_page, link_func)
@@ -267,7 +115,7 @@ class RecentChanges(Macro):
                     if len(revs) > 1:
                         stamps = (format_time(revs[0].change_date),
                                   format_time(revs[-1].change_date))
-                        stamp = u'%s' % (stamps[0]==stamps[-1] and stamps[0] or \
+                        stamp = u'%s' % (stamps[0]==stamps[-1] and stamps[0] or
                                 u'%s - %s' % stamps)
                     else:
                         stamp = format_time(revs[0].change_date)
@@ -303,7 +151,7 @@ class RecentChanges(Macro):
                                 nodes.Text(rev.note and u')' or '')]))
                     table.children[-1].children.extend([
                         nodes.TableCell(
-                            page_notes.children and [page_notes] or \
+                            page_notes.children and [page_notes] or
                             [nodes.Text(u'')], class_='note')])
             data = {
                 'nodes':      table,
@@ -323,82 +171,21 @@ class RecentChanges(Macro):
         return data['nodes']
 
 
-class TableOfContents(TreeMacro):
-    """
-    Show a table of contents.  We do not embedd the TOC in a DIV so far and
-    there is also no title on it.
-    """
-    stage = 'final'
-    is_block_tag = True
-    arguments = (
-        ('max_depth', int, 3),
-        ('type', {
-            'unordered':    'unordered',
-            'arabic0':      'arabiczero',
-            'arabic':       'arabic',
-            'alphabeth':    'alphalower',
-            'ALPHABETH':    'alphaupper',
-            'roman':        'romanlower',
-            'ROMAN':        'romanupper'
-        }, 'arabic')
-    )
-
-    def __init__(self, depth, list_type):
-        self.depth = depth
-        self.list_type = list_type
-
-    def build_node(self, tree):
-        result = nodes.List(self.list_type)
-        stack = [result]
-        normalized_level = 0
-        last_level = 0
-        for headline in tree.query.by_type(nodes.Headline):
-            if not headline.level == last_level:
-                if headline.level > normalized_level:
-                    normalized_level += 1
-                elif headline.level < normalized_level:
-                    normalized_level -= (normalized_level - headline.level)
-            if normalized_level > self.depth:
-                continue
-            elif normalized_level > len(stack):
-                for x in xrange(normalized_level - len(stack)):
-                    node = nodes.List(self.list_type)
-                    if stack[-1].children:
-                        stack[-1].children[-1].children.append(node)
-                    else:
-                        result.children.append(nodes.ListItem([node]))
-                    stack.append(node)
-            elif normalized_level < len(stack):
-                for x in xrange(len(stack) - normalized_level):
-                    stack.pop()
-            ml = normalized_level*((45-self.depth-normalized_level)/(normalized_level or 1))
-            text = len(headline.text)>ml and headline.text[:ml]+'...' or \
-                   headline.text
-            caption = [nodes.Text(text)]
-            link = nodes.Link('#' + headline.id, caption)
-            stack[-1].children.append(nodes.ListItem([link]))
-            last_level = headline.level
-        head = nodes.Layer(children=[nodes.Text(_(u'Table of contents'))],
-                           class_='head')
-        result = nodes.Layer(class_='toc toc-depth-%d' % self.depth,
-                             children=[head, result])
-        return result
-
-
-class PageCount(Macro):
+class PageCount(macros.Macro):
     """
     Return the number of existing pages.
     """
+    name = (u'PageCount', 'Seitenzahl')
 
     def build_node(self, context, format):
         return nodes.Text(unicode(Page.objects.get_page_count()))
 
 
-class PageList(Macro):
+class PageList(macros.Macro):
     """
     Return a list of pages.
     """
-
+    names = ('PageList', 'Seitenliste')
     is_block_tag = True
     arguments = (
         ('pattern', unicode, ''),
@@ -425,12 +212,12 @@ class PageList(Macro):
         return result
 
 
-class AttachmentList(Macro):
+class AttachmentList(macros.Macro):
     """
     Return a list of attachments or attachments below
     a given page.
     """
-
+    names = ('AttachmentList', 'Anhänge')
     is_block_tag = True
     arguments = (
         ('page', unicode, ''),
@@ -451,11 +238,11 @@ class AttachmentList(Macro):
         return result
 
 
-class OrphanedPages(Macro):
+class OrphanedPages(macros.Macro):
     """
     Return a list of orphaned pages.
     """
-
+    names = (u'OrphanedPages', u'VerwaisteSeiten')
     is_block_tag = True
 
     def build_node(self, context, format):
@@ -468,11 +255,11 @@ class OrphanedPages(Macro):
         return result
 
 
-class MissingPages(Macro):
+class MissingPages(macros.Macro):
     """
     Return a list of missing pages.
     """
-
+    names = (u'MissingPages', u'FehlendeSeiten')
     is_block_tag = True
 
     def build_node(self, context, format):
@@ -485,11 +272,11 @@ class MissingPages(Macro):
         return result
 
 
-class RedirectPages(Macro):
+class RedirectPages(macros.Macro):
     """
     Return a list of pages that redirect to somewhere.
     """
-
+    names = (u'RedirectPages', u'Weiterleitungen')
     is_block_tag = True
 
     def build_node(self, context, format):
@@ -507,25 +294,12 @@ class RedirectPages(Macro):
         return result
 
 
-class PageName(Macro):
-    """
-    Return the name of the current page if the render context
-    knows about that.  This is only useful when rendered from
-    a wiki page.
-    """
-
-    def build_node(self, context, format):
-        if context.wiki_page:
-            return nodes.Text(context.wiki_page.title)
-        return nodes.Text(_(u'Unknown page'))
-
-
-class NewPage(Macro):
+class NewPage(macros.Macro):
     """
     Show a small form to create a new page below a page or in
     top level and with a given template.
     """
-
+    names = (u'NewPage', u'NeueSeite')
     is_static = True
     arguments = (
         ('base', unicode, ''),
@@ -546,12 +320,12 @@ class NewPage(Macro):
         )
 
 
-class SimilarPages(Macro):
+class SimilarPages(macros.Macro):
     """
     Show a list of pages similar to the page name given or the
     page from the render context.
     """
-
+    names = (u'SimilarPages', u'ÄhnlicheSeiten')
     is_block_tag = True
     arguments = (
         ('page', unicode, ''),
@@ -561,8 +335,9 @@ class SimilarPages(Macro):
         self.page_name = page_name
 
     def build_node(self, context, format):
-        if context.wiki_page:
-            name = context.wiki_page.name
+        wiki_page = context.kwargs.get('wiki_page', None)
+        if wiki_page:
+            name = wiki_page.name
             ignore = name
         else:
             name = self.page_name
@@ -582,12 +357,12 @@ class SimilarPages(Macro):
         return result
 
 
-class TagCloud(Macro):
+class TagCloud(macros.Macro):
     """
     Show a tag cloud (or a tag list if the ?tag parameter is defined in
     the URL).
     """
-
+    names = (u'TagCloud', u'TagWolke')
     is_block_tag = True
     arguments = (
         ('max', int, 100),
@@ -605,7 +380,7 @@ class TagCloud(Macro):
 
         result = nodes.Layer(class_='tagcloud')
         for tag in Page.objects.get_tagcloud(self.max):
-            title = ungettext('%(count)d page', '%(count)d pages',
+            title = ungettext('one page', '%(count)d pages',
                               tag['count']) % tag
             result.children.extend((
                 nodes.Link('?' + urlencode({
@@ -624,11 +399,11 @@ class TagCloud(Macro):
         return container
 
 
-class TagList(Macro):
+class TagList(macros.Macro):
     """
     Show a taglist.
     """
-
+    names = ('TagList', u'TagListe')
     is_block_tag = True
     arguments = (
         ('tag', unicode, ''),
@@ -664,12 +439,12 @@ class TagList(Macro):
         return container
 
 
-class Include(Macro):
+class Include(macros.Macro):
     """
     Include a page.  This macro works dynamically thus the included headlines
     do not appear in the TOC.
     """
-
+    names = (u'Include', u'Einbinden')
     is_block_tag = True
     arguments = (
         ('page', unicode, ''),
@@ -692,234 +467,19 @@ class Include(Macro):
             msg = _(u'The page “%(name)s” was not found') % {
                 'name': self.page}
             return nodes.error_box(_(u'Page not found'), msg)
-        if page.name in context.included_pages:
+        context.kwargs.setdefault('included_pages', set())
+        if page.name in context.kwargs['included_pages']:
             msg = _(u'Detected a circular include macro call')
             return nodes.error_box(_(u'Circular import'), msg)
-        context.included_pages.add(page.name)
+        context.kwargs['included_pages'].add(page.name)
         return page.rev.text.render(context=context, format=format)
 
 
-class Template(Macro):
-    """
-    Include a page as template and expand it.
-    """
-
-    has_argument_parser = True
-    is_static = True
-
-    def __init__(self, args, kwargs):
-        if not args:
-            self.template = None
-            self.context = []
-            return
-        items = kwargs.items()
-        for idx, arg in enumerate(args[1:]):
-            items.append(('arguments.%d' % idx, arg))
-        self.template = join_pagename(settings.WIKI_TEMPLATE_BASE,
-                                      normalize_pagename(args[0], False))
-        self.context = items
-
-    def build_node(self):
-        return expand_page_template(self.template, self.context, True)
-
-
-class Attachment(Macro):
-    """
-    This macro displays a download link for an attachment.
-    """
-
-    arguments = (
-        ('attachment', unicode, u''),
-        ('text', unicode, u''),
-    )
-
-    def __init__(self, target, text):
-        self.target = target
-        self.text = text
-        self.is_external = is_external_target(target)
-        if not self.is_external:
-            self.metadata = [nodes.MetaData('X-Attach', [target])]
-            target = normalize_pagename(target, True)
-        self.children = [nodes.Text(self.text or self.target)]
-
-    def build_node(self, context, format):
-        target = self.target
-        if self.is_external:
-            return nodes.Link(target, self.children)
-        else:
-            if context.wiki_page:
-                target = join_pagename(context.wiki_page.name, self.target)
-            source = href('wiki', '_attachment',
-                target=target,
-            )
-            return nodes.Link(source, self.children)
-
-
-class Picture(Macro):
-    """
-    This macro can display external images and attachments as images.  It
-    also takes care about thumbnail generation.  For any internal (attachment)
-    image included that way an ``X-Attach`` metadata is emitted.
-
-    Like for any link only absolute targets are allowed.  This might be
-    surprising behavior if you're used to the MoinMoin syntax but caused
-    by the fact that the parser does not know at parse time on which page
-    it is operating.
-    """
-
-    arguments = (
-        ('picture', unicode, u''),
-        ('size', unicode, u''),
-        ('align', unicode, u''),
-        ('alt', unicode, None),
-        ('title', unicode, None)
-    )
-
-    def __init__(self, target, dimensions, alignment, alt, title):
-        self.metadata = [nodes.MetaData('X-Attach', [target])]
-        self.width, self.height = parse_dimensions(dimensions)
-        self.target = target
-        self.alt = alt or target
-        self.title = title
-
-        self.align = alignment
-        if self.align not in ('left', 'right', 'center'):
-            self.align = None
-
-    def build_node(self, context, format):
-        if context.application == 'wiki':
-            target = normalize_pagename(self.target, True)
-        else:
-            target = self.target
-
-        if context.wiki_page:
-            target = join_pagename(context.wiki_page.name, target)
-
-        source = fetch_real_target(target, width=self.width, height=self.height)
-        file = None
-
-        if context.application == 'ikhaya':
-            try:
-                file = StaticFile.objects.get(identifier=target)
-                if (self.width or self.height) and os.path.exists(file.file.path):
-                    tt = target.rsplit('.', 1)
-                    dimension = '%sx%s' % (self.width and int(self.width) or '',
-                                           self.height and int(self.height) or '')
-                    target = '%s%s.%s' % (tt[0], dimension, tt[1])
-
-                    destination = os.path.join(settings.MEDIA_ROOT, 'portal/thumbnails', target)
-                    thumb = get_thumbnail(file.file.path, destination, self.width, self.height)
-                    if thumb:
-                        source = os.path.join(settings.MEDIA_URL, 'portal/thumbnails', thumb.rsplit('/', 1)[1])
-                    else:
-                        # fallback to the orginal file
-                        source = os.path.join(settings.MEDIA_URL, file.file.name)
-                else:
-                    source = url_for(file)
-            except StaticFile.DoesNotExist:
-                pass
-        if context.application == 'forum':
-            try:
-                # There are times when two users upload a attachment with the same
-                # name, both have post=None, so we cannot .get() here
-                # and need to filter for attachments that are session related.
-                # THIS IS A HACK and should go away once we found a way
-                # to upload attachments directly to bound posts in a sane way...
-                if context.request is not None and 'attachments' in context.request.POST:
-                    att_ids = map(int, filter(bool,
-                        context.request.POST.get('attachments', '').split(',')
-                    ))
-                    post = context.forum_post.id if context.forum_post else None
-                    files = ForumAttachment.objects.filter(name=target,
-                            post=post, id__in=att_ids)
-                    return nodes.HTML(files[0].html_representation)
-                else:
-                    file = ForumAttachment.objects.get(name=target, post=context.forum_post)
-                    return nodes.HTML(file.html_representation)
-            except (ForumAttachment.DoesNotExist, IndexError):
-                pass
-
-        img = nodes.Image(source, self.alt, class_='image-' +
-                          (self.align or 'default'), title=self.title)
-        if (self.width or self.height) and context.wiki_page is not None:
-            return nodes.Link(fetch_real_target(target), [img])
-        elif (self.width or self.height) and not context.application == 'wiki' and file is not None:
-            return nodes.Link(url_for(file), [img])
-        return img
-
-    def __setstate__(self, dict):
-        self.__dict__ = dict
-        if 'title' not in dict:
-            self.title = None
-
-
-class Date(Macro):
-    """
-    This macro accepts an `iso8601` string or unix timestamp (the latter in
-    UTC) and formats it using the `format_datetime` function.
-    """
-
-    arguments = (
-        ('date', unicode, None),
-    )
-
-    def __init__(self, date):
-        if not date:
-            self.now = True
-        else:
-            self.now = False
-            try:
-                self.date = parse_iso8601(date)
-            except ValueError:
-                try:
-                    self.date = datetime.utcfromtimestamp(int(date))
-                except ValueError:
-                    self.date = None
-
-    def build_node(self, context, format):
-        if self.now:
-            date = datetime.utcnow()
-        else:
-            date = self.date
-        if date is None:
-            return nodes.Text(_(u'Invalid date'))
-        return nodes.Text(format_datetime(date))
-
-
-class Newline(Macro):
-    """
-    This macro just forces a new line.
-    """
-
-    is_static = True
-
-    def build_node(self):
-        return nodes.Newline()
-
-
-class Anchor(Macro):
-    """
-    This macro creates an anchor accessible by url.
-    """
-
-    is_static = True
-    arguments = (
-        ('id', unicode, None),
-    )
-
-    def __init__(self, id):
-        self.id = id
-
-    def build_node(self):
-        return nodes.Link(u'#%s' % self.id, id=self.id, class_='anchor',
-                          children=[nodes.Text(u'')])
-
-
-class RandomPageList(Macro):
+class RandomPageList(macros.Macro):
     """
     Return random a list of pages.
     """
-
+    names = (u'RandomPageList', u'Zufallsseite')
     is_block_tag = True
     arguments = (
         ('pages', int, 10),
@@ -954,25 +514,8 @@ class RandomPageList(Macro):
         return result
 
 
-class Span(Macro):
-    is_static = True
-    arguments = (
-        ('content', unicode, ''),
-        ('class_', unicode, None),
-        ('style', unicode, None),
-    )
-
-    def __init__(self, content, class_, style):
-        self.content = content
-        self.class_ = class_
-        self.style = filter_style(style) or None
-
-    def build_node(self):
-        return nodes.Span(children=[nodes.Text(self.content)],
-                        class_=self.class_, style=self.style)
-
-
-class RandomKeyValue(Macro):
+class RandomKeyValue(macros.Macro):
+    names = (u'RandomKeyValue', u'ZufallsZitat', u'ZufälligerServer')
     arguments = (
         ('page', unicode, u''),
         ('key', unicode, u''),
@@ -1043,13 +586,13 @@ class RandomKeyValue(Macro):
             return result
 
 
-class FilterByMetaData(Macro):
+class FilterByMetaData(macros.Macro):
     """
     Filter pages by their metadata
     """
 
+    names = (u'FilterByMetaData', u'MetaFilter')
     is_block_tag = True
-
     arguments = (
         ('filters', unicode, ''),
     )
@@ -1092,8 +635,8 @@ class FilterByMetaData(Macro):
 
         if not names:
             return nodes.error_box(_(u'No result'),
-                _(u'The metadata filter has found no results.  Query: %(query)s') % {
-                    'query':u'; '.join(self.filters)})
+                _(u'The metadata filter has found no results. Query: %(query)s') % {
+                    'query': u'; '.join(self.filters)})
 
         # build the node
         result = nodes.List('unordered')
@@ -1104,36 +647,160 @@ class FilterByMetaData(Macro):
 
         return result
 
-#: this mapping is used by the `get_macro()` function to map public
-#: macro names to the classes.
-ALL_MACROS = {
-    u'Anhänge':             AttachmentList,
-    u'Anker':               Anchor,
-    u'BR':                  Newline,
-    u'Bild':                Picture,
-    u'Anhang':              Attachment,
-    u'Datum':               Date,
-    u'Einbinden':           Include,
-    u'FehlendeSeiten':      MissingPages,
-    u'Inhaltsverzeichnis':  TableOfContents,
-    u'LetzteÄnderungen':    RecentChanges,
-    u'NeueSeite':           NewPage,
-    u'Seitenliste':         PageList,
-    u'Seitenname':          PageName,
-    u'Seitenzahl':          PageCount,
-    u'TagListe':            TagList,
-    u'TagWolke':            TagCloud,
-    u'VerwaisteSeiten':     OrphanedPages,
-    u'Vorlage':             Template,
-    u'Weiterleitungen':     RedirectPages,
-    u'Zufallsseite':        RandomPageList,
-    u'ÄhnlicheSeiten':      SimilarPages,
-    u'SPAN':                Span,
-    u'ZufallsZitat':        RandomKeyValue,
-    u'ZufälligerServer':    RandomKeyValue,
-    u'MetaFilter':          FilterByMetaData,
-}
+
+class PageName(macros.Macro):
+    """
+    Return the name of the current page if the render context
+    knows about that.  This is only useful when rendered from
+    a wiki page.
+    """
+    names = (u'PageName', u'Seitenname')
+
+    def build_node(self, context, format):
+        wiki_page = context.kwargs.get('wiki_page', None)
+        if wiki_page:
+            return nodes.Text(wiki_page.title)
+        return nodes.Text(_(u'Unknown page'))
 
 
-#: automatically updated reverse mapping of macros
-REVERSE_MACROS = {value: key for key, value in ALL_MACROS.iteritems()}
+class Template(macros.Macro):
+    """
+    Include a page as template and expand it.
+    """
+    names = (u'Template', u'Vorlage')
+    has_argument_parser = True
+    is_static = True
+
+    def __init__(self, args, kwargs):
+        if not args:
+            self.template = None
+            self.context = []
+            return
+        items = kwargs.items()
+        for idx, arg in enumerate(args[1:]):
+            items.append(('arguments.%d' % idx, arg))
+        #TODO: kill WIKI_ prefix here
+        self.template = join_pagename(settings.WIKI_TEMPLATE_BASE,
+                                      normalize_pagename(args[0], False))
+        self.context = items
+
+    def build_node(self):
+        return expand_page_template(self.template, self.context, True)
+
+
+class Attachment(macros.Macro):
+    """
+    This macro displays a download link for an attachment.
+    """
+    names = (u'Attachment', u'Anhang')
+    arguments = (
+        ('attachment', unicode, u''),
+        ('text', unicode, u''),
+    )
+
+    def __init__(self, target, text):
+        self.target = target
+        self.text = text
+        self.is_external = is_external_target(target)
+        if not self.is_external:
+            self.metadata = [nodes.MetaData('X-Attach', [target])]
+            target = normalize_pagename(target, True)
+        self.children = [nodes.Text(self.text or self.target)]
+
+    def build_node(self, context, format):
+        target = self.target
+        if self.is_external:
+            return nodes.Link(target, self.children)
+        else:
+            wiki_page = context.kwargs.get('wiki_page', None)
+            if wiki_page:
+                target = join_pagename(wiki_page.name, self.target)
+            source = href('wiki', '_attachment',
+                target=target,
+            )
+            return nodes.Link(source, self.children)
+
+
+class Picture(macros.Macro):
+    """
+    This macro can display external images and attachments as images.  It
+    also takes care about thumbnail generation.  For any internal (attachment)
+    image included that way an ``X-Attach`` metadata is emitted.
+
+    Like for any link only absolute targets are allowed.  This might be
+    surprising behavior if you're used to the MoinMoin syntax but caused
+    by the fact that the parser does not know at parse time on which page
+    it is operating.
+    """
+    names = (u'Picture', u'Bild')
+    arguments = (
+        ('picture', unicode, u''),
+        ('size', unicode, u''),
+        ('align', unicode, u''),
+        ('alt', unicode, None),
+        ('title', unicode, None)
+    )
+
+    def __init__(self, target, dimensions, alignment, alt, title):
+        self.metadata = [nodes.MetaData('X-Attach', [target])]
+        self.width, self.height = parse_dimensions(dimensions)
+        self.target = target
+        self.alt = alt or target
+        self.title = title
+
+        self.align = alignment
+        if self.align not in ('left', 'right', 'center'):
+            self.align = None
+
+    def build_node(self, context, format):
+        ret_ = build_picture_node.send(sender=self,
+                                       context=context,
+                                       format=format)
+        ret = filter(None, itertools.chain(
+            map(operator.itemgetter(1), ret_)
+        ))
+
+        if ret:
+            assert len(ret) == 1, "There must not be more than one node tree per context"
+            return ret[0]
+
+        #TODO: refactor using signals on rendering
+        #      to get proper application independence
+        if context.application == 'wiki':
+            target = normalize_pagename(self.target, True)
+        else:
+            target = self.target
+
+        wiki_page = context.kwargs.get('wiki_page', None)
+
+        if wiki_page:
+            target = join_pagename(wiki_page.name, target)
+
+        source = fetch_real_target(target, width=self.width, height=self.height)
+
+        img = nodes.Image(source, self.alt, class_='image-' +
+                          (self.align or 'default'), title=self.title)
+        if (self.width or self.height) and wiki_page is not None:
+            return nodes.Link(fetch_real_target(target), [img])
+        return img
+
+
+macros.register(RecentChanges)
+macros.register(PageCount)
+macros.register(PageList)
+macros.register(AttachmentList)
+macros.register(OrphanedPages)
+macros.register(MissingPages)
+macros.register(RedirectPages)
+macros.register(NewPage)
+macros.register(SimilarPages)
+macros.register(TagCloud)
+macros.register(TagList)
+macros.register(Include)
+macros.register(RandomPageList)
+macros.register(RandomKeyValue)
+macros.register(FilterByMetaData)
+macros.register(PageName)
+macros.register(Template)
+macros.register(Attachment)
+macros.register(Picture)

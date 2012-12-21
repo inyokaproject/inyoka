@@ -61,10 +61,6 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
         return CommonMiddleware.process_request(self, request)
 
     def process_response(self, request, response):
-        """
-        Hook our X-Powered header in (and an easteregg header).  And clean up
-        the werkzeug local.
-        """
         response = CommonMiddleware.process_response(self, request, response)
 
         # update the cache control
@@ -93,7 +89,10 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
 
 
 class MobileDetectionMiddleware(BaseMobileDetectionMiddleware):
-        user_agents_test_search = "(?:up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|windows ce|pda|mobile|mini|palm|netfront|fennec)"
+    agents = ('up.browser', 'up.link', 'mmp', 'symbian', 'smartphone',
+              'midp', 'wap', 'phone', 'windows ce', 'pda', 'mobile',
+              'mini', 'palm', 'netfront', 'fennec')
+    user_agents_test_search = "(?:%(agents)s)" % {'agents': '|'.join(agents)}
 
 
 # import all application modules so that we get bootstrapping

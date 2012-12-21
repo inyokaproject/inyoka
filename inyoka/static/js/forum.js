@@ -1,16 +1,16 @@
-/*
-    static.js.forum
-    ~~~~~~~~~~~~~~~
-
-    JavaScript for the forum.
-
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
-*/
+/**
+ * static.js.forum
+ * ~~~~~~~~~~~~~~~
+ *
+ * JavaScript for the forum.
+ *
+ * :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+ * :license: GNU GPL, see LICENSE for more details.
+ */
 
 $(function () { /* collapsable elements for the input forms */
   $('dt.collapse').each(function () {
-    $(this).nextWhile('dd').hide().addClass('collapse_enabled');
+    $(this).nextWhile('dd').addClass('collapse_enabled').toggle($(this).hasClass('has_errors'));
     $(this).click(function () {
       $(this).toggleClass('collapsed').nextWhile('dd').toggle();
     }).addClass('collapse_enabled collapsed');

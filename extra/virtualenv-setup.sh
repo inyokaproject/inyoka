@@ -1,8 +1,7 @@
 #!/bin/bash
 # A simple Script for creating virtual environments without magic things ;-)
 
-PIL_VERSION='1.1.7'
-XAPIAN_VERSION='1.2.5'
+XAPIAN_VERSION='1.2.12'
 BASE_DIRECTORY=`pwd`
 
 if [ ! -z $1 ]; then
@@ -26,12 +25,6 @@ VIRTUAL_ENV=`readlink -m -n $VIRTUAL_ENV`
 # Step 1: Activate Virtualenv
 . $VIRTUAL_ENV/bin/activate
 cd $VIRTUAL_ENV/src
-## Step 2: Setup PIL
-wget -c "http://effbot.org/downloads/Imaging-$PIL_VERSION.tar.gz"
-if [ ! -d Imaging-$PIL_VERSION ]; then tar xzvf Imaging-$PIL_VERSION.tar.gz; fi
-cd "Imaging-$PIL_VERSION"
-python setup.py install
-cd ..
 
 # Step 3: Setup Xapian
 wget -c "http://oligarchy.co.uk/xapian/$XAPIAN_VERSION/xapian-core-$XAPIAN_VERSION.tar.gz"

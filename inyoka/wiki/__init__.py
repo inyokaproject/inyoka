@@ -8,7 +8,7 @@
     advantage that it doesn't cause IO load on the server.  The database
     layout is inspired by MediaWiki.
 
-    The Wiki Syntax is implemented and described in `inyoka.wiki.parser` and
+    The Wiki Syntax is implemented and described in `inyoka.markup` and
     also used by other applications in the `inyoka` package.  Most important
     is that contrary to MoinMoin the parser produces `nodes` of the input
     text which that know how to render their contents into multiple output
@@ -85,6 +85,3 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-
-# register search auth decider
-import inyoka.wiki.search

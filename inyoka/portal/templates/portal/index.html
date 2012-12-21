@@ -13,9 +13,6 @@
 {%- do BREADCRUMB.append(_('Portal'), href('portal'), True) -%}
 
 {% block pre_navigation %}
-  <div class="container" style="text-align:center; height: 150px; padding-top: 7px;">
-    <a href="http://wiki.ubuntuusers.de/Downloads"><img src="http://www.ubuntu.com/countdown/banner3.png" border="0" width="180" height="150" alt="The next version of Ubuntu is coming soon"></a>
-  </div>
   <div class="container get_ubuntu">
     <div>
       <h3><a href="{{ get_ubuntu_link }}">Hol dir Ubuntu!</a></h3>
@@ -86,4 +83,16 @@
     {%- endfor %}
   </div>
   {%- endif %}
+{% endblock %}
+
+{% block additional_scripts %}
+{{ super() }}
+<script type="text/javascript">
+  /* <![CDATA[ */
+  var $COUNTDOWN_ACTIVE = {{ countdown_active|lower|e }};
+  {% if countdown_active -%}
+  var $COUNTDOWN_IMAGE_URL = "{{ countdown_image_url|e }}";
+  {%- endif %}
+  /* ]]> */
+</script>
 {% endblock %}

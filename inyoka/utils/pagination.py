@@ -111,6 +111,8 @@ class Pagination(object):
 
     def generate(self, position=None, threshold=2, show_next_link=True,
                  show_prev_link=True):
+        if get_flavour() == 'mobile':
+            return self.generate_mobile()
         normal = u'<a href="%(href)s" class="pageselect">%(page)d</a>'
         active = u'<span class="pageselect active">%(page)d</span>'
         ellipsis = u'<span class="ellipsis"> … </span>'
@@ -148,37 +150,24 @@ class Pagination(object):
                 was_ellipsis = True
                 add(ellipsis)
 
-        mobile = get_flavour() == 'mobile'
         if show_next_link:
             if self.page < pages:
                 link = self.generate_link(self.page + 1, params)
-                if mobile:
-                    tmpl = u'<a href="%s" class="next">»</a>'
-                else:
-                    tmpl = u''.join([u'<a href="%s" class="next">',
+                tmpl = u''.join([u'<a href="%s" class="next">',
                                     _(u'Next »'), u'</a>'])
                 add(tmpl % escape(link))
             else:
-                if mobile:
-                    add(u'<span class="disabled next">»</span>')
-                else:
-                    add(u''.join([u'<span class="disabled next">',
+                add(u''.join([u'<span class="disabled next">',
                                     _(u'Next »'), u'</span>']))
 
         if show_prev_link:
             if self.page > 1:
                 link = self.generate_link(self.page - 1, params)
-                if mobile:
-                    tmpl = u'<a href="%s" class="prev">«</a>'
-                else:
-                    tmpl = u''.join([u'<a href="%s" class="prev">',
+                tmpl = u''.join([u'<a href="%s" class="prev">',
                                     _(u'« Previous'), u'</a>'])
                 result.insert(0, tmpl % escape(link))
             else:
-                if mobile:
-                    result.insert(0, (u'<span class="disabled prev">«</span>'))
-                else:
-                    result.insert(0, (u''.join([u'<span class="disabled prev">',
+                result.insert(0, (u''.join([u'<span class="disabled prev">',
                                     _(u'« Previous'), u'</span>'])))
 
         class_ = 'pagination'
@@ -186,3 +175,22 @@ class Pagination(object):
             class_ += ' pagination_' + position
         return u'<div class="%s">%s<div style="clear: both">' \
                u'</div></div>' % (class_, u''.join(result))
+
+    def generate_mobile(self):
+        return u"""
+            <div class="pagination">
+                <a href="{prev_link}" class="prev">{prev_label}</a>
+                <span class="active">{current_label} {page}</span>
+                <a href="{next_link}" class="next">{next_label}</a>
+                <span style="display: none;" class="link_base">{link_base}</span>
+            </div>
+        """.format(
+            current_label=_(u'Page'),
+            goto_label=_(u'Go to'),
+            link_base=self.generate_link(1, None),
+            next_label=_(u'Next »'),
+            next_link=self.generate_link(min(self.page + 1, self.max_pages), self.parameters),
+            prev_label=_(u'« Previous'),
+            prev_link=self.generate_link(max(self.page - 1, 1), self.parameters),
+            page=self.page
+        )

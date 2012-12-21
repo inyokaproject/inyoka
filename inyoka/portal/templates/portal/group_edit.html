@@ -27,27 +27,35 @@
 	{{ csrf_token() }}
   <dl>
     {{ render_form(form, ['name'], inline=true) }}
+    <dt>
+      <label for="{{ form.is_public.auto_id }}">{{ form.is_public.label }}</label>
+    </dt>
     <dd>
-      {{ form.is_public }} <label for="id_is_public">{% trans %}Public{% endtrans %}</label>
-      <span class="help_text">{% trans %}will be shown in the group overview and the user profile{% endtrans %}</span>
+      {{ form.is_public }} <span class="help_text">{{ form.is_public.help_text }}</span>
       {{- form.is_public.errors }}
     </dd>
     <dl>
       <dt>{% trans %}Team icon:{% endtrans %}</dt>
       {% if group.icon %}<dd><img class="admin_teamicon" src="{{ group.icon_url }}" alt="Team-Icon" /></dd>{% endif %}
       <dd>{{ form.icon }}</dd>
+      {% if group.icon -%}
+      <dd>
+        <input type="checkbox" name="icon-clear" id="icon-clear_id" />
+        <label for="icon-clear_id">
+          {%- trans %}Delete team icon{% endtrans -%}
+        </label>
+      </dd>
+      {%- endif %}
       {%- if team_icon_height >= 0 and team_icon_width >= 0 %}
       <dd class="note">
         {%- trans width=team_icon_width, height=team_icon_height -%}
-          Please note that the team icon can not be bigger than {{ width }}x{{ height }} pixel. Everything that exceeds this limit will automatically be resized.
+          Please note that the team icon can not be bigger than {{ width }}x{{ height }} pixel. Images exceeding this limit will be resized automatically.
         {%- endtrans -%}
       </dd>
       {%- endif %}
+      {%- if form.errors.icon %}<dd>{{ form.errors.icon }}</dd>{% endif %}
       <dd>{{ form.import_icon_from_global }} <label for="id_import_icon_from_global">Globales Team-Icon importieren</label></dd>
-      {%- if group.icon %}
-      <dd>{{ form.delete_icon }} <label for="id_delete_icon">{% trans %}Delete team icon{% endtrans %}</label></dd>
-      {%- endif %}
-      {%- if form.errors.avatar or form.errors.delete_avatar %}<dd>{{ form.errors.avatar }}{{ form.errors.delete_avatar }}</dd>{% endif %}
+      {%- if form.errors.import_icon_from_global %}<dd>{{ form.errors.import_icon_from_global }}</dd>{% endif %}
     </dl>
     {{ render_form(form, ['permissions']) }}
     <dt>{% trans %}Forum privileges:{% endtrans %}</dt>

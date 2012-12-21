@@ -45,7 +45,7 @@ from collections import OrderedDict
 from django.conf import settings
 
 from inyoka.utils.cache import request_cache
-
+from inyoka.wiki.models import MetaData, Page
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
 
@@ -261,6 +261,3 @@ storage = StorageManager(
     interwiki=InterwikiMap,
     acl=AccessControlList
 )
-
-# circ imports
-from inyoka.wiki.models import MetaData, Page

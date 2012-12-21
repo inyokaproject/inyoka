@@ -11,15 +11,6 @@
 #}
 {%- extends 'portal/overall.m.html' %}
 {% block content %}
-  {%- if USER.is_authenticated %}
-    <hr />
-    <nav>
-      <ul>
-        <li><a href="{{ href('portal', 'privmsg') }}">{% trans %}Messages{% endtrans %}</a></li>
-        <li><a href="{{ href('portal', 'usercp', 'subscriptions') }}">{% trans %}Subscriptions{% endtrans %}</a></li>
-      </ul>
-    </nav>
-  {%- endif %}
   <h1>Willkommen</h1>
   <p>
     Hier findest Du freundliche Hilfe zu Ubuntu. Im

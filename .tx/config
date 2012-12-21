@@ -6,15 +6,20 @@ source_file = inyoka/forum/locale/django.pot
 source_lang = en
 file_filter = inyoka/forum/locale/<lang>/LC_MESSAGES/django.po
 
+[inyoka.global]
+source_file = inyoka/locale/django.pot
+source_lang = en
+file_filter = inyoka/locale/<lang>/LC_MESSAGES/django.po
+
 [inyoka.ikhaya]
 source_file = inyoka/ikhaya/locale/django.pot
 source_lang = en
 file_filter = inyoka/ikhaya/locale/<lang>/LC_MESSAGES/django.po
 
-[inyoka.global]
-source_file = inyoka/locale/django.pot
+[inyoka.markup]
+source_file = inyoka/markup/locale/django.pot
 source_lang = en
-file_filter = inyoka/locale/<lang>/LC_MESSAGES/django.po
+file_filter = inyoka/markup/locale/<lang>/LC_MESSAGES/django.po
 
 [inyoka.pastebin]
 source_file = inyoka/pastebin/locale/django.pot

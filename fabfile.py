@@ -88,17 +88,19 @@ def check_js():
 
 def compile_js(file=None):
     """Minimize js files"""
-    rhino = 'java -jar extra/js.jar'
     minjar = 'java -jar extra/google-compiler.jar'
     #TODO: find some way to preserve comments on top
     if file is None:
-        files = os.listdir('inyoka/static/js')
-        files = [fn for fn in files if not '.min.' in fn and not fn.startswith('.')]
+        dirs = ['inyoka/static/js/']
+        for app in ['forum']:
+            dirs += ['inyoka/%s/static/%s/js/' % (app, app)]
+        files = []
+        for dir in dirs:
+            files += [dir + fn for fn in os.listdir(dir) if not '.min.' in fn and not fn.startswith('.')]
     else:
         files = [file]
     for file in files:
-        local("%s --js inyoka/static/js/%s --warning_level QUIET > inyoka/static/js/%s" %
-            (minjar, file, file.split('.js')[0] + '.min.js'), capture=False)
+        local("%s --js %s > %s" % (minjar, file, file.split('.js')[0] + '.min.js'), capture=False)
 
 
 def compile_css(file=None):
@@ -110,17 +112,23 @@ def compile_css(file=None):
 
     less = './extra/less.js/bin/lessc -x -O2'
     if file is None:
-        files = [fn for fn in os.listdir('inyoka/static/style') if fn.endswith('.less')]
+        dirs = ['inyoka/static/style/']
+        files = []
+        for dir in dirs:
+            files += [dir + fn for fn in os.listdir(dir) if fn.endswith('.less')]
+        for app in ['forum', 'ikhaya', 'portal']:
+            files.append('inyoka/%s/static/%s/style/overall.m.less' % (app, app))
     else:
         files = [file]
     for file in files:
-        local("%s inyoka/static/style/%s > inyoka/static/style/%s" %
-            (less, file, file.split('.less')[0] + '.css'), capture=False)
+        # we need to '_/_/' to successfully compile the less files within app directories
+        local("%s --verbose --include-path=inyoka/static/_/_/ %s > %s" % (less, file, file.split('.less')[0] + '.css'), capture=False)
 
 
 def compile_static():
     compile_js()
     compile_css()
+
 
 def compile_translations():
     """Build mo files from po"""

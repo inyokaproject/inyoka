@@ -24,19 +24,20 @@ from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.utils import encode_confirm_data, classproperty
+from inyoka.utils.database import update_model, JSONField
 from inyoka.utils.decorators import deferred
-from inyoka.utils.mail import send_mail
-from inyoka.utils.user import normalize_username, get_hexdigest,\
-    check_password, gen_activation_key
+from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.local import current_request
+from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
-from inyoka.utils.gravatar import get_gravatar
-from inyoka.utils.database import update_model, JSONField
+from inyoka.utils.user import normalize_username, get_hexdigest,\
+    check_password, gen_activation_key
+from inyoka.markup import parse, render, RenderContext
 
 
 UNUSABLE_PASSWORD = '!$!'
-_ANONYMOUS_USER = _SYSTEM_USER = None
+_ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
 DEFAULT_GROUP_ID = 1 # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
     ('admin_panel', u'Not in use anymore'), #TODO: DEPRECATED
@@ -96,7 +97,7 @@ def reactivate_user(id, email, status, time):
     user = User.objects.get(id=id)
     if not user.is_deleted:
         return {
-            'failed': _(u'The account “%(name)s“ was already reactivated.') %
+            'failed': _(u'The account “%(name)s” was already reactivated.') %
                 {'name': escape(user.username)},
         }
     values = {'email': email,
@@ -113,13 +114,13 @@ def reactivate_user(id, email, status, time):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
-                      note=_(u'The user “%(name)s“ has reactivated his account.')
+                      note=_(u'The user “%(name)s” has reactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
 
     return {
-        'success': _(u'The account “%(name)s“ was reactivated. You will '
+        'success': _(u'The account “%(name)s” was reactivated. You will '
                      u'receive an email to set the new password.')
                      % {'name': escape(user.username)},
     }
@@ -143,7 +144,7 @@ def deactivate_user(user):
 
     userdata = encode_confirm_data(userdata)
 
-    subject = _(u'Deactivation of your account “%(name)s“ on %(sitename)s') \
+    subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
                 % {'name': escape(user.username),
                    'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
@@ -157,7 +158,7 @@ def deactivate_user(user):
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
                 settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=True,
-                      note=_(u'The user “%(name)s“ has deactivated his account.')
+                      note=_(u'The user “%(name)s” has deactivated his account.')
                              % {'name': escape(user.username)})
     except WikiPage.DoesNotExist:
         pass
@@ -245,7 +246,7 @@ def send_activation_mail(user):
         'email':            user.email,
         'activation_key':   gen_activation_key(user)
     })
-    subject = _(u'%(sitename)s – Activation of the user “%(name)s“') \
+    subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
@@ -262,20 +263,28 @@ def send_new_user_password(user):
         'new_password_url': href('portal', 'lost_password',
                                  user.urlsafe_username, new_password_key),
     })
-    subject = _(u'%(sitename)s – New password for “%(name)s“') \
+    subject = _(u'%(sitename)s – New password for “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
                  'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
 class Group(models.Model):
-    name = models.CharField('Name', max_length=80, unique=True, db_index=True)
-    is_public = models.BooleanField(ugettext_lazy(u'Public profile'))
-    _default_group = None
+    name = models.CharField(ugettext_lazy(u'Group name'), max_length=80,
+                unique=True, db_index=True, error_messages={
+                    'unique': ugettext_lazy(u'This group name is already taken. '
+                                u'Please choose another one.')})
+    is_public = models.BooleanField(ugettext_lazy(u'Public profile'),
+                default=False, help_text=ugettext_lazy(u'Will be shown in the '
+                                    u'group overview and the user profile'))
     permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
     icon = models.ImageField(ugettext_lazy(u'Team icon'),
                              upload_to='portal/team_icons',
                              blank=True, null=True)
+
+    class Meta:
+        verbose_name = ugettext_lazy(u'Usergroup')
+        verbose_name_plural = ugettext_lazy(u'Usergroups')
 
     @property
     def icon_url(self):
@@ -297,9 +306,11 @@ class Group(models.Model):
         if self.icon:
             self.icon.delete(save=False)
 
-        std = storage.get_many(('team_icon_height', 'team_icon_width'))
-        max_size = (int(std['team_icon_height']),
-                    int(std['team_icon_width']))
+        std = storage.get_many(('team_icon_width', 'team_icon_height'))
+        # According to PIL.Image:
+        # "The requested size in pixels, as a 2-tuple: (width, height)."
+        max_size = (int(std['team_icon_width']),
+                    int(std['team_icon_height']))
         resized = False
         if image.size > max_size:
             image = image.resize(max_size)
@@ -325,9 +336,10 @@ class Group(models.Model):
     @classmethod
     def get_default_group(self):
         """Return a default group for all registered users."""
-        if not Group._default_group:
-            Group._default_group = Group.objects.get(id=DEFAULT_GROUP_ID)
-        return Group._default_group
+        global _DEFAULT_GROUP
+        if not _DEFAULT_GROUP:
+            _DEFAULT_GROUP = Group.objects.get(id=DEFAULT_GROUP_ID)
+        return _DEFAULT_GROUP
 
 
 class UserManager(models.Manager):
@@ -482,8 +494,19 @@ class UserManager(models.Manager):
         return _SYSTEM_USER
 
 
+def upload_to_avatar(instance, filename):
+    fn = 'portal/avatars/avatar_user%d.%s'
+    return fn % (instance.pk, filename.rsplit('.',1)[-1])
+
+
 class User(models.Model):
     """User model that contains all informations about an user."""
+
+    STATUS_CHOICES = enumerate([ugettext_lazy(u'not yet activated'),
+                                ugettext_lazy(u'active'),
+                                ugettext_lazy(u'banned'),
+                                ugettext_lazy(u'deleted himself')])
+
     objects = UserManager()
 
     username = models.CharField(ugettext_lazy(u'Username'),
@@ -491,7 +514,8 @@ class User(models.Model):
     email = models.EmailField(ugettext_lazy(u'Email address'),
                               unique=True, max_length=50, db_index=True)
     password = models.CharField(ugettext_lazy(u'Password'), max_length=128)
-    status = models.IntegerField(ugettext_lazy(u'Status'), default=0)
+    status = models.IntegerField(ugettext_lazy(u'Activation status'), default=0,
+                                 choices=STATUS_CHOICES)
     last_login = models.DateTimeField(ugettext_lazy(u'Last login'),
                                       default=datetime.utcnow)
     date_joined = models.DateTimeField(ugettext_lazy(u'Member since'),
@@ -503,11 +527,13 @@ class User(models.Model):
     new_password_key = models.CharField(ugettext_lazy(u'Confirmation key for a new password'),
                                         blank=True, null=True, max_length=32)
 
-    banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'), null=True)
+    banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'),
+                                        null=True, blank=True,
+                                        help_text=ugettext_lazy(u'leave empty to ban permanent'))
 
     # profile attributes
     post_count = models.IntegerField(ugettext_lazy(u'Posts'), default=0)
-    avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to='portal/avatars',
+    avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
     jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
     icq = models.CharField(ugettext_lazy(u'ICQ'), max_length=16, blank=True)
@@ -537,8 +563,8 @@ class User(models.Model):
                                      blank=True)
 
     # member title
-    member_title = models.CharField(ugettext_lazy(u'Member title'), blank=True, null=True,
-                                    max_length=200)
+    member_title = models.CharField(ugettext_lazy(u'Team affiliation / Member title'),
+                                    blank=True, null=True, max_length=200)
 
     # primary group from which the user gets some settings
     # e.g the membericon
@@ -702,40 +728,6 @@ class User(models.Model):
         '''return the username with space replaced by _ for urls'''
         return self.username.replace(' ', '_')
 
-    def save_avatar(self, img):
-        """
-        Save `img` to the file system.
-
-        :return: boolean value if `img` was resized or not.
-        """
-        data = img.read()
-        image = Image.open(StringIO(data))
-        fn = 'portal/avatars/avatar_user%d.%s' % (self.id,
-             image.format.lower())
-        #: clear the file system
-        self.delete_avatar()
-
-        std = storage.get_many(('max_avatar_height', 'max_avatar_width'))
-        max_size = (int(std['max_avatar_height']),
-                    int(std['max_avatar_width']))
-        resized = False
-        if image.size > max_size:
-            image = image.resize(max_size)
-            image_path = path.join(settings.MEDIA_ROOT, fn)
-            image.save(image_path)
-            resized = True
-        else:
-            img.seek(0)
-            default_storage.save(fn, img)
-        self.avatar = fn
-
-        return resized
-
-    def delete_avatar(self):
-        """Delete the avatar from the file system."""
-        if self.avatar:
-            self.avatar.delete(save=False)
-
     def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
             return href('portal', 'user', self.urlsafe_username, **query)
@@ -779,6 +771,5 @@ class UserData(models.Model):
 
 
 # circ imports
-from inyoka.wiki.parser import parse, render, RenderContext
 from inyoka.utils.urls import href
 from inyoka.utils.storage import storage

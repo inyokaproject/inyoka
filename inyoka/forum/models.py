@@ -29,16 +29,16 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
-from inyoka.utils.files import get_filename
-from inyoka.utils.text import get_new_unique_filename
 from inyoka.utils.database import LockableObject, update_model, model_or_none
 from inyoka.utils.dates import timedelta_to_seconds
-from inyoka.utils.urls import href
-from inyoka.utils.search import search
-from inyoka.utils.local import current_request
 from inyoka.utils.decorators import deferred
+from inyoka.utils.files import get_filename
 from inyoka.utils.imaging import get_thumbnail
+from inyoka.utils.local import current_request
+from inyoka.utils.search import search
+from inyoka.utils.urls import href
 
+from inyoka.markup import parse, RenderContext
 from inyoka.portal.user import User, Group
 from inyoka.portal.utils import UBUNTU_VERSIONS
 from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \
@@ -47,8 +47,8 @@ from inyoka.forum.constants import CACHE_PAGES_COUNT, VERSION_CHOICES, \
     DISTRO_CHOICES, POSTS_PER_PAGE, UBUNTU_DISTROS_LEGACY, \
     SUPPORTED_IMAGE_TYPES
 
-
 _newline_re = re.compile(r'\r?\n')
+
 
 def fix_plaintext(text):
     text = escape(text)
@@ -167,6 +167,7 @@ class ForumManager(models.Manager):
         forums = self.get_cached()
         forums = sorted(forums, key=attrgetter(attr))
         return forums
+
 
 class TopicManager(models.Manager):
 
@@ -749,6 +750,14 @@ class Post(models.Model, LockableObject):
         self.save()
 
     def delete(self, *args, **kwargs):
+        """Delete the post and apply environmental changes.
+
+        This method recalculates the post_count, updates the
+        last and first posts of all parent forums.
+
+        Note: The cache for all parent forums is explicitely deleted
+              to update last/first post properly.
+        """
         if not self.topic:
             return super(Post, self).delete()
 
@@ -759,21 +768,11 @@ class Post(models.Model, LockableObject):
 
         # update topic.last_post_id
         if self.pk == self.topic.last_post_id:
-            new_lp_id = Post.objects.filter(topic=self.topic)\
+            new_lp_ids = Post.objects.filter(topic=self.topic)\
                 .exclude(pk=self.pk).order_by('-position')\
-                .values_list('id', flat=True)[0]
+                .values_list('id', flat=True)
+            new_lp_id = new_lp_ids[0] if new_lp_ids else None
             update_model(self.topic, last_post=model_or_none(new_lp_id, self))
-
-        # search for a new last post for al forums in the chain up.
-        # We actually cheat here and set the newest post from the current
-        # forum for all forums.
-        if self.pk == self.topic.forum.last_post_id:
-            new_lp_id = Topic.objects.filter(forum=self.topic.forum)\
-                .exclude(last_post=self).order_by('-last_post')\
-                .values_list('last_post', flat=True)[0]
-            lpf = list(Forum.objects.filter(last_post=self).all())
-            update_model(lpf, last_post=model_or_none(new_lp_id, self))
-            cache.delete_many('forum/forums/%s' % f.slug for f in lpf)
 
         # decrement post_counts
         forums = self.topic.forum.parents + [self.topic.forum]
@@ -783,6 +782,21 @@ class Post(models.Model, LockableObject):
         # decrement position
         Post.objects.filter(position__gt=self.position, topic=self.topic) \
                     .update(position=F('position') - 1)
+
+        forums = list(Forum.objects.filter(last_post=self).all())
+
+        # search for a new last post for al forums in the chain up.
+        # We actually cheat here and set the newest post from the current
+        # forum for all forums.
+        if self.pk == self.topic.forum.last_post_id:
+            new_lp_ids = Topic.objects.filter(forum=self.topic.forum)\
+                .exclude(last_post=self).order_by('-last_post')\
+                .values_list('last_post', flat=True)
+            new_lp_id = new_lp_ids[0] if new_lp_ids else None
+            update_model(forums, last_post=model_or_none(new_lp_id, self))
+            self.topic.forum.last_post_id = new_lp_id
+
+        cache.delete_many('forum/forums/%s' % f.slug for f in forums)
 
         return super(Post, self).delete()
 
@@ -819,17 +833,20 @@ class Post(models.Model, LockableObject):
 
         with transaction.commit_on_success():
             maxpos = new_topic.posts.all()._clone() \
-                              .aggregate(count=Max('position'))['count'] or -1
+                              .aggregate(count=Max('position'))['count']
+            if maxpos is None:
+                # New topic. First post must get the position 0
+                maxpos = -1
 
             post_ids = map(lambda p: p.id, posts)
-            Post.objects.filter(pk__in = post_ids).update(topic=new_topic)
+            Post.objects.filter(pk__in=post_ids).update(topic=new_topic)
             for post in posts:
                 maxpos += 1
                 Post.objects.filter(pk=post.pk).update(position=maxpos)
 
             # adjust positions of the old topic.
             # split the posts into continous groups
-            post_groups = [(v.position-k, v) for k,v in enumerate(posts)]
+            post_groups = [(v.position - k, v) for k, v in enumerate(posts)]
             post_groups = groupby(post_groups, itemgetter(0))
 
             adjust_start = 0
@@ -840,7 +857,7 @@ class Post(models.Model, LockableObject):
                 # and don't forget that previous decrements already decremented our position
                 start = g[-1][1].position - adjust_start
                 Post.objects.filter(topic=old_topic, position__gt=start)\
-                    .update(position=F('position')-dec)
+                    .update(position=F('position') - dec)
                 adjust_start += dec
 
             if old_topic.forum.id != new_topic.forum.id:
@@ -862,7 +879,6 @@ class Post(models.Model, LockableObject):
                         User.objects.filter(pk=user['id']) \
                                 .update(post_count=op(F('post_count'), user['pcount']))
                     cache.delete_many('portal/user/%d' % user['id'] for user in post_counts)
-
 
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \
@@ -905,9 +921,9 @@ class Post(models.Model, LockableObject):
 
             # Update post_count of the forums
             Forum.objects.filter(id__in=new_ids)\
-                .update(post_count = F('post_count') + len(posts))
+                .update(post_count=F('post_count') + len(posts))
             Forum.objects.filter(id__in=old_ids)\
-                .update(post_count = F('post_count') - len(posts))
+                .update(post_count=F('post_count') - len(posts))
 
         # update the search index which has the post --> topic mapping indexed
         Post.multi_update_search([post.id for post in posts])
@@ -1327,10 +1343,6 @@ def mark_all_forums_read(user):
 
 
 # Circular imports
-from inyoka.wiki.parser import parse, RenderContext
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.portal.models import SearchQueue, Subscription
 from inyoka.utils.highlight import highlight_code
-
-# register signal handlers
-from inyoka.forum import signals

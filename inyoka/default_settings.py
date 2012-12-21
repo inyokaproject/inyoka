@@ -103,9 +103,6 @@ EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 # Examples: /path/to/inyoka.xapdb, or tcpsrv://localhost:3000/
 XAPIAN_DATABASE = join(BASE_PATH, 'inyoka.xapdb')
 
-# imagemagick path. leave empty for auto detection
-IMAGEMAGICK_PATH = ''
-
 # forum settings
 FORUM_LIMIT_UNREAD = 100
 FORUM_THUMBNAIL_SIZE = (64, 64)
@@ -202,6 +199,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.humanize',
+    'inyoka.core',
     'inyoka.portal',
     'inyoka.wiki',
     'inyoka.forum',
@@ -316,6 +314,10 @@ X_FRAME_OPTIONS = 'DENY'
 CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
+
+TEST_RUNNER = 'discover_runner.DiscoverRunner'
+from os import path
+TEST_DISCOVER_TOP_LEVEL = path.dirname(path.dirname(__file__))
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

@@ -87,12 +87,12 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
+from django.db.models.loading import get_model
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 from werkzeug import cached_property
 
-from inyoka.wiki.storage import storage
-from inyoka.wiki.tasks import update_related_pages, render_article, update_object_list
+from inyoka.markup.parsertools import MultiMap
 from inyoka.utils import magic
 from inyoka.utils.cache import request_cache
 from inyoka.utils.decorators import deferred
@@ -103,13 +103,12 @@ from inyoka.utils.urls import href
 from inyoka.utils.search import search
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.templating import render_template
-from inyoka.utils.parsertools import MultiMap
 from inyoka.utils.local import current_request
 from inyoka.utils.html import striptags
 from inyoka.utils.text import join_pagename, get_pagetitle, normalize_pagename
 from inyoka.utils.diff3 import generate_udiff, prepare_udiff, \
     get_close_matches
-from inyoka.portal.user import User
+from inyoka.wiki.tasks import update_related_pages, render_article, update_object_list
 
 
 # maximum number of bytes for metadata.  everything above is truncated
@@ -466,7 +465,7 @@ class PageManager(models.Manager):
                 scripts.
         """
         if user is None:
-            user = User.objects.get_system_user()
+            user = get_model('portal', 'User').objects.get_system_user()
         elif user.is_anonymous:
             user = None
         if remote_addr is None and user is None:
@@ -635,7 +634,7 @@ class Text(models.Model):
             value = templates.process(self.value, template_context)
         else:
             value = self.value
-        return parser.parse(value, transformers=transformers)
+        return markup.parse(value, transformers=transformers)
 
     def find_meta(self):
         """
@@ -681,13 +680,13 @@ class Text(models.Model):
                     # no request exists, that happens if we're generating
                     # the snapshot.
                     request = None
-            context = parser.RenderContext(request, page)
+            context = markup.RenderContext(request, wiki_page=page)
         if template_context is not None or format != 'html':
             return self.parse(template_context).render(context, format)
         self.touch_html_render_instructions()
         blob = self.html_render_instructions.decode('base64')
         instructions = pickle.loads(blob)
-        return parser.render(instructions, context)
+        return markup.render(instructions, context)
 
     def touch_html_render_instructions(self):
         """update the html render instructions if they are none."""
@@ -838,6 +837,7 @@ class Page(models.Model):
 
         for key, value in new_metadata:
             if key == 'X-Behave':
+                from inyoka.wiki.storage import storage
                 storage.clear_cache()
                 break
 
@@ -970,7 +970,7 @@ class Page(models.Model):
                 scripts.
         """
         if user is None:
-            user = User.objects.get_system_user()
+            user = get_model('portal', 'User').objects.get_system_user()
         elif user.is_anonymous:
             user = None
         if remote_addr is None and user is None:
@@ -1153,7 +1153,7 @@ class Revision(models.Model):
     objects = RevisionManager()
     page = models.ForeignKey(Page, related_name='revisions')
     text = models.ForeignKey(Text, related_name='revisions')
-    user = models.ForeignKey(User, related_name='wiki_revisions', null=True,
+    user = models.ForeignKey('portal.User', related_name='wiki_revisions', null=True,
                              blank=True)
     change_date = models.DateTimeField(db_index=True)
     note = models.CharField(max_length=512)
@@ -1254,5 +1254,5 @@ class MetaData(models.Model):
 
 
 # imported here because of circular references
-from inyoka.wiki import parser, templates
-from inyoka.wiki.parser import nodes
+from inyoka import markup
+from inyoka.markup import nodes, templates

@@ -1,4 +1,4 @@
-Django==1.4.1
+Django==1.4.3
 distribute
 Jinja2==2.6
 MarkupSafe==0.12
@@ -30,3 +30,4 @@ lxml
 dulwich
 raven==1.4.3
 transifex-client
+Pillow==1.7.7
