@@ -72,7 +72,7 @@ $(document).ready(function () {
       toc.find('ol').addClass('originaltoc');
 
       var ol = function(level) {
-        return $('<ol class="' + style + ' toc-item-depth-' + level + '"></ol>');
+        return $('<ol class="toc-item-depth-' + level + '"></ol>');
       };
       var li = $('<li></li>');
       var li_no_number = $('<li style="list-style: none"></li>');
@@ -82,7 +82,7 @@ $(document).ready(function () {
       var last_level = 1;
       // Iterate over all <a> tags in headlines
       $('.headerlink').each(function(index) {
-        level_class = $(this).parent().parent().attr("class");
+        var level_class = $(this).parent().parent().attr("class");
         var match = level_class.match(/^section_(\d+)$/);
         if (match === null) { // not a section_* class
           return true; // continue
@@ -115,7 +115,8 @@ $(document).ready(function () {
 
         var ml = 42 - (level - 1) * 2; // max text length of toc entry
         var link = $(this).parent().attr("id");
-        var linkText = $(this).parent().clone().children().remove().end().text().substr(0, ml);
+        var linkText = $(this).parent().text();
+        linkText = linkText.substr(0, linkText.length-1).substr(0, ml);
         tocTree[tocTree.length - 1].append(li.clone().append($('<a href="#' + link + '" class="crosslink">' + linkText + '</a>')));
 
         last_level = level;
@@ -123,8 +124,9 @@ $(document).ready(function () {
       var limit = last_level - 1;
       for (var i = 0; i < limit; i++) {
         var node = tocTree.pop();
-        if (tocTree[tocTree.length - 1].children().length > 0) {
-          $(':last-child', tocTree[tocTree.length - 1]).append(node);
+        var children = tocTree[tocTree.length - 1].children();
+        if (children.length > 0) {
+          children.last().append(node);
         } else {
           tocTree[tocTree.length - 1].append(li_no_number.clone().append(node));
         }
