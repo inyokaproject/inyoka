@@ -177,6 +177,12 @@ class Pagination(object):
                u'</div></div>' % (class_, u''.join(result))
 
     def generate_mobile(self):
+        # This unicode/utf-8 conversion exists because of some fancy hacker-bots
+        # that try to fuzz the pagination with some extremly invalid unicode data.
+        # Catching those here fixes vulerabilty of the whole application.
+        _get_v = lambda v: force_unicode(v).encode('utf-8') if isinstance(v, basestring) else v
+        params = {force_unicode(k).encode('utf-8'): _get_v(v)
+                  for k, v in self.parameters.iteritems()}
         return u"""
             <div class="pagination">
                 <a href="{prev_link}" class="prev">{prev_label}</a>
@@ -187,10 +193,10 @@ class Pagination(object):
         """.format(
             current_label=_(u'Page'),
             goto_label=_(u'Go to'),
-            link_base=self.generate_link(1, None),
+            link_base=self.generate_link(1, params),
             next_label=_(u'Next »'),
-            next_link=self.generate_link(min(self.page + 1, self.max_pages), self.parameters),
+            next_link=self.generate_link(min(self.page + 1, self.max_pages), params),
             prev_label=_(u'« Previous'),
-            prev_link=self.generate_link(max(self.page - 1, 1), self.parameters),
+            prev_link=self.generate_link(max(self.page - 1, 1), params),
             page=self.page
         )
