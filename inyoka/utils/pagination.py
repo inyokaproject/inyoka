@@ -181,16 +181,22 @@ class Pagination(object):
         # that try to fuzz the pagination with some extremly invalid unicode data.
         # Catching those here fixes vulerabilty of the whole application.
         _get_v = lambda v: force_unicode(v).encode('utf-8') if isinstance(v, basestring) else v
+
+        pages = 1
+        if self.total:
+            pages = max(0, self.total - 1) // self.per_page + 1
+
         params = {force_unicode(k).encode('utf-8'): _get_v(v)
                   for k, v in self.parameters.iteritems()}
-        return u"""
-            <div class="pagination">
-                <a href="{prev_link}" class="prev">{prev_label}</a>
-                <span class="active">{current_label} {page}</span>
-                <a href="{next_link}" class="next">{next_label}</a>
-                <span style="display: none;" class="link_base">{link_base}</span>
-            </div>
-        """.format(
+        s = u''.join([
+            u'<div class="pagination">',
+            u'<a href="{prev_link}" class="prev">{prev_label}</a>' if self.page > 1 else '',
+            u'<span class="active">{current_label} {page}</span>',
+            u'<a href="{next_link}" class="next">{next_label}</a>' if self.page < pages else '',
+            u'<span style="display: none;" class="link_base">{link_base}</span>',
+            u'</div>',
+        ])
+        return s.format(
             current_label=_(u'Page'),
             goto_label=_(u'Go to'),
             link_base=self.generate_link(1, params),
