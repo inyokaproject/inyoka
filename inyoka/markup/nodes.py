@@ -22,7 +22,7 @@ from urlparse import urlparse
 
 from django.conf import settings
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 
 from inyoka.markup.utils import debug_repr
 
@@ -686,31 +686,6 @@ class Quote(Element):
         yield u'</blockquote>'
 
 
-class Moderated(Element):
-    """
-    Text that describes a moderation action.
-    """
-    is_block_tag = True
-    allows_paragraphs = True
-    allowed_in_signatures = False
-
-    def __init__(self, username, children=None, id=None, style=None,
-                 class_=None):
-        Element.__init__(self, children, id, style, class_)
-        self.username = username
-
-    def prepare_html(self):
-        msg = _(u'Moderated by')
-        yield u'<div class="moderated">'
-        yield u'<p><strong>%s <a class="crosslink user" href="%s">' \
-              u'%s</a>:</strong></p> ' % (msg,
-                href('portal', 'user', self.username),
-                self.username)
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</div>'
-
-
 class Edited(Element):
     """
     Text that describes an edit action.
@@ -719,21 +694,34 @@ class Edited(Element):
     allows_paragraphs = True
     allowed_in_signatures = False
 
+    #: Title message for the edited box
+    msg = ugettext_lazy(u'Edited by')
+
+    #: CSS Class used for styling
+    css_class = 'edited'
+
     def __init__(self, username, children=None, id=None, style=None,
                  class_=None):
         Element.__init__(self, children, id, style, class_)
         self.username = username
 
     def prepare_html(self):
-        msg = _(u'Edited by')
-        yield u'<div class="edited">'
+        yield u'<div class="%s">' % self.css_class
         yield u'<p><strong>%s <a class="crosslink user" href="%s">' \
-              u'%s</a>:</strong></p> ' % (msg,
+              u'%s</a>:</strong></p> ' % (self.msg,
                 href('portal', 'user', self.username),
                 self.username)
         for item in Element.prepare_html(self):
             yield item
         yield u'</div>'
+
+
+class Moderated(Edited):
+    """
+    Text that describes a moderation action.
+    """
+    msg = ugettext_lazy(u'Moderated by')
+    css_class = 'moderated'
 
 
 class Preformatted(Element):
@@ -1248,29 +1236,3 @@ class TableHeader(TableCell):
     Exactly like a table cell but renders to <th>
     """
     _html_tag = 'th'
-
-
-class TableHeadSection(Element):
-    """
-    Roughtly translates into a `<thead>` or similar thing.
-    """
-
-    def prepare_html(self):
-        yield build_html_tag('thead', style=self.style,
-                             id=self.id, class_=self.class_)
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</thead>'
-
-
-class TableBodySection(Element):
-    """
-    Roughtly translates into a `<tbody>` or similar thing.
-    """
-
-    def prepare_html(self):
-        yield build_html_tag('tbody', style=self.style,
-                             id=self.id, class_=self.class_)
-        for item in Element.prepare_html(self):
-            yield item
-        yield u'</tbody>'

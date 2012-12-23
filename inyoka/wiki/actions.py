@@ -60,7 +60,7 @@ def context_modifier(request, context):
     if 'page' in context:
         page_name = getattr(context['page'], 'name', None)
         if page_name:
-            context['is_subscribed'] = request.user.is_authenticated and \
+            context['is_subscribed'] = request.user.is_authenticated() and \
                 Subscription.objects.user_subscribed(request.user,
                                                      context['page'],
                                                      clear_notified=True)
@@ -495,7 +495,7 @@ def do_edit(request, name):
                 else:
                     url = href('wiki', page.name)
                 return HttpResponseRedirect(url)
-    elif not request.user.is_authenticated:
+    elif not request.user.is_authenticated():
         messages.info(request,
             _(u'You are in the process of editing this page unauthenticated. '
                 u'If you save, your IP-Address will be recorded in the '

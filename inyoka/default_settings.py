@@ -8,6 +8,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from os import path
 from os.path import dirname, join
 from django.conf.global_settings import *
 
@@ -76,7 +77,6 @@ MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
 # same for static
 STATIC_ROOT = join(BASE_PATH, 'static-collected')
 STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
-ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 
 STATICFILES_DIRS = (
     join(BASE_PATH, 'static'),
@@ -200,9 +200,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.humanize',
     'inyoka.core',
+    'django.contrib.auth',
+    'inyoka.forum',
     'inyoka.portal',
     'inyoka.wiki',
-    'inyoka.forum',
     'inyoka.ikhaya',
     'inyoka.pastebin',
     'inyoka.planet',
@@ -211,8 +212,8 @@ INSTALLED_APPS = (
     'raven.contrib.django',
     'south',
     # *must* be installed after south
+    'kombu.transport.django',
     'djcelery',
-    'djkombu',
     'django_mobile',
     'django_hosts',
 )
@@ -286,20 +287,14 @@ CELERY_ALWAYS_EAGER = DEBUG
 # Do not hijack the root logger, avoids unicode errors
 CELERYD_HIJACK_ROOT_LOGGER = False
 
-SEND_EVENTS = True
+CELERY_SEND_EVENTS = True
 
 # Make the template context available as tmpl_context in the TemplateResponse.
 # Useful for tests in combination with override_settings.
 PROPAGATE_TEMPLATE_CONTEXT = False
 
 # http://ask.github.com/kombu/introduction.html#transport-comparison
-BROKER_BACKEND = 'inyoka.utils.celery_support.DatabaseTransport'
-
-BROKER_HOST = 'localhost'
-BROKER_PORT = 5672
-BROKER_USER = ''
-BROKER_PASSWORD = ''
-BROKER_VHOST = ''
+BROKER_URL = 'django://'
 
 INTERNAL_IPS = ('127.0.0.1',)
 
@@ -317,8 +312,23 @@ CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
 
 TEST_RUNNER = 'discover_runner.DiscoverRunner'
-from os import path
 TEST_DISCOVER_TOP_LEVEL = path.dirname(path.dirname(__file__))
+
+AUTH_USER_MODEL = 'portal.User'
+AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)
+
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+    'inyoka.utils.user.UnsaltedMD5PasswordHasher',
+)
+
+TEMPLATE_LOADERS = (
+    'inyoka.utils.templating.DjangoLoader',
+    'django.template.loaders.app_directories.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = ()
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

@@ -37,7 +37,7 @@ def set_session_info(request):
     if request.session.new:
         return
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         if request.user.settings.get('hide_profile', False):
             transaction.rollback()
             return
@@ -142,8 +142,3 @@ def get_sessions(order_by='-last_change'):
 def make_permanent(request):
     """Make this session a permanent one."""
     request.session['_perm'] = True
-
-
-def close_with_browser(request):
-    """Close the session with the end of the browser session."""
-    request.session.pop('_perm', None)

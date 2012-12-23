@@ -10,6 +10,7 @@
 """
 import datetime
 import StringIO
+import json
 
 from PIL import Image
 
@@ -22,11 +23,12 @@ from django.forms import HiddenInput
 from django.db.models import Count
 from django.db.models.fields.files import ImageFieldFile
 from django.conf import settings
-from django.utils import simplejson
+from django.core.validators import EMPTY_VALUES
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from django.contrib import messages
+from django.contrib.auth import forms as auth_forms
 
 from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
@@ -201,58 +203,32 @@ class RegisterForm(forms.Form):
         return self.cleaned_data['email']
 
 
-class LostPasswordForm(forms.Form):
-    """
-    Form for the lost password form.
-
-    It's similar to the register form and uses
-    a hidden and a visible image CAPTCHA too.
-    """
-    username = forms.CharField(label=_('Username or email address'))
-    captcha = CaptchaField(label=_('CAPTCHA'))
-    hidden_captcha = HiddenCaptchaField(required=False)
-
-    def clean_username(self):
-        data = super(LostPasswordForm, self).clean()
-        if 'username' in data and '@' in data['username']:
-            try:
-                self.user = User.objects.get(email=data['username'])
-            except User.DoesNotExist:
-                raise forms.ValidationError(
-                    _(u'A user with the email address “%(mail)s” does not exist.')
-                    % {'mail': data['username']}
-                )
-        else:
-            try:
-                self.user = User.objects.get(data['username'])
-            except User.DoesNotExist:
-                raise forms.ValidationError(
-                    _(u'The user “%(name)s” does not exist.')
-                    % {'name': data['username']}
-                )
-
-
-class SetNewPasswordForm(forms.Form):
-    username = forms.CharField(widget=forms.HiddenInput)
-    new_password_key = forms.CharField(widget=forms.HiddenInput)
-    password = forms.CharField(label=ugettext_lazy(u'New password'),
-                               widget=forms.PasswordInput)
-    password_confirm = forms.CharField(label=ugettext_lazy(u'Confirm new password'),
-                                       widget=forms.PasswordInput)
-
-    def clean(self):
-        data = super(SetNewPasswordForm, self).clean()
-        if 'password' not in data or 'password_confirm' not in data or \
-           data['password'] != data['password_confirm']:
-            raise forms.ValidationError(_(u'The passwords do not match!'))
+class LostPasswordForm(auth_forms.PasswordResetForm):
+    def clean_email(self):  # Work around Django's check.
+        # FIXME: Check is_active and useable password.
+        email = self.cleaned_data['email']
         try:
-            data['user'] = User.objects.get(self['username'].data,
-                               new_password_key=self['new_password_key'].data)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise forms.ValidationError(_(
-                u'The user does not exist or the confirmation key is invalid')
-            )
-        return data
+            raise forms.ValidationError(self.error_messages['unknown'])
+        if not user.has_usable_password() or not user.is_active:
+            raise forms.ValidationError(self.error_messages['unusable'])
+        self.users_cache = [user]  # For Django
+        return email
+
+    def save(self, **opts):
+        request = opts['request']
+        messages.success(request, _(u'An email with further instructions was sent to you.'))
+        return super(LostPasswordForm, self).save(**opts)
+
+
+class SetNewPasswordForm(auth_forms.SetPasswordForm):
+    def save(self, commit=True):
+        instance = super(SetNewPasswordForm, self).save(commit)
+        messages.success(current_request,
+            _(u'You successfully changed your password and are now '
+              u'able to login.'))
+        return instance
 
 
 class ChangePasswordForm(forms.Form):
@@ -393,7 +369,6 @@ class UserCPProfileForm(forms.ModelForm):
             raise forms.ValidationError(
                 _(u'This email address is already in use.'))
         return email
-
 
     def clean_avatar(self):
         """
@@ -788,21 +763,6 @@ class PrivateMessageIndexForm(forms.Form):
     delete = forms.MultipleChoiceField()
 
 
-class UserErrorReportForm(forms.Form):
-    title = forms.CharField(label=ugettext_lazy(u'Short description'), max_length=50,
-                            widget=forms.TextInput(attrs={'size':50}))
-    text = forms.CharField(label=ugettext_lazy(u'Long description'),
-                           widget=forms.Textarea(attrs={'rows': 3}))
-    url = forms.URLField(widget=forms.HiddenInput, required=False,
-                         label=ugettext_lazy(u'URL of the site the ticket refers to'))
-
-    def clean_url(self):
-        data = self.cleaned_data
-        if data.get('url') and not is_safe_domain(self.cleaned_data['url']):
-            raise forms.ValidationError(_(u'Invalid URL'))
-        return self.cleaned_data['url']
-
-
 def _feed_count_cleanup(n):
     COUNTS = (10, 20, 30, 50)
     if n in COUNTS:
@@ -954,8 +914,8 @@ class ConfigurationForm(forms.Form):
         try:
             data[key] = data.get(key, '[]')
             # is there a way to validate a JSON string?
-            simplejson.loads(data[key])
-        except simplejson.JSONDecodeError:
+            json.loads(data[key])
+        except ValueError:
             return u'[]'
         return data[key]
 

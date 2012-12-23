@@ -190,7 +190,7 @@ class CaptchaField(forms.Field):
         forms.Field.__init__(self, *args, **kwargs)
 
     def clean(self, value):
-        if current_request.user.is_authenticated and self.only_anonymous:
+        if current_request.user.is_authenticated() and self.only_anonymous:
             return True
         solution = current_request.session.get('captcha_solution')
         if value:

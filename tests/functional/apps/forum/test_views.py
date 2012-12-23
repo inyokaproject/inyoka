@@ -86,10 +86,7 @@ class TestViews(TestCase):
         self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
         for _ in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
-        #TODO: kill chunking in Django 1.5
-        chunks = izip_longest(*[iter(posts)]*50, fillvalue=None)
-        for chunk in chunks:
-            Post.objects.bulk_create(filter(None, chunk))
+        Post.objects.bulk_create(posts)
 
     def test_reported_topics(self):
         response = self.client.get('/reported_topics/')

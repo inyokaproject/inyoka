@@ -25,7 +25,7 @@
       <li>
         <ul>
           {%- if forum %}
-            {%- if USER.is_authenticated %}
+            {%- if USER.is_authenticated() %}
               <li>
                 <a href="{{ href('forum', 'egosearch') }}">{% trans %}My posts{% endtrans %}</a>
                 <a href="{{ href('forum', 'egosearch', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
@@ -60,7 +60,7 @@
               <a href="{{ href('forum', 'last6', forum.slug|e) }}" class="limited">{% trans %}only here{% endtrans %}</a>
             </li>
           {% else %}
-            {%- if USER.is_authenticated %}
+            {%- if USER.is_authenticated() %}
               <li><a href="{{ href('forum', 'egosearch') }}">{% trans %}My posts{% endtrans %}</a></li>
               <li><a href="{{ href('forum', 'topic_author', USER.urlsafe_username)|e }}">{% trans %}My topics{% endtrans %}</a></li>
             {%- endif %}

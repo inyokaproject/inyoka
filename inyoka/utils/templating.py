@@ -8,12 +8,14 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import json
 import os
 from glob import glob
 
 from django.conf import settings
+from django.template.base import TemplateDoesNotExist, Context as DjangoContext
+from django.template.loader import BaseLoader
 from django.utils import translation
-from django.utils import simplejson as json
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 from django.utils.timesince import timesince
@@ -24,7 +26,7 @@ from django.contrib.humanize.templatetags.humanize import naturalday
 
 from django_mobile import get_flavour
 from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound,\
-    contextfunction
+    contextfunction, Template
 
 from inyoka import INYOKA_REVISION
 from inyoka.utils.cache import request_cache
@@ -122,7 +124,7 @@ def populate_context_defaults(context, flash=False):
         user = None
 
     reported = pms = suggestions = events = reported_articles = 0
-    if request and user.is_authenticated:
+    if request and user.is_authenticated():
         can = {'manage_topics': user.can('manage_topics'),
                'article_edit': user.can('article_edit'),
                'event_edit': user.can('event_edit')}
@@ -190,7 +192,7 @@ def populate_context_defaults(context, flash=False):
             USER=user,
             BREADCRUMB=Breadcrumb(),
             MOBILE=get_flavour() == 'mobile',
-            _csrf_token=csrf(request)['csrf_token']
+            _csrf_token=force_unicode(csrf(request)['csrf_token'])
         )
 
         if not flash:
@@ -208,8 +210,7 @@ def populate_context_defaults(context, flash=False):
     )
 
 
-def render_template(template_name, context, flash=False):
-    """Render a template.  You might want to set `req` to `None`."""
+def load_template(template_name):
     # if available, use dedicated mobile template
     mobile_template_name = template_name
     if get_flavour() == 'mobile':
@@ -219,6 +220,12 @@ def render_template(template_name, context, flash=False):
         tmpl = jinja_env.get_template(mobile_template_name)
     except TemplateNotFound:
         tmpl = jinja_env.get_template(template_name)
+    return tmpl
+
+
+def render_template(template_name, context, flash=False):
+    """Render a template.  You might want to set `req` to `None`."""
+    tmpl = load_template(template_name)
     populate_context_defaults(context, flash=flash)
     return tmpl.render(context)
 
@@ -261,11 +268,25 @@ def json_filter(value):
     return LazyJSONEncoder().encode(value)
 
 
+class JinjaTemplate(Template):
+    def render(self, context):
+        context = {} if context is None else context
+        if isinstance(context, DjangoContext):
+            c = context
+            context = {}
+            for d in c.dicts:
+                context.update(d)
+            context.pop('csrf_token', None)  # We have our own...
+        populate_context_defaults(context)
+        return super(JinjaTemplate, self).render(context)
+
+
 class InyokaEnvironment(Environment):
     """
     Beefed up version of the jinja environment but without security features
     to improve the performance of the lookups.
     """
+    template_class = JinjaTemplate
 
     def __init__(self):
         template_paths = list(settings.TEMPLATE_DIRS)
@@ -292,6 +313,16 @@ class InyokaEnvironment(Environment):
                                         else filename
         code = compile(source, filename, 'exec')
         return code
+
+
+class DjangoLoader(BaseLoader):
+    is_usable = True
+
+    def load_template(self, template_name, template_dirs=None):
+        try:
+            return load_template(template_name), template_name
+        except TemplateNotFound:
+            raise TemplateDoesNotExist(template_name)
 
 
 # circular imports

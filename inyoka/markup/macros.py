@@ -95,11 +95,6 @@ class Macro(object):
 
     __repr__ = debug_repr
 
-    @property
-    def argument_string(self):
-        """The argument string."""
-        return dump_argstring(self.argument_def)
-
     def render(self, context, format):
         """Dispatch to the correct render method."""
         rv = self.build_node(context, format)
