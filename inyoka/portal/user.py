@@ -610,6 +610,8 @@ class User(models.Model):
         """
         Returns a boolean of whether the raw_password was correct.
         """
+        if self.is_anonymous:
+            return False
         return check_password(raw_password, self.password,
                               convert_user=auto_convert and self or False)
 
