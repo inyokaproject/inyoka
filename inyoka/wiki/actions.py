@@ -182,7 +182,7 @@ def do_missing_page(request, name, _page=None):
 
     try:
         not_finished = Page.objects.get_by_name(join_pagename(
-            storage['wiki_newpage_root'], name
+            storage['wiki_newpage_root'], name, nocache=True
         ))
     except Page.DoesNotExist:
         not_finished = None
