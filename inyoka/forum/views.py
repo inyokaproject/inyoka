@@ -19,9 +19,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Q, F
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponseRedirect
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 from django.utils.text import truncate_html_words
 

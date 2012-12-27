@@ -14,7 +14,6 @@
 import re
 from cPickle import loads, dumps, HIGHEST_PROTOCOL
 
-from inyoka.markup.lexer import escape
 from inyoka.utils import get_request_context
 
 

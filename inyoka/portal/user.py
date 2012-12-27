@@ -18,7 +18,6 @@ from StringIO import StringIO
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files.storage import default_storage
 from django.db import models
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _

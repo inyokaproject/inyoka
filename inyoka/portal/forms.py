@@ -15,7 +15,6 @@ from PIL import Image
 
 from django import forms
 from django.core.cache import cache
-from django.core.validators import EMPTY_VALUES
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.forms import HiddenInput
@@ -36,14 +35,14 @@ from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href, is_safe_domain
-from inyoka.utils.forms import CaptchaField, DateTimeWidget, DateWidget, \
-    HiddenCaptchaField, EmailField, JabberField, validate_signature
+from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
+    HiddenCaptchaField, EmailField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.search import search as search_system
-from inyoka.portal.user import User, UserData, Group, PERMISSION_NAMES, \
+from inyoka.portal.user import User, Group, PERMISSION_NAMES, \
     send_new_email_confirmation
 from inyoka.portal.models import StaticPage, StaticFile
 

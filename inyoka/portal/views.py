@@ -16,7 +16,6 @@ import time
 from PIL import Image
 from datetime import datetime, date, timedelta
 
-from django import forms
 from django.conf import settings
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
@@ -71,8 +70,8 @@ from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
     deactivate_user, reactivate_user, set_new_email, \
-    send_new_email_confirmation, reset_email, send_activation_mail, \
-    send_new_user_password, PERMISSION_NAMES
+    reset_email, send_activation_mail, send_new_user_password, \
+    PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
