@@ -15,7 +15,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from inyoka.utils.http import HttpResponse
+from django.http import HttpResponse
 from django.utils.cache import add_never_cache_headers
 from django.utils import simplejson
 

@@ -10,14 +10,14 @@
 """
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.views.generic import edit, base, list
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
-from inyoka.utils.http import TemplateResponse, HttpResponseRedirect
+from inyoka.utils.http import TemplateResponse
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template

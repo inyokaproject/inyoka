@@ -11,9 +11,9 @@
 """
 from werkzeug.contrib.atom import AtomFeed
 from django.conf import settings
+from django.http import Http404, HttpResponse
 from django.utils.encoding import force_unicode
 from django.utils.cache import patch_response_headers
-from inyoka.utils.http import HttpResponse, PageNotFound
 
 
 MODES = frozenset(('full', 'short', 'title'))
@@ -23,19 +23,19 @@ def atom_feed(name=None, supports_modes=True):
     def _wrapper(func):
         def real_func(*args, **kwargs):
             if supports_modes and kwargs.get('mode') not in MODES:
-                raise PageNotFound()
+                raise Http404()
 
             kwargs['count'] = count = int(kwargs['count'])
             try:
                 available = settings.AVAILABLE_FEED_COUNTS[name]
             except KeyError:
-                raise PageNotFound()
+                raise Http404()
 
             count = count if count <= max(available) else max(available)
             kwargs['count'] = count
 
             if count not in available:
-                raise PageNotFound()
+                raise Http404()
 
             rv = func(*args, **kwargs)
             if not isinstance(rv, AtomFeed):

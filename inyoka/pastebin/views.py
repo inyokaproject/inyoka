@@ -8,14 +8,14 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import messages
 from django.utils.translation import ugettext as _
 
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
 from inyoka.portal.utils import require_permission
-from inyoka.utils.http import templated, HttpResponseRedirect, HttpResponse, \
-     PageNotFound
+from inyoka.utils.http import templated
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import global_not_found, href
 
@@ -65,7 +65,7 @@ def delete(request, entry_id):
     """
     entry = Entry.objects.get(id=entry_id)
     if not entry:
-        raise PageNotFound
+        raise Http404()
     if request.method == 'POST':
         if 'cancel' in request.POST:
             messages.info(request, _(u'The deletion was canceled'))
@@ -83,7 +83,7 @@ def raw(request, entry_id):
     try:
         entry = Entry.objects.get(id=entry_id)
     except Entry.DoesNotExist:
-        raise PageNotFound
+        raise Http404()
     return HttpResponse(entry.code, content_type='text/plain; charset=utf-8')
 
 

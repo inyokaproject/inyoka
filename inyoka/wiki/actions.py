@@ -21,6 +21,7 @@
 from datetime import datetime
 
 from django.db import models
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
@@ -28,8 +29,7 @@ from django.utils.translation import ugettext as _
 from inyoka.markup import parse, RenderContext
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
-     TemplateResponse, AccessDeniedResponse, PageNotFound, \
-     HttpResponseRedirect, HttpResponse
+     TemplateResponse, AccessDeniedResponse
 from inyoka.utils.diff3 import merge
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
@@ -212,7 +212,7 @@ def do_revert(request, name):
     try:
         rev = int(request.GET['rev'])
     except (KeyError, ValueError):
-        raise PageNotFound()
+        raise Http404()
     url = href('wiki', name, rev=rev)
     page = Page.objects.get_by_name_and_rev(name, rev)
     latest_rev = page.revisions.latest()
@@ -768,7 +768,7 @@ def do_diff(request, name):
             raise Revision.DoesNotExist()
     new_rev = request.GET.get('new_rev') or None
     if new_rev and not new_rev.isdigit():
-        raise PageNotFound()
+        raise Http404()
     diff = Page.objects.compare(name, old_rev, new_rev)
     if request.GET.get('format') == 'udiff':
         return HttpResponse(diff.udiff, mimetype='text/plain; charset=utf-8')

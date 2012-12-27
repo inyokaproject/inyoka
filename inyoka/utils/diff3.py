@@ -315,12 +315,12 @@ def generate_udiff(old, new, old_title='', new_title='',
     """
     # NOTE: difflib doesn't like unicode filenames!
     udiff = difflib.unified_diff(
-            old.splitlines(),
-            new.splitlines(),
-            fromfile=old_title.encode('utf-8'),
-            tofile=new_title.encode('utf-8'),
-            lineterm='',
-            n=context_lines)
+        old.splitlines(),
+        new.splitlines(),
+        fromfile=old_title.encode('utf-8'),
+        tofile=new_title.encode('utf-8'),
+        lineterm='',
+        n=context_lines)
     try:
         title_diff_1 = udiff.next().decode('utf-8')
         title_diff_2 = udiff.next().decode('utf-8')
@@ -407,10 +407,10 @@ class DiffRenderer(object):
                 filename, old_rev, new_rev = \
                     self._extract_rev(line, lineiter.next())
                 files.append({
-                    'filename':         filename,
-                    'old_revision':     old_rev,
-                    'new_revision':     new_rev,
-                    'chunks':           chunks,
+                    'filename': filename,
+                    'old_revision': old_rev,
+                    'new_revision': new_rev,
+                    'chunks': chunks,
                 })
 
                 line = lineiter.next()
@@ -452,10 +452,10 @@ class DiffRenderer(object):
                         old_line += affects_old
                         new_line += affects_new
                         lines.append({
-                            'old_lineno':   affects_old and old_line or u'',
-                            'new_lineno':   affects_new and new_line or u'',
-                            'action':       action,
-                            'line':         line,
+                            'old_lineno': affects_old and old_line or u'',
+                            'new_lineno': affects_new and new_line or u'',
+                            'action': action,
+                            'line': line,
                         })
                         line = lineiter.next()
 

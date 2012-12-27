@@ -20,6 +20,7 @@ import os
 from urlparse import urljoin
 
 from django.conf import settings
+from django.http import Http404, HttpResponseRedirect
 from django.contrib import messages
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext as _
@@ -27,8 +28,7 @@ from django.utils.html import escape
 
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.text import join_pagename, normalize_pagename
-from inyoka.utils.http import templated, PageNotFound, HttpResponseRedirect, \
-    AccessDeniedResponse
+from inyoka.utils.http import templated, AccessDeniedResponse
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.imaging import get_thumbnail
@@ -115,7 +115,7 @@ def get_attachment(request):
     """
     target = request.GET.get('target')
     if not target:
-        raise PageNotFound()
+        raise Http404()
 
     target = normalize_pagename(target)
     if not has_privilege(request.user, target, 'read'):
@@ -124,7 +124,7 @@ def get_attachment(request):
     target = Page.objects.attachment_for_page(target)
     target = href('media', target)
     if not target:
-        raise PageNotFound()
+        raise Http404()
     return HttpResponseRedirect(target)
 
 
@@ -167,7 +167,7 @@ def get_image_resource(request):
     """
     target = request.GET.get('target')
     if not target:
-        raise PageNotFound()
+        raise Http404()
 
     target = normalize_pagename(target)
     if not has_privilege(request.user, target, 'read'):
@@ -185,7 +185,7 @@ def get_image_resource(request):
     force = request.GET.get('force') == 'yes'
     target = fetch_real_target(target, width=width, height=height, force=force)
     if target is None:
-        raise PageNotFound()
+        raise Http404()
 
     return HttpResponseRedirect(target)
 

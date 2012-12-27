@@ -135,6 +135,8 @@ def clean_openid_url(url):
 
 
 from inyoka.utils.http import TemplateResponse
+
+
 def global_not_found(request, err_message=None):
     return TemplateResponse('errors/404.html', {
         'err_message': err_message,

@@ -9,9 +9,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.http import HttpResponse, HttpResponseRedirect, \
-     HttpResponsePermanentRedirect, HttpResponseForbidden, \
-     Http404 as PageNotFound
+from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from inyoka.utils.decorators import patch_wrapper
@@ -38,7 +36,7 @@ def templated(template_name, status=None, modifier=None,
             try:
                 rv = f(request, *args, **kwargs)
             except ObjectDoesNotExist:
-                raise PageNotFound()
+                raise Http404()
             if isinstance(rv, HttpResponse):
                 return rv
             elif rv is None:
@@ -57,7 +55,7 @@ def does_not_exist_is_404(f):
         try:
             return f(*args, **kwargs)
         except ObjectDoesNotExist:
-            raise PageNotFound()
+            raise Http404()
     return patch_wrapper(proxy, f)
 
 

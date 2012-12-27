@@ -135,10 +135,10 @@ class CleanupFilter(object):
     """
 
     tag_conversions = {
-        'center':       ('span', 'text-align: center'),
-        'u':            ('span', 'text-decoration: underline'),
-        'menu':         ('ul', None),
-        'strike':       ('del', None)
+        'center': ('span', 'text-align: center'),
+        'u': ('span', 'text-decoration: underline'),
+        'menu': ('ul', None),
+        'strike': ('del', None)
     }
 
     end_tags = {key: value[0] for key, value in tag_conversions.iteritems()}
@@ -204,12 +204,12 @@ class CleanupFilter(object):
                     tmp = attrs.pop('size', None)
                     if tmp:
                         styles.append('font-size: %s' % {
-                            '1':    'xx-small',
-                            '2':    'small',
-                            '3':    'medium',
-                            '4':    'large',
-                            '5':    'x-large',
-                            '6':    'xx-large'
+                            '1': 'xx-small',
+                            '2': 'small',
+                            '3': 'medium',
+                            '4': 'large',
+                            '5': 'x-large',
+                            '6': 'xx-large'
                         }.get(tmp, 'medium'))
                     if styles:
                         style = attrs.get('style')

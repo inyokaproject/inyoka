@@ -11,6 +11,7 @@
 import calendar
 from datetime import date, time
 
+from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.db.models import Q
 from django.utils import simplejson
@@ -18,7 +19,7 @@ from django.utils.http import urlquote_plus
 
 from inyoka.utils.urls import href
 from inyoka.utils.decorators import patch_wrapper
-from inyoka.utils.http import AccessDeniedResponse, HttpResponseRedirect
+from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.storage import storage
 

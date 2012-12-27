@@ -12,6 +12,7 @@
 from urllib import unquote
 
 from django.db import transaction
+from django.http import HttpResponse
 from django.utils.datastructures import MultiValueDictKeyError
 
 from inyoka.forum.models import Topic, Post, Forum
@@ -19,7 +20,6 @@ from inyoka.forum.acl import get_forum_privileges, check_privilege, \
     have_privilege
 from inyoka.portal.models import Subscription
 from inyoka.portal.utils import abort_access_denied, UBUNTU_VERSIONS
-from inyoka.utils.http import HttpResponse
 from inyoka.utils.services import SimpleDispatcher, permit_methods, never_cache
 from inyoka.utils.templating import render_template
 

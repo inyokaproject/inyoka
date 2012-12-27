@@ -15,7 +15,7 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from inyoka.utils.http import HttpResponse
+from django.http import HttpResponse
 from inyoka.utils.services import SimpleDispatcher, permit_methods
 from inyoka.forum.models import Post as ForumPost
 from inyoka.markup import parse, RenderContext

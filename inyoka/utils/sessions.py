@@ -122,20 +122,20 @@ def get_sessions(order_by='-last_change'):
     for item in SessionInfo.objects.filter(last_change__gt=delta) \
                                    .order_by(order_by):
         sessions.append({
-            'anonymous':    item.subject_text is None,
-            'text':         item.subject_text,
-            'type':         item.subject_type,
-            'link':         item.subject_link,
-            'last_change':  item.last_change,
+            'anonymous': item.subject_text is None,
+            'text': item.subject_text,
+            'type': item.subject_type,
+            'link': item.subject_link,
+            'last_change': item.last_change,
         })
 
     anonymous = sum(x['anonymous'] for x in sessions)
     return {
-        'anonymous':            anonymous,
-        'registered':           len(sessions) - anonymous,
-        'all':                  len(sessions),
-        'sessions':             sessions,
-        'registered_sessions':  [s for s in sessions if not s['anonymous']]
+        'anonymous': anonymous,
+        'registered': len(sessions) - anonymous,
+        'all': len(sessions),
+        'sessions': sessions,
+        'registered_sessions': [s for s in sessions if not s['anonymous']]
     }
 
 
