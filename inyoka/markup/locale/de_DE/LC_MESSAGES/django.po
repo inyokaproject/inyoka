@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-12-17 15:55+0100\n"
+"POT-Creation-Date: 2012-12-27 11:58+0100\n"
 "PO-Revision-Date: 2012-11-03 11:11+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -36,11 +36,11 @@ msgstr "Fehlendes Makro"
 msgid "The macro “%(name)s” does not exist."
 msgstr "Das Makro „%(name)s“ konnte nicht gefunden werden."
 
-#: inyoka/markup/macros.py:271
+#: inyoka/markup/macros.py:266
 msgid "Table of contents"
 msgstr "Inhaltsverzeichnis"
 
-#: inyoka/markup/macros.py:307
+#: inyoka/markup/macros.py:302
 msgid "Invalid date"
 msgstr "Ungültiges Datum"
 
@@ -56,13 +56,13 @@ msgstr "<strong>Konflikt</strong> – eigene Version"
 msgid "<strong>Conflict End</strong>"
 msgstr "<strong>Konlikt Ende</strong>"
 
-#: inyoka/markup/nodes.py:703
-msgid "Moderated by"
-msgstr "Moderiert von"
-
-#: inyoka/markup/nodes.py:728
+#: inyoka/markup/nodes.py:698
 msgid "Edited by"
 msgstr "Bearbeitet von"
+
+#: inyoka/markup/nodes.py:723
+msgid "Moderated by"
+msgstr "Moderiert von"
 
 #: inyoka/markup/templates.py:53
 msgid "Invalid arguments"

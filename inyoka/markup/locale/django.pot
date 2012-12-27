@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-12-17 15:55+0100\n"
+"POT-Creation-Date: 2012-12-27 11:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,11 +34,11 @@ msgstr ""
 msgid "The macro “%(name)s” does not exist."
 msgstr ""
 
-#: inyoka/markup/macros.py:271
+#: inyoka/markup/macros.py:266
 msgid "Table of contents"
 msgstr ""
 
-#: inyoka/markup/macros.py:307
+#: inyoka/markup/macros.py:302
 msgid "Invalid date"
 msgstr ""
 
@@ -54,12 +54,12 @@ msgstr ""
 msgid "<strong>Conflict End</strong>"
 msgstr ""
 
-#: inyoka/markup/nodes.py:703
-msgid "Moderated by"
+#: inyoka/markup/nodes.py:698
+msgid "Edited by"
 msgstr ""
 
-#: inyoka/markup/nodes.py:728
-msgid "Edited by"
+#: inyoka/markup/nodes.py:723
+msgid "Moderated by"
 msgstr ""
 
 #: inyoka/markup/templates.py:53

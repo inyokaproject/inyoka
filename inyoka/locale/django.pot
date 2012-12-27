@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-12-17 15:55+0100\n"
+"POT-Creation-Date: 2012-12-27 11:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,15 +194,15 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: inyoka/utils/flash_confirmation.py:22
+#: inyoka/utils/flash_confirmation.py:23
 msgid "Are you sure?"
 msgstr ""
 
-#: inyoka/utils/flash_confirmation.py:23
+#: inyoka/utils/flash_confirmation.py:24
 msgid "Yes"
 msgstr ""
 
-#: inyoka/utils/flash_confirmation.py:24
+#: inyoka/utils/flash_confirmation.py:25
 msgid "No"
 msgstr ""
 
@@ -293,21 +293,21 @@ msgstr ""
 msgid "Canceled."
 msgstr ""
 
-#: inyoka/utils/pagination.py:157 inyoka/utils/pagination.py:161
-#: inyoka/utils/pagination.py:196
+#: inyoka/utils/pagination.py:156 inyoka/utils/pagination.py:160
+#: inyoka/utils/pagination.py:202
 msgid "Next »"
 msgstr ""
 
-#: inyoka/utils/pagination.py:167 inyoka/utils/pagination.py:171
-#: inyoka/utils/pagination.py:198
+#: inyoka/utils/pagination.py:166 inyoka/utils/pagination.py:170
+#: inyoka/utils/pagination.py:204
 msgid "« Previous"
 msgstr ""
 
-#: inyoka/utils/pagination.py:193
+#: inyoka/utils/pagination.py:199
 msgid "Page"
 msgstr ""
 
-#: inyoka/utils/pagination.py:194
+#: inyoka/utils/pagination.py:200
 msgid "Go to"
 msgstr ""
 
@@ -322,43 +322,43 @@ msgstr ""
 msgid "The chosen sort value (“%(value)s”) is not available"
 msgstr ""
 
-#: inyoka/utils/text.py:212
+#: inyoka/utils/text.py:179
 msgid "ten"
 msgstr ""
 
-#: inyoka/utils/text.py:214
+#: inyoka/utils/text.py:181
 msgid "eleven"
 msgstr ""
 
-#: inyoka/utils/text.py:216
+#: inyoka/utils/text.py:183
 msgid "twelve"
 msgstr ""
 
-#: inyoka/utils/text.py:220
+#: inyoka/utils/text.py:186
 msgctxt "masculine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:221
+#: inyoka/utils/text.py:187
 msgctxt "feminine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:222
+#: inyoka/utils/text.py:188
 msgctxt "neuter"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:223
+#: inyoka/utils/text.py:189
 msgid "one"
 msgstr ""
 
-#: inyoka/middlewares/auth.py:33
+#: inyoka/middlewares/auth.py:36
 #, python-format
 msgid "The user “%(name)s” was banned. Your session has ended."
 msgstr ""
 
-#: inyoka/middlewares/auth.py:37
+#: inyoka/middlewares/auth.py:40
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
 msgstr ""

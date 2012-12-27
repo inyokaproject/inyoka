@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-12-17 15:55+0100\n"
+"POT-Creation-Date: 2012-12-27 11:58+0100\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -261,16 +261,16 @@ msgstr "Schlüssel nicht definiert"
 msgid "The key “%(name)s” is not defined"
 msgstr "Der Schlüssel „%(name)s“ wurde nicht definiert."
 
-#: inyoka/wiki/macros.py:637
+#: inyoka/wiki/macros.py:640
 msgid "No result"
 msgstr "Kein Ergebnis"
 
-#: inyoka/wiki/macros.py:638
+#: inyoka/wiki/macros.py:641
 #, python-format
 msgid "The metadata filter has found no results. Query: %(query)s"
 msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 
-#: inyoka/wiki/macros.py:663
+#: inyoka/wiki/macros.py:666
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
