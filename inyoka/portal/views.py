@@ -30,6 +30,10 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ungettext, ugettext as _
 from django.utils.html import escape
 
+from django.contrib import auth
+from django.contrib import messages
+from django.contrib.auth.views import password_reset, password_reset_confirm
+
 from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
 
@@ -70,8 +74,7 @@ from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
     deactivate_user, reactivate_user, set_new_email, \
-    reset_email, send_activation_mail, send_new_user_password, \
-    PERMISSION_NAMES
+    reset_email, send_activation_mail, PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
@@ -102,7 +105,7 @@ files = generic.ListView.as_view(model=StaticFile,
     template_name='portal/files.html',
     columns=['identifier', 'is_ikhaya_icon'],
     required_permission='static_file_edit',
-    base_link = href('portal', 'files'))
+    base_link=href('portal', 'files'))
 
 
 file_edit = generic.CreateUpdateView(model=StaticFile,
@@ -161,7 +164,7 @@ def markup_styles(request):
     Its content is editable in the admin panel.
     """
     from django.utils.cache import patch_response_headers
-    response = HttpResponse(storage['markup_styles'], mimetype='text/css')
+    response = HttpResponse(storage['markup_styles'], content_type='text/css')
     patch_response_headers(response, 60 * 15)
     return response
 
@@ -186,7 +189,7 @@ def whoisonline(request):
 def register(request):
     """Register a new user."""
     redirect = request.GET.get('next') or href('portal')
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
@@ -238,7 +241,7 @@ def activate(request, action='', username='', activation_key=''):
     if not redirect:
         redirect = href('portal', 'login', username=user.username)
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         messages.error(request,
             _(u'You cannot enter an activation key when you are logged in.'))
         return HttpResponseRedirect(href('portal'))
@@ -285,62 +288,20 @@ def resend_activation_mail(request, username):
     return HttpResponseRedirect(href('portal'))
 
 
-@templated('portal/lost_password.html')
 def lost_password(request):
-    """
-    View for the lost password dialog.
-    It generates a new random password and sends it via mail.
-    """
-    if request.user.is_authenticated:
-        messages.error(request, _(u'You are already logged in.'))
-        return HttpResponseRedirect(href('portal'))
-
-    if request.method == 'POST':
-        form = LostPasswordForm(request.POST)
-        form.captcha_solution = request.session.get('captcha_solution')
-        if form.is_valid():
-            send_new_user_password(form.user)
-            messages.success(request, _(u'An email with further instructions was sent to you.'))
-            # clean up request.session
-            return HttpResponseRedirect(href('portal', 'login'))
-    else:
-        form = LostPasswordForm()
-
-    return {
-        'form': form
-    }
+    return password_reset(request,
+        post_reset_redirect=href('portal', 'login'),
+        template_name='portal/lost_password.html',
+        email_template_name='mails/new_user_password.txt',
+        subject_template_name='mails/new_user_password_subject.txt',
+        password_reset_form=LostPasswordForm)
 
 
-@templated('portal/set_new_password.html')
-def set_new_password(request, username, new_password_key):
-    if request.method == 'POST':
-        form = SetNewPasswordForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            data['user'].set_password(data['password'])
-            data['user'].new_password_key = ''
-            data['user'].save()
-            messages.success(request,
-                _(u'You successfully changed your password and are now '
-                  u'able to login.'))
-            return HttpResponseRedirect(href('portal', 'login'))
-    else:
-        try:
-            user = User.objects.get(username)
-        except User.DoesNotExist:
-            messages.error(request, _(u'This user does not exist.'))
-            return HttpResponseRedirect(href())
-        if user.new_password_key != new_password_key:
-            messages.error(request, _(u'Invalid activation key.'))
-            return HttpResponseRedirect(href())
-        form = SetNewPasswordForm(initial={
-            'username': user.username,
-            'new_password_key': new_password_key,
-        })
-    return {
-        'form': form,
-        'username': username,
-    }
+def set_new_password(request, uidb36, token):
+    return password_reset_confirm(request, uidb36, token,
+        post_reset_redirect=href('portal', 'login'),
+        template_name='portal/set_new_password.html',
+        set_password_form=SetNewPasswordForm)
 
 
 @templated('portal/login.html')
@@ -348,7 +309,7 @@ def login(request):
     """Login dialog that supports permanent logins"""
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('portal')
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
@@ -365,29 +326,28 @@ def login(request):
                 return openid_consumer.start_openid_process(request, data['username'])
             else:
                 try:
-                    user = User.objects.authenticate(
-                        username=data['username'],
-                        password=data['password'])
-                except User.DoesNotExist:
-                    failed = True
-                    user = None
+                    user = auth.authenticate(username=data['username'],
+                                      password=data['password'])
                 except UserBanned:
-                    failed = banned = True
+                    banned = True
                     user = None
+
+                if user is None:
+                    failed = True
 
                 if user is not None:
                     if user.is_active:
                         if data['permanent']:
-                            make_permanent(request)
+                            request.session.set_expiry(None)
                         # username matches password and user is active
                         messages.success(request, _(u'You have successfully logged in.'))
-                        user.login(request)
+                        auth.login(request, user)
                         return HttpResponseRedirect(redirect)
                     inactive = True
                 failed = True
     else:
         if 'username' in request.GET:
-            form = LoginForm(initial={'username':request.GET['username']})
+            form = LoginForm(initial={'username': request.GET['username']})
         else:
             form = LoginForm()
 
@@ -407,12 +367,11 @@ def logout(request):
     successfull or not (e.g if the user wasn't logged in)."""
     redirect = is_safe_domain(request.GET.get('next', '')) and \
                request.GET['next'] or href('portal')
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():
                 forum.mark_read(request.user)
-            request.user.save()
-        User.objects.logout(request)
+        auth.logout(request)
         messages.success(request, _(u'You have successfully logged out.'))
     else:
         messages.error(request, _(u'You were not logged in.'))
@@ -426,7 +385,7 @@ def search(request):
         f = SearchForm(request.REQUEST, user=request.user)
     else:
         f = SearchForm(user=request.user)
-    f.fields['forums'].refresh(add=[(u'support',_(u'All support forums'))])
+    f.fields['forums'].refresh(add=[(u'support', _(u'All support forums'))])
 
     if f.is_valid():
         results = f.search()
@@ -570,6 +529,7 @@ def user_mail(request, username):
         'user': user,
     }
 
+
 @require_permission('subscribe_to_users')
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
@@ -666,7 +626,7 @@ def usercp_settings(request):
                                                 ubuntu_version=version).delete()
             for key, value in data.iteritems():
                 request.user.settings[key] = data[key]
-            request.user.save()
+            request.user.save(update_fields=['settings'])
             messages.success(request, _(u'Your settings were successfully changed.'))
         else:
             generic.trigger_fix_errors_message(request)
@@ -799,7 +759,7 @@ def usercp_deactivate(request):
 
         if form.is_valid():
             deactivate_user(request.user)
-            User.objects.logout(request)
+            auth.logout(request)
             messages.success(request, _(u'Your account was deactivated.'))
             return HttpResponseRedirect(href('portal'))
         else:
@@ -1200,7 +1160,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
     page = int(page)
     if folder is None:
         if get_flavour() == 'mobile':
-            return { 'folder': None}
+            return {'folder': None}
         if entry_id is None:
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS['inbox'][1]))
@@ -1233,7 +1193,6 @@ def privmsg(request, folder=None, entry_id=None, page=1):
             entries = filter(lambda s: str(s.id) not in d['delete'], entries)
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
-
 
     if entry_id is not None:
         entry = PrivateMessageEntry.objects.get(user=request.user,
@@ -1315,7 +1274,7 @@ def privmsg_new(request, username=None):
         form = form_class(request.POST)
         if 'preview' in request.POST:
             ctx = RenderContext(request)
-            preview = parse(request.POST.get('text','')).render(ctx, 'html')
+            preview = parse(request.POST.get('text', '')).render(ctx, 'html')
         elif form.is_valid():
             d = form.cleaned_data
 
@@ -1323,16 +1282,16 @@ def privmsg_new(request, username=None):
                 t = d['text']
                 if all(map(lambda x: x in t, group)):
                     if '>' in t:
-                        continue # User quoted, most likely a forward and no spam
+                        continue  # User quoted, most likely a forward and no spam
                     request.user.status = 2
                     request.user.banned_until = None
-                    request.user.save()
+                    request.user.save(update_fields=['status', 'banned_until'])
                     messages.info(request,
                         _(u'You were automatically banned because we suspect '
                           u'you are sending spam. If this ban is not '
                           u'justified, contact us at %(email)s')
                           % {'email': settings.INYOKA_CONTACT_EMAIL})
-                    User.objects.logout(request)
+                    auth.logout(request)
                     return HttpResponseRedirect(href('portal'))
 
             recipient_names = set(r.strip() for r in \
@@ -1463,7 +1422,7 @@ def privmsg_new(request, username=None):
                     if not data['subject'].lower().startswith(u're: '):
                         data['subject'] = u'Re: %s' % data['subject']
                 if reply_to_all:
-                    data['recipient'] += ';'+';'.join(x.username for x in msg.recipients if x != request.user)
+                    data['recipient'] += ';' + ';'.join(x.username for x in msg.recipients if x != request.user)
                 if forward and not data['subject'].lower().startswith(u'fw: '):
                     data['subject'] = u'Fw: %s' % data['subject']
                 data['text'] = quote_text(msg.text, msg.author) + '\n'
@@ -1774,7 +1733,7 @@ def calendar_detail(request, slug):
 @templated('portal/open_search.xml', content_type='text/xml; charset=utf-8')
 def open_search(request, app):
     if app not in ('wiki', 'forum', 'planet', 'ikhaya'):
-        app='portal'
+        app = 'portal'
     return {
         'app': app
     }
@@ -1808,6 +1767,7 @@ def confirm(request, action=None):
         r['action'] = action
     return r
 
+
 class OpenIdConsumer(Consumer):
     on_complete_url = '/openid/complete/'
     trust_root = 'http://*.' + settings.BASE_DOMAIN_NAME
@@ -1824,21 +1784,20 @@ class OpenIdConsumer(Consumer):
             if form.is_valid():
                 data = form.cleaned_data
                 try:
-                    user = User.objects.authenticate(
-                        username=data['username'],
-                        password=data['password'])
-                except User.DoesNotExist:
-                    failed = True
-                    user = None
+                    user = auth.authenticate(username=data['username'],
+                                             password=data['password'])
                 except UserBanned:
                     failed = banned = True
                     user = None
+
+                if user is None:
+                    failed = True
 
                 if user is not None:
                     if user.is_active:
                         # username matches password and user is active
                         messages.success(request, _(u'You have successfully logged in.'))
-                        user.login(request)
+                        auth.login(request, user)
                         openid = request.session.pop('openid')
                         if not UserData.objects.filter(key='openid',
                                                        value=openid).count():
@@ -1875,7 +1834,7 @@ class OpenIdConsumer(Consumer):
                     value=openid_response.identity_url).user
             if user.is_active:
                 messages.success(request, _(u'You have successfully logged in.'))
-                user.login(request)
+                auth.login(request, user)
             else:
                 messages.error(request, _(u'This user is not activated'))
         except UserData.DoesNotExist:

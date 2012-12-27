@@ -108,6 +108,7 @@ def get_forum_privileges(user, forum):
 
 
 def _get_privilege_map(user, forum_ids):
+    # circular imports
     from inyoka.forum.models import Privilege, Forum
     group_ids = user.groups.values_list('id', flat=True)
 

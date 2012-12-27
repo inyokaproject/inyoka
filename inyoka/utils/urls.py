@@ -108,36 +108,10 @@ def is_external_target(location):
     return _schema_re.match(location) is not None
 
 
-def get_query_string(url):
-    """Return the query string of a URL"""
-    return urlparse(url)[4]
-
-
-def get_path_info(url, charset='utf-8'):
-    """Return the path info of a URL."""
-    return urlparse(url)[2].decode(charset, 'utf-8', 'ignore')
-
-
-def get_server_name(url, charset='utf-8'):
-    """Return the server name for a URL."""
-    return urlparse(url)[1].decode(charset, 'utf-8', 'ignore')
-
-
-def clean_openid_url(url):
-    """
-    Normalizes according to (only URLs though, not XRI):
-    http://openid.net/specs/openid-authentication-2_0.html#normalization_example
-    """
-    parts = urlparse(url)
-    if parts.path == '':
-        return url + '/'
-    return url
-
-
-from inyoka.utils.http import TemplateResponse
-
-
 def global_not_found(request, err_message=None):
     return TemplateResponse('errors/404.html', {
         'err_message': err_message,
     }, 404)
+
+
+from inyoka.utils.http import TemplateResponse

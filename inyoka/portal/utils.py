@@ -8,13 +8,13 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import json
 import calendar
 from datetime import date, time
 
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.db.models import Q
-from django.utils import simplejson
 from django.utils.http import urlquote_plus
 
 from inyoka.utils.urls import href
@@ -33,7 +33,7 @@ def check_login(message=None):
     def _wrapper(func):
         def decorator(*args, **kwargs):
             req = args[0]
-            if req.user.is_authenticated:
+            if req.user.is_authenticated():
                 return func(*args, **kwargs)
             if message is not None:
                 messages.info(req, message)
@@ -68,7 +68,7 @@ def simple_check_login(f):
     """
     def decorator(*args, **kwargs):
         req = args[0]
-        if req.user.is_authenticated:
+        if req.user.is_authenticated():
             return f(*args, **kwargs)
         args = {'next': 'http://%s%s' % (req.get_host(), req.path)}
         return HttpResponseRedirect(href('portal', 'login', **args))
@@ -196,15 +196,14 @@ class UbuntuVersion(object):
         return s[0] > o[0] or s[0] == o[0] and s[1] > o[1]
 
     def as_json(self):
-        json = {
+        data = {
                 'number': self.number,
                 'name': self.name,
                 'lts': self.lts,
                 'acitve': self.active,
                 'current': self.current,
-                'dev': self.dev,
-            }
-        return simplejson.dumps(json)
+                'dev': self.dev}
+        return json.dumps(data)
 
 
 class UbuntuVersionList(set):
@@ -214,12 +213,12 @@ class UbuntuVersionList(set):
     should be done by :py:var:`UBUNTU_VERSIONS`.
     """
 
-    def __init__(self, json=u''):
+    def __init__(self, data=u''):
         super(set, self).__init__()
         #: we need that try-except block to avoid failing `./manage syncdb`
         try:
-            value = json or storage['distri_versions']
-            jsonobjs = simplejson.loads(value)
+            value = data or storage['distri_versions']
+            jsonobjs = json.loads(value)
             for obj in jsonobjs:
                 version = UbuntuVersion(**obj)
                 self.add(version)

@@ -29,9 +29,6 @@ from inyoka.utils.timer import StopWatch
 from inyoka.utils.logger import logger
 
 
-re_htmlmime = re.compile(r'^text/x?html')
-
-
 class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
     """Hook in as first middleware for common tasks."""
 
@@ -64,16 +61,12 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
         response = CommonMiddleware.process_response(self, request, response)
 
         # update the cache control
-        if hasattr(request, 'user') and request.user.is_authenticated \
+        if hasattr(request, 'user') and request.user.is_authenticated() \
            or len(messages.get_messages(request)):
             response['Cache-Control'] = 'no-cache'
 
         path = request.path
-        exclude = (any(x in path for x in ('.js', '.css'))
-                   or '__service__' in request.GET
-                   or 'Content-Disposition' in response
-                   or 'html' in response['Content-Type'])
-        if settings.DEBUG and not exclude:
+        if path.endswith('.less') and settings.DEBUG:
             response['Access-Control-Allow-Origin'] = '*'
 
         # warn of slow requests
@@ -81,7 +74,6 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
             logger.warning(u'Slow Request', extra={
                 'request': request, 'url': request.build_absolute_uri()
             })
-
 
         local_manager.cleanup()
 

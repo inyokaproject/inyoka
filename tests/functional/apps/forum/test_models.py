@@ -29,6 +29,11 @@ class TestForumModel(TestCase):
         self.forum = Forum(name='This rocks damnit', parent=self.parent2)
         self.forum.save()
 
+        request_cache.clear()
+
+    def tearDown(self):
+        request_cache.clear()
+
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
 
@@ -79,6 +84,7 @@ class TestForumModel(TestCase):
                'forum/forums/this-is-a-second-test': self.parent2,
                'forum/forums/this-rocks-damnit': self.forum}
         cache.delete_many(map.keys())
+        request_cache.delete('forum/slugs')
         self.assertEqual(Forum.objects.get_all_forums_cached(), map)
         self.assertEqual(cache.get('forum/forums/this-is-a-test'), self.parent1)
         new_forum = Forum(name='yeha')
@@ -204,6 +210,7 @@ class TestPostSplit(TestCase):
         post_ids = [p.id for k,p in self.t2_posts.items()] + \
                    [p.id for k,p in self.t1_posts.items()]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
+
 
 class TestPostMove(TestCase):
 

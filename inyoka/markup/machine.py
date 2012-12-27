@@ -17,9 +17,6 @@ from cPickle import loads, dumps, HIGHEST_PROTOCOL
 from inyoka.utils import get_request_context
 
 
-_whitespace_re = re.compile('\s+')
-
-
 class NodeCompiler(object):
     """
     MixIn class for node instruction compiling.  Most nodes mix this class in

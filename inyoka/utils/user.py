@@ -13,6 +13,7 @@
 import re
 from hashlib import md5, sha1
 from django.conf import settings
+from django.contrib.auth import hashers
 
 
 _username_re = re.compile(ur'^[@\-\.a-z0-9 öäüß]{1,30}$', re.I | re.U)
@@ -67,29 +68,5 @@ def check_activation_key(user, key):
     return key == gen_activation_key(user)
 
 
-def get_hexdigest(salt, raw_password):
-    """
-    Returns a string of the hexdigest of the given plaintext password and salt
-    using the sha1 algorithm.
-    """
-    if isinstance(raw_password, unicode):
-        raw_password = raw_password.encode('utf-8')
-    return sha1(str(salt) + raw_password).hexdigest()
-
-
-def check_password(raw_password, enc_password, convert_user=None):
-    """
-    Returns a boolean of whether the raw_password was correct.  Handles
-    encryption formats behind the scenes.
-    """
-    if isinstance(raw_password, unicode):
-        raw_password = raw_password.encode('utf-8')
-    salt, hsh = enc_password.split('$')
-    # compatibility with old md5 passwords
-    if salt == 'md5':
-        result = hsh == md5(raw_password).hexdigest()
-        if result and convert_user and convert_user.is_authenticated:
-            convert_user.set_password(raw_password)
-            convert_user.save()
-        return result
-    return hsh == get_hexdigest(salt, raw_password)
+class UnsaltedMD5PasswordHasher(hashers.UnsaltedMD5PasswordHasher):
+    algorithm = 'md5'

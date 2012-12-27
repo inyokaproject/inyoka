@@ -1,10 +1,11 @@
 # encoding: utf-8
+import json
 import cPickle
 import datetime
+
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
-from django.utils import simplejson
 from django.utils.encoding import smart_str
 
 class Migration(DataMigration):
@@ -16,14 +17,14 @@ class Migration(DataMigration):
                 settings = cPickle.loads(smart_str(user._settings))
                 if 'hidden_forum_categories' in settings:
                     settings['hidden_forum_categories'] = list(settings['hidden_forum_categories'])
-                user.settings = simplejson.dumps(settings)
+                user.settings = json.dumps(settings)
                 user.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."
         if not db.dry_run:
             for user in orm.User.objects.iterator():
-                user._settings = cPickle.dumps(simplejson.loads(user.settings))
+                user._settings = cPickle.dumps(json.loads(user.settings))
                 user.save()
 
     models = {

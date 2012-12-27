@@ -26,7 +26,6 @@
     MySQL must support InnoDB or any other transaction engine like falcon
     (untested though).  For incoming HTML data that is converted to XHTML
     we also need html5lib.
-    To let the inyoka services run (required) you need also simplejson.
 
     We're using the recent stable django releases.
 

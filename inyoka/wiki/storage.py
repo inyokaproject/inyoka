@@ -146,24 +146,6 @@ class DictStorage(BaseStorage):
         return result
 
 
-class SetStorage(BaseStorage):
-    """
-    Stores a set.
-    """
-
-    def extract_data(self, text):
-        for line in text.splitlines():
-            line = line.strip()
-            if line:
-                yield line
-
-    def combine_data(self, objects):
-        result = set()
-        for obj in objects:
-            result.update(obj)
-        return result
-
-
 class SmileyMap(DictStorage):
     """
     Stores smiley code to image mappings.

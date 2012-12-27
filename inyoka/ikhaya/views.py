@@ -150,7 +150,7 @@ def detail(request, year, month, day, slug):
             return AccessDeniedResponse()
         messages.info(request, _(u'This article is not visible for regular users.'))
 
-    if request.method == 'POST' and (not article.comments_enabled or not request.user.is_authenticated):
+    if request.method == 'POST' and (not article.comments_enabled or not request.user.is_authenticated()):
         return AccessDeniedResponse()
 
     # clear notification status
@@ -194,8 +194,8 @@ def detail(request, year, month, day, slug):
         'comments': article.comment_set.select_related('author'),
         'form': form,
         'preview': preview,
-        'can_post_comment': request.user.is_authenticated,
-        'can_subscribe': request.user.is_authenticated,
+        'can_post_comment': request.user.is_authenticated(),
+        'can_subscribe': request.user.is_authenticated(),
         'can_admin_comment': request.user.can('comment_edit'),
         'can_edit_article': request.user.can('article_edit'),
         'is_subscribed': subscribed
