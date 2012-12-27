@@ -9,8 +9,6 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import random
-import string
 from datetime import datetime
 from os import path
 from PIL import Image
@@ -26,7 +24,7 @@ from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
-from inyoka.utils import encode_confirm_data, classproperty
+from inyoka.utils import encode_confirm_data
 from inyoka.utils.database import update_model, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar

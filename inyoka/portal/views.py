@@ -18,7 +18,6 @@ from datetime import datetime, date, timedelta
 
 from django.conf import settings
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.contrib import messages
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.db.models import Q
@@ -44,8 +43,7 @@ from inyoka.utils.dates import DEFAULT_TIMEZONE, \
     get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, does_not_exist_is_404, \
     TemplateResponse
-from inyoka.utils.sessions import get_sessions, make_permanent, \
-    get_user_record
+from inyoka.utils.sessions import get_sessions, get_user_record
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.pagination import Pagination

@@ -22,7 +22,6 @@ from django.forms import HiddenInput
 from django.db.models import Count
 from django.db.models.fields.files import ImageFieldFile
 from django.conf import settings
-from django.core.validators import EMPTY_VALUES
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy, ugettext as _
 
@@ -36,7 +35,7 @@ from inyoka.forum.models import Forum
 from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
-from inyoka.utils.urls import href, is_safe_domain
+from inyoka.utils.urls import href
 from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
     HiddenCaptchaField, EmailField, validate_signature
 from inyoka.utils.local import current_request

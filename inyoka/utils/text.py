@@ -9,7 +9,6 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-import os
 import random
 import posixpath
 import unicodedata
