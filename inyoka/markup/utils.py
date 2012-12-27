@@ -77,21 +77,7 @@ def filter_style(css):
     return u'; '.join(clean)
 
 
-def dump_argstring(argdef, sep=u', '):
-    """Create an argument string from an argdef list."""
-    result = []
-    for is_kwarg, is_default, name, typedef, value in argdef:
-        if is_default:
-            continue
-        if typedef is bool:
-            value = value and 'ja' or 'nein'
-        result.append((is_kwarg and name + '=' or '') + value)
-    return sep.join(result)
-
-
 class ArgumentCollector(type):
-    """
-    """
 
     def __new__(cls, name, bases, d):
         no_parser = d.get('has_argument_parser')
