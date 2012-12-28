@@ -31,6 +31,5 @@ def register_special_modules():
                     _ = str(exc)
                     if _ != 'No module named %s' % path:
                         raise
-                    pass
 
 register_special_modules()
