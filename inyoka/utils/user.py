@@ -11,7 +11,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-from hashlib import md5, sha1
+import hashlib
 from django.conf import settings
 from django.contrib.auth import hashers
 
@@ -46,7 +46,7 @@ def gen_activation_key(user):
             An user object from the user the key
             will be generated for.
     """
-    return sha1(('%d%s%s%s' % (
+    return hashlib.sha1(('%d%s%s%s' % (
         user.id, user.username,
         settings.SECRET_KEY,
         user.email,

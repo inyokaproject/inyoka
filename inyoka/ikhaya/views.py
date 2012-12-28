@@ -12,6 +12,7 @@ import pytz
 from datetime import datetime, date, time as dt_time
 
 from django.conf import settings
+from django.http import HttpResponseRedirect, Http404
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
@@ -24,7 +25,7 @@ from django.utils.html import escape
 from inyoka.utils import ctype
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, AccessDeniedResponse, \
-     HttpResponseRedirect, PageNotFound, does_not_exist_is_404
+    does_not_exist_is_404
 from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.pagination import Pagination
 from inyoka.utils import generic
@@ -142,7 +143,7 @@ def detail(request, year, month, day, slug):
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
     except IndexError:
-        raise PageNotFound()
+        raise Http404()
     preview = None
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.can('article_read'):
@@ -211,7 +212,7 @@ def article_delete(request, year, month, day, slug):
         article = Article.objects.get(pub_date=date(int(year), int(month),
             int(day)), slug=slug)
     except IndexError:
-        raise PageNotFound()
+        raise Http404()
     if request.method == 'POST':
         if 'unpublish' in request.POST:
             article.public = False
@@ -259,7 +260,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             article = Article.objects.get(pub_date=date(int(year), int(month),
                 int(day)), slug=slug)
         except IndexError:
-            raise PageNotFound()
+            raise Http404()
         locked = article.lock(request)
         if locked:
             messages.error(request,
@@ -333,7 +334,7 @@ def article_subscribe(request, year, month, day, slug):
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
     except IndexError:
-        raise PageNotFound()
+        raise Http404()
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.can('article_read'):
             return AccessDeniedResponse()
@@ -357,7 +358,7 @@ def article_unsubscribe(request, year, month, day, slug):
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
     except IndexError:
-        raise PageNotFound()
+        raise Http404()
     try:
         subscription = Subscription.objects.get_for_user(request.user, article)
     except Subscription.DoesNotExist:
@@ -381,7 +382,7 @@ def report_new(request, year, month, day, slug):
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
     except IndexError:
-        raise PageNotFound()
+        raise Http404()
 
     if request.method == 'POST':
         form = EditCommentForm(request.POST)
@@ -458,7 +459,7 @@ def reports(request, year, month, day, slug):
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
     except IndexError:
-        raise PageNotFound()
+        raise Http404()
     return {
         'article': article,
         'reports': article.report_set.select_related(),
@@ -548,7 +549,7 @@ def suggest_assign_to(request, suggestion, username):
         try:
             suggestion.owner = User.objects.get(username)
         except User.DoesNotExist:
-            raise PageNotFound
+            raise Http404
         suggestion.save()
         messages.ssuccess(request, _(u'The suggestion was assigned to “%(user)s”.')
                                     % {'user': username})

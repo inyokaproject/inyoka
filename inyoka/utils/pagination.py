@@ -19,7 +19,7 @@
         >>> # the generated HTML code for the pagination
         >>> html = pagination.generate()
 
-    If the page is out of range, it throws a PageNotFound exception.
+    If the page is out of range, it throws a Http404 exception.
     You can pass the optional argument `total` if you already know how
     many entries match your query. If you don't, `Pagination` will use
     a database query to find it out.
@@ -36,13 +36,13 @@
 from __future__ import division
 import math
 
+from django.http import Http404, HttpResponseRedirect
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
 
 from django_mobile import get_flavour
 
-from inyoka.utils.http import PageNotFound, HttpResponseRedirect
 from inyoka.utils.urls import urlencode
 
 
@@ -69,7 +69,7 @@ class Pagination(object):
             self.max_pages = max(0, self.total - 1) // self.per_page + 1
 
         if self.page > self.max_pages:
-            raise PageNotFound()
+            raise Http404()
 
         if link is None:
             link = request.path
@@ -126,9 +126,8 @@ class Pagination(object):
         # This unicode/utf-8 conversion exists because of some fancy hacker-bots
         # that try to fuzz the pagination with some extremly invalid unicode data.
         # Catching those here fixes vulerabilty of the whole application.
-        _get_v = lambda v: force_unicode(v).encode('utf-8') if isinstance(v, basestring) else v
-        params = {force_unicode(k).encode('utf-8'): _get_v(v)
-                  for k, v in self.parameters.iteritems()}
+        enc = lambda v: force_unicode(v).encode('utf-8') if isinstance(v, basestring) else v
+        params = {enc(k): enc(v) for k, v in self.parameters.iteritems()}
 
         half_threshold = max(math.ceil(threshold / 2.0), 2)
         for num in xrange(1, pages + 1):
@@ -143,8 +142,8 @@ class Pagination(object):
                 else:
                     template = normal
                 add(template % {
-                    'href':     escape(link),
-                    'page':     num,
+                    'href': escape(link),
+                    'page': num,
                 })
             elif not was_ellipsis:
                 was_ellipsis = True
@@ -177,25 +176,32 @@ class Pagination(object):
                u'</div></div>' % (class_, u''.join(result))
 
     def generate_mobile(self):
-        select_options = ''.join(
-            ['<option{0}>{1}</option>'.format(
-                ' selected="selected"' if i == self.page else '', i
-            ) for i in range(1, self.max_pages+1)]
-        )
-        return u"""
-            <div class="pagination">
-                <a href="{prev_link}" class="prev">{prev_label}</a>
-                <span class="active">{current_label} <select>{select_options}</select></span>
-                <a href="{next_link}" class="next">{next_label}</a>
-                <span style="display: none;" class="link_base">{link_base}</span>
-            </div>
-        """.format(
+        # This unicode/utf-8 conversion exists because of some fancy hacker-bots
+        # that try to fuzz the pagination with some extremly invalid unicode data.
+        # Catching those here fixes vulerabilty of the whole application.
+        _get_v = lambda v: force_unicode(v).encode('utf-8') if isinstance(v, basestring) else v
+
+        pages = 1
+        if self.total:
+            pages = max(0, self.total - 1) // self.per_page + 1
+
+        params = {force_unicode(k).encode('utf-8'): _get_v(v)
+                  for k, v in self.parameters.iteritems()}
+        s = u''.join([
+            u'<div class="pagination">',
+            u'<a href="{prev_link}" class="prev">{prev_label}</a>' if self.page > 1 else '',
+            u'<span class="active">{current_label} {page}</span>',
+            u'<a href="{next_link}" class="next">{next_label}</a>' if self.page < pages else '',
+            u'<span style="display: none;" class="link_base">{link_base}</span>',
+            u'</div>',
+        ])
+        return s.format(
             current_label=_(u'Page'),
             goto_label=_(u'Go to'),
-            link_base=self.generate_link(1, None),
+            link_base=self.generate_link(1, params),
             next_label=_(u'Next »'),
-            next_link=self.generate_link(min(self.page + 1, self.max_pages), self.parameters),
+            next_link=self.generate_link(min(self.page + 1, self.max_pages), params),
             prev_label=_(u'« Previous'),
-            prev_link=self.generate_link(max(self.page - 1, 1), self.parameters),
-            select_options=select_options
+            prev_link=self.generate_link(max(self.page - 1, 1), params),
+            page=self.page
         )

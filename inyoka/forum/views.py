@@ -19,8 +19,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Q, F
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.contenttypes.models import ContentType
+from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.utils.text import truncate_html_words
 
@@ -29,7 +28,7 @@ from inyoka.markup.parsertools import flatten_iterator
 from inyoka.utils.cache import request_cache
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.text import normalize_pagename
-from inyoka.utils.http import templated, PageNotFound, HttpResponseRedirect, AccessDeniedResponse, \
+from inyoka.utils.http import templated, AccessDeniedResponse, \
     does_not_exist_is_404
 from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
@@ -74,7 +73,7 @@ def index(request, category=None):
     if category:
         category = Forum.objects.get_cached(category)
         if not category or category.parent is not None:
-            raise PageNotFound()
+            raise Http404()
         category = category
         categories = [category]
 
@@ -117,10 +116,10 @@ def forum(request, slug, page=1):
     Return a single forum to show a topic list.
     """
     forum = Forum.objects.get_cached(slug)
-    # if the forum is a category we raise PageNotFound. Categories have
+    # if the forum is a category we raise Http404. Categories have
     # their own url at /category.
     if not forum or forum.parent is None:
-        raise PageNotFound()
+        raise Http404()
 
     privs = get_privileges(request.user, [forum] + forum.children)
     if not check_privilege(privs[forum.pk], 'read'):
@@ -436,7 +435,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     elif forum_slug:
         forum = Forum.objects.get_cached(slug=forum_slug)
         if not forum or not forum.parent_id:
-            raise PageNotFound()
+            raise Http404()
         newtopic = firstpost = True
     elif post_id:
         post = Post.objects.get(id=int(post_id))
@@ -920,7 +919,7 @@ def post(request, post_id):
         url = Post.url_for_post(int(post_id),
             paramstr=request.GET and request.GET.urlencode())
     except (Topic.DoesNotExist, Post.DoesNotExist):
-        raise PageNotFound()
+        raise Http404()
     return HttpResponseRedirect(url)
 
 
@@ -971,7 +970,7 @@ def last_post(request, topic_slug):
         url = Post.url_for_post(last, paramstr=params)
         return HttpResponseRedirect(url)
     except (Post.DoesNotExist, Topic.DoesNotExist):
-        raise PageNotFound()
+        raise Http404()
 
 @templated('forum/movetopic.html')
 def movetopic(request, topic_slug):
@@ -1310,7 +1309,7 @@ def topic_feed(request, slug=None, mode='short', count=10):
 
     topic = Topic.objects.get(slug=slug)
     if topic.hidden:
-        raise PageNotFound()
+        raise Http404()
 
     if not have_privilege(anonymous, topic.cached_forum(), CAN_READ):
         return abort_access_denied(request)
@@ -1447,7 +1446,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     if action == 'last':
         hours = int(hours)
         if hours > 24:
-            raise PageNotFound()
+            raise Http404()
         topics = topics.filter(posts__pub_date__gt=datetime.utcnow() - timedelta(hours=hours))
         title = _(u'Posts of the last %(n)d hours') % {'n': hours}
         url = href('forum', 'last%d' % hours, forum)
@@ -1539,7 +1538,7 @@ def welcome(request, slug, path=None):
     """
     forum = Forum.objects.get(slug=slug)
     if not forum.welcome_message:
-        raise PageNotFound()
+        raise Http404()
     goto_url = path or url_for(forum)
     if request.method == 'POST':
         accepted = request.POST.get('accept', False)
@@ -1595,7 +1594,7 @@ def forum_edit(request, slug=None, parent=None):
     if slug:
         forum = Forum.objects.get_cached(slug)
         if forum is None:
-            raise PageNotFound()
+            raise Http404()
 
     if request.method == 'POST':
         form = EditForumForm(request.POST, forum=forum)

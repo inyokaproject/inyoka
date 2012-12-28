@@ -66,8 +66,9 @@ def rollback(tag):
 def deploy_static():
     """Deploy static files"""
     compile_static()
+    local('./manage.py collectstatic')
     with settings(target_dir=STATIC_DIRECTORY):
-        rsync_project(env.target_dir, 'inyoka/static')
+        rsync_project(os.path.join(env.target_dir, 'static/'), 'inyoka/static-collected/')
 
 
 def pip():

@@ -208,6 +208,7 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'social_auth',
+    'inyoka.markup',
     'raven.contrib.django',
     'south',
     # *must* be installed after south

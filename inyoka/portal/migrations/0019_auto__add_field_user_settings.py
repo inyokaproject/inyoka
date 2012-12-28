@@ -8,12 +8,12 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding field 'User.settings'
         db.add_column('portal_user', 'settings', self.gf('django.db.models.TextField')(default={}), keep_default=False)
 
     def backwards(self, orm):
-        
+
         # Deleting field 'User.settings'
         db.delete_column('portal_user', 'settings')
 

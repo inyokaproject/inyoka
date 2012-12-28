@@ -14,8 +14,8 @@ from django.conf import settings
 
 urlpatterns = patterns('',
     url(r'^(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT,
-        }),
+        'document_root': settings.MEDIA_ROOT,
+    }),
 )
 
 

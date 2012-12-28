@@ -9,7 +9,6 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-import os
 import random
 import posixpath
 import unicodedata
@@ -18,6 +17,7 @@ from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
 from django.utils.translation import get_language
 from django.utils.translation import pgettext, ugettext as _
+
 
 _str_num_re = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 _path_crop = re.compile(r'^(\.\.?/)+')
@@ -183,9 +183,8 @@ def human_number(value, gender=None):
         return _("twelve")
     lang = get_language()
     if value == 1 and gender and 'en' not in lang.lower():
-        return {
-                'masculine':    pgettext('masculine', u'one'),
-                'feminine':     pgettext('feminine', u'one'),
-                'neuter':       pgettext('neuter', u'one')
-               }.get(gender, _(u'one'))
+        return {'masculine': pgettext('masculine', u'one'),
+                'feminine': pgettext('feminine', u'one'),
+                'neuter': pgettext('neuter', u'one')
+        }.get(gender, _(u'one'))
     return apnumber(value)

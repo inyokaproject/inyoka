@@ -16,8 +16,8 @@ import time
 from PIL import Image
 from datetime import datetime, date, timedelta
 
-from django import forms
 from django.conf import settings
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.db.models import Q
@@ -40,11 +40,9 @@ from inyoka.utils import decode_confirm_data, generic
 from inyoka.utils.text import get_random_password, normalize_pagename
 from inyoka.utils.dates import DEFAULT_TIMEZONE, \
     get_user_timezone, find_best_timezone
-from inyoka.utils.http import templated, HttpResponse, \
-     PageNotFound, does_not_exist_is_404, HttpResponseRedirect, \
-     TemplateResponse
-from inyoka.utils.sessions import get_sessions, make_permanent, \
-    get_user_record
+from inyoka.utils.http import templated, does_not_exist_is_404, \
+    TemplateResponse
+from inyoka.utils.sessions import get_sessions, get_user_record
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.pagination import Pagination
@@ -73,8 +71,7 @@ from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
      PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
     deactivate_user, reactivate_user, set_new_email, \
-    send_new_email_confirmation, reset_email, send_activation_mail, \
-    PERMISSION_NAMES
+    reset_email, send_activation_mail, PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
      require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
 from inyoka.portal.filters import SubscriptionFilter
@@ -253,7 +250,7 @@ def activate(request, action='', username='', activation_key=''):
         return HttpResponseRedirect(href('portal'))
 
     if not action in ('delete', 'activate'):
-        raise PageNotFound()
+        raise Http404()
 
     if action == 'delete':
         if check_activation_key(user, activation_key):
@@ -471,7 +468,7 @@ def profile(request, username):
         if username != user.urlsafe_username:
             return HttpResponseRedirect(url_for(user))
     except ValueError:
-        raise PageNotFound()
+        raise Http404()
 
     try:
         key = '%s/%s' % (settings.WIKI_USER_BASE,
@@ -506,7 +503,7 @@ def user_mail(request, username):
         else:
             user = User.objects.get(username)
     except User.DoesNotExist:
-        raise PageNotFound
+        raise Http404
     if request.method == 'POST':
         form = UserMailForm(request.POST)
         if form.is_valid():
@@ -810,7 +807,7 @@ def get_user(username):
         else:
             user = User.objects.get(username)
     except User.DoesNotExist:
-        raise PageNotFound
+        raise Http404
     return user
 
 
@@ -1189,7 +1186,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                                                  PRIVMSG_FOLDERS[entry.folder][1],
                                                  entry.id))
             except KeyError:
-                raise PageNotFound
+                raise Http404
 
     entries = PrivateMessageEntry.objects.filter(
         user=request.user,
@@ -1510,7 +1507,7 @@ def group(request, name, page=1):
     """Shows the informations about the group named `name`."""
     group = Group.objects.get(name__iexact=name)
     if not (group.is_public or request.user.can('group_edit') or request.user.can('user_edit')):
-        raise PageNotFound
+        raise Http404
     users = group.user_set.all()
 
     table = Sortable(users, request.GET, 'id',
@@ -1706,7 +1703,7 @@ def calendar_month(request, year, month):
     year = int(year)
     month = int(month)
     if year < 1900 or month < 1 or month > 12:
-        raise PageNotFound
+        raise Http404
     days = calendar_entries_for_month(year, month)
     days = [(date(year, month, day), events) for day, events in days.items()]
 
@@ -1738,7 +1735,7 @@ def calendar_detail(request, slug):
     try:
         event = Event.objects.get(slug=slug)
     except Event.DoesNotExist:
-        raise PageNotFound()
+        raise Http404()
     return {
         'google_link': google_calendarize(event),
         'event': event,
@@ -1842,7 +1839,7 @@ def static_page(request, page):
     try:
         q = StaticPage.objects.get(key=page)
     except StaticPage.DoesNotExist:
-        raise PageNotFound
+        raise Http404
     return {
         'title': q.title,
         'content': q.rendered_content,

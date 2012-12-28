@@ -21,10 +21,6 @@ $(document).ready(function () {
       $('<img />').attr('src', $STATIC_URL + this).appendTo(container);
     });
   })();
-  // Display the countdown
-  if (typeof $COUNTDOWN_ACTIVE == "boolean" && $COUNTDOWN_ACTIVE) {
-    $("#counter > a > img").attr('src', $COUNTDOWN_IMAGE_URL);
-  }
 
   // add a hide message link to all flash messages
   $.each($('div.message'), function (i, elm) {
@@ -76,19 +72,19 @@ $(document).ready(function () {
       toc.find('ol').addClass('originaltoc');
 
       var ol = function(level) {
-        return $('<ol class="' + style + ' toc-item-depth-' + level + '"></ol>')
+        return $('<ol class="toc-item-depth-' + level + '"></ol>');
       };
       var li = $('<li></li>');
       var li_no_number = $('<li style="list-style: none"></li>');
       // will finally hold the whole tocTree
-      var tocTree = new Array();
+      var tocTree = [];
       tocTree.push(ol(1));
       var last_level = 1;
       // Iterate over all <a> tags in headlines
       $('.headerlink').each(function(index) {
-        level_class = $(this).parent().parent().attr("class");
+        var level_class = $(this).parent().parent().attr("class");
         var match = level_class.match(/^section_(\d+)$/);
-        if (match == null) { // not a section_* class
+        if (match === null) { // not a section_* class
           return true; // continue
         }
         var level = parseInt(match[1], 10);
@@ -96,7 +92,7 @@ $(document).ready(function () {
         if (level > last_level) {
           // if the headline is indented compared to the previous one
           // we need to check for the difference between those levels
-          var limit = level - last_level;
+          limit = level - last_level;
           for (var i = 1; i < limit; i++) {
             tocTree.push(ol(last_level + i));
             tocTree[tocTree.length - 1].append(li_no_number.clone());
@@ -105,7 +101,7 @@ $(document).ready(function () {
         } else if (level < last_level) {
           // we are unindenting the headline level. All lists have to be
           // popped from the stack up to the current level
-          var limit = last_level - level;
+          limit = last_level - level;
           for (var i = 0; i < limit; i++) {
             var node = tocTree.pop();
             var children = tocTree[tocTree.length - 1].children();
@@ -119,7 +115,8 @@ $(document).ready(function () {
 
         var ml = 42 - (level - 1) * 2; // max text length of toc entry
         var link = $(this).parent().attr("id");
-        var linkText = $(this).parent().clone().children().remove().end().text().substr(0, ml);
+        var linkText = $(this).parent().text();
+        linkText = linkText.substr(0, linkText.length-1).substr(0, ml);
         tocTree[tocTree.length - 1].append(li.clone().append($('<a href="#' + link + '" class="crosslink">' + linkText + '</a>')));
 
         last_level = level;
@@ -127,8 +124,9 @@ $(document).ready(function () {
       var limit = last_level - 1;
       for (var i = 0; i < limit; i++) {
         var node = tocTree.pop();
-        if (tocTree[tocTree.length - 1].children().length > 0) {
-          $(':last-child', tocTree[tocTree.length - 1]).append(node);
+        var children = tocTree[tocTree.length - 1].children();
+        if (children.length > 0) {
+          children.last().append(node);
         } else {
           tocTree[tocTree.length - 1].append(li_no_number.clone().append(node));
         }
@@ -147,7 +145,7 @@ $(document).ready(function () {
           }
         );
         var classes = $(this).attr('class').split(/\s+/);
-        if (parseInt(classes[classes.length - 1].slice(15)) >= tocDepth) {
+        if (parseInt(classes[classes.length - 1].slice(15), 10) >= tocDepth) {
           f.click();
         }
       });
@@ -273,7 +271,7 @@ $(document).ready(function () {
     }
   });
 
-  $('div.code').add('pre').each(function () {
+  $('div.code').add('pre.notranslate').each(function () {
     if (this.clientHeight < this.scrollHeight) {
       $(this).before('<div class="codeblock_resizer">vergrößern</div>')
              .css('height', '15em').css('max-height', 'none')

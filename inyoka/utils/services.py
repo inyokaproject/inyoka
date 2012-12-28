@@ -11,7 +11,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from itertools import imap
-from inyoka.utils.http import HttpResponse
+from django.http import Http404, HttpResponseNotAllowed
 from inyoka.utils.decorators import patch_wrapper
 
 
@@ -25,13 +25,13 @@ class SimpleDispatcher(object):
 
     def register(self, name=None):
         def decorator(f):
-            name = name or f.__name__
-            self.methods[name] = f
+            service_name = name or f.__name__
+            self.methods[service_name] = f
         return decorator
 
     def __call__(self, request, name):
         if name not in self.methods:
-            return HttpResponse('Service not found.', status=404)
+            return Http404('Service not found.')
         return self.methods[name](request)
 
 
@@ -40,8 +40,7 @@ def permit_methods(methods=('GET',)):
     def decorate(func):
         def oncall(request, *args, **kwargs):
             if not request.method.lower() in imap(str.lower, methods):
-                return HttpResponse('Method %s not allowed' % request.method,
-                                    status=400)
+                return HttpResponseNotAllowed(methods)
             return func(request, *args, **kwargs)
         return patch_wrapper(oncall, func)
     return decorate

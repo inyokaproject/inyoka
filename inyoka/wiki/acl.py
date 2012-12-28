@@ -25,8 +25,9 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.http import HttpResponseRedirect
 from inyoka.utils.decorators import patch_wrapper
-from inyoka.utils.http import AccessDeniedResponse, HttpResponseRedirect
+from inyoka.utils.http import AccessDeniedResponse
 from inyoka.wiki.storage import storage
 from inyoka.wiki.models import Page
 

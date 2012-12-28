@@ -14,11 +14,11 @@ from hashlib import md5
 from urlparse import urlparse
 
 from django.conf import settings
+from django.http import Http404
 from django.utils.dates import MONTHS, WEEKDAYS
 from inyoka.portal.user import User, Group
 from inyoka.ikhaya.models import Event
 from inyoka.utils.text import get_random_password
-from inyoka.utils.http import PageNotFound
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.captcha import Captcha
 from inyoka.utils.templating import render_template
@@ -80,11 +80,11 @@ def on_get_calendar_entry(request):
         try:
             slug = request.GET['slug']
         except KeyError:
-            raise PageNotFound
+            raise Http404()
     try:
         event = Event.objects.get(slug=slug)
     except Event.DoesNotExist:
-        raise PageNotFound
+        raise Http404()
 
     data = {
         'event': event,
