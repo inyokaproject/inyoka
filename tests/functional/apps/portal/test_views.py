@@ -3,10 +3,9 @@ from django.conf import settings
 from django.test import TestCase
 
 from django.utils.translation import ugettext as _
-from inyoka.portal.user import Group, User, PERMISSION_NAMES
+from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient
-from inyoka.utils.urls import href
 
 
 class TestViews(TestCase):
@@ -33,12 +32,11 @@ class TestViews(TestCase):
         postdata = {u'name': u'LOr3m'}
         response = self.client.post('/group/Lorem/edit/', postdata)
         self.assertFalse('<ul class="errorlist"><li>%s</li></ul>' % _(
-                u'The group name contains invalid chars') in \
-                    response.content.decode('utf-8'))
+            u'The group name contains invalid chars') in
+            response.content.decode('utf-8'))
 
         postdata = {u'name': u'£Ø®€m'}
         response = self.client.post('/group/LOr3m/edit/', postdata)
         self.assertTrue('<ul class="errorlist"><li>%s</li></ul>' % _(
-                u'The group name contains invalid chars') in \
-                    response.content.decode('utf-8'))
-
+            u'The group name contains invalid chars') in
+            response.content.decode('utf-8'))
