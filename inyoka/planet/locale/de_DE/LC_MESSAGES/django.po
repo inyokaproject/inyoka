@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-12-27 11:58+0100\n"
+"POT-Creation-Date: 2012-12-29 14:02+0100\n"
 "PO-Revision-Date: 2012-10-12 23:52+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -93,6 +93,10 @@ msgstr "Das Blog „%(title)s“ wurde vorgeschlagen."
 #, python-format
 msgid "%(sitename)s planet"
 msgstr "%(sitename)s Planet"
+
+#: inyoka/planet/views.py:139
+msgid "No title given"
+msgstr "Kein Titel vorhanden"
 
 #: inyoka/planet/views.py:155
 msgid "Canceled"

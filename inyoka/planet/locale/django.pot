@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-12-27 11:58+0100\n"
+"POT-Creation-Date: 2012-12-29 14:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,6 +89,10 @@ msgstr ""
 #: inyoka/planet/views.py:112
 #, python-format
 msgid "%(sitename)s planet"
+msgstr ""
+
+#: inyoka/planet/views.py:139
+msgid "No title given"
 msgstr ""
 
 #: inyoka/planet/views.py:155
