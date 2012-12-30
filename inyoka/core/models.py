@@ -1,4 +1,13 @@
 #-*- coding: utf-8 -*-
+"""
+    inyoka.core.models
+    ~~~~~~~~~~~~~~~~~~
+
+    This module provides autoloading a certain core functions.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
 from django.db.models import loading
 from django.utils.importlib import import_module
 
@@ -9,14 +18,14 @@ AUTOIMPORT_MODULES = ['search', 'macros', 'signals']
 def register_special_modules():
     """Import special modules for every application.
 
-    This enables to implement pluggable APIs where application
-    can register addons to some core functionality.
+    This enables to implement pluggable APIs where application can register
+    addons to some core functionality.
 
-    With this we are able to finally split application logic
-    from core functionality and cleanup some fancy circular imports.
+    With this we are able to finally split application logic from core
+    functionality and cleanup some fancy circular imports.
 
-    This truely adds some overhead for the initial startup time
-    of Inyoka but as Python caches imports the overhead is bearable.
+    This truely adds some overhead for the initial startup time of Inyoka but
+    as Python caches imports the overhead is bearable.
     """
     apps = loading.get_apps()
     for app in apps:
