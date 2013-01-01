@@ -142,3 +142,8 @@ def get_sessions(order_by='-last_change'):
 def make_permanent(request):
     """Make this session a permanent one."""
     request.session['_perm'] = True
+
+
+def is_permanent(request):
+    """Check if the session is permanent."""
+    return request.session.get('_perm')
