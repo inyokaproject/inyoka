@@ -19,8 +19,8 @@ from inyoka.planet.models import Blog
 class SuggestBlogForm(forms.Form):
     """Form to suggest a new blog url for the planet."""
     name = forms.CharField(label=ugettext_lazy(u'Name of the blog'))
-    url =  forms.URLField(label=ugettext_lazy(u'URL'))
-    feed_url =  forms.URLField(label=ugettext_lazy(u'Feed URL'), required=False)
+    url = forms.URLField(label=ugettext_lazy(u'URL'))
+    feed_url = forms.URLField(label=ugettext_lazy(u'Feed URL'), required=False)
     description = forms.CharField(label=ugettext_lazy(u'Description'),
         widget=forms.Textarea)
     mine = forms.BooleanField(label=ugettext_lazy(u'This is my own blog'),
@@ -28,7 +28,6 @@ class SuggestBlogForm(forms.Form):
     contact_email = forms.EmailField(
         label=ugettext_lazy(u'Email address of the blog author'),
         required=False)
-
 
 
 class EditBlogForm(forms.ModelForm):
@@ -43,10 +42,8 @@ class EditBlogForm(forms.ModelForm):
                   'user', 'icon')
 
     def _validate_url(self, url):
-        if self.cleaned_data.get('active', False):
-            validator = URLValidator(verify_exists=True)
-        else:
-            validator = URLValidator(verify_exists=False)
+        # Since Django 1.5 there is no `verify_exists` for the validator
+        validator = URLValidator()
         validator(url)
 
     def clean_blog_url(self):
