@@ -43,7 +43,7 @@ from inyoka.utils.dates import DEFAULT_TIMEZONE, \
     get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, does_not_exist_is_404, \
     TemplateResponse
-from inyoka.utils.sessions import get_sessions, get_user_record
+from inyoka.utils.sessions import get_sessions, get_user_record, make_permanent
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.pagination import Pagination
@@ -336,7 +336,7 @@ def login(request):
                 if user is not None:
                     if user.is_active:
                         if data['permanent']:
-                            request.session.set_expiry(None)
+                            make_permanent(request)
                         # username matches password and user is active
                         messages.success(request, _(u'You have successfully logged in.'))
                         auth.login(request, user)

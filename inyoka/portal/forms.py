@@ -202,18 +202,6 @@ class RegisterForm(forms.Form):
 
 
 class LostPasswordForm(auth_forms.PasswordResetForm):
-    def clean_email(self):  # Work around Django's check.
-        # FIXME: Check is_active and useable password.
-        email = self.cleaned_data['email']
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            raise forms.ValidationError(self.error_messages['unknown'])
-        if not user.has_usable_password() or not user.is_active:
-            raise forms.ValidationError(self.error_messages['unusable'])
-        self.users_cache = [user]  # For Django
-        return email
-
     def save(self, **opts):
         request = opts['request']
         messages.success(request, _(u'An email with further instructions was sent to you.'))
