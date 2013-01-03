@@ -1,15 +1,13 @@
 #-*- coding: utf-8 -*-
 from django.conf import settings
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from django.utils import translation
 from django.utils.translation import ugettext as _
 
-from inyoka.portal.user import Group, User, PERMISSION_NAMES
+from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient
-from inyoka.utils.urls import href
 
 
 class TestViews(TestCase):
@@ -30,20 +28,23 @@ class TestViews(TestCase):
         storage['team_icon_width'] = 80
 
         postdata = {u'name': u'Lorem'}
-        response = self.client.post('/group/new/', postdata)
-        self.assertEqual(response.status_code, 302)
+        with translation.override('en-us'):
+            response = self.client.post('/group/new/', postdata)
+            self.assertEqual(response.status_code, 302)
 
         postdata = {u'name': u'LOr3m'}
-        response = self.client.post('/group/Lorem/edit/', postdata)
-        self.assertFalse('<ul class="errorlist"><li>%s</li></ul>' % _(
-                u'The group name contains invalid chars') in \
-                    response.content.decode('utf-8'))
+        with translation.override('en-us'):
+            response = self.client.post('/group/Lorem/edit/', postdata)
+            self.assertNotIn('<ul class="errorlist"><li>%s</li></ul>'
+                % _(u'The group name contains invalid chars'),
+                response.content.decode('utf-8'))
 
         postdata = {u'name': u'£Ø®€m'}
-        response = self.client.post('/group/LOr3m/edit/', postdata)
-        self.assertTrue('<ul class="errorlist"><li>%s</li></ul>' % _(
-                u'The group name contains invalid chars') in \
-                    response.content.decode('utf-8'))
+        with translation.override('en-us'):
+            response = self.client.post('/group/LOr3m/edit/', postdata)
+            self.assertIn('<ul class="errorlist"><li>%s</li></ul>'
+                 % _(u'The group name contains invalid chars'),
+                response.content.decode('utf-8'))
 
 
 class TestAuthViews(TestCase):
@@ -57,19 +58,21 @@ class TestAuthViews(TestCase):
 
     def test_valid_login(self):
         postdata = {'username': 'user', 'password': 'user'}
-        response = self.client.post('/login/', postdata, follow=True)
-        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
-        self.assertInHTML('<div class="message success">%s</div>'
-                          % _(u'You have successfully logged in.'),
-                          response.content, count=1)
+        with translation.override('en-us'):
+            response = self.client.post('/login/', postdata, follow=True)
+            self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+            self.assertInHTML('<div class="message success">%s</div>'
+                              % _(u'You have successfully logged in.'),
+                              response.content, count=1)
 
-        self.assertTrue(response.client.session.get_expire_at_browser_close())
+            self.assertTrue(response.client.session \
+                            .get_expire_at_browser_close())
 
-        response = self.client.get('/login/', follow=True)
-        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
-        self.assertInHTML('<div class="message error">%s</div>'
-                          % _(u'You are already logged in.'),
-                          response.content, count=1)
+            response = self.client.get('/login/', follow=True)
+            self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+            self.assertInHTML('<div class="message error">%s</div>'
+                              % _(u'You are already logged in.'),
+                              response.content, count=1)
 
     def test_login_with_permanent_flag(self):
         postdata = {'username': 'user', 'password': 'user', 'permanent': 'on'}
