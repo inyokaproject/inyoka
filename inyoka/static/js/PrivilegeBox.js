@@ -1,3 +1,10 @@
+/**
+ * js.PrivilegeBox
+ * ~~~~~~~~~~~~~~~
+ *
+ * :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+ * :license: GNU GPL, see LICENSE for more details.
+ */
 (function () {
   PrivilegeBox = function (container, forums, privileges) {
     this.mapping = {};
