@@ -3,11 +3,11 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from inyoka.forum.models import Forum, Topic, Post, Attachment
 from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
-
 
 
 class TestAttachmentModel(TestCase):
@@ -16,7 +16,7 @@ class TestAttachmentModel(TestCase):
         try:
             self.assertEqual(a.contents, 'test')
         finally:
-            a.delete() # Yank the file from the filesystem
+            a.delete()  # Yank the file from the filesystem
 
 
 class TestForumModel(TestCase):
@@ -130,6 +130,39 @@ class TestForumModel(TestCase):
         self.assertEqual(url1, url1_target)
 
 
+class TestPostModel(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.register_user('admin', 'admin', 'admin', False)
+
+        self.category = Forum(name='category')
+        self.category.save()
+        self.forum = Forum(name='forum')
+        self.forum.save()
+        self.topic = Topic(title='topic', author=self.user)
+        self.forum.topics.add(self.topic)
+
+    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
+    def test_url_for_post(self):
+        post = Post(text=u'test1', author=self.user)
+        self.topic.posts.add(post)
+        self.assertEqual(Post.url_for_post(post.pk),
+                         'http://forum.inyoka.local/topic/topic/#post-%s' % post.pk)
+
+    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
+    def test_url_for_post_multiple_pages(self):
+        posts = []
+        for idx in xrange(45):
+            post = Post(text=u'test%s' % idx, author=self.user)
+            self.topic.posts.add(post)
+            posts.append(post.pk)
+        self.assertEqual(Post.url_for_post(posts[-1]),
+                         'http://forum.inyoka.local/topic/topic/4/#post-%s' % post.pk)
+
+    def test_url_for_post_not_existing_post(self):
+        self.assertRaises(Post.DoesNotExist, Post.url_for_post, 250000913)
+
+
 class TestPostSplit(TestCase):
 
     def setUp(self):
@@ -188,27 +221,26 @@ class TestPostSplit(TestCase):
         for i in range(10):
             topic.posts.add(Post(text='test', author=self.user, position=i))
 
-        posts = Post.objects.filter(topic=topic, position__in=[1,2,4,5,6,8])    
+        posts = Post.objects.filter(topic=topic, position__in=[1, 2, 4, 5, 6, 8])
 
         Post.split(posts, topic, self.topic2)
 
         old_positions = Post.objects.filter(topic=topic).order_by('position')\
             .values_list('position', flat=True)
-        self.assertEqual(list(old_positions), [0,1,2,3])
+        self.assertEqual(list(old_positions), [0, 1, 2, 3])
 
     def test_split_post_remove_topic(self):
         Post.split(self.t1_posts.values(), self.topic1, self.topic2)
         cache.delete('forum/forums/%s' % self.forum1.slug)
         cache.delete('forum/forums/%s' % self.forum2.slug)
-        user = User.objects.get(id=self.user.id)
         t2 = Topic.objects.get(id=self.topic2.id)
 
         self.assertEqual(Topic.objects.filter(id=self.topic1.id).count(), 0)
         self.assertEqual(t2.post_count, 20)
         self.assertEqual(t2.first_post.id, self.t2_posts[0].id)
         self.assertEqual(t2.last_post.id, self.t1_posts[9].id)
-        post_ids = [p.id for k,p in self.t2_posts.items()] + \
-                   [p.id for k,p in self.t1_posts.items()]
+        post_ids = [p.id for k, p in self.t2_posts.items()] + \
+                   [p.id for k, p in self.t1_posts.items()]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
 

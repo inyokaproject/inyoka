@@ -1,7 +1,4 @@
 #-*- coding: utf-8 -*-
-from mock import patch
-from random import randint
-
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
