@@ -1,11 +1,10 @@
 #-*- coding: utf-8 -*-
 """
-    inyoka.utils.tests.test_storage
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.functional.utils.test_storage
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This module tests the the storage object that uses a combination of cache
-    and database storing..
-
+    and database storing.
 
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.

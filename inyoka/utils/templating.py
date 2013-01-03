@@ -264,7 +264,7 @@ class LazyJSONEncoder(json.JSONEncoder):
 
 
 def json_filter(value):
-    """"A wrapper function that uses the ``LazyJSONEncoder``"""
+    """"A wrapper function that uses the :class:`LazyJSONEncoder`"""
     return LazyJSONEncoder().encode(value)
 
 

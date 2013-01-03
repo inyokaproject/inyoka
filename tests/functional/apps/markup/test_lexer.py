@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    test_wiki_lexer
-    ~~~~~~~~~~~~~~~
+    tests.functional.apps.markup.test_lexer
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This unittest tests various features of the wiki lexer. Just the lexer,
     not the parser.

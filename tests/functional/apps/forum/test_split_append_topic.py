@@ -1,4 +1,13 @@
 #-*- coding: utf-8 -*-
+"""
+    tests.functional.apps.forum.test_split_append_topic
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test split function for topics that append posts to another thread.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL.
+"""
 from django.core.cache import cache
 from django.test import TestCase
 

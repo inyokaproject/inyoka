@@ -1,7 +1,9 @@
 #-*- coding: utf-8 -*-
 """
-    inyoka.portal.tests.test_user
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.functional.apps.portal.test_user
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test some user model functions
 
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.

@@ -1,7 +1,9 @@
 #-*- coding: utf-8 -*-
 """
-    inyoka.utils.tests.test_slug
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.functional.utils.test_slug
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test for slug uniqueness and slug numberation
 
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.

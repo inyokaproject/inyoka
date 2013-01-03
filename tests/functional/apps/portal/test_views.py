@@ -1,4 +1,13 @@
 #-*- coding: utf-8 -*-
+"""
+    tests.functional.apps.portal.test_views
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test portal views.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL.
+"""
 from django.conf import settings
 from django.test import TestCase
 

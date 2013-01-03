@@ -1,4 +1,13 @@
 #-*- coding: utf-8 -*-
+"""
+    tests.functional.apps.forum.test_views
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test forum views.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL.
+"""
 from mock import patch
 from random import randint
 from itertools import izip_longest

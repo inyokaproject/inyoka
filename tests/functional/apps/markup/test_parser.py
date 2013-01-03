@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    test_wiki_parser
-    ~~~~~~~~~~~~~~~~
+    tests.functional.apps.markup.test_parser
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     This unittests tests the parser.
 
