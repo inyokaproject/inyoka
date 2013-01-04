@@ -186,7 +186,8 @@ def whoisonline(request):
 @templated('portal/register.html')
 def register(request):
     """Register a new user."""
-    redirect = request.GET.get('next') or href('portal')
+    redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
+        else href('portal'))
     if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
@@ -305,8 +306,8 @@ def set_new_password(request, uidb36, token):
 @templated('portal/login.html')
 def login(request):
     """Login dialog that supports permanent logins"""
-    redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('portal')
+    redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
+        else href('portal'))
     if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
@@ -363,8 +364,8 @@ def login(request):
 def logout(request):
     """Simple logout view that flashes if the process was done
     successfull or not (e.g if the user wasn't logged in)."""
-    redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('portal')
+    redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
+        else href('portal'))
     if request.user.is_authenticated():
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():

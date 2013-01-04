@@ -53,7 +53,6 @@ class TestAuthViews(TestCase):
 
     def setUp(self):
         self.user = User.objects.register_user('user', 'user', 'user', False)
-
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
     def test_valid_login(self):
@@ -93,7 +92,7 @@ class TestAuthViews(TestCase):
             response = self.client.post('/login/', postdata)
             self.assertContains(response, 'is currently banned.')
 
-    def test_test_login_asinactive_user(self):
+    def test_login_as_inactive_user(self):
         self.user.status = 0
         self.user.save()
 
@@ -106,4 +105,53 @@ class TestAuthViews(TestCase):
         postdata = {'username': 'user', 'password': 'wrong_password'}
         with translation.override('en-us'):
             response = self.client.post('/login/', postdata)
-            self.assertContains(response, 'Login failed because the password')
+        self.assertContains(response, 'Login failed because the password')
+
+    def test_logout_as_anonymous(self):
+        with translation.override('en-us'):
+            response = self.client.get('/logout/', follow=True)
+            self.assertContains(response, 'You were not logged in.')
+
+    def test_logout(self):
+        self.client.login(username='user', password='user')
+        # Trigger a request to / to properly fill up the session.
+        response = self.client.get('/')
+        self.assertIn('_auth_user_id', self.client.session.keys())
+        self.assertIn('_auth_user_backend', self.client.session.keys())
+
+        next = 'http://%s/login/' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/logout/', {'next': next})
+
+        self.assertRedirects(response, '/login/', host=settings.BASE_DOMAIN_NAME)
+        self.assertNotIn('_auth_user_id', self.client.session.keys())
+        self.assertNotIn('_auth_user_backend', self.client.session.keys())
+
+    def test_logout_safe_redirest(self):
+        next = 'http://google.at'
+        response = self.client.get('/logout/', {'next': next}, follow=True)
+        # We don't allow redirects to external pages!
+        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+
+        next = 'http://%s/search/' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/logout/', {'next': next}, follow=True)
+        # But internal redirects are fine.
+        self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
+
+
+    def test_register_safe_redirects(self):
+        self.client.login(username='user', password='user')
+        next = 'http://google.at'
+        response = self.client.get('/register/', {'next': next}, follow=True)
+        # We don't allow redirects to external pages!
+        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+
+        next = 'http://%s/search/' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/register/', {'next': next}, follow=True)
+        # But internal redirects are fine.
+        self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
+
+    def test_register_as_authenticated_user(self):
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.get('/register/', follow=True)
+        self.assertContains(response, 'You are already logged in.')
