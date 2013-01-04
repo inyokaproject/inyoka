@@ -25,7 +25,7 @@ from inyoka.markup import parse, StackExhaused
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
 from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request
-from inyoka.utils.mail import may_be_valid_mail, is_blocked_host
+from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.utils.storage import storage
@@ -172,7 +172,7 @@ class StrippedCharField(forms.CharField):
     default_validators = [validate_empty_text]
 
 
-class EmailField(forms.CharField):
+class EmailField(forms.EmailField):
 
     def clean(self, value):
         value = super(EmailField, self).clean(value)
@@ -181,9 +181,6 @@ class EmailField(forms.CharField):
             raise forms.ValidationError(_(u'The entered e-mail address belongs to a '
                 u'e-mail provider we had to block because of SPAM problems. Please '
                 u'choose another e-mail address'))
-        elif not may_be_valid_mail(value):
-            raise forms.ValidationError(_(u'The entered e-mail address is invalid. '
-                u'Please check your input.'))
         return value
 
 

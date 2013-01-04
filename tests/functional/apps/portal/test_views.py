@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.conf import settings
+from django.core import mail
 from django.test import TestCase
 
 from django.utils import translation
@@ -107,6 +108,19 @@ class TestAuthViews(TestCase):
             response = self.client.post('/login/', postdata)
         self.assertContains(response, 'Login failed because the password')
 
+    def test_login_safe_redirects(self):
+        self.client.login(username='user', password='user')
+
+        next = 'http://google.at'
+        response = self.client.get('/login/', {'next': next}, follow=True)
+        # We don't allow redirects to external pages!
+        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+
+        next = 'http://%s/search/' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/login/', {'next': next}, follow=True)
+        # But internal redirects are fine.
+        self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
+
     def test_logout_as_anonymous(self):
         with translation.override('en-us'):
             response = self.client.get('/logout/', follow=True)
@@ -137,7 +151,6 @@ class TestAuthViews(TestCase):
         # But internal redirects are fine.
         self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
 
-
     def test_register_safe_redirects(self):
         self.client.login(username='user', password='user')
         next = 'http://google.at'
@@ -155,3 +168,15 @@ class TestAuthViews(TestCase):
         with translation.override('en-us'):
             response = self.client.get('/register/', follow=True)
         self.assertContains(response, 'You are already logged in.')
+
+    def test_register(self):
+        postdata = {'username': 'apollo13', 'password': 'secret',
+            'confirm_password': 'secret', 'email': 'apollo13@ubuntuusers.de',
+            'terms_of_usage': '1'}
+
+        self.assertEqual(0, len(mail.outbox))
+        with translation.override('en-us'):
+            response = self.client.post('/register/', postdata)
+        self.assertEqual(1, len(mail.outbox))
+        subject = mail.outbox[0].subject
+        self.assertIn(u'Activation of the user “apollo13”', subject)
