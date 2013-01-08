@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-12-27 11:58+0100\n"
+"POT-Creation-Date: 2013-01-08 18:37+0100\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -402,11 +402,9 @@ msgstr "Beschreibung"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:35
 #: inyoka/wiki/templates/wiki/action_attach_edit.html:36
-#: inyoka/wiki/templates/wiki/action_delete.html:16
 #: inyoka/wiki/templates/wiki/action_edit.html:34
-#: inyoka/wiki/templates/wiki/action_revert.html:16
-msgid "Note:"
-msgstr "Notiz:"
+msgid "Edit summary:"
+msgstr "Änderungskommentar:"
 
 #: inyoka/wiki/templates/wiki/action_attach.html:40
 msgid "Overwrite existing attachments with same name:"
@@ -514,6 +512,11 @@ msgstr "Dieser Artikel ist verwaist und von keiner Seite referenziert."
 #: inyoka/wiki/templates/wiki/action_delete.html:15
 msgid "Are you sure you want to delete this page?"
 msgstr "Bist du sicher, dass du diese Seite löschen möchtest?"
+
+#: inyoka/wiki/templates/wiki/action_delete.html:16
+#: inyoka/wiki/templates/wiki/action_revert.html:16
+msgid "Reason:"
+msgstr "Begründung:"
 
 #: inyoka/wiki/templates/wiki/action_delete.html:18
 msgid "Delete"
@@ -905,4 +908,3 @@ msgstr "Abbestellen"
 #: inyoka/wiki/templates/wiki/page.html:66
 msgid "Subscribe"
 msgstr "Abonnieren"
-
