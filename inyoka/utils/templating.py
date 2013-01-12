@@ -5,7 +5,7 @@
 
     This module contains functions for template-related things.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import json
@@ -264,7 +264,7 @@ class LazyJSONEncoder(json.JSONEncoder):
 
 
 def json_filter(value):
-    """"A wrapper function that uses the ``LazyJSONEncoder``"""
+    """"A wrapper function that uses the :class:`LazyJSONEncoder`"""
     return LazyJSONEncoder().encode(value)
 
 

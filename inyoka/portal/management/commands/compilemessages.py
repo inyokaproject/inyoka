@@ -1,8 +1,21 @@
+#-*- coding: utf-8 -*-
+"""
+    inyoka.portal.management.commands.compilemessages
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This module provides a command to the Django ``manage.py`` file to compile
+    the ``.po`` language files to ``.mo`` files. The ``.mo`` files are placed
+    in the same directory as the regarding ``.po`` files.
+
+    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
 from subprocess import call
 
 from django.core.management.base import BaseCommand
 
 APPS = ['forum', 'portal', 'wiki', 'ikhaya', 'pastebin', 'planet', 'markup']
+
 
 class Command(BaseCommand):
 

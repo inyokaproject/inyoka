@@ -1,9 +1,9 @@
 #-*- coding: utf-8 -*-
 """
-    inyoka.utils.tests.test_user
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.functional.utils.test_user
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import unittest

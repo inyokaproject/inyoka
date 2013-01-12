@@ -5,7 +5,7 @@
 
     This module implements some helper methods to generate thumbnails
 
-    :copyright: 2011-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os

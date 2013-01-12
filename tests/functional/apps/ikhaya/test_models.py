@@ -1,4 +1,13 @@
 #-*- coding: utf-8 -*-
+"""
+    tests.functional.apps.ikhaya.test_models
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test Ikhaya models.
+
+    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL.
+"""
 from django.test import TestCase
 
 from datetime import date, time

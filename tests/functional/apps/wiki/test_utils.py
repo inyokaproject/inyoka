@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    test_wiki_utils
-    ~~~~~~~~~~~~~~~
+    tests.functional.apps.wiki.test_utils
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Test the wiki utilities.
+    Test the wiki utilities like join_pagename and normalize_pagename.
 
     :copyright: Copyright 2007 by Armin Ronacher.
     :license: GNU GPL.

@@ -1,4 +1,13 @@
 #-*- coding: utf-8 -*-
+"""
+    tests.functional.utils.test_files
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test the uniqueness of file names, as well as the file name length.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL.
+"""
 from django.core.files.base import ContentFile
 from django.utils.unittest import TestCase
 from inyoka.utils.files import InyokaFSStorage

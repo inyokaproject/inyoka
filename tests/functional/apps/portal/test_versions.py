@@ -1,9 +1,11 @@
 #-*- coding: utf-8 -*-
 """
-    inyoka.portal.tests.test_versions
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.functional.apps.portal.test_versions
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    Tests for the :class:`UbuntuVersion` class, such as ordering.
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.test import TestCase
