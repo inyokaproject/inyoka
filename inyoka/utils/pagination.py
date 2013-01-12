@@ -189,15 +189,18 @@ class Pagination(object):
                   for k, v in self.parameters.iteritems()}
         s = u''.join([
             u'<div class="pagination">',
+            u'<a href="{first_link}" class="prev first">«</a>' if self.page > 1 else '',
             u'<a href="{prev_link}" class="prev">{prev_label}</a>' if self.page > 1 else '',
             u'<span class="active">{current_label} {page}</span>',
             u'<a href="{next_link}" class="next">{next_label}</a>' if self.page < pages else '',
+            u'<a href="{last_link}" class="next last">»</a>' if self.page < pages else '',
             u'<span style="display: none;" class="link_base">{link_base}</span>',
             u'</div>',
         ])
         return s.format(
             current_label=_(u'Page'),
-            goto_label=_(u'Go to'),
+            first_link=self.generate_link(1, params),
+            last_link=self.generate_link(self.max_pages, params),
             link_base=self.generate_link(1, params),
             next_label=_(u'Next »'),
             next_link=self.generate_link(min(self.page + 1, self.max_pages), params),

@@ -136,7 +136,7 @@ def feed(request, mode='short', count=10):
         else:
             kwargs['author'] = entry.author
 
-        feed.add(title=entry.title,
+        feed.add(title=entry.title or _(u'No title given'),
                  url=entry.url,
                  id=entry.guid,
                  updated=entry.updated,

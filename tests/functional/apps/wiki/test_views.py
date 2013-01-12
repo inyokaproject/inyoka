@@ -8,9 +8,6 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from mock import patch
-from random import randint
-
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings

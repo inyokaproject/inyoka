@@ -10,7 +10,6 @@
 """
 from mock import patch
 from random import randint
-from itertools import izip_longest
 from os import path
 
 from django.conf import settings
@@ -18,10 +17,8 @@ from django.test import TestCase, Client
 from django.test.utils import override_settings
 from django.utils.translation import ugettext as _
 
-from inyoka.utils.test import profile_memory
 from inyoka.forum.acl import PRIVILEGES_BITS
-from inyoka.forum import constants
-from inyoka.forum.constants import TOPICS_PER_PAGE, VERSION_CHOICES, DISTRO_CHOICES
+from inyoka.forum.constants import TOPICS_PER_PAGE, DISTRO_CHOICES
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import Subscription
@@ -36,14 +33,6 @@ class TestForumViews(TestCase):
         client = Client(HTTP_HOST='forum.inyoka.local')
         resp = client.get('/')
         self.assertEqual(resp.status_code, 200)
-
-#    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
-#    def test_forum_index_memory(self):
-#        client = Client(HTTP_HOST='forum.inyoka.local')
-#        @profile_memory
-#        def go():
-#            resp = client.get('/')
-#        go()
 
 
 class TestViews(TestCase):
@@ -79,6 +68,7 @@ class TestViews(TestCase):
     def _setup_pagination(self):
         """Create enough topics for pagination test"""
         posts = []
+
         def newtopic():
             t = Topic.objects.create(title="Title %s" % randint(1, 100000),
                                      author=self.user, forum=self.forum3)
@@ -92,8 +82,9 @@ class TestViews(TestCase):
             for i in xrange(1, randint(2, 3)):
                 posts.append(Post(text="More Posts %s" % randint(1, 100000),
                                     topic=t, author=self.admin, position=i))
+
         self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
-        for _ in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
+        for i in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
         Post.objects.bulk_create(posts)
 
@@ -108,7 +99,7 @@ class TestViews(TestCase):
         response = self.client.post('/topic/%s/move/' % self.topic.slug,
                     {'forum': self.forum3.id})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(mock_send.call_count, 1) #only the topic author
+        self.assertEqual(mock_send.call_count, 1)  # only the topic author
         mock_send.assert_called_with(self.user, 'topic_moved',
             _(u'Your topic “%(topic)s” was moved.') % {'topic': 'A test Topic'}, {
                 'username': self.user.username, 'topic': self.topic,
@@ -127,7 +118,7 @@ class TestViews(TestCase):
         self.assertTrue(
                    Subscription.objects.user_subscribed(self.user, self.topic))
 
-        # Test for unsubscribe-link in the usercp if the user has no more read 
+        # Test for unsubscribe-link in the usercp if the user has no more read
         # access to a subscription
         useraccess.positive = 0
         useraccess.save()
@@ -138,7 +129,7 @@ class TestViews(TestCase):
 
         forward_url = 'http://portal.%s/myfwd' % settings.BASE_DOMAIN_NAME
         response = self.client.get('/topic/%s/unsubscribe/' % self.topic.slug,
-                                    { 'next': forward_url })
+                                    {'next': forward_url})
         self.assertFalse(
                    Subscription.objects.user_subscribed(self.user, self.topic))
         self.assertEqual(response['location'], forward_url)
@@ -206,13 +197,13 @@ class TestViews(TestCase):
 
         for url in action_paginationurl:
             # InyokaClient.get needs only the right part of the url
-            path = url[url.index(settings.BASE_DOMAIN_NAME) +
+            urlpath = url[url.index(settings.BASE_DOMAIN_NAME) +
                       len(settings.BASE_DOMAIN_NAME):]
-            response = self.client.get(path)
+            response = self.client.get(urlpath)
             self.assertIn('%s2/' % url, response.tmpl_context['pagination'],
-                    "%s does not render pagination urls properly" % path)
+                    "%s does not render pagination urls properly" % urlpath)
             self.assertNotIn('%s6/' % url, response.tmpl_context['pagination'],
-                    "%s does display more pages than available" % path)
+                    "%s does display more pages than available" % urlpath)
 
     def test_service_splittopic(self):
         t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
@@ -316,7 +307,7 @@ class TestViews(TestCase):
 
         f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
         postdata = {u'attachment': f,
-                    u'attach' : u'upload attachment',
+                    u'attach': u'upload attachment',
                     u'ubuntu_distro': DISTRO_CHOICES[2][0],
                     u'comment': u'',
                     u'attachments': u'',
@@ -327,7 +318,6 @@ class TestViews(TestCase):
                     u'filename': u'',
                     u'duration': u'',
                     u'options': u''}
-
 
         response = self.client.post('/post/%s/edit/' % p1.pk, postdata)
         content = unicode(response.__str__().decode(response._charset))

@@ -94,6 +94,8 @@ def url_for(obj, action=None, **kwargs):
 
 def is_safe_domain(url):
     """Check whether `url` points to the same host as inyoka"""
+    if not url:
+        return False
     scheme, netloc = urlparse(url)[:2]
     if scheme not in acceptable_protocols:
         return False

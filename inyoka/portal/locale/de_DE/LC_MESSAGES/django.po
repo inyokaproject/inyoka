@@ -1969,9 +1969,9 @@ msgid "Set new password"
 msgstr "Neues Passwort erstellen"
 
 #: inyoka/portal/templates/portal/set_new_password.html:19
-#, fuzzy, python-format
+#, python-format
 msgid "You can set a new password for your account here."
-msgstr "Du kannst hier ein neues Passwort für dein Konto „%(name)s“ erstellen."
+msgstr "Du kannst hier ein neues Passwort für dein Konto setzen."
 
 #: inyoka/portal/templates/portal/special_rights.html:12
 msgid "User with special privileges"
