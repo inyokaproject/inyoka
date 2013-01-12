@@ -1,4 +1,13 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+"""
+    inyoka.wiki.macros
+    ~~~~~~~~~~~~~~~~~~
+
+    Macros for the wiki.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
 import string
 import random
 import operator

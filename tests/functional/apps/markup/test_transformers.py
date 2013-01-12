@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    test_wiki_transformers
-    ~~~~~~~~~~~~~~~~~~~~~~
+    tests.functional.apps.markup.test_transformers
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    This module tests the wiki ast transformers.
+    This module tests the AST transformers.
 
     :copyright: Copyright 2007 by Armin Ronacher.
-    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 from django.test import TestCase

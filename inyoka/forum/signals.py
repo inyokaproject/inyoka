@@ -1,4 +1,13 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+"""
+    inyoka.forum.signals
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Signals for the forum.
+
+    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
 from django.core.cache import cache
 from django.dispatch import receiver
 from django.db.models import Max, F

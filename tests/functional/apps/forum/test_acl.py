@@ -1,3 +1,13 @@
+#-*- coding: utf-8 -*-
+"""
+    tests.functional.apps.forum.test_acl
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test forum ACL.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL.
+"""
 from django.test import TestCase
 
 from inyoka.forum import acl

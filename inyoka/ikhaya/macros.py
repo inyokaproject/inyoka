@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+    inyoka.ikhaya.macros
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Macros for Ikhaya.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
 import os
 from django.conf import settings
 from django.dispatch import receiver

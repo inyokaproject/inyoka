@@ -12,7 +12,7 @@
     `Haystack-Xapian <https://github.com/notanumber/xapian-haystack>`
     but heavily modified to fix soem bugs and to match inyoka search internals.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
