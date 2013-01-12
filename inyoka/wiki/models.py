@@ -84,7 +84,6 @@ from operator import itemgetter
 from datetime import datetime
 
 from django.conf import settings
-from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
 from django.db.models.loading import get_model
@@ -536,7 +535,7 @@ class RevisionManager(models.Manager):
             # FIXME: properly debug that...
             revisions = list(self.select_related('user', 'page')\
                                  .filter(pk__in = revision_ids))
-            cache.set(cache_key, revisions, 300)
+            request_cache.set(cache_key, revisions, 300)
         return revisions[:count]
 
 
@@ -1008,7 +1007,7 @@ class Page(models.Model):
         self.last_rev = self.rev
         self.save(update_meta=update_meta)
 
-        update_object_list.delay(rev)
+        update_object_list.delay(self.name)
 
     def get_absolute_url(self, action='show', **query):
         if action in ('edit', 'subscribe', 'unsubscribe', 'log', 'backlinks',
@@ -1216,7 +1215,7 @@ class Revision(models.Model):
     def save(self, *args, **kwargs):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
-        cache.delete('wiki/page/' + self.page.name)
+        request_cache.delete('wiki/page/' + self.page.name)
 
     def prepare_for_caching(self):
         """Called before the page object is stored in the cache."""
