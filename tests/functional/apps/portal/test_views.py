@@ -1,15 +1,23 @@
 #-*- coding: utf-8 -*-
+"""
+    tests.functional.apps.portal.test_views
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test portal views.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL.
+"""
 from django.conf import settings
+from django.core import mail
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from django.utils import translation
 from django.utils.translation import ugettext as _
 
-from inyoka.portal.user import Group, User, PERMISSION_NAMES
+from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient
-from inyoka.utils.urls import href
 
 
 class TestViews(TestCase):
@@ -30,20 +38,23 @@ class TestViews(TestCase):
         storage['team_icon_width'] = 80
 
         postdata = {u'name': u'Lorem'}
-        response = self.client.post('/group/new/', postdata)
-        self.assertEqual(response.status_code, 302)
+        with translation.override('en-us'):
+            response = self.client.post('/group/new/', postdata)
+            self.assertEqual(response.status_code, 302)
 
         postdata = {u'name': u'LOr3m'}
-        response = self.client.post('/group/Lorem/edit/', postdata)
-        self.assertFalse('<ul class="errorlist"><li>%s</li></ul>' % _(
-                u'The group name contains invalid chars') in \
-                    response.content.decode('utf-8'))
+        with translation.override('en-us'):
+            response = self.client.post('/group/Lorem/edit/', postdata)
+            self.assertNotIn('<ul class="errorlist"><li>%s</li></ul>'
+                % _(u'The group name contains invalid chars'),
+                response.content.decode('utf-8'))
 
         postdata = {u'name': u'£Ø®€m'}
-        response = self.client.post('/group/LOr3m/edit/', postdata)
-        self.assertTrue('<ul class="errorlist"><li>%s</li></ul>' % _(
-                u'The group name contains invalid chars') in \
-                    response.content.decode('utf-8'))
+        with translation.override('en-us'):
+            response = self.client.post('/group/LOr3m/edit/', postdata)
+            self.assertIn('<ul class="errorlist"><li>%s</li></ul>'
+                 % _(u'The group name contains invalid chars'),
+                response.content.decode('utf-8'))
 
 
 class TestAuthViews(TestCase):
@@ -52,24 +63,25 @@ class TestAuthViews(TestCase):
 
     def setUp(self):
         self.user = User.objects.register_user('user', 'user', 'user', False)
-
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
     def test_valid_login(self):
         postdata = {'username': 'user', 'password': 'user'}
-        response = self.client.post('/login/', postdata, follow=True)
-        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
-        self.assertInHTML('<div class="message success">%s</div>'
-                          % _(u'You have successfully logged in.'),
-                          response.content, count=1)
+        with translation.override('en-us'):
+            response = self.client.post('/login/', postdata, follow=True)
+            self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+            self.assertInHTML('<div class="message success">%s</div>'
+                              % _(u'You have successfully logged in.'),
+                              response.content, count=1)
 
-        self.assertTrue(response.client.session.get_expire_at_browser_close())
+            self.assertTrue(response.client.session \
+                            .get_expire_at_browser_close())
 
-        response = self.client.get('/login/', follow=True)
-        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
-        self.assertInHTML('<div class="message error">%s</div>'
-                          % _(u'You are already logged in.'),
-                          response.content, count=1)
+            response = self.client.get('/login/', follow=True)
+            self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+            self.assertInHTML('<div class="message error">%s</div>'
+                              % _(u'You are already logged in.'),
+                              response.content, count=1)
 
     def test_login_with_permanent_flag(self):
         postdata = {'username': 'user', 'password': 'user', 'permanent': 'on'}
@@ -90,7 +102,7 @@ class TestAuthViews(TestCase):
             response = self.client.post('/login/', postdata)
             self.assertContains(response, 'is currently banned.')
 
-    def test_test_login_asinactive_user(self):
+    def test_login_as_inactive_user(self):
         self.user.status = 0
         self.user.save()
 
@@ -103,4 +115,77 @@ class TestAuthViews(TestCase):
         postdata = {'username': 'user', 'password': 'wrong_password'}
         with translation.override('en-us'):
             response = self.client.post('/login/', postdata)
-            self.assertContains(response, 'Login failed because the password')
+        self.assertContains(response, 'Login failed because the password')
+
+    def test_login_safe_redirects(self):
+        self.client.login(username='user', password='user')
+
+        next = 'http://google.at'
+        response = self.client.get('/login/', {'next': next}, follow=True)
+        # We don't allow redirects to external pages!
+        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+
+        next = 'http://%s/search/' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/login/', {'next': next}, follow=True)
+        # But internal redirects are fine.
+        self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
+
+    def test_logout_as_anonymous(self):
+        with translation.override('en-us'):
+            response = self.client.get('/logout/', follow=True)
+            self.assertContains(response, 'You were not logged in.')
+
+    def test_logout(self):
+        self.client.login(username='user', password='user')
+        # Trigger a request to / to properly fill up the session.
+        response = self.client.get('/')
+        self.assertIn('_auth_user_id', self.client.session.keys())
+        self.assertIn('_auth_user_backend', self.client.session.keys())
+
+        next = 'http://%s/login/' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/logout/', {'next': next})
+
+        self.assertRedirects(response, '/login/', host=settings.BASE_DOMAIN_NAME)
+        self.assertNotIn('_auth_user_id', self.client.session.keys())
+        self.assertNotIn('_auth_user_backend', self.client.session.keys())
+
+    def test_logout_safe_redirest(self):
+        next = 'http://google.at'
+        response = self.client.get('/logout/', {'next': next}, follow=True)
+        # We don't allow redirects to external pages!
+        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+
+        next = 'http://%s/search/' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/logout/', {'next': next}, follow=True)
+        # But internal redirects are fine.
+        self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
+
+    def test_register_safe_redirects(self):
+        self.client.login(username='user', password='user')
+        next = 'http://google.at'
+        response = self.client.get('/register/', {'next': next}, follow=True)
+        # We don't allow redirects to external pages!
+        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+
+        next = 'http://%s/search/' % settings.BASE_DOMAIN_NAME
+        response = self.client.get('/register/', {'next': next}, follow=True)
+        # But internal redirects are fine.
+        self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
+
+    def test_register_as_authenticated_user(self):
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.get('/register/', follow=True)
+        self.assertContains(response, 'You are already logged in.')
+
+    def test_register(self):
+        postdata = {'username': 'apollo13', 'password': 'secret',
+            'confirm_password': 'secret', 'email': 'apollo13@ubuntuusers.de',
+            'terms_of_usage': '1'}
+
+        self.assertEqual(0, len(mail.outbox))
+        with translation.override('en-us'):
+            response = self.client.post('/register/', postdata)
+        self.assertEqual(1, len(mail.outbox))
+        subject = mail.outbox[0].subject
+        self.assertIn(u'Activation of the user “apollo13”', subject)

@@ -5,7 +5,7 @@
 
     Views for the planet.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
@@ -136,7 +136,7 @@ def feed(request, mode='short', count=10):
         else:
             kwargs['author'] = entry.author
 
-        feed.add(title=entry.title,
+        feed.add(title=entry.title or _(u'No title given'),
                  url=entry.url,
                  id=entry.guid,
                  updated=entry.updated,

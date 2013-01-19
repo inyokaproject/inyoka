@@ -6,7 +6,7 @@
     This file contains extensions for the django forms like special form
     fields.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import sys
@@ -25,7 +25,7 @@ from inyoka.markup import parse, StackExhaused
 from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
 from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request
-from inyoka.utils.mail import may_be_valid_mail, is_blocked_host
+from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.utils.storage import storage
@@ -127,20 +127,6 @@ class UserField(forms.CharField):
             raise forms.ValidationError(_(u'This user does not exist'))
 
 
-class CaptchaWidget(Input):
-    input_type = 'text'
-
-    def render(self, name, value, attrs=None):
-        input_ = Input.render(self, name, u'', attrs)
-        img = '<img src="%s" class="captcha" alt="%s" />' % (
-              href('portal', __service__='portal.get_captcha',
-                   rnd=randrange(1, sys.maxint)), _('CAPTCHA'))
-        text = '%s:' % _('Please type in the code from the graphic above')
-        input_tag = '%s <input type="submit" name="renew_captcha" value="%s" />' % (
-                    input_, _('Generate new code'))
-        return '<br />'.join([img, text, input_tag])
-
-
 class DateTimeWidget(Input):
     input_type = 'text'
     value_type = 'datetime'
@@ -182,46 +168,11 @@ class DateTimeField(forms.DateTimeField):
         return datetime
 
 
-class CaptchaField(forms.Field):
-    widget = CaptchaWidget
-
-    def __init__(self, only_anonymous=False, *args, **kwargs):
-        self.only_anonymous = only_anonymous
-        forms.Field.__init__(self, *args, **kwargs)
-
-    def clean(self, value):
-        if current_request.user.is_authenticated() and self.only_anonymous:
-            return True
-        solution = current_request.session.get('captcha_solution')
-        if value:
-            h = md5(settings.SECRET_KEY)
-            if isinstance(value, unicode):
-                # md5 doesn't like to have non-ascii containing unicode strings
-                value = value.encode('utf-8')
-            if value:
-                h.update(value)
-            if h.digest() == solution:
-                return True
-        raise forms.ValidationError(_(u'The entered CAPTCHA was incorrect.'))
-
-
 class StrippedCharField(forms.CharField):
     default_validators = [validate_empty_text]
 
 
-class HiddenCaptchaField(forms.Field):
-    widget = forms.HiddenInput
-
-    def clean(self, value):
-        if not value:
-            return True
-        else:
-            raise forms.ValidationError(
-                _(u'You have entered an invisible field '
-                  u'and were therefore classified as a bot.'))
-
-
-class EmailField(forms.CharField):
+class EmailField(forms.EmailField):
 
     def clean(self, value):
         value = super(EmailField, self).clean(value)
@@ -230,9 +181,6 @@ class EmailField(forms.CharField):
             raise forms.ValidationError(_(u'The entered e-mail address belongs to a '
                 u'e-mail provider we had to block because of SPAM problems. Please '
                 u'choose another e-mail address'))
-        elif not may_be_valid_mail(value):
-            raise forms.ValidationError(_(u'The entered e-mail address is invalid. '
-                u'Please check your input.'))
         return value
 
 
@@ -255,3 +203,80 @@ class SlugField(forms.CharField):
             value = slugify(value)
             return value.strip() if value else None
         return None
+
+
+class HiddenCaptchaField(forms.Field):
+    widget = forms.HiddenInput
+
+    def __init__(self, *args, **kwargs):
+        kwargs['required'] = False
+        super(HiddenCaptchaField, self).__init__(*args, **kwargs)
+
+    def clean(self, value):
+        if not value:
+            return True
+        else:
+            raise forms.ValidationError(
+                _(u'You have entered an invisible field '
+                  u'and were therefore classified as a bot.'))
+
+
+class ImageCaptchaWidget(Input):
+    input_type = 'text'
+
+    def render(self, name, value, attrs=None):
+        input_ = Input.render(self, name, u'', attrs)
+        img = '<img src="%s" class="captcha" alt="%s" />' % (
+              href('portal', __service__='portal.get_captcha',
+                   rnd=randrange(1, sys.maxint)), _('CAPTCHA'))
+        text = '%s:' % _('Please type in the code from the graphic above')
+        input_tag = '%s <input type="submit" name="renew_captcha" value="%s" />' % (
+                    input_, _('Generate new code'))
+        return '<br />'.join([img, text, input_tag])
+
+
+class ImageCaptchaField(forms.Field):
+    widget = ImageCaptchaWidget
+
+    def __init__(self, only_anonymous=False, *args, **kwargs):
+        self.only_anonymous = only_anonymous
+        forms.Field.__init__(self, *args, **kwargs)
+
+    def clean(self, value):
+        if current_request.user.is_authenticated() and self.only_anonymous:
+            return True
+        value = super(ImageCaptchaField, self).clean(value)
+        solution = current_request.session.get('captcha_solution')
+        if value:
+            h = md5(settings.SECRET_KEY)
+            if isinstance(value, unicode):
+                # md5 doesn't like to have non-ascii containing unicode strings
+                value = value.encode('utf-8')
+            if value:
+                h.update(value)
+            if h.digest() == solution:
+                return True
+        raise forms.ValidationError(_(u'The entered CAPTCHA was incorrect.'))
+
+
+class CaptchaWidget(forms.MultiWidget):
+    def __init__(self, attrs=None):
+        # The HiddenInput is a honey-pot
+        widgets = ImageCaptchaWidget, forms.HiddenInput
+        super(CaptchaWidget, self).__init__(widgets, attrs)
+
+    def decompress(self, value):
+        return [None, None]
+
+
+class CaptchaField(forms.MultiValueField):
+    widget = CaptchaWidget
+
+    def __init__(self, *args, **kwargs):
+        fields = (ImageCaptchaField(), HiddenCaptchaField())
+        kwargs['required'] = False
+        super(CaptchaField, self).__init__(fields, *args, **kwargs)
+        fields[0].required = True # Ensure the Captcha is required.
+
+    def compress(self, data_list):
+        pass # CaptchaField doesn't have a useful value to return.

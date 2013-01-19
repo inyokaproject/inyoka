@@ -1,4 +1,11 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+"""
+    tests.functional.utils.test_utils
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :copyright: Copyright 2007 by Armin Ronacher.
+    :license: GNU GPL.
+"""
 from django.test import TestCase
 from inyoka.utils.text import get_next_increment, human_number
 

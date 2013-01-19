@@ -1,9 +1,9 @@
 #-*- coding: utf-8 -*-
 """
-    inyoka.utils.tests.test_database
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.functional.utils.test_database
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import datetime
@@ -12,7 +12,6 @@ from django.test import TestCase
 from inyoka.portal.user import User
 from inyoka.utils.database import update_model
 from .models import JSONEntry
-
 
 
 class TestDatabase(TestCase):

@@ -1,7 +1,13 @@
 #-*- coding: utf-8 -*-
-from mock import patch
-from random import randint
+"""
+    tests.functional.apps.wiki.test_views
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    Test wiki views.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL.
+"""
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings

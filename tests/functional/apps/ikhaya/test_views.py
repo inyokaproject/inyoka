@@ -1,6 +1,13 @@
 #-*- coding: utf-8 -*-
-from mock import patch
-from random import randint
+"""
+    tests.functional.apps.ikhaya.test_views
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Test Ikhaya views.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL.
+"""
 from datetime import datetime
 
 from django.conf import settings
@@ -31,52 +38,50 @@ class TestViews(TestCase):
         self.report = Report.objects.create(article=self.article, text="Text",
                             author=self.user, pub_date=datetime.now())
 
-
         self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
     def test_comment_update(self):
         self.assertEqual(Comment.objects.get(id=self.comment.id).deleted, False)
 
-        response = self.client.post('/comment/%d/hide/' % self.comment.id, {'cancel': True})
+        self.client.post('/comment/%d/hide/' % self.comment.id, {'cancel': True})
         self.assertEqual(Comment.objects.get(id=self.comment.id).deleted, False)
 
-        response = self.client.post('/comment/%d/hide/' % self.comment.id, {'confirm': True})
+        self.client.post('/comment/%d/hide/' % self.comment.id, {'confirm': True})
         self.assertEqual(Comment.objects.get(id=self.comment.id).deleted, True)
 
-        response = self.client.post('/comment/%d/restore/' % self.comment.id, {'cancel': True})
+        self.client.post('/comment/%d/restore/' % self.comment.id, {'cancel': True})
         self.assertEqual(Comment.objects.get(id=self.comment.id).deleted, True)
 
-        response = self.client.post('/comment/%d/restore/' % self.comment.id, {'confirm': True})
+        self.client.post('/comment/%d/restore/' % self.comment.id, {'confirm': True})
         self.assertEqual(Comment.objects.get(id=self.comment.id).deleted, False)
 
     def test_report_deleted_update(self):
         self.assertEqual(Report.objects.get(id=self.report.id).deleted, False)
 
-        response = self.client.post('/report/%d/hide/' % self.report.id, {'cancel': True})
+        self.client.post('/report/%d/hide/' % self.report.id, {'cancel': True})
         self.assertEqual(Report.objects.get(id=self.report.id).deleted, False)
 
-        response = self.client.post('/report/%d/hide/' % self.report.id, {'confirm': True})
+        self.client.post('/report/%d/hide/' % self.report.id, {'confirm': True})
         self.assertEqual(Report.objects.get(id=self.report.id).deleted, True)
 
-        response = self.client.post('/report/%d/restore/' % self.report.id, {'cancel': True})
+        self.client.post('/report/%d/restore/' % self.report.id, {'cancel': True})
         self.assertEqual(Report.objects.get(id=self.report.id).deleted, True)
 
-        response = self.client.post('/report/%d/restore/' % self.report.id, {'confirm': True})
+        self.client.post('/report/%d/restore/' % self.report.id, {'confirm': True})
         self.assertEqual(Report.objects.get(id=self.report.id).deleted, False)
 
     def test_report_solved_update(self):
         self.assertEqual(Report.objects.get(id=self.report.id).solved, False)
 
-        response = self.client.post('/report/%d/solve/' % self.report.id, {'cancel': True})
+        self.client.post('/report/%d/solve/' % self.report.id, {'cancel': True})
         self.assertEqual(Report.objects.get(id=self.report.id).solved, False)
 
-        response = self.client.post('/report/%d/solve/' % self.report.id, {'confirm': True})
+        self.client.post('/report/%d/solve/' % self.report.id, {'confirm': True})
         self.assertEqual(Report.objects.get(id=self.report.id).solved, True)
 
-        response = self.client.post('/report/%d/unsolve/' % self.report.id, {'cancel': True})
+        self.client.post('/report/%d/unsolve/' % self.report.id, {'cancel': True})
         self.assertEqual(Report.objects.get(id=self.report.id).solved, True)
 
-        response = self.client.post('/report/%d/unsolve/' % self.report.id, {'confirm': True})
+        self.client.post('/report/%d/unsolve/' % self.report.id, {'confirm': True})
         self.assertEqual(Report.objects.get(id=self.report.id).solved, False)
-

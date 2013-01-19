@@ -7,7 +7,7 @@
     to build urls for different subdomains using the `href` function.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -94,6 +94,8 @@ def url_for(obj, action=None, **kwargs):
 
 def is_safe_domain(url):
     """Check whether `url` points to the same host as inyoka"""
+    if not url:
+        return False
     scheme, netloc = urlparse(url)[:2]
     if scheme not in acceptable_protocols:
         return False

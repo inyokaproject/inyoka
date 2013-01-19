@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    test_wiki_html_renderer
-    ~~~~~~~~~~~~~~~~~~~~~~~
+    tests.functional.apps.markup.test_html_renderer
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Here we test the HTML rendering.
 

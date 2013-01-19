@@ -5,7 +5,7 @@
 
     Various forms for the portal.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import datetime
@@ -37,7 +37,7 @@ from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href
 from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
-    HiddenCaptchaField, EmailField, validate_signature
+    EmailField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
 from inyoka.utils.storage import storage
@@ -136,7 +136,6 @@ class RegisterForm(forms.Form):
     confirm_password = forms.CharField(label=_('Confirm password'),
         widget=forms.PasswordInput(render_value=False))
     captcha = CaptchaField(label=_('CAPTCHA'))
-    hidden_captcha = HiddenCaptchaField(required=False)
     terms_of_usage = forms.BooleanField()
 
     def clean_username(self):
