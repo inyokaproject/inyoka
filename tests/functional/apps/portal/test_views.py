@@ -62,7 +62,7 @@ class TestAuthViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
-        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
     def test_valid_login(self):
@@ -180,7 +180,7 @@ class TestAuthViews(TestCase):
 
     def test_register(self):
         postdata = {'username': 'apollo13', 'password': 'secret',
-            'confirm_password': 'secret', 'email': 'apollo13@ubuntuusers.de',
+            'confirm_password': 'secret', 'email': 'apollo13@example.com',
             'terms_of_usage': '1'}
 
         self.assertEqual(0, len(mail.outbox))
@@ -189,3 +189,16 @@ class TestAuthViews(TestCase):
         self.assertEqual(1, len(mail.outbox))
         subject = mail.outbox[0].subject
         self.assertIn(u'Activation of the user “apollo13”', subject)
+
+    def test_lost_password(self):
+        postdata = {'email': 'user@example.com'}
+        with translation.override('en-us'):
+            response = self.client.post('/lost_password/', postdata)
+        subject = mail.outbox[0].subject
+        self.assertIn(u'New password for “user”', subject)
+
+    def test_lost_password_as_authenticated_user(self):
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.get('/lost_password/', follow=True)
+        self.assertContains(response, 'You are already logged in.')
