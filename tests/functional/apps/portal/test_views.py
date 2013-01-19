@@ -149,7 +149,7 @@ class TestAuthViews(TestCase):
         self.assertNotIn('_auth_user_id', self.client.session.keys())
         self.assertNotIn('_auth_user_backend', self.client.session.keys())
 
-    def test_logout_safe_redirest(self):
+    def test_logout_safe_redirects(self):
         next = 'http://google.at'
         response = self.client.get('/logout/', {'next': next}, follow=True)
         # We don't allow redirects to external pages!
