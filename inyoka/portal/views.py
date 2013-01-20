@@ -288,6 +288,9 @@ def resend_activation_mail(request, username):
 
 
 def lost_password(request):
+    if request.user.is_authenticated():
+        messages.error(request, _(u'You are already logged in.'))
+        return HttpResponseRedirect(href('portal'))
     return password_reset(request,
         post_reset_redirect=href('portal', 'login'),
         template_name='portal/lost_password.html',
