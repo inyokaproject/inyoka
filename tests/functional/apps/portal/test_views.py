@@ -8,6 +8,8 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
+import re
+
 from django.conf import settings
 from django.core import mail
 from django.test import TestCase
@@ -196,6 +198,11 @@ class TestAuthViews(TestCase):
             response = self.client.post('/lost_password/', postdata)
         subject = mail.outbox[0].subject
         self.assertIn(u'New password for “user”', subject)
+        body = mail.outbox[0].body
+        link = re.search(r'(/lost_password/.*)\n', body).groups()[0]
+        with translation.override('en-us'):
+            response = self.client.get(link)
+        self.assertContains(response, 'You can set a new password')
 
     def test_lost_password_as_authenticated_user(self):
         self.client.login(username='user', password='user')
