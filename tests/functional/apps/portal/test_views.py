@@ -180,7 +180,7 @@ class TestAuthViews(TestCase):
 
     def test_register(self):
         postdata = {'username': 'apollo13', 'password': 'secret',
-            'confirm_password': 'secret', 'email': 'apollo13@ubuntuusers.de',
+            'confirm_password': 'secret', 'email': 'apollo13@example.com',
             'terms_of_usage': '1'}
 
         self.assertEqual(0, len(mail.outbox))
