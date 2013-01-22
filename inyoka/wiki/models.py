@@ -108,7 +108,8 @@ from inyoka.utils.html import striptags
 from inyoka.utils.text import join_pagename, get_pagetitle, normalize_pagename
 from inyoka.utils.diff3 import generate_udiff, prepare_udiff, \
     get_close_matches
-from inyoka.wiki.tasks import update_related_pages, render_article, update_object_list
+from inyoka.wiki.tasks import update_related_pages, render_article, \
+    update_object_list
 
 
 # maximum number of bytes for metadata.  everything above is truncated
@@ -161,17 +162,16 @@ class PageManager(models.Manager):
             In theory there is no upper limit for the tag size but it won't
             grow unnecessary high with a sane page count (< 1000000 pages)
         """
-        tags = MetaData.objects.filter(key = 'tag').values_list('value')\
-                               .annotate(count = Count('value'))\
+        tags = MetaData.objects.filter(key='tag').values_list('value')\
+                               .annotate(count=Count('value'))\
                                .order_by('-count')
         if max is not None:
             tags = tags[:max]
 
-        return [{
-            'name':     tag[0],
-            'count':    tag[1],
-            'size':     round(100 + log(tag[1] or 1) * 20, 2)
-        } for tag in sorted(tags, key=lambda x: x[0].lower())]
+        return [{'name': tag[0],
+                 'count': tag[1],
+                 'size': round(100 + log(tag[1] or 1) * 20, 2)}
+                for tag in sorted(tags, key=lambda x: x[0].lower())]
 
     def compare(self, name, old_rev, new_rev=None):
         """
@@ -198,8 +198,8 @@ class PageManager(models.Manager):
 
         if pagelist is None:
             pagelist = Page.objects.select_related('last_rev')\
-                .values_list('name', 'last_rev__deleted', 'last_rev__attachment__id') \
-                .order_by('name').all()
+                .values_list('name', 'last_rev__deleted',
+                             'last_rev__attachment__id').order_by('name').all()
             # force a list, can't pickle ValueQueryset that way
             pagelist = list(pagelist)
             # we cache that also if the user wants something uncached
@@ -282,19 +282,20 @@ class PageManager(models.Manager):
         """
         ignore = set([settings.WIKI_MAIN_PAGE])
         pages = set(self.get_page_list())
-        linked_pages = set(MetaData.objects.values_list('value', flat=True) \
+        linked_pages = set(MetaData.objects.values_list('value', flat=True)
                                            .filter(key='X-Link').all())
-        redirects = set(MetaData.objects.values_list('value', flat=True) \
+        redirects = set(MetaData.objects.values_list('value', flat=True)
                                         .filter(key='X-Redirect'))
         pages = (pages - linked_pages) - redirects
         return sorted(page for page in pages if not page in ignore)
 
     def get_missing(self):
         """Return a tuple of (page, count) for all missing page-links."""
-        missing = MetaData.objects.filter(key='X-Link')\
-                                  .values_list('value', flat=True)\
+        missing = MetaData.objects.filter(key='X-Link') \
+                                  .values_list('value', flat=True) \
                                   .extra(where=["wiki_page.id IS NULL"])
-        missing.query.join(('wiki_metadata', 'wiki_page', 'value', 'name'), promote=True, nullable=True)
+        missing.query.join(('wiki_metadata', 'wiki_page', 'value', 'name'),
+                           promote=True, nullable=True)
         missing = list(missing)
         pages = set(missing)
 
@@ -363,10 +364,10 @@ class PageManager(models.Manager):
         """
         if rev is None:
             return self.get_by_name(name, True, raise_on_deleted)
-        rev = Revision.objects.select_related('page', 'test', 'user').\
-                get(id=int(rev))
+        rev = Revision.objects.select_related('page', 'test', 'user') \
+                              .get(id=int(rev))
         if rev.page.name.lower() != name.lower() or \
-           (rev.deleted and raise_on_deleted):
+                (rev.deleted and raise_on_deleted):
             raise Page.DoesNotExist()
         rev.page.rev = rev
         return rev.page
@@ -396,7 +397,7 @@ class PageManager(models.Manager):
         provided.  If the page does not exist or it doesn't have an attachment
         defined the return value will be `None`.
         """
-        attachments = Revision.objects.filter(page__name=page_name, deleted=False)\
+        attachments = Revision.objects.filter(page__name=page_name, deleted=False) \
                               .values_list('attachment__file')\
                               .annotate(Max('id')).order_by('-id')[:1]
         if attachments:
@@ -692,12 +693,14 @@ class Text(models.Model):
             self.update_html_render_instructions()
 
     def update_html_render_instructions(self, nosave=False):
-        """Puts the render instructions for this text in the database and saves."""
-        self.html_render_instructions = instructions = pickle.dumps(self.parse().
-            compile('html'), protocol=0).encode('base64')
+        """Puts the render instructions for this text in the database and
+        saves.
+        """
+        self.html_render_instructions = pickle.dumps(self.parse()
+                                .compile('html'), protocol=0).encode('base64')
         if not nosave:
             Text.objects.filter(id=self.id).update(**{
-                'html_render_instructions': instructions
+                'html_render_instructions': self.html_render_instructions
             })
 
     def save(self, *args, **kwargs):
@@ -806,7 +809,8 @@ class Page(models.Model):
         change metadata from the model because it's an aggregated value from
         multiple sources (explicit metadata, backlinks, macros etc.)
         """
-        meta = MetaData.objects.filter(page=self.id).values_list('key', 'value')
+        meta = MetaData.objects.filter(page=self.id) \
+                               .values_list('key', 'value')
         return MultiMap(meta)
 
     @property
@@ -850,7 +854,8 @@ class Page(models.Model):
                     new_metadata.remove(t)
                 new_metadata.add((key, join_pagename(self.name, value)))
 
-        qs = MetaData.objects.filter(page=self.id).values_list('id', 'key', 'value')
+        qs = MetaData.objects.filter(page=self.id) \
+                             .values_list('id', 'key', 'value')
         to_remove = []
 
         for id, key, value in qs:
@@ -1055,7 +1060,7 @@ class Attachment(models.Model):
     def mimetype(self):
         """The mimetype of the attachment."""
         return magic.from_file(self.file.path, mime=True) or \
-                'application/octet-stream'
+            'application/octet-stream'
 
     @property
     def contents(self):
@@ -1082,13 +1087,12 @@ class Attachment(models.Model):
         url = escape(self.get_absolute_url())
         if self.mimetype.startswith('image/'):
             return u'<a href="%s"><img class="attachment" src="%s" ' \
-                   u'alt="%s"></a>' % ((url,) * 3)
-        elif self.mimetype.startswith('text/'):
-            return highlight_code(self.contents, filename=self.filename) + \
-                   u''.join([u'<a href="%s">', _(u'Download attachment'),
-                            u'</a>']) % url
+                   u'alt="%s"></a>' % (url, url, url)
         else:
-            return u''.join([u'<a href="%s">', _(u'Download attachment'), u'</a>']) % url
+            code = u''
+            if self.mimetype.startswith('text/'):
+                code = highlight_code(self.contents, filename=self.filename)
+            return u'%s<a href="%s">%s</a>' % (code, url, _(u'Download attachment'))
 
     def open(self, mode='rb'):
         """
@@ -1151,8 +1155,8 @@ class Revision(models.Model):
     objects = RevisionManager()
     page = models.ForeignKey(Page, related_name='revisions')
     text = models.ForeignKey(Text, related_name='revisions')
-    user = models.ForeignKey('portal.User', related_name='wiki_revisions', null=True,
-                             blank=True)
+    user = models.ForeignKey('portal.User', related_name='wiki_revisions',
+                             null=True, blank=True)
     change_date = models.DateTimeField(db_index=True)
     note = models.CharField(max_length=512)
     deleted = models.BooleanField()
@@ -1195,16 +1199,16 @@ class Revision(models.Model):
         """Revert this revision and make it the current one."""
         # no relative date information, because it stays in the note forever
 
-        note = _(u'%(note)s [Revision from %(date)s restored by %(user)s]' % {
-                'note': note,
-                'date': datetime_to_timezone(self.change_date).strftime(
-                    '%d.%m.%Y %H:%M %Z'),
-                'user': self.user.username if self.user else self.remote_addr})
+        note = _(u'%(note)s [Revision from %(date)s restored by %(user)s]' %
+                 {'note': note,
+                  'date': datetime_to_timezone(self.change_date).strftime(
+                                '%d.%m.%Y %H:%M %Z'),
+                  'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
                            user=(user if user.is_authenticated() else None),
                            change_date=datetime.utcnow(),
-                           note=note, deleted=False, remote_addr=
-                           remote_addr or '127.0.0.1',
+                           note=note, deleted=False,
+                           remote_addr=remote_addr or '127.0.0.1',
                            attachment=self.attachment)
         new_rev.save()
         self.page.last_rev = new_rev
