@@ -84,6 +84,7 @@ from operator import itemgetter
 from datetime import datetime
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
 from django.db.models.loading import get_model
@@ -518,24 +519,22 @@ class RevisionManager(models.Manager):
 
     def get_latest_revisions(self, page_name=None, count=10):
         cache_key = 'wiki/latest_revisions'
+        revision_ids = self.all()
         if page_name is not None:
-            cache_key = 'wiki/latest_revisions/%s' % normalize_pagename(page_name)
-
-        revisions = None
-        if revisions is None:
-            revision_ids = self.all()
-            if page_name is not None:
-                revision_ids = revision_ids.filter(page__name__exact=page_name)
-            max_size = max(settings.AVAILABLE_FEED_COUNTS['wiki_feed'])
-            # Force evaluation to not cause a subselect in the next select.
-            revision_ids = list(revision_ids.values_list('pk', flat=True)[:max_size])
-            # Force evaluation, otherwise we get two queries, one limit 100
-            # and one limit 21 (later seems to be caused by repr on the qs
-            # in CacheDebugProxy). No idea why that happens in the live sys.
-            # FIXME: properly debug that...
-            revisions = list(self.select_related('user', 'page')\
-                                 .filter(pk__in = revision_ids))
-            request_cache.set(cache_key, revisions, 300)
+            cache_key = 'wiki/latest_revisions/%s' % \
+                normalize_pagename(page_name)
+            revision_ids = revision_ids.filter(page__name__exact=page_name)
+        max_size = max(settings.AVAILABLE_FEED_COUNTS['wiki_feed'])
+        # Force evaluation to not cause a subselect in the next select.
+        revision_ids = list(revision_ids.values_list('pk',
+                                                     flat=True)[:max_size])
+        # Force evaluation, otherwise we get two queries, one limit 100
+        # and one limit 21 (later seems to be caused by repr on the qs
+        # in CacheDebugProxy). No idea why that happens in the live sys.
+        # FIXME: properly debug that...
+        revisions = list(self.select_related('user', 'page')
+                             .filter(pk__in=revision_ids))
+        cache.set(cache_key, revisions, 300)
         return revisions[:count]
 
 
@@ -1216,6 +1215,8 @@ class Revision(models.Model):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
         request_cache.delete('wiki/page/' + self.page.name)
+        cache.delete('wiki/latest_revisions')
+        cache.delete('wiki/latest_revisions/%s' % self.page.name)
 
     def prepare_for_caching(self):
         """Called before the page object is stored in the cache."""
