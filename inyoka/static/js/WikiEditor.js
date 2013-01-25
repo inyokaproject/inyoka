@@ -142,7 +142,7 @@
         seconds = orig.getUTCSeconds();
     return (year + '-' + (month < 9 ? '0' : '') + (month + 1) + '-' +
                          (date < 10 ? '0' : '') + date + 'T' +
-                         (hours < 10 ? '0' : '') + hours + ':' + 
+                         (hours < 10 ? '0' : '') + hours + ':' +
                          (minutes < 10 ? '0' : '') + minutes + ':' +
                          (seconds < 10 ? '0' : '') + seconds + 'Z');
   };
@@ -199,7 +199,7 @@
       });
       for (var i = 0; i < tds.length / 2; i++) {
         $('<tr />')
-          .appendTo(codebox)        
+          .appendTo(codebox)
           .append(tds[i], tds[i + tds.length / 2]);
       }
       $(document).click(function() {
@@ -312,7 +312,7 @@
       var bar = toolbar();
       for (var i = 0, n = bar.length, x; i != n; ++i)
         if (x = bar[i](self))
-          x.appendTo($('<li />').appendTo(t))
+          x.appendTo($('<li />').appendTo(t));
 
       /* Helpbar */
       //this.helpbar.appendTo($('<li />').appendTo(t)).hide();
