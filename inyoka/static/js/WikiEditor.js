@@ -59,10 +59,11 @@
           .attr('title', title)
           .mouseover(function(evt) {
             evt.preventDefault();
-            helper.call(editor, evt);
+            helper(editor, evt);
           })
           .mouseout(function(evt) {
             evt.preventDefault();
+            helper(editor, evt);
           })
           .append($('<span />').text(title))
           .click(function(evt) {
@@ -84,12 +85,13 @@
         .attr('title', title)
         .append($('<option class="title" value="" />').text(title))
         .mouseover(function(evt) {
-          helper.call(editor, evt);
+          helper(editor, evt);
         })
         .mouseout(function(evt) {
+          helper(editor, evt);
         })
         .change(function(evt) {
-          callback.call(editor, evt);
+          callback(editor, evt);
         });
       $.each(items, function() {
         dropdown.append(this);
@@ -121,10 +123,14 @@
    * factory duncrion for combined usage with "button".
    * It's an easy way to insert help commands.
    *
-   * NOTE: currently unused!
    */
   var help = function(message) {
-    return function(evt) {
+    return function(editor, evt) {
+      if (evt.type == 'mouseover') {
+        $('.toolbar_help').text(message);
+      } else {
+        $('.toolbar_help').text('...');
+      }
     };
   };
 
@@ -268,7 +274,7 @@
         if (evt.target.value.length > 0)
           this.insertTag(evt.target.value, '');
         evt.target.selectedIndex = 0;
-    }, ['wiki'], help("Textbausteine einfügen")),
+    }, ['wiki'], help("Textbaustein einfügen")),
     dropdown('textformat', 'Textformat', [
       item("'''{S/Verzeichnisse}'''", 'Verzeichnisse'),
       item("''\"{S/Menü -> Untermenü -> Menübefehl}\"''", 'Menüs'),
@@ -305,7 +311,7 @@
       this.textarea[0].inyokaWikiEditor = this;
 
       /* helpbar with some syntax informations */
-      //this.helpbar = $('<span class="toolbar_help note" />');
+      this.helpbar = $('<span class="toolbar_help note">...</span>');
 
       /* create toolbar based on button layout */
       t = $('<ul class="toolbar" />').prependTo(this.textarea.parent());
@@ -315,7 +321,8 @@
           x.appendTo($('<li />').appendTo(t));
 
       /* Helpbar */
-      //this.helpbar.appendTo($('<li />').appendTo(t)).hide();
+      this.helpbar.appendTo($('<li />').appendTo(t));
+
       if (profile == 'wiki') {
         link = 'http://wiki.ubuntuusers.de/Wiki/Syntax';
       } else {
