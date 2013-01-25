@@ -33,7 +33,7 @@
     <dd><label for="id_enddate">{% trans %}Date (to):{% endtrans %}</label> {{ form.enddate }}</dd>
     <dd><label for="id_endtime">{% trans %}Time (to):{% endtrans %}</label> {{ form.endtime }}</dd>
     <dt><label for="id_description">{% trans %}Description:{% endtrans %}</label></dt>
-    <dd>{{ form.description }}</dd>
+    <dd><textarea data-enable-editor="true" id="id_{{ form.description.html_name }}"></textarea><dd>
     <dt>{% trans %}Venue:{% endtrans %}</dt>
     <dd><label for="id_location_town">{% trans %}Town:{% endtrans %}</label> {{ form.location_town }}</dd>
     <dd><label for="id_location">{% trans %}Venue:{% endtrans %}</label> {{ form.location }}</dd>
@@ -44,10 +44,4 @@
 
     <p><input type="submit" value="{% trans %}Submit{% endtrans %}" /></p>
   </form>
-
-  <script type="text/javascript">
-    /* <![CDATA[ */
-    var text = new WikiEditor('#id_description');
-    /* ]]> */
-  </script>
 {% endblock %}

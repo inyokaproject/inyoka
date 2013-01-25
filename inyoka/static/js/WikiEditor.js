@@ -487,4 +487,17 @@
       return lines.join('\n') + '\n';
     }
   });
+
+  /*
+   * Automatically detect form fields and transform them to a editor
+   * field.
+   *
+   */
+
+  $(document).ready(function () {
+    $('textarea[data-enable-editor="true"]').each(function () {
+      new WikiEditor($(this));
+    });
+  });
+
 })();
