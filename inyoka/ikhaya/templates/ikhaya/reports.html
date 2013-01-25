@@ -59,18 +59,3 @@
     <a href="{{ article|url('report_new')|e }}">{% trans %}Report a new spelling mistake{% endtrans %}</a>
   </p>
 {% endblock %}
-
-{% block additional_scripts %}
-  {{ super() }}
-  <script type="text/javascript">
-    /* <![CDATA[ */
-    $('.report .report_header').click(function() {
-      var report = $(this).parent('.report')
-      report.find('.text').toggle();
-      report.find('.meta').toggle();
-    });
-    $('.solved').find('.text').hide();
-    $('.solved .meta').hide();
-    /* ]]> */
-  </script>
-{% endblock %}
