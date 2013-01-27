@@ -123,7 +123,7 @@ msgid "Title"
 msgstr ""
 
 #: inyoka/ikhaya/models.py:421
-msgid "Annotations"
+msgid "Annotations to the team"
 msgstr ""
 
 #: inyoka/ikhaya/models.py:427

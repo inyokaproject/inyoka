@@ -418,8 +418,8 @@ class Suggestion(models.Model):
     title = models.CharField(ugettext_lazy(u'Title'), max_length=100)
     text = models.TextField(ugettext_lazy(u'Text'))
     intro = models.TextField(ugettext_lazy(u'Introduction'))
-    notes = models.TextField(ugettext_lazy(u'Annotations'), blank=True,
-                default=u'')
+    notes = models.TextField(ugettext_lazy(u'Annotations to the team'),
+                blank=True, default=u'')
     owner = models.ForeignKey(User, related_name='owned_suggestion_set',
                               null=True, blank=True)
 
