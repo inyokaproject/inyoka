@@ -135,8 +135,8 @@ msgid "Title"
 msgstr "Titel"
 
 #: inyoka/ikhaya/models.py:421
-msgid "Annotations"
-msgstr "Anmerkungen"
+msgid "Annotations to the team"
+msgstr "Anmerkungen an das Ikhayateam"
 
 #: inyoka/ikhaya/models.py:427
 msgid "Article suggestion"
