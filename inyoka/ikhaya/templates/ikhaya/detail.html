@@ -32,7 +32,7 @@
         <div class="member_title">{{ user.member_title|e }}</div>
       {%- endif %}
     </p>
-    {%- if user.avatar and not USER.settings['hide_avatars'] %}
+    {%- if user.has_avatar and not USER.settings['hide_avatars'] %}
       <img class="avatar" src="{{ user.avatar_url }}"
            alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
     {%- endif %}
