@@ -77,6 +77,17 @@ class TestViews(TestCase):
             self.assertEqual(response.status_code, 403)
         self.assertFalse(Subscription.objects.user_subscribed(self.user, self.admin))
 
+    def test_unsubscribe_user(self):
+        Subscription(user=self.admin, content_object=self.user).save()
+        with translation.override('en-us'):
+            response = self.client.post('/user/user/unsubscribe/', follow=True)
+        self.assertRedirects(response, '/user/user/', host=settings.BASE_DOMAIN_NAME)
+        self.assertIn(
+            u'From now on you won’t be notified anymore about activities of “user”.',
+            response.content.decode('utf-8'),
+        )
+        self.assertFalse(Subscription.objects.user_subscribed(self.admin, self.user))
+
 
 class TestAuthViews(TestCase):
 
