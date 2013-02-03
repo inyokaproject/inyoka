@@ -28,6 +28,7 @@ class TestViews(TestCase):
     permissions = sum(PERMISSION_NAMES.keys())
 
     def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.admin._permissions = self.permissions
         self.admin.save()
@@ -57,6 +58,18 @@ class TestViews(TestCase):
             self.assertIn('<ul class="errorlist"><li>%s</li></ul>'
                  % _(u'The group name contains invalid chars'),
                 response.content.decode('utf-8'))
+
+    def test_subscribe_user(self):
+        with translation.override('en-us'):
+            response = self.client.post('/user/user/subscribe/', follow=True)
+            self.assertRedirects(response, '/user/user/', host=settings.BASE_DOMAIN_NAME)
+            self.assertIn(
+                u'You will now be notified about activities of “user”.',
+                response.content.decode('utf-8'),
+            )
+            self.client.login(username='user', password='user')
+            response = self.client.post('/user/admin/subscribe/')
+            self.assertEqual(response.status_code, 403)
 
 
 class TestAuthViews(TestCase):
