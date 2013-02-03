@@ -17,6 +17,7 @@ from django.test import TestCase
 from django.utils import translation
 from django.utils.translation import ugettext as _
 
+from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient
@@ -62,14 +63,19 @@ class TestViews(TestCase):
     def test_subscribe_user(self):
         with translation.override('en-us'):
             response = self.client.post('/user/user/subscribe/', follow=True)
-            self.assertRedirects(response, '/user/user/', host=settings.BASE_DOMAIN_NAME)
-            self.assertIn(
-                u'You will now be notified about activities of “user”.',
-                response.content.decode('utf-8'),
-            )
+        self.assertRedirects(response, '/user/user/', host=settings.BASE_DOMAIN_NAME)
+        self.assertIn(
+            u'You will now be notified about activities of “user”.',
+            response.content.decode('utf-8'),
+        )
+        self.assertTrue(Subscription.objects.user_subscribed(self.admin, self.user))
+
+    def test_subscribe_user_as_unauthorized(self):
+        with translation.override('en-us'):
             self.client.login(username='user', password='user')
             response = self.client.post('/user/admin/subscribe/')
             self.assertEqual(response.status_code, 403)
+        self.assertFalse(Subscription.objects.user_subscribed(self.user, self.admin))
 
 
 class TestAuthViews(TestCase):
