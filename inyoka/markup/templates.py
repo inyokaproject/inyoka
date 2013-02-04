@@ -592,7 +592,7 @@ class For(Node):
         seq = self.seq.evaluate(context)
         length = len(seq)
         for idx, child in enumerate(seq):
-            context[self.var] = child
+            context[self.var] = Value(child)
             context['loop'] = Value({
                 'index0':       idx,
                 'index':        idx + 1,
