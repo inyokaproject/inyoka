@@ -8,12 +8,14 @@
     :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
+from django.conf import settings
 from django.test import TestCase
 
 from datetime import date, time
 
-from inyoka.ikhaya.models import Article, Category
+from inyoka.ikhaya.models import Article, Category, Suggestion
 from inyoka.portal.user import User
+from inyoka.utils.urls import url_for
 
 
 class TestArticleModel(TestCase):
@@ -68,3 +70,15 @@ class TestArticleModel(TestCase):
         self.article1.text = 'Text 1   '
         self.assertEqual(self.article1.simplified_text, 'Text 1')
         self.article1.text = _old_text
+
+class TestSuggestionModel(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.register_user('admin', 'admin', 'admin',
+                False)
+        self.suggestion1 = Suggestion(author=self.user)
+        self.suggestion1.save()
+
+    def test_url(self):
+        url = 'http://ikhaya.{0}/suggestions/#{1}'.format(settings.BASE_DOMAIN_NAME, self.suggestion1.id)
+        self.assertEqual(url_for(self.suggestion1), url)

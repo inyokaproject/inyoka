@@ -458,7 +458,7 @@ class Suggestion(models.Model):
         return render(instructions, context)
 
     def get_absolute_url(self):
-        return href('ikhaya', 'suggestions', anchor=self.id)
+        return href('ikhaya', 'suggestions', _anchor=self.id)
 
 
 class Comment(models.Model):
