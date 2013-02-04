@@ -1,5 +1,4 @@
-{% load i18n %}
-{% comment %}
+{#
     errors/500.html
     ~~~~~~~~~~~~~~~
 
@@ -8,16 +7,15 @@
 
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
-{% endcomment %}
-
+#}
 <html>
   <head>
-    <title>{% trans "Servererror" %}</title>
+    <title>{% trans %}Servererror{% endtrans %}</title>
   </head>
   <body>
-    <h1>{% trans "Servererror" %}</h1>
+    <h1>{% trans %}Servererror{% endtrans %}</h1>
     <p>
-      {% trans "An internal error occurred. The administration was already notified." %}
+      {% trans %}An internal error occurred. The administration was already notified.{% endtrans %}
     </p>
   </body>
 </html>
