@@ -95,7 +95,7 @@ class Lexer(object):
             rule(r'@>', 'tag_end', leave=1),
             rule(r'#.*?$(?m)'),
             rule(r'\s+'),
-            rule(r'\d(\.\d*)?', 'number'),
+            rule(r'\d+(\.\d*)?', 'number'),
             rule(r"('([^'\\]*(?:\\.[^'\\]*)*)'|"
                  r'"([^"\\]*(?:\\.[^"\\]*)*)")(?s)', 'string'),
             rule(r'(<=?|>=?|=>|[!=]?=)|[()\[\]&.,*%/+-]', 'operator'),
@@ -679,14 +679,13 @@ class Value(Expr):
         return 0
 
     def __getitem__(self, key):
-        if isinstance(self.value, (tuple, list, dict)):
+        try:
+            return self.value[int(key)]
+        except (ValueError, TypeError, IndexError, KeyError):
             try:
-                return self.value[int(key)]
-            except (ValueError, TypeError, IndexError, KeyError):
-                try:
-                    return self.value[unicode(key)]
-                except (KeyError, TypeError):
-                    pass
+                return self.value[unicode(key)]
+            except (KeyError, TypeError):
+                pass
         return NoneValue
 
     def __unicode__(self):

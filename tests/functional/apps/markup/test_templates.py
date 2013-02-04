@@ -40,3 +40,10 @@ class TestWikiTemplates(TestCase):
         node = parser.subparse(None)
         self.assertIsInstance(node, templates.Data)
         self.assertIn('Unexpected operator', node.markup)
+
+    def test_getitem_numbered(self):
+        context = [('arg', 'some_string')]
+        code = '<@ $arg.10 @>'
+        parser = templates.Parser(code)
+        node = parser.subparse(None)
+        self.assertEqual(templates.process(code, context), 'g')
