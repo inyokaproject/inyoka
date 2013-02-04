@@ -95,7 +95,7 @@ class Lexer(object):
             rule(r'@>', 'tag_end', leave=1),
             rule(r'#.*?$(?m)'),
             rule(r'\s+'),
-            rule(r'\d(\.\d*)?', 'number'),
+            rule(r'\d+(\.\d*)?', 'number'),
             rule(r"('([^'\\]*(?:\\.[^'\\]*)*)'|"
                  r'"([^"\\]*(?:\\.[^"\\]*)*)")(?s)', 'string'),
             rule(r'(<=?|>=?|=>|[!=]?=)|[()\[\]&.,*%/+-]', 'operator'),
@@ -379,6 +379,8 @@ class Parser(object):
                         next_numeric += 1
                     items[key] = value
                 node = Value(items)
+            else:
+                raise TemplateSyntaxError(_('Unexpected operator'))
             self.stream.next()
         else:
             node = Value(value)
@@ -590,7 +592,7 @@ class For(Node):
         seq = self.seq.evaluate(context)
         length = len(seq)
         for idx, child in enumerate(seq):
-            context[self.var] = child
+            context[self.var] = Value(child)
             context['loop'] = Value({
                 'index0':       idx,
                 'index':        idx + 1,
@@ -677,14 +679,13 @@ class Value(Expr):
         return 0
 
     def __getitem__(self, key):
-        if isinstance(self.value, (tuple, list, dict)):
+        try:
+            return self.value[int(key)]
+        except (ValueError, TypeError, IndexError, KeyError):
             try:
-                return self.value[int(key)]
-            except (ValueError, TypeError, IndexError, KeyError):
-                try:
-                    return self.value[unicode(key)]
-                except (KeyError, TypeError):
-                    pass
+                return self.value[unicode(key)]
+            except (KeyError, TypeError):
+                pass
         return NoneValue
 
     def __unicode__(self):
