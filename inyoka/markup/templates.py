@@ -379,6 +379,8 @@ class Parser(object):
                         next_numeric += 1
                     items[key] = value
                 node = Value(items)
+            else:
+                raise TemplateSyntaxError(_('Unexpected operator'))
             self.stream.next()
         else:
             node = Value(value)
