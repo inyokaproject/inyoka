@@ -8,6 +8,8 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
+import re
+
 from django.conf import settings
 from django.core import mail
 from django.test import TestCase
@@ -15,6 +17,7 @@ from django.test import TestCase
 from django.utils import translation
 from django.utils.translation import ugettext as _
 
+from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient
@@ -26,6 +29,7 @@ class TestViews(TestCase):
     permissions = sum(PERMISSION_NAMES.keys())
 
     def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.admin._permissions = self.permissions
         self.admin.save()
@@ -56,13 +60,41 @@ class TestViews(TestCase):
                  % _(u'The group name contains invalid chars'),
                 response.content.decode('utf-8'))
 
+    def test_subscribe_user(self):
+        with translation.override('en-us'):
+            response = self.client.post('/user/user/subscribe/', follow=True)
+        self.assertRedirects(response, '/user/user/', host=settings.BASE_DOMAIN_NAME)
+        self.assertIn(
+            u'You will now be notified about activities of “user”.',
+            response.content.decode('utf-8'),
+        )
+        self.assertTrue(Subscription.objects.user_subscribed(self.admin, self.user))
+
+    def test_subscribe_user_as_unauthorized(self):
+        with translation.override('en-us'):
+            self.client.login(username='user', password='user')
+            response = self.client.post('/user/admin/subscribe/')
+            self.assertEqual(response.status_code, 403)
+        self.assertFalse(Subscription.objects.user_subscribed(self.user, self.admin))
+
+    def test_unsubscribe_user(self):
+        Subscription(user=self.admin, content_object=self.user).save()
+        with translation.override('en-us'):
+            response = self.client.post('/user/user/unsubscribe/', follow=True)
+        self.assertRedirects(response, '/user/user/', host=settings.BASE_DOMAIN_NAME)
+        self.assertIn(
+            u'From now on you won’t be notified anymore about activities of “user”.',
+            response.content.decode('utf-8'),
+        )
+        self.assertFalse(Subscription.objects.user_subscribed(self.admin, self.user))
+
 
 class TestAuthViews(TestCase):
 
     client_class = InyokaClient
 
     def setUp(self):
-        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
     def test_valid_login(self):
@@ -149,7 +181,7 @@ class TestAuthViews(TestCase):
         self.assertNotIn('_auth_user_id', self.client.session.keys())
         self.assertNotIn('_auth_user_backend', self.client.session.keys())
 
-    def test_logout_safe_redirest(self):
+    def test_logout_safe_redirects(self):
         next = 'http://google.at'
         response = self.client.get('/logout/', {'next': next}, follow=True)
         # We don't allow redirects to external pages!
@@ -189,3 +221,21 @@ class TestAuthViews(TestCase):
         self.assertEqual(1, len(mail.outbox))
         subject = mail.outbox[0].subject
         self.assertIn(u'Activation of the user “apollo13”', subject)
+
+    def test_lost_password(self):
+        postdata = {'email': 'user@example.com'}
+        with translation.override('en-us'):
+            response = self.client.post('/lost_password/', postdata)
+        subject = mail.outbox[0].subject
+        self.assertIn(u'New password for “user”', subject)
+        body = mail.outbox[0].body
+        link = re.search(r'(/lost_password/.*)\n', body).groups()[0]
+        with translation.override('en-us'):
+            response = self.client.get(link)
+        self.assertContains(response, 'You can set a new password')
+
+    def test_lost_password_as_authenticated_user(self):
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.get('/lost_password/', follow=True)
+        self.assertContains(response, 'You are already logged in.')

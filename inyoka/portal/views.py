@@ -32,6 +32,7 @@ from django.utils.html import escape
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.views import password_reset, password_reset_confirm
+from django.views.decorators.http import require_POST
 
 from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
@@ -288,6 +289,9 @@ def resend_activation_mail(request, username):
 
 
 def lost_password(request):
+    if request.user.is_authenticated():
+        messages.error(request, _(u'You are already logged in.'))
+        return HttpResponseRedirect(href('portal'))
     return password_reset(request,
         post_reset_redirect=href('portal', 'login'),
         template_name='portal/lost_password.html',
@@ -529,6 +533,7 @@ def user_mail(request, username):
     }
 
 
+@require_POST
 @require_permission('subscribe_to_users')
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
@@ -543,7 +548,7 @@ def subscribe_user(request, username):
               % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
-
+@require_POST
 def unsubscribe_user(request, username):
     """Remove a user subscription."""
     user = User.objects.get(username)
