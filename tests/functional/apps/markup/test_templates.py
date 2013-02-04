@@ -7,6 +7,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.test import TestCase
+from django.utils import translation
+
 from inyoka.markup import templates
 
 
@@ -23,21 +25,23 @@ class TestWikiTemplates(TestCase):
         code = '<@ $author.groups.1 @>'
         parser = templates.Parser(code)
         node = parser.subparse(None)
-        values = []
-        while 1:
-            self.assertIsInstance(node, templates.GetItem)
-            values.append(node.item.value)
-            node = node.expr
-            if isinstance(node, templates.Var):
-                values.append(node.name)
-                break
 
-        self.assertEqual(values, [1.0, u'groups', u'author'])
+        self.assertIsInstance(node, templates.GetItem)
+        self.assertEqual(node.item.value, 1.0)
+
+        node = node.expr
+        self.assertIsInstance(node, templates.GetItem)
+        self.assertEqual(node.item.value, 'groups')
+
+        node = node.expr
+        self.assertIsInstance(node, templates.Var)
+        self.assertEqual(node.name, 'author')
 
     def test_invalid_primary(self):
         code = '<@ , $author @>'
         parser = templates.Parser(code)
-        node = parser.subparse(None)
+        with translation.override('en-us'):
+            node = parser.subparse(None)
         self.assertIsInstance(node, templates.Data)
         self.assertIn('Unexpected operator', node.markup)
 
