@@ -27,6 +27,7 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
 from inyoka.markup import parse, RenderContext
+from inyoka.utils.cache import request_cache
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse
@@ -297,7 +298,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
         ap.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': old_attachment_name},
                 remote_addr=request.META.get('REMOTE_ADDR'))
 
-    update_object_list.delay(page.last_rev)
+    update_object_list.delay([name, new_name])
     return True
 
 
