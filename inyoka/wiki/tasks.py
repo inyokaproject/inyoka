@@ -13,8 +13,6 @@ from django.core.cache import cache
 
 from celery.task import task
 
-from inyoka.utils.cache import request_cache
-
 
 @task(ignore_result=True)
 def render_article(page):
@@ -42,12 +40,13 @@ def update_related_pages(page, update_meta=True):
 
 
 @task(ignore_result=True)
-def update_object_list(rev=None, deleted=False):
+def update_object_list(names=None):
     """Refresh the wiki/object_list cache key"""
     from inyoka.wiki.models import Page
-    if rev is not None:
-        cache.delete('wiki/page/' + rev.page.name)
+    if isinstance(names, list):
+        cache.delete_many(['wiki/page/%s' % name for name in names])
+    elif isinstance(names, basestring):
+        cache.delete('wiki/page/%s' % names)
 
-
-    request_cache.delete('wiki/object_list')
+    cache.delete('wiki/object_list')
     Page.objects.get_page_list()
