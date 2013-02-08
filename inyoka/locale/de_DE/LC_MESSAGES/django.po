@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-12-27 11:58+0100\n"
+"POT-Creation-Date: 2013-02-08 23:35+0100\n"
 "PO-Revision-Date: 2012-11-03 12:49+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -22,7 +22,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.0dev\n"
 
-#: inyoka/templates/appheader.html:2
+#: inyoka/templates/500.html:13 inyoka/templates/500.html:16
+msgid "Servererror"
+msgstr "Serverfehler"
+
+#: inyoka/templates/500.html:18
+msgid "An internal error occurred. The administration was already notified."
+msgstr ""
+"Ein interner Fehler ist aufgetreten. Die Administratoren wurden bereits "
+"benachrichtigt."
+
+#: inyoka/templates/appheader.html:9
 msgid "Portal"
 msgstr "Portal"
 
@@ -209,15 +219,15 @@ msgstr "Alt"
 msgid "New"
 msgstr "Neu"
 
-#: inyoka/utils/flash_confirmation.py:23
+#: inyoka/utils/flash_confirmation.py:33
 msgid "Are you sure?"
 msgstr "Bist du sicher"
 
-#: inyoka/utils/flash_confirmation.py:24
+#: inyoka/utils/flash_confirmation.py:34
 msgid "Yes"
 msgstr "Ja"
 
-#: inyoka/utils/flash_confirmation.py:25
+#: inyoka/utils/flash_confirmation.py:35
 msgid "No"
 msgstr "Nein"
 
@@ -247,21 +257,19 @@ msgstr "Deine Signatur darf nicht mehr als %(num)d Zeilen haben"
 msgid "This user does not exist"
 msgstr "Diesen Benutzer gibt es nicht"
 
-#: inyoka/utils/forms.py:137
-msgid "CAPTCHA"
-msgstr "CAPTCHA"
+#: inyoka/utils/forms.py:181
+msgid ""
+"The entered e-mail address belongs to a e-mail provider we had to block "
+"because of SPAM problems. Please choose another e-mail address"
+msgstr ""
+"Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir "
+"wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
 
-#: inyoka/utils/forms.py:138
-msgid "Please type in the code from the graphic above"
-msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
-
-#: inyoka/utils/forms.py:140
-msgid "Generate new code"
-msgstr "Neue Zeichenfolge generieren"
-
-#: inyoka/utils/forms.py:205
-msgid "The entered CAPTCHA was incorrect."
-msgstr "Die Eingabe des Captchas war nicht korrekt."
+#: inyoka/utils/forms.py:194
+msgid "The entered Jabber address is invalid. Please check your input."
+msgstr ""
+"Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die "
+"Eingabe."
 
 #: inyoka/utils/forms.py:220
 msgid ""
@@ -271,25 +279,21 @@ msgstr ""
 "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot "
 "identifiziert."
 
-#: inyoka/utils/forms.py:230
-msgid ""
-"The entered e-mail address belongs to a e-mail provider we had to block "
-"because of SPAM problems. Please choose another e-mail address"
-msgstr ""
-"Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir "
-"wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
+#: inyoka/utils/forms.py:231
+msgid "CAPTCHA"
+msgstr "CAPTCHA"
+
+#: inyoka/utils/forms.py:232
+msgid "Please type in the code from the graphic above"
+msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
 
 #: inyoka/utils/forms.py:234
-msgid "The entered e-mail address is invalid. Please check your input."
-msgstr ""
-"Die von dir angegebene E-Mail-Adresse ist ungültig. Bitte überpfüfe die "
-"Eingabe."
+msgid "Generate new code"
+msgstr "Neue Zeichenfolge generieren"
 
-#: inyoka/utils/forms.py:246
-msgid "The entered Jabber address is invalid. Please check your input."
-msgstr ""
-"Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die "
-"Eingabe."
+#: inyoka/utils/forms.py:259
+msgid "The entered CAPTCHA was incorrect."
+msgstr "Die Eingabe des Captchas war nicht korrekt."
 
 #: inyoka/utils/generic.py:28
 msgid "Errors occurred, please fix them."
@@ -317,22 +321,18 @@ msgid "Canceled."
 msgstr "Abgebrochen."
 
 #: inyoka/utils/pagination.py:156 inyoka/utils/pagination.py:160
-#: inyoka/utils/pagination.py:202
+#: inyoka/utils/pagination.py:206
 msgid "Next »"
 msgstr "Weiter »"
 
 #: inyoka/utils/pagination.py:166 inyoka/utils/pagination.py:170
-#: inyoka/utils/pagination.py:204
+#: inyoka/utils/pagination.py:208
 msgid "« Previous"
 msgstr "« Zurück"
 
-#: inyoka/utils/pagination.py:199
+#: inyoka/utils/pagination.py:201
 msgid "Page"
 msgstr "Seite"
-
-#: inyoka/utils/pagination.py:200
-msgid "Go to"
-msgstr "Gehe zu"
 
 #: inyoka/utils/sessions.py:82
 msgid ""

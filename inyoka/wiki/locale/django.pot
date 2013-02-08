@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-01-08 18:37+0100\n"
+"POT-Creation-Date: 2013-02-08 23:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,25 +17,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.0dev\n"
 
-#: inyoka/wiki/actions.py:106
+#: inyoka/wiki/actions.py:107
 #, python-format
 msgid "Redirected from “<a href=\"%(link)s\">%(title)s</a>”."
 msgstr ""
 
-#: inyoka/wiki/actions.py:221
+#: inyoka/wiki/actions.py:222
 msgid "Revision is the latest one, revert aborted."
 msgstr ""
 
-#: inyoka/wiki/actions.py:224
+#: inyoka/wiki/actions.py:225
 msgid "Revert aborted."
 msgstr ""
 
-#: inyoka/wiki/actions.py:232
+#: inyoka/wiki/actions.py:233
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr ""
 
-#: inyoka/wiki/actions.py:261
+#: inyoka/wiki/actions.py:262
 #, python-format
 msgid ""
 "These attachments are already attached to the new page name: %(names)s. "
@@ -43,102 +43,102 @@ msgid ""
 "href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
 msgstr ""
 
-#: inyoka/wiki/actions.py:276 inyoka/wiki/actions.py:280
-#: inyoka/wiki/actions.py:297
+#: inyoka/wiki/actions.py:277 inyoka/wiki/actions.py:281
+#: inyoka/wiki/actions.py:298
 #, python-format
 msgid "Renamed from %(old_name)s"
 msgstr ""
 
-#: inyoka/wiki/actions.py:288
+#: inyoka/wiki/actions.py:289
 #, python-format
 msgid "Renamed to %(new_name)s"
 msgstr ""
 
-#: inyoka/wiki/actions.py:315
+#: inyoka/wiki/actions.py:316
 msgid "No page name given."
 msgstr ""
 
-#: inyoka/wiki/actions.py:322
+#: inyoka/wiki/actions.py:323
 msgid "Renamed the page successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:325
+#: inyoka/wiki/actions.py:326
 msgid "A page with this name already exists."
 msgstr ""
 
-#: inyoka/wiki/actions.py:410
+#: inyoka/wiki/actions.py:411
 #, python-format
 msgid "Used the template “<a href=\"%(link)s\">%(name)s</a>” for this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:441 inyoka/wiki/actions.py:890
+#: inyoka/wiki/actions.py:442 inyoka/wiki/actions.py:891
 msgid "Canceled."
 msgstr ""
 
-#: inyoka/wiki/actions.py:459
+#: inyoka/wiki/actions.py:460
 msgid "No changes."
 msgstr ""
 
-#: inyoka/wiki/actions.py:466 inyoka/wiki/actions.py:479
+#: inyoka/wiki/actions.py:467 inyoka/wiki/actions.py:480
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been created."
 msgstr ""
 
-#: inyoka/wiki/actions.py:468
+#: inyoka/wiki/actions.py:469
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been edited."
 msgstr ""
 
-#: inyoka/wiki/actions.py:500
+#: inyoka/wiki/actions.py:501
 msgid ""
 "You are in the process of editing this page unauthenticated. If you save,"
 " your IP-Address will be recorded in the revision history and is "
 "irrevocable publicly visible."
 msgstr ""
 
-#: inyoka/wiki/actions.py:508
+#: inyoka/wiki/actions.py:509
 msgid ""
 "Another user edited this page also.  Please check if the automatic "
 "merging is satisfying."
 msgstr ""
 
-#: inyoka/wiki/actions.py:879
+#: inyoka/wiki/actions.py:880
 msgid "Attachments within attachments are not allowed!"
 msgstr ""
 
-#: inyoka/wiki/actions.py:905
+#: inyoka/wiki/actions.py:906
 msgid "Please enter a name for this attachment."
 msgstr ""
 
-#: inyoka/wiki/actions.py:916
+#: inyoka/wiki/actions.py:917
 msgid "Another page or attachment with the same name exists"
 msgstr ""
 
-#: inyoka/wiki/actions.py:935
+#: inyoka/wiki/actions.py:936
 msgid "Attachment saved successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:969
+#: inyoka/wiki/actions.py:970
 msgid "Attachment edited successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:983
+#: inyoka/wiki/actions.py:984
 msgid "Emptied the page cache."
 msgstr ""
 
-#: inyoka/wiki/actions.py:1011
+#: inyoka/wiki/actions.py:1012
 msgid "You will be notified on changes on this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:1013
+#: inyoka/wiki/actions.py:1014
 msgid "You are already subscribed"
 msgstr ""
 
-#: inyoka/wiki/actions.py:1026
+#: inyoka/wiki/actions.py:1027
 msgid "No subscription for this page found."
 msgstr ""
 
-#: inyoka/wiki/actions.py:1030
+#: inyoka/wiki/actions.py:1031
 msgid "You won't be notified for changes on this page anymore"
 msgstr ""
 
@@ -185,106 +185,106 @@ msgstr ""
 msgid "Completion date"
 msgstr ""
 
-#: inyoka/wiki/macros.py:54
+#: inyoka/wiki/macros.py:63
 msgid "Recent changes cannot be rendered on this page"
 msgstr ""
 
-#: inyoka/wiki/macros.py:346
+#: inyoka/wiki/macros.py:355
 msgid ""
 "You must apply a page name because the macro is being called outside the "
 "wiki context."
 msgstr ""
 
-#: inyoka/wiki/macros.py:348
+#: inyoka/wiki/macros.py:357
 msgid "Invalid arguments"
 msgstr ""
 
-#: inyoka/wiki/macros.py:383
+#: inyoka/wiki/macros.py:392
 #, python-format
 msgid "one page"
 msgid_plural "%(count)d pages"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/wiki/macros.py:395 inyoka/wiki/templates/wiki/page.html:39
+#: inyoka/wiki/macros.py:404 inyoka/wiki/templates/wiki/page.html:39
 msgid "Tags"
 msgstr ""
 
-#: inyoka/wiki/macros.py:434
+#: inyoka/wiki/macros.py:443
 #, python-format
 msgid "Pages with tag “%(name)s”"
 msgstr ""
 
-#: inyoka/wiki/macros.py:467 inyoka/wiki/macros.py:538
+#: inyoka/wiki/macros.py:476 inyoka/wiki/macros.py:547
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr ""
 
-#: inyoka/wiki/macros.py:469 inyoka/wiki/macros.py:537
+#: inyoka/wiki/macros.py:478 inyoka/wiki/macros.py:546
 msgid "Page not found"
 msgstr ""
 
-#: inyoka/wiki/macros.py:472
+#: inyoka/wiki/macros.py:481
 msgid "Detected a circular include macro call"
 msgstr ""
 
-#: inyoka/wiki/macros.py:473
+#: inyoka/wiki/macros.py:482
 msgid "Circular import"
 msgstr ""
 
-#: inyoka/wiki/macros.py:568
+#: inyoka/wiki/macros.py:577
 msgid "Key not defined"
 msgstr ""
 
-#: inyoka/wiki/macros.py:569
+#: inyoka/wiki/macros.py:578
 #, python-format
 msgid "The key “%(name)s” is not defined"
 msgstr ""
 
-#: inyoka/wiki/macros.py:640
+#: inyoka/wiki/macros.py:649
 msgid "No result"
 msgstr ""
 
-#: inyoka/wiki/macros.py:641
+#: inyoka/wiki/macros.py:650
 #, python-format
 msgid "The metadata filter has found no results. Query: %(query)s"
 msgstr ""
 
-#: inyoka/wiki/macros.py:666
+#: inyoka/wiki/macros.py:675
 msgid "Unknown page"
 msgstr ""
 
-#: inyoka/wiki/models.py:479
+#: inyoka/wiki/models.py:480
 msgid "Created"
 msgstr ""
 
-#: inyoka/wiki/models.py:912
+#: inyoka/wiki/models.py:915
 msgid "Automatically deleted"
 msgstr ""
 
-#: inyoka/wiki/models.py:1035
+#: inyoka/wiki/models.py:1038
 msgid "Wiki page"
 msgstr ""
 
-#: inyoka/wiki/models.py:1036
+#: inyoka/wiki/models.py:1039
 msgid "Wiki pages"
 msgstr ""
 
-#: inyoka/wiki/models.py:1090 inyoka/wiki/models.py:1093
+#: inyoka/wiki/models.py:1095
 msgid "Download attachment"
 msgstr ""
 
-#: inyoka/wiki/models.py:1172
+#: inyoka/wiki/models.py:1174
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr ""
 
-#: inyoka/wiki/models.py:1202
+#: inyoka/wiki/models.py:1204
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr ""
 
-#: inyoka/wiki/models.py:1226
+#: inyoka/wiki/models.py:1230
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr ""
