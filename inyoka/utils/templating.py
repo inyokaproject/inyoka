@@ -119,7 +119,7 @@ def populate_context_defaults(context, flash=False):
     try:
         request = current_request._get_current_object()
         user = request.user
-    except RuntimeError:
+    except (RuntimeError, AttributeError):
         request = None
         user = None
 
