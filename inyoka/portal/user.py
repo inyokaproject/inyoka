@@ -88,6 +88,8 @@ def reactivate_user(id, email, status, time):
                         u'of the account'),
         }
 
+    return {'failed': _(u'Sorry, user reactivation is currently disabled.')}
+
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
         msg = _(u'This e-mail address is used by another user.')

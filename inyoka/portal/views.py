@@ -1762,10 +1762,6 @@ def confirm(request, action=None):
             'action': action
         }
 
-    if 'action' not in data:
-        # legacy support, can be removed after september 15th
-        data['action'] = 'reactivate_user'
-
     r = ACTIONS[data.pop('action')](**data)
     if isinstance(r, dict) and action:
         r['action'] = action
