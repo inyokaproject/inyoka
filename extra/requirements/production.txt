@@ -32,3 +32,4 @@ dulwich==0.8.7
 raven==2.0.12.2
 transifex-client==0.8
 Pillow==1.7.7
+defusedxml==0.3
