@@ -167,9 +167,11 @@ def fix_path(pth):
 
 def replacer(func, parts, is_main_page, page_name):
     pre = (parts and u''.join('../' for i in xrange(parts)) or './')
-    def replacer(match):
+
+    def _repl(match):
         return func(match, pre, is_main_page, page_name)
-    return replacer
+
+    return _repl
 
 
 def handle_src(match, pre, is_main_page, page_name):
