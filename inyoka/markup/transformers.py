@@ -187,10 +187,10 @@ class KeyHandler(Transformer):
         new_children = []
         for idx, node in enumerate(tree.children):
             contains_key = False
+            is_special_container = type(node) in (nodes.Paragraph, nodes.Container)
             if hasattr(node, 'class_') and node.class_ == 'key':
                 return tree, True
-            if node.is_container and not node.is_raw and \
-                type(node) in (nodes.Paragraph, nodes.Container):
+            if node.is_container and not node.is_raw and is_special_container:
                 node, contains_key = self.transform(node, nested=True)
             if contains_key:
                 new_children.extend(node.children)
