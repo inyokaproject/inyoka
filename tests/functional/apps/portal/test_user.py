@@ -19,6 +19,7 @@ class TestUserModel(TestCase):
         self.user = User.objects.register_user('testing', 'example@example.com',
                                                'pwd', False)
 
+    @unittest.skip("As of b0365842f we do not allow user reactivation due to security issues")
     def test_reactivation(self):
         result = reactivate_user(self.user.id, '', '', datetime.utcnow())
         self.assert_('failed' in result)
