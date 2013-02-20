@@ -1,4 +1,4 @@
-Django==1.4.3
+Django==1.4.5
 distribute
 Jinja2==2.6
 MarkupSafe==0.12
