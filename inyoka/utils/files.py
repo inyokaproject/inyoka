@@ -86,8 +86,8 @@ class MaxLengthStorageMixin(object):
             the actual file root. This makes the handling of an incrementing
             counter at the end of the file root much simpler.
         """
-        if '../' in name or '../' in os.path.normpath(name) \
-            or name.endswith('..'):
+        normalized = os.path.normpath(name)
+        if '../' in name or '../' in normalized or name.endswith('..'):
             raise ValueError('Invalid Path.')
 
         dir_name, file_name = os.path.split(name)
