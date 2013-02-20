@@ -31,3 +31,4 @@ dulwich
 raven==1.4.3
 transifex-client
 Pillow==1.7.7
+defusedxml==0.3
