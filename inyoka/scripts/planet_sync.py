@@ -14,6 +14,14 @@
     :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+# Secure XML libraries till a python solution exists.
+# We already patch in inyoka, hence we just import inyoka before feedparser.
+import inyoka
+# And further patch it so feedparser works :/
+import xml.sax
+make_parser = xml.sax.make_parser
+xml.sax.make_parser = lambda x: make_parser()
+# End XML patching.
 import re
 import sys
 import feedparser
