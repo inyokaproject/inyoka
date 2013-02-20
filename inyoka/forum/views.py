@@ -1509,6 +1509,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     moderatable_forums = [forum.id for forum in
         Forum.objects.get_forums_filtered(request.user, CAN_MODERATE, reverse=True)
     ]
+
     def can_moderate(topic):
         return topic.forum_id not in moderatable_forums
 

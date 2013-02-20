@@ -192,5 +192,6 @@ class NewEventForm(forms.ModelForm):
 class EditEventForm(NewEventForm):
     visible = forms.BooleanField(label=ugettext_lazy(u'Display event?'),
                 required=False)
+
     class Meta(NewEventForm.Meta):
         exclude = ['author', 'slug']

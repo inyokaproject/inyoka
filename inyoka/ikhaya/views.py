@@ -736,9 +736,11 @@ def event_edit(request, pk=None):
                   u'for a new event because it does not exist.')
                   % {'id': request.GET['copy_from']})
         else:
-            for key in ('name', 'changed', 'created', 'date', 'time', 'enddate',
-                'endtime', 'description', 'author_id', 'location',
-                'location_town', 'location_lat', 'location_long'):
+            fields = ('name', 'changed', 'created', 'date', 'time',
+                      'enddate', 'endtime', 'description', 'author_id',
+                      'location', 'location_town', 'location_lat',
+                      'location_long')
+            for key in fields:
                 setattr(event, key, getattr(base_event, key))
             event.visible = False
 

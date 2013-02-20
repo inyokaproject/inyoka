@@ -27,7 +27,6 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
 from inyoka.markup import parse, RenderContext
-from inyoka.utils.cache import request_cache
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
      TemplateResponse, AccessDeniedResponse

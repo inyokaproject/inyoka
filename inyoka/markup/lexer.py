@@ -518,6 +518,7 @@ class Lexer(object):
                 match = primary(line, match.end())
                 if match is None:
                     return False
+
         def tokenize_blocks():
             for line in string.splitlines():
                 block_open = open_blocks[-1]
