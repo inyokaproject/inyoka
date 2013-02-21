@@ -55,6 +55,10 @@ class TestWikiTemplates(TestCase):
         code = '<@ $arg.10 @>'
         self.assertEqual(templates.process(code, context), 'g')
 
+    def test_regression_ticket867(self):
+        code = '<@ if 1 != 3 @>:)<@ else @>:(<@ endif @>'
+        self.assertEqual(templates.process(code), ':)')
+
     def test_regression_ticket868(self):
         code = '<@ if "foobar" starts_with \'a\' @>true<@ else @>false<@ endif @>'
         self.assertEqual(templates.process(code), 'false')
