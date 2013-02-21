@@ -54,3 +54,118 @@ class TestWikiTemplates(TestCase):
         context = [('arg', 'some_string')]
         code = '<@ $arg.10 @>'
         self.assertEqual(templates.process(code, context), 'g')
+
+    def test_regression_ticket868(self):
+        code = '<@ if "foobar" starts_with \'a\' @>true<@ else @>false<@ endif @>'
+        self.assertEqual(templates.process(code), 'false')
+
+
+class TestBinaryFunctions(TestCase):
+
+    def test_contain(self):
+        code = '<@ if $a contain $b @>True<@ endif @>'
+
+        context = [('a', 'abc'), ('b', 'b')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', ['a', 'b', 'c']), ('b', 'b')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', [1, 2, 3]), ('b', 'b')]
+        self.assertEqual(templates.process(code, context), '')
+
+    def test_contains(self):
+        code = '<@ if $a contains $b @>True<@ endif @>'
+
+        context = [('a', 'abc'), ('b', 'b')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', ['a', 'b', 'c']), ('b', 'b')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', [1, 2, 3]), ('b', 'b')]
+        self.assertEqual(templates.process(code, context), '')
+
+    def test_has_key(self):
+        code = '<@ if $a has_key $b @>True<@ endif @>'
+
+        context = [('a.bar', 'rab'), ('a.buz', 'zub'), ('b', 'bar')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a.bar', 'rab'), ('a.buz', 'zub'), ('b', 'lorem')]
+        self.assertEqual(templates.process(code, context), '')
+
+    def test_starts_with(self):
+        code = '<@ if $a starts_with $b @>True<@ endif @>'
+
+        context = [('a', 'lorem'), ('b', 'lo')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', 'lorem'), ('b', 'ip')]
+        self.assertEqual(templates.process(code, context), '')
+
+        context = [('a', 123), ('b', 1)]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', 123), ('b', 23)]
+        self.assertEqual(templates.process(code, context), '')
+
+    def test_ends_with(self):
+        code = '<@ if $a ends_with $b @>True<@ endif @>'
+
+        context = [('a', 'lorem'), ('b', 'em')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', 'lorem'), ('b', 'um')]
+        self.assertEqual(templates.process(code, context), '')
+
+        context = [('a', 123), ('b', 3)]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', 123), ('b', 12)]
+        self.assertEqual(templates.process(code, context), '')
+
+    def test_matches(self):
+        code = '<@ if $a matches $b @>True<@ endif @>'
+
+        context = [('a', 'lorem'), ('b', '*re*')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', 'lorem'), ('b', 'lore')]
+        self.assertEqual(templates.process(code, context), '')
+
+        context = [('a', "123"), ('b', 123)]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', 12.3), ('b', 123)]
+        self.assertEqual(templates.process(code, context), '')
+
+    def test_matches_regex(self):
+        code = '<@ if $a matches_regex $b @>True<@ endif @>'
+
+        context = [('a', '1234'), ('b', '\d+')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', 'FooBar'), ('b', '[a-z]')]
+        self.assertEqual(templates.process(code, context), '')
+
+        context = [('a', 'Fo0Bar'), ('b', '[a-z0-9](?i)')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+        context = [('a', 112.34), ('b', 12.3)]
+        self.assertEqual(templates.process(code, context), '')
+
+        context = [('a', 112.34), ('b', '.*12.3')]
+        self.assertEqual(templates.process(code, context), 'True')
+
+    def test_join_with(self):
+        code = '<@ $a join_with $b @>'
+
+        context = [('a', [1, 2, 'a', 'b', 1.2, 3.4]), ('b', ', ')]
+        self.assertEqual(templates.process(code, context), '1, 2, a, b, 1.2, 3.4')
+
+    def test_split_by(self):
+        code = '<@ ($a split_by $b) join_with "X" @>'
+
+        context = [('a', '1, 2, a, b, 1.2, 3.4'), ('b', ', ')]
+        self.assertEqual(templates.process(code, context), '1X2XaXbX1.2X3.4')
