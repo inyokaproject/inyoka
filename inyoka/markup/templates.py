@@ -35,7 +35,8 @@ from django.utils.translation import ugettext as _
 
 from inyoka.markup import unescape_string, escape
 from inyoka.markup.parsertools import TokenStream
-from inyoka.markup.utils import debug_repr, simple_match
+from inyoka.markup.utils import debug_repr, has_key, join_array, regex_match, \
+    simple_match
 
 
 def process(source, context=()):
@@ -776,19 +777,11 @@ class Value(Expr):
                     return True
             return False
         elif isinstance(self.value, dict):
-            for item in self.value.itervalues():
+            for item in self.value.iterkeys():
                 if obj == item:
                     return True
             return False
         return unicode(obj) in unicode(self)
-
-    def has_key(self, key):
-        if not isinstance(self, dict):
-            return False
-        for k in self.value:
-            if key == k:
-                return True
-        return False
 
     @property
     def is_string(self):
@@ -948,24 +941,14 @@ class TestFunction(Expr):
         return Value(bool(rv))
 
 
-def join_array(array, delimiter):
-    if not isinstance(array.value, (tuple, list)):
-        return u''
-    result = []
-    for key in array.value:
-        result.append(unicode(key))
-    return unicode(delimiter).join(result)
-
-
 BINARY_FUNCTIONS = {
     'contain':          lambda a, b: b in a,
     'contains':         lambda a, b: b in a,
-    'has_key':          lambda a, b: b in a,
-    'starts_with':      lambda a, b: unicode(a).startswith(b),
-    'ends_with':        lambda a, b: unicode(a).endswith(b),
-    'matches':          lambda a, b: simple_match(b, unicode(a)),
-    'matches_regex':    lambda a, b: re.match(unicode(b), unicode(a)) \
-                                     is not None,
+    'has_key':          has_key,
+    'starts_with':      lambda a, b: unicode(a).startswith(unicode(b)),
+    'ends_with':        lambda a, b: unicode(a).endswith(unicode(b)),
+    'matches':          lambda a, b: simple_match(unicode(b), unicode(a)),
+    'matches_regex':    lambda a, b: regex_match(unicode(b), unicode(a)),
     'join_with':        join_array,
     'split_by':         lambda a, b: unicode(a).split(unicode(b)),
 }
