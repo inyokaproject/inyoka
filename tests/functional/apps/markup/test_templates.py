@@ -10,6 +10,7 @@ from django.test import TestCase
 from django.utils import translation
 
 from inyoka.markup import templates
+from inyoka.markup.templates import Value, NoneValue
 
 
 class TestWikiTemplates(TestCase):
@@ -62,6 +63,206 @@ class TestWikiTemplates(TestCase):
     def test_regression_ticket868(self):
         code = '<@ if "foobar" starts_with \'a\' @>true<@ else @>false<@ endif @>'
         self.assertEqual(templates.process(code), 'false')
+
+
+class TestValue(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.int1 = Value(42)
+        cls.int2 = Value(23)
+        cls.float1 = Value(8.15)
+        cls.float2 = Value(13.37)
+        cls.string1 = Value('lorem')
+        cls.string2 = Value('ipsum')
+        cls.list1 = Value([Value(1), Value('str'), Value(1.2)])
+        cls.list2 = Value([Value(5), Value(u'unicode'), Value(11.47)])
+        cls.tuple1 = Value((Value(1), Value('str'), Value(1.2)))
+        cls.tuple2 = Value((Value(5), Value(u'unicode'), Value(11.47)))
+        cls.dict1 = Value({'a': Value('A'), 'b': Value(2), 'c': Value(2.3)})
+        cls.dict2 = Value({'d': Value('D'), 'e': Value(6), 'f': Value(9.8)})
+
+    def test_nonzero(self):
+        self.assertTrue(bool(self.int1))
+        self.assertTrue(bool(self.float1))
+        self.assertTrue(bool(self.string1))
+        self.assertTrue(bool(self.list1))
+        self.assertTrue(bool(self.tuple1))
+        self.assertTrue(bool(self.dict1))
+
+        self.assertFalse(bool(Value(None)))
+        self.assertFalse(bool(Value(0)))
+        self.assertFalse(bool(Value(0.0)))
+        self.assertFalse(bool(Value('')))
+        self.assertFalse(bool(Value('0')))
+        self.assertFalse(bool(Value('0.0')))
+        self.assertFalse(bool(Value([])))
+        self.assertFalse(bool(Value(())))
+        self.assertFalse(bool(Value({})))
+
+    def test_convert(self):
+        self.assertEqual(int(self.int1), 42)
+        self.assertEqual(int(self.float1), 8)
+        self.assertEqual(int(self.string1), 0)
+        self.assertEqual(int(self.list1), 0)
+        self.assertEqual(int(self.tuple1), 0)
+        self.assertEqual(int(self.dict1), 0)
+
+        self.assertEqual(float(self.int1), 42.0)
+        self.assertEqual(float(self.float1), 8.15)
+        self.assertEqual(float(self.string1), 0.0)
+        self.assertEqual(float(self.list1), 0.0)
+        self.assertEqual(float(self.tuple1), 0.0)
+        self.assertEqual(float(self.dict1), 0.0)
+
+        self.assertEqual(unicode(self.int1), u'42')
+        self.assertEqual(unicode(self.float1), u'8.15')
+        self.assertEqual(unicode(self.string1), u'lorem')
+        self.assertEqual(unicode(self.list1), u'1, str, 1.2')
+        self.assertEqual(unicode(self.tuple1), u'1, str, 1.2')
+        # TODO: Can we reliably test the next line?
+        #self.assertEqual(unicode(self.dict1), u'a: A, c: 2.3, b: 2')
+
+        self.assertEqual(str(self.int1), '42')
+        self.assertEqual(str(self.float1), '8.15')
+        self.assertEqual(str(self.string1), 'lorem')
+        self.assertEqual(str(self.list1), '1, str, 1.2')
+        self.assertEqual(str(self.tuple1), '1, str, 1.2')
+        # TODO: Can we reliably test the next line?
+        #self.assertEqual(str(self.dict1), 'a: A, c: 2.3, b: 2')
+
+    def test_list(self):
+        self.assertEqual(len(self.int1), 0)
+        self.assertEqual(len(self.float1), 0)
+        self.assertEqual(len(self.string1), 5)
+        self.assertEqual(len(self.list1), 3)
+        self.assertEqual(len(self.tuple1), 3)
+        self.assertEqual(len(self.dict1), 3)
+
+        self.assertEqual(list(iter(self.int1)), [])
+        self.assertEqual(list(iter(self.float1)), [])
+        self.assertEqual(list(iter(self.string1)), ['l', 'o', 'r', 'e', 'm'])
+        self.assertEqual(list(iter(self.list1)), [Value(1), Value('str'), Value(1.2)])
+        self.assertEqual(list(iter(self.tuple1)), [Value(1), Value('str'), Value(1.2)])
+        # TODO: Can we reliably test the next lines?
+        #self.assertEqual(list(iter(self.dict1)), [
+        #    Value({'key': 'a', 'value': Value('A')}),
+        #    Value({'key': 'c', 'value': Value(2.3)}),
+        #    Value({'key': 'b', 'value': Value(2)})
+        #])
+
+    def test_getter(self):
+        self.assertEqual(self.int1[1], NoneValue)
+        self.assertEqual(self.float1[1], NoneValue)
+        self.assertEqual(self.string1[1], 'o')
+        self.assertEqual(self.list1[1], Value('str'))
+        self.assertEqual(self.tuple1[1], Value('str'))
+        self.assertEqual(self.dict1[1], NoneValue)
+        self.assertEqual(self.dict1['a'], Value('A'))
+
+    def test_compare(self):
+        self.assertEqual(self.int1, Value(42))
+        self.assertEqual(self.float1, Value(8.15))
+        self.assertEqual(self.string1,  Value('lorem'))
+        self.assertEqual(self.list1, Value([Value(1), Value('str'), Value(1.2)]))
+        self.assertEqual(self.tuple1, Value((Value(1), Value('str'), Value(1.2))))
+        self.assertEqual(self.dict1, Value({'a': Value('A'), 'b': Value(2), 'c': Value(2.3)}))
+
+        self.assertNotEqual(self.int1, self.int2)
+        self.assertNotEqual(self.float1, self.float2)
+        self.assertNotEqual(self.string1, self.string2)
+        self.assertNotEqual(self.list1, self.list2)
+        self.assertNotEqual(self.tuple1, self.tuple2)
+        self.assertNotEqual(self.dict1, self.dict2)
+
+        self.assertEqual(cmp(self.int1, self.int1), 0)
+        self.assertEqual(cmp(self.int1, self.int2), 1)
+        self.assertEqual(cmp(self.float1, self.float1), 0)
+        self.assertEqual(cmp(self.float1, self.float2), -1)
+        self.assertEqual(cmp(self.string1, self.string2), 0.0)
+        self.assertEqual(cmp(self.list1, self.list2), 0.0)
+        self.assertEqual(cmp(self.tuple1, self.tuple2), 0.0)
+        self.assertEqual(cmp(self.dict1, self.dict2), 0.0)
+
+    def test_math(self):
+        self.assertEqual(self.int1 + self.int2, Value(65))
+        self.assertEqual(self.float1 + self.float2, Value(21.52))
+        self.assertEqual(self.string1 + self.string2, Value('loremipsum'))
+        self.assertEqual(self.list1 + self.list2, Value([Value(1), Value('str'), Value(1.2), Value(5), Value(u'unicode'), Value(11.47)]))
+        self.assertEqual(self.tuple1 + self.tuple2, Value([Value(1), Value('str'), Value(1.2), Value(5), Value(u'unicode'), Value(11.47)]))
+        self.assertEqual(self.dict1 + self.dict2, Value({'a': Value('A'), 'b': Value(2), 'c': Value(2.3), 'd': Value('D'), 'e': Value(6), 'f': Value(9.8)}))
+
+        self.assertEqual(self.int1 - self.int2, Value(19))
+        self.assertEqual(self.float1 - self.float2, Value(-5.22))
+        self.assertEqual(self.string1 - self.string2, NoneValue)
+        self.assertEqual(self.list1 - self.list2, NoneValue)
+        self.assertEqual(self.tuple1 - self.tuple2, NoneValue)
+        self.assertEqual(self.dict1 - self.dict2, NoneValue)
+
+        self.assertEqual(self.int1 * self.int2, Value(966))
+        self.assertEqual(self.float1 * self.float2, Value(108.9655))
+        self.assertEqual(self.string1 * self.string2, NoneValue)
+        self.assertEqual(self.list1 * self.list2, NoneValue)
+        self.assertEqual(self.tuple1 * self.tuple2, NoneValue)
+        self.assertEqual(self.dict1 * self.dict2, NoneValue)
+
+        self.assertEqual(self.int1 / self.int2, Value(1))
+        self.assertAlmostEqual((self.float1 / self.float2).value, 0.6095737)
+        self.assertEqual(self.string1 / self.string2, NoneValue)
+        self.assertEqual(self.list1 / self.list2, NoneValue)
+        self.assertEqual(self.tuple1 / self.tuple2, NoneValue)
+        self.assertEqual(self.dict1 / self.dict2, NoneValue)
+
+        self.assertEqual(self.int1 % self.int2, Value(19))
+        self.assertEqual(self.float1 % self.float2, Value(8.15))
+        self.assertEqual(self.string1 % self.string2, NoneValue)
+        self.assertEqual(self.list1 % self.list2, NoneValue)
+        self.assertEqual(self.tuple1 % self.tuple2, NoneValue)
+        self.assertEqual(self.dict1 % self.dict2, NoneValue)
+
+        self.assertEqual(self.int1 & self.int2, Value("4223"))
+        self.assertEqual(self.float1 & self.float2, Value("8.1513.37"))
+        self.assertEqual(self.string1 & self.string2, Value("loremipsum"))
+        self.assertEqual(self.list1 & self.list2, Value("1, str, 1.25, unicode, 11.47"))
+        self.assertEqual(self.tuple1 & self.tuple2, Value("1, str, 1.25, unicode, 11.47"))
+        # TODO: Can we reliably test the next line?
+        #self.assertEqual(self.dict1 & self.dict2, Value("a: A, c: 2.3, b: 2e: 6, d: D, f: 9.8"))
+
+    def test_boolean(self):
+        self.assertIn(Value('str'), self.list1)
+        self.assertNotIn(Value('foo'), self.list1)
+        self.assertIn(Value('str'), self.tuple1)
+        self.assertNotIn(Value('foo'), self.tuple1)
+        self.assertIn('a', self.dict1)
+        self.assertNotIn('xyz', self.dict1)
+
+        self.assertFalse(self.int1.is_string)
+        self.assertFalse(self.float1.is_string)
+        self.assertTrue(self.string1.is_string)
+        self.assertFalse(self.list1.is_string)
+        self.assertFalse(self.tuple1.is_string)
+        self.assertFalse(self.dict1.is_string)
+
+        self.assertTrue(self.int1.is_number)
+        self.assertTrue(self.float1.is_number)
+        self.assertFalse(self.string1.is_number)
+        self.assertFalse(self.list1.is_number)
+        self.assertFalse(self.tuple1.is_number)
+        self.assertFalse(self.dict1.is_number)
+
+        self.assertFalse(self.int1.is_array)
+        self.assertFalse(self.float1.is_array)
+        self.assertFalse(self.string1.is_array)
+        self.assertTrue(self.list1.is_array)
+        self.assertTrue(self.tuple1.is_array)
+        self.assertFalse(self.dict1.is_array)
+
+        self.assertFalse(self.int1.is_object)
+        self.assertFalse(self.float1.is_object)
+        self.assertFalse(self.string1.is_object)
+        self.assertFalse(self.list1.is_object)
+        self.assertFalse(self.tuple1.is_object)
+        self.assertTrue(self.dict1.is_object)
 
 
 class TestBinaryFunctions(TestCase):

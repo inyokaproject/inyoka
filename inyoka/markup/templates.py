@@ -644,9 +644,7 @@ class Value(Expr):
         return self
 
     def __nonzero__(self):
-        if self.value is None:
-            return False
-        elif self.value in (0, '0', '0.0', None, ''):
+        if self.value in ('0', '0.0'):
             return False
         return bool(self.value)
 
@@ -664,7 +662,7 @@ class Value(Expr):
         return int(self.__float__(0))
 
     def __iter__(self):
-        if isinstance(self.value, (tuple, list)):
+        if isinstance(self.value, (tuple, list, basestring)):
             for item in self.value:
                 yield item
         elif isinstance(self.value, dict):
@@ -675,7 +673,7 @@ class Value(Expr):
                 })
 
     def __len__(self):
-        if self.value:
+        if isinstance(self.value, (list, tuple, dict, basestring)):
             return len(self.value)
         return 0
 
@@ -741,29 +739,44 @@ class Value(Expr):
             result.extend(self.value)
             result.extend(other.value)
             return Value(result)
-        elif isinstance(self.value, dict) and \
+        if isinstance(self.value, dict) and \
              isinstance(other.value, dict):
             result = {}
             result.update(self.value)
             result.update(other.value)
             return Value(result)
-        return Value(float(self) + float(other))
+        if isinstance(self.value, (int, long, float, basestring)) and \
+           isinstance(other.value, (int, long, float, basestring)):
+            return Value(self.value + other.value)
+        return Value(None)
 
     def __sub__(self, other):
-        return Value(float(self) - float(other))
+        if isinstance(self.value, (int, long, float)) and \
+           isinstance(other.value, (int, long, float)):
+            return Value(self.value - other.value)
+        return Value(None)
 
     def __mul__(self, other):
-        return Value(float(self) * float(other))
+        if isinstance(self.value, (int, long, float)) and \
+           isinstance(other.value, (int, long, float)):
+            return Value(self.value * other.value)
+        return Value(None)
 
     def __div__(self, other):
         try:
-            return Value(float(self) / float(other))
+            if isinstance(self.value, (int, long, float)) and \
+               isinstance(other.value, (int, long, float)):
+                return Value(self.value / other.value)
+            return Value(None)
         except ZeroDivisionError:
             return NaN
 
     def __mod__(self, other):
         try:
-            return Value(float(self) % float(other))
+            if isinstance(self.value, (int, long, float)) and \
+               isinstance(other.value, (int, long, float)):
+                return Value(self.value % other.value)
+            return Value(None)
         except ZeroDivisionError:
             return NaN
 
@@ -785,13 +798,11 @@ class Value(Expr):
 
     @property
     def is_string(self):
-        return not isinstance(self.value, (tuple, list, dict))
+        return isinstance(self.value, basestring)
 
     @property
     def is_number(self):
-        invalid = object()
-        rv = self.__float__(invalid)
-        return rv is not invalid
+        return isinstance(self.value, (int, long, float))
 
     @property
     def is_array(self):
