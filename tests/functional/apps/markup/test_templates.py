@@ -56,6 +56,11 @@ class TestWikiTemplates(TestCase):
         code = '<@ $arg.10 @>'
         self.assertEqual(templates.process(code, context), 'g')
 
+    def test_regression_ticket866(self):
+        code = '<@ if 5 == 3 @>0<@ elseif 5 == 4 @>1<@ else @>'\
+               '<@ if 2 == 3 @>1.5<@ endif @>2<@ endif @>'
+        self.assertEqual(templates.process(code), '1')
+
     def test_regression_ticket867(self):
         code = '<@ if 1 != 3 @>:)<@ else @>:(<@ endif @>'
         self.assertEqual(templates.process(code), ':)')

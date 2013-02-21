@@ -206,7 +206,7 @@ class Parser(object):
                         _(u'Conditions allow only one expression per block.'))
                 self.stream.next()
                 tests.append((expr, self.subparse(lambda:
-                             self.stream.test('raw', ('endif', 'elseif')),
+                             self.stream.test('raw', ('endif', 'elseif', 'else')),
                              drop_needle=False)))
                 continue
             break
