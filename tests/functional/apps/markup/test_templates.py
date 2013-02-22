@@ -57,7 +57,7 @@ class TestWikiTemplates(TestCase):
         self.assertEqual(templates.process(code, context), 'g')
 
     def test_regression_ticket866(self):
-        code = '<@ if 5 == 3 @>0<@ elseif 5 == 4 @>1<@ else @>'\
+        code = '<@ if 5 == 3 @>0<@ elseif 5 == 5 @>1<@ else @>'\
                '<@ if 2 == 3 @>1.5<@ endif @>2<@ endif @>'
         self.assertEqual(templates.process(code), '1')
 
