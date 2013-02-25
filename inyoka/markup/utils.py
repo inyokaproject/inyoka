@@ -148,6 +148,28 @@ def debug_repr(obj):
         if not key.startswith('_')))
 
 
+def join_array(array, delimiter):
+    if not isinstance(array.value, (tuple, list)):
+        return u''
+    result = []
+    for key in array.value:
+        result.append(unicode(key))
+    return unicode(delimiter).join(result)
+
+
+def has_key(mapping, search):
+    if not isinstance(mapping.value, dict):
+        return False
+    return search in mapping.value
+
+
+def regex_match(pattern, string):
+    """
+    Match a string against a regex pattern.  Works like `simple_match`.
+    """
+    return re.match(pattern, string) is not None
+
+
 def simple_match(pattern, string, case_sensitive=False):
     """
     Match a string against a pattern.  Works like `simple_filter`.

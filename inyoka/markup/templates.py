@@ -27,7 +27,6 @@ r"""
 """
 import re
 import operator
-import math
 import random
 
 from django.utils.encoding import smart_unicode
@@ -35,7 +34,8 @@ from django.utils.translation import ugettext as _
 
 from inyoka.markup import unescape_string, escape
 from inyoka.markup.parsertools import TokenStream
-from inyoka.markup.utils import debug_repr, simple_match
+from inyoka.markup.utils import debug_repr, has_key, join_array, regex_match, \
+    simple_match
 
 
 def process(source, context=()):
@@ -205,7 +205,7 @@ class Parser(object):
                         _(u'Conditions allow only one expression per block.'))
                 self.stream.next()
                 tests.append((expr, self.subparse(lambda:
-                             self.stream.test('raw', ('endif', 'elseif')),
+                             self.stream.test('raw', ('endif', 'elseif', 'else')),
                              drop_needle=False)))
                 continue
             break
@@ -356,16 +356,19 @@ class Parser(object):
                     raise TemplateSyntaxError(
                         _(u'Parentheses were not closed properly.'))
             elif value == '[':
-                items = {}
+                keys = []
+                values = []
                 next_numeric = 0
+                is_list = True
                 while self.stream.current.value != ']':
-                    if items:
+                    if values:
                         if not self.stream.test('operator', ','):
                             raise TemplateSyntaxError(
                                 _(u'Missing comma between array entries'))
                         self.stream.next()
                     value = self.parse_expr()
                     if self.stream.test('operator', '=>'):
+                        is_list = False
                         self.stream.next()
                         key = value
                         value = self.parse_expr()
@@ -377,8 +380,12 @@ class Parser(object):
                     else:
                         key = Value(next_numeric)
                         next_numeric += 1
-                    items[key] = value
-                node = Value(items)
+                    keys.append(key)
+                    values.append(value)
+                if is_list:
+                    node = Value(values)
+                else:
+                    node = Value(dict(zip(keys, values)))
             else:
                 raise TemplateSyntaxError(_('Unexpected operator'))
             self.stream.next()
@@ -643,9 +650,7 @@ class Value(Expr):
         return self
 
     def __nonzero__(self):
-        if self.value is None:
-            return False
-        elif self.value in (0, '0', '0.0', None, ''):
+        if self.value in ('0', '0.0'):
             return False
         return bool(self.value)
 
@@ -663,18 +668,15 @@ class Value(Expr):
         return int(self.__float__(0))
 
     def __iter__(self):
-        if isinstance(self.value, (tuple, list)):
+        if isinstance(self.value, (tuple, list, basestring)):
             for item in self.value:
                 yield item
         elif isinstance(self.value, dict):
             for key, value in self.value.iteritems():
-                yield Value({
-                    'key':      key,
-                    'value':    value
-                })
+                yield {'key': key, 'value': value}
 
     def __len__(self):
-        if self.value:
+        if isinstance(self.value, (list, tuple, dict, basestring)):
             return len(self.value)
         return 0
 
@@ -728,7 +730,7 @@ class Value(Expr):
         return a == b
 
     def __ne__(self, other):
-        return not self.__eq__(self, other)
+        return not self.__eq__(other)
 
     def __cmp__(self, other):
         return cmp(float(self), float(other))
@@ -740,29 +742,44 @@ class Value(Expr):
             result.extend(self.value)
             result.extend(other.value)
             return Value(result)
-        elif isinstance(self.value, dict) and \
+        if isinstance(self.value, dict) and \
              isinstance(other.value, dict):
             result = {}
             result.update(self.value)
             result.update(other.value)
             return Value(result)
-        return Value(float(self) + float(other))
+        if isinstance(self.value, (int, long, float, basestring)) and \
+           isinstance(other.value, (int, long, float, basestring)):
+            return Value(self.value + other.value)
+        return Value(None)
 
     def __sub__(self, other):
-        return Value(float(self) - float(other))
+        if isinstance(self.value, (int, long, float)) and \
+           isinstance(other.value, (int, long, float)):
+            return Value(self.value - other.value)
+        return Value(None)
 
     def __mul__(self, other):
-        return Value(float(self) * float(other))
+        if isinstance(self.value, (int, long, float)) and \
+           isinstance(other.value, (int, long, float)):
+            return Value(self.value * other.value)
+        return Value(None)
 
     def __div__(self, other):
         try:
-            return Value(float(self) / float(other))
+            if isinstance(self.value, (int, long, float)) and \
+               isinstance(other.value, (int, long, float)):
+                return Value(self.value / other.value)
+            return Value(None)
         except ZeroDivisionError:
             return NaN
 
     def __mod__(self, other):
         try:
-            return Value(float(self) % float(other))
+            if isinstance(self.value, (int, long, float)) and \
+               isinstance(other.value, (int, long, float)):
+                return Value(self.value % other.value)
+            return Value(None)
         except ZeroDivisionError:
             return NaN
 
@@ -770,35 +787,17 @@ class Value(Expr):
         return Value(unicode(self) + unicode(other))
 
     def __contains__(self, obj):
-        if isinstance(self.value, (tuple, list)):
-            for item in self.value:
-                if obj == item:
-                    return True
-            return False
-        elif isinstance(self.value, dict):
-            for item in self.value.itervalues():
-                if obj == item:
-                    return True
-            return False
+        if isinstance(self.value, (tuple, list, dict)):
+            return obj in self.value
         return unicode(obj) in unicode(self)
-
-    def has_key(self, key):
-        if not isinstance(self, dict):
-            return False
-        for k in self.value:
-            if key == k:
-                return True
-        return False
 
     @property
     def is_string(self):
-        return not isinstance(self.value, (tuple, list, dict))
+        return isinstance(self.value, basestring)
 
     @property
     def is_number(self):
-        invalid = object()
-        rv = self.__float__(invalid)
-        return rv is not invalid
+        return isinstance(self.value, (int, long, float))
 
     @property
     def is_array(self):
@@ -948,24 +947,14 @@ class TestFunction(Expr):
         return Value(bool(rv))
 
 
-def join_array(array, delimiter):
-    if not isinstance(array.value, (tuple, list)):
-        return u''
-    result = []
-    for key in array.value:
-        result.append(unicode(key))
-    return unicode(delimiter).join(result)
-
-
 BINARY_FUNCTIONS = {
     'contain':          lambda a, b: b in a,
     'contains':         lambda a, b: b in a,
-    'has_key':          lambda a, b: b in a,
-    'starts_with':      lambda a, b: unicode(a).startswith(b),
-    'ends_with':        lambda a, b: unicode(a).endswith(b),
-    'matches':          lambda a, b: simple_match(b, unicode(a)),
-    'matches_regex':    lambda a, b: re.match(unicode(b), unicode(a)) \
-                                     is not None,
+    'has_key':          has_key,
+    'starts_with':      lambda a, b: unicode(a).startswith(unicode(b)),
+    'ends_with':        lambda a, b: unicode(a).endswith(unicode(b)),
+    'matches':          lambda a, b: simple_match(unicode(b), unicode(a)),
+    'matches_regex':    lambda a, b: regex_match(unicode(b), unicode(a)),
     'join_with':        join_array,
     'split_by':         lambda a, b: unicode(a).split(unicode(b)),
 }
@@ -973,11 +962,12 @@ BINARY_FUNCTIONS = {
 CONVERTER = {
     'string':           lambda x: unicode(x),
     'number':           lambda x: float(x),
+    'int':              lambda x: int(x),
     'uppercase':        lambda x: unicode(x).upper(),
     'lowercase':        lambda x: unicode(x).lower(),
     'title':            lambda x: unicode(x).title(),
     'stripped':         lambda x: unicode(x).strip(),
-    'rounded':          lambda x: math.round(float(x)),
+    'rounded':          lambda x: round(float(x)),
     'quoted':           lambda x: u"%s" % unicode(x) .
                                   replace('\\', '\\\\') .
                                   replace('"', '\\"'),
