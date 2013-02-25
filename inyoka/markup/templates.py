@@ -27,7 +27,6 @@ r"""
 """
 import re
 import operator
-import math
 import random
 
 from django.utils.encoding import smart_unicode
@@ -357,16 +356,19 @@ class Parser(object):
                     raise TemplateSyntaxError(
                         _(u'Parentheses were not closed properly.'))
             elif value == '[':
-                items = {}
+                keys = []
+                values = []
                 next_numeric = 0
+                is_list = True
                 while self.stream.current.value != ']':
-                    if items:
+                    if values:
                         if not self.stream.test('operator', ','):
                             raise TemplateSyntaxError(
                                 _(u'Missing comma between array entries'))
                         self.stream.next()
                     value = self.parse_expr()
                     if self.stream.test('operator', '=>'):
+                        is_list = False
                         self.stream.next()
                         key = value
                         value = self.parse_expr()
@@ -378,8 +380,12 @@ class Parser(object):
                     else:
                         key = Value(next_numeric)
                         next_numeric += 1
-                    items[key] = value
-                node = Value(items)
+                    keys.append(key)
+                    values.append(value)
+                if is_list:
+                    node = Value(values)
+                else:
+                    node = Value(dict(zip(keys, values)))
             else:
                 raise TemplateSyntaxError(_('Unexpected operator'))
             self.stream.next()
@@ -959,11 +965,12 @@ BINARY_FUNCTIONS = {
 CONVERTER = {
     'string':           lambda x: unicode(x),
     'number':           lambda x: float(x),
+    'int':              lambda x: int(x),
     'uppercase':        lambda x: unicode(x).upper(),
     'lowercase':        lambda x: unicode(x).lower(),
     'title':            lambda x: unicode(x).title(),
     'stripped':         lambda x: unicode(x).strip(),
-    'rounded':          lambda x: math.round(float(x)),
+    'rounded':          lambda x: round(float(x)),
     'quoted':           lambda x: u"%s" % unicode(x) .
                                   replace('\\', '\\\\') .
                                   replace('"', '\\"'),

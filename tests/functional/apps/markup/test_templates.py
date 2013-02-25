@@ -69,6 +69,24 @@ class TestWikiTemplates(TestCase):
         code = '<@ if "foobar" starts_with \'a\' @>true<@ else @>false<@ endif @>'
         self.assertEqual(templates.process(code), 'false')
 
+    def test_regression_ticket869(self):
+        code = '<@ for $var in [\'a\', \'b\', \'c\'] @><@ $var @><@ endfor @>'
+        ret = templates.process(code)
+        self.assertEqual(ret, 'abc')
+
+        code = '<@ if $args is array @><@ for $var in $args @><@ $var @><@ endfor @><@ endif @>'
+        context = [('args', ['a', 'b', 'c'])]
+        ret = templates.process(code, context)
+        self.assertEqual(ret, 'abc')
+
+        code = '<@ for $var in [0 => \'a\', 1 => \'b\', 2 => \'c\'] @><@ $var.value @><@ endfor @>'
+        ret = templates.process(code)
+        self.assertEqual(sorted(ret), ['a', 'b', 'c'])
+
+        code = '<@ for $var in [0 => \'a\', 1 => \'b\', 2 => \'c\'] @><@ $var.key as int @><@ endfor @>'
+        ret = templates.process(code)
+        self.assertEqual(sorted(ret), ['0', '1', '2'])
+
 
 class TestValue(TestCase):
 
