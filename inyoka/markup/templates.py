@@ -784,16 +784,8 @@ class Value(Expr):
         return Value(unicode(self) + unicode(other))
 
     def __contains__(self, obj):
-        if isinstance(self.value, (tuple, list)):
-            for item in self.value:
-                if obj == item:
-                    return True
-            return False
-        elif isinstance(self.value, dict):
-            for item in self.value.iterkeys():
-                if obj == item:
-                    return True
-            return False
+        if isinstance(self.value, (tuple, list, dict)):
+            return obj in self.value
         return unicode(obj) in unicode(self)
 
     @property
