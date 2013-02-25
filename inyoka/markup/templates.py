@@ -673,10 +673,7 @@ class Value(Expr):
                 yield item
         elif isinstance(self.value, dict):
             for key, value in self.value.iteritems():
-                yield Value({
-                    'key':      key,
-                    'value':    value
-                })
+                yield {'key': key, 'value': value}
 
     def __len__(self):
         if isinstance(self.value, (list, tuple, dict, basestring)):
