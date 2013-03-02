@@ -1,5 +1,4 @@
-# Django 1.5 branch
-https://github.com/django/django/archive/stable/1.5.x.zip
+Django==1.5
 # Includes various fixes
 https://github.com/alex/django-filter/tarball/master/#egg=django-filter
 # Includes Django 1.5 fix

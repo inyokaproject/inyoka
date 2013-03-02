@@ -274,9 +274,12 @@ class CaptchaField(forms.MultiValueField):
 
     def __init__(self, *args, **kwargs):
         fields = (ImageCaptchaField(), HiddenCaptchaField())
-        kwargs['required'] = False
+        kwargs['required'] = True
         super(CaptchaField, self).__init__(fields, *args, **kwargs)
-        fields[0].required = True # Ensure the Captcha is required.
 
     def compress(self, data_list):
         pass # CaptchaField doesn't have a useful value to return.
+
+    def clean(self, value):
+        value[1] = False # Prevent beeing catched by validators.EMPTY_VALUES
+        return super(CaptchaField, self).clean(value)

@@ -213,8 +213,10 @@ class TestAuthViews(TestCase):
     def test_register(self):
         postdata = {'username': 'apollo13', 'password': 'secret',
             'confirm_password': 'secret', 'email': 'apollo13@example.com',
-            'terms_of_usage': '1'}
+            'terms_of_usage': '1', 'captcha_1': ''}
 
+        response = self.client.get('/', {'__service__': 'portal.get_captcha'})
+        postdata['captcha_0'] = response._captcha_solution
         self.assertEqual(0, len(mail.outbox))
         with translation.override('en-us'):
             response = self.client.post('/register/', postdata)
