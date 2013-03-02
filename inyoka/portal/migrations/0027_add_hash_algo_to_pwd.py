@@ -9,10 +9,10 @@ class Migration(DataMigration):
         # Fix UNUSEABLE_PASSWORD_HASHES
         db.execute("UPDATE portal_user set password = '!' where password = '!$!';")
         # Ensure that sha1 hashes are properly upgraded
-        db.execute("UPDATE portal_user set password = CONCAT('sha1$', password) WHERE password != '!' AND password NOT LIKE 'md5$%';")
+        db.execute("UPDATE portal_user set password = CONCAT('sha1$', password) WHERE password != '!' AND password NOT LIKE 'md5$%%';")
         # Last login for md5 was 2009, nuke them and set them to invalid pbkdf2_sha256
         # Can't use ! cause password reset only works for valid passwords
-        db.execute("UPDATE portal_user set password = 'pbkdf2_sha256$10000$D0QOWK6bD9Si$' where password LIKE 'md5$%;'")
+        db.execute("UPDATE portal_user set password = 'pbkdf2_sha256$10000$D0QOWK6bD9Si$' where password LIKE 'md5$%%;'")
 
     def backwards(self, orm):
         db.execute("UPDATE portal_user set password = '!$!' where password = '!';")
