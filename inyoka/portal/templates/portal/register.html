@@ -22,6 +22,7 @@
       <dt>Nutzungshinweise:</dt>
       {# include the agreement letter #}
       <dd>{{ form.terms_of_usage }} <label for="id_terms_of_usage">Ich bestätige den <a href="{{ href('portal', 'lizenz') }}">Lizenztext</a> gelesen zu haben und erkläre mich mit der Veröffentlichung unter dieser Lizenz einverstanden.<br />Durch das Abschließen der Registrierung stimme ich den <a href="{{ href('portal', 'nutzungsbedingungen') }}">Nutzungsbedingungen</a> und <a href="http://wiki.ubuntuusers.de/ubuntuusers/Moderatoren/Forenregeln">Forenregeln</a> ebenfalls zu.</label><br />
+      {{ form.errors.terms_of_usage }}
       <p>Um möglichst gute Hilfe erhalten, beachte bitte folgende Punkte:</p>
       <ul>
         <li><p>ubuntuusers.de unterliegt deutscher Rechtsprechung. Beiträge, die deutschem Recht widersprechen, sind nicht erlaubt.</p></li>
@@ -31,7 +32,7 @@
       </ul>
       <p>Die <a href="http://wiki.ubuntuusers.de/ubuntuusers/Moderatoren/Forenregeln">vollständigen Regeln</a> erläutern die einzelnen Punkte genauer. Bei Fragen kannst Du Dich an die entsprechenden <a href="{{ href('portal', 'groups') }}">Teams</a> wenden.</p>
       <p>Wir wünschen Dir viel Spass und Erfolg auf ubuntuusers.de!</p>
-      {{ form.errors.terms_of_usage }}</dd>
+      </dd>
       <dd style="display: none"><input type="submit" /></dd><!-- at enter the first submit button is used -->
       {{ render_form(form, ['captcha'], inline=true) }}
     </dl>
