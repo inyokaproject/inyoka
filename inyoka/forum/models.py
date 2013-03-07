@@ -233,11 +233,11 @@ class Forum(models.Model):
     force_version = models.BooleanField(default=False)
 
     parent = models.ForeignKey('self', null=True, related_name='_children',
-        on_delete=models.PROTECT)
+                               on_delete=models.PROTECT)
     last_post = models.ForeignKey('forum.Post', null=True, blank=True,
-        on_delete=models.PROTECT)
+                                  on_delete=models.PROTECT)
     welcome_message = models.ForeignKey('forum.WelcomeMessage', null=True,
-        blank=True, on_delete=models.SET_NULL)
+                                        blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = ugettext_lazy(u'Forum')
@@ -398,17 +398,17 @@ class Topic(models.Model):
     has_poll = models.BooleanField(default=False)
 
     forum = models.ForeignKey(Forum, related_name='topics',
-        on_delete=models.PROTECT)
+                              on_delete=models.PROTECT)
     reporter = models.ForeignKey(User, null=True, related_name='+',
-        on_delete=models.PROTECT)
+                                 on_delete=models.PROTECT)
     report_claimed_by = models.ForeignKey(User, null=True, related_name='+',
-        on_delete=models.PROTECT)
+                                          on_delete=models.PROTECT)
     author = models.ForeignKey(User, related_name='topics',
-        on_delete=models.PROTECT)
+                               on_delete=models.PROTECT)
     first_post = models.ForeignKey('forum.Post', null=True, related_name='+',
-        on_delete=models.PROTECT)
+                                   on_delete=models.PROTECT)
     last_post = models.ForeignKey('forum.Post', null=True, related_name='+',
-        on_delete=models.PROTECT)
+                                  on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = ugettext_lazy(u'Topic')
@@ -610,7 +610,8 @@ class PostRevision(models.Model):
 
     text = models.TextField()
     store_date = models.DateTimeField(default=datetime.utcnow)
-    post = models.ForeignKey('forum.Post', related_name='revisions')
+    post = models.ForeignKey('forum.Post', related_name='revisions',
+                             on_delete=models.CASCADE)
 
     def get_absolute_url(self, action='restore'):
         return href('forum', 'revision', self.id, 'restore')
@@ -664,7 +665,7 @@ class Post(models.Model, LockableObject):
 
     author = models.ForeignKey(User, on_delete=models.PROTECT)
     topic = models.ForeignKey(Topic, related_name='posts',
-        on_delete=models.PROTECT)
+                              on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = ugettext_lazy(u'Post')
@@ -980,7 +981,8 @@ class Attachment(models.Model):
     comment = models.TextField(null=True, blank=True)
     mimetype = models.CharField(max_length=100, null=True)
 
-    post = models.ForeignKey(Post, null=True, related_name='attachments')
+    post = models.ForeignKey(Post, null=True, related_name='attachments',
+                             on_delete=models.CASCADE)
 
     @staticmethod
     def create(name, uploaded_file, mime, attachments, override=False, **kwargs):
@@ -1151,9 +1153,9 @@ class Attachment(models.Model):
 
 
 class Privilege(models.Model):
-    group = models.ForeignKey(Group, null=True)
-    user = models.ForeignKey(User, null=True)
-    forum = models.ForeignKey(Forum)
+    group = models.ForeignKey(Group, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
     positive = models.IntegerField(null=True)
     negative = models.IntegerField(null=True)
 
@@ -1174,7 +1176,8 @@ class Privilege(models.Model):
 
 
 class PollOption(models.Model):
-    poll = models.ForeignKey('forum.Poll', related_name='options')
+    poll = models.ForeignKey('forum.Poll', related_name='options',
+                             on_delete=models.CASCADE)
     name = models.CharField(max_length=250)
     votes = models.IntegerField(default=0)
 
@@ -1187,8 +1190,9 @@ class PollOption(models.Model):
 
 
 class PollVote(models.Model):
-    voter = models.ForeignKey(User)
-    poll = models.ForeignKey('forum.Poll', related_name='votings')
+    voter = models.ForeignKey(User, on_delete=models.PROTECT)
+    poll = models.ForeignKey('forum.Poll', related_name='votings',
+                             on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'forum_voter'
@@ -1200,7 +1204,8 @@ class Poll(models.Model):
     end_time = models.DateTimeField(null=True)
     multiple_votes = models.BooleanField(default=False)
 
-    topic = models.ForeignKey(Topic, null=True, db_index=True, related_name='polls')
+    topic = models.ForeignKey(Topic, null=True, db_index=True,
+                              related_name='polls', on_delete=models.CASCADE)
 
     @deferred
     def votes(self):

@@ -744,7 +744,8 @@ class Page(models.Model):
     name = models.CharField(max_length=200, unique=True, db_index=True)
     topic = models.ForeignKey('forum.Topic', null=True,
                               on_delete=models.PROTECT)
-    last_rev = models.ForeignKey('Revision', null=True, related_name='+')
+    last_rev = models.ForeignKey('Revision', null=True, related_name='+',
+                                 on_delete=models.PROTECT)
 
     #: this points to a revision if created with a query method
     #: that attaches revisions. Also creating a page object using
@@ -1153,15 +1154,18 @@ class Revision(models.Model):
             be ignored.
     """
     objects = RevisionManager()
-    page = models.ForeignKey(Page, related_name='revisions')
-    text = models.ForeignKey(Text, related_name='revisions')
+    page = models.ForeignKey(Page, related_name='revisions',
+                             on_delete=models.PROTECT)
+    text = models.ForeignKey(Text, related_name='revisions',
+                             on_delete=models.PROTECT)
     user = models.ForeignKey('portal.User', related_name='wiki_revisions',
-                             null=True, blank=True)
+                             null=True, blank=True, on_delete=models.PROTECT)
     change_date = models.DateTimeField(db_index=True)
     note = models.CharField(max_length=512)
     deleted = models.BooleanField()
     remote_addr = models.CharField(max_length=200, null=True)
-    attachment = models.ForeignKey(Attachment, null=True, blank=True)
+    attachment = models.ForeignKey(Attachment, null=True, blank=True,
+                                   on_delete=models.PROTECT)
 
     @property
     def title(self):
@@ -1252,7 +1256,7 @@ class MetaData(models.Model):
     This should be considered being a private class because it is wrapped
     by the `Page.metadata` property and the `Page.update_meta` method.
     """
-    page = models.ForeignKey(Page)
+    page = models.ForeignKey(Page, on_delete=models.CASCADE)
     key = models.CharField(max_length=30, db_index=True)
     value = models.CharField(max_length=512, db_index=True)
 

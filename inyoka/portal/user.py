@@ -646,7 +646,7 @@ class User(AbstractBaseUser):
 
 
 class UserData(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     key = models.CharField(max_length=255)
     value = models.CharField(max_length=255)
 

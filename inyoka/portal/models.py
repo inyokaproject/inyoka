@@ -97,8 +97,10 @@ PRIVMSG_FOLDERS_DATA = (
 
 
 PRIVMSG_FOLDERS = {}
+PRIVMSG_FOLDERS_CHOICES = []
 for folder in PRIVMSG_FOLDERS_DATA:
     PRIVMSG_FOLDERS[folder[0]] = PRIVMSG_FOLDERS[folder[1]] = folder
+    PRIVMSG_FOLDERS_CHOICES.append((folder[0], folder[1]))
 
 
 class PrivateMessage(models.Model):
@@ -106,7 +108,7 @@ class PrivateMessage(models.Model):
     Private messages allow users to communicate with each other privately.
     This model represent one of these messages.
     """
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.PROTECT)
     subject = models.CharField(ugettext_lazy(u'Title'), max_length=255)
     pub_date = models.DateTimeField(ugettext_lazy(u'Date'))
     text = models.TextField(ugettext_lazy(u'Text'))
@@ -157,12 +159,11 @@ class PrivateMessageEntry(models.Model):
     message.  This entry can be moved between folders and stores the
     read status flag.
     """
-    message = models.ForeignKey('PrivateMessage')
-    user = models.ForeignKey(User)
+    message = models.ForeignKey('PrivateMessage', on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     read = models.BooleanField(ugettext_lazy(u'Read'))
-    folder = models.SmallIntegerField(ugettext_lazy(u'Folder'),
-        null=True,
-        choices=[(f[0], f[1]) for f in PRIVMSG_FOLDERS_DATA])
+    folder = models.SmallIntegerField(ugettext_lazy(u'Folder'), null=True,
+                                      choices=PRIVMSG_FOLDERS_CHOICES)
 
     @property
     def folder_name(self):
@@ -282,8 +283,8 @@ class StaticPage(models.Model):
 
 
 class StaticFile(models.Model):
-    identifier = models.CharField(ugettext_lazy('Identifier'),
-        max_length=100, unique=True, db_index=True)
+    identifier = models.CharField(ugettext_lazy('Identifier'), max_length=100,
+                                  unique=True, db_index=True)
     file = models.FileField(ugettext_lazy('File'), upload_to='portal/files')
     is_ikhaya_icon = models.BooleanField(
         ugettext_lazy(u'Is Ikhaya icon'),
@@ -313,13 +314,13 @@ class StaticFile(models.Model):
 
 class Subscription(models.Model):
     objects = SubscriptionManager()
-    user = models.ForeignKey(User)
-    notified = models.BooleanField(
-        ugettext_lazy('User was already notified'),
-        default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    notified = models.BooleanField(ugettext_lazy('User was already notified'),
+                                   default=False)
     ubuntu_version = models.CharField(max_length=5, null=True)
 
-    content_type = models.ForeignKey(ContentType, null=True)
+    content_type = models.ForeignKey(ContentType, null=True,
+                                     on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField(null=True, db_index=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
