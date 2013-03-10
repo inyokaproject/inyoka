@@ -67,7 +67,10 @@ def on_get_captcha(request):
     h = md5(settings.SECRET_KEY)
     h.update(captcha.solution)
     request.session['captcha_solution'] = h.digest()
-    return captcha.get_response()
+    response = captcha.get_response()
+    # Save the solution for easier testing
+    response._captcha_solution = captcha.solution
+    return response
 
 
 def on_get_calendar_entry(request):
