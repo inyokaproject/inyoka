@@ -9,84 +9,69 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import os
-import re
-import shutil
 from functools import partial
-from os import path
-from hashlib import md5, sha1
+from hashlib import sha1
 from itertools import izip
-from urlparse import urlparse, parse_qs
-from werkzeug import url_unquote
+from os import chmod, mkdir, path, unlink, walk
+from re import compile, escape
+from shutil import copy, copytree, rmtree
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.utils.encoding import force_unicode
 
 from inyoka.utils.http import templated
-from inyoka.utils.imaging import get_thumbnail, parse_dimensions
 from inyoka.utils.urls import href
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.templating import Breadcrumb
 from inyoka.wiki.models import Page
-from inyoka.wiki.views import fetch_real_target
 from inyoka.wiki.acl import has_privilege
 from inyoka.portal.user import User
 
 
-#FIXME: Don't rely on STATIC_ROOT but use the finders or collect_static.
-settings.STATIC_ROOT = settings.STATICFILES_DIRS[0]
-
 FOLDER = 'static_wiki'
+INCLUDE_IMAGES = False
+
 UU_DE = 'http://%subuntuusers.de/'
 UU_PORTAL = UU_DE % ''
 UU_FORUM = UU_DE % 'forum.'
 UU_WIKI = UU_DE % 'wiki.'
 UU_IKHAYA = UU_DE % 'ikhaya.'
 UU_PLANET = UU_DE % 'planet.'
-UU_COMMUNITY = UU_DE % 'community.'
+UU_COMMUNITY = UU_WIKI + 'Mitmachen'
 URL = href('wiki')
+NON_WIKI_RE = compile('|'.join(escape(href(u)) for u in
+                      ['forum', 'ikhaya', 'pastebin', 'planet', 'portal']))
+WIKI_BEGIN_RE = compile("^%s" % escape(href('wiki')))
+WIKI_CENTER_RE = compile("^%s$" % escape(href('wiki')))
+PORTAL_RE = compile(escape(href('portal')))
 DONE_SRCS = {}
+UPDATED_SRCS = set()
 
+SNAPSHOT_MESSAGE = u'<div class="message staticwikinote"><strong>Hinweis:'\
+                   u'</strong> Dies ist nur ein statischer Snapshot '\
+                   u'unseres Wikis. Dieser kann nicht bearbeitet werden '\
+                   u'und veraltet sein. Der aktuelle Artikel ist unter '\
+                   u'<a href="%s">wiki.ubuntuusers.de</a> zu finden.</div>'
 
-SRC_RE = re.compile(r'src="([^"]+)"')
-STYLE_RE = re.compile(r'(?:rel="stylesheet"\s+type="text/css"\s+)href="([^"]+)"')
-FAVICON_RE = re.compile(r'rel="shortcut icon" href="([^"]+)"')
-TAB_RE = re.compile(r'(<div class="navi_tabbar navigation">).+?(</div>)', re.DOTALL)
-META_RE = re.compile(r'(<p class="meta">).+?(</p>)\s*', re.DOTALL)
-NAVI_RE = re.compile(r'(<ul class="navi_global">).+?(</ul>)\s*', re.DOTALL)
-IMG_RE = re.compile(r'href="%s\?target=([^"]+)"' % href('wiki', '_image'))
-REAL_MEDIA_RE = re.compile(r'href="%s\?target=([^"]+)"' % settings.MEDIA_URL)
-REAL_IMG_RE = re.compile(r'href="%s.*?"' % settings.STATIC_URL)
-LINK_RE = re.compile(r'href="%s([^"]+)"' % URL)
-STARTPAGE_RE = re.compile(r'href="(%s)"' % URL)
-ERROR_REPORT_RE = re.compile(r'<a href=".[^"]+" id="user_error_report_link">Fehler melden</a><br/>\s*')
-POWERED_BY_RE = re.compile(r'<li class="poweredby">.*?</li>\s*', re.DOTALL)
-SEARCH_PATHBAR_RE = re.compile(r'<form .*? class="search">.+?</form>\s*', re.DOTALL)
-DROPDOWN_RE = re.compile(r'<div class="dropdown">.+?</div>\s*', re.DOTALL)
-PATHBAR_RE = re.compile(r'(<div class="pathbar">).*?(</div>)\s*', re.DOTALL)
-LOGO_RE = re.compile(r'<h1><a href=".*?"><span>ubuntuusers.de</span></a></h1>', re.DOTALL)
-TABBAR_RE = re.compile(r'<li class="(portal|forum|wiki|ikhaya|planet|community).*?"><a href=".*?">(.*?)</a></li>', re.DOTALL)
-OPENSEARCH_RE = re.compile(r'<link rel="search".*? />\s*', re.DOTALL)
-FOOTER_RE = re.compile(r'<a href="%s(lizenz|kontakt|datenschutz|impressum)/.*?">(.+?)</a>' % href('portal'), re.DOTALL)
-GLOBAL_MESSAGE_RE = re.compile(r'(<div class="message global">).+?(</div>)\s*', re.DOTALL)
+REDIRECT_MESSAGE = u'<p>Diese Seite ist eine Weiterleitung. Daher wirst '\
+                   u'du in 5 Sekunden automatisch nach <a '\
+                   u'href="%s.html">%s</a> weitergeleitet.</p>'
 
-SNAPSHOT_MESSAGE = u'''<div class="message staticwikinote">
-<strong>Hinweis:</strong> Dies ist nur ein statischer Snapshot unseres Wikis. Dieser kann nicht bearbeitet werden und veraltet sein. Der aktuelle Artikel ist unter <a href="%s">wiki.ubuntuusers.de</a> zu finden.
-</div>'''
+CREATED_MESSAGE = u'<li class="poweredby">Erstellt mit <a '\
+                  u'href="http://inyokaproject.org/">Inyoka</a></li>'
 
-EXCLUDE_PAGES = [u'Benutzer/', u'Anwendertreffen/', u'Baustelle/', u'LocoTeam/',
-                 u'Wiki/Vorlagen', u'Vorlage/', u'Verwaltung/', u'Galerie', 'Trash/',
-                 u'Messen/', u'UWN-Team/', u'Mitmachen/', u'ubuntuusers/']
+EXCLUDE_PAGES = [u'Benutzer/', u'Anwendertreffen/', u'Baustelle/',
+                 u'LocoTeam/', u'Wiki/Vorlagen', u'Vorlage/', u'Verwaltung/',
+                 u'Galerie', 'Trash/', u'Messen/', u'UWN-Team/', u'Mitmachen/',
+                 u'ubuntuusers/']
 # we're case insensitive
 EXCLUDE_PAGES = [x.lower() for x in EXCLUDE_PAGES]
 
-
-INCLUDE_IMAGES = False
-
 _iterables = (tuple, list, set, frozenset)
+
 
 @templated('wiki/action_show.html')
 def fetch_page(page, **kwargs):
@@ -104,182 +89,226 @@ def save_file(url, is_main_page=False, is_static=False):
         return ""
     if url.startswith(settings.STATIC_URL):
         base = settings.STATIC_ROOT
-        rel_path = url[len(settings.STATIC_URL)+1:]
-    elif url.startswith(URL):
+        rel_path = url[len(settings.STATIC_URL):]
+    elif url.startswith(settings.MEDIA_URL):
         base = settings.MEDIA_ROOT
-
-        query = parse_qs(urlparse(url).query)
-        width = query.get('width', [None])[0]
-        height = query.get('height', [None])[0]
-        target = query.get('target', [None])[0]
-        width, height = parse_dimensions('%sx%s' % (width, height))
-        if not target:
-            return ""
-
-        target = force_unicode(target)
-        target = normalize_pagename(target)
-
-        if height or width:
-            page_filename = Page.objects.attachment_for_page(target)
-            if page_filename is None:
-                return ""
-
-            partial_hash = sha1(force_unicode(page_filename).encode('utf-8')).hexdigest()
-
-            force = query.get('force', [None])[0]
-            dimension = '%sx%s%s' % (width or '',
-                                     height or '',
-                                     force and '!' or '')
-            hash = '%s%s%s' % (partial_hash, 'i',
-                               dimension.replace('!', 'f'))
-            base_filename = os.path.join('wiki', 'thumbnails', hash[:1],
-                                         hash[:2], hash)
-            rel_path = get_thumbnail(page_filename, base_filename, width, height)
-        else:
-            rel_path = Page.objects.attachment_for_page(target)
-            if not rel_path:
-                return ""
-        if not rel_path:
-            return ""
+        rel_path = url[len(settings.MEDIA_URL):]
     else:
         return ""
     try:
         if rel_path:
-            abs_path = os.path.join(base, rel_path)
-            hash = md5(force_unicode(rel_path).encode('utf-8')).hexdigest()
+            abs_path = path.join(base, rel_path)
+            hash = sha1(force_unicode(rel_path).encode('utf-8')).hexdigest()
             if hash not in DONE_SRCS:
-                ext = os.path.splitext(rel_path)[1]
+                ext = path.splitext(rel_path)[1]
                 fname = '%s%s' % (hash, ext)
-                shutil.copy(abs_path, path.join(FOLDER, 'files', '_', fname))
+                dst = path.join(FOLDER, 'files', '_', fname)
+                copy(abs_path, dst)
                 DONE_SRCS[hash] = fname
-            return os.path.join('_', DONE_SRCS[hash])
+                chmod(dst, 0644)
+            return path.join('_', DONE_SRCS[hash])
     except IOError:
         pass
 
     return ""
 
 
-def fix_path(pth):
+def fix_path(pth, pre=''):
     if isinstance(pth, unicode):
         pth.encode('utf-8')
-    return normalize_pagename(pth, False).lower()
+    return pre + normalize_pagename(pth, False).lower()
 
 
-def replacer(func, parts, is_main_page, page_name):
-    pre = (parts and u''.join('../' for i in xrange(parts)) or './')
-
-    def _repl(match):
-        return func(match, pre, is_main_page, page_name)
-
-    return _repl
+def _pre(parts):
+    return parts and u''.join('../' for i in xrange(parts)) or './'
 
 
-def handle_src(match, pre, is_main_page, page_name):
-    is_static = 'static' in match.groups()[0]
-    return u'src="%s%s"' % (pre, save_file(match.groups()[0], is_main_page, is_static))
+def handle_removals(soup, pre, is_main_page, page_name):
+    remove = (('script',),
+              ('ul', 'navi_global'),
+              ('div', 'pathbar'),
+              ('div', 'navi_tabbar navigation'),
+              ('p', 'meta'))
+    for args in remove:
+        for x in soup.find_all(*args):
+            x.extract()
 
 
-def handle_img(match, pre, is_main_page, page_name):
-    if not INCLUDE_IMAGES:
-        return u'href="%s%s"' % (pre, os.path.join('_', '1px.png'))
-    return u'href="%s%s"' % (pre, save_file(fetch_real_target(target=url_unquote(match.groups()[0].encode('utf8'))), is_main_page))
+def handle_meta_link(soup, pre, is_main_page, page_name):
+
+    def _handle_style(tag):
+        rel_path = save_file(tag['href'], is_main_page, True)
+        if not rel_path:
+            tag.extract()
+        else:
+            tag['href'] = u'%s%s' % (pre, rel_path)
+            if not rel_path in UPDATED_SRCS:
+                abs_path = path.join(FOLDER, 'files', rel_path)
+                if path.isfile(abs_path):
+                    content = ''
+                    with open(abs_path, 'r') as f:
+                        content = f.read()
+
+                    _re = compile(r'\?[0-9a-f]{32}')
+                    content = _re.sub('', content)
+                    with open(abs_path, 'w') as f:
+                        f.write(content)
+                        UPDATED_SRCS.add(rel_path)
+
+    def _handle_favicon(tag):
+        rel_path = save_file(tag['href'], is_main_page, True)
+        if not rel_path:
+            tag.extract()
+        else:
+            tag['href'] = u'%s%s' % (pre, rel_path)
+
+    sub = {'stylesheet': _handle_style,
+           'shortcut icon': _handle_favicon}
+
+    for link in soup.find('head').find_all('link'):
+        op = sub.get(link['rel'][0], lambda tag: tag.extract())
+        op(link)
 
 
-def handle_style(match, pre, is_main_page, page_name):
-    ret = u'rel="stylesheet" type="text/css" href="%s%s"' % (pre, save_file(match.groups()[0], is_main_page, True))
-    return ret
+def handle_title(soup, pre, is_main_page, page_name):
+    soup.find('title').string = page_name + u' › ubuntuusers statisches Wiki'
 
 
-def handle_favicon(match, pre, is_main_page, page_name):
-    ret = u'rel="shortcut icon" href="%s%s"' % (pre, save_file(match.groups()[0], is_main_page, True))
-    return ret
+def handle_logo(soup, pre, is_main_page, page_name):
+    tag = soup.find('div', 'header').find('h1').find('a')
+    tag['href'] = UU_PORTAL
+    tag.find('span').string = u'ubuntuusers.de'
 
 
-def handle_link(match, pre, is_main_page, page_name):
-    if not '?' in match.group():
-        return u'href="%s%s.html"' % (pre, fix_path(match.groups()[0]))
-    return u'href="%s%s.html"' % (pre, fix_path(page_name))
-
-
-def handle_powered_by(match, pre, is_main_page, page_name):
-    return u'<li class="poweredby">Erstellt mit <a href="http://ubuntuusers.de/inyoka">Inyoka</a></li>'
-
-def handle_logo(match, pre, is_main_page, page_name):
-    return u'<h1><a href="%s"><span>ubuntuusers.de</span></a></h1>' % UU_PORTAL
-
-def handle_tabbar(match, pre, is_main_page, page_name):
+def handle_tabbar(soup, pre, is_main_page, page_name):
     sub = {
-        'portal': ('', UU_PORTAL),
-        'forum': ('', UU_FORUM),
-        'wiki': (' active', UU_WIKI),
-        'ikhaya': ('', UU_IKHAYA),
-        'planet': ('', UU_PLANET),
-        'community': ('', UU_COMMUNITY),
+        'portal': UU_PORTAL,
+        'forum': UU_FORUM,
+        'wiki': UU_WIKI,
+        'ikhaya': UU_IKHAYA,
+        'planet': UU_PLANET,
+        'community': UU_COMMUNITY,
     }
-    key = match.groups()[0]
-    return u'<li class="%s%s"><a href="%s">%s</a></li>' % (key, sub[key][0], sub[key][1], match.groups()[1])
-
-def handle_footer(match, pre, is_main_page, page_name):
-    return u'<a href="%s%s">%s</a>' % (UU_PORTAL, match.groups()[0], match.groups()[1])
-
-def handle_startpage(match, pre, is_main_page, page_name):
-    return u'href="%s%s.html"' % (pre, settings.WIKI_MAIN_PAGE.lower())
-
-def handle_snapshot_message(match, pre, is_main_page, page_name):
-    return SNAPSHOT_MESSAGE % os.path.join(UU_WIKI, page_name)
+    for li in soup.find('ul', 'tabbar').find_all('li'):
+        key = li['class'][0]
+        li.find('a')['href'] = sub[key]
 
 
-REPLACERS = (
-    (IMG_RE,            handle_img),
-    (SRC_RE,            handle_src),
-    (STYLE_RE,          handle_style),
-    (FAVICON_RE,        handle_favicon),
-    (LINK_RE,           handle_link),
-    (STARTPAGE_RE,      handle_startpage),
-    (POWERED_BY_RE,     handle_powered_by),
-    (META_RE,           ''),
-    (NAVI_RE,           ''),
-    (ERROR_REPORT_RE,   ''),
-    (GLOBAL_MESSAGE_RE, ''),
-    (SEARCH_PATHBAR_RE, ''),
-    (DROPDOWN_RE,       ''),
-    (PATHBAR_RE,        ''),
-    (OPENSEARCH_RE,     ''),
-    (REAL_IMG_RE,       ''),
-    (REAL_MEDIA_RE,     ''),
-    (LOGO_RE,           handle_logo),
-    (TABBAR_RE,         handle_tabbar),
-    (FOOTER_RE,         handle_footer),
-    (TAB_RE,            handle_snapshot_message)
-)
+def handle_link(soup, pre, is_main_page, page_name):
+    length = len(href('wiki'))
+    for a in soup.find_all('a', href=WIKI_BEGIN_RE):
+        link = a['href'][length:]
+        if '?' in link:
+            rel_path = fix_path(page_name, pre)
+        else:
+            rel_path = fix_path(link, pre)
+        a['href'] = u'%s.html' % rel_path
+
+    for a in soup.find_all('a', href=NON_WIKI_RE):
+        a.unwrap()
+
+
+def handle_img(soup, pre, is_main_page, page_name):
+    def _remove_link(tag):
+        if tag.parent.name == 'a':
+            tag.parent.unwrap()
+
+    if not INCLUDE_IMAGES:
+        for img in soup.find_all('img'):
+            img['src'] = u'%s%s' % (pre, path.join('img', '1px.png'))
+            _remove_link(img)
+    else:
+        for img in soup.find_all('img'):
+            try:
+                rel_path = save_file(img['src'], is_main_page,
+                                     img['src'].startswith(href('static')))
+                if not rel_path:
+                    img['src'] = u'%s%s' % (pre, path.join('img', '1px.png'))
+                else:
+                    img['src'] = u'%s%s' % (pre, rel_path)
+                _remove_link(img)
+            except KeyError:
+                img.extract()
+
+
+def handle_startpage(soup, pre, is_main_page, page_name):
+    for a in soup.find_all('a', href=WIKI_CENTER_RE):
+        a['href'] = u'%s%s.html' % (pre, settings.WIKI_MAIN_PAGE.lower())
+
+
+def handle_footer(soup, pre, is_main_page, page_name):
+    for li in soup.find('div', 'footer').find_all('li'):
+        key = li['class'][0]
+        if key == 'license':
+            li.find('a', 'flavour_switch').extract()
+            li.find('br').extract()
+            for a in li.find_all('a', href=PORTAL_RE):
+                a['href'] = '%s%s' % (UU_PORTAL,
+                                      a['href'][len(href('portal')):])
+        elif key == 'poweredby':
+            tag = BeautifulSoup(CREATED_MESSAGE)
+            li.clear()
+            li.append(tag.find('li'))
+
+
+def handle_snapshot_message(soup, pre, is_main_page, page_name):
+    tag = BeautifulSoup(SNAPSHOT_MESSAGE % path.join(UU_WIKI, page_name))
+    soup.find('div', 'appheader').insert_after(tag.find('div'))
+
+
+def handle_redirect_page(soup, pre, target):
+    page = soup.find('div', id='page')
+    page.clear()
+    t1 = BeautifulSoup(REDIRECT_MESSAGE % (fix_path(target, pre), target))
+    page.append(t1.find('p'))
+    page.find('head')
+    t2 = BeautifulSoup('<meta http-equiv="refresh" content="5;url=%s.html">' %
+                       fix_path(target, pre))
+    page.append(t2.find('meta'))
+
+
+HANDLERS = [handle_removals,
+            handle_meta_link,
+            handle_title,
+            handle_logo,
+            handle_tabbar,
+            handle_startpage,
+            handle_link,
+            handle_img,
+            handle_footer,
+            handle_snapshot_message]
+
 
 def create_snapshot():
-    # remove the snapshot folder and recreate it
-    try:
-        shutil.rmtree(FOLDER)
-    except OSError:
-        pass
-
     user = User.objects.get_anonymous_user()
 
     # create the folder structure
-    os.mkdir(FOLDER)
-    os.mkdir(path.join(FOLDER, 'files'))
+    if not path.exists(FOLDER):
+        mkdir(FOLDER)
+    else:
+        for root, dirs, files in walk(FOLDER):
+            for f in files:
+                unlink(path.join(root, f))
+            for d in dirs:
+                rmtree(path.join(root, d))
+    mkdir(path.join(FOLDER, 'files'))
     stroot = settings.STATIC_ROOT
     ff = partial(path.join, stroot, 'img')
     static_paths = ((path.join(stroot, 'img', 'icons'), 'icons'),
-        ff('logo.png'), ff('favicon.ico'), ff('float-left.jpg'),
-        ff('float-right.jpg'), ff('float-top.jpg'), ff('head.jpg'),
-        ff('head-right.png'), ff('anchor.png'), ff('header-sprite.png'),
-        ff('1px.png'))
+                    (path.join(stroot, 'img', 'wiki'), 'wiki'),
+                    (path.join(stroot, 'img', 'interwiki'), 'interwiki'),
+                    ff('logo.png'), ff('favicon.ico'), ff('float-left.jpg'),
+                    ff('float-right.jpg'), ff('float-top.jpg'), ff('head.jpg'),
+                    ff('head-right.png'), ff('anchor.png'), ff('1px.png'),
+                    ff('header-sprite.png'))
     for pth in static_paths:
         _pth = pth[0] if isinstance(pth, _iterables) else pth
         if path.isdir(_pth):
-            shutil.copytree(_pth, path.join(FOLDER, 'files', 'img', pth[1]))
+            copytree(_pth, path.join(FOLDER, 'files', 'img', pth[1]))
         else:
-            shutil.copy(_pth, path.join(FOLDER, 'files', 'img'))
+            copy(_pth, path.join(FOLDER, 'files', 'img'))
     attachment_folder = path.join(FOLDER, 'files', '_')
-    os.mkdir(attachment_folder)
+    mkdir(attachment_folder)
 
     pb = ProgressBar(40)
 
@@ -323,7 +352,7 @@ def create_snapshot():
             for part in page.trace[:-1]:
                 pth = path.join(FOLDER, 'files', *fix_path(part).split('/'))
                 if not path.exists(pth):
-                    os.mkdir(pth)
+                    mkdir(pth)
                 parts += 1
 
         content = fetch_page(page, user=user, settings=settings).content
@@ -331,27 +360,30 @@ def create_snapshot():
             return
         content = content.decode('utf8')
 
-        for regex, repl in REPLACERS:
-            if callable(repl):
-                repl = replacer(repl, parts, is_main_page, page.name)
-            content = regex.sub(repl, content)
+        soup = BeautifulSoup(content)
 
-        # Filter out all JavaScript directives
-        # TODO: This way all tag-filters/replaces above could work
-        #       but for now i'm too lazy...
-        soap = BeautifulSoup(content)
-        [x.extract() for x in soap.findAll('script')]
-        content = unicode(soap)
+        # Apply the handlers from above to modify the page content
+        for handler in HANDLERS:
+            handler(soup, _pre(parts), is_main_page, page.name)
+
+        # If a page is a redirect page, add a forward link
+        redirect = page.metadata.get('X-Redirect')
+        if redirect:
+            handle_redirect_page(soup, _pre(parts), redirect)
+
+        content = unicode(soup)
 
         def _write_file(pth):
             with open(pth, 'w+') as fobj:
                 fobj.write(content.encode('utf-8'))
 
-        _write_file(path.join(FOLDER, 'files', '%s.html' % fix_path(page.name)))
+        _write_file(path.join(FOLDER, 'files', '%s.html' %
+                                               fix_path(page.name)))
 
         if is_main_page:
-            content = re.compile(r'(src|href)="\./([^"]+)"') \
-                    .sub(lambda m: '%s="./files/%s"' % (m.groups()[0], m.groups()[1]), content)
+            content = compile(r'(src|href)="\./([^"]+)"') \
+                .sub(lambda m: '%s="./files/%s"' %
+                               (m.groups()[0], m.groups()[1]), content)
             _write_file(path.join(FOLDER, 'index.html'))
 
     percents = list(percentize(len(todo)))
