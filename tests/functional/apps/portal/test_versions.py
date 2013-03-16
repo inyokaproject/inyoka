@@ -27,8 +27,9 @@ class TestVersions(TestCase):
     def test_order(self):
         """Test the ability of the UbuntuVersion class to sort itself.
 
-        The UbuntuVersion class supports ordering by the “number” attribute,
-        test here if this ordering is correctly done.
+        The UbuntuVersion class supports ordering by the
+        :py:attr:`inyoka.portal.utils.UbuntuVersion.number` attribute, test
+        here if this ordering is correctly done.
         """
         order = ['5.04', '6.06', '6.10', '10.04', '10.10', '12.04']
         versions = map(lambda v: v.number, sorted(self.versions))

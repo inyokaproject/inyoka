@@ -127,7 +127,7 @@ class TestAuthViews(TestCase):
                               response.content, count=1)
 
     def test_login_with_permanent_flag(self):
-        """Test the ”stay logged in” function."""
+        """Test the “stay logged in” function."""
         postdata = {'username': 'user', 'password': 'user', 'permanent': 'on'}
         response = self.client.post('/login/', postdata, follow=True)
         self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
@@ -189,7 +189,7 @@ class TestAuthViews(TestCase):
         self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
 
     def test_logout_as_anonymous(self):
-        """If a user is logging out without beeing logged in previousley,
+        """If a user is logging out without beeing logged in previously,
         display a message telling that the user.
         """
         with translation.override('en-us'):
