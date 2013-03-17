@@ -59,16 +59,28 @@ class StorageManager(object):
     """
 
     def __init__(self, **storages):
-        self.storages = storages
+        self._storages = storages
+        self.storages = {}
 
     def __getattr__(self, key):
-        if key in self.storages:
-            return self.storages[key]().data
+        st = self._get_or_create(key)
+        if st:
+            return st.data
         raise AttributeError(key)
+
+    def _get_or_create(self, key):
+        if key in self.storages:
+            return self.storages[key]
+        elif key in self._storages:
+            self.storages[key] = self._storages[key]()
+            return self.storages[key]
+        return None
 
     def clear_cache(self, key):
         """Clear caches for ``key``."""
-        request_cache.delete(CACHE_PREFIX + key)
+        st = self._get_or_create(key)
+        if st:
+            st.update()
 
 
 class BaseStorage(object):
@@ -82,11 +94,11 @@ class BaseStorage(object):
     storage_type = None
 
     def __init__(self):
-        key = CACHE_PREFIX + self.storage_type
-        self.data = request_cache.get(key)
-        if self.data is not None:
-            return
+        self.data = request_cache.get(CACHE_PREFIX + self.storage_type)
+        if not self.data:
+            self.update()
 
+    def update(self):
         data = Page.objects.values_list('last_rev__text__value', 'name') \
             .filter(name__in=settings.WIKI_STORAGE_PAGES[self.storage_type],
                     last_rev__deleted=False) \
@@ -98,7 +110,7 @@ class BaseStorage(object):
             objects.append(self.extract_data(block))
 
         self.data = self.combine_data(objects)
-        request_cache.set(key, self.data, 10000)
+        request_cache.set(CACHE_PREFIX + self.storage_type, self.data, 10000)
 
     def find_block(self, text):
         """Helper method that finds a processable block in the text."""
