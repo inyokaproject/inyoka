@@ -50,10 +50,6 @@
         Marks this page as redirect to another page.  This should be an
         absolute link to an existing page.
 
-    ``X-Behave``
-        Gives the page a behavior.  This is used by the `storage` system and
-        documented as part of that module.
-
     ``X-Cache-Time``
         This is used to give the page a different cache time than the default.
 
@@ -835,10 +831,10 @@ class Page(models.Model):
         # regular metadata and links
         new_metadata = set(meta['metadata'])
 
-        for key, value in new_metadata:
-            if key == 'X-Behave':
+        for key, values in settings.WIKI_STORAGE_PAGES.iteritems():
+            if self.name in values:
                 from inyoka.wiki.storage import storage
-                storage.clear_cache()
+                storage.clear_cache(key)
                 break
 
         # add links as x-links
