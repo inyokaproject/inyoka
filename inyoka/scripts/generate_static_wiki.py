@@ -135,12 +135,27 @@ def _pre(parts):
 def handle_removals(soup, pre, is_main_page, page_name):
     remove = (('script',),
               ('ul', 'navi_global'),
-              ('div', 'pathbar'),
               ('div', 'navi_tabbar navigation'),
               ('p', 'meta'))
     for args in remove:
         for x in soup.find_all(*args):
             x.extract()
+
+
+def handle_pathbar(soup, pre, is_main_page, page_name):
+    pathbar = soup.find('div', 'pathbar')
+    pathbar.find('form').decompose()
+    pathbar.find('div').decompose()
+    children = list(pathbar.children)
+    if len(children) > 4:
+        # 4 because, the form and div leave a \n behind
+        # remove the ubuntuusers.de link
+        children = children[5:]
+        pathbar.clear()
+        for child in children:
+            pathbar.append(child)
+    else:
+        pathbar.decompose()
 
 
 def handle_meta_link(soup, pre, is_main_page, page_name):
@@ -226,9 +241,6 @@ def handle_link(soup, pre, is_main_page, page_name):
                 rel_path = fix_path(link, pre)
             a['href'] = u'%s.html' % rel_path
 
-    for a in soup.find_all('a', href=NON_WIKI_RE):
-        a.unwrap()
-
 
 def handle_img(soup, pre, is_main_page, page_name):
     def _remove_link(tag):
@@ -273,6 +285,11 @@ def handle_footer(soup, pre, is_main_page, page_name):
             li.append(tag.find('li'))
 
 
+def handle_link_unwraps(soup, pre, is_main_page, page_name):
+    for a in soup.find_all('a', href=NON_WIKI_RE):
+        a.unwrap()
+
+
 def handle_snapshot_message(soup, pre, is_main_page, page_name):
     tag = BeautifulSoup(SNAPSHOT_MESSAGE % path.join(UU_WIKI, page_name))
     soup.find('div', 'appheader').insert_after(tag.find('div'))
@@ -290,6 +307,7 @@ def handle_redirect_page(soup, pre, target):
 
 
 HANDLERS = [handle_removals,
+            handle_pathbar,
             handle_meta_link,
             handle_title,
             handle_logo,
@@ -298,6 +316,7 @@ HANDLERS = [handle_removals,
             handle_link,
             handle_img,
             handle_footer,
+            handle_link_unwraps,
             handle_snapshot_message]
 
 
