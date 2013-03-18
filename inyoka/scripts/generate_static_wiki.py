@@ -21,6 +21,8 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.encoding import force_unicode
 
+from werkzeug import url_unquote
+
 from inyoka.utils.http import templated
 from inyoka.utils.urls import href
 from inyoka.utils.storage import storage
@@ -97,6 +99,7 @@ def save_file(url, is_main_page=False, is_static=False):
     else:
         return ""
     try:
+        rel_path = url_unquote(rel_path)
         if rel_path:
             abs_path = path.join(base, rel_path)
             hash = sha1(force_unicode(rel_path).encode('utf-8')).hexdigest()
@@ -117,7 +120,7 @@ def save_file(url, is_main_page=False, is_static=False):
 def fix_path(pth, pre=''):
     if isinstance(pth, unicode):
         pth.encode('utf-8')
-    return pre + normalize_pagename(pth, False).lower()
+    return pre + normalize_pagename(url_unquote(pth), False).lower()
 
 
 def _pre(parts):
