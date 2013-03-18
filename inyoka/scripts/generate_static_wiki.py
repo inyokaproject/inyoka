@@ -212,11 +212,14 @@ def handle_link(soup, pre, is_main_page, page_name):
     length = len(href('wiki'))
     for a in soup.find_all('a', href=WIKI_BEGIN_RE):
         link = a['href'][length:]
-        if '?' in link:
-            rel_path = fix_path(page_name, pre)
+        if link.startswith('_attachment?'):
+            a['href'] = UU_WIKI + link
         else:
-            rel_path = fix_path(link, pre)
-        a['href'] = u'%s.html' % rel_path
+            if '?' in link:
+                rel_path = fix_path(page_name, pre)
+            else:
+                rel_path = fix_path(link, pre)
+            a['href'] = u'%s.html' % rel_path
 
     for a in soup.find_all('a', href=NON_WIKI_RE):
         a.unwrap()
