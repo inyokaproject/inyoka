@@ -23,6 +23,7 @@ from django.utils.encoding import force_unicode
 
 from inyoka.utils.http import templated
 from inyoka.utils.urls import href
+from inyoka.utils.storage import storage
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.templating import Breadcrumb
@@ -137,6 +138,16 @@ def handle_removals(soup, pre, is_main_page, page_name):
 def handle_meta_link(soup, pre, is_main_page, page_name):
 
     def _handle_style(tag):
+        if tag['href'] == href('portal', 'markup.css'):
+            hash = sha1(force_unicode('dyn.css').encode('utf-8')).hexdigest()
+            rel_path = path.join('_', '%s.css' % hash)
+            abs_path = path.join(FOLDER, 'files', rel_path)
+            if not path.isfile(abs_path):
+                with open(abs_path, 'w+') as fobj:
+                    fobj.write(storage['markup_styles'].encode('utf-8'))
+            tag['href'] = u'%s%s' % (pre, rel_path)
+            return
+
         rel_path = save_file(tag['href'], is_main_page, True)
         if not rel_path:
             tag.extract()
