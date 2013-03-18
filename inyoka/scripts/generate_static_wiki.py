@@ -9,6 +9,8 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import datetime
+
 from functools import partial
 from hashlib import sha1
 from itertools import izip
@@ -19,7 +21,9 @@ from shutil import copy, copytree, rmtree
 from bs4 import BeautifulSoup
 
 from django.conf import settings
+from django.template.defaultfilters import date
 from django.utils.encoding import force_unicode
+from django.utils.translation import activate
 
 from werkzeug import url_unquote
 
@@ -54,10 +58,11 @@ DONE_SRCS = {}
 UPDATED_SRCS = set()
 
 SNAPSHOT_MESSAGE = u'<div class="message staticwikinote"><strong>Hinweis:'\
-                   u'</strong> Dies ist nur ein statischer Snapshot '\
-                   u'unseres Wikis. Dieser kann nicht bearbeitet werden '\
-                   u'und veraltet sein. Der aktuelle Artikel ist unter '\
-                   u'<a href="%s">wiki.ubuntuusers.de</a> zu finden.</div>'
+                   u'</strong> Dies ist ein statischer Snapshot unseres '\
+                   u'Wikis vom %s und kann daher bearbeitet werden. Der '\
+                   u'aktuelle Artikel ist unter <a '\
+                   u'href="%s">wiki.ubuntuusers.de</a> zu finden.</div>'
+SNAPSHOT_DATE = None
 
 REDIRECT_MESSAGE = u'<p>Diese Seite ist eine Weiterleitung. Daher wirst '\
                    u'du in 5 Sekunden automatisch nach <a '\
@@ -412,4 +417,7 @@ def create_snapshot():
 
 
 if __name__ == '__main__':
+    activate(settings.LANGUAGE_CODE)
+    SNAPSHOT_DATE = date(datetime.date.today(), settings.DATE_FORMAT)
+    SNAPSHOT_MESSAGE = SNAPSHOT_MESSAGE % (SNAPSHOT_DATE, '%s')
     create_snapshot()
