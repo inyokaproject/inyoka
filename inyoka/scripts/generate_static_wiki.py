@@ -237,9 +237,14 @@ def handle_link(soup, pre, is_main_page, page_name):
         else:
             if '?' in link:
                 rel_path = fix_path(page_name, pre)
+                a['href'] = u'%s.html' % rel_path
+            elif '#' in link:
+                target, anchor = link.split(u'#', 1)
+                rel_path = fix_path(target, pre)
+                a['href'] = u'%s.html%s' % (rel_path, anchor)
             else:
                 rel_path = fix_path(link, pre)
-            a['href'] = u'%s.html' % rel_path
+                a['href'] = u'%s.html' % rel_path
 
 
 def handle_img(soup, pre, is_main_page, page_name):
