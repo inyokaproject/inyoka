@@ -327,16 +327,19 @@ def create_snapshot():
     pb = ProgressBar(40)
 
     unsorted = Page.objects.get_page_list(existing_only=True)
-    pages = set()
-    excluded_pages = set()
+    todo = set()
+    num_excluded = 0
     # sort out excluded pages
     for page in unsorted:
+        page = page.lower()
+        do_add = True
         for exclude in EXCLUDE_PAGES:
-            if exclude.lower() in page.lower():
-                excluded_pages.add(page)
-            else:
-                pages.add(page)
-    todo = pages - excluded_pages
+            if page.startswith(exclude):
+                do_add = False
+                num_excluded += 1
+                break
+        if do_add:
+            todo.add(page)
 
     def _fetch_and_write(name):
         parts = 0
@@ -348,10 +351,6 @@ def create_snapshot():
         try:
             page = Page.objects.get_by_name(name, False, True)
         except Page.DoesNotExist:
-            return
-
-        if page.name in excluded_pages:
-            # however these are not filtered before…
             return
 
         if page.name == settings.WIKI_MAIN_PAGE:
@@ -406,7 +405,7 @@ def create_snapshot():
         pb.update(percent)
     print
     print ("Created Wikisnapshot with %s pages; excluded %s pages"
-           % (len(todo), len(excluded_pages)))
+           % (len(todo), num_excluded))
 
 
 if __name__ == '__main__':
