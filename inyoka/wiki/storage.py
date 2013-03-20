@@ -10,21 +10,21 @@
     a dict, or something different, depending what the class wants to have.
 
     This is used for similies, interwiki links, access control and much more.
-    If a page is a storage container is determined by the special 'X-Behave'
-    metadata header.  There can be multiple pages with the same behave header,
-    the contents of those pages are combined afterwards.
+    If a page is a storage container is defined by the settings variable
+    ``WIKI_STORAGE_PAGES``.  There can be multiple pages for the same type, the
+    contents of those pages are combined afterwards.
 
-    The following behave headers are known so far:
+    The following keys for the mentioned dict are known so far:
 
-    ``X-Behave: Smiley-Map``
+    ``smilies``
         this page must contain a pre block that binds smiley codes to their
         image location.  If the link is relative it's assumed to be a link to
         an attachment, otherwise a full url.
 
-    ``X-Behave: Interwiki-Map``
+    ``interwiki``
         Binds shortnames to wiki URLs.
 
-    ``X-Behave: Access-Control-List``
+    ``acl``
         This storage contains ACL information
 
     Storage objects are read only because they combine the information from
@@ -36,7 +36,7 @@
     problems.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -45,9 +45,12 @@ from collections import OrderedDict
 from django.conf import settings
 
 from inyoka.utils.cache import request_cache
-from inyoka.wiki.models import MetaData, Page
+from inyoka.wiki.models import Page
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
+
+
+CACHE_PREFIX = 'wiki/storage/'
 
 
 class StorageManager(object):
@@ -56,17 +59,28 @@ class StorageManager(object):
     """
 
     def __init__(self, **storages):
-        self.storages = storages
+        self._storages = storages
+        self.storages = {}
 
     def __getattr__(self, key):
-        if key in self.storages:
-            return self.storages[key]().data
+        st = self._get_or_create(key)
+        if st:
+            return st.data
         raise AttributeError(key)
 
-    def clear_cache(self):
-        """Clear all active caches."""
-        for obj in self.storages.itervalues():
-            request_cache.delete('wiki/storage/' + obj.behavior_key)
+    def _get_or_create(self, key):
+        if key in self.storages:
+            return self.storages[key]
+        elif key in self._storages:
+            self.storages[key] = self._storages[key]()
+            return self.storages[key]
+        return None
+
+    def clear_cache(self, key):
+        """Clear caches for ``key``."""
+        st = self._get_or_create(key)
+        if st:
+            st.update()
 
 
 class BaseStorage(object):
@@ -75,21 +89,20 @@ class BaseStorage(object):
     logic like flushing the cache and storing back to it.
     """
 
-    #: the name of the behavior key this storage looks for. If it's `None`
+    #: the name of the storage type this storage looks for. If it's `None`
     #: this storage is abstract and useful as baseclass for concrete storages.
-    behavior_key = None
+    storage_type = None
 
     def __init__(self):
-        key = 'wiki/storage/' + self.behavior_key
-        self.data = request_cache.get(key)
-        if self.data is not None:
-            return
+        self.data = request_cache.get(CACHE_PREFIX + self.storage_type)
+        if not self.data:
+            self.update()
 
-        data = MetaData.objects.values_list('page__last_rev__text__value', 'page__name') \
-            .filter(key='X-Behave',
-                    page__last_rev__deleted=False,
-                    value=self.behavior_key) \
-            .order_by('page__name').all()
+    def update(self):
+        data = Page.objects.values_list('last_rev__text__value', 'name') \
+            .filter(name__in=settings.WIKI_STORAGE_PAGES[self.storage_type],
+                    last_rev__deleted=False) \
+            .order_by('name').all()
 
         objects = []
         for raw_text, page_name in data:
@@ -97,7 +110,7 @@ class BaseStorage(object):
             objects.append(self.extract_data(block))
 
         self.data = self.combine_data(objects)
-        request_cache.set(key, self.data, 10000)
+        request_cache.set(CACHE_PREFIX + self.storage_type, self.data, 10000)
 
     def find_block(self, text):
         """Helper method that finds a processable block in the text."""
@@ -168,7 +181,7 @@ class SmileyMap(DictStorage):
     """
     Stores smiley code to image mappings.
     """
-    behavior_key = 'Smiley-Map'
+    storage_type = 'smilies'
     multi_key = True
 
     def combine_data(self, objects):
@@ -195,7 +208,7 @@ class InterwikiMap(DictStorage):
     """
     Map shortnames to full interwiki links.
     """
-    behavior_key = 'Interwiki-Map'
+    storage_type = 'interwiki'
 
 
 class AccessControlList(BaseStorage):
@@ -204,7 +217,7 @@ class AccessControlList(BaseStorage):
     are similar to the basic expansion rules we also use for the `PageList`
     macro but they are always case sensitive.
     """
-    behavior_key = 'Access-Control-List'
+    storage_type = 'acl'
 
     def extract_data(self, text):
         from inyoka.wiki import acl

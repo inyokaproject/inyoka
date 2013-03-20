@@ -24,7 +24,7 @@ INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4BQQM-N93TqupJwysf0dHBu_LfF6AQ'
 
 # Removed django-openid for now as we do not support proper test setup for now.
-# explicitly add inyoka.utils.tests to apps to run unittests here
+# explicitly add tests.functional.utils to apps to run unittests here
 INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.contenttypes',
