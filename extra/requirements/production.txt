@@ -22,6 +22,7 @@ django-mobile==0.2.4
 celery==3.0.12
 django-celery==3.0.11
 kombu==2.5.4
+django-kombu==0.9.4
 django-hosts==0.5
 requests==1.0.3
 pyzmq==2.2.0.1
