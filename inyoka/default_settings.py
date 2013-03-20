@@ -126,21 +126,11 @@ USER_INACTIVE_DAYS = 365
 # key for google maps
 GOOGLE_MAPS_APIKEY = ''
 
-# The forum that should contain the wiki discussions
-WIKI_DISCUSSION_FORUM = 'discussions'
-
 # wiki settings
 WIKI_MAIN_PAGE = 'Welcome'
 
-# The wiki storage pages
-WIKI_STORAGE_PAGES = {
-    # The wiki ACL definitions
-    'acl': ('Wiki/ACL/All-In-One',),
-    # Inter wiki link definitions
-    'interwiki': ('Wiki/InterWikiMap',),
-    # The smiley definitions
-    'smilies': ('Wiki/Smilies', 'Wiki/FlaggenMap'),
-}
+# The forum that should contain the wiki discussions
+WIKI_DISCUSSION_FORUM = 'discussions'
 
 # the page below we have our templates.  The template the
 # user specifies in the macro or in the parser is then
