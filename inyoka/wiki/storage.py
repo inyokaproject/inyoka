@@ -45,6 +45,8 @@ from collections import OrderedDict
 from django.conf import settings
 
 from inyoka.utils.cache import request_cache
+from inyoka.utils.text import normalize_pagename
+from inyoka.utils.user import normalize_username
 from inyoka.wiki.models import MetaData, Page
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
@@ -195,8 +197,8 @@ class AccessControlList(BaseStorage):
         groups = ['*']
         for line in text.splitlines():
             # comments and empty lines
-            line = line.strip()
-            if not line or line.startswith('##'):
+            line = line.split('#', 1)[0].strip()
+            if not line:
                 continue
 
             # group sections
@@ -208,7 +210,8 @@ class AccessControlList(BaseStorage):
             if len(bits) != 2:
                 continue
 
-            subjects = set(s.strip() for s in bits[0].split(','))
+            subjects = [normalize_username(s.strip()) for s in bits[0].split(',')]
+
             add_privs = del_privs = 0
             for s in bits[1].split(','):
                 s = s.strip().lower()
@@ -226,7 +229,8 @@ class AccessControlList(BaseStorage):
                             add_privs |= privileges[s]
 
             for group in groups:
-                pattern = re.compile(r'^%s$' % re.escape(group).
+                page_name = normalize_pagename(group)
+                pattern = re.compile(r'^%s$' % re.escape(page_name).
                                      replace('\\*', '.*?'), re.I)
                 for subject in subjects:
                     yield pattern, subject, add_privs, del_privs
