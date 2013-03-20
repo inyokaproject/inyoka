@@ -5,7 +5,6 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'inyoka_testrunner',
-        'USER': 'postgres',
     }
 }
 
@@ -33,7 +32,7 @@ INSTALLED_APPS = (
     'inyoka.ikhaya',
     'inyoka.pastebin',
     'inyoka.planet',
-    'inyoka.utils.tests',
+    'tests.functional.utils',
     'south',
     # *must* be installed after south
     'djcelery',

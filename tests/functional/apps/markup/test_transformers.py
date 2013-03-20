@@ -85,7 +85,7 @@ class TestTransformers(TestCase):
         ]))
 
     def test_smiley_re(self):
-        global _smiley_rey
+        global _smiley_re
         smileys = {':)': '', ':/': '', '8-o': '', '{de}': ''}
         assert _smiley_re is None
         smiley_re = get_smiley_re(smileys)
