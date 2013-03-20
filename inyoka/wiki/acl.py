@@ -112,7 +112,8 @@ class GroupContainer(object):
 
     def load(self):
         """Load the data from the database."""
-        self.cache = set(normalize_username(x.name) for x in self.user.get_groups())
+        self.cache = set(normalize_username(x.name)
+                         for x in self.user.get_groups())
         for item in Page.objects.get_owners(self.page):
             if item == self.user.username or \
                (item.startswith('@') and item[1:] in self.cache):
@@ -179,7 +180,7 @@ def get_privilege_flags(user, page_name, groups=None):
     for pattern, subject, add_privs, del_privs in rules:
         if (subject == user or
             (subject.startswith('@') and subject[1:] in groups)) and \
-             pattern.match(page_name) is not None:
+                pattern.match(page_name) is not None:
             privileges = (privileges | add_privs) & ~del_privs
     return privileges
 

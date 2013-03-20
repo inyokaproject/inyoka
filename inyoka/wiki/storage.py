@@ -87,7 +87,8 @@ class BaseStorage(object):
         if self.data is not None:
             return
 
-        data = MetaData.objects.values_list('page__last_rev__text__value', 'page__name') \
+        data = MetaData.objects.values_list('page__last_rev__text__value',
+                                            'page__name') \
             .filter(key='X-Behave',
                     page__last_rev__deleted=False,
                     value=self.behavior_key) \
@@ -194,7 +195,7 @@ class AccessControlList(BaseStorage):
         from inyoka.wiki import acl
         privileges = acl.privilege_map
 
-        groups = ['*']
+        pages = [u'*']
         for line in text.splitlines():
             # comments and empty lines
             line = line.split('#', 1)[0].strip()
@@ -203,14 +204,16 @@ class AccessControlList(BaseStorage):
 
             # group sections
             if line[0] == '[' and line[-1] == ']':
-                groups = [x.strip() for x in line[1:-1].split(',')]
+                pages = [normalize_pagename(x.strip())
+                         for x in line[1:-1].split(',')]
                 continue
 
             bits = line.split('=', 1)
             if len(bits) != 2:
                 continue
 
-            subjects = [normalize_username(s.strip()) for s in bits[0].split(',')]
+            subjects = [normalize_username(s.strip())
+                        for s in bits[0].split(',')]
 
             add_privs = del_privs = 0
             for s in bits[1].split(','):
@@ -228,8 +231,7 @@ class AccessControlList(BaseStorage):
                         if s in privileges:
                             add_privs |= privileges[s]
 
-            for group in groups:
-                page_name = normalize_pagename(group)
+            for page_name in pages:
                 pattern = re.compile(r'^%s$' % re.escape(page_name).
                                      replace('\\*', '.*?'), re.I)
                 for subject in subjects:
