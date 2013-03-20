@@ -11,8 +11,9 @@
 """
 from django.test import TestCase
 
+from inyoka.markup import transformers
 from inyoka.markup.transformers import AutomaticParagraphs, \
-     FootnoteSupport, HeadlineProcessor, get_smiley_re, _smiley_re
+     FootnoteSupport, HeadlineProcessor, get_smiley_re
 from inyoka.markup import Parser, nodes
 
 
@@ -85,9 +86,8 @@ class TestTransformers(TestCase):
         ]))
 
     def test_smiley_re(self):
-        global _smiley_re
+        transformers._smiley_re = None
         smileys = {':)': '', ':/': '', '8-o': '', '{de}': ''}
-        assert _smiley_re is None
         smiley_re = get_smiley_re(smileys)
         t = lambda x: smiley_re.findall(x)
         self.assertEqual(t(':) :/'), [':)', ':/'])
