@@ -227,6 +227,7 @@ INSTALLED_APPS = (
 # don't use migrations but just syncdb
 SOUTH_TESTS_MIGRATE = False
 
+
 OPENID_PROVIDERS = {
     'openid': {
       'name': gettext_noop('OpenID'),
@@ -245,12 +246,6 @@ OPENID_PROVIDERS = {
       'url': 'https://www.google.com/accounts/o8/id'
     },
 }
-
-# some terms to exclude by default to maintain readability
-SEARCH_DEFAULT_EXCLUDE = []
-
-# Default blocksize to delmit queries to the search index
-SEARCH_INDEX_BLOCKSIZE = 5000
 
 # Set the default sentry site
 SENTRY_SITE = 'example.com'

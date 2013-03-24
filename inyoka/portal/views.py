@@ -61,7 +61,7 @@ from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.forum.acl import filter_invisible, split_bits, PRIVILEGES_DETAILS, \
      REVERSED_PRIVILEGES_BITS, split_negative_positive
-from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
+from inyoka.portal.forms import LoginForm, RegisterForm, \
      UserCPSettingsForm, PrivateMessageForm, DeactivateUserForm, \
      LostPasswordForm, ChangePasswordForm, SubscriptionForm, \
      UserCPProfileForm, SetNewPasswordForm, ForumFeedSelectorForm, \
@@ -419,79 +419,8 @@ def logout(request):
     return HttpResponseRedirect(redirect)
 
 
-@templated('portal/search.html')
 def search(request):
-    """Search dialog for the Xapian search engine."""
-    if 'query' in request.GET:
-        f = SearchForm(request.REQUEST, user=request.user)
-    else:
-        f = SearchForm(user=request.user)
-    f.fields['forums'].refresh(add=[(u'support', _(u'All support forums'))])
-
-    if f.is_valid():
-        results = f.search()
-        if not results or not results.success:
-            messages.error(request,
-                _(u'An error occurred while processing your search request. '
-                  u'Please check your input.'))
-
-        normal = u'<a href="%(href)s" class="pageselect">%(text)s</a>'
-        disabled = u'<span class="disabled next">%(text)s</span>'
-        active = u'<span class="pageselect active">%(text)s</span>'
-        pagination = [u'<div class="pagination pagination_right">']
-        add = pagination.append
-
-        d = f.cleaned_data
-
-        def _link(page):
-            return href('portal', 'search', page=page, query=d['query'],
-                        area=d['area'], per_page=results.per_page,
-                        sort=d['sort'], forums=d['forums'])
-
-        if results:
-            add(((results.page == 1) and disabled or normal) % {
-                'href': _link(results.page - 1),
-                'text': _(u'« Previous'),
-            })
-            add(active % {
-                'text': _(u'Page %(page)d of about %(total)d') % {
-                            'page': results.page,
-                            'total': results.page_count}
-            })
-            add(((results.page < results.page_count) and normal or disabled) % {
-                'href': _link(results.page + 1),
-                'text': _(u'Next »')
-            })
-            add(u'<div style="clear: both"></div></div>')
-
-        # only highlight for users with that setting enabled.
-        highlight = None
-        if request.user.settings.get('highlight_search', True) and results:
-            highlight = results.highlight_string
-        wiki_result = None
-        if d['area'] in ('wiki', 'all'):
-            try:
-                wiki_result = WikiPage.objects.filter(
-                              name__iexact=normalize_pagename(d['query'])).get()
-            except WikiPage.DoesNotExist:
-                pass
-        rv = {
-            'area':             d['area'].lower(),
-            'query':            d['query'],
-            'highlight':        highlight,
-            'results':          results,
-            'wiki_result':      wiki_result,
-            'pagination':       u''.join(pagination),
-            'sort':             d['sort'],
-        }
-    else:
-        rv = {'area': (request.GET.get('area') or 'all').lower()}
-
-    rv.update({
-        'searchform':   f,
-        'advanced':     request.GET.get('advanced')
-    })
-    return rv
+    return HttpResponse('Search Dummy')
 
 
 @check_login(message=_(u'You need to be logged in to view a user profile.'))
@@ -688,7 +617,6 @@ def usercp_settings(request):
             'autosubscribe': settings.get('autosubscribe', True),
             'show_preview': settings.get('show_preview', False),
             'show_thumbnails': settings.get('show_thumbnails', False),
-            'highlight_search': settings.get('highlight_search', True),
             'mark_read_on_logout': settings.get('mark_read_on_logout', False)
         }
         form = UserCPSettingsForm(initial=values)
@@ -921,7 +849,6 @@ def user_edit_settings(request, username):
         'autosubscribe': user.settings.get('autosubscribe', True),
         'show_preview': user.settings.get('show_preview', False),
         'show_thumbnails': user.settings.get('show_thumbnails', False),
-        'highlight_search': user.settings.get('highlight_search', True),
         'mark_read_on_logout': user.settings.get('mark_read_on_logout', False)
     }
     form = UserCPSettingsForm(initial=initial)
