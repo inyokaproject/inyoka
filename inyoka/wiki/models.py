@@ -100,7 +100,6 @@ from inyoka.utils.dates import format_specific_datetime, format_datetime, \
     datetime_to_timezone
 from inyoka.utils.files import get_filename
 from inyoka.utils.urls import href
-from inyoka.utils.search import search
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.templating import render_template
 from inyoka.utils.local import current_request
@@ -874,9 +873,6 @@ class Page(models.Model):
             if len(key) > 30:
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
-
-        # searchindex
-        search.queue('w', self.id)
 
     def prune(self):
         """Clear the page cache."""
