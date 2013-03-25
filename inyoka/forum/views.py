@@ -21,7 +21,7 @@ from django.db import transaction
 from django.db.models import Q, F
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext as _
-from django.utils.text import truncate_html_words
+from django.utils.text import Truncator
 
 from inyoka.markup import parse, RenderContext
 from inyoka.markup.parsertools import flatten_iterator
@@ -1330,7 +1330,7 @@ def topic_feed(request, slug=None, mode='short', count=10):
             kwargs['content'] = post.get_text()
             kwargs['content_type'] = 'xhtml'
         if mode == 'short':
-            kwargs['summary'] = truncate_html_words(post.get_text(), 100)
+            kwargs['summary'] = Truncator(post.get_text).words(100, html=True)
             kwargs['summary_type'] = 'xhtml'
 
         feed.add(
@@ -1386,7 +1386,7 @@ def forum_feed(request, slug=None, mode='short', count=10):
             kwargs['content'] = text
             kwargs['content_type'] = 'xhtml'
         if mode == 'short':
-            kwargs['summary'] = truncate_html_words(text, 100)
+            kwargs['summary'] = Truncator(text).words(100, html=True)
             kwargs['summary_type'] = 'xhtml'
 
         feed.add(
