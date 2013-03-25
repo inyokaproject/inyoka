@@ -1,0 +1,3 @@
+{{ object.topic.title }}
+{{ object.author.username }}
+{{ object.stripped_text }}
