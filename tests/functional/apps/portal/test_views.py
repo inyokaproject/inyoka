@@ -137,7 +137,7 @@ class TestAuthViews(TestCase):
                          settings.SESSION_COOKIE_AGE)
 
     def test_login_as_banned_user(self):
-        """Maka sure that banned users can’t login."""
+        """Make sure that banned users can’t login."""
         banned_user = User.objects.register_user('badboy', 'bad', 'bad', False)
         banned_user.status = 2
         banned_user.save()
