@@ -241,7 +241,7 @@ def handle_link(soup, pre, is_main_page, page_name):
             elif '#' in link:
                 target, anchor = link.split(u'#', 1)
                 rel_path = fix_path(target, pre)
-                a['href'] = u'%s.html%s' % (rel_path, anchor)
+                a['href'] = u'%s.html#%s' % (rel_path, anchor)
             else:
                 rel_path = fix_path(link, pre)
                 a['href'] = u'%s.html' % rel_path
