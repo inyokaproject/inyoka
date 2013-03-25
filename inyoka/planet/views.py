@@ -11,7 +11,7 @@
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Max
-from django.utils.text import truncate_html_words
+from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
 from django.contrib import messages
@@ -126,7 +126,7 @@ def feed(request, mode='short', count=10):
                                 u'xhtml">%s</div>' % entry.text
             kwargs['content_type'] = 'xhtml'
         if mode == 'short':
-            summary = truncate_html_words(entry.text, 100)
+            summary = Truncator(entry.text).words(100, html=True)
             kwargs['summary'] = u'<div xmlns="http://www.w3.org/1999/' \
                                 u'xhtml">%s</div>' % summary
             kwargs['content_type'] = 'xhtml'

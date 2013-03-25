@@ -18,7 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.utils.dates import MONTHS
 from django.utils.http import urlencode
-from django.utils.text import truncate_html_words
+from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
 
@@ -891,7 +891,7 @@ def feed_comment(request, id=None, mode='short', count=10):
             kwargs['content'] = comment.rendered_text
             kwargs['content_type'] = 'xhtml'
         if mode == 'short':
-            kwargs['summary'] = truncate_html_words(comment.rendered_text, 100)
+            kwargs['summary'] = Truncator(comment.rendered_text).words(100, html=True)
             kwargs['summary_type'] = 'xhtml'
 
         if article is None:
