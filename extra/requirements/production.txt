@@ -1,8 +1,7 @@
 Django==1.5
-# Includes various fixes
-https://github.com/alex/django-filter/tarball/master/#egg=django-filter
+django-filter==0.6
 # Includes Django 1.5 fix
-https://github.com/EnTeQuAk/django-openid/archive/fix_django.zip
+-e git+https://github.com/EnTeQuAk/django-openid.git@fix_django#egg=django-openid
 # Because of http://south.aeracode.org/ticket/747 that is already fixed in trunk
 https://bitbucket.org/andrewgodwin/south/get/7b6cdb6.tar.bz2
 
@@ -33,3 +32,6 @@ raven==2.0.12.2
 transifex-client==0.8
 Pillow==1.7.7
 defusedxml==0.3
+# We want 2.0
+-e git+https://github.com/toastdriven/django-haystack.git@master#egg=django-haystack
+pyelasticsearch==0.4
