@@ -59,8 +59,8 @@ UPDATED_SRCS = set()
 
 SNAPSHOT_MESSAGE = u'<div class="message staticwikinote"><strong>Hinweis:'\
                    u'</strong> Dies ist ein statischer Snapshot unseres '\
-                   u'Wikis vom %s und kann daher bearbeitet werden. Der '\
-                   u'aktuelle Artikel ist unter <a '\
+                   u'Wikis vom %s und kann daher nicht bearbeitet werden. '\
+                   u'Der aktuelle Artikel ist unter <a '\
                    u'href="%s">wiki.ubuntuusers.de</a> zu finden.</div>'
 SNAPSHOT_DATE = None
 
