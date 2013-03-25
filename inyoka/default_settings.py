@@ -297,6 +297,23 @@ INTERNAL_IPS = ('127.0.0.1',)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'requests': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        }
+    }
 }
 
 WSGI_APPLICATION = 'inyoka.wsgi.application'
