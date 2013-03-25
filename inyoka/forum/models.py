@@ -671,6 +671,10 @@ class Post(models.Model, LockableObject):
             return fix_plaintext(self.text)
         return self.rendered_text
 
+    @property
+    def stripped_text(self):
+        return parse(self.text).text.strip()
+
     def get_absolute_url(self, action='show'):
         if action == 'show':
             return href('forum', 'post', self.id)
