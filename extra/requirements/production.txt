@@ -35,3 +35,4 @@ defusedxml==0.3
 # We want 2.0
 -e git+https://github.com/toastdriven/django-haystack.git@master#egg=django-haystack
 pyelasticsearch==0.4
+celery-haystack==0.7.2

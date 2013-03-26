@@ -1,9 +1,10 @@
 import datetime
 from haystack import indexes
+from celery_haystack.indexes import CelerySearchIndex
 from inyoka.forum.models import Post
 
 
-class PostIndex(indexes.SearchIndex, indexes.Indexable):
+class PostIndex(CelerySearchIndex, indexes.Indexable):
     pub_date = indexes.DateTimeField(model_attr='pub_date')
     hidden = indexes.BooleanField(model_attr='hidden')
     text = indexes.CharField(document=True, use_template=True)
