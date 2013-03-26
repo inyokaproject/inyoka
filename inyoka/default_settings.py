@@ -206,6 +206,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.humanize',
     'haystack',
+    'celery_haystack',
     'inyoka.core',
     'django.contrib.auth',
     'inyoka.forum',
@@ -356,6 +357,8 @@ HAYSTACK_CONNECTIONS = {
         'INDEX_NAME': 'haystack',
     },
 }
+
+HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
