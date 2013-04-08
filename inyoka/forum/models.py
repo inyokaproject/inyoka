@@ -401,7 +401,7 @@ class Topic(models.Model):
         on_delete=models.PROTECT)
     report_claimed_by = models.ForeignKey(User, null=True, related_name='+',
         on_delete=models.PROTECT)
-    author = models.ForeignKey(User, related_name='posts',
+    author = models.ForeignKey(User, related_name='topics',
         on_delete=models.PROTECT)
     first_post = models.ForeignKey('forum.Post', null=True, related_name='+',
         on_delete=models.PROTECT)
