@@ -354,7 +354,7 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'haystack',
+        'INDEX_NAME': 'inyoka',
         'SILENTLY_FAIL': False
     },
 }
@@ -362,6 +362,8 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
 HAYSTACK_LIMIT_TO_REGISTERED_MODELS = False
+
+HAYSTACK_DOCUMENT_FIELD = '_all'
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
