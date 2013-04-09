@@ -199,7 +199,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.humanize',
+    'django_openid',
+    'raven.contrib.django',
     'haystack',
+    'south',
+    'kombu.transport.django',
+    'djcelery',
+    'django_mobile',
+    'django_hosts',
     'celery_haystack',
     'inyoka.core',
     'django.contrib.auth',
@@ -210,14 +217,7 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'inyoka.markup',
-    'django_openid',
-    'raven.contrib.django',
-    'south',
-    # *must* be installed after south
-    'kombu.transport.django',
-    'djcelery',
-    'django_mobile',
-    'django_hosts',
+
 )
 
 # don't use migrations but just syncdb
