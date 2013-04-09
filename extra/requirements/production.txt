@@ -34,5 +34,6 @@ Pillow==1.7.7
 defusedxml==0.3
 # We want 2.0
 -e git+https://github.com/toastdriven/django-haystack.git@master#egg=django-haystack
-pyelasticsearch==0.4
+# And 0.5...
+-e git+https://github.com/rhec/pyelasticsearch.git@master#egg=pyelasticsearch
 celery-haystack==0.7.2
