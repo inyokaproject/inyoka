@@ -147,15 +147,8 @@ def index(request):
     countdown_image_url = storage_values.get('countdown_image_url', None)
     if countdown_active and countdown_date:
         release_date = None
-        if isinstance(countdown_date, unicode):
-            for format in settings.DATE_INPUT_FORMATS:
-                try:
-                    release_date = datetime.strptime(countdown_date, format).date()
-                    break
-                except ValueError:
-                    continue
-        elif isinstance(countdown_date, date):
-            release_date = countdown_date
+        if isinstance(countdown_date, basestring):
+            release_date = datetime.strptime(countdown_date, '%Y-%m-%d').date()
         else:
             release_date = None
         if release_date:
@@ -1965,6 +1958,9 @@ def config(request):
                 context = RenderContext(request, simplified=True)
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
+
+            if data['countdown_date']:
+                storage['countdown_date'] = str(data['countdown_date'])
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:
