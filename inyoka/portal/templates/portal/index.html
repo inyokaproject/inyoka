@@ -14,7 +14,7 @@
 
 {% block pre_navigation %}
   {%- if countdown_active -%}
-    <div class="container" id="counter" style="text-align:center; height: 150px; padding-top: 7px;">
+    <div class="container" id="counter" style="text-align:center; padding-top: 7px;">
       <a href="{{ countdown_target_page|e }}"><img src="{{ countdown_image_url|e }}"/></a>
     </div>
   {%- endif -%}
