@@ -574,20 +574,21 @@ msgstr "Vollständiger Link zur Zielseite"
 msgid "Image URL"
 msgstr "Bild URL"
 
-#: inyoka/portal/forms.py:936
+#: inyoka/portal/forms.py:881
 #, python-format
 msgid ""
 "The complete URL to the countdown banner. Use <code>%(remaining)s</code> "
 "to be replaced by the remaining days or <code>soon</code>."
-msgstr "Die vollständige URL zum Banner, inklusive http:// . Der Platzhalter "
+msgstr ""
+"Die vollständige URL zum Banner, inklusive http:// . Der Platzhalter "
 "<code>%(remaining)s</code> wird verwendet um die verbleibenden Tage oder "
 "<code>soon</code> in die URL einzufügen."
 
-#: inyoka/portal/forms.py:939
+#: inyoka/portal/forms.py:884
 msgid "Release date"
 msgstr "Veröffentlichungsdatum"
 
-#: inyoka/portal/forms.py:886
+#: inyoka/portal/forms.py:890
 msgid ""
 "Description about Ikhaya that will be used on the start page and in the "
 "feed aggregations."

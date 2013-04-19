@@ -36,7 +36,7 @@ from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href
-from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
+from inyoka.utils.forms import CaptchaField, DateTimeWidget, DateWidget, \
     EmailField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
