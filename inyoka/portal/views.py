@@ -136,12 +136,41 @@ def index(request):
 
     storage_values = storage.get_many(('get_ubuntu_link', 'get_ubuntu_description',
         'session_record', 'session_record_time', 'countdown_active',
-        'countdown_target_page', 'countdown_image_url'))
+        'countdown_target_page', 'countdown_image_url', 'countdown_date'))
 
     record, record_time = get_user_record({
         'session_record': storage_values.get('session_record'),
         'session_record_time': storage_values.get('session_record_time')
     })
+
+    countdown_active = storage_values.get('countdown_active', False)
+    countdown_date = storage_values.get('countdown_date', None)
+    countdown_image_url = storage_values.get('countdown_image_url', None)
+    if countdown_active and countdown_date:
+        release_date = None
+        if isinstance(countdown_date, basestring):
+            release_date = datetime.strptime(countdown_date, '%Y-%m-%d').date()
+        else:
+            release_date = None
+        if release_date:
+            countdown_remaining = (release_date - date.today()).days
+            if countdown_remaining > 31:
+                # We don't have images for > 31 days ahead
+                countdown_active = False
+            elif countdown_remaining > 0:
+                # Format it with a leading zero
+                countdown_remaining = u'%02d' % countdown_remaining
+            elif countdown_remaining <= 0:
+                countdown_remaining = u'soon'
+        else:
+            countdown_active = False
+    else:
+        countdown_active = False
+    if countdown_active:
+        if countdown_remaining:
+            countdown_image_url = countdown_image_url % {
+                'remaining': countdown_remaining
+            }
 
     return {
         'ikhaya_latest': list(ikhaya_latest),
@@ -151,9 +180,9 @@ def index(request):
         'get_ubuntu_link': storage_values.get('get_ubuntu_link', ''),
         'get_ubuntu_description': storage_values.get('get_ubuntu_description', ''),
         'calendar_events': events,
-        'countdown_active': storage_values.get('countdown_active', False),
+        'countdown_active': countdown_active,
         'countdown_target_page': storage_values.get('countdown_target_page', None),
-        'countdown_image_url': storage_values.get('countdown_image_url', None),
+        'countdown_image_url': countdown_image_url,
     }
 
 
@@ -1861,7 +1890,7 @@ def config(request):
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
             'team_icon_height', 'team_icon_width', 'distri_versions',
             'countdown_active', 'countdown_target_page', 'countdown_image_url',
-            'ikhaya_description', 'planet_description']
+            'countdown_date', 'ikhaya_description', 'planet_description']
 
     team_icon = storage['team_icon']
 
@@ -1887,6 +1916,9 @@ def config(request):
                 context = RenderContext(request, simplified=True)
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
+
+            if data['countdown_date']:
+                storage['countdown_date'] = str(data['countdown_date'])
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:

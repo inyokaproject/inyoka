@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-08 23:08+0100\n"
+"POT-Creation-Date: 2013-04-17 01:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -545,8 +545,15 @@ msgstr ""
 msgid "Image URL"
 msgstr ""
 
-#: inyoka/portal/forms.py:881
-msgid "The complete URL to the countdown banner."
+#: inyoka/portal/forms.py:936
+#, python-format
+msgid ""
+"The complete URL to the countdown banner. Use <code>%(remaining)s</code> "
+"to be replaced by the remaining days or <code>soon</code>."
+msgstr ""
+
+#: inyoka/portal/forms.py:939
+msgid "Release date"
 msgstr ""
 
 #: inyoka/portal/forms.py:886
@@ -559,7 +566,11 @@ msgstr ""
 msgid "Description about the planet that will be used in the feed aggregations."
 msgstr ""
 
-#: inyoka/portal/forms.py:909
+#: inyoka/portal/forms.py:971
+msgid "Invalid substitution pattern."
+msgstr ""
+
+#: inyoka/portal/forms.py:976
 msgid "Styles"
 msgstr ""
 

@@ -878,7 +878,11 @@ class ConfigurationForm(forms.Form):
         label=ugettext_lazy(u'Full path to the target link page'))
     countdown_image_url = forms.CharField(required=False,
         label=ugettext_lazy(u'Image URL'),
-        help_text=ugettext_lazy(u'The complete URL to the countdown banner.'))
+        help_text=ugettext_lazy(u'The complete URL to the countdown banner. '
+                    u'Use <code>%(remaining)s</code> to be replaced by the '
+                    u'remaining days or <code>soon</code>.'))
+    countdown_date = forms.DateField(label=ugettext_lazy(u'Release date'),
+        required=False, widget=DateWidget, localize=True)
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,
@@ -903,6 +907,14 @@ class ConfigurationForm(forms.Form):
         except ValueError:
             return u'[]'
         return data[key]
+
+    def clean_countdown_image_url(self):
+        data = self.cleaned_data.get('countdown_image_url', u'')
+        try:
+            data % {'remaining': 'soon'}
+        except KeyError:
+            raise forms.ValidationError(_(u'Invalid substitution pattern.'))
+        return data
 
 
 class EditStyleForm(forms.Form):
