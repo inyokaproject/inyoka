@@ -20,6 +20,7 @@ from django.conf import settings
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.cache import cache
 from django.core.files.storage import default_storage
+from django.core.signing import BadSignature
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
@@ -75,7 +76,8 @@ from inyoka.portal.user import User, Group, UserBanned, UserData, \
     deactivate_user, reactivate_user, set_new_email, \
     reset_email, send_activation_mail, PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
-     require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
+     require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList, \
+     abort_access_denied
 from inyoka.portal.filters import SubscriptionFilter
 
 
@@ -91,6 +93,12 @@ tmp = dict(PRIVILEGES_DETAILS)
 PRIVILEGE_DICT = {bits: tmp[key]
                   for bits, key in REVERSED_PRIVILEGES_BITS.iteritems()}
 del tmp
+
+CONFIRM_ACTIONS = {
+    'reactivate_user': (reactivate_user, settings.USER_REACTIVATION_LIMIT,),
+    'set_new_email': (set_new_email, settings.USER_SET_NEW_EMAIL_LIMIT,),
+    'reset_email': (reset_email, settings.USER_RESET_EMAIL_LIMIT,),
+}
 
 
 page_delete = generic.DeleteView.as_view(model=StaticPage,
@@ -1775,26 +1783,34 @@ def open_search(request, app):
 
 
 @templated('portal/confirm.html')
-def confirm(request, action=None):
-    ACTIONS = {
-        'reactivate_user': reactivate_user,
-        'set_new_email': set_new_email,
-        'reset_email': reset_email,
-    }
-    data = request.REQUEST.get('data', u'').strip()
+def confirm(request, action):
+    from dateutil.parser import parse
+
+    if action == 'reactivate_user' and request.user.is_authenticated():
+        messages.error(request, _(u'You cannot reactivate an account while '
+                                  u'you are logged in.'))
+        return abort_access_denied(request)
+    elif action in ['set_new_email', 'reset_email'] and \
+            request.user.is_anonymous:
+        messages.error(request, _(u'You need to be logged in before you can continue.'))
+        return abort_access_denied(request)
+
+    func, lifetime = CONFIRM_ACTIONS.get(action)
+    data = request.POST.get('data', u'').strip()
     if not data:
         return {'action': action}
 
     try:
-        data = decode_confirm_data(data)
-    except (ValueError, binascii.Error):
+        data = decode_confirm_data(data, max_age=lifetime * 86400)  # 24*60*60
+        data['time'] = parse(data['time'])
+    except (ValueError, BadSignature):
         return {
             'failed': _(u'The entered data is invalid.'),
-            'action': action
         }
 
-    r = ACTIONS[data.pop('action')](**data)
-    if isinstance(r, dict) and action:
+    data.pop('action')
+    r = func(**data)
+    if isinstance(r, dict):
         r['action'] = action
     return r
 

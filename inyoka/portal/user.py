@@ -80,15 +80,14 @@ class UserBanned(Exception):
 
 
 def reactivate_user(id, email, status, time):
+    from django.utils.crypto import get_random_string
     from inyoka.wiki.models import Page as WikiPage
 
-    if (datetime.utcnow() - time).days > 33:
+    if (datetime.utcnow() - time).days > settings.USER_RESET_EMAIL_LIMIT:
         return {
             'failed': _(u'Sorry, more than one month passed since the deletion '
                         u'of the account'),
         }
-
-    return {'failed': _(u'Sorry, user reactivation is currently disabled.')}
 
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
@@ -101,20 +100,25 @@ def reactivate_user(id, email, status, time):
             'failed': _(u'The account “%(name)s” was already reactivated.') %
                 {'name': escape(user.username)},
         }
-    values = {'email': email,
-              'status': status}
+    values = {
+        'email': email,
+        'status': status,
+    }
     if user.banned_until and user.banned_until < datetime.utcnow():
+        # User was banned but the ban time exceeded
         values['status'] = 1
         values['banned_until'] = None
 
     update_model(user, **values)
-    # FIXME: Django 1.5, this thing got nuked :þ
-    #send_new_user_password(user)
+
+    # Set a dumy password
+    user.set_password(UserManager().make_random_password(length=32))
+    user.save()
 
     # reactivate user page
     try:
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
-                settings.WIKI_USER_BASE, escape(user.username)))
+            settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
                       note=_(u'The user “%(name)s” has reactivated his account.')
                              % {'name': escape(user.username)})
@@ -122,8 +126,8 @@ def reactivate_user(id, email, status, time):
         pass
 
     return {
-        'success': _(u'The account “%(name)s” was reactivated. You will '
-                     u'receive an email to set the new password.')
+        'success': _(u'The account “%(name)s” was reactivated. Please use the '
+                     u'password recovery function to set a new password.')
                      % {'name': escape(user.username)},
     }
 
@@ -141,7 +145,7 @@ def deactivate_user(user):
         'id': user.id,
         'email': user.email,
         'status': user.status,
-        'time': datetime.utcnow(),
+        'time': str(datetime.utcnow()),
     }
 
     userdata = encode_confirm_data(userdata)
@@ -185,15 +189,16 @@ def send_new_email_confirmation(user, email):
         'action': 'set_new_email',
         'id': user.id,
         'email': email,
-        'time': datetime.utcnow()
+        'time': str(datetime.utcnow()),
     }
 
     text = render_template('mails/new_email_confirmation.txt', {
         'user': user,
         'data': encode_confirm_data(data),
     })
-    subject = _(u'%(sitename)s – Confirm email address') \
-              % {'sitename': settings.BASE_DOMAIN_NAME}
+    subject = _(u'%(sitename)s – Confirm email address') % {
+        'sitename': settings.BASE_DOMAIN_NAME
+    }
     send_mail(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL, [email])
 
 
@@ -202,7 +207,7 @@ def set_new_email(id, email, time):
     Save the new email address the user has confirmed, and send an email to
     his old address where he can reset it to protect against abuse.
     """
-    if (datetime.utcnow() - time).days > 8:
+    if (datetime.utcnow() - time).days > settings.USER_SET_NEW_EMAIL_LIMIT:
         return {'failed': _(u'The link is too old.')}
     user = User.objects.get(id=id)
 
@@ -210,15 +215,16 @@ def set_new_email(id, email, time):
         'action': 'reset_email',
         'id': user.id,
         'email': user.email,
-        'time': datetime.utcnow(),
+        'time': str(datetime.utcnow()),
     }
     text = render_template('mails/reset_email.txt', {
         'user': user,
         'new_email': email,
         'data': encode_confirm_data(data),
     })
-    subject = _(u'%(sitename)s – Email address changed') \
-              % {'sitename': settings.BASE_DOMAIN_NAME}
+    subject = _(u'%(sitename)s – Email address changed') % {
+        'sitename': settings.BASE_DOMAIN_NAME
+    }
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
     user.email = email
@@ -229,7 +235,7 @@ def set_new_email(id, email, time):
 
 
 def reset_email(id, email, time):
-    if (datetime.utcnow() - time).days > 33:
+    if (datetime.utcnow() - time).days > settings.USER_RESET_EMAIL_LIMIT:
         return {'failed': _(u'The link is too old.')}
 
     user = User.objects.get(id=id)
@@ -237,7 +243,7 @@ def reset_email(id, email, time):
     user.save()
 
     return {
-        'success': _('Your email address was reset.')
+        'success': _(u'Your email address was reset.')
     }
 
 

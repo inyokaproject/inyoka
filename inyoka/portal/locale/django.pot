@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-04-17 01:52+0200\n"
+"POT-Creation-Date: 2013-04-21 00:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -769,11 +769,11 @@ msgstr ""
 msgid "The user “%(name)s” has reactivated his account."
 msgstr ""
 
-#: inyoka/portal/user.py:123
+#: inyoka/portal/user.py:128
 #, python-format
 msgid ""
-"The account “%(name)s” was reactivated. You will receive an email to set "
-"the new password."
+"The account “%(name)s” was reactivated. Please use the password recovery "
+"function to set a new password."
 msgstr ""
 
 #: inyoka/portal/user.py:147
@@ -1316,6 +1316,14 @@ msgstr ""
 #: inyoka/portal/views.py:1634 inyoka/portal/views.py:1641
 #: inyoka/portal/templates/portal/feedselector.html:37
 msgid "All"
+msgstr ""
+
+#: inyoka/portal/views.py:1788
+msgid "You cannot reactivate an account while you are logged in."
+msgstr ""
+
+#: inyoka/portal/views.py:1793
+msgid "You need to be logged in before you can continue."
 msgstr ""
 
 #: inyoka/portal/views.py:1761

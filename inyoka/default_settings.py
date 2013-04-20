@@ -111,6 +111,12 @@ FORUM_THUMBNAIL_SIZE = (64, 64)
 FORUM_OWNPOST_EDIT_LIMIT = (-1, 1800)
 FORUM_OWNPOST_DELETE_LIMIT = (0, 0)
 
+# Number of days a user is allowed to perform the respective action with his
+# user account.
+USER_REACTIVATION_LIMIT = 31
+USER_SET_NEW_EMAIL_LIMIT = 7
+USER_RESET_EMAIL_LIMIT = 31
+
 # the id of the ikhaya team group
 IKHAYA_GROUP_ID = 1
 

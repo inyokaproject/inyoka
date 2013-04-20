@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-04-17 01:52+0200\n"
+"POT-Creation-Date: 2013-04-21 00:54+0200\n"
 "PO-Revision-Date: 2012-11-03 12:47+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -807,14 +807,14 @@ msgstr "Das Konto „%(name)s“ wurde bereits reaktiviert."
 msgid "The user “%(name)s” has reactivated his account."
 msgstr "Der Benutzer „%(name)s“ hat sein Konto neu aktiviert."
 
-#: inyoka/portal/user.py:123
+#: inyoka/portal/user.py:128
 #, python-format
 msgid ""
-"The account “%(name)s” was reactivated. You will receive an email to set "
-"the new password."
+"The account “%(name)s” was reactivated. Please use the password recovery "
+"function to set a new password."
 msgstr ""
-"Das Konto „%(name)s“ wurde reaktiviert. Du erhälst eine E-Mail, um ein "
-"neues Passwort zu erstellen."
+"Das Konto „%(name)s“ wurde reaktiviert. Bitte benutze die Passwort vergessen "
+"Funktion um ein neues Passwort zu setzen."
 
 #: inyoka/portal/user.py:147
 #, python-format
@@ -1370,6 +1370,14 @@ msgstr "Bitte auswählen"
 #: inyoka/portal/templates/portal/feedselector.html:37
 msgid "All"
 msgstr "Alle"
+
+#: inyoka/portal/views.py:1788
+msgid "You cannot reactivate an account while you are logged in."
+msgstr "Du kannst kein Konto reaktivieren solange du angemeldet bist."
+
+#: inyoka/portal/views.py:1793
+msgid "You need to be logged in before you can continue."
+msgstr "Du musst angemeldet sein, um dein Konto deaktivieren zu können."
 
 #: inyoka/portal/views.py:1761
 msgid "The entered data is invalid."

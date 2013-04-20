@@ -9,11 +9,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import math
-import cPickle
 from itertools import groupby as igroupby
-from hashlib import sha1
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core import signing
 
 
 def ctype(model):
@@ -21,18 +19,11 @@ def ctype(model):
 
 
 def encode_confirm_data(data):
-    dump = cPickle.dumps(data)
-    hash = sha1(dump + settings.SECRET_KEY).digest()
-    return (dump + hash).encode('base64').replace('+', '_')
+    return signing.dumps(data)
 
 
-def decode_confirm_data(data):
-    data = data.replace('_', '+').decode('base64')
-    dump = data[:-20]
-    hash = data[-20:]
-    if sha1(dump + settings.SECRET_KEY).digest() != hash:
-        raise ValueError
-    return cPickle.loads(dump)
+def decode_confirm_data(data, max_age=None):
+    return signing.loads(data, max_age=max_age)
 
 
 class classproperty(object):
