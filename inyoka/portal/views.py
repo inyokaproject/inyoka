@@ -1195,17 +1195,19 @@ def privmsg(request, folder=None, entry_id=None, page=1):
         if get_flavour() == 'mobile':
             return {'folder': None}
         if entry_id is None:
-            return HttpResponseRedirect(href('portal', 'privmsg',
-                                             PRIVMSG_FOLDERS['inbox'][1]))
+            return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
         else:
-            entry = PrivateMessageEntry.objects.get(user=request.user,
-                                                    id=entry_id)
             try:
+                entry = PrivateMessageEntry.objects.get(user=request.user,
+                                                        id=entry_id)
                 return HttpResponseRedirect(href('portal', 'privmsg',
                                                  PRIVMSG_FOLDERS[entry.folder][1],
                                                  entry.id))
             except KeyError:
                 raise Http404
+
+    if folder not in PRIVMSG_FOLDERS.keys():
+        raise Http404
 
     entries = PrivateMessageEntry.objects.filter(
         user=request.user,
