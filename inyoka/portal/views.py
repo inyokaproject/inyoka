@@ -11,6 +11,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import binascii
+import dateutil
 import pytz
 import time
 from PIL import Image
@@ -20,7 +21,7 @@ from django.conf import settings
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.cache import cache
 from django.core.files.storage import default_storage
-from django.core.signing import BadSignature
+from django.core import signing
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
@@ -1784,8 +1785,6 @@ def open_search(request, app):
 
 @templated('portal/confirm.html')
 def confirm(request, action):
-    from dateutil.parser import parse
-
     if action == 'reactivate_user' and request.user.is_authenticated():
         messages.error(request, _(u'You cannot reactivate an account while '
                                   u'you are logged in.'))
@@ -1801,17 +1800,17 @@ def confirm(request, action):
         return {'action': action}
 
     try:
-        data = decode_confirm_data(data, max_age=lifetime * 86400)  # 24*60*60
-        data['time'] = parse(data['time'])
-    except (ValueError, BadSignature):
+        salt = 'inyoka.action.%s' % action
+        data = signing.loads(data, max_age=lifetime * 24 * 60 * 60, salt=salt)
+        data['time'] = dateutil.parser.parse(data['time'])
+    except (ValueError, signing.BadSignature):
         return {
-            'failed': _(u'The entered data is invalid.'),
+            'failed': _(u'The entered data is invalid or has expired.'),
         }
 
     data.pop('action')
     r = func(**data)
-    if isinstance(r, dict):
-        r['action'] = action
+    r['action'] = action
     return r
 
 

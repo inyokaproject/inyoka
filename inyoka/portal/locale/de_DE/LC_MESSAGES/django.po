@@ -600,9 +600,9 @@ msgstr ""
 msgid "Description about the planet that will be used in the feed aggregations."
 msgstr "Beschreibung zum Planeten, die im Feed verwendet wird."
 
-#: inyoka/portal/forms.py:971
+#: inyoka/portal/forms.py:916
 msgid "Invalid substitution pattern."
-msgstr "Ungültiger Ersetzungsmuster."
+msgstr "Ungültiges Ersetzungsmuster."
 
 #: inyoka/portal/forms.py:976
 msgid "Styles"
@@ -787,12 +787,6 @@ msgstr "Portal | kann Ablage verwalten"
 msgid "Portal | can watch users"
 msgstr "Portal | kann Benutzer beobachten"
 
-#: inyoka/portal/user.py:87
-msgid "Sorry, more than one month passed since the deletion of the account"
-msgstr ""
-"Entschuldige, es ist bereits mehr als ein Monat seit der Löschung deines "
-"Kontos vergangen."
-
 #: inyoka/portal/user.py:93
 msgid "This e-mail address is used by another user."
 msgstr "Diese E-Mail-Adresse wird bereits verwendet."
@@ -807,14 +801,14 @@ msgstr "Das Konto „%(name)s“ wurde bereits reaktiviert."
 msgid "The user “%(name)s” has reactivated his account."
 msgstr "Der Benutzer „%(name)s“ hat sein Konto neu aktiviert."
 
-#: inyoka/portal/user.py:128
+#: inyoka/portal/user.py:129
 #, python-format
 msgid ""
 "The account “%(name)s” was reactivated. Please use the password recovery "
 "function to set a new password."
 msgstr ""
-"Das Konto „%(name)s“ wurde reaktiviert. Bitte benutze die Passwort vergessen "
-"Funktion um ein neues Passwort zu setzen."
+"Das Konto „%(name)s“ wurde reaktiviert. Bitte benutze die „Passwort "
+"vergessen“ Funktion um ein neues Passwort zu setzen."
 
 #: inyoka/portal/user.py:147
 #, python-format
@@ -830,10 +824,6 @@ msgstr "Der Benutzer „%(name)s“ hat sein Konto deaktiviert."
 #, python-format
 msgid "%(sitename)s – Confirm email address"
 msgstr "%(sitename)s – E-Mail Adresse bestätigen"
-
-#: inyoka/portal/user.py:204 inyoka/portal/user.py:231
-msgid "The link is too old."
-msgstr "Der Link ist zu alt."
 
 #: inyoka/portal/user.py:218
 #, python-format
@@ -1377,10 +1367,10 @@ msgstr "Du kannst kein Konto reaktivieren solange du angemeldet bist."
 
 #: inyoka/portal/views.py:1793
 msgid "You need to be logged in before you can continue."
-msgstr "Du musst angemeldet sein, um dein Konto deaktivieren zu können."
+msgstr "Du musst angemeldet sein um fortzufahren."
 
-#: inyoka/portal/views.py:1761
-msgid "The entered data is invalid."
+#: inyoka/portal/views.py:1808
+msgid "The entered data is invalid or has expired."
 msgstr "Die eingegebenen Daten sind ungültig."
 
 #: inyoka/portal/views.py:1811

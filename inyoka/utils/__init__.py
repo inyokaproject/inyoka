@@ -11,19 +11,10 @@
 import math
 from itertools import groupby as igroupby
 from django.contrib.contenttypes.models import ContentType
-from django.core import signing
 
 
 def ctype(model):
     return ContentType.objects.get_for_model(model)
-
-
-def encode_confirm_data(data):
-    return signing.dumps(data)
-
-
-def decode_confirm_data(data, max_age=None):
-    return signing.loads(data, max_age=max_age)
 
 
 class classproperty(object):

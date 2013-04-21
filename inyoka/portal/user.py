@@ -19,12 +19,12 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,\
     update_last_login
 from django.contrib.auth.signals import user_logged_in
 from django.core.cache import cache
+from django.core import signing
 from django.db import models
 from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
-from inyoka.utils import encode_confirm_data
 from inyoka.utils.database import update_model, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
@@ -80,14 +80,7 @@ class UserBanned(Exception):
 
 
 def reactivate_user(id, email, status, time):
-    from django.utils.crypto import get_random_string
     from inyoka.wiki.models import Page as WikiPage
-
-    if (datetime.utcnow() - time).days > settings.USER_RESET_EMAIL_LIMIT:
-        return {
-            'failed': _(u'Sorry, more than one month passed since the deletion '
-                        u'of the account'),
-        }
 
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
@@ -98,7 +91,7 @@ def reactivate_user(id, email, status, time):
     if not user.is_deleted:
         return {
             'failed': _(u'The account “%(name)s” was already reactivated.') %
-                {'name': escape(user.username)},
+               {'name': escape(user.username)},
         }
     values = {
         'email': email,
@@ -140,7 +133,7 @@ def deactivate_user(user):
     """
     from inyoka.wiki.models import Page as WikiPage
 
-    userdata = {
+    data = {
         'action': 'reactivate_user',
         'id': user.id,
         'email': user.email,
@@ -148,14 +141,12 @@ def deactivate_user(user):
         'time': str(datetime.utcnow()),
     }
 
-    userdata = encode_confirm_data(userdata)
-
     subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
                 % {'name': escape(user.username),
                    'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
         'user': user,
-        'userdata': userdata,
+        'data': signing.dumps(data, salt='inyoka.action.reactivate_user'),
     })
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
@@ -194,7 +185,7 @@ def send_new_email_confirmation(user, email):
 
     text = render_template('mails/new_email_confirmation.txt', {
         'user': user,
-        'data': encode_confirm_data(data),
+        'data': signing.dumps(data, salt='inyoka.action.set_new_email'),
     })
     subject = _(u'%(sitename)s – Confirm email address') % {
         'sitename': settings.BASE_DOMAIN_NAME
@@ -207,8 +198,6 @@ def set_new_email(id, email, time):
     Save the new email address the user has confirmed, and send an email to
     his old address where he can reset it to protect against abuse.
     """
-    if (datetime.utcnow() - time).days > settings.USER_SET_NEW_EMAIL_LIMIT:
-        return {'failed': _(u'The link is too old.')}
     user = User.objects.get(id=id)
 
     data = {
@@ -220,7 +209,7 @@ def set_new_email(id, email, time):
     text = render_template('mails/reset_email.txt', {
         'user': user,
         'new_email': email,
-        'data': encode_confirm_data(data),
+        'data': signing.dumps(data, salt='inyoka.action.reset_email'),
     })
     subject = _(u'%(sitename)s – Email address changed') % {
         'sitename': settings.BASE_DOMAIN_NAME
@@ -235,9 +224,6 @@ def set_new_email(id, email, time):
 
 
 def reset_email(id, email, time):
-    if (datetime.utcnow() - time).days > settings.USER_RESET_EMAIL_LIMIT:
-        return {'failed': _(u'The link is too old.')}
-
     user = User.objects.get(id=id)
     user.email = email
     user.save()
