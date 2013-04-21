@@ -40,7 +40,7 @@ from django_openid.consumer import Consumer, SessionPersist
 from django_mobile import get_flavour
 
 from inyoka.markup import parse, RenderContext
-from inyoka.utils import decode_confirm_data, generic
+from inyoka.utils import generic
 from inyoka.utils.text import get_random_password, normalize_pagename
 from inyoka.utils.dates import DEFAULT_TIMEZONE, \
     get_user_timezone, find_best_timezone
