@@ -84,7 +84,7 @@ def pip():
 
 def check_js():
     rhino = 'java -jar extra/js.jar'
-    local("%s extra/jslint-check.js" % rhino, capture=False)
+    local("%s extra/jslint.js" % rhino, capture=False)
 
 
 def compile_js(file=None):
