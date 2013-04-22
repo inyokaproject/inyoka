@@ -12,7 +12,7 @@ def install_requirements(home_dir, requirements):
         return
     home_dir = os.path.abspath(home_dir)
     cmd = [os.path.join(home_dir, 'bin', 'pip')]
-    cmd.extend(['install', '-r', os.path.join(home_dir, requirements)])
+    cmd.extend(['install', '--use-mirrors', '-r', os.path.join(home_dir, requirements)])
     call_subprocess(cmd)
 
 
