@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-02-08 23:08+0100\n"
+"POT-Creation-Date: 2013-04-17 01:52+0200\n"
 "PO-Revision-Date: 2012-11-03 12:47+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -575,10 +575,20 @@ msgid "Image URL"
 msgstr "Bild URL"
 
 #: inyoka/portal/forms.py:881
-msgid "The complete URL to the countdown banner."
-msgstr "Die vollständige URL zum Banner, inklusive http:// etc."
+#, python-format
+msgid ""
+"The complete URL to the countdown banner. Use <code>%(remaining)s</code> "
+"to be replaced by the remaining days or <code>soon</code>."
+msgstr ""
+"Die vollständige URL zum Banner, inklusive http:// . Der Platzhalter "
+"<code>%(remaining)s</code> wird verwendet um die verbleibenden Tage oder "
+"<code>soon</code> in die URL einzufügen."
 
-#: inyoka/portal/forms.py:886
+#: inyoka/portal/forms.py:884
+msgid "Release date"
+msgstr "Veröffentlichungsdatum"
+
+#: inyoka/portal/forms.py:890
 msgid ""
 "Description about Ikhaya that will be used on the start page and in the "
 "feed aggregations."
@@ -590,7 +600,11 @@ msgstr ""
 msgid "Description about the planet that will be used in the feed aggregations."
 msgstr "Beschreibung zum Planeten, die im Feed verwendet wird."
 
-#: inyoka/portal/forms.py:909
+#: inyoka/portal/forms.py:971
+msgid "Invalid substitution pattern."
+msgstr "Ungültiger Ersetzungsmuster."
+
+#: inyoka/portal/forms.py:976
 msgid "Styles"
 msgstr "Stile"
 

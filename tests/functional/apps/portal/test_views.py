@@ -304,3 +304,34 @@ class TestAuthViews(TestCase):
         with translation.override('en-us'):
             response = self.client.get('/lost_password/', follow=True)
         self.assertContains(response, 'You are already logged in.')
+
+
+class TestPrivMsgViews(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
+
+    def test_access(self):
+        response = self.client.get('/privmsg/', follow=True)
+        self.assertRedirects(response, '/privmsg/inbox/',
+                             host=settings.BASE_DOMAIN_NAME)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/privmsg/inbox/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/privmsg/does_not_exist/')
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get('/privmsg/42/')
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get('/privmsg/', {'flavour': 'mobile'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/privmsg/42/', {'flavour': 'mobile'})
+        self.assertEqual(response.status_code, 200)

@@ -53,7 +53,7 @@
     </div>
     <p class="meta admin_link_hover">
       {% trans link=article.author|url, author=article.author.username|e -%}
-        Written by <a href="{{ link }}">{{ author }}</a>
+        Published by <a href="{{ link }}">{{ author }}</a>
       {%- endtrans %} |
       {{ article.pub_datetime|datetimeformat }} |
       {% trans %}Category:{% endtrans %} <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>

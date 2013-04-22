@@ -36,7 +36,7 @@ from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href
-from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
+from inyoka.utils.forms import CaptchaField, DateTimeWidget, DateWidget, \
     EmailField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
@@ -776,7 +776,11 @@ class ConfigurationForm(forms.Form):
         label=ugettext_lazy(u'Full path to the target link page'))
     countdown_image_url = forms.CharField(required=False,
         label=ugettext_lazy(u'Image URL'),
-        help_text=ugettext_lazy(u'The complete URL to the countdown banner.'))
+        help_text=ugettext_lazy(u'The complete URL to the countdown banner. '
+                    u'Use <code>%(remaining)s</code> to be replaced by the '
+                    u'remaining days or <code>soon</code>.'))
+    countdown_date = forms.DateField(label=ugettext_lazy(u'Release date'),
+        required=False, widget=DateWidget, localize=True)
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,
@@ -801,6 +805,14 @@ class ConfigurationForm(forms.Form):
         except ValueError:
             return u'[]'
         return data[key]
+
+    def clean_countdown_image_url(self):
+        data = self.cleaned_data.get('countdown_image_url', u'')
+        try:
+            data % {'remaining': 'soon'}
+        except KeyError:
+            raise forms.ValidationError(_(u'Invalid substitution pattern.'))
+        return data
 
 
 class EditStyleForm(forms.Form):
