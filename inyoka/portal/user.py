@@ -105,7 +105,7 @@ def reactivate_user(id, email, status, time):
     update_model(user, **values)
 
     # Set a dumy password
-    user.set_password(UserManager().make_random_password(length=32))
+    user.set_password(User.objects.make_random_password(length=32))
     user.save()
 
     # reactivate user page
