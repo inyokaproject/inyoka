@@ -13,11 +13,10 @@
         list = $('<ul class="forums" />');
     this.container = $(container);
     $.each(forums, function (i, forum) {
-      var id = forum[0];
-      var name = forum[1];
-      var positive = forum[2];
-      var negative = forum[3];
-      var result;
+      id = forum[0];
+      name = forum[1];
+      positive = forum[2];
+      negative = forum[3];
       self.mapping[id] = positive.concat($.map(negative, function (o) {
         return o * -1;
       }));
@@ -45,7 +44,7 @@
         if (selected_forums.length == 1) {
           var forum = selected_forums[0];
           headline.text($('#forum_' + forum).text());
-          $.each(privileges, function (id, name) {
+          $.each(privileges, function (id) {
             id = parseInt(id, 10);
             var s;
             if ($.inArray(id, self.mapping[forum]) > -1) s = '1';
