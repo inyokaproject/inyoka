@@ -12,7 +12,7 @@ $(document).ready(function () {
   (function () {
     if ($('textarea[name="signature"]').length !== 0) {
       // create a WikiEditor instance for all signature fields
-      var signature = new WikiEditor('textarea[name="signature"]');
+      new WikiEditor('textarea[name="signature"]');
     }
 
     // Small helper to define a users group title
