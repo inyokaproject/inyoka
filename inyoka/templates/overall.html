@@ -289,13 +289,13 @@
               src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
     {% endif %}
 
-   {%- for script in ['overall'] + scripts|default([]) %}
-     {%- if SETTINGS.DEBUG %}
+   {%- if settings.DEBUG %}
+     {%- for script in ['overall'] + scripts|default([]) %}
        <script type="text/javascript" src="{{ href('static', 'js/%s.js'|format(script)) }}"></script>
-     {%- else %}
-       <script type="text/javascript" src="{{ href('static', 'js/%s.min.js'|format(script)) }}"></script>
-     {% endif %}
-   {%- endfor %}
+     {%- endfor %}
+    {%- else %}
+       <script type="text/javascript" src="{{ href('static', 'js/inyoka.min.js'|format(script)) }}"></script>
+    {% endif %}
 
    {% block additional_scripts %}
    {% endblock %}
