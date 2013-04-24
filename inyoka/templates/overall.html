@@ -79,11 +79,6 @@
         <script type="text/javascript"
                 src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
       {% endif %}
-    {% if SETTINGS.DEBUG %}
-      <script src='{{ href('static', 'js/jquery-1.5.2.js') }}'></script>
-    {% else %}
-      <script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'></script>
-    {% endif %}
     {%- endblock %}
   </head>
   <body>
@@ -292,13 +287,12 @@
     </div>{# .footer #}
     <div style="clear: both;"></div>
    </div>
-
-   {%- if settings.DEBUG %}
-     {%- for script in ['overall'] + scripts|default([]) %}
+   {%- if SETTINGS.DEBUG %}
+     {%- for script in ['jquery-1.5.2', 'overall'] + scripts|default([]) %}
        <script type="text/javascript" src="{{ href('static', 'js/%s.js'|format(script)) }}"></script>
      {%- endfor %}
     {%- else %}
-       <script type="text/javascript" src="{{ href('static', 'js/inyoka.min.js'|format(script)) }}"></script>
+       <script type="text/javascript" src="{{ href('static', 'js/inyoka.min.js') }}"></script>
     {% endif %}
 
    {% block additional_scripts %}
