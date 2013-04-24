@@ -290,11 +290,11 @@
     {% endif %}
 
    {%- if settings.DEBUG %}
-     {%- for script in ['overall'] + scripts|default([]) %}
+     {%- for script in ['jquery-1.5.2', 'overall'] + scripts|default([]) %}
        <script type="text/javascript" src="{{ href('static', 'js/%s.js'|format(script)) }}"></script>
      {%- endfor %}
     {%- else %}
-       <script type="text/javascript" src="{{ href('static', 'js/inyoka.min.js'|format(script)) }}"></script>
+       <script type="text/javascript" src="{{ href('static', 'js/inyoka.min.js') }}"></script>
     {% endif %}
 
    {% block additional_scripts %}

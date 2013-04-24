@@ -12,12 +12,14 @@ module.exports = function(grunt) {
         preserveComments: false
       },
       build: {
-        src: ['inyoka/forum/static/forum/js/overall.m.js',
+        src: ['inyoka/static/js/jquery-1.5.2.js',
+              'inyoka/forum/static/forum/js/overall.m.js',
               'inyoka/static/js/DateTime.js',
               'inyoka/static/js/FeedSelector.js',
               'inyoka/static/js/NewTopic.js',
               'inyoka/static/js/PrivilegeBox.js',
               'inyoka/static/js/UserGroupBos.js',
+              'inyoka/static/js/Pastebin.js',
               'inyoka/static/js/admin.js',
               'inyoka/static/js/forum.js',
               'inyoka/static/js/ikhaya.js',
