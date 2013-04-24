@@ -3,7 +3,7 @@ from inyoka.default_settings import *
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '',
+        'NAME': 'test.db',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
