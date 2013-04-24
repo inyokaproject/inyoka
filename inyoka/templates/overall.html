@@ -289,7 +289,7 @@
    </div>
 
    {%- if SETTINGS.DEBUG %}
-     {%- for script in ['underscore', 'vendor/jquery-1.5.2', 'overall'] + scripts|default([]) %}
+     {%- for script in ['vendor/underscore', 'vendor/jquery-1.5.2', 'overall'] + scripts|default([]) %}
        <script type="text/javascript" src="{{ href('static', 'js/%s.js'|format(script)) }}"></script>
      {%- endfor %}
     {%- else %}
