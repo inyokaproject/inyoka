@@ -191,7 +191,7 @@ $(function () { /* collapsable elements for the input forms */
   (function() {
     // Bind events so that we can update the user session
     // properly on interaction.
-    $('.splitinfo input').live('click', function() {
+    $('.splitinfo input').on('click', function() {
       var self = $(this);
       var topic = location.href.slice(location.href.indexOf('/topic/') + 7);
       topic = topic.substring(0, topic.indexOf('/'));
