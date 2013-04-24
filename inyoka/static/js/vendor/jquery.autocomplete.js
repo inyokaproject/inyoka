@@ -306,10 +306,6 @@ $.autocomplete = function(input, options) {
 			// if the field no longer has focus or if there are no matches, do not display the drop down
 			if( !hasFocus || data.length == 0 ) return hideResultsNow();
 
-			if ($.browser.msie) {
-				// we put a styled iframe behind the calendar so HTML SELECT elements don't show through
-				$results.append(document.createElement('iframe'));
-			}
 			results.appendChild(dataToDom(data));
 			// autofill in the complete box w/the first match as long as the user hasn't entered in more data
 			if( options.autoFill && ($input.val().toLowerCase() == q.toLowerCase()) ) autoFill(data[0][0]);
