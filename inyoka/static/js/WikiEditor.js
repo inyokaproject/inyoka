@@ -58,10 +58,11 @@
           .attr('title', title)
           .mouseover(function(evt) {
             evt.preventDefault();
-            helper.call(editor, evt);
+            helper(editor, evt);
           })
           .mouseout(function(evt) {
             evt.preventDefault();
+            helper(editor, evt);
           })
           .append($('<span />').text(title))
           .click(function(evt) {
@@ -83,12 +84,13 @@
         .attr('title', title)
         .append($('<option class="title" value="" />').text(title))
         .mouseover(function(evt) {
-          helper.call(editor, evt);
+          helper(editor, evt);
         })
         .mouseout(function(evt) {
+          helper(editor, evt);
         })
         .change(function(evt) {
-          callback.call(editor, evt);
+          callback(editor, evt);
         });
       $.each(items, function() {
         dropdown.append(this);
@@ -120,10 +122,14 @@
    * factory duncrion for combined usage with "button".
    * It's an easy way to insert help commands.
    *
-   * NOTE: currently unused!
    */
   var help = function(message) {
-    return function(evt) {
+    return function(editor, evt) {
+      if (evt.type == 'mouseover') {
+        $('.toolbar_help').text(message);
+      } else {
+        $('.toolbar_help').text('...');
+      }
     };
   };
 
@@ -141,7 +147,7 @@
         seconds = orig.getUTCSeconds();
     return (year + '-' + (month < 9 ? '0' : '') + (month + 1) + '-' +
                          (date < 10 ? '0' : '') + date + 'T' +
-                         (hours < 10 ? '0' : '') + hours + ':' + 
+                         (hours < 10 ? '0' : '') + hours + ':' +
                          (minutes < 10 ? '0' : '') + minutes + ':' +
                          (seconds < 10 ? '0' : '') + seconds + 'Z');
   };
@@ -198,7 +204,7 @@
       });
       for (var i = 0; i < tds.length / 2; i++) {
         $('<tr />')
-          .appendTo(codebox)        
+          .appendTo(codebox)
           .append(tds[i], tds[i + tds.length / 2]);
       }
       $(document).click(function() {
@@ -267,7 +273,7 @@
         if (evt.target.value.length > 0)
           this.insertTag(evt.target.value, '');
         evt.target.selectedIndex = 0;
-    }, ['wiki'], help("Textbausteine einfügen")),
+    }, ['wiki'], help("Textbaustein einfügen")),
     dropdown('textformat', 'Textformat', [
       item("'''{S/Verzeichnisse}'''", 'Verzeichnisse'),
       item("''\"{S/Menü -> Untermenü -> Menübefehl}\"''", 'Menüs'),
@@ -480,5 +486,18 @@
       new WikiEditor(this, options);
     });
   };
+
+  /*
+   * Automatically detect form fields and transform them to a editor
+   * field.
+   *
+   */
+
+  $(document).ready(function () {
+    $('textarea[data-enable-editor="true"]').each(function () {
+      new WikiEditor($(this));
+    });
+  });
+
 
 })(jQuery, document, window);
