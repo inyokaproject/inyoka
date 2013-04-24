@@ -5,7 +5,11 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+        mangle: true,
+        compress: true,
+        report: true,
+        preserveComments: false
       },
       build: {
         src: ['inyoka/forum/static/forum/js/overall.m.js',
@@ -24,12 +28,12 @@ module.exports = function(grunt) {
               'inyoka/static/js/jstableform.js',
               'inyoka/static/js/overall.js',
               'inyoka/static/js/overall.m.js'],
-        dest: '<%= pkg.name %>.min.js'
+        dest: 'inyoka/static/js/<%= pkg.name %>.min.js'
       }
     },
     jshint: {
       all: ['inyoka/static/js/*.js']
-    }
+    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
