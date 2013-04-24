@@ -173,7 +173,7 @@
           $(this).change();
           return false;
         }
-      }).blur(function (evt) {
+      }).blur(function () {
         $(this).change();
       }));
       $(this).next().focus();

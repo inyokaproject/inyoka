@@ -13,7 +13,6 @@
 
   var FEED_COUNTS = [10, 20, 30, 50, 75, 100];
   var FORUM_URL = 'http://forum.' + $BASE_DOMAIN_NAME + '/';
-  var WIKI_URL = 'http://wiki.' + $BASE_DOMAIN_NAME + '/';
   var IKHAYA_URL = 'http://ikhaya.' + $BASE_DOMAIN_NAME + '/';
   var PLANET_URL = 'http://planet.' + $BASE_DOMAIN_NAME + '/';
 

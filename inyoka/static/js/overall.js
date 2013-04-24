@@ -81,7 +81,7 @@ $(document).ready(function () {
       tocTree.push(ol(1));
       var last_level = 1;
       // Iterate over all <a> tags in headlines
-      $('.headerlink').each(function(index) {
+      $('.headerlink').each(function() {
         var level_class = $(this).parent().parent().attr("class");
         var match = level_class.match(/^section_(\d+)$/);
         if (match === null) { // not a section_* class
