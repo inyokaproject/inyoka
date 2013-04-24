@@ -48,11 +48,12 @@ $(document).ready(function () {
     if (document.location.href.indexOf('/full/') >= 0) return;
 
     // create a link to hide a toc
-    $('.toc .head').append(
-    $('<a> [-]</a>').toggle(function () {
-      $(this).text(' [+]').parent().next().slideUp('fast');
-    }, function () {
-      $(this).text(' [-]').parent().next().slideDown('fast');
+    $('.toc .head').append($('<a> [-]</a>').click(function () {
+      if ($(this).text() === ' [-]') {
+        $(this).text(' [+]').parent().next().slideUp('fast');
+      } else {
+        $(this).text(' [-]').parent().next().slideDown('fast');
+      }
     }));
 
     $('.toc').each(function () {
@@ -137,16 +138,16 @@ $(document).ready(function () {
       var folder = $('<a class="toctoggle"> [-] </a>');
       toc.find('ol ol').each(function () {
         var f = folder.clone();
-        f.insertBefore($(this)).toggle(
-          function () {
-            $(this).text(' [+] ').next().slideUp('fast');
-          }, function () {
-            $(this).text(' [-] ').next().slideDown('fast');
+        f.insertBefore($(this)).click(function () {
+          if ($(this).text() === ' [-]') {
+            $(this).text(' [+]').next().slideUp('fast');
+          } else {
+            $(this).text(' [-]').next().slideDown('fast');
           }
-        );
+        });
         var classes = $(this).attr('class').split(/\s+/);
         if (parseInt(classes[classes.length - 1].slice(15), 10) >= tocDepth) {
-          f.click();
+          f.click().click();
         }
       });
     });

@@ -11,6 +11,7 @@
 $(function () { /* collapsable elements for the input forms */
   $('dt.collapse').each(function () {
     $(this).nextUntil(':not(dd)').addClass('collapse_enabled').toggle($(this).hasClass('has_errors'));
+
     $(this).click(function () {
       $(this).toggleClass('collapsed').nextUntil(':not(dd)').toggle();
     }).addClass('collapse_enabled collapsed');
