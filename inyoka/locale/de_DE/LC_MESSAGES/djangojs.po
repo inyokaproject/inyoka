@@ -1,0 +1,121 @@
+# German (Germany) translations for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-04-24 15:17+0200\n"
+"PO-Revision-Date: 2012-01-22 13:07+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: de_DE <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.0dev\n"
+
+#: inyoka/static/js/DateTime.js:20
+msgid "January"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:20
+msgid "February"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:20
+msgid "March"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:20
+msgid "April"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:21
+msgid "May"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:21
+msgid "June"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:21
+msgid "July"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:21
+msgid "August"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:22
+msgid "September"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:22
+msgid "October"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:23
+msgid "November"
+msgstr ""
+
+#: inyoka/static/js/DateTime.js:23
+msgid "December"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:50
+msgid "Please choose a forum!"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:52
+msgid "Invalid choice"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:64 inyoka/static/js/FeedSelector.js:89
+#: inyoka/static/js/FeedSelector.js:112
+msgid "Feed URL:"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:145
+msgid "Please choose a feed type!"
+msgstr ""
+
+#: inyoka/static/js/FeedSelector.js:148
+msgid "Please choose a number between 10 and 100!"
+msgstr ""
+
+#: inyoka/static/js/forum.js:23
+msgid "Reply "
+msgstr ""
+
+#: inyoka/static/js/forum.js:25
+msgid "More replies"
+msgstr ""
+
+#: inyoka/static/js/forum.js:76
+msgid "Subscribe"
+msgstr ""
+
+#: inyoka/static/js/forum.js:80
+msgid "Unsubscribe"
+msgstr ""
+
+#: inyoka/static/js/forum.js:83
+msgid "Mark as solved"
+msgstr ""
+
+#: inyoka/static/js/forum.js:86
+msgid "Mark as unsolved"
+msgstr ""
+
+#: inyoka/static/js/forum.js:135
+msgid "solved"
+msgstr ""
+
+#: inyoka/static/js/forum.js:144
+msgid "unsolved"
+msgstr ""
+

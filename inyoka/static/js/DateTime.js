@@ -17,7 +17,10 @@
    a global is the `DateTimeField`. */
 
 (function () {
-  var months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+  var months = [gettext('January'), gettext('February'), gettext('March'), gettext('April'),
+                gettext('May'), gettext('June'), gettext('July'), gettext('August'),
+                gettext('September'), gettext('October'),
+                gettext('November'), gettext('December')];
   var days_of_week = ['S', 'M', 'D', 'M', 'D', 'F', 'S'];
 
   function isLeapYear(year) {

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-12-27 11:58+0100\n"
+"POT-Creation-Date: 2013-04-24 15:17+0200\n"
 "PO-Revision-Date: 2012-11-03 11:11+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -22,8 +22,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.0dev\n"
 
-#: inyoka/ikhaya/forms.py:41 inyoka/ikhaya/models.py:210
-#: inyoka/ikhaya/models.py:419
+#: inyoka/ikhaya/forms.py:41 inyoka/ikhaya/models.py:209
+#: inyoka/ikhaya/models.py:400
 msgid "Text"
 msgstr "Text"
 
@@ -37,7 +37,7 @@ msgstr ""
 "<code>@kommentarnummer</code> verwenden.<br />Dieser wird automatisch "
 "eingefügt, wenn du bei einem Beitrag auf „Antworten“ klickst."
 
-#: inyoka/ikhaya/forms.py:60 inyoka/ikhaya/models.py:203
+#: inyoka/ikhaya/forms.py:60 inyoka/ikhaya/models.py:202
 #: inyoka/ikhaya/templates/ikhaya/events.html:33
 msgid "Author"
 msgstr "Autor"
@@ -74,85 +74,85 @@ msgstr "Das Enddatum muss nach dem Startdatum liegen."
 msgid "Display event?"
 msgstr "Kalendereintrag sichtbar?"
 
-#: inyoka/ikhaya/models.py:166 inyoka/ikhaya/models.py:212
+#: inyoka/ikhaya/models.py:165 inyoka/ikhaya/models.py:211
 msgid "Slug"
 msgstr "Slug"
 
-#: inyoka/ikhaya/models.py:169 inyoka/ikhaya/models.py:208
+#: inyoka/ikhaya/models.py:168 inyoka/ikhaya/models.py:207
 msgid "Icon"
 msgstr "Icon"
 
-#: inyoka/ikhaya/models.py:188 inyoka/ikhaya/models.py:205
+#: inyoka/ikhaya/models.py:187 inyoka/ikhaya/models.py:204
 msgid "Category"
 msgstr "Kategorie"
 
-#: inyoka/ikhaya/models.py:189 inyoka/ikhaya/templates/ikhaya/page.html:57
+#: inyoka/ikhaya/models.py:188 inyoka/ikhaya/templates/ikhaya/page.html:57
 msgid "Categories"
 msgstr "Kategorien"
 
-#: inyoka/ikhaya/models.py:198 inyoka/ikhaya/templates/ikhaya/events.html:32
+#: inyoka/ikhaya/models.py:197 inyoka/ikhaya/templates/ikhaya/events.html:32
 msgid "Date"
 msgstr "Datum"
 
-#: inyoka/ikhaya/models.py:199
+#: inyoka/ikhaya/models.py:198
 msgid "Time"
 msgstr "Zeit"
 
-#: inyoka/ikhaya/models.py:200
+#: inyoka/ikhaya/models.py:199
 msgid "Last change"
 msgstr "Letzte Änderung"
 
-#: inyoka/ikhaya/models.py:204
+#: inyoka/ikhaya/models.py:203
 msgid "Headline"
 msgstr "Überschrift"
 
-#: inyoka/ikhaya/models.py:209 inyoka/ikhaya/models.py:420
+#: inyoka/ikhaya/models.py:208 inyoka/ikhaya/models.py:401
 msgid "Introduction"
 msgstr "Einleitung"
 
-#: inyoka/ikhaya/models.py:211
+#: inyoka/ikhaya/models.py:210
 msgid "Public"
 msgstr "Veröffentlicht"
 
-#: inyoka/ikhaya/models.py:214
+#: inyoka/ikhaya/models.py:213
 msgid "XHTML Markup"
 msgstr "XHTML Markup"
 
-#: inyoka/ikhaya/models.py:217
+#: inyoka/ikhaya/models.py:216
 msgid "Allow comments"
 msgstr "Kommentare erlauben"
 
-#: inyoka/ikhaya/models.py:379
+#: inyoka/ikhaya/models.py:360
 msgid "Article"
 msgstr "Artikel"
 
-#: inyoka/ikhaya/models.py:380
+#: inyoka/ikhaya/models.py:361
 msgid "Articles"
 msgstr "Artikel"
 
-#: inyoka/ikhaya/models.py:418
+#: inyoka/ikhaya/models.py:399
 msgid "Title"
 msgstr "Titel"
 
-#: inyoka/ikhaya/models.py:421
+#: inyoka/ikhaya/models.py:402
 msgid "Annotations to the team"
 msgstr "Anmerkungen an das Ikhayateam"
 
-#: inyoka/ikhaya/models.py:427
+#: inyoka/ikhaya/models.py:408
 msgid "Article suggestion"
 msgstr "Artikelvorschlag"
 
-#: inyoka/ikhaya/models.py:428
+#: inyoka/ikhaya/models.py:409
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:13
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:16
 msgid "Article suggestions"
 msgstr "Artikelvorschläge"
 
-#: inyoka/ikhaya/models.py:509
+#: inyoka/ikhaya/models.py:490
 msgid "Degree of latitude"
 msgstr "Breitengrad"
 
-#: inyoka/ikhaya/models.py:511
+#: inyoka/ikhaya/models.py:492
 msgid "Degree of longitude"
 msgstr "Längengrad"
 
@@ -384,22 +384,22 @@ msgstr ""
 "Die Veranstaltung mit der ID %(id)s existiert nicht und kann daher nicht "
 "als Basis für den Kopiervorgang benutzt werden."
 
-#: inyoka/ikhaya/views.py:749
+#: inyoka/ikhaya/views.py:751
 msgid "The event was saved."
 msgstr "Die Veranstaltung wurde gespeichert."
 
-#: inyoka/ikhaya/views.py:806
+#: inyoka/ikhaya/views.py:808
 msgid "The event has been saved. A team member will review it soon."
 msgstr ""
 "Die Veranstaltung wurde gespeichert. Ein Teammitglied wird sie demnächst "
 "prüfen."
 
-#: inyoka/ikhaya/views.py:870
+#: inyoka/ikhaya/views.py:872
 #, python-format
 msgid "%(domain)s Ikhaya comments – %(title)s"
 msgstr "%(domain)s Ikhaya Kommentare – %(title)s"
 
-#: inyoka/ikhaya/views.py:875
+#: inyoka/ikhaya/views.py:877
 #, python-format
 msgid "%(domain)s Ikhaya comments"
 msgstr "%(domain)s Ikhaya Kommentare"
@@ -530,9 +530,9 @@ msgstr "Avatar von %(user)s"
 #: inyoka/ikhaya/templates/ikhaya/detail.html:55
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:20
 #: inyoka/ikhaya/templates/ikhaya/index.html:52
-#, python-format
-msgid "Written by <a href=\"%(link)s\">%(author)s</a>"
-msgstr "Verfasst von <a href=\"%(link)s\">%(author)s</a>"
+#, fuzzy, python-format
+msgid "Published by <a href=\"%(link)s\">%(author)s</a>"
+msgstr "Vorgeschlagen von <a href=\"%(link)s\">%(author)s</a>"
 
 #: inyoka/ikhaya/templates/ikhaya/detail.html:59
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:25

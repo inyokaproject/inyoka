@@ -20,9 +20,9 @@ $(function () { /* collapsable elements for the input forms */
   (function () {
     $('#id_add_option').click(function addReply() {
       count = $('.newtopic_polls_replies').length;
-      $($('.newtopic_polls_replies')[count - 1]).after('<dd class="newtopic_polls_replies collapse_enabled">Antwort ' + (count + 1) + ': <input type="text" name="options" value="" /></dd>');
+      $($('.newtopic_polls_replies')[count - 1]).after('<dd class="newtopic_polls_replies collapse_enabled">' + gettext('Reply ') + (count + 1) + ': <input type="text" name="options" value="" /></dd>');
       $('#id_add_option').remove();
-      $($('.newtopic_polls_replies')[count]).append(' <input type="submit" name="add_option" value="Weitere Antwort" ' + 'id="id_add_option" />');
+      $($('.newtopic_polls_replies')[count]).append(' <input type="submit" name="add_option" value="' + gettext("More replies") + ' id="id_add_option" />');
       $('#id_add_option').click(addReply);
       return false;
     });
@@ -60,92 +60,95 @@ $(function () { /* collapsable elements for the input forms */
     };
   })();
 
-  // function doAction(type, slug, tags, callback) {
-  //   // Get the matching string for replacement. Since the two buttons (top and bottom)
-  //   // are in the same macro we just need to check for one buttons text at all.
-  //   var action = "";
-  //   var new_text = "";
+  function doAction(type, slug, tags, callback) {
+    // Get the matching string for replacement. Since the two buttons (top and bottom)
+    // are in the same macro we just need to check for one buttons text at all.
+    var
+      action = "",
+      new_text = "",
+      classes = [];
 
-  //   var text = $(tags[0]).text();
+    var obj = $(tags);
 
-  //   switch (text) {
-  //   case 'abbestellen':
-  //     action = 'unsubscribe';
-  //     new_text = 'abonnieren';
-  //     break;
-  //   case 'abonnieren':
-  //     action = 'subscribe';
-  //     new_text = 'abbestellen';
-  //     break;
-  //   case 'als ungelöst markieren':
-  //     action = 'mark_unsolved';
-  //     new_text = 'als gelöst markieren';
-  //     break;
-  //   case 'als gelöst markieren':
-  //     action = 'mark_solved';
-  //     new_text = 'als ungelöst markieren';
-  //     break;
-  //   }
+    if (obj.hasClass('action_unsubscribe')) {
+      action = 'unsubscribe';
+      classes = ['action_unsubscribe', 'action_subscribe'];
+      new_text = gettext('Subscribe');
+    } else if (obj.hasClass('action_subscribe')) {
+      action = 'subscribe';
+      classes = ['action_subscribe', 'action_unsubscribe'];
+      new_text = gettext('Unsubscribe');
+    } else if (obj.hasClass('action_unsolve')) {
+      action = 'mark_unsolved';
+      new_text = gettext('Mark as solved');
+    } else if (obj.hasClass('action_solve')) {
+      action = 'mark_solved';
+      new_text = gettext('Mark as unsolved');
+    }
 
-  //   var url = "/?__service__=forum." + action;
+    var url = "/?__service__=forum." + action;
 
-  //   $.post(url, {
-  //     type: type,
-  //     slug: slug
-  //   }, function (data, status, xhr) {
-  //     // Bind new events and change button's text.
-  //     if (xhr.status == 200) {
-  //       $(tags).fadeOut('fast');
-  //       $(tags).text(new_text);
-  //       $(tags).fadeIn('fast');
-  //       if (typeof callback == 'function') callback();
-  //     }
-  //   });
-  // }
+    $.post(url, {
+      type: type,
+      slug: slug
+    }, function (data, status, xhr) {
+      // Bind new events and change button's text.
+      if (xhr.status == 200) {
+        $(tags).fadeOut('fast');
+        $(tags).text(new_text);
+        if (classes.length > 0) {
+          obj.removeClass(classes[0]);
+          obj.addClass(classes[1]);
+        }
+        $(tags).fadeIn('fast');
+        if (typeof callback == 'function') callback();
+      }
+    });
+  }
 
-//  (function () {
-//    $('a.action_subscribe.subscribe_topic').each(function () {
-//      $(this).click(function () {
-//        doAction('topic', $(this).attr('id'), $('a.action_subscribe.subscribe_topic'));
-//        return false;
-//      });
-//    });
-//
-//    $('a.action_subscribe.subscribe_forum').each(function () {
-//      $(this).click(function () {
-//        doAction('forum', $(this).attr('id'), $('a.action_subscribe.subscribe_forum'));
-//        return false;
-//      });
-//    });
-//
-//    $('a.solve_topic').each(function () {
-//      $(this).click(function () {
-//        doAction('topic', $(this).attr('id'), $('a.solve_topic'), function () {
-//          // switch classes
-//          if ($('a.solve_topic').hasClass('action_solve')) {
-//            $('a.solve_topic').removeClass('action_solve');
-//            $('a.solve_topic').addClass('action_unsolve');
-//            var span = $('span.status_unsolved');
-//            span.fadeOut('fast');
-//            span.removeClass('status_unsolved');
-//            span.addClass('status_solved');
-//            span.text('gelöst');
-//            span.fadeIn('fast');
-//          } else {
-//            $('a.solve_topic').removeClass('action_unsolve');
-//            $('a.solve_topic').addClass('action_solve');
-//            var span = $('span.status_solved');
-//            span.fadeOut('fast');
-//            span.removeClass('status_solved');
-//            span.addClass('status_unsolved');
-//            span.text('ungelöst');
-//            span.fadeIn('fast');
-//          }
-//        });
-//        return false;
-//      });
-//    });
-//  })();
+  (function () {
+    $('a.subscribe_topic').each(function () {
+      $(this).click(function () {
+        doAction('topic', $(this).attr('id'), $('a.subscribe_topic'));
+        return false;
+      });
+    });
+
+    $('a.subscribe_forum').each(function () {
+      $(this).click(function () {
+        doAction('forum', $(this).attr('id'), $('a.subscribe_forum'));
+        return false;
+      });
+    });
+
+    $('a.solve_topic').each(function () {
+      $(this).click(function () {
+        doAction('topic', $(this).attr('id'), $('a.solve_topic'), function () {
+          // switch classes
+          if ($('a.solve_topic').hasClass('action_solve')) {
+            $('a.solve_topic').removeClass('action_solve');
+            $('a.solve_topic').addClass('action_unsolve');
+            var span = $('span.status_unsolved');
+            span.fadeOut('fast');
+            span.removeClass('status_unsolved');
+            span.addClass('status_solved');
+            span.text(gettext('solved'));
+            span.fadeIn('fast');
+          } else {
+            $('a.solve_topic').removeClass('action_unsolve');
+            $('a.solve_topic').addClass('action_solve');
+            var span = $('span.status_solved');
+            span.fadeOut('fast');
+            span.removeClass('status_solved');
+            span.addClass('status_unsolved');
+            span.text(gettext('unsolved'));
+            span.fadeIn('fast');
+          }
+        });
+        return false;
+      });
+    });
+  })();
 
   /* Display some more informations about the ubuntu version */
   (function () {
