@@ -20,13 +20,15 @@ module.exports = function(grunt) {
               'inyoka/static/js/jquery.autocomplete.js',
               'inyoka/static/js/jquery.ba-hashchange.js',
               'inyoka/static/js/jquery.cookie.js',
-              'inyoka/static/js/jquery.extensions.js',
               'inyoka/static/js/jquery.tokenfield.js',
               'inyoka/static/js/jstableform.js',
               'inyoka/static/js/overall.js',
               'inyoka/static/js/overall.m.js'],
         dest: '<%= pkg.name %>.min.js'
       }
+    },
+    jshint: {
+      all: ['inyoka/static/js/*.js']
     }
   });
 
