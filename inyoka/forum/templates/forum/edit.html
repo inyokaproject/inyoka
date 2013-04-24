@@ -182,7 +182,8 @@
   {{ super() }}
   <script type="text/javascript">
     /* <![CDATA[ */
-    var editor = new WikiEditor('textarea[name="text"]', 'forum');
+    $('textarea[name="text"]').wikiEditor({profile: 'forum'});
+
     (function() {
       var
         editor = $('textarea[name="text"]'),
