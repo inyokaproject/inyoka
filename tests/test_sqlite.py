@@ -26,3 +26,6 @@ GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4B
 # Removed django-openid for now as we do not support proper test setup for now.
 # explicitly add tests.functional.utils to apps to run unittests here
 INSTALLED_APPS = INSTALLED_APPS + ('tests.functional.utils',)
+
+SECRET_KEY='test-secret-key'
+
