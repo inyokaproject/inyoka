@@ -14,6 +14,7 @@ module.exports = function(grunt) {
       },
       build: {
         src: [
+          'inyoka/static/js/vendor/underscore.js',
           'inyoka/static/js/vendor/jquery-1.5.2.js',
           'inyoka/static/js/vendor/jquery.autocomplete.js',
           'inyoka/static/js/vendor/jquery.ba-hashchange.js',
