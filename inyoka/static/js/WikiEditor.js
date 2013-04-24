@@ -312,8 +312,9 @@
     t = $('<ul class="toolbar" />').prependTo(this.$el.parent());
     var bar = toolbar();
     for (var i = 0, n = bar.length, x; i != n; ++i)
-      if (x = bar[i](self))
-        x.appendTo($('<li />').appendTo(t))
+      var x = bar[i](self)
+      if (x)
+        x.appendTo($('<li />').appendTo(t));
 
       /* helpbar with some syntax informations */
       this.helpbar = $('<span class="toolbar_help note">...</span>');

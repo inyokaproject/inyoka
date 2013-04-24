@@ -219,7 +219,7 @@ $(function () { /* collapsable elements for the input forms */
         $.getJSON(url, {
           post: self.attr('value'),
           topic: topic
-        })
+        });
       }
 
       return true;

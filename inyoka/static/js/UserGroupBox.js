@@ -42,7 +42,7 @@
     $('img.item_remove').click(function () {
       self.move(self.user_joined, self.user_not_joined);
     });
-  };
+  }
 
   GroupBox.prototype.rebuildBoxes = function (joined, not_joined) {
     var self = this;

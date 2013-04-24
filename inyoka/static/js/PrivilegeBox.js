@@ -22,7 +22,7 @@
         return o * -1;
       }));
       var li = $('<li />').text(name).attr('id', 'forum_' + id);
-      if (positive != '' || negative != '') {
+      if (positive !== '' || negative !== '') {
         li.css('color', '#E00');
       }
       list.append(li.click(function (evt) {
