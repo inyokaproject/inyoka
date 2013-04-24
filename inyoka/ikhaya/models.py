@@ -325,7 +325,7 @@ class Article(models.Model, LockableObject):
 
     def save(self, *args, **kwargs):
         """
-        This increases the edit count by 1 and updates the xapian database.
+        This increases the edit count by 1.
         """
         if self.text is None or self.intro is None:
             # might happen, because cached objects are setting text and

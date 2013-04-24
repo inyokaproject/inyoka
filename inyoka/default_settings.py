@@ -99,10 +99,6 @@ EMAIL_SUBJECT_PREFIX = u'%s: ' % BASE_DOMAIN_NAME
 
 EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 
-# path to the xapian database
-# Examples: /path/to/inyoka.xapdb, or tcpsrv://localhost:3000/
-XAPIAN_DATABASE = join(BASE_PATH, 'inyoka.xapdb')
-
 # forum settings
 FORUM_LIMIT_UNREAD = 100
 FORUM_THUMBNAIL_SIZE = (64, 64)
