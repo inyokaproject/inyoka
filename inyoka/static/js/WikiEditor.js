@@ -312,8 +312,7 @@
     t = $('<ul class="toolbar" />').prependTo(this.$el.parent());
     var bar = toolbar();
     for (var i = 0, n = bar.length, x; i != n; ++i)
-      var x = bar[i](self)
-      if (x)
+      if (x = bar[i](self))
         x.appendTo($('<li />').appendTo(t));
 
       /* helpbar with some syntax informations */
