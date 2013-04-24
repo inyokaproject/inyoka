@@ -6,11 +6,6 @@
     This module summarizes various highlighting tasks. It implements:
 
      * code highlighting using `Pygments <http://pygments.org>`
-     * Text excerpt highlighting used by the search system.
-
-    The text excerpt highlighting system is borrowed from
-    `Haystack-Xapian <https://github.com/notanumber/xapian-haystack>`
-    but heavily modified to fix soem bugs and to match inyoka search internals.
 
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
