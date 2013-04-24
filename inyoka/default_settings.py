@@ -139,7 +139,7 @@ WIKI_USER_BASE = 'User'
 WIKI_USERPAGE_INFO = 'Userpage'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'b)l0ju3erxs)od$g&l_0i1za^l+2dwgxuay(nwv$q4^*c#tdwt'
+SECRET_KEY = None
 
 # a prefix that is automatically added on every cache operation to the key.
 # You won't notice anything of it at all but it makes it possible to run more

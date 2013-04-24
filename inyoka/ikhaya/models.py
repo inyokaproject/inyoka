@@ -232,7 +232,7 @@ class Article(models.Model, LockableObject):
     def local_updated(self):
         return datetime_to_timezone(self.updated).replace(tzinfo=None)
 
-    def _simplify(self, text, key):
+    def _simplify(self, text):
         """Remove markup of a text that belongs to this Article"""
         if self.is_xhtml:
             simple = striptags(text)
@@ -240,7 +240,7 @@ class Article(models.Model, LockableObject):
             simple = parse(text).text
         return simple.strip()
 
-    def _render(self, text, key):
+    def _render(self, text):
         """Render a text that belongs to this Article to HTML"""
         if self.is_xhtml:
             return text
@@ -251,25 +251,25 @@ class Article(models.Model, LockableObject):
     @property
     def rendered_text(self):
         if not hasattr(self, '_rendered_text'):
-            self._rendered_text = self._render(self.text, 'ikhaya/article_text/%s' % self.id)
+            self._rendered_text = self._render(self.text)
         return self._rendered_text
 
     @property
     def rendered_intro(self):
         if not hasattr(self, '_rendered_intro'):
-            self._rendered_intro = self._render(self.intro, 'ikhaya/article_intro/%s' % self.id)
+            self._rendered_intro = self._render(self.intro)
         return self._rendered_intro
 
     @property
     def simplified_text(self):
         if not hasattr(self, '_simplified_text'):
-            self._simplified_text = self._simplify(self.text, 'ikhaya/simple_text/%s' % self.id)
+            self._simplified_text = self._simplify(self.text)
         return self._simplified_text
 
     @property
     def simplified_intro(self):
         if not hasattr(self, '_simplified_intro'):
-            self._simplified_intro = self._simplify(self.intro, 'ikhaya/simple_intro/%s' % self.id)
+            self._simplified_intro = self._simplify(self.intro)
         return self._simplified_intro
 
     @property

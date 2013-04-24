@@ -41,7 +41,7 @@ def _strip_ending_nums(string):
 
 
 def find_next_increment(model, column, string, stripdate=False, **query_opts):
-    """Get the next incremented string based on `column` and string`.
+    """Get the next incremented string based on `column` and `string`.
     This function is the port of `find_next_increment` for Django models.
 
     Example::
