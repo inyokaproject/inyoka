@@ -10,7 +10,7 @@
 
 $(document).ready(function () {
   (function () {
-    if (!$('textarea[name="signature"]').length == 0) {
+    if ($('textarea[name="signature"]').length !== 0) {
       // create a WikiEditor instance for all signature fields
       var signature = new WikiEditor('textarea[name="signature"]');
     }

@@ -49,7 +49,11 @@
     this.container = $('<table class="datetime"></table>').click(function () {
       return false;
     });
-    auto_show ? this.container.hide().addClass('auto_show') : this.input.hide();
+    if (auto_show) {
+      this.container.hide().addClass('auto_show');
+    } else {
+      this.input.hide();
+    }
     var row = $('<tr></tr>').appendTo(this.container);
     this.calendar = $('<td></td>').appendTo(row);
     this.timetable = $('<td></td>').appendTo(row);
@@ -63,7 +67,7 @@
       this.calendar.hide();
     }
     this.input.after(this.container);
-  };
+  }
 
   DateTimeField.prototype.show = function () {
     this.readDateTime();
@@ -91,7 +95,7 @@
     var dateTimeRegex = /(\d{4})-(\d{1,2})-(\d{1,2}) (\d{2}):(\d{2}):(\d{2})/;
     var input_value = this.input.val();
     var found = dateTimeRegex.exec(input_value);
-    if (input_value == '' || !found) {
+    if (input_value === '' || !found) {
       var today = new Date();
       set_vars(today.getFullYear(), today.getMonth() + 1, today.getDate(), [today.getHours(), today.getMinutes(), today.getSeconds()].join(':'));
     } else {
@@ -185,10 +189,9 @@
     var starting_pos = new Date(year, month - 1, 1).getDay();
     var days = getDaysInMonth(month, year);
 
-    // Draw blanks before first of month
-    var row = $('<tr></tr>').appendTo(tbody);
-    for (var i = 0; i < starting_pos; i++)
-    $('<td style="background-color: #f3f3f3;"></td>').appendTo(row);
+    row = $('<tr></tr>').appendTo(tbody);
+    for (i = 0; i < starting_pos; i++)
+      $('<td style="background-color: #f3f3f3;"></td>').appendTo(row);
 
     // Draw days of month
     var currentDay = 1;
@@ -201,7 +204,7 @@
       self.writeDateTime();
       return false;
     };
-    for (var i = starting_pos; currentDay <= days; i++) {
+    for (i = starting_pos; currentDay <= days; i++) {
       if (i % 7 === 0 && currentDay != 1) row = $('<tr></tr>').appendTo(tbody);
       var td = $('<td></td>').append(
       $('<a></a>').text(currentDay).click(day_click_callback)).appendTo(row);
