@@ -430,74 +430,80 @@ $(document).ready(function () {
 
 (function() {
   /* OpenID Integration */
-  OpenIDHelper = Class.$extend({
-    __init__: function(target, openid_providers) {
-      var self = this;
-      var target = $(target);
 
-      // hide password field if it looks like we're getting and openid
-      var elements = ['input[name="password"]', 'label[for="id_password"]', 'label[for="js_login_password"]'];
-      $(target).keydown(function() {
-        if ($(target).val().slice(0, 4) == 'http') {
-          $('input[name="password"]').val('');
-          for (idx in elements)
-            $(elements[idx]).hide();
-        } else {
-          for (idx in elements)
-            $(elements[idx]).show();
-        }
-      });
+  function OpenIDHelper (target, openid_providers) {
+    var self = this;
+    var target = $(target);
 
-      // Add common OpenID providers
-      for (var provider in openid_providers) {
-        var name = openid_providers[provider].name;
-        var element = $('<img src="' + $STATIC_URL + 'img/openid/' + provider + '.png" class="openid_logo" id="openid_' + provider + '" alt="' + name + '" title="' + name + ' benutzen" />')
-          .click(function() {
-            $(target).val('');
-            p = $(this).attr('id').substring(7);
-            if (openid_providers[p]['url'] == null) {
-              $(target).val('http://');
-              $(target).focus();
-            } else {
-              self.setSelection($(target), openid_providers[p]['url'], '{username}', true);
-            }
-          })
-          .css('cursor', 'pointer');
-
-        element.insertAfter($(target));
+    // hide password field if it looks like we're getting and openid
+    var elements = ['input[name="password"]', 'label[for="id_password"]', 'label[for="js_login_password"]'];
+    $(target).keydown(function() {
+      if ($(target).val().slice(0, 4) == 'http') {
+        $('input[name="password"]').val('');
+        for (idx in elements)
+          $(elements[idx]).hide();
+      } else {
+        for (idx in elements)
+          $(elements[idx]).show();
       }
-    },
+    });
 
-    setSelection: function(area, text, match, reselect) {
-      var t = $(area)[0];
-      if (typeof t.selectionStart != 'undefined') {
-        var
-          start = text.indexOf(match),
-          end = text.indexOf(match) + match.length;
-        var
-          s1 = t.value.substring(0, start),
-          s2 = t.value.substring(end);
+    // Add common OpenID providers
+    for (var provider in openid_providers) {
+      var name = openid_providers[provider].name;
+      var element = $('<img src="' + $STATIC_URL + 'img/openid/' + provider + '.png" class="openid_logo" id="openid_' + provider + '" alt="' + name + '" title="' + name + ' benutzen" />')
+        .click(function() {
+          $(target).val('');
+          p = $(this).attr('id').substring(7);
+          if (openid_providers[p]['url'] == null) {
+            $(target).val('http://');
+            $(target).focus();
+          } else {
+            self.setSelection($(target), openid_providers[p]['url'], '{username}', true);
+          }
+        })
+        .css('cursor', 'pointer');
 
-        t.value = s1 + text + s2;
-        if (start == -1) {
-          area.closest('form').submit();
-          return;
-        }
-        t.focus();
-        if (reselect) {
-          t.selectionStart = start;
-          t.selectionEnd = end;
-        }
-        else
-          t.selectionEnd = t.selectionStart = start + text.length;
-      }
-      else if (typeof document.selection != 'undefined') {
-        t.focus();
-        var range = document.selection.createRange();
-        range.text = text;
-      }
+      element.insertAfter($(target));
     }
-  });
+  };
+
+  OpenIDHelper.prototype.setSelection = function(area, text, match, reselect) {
+    var t = $(area)[0];
+    if (typeof t.selectionStart != 'undefined') {
+      var
+        start = text.indexOf(match),
+        end = text.indexOf(match) + match.length;
+      var
+        s1 = t.value.substring(0, start),
+        s2 = t.value.substring(end);
+
+      t.value = s1 + text + s2;
+      if (start == -1) {
+        area.closest('form').submit();
+        return;
+      }
+      t.focus();
+      if (reselect) {
+        t.selectionStart = start;
+        t.selectionEnd = end;
+      }
+      else
+        t.selectionEnd = t.selectionStart = start + text.length;
+    }
+    else if (typeof document.selection != 'undefined') {
+      t.focus();
+      var range = document.selection.createRange();
+      range.text = text;
+    }
+  };
+
+  $.fn.openIDHelper = function (user_joined, user_not_joined) {
+    return this.each(function() {
+      new OpenIDHelper(this, user_joined, user_not_joined);
+    });
+  };
+
 })();
 
 String.prototype.htmlEscape = function () {

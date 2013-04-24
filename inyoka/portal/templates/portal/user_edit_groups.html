@@ -46,7 +46,7 @@
 {% block additional_scripts %}
   <script type="text/javascript">
     /* <![CDATA[ */
-    var select_form = new GroupBox('#user_edit_box',
+    $('#user_edit_form').groupBox(
       {{ joined_groups|sort|jsonencode }},
       {{ not_joined_groups|sort|jsonencode }}
     );
