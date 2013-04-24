@@ -154,8 +154,8 @@ $.autocomplete = function(input, options) {
 
 		if (active < 0) {
 			active = 0;
-		} else if (active >= lis.size()) {
-			active = lis.size() - 1;
+		} else if (active >= lis.length()) {
+			active = lis.length() - 1;
 		}
 
 		lis.removeClass("ac_over");
