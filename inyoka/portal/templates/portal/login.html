@@ -45,7 +45,7 @@
     else
       $('#id_username')[0].focus();
 
-    var input = OpenIDHelper($('input[name="username"]'), {{ OPENID_PROVIDERS|jsonencode }});
+    $('input[name="username"]').openIDHelper({{ OPENID_PROVIDERS|jsonencode }});
     /*]]>*/
   </script>
 {% endblock %}
