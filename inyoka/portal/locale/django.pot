@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-04-17 01:52+0200\n"
+"POT-Creation-Date: 2013-04-21 23:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -751,10 +751,6 @@ msgstr ""
 msgid "Portal | can watch users"
 msgstr ""
 
-#: inyoka/portal/user.py:87
-msgid "Sorry, more than one month passed since the deletion of the account"
-msgstr ""
-
 #: inyoka/portal/user.py:93
 msgid "This e-mail address is used by another user."
 msgstr ""
@@ -769,11 +765,11 @@ msgstr ""
 msgid "The user “%(name)s” has reactivated his account."
 msgstr ""
 
-#: inyoka/portal/user.py:123
+#: inyoka/portal/user.py:128
 #, python-format
 msgid ""
-"The account “%(name)s” was reactivated. You will receive an email to set "
-"the new password."
+"The account “%(name)s” was reactivated. Please use the password recovery "
+"function to set a new password."
 msgstr ""
 
 #: inyoka/portal/user.py:147
@@ -789,10 +785,6 @@ msgstr ""
 #: inyoka/portal/user.py:193
 #, python-format
 msgid "%(sitename)s – Confirm email address"
-msgstr ""
-
-#: inyoka/portal/user.py:204 inyoka/portal/user.py:231
-msgid "The link is too old."
 msgstr ""
 
 #: inyoka/portal/user.py:218
@@ -1318,8 +1310,16 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: inyoka/portal/views.py:1761
-msgid "The entered data is invalid."
+#: inyoka/portal/views.py:1788
+msgid "You cannot reactivate an account while you are logged in."
+msgstr ""
+
+#: inyoka/portal/views.py:1793
+msgid "You need to be logged in before you can continue."
+msgstr ""
+
+#: inyoka/portal/views.py:1808
+msgid "The entered data is invalid or has expired."
 msgstr ""
 
 #: inyoka/portal/views.py:1811

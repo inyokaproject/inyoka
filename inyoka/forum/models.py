@@ -10,8 +10,8 @@
 """
 from __future__ import division
 import re
-import cPickle
 import operator
+import json
 from os import path
 from hashlib import md5
 from time import time
@@ -1255,8 +1255,11 @@ class ReadStatus(object):
     Manages the read status of forums and topics for a specific user.
     """
 
-    def __init__(self, serialized_data):
-        self.data = cPickle.loads(str(serialized_data)) if serialized_data else {}
+    def __init__(self, serialized_data=None):
+        self.data = {}
+
+        if serialized_data:
+            self.data = json.loads(str(serialized_data))
 
     def __call__(self, item):
         """
@@ -1271,7 +1274,7 @@ class ReadStatus(object):
             forum_id, post_id = item.forum_id, item.last_post_id
         else:
             raise ValueError('Can\'t determine read status of an unknown type')
-        row = self.data.get(forum_id, (None, []))
+        row = self.data.get(str(forum_id), (None, []))
         if row[0] >= post_id:
             return True
         elif is_forum:
@@ -1289,7 +1292,7 @@ class ReadStatus(object):
         post_id = item.last_post.id
 
         if isinstance(item, Forum):
-            self.data[forum_id] = (post_id, set())
+            self.data[str(forum_id)] = (post_id, [])
             for child in item.children:
                 self.mark(child)
             if item.parent_id:
@@ -1300,8 +1303,8 @@ class ReadStatus(object):
                     self.mark(item.parent)
             return True
 
-        row = self.data.get(forum_id, (None, set()))
-        row[1].add(post_id)
+        row = self.data.get(str(forum_id), (None, []))
+        row[1].append(post_id)
         children = item.forum.children
         if children:
             unread_children = reduce(lambda a, b: a and b,
@@ -1313,12 +1316,20 @@ class ReadStatus(object):
             r = list(row[1])
             r.sort()
             row = (r[settings.FORUM_LIMIT_UNREAD//2],
-                set(r[settings.FORUM_LIMIT_UNREAD//2:]))
-        self.data[forum_id] = row
+                   r[settings.FORUM_LIMIT_UNREAD//2:])
+        self.data[str(forum_id)] = row
         return True
 
     def serialize(self):
-        return cPickle.dumps(self.data)
+        def _serialize(iter):
+            result = []
+            for item in iter:
+                if item and isinstance(item, (list, set, tuple)):
+                    result.append(_serialize(list(set(item))))
+                else:
+                    result.append(item)
+            return result
+        return json.dumps({k: _serialize(v) for k, v in self.data.iteritems()})
 
 
 def mark_all_forums_read(user):

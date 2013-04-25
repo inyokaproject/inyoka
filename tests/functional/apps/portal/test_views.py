@@ -305,6 +305,71 @@ class TestAuthViews(TestCase):
             response = self.client.get('/lost_password/', follow=True)
         self.assertContains(response, 'You are already logged in.')
 
+    def test_user_deactivate_and_recover(self):
+        """Test the user deactivate and recover feature.
+        """
+        self.client.login(username='user', password='user')
+        postdata = {'password_confirmation': 'user'}
+        with translation.override('en-us'):
+            response = self.client.post('/usercp/deactivate/', postdata, follow=True)
+        self.assertContains(response, 'Your account was deactivated.')
+
+        # Once an account is deactivated the user session will be terminated.
+        self.assertFalse(self.client.user.is_authenticated())
+
+        subject = mail.outbox[0].subject
+        self.assertIn(u'Deactivation of your account “user”', subject)
+        code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
+                         mail.outbox[0].body).group(0).strip()
+        postdata = {'data': code}
+        with translation.override('en-us'):
+            response = self.client.post('/confirm/reactivate_user/', postdata, follow=True)
+        self.assertContains(response, 'The account “user” was reactivated.')
+
+    def test_user_change_mail_and_recover(self):
+        self.client.login(username='user', password='user')
+        postdata = {'email': 'newmail@example.com'}
+        with translation.override('en-us'):
+            response = self.client.post('/usercp/profile/', postdata, follow=True)
+        self.assertContains(response, 'You’ve been sent an email to confirm your new email address.')
+
+        # Changing an email address requires a valid session
+        self.client.logout()
+        self.assertFalse(self.client.user.is_authenticated())
+
+        # Perform invalid mail change
+        subject = mail.outbox[0].subject
+        self.assertIn(u'Confirm email address', subject)
+        code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
+                         mail.outbox[0].body).group(0).strip()
+        postdata = {'data': code}
+        with translation.override('en-us'):
+            response = self.client.post('/confirm/set_new_email/', postdata, follow=True)
+        self.assertContains(response, 'You need to be logged in before you can continue.')
+
+        # Perform successful email change and log the user out again
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.post('/confirm/set_new_email/', postdata)
+        self.client.logout()
+        self.assertFalse(self.client.user.is_authenticated())
+
+        # Perform invalid mail reset
+        subject = mail.outbox[1].subject
+        self.assertIn(u'Email address changed', subject)
+        code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
+                         mail.outbox[1].body).group(0).strip()
+        postdata = {'data': code}
+        with translation.override('en-us'):
+            response = self.client.post('/confirm/reset_email/', postdata, follow=True)
+        self.assertContains(response, 'You need to be logged in before you can continue.')
+
+        # Perform successful email reset
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.post('/confirm/reset_email/', postdata)
+        self.assertContains(response, 'Your email address was reset.')
+
 
 class TestPrivMsgViews(TestCase):
 
