@@ -1,19 +1,20 @@
 # German (Germany) translations for .
-# Copyright (C) 2012 ORGANIZATION
+# Copyright (C) 2013 ORGANIZATION
 # This file is distributed under the same license as the  project.
 #
 # Translators:
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-# <frustbox@gmail.com>, 2011.
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012.
-# <phaiax@invisibletower.de>, 2012.
-# Sören Wegener <wegener92@googlemail.com>, 2011.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010
+# jug <frustbox@gmail.com>, 2011
+# Markus Holtermann <inyoka@markusholtermann.eu>, 2012-2013
+# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
+# Phaiax <phaiax@invisibletower.de>, 2012
+# Sören Wegener <wegener92@googlemail.com>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-04-17 01:52+0200\n"
-"PO-Revision-Date: 2012-11-03 12:47+0000\n"
+"POT-Creation-Date: 2013-04-21 23:09+0200\n"
+"PO-Revision-Date: 2013-04-21 21:09+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
@@ -600,9 +601,9 @@ msgstr ""
 msgid "Description about the planet that will be used in the feed aggregations."
 msgstr "Beschreibung zum Planeten, die im Feed verwendet wird."
 
-#: inyoka/portal/forms.py:971
+#: inyoka/portal/forms.py:916
 msgid "Invalid substitution pattern."
-msgstr "Ungültiger Ersetzungsmuster."
+msgstr "Ungültiges Ersetzungsmuster."
 
 #: inyoka/portal/forms.py:976
 msgid "Styles"
@@ -787,12 +788,6 @@ msgstr "Portal | kann Ablage verwalten"
 msgid "Portal | can watch users"
 msgstr "Portal | kann Benutzer beobachten"
 
-#: inyoka/portal/user.py:87
-msgid "Sorry, more than one month passed since the deletion of the account"
-msgstr ""
-"Entschuldige, es ist bereits mehr als ein Monat seit der Löschung deines "
-"Kontos vergangen."
-
 #: inyoka/portal/user.py:93
 msgid "This e-mail address is used by another user."
 msgstr "Diese E-Mail-Adresse wird bereits verwendet."
@@ -807,14 +802,14 @@ msgstr "Das Konto „%(name)s“ wurde bereits reaktiviert."
 msgid "The user “%(name)s” has reactivated his account."
 msgstr "Der Benutzer „%(name)s“ hat sein Konto neu aktiviert."
 
-#: inyoka/portal/user.py:123
+#: inyoka/portal/user.py:129
 #, python-format
 msgid ""
-"The account “%(name)s” was reactivated. You will receive an email to set "
-"the new password."
+"The account “%(name)s” was reactivated. Please use the password recovery "
+"function to set a new password."
 msgstr ""
-"Das Konto „%(name)s“ wurde reaktiviert. Du erhälst eine E-Mail, um ein "
-"neues Passwort zu erstellen."
+"Das Konto „%(name)s“ wurde reaktiviert. Bitte benutze die „Passwort "
+"vergessen“ Funktion um ein neues Passwort zu setzen."
 
 #: inyoka/portal/user.py:147
 #, python-format
@@ -830,10 +825,6 @@ msgstr "Der Benutzer „%(name)s“ hat sein Konto deaktiviert."
 #, python-format
 msgid "%(sitename)s – Confirm email address"
 msgstr "%(sitename)s – E-Mail Adresse bestätigen"
-
-#: inyoka/portal/user.py:204 inyoka/portal/user.py:231
-msgid "The link is too old."
-msgstr "Der Link ist zu alt."
 
 #: inyoka/portal/user.py:218
 #, python-format
@@ -1371,8 +1362,16 @@ msgstr "Bitte auswählen"
 msgid "All"
 msgstr "Alle"
 
-#: inyoka/portal/views.py:1761
-msgid "The entered data is invalid."
+#: inyoka/portal/views.py:1788
+msgid "You cannot reactivate an account while you are logged in."
+msgstr "Du kannst kein Konto reaktivieren solange du angemeldet bist."
+
+#: inyoka/portal/views.py:1793
+msgid "You need to be logged in before you can continue."
+msgstr "Du musst angemeldet sein um fortzufahren."
+
+#: inyoka/portal/views.py:1808
+msgid "The entered data is invalid or has expired."
 msgstr "Die eingegebenen Daten sind ungültig."
 
 #: inyoka/portal/views.py:1811

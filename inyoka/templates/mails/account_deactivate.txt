@@ -4,6 +4,6 @@ du hast auf ubuntuusers.de deinen Account gelöscht. Zum Schutz vor Missbrauch k
 
 Besuche dazu {{ href('portal', 'confirm', 'reactivate_user') }} und gib die folgende Zeichenkette dort ein:
 
-    {{ userdata|indent(4) }}
+    {{ data|indent(4) }}
 
 Dein Team von ubuntuusers.de

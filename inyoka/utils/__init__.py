@@ -9,30 +9,12 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import math
-import cPickle
 from itertools import groupby as igroupby
-from hashlib import sha1
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 
 
 def ctype(model):
     return ContentType.objects.get_for_model(model)
-
-
-def encode_confirm_data(data):
-    dump = cPickle.dumps(data)
-    hash = sha1(dump + settings.SECRET_KEY).digest()
-    return (dump + hash).encode('base64').replace('+', '_')
-
-
-def decode_confirm_data(data):
-    data = data.replace('_', '+').decode('base64')
-    dump = data[:-20]
-    hash = data[-20:]
-    if sha1(dump + settings.SECRET_KEY).digest() != hash:
-        raise ValueError
-    return cPickle.loads(dump)
 
 
 class classproperty(object):
