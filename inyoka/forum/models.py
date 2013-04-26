@@ -1303,7 +1303,7 @@ class ReadStatus(object):
                     self.mark(item.parent)
             return True
 
-        row = self.data.get(str(forum_id), (None, []))
+        row = self.data.get((forum_id), (None, []))
         row[1].append(post_id)
         children = item.forum.children
         if children:
