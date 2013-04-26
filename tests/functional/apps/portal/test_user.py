@@ -41,13 +41,10 @@ class TestUserModel(TestCase):
         self.assertEqual(self.user.status, 3)
 
 
-class TestGroupModel(unittest.TestCase):
+class TestGroupModel(TestCase):
     def setUp(self):
         self.group = Group.objects.create(name='testing', is_public=True)
 
     def test_icon(self):
         # TODO? What should be tested here?
         self.assertEqual(self.group.icon_url, None)
-
-    def tearDown(self):
-        self.group.delete()
