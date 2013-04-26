@@ -6,11 +6,10 @@
     This unittest tests various features of the wiki lexer. Just the lexer,
     not the parser.
 
-    :copyright: Copyright 2007 by Armin Ronacher.
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from django.test import TestCase
+import unittest
 
 from inyoka.markup.lexer import Lexer
 
@@ -18,7 +17,7 @@ from inyoka.markup.lexer import Lexer
 lexer = Lexer()
 
 
-class TestLexer(TestCase):
+class TestLexer(unittest.TestCase):
 
     def test_inline_markup(self):
         expect = lexer.tokenize(

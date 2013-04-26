@@ -3,14 +3,15 @@
     tests.functional.utils.test_utils
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: Copyright 2007 by Armin Ronacher.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
+import unittest
 from django.test import TestCase
 from inyoka.utils.text import get_next_increment, human_number
 
 
-class TestText(TestCase):
+class TestText(unittest.TestCase):
 
     def test_get_next_increment(self):
         self.assertEqual(get_next_increment(['cat', 'cat10', 'cat2'], u'cat'),

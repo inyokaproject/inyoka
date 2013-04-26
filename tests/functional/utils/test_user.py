@@ -18,9 +18,6 @@ class TestUtilsUser(unittest.TestCase):
         self.user = User.objects.register_user('testing', 'example@example.com',
                                                'pwd', False)
 
-    def tearDown(self):
-        self.user.delete()
-
     def test_gen_activation_key(self):
         # We need to fakly generate the hash here because we're using the
         # user.id and MySQL does not handle primary keys well during

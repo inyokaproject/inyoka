@@ -5,10 +5,10 @@
 
     Here we test the HTML rendering.
 
-    :copyright: Copyright 2007 by Armin Ronacher.
+    :copyright: (c) 2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from django.test import TestCase
+import unittest
 
 from inyoka.markup import Parser, RenderContext
 
@@ -20,7 +20,7 @@ def render(source):
     return html
 
 
-class TestHtmlRenderer(TestCase):
+class TestHtmlRenderer(unittest.TestCase):
     def test_simple_markup(self):
         """Test the simple markup."""
         html = render("''foo'', '''bar''', __baz__, ,,(foo),,, ^^(bar)^^")
