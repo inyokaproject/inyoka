@@ -1274,7 +1274,7 @@ class ReadStatus(object):
             forum_id, post_id = item.forum_id, item.last_post_id
         else:
             raise ValueError('Can\'t determine read status of an unknown type')
-        row = self.data.get(str(forum_id), (None, []))
+        row = self.data.get(forum_id, (None, []))
         if row[0] >= post_id:
             return True
         elif is_forum:
@@ -1292,7 +1292,7 @@ class ReadStatus(object):
         post_id = item.last_post.id
 
         if isinstance(item, Forum):
-            self.data[str(forum_id)] = (post_id, [])
+            self.data[forum_id] = (post_id, [])
             for child in item.children:
                 self.mark(child)
             if item.parent_id:
@@ -1303,7 +1303,7 @@ class ReadStatus(object):
                     self.mark(item.parent)
             return True
 
-        row = self.data.get((forum_id), (None, []))
+        row = self.data.get(forum_id, (None, []))
         row[1].append(post_id)
         children = item.forum.children
         if children:
@@ -1316,20 +1316,20 @@ class ReadStatus(object):
             r = list(row[1])
             r.sort()
             row = (r[settings.FORUM_LIMIT_UNREAD//2],
-                   r[settings.FORUM_LIMIT_UNREAD//2:])
-        self.data[str(forum_id)] = row
+                list(r[settings.FORUM_LIMIT_UNREAD//2:]))
+        self.data[forum_id] = row
         return True
 
     def serialize(self):
         def _serialize(iter):
             result = []
             for item in iter:
-                if item and isinstance(item, (list, set, tuple)):
+                if isinstance(item, (set, list, tuple)):
                     result.append(_serialize(list(set(item))))
                 else:
                     result.append(item)
             return result
-        return json.dumps({k: _serialize(v) for k, v in self.data.iteritems()})
+        return json.dumps({key: _serialize(value) for key, value in self.data.iteritems()})
 
 
 def mark_all_forums_read(user):
