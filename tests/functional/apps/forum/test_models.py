@@ -244,7 +244,7 @@ class TestPostSplit(TestCase):
         cache.delete('forum/forums/%s' % self.forum2.slug)
         t2 = Topic.objects.get(id=self.topic2.id)
 
-        self.assertEqual(Topic.objects.filter(id=self.topic1.id).count(), 0)
+        self.assertFalse(Topic.objects.filter(id=self.topic1.id).exists())
         self.assertEqual(t2.post_count, 10)
         self.assertEqual(t2.first_post.id, self.t2_posts[0].id)
         self.assertEqual(t2.last_post.id, self.t1_posts[4].id)
