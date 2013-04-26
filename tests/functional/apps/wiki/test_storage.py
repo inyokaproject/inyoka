@@ -23,26 +23,26 @@ class StorageTest(TestCase):
     storage_type = ''
 
     def setUp(self):
-      self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
-      self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
 
-      self.client.login(username='admin', password='admin')
-      storage.clear_cache()
+        self.client.login(username='admin', password='admin')
+        storage.clear_cache()
 
     def tearDown(self):
-      self.client.logout()
-      storage.clear_cache()
+        self.client.logout()
+        storage.clear_cache()
 
     def _create_page(self, name, text, **kwargs):
-      return Page.objects.create(name, text, user=self.admin,
-                                 note='comment', **kwargs)
+        return Page.objects.create(name, text, user=self.admin,
+                                   note='comment', **kwargs)
 
 
 class TestACLStorage(StorageTest):
 
     def setUp(self):
-      super(TestACLStorage, self).setUp()
-      User.objects.register_user('hacker', 'hacker', 'hacker', False)
+        super(TestACLStorage, self).setUp()
+        User.objects.register_user('hacker', 'hacker', 'hacker', False)
 
     def test_single_valid(self):
         self._create_page(u'ACL',
