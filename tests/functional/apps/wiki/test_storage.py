@@ -31,8 +31,6 @@ class StorageTest(TestCase):
 
     def tearDown(self):
         self.client.logout()
-        Page.objects.all().delete()
-        Attachment.objects.all().delete()
         storage.clear_cache()
 
     def _create_page(self, name, text, **kwargs):
