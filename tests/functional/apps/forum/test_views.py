@@ -171,8 +171,8 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 403)
 
     @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
-    @patch('inyoka.forum.views.TOPICS_PER_PAGE', 2)
-    @patch('tests.functional.apps.forum.test_views.TOPICS_PER_PAGE', 2)
+    @patch('inyoka.forum.views.TOPICS_PER_PAGE', 4)
+    @patch('tests.functional.apps.forum.test_views.TOPICS_PER_PAGE', 4)
     def test_topiclist(self):
         self._setup_pagination()
         self.assertEqual(len(self.client.get("/last24/").tmpl_context['topics']),
