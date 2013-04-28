@@ -314,6 +314,8 @@ class TestAuthViews(TestCase):
             response = self.client.post('/usercp/deactivate/', postdata, follow=True)
         self.assertContains(response, 'Your account was deactivated.')
 
+        self.assertTrue(User.objects.get(pk=self.user.pk).is_deleted)
+
         # Once an account is deactivated the user session will be terminated.
         self.assertFalse(self.client.user.is_authenticated())
 
@@ -325,6 +327,7 @@ class TestAuthViews(TestCase):
         with translation.override('en-us'):
             response = self.client.post('/confirm/reactivate_user/', postdata, follow=True)
         self.assertContains(response, 'The account “user” was reactivated.')
+        self.assertTrue(User.objects.get(pk=self.user.pk).is_active)
 
     def test_user_change_mail_and_recover(self):
         self.client.login(username='user', password='user')
