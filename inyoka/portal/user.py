@@ -79,7 +79,7 @@ class UserBanned(Exception):
     """
 
 
-def reactivate_user(id, email, status, time):
+def reactivate_user(id, email, status):
     from inyoka.wiki.models import Page as WikiPage
 
     email_exists = User.objects.filter(email=email).exists()
@@ -134,11 +134,9 @@ def deactivate_user(user):
     from inyoka.wiki.models import Page as WikiPage
 
     data = {
-        'action': 'reactivate_user',
         'id': user.id,
         'email': user.email,
         'status': user.status,
-        'time': str(datetime.utcnow()),
     }
 
     subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
@@ -177,10 +175,8 @@ def deactivate_user(user):
 def send_new_email_confirmation(user, email):
     """Send the user an email where he can confirm his new email address"""
     data = {
-        'action': 'set_new_email',
         'id': user.id,
         'email': email,
-        'time': str(datetime.utcnow()),
     }
 
     text = render_template('mails/new_email_confirmation.txt', {
@@ -193,7 +189,7 @@ def send_new_email_confirmation(user, email):
     send_mail(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL, [email])
 
 
-def set_new_email(id, email, time):
+def set_new_email(id, email):
     """
     Save the new email address the user has confirmed, and send an email to
     his old address where he can reset it to protect against abuse.
@@ -201,10 +197,8 @@ def set_new_email(id, email, time):
     user = User.objects.get(id=id)
 
     data = {
-        'action': 'reset_email',
         'id': user.id,
         'email': user.email,
-        'time': str(datetime.utcnow()),
     }
     text = render_template('mails/reset_email.txt', {
         'user': user,
@@ -223,7 +217,7 @@ def set_new_email(id, email, time):
     }
 
 
-def reset_email(id, email, time):
+def reset_email(id, email):
     user = User.objects.get(id=id)
     user.email = email
     user.save()

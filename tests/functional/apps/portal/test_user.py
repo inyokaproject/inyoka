@@ -19,19 +19,6 @@ class TestUserModel(TestCase):
         self.user = User.objects.register_user('testing', 'example@example.com',
                                                'pwd', False)
 
-    def test_reactivation(self):
-        result = reactivate_user(self.user.id, '', '', datetime.utcnow())
-        self.assert_('failed' in result)
-        result = reactivate_user(self.user.id, '', '', datetime.utcnow() - timedelta(days=34))
-        self.assert_('failed' in result)
-        self.user.status = 3
-        self.user.save()
-        result = reactivate_user(self.user.id, 'example_new@example.com',
-                                 1, datetime.now())
-        self.assert_('success' in result)
-        self.user = User.objects.get(pk=self.user.id)
-        self.assertEqual(self.user.status, 1)
-
     def test_deactivation(self):
         """Test if the user status is correctly changed after deactivating a
         user.

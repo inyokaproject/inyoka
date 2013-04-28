@@ -1802,13 +1802,11 @@ def confirm(request, action):
     try:
         salt = 'inyoka.action.%s' % action
         data = signing.loads(data, max_age=lifetime * 24 * 60 * 60, salt=salt)
-        data['time'] = dateutil.parser.parse(data['time'])
     except (ValueError, signing.BadSignature):
         return {
             'failed': _(u'The entered data is invalid or has expired.'),
         }
 
-    data.pop('action')
     r = func(**data)
     r['action'] = action
     return r
