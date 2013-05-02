@@ -12,9 +12,6 @@
   if (navigator.userAgent.indexOf('KHTML') >= 0) return;
 
   var FEED_COUNTS = [10, 20, 30, 50, 75, 100];
-  var FORUM_URL = 'http://forum.' + Inyoka.BASE_DOMAIN_NAME + '/';
-  var IKHAYA_URL = 'http://ikhaya.' + Inyoka.BASE_DOMAIN_NAME + '/';
-  var PLANET_URL = 'http://planet.' + Inyoka.BASE_DOMAIN_NAME + '/';
 
   $(document).ready(function () {
     $('#id_forum_forum').change(function () {
@@ -58,7 +55,7 @@
       break;
     }
     if (OK) {
-      if (data.component == '*') feed_url = FORUM_URL + 'feeds/' + data.mode + '/' + data.count + '/';
+      if (data.component == '*') feed_url = Inyoka.FORUM_URL + 'feeds/' + data.mode + '/' + data.count + '/';
       else feed_url = FORUM_URL + 'feeds/' + data.component + '/' + data.forum + '/' + data.mode + '/' + data.count + '/';
       if (!$('#forum_feed_url').length) {
         $('#forum_submit_p').prepend('<strong>' + gettext('Feed URL:') + '</strong> ' + '<a id="forum_feed_url" href="about:blank">-</a></span><br/>');
@@ -83,8 +80,8 @@
       break;
     }
     if (OK) {
-      if (data.category == '*') feed_url = IKHAYA_URL + 'feeds/' + data.mode + '/' + data.count + '/';
-      else feed_url = IKHAYA_URL + 'feeds/' + data.category + '/' + data.mode + '/' + data.count + '/';
+      if (data.category == '*') feed_url = Inyoka.IKHAYA_URL + 'feeds/' + data.mode + '/' + data.count + '/';
+      else feed_url = Inyoka.IKHAYA_URL + 'feeds/' + data.category + '/' + data.mode + '/' + data.count + '/';
       if (!$('#ikhaya_feed_url').length) {
         $('#ikhaya_submit_p').prepend('<strong>' + gettext('Feed URL:') + '</strong> ' + '<a id="ikhaya_feed_url" href="about:blank">-</a></span><br/>');
       }
@@ -96,7 +93,7 @@
 
   function makePlanetFeedURL() {
     var
-    errors = {},
+        errors = {},
         data = {},
         OK = true,
         form = document.getElementById('planet');
@@ -107,7 +104,7 @@
       break;
     }
     if (OK) {
-      feed_url = PLANET_URL + 'feeds/' + data.mode + '/' + data.count + '/';
+      feed_url = Inyoka.PLANET_URL + 'feeds/' + data.mode + '/' + data.count + '/';
       if ($('#planet_feed_url').length) {
         $('#planet_submit_p').prepend('<strong>' + gettext('Feed URL:') + '</strong> ' + '<a id="planet_feed_url" href="about:blank">-</a></span><br/>');
       }
