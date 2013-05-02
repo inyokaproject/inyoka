@@ -59,7 +59,7 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
     return [{
         'date':     date(*key),
         'articles': entries
-    } for key, entries in days if entries]
+    } for key, items in days if items]
 
 
 def get_user_timezone():
