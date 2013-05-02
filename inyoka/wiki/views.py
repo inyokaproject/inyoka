@@ -249,7 +249,7 @@ def feed(request, page_name=None, count=10):
                   or settings.INYOKA_ANONYMOUS_USER)
         feed.add(
             title=u'%s (%s)' % (
-                rev.user or INYOKA_ANONYMOUS_USER,
+                rev.user or settings.INYOKA_ANONYMOUS_USER,
                 format_datetime(rev.change_date),
             ),
             url=url_for(rev),
