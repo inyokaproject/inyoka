@@ -12,9 +12,9 @@
   if (navigator.userAgent.indexOf('KHTML') >= 0) return;
 
   var FEED_COUNTS = [10, 20, 30, 50, 75, 100];
-  var FORUM_URL = 'http://forum.' + $BASE_DOMAIN_NAME + '/';
-  var IKHAYA_URL = 'http://ikhaya.' + $BASE_DOMAIN_NAME + '/';
-  var PLANET_URL = 'http://planet.' + $BASE_DOMAIN_NAME + '/';
+  var FORUM_URL = 'http://forum.' + Inyoka.BASE_DOMAIN_NAME + '/';
+  var IKHAYA_URL = 'http://ikhaya.' + Inyoka.BASE_DOMAIN_NAME + '/';
+  var PLANET_URL = 'http://planet.' + Inyoka.BASE_DOMAIN_NAME + '/';
 
   $(document).ready(function () {
     $('#id_forum_forum').change(function () {
@@ -24,8 +24,8 @@
     $('#ikhaya').change(makeIkhayaFeedURL);
     $('#planet').change(makePlanetFeedURL);
     $('.feed_count').after(' <span class="feed_count_adjust">');
-    $('.feed_count_adjust').append('<img class="feed_count_increase" src="' + $STATIC_URL + 'img/arrow-up.gif" />')
-                           .append('<img class="feed_count_decrease" src="' + $STATIC_URL + 'img/arrow-down.gif" />');
+    $('.feed_count_adjust').append('<img class="feed_count_increase" src="' + Inyoka.STATIC_URL + 'img/arrow-up.gif" />')
+                           .append('<img class="feed_count_decrease" src="' + Inyoka.STATIC_URL + 'img/arrow-down.gif" />');
     $('.feed_count_increase').click(function () {
       var count = document.getElementById($(this).parent().siblings()[0].htmlFor);
       count.value = _next(count.value, FEED_COUNTS);

@@ -304,7 +304,7 @@
   WikiEditor.prototype.init = function (options) {
     var self = this;
     this.options = $.extend(defaults, options);
-    this.username = $CURRENT_USER || 'Anonymous';
+    this.username = Inyoka.CURRENT_USER || 'Anonymous';
     this.smilies = null;
     this.$el[0].inyokaWikiEditor = this;
 

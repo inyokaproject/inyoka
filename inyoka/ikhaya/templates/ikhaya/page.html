@@ -7,18 +7,18 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends 'overall.html' %}
 {% do BREADCRUMB.append(_('News'), href('ikhaya'), True) %}
 {% set styles = styles|default([]) + ['ikhaya', 'highlight'] %}
 {% set scripts = scripts|default([]) + ['ikhaya'] %}
 {% set active_app = 'ikhaya' %}
 {% set navi_type  = 'sidebar' %}
+{%- extends 'overall.html' %}
 
 {%- block html_head %}
   {{ super() }}
   <script type="text/javascript">
     /*<![CDATA[*/
-      var $SIDEBAR_HIDDEN = {{ USER.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
+      var Inyoka.SIDEBAR_HIDDEN = {{ USER.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
     /*]]>*/
   </script>
 {%- endblock %}
