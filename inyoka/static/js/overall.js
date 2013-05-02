@@ -13,7 +13,6 @@ window.Inyoka = {}
 $(document).ready(function () {
 
   // Set global available constants.
-  // TODO: These constants should be bound to a special ``Inyoka`` object.
   (function() {
     Inyoka.STATIC_URL = $('body').data('static-url'),
     Inyoka.MEDIA_URL = $('body').data('media-url'),
