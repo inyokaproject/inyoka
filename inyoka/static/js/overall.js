@@ -20,6 +20,10 @@ $(document).ready(function () {
     Inyoka.CURRENT_USER = $('body').data('current-user'),
     Inyoka.IS_LOGGED_IN = $('body').data('logged-in'),
     Inyoka.SIDEBAR_HIDDEN = $('body').data('sidebar-hidden');
+
+    Inyoka.FORUM_URL = 'http://forum.' + Inyoka.BASE_DOMAIN_NAME + '/';
+    Inyoka.IKHAYA_URL = 'http://ikhaya.' + Inyoka.BASE_DOMAIN_NAME + '/';
+    Inyoka.PLANET_URL = 'http://planet.' + Inyoka.BASE_DOMAIN_NAME + '/';
   })();
 
   var loginForm = null;
