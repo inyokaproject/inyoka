@@ -63,7 +63,7 @@
   <body data-static-url="{{ href('static') }}"
         data-media-url="{{ href('media') }}"
         data-base-domain-name="{{ SETTINGS.BASE_DOMAIN_NAME }}"
-        data-current-user="{{ USER.username if USER.is_authenticated() else 'Anonymous' }}"
+        data-current-user="{{ USER.username if USER.is_authenticated() else SETTINGS.INYOKA_ANONYMOUS_USER }}"
         data-logged-in="{{ USER.is_authenticated() and 'true' or 'false' }}"
         data-sidebar-hidden="{{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }}">
    <div class="wrap">
