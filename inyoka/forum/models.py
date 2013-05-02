@@ -1062,7 +1062,7 @@ class Attachment(models.Model):
             return
 
         with f.file as fobj:
-            return f.read()
+            return fobj.read()
 
     @property
     def html_representation(self):
