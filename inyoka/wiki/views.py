@@ -244,12 +244,12 @@ def feed(request, page_name=None, count=10):
             'summary': rev.note or '-',
         }
         kwargs['summary_type'] = None
-        author = rev.user \
-            and {'name': rev.user.username, 'uri': url_for(rev.user)} \
-            or _(u'Anonymous')
+        author = (rev.user
+                  and {'name': rev.user.username, 'uri': url_for(rev.user)}
+                  or settings.INYOKA_ANONYMOUS_USER)
         feed.add(
             title=u'%s (%s)' % (
-                rev.user or _(u'Anonymous'),
+                rev.user or INYOKA_ANONYMOUS_USER,
                 format_datetime(rev.change_date),
             ),
             url=url_for(rev),
