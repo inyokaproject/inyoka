@@ -1504,7 +1504,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     pagination = pagination.generate()
 
     # check for moderation permissions
-    moderatable_forums = [forum.id for forum in
+    moderatable_forums = [obj.id for obj in
         Forum.objects.get_forums_filtered(request.user, CAN_MODERATE, reverse=True)
     ]
 
