@@ -19,12 +19,12 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,\
     update_last_login
 from django.contrib.auth.signals import user_logged_in
 from django.core.cache import cache
+from django.core import signing
 from django.db import models
 from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy, ugettext as _
 
-from inyoka.utils import encode_confirm_data
 from inyoka.utils.database import update_model, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
@@ -79,16 +79,8 @@ class UserBanned(Exception):
     """
 
 
-def reactivate_user(id, email, status, time):
+def reactivate_user(id, email, status):
     from inyoka.wiki.models import Page as WikiPage
-
-    if (datetime.utcnow() - time).days > 33:
-        return {
-            'failed': _(u'Sorry, more than one month passed since the deletion '
-                        u'of the account'),
-        }
-
-    return {'failed': _(u'Sorry, user reactivation is currently disabled.')}
 
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
@@ -99,22 +91,27 @@ def reactivate_user(id, email, status, time):
     if not user.is_deleted:
         return {
             'failed': _(u'The account “%(name)s” was already reactivated.') %
-                {'name': escape(user.username)},
+               {'name': escape(user.username)},
         }
-    values = {'email': email,
-              'status': status}
+    values = {
+        'email': email,
+        'status': status,
+    }
     if user.banned_until and user.banned_until < datetime.utcnow():
+        # User was banned but the ban time exceeded
         values['status'] = 1
         values['banned_until'] = None
 
     update_model(user, **values)
-    # FIXME: Django 1.5, this thing got nuked :þ
-    #send_new_user_password(user)
+
+    # Set a dumy password
+    user.set_password(User.objects.make_random_password(length=32))
+    user.save()
 
     # reactivate user page
     try:
         userpage = WikiPage.objects.get_by_name('%s/%s' % (
-                settings.WIKI_USER_BASE, escape(user.username)))
+            settings.WIKI_USER_BASE, escape(user.username)))
         userpage.edit(user=User.objects.get_system_user(), deleted=False,
                       note=_(u'The user “%(name)s” has reactivated his account.')
                              % {'name': escape(user.username)})
@@ -122,8 +119,8 @@ def reactivate_user(id, email, status, time):
         pass
 
     return {
-        'success': _(u'The account “%(name)s” was reactivated. You will '
-                     u'receive an email to set the new password.')
+        'success': _(u'The account “%(name)s” was reactivated. Please use the '
+                     u'password recovery function to set a new password.')
                      % {'name': escape(user.username)},
     }
 
@@ -136,22 +133,18 @@ def deactivate_user(user):
     """
     from inyoka.wiki.models import Page as WikiPage
 
-    userdata = {
-        'action': 'reactivate_user',
+    data = {
         'id': user.id,
         'email': user.email,
         'status': user.status,
-        'time': datetime.utcnow(),
     }
-
-    userdata = encode_confirm_data(userdata)
 
     subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
                 % {'name': escape(user.username),
                    'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
         'user': user,
-        'userdata': userdata,
+        'data': signing.dumps(data, salt='inyoka.action.reactivate_user'),
     })
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
@@ -182,43 +175,39 @@ def deactivate_user(user):
 def send_new_email_confirmation(user, email):
     """Send the user an email where he can confirm his new email address"""
     data = {
-        'action': 'set_new_email',
         'id': user.id,
         'email': email,
-        'time': datetime.utcnow()
     }
 
     text = render_template('mails/new_email_confirmation.txt', {
         'user': user,
-        'data': encode_confirm_data(data),
+        'data': signing.dumps(data, salt='inyoka.action.set_new_email'),
     })
-    subject = _(u'%(sitename)s – Confirm email address') \
-              % {'sitename': settings.BASE_DOMAIN_NAME}
+    subject = _(u'%(sitename)s – Confirm email address') % {
+        'sitename': settings.BASE_DOMAIN_NAME
+    }
     send_mail(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL, [email])
 
 
-def set_new_email(id, email, time):
+def set_new_email(id, email):
     """
     Save the new email address the user has confirmed, and send an email to
     his old address where he can reset it to protect against abuse.
     """
-    if (datetime.utcnow() - time).days > 8:
-        return {'failed': _(u'The link is too old.')}
     user = User.objects.get(id=id)
 
     data = {
-        'action': 'reset_email',
         'id': user.id,
         'email': user.email,
-        'time': datetime.utcnow(),
     }
     text = render_template('mails/reset_email.txt', {
         'user': user,
         'new_email': email,
-        'data': encode_confirm_data(data),
+        'data': signing.dumps(data, salt='inyoka.action.reset_email'),
     })
-    subject = _(u'%(sitename)s – Email address changed') \
-              % {'sitename': settings.BASE_DOMAIN_NAME}
+    subject = _(u'%(sitename)s – Email address changed') % {
+        'sitename': settings.BASE_DOMAIN_NAME
+    }
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
     user.email = email
@@ -228,16 +217,13 @@ def set_new_email(id, email, time):
     }
 
 
-def reset_email(id, email, time):
-    if (datetime.utcnow() - time).days > 33:
-        return {'failed': _(u'The link is too old.')}
-
+def reset_email(id, email):
     user = User.objects.get(id=id)
     user.email = email
     user.save()
 
     return {
-        'success': _('Your email address was reset.')
+        'success': _(u'Your email address was reset.')
     }
 
 

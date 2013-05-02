@@ -37,3 +37,4 @@ defusedxml==0.3
 # And 0.5...
 -e git+https://github.com/rhec/pyelasticsearch.git@master#egg=pyelasticsearch
 celery-haystack==0.7.2
+python-dateutil==1.5

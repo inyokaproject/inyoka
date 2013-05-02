@@ -31,8 +31,6 @@ class StorageTest(TestCase):
 
     def tearDown(self):
         self.client.logout()
-        Page.objects.all().delete()
-        Attachment.objects.all().delete()
         storage.clear_cache()
 
     def _create_page(self, name, text, **kwargs):
@@ -42,9 +40,9 @@ class StorageTest(TestCase):
 
 class TestACLStorage(StorageTest):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.hacker = User.objects.register_user('hacker', 'hacker', 'hacker', False)
+    def setUp(self):
+        super(TestACLStorage, self).setUp()
+        User.objects.register_user('hacker', 'hacker', 'hacker', False)
 
     def test_single_valid(self):
         self._create_page(u'ACL',

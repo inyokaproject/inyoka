@@ -6,11 +6,11 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.test import TestCase
+import unittest
 from inyoka.markup.utils import filter_style
 
 
-class TestUtilsCss(TestCase):
+class TestUtilsCss(unittest.TestCase):
     def test_unwanted_css_properties(self):
         """Test for some xss wholes."""
         self.assertEqual(filter_style(u'background-image: url(javascript: alert("foo"));'), u'')

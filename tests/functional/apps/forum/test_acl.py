@@ -8,12 +8,12 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from django.test import TestCase
+import unittest
 
 from inyoka.forum import acl
 
 
-class TestForumAcl(TestCase):
+class TestForumAcl(unittest.TestCase):
 
     def test_privileges_constant(self):
         self.assertEqual(acl.PRIVILEGES,

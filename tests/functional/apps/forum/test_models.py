@@ -113,7 +113,7 @@ class TestForumModel(TestCase):
         self.parent2.topics.add(t1)
         self.forum.topics.add(t2)
 
-        for i in xrange(10):
+        for i in xrange(5):
             t1.posts.add(Post(text='post%d t1' % i,
                 author=user, position=i))
             t2.posts.add(Post(text='post%d t2' % i,
@@ -121,15 +121,15 @@ class TestForumModel(TestCase):
 
         cache.delete('forum/forums/%s' % self.parent1.slug)
         f = Forum.objects.get(id=self.parent1.id)
-        self.assertEqual(f.post_count, 20)
+        self.assertEqual(f.post_count, 10)
 
         cache.delete('forum/forums/%s' % self.parent2.slug)
         f = Forum.objects.get(id=self.parent2.id)
-        self.assertEqual(f.post_count, 20)
+        self.assertEqual(f.post_count, 10)
 
         cache.delete('forum/forums/%s' % self.forum.slug)
         f = Forum.objects.get(id=self.forum.id)
-        self.assertEqual(f.post_count, 10)
+        self.assertEqual(f.post_count, 5)
 
     def test_get_absolute_url(self):
         url1 = self.forum.get_absolute_url('show', foo='val1', bar='val2')
@@ -193,24 +193,24 @@ class TestPostSplit(TestCase):
         self.forum2.topics.add(self.topic2)
 
         self.t1_posts = {}
-        for i in xrange(10):
+        for i in xrange(5):
             self.t1_posts[i] = Post(text=u'post-1-%d' % i, author=self.user,
                     position=i)
             self.topic1.posts.add(self.t1_posts[i])
 
         self.t2_posts = {}
-        for i in xrange(10):
+        for i in xrange(5):
             self.t2_posts[i] = Post(text=u'post-1-%d' % i, author=self.user,
                     position=i)
             self.topic2.posts.add(self.t2_posts[i])
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
-        self.assertEqual(user.post_count, 20)
+        self.assertEqual(user.post_count, 10)
 
     def test_topic_count(self):
-        self.assertEqual(Topic.objects.get(id=self.topic1.id).post_count, 10)
-        self.assertEqual(Topic.objects.get(id=self.topic2.id).post_count, 10)
+        self.assertEqual(Topic.objects.get(id=self.topic1.id).post_count, 5)
+        self.assertEqual(Topic.objects.get(id=self.topic2.id).post_count, 5)
 
     def test_topic_first_post(self):
         self.assertEqual(Topic.objects.get(id=self.topic1.id).first_post,
@@ -220,23 +220,23 @@ class TestPostSplit(TestCase):
 
     def test_topic_last_post(self):
         self.assertEqual(Topic.objects.get(id=self.topic1.id).last_post,
-                         Post.objects.get(id=self.t1_posts[9].id))
+                         Post.objects.get(id=self.t1_posts[4].id))
         self.assertEqual(Topic.objects.get(id=self.topic2.id).last_post,
-                         Post.objects.get(id=self.t2_posts[9].id))
+                         Post.objects.get(id=self.t2_posts[4].id))
 
     def test_split_renumber_old_positions(self):
         topic = Topic(title='positions', author=self.user)
         self.forum1.topics.add(topic)
-        for i in range(10):
+        for i in range(5):
             topic.posts.add(Post(text='test', author=self.user, position=i))
 
-        posts = Post.objects.filter(topic=topic, position__in=[1, 2, 4, 5, 6, 8])
+        posts = Post.objects.filter(topic=topic, position__in=[1, 2, 4])
 
         Post.split(posts, topic, self.topic2)
 
         old_positions = Post.objects.filter(topic=topic).order_by('position')\
             .values_list('position', flat=True)
-        self.assertEqual(list(old_positions), [0, 1, 2, 3])
+        self.assertEqual(list(old_positions), [0, 1])
 
     def test_split_post_remove_topic(self):
         Post.split(self.t1_posts.values(), self.topic1, self.topic2)
@@ -244,10 +244,10 @@ class TestPostSplit(TestCase):
         cache.delete('forum/forums/%s' % self.forum2.slug)
         t2 = Topic.objects.get(id=self.topic2.id)
 
-        self.assertEqual(Topic.objects.filter(id=self.topic1.id).count(), 0)
-        self.assertEqual(t2.post_count, 20)
+        self.assertFalse(Topic.objects.filter(id=self.topic1.id).exists())
+        self.assertEqual(t2.post_count, 10)
         self.assertEqual(t2.first_post.id, self.t2_posts[0].id)
-        self.assertEqual(t2.last_post.id, self.t1_posts[9].id)
+        self.assertEqual(t2.last_post.id, self.t1_posts[4].id)
         post_ids = [p.id for k, p in self.t2_posts.items()] + \
                    [p.id for k, p in self.t1_posts.items()]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)

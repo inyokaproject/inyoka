@@ -8,18 +8,21 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from django.test import TestCase
+import unittest
 
 from inyoka.wiki.models import Page
 from inyoka.markup import parse, RenderContext
 
 
-class TestMacros(TestCase):
+class TestMacros(unittest.TestCase):
 
     def test_missing_link_in_picture_ticket_635(self):
         page = Page(name='Something')
-        parse("[[Bild(Bildname, 1)]]").render(RenderContext(wiki_page=page),
-                                              format='html')
+        html = parse("[[Bild(Bildname, 1)]]").render(RenderContext(wiki_page=page),
+                                                     format='html')
+
+        result = '<a href="invalid-url" class="crosslink"><img alt="Bildname" class="image-default" /></a>'
+        self.assertIn(result, html)
 
     def test_toc_indention_ticket_688(self):
         html = parse("""[[Inhaltsverzeichnis(10)]]

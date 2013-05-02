@@ -9,7 +9,7 @@
     :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from django.test import TestCase
+import unittest
 
 from inyoka.markup import Parser, nodes
 
@@ -23,7 +23,7 @@ def parse(code):
     return tree
 
 
-class TestParser(TestCase):
+class TestParser(unittest.TestCase):
 
     def test_inline_formattings(self):
         """Simple test for some inline formattings."""

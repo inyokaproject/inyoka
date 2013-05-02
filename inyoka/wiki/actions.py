@@ -48,6 +48,9 @@ from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.tasks import update_object_list
 
 
+REVISIONS_PER_PAGE = 100
+
+
 def context_modifier(request, context):
     """
     If a key called ``'page'`` that points to a page object is part of the
@@ -748,7 +751,7 @@ def do_log(request, name):
         return HttpResponseRedirect(href('wiki', '_feed', page.name, 20))
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
-                            100, link_func)
+                            REVISIONS_PER_PAGE, link_func)
     return {
         'page':         page,
         'revisions':    pagination.get_queryset(),

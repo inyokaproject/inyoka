@@ -691,15 +691,7 @@ msgstr ""
 msgid "Portal | can watch users"
 msgstr ""
 
-#: inyoka/portal/user.py:87
-msgid "Sorry, more than one month passed since the deletion of the account"
-msgstr ""
-
-#: inyoka/portal/user.py:91
-msgid "Sorry, user reactivation is currently disabled."
-msgstr ""
-
-#: inyoka/portal/user.py:95
+#: inyoka/portal/user.py:93
 msgid "This e-mail address is used by another user."
 msgstr ""
 
@@ -713,11 +705,11 @@ msgstr ""
 msgid "The user “%(name)s” has reactivated his account."
 msgstr ""
 
-#: inyoka/portal/user.py:125
+#: inyoka/portal/user.py:128
 #, python-format
 msgid ""
-"The account “%(name)s” was reactivated. You will receive an email to set "
-"the new password."
+"The account “%(name)s” was reactivated. Please use the password recovery "
+"function to set a new password."
 msgstr ""
 
 #: inyoka/portal/user.py:149
@@ -735,11 +727,7 @@ msgstr ""
 msgid "%(sitename)s – Confirm email address"
 msgstr ""
 
-#: inyoka/portal/user.py:206 inyoka/portal/user.py:233
-msgid "The link is too old."
-msgstr ""
-
-#: inyoka/portal/user.py:220
+#: inyoka/portal/user.py:218
 #, python-format
 msgid "%(sitename)s – Email address changed"
 msgstr ""
@@ -1243,8 +1231,16 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: inyoka/portal/views.py:1719
-msgid "The entered data is invalid."
+#: inyoka/portal/views.py:1788
+msgid "You cannot reactivate an account while you are logged in."
+msgstr ""
+
+#: inyoka/portal/views.py:1793
+msgid "You need to be logged in before you can continue."
+msgstr ""
+
+#: inyoka/portal/views.py:1808
+msgid "The entered data is invalid or has expired."
 msgstr ""
 
 #: inyoka/portal/views.py:1765

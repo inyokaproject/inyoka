@@ -1,10 +1,10 @@
 #-*- coding: utf-8 -*-
+import unittest
 from os.path import join, dirname
-from django.test import TestCase
 from inyoka.utils import magic
 
 
-class TestMagic(TestCase):
+class TestMagic(unittest.TestCase):
 
     def setUp(self):
         self.filename = join(dirname(__file__), 'test.pdf')

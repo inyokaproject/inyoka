@@ -62,23 +62,6 @@
                 href="{{ href('portal', 'opensearch', app) }}" />
         {%- endif -%}
       {%- endfor %}
-      <script type="text/javascript" src="{{ href('portal', 'jsi18n') }}"></script>
-      <script type="text/javascript">
-      /*<![CDATA[*/
-        var
-          $STATIC_URL = {{ href('static')|jsonencode }},
-          $MEDIA_URL = {{ href('media')|jsonencode }},
-          $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }},
-          $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated() else 'null' }},
-          $IS_LOGGED_IN = {{ USER.is_authenticated() and 'true' or 'false' }},
-          $SIDEBAR_HIDDEN = {{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }};
-      /*]]>*/
-      </script>
-      {%- if SETTINGS.DEBUG %}
-        {% set suffix = SETTINGS.DEBUG and '.js' or '.min.js' %}
-        <script type="text/javascript"
-                src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
-      {% endif %}
     {%- endblock %}
   </head>
   <body>
@@ -287,6 +270,24 @@
     </div>{# .footer #}
     <div style="clear: both;"></div>
    </div>
+
+    <script type="text/javascript" src="{{ href('portal', 'jsi18n') }}"></script>
+    <script type="text/javascript">
+    /*<![CDATA[*/
+      var
+        $STATIC_URL = {{ href('static')|jsonencode }},
+        $MEDIA_URL = {{ href('media')|jsonencode }},
+        $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }},
+        $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated() else 'null' }},
+        $IS_LOGGED_IN = {{ USER.is_authenticated() and 'true' or 'false' }},
+        $SIDEBAR_HIDDEN = {{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }};
+    /*]]>*/
+    </script>
+    {%- if SETTINGS.DEBUG %}
+      {% set suffix = SETTINGS.DEBUG and '.js' or '.min.js' %}
+      <script type="text/javascript"
+              src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
+    {% endif %}
 
    {%- if SETTINGS.DEBUG %}
      {%- for script in ['vendor/underscore', 'vendor/jquery-2.0.0', 'overall'] + scripts|default([]) %}

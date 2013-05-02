@@ -9,7 +9,7 @@
     :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from django.test import TestCase
+import unittest
 
 from inyoka.markup import transformers
 from inyoka.markup.transformers import AutomaticParagraphs, \
@@ -26,7 +26,7 @@ def parse(source, transformer):
     return tree
 
 
-class TestTransformers(TestCase):
+class TestTransformers(unittest.TestCase):
 
     def test_automatic_paragraphs(self):
         """Test the automatic paragraph insertion."""

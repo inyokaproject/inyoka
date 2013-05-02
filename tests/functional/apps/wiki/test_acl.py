@@ -45,20 +45,12 @@ test_normalized_name=-edit,-create,-attach,-manage,-delete
 
         self.assertEqual(get_privilege_flags('test normalized_name', 'some_page'), PRIV_ALL)
 
-        tests = (
-            'page',
-
-            'page_normalized1',
-            'page normalized2',
-
-            'wild_cards1/test a',
-            'wild_cards1/test_a',
-
-            'wild cards2/test a',
-            'wild cards2/test_a',
-        )
-
-        for test in tests:
-            self.assertEqual(get_privilege_flags('test normalized_name', test), PRIV_READ)
+        self.assertEqual(get_privilege_flags('test normalized_name', 'page'), PRIV_READ)
+        self.assertEqual(get_privilege_flags('test normalized_name', 'page_normalized1'), PRIV_READ)
+        self.assertEqual(get_privilege_flags('test normalized_name', 'page_normalized2'), PRIV_READ)
+        self.assertEqual(get_privilege_flags('test normalized_name', 'wild_cards1/test a'), PRIV_READ)
+        self.assertEqual(get_privilege_flags('test normalized_name', 'wild_cards1/test b'), PRIV_READ)
+        self.assertEqual(get_privilege_flags('test normalized_name', 'wild cards2/test a'), PRIV_READ)
+        self.assertEqual(get_privilege_flags('test normalized_name', 'wild cards2/test b'), PRIV_READ)
 
         request_cache.delete('wiki/storage/Access-Control-List')

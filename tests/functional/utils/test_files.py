@@ -8,12 +8,12 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
+import unittest
 from django.core.files.base import ContentFile
-from django.utils.unittest import TestCase
 from inyoka.utils.files import InyokaFSStorage
 
 
-class TestFileStorage(TestCase):
+class TestFileStorage(unittest.TestCase):
     def setUp(self):
         self.s = InyokaFSStorage()
 

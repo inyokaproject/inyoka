@@ -397,6 +397,7 @@ def report_new(request, year, month, day, slug):
                 report.author = request.user
                 report.pub_date = datetime.utcnow()
                 report.save()
+                cache.delete('ikhaya/reported_article_count')
                 messages.success(request, _(u'Thanks for your report.'))
                 return HttpResponseRedirect(url_for(report))
     else:
@@ -420,6 +421,7 @@ def _change_report_status(request, report_id, action, msg):
     elif action == 'unsolve':
         report.solved = False
     report.save()
+    cache.delete('ikhaya/reported_article_count')
     messages.success(request, msg)
     return HttpResponseRedirect(url_for(report))
 

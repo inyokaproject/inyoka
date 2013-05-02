@@ -6,4 +6,6 @@ Besuche dazu die Seite {{ href('portal', 'confirm', 'reset_email') }} und gib fo
 
     {{ data|indent(4) }}
 
-Wenn die Änderung der E-Mail-Adresse beabsichtigt war, brauchst du nichts weiter zu tun. Außer diese E-Mail zu löschen :-)
+Im Falle eines Missbrauchs solltest du außerdem dein Passwort ändern. Wenn die Änderung der E-Mail-Adresse beabsichtigt war, brauchst du nichts weiter zu tun. Außer diese E-Mail zu löschen :-)
+
+Dein Team von ubuntuusers.de

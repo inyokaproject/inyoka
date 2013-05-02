@@ -8,11 +8,11 @@
     :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from django.test import TestCase
+import unittest
 from inyoka.utils.gravatar import get_gravatar
 
 
-class TestGravatar(TestCase):
+class TestGravatar(unittest.TestCase):
 
     def test_get_gravatar(self):
         self.assertEqual(get_gravatar('gridaphobe@gmail.com'),

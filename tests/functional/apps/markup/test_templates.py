@@ -6,14 +6,14 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.test import TestCase
+import unittest
 from django.utils import translation
 
 from inyoka.markup import templates
 from inyoka.markup.templates import Value, NoneValue
 
 
-class TestWikiTemplates(TestCase):
+class TestWikiTemplates(unittest.TestCase):
     def test_valid_for(self):
         code = '<@ for $l in $list @><@ endfor @>'
         parser = templates.Parser(code)
@@ -88,7 +88,7 @@ class TestWikiTemplates(TestCase):
         self.assertEqual(sorted(ret), ['0', '1', '2'])
 
 
-class TestValue(TestCase):
+class TestValue(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -288,7 +288,7 @@ class TestValue(TestCase):
         self.assertTrue(self.dict1.is_object)
 
 
-class TestBinaryFunctions(TestCase):
+class TestBinaryFunctions(unittest.TestCase):
 
     def test_contain(self):
         code = '<@ if $a contain $b @>True<@ endif @>'

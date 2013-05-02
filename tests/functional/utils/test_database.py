@@ -20,7 +20,7 @@ class TestDatabase(TestCase):
         user = User.objects.create_user('test123', 't@bla.xy', 'test123')
         update_model(user, email='another.bla')
         self.assertEqual(user.email, 'another.bla')
-        self.assertEqual(1, User.objects.filter(email='another.bla').count())
+        self.assertTrue(User.objects.filter(email='another.bla').exists())
 
         update_model(user, settings={'test': 123})
         self.assertEqual(user.settings, {'test': 123})

@@ -8,13 +8,13 @@
     :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from django.test import TestCase
+import unittest
 from inyoka.utils.templating import json_filter
 
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 
-class TestTemplating(TestCase):
+class TestTemplating(unittest.TestCase):
 
     def test_json_encoding(self):
 
