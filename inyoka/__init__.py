@@ -79,7 +79,8 @@ def _bootstrap():
 
     try:
         repo = Repo(repo_path)
-        tags = sorted([ref for ref in repo.get_refs() if ref.startswith('refs/tags')],
+        refs = repo.get_refs()
+        tags = sorted([ref for ref in refs if ref.startswith('refs/tags')],
                       key=lambda obj: V(obj))
         tag = tags[-1][10:].strip()
         commit = repo.head()[:8]
