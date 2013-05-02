@@ -8,7 +8,21 @@
  * :license: GNU GPL, see LICENSE for more details.
  */
 
+window.Inyoka = {}
+
 $(document).ready(function () {
+
+  // Set global available constants.
+  // TODO: These constants should be bound to a special ``Inyoka`` object.
+  (function() {
+    Inyoka.STATIC_URL = $('body').data('static-url'),
+    Inyoka.MEDIA_URL = $('body').data('media-url'),
+    Inyoka.BASE_DOMAIN_NAME = $('body').data('base-domain-name'),
+    Inyoka.CURRENT_USER = $('body').data('current-user'),
+    Inyoka.IS_LOGGED_IN = $('body').data('logged-in'),
+    Inyoka.SIDEBAR_HIDDEN = $('body').data('sidebar-hidden');
+  })();
+
   var loginForm = null;
 
   // preload images
@@ -18,7 +32,7 @@ $(document).ready(function () {
       overflow: 'hidden'
     });
     $.each([], function () {
-      $('<img />').attr('src', $STATIC_URL + this).appendTo(container);
+      $('<img />').attr('src', Inyoka.STATIC_URL + this).appendTo(container);
     });
   })();
 
@@ -221,13 +235,13 @@ $(document).ready(function () {
       $('.content').toggleClass('content_sidebar');
       sidebar.toggle();
       togglebutton.toggleClass('navi_toggle_up').toggleClass('navi_toggle_down');
-      if ($IS_LOGGED_IN) $.get('/?__service__=portal.toggle_sidebar', {
+      if (Inyoka.IS_LOGGED_IN) $.get('/?__service__=portal.toggle_sidebar', {
         hide: !sidebar.is(':visible'),
         component: window.location.hostname.split('.')[0]
       });
       return false;
     }).insertAfter('form.search');
-    if ($SIDEBAR_HIDDEN) togglebutton.click();
+    if (Inyoka.SIDEBAR_HIDDEN) togglebutton.click();
   })();
 
   // use javascript to deactivate the submit button on click
@@ -420,10 +434,10 @@ $(document).ready(function () {
     admin_cookie.setTime(admin_cookie_expires);
     var exp = "expires=" + admin_cookie.toGMTString();
     var dom;
-    if ($BASE_DOMAIN_NAME.indexOf(":") > 0) {
-      dom = "domain=." + $BASE_DOMAIN_NAME.substring(0, $BASE_DOMAIN_NAME.indexOf(":"));
+    if (Inyoka.BASE_DOMAIN_NAME.indexOf(":") > 0) {
+      dom = "domain=." + Inyoka.BASE_DOMAIN_NAME.substring(0, Inyoka.BASE_DOMAIN_NAME.indexOf(":"));
     } else {
-      dom = "domain=." + $BASE_DOMAIN_NAME;
+      dom = "domain=." + Inyoka.BASE_DOMAIN_NAME;
     }
     document.cookie = "admin_menu=" + menu_status + "; " + exp + "; " + dom + "; path=/";
   });
@@ -452,7 +466,7 @@ $(document).ready(function () {
     // Add common OpenID providers
     for (var provider in openid_providers) {
       var name = openid_providers[provider].name;
-      var element = $('<img src="' + $STATIC_URL + 'img/openid/' + provider + '.png" class="openid_logo" id="openid_' + provider + '" alt="' + name + '" title="' + name + ' benutzen" />')
+      var element = $('<img src="' + Inyoka.STATIC_URL + 'img/openid/' + provider + '.png" class="openid_logo" id="openid_' + provider + '" alt="' + name + '" title="' + name + ' benutzen" />')
         .click(function() {
           $(target).val('');
           p = $(this).attr('id').substring(7);

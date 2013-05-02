@@ -10,7 +10,7 @@
     :license: GNU GPL, see LICENSE for more details.
 -#}
 {%- from 'macros.html' import breadcrumb, render_modnavi_li -%}
-{{- XHTML_DTD }}
+ <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://creativecommons.org/ns#"
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -64,7 +64,12 @@
       {%- endfor %}
     {%- endblock %}
   </head>
-  <body>
+  <body data-static-url="{{ href('static') }}"
+        data-media-url="{{ href('media') }}"
+        data-base-domain-name="{{ SETTINGS.BASE_DOMAIN_NAME }}"
+        data-current-user="{{ USER.username if USER.is_authenticated() else 'Anonymous' }}"
+        data-logged-in="{{ USER.is_authenticated() and 'true' or 'false' }}"
+        data-sidebar-hidden="{{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }}">
    <div class="wrap">
     <div class="header">
       <h1><a href="/"><span>{{ SETTINGS.BASE_DOMAIN_NAME }}</span></a></h1>
@@ -274,13 +279,7 @@
     <script type="text/javascript" src="{{ href('portal', 'jsi18n') }}"></script>
     <script type="text/javascript">
     /*<![CDATA[*/
-      var
-        $STATIC_URL = {{ href('static')|jsonencode }},
-        $MEDIA_URL = {{ href('media')|jsonencode }},
-        $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }},
-        $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated() else 'null' }},
-        $IS_LOGGED_IN = {{ USER.is_authenticated() and 'true' or 'false' }},
-        $SIDEBAR_HIDDEN = {{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }};
+
     /*]]>*/
     </script>
     {%- if SETTINGS.DEBUG %}
