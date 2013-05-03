@@ -414,7 +414,7 @@ class PageManager(models.Manager):
 
             name
                 This must be a *normaliezd* version of the page name.  The
-                default action dispatcher (`ikhaya.wiki.views.show_page`)
+                default action dispatcher (`inyoka.wiki.views.show_page`)
                 automatically normalizes incoming page names so this is no
                 issue from the web layer.  However shell scripts, converters,
                 crons etc have to normalize this parameter themselves.
