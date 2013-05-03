@@ -19,9 +19,9 @@ feedparser==5.1.3
 Fabric==1.5.1
 python-openid==2.2.5
 django-mobile==0.2.4
-celery==3.0.12
-django-celery==3.0.11
-kombu==2.5.4
+celery==3.0.19
+django-celery==3.0.17
+kombu==2.5.10
 django-kombu==0.9.4
 django-hosts==0.5
 requests==1.0.3
