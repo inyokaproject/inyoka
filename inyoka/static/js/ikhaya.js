@@ -55,7 +55,7 @@ $(function () {
   };
 
   $('.suggestionlist a.assign').click(function() {
-    doAssignmentAction($(this), $CURRENT_USER);
+    doAssignmentAction($(this), Inyoka.CURRENT_USER);
     return false;
   });
 

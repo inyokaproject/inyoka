@@ -28,7 +28,6 @@ from inyoka.utils.database import find_next_increment, LockableObject
 from inyoka.utils.decorators import deferred
 from inyoka.utils.html import striptags
 from inyoka.utils.local import current_request
-from inyoka.utils.search import search
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 
@@ -324,15 +323,9 @@ class Article(models.Model, LockableObject):
     def __unicode__(self):
         return self.subject
 
-    def update_search(self):
-        """
-        This updates the xapian search index.
-        """
-        search.queue('i', self.id)
-
     def save(self, *args, **kwargs):
         """
-        This increases the edit count by 1 and updates the xapian database.
+        This increases the edit count by 1.
         """
         if self.text is None or self.intro is None:
             # might happen, because cached objects are setting text and
@@ -353,7 +346,6 @@ class Article(models.Model, LockableObject):
         self.slug = slugify(self.slug)
 
         super(Article, self).save(*args, **kwargs)
-        self.update_search()
 
         # now that we have the article id we can put it into the slug
         if suffix_id:
@@ -363,17 +355,6 @@ class Article(models.Model, LockableObject):
         cache.delete('ikhaya/article_text/%s' % self.id)
         cache.delete('ikhaya/article_intro/%s' % self.id)
         cache.delete('ikhaya/article/%s' % self.slug)
-
-    def delete(self):
-        """
-        Delete the xapian document.
-        Subscriptions are removed by a Django signal `pre_delete`
-        """
-        id = self.id
-        super(Article, self).delete()
-        self.id = id
-        # update search
-        self.update_search()
 
     class Meta:
         verbose_name = ugettext_lazy('Article')

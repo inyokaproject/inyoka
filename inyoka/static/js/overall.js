@@ -8,7 +8,24 @@
  * :license: GNU GPL, see LICENSE for more details.
  */
 
+window.Inyoka = {}
+
 $(document).ready(function () {
+
+  // Set global available constants.
+  (function() {
+    Inyoka.STATIC_URL = $('body').data('static-url'),
+    Inyoka.MEDIA_URL = $('body').data('media-url'),
+    Inyoka.BASE_DOMAIN_NAME = $('body').data('base-domain-name'),
+    Inyoka.CURRENT_USER = $('body').data('current-user'),
+    Inyoka.IS_LOGGED_IN = $('body').data('logged-in'),
+    Inyoka.SIDEBAR_HIDDEN = $('body').data('sidebar-hidden');
+
+    Inyoka.FORUM_URL = 'http://forum.' + Inyoka.BASE_DOMAIN_NAME + '/';
+    Inyoka.IKHAYA_URL = 'http://ikhaya.' + Inyoka.BASE_DOMAIN_NAME + '/';
+    Inyoka.PLANET_URL = 'http://planet.' + Inyoka.BASE_DOMAIN_NAME + '/';
+  })();
+
   var loginForm = null;
 
   // preload images
@@ -18,7 +35,7 @@ $(document).ready(function () {
       overflow: 'hidden'
     });
     $.each([], function () {
-      $('<img />').attr('src', $STATIC_URL + this).appendTo(container);
+      $('<img />').attr('src', Inyoka.STATIC_URL + this).appendTo(container);
     });
   })();
 
@@ -48,11 +65,12 @@ $(document).ready(function () {
     if (document.location.href.indexOf('/full/') >= 0) return;
 
     // create a link to hide a toc
-    $('.toc .head').append(
-    $('<a> [-]</a>').toggle(function () {
-      $(this).text(' [+]').parent().next().slideUp('fast');
-    }, function () {
-      $(this).text(' [-]').parent().next().slideDown('fast');
+    $('.toc .head').append($('<a> [-]</a>').click(function () {
+      if ($(this).text() === ' [-]') {
+        $(this).text(' [+]').parent().next().slideUp('fast');
+      } else {
+        $(this).text(' [-]').parent().next().slideDown('fast');
+      }
     }));
 
     $('.toc').each(function () {
@@ -81,7 +99,7 @@ $(document).ready(function () {
       tocTree.push(ol(1));
       var last_level = 1;
       // Iterate over all <a> tags in headlines
-      $('.headerlink').each(function(index) {
+      $('.headerlink').each(function() {
         var level_class = $(this).parent().parent().attr("class");
         var match = level_class.match(/^section_(\d+)$/);
         if (match === null) { // not a section_* class
@@ -137,16 +155,16 @@ $(document).ready(function () {
       var folder = $('<a class="toctoggle"> [-] </a>');
       toc.find('ol ol').each(function () {
         var f = folder.clone();
-        f.insertBefore($(this)).toggle(
-          function () {
-            $(this).text(' [+] ').next().slideUp('fast');
-          }, function () {
-            $(this).text(' [-] ').next().slideDown('fast');
+        f.insertBefore($(this)).click(function () {
+          if ($(this).text() === ' [-]') {
+            $(this).text(' [+]').next().slideUp('fast');
+          } else {
+            $(this).text(' [-]').next().slideDown('fast');
           }
-        );
+        });
         var classes = $(this).attr('class').split(/\s+/);
         if (parseInt(classes[classes.length - 1].slice(15), 10) >= tocDepth) {
-          f.click();
+          f.click().click();
         }
       });
     });
@@ -220,13 +238,13 @@ $(document).ready(function () {
       $('.content').toggleClass('content_sidebar');
       sidebar.toggle();
       togglebutton.toggleClass('navi_toggle_up').toggleClass('navi_toggle_down');
-      if ($IS_LOGGED_IN) $.get('/?__service__=portal.toggle_sidebar', {
+      if (Inyoka.IS_LOGGED_IN) $.get('/?__service__=portal.toggle_sidebar', {
         hide: !sidebar.is(':visible'),
         component: window.location.hostname.split('.')[0]
       });
       return false;
     }).insertAfter('form.search');
-    if ($SIDEBAR_HIDDEN) togglebutton.click();
+    if (Inyoka.SIDEBAR_HIDDEN) togglebutton.click();
   })();
 
   // use javascript to deactivate the submit button on click
@@ -419,10 +437,10 @@ $(document).ready(function () {
     admin_cookie.setTime(admin_cookie_expires);
     var exp = "expires=" + admin_cookie.toGMTString();
     var dom;
-    if ($BASE_DOMAIN_NAME.indexOf(":") > 0) {
-      dom = "domain=." + $BASE_DOMAIN_NAME.substring(0, $BASE_DOMAIN_NAME.indexOf(":"));
+    if (Inyoka.BASE_DOMAIN_NAME.indexOf(":") > 0) {
+      dom = "domain=." + Inyoka.BASE_DOMAIN_NAME.substring(0, Inyoka.BASE_DOMAIN_NAME.indexOf(":"));
     } else {
-      dom = "domain=." + $BASE_DOMAIN_NAME;
+      dom = "domain=." + Inyoka.BASE_DOMAIN_NAME;
     }
     document.cookie = "admin_menu=" + menu_status + "; " + exp + "; " + dom + "; path=/";
   });
@@ -430,74 +448,80 @@ $(document).ready(function () {
 
 (function() {
   /* OpenID Integration */
-  OpenIDHelper = Class.$extend({
-    __init__: function(target, openid_providers) {
-      var self = this;
-      var target = $(target);
 
-      // hide password field if it looks like we're getting and openid
-      var elements = ['input[name="password"]', 'label[for="id_password"]', 'label[for="js_login_password"]'];
-      $(target).keydown(function() {
-        if ($(target).val().slice(0, 4) == 'http') {
-          $('input[name="password"]').val('');
-          for (idx in elements)
-            $(elements[idx]).hide();
-        } else {
-          for (idx in elements)
-            $(elements[idx]).show();
-        }
-      });
+  function OpenIDHelper (target, openid_providers) {
+    var self = this;
+    var target = $(target);
 
-      // Add common OpenID providers
-      for (var provider in openid_providers) {
-        var name = openid_providers[provider].name;
-        var element = $('<img src="' + $STATIC_URL + 'img/openid/' + provider + '.png" class="openid_logo" id="openid_' + provider + '" alt="' + name + '" title="' + name + ' benutzen" />')
-          .click(function() {
-            $(target).val('');
-            p = $(this).attr('id').substring(7);
-            if (openid_providers[p]['url'] == null) {
-              $(target).val('http://');
-              $(target).focus();
-            } else {
-              self.setSelection($(target), openid_providers[p]['url'], '{username}', true);
-            }
-          })
-          .css('cursor', 'pointer');
-
-        element.insertAfter($(target));
+    // hide password field if it looks like we're getting and openid
+    var elements = ['input[name="password"]', 'label[for="id_password"]', 'label[for="js_login_password"]'];
+    $(target).keydown(function() {
+      if ($(target).val().slice(0, 4) == 'http') {
+        $('input[name="password"]').val('');
+        for (idx in elements)
+          $(elements[idx]).hide();
+      } else {
+        for (idx in elements)
+          $(elements[idx]).show();
       }
-    },
+    });
 
-    setSelection: function(area, text, match, reselect) {
-      var t = $(area)[0];
-      if (typeof t.selectionStart != 'undefined') {
-        var
-          start = text.indexOf(match),
-          end = text.indexOf(match) + match.length;
-        var
-          s1 = t.value.substring(0, start),
-          s2 = t.value.substring(end);
+    // Add common OpenID providers
+    for (var provider in openid_providers) {
+      var name = openid_providers[provider].name;
+      var element = $('<img src="' + Inyoka.STATIC_URL + 'img/openid/' + provider + '.png" class="openid_logo" id="openid_' + provider + '" alt="' + name + '" title="' + name + ' benutzen" />')
+        .click(function() {
+          $(target).val('');
+          p = $(this).attr('id').substring(7);
+          if (openid_providers[p]['url'] == null) {
+            $(target).val('http://');
+            $(target).focus();
+          } else {
+            self.setSelection($(target), openid_providers[p]['url'], '{username}', true);
+          }
+        })
+        .css('cursor', 'pointer');
 
-        t.value = s1 + text + s2;
-        if (start == -1) {
-          area.closest('form').submit();
-          return;
-        }
-        t.focus();
-        if (reselect) {
-          t.selectionStart = start;
-          t.selectionEnd = end;
-        }
-        else
-          t.selectionEnd = t.selectionStart = start + text.length;
-      }
-      else if (typeof document.selection != 'undefined') {
-        t.focus();
-        var range = document.selection.createRange();
-        range.text = text;
-      }
+      element.insertAfter($(target));
     }
-  });
+  };
+
+  OpenIDHelper.prototype.setSelection = function(area, text, match, reselect) {
+    var t = $(area)[0];
+    if (typeof t.selectionStart != 'undefined') {
+      var
+        start = text.indexOf(match),
+        end = text.indexOf(match) + match.length;
+      var
+        s1 = t.value.substring(0, start),
+        s2 = t.value.substring(end);
+
+      t.value = s1 + text + s2;
+      if (start == -1) {
+        area.closest('form').submit();
+        return;
+      }
+      t.focus();
+      if (reselect) {
+        t.selectionStart = start;
+        t.selectionEnd = end;
+      }
+      else
+        t.selectionEnd = t.selectionStart = start + text.length;
+    }
+    else if (typeof document.selection != 'undefined') {
+      t.focus();
+      var range = document.selection.createRange();
+      range.text = text;
+    }
+  };
+
+  $.fn.openIDHelper = function (user_joined, user_not_joined) {
+    return this.each(function() {
+      new OpenIDHelper(this, user_joined, user_not_joined);
+    });
+  };
+
 })();
 
 String.prototype.htmlEscape = function () {

@@ -13,12 +13,11 @@
 {% set scripts = scripts|default([]) + ['ikhaya'] %}
 {% set active_app = 'ikhaya' %}
 {% set navi_type  = 'sidebar' %}
-
 {%- block html_head %}
   {{ super() }}
   <script type="text/javascript">
     /*<![CDATA[*/
-      var $SIDEBAR_HIDDEN = {{ USER.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
+      var Inyoka.SIDEBAR_HIDDEN = {{ USER.settings.ikhaya_sidebar_hidden and 'true' or 'false' }};
     /*]]>*/
   </script>
 {%- endblock %}

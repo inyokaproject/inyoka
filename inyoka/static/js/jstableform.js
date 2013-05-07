@@ -255,9 +255,9 @@ $(function () {
         }
 
         function submit_config(event) {
-            var distri_versions = new Array();
-            var $row;
-            var new_row;
+            var $row,
+                new_row,
+                distri_versions = [];
             $('tr[name^="jstableform-"]').each(function () {
                 $row = $(this); // just to make it a bit more handy
                 var row_id = $row.attr('name').substring(12);
