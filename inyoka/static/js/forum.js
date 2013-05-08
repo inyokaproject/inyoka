@@ -124,12 +124,13 @@ $(function () { /* collapsable elements for the input forms */
 
     $('a.solve_topic').each(function () {
       $(this).click(function () {
+        var span;
         doAction('topic', $(this).attr('id'), $('a.solve_topic'), function () {
           // switch classes
           if ($('a.solve_topic').hasClass('action_solve')) {
             $('a.solve_topic').removeClass('action_solve');
             $('a.solve_topic').addClass('action_unsolve');
-            var span = $('span.status_unsolved');
+            span = $('span.status_unsolved');
             span.fadeOut('fast');
             span.removeClass('status_unsolved');
             span.addClass('status_solved');
@@ -138,7 +139,7 @@ $(function () { /* collapsable elements for the input forms */
           } else {
             $('a.solve_topic').removeClass('action_unsolve');
             $('a.solve_topic').addClass('action_solve');
-            var span = $('span.status_solved');
+            span = $('span.status_solved');
             span.fadeOut('fast');
             span.removeClass('status_solved');
             span.addClass('status_unsolved');
