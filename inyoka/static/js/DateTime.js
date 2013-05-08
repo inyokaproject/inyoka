@@ -1,11 +1,16 @@
 /**
- * js.DateTime
- * ~~~~~~~~~~~
+ * jquery.plugin.datetime
+ * ~~~~~~~~~~~~~~~~~~~~~~
  *
- * This replaces a DateTime text field with a nice user-friendly gui including
- * a calendar and a table to select the clock.
+ * This implements a jQuery plugin that implements a easy to use
+ * calendar and a table to select the clock.
+ *
  * It's based on django code that implements a similar widget for the admin
  * panel.
+ *
+ * Usage as follows::
+ *
+ *    $('#my_input_field').wikiEditor();
  *
  * :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
  * :license: GNU GPL, see LICENSE for more details.
@@ -16,7 +21,7 @@
    helper functions and variables.  The only thing that is defined as
    a global is the `DateTimeField`. */
 
-(function () {
+(function( $ ) {
   var months = [gettext('January'), gettext('February'), gettext('March'), gettext('April'),
                 gettext('May'), gettext('June'), gettext('July'), gettext('August'),
                 gettext('September'), gettext('October'),
@@ -36,7 +41,7 @@
     return days;
   }
 
-  function DateTimeField (editor, auto_show, only_date, only_time) {
+  function DateTimeField (editor, options) {
     var self = this;
     this.input = $(editor).click(function () {
       $('table.datetime').each(function () {
@@ -45,9 +50,9 @@
       });
       return false;
     });
-    this.auto_show = auto_show || false;
-    this.only_date = only_date || false;
-    this.only_time = only_time || false;
+    this.auto_show = options.auto_show || false;
+    this.only_date = options.only_date || false;
+    this.only_time = options.only_time || false;
     this.readDateTime();
     this.container = $('<table class="datetime"></table>').click(function () {
       return false;
@@ -274,6 +279,13 @@
     this.input.show();
   };
 
+
+  $.fn.dateTimeField = function (options) {
+    return this.each(function() {
+      new DateTimeField(this, options);
+    });
+  };
+
   /* Get all inputs with type date or datetime and create a DateTimeField for
    * them. */
 
@@ -281,11 +293,14 @@
     $('input').each(function () {
       var type = this.getAttribute('valuetype');
       if (type == 'datetime') {
-        new DateTimeField(this, true);
+        new DateTimeField(this, {auto_show: true});
       } else if (type == 'date') {
-        new DateTimeField(this, true, true);
+        new DateTimeField(this, {auto_show: true, only_date: true});
       } else if (type == 'time') {
-        new DateTimeField(this, true, false, true);
+        new DateTimeField(this,
+          {auto_show: true,
+           only_date: false,
+           only_time: true});
       }
     });
   });
@@ -294,4 +309,4 @@
     $('table.datetime.auto_show').hide();
   });
 
-})();
+})(jQuery, document, window);
