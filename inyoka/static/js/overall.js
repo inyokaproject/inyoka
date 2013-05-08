@@ -8,7 +8,7 @@
  * :license: GNU GPL, see LICENSE for more details.
  */
 
-window.Inyoka = {}
+window.Inyoka = {};
 
 $(document).ready(function () {
 
@@ -217,7 +217,7 @@ $(document).ready(function () {
     }));
     $('.search_query').addClass('search_query_js').blur(function () {
       var e = $(this);
-      if (e.val() == '' || e.val() == $currentAreaName) e.addClass('default_value').val($currentAreaName);
+      if (e.val() === '' || e.val() === $currentAreaName) e.addClass('default_value').val($currentAreaName);
     }).focus(function () {
       var e = $(this);
       if (e.hasClass('default_value')) e.val('').removeClass('default_value');
