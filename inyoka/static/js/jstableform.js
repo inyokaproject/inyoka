@@ -50,8 +50,8 @@ $(function () {
          * requires JavaScript. The parent HTML element of this cell, normally
          * an <tr> tag, will be removed if JavaScript is activated.
          */
-        var int_re = /^\d+$/
-        var float_re = /^\d+|\d+\.\d+|\.\d+$/
+        var int_re = /^\d+$/;
+        var float_re = /^\d+|\d+\.\d+|\.\d+$/;
         var versionnumber_re = /^\d\d?\.\d\d$/;
         var versionname_re = /^[A-Z][a-z]+ [A-Z][a-z]+$/;
         var revert = {};
@@ -107,7 +107,7 @@ $(function () {
         function onValidate(event) {
             var key = $(this).parent().attr('name').substring(16);
             var validator = columns[key].validator;
-            if (validator != null) {
+            if (validator !== null) {
                 if (validator($(this).val())) {
                     $(this).removeClass('invalid');
                 } else {
@@ -147,7 +147,7 @@ $(function () {
                     // and no / true and false
                     $td.addClass('jstableform-status-no');
                     $td.addClass('pointer');
-                    $td.click(toggleBooleanStatus)
+                    $td.click(toggleBooleanStatus);
                 } else if (obj.type == '_edit') {
                     // do nothing -- a new row is always in
                     // edit mode and cannot even be reverted
@@ -218,19 +218,20 @@ $(function () {
             var dataset = {};
 
             $.each(keys, function (i, k) { // let's iterator over the columns
+                var $e;
                 var obj = columns[k];
                 // This is the current cell we are operating on
                 var $td = $row.find('[name="jstableform-key-' + k + '"]');
                 if (obj.type == 'string' || obj.type == 'int' || obj.type == 'float') {
                     // string, int and float are the same, at least internally
-                    var $e = $('<input type="text"/>');
+                    $e = $('<input type="text"/>');
                     $e.blur(onValidate);
                     dataset[k] = $td.text();
                     $e.val($td.text());
                     $td.empty();
                     $e.appendTo($td);
                 } else if (obj.type == 'text') {
-                    var $e = $('<textarea></textarea>');
+                    $e = $('<textarea></textarea>');
                     $e.blur(onValidate);
                     dataset[k] = $td.text();
                     $e.val($td.text());
@@ -241,7 +242,7 @@ $(function () {
                     $td.addClass('pointer');
                     $td.click(toggleBooleanStatus);
                 } else if (obj.type == '_edit') {
-                    var $e = $('<a href="#' + anchor + '">Abbrechen</a>');
+                    $e = $('<a href="#' + anchor + '">Abbrechen</a>');
                     $td.empty();
                     $e.click(revert_row);
                     $e.appendTo($td);
@@ -322,9 +323,9 @@ $(function () {
             //    int or float
             //  - the validator as defined in the variable `validators`
             $.each(classes, function (i, k) {
-                if (k.indexOf('jstableform-') == 0) {
+                if (k.indexOf('jstableform-') === 0) {
                     k = k.substring(12);
-                    if (k.indexOf('key-') == 0) {
+                    if (k.indexOf('key-') === 0) {
                         key = k.substring(4);
                         obj.key = key;
                         if (key == '_cmdedit') {
@@ -334,14 +335,14 @@ $(function () {
                             obj.type = '_delete';
                             return true; // continue with next element
                         }
-                    } else if (k.indexOf('type-') == 0) {
+                    } else if (k.indexOf('type-') === 0) {
                         obj.type = k.substring(5);
-                        if (obj.type == 'int' && obj.validator == null) {
+                        if (obj.type == 'int' && obj.validator === null) {
                             obj.validator = validators['int'];
-                        } else if (obj.type == 'float' && obj.validator == null) {
+                        } else if (obj.type == 'float' && obj.validator === null) {
                             obj.validator = validators['float'];
                         }
-                    } else if (k.indexOf('validate-') == 0) {
+                    } else if (k.indexOf('validate-') === 0) {
                         obj.validator = validators[k.substring(9)];
                     }
                 }
@@ -360,6 +361,6 @@ $(function () {
         $('td[name|="jstableform-key-_cmddel"] a', $table).click(delete_row);
 
         $('input[type="submit"]').click(submit_config);
-    }
-    })();
+    };
+  })();
 });
