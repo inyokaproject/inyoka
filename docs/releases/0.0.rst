@@ -7,6 +7,555 @@ Inyoka 0.0 release summary
 Inyoka DEV release summary
 ==========================
 
+* Use `sphinx.ext.extlinks` to link to tickets (``:ticket:`123``` => ``Ticket
+  #123``) and pull requests (``:pr:`123``` => ``PR #123``)
+* Fix countdown deactivation. The storage can only handle strings
+* Upgrade celery dependencies
+* Adjust topic.author related_name
+* Use JPG file instead of uncompressed png for mobile header. 65k -> 27k
+* ikhaya -> inyoka, thanks Markus for the hint
+* Optimized PNG images, decreases overall size by more than 200kb.
+* Do not overwrite 'forum' name here
+* Use fobj that was returned by the context manager
+* Typo
+* avoid name clash
+* Use anonymous name from settings in wiki.notifications
+* Use anonymous name from settings
+* force memory sqlite db
+* Remove unused jquery-ui
+* Add use-mirrors option to pip in bootstrap-extra step
+* add use-mirrors to pip in virtualenv-setup.sh
+* Remove some unused image files
+* Simplify confirm data for user reactivation, and email change/reset.
+* Update Ikhaya article reports upon creation/solving. Fixes :ticket:`889`
+* Move javascripts to the end of the page, it's not required anymore to have
+  them on top
+* Use 4 topics per page, thanks Florian for the hint
+* Revert "Rewrite ReadStatus to use a json data structure instead of pickle."
+* Revert "Fixed serialization, fixed read status"
+* Revert "Fixed typo, thanks Markus"
+* use exists
+* Avoid transaction and fixture setup in tests whenever possible
+* cut revisions per page in half
+* Add missing test for ticket :ticket:`635`
+* Use real TestCase when touching the database
+* Speedup test_topiclist by decreasing TOPICS_PER_PAGE
+* Speedup post split tests
+* Reindent
+* Use setUp instead of setUpClass, avoid side effects
+* Not required to delete all models here
+* Fixed test_normalized_naming by removing double names.
+* Speedup test_log test
+* Use new Truncator class
+* Fixed typo, thanks Markus
+* Fixed serialization, fixed read status
+* Rewrite ReadStatus to use a json data structure instead of pickle.
+* XHTML validity
+* Set a test secret key
+* update releases
+* small fixups in docu.
+* update docu to v0.0.38
+* Inyoka requires at least Python 2.7.
+* docs v0.0.34...v0.0.37
+* update 0.0.dev release summary
+* Removed unnecessary "cd" in installation manual.
+* really fix bytestring for version info in documentation
+* fix bytestring
+* we don't have custom static files right now
+* release summary for v0.0.34
+* Change the way we get the inyoka revision
+* docu for inyoka.utils.forms
+* change html theme to `nature` and cleanup docs
+* inyoka.utils.database
+* documentation for inyoka.utils.user
+* documentation for inyoka.utils.files
+* Fix SQLite test settings after migrating to Raven.
+* Remove unnecessary function parameters in inyoka.ikhaya.Article
+* Further documentation on Ikhaya models.
+* class and function docs for ikhaya.models
+* basic ikhaya.forms and ikhaya.models
+* About Inyoka
+* concretize the requirements and configuration settings
+* Set ``seealso`` links and references to the Django documentation.
+* add all configuration directives from the default_settings to the docs
+* Don't recommend MySQL. PostgreSQL should be working as well.
+* release summaries for v0.0.1 to v0.0.30
+* basic generic installation manual
+* initial docs commit
+* Add dateutil to requirements and call the usermanager through the user class.
+* Fix import error
+* Several improvements and cleanups in the context of dropping cPickle from
+  mails
+* Changed a string in Ikhaya (“published“ instead of “written by”)
+* Drop the usage of cPickle from the user reactivation and email verification
+  and replace it by Django's signing features.
+* Removed debug.js
+* Update AUTHORS
+* fixup recent merge.
+* Fix KeyError in PrivMsg index
+* The included pages __cannot__ be modified.
+* Fix missing # in internal links
+* Make the tests work again
+* Add django-kombu to the requirements
+* Add tests for wiki storage (interwiki, acl, smiley)
+* Simplified test settings files.
+* Fixed smiley_regex tests.
+* Test settings fixes and typo fix.
+* Some pep changes and simplifications
+* Normalize wiki page names and username in ACL checks.
+* Fix internal links containing anchors
+* Include the breadcrumbs in the static wiki
+* Add a snapshot date to the note
+* Fix attachment links
+* Do not exclude too many pages
+* fix umlauts
+* Include dynamic style
+* Reworked the static wiki script and drop the usage of regex in favor of
+  BeautifulSoup
+* Typofixes.
+* Set content div padding to zero in wiki stylesheet.
+* Docstring for portal test_versions,
+* Added docstrings to portal view tests.
+* Put the codebox and smileybox into the foreground. Fixes :ticket:`828`
+* Fixed a typo.
+* Properly escape %, lulz.
+* Even more paranoid approach to password upgrades.
+* Minor html corrections.
+* Make sure that the captcha is required.
+* Prevent nested Values while iterating over a dictionary in the template
+  syntax.
+* Distinguish between arrays/lists and dictionaries. Fixes :ticket:`869`
+* Simplify Value.__contains__
+* fixup for b99b595 Fixes :ticket:`866`
+* Parse 'else' after 'elseif' in template syntax again. Fixes :ticket:`866`
+* Lots of cleanup in wiki teamplates and a bunch of tests
+* Fix servererror after not-equal sign in wiki templates. Fixes :ticket:`867`
+* Tests for 04e06ad
+* Correctly convert values to unicode for binary template functions. Fixes
+  :ticket:`868` as well as g3610735 and g3610740
+* Make the tests work again. Refers to b0365842f
+* pep08
+* simplified container check
+* pep08
+* simplified if statement in storage mixin
+* unused re import
+* Disable user reactivation for now (till 1.5 issues are fixed).
+* Increased year in footer to 2013.
+* Don't fail when rendering the 500 template.
+* i18n: update line numbers and add missing translations
+* Converted inyoka/templates/500.html to Jinja.
+* Simplified testcase.
+* Fixed https://app.getsentry.com/ubuntuusers/ubuntuusers/group/3448860/
+* Support multi-digit numbers in inyoka.markup.templates.
+* Fixed https://app.getsentry.com/ubuntuusers/ubuntuusers/group/3448968/
+* Added `test_unsusbscribe_user`.
+* Added test for Markus' patch.
+* Pass the suggestion id as anchor and not as a value to a query parameter. The
+  only usage of the anchor is in the list of active suggestions and the current
+  implementation does not work there.
+* Split up `test_subscribe_user` up into two tests.
+* Added `test_subscribe_user`
+* spellcheck
+* Relable the annotation field for suggesting Ikhaya articles
+* Show gravatar if activated in Ikhaya comments. Fixes :ticket:`854`
+* Hotfix: Require (un)subscribe_user to use POST requests.
+* Some cleanup
+* Properly remove the last_revisions cache after adding a new revision to a
+  page.
+* Test for "lost password link" in message body.
+* Replaced ubuntuusers.de string with example.com in the tests.
+* Do not allow using the "lost password" form if logged in.
+* Two new test cases for lost password, changed mail adresses of user.
+* Renamed test (typofix)
+* Show total number of pages in mobile pagination.
+* Proper usage of the different caches in wiki models and wiki tasks. E.g. this
+  commit properly deletes the old name of a wiki page after renaming it to a
+  new name.
+* Define an default left padding for interwiki links in full and mobile view
+  which. The padding can be overwritten by the dynamic styles. Fixes
+  :ticket:`846`. Move the team interwiki icon to the appropriate directory.
+* Fix errors in PostDeletionTest for MySQL tests.
+* Clean unneeded imports and unused variables.
+* Fix German translation in Portal.
+* Update edit/revert/delete field descriptions. Closes :ticket:`843` (trac)
+* Added a few more tests for the auth views.
+* Fixed small security issue in redirect handling and added a few tests for
+  auth views.
+* Add copyright headers to html files.
+* Add copyright headers to JS and lesscss files
+* Add missing copyright header to python files.
+* Moved terms_of_usage errors around a bit.
+* Merged our captcha fields into one field.
+* Added "Go to first / last page" button in pagination.
+* Update the board rules in the registration form as announced in
+  http://ubuntuusers.de/ikhaya/3867/
+* Push copyright year to 2013 and add some missing copyright annotations.
+* Add a view test to check for a successful feed generation if a blog entry
+  lacks a title.
+* The URLValidator in Django 1.5 has no ``verify_exists`` any more.
+* Werkzeug requires a title to be defined for every feed entry. If no is
+  specified by a blog (https://app.getsentry.com/ubuntuusers-1/group/3011424/)
+  we set it to "No title given".
+* Removed useless pass statement.
+* Fixed permanent login.
+* Fix dataloss in hash algorithm change migration
+* Removed some unneeded stuff.
+* remove unused clean_temp_dirs script
+* move user_record cron script to celery task
+* fixed not_finished call in do_missing action, sentry/group/2974229
+* makemessages
+* reindent
+* unused imports
+* dump_argstring is not used anymore
+* unused imports
+* Use django.http import instead of inyoka aliases, some pep08
+* Raise proper Not Allowed instead of Bad Request in permit_methods
+* Do not hit cache on missing pages, sentry/group/138625
+* do not even try to authenticate anonymous sentry/group/164417
+* Do not show "prev" and "next" buttons in mobile if there is no prev/next page
+* another unused constant
+* removed filename functions from utils.text as they are now implemented more
+  reliable and proper in utils.files
+* remove unused helper functions
+* SetStorage is unused
+* fix permanent session on login
+* SYSTEM_USER and ANONYOUS_USER aliases are not used
+* user error reports do not exist since ages
+* parser_name and argument definition string have no use right now
+* remove unused nodes
+* NewPostForm is not used anymore
+* remove some dead code from forum.models
+* there is no filter based on Article.drafts
+* fix SEND_EVENTS config name
+* BROKER_BACKEND is not required anymore
+* upgraded dependencies, added explicit version dependencies everywhere
+* Upgrade celery and kombu
+* explicit installed apps overwrite in tests config is not required anymore
+* upgraded requirements/production.txt
+* use real bulk create
+* Small speed saver in wiki view test
+* Moved User.authenticate to custom auth backend to properly use
+  django.contrib.auth
+* Enable django.contrib.auth again
+* Remove  field from user model, not required anymore
+* MEDIA/STATIC URL require ending slash
+* Upgrade south to latest trunk to include django1.5 work
+* We are no longer using simplejson.
+* Modularized nodes.Edited and simplified nodes.Moderated implementation
+* Enable test code again
+* Prevent request_cache.clear() to fail without request environment
+* Remove unused test_post_delete fixture
+* Fix requirements to Django 1.5
+* ported update_model to django 1.5
+* fixed broken merge
+* Actually remove inyoka.parser :þ
+* Remove unneded user.save calls and use update_fields where appropriate.
+* Killed new_password_key field on the user model.
+* Get rid of unused stuff.
+* Use Django's password reset views instead of our own.
+* Fixed tests.
+* Update last_login via signals and try using Django's password reset views.
+* Move the wiki parser and parser related stuff into inyoka.parser
+* Simplify our access control checks (They are only needed for less).
+* Use a more defensive approach for updating password hashes.
+* Properly upgrade our old md5 passwords.
+* Initial work toward Django 1.5.
+* Fix csrf token for Django 1.5
+
+Inyoka 0.0.62 release summary
+=============================
+
+* Translation upgrades.
+* Explicity use the ISO format for the countdown to speed things up while
+  rendering the image
+* Make the countdown finally work. The image URL might contain a placeholder
+  ``%(remaining)s`` that will be substituted by the number of remaining days (2
+  digits, zero-prefixed) or ``soon``.
+* fix download countdown regression (715a1bb7fe)
+
+Inyoka 0.0.61 release summary
+=============================
+
+* Reverted broken caching of ACL.
+
+Inyoka 0.0.60 release summary
+=============================
+
+* Simplified test settings files.
+* Fixed smiley_regex tests.
+* Test settings fixes and typo fix.
+* Add tests regarding a89f5d928e and 0b398b11bd
+* Prevent the StorageManager to re-instantiate the different storage classes on
+  each request. This should also increase the performance dramatically.
+* Drop the X-Behave feature from the wiki due to security issues, especially
+  regarding the ACL. The settings variable WIKI_STORAGE_PAGES contains pages
+  allowed storing data.
+
+Inyoka 0.0.59 release summary
+=============================
+
+* Added defusedxml.
+* Updated Django to 1.4.5 (sic, not yet released) and updated copyright to
+  2013.
+
+Inyoka 0.0.58 release summary
+=============================
+
+* Update the board rules in the registration form as announced in
+  http://ubuntuusers.de/ikhaya/3867/
+
+Inyoka 0.0.57 release summary
+=============================
+
+* Fixed mobile pagination
+  (https://app.getsentry.com/ubuntuusers-1/group/2926361/)
+* Fix empty titles in ToC items and correctly push the sub nodes to the
+  regarding parent node
+* Fixed deployment of static files.
+* Fixed some elementary errors in toc rendering
+* Fixed https://app.getsentry.com/ubuntuusers-1/group/2923716/.
+
+Inyoka 0.0.56 release summary
+=============================
+
+* Added inyoka.markup to default_settings to pick up translations.
+* Fixed codeblock resizer for pre elements.
+
+Inyoka 0.0.55 release summary
+=============================
+
+* Fixed names for Seitenzahl macro.
+
+Inyoka 0.0.54 release summary
+=============================
+
+* Compile translations.
+* Fixed actions in forum template.
+* Removed page selector from mobile navigation.
+* Updated translations
+* Fix German translation of ticket closing failure.
+* continue parameter was renamed to next
+* Replace the ubuntu brand logo with the current version. fixes :ticket:`827`
+* Added style for "Preview / Submit" buttons in ikhaya.
+* Less redundant css for "action" buttons, changed style of them.
+* Update extra/requirements/production.txt
+* Fixed rendering of the Attachment macro.
+* Properly pass `wiki_page` to RenderContext.
+* remove a bunch of whitespaces in mobile forum list.
+* Fix search page for mobile version
+* Exclude compiled css files from static app directories.
+* Syntax fixes
+* Justify text in Ikhaya articles and comments
+* change the width of textareas in mobile design to 100% but with respect to
+  the box-model (http://www.w3schools.com/css/css_boxmodel.asp)
+* unify lesscss mixins for mobile app design
+* Update fabfile to respect .less, .js and image files inside app directories.
+  The compiled .css or .min.js files will be stored in the same directory as
+  the original file is stored.
+* Update lesscss to version 1.3.1
+* Make sure that we only work on ``section_*`` css classes while rendering the
+  ToC
+* Verify the post position after a topic split
+* Fix small javascript error if no value is set for countdown_active.
+* Imagine two topics T1 and T2 with the posts [[P1, P2, P3], [P4, P5, P6]].
+  Splitting all posts from P2 and append them at T2 will result in [[P1], [P4,
+  P5, P6, P2, P3]]. If now all posts form P5 are split and appended to T1, the
+  correct list would be [[P1, P5, P6, P2, P3], [P4]]. Before this commit, the
+  lists have been [[P1, P5, P6], [P4, P2, P3]].
+* Make make-bootstrap.py py3k compatible to simplify generation
+* By 6632ff8 we introduced two separate macros handling the package lists in
+  the Wiki. As requested the default will no longer provide an apturl. These
+  URLs must explicitly activated.
+* fix sentry 2658411
+* Fix picture macro in Ikhaya
+* translation update
+* Fix build error :ticket:`90`
+* Simplify the ToC macro and its JS implementation
+* * Remove useless comment
+* Rewrite the JS ToC to return the same tree structure as the python backend
+  rendering plus the JS folding features.
+* Add tests for new ToC macro (c344032093)
+* Rewrote the TableOfContents macro to also handle broken headline levels (e.g.
+  from level 1 to 3, w/o level 2 in between)
+* Push to Django 1.4.2
+* Fix _DEFAULT_GROUP definition
+* Updated description
+* Renamed countdown_wiki_page to countdown_target_page and added support for
+  remote pages
+* Remove unused imports
+* Remove signal imports not required anymore
+* Move picture macro to inyoka.wiki, add signals to auto import
+* Splitted picture macro to application specific tasks
+* Fix portal.0018 migration to only being executed with MySQL
+* Remove Picture.__setstate__ definition, it's not required anymore
+* Moved PageName, Template and Attachment macros to wiki.macros
+* Made `RenderingContext` application independend by introducing a `kwargs`
+  property.
+* Removed obsolute mobile.css
+* Basic styling of private messages.
+* Moved page selection into "label".
+* Use a <select> element for switching pages on mobile.
+* Fixed test for explicit cache clearing, updated Post.delete to clear the
+  cache of parent forums explicitely and added documentation
+* Fixed, clearified and updated post deletion tests
+* Fixed edge case in setting last_post if there is none
+* speedup test_topiclist a bit
+* Collapse forum categories by default, requires less scrolling.
+* Made links on frontpage more clickable with more spaces between listitems.
+* Using a "menu" icon instead of the uu logo
+* Introduced an admin_mode to UserCPForm to not send email confirmations for
+  admins.
+* Implemented cache.clear on request_cache
+* Fixed wrong, broken tests
+* Integrated django-discover-runner, moved tests out of application code,
+  restructured tests a bit
+* Fixed name error
+* More paragraph spacing in forum, include markup.less in mobile.
+* Mobile .less styles for ikhaya.
+* Moved wiki specific macros to inyoka.wiki.macros
+* Moved autoimport logic for special modules to inyoka.core.models
+* Started to refactor macros to allow pluggable registration and multiple
+  aliasses.
+* Removed unused Parser.wiki_representation method
+* Removed old, unused and unmaintained generate_markup functionality.
+* Implemented inyoka.core and added some new autodiscover signal for special
+  modules.
+* Adapt virtualenv-setup.sh script to recent dependency changes
+* Update the tx-client config
+* cache default group globally as we do with system user and anonymous
+* small pep08 cleanup
+* Upgrade xapian to 1.2.12 and use Pillow from pypi instead of compiling PIL
+  manually
+* strip simplified text
+* Reformat AUTHORS file, fixed up some authors
+* Fixed codeblock resizer behavior when resizing windows.
+* Fix codeblock resizer behavior with TOC.
+* Fixed :ticket:`804` -- Renamed the label of member_title to reflect it's
+  actual usage.
+* Get rid of save/delete_avatar completly.
+* Use Modelforms for the profile and fix some issues with avatar uploads along
+  the line.
+* remove stupid docstring.
+* Update messages.
+* Update inyoka/portal/templates/portal/group_edit.html
+* Moved form related stuff for group edits into the form class, no need to do
+  form logic in the view.
+* Adjust translations.
+* Use the       ``ClearableFileInput`` widget to remove a group icon.
+* According to the PIL documentation, the ``resize()`` function expects the
+  size tuple to have (width, height) and *NOT* (height, width).
+* Make the bash code highlighting identifiable against 'normal' code blocks.
+  Fixes :ticket:`652`
+* realign the codeblock resize button
+* Fix scrolling for code-blocks in ikhaya and portal.
+* Descriptions for topic split tests.
+* Fix merges.
+* Updated translations
+* Add missing import so that tests run through
+* fixed import error
+* Add inyoka.markup compiled catalog
+* compile catalogs
+* Remove fuzzy marker from inyoka.markup
+* Add german translations for inyoka.markup
+* Update messages
+* Add markup app to messages collectors/compilers
+* Fixed import error in markup.utils
+* Form fields don't need to be part of the ``fields`` attribute for forms.
+* Remove the CreateGroupForm and convert the EditGroupForm to a ModelForm for
+  simplification.
+* Simplified js-collapsing code for polls and attachments.
+* Fix the quotation marks for English and German strings. In English “” (69) is
+  used, while the German language uses „“ (96).
+* validate the uniqueness of the name for static files. fixes :ticket:`734`
+* To prevent automatic hiding if an error exists for a poll or an attachment, a
+  ``has_error`` class is being added. Initial folding is then only done if this
+  class is not set. fixes :ticket:`714`
+* Add tests for previous commit (19296d90c0)
+* Until now a group must only contain alpha numerical characters and a few
+  punctuation marks during creation. But during edit this character scope is
+  not checked. This shouldn't be.
+* Rename .package-list2 to .builddeps
+* Move the wiki parser and parser related stuff into inyoka.markup
+* The CSRF protection is handled by the middleware. No need to do it in the
+  decorator. Add translations
+* builddeps cannot handle apt urls. hence introduce a package-list2 class to
+  render those wiki templates without it.
+* Add tests for confirm_action decorated ikhaya-functions
+* Apply confirm_action decorator to ikhaya reports
+* Flash confirmation messages again
+* Use the confirm_action decorator to handle comment hiding/restoring
+* Validate the CSRF token for the flash confirmation messages Check for the
+  confirm button be send
+* Ikhaya frontpage style, styled plain text codeblocks.
+* Changed `article` tag to `div`.
+* Styled "edit" template (new topics, replies etc.)
+* Styled form posts and codeblocks.
+* Splitted less files a bit more up and styled polls.
+* Styled "actions" (New topic, subscribe...) with less.
+* Styled mobile pagination a bit.
+* Started styling of pagination.
+* Styled topiclist with less.
+* Styled categories and subforums via less.
+* Started with splitting up mobile.css into multiple less files.
+* Basic mobile search template.
+* Replaced mobile planet icon to match desktop version.
+* Removed redundant viewport directive.
+* Styled category bars.
+* Changed brown tone.
+* Styled mobile header similiar to desktop header.
+* Styling of search input.
+* Highres menu icons.
+* Added search field in mobile.
+* Improved alignment of top navigation and further css changes.
+* Hide the menu when the back button on android is used.
+* Provide backlinks from mobile messages.
+* Added padding to wrapper.
+* Reordered stylesheet.
+* Added a few icons.
+* Moved some javascript from forum to overall.
+* Make top menu toggable.
+* Added toggle capability to mobile forum categories.
+* Only show "first unread" link if the topic is actually unread.
+* Added "top menu" for mobile template.
+* Substituted orange by brown. Looks meh.
+* Added "go to last unread" link in mobile forum template.
+* Commented out "This is mobile version" popup.
+* Added links to mobile to create topics and subscribe to forums.
+* More detailed help text for dynamic countdown.
+* This commit enables a dynamic configuration of the Ubuntu release countdown.
+  However, currently the files have to be uploaded manually to `href('static')`
+  but this can be improved by e.g. linking to static files.
+
+Inyoka 0.0.53 release summary
+=============================
+
+* Add 12.10 countdown.
+
+Inyoka 0.0.52 release summary
+=============================
+
+* Revert "Add logo for the Ikhaya writing contest"
+
+Inyoka 0.0.51 release summary
+=============================
+
+* Compile translations.
+* Add logo for the Ikhaya writing contest
+* Correctly unindent in TableOfContents if a heading is more than 1 level above
+  the previous. fixes :ticket:`688`
+* Abort the hiding/restoring process for Ikhaya comments when pressing the
+  "Cancel" button. fixes :ticket:`750`
+* Correctly order the posts during split preview. fixes :ticket:`678`
+* German translation: Change beginning “ to „ .
+* German translation: Use „“ instead of "".
+* German translation fix.
+* Change German ending quotes from "”" to "“". track no. 805
+* Fix typo in inyoka/wiki/utils.py docstring.
+* update .po and .pot files
+* Include missing translation string.
+* See post http://forum.ubuntuusers.de/post/4781652/
+* Fix NameError. refs https://app.getsentry.com/ubuntuusers-1/group/428309/
+
 Inyoka 0.0.50 release summary
 =============================
 
@@ -355,7 +904,7 @@ Inyoka 0.0.31 release summary
 * Ignore results from tasks we do not require.
 * Solve strange display width of Ikhaya article comments. The ``markup.css``
   defines ``#page table { width: auto; }`` whic
-* Check for permissions when quoting. Fixes #751.
+* Check for permissions when quoting. Fixes :ticket:`751`.
 
 
 Inyoka 0.0.30 release summary
