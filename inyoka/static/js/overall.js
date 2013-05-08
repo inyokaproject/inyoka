@@ -449,7 +449,7 @@ $(document).ready(function () {
 (function() {
   /* OpenID Integration */
 
-  function OpenIDHelper (target, openid_providers) {
+  var OpenIDHelper = function (target, openid_providers) {
     var self = this;
     var $target = $(target);
 
@@ -458,10 +458,10 @@ $(document).ready(function () {
     $target.keydown(function() {
       if ($target.val().slice(0, 4) == 'http') {
         $('input[name="password"]').val('');
-        for (idx in elements)
+        for (var idx in elements)
           $(elements[idx]).hide();
       } else {
-        for (idx in elements)
+        for (var idx in elements)
           $(elements[idx]).show();
       }
     });
@@ -473,11 +473,11 @@ $(document).ready(function () {
         .click(function() {
           $target.val('');
           p = $(this).attr('id').substring(7);
-          if (openid_providers[p]['url'] == null) {
+          if (openid_providers[p].url === null) {
             $target.val('http://');
             $target.focus();
           } else {
-            self.setSelection($target, openid_providers[p]['url'], '{username}', true);
+            self.setSelection($target, openid_providers[p].url, '{username}', true);
           }
         })
         .css('cursor', 'pointer');
