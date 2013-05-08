@@ -410,7 +410,7 @@ $(document).ready(function () {
   // class and toggle their visibility.
   // alert(document.cookie);
   var result = /admin_menu\=([01])/.exec(document.cookie);
-  var menu_status = (result != null) ? result[1] : 1;
+  var menu_status = (result !== null) ? result[1] : 1;
   if (menu_status == 1) {
     $('.admin_link').removeClass('admin_link').addClass('admin_link_js').show();
     $('#admin_layer_button').addClass('highlight');
@@ -426,7 +426,7 @@ $(document).ready(function () {
         $(this).fadeIn("fast", function () {$(this).show();});
       }
     });
-    menu_status = (menu_status == 0) ? 1 : 0;
+    menu_status = (menu_status === 0) ? 1 : 0;
     if (menu_status == 1) {
       $('#admin_layer_button').addClass('highlight');
     } else {
@@ -451,12 +451,12 @@ $(document).ready(function () {
 
   function OpenIDHelper (target, openid_providers) {
     var self = this;
-    var target = $(target);
+    var $target = $(target);
 
     // hide password field if it looks like we're getting and openid
     var elements = ['input[name="password"]', 'label[for="id_password"]', 'label[for="js_login_password"]'];
-    $(target).keydown(function() {
-      if ($(target).val().slice(0, 4) == 'http') {
+    $target.keydown(function() {
+      if ($target.val().slice(0, 4) == 'http') {
         $('input[name="password"]').val('');
         for (idx in elements)
           $(elements[idx]).hide();
@@ -471,18 +471,18 @@ $(document).ready(function () {
       var name = openid_providers[provider].name;
       var element = $('<img src="' + Inyoka.STATIC_URL + 'img/openid/' + provider + '.png" class="openid_logo" id="openid_' + provider + '" alt="' + name + '" title="' + name + ' benutzen" />')
         .click(function() {
-          $(target).val('');
+          $target.val('');
           p = $(this).attr('id').substring(7);
           if (openid_providers[p]['url'] == null) {
-            $(target).val('http://');
-            $(target).focus();
+            $target.val('http://');
+            $target.focus();
           } else {
-            self.setSelection($(target), openid_providers[p]['url'], '{username}', true);
+            self.setSelection($target, openid_providers[p]['url'], '{username}', true);
           }
         })
         .css('cursor', 'pointer');
 
-      element.insertAfter($(target));
+      element.insertAfter($target);
     }
   };
 
