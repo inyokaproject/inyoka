@@ -335,9 +335,7 @@
       }
       $('<span class="syntax_help note"><a href="' + link + '">Hilfe zur Syntax</a></span>')
         .appendTo($('<li />').appendTo(t));
-    },
   };
-
 
   /**
    * Insert a tag around a selection.  (Or if no value is selected then it
