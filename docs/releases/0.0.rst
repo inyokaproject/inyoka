@@ -12,8 +12,7 @@ Inyoka 0.0.50 release summary
 
 * Remove <p></p> from planet entry titles.
 * Remove leading and trailing whitespaces that break the javascript to display
-  the selected search area. Fixes `#799
-  <http://trac.inyokaproject.org/ticket/799>`_
+  the selected search area. Fixes :ticket:`799`
 
 Inyoka 0.0.49 release summary
 =============================
@@ -65,9 +64,8 @@ Inyoka 0.0.46 release summary
 * Add config to run tests with postgresql
 * Add config for mysql test runner, fix tests
 * Security release, immediate deploy ahead.
-* Fixes `#700 <http://trac.inyokaproject.org/ticket/700>`_ again. Capitalize
-  the numbers for the number of Ikhaya comments and print the human numbers in
-  the portal view, too.
+* Fixes :ticket:`700` again. Capitalize the numbers for the number of Ikhaya
+  comments and print the human numbers in the portal view, too.
 * small pep08 changes, more cleanups to come
 * Remove highlighter middleware.
 * fixed name error
@@ -78,10 +76,9 @@ Inyoka 0.0.46 release summary
 * move fix_errors utility to utils.generic and reuse it everywhere
 * Fixed language of title attribute.
 * Removed alert which shows up when clicking on a link to a post.
-* Added "trans" to "Show my profile" string. Fixes `#797
-  <http://trac.inyokaproject.org/ticket/797>`_.
-* Correctly close <div> tags in the Ikhaya article suggestion list. Fixes `#796
-  <http://trac.inyokaproject.org/ticket/796>`_
+* Added "trans" to "Show my profile" string. Fixes :ticket:`797`.
+* Correctly close <div> tags in the Ikhaya article suggestion list. Fixes
+  :ticket:`700`
 * Typofix in jabber notification.
 * Fixed the order of the breadcrumb elements in wiki articles.
 * update read status only for authenticated users.
@@ -156,16 +153,13 @@ Inyoka 0.0.42 release summary
   construction finish
 * Do not use any CDN for jQuery.
 * Revert "Add a IPv6 Badge."
-* fixed `#710 <http://trac.inyokaproject.org/ticket/710>`_ by incrementing gpg
-  key length to 255.
+* fixed :ticket:`710` by incrementing gpg key length to 255.
 * fixed title length validation on post edits.
 * compile translations.
-* Testcommit for GithubTrac, fixed `#782
-  <http://trac.inyokaproject.org/ticket/782>`_
+* Testcommit for GithubTrac, fixed :ticket:`782`
 * simpler fix for the previous fix ;)
 * Fix other possible bugs and add test for attachment adding
-* Fix `#782 <http://trac.inyokaproject.org/ticket/782>`_ and add missing
-  translation
+* Fix :ticket:`782` and add missing translation
 * Removed "#egg=django-openid" from requirements/production.txt
 * implement partial fields saves like django 1.5 will support.
 * clean the permission cache when a user is saved.
@@ -175,12 +169,12 @@ Inyoka 0.0.42 release summary
 * Correctly remove the leading 'Baustelle/' while moving a wiki page back from
   the construction site.
 * Change the font color of highlighted text in bash codes to a dark tone. fixes
-  `#696 <http://trac.inyokaproject.org/ticket/696>`_
+  :ticket:`696`
 * correctly align tables in the preview, e.g. Vorlage/Bildersammlung. fixes
-  `#224 <http://trac.inyokaproject.org/ticket/224>`_
+  :ticket:`224`
 * fix function name for wiki log test
 * Increase the number of wiki revisions per page to 100 in the history/log
-  view. Fixes `#693 <http://trac.inyokaproject.org/ticket/693>`_
+  view. Fixes :ticket:`693`
 * We don't read locale information from the browser (yet)
 * This commit fixes a problem in the post selection for topic split. If an old
   topic slug contains a character that normally is percent-encoded (e.g. a
@@ -194,11 +188,9 @@ Inyoka 0.0.42 release summary
 * Updated Translations
 * Languagespecific human numbers
 * Update Pybabel to trunk
-* Fix egosearch pagination. See `#646
-  <http://trac.inyokaproject.org/ticket/646>`_
+* Fix egosearch pagination. See :ticket:`646`
 * Removed "Highlight" Middleware.
-* Disabled editing of comments. Refers `#732
-  <http://trac.inyokaproject.org/ticket/732>`_.
+* Disabled editing of comments. Refers :ticket:`732`.
 
 Inyoka 0.0.41 release summary
 =============================
@@ -206,8 +198,7 @@ Inyoka 0.0.41 release summary
 * Add a IPv6 Badge.
 * remove the donation banner
 * A 1 to much
-* Fix empty pages in /last24/ regarding PR 76 and `#617
-  <http://trac.inyokaproject.org/ticket/617>`_
+* Fix empty pages in /last24/ regarding :pr:`76` and :ticket:`617`
 
 Inyoka 0.0.40 release summary
 =============================
@@ -218,8 +209,7 @@ Inyoka 0.0.40 release summary
 * Improove context propagation and testing
 * Add test for /last24/
 * Add propagating context for using in tests
-* Fix `#617 <http://trac.inyokaproject.org/ticket/617>`_. Maybe performace
-  issues created
+* Fix :ticket:`617`. Maybe performace issues created
 
 Inyoka 0.0.39 release summary
 =============================
@@ -231,9 +221,8 @@ Inyoka 0.0.38 release summary
 
 * Fix jquery selector for assigning article suggestions.
 * don't let search engines index ikhaya typo reports.
-* fix `#767 <http://trac.inyokaproject.org/ticket/767>`_
-* Disabled editing of comments. Refers `#732
-  <http://trac.inyokaproject.org/ticket/732>`_.
+* fix :ticket:`767`
+* Disabled editing of comments. Refers :ticket:`732`.
 * disable highlighther middleware for now, till it's redirection problems are
   fixed.
 * fix and simplify tabbar.
@@ -304,7 +293,7 @@ Inyoka 0.0.34 release summary
 * compile messages.
 * remove precise countdown banner
 * Add a donation postit and link it to the donation article
-* Fix `#764 <http://trac.inyokaproject.org/ticket/764>`_ and sync with transifex
+* Fix :ticket:`764` and sync with transifex
 * Revert "Translations for 4c4bff9322". Unneeded.
 * small fixes and removal of uneeded variables.
 * Switch position of locked and solved status emblemes for topic icons and add
@@ -317,8 +306,8 @@ Inyoka 0.0.34 release summary
   even if the directory is too long.
 * don't leave any files behind.
 * get rid of unneeded storage.exists call and add tests.
-* fix `#760 <http://trac.inyokaproject.org/ticket/760>`_, file.open returns
-  None and as such isn't useable as context manager.
+* fix :ticket:`760`, file.open returns None and as such isn't useable as
+  context manager.
 * Remove unused PickleEntry database field type
 * Speedup test_storage tests
 * Changed url_for_post behavior to make it easier to use.
@@ -328,14 +317,14 @@ Inyoka 0.0.34 release summary
 * try to reconnect to xapian database on common DatabaseErrors as well
   (hopefully NFS corruption workaround, #group/66883)
 * Changes as recommended in
-  https://github.com/inyokaproject/inyoka/pull/57#issuecomment-5011192
+  :pr:`57`
 * Remove the ``set_host()`` function from the InyokaClient and make the
   ``login()`` function to use the same parameters as
 * Add basic tests to show the usage of the InyokaClient for testing views.
 * Our own test client for testing views. This client implements our own
   authorization, permission and session management a
-* Show the old forum name in notifications about topic movements. Fixes `#752
-  <http://trac.inyokaproject.org/ticket/752>`_.
+* Show the old forum name in notifications about topic movements. Fixes
+  :ticket:`752`.
 * add tests for splitting posts into a new topic; move tests for splitting
   posts and appending them to an existing topic
 * Add some enhanced tests for topic split. But the forum unittest rewrite is
@@ -409,20 +398,17 @@ Inyoka 0.0.28 release summary
 * make the differences between location of a user and an event clear:
   "residence" and "venue"
 * compile messages.
-* Clear the cache after publishing an Ikhaya article. Fixes `#664
-  <http://trac.inyokaproject.org/ticket/664>`_
-* Make the subscription filter work again. Fixes `#716
-  <http://trac.inyokaproject.org/ticket/716>`_.
+* Clear the cache after publishing an Ikhaya article. Fixes :ticket:`664`
+* Make the subscription filter work again. Fixes :ticket:`716`.
 * spell correction
 * Get rid of the ugly underlines in links
-* Remove unnecessary form fields. Fixes `#682
-  <http://trac.inyokaproject.org/ticket/682>`_
+* Remove unnecessary form fields. Fixes :ticket:`682`
 * Introduce a new feature to directly go to the last post of a topic using
 * add the translations for jumping to last Ikhaya article comment
 * add the goto link to the mobile version as well
 * add a goto link to the subscription view to jump to the last Ikhaya article
   comment
-* fixes `#725 <http://trac.inyokaproject.org/ticket/725>`_
+* fixes :ticket:`725`
 * Fix ``./manage.py makemessages`` to use all keywords. The settings in
   setup.cfg are not taken into account when running ``pybabel``.
 * remove unneeded /404/ url.
@@ -446,12 +432,10 @@ Inyoka 0.0.26 release summary
   https://app.getsentry.com/51/group/59513/
 * fix raw display in the pastebin and posting of entries without a title.
 * replace singular placeholder ``%(count)s`` with ``one``
-* remove double pipe sign ``| |``. fixes `#722
-  <http://trac.inyokaproject.org/ticket/722>`_
+* remove double pipe sign ``| |``. fixes :ticket:`722`
 * inyoka.middlewares contains some i18n strings too
-* translations for refs `#724 <http://trac.inyokaproject.org/ticket/724>`_
-* display user location in forum topic view. fixes `#724
-  <http://trac.inyokaproject.org/ticket/724>`_
+* translations for refs :ticket:`724`
+* display user location in forum topic view. fixes :ticket:`724`
 * apply recent translation changes to source code
 * apply recent changes to .pot-file
 * German translation fixes.
@@ -475,7 +459,7 @@ Inyoka 0.0.24 release summary
 * Revert "ugettext_lazy fix for privileges.
   (http://log.apolloner.eu/group/587)" This solution is invalid as EnTeQuAk
   stated in
-  https://github.com/inyokaproject/inyoka/pull/35#issuecomment-4027492
+  :pr:`35`
 * make the jstableform handle boolean fields as bool and not as string
 * ugettext_lazy fix for privileges. (http://log.apolloner.eu/group/587)
 * update ubuntuusers copyright
@@ -605,28 +589,21 @@ Inyoka 0.0.19 release summary
 * Fix "link discussions" in breadcrumbs.
 * force reinstall of libs in virtualenv-setup.sh
 * Rewritten INYOKA_REVISION parsing to dulwich, much faster
-* add link to connect a wiki page to a forum topic. refers `#686
-  <http://trac.inyokaproject.org/ticket/686>`_
-* each wiki page can have only one discussion. changed i18n. refers `#686
-  <http://trac.inyokaproject.org/ticket/686>`_
-* display the revision notes on the diff page. refers `#656
-  <http://trac.inyokaproject.org/ticket/656>`_
+* add link to connect a wiki page to a forum topic. refers :ticket:`686`
+* each wiki page can have only one discussion. changed i18n. refers :ticket:`686`
+* display the revision notes on the diff page. refers :ticket:`656`
 * fix pagination in blog list
 * remove query optimation, this is a jinja bug
 * display voters in mobile template and reduce query count
-* properly quote urls in interwiki links, fixes `#687
-  <http://trac.inyokaproject.org/ticket/687>`_
-* Don't rename .html to .xml during uploads, fixes `#599
-  <http://trac.inyokaproject.org/ticket/599>`_
-* Add voters count to poll display if multiple votes are allowed, fixes `#692
-  <http://trac.inyokaproject.org/ticket/692>`_
+* properly quote urls in interwiki links, fixes :ticket:`687`
+* Don't rename .html to .xml during uploads, fixes :ticket:`599`
+* Add voters count to poll display if multiple votes are allowed, fixes :ticket:`692`
 * remove unneeded cache filling
 * add tests for post.delete
 * Disable deletion of test data, django truncates the tables already.
 * remove unneeded qs limiting.
 * properly clear the forum cache after post.delete()
-* fix for `#695 <http://trac.inyokaproject.org/ticket/695>`_. (last_post_id
-  wasn't updated properly)
+* fix for :ticket:`695`. (last_post_id wasn't updated properly)
 * fix typo in post.delete()
 * Restore functionality of the special_rights view.
 * Properly set return-path when using sendmail
@@ -644,30 +621,24 @@ Inyoka 0.0.19 release summary
 * Minor style change (extra padding).
 * Fixed "tabbar sprite" bug.
 * Set default environment variable in make_testdata.py
-* change header sprite to vertical. fixes `#683
-  <http://trac.inyokaproject.org/ticket/683>`_
+* change header sprite to vertical. fixes :ticket:`683`
 * Changed "Welcome" text on the frontpage.
-* change links in 'about inyoka'. fixes `#681
-  <http://trac.inyokaproject.org/ticket/681>`_
+* change links in 'about inyoka'. fixes :ticket:`681`
 * fix floating of ikhaya comments if admin links have more than one line. fixes
-  `#637 <http://trac.inyokaproject.org/ticket/637>`_
+  :ticket:`637`
 * Introduce a ForumField (inyoka.forum.forms.ForumField), that hierarchically
   displays all forums the requesting user has access to. This field is now used
   in topic split and topic move, as well as in forum edit. Besides these forum
-  related views, the search page uses die field too which fixes `#654
-  <http://trac.inyokaproject.org/ticket/654>`_.
+  related views, the search page uses die field too which fixes :ticket:`654`.
 * Reindent.
-* fix anchor in interwiki links for opera & chromium, fixes `#679
-  <http://trac.inyokaproject.org/ticket/679>`_
+* fix anchor in interwiki links for opera & chromium, fixes :ticket:`679`
 * Added sprite-ref to tabbar background images.
 * Dynamic width for header icons.
 * display the parent forums during forum creation in a hierarchical order, so
-  that they can be clearly identified. fixed `#513
-  <http://trac.inyokaproject.org/ticket/513>`_
-* add column borders to tables in preview area. fixes `#527
-  <http://trac.inyokaproject.org/ticket/527>`_
+  that they can be clearly identified. fixed :ticket:`513`
+* add column borders to tables in preview area. fixes :ticket:`527`
 * correctly insert the unstable status to topics based on their version info.
-  fixes `#676 <http://trac.inyokaproject.org/ticket/676>`_
+  fixes :ticket:`676`
 * Fixed path for switch.png
 * Implemented a gunicorn autoreloader.
 * Reindent.
@@ -807,18 +778,16 @@ Inyoka 0.0.18 release summary
 Inyoka 0.0.17 release summary
 =============================
 
-* properly escape title and alt attrs in image uploads, refs `#633
-  <http://trac.inyokaproject.org/ticket/633>`_
+* properly escape title and alt attrs in image uploads, refs :ticket:`633`
 * add an invisible border to keep the dropdown at the same position, fixes
-  `#559 <http://trac.inyokaproject.org/ticket/559>`_
+  :ticket:`559`
 * Changed admin icon from monkey to tools.
 * fix slug creation to actually take max_length of fields into account, fixes
-  `#655 <http://trac.inyokaproject.org/ticket/655>`_
+  :ticket:`655`
 * Fixed error when saving a wikiarticle if not logged in.
-* restore short url for ikhaya, fixes `#642
-  <http://trac.inyokaproject.org/ticket/642>`_
+* restore short url for ikhaya, fixes :ticket:`642`
 * Revert "Added test to check time of a request."
-* add a broken testcase for `#655 <http://trac.inyokaproject.org/ticket/655>`_
+* add a broken testcase for :ticket:`655`
 * update celery to 2.4.0
 * move jstableform to a separat js file and fix coloring after field
   validation.
@@ -830,19 +799,17 @@ Inyoka 0.0.17 release summary
   inyoka/static/js/portal.js for a brief how-to :)
 * add new migration for distribution versions instead of changing an existing.
 * Fake acitivty monitor not required as we now have rabbitmq
-* fix pagination in blog list. fixes `#622
-  <http://trac.inyokaproject.org/ticket/622>`_
+* fix pagination in blog list. fixes :ticket:`622`
 * add ubuntu versions 4.10 to 12.04(dev) to the initial data migration
 * use a dictionary and simplejson.dumps() to build the json notation of an
   UbuntuVersion
 * reorder/restructure the JS for dynamic distribution versions
 * make the admin menu static. It does *not* flow in and out any longer! fixes
-  `#546 <http://trac.inyokaproject.org/ticket/546>`_
+  :ticket:`546`
 * Fixed undefined value
 * add unittest for distribution version order
 * integrate new distribution version management into all apps.
-* Fixed `#635 <http://trac.inyokaproject.org/ticket/635>`_, fixed behavior of
-  Link node if url is None
+* Fixed :ticket:`635`, fixed behavior of Link node if url is None
 * removed more unused scripts
 * Removed unused feeds_update.xml
 * Removed unused plax.js
@@ -877,19 +844,17 @@ Inyoka 0.0.17 release summary
   inyoka/static/js/portal.js for a brief how-to :)
 * add new migration for distribution versions instead of changing an existing.
 * Fake acitivty monitor not required as we now have rabbitmq
-* fix pagination in blog list. fixes `#622
-  <http://trac.inyokaproject.org/ticket/622>`_
+* fix pagination in blog list. fixes :ticket:`622`
 * add ubuntu versions 4.10 to 12.04(dev) to the initial data migration
 * use a dictionary and simplejson.dumps() to build the json notation of an
   UbuntuVersion
 * reorder/restructure the JS for dynamic distribution versions
 * make the admin menu static. It does *not* flow in and out any longer! fixes
-  `#546 <http://trac.inyokaproject.org/ticket/546>`_
+  :ticket:`546`
 * Fixed undefined value
 * add unittest for distribution version order
 * integrate new distribution version management into all apps.
-* Fixed `#635 <http://trac.inyokaproject.org/ticket/635>`_, fixed behavior of
-  Link node if url is None
+* Fixed :ticket:`635`, fixed behavior of Link node if url is None
 * removed more unused scripts
 * Removed unused feeds_update.xml
 * Removed unused plax.js
@@ -909,8 +874,7 @@ Inyoka 0.0.17 release summary
 Inyoka 0.0.16 release summary
 =============================
 
-* Fixed `#635 <http://trac.inyokaproject.org/ticket/635>`_, fixed behavior of
-  Link node if url is None
+* Fixed :ticket:`635`, fixed behavior of Link node if url is None
 * Updated server_error.html
 
 Inyoka 0.0.15 release summary
@@ -948,19 +912,13 @@ Inyoka 0.0.12 release summary
 * Remove _image references and link directly to the media url
 * Increase celery log level to INFO
 * Fixed cache update on page do_attach
-* Fixed `#619 <http://trac.inyokaproject.org/ticket/619>`_ - show first posts
-  on paginated pages
-* Fixed flash messages in privmsg delete/archive, fixes `#18
-  <http://trac.inyokaproject.org/ticket/18>`_
-* don't raise errors in urlparse, refs `#614
-  <http://trac.inyokaproject.org/ticket/614>`_
-* made external link regex ungreedy, fixes `#614
-  <http://trac.inyokaproject.org/ticket/614>`_
+* Fixed :ticket:`619` - show first posts on paginated pages
+* Fixed flash messages in privmsg delete/archive, fixes :ticket:`18`
+* don't raise errors in urlparse, refs :ticket:`614`
+* made external link regex ungreedy, fixes :ticket:`614`
 * Fixed UnicodeDecodeError in cleanup_html
-* removed dc:title from foaf export, fixes `#623
-  <http://trac.inyokaproject.org/ticket/623>`_
-* added missing pagination to bloglist, fixes `#622
-  <http://trac.inyokaproject.org/ticket/622>`_
+* removed dc:title from foaf export, fixes :ticket:`623`
+* added missing pagination to bloglist, fixes :ticket:`622`
 * add `Precise Pangolin` to the list of Ubuntu versions.
 * extend unit test for inyoka.utils.storage to show the problem that was fixed
   by 30b48c9e10d4083c90cb82eb1977111ff38a7974
@@ -1006,12 +964,10 @@ Inyoka 0.0.12 release summary
 * forum/_forum.html "topic_icon" macro is not compatible with egosearch.
 * Do not show reported topics to all users in egosearch.
 * Do not color every td, just give the tr an own class. (+ reindent)
-* fix table borders in ikhaya article details: fixes `#597
-  <http://trac.inyokaproject.org/ticket/597>`_
+* fix table borders in ikhaya article details: fixes :ticket:`597`
 * we should rely on sub.notified to always display of the star for ``unread``
   together with the link to ``first_unread`` even if there are some
-  inconsistencies. finally fixes `#276
-  <http://trac.inyokaproject.org/ticket/276>`_ - hopefully
+  inconsistencies. finally fixes :ticket:`276` - hopefully
 * Variable was referenced before assignment, should probably like this.
 * Some more commits, just some intermediate result of my cleanup hacking...
 * More pep08 cleanups
@@ -1031,14 +987,10 @@ Inyoka 0.0.12 release summary
 * Added basic unittests for request cache
 * Removed unused import
 * Added KEY_PREFIX to RequestCache backend
-* Added fennec to mobile browser list, fixes `#611
-  <http://trac.inyokaproject.org/ticket/611>`_
-* moved login link to the appbar in the mobile template, fixes `#542
-  <http://trac.inyokaproject.org/ticket/542>`_
-* hide admin_menu if media=print, fixes `#603
-  <http://trac.inyokaproject.org/ticket/603>`_
-* changed number_re in wiki.templates to only match numbers, fixes `#598
-  <http://trac.inyokaproject.org/ticket/598>`_
+* Added fennec to mobile browser list, fixes :ticket:`611`
+* moved login link to the appbar in the mobile template, fixes :ticket:`542`
+* hide admin_menu if media=print, fixes :ticket:`603`
+* changed number_re in wiki.templates to only match numbers, fixes :ticket:`598`
 * removed a comment
 * added lxml to requirements and removed ugly border from extended search
   dropdown
@@ -1080,15 +1032,10 @@ Inyoka 0.0.8 release summary
 * Allow update_model to update a list of instances
 * Hide hide/delete actions for first post, as they are not allowed there
 * Added confirm to topic deletion
-* Take the risk and reactivate delete buttons, fixes `#565
-  <http://trac.inyokaproject.org/ticket/565>`_
-* PROTECT wiki discussions for deletion, fixes `#610
-  <http://trac.inyokaproject.org/ticket/610>`_
-* Start normalizing headlines at level zero, fixes `#553
-  <http://trac.inyokaproject.org/ticket/553>`_, `#463
-  <http://trac.inyokaproject.org/ticket/463>`_
-* Fixed last post aggregation in split/move topics, fixes `#604
-  <http://trac.inyokaproject.org/ticket/604>`_
+* Take the risk and reactivate delete buttons, fixes :ticket:`565`
+* PROTECT wiki discussions for deletion, fixes :ticket:`610`
+* Start normalizing headlines at level zero, fixes :ticket:`553`, :ticket:`463`
+* Fixed last post aggregation in split/move topics, fixes :ticket:`604`
 * remove deprecated code block
 * save get_version_details for site scrapers like HTTRack, group/388
 * Fixed split topic for empty post_id list
@@ -1097,23 +1044,19 @@ Inyoka 0.0.8 release summary
 * Added simple atomic model update utilility
 * fixed none check for non existing topics to not issue a query
 * Workaround for previews with the insidious attachment handling in forum.
-* Fix typo, mods can now unsubscribe from forum reports again, fixes `#602
-  <http://trac.inyokaproject.org/ticket/602>`_
-* Fix serveral minior issues at `#443
-  <http://trac.inyokaproject.org/ticket/443>`_: Auto moving wiki pages to
+* Fix typo, mods can now unsubscribe from forum reports again, fixes :ticket:`602`
+* Fix serveral minior issues at :ticket:`443`: Auto moving wiki pages to
   'Baustelle' and back
 * Setting a global message crashed everything, fixed that.
 * Add direct editing links to Ikhaya report lists (saves a click or two)
 * make_testdata.py now also creates planet test data
-* fixed `#595 <http://trac.inyokaproject.org/ticket/595>`_
-* fixed `#607 <http://trac.inyokaproject.org/ticket/607>`_
-* don't rename .mo and .svg on upload, fixes `#599
-  <http://trac.inyokaproject.org/ticket/599>`_
-* increased ul.dropdown width, fixes `#589
-  <http://trac.inyokaproject.org/ticket/589>`_
+* fixed :ticket:`595`
+* fixed :ticket:`607`
+* don't rename .mo and .svg on upload, fixes :ticket:`599`
+* increased ul.dropdown width, fixes :ticket:`589`
 * moved username checking into the form for EditUserProfileForm instead of the
   view
-* fixed `#576 <http://trac.inyokaproject.org/ticket/576>`_
+* fixed :ticket:`576`
 * Some small cleanups, removed unused imports
 * Fixed name error in mv_baustelle
 * Fixed resend activation link
@@ -1131,20 +1074,14 @@ Inyoka 0.0.6 release summary
 Inyoka 0.0.5 release summary
 ============================
 
-* Fixed `#577 <http://trac.inyokaproject.org/ticket/577>`_: Do not show empty
-  version field as checkbox in usercp-settings
-* Show list-styles in mobile template again, fixes `#549
-  <http://trac.inyokaproject.org/ticket/549>`_
-* Do not show confirm_action question on solve/unsolve, fixes `#582
-  <http://trac.inyokaproject.org/ticket/582>`_
-* Make question answer input fields a bit bigger, fixes `#581
-  <http://trac.inyokaproject.org/ticket/581>`_
-* Remove top pagination from subscription page, fixes `#579
-  <http://trac.inyokaproject.org/ticket/579>`_
-* Removed transition, fixed width of dropdown, fixes `#584
-  <http://trac.inyokaproject.org/ticket/584>`_
-* Show git tag in footer, fixes `#575
-  <http://trac.inyokaproject.org/ticket/575>`_
+* Fixed :ticket:`577`: Do not show empty version field as checkbox in
+  usercp-settings
+* Show list-styles in mobile template again, fixes :ticket:`549`
+* Do not show confirm_action question on solve/unsolve, fixes :ticket:`582`
+* Make question answer input fields a bit bigger, fixes :ticket:`581`
+* Remove top pagination from subscription page, fixes :ticket:`579`
+* Removed transition, fixed width of dropdown, fixes :ticket:`584`
+* Show git tag in footer, fixes :ticket:`575`
 * Added Lubuntu, http://forum.ubuntuusers.de/topic/lubuntu-im-drop-down-menue/
 * Fix anonymous comments in mobile view
 * Fixed UnboundLocalError in ikhaya article edit
@@ -1159,21 +1096,18 @@ Inyoka 0.0.4 release summary
 * Changed mobile emblems to old monochrome ones because of readability.
 * Removed everything from requirements.txt that is not required at all but
   optional (eases CI builds)
-* Changed style of "advanced search" dropdown, fixes `#559
-  <http://trac.inyokaproject.org/ticket/559>`_.
+* Changed style of "advanced search" dropdown, fixes :ticket:`559`.
 * New layout for mobile userprofile.
 * Added "quote" button and moved "edit" button to post header.
 * Added "quote" button and moved "edit" button to post header.
-* Show edit button in mobile. Fixes `#558
-  <http://trac.inyokaproject.org/ticket/558>`_.
+* Show edit button in mobile. Fixes :ticket:`558`.
 * Check for permissions in view instead of template.
 * Only show "reported" emblem if user can moderate.
 * Colorized mobile forum emblems and added border for better visibility.
 * Extended mobile emblems.
 * Optimized size of mobile emblems.
 * Emblems for mobile forum (solved, locked, reported, sticky).
-* Replaced forum.views by Forum.objects.get_cached(). Fixes `#578
-  <http://trac.inyokaproject.org/ticket/578>`_.
+* Replaced forum.views by Forum.objects.get_cached(). Fixes :ticket:`578`.
 * Replaced "not user.is_banned" by "user.is_active"
 * Typofix.
 * Updated deploy, implemented rollback to properly work with git tags
