@@ -154,7 +154,7 @@ def index(request):
 
     countdown_active = storage_values.get('countdown_active', False)
     # The storage can only handle strings
-    countdown_active = True if countdown_active == 'True' else False
+    countdown_active = (countdown_active == 'True')
     countdown_date = storage_values.get('countdown_date', None)
     countdown_image_url = storage_values.get('countdown_image_url', None)
     if countdown_active and countdown_date:
