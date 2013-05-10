@@ -4,6 +4,7 @@
 inyoka.xapdb/
 inyoka/media/
 node_modules/
+inyoka/static-collected/
 DJANGO_SETTINGS_MODULE
 .venv
 .venv_hook
