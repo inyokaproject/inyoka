@@ -228,7 +228,7 @@ class ImageCaptchaWidget(Input):
         input_ = Input.render(self, name, u'', attrs)
         img = '<img src="%s" class="captcha" alt="%s" />' % (
               href('portal', __service__='portal.get_captcha',
-                   rnd=randrange(1, sys.maxint)), _('CAPTCHA'))
+                   rnd=randrange(1, sys.maxsize)), _('CAPTCHA'))
         text = '%s:' % _('Please type in the code from the graphic above')
         input_tag = '%s <input type="submit" name="renew_captcha" value="%s" />' % (
                     input_, _('Generate new code'))
@@ -278,8 +278,8 @@ class CaptchaField(forms.MultiValueField):
         super(CaptchaField, self).__init__(fields, *args, **kwargs)
 
     def compress(self, data_list):
-        pass # CaptchaField doesn't have a useful value to return.
+        pass  # CaptchaField doesn't have a useful value to return.
 
     def clean(self, value):
-        value[1] = False # Prevent beeing catched by validators.EMPTY_VALUES
+        value[1] = False  # Prevent beeing catched by validators.EMPTY_VALUES
         return super(CaptchaField, self).clean(value)

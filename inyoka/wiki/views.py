@@ -196,7 +196,7 @@ def feed(request, page_name=None, count=10):
     Shows the wiki pages or all revisions of one page that match
     the given criteria in an atom feed.
     """
-    #TODO i18n: Find a better solution to hard coded wiki paths.
+    # TODO i18n: Find a better solution to hard coded wiki paths.
     #           Maybe we need even more configuration values in the storage.
     if page_name:
         feed = AtomFeed(title=_(u'%(sitename)s wiki – %(pagename)s') % {

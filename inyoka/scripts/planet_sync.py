@@ -168,7 +168,7 @@ def sync():
             try:
                 entry.save()
                 debug(u' synced entry %r' % guid)
-            except Exception, exc:
+            except Exception as exc:
                 debug(u' Error on entry %r: %r' % (guid, exc))
         blog.last_sync = datetime.utcnow()
         blog.save()

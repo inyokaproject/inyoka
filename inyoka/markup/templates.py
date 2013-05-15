@@ -127,7 +127,7 @@ class Lexer(object):
                     yield tokentype, m.group()
                 pos = m.end()
                 if statechange is not None:
-                    if type(statechange) is int:
+                    if isinstance(statechange, int):
                         del stack[-statechange:]
                     else:
                         stack.append(statechange)
@@ -148,8 +148,8 @@ class Parser(object):
     def __init__(self, code):
         self.stream = Lexer().tokenize(code)
         self.handlers = {
-            'for':      self.parse_for,
-            'if':       self.parse_if
+            'for': self.parse_for,
+            'if': self.parse_if
         }
 
     def parse_for(self):
@@ -186,7 +186,7 @@ class Parser(object):
                  ('endif', 'else', 'elseif')), drop_needle=False))]
         else_body = None
 
-        while 1:
+        while True:
             if self.stream.test('raw', 'else'):
                 self.stream.next()
                 if not self.stream.test('tag_end'):
@@ -272,12 +272,12 @@ class Parser(object):
 
     def parse_cmp(self):
         known_operators = {
-            '==':       'eq',
-            '!=':       'ne',
-            '>':        'gt',
-            '>=':       'ge',
-            '<':        'lt',
-            '<=':       'le'
+            '==': 'eq',
+            '!=': 'ne',
+            '>': 'gt',
+            '>=': 'ge',
+            '<': 'lt',
+            '<=': 'le'
         }
         left = self.parse_add()
         while not self.stream.eof:
@@ -394,7 +394,7 @@ class Parser(object):
         return self.parse_postfix(node)
 
     def parse_postfix(self, node):
-        while 1:
+        while True:
             if self.stream.test('operator', '.'):
                 node = self.parse_getitem(node)
             else:
@@ -452,7 +452,7 @@ class Parser(object):
                     next()
                 else:
                     assert 0, 'arrrr. the lexer screwed us'
-        except TemplateSyntaxError, exc:
+        except TemplateSyntaxError as exc:
             result.append(exc.get_node())
         return assemble_compound()
 
@@ -601,13 +601,13 @@ class For(Node):
         for idx, child in enumerate(seq):
             context[self.var] = Value(child)
             context['loop'] = Value({
-                'index0':       idx,
-                'index':        idx + 1,
-                'revindex0':    length - idx - 1,
-                'revindex':     length - idx,
-                'length':       length,
-                'first':        idx == 0,
-                'last':         idx == length - 1
+                'index0': idx,
+                'index': idx + 1,
+                'revindex0': length - idx - 1,
+                'revindex': length - idx,
+                'length': length,
+                'first': idx == 0,
+                'last': idx == length - 1
             })
             for item in self.body.stream_markup(context):
                 yield item
@@ -948,43 +948,43 @@ class TestFunction(Expr):
 
 
 BINARY_FUNCTIONS = {
-    'contain':          lambda a, b: b in a,
-    'contains':         lambda a, b: b in a,
-    'has_key':          has_key,
-    'starts_with':      lambda a, b: unicode(a).startswith(unicode(b)),
-    'ends_with':        lambda a, b: unicode(a).endswith(unicode(b)),
-    'matches':          lambda a, b: simple_match(unicode(b), unicode(a)),
-    'matches_regex':    lambda a, b: regex_match(unicode(b), unicode(a)),
-    'join_with':        join_array,
-    'split_by':         lambda a, b: unicode(a).split(unicode(b)),
+    'contain': lambda a, b: b in a,
+    'contains': lambda a, b: b in a,
+    'has_key': has_key,
+    'starts_with': lambda a, b: unicode(a).startswith(unicode(b)),
+    'ends_with': lambda a, b: unicode(a).endswith(unicode(b)),
+    'matches': lambda a, b: simple_match(unicode(b), unicode(a)),
+    'matches_regex': lambda a, b: regex_match(unicode(b), unicode(a)),
+    'join_with': join_array,
+    'split_by': lambda a, b: unicode(a).split(unicode(b)),
 }
 
 CONVERTER = {
-    'string':           lambda x: unicode(x),
-    'number':           lambda x: float(x),
-    'int':              lambda x: int(x),
-    'uppercase':        lambda x: unicode(x).upper(),
-    'lowercase':        lambda x: unicode(x).lower(),
-    'title':            lambda x: unicode(x).title(),
-    'stripped':         lambda x: unicode(x).strip(),
-    'rounded':          lambda x: round(float(x)),
-    'quoted':           lambda x: u"%s" % unicode(x) .
-                                  replace('\\', '\\\\') .
-                                  replace('"', '\\"'),
-    'escaped':          lambda x: escape(unicode(x)),
-    'array_of_lines':   lambda x: unicode(x).splitlines(),
-    'randint':          lambda x: float(random.randint(1.0, x))
+    'string': lambda x: unicode(x),
+    'number': lambda x: float(x),
+    'int': lambda x: int(x),
+    'uppercase': lambda x: unicode(x).upper(),
+    'lowercase': lambda x: unicode(x).lower(),
+    'title': lambda x: unicode(x).title(),
+    'stripped': lambda x: unicode(x).strip(),
+    'rounded': lambda x: round(float(x)),
+    'quoted': lambda x: u"%s" % unicode(x) .
+    replace('\\', '\\\\') .
+    replace('"', '\\"'),
+    'escaped': lambda x: escape(unicode(x)),
+    'array_of_lines': lambda x: unicode(x).splitlines(),
+    'randint': lambda x: float(random.randint(1.0, x))
 }
 
 TESTS = {
-    'even':             lambda x: int(x) % 2 == 0,
-    'odd':              lambda x: int(x) % 2 != 0,
-    'uppercase':        lambda x: unicode(x).isupper(),
-    'lowercase':        lambda x: unicode(x).islower(),
-    'string':           lambda x: x.is_string,
-    'number':           lambda x: x.is_number,
-    'array':            lambda x: x.is_array,
-    'object':           lambda x: x.is_object,
-    'defined':          lambda x: x.value is not None,
-    'undefined':        lambda x: x.value is None
+    'even': lambda x: int(x) % 2 == 0,
+    'odd': lambda x: int(x) % 2 != 0,
+    'uppercase': lambda x: unicode(x).isupper(),
+    'lowercase': lambda x: unicode(x).islower(),
+    'string': lambda x: x.is_string,
+    'number': lambda x: x.is_number,
+    'array': lambda x: x.is_array,
+    'object': lambda x: x.is_object,
+    'defined': lambda x: x.value is not None,
+    'undefined': lambda x: x.value is None
 }

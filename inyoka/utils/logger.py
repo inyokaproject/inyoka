@@ -39,11 +39,11 @@ def process_failure_signal(sender, task_id, exception, args, kwargs, traceback,
     logger.error('Celery job exception: %s (%s)' % descr,
         exc_info=exc_info,
         extra={
-          'data': {
-            'task_id': task_id,
-            'sender': sender,
-            'args': args,
-            'kwargs': kwargs,
+                 'data': {
+                     'task_id': task_id,
+                     'sender': sender,
+                     'args': args,
+                     'kwargs': kwargs,
           }
         }
       )

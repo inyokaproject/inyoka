@@ -169,7 +169,7 @@ class TemplateParser(Parser):
 
 #: list of all parsers this wiki can handle
 ALL_PARSERS = {
-    'code':     PygmentsParser,
-    'csv':      CSVParser,
-    'vorlage':  TemplateParser
+    'code': PygmentsParser,
+    'csv': CSVParser,
+    'vorlage': TemplateParser
 }

@@ -114,7 +114,7 @@ def save_file(url, is_main_page=False, is_static=False):
                 dst = path.join(FOLDER, 'files', '_', fname)
                 copy(abs_path, dst)
                 DONE_SRCS[hash] = fname
-                chmod(dst, 0644)
+                chmod(dst, 0o644)
             return path.join('_', DONE_SRCS[hash])
     except IOError:
         pass

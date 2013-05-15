@@ -239,7 +239,7 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
 
     def get_paginate_by(self, queryset):
         paginate_by = self.kwargs.get('paginate_by') or \
-                      self.request.GET.get('paginate_by')
+            self.request.GET.get('paginate_by')
         paginate_by = paginate_by or self.paginate_by
         return int(paginate_by)
 

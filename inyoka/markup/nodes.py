@@ -32,7 +32,7 @@ from inyoka.utils.urls import href, urlquote_plus, get_url
 from inyoka.utils.templating import render_template
 
 from inyoka.markup.machine import NodeCompiler, NodeRenderer, \
-     NodeQueryInterface
+    NodeQueryInterface
 
 
 def error_box(title, message):
@@ -102,7 +102,7 @@ class BaseNode(object):
 
     def __eq__(self, other):
         return self.__class__ is other.__class__ and \
-               self.__dict__ == other.__dict__
+            self.__dict__ == other.__dict__
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -143,7 +143,7 @@ class Node(BaseNode, NodeRenderer, NodeCompiler, NodeQueryInterface):
         used by the renderer and node compiler.
         """
         return {
-            'html':     self.prepare_html
+            'html': self.prepare_html
         }[format]()
 
     def prepare_html(self):
@@ -254,9 +254,9 @@ class ConflictMarker(Node):
     def prepare_html(self):
         yield u'<div class="conflict conflict-%s">' % self.type
         yield {
-            'left':   _(u'<strong>Conflict</strong> – remote version'),
+            'left': _(u'<strong>Conflict</strong> – remote version'),
             'middle': _(u'<strong>Conflict</strong> – local Version'),
-            'right':  _(u'<strong>Conflict End</strong>')
+            'right': _(u'<strong>Conflict End</strong>')
         }[self.type]
         yield u'</div>'
 
@@ -428,7 +428,6 @@ class Span(Element):
                  style=None, class_=None):
         Element.__init__(self, children, id, style, class_)
 
-
     def prepare_html(self):
         yield build_html_tag(u'span',
             id=self.id,
@@ -438,7 +437,6 @@ class Span(Element):
         for item in Element.prepare_html(self):
             yield item
         yield u'</span>'
-
 
 
 class InternalLink(Element):
@@ -551,7 +549,6 @@ class Link(Element):
                 self.valid_url = False
         else:
             self.valid_url = False
-
 
     @property
     def href(self):
@@ -710,7 +707,7 @@ class Edited(Element):
         yield u'<p><strong>%s <a class="crosslink user" href="%s">' \
               u'%s</a>:</strong></p> ' % (self.msg,
                 href('portal', 'user', self.username),
-                self.username)
+                  self.username)
         for item in Element.prepare_html(self):
             yield item
         yield u'</div>'

@@ -511,7 +511,7 @@ class Lexer(object):
             match = primary(line)
             if match is None:
                 return False
-            while 1:
+            while True:
                 match = secondary(line, match.end())
                 if match is None:
                     return True

@@ -112,9 +112,9 @@ def calendar_entries_for_month(year, month):
                     delta = event.date - event.date
                 base = event.date.day
 
-            for day in range(delta.days+1):
+            for day in range(delta.days + 1):
                 if base + day in days:
-                    days[base+day].append(event)
+                    days[base + day].append(event)
         else:
             days[event.date.day].append(event)
     return days
