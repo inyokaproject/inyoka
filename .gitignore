@@ -3,6 +3,7 @@
 .DS_Store
 inyoka.xapdb/
 inyoka/media/
+inyoka/static-collected/
 DJANGO_SETTINGS_MODULE
 .venv
 .venv_hook
