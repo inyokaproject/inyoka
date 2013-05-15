@@ -17,6 +17,7 @@ from hashlib import md5
 from time import time
 from datetime import datetime
 from itertools import groupby
+from functools import reduce
 from operator import attrgetter, itemgetter
 
 from django.conf import settings
@@ -46,7 +47,6 @@ from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \
 from inyoka.forum.constants import CACHE_PAGES_COUNT, VERSION_CHOICES, \
     DISTRO_CHOICES, POSTS_PER_PAGE, UBUNTU_DISTROS_LEGACY, \
     SUPPORTED_IMAGE_TYPES
-from functools import reduce
 
 _newline_re = re.compile(r'\r?\n')
 
