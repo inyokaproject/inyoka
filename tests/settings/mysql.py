@@ -1,5 +1,5 @@
 from inyoka.default_settings import *
-from test_sqlite import *
+from .base import *
 
 DATABASES = {
     'default': {
