@@ -17,6 +17,7 @@ from hashlib import md5
 from time import time
 from datetime import datetime
 from itertools import groupby
+from functools import reduce
 from operator import attrgetter, itemgetter
 
 from django.conf import settings
@@ -327,7 +328,7 @@ class Forum(models.Model):
         user.save(update_fields=('forum_welcome',))
 
     def invalidate_topic_cache(self):
-        cache.delete_many('forum/topics/%d/%d' % (self.id, page+1) for page in
+        cache.delete_many('forum/topics/%d/%d' % (self.id, page + 1) for page in
             range(CACHE_PAGES_COUNT))
 
     @staticmethod
@@ -414,7 +415,7 @@ class Topic(models.Model):
 
     @property
     def rendered_report_text(self):
-        return parse(self.reported).render(None,'html')
+        return parse(self.reported).render(None, 'html')
 
     def cached_forum(self):
         return Forum.objects.get(self.forum_id)
@@ -986,7 +987,7 @@ class Attachment(models.Model):
         """
         name = get_filename(name, uploaded_file)
         # check whether an attachment with the same name already exists
-        existing = filter(lambda a: a.name==name, attachments)
+        existing = filter(lambda a: a.name == name, attachments)
         exists = bool(existing)
         if exists:
             existing = existing[0]
@@ -1112,7 +1113,7 @@ class Attachment(models.Model):
                        % (url, thumb, escape(self.comment), escape(self.comment))
             else:
                 return u'<a href="%s" type="%s" title="%s">%s ansehen</a>' \
-                          % (url, self.mimetype, escape(self.comment), self.name)
+                    % (url, self.mimetype, escape(self.comment), self.name)
         elif show_preview and istext():
             contents = self.contents
             if contents is not None:
@@ -1290,10 +1291,9 @@ class ReadStatus(object):
                 self.mark(item.forum)
                 return True
         elif len(row[1]) > settings.FORUM_LIMIT_UNREAD:
-            r = list(row[1])
-            r.sort()
-            row = (r[settings.FORUM_LIMIT_UNREAD//2],
-                set(r[settings.FORUM_LIMIT_UNREAD//2:]))
+            r = sorted(row[1])
+            row = (r[settings.FORUM_LIMIT_UNREAD // 2],
+                set(r[settings.FORUM_LIMIT_UNREAD // 2:]))
         self.data[forum_id] = row
         return True
 

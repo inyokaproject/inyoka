@@ -67,7 +67,7 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),
         help_text=ugettext_lazy(u'Leave this field empty if you are using OpenID.'),)
     permanent = forms.BooleanField(label=_('Keep logged in'),
-        required=False, widget=forms.CheckboxInput(attrs={'tabindex':'1'}))
+        required=False, widget=forms.CheckboxInput(attrs={'tabindex': '1'}))
 
     def clean(self):
         data = self.cleaned_data
@@ -194,8 +194,8 @@ class ChangePasswordForm(forms.Form):
     new_password = forms.CharField(label=ugettext_lazy(u'New password'),
                                    widget=forms.PasswordInput)
     new_password_confirm = forms.CharField(
-                                   label=ugettext_lazy(u'Confirm new password'),
-                                   widget=forms.PasswordInput)
+        label=ugettext_lazy(u'Confirm new password'),
+        widget=forms.PasswordInput)
 
 
 class UserCPSettingsForm(forms.Form):
@@ -231,7 +231,6 @@ class UserCPSettingsForm(forms.Form):
         help_text=ugettext_lazy(u'No effect if “attachment preview” is disabled'))
     mark_read_on_logout = forms.BooleanField(required=False,
         label=ugettext_lazy(u'Mark all forums as “read” on logout'))
-
 
     def clean_notify(self):
         data = self.cleaned_data['notify']
@@ -468,7 +467,7 @@ class CreateUserForm(forms.Form):
 class EditUserStatusForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EditUserStatusForm, self).__init__(*args, **kwargs)
-        self.fields['banned_until'].localize=True
+        self.fields['banned_until'].localize = True
 
     class Meta:
         model = User
@@ -592,7 +591,6 @@ class EditGroupForm(forms.ModelForm):
             group.icon.save(icon_path, icon)
             icon.close()
 
-
         # permissions
         permissions = 0
         for perm in data['permissions']:
@@ -654,7 +652,7 @@ def _feed_count_cleanup(n):
         return COUNTS[0]
     for i in range(len(COUNTS)):
         if n < COUNTS[i]:
-            return n - COUNTS[i-1] < COUNTS[i] - n and COUNTS[i-1] or COUNTS[i]
+            return n - COUNTS[i - 1] < COUNTS[i] - n and COUNTS[i - 1] or COUNTS[i]
     return COUNTS[-1]
 
 
@@ -666,10 +664,10 @@ class FeedSelectorForm(forms.Form):
                 help_text=ugettext_lazy(u'The number will be round off to keep the server '
                             u'load low.'))
     mode = forms.ChoiceField(initial='short',
-        choices=(('full',  ugettext_lazy(u'Full article')),
+        choices=(('full', ugettext_lazy(u'Full article')),
                  ('short', ugettext_lazy(u'Only introduction')),
                  ('title', ugettext_lazy(u'Only title'))),
-        widget=forms.RadioSelect(attrs={'class':'radioul'}))
+        widget=forms.RadioSelect(attrs={'class': 'radioul'}))
 
     def clean(self):
         data = self.cleaned_data
@@ -738,12 +736,12 @@ class EditFileForm(forms.ModelForm):
 class ConfigurationForm(forms.Form):
     global_message = forms.CharField(label=ugettext_lazy(u'Global Message'),
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
-        help_text = ugettext_lazy(u'This message will displayed on every page in the '
+        help_text=ugettext_lazy(u'This message will displayed on every page in the '
                       u'header. To disable it, leave the field empty. '
                       u'Needs to be valid XHTML.'))
     blocked_hosts = forms.CharField(label=ugettext_lazy(u'Blocked hosts for email addresses'),
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
-        help_text = ugettext_lazy(u'Users cannot use email addresses from these hosts to '
+        help_text=ugettext_lazy(u'Users cannot use email addresses from these hosts to '
                       u'register an account.'))
     team_icon = forms.ImageField(label=ugettext_lazy(u'Global team icon'), required=False,
         help_text=ugettext_lazy(u'Please note the details on the maximum size below.'))

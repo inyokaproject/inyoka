@@ -57,7 +57,7 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
             days_found.add(key)
         days[-1][1].append(entry)
     return [{
-        'date':     date(*key),
+        'date': date(*key),
         'articles': entries
     } for key, items in days if items]
 

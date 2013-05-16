@@ -90,7 +90,7 @@ class SurgeProtectionMixin(object):
         # errors would trigger the surge protection!
         if self.is_valid():
             identifier = self.source_protection_identifier or \
-                         self.__class__.__module__.split('.')[1]
+                self.__class__.__module__.split('.')[1]
             protection = current_request.session.setdefault('sp', {})
             if protection.get(identifier, 0) >= time():
                 raise ValidationError(self.source_protection_message)

@@ -29,7 +29,7 @@ from django.utils.translation import ugettext as _
 from inyoka.markup import parse, RenderContext
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, does_not_exist_is_404, \
-     TemplateResponse, AccessDeniedResponse
+    TemplateResponse, AccessDeniedResponse
 from inyoka.utils.diff3 import merge
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
@@ -107,8 +107,8 @@ def do_show(request, name):
         if redirect:
             messages.info(request,
                 _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
-                'link': escape(href('wiki', page.name, redirect='no')),
-                'title': escape(page.title)
+                    'link': escape(href('wiki', page.name, redirect='no')),
+                    'title': escape(page.title)
             })
             anchor = None
             if '#' in redirect:
@@ -118,9 +118,9 @@ def do_show(request, name):
         return do_missing_page(request, name, page)
 
     return {
-        'page':         page,
-        'tags':         page.metadata['tag'],
-        'deny_robots':  rev is not None,
+        'page': page,
+        'tags': page.metadata['tag'],
+        'deny_robots': rev is not None,
     }
 
 
@@ -191,17 +191,17 @@ def do_missing_page(request, name, _page=None):
         not_finished = None
 
     return {
-        'page':         _page,
-        'page_name':    name,
-        'create_link':  create_link,
-        'title':        get_pagetitle(name),
+        'page': _page,
+        'page_name': name,
+        'create_link': create_link,
+        'title': get_pagetitle(name),
         'similar': [{
-            'name':     x,
-            'title':    get_pagetitle(x)
+            'name': x,
+            'title': get_pagetitle(x)
         } for x in sorted(Page.objects.get_similar(name))],
         'backlinks': [{
-            'name':     x.name,
-            'title':    x.title
+            'name': x.name,
+            'title': x.title
         } for x in sorted(Page.objects.find_by_metadata('X-Link', name),
                           key=lambda x: x.title.lower())],
         'not_finished': not_finished
@@ -233,7 +233,7 @@ def do_revert(request, name):
             page.last_rev = new_revision
             messages.success(request,
                 _(u'“%(title)s” was reverted successfully') % {
-                'title': escape(page.rev.title)})
+                    'title': escape(page.rev.title)})
             url = href('wiki', name)
     else:
         messages.info(request,
@@ -264,8 +264,8 @@ def _rename(request, page, new_name, force=False, new_text=None):
             _(u'These attachments are already attached to the new page name: %(names)s. '
               u'Please make sure that they are not required anymore. '
               u'<a href="%(link)s">Force rename and deletion of duplicate attachments</a>,') % {
-                'names': linklist,
-                'link': href('wiki', page.name, action='rename', force=True)})
+                  'names': linklist,
+                  'link': href('wiki', page.name, action='rename', force=True)})
         return False
 
     elif duplicate and force:
@@ -328,12 +328,11 @@ def do_rename(request, name):
                                _(u'A page with this name already exists.'))
                 return HttpResponseRedirect(href('wiki', name))
 
-
         return HttpResponseRedirect(url_for(page))
     messages.info(request, render_template('wiki/action_rename.html', {
-        'page':         page,
-        'new_name':     new_name,
-        'force':        force
+        'page': page,
+        'new_name': new_name,
+        'force': force
     }))
     return HttpResponseRedirect(url_for(page, 'show_no_redirect'))
 
@@ -411,8 +410,8 @@ def do_edit(request, name):
             form.initial['text'] = template.rev.text.value
             messages.info(request,
                 _(u'Used the template “<a href="%(link)s">%(name)s</a>” for this page') % {
-                'link': url_for(template),
-                'name': escape(template.title)
+                    'link': url_for(template),
+                    'name': escape(template.title)
             })
 
     # check for edits by other users.  If we have such an edit we try
@@ -470,7 +469,6 @@ def do_edit(request, name):
                         else:
                             msg = _(u'The page <a href="%(link)s">%(name)s</a> has been edited.')
 
-
                         messages.success(request, msg % {'link': escape(href('wiki', page.name)),
                                                          'name': escape(page.title)})
                 else:
@@ -480,8 +478,8 @@ def do_edit(request, name):
                                                **form.cleaned_data)
                     messages.success(request,
                         _(u'The page <a href="%(link)s">%(name)s</a> has been created.') % {
-                        'link': escape(href('wiki', page.name)),
-                        'name': escape(page.title)
+                            'link': escape(href('wiki', page.name)),
+                            'name': escape(page.title)
                     })
 
                 last_revisions = page.revisions.all()[:2]
@@ -512,15 +510,15 @@ def do_edit(request, name):
               u'Please check if the automatic merging is satisfying.'))
 
     return {
-        'name':         name,
-        'title':        get_pagetitle(name),
-        'page':         page,
-        'form':         form,
-        'preview':      preview,
-        'edit_time':    edit_time.strftime('%s'),
-        'rev':          current_rev_id,
-        'storage':      storage,
-        'deny_robots':  True,
+        'name': name,
+        'title': get_pagetitle(name),
+        'page': page,
+        'form': form,
+        'preview': preview,
+        'edit_time': edit_time.strftime('%s'),
+        'rev': current_rev_id,
+        'storage': storage,
+        'deny_robots': True,
     }
 
 
@@ -544,7 +542,7 @@ def do_delete(request, name):
     return HttpResponseRedirect(url_for(page))
 
 
-#TODO: This damn function is much too specific as translation would
+# TODO: This damn function is much too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
 @require_privilege('manage')
 @templated('wiki/action_mv_baustelle.html')
@@ -577,7 +575,7 @@ def do_mv_baustelle(request, name):
 
             # Move from 'Baustelle/Verlassen' to 'Baustelle'
             if text.startswith('[[Vorlage(Verlassen'):
-                text = text[text.find('\n')+1:]
+                text = text[text.find('\n') + 1:]
             new_text = u'[[Vorlage(Überarbeitung, %s%s, %s)]]\n%s' % (date,
                        name, data['user'], text)
             try:
@@ -610,12 +608,12 @@ def do_mv_baustelle(request, name):
         init_name = 'Baustelle/%s' % name
     form.initial = {'new_name': init_name, 'user': request.user}
     return {
-        'page':page,
-        'form':form,
+        'page': page,
+        'form': form,
     }
 
 
-#TODO: This damn function is way too specific as translation would
+# TODO: This damn function is way too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
 @require_privilege('manage')
 @does_not_exist_is_404
@@ -629,7 +627,7 @@ def do_mv_discontinued(request, name):
             new_name = name.replace('Baustelle', 'Baustelle/Verlassen')
             text = page.revisions.latest().text.value
             if text.startswith('[[Vorlage(Baustelle'):
-                text = text[text.find('\n')+1:]
+                text = text[text.find('\n') + 1:]
             text = u'[[Vorlage(Verlassen)]]\n' + text
             try:
                 Page.objects.get_by_name(new_name)
@@ -650,7 +648,7 @@ def do_mv_discontinued(request, name):
     return HttpResponseRedirect(url_for(page))
 
 
-#TODO: This damn function is way too specific as translation would
+# TODO: This damn function is way too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
 @require_privilege('manage')
 @does_not_exist_is_404
@@ -665,10 +663,10 @@ def do_mv_back(request, name):
             messages.info(request, u'Wiederherstellen wurde abgebrochen.')
         else:
             if name.startswith('Baustelle/'):
-                new_name = name[10:] # Remove the leading 'Baustelle/' from the name
+                new_name = name[10:]  # Remove the leading 'Baustelle/' from the name
             else:
                 new_name = name
-            ## Move copy to Trash
+            # Move copy to Trash
             try:
                 copy = Page.objects.get_by_name(new_name)
             except Page.DoesNotExist:
@@ -677,7 +675,7 @@ def do_mv_back(request, name):
             else:
                 copy_text = copy.revisions.latest().text.value
                 if copy_text.startswith('[[Vorlage(Kopie'):
-                    copy_text = copy_text[copy_text.find('\n')+1:]
+                    copy_text = copy_text[copy_text.find('\n') + 1:]
                 moved = False
                 for id in range(1, 100):
                     trash_name = "Trash/%s-%i" % (new_name, id)
@@ -693,12 +691,12 @@ def do_mv_back(request, name):
                     messages.error(request,
                         u'Kopie konnte nicht nach Trash verschoben werden')
                     return HttpResponseRedirect(url_for(page))
-            ## Remove box
+            # Remove box
             text = page.revisions.latest().text.value
             while text.startswith(u'[[Vorlage(Baustelle') or \
                     text.startswith(u'[[Vorlage(Überarbeitung'):
-                text = text[text.find('\n')+1:]
-            ## Rename
+                text = text[text.find('\n') + 1:]
+            # Rename
             if not _rename(request, page, new_name, new_text=text):
                 messages.error(request,
                     u'Beim Verschieben ist ein Fehler aufgereten.')
@@ -753,10 +751,10 @@ def do_log(request, name):
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
                             REVISIONS_PER_PAGE, link_func)
     return {
-        'page':         page,
-        'revisions':    pagination.get_queryset(),
-        'pagination':   pagination,
-        'deny_robots':  True,
+        'page': page,
+        'revisions': pagination.get_queryset(),
+        'pagination': pagination,
+        'deny_robots': True,
     }
 
 
@@ -777,9 +775,9 @@ def do_diff(request, name):
         return HttpResponse(diff.udiff, mimetype='text/plain; charset=utf-8')
 
     return {
-        'diff':         diff,
-        'page':         diff.page,
-        'deny_robots':  True,
+        'diff': diff,
+        'page': diff.page,
+        'deny_robots': True,
     }
 
 
@@ -797,7 +795,7 @@ def do_backlinks(request, name):
 
     return {
         'page': page,
-        'deny_robots':  True,
+        'deny_robots': True,
     }
 
 
@@ -841,7 +839,7 @@ def do_export(request, name):
                                                 raise_on_deleted=True)
     ctx = {
         'fragment': request.GET.get('fragment', 'no') == 'yes',
-        'page':     page
+        'page': page
     }
     format = request.GET.get('format', 'raw').lower()
     if format == 'html':
@@ -884,9 +882,9 @@ def do_attach(request, name):
     attachments = Page.objects.get_attachment_list(page.name)
     attachments = [Page.objects.get_by_name(i) for i in attachments]
     context = {
-        'page':        page,
+        'page': page,
         'attachments': attachments,
-        'form':        AddAttachmentForm()
+        'form': AddAttachmentForm()
     }
     if request.method == 'POST':
         if request.POST.get('cancel'):
@@ -996,8 +994,8 @@ def do_manage(request, name):
         ``'wiki/action_manage.html'``
     """
     return {
-        'page':         Page.objects.get_by_name(name),
-        'deny_robots':  True,
+        'page': Page.objects.get_by_name(name),
+        'deny_robots': True,
     }
 
 
@@ -1065,23 +1063,23 @@ def do_manage_discussion(request, name):
     }
 
 PAGE_ACTIONS = {
-    'show':              do_show,
-    'metaexport':        do_metaexport,
-    'log':               do_log,
-    'diff':              do_diff,
-    'revert':            do_revert,
-    'rename':            do_rename,
-    'edit':              do_edit,
-    'delete':            do_delete,
-    'mv_baustelle':      do_mv_baustelle,
-    'mv_discontinued':   do_mv_discontinued,
-    'mv_back':           do_mv_back,
-    'backlinks':         do_backlinks,
-    'export':            do_export,
-    'attach':            do_attach,
-    'prune':             do_prune,
-    'manage':            do_manage,
-    'subscribe':         do_subscribe,
-    'unsubscribe':       do_unsubscribe,
+    'show': do_show,
+    'metaexport': do_metaexport,
+    'log': do_log,
+    'diff': do_diff,
+    'revert': do_revert,
+    'rename': do_rename,
+    'edit': do_edit,
+    'delete': do_delete,
+    'mv_baustelle': do_mv_baustelle,
+    'mv_discontinued': do_mv_discontinued,
+    'mv_back': do_mv_back,
+    'backlinks': do_backlinks,
+    'export': do_export,
+    'attach': do_attach,
+    'prune': do_prune,
+    'manage': do_manage,
+    'subscribe': do_subscribe,
+    'unsubscribe': do_unsubscribe,
     'manage_discussion': do_manage_discussion,
 }

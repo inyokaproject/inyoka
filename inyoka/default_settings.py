@@ -228,20 +228,20 @@ SOUTH_TESTS_MIGRATE = False
 
 OPENID_PROVIDERS = {
     'openid': {
-      'name': gettext_noop('OpenID'),
-      'url': None
+        'name': gettext_noop('OpenID'),
+        'url': None
     },
     'launchpad': {
         'name': gettext_noop('Launchpad'),
         'url': 'https://launchpad.net/~{username}'
     },
     'claimid': {
-      'name': gettext_noop('ClaimID'),
-      'url': 'http://claimid.com/{username}'
+        'name': gettext_noop('ClaimID'),
+        'url': 'http://claimid.com/{username}'
     },
     'google': {
-      'name': gettext_noop('Google'),
-      'url': 'https://www.google.com/accounts/o8/id'
+        'name': gettext_noop('Google'),
+        'url': 'https://www.google.com/accounts/o8/id'
     },
 }
 

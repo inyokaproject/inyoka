@@ -37,9 +37,9 @@ from inyoka.markup import parse, render, RenderContext
 
 
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
-DEFAULT_GROUP_ID = 1 # group id for all registered users
+DEFAULT_GROUP_ID = 1  # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
-    ('admin_panel', u'Not in use anymore'), #TODO: DEPRECATED
+    ('admin_panel', u'Not in use anymore'),  # TODO: DEPRECATED
     ('article_edit', ugettext_lazy(u'Ikhaya | can edit articles')),
     ('category_edit', ugettext_lazy(u'Ikhaya | can edit categories')),
     ('event_edit', ugettext_lazy(u'Ikhaya | can create new events')),
@@ -64,10 +64,10 @@ PERMISSION_NAMES = {val: desc for val, name, desc in PERMISSIONS}
 PERMISSION_MAPPING = {name: val for val, name, desc in PERMISSIONS}
 
 USER_STATUSES = {
-    0: 'inactive', #not yet activated
+    0: 'inactive',  # not yet activated
     1: 'normal',
     2: 'banned',
-    3: 'deleted', #deleted itself
+    3: 'deleted',  # deleted itself
 }
 
 
@@ -121,7 +121,7 @@ def reactivate_user(id, email, status):
     return {
         'success': _(u'The account “%(name)s” was reactivated. Please use the '
                      u'password recovery function to set a new password.')
-                     % {'name': escape(user.username)},
+        % {'name': escape(user.username)},
     }
 
 
@@ -230,9 +230,9 @@ def reset_email(id, email):
 def send_activation_mail(user):
     """send an activation mail"""
     message = render_template('mails/activation_mail.txt', {
-        'user':             user,
-        'email':            user.email,
-        'activation_key':   gen_activation_key(user)
+        'user': user,
+        'email': user.email,
+        'activation_key': gen_activation_key(user)
     })
     subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
@@ -346,7 +346,7 @@ class UserManager(BaseUserManager):
         """Get a user by it's username or email address"""
         try:
             user = User.objects.get(name)
-        except User.DoesNotExist, exc:
+        except User.DoesNotExist as exc:
             # fallback to email
             if '@' in name:
                 user = User.objects.get(email__iexact=name)
@@ -392,7 +392,6 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
-
     def get_anonymous_user(self):
         global _ANONYMOUS_USER
         if not _ANONYMOUS_USER:
@@ -423,7 +422,7 @@ class UserManager(BaseUserManager):
 
 def upload_to_avatar(instance, filename):
     fn = 'portal/avatars/avatar_user%d.%s'
-    return fn % (instance.pk, filename.rsplit('.',1)[-1])
+    return fn % (instance.pk, filename.rsplit('.', 1)[-1])
 
 
 class User(AbstractBaseUser):
@@ -561,8 +560,8 @@ class User(AbstractBaseUser):
         # FIXME:
         # primary_group is currently only used to display the teammembers
         # icons, not checking self.groups saves shitloads of queries
-        #if self._primary_group is None:
-        #    # we use the first assigned group as the primary one
+        # if self._primary_group is None:
+        # we use the first assigned group as the primary one
         #    groups = self.groups.all()
         #    if len(groups) >= 1:
         #        return groups[0]

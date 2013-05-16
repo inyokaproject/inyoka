@@ -310,12 +310,12 @@ class Article(models.Model, LockableObject):
             return href('ikhaya', self.stamp, self.slug, action, **query)
 
         links = {
-            'delete':     ('ikhaya', self.stamp, self.slug, 'delete'),
-            'edit':       ('ikhaya', self.stamp, self.slug, 'edit'),
-            'id':         ('portal', 'ikhaya',  self.id),
+            'delete': ('ikhaya', self.stamp, self.slug, 'delete'),
+            'edit': ('ikhaya', self.stamp, self.slug, 'edit'),
+            'id': ('portal', 'ikhaya', self.id),
             'report_new': ('ikhaya', self.stamp, self.slug, 'new_report'),
-            'reports':    ('ikhaya', self.stamp, self.slug, 'reports'),
-            'show':       ('ikhaya', self.stamp, self.slug),
+            'reports': ('ikhaya', self.stamp, self.slug, 'reports'),
+            'show': ('ikhaya', self.stamp, self.slug),
         }
 
         return href(*links[action if action in links.keys() else 'show'], **query)
@@ -480,9 +480,9 @@ class Event(models.Model):
     changed = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     date = models.DateField(db_index=True)
-    time = models.TimeField(blank=True, null=True) # None -> whole day
-    enddate = models.DateField(blank=True, null=True) # None
-    endtime = models.TimeField(blank=True, null=True) # None -> whole day
+    time = models.TimeField(blank=True, null=True)  # None -> whole day
+    enddate = models.DateField(blank=True, null=True)  # None
+    endtime = models.TimeField(blank=True, null=True)  # None -> whole day
     description = models.TextField(blank=True)
     author = models.ForeignKey(User)
     location = models.CharField(max_length=128, blank=True)
@@ -497,10 +497,10 @@ class Event(models.Model):
         if action == 'copy':
             return href('ikhaya', 'event', 'new', copy_from=self.id)
         return href(*{
-            'show':   ('portal', 'calendar', self.slug),
+            'show': ('portal', 'calendar', self.slug),
             'delete': ('ikhaya', 'event', self.id, 'delete'),
-            'edit':   ('ikhaya', 'event', self.id, 'edit'),
-            'new':    ('ikhaya', 'event', 'new'),
+            'edit': ('ikhaya', 'event', self.id, 'edit'),
+            'new': ('ikhaya', 'event', 'new'),
         }[action])
 
     @property
@@ -524,7 +524,7 @@ class Event(models.Model):
 
     def friendly_title(self, with_html_link=False):
         s_location = '<span class="location">%s</span>' % (
-             self.location_town and u' in %s' % self.location_town or '')
+            self.location_town and u' in %s' % self.location_town or '')
         summary = u'<span class="summary">%s</span>' % escape(self.name)
         if with_html_link:
             ret = u'<a href="%s" class="event_link">%s</a>%s' % (

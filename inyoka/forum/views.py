@@ -101,12 +101,12 @@ def index(request, category=None):
     last_post_map = Post.objects.last_post_map(toplevel_last_post_ids)
 
     return {
-        'categories':           categories,
-        'is_index':             is_index,
-        'hidden_categories':    hidden_categories,
-        'forum_hierarchy':      forum_hierarchy,
-        'forum':                category,
-        'last_posts':           last_post_map,
+        'categories': categories,
+        'is_index': is_index,
+        'hidden_categories': hidden_categories,
+        'forum_hierarchy': forum_hierarchy,
+        'forum': category,
+        'last_posts': last_post_map,
     }
 
 
@@ -141,7 +141,7 @@ def forum(request, slug, page=1):
 
     qs = Topic.objects.prepare_for_overview(list(pagination.get_queryset()))
 
-    #FIXME: Filter topics with no last_post or first_post
+    # FIXME: Filter topics with no last_post or first_post
     topics = [topic for topic in qs
                     if topic.first_post and topic.last_post]
 
@@ -152,14 +152,14 @@ def forum(request, slug, page=1):
         topic.forum = forum
 
     context = {
-        'forum':         forum,
-        'subforums':     subforums,
-        'last_posts':    last_post_map,
+        'forum': forum,
+        'subforums': subforums,
+        'last_posts': last_post_map,
         'is_subscribed': Subscription.objects.user_subscribed(request.user, forum),
-        'can_moderate':  check_privilege(privs[forum.pk], 'moderate'),
-        'can_create':    check_privilege(privs[forum.pk], 'create'),
-        'supporters':    forum.get_supporters(),
-        'topics':        topics,
+        'can_moderate': check_privilege(privs[forum.pk], 'moderate'),
+        'can_create': check_privilege(privs[forum.pk], 'create'),
+        'supporters': forum.get_supporters(),
+        'topics': topics,
         'pagination': pagination,
     }
     return context
@@ -259,21 +259,21 @@ def viewtopic(request, topic_slug, page=1):
         marked_split_posts = marked_split_posts[topic.slug]
 
     return {
-        'topic':             topic,
-        'forum':             topic.cached_forum(),
-        'posts':             posts,
-        'is_subscribed':     subscribed,
-        'pagination':        pagination,
-        'polls':             polls,
+        'topic': topic,
+        'forum': topic.cached_forum(),
+        'posts': posts,
+        'is_subscribed': subscribed,
+        'pagination': pagination,
+        'polls': polls,
         'show_vote_results': request.GET.get('action') == 'vote_results',
-        'voted_all':         voted_all,
-        'can_moderate':      can_mod,
-        'can_edit':          can_edit,
-        'can_reply':         can_reply,
-        'can_vote':          can_vote,
-        'can_delete':        can_delete,
-        'team_icon_url':     team_icon,
-        'discussions':       Page.objects.discussions(topic),
+        'voted_all': voted_all,
+        'can_moderate': can_mod,
+        'can_edit': can_edit,
+        'can_reply': can_reply,
+        'can_vote': can_vote,
+        'can_delete': can_delete,
+        'team_icon_url': team_icon,
+        'discussions': Page.objects.discussions(topic),
         'marked_split_posts': marked_split_posts
     }
 
@@ -426,8 +426,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             _(u'No discussion is linked yet to the article “%(article)s”. '
                'You can create a discussion now or <a href="%(link)s">link '
                'an existing topic</a> to the article.') % {
-                    'article': page_name,
-                    'link': href('wiki', norm_page_name,
+                   'article': page_name,
+                   'link': href('wiki', norm_page_name,
                             action='manage_discussion')})
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
@@ -443,7 +443,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         if locked:
             messages.error(request,
                 _(u'This post is currently beeing edited by “%(user)s”!')
-                  % {'user': locked})
+                % {'user': locked})
         topic = post.topic
         forum = topic.forum
         firstpost = post.id == topic.first_post_id
@@ -454,7 +454,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         forum = topic.forum
     if newtopic:
         form = NewTopicForm(request.POST or None, initial={
-            'text':  forum.newtopic_default_text,
+            'text': forum.newtopic_default_text,
             'title': page and norm_page_name or '',
         }, force_version=forum.force_version)
     elif quote:
@@ -540,7 +540,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     if 'send' in request.POST and form.is_valid():
         d = form.cleaned_data
 
-        if not post: # not when editing an existing post
+        if not post:  # not when editing an existing post
             doublepost = Post.objects \
                 .filter(author=request.user, text=d['text'],
                         pub_date__gt=(datetime.utcnow() - timedelta(0, 300)))
@@ -578,7 +578,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
         if not post:
             post = Post(topic=topic, author_id=request.user.id)
-            #TODO: Move this somehow to model to ease unittesting!
+            # TODO: Move this somehow to model to ease unittesting!
             if newtopic:
                 post.position = 0
 
@@ -642,25 +642,25 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         discussions = Page.objects.filter(topic=topic)
 
     return {
-        'form':         form,
-        'poll_form':    poll_form,
-        'options':      poll_options,
-        'polls':        polls,
-        'post':         post,
-        'forum':        forum,
-        'topic':        topic,
-        'preview':      preview,
-        'isnewtopic':   newtopic,
-        'isfirstpost':  firstpost,
-        'can_attach':   check_privilege(privileges, 'upload'),
-        'can_create_poll':     check_privilege(privileges, 'create_poll'),
+        'form': form,
+        'poll_form': poll_form,
+        'options': poll_options,
+        'polls': polls,
+        'post': post,
+        'forum': forum,
+        'topic': topic,
+        'preview': preview,
+        'isnewtopic': newtopic,
+        'isfirstpost': firstpost,
+        'can_attach': check_privilege(privileges, 'upload'),
+        'can_create_poll': check_privilege(privileges, 'create_poll'),
         'can_moderate': check_privilege(privileges, 'moderate'),
-        'can_sticky':   check_privilege(privileges, 'sticky'),
-        'attach_form':  attach_form,
-        'attachments':  list(attachments),
-        'posts':        posts,
-        'storage':      storage,
-        'discussions':  discussions,
+        'can_sticky': check_privilege(privileges, 'sticky'),
+        'attach_form': attach_form,
+        'attachments': list(attachments),
+        'posts': posts,
+        'storage': storage,
+        'discussions': discussions,
     }
 
 
@@ -823,7 +823,7 @@ def report(request, topic_slug):
         form = ReportTopicForm()
     return {
         'topic': topic,
-        'form':  form
+        'form': form
     }
 
 
@@ -885,8 +885,8 @@ def reportlist(request):
     subscribed = str(request.user.id) in subscribers.split(',')
 
     return {
-        'topics':     topics,
-        'form':       form,
+        'topics': topics,
+        'form': form,
         'subscribed': subscribed,
     }
 
@@ -1028,7 +1028,7 @@ def movetopic(request, topic_slug):
         form = MoveTopicForm()
         form.fields['forum'].refresh()
     return {
-        'form':  form,
+        'form': form,
         'topic': topic
     }
 
@@ -1108,8 +1108,8 @@ def splittopic(request, topic_slug, page=1):
             filter = Q(topic_id=old_topic.id)
             if data['action'] == 'new':
                 filter |= Q(forum_id=new_forum.id)
-            #TODO: Disable until http://forum.ubuntuusers.de/topic/benachrichtigungen-nach-teilung-einer-diskuss/ is resolved to not spam the users
-            #subscriptions = Subscription.objects.select_related('user').filter(filter)
+            # TODO: Disable until http://forum.ubuntuusers.de/topic/benachrichtigungen-nach-teilung-einer-diskuss/ is resolved to not spam the users
+            # subscriptions = Subscription.objects.select_related('user').filter(filter)
             subscriptions = []
 
             for subscription in subscriptions:
@@ -1138,7 +1138,7 @@ def splittopic(request, topic_slug, page=1):
     return {
         'topic': old_topic,
         'forum': old_topic.forum,
-        'form':  form,
+        'form': form,
         'posts': posts,
     }
 
@@ -1157,7 +1157,7 @@ def restore_post(request, post_id):
     post.save()
     messages.success(request,
         _(u'The post by “%(user)s” was made visible.')
-          % {'user': post.author.username})
+        % {'user': post.author.username})
     return HttpResponseRedirect(url_for(post))
 
 
@@ -1209,7 +1209,6 @@ def delete_post(request, post_id, action='hide'):
                                      post.page))
 
 
-
 @templated('forum/revisions.html')
 def revisions(request, post_id):
     post = Post.objects.select_related('topic', 'topic.forum').get(id=post_id)
@@ -1219,9 +1218,9 @@ def revisions(request, post_id):
         return abort_access_denied(request)
     revs = PostRevision.objects.filter(post=post).all()
     return {
-        'post':      post,
-        'topic':     topic,
-        'forum':     forum,
+        'post': post,
+        'topic': topic,
+        'forum': forum,
         'revisions': reversed(revs)
     }
 
@@ -1289,7 +1288,7 @@ def delete_topic(request, topic_slug, action='hide'):
                 redirect = url_for(topic.forum)
                 messages.success(request,
                     _(u'The topic “%(topic)s” was deleted successfully.')
-                      % {'topic': topic.title})
+                    % {'topic': topic.title})
 
             topic.forum.invalidate_topic_cache()
             return HttpResponseRedirect(redirect)
@@ -1417,7 +1416,7 @@ def markread(request, slug=None):
         user.save()
         messages.success(request,
             _(u'The forum “%(forum)s” was marked as read.') %
-              {'forum': forum.name})
+            {'forum': forum.name})
         return HttpResponseRedirect(url_for(forum))
     else:
         mark_all_forums_read(user)
@@ -1520,12 +1519,12 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         topics = []
 
     return {
-        'topics':       topics,
-        'pagination':   pagination,
-        'title':        title,
+        'topics': topics,
+        'pagination': pagination,
+        'title': title,
         'can_moderate': can_moderate,
-        'hide_sticky':  False,
-        'forum':        forum_obj,
+        'hide_sticky': False,
+        'forum': forum_obj,
     }
 
 
@@ -1662,6 +1661,6 @@ def forum_edit(request, slug=None, parent=None):
             })
         form.fields['parent'].refresh(add=[(0, u'-')], remove=[forum])
     return {
-        'form':  form,
+        'form': form,
         'forum': forum
     }

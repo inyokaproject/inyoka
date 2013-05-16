@@ -99,7 +99,7 @@ class Entry(models.Model):
             return self.url
         else:
             return href(*{
-                'hide':     ('planet', 'hide', self.id),
+                'hide': ('planet', 'hide', self.id),
             }[action])
 
     class Meta:
