@@ -1,3 +1,6 @@
+!.coveragerc
+!.tx/config
+
 *_settings.py
 *.py[co]
 .DS_Store
