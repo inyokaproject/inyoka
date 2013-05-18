@@ -26,7 +26,7 @@ from django.db import models, transaction
 from django.db.models import F, Count, Max
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
 from django.utils.html import escape
-from django.utils.translation import ugettext_lazy, ugettext as _
+from django.utils.translation import ugettext_lazy, ugettext as _, pgettext
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.utils.cache import request_cache
@@ -1129,11 +1129,13 @@ class Attachment(models.Model):
             thumb = thumbnail()
             if thumb:
                 return u'<a href="%s"><img class="preview" src="%s" ' \
-                       u'alt="%s" title="%s"></a>' \
-                       % (url, thumb, escape(self.comment), escape(self.comment))
+                    u'alt="%s" title="%s"></a>' % (url, thumb,
+                        escape(self.comment), escape(self.comment))
             else:
-                return u'<a href="%s" type="%s" title="%s">%s ansehen</a>' \
-                    % (url, self.mimetype, escape(self.comment), self.name)
+                linktext = pgettext('Link text to an image attachment',
+                    u'View %(name)s') % {'name': self.name}
+                return u'<a href="%s" type="%s" title="%s">%s</a>' \
+                    % (url, self.mimetype, escape(self.comment), linktext)
         elif show_preview and istext():
             contents = self.contents
             if contents is not None:
@@ -1143,8 +1145,10 @@ class Attachment(models.Model):
                 except DjangoUnicodeDecodeError:
                     pass
 
-        return u'<a href="%s" type="%s" title="%s">%s herunterladen</a>' \
-                    % (url, self.mimetype, escape(self.comment), self.name)
+        linktext = pgettext('Link text to download an attachment',
+            u'Download %(name)s') % {'name': self.name}
+        return u'<a href="%s" type="%s" title="%s">%s</a>' % (url,
+            self.mimetype, escape(self.comment), linktext)
 
     def get_absolute_url(self, action=None):
         return self.file.url
