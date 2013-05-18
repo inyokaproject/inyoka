@@ -15,13 +15,15 @@ from os import path
 from django.conf import settings
 from django.test import TestCase, Client
 from django.test.utils import override_settings
+from django.utils import translation
 from django.utils.translation import ugettext as _
 
 from inyoka.forum.acl import PRIVILEGES_BITS
 from inyoka.forum.constants import TOPICS_PER_PAGE, DISTRO_CHOICES
-from inyoka.forum.models import Forum, Topic, Post, Privilege
-from inyoka.portal.user import User, PERMISSION_NAMES
+from inyoka.forum.models import (Attachment, Forum, Post, Poll, PollOption,
+    Privilege, Topic)
 from inyoka.portal.models import Subscription
+from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.utils.test import InyokaClient
 from inyoka.utils.urls import href
 
@@ -42,8 +44,8 @@ class TestViews(TestCase):
     privileges = sum(PRIVILEGES_BITS.values())
 
     def setUp(self):
-        self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
-        self.user = User.objects.register_user('user', 'user', 'user', False)
+        self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.admin._permissions = self.permissions
         self.admin.save()
 
@@ -337,3 +339,323 @@ class TestViews(TestCase):
 
         p1_test = Post.objects.get(pk=p1.pk)
         self.assertEqual(p1_test.text, u'Post 1')
+
+
+class TestPostEditView(TestCase):
+
+    client_class = InyokaClient
+    permissions = sum(PERMISSION_NAMES.keys())
+    privileges = sum(PRIVILEGES_BITS.values())
+
+    def setUp(self):
+        self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
+        self.admin._permissions = self.permissions
+        self.admin.save()
+
+        self.category = Forum.objects.create(name='Category')
+        self.forum = Forum.objects.create(name='Forum', parent=self.category)
+
+        Privilege.objects.create(user=self.admin, forum=self.category,
+            positive=self.privileges, negative=0)
+        Privilege.objects.create(user=self.admin, forum=self.forum,
+            positive=self.privileges, negative=0)
+
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='admin', password='admin')
+
+    def test_newtopic(self):
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            #'ubuntu_version': UBUNTU_VERSIONS[-1].number,
+            'text': 'newpost text',
+            'preview': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
+
+        # Test send
+        postdata.pop('preview')
+        postdata['send'] = True
+        with translation.override('en-us'):
+            self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 1)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>',
+            response.content, count=1)
+
+    def test_newtopic_with_file(self):
+        TEST_ATTACHMENT = 'test_attachment.png'
+        # Test file upload
+        f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
+        postdata = {
+            'attachment': f,
+            'filename': 'newpost_file_name.png',
+            'comment': 'newpost file comment',
+            'attach': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Attachment.objects.all().count(), 1)
+        attachment = Attachment.objects.get(pk=1)
+        self.assertInHTML('<ul><li><a href="%(url)s">newpost_file_name.png</a> - 273 Bytes'
+            '<button type="submit" name="delete_attachment" value="1">Delete</button></li></ul>'
+            % {'url': attachment.get_absolute_url()}, response.content, count=1)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
+
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            #'ubuntu_version': UBUNTU_VERSIONS[-1].number,
+            'text': 'newpost text',
+            'attachments': '1',
+            'preview': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
+
+        # Test send
+        postdata.pop('preview')
+        postdata['send'] = True
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 1)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        att = Attachment.objects.get(pk=1)
+        self.assertInHTML('<dl class="attachments"><dt>Pictures</dt><ul class="attr_list"><li>'
+            '<a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li></ul></dl>'
+                % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name},
+            response.content, count=1)
+
+    def test_newtopic_with_multiple_files(self):
+        TEST_ATTACHMENT1 = 'test_attachment.png'
+        TEST_ATTACHMENT2 = 'test_attachment2.png'
+        # Upload first file
+        f1 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb')
+        postdata = {
+            'attachment': f1,
+            'filename': 'newpost_file_name.png',
+            'comment': 'newpost file comment',
+            'attach': True,
+        }
+        with translation.override('en-us'):
+            self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+
+        # Upload second file
+        f2 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT2), 'rb')
+        postdata = {
+            'attachment': f2,
+            'filename': 'newpost_second_file.png',
+            'comment': 'newpost comment for file 2',
+            'attachments': 1,
+            'attach': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+
+        # Verify that the attachments exit
+        self.assertEqual(Attachment.objects.all().count(), 2)
+        att1, att2 = Attachment.objects.filter(pk__in=[1, 2]).order_by('pk').all()
+        self.assertInHTML('<li><a href="%(url)s">%(name)s</a> - 273 Bytes'
+            '<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
+                % {'url': att1.get_absolute_url(), 'name': att1.name, 'pk': att1.pk},
+            response.content, count=1)
+        self.assertInHTML('<li><a href="%(url)s">%(name)s</a> - 276 Bytes'
+            '<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
+                % {'url': att2.get_absolute_url(), 'name': att2.name, 'pk': att2.pk},
+            response.content, count=1)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
+
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            #'ubuntu_version': UBUNTU_VERSIONS[-1].number,
+            'text': 'newpost text',
+            'attachments': '1,2',
+            'preview': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
+
+        # Test send
+        postdata.pop('preview')
+        postdata['send'] = True
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 1)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        att1, att2 = Attachment.objects.filter(pk__in=[1, 2]).order_by('pk').all()
+        self.assertInHTML('<dl class="attachments"><dt>Pictures</dt><ul class="attr_list">'
+            '<li><a href="%(url1)s" type="image/png" title="%(comment1)s">Download %(name1)s</a></li>'
+            '<li><a href="%(url2)s" type="image/png" title="%(comment2)s">Download %(name2)s</a></li>'
+            '</ul></dl>' % {
+                'url1': att1.get_absolute_url(), 'comment1': att1.comment, 'name1': att1.name,
+                'url2': att2.get_absolute_url(), 'comment2': att2.comment, 'name2': att2.name
+            }, response.content, count=1)
+
+    def test_newtopic_with_poll(self):
+        # Add first poll
+        postdata = {
+            'question': "What shall I ask?",
+            'options': ['this', 'that'],
+            'add_poll': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Poll.objects.all().count(), 1)
+        poll = Poll.objects.get(pk=1)
+        self.assertInHTML('<dd>Existing polls:<ul><li>%(question)s<button '
+            'name="delete_poll" value="1">Delete</button></li></ul></dd>' % {
+                'question': poll.question}, response.content, count=1)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
+
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            #'ubuntu_version': UBUNTU_VERSIONS[-1].number,
+            'text': 'newpost text',
+            'polls': '1',
+            'preview': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
+
+        # Test send
+        postdata.pop('preview')
+        postdata['send'] = True
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 1)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        poll = Poll.objects.get(pk=1)
+        opt1, opt2 = PollOption.objects.filter(pk__in=[1, 2]).order_by('pk').all()
+        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {
+            'question': poll.question
+        }, response.content, count=1)
+        self.assertInHTML('<table class="poll">'
+            '<tr><td><input type="radio" name="poll_1" id="option_1" value="1"/><label for="option_1">%(opt1)s</label></td></tr>'
+            '<tr><td><input type="radio" name="poll_1" id="option_2" value="2"/><label for="option_2">%(opt2)s</label></td></tr>'
+            '</table>' % {
+                'opt1': opt1.name, 'opt2': opt2.name
+            }, response.content, count=1)
+
+    def test_newtopic_with_multiple_polls(self):
+        # Add first poll
+        postdata = {
+            'question': "What shall I ask?",
+            'options': ['this', 'that'],
+            'add_poll': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+
+        postdata = {
+            'question': "Ask something else!",
+            'options': ['Lorem', 'Ipsum'],
+            'add_poll': True,
+            'polls': 1,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Poll.objects.all().count(), 2)
+        poll1, poll2 = Poll.objects.filter(pk__in=[1, 2]).order_by('pk').all()
+        self.assertInHTML('<dd>Existing polls:<ul>'
+            '<li>%(q1)s<button name="delete_poll" value="%(pk1)d">Delete</button></li>'
+            '<li>%(q2)s<button name="delete_poll" value="%(pk2)d">Delete</button></li>'
+            '</ul></dd>' % {
+                'q1': poll1.question, 'pk1': poll1.pk,
+                'q2': poll2.question, 'pk2': poll2.pk,
+            }, response.content, count=1)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
+
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            #'ubuntu_version': UBUNTU_VERSIONS[-1].number,
+            'text': 'newpost text',
+            'polls': '1,2',
+            'preview': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
+
+        # Test send
+        postdata.pop('preview')
+        postdata['send'] = True
+        with translation.override('en-us'):
+            response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 1)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        poll1, poll2 = Poll.objects.filter(pk__in=[1, 2]).order_by('pk').all()
+        opt11, opt12, opt21, opt22 = PollOption.objects.filter(pk__in=[1, 2, 3, 4]).order_by('pk').all()
+        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {
+            'question': poll1.question
+        }, response.content, count=1)
+        self.assertInHTML('<table class="poll">'
+            '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt1_pk)d" value="%(opt1_pk)d"/><label for="option_%(opt1_pk)d">%(opt1)s</label></td></tr>'
+            '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt2_pk)d" value="%(opt2_pk)d"/><label for="option_%(opt2_pk)d">%(opt2)s</label></td></tr>'
+            '</table>' % {
+                'poll_pk': poll1.pk,
+                'opt1': opt11.name, 'opt1_pk': opt11.pk,
+                'opt2': opt12.name, 'opt2_pk': opt12.pk,
+            }, response.content, count=1)
+        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {
+            'question': poll2.question
+        }, response.content, count=1)
+        self.assertInHTML('<table class="poll">'
+            '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt1_pk)d" value="%(opt1_pk)d"/><label for="option_%(opt1_pk)d">%(opt1)s</label></td></tr>'
+            '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt2_pk)d" value="%(opt2_pk)d"/><label for="option_%(opt2_pk)d">%(opt2)s</label></td></tr>'
+            '</table>' % {
+                'poll_pk': poll2.pk,
+                'opt1': opt21.name, 'opt1_pk': opt21.pk,
+                'opt2': opt22.name, 'opt2_pk': opt22.pk,
+            }, response.content, count=1)
