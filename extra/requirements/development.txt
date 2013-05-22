@@ -1,4 +1,1 @@
 -r production.txt
-
-gunicorn
-gevent
