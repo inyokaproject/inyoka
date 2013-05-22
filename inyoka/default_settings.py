@@ -280,8 +280,8 @@ CELERY_IMPORTS = [
 
 CELERY_SEND_TASK_ERROR_EMAILS = False
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-CELERY_EAGER_PROPAGATES_EXCEPTIONS = False
-CELERY_ALWAYS_EAGER = DEBUG
+CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+CELERY_ALWAYS_EAGER = True
 
 # Do not hijack the root logger, avoids unicode errors
 CELERYD_HIJACK_ROOT_LOGGER = False
@@ -351,15 +351,11 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': 'http://127.0.0.1:9200/',
         'INDEX_NAME': 'inyoka',
-        'SILENTLY_FAIL': True
+        'SILENTLY_FAIL': False
     },
 }
 
-HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
-
-HAYSTACK_LIMIT_TO_REGISTERED_MODELS = False
-
-HAYSTACK_DOCUMENT_FIELD = '_all'
+#HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
