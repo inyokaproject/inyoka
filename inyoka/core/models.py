@@ -8,10 +8,11 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import sys
 from django.db.models import loading
 from django.utils.importlib import import_module
 
-
+IS_PYPY = hasattr(sys, "pypy_version_info")
 AUTOIMPORT_MODULES = ['macros', 'signals']
 
 
@@ -38,7 +39,8 @@ def register_special_modules():
                     import_module(module_path)
                 except ImportError as exc:
                     _ = str(exc)
-                    if _ != 'No module named %s' % path:
+                    exc_path = module_path if IS_PYPY else path
+                    if _ != 'No module named %s' % exc_path:
                         raise
 
 register_special_modules()
