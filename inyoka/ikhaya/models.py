@@ -211,7 +211,7 @@ class Article(models.Model, LockableObject):
     public = models.BooleanField(ugettext_lazy(u'Public'))
     slug = models.SlugField(ugettext_lazy(u'Slug'), max_length=100,
             blank=True, db_index=True)
-    is_xhtml = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
+    is_html = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
                 default=False)
     comment_count = models.IntegerField(default=0)
     comments_enabled = models.BooleanField(ugettext_lazy(u'Allow comments'),

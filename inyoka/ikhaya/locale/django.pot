@@ -103,7 +103,7 @@ msgid "Public"
 msgstr ""
 
 #: inyoka/ikhaya/models.py:214
-msgid "XHTML Markup"
+msgid "HTML Markup"
 msgstr ""
 
 #: inyoka/ikhaya/models.py:217

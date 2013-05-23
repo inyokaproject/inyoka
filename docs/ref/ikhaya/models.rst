@@ -165,7 +165,7 @@ Models
 
         :py:class:`django.db.models.TextField`
 
-    .. py:attribute:: is_xhtml
+    .. py:attribute:: is_html
 
         :py:class:`django.db.models.BooleanField`
 

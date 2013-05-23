@@ -122,14 +122,12 @@ def feed(request, mode='short', count=10):
     for entry in entries:
         kwargs = {}
         if mode == 'full':
-            kwargs['content'] = u'<div xmlns="http://www.w3.org/1999/' \
-                                u'xhtml">%s</div>' % entry.text
-            kwargs['content_type'] = 'xhtml'
+            kwargs['content'] = u'<div type="html">%s</div>' % entry.text
+            kwargs['content_type'] = 'html'
         if mode == 'short':
             summary = Truncator(entry.text).words(100, html=True)
-            kwargs['summary'] = u'<div xmlns="http://www.w3.org/1999/' \
-                                u'xhtml">%s</div>' % summary
-            kwargs['content_type'] = 'xhtml'
+            kwargs['summary'] = u'<div type="html">%s</div>' % summary
+            kwargs['content_type'] = 'html'
         if entry.author_homepage:
             kwargs['author'] = {'name': entry.author,
                                 'uri': entry.author_homepage}

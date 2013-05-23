@@ -3,7 +3,7 @@
     inyoka.utils.html
     ~~~~~~~~~~~~~~~~~
 
-    This module implements various HTML/XHTML utility functions.  Some parts
+    This module implements various HTML utility functions.  Some parts
     of this module require the lxml and html5lib libraries.
 
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
@@ -17,6 +17,7 @@ from htmlentitydefs import name2codepoint
 from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders
 from html5lib.serializer import HTMLSerializer
+from html5lib.filters import _base as filters_base
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
 from django.utils.encoding import force_unicode
 
@@ -94,26 +95,24 @@ def striptags(string):
 
 def parse_html(string, fragment=True):
     """
-    Parse a tagsoup into a tree.  Currently this tree is a html5lib simpletree
-    because of a bug in lxml2 or html5lib.  We will switch to etree sooner or
-    later so do not use this function until this is solved.  For cleaning up
+    Parse a tagsoup into a tree. For cleaning up
     markup you can use the `cleanup_html` function.
     """
-    parser = HTMLParser(tree=treebuilders.getTreeBuilder('dom'))
+    parser = HTMLParser(tree=treebuilders.getTreeBuilder('lxml'))
     return (fragment and parser.parseFragment or parser.parse)(string)
 
 
 def cleanup_html(string, sanitize=True, fragment=True, stream=False,
                  filter_optional_tags=False, id_prefix=None,
                  update_anchor_links=True):
-    """Clean up some html and convert it to HTML/XHTML."""
+    """Clean up some html and convert it to HTML."""
     if not string.strip():
         return u''
     string = force_unicode(string)
     if sanitize:
         string = lxml.html.clean.clean_html(string)
     tree = parse_html(string, fragment)
-    walker = treewalkers.getTreeWalker('dom')(tree)
+    walker = treewalkers.getTreeWalker('lxml')(tree)
     walker = CleanupFilter(walker, id_prefix, update_anchor_links)
     if filter_optional_tags:
         walker = OptionalTagsFilter(walker)
@@ -124,9 +123,9 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     return force_unicode(''.join(rv))
 
 
-class CleanupFilter(object):
+class CleanupFilter(filters_base.Filter):
     """
-    A simple filter that replaces XHTML deprecated elements with others.
+    A simple filter that replaces deprecated elements with others.
     """
 
     tag_conversions = {
@@ -165,7 +164,7 @@ class CleanupFilter(object):
     def walk(self, id_map, deferred_links):
         tracked_ids = set()
 
-        for token in self.source:
+        for token in filters_base.Filter.__iter__(self):
             if token['type'] == 'StartTag':
                 attrs = token.get('data', ())
                 if not isinstance(attrs, dict):
@@ -174,11 +173,11 @@ class CleanupFilter(object):
                     new_tag, new_style = self.tag_conversions[token['name']]
                     token['name'] = new_tag
                     if new_style:
-                        style = attrs.get('style') or ''
+                        style = attrs.get('style', '')
                         # this could give false positives, but the chance is
                         # quite small that this happens.
                         if new_style not in style:
-                            attrs['style'] = (style and style.rstrip(';') +
+                            attrs[(None, u'style')] = (style and style.rstrip(';') +
                                               '; ' or '') + new_style + ';'
 
                 elif token['name'] == 'a' and \
@@ -188,7 +187,9 @@ class CleanupFilter(object):
 
                 elif token['name'] == 'font':
                     token['name'] = 'span'
-                    attrs = dict(reversed(token.get('data', ())))
+                    attrs = token.get('data', ())
+                    if not isinstance(attrs, dict):
+                        attrs = dict(reversed(attrs))
                     styles = []
                     tmp = attrs.pop('color', None)
                     if tmp:

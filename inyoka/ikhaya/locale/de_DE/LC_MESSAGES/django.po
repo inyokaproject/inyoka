@@ -115,8 +115,8 @@ msgid "Public"
 msgstr "Veröffentlicht"
 
 #: inyoka/ikhaya/models.py:214
-msgid "XHTML Markup"
-msgstr "XHTML Markup"
+msgid "HTML Markup"
+msgstr "HTML Markup"
 
 #: inyoka/ikhaya/models.py:217
 msgid "Allow comments"

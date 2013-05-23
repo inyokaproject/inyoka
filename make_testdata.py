@@ -223,7 +223,7 @@ def make_ikhaya():
                 intro=intro(),
                 text=sentences(),
                 public=True,
-                is_xhtml=False
+                is_html=False
             )
             a.save()
             for i, name in enumerate(create_names(randint(0, 5), title)):

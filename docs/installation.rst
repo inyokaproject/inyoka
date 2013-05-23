@@ -25,7 +25,7 @@ chardet is recommended so that it can better guess broken encodings of feeds.
 For the pastebin, wiki and some other parts `Pygments 1.4
 <http://pygments.org/>`_ or higher must be available. MySQL must support InnoDB
 or any other transaction engine like falcon (untested though). For incoming
-HTML data that is converted to XHTML we also need html5lib. To let the inyoka
+HTML data that is sanitized we also need html5lib. To let the inyoka
 services run (required) you need also `simplejson
 <http://simplejson.readthedocs.org/en/latest/index.html>`_.
 
