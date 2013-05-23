@@ -296,14 +296,13 @@
 
   var WikiEditor = function (editor, options) {
     this.$el = $(editor);
-    this.options = options;
+    this.options = $.extend({}, defaults, options);
 
     this.init();
   };
 
-  WikiEditor.prototype.init = function (options) {
+  WikiEditor.prototype.init = function () {
     var self = this;
-    this.options = $.extend(defaults, options);
     this.username = Inyoka.CURRENT_USER;
     this.smilies = null;
     this.$el[0].inyokaWikiEditor = this;
