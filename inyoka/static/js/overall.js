@@ -24,7 +24,6 @@ $(document).ready(function () {
     Inyoka.FORUM_URL = 'http://forum.' + Inyoka.BASE_DOMAIN_NAME + '/';
     Inyoka.IKHAYA_URL = 'http://ikhaya.' + Inyoka.BASE_DOMAIN_NAME + '/';
     Inyoka.PLANET_URL = 'http://planet.' + Inyoka.BASE_DOMAIN_NAME + '/';
-    console.log("Done initializing Inyoka object", Inyoka);
   })();
 
   var loginForm = null;
