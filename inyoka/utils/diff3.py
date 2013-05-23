@@ -195,7 +195,7 @@ def tripple_match(old, other, new, other_match, new_match):
     position in all three lists.  Unlike `merge` this only operates on
     lists.
     """
-    while 1:
+    while True:
         difference = new_match[0] - other_match[0]
 
         # new changed more lines

@@ -108,7 +108,7 @@ class EditAttachmentForm(forms.Form):
 class ManageDiscussionForm(forms.Form):
     """Let the user set an existing thread as discussion of a page"""
     topic = forms.CharField(label=_('Slug of the topic'), max_length=50,
-        help_text= ugettext_lazy(u'You can find the slug of a topic in the URL '
+        help_text=ugettext_lazy(u'You can find the slug of a topic in the URL '
             u'(e.g. <var>example</var> when <em>%(example)s</em>)') % {
                 'example': href('forum', 'topic', 'example')},
             required=False)

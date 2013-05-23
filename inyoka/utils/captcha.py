@@ -271,7 +271,7 @@ class GridBackground(Layer):
                       fill=self.color)
         for i in xrange(image.size[0] / self.size + 1):
             draw.line((0, i * self.size + self.offset[1],
-                       image.size[0], i * self.size+self.offset[1]),
+                       image.size[0], i * self.size + self.offset[1]),
                        fill=self.color)
         return image
 
@@ -324,7 +324,7 @@ class WigglyBlocks(Layer):
             my = int(math.floor(r.normalvariate(0, self.sigma)))
 
             # Now actually move the block
-            image.paste(block, (bx+mx, by+my))
+            image.paste(block, (bx + mx, by + my))
         return image
 
 
@@ -371,15 +371,15 @@ class WarpBase(Layer):
         # each square between points on the grid
         mesh = []
         for j in xrange(y_points - 1):
-            for i in xrange(x_points-1):
+            for i in xrange(x_points - 1):
                 mesh.append((
                     # Destination rectangle
                     (i * r, j * r, (i + 1) * r, (j + 1) * r),
                     # Source quadrilateral
                     (x_rows[j][i], y_rows[j][i],
-                     x_rows[j + 1][i], y_rows[j+1][i],
+                     x_rows[j + 1][i], y_rows[j + 1][i],
                      x_rows[j + 1][i + 1], y_rows[j + 1][i + 1],
-                     x_rows[j][i+1], y_rows[j][i + 1]),
+                     x_rows[j][i + 1], y_rows[j][i + 1]),
                 ))
         return image.transform(image.size, Image.MESH, mesh, self.filtering)
 

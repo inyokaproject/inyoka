@@ -15,7 +15,7 @@ from inyoka.utils.notification import queue_notifications
 
 def send_new_suggestion_notifications(user, suggestion):
     from inyoka.ikhaya.models import Suggestion
-    data={'suggestion_author': suggestion.author.username,
+    data = {'suggestion_author': suggestion.author.username,
           'suggestion_title': suggestion.title,
           'suggestion_url': suggestion.get_absolute_url()}
 
@@ -28,7 +28,7 @@ def send_new_suggestion_notifications(user, suggestion):
 
 def send_comment_notifications(user, comment, article):
     from inyoka.ikhaya.models import Article
-    data={'article_id': article.id,
+    data = {'article_id': article.id,
           'article_subject': article.subject,
           'article_unsubscribe': article.get_absolute_url('unsubscribe'),
           'comment_author': comment.author,

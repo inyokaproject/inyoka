@@ -60,25 +60,25 @@ from inyoka.wiki.models import Page as WikiPage
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.forum.acl import filter_invisible, split_bits, PRIVILEGES_DETAILS, \
-     REVERSED_PRIVILEGES_BITS, split_negative_positive
+    REVERSED_PRIVILEGES_BITS, split_negative_positive
 from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
-     UserCPSettingsForm, PrivateMessageForm, DeactivateUserForm, \
-     LostPasswordForm, ChangePasswordForm, SubscriptionForm, \
-     UserCPProfileForm, SetNewPasswordForm, ForumFeedSelectorForm, \
-     IkhayaFeedSelectorForm, PlanetFeedSelectorForm, WikiFeedSelectorForm, \
-     NOTIFICATION_CHOICES, PrivateMessageIndexForm, PrivateMessageFormProtected, \
-     OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
-     EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
-     EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
-     CreateUserForm, UserMailForm, EditGroupForm
+    UserCPSettingsForm, PrivateMessageForm, DeactivateUserForm, \
+    LostPasswordForm, ChangePasswordForm, SubscriptionForm, \
+    UserCPProfileForm, SetNewPasswordForm, ForumFeedSelectorForm, \
+    IkhayaFeedSelectorForm, PlanetFeedSelectorForm, WikiFeedSelectorForm, \
+    NOTIFICATION_CHOICES, PrivateMessageIndexForm, PrivateMessageFormProtected, \
+    OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
+    EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
+    EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
+    CreateUserForm, UserMailForm, EditGroupForm
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
-     PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
+    PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
     deactivate_user, reactivate_user, set_new_email, \
     reset_email, send_activation_mail, PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
-     require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList, \
-     abort_access_denied
+    require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList, \
+    abort_access_denied
 from inyoka.portal.filters import SubscriptionFilter
 
 
@@ -217,10 +217,10 @@ def whoisonline(request):
         cache.set('portal/registered_users', registered_users, 1000)
     record, record_time = get_user_record()
     return {
-        'sessions':                 get_sessions(),
-        'record':                   record,
-        'record_time':              record_time,
-        'global_registered_users':  registered_users
+        'sessions': get_sessions(),
+        'record': record,
+        'record_time': record_time,
+        'global_registered_users': registered_users
     }
 
 
@@ -264,7 +264,7 @@ def register(request):
         form = RegisterForm()
 
     return {
-        'form':         form,
+        'form': form,
     }
 
 
@@ -276,7 +276,7 @@ def activate(request, action='', username='', activation_key=''):
     except User.DoesNotExist:
         messages.error(request,
             _(u'The user “%(username)s” does not exist.') % {
-              u'username': escape(username)})
+                u'username': escape(username)})
         return HttpResponseRedirect(href('portal'))
     if not redirect:
         redirect = href('portal', 'login', username=user.username)
@@ -296,7 +296,7 @@ def activate(request, action='', username='', activation_key=''):
             else:
                 messages.error(request,
                     _(u'The account of “%(username)s” was already activated.') %
-                      {'username': escape(username)})
+                    {'username': escape(username)})
         else:
             messages.error(request, _(u'Your activation key is invalid.'))
         return HttpResponseRedirect(href('portal'))
@@ -321,7 +321,7 @@ def resend_activation_mail(request, username):
     if user.status > 0:
         messages.error(request,
             _(u'The account “%(username)s” was already activated.') %
-              {'username': escape(user.username)})
+            {'username': escape(user.username)})
         return HttpResponseRedirect(href('portal'))
     send_activation_mail(user)
     messages.success(request, _(u'An email with the activation key was sent to you.'))
@@ -395,10 +395,10 @@ def login(request):
             form = LoginForm()
 
     d = {
-        'form':         form,
-        'failed':       failed,
-        'inactive':     inactive,
-        'banned':       banned,
+        'form': form,
+        'failed': failed,
+        'inactive': inactive,
+        'banned': banned,
     }
     if failed:
         d['username'] = data['username']
@@ -474,24 +474,24 @@ def search(request):
         if d['area'] in ('wiki', 'all'):
             try:
                 wiki_result = WikiPage.objects.filter(
-                              name__iexact=normalize_pagename(d['query'])).get()
+                    name__iexact=normalize_pagename(d['query'])).get()
             except WikiPage.DoesNotExist:
                 pass
         rv = {
-            'area':             d['area'].lower(),
-            'query':            d['query'],
-            'highlight':        highlight,
-            'results':          results,
-            'wiki_result':      wiki_result,
-            'pagination':       u''.join(pagination),
-            'sort':             d['sort'],
+            'area': d['area'].lower(),
+            'query': d['query'],
+            'highlight': highlight,
+            'results': results,
+            'wiki_result': wiki_result,
+            'pagination': u''.join(pagination),
+            'sort': d['sort'],
         }
     else:
         rv = {'area': (request.GET.get('area') or 'all').lower()}
 
     rv.update({
-        'searchform':   f,
-        'advanced':     request.GET.get('advanced')
+        'searchform': f,
+        'advanced': request.GET.get('advanced')
     })
     return rv
 
@@ -524,12 +524,12 @@ def profile(request, username):
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
     return {
-        'user':          user,
-        'groups':        groups,
-        'wikipage':      content,
-        'User':          User,
+        'user': user,
+        'groups': groups,
+        'wikipage': content,
+        'User': User,
         'is_subscribed': subscribed,
-        'request':       request
+        'request': request
     }
 
 
@@ -561,7 +561,7 @@ def user_mail(request, username):
                 [user.email])
             messages.success(request,
                 _(u'The email to “%(username)s” was sent successfully.')
-                  % {'username': escape(username)})
+                % {'username': escape(username)})
             return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
         else:
             generic.trigger_fix_errors_message(request)
@@ -585,7 +585,7 @@ def subscribe_user(request, username):
         Subscription(user=request.user, content_object=user).save()
         messages.info(request,
             _(u'You will now be notified about activities of “%(username)s”.')
-              % {'username': user.username})
+            % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
 @require_POST
@@ -628,7 +628,7 @@ def usercp_profile(request):
         if form.is_valid():
             user = form.save(request)
             openids = map(int, request.POST.getlist('openids'))
-            UserData.objects.filter(user=user, pk__in = openids).delete()
+            UserData.objects.filter(user=user, pk__in=openids).delete()
             messages.success(request, _(u'Your profile information were updated successfully.'))
             return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
@@ -640,14 +640,14 @@ def usercp_profile(request):
         'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
 
     return {
-        'form':                 form,
-        'user':                 request.user,
-        'gmaps_apikey':         settings.GOOGLE_MAPS_APIKEY,
-        'max_avatar_width':     storage_keys.get('max_avatar_width', -1),
-        'max_avatar_height':    storage_keys.get('max_avatar_height', -1),
-        'max_avatar_size':      storage_keys.get('max_avatar_size', -1),
-        'max_sig_length':       storage_keys.get('max_signature_length'),
-        'openids':              UserData.objects.filter(user=user, key='openid'),
+        'form': form,
+        'user': request.user,
+        'gmaps_apikey': settings.GOOGLE_MAPS_APIKEY,
+        'max_avatar_width': storage_keys.get('max_avatar_width', -1),
+        'max_avatar_height': storage_keys.get('max_avatar_height', -1),
+        'max_avatar_size': storage_keys.get('max_avatar_size', -1),
+        'max_sig_length': storage_keys.get('max_signature_length'),
+        'openids': UserData.objects.filter(user=user, key='openid'),
     }
 
 
@@ -882,7 +882,7 @@ def user_edit_profile(request, username):
             user = form.save(request)
             messages.success(request,
                 _(u'The profile of “%(username)s” was changed successfully')
-                  % {'username': escape(user.username)})
+                % {'username': escape(user.username)})
             # redirect to the new username if given
             if user.username != username:
                 return HttpResponseRedirect(href('portal', 'user', user.username, 'edit', 'profile'))
@@ -945,7 +945,7 @@ def user_edit_settings(request, username):
             user.save()
             messages.success(request,
                 _(u'The setting of “%(username)s” were successfully changed.')
-                  % {'username': escape(user.username)})
+                % {'username': escape(user.username)})
     return {
         'user': user,
         'form': form
@@ -966,7 +966,7 @@ def user_edit_status(request, username):
             user.save()
             messages.success(request,
                 _(u'The state of “%(username)s” was successfully changed.')
-                  % {'username': escape(user.username)})
+                % {'username': escape(user.username)})
     if user.status > 0:
         activation_link = None
     else:
@@ -991,7 +991,7 @@ def user_edit_password(request, username):
         user.save()
         messages.success(request,
             _(u'The password of “%(username)s” was successfully changed.')
-              % {'username': escape(user.username)})
+            % {'username': escape(user.username)})
     return {
         'user': user,
         'form': form
@@ -1141,7 +1141,7 @@ def user_edit_groups(request, username):
             user.save()
             messages.success(request,
                 _(u'The groups of “%(username)s” were successfully changed.')
-                  % {'username': escape(user.username)})
+                % {'username': escape(user.username)})
         else:
             generic.trigger_fix_errors_message(request)
     groups_joined, groups_not_joined = ([], [])
@@ -1171,7 +1171,7 @@ def user_new(request):
             messages.success(request,
                 _(u'The user “%(username)s” was successfully created. '
                   u'You can now edit more details.')
-                  % {'username': escape(data['username'])})
+                % {'username': escape(data['username'])})
             return HttpResponseRedirect(href('portal', 'user', \
                         escape(data['username']), 'edit'))
         else:
@@ -1189,7 +1189,7 @@ def admin_resend_activation_mail(request):
     if user.status != 0:
         messages.error(request,
             _(u'The account of “%(username)s” was already activated.')
-              % {'username': user.username})
+            % {'username': user.username})
     else:
         send_activation_mail(user)
         messages.success(request,
@@ -1264,15 +1264,15 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                         return HttpResponseRedirect(href('portal', 'privmsg'))
                 elif action == 'delete':
                     msg = _(u'The message was deleted.') if \
-                          entry.folder == PRIVMSG_FOLDERS['trash'][0] else \
-                          _(u'The message was moved in the trash.')
+                        entry.folder == PRIVMSG_FOLDERS['trash'][0] else \
+                        _(u'The message was moved in the trash.')
                     if entry.delete():
                         messages.success(request, msg)
                         return HttpResponseRedirect(href('portal', 'privmsg'))
             else:
                 if action == 'archive':
                     msg = _(u'Do you want to archive the message?')
-                    #confirm_label = pgettext('the verb "to archive", not the '
+                    # confirm_label = pgettext('the verb "to archive", not the '
                     #                         'noun.', 'Archive')
                     confirm_label = _(u'Archive it')
                 elif action == 'restore':
@@ -1336,7 +1336,7 @@ def privmsg_new(request, username=None):
                         _(u'You were automatically banned because we suspect '
                           u'you are sending spam. If this ban is not '
                           u'justified, contact us at %(email)s')
-                          % {'email': settings.INYOKA_CONTACT_EMAIL})
+                        % {'email': settings.INYOKA_CONTACT_EMAIL})
                     auth.logout(request)
                     return HttpResponseRedirect(href('portal'))
 
@@ -1359,7 +1359,7 @@ def privmsg_new(request, username=None):
                 except Group.DoesNotExist:
                     messages.error(request,
                         _(u'The group “%(group)s” does not exist.')
-                          % {'group': escape(group)})
+                        % {'group': escape(group)})
                     return HttpResponseRedirect(href('portal', 'privmsg'))
 
             try:
@@ -1384,7 +1384,7 @@ def privmsg_new(request, username=None):
                 recipients = None
                 messages.error(request,
                     _(u'The user “%(username)s” does not exist.')
-                      % {'username': escape(recipient)})
+                    % {'username': escape(recipient)})
 
             if recipients:
                 msg = PrivateMessage()
@@ -1403,10 +1403,10 @@ def privmsg_new(request, username=None):
                             _(u'New private message from %(username)s: %(subject)s')
                             % {'username': request.user.username,
                                'subject': d['subject']},
-                            {'user':     recipient,
-                             'sender':   request.user,
-                             'subject':  d['subject'],
-                             'entry':    entry,
+                            {'user': recipient,
+                             'sender': request.user,
+                             'subject': d['subject'],
+                             'entry': entry,
                         })
 
                 messages.success(request, _(u'The message was sent successfully.'))
@@ -1499,7 +1499,7 @@ class MemberlistView(generic.ListView):
         except User.DoesNotExist:
             messages.error(request,
                 _(u'The user “%(username)s” does not exist.')
-                  % {'username': escape(name)})
+                % {'username': escape(name)})
             return HttpResponseRedirect(request.build_absolute_uri())
         else:
             return HttpResponseRedirect(user.get_absolute_url('admin'))
@@ -1526,11 +1526,11 @@ def grouplist(request, page=1):
     pagination = Pagination(request, table.get_queryset(), page, 15,
                             link=href('portal', 'groups'))
     return {
-        'groups':      pagination.get_queryset(),
+        'groups': pagination.get_queryset(),
         'group_count': len(groups),
         'user_groups': user_groups,
-        'pagination':  pagination,
-        'table':       table
+        'pagination': pagination,
+        'table': table
     }
 
 
@@ -1547,11 +1547,11 @@ def group(request, name, page=1):
     pagination = Pagination(request, table.get_queryset(), page, 15,
                             link=href('portal', 'group', name))
     return {
-        'group':      group,
-        'users':      pagination.get_queryset(),
+        'group': group,
+        'users': pagination.get_queryset(),
         'user_count': group.user_set.count(),
         'pagination': pagination,
-        'table':      table,
+        'table': table,
     }
 
 
@@ -1566,7 +1566,7 @@ def group_edit(request, name=None):
         except Group.DoesNotExist:
             messages.error(request,
                 _(u'The group “%(group)s” does not exist.')
-                  % {'group': escape(name)})
+                % {'group': escape(name)})
             return HttpResponseRedirect(href('portal', 'groups'))
 
     std = storage.get_many(('team_icon_width', 'team_icon_height'))
@@ -1716,11 +1716,11 @@ def feedselector(request, app=None):
                            data['page'], data['count']))
 
     return {
-        'app':         app,
-        'forum_form':  forms['forum'],
+        'app': app,
+        'forum_form': forms['forum'],
         'ikhaya_form': forms['ikhaya'],
         'planet_form': forms['planet'],
-        'wiki_form':   forms['wiki'],
+        'wiki_form': forms['wiki'],
     }
 
 
@@ -1822,7 +1822,7 @@ class OpenIdConsumer(Consumer):
     def do_connect(self, request):
         # TODO: This is mostly duplication of login, maybe merge those two
         redirect = is_safe_domain(request.GET.get('next', '')) and \
-                   request.GET['next'] or href('portal')
+            request.GET['next'] or href('portal')
 
         failed = inactive = banned = False
         if request.method == 'POST' and 'openid' in request.session:
@@ -1860,9 +1860,9 @@ class OpenIdConsumer(Consumer):
         return {
             'form': form,
             'openid': request.session.get('openid', None),
-            'failed':       failed,
-            'inactive':     inactive,
-            'banned':       banned,
+            'failed': failed,
+            'inactive': inactive,
+            'banned': banned,
         }
 
     def on_success(self, request, identity_url, openid_response):

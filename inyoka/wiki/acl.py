@@ -60,12 +60,12 @@ GROUP_OWNER = 'owner'
 
 #: used by the decorator
 privilege_map = {
-    'read':         PRIV_READ,
-    'edit':         PRIV_EDIT,
-    'create':       PRIV_CREATE,
-    'attach':       PRIV_ATTACH,
-    'delete':       PRIV_DELETE,
-    'manage':       PRIV_MANAGE
+    'read': PRIV_READ,
+    'edit': PRIV_EDIT,
+    'create': PRIV_CREATE,
+    'attach': PRIV_ATTACH,
+    'delete': PRIV_DELETE,
+    'manage': PRIV_MANAGE
 }
 
 
