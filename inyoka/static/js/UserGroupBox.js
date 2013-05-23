@@ -12,7 +12,6 @@
 (function ( $ ) {
 
   function GroupBox (container, user_joined, user_not_joined) {
-    console.log("initialize real group box", container);
     var self = this;
     this.container = $(container);
 
