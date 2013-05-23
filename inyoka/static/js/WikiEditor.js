@@ -318,17 +318,10 @@
       /* helpbar with some syntax informations */
       this.helpbar = $('<span class="toolbar_help note">...</span>');
 
-      /* create toolbar based on button layout */
-      t = $('<ul class="toolbar" />').prependTo(this.textarea.parent());
-      var bar = toolbar();
-      for (var i = 0, n = bar.length, x; i != n; ++i)
-        if (x = bar[i](self))
-          x.appendTo($('<li />').appendTo(t));
-
       /* Helpbar */
       this.helpbar.appendTo($('<li />').appendTo(t));
 
-      if (profile == 'wiki') {
+      if (this.options.profile == 'wiki') {
         link = 'http://wiki.ubuntuusers.de/Wiki/Syntax';
       } else {
         link = 'http://wiki.ubuntuusers.de/Forum/Syntax';
