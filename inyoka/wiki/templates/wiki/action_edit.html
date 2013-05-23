@@ -50,7 +50,7 @@
   {{ super() }}
   <script type="text/javascript">
     /*<![CDATA[*/
-      new WikiEditor('textarea[name="text"]', 'wiki');
+      $('textarea[name="text"]').wikiEditor({profile: 'wiki'});
 
       (function() {
         var
