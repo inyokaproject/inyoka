@@ -315,19 +315,19 @@
       if (x = bar[i](self))
         x.appendTo($('<li />').appendTo(t));
 
-      /* helpbar with some syntax informations */
-      this.helpbar = $('<span class="toolbar_help note">...</span>');
+    /* helpbar with some syntax informations */
+    this.helpbar = $('<span class="toolbar_help note">...</span>');
 
-      /* Helpbar */
-      this.helpbar.appendTo($('<li />').appendTo(t));
+    /* Helpbar */
+    this.helpbar.appendTo($('<li />').appendTo(t));
 
-      if (this.options.profile == 'wiki') {
-        link = 'http://wiki.ubuntuusers.de/Wiki/Syntax';
-      } else {
-        link = 'http://wiki.ubuntuusers.de/Forum/Syntax';
-      }
-      $('<span class="syntax_help note"><a href="' + link + '">Hilfe zur Syntax</a></span>')
-        .appendTo($('<li />').appendTo(t));
+    if (this.options.profile == 'wiki') {
+      link = 'http://wiki.ubuntuusers.de/Wiki/Syntax';
+    } else {
+      link = 'http://wiki.ubuntuusers.de/Forum/Syntax';
+    }
+    $('<span class="syntax_help note"><a href="' + link + '">Hilfe zur Syntax</a></span>')
+      .appendTo($('<li />').appendTo(t));
   };
 
   /**
