@@ -24,6 +24,7 @@
     profile: 'small',
     previewUri: '/?__service__=wiki.render_preview',
     previewButton: $('form input[name="preview"]'),
+    enablePreview: true,
     codes: {
       'text': 'Code ohne Highlighting',
       'bash': 'Bash',
@@ -301,6 +302,9 @@
     this.options = $.extend({}, defaults, options);
 
     this.init();
+    if (this.options.enablePreview) {
+      this.initPreview();
+    }
   };
 
   WikiEditor.prototype.init = function () {
