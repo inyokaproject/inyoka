@@ -22,6 +22,8 @@
   var defaults = {
     indentation: 2,
     profile: 'small',
+    previewUri: '/?__service__=wiki.render_preview',
+    previewButton: $('form input[name="preview"]'),
     codes: {
       'text': 'Code ohne Highlighting',
       'bash': 'Bash',
@@ -482,6 +484,28 @@
       lines.push('>' + (this.charAt(0) != '>' ? ' ' : '') + this);
     });
     return lines.join('\n') + '\n';
+  };
+
+  WikiEditor.prototype.initPreview = function () {
+    var self = this,
+        $output = $('<div class="preview"></div>'),
+        $preview = $('<div></div>')
+          .hide()
+          .append('<h2>' + gettext('Preview') + '</h2>')
+          .append($output);
+
+    this.options.previewButton.click(function() {
+      $('body, input, textarea').css('cursor', 'progress');
+        $preview.hide();
+        $.post(self.options.previewUri, {
+          text: self.$el.val()
+        }, function(data) {
+          $output.html(data);
+          $preview.slideDown('fast');
+          $('body, input, textarea').css('cursor', 'auto');
+        });
+        return false;
+      }).parent().parent().append($preview);
   };
 
   $.fn.wikiEditor = function (options) {

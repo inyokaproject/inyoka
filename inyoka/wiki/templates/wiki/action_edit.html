@@ -52,30 +52,7 @@
   <script type="text/javascript">
     /*<![CDATA[*/
       $('textarea[name="text"]').wikiEditor({profile: 'wiki'});
-
-      (function() {
-        var
-          editor = $('textarea[name="text"]'),
-          output = $('<div class="preview"></div>');
-        var preview = $('<div></div>')
-          .hide()
-          .append('<h2>{% trans %}Preview{% endtrans %}</h2>')
-          .append(output);
-
-        $('form input[name="preview"]').click(function() {
-        $('body, input, textarea').css('cursor', 'progress');
-          preview.hide();
-          $.post('/?__service__=wiki.render_preview', {
-            page: {{ name|jsonencode }},
-            text: editor.val()
-          }, function(data) {
-            output.html(data);
-            preview.slideDown('fast');
-            $('body, input, textarea').css('cursor', 'auto');
-          });
-          return false;
-        }).parent().parent().append(preview);
-      })();
+      $('textarea[name="text"]')[0].inyokaWikiEditor.initPreview();
     /*]]>*/
   </script>
 {% endblock %}
