@@ -19,11 +19,12 @@
   <form enctype="multipart/form-data" action="?action=edit" method="post">
     {{ csrf_token() }}
     <p>
-      {#{% trans license_link=href('wiki', 'Wiki/Lizenz'),
+      {# TODO: More i18n integration for page names :-/ #}
+      {%- trans license_link=href('wiki', 'Wiki/Lizenz'),
                reference_link=href('wiki', 'Wiki/Referenz'),
-               syntax_link=href('wiki', 'Wiki/Syntax') %}
-        By clicking on “Submit“#}
-      Durch Anklicken von „Speichern“ stellst du deine Änderungen unter unsere <a href="{{ href('wiki', 'Wiki/Lizenz') }}">Lizenz</a>. Wenn du das nicht willst, klicke auf „Abbrechen“, um deine Änderungen zu verwerfen. Hilfe zum Bearbeiten findest du unter <a href="{{ href('wiki', 'Wiki/Referenz') }}">Wiki/Referenz</a> und <a href="{{ href('wiki', 'Wiki/Syntax') }}">Wiki/Syntax</a>.
+               syntax_link=href('wiki', 'Wiki/Syntax') -%}
+        By clicking on “submit“ you agree our <a href="{{ license_link }}">license</a>. If you disagree, click “cancel“ to revert all changes immediately. You'll find help at <a href="{{ reference_link }}">Wiki/Referenz</a> and <a href="{{ syntax_link }}">Wiki/Syntax</a>.
+      {%- endtrans -%}
     </p>
     <div class="editor">{{ form.text }}</div>
     {{ form.errors.text }}
