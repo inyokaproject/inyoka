@@ -1,4 +1,9 @@
-Hallo {{ username }},
+{% trans username=username, suggestion_author=suggestion_author, suggestion_title=suggestion_title, suggestion_url=suggestion_url, domain=domain -%}
+Hello {{ username }},
 
-der Benutzer {{ suggestion_author }} hat einen neuen Artikelvorschlag „{{ suggestion_title }}“ verfasst.
-Du kannst ihn dir hier ansehen: {{ suggestion_url }}
+{{ suggestion_author }} submitted a new article suggestion “{{ suggestion_title }}”. You can view the suggestion by visiting {{ suggestion_url }}
+
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

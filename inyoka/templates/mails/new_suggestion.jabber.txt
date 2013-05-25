@@ -1,1 +1,3 @@
-Neuer Artikelvorschlag von {{ suggestion_author }} „{{ suggestion_title }}“: {{ suggestion_url }}
+{% trans suggestion_author=suggestion_author, suggestion_title=suggestion_title, suggestion_url=suggestion_url -%}
+{{ suggestion_author }} submitted a new article suggestion “{{ suggestion_title }}”: {{ suggestion_url }}
+{%- endtrans %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-05-26 10:24+0200\n"
+"POT-Creation-Date: 2013-06-16 14:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -187,6 +187,516 @@ msgstr ""
 
 #: inyoka/templates/errors/404.html:19
 msgid "Page not found"
+msgstr ""
+
+#: inyoka/templates/mails/account_deactivate.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"you have removed your user account from %(domain)s. To prevent abuse you "
+"are able to recreate your account within the next 30 days. \n"
+"\n"
+"Please visit %(link)s and enter the following verification code:\n"
+"\n"
+"    %(data)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/activation_mail.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"welcome to %(domain)s!\n"
+"\n"
+"Someone created an account using this email address (%(email)s) for "
+"account activation.\n"
+"\n"
+"The account is still deactivated. To activate visit the following link: "
+"%(link_activate)s\n"
+"\n"
+"If you haven't registered the account yourself you can remove the account"
+" by visiting %(link_delete)s .\n"
+"\n"
+"Due to security reasons we do not send your password as part of this "
+"email. We neither store the password in plain text in our database. "
+"Though, if you forget it someday we are only able to send you a new "
+"password.\n"
+"\n"
+"NOTICE: Nobody will ever ask you for your password! Neither via email nor"
+" private message nor using any other contact form! Do not share the "
+"password with someone else!\n"
+"\n"
+"As accepted during the registration process, every post you create at "
+"%(domain)s is licensed under %(link_license)s\n"
+"\n"
+"Kind regards and thank your for your participation.\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/formmailer_template.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"you received a new message from %(from)s.\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team\n"
+"\n"
+"-----\n"
+"\n"
+"%(text)s\n"
+"\n"
+"-----"
+msgstr ""
+
+#: inyoka/templates/mails/new_comment.jabber.txt:1
+#, python-format
+msgid ""
+"%(comment_author)s commented on the article “%(article_subject)s”: "
+"%(comment_url)s"
+msgstr ""
+
+#: inyoka/templates/mails/new_comment.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(comment_author)s wrote a new comment on the article "
+"“%(article_subject)s”. You can view the comment by visiting "
+"%(comment_url)s\n"
+"\n"
+"To unsubscribe from further notifications about this article visit "
+"%(article_unsubscribe)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_email_confirmation.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"we received a email change request for %(domain)s. To verify this request"
+" please visit %(link)s and enter the following code:\n"
+"\n"
+"    %(data)s\n"
+"\n"
+"If you do not own the account on %(domain)s or if the change request was "
+"done by accident, you don't need to do anything. Your email address will "
+"not be used.\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_page_discussion.jabber.txt:1
+#, python-format
+msgid ""
+"A new discussion about the wiki page “%(page_title)s” has been started: "
+"%(topic_url)s"
+msgstr ""
+
+#: inyoka/templates/mails/new_page_discussion.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(creator)s started a new discussion about the wiki page "
+"“%(page_title)s”. You can view the discussion by visiting %(topic_url)s\n"
+"\n"
+"If you want to get notified about updates on this discussion you need to "
+"subscribe: %(topic_subscribe)s\n"
+"\n"
+"To unsubscribe from further notifications about this wiki page visit "
+"%(page_unsubscribe)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_pm.jabber.txt:1
+#, python-format
+msgid "%(from)s has sent you a new private message titled “%(subject)s”: %(link)s"
+msgstr ""
+
+#: inyoka/templates/mails/new_pm.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(from)s has sent you a new private message titled “%(subject)s”. You can"
+" view the message by visiting %(link)s\n"
+"\n"
+"To unsubscribe from further notifications about private messages visit "
+"%(link_settings)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_post.jabber.txt:1
+#: inyoka/templates/mails/user_new_post.jabber.txt:1
+#, python-format
+msgid "%(author_username)s posted in topic “%(topic_title)s”: %(post_url)s"
+msgstr ""
+
+#: inyoka/templates/mails/new_post.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(author_username)s posted in the topic “%(topic_title)s”. You can view "
+"the post by visiting %(post_url)s\n"
+"\n"
+"To unsubscribe from further notifications about this topic visit "
+"%(topic_unsubscribe)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_reported_topic.jabber.txt:1
+#, python-format
+msgid ""
+"%(reporter)s reported the topic “%(topic_title)s” ( %(topic_link)s ) in "
+"the forum “%(topic_forum)s”.\n"
+"    %(text)s\n"
+"List of reported topics: %(reported_topics)s"
+msgstr ""
+
+#: inyoka/templates/mails/new_reported_topic.txt:1
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"%(reporter)s reported the topic “%(topic_title)s” ( %(topic_link)s ) in "
+"the forum “%(topic_forum)s”.\n"
+"\n"
+"    %(text)s\n"
+"\n"
+"List of reported topics: %(reported_topics)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_suggestion.jabber.txt:1
+#, python-format
+msgid ""
+"%(suggestion_author)s submitted a new article suggestion "
+"“%(suggestion_title)s”: %(suggestion_url)s"
+msgstr ""
+
+#: inyoka/templates/mails/new_suggestion.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(suggestion_author)s submitted a new article suggestion "
+"“%(suggestion_title)s”. You can view the suggestion by visiting "
+"%(suggestion_url)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_topic.jabber.txt:1
+#: inyoka/templates/mails/user_new_topic.jabber.txt:1
+#, python-format
+msgid ""
+"%(author_username)s created a new topic “%(topic_title)s” in the forum "
+"“%(forum_name)s”: %(post_url)s"
+msgstr ""
+
+#: inyoka/templates/mails/new_topic.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(author_username)s created a new topic “%(topic_title)s” in the forum "
+"“%(forum_name)s”. You can view the topic by visiting %(post_url)s\n"
+"\n"
+"To unsubscribe from further notifications within this forum visit "
+"%(forum_unsubscribe)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_topic_ubuntu_version.jabber.txt:1
+#, python-format
+msgid ""
+"%(author_username)s created a new topic “%(topic_title)s” in the forum "
+"“%(forum_name)s” featuring the Ubuntu version “%(topic_version)s”: "
+"%(post_url)s"
+msgstr ""
+
+#: inyoka/templates/mails/new_topic_ubuntu_version.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(author_username)s created a new topic “%(topic_title)s” in the forum "
+"“%(forum_name)s” featuring the Ubuntu version “%(topic_version)s”. You "
+"can view the topic by visiting %(post_url)s\n"
+"\n"
+"To unsubscribe from further notifications about this Ubuntu version visit"
+" %(link)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_user_password.txt:1
+#, python-format
+msgid ""
+"Hello %(user)s,\n"
+"\n"
+"someone request a password reset for the account “%(user)s” at "
+"%(domain)s.\n"
+"\n"
+"If you issued the request, please visit %(link)s\n"
+"\n"
+"In case someone else requested the password you can delete this email.\n"
+"\n"
+"NOTICE: Nobody will ever ask you for your password! Neither via email nor"
+" private message nor using any other contact form! Do not share the "
+"password with someone else!\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/new_user_password_subject.txt:1
+msgid "Password reset request"
+msgstr ""
+
+#: inyoka/templates/mails/page_edited.jabber.txt:1
+#, python-format
+msgid ""
+"%(rev_username)s updated the wiki page “%(page_title)s”. Change note: "
+"%(rev_note)s\n"
+"Changes: %(diff_link)s\n"
+"Changes since last visit: %(changes_link)s"
+msgstr ""
+
+#: inyoka/templates/mails/page_edited.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(rev_username)s updated the wiki page “%(page_title)s”.\n"
+"\n"
+"The change note is:\n"
+"\n"
+"    %(rev_note)s\n"
+"\n"
+"You can view the changed by visiting %(diff_link)s\n"
+"\n"
+"To show all changes since your last visit, open %(changes_link)s\n"
+"\n"
+"To unsubscribe from further notifications about this wiki page visit "
+"%(unsubscribe_link)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/planet_suggest.txt:1
+#, python-format
+msgid ""
+"New suggestion for a blog\n"
+"=========================\n"
+"\n"
+"Submitted by:   %(username)s (%(user_link)s)\n"
+"                Der Blog gehört %(username)s\n"
+"Name:           %(name)s\n"
+"URL:            %(url)s\n"
+"Feed:           %(feed_url)s\n"
+"Contact email:  %(contact_email)s\n"
+"Description:\n"
+"\n"
+"    %(description)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/reset_email.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"the email address of your account at %(domain)s has been changed to "
+"%(new_email)s. To prevent abuse you can revert to your old email address "
+"by visiting %(link)s and entering the following code:\n"
+"\n"
+"    %(data)s\n"
+"\n"
+"You are only able to reset your email address withing the next 31 days.\n"
+"\n"
+"NOTICE: In case of abuse you should change your password immediately! "
+"Keep in mind that nobody will ever ask you for your password! Neither via"
+" email nor private message nor using any other contact form! Do not share"
+" the password with someone else!\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/suggestion_rejected.jabber.txt:1
+#, python-format
+msgid ""
+"%(username)s rejected your article suggestion “%(title)s”. The specified "
+"reason is:\n"
+"%(note)s"
+msgstr ""
+
+#: inyoka/templates/mails/suggestion_rejected.txt:1
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"%(username)s rejected your article suggestion “%(title)s”. The specified "
+"reason is:\n"
+"\n"
+"    %(note)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/topic_deleted.jabber.txt:1
+#, python-format
+msgid "%(mod)s deleted your topic “%(topic_title)s”."
+msgstr ""
+
+#: inyoka/templates/mails/topic_deleted.jabber.txt:5
+#, python-format
+msgid "The specified reason is: %(reason)s"
+msgstr ""
+
+#: inyoka/templates/mails/topic_deleted.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(mod)s deleted your topic “%(topic_title)s”."
+msgstr ""
+
+#: inyoka/templates/mails/topic_deleted.txt:7
+#, python-format
+msgid ""
+"\n"
+"The specified reason is:\n"
+"\n"
+"    %(reason)s\n"
+msgstr ""
+
+#: inyoka/templates/mails/topic_deleted.txt:13
+#, python-format
+msgid ""
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/topic_moved.jabber.txt:1
+#, python-format
+msgid ""
+"%(mod)s moved your topic “%(topic_title)s” from the forum "
+"“%(old_forum_name)s” to “%(forum_name)s”: %(topic_url)s"
+msgstr ""
+
+#: inyoka/templates/mails/topic_moved.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(mod)s moved your topic “%(topic_title)s” from the forum "
+"“%(old_forum_name)s” to “%(forum_name)s”. You can view the topic by "
+"visiting %(topic_url)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/topic_splited.jabber.txt:1
+#, python-format
+msgid ""
+"%(mod)s has split the topic “%(old_topic_title)s” ( %(old_topic_url)s )  "
+"to “%(new_topic_title)s”: %(new_topic_url)s"
+msgstr ""
+
+#: inyoka/templates/mails/topic_splited.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(mod)s has split the topic “%(old_topic_title)s” to "
+"“%(new_topic_title)s”. You can view the splited part by visiting "
+"%(new_topic_url)s . You can view the original topic by visiting "
+"%(old_topic_url)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/user_new_post.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(author_username)s has written a new post in the topic "
+"“%(topic_title)s”. You can view the topic by visiting %(post_url)s\n"
+"\n"
+"To unsubscribe from further notifications about this user's activity "
+"visit %(author_unsubscribe)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
+msgstr ""
+
+#: inyoka/templates/mails/user_new_topic.txt:1
+#, python-format
+msgid ""
+"Hello %(username)s,\n"
+"\n"
+"%(author_username)s created a new topic “%(topic_title)s” in the forum "
+"“%(forum_name)s”. You can view the topic by visiting %(post_url)s\n"
+"\n"
+"To unsubscribe from further notifications about this user's activity "
+"visit %(author_unsubscribe)s\n"
+"\n"
+"Kind regards,\n"
+"\n"
+"Your %(domain)s team"
 msgstr ""
 
 #: inyoka/utils/dates.py:204

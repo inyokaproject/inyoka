@@ -28,6 +28,9 @@ def send_notification(user, template_name=None, subject=None, args=None):
 
     methods = user.settings.get('notify', ['mail'])
 
+    if not 'domain' in args:
+        args['domain'] = settings.BASE_DOMAIN_NAME
+
     if 'jabber' in methods and user.jabber:
         message = render_template('mails/%s.jabber.txt' % template_name, args)
         send_jabber(user.jabber, message)

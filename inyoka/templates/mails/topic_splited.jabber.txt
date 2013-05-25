@@ -1,1 +1,3 @@
-Das Thema „{{ old_topic.title }}“ ( {{ old_topic|url }} ) wurde von {{ mod }} nach „{{ new_topic.title }}“ ( {{ new_topic|url }} ) aufgeteilt. Bitte beachte das du noch keine Benachrichtigungen für das neue Thema aktiviert hast!
+{% trans old_topic_title=old_topic.title, old_topic_url=old_topic|url, mod=mod, new_topic_title=new_topic.title, new_topic_url=new_topic|url -%}
+{{ mod }} has split the topic “{{ old_topic_title }}” ( {{ old_topic_url }} )  to “{{ new_topic_title }}”: {{ new_topic_url }}
+{%- endtrans %}

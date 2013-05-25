@@ -1,1 +1,7 @@
-Das Thema „{{ topic_title}}“ wurde von {{ mod }} gelöscht. {% if reason %}Als Grund wurde angegeben: {{ reason }}{% endif %}
+{% trans topic_title=topic_title, mod=mod, reason=reason -%}
+{{ mod }} deleted your topic “{{ topic_title }}”.
+{%- endtrans %}
+
+{% if reason %}{% trans reason=reason -%}
+The specified reason is: {{ reason }}
+{%- endtrans %}{% endif %}

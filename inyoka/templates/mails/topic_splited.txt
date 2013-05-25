@@ -1,10 +1,12 @@
-Hallo {{ username }},
+{% trans username=username, old_topic_title=old_topic.title, mod=mod, new_topic_title=new_topic.title, new_topic_url=new_topic|url, old_topic_url=old_topic|url, domain=domain -%}
+Hello {{ username }},
 
-das Thema „{{ old_topic.title }}“ wurde von {{ mod }} nach „{{ new_topic.title }}“ aufgeteilt.
+{{ mod }} has split the topic “{{ old_topic_title }}” to “{{ new_topic_title }}”. You can view the splited part by visiting {{ new_topic_url }} . You can view the original topic by visiting {{ old_topic_url }}
 
-Du kannst dir den abgetrennten Teil hier ansehen: {{ new_topic|url }}
-Das ursprüngliche Thema kannst du hier ansehen: {{ old_topic|url }}
+Kind regards,
 
-{# NOTE: Deaktiviert, weil das nicht notwendigerweise der Fall ist...
+Your {{ domain }} team
+{%- endtrans %}
+{#- NOTE: Deaktiviert, weil das nicht notwendigerweise der Fall ist...
 Bitte beachte das du noch keine Benachrichtigungen für das neue Thema aktiviert hast!
 #}

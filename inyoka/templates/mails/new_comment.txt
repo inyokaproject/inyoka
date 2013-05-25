@@ -1,6 +1,11 @@
-Hallo {{ username }},
+{% trans username=username, comment_author=comment_author, article_subject=article_subject, comment_url=comment_url, article_unsubscribe=article_unsubscribe, domain=domain -%}
+Hello {{ username }},
 
-der Benutzer {{ comment_author }} hat einen neuen Kommentar zum Artikel „{{ article_subject }}“ verfasst.
-Du kannst ihn dir hier ansehen: {{ comment_url }}
+{{ comment_author }} wrote a new comment on the article “{{ article_subject }}”. You can view the comment by visiting {{ comment_url }}
 
-Falls du bei Beiträgen in diesem Thema in Zukunft nicht mehr benachrichtigt werden willst, so kannst du das hier deaktivieren: {{ article_unsubscribe }}
+To unsubscribe from further notifications about this article visit {{ article_unsubscribe }}
+
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

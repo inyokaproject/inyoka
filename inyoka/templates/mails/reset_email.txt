@@ -1,11 +1,15 @@
-Hallo {{ user.username }},
+{% trans username=user.username, new_email=new_email, link=href('portal', 'confirm', 'reset_email'), data=data|indent(4), domain=domain -%}
+Hello {{ username }},
 
-die E-Mail-Adresse deines Benutzers auf ubuntuusers.de wurde auf {{ new_email }} geändert. Um Missbrauch zu vermeiden, kannst du die E-Mail-Adresse auf die alte zurücksetzen. Bitte beachte, dass das nur einen Monat ab heute möglich ist.
+the email address of your account at {{ domain }} has been changed to {{ new_email }}. To prevent abuse you can revert to your old email address by visiting {{ link }} and entering the following code:
 
-Besuche dazu die Seite {{ href('portal', 'confirm', 'reset_email') }} und gib folgende Zeichenkette dort ein:
+    {{ data }}
 
-    {{ data|indent(4) }}
+You are only able to reset your email address withing the next 31 days.
 
-Im Falle eines Missbrauchs solltest du außerdem dein Passwort ändern. Wenn die Änderung der E-Mail-Adresse beabsichtigt war, brauchst du nichts weiter zu tun. Außer diese E-Mail zu löschen :-)
+NOTICE: In case of abuse you should change your password immediately! Keep in mind that nobody will ever ask you for your password! Neither via email nor private message nor using any other contact form! Do not share the password with someone else!
 
-Dein Team von ubuntuusers.de
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

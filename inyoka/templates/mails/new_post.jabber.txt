@@ -1,1 +1,3 @@
-Neuer Beitrag von {{ author_username }} im Thema „{{ topic_title }}“: {{ post_url }}
+{% trans author_username=author_username, topic_title=topic_title, post_url=post_url -%}
+{{ author_username }} posted in topic “{{ topic_title }}”: {{ post_url }}
+{%- endtrans %}

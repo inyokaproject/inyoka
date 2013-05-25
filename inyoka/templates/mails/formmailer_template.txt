@@ -1,5 +1,16 @@
-Hallo {{ user.username }},
+{% trans username=user.username, from=from, text=text -%}
+Hello {{ username }},
 
-{{ from }} schickt dir folgende Nachricht:
+you received a new message from {{ from }}.
+
+Kind regards,
+
+Your {{ domain }} team
+
+-----
 
 {{ text }}
+
+-----
+
+{%- endtrans %}

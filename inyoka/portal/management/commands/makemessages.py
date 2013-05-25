@@ -33,7 +33,7 @@ class Command(BaseCommand):
         call(['pybabel', 'extract', '-F', 'extra/babel.cfg', '-k', '_', '-k',
               'gettext', '-k', 'pgettext:1c,2', '-k', 'ugettext', '-k',
               'ugettext_lazy', '-k', 'ungettext_lazy', '-o',
-              'inyoka/locale/django.pot', 'inyoka/templates', 'inyoka/utils',
+              'inyoka/locale/django.pot', 'inyoka/templates', 'inyoka/templates/mails', 'inyoka/utils',
               'inyoka/middlewares'])
         call(['pybabel', 'update', '-D', 'django', '-i',
               'inyoka/locale/django.pot', '-d', 'inyoka/locale', '-l',
