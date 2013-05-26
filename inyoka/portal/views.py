@@ -72,7 +72,7 @@ from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
     CreateUserForm, UserMailForm, EditGroupForm
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
     PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
-from inyoka.portal.user import User, Group, UserBanned, UserData, \
+from inyoka.portal.user import User, Group, UserBanned, \
     deactivate_user, reactivate_user, set_new_email, \
     reset_email, send_activation_mail, PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \

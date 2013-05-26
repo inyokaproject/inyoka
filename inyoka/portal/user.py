@@ -645,6 +645,7 @@ class User(AbstractBaseUser):
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
 
 
+# TODO: Remove as soon as we merge this branch.
 class UserData(models.Model):
     user = models.ForeignKey(User)
     key = models.CharField(max_length=255)

@@ -374,16 +374,6 @@ class UserCPProfileForm(forms.ModelForm):
         self.change_avatar = True
         return ContentFile(out.getvalue(), 'avatar.' + format.lower())
 
-# FIXME: social-auth
-#    def clean_openid(self):
-#        if self.cleaned_data['openid'] in EMPTY_VALUES:
-#            return
-#        openid = self.cleaned_data['openid']
-#        if UserData.objects.filter(key='openid', value=openid)\
-#                           .exclude(user=self.user).count():
-#            raise forms.ValidationError(_(u'This OpenID is already in use.'))
-#        return openid
-
 
 class EditUserProfileForm(UserCPProfileForm):
     class Meta(UserCPProfileForm.Meta):
