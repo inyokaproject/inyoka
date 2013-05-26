@@ -530,9 +530,9 @@ msgstr "Avatar von %(user)s"
 #: inyoka/ikhaya/templates/ikhaya/detail.html:55
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:20
 #: inyoka/ikhaya/templates/ikhaya/index.html:52
-#, fuzzy, python-format
+#, python-format
 msgid "Published by <a href=\"%(link)s\">%(author)s</a>"
-msgstr "Vorgeschlagen von <a href=\"%(link)s\">%(author)s</a>"
+msgstr "Veröffentlicht von <a href=\"%(link)s\">%(author)s</a>"
 
 #: inyoka/ikhaya/templates/ikhaya/detail.html:59
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:25
