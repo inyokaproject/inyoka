@@ -2,7 +2,7 @@ Django==1.5.1
 # Includes various fixes
 https://github.com/alex/django-filter/tarball/master/#egg=django-filter
 # Includes Django 1.5 fix
--e git+https://github.com/EnTeQuAk/django-openid.git@fix_django#egg=django-openid
+https://github.com/EnTeQuAk/django-openid/tarball/django_fix/#egg=django-openid
 South==0.8
 distribute==0.6.40
 Jinja2==2.7
