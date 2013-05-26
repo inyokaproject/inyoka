@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-02-08 23:08+0100\n"
+"POT-Creation-Date: 2013-05-26 10:23+0200\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -21,25 +21,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.0dev\n"
 
-#: inyoka/wiki/actions.py:107
+#: inyoka/wiki/actions.py:109
 #, python-format
 msgid "Redirected from “<a href=\"%(link)s\">%(title)s</a>”."
 msgstr "Von „<a href=\"%(link)s\">%(title)s</a>“ weitergeleitet."
 
-#: inyoka/wiki/actions.py:222
+#: inyoka/wiki/actions.py:224
 msgid "Revision is the latest one, revert aborted."
 msgstr "Keine Änderungen durchgeführt, da die Revision bereits die aktuelle ist."
 
-#: inyoka/wiki/actions.py:225
+#: inyoka/wiki/actions.py:227
 msgid "Revert aborted."
 msgstr "Wiederherstellen abgebrochen."
 
-#: inyoka/wiki/actions.py:233
+#: inyoka/wiki/actions.py:235
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
 
-#: inyoka/wiki/actions.py:262
+#: inyoka/wiki/actions.py:264
 #, python-format
 msgid ""
 "These attachments are already attached to the new page name: %(names)s. "
@@ -51,50 +51,50 @@ msgstr ""
 " href=\"%(link)s\">Umbenennen und Löschung doppelter Anhänge "
 "erzwingen</a>."
 
-#: inyoka/wiki/actions.py:277 inyoka/wiki/actions.py:281
-#: inyoka/wiki/actions.py:298
+#: inyoka/wiki/actions.py:279 inyoka/wiki/actions.py:283
+#: inyoka/wiki/actions.py:300
 #, python-format
 msgid "Renamed from %(old_name)s"
 msgstr "Umbenannt von %(old_name)s"
 
-#: inyoka/wiki/actions.py:289
+#: inyoka/wiki/actions.py:291
 #, python-format
 msgid "Renamed to %(new_name)s"
 msgstr "Umbenannt nach %(new_name)s"
 
-#: inyoka/wiki/actions.py:316
+#: inyoka/wiki/actions.py:318
 msgid "No page name given."
 msgstr "Kein Seitenname eingegeben."
 
-#: inyoka/wiki/actions.py:323
+#: inyoka/wiki/actions.py:325
 msgid "Renamed the page successfully."
 msgstr "Die Seite wurde erfolgreich umbenannt."
 
-#: inyoka/wiki/actions.py:326
+#: inyoka/wiki/actions.py:328
 msgid "A page with this name already exists."
 msgstr "Eine andere Seite mit diesem Namen existiert bereits."
 
-#: inyoka/wiki/actions.py:411
+#: inyoka/wiki/actions.py:412
 #, python-format
 msgid "Used the template “<a href=\"%(link)s\">%(name)s</a>” for this page"
 msgstr ""
 "Die Vorlage „<a href=\"%(link)s\">%(name)s</a>” wurde geladen und wird "
 "als Basis für die neue Seite verwendet."
 
-#: inyoka/wiki/actions.py:442 inyoka/wiki/actions.py:891
+#: inyoka/wiki/actions.py:443 inyoka/wiki/actions.py:891
 msgid "Canceled."
 msgstr "Abgebrochen."
 
-#: inyoka/wiki/actions.py:460
+#: inyoka/wiki/actions.py:461
 msgid "No changes."
 msgstr "Keine Änderungen."
 
-#: inyoka/wiki/actions.py:467 inyoka/wiki/actions.py:480
+#: inyoka/wiki/actions.py:468 inyoka/wiki/actions.py:480
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been created."
 msgstr "Die Seite „<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."
 
-#: inyoka/wiki/actions.py:469
+#: inyoka/wiki/actions.py:470
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been edited."
 msgstr "Die Seite „<a href=\"%(link)s\">%(name)s</a>“ wurde bearbeitet."
@@ -309,7 +309,7 @@ msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
 msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"
 
-#: inyoka/wiki/notifications.py:28
+#: inyoka/wiki/notifications.py:32
 #, python-format
 msgid "The page “%(name)s” was changed"
 msgstr "Die Seite „%(name)s“ wurde geändert"
@@ -370,10 +370,6 @@ msgid ""
 msgstr ""
 "Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s "
 "bearbeitet. Zusammenfassung: %(summary)s"
-
-#: inyoka/wiki/views.py:249 inyoka/wiki/views.py:252
-msgid "Anonymous"
-msgstr "Anonymous"
 
 #: inyoka/wiki/templates/wiki/_diff.html:32
 msgid "The two revisions are identical."
@@ -908,4 +904,7 @@ msgstr "Abbestellen"
 #: inyoka/wiki/templates/wiki/page.html:66
 msgid "Subscribe"
 msgstr "Abonnieren"
+
+#~ msgid "Anonymous"
+#~ msgstr "Anonymous"
 
