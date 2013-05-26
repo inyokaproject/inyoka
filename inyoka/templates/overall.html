@@ -6,10 +6,10 @@
 
     It contains the design elements that are displayed on all pages.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 -#}
-{% from 'macros.html' import breadcrumb, render_modnavi_li %}
+{%- from 'macros.html' import breadcrumb, render_modnavi_li -%}
 {{- XHTML_DTD }}
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://creativecommons.org/ns#"
@@ -62,28 +62,6 @@
                 href="{{ href('portal', 'opensearch', app) }}" />
         {%- endif -%}
       {%- endfor %}
-      <script type="text/javascript" src="{{ href('portal', 'jsi18n') }}"></script>
-      <script type="text/javascript">
-      /*<![CDATA[*/
-        var
-          $STATIC_URL = {{ href('static')|jsonencode }},
-          $MEDIA_URL = {{ href('media')|jsonencode }},
-          $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }},
-          $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated() else 'null' }},
-          $IS_LOGGED_IN = {{ USER.is_authenticated() and 'true' or 'false' }},
-          $SIDEBAR_HIDDEN = {{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }};
-      /*]]>*/
-      </script>
-      {%- if SETTINGS.DEBUG %}
-        {% set suffix = SETTINGS.DEBUG and '.js' or '.min.js' %}
-        <script type="text/javascript"
-                src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
-      {% endif %}
-    {% if SETTINGS.DEBUG %}
-      <script src='{{ href('static', 'js/jquery-1.5.2.js') }}'></script>
-    {% else %}
-      <script src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'></script>
-    {% endif %}
     {%- endblock %}
   </head>
   <body>
@@ -277,7 +255,7 @@
         <li class="license">
           <a href="?flavour=mobile" class="flavour_switch" >{% trans %}To mobile version{% endtrans %}</a><br />
           <img src="{{ href('static', 'img/copyleft.png') }}" alt="Copyleft" />
-          2004 – 2012 ubuntuusers.de • Einige Rechte vorbehalten<br />
+          2004 – 2013 ubuntuusers.de • Einige Rechte vorbehalten<br />
           <a href="http://creativecommons.org/licenses/by-nc-sa/2.0/de/deed.de" rel="license">CC</a> •
           <a href="{{ href('portal', 'lizenz') }}" rel="cc:morePermissions">Lizenz</a> •
           <a href="{{ href('portal', 'kontakt') }}">Kontakt</a> •
@@ -293,24 +271,31 @@
     <div style="clear: both;"></div>
    </div>
 
-   {%- for script in ['classy', 'jquery.extensions', 'overall'] + scripts|default([]) %}
+    <script type="text/javascript" src="{{ href('portal', 'jsi18n') }}"></script>
+    <script type="text/javascript">
+    /*<![CDATA[*/
+      var
+        $STATIC_URL = {{ href('static')|jsonencode }},
+        $MEDIA_URL = {{ href('media')|jsonencode }},
+        $BASE_DOMAIN_NAME = {{ SETTINGS.BASE_DOMAIN_NAME|jsonencode }},
+        $CURRENT_USER = {{ USER.username|jsonencode if USER.is_authenticated() else 'null' }},
+        $IS_LOGGED_IN = {{ USER.is_authenticated() and 'true' or 'false' }},
+        $SIDEBAR_HIDDEN = {{ USER.settings.portal_sidebar_hidden and 'true' or 'false' }};
+    /*]]>*/
+    </script>
+    {%- if SETTINGS.DEBUG %}
+      {% set suffix = SETTINGS.DEBUG and '.js' or '.min.js' %}
+      <script type="text/javascript"
+              src="{{ href('static', 'js/less-1.1.3%s'|format(suffix)) }}"></script>
+    {% endif %}
+
+   {%- for script in ['jquery-1.5.2', 'classy', 'jquery.extensions', 'overall'] + scripts|default([]) %}
      {%- if SETTINGS.DEBUG %}
        <script type="text/javascript" src="{{ href('static', 'js/%s.js'|format(script)) }}"></script>
      {%- else %}
        <script type="text/javascript" src="{{ href('static', 'js/%s.min.js'|format(script)) }}"></script>
      {% endif %}
    {%- endfor %}
-   {%- if SETTINGS.DEBUG %}
-     <script type="text/javascript" src="{{ href('static', 'js/debug.js') }}"></script>
-     <script type="text/javascript">
-     /*<![CDATA[*/
-     $(document).ready(function() {
-       /* Designers Debug Tools */
-       debugTools.init();
-     });
-     /*]]>*/
-     </script>
-   {% endif %}
 
    {% block additional_scripts %}
    {% endblock %}

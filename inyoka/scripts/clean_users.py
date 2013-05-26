@@ -7,7 +7,7 @@
     A simple script that searches for non activated users whose
     activation key is expired and deletes them.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import sys
@@ -92,6 +92,6 @@ if __name__ == '__main__':
         for user in set((expired + inactive)):
             try:
                 user.delete()
-            except Exception, exc:
+            except Exception as exc:
                 print "EXCEPTION RAISED ON USER %s" % user
                 print exc

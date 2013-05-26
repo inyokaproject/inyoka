@@ -5,7 +5,7 @@
 
     The inyoka default settings.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from os import path
@@ -87,6 +87,7 @@ INYOKA_SYSTEM_USER = u'ubuntuusers.de'
 INYOKA_SYSTEM_USER_EMAIL = '@'.join(['system', BASE_DOMAIN_NAME])
 INYOKA_ANONYMOUS_USER = u'anonymous'
 INYOKA_CONTACT_EMAIL = '@'.join(['contact', BASE_DOMAIN_NAME])
+DEFAULT_FROM_EMAIL = INYOKA_SYSTEM_USER_EMAIL
 
 # logger name for remote exception logging
 INYOKA_LOGGER_NAME = u'inyoka'
@@ -110,6 +111,12 @@ FORUM_THUMBNAIL_SIZE = (64, 64)
 # for posts (without, with) replies. -1 for infinitely, 0 for never
 FORUM_OWNPOST_EDIT_LIMIT = (-1, 1800)
 FORUM_OWNPOST_DELETE_LIMIT = (0, 0)
+
+# Number of days a user is allowed to perform the respective action with his
+# user account.
+USER_REACTIVATION_LIMIT = 31
+USER_SET_NEW_EMAIL_LIMIT = 7
+USER_RESET_EMAIL_LIMIT = 31
 
 # the id of the ikhaya team group
 IKHAYA_GROUP_ID = 1
@@ -143,7 +150,7 @@ WIKI_USER_BASE = 'User'
 WIKI_USERPAGE_INFO = 'Userpage'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'b)l0ju3erxs)od$g&l_0i1za^l+2dwgxuay(nwv$q4^*c#tdwt'
+SECRET_KEY = None
 
 # a prefix that is automatically added on every cache operation to the key.
 # You won't notice anything of it at all but it makes it possible to run more
@@ -223,20 +230,20 @@ SOUTH_TESTS_MIGRATE = False
 
 OPENID_PROVIDERS = {
     'openid': {
-      'name': gettext_noop('OpenID'),
-      'url': None
+        'name': gettext_noop('OpenID'),
+        'url': None
     },
     'launchpad': {
         'name': gettext_noop('Launchpad'),
         'url': 'https://launchpad.net/~{username}'
     },
     'claimid': {
-      'name': gettext_noop('ClaimID'),
-      'url': 'http://claimid.com/{username}'
+        'name': gettext_noop('ClaimID'),
+        'url': 'http://claimid.com/{username}'
     },
     'google': {
-      'name': gettext_noop('Google'),
-      'url': '/auth/login/google/'
+        'name': gettext_noop('Google'),
+        'url': '/auth/login/google/'
     },
 }
 

@@ -22,7 +22,7 @@
     which implements all the builtin macros.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
@@ -168,13 +168,13 @@ class TableOfContents(TreeMacro):
     arguments = (
         ('max_depth', int, 3),
         ('type', {
-            'unordered':    'unordered',
-            'arabic0':      'arabiczero',
-            'arabic':       'arabic',
-            'alphabeth':    'alphalower',
-            'ALPHABETH':    'alphaupper',
-            'roman':        'romanlower',
-            'ROMAN':        'romanupper'
+            'unordered': 'unordered',
+            'arabic0': 'arabiczero',
+            'arabic': 'arabic',
+            'alphabeth': 'alphalower',
+            'ALPHABETH': 'alphaupper',
+            'roman': 'romanlower',
+            'ROMAN': 'romanupper'
         }, 'arabic')
     )
 

@@ -1,3 +1,11 @@
+/**
+ * style.overall (mobile)
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+ * :license: GNU GPL, see LICENSE for more details.
+ */
+
 @import 'layout.less';
 @import 'mixins.m.less';
 @import 'markup.less';
@@ -40,7 +48,7 @@ header{
 
   nav {
     background-size: auto @navbar-height;
-    background: @orange_s_medium url('../img/head.m.png') repeat-x;
+    background: @orange_s_medium url('../img/head.m.jpg') repeat-x;
     display: block;
     height: @navbar-height;
     line-height: @navbar-height;
@@ -165,13 +173,21 @@ header{
   .next {
     .active;
     position: absolute;
-    right: 0;
+    right: 2em;
   }
 
   .prev {
     .active;
-    left: 0;
+    left: 2em;
     position: absolute;
+  }
+
+  .first {
+    left: 0 !important;
+  }
+
+  .last {
+    right: 0 !important;
   }
 }
 

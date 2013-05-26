@@ -11,9 +11,17 @@
     It'd be ideal if ``sync`` was called every 30 minutes.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+# Secure XML libraries till a python solution exists.
+# We already patch in inyoka, hence we just import inyoka before feedparser.
+import inyoka
+# And further patch it so feedparser works :/
+import xml.sax
+make_parser = xml.sax.make_parser
+xml.sax.make_parser = lambda x: make_parser()
+# End XML patching.
 import re
 import sys
 import feedparser
@@ -89,7 +97,7 @@ def sync():
                 title = entry.title_detail.get('value') or ''
                 if entry.title_detail.get('type') in HTML_MIMETYPES:
                     title = cleanup_html(title, id_prefix='entry-title-%x' %
-                                         int(time()), output_format='xhtml')
+                                         int(time()))
                     # cleanup_html adds <p> around the text, remove it again
                     title = title[3:-4]
                 else:
@@ -160,7 +168,7 @@ def sync():
             try:
                 entry.save()
                 debug(u' synced entry %r' % guid)
-            except Exception, exc:
+            except Exception as exc:
                 debug(u' Error on entry %r: %r' % (guid, exc))
         blog.last_sync = datetime.utcnow()
         blog.save()

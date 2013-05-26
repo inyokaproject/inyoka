@@ -4,7 +4,7 @@
     inyoka.scripts.jabber_bot
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import argparse
@@ -23,8 +23,8 @@ class JabberBot(ClientXMPP):
         self.add_event_handler('session_start', self.handle_session_start,
                                threaded=True)
         self.add_event_handler('disconnected', self.handle_disconnected)
-        self.register_plugin('xep_0030') # Service Discovery
-        self.register_plugin('xep_0199') # XMPP Ping
+        self.register_plugin('xep_0030')  # Service Discovery
+        self.register_plugin('xep_0199')  # XMPP Ping
         self.zmq = zmq.Context()
         self.zeromq_bind = bind
 

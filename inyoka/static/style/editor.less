@@ -4,12 +4,11 @@
  *
  * The style for the javascript-based wiki syntax editor.
  *
- * :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+ * :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
  * :license: GNU GPL, see LICENSE for more details.
  */
  
 /** sprite: editor; sprite-image: url('../img/icons/editor-sprite.png'); sprite-ie6-mode: none; sprite-image-uid: md5 */
-
 
 p.ubuntu_version {
   font-size: 0.8em;
@@ -131,7 +130,7 @@ ul.toolbar {
       }
     }
     ul.smileybox {
-      width: 190px;
+      width: 182px;
       background-color: #eee;
       li {
         height: 24px;
@@ -166,9 +165,11 @@ ul.toolbar li ul.colorbox,ul.toolbar li ul.smileybox,ul.toolbar li table.codebox
   position: absolute;
   border: 1px solid #aaa;
   padding-left: 0;
+  z-index: 1;
 }
 ul.toolbar li ul.colorbox li,ul.toolbar li ul.smileybox li {
   padding: 1px;
   width: 24px;
   cursor: pointer;
+  text-align: center;
 }

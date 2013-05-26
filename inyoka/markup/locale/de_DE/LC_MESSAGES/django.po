@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2012-12-27 11:58+0100\n"
+"POT-Creation-Date: 2013-05-26 10:24+0200\n"
 "PO-Revision-Date: 2012-11-03 11:11+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -56,11 +56,11 @@ msgstr "<strong>Konflikt</strong> – eigene Version"
 msgid "<strong>Conflict End</strong>"
 msgstr "<strong>Konlikt Ende</strong>"
 
-#: inyoka/markup/nodes.py:698
+#: inyoka/markup/nodes.py:695
 msgid "Edited by"
 msgstr "Bearbeitet von"
 
-#: inyoka/markup/nodes.py:723
+#: inyoka/markup/nodes.py:720
 msgid "Moderated by"
 msgstr "Moderiert von"
 
@@ -133,19 +133,23 @@ msgstr "Unerwartetes Ausdrucksende."
 msgid "Parentheses were not closed properly."
 msgstr "Klammerausdruck wurde nicht geschlossen."
 
-#: inyoka/markup/templates.py:365
+#: inyoka/markup/templates.py:367
 msgid "Missing comma between array entries"
 msgstr "Fehlendes Komma zwischen Array Einträgen."
 
-#: inyoka/markup/templates.py:408
+#: inyoka/markup/templates.py:390
+msgid "Unexpected operator"
+msgstr "Unerwarteter Operator"
+
+#: inyoka/markup/templates.py:417
 msgid "expected variable, integer or attribute"
 msgstr "Variable, Zahl oder Attribut erwartet."
 
-#: inyoka/markup/templates.py:439
+#: inyoka/markup/templates.py:448
 msgid "Too many arguments for this value output"
 msgstr "Zu viele Argumente für Wertausgabe."
 
-#: inyoka/markup/templates.py:464
+#: inyoka/markup/templates.py:473
 msgid "Invalid syntax: "
 msgstr "Syntaxfehler: "
 

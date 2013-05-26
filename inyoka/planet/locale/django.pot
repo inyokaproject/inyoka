@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2012 ORGANIZATION
+# Copyright (C) 2013 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-12-27 11:58+0100\n"
+"POT-Creation-Date: 2013-05-26 10:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,6 +91,10 @@ msgstr ""
 msgid "%(sitename)s planet"
 msgstr ""
 
+#: inyoka/planet/views.py:139
+msgid "No title given"
+msgstr ""
+
 #: inyoka/planet/views.py:155
 msgid "Canceled"
 msgstr ""
@@ -144,25 +148,25 @@ msgstr ""
 msgid "No entry"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:12
+#: inyoka/planet/templates/planet/hide_entry.html:15
 msgid "Are you sure you want to restore the entry?"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:14
+#: inyoka/planet/templates/planet/hide_entry.html:17
 msgid "Are you sure you want to hide the entry?"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:17
+#: inyoka/planet/templates/planet/hide_entry.html:20
 #: inyoka/planet/templates/planet/index.html:72
 msgid "Restore"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:17
+#: inyoka/planet/templates/planet/hide_entry.html:20
 #: inyoka/planet/templates/planet/index.html:72
 msgid "Hide"
 msgstr ""
 
-#: inyoka/planet/templates/planet/hide_entry.html:18
+#: inyoka/planet/templates/planet/hide_entry.html:21
 #: inyoka/planet/templates/planet/suggest.html:34
 msgid "Cancel"
 msgstr ""

@@ -7,10 +7,11 @@
     private messages, static pages and the login/register and search
     dialogs.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import binascii
+import dateutil
 import pytz
 import time
 from PIL import Image
@@ -20,6 +21,7 @@ from django.conf import settings
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.cache import cache
 from django.core.files.storage import default_storage
+from django.core import signing
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
@@ -32,17 +34,18 @@ from django.utils.html import escape
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.views import password_reset, password_reset_confirm
+from django.views.decorators.http import require_POST
 
 from django_mobile import get_flavour
 
 from inyoka.markup import parse, RenderContext
-from inyoka.utils import decode_confirm_data, generic
+from inyoka.utils import generic
 from inyoka.utils.text import get_random_password, normalize_pagename
 from inyoka.utils.dates import DEFAULT_TIMEZONE, \
     get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, does_not_exist_is_404, \
     TemplateResponse
-from inyoka.utils.sessions import get_sessions, get_user_record
+from inyoka.utils.sessions import get_sessions, get_user_record, make_permanent
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.pagination import Pagination
@@ -56,24 +59,25 @@ from inyoka.wiki.models import Page as WikiPage
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.forum.acl import filter_invisible, split_bits, PRIVILEGES_DETAILS, \
-     REVERSED_PRIVILEGES_BITS, split_negative_positive
+    REVERSED_PRIVILEGES_BITS, split_negative_positive
 from inyoka.portal.forms import LoginForm, SearchForm, RegisterForm, \
-     UserCPSettingsForm, PrivateMessageForm, DeactivateUserForm, \
-     LostPasswordForm, ChangePasswordForm, SubscriptionForm, \
-     UserCPProfileForm, SetNewPasswordForm, ForumFeedSelectorForm, \
-     IkhayaFeedSelectorForm, PlanetFeedSelectorForm, WikiFeedSelectorForm, \
-     NOTIFICATION_CHOICES, PrivateMessageIndexForm, PrivateMessageFormProtected, \
-     EditUserProfileForm, EditUserGroupsForm, \
-     EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
-     EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
-     CreateUserForm, UserMailForm, EditGroupForm
+    UserCPSettingsForm, PrivateMessageForm, DeactivateUserForm, \
+    LostPasswordForm, ChangePasswordForm, SubscriptionForm, \
+    UserCPProfileForm, SetNewPasswordForm, ForumFeedSelectorForm, \
+    IkhayaFeedSelectorForm, PlanetFeedSelectorForm, WikiFeedSelectorForm, \
+    NOTIFICATION_CHOICES, PrivateMessageIndexForm, PrivateMessageFormProtected, \
+    EditUserProfileForm, EditUserGroupsForm, \
+    EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
+    EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
+    CreateUserForm, UserMailForm, EditGroupForm
 from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
-     PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
+    PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
 from inyoka.portal.user import User, Group, UserBanned, UserData, \
     deactivate_user, reactivate_user, set_new_email, \
     reset_email, send_activation_mail, PERMISSION_NAMES
 from inyoka.portal.utils import check_login, calendar_entries_for_month, \
-     require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList
+    require_permission, google_calendarize, UBUNTU_VERSIONS, UbuntuVersionList, \
+    abort_access_denied
 from inyoka.portal.filters import SubscriptionFilter
 
 from social_auth.models import UserSocialAuth
@@ -90,6 +94,12 @@ tmp = dict(PRIVILEGES_DETAILS)
 PRIVILEGE_DICT = {bits: tmp[key]
                   for bits, key in REVERSED_PRIVILEGES_BITS.iteritems()}
 del tmp
+
+CONFIRM_ACTIONS = {
+    'reactivate_user': (reactivate_user, settings.USER_REACTIVATION_LIMIT,),
+    'set_new_email': (set_new_email, settings.USER_SET_NEW_EMAIL_LIMIT,),
+    'reset_email': (reset_email, settings.USER_RESET_EMAIL_LIMIT,),
+}
 
 
 page_delete = generic.DeleteView.as_view(model=StaticPage,
@@ -135,12 +145,43 @@ def index(request):
 
     storage_values = storage.get_many(('get_ubuntu_link', 'get_ubuntu_description',
         'session_record', 'session_record_time', 'countdown_active',
-        'countdown_target_page', 'countdown_image_url'))
+        'countdown_target_page', 'countdown_image_url', 'countdown_date'))
 
     record, record_time = get_user_record({
         'session_record': storage_values.get('session_record'),
         'session_record_time': storage_values.get('session_record_time')
     })
+
+    countdown_active = storage_values.get('countdown_active', False)
+    # The storage can only handle strings
+    countdown_active = (countdown_active == 'True')
+    countdown_date = storage_values.get('countdown_date', None)
+    countdown_image_url = storage_values.get('countdown_image_url', None)
+    if countdown_active and countdown_date:
+        release_date = None
+        if isinstance(countdown_date, basestring):
+            release_date = datetime.strptime(countdown_date, '%Y-%m-%d').date()
+        else:
+            release_date = None
+        if release_date:
+            countdown_remaining = (release_date - date.today()).days
+            if countdown_remaining > 31:
+                # We don't have images for > 31 days ahead
+                countdown_active = False
+            elif countdown_remaining > 0:
+                # Format it with a leading zero
+                countdown_remaining = u'%02d' % countdown_remaining
+            elif countdown_remaining <= 0:
+                countdown_remaining = u'soon'
+        else:
+            countdown_active = False
+    else:
+        countdown_active = False
+    if countdown_active:
+        if countdown_remaining:
+            countdown_image_url = countdown_image_url % {
+                'remaining': countdown_remaining
+            }
 
     return {
         'ikhaya_latest': list(ikhaya_latest),
@@ -150,9 +191,9 @@ def index(request):
         'get_ubuntu_link': storage_values.get('get_ubuntu_link', ''),
         'get_ubuntu_description': storage_values.get('get_ubuntu_description', ''),
         'calendar_events': events,
-        'countdown_active': storage_values.get('countdown_active', False),
+        'countdown_active': countdown_active,
         'countdown_target_page': storage_values.get('countdown_target_page', None),
-        'countdown_image_url': storage_values.get('countdown_image_url', None),
+        'countdown_image_url': countdown_image_url,
     }
 
 
@@ -176,17 +217,18 @@ def whoisonline(request):
         cache.set('portal/registered_users', registered_users, 1000)
     record, record_time = get_user_record()
     return {
-        'sessions':                 get_sessions(),
-        'record':                   record,
-        'record_time':              record_time,
-        'global_registered_users':  registered_users
+        'sessions': get_sessions(),
+        'record': record,
+        'record_time': record_time,
+        'global_registered_users': registered_users
     }
 
 
 @templated('portal/register.html')
 def register(request, external=False):
     """Register a new user."""
-    redirect = request.GET.get('next') or href('portal')
+    redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
+        else href('portal'))
     if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
@@ -239,7 +281,7 @@ def activate(request, action='', username='', activation_key=''):
     except User.DoesNotExist:
         messages.error(request,
             _(u'The user “%(username)s” does not exist.') % {
-              u'username': escape(username)})
+                u'username': escape(username)})
         return HttpResponseRedirect(href('portal'))
     if not redirect:
         redirect = href('portal', 'login', username=user.username)
@@ -259,7 +301,7 @@ def activate(request, action='', username='', activation_key=''):
             else:
                 messages.error(request,
                     _(u'The account of “%(username)s” was already activated.') %
-                      {'username': escape(username)})
+                    {'username': escape(username)})
         else:
             messages.error(request, _(u'Your activation key is invalid.'))
         return HttpResponseRedirect(href('portal'))
@@ -284,7 +326,7 @@ def resend_activation_mail(request, username):
     if user.status > 0:
         messages.error(request,
             _(u'The account “%(username)s” was already activated.') %
-              {'username': escape(user.username)})
+            {'username': escape(user.username)})
         return HttpResponseRedirect(href('portal'))
     send_activation_mail(user)
     messages.success(request, _(u'An email with the activation key was sent to you.'))
@@ -292,6 +334,9 @@ def resend_activation_mail(request, username):
 
 
 def lost_password(request):
+    if request.user.is_authenticated():
+        messages.error(request, _(u'You are already logged in.'))
+        return HttpResponseRedirect(href('portal'))
     return password_reset(request,
         post_reset_redirect=href('portal', 'login'),
         template_name='portal/lost_password.html',
@@ -310,8 +355,8 @@ def set_new_password(request, uidb36, token):
 @templated('portal/login.html')
 def login(request):
     """Login dialog that supports permanent logins"""
-    redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('portal')
+    redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
+        else href('portal'))
     if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
@@ -341,7 +386,7 @@ def login(request):
                 if user is not None:
                     if user.is_active:
                         if data['permanent']:
-                            request.session.set_expiry(None)
+                            make_permanent(request)
                         # username matches password and user is active
                         messages.success(request, _(u'You have successfully logged in.'))
                         auth.login(request, user)
@@ -355,10 +400,10 @@ def login(request):
             form = LoginForm()
 
     d = {
-        'form':         form,
-        'failed':       failed,
-        'inactive':     inactive,
-        'banned':       banned,
+        'form': form,
+        'failed': failed,
+        'inactive': inactive,
+        'banned': banned,
         'OPENID_PROVIDERS': settings.OPENID_PROVIDERS,
     }
     if failed:
@@ -369,8 +414,8 @@ def login(request):
 def logout(request):
     """Simple logout view that flashes if the process was done
     successfull or not (e.g if the user wasn't logged in)."""
-    redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('portal')
+    redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
+        else href('portal'))
     if request.user.is_authenticated():
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():
@@ -435,24 +480,24 @@ def search(request):
         if d['area'] in ('wiki', 'all'):
             try:
                 wiki_result = WikiPage.objects.filter(
-                              name__iexact=normalize_pagename(d['query'])).get()
+                    name__iexact=normalize_pagename(d['query'])).get()
             except WikiPage.DoesNotExist:
                 pass
         rv = {
-            'area':             d['area'].lower(),
-            'query':            d['query'],
-            'highlight':        highlight,
-            'results':          results,
-            'wiki_result':      wiki_result,
-            'pagination':       u''.join(pagination),
-            'sort':             d['sort'],
+            'area': d['area'].lower(),
+            'query': d['query'],
+            'highlight': highlight,
+            'results': results,
+            'wiki_result': wiki_result,
+            'pagination': u''.join(pagination),
+            'sort': d['sort'],
         }
     else:
         rv = {'area': (request.GET.get('area') or 'all').lower()}
 
     rv.update({
-        'searchform':   f,
-        'advanced':     request.GET.get('advanced')
+        'searchform': f,
+        'advanced': request.GET.get('advanced')
     })
     return rv
 
@@ -485,12 +530,12 @@ def profile(request, username):
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
     return {
-        'user':          user,
-        'groups':        groups,
-        'wikipage':      content,
-        'User':          User,
+        'user': user,
+        'groups': groups,
+        'wikipage': content,
+        'User': User,
         'is_subscribed': subscribed,
-        'request':       request
+        'request': request
     }
 
 
@@ -522,7 +567,7 @@ def user_mail(request, username):
                 [user.email])
             messages.success(request,
                 _(u'The email to “%(username)s” was sent successfully.')
-                  % {'username': escape(username)})
+                % {'username': escape(username)})
             return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
         else:
             generic.trigger_fix_errors_message(request)
@@ -534,6 +579,7 @@ def user_mail(request, username):
     }
 
 
+@require_POST
 @require_permission('subscribe_to_users')
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
@@ -545,10 +591,10 @@ def subscribe_user(request, username):
         Subscription(user=request.user, content_object=user).save()
         messages.info(request,
             _(u'You will now be notified about activities of “%(username)s”.')
-              % {'username': user.username})
+            % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
-
+@require_POST
 def unsubscribe_user(request, username):
     """Remove a user subscription."""
     user = User.objects.get(username)
@@ -587,16 +633,12 @@ def usercp_profile(request):
         form = UserCPProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             user = form.save(request)
-            openids = map(int, request.POST.getlist('openids'))
-            UserData.objects.filter(user=user, pk__in = openids).delete()
-
             accounts_to_delete = map(int, request.POST.getlist('delete_accounts'))
             # Ensure that the user can only delete his own accounts
             accounts_to_delete = UserSocialAuth.objects\
                 .filter(user=request.user, pk__in=accounts_to_delete)\
                 .values_list('pk', flat=True)
             UserSocialAuth.objects.filter(pk__in=accounts_to_delete).delete()
-
             messages.success(request, _(u'Your profile information were updated successfully.'))
             return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
@@ -609,15 +651,15 @@ def usercp_profile(request):
         'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
 
     return {
-        'form':                 form,
-        'connected_accounts':   connected_accounts,
-        'user':                 request.user,
-        'gmaps_apikey':         settings.GOOGLE_MAPS_APIKEY,
-        'max_avatar_width':     storage_keys.get('max_avatar_width', -1),
-        'max_avatar_height':    storage_keys.get('max_avatar_height', -1),
-        'max_avatar_size':      storage_keys.get('max_avatar_size', -1),
-        'max_sig_length':       storage_keys.get('max_signature_length'),
-        'OPENID_PROVIDERS':     settings.OPENID_PROVIDERS,
+        'form': form,
+        'connected_accounts': connected_accounts,
+        'user': request.user,
+        'gmaps_apikey': settings.GOOGLE_MAPS_APIKEY,
+        'max_avatar_width': storage_keys.get('max_avatar_width', -1),
+        'max_avatar_height': storage_keys.get('max_avatar_height', -1),
+        'max_avatar_size': storage_keys.get('max_avatar_size', -1),
+        'max_sig_length': storage_keys.get('max_signature_length'),
+        'OPENID_PROVIDERS': settings.OPENID_PROVIDERS,
     }
 
 
@@ -852,7 +894,7 @@ def user_edit_profile(request, username):
             user = form.save(request)
             messages.success(request,
                 _(u'The profile of “%(username)s” was changed successfully')
-                  % {'username': escape(user.username)})
+                % {'username': escape(user.username)})
             # redirect to the new username if given
             if user.username != username:
                 return HttpResponseRedirect(href('portal', 'user', user.username, 'edit', 'profile'))
@@ -915,7 +957,7 @@ def user_edit_settings(request, username):
             user.save()
             messages.success(request,
                 _(u'The setting of “%(username)s” were successfully changed.')
-                  % {'username': escape(user.username)})
+                % {'username': escape(user.username)})
     return {
         'user': user,
         'form': form
@@ -936,7 +978,7 @@ def user_edit_status(request, username):
             user.save()
             messages.success(request,
                 _(u'The state of “%(username)s” was successfully changed.')
-                  % {'username': escape(user.username)})
+                % {'username': escape(user.username)})
     if user.status > 0:
         activation_link = None
     else:
@@ -961,7 +1003,7 @@ def user_edit_password(request, username):
         user.save()
         messages.success(request,
             _(u'The password of “%(username)s” was successfully changed.')
-              % {'username': escape(user.username)})
+            % {'username': escape(user.username)})
     return {
         'user': user,
         'form': form
@@ -1111,7 +1153,7 @@ def user_edit_groups(request, username):
             user.save()
             messages.success(request,
                 _(u'The groups of “%(username)s” were successfully changed.')
-                  % {'username': escape(user.username)})
+                % {'username': escape(user.username)})
         else:
             generic.trigger_fix_errors_message(request)
     groups_joined, groups_not_joined = ([], [])
@@ -1141,7 +1183,7 @@ def user_new(request):
             messages.success(request,
                 _(u'The user “%(username)s” was successfully created. '
                   u'You can now edit more details.')
-                  % {'username': escape(data['username'])})
+                % {'username': escape(data['username'])})
             return HttpResponseRedirect(href('portal', 'user', \
                         escape(data['username']), 'edit'))
         else:
@@ -1159,7 +1201,7 @@ def admin_resend_activation_mail(request):
     if user.status != 0:
         messages.error(request,
             _(u'The account of “%(username)s” was already activated.')
-              % {'username': user.username})
+            % {'username': user.username})
     else:
         send_activation_mail(user)
         messages.success(request,
@@ -1176,17 +1218,19 @@ def privmsg(request, folder=None, entry_id=None, page=1):
         if get_flavour() == 'mobile':
             return {'folder': None}
         if entry_id is None:
-            return HttpResponseRedirect(href('portal', 'privmsg',
-                                             PRIVMSG_FOLDERS['inbox'][1]))
+            return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
         else:
-            entry = PrivateMessageEntry.objects.get(user=request.user,
-                                                    id=entry_id)
             try:
+                entry = PrivateMessageEntry.objects.get(user=request.user,
+                                                        id=entry_id)
                 return HttpResponseRedirect(href('portal', 'privmsg',
                                                  PRIVMSG_FOLDERS[entry.folder][1],
                                                  entry.id))
             except KeyError:
                 raise Http404
+
+    if folder not in PRIVMSG_FOLDERS.keys():
+        raise Http404
 
     entries = PrivateMessageEntry.objects.filter(
         user=request.user,
@@ -1232,15 +1276,15 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                         return HttpResponseRedirect(href('portal', 'privmsg'))
                 elif action == 'delete':
                     msg = _(u'The message was deleted.') if \
-                          entry.folder == PRIVMSG_FOLDERS['trash'][0] else \
-                          _(u'The message was moved in the trash.')
+                        entry.folder == PRIVMSG_FOLDERS['trash'][0] else \
+                        _(u'The message was moved in the trash.')
                     if entry.delete():
                         messages.success(request, msg)
                         return HttpResponseRedirect(href('portal', 'privmsg'))
             else:
                 if action == 'archive':
                     msg = _(u'Do you want to archive the message?')
-                    #confirm_label = pgettext('the verb "to archive", not the '
+                    # confirm_label = pgettext('the verb "to archive", not the '
                     #                         'noun.', 'Archive')
                     confirm_label = _(u'Archive it')
                 elif action == 'restore':
@@ -1304,7 +1348,7 @@ def privmsg_new(request, username=None):
                         _(u'You were automatically banned because we suspect '
                           u'you are sending spam. If this ban is not '
                           u'justified, contact us at %(email)s')
-                          % {'email': settings.INYOKA_CONTACT_EMAIL})
+                        % {'email': settings.INYOKA_CONTACT_EMAIL})
                     auth.logout(request)
                     return HttpResponseRedirect(href('portal'))
 
@@ -1327,7 +1371,7 @@ def privmsg_new(request, username=None):
                 except Group.DoesNotExist:
                     messages.error(request,
                         _(u'The group “%(group)s” does not exist.')
-                          % {'group': escape(group)})
+                        % {'group': escape(group)})
                     return HttpResponseRedirect(href('portal', 'privmsg'))
 
             try:
@@ -1352,7 +1396,7 @@ def privmsg_new(request, username=None):
                 recipients = None
                 messages.error(request,
                     _(u'The user “%(username)s” does not exist.')
-                      % {'username': escape(recipient)})
+                    % {'username': escape(recipient)})
 
             if recipients:
                 msg = PrivateMessage()
@@ -1371,10 +1415,10 @@ def privmsg_new(request, username=None):
                             _(u'New private message from %(username)s: %(subject)s')
                             % {'username': request.user.username,
                                'subject': d['subject']},
-                            {'user':     recipient,
-                             'sender':   request.user,
-                             'subject':  d['subject'],
-                             'entry':    entry,
+                            {'user': recipient,
+                             'sender': request.user,
+                             'subject': d['subject'],
+                             'entry': entry,
                         })
 
                 messages.success(request, _(u'The message was sent successfully.'))
@@ -1467,7 +1511,7 @@ class MemberlistView(generic.ListView):
         except User.DoesNotExist:
             messages.error(request,
                 _(u'The user “%(username)s” does not exist.')
-                  % {'username': escape(name)})
+                % {'username': escape(name)})
             return HttpResponseRedirect(request.build_absolute_uri())
         else:
             return HttpResponseRedirect(user.get_absolute_url('admin'))
@@ -1494,11 +1538,11 @@ def grouplist(request, page=1):
     pagination = Pagination(request, table.get_queryset(), page, 15,
                             link=href('portal', 'groups'))
     return {
-        'groups':      pagination.get_queryset(),
+        'groups': pagination.get_queryset(),
         'group_count': len(groups),
         'user_groups': user_groups,
-        'pagination':  pagination,
-        'table':       table
+        'pagination': pagination,
+        'table': table
     }
 
 
@@ -1515,11 +1559,11 @@ def group(request, name, page=1):
     pagination = Pagination(request, table.get_queryset(), page, 15,
                             link=href('portal', 'group', name))
     return {
-        'group':      group,
-        'users':      pagination.get_queryset(),
+        'group': group,
+        'users': pagination.get_queryset(),
         'user_count': group.user_set.count(),
         'pagination': pagination,
-        'table':      table,
+        'table': table,
     }
 
 
@@ -1534,7 +1578,7 @@ def group_edit(request, name=None):
         except Group.DoesNotExist:
             messages.error(request,
                 _(u'The group “%(group)s” does not exist.')
-                  % {'group': escape(name)})
+                % {'group': escape(name)})
             return HttpResponseRedirect(href('portal', 'groups'))
 
     std = storage.get_many(('team_icon_width', 'team_icon_height'))
@@ -1684,11 +1728,11 @@ def feedselector(request, app=None):
                            data['page'], data['count']))
 
     return {
-        'app':         app,
-        'forum_form':  forms['forum'],
+        'app': app,
+        'forum_form': forms['forum'],
         'ikhaya_form': forms['ikhaya'],
         'planet_form': forms['planet'],
-        'wiki_form':   forms['wiki'],
+        'wiki_form': forms['wiki'],
     }
 
 
@@ -1754,31 +1798,31 @@ def open_search(request, app):
 
 
 @templated('portal/confirm.html')
-def confirm(request, action=None):
-    ACTIONS = {
-        'reactivate_user': reactivate_user,
-        'set_new_email': set_new_email,
-        'reset_email': reset_email,
-    }
-    data = request.REQUEST.get('data', u'').strip()
+def confirm(request, action):
+    if action == 'reactivate_user' and request.user.is_authenticated():
+        messages.error(request, _(u'You cannot reactivate an account while '
+                                  u'you are logged in.'))
+        return abort_access_denied(request)
+    elif action in ['set_new_email', 'reset_email'] and \
+            request.user.is_anonymous:
+        messages.error(request, _(u'You need to be logged in before you can continue.'))
+        return abort_access_denied(request)
+
+    func, lifetime = CONFIRM_ACTIONS.get(action)
+    data = request.POST.get('data', u'').strip()
     if not data:
         return {'action': action}
 
     try:
-        data = decode_confirm_data(data)
-    except (ValueError, binascii.Error):
+        salt = 'inyoka.action.%s' % action
+        data = signing.loads(data, max_age=lifetime * 24 * 60 * 60, salt=salt)
+    except (ValueError, signing.BadSignature):
         return {
-            'failed': _(u'The entered data is invalid.'),
-            'action': action
+            'failed': _(u'The entered data is invalid or has expired.'),
         }
 
-    if 'action' not in data:
-        # legacy support, can be removed after september 15th
-        data['action'] = 'reactivate_user'
-
-    r = ACTIONS[data.pop('action')](**data)
-    if isinstance(r, dict) and action:
-        r['action'] = action
+    r = func(**data)
+    r['action'] = action
     return r
 
 
@@ -1791,7 +1835,7 @@ def config(request):
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
             'team_icon_height', 'team_icon_width', 'distri_versions',
             'countdown_active', 'countdown_target_page', 'countdown_image_url',
-            'ikhaya_description', 'planet_description']
+            'countdown_date', 'ikhaya_description', 'planet_description']
 
     team_icon = storage['team_icon']
 
@@ -1817,6 +1861,9 @@ def config(request):
                 context = RenderContext(request, simplified=True)
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
+
+            if data['countdown_date']:
+                storage['countdown_date'] = str(data['countdown_date'])
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:

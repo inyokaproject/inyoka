@@ -7,7 +7,7 @@
     scanner with an internal stack.  Inspired by pygments.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -511,13 +511,14 @@ class Lexer(object):
             match = primary(line)
             if match is None:
                 return False
-            while 1:
+            while True:
                 match = secondary(line, match.end())
                 if match is None:
                     return True
                 match = primary(line, match.end())
                 if match is None:
                     return False
+
         def tokenize_blocks():
             for line in string.splitlines():
                 block_open = open_blocks[-1]

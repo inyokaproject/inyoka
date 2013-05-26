@@ -4,7 +4,7 @@
 
     This page shows some of the latest ikhaya entries.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
@@ -50,7 +50,7 @@
           {% endif %}
           <p class="meta admin_link_hover">
             {% trans link=article.author|url, author=article.author.username|e -%}
-              Written by <a href="{{ link }}">{{ author }}</a>
+              Published by <a href="{{ link }}">{{ author }}</a>
             {%- endtrans %} |
             {{ article.pub_datetime|datetimeformat }} |
             {% trans %}Category:{% endtrans %}

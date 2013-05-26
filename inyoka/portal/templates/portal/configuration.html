@@ -4,7 +4,7 @@
 
     On this page the administrator can set general configuration values.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.html' %}
@@ -39,7 +39,7 @@
   <h3>Get-Ubuntu-Link</h3>
   {{ render_form(form, ['get_ubuntu_link', 'get_ubuntu_description']) }}
   <h3>Release-Countdown</h3>
-  {{ render_form(form, ['countdown_active', 'countdown_target_page', 'countdown_image_url'], inline=true) }}
+  {{ render_form(form, ['countdown_active', 'countdown_target_page', 'countdown_image_url', 'countdown_date'], inline=true) }}
   <br />
   <h3>Distributions Versionen</h3>
   <table id="distri-table" class="jstableform">

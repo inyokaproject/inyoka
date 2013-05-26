@@ -5,13 +5,13 @@
 
     Views for the planet.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Max
-from django.utils.text import truncate_html_words
+from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
 from django.contrib import messages
@@ -67,10 +67,10 @@ def index(request, page=1):
     pagination = Pagination(request, entries, page, 25, href('planet'))
     queryset = pagination.get_queryset()
     return {
-        'days':         group_by_day(queryset),
-        'articles':     queryset,
-        'pagination':   pagination,
-        'page':         page,
+        'days': group_by_day(queryset),
+        'articles': queryset,
+        'pagination': pagination,
+        'page': page,
     }
 
 
@@ -126,17 +126,17 @@ def feed(request, mode='short', count=10):
                                 u'xhtml">%s</div>' % entry.text
             kwargs['content_type'] = 'xhtml'
         if mode == 'short':
-            summary = truncate_html_words(entry.text, 100)
+            summary = Truncator(entry.text).words(100, html=True)
             kwargs['summary'] = u'<div xmlns="http://www.w3.org/1999/' \
                                 u'xhtml">%s</div>' % summary
             kwargs['content_type'] = 'xhtml'
         if entry.author_homepage:
             kwargs['author'] = {'name': entry.author,
-                                'uri':  entry.author_homepage}
+                                'uri': entry.author_homepage}
         else:
             kwargs['author'] = entry.author
 
-        feed.add(title=entry.title,
+        feed.add(title=entry.title or _(u'No title given'),
                  url=entry.url,
                  id=entry.guid,
                  updated=entry.updated,

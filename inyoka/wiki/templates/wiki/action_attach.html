@@ -5,7 +5,7 @@
     This template is used to show a list of attached files and for
     uploading new attachments.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -32,7 +32,7 @@
         {{ form.filename }}</p>
       <p><label for="id_text">{% trans %}Description:{% endtrans %}</label><br style="clear: both" /></p>
         <p>{{ form.text }}</p>
-      <p><label for="id_note">{% trans %}Note:{% endtrans %}</label>
+      <p><label for="id_note">{% trans %}Edit summary:{% endtrans %}</label>
         {{ form.note }}</p>
       <p>
         {{ form.override }}

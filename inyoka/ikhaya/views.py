@@ -5,7 +5,7 @@
 
     Views for Ikhaya.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import pytz
@@ -18,7 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.utils.dates import MONTHS
 from django.utils.http import urlencode
-from django.utils.text import truncate_html_words
+from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.utils.html import escape
 
@@ -39,12 +39,12 @@ from inyoka.utils.storage import storage
 from inyoka.portal.utils import check_login, require_permission
 from inyoka.portal.user import User
 from inyoka.portal.models import PrivateMessage, PrivateMessageEntry, \
-     Subscription
+    Subscription
 from inyoka.ikhaya.forms import SuggestArticleForm, EditCommentForm, \
-     EditArticleForm, EditPublicArticleForm, EditCategoryForm, \
-     EditEventForm, NewEventForm
+    EditArticleForm, EditPublicArticleForm, EditCategoryForm, \
+    EditEventForm, NewEventForm
 from inyoka.ikhaya.models import Event, Category, Article, Suggestion, \
-     Comment, Report
+    Comment, Report
 from inyoka.ikhaya.notifications import send_comment_notifications, \
     send_new_suggestion_notifications
 
@@ -67,7 +67,7 @@ def context_modifier(request, context):
         else:
             short_archive = False
         data = {
-            'archive':       archive,
+            'archive': archive,
             'short_archive': short_archive
         }
         cache.set(key, data)
@@ -184,13 +184,13 @@ def detail(request, year, month, day, slug):
     elif request.GET.get('moderate'):
         comment = Comment.objects.get(id=int(request.GET.get('moderate')))
         form = EditCommentForm(initial={
-            'comment_id':   comment.id,
-            'text':         comment.text,
+            'comment_id': comment.id,
+            'text': comment.text,
         })
     else:
         form = EditCommentForm()
     return {
-        'article':  article,
+        'article': article,
         'comments': article.comment_set.select_related('author'),
         'form': form,
         'preview': preview,
@@ -220,18 +220,18 @@ def article_delete(request, year, month, day, slug):
             messages.info(request,
                 _(u'The publication of the article '
                   u'“<a href="%(link)s">%(title)s</a>” has been revoked.')
-                  % {'link': escape(url_for(article, 'show')),
+                % {'link': escape(url_for(article, 'show')),
                      'title': escape(article.subject)})
         elif 'cancel' in request.POST:
             messages.info(request,
                 _(u'Deletion of the article “<a href="%(link)s">%(title)s</a>” was canceled.')
-                  % {'link': escape(url_for(article, 'show')),
+                % {'link': escape(url_for(article, 'show')),
                      'title': escape(article.subject)})
         else:
             article.delete()
             messages.success(request,
                 _(u'The article “%(title)s” was deleted.')
-                  % {'title': escape(article.subject)})
+                % {'title': escape(article.subject)})
     else:
         messages.info(request,
             render_template('ikhaya/article_delete.html',
@@ -265,7 +265,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
         if locked:
             messages.error(request,
                 _(u'This article is currently being edited by “%(user)s”!')
-                  % {'user': locked})
+                % {'user': locked})
     else:
         article = None
 
@@ -286,12 +286,12 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 if new:
                     messages.success(request,
                         _(u'The article “%(title)s” was created.')
-                          % {'title': escape(article.subject)})
+                        % {'title': escape(article.subject)})
                     return HttpResponseRedirect(url_for(article, 'edit'))
                 else:
                     messages.success(request,
                         _(u'The article “%(title)s” was saved.')
-                          % {'title': escape(article.subject)})
+                        % {'title': escape(article.subject)})
                     cache.delete('ikhaya/article/%s/%s' %
                                  (article.pub_date, article.slug))
                     keys = ['ikhaya/latest_articles',
@@ -313,9 +313,9 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             suggestion = Suggestion.objects.get(id=suggestion_id)
             form = EditArticleForm(initial={
                 'subject': suggestion.title,
-                'text':    suggestion.text,
-                'intro':   suggestion.intro,
-                'author':  suggestion.author,
+                'text': suggestion.text,
+                'intro': suggestion.intro,
+                'author': suggestion.author,
             })
         else:
             form = EditArticleForm(initial=initial)
@@ -397,6 +397,7 @@ def report_new(request, year, month, day, slug):
                 report.author = request.user
                 report.pub_date = datetime.utcnow()
                 report.save()
+                cache.delete('ikhaya/reported_article_count')
                 messages.success(request, _(u'Thanks for your report.'))
                 return HttpResponseRedirect(url_for(report))
     else:
@@ -420,6 +421,7 @@ def _change_report_status(request, report_id, action, msg):
     elif action == 'unsolve':
         report.solved = False
     report.save()
+    cache.delete('ikhaya/reported_article_count')
     messages.success(request, msg)
     return HttpResponseRedirect(url_for(report))
 
@@ -494,8 +496,8 @@ def comment_edit(request, comment_id):
         else:
             form = EditCommentForm(initial={'text': comment.text})
         return {
-            'comment':  comment,
-            'form':     form,
+            'comment': comment,
+            'form': form,
         }
     return AccessDeniedResponse()
 
@@ -538,7 +540,7 @@ def suggest_assign_to(request, suggestion, username):
     except Suggestion.DoesNotExist:
         messages.error(request,
             _(u'The suggestion “%(title)s” does not exist.')
-              % {'title': suggestion})
+            % {'title': suggestion})
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
     if username == '-':
         suggestion.owner = None
@@ -566,9 +568,9 @@ def suggest_delete(request, suggestion):
                 messages.error(request, (_(u'This suggestion does not exist.')))
                 return HttpResponseRedirect(href('ikhaya', 'suggestions'))
             if request.POST.get('note'):
-                args = {'title':    s.title,
+                args = {'title': s.title,
                         'username': request.user.username,
-                        'note':     request.POST['note']}
+                        'note': request.POST['note']}
                 send_notification(s.author, u'suggestion_rejected',
                     _(u'Article suggestion deleted'), args)
 
@@ -592,10 +594,10 @@ def suggest_delete(request, suggestion):
                                       'subject': msg.subject,
                                   }
                         send_notification(recipient, 'new_pm', title, {
-                                              'user':     recipient,
-                                              'sender':   request.user,
-                                              'subject':  msg.subject,
-                                              'entry':    entry,
+                                          'user': recipient,
+                                              'sender': request.user,
+                                              'subject': msg.subject,
+                                              'entry': entry,
                                           })
 
             cache.delete('ikhaya/suggestion_count')
@@ -734,11 +736,13 @@ def event_edit(request, pk=None):
             messages.error(request,
                 _(u'The event with the id %(id)s could not be used as draft '
                   u'for a new event because it does not exist.')
-                  % {'id': request.GET['copy_from']})
+                % {'id': request.GET['copy_from']})
         else:
-            for key in ('name', 'changed', 'created', 'date', 'time', 'enddate',
-                'endtime', 'description', 'author_id', 'location',
-                'location_town', 'location_lat', 'location_long'):
+            fields = ('name', 'changed', 'created', 'date', 'time',
+                      'enddate', 'endtime', 'description', 'author_id',
+                      'location', 'location_town', 'location_lat',
+                      'location_long')
+            for key in fields:
                 setattr(event, key, getattr(base_event, key))
             event.visible = False
 
@@ -805,7 +809,7 @@ def event_suggest(request):
             messages.success(request,
                 _(u'The event has been saved. A team member will review it '
                   u'soon.'))
-            event = Event.objects.get(id=event.id) # get truncated slug
+            event = Event.objects.get(id=event.id)  # get truncated slug
             return HttpResponseRedirect(url_for(event))
     else:
         form = NewEventForm()
@@ -851,7 +855,7 @@ def feed_article(request, slug=None, mode='short', count=10):
             published=article.pub_datetime,
             author={
                 'name': article.author.username,
-                'uri':  url_for(article.author)
+                'uri': url_for(article.author)
             },
             **kwargs
         )
@@ -889,7 +893,7 @@ def feed_comment(request, id=None, mode='short', count=10):
             kwargs['content'] = comment.rendered_text
             kwargs['content_type'] = 'xhtml'
         if mode == 'short':
-            kwargs['summary'] = truncate_html_words(comment.rendered_text, 100)
+            kwargs['summary'] = Truncator(comment.rendered_text).words(100, html=True)
             kwargs['summary_type'] = 'xhtml'
 
         if article is None:
@@ -902,7 +906,7 @@ def feed_comment(request, id=None, mode='short', count=10):
             published=comment.pub_date,
             author={
                 'name': comment.author.username,
-                'uri':  url_for(comment.author)
+                'uri': url_for(comment.author)
             },
             **kwargs
         )

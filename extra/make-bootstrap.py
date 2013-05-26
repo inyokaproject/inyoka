@@ -6,7 +6,7 @@
 
     Creates a bootstrap script for inyoka.
 
-    :copyright: 2009-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2009-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import with_statement

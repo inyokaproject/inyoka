@@ -15,7 +15,7 @@
     passed the wrapper `data` which they can process.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
@@ -169,7 +169,7 @@ class TemplateParser(Parser):
 
 #: list of all parsers this wiki can handle
 ALL_PARSERS = {
-    'code':     PygmentsParser,
-    'csv':      CSVParser,
-    'vorlage':  TemplateParser
+    'code': PygmentsParser,
+    'csv': CSVParser,
+    'vorlage': TemplateParser
 }

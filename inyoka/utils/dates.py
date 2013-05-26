@@ -5,7 +5,7 @@
 
     Various utilities for datetime handling.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -57,9 +57,9 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
             days_found.add(key)
         days[-1][1].append(entry)
     return [{
-        'date':     date(*key),
+        'date': date(*key),
         'articles': entries
-    } for key, entries in days if entries]
+    } for key, items in days if items]
 
 
 def get_user_timezone():

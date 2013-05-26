@@ -5,7 +5,7 @@
 
     Useful classes for parsers.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import sys
@@ -110,7 +110,7 @@ class TokenStream(object):
         assert self.current.type == type
         if value is not None:
             assert self.current.value == value or \
-                   (value.__class__ is tuple and
+                (value.__class__ is tuple and
                     self.current.value in value), "%s != %s" % (type, value)
         try:
             return self.current
@@ -164,7 +164,7 @@ class MultiMap(dict):
                         self.__class__.__name__)
 
     setlist = setdefault = setlistdefault = update = pop = popitem = \
-    poplist = popitemlist = __setitem__ = __delitem__ = _immutable
+        poplist = popitemlist = __setitem__ = __delitem__ = _immutable
     del _immutable
 
     def __getitem__(self, key):

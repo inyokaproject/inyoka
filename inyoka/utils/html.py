@@ -6,7 +6,7 @@
     This module implements various HTML/XHTML utility functions.  Some parts
     of this module require the lxml and html5lib libraries.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
@@ -16,7 +16,7 @@ from lxml.html.defs import empty_tags
 from htmlentitydefs import name2codepoint
 from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders
-from html5lib.serializer import XHTMLSerializer, HTMLSerializer
+from html5lib.serializer import HTMLSerializer
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
 from django.utils.encoding import force_unicode
 
@@ -30,11 +30,6 @@ _strip_re = re.compile(r'<!--.*?-->|<[^>]*>(?s)')
 html_entities = name2codepoint.copy()
 html_entities['apos'] = 39
 del name2codepoint
-
-SERIALIZERS = {
-    'html': HTMLSerializer,
-    'xhtml': XHTMLSerializer,
-}
 
 
 def _build_html_tag(tag, attrs):
@@ -110,7 +105,7 @@ def parse_html(string, fragment=True):
 
 def cleanup_html(string, sanitize=True, fragment=True, stream=False,
                  filter_optional_tags=False, id_prefix=None,
-                 update_anchor_links=True, output_format='xhtml'):
+                 update_anchor_links=True):
     """Clean up some html and convert it to HTML/XHTML."""
     if not string.strip():
         return u''
@@ -122,7 +117,7 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     walker = CleanupFilter(walker, id_prefix, update_anchor_links)
     if filter_optional_tags:
         walker = OptionalTagsFilter(walker)
-    serializer = SERIALIZERS[output_format]()
+    serializer = HTMLSerializer()
     rv = serializer.serialize(walker, 'utf-8')
     if stream:
         return rv

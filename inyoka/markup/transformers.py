@@ -12,7 +12,7 @@
     stage attribute set to 'final' are expanded after all the transformers
     finished their job.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -37,7 +37,7 @@ def get_smiley_re(smilies):
     if _smiley_re is None:
         helper = u'|'.join(re.escape(smart_unicode(s)) for s in
                            sorted(smilies, key=lambda x: -len(x)))
-        regex = (u'(?<![\d\w])' # don't precede smileys with alnum chars
+        regex = (u'(?<![\d\w])'  # don't precede smileys with alnum chars
                  u'({helper})'
                  u'(?![\d\w])'.format(helper=helper))
         _smiley_re = re.compile(regex, re.UNICODE)
@@ -187,10 +187,10 @@ class KeyHandler(Transformer):
         new_children = []
         for idx, node in enumerate(tree.children):
             contains_key = False
+            is_special_container = type(node) in (nodes.Paragraph, nodes.Container)
             if hasattr(node, 'class_') and node.class_ == 'key':
                 return tree, True
-            if node.is_container and not node.is_raw and \
-                type(node) in (nodes.Paragraph, nodes.Container):
+            if node.is_container and not node.is_raw and is_special_container:
                 node, contains_key = self.transform(node, nested=True)
             if contains_key:
                 new_children.extend(node.children)
@@ -240,7 +240,7 @@ class HeadlineProcessor(Transformer):
     def transform(self, tree):
         id_map = {}
         for headline in tree.query.by_type(nodes.Headline):
-            while 1:
+            while True:
                 if not headline.id:
                     headline.id = 'empty-headline'
                 if headline.id not in id_map:
@@ -266,7 +266,7 @@ class AutomaticStructure(Transformer):
             if isinstance(node, nodes.Headline):
                 while node.level < len(struct):
                     struct.pop()
-                while node.level > len(struct)-1:
+                while node.level > len(struct) - 1:
                     sec = nodes.Section(len(struct))
                     struct[-1].append(sec)
                     struct.append(sec.children)

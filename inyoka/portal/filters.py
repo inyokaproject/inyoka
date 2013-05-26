@@ -5,7 +5,7 @@
 
     `QuerySet` filter based on `django-filters <https://github.com/alex/django-filter>`_
 
-    :copyright: (c) 2011-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from itertools import chain
@@ -47,9 +47,9 @@ class LinkWidget(BaseLinkWidget):
         except AttributeError:
             url = urlencode(data)
         return self.option_string() % {
-             'attrs': selected and ' class="selected"' or '',
-             'query_string': url,
-             'label': force_unicode(option_label)
+            'attrs': selected and ' class="selected"' or '',
+            'query_string': url,
+            'label': force_unicode(option_label)
         }
 
     def option_string(self):

@@ -5,7 +5,7 @@
 
     Views for the pastebin.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -54,7 +54,7 @@ def display(request, entry_id):
         entry.save()
     return {
         'entry': entry,
-        'page':  'browse'
+        'page': 'browse'
     }
 
 
@@ -90,6 +90,6 @@ def raw(request, entry_id):
 @templated('pastebin/browse.html')
 def browse(request):
     return {
-        'entries':      list(Entry.objects.all()[:50]),
-        'page':         'browse'
+        'entries': list(Entry.objects.all()[:50]),
+        'page': 'browse'
     }

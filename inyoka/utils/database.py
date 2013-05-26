@@ -5,7 +5,7 @@
 
     This module provides some helpers to work with the database.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import json
@@ -41,7 +41,7 @@ def _strip_ending_nums(string):
 
 
 def find_next_increment(model, column, string, stripdate=False, **query_opts):
-    """Get the next incremented string based on `column` and string`.
+    """Get the next incremented string based on `column` and `string`.
     This function is the port of `find_next_increment` for Django models.
 
     Example::

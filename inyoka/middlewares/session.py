@@ -9,13 +9,15 @@
 
     Uses client side storage.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import uuid
 from time import time
 
 from django.contrib.sessions import middleware
+
+from inyoka.utils.sessions import is_permanent
 
 
 class SessionMiddleware(middleware.SessionMiddleware):
@@ -55,10 +57,10 @@ class SessionMiddleware(middleware.SessionMiddleware):
                 del request.session['sp']
 
         if request.session.modified:
-            if '_perm' not in request.session:
+            if is_permanent(request):
+                request.session.set_expiry(None)
+            else:
                 # Require a session drop on browser close.
                 request.session.set_expiry(0)
-            else:
-                request.session.set_expiry(None)
 
         return super(SessionMiddleware, self).process_response(request, response)

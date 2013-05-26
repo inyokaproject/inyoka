@@ -5,7 +5,7 @@
 
     This module provides a logger.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import logging
@@ -39,11 +39,11 @@ def process_failure_signal(sender, task_id, exception, args, kwargs, traceback,
     logger.error('Celery job exception: %s (%s)' % descr,
         exc_info=exc_info,
         extra={
-          'data': {
-            'task_id': task_id,
-            'sender': sender,
-            'args': args,
-            'kwargs': kwargs,
+                 'data': {
+                     'task_id': task_id,
+                     'sender': sender,
+                     'args': args,
+                     'kwargs': kwargs,
           }
         }
       )

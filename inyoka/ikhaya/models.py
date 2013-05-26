@@ -3,9 +3,9 @@
     inyoka.ikhaya.models
     ~~~~~~~~~~~~~~~~~~~~
 
-    Database models for ikhaya.
+    Database models for Ikhaya.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
@@ -233,7 +233,7 @@ class Article(models.Model, LockableObject):
     def local_updated(self):
         return datetime_to_timezone(self.updated).replace(tzinfo=None)
 
-    def _simplify(self, text, key):
+    def _simplify(self, text):
         """Remove markup of a text that belongs to this Article"""
         if self.is_xhtml:
             simple = striptags(text)
@@ -241,7 +241,7 @@ class Article(models.Model, LockableObject):
             simple = parse(text).text
         return simple.strip()
 
-    def _render(self, text, key):
+    def _render(self, text):
         """Render a text that belongs to this Article to HTML"""
         if self.is_xhtml:
             return text
@@ -252,25 +252,25 @@ class Article(models.Model, LockableObject):
     @property
     def rendered_text(self):
         if not hasattr(self, '_rendered_text'):
-            self._rendered_text = self._render(self.text, 'ikhaya/article_text/%s' % self.id)
+            self._rendered_text = self._render(self.text)
         return self._rendered_text
 
     @property
     def rendered_intro(self):
         if not hasattr(self, '_rendered_intro'):
-            self._rendered_intro = self._render(self.intro, 'ikhaya/article_intro/%s' % self.id)
+            self._rendered_intro = self._render(self.intro)
         return self._rendered_intro
 
     @property
     def simplified_text(self):
         if not hasattr(self, '_simplified_text'):
-            self._simplified_text = self._simplify(self.text, 'ikhaya/simple_text/%s' % self.id)
+            self._simplified_text = self._simplify(self.text)
         return self._simplified_text
 
     @property
     def simplified_intro(self):
         if not hasattr(self, '_simplified_intro'):
-            self._simplified_intro = self._simplify(self.intro, 'ikhaya/simple_intro/%s' % self.id)
+            self._simplified_intro = self._simplify(self.intro)
         return self._simplified_intro
 
     @property
@@ -311,12 +311,12 @@ class Article(models.Model, LockableObject):
             return href('ikhaya', self.stamp, self.slug, action, **query)
 
         links = {
-            'delete':     ('ikhaya', self.stamp, self.slug, 'delete'),
-            'edit':       ('ikhaya', self.stamp, self.slug, 'edit'),
-            'id':         ('portal', 'ikhaya',  self.id),
+            'delete': ('ikhaya', self.stamp, self.slug, 'delete'),
+            'edit': ('ikhaya', self.stamp, self.slug, 'edit'),
+            'id': ('portal', 'ikhaya', self.id),
             'report_new': ('ikhaya', self.stamp, self.slug, 'new_report'),
-            'reports':    ('ikhaya', self.stamp, self.slug, 'reports'),
-            'show':       ('ikhaya', self.stamp, self.slug),
+            'reports': ('ikhaya', self.stamp, self.slug, 'reports'),
+            'show': ('ikhaya', self.stamp, self.slug),
         }
 
         return href(*links[action if action in links.keys() else 'show'], **query)
@@ -418,8 +418,8 @@ class Suggestion(models.Model):
     title = models.CharField(ugettext_lazy(u'Title'), max_length=100)
     text = models.TextField(ugettext_lazy(u'Text'))
     intro = models.TextField(ugettext_lazy(u'Introduction'))
-    notes = models.TextField(ugettext_lazy(u'Annotations'), blank=True,
-                default=u'')
+    notes = models.TextField(ugettext_lazy(u'Annotations to the team'),
+                blank=True, default=u'')
     owner = models.ForeignKey(User, related_name='owned_suggestion_set',
                               null=True, blank=True)
 
@@ -458,7 +458,7 @@ class Suggestion(models.Model):
         return render(instructions, context)
 
     def get_absolute_url(self):
-        return href('ikhaya', 'suggestions', anchor=self.id)
+        return href('ikhaya', 'suggestions', _anchor=self.id)
 
 
 class Comment(models.Model):
@@ -499,9 +499,9 @@ class Event(models.Model):
     changed = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     date = models.DateField(db_index=True)
-    time = models.TimeField(blank=True, null=True) # None -> whole day
-    enddate = models.DateField(blank=True, null=True) # None
-    endtime = models.TimeField(blank=True, null=True) # None -> whole day
+    time = models.TimeField(blank=True, null=True)  # None -> whole day
+    enddate = models.DateField(blank=True, null=True)  # None
+    endtime = models.TimeField(blank=True, null=True)  # None -> whole day
     description = models.TextField(blank=True)
     author = models.ForeignKey(User)
     location = models.CharField(max_length=128, blank=True)
@@ -516,10 +516,10 @@ class Event(models.Model):
         if action == 'copy':
             return href('ikhaya', 'event', 'new', copy_from=self.id)
         return href(*{
-            'show':   ('portal', 'calendar', self.slug),
+            'show': ('portal', 'calendar', self.slug),
             'delete': ('ikhaya', 'event', self.id, 'delete'),
-            'edit':   ('ikhaya', 'event', self.id, 'edit'),
-            'new':    ('ikhaya', 'event', 'new'),
+            'edit': ('ikhaya', 'event', self.id, 'edit'),
+            'new': ('ikhaya', 'event', 'new'),
         }[action])
 
     @property
@@ -543,7 +543,7 @@ class Event(models.Model):
 
     def friendly_title(self, with_html_link=False):
         s_location = '<span class="location">%s</span>' % (
-             self.location_town and u' in %s' % self.location_town or '')
+            self.location_town and u' in %s' % self.location_town or '')
         summary = u'<span class="summary">%s</span>' % escape(self.name)
         if with_html_link:
             ret = u'<a href="%s" class="event_link">%s</a>%s' % (

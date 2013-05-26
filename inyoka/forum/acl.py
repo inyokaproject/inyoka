@@ -5,7 +5,7 @@
 
     Authentification systen for the forum.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import operator as ops
@@ -26,7 +26,7 @@ PRIVILEGES_DETAILS = [
 ]
 
 PRIVILEGES = [x[0] for x in PRIVILEGES_DETAILS]
-PRIVILEGES_BITS = {PRIVILEGES[i-1]: 2 ** i
+PRIVILEGES_BITS = {PRIVILEGES[i - 1]: 2 ** i
                    for i in xrange(1, len(PRIVILEGES_DETAILS) + 1)}
 REVERSED_PRIVILEGES_BITS = {y: x for x, y in PRIVILEGES_BITS.iteritems()}
 
@@ -115,8 +115,8 @@ def _get_privilege_map(user, forum_ids):
     cols = ('forum__id', 'user__id', 'group__id', 'positive', 'negative')
 
     # construct the query, but do not execute it yet for caching reasons
-    filter = (Q(user__id = user.id) |
-              Q(group__id = (-1 if user.is_anonymous else DEFAULT_GROUP_ID)))
+    filter = (Q(user__id=user.id) |
+              Q(group__id=(-1 if user.is_anonymous else DEFAULT_GROUP_ID)))
 
     # Small performance optimization that actually matters
     if len(group_ids) > 1:

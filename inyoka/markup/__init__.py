@@ -129,7 +129,7 @@
     are expanded at parse time can return `nodes.MetaData` metadata.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -164,12 +164,12 @@ def _ikhaya_id(x):
 
 # the default inter-"wiki"s
 STANDARD_WIKI_MAP = {
-    'user':   lambda x: href('portal', 'user', x),
-    'paste':  lambda x: href('pastebin', x),
-    'topic':  lambda x: href('forum', 'topic', x),
+    'user': lambda x: href('portal', 'user', x),
+    'paste': lambda x: href('pastebin', x),
+    'topic': lambda x: href('forum', 'topic', x),
     'ikhaya': _ikhaya_id,
     'search': lambda x: href('portal', 'search', query=x),
-    'post':   lambda x: href('forum', 'post', x),
+    'post': lambda x: href('forum', 'post', x),
 }
 
 _hex_color_re = re.compile(r'#([a-f0-9]{3}){1,2}$')
@@ -221,21 +221,21 @@ def unescape_string(string):
     result = []
     write = result.append
     simple_escapes = {
-        'a':    '\a',
-        'n':    '\n',
-        'r':    '\r',
-        'f':    '\f',
-        't':    '\t',
-        'v':    '\v',
-        '\\':   '\\',
-        '"':    '"',
-        "'":    "'",
-        '0':    '\x00'
+        'a': '\a',
+        'n': '\n',
+        'r': '\r',
+        'f': '\f',
+        't': '\t',
+        'v': '\v',
+        '\\': '\\',
+        '"': '"',
+        "'": "'",
+        '0': '\x00'
     }
     unicode_escapes = {
-        'x':    2,
-        'u':    4,
-        'U':    8
+        'x': 2,
+        'u': 4,
+        'U': 8
     }
     chariter = iter(string)
     next_char = chariter.next
@@ -354,54 +354,54 @@ class Parser(object):
 
         #: node dispatchers
         self._handlers = {
-            'text':                 self.parse_text,
-            'raw':                  self.parse_raw,
-            'nl':                   self.parse_nl,
-            'highlighted_begin':    self.parse_highlighted,
+            'text': self.parse_text,
+            'raw': self.parse_raw,
+            'nl': self.parse_nl,
+            'highlighted_begin': self.parse_highlighted,
             'highlighted_wi_begin': partial(self.parse_highlighted,
                                             name='highlighted_wi'),
-            'conflict_begin':       self.parse_conflict_left,
-            'conflict_switch':      self.parse_conflict_middle,
-            'conflict_end':         self.parse_conflict_end,
-            'metadata_begin':       self.parse_metadata,
-            'headline_begin':       self.parse_headline,
-            'strong_begin':         self.parse_strong,
-            'emphasized_begin':     self.parse_emphasized,
-            'escaped_code_begin':   self.parse_escaped_code,
-            'code_begin':           self.parse_code,
-            'underline_begin':      self.parse_underline,
-            'stroke_begin':         self.parse_stroke,
-            'small_begin':          self.parse_small,
-            'big_begin':            self.parse_big,
-            'sub_begin':            self.parse_sub,
-            'sup_begin':            self.parse_sup,
-            'footnote_begin':       self.parse_footnote,
-            'color_begin':          self.parse_color,
-            'size_begin':           self.parse_size,
-            'font_begin':           self.parse_font,
-            'mod_begin':            self.parse_mod,
-            'edit_begin':           self.parse_edit,
-            'quote_begin':          self.parse_quote,
-            'list_item_begin':      self.parse_list,
-            'definition_begin':     self.parse_definition,
-            'wiki_link_begin':      self.parse_wiki_link,
-            'external_link_begin':  self.parse_external_link,
-            'free_link':            self.parse_free_link,
-            'ruler':                self.parse_ruler,
-            'macro_begin':          self.parse_macro,
-            'template_begin':       self.parse_template,
-            'pre_begin':            self.parse_pre_block,
-            'table_row_begin':      self.parse_table,
-            'box_begin':            self.parse_box,
-            'sourcelink':           self.parse_source_link
+            'conflict_begin': self.parse_conflict_left,
+            'conflict_switch': self.parse_conflict_middle,
+            'conflict_end': self.parse_conflict_end,
+            'metadata_begin': self.parse_metadata,
+            'headline_begin': self.parse_headline,
+            'strong_begin': self.parse_strong,
+            'emphasized_begin': self.parse_emphasized,
+            'escaped_code_begin': self.parse_escaped_code,
+            'code_begin': self.parse_code,
+            'underline_begin': self.parse_underline,
+            'stroke_begin': self.parse_stroke,
+            'small_begin': self.parse_small,
+            'big_begin': self.parse_big,
+            'sub_begin': self.parse_sub,
+            'sup_begin': self.parse_sup,
+            'footnote_begin': self.parse_footnote,
+            'color_begin': self.parse_color,
+            'size_begin': self.parse_size,
+            'font_begin': self.parse_font,
+            'mod_begin': self.parse_mod,
+            'edit_begin': self.parse_edit,
+            'quote_begin': self.parse_quote,
+            'list_item_begin': self.parse_list,
+            'definition_begin': self.parse_definition,
+            'wiki_link_begin': self.parse_wiki_link,
+            'external_link_begin': self.parse_external_link,
+            'free_link': self.parse_free_link,
+            'ruler': self.parse_ruler,
+            'macro_begin': self.parse_macro,
+            'template_begin': self.parse_template,
+            'pre_begin': self.parse_pre_block,
+            'table_row_begin': self.parse_table,
+            'box_begin': self.parse_box,
+            'sourcelink': self.parse_source_link
         }
 
         #: runtime information
         self.is_dirty = False
         self.deferred_macros = {
-            'final':    [],
-            'initial':  [],
-            'late':     []
+            'final': [],
+            'initial': [],
+            'late': []
         }
 
     def parse_node(self, stream):

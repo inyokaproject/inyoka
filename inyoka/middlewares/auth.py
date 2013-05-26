@@ -5,7 +5,7 @@
 
     This replaces the django auth middleware.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.contrib import auth
@@ -34,7 +34,7 @@ class AuthMiddleware(object):
             if user.is_banned:
                 messages.error(request,
                     _(u'The user “%(name)s” was banned. Your session has ended.') % {
-                    'name': escape(user.username)})
+                        'name': escape(user.username)})
             elif user.is_deleted:
                 messages.error(request,
                     _(u'The user “%(name)s” deleted his profile. '

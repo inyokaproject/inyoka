@@ -4,7 +4,7 @@
 
     This page shows a user's profile.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.html' %}
@@ -23,26 +23,38 @@
   {%- endif -%}
 {% endmacro %}
 
-{% macro generate_subscription_link(do='subscribe') %}
-  {{ href('portal', 'user', user.username, do)|e }}
-{% endmacro %}
-
 {% block portal_content %}
   <h3>{{ user.username|e }}
   {%- if request.user.can('user_edit') %}
     <a href="{{ href('portal', 'user', user.username, 'edit') }}" class="admin_link"><img
       src="{{ href('static', 'img/ikhaya/category_edit.png') }}" alt="{% trans %}Edit user{% endtrans %}" title="{% trans %}Edit user{% endtrans %}" /></a>
   {%- endif %}
+  </h3>
   {%- if request.user.can('subscribe_to_users') -%}
     {%- if is_subscribed %}
-      <a href="{{ generate_subscription_link(do='unsubscribe') }}" class="action action_subscribe subscribe_user admin link"><img
-      src="{{ href('static', 'img/forum/subscribe.png') }}" alt="{% trans %}Don’t watch anymore{% endtrans %}" title="{% trans %}Don’t watch anymore{% endtrans %}" /></a>
+      <form action="{{ href('portal', 'user', user.username, 'unsubscribe')|e }}"
+            method="post">
+        {{ csrf_token() }}
+        <input type="image"
+               class="action action_subscribe subscribe_user admin link"
+               src="{{ href('static', 'img/forum/subscribe.png') }}"
+               alt="{% trans %}Don’t watch anymore{% endtrans %}"
+               title="{% trans %}Don’t watch anymore{% endtrans %}" >
+        </input>
+      </form>
     {%- else %}
-      <a href="{{ generate_subscription_link() }}" class="action action_subscribe subscribe_user admin_link"><img
-      src="{{ href('static', 'img/forum/subscribe.png') }}" alt="{% trans %}Watch{% endtrans %}" title="{% trans %}Watch{% endtrans %}" /></a>
+      <form action="{{ href('portal', 'user', user.username, 'subscribe')|e }}"
+            method="post">
+          {{ csrf_token() }}
+        <input type="image"
+               class="action action_subscribe subscribe_user admin_link"
+               src="{{ href('static', 'img/forum/subscribe.png') }}"
+               alt="{% trans %}Watch{% endtrans %}"
+               title="{% trans %}Watch{% endtrans %}" >
+        </input>
+      </form>
     {%- endif -%}
   {%- endif %}
-  </h3>
   {%- if user in (User.objects.get_system_user(), User.objects.get_anonymous_user()) %}
     {% trans name=user.username|e %}{{ name }} is a system user.{% endtrans %}
   {%- elif user.is_deleted or user.is_banned %}

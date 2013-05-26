@@ -5,7 +5,7 @@
 
     Forms for the forum.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
@@ -54,7 +54,7 @@ class EditPostForm(forms.Form):
     # topic.
     #: the user can select, whether the post's topic should be sticky or not.
     sticky = forms.BooleanField(required=False)
-    title = forms.CharField(widget=forms.TextInput(attrs={'size':60}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}))
     ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
                                                 required=False)
     ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
@@ -83,7 +83,7 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
         The ubuntu distribution the user has.
     It's used together with `AddAttachmentForm` in general.
     """
-    title = StrippedCharField(widget=forms.TextInput(attrs={'size':60}),
+    title = StrippedCharField(widget=forms.TextInput(attrs={'size': 60}),
                             max_length=100)
     text = StrippedCharField(widget=forms.Textarea)
     ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
@@ -184,15 +184,15 @@ class AddAttachmentForm(forms.Form):
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
     comment = forms.CharField(label=ugettext_lazy(u'Description'), required=False,
-                  widget=forms.TextInput(attrs={'size':'60'}))
+                  widget=forms.TextInput(attrs={'size': '60'}))
 
 
 class AddPollForm(forms.Form):
-    question = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'size':'60'}))
+    question = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'size': '60'}))
     multiple = forms.BooleanField(required=False)
-    options = MultiField((forms.CharField(max_length=250, widget=forms.TextInput(attrs={'size':'50'})),))
+    options = MultiField((forms.CharField(max_length=250, widget=forms.TextInput(attrs={'size': '50'})),))
     duration = forms.IntegerField(min_value=1, max_value=3650, required=False,
-                                  widget=forms.TextInput(attrs={'size':'3'}))
+                                  widget=forms.TextInput(attrs={'size': '3'}))
 
 
 class ReportTopicForm(forms.Form):

@@ -1,4 +1,13 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+"""
+    inyoka.wiki.macros
+    ~~~~~~~~~~~~~~~~~~
+
+    Macros for the wiki.
+
+    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+"""
 import string
 import random
 import operator
@@ -77,7 +86,7 @@ class RecentChanges(macros.Macro):
         data = cache.get(cache_key)
         if data is None:
             revisions = Revision.objects.filter(
-                change_date__gt=(datetime.utcnow() -timedelta(days=max_days))
+                change_date__gt=(datetime.utcnow() - timedelta(days=max_days))
             ).select_related('user', 'page')
             pagination = Pagination(context.request, revisions,
                                     page_num, self.per_page, link_func)
@@ -115,7 +124,7 @@ class RecentChanges(macros.Macro):
                     if len(revs) > 1:
                         stamps = (format_time(revs[0].change_date),
                                   format_time(revs[-1].change_date))
-                        stamp = u'%s' % (stamps[0]==stamps[-1] and stamps[0] or
+                        stamp = u'%s' % (stamps[0] == stamps[-1] and stamps[0] or
                                 u'%s - %s' % stamps)
                     else:
                         stamp = format_time(revs[0].change_date)
@@ -128,7 +137,7 @@ class RecentChanges(macros.Macro):
                             nodes.InternalLink(page.name),
                             nodes.Text(u' ('),
                             nodes.Link(href('wiki', page.name, action='log'), [
-                                nodes.Text(str(len(revs))+'x')
+                                nodes.Text(str(len(revs)) + 'x')
                             ]),
                             nodes.Text(u')')
                         ])]))
@@ -154,7 +163,7 @@ class RecentChanges(macros.Macro):
                             page_notes.children and [page_notes] or
                             [nodes.Text(u'')], class_='note')])
             data = {
-                'nodes':      table,
+                'nodes': table,
                 'pagination': pagination.generate()
             }
             cache.set(cache_key, data)
@@ -281,7 +290,7 @@ class RedirectPages(macros.Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
-        #TODO i18n: bloody hell, this is crazy... requires some more thinking
+        # TODO i18n: bloody hell, this is crazy... requires some more thinking
         #           and a migration as well as coordination with the wiki team...
         for page in Page.objects.find_by_metadata('weiterleitung'):
             target = page.metadata.get('weiterleitung')
@@ -376,7 +385,7 @@ class TagCloud(macros.Macro):
             active_tag = context.request.GET.get('tag')
             if active_tag:
                 return TagList(active_tag, _raw=True). \
-                       build_node(context, format)
+                    build_node(context, format)
 
         result = nodes.Layer(class_='tagcloud')
         for tag in Page.objects.get_tagcloud(self.max):
@@ -384,7 +393,7 @@ class TagCloud(macros.Macro):
                               tag['count']) % tag
             result.children.extend((
                 nodes.Link('?' + urlencode({
-                        'tag':  tag['name']
+                        'tag': tag['name']
                     }), [nodes.Text(tag['name'])],
                     title=title,
                     style='font-size: %s%%' % tag['size']
@@ -425,7 +434,7 @@ class TagList(macros.Macro):
         else:
             for tag in Page.objects.get_tagcloud():
                 link = nodes.Link('?' + urlencode({
-                        'tag':  tag['name']
+                        'tag': tag['name']
                     }), [nodes.Text(tag['name'])],
                     style='font-size: %s%%' % tag['size']
                 )
@@ -492,7 +501,7 @@ class RandomPageList(macros.Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
-        #TODO i18n: Again this fancy meta data... wheeeey :-)
+        # TODO i18n: Again this fancy meta data... wheeeey :-)
         #           see RedirectPages for more infos.
         redirect_pages = Page.objects.find_by_metadata('weiterleitung')
         pagelist = filter(lambda p: not p in redirect_pages,
@@ -549,7 +558,7 @@ class RandomKeyValue(macros.Macro):
                     buffer = []
                     id = node.id
                     stack.setdefault(id, {}).update({
-                        'name':  u''.join(x.text for x in node.query.children)
+                        'name': u''.join(x.text for x in node.query.children)
                     })
                     last_cat = id
                 elif isinstance(node, nodes.List):
@@ -682,7 +691,7 @@ class Template(macros.Macro):
         items = kwargs.items()
         for idx, arg in enumerate(args[1:]):
             items.append(('arguments.%d' % idx, arg))
-        #TODO: kill WIKI_ prefix here
+        # TODO: kill WIKI_ prefix here
         self.template = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                       normalize_pagename(args[0], False))
         self.context = items
@@ -767,7 +776,7 @@ class Picture(macros.Macro):
             assert len(ret) == 1, "There must not be more than one node tree per context"
             return ret[0]
 
-        #TODO: refactor using signals on rendering
+        # TODO: refactor using signals on rendering
         #      to get proper application independence
         if context.application == 'wiki':
             target = normalize_pagename(self.target, True)

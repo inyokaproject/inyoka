@@ -6,7 +6,7 @@
     Various services for the portal or all applications.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import time
@@ -28,9 +28,9 @@ def on_get_current_user(request):
     """Get the current user."""
     user = request.user
     return {
-        'is_anonymous':     user.is_anonymous,
-        'username':         user.username or None,
-        'email':            getattr(user, 'email', None),
+        'is_anonymous': user.is_anonymous,
+        'username': user.username or None,
+        'email': getattr(user, 'email', None),
     }
 
 
@@ -48,7 +48,7 @@ def on_get_user_list(request):
 
 def on_get_group_list(request):
     q = request.GET.get('q', '')
-    #if len(q) < 3:
+    # if len(q) < 3:
     #    return
     qs = list(Group.objects.filter(name__istartswith=q,
                                   is_public__exact=True)[:11])
@@ -67,7 +67,10 @@ def on_get_captcha(request):
     h = md5(settings.SECRET_KEY)
     h.update(captcha.solution)
     request.session['captcha_solution'] = h.digest()
-    return captcha.get_response()
+    response = captcha.get_response()
+    # Save the solution for easier testing
+    response._captcha_solution = captcha.solution
+    return response
 
 
 def on_get_calendar_entry(request):

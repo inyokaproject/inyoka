@@ -5,7 +5,7 @@
 
     Various forms for the portal.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import datetime
@@ -36,8 +36,8 @@ from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href
-from inyoka.utils.forms import CaptchaField, DateTimeWidget, \
-    HiddenCaptchaField, EmailField, validate_signature
+from inyoka.utils.forms import CaptchaField, DateTimeWidget, DateWidget, \
+    EmailField, validate_signature
 from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
 from inyoka.utils.storage import storage
@@ -95,7 +95,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(label=ugettext_lazy(u'Password'), required=True,
         widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}))
     permanent = forms.BooleanField(label=_('Keep logged in'),
-        required=False, widget=forms.CheckboxInput(attrs={'tabindex':'1'}))
+        required=False, widget=forms.CheckboxInput(attrs={'tabindex': '1'}))
 
 
 class RegisterForm(forms.Form):
@@ -120,7 +120,6 @@ class RegisterForm(forms.Form):
     confirm_password = forms.CharField(label=_('Confirm password'),
         widget=forms.PasswordInput(render_value=False))
     captcha = CaptchaField(label=_('CAPTCHA'))
-    hidden_captcha = HiddenCaptchaField(required=False)
     terms_of_usage = forms.BooleanField()
 
     def __init__(self, *args, **kwargs):
@@ -195,18 +194,6 @@ class RegisterForm(forms.Form):
 
 
 class LostPasswordForm(auth_forms.PasswordResetForm):
-    def clean_email(self):  # Work around Django's check.
-        # FIXME: Check is_active and useable password.
-        email = self.cleaned_data['email']
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            raise forms.ValidationError(self.error_messages['unknown'])
-        if not user.has_usable_password() or not user.is_active:
-            raise forms.ValidationError(self.error_messages['unusable'])
-        self.users_cache = [user]  # For Django
-        return email
-
     def save(self, **opts):
         request = opts['request']
         messages.success(request, _(u'An email with further instructions was sent to you.'))
@@ -229,8 +216,8 @@ class ChangePasswordForm(forms.Form):
     new_password = forms.CharField(label=ugettext_lazy(u'New password'),
                                    widget=forms.PasswordInput)
     new_password_confirm = forms.CharField(
-                                   label=ugettext_lazy(u'Confirm new password'),
-                                   widget=forms.PasswordInput)
+        label=ugettext_lazy(u'Confirm new password'),
+        widget=forms.PasswordInput)
 
 
 class UserCPSettingsForm(forms.Form):
@@ -268,7 +255,6 @@ class UserCPSettingsForm(forms.Form):
         label=ugettext_lazy(u'Highlight search'))
     mark_read_on_logout = forms.BooleanField(required=False,
         label=ugettext_lazy(u'Mark all forums as “read” on logout'))
-
 
     def clean_notify(self):
         data = self.cleaned_data['notify']
@@ -487,7 +473,7 @@ class CreateUserForm(forms.Form):
 class EditUserStatusForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EditUserStatusForm, self).__init__(*args, **kwargs)
-        self.fields['banned_until'].localize=True
+        self.fields['banned_until'].localize = True
 
     class Meta:
         model = User
@@ -611,7 +597,6 @@ class EditGroupForm(forms.ModelForm):
             group.icon.save(icon_path, icon)
             icon.close()
 
-
         # permissions
         permissions = 0
         for perm in data['permissions']:
@@ -699,7 +684,6 @@ class SearchForm(forms.Form):
         )
 
 
-
 class PrivateMessageForm(forms.Form):
     """Form for writing a new private message"""
     recipient = forms.CharField(label=ugettext_lazy(u'To'), required=False,
@@ -744,7 +728,7 @@ def _feed_count_cleanup(n):
         return COUNTS[0]
     for i in range(len(COUNTS)):
         if n < COUNTS[i]:
-            return n - COUNTS[i-1] < COUNTS[i] - n and COUNTS[i-1] or COUNTS[i]
+            return n - COUNTS[i - 1] < COUNTS[i] - n and COUNTS[i - 1] or COUNTS[i]
     return COUNTS[-1]
 
 
@@ -756,10 +740,10 @@ class FeedSelectorForm(forms.Form):
                 help_text=ugettext_lazy(u'The number will be round off to keep the server '
                             u'load low.'))
     mode = forms.ChoiceField(initial='short',
-        choices=(('full',  ugettext_lazy(u'Full article')),
+        choices=(('full', ugettext_lazy(u'Full article')),
                  ('short', ugettext_lazy(u'Only introduction')),
                  ('title', ugettext_lazy(u'Only title'))),
-        widget=forms.RadioSelect(attrs={'class':'radioul'}))
+        widget=forms.RadioSelect(attrs={'class': 'radioul'}))
 
     def clean(self):
         data = self.cleaned_data
@@ -828,12 +812,12 @@ class EditFileForm(forms.ModelForm):
 class ConfigurationForm(forms.Form):
     global_message = forms.CharField(label=ugettext_lazy(u'Global Message'),
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
-        help_text = ugettext_lazy(u'This message will displayed on every page in the '
+        help_text=ugettext_lazy(u'This message will displayed on every page in the '
                       u'header. To disable it, leave the field empty. '
                       u'Needs to be valid XHTML.'))
     blocked_hosts = forms.CharField(label=ugettext_lazy(u'Blocked hosts for email addresses'),
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
-        help_text = ugettext_lazy(u'Users cannot use email addresses from these hosts to '
+        help_text=ugettext_lazy(u'Users cannot use email addresses from these hosts to '
                       u'register an account.'))
     team_icon = forms.ImageField(label=ugettext_lazy(u'Global team icon'), required=False,
         help_text=ugettext_lazy(u'Please note the details on the maximum size below.'))
@@ -866,7 +850,11 @@ class ConfigurationForm(forms.Form):
         label=ugettext_lazy(u'Full path to the target link page'))
     countdown_image_url = forms.CharField(required=False,
         label=ugettext_lazy(u'Image URL'),
-        help_text=ugettext_lazy(u'The complete URL to the countdown banner.'))
+        help_text=ugettext_lazy(u'The complete URL to the countdown banner. '
+                    u'Use <code>%(remaining)s</code> to be replaced by the '
+                    u'remaining days or <code>soon</code>.'))
+    countdown_date = forms.DateField(label=ugettext_lazy(u'Release date'),
+        required=False, widget=DateWidget, localize=True)
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,
@@ -891,6 +879,14 @@ class ConfigurationForm(forms.Form):
         except ValueError:
             return u'[]'
         return data[key]
+
+    def clean_countdown_image_url(self):
+        data = self.cleaned_data.get('countdown_image_url', u'')
+        try:
+            data % {'remaining': 'soon'}
+        except KeyError:
+            raise forms.ValidationError(_(u'Invalid substitution pattern.'))
+        return data
 
 
 class EditStyleForm(forms.Form):

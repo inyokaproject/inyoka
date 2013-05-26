@@ -36,7 +36,7 @@
     problems.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -45,6 +45,8 @@ from collections import OrderedDict
 from django.conf import settings
 
 from inyoka.utils.cache import request_cache
+from inyoka.utils.text import normalize_pagename
+from inyoka.utils.user import normalize_username
 from inyoka.wiki.models import MetaData, Page
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
@@ -85,7 +87,8 @@ class BaseStorage(object):
         if self.data is not None:
             return
 
-        data = MetaData.objects.values_list('page__last_rev__text__value', 'page__name') \
+        data = MetaData.objects.values_list('page__last_rev__text__value',
+                                            'page__name') \
             .filter(key='X-Behave',
                     page__last_rev__deleted=False,
                     value=self.behavior_key) \
@@ -192,23 +195,26 @@ class AccessControlList(BaseStorage):
         from inyoka.wiki import acl
         privileges = acl.privilege_map
 
-        groups = ['*']
+        pages = [u'*']
         for line in text.splitlines():
             # comments and empty lines
-            line = line.strip()
-            if not line or line.startswith('##'):
+            line = line.split('#', 1)[0].strip()
+            if not line:
                 continue
 
             # group sections
             if line[0] == '[' and line[-1] == ']':
-                groups = [x.strip() for x in line[1:-1].split(',')]
+                pages = [normalize_pagename(x.strip())
+                         for x in line[1:-1].split(',')]
                 continue
 
             bits = line.split('=', 1)
             if len(bits) != 2:
                 continue
 
-            subjects = set(s.strip() for s in bits[0].split(','))
+            subjects = [normalize_username(s.strip())
+                        for s in bits[0].split(',')]
+
             add_privs = del_privs = 0
             for s in bits[1].split(','):
                 s = s.strip().lower()
@@ -225,8 +231,8 @@ class AccessControlList(BaseStorage):
                         if s in privileges:
                             add_privs |= privileges[s]
 
-            for group in groups:
-                pattern = re.compile(r'^%s$' % re.escape(group).
+            for page_name in pages:
+                pattern = re.compile(r'^%s$' % re.escape(page_name).
                                      replace('\\*', '.*?'), re.I)
                 for subject in subjects:
                     yield pattern, subject, add_privs, del_privs

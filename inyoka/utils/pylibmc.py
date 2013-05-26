@@ -3,7 +3,7 @@
     inyoka.utils.pylibmc
     ~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.core.cache.backends.memcached import PyLibMCCache
@@ -24,6 +24,6 @@ class CachedPyLibMCCache(PyLibMCCache):
         return self._cache.add(key, value, self._get_memcache_timeout(timeout), min_compress_len)
 
     def set_many(self, data, timeout=0, version=None, min_compress_len=MIN_COMPRESS_LEN):
-        #TODO: for now compression does not work on set_multi, so we must use .set() here :(
+        # TODO: for now compression does not work on set_multi, so we must use .set() here :(
         for key, value in data.items():
             self.set(key, value, timeout, version, min_compress_len)

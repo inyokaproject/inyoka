@@ -5,7 +5,7 @@
 
     Models for the portal.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.contrib.contenttypes.models import ContentType
@@ -89,7 +89,6 @@ class SessionInfo(models.Model):
     category = models.CharField(max_length=200, null=True)
 
 
-
 PRIVMSG_FOLDERS_DATA = (
     (0, 'sent', ugettext_lazy(u'Send')),
     (1, 'inbox', ugettext_lazy(u'Inbox')),
@@ -128,7 +127,7 @@ class PrivateMessage(models.Model):
     def recipients(self):
         if not hasattr(self, '_recipients'):
             entries = PrivateMessageEntry.objects.filter(message=self) \
-                      .exclude(user=self.author)
+                .exclude(user=self.author)
             self._recipients = [e.user for e in entries]
         return self._recipients
 

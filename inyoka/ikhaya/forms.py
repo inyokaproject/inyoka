@@ -5,7 +5,7 @@
 
     Forms for the Ikhaya.
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
@@ -84,7 +84,7 @@ class EditArticleForm(forms.ModelForm):
         slug = self.cleaned_data['slug']
         pub_date = self.cleaned_data.get('pub_date', None)
         if not pub_date:
-            return slug # invalid anyway as pub_date is required
+            return slug  # invalid anyway as pub_date is required
         pub_date = get_user_timezone().localize(pub_date) \
                     .astimezone(pytz.utc).replace(tzinfo=None).date()
         if slug:
@@ -129,7 +129,7 @@ class EditCategoryForm(forms.ModelForm):
 class NewEventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         event = kwargs.get('instance', None)
-        if event: # Adjust datetime to local timezone
+        if event:  # Adjust datetime to local timezone
             if event.date and event.time is not None:
                 dt = datetime_to_timezone(date_time_to_datetime(
                     event.date, event.time or dt_time(0)))
@@ -192,5 +192,6 @@ class NewEventForm(forms.ModelForm):
 class EditEventForm(NewEventForm):
     visible = forms.BooleanField(label=ugettext_lazy(u'Display event?'),
                 required=False)
+
     class Meta(NewEventForm.Meta):
         exclude = ['author', 'slug']

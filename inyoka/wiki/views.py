@@ -12,7 +12,7 @@
     views too because they do not necessarily work on page objects.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from hashlib import sha1
@@ -196,7 +196,7 @@ def feed(request, page_name=None, count=10):
     Shows the wiki pages or all revisions of one page that match
     the given criteria in an atom feed.
     """
-    #TODO i18n: Find a better solution to hard coded wiki paths.
+    # TODO i18n: Find a better solution to hard coded wiki paths.
     #           Maybe we need even more configuration values in the storage.
     if page_name:
         feed = AtomFeed(title=_(u'%(sitename)s wiki – %(pagename)s') % {
@@ -244,12 +244,12 @@ def feed(request, page_name=None, count=10):
             'summary': rev.note or '-',
         }
         kwargs['summary_type'] = None
-        author = rev.user \
-            and {'name': rev.user.username, 'uri': url_for(rev.user)} \
-            or _(u'Anonymous')
+        author = (rev.user
+                  and {'name': rev.user.username, 'uri': url_for(rev.user)}
+                  or settings.INYOKA_ANONYMOUS_USER)
         feed.add(
             title=u'%s (%s)' % (
-                rev.user or _(u'Anonymous'),
+                rev.user or settings.INYOKA_ANONYMOUS_USER,
                 format_datetime(rev.change_date),
             ),
             url=url_for(rev),

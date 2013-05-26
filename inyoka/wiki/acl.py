@@ -22,12 +22,14 @@
     provides a function called `test_changes_allowed` that checks for that.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.http import HttpResponseRedirect
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import AccessDeniedResponse
+from inyoka.utils.text import normalize_pagename
+from inyoka.utils.user import normalize_username
 from inyoka.wiki.storage import storage
 from inyoka.wiki.models import Page
 
@@ -58,12 +60,12 @@ GROUP_OWNER = 'owner'
 
 #: used by the decorator
 privilege_map = {
-    'read':         PRIV_READ,
-    'edit':         PRIV_EDIT,
-    'create':       PRIV_CREATE,
-    'attach':       PRIV_ATTACH,
-    'delete':       PRIV_DELETE,
-    'manage':       PRIV_MANAGE
+    'read': PRIV_READ,
+    'edit': PRIV_EDIT,
+    'create': PRIV_CREATE,
+    'attach': PRIV_ATTACH,
+    'delete': PRIV_DELETE,
+    'manage': PRIV_MANAGE
 }
 
 
@@ -110,7 +112,8 @@ class GroupContainer(object):
 
     def load(self):
         """Load the data from the database."""
-        self.cache = set(x.name for x in self.user.get_groups())
+        self.cache = set(normalize_username(x.name)
+                         for x in self.user.get_groups())
         for item in Page.objects.get_owners(self.page):
             if item == self.user.username or \
                (item.startswith('@') and item[1:] in self.cache):
@@ -167,14 +170,17 @@ def get_privilege_flags(user, page_name, groups=None):
     if groups is None:
         groups = GroupContainer(user, page_name)
 
+    user = normalize_username(user.username)
+    page_name = normalize_pagename(page_name)
+
     rules = storage.acl
     if not rules:
         return PRIV_DEFAULT
     privileges = PRIV_NONE
     for pattern, subject, add_privs, del_privs in rules:
-        if ((subject == user.username or
-             subject.startswith('@') and subject[1:] in groups)) and \
-             pattern.match(page_name) is not None:
+        if (subject == user or
+            (subject.startswith('@') and subject[1:] in groups)) and \
+                pattern.match(page_name) is not None:
             privileges = (privileges | add_privs) & ~del_privs
     return privileges
 

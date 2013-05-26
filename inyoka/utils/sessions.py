@@ -6,7 +6,7 @@
     Session related utility functions.
 
 
-    :copyright: (c) 2007-2012 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from time import time
@@ -90,7 +90,7 @@ class SurgeProtectionMixin(object):
         # errors would trigger the surge protection!
         if self.is_valid():
             identifier = self.source_protection_identifier or \
-                         self.__class__.__module__.split('.')[1]
+                self.__class__.__module__.split('.')[1]
             protection = current_request.session.setdefault('sp', {})
             if protection.get(identifier, 0) >= time():
                 raise ValidationError(self.source_protection_message)
@@ -142,3 +142,8 @@ def get_sessions(order_by='-last_change'):
 def make_permanent(request):
     """Make this session a permanent one."""
     request.session['_perm'] = True
+
+
+def is_permanent(request):
+    """Check if the session is permanent."""
+    return request.session.get('_perm')
