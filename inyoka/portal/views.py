@@ -337,8 +337,7 @@ def lost_password(request):
         template_name='portal/lost_password.html',
         email_template_name='mails/new_user_password.txt',
         subject_template_name='mails/new_user_password_subject.txt',
-        password_reset_form=LostPasswordForm,
-        from_email=settings.INYOKA_SYSTEM_USER_EMAIL)
+        password_reset_form=LostPasswordForm)
 
 
 def set_new_password(request, uidb36, token):
