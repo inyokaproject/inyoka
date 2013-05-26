@@ -324,7 +324,7 @@ TEST_DISCOVER_TOP_LEVEL = path.dirname(path.dirname(__file__))
 AUTH_USER_MODEL = 'portal.User'
 AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)
 
-SOCIAL_AUTH_USER_MODEL = AUTH_USER_MODEL = 'portal.User'
+AUTH_USER_MODEL = 'portal.User'
 
 SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.social_auth_user',
