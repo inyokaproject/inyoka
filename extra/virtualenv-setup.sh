@@ -46,4 +46,4 @@ make install
 
 # Step 4: Install requirements via pip
 cd $BASE_DIRECTORY
-pip install --upgrade -r extra/requirements/production.txt
+pip install --use-mirrors --upgrade -r extra/requirements/production.txt

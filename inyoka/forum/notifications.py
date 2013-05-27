@@ -26,7 +26,7 @@ def send_newtopic_notifications(user, post, topic, forum):
 
     version_number = topic.get_ubuntu_version()
 
-    data={'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
+    data = {'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
           'author_username': post.author.username,
           'forum_id': forum.id,
           'forum_name': forum.name,
@@ -58,9 +58,9 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
                     'topic': data.get('topic_title')},
             data,
             include_notified=True,
-            filter = {'content_type': ctype(Forum),
+            filter={'content_type': ctype(Forum),
                       'object_id': data.get('forum_id')},
-            callback = notify_ubuntu_version_subscriptions.subtask(
+            callback=notify_ubuntu_version_subscriptions.subtask(
                 args=(request_user_id, data)),
             exclude = {'user__in': notified_users})
     finally:
@@ -88,7 +88,7 @@ def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
 def send_edit_notifications(user, post, topic, forum):
     from inyoka.forum.models import Topic
 
-    data={'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
+    data = {'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
           'author_username': post.author.username,
           'forum_name': forum.name,
           'post_url': post.get_absolute_url(),
@@ -119,7 +119,7 @@ def notify_member_subscriptions(notified_users, request_user_id, data):
 
 def send_discussion_notification(user, page):
     from inyoka.wiki.models import Page
-    data={'creator': user.username,
+    data = {'creator': user.username,
           'page_id': page.id,
           'page_title': page.title,
           'page_unsubscribe': page.get_absolute_url('unsubscribe'),
@@ -137,7 +137,7 @@ def send_discussion_notification(user, page):
 
 def send_deletion_notification(user, topic, reason):
     from inyoka.forum.models import Topic
-    data={'mod': user.username,
+    data = {'mod': user.username,
           'reason': reason,
           'topic_id': topic.id,
           'topic_title': topic.title}

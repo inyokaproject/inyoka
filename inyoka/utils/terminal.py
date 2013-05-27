@@ -16,11 +16,11 @@ _color_mapping = zip(xrange(8),
     ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'))
 _colors = {code: '3%d' % idx for idx, code in _color_mapping}
 _formats = {
-    'bold':         '1',
-    'underscore':   '4',
-    'blink':        '5',
-    'reverse':      '7',
-    'conceal':      '8'
+    'bold': '1',
+    'underscore': '4',
+    'blink': '5',
+    'reverse': '7',
+    'conceal': '8'
 }
 
 

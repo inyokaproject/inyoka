@@ -36,7 +36,7 @@ def register_special_modules():
                                          path)
                 try:
                     import_module(module_path)
-                except ImportError, exc:
+                except ImportError as exc:
                     _ = str(exc)
                     if _ != 'No module named %s' % path:
                         raise

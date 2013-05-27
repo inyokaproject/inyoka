@@ -92,6 +92,6 @@ if __name__ == '__main__':
         for user in set((expired + inactive)):
             try:
                 user.delete()
-            except Exception, exc:
+            except Exception as exc:
                 print "EXCEPTION RAISED ON USER %s" % user
                 print exc

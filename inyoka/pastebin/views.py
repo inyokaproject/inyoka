@@ -54,7 +54,7 @@ def display(request, entry_id):
         entry.save()
     return {
         'entry': entry,
-        'page':  'browse'
+        'page': 'browse'
     }
 
 
@@ -90,6 +90,6 @@ def raw(request, entry_id):
 @templated('pastebin/browse.html')
 def browse(request):
     return {
-        'entries':      list(Entry.objects.all()[:50]),
-        'page':         'browse'
+        'entries': list(Entry.objects.all()[:50]),
+        'page': 'browse'
     }

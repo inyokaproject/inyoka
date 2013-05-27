@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-08 23:08+0100\n"
+"POT-Creation-Date: 2013-05-26 10:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,11 +54,11 @@ msgstr ""
 msgid "<strong>Conflict End</strong>"
 msgstr ""
 
-#: inyoka/markup/nodes.py:698
+#: inyoka/markup/nodes.py:695
 msgid "Edited by"
 msgstr ""
 
-#: inyoka/markup/nodes.py:723
+#: inyoka/markup/nodes.py:720
 msgid "Moderated by"
 msgstr ""
 
@@ -127,23 +127,23 @@ msgstr ""
 msgid "Parentheses were not closed properly."
 msgstr ""
 
-#: inyoka/markup/templates.py:365
+#: inyoka/markup/templates.py:367
 msgid "Missing comma between array entries"
 msgstr ""
 
-#: inyoka/markup/templates.py:383
+#: inyoka/markup/templates.py:390
 msgid "Unexpected operator"
 msgstr ""
 
-#: inyoka/markup/templates.py:410
+#: inyoka/markup/templates.py:417
 msgid "expected variable, integer or attribute"
 msgstr ""
 
-#: inyoka/markup/templates.py:441
+#: inyoka/markup/templates.py:448
 msgid "Too many arguments for this value output"
 msgstr ""
 
-#: inyoka/markup/templates.py:466
+#: inyoka/markup/templates.py:473
 msgid "Invalid syntax: "
 msgstr ""
 
