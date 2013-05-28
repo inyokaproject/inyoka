@@ -167,9 +167,11 @@ class CleanupFilter(object):
 
         for token in self.source:
             if token['type'] == 'StartTag':
-                attrs = token.get('data', ())
+                attrs = token.get('data', {})
                 if not isinstance(attrs, dict):
                     attrs = dict(reversed(attrs))
+                # The attributes are namespaced -- we don't care about that, add them back later
+                attrs = {k: v for (_, k), v in attrs.iteritems()}
                 if token['name'] in self.tag_conversions:
                     new_tag, new_style = self.tag_conversions[token['name']]
                     token['name'] = new_tag
@@ -224,7 +226,9 @@ class CleanupFilter(object):
                         element_id = self.id_prefix + element_id
                     attrs['id'] = element_id
                     id_map[original_id] = element_id
-                token['data'] = dict(list(item) for item in attrs.items())
+                token['data'] = {}
+                for k, v in attrs.iteritems():
+                    token['data'][(None, force_unicode(k))] = force_unicode(v)  # None is the namespace
             elif token['type'] == 'EndTag' and token['name'] in self.end_tags:
                 token['name'] = self.end_tags[token['name']]
             yield token
