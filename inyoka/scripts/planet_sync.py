@@ -119,8 +119,7 @@ def sync():
             # with our tag soup parser for the moment.
             if text.get('type') in HTML_MIMETYPES:
                 text = cleanup_html(text.get('value') or '',
-                                    id_prefix='entry-text-%x' % int(time()),
-                                    output_format='xhtml')
+                                    id_prefix='entry-text-%x' % int(time()))
             else:
                 text = escape(nl2p(text.get('value') or ''))
 

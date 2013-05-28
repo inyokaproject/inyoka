@@ -181,8 +181,7 @@ class CleanupFilter(object):
                             attrs['style'] = (style and style.rstrip(';') +
                                               '; ' or '') + new_style + ';'
 
-                elif token['name'] == 'a' and \
-                     attrs.get('href', '').startswith('#'):
+                elif token['name'] == 'a' and attrs.get('href', '').startswith('#'):
                     attrs.pop('target', None)
                     deferred_links[attrs['href'][1:]] = token
 
@@ -226,8 +225,7 @@ class CleanupFilter(object):
                     attrs['id'] = element_id
                     id_map[original_id] = element_id
                 token['data'] = dict(list(item) for item in attrs.items())
-            elif token['type'] == 'EndTag' and \
-                 token['name'] in self.end_tags:
+            elif token['type'] == 'EndTag' and token['name'] in self.end_tags:
                 token['name'] = self.end_tags[token['name']]
             yield token
 
