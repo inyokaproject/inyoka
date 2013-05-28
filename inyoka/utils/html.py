@@ -189,7 +189,6 @@ class CleanupFilter(object):
 
                 elif token['name'] == 'font':
                     token['name'] = 'span'
-                    attrs = dict(reversed(token.get('data', ())))
                     styles = []
                     tmp = attrs.pop('color', None)
                     if tmp:
