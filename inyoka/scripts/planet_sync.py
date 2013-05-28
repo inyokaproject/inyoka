@@ -24,6 +24,7 @@ xml.sax.make_parser = lambda x: make_parser()
 # End XML patching.
 import re
 import sys
+import dateutil
 import feedparser
 from time import time
 from datetime import datetime
@@ -53,6 +54,12 @@ def debug(msg):
     """Helper function that prints to stderr if debugging is enabled."""
     if settings.DEBUG:
         sys.stderr.write(msg.encode('utf-8') + '\n')
+
+
+def dateutilDateHandler(aDateString):
+    return dateutil.parser.parse(aDateString).utctimetuple()
+
+feedparser.registerDateHandler(dateutilDateHandler)
 
 
 def sync():
