@@ -132,7 +132,7 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
         serializer = HTMLSerializer(
             quote_attr_values=True,
             minimize_boolean_attributes=False,
-            #escape_rcdata = True,
+            omit_optional_tags=False,
         )
     rv = serializer.serialize(walker, 'utf-8')
     if stream:
