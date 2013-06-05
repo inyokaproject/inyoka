@@ -47,6 +47,7 @@ class EditCommentForm(forms.Form):
 class EditArticleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
+        readonly = kwargs.pop('readonly', False)
         if instance:
             initial = kwargs.setdefault('initial', {})
             initial['pub_date'] = instance.pub_datetime
@@ -56,6 +57,9 @@ class EditArticleForm(forms.ModelForm):
         super(EditArticleForm, self).__init__(*args, **kwargs)
         # Following stuff is in __init__ to keep helptext etc intact.
         self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
+        if readonly:
+            for field in ('subject', 'intro', 'text'):
+                self.fields[field].widget.attrs['readonly'] = True
 
     author = UserField(label=ugettext_lazy(u'Author'), required=True)
     pub_date = DateTimeField(label=ugettext_lazy(u'Publication date'),
