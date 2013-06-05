@@ -13,7 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Max
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
-from django.utils.html import escape
+from django.utils.html import escape, smart_urlquote
 from django.contrib import messages
 
 from inyoka.portal.user import Group
@@ -138,7 +138,7 @@ def feed(request, mode='short', count=10):
 
         feed.add(title=entry.title or _(u'No title given'),
                  url=entry.url,
-                 id=entry.guid,
+                 id=smart_urlquote(entry.guid),
                  updated=entry.updated,
                  published=entry.pub_date,
                  **kwargs)
