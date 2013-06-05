@@ -415,7 +415,7 @@ class PageManager(models.Manager):
 
             name
                 This must be a *normaliezd* version of the page name.  The
-                default action dispatcher (`ikhaya.wiki.views.show_page`)
+                default action dispatcher (`inyoka.wiki.views.show_page`)
                 automatically normalizes incoming page names so this is no
                 issue from the web layer.  However shell scripts, converters,
                 crons etc have to normalize this parameter themselves.
@@ -657,9 +657,9 @@ class Text(models.Model):
         walk(tree)
 
         return {
-            'links':        links,
-            'metadata':     metadata,
-            'text':         tree.text
+            'links': links,
+            'metadata': metadata,
+            'text': tree.text
         }
 
     def render(self, request=None, page=None, format='html',
@@ -1202,7 +1202,7 @@ class Revision(models.Model):
         note = _(u'%(note)s [Revision from %(date)s restored by %(user)s]' %
                  {'note': note,
                   'date': datetime_to_timezone(self.change_date).strftime(
-                                '%d.%m.%Y %H:%M %Z'),
+                  '%d.%m.%Y %H:%M %Z'),
                   'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
                            user=(user if user.is_authenticated() else None),

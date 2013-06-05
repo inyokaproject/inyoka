@@ -168,13 +168,13 @@ class TableOfContents(TreeMacro):
     arguments = (
         ('max_depth', int, 3),
         ('type', {
-            'unordered':    'unordered',
-            'arabic0':      'arabiczero',
-            'arabic':       'arabic',
-            'alphabeth':    'alphalower',
-            'ALPHABETH':    'alphaupper',
-            'roman':        'romanlower',
-            'ROMAN':        'romanupper'
+            'unordered': 'unordered',
+            'arabic0': 'arabiczero',
+            'arabic': 'arabic',
+            'alphabeth': 'alphalower',
+            'ALPHABETH': 'alphaupper',
+            'roman': 'romanlower',
+            'ROMAN': 'romanupper'
         }, 'arabic')
     )
 

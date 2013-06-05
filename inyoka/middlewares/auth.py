@@ -34,7 +34,7 @@ class AuthMiddleware(object):
             if user.is_banned:
                 messages.error(request,
                     _(u'The user “%(name)s” was banned. Your session has ended.') % {
-                    'name': escape(user.username)})
+                        'name': escape(user.username)})
             elif user.is_deleted:
                 messages.error(request,
                     _(u'The user “%(name)s” deleted his profile. '

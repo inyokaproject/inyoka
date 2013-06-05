@@ -47,6 +47,6 @@ UBUNTU_DISTROS = [
 
 SIMPLE_VERSION_CHOICES = [
     (v.number, str(v)) for v in UBUNTU_VERSIONS
-                       if v.is_active()]
+    if v.is_active()]
 VERSION_CHOICES = [('', ugettext_lazy('Version'))] + SIMPLE_VERSION_CHOICES
 DISTRO_CHOICES = [('', ugettext_lazy('Distribution'))] + UBUNTU_DISTROS

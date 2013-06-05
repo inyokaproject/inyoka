@@ -87,6 +87,7 @@ INYOKA_SYSTEM_USER = u'ubuntuusers.de'
 INYOKA_SYSTEM_USER_EMAIL = '@'.join(['system', BASE_DOMAIN_NAME])
 INYOKA_ANONYMOUS_USER = u'anonymous'
 INYOKA_CONTACT_EMAIL = '@'.join(['contact', BASE_DOMAIN_NAME])
+DEFAULT_FROM_EMAIL = INYOKA_SYSTEM_USER_EMAIL
 
 # logger name for remote exception logging
 INYOKA_LOGGER_NAME = u'inyoka'
@@ -229,20 +230,20 @@ SOUTH_TESTS_MIGRATE = False
 
 OPENID_PROVIDERS = {
     'openid': {
-      'name': gettext_noop('OpenID'),
-      'url': None
+        'name': gettext_noop('OpenID'),
+        'url': None
     },
     'launchpad': {
         'name': gettext_noop('Launchpad'),
         'url': 'https://launchpad.net/~{username}'
     },
     'claimid': {
-      'name': gettext_noop('ClaimID'),
-      'url': 'http://claimid.com/{username}'
+        'name': gettext_noop('ClaimID'),
+        'url': 'http://claimid.com/{username}'
     },
     'google': {
-      'name': gettext_noop('Google'),
-      'url': 'https://www.google.com/accounts/o8/id'
+        'name': gettext_noop('Google'),
+        'url': 'https://www.google.com/accounts/o8/id'
     },
 }
 

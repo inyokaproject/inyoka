@@ -13,7 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Max
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
-from django.utils.html import escape
+from django.utils.html import escape, smart_urlquote
 from django.contrib import messages
 
 from inyoka.portal.user import Group
@@ -67,10 +67,10 @@ def index(request, page=1):
     pagination = Pagination(request, entries, page, 25, href('planet'))
     queryset = pagination.get_queryset()
     return {
-        'days':         group_by_day(queryset),
-        'articles':     queryset,
-        'pagination':   pagination,
-        'page':         page,
+        'days': group_by_day(queryset),
+        'articles': queryset,
+        'pagination': pagination,
+        'page': page,
     }
 
 
@@ -132,13 +132,13 @@ def feed(request, mode='short', count=10):
             kwargs['content_type'] = 'xhtml'
         if entry.author_homepage:
             kwargs['author'] = {'name': entry.author,
-                                'uri':  entry.author_homepage}
+                                'uri': entry.author_homepage}
         else:
             kwargs['author'] = entry.author
 
         feed.add(title=entry.title or _(u'No title given'),
                  url=entry.url,
-                 id=entry.guid,
+                 id=smart_urlquote(entry.guid),
                  updated=entry.updated,
                  published=entry.pub_date,
                  **kwargs)

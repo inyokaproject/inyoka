@@ -47,6 +47,7 @@ class EditCommentForm(forms.Form):
 class EditArticleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
+        readonly = kwargs.pop('readonly', False)
         if instance:
             initial = kwargs.setdefault('initial', {})
             initial['pub_date'] = instance.pub_datetime
@@ -56,6 +57,9 @@ class EditArticleForm(forms.ModelForm):
         super(EditArticleForm, self).__init__(*args, **kwargs)
         # Following stuff is in __init__ to keep helptext etc intact.
         self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
+        if readonly:
+            for field in ('subject', 'intro', 'text'):
+                self.fields[field].widget.attrs['readonly'] = True
 
     author = UserField(label=ugettext_lazy(u'Author'), required=True)
     pub_date = DateTimeField(label=ugettext_lazy(u'Publication date'),
@@ -84,7 +88,7 @@ class EditArticleForm(forms.ModelForm):
         slug = self.cleaned_data['slug']
         pub_date = self.cleaned_data.get('pub_date', None)
         if not pub_date:
-            return slug # invalid anyway as pub_date is required
+            return slug  # invalid anyway as pub_date is required
         pub_date = get_user_timezone().localize(pub_date) \
                     .astimezone(pytz.utc).replace(tzinfo=None).date()
         if slug:
@@ -129,7 +133,7 @@ class EditCategoryForm(forms.ModelForm):
 class NewEventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         event = kwargs.get('instance', None)
-        if event: # Adjust datetime to local timezone
+        if event:  # Adjust datetime to local timezone
             if event.date and event.time is not None:
                 dt = datetime_to_timezone(date_time_to_datetime(
                     event.date, event.time or dt_time(0)))

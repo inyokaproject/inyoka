@@ -44,9 +44,9 @@ def on_get_post(request):
                        'moderate') and post.topic.hidden or post.hidden):
         return None
     return {
-        'id':       post.id,
-        'author':   post.author.username,
-        'text':     post.text
+        'id': post.id,
+        'author': post.author.username,
+        'text': post.text
     }
 
 
@@ -155,7 +155,7 @@ def on_mark_topic_split_point(request):
     unchecked = False
 
     if topic and post_id:
-        topic = unquote(topic) # To replace quotes. e.g. the colon
+        topic = unquote(topic)  # To replace quotes. e.g. the colon
         post_ids = post_ids if topic in post_ids else {topic: []}
 
         post_id_marked = '!%s' % post_id
