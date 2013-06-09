@@ -16,7 +16,7 @@ from lxml.html.defs import empty_tags
 from htmlentitydefs import name2codepoint
 from xml.sax.saxutils import quoteattr
 from html5lib import HTMLParser, treewalkers, treebuilders
-from html5lib.serializer import XHTMLSerializer, HTMLSerializer
+from html5lib.serializer import HTMLSerializer
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
 from django.utils.encoding import force_unicode
 
@@ -31,10 +31,14 @@ html_entities = name2codepoint.copy()
 html_entities['apos'] = 39
 del name2codepoint
 
-SERIALIZERS = {
-    'html': HTMLSerializer,
-    'xhtml': XHTMLSerializer,
-}
+
+class XHTMLSerializer(HTMLSerializer):
+    quote_attr_values = True
+    minimize_boolean_attributes = False
+    use_trailing_solidus = True
+    escape_lt_in_attrs = True
+    omit_optional_tags = False
+    escape_rcdata = True
 
 
 def _build_html_tag(tag, attrs):
@@ -110,7 +114,7 @@ def parse_html(string, fragment=True):
 
 def cleanup_html(string, sanitize=True, fragment=True, stream=False,
                  filter_optional_tags=False, id_prefix=None,
-                 update_anchor_links=True, output_format='xhtml'):
+                 update_anchor_links=True, make_xhtml=False):
     """Clean up some html and convert it to HTML/XHTML."""
     if not string.strip():
         return u''
@@ -122,7 +126,14 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     walker = CleanupFilter(walker, id_prefix, update_anchor_links)
     if filter_optional_tags:
         walker = OptionalTagsFilter(walker)
-    serializer = SERIALIZERS[output_format]()
+    if make_xhtml:
+        serializer = XHTMLSerializer()
+    else:
+        serializer = HTMLSerializer(
+            quote_attr_values=True,
+            minimize_boolean_attributes=False,
+            omit_optional_tags=False,
+        )
     rv = serializer.serialize(walker, 'utf-8')
     if stream:
         return rv
@@ -172,9 +183,11 @@ class CleanupFilter(object):
 
         for token in self.source:
             if token['type'] == 'StartTag':
-                attrs = token.get('data', ())
+                attrs = token.get('data', {})
                 if not isinstance(attrs, dict):
                     attrs = dict(reversed(attrs))
+                # The attributes are namespaced -- we don't care about that, add them back later
+                attrs = {k: v for (_, k), v in attrs.iteritems()}
                 if token['name'] in self.tag_conversions:
                     new_tag, new_style = self.tag_conversions[token['name']]
                     token['name'] = new_tag
@@ -186,14 +199,12 @@ class CleanupFilter(object):
                             attrs['style'] = (style and style.rstrip(';') +
                                               '; ' or '') + new_style + ';'
 
-                elif token['name'] == 'a' and \
-                     attrs.get('href', '').startswith('#'):
+                elif token['name'] == 'a' and attrs.get('href', '').startswith('#'):
                     attrs.pop('target', None)
                     deferred_links[attrs['href'][1:]] = token
 
                 elif token['name'] == 'font':
                     token['name'] = 'span'
-                    attrs = dict(reversed(token.get('data', ())))
                     styles = []
                     tmp = attrs.pop('color', None)
                     if tmp:
@@ -230,9 +241,10 @@ class CleanupFilter(object):
                         element_id = self.id_prefix + element_id
                     attrs['id'] = element_id
                     id_map[original_id] = element_id
-                token['data'] = dict(list(item) for item in attrs.items())
-            elif token['type'] == 'EndTag' and \
-                 token['name'] in self.end_tags:
+                token['data'] = {}
+                for k, v in attrs.iteritems():
+                    token['data'][(None, force_unicode(k))] = force_unicode(v)  # None is the namespace
+            elif token['type'] == 'EndTag' and token['name'] in self.end_tags:
                 token['name'] = self.end_tags[token['name']]
             yield token
 

@@ -273,7 +273,9 @@ class CaptchaField(forms.MultiValueField):
     widget = CaptchaWidget
 
     def __init__(self, *args, **kwargs):
-        fields = (ImageCaptchaField(), HiddenCaptchaField())
+        only_anonymous = kwargs.pop('only_anonymous', False)
+        fields = (ImageCaptchaField(only_anonymous=only_anonymous),
+                  HiddenCaptchaField())
         kwargs['required'] = True
         super(CaptchaField, self).__init__(fields, *args, **kwargs)
 

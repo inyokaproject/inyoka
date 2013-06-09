@@ -87,6 +87,7 @@ INYOKA_SYSTEM_USER = u'ubuntuusers.de'
 INYOKA_SYSTEM_USER_EMAIL = '@'.join(['system', BASE_DOMAIN_NAME])
 INYOKA_ANONYMOUS_USER = u'anonymous'
 INYOKA_CONTACT_EMAIL = '@'.join(['contact', BASE_DOMAIN_NAME])
+DEFAULT_FROM_EMAIL = INYOKA_SYSTEM_USER_EMAIL
 
 # logger name for remote exception logging
 INYOKA_LOGGER_NAME = u'inyoka'

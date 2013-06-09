@@ -641,6 +641,9 @@ class User(AbstractBaseUser):
         elif action in ('subscribe', 'unsubscribe'):
             return href('portal', 'user', self.urlsafe_username, action, **query)
 
+    # TODO: reevaluate if needed.
+    backend = 'inyoka.portal.auth.InyokaAuthBackend'
+
 
 class UserData(models.Model):
     user = models.ForeignKey(User)

@@ -36,7 +36,7 @@ class RequestCache(BaseCache):
 
                 return val
         else:
-            return self.real_cache.get(key)
+            return self.real_cache.get(key, default, version)
 
     def get_many(self, keys, version=None):
         if not local_has_key('cache'):
