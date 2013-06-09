@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-08 23:08+0100\n"
+"POT-Creation-Date: 2013-05-26 10:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,25 +17,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.0dev\n"
 
-#: inyoka/wiki/actions.py:107
+#: inyoka/wiki/actions.py:109
 #, python-format
 msgid "Redirected from “<a href=\"%(link)s\">%(title)s</a>”."
 msgstr ""
 
-#: inyoka/wiki/actions.py:222
+#: inyoka/wiki/actions.py:224
 msgid "Revision is the latest one, revert aborted."
 msgstr ""
 
-#: inyoka/wiki/actions.py:225
+#: inyoka/wiki/actions.py:227
 msgid "Revert aborted."
 msgstr ""
 
-#: inyoka/wiki/actions.py:233
+#: inyoka/wiki/actions.py:235
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr ""
 
-#: inyoka/wiki/actions.py:262
+#: inyoka/wiki/actions.py:264
 #, python-format
 msgid ""
 "These attachments are already attached to the new page name: %(names)s. "
@@ -43,48 +43,48 @@ msgid ""
 "href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
 msgstr ""
 
-#: inyoka/wiki/actions.py:277 inyoka/wiki/actions.py:281
-#: inyoka/wiki/actions.py:298
+#: inyoka/wiki/actions.py:279 inyoka/wiki/actions.py:283
+#: inyoka/wiki/actions.py:300
 #, python-format
 msgid "Renamed from %(old_name)s"
 msgstr ""
 
-#: inyoka/wiki/actions.py:289
+#: inyoka/wiki/actions.py:291
 #, python-format
 msgid "Renamed to %(new_name)s"
 msgstr ""
 
-#: inyoka/wiki/actions.py:316
+#: inyoka/wiki/actions.py:318
 msgid "No page name given."
 msgstr ""
 
-#: inyoka/wiki/actions.py:323
+#: inyoka/wiki/actions.py:325
 msgid "Renamed the page successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:326
+#: inyoka/wiki/actions.py:328
 msgid "A page with this name already exists."
 msgstr ""
 
-#: inyoka/wiki/actions.py:411
+#: inyoka/wiki/actions.py:412
 #, python-format
 msgid "Used the template “<a href=\"%(link)s\">%(name)s</a>” for this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:442 inyoka/wiki/actions.py:891
+#: inyoka/wiki/actions.py:443 inyoka/wiki/actions.py:891
 msgid "Canceled."
 msgstr ""
 
-#: inyoka/wiki/actions.py:460
+#: inyoka/wiki/actions.py:461
 msgid "No changes."
 msgstr ""
 
-#: inyoka/wiki/actions.py:467 inyoka/wiki/actions.py:480
+#: inyoka/wiki/actions.py:468 inyoka/wiki/actions.py:480
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been created."
 msgstr ""
 
-#: inyoka/wiki/actions.py:469
+#: inyoka/wiki/actions.py:470
 #, python-format
 msgid "The page <a href=\"%(link)s\">%(name)s</a> has been edited."
 msgstr ""
@@ -289,7 +289,7 @@ msgstr ""
 msgid "Revision %(id)d (%(title)s)"
 msgstr ""
 
-#: inyoka/wiki/notifications.py:28
+#: inyoka/wiki/notifications.py:32
 #, python-format
 msgid "The page “%(name)s” was changed"
 msgstr ""
@@ -339,10 +339,6 @@ msgstr ""
 msgid ""
 "An anonymous user edited the article “%(article)s” on %(date)s. Summary: "
 "%(summary)s"
-msgstr ""
-
-#: inyoka/wiki/views.py:249 inyoka/wiki/views.py:252
-msgid "Anonymous"
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/_diff.html:32

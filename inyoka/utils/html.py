@@ -33,6 +33,15 @@ html_entities['apos'] = 39
 del name2codepoint
 
 
+class XHTMLSerializer(HTMLSerializer):
+    quote_attr_values = True
+    minimize_boolean_attributes = False
+    use_trailing_solidus = True
+    escape_lt_in_attrs = True
+    omit_optional_tags = False
+    escape_rcdata = True
+
+
 def _build_html_tag(tag, attrs):
     """Build an HTML opening tag."""
     attrs = u' '.join(iter(
@@ -116,7 +125,11 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     walker = CleanupFilter(walker, id_prefix, update_anchor_links)
     if filter_optional_tags:
         walker = OptionalTagsFilter(walker)
-    serializer = HTMLSerializer()
+    serializer = HTMLSerializer(
+        quote_attr_values=True,
+        minimize_boolean_attributes=False,
+        omit_optional_tags=False,
+    )
     rv = serializer.serialize(walker, 'utf-8')
     if stream:
         return rv
@@ -166,9 +179,11 @@ class CleanupFilter(filters_base.Filter):
 
         for token in filters_base.Filter.__iter__(self):
             if token['type'] == 'StartTag':
-                attrs = token.get('data', ())
+                attrs = token.get('data', {})
                 if not isinstance(attrs, dict):
                     attrs = dict(reversed(attrs))
+                # The attributes are namespaced -- we don't care about that, add them back later
+                attrs = {k: v for (_, k), v in attrs.iteritems()}
                 if token['name'] in self.tag_conversions:
                     new_tag, new_style = self.tag_conversions[token['name']]
                     token['name'] = new_tag
@@ -180,8 +195,7 @@ class CleanupFilter(filters_base.Filter):
                             attrs[(None, u'style')] = (style and style.rstrip(';') +
                                               '; ' or '') + new_style + ';'
 
-                elif token['name'] == 'a' and \
-                     attrs.get('href', '').startswith('#'):
+                elif token['name'] == 'a' and attrs.get('href', '').startswith('#'):
                     attrs.pop('target', None)
                     deferred_links[attrs['href'][1:]] = token
 
@@ -226,9 +240,10 @@ class CleanupFilter(filters_base.Filter):
                         element_id = self.id_prefix + element_id
                     attrs['id'] = element_id
                     id_map[original_id] = element_id
-                token['data'] = dict(list(item) for item in attrs.items())
-            elif token['type'] == 'EndTag' and \
-                 token['name'] in self.end_tags:
+                token['data'] = {}
+                for k, v in attrs.iteritems():
+                    token['data'][(None, force_unicode(k))] = force_unicode(v)  # None is the namespace
+            elif token['type'] == 'EndTag' and token['name'] in self.end_tags:
                 token['name'] = self.end_tags[token['name']]
             yield token
 

@@ -248,17 +248,15 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
     article suggestion made by a user. After saving it, the suggestion will be
     deleted automatically.
     """
-    preview = None
+    preview, locked, article = None, False, None
     initial = {'author': request.user}
 
     if year and month and day and slug:
         try:
-            """
-            do not access cached object!
-            This would lead to inconsistent form content
-            """
-            article = Article.objects.get(pub_date=date(int(year), int(month),
-                int(day)), slug=slug)
+            # Do not access cached object!
+            # This would lead to inconsistent form content here.
+            pub_date = date(int(year), int(month), int(day))
+            article = Article.objects.get(pub_date=pub_date, slug=slug)
         except IndexError:
             raise Http404()
         locked = article.lock(request)
@@ -266,16 +264,14 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             messages.error(request,
                 _(u'This article is currently being edited by “%(user)s”!')
                 % {'user': locked})
-    else:
-        article = None
 
     if request.method == 'POST':
         if article and article.public:
             form = EditPublicArticleForm(request.POST, instance=article,
-                                         initial=initial)
+                                         initial=initial, readonly=locked)
         else:
             form = EditArticleForm(request.POST, instance=article,
-                                   initial=initial)
+                                   initial=initial, readonly=locked)
         if 'send' in request.POST:
             if form.is_valid():
                 new = article is None
@@ -306,9 +302,11 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
     else:
         if slug:
             if article.public:
-                form = EditPublicArticleForm(instance=article, initial=initial)
+                form = EditPublicArticleForm(instance=article, initial=initial,
+                    readonly=locked)
             else:
-                form = EditArticleForm(instance=article, initial=initial)
+                form = EditArticleForm(instance=article, initial=initial,
+                    readonly=locked)
         elif suggestion_id:
             suggestion = Suggestion.objects.get(id=suggestion_id)
             form = EditArticleForm(initial={
@@ -316,9 +314,9 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 'text': suggestion.text,
                 'intro': suggestion.intro,
                 'author': suggestion.author,
-            })
+            }, readonly=locked)
         else:
-            form = EditArticleForm(initial=initial)
+            form = EditArticleForm(initial=initial, readonly=locked)
 
     return {
         'form': form,
