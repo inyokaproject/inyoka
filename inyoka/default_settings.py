@@ -319,7 +319,6 @@ CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
 
 TEST_RUNNER = 'discover_runner.DiscoverRunner'
-TEST_DISCOVER_TOP_LEVEL = path.dirname(path.dirname(__file__))
 
 AUTH_USER_MODEL = 'portal.User'
 AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)

@@ -1,4 +1,4 @@
 -r production.txt
 
 mock
-django-discover-runner==0.2.2
+django-discover-runner==1.0
