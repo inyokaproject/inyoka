@@ -152,10 +152,6 @@ WIKI_USERPAGE_INFO = 'Userpage'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = None
 
-# a prefix that is automatically added on every cache operation to the key.
-# You won't notice anything of it at all but it makes it possible to run more
-# than one application on a single memcached server without the risk of cache
-# key collision.
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
