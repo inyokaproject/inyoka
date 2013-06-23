@@ -32,6 +32,15 @@ html_entities['apos'] = 39
 del name2codepoint
 
 
+class XHTMLSerializer(HTMLSerializer):
+    quote_attr_values = True
+    minimize_boolean_attributes = False
+    use_trailing_solidus = True
+    escape_lt_in_attrs = True
+    omit_optional_tags = False
+    escape_rcdata = True
+
+
 def _build_html_tag(tag, attrs):
     """Build an HTML opening tag."""
     attrs = u' '.join(iter(
@@ -105,7 +114,7 @@ def parse_html(string, fragment=True):
 
 def cleanup_html(string, sanitize=True, fragment=True, stream=False,
                  filter_optional_tags=False, id_prefix=None,
-                 update_anchor_links=True):
+                 update_anchor_links=True, make_xhtml=False):
     """Clean up some html and convert it to HTML/XHTML."""
     if not string.strip():
         return u''
@@ -117,7 +126,14 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     walker = CleanupFilter(walker, id_prefix, update_anchor_links)
     if filter_optional_tags:
         walker = OptionalTagsFilter(walker)
-    serializer = HTMLSerializer()
+    if make_xhtml:
+        serializer = XHTMLSerializer()
+    else:
+        serializer = HTMLSerializer(
+            quote_attr_values=True,
+            minimize_boolean_attributes=False,
+            omit_optional_tags=False,
+        )
     rv = serializer.serialize(walker, 'utf-8')
     if stream:
         return rv
