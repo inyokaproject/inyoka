@@ -289,7 +289,7 @@ class TestAuthViews(TestCase):
         with translation.override('en-us'):
             response = self.client.post('/lost_password/', postdata)
         subject = mail.outbox[0].subject
-        self.assertIn(u'New password for “user”', subject)
+        self.assertIn(u'Password reset request', subject)
         body = mail.outbox[0].body
         link = re.search(r'(/lost_password/.*)\n', body).groups()[0]
         with translation.override('en-us'):
