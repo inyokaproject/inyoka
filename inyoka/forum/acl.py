@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy
 
 
+#: Mapping from privilege strings to human readable descriptions
 PRIVILEGES_DETAILS = [
     ('read', ugettext_lazy(u'can read')),
     ('vote', ugettext_lazy(u'can vote')),
@@ -25,9 +26,13 @@ PRIVILEGES_DETAILS = [
     ('moderate', ugettext_lazy(u'can moderate'))
 ]
 
+#: List of available privilege strings
 PRIVILEGES = [x[0] for x in PRIVILEGES_DETAILS]
+
+#: Mapping from privilege strings to bit representations
 PRIVILEGES_BITS = {PRIVILEGES[i - 1]: 2 ** i
                    for i in xrange(1, len(PRIVILEGES_DETAILS) + 1)}
+#: Similar to :data:`PRIVILEGES_BITS` except a mapping from the bits to the strings
 REVERSED_PRIVILEGES_BITS = {y: x for x, y in PRIVILEGES_BITS.iteritems()}
 
 #: create some constants for easy access
