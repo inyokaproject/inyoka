@@ -18,7 +18,7 @@ from inyoka.utils.cache import request_cache
 
 class TestWikiAcl(TestCase):
     def test_normalized_naming(self):
-        User.objects.create_user('test normalized name', 'test2@example.com')
+        user = User.objects.create_user('test normalized name', 'test2@example.com')
         test_page = """
 #X-Behave: Access-Control-List
 {{{
@@ -41,7 +41,7 @@ test normalized name=-edit,-create,-attach,-manage,-delete
 test_normalized_name=-edit,-create,-attach,-manage,-delete
 }}}
 """
-        Page.objects.create('ACL', test_page)
+        Page.objects.create('ACL', test_page, user)
 
         self.assertEqual(get_privilege_flags('test normalized_name', 'some_page'), PRIV_ALL)
 
