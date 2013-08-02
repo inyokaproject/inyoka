@@ -15,7 +15,8 @@ from django.utils.translation import ugettext as _
 from celery.task import task
 
 from inyoka.utils import ctype
-from inyoka.utils.notification import queue_notifications
+from inyoka.utils.notification import queue_notifications, send_notification
+from inyoka.utils.urls import href
 
 
 def send_newtopic_notifications(user, post, topic, forum):
@@ -147,3 +148,31 @@ def send_deletion_notification(user, topic, reason):
             'topic': data.get('topic_title')},
         data,
         filter={'content_type': ctype(Topic), 'object_id': data.get('topic_id')})
+
+
+def send_reported_topics_notification(topic_id):
+    notify_reported_topics.delay(topic_id)
+
+
+@task(ignore_result=True)
+def notify_reported_topics(topic_id):
+    from inyoka.forum.models import Topic
+    from inyoka.portal.models import User
+    from inyoka.utils.storage import storage
+
+    topic = Topic.objects.get(pk=topic_id)
+
+    subscribers = storage['reported_topics_subscribers'] or u''
+    args = {
+        'reported_topics': href('forum', 'reported_topics'),
+        'reporter': topic.reporter.username,
+        'text': topic.reported,
+        'topic_forum': topic.forum.name,
+        'topic_link': topic.get_absolute_url(),
+        'topic_title': topic.title,
+    }
+    for uid in map(int, subscribers.split(',')):
+        user = User.objects.get(pk=uid)
+        send_notification(user, 'new_reported_topic',
+            _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
+            args)

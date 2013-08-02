@@ -17,8 +17,26 @@ from inyoka.portal.models import Subscription
 
 def send_notification(user, template_name=None, subject=None, args=None):
     """
-    Send a message to the user using the person's favourite method(s)
-    he has specified in the user control panel.
+    Send a message to the user using the person's favorite method(s) specified
+    in the user control panel.
+
+    The message will be loaded from the file ``<template_name>.txt`` or
+    ``<template_name>.jabber.txt`` respectively. Besides the template data
+    provided via ``args`` the following data will be propagated to the template
+    rendering process:
+
+    ``domain``
+        Resolves to the :data:`BASE_DOMAIN_NAME` as defined in the settings.
+
+    ``username``
+        Resolves to the username of the receiver.
+
+    :param User user: An instance of a :class:`~inyoka.portal.user.User` model
+        specifying the receiver of the notification.
+    :param str template_name: The name of the mail/jabber template to use (w/o
+        the file extension)
+    :param str subject: The subject used in mails
+    :param dict args: The data that is used during message template rendering
     """
     assert subject is not None
     args = args or {}
@@ -28,8 +46,10 @@ def send_notification(user, template_name=None, subject=None, args=None):
 
     methods = user.settings.get('notify', ['mail'])
 
-    if not 'domain' in args:
-        args['domain'] = settings.BASE_DOMAIN_NAME
+    args.update({
+        'domain': settings.BASE_DOMAIN_NAME,
+        'username': user.username,
+    })
 
     if 'jabber' in methods and user.jabber:
         message = render_template('mails/%s.jabber.txt' % template_name, args)
@@ -76,7 +96,6 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
         notified_users.add(subscription.user)
         if callable(args):
             args = args(subscription)
-        args.update({'username': subscription.user.username})
         notify_about_subscription(subscription, template, subject, args)
         notified.add(subscription.id)
 

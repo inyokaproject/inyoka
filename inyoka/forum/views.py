@@ -57,7 +57,7 @@ from inyoka.forum.acl import filter_invisible, get_forum_privileges, \
     check_privilege, get_privileges
 from inyoka.forum.notifications import send_discussion_notification, \
     send_edit_notifications, send_newtopic_notifications, \
-    send_deletion_notification
+    send_deletion_notification, send_reported_topics_notification
 
 
 @templated('forum/index.html')
@@ -142,8 +142,7 @@ def forum(request, slug, page=1):
     qs = Topic.objects.prepare_for_overview(list(pagination.get_queryset()))
 
     # FIXME: Filter topics with no last_post or first_post
-    topics = [topic for topic in qs
-                    if topic.first_post and topic.last_post]
+    topics = [topic for topic in qs if topic.first_post and topic.last_post]
 
     if not check_privilege(privs[forum.pk], 'moderate'):
         topics = [topic for topic in topics if not topic.hidden]
@@ -811,12 +810,7 @@ def report(request, topic_slug):
             topic.reporter_id = request.user.id
             topic.save()
 
-            subscribers = storage['reported_topics_subscribers'] or u''
-            users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
-            for user in users:
-                send_notification(user, 'new_reported_topic',
-                                  _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
-                                  {'topic': topic, 'text': data['text']})
+            send_reported_topics_notification(topic.pk)
 
             cache.delete('forum/reported_topic_count')
             messages.success(request, _(u'The topic was reported.'))

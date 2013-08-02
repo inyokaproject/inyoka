@@ -1,4 +1,4 @@
-{% trans reporter=USER.username, topic_title=topic.title, topic_forum=topic.forum, topic_link=topic|url, text=text|wordwrap(75, false)|indent(4), reported_topics=href('forum', 'reported_topics') -%}
+{% trans text=text|wordwrap(75, false)|indent(4) -%}
 {{ reporter }} reported the topic “{{ topic_title }}” ( {{ topic_link }} ) in the forum “{{ topic_forum }}”.
     {{ text }}
 List of reported topics: {{ reported_topics }}
