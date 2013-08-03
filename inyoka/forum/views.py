@@ -805,8 +805,7 @@ def report(request, topic_slug):
     if request.method == 'POST':
         form = ReportTopicForm(request.POST)
         if form.is_valid():
-            data = form.cleaned_data
-            topic.reported = data['text']
+            topic.reported = form.cleaned_data['text']
             topic.reporter_id = request.user.id
             topic.save()
 
