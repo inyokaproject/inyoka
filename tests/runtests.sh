@@ -5,6 +5,7 @@ interpreter=python
 manage="${basedir}/../manage.py test --noinput"
 settings=()
 verbosity=1
+optional=()
 
 function usage {
     echo "Usage:"
@@ -50,8 +51,9 @@ while [ "$1" != "" ]; do
             exit
             ;;
         *)
-            usage
-            exit 1
+            #usage
+            #exit 1
+            optional+=(${1})
     esac
     shift
 done
@@ -65,6 +67,6 @@ uniq_settings=($(printf "%s\n" "${settings[@]}" | sort -u))
 
 for setting in "${uniq_settings[@]}" ; do
     echo -en "\n\n--------------------------------------------------\nrunning tests for $setting"
-    $interpreter $manage --settings=$setting --verbosity=$verbosity
+    $interpreter $manage --settings=$setting --verbosity=$verbosity ${optional[@]}
 done
 
