@@ -1,7 +1,7 @@
-{% trans username=username, topic_title=topic.title, topic_url=topic|url, mod=mod, old_forum_name=old_forum_name, forum_name=forum_name, domain=domain -%}
+{% trans -%}
 Hello {{ username }},
 
-{{ mod}} moved your topic “{{ topic_title }}” from the forum “{{ old_forum_name }}” to “{{ forum_name }}”. You can view the topic by visiting {{ topic_url }}
+{{ mod}} moved the topic “{{ topic_title }}” from the forum “{{ old_forum_name }}” to “{{ new_forum_name }}”. You can view the topic by visiting {{ topic_link }}
 
 Kind regards,
 

@@ -627,7 +627,7 @@ msgstr ""
 #: inyoka/templates/mails/topic_moved.jabber.txt:1
 #, python-format
 msgid ""
-"%(mod)s moved your topic “%(topic_title)s” from the forum "
+"%(mod)s moved the topic “%(topic_title)s” from the forum "
 "“%(old_forum_name)s” to “%(forum_name)s”: %(topic_url)s"
 msgstr ""
 
@@ -636,7 +636,7 @@ msgstr ""
 msgid ""
 "Hello %(username)s,\n"
 "\n"
-"%(mod)s moved your topic “%(topic_title)s” from the forum "
+"%(mod)s moved the topic “%(topic_title)s” from the forum "
 "“%(old_forum_name)s” to “%(forum_name)s”. You can view the topic by "
 "visiting %(topic_url)s\n"
 "\n"
