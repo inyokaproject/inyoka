@@ -66,7 +66,7 @@ fi
 uniq_settings=($(printf "%s\n" "${settings[@]}" | sort -u))
 
 for setting in "${uniq_settings[@]}" ; do
-    echo -en "\n\n--------------------------------------------------\nrunning tests for $setting"
+    echo -en "\n\n--------------------------------------------------\nrunning tests for $setting\n"
     $interpreter $manage --settings=$setting --verbosity=$verbosity ${optional[@]}
 done
 
