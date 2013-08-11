@@ -16,7 +16,7 @@ from django.utils import translation
 from inyoka.forum.acl import CAN_READ, PRIVILEGES_BITS
 from inyoka.forum.models import Forum, Topic, Post, Privilege
 from inyoka.forum.notifications import send_move_notification, \
-    send_reported_topics_notification
+    send_reported_topics_notification, send_split_notification
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.utils.storage import storage
@@ -130,3 +130,83 @@ class TestNotifications(TestCase):
         # Since the other body parts didn't change from mail1 -> mail2, skip them here
         self.assertEqual(mail3.to, [u'user2@example.com'])
         self.assertEqual(mail3.subject, u'ubuntuusers.de: The topic “A test Topic” was moved')
+
+    def test_splittopic_new(self):
+        new_topic = Topic.objects.create(title='New Topic', author=self.user,
+                forum=self.forum2)
+        Post.objects.create(text=u'Post 2', author=self.user, topic=new_topic)
+        Post.objects.create(text=u'Post 3', author=self.user, topic=new_topic)
+
+        for u in [self.admin, self.admin2, self.user, self.user2, self.user_no_read]:
+            Subscription(user=u, content_object=self.topic).save()
+            for f in self.forums:
+                Subscription(user=u, content_object=f).save()
+
+        with translation.override('en-us'):
+            send_split_notification(self.topic, new_topic, True, self.admin)
+
+        self.assertEqual(len(mail.outbox), 3)
+
+        mail1, mail2, mail3 = mail.outbox[0], mail.outbox[1], mail.outbox[2]
+        self.assertIn(u'Hello admin2,', mail1.body)
+        self.assertIn(u'admin has split', mail1.body)
+        self.assertIn(u'topic “A test Topic”', mail1.body)
+        self.assertIn(u'to “New Topic”', mail1.body)
+        self.assertIn(u'splited part by visiting http://forum.ubuntuusers.local:8080/topic/new-topic/', mail1.body)
+        self.assertIn(u'original topic by visiting http://forum.ubuntuusers.local:8080/topic/a-test-topic/', mail1.body)
+        self.assertEqual(mail1.to, [u'admin2@example.com'])
+        self.assertEqual(mail1.subject, u'ubuntuusers.de: The topic “A test Topic” was split')
+
+        self.assertIn(u'Hello user,', mail2.body)
+        self.assertIn(u'admin has split', mail2.body)
+        self.assertIn(u'topic “A test Topic”', mail2.body)
+        self.assertIn(u'to “New Topic”', mail2.body)
+        self.assertIn(u'splited part by visiting http://forum.ubuntuusers.local:8080/topic/new-topic/', mail2.body)
+        self.assertIn(u'original topic by visiting http://forum.ubuntuusers.local:8080/topic/a-test-topic/', mail2.body)
+        self.assertEqual(mail2.to, [u'user@example.com'])
+        self.assertEqual(mail2.subject, u'ubuntuusers.de: The topic “A test Topic” was split')
+
+        self.assertIn(u'Hello user2,', mail3.body)
+        # Since the other body parts didn't change from mail1 -> mail2, skip them here
+        self.assertEqual(mail3.to, [u'user2@example.com'])
+        self.assertEqual(mail3.subject, u'ubuntuusers.de: The topic “A test Topic” was split')
+
+    def test_splittopic_append(self):
+        new_topic = Topic.objects.create(title='New Topic', author=self.user,
+                forum=self.forum2)
+        Post.objects.create(text=u'Post 2', author=self.user, topic=new_topic)
+        Post.objects.create(text=u'Post 3', author=self.user, topic=new_topic)
+
+        for u in [self.admin, self.admin2, self.user, self.user2, self.user_no_read]:
+            Subscription(user=u, content_object=self.topic).save()
+            for f in self.forums:
+                Subscription(user=u, content_object=f).save()
+
+        with translation.override('en-us'):
+            send_split_notification(self.topic, new_topic, True, self.admin)
+
+        self.assertEqual(len(mail.outbox), 3)
+
+        mail1, mail2, mail3 = mail.outbox[0], mail.outbox[1], mail.outbox[2]
+        self.assertIn(u'Hello admin2,', mail1.body)
+        self.assertIn(u'admin has split', mail1.body)
+        self.assertIn(u'topic “A test Topic”', mail1.body)
+        self.assertIn(u'to “New Topic”', mail1.body)
+        self.assertIn(u'splited part by visiting http://forum.ubuntuusers.local:8080/topic/new-topic/', mail1.body)
+        self.assertIn(u'original topic by visiting http://forum.ubuntuusers.local:8080/topic/a-test-topic/', mail1.body)
+        self.assertEqual(mail1.to, [u'admin2@example.com'])
+        self.assertEqual(mail1.subject, u'ubuntuusers.de: The topic “A test Topic” was split')
+
+        self.assertIn(u'Hello user,', mail2.body)
+        self.assertIn(u'admin has split', mail2.body)
+        self.assertIn(u'topic “A test Topic”', mail2.body)
+        self.assertIn(u'to “New Topic”', mail2.body)
+        self.assertIn(u'splited part by visiting http://forum.ubuntuusers.local:8080/topic/new-topic/', mail2.body)
+        self.assertIn(u'original topic by visiting http://forum.ubuntuusers.local:8080/topic/a-test-topic/', mail2.body)
+        self.assertEqual(mail2.to, [u'user@example.com'])
+        self.assertEqual(mail2.subject, u'ubuntuusers.de: The topic “A test Topic” was split')
+
+        self.assertIn(u'Hello user2,', mail3.body)
+        # Since the other body parts didn't change from mail1 -> mail2, skip them here
+        self.assertEqual(mail3.to, [u'user2@example.com'])
+        self.assertEqual(mail3.subject, u'ubuntuusers.de: The topic “A test Topic” was split')

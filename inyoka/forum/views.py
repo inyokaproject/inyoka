@@ -34,7 +34,6 @@ from inyoka.utils.feeds import atom_feed, AtomFeed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.notification import send_notification, notify_about_subscription
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.storage import storage
 from inyoka.utils.forms import clear_surge_protection
@@ -58,7 +57,7 @@ from inyoka.forum.acl import filter_invisible, get_forum_privileges, \
 from inyoka.forum.notifications import send_discussion_notification, \
     send_edit_notifications, send_newtopic_notifications, \
     send_deletion_notification, send_reported_topics_notification, \
-    send_move_notification
+    send_move_notification, send_split_notification
 
 
 @templated('forum/index.html')
@@ -1037,16 +1036,17 @@ def splittopic(request, topic_slug, page=1):
         if form.is_valid():
             data = form.cleaned_data
 
+            as_new = (data['action'] == 'new')
             # Sanity check to not circulary split topics to the same topic
             # (they get erased in that case)
-            if data['action'] != 'new' and data['topic'].slug == old_topic.slug:
+            if not as_new and data['topic'].slug == old_topic.slug:
                 messages.error(request, _(u'You cannot set this topic as target.'))
                 return HttpResponseRedirect(request.path)
 
             posts = list(posts)
 
             try:
-                if data['action'] == 'new':
+                if as_new:
                     new_topic = Topic(title=data['title'],
                                       forum=data['forum'],
                                       slug=None,
@@ -1070,33 +1070,8 @@ def splittopic(request, topic_slug, page=1):
                       u'Please choose a forum.'))
                 return HttpResponseRedirect(request.path)
 
-            new_forum = new_topic.forum
-            nargs = {'username': None,
-                     'new_topic': new_topic,
-                     'old_topic': old_topic,
-                     'mod': request.user.username}
-            users_done = set([request.user.id])
-            filter = Q(topic_id=old_topic.id)
-            if data['action'] == 'new':
-                filter |= Q(forum_id=new_forum.id)
-            # TODO: Disable until http://forum.ubuntuusers.de/topic/benachrichtigungen-nach-teilung-einer-diskuss/ is resolved to not spam the users
-            # subscriptions = Subscription.objects.select_related('user').filter(filter)
-            subscriptions = []
+            send_split_notification(old_topic, new_topic, as_new, request.user)
 
-            for subscription in subscriptions:
-                # Skip loop for users already notified:
-                if subscription.user.id in users_done:
-                    continue
-                # Added Users to users_done which should not get any
-                # notification for splited Topics:
-                if 'topic_split' not in subscription.user.settings.get('notifications', ('topic_split',)):
-                    users_done.add(subscription.user.id)
-                    continue
-                nargs['username'] = subscription.user.username
-                notify_about_subscription(subscription, 'topic_splited',
-                    _(u'The topic “%(topic)s” was split.')
-                    % {'topic': old_topic.title}, nargs)
-                users_done.add(subscription.user.id)
             return HttpResponseRedirect(url_for(new_topic))
     else:
         form = SplitTopicForm(initial={

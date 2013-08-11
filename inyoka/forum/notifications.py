@@ -215,3 +215,26 @@ def notify_move_author(author_id, data):
             data)
     except User.DoesNotExist:
         pass
+
+
+def send_split_notification(old_topic, new_topic, is_new, request_user):
+    from django.db.models import Q
+    from inyoka.forum.models import Forum, Topic
+    data = {
+        'mod': request_user.username,
+        'new_topic_title': new_topic.title,
+        'new_topic_link': new_topic.get_absolute_url(),
+        'old_topic_title': old_topic.title,
+        'old_topic_link': old_topic.get_absolute_url(),
+    }
+
+    filter = Q(content_type=ctype(Topic)) & Q(object_id=old_topic.id)
+    if is_new:
+        filter |= (Q(content_type=ctype(Forum)) & Q(object_id=new_topic.forum.id))
+
+    queue_notifications.delay(
+        request_user.pk,
+        'topic_splited',
+        _(u'The topic “%(topic)s” was split') % {'topic': old_topic.title},
+        data,
+        filter=filter)
