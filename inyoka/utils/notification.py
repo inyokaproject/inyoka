@@ -76,16 +76,29 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
     assert filter is not None
     assert args is not None
 
+    from django.db.models import Q
+
     if not include_notified:
-        filter.update({'notified': False})
+        if isinstance(filter, Q):
+            filter = filter & Q(notified=False)
+        else:
+            filter.update({'notified': False})
 
     if exclude_current_user:
         if not exclude:
             exclude = {'user__id': request_user_id}
         else:
-            exclude.update({'user__id': request_user_id})
+            if 'user__id' in exclude:
+                ids = [exclude.pop('user__id'), request_user_id] + exclude.pop('user__in', [])
+                exclude.update({'user__in': ids})
+            else:
+                exclude.update({'user__id': request_user_id})
 
-    subscriptions = Subscription.objects.filter(**filter)
+    if isinstance(filter, Q):
+        subscriptions = Subscription.objects.filter(filter)
+    else:
+        subscriptions = Subscription.objects.filter(**filter)
+
     if exclude is not None:
         subscriptions = subscriptions.exclude(**exclude)
 
@@ -93,6 +106,11 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
 
     notified = set()
     for subscription in subscriptions.all():
+        if subscription.user in notified_users:
+            # Prevent duplicate notification for same event,
+            # but update all subscriptions
+            notified.add(subscription.id)
+            continue
         notified_users.add(subscription.user)
         if callable(args):
             args = args(subscription)
