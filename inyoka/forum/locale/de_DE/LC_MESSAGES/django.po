@@ -430,13 +430,13 @@ msgstr "Du wirst ab sofort nicht mehr bei gemeldeten Themen benachrichtigt."
 
 #: inyoka/forum/views.py:1011
 #, python-format
-msgid "Your topic “%(topic)s” was moved."
-msgstr "Dein Thema „%(topic)s“ wurde verschoben."
+msgid "Your topic “%(topic)s” was moved"
+msgstr "Dein Thema „%(topic)s“ wurde verschoben"
 
 #: inyoka/forum/views.py:1025
 #, python-format
-msgid "The topic “%(topic)s” was moved."
-msgstr "Das Thema „%(topic)s“ wurde verschoben."
+msgid "The topic “%(topic)s” was moved"
+msgstr "Das Thema „%(topic)s“ wurde verschoben"
 
 #: inyoka/forum/views.py:1048
 msgid "No post selected."

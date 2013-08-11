@@ -57,7 +57,8 @@ from inyoka.forum.acl import filter_invisible, get_forum_privileges, \
     check_privilege, get_privileges
 from inyoka.forum.notifications import send_discussion_notification, \
     send_edit_notifications, send_newtopic_notifications, \
-    send_deletion_notification, send_reported_topics_notification
+    send_deletion_notification, send_reported_topics_notification, \
+    send_move_notification
 
 
 @templated('forum/index.html')
@@ -809,7 +810,7 @@ def report(request, topic_slug):
             topic.reporter_id = request.user.id
             topic.save()
 
-            send_reported_topics_notification(topic.pk)
+            send_reported_topics_notification(topic)
 
             cache.delete('forum/reported_topic_count')
             messages.success(request, _(u'The topic was reported.'))
@@ -985,39 +986,14 @@ def movetopic(request, topic_slug):
         form.fields['forum'].refresh()
         if form.is_valid():
             data = form.cleaned_data
-            forum = mapping.get(int(data['forum']))
-            if forum is None:
+            new_forum = mapping.get(int(data['forum']))
+            if new_forum is None:
                 return abort_access_denied(request)
-            old_forum_name = topic.forum.name
-            topic.move(forum)
-            # send a notification to the topic author to inform him about
-            # the new forum.
-            nargs = {'username': topic.author.username,
-                     'topic': topic,
-                     'mod': request.user.username,
-                     'forum_name': forum.name,
-                     'old_forum_name': old_forum_name}
-
-            user_notifications = topic.author.settings.get('notifications', ('topic_move',))
-            if 'topic_move' in user_notifications and topic.author.username != request.user.username:
-                send_notification(topic.author, 'topic_moved',
-                    _(u'Your topic “%(topic)s” was moved.')
-                    % {'topic': topic.title}, nargs)
-
-            users_done = set([topic.author.id, request.user.id])
-            ct = ContentType.objects.get_for_model
-            subscriptions = Subscription.objects.filter((Q(content_type=ct(Topic)) &
-                                                         Q(object_id=topic.id)) |
-                                                        (Q(content_type=ct(Forum)) &
-                                                         Q(object_id=topic.forum.id)))
-            for subscription in subscriptions:
-                if subscription.user.id in users_done:
-                    continue
-                nargs['username'] = subscription.user.username
-                notify_about_subscription(subscription, 'topic_moved',
-                    _(u'The topic “%(topic)s” was moved.')
-                    % {'topic': topic.title}, nargs)
-                users_done.add(subscription.user.id)
+            old_forum = topic.forum
+            topic.move(new_forum)
+            # send a notification to the topic author and subscribers to inform
+            # them about the movement
+            send_move_notification(topic, old_forum, new_forum, request.user)
             return HttpResponseRedirect(url_for(topic))
     else:
         form = MoveTopicForm()

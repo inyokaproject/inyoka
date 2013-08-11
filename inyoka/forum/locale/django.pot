@@ -410,12 +410,12 @@ msgstr ""
 
 #: inyoka/forum/views.py:1011
 #, python-format
-msgid "Your topic “%(topic)s” was moved."
+msgid "Your topic “%(topic)s” was moved"
 msgstr ""
 
 #: inyoka/forum/views.py:1025
 #, python-format
-msgid "The topic “%(topic)s” was moved."
+msgid "The topic “%(topic)s” was moved"
 msgstr ""
 
 #: inyoka/forum/views.py:1048
