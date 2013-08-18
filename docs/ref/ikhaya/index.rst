@@ -1,12 +1,23 @@
 .. _ikhaya:
 
-================
-Ikhaya component
-================
+======
+Ikhaya
+======
+
+.. py:currentmodule:: inyoka.ikhaya
+
+.. automodule:: inyoka.ikhaya
+   :members:
+   :undoc-members:
+   :private-members:
+
+
+References
+==========
 
 .. toctree::
-    :maxdepth: 1
+   :glob:
+   :maxdepth: 1
 
-    forms
-    models
-    views
+   *
+
