@@ -1,10 +1,9 @@
-Django==1.5.1
-# Includes various fixes
-https://github.com/alex/django-filter/tarball/master/#egg=django-filter
+Django==1.5.2
+django-filter==0.7
 # Includes Django 1.5 fix
-https://github.com/EnTeQuAk/django-openid/tarball/fix_django/#egg=django-openid
+#https://github.com/EnTeQuAk/django-openid/tarball/fix_django/#egg=django-openid
+django-openid==0.1.5
 South==0.8.1
-distribute==0.6.40
 Jinja2==2.7
 MarkupSafe==0.18
 # Because Babel 0.9.6 does not extract pgettext
