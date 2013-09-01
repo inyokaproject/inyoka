@@ -18,7 +18,7 @@ from itertools import izip
 from jinja2.constants import LOREM_IPSUM_WORDS
 from django.conf import settings
 
-if not os.environ.has_key('DJANGO_SETTINGS_MODULE'):
+if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
 settings.DEBUG = settings.DATABASE_DEBUG = False # for nice progressbar output ;)
 
