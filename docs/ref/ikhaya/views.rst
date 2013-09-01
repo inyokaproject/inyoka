@@ -1,10 +1,13 @@
 .. _ikhaya-views:
 
 ============
-Ikhaya views
+Ikhaya Views
 ============
 
-.. py:module:: inyoka.ikhaya.views
-
 .. py:currentmodule:: inyoka.ikhaya.views
+
+.. automodule:: inyoka.ikhaya.views
+   :members:
+   :undoc-members:
+   :private-members:
 

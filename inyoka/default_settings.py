@@ -148,10 +148,6 @@ WIKI_USERPAGE_INFO = 'Userpage'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = None
 
-# a prefix that is automatically added on every cache operation to the key.
-# You won't notice anything of it at all but it makes it possible to run more
-# than one application on a single memcached server without the risk of cache
-# key collision.
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -329,7 +325,6 @@ CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
 
 TEST_RUNNER = 'discover_runner.DiscoverRunner'
-TEST_DISCOVER_TOP_LEVEL = path.dirname(path.dirname(__file__))
 
 AUTH_USER_MODEL = 'portal.User'
 AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)

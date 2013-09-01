@@ -184,6 +184,7 @@ class Category(models.Model):
         cache.delete('ikhaya/categories')
 
     class Meta:
+        ordering = ('name',)
         verbose_name = ugettext_lazy(u'Category')
         verbose_name_plural = ugettext_lazy(u'Categories')
 
