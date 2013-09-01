@@ -71,6 +71,25 @@ class TestArticleModel(TestCase):
         self.assertEqual(self.article1.simplified_text, 'Text 1')
         self.article1.text = _old_text
 
+
+class TestCategoryModel(TestCase):
+
+    def test_default_ordering(self):
+        """Order categories by name -- Ticket #906"""
+        names = [
+            'Maecenas ut leo',
+            'Phasellus lobortis felis',
+            'Duis eget odio pulvinar',
+            'Quisque volutpat'
+        ]
+        for name in names:
+            Category.objects.create(name=name)
+        self.assertEqual(
+            list(Category.objects.values_list('name', flat=True).all()),
+            sorted(names)
+        )
+
+
 class TestSuggestionModel(TestCase):
 
     def setUp(self):

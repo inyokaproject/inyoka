@@ -899,7 +899,7 @@ class Parser(object):
     def parse_template(self, stream):
         """Parse the template macro shortcut."""
         # FIXME: Circular imports
-        from inyoka.markup.macros import Template
+        from inyoka.wiki.macros import Template
         stream.expect('template_begin')
         name = stream.expect('template_name').value
         args, kwargs = self.parse_arguments(stream, 'template_end')

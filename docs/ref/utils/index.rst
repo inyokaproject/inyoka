@@ -1,13 +1,23 @@
 .. _utils:
 
-=========
-Utilities
-=========
+=====
+Utils
+=====
+
+.. py:currentmodule:: inyoka.utils
+
+.. automodule:: inyoka.utils
+   :members:
+   :undoc-members:
+   :private-members:
+
+
+References
+==========
 
 .. toctree::
-    :maxdepth: 1
+   :glob:
+   :maxdepth: 1
 
-    database
-    files
-    forms
-    user
+   *
+
