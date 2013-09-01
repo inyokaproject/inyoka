@@ -61,7 +61,7 @@ def main():
         opts, args = getopt.getopt(sys.argv[1:], "drvhB",
                                    ["dryrun", "recurse", "verbose", "help",
                                     "no-backup"])
-    except getopt.error, msg:
+    except getopt.error as msg:
         usage(msg)
         return
     for o, a in opts:
@@ -101,7 +101,7 @@ def check(file):
         print "checking", file, "...",
     try:
         f = open(file)
-    except IOError, msg:
+    except IOError as msg:
         errprint("%s: I/O Error: %s" % (file, str(msg)))
         return
 
@@ -237,13 +237,14 @@ class Reindenter:
         return line
 
     # Line-eater for tokenize.
-    def tokeneater(self, type, token, (sline, scol), end, line,
+    def tokeneater(self, type, token, cols, end, line,
                    INDENT=tokenize.INDENT,
                    DEDENT=tokenize.DEDENT,
                    NEWLINE=tokenize.NEWLINE,
                    COMMENT=tokenize.COMMENT,
                    NL=tokenize.NL):
 
+        (sline, scol) = cols
         if type == NEWLINE:
             # A program statement, or ENDMARKER, will eventually follow,
             # after some (possibly empty) run of tokens of the form
