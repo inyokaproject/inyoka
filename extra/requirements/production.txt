@@ -1,8 +1,7 @@
 Django==1.5.2
 django-filter==0.7
 # Includes Django 1.5 fix
-#https://github.com/EnTeQuAk/django-openid/tarball/fix_django/#egg=django-openid
-django-openid==0.1.5
+https://github.com/EnTeQuAk/django-openid/tarball/fix_django/#egg=django-openid
 South==0.8.1
 Jinja2==2.7
 MarkupSafe==0.18
