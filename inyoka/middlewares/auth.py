@@ -8,9 +8,7 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.contrib import auth
-from django.contrib import messages
-
+from django.contrib import auth, messages
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 

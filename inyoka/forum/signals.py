@@ -8,16 +8,16 @@
     :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.core.cache import cache
 from django.dispatch import receiver
-from django.db.models import Max, F
-from django.db.models.signals import post_save, post_delete, pre_save
+from django.db.models import F, Max
+from django.core.cache import cache
+from django.db.models.signals import pre_save, post_save, post_delete
 
-from inyoka.utils.search import search
-from inyoka.utils.database import find_next_increment
 from inyoka.utils.text import slugify
 from inyoka.portal.user import User
-from inyoka.forum.models import Forum, Topic, Post, Privilege
+from inyoka.utils.search import search
+from inyoka.forum.models import Post, Topic, Forum, Privilege
+from inyoka.utils.database import find_next_increment
 
 
 @receiver(pre_save, sender=Forum)

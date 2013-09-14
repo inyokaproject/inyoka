@@ -9,10 +9,11 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.utils.translation import ugettext_lazy
+
 from inyoka.forum.acl import get_privileges, check_privilege
-from inyoka.forum.models import Post, Forum
-from inyoka.utils.urls import url_for, href
+from inyoka.utils.urls import href, url_for
 from inyoka.utils.search import search, SearchAdapter
+from inyoka.forum.models import Post, Forum
 from inyoka.utils.decorators import deferred
 
 

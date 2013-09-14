@@ -9,9 +9,11 @@
     :license: GNU GPL.
 """
 import unittest
-from inyoka.utils.templating import json_filter
 
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
+
+from inyoka.utils.templating import json_filter
 
 
 class TestTemplating(unittest.TestCase):

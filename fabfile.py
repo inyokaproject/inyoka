@@ -10,11 +10,10 @@
     :license: GNU GPL.
 """
 import os
-from fabric.api import env, run, local, put, require, prompt, open_shell, \
-    roles, settings
+
+from fabric.api import env, put, run, roles, local, prompt, require, settings, open_shell
 from fabric.contrib.project import rsync_project
 from fabric.context_managers import cd
-
 
 env.roledefs.update({
     'web': ['ubuntu_de@dongo.ubuntu-eu.org',

@@ -13,7 +13,6 @@ from django.utils import translation
 from django.utils.translation import ugettext as _
 
 from celery.task import task
-
 from inyoka.utils import ctype
 from inyoka.utils.notification import queue_notifications
 

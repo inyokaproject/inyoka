@@ -7,8 +7,10 @@
     :license: GNU GPL.
 """
 import unittest
+
 from django.test import TestCase
-from inyoka.utils.text import get_next_increment, human_number
+
+from inyoka.utils.text import human_number, get_next_increment
 
 
 class TestText(unittest.TestCase):

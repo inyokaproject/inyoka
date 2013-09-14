@@ -32,9 +32,9 @@ tabnanny.py, reindent should do a good job.
 
 __version__ = "1"
 
-import tokenize
 import os
 import sys
+import tokenize
 
 verbose = 0
 recurse = 0

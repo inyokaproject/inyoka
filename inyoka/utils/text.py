@@ -8,16 +8,15 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import unicodedata
 import re
 import random
 import posixpath
-import unicodedata
 
 from django.conf import settings
+from django.utils.translation import ugettext as _
+from django.utils.translation import pgettext, get_language
 from django.contrib.humanize.templatetags.humanize import apnumber
-from django.utils.translation import get_language
-from django.utils.translation import pgettext, ugettext as _
-
 
 _str_num_re = re.compile(r'(?:[^\d]*(\d+)[^\d]*)+')
 _path_crop = re.compile(r'^(\.\.?/)+')

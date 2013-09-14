@@ -10,9 +10,9 @@
 """
 from django.test import TestCase
 
-from inyoka.portal.user import User
-from inyoka.wiki.models import Page
 from inyoka.wiki.acl import *
+from inyoka.wiki.models import Page
+from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
 
 

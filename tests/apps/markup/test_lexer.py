@@ -13,7 +13,6 @@ import unittest
 
 from inyoka.markup.lexer import Lexer
 
-
 lexer = Lexer()
 
 

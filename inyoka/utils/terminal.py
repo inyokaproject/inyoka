@@ -11,7 +11,6 @@
 import sys
 from itertools import cycle
 
-
 _color_mapping = zip(xrange(8),
     ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'))
 _colors = {code: '3%d' % idx for idx, code in _color_mapping}

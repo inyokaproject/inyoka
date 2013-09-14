@@ -10,7 +10,6 @@
 """
 from django.conf.urls import patterns
 
-
 urlpatterns = patterns('inyoka.ikhaya.views',
     (r'^$', 'index'),
     (r'^full/$', 'index', {'full': True}),
@@ -85,4 +84,4 @@ urlpatterns = patterns('inyoka.ikhaya.views',
 )
 
 
-handler404 = 'inyoka.utils.urls.global_not_found'
+handler404 = 'inyoka.utils.http.global_not_found'

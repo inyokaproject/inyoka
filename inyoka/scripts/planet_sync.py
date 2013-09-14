@@ -17,27 +17,31 @@
 # Secure XML libraries till a python solution exists.
 # We already patch in inyoka, hence we just import inyoka before feedparser.
 import inyoka
+
 # And further patch it so feedparser works :/
-import xml.sax
 make_parser = xml.sax.make_parser
 xml.sax.make_parser = lambda x: make_parser()
 # End XML patching.
+
 import re
 import sys
-import dateutil
-import feedparser
+import socket
+import xml.sax
 from time import time
 from datetime import datetime
-from django.conf import settings
-from django.utils.encoding import force_unicode
-from django.utils.html import escape
 
-from inyoka.planet.models import Blog, Entry
+import dateutil
+from django.conf import settings
+from django.utils.html import escape
+from django.utils.encoding import force_unicode
+
+import feedparser
 from inyoka.utils.html import cleanup_html
+from inyoka.planet.models import Blog, Entry
+
 
 # set a default timeout. Otherwise fetching some feeds might cause the script
 # to block forever
-import socket
 socket.setdefaulttimeout(20.0)
 
 

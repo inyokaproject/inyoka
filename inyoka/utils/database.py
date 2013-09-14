@@ -11,13 +11,12 @@
 import json
 import operator
 
-from django.core.cache import cache
-from django.db.models.expressions import F, ExpressionNode
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.core.cache import cache
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models.expressions import F, ExpressionNode
 
 from inyoka.utils.text import get_next_increment
-
 
 EXPRESSION_NODE_CALLBACKS = {
     ExpressionNode.ADD: operator.add,

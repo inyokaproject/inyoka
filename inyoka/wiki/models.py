@@ -77,40 +77,43 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from hashlib import sha1
 import pickle
 from math import log
+from hashlib import sha1
 from operator import itemgetter
 from datetime import datetime
 
-from django.conf import settings
-from django.core.cache import cache
-from django.db import models
-from django.db.models import Count, Max
-from django.db.models.loading import get_model
-from django.utils.html import escape
-from django.utils.translation import ugettext_lazy, ugettext as _
 from werkzeug import cached_property
+from django.db import models
+from django.conf import settings
+from django.db.models import Max, Count
+from django.utils.html import escape
+from django.core.cache import cache
+from django.db.models.loading import get_model
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
 
-from inyoka.markup.parsertools import MultiMap
+from inyoka import markup
 from inyoka.utils import magic
-from inyoka.utils.cache import request_cache
-from inyoka.utils.decorators import deferred
-from inyoka.utils.dates import format_specific_datetime, format_datetime, \
-    datetime_to_timezone
-from inyoka.utils.files import get_filename
+from inyoka.markup import nodes, templates
+from inyoka.wiki.tasks import render_article, update_object_list, update_related_pages
 from inyoka.utils.urls import href
+from inyoka.utils.html import striptags
+from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
+from inyoka.utils.files import get_filename
+from inyoka.utils.local import current_request
+from inyoka.utils.cache import request_cache
+from inyoka.utils.dates import (
+    format_datetime,
+    datetime_to_timezone,
+    format_specific_datetime
+)
+from inyoka.utils.diff3 import prepare_udiff, generate_udiff, get_close_matches
 from inyoka.utils.search import search
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.templating import render_template
-from inyoka.utils.local import current_request
-from inyoka.utils.html import striptags
-from inyoka.utils.text import join_pagename, get_pagetitle, normalize_pagename
-from inyoka.utils.diff3 import generate_udiff, prepare_udiff, \
-    get_close_matches
-from inyoka.wiki.tasks import update_related_pages, render_article, \
-    update_object_list
-
+from inyoka.utils.decorators import deferred
+from inyoka.markup.parsertools import MultiMap
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
@@ -1258,5 +1261,3 @@ class MetaData(models.Model):
 
 
 # imported here because of circular references
-from inyoka import markup
-from inyoka.markup import nodes, templates

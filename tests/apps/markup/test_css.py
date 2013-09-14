@@ -7,6 +7,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import unittest
+
 from inyoka.markup.utils import filter_style
 
 

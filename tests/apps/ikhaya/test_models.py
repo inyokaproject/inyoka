@@ -8,14 +8,14 @@
     :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
+from datetime import date, time
+
 from django.conf import settings
 from django.test import TestCase
 
-from datetime import date, time
-
-from inyoka.ikhaya.models import Article, Category, Suggestion
-from inyoka.portal.user import User
 from inyoka.utils.urls import url_for
+from inyoka.portal.user import User
+from inyoka.ikhaya.models import Article, Category, Suggestion
 
 
 class TestArticleModel(TestCase):

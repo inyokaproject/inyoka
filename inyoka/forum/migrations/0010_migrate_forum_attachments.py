@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import os
-import os.path as path
 import re
+import os
 import shutil
+import os.path as path
 import datetime
+
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models

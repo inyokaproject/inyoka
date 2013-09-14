@@ -11,16 +11,15 @@
 import re
 
 from django.conf import settings
-from django.core import mail
 from django.test import TestCase
-
+from django.core import mail
 from django.utils import translation
 from django.utils.translation import ugettext as _
 
-from inyoka.portal.models import Subscription
-from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient
+from inyoka.portal.user import User, PERMISSION_NAMES
+from inyoka.portal.models import Subscription
+from inyoka.utils.storage import storage
 
 
 class TestViews(TestCase):

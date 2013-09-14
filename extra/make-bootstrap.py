@@ -10,7 +10,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import with_statement
-from os.path import realpath, join, dirname
+
+from os.path import join, dirname, realpath
+
 # virtualenv is stored wrong in debian squeeze
 try:
     from virtualenv import create_bootstrap_script

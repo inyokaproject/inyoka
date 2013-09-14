@@ -8,9 +8,9 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from inyoka.planet.models import Entry
-from inyoka.utils.search import SearchAdapter, search
 from inyoka.utils.urls import url_for
+from inyoka.utils.search import search, SearchAdapter
+from inyoka.planet.models import Entry
 
 
 class PlanetSearchAdapter(SearchAdapter):
