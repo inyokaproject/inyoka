@@ -1,5 +1,5 @@
-from .base import *
 from inyoka.default_settings import *
+from .base import *
 
 DATABASES = {
     'default': {
