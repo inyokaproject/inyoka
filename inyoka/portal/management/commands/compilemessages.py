@@ -23,6 +23,10 @@ class Command(BaseCommand):
         for app in APPS:
             call(['pybabel', 'compile', '-D', 'django', '-d',
                   'inyoka/%s/locale' % app, '-l', 'de_DE'])
+            call(['pybabel', 'compile', '-D', 'djangojs', '-d',
+                  'inyoka/%s/locale' % app, '-l', 'de_DE'])
         # global files
         call(['pybabel', 'compile', '-D', 'django', '-d',
+              'inyoka/locale', '-l', 'de_DE'])
+        call(['pybabel', 'compile', '-D', 'djangojs', '-d',
               'inyoka/locale', '-l', 'de_DE'])

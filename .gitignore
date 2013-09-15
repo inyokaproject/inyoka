@@ -5,6 +5,7 @@
 *.py[co]
 inyoka.xapdb/
 inyoka/media/
+node_modules/
 inyoka/static-collected/
 *.min.js
 inyoka/static/style/*.css

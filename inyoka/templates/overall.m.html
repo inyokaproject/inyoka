@@ -96,29 +96,18 @@
     </div>
 
     {% block scripts %}
-      {% if SETTINGS.DEBUG %}
+      {%- if SETTINGS.DEBUG %}
+        {% set suffix = SETTINGS.DEBUG and '.js' or '.min.js' %}
         <script type="text/javascript"
-                src="{{ href('static', 'js/less-1.1.3.js') }}">
-        </script>
-        <script type="text/javascript"
-                src='{{ href('static', 'js/jquery-1.5.2.js') }}'>
-        </script>
-        <script type="text/javascript"
-                src='{{ href('static', 'js/jquery.ba-hashchange.js') }}'>
-        </script>
-        <script type="text/javascript"
-                src="{{ href('static', 'js', 'overall.m.js') }}">
-        </script>
-      {% else %}
-        <script type="text/javascript"
-                src='{{ href('static', 'js/jquery-1.5.2.min.js') }}'>
-        </script>
-        <script type="text/javascript"
-                src='{{ href('static', 'js/jquery.ba-hashchange.min.js') }}'>
-        </script>
-        <script type="text/javascript"
-                src="{{ href('static', 'js', 'overall.m.min.js') }}">
-        </script>
+                src="{{ href('static', 'js/vendor/less-1.1.3%s'|format(suffix)) }}"></script>
+      {% endif %}
+
+     {%- if SETTINGS.DEBUG %}
+       {%- for script in ['vendor/underscore', 'vendor/jquery-2.0.0', 'overall.m', 'jquery.ba-hashchange'] + scripts|default([]) %}
+         <script type="text/javascript" src="{{ href('static', 'js/%s.js'|format(script)) }}"></script>
+       {%- endfor %}
+      {%- else %}
+         <script type="text/javascript" src="{{ href('static', 'js/inyoka.min.js') }}"></script>
       {% endif %}
     {% endblock %}
 

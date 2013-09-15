@@ -1356,10 +1356,10 @@ def topic_feed(request, slug=None, mode='short', count=10):
         kwargs = {}
         if mode == 'full':
             kwargs['content'] = post.get_text()
-            kwargs['content_type'] = 'xhtml'
+            kwargs['content_type'] = 'html'
         if mode == 'short':
             kwargs['summary'] = Truncator(post.get_text).words(100, html=True)
-            kwargs['summary_type'] = 'xhtml'
+            kwargs['summary_type'] = 'html'
 
         feed.add(
             title='%s (%s)' % (
@@ -1412,10 +1412,10 @@ def forum_feed(request, slug=None, mode='short', count=10):
 
         if mode == 'full':
             kwargs['content'] = text
-            kwargs['content_type'] = 'xhtml'
+            kwargs['content_type'] = 'html'
         if mode == 'short':
             kwargs['summary'] = Truncator(text).words(100, html=True)
-            kwargs['summary_type'] = 'xhtml'
+            kwargs['summary_type'] = 'html'
 
         feed.add(
             title=topic.title,

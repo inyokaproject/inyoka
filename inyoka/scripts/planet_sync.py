@@ -107,8 +107,8 @@ def sync():
             if entry.get('title_detail'):
                 title = entry.title_detail.get('value') or ''
                 if entry.title_detail.get('type') in HTML_MIMETYPES:
-                    title = cleanup_html(title, make_xhtml=True,
-                                         id_prefix='entry-title-%x' % int(time()))
+                    title = cleanup_html(title,
+                        id_prefix='entry-title-%x' % int(time()))
                     # cleanup_html adds <p> around the text, remove it again
                     title = title[3:-4]
                 else:
@@ -129,7 +129,7 @@ def sync():
             # escape the text and use that one. We also handle XHTML
             # with our tag soup parser for the moment.
             if text.get('type') in HTML_MIMETYPES:
-                text = cleanup_html(text.get('value') or '', make_xhtml=True,
+                text = cleanup_html(text.get('value') or '',
                                     id_prefix='entry-text-%x' % int(time()))
             else:
                 text = escape(nl2p(text.get('value') or ''))

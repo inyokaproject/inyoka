@@ -11,59 +11,6 @@
     non standard template engine called Jinja.  The basic application
     structure is explained below.
 
-
-    Requirements
-    ============
-
-    The code is mostly tested with MySQL but should work with PostgreSQL,
-    SQLite or any other database Django supports.
-
-    Additionally Jinja 2.5 or higher is required as well as xapian for the
-    full text search facilities.  For the planet application the feedparser
-    library must be installed.  Additionally chardet is recommended so that
-    it can better guess broken encodings of feeds.  For the pastebin, wiki and
-    some other parts `pygments` 1.4 or higher must be available.
-    MySQL must support InnoDB or any other transaction engine like falcon
-    (untested though).  For incoming HTML data that is converted to XHTML
-    we also need html5lib.
-
-    We're using the recent stable django releases.
-
-    For deployment memcached is the preferred caching system.  Otherwise use
-    many threads and few processes and enable `locmem`.
-
-
-    Configuration
-    =============
-
-    The default configuration the development, test and production
-    configuration files should start import is in `inyoka.default_settings`.
-    This file is not referenced by the application code itself which means
-    that you can import it as part of the django setup without causing
-    circular bootstrapping dependencies.
-
-
-    Quickstart
-    ==========
-
-    To get inyoka running you have to install the dependencies and then create
-    a ``development_settings.py`` in the root folder, next to the example
-    settings file.  It could look like that::
-
-        from example_development_settings import *
-
-        DATABASE_NAME = 'inyoka'
-        DATABASE_USER = 'root'
-        XAPIAN_DATABASE = '/home/user/dev/inyoka/inyoka.xapdb'
-
-    After that all you have to do before working with inyoka is sourcing the
-    `init.sh` file (``source init.sh`` or ``. init.sh``).
-
-    Then you can use the Makefile which provides comments for resetting the
-    database, starting the server, building the documentation etc.  For more
-    details have a look at the Makefile.
-
-
     Contents
     ========
 

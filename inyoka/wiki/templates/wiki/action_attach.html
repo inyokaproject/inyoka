@@ -31,7 +31,7 @@
       <p><label for="id_filename">{% trans %}Rename to:{% endtrans %}</label>
         {{ form.filename }}</p>
       <p><label for="id_text">{% trans %}Description:{% endtrans %}</label><br style="clear: both" /></p>
-        <p>{{ form.text }}</p>
+        <p><textarea data-enable-editor="true" id="id_{{ form.text.html_name }}"></textarea><p>
       <p><label for="id_note">{% trans %}Edit summary:{% endtrans %}</label>
         {{ form.note }}</p>
       <p>
@@ -80,13 +80,4 @@
       <p>{% trans %}There are no attachments yet for this site.{% endtrans %}</p>
     {%- endif %}
   </div>
-{% endblock %}
-
-{% block additional_scripts %}
-  {{ super() }}
-  <script type="text/javascript">
-    /* <![CDATA[ */
-    var text = new WikiEditor('textarea[name="text"]');
-    /* ]]> */
-  </script>
 {% endblock %}

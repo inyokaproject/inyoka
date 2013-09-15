@@ -10,4 +10,3 @@ Ikhaya Models
    :members:
    :undoc-members:
    :private-members:
-

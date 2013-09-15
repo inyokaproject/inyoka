@@ -40,36 +40,6 @@ from inyoka.utils.dates import format_time, format_datetime, format_specific_dat
 from inyoka.utils.local import current_request
 from inyoka.utils.cache import request_cache
 
-# path to the dtd.  In debug mode we refer to the file system, otherwise
-# URL.  We do that because the firefox validator extension is unable to
-# load DTDs from URLs...  On first rendering the path is calculated because
-# of circular imports "href()" could cause.
-inyoka_dtd = None
-
-
-def get_dtd():
-    """
-    This returns either our dtd or our dtd + xml comment.  Neither is stricly
-    valid as XML documents with custom doctypes must be served as XML but
-    currently as MSIE is pain in the ass we have to workaround that IE bug
-    by removing the XML PI comment.
-    """
-    global inyoka_dtd
-    if inyoka_dtd is None:
-        if settings.DEBUG:
-            path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                                 'static',
-                                                 'xhtml1-strict-uu.dtd'))
-        else:
-            path = href('static', 'xhtml1-strict-uu.dtd')
-        inyoka_dtd = u'<!DOCTYPE html SYSTEM "%s">' % path
-
-    try:
-        if 'msie' in current_request.META['HTTP_USER_AGENT'].lower():
-            return inyoka_dtd
-    except Exception:
-        pass
-    return u'<?xml version="1.0" encoding="utf-8"?>\n' + inyoka_dtd
 
 
 class Breadcrumb(object):
@@ -192,7 +162,6 @@ def populate_context_defaults(context, flash=False):
 
     if request:
         context.update(
-            XHTML_DTD=get_dtd(),
             CURRENT_URL=request.build_absolute_uri(),
             USER=user,
             BREADCRUMB=Breadcrumb(),

@@ -478,7 +478,7 @@ msgstr ""
 #: inyoka/portal/forms.py:840
 msgid ""
 "This message will displayed on every page in the header. To disable it, "
-"leave the field empty. Needs to be valid XHTML."
+"leave the field empty. Needs to be valid HTML."
 msgstr ""
 
 #: inyoka/portal/forms.py:843

@@ -24,7 +24,34 @@
   </p>
   <form action="" method="post">
     {{ csrf_token() }}
-    {{ render_form(form, ['title', 'intro', 'text', 'notes']) }}
+    {{ render_form(form, ['title']) }}
+
+    <dt>
+      <label for="id_{{ form.intro.html_name }}">{{ form.intro.label }}:</label>
+    </dt>
+    <dd>
+    <textarea data-enable-editor="true" name="intro" id="id_{{ form.intro.html_name }}" rows="4" cols="40">
+      {{ form.intro.text|e }}
+    </textarea>
+    </dd>
+
+    <dt>
+      <label for="id_{{ form.text.html_name }}">{{ form.text.label }}:</label>
+    </dt>
+    <dd>
+      <textarea data-enable-editor="true" name="text" id="id_{{ form.text.html_name }}" rows="10" cols="40">
+        {{ form.text.text|e }}
+      </textarea>
+    </dd>
+
+    <dt>
+      <label for="id_{{ form.text.html_name }}">{{ form.text.label }}:</label>
+    </dt>
+    <dd>
+      <textarea data-enable-editor="true" name="notes" id="id_{{ form.text.html_name }}" rows="10" cols="40">
+        {{ form.notes.text|e }}
+      </textarea>
+    </dd>
     <p>
       <input type="submit" value="Abschicken" />
       <input type="submit" value="Vorschau" name="preview" />
@@ -44,9 +71,6 @@
   {{ super() }}
   <script type="text/javascript">
     /* <![CDATA[ */
-    var text = new WikiEditor('textarea[name="text"]');
-    var intro = new WikiEditor('textarea[name="intro"]');
-    var notes = new WikiEditor('textarea[name="notes"]');
 
   /* Preview implementation */
   (function() {

@@ -504,10 +504,10 @@ msgstr "Globale Nachricht"
 #: inyoka/portal/forms.py:840
 msgid ""
 "This message will displayed on every page in the header. To disable it, "
-"leave the field empty. Needs to be valid XHTML."
+"leave the field empty. Needs to be valid HTML."
 msgstr ""
 "Diese Nachricht wird auf allen Seiten im Kopfbereich angezeigt. Um sie zu"
-" deaktivieren, lasse das Feld leer. Muss gültiges XHTML sein."
+" deaktivieren, lasse das Feld leer. Muss gültiges HTML sein."
 
 #: inyoka/portal/forms.py:843
 msgid "Blocked hosts for email addresses"

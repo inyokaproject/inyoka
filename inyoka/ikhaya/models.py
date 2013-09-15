@@ -211,7 +211,7 @@ class Article(models.Model, LockableObject):
     public = models.BooleanField(ugettext_lazy(u'Public'))
     slug = models.SlugField(ugettext_lazy(u'Slug'), max_length=100,
             blank=True, db_index=True)
-    is_xhtml = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
+    is_html = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
                 default=False)
     comment_count = models.IntegerField(default=0)
     comments_enabled = models.BooleanField(ugettext_lazy(u'Allow comments'),
@@ -235,7 +235,7 @@ class Article(models.Model, LockableObject):
 
     def _simplify(self, text):
         """Remove markup of a text that belongs to this Article"""
-        if self.is_xhtml:
+        if self.is_html:
             simple = striptags(text)
         else:
             simple = parse(text).text
@@ -243,7 +243,7 @@ class Article(models.Model, LockableObject):
 
     def _render(self, text):
         """Render a text that belongs to this Article to HTML"""
-        if self.is_xhtml:
+        if self.is_html:
             return text
         context = RenderContext(current_request, application='ikhaya')
         instructions = parse(text).compile('html')

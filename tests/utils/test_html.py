@@ -19,18 +19,9 @@ class TestHTML(TestCase):
         self.assertEqual(cleanup_html('Foo Bar</p>'), u'<p>Foo Bar</p>')
         self.assertEqual(cleanup_html('<p>Foo Bar</p>'), u'<p>Foo Bar</p>')
 
-        self.assertEqual(cleanup_html('Foo Bar', make_xhtml=True), u'<p>Foo Bar</p>')
-        self.assertEqual(cleanup_html('<p>Foo Bar', make_xhtml=True), u'<p>Foo Bar</p>')
-        self.assertEqual(cleanup_html('Foo Bar</p>', make_xhtml=True), u'<p>Foo Bar</p>')
-        self.assertEqual(cleanup_html('<p>Foo Bar</p>', make_xhtml=True), u'<p>Foo Bar</p>')
-
         self.assertEqual(cleanup_html('<img src=foo_bar.png>'), u'<img src="foo_bar.png">')
         self.assertEqual(cleanup_html('<img src="foo_bar.png">'), u'<img src="foo_bar.png">')
         self.assertEqual(cleanup_html("<img src='foo_bar.png'>"), u'<img src="foo_bar.png">')
-
-        self.assertEqual(cleanup_html('<img src=foo_bar.png>', make_xhtml=True), u'<img src="foo_bar.png" />')
-        self.assertEqual(cleanup_html('<img src="foo_bar.png">', make_xhtml=True), u'<img src="foo_bar.png" />')
-        self.assertEqual(cleanup_html("<img src='foo_bar.png'>", make_xhtml=True), u'<img src="foo_bar.png" />')
 
     def test_replace_entities(self):
         self.assertEqual(replace_entities('foo &amp; bar &raquo; foo'), u'foo & bar \xbb foo')

@@ -846,10 +846,10 @@ def feed_article(request, slug=None, mode='short', count=10):
         if mode == 'full':
             kwargs['content'] = u'%s\n%s' % (article.rendered_intro,
                                              article.rendered_text)
-            kwargs['content_type'] = 'xhtml'
+            kwargs['content_type'] = 'html'
         if mode == 'short':
             kwargs['summary'] = article.rendered_intro
-            kwargs['summary_type'] = 'xhtml'
+            kwargs['summary_type'] = 'html'
 
         feed.add(
             title=article.subject,
@@ -894,10 +894,10 @@ def feed_comment(request, id=None, mode='short', count=10):
         kwargs = {}
         if mode == 'full':
             kwargs['content'] = comment.rendered_text
-            kwargs['content_type'] = 'xhtml'
+            kwargs['content_type'] = 'html'
         if mode == 'short':
             kwargs['summary'] = Truncator(comment.rendered_text).words(100, html=True)
-            kwargs['summary_type'] = 'xhtml'
+            kwargs['summary_type'] = 'html'
 
         if article is None:
             article = comment.article

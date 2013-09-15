@@ -31,10 +31,15 @@ STATIC_DIRECTORY = '/home/ubuntu_de_static'
 def bootstrap():
     """Create a virtual environment.  Call this once on every new server."""
     env.hosts = [x.strip() for x in raw_input('Servers: ').split(',')]
-    env.interpreter = raw_input('Python-executable (default: python2.5): ').strip() or 'python2.5'
-    env.target_dir = raw_input('Location (default: %s): ' % TARGET_DIR).strip().rstrip('/') or TARGET_DIR
+    env.interpreter = raw_input(
+        'Python-executable (default: python2.7): ').strip()
+        or 'python2.7'
+    env.target_dir = raw_input(
+        'Location (default: %s): ' %
+        TARGET_DIR).strip().rstrip('/') or TARGET_DIR
     run('mkdir {target_dir}'.format(target_dir=env.target_dir))
-    run('git clone {repository} {target_dir}/inyoka'.format(target_dir=env.target_dir))
+    run('git clone {repository} {target_dir}/inyoka'.format(
+        target_dir=env.target_dir))
     run('{interpreter} {target_dir}/inyoka/make-bootstrap.py > {target_dir}/bootstrap.py'.format(**{
         'interpreter': env.interpreter,
         'target_dir': env.target_dir}))
@@ -44,6 +49,7 @@ def bootstrap():
     run("ln -s {target_dir}/inyoka/inyoka {target_dir}/lib/python`{interpreter} -V 2>&1|grep -o '[0-9].[0-9]'`/site-packages".format(**{
         'target_dir': env.target_dir,
         'interpreter': env.interpreter}))
+    run("npm install")
 
 
 @roles('web')
@@ -67,7 +73,11 @@ def deploy_static():
     compile_static()
     local('./manage.py collectstatic')
     with settings(target_dir=STATIC_DIRECTORY):
-        rsync_project(os.path.join(env.target_dir, 'static/'), 'inyoka/static-collected/')
+        rsync_project(
+            os.path.join(
+                env.target_dir,
+                'static/'),
+            'inyoka/static-collected/')
 
 
 def pip():
@@ -81,31 +91,18 @@ def pip():
             'parameters': env.parameters}))
 
 
-def check_js():
-    rhino = 'java -jar extra/js.jar'
-    local("%s extra/jslint-check.js" % rhino, capture=False)
-
-
 def compile_js(file=None):
     """Minimize js files"""
-    minjar = 'java -jar extra/google-compiler.jar'
-    #TODO: find some way to preserve comments on top
-    if file is None:
-        dirs = ['inyoka/static/js/']
-        for app in ['forum']:
-            dirs += ['inyoka/%s/static/%s/js/' % (app, app)]
-        files = []
-        for dir in dirs:
-            files += [dir + fn for fn in os.listdir(dir) if not '.min.' in fn and not fn.startswith('.')]
-    else:
-        files = [file]
-    for file in files:
-        local("%s --js %s > %s" % (minjar, file, file.split('.js')[0] + '.min.js'), capture=False)
+    local("grunt uglify -v")
 
 
 def compile_css(file=None):
     """Create sprited css files for deployment"""
-    files = u' inyoka/static/style/'.join(('', 'main.less', 'forum.less', 'editor.less'))
+    files = u' inyoka/static/style/'.join(
+        ('',
+         'main.less',
+         'forum.less',
+         'editor.less'))
     local("java -classpath extra/smartsprites -Djava.ext.dirs=extra/smartsprites "
           "org.carrot2.labs.smartsprites.SmartSprites"
           " %s" % files, capture=False)
@@ -115,14 +112,23 @@ def compile_css(file=None):
         dirs = ['inyoka/static/style/']
         files = []
         for dir in dirs:
-            files += [dir + fn for fn in os.listdir(dir) if fn.endswith('.less')]
+            files += [
+                dir +
+                fn for fn in os.listdir(
+                    dir) if fn.endswith(
+                        '.less')]
         for app in ['forum', 'ikhaya', 'portal']:
-            files.append('inyoka/%s/static/%s/style/overall.m.less' % (app, app))
+            files.append(
+                'inyoka/%s/static/%s/style/overall.m.less' %
+                (app, app))
     else:
         files = [file]
     for file in files:
-        # we need to '_/_/' to successfully compile the less files within app directories
-        local("%s --verbose --include-path=inyoka/static/_/_/ %s > %s" % (less, file, file.split('.less')[0] + '.css'), capture=False)
+        # we need to '_/_/' to successfully compile the less files within app
+        # directories
+        local(
+            "%s --verbose --include-path=inyoka/static/_/_/ %s > %s" %
+            (less, file, file.split('.less')[0] + '.css'), capture=False)
 
 
 def compile_static():
