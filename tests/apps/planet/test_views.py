@@ -51,4 +51,3 @@ class TestViews(TestCase):
             response = self.client.post('/feeds/full/10/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "No title given", count=1)
-

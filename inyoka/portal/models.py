@@ -371,5 +371,3 @@ class SearchQueue(models.Model):
 class Storage(models.Model):
     key = models.CharField(max_length=200, db_index=True)
     value = models.TextField()
-
-

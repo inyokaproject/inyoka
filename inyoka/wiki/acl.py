@@ -259,5 +259,3 @@ def test_changes_allowed(user, page_name, old_text, new_text):
                 for value in node.values:
                     metadata.add((node.key, value))
     return old == new
-
-
