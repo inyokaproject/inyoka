@@ -1,4 +1,4 @@
-Django==1.5.1
+Django==1.5.4
 # Includes various fixes
 https://github.com/alex/django-filter/tarball/master/#egg=django-filter
 # Includes Django 1.5 fix

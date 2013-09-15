@@ -332,5 +332,7 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = ()
 
+ALLOWED_HOSTS = ['.ubuntuusers.de']
+
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
