@@ -348,9 +348,8 @@ class Article(models.Model, LockableObject):
         if not self.slug:
             self.slug = find_next_increment(Article, 'slug',
                 slugify(self.subject), pub_date=self.pub_date)
-
-        # Force to use a valid slug
-        self.slug = slugify(self.slug)
+        else:
+            self.slug = slugify(self.slug)
 
         super(Article, self).save(*args, **kwargs)
         self.update_search()
@@ -536,7 +535,7 @@ class Event(models.Model):
         if not self.slug:
             name = datetime_safe.new_date(self.date) \
                                 .strftime('%Y/%m/%d/') + slugify(self.name)
-            self.slug = find_next_increment(Event, 'slug', name, stripdate=True)
+            self.slug = find_next_increment(Event, 'slug', name)
         super(self.__class__, self).save(*args, **kwargs)
         cache.delete('ikhaya/event/%s' % self.id)
         cache.delete('ikhaya/event_count')
