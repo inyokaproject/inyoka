@@ -137,42 +137,6 @@ def get_pagetitle(name, full=True):
     return u' '.join(x for x in name.split('_') if x)
 
 
-def get_next_increment(values, string, max_length=None, stripdate=False):
-    """Return the next usable incremented string."""
-    def _stripdate(value):
-        parts = value.split('/')
-        return parts[:-1], parts[-1]
-
-    def _get_value(value):
-        if stripdate:
-            stripped = _stripdate(value)
-            return u'{0}/{1}'.format(u'/'.join(stripped[0]),
-                                     increment_string(stripped[1]))
-        return increment_string(value)
-
-    values = list(_stripdate(x)[1] if stripdate else x for x in values)
-
-    if not values:
-        return string[:max_length] if max_length is not None else string
-
-    base = None
-    for value in values:
-        match = _str_num_re.search(value)
-        if match is not None and int(match.group(1)) > base:
-            base = int(match.group(1))
-
-    gs = (lambda s: s if base is None else s + unicode(base))
-    poi = _get_value(gs(string))
-    if max_length is None:
-        return poi
-
-    if len(poi) > max_length:
-        # we need to shorten the string a bit so that we don't break any rules
-        strip = max_length - len(poi)
-        string = string[:strip]
-    return _get_value(gs(string))
-
-
 def human_number(value, gender=None):
     if value == 10:
         return _("ten")

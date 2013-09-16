@@ -16,7 +16,6 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models.expressions import F, ExpressionNode
 
-from inyoka.utils.text import get_next_increment
 
 EXPRESSION_NODE_CALLBACKS = {
     ExpressionNode.ADD: operator.add,
@@ -39,9 +38,8 @@ def _strip_ending_nums(string):
     return string
 
 
-def find_next_increment(model, column, string, stripdate=False, **query_opts):
+def find_next_increment(model, column, string, **query_opts):
     """Get the next incremented string based on `column` and `string`.
-    This function is the port of `find_next_increment` for Django models.
 
     Example::
 
@@ -49,18 +47,24 @@ def find_next_increment(model, column, string, stripdate=False, **query_opts):
     """
     field = model._meta.get_field_by_name(column)[0]
     max_length = field.max_length if hasattr(field, 'max_length') else None
-    string = _strip_ending_nums(string)
+    # We are pretty defensive here and make sure we always have 4 characters
+    # left, to be able to append up to 999 slugs (-1 ... -999)
+    assert max_length is None or max_length > 4
     slug = string[:max_length - 4] if max_length is not None else string
     filter = {column: slug}
     filter.update(query_opts)
-    slug_taken = model.objects.filter(**filter).exists()
-    if not slug_taken:
+    if not model.objects.filter(**filter).exists():
         return slug
-    filter = {'%s__startswith' % column: slug + '-'}
+    filter = {'%s__startswith' % column: slug + u'-'}
     filter.update(query_opts)
     existing = model.objects.filter(**filter).values_list(column, flat=True)
-    return get_next_increment([slug] + list(existing), slug, max_length,
-                              stripdate=stripdate)
+    # strip of the common prefix
+    slug_numbers = [i[len(slug)+1:] for i in existing]
+    # find the next free slug number
+    slug_numbers = [int(i) for i in slug_numbers if i.isdigit()]
+    num = max(slug_numbers) + 1 if slug_numbers else 2
+    assert max_length is None or num < 1000
+    return '{0}-{1}'.format(slug, num)
 
 
 def get_simplified_queryset(queryset):

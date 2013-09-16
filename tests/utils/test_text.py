@@ -10,27 +10,10 @@ import unittest
 
 from django.test import TestCase
 
-from inyoka.utils.text import human_number, get_next_increment
+from inyoka.utils.text import human_number
 
 
 class TestText(unittest.TestCase):
-
-    def test_get_next_increment(self):
-        self.assertEqual(get_next_increment(['cat', 'cat10', 'cat2'], u'cat'),
-                         u'cat-11')
-        self.assertEqual(get_next_increment(['cat', 'cat2'], u'cat'),
-                         u'cat-3')
-        self.assertEqual(get_next_increment(['cat', 'cat1'], u'cat'),
-                         u'cat-2')
-        self.assertEqual(get_next_increment([], u'cat'),
-                         u'cat')
-        self.assertEqual(get_next_increment(['cat'], u'cat'),
-                         u'cat-2')
-        self.assertEqual(get_next_increment(['cat', 'cat10', 'cat2'], u'cat', 3),
-                         u'-11')
-        self.assertEqual(get_next_increment(['cat', 'cat100'], u'cat', 3),
-                         u'-101')
-
     def test_human_number(self):
         self.assertEqual(human_number(-1337), -1337)
         self.assertEqual(human_number(0), 0)
