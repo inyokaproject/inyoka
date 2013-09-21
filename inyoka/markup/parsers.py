@@ -19,15 +19,13 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
+from pygments.util import ClassNotFound
 
 from inyoka.markup import nodes
-from inyoka.markup.templates import expand_page_template
-
-from inyoka.utils.highlight import highlight_code
 from inyoka.utils.text import join_pagename, normalize_pagename
 from inyoka.markup.utils import debug_repr, ArgumentCollector
-
-from pygments.util import ClassNotFound
+from inyoka.utils.highlight import highlight_code
+from inyoka.markup.templates import expand_page_template
 
 
 def get_parser(name, args, kwargs, data):

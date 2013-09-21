@@ -8,6 +8,7 @@ from south.v2 import DataMigration
 from django.db import models
 from django.utils.encoding import smart_str
 
+
 class Migration(DataMigration):
 
     def forwards(self, orm):

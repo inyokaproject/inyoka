@@ -8,24 +8,26 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from mock import patch
-from random import randint
 from os import path
+from random import randint
 
+from mock import patch
 from django.conf import settings
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
 
 from inyoka.forum.acl import PRIVILEGES_BITS
-from inyoka.forum.constants import TOPICS_PER_PAGE, DISTRO_CHOICES
+from inyoka.utils.urls import href
+from inyoka.utils.test import InyokaClient
+from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.forum.models import (Attachment, Forum, Post, Poll, PollOption,
     Privilege, Topic)
 from inyoka.portal.models import Subscription
-from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.utils.test import InyokaClient
-from inyoka.utils.urls import href
+from inyoka.forum.constants import DISTRO_CHOICES, TOPICS_PER_PAGE
+
+
 
 
 class TestForumViews(TestCase):

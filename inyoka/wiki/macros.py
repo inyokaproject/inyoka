@@ -8,27 +8,30 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import string
 import random
+import string
 import operator
 import itertools
-from datetime import datetime, timedelta, date
+from datetime import date, datetime, timedelta
 from collections import OrderedDict
+
 from django.conf import settings
+from django.utils.translation import ugettext as _
+from django.utils.translation import ungettext
+
+from inyoka.markup import nodes, macros
 from inyoka.wiki.views import fetch_real_target
-from inyoka.wiki.models import Revision, Page, MetaData
-from inyoka.wiki.signals import build_picture_node
-from inyoka.markup import macros, nodes
-from inyoka.markup.utils import simple_filter
-from inyoka.markup.templates import expand_page_template
-from inyoka.markup.parsertools import MultiMap, flatten_iterator
-from inyoka.utils.imaging import parse_dimensions
-from inyoka.utils.urls import href, urlencode, url_for, is_external_target
+from inyoka.utils.urls import href, url_for, urlencode, is_external_target
+from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
+from inyoka.wiki.models import Page, MetaData, Revision
 from inyoka.utils.cache import cache
+from inyoka.utils.dates import format_time, datetime_to_timezone
+from inyoka.wiki.signals import build_picture_node
+from inyoka.markup.utils import simple_filter
+from inyoka.utils.imaging import parse_dimensions
+from inyoka.markup.templates import expand_page_template
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.dates import datetime_to_timezone, format_time
-from inyoka.utils.text import normalize_pagename, get_pagetitle, join_pagename
-from django.utils.translation import ugettext as _, ungettext
+from inyoka.markup.parsertools import MultiMap, flatten_iterator
 
 
 def make_int(s, default):

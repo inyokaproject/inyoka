@@ -15,11 +15,10 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.http import HttpResponse
 import json
 
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.cache import add_never_cache_headers
-
 
 JSON_CONTENTTYPE = 'application/json'
 
@@ -35,7 +34,7 @@ class ServiceMiddleware(object):
                     call = __import__('inyoka.%s.services' % parts[0], None,
                                       None, ['dispatcher']).dispatcher
                 except (ImportError, AttributeError):
-                    pass
+                    return HttpResponseBadRequest()
                 else:
                     response = call(request, parts[1])
             if isinstance(response, HttpResponse):

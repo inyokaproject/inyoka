@@ -8,45 +8,50 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import pytz
-from datetime import datetime, date, time as dt_time
+from datetime import time as dt_time
+from datetime import date, datetime
 
+from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
-from django.http import HttpResponseRedirect, Http404
 from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
-from django.core.cache import cache
-from django.utils.dates import MONTHS
-from django.utils.http import urlencode
 from django.utils.text import Truncator
-from django.utils.translation import ugettext as _
 from django.utils.html import escape
+from django.core.cache import cache
+from django.utils.http import urlencode
+from django.utils.dates import MONTHS
+from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
-from inyoka.utils import ctype
-from inyoka.utils.urls import href, url_for, is_safe_domain
-from inyoka.utils.http import templated, AccessDeniedResponse, \
-    does_not_exist_is_404
-from inyoka.utils.feeds import atom_feed, AtomFeed
-from inyoka.utils.pagination import Pagination
-from inyoka.utils import generic
-from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
-from inyoka.utils.notification import send_notification
+import pytz
+from inyoka.utils import ctype, generic
 from inyoka.markup import parse, RenderContext
-from inyoka.utils.templating import render_template
-from inyoka.utils.flash_confirmation import confirm_action
-from inyoka.utils.sortable import Sortable
-from inyoka.utils.storage import storage
-from inyoka.portal.utils import check_login, require_permission
+from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.utils.http import templated, AccessDeniedResponse, does_not_exist_is_404
 from inyoka.portal.user import User
-from inyoka.portal.models import PrivateMessage, PrivateMessageEntry, \
-    Subscription
-from inyoka.ikhaya.forms import SuggestArticleForm, EditCommentForm, \
-    EditArticleForm, EditPublicArticleForm, EditCategoryForm, \
-    EditEventForm, NewEventForm
-from inyoka.ikhaya.models import Event, Category, Article, Suggestion, \
-    Comment, Report
-from inyoka.ikhaya.notifications import send_comment_notifications, \
+from inyoka.utils.feeds import AtomFeed, atom_feed
+from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
+from inyoka.portal.utils import check_login, require_permission
+from inyoka.ikhaya.forms import (
+    NewEventForm,
+    EditEventForm,
+    EditCommentForm,
+    EditArticleForm,
+    EditCategoryForm,
+    SuggestArticleForm,
+    EditPublicArticleForm
+)
+from inyoka.ikhaya.models import Event, Report, Comment, Article, Category, Suggestion
+from inyoka.portal.models import Subscription, PrivateMessage, PrivateMessageEntry
+from inyoka.utils.storage import storage
+from inyoka.utils.sortable import Sortable
+from inyoka.utils.templating import render_template
+from inyoka.utils.pagination import Pagination
+from inyoka.utils.notification import send_notification
+from inyoka.ikhaya.notifications import (
+    send_comment_notifications,
     send_new_suggestion_notifications
+)
+from inyoka.utils.flash_confirmation import confirm_action
 
 
 def context_modifier(request, context):
@@ -248,17 +253,15 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
     article suggestion made by a user. After saving it, the suggestion will be
     deleted automatically.
     """
-    preview = None
+    preview, locked, article = None, False, None
     initial = {'author': request.user}
 
     if year and month and day and slug:
         try:
-            """
-            do not access cached object!
-            This would lead to inconsistent form content
-            """
-            article = Article.objects.get(pub_date=date(int(year), int(month),
-                int(day)), slug=slug)
+            # Do not access cached object!
+            # This would lead to inconsistent form content here.
+            pub_date = date(int(year), int(month), int(day))
+            article = Article.objects.get(pub_date=pub_date, slug=slug)
         except IndexError:
             raise Http404()
         locked = article.lock(request)
@@ -266,16 +269,14 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             messages.error(request,
                 _(u'This article is currently being edited by “%(user)s”!')
                 % {'user': locked})
-    else:
-        article = None
 
     if request.method == 'POST':
         if article and article.public:
             form = EditPublicArticleForm(request.POST, instance=article,
-                                         initial=initial)
+                                         initial=initial, readonly=locked)
         else:
             form = EditArticleForm(request.POST, instance=article,
-                                   initial=initial)
+                                   initial=initial, readonly=locked)
         if 'send' in request.POST:
             if form.is_valid():
                 new = article is None
@@ -306,9 +307,11 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
     else:
         if slug:
             if article.public:
-                form = EditPublicArticleForm(instance=article, initial=initial)
+                form = EditPublicArticleForm(instance=article, initial=initial,
+                    readonly=locked)
             else:
-                form = EditArticleForm(instance=article, initial=initial)
+                form = EditArticleForm(instance=article, initial=initial,
+                    readonly=locked)
         elif suggestion_id:
             suggestion = Suggestion.objects.get(id=suggestion_id)
             form = EditArticleForm(initial={
@@ -316,9 +319,9 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                 'text': suggestion.text,
                 'intro': suggestion.intro,
                 'author': suggestion.author,
-            })
+            }, readonly=locked)
         else:
-            form = EditArticleForm(initial=initial)
+            form = EditArticleForm(initial=initial, readonly=locked)
 
     return {
         'form': form,

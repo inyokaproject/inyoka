@@ -10,8 +10,8 @@
 """
 from django.test import TestCase
 
-from inyoka.portal.user import User
 from inyoka.wiki.models import Page
+from inyoka.portal.user import User
 
 
 class TestModels(TestCase):

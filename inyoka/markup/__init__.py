@@ -132,22 +132,20 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import re
 import unicodedata
-from functools import partial
+import re
 from urlparse import urlsplit
+from functools import partial
 
 from django.utils.translation import ugettext as _
 
-from inyoka.markup.lexer import escape, Lexer
-from inyoka.markup.machine import Renderer, RenderContext
-from inyoka.markup.transformers import DEFAULT_TRANSFORMERS
-from inyoka.markup.constants import HTML_COLORS
-from inyoka.markup.utils import filter_style
 from inyoka.markup import nodes
-
 from inyoka.utils.urls import href
-
+from inyoka.markup.lexer import Lexer, escape
+from inyoka.markup.utils import filter_style
+from inyoka.markup.machine import Renderer, RenderContext
+from inyoka.markup.constants import HTML_COLORS
+from inyoka.markup.transformers import DEFAULT_TRANSFORMERS
 
 __all__ = ['parse', 'render', 'stream', 'escape']
 
@@ -899,7 +897,7 @@ class Parser(object):
     def parse_template(self, stream):
         """Parse the template macro shortcut."""
         # FIXME: Circular imports
-        from inyoka.markup.macros import Template
+        from inyoka.wiki.macros import Template
         stream.expect('template_begin')
         name = stream.expect('template_name').value
         args, kwargs = self.parse_arguments(stream, 'template_end')

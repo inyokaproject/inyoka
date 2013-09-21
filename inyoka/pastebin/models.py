@@ -8,15 +8,15 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from datetime import datetime
 from urlparse import urlparse
+from datetime import datetime
 
 from django.db import models
 from django.utils.translation import ugettext_lazy
 
+from inyoka.utils.urls import href, is_safe_domain
 from inyoka.portal.user import User
 from inyoka.utils.highlight import highlight_code
-from inyoka.utils.urls import href, is_safe_domain
 
 
 class Entry(models.Model):

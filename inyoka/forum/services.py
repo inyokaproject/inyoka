@@ -15,12 +15,11 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.utils.datastructures import MultiValueDictKeyError
 
-from inyoka.forum.models import Topic, Post, Forum
-from inyoka.forum.acl import get_forum_privileges, check_privilege, \
-    have_privilege
+from inyoka.forum.acl import have_privilege, check_privilege, get_forum_privileges
+from inyoka.portal.utils import UBUNTU_VERSIONS, abort_access_denied
+from inyoka.forum.models import Post, Topic, Forum
 from inyoka.portal.models import Subscription
-from inyoka.portal.utils import abort_access_denied, UBUNTU_VERSIONS
-from inyoka.utils.services import SimpleDispatcher, permit_methods, never_cache
+from inyoka.utils.services import never_cache, permit_methods, SimpleDispatcher
 from inyoka.utils.templating import render_template
 
 

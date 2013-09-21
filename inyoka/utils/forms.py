@@ -10,9 +10,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import sys
-import pytz
-from hashlib import md5
 from random import randrange
+from hashlib import md5
 
 from django import forms
 from django.conf import settings
@@ -20,14 +19,15 @@ from django.core import validators
 from django.forms.widgets import Input
 from django.utils.translation import ugettext as _
 
-from inyoka.portal.user import User
+import pytz
 from inyoka.markup import parse, StackExhaused
-from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
-from inyoka.utils.jabber import may_be_valid_jabber
-from inyoka.utils.local import current_request
-from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.text import slugify
+from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.urls import href
+from inyoka.portal.user import User
+from inyoka.utils.local import current_request
+from inyoka.utils.dates import get_user_timezone, datetime_to_timezone
+from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.storage import storage
 
 
@@ -238,13 +238,10 @@ class ImageCaptchaWidget(Input):
 class ImageCaptchaField(forms.Field):
     widget = ImageCaptchaWidget
 
-    def __init__(self, only_anonymous=False, *args, **kwargs):
-        self.only_anonymous = only_anonymous
+    def __init__(self, *args, **kwargs):
         forms.Field.__init__(self, *args, **kwargs)
 
     def clean(self, value):
-        if current_request.user.is_authenticated() and self.only_anonymous:
-            return True
         value = super(ImageCaptchaField, self).clean(value)
         solution = current_request.session.get('captcha_solution')
         if value:
@@ -273,15 +270,16 @@ class CaptchaField(forms.MultiValueField):
     widget = CaptchaWidget
 
     def __init__(self, *args, **kwargs):
-        only_anonymous = kwargs.pop('only_anonymous', False)
-        fields = (ImageCaptchaField(only_anonymous=only_anonymous),
-                  HiddenCaptchaField())
         kwargs['required'] = True
+        self.only_anonymous = kwargs.pop('only_anonymous', False)
+        fields = (ImageCaptchaField(), HiddenCaptchaField())
         super(CaptchaField, self).__init__(fields, *args, **kwargs)
 
     def compress(self, data_list):
         pass  # CaptchaField doesn't have a useful value to return.
 
     def clean(self, value):
+        if current_request.user.is_authenticated() and self.only_anonymous:
+            return [None, None]
         value[1] = False  # Prevent beeing catched by validators.EMPTY_VALUES
         return super(CaptchaField, self).clean(value)

@@ -17,26 +17,31 @@
 # Secure XML libraries till a python solution exists.
 # We already patch in inyoka, hence we just import inyoka before feedparser.
 import inyoka
+
 # And further patch it so feedparser works :/
-import xml.sax
 make_parser = xml.sax.make_parser
 xml.sax.make_parser = lambda x: make_parser()
 # End XML patching.
+
 import re
 import sys
-import feedparser
+import socket
+import xml.sax
 from time import time
 from datetime import datetime
-from django.conf import settings
-from django.utils.encoding import force_unicode
-from django.utils.html import escape
 
-from inyoka.planet.models import Blog, Entry
+import dateutil
+from django.conf import settings
+from django.utils.html import escape
+from django.utils.encoding import force_unicode
+
+import feedparser
 from inyoka.utils.html import cleanup_html
+from inyoka.planet.models import Blog, Entry
+
 
 # set a default timeout. Otherwise fetching some feeds might cause the script
 # to block forever
-import socket
 socket.setdefaulttimeout(20.0)
 
 
@@ -53,6 +58,12 @@ def debug(msg):
     """Helper function that prints to stderr if debugging is enabled."""
     if settings.DEBUG:
         sys.stderr.write(msg.encode('utf-8') + '\n')
+
+
+def dateutilDateHandler(aDateString):
+    return dateutil.parser.parse(aDateString).utctimetuple()
+
+feedparser.registerDateHandler(dateutilDateHandler)
 
 
 def sync():
@@ -96,8 +107,8 @@ def sync():
             if entry.get('title_detail'):
                 title = entry.title_detail.get('value') or ''
                 if entry.title_detail.get('type') in HTML_MIMETYPES:
-                    title = cleanup_html(title, id_prefix='entry-title-%x' %
-                                         int(time()))
+                    title = cleanup_html(title, make_xhtml=True,
+                                         id_prefix='entry-title-%x' % int(time()))
                     # cleanup_html adds <p> around the text, remove it again
                     title = title[3:-4]
                 else:
@@ -118,9 +129,8 @@ def sync():
             # escape the text and use that one. We also handle XHTML
             # with our tag soup parser for the moment.
             if text.get('type') in HTML_MIMETYPES:
-                text = cleanup_html(text.get('value') or '',
-                                    id_prefix='entry-text-%x' % int(time()),
-                                    output_format='xhtml')
+                text = cleanup_html(text.get('value') or '', make_xhtml=True,
+                                    id_prefix='entry-text-%x' % int(time()))
             else:
                 text = escape(nl2p(text.get('value') or ''))
 

@@ -10,13 +10,15 @@
 """
 from django import forms
 from django.utils.html import escape
-from django.utils.translation import ugettext as _, ugettext_lazy
-from inyoka.utils.forms import MultiField, SlugField, StrippedCharField
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
+
 from inyoka.forum.acl import CAN_READ
-from inyoka.forum.models import Topic, Forum
-from inyoka.forum.constants import VERSION_CHOICES, DISTRO_CHOICES
 from inyoka.utils.local import current_request
+from inyoka.utils.forms import SlugField, MultiField, StrippedCharField
+from inyoka.forum.models import Topic, Forum
 from inyoka.utils.sessions import SurgeProtectionMixin
+from inyoka.forum.constants import DISTRO_CHOICES, VERSION_CHOICES
 
 
 class ForumField(forms.ChoiceField):

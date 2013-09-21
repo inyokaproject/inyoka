@@ -9,7 +9,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
+
 from django.contrib.auth.backends import ModelBackend
+
 from inyoka.portal.user import User, UserBanned
 
 
@@ -31,14 +33,19 @@ class InyokaAuthBackend(ModelBackend):
             UserBanned
                 If the found user was banned by an admin.
         """
+        user = None
         try:
             user = User.objects.get(username)
         except User.DoesNotExist:
             # fallback to email login
             if '@' in username:
-                user = User.objects.get(email__iexact=username)
-            else:
-                return None
+                try:
+                    user = User.objects.get(email__iexact=username)
+                except User.DoesNotExist:
+                    pass
+
+        if user is None:
+            return None
 
         if user.is_banned:
             # user banned ad infinitum

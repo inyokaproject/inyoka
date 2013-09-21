@@ -10,8 +10,8 @@
 """
 from PIL import Image
 from django.utils.translation import ugettext_lazy
-from inyoka.portal.utils import UBUNTU_VERSIONS
 
+from inyoka.portal.utils import UBUNTU_VERSIONS
 
 # initialize PIL to make Image.ID available
 Image.init()

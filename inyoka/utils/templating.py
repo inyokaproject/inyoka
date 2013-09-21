@@ -8,32 +8,37 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import json
 import os
+import json
 from glob import glob
 
+from jinja2 import (
+    escape,
+    Template,
+    Environment,
+    contextfunction,
+    TemplateNotFound,
+    FileSystemLoader
+)
 from django.conf import settings
-from django.template.base import TemplateDoesNotExist, Context as DjangoContext
-from django.template.loader import BaseLoader
 from django.utils import translation
-from django.utils.functional import Promise
-from django.utils.encoding import force_unicode
-from django.utils.timesince import timesince
-
 from django.contrib import messages
+from django.template.base import Context as DjangoContext
+from django.template.base import TemplateDoesNotExist
+from django.utils.encoding import force_unicode
+from django.template.loader import BaseLoader
+from django.utils.timesince import timesince
+from django.utils.functional import Promise
 from django.core.context_processors import csrf
 from django.contrib.humanize.templatetags.humanize import naturalday
 
-from django_mobile import get_flavour
-from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound,\
-    contextfunction, Template
-
 from inyoka import INYOKA_REVISION
-from inyoka.utils.cache import request_cache
-from inyoka.utils.dates import format_datetime, format_specific_datetime, \
-    format_time
-from inyoka.utils.local import current_request
+from django_mobile import get_flavour
+from inyoka.utils.urls import href, url_for, urlquote, urlencode
 from inyoka.utils.text import human_number
+from inyoka.utils.dates import format_time, format_datetime, format_specific_datetime
+from inyoka.utils.local import current_request
+from inyoka.utils.cache import request_cache
 
 # path to the dtd.  In debug mode we refer to the file system, otherwise
 # URL.  We do that because the firefox validator extension is unable to
@@ -324,9 +329,6 @@ class DjangoLoader(BaseLoader):
         except TemplateNotFound:
             raise TemplateDoesNotExist(template_name)
 
-
-# circular imports
-from inyoka.utils.urls import href, url_for, urlencode, urlquote
 
 #: Filters that are globally available in the template environment
 FILTERS = {

@@ -19,8 +19,7 @@ magic.from_buffer(open("./tests/test.pdf").read(1024))
 """
 
 import os.path
-from ctypes import CDLL, util
-from ctypes import c_char_p, c_int, c_size_t, c_void_p
+from ctypes import CDLL, util, c_int, c_size_t, c_char_p, c_void_p
 
 
 class MagicException(Exception):

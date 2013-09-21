@@ -9,15 +9,17 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-import pytz
 from operator import attrgetter
-from datetime import date, datetime, timedelta, time
-from django.contrib.humanize.templatetags.humanize import naturalday
+from datetime import date, time, datetime, timedelta
+
 from django.utils import datetime_safe
 from django.utils.dateformat import DateFormat
-from django.utils.translation import get_language_from_request, ugettext as _
-from inyoka.utils.local import current_request
+from django.utils.translation import ugettext as _
+from django.utils.translation import get_language_from_request
+from django.contrib.humanize.templatetags.humanize import naturalday
 
+import pytz
+from inyoka.utils.local import current_request
 
 TIMEZONES = pytz.common_timezones
 DEFAULT_TIMEZONE = pytz.timezone('Europe/Berlin')
@@ -58,7 +60,7 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
         days[-1][1].append(entry)
     return [{
         'date': date(*key),
-        'articles': entries
+        'articles': items,
     } for key, items in days if items]
 
 

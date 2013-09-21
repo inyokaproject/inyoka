@@ -10,8 +10,8 @@
 """
 import unittest
 
-from inyoka.wiki.models import Page
 from inyoka.markup import parse, RenderContext
+from inyoka.wiki.models import Page
 
 
 class TestMacros(unittest.TestCase):

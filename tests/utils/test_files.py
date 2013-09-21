@@ -9,7 +9,9 @@
     :license: GNU GPL.
 """
 import unittest
+
 from django.core.files.base import ContentFile
+
 from inyoka.utils.files import InyokaFSStorage
 
 

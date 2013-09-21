@@ -10,7 +10,6 @@
 """
 from django.conf.urls import patterns
 
-
 urlpatterns = patterns('inyoka.wiki.views',
     (r'^$', 'index'),
     (r'^_image$', 'get_image_resource'),

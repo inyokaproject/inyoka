@@ -10,7 +10,6 @@
 """
 from django.conf.urls import patterns
 
-
 urlpatterns = patterns('inyoka.forum.views',
     (r'^$', 'index'),
     (r'^topic/(?P<topic_slug>[^/]+)/$', 'viewtopic'),
@@ -104,4 +103,4 @@ urlpatterns = patterns('inyoka.forum.views',
 )
 
 
-handler404 = 'inyoka.utils.urls.global_not_found'
+handler404 = 'inyoka.utils.http.global_not_found'

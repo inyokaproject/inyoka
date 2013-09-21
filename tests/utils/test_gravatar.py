@@ -9,6 +9,7 @@
     :license: GNU GPL.
 """
 import unittest
+
 from inyoka.utils.gravatar import get_gravatar
 
 

@@ -8,16 +8,26 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django import forms
-import pytz
 from datetime import time as dt_time
+
+from django import forms
 from django.utils.translation import ugettext_lazy
-from inyoka.utils.forms import UserField, DateWidget, \
-    TimeWidget, DateTimeField, StrippedCharField
-from inyoka.utils.dates import datetime_to_timezone, get_user_timezone, \
-        date_time_to_datetime
-from inyoka.ikhaya.models import Article, Suggestion, Category, Event
+
+import pytz
+from inyoka.utils.forms import (
+    UserField,
+    TimeWidget,
+    DateWidget,
+    DateTimeField,
+    StrippedCharField
+)
+from inyoka.utils.dates import (
+    get_user_timezone,
+    datetime_to_timezone,
+    date_time_to_datetime
+)
 from inyoka.portal.models import StaticFile
+from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 
 
 class SuggestArticleForm(forms.ModelForm):
@@ -47,6 +57,7 @@ class EditCommentForm(forms.Form):
 class EditArticleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
+        readonly = kwargs.pop('readonly', False)
         if instance:
             initial = kwargs.setdefault('initial', {})
             initial['pub_date'] = instance.pub_datetime
@@ -56,6 +67,9 @@ class EditArticleForm(forms.ModelForm):
         super(EditArticleForm, self).__init__(*args, **kwargs)
         # Following stuff is in __init__ to keep helptext etc intact.
         self.fields['icon'].queryset = StaticFile.objects.filter(is_ikhaya_icon=True)
+        if readonly:
+            for field in ('subject', 'intro', 'text'):
+                self.fields[field].widget.attrs['readonly'] = True
 
     author = UserField(label=ugettext_lazy(u'Author'), required=True)
     pub_date = DateTimeField(label=ugettext_lazy(u'Publication date'),

@@ -15,14 +15,16 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
+
 import datetime
 from operator import itemgetter
-from xapian import DatabaseOpeningError
 
 from django.conf import settings
-from inyoka.portal.models import SearchQueue
+
+from xapian import DatabaseOpeningError
 from inyoka.utils import groupby
 from inyoka.utils.search import search
+from inyoka.portal.models import SearchQueue
 from inyoka.utils.terminal import show
 
 

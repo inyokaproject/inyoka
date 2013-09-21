@@ -8,11 +8,11 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from django.core.cache import cache
 from django.test import TestCase
+from django.core.cache import cache
 
-from inyoka.forum.models import Forum, Topic, Post
 from inyoka.portal.user import User
+from inyoka.forum.models import Post, Topic, Forum
 
 
 class TestPostSplitNewTopic(TestCase):

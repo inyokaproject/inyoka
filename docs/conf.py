@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
-from subprocess import Popen, PIPE
+import sys
+import datetime
+from os.path import join, dirname
+from subprocess import PIPE, Popen
+
+sys.path.insert(0, join(dirname(__file__), '..'))
 
 extensions = ['sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
-    'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.extlinks']
+    'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.extlinks',
+    'sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -15,7 +21,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Inyoka'
-copyright = u'2007 - 2012 by the Inyoka Team, see AUTHORS for more details'
+copyright = u'2007 - %d by the Inyoka Team, see AUTHORS for more details' % datetime.date.today().year
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

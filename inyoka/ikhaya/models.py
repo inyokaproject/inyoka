@@ -8,29 +8,28 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from operator import attrgetter, itemgetter
 from datetime import datetime
-from operator import itemgetter, attrgetter
 
-from django.core.cache import cache
-from django.conf import settings
 from django.db import models
-from django.db.models import Q
-from django.utils.translation import ugettext_lazy
+from django.conf import settings
 from django.utils import datetime_safe
+from django.db.models import Q
+from django.core.cache import cache
 from django.utils.html import escape
+from django.utils.translation import ugettext_lazy
 
-from inyoka.markup import render, parse, RenderContext
-from inyoka.portal.user import User
-from inyoka.portal.models import StaticFile
-
-from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
-from inyoka.utils.database import find_next_increment, LockableObject
-from inyoka.utils.decorators import deferred
-from inyoka.utils.html import striptags
-from inyoka.utils.local import current_request
-from inyoka.utils.search import search
-from inyoka.utils.text import slugify
+from inyoka.markup import parse, render, RenderContext
 from inyoka.utils.urls import href
+from inyoka.utils.text import slugify
+from inyoka.utils.html import striptags
+from inyoka.portal.user import User
+from inyoka.utils.local import current_request
+from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
+from inyoka.utils.search import search
+from inyoka.portal.models import StaticFile
+from inyoka.utils.database import LockableObject, find_next_increment
+from inyoka.utils.decorators import deferred
 
 
 def _get_not_cached_articles(keys, cache_values):
@@ -185,6 +184,7 @@ class Category(models.Model):
         cache.delete('ikhaya/categories')
 
     class Meta:
+        ordering = ('name',)
         verbose_name = ugettext_lazy(u'Category')
         verbose_name_plural = ugettext_lazy(u'Categories')
 
@@ -348,9 +348,8 @@ class Article(models.Model, LockableObject):
         if not self.slug:
             self.slug = find_next_increment(Article, 'slug',
                 slugify(self.subject), pub_date=self.pub_date)
-
-        # Force to use a valid slug
-        self.slug = slugify(self.slug)
+        else:
+            self.slug = slugify(self.slug)
 
         super(Article, self).save(*args, **kwargs)
         self.update_search()
@@ -536,7 +535,7 @@ class Event(models.Model):
         if not self.slug:
             name = datetime_safe.new_date(self.date) \
                                 .strftime('%Y/%m/%d/') + slugify(self.name)
-            self.slug = find_next_increment(Event, 'slug', name, stripdate=True)
+            self.slug = find_next_increment(Event, 'slug', name)
         super(self.__class__, self).save(*args, **kwargs)
         cache.delete('ikhaya/event/%s' % self.id)
         cache.delete('ikhaya/event_count')

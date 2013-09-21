@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 import unittest
 from os.path import join, dirname
+
 from inyoka.utils import magic
 
 
