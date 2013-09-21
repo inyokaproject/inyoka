@@ -8,6 +8,8 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
+import unittest
+
 from os import path
 from random import randint
 
@@ -365,6 +367,13 @@ class TestPostEditView(TestCase):
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
 
+    def tearDown(self):
+        for att in Attachment.objects.all():
+            att.delete()  # This removes the files too
+
+        PollOption.objects.all().delete()
+        Poll.objects.all().delete()
+
     def test_newtopic(self):
         # Test preview
         postdata = {
@@ -408,10 +417,9 @@ class TestPostEditView(TestCase):
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
         self.assertEqual(Attachment.objects.all().count(), 1)
-        attachment = Attachment.objects.get(pk=1)
-        self.assertInHTML('<ul><li><a href="%(url)s">newpost_file_name.png</a> - 273 Bytes'
-            '<button type="submit" name="delete_attachment" value="1">Delete</button></li></ul>'
-            % {'url': attachment.get_absolute_url()}, response.content, count=1)
+        att = Attachment.objects.get()
+        pattern = '<li><a href="%(url)s">%(name)s</a> - %(size)d Bytes<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
+        self.assertInHTML(pattern % {'size': 273, 'url': att.get_absolute_url(), 'name': att.name, 'pk': att.pk}, response.content, count=1)
         self.assertEqual(Topic.objects.all().count(), 0)
         self.assertEqual(Post.objects.all().count(), 0)
 
@@ -421,7 +429,7 @@ class TestPostEditView(TestCase):
             'ubuntu_distro': DISTRO_CHOICES[2][0],
             #'ubuntu_version': UBUNTU_VERSIONS[-1].number,
             'text': 'newpost text',
-            'attachments': '1',
+            'attachments': str(att.pk),
             'preview': True,
         }
         with translation.override('en-us'):
@@ -442,11 +450,9 @@ class TestPostEditView(TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        att = Attachment.objects.get(pk=1)
-        self.assertInHTML('<dl class="attachments"><dt>Pictures</dt><ul class="attr_list"><li>'
-            '<a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li></ul></dl>'
-                % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name},
-            response.content, count=1)
+        att = Attachment.objects.get()
+        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
+        self.assertInHTML(pattern % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name}, response.content, count=1)
 
     def test_newtopic_with_multiple_files(self):
         TEST_ATTACHMENT1 = 'test_attachment.png'
@@ -462,13 +468,16 @@ class TestPostEditView(TestCase):
         with translation.override('en-us'):
             self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
 
+        self.assertEqual(Attachment.objects.all().count(), 1)
+        att1 = Attachment.objects.get()
+
         # Upload second file
         f2 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT2), 'rb')
         postdata = {
             'attachment': f2,
             'filename': 'newpost_second_file.png',
             'comment': 'newpost comment for file 2',
-            'attachments': 1,
+            'attachments': str(att1.pk),
             'attach': True,
         }
         with translation.override('en-us'):
@@ -476,15 +485,10 @@ class TestPostEditView(TestCase):
 
         # Verify that the attachments exit
         self.assertEqual(Attachment.objects.all().count(), 2)
-        att1, att2 = Attachment.objects.filter(pk__in=[1, 2]).order_by('pk').all()
-        self.assertInHTML('<li><a href="%(url)s">%(name)s</a> - 273 Bytes'
-            '<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
-                % {'url': att1.get_absolute_url(), 'name': att1.name, 'pk': att1.pk},
-            response.content, count=1)
-        self.assertInHTML('<li><a href="%(url)s">%(name)s</a> - 276 Bytes'
-            '<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
-                % {'url': att2.get_absolute_url(), 'name': att2.name, 'pk': att2.pk},
-            response.content, count=1)
+        att1, att2 = Attachment.objects.all()
+        pattern = '<li><a href="%(url)s">%(name)s</a> - %(size)d Bytes<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
+        self.assertInHTML(pattern % {'size': 273, 'url': att1.get_absolute_url(), 'name': att1.name, 'pk': att1.pk}, response.content, count=1)
+        self.assertInHTML(pattern % {'size': 276, 'url': att2.get_absolute_url(), 'name': att2.name, 'pk': att2.pk}, response.content, count=1)
         self.assertEqual(Topic.objects.all().count(), 0)
         self.assertEqual(Post.objects.all().count(), 0)
 
@@ -494,7 +498,7 @@ class TestPostEditView(TestCase):
             'ubuntu_distro': DISTRO_CHOICES[2][0],
             #'ubuntu_version': UBUNTU_VERSIONS[-1].number,
             'text': 'newpost text',
-            'attachments': '1,2',
+            'attachments': '%d,%d' % (att1.pk, att2.pk),
             'preview': True,
         }
         with translation.override('en-us'):
@@ -515,14 +519,10 @@ class TestPostEditView(TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        att1, att2 = Attachment.objects.filter(pk__in=[1, 2]).order_by('pk').all()
-        self.assertInHTML('<dl class="attachments"><dt>Pictures</dt><ul class="attr_list">'
-            '<li><a href="%(url1)s" type="image/png" title="%(comment1)s">Download %(name1)s</a></li>'
-            '<li><a href="%(url2)s" type="image/png" title="%(comment2)s">Download %(name2)s</a></li>'
-            '</ul></dl>' % {
-                'url1': att1.get_absolute_url(), 'comment1': att1.comment, 'name1': att1.name,
-                'url2': att2.get_absolute_url(), 'comment2': att2.comment, 'name2': att2.name
-            }, response.content, count=1)
+        att1, att2 = Attachment.objects.all()
+        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
+        self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, response.content, count=1)
+        self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, response.content, count=1)
 
     def test_newtopic_with_poll(self):
         # Add first poll
@@ -534,10 +534,9 @@ class TestPostEditView(TestCase):
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
         self.assertEqual(Poll.objects.all().count(), 1)
-        poll = Poll.objects.get(pk=1)
-        self.assertInHTML('<dd>Existing polls:<ul><li>%(question)s<button '
-            'name="delete_poll" value="1">Delete</button></li></ul></dd>' % {
-                'question': poll.question}, response.content, count=1)
+        poll = Poll.objects.get()
+        pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
+        self.assertInHTML(pattern % {'q': poll.question, 'pk': poll.pk}, response.content, count=1)
         self.assertEqual(Topic.objects.all().count(), 0)
         self.assertEqual(Post.objects.all().count(), 0)
 
@@ -547,7 +546,7 @@ class TestPostEditView(TestCase):
             'ubuntu_distro': DISTRO_CHOICES[2][0],
             #'ubuntu_version': UBUNTU_VERSIONS[-1].number,
             'text': 'newpost text',
-            'polls': '1',
+            'polls': str(poll.pk),
             'preview': True,
         }
         with translation.override('en-us'):
@@ -568,17 +567,12 @@ class TestPostEditView(TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        poll = Poll.objects.get(pk=1)
-        opt1, opt2 = PollOption.objects.filter(pk__in=[1, 2]).order_by('pk').all()
-        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {
-            'question': poll.question
-        }, response.content, count=1)
-        self.assertInHTML('<table class="poll">'
-            '<tr><td><input type="radio" name="poll_1" id="option_1" value="1"/><label for="option_1">%(opt1)s</label></td></tr>'
-            '<tr><td><input type="radio" name="poll_1" id="option_2" value="2"/><label for="option_2">%(opt2)s</label></td></tr>'
-            '</table>' % {
-                'opt1': opt1.name, 'opt2': opt2.name
-            }, response.content, count=1)
+        poll = Poll.objects.get()
+        opt1, opt2 = PollOption.objects.all()
+        pattern = '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt_pk)d" value="%(opt_pk)d"/><label for="option_%(opt_pk)d">%(opt)s</label></td></tr>'
+        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {'question': poll.question}, response.content, count=1)
+        self.assertInHTML(pattern % {'poll_pk': poll.pk, 'opt': opt1.name, 'opt_pk': opt1.pk}, response.content, count=1)
+        self.assertInHTML(pattern % {'poll_pk': poll.pk, 'opt': opt2.name, 'opt_pk': opt2.pk}, response.content, count=1)
 
     def test_newtopic_with_multiple_polls(self):
         # Add first poll
@@ -590,23 +584,22 @@ class TestPostEditView(TestCase):
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
 
+        self.assertEqual(Poll.objects.all().count(), 1)
+        poll1 = Poll.objects.get()
+
         postdata = {
             'question': "Ask something else!",
             'options': ['Lorem', 'Ipsum'],
             'add_poll': True,
-            'polls': 1,
+            'polls': str(poll1.pk),
         }
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
         self.assertEqual(Poll.objects.all().count(), 2)
-        poll1, poll2 = Poll.objects.filter(pk__in=[1, 2]).order_by('pk').all()
-        self.assertInHTML('<dd>Existing polls:<ul>'
-            '<li>%(q1)s<button name="delete_poll" value="%(pk1)d">Delete</button></li>'
-            '<li>%(q2)s<button name="delete_poll" value="%(pk2)d">Delete</button></li>'
-            '</ul></dd>' % {
-                'q1': poll1.question, 'pk1': poll1.pk,
-                'q2': poll2.question, 'pk2': poll2.pk,
-            }, response.content, count=1)
+        poll1, poll2 = Poll.objects.all()
+        pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
+        self.assertInHTML(pattern % {'q': poll1.question, 'pk': poll1.pk}, response.content, count=1)
+        self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, response.content, count=1)
         self.assertEqual(Topic.objects.all().count(), 0)
         self.assertEqual(Post.objects.all().count(), 0)
 
@@ -616,7 +609,7 @@ class TestPostEditView(TestCase):
             'ubuntu_distro': DISTRO_CHOICES[2][0],
             #'ubuntu_version': UBUNTU_VERSIONS[-1].number,
             'text': 'newpost text',
-            'polls': '1,2',
+            'polls': '%d,%d' % (poll1.pk, poll2.pk),
             'preview': True,
         }
         with translation.override('en-us'):
@@ -637,27 +630,39 @@ class TestPostEditView(TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        poll1, poll2 = Poll.objects.filter(pk__in=[1, 2]).order_by('pk').all()
-        opt11, opt12, opt21, opt22 = PollOption.objects.filter(pk__in=[1, 2, 3, 4]).order_by('pk').all()
-        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {
-            'question': poll1.question
-        }, response.content, count=1)
-        self.assertInHTML('<table class="poll">'
-            '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt1_pk)d" value="%(opt1_pk)d"/><label for="option_%(opt1_pk)d">%(opt1)s</label></td></tr>'
-            '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt2_pk)d" value="%(opt2_pk)d"/><label for="option_%(opt2_pk)d">%(opt2)s</label></td></tr>'
-            '</table>' % {
-                'poll_pk': poll1.pk,
-                'opt1': opt11.name, 'opt1_pk': opt11.pk,
-                'opt2': opt12.name, 'opt2_pk': opt12.pk,
-            }, response.content, count=1)
-        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {
-            'question': poll2.question
-        }, response.content, count=1)
-        self.assertInHTML('<table class="poll">'
-            '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt1_pk)d" value="%(opt1_pk)d"/><label for="option_%(opt1_pk)d">%(opt1)s</label></td></tr>'
-            '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt2_pk)d" value="%(opt2_pk)d"/><label for="option_%(opt2_pk)d">%(opt2)s</label></td></tr>'
-            '</table>' % {
-                'poll_pk': poll2.pk,
-                'opt1': opt21.name, 'opt1_pk': opt21.pk,
-                'opt2': opt22.name, 'opt2_pk': opt22.pk,
-            }, response.content, count=1)
+        poll1, poll2 = Poll.objects.all()
+        self.assertEqual(PollOption.objects.all().count(), 4)
+        opt11, opt12, opt21, opt22 = PollOption.objects.order_by('pk').all()
+        pattern = '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt_pk)d" value="%(opt_pk)d"/><label for="option_%(opt_pk)d">%(opt)s</label></td></tr>'
+        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {'question': poll1.question}, response.content, count=1)
+        self.assertInHTML(pattern % {'poll_pk': poll1.pk, 'opt': opt11.name, 'opt_pk': opt11.pk}, response.content, count=1)
+        self.assertInHTML(pattern % {'poll_pk': poll1.pk, 'opt': opt12.name, 'opt_pk': opt12.pk}, response.content, count=1)
+        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {'question': poll2.question}, response.content, count=1)
+        self.assertInHTML(pattern % {'poll_pk': poll2.pk, 'opt': opt21.name, 'opt_pk': opt21.pk}, response.content, count=1)
+        self.assertInHTML(pattern % {'poll_pk': poll2.pk, 'opt': opt22.name, 'opt_pk': opt22.pk}, response.content, count=1)
+
+    @unittest.skip('Not implemented yet')
+    def test_new_post(self):
+        pass
+
+    @unittest.skip('Not implemented yet')
+    def test_new_post_with_file(self):
+        pass
+
+    @unittest.skip('Not implemented yet')
+    def test_new_post_with_multiple_files(self):
+        pass
+
+    @unittest.skip('Not implemented yet')
+    def test_edit_post(self):
+        pass
+
+    @unittest.skip('Not implemented yet')
+    def test_edit_post_remove_single(self):
+        # Create a topic with multiple files and polls and remove one of each
+        pass
+
+    @unittest.skip('Not implemented yet')
+    def test_edit_post_remove_all(self):
+        # Create a topic with multiple files and polls and remove all of them
+        pass
