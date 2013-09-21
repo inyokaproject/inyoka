@@ -1161,7 +1161,7 @@ class Attachment(models.Model):
 
         linktext = pgettext('Link text to download an attachment',
             u'Download %(name)s') % {'name': self.name}
-        return format_html(u'<a href="%s" type="%s" title="%s">%s</a>',
+        return format_html(u'<a href="{}" type="{}" title="{}">{}</a>',
                            url, self.mimetype, self.comment, linktext)
 
     def get_absolute_url(self, action=None):
