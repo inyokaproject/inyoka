@@ -163,9 +163,10 @@ class CommentManager(models.Manager):
 class Category(models.Model):
     name = models.CharField(max_length=180)
     slug = models.CharField(ugettext_lazy(u'Slug'), max_length=100,
-            blank=True, unique=True, db_index=True)
+                            blank=True, unique=True, db_index=True)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-                             verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
+                             verbose_name=ugettext_lazy(u'Icon'),
+                             on_delete=models.SET_NULL)
 
     def __unicode__(self):
         return self.name
@@ -198,24 +199,26 @@ class Article(models.Model, LockableObject):
     pub_date = models.DateField(ugettext_lazy(u'Date'), db_index=True)
     pub_time = models.TimeField(ugettext_lazy(u'Time'))
     updated = models.DateTimeField(ugettext_lazy(u'Last change'), blank=True,
-                null=True, db_index=True)
+                                   null=True, db_index=True)
     author = models.ForeignKey(User, related_name='article_set',
-                               verbose_name=ugettext_lazy(u'Author'))
+                               verbose_name=ugettext_lazy(u'Author'),
+                               on_delete=models.PROTECT)
     subject = models.CharField(ugettext_lazy(u'Headline'), max_length=180)
     category = models.ForeignKey(Category, verbose_name=ugettext_lazy(u'Category'),
                                  on_delete=models.PROTECT)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
-            verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
+                             verbose_name=ugettext_lazy(u'Icon'),
+                             on_delete=models.SET_NULL)
     intro = models.TextField(ugettext_lazy(u'Introduction'))
     text = models.TextField(ugettext_lazy(u'Text'))
     public = models.BooleanField(ugettext_lazy(u'Public'))
     slug = models.SlugField(ugettext_lazy(u'Slug'), max_length=100,
-            blank=True, db_index=True)
+                            blank=True, db_index=True)
     is_xhtml = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
-                default=False)
+                                   default=False)
     comment_count = models.IntegerField(default=0)
     comments_enabled = models.BooleanField(ugettext_lazy(u'Allow comments'),
-                        default=True)
+                                           default=True)
 
     @property
     def article_icon(self):
@@ -382,9 +385,9 @@ class Article(models.Model, LockableObject):
 
 
 class Report(models.Model):
-    article = models.ForeignKey(Article, null=True)
+    article = models.ForeignKey(Article, null=True, on_delete=models.CASCADE)
     text = models.TextField()
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.PROTECT)
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
     solved = models.BooleanField(null=False, default=False)
@@ -412,15 +415,16 @@ class Report(models.Model):
 
 class Suggestion(models.Model):
     objects = SuggestionManager()
-    author = models.ForeignKey(User, related_name='suggestion_set')
+    author = models.ForeignKey(User, related_name='suggestion_set',
+                               on_delete=models.PROTECT)
     pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
     title = models.CharField(ugettext_lazy(u'Title'), max_length=100)
     text = models.TextField(ugettext_lazy(u'Text'))
     intro = models.TextField(ugettext_lazy(u'Introduction'))
     notes = models.TextField(ugettext_lazy(u'Annotations to the team'),
-                blank=True, default=u'')
+                             blank=True, default=u'')
     owner = models.ForeignKey(User, related_name='owned_suggestion_set',
-                              null=True, blank=True)
+                              null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = ugettext_lazy(u'Article suggestion')
@@ -462,9 +466,9 @@ class Suggestion(models.Model):
 
 class Comment(models.Model):
     objects = CommentManager()
-    article = models.ForeignKey(Article, null=True)
+    article = models.ForeignKey(Article, null=True, on_delete=models.PROTECT)
     text = models.TextField()
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.PROTECT)
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
     rendered_text = models.TextField()
@@ -502,7 +506,7 @@ class Event(models.Model):
     enddate = models.DateField(blank=True, null=True)  # None
     endtime = models.TimeField(blank=True, null=True)  # None -> whole day
     description = models.TextField(blank=True)
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, on_delete=models.PROTECT)
     location = models.CharField(max_length=128, blank=True)
     location_town = models.CharField(max_length=56, blank=True)
     location_lat = models.FloatField(ugettext_lazy(u'Degree of latitude'),

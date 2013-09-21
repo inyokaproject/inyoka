@@ -26,7 +26,8 @@ class Entry(models.Model):
     rendered_code = models.TextField(ugettext_lazy('Rendered code'))
     pub_date = models.DateTimeField(ugettext_lazy('Date'), db_index=True,
                                     default=datetime.utcnow)
-    author = models.ForeignKey(User, verbose_name=ugettext_lazy('Author'))
+    author = models.ForeignKey(User, verbose_name=ugettext_lazy('Author'),
+                               on_delete=models.PROTECT)
     referrer = models.TextField(ugettext_lazy('Referencing pages'), blank=True)
 
     class Meta:
