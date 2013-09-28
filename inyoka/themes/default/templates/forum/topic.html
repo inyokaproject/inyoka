@@ -1,0 +1,108 @@
+{% extends 'forum/base.html' %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  {% if topic.forum.parent.parent %}
+    <li>…</li>
+  {% endif %}
+  <li><a href="{{ topic.forum|url }}">{{ topic.forum }}</a></li>
+  <li>{{ topic }}</li>
+{% endblock %}
+
+{% block sidebar %}
+  {% call macros.sidebar() %}
+    {{ macros.sidebar_item(_('Reply'), topic|url('reply')) }}
+
+    {% if can_subscribe %}
+      {% if is_subscribed %}
+        {{ macros.sidebar_item(_('Unsubscribe'), topic|url('unsubscribe')) }}
+      {% else %}
+        {{ macros.sidebar_item(_('Subscribe'), topic|url('subscribe')) }}
+      {% endif %}
+    {% endif %}
+
+    {% if topic.solved %}
+      {{ macros.sidebar_item(_('Mark as unsolved'), topic|url('unsolve')) }}
+    {% else %}
+      {{ macros.sidebar_item(_('Mark as solved'), topic|url('solve')) }}
+    {% endif %}
+
+    {{ macros.sidebar_item(_('Report'), topic|url('report')) }}
+  {% endcall %}
+{% endblock %}
+
+{% block content %}
+  {{ rendered_pagination }}
+  {% for post in posts %}
+    <div class="forum-post {% if post.hidden %}forum-post-muted{% endif %}" id="post-{{ post.id }}">
+      <div class="forum-post-heading">
+        <span class="pull-right">
+          <a href="{{ post|url }}">
+            <time datetime="{{ post.pub_date|datetime('c') }}">{{ post.pub_date|datetime }}</time>
+          </a>
+        </span>
+        <a href="{{ post.author|url }}">{{ post.author }}</a>
+
+        <div class="clearfix"></div>
+      </div>
+      <div class="forum-post-body">
+        {{ post.get_text() }}
+      </div>
+      <div class="forum-post-footer">
+        <div class="button-group"{% if topic.locked %} data-toggle="tooltip" data-placement="right"
+             title="{% trans %}The topic is locked{% endtrans %}"{% endif %}>
+          <a href="{{ post|url('quote') }}" class="btn btn-default{% if topic.locked %} disabled{% endif %}">
+            {% trans %}Quote{% endtrans %}
+          </a>
+          {% if can_edit(post) %}
+            <a href="{{ post|url('edit') }}" class="btn btn-primary{% if topic.locked %} disabled{% endif %}">
+              {% trans %}Edit{% endtrans %}</a>
+          {% endif %}
+        </div>
+        {% if can_moderate %}
+          <div class="pull-right">
+            <button type="button" class="stuff-button" data-toggle="dropdown">
+              {% trans %}Staff{% endtrans %}
+              <span class="fa_icon-caret-down"></span>
+            </button>
+            <ul class="stuff-button-menu">
+              <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
+              {% if post.hidden %}
+                <li><a href="#">{% trans %}Restore{% endtrans %}</a></li>
+              {% else %}
+                <li><a href="#">{% trans %}Hide{% endtrans %}</a></li>
+              {% endif %}
+              {% if can_moderate and topic.locked %}
+                <li><a href="{{ post|url('quote') }}">{% trans %}Quote{% endtrans %}</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+  <div class="button-group visible-xs">
+    <a href="{{ topic|url('reply') }}" class="btn btn-primary">
+      <span class="fa_icon-pencil"></span> {% trans %}Reply{% endtrans %}</a>
+    {% if is_subscribed %}
+      <a href="{{ topic|url('unsubscribe') }}" class="btn btn-default">{% trans %}Unsubscribe{% endtrans %}</a>
+    {% else %}
+      <a href="{{ topic|url('subscribe') }}" class="btn btn-default"
+         title="{% trans %}Get notified as soon someone replies to this topic{% endtrans %}"
+         data-toggle="tooltip" data-placement="bottom" data-delay="700">{% trans %}Subscribe{% endtrans %}</a>
+    {% endif %}
+    {% if topic.solved %}
+      <a href="{{ topic|url('unsolve') }}" class="btn btn-default">
+        <span class="fa_icon-remove"></span> {% trans %}Mark as unsolved{% endtrans %}</a>
+    {% else %}
+      <a href="{{ topic|url('solve') }}" class="btn btn-default">
+        <span class="fa_icon-check"></span> {% trans %}Mark as solved{% endtrans %}</a>
+    {% endif %}
+    <a href="{{ topic|url('report') }}" class="btn btn-default"
+       title="{% trans %}Report this topic if you think it needs moderators attention{% endtrans %}"
+       data-toggle="tooltip" data-placement="bottom" data-delay="700">
+      <span class="fa_icon-bell-o"></span> {% trans %}Report{% endtrans %}</a>
+  </div>
+  <div class="clearfix"></div>
+  {{ rendered_pagination }}
+{% endblock %}

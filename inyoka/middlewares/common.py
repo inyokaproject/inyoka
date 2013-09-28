@@ -64,7 +64,8 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
             response['Cache-Control'] = 'no-cache'
 
         path = request.path
-        if path.endswith('.less') and settings.DEBUG:
+        if (path.endswith(('.less', '.woff', '.eot', '.ttf', '.otf'))
+            and settings.DEBUG):
             response['Access-Control-Allow-Origin'] = '*'
 
         # warn of slow requests

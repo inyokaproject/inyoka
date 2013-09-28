@@ -1,0 +1,60 @@
+{#
+    portal/user_edit_profile.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Change a userprofile
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li>{{_('Profile')}}</li>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+		{{ csrf_token() }}
+    {{ render_form(form, ['username'], inline=true) }}
+    <dt>{{ form.member_title.label_tag() }}:</dt>
+    <dd>{{ form.member_title }}
+      {% if user.groups.all() %}
+      <div class="group_titles">
+      {% for group in user.groups.all() %}
+        <input type="checkbox" name="group_titles" value="{{ group }}" /> {{ group }}
+      {% endfor %}
+      </div>
+      {%- endif %}
+    </dd>
+
+    <div class="page-header">
+      <h4>{% trans %}Avatar settings{% endtrans %}:</h4>
+    </div>
+    <dt>{{ form.avatar.label_tag() }}:</dt>
+    <dd><img class="usercp_avatar" src="{{ user.avatar_url }}" alt="Avatar" /></dd>
+    <dd>{{ form.avatar }}</dd>
+    <dd class="note">{% trans height=avatar_height, width=avatar_width -%}
+      (Will be scaled to {{ width }}x{{ height }})
+    {%- endtrans %}</dd>
+
+    <div class="page-header">
+      <h4>{% trans %}Contact addresses{% endtrans %}</h4>
+    </div>
+    {{ render_form(form, ['email', 'gpgkey', 'jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone', 'sip']) }}
+
+    <div class="page-header">
+      <h4>{% trans %}Miscellaneous settings{% endtrans %}</h4>
+    </div>
+    {{ render_form(form, ['occupation', 'interests', 'website',
+                          'launchpad', 'location']) }}
+
+    <div class="page-header">
+      <h4>{% trans %}Signature{% endtrans %}</h4>
+    </div>
+    <p>{{ form.signature }}</p>
+    <p><input type="submit" value="{% trans %}Submit{% endtrans %}" /></p>
+  </form>
+{% endblock %}

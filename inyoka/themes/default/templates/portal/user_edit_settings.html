@@ -1,0 +1,40 @@
+{#
+    portal/user_edit_settings.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Change the settings of a user.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li>{{_('Settings')}}</li>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+    {{ csrf_token() }}
+    <div class="page-header">
+      <h3>{% trans %}Settings{% endtrans %}</h3>
+    </div>
+
+    <dl>
+      {{ render_form(form, ['notify', 'notifications', 'timezone'], inline = True) }}
+
+      <dt><h4>{% trans %}Interface{% endtrans %}</h4></dt>
+      {{ render_checkbox_form(form, ['hide_avatars', 'hide_signatures', 'hide_profile', 'highlight_search'], inline = True) }}
+
+
+      <dt><h4>{% trans %}Forum{% endtrans %}</h4></dt>
+      {{ render_checkbox_form(form, ['mark_read_on_logout', 'autosubscribe', 'show_preview'], inline = True) }}
+      {{ render_checkbox_form(form, ['show_thumbnails'], inline = False) }}
+    </dl>
+    <p>
+      <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+    </p>
+  </script>
+{% endblock %}

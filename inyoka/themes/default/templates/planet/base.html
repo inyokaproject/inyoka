@@ -1,0 +1,55 @@
+{#
+    planet/page.html
+    ~~~~~~~~~~~~~~~~
+
+    This template is included by all planet templates and adds the elements
+    they all use (sidebar etc).
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'base.html' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ href('planet') }}">{% trans %}Planet{% endtrans %}</a></li>
+{% endblock %}
+
+{% set active_app = 'planet' %}
+{% set styles = styles|default([]) + ['planet'] %}
+
+{% block sidebar %}
+  {{ planet_description_rendered|default('', True) }}
+
+  {% call macros.sidebar(_('Export blogs')) %}
+    {{ macros.sidebar_item('OPML', href('planet', 'blogs', 'export', 'opml')) }}
+    {{ macros.sidebar_item('FOAF', href('planet', 'blogs', 'export', 'foaf')) }}
+  {% endcall %}
+
+  {%- if blogs %}
+    {% call macros.sidebar(_('Blogs')) %}
+      {%- for blog in blogs %}
+        {% call macros.sidebar_item() %}
+          <a href="{{ blog|url|e }}">{{ blog.name|e }}</a>
+
+          {# TODO: swap pencil to the right #}
+          {%- if USER.can('category_edit') -%}
+            <a href="{{ blog|url('edit') }}"> <span class="fa_icon-pencil"></span></a>
+          {%- endif -%}
+        {% endcall %}
+      {%- endfor %}
+    {% endcall %}
+  {%- endif %}
+
+  {%- if USER.can('blog_edit') %}
+    {% call macros.sidebar_admin() %}
+      {{ macros.sidebar_item(_('new blog'), href('planet', 'blog', 'new')) }}
+      {{ macros.sidebar_item(_('Bloglist'), href('planet', 'blogs')) }}
+    {% endcall %}
+  {%- endif %}
+
+{% endblock %}
+
+{% block content %}
+  {%- block planet_content %}
+  {%- endblock %}
+{%- endblock %}

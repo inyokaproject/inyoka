@@ -1,0 +1,40 @@
+{#
+    pastebin/browse.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    On this page the user can browse through old pastebin entries.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+{%- extends 'pastebin/base.html' %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li><a href="{{ href('pastebin', 'browse') }}">{% trans %}Entries{% endtrans %}</a></li>
+{% endblock %}
+
+{% block paste_content %}
+  {%- if entries %}
+    <ul class="pastes">
+      {%- for entry in entries %}
+        <li>
+          <span class="number">#{{ entry.id }}</span>
+          {% trans entry_link=entry|url, author_link=entry.author|url, 
+                   title=entry.title|e, author=entry.author.username|e -%}
+            <a href="{{ entry_link }}">{{ title }}</a> by <a href="{{ author_link }}">{{- author -}}</a>
+          {%- endtrans %}
+          <span class="pull-right">
+            <span class="linklist"> | </span>
+            <span class="date">
+              {{- entry.pub_date|datetime }}
+            </span>
+          </span>
+        </li>
+      {%- endfor %}
+    </ul>
+  {%- else %}
+    <p>{% trans %}No pastes were created yet.{% endtrans %}</p>
+  {%- endif %}
+{% endblock %}

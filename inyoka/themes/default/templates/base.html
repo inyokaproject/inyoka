@@ -1,0 +1,154 @@
+{#
+  base.html
+  ~~~~~~~~~~~~~~~~~~~~~~
+
+  basic template on which all used templates rely.
+
+  :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+  :license: BSD, see LICENSE for more details.
+#}
+{% import 'macros.html' as macros %}
+
+{% set active_app = 'portal' %}
+
+<!DOCTYPE html>
+<html>
+{% block head %}
+
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Inyoka</title>
+
+  <link href="{{ href('static', 'less', 'style.less') }}" rel="stylesheet/less" type="text/css" />
+  <script type="text/javascript" src="{{ href('static', 'js/less.min.js') }}"></script>
+
+</head>
+{% endblock %} {% block body %}
+
+<body id="{{ active_app }}" role="document">
+
+  {% block header %}
+  <header class="header" role="navigation">
+    <div class="container">
+      <div class="header-collapsed">
+        <button type="button" class="header-toggle" data-toggle="collapse" data-target=".header-collapsing">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="fa_icon-navicon"></span>
+        </button>
+        <a class="header-brand" href="{{ href('portal') }}">Inyoka</a>
+      </div>
+      <div class="header-collapsing">
+        <ul>
+          {# TODO: Apps should register themself, and the template should receive some list of active apps #} 
+          {% for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
+          <li class="{{ app }}{% if app == active_app %} active{% endif %}">
+            <a href="{{ href(app) }}">{{ app|capitalize }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+        <ul class="header-right">
+          {% if USER.is_authenticated() %}
+          <li>
+            <a href="{{ USER|url }}" class="hidden-sm" title="{% trans %}My profile{% endtrans %}" data-toggle="tooltip" data-placement="bottom">{{ USER }}</a>
+          </li>
+          <li>
+            <a href="{{ href('portal', 'logout') }}" title="{% trans %}Logout{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+              <span class="fa_icon-sign-out"></span>
+              <span class="visible-xs-inline">{% trans %}Logout{% endtrans %}</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ href('portal', 'usercp') }}" title="{% trans %}Control panel{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+              <span class="fa_icon-wrench"></span>
+              <span class="visible-xs-inline">{% trans %}Control panel{% endtrans %}</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ href('portal', 'privmsg') }}" title="{% trans %}Messages{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+              <span class="fa_icon-envelope"></span>
+              <span class="visible-xs-inline">{% trans %}Messages{% endtrans %}</span>
+            </a>
+          </li>
+          {% else %}
+          <li>
+            <a href="{{ href('portal', 'login') }}" title="{% trans %}Login{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+              <span class="fa_icon-sign-in"></span>
+              <span class="visible-xs-inline">{% trans %}Login{% endtrans %}</span>
+            </a>
+          </li>
+          {% endif %}
+          <li>
+            <a href="{{ href('portal', 'search') }}" title="{% trans %}Search{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+              <span class="fa_icon-search"></span>
+              <span class="visible-xs-inline">{% trans %}Search{% endtrans %}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+  {% endblock %}
+
+  {% block main %}
+  <div class="content" id="main-content" role="main">
+    <div class="container">
+      <div class="row">
+        {% for message in MESSAGES %}
+        <div class="col-md-12">
+          <div class="message-{{ message.tags }}">
+            {{ message }}
+          </div>
+        </div>
+        {% endfor %}
+
+        <!-- Breadcrumb  like bootstrap-->
+        <div class="col-md-12">
+          <ol class="breadcrumb">
+            {% block breadcrumb %}
+            {% endblock %}
+          </ol>
+        </div>
+
+        <div class="col-sm-3">
+          <div class="content_sidebar" id="sidebar">
+            {% block sidebar %}
+            {% endblock %}
+          </div>
+        </div>
+        <div class="col-sm-9 content">
+          {% block content %}
+          {% endblock %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+  
+  {% block footer %}
+  <nav class="footer" id="main-footer">
+    <div class="container">
+      <div class="footer-left">
+        {% trans link='http://inyokaproject.org/' %}
+          Powered by <a href="{{ link }}">Inyoka</a>
+        {% endtrans %}
+      </div>
+      <div class="footer-center">Text - center</div>
+      <div class="footer-right">Text - right</div>
+    </div>
+  </nav>
+  {% endblock %}
+
+  <script src="{{ href('static', 'js', 'jquery-2.1.1.min.js') }}"></script>
+  <script src="{{ href('static', 'js', 'bootstrap.min.js') }}"></script>
+  <script src="{{ href('static', 'js', 'smoothscrolling.js') }}"></script>
+  <script src="{{ href('static', 'js', 'base.js') }}"></script>
+  {% block scripts %} {% endblock %}
+</body>
+{% endblock %}
+
+</html>

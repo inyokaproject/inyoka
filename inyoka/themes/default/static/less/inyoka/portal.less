@@ -1,0 +1,47 @@
+.portal {
+  &-userinfo {
+    &:extend(.table);
+    &:extend(.table-striped);
+    &:extend(.table-bordered);
+
+    & > tbody {
+      & > tr {
+        &:nth-child(odd) {
+          & > td {
+            &:extend(.table-striped > tbody > tr:nth-child(odd) > td);
+          }
+          & > th {
+            &:extend(.table-striped > tbody > tr:nth-child(odd) > th);
+          }
+        }
+        & > th {
+          &:extend(.table > tbody > tr > th);
+          &:extend(.table-bordered > tbody > tr > th);
+        }
+        & > td {
+          &:extend(.table > tbody > tr > td);
+          &:extend(.table-bordered > tbody > tr > td);
+        }
+      }
+    }
+  }
+
+  &-privilege-list {
+    &:extend(.list-group);
+
+    &-item {
+      &:extend(.list-group-item);
+
+      &:last-child {
+        &:extend(.list-group-item:last-child);
+      }
+      &.active {
+        &:extend(.list-group-item.active);
+      }
+      &.changed:not(.active) {
+        color: @state-warning-text;
+        background-color: @state-warning-bg;
+      }
+    }
+  }
+}

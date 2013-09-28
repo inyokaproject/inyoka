@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% set active_app = 'forum' %}
+
+{% block scripts %}
+  <script src="{{ href('static', 'js', 'forum.js') }}"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+  <li><a href="{{ href('forum') }}">Forum</a></li>
+{% endblock %}

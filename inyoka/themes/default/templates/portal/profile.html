@@ -1,0 +1,194 @@
+{#
+    portal/profile.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    This page shows a user's profile.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/base.html' %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li><a href="{{ href('portal', 'users') }}">{% trans %}Members{% endtrans %}</a></li>
+  <li>{{ user.username }}</li>
+{% endblock %}
+
+{% macro show_item(item) %}
+  {%- if user[item] and user.settings['show_'+item] -%}
+    <td>{{ user[item]|e }}</td>
+  {%- elif user[item] and REQUEST.user.can('user_edit') -%}
+    <td class="hidden-info">{{ user[item]|e }}</td>
+  {%- else -%}
+    <td>–</td>
+  {%- endif -%}
+{% endmacro %}
+
+{% block sidebar %}
+  <form action="{{ href('portal', 'user', user.username, 'unsubscribe')|e }}"
+        method="post"
+        id="unsubscribe_user">
+    {{ csrf_token() }}
+  </form>
+  <form action="{{ href('portal', 'user', user.username, 'subscribe')|e }}"
+        method="post"
+        id="subscribe_user">
+    {{ csrf_token() }}
+  </form>
+
+  {% call macros.sidebar() %}
+    {%- if request.user.can('subscribe_to_users') -%}
+      {%- if is_subscribed %}
+          <input type="submit" form="unsubscribe_user" class="button-in-sidebar"
+                  title="{% trans %}Don’t watch anymore{% endtrans %}"
+                  value="{% trans %}Don’t watch anymore{% endtrans %}"
+          />
+      {%- else %}
+        <input type="submit" form="subscribe_user" class="button-in-sidebar"
+                title="{% trans %}Watch{% endtrans %}"
+                value="{% trans %}Watch{% endtrans %}"
+        />
+      {%- endif -%}
+    {%- endif %}
+    {{ macros.sidebar_item(_('Private message'), user|url('privmsg')) }}
+    {{ macros.sidebar_item(_('show posts'), href('forum', 'author', user.username)) }}
+  {% endcall %}
+
+  {%- if request.user.can('user_edit') %}
+    {% call macros.sidebar_admin() %}
+      {{ macros.sidebar_item(_('Edit user'), href('portal', 'user', user.urlsafe_username, 'edit', 'profile')) }}
+      {{ macros.sidebar_item(_('Edit groups'), href('portal', 'user', user.username, 'edit', 'groups')) }}
+    {% endcall %}
+  {%- endif %}
+{% endblock %}
+
+{% block content %}
+  <h3>
+    {{ user.username|e }}
+  </h3>
+
+  {%- if user in (User.objects.get_system_user(), User.objects.get_anonymous_user()) %}
+    {% trans name=user.username|e %}{{ name }} is a system user.{% endtrans %}
+  {%- elif user.is_deleted or user.is_banned %}
+    {% trans name=user.username|e %}{{ name }} is not available.{% endtrans %}
+  {%- else %}
+    <table class="portal-userinfo">
+      <tr>
+        <th>{% trans %}Name{% endtrans %}</th>
+        <td>{{ user.username|e }}</td>
+        <td rowspan="6">
+          <img class="col-md-12" src="{{ user.avatar_url|e }}"
+               alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}"
+               title="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
+        </td>
+      </tr>
+      <tr>
+        <th>{% trans %}Email address{% endtrans %}</th>
+        {{ show_item('email') }}
+      </tr>
+      <tr>
+        <th>{% trans %}Website{% endtrans %}</th>
+        <td>
+          {%- if user.website -%}
+            <a href="{{ user.website|e }}">{{ user.website|e }}</a>
+          {%- else -%}
+            –
+          {%- endif -%}
+        </td>
+      </tr>
+      <tr>
+        <th>{% trans %}Launchpad username{% endtrans %}</th>
+        <td>
+          {%- if user.launchpad -%}
+            <a href="{{ user.launchpad_url|e }}">{{ user.launchpad|e }}</a>
+          {%- else -%}
+            –
+          {% endif %}
+        </td>
+      <tr>
+        <th>{% trans %}Member since{% endtrans %}</th>
+        <td>{{ user.date_joined|datetime }}</td>
+      </tr>
+      <tr>
+        <th>{% trans %}Posts{% endtrans %}</th>
+        <td>
+          {{ user.post_count }}
+        </td>
+      </tr>
+      <tr>
+        <th>{% trans %}Residence{% endtrans %}</th>
+        <th>{% trans %}Job{% endtrans %}</th>
+        <th>{% trans %}Interests{% endtrans %}</th>
+      </tr>
+      <tr>
+        <td>{{ user.location|e or '–' }}</td>
+        <td>{{ user.occupation|e or '–' }}</td>
+        <td>{{ user.interests|e or '–' }}</td>
+      </tr>
+      <tr>
+        <th>{% trans %}MSN{% endtrans %}</th>
+        <th>{% trans %}ICQ{% endtrans %}</th>
+        <th>{% trans %}AIM{% endtrans %}</th>
+      </tr>
+      <tr>
+        <td>{{ user.msn|e or '–' }}</td>
+        <td>{{ user.icq|e or '–' }}</td>
+        <td>{{ user.aim|e or '–' }}</td>
+      </tr>
+      <tr>
+        <th>{% trans %}Yahoo Messenger{% endtrans %}</th>
+        <th>{% trans %}Skype{% endtrans %}</th>
+        <th>{% trans %}WengoPhone{% endtrans %}</th>
+      </tr>
+      <tr>
+        <td>{{ user.yim|e or '–' }}</td>
+        <td>{{ user.skype|e or '–' }}</td>
+        <td>{{ user.wengophone|e or '–' }}</td>
+      </tr>
+      <tr>
+        <th>{% trans %}SIP{% endtrans %}</th>
+        <th>{% trans %}Jabber{% endtrans %}</th>
+        <th>{% trans %}GPG key{% endtrans %}</th>
+      </tr>
+      <tr>
+        <td>{{ user.sip|e or '–' }}</td>
+        {% if user.jabber and user.settings['show_jabber'] -%}
+          <td><a href="{{ user.jabber_url|e }}">{{ user.jabber|e }}</a></td>
+        {%- elif user.jabber and REQUEST.user.can('user_edit') -%}
+          <td class="hidden-info">
+            <a href="{{ user.jabber_url|e }}">{{ user.jabber|e }}</a>
+          </td>
+        {%- else -%}
+          <td>–</td>
+        {%- endif -%}
+        <td>{% if user.gpgkey %}0x{{ user.gpgkey|e }}{% else %}–{% endif %}</td>
+      </tr>
+      <tr>
+        <th colspan="3">{% trans %}Group memberships{% endtrans %} </th>
+      </tr>
+      <tr>
+        <td colspan="3">
+          {%- for group in groups -%}
+            <a  href="{{ group|url }}"{% if not group.is_public %}
+                class="hidden-info"{% endif %}>
+              {{ group.name|e }}
+            </a>
+            {%- if not loop.last %}, {% endif %}
+          {%- else %}{% trans name=user.username|e -%}
+            “{{ name }}” is no member of any group.
+           {%- endtrans %}
+          {%- endfor %}
+        </td>
+      </tr>
+    </table>
+  {% endif %}
+  {%- if wikipage %}
+    {{ wikipage }}
+    <p>
+      (<a href="{{ href('wiki', SETTINGS.WIKI_USER_BASE, user.username|e, action='edit') }}">
+        {% trans %}edit{% endtrans %}
+      </a>)
+    </p>
+  {%- endif %}
+{% endblock %}

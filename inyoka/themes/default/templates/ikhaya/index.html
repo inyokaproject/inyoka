@@ -1,0 +1,60 @@
+{% extends 'ikhaya/base.html' %}
+
+{% import 'macros.html' as macros %}
+{% set rendered_pagination = macros.render_pagination(pagination) %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  {% if category %}
+    <li>{{ category }}</li>
+  {% endif %}
+{% endblock %}
+
+{# if you want to add a specific sidebar, uncomment this #}
+{#{% block sidebar %}#}
+{#  {{super(); }} #}{# neceserry! otherwise we would overwrite content from ikhaya/base.html #}
+{#{% endblock %}#}
+
+{% block content %}
+  {{ rendered_pagination }}
+  {% for article in articles %}
+    <article class="ikhaya-article {% if article.hidden %}ikhaya-article-muted{% endif %}"
+        {% if article.hidden %} data-toggle="tooltip"
+             title="{% trans %}This article is not visible for regular users{% endtrans %}" data-trigger="manual"
+        {% endif %} id="article-{{ article.id }}">
+      <div class="ikhaya-article-heading">
+        <time datetime="{{ article.pub_datetime|datetime('c') }}"
+              class="pull-right">{{ article.pub_datetime|datetime }}</time>
+        <a href="{{ article|url }}">{{ article.subject }}</a>
+
+        <div class="clearfix"></div>
+      </div>
+      <div class="ikhaya-article-body">
+        {{ article.rendered_intro }}
+      </div>
+      <div class="ikhaya-article-footer">
+        <ul class="list-inline">
+          <li>
+            {% trans %}Category:{% endtrans %}
+            <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
+          </li>
+          <li>
+            {% trans count=article.comment_count %}
+              {{ count }} comment
+              {% pluralize %}
+              {{ count }} comments
+            {% endtrans %}
+          </li>
+          {% if article.updated > article.pub_datetime %}
+            <li class="pull-right">
+              <time datetime="{{ article.updated|datetime('c') }}">
+                {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}
+              </time>
+            </li>
+          {% endif %}</ul>
+        <div class="clearfix"></div>
+      </div>
+    </article>
+  {% endfor %}
+  {{ rendered_pagination }}
+{% endblock %}

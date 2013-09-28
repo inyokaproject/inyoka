@@ -1,0 +1,44 @@
+{#
+    portal/user_admin.html
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+    user administration interface.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/base.html' %}
+
+{% from 'macros.html' import render_form %}
+{% from 'macros.html' import render_checkbox_form %}
+
+{% block breadcrumb %}
+  {{ super() }}
+
+  <li><a href="{{ href('portal', 'users') }}">{% trans %}Members{% endtrans %}</a></li>
+  <li><a href="{{ USER|url }}">{{ user.username }}</a></li>
+  <li><a href="{{ href('portal', 'user', user.urlsafe_username, 'edit') }}">{{_('Edit')}}</a></li>
+{% endblock %}
+
+{% block sidebar %}
+  {% call macros.sidebar(_('Menu')) %}
+    {{ macros.sidebar_item(_('View public profile'), href('portal', 'user', user.username)) }}
+  {% endcall %}
+
+  {% call macros.sidebar_admin() %}
+    {{ macros.sidebar_item(_('Profile'), href('portal', 'user', user.urlsafe_username, 'edit', 'profile')) }}
+    {{ macros.sidebar_item(_('Settings'), href('portal', 'user', user.urlsafe_username, 'edit', 'settings')) }}
+    {{ macros.sidebar_item(_('Group memberships'), href('portal', 'user', user.urlsafe_username, 'edit', 'groups')) }}
+    {{ macros.sidebar_item(_('Privileges'), href('portal', 'user', user.urlsafe_username, 'edit', 'privileges')) }}
+    {{ macros.sidebar_item(_('Change password'), href('portal', 'user', user.urlsafe_username, 'edit', 'password')) }}
+    {{ macros.sidebar_item(_('State'), href('portal', 'user', user.urlsafe_username, 'edit', 'status')) }}
+  {% endcall %}
+{% endblock %}
+
+{% block content %}
+  <div class="warning_important">
+    {% trans name=user.username -%}
+      Attention: You are currently editing “{{ name }}”.
+    {%- endtrans %}
+  </div>
+{% endblock %}

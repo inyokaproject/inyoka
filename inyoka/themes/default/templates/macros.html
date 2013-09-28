@@ -1,0 +1,152 @@
+{% macro sidebar_item(label, url) %}
+    <li class="list-group-item" ><a href="{{ url }}">
+      {{ label }}
+    </a></li>
+{% endmacro %}
+
+{% macro render_form(form, fields, inline = false) %}
+  {%- if not inline %}
+    <dl>
+  {%- endif %}
+  {%- for field in fields %}
+    {%- if form[field] %}
+      <dt>
+        <label for="{{ form[field].auto_id }}">{{ form[field].label }}:</label>
+      </dt>
+      <dd>
+        {{ form[field] }} {{ form.errors[field] }}
+        {%- if form[field].help_text %}
+          <p class="text-info">{{ form[field].help_text }}</p>
+        {%- endif %}
+      </dd>
+    {%- endif %}
+  {%- endfor %}
+  {%- if not inline %}
+    </dl>
+  {%- endif %}
+{%- endmacro %}
+
+{% macro render_checkbox_form(form, fields, inline = false) %}
+  {%- if not inline %}
+    <dl>
+  {%- endif %}
+  {%- for field in fields %}
+    {%- if form[field] %}
+      <dd>
+        {{ form[field] }}
+        <label for="{{ form[field].auto_id }}">{{ form[field].label }}</label>
+        {{ form.errors[field] }}
+        {%- if form[field].help_text %}
+          <p class="text-info">{{ form[field].help_text }}</p>
+        {%- endif %}
+      </dd>
+    {%- endif %}
+  {%- endfor %}
+  {%- if not inline %}
+    </dl>
+  {%- endif %}
+{%- endmacro %}
+
+{# SIDEBAR #}
+
+{% macro sidebar(title) %}
+{# use as caller in combination with sidebar_item #}
+  <div class="sidebar">
+    {%- if title %}
+      <div class="sidebar-heading">
+        <h1>{{ title }}</h1>
+      </div>
+    {% endif %}
+    <ul>
+      {{ caller() }}
+    </ul>
+  </div>
+{% endmacro %}
+
+{% macro sidebar_admin(title) %}
+{# use as caller in combination with sidebar_item #}
+<div class="sidebar sidebar-danger">
+  <div class="sidebar-heading">
+    {%- if title %} {# necessary because gettext wont work here #}
+      <h1>{{ title }}</h1>
+    {%- else %}
+      <h1>{% trans %}Staff{% endtrans %}</h1>
+    {%- endif %}
+  </div>
+  <ul>
+    {{ caller() }}
+  </ul>
+</div>
+{% endmacro %}
+
+{% macro sidebar_item(label, url) %}
+{# This macro can be used in two types:
+    1. as "normal" function
+       with the the parameters "label" and "url", a link (<a>) is generated inside a <li>
+    2. as caller
+       via the caller the inner content of the <li> is simply passed to it
+#}
+  <li class="sidebar-item" >
+    {%- if caller %}
+      {{ caller() }}
+    {%- else %}
+      <a href="{{ url }}">{{ label }}</a>
+    {%- endif %}
+  </li>
+{% endmacro %}
+
+{# BREADCRUMB #}
+
+{% macro breadcrumb_item(label, url) %}
+  {%- if url %}
+    <li><a href="{{ url }}">
+      {{ label }}
+    </a></li>
+  {%- else %}
+    <li>{{ label }}</li>
+  {%- endif %}
+{% endmacro %}
+
+{# PAGINATION #}
+
+{% macro render_pagination(pagination, show_prev=True, show_next=True, threshold=2) %}
+  <ul class="pagination">
+    {%- if show_prev -%}
+      {%- if pagination.prev -%}
+        <li>
+          <a href="{{ pagination.prev }}">«</a>
+        </li>
+      {%- else -%}
+        <li class="disabled">
+          <span>«</span>
+        </li>
+      {%- endif -%}
+    {%- endif -%}
+    {% for link in pagination.list(threshold) -%}
+      {%- if link['type'] == 'spacer' -%}
+        <li>
+          <span>…</span>
+        </li>
+      {%- elif link['type'] == 'current' -%}
+        <li class="active">
+          <span>{{ link['page'] }}</span>
+        </li>
+      {%- else -%}
+        <li>
+          <a href="{{ link['url'] }}">{{ link['page'] }}</a>
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if show_next -%}
+      {%- if pagination.next -%}
+        <li>
+          <a href="{{ pagination.next }}">»</a>
+        </li>
+      {%- else -%}
+        <li class="disabled">
+          <span>»</span>
+        </li>
+      {%- endif -%}
+    {%- endif %}
+  </ul>
+{% endmacro %}

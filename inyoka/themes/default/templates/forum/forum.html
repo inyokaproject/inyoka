@@ -1,0 +1,99 @@
+{% extends 'forum/base.html' %}
+
+{% import 'macros.html' as macros %}
+
+{% set rendered_pagination = macros.render_pagination(pagination) %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  {% if forum.parent.parent %}
+    <li><a href="{{ forum.parent|url }}">{{ forum.parent }}</a></li>
+  {% endif %}
+  <li>{{ forum }}</li>
+{% endblock %}
+
+{% block sidebar %}
+  {% call macros.sidebar() %}
+    {% if is_subscribed %}
+      {{ macros.sidebar_item(_('Unsubscribe'), forum|url('unsubscribe')) }}
+    {% else %}
+      {{ macros.sidebar_item(_('Subscribe'), forum|url('subscribe')) }}
+    {% endif %}
+    {{ macros.sidebar_item(_('New topic'), forum|url('newtopic')) }}
+    {{ macros.sidebar_item(_('Mark as read'), forum|url('markread')) }}
+  {% endcall %}
+{% endblock %}
+
+{% block content %}
+  {{ rendered_pagination }}
+  {% if subforums %}
+    <div class="forum-list">
+      <div class="forum-list-heading">
+        <h1>
+          <a href="#" data-toggle="collapse" data-target="#subforums">
+            {% trans %}Subforums{% endtrans %}
+          </a>
+        </h1>
+      </div>
+      <ul class="collapse in" id="subforums">
+        {% for forum in subforums %}
+          <a href="{{ forum|url }}" class="forum-list-item">
+            <h4>{{ forum }}</h4>
+            <p>{{ forum.description }}</p>
+          </a>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  <div class="forum-topic-list">
+    <div class="forum-topic-list-heading">
+      <h3>
+        {% trans %}Topics{% endtrans %}
+      </h3>
+    </div>
+    <ul>
+      {% for topic in topics %}
+        <li class="forum-topic-list-item" title="{{ topic.first_post.text|truncate(500)|e }}" data-toggle="tooltip"
+            data-trigger="manual">
+          <div class="row">
+            <div class="col-sm-8">
+              {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
+              {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
+              <a href="{{ topic|url }}">{{ topic }}</a><br />
+              <small class="text-muted">
+                {% trans %}
+                  Created on:
+                {% endtrans %}
+                <time
+                    datetime="{{ topic.first_post.pub_date|datetime('c') }}">{{ topic.first_post.pub_date|datetime }}</time>
+              </small>
+            </div>
+            <div class="col-sm-4 hidden-xs">
+              <a href="{{ topic.last_post|url }}" class="pull-right">
+                <time
+                    datetime="{{ topic.last_post.pub_date|datetime('c') }}">{{ topic.last_post.pub_date|datetime }}</time>
+              </a><br />
+              <small class="text-muted pull-right">
+                {% trans author=topic.last_post.author|e, link=topic.last_post.author|url %}
+                  Last post by <a href="{{ link }}">{{ author }}</a>
+                {% endtrans %}
+              </small>
+            </div>
+            <div class="col-sm-4 visible-xs">
+              <small class="text-muted">
+                {% trans %}
+                  Last post:
+                {% endtrans %}
+                <a href="{{ topic.last_post|url }}">
+                  <time
+                      datetime="{{ topic.last_post.pub_date|datetime('c') }}">{{ topic.last_post.pub_date|datetime }}</time>
+                </a>
+              </small>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {{ rendered_pagination }}
+{% endblock %}

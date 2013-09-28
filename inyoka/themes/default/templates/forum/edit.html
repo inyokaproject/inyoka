@@ -1,0 +1,14 @@
+{% extends 'forum/base.html' %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  {% if topic.forum.parent.parent %}
+    <li>…</li>
+  {% endif %}
+  <li><a href="{{ topic.forum|url }}">{{ topic.forum }}</a></li>
+  <li><a href="{{ topic|url }}">{{ topic }}</a></li>
+  <li>{% trans %}Edit{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+{% endblock %}

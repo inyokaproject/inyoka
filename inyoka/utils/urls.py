@@ -92,18 +92,33 @@ def url_for(obj, action=None, **kwargs):
 
 
 def is_safe_domain(url):
-    """Check whether `url` points to the same host as inyoka"""
+    """
+    Check whether `url` points to the same host as inyoka
+
+    Return ``True`` if the url is a safe redirection (i.e. it doesn't point to
+    a different host and uses a safe scheme).
+    Always returns ``False`` on an empty url.
+
+    Adopted from :func:`django.utils.http.is_safe_url` and related to
+    CVE-2014-3730
+    """
     if not url:
         return False
-    scheme, netloc = urlparse(url)[:2]
-    if scheme not in acceptable_protocols:
+
+    # Chrome treats \ completely as /
+    url = url.replace('\\', '/')
+
+    # Chrome considers any URL with more than two slashes to be absolute, but
+    # urlaprse is not so flexible. Treat any url with three slashes as unsafe.
+    if url.startswith('///'):
         return False
-    return ('.' + netloc).endswith('.' + settings.BASE_DOMAIN_NAME)
+    scheme, netloc = urlparse(url)[:2]
 
-
-def is_external_target(location):
-    """
-    Check if a target points to an external URL or an internal page.  Returns
-    `True` if the target is an external URL.
-    """
-    return _schema_re.match(location) is not None
+    # Forbid URLs like http:///example.com - with a scheme, but without a hostname.
+    # In that URL, example.com is not the hostname but, a path component. However,
+    # Chrome will still consider example.com to be the hostname, so we must not
+    # allow this syntax.
+    if not netloc and scheme:
+        return False
+    return ((not netloc or ('.' + netloc).endswith('.' + settings.BASE_DOMAIN_NAME)) and
+            (not scheme or scheme in acceptable_protocols))

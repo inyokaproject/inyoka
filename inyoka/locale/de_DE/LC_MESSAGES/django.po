@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-10-19 16:33+0200\n"
-"PO-Revision-Date: 2012-11-03 12:49+0000\n"
-"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
+"POT-Creation-Date: 2014-12-14 12:15+0100\n"
+"PO-Revision-Date: 2014-09-06 21:47+0100\n"
+"Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -35,6 +35,20 @@ msgstr ""
 #: inyoka/templates/appheader.html:9
 msgid "Portal"
 msgstr "Portal"
+
+#: inyoka/templates/macros.html:56 inyoka/templates/macros.html:58
+#: inyoka/templates/macros.html:101
+msgid "Previous"
+msgstr "Vorherige"
+
+#: inyoka/templates/macros.html:74 inyoka/templates/macros.html:76
+#: inyoka/templates/macros.html:105
+msgid "Next"
+msgstr "Nächste"
+
+#: inyoka/templates/macros.html:103
+msgid "Page"
+msgstr "Seite"
 
 #: inyoka/templates/overall.html:95
 #, python-format
@@ -315,20 +329,6 @@ msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
 msgid "Canceled."
 msgstr "Abgebrochen."
 
-#: inyoka/utils/pagination.py:156 inyoka/utils/pagination.py:160
-#: inyoka/utils/pagination.py:206
-msgid "Next »"
-msgstr "Weiter »"
-
-#: inyoka/utils/pagination.py:166 inyoka/utils/pagination.py:170
-#: inyoka/utils/pagination.py:208
-msgid "« Previous"
-msgstr "« Zurück"
-
-#: inyoka/utils/pagination.py:201
-msgid "Page"
-msgstr "Seite"
-
 #: inyoka/utils/sessions.py:83
 msgid ""
 "You cannot send data that fast in a row. Please wait a bit until you "
@@ -387,4 +387,7 @@ msgstr ""
 
 #~ msgid "%(date)s at %(time)s"
 #~ msgstr "%(date)s um %(time)s"
+
+#~ msgid "Next »"
+#~ msgstr "Weiter »"
 

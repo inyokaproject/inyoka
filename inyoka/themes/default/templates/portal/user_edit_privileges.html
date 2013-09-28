@@ -1,0 +1,73 @@
+{#
+    portal/user_edit_privileges.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Manage the privileges of a user.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li>{{_('Privileges')}}</li>
+{% endblock %}
+
+{% macro render_grouplist(derived) %}
+  {% for group in derived %}<a href="{{ group|url }}">{{ group.name|e }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
+{%- endmacro %}
+
+{% block content %}
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+		{{ csrf_token() }}
+    <div class="page-header">
+      <h3>{% trans %}Privileges{% endtrans %}</h3>
+    </div>
+    {%- for id, name, checked, derived in permissions %}
+      <input type="checkbox"
+        name="permissions"
+        value="{{ id }}"
+        id="perm_{{ id }}"
+        {%- if checked %}
+          checked="checked"
+        {% endif %}
+      />
+      <label for="perm_{{ id }}">{{ name|e }}</label>
+      {%- if derived %}
+        <span class="text-muted">
+          {% trans grouplist=render_grouplist(derived) -%}
+            (Derived from {{ grouplist }})
+          {%- endtrans %}
+        </span>
+      {%- endif -%}
+      <br />
+    {%- endfor %}
+    {{ form.permissions.errors }}
+    <h4>{% trans %}Forum privileges{% endtrans %}</h4>
+    <div id="forum_rights">
+      <p class="text-danger">
+        {% trans %}
+          Sorry, you need to enable JavaScript to edit forum privileges.
+        {% endtrans %}
+      </p>
+    </div>
+    <p>
+      <input type="submit"
+        value="{% trans %}Submit{% endtrans %}"
+      />
+    </p>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ href('static', 'js', 'PrivilegeBox.js') }}"></script>
+  <script type="text/javascript">
+    /* <![CDATA[ */
+    var forum_rights = new PrivilegeBox('#forum_rights', {{ user_forum_privileges|jsonencode }},
+      {{ forum_privileges|jsonencode }});
+    /* ]]> */
+  </script>
+{% endblock %}

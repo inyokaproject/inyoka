@@ -1,0 +1,126 @@
+{% extends 'ikhaya/base.html' %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li><a href="{{ article.category|url }}">{{ article.category }}</a></li>
+  <li>{{ article.subject }}</li>
+{% endblock %}
+
+{% block sidebar %}
+  {{ super() }} {# necessary! otherwise we would overwrite content from ikhaya/base.html #}
+
+  {% call macros.sidebar() %}
+    {% if can_subscribe and article.comments_enabled %}
+      {% if is_subscribed %}
+        {{ macros.sidebar_item(_('Unsubscribe comments'), article|url('unsubscribe')) }}
+      {% else %}
+        {{ macros.sidebar_item(_('Subscribe comments'), article|url('subscribe')) }}
+      {% endif %}
+    {% endif %}
+
+    {{ macros.sidebar_item(_('Report misspelling'), article|url('reports')) }}
+  {% endcall %}
+
+  {% if can_edit_article %}
+    {% call macros.sidebar_admin() %}
+      {{ macros.sidebar_item(_('Edit article'), '#') }}
+      {{ macros.sidebar_item('Enable / Disable comments', '#') }}
+    {% endcall %}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <article>
+    <header>
+      <h3>{{ article.subject }}</h3>
+      <ul class="list-inline meta">
+        <li class="author">
+          {% trans link=article.author|url, author=article.author.username|e %}
+            Published by <a href="{{ link }}">{{ author }}</a>
+          {% endtrans %}
+        </li>
+        <li>
+          <time datetime="{{ article.pub_datetime|datetime('c') }}">{{ article.pub_datetime|datetime }}</time>
+        </li>
+        {% if article.updated > article.pub_datetime %}
+          <li>
+            <time datetime="{{ article.updated|datetime('c') }}">{% trans %}Last
+              update:{% endtrans %} {{ article.updated|datetime }}</time>
+          </li>
+        {% endif %}
+        <li class="category">
+          {% trans %}Category:{% endtrans %}
+          <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
+        </li>
+      </ul>
+    </header>
+    <div class="clearfix"></div>
+    <div class="intro lead">{{ article.rendered_intro }}</div>
+    <div class="text">{{ article.rendered_text }}</div>
+  </article>
+  <div class="button-group visible-xs">
+    {% if is_subscribed %}
+      <a href="{{ article|url('unsubscribe') }}" class="btn btn-default" role="button">
+        {% trans %}Unsubscribe comments{% endtrans %}
+      </a>
+    {% else %}
+      <a href="{{ article|url('subscribe') }}" class="btn btn-default" role="button">
+        {% trans %}Subscribe comments{% endtrans %}
+      </a>
+    {% endif %}
+    <a href="{{ article|url('reports') }}" class="btn btn-default" role="button">
+      {% trans %}Report misspelling{% endtrans %}
+    </a>
+  </div>
+  <div class="clearfix"></div>
+  <hr />
+  <h3>{% trans %}Comments{% endtrans %}</h3>
+  {% for comment in comments %}
+    {% if not comment.deleted or can_admin_comment %}
+      <div class="ikhaya-comment {% if comment.deleted %}ikhaya-comment-muted{% endif %}" id="comment_{{ loop.index }}">
+        <div class="ikhaya-comment-heading">
+          <span class="pull-right">
+            <a href="#comment_{{ loop.index }}">
+              <time datetime="{{ comment.pub_date|datetime('c') }}">{{ comment.pub_date|datetime }}</time>
+            </a>
+          </span>
+          <a href="#comment_{{ loop.index }}">#{{ loop.index }}</a>
+          <a href="{{ comment.author|url }}">{{ comment.author }}</a>
+
+          <div class="clearfix"></div>
+        </div>
+        <div class="ikhaya-comment-body">
+          {{ comment.rendered_text }}
+        </div>
+        <div class="ikhaya-comment-footer">
+          <div class="button-group">
+            <a href="#" class="btn btn-default">
+              {% trans %}Reply{% endtrans %}
+            </a>
+            {% if comment.author_id == USER.id %}
+              <a href="{{ comment|url('edit') }}" class="btn btn-primary">
+                {% trans %}Edit{% endtrans %}</a>
+            {% endif %}
+          </div>
+          {% if can_admin_comment %}
+            <div class="pull-right">
+              <button type="button" class="stuff-button" data-toggle="dropdown">
+                {% trans %}Staff{% endtrans %}
+                <span class="fa_icon-caret-down"></span>
+              </button>
+              <ul class="stuff-button-menu">
+                <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
+                {% if comment.deleted %}
+                  <li><a href="#">{% trans %}Restore{% endtrans %}</a></li>
+                {% else %}
+                  <li><a href="#">{% trans %}Hide{% endtrans %}</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          {% endif %}
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

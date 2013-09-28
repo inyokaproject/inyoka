@@ -1,0 +1,56 @@
+{% extends 'wiki/base.html' %}
+
+{% block content %}
+  <h2>{% trans %}Missing article{% endtrans %}</h2>
+  <p>
+    {% if not page %}
+      {% trans title=title|e %}The article “{{ title }}” does not exist yet.{% endtrans %}
+    {% else %}
+      {% trans title=title|e %}
+        The article “{{ title }}” was deleted. You can restore it or create a new one in the
+        action menu.
+      {% endtrans %}
+    {% endif %}</p>
+  {% if not_finished %}
+    <p>
+      {% trans %}The article is already under construction, help improving and finishing it!{% endtrans %}
+    </p>
+    <ul>
+      <li>
+        <a href="{{ href('wiki', not_finished.name)|e }}">{{ not_finished.title|e }}</a>
+      </li>
+    </ul>
+  {% endif %}
+  {% if backlinks %}
+    <p>
+      {% trans %}The following pages are referring this article:{% endtrans %}
+    </p>
+    <ul>
+      {% for link in backlinks %}
+        <li>
+          <a href="{{ href('wiki', link.name)|e }}">{{ link.title|e }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <p>
+    {% trans %}Check if you have a typo in the URL.{% endtrans %}
+    {% if similar %}
+      {% trans %}The following pages have similar names:{% endtrans %}
+    {% endif %}
+  </p>
+  {% if similar %}
+    <ul>
+      {% for link in similar %}
+        <li><a href="{{ href('wiki', link.name)|e }}">{{ link.title|e }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <p>
+    {% if create_link %}
+      {% trans link=create_link %}You can also <a href="{{ link }}">create</a> this article.{% endtrans %}
+    {% else %}
+      {% trans %}However, you are missing the permissions to create this article.{% endtrans %}
+    {% endif %}
+  </p>
+{% endblock %}

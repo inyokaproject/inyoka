@@ -1,0 +1,24 @@
+{#
+    pastebin/delete_topic.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This template is flashed to ensure that the user want to delete the
+    selected pastebin entry.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+
+
+<form action="{{ entry|url('delete')|e }}" method="post">
+  {{ csrf_token() }}
+  <p>
+    {%- trans link=entry|url, entry=entry.title|e -%}
+      Do you really want to delete the entry <a href="{{ link }}">{{ entry }}</a>?
+    {%- endtrans -%}
+  </p>
+  <p>
+    <input type="submit" class="button-delete" value="{% trans %}Delete{% endtrans %}" />
+    <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" />
+  </p>
+</form>

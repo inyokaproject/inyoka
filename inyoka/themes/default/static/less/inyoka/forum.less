@@ -1,0 +1,101 @@
+.forum {
+  &-list {
+    &:extend(.panel);
+    &:extend(.panel-default);
+
+    &-heading {
+      &:extend(.panel-heading);
+      &:extend(.panel-default > .panel-heading);
+
+      & > h3 {
+        &:extend(.panel-title);
+
+        font-size: @font-size-h3;
+
+        & > a {
+          &:extend(.panel-title > a);
+        }
+      }
+    }
+    & > ul {
+      &:extend(.list-group);
+      &:extend(.panel > .list-group);
+    }
+    &-item {
+      &:extend(.list-group-item);
+      &:extend(a.list-group-item);
+      &:extend(.panel > .list-group .list-group-item);
+
+      &:first-child {
+        &:extend(.panel > .list-group:first-child .list-group-item:first-child);
+      }
+      &:last-child {
+        &:extend(.list-group-item:last-child);
+        &:extend(.panel > .list-group:last-child .list-group-item:last-child);
+      }
+      &:focus, &:hover {
+        &:extend(a.list-group-item:hover);
+      }
+
+      & > h4 {
+        &:extend(list-group-item-heading);
+      }
+      & > p {
+        &:extend(list-group-item-text);
+      }
+    }
+  }
+
+  &-topic-list {
+    &:extend(.panel);
+    &:extend(.panel-default);
+
+    &-heading {
+      &:extend(.panel-heading);
+      &:extend(.panel-default > .panel-heading);
+
+      & > h3 {
+        &:extend(.panel-title);
+      }
+    }
+    & > ul {
+      &:extend(.list-group);
+      &:extend(.panel > .list-group);
+    }
+    &-item {
+      &:extend(.list-group-item);
+      &:extend(.panel > .list-group .list-group-item);
+
+      &:first-child {
+        &:extend(.panel > .list-group:first-child .list-group-item:first-child);
+      }
+      &:last-child {
+        &:extend(.list-group-item:last-child);
+        &:extend(.panel > .list-group:last-child .list-group-item:last-child);
+      }
+    }
+  }
+
+  &-post {
+    &:extend(.panel);
+    &:extend(.panel-default);
+
+    &-muted {
+      &:extend(.panel-info);
+
+      & > .forum-post-heading {
+        &:extend(.panel-info > .panel-heading);
+      }
+    }
+    & > &-heading {
+      &:extend(.panel-heading);
+      &:extend(.panel-default > .panel-heading);
+    }
+    & > &-body {
+      &:extend(.panel-body);
+    }
+    & > &-footer {
+      &:extend(.panel-footer);
+    }
+  }
+}

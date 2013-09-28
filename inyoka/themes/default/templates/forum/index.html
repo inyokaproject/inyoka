@@ -1,0 +1,23 @@
+{% extends 'forum/base.html' %}
+
+{% block content %}
+  {% for category, forums in forum_hierarchy %}
+    <div class="forum-list">
+      <div class="forum-list-heading">
+        <h3>
+          <a href="#" data-toggle="collapse" data-target="#category_{{ category.id }}">
+            {{ category }}
+          </a>
+        </h3>
+      </div>
+      <ul class="collapse {% if category.id not in hidden_categories %}in{% endif %}" id="category_{{ category.id }}">
+        {% for forum, subforums in forums %}
+          <a href="{{ forum|url }}" class="forum-list-item">
+            <h4>{{ forum }}</h4>
+            <p>{{ forum.description }}</p>
+          </a>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+{% endblock %}

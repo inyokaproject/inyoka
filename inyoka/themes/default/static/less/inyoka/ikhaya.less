@@ -1,0 +1,53 @@
+.ikhaya {
+  &-comment {
+    &:extend(.panel);
+    &:extend(.panel-default);
+
+    &-muted {
+      &:extend(.panel-info);
+
+      & > .ikhaya-comment-heading {
+        &:extend(.panel-info > .panel-heading);
+      }
+    }
+    & > &-heading {
+      &:extend(.panel-heading);
+      &:extend(.panel-default > .panel-heading);
+    }
+    & > &-body {
+      &:extend(.panel-body);
+    }
+    & > &-footer {
+      &:extend(.panel-footer);
+    }
+  }
+
+  &-article {
+    &:extend(.panel);
+    &:extend(.panel-default);
+
+    &-muted {
+      &:extend(.panel-info);
+
+      & > .ikhaya-article-heading {
+        &:extend(.panel-info > .panel-heading);
+      }
+    }
+    & > &-heading {
+      &:extend(.panel-heading);
+      &:extend(.panel-default > .panel-heading);
+
+      & > a {
+        &:extend(.panel-title > a);
+
+        font-size: @font-size-h3;
+      }
+    }
+    & > &-body {
+      &:extend(.panel-body);
+    }
+    & > &-footer {
+      &:extend(.panel-footer);
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{#
+    pastebin/add.html
+    ~~~~~~~~~~~~~~~~~
+
+    On this page the user can add a new pastebin entry.
+
+    It's pastebin's index page.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'pastebin/page.html' %}
+{% from 'macros.html' import render_form %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li><a href="{{ href('pastebin', 'add') }}">{% trans %}New paste{% endtrans %}</a></li>
+{% endblock %}
+
+{% block paste_content %}
+  <form action="" method="post">
+    {{ csrf_token() }}
+    <dl>
+      <dt>{% trans %}About:{% endtrans %}</dt>
+      <dd>{% trans -%}
+        This is a pastebin where you can save error messages, logs, configuration files or source codes to keep threads or IRC channels clean. To do this, just copy the text in the box below and choose the appropriate language. After that, you copy the URL into the topic or the channel.
+      {%- endtrans %}</dd>
+      {{ render_form(form, ['title', 'lang', 'code'], inline=True) }}
+      {%- if not USER.is_authenticated() %}
+      {{ render_form(form, ['captcha'], inline=True) }}
+      {%- endif %}
+      <dd>
+        <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+      </dd>
+    </dl>
+  </form>
+{% endblock %}

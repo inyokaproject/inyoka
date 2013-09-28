@@ -1,0 +1,60 @@
+{#
+    portal/user_edit_status.html
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Change the status of a user.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'portal/user_admin.html' %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li>{{_('Status')}}</li>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+		{{ csrf_token() }}
+    <div class="page-header">
+      <h3>{% trans %}Status{% endtrans %}</h3>
+    </div>
+
+    {{ form.non_field_errors() }}
+    <dt>{{ form.status.label_tag() }}:</dt>
+    <dd>{{ form.status }} {{ form.errors.status }}
+      <div class="text-muted">
+        {% trans date=user.last_login|datetime -%}
+          Last login: {{ date }}
+        {%- endtrans %}
+      </div>
+      <div class="text-muted">
+        {% trans date=user.date_joined|datetime -%}
+          Member since: {{ date }}
+        {%- endtrans %}
+      </div>
+      <div class="text-muted">
+        {% trans link=href('portal', 'user', user.username, 'mail', next=CURRENT_URL),
+                 name=user.username -%}
+          <a href="{{ link }}">Send an email</a> to {{ name }}
+        {%- endtrans %}
+      </div>
+      {%- if activation_link %}
+        <div class="text-muted">
+          <a href="{{ href('portal', 'users', 'resend_activation_mail', user=user, next=CURRENT_URL) }}">
+            {% trans %}Resend activation mail{% endtrans %}
+          </a>
+        </div>
+        <div class="text-muted">
+          {% trans %} Activation link:{% endtrans %}
+          <a href="{{ activation_link }}">{{ activation_link }}</a>
+        </div>
+      {%- endif %}
+    </dd>
+    {{ render_form(form, ['banned_until'], inline=true) }}
+    {{ render_form(form, ['gpgkey']) }}
+    <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+  </form>
+{% endblock %}

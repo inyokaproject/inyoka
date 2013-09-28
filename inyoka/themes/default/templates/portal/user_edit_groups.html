@@ -1,0 +1,75 @@
+{#
+    portal/user_edit_groups.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Edit the groups of user
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{% extends 'portal/user_admin.html' %}
+
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li>{{_('Group memberships')}}</li>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  <form enctype="multipart/form-data" id="user_edit_form" method="post" action="">
+		{{ csrf_token() }}
+    <div class="page-header">
+      <h3>{% trans %}Group memberships{% endtrans %}</h3>
+    </div>
+    <table class="user_groups">
+      <tr>
+        <th class="col-sm-5">{% trans %}Available groups{% endtrans %}</th>
+        <th class="col-sm-1"></th>
+        <th class="col-sm-5">{% trans %}Membership{% endtrans %}</th>
+      </tr>
+      <tr>
+        <td>
+          <select multiple="multiple" size="5" name="user_groups_not_joined" class="form-control">
+          </select>
+        </td>
+        <td class="actions">
+          <div class="center-block col-sm-1">
+            <button class="item_add btn btn-default" type="button">
+              <span alt="{% trans %}Add group{% endtrans %}"
+                class="fa_icon-arrow-right"></span>
+            </button><br />
+            <button class="item_remove btn btn-default" type="button">
+              <span alt="{% trans %}Remove group{% endtrans %}"
+                class="fa_icon-arrow-left"></span>
+            </button>
+          </div>
+        </td>
+        <td>
+          <select multiple="multiple" size="5" name="user_groups_joined" class="form-control">
+          </select>
+        </td>
+      </tr>
+    </table>
+    <dt><div class="page-header">{{ form.primary_group.label }}</div></dt>
+    <dd>
+      {{ form.primary_group }}
+      <a href="" class="delete_primary_group">{% trans %}delete{% endtrans %}</a>
+      <p class="help-block">{{ form.primary_group.help_text }}</p>
+    </dd>
+    <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ href('static', 'js', 'classy.js') }}"></script>
+  <script src="{{ href('static', 'js', 'UserGroupBox.js') }}"></script>
+  <script type="text/javascript">
+    /* <![CDATA[ */
+    var select_form = new GroupBox('#user_edit_box',
+      {{ joined_groups|sort|jsonencode }},
+      {{ not_joined_groups|sort|jsonencode }}
+    );
+    /* ]]> */
+  </script>
+{% endblock %}

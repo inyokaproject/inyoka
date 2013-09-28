@@ -1,0 +1,58 @@
+{#
+    pastebin/display.html
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    This template shows a single pastebin entry and displays a list of actions
+    the user can execute.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'pastebin/base.html' %}
+
+{% set styles = ['highlight'] %}
+{% set scripts = ['Pastebin'] %}
+
+{% block breadcrumb %}
+  {{ super() }}
+  <li><a href="{{ entry|url }}">{{ entry.title|e }}</a></li>
+{% endblock %}
+
+{% block sidebar %}
+  {{ super() }}
+  
+  {% call macros.sidebar(title=_('Actions:')) %}
+    {{ macros.sidebar_item(_('Display entry as raw text'), entry|url('raw')) }}
+  {% endcall %}
+  
+  {%- if USER.can('manage_pastebin') %}
+    {% call macros.sidebar_admin() %}
+      {{ macros.sidebar_item(_('Delete entry'), entry|url('delete')) }}
+    {% endcall %}
+  {%- endif %}
+{% endblock %}
+
+{% block paste_content %}
+  <dl>
+    <dt>{% trans %}Title:{% endtrans %}</dt>
+    <dd>{{ entry.title|e }}</dd>
+    {%- if not entry.author.is_anonymous %}
+      <dt>{% trans %}Author:{% endtrans %}</dt>
+      <dd><a href="{{ entry.author|url }}">{{ entry.author.username|e }}</a></dd>
+    {%- endif %}
+    <dt>{% trans %}Date:{% endtrans %}</dt>
+    <dd>{{ entry.pub_date|datetime }}</dd>
+    {%- if entry.referrer|length %}
+      <dt>{% trans %}Pages that are referencing this entry:{% endtrans %}</dt>
+      <dd><ul>
+      {%- for link in entry.referrer_list %}
+        <li>{{ link|urlize(60) }}</li>
+      {%- endfor %}
+      </ul></dd>
+    {%- endif %}
+    <dt>{% trans %}Code:{% endtrans %}</dt>
+    <dd>
+      {{ entry.rendered_code }}
+    </dd>
+  </dl>
+{% endblock %}

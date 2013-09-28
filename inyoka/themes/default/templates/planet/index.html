@@ -1,0 +1,112 @@
+{#
+  planet/index.html
+  ~~~~~~~~~~~~~~~~~
+
+  This page shows some of the latest planet entries.
+
+  :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+  :license: BSD, see LICENSE for more details.
+#}
+{%- extends 'planet/base.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
+{% set feeds = [
+  (_('Planet - Captions'), href('planet', 'feeds/title/20')),
+  (_('Planet - Teaser'), href('planet', 'feeds/short/20')),
+  (_('Planet - Full article'), href('planet', 'feeds/full/20'))
+] %}
+
+{% block planet_content %}
+  {%- if days %}
+    {%- if page == 1 %}
+      <div class="planet-newestarticles">
+        <h2>{% trans %}Recent articles{% endtrans %}</h2>
+        <ul class="list-inline">
+          {%- for article in articles[:10] %}
+            <li><a title="{{ article.blog }}" href="#article_{{ loop.index0 }}">{{ article.title }}</a></li>
+          {%- endfor %}
+        </ul>
+      </div>
+    {%- endif %}
+
+    <div class="row">
+      {% set article_index = 0 %}
+      {%- for day in days %}
+        <div class="col-xs-12">
+          <h2>{{ day.date|naturalday }}</h2>
+          {% set dayloop = loop %}
+          {% for article in day.articles %}
+            <article id="article_{{ article_index + loop.index0 }}">
+              <div class="planet-article">
+                <div class="planet-article-heading">
+                  <div class="row">
+                    <div class="col-md-2">
+                      <a href="{{ article.blog|url|e }}">
+                        <img src="{{ article.blog.icon_url|e }}" alt="" />
+                      </a>
+                    </div>
+                    <div class="col-md-10">
+                      <div class="pull-left">
+                        <a href="{{ article.blog|url|e }}">{{ article.blog.name|e }}</a>
+                        {{ article.pub_date|datetime }}
+                      </div>
+                      <div class="pull-right">
+                        {%- if not (dayloop.first and loop.first) %}
+                        <a href="#article_{{ article_index + loop.index0 - 1 }}">{% trans %}« Previous{% endtrans %}</a>
+                        {%- endif %}
+
+                        {%- if not (dayloop.first and loop.first) and not (dayloop.last and loop.last) %}
+                        <span>&#448;</span>
+                        {%- endif %}
+
+                        {%- if not (dayloop.last and loop.last) %}
+                        <a href="#article_{{ article_index + loop.index0 + 1 }}">{% trans %}Next »{% endtrans %}</a>
+                        {%- endif %}
+                      </div>
+                      <div class="clearfix"></div>
+                      <h3>
+                        <a href="{{ article|url|e }}">{{ article.title }}</a>
+                        <a class="headerlink" href="#article_{{ article_index + loop.index0 }}">¶</a>
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+                <div class="planet-article-body">
+                  <div class="col-xs-12">
+                    <div class="text">{{ article.text }}</div>
+                    <div class="meta">
+                      <p>
+                        <a href="{{ article|url|e }}">{% trans %}Permanent link{% endtrans %}</a>
+                        {% if USER.can('blog_edit') %}
+                          {% if article.hidden and article.hidden_by %} |
+                            {% trans link=article.hidden_by|url, name=article.hidden_by.username|e -%}
+                              Hidden by: <a href="{{ link }}">{{ name }}</a>
+                            {%- endtrans %}
+                          {% endif %}
+                          <span class="admin_link">| {#
+                            #}<a href="{{ article|url('hide')|e }}">
+                              {% if article.hidden %}
+                                {% trans %}Restore{% endtrans %}
+                              {% else %}
+                                {% trans %}Hide{% endtrans %}
+                              {% endif %}
+                            </a>
+                        </span>
+                        {% endif %}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          {%- endfor %}
+        </div>
+        {% set article_index = article_index + day.articles|length %}      
+      {%- endfor %}
+    </div>
+    {{ rendered_pagination }}
+  {%- else %}
+    <p>{% trans %}No articles were aggregated{% endtrans %}</p>
+  {%- endif %}
+{% endblock %}

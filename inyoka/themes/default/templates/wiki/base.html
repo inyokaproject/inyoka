@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% set active_app = 'wiki' %}
+
+{% import 'macros.html' as macros %}
+
+{% block breadcrumb %}
+  {{ macros.breadcrumb_item(_('Wiki'), href('wiki')) }}
+{% endblock %}

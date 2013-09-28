@@ -1,0 +1,30 @@
+{#
+  planet/hide_entry.html
+  ~~~~~~~~~~~~~~~~~~~~~~
+
+  This template is (unlike the other action templates) not a full HTML page
+  but flashed to the show action.  So keep it small, it's in a cookie!
+
+  :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+  :license: BSD, see LICENSE for more details.
+-#}
+<form action="{{ href('planet', 'hide', entry.id)|e }}" method="post">
+  {{ csrf_token() }}
+  <p>
+    {% if entry.hidden %}
+      {% trans %}Are you sure you want to restore the entry?{% endtrans %}
+    {% else %}
+      {% trans %}Are you sure you want to hide the entry?{% endtrans %}
+    {% endif %}
+  </p>
+  <p> 
+    <input type="submit" value="
+      {% if entry.hidden %}
+        {% trans %}Restore{% endtrans %}
+      {% else %}
+        {% trans %}Hide{% endtrans %}
+      {% endif %}"
+    />
+    <input type="submit" name="cancel" value="{% trans %}Cancel{% endtrans %}" />
+  </p>
+</form>
