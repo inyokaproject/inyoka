@@ -196,7 +196,7 @@ FILE_UPLOAD_HANDLERS = (
 )
 
 TEMPLATE_DIRS = (
-    join(BASE_PATH, 'templates'),
+    join(BASE_PATH, 'templates', 'ubuntuusers'),
 )
 
 INSTALLED_APPS = (
