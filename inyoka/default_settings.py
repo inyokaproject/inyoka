@@ -82,6 +82,7 @@ STATIC_ROOT = join(BASE_PATH, 'static-collected')
 STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
 
 STATICFILES_DIRS = (
+    join(BASE_PATH, 'static', 'default'),
     join(BASE_PATH, 'static', 'ubuntuusers'),
 )
 
