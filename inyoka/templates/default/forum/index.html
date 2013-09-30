@@ -6,7 +6,7 @@
 
 {% block content %}
   {% for category, forums in forum_hierarchy %}
-    <div class="panel panel-primary">
+    <div class="category panel panel-primary">
       <div class="panel-heading">
         <h3 class="panel-title">
           <a href="#" class="accordion-toggle" data-toggle="collapse" data-target="#category_{{ category.id }}">
@@ -25,5 +25,4 @@
       </ul>
     </div>
   {% endfor %}
-  </div>
 {% endblock %}
