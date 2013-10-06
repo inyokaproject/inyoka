@@ -30,8 +30,6 @@ from inyoka.portal.models import Subscription
 from inyoka.forum.constants import DISTRO_CHOICES, TOPICS_PER_PAGE
 
 
-
-
 class TestForumViews(TestCase):
 
     @override_settings(BASE_DOMAIN_NAME='inyoka.local')
@@ -385,10 +383,10 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
-        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
-            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
         self.assertEqual(Topic.objects.all().count(), 0)
         self.assertEqual(Post.objects.all().count(), 0)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
 
         # Test send
         postdata.pop('preview')
@@ -401,8 +399,7 @@ class TestPostEditView(TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>',
-            response.content, count=1)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
     def test_newtopic_with_file(self):
         TEST_ATTACHMENT = 'test_attachment.png'
@@ -416,12 +413,12 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
         self.assertEqual(Attachment.objects.all().count(), 1)
         att = Attachment.objects.get()
         pattern = '<li><a href="%(url)s">%(name)s</a> - %(size)d Bytes<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
         self.assertInHTML(pattern % {'size': 273, 'url': att.get_absolute_url(), 'name': att.name, 'pk': att.pk}, response.content, count=1)
-        self.assertEqual(Topic.objects.all().count(), 0)
-        self.assertEqual(Post.objects.all().count(), 0)
 
         # Test preview
         postdata = {
@@ -434,10 +431,10 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
-        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
-            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
         self.assertEqual(Topic.objects.all().count(), 0)
         self.assertEqual(Post.objects.all().count(), 0)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
 
         # Test send
         postdata.pop('preview')
@@ -450,6 +447,7 @@ class TestPostEditView(TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
         att = Attachment.objects.get()
         pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         self.assertInHTML(pattern % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name}, response.content, count=1)
@@ -484,13 +482,13 @@ class TestPostEditView(TestCase):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
 
         # Verify that the attachments exit
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
         self.assertEqual(Attachment.objects.all().count(), 2)
         att1, att2 = Attachment.objects.all()
         pattern = '<li><a href="%(url)s">%(name)s</a> - %(size)d Bytes<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
         self.assertInHTML(pattern % {'size': 273, 'url': att1.get_absolute_url(), 'name': att1.name, 'pk': att1.pk}, response.content, count=1)
         self.assertInHTML(pattern % {'size': 276, 'url': att2.get_absolute_url(), 'name': att2.name, 'pk': att2.pk}, response.content, count=1)
-        self.assertEqual(Topic.objects.all().count(), 0)
-        self.assertEqual(Post.objects.all().count(), 0)
 
         # Test preview
         postdata = {
@@ -503,10 +501,10 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
-        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
-            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
         self.assertEqual(Topic.objects.all().count(), 0)
         self.assertEqual(Post.objects.all().count(), 0)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
 
         # Test send
         postdata.pop('preview')
@@ -519,6 +517,7 @@ class TestPostEditView(TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
         att1, att2 = Attachment.objects.all()
         pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
         self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, response.content, count=1)
@@ -533,12 +532,12 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
         self.assertEqual(Poll.objects.all().count(), 1)
         poll = Poll.objects.get()
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
         self.assertInHTML(pattern % {'q': poll.question, 'pk': poll.pk}, response.content, count=1)
-        self.assertEqual(Topic.objects.all().count(), 0)
-        self.assertEqual(Post.objects.all().count(), 0)
 
         # Test preview
         postdata = {
@@ -551,10 +550,10 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
-        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
-            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
         self.assertEqual(Topic.objects.all().count(), 0)
         self.assertEqual(Post.objects.all().count(), 0)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
 
         # Test send
         postdata.pop('preview')
@@ -567,6 +566,7 @@ class TestPostEditView(TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
         poll = Poll.objects.get()
         opt1, opt2 = PollOption.objects.all()
         pattern = '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt_pk)d" value="%(opt_pk)d"/><label for="option_%(opt_pk)d">%(opt)s</label></td></tr>'
@@ -595,13 +595,13 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 0)
+        self.assertEqual(Post.objects.all().count(), 0)
         self.assertEqual(Poll.objects.all().count(), 2)
         poll1, poll2 = Poll.objects.all()
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
         self.assertInHTML(pattern % {'q': poll1.question, 'pk': poll1.pk}, response.content, count=1)
         self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, response.content, count=1)
-        self.assertEqual(Topic.objects.all().count(), 0)
-        self.assertEqual(Post.objects.all().count(), 0)
 
         # Test preview
         postdata = {
@@ -614,10 +614,10 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/forum/%s/newtopic/' % self.forum.slug, postdata)
-        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
-            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
         self.assertEqual(Topic.objects.all().count(), 0)
         self.assertEqual(Post.objects.all().count(), 0)
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
 
         # Test send
         postdata.pop('preview')
@@ -630,8 +630,9 @@ class TestPostEditView(TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        poll1, poll2 = Poll.objects.all()
         self.assertEqual(PollOption.objects.all().count(), 4)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        poll1, poll2 = Poll.objects.all()
         opt11, opt12, opt21, opt22 = PollOption.objects.order_by('pk').all()
         pattern = '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt_pk)d" value="%(opt_pk)d"/><label for="option_%(opt_pk)d">%(opt)s</label></td></tr>'
         self.assertInHTML('<div><strong>%(question)s</strong></div>' % {'question': poll1.question}, response.content, count=1)
@@ -641,17 +642,156 @@ class TestPostEditView(TestCase):
         self.assertInHTML(pattern % {'poll_pk': poll2.pk, 'opt': opt21.name, 'opt_pk': opt21.pk}, response.content, count=1)
         self.assertInHTML(pattern % {'poll_pk': poll2.pk, 'opt': opt22.name, 'opt_pk': opt22.pk}, response.content, count=1)
 
-    @unittest.skip('Not implemented yet')
     def test_new_post(self):
-        pass
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 
-    @unittest.skip('Not implemented yet')
+        # Test preview
+        postdata = {
+            'text': 'newpost text',
+            'preview': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/topic/%s/reply/' % topic.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)  # The existing topic ...
+        self.assertEqual(Post.objects.all().count(), 1)  # ... and post
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
+
+        # Test send
+        postdata.pop('preview')
+        postdata['send'] = True
+        with translation.override('en-us'):
+            self.client.post('/topic/%s/reply/' % topic.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 2)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+
     def test_new_post_with_file(self):
-        pass
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 
-    @unittest.skip('Not implemented yet')
+        TEST_ATTACHMENT = 'test_attachment.png'
+        # Test file upload
+        f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
+        postdata = {
+            'attachment': f,
+            'filename': 'newpost_file_name.png',
+            'comment': 'newpost file comment',
+            'attach': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/topic/%s/reply/' % topic.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 1)
+        self.assertEqual(Attachment.objects.all().count(), 1)
+        att = Attachment.objects.get()
+        pattern = '<li><a href="%(url)s">%(name)s</a> - %(size)d Bytes<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
+        self.assertInHTML(pattern % {'size': 273, 'url': att.get_absolute_url(), 'name': att.name, 'pk': att.pk}, response.content, count=1)
+
+        # Test preview
+        postdata = {
+            'text': 'newpost text',
+            'attachments': str(att.pk),
+            'preview': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/topic/%s/reply/' % topic.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)  # The existing topic ...
+        self.assertEqual(Post.objects.all().count(), 1)  # ... and post
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
+
+        # Test send
+        postdata.pop('preview')
+        postdata['send'] = True
+        with translation.override('en-us'):
+            self.client.post('/topic/%s/reply/' % topic.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 2)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        att = Attachment.objects.get()
+        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
+        self.assertInHTML(pattern % {'url': att.get_absolute_url(), 'comment': att.comment, 'name': att.name}, response.content, count=1)
+
     def test_new_post_with_multiple_files(self):
-        pass
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+
+        TEST_ATTACHMENT1 = 'test_attachment.png'
+        TEST_ATTACHMENT2 = 'test_attachment2.png'
+        # Upload first file
+        f1 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb')
+        postdata = {
+            'attachment': f1,
+            'filename': 'newpost_file_name.png',
+            'comment': 'newpost file comment',
+            'attach': True,
+        }
+        with translation.override('en-us'):
+            self.client.post('/topic/%s/reply/' % topic.slug, postdata)
+
+        self.assertEqual(Attachment.objects.all().count(), 1)
+        att1 = Attachment.objects.get()
+
+        # Upload second file
+        f2 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT2), 'rb')
+        postdata = {
+            'attachment': f2,
+            'filename': 'newpost_second_file.png',
+            'comment': 'newpost comment for file 2',
+            'attachments': str(att1.pk),
+            'attach': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/topic/%s/reply/' % topic.slug, postdata)
+
+        # Verify that the attachments exit
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 1)
+        self.assertEqual(Attachment.objects.all().count(), 2)
+        att1, att2 = Attachment.objects.all()
+        pattern = '<li><a href="%(url)s">%(name)s</a> - %(size)d Bytes<button type="submit" name="delete_attachment" value="%(pk)d">Delete</button></li>'
+        self.assertInHTML(pattern % {'size': 273, 'url': att1.get_absolute_url(), 'name': att1.name, 'pk': att1.pk}, response.content, count=1)
+        self.assertInHTML(pattern % {'size': 276, 'url': att2.get_absolute_url(), 'name': att2.name, 'pk': att2.pk}, response.content, count=1)
+
+        # Test preview
+        postdata = {
+            'text': 'newpost text',
+            'attachments': '%d,%d' % (att1.pk, att2.pk),
+            'preview': True,
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/topic/%s/reply/' % topic.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)  # The existing topic ...
+        self.assertEqual(Post.objects.all().count(), 1)  # ... and post
+        self.assertInHTML('<div class="preview_wrapper"><h2 class="title">Preview</h2>'
+            '<div class="preview"><p>newpost text</p></div></div>', response.content, count=1)
+
+        # Test send
+        postdata.pop('preview')
+        postdata['send'] = True
+        with translation.override('en-us'):
+            self.client.post('/topic/%s/reply/' % topic.slug, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 2)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        att1, att2 = Attachment.objects.all()
+        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
+        self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, response.content, count=1)
+        self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, response.content, count=1)
 
     @unittest.skip('Not implemented yet')
     def test_edit_post(self):
