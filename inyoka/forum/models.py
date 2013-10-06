@@ -352,6 +352,7 @@ class Forum(models.Model):
         Yield all forums sorted as in the index page, with indentation.
         `forums` must be sorted by position.
         Every entry is a tuple (offset, forum). Example usage::
+
             forums = Forum.objects.order_by('-position').all()
             for offset, f in Forum.get_children_recursive(forums):
                 choices.append((f.id, u'  ' * offset + f.name))
@@ -1051,11 +1052,9 @@ class Attachment(models.Model):
     def update_post_ids(att_ids, post):
         """
         Update the post_id of a few unbound attachments.
-        :Parameters:
-            att_ids
-                A list of the attachment's ids.
-            post
-                The new post object.
+
+        :param list att_ids: A list of the attachment's ids.
+        :param Post post: The new post object.
         """
         if not att_ids or not post:
             return False

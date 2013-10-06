@@ -57,8 +57,10 @@ from inyoka.utils.flash_confirmation import confirm_action
 def context_modifier(request, context):
     """
     This function adds two things to the context of all ikhaya pages:
+
     `archive`
         A list of the latest months with ikhaya articles.
+
     `categories`
         A list of all ikhaya categories.
     """

@@ -149,12 +149,11 @@ def google_calendarize(event):
 class UbuntuVersion(object):
     """
     This class holds a single Ubuntu version. Based on the settings for
-    :py:attribute:`lts`, :py:attribute:`active`, :py:attribute:`current`,
-    :py:attribute:`dev`, a different notification appears in the forum
-    front-end while selecting the topic version.
+    :py:attr:`lts`, :py:attr:`active`, :py:attr:`current`, :py:attr:`dev`, a
+    different notification appears in the forum front-end while selecting the
+    topic version.
 
-    The attributes :py:attribute:`number` and :py:attribute:`name` have to be
-    given.
+    The attributes :py:attr:`number` and :py:attr:`name` have to be given.
     """
 
     def __init__(self, number, name, lts=False, active=False,
@@ -210,7 +209,7 @@ class UbuntuVersionList(set):
     """
     This class holds a set of :py:class:`UbuntuVersion`. We are using a set to
     avoid duplicate entries. But accessing this class with all its version
-    should be done by :py:var:`UBUNTU_VERSIONS`.
+    should be done by :py:data:`UBUNTU_VERSIONS`.
     """
 
     def __init__(self, data=u''):
