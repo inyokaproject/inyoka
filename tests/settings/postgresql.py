@@ -7,8 +7,3 @@ DATABASES = {
         'NAME': 'inyoka_testrunner',
     }
 }
-
-try:
-    from ._postgresql import *
-except ImportError:
-    pass
