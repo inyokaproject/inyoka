@@ -1,0 +1,65 @@
+{% extends 'forum/base.html' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ href('forum') }}">Forum</a></li>
+  {% if topic.forum.parent.parent %}
+    <li>…</li>
+  {% endif %}
+  <li><a href="{{ topic.forum|url }}">{{ topic.forum }}</a></li>
+  <li class="active">{{ topic }}</li>
+{% endblock %}
+
+{% block sidebar %}
+  <ul class="nav nav-pills nav-stacked">
+    <li><a href="{{ topic|url('reply') }}">{% trans %}Reply{% endtrans %}</a></li>
+    {% if is_subscribed %}
+      <li><a href="{{ topic|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a></li>
+    {% else %}
+      <li><a href="{{ topic|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a></li>
+    {% endif %}
+    {% if topic.solved %}
+      <li><a href="{{ topic|url('unsolve') }}">{% trans %}Mark as unsolved{% endtrans %}</a></li>
+    {% else %}
+      <li><a href="{{ topic|url('solve') }}">{% trans %}Mark as solved{% endtrans %}</a></li>
+    {% endif %}
+    <li><a href="{{ topic|url('report') }}">{% trans %}Report{% endtrans %}</a></li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+  {{ pagination.generate() }}
+  {% for post in posts %}
+    <div class="panel panel-default post" id="post-{{ post.id }}">
+      <div class="panel-heading">
+        <a href="{{ post.author|url }}">{{ post.author }}</a>
+        <span class="pull-right">
+          <a href="{{ post|url }}">{{ post.pub_date|datetimeformat }}</a>
+        </span>
+      </div>
+      <div class="panel-body">
+        {{ post.get_text() }}
+      </div>
+      <div class="panel-footer">
+        <div class="btn-group btn-group-sm">
+          <a href="{{ post|url('quote') }}" class="btn btn-default">{% trans %}Quote{% endtrans %}</a>
+          {% if can_edit(post) %}
+            <a href="{{ post|url('edit') }}" class="btn btn-primary">{% trans %}Edit{% endtrans %}</a>
+          {% endif %}
+        </div>
+      {% if can_moderate %}
+        <div class="btn-group btn-group-sm pull-right">
+          <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+            {% trans %}More{% endtrans %}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
+            <li><a href="#">{% trans %}Hide{% endtrans %}</a></li>
+          </ul>
+        </div>
+      {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+  {{ pagination.generate() }}
+{% endblock %}
