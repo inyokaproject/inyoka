@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 """
     inyoka.ikhaya.search
-    ~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~
 
     Search interfaces for ikhaya.
 

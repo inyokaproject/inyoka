@@ -71,18 +71,23 @@ class EditPostForm(forms.Form):
 
 class NewTopicForm(SurgeProtectionMixin, forms.Form):
     """
-    Allows the user to create a new topic.
-    It provides the following fields:
+    Allows the user to create a new topic. It provides the following fields:
+
     `title`
         The title of the topic.
+
     `text`
         The text of the first post inside the topic.
+
     `polls`
         A list of new polls bound to this topic.
+
     `ubuntu_version`
         The ubuntu version the user has.
+
     `ubuntu_distro`
         The ubuntu distribution the user has.
+
     It's used together with `AddAttachmentForm` in general.
     """
     title = StrippedCharField(widget=forms.TextInput(attrs={'size': 60}),
@@ -168,6 +173,7 @@ class SplitTopicForm(forms.Form):
 class AddAttachmentForm(forms.Form):
     """
     Allows the user to upload new attachments.  It provides the following fields:
+
     `attachment`
         A file field for the uploaded file.
 

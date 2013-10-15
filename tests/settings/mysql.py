@@ -11,8 +11,3 @@ DATABASES = {
         'PORT': '',
     }
 }
-
-try:
-    from ._mysql import *
-except ImportError:
-    pass
