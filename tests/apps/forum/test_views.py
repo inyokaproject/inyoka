@@ -8,6 +8,7 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
+import shutil
 import unittest
 
 from os import path
@@ -15,6 +16,7 @@ from random import randint
 
 from mock import patch
 from django.conf import settings
+from django.core.files import File
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.utils import translation
@@ -708,16 +710,117 @@ class TestPostEditView(TestCase):
         self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, response.content, count=1)
         self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, response.content, count=1)
 
-    @unittest.skip('Not implemented yet')
     def test_edit_post(self):
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text=u'second post', author=self.admin, position=1, topic=topic)
+
+        # Test preview
+        postdata = {
+            'text': 'editpost text',
+        }
+        response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 2)
+        self.assertPreviewInHTML('editpost text', response)
+
+        # Test send
+        self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 2, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
+
+    # TODO FIXME
+    @unittest.expectedFailure
+    def test_edit_post_remove_attachments(self):
+        TEST_ATTACHMENT1 = 'test_attachment.png'
+        TEST_ATTACHMENT2 = 'test_attachment2.png'
+
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text=u'second post', author=self.admin, position=1, topic=topic)
+
+        new_file1 = path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00', TEST_ATTACHMENT1)
+        shutil.copy(path.join(path.dirname(__file__), TEST_ATTACHMENT1), new_file1)
+        new_file2 = path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00', TEST_ATTACHMENT2)
+        shutil.copy(path.join(path.dirname(__file__), TEST_ATTACHMENT2), new_file2)
+
+        with open(new_file1, 'rb') as f:
+            att1 = Attachment.objects.create(name=TEST_ATTACHMENT1, file=File(f), mimetype='image/png', post=post)
+        with open(new_file2, 'rb') as f:
+            att2 = Attachment.objects.create(name=TEST_ATTACHMENT2, file=File(f), mimetype='image/png', post=post)
+        # FIXME: Move this stuff to the model!
+        post.has_attachments = True
+        post.save(update_fields=['has_attachments'])
+
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 2)
+        self.assertEqual(Attachment.objects.all().count(), 2)
+
+        with translation.override('en-us'):
+            response = self.client.get('/topic/topic/')
+
+        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
+        self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, response.content, count=1)
+        self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, response.content, count=1)
+
+        # Test attachment deletion 1
+        postdata = {
+            'delete_attachment': str(att1.pk),
+            'attachments': '%d,%d' % (att1.pk, att2.pk),
+            'text': 'edit 1',
+        }
+
+        with translation.override('en-us'):
+            response = self.client.post('/post/%d/edit/' % post.pk, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 2)
+        self.assertEqual(Attachment.objects.all().count(), 1)
+        self.assertTrue(Post.objects.get(pk=post.pk).has_attachments)
+        self.assertInHTML('<textarea id="id_text" rows="10" cols="40" name="text">edit 1</textarea>', response.content)
+        self.assertAttachmentInHTML(att2, response)
+
+        # Test attachment deletion 2
+        postdata = {
+            'delete_attachment': str(att2.pk),
+            'attachments': att2.pk,
+            'text': 'edit 2',
+        }
+
+        with translation.override('en-us'):
+            response = self.client.post('/post/%d/edit/' % post.pk, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 2)
+        self.assertEqual(Attachment.objects.all().count(), 0)
+        self.assertTrue(Post.objects.get(pk=post.pk).has_attachments)
+        self.assertInHTML('<textarea id="id_text" rows="10" cols="40" name="text">edit 2</textarea>', response.content)
+
+        postdata = {
+            'text': 'edit 3',
+        }
+        response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 2)
+        self.assertPreviewInHTML('edit 3', response)
+        self.assertTrue(Post.objects.get(pk=post.pk).has_attachments)
+
+        # We must submit the entire form since deleting an attachment does not update the has_attachments information
+        self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 2, submit=True)
+        self.assertFalse(Post.objects.get(pk=post.pk).has_attachments)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="text"><p>edit 3</p></div>', response.content, count=1)
+
+    @unittest.skip('Not implemented yet')
+    def test_edit_first_post(self):
         pass
 
     @unittest.skip('Not implemented yet')
-    def test_edit_post_remove_single(self):
+    def test_edit_first_post_remove_single(self):
         # Create a topic with multiple files and polls and remove one of each
         pass
 
     @unittest.skip('Not implemented yet')
-    def test_edit_post_remove_all(self):
+    def test_edit_first_post_remove_all(self):
         # Create a topic with multiple files and polls and remove all of them
         pass
