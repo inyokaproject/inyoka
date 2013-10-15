@@ -14,6 +14,7 @@ from datetime import date, time
 
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import Q
 from django.utils.http import urlquote_plus
 
@@ -212,9 +213,11 @@ class UbuntuVersionList(set):
     should be done by :py:data:`UBUNTU_VERSIONS`.
     """
 
+    # TODO: Get rid of this shit.
     def __init__(self, data=u''):
         super(set, self).__init__()
         #: we need that try-except block to avoid failing `./manage syncdb`
+        sid = transaction.savepoint()
         try:
             value = data or storage['distri_versions']
             jsonobjs = json.loads(value)
@@ -222,7 +225,9 @@ class UbuntuVersionList(set):
                 version = UbuntuVersion(**obj)
                 self.add(version)
         except:
-            pass
+            transaction.savepoint_rollback(sid)
+        else:
+            transaction.savepoint_commit(sid)
 
 
 UBUNTU_VERSIONS = list(sorted(UbuntuVersionList()))
