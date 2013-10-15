@@ -78,6 +78,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import pickle
+import magic
+
 from math import log
 from hashlib import sha1
 from operator import itemgetter
@@ -94,7 +96,6 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
 from inyoka import markup
-from inyoka.utils import magic
 from inyoka.markup import nodes, templates
 from inyoka.wiki.tasks import render_article, update_object_list, update_related_pages
 from inyoka.utils.urls import href

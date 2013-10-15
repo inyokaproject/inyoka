@@ -10,12 +10,12 @@
 """
 import os.path
 import itertools
+import magic
+
 from mimetypes import guess_extension, guess_all_extensions
 
 from werkzeug import utils
 from django.core.files.storage import FileSystemStorage
-
-from inyoka.utils import magic
 
 
 def fix_extension(filename, mime):
