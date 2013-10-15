@@ -304,46 +304,6 @@ class TestViews(TestCase):
         self.assertEqual(valuelist(t1.pk, 'position'), list(xrange(0, 5)))
         self.assertEqual(valuelist(t2.pk, 'position'), [0])
 
-    def test_add_attachment(self):
-        TEST_ATTACHMENT = 'test_attachment.png'
-
-        t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
-                author=self.user, forum=self.forum2,
-                ubuntu_distro=DISTRO_CHOICES[1][0])
-        p1 = Post.objects.create(text=u'Post 1', author=self.user,
-                topic=t1)
-
-        f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
-        postdata = {u'attachment': f,
-                    u'attach': u'upload attachment',
-                    u'ubuntu_distro': DISTRO_CHOICES[2][0],
-                    u'comment': u'',
-                    u'attachments': u'',
-                    u'title': u'Tag124345637',
-                    u'text': u'Tag23562434',
-                    u'polls': u'',
-                    u'question': u'',
-                    u'filename': u'',
-                    u'duration': u'',
-                    u'options': u''}
-
-        response = self.client.post('/post/%s/edit/' % p1.pk, postdata)
-        content = unicode(response.__str__().decode(response._charset))
-
-        self.assertIn(postdata['title'], content)
-        self.assertIn(postdata['text'], content)
-        self.assertIn(u'value="%s" selected="selected"' % DISTRO_CHOICES[2][0],
-                      content)
-        self.assertIn(unicode(TEST_ATTACHMENT), content)
-
-        # Adding an attachment should not trigger save
-        t1_test = Topic.objects.get(pk=t1.pk)
-        self.assertEqual(t1_test.title, u'A: topic')
-        self.assertEqual(t1_test.ubuntu_distro, DISTRO_CHOICES[1][0])
-
-        p1_test = Post.objects.get(pk=p1.pk)
-        self.assertEqual(p1_test.text, u'Post 1')
-
 
 class TestPostEditView(TestCase):
 
