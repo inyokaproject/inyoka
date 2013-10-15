@@ -753,16 +753,14 @@ class TestPostEditView(TestCase):
         post.has_attachments = True
         post.save(update_fields=['has_attachments'])
 
+        # Test existing data
+        with translation.override('en-us'):
+            response = self.client.get('/post/%d/edit/' % post.pk)
         self.assertEqual(Topic.objects.all().count(), 1)
         self.assertEqual(Post.objects.all().count(), 2)
         self.assertEqual(Attachment.objects.all().count(), 2)
-
-        with translation.override('en-us'):
-            response = self.client.get('/topic/topic/')
-
-        pattern = '<li><a href="%(url)s" type="image/png" title="%(comment)s">Download %(name)s</a></li>'
-        self.assertInHTML(pattern % {'url': att1.get_absolute_url(), 'comment': att1.comment, 'name': att1.name}, response.content, count=1)
-        self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, response.content, count=1)
+        self.assertAttachmentInHTML(att1, response)
+        self.assertAttachmentInHTML(att2, response)
 
         # Test attachment deletion 1
         postdata = {
@@ -811,16 +809,74 @@ class TestPostEditView(TestCase):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('<div class="text"><p>edit 3</p></div>', response.content, count=1)
 
-    @unittest.skip('Not implemented yet')
     def test_edit_first_post(self):
-        pass
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        post = Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 
-    @unittest.skip('Not implemented yet')
-    def test_edit_first_post_remove_single(self):
-        # Create a topic with multiple files and polls and remove one of each
-        pass
+        # Test preview
+        postdata = {
+            'title': 'edited title',
+            'text': 'edited text',
+        }
+        response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
+        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertPreviewInHTML('edited text', response)
 
-    @unittest.skip('Not implemented yet')
-    def test_edit_first_post_remove_all(self):
-        # Create a topic with multiple files and polls and remove all of them
-        pass
+        # Test send
+        self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
+
+
+    def test_edit_first_post_remove_polls(self):
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        post = Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        poll1 = Poll.objects.create(question='some first question', topic=topic)
+        poll2 = Poll.objects.create(question='some second question', topic=topic)
+        PollOption.objects.create(poll=poll1, name='option11')
+        PollOption.objects.create(poll=poll1, name='option12')
+        PollOption.objects.create(poll=poll2, name='option21')
+        PollOption.objects.create(poll=poll2, name='option22')
+
+        with translation.override('en-us'):
+            response = self.client.get('/post/%d/edit/' % post.pk)
+        pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
+        self.assertInHTML(pattern % {'q': poll1.question, 'pk': poll1.pk}, response.content, count=1)
+        self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, response.content, count=1)
+
+        postdata = {
+            'title': 'edited title',
+            'text': 'edited text',
+            'polls': '%d,%d' % (poll1.pk, poll2.pk),
+            'delete_poll': str(poll1.pk),
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/post/%d/edit/' % post.pk, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 1)
+        self.assertEqual(Poll.objects.all().count(), 1)
+        self.assertEqual(PollOption.objects.all().count(), 2)
+        pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
+        self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, response.content, count=1)
+        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
+
+        postdata = {
+            'title': 'edited title 2',
+            'text': 'edited text 2',
+            'polls': str(poll2.pk),
+            'delete_poll': str(poll2.pk),
+        }
+        with translation.override('en-us'):
+            response = self.client.post('/post/%d/edit/' % post.pk, postdata)
+        self.assertEqual(Topic.objects.all().count(), 1)
+        self.assertEqual(Post.objects.all().count(), 1)
+        self.assertEqual(Poll.objects.all().count(), 0)
+        self.assertEqual(PollOption.objects.all().count(), 0)
+        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title 2">', response.content)
+
+        # Test send
+        self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1, submit=True)
