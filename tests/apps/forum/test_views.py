@@ -373,11 +373,15 @@ class TestPostEditView(TestCase):
         Poll.objects.all().delete()
 
     def post_request(self, path, postdata, topics, posts, attachments=None,
-            polls=None, polloptions=None, send=False):
-        if send:
+            polls=None, polloptions=None, submit=False):
+        if submit:
             if 'preview' in postdata:
                 postdata.pop('preview')
             postdata['send'] = True
+        else:
+            if 'send' in postdata:
+                postdata.pop('send')
+            postdata['preview'] = True
         with translation.override('en-us'):
             response = self.client.post(path, postdata)
         self.assertEqual(Topic.objects.all().count(), topics)
@@ -409,13 +413,12 @@ class TestPostEditView(TestCase):
             'title': 'newpost_title',
             'ubuntu_distro': DISTRO_CHOICES[2][0],
             'text': 'newpost text',
-            'preview': True,
         }
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0)
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
-        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, send=True)
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, submit=True)
 
         # Check for rendered post
         with translation.override('en-us'):
@@ -442,13 +445,12 @@ class TestPostEditView(TestCase):
             'ubuntu_distro': DISTRO_CHOICES[2][0],
             'text': 'newpost text',
             'attachments': str(att.pk),
-            'preview': True,
         }
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, attachments=1)
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
-        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, attachments=1, send=True)
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, attachments=1, submit=True)
 
         # Check for rendered post
         with translation.override('en-us'):
@@ -483,7 +485,7 @@ class TestPostEditView(TestCase):
         }
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, attachments=2)
 
-        # Verify that the attachments exit
+        # Verify that the attachments exist
         att1, att2 = Attachment.objects.all()
         self.assertAttachmentInHTML(att1, response)
         self.assertAttachmentInHTML(att2, response)
@@ -494,13 +496,12 @@ class TestPostEditView(TestCase):
             'ubuntu_distro': DISTRO_CHOICES[2][0],
             'text': 'newpost text',
             'attachments': '%d,%d' % (att1.pk, att2.pk),
-            'preview': True,
         }
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, attachments=2)
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
-        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, attachments=2, send=True)
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, attachments=2, submit=True)
 
         # Check for rendered post
         with translation.override('en-us'):
@@ -529,13 +530,12 @@ class TestPostEditView(TestCase):
             'ubuntu_distro': DISTRO_CHOICES[2][0],
             'text': 'newpost text',
             'polls': str(poll.pk),
-            'preview': True,
         }
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, polls=1, polloptions=2)
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
-        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, polls=1, polloptions=2, send=True)
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, polls=1, polloptions=2, submit=True)
 
         # Check for rendered post
         with translation.override('en-us'):
@@ -567,7 +567,7 @@ class TestPostEditView(TestCase):
         }
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, polls=2, polloptions=4)
 
-        # Verify that the polls exit
+        # Verify that the polls exist
         poll1, poll2 = Poll.objects.all()
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
         self.assertInHTML(pattern % {'q': poll1.question, 'pk': poll1.pk}, response.content, count=1)
@@ -579,13 +579,12 @@ class TestPostEditView(TestCase):
             'ubuntu_distro': DISTRO_CHOICES[2][0],
             'text': 'newpost text',
             'polls': '%d,%d' % (poll1.pk, poll2.pk),
-            'preview': True,
         }
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0, polls=2, polloptions=4)
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
-        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, polls=2, polloptions=4, send=True)
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, polls=2, polloptions=4, submit=True)
 
         # Check for rendered post
         with translation.override('en-us'):
@@ -608,13 +607,12 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'text': 'newpost text',
-            'preview': True,
         }
         response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1)
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
-        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, send=True)
+        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, submit=True)
 
         # Check for rendered post
         with translation.override('en-us'):
@@ -642,13 +640,12 @@ class TestPostEditView(TestCase):
         postdata = {
             'text': 'newpost text',
             'attachments': str(att.pk),
-            'preview': True,
         }
         response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1, attachments=1)
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
-        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, attachments=1, send=True)
+        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, attachments=1, submit=True)
 
         # Check for rendered post
         with translation.override('en-us'):
@@ -686,7 +683,7 @@ class TestPostEditView(TestCase):
         }
         response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1, attachments=2)
 
-        # Verify that the attachments exit
+        # Verify that the attachments exist
         att1, att2 = Attachment.objects.all()
         self.assertAttachmentInHTML(att1, response)
         self.assertAttachmentInHTML(att2, response)
@@ -695,13 +692,12 @@ class TestPostEditView(TestCase):
         postdata = {
             'text': 'newpost text',
             'attachments': '%d,%d' % (att1.pk, att2.pk),
-            'preview': True,
         }
         response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1, attachments=2)
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
-        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, attachments=2, send=True)
+        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, attachments=2, submit=True)
 
         # Check for rendered post
         with translation.override('en-us'):
