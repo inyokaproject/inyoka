@@ -386,14 +386,14 @@ class TestPostEditView(TestCase):
             postdata['preview'] = True
         with translation.override('en-us'):
             response = self.client.post(path, postdata)
-        self.assertEqual(Topic.objects.all().count(), topics)
-        self.assertEqual(Post.objects.all().count(), posts)
+        self.assertEqual(Topic.objects.count(), topics)
+        self.assertEqual(Post.objects.count(), posts)
         if attachments:
-            self.assertEqual(Attachment.objects.all().count(), attachments)
+            self.assertEqual(Attachment.objects.count(), attachments)
         if polls:
-            self.assertEqual(Poll.objects.all().count(), polls)
+            self.assertEqual(Poll.objects.count(), polls)
         if polloptions:
-            self.assertEqual(PollOption.objects.all().count(), polloptions)
+            self.assertEqual(PollOption.objects.count(), polloptions)
         return response
 
     def assertAttachmentInHTML(self, attachment, response):
@@ -756,9 +756,9 @@ class TestPostEditView(TestCase):
         # Test existing data
         with translation.override('en-us'):
             response = self.client.get('/post/%d/edit/' % post.pk)
-        self.assertEqual(Topic.objects.all().count(), 1)
-        self.assertEqual(Post.objects.all().count(), 2)
-        self.assertEqual(Attachment.objects.all().count(), 2)
+        self.assertEqual(Topic.objects.count(), 1)
+        self.assertEqual(Post.objects.count(), 2)
+        self.assertEqual(Attachment.objects.count(), 2)
         self.assertAttachmentInHTML(att1, response)
         self.assertAttachmentInHTML(att2, response)
 
@@ -771,9 +771,9 @@ class TestPostEditView(TestCase):
 
         with translation.override('en-us'):
             response = self.client.post('/post/%d/edit/' % post.pk, postdata)
-        self.assertEqual(Topic.objects.all().count(), 1)
-        self.assertEqual(Post.objects.all().count(), 2)
-        self.assertEqual(Attachment.objects.all().count(), 1)
+        self.assertEqual(Topic.objects.count(), 1)
+        self.assertEqual(Post.objects.count(), 2)
+        self.assertEqual(Attachment.objects.count(), 1)
         self.assertTrue(Post.objects.get(pk=post.pk).has_attachments)
         self.assertInHTML('<textarea id="id_text" rows="10" cols="40" name="text">edit 1</textarea>', response.content)
         self.assertAttachmentInHTML(att2, response)
@@ -787,9 +787,9 @@ class TestPostEditView(TestCase):
 
         with translation.override('en-us'):
             response = self.client.post('/post/%d/edit/' % post.pk, postdata)
-        self.assertEqual(Topic.objects.all().count(), 1)
-        self.assertEqual(Post.objects.all().count(), 2)
-        self.assertEqual(Attachment.objects.all().count(), 0)
+        self.assertEqual(Topic.objects.count(), 1)
+        self.assertEqual(Post.objects.count(), 2)
+        self.assertEqual(Attachment.objects.count(), 0)
         self.assertTrue(Post.objects.get(pk=post.pk).has_attachments)
         self.assertInHTML('<textarea id="id_text" rows="10" cols="40" name="text">edit 2</textarea>', response.content)
 
@@ -856,10 +856,10 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/post/%d/edit/' % post.pk, postdata)
-        self.assertEqual(Topic.objects.all().count(), 1)
-        self.assertEqual(Post.objects.all().count(), 1)
-        self.assertEqual(Poll.objects.all().count(), 1)
-        self.assertEqual(PollOption.objects.all().count(), 2)
+        self.assertEqual(Topic.objects.count(), 1)
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Poll.objects.count(), 1)
+        self.assertEqual(PollOption.objects.count(), 2)
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
         self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, response.content, count=1)
         self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
@@ -872,11 +872,29 @@ class TestPostEditView(TestCase):
         }
         with translation.override('en-us'):
             response = self.client.post('/post/%d/edit/' % post.pk, postdata)
-        self.assertEqual(Topic.objects.all().count(), 1)
-        self.assertEqual(Post.objects.all().count(), 1)
-        self.assertEqual(Poll.objects.all().count(), 0)
-        self.assertEqual(PollOption.objects.all().count(), 0)
+        self.assertEqual(Topic.objects.count(), 1)
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Poll.objects.count(), 0)
+        self.assertEqual(PollOption.objects.count(), 0)
         self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title 2">', response.content)
 
+        postdata = {
+            'title': 'edited title 3',
+            'text': 'edited text 3',
+        }
+        # Test send
+        response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
+        self.assertPreviewInHTML('edited text 3', response)
+
+        postdata = {
+            'title': 'edited title 4',
+            'text': 'edited text 4',
+        }
         # Test send
         self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<h2>edited title 4</h2>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>edited text 4</p></div>', response.content, count=1)
