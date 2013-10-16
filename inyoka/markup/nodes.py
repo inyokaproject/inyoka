@@ -22,17 +22,15 @@ from urlparse import urlparse
 
 from django.conf import settings
 from django.utils.html import escape
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
 
+from inyoka.utils.urls import href, get_url, urlquote_plus
+from inyoka.utils.html import striptags, build_html_tag
+from inyoka.utils.text import slugify, get_pagetitle, normalize_pagename
 from inyoka.markup.utils import debug_repr
-
-from inyoka.utils.text import slugify, normalize_pagename, get_pagetitle
-from inyoka.utils.html import build_html_tag, striptags
-from inyoka.utils.urls import href, urlquote_plus, get_url
+from inyoka.markup.machine import NodeRenderer, NodeCompiler, NodeQueryInterface
 from inyoka.utils.templating import render_template
-
-from inyoka.markup.machine import NodeCompiler, NodeRenderer, \
-    NodeQueryInterface
 
 
 def error_box(title, message):

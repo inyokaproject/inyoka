@@ -9,32 +9,37 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from datetime import datetime
 from os import path
-from PIL import Image
 from StringIO import StringIO
+from datetime import datetime
 
-from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,\
-    update_last_login
-from django.contrib.auth.signals import user_logged_in
-from django.core.cache import cache
-from django.core import signing
+from PIL import Image
 from django.db import models
+from django.core import signing
+from django.conf import settings
 from django.dispatch import receiver
+from django.core.cache import cache
 from django.utils.html import escape
-from django.utils.translation import ugettext_lazy, ugettext as _
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
+from django.contrib.auth.models import (
+    BaseUserManager,
+    AbstractBaseUser,
+    update_last_login
+)
+from django.contrib.auth.signals import user_logged_in
 
-from inyoka.utils.database import update_model, JSONField
-from inyoka.utils.decorators import deferred
-from inyoka.utils.gravatar import get_gravatar
-from inyoka.utils.local import current_request
-from inyoka.utils.mail import send_mail
-from inyoka.utils.templating import render_template
-from inyoka.utils.text import normalize_pagename
-from inyoka.utils.user import normalize_username, gen_activation_key
 from inyoka.markup import parse, render, RenderContext
-
+from inyoka.utils.mail import send_mail
+from inyoka.utils.user import normalize_username, gen_activation_key
+from inyoka.utils.text import normalize_pagename
+from inyoka.utils.urls import href
+from inyoka.utils.local import current_request
+from inyoka.utils.storage import storage
+from inyoka.utils.gravatar import get_gravatar
+from inyoka.utils.database import JSONField, update_model
+from inyoka.utils.templating import render_template
+from inyoka.utils.decorators import deferred
 
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
 DEFAULT_GROUP_ID = 1  # group id for all registered users
@@ -658,8 +663,3 @@ def update_user_flags(sender, request, user, **kwargs):
     user.save(update_fields=['last_login'])
 
 user_logged_in.disconnect(update_last_login)
-
-
-# circ imports
-from inyoka.utils.urls import href
-from inyoka.utils.storage import storage

@@ -11,7 +11,6 @@
 import sys
 from collections import namedtuple
 
-
 #: Represents one token.
 Token = namedtuple('Token', ('type', 'value'))
 

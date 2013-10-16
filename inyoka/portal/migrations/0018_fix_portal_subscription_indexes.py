@@ -1,8 +1,8 @@
 # encoding: utf-8
 import re
+
 from south.db import db
 from south.v2 import SchemaMigration
-
 
 _re = re.compile(r'  UNIQUE KEY `([a-z0-9_].*?)` \(`[a-z_]+`\),\n')
 

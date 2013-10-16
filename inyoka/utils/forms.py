@@ -10,9 +10,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import sys
-import pytz
-from hashlib import md5
 from random import randrange
+from hashlib import md5
 
 from django import forms
 from django.conf import settings
@@ -20,14 +19,15 @@ from django.core import validators
 from django.forms.widgets import Input
 from django.utils.translation import ugettext as _
 
-from inyoka.portal.user import User
+import pytz
 from inyoka.markup import parse, StackExhaused
-from inyoka.utils.dates import datetime_to_timezone, get_user_timezone
-from inyoka.utils.jabber import may_be_valid_jabber
-from inyoka.utils.local import current_request
-from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.text import slugify
+from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.urls import href
+from inyoka.portal.user import User
+from inyoka.utils.local import current_request
+from inyoka.utils.dates import get_user_timezone, datetime_to_timezone
+from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.storage import storage
 
 

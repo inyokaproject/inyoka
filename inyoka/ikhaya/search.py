@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 """
     inyoka.ikhaya.search
-    ~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~
 
     Search interfaces for ikhaya.
 
@@ -9,8 +9,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
-from inyoka.utils.search import SearchAdapter, search
+
 from inyoka.utils.urls import url_for
+from inyoka.utils.search import search, SearchAdapter
 from inyoka.ikhaya.models import Article
 
 

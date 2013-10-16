@@ -9,10 +9,12 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import operator as ops
-from django.core.cache import cache
+
 from django.db.models import Q
+from django.core.cache import cache
 from django.utils.translation import ugettext_lazy
 
+from inyoka.portal.user import DEFAULT_GROUP_ID
 
 #: Mapping from privilege strings to human readable descriptions
 PRIVILEGES_DETAILS = [
@@ -222,6 +224,3 @@ filter_visible = lambda u, f=None, priv=CAN_READ, perm=None: filter(u, f, priv, 
 
 #: Shortcut to filter all invisible forums
 filter_invisible = lambda u, f=None, priv=CAN_READ, perm=None: filter(u, f, priv, perm, ops.ne)
-
-# circular imports
-from inyoka.portal.user import DEFAULT_GROUP_ID

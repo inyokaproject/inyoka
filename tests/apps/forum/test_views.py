@@ -8,21 +8,21 @@
     :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
-from mock import patch
-from random import randint
 from os import path
+from random import randint
 
+from mock import patch
 from django.conf import settings
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.test.utils import override_settings
 
 from inyoka.forum.acl import PRIVILEGES_BITS
-from inyoka.forum.constants import TOPICS_PER_PAGE, DISTRO_CHOICES
-from inyoka.forum.models import Forum, Topic, Post, Privilege
-from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.portal.models import Subscription
-from inyoka.utils.test import InyokaClient
 from inyoka.utils.urls import href
+from inyoka.utils.test import InyokaClient
+from inyoka.portal.user import User, PERMISSION_NAMES
+from inyoka.forum.models import Post, Topic, Forum, Privilege
+from inyoka.portal.models import Subscription
+from inyoka.forum import constants
 
 
 class TestForumViews(TestCase):
@@ -82,8 +82,8 @@ class TestViews(TestCase):
                 posts.append(Post(text="More Posts %s" % randint(1, 100000),
                                     topic=t, author=self.admin, position=i))
 
-        self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
-        for i in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
+        self.num_topics_on_last_page = int(round(constants.TOPICS_PER_PAGE * 0.66))
+        for i in xrange(1, 4 * constants.TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
         Post.objects.bulk_create(posts)
 
@@ -163,13 +163,13 @@ class TestViews(TestCase):
 
     @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     @patch('inyoka.forum.views.TOPICS_PER_PAGE', 4)
-    @patch('tests.apps.forum.test_views.TOPICS_PER_PAGE', 4)
+    @patch('inyoka.forum.constants.TOPICS_PER_PAGE', 4)
     def test_topiclist(self):
         self._setup_pagination()
         self.assertEqual(len(self.client.get("/last24/").tmpl_context['topics']),
-                         TOPICS_PER_PAGE)
+                         constants.TOPICS_PER_PAGE)
         self.assertEqual(len(self.client.get("/last24/3/").tmpl_context['topics']),
-                         TOPICS_PER_PAGE)
+                         constants.TOPICS_PER_PAGE)
         self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
@@ -294,14 +294,14 @@ class TestViews(TestCase):
 
         t1 = Topic.objects.create(title='A: topic', slug='a:-topic',
                 author=self.user, forum=self.forum2,
-                ubuntu_distro=DISTRO_CHOICES[1][0])
+                ubuntu_distro=constants.DISTRO_CHOICES[1][0])
         p1 = Post.objects.create(text=u'Post 1', author=self.user,
                 topic=t1)
 
         f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
         postdata = {u'attachment': f,
                     u'attach': u'upload attachment',
-                    u'ubuntu_distro': DISTRO_CHOICES[2][0],
+                    u'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
                     u'comment': u'',
                     u'attachments': u'',
                     u'title': u'Tag124345637',
@@ -317,14 +317,14 @@ class TestViews(TestCase):
 
         self.assertIn(postdata['title'], content)
         self.assertIn(postdata['text'], content)
-        self.assertIn(u'value="%s" selected="selected"' % DISTRO_CHOICES[2][0],
+        self.assertIn(u'value="%s" selected="selected"' % constants.DISTRO_CHOICES[2][0],
                       content)
         self.assertIn(unicode(TEST_ATTACHMENT), content)
 
         # Adding an attachment should not trigger save
         t1_test = Topic.objects.get(pk=t1.pk)
         self.assertEqual(t1_test.title, u'A: topic')
-        self.assertEqual(t1_test.ubuntu_distro, DISTRO_CHOICES[1][0])
+        self.assertEqual(t1_test.ubuntu_distro, constants.DISTRO_CHOICES[1][0])
 
         p1_test = Post.objects.get(pk=p1.pk)
         self.assertEqual(p1_test.text, u'Post 1')

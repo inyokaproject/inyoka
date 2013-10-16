@@ -19,7 +19,6 @@ import itertools
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
-
 DEFAULT_MARKERS = (
     '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<',
     '========================================',

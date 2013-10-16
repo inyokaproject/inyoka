@@ -10,9 +10,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
+
 import zmq
 from django.conf import settings
-
 
 # NOTE: according to rfc4622 a nodeid is optional. But we require one
 #       'cause nobody should enter a service-jid in the jabber field.

@@ -1,17 +1,16 @@
 #-*- coding: utf-8 -*-
-from os.path import dirname, join
+from os.path import join, dirname
 
 from django.conf import settings
-from django.core.files import File
 from django.test import TestCase
+from django.core.files import File
 
-from inyoka.portal.user import User
-from inyoka.utils.test import InyokaClient
 from inyoka.utils.urls import href
-from inyoka.wiki.models import Attachment, Page
-from inyoka.wiki.storage import storage
+from inyoka.utils.test import InyokaClient
 from inyoka.wiki.utils import get_smilies
-
+from inyoka.wiki.models import Page, Attachment
+from inyoka.portal.user import User
+from inyoka.wiki.storage import storage
 
 BASE_PATH = dirname(__file__)
 

@@ -8,20 +8,21 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic, models as gmodels
-from django.core.cache import cache
-from django.db import models, transaction
-from django.utils.translation import ugettext_lazy
-
 from werkzeug import cached_property
+from django.db import models, transaction
+from django.core.cache import cache
+from django.utils.translation import ugettext_lazy
+from django.contrib.contenttypes import models as gmodels
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 
 from inyoka.markup import parse, render, RenderContext
-from inyoka.portal.user import User
-
-from inyoka.utils.local import current_request
-from inyoka.utils.text import slugify
+from inyoka.wiki.acl import has_privilege as have_wiki_privilege
+from inyoka.forum.acl import have_privilege as have_forum_privilege
 from inyoka.utils.urls import href
+from inyoka.utils.text import slugify
+from inyoka.portal.user import User
+from inyoka.utils.local import current_request
 
 
 class SubscriptionManager(gmodels.ContentTypeManager):
@@ -370,7 +371,3 @@ class SearchQueue(models.Model):
 class Storage(models.Model):
     key = models.CharField(max_length=200, db_index=True)
     value = models.TextField()
-
-
-from inyoka.forum.acl import have_privilege as have_forum_privilege
-from inyoka.wiki.acl import has_privilege as have_wiki_privilege

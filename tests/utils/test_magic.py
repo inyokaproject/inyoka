@@ -1,7 +1,8 @@
 #-*- coding: utf-8 -*-
 import unittest
+import magic
+
 from os.path import join, dirname
-from inyoka.utils import magic
 
 
 class TestMagic(unittest.TestCase):

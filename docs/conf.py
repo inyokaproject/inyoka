@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import datetime
 import sys
-from os.path import dirname, join
-from subprocess import Popen, PIPE
+import datetime
+from os.path import join, dirname
+from subprocess import PIPE, Popen
 
 sys.path.insert(0, join(dirname(__file__), '..'))
 

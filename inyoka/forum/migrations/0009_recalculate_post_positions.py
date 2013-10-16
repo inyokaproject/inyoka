@@ -4,9 +4,8 @@ import datetime
 
 from south.db import db
 from south.v2 import DataMigration
-
+from django.db import models, connection, transaction
 from django.conf import settings
-from django.db import models, transaction, connection
 
 
 def queryset_iterator(queryset, chunksize=1000):

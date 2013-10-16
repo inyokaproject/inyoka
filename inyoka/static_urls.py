@@ -8,8 +8,7 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf.urls import patterns, url
-
+from django.conf.urls import url, patterns
 
 urlpatterns = patterns('',
     url(r'^(?P<path>.*)$', 'django.contrib.staticfiles.views.serve',
@@ -17,4 +16,4 @@ urlpatterns = patterns('',
 )
 
 
-handler404 = 'inyoka.utils.urls.global_not_found'
+handler404 = 'inyoka.utils.http.global_not_found'

@@ -8,56 +8,88 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from datetime import datetime, timedelta
 from operator import attrgetter
+from datetime import datetime, timedelta
 from itertools import groupby
 
+from django.db import transaction
+from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q, F
+from django.utils.text import Truncator
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import transaction
-from django.db.models import Q, F
-from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext as _
-from django.utils.text import Truncator
+from django.contrib.contenttypes.models import ContentType
 
 from inyoka.markup import parse, RenderContext
-from inyoka.markup.parsertools import flatten_iterator
-from inyoka.utils.cache import request_cache
-from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.forum.acl import (
+    CAN_READ,
+    CAN_MODERATE,
+    get_privileges,
+    have_privilege,
+    check_privilege,
+    filter_invisible,
+    get_forum_privileges
+)
 from inyoka.utils.text import normalize_pagename
-from inyoka.utils.http import templated, AccessDeniedResponse, \
-    does_not_exist_is_404
-from inyoka.utils.feeds import atom_feed, AtomFeed
-from inyoka.utils.flash_confirmation import confirm_action
+from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.wiki.utils import quote_text
+from inyoka.utils.http import templated, AccessDeniedResponse, does_not_exist_is_404
+from inyoka.forum.forms import (
+    AddPollForm,
+    NewTopicForm,
+    EditPostForm,
+    EditForumForm,
+    MoveTopicForm,
+    SplitTopicForm,
+    ReportListForm,
+    ReportTopicForm,
+    AddAttachmentForm
+)
+from inyoka.wiki.models import Page
+from inyoka.utils.cache import request_cache
+from inyoka.utils.feeds import AtomFeed, atom_feed
+from inyoka.utils.forms import clear_surge_protection
+from inyoka.utils.dates import format_datetime
+from inyoka.portal.user import User
+from inyoka.forum.models import (
+    Post,
+    Poll,
+    Forum,
+    Topic,
+    PollVote,
+    Attachment,
+    PollOption,
+    PostRevision,
+    WelcomeMessage,
+    mark_all_forums_read
+)
+from inyoka.portal.utils import (
+    require_permission,
+    simple_check_login,
+    abort_access_denied
+)
+from inyoka.utils.storage import storage
+from inyoka.utils.generic import trigger_fix_errors_message
+from inyoka.portal.models import Subscription
+from inyoka.utils.database import get_simplified_queryset
+from inyoka.forum.constants import POSTS_PER_PAGE, TOPICS_PER_PAGE
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.dates import format_datetime
-from inyoka.utils.storage import storage
-from inyoka.utils.forms import clear_surge_protection
-from inyoka.utils.database import get_simplified_queryset
-from inyoka.utils.generic import trigger_fix_errors_message
-from inyoka.wiki.utils import quote_text
-from inyoka.wiki.models import Page
-from inyoka.portal.utils import simple_check_login, abort_access_denied, \
-    require_permission
-from inyoka.portal.user import User
-from inyoka.portal.models import Subscription
-from inyoka.forum.models import Forum, Topic, Post, Poll, PollVote, PollOption, \
-    Attachment, PostRevision, WelcomeMessage, mark_all_forums_read
-from inyoka.forum.constants import POSTS_PER_PAGE, TOPICS_PER_PAGE
-from inyoka.forum.forms import NewTopicForm, SplitTopicForm, EditPostForm, \
-    AddPollForm, MoveTopicForm, ReportTopicForm, ReportListForm, \
-    AddAttachmentForm, EditForumForm
-from inyoka.forum.acl import filter_invisible, get_forum_privileges, \
-    have_privilege, CAN_READ, CAN_MODERATE, \
-    check_privilege, get_privileges
-from inyoka.forum.notifications import send_discussion_notification, \
-    send_edit_notifications, send_newtopic_notifications, \
-    send_deletion_notification, send_reported_topics_notification, \
-    send_move_notification, send_split_notification
+from inyoka.utils.notification import send_notification, notify_about_subscription
+from inyoka.markup.parsertools import flatten_iterator
+from inyoka.forum.notifications import (
+    send_edit_notifications,
+    send_deletion_notification,
+    send_newtopic_notifications,
+    send_discussion_notification,
+    send_reported_topics_notification,
+    send_move_notification,
+    send_split_notification
+)
+from inyoka.utils.flash_confirmation import confirm_action
 
 
 @templated('forum/index.html')

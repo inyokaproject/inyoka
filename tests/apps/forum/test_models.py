@@ -9,14 +9,14 @@
     :license: GNU GPL.
 """
 from django.conf import settings
-from django.core.cache import cache
-from django.core.files.base import ContentFile
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.core.cache import cache
+from django.core.files.base import ContentFile
 
-from inyoka.forum.models import Forum, Topic, Post, Attachment
 from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
+from inyoka.forum.models import Post, Topic, Forum, Attachment
 
 
 class TestAttachmentModel(TestCase):

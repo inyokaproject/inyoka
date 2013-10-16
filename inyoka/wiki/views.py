@@ -15,26 +15,26 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from hashlib import sha1
 import os
+from hashlib import sha1
 from urlparse import urljoin
 
-from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
+from django.conf import settings
 from django.contrib import messages
+from django.utils.html import escape
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext as _
-from django.utils.html import escape
 
-from inyoka.utils.urls import href, is_safe_domain, url_for
+from inyoka.wiki.acl import has_privilege
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.text import join_pagename, normalize_pagename
 from inyoka.utils.http import templated, AccessDeniedResponse
-from inyoka.utils.dates import format_datetime
-from inyoka.utils.feeds import atom_feed, AtomFeed
-from inyoka.utils.imaging import get_thumbnail
 from inyoka.wiki.models import Page, Revision
+from inyoka.utils.feeds import AtomFeed, atom_feed
+from inyoka.utils.dates import format_datetime
 from inyoka.wiki.actions import PAGE_ACTIONS
-from inyoka.wiki.acl import has_privilege
+from inyoka.utils.imaging import get_thumbnail
 
 
 def index(request):
