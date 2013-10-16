@@ -10,7 +10,7 @@
 """
 import shutil
 
-from os import path
+from os import makedirs, path
 from random import randint
 
 from mock import patch
@@ -697,6 +697,7 @@ class TestPostEditView(TestCase):
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
         post = Post.objects.create(text=u'second post', author=self.admin, position=1, topic=topic)
 
+        makedirs(path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00'))
         new_file1 = path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00', TEST_ATTACHMENT1)
         shutil.copy(path.join(path.dirname(__file__), TEST_ATTACHMENT1), new_file1)
         new_file2 = path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00', TEST_ATTACHMENT2)
