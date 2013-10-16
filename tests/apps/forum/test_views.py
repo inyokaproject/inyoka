@@ -697,10 +697,12 @@ class TestPostEditView(TestCase):
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
         post = Post.objects.create(text=u'second post', author=self.admin, position=1, topic=topic)
 
-        makedirs(path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00'))
-        new_file1 = path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00', TEST_ATTACHMENT1)
+        basedir = path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00')
+        if not path.exists(basedir):
+            makedirs(basedir)
+        new_file1 = path.join(basedir, TEST_ATTACHMENT1)
         shutil.copy(path.join(path.dirname(__file__), TEST_ATTACHMENT1), new_file1)
-        new_file2 = path.join(settings.MEDIA_ROOT, 'forum', 'attachments', '00', '00', TEST_ATTACHMENT2)
+        new_file2 = path.join(basedir, TEST_ATTACHMENT2)
         shutil.copy(path.join(path.dirname(__file__), TEST_ATTACHMENT2), new_file2)
 
         with open(new_file1, 'rb') as f:
