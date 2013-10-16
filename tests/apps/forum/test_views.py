@@ -9,7 +9,6 @@
     :license: GNU GPL.
 """
 import shutil
-import unittest
 
 from os import path
 from random import randint
@@ -29,7 +28,7 @@ from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.forum.models import (Attachment, Forum, Post, Poll, PollOption,
     Privilege, Topic)
 from inyoka.portal.models import Subscription
-from inyoka.forum.constants import DISTRO_CHOICES, TOPICS_PER_PAGE
+from inyoka.forum import constants
 
 
 class TestForumViews(TestCase):
@@ -89,8 +88,8 @@ class TestViews(TestCase):
                 posts.append(Post(text="More Posts %s" % randint(1, 100000),
                                     topic=t, author=self.admin, position=i))
 
-        self.num_topics_on_last_page = int(round(TOPICS_PER_PAGE * 0.66))
-        for i in xrange(1, 4 * TOPICS_PER_PAGE + self.num_topics_on_last_page):
+        self.num_topics_on_last_page = int(round(constants.TOPICS_PER_PAGE * 0.66))
+        for i in xrange(1, 4 * constants.TOPICS_PER_PAGE + self.num_topics_on_last_page):
             newtopic()
         Post.objects.bulk_create(posts)
 
@@ -178,13 +177,13 @@ class TestViews(TestCase):
 
     @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
     @patch('inyoka.forum.views.TOPICS_PER_PAGE', 4)
-    @patch('tests.apps.forum.test_views.TOPICS_PER_PAGE', 4)
+    @patch('inyoka.forum.constants.TOPICS_PER_PAGE', 4)
     def test_topiclist(self):
         self._setup_pagination()
         self.assertEqual(len(self.client.get("/last24/").tmpl_context['topics']),
-                         TOPICS_PER_PAGE)
+                         constants.TOPICS_PER_PAGE)
         self.assertEqual(len(self.client.get("/last24/3/").tmpl_context['topics']),
-                         TOPICS_PER_PAGE)
+                         constants.TOPICS_PER_PAGE)
         self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
@@ -373,7 +372,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
             'text': 'newpost text',
         }
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0)
@@ -404,7 +403,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
             'text': 'newpost text',
             'attachments': str(att.pk),
         }
@@ -455,7 +454,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
             'text': 'newpost text',
             'attachments': '%d,%d' % (att1.pk, att2.pk),
         }
@@ -489,7 +488,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
             'text': 'newpost text',
             'polls': str(poll.pk),
         }
@@ -538,7 +537,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
             'text': 'newpost text',
             'polls': '%d,%d' % (poll1.pk, poll2.pk),
         }
@@ -690,8 +689,6 @@ class TestPostEditView(TestCase):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
 
-    # TODO FIXME
-    @unittest.expectedFailure
     def test_edit_post_remove_attachments(self):
         TEST_ATTACHMENT1 = 'test_attachment.png'
         TEST_ATTACHMENT2 = 'test_attachment2.png'

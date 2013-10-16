@@ -621,6 +621,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             if not post.id:
                 post.save()
             Attachment.update_post_ids(att_ids, post)
+        else:
+            post.has_attachments = False
         post.edit(request, d['text'])
 
         if newtopic:
