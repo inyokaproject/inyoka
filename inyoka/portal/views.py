@@ -1444,14 +1444,17 @@ def privmsg_new(request, username=None):
                     if 'pm_new' in recipient.settings.get('notifications',
                                                           ('pm_new',)):
                         send_notification(recipient, 'new_pm',
-                            _(u'New private message from %(username)s: %(subject)s')
-                            % {'username': request.user.username,
-                               'subject': d['subject']},
-                            {'user': recipient,
-                             'sender': request.user,
-                             'subject': d['subject'],
-                             'entry': entry,
-                        })
+                            _(u'New private message from %(username)s: %(subject)s') % {
+                                'username': request.user.username,
+                                'subject': d['subject']
+                            },
+                            {
+                                'user': recipient,
+                                'from': request.user.username,
+                                'subject': d['subject'],
+                                'entry': entry,
+                            }
+                        )
 
                 messages.success(request, _(u'The message was sent successfully.'))
 

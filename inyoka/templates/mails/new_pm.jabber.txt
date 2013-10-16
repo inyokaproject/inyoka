@@ -1,3 +1,3 @@
-{% trans from=sender.username, subject=subject, link=entry|url -%}
+{% trans from=from, subject=subject, link=entry|url -%}
 {{ from }} has sent you a new private message titled “{{ subject }}”: {{ link }}
 {%- endtrans %}

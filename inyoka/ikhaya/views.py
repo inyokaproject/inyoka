@@ -600,7 +600,7 @@ def suggest_delete(request, suggestion):
                                   }
                         send_notification(recipient, 'new_pm', title, {
                                           'user': recipient,
-                                              'sender': request.user,
+                                              'sender': request.user.username,
                                               'subject': msg.subject,
                                               'entry': entry,
                                           })
