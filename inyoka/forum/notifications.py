@@ -31,6 +31,7 @@ def send_newtopic_notifications(user, post, topic, forum):
           'forum_id': forum.id,
           'forum_name': forum.name,
           'forum_unsubscribe': forum.get_absolute_url('unsubscribe'),
+          'link_user_settings': href('portal', 'usercp', 'settings'),
           'post_url': post.get_absolute_url(),
           'topic_title': topic.title,
           'topic_version': topic.get_ubuntu_version(),

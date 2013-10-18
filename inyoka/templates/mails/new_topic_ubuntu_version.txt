@@ -1,9 +1,9 @@
-{% trans link=href('portal', 'usercp', 'settings') -%}
+{% trans -%}
 Hello {{ username }},
 
 {{ author_username }} created a new topic “{{ topic_title }}” in the forum “{{ forum_name }}” featuring the Ubuntu version “{{ topic_version }}”. You can view the topic by visiting {{ post_url }}
 
-To unsubscribe from further notifications about this Ubuntu version visit {{ link }}
+To unsubscribe from further notifications about this Ubuntu version visit {{ link_user_settings }}
 
 Kind regards,
 
