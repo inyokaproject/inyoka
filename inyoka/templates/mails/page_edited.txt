@@ -1,4 +1,4 @@
-{% trans username=username, rev_username=rev_username, page_title=page_title, rev_note=rev_note|wordwrap(75, false)|indent(4), diff_link=href('wiki', page_name, action='diff', new_rev=rev_id, rev=old_rev_id), changes_link=href('wiki', page_name, action='diff', rev=old_rev_id), unsubscribe_link=href('wiki', page_name, action='unsubscribe'), domain=domain -%}
+{% trans rev_note=rev_note|wordwrap(75, false)|indent(4), diff_link=href('wiki', page_name, action='diff', new_rev=rev_id, rev=old_rev_id), changes_link=href('wiki', page_name, action='diff', rev=old_rev_id), unsubscribe_link=href('wiki', page_name, action='unsubscribe') -%}
 Hello {{ username }},
 
 {{ rev_username }} updated the wiki page “{{ page_title }}”.

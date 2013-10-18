@@ -1,4 +1,4 @@
-{% trans username=username, topic_title=topic_title, mod=mod, reason=reason|wordwrap(75, false)|indent(4), domain=domain -%}
+{% trans reason=reason|wordwrap(75, false)|indent(4) -%}
 Hello {{ username }},
 
 {{ mod }} deleted your topic “{{ topic_title }}”.

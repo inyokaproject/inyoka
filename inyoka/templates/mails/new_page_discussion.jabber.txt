@@ -1,3 +1,3 @@
-{% trans page_title=page_title, topic_url=topic_url -%}
+{% trans -%}
 A new discussion about the wiki page “{{ page_title }}” has been started: {{ topic_url }}
 {%- endtrans %}

@@ -1,3 +1,3 @@
-{% trans topic_title=topic_title, author_username=author_username, forum_name=forum_name, topic_version=topic_version, post_url=post_url -%}
+{% trans -%}
 {{ author_username }} created a new topic “{{ topic_title }}” in the forum “{{ forum_name }}” featuring the Ubuntu version “{{ topic_version }}”: {{ post_url }}
 {%- endtrans %}

@@ -1,4 +1,4 @@
-{% trans topic_title=topic_title, mod=mod, reason=reason -%}
+{% trans -%}
 {{ mod }} deleted your topic “{{ topic_title }}”.
 {%- endtrans %}
 

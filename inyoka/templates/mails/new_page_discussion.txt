@@ -1,4 +1,4 @@
-{% trans username=username, creator=creator, page_title=page_title, topic_url=topic_url, topic_subscribe=topic_subscribe, page_unsubscribe=page_unsubscribe, domain=domain -%}
+{% trans -%}
 Hello {{ username }},
 
 {{ creator }} started a new discussion about the wiki page “{{ page_title }}”. You can view the discussion by visiting {{ topic_url }}

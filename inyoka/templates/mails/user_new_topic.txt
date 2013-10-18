@@ -1,4 +1,4 @@
-{% trans username=username, author_username=author_username, forum_name=forum_name, topic_title=topic_title, post_url=post_url, author_unsubscribe=author_unsubscribe, domain=domain -%}
+{% trans -%}
 Hello {{ username }},
 
 {{ author_username }} created a new topic “{{ topic_title }}” in the forum “{{ forum_name }}”. You can view the topic by visiting {{ post_url }}

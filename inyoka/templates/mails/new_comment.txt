@@ -1,4 +1,4 @@
-{% trans username=username, comment_author=comment_author, article_subject=article_subject, comment_url=comment_url, article_unsubscribe=article_unsubscribe, domain=domain -%}
+{% trans -%}
 Hello {{ username }},
 
 {{ comment_author }} wrote a new comment on the article “{{ article_subject }}”. You can view the comment by visiting {{ comment_url }}

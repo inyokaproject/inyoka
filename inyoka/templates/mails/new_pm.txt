@@ -1,4 +1,4 @@
-{% trans username=username, from=from, subject=subject, link=entry|url, link_settings=href('portal', 'usercp', 'settings'), domain=domain -%}
+{% trans link=entry|url, link_settings=href('portal', 'usercp', 'settings') -%}
 Hello {{ username }},
 
 {{ from }} has sent you a new private message titled “{{ subject }}”. You can view the message by visiting {{ link }}

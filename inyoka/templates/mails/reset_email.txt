@@ -1,4 +1,4 @@
-{% trans username=user.username, new_email=new_email, link=href('portal', 'confirm', 'reset_email'), data=data|indent(4), domain=domain -%}
+{% trans username=user.username, link=href('portal', 'confirm', 'reset_email'), data=data|indent(4) -%}
 Hello {{ username }},
 
 the email address of your account at {{ domain }} has been changed to {{ new_email }}. To prevent abuse you can revert to your old email address by visiting {{ link }} and entering the following code:

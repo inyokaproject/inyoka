@@ -1,4 +1,4 @@
-{% trans username=user.username, link=href('portal', 'confirm', 'reactivate_user'), data=data|indent(4), domain=domain -%}
+{% trans username=user.username, link=href('portal', 'confirm', 'reactivate_user'), data=data|indent(4) -%}
 Hello {{ username }},
 
 you have removed your user account from {{ domain }}. To prevent abuse you are able to recreate your account within the next 30 days. 

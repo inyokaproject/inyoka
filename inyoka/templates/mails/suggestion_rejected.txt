@@ -1,4 +1,4 @@
-{% trans username=username, title=title, note=note|wordwrap(75, false)|indent(4), domain=domain -%}
+{% trans note=note|wordwrap(75, false)|indent(4) -%}
 Hello,
 
 {{ username }} rejected your article suggestion “{{ title }}”. The specified reason is:

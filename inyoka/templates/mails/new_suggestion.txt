@@ -1,4 +1,4 @@
-{% trans username=username, suggestion_author=suggestion_author, suggestion_title=suggestion_title, suggestion_url=suggestion_url, domain=domain -%}
+{% trans -%}
 Hello {{ username }},
 
 {{ suggestion_author }} submitted a new article suggestion “{{ suggestion_title }}”. You can view the suggestion by visiting {{ suggestion_url }}

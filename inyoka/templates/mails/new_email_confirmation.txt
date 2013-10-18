@@ -1,4 +1,4 @@
-{% trans username=user.username, link=href('portal', 'confirm', 'set_new_email'), data=data|indent(4), domain=domain -%}
+{% trans username=user.username, link=href('portal', 'confirm', 'set_new_email'), data=data|indent(4) -%}
 Hello {{ username }},
 
 we received a email change request for {{ domain }}. To verify this request please visit {{ link }} and enter the following code:

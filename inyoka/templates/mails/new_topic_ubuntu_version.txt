@@ -1,4 +1,4 @@
-{% trans username=username, author_username=author_username, forum_name=forum_name, topic_version=topic_version, topic_title=topic_title, post_url=post_url, link=href('portal', 'usercp', 'settings'), domain=domain -%}
+{% trans link=href('portal', 'usercp', 'settings') -%}
 Hello {{ username }},
 
 {{ author_username }} created a new topic “{{ topic_title }}” in the forum “{{ forum_name }}” featuring the Ubuntu version “{{ topic_version }}”. You can view the topic by visiting {{ post_url }}

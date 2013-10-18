@@ -1,4 +1,4 @@
-{% trans username=USER.username, user_link=USER|url, name=name, url=url, feed_url=feed_url, contact_email=contact_email, description=description|wordwrap(75)|indent(4), domain=domain -%}
+{% trans username=USER.username, user_link=USER|url, description=description|wordwrap(75)|indent(4) -%}
 New suggestion for a blog
 =========================
 
