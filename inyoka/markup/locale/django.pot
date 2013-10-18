@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-08-18 15:47+0200\n"
+"POT-Creation-Date: 2013-10-18 18:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: inyoka/markup/__init__.py:198
+#: inyoka/markup/__init__.py:196
 msgid "Internal error: "
 msgstr ""
 
-#: inyoka/markup/__init__.py:199
+#: inyoka/markup/__init__.py:197
 msgid "The parser found too deeply nested elements."
 msgstr ""
 
-#: inyoka/markup/__init__.py:889
+#: inyoka/markup/__init__.py:887
 msgid "Missing macro"
 msgstr ""
 
-#: inyoka/markup/__init__.py:890
+#: inyoka/markup/__init__.py:888
 #, python-format
 msgid "The macro “%(name)s” does not exist."
 msgstr ""
@@ -42,108 +42,108 @@ msgstr ""
 msgid "Invalid date"
 msgstr ""
 
-#: inyoka/markup/nodes.py:257
+#: inyoka/markup/nodes.py:255
 msgid "<strong>Conflict</strong> – remote version"
 msgstr ""
 
-#: inyoka/markup/nodes.py:258
+#: inyoka/markup/nodes.py:256
 msgid "<strong>Conflict</strong> – local Version"
 msgstr ""
 
-#: inyoka/markup/nodes.py:259
+#: inyoka/markup/nodes.py:257
 msgid "<strong>Conflict End</strong>"
 msgstr ""
 
-#: inyoka/markup/nodes.py:695
+#: inyoka/markup/nodes.py:693
 msgid "Edited by"
 msgstr ""
 
-#: inyoka/markup/nodes.py:720
+#: inyoka/markup/nodes.py:718
 msgid "Moderated by"
 msgstr ""
 
-#: inyoka/markup/templates.py:53
+#: inyoka/markup/templates.py:52
 msgid "Invalid arguments"
 msgstr ""
 
-#: inyoka/markup/templates.py:54
+#: inyoka/markup/templates.py:53
 msgid "The first argument must be the name of the template."
 msgstr ""
 
-#: inyoka/markup/templates.py:60
+#: inyoka/markup/templates.py:59
 msgid "Missing template"
 msgstr ""
 
-#: inyoka/markup/templates.py:61
+#: inyoka/markup/templates.py:60
 #, python-format
 msgid "The template “%(name)s” could not be found."
 msgstr ""
 
-#: inyoka/markup/templates.py:159
+#: inyoka/markup/templates.py:158
 msgid "Invalid syntax for this loop. The first argument must be a variable."
 msgstr ""
 
-#: inyoka/markup/templates.py:165
+#: inyoka/markup/templates.py:164
 msgid ""
 "Invalid syntax for this loop. After the first variable an “in” is "
 "required."
 msgstr ""
 
-#: inyoka/markup/templates.py:170
+#: inyoka/markup/templates.py:169
 msgid "Loop header contains too many arguments."
 msgstr ""
 
-#: inyoka/markup/templates.py:174
+#: inyoka/markup/templates.py:173
 msgid "Loop end contains too many arguments."
 msgstr ""
 
-#: inyoka/markup/templates.py:183 inyoka/markup/templates.py:205
+#: inyoka/markup/templates.py:182 inyoka/markup/templates.py:204
 msgid "Conditions allow only one expression per block."
 msgstr ""
 
-#: inyoka/markup/templates.py:194
+#: inyoka/markup/templates.py:193
 msgid ""
 "The “else” block does not allow any expressions. Maybe you wanted to use "
 "the “elseif” block."
 msgstr ""
 
-#: inyoka/markup/templates.py:214
+#: inyoka/markup/templates.py:213
 msgid "“endif” does not allow any arguments"
 msgstr ""
 
-#: inyoka/markup/templates.py:250
+#: inyoka/markup/templates.py:249
 msgid "Unknown expression after “as” operator."
 msgstr ""
 
-#: inyoka/markup/templates.py:267
+#: inyoka/markup/templates.py:266
 msgid "Unknown expression after “is” operator"
 msgstr ""
 
-#: inyoka/markup/templates.py:345
+#: inyoka/markup/templates.py:344
 msgid "Unexpected end of expression."
 msgstr ""
 
-#: inyoka/markup/templates.py:357
+#: inyoka/markup/templates.py:356
 msgid "Parentheses were not closed properly."
 msgstr ""
 
-#: inyoka/markup/templates.py:367
+#: inyoka/markup/templates.py:366
 msgid "Missing comma between array entries"
 msgstr ""
 
-#: inyoka/markup/templates.py:390
+#: inyoka/markup/templates.py:389
 msgid "Unexpected operator"
 msgstr ""
 
-#: inyoka/markup/templates.py:417
+#: inyoka/markup/templates.py:416
 msgid "expected variable, integer or attribute"
 msgstr ""
 
-#: inyoka/markup/templates.py:448
+#: inyoka/markup/templates.py:447
 msgid "Too many arguments for this value output"
 msgstr ""
 
-#: inyoka/markup/templates.py:473
+#: inyoka/markup/templates.py:472
 msgid "Invalid syntax: "
 msgstr ""
 

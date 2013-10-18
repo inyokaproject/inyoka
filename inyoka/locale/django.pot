@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-08-18 15:47+0200\n"
+"POT-Creation-Date: 2013-10-18 18:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -197,7 +197,8 @@ msgid ""
 "you have removed your user account from %(domain)s. To prevent abuse you "
 "are able to recreate your account within the next 30 days. \n"
 "\n"
-"Please visit %(link)s and enter the following verification code:\n"
+"Please visit %(link_reactivate)s and enter the following verification "
+"code:\n"
 "\n"
 "    %(data)s\n"
 "\n"
@@ -287,7 +288,7 @@ msgid ""
 "Hello %(username)s,\n"
 "\n"
 "we received a email change request for %(domain)s. To verify this request"
-" please visit %(link)s and enter the following code:\n"
+" please visit %(link_new_email)s and enter the following code:\n"
 "\n"
 "    %(data)s\n"
 "\n"
@@ -328,7 +329,9 @@ msgstr ""
 
 #: inyoka/templates/mails/new_pm.jabber.txt:1
 #, python-format
-msgid "%(from)s has sent you a new private message titled “%(subject)s”: %(link)s"
+msgid ""
+"%(from)s has sent you a new private message titled “%(subject)s”: "
+"%(link_view)s"
 msgstr ""
 
 #: inyoka/templates/mails/new_pm.txt:1
@@ -337,7 +340,7 @@ msgid ""
 "Hello %(username)s,\n"
 "\n"
 "%(from)s has sent you a new private message titled “%(subject)s”. You can"
-" view the message by visiting %(link)s\n"
+" view the message by visiting %(link_view)s\n"
 "\n"
 "To unsubscribe from further notifications about private messages visit "
 "%(link_settings)s\n"
@@ -381,10 +384,10 @@ msgstr ""
 #: inyoka/templates/mails/new_reported_topic.txt:1
 #, python-format
 msgid ""
-"Hello,\n"
+"Hello %(username)s,\n"
 "\n"
-"%(reporter)s reported the topic “%(topic_title)s” ( %(topic_link)s ) in "
-"the forum “%(topic_forum)s”.\n"
+"%(reporter)s reported the topic “%(topic_title)s” (%(topic_link)s) in the"
+" forum “%(topic_forum)s”.\n"
 "\n"
 "    %(text)s\n"
 "\n"
@@ -458,7 +461,7 @@ msgid ""
 "can view the topic by visiting %(post_url)s\n"
 "\n"
 "To unsubscribe from further notifications about this Ubuntu version visit"
-" %(link)s\n"
+" %(link_user_settings)s\n"
 "\n"
 "Kind regards,\n"
 "\n"
@@ -628,7 +631,7 @@ msgstr ""
 #, python-format
 msgid ""
 "%(mod)s moved the topic “%(topic_title)s” from the forum "
-"“%(old_forum_name)s” to “%(forum_name)s”: %(topic_url)s"
+"“%(old_forum_name)s” to “%(new_forum_name)s”: %(topic_link)s"
 msgstr ""
 
 #: inyoka/templates/mails/topic_moved.txt:1
@@ -637,8 +640,8 @@ msgid ""
 "Hello %(username)s,\n"
 "\n"
 "%(mod)s moved the topic “%(topic_title)s” from the forum "
-"“%(old_forum_name)s” to “%(forum_name)s”. You can view the topic by "
-"visiting %(topic_url)s\n"
+"“%(old_forum_name)s” to “%(new_forum_name)s”. You can view the topic by "
+"visiting %(topic_link)s\n"
 "\n"
 "Kind regards,\n"
 "\n"
@@ -648,8 +651,8 @@ msgstr ""
 #: inyoka/templates/mails/topic_splited.jabber.txt:1
 #, python-format
 msgid ""
-"%(mod)s has split the topic “%(old_topic_title)s” ( %(old_topic_url)s )  "
-"to “%(new_topic_title)s”: %(new_topic_url)s"
+"%(mod)s has split the topic “%(old_topic_title)s” (%(old_topic_link)s)  "
+"to “%(new_topic_title)s”: %(new_topic_link)s"
 msgstr ""
 
 #: inyoka/templates/mails/topic_splited.txt:1
@@ -659,8 +662,8 @@ msgid ""
 "\n"
 "%(mod)s has split the topic “%(old_topic_title)s” to "
 "“%(new_topic_title)s”. You can view the splited part by visiting "
-"%(new_topic_url)s . You can view the original topic by visiting "
-"%(old_topic_url)s\n"
+"%(new_topic_link)s. You can view the original topic by visiting "
+"%(old_topic_link)s\n"
 "\n"
 "Kind regards,\n"
 "\n"
@@ -699,16 +702,16 @@ msgid ""
 "Your %(domain)s team"
 msgstr ""
 
-#: inyoka/utils/dates.py:204
+#: inyoka/utils/dates.py:206
 #, python-format
 msgid "%(date)s at %(time)s"
 msgstr ""
 
-#: inyoka/utils/diff3.py:374
+#: inyoka/utils/diff3.py:373
 msgid "Old"
 msgstr ""
 
-#: inyoka/utils/diff3.py:374
+#: inyoka/utils/diff3.py:373
 msgid "New"
 msgstr ""
 
@@ -782,28 +785,28 @@ msgstr ""
 msgid "The entered CAPTCHA was incorrect."
 msgstr ""
 
-#: inyoka/utils/generic.py:28
+#: inyoka/utils/generic.py:29
 msgid "Errors occurred, please fix them."
 msgstr ""
 
-#: inyoka/utils/generic.py:58
+#: inyoka/utils/generic.py:59
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr ""
 
-#: inyoka/utils/generic.py:60
+#: inyoka/utils/generic.py:61
 msgid "{verbose_name} “{object_name}” was successfully changed."
 msgstr ""
 
-#: inyoka/utils/generic.py:174
+#: inyoka/utils/generic.py:175
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
 msgstr ""
 
-#: inyoka/utils/generic.py:201
+#: inyoka/utils/generic.py:202
 msgid "{verbose_name} “{object_name}” was deleted successfully!"
 msgstr ""
 
-#: inyoka/utils/generic.py:219
+#: inyoka/utils/generic.py:220
 msgid "Canceled."
 msgstr ""
 
@@ -821,7 +824,7 @@ msgstr ""
 msgid "Page"
 msgstr ""
 
-#: inyoka/utils/sessions.py:82
+#: inyoka/utils/sessions.py:83
 msgid ""
 "You cannot send data that fast in a row. Please wait a bit until you "
 "submit the form again."
@@ -832,43 +835,43 @@ msgstr ""
 msgid "The chosen sort value (“%(value)s”) is not available"
 msgstr ""
 
-#: inyoka/utils/text.py:179
+#: inyoka/utils/text.py:142
 msgid "ten"
 msgstr ""
 
-#: inyoka/utils/text.py:181
+#: inyoka/utils/text.py:144
 msgid "eleven"
 msgstr ""
 
-#: inyoka/utils/text.py:183
+#: inyoka/utils/text.py:146
 msgid "twelve"
 msgstr ""
 
-#: inyoka/utils/text.py:186
+#: inyoka/utils/text.py:149
 msgctxt "masculine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:187
+#: inyoka/utils/text.py:150
 msgctxt "feminine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:188
+#: inyoka/utils/text.py:151
 msgctxt "neuter"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:189
+#: inyoka/utils/text.py:152
 msgid "one"
 msgstr ""
 
-#: inyoka/middlewares/auth.py:36
+#: inyoka/middlewares/auth.py:34
 #, python-format
 msgid "The user “%(name)s” was banned. Your session has ended."
 msgstr ""
 
-#: inyoka/middlewares/auth.py:40
+#: inyoka/middlewares/auth.py:38
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
 msgstr ""

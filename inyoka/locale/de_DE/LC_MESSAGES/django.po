@@ -11,11 +11,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-08-18 15:47+0200\n"
-"PO-Revision-Date: 2013-06-16 14:10+0200\n"
-"Last-Translator: Markus Holtermann <info@markusholtermann.eu>\n"
-"Language-Team: German (Germany) "
-"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
+"POT-Creation-Date: 2013-10-18 18:23+0200\n"
+"PO-Revision-Date: 2013-10-18 18:07+0200\n"
+"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
+"Language-Team: American English <webteam@ubuntuusers.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -207,14 +206,15 @@ msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
 #: inyoka/templates/mails/account_deactivate.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
 "you have removed your user account from %(domain)s. To prevent abuse you "
 "are able to recreate your account within the next 30 days. \n"
 "\n"
-"Please visit %(link)s and enter the following verification code:\n"
+"Please visit %(link_reactivate)s and enter the following verification "
+"code:\n"
 "\n"
 "    %(data)s\n"
 "\n"
@@ -224,18 +224,19 @@ msgid ""
 msgstr ""
 "Hallo %(username)s,\n"
 "\n"
-"du hast auf ubuntuusers.de deinen Account gelöscht. Zum Schutz vor "
-"Missbrauch kannst du deinen Account wiederherstellen. Dies ist bis zu "
-"einen Monat ab heute möglich.\n"
+"du hast auf %(domain)s deinen Account gelöscht. Zum Schutz vor Missbrauch"
+" kannst du deinen Account wiederherstellen. Dies ist bis zu einen Monat "
+"ab heute möglich.\n"
 "\n"
-"Besuche dazu %(link)s und gib die folgende Zeichenkette dort ein:\n"
+"Besuche dazu %(link_reactivate)s und gib die folgende Zeichenkette dort "
+"ein:\n"
 "\n"
 "    %(data)s\n"
 "\n"
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/activation_mail.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -285,19 +286,19 @@ msgstr ""
 "Datenbank. Wenn Du es vergisst, können wir Dir also nur ein neues "
 "schicken.\n"
 "\n"
-"Wichtiger Hinweis: Das Team von ubuntuusers.de wird Dich niemals (egal ob"
-" per E-Mail oder einer Privatnachricht oder sonst wie) nach Deinem "
-"Passwort fragen. Bitte halte dieses geheim und gib es nicht weiter!\n"
+"Wichtiger Hinweis: Niemand wird Dich jemals (egal ob per E-Mail oder "
+"einer Privatnachricht oder sonst wie) nach Deinem Passwort fragen. Bitte "
+"halte dieses geheim und gib es nicht weiter!\n"
 "\n"
 "Wenn Du selber Beiträge erstellst, unterliegen diese den "
-"Lizenzbedingungen von ubuntuusers.de: %(link_license)s\n"
+"Lizenzbedingungen von %(domain)s: %(link_license)s\n"
 "\n"
 "Vielen Dank für Deine Anmeldung!\n"
 "\n"
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/formmailer_template.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -326,7 +327,7 @@ msgstr ""
 "-----"
 
 #: inyoka/templates/mails/new_comment.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(comment_author)s commented on the article “%(article_subject)s”: "
 "%(comment_url)s"
@@ -335,7 +336,7 @@ msgstr ""
 " %(comment_url)s"
 
 #: inyoka/templates/mails/new_comment.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -363,12 +364,12 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/new_email_confirmation.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
 "we received a email change request for %(domain)s. To verify this request"
-" please visit %(link)s and enter the following code:\n"
+" please visit %(link_new_email)s and enter the following code:\n"
 "\n"
 "    %(data)s\n"
 "\n"
@@ -385,25 +386,26 @@ msgstr ""
 "du hast auf %(domain)s deine E-Mail-Adresse auf diese Adresse geändert. "
 "Damit diese Änderung aktiv wird, musst du sie bestätigen.\n"
 "\n"
-"Besuche dazu %(link)s und gib die folgende Zeichenkette dort ein:\n"
+"Besuche dazu %(link_new_email)s und gib die folgende Zeichenkette dort "
+"ein:\n"
 "\n"
 "    %(data)s\n"
 "\n"
-"Falls du auf ubuntuusers.de nicht den Account „%(username)s“ besitzt, "
-"brauchst du nichts weiter zu tun, deine E-Mail-Adresse wird nicht als "
-"Kontaktadresse verwendet werden.\n"
+"Falls dir dieses Konto auf %(domain)s nicht gehört oder du versehentlich "
+"deine E-Mail-Adresse geändert hastbrauchst du nichts weiter zu tun, deine"
+" E-Mail-Adresse wird nicht als Kontaktadresse verwendet werden.\n"
 "\n"
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/new_page_discussion.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "A new discussion about the wiki page “%(page_title)s” has been started: "
 "%(topic_url)s"
 msgstr "Neue Diskussion über die Wiki-Seite „%(page_title)s“: %(topic_url)s"
 
 #: inyoka/templates/mails/new_page_discussion.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -435,19 +437,21 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/new_pm.jabber.txt:1
-#, fuzzy, python-format
-msgid "%(from)s has sent you a new private message titled “%(subject)s”: %(link)s"
+#, python-format
+msgid ""
+"%(from)s has sent you a new private message titled “%(subject)s”: "
+"%(link_view)s"
 msgstr ""
 "Du hast eine neue private Nachricht von %(from)s mit dem Titel "
-"„%(subject)s“ erhalten: %(link)s"
+"„%(subject)s“ erhalten: %(link_view)s"
 
 #: inyoka/templates/mails/new_pm.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
 "%(from)s has sent you a new private message titled “%(subject)s”. You can"
-" view the message by visiting %(link)s\n"
+" view the message by visiting %(link_view)s\n"
 "\n"
 "To unsubscribe from further notifications about private messages visit "
 "%(link_settings)s\n"
@@ -458,24 +462,24 @@ msgid ""
 msgstr ""
 "Hallo %(username)s,\n"
 "\n"
-"du hast von %(from)s eine neue private Nachricht mit dem Titel "
-"„%(subject)s“ bekommen. Du kannst sie dir hier ansehen: %(link)s\n"
+"der Benutzer %(from)s hat dir eine neue Privatnachricht mit dem Titel "
+"„%(subject)s“ geschickt. Du kannst sie dir unter %(link_view)s ansehen.\n"
 "\n"
-"Falls du bei neuen Privatnachrichten in Zukunft nicht mehr benachrichtigt"
-" werden willst, so kannst du das hier deaktivieren: %(link_settings)s\n"
+"Wenn du bei neuen Privatnachrichten in Zukunft nicht mehr benachrichtigt "
+"werden willst kannst du diese hier abbestellen: %(link_settings)s\n"
 "\n"
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/new_post.jabber.txt:1
 #: inyoka/templates/mails/user_new_post.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid "%(author_username)s posted in topic “%(topic_title)s”: %(post_url)s"
 msgstr ""
 "Neuer Beitrag von %(author_username)s im Thema „%(topic_title)s“: "
 "%(post_url)s"
 
 #: inyoka/templates/mails/new_post.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -502,7 +506,7 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/new_reported_topic.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(reporter)s reported the topic “%(topic_title)s” ( %(topic_link)s ) in "
 "the forum “%(topic_forum)s”.\n"
@@ -515,12 +519,12 @@ msgstr ""
 "Übersicht über alle gemeldeten Themen: %(reported_topics)s"
 
 #: inyoka/templates/mails/new_reported_topic.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
-"Hello,\n"
+"Hello %(username)s,\n"
 "\n"
-"%(reporter)s reported the topic “%(topic_title)s” ( %(topic_link)s ) in "
-"the forum “%(topic_forum)s”.\n"
+"%(reporter)s reported the topic “%(topic_title)s” (%(topic_link)s) in the"
+" forum “%(topic_forum)s”.\n"
 "\n"
 "    %(text)s\n"
 "\n"
@@ -530,7 +534,7 @@ msgid ""
 "\n"
 "Your %(domain)s team"
 msgstr ""
-"Hallo,\n"
+"Hallo %(username)s,\n"
 "\n"
 "der Benutzer %(reporter)s hat das Thema „%(topic_title)s“ im Forum "
 "„%(topic_forum)s“ ( %(topic_link)s ) gemeldet.\n"
@@ -542,7 +546,7 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/new_suggestion.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(suggestion_author)s submitted a new article suggestion "
 "“%(suggestion_title)s”: %(suggestion_url)s"
@@ -551,7 +555,7 @@ msgstr ""
 "%(suggestion_url)s"
 
 #: inyoka/templates/mails/new_suggestion.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -573,7 +577,7 @@ msgstr ""
 
 #: inyoka/templates/mails/new_topic.jabber.txt:1
 #: inyoka/templates/mails/user_new_topic.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(author_username)s created a new topic “%(topic_title)s” in the forum "
 "“%(forum_name)s”: %(post_url)s"
@@ -582,7 +586,7 @@ msgstr ""
 "„%(forum_name)s“: %(post_url)s"
 
 #: inyoka/templates/mails/new_topic.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -608,7 +612,7 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/new_topic_ubuntu_version.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(author_username)s created a new topic “%(topic_title)s” in the forum "
 "“%(forum_name)s” featuring the Ubuntu version “%(topic_version)s”: "
@@ -618,7 +622,7 @@ msgstr ""
 "„%(forum_name)s“ mit der Ubuntu-Version „%(topic_version)s“: %(post_url)s"
 
 #: inyoka/templates/mails/new_topic_ubuntu_version.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -627,7 +631,7 @@ msgid ""
 "can view the topic by visiting %(post_url)s\n"
 "\n"
 "To unsubscribe from further notifications about this Ubuntu version visit"
-" %(link)s\n"
+" %(link_user_settings)s\n"
 "\n"
 "Kind regards,\n"
 "\n"
@@ -641,12 +645,12 @@ msgstr ""
 "\n"
 "Falls du zu neuen Themen mit dieser Ubuntu Version in Zukunft nicht mehr "
 "benachrichtigt werden möchtest, so kannst du das hier deaktivieren: "
-"%(link)s\n"
+"%(link_user_settings)s\n"
 "\n"
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/new_user_password.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(user)s,\n"
 "\n"
@@ -682,12 +686,11 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/new_user_password_subject.txt:1
-#, fuzzy
 msgid "Password reset request"
 msgstr "Passwort ändern"
 
 #: inyoka/templates/mails/page_edited.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(rev_username)s updated the wiki page “%(page_title)s”. Change note: "
 "%(rev_note)s\n"
@@ -700,7 +703,7 @@ msgstr ""
 "Alle aktuellen Änderungen: %(changes_link)s"
 
 #: inyoka/templates/mails/page_edited.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -777,7 +780,7 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/reset_email.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -800,7 +803,7 @@ msgid ""
 msgstr ""
 "Hallo %(username)s,\n"
 "\n"
-"die E-Mail-Adresse deines Benutzers auf ubuntuusers.de wurde auf "
+"die E-Mail-Adresse deines Benutzers auf %(domain)s wurde auf "
 "%(new_email)s geändert. Um Missbrauch zu vermeiden, kannst du die E-Mail-"
 "Adresse auf die alte zurücksetzen. Bitte beachte, dass das nur einen "
 "Monat ab heute möglich ist.\n"
@@ -816,7 +819,7 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/suggestion_rejected.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(username)s rejected your article suggestion “%(title)s”. The specified "
 "reason is:\n"
@@ -827,7 +830,7 @@ msgstr ""
 "%(note)s"
 
 #: inyoka/templates/mails/suggestion_rejected.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello,\n"
 "\n"
@@ -850,28 +853,29 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/topic_deleted.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid "%(mod)s deleted your topic “%(topic_title)s”."
-msgstr "Das Thema „%(topic_title}}“ wurde von %(mod)s gelöscht."
+msgstr "Das Thema „%(topic_title)s“ wurde von %(mod)s gelöscht."
 
 #: inyoka/templates/mails/topic_deleted.jabber.txt:5
-#, fuzzy, python-format
+#, python-format
 msgid "The specified reason is: %(reason)s"
 msgstr "Als Grund wurde angegeben: %(reason)s"
 
 #: inyoka/templates/mails/topic_deleted.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
 "%(mod)s deleted your topic “%(topic_title)s”."
 msgstr ""
-"Hallo %(username)s,dein Thema „%(topic_title)s“ wurde von %(mod)s "
-"gelöscht.Du wirst nicht mehr über Veränderungen in diesem Thema "
-"benachrichtigt."
+"Hallo %(username)s,\n"
+" \n"
+"dein Thema „%(topic_title)s“ wurde von %(mod)s gelöscht. Du wirst nicht "
+"mehr über Veränderungen in diesem Thema benachrichtigt."
 
 #: inyoka/templates/mails/topic_deleted.txt:7
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "The specified reason is:\n"
@@ -883,7 +887,7 @@ msgstr ""
 "    %(reason)s"
 
 #: inyoka/templates/mails/topic_deleted.txt:13
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Kind regards,\n"
 "\n"
@@ -891,22 +895,22 @@ msgid ""
 msgstr "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/topic_moved.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "%(mod)s moved the topic “%(topic_title)s” from the forum "
-"“%(old_forum_name)s” to “%(forum_name)s”: %(topic_url)s"
+"“%(old_forum_name)s” to “%(new_forum_name)s”: %(topic_link)s"
 msgstr ""
-"Das Thema „%(topic_title)s“ ( %(topic_url)s ) wurde von %(mod)s aus dem "
-"Forum „%(old_forum_name)s“ nach „%(forum_name)s“ verschoben"
+"Das Thema „%(topic_title)s“ ( %(topic_link)s ) wurde von %(mod)s aus dem "
+"Forum „%(old_forum_name)s“ nach „%(new_forum_name)s“ verschoben"
 
 #: inyoka/templates/mails/topic_moved.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
 "%(mod)s moved the topic “%(topic_title)s” from the forum "
-"“%(old_forum_name)s” to “%(forum_name)s”. You can view the topic by "
-"visiting %(topic_url)s\n"
+"“%(old_forum_name)s” to “%(new_forum_name)s”. You can view the topic by "
+"visiting %(topic_link)s\n"
 "\n"
 "Kind regards,\n"
 "\n"
@@ -915,31 +919,31 @@ msgstr ""
 "Hallo %(username)s,\n"
 "\n"
 "das Thema „%(topic_title)s“ wurde von %(mod)s aus dem Forum "
-"„%(old_forum_name)s“ nach „%(forum_name)s“ verschoben. Du kannst dir das "
-"Thema hier ansehen: %(topic_url)s\n"
+"„%(old_forum_name)s“ nach „%(new_forum_name)s“ verschoben. Du kannst dir "
+"das Thema hier ansehen: %(topic_link)s\n"
 "\n"
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/topic_splited.jabber.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
-"%(mod)s has split the topic “%(old_topic_title)s” ( %(old_topic_url)s )  "
-"to “%(new_topic_title)s”: %(new_topic_url)s"
+"%(mod)s has split the topic “%(old_topic_title)s” (%(old_topic_link)s)  "
+"to “%(new_topic_title)s”: %(new_topic_link)s"
 msgstr ""
-"Das Thema „%(old_topic_title)s“ ( %(old_topic_url)s ) wurde von %(mod)s "
-"nach „%(new_topic_title)s“ ( %(new_topic_url)s ) aufgeteilt. Bitte "
+"Das Thema „%(old_topic_title)s“ ( %(old_topic_link)s ) wurde von %(mod)s "
+"nach „%(new_topic_title)s“ ( %(new_topic_link)s ) aufgeteilt. Bitte "
 "beachte, dass du noch keine Benachrichtigungen für das neue Thema "
 "aktiviert hast!"
 
 #: inyoka/templates/mails/topic_splited.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
 "%(mod)s has split the topic “%(old_topic_title)s” to "
 "“%(new_topic_title)s”. You can view the splited part by visiting "
-"%(new_topic_url)s . You can view the original topic by visiting "
-"%(old_topic_url)s\n"
+"%(new_topic_link)s. You can view the original topic by visiting "
+"%(old_topic_link)s\n"
 "\n"
 "Kind regards,\n"
 "\n"
@@ -949,13 +953,13 @@ msgstr ""
 "\n"
 "das Thema „%(old_topic_title)s“ wurde von %(mod)s nach "
 "„%(new_topic_title)s“ aufgeteilt. Du kannst dir den abgetrennten Teil "
-"hier ansehen: %(new_topic_url)s. Das ursprüngliche Thema kannst du hier "
-"ansehen: %(old_topic_url)s\n"
+"hier ansehen: %(new_topic_link)s. Das ursprüngliche Thema kannst du hier "
+"ansehen: %(old_topic_link)s\n"
 "\n"
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/user_new_post.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -982,7 +986,7 @@ msgstr ""
 "Dein Team von %(domain)s"
 
 #: inyoka/templates/mails/user_new_topic.txt:1
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Hello %(username)s,\n"
 "\n"
@@ -1008,16 +1012,16 @@ msgstr ""
 "\n"
 "Dein Team von %(domain)s"
 
-#: inyoka/utils/dates.py:204
+#: inyoka/utils/dates.py:206
 #, python-format
 msgid "%(date)s at %(time)s"
 msgstr "%(date)s um %(time)s"
 
-#: inyoka/utils/diff3.py:374
+#: inyoka/utils/diff3.py:373
 msgid "Old"
 msgstr "Alt"
 
-#: inyoka/utils/diff3.py:374
+#: inyoka/utils/diff3.py:373
 msgid "New"
 msgstr "Neu"
 
@@ -1097,28 +1101,28 @@ msgstr "Neue Zeichenfolge generieren"
 msgid "The entered CAPTCHA was incorrect."
 msgstr "Die Eingabe des Captchas war nicht korrekt."
 
-#: inyoka/utils/generic.py:28
+#: inyoka/utils/generic.py:29
 msgid "Errors occurred, please fix them."
 msgstr "Bitte die aufgetretenen Fehler beheben."
 
-#: inyoka/utils/generic.py:58
+#: inyoka/utils/generic.py:59
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
 
-#: inyoka/utils/generic.py:60
+#: inyoka/utils/generic.py:61
 msgid "{verbose_name} “{object_name}” was successfully changed."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
-#: inyoka/utils/generic.py:174
+#: inyoka/utils/generic.py:175
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
 msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
 
-#: inyoka/utils/generic.py:201
+#: inyoka/utils/generic.py:202
 msgid "{verbose_name} “{object_name}” was deleted successfully!"
 msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
 
-#: inyoka/utils/generic.py:219
+#: inyoka/utils/generic.py:220
 msgid "Canceled."
 msgstr "Abgebrochen."
 
@@ -1136,7 +1140,7 @@ msgstr "« Zurück"
 msgid "Page"
 msgstr "Seite"
 
-#: inyoka/utils/sessions.py:82
+#: inyoka/utils/sessions.py:83
 msgid ""
 "You cannot send data that fast in a row. Please wait a bit until you "
 "submit the form again."
@@ -1149,46 +1153,49 @@ msgstr ""
 msgid "The chosen sort value (“%(value)s”) is not available"
 msgstr "Der ausgewählte Wert („%(value)s“) ist nicht verfügbar"
 
-#: inyoka/utils/text.py:179
+#: inyoka/utils/text.py:142
 msgid "ten"
 msgstr "zehn"
 
-#: inyoka/utils/text.py:181
+#: inyoka/utils/text.py:144
 msgid "eleven"
 msgstr "elf"
 
-#: inyoka/utils/text.py:183
+#: inyoka/utils/text.py:146
 msgid "twelve"
 msgstr "zwölf"
 
-#: inyoka/utils/text.py:186
+#: inyoka/utils/text.py:149
 msgctxt "masculine"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:187
+#: inyoka/utils/text.py:150
 msgctxt "feminine"
 msgid "one"
 msgstr "eine"
 
-#: inyoka/utils/text.py:188
+#: inyoka/utils/text.py:151
 msgctxt "neuter"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:189
+#: inyoka/utils/text.py:152
 msgid "one"
 msgstr "eins"
 
-#: inyoka/middlewares/auth.py:36
+#: inyoka/middlewares/auth.py:34
 #, python-format
 msgid "The user “%(name)s” was banned. Your session has ended."
 msgstr "Der Benutzer „%(name)s“ wurde gesperrt und dadurch deine Sitzung beendet"
 
-#: inyoka/middlewares/auth.py:40
+#: inyoka/middlewares/auth.py:38
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
 msgstr ""
 "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum "
 "abgemelet."
+
+#~ msgid ""
+#~ msgstr ""
 
