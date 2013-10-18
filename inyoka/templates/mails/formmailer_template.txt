@@ -1,4 +1,4 @@
-{% trans username=user.username, from=from, text=text -%}
+{% trans -%}
 Hello {{ username }},
 
 you received a new message from {{ from }}.

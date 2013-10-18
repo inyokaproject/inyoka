@@ -592,7 +592,7 @@ def user_mail(request, username):
         if form.is_valid():
             text = form.cleaned_data['text']
             message = render_template('mails/formmailer_template.txt', {
-                'user': user,
+                'username': user.username,
                 'text': text,
                 'from': request.user.username,
             })
