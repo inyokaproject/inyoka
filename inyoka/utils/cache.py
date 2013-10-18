@@ -13,6 +13,7 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.conf import settings
 from django.core.cache import cache, get_cache
 from django.core.cache.backends.base import BaseCache
 
@@ -76,5 +77,6 @@ class RequestCache(BaseCache):
             self.request_cache.clear()
         self.real_cache.clear()
 
-
+if 'debug_toolbar' in settings.INSTALLED_APPS:
+    from debug_toolbar.panels.cache import get_cache_debug as get_cache
 request_cache = get_cache('request')
