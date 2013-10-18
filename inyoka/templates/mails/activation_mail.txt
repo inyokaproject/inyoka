@@ -1,4 +1,4 @@
-{% trans username=user.username, email=user.email, link_activate=user.get_absolute_url('activate'), link_delete=user.get_absolute_url('activate_delete'), link_license=href('portal', 'lizenz') -%}
+{% trans -%}
 Hello {{ username }},
 
 welcome to {{ domain }}!

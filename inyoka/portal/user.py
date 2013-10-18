@@ -235,9 +235,13 @@ def reset_email(id, email):
 def send_activation_mail(user):
     """send an activation mail"""
     message = render_template('mails/activation_mail.txt', {
-        'user': user,
+        'activation_key': gen_activation_key(user),
+        'domain': settings.BASE_DOMAIN_NAME,
         'email': user.email,
-        'activation_key': gen_activation_key(user)
+        'link_activate': user.get_absolute_url('activate'),
+        'link_delete': user.get_absolute_url('activate_delete'),
+        'link_license': href('portal', 'lizenz'),
+        'username': user.username,
     })
     subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,
