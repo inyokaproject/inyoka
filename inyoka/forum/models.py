@@ -27,8 +27,8 @@ from django.db.models import F, Max, Count
 from django.utils.html import escape
 from django.core.cache import cache
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
-from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_lazy
+from django.utils.html import escape, format_html
+from django.utils.translation import pgettext, ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.markup import parse, RenderContext
@@ -1141,23 +1141,27 @@ class Attachment(models.Model):
         if show_preview and show_thumbnails and isimage():
             thumb = thumbnail()
             if thumb:
-                return u'<a href="%s"><img class="preview" src="%s" ' \
-                       u'alt="%s" title="%s"></a>' \
-                       % (url, thumb, escape(self.comment), escape(self.comment))
+                return format_html(u'<a href="{}"><img class="preview" src="{}" alt="{}" title="{}"></a>',
+                                   url, thumb, self.comment, self.comment
+                )
             else:
-                return u'<a href="%s" type="%s" title="%s">%s ansehen</a>' \
-                    % (url, self.mimetype, escape(self.comment), self.name)
+                linktext = pgettext('Link text to an image attachment',
+                    u'View %(name)s') % {'name': self.name}
+                return format_html(u'<a href="{}" type="{}" title="{}">{}</a>',
+                                   url, self.mimetype, self.comment, linktext)
         elif show_preview and istext():
             contents = self.contents
             if contents is not None:
                 try:
                     highlighted = highlight_code(force_unicode(contents), mimetype=self.mimetype)
-                    return u'<div class="code">%s</div>' % highlighted
+                    return format_html(u'<div class="code">{}</div>', highlighted)
                 except DjangoUnicodeDecodeError:
                     pass
 
-        return u'<a href="%s" type="%s" title="%s">%s herunterladen</a>' \
-                    % (url, self.mimetype, escape(self.comment), self.name)
+        linktext = pgettext('Link text to download an attachment',
+            u'Download %(name)s') % {'name': self.name}
+        return format_html(u'<a href="{}" type="{}" title="{}">{}</a>',
+                           url, self.mimetype, self.comment, linktext)
 
     def get_absolute_url(self, action=None):
         return self.file.url

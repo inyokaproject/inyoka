@@ -18,6 +18,8 @@
 import re
 from itertools import chain
 
+from django.utils.safestring import mark_safe
+
 from pygments import highlight
 from pygments.util import ClassNotFound
 from pygments.lexers import (
@@ -62,7 +64,7 @@ def highlight_code(code, lang=None, filename=None, mimetype=None):
             lexer = TextLexer(stripnl=False)
     except LookupError:
         lexer = TextLexer(stripnl=False)
-    return highlight(code, lexer, _pygments_formatter)
+    return mark_safe(highlight(code, lexer, _pygments_formatter))
 
 
 class HumanStyle(FriendlyStyle):

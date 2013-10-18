@@ -206,6 +206,18 @@ msgstr "Beiträge"
 msgid "Pictures"
 msgstr "Bilder"
 
+#: inyoka/forum/models.py:1135
+#, python-format
+msgctxt "Link text to an image attachment"
+msgid "View %(name)s"
+msgstr "%(name)s ansehen"
+
+#: inyoka/forum/models.py:1148
+#, python-format
+msgctxt "Link text to download an attachment"
+msgid "Download %(name)s"
+msgstr "%(name)s herunterladen"
+
 #: inyoka/forum/notifications.py:40
 #, python-format
 msgid "%(username)s has created a new topic"
