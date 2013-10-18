@@ -187,8 +187,10 @@ def send_new_email_confirmation(user, email):
     }
 
     text = render_template('mails/new_email_confirmation.txt', {
-        'user': user,
         'data': signing.dumps(data, salt='inyoka.action.set_new_email'),
+        'domain': settings.BASE_DOMAIN_NAME,
+        'link_new_email': href('portal', 'confirm', 'set_new_email'),
+        'username': user.username,
     })
     subject = _(u'%(sitename)s – Confirm email address') % {
         'sitename': settings.BASE_DOMAIN_NAME
