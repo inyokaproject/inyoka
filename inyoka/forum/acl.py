@@ -118,7 +118,8 @@ def _get_privilege_map(user, forum_ids):
     # circular imports
     from inyoka.forum.models import Privilege, Forum
     group_ids = set(user.groups.values_list('id', flat=True))
-    group_ids.add(-1 if user.is_anonymous else DEFAULT_GROUP_ID)
+    if user.is_authenticated:
+        group_ids.add(DEFAULT_GROUP_ID)
 
     cols = ('forum_id', 'user_id', 'group_id', 'positive', 'negative')
 
@@ -149,9 +150,9 @@ def _get_privilege_map(user, forum_ids):
         # so that this saves a bit bandwith and quite a few time for the query
         if len(forum_ids) != len(all_ids):
             if len(forum_ids) > 1:
-                query = query.filter(forum__id__in=forum_ids)
-            elif forum_ids:
-                query = query.filter(forum__id=forum_ids[0])
+                query = query.filter(forum_id__in=forum_ids)
+            else:
+                query = query.filter(forum_id=forum_ids[0])
         privilege_map = query.values_list(*cols)
 
     return privilege_map
