@@ -589,21 +589,23 @@ def suggest_delete(request, suggestion):
                 msg.send(recipients)
                 # send notification
                 for recipient in recipients:
-                    entry = PrivateMessageEntry.objects \
-                        .filter(message=msg, user=recipient)[0]
+                    entry = PrivateMessageEntry.objects.get(message=msg,
+                                                            user=recipient)
                     if 'pm_new' in recipient.settings.get('notifications',
                                                           ('pm_new',)):
-                        title = _(u'New private message from %(user)s: '
-                                  '%(subject)s') % {
-                                      'user': request.user.username,
-                                      'subject': msg.subject,
-                                  }
-                        send_notification(recipient, 'new_pm', title, {
-                                          'user': recipient,
-                                              'sender': request.user.username,
-                                              'subject': msg.subject,
-                                              'entry': entry,
-                                          })
+                        send_notification(recipient, 'new_pm',
+                            _(u'New private message from %(username)s: %(subject)s') % {
+                                'username': request.user.username,
+                                'subject': msg.subject,
+                            },
+                            {
+                                'from': request.user.username,
+                                'link_view': entry.get_absolute_url(),
+                                'link_settings': href('portal', 'usercp', 'settings'),
+                                'subject': msg.subject,
+                                'username': recipient.username,
+                            }
+                        )
 
             cache.delete('ikhaya/suggestion_count')
             s.delete()

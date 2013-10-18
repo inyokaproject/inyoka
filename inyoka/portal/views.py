@@ -1449,10 +1449,11 @@ def privmsg_new(request, username=None):
                                 'subject': d['subject']
                             },
                             {
-                                'user': recipient,
                                 'from': request.user.username,
+                                'link_view': entry.get_absolute_url(),
+                                'link_settings': href('portal', 'usercp', 'settings'),
                                 'subject': d['subject'],
-                                'entry': entry,
+                                'username': recipient.username,
                             }
                         )
 

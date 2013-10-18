@@ -1,7 +1,7 @@
-{% trans link=entry|url, link_settings=href('portal', 'usercp', 'settings') -%}
+{% trans -%}
 Hello {{ username }},
 
-{{ from }} has sent you a new private message titled “{{ subject }}”. You can view the message by visiting {{ link }}
+{{ from }} has sent you a new private message titled “{{ subject }}”. You can view the message by visiting {{ link_view }}
 
 To unsubscribe from further notifications about private messages visit {{ link_settings }}
 
