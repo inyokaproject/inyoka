@@ -3,10 +3,10 @@ from south.db import db
 from south.v2 import DataMigration
 from django.contrib.contenttypes import management
 
-from inyoka.wiki.models import Page
-from inyoka.portal.user import User
-from inyoka.forum.models import Topic, Forum
+from inyoka.forum.models import Forum, Topic
 from inyoka.ikhaya.models import Article
+from inyoka.portal.user import User
+from inyoka.wiki.models import Page
 
 
 class Migration(DataMigration):

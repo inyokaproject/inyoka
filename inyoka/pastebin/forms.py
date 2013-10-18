@@ -11,8 +11,8 @@
 from django import forms
 from django.utils.translation import ugettext, ugettext_lazy
 
-from inyoka.utils.forms import CaptchaField
 from inyoka.pastebin.models import Entry
+from inyoka.utils.forms import CaptchaField
 
 # languages for highlighting. We do not use the full list of pygments
 # lexers because that is just insane ;-)

@@ -27,40 +27,30 @@ from django.db.models import F, Max, Count
 from django.utils.html import escape
 from django.core.cache import cache
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
-from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_lazy
+from django.utils.html import escape, format_html
+from django.utils.translation import pgettext, ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 
+from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
+    check_privilege, filter_invisible)
+from inyoka.forum.constants import (DISTRO_CHOICES, POSTS_PER_PAGE,
+    VERSION_CHOICES, CACHE_PAGES_COUNT, SUPPORTED_IMAGE_TYPES,
+    UBUNTU_DISTROS_LEGACY)
 from inyoka.markup import parse, RenderContext
-from inyoka.forum.acl import (
-    CAN_READ,
-    get_privileges,
-    filter_visible,
-    check_privilege,
-    filter_invisible
-)
-from inyoka.utils.urls import href
-from inyoka.utils.files import get_filename
-from inyoka.portal.user import User, Group
-from inyoka.utils.local import current_request
-from inyoka.utils.cache import request_cache
-from inyoka.utils.dates import timedelta_to_seconds
-from inyoka.wiki.models import Page as WikiPage
-from inyoka.utils.search import search
-from inyoka.portal.utils import UBUNTU_VERSIONS
-from inyoka.utils.imaging import get_thumbnail
 from inyoka.portal.models import SearchQueue, Subscription
+from inyoka.portal.user import User, Group
+from inyoka.portal.utils import UBUNTU_VERSIONS
+from inyoka.utils.cache import request_cache
 from inyoka.utils.database import update_model, model_or_none, LockableObject
-from inyoka.utils.highlight import highlight_code
-from inyoka.forum.constants import (
-    DISTRO_CHOICES,
-    POSTS_PER_PAGE,
-    VERSION_CHOICES,
-    CACHE_PAGES_COUNT,
-    SUPPORTED_IMAGE_TYPES,
-    UBUNTU_DISTROS_LEGACY
-)
+from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
+from inyoka.utils.files import get_filename
+from inyoka.utils.highlight import highlight_code
+from inyoka.utils.imaging import get_thumbnail
+from inyoka.utils.local import current_request
+from inyoka.utils.search import search
+from inyoka.utils.urls import href
+from inyoka.wiki.models import Page as WikiPage
 
 _newline_re = re.compile(r'\r?\n')
 
@@ -1141,23 +1131,27 @@ class Attachment(models.Model):
         if show_preview and show_thumbnails and isimage():
             thumb = thumbnail()
             if thumb:
-                return u'<a href="%s"><img class="preview" src="%s" ' \
-                       u'alt="%s" title="%s"></a>' \
-                       % (url, thumb, escape(self.comment), escape(self.comment))
+                return format_html(u'<a href="{}"><img class="preview" src="{}" alt="{}" title="{}"></a>',
+                                   url, thumb, self.comment, self.comment
+                )
             else:
-                return u'<a href="%s" type="%s" title="%s">%s ansehen</a>' \
-                    % (url, self.mimetype, escape(self.comment), self.name)
+                linktext = pgettext('Link text to an image attachment',
+                    u'View %(name)s') % {'name': self.name}
+                return format_html(u'<a href="{}" type="{}" title="{}">{}</a>',
+                                   url, self.mimetype, self.comment, linktext)
         elif show_preview and istext():
             contents = self.contents
             if contents is not None:
                 try:
                     highlighted = highlight_code(force_unicode(contents), mimetype=self.mimetype)
-                    return u'<div class="code">%s</div>' % highlighted
+                    return format_html(u'<div class="code">{}</div>', highlighted)
                 except DjangoUnicodeDecodeError:
                     pass
 
-        return u'<a href="%s" type="%s" title="%s">%s herunterladen</a>' \
-                    % (url, self.mimetype, escape(self.comment), self.name)
+        linktext = pgettext('Link text to download an attachment',
+            u'Download %(name)s') % {'name': self.name}
+        return format_html(u'<a href="{}" type="{}" title="{}">{}</a>',
+                           url, self.mimetype, self.comment, linktext)
 
     def get_absolute_url(self, action=None):
         return self.file.url

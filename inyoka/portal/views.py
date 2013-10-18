@@ -14,117 +14,70 @@ import time
 import binascii
 from datetime import date, datetime, timedelta
 
-import dateutil
 from PIL import Image
-from django.core import signing
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django_mobile import get_flavour
+from django_openid.consumer import Consumer, SessionPersist
+import dateutil
+import pytz
+
 from django.conf import settings
 from django.contrib import auth, messages
-from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from django.forms.util import ErrorList
+from django.contrib.auth.views import password_reset, password_reset_confirm
+from django.core import signing
 from django.core.cache import cache
-from django.utils.html import escape
-from django.utils.dates import MONTHS, WEEKDAYS
+from django.core.files.storage import default_storage
+from django.db.models import Q
 from django.forms.models import model_to_dict
+from django.forms.util import ErrorList
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.decorators import method_decorator
+from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
-from django.core.files.storage import default_storage
-from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.views.decorators.http import require_POST
 
-import pytz
-from inyoka.utils import generic
-from inyoka.markup import parse, RenderContext
-from django_mobile import get_flavour
-from inyoka.forum.acl import (
-    split_bits,
-    filter_invisible,
-    PRIVILEGES_DETAILS,
-    split_negative_positive,
-    REVERSED_PRIVILEGES_BITS
-)
-from inyoka.utils.text import normalize_pagename, get_random_password
-from inyoka.utils.urls import href, url_for, is_safe_domain
-from inyoka.utils.mail import send_mail
-from inyoka.wiki.utils import quote_text
-from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
-from inyoka.utils.user import check_activation_key
-from inyoka.wiki.models import Page as WikiPage
-from inyoka.utils.dates import DEFAULT_TIMEZONE, get_user_timezone, find_best_timezone
-from inyoka.portal.user import (
-    User,
-    Group,
-    UserData,
-    UserBanned,
-    reset_email,
-    set_new_email,
-    deactivate_user,
-    reactivate_user,
-    PERMISSION_NAMES,
-    send_activation_mail
-)
+
+from inyoka.forum.acl import (split_bits, filter_invisible, PRIVILEGES_DETAILS,
+    split_negative_positive, REVERSED_PRIVILEGES_BITS)
 from inyoka.forum.models import Post, Topic, Forum, Privilege
-from inyoka.portal.forms import (
-    LoginForm,
-    SearchForm,
-    UserMailForm,
-    EditFileForm,
-    RegisterForm,
-    EditStyleForm,
-    EditGroupForm,
-    CreateUserForm,
-    LostPasswordForm,
-    SubscriptionForm,
-    UserCPProfileForm,
-    OpenIDConnectForm,
-    ConfigurationForm,
-    EditUserGroupsForm,
-    EditStaticPageForm,
-    DeactivateUserForm,
-    UserCPSettingsForm,
-    ChangePasswordForm,
-    PrivateMessageForm,
-    EditUserStatusForm,
-    SetNewPasswordForm,
-    EditUserProfileForm,
-    WikiFeedSelectorForm,
-    EditUserPasswordForm,
-    NOTIFICATION_CHOICES,
-    ForumFeedSelectorForm,
-    PlanetFeedSelectorForm,
-    EditUserPrivilegesForm,
-    IkhayaFeedSelectorForm,
-    PrivateMessageIndexForm,
-    PrivateMessageFormProtected
-)
-from inyoka.portal.utils import (
-    check_login,
-    UBUNTU_VERSIONS,
-    UbuntuVersionList,
-    require_permission,
-    google_calendarize,
-    abort_access_denied,
-    calendar_entries_for_month
-)
-from inyoka.utils.storage import storage
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
-from inyoka.portal.models import (
-    StaticPage,
-    StaticFile,
-    Subscription,
-    PrivateMessage,
-    PRIVMSG_FOLDERS,
-    PrivateMessageEntry
-)
+from inyoka.markup import parse, RenderContext
 from inyoka.portal.filters import SubscriptionFilter
+from inyoka.portal.forms import (LoginForm, SearchForm, UserMailForm,
+    EditFileForm, RegisterForm, EditStyleForm, EditGroupForm, CreateUserForm,
+    LostPasswordForm, SubscriptionForm, UserCPProfileForm, OpenIDConnectForm,
+    ConfigurationForm, EditUserGroupsForm, EditStaticPageForm, DeactivateUserForm,
+    UserCPSettingsForm, ChangePasswordForm, PrivateMessageForm, EditUserStatusForm,
+    SetNewPasswordForm, EditUserProfileForm, WikiFeedSelectorForm,
+    EditUserPasswordForm, NOTIFICATION_CHOICES, ForumFeedSelectorForm,
+    PlanetFeedSelectorForm, EditUserPrivilegesForm, IkhayaFeedSelectorForm,
+    PrivateMessageIndexForm, PrivateMessageFormProtected)
+from inyoka.portal.models import (StaticPage, StaticFile, Subscription,
+    PrivateMessage, PRIVMSG_FOLDERS, PrivateMessageEntry)
+from inyoka.portal.user import (User, Group, UserData, UserBanned, reset_email,
+    set_new_email, deactivate_user, reactivate_user, PERMISSION_NAMES,
+    send_activation_mail)
+from inyoka.portal.utils import (check_login, UBUNTU_VERSIONS, UbuntuVersionList,
+    require_permission, google_calendarize, abort_access_denied,
+    calendar_entries_for_month)
+from inyoka.utils import generic
+from inyoka.utils.dates import DEFAULT_TIMEZONE, get_user_timezone, find_best_timezone
+from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
+from inyoka.utils.mail import send_mail
+from inyoka.utils.notification import send_notification
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.sessions import get_sessions, make_permanent, get_user_record
 from inyoka.utils.sortable import Sortable
-from django_openid.consumer import Consumer, SessionPersist
+from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
-from inyoka.utils.pagination import Pagination
-from inyoka.utils.notification import send_notification
+from inyoka.utils.text import normalize_pagename, get_random_password
+from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.utils.user import check_activation_key
+from inyoka.wiki.models import Page as WikiPage
+from inyoka.wiki.utils import quote_text
+
 
 # TODO: move into some kind of config, but as a quick fix for now...
 AUTOBAN_SPAMMER_WORDS = (

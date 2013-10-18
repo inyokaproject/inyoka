@@ -27,14 +27,15 @@
 """
 from django.http import HttpResponseRedirect
 
-from inyoka.utils.urls import href
-from inyoka.utils.text import normalize_pagename
+from inyoka.portal.user import User
+from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import AccessDeniedResponse
+from inyoka.utils.text import normalize_pagename
+from inyoka.utils.urls import href
 from inyoka.utils.user import normalize_username
 from inyoka.wiki.models import Page
-from inyoka.portal.user import User
 from inyoka.wiki.storage import storage
-from inyoka.utils.decorators import patch_wrapper
+
 
 #: metadata users without the `PRIV_MANAGE` privilege can edit.
 LENIENT_METADATA_KEYS = frozenset(('X-Link', 'X-Attach', 'X-Redirect'))

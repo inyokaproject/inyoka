@@ -24,13 +24,14 @@ from django.utils.encoding import force_unicode
 from django.core.exceptions import ObjectDoesNotExist
 
 import xapian
+
 from inyoka.utils import get_significant_digits
 from inyoka.utils.highlight import create_excerpt
+
 
 # TODO: i18n note: This module will be rewritten and with this rewrite
 #                 i18n support will land in the search, for now it's
 #                 german only.
-
 LANGUAGE = 'de'
 search = None
 

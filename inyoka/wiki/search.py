@@ -8,11 +8,11 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from inyoka.wiki.acl import PRIV_READ, MultiPrivilegeTest
-from inyoka.utils.urls import href, url_for
-from inyoka.wiki.models import Page, Revision
 from inyoka.portal.user import User
 from inyoka.utils.search import search, SearchAdapter
+from inyoka.utils.urls import href, url_for
+from inyoka.wiki.acl import PRIV_READ, MultiPrivilegeTest
+from inyoka.wiki.models import Page, Revision
 
 
 class WikiSearchAuthDecider(object):

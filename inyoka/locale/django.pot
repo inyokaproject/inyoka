@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-10-18 18:23+0200\n"
+"POT-Creation-Date: 2013-10-18 18:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -702,7 +702,7 @@ msgid ""
 "Your %(domain)s team"
 msgstr ""
 
-#: inyoka/utils/dates.py:206
+#: inyoka/utils/dates.py:207
 #, python-format
 msgid "%(date)s at %(time)s"
 msgstr ""
@@ -835,34 +835,34 @@ msgstr ""
 msgid "The chosen sort value (“%(value)s”) is not available"
 msgstr ""
 
-#: inyoka/utils/text.py:142
+#: inyoka/utils/text.py:143
 msgid "ten"
 msgstr ""
 
-#: inyoka/utils/text.py:144
+#: inyoka/utils/text.py:145
 msgid "eleven"
 msgstr ""
 
-#: inyoka/utils/text.py:146
+#: inyoka/utils/text.py:147
 msgid "twelve"
 msgstr ""
 
-#: inyoka/utils/text.py:149
+#: inyoka/utils/text.py:150
 msgctxt "masculine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:150
+#: inyoka/utils/text.py:151
 msgctxt "feminine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:151
+#: inyoka/utils/text.py:152
 msgctxt "neuter"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:152
+#: inyoka/utils/text.py:153
 msgid "one"
 msgstr ""
 

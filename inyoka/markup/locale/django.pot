@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-10-18 18:23+0200\n"
+"POT-Creation-Date: 2013-10-18 18:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,23 +42,23 @@ msgstr ""
 msgid "Invalid date"
 msgstr ""
 
-#: inyoka/markup/nodes.py:255
+#: inyoka/markup/nodes.py:254
 msgid "<strong>Conflict</strong> – remote version"
 msgstr ""
 
-#: inyoka/markup/nodes.py:256
+#: inyoka/markup/nodes.py:255
 msgid "<strong>Conflict</strong> – local Version"
 msgstr ""
 
-#: inyoka/markup/nodes.py:257
+#: inyoka/markup/nodes.py:256
 msgid "<strong>Conflict End</strong>"
 msgstr ""
 
-#: inyoka/markup/nodes.py:693
+#: inyoka/markup/nodes.py:692
 msgid "Edited by"
 msgstr ""
 
-#: inyoka/markup/nodes.py:718
+#: inyoka/markup/nodes.py:717
 msgid "Moderated by"
 msgstr ""
 

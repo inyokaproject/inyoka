@@ -30,8 +30,8 @@ from datetime import datetime
 from django.utils.translation import ugettext as _
 
 from inyoka.markup import nodes
-from inyoka.utils.dates import parse_iso8601, format_datetime
 from inyoka.markup.utils import debug_repr, filter_style, ArgumentCollector
+from inyoka.utils.dates import parse_iso8601, format_datetime
 
 ALL_MACROS = {}
 

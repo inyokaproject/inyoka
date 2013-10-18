@@ -14,9 +14,11 @@ from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy
 
 from django_filters import FilterSet, ChoiceFilter
-from inyoka.utils.urls import urlencode
-from inyoka.portal.models import Subscription
 from django_filters.widgets import LinkWidget as BaseLinkWidget
+
+from inyoka.portal.models import Subscription
+from inyoka.utils.urls import urlencode
+
 
 SUPPORTED_SUBSCRIPTION_TYPES = {
     'topic': ugettext_lazy(u'Topic'),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-10-18 18:23+0200\n"
+"POT-Creation-Date: 2013-10-18 18:37+0200\n"
 "PO-Revision-Date: 2012-11-03 11:11+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -44,23 +44,23 @@ msgstr "Inhaltsverzeichnis"
 msgid "Invalid date"
 msgstr "Ungültiges Datum"
 
-#: inyoka/markup/nodes.py:255
+#: inyoka/markup/nodes.py:254
 msgid "<strong>Conflict</strong> – remote version"
 msgstr "<strong>Konflikt</strong> – vorherige Version"
 
-#: inyoka/markup/nodes.py:256
+#: inyoka/markup/nodes.py:255
 msgid "<strong>Conflict</strong> – local Version"
 msgstr "<strong>Konflikt</strong> – eigene Version"
 
-#: inyoka/markup/nodes.py:257
+#: inyoka/markup/nodes.py:256
 msgid "<strong>Conflict End</strong>"
 msgstr "<strong>Konlikt Ende</strong>"
 
-#: inyoka/markup/nodes.py:693
+#: inyoka/markup/nodes.py:692
 msgid "Edited by"
 msgstr "Bearbeitet von"
 
-#: inyoka/markup/nodes.py:718
+#: inyoka/markup/nodes.py:717
 msgid "Moderated by"
 msgstr "Moderiert von"
 

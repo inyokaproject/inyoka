@@ -20,11 +20,11 @@ import datetime
 from operator import itemgetter
 
 from django.conf import settings
-
 from xapian import DatabaseOpeningError
+
+from inyoka.portal.models import SearchQueue
 from inyoka.utils import groupby
 from inyoka.utils.search import search
-from inyoka.portal.models import SearchQueue
 from inyoka.utils.terminal import show
 
 
