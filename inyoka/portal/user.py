@@ -148,8 +148,10 @@ def deactivate_user(user):
                 % {'name': escape(user.username),
                    'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
-        'user': user,
         'data': signing.dumps(data, salt='inyoka.action.reactivate_user'),
+        'domain': settings.BASE_DOMAIN_NAME,
+        'link_reactivate': href('portal', 'confirm', 'reactivate_user'),
+        'username': user.username,
     })
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
