@@ -6,8 +6,8 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from inyoka.portal.models import User
 from inyoka.ikhaya.models import Suggestion
+from inyoka.portal.models import User
 from inyoka.utils.services import permit_methods, SimpleDispatcher
 
 

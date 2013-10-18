@@ -17,12 +17,13 @@ from xml.sax.saxutils import quoteattr
 
 from django.utils.encoding import force_unicode
 
-import lxml.html.clean
 from html5lib import HTMLParser, treewalkers, treebuilders
-from lxml.html.defs import empty_tags
-from inyoka.utils.text import increment_string
-from html5lib.serializer import HTMLSerializer
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
+from html5lib.serializer import HTMLSerializer
+from lxml.html.defs import empty_tags
+import lxml.html.clean
+
+from inyoka.utils.text import increment_string
 
 _entity_re = re.compile(r'&([^;]+);')
 _strip_re = re.compile(r'<!--.*?-->|<[^>]*>(?s)')

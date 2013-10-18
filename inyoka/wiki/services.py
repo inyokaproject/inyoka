@@ -17,11 +17,11 @@
 """
 from django.http import HttpResponse
 
-from inyoka.markup import parse, RenderContext
-from inyoka.wiki.utils import get_smilies
-from inyoka.wiki.models import Page
 from inyoka.forum.models import Post as ForumPost
+from inyoka.markup import parse, RenderContext
 from inyoka.utils.services import permit_methods, SimpleDispatcher
+from inyoka.wiki.models import Page
+from inyoka.wiki.utils import get_smilies
 
 
 def on_get_smilies(request):

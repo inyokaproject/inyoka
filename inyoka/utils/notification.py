@@ -10,9 +10,10 @@ from django.conf import settings
 
 from celery.task import task
 from celery.task.sets import subtask
-from inyoka.utils.mail import send_mail
-from inyoka.utils.jabber import send as send_jabber
+
 from inyoka.portal.models import Subscription
+from inyoka.utils.jabber import send as send_jabber
+from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 
 

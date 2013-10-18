@@ -14,20 +14,13 @@ from django import forms
 from django.utils.translation import ugettext_lazy
 
 import pytz
-from inyoka.utils.forms import (
-    UserField,
-    TimeWidget,
-    DateWidget,
-    DateTimeField,
-    StrippedCharField
-)
-from inyoka.utils.dates import (
-    get_user_timezone,
-    datetime_to_timezone,
-    date_time_to_datetime
-)
-from inyoka.portal.models import StaticFile
+
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
+from inyoka.portal.models import StaticFile
+from inyoka.utils.forms import (UserField, TimeWidget, DateWidget,
+    DateTimeField, StrippedCharField)
+from inyoka.utils.dates import (get_user_timezone, datetime_to_timezone,
+    date_time_to_datetime)
 
 
 class SuggestArticleForm(forms.ModelForm):

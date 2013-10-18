@@ -38,8 +38,8 @@ from __future__ import division
 import math
 
 from django.http import Http404, HttpResponseRedirect
-from django.utils.html import escape
 from django.utils.encoding import force_unicode
+from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
 from django_mobile import get_flavour
