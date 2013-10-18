@@ -9,7 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
-from django.conf.urls import url, patterns
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('',
     url(r'^(?P<path>.*)$', 'django.views.static.serve', {
