@@ -12,9 +12,9 @@
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
 
-from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import TemplateResponse
 from inyoka.utils.urls import href
+from inyoka.utils.decorators import patch_wrapper
 
 
 def confirm_action(message=None, confirm=None, cancel=None):

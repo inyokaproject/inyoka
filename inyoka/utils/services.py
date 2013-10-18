@@ -11,7 +11,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from itertools import imap
+
 from django.http import Http404, HttpResponseNotAllowed
+
 from inyoka.utils.decorators import patch_wrapper
 
 

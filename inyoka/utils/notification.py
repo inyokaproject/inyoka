@@ -6,13 +6,14 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from django.conf import settings
+
 from celery.task import task
 from celery.task.sets import subtask
-from django.conf import settings
 from inyoka.utils.mail import send_mail
 from inyoka.utils.jabber import send as send_jabber
-from inyoka.utils.templating import render_template
 from inyoka.portal.models import Subscription
+from inyoka.utils.templating import render_template
 
 
 def send_notification(user, template_name=None, subject=None, args=None):

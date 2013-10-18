@@ -8,44 +8,46 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import datetime
-import StringIO
 import json
+import StringIO
+import datetime
 
 from PIL import Image
-
 from django import forms
-from django.core.cache import cache
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
-from django.forms import HiddenInput
-from django.db.models import Count
-from django.db.models.fields.files import ImageFieldFile
 from django.conf import settings
-from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy, ugettext as _
-
+from django.forms import HiddenInput
 from django.contrib import messages
+from django.db.models import Count
+from django.core.cache import cache
 from django.contrib.auth import forms as auth_forms
+from django.core.files.base import ContentFile
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
+from django.core.files.storage import default_storage
+from django.db.models.fields.files import ImageFieldFile
 
-from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 from inyoka.forum.acl import filter_invisible
-from inyoka.forum.forms import ForumField
-from inyoka.forum.models import Forum
-from inyoka.utils.dates import datetime_to_timezone
-from inyoka.utils.user import is_valid_username, normalize_username
-from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.urls import href
-from inyoka.utils.forms import CaptchaField, DateTimeWidget, DateWidget, \
-    EmailField, validate_signature
-from inyoka.utils.local import current_request
+from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.html import cleanup_html
+from inyoka.forum.forms import ForumField
+from inyoka.utils.dates import TIMEZONES, datetime_to_timezone
+from inyoka.utils.local import current_request
+from inyoka.utils.forms import (
+    DateWidget,
+    EmailField,
+    CaptchaField,
+    DateTimeWidget,
+    validate_signature
+)
+from inyoka.portal.user import User, Group, PERMISSION_NAMES, send_new_email_confirmation
+from inyoka.utils.search import search as search_system
+from inyoka.forum.models import Forum
+from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.utils.storage import storage
 from inyoka.utils.sessions import SurgeProtectionMixin
-from inyoka.utils.search import search as search_system
-from inyoka.portal.user import User, Group, PERMISSION_NAMES, \
-    send_new_email_confirmation
-from inyoka.portal.models import StaticPage, StaticFile
+from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
 
 #: Some constants used for ChoiceFields
 NOTIFY_BY_CHOICES = (

@@ -10,33 +10,29 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import datetime
-
-from functools import partial
+from re import escape, compile
+from os import path, walk, mkdir, chmod, unlink
+from shutil import copy, rmtree, copytree
 from hashlib import sha1
+from functools import partial
 from itertools import izip
-from os import chmod, mkdir, path, unlink, walk
-from re import compile, escape
-from shutil import copy, copytree, rmtree
-
-from bs4 import BeautifulSoup
-
-from django.conf import settings
-from django.template.defaultfilters import date
-from django.utils.encoding import force_unicode
-from django.utils.translation import activate
 
 from werkzeug import url_unquote
+from django.conf import settings
+from django.utils.encoding import force_unicode
+from django.utils.translation import activate
+from django.template.defaultfilters import date
 
-from inyoka.utils.http import templated
-from inyoka.utils.urls import href
-from inyoka.utils.storage import storage
-from inyoka.utils.text import normalize_pagename
-from inyoka.utils.terminal import ProgressBar, percentize
-from inyoka.utils.templating import Breadcrumb
-from inyoka.wiki.models import Page
+from bs4 import BeautifulSoup
 from inyoka.wiki.acl import has_privilege
+from inyoka.utils.urls import href
+from inyoka.utils.text import normalize_pagename
+from inyoka.utils.http import templated
+from inyoka.wiki.models import Page
 from inyoka.portal.user import User
-
+from inyoka.utils.storage import storage
+from inyoka.utils.terminal import percentize, ProgressBar
+from inyoka.utils.templating import Breadcrumb
 
 FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False

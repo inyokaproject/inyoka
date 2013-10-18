@@ -13,9 +13,10 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.core.cache import get_cache, cache
+from django.core.cache import cache, get_cache
 from django.core.cache.backends.base import BaseCache
-from inyoka.utils.local import _request_cache, local_has_key
+
+from inyoka.utils.local import local_has_key, _request_cache
 
 
 class RequestCache(BaseCache):

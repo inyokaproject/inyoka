@@ -8,7 +8,6 @@
 """
 from django.core.cache.backends.memcached import PyLibMCCache
 
-
 MIN_COMPRESS_LEN = 150000
 
 

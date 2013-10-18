@@ -9,7 +9,6 @@
 import re
 from itertools import ifilter
 
-
 acceptable_css_properties = frozenset((
     'azimuth', 'background-color', 'border-bottom-color',
     'border-collapse', 'border-color', 'border-left-color',

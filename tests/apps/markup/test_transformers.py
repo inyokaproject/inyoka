@@ -11,10 +11,13 @@
 """
 import unittest
 
-from inyoka.markup import transformers
-from inyoka.markup.transformers import AutomaticParagraphs, \
-    FootnoteSupport, HeadlineProcessor, get_smiley_re
-from inyoka.markup import Parser, nodes
+from inyoka.markup import nodes, Parser, transformers
+from inyoka.markup.transformers import (
+    get_smiley_re,
+    FootnoteSupport,
+    HeadlineProcessor,
+    AutomaticParagraphs
+)
 
 
 def parse(source, transformer):

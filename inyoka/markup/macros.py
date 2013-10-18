@@ -26,12 +26,12 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
-from django.utils.translation import ugettext as _
-from inyoka.markup import nodes
-from inyoka.markup.utils import (debug_repr, ArgumentCollector,
-    filter_style)
-from inyoka.utils.dates import parse_iso8601, format_datetime
 
+from django.utils.translation import ugettext as _
+
+from inyoka.markup import nodes
+from inyoka.utils.dates import parse_iso8601, format_datetime
+from inyoka.markup.utils import debug_repr, filter_style, ArgumentCollector
 
 ALL_MACROS = {}
 
@@ -183,8 +183,8 @@ class TableOfContents(TreeMacro):
         self.list_type = list_type
 
     def build_node(self, tree):
-        """Queries for all :cls:`nodes.Headline` nodes and constructs a
-        :cls:`nodes.List` representing the headlines. The optimal result
+        """Queries for all :class:`nodes.Headline` nodes and constructs a
+        :class:`nodes.List` representing the headlines. The optimal result
         will look like::
 
             = Foo1 =
@@ -203,7 +203,7 @@ class TableOfContents(TreeMacro):
 
         But due to some reasons, there are situations where the headlines
         are not used as one would expect. The level is increased by something
-        larger 1 rather than 1::
+        larger than 1::
 
             = Foo1 =
             === Buz1 ===

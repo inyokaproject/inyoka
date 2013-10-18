@@ -10,8 +10,10 @@
 """
 import unittest
 from datetime import datetime, timedelta
+
 from django.test import TestCase
-from inyoka.portal.user import User, Group, reactivate_user, deactivate_user
+
+from inyoka.portal.user import User, Group, deactivate_user, reactivate_user
 
 
 class TestUserModel(TestCase):

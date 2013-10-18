@@ -19,4 +19,4 @@ urlpatterns = patterns('inyoka.pastebin.views',
 )
 
 
-handler404 = 'inyoka.utils.urls.global_not_found'
+handler404 = 'inyoka.utils.http.global_not_found'

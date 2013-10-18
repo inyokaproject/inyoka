@@ -8,27 +8,27 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
+from django.contrib import messages
 from django.db.models import Max
 from django.utils.text import Truncator
-from django.utils.translation import ugettext as _
 from django.utils.html import escape, smart_urlquote
-from django.contrib import messages
+from django.utils.translation import ugettext as _
 
-from inyoka.portal.user import Group
-from inyoka.portal.utils import check_login, require_permission
 from inyoka.utils import generic
 from inyoka.utils.urls import href
+from inyoka.utils.mail import send_mail
 from inyoka.utils.http import templated, does_not_exist_is_404
+from inyoka.portal.user import Group
+from inyoka.utils.feeds import AtomFeed, atom_feed
+from inyoka.utils.dates import group_by_day
+from inyoka.portal.utils import check_login, require_permission
+from inyoka.planet.forms import EditBlogForm, SuggestBlogForm
+from inyoka.planet.models import Blog, Entry
+from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.mail import send_mail
-from inyoka.utils.dates import group_by_day
-from inyoka.utils.storage import storage
-from inyoka.utils.feeds import atom_feed, AtomFeed
-from inyoka.planet.models import Blog, Entry
-from inyoka.planet.forms import SuggestBlogForm, EditBlogForm
 
 
 def context_modifier(request, context):

@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf.urls import patterns, url, include
+from django.conf.urls import include, patterns, url
 
 urlpatterns = patterns('inyoka.portal.views',
     (r'^$', 'index'),
@@ -101,4 +101,4 @@ urlpatterns += patterns('inyoka.portal.views',
     (r'^(?P<pk>[-A-Za-z_]+)/delete/$', 'page_delete'),
 )
 
-handler404 = 'inyoka.utils.urls.global_not_found'
+handler404 = 'inyoka.utils.http.global_not_found'

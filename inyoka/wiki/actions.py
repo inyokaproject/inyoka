@@ -27,26 +27,31 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
 from inyoka.markup import parse, RenderContext
-from inyoka.utils.urls import href, url_for, is_safe_domain
-from inyoka.utils.http import templated, does_not_exist_is_404, \
-    TemplateResponse, AccessDeniedResponse
+from inyoka.wiki.acl import has_privilege, PrivilegeTest, require_privilege
+from inyoka.wiki.tasks import update_object_list
+from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
+from inyoka.utils.http import (
+    templated,
+    TemplateResponse,
+    AccessDeniedResponse,
+    does_not_exist_is_404
+)
+from inyoka.wiki.forms import (
+    PageEditForm,
+    MvBaustelleForm,
+    AddAttachmentForm,
+    EditAttachmentForm,
+    ManageDiscussionForm
+)
+from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
+from inyoka.wiki.models import Page, Revision
 from inyoka.utils.diff3 import merge
+from inyoka.portal.utils import simple_check_login
+from inyoka.portal.models import Subscription
+from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.storage import storage
-from inyoka.utils.text import normalize_pagename, get_pagetitle, join_pagename
-from inyoka.utils.urls import urlencode
-
-from inyoka.portal.models import Subscription
-from inyoka.portal.utils import simple_check_login
-
-from inyoka.wiki.models import Page, Revision
-from inyoka.wiki.forms import PageEditForm, AddAttachmentForm, \
-    EditAttachmentForm, ManageDiscussionForm, MvBaustelleForm
-from inyoka.wiki.acl import require_privilege, has_privilege, PrivilegeTest
 from inyoka.wiki.notifications import send_edit_notifications
-from inyoka.wiki.tasks import update_object_list
-
 
 REVISIONS_PER_PAGE = 100
 

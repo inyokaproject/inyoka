@@ -9,8 +9,11 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from os import path
-from os.path import dirname, join
+from os.path import join, dirname
+
 from django.conf.global_settings import *
+
+import djcelery
 
 gettext_noop = lambda x: x
 
@@ -254,7 +257,6 @@ SENTRY_SITE = 'example.com'
 
 
 # Import and activate django-celery support
-import djcelery
 djcelery.setup_loader()
 
 # Celery broker preferences.
@@ -354,6 +356,8 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = ()
+
+ALLOWED_HOSTS = ['.ubuntuusers.de']
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

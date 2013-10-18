@@ -10,6 +10,7 @@
 """
 import math
 from itertools import groupby as igroupby
+
 from django.contrib.contenttypes.models import ContentType
 
 

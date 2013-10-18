@@ -16,11 +16,12 @@ from urlparse import urlparse
 from django.conf import settings
 from django.http import Http404
 from django.utils.dates import MONTHS, WEEKDAYS
+
+from inyoka.utils.text import get_random_password
 from inyoka.portal.user import User, Group
 from inyoka.ikhaya.models import Event
-from inyoka.utils.text import get_random_password
-from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.captcha import Captcha
+from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.templating import render_template
 
 

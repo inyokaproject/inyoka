@@ -9,6 +9,7 @@
     :license: GNU GPL.
 """
 from django.db import models
+
 from inyoka.utils.database import JSONField
 
 

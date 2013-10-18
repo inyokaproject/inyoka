@@ -21,7 +21,6 @@ from django.utils.encoding import smart_unicode
 
 from inyoka.markup import nodes
 
-
 _newline_re = re.compile(r'(\n)')
 _paragraph_re = re.compile(r'(\s*?\n){2,}')
 
