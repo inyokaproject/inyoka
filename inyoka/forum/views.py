@@ -117,7 +117,7 @@ def forum(request, slug, page=1):
     forum = Forum.objects.get_cached(slug)
     # if the forum is a category we raise Http404. Categories have
     # their own url at /category.
-    if not forum or forum.parent is None:
+    if not forum or forum.parent_id is None:
         raise Http404()
 
     privs = get_privileges(request.user, [forum] + forum.children)
