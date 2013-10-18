@@ -8,13 +8,14 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf.urls import url, patterns
+from django.conf.urls import include, patterns, url
 
 urlpatterns = patterns('inyoka.portal.views',
     (r'^$', 'index'),
     (r'^markup.css', 'markup_styles'),
     (r'^login/$', 'login'),
     (r'^logout/$', 'logout'),
+    (r'auth/', include('social_auth.urls')),
     (r'^search/$', 'search'),
     (r'^users/$', 'memberlist'),
     (r'^users/(?P<page>\d+)/$', 'memberlist'),
@@ -57,7 +58,8 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^map/$', 'usermap'),
     (r'^whoisonline/$', 'whoisonline'),
     (r'^inyoka/$', 'about_inyoka'),
-    (r'^register/$', 'register'),
+    (r'^register/$', 'register', {'external': False}),
+    (r'^register/external/$', 'register', {'external': True}),
     (r'^(?P<action>activate|delete)/(?P<username>[^/]+)/(?P<activation_key>.*?)/$', 'activate'),
     (r'^register/resend/(?P<username>[^/]+)/$', 'resend_activation_mail'),
     (r'^confirm/(?P<action>reactivate_user|set_new_email|reset_email)/$', 'confirm'),
@@ -69,7 +71,6 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^calendar/(?P<year>\d{4})/(?P<month>(0?\d|1[0-2]))/$', 'calendar_month'),
     (r'^calendar/(?P<slug>.*?)/$', 'calendar_detail'),
     (r'^opensearch/(?P<app>[a-z]+)/$', 'open_search'),
-    (r'^openid/(.*)', 'openid_consumer'),
     (r'^config/$', 'config'),
     (r'^styles/$', 'styles'),
     # shortcuts

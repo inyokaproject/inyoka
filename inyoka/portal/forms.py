@@ -92,28 +92,12 @@ SEARCH_AREAS = {
 
 class LoginForm(forms.Form):
     """Simple form for the login dialog"""
-    username = forms.CharField(label=ugettext_lazy(u'Username, email address or OpenID'),
+    username = forms.CharField(label=ugettext_lazy(u'Username or email address'),
         widget=forms.TextInput(attrs={'tabindex': '1'}))
-    password = forms.CharField(label=ugettext_lazy(u'Password'), required=False,
-        widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),
-        help_text=ugettext_lazy(u'Leave this field empty if you are using OpenID.'),)
+    password = forms.CharField(label=ugettext_lazy(u'Password'), required=True,
+        widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}))
     permanent = forms.BooleanField(label=_('Keep logged in'),
         required=False, widget=forms.CheckboxInput(attrs={'tabindex': '1'}))
-
-    def clean(self):
-        data = self.cleaned_data
-        if 'username' in data and not (data['username'].startswith('http://') or \
-         data['username'].startswith('https://')) and data['password'] == '':
-            msg = _(u'This field is required')
-            self._errors['password'] = self.error_class([msg])
-        return data
-
-
-class OpenIDConnectForm(forms.Form):
-    username = forms.CharField(label=ugettext_lazy(u'Username'))
-    password = forms.CharField(label=_('Password'),
-        widget=forms.PasswordInput(render_value=False),
-        required=True)
 
 
 class RegisterForm(forms.Form):
@@ -139,6 +123,13 @@ class RegisterForm(forms.Form):
         widget=forms.PasswordInput(render_value=False))
     captcha = CaptchaField(label=_('CAPTCHA'))
     terms_of_usage = forms.BooleanField()
+
+    def __init__(self, *args, **kwargs):
+        self.external = kwargs.pop('external')
+        super(RegisterForm, self).__init__(*args, **kwargs)
+        if self.external:
+            del self.fields['password']
+            del self.fields['confirm_password']
 
     def clean_username(self):
         """
@@ -168,6 +159,8 @@ class RegisterForm(forms.Form):
         """
         Validates that the two password inputs match.
         """
+        if self.external:
+            return self.cleaned_data
         if 'password' in self.cleaned_data and 'confirm_password' in self.cleaned_data:
             if self.cleaned_data['password'] == self.cleaned_data['confirm_password']:
                 return self.cleaned_data
@@ -382,34 +375,6 @@ class UserCPProfileForm(forms.ModelForm):
         image.save(out, format)
         self.change_avatar = True
         return ContentFile(out.getvalue(), 'avatar.' + format.lower())
-
-    def save(self, request, commit=True):
-        data = self.cleaned_data
-        user = super(UserCPProfileForm, self).save(commit=False)
-
-        # Ensure that we delete the old avatar, otherwise Django will create
-        # a file with a different name.
-        if self.old_avatar and self.change_avatar:
-            default_storage.delete(self.old_avatar)
-
-        if self.admin_mode:
-            user.email = data['email']
-        else:
-            if data['email'] != self.old_email:
-                send_new_email_confirmation(user, data['email'])
-                messages.info(request,
-                    _(u'You’ve been sent an email to confirm your new email '
-                      u'address.'))
-
-        if data['coordinates']:
-            user.coordinates_lat, user.coordinates_long = \
-                data['coordinates']
-        for key in ('show_email', 'show_jabber', 'use_gravatar'):
-            user.settings[key] = data[key]
-
-        if commit:
-            user.save()
-        return user
 
 
 class EditUserProfileForm(UserCPProfileForm):

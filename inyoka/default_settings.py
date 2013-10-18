@@ -213,8 +213,8 @@ INSTALLED_APPS = (
     'inyoka.ikhaya',
     'inyoka.pastebin',
     'inyoka.planet',
+    'social_auth',
     'inyoka.markup',
-    'django_openid',
     'raven.contrib.django',
     'south',
     # *must* be installed after south
@@ -242,7 +242,7 @@ OPENID_PROVIDERS = {
     },
     'google': {
         'name': gettext_noop('Google'),
-        'url': 'https://www.google.com/accounts/o8/id'
+        'url': '/auth/login/google/'
     },
 }
 
@@ -320,6 +320,29 @@ TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
 AUTH_USER_MODEL = 'portal.User'
 AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)
+
+AUTH_USER_MODEL = 'portal.User'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_auth.backends.pipeline.social.social_auth_user',
+    'social_auth.backends.pipeline.misc.save_status_to_session',
+    'inyoka.portal.auth_pipeline.collect_registration_info',
+    'inyoka.portal.auth_pipeline.get_username',
+    'inyoka.portal.auth_pipeline.create_user',
+    'inyoka.portal.auth_pipeline.clear_session',
+    'social_auth.backends.pipeline.social.associate_user',
+)
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_ERROR_MESSAGE = gettext_noop(u'Login via 3rd party failed.')
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.google.GoogleBackend',
+    'social_auth.backends.browserid.BrowserIDBackend',
+    'social_auth.backends.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
