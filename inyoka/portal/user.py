@@ -210,9 +210,11 @@ def set_new_email(id, email):
         'email': user.email,
     }
     text = render_template('mails/reset_email.txt', {
-        'user': user,
-        'new_email': email,
         'data': signing.dumps(data, salt='inyoka.action.reset_email'),
+        'domain': settings.BASE_DOMAIN_NAME,
+        'new_email': email,
+        'reset_link': href('portal', 'confirm', 'reset_email'),
+        'username': user.username,
     })
     subject = _(u'%(sitename)s – Email address changed') % {
         'sitename': settings.BASE_DOMAIN_NAME
