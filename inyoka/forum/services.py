@@ -65,6 +65,7 @@ def on_toggle_categories(request):
     request.user.save(update_fields=('settings',))
     return True
 
+
 def on_toggle_category(request):
     if request.user.is_anonymous:
         return False
@@ -72,7 +73,7 @@ def on_toggle_category(request):
         category_id = int(request.GET.get('id'))
     except TypeError:
         return False
-    hidden_categories = request.user.settings['hidden_forum_categories']
+    hidden_categories = request.user.settings.get('hidden_forum_categories', [])
     state = request.GET.get('state')
     if state == 'hide':
         hidden_categories.append(category_id)
