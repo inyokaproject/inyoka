@@ -1,7 +1,7 @@
 {% trans data=data|indent(4) -%}
 Hello {{ username }},
 
-you have removed your user account from {{ domain }}. To prevent abuse you are able to recreate your account within the next 30 days. 
+you have removed your user account from {{ domain }}. To prevent abuse you are able to recreate your account within the next 30 days.
 
 Please visit {{ link_reactivate }} and enter the following verification code:
 
