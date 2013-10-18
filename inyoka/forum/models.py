@@ -31,36 +31,26 @@ from django.utils.html import escape, format_html
 from django.utils.translation import pgettext, ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 
+from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
+    check_privilege, filter_invisible)
+from inyoka.forum.constants import (DISTRO_CHOICES, POSTS_PER_PAGE,
+    VERSION_CHOICES, CACHE_PAGES_COUNT, SUPPORTED_IMAGE_TYPES,
+    UBUNTU_DISTROS_LEGACY)
 from inyoka.markup import parse, RenderContext
-from inyoka.forum.acl import (
-    CAN_READ,
-    get_privileges,
-    filter_visible,
-    check_privilege,
-    filter_invisible
-)
-from inyoka.utils.urls import href
-from inyoka.utils.files import get_filename
-from inyoka.portal.user import User, Group
-from inyoka.utils.local import current_request
-from inyoka.utils.cache import request_cache
-from inyoka.utils.dates import timedelta_to_seconds
-from inyoka.wiki.models import Page as WikiPage
-from inyoka.utils.search import search
-from inyoka.portal.utils import UBUNTU_VERSIONS
-from inyoka.utils.imaging import get_thumbnail
 from inyoka.portal.models import SearchQueue, Subscription
+from inyoka.portal.user import User, Group
+from inyoka.portal.utils import UBUNTU_VERSIONS
+from inyoka.utils.cache import request_cache
 from inyoka.utils.database import update_model, model_or_none, LockableObject
-from inyoka.utils.highlight import highlight_code
-from inyoka.forum.constants import (
-    DISTRO_CHOICES,
-    POSTS_PER_PAGE,
-    VERSION_CHOICES,
-    CACHE_PAGES_COUNT,
-    SUPPORTED_IMAGE_TYPES,
-    UBUNTU_DISTROS_LEGACY
-)
+from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
+from inyoka.utils.files import get_filename
+from inyoka.utils.highlight import highlight_code
+from inyoka.utils.imaging import get_thumbnail
+from inyoka.utils.local import current_request
+from inyoka.utils.search import search
+from inyoka.utils.urls import href
+from inyoka.wiki.models import Page as WikiPage
 
 _newline_re = re.compile(r'\r?\n')
 

@@ -16,10 +16,10 @@ from django.db import transaction
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy
 
-from inyoka.utils.urls import url_for
+from inyoka.portal.models import SessionInfo
 from inyoka.utils.local import current_request
 from inyoka.utils.storage import storage
-from inyoka.portal.models import SessionInfo
+from inyoka.utils.urls import url_for
 
 SESSION_DELTA = 300
 

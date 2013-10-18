@@ -12,14 +12,15 @@ import re
 from operator import attrgetter
 from datetime import date, time, datetime, timedelta
 
+from django.contrib.humanize.templatetags.humanize import naturalday
 from django.utils import datetime_safe
 from django.utils.dateformat import DateFormat
-from django.utils.translation import ugettext as _
 from django.utils.translation import get_language_from_request
-from django.contrib.humanize.templatetags.humanize import naturalday
-
+from django.utils.translation import ugettext as _
 import pytz
+
 from inyoka.utils.local import current_request
+
 
 TIMEZONES = pytz.common_timezones
 DEFAULT_TIMEZONE = pytz.timezone('Europe/Berlin')

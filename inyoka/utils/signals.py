@@ -11,12 +11,12 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 
-from django.dispatch import receiver
-from django.db.models.signals import pre_delete
 from django.contrib.contenttypes.models import ContentType
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
-from inyoka.portal.models import Subscription
 from inyoka.ikhaya.models import Comment, Article
+from inyoka.portal.models import Subscription
 
 
 @receiver(pre_delete, sender=Article)

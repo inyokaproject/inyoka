@@ -140,12 +140,12 @@ from functools import partial
 from django.utils.translation import ugettext as _
 
 from inyoka.markup import nodes
-from inyoka.utils.urls import href
-from inyoka.markup.lexer import Lexer, escape
-from inyoka.markup.utils import filter_style
-from inyoka.markup.machine import Renderer, RenderContext
 from inyoka.markup.constants import HTML_COLORS
+from inyoka.markup.lexer import Lexer, escape
+from inyoka.markup.machine import Renderer, RenderContext
 from inyoka.markup.transformers import DEFAULT_TRANSFORMERS
+from inyoka.markup.utils import filter_style
+from inyoka.utils.urls import href
 
 __all__ = ['parse', 'render', 'stream', 'escape']
 

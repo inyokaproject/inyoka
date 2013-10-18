@@ -10,8 +10,8 @@
 """
 from datetime import datetime
 
-from inyoka.utils.urls import url_for
 from inyoka.utils.search import search, SearchAdapter
+from inyoka.utils.urls import url_for
 from inyoka.ikhaya.models import Article
 
 

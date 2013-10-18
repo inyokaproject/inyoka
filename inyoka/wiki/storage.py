@@ -45,10 +45,11 @@ from collections import OrderedDict
 
 from django.conf import settings
 
-from inyoka.utils.user import normalize_username
-from inyoka.utils.text import normalize_pagename
-from inyoka.wiki.models import Page, MetaData
 from inyoka.utils.cache import request_cache
+from inyoka.utils.text import normalize_pagename
+from inyoka.utils.user import normalize_username
+from inyoka.wiki.models import Page, MetaData
+
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
 

@@ -17,22 +17,23 @@ from hashlib import sha1
 from functools import partial
 from itertools import izip
 
-from werkzeug import url_unquote
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.encoding import force_unicode
 from django.utils.translation import activate
 from django.template.defaultfilters import date
+from werkzeug import url_unquote
 
-from bs4 import BeautifulSoup
-from inyoka.wiki.acl import has_privilege
-from inyoka.utils.urls import href
-from inyoka.utils.text import normalize_pagename
-from inyoka.utils.http import templated
-from inyoka.wiki.models import Page
 from inyoka.portal.user import User
+from inyoka.utils.http import templated
 from inyoka.utils.storage import storage
-from inyoka.utils.terminal import percentize, ProgressBar
 from inyoka.utils.templating import Breadcrumb
+from inyoka.utils.terminal import percentize, ProgressBar
+from inyoka.utils.text import normalize_pagename
+from inyoka.utils.urls import href
+from inyoka.wiki.acl import has_privilege
+from inyoka.wiki.models import Page
+
 
 FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False

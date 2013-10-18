@@ -14,9 +14,9 @@ from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy
 
-from inyoka.utils.urls import href, is_safe_domain
 from inyoka.portal.user import User
 from inyoka.utils.highlight import highlight_code
+from inyoka.utils.urls import href, is_safe_domain
 
 
 class Entry(models.Model):
