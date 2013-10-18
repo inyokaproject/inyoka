@@ -1,0 +1,50 @@
+{% extends 'ikhaya/base.html' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ href('ikhaya') }}">{% trans %}News{% endtrans %}</a></li>
+  <li class="active">{{ article.subject }}</li>
+{% endblock %}
+
+{% block content %}
+  <h3>{{ article.subject }}</h3>
+  <div class="well">{{ article.rendered_intro }}</div>
+  <p>{{ article.rendered_text }}</p>
+  <div class="text-muted well">
+    <small>
+      <div class="pull-left">
+        {{ article.pub_datetime|datetimeformat }} |
+        {% trans link=article.author|url, author=article.author.username|e %}
+          Published by <a href="{{ link }}">{{ author }}</a>
+        {% endtrans %}
+      </div>
+      <div class="text-right">
+        {% trans %}Category:{% endtrans %}
+        <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
+      </div>
+      {% if article.updated > article.pub_datetime %}
+        <div>
+          {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }}
+        </div>
+      {% endif %}
+    </small>
+  </div>
+  <div class="btn-group btn-group-sm">
+    {% if can_subscribe and article.comments_enabled %}
+      {% if is_subscribed %}
+        <a href="{{ article|url('unsubscribe') }}" class="btn btn-default">
+          {% trans %}Unsubscribe comments{% endtrans %}
+        </a>
+      {% else %}
+        <a href="{{ article|url('subscribe') }}" class="btn btn-default">
+          {% trans %}Subscribe comments{% endtrans %}
+        </a>
+      {% endif %}
+    {% endif %}
+    <a href="{{ article|url('reports') }}" class="btn btn-default">
+      {% trans %}Report misspelling{% endtrans %}
+    </a>
+    {% if can_edit_article %}
+      <a href="{{ article|url('edit') }}" class="btn btn-danger">{% trans %}Edit{% endtrans %}</a>
+    {% endif %}
+  </div>
+{% endblock %}

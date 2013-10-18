@@ -1,7 +1,7 @@
 {% extends 'forum/base.html' %}
 
 {% block breadcrumb %}
-  <li><a href="{{ href('forum') }}">Forum</a></li>
+  <li><a href="{{ href('forum') }}">{% block trans %}Forum{% endblock %}</a></li>
   {% if topic.forum.parent.parent %}
     <li>…</li>
   {% endif %}

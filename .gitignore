@@ -13,3 +13,5 @@ inyoka/*/static/*/style/*.css
 *-sprite*.less
 *.db
 bootstrap.py
+
+node_modules
