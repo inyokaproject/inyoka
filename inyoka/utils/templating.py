@@ -97,13 +97,15 @@ class Breadcrumb(object):
             return u' › '.join(result)
         elif target == 'appheader':
             if len(self.path) < 2:
-                return render_template('appheader.html', {'fallback': True})
-            return render_template('appheader.html', {
-                'h1_text': self.path[1][0],
-                'h1_link': self.path[1][1],
-                'h2_text': self.path[-1][0],
-                'h2_link': self.path[-1][1],
-            })
+                context = {'fallback': True}
+            else:
+                context = {
+                    'h1_text': self.path[1][0],
+                    'h1_link': self.path[1][1],
+                    'h2_text': self.path[-1][0],
+                    'h2_link': self.path[-1][1],
+                }
+            return render_template('appheader.html', context, populate_defaults=False)
         elif target == 'title':
             return u' › '.join(i[0] for i in self.path[::-1] if i[2])
 
@@ -223,11 +225,11 @@ def load_template(template_name):
     return tmpl
 
 
-def render_template(template_name, context, flash=False):
+def render_template(template_name, context, flash=False,
+                    populate_defaults=True):
     """Render a template.  You might want to set `req` to `None`."""
     tmpl = load_template(template_name)
-    populate_context_defaults(context, flash=flash)
-    return tmpl.render(context)
+    return tmpl.render(context, flash, populate_defaults)
 
 
 def render_string(source, context):
@@ -269,7 +271,7 @@ def json_filter(value):
 
 
 class JinjaTemplate(Template):
-    def render(self, context):
+    def render(self, context, flash=False, populate_defaults=True):
         context = {} if context is None else context
         if isinstance(context, DjangoContext):
             c = context
@@ -277,7 +279,8 @@ class JinjaTemplate(Template):
             for d in c.dicts:
                 context.update(d)
             context.pop('csrf_token', None)  # We have our own...
-        populate_context_defaults(context)
+        if populate_defaults:
+            populate_context_defaults(context, flash)
         return super(JinjaTemplate, self).render(context)
 
 
