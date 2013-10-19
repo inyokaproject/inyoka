@@ -121,16 +121,6 @@ def datetime_to_timezone(dt, enforce_utc=False):
     return datetime_safe.new_datetime(dt.astimezone(tz))
 
 
-def datetime_to_naive_utc(dt):
-    """
-    Convert a datetime object with a timezone information into a datetime
-    object without timezone information in UTC timezone.  If the object
-    did not contain a timezone information it's returned unchainged.
-    """
-    if dt.tzinfo is None:
-        return dt
-    return datetime_safe.new_datetime(dt.astimezone(pytz.UTC).replace(tzinfo=None))
-
 date_time_to_datetime = datetime.combine
 
 
