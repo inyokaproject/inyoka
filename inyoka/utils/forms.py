@@ -251,7 +251,7 @@ class ImageCaptchaField(forms.Field):
                 value = value.encode('utf-8')
             if value:
                 h.update(value)
-            if h.digest() == solution:
+            if h.hexdigest() == solution:
                 return True
         raise forms.ValidationError(_(u'The entered CAPTCHA was incorrect.'))
 

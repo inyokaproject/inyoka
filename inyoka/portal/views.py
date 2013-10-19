@@ -59,9 +59,8 @@ from inyoka.portal.models import (StaticPage, StaticFile, Subscription,
 from inyoka.portal.user import (User, Group, UserData, UserBanned, reset_email,
     set_new_email, deactivate_user, reactivate_user, PERMISSION_NAMES,
     send_activation_mail)
-from inyoka.portal.utils import (check_login, UBUNTU_VERSIONS, UbuntuVersionList,
-    require_permission, google_calendarize, abort_access_denied,
-    calendar_entries_for_month)
+from inyoka.portal.utils import (abort_access_denied, calendar_entries_for_month,
+    check_login, get_ubuntu_versions, google_calendarize, require_permission)
 from inyoka.utils import generic
 from inyoka.utils.dates import DEFAULT_TIMEZONE, get_user_timezone, find_best_timezone
 from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
@@ -659,7 +658,7 @@ def usercp_settings(request):
             new_versions = data.pop('ubuntu_version')
             old_versions = [s.ubuntu_version for s in Subscription.objects \
                           .filter(user=request.user).exclude(ubuntu_version__isnull=True)]
-            for version in [v.number for v in UBUNTU_VERSIONS]:
+            for version in [v.number for v in get_ubuntu_versions()]:
                 if version in new_versions and version not in old_versions:
                     Subscription(user=request.user, ubuntu_version=version).save()
                 elif version not in new_versions and version in old_versions:
@@ -931,7 +930,7 @@ def user_edit_settings(request, username):
             new_versions = data.pop('ubuntu_version')
             old_versions = [s.ubuntu_version for s in Subscription.objects \
                           .filter(user=user).exclude(ubuntu_version__isnull=True)]
-            for version in [v.number for v in UBUNTU_VERSIONS]:
+            for version in [v.number for v in get_ubuntu_versions()]:
                 if version in new_versions and version not in old_versions:
                     Subscription(user=user, ubuntu_version=version).save()
                 elif version not in new_versions and version in old_versions:
@@ -1949,7 +1948,7 @@ def config(request):
     return {
         'form': form,
         'team_icon_url': team_icon and href('media', team_icon) or None,
-        'versions': list(sorted(UbuntuVersionList())),
+        'versions': get_ubuntu_versions(),
     }
 
 

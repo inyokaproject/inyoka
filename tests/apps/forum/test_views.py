@@ -362,7 +362,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
             'text': 'newpost text',
         }
         response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0)
@@ -393,7 +393,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
             'text': 'newpost text',
             'attachments': str(att.pk),
         }
@@ -444,7 +444,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
             'text': 'newpost text',
             'attachments': '%d,%d' % (att1.pk, att2.pk),
         }
@@ -478,7 +478,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
             'text': 'newpost text',
             'polls': str(poll.pk),
         }
@@ -527,7 +527,7 @@ class TestPostEditView(TestCase):
         # Test preview
         postdata = {
             'title': 'newpost_title',
-            'ubuntu_distro': constants.DISTRO_CHOICES[2][0],
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
             'text': 'newpost text',
             'polls': '%d,%d' % (poll1.pk, poll2.pk),
         }

@@ -16,7 +16,7 @@ from django.http import HttpResponse
 from django.utils.datastructures import MultiValueDictKeyError
 
 from inyoka.forum.acl import have_privilege, check_privilege, get_forum_privileges
-from inyoka.portal.utils import UBUNTU_VERSIONS, abort_access_denied
+from inyoka.portal.utils import abort_access_denied, get_ubuntu_versions
 from inyoka.forum.models import Post, Topic, Forum
 from inyoka.portal.models import Subscription
 from inyoka.utils.services import never_cache, permit_methods, SimpleDispatcher
@@ -113,7 +113,7 @@ def on_change_status(request, solved=None):
 def on_get_version_details(request):
     try:
         version = request.GET['version']
-        obj = [x for x in UBUNTU_VERSIONS if x.number == version][0]
+        obj = [x for x in get_ubuntu_versions() if x.number == version][0]
     except (IndexError, KeyError, MultiValueDictKeyError):
         return {}
 

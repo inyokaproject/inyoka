@@ -49,10 +49,12 @@ class SubscriptionManager(gmodels.ContentTypeManager):
             return False
         filter = self._get_filter(user, object, ctype_query)
 
-        subscribed = Subscription.objects.filter(**filter).exists()
-        if clear_notified and subscribed:
+        notifies = Subscription.objects.filter(**filter)\
+                                       .values_list('notified', flat=True)[:1]
+        notified = notifies and notifies[0] == True
+        if clear_notified and notified:
             Subscription.objects.filter(**filter).update(notified=False)
-        return subscribed
+        return bool(notifies)
 
     def get_for_user(self, user, object, ctype_query=None):
         filter = self._get_filter(user, object, ctype_query)

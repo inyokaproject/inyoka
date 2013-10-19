@@ -206,28 +206,17 @@ class UbuntuVersion(object):
         return json.dumps(data)
 
 
-class UbuntuVersionList(set):
-    """
-    This class holds a set of :py:class:`UbuntuVersion`. We are using a set to
-    avoid duplicate entries. But accessing this class with all its version
-    should be done by :py:data:`UBUNTU_VERSIONS`.
-    """
-
-    # TODO: Get rid of this shit.
-    def __init__(self, data=u''):
-        super(set, self).__init__()
-        #: we need that try-except block to avoid failing `./manage syncdb`
-        sid = transaction.savepoint()
-        try:
-            value = data or storage['distri_versions']
-            jsonobjs = json.loads(value)
-            for obj in jsonobjs:
-                version = UbuntuVersion(**obj)
-                self.add(version)
-        except:
-            transaction.savepoint_rollback(sid)
-        else:
-            transaction.savepoint_commit(sid)
-
-
-UBUNTU_VERSIONS = list(sorted(UbuntuVersionList()))
+def get_ubuntu_versions():
+    #: we need that try-except block to avoid failing `./manage syncdb`
+    sid = transaction.savepoint()
+    versions = set([])
+    try:
+        jsonobjs = json.loads(storage['distri_versions'])
+        for obj in jsonobjs:
+            version = UbuntuVersion(**obj)
+            versions.add(version)
+    except:
+        transaction.savepoint_rollback(sid)
+    else:
+        transaction.savepoint_commit(sid)
+    return sorted(versions)
