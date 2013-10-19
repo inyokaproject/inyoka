@@ -12,7 +12,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from inyoka.forum.models import Post, Topic, Forum, Attachment
 from inyoka.portal.user import User
@@ -151,14 +150,12 @@ class TestPostModel(TestCase):
         self.topic = Topic(title='topic', author=self.user)
         self.forum.topics.add(self.topic)
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_url_for_post(self):
         post = Post(text=u'test1', author=self.user)
         self.topic.posts.add(post)
         self.assertEqual(Post.url_for_post(post.pk),
                          'http://forum.inyoka.local/topic/topic/#post-%s' % post.pk)
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_url_for_post_multiple_pages(self):
         posts = []
         for idx in xrange(45):

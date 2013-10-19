@@ -32,7 +32,6 @@ from inyoka.utils.test import InyokaClient
 
 class TestForumViews(TestCase):
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_forum_index(self):
         client = Client(HTTP_HOST='forum.inyoka.local')
         resp = client.get('/')

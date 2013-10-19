@@ -12,7 +12,6 @@ import json
 
 from django.core import mail
 from django.test import TestCase
-from django.test.utils import override_settings
 from django.utils import translation
 
 from mock import patch
@@ -31,14 +30,13 @@ def patched_signing_dumps(obj, **kwargs):
 class TestNotifications(TestCase):
 
     def setUp(self):
-        self.user = User.objects.register_user('MyName', 'user@example.com', 'MyPass', False)
         self.maxDiff = None
+        self.user = User.objects.register_user('MyName', 'user@example.com', 'MyPass', False)
 
     def tearDown(self):
         # Make sure to clean the mail outbox after each test
         mail.outbox = []
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     @patch('django.core.signing.dumps', patched_signing_dumps)
     def test_deactivate_user_en(self):
         self.assertEqual(len(mail.outbox), 0)
@@ -61,7 +59,6 @@ Your inyoka.local team''' % self.user.pk
         self.assertEqual(mail1.to, [u'user@example.com'])
         self.assertEqual(mail1.subject, u'Deactivation of your account “MyName” on inyoka.local')
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     @patch('django.core.signing.dumps', patched_signing_dumps)
     def test_deactivate_user_de(self):
         with translation.override('de'):
@@ -81,7 +78,6 @@ Dein Team von inyoka.local''' % self.user.pk
         self.assertEqual(mail1.to, [u'user@example.com'])
         self.assertEqual(mail1.subject, u'Deaktivierung deines Kontos „MyName“ auf inyoka.local')
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     @patch('django.core.signing.dumps', patched_signing_dumps)
     def test_send_new_email_confirmation_en(self):
         self.assertEqual(len(mail.outbox), 0)
@@ -104,7 +100,6 @@ Your inyoka.local team''' % self.user.pk
         self.assertEqual(mail1.to, [u'new-mail@example.com'])
         self.assertEqual(mail1.subject, u'inyoka.local – Confirm email address')
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     @patch('django.core.signing.dumps', patched_signing_dumps)
     def test_send_new_email_confirmation_de(self):
         with translation.override('de'):
@@ -126,7 +121,6 @@ Dein Team von inyoka.local''' % self.user.pk
         self.assertEqual(mail1.to, [u'new-mail@example.com'])
         self.assertEqual(mail1.subject, u'inyoka.local – E-Mail Adresse bestätigen')
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     @patch('django.core.signing.dumps', patched_signing_dumps)
     def test_set_new_email_en(self):
         self.assertEqual(len(mail.outbox), 0)
@@ -151,7 +145,6 @@ Your inyoka.local team''' % self.user.pk
         self.assertEqual(mail1.to, [u'user@example.com'])
         self.assertEqual(mail1.subject, u'inyoka.local – Email address changed')
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     @patch('django.core.signing.dumps', patched_signing_dumps)
     def test_set_new_email_de(self):
         with translation.override('de'):
@@ -173,7 +166,6 @@ Dein Team von inyoka.local''' % self.user.pk
         self.assertEqual(mail1.to, [u'user@example.com'])
         self.assertEqual(mail1.subject, u'inyoka.local – E-Mail Adresse geändert')
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     @patch('inyoka.portal.user.gen_activation_key', lambda x: 'a1b2c3')
     def test_send_activation_mail_en(self):
         with translation.override('en-us'):
@@ -203,7 +195,6 @@ Your inyoka.local team'''
         self.assertEqual(mail1.to, [u'user@example.com'])
         self.assertEqual(mail1.subject, u'inyoka.local – Activation of the user “MyName”')
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     @patch('inyoka.portal.user.gen_activation_key', lambda x: 'a1b2c3')
     def test_send_activation_mail_de(self):
         with translation.override('de'):
@@ -232,3 +223,4 @@ Dein Team von inyoka.local'''
         self.assertEqual(body, mail1.body)
         self.assertEqual(mail1.to, [u'user@example.com'])
         self.assertEqual(mail1.subject, u'inyoka.local – Aktivierung des Benutzers „MyName“')
+
