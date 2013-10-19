@@ -576,3 +576,17 @@ class Event(models.Model):
                                       or '%g_W' % -self.location_long
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
                '=de&params=%s_%s' % (lat, long)
+
+    def _construct_datetimes(self, day, time):
+        if not day:
+            day = datetime.utcnow().date()
+        return datetime_to_timezone(datetime.combine(day, time))
+
+    @property
+    def startdatetime(self):
+        return self._construct_datetimes(self.date, self.time)
+
+    @property
+    def enddatetime(self):
+        return self._construct_datetimes(self.enddate or self.date, self.endtime)
+

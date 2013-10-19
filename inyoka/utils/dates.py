@@ -12,11 +12,10 @@ import re
 from operator import attrgetter
 from datetime import date, time, datetime, timedelta
 
-from django.contrib.humanize.templatetags.humanize import naturalday
+from django.contrib.humanize.templatetags.humanize import naturalday as djnaturalday
+from django.template import defaultfilters
 from django.utils import datetime_safe
-from django.utils.dateformat import DateFormat
 from django.utils.translation import get_language_from_request
-from django.utils.translation import ugettext as _
 import pytz
 
 from inyoka.utils.local import current_request
@@ -32,6 +31,12 @@ _iso8601_re = re.compile(
     # time
     r'(?:T(\d{2}):(\d{2})(?::(\d{2}(?:\.\d+)?))?(Z?|[+-]\d{2}:\d{2})?)?$'
 )
+
+
+naturalday = lambda value, arg='DATE_FORMAT': djnaturalday(value, arg)
+format_date = lambda value, arg='DATE_FORMAT': defaultfilters.date(value, arg)
+format_datetime = lambda value, arg='DATETIME_FORMAT': defaultfilters.date(value, arg)
+format_time = lambda value, arg='TIME_FORMAT': defaultfilters.time(value, arg)
 
 
 def group_by_day(entries, date_func=attrgetter('pub_date'),
@@ -174,36 +179,3 @@ def timedelta_to_seconds(t):
     Convert a datetime.timedelta to Seconds.
     """
     return t.days * 86400 + t.seconds
-
-
-def format_time(value, day=None, daytime=False):
-    """Format a datetime object for time."""
-    if isinstance(value, time) and not day:
-        value = datetime.combine(datetime.utcnow().date(), value)
-    elif day:
-        value = datetime.combine(day, value)
-    value = datetime_to_timezone(value)
-
-    # WTF is daytime doing?!
-    format = 'H:i a' if daytime else 'H:i'
-    return DateFormat(value).format(format)
-
-
-def format_datetime(value):
-    """Just format a datetime object."""
-    value = datetime_to_timezone(value)
-    rv = DateFormat(value).format('j. F Y H:i')
-    return rv
-
-
-def format_specific_datetime(value):
-    """
-    Use German grammar to format a datetime object for a
-    specific datetime.
-    """
-    if not isinstance(value, datetime):
-        value = datetime(value.year, value.month, value.day)
-
-    return _(u'%(date)s at %(time)s') % {
-        'date': naturalday(value),
-        'time': format_time(value, daytime=True)}

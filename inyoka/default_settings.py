@@ -337,5 +337,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ()
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 
+FORMAT_MODULE_PATH = 'inyoka.locale'
+
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

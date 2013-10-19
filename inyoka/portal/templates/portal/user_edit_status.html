@@ -22,10 +22,10 @@
       {{ form.non_field_errors() }}
       <dt>{{ form.status.label_tag() }}:</dt>
       <dd>{{ form.status }} {{ form.errors.status }}
-        <div class="note">{% trans date=user.last_login|datetimeformat -%}
+        <div class="note">{% trans date=user.last_login|datetime -%}
           Last login: {{ date }}
         {%- endtrans %}</div>
-        <div class="note">{% trans date=user.date_joined|datetimeformat -%}
+        <div class="note">{% trans date=user.date_joined|datetime -%}
           Member since: {{ date }}
         {%- endtrans %}</div>
         <div class="note">

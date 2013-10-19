@@ -38,7 +38,7 @@
     {%- if message %}
       <h3>{% trans name=message.author|e %}Message from {{ name }}{% endtrans %}</h3>
       <div class="meta">
-        {{ message.pub_date|datetimeformat }} |
+        {{ message.pub_date|datetime }} |
         {% if message.recipients|length > 1 %}
           {% trans %}To:{% endtrans %}
           {% for recipient in message.recipients %}
