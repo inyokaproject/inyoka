@@ -1233,6 +1233,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                             len(d['delete']))
             messages.success(request, msg % {'n': len(d['delete'])})
             entries = filter(lambda s: str(s.id) not in d['delete'], entries)
+            cache.delete('portal/pm_count/%s' % request.user.id)
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
 
