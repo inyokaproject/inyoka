@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-08-18 15:47+0200\n"
+"POT-Creation-Date: 2013-10-19 16:33+0200\n"
 "PO-Revision-Date: 2012-11-03 12:49+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -206,16 +206,11 @@ msgstr "Das könnte daran liegen, dass du nicht angemeldet bist."
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: inyoka/utils/dates.py:204
-#, python-format
-msgid "%(date)s at %(time)s"
-msgstr "%(date)s um %(time)s"
-
-#: inyoka/utils/diff3.py:374
+#: inyoka/utils/diff3.py:373
 msgid "Old"
 msgstr "Alt"
 
-#: inyoka/utils/diff3.py:374
+#: inyoka/utils/diff3.py:373
 msgid "New"
 msgstr "Neu"
 
@@ -231,33 +226,33 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: inyoka/utils/forms.py:51
+#: inyoka/utils/forms.py:52
 msgid "Text must not be empty"
 msgstr "Text darf nicht leer sein"
 
-#: inyoka/utils/forms.py:62
+#: inyoka/utils/forms.py:63
 msgid "Your signature contains illegal elements"
 msgstr "Deine Signatur enthält ungültige Elemente"
 
-#: inyoka/utils/forms.py:67
+#: inyoka/utils/forms.py:68
 msgid "Your signature contains too many nested elements"
 msgstr "Deine Signatur enthält zu viele verschachtelte Elemente"
 
-#: inyoka/utils/forms.py:72
+#: inyoka/utils/forms.py:73
 #, python-format
 msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
 
-#: inyoka/utils/forms.py:76
+#: inyoka/utils/forms.py:77
 #, python-format
 msgid "Your signature can only contain up to %(num)d lines"
 msgstr "Deine Signatur darf nicht mehr als %(num)d Zeilen haben"
 
-#: inyoka/utils/forms.py:127
+#: inyoka/utils/forms.py:128
 msgid "This user does not exist"
 msgstr "Diesen Benutzer gibt es nicht"
 
-#: inyoka/utils/forms.py:181
+#: inyoka/utils/forms.py:182
 msgid ""
 "The entered e-mail address belongs to a e-mail provider we had to block "
 "because of SPAM problems. Please choose another e-mail address"
@@ -265,13 +260,13 @@ msgstr ""
 "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir "
 "wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
 
-#: inyoka/utils/forms.py:194
+#: inyoka/utils/forms.py:195
 msgid "The entered Jabber address is invalid. Please check your input."
 msgstr ""
 "Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die "
 "Eingabe."
 
-#: inyoka/utils/forms.py:220
+#: inyoka/utils/forms.py:221
 msgid ""
 "You have entered an invisible field and were therefore classified as a "
 "bot."
@@ -279,44 +274,44 @@ msgstr ""
 "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot "
 "identifiziert."
 
-#: inyoka/utils/forms.py:231
+#: inyoka/utils/forms.py:232
 msgid "CAPTCHA"
 msgstr "CAPTCHA"
 
-#: inyoka/utils/forms.py:232
+#: inyoka/utils/forms.py:233
 msgid "Please type in the code from the graphic above"
 msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
 
-#: inyoka/utils/forms.py:234
+#: inyoka/utils/forms.py:235
 msgid "Generate new code"
 msgstr "Neue Zeichenfolge generieren"
 
-#: inyoka/utils/forms.py:256
+#: inyoka/utils/forms.py:257
 msgid "The entered CAPTCHA was incorrect."
 msgstr "Die Eingabe des Captchas war nicht korrekt."
 
-#: inyoka/utils/generic.py:28
+#: inyoka/utils/generic.py:29
 msgid "Errors occurred, please fix them."
 msgstr "Bitte die aufgetretenen Fehler beheben."
 
-#: inyoka/utils/generic.py:58
+#: inyoka/utils/generic.py:59
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
 
-#: inyoka/utils/generic.py:60
+#: inyoka/utils/generic.py:61
 msgid "{verbose_name} “{object_name}” was successfully changed."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
-#: inyoka/utils/generic.py:174
+#: inyoka/utils/generic.py:175
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
 msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
 
-#: inyoka/utils/generic.py:201
+#: inyoka/utils/generic.py:202
 msgid "{verbose_name} “{object_name}” was deleted successfully!"
 msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
 
-#: inyoka/utils/generic.py:219
+#: inyoka/utils/generic.py:220
 msgid "Canceled."
 msgstr "Abgebrochen."
 
@@ -334,7 +329,7 @@ msgstr "« Zurück"
 msgid "Page"
 msgstr "Seite"
 
-#: inyoka/utils/sessions.py:82
+#: inyoka/utils/sessions.py:83
 msgid ""
 "You cannot send data that fast in a row. Please wait a bit until you "
 "submit the form again."
@@ -347,46 +342,49 @@ msgstr ""
 msgid "The chosen sort value (“%(value)s”) is not available"
 msgstr "Der ausgewählte Wert („%(value)s“) ist nicht verfügbar"
 
-#: inyoka/utils/text.py:179
+#: inyoka/utils/text.py:143
 msgid "ten"
 msgstr "zehn"
 
-#: inyoka/utils/text.py:181
+#: inyoka/utils/text.py:145
 msgid "eleven"
 msgstr "elf"
 
-#: inyoka/utils/text.py:183
+#: inyoka/utils/text.py:147
 msgid "twelve"
 msgstr "zwölf"
 
-#: inyoka/utils/text.py:186
+#: inyoka/utils/text.py:150
 msgctxt "masculine"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:187
+#: inyoka/utils/text.py:151
 msgctxt "feminine"
 msgid "one"
 msgstr "eine"
 
-#: inyoka/utils/text.py:188
+#: inyoka/utils/text.py:152
 msgctxt "neuter"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:189
+#: inyoka/utils/text.py:153
 msgid "one"
 msgstr "eins"
 
-#: inyoka/middlewares/auth.py:36
+#: inyoka/middlewares/auth.py:34
 #, python-format
 msgid "The user “%(name)s” was banned. Your session has ended."
 msgstr "Der Benutzer „%(name)s“ wurde gesperrt und dadurch deine Sitzung beendet"
 
-#: inyoka/middlewares/auth.py:40
+#: inyoka/middlewares/auth.py:38
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
 msgstr ""
 "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum "
 "abgemelet."
+
+#~ msgid "%(date)s at %(time)s"
+#~ msgstr "%(date)s um %(time)s"
 
