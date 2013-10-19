@@ -16,7 +16,7 @@ from datetime import date, datetime, timedelta
 from collections import OrderedDict
 
 from django.conf import settings
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ungettext
 
 from inyoka.markup import nodes, macros
 from inyoka.markup.parsertools import MultiMap, flatten_iterator
