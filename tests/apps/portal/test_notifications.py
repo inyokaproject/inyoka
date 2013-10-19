@@ -10,7 +10,6 @@
 """
 import json
 
-from django.conf import settings
 from django.core import mail
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -18,7 +17,7 @@ from django.utils import translation
 
 from mock import patch
 
-from inyoka.portal.user import (deactivate_user, set_new_email,
+from inyoka.portal.user import (deactivate_user, send_activation_mail, set_new_email,
     send_new_email_confirmation, User)
 
 
@@ -174,3 +173,62 @@ Dein Team von inyoka.local''' % self.user.pk
         self.assertEqual(mail1.to, [u'user@example.com'])
         self.assertEqual(mail1.subject, u'inyoka.local – E-Mail Adresse geändert')
 
+    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
+    @patch('inyoka.portal.user.gen_activation_key', lambda x: 'a1b2c3')
+    def test_send_activation_mail_en(self):
+        with translation.override('en-us'):
+            send_activation_mail(self.user)
+
+        mail1 = mail.outbox[0]
+        body = u'''Hello MyName,
+
+welcome to inyoka.local!
+
+Someone created an account using this email address (user@example.com) for account activation.
+
+The account is still deactivated. To activate visit the following link: http://inyoka.local/activate/MyName/a1b2c3/
+
+If you haven't registered the account yourself you can remove the account by visiting http://inyoka.local/delete/MyName/a1b2c3/
+
+Due to security reasons we do not send your password as part of this email. We neither store the password in plain text in our database. Though, if you forget it someday we are only able to send you a new password.
+
+NOTICE: Nobody will ever ask you for your password! Neither via email nor private message nor using any other contact form! Do not share the password with someone else!
+
+As accepted during the registration process, every post you create at inyoka.local is licensed under http://inyoka.local/lizenz/
+
+Kind regards and thank your for your participation.
+
+Your inyoka.local team'''
+        self.assertEqual(body, mail1.body)
+        self.assertEqual(mail1.to, [u'user@example.com'])
+        self.assertEqual(mail1.subject, u'inyoka.local – Activation of the user “MyName”')
+
+    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
+    @patch('inyoka.portal.user.gen_activation_key', lambda x: 'a1b2c3')
+    def test_send_activation_mail_de(self):
+        with translation.override('de'):
+            send_activation_mail(self.user)
+
+        mail1 = mail.outbox[0]
+        body = u'''Hallo MyName,
+
+herzlich Willkommen bei inyoka.local!
+
+Es wurde ein Benutzerkonto registriert, und diese E-Mail-Adresse (user@example.com) für die Bestätigung ausgewählt.
+
+Das oben angesprochene Benutzerkonto ist im Moment inaktiv. Du kannst es erst benutzen, wenn du es durch Klicken auf folgenden Link aktiviert hast: http://inyoka.local/activate/MyName/a1b2c3/
+
+Solltest du dieses Benutzerkonto nicht registriert haben, kannst du es unter folgendem Link wieder löschen: http://inyoka.local/delete/MyName/a1b2c3/
+
+Aus Sicherheitsgründen schicken wir Dir Dein Passwort in dieser E-Mail nicht mit und speichern dieses auch nicht im Klartext in unserer Datenbank. Wenn Du es vergisst, können wir Dir also nur ein neues schicken.
+
+Wichtiger Hinweis: Niemand wird Dich jemals (egal ob per E-Mail oder einer Privatnachricht oder sonst wie) nach Deinem Passwort fragen. Bitte halte dieses geheim und gib es nicht weiter!
+
+Wenn Du selber Beiträge erstellst, unterliegen diese den Lizenzbedingungen von inyoka.local: http://inyoka.local/lizenz/
+
+Vielen Dank für Deine Anmeldung!
+
+Dein Team von inyoka.local'''
+        self.assertEqual(body, mail1.body)
+        self.assertEqual(mail1.to, [u'user@example.com'])
+        self.assertEqual(mail1.subject, u'inyoka.local – Aktivierung des Benutzers „MyName“')
