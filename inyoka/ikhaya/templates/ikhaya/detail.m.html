@@ -15,7 +15,7 @@
   <article>
     <h2 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h2>
     <span class="meta">
-      <span class="date">{{ article.pub_datetime|datetimeformat }}</span> |
+      <span class="date">{{ article.pub_datetime|datetime }}</span> |
       <span class="author">
         {%- trans link=article.author|url, author=article.author.username|e -%}
           Published by <a href="{{ link }}">{{ author }}</a>
@@ -39,7 +39,7 @@
         {% if not comment.deleted %}
           <div class="comment" id="comment_{{ loop.index }}">
             <p class="meta">
-              <span class="right">{{ comment.pub_date|datetimeformat }}</span>
+              <span class="right">{{ comment.pub_date|datetime }}</span>
               <span class="left">
                 <a href="#comment_{{ loop.index }}"><strong>{{ loop.index }}.</strong></a>
                 <a href="{{ comment.author|url }}">{{ comment.author.username|e }}</a></span>

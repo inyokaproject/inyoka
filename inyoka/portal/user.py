@@ -26,6 +26,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 
 from inyoka.markup import parse, render, RenderContext
 from inyoka.utils.database import JSONField, update_model
+from inyoka.utils.dates import DEFAULT_TIMEZONE
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.local import current_request
@@ -652,10 +653,12 @@ class UserData(models.Model):
     value = models.CharField(max_length=255)
 
 
-# TODO: The original signal can get reused as soon as we turn USE_TZ on.
 @receiver(user_logged_in)
 def update_user_flags(sender, request, user, **kwargs):
     user.last_login = datetime.utcnow()
     user.save(update_fields=['last_login'])
+    tz = user.settings.get('timezone')
+    if tz and tz != DEFAULT_TIMEZONE:
+        request.session['django_timezone'] = tz
 
 user_logged_in.disconnect(update_last_login)
