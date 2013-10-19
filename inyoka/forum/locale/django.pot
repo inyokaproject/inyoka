@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-10-19 16:18+0200\n"
+"POT-Creation-Date: 2013-08-18 15:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -201,6 +201,18 @@ msgstr ""
 
 #: inyoka/forum/models.py:929
 msgid "Pictures"
+msgstr ""
+
+#: inyoka/forum/models.py:1135
+#, python-format
+msgctxt "Link text to an image attachment"
+msgid "View %(name)s"
+msgstr ""
+
+#: inyoka/forum/models.py:1148
+#, python-format
+msgctxt "Link text to download an attachment"
+msgid "Download %(name)s"
 msgstr ""
 
 #: inyoka/forum/notifications.py:40

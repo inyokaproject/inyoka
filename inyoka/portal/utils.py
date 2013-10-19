@@ -12,16 +12,17 @@ import json
 import calendar
 from datetime import date, time
 
-from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.utils.http import urlquote_plus
 
-from inyoka.utils.urls import href
+from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import AccessDeniedResponse
-from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.storage import storage
+from inyoka.utils.urls import href
 
 
 def check_login(message=None):
@@ -149,12 +150,11 @@ def google_calendarize(event):
 class UbuntuVersion(object):
     """
     This class holds a single Ubuntu version. Based on the settings for
-    :py:attribute:`lts`, :py:attribute:`active`, :py:attribute:`current`,
-    :py:attribute:`dev`, a different notification appears in the forum
-    front-end while selecting the topic version.
+    :py:attr:`lts`, :py:attr:`active`, :py:attr:`current`, :py:attr:`dev`, a
+    different notification appears in the forum front-end while selecting the
+    topic version.
 
-    The attributes :py:attribute:`number` and :py:attribute:`name` have to be
-    given.
+    The attributes :py:attr:`number` and :py:attr:`name` have to be given.
     """
 
     def __init__(self, number, name, lts=False, active=False,
@@ -206,24 +206,17 @@ class UbuntuVersion(object):
         return json.dumps(data)
 
 
-class UbuntuVersionList(set):
-    """
-    This class holds a set of :py:class:`UbuntuVersion`. We are using a set to
-    avoid duplicate entries. But accessing this class with all its version
-    should be done by :py:var:`UBUNTU_VERSIONS`.
-    """
-
-    def __init__(self, data=u''):
-        super(set, self).__init__()
-        #: we need that try-except block to avoid failing `./manage syncdb`
-        try:
-            value = data or storage['distri_versions']
-            jsonobjs = json.loads(value)
-            for obj in jsonobjs:
-                version = UbuntuVersion(**obj)
-                self.add(version)
-        except:
-            pass
-
-
-UBUNTU_VERSIONS = list(sorted(UbuntuVersionList()))
+def get_ubuntu_versions():
+    #: we need that try-except block to avoid failing `./manage syncdb`
+    sid = transaction.savepoint()
+    versions = set([])
+    try:
+        jsonobjs = json.loads(storage['distri_versions'])
+        for obj in jsonobjs:
+            version = UbuntuVersion(**obj)
+            versions.add(version)
+    except:
+        transaction.savepoint_rollback(sid)
+    else:
+        transaction.savepoint_commit(sid)
+    return sorted(versions)

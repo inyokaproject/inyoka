@@ -1,5 +1,7 @@
-import os, sys
-import tempfile, shutil
+import os
+import sys
+import shutil
+import tempfile
 from os import path
 
 python_version = '2.7.3'

@@ -159,11 +159,11 @@
         </table>
         <div>
           {%- if poll.ended -%}
-            {% trans start_date=poll.start_time|dateformat, end_date=poll.end_time|dateformat -%}
+            {% trans start_date=poll.start_time|datetime, end_date=poll.end_time|datetime -%}
               The poll was started on {{ start_date }} and it ended on {{ end_date }}.
             {%- endtrans %}
           {%- elif poll.end_time -%}
-            {% trans start_date=poll.start_time|dateformat, end_date=poll.end_time|dateformat -%}
+            {% trans start_date=poll.start_time|datetime, end_date=poll.end_time|datetime -%}
               The poll was started on {{ start_date }} and it will end on {{ end_date }}.
             {%- endtrans %}
           {%- endif -%}
@@ -208,7 +208,7 @@
               <img class="avatar" src="{{ post.author.avatar_url }}"
                    alt="{% trans user=post.author.username|e %}Avatar of {{ user }}{% endtrans %}" />
             {%- endif %}
-            <p>{% trans %}Member since:{% endtrans %}<br />{{ post.author.date_joined|dateformat }}</p>
+            <p>{% trans %}Member since:{% endtrans %}<br />{{ post.author.date_joined|naturalday }}</p>
             <p>{% trans %}Posts:{% endtrans %} {{ post.author.post_count }}</p>
             {%- if post.author.location %}
               <p>{% trans %}Residence:{% endtrans %} {{ post.author.location|e }}</p>
@@ -267,7 +267,7 @@
               <a href="{{ post|url }}" title="{% trans %}Link to this post{% endtrans %}">
                 <img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" />{#
               #}</a>
-              {{ post.pub_date|datetimeformat }}
+              {{ post.pub_date|datetime }}
             </div>
             {% if can_moderate %}
               <div class="splitinfo admin_link">

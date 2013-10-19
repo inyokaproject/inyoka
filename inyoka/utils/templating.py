@@ -8,32 +8,31 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-import json
 import os
+import json
 from glob import glob
 
 from django.conf import settings
-from django.template.base import TemplateDoesNotExist, Context as DjangoContext
-from django.template.loader import BaseLoader
-from django.utils import translation
-from django.utils.functional import Promise
-from django.utils.encoding import force_unicode
-from django.utils.timesince import timesince
-
 from django.contrib import messages
 from django.core.context_processors import csrf
-from django.contrib.humanize.templatetags.humanize import naturalday
-
+from django.template.base import Context as DjangoContext
+from django.template.base import TemplateDoesNotExist
+from django.template.loader import BaseLoader
+from django.utils import translation
+from django.utils.encoding import force_unicode
+from django.utils.functional import Promise
+from django.utils.timesince import timesince
 from django_mobile import get_flavour
-from jinja2 import Environment, FileSystemLoader, escape, TemplateNotFound,\
-    contextfunction, Template
+from jinja2 import (escape, Template, Environment, contextfunction,
+    TemplateNotFound, FileSystemLoader)
 
 from inyoka import INYOKA_REVISION
 from inyoka.utils.cache import request_cache
-from inyoka.utils.dates import format_datetime, format_specific_datetime, \
-    format_time
+from inyoka.utils.dates import format_date, format_datetime, format_time, naturalday
 from inyoka.utils.local import current_request
 from inyoka.utils.text import human_number
+from inyoka.utils.urls import href, url_for, urlquote, urlencode
+
 
 # path to the dtd.  In debug mode we refer to the file system, otherwise
 # URL.  We do that because the firefox validator extension is unable to
@@ -97,13 +96,15 @@ class Breadcrumb(object):
             return u' › '.join(result)
         elif target == 'appheader':
             if len(self.path) < 2:
-                return render_template('appheader.html', {'fallback': True})
-            return render_template('appheader.html', {
-                'h1_text': self.path[1][0],
-                'h1_link': self.path[1][1],
-                'h2_text': self.path[-1][0],
-                'h2_link': self.path[-1][1],
-            })
+                context = {'fallback': True}
+            else:
+                context = {
+                    'h1_text': self.path[1][0],
+                    'h1_link': self.path[1][1],
+                    'h2_text': self.path[-1][0],
+                    'h2_link': self.path[-1][1],
+                }
+            return render_template('appheader.html', context, populate_defaults=False)
         elif target == 'title':
             return u' › '.join(i[0] for i in self.path[::-1] if i[2])
 
@@ -223,11 +224,11 @@ def load_template(template_name):
     return tmpl
 
 
-def render_template(template_name, context, flash=False):
+def render_template(template_name, context, flash=False,
+                    populate_defaults=True):
     """Render a template.  You might want to set `req` to `None`."""
     tmpl = load_template(template_name)
-    populate_context_defaults(context, flash=flash)
-    return tmpl.render(context)
+    return tmpl.render(context, flash, populate_defaults)
 
 
 def render_string(source, context):
@@ -269,7 +270,7 @@ def json_filter(value):
 
 
 class JinjaTemplate(Template):
-    def render(self, context):
+    def render(self, context, flash=False, populate_defaults=True):
         context = {} if context is None else context
         if isinstance(context, DjangoContext):
             c = context
@@ -277,7 +278,8 @@ class JinjaTemplate(Template):
             for d in c.dicts:
                 context.update(d)
             context.pop('csrf_token', None)  # We have our own...
-        populate_context_defaults(context)
+        if populate_defaults:
+            populate_context_defaults(context, flash)
         return super(JinjaTemplate, self).render(context)
 
 
@@ -325,20 +327,21 @@ class DjangoLoader(BaseLoader):
             raise TemplateDoesNotExist(template_name)
 
 
-# circular imports
-from inyoka.utils.urls import href, url_for, urlencode, urlquote
-
 #: Filters that are globally available in the template environment
 FILTERS = {
     'timedeltaformat': timesince,
-    'datetimeformat': format_datetime,
-    'dateformat': naturalday,
     'hnumber': human_number,
-    'timeformat': format_time,
-    'specificdatetimeformat': format_specific_datetime,
     'url': url_for,
     'urlencode': urlencode_filter,
     'jsonencode': json_filter,
+    # L10N aware variants of Django's filters. They all are patched to use
+    # DATE_FORMAT (naturalday and format_date), DATETIME_FORMAT (format_datetime),
+    # and TIME_FORMAT (format_time) from the formats module and not the relevant
+    # variables from settings.py
+    'naturalday': naturalday,
+    'date': format_date,
+    'datetime': format_datetime,
+    'time': format_time,
 }
 
 # setup the template environment

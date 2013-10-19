@@ -15,8 +15,10 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from os.path import join
-from pygments.formatters import HtmlFormatter
+
 from django.conf import settings
+from pygments.formatters import HtmlFormatter
+
 from inyoka.utils.highlight import HumanStyle
 
 

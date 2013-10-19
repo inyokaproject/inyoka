@@ -10,8 +10,8 @@
 """
 import gc
 
-from django.contrib.auth import authenticate, login
 from django.conf import settings
+from django.contrib.auth import login, authenticate
 from django.http import HttpRequest
 from django.test.client import Client
 from django.utils.importlib import import_module

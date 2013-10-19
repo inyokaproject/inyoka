@@ -23,7 +23,7 @@
               <div class="linklist">
                 <a href="{{ rev|url('restore') }}" class="action action_review admin_link">{% trans %}Restore{% endtrans %}</a>
               </div>
-              {% trans date=rev.store_date|datetimeformat %}Edited: {{ date }}{% endtrans %}
+              {% trans date=rev.store_date|datetime %}Edited: {{ date }}{% endtrans %}
               {% if post.rendered_text == rev.rendered_text %}
                 | {% trans %}Current revision{% endtrans %}
               {% endif %}

@@ -16,12 +16,13 @@ from urlparse import urlparse
 from django.conf import settings
 from django.http import Http404
 from django.utils.dates import MONTHS, WEEKDAYS
-from inyoka.portal.user import User, Group
+
 from inyoka.ikhaya.models import Event
-from inyoka.utils.text import get_random_password
-from inyoka.utils.services import SimpleDispatcher
+from inyoka.portal.user import User, Group
 from inyoka.utils.captcha import Captcha
+from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.templating import render_template
+from inyoka.utils.text import get_random_password
 
 
 def on_get_current_user(request):
@@ -66,7 +67,7 @@ def on_get_captcha(request):
     captcha = Captcha()
     h = md5(settings.SECRET_KEY)
     h.update(captcha.solution)
-    request.session['captcha_solution'] = h.digest()
+    request.session['captcha_solution'] = h.hexdigest()
     response = captcha.get_response()
     # Save the solution for easier testing
     response._captcha_solution = captcha.solution

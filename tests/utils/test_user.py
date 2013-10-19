@@ -8,9 +8,11 @@
 """
 import unittest
 from hashlib import sha1
+
 from django.conf import settings
-from inyoka.portal.user import User
+
 from inyoka.utils.user import gen_activation_key
+from inyoka.portal.user import User
 
 
 class TestUtilsUser(unittest.TestCase):

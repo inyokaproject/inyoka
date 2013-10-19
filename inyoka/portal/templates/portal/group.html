@@ -41,7 +41,7 @@
       <td>
         <a href="{{ user|url }}">{{ user.username|e }}</a></td>
       <td>{{ user.location }}</td>
-      <td>{{ user.date_joined|datetimeformat }}</td>
+      <td>{{ user.date_joined|datetime }}</td>
       <td>{{ user.post_count }}</td>
     </tr>
     {%- endfor %}

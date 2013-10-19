@@ -9,9 +9,10 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import logging
-from django.conf import settings
-from celery.signals import task_failure
 
+from django.conf import settings
+
+from celery.signals import task_failure
 
 logger = logging.getLogger(settings.INYOKA_LOGGER_NAME)
 

@@ -11,9 +11,10 @@
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponseRedirect
-from django.views.generic import edit, base, list
 from django.utils.html import escape
-from django.utils.translation import ugettext_lazy, ugettext as _
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
+from django.views.generic import edit, base, list
 
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset

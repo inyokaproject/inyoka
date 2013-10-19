@@ -13,9 +13,9 @@ from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
 
+from inyoka.utils.test import InyokaClient
 from inyoka.wiki.models import Page
 from inyoka.portal.user import User
-from inyoka.utils.test import InyokaClient
 
 
 class TestViews(TestCase):

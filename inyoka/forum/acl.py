@@ -9,10 +9,12 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import operator as ops
-from django.core.cache import cache
+
 from django.db.models import Q
+from django.core.cache import cache
 from django.utils.translation import ugettext_lazy
 
+from inyoka.portal.user import DEFAULT_GROUP_ID
 
 #: Mapping from privilege strings to human readable descriptions
 PRIVILEGES_DETAILS = [
@@ -115,19 +117,18 @@ def get_forum_privileges(user, forum):
 def _get_privilege_map(user, forum_ids):
     # circular imports
     from inyoka.forum.models import Privilege, Forum
-    group_ids = user.groups.values_list('id', flat=True)
+    group_ids = set(user.groups.values_list('id', flat=True))
+    if user.is_authenticated:
+        group_ids.add(DEFAULT_GROUP_ID)
 
-    cols = ('forum__id', 'user__id', 'group__id', 'positive', 'negative')
+    cols = ('forum_id', 'user_id', 'group_id', 'positive', 'negative')
 
-    # construct the query, but do not execute it yet for caching reasons
-    filter = (Q(user__id=user.id) |
-              Q(group__id=(-1 if user.is_anonymous else DEFAULT_GROUP_ID)))
+    filter = Q(user_id=user.id)
 
-    # Small performance optimization that actually matters
     if len(group_ids) > 1:
-        filter |= Q(group__id__in=group_ids)
-    elif group_ids:
-        filter |= Q(group__id=group_ids[0])
+        filter |= Q(group_id__in=group_ids)
+    else:
+        filter |= Q(group_id=list(group_ids)[0])
 
     query = Privilege.objects.filter(filter)
 
@@ -149,9 +150,9 @@ def _get_privilege_map(user, forum_ids):
         # so that this saves a bit bandwith and quite a few time for the query
         if len(forum_ids) != len(all_ids):
             if len(forum_ids) > 1:
-                query = query.filter(forum__id__in=forum_ids)
-            elif forum_ids:
-                query = query.filter(forum__id=forum_ids[0])
+                query = query.filter(forum_id__in=forum_ids)
+            else:
+                query = query.filter(forum_id=forum_ids[0])
         privilege_map = query.values_list(*cols)
 
     return privilege_map
@@ -222,6 +223,3 @@ filter_visible = lambda u, f=None, priv=CAN_READ, perm=None: filter(u, f, priv, 
 
 #: Shortcut to filter all invisible forums
 filter_invisible = lambda u, f=None, priv=CAN_READ, perm=None: filter(u, f, priv, perm, ops.ne)
-
-# circular imports
-from inyoka.portal.user import DEFAULT_GROUP_ID

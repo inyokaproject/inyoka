@@ -8,8 +8,8 @@
 """
 from django.test import TestCase
 
-from inyoka.utils.cache import get_cache
 from inyoka.utils.local import local
+from inyoka.utils.cache import get_cache
 
 
 class TestCache(TestCase):

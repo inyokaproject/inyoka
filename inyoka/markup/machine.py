@@ -11,7 +11,7 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from cPickle import loads, dumps, HIGHEST_PROTOCOL
+from cPickle import dumps, loads, HIGHEST_PROTOCOL
 
 from inyoka.utils import get_request_context
 

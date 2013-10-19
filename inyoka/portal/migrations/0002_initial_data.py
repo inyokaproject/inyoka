@@ -1,5 +1,6 @@
 # encoding: utf-8
 import datetime
+
 from south.v2 import DataMigration
 
 now = datetime.datetime.utcnow

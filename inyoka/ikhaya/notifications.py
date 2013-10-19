@@ -9,6 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.utils.translation import ugettext
+
 from inyoka.utils import ctype
 from inyoka.utils.notification import queue_notifications
 

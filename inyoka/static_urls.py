@@ -10,11 +10,10 @@
 """
 from django.conf.urls import patterns, url
 
-
 urlpatterns = patterns('',
     url(r'^(?P<path>.*)$', 'django.contrib.staticfiles.views.serve',
         {'insecure': True}),
 )
 
 
-handler404 = 'inyoka.utils.urls.global_not_found'
+handler404 = 'inyoka.utils.http.global_not_found'

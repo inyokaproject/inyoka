@@ -9,10 +9,12 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.http import HttpResponse, Http404
 from django.conf import settings
+from django.http import Http404, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+
 from inyoka.utils.decorators import patch_wrapper
+from inyoka.utils.templating import render_template
 
 
 def templated(template_name, status=None, modifier=None,
@@ -59,6 +61,12 @@ def does_not_exist_is_404(f):
     return patch_wrapper(proxy, f)
 
 
+def global_not_found(request, err_message=None):
+    return TemplateResponse('errors/404.html', {
+        'err_message': err_message,
+    }, 404)
+
+
 class TemplateResponse(HttpResponse):
     """
     Returns a rendered template as response.
@@ -78,7 +86,3 @@ class AccessDeniedResponse(TemplateResponse):
     """
     def __init__(self):
         TemplateResponse.__init__(self, 'errors/403.html', {}, status=403)
-
-
-# circular import
-from inyoka.utils.templating import render_template

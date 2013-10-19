@@ -7,6 +7,7 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import unittest
+
 from django.utils import translation
 
 from inyoka.markup import templates

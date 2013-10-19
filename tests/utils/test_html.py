@@ -7,6 +7,7 @@
     :license: GNU GPL.
 """
 from django.test import TestCase
+
 from inyoka.utils.html import cleanup_html, replace_entities
 
 

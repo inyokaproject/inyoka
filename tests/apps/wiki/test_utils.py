@@ -9,6 +9,7 @@
     :license: GNU GPL.
 """
 from django.test import TestCase
+
 from inyoka.utils.text import join_pagename, normalize_pagename
 
 

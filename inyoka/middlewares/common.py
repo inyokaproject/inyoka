@@ -20,12 +20,11 @@ from django.contrib import messages
 from django.middleware.common import CommonMiddleware
 
 from django_hosts.middleware import HostsMiddleware
-from django_mobile.middleware import \
-    MobileDetectionMiddleware as BaseMobileDetectionMiddleware
+from django_mobile.middleware import MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
-from inyoka.utils.local import local, _request_cache, local_manager
-from inyoka.utils.timer import StopWatch
+from inyoka.utils.local import local, local_manager, _request_cache
 from inyoka.utils.logger import logger
+from inyoka.utils.timer import StopWatch
 
 
 class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):

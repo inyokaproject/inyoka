@@ -11,7 +11,7 @@
 """
 import unittest
 
-from inyoka.markup import Parser, nodes
+from inyoka.markup import nodes, Parser
 
 
 def parse(code):

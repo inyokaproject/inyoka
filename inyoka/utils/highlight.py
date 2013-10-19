@@ -18,12 +18,14 @@
 import re
 from itertools import chain
 
+from django.utils.safestring import mark_safe
+
 from pygments import highlight
-from pygments.lexers import get_lexer_by_name, get_lexer_for_filename, \
-    get_lexer_for_mimetype, TextLexer
 from pygments.formatters import HtmlFormatter
-from pygments.util import ClassNotFound
+from pygments.lexers import (TextLexer, get_lexer_by_name,
+    get_lexer_for_mimetype, get_lexer_for_filename)
 from pygments.styles.friendly import FriendlyStyle
+from pygments.util import ClassNotFound
 
 from inyoka.utils.html import striptags
 
@@ -59,7 +61,7 @@ def highlight_code(code, lang=None, filename=None, mimetype=None):
             lexer = TextLexer(stripnl=False)
     except LookupError:
         lexer = TextLexer(stripnl=False)
-    return highlight(code, lexer, _pygments_formatter)
+    return mark_safe(highlight(code, lexer, _pygments_formatter))
 
 
 class HumanStyle(FriendlyStyle):

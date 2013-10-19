@@ -13,12 +13,12 @@
     <td class="author">
       <p class="username"><a href="{{ post.author|url }}">{{ post.author|e }}</a></p>
       <p>{% trans %}Posts:{% endtrans %} {{ post.author.post_count }}</p>
-      <p>{% trans %}Member since:{% endtrans %} <br />{{ post.author.date_joined|dateformat }}</p>
+      <p>{% trans %}Member since:{% endtrans %} <br />{{ post.author.date_joined|naturalday }}</p>
     </td>
     <td class="post">
       <div class="postinfo">
         <a href="{{ post|url }}"><img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" /></a>
-        {{ post.pub_date|datetimeformat }}
+        {{ post.pub_date|datetime }}
       </div>
       {{ post.get_text() }}
     </td>

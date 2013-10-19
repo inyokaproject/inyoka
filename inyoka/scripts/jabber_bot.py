@@ -8,8 +8,8 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 import argparse
-import sys
 import logging
+import sys
 
 import zmq
 

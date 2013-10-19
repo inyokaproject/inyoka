@@ -9,8 +9,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.dispatch import receiver
-from inyoka.forum.models import Attachment
+
 from inyoka.markup import nodes
+from inyoka.forum.models import Attachment
 from inyoka.wiki.signals import build_picture_node
 
 

@@ -1,10 +1,11 @@
 # encoding: utf-8
+import warnings
+
 from south.db import db
 from south.v2 import SchemaMigration
 
 # MySQL doesn't like indexes for Varchars(>255) if charset is multibyte.
 # Tell mysqldb to not warn us, so south can continue
-import warnings
 warnings.filterwarnings("ignore", ".*Specified key was too long.*")
 
 class Migration(SchemaMigration):

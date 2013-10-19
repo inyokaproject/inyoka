@@ -9,7 +9,9 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
+
 from django.contrib.auth.backends import ModelBackend
+
 from inyoka.portal.user import User, UserBanned
 
 

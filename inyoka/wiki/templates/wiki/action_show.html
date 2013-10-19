@@ -23,12 +23,12 @@
 
   <p class="meta">
     {% if page.rev.user %}
-      {% trans rev_link=page.rev|url, date=page.rev.change_date|datetimeformat,
+      {% trans rev_link=page.rev|url, date=page.rev.change_date|datetime,
                author_link=page.rev.user|url, author=page.rev.user.username|e -%}
         <a href="{{ rev_link }}">This revision</a> was created on {{ date }} by <a href="{{ author_link }}">{{ author }}</a>.
       {%- endtrans %}
     {% else %}
-      {% trans rev_link=page.rev|url, date=page.rev.change_date|datetimeformat,
+      {% trans rev_link=page.rev|url, date=page.rev.change_date|datetime,
                author=page.rev.remote_addr|e -%}
         <a href="{{ rev_link }}">This revision</a> was created on {{ date }} by {{ author }}.
       {%- endtrans %}

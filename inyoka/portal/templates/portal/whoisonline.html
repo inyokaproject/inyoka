@@ -23,7 +23,7 @@
     {% trans guests=sessions.anonymous %}{{ guests }} Guest{% pluralize %}{{ guests }} Guests{% endtrans %}
   </p>
   <p>
-    {% trans time=record_time|datetimeformat -%}
+    {% trans time=record_time|datetime -%}
       Most users ever online was {{ record }} on {{ time }}.
     {%- endtrans %}
     {% trans -%}
