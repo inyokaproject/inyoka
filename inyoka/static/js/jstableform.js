@@ -162,7 +162,7 @@ $(function () {
                 $td.appendTo($row);
             });
             // And finally we add the row to the table body
-            $row.appendTo('tbody', $table);
+            $('tbody', $table).append($row);
         }
 
         function delete_row(event) {
