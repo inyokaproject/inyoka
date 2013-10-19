@@ -20,6 +20,7 @@ from django.core.cache import cache
 from django.utils.http import urlencode
 from django.utils.dates import MONTHS
 from django.utils.translation import ugettext as _
+from django.utils.timezone import get_current_timezone
 from django.contrib.contenttypes.models import ContentType
 
 from inyoka.ikhaya.forms import (NewEventForm, EditEventForm, EditCommentForm,
@@ -35,7 +36,7 @@ from inyoka.utils import ctype, generic
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, AccessDeniedResponse, does_not_exist_is_404
 from inyoka.utils.feeds import AtomFeed, atom_feed
-from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
+from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.storage import storage
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
@@ -768,7 +769,7 @@ def event_suggest(request):
         form = NewEventForm(request.POST)
         if form.is_valid():
             event = Event()
-            convert = (lambda v: get_user_timezone().localize(v)
+            convert = (lambda v: get_current_timezone().localize(v)
                                 .astimezone(pytz.utc).replace(tzinfo=None))
             data = form.cleaned_data
             event.name = data['name']

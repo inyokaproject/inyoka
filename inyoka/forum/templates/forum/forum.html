@@ -116,7 +116,7 @@
               {%- trans author=topic.author.username|e, link=topic.author|url -%}
                 by <a href="{{ link }}">{{ author }}</a>
               {%- endtrans %} |
-              {{ topic.first_post.pub_date|datetimeformat }}
+              {{ topic.first_post.pub_date|datetime }}
               {%- if topic.paginated %} |
                 {% trans pagination=topic.get_pagination() -%}
                   Go to page {{ pagination }}
@@ -129,7 +129,7 @@
           <td class="last_post">
             {%- if topic.last_post_id %}
               <a href="{{ topic.last_post|url}}" class="date">
-                {{- topic.last_post.pub_date|datetimeformat -}}
+                {{- topic.last_post.pub_date|datetime -}}
               </a><br />
               {% trans author=topic.last_post.author|e, link=topic.last_post.author|url -%}
                 by <a href="{{ link }}">{{ author }}</a>

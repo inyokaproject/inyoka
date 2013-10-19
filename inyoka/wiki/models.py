@@ -99,8 +99,7 @@ from inyoka import markup
 from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.cache import request_cache
-from inyoka.utils.dates import (format_datetime, datetime_to_timezone,
-    format_specific_datetime)
+from inyoka.utils.dates import format_datetime, datetime_to_timezone
 from inyoka.utils.decorators import deferred
 from inyoka.utils.diff3 import prepare_udiff, generate_udiff, get_close_matches
 from inyoka.utils.files import get_filename
@@ -1173,7 +1172,7 @@ class Revision(models.Model):
         """
         return _(u'%(rev)s (Revision %(date)s)' % {
             'rev': self.page.title,
-            'date': format_specific_datetime(self.change_date)
+            'date': format_datetime(self.change_date)
         })
 
     @property
