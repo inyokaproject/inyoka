@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
 from inyoka.forum.acl import CAN_READ
-from inyoka.forum.constants import DISTRO_CHOICES, VERSION_CHOICES
+from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import Topic, Forum
 from inyoka.utils.forms import SlugField, MultiField, StrippedCharField
 from inyoka.utils.local import current_request
@@ -57,13 +57,14 @@ class EditPostForm(forms.Form):
     #: the user can select, whether the post's topic should be sticky or not.
     sticky = forms.BooleanField(required=False)
     title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}))
-    ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
-                                                required=False)
-    ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
+    ubuntu_version = forms.ChoiceField(required=False)
+    ubuntu_distro = forms.ChoiceField(required=False)
 
     def __init__(self, *args, **kwargs):
         is_first_post = kwargs.pop('is_first_post', False)
-        forms.Form.__init__(self, *args, **kwargs)
+        super(EditPostForm, self).__init__(*args, **kwargs)
+        self.fields['ubuntu_version'].choices = get_version_choices()
+        self.fields['ubuntu_distro'].choices = get_distro_choices()
         if not is_first_post:
             for k in ['sticky', 'title', 'ubuntu_version', 'ubuntu_distro']:
                 del self.fields[k]
@@ -93,10 +94,15 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
     title = StrippedCharField(widget=forms.TextInput(attrs={'size': 60}),
                             max_length=100)
     text = StrippedCharField(widget=forms.Textarea)
-    ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
-                                                required=False)
-    ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
+    ubuntu_version = forms.ChoiceField(required=False)
+    ubuntu_distro = forms.ChoiceField(required=False)
     sticky = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.force_version = kwargs.pop('force_version', False)
+        super(NewTopicForm, self).__init__(*args, **kwargs)
+        self.fields['ubuntu_version'].choices = get_version_choices()
+        self.fields['ubuntu_distro'].choices = get_distro_choices()
 
     def clean_ubuntu_version(self):
         ubuntu_version = self.cleaned_data.get('ubuntu_version', None)
@@ -111,10 +117,6 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
             raise forms.ValidationError(forms.fields.Field.
                                         default_error_messages['required'])
         return ubuntu_distro
-
-    def __init__(self, *args, **kwargs):
-        self.force_version = kwargs.pop('force_version', False)
-        forms.Form.__init__(self, *args, **kwargs)
 
 
 class MoveTopicForm(forms.Form):
@@ -138,9 +140,13 @@ class SplitTopicForm(forms.Form):
     #: the slug of the existing topic
     topic = forms.CharField(max_length=200)
     #: version info. defaults to the values set in the old topic.
-    ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
-                                       required=False)
-    ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
+    ubuntu_version = forms.ChoiceField(required=False)
+    ubuntu_distro = forms.ChoiceField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(SplitTopicForm, self).__init__(*args, **kwargs)
+        self.fields['ubuntu_version'].choices = get_version_choices()
+        self.fields['ubuntu_distro'].choices = get_distro_choices()
 
     def clean(self):
         data = self.cleaned_data

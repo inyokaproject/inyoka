@@ -33,13 +33,12 @@ from django.contrib.contenttypes.models import ContentType
 
 from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
     check_privilege, filter_invisible)
-from inyoka.forum.constants import (DISTRO_CHOICES, POSTS_PER_PAGE,
-    VERSION_CHOICES, CACHE_PAGES_COUNT, SUPPORTED_IMAGE_TYPES,
-    UBUNTU_DISTROS_LEGACY)
+from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
+    SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS_LEGACY)
 from inyoka.markup import parse, RenderContext
 from inyoka.portal.models import SearchQueue, Subscription
 from inyoka.portal.user import User, Group
-from inyoka.portal.utils import UBUNTU_VERSIONS
+from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import request_cache
 from inyoka.utils.database import update_model, model_or_none, LockableObject
 from inyoka.utils.dates import timedelta_to_seconds
@@ -396,10 +395,8 @@ class Topic(models.Model):
     locked = models.BooleanField(default=False)
     reported = models.TextField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
-    ubuntu_version = models.CharField(max_length=5, null=True, blank=True,
-                                      choices=VERSION_CHOICES)
-    ubuntu_distro = models.CharField(max_length=40, null=True, blank=True,
-                                     choices=DISTRO_CHOICES)
+    ubuntu_version = models.CharField(max_length=5, null=True, blank=True)
+    ubuntu_distro = models.CharField(max_length=40, null=True, blank=True)
     has_poll = models.BooleanField(default=False)
 
     forum = models.ForeignKey(Forum, related_name='topics',
@@ -552,7 +549,7 @@ class Topic(models.Model):
 
     def get_ubuntu_version(self):
         if self.ubuntu_version:
-            version = filter(lambda v: v.number == self.ubuntu_version, UBUNTU_VERSIONS)
+            version = filter(lambda v: v.number == self.ubuntu_version, get_ubuntu_versions())
             if len(version) > 0:
                 return version[0]
             return ''

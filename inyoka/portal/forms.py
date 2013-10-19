@@ -29,7 +29,7 @@ from django.core.files.storage import default_storage
 from django.db.models.fields.files import ImageFieldFile
 
 from inyoka.forum.acl import filter_invisible
-from inyoka.forum.constants import SIMPLE_VERSION_CHOICES
+from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.forms import ForumField
 from inyoka.forum.models import Forum
 from inyoka.portal.models import StaticFile, StaticPage
@@ -240,8 +240,7 @@ class UserCPSettingsForm(forms.Form):
         widget=forms.CheckboxSelectMultiple)
     ubuntu_version = forms.MultipleChoiceField(
         label=ugettext_lazy(u'Notifications on topics with a specific Ubuntu version'),
-        required=False, choices=SIMPLE_VERSION_CHOICES,
-        widget=forms.CheckboxSelectMultiple)
+        required=False, widget=forms.CheckboxSelectMultiple)
     timezone = forms.ChoiceField(label=ugettext_lazy(u'Timezone'), required=True,
         choices=zip(TIMEZONES, TIMEZONES))
     hide_profile = forms.BooleanField(label=ugettext_lazy(u'Hide online status'),
@@ -261,6 +260,10 @@ class UserCPSettingsForm(forms.Form):
         label=ugettext_lazy(u'Highlight search'))
     mark_read_on_logout = forms.BooleanField(required=False,
         label=ugettext_lazy(u'Mark all forums as “read” on logout'))
+
+    def __init__(self, *args, **kwargs):
+        super(UserCPSettingsForm, self).__init__(*args, **kwargs)
+        self.fields['ubuntu_version'].choices = get_simple_version_choices()
 
     def clean_notify(self):
         data = self.cleaned_data['notify']
