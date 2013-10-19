@@ -60,7 +60,6 @@ from inyoka.portal.user import (User, Group, UserData, UserBanned, reset_email,
 from inyoka.portal.utils import (abort_access_denied, calendar_entries_for_month,
     check_login, get_ubuntu_versions, google_calendarize, require_permission)
 from inyoka.utils import generic
-from inyoka.utils.dates import DEFAULT_TIMEZONE
 from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
 from inyoka.utils.mail import send_mail
 from inyoka.utils.notification import send_notification

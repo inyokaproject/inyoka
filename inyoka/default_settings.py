@@ -41,11 +41,7 @@ DATABASES = {
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be avilable on all operating systems.
 # the setting here has nothing to do with the timezone the user is
-#
-# We set the TIME_ZONE to `None` on default so that Django does not
-# issue time zone aware columns on postgresql.  This finally should fix
-# the last standing bugs regarding postgresql. --entequak
-TIME_ZONE = None
+TIME_ZONE = 'Europe/Berlin'
 
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes

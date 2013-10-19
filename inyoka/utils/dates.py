@@ -22,7 +22,6 @@ from inyoka.utils.local import current_request
 
 
 TIMEZONES = pytz.common_timezones
-DEFAULT_TIMEZONE = pytz.timezone('Europe/Berlin')
 
 
 _iso8601_re = re.compile(

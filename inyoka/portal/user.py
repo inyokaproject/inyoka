@@ -26,7 +26,6 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 
 from inyoka.markup import parse, render, RenderContext
 from inyoka.utils.database import JSONField, update_model
-from inyoka.utils.dates import DEFAULT_TIMEZONE
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.local import current_request
@@ -658,7 +657,7 @@ def update_user_flags(sender, request, user, **kwargs):
     user.last_login = datetime.utcnow()
     user.save(update_fields=['last_login'])
     tz = user.settings.get('timezone')
-    if tz and tz != DEFAULT_TIMEZONE:
+    if tz and tz != settings.TIME_ZONE:
         request.session['django_timezone'] = tz
 
 user_logged_in.disconnect(update_last_login)
