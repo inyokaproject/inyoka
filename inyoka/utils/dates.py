@@ -14,7 +14,7 @@ from datetime import date, time, datetime, timedelta
 
 from django.contrib.humanize.templatetags.humanize import naturalday as djnaturalday
 from django.template import defaultfilters
-from django.utils import datetime_safe
+from django.utils import timezone, datetime_safe
 from django.utils.translation import get_language_from_request
 import pytz
 
@@ -32,11 +32,15 @@ _iso8601_re = re.compile(
     r'(?:T(\d{2}):(\d{2})(?::(\d{2}(?:\.\d+)?))?(Z?|[+-]\d{2}:\d{2})?)?$'
 )
 
+def _ma(val):
+    if val.tzinfo is None:
+        val = val.replace(tzinfo=pytz.UTC)
+    return timezone.localtime(val)
 
-naturalday = lambda value, arg='DATE_FORMAT': djnaturalday(value, arg)
-format_date = lambda value, arg='DATE_FORMAT': defaultfilters.date(value, arg)
-format_datetime = lambda value, arg='DATETIME_FORMAT': defaultfilters.date(value, arg)
-format_time = lambda value, arg='TIME_FORMAT': defaultfilters.time(value, arg)
+naturalday = lambda value, arg='DATE_FORMAT': djnaturalday(_ma(value), arg)
+format_date = lambda value, arg='DATE_FORMAT': defaultfilters.date(_ma(value), arg)
+format_datetime = lambda value, arg='DATETIME_FORMAT': defaultfilters.date(_ma(value), arg)
+format_time = lambda value, arg='TIME_FORMAT': defaultfilters.time(_ma(value), arg)
 
 
 def group_by_day(entries, date_func=attrgetter('pub_date'),
@@ -53,7 +57,7 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
     if enforce_utc:
         tzinfo = pytz.UTC
     else:
-        tzinfo = get_user_timezone()
+        tzinfo = timezone.get_current_timezone()
     for entry in entries:
         d = date_func(entry)
         if d.tzinfo is None:
@@ -70,21 +74,6 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
     } for key, items in days if items]
 
 
-def get_user_timezone():
-    """
-    Return the timezone of the current user or UTC if there is no user
-    available (eg: no web request).
-    """
-    try:
-        user = getattr(current_request, 'user', None)
-    except RuntimeError:
-        user = None
-    try:
-        return pytz.timezone(user.settings.get('timezone', ''))
-    except:
-        return DEFAULT_TIMEZONE
-
-
 def datetime_to_timezone(dt, enforce_utc=False):
     """
     Convert a datetime object to the user's timezone or UTC if the
@@ -96,7 +85,7 @@ def datetime_to_timezone(dt, enforce_utc=False):
     if enforce_utc:
         tz = pytz.UTC
     else:
-        tz = get_user_timezone()
+        tz = timezone.get_current_timezone()
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=pytz.UTC)
     return datetime_safe.new_datetime(dt.astimezone(tz))

@@ -17,8 +17,6 @@ from datetime import date, datetime, timedelta
 from PIL import Image
 from django_mobile import get_flavour
 from django_openid.consumer import Consumer, SessionPersist
-import dateutil
-import pytz
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -31,11 +29,11 @@ from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
-from django.utils.translation import ungettext
+from django.utils.translation import ugettext as _, ungettext
 from django.views.decorators.http import require_POST
 
 
@@ -63,7 +61,7 @@ from inyoka.portal.utils import (check_login, UBUNTU_VERSIONS, UbuntuVersionList
     require_permission, google_calendarize, abort_access_denied,
     calendar_entries_for_month)
 from inyoka.utils import generic
-from inyoka.utils.dates import DEFAULT_TIMEZONE, get_user_timezone
+from inyoka.utils.dates import DEFAULT_TIMEZONE
 from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
 from inyoka.utils.mail import send_mail
 from inyoka.utils.notification import send_notification
@@ -660,6 +658,9 @@ def usercp_settings(request):
                                                 ubuntu_version=version).delete()
             for key, value in data.iteritems():
                 request.user.settings[key] = data[key]
+                if key == 'timezone':
+                    timezone.activate(data[key])
+                    request.session['django_timezone'] = data[key]
             request.user.save(update_fields=['settings'])
             messages.success(request, _(u'Your settings were successfully changed.'))
         else:
@@ -673,7 +674,7 @@ def usercp_settings(request):
             'notifications': settings.get('notifications', [c[0] for c in
                                                     NOTIFICATION_CHOICES]),
             'ubuntu_version': ubuntu_version,
-            'timezone': get_user_timezone(),
+            'timezone': timezone.get_current_timezone(),
             'hide_avatars': settings.get('hide_avatars', False),
             'hide_signatures': settings.get('hide_signatures', False),
             'hide_profile': settings.get('hide_profile', False),
@@ -896,17 +897,12 @@ def user_edit_settings(request, username):
 
     ubuntu_version = [s.ubuntu_version for s in Subscription.objects.\
                       filter(user=user, ubuntu_version__isnull=False)]
-    try:
-        timezone = pytz.timezone(user.settings.get('timezone', ''))
-    except pytz.UnknownTimeZoneError:
-        # TODO: set the default timezone in some config file
-        timezone = pytz.timezone('Europe/Berlin')
     initial = {
         'notify': user.settings.get('notify', ['mail']),
         'notifications': user.settings.get('notifications',
             [c[0] for c in NOTIFICATION_CHOICES]),
         'ubuntu_version': ubuntu_version,
-        'timezone': timezone,
+        'timezone': timezone.get_current_timezone(),
         'hide_avatars': user.settings.get('hide_avatars', False),
         'hide_signatures': user.settings.get('hide_signatures', False),
         'hide_profile': user.settings.get('hide_profile', False),
