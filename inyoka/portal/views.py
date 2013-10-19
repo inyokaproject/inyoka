@@ -63,7 +63,7 @@ from inyoka.portal.utils import (check_login, UBUNTU_VERSIONS, UbuntuVersionList
     require_permission, google_calendarize, abort_access_denied,
     calendar_entries_for_month)
 from inyoka.utils import generic
-from inyoka.utils.dates import DEFAULT_TIMEZONE, get_user_timezone, find_best_timezone
+from inyoka.utils.dates import DEFAULT_TIMEZONE, get_user_timezone
 from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
 from inyoka.utils.mail import send_mail
 from inyoka.utils.notification import send_notification
@@ -239,13 +239,6 @@ def register(request):
                 username=data['username'],
                 email=data['email'],
                 password=data['password'])
-
-            timezone = find_best_timezone(request)
-
-            # utc is default, no need for another update statement
-            if timezone != DEFAULT_TIMEZONE:
-                user.settings['timezone'] = timezone
-                user.save()
 
             messages.success(request,
                 _(u'The username “%(username)s” was successfully registered. '

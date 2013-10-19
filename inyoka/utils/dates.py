@@ -85,25 +85,6 @@ def get_user_timezone():
         return DEFAULT_TIMEZONE
 
 
-def find_best_timezone(request):
-    """Return the best timezone match based on browser language.
-
-    This is not the best way to do that but good enough for the moment.
-    """
-    timezone = DEFAULT_TIMEZONE
-    language_header = request.META.get('HTTP_ACCEPT_LANGUAGES')
-    if language_header:
-        try:
-            timezones = pytz.country_timezones(get_language_from_request(request))
-            if not timezones:
-                raise LookupError()
-        except LookupError:
-            pass
-        else:
-            timezone = timezones[0]
-    return timezone
-
-
 def datetime_to_timezone(dt, enforce_utc=False):
     """
     Convert a datetime object to the user's timezone or UTC if the
