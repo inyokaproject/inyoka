@@ -1,0 +1,35 @@
+{#
+    forum/index.m.html
+    ~~~~~~~~~~~~~~~~
+
+    This is the forum's index page that shows all root-forums and their
+    first-level subforums.
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends '../../../themes/default/templates/forum/page.m.html' %}
+
+{% block content %}
+  {%- if categories %}
+    {%- for category, forums in forum_hierarchy %}
+      <div class="category" id="category-{{ category.id }}">
+        <a href="#" class="collapse">
+          <h3>{{ category.name|e }}</h3>
+        </a>
+        <div class="forums">
+          {%- for forum, subforums in forums %}
+            <a href="{{ forum|url }}"{% if not forum.get_read_status(USER) %} class="unread"{% endif %}>
+              {{ forum.name }}
+            </a>
+          {%- else %}
+            <div class="empty">{% trans %}This category does not contain any forum.{% endtrans %}</div>
+          {%- endfor %}
+        </div>
+      </div>
+    {%- endfor %}
+
+  {%- else %}
+    <p>{% trans %}No categories{% endtrans %}</p>
+  {%- endif %}
+{% endblock %}

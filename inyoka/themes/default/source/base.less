@@ -1,0 +1,22 @@
+@import "bootstrap-3.0.0/less/bootstrap";
+@import "variables";
+
+body {
+    padding-top: 40px;
+}
+
+.shadowed {
+    box-shadow: 0 5px 30px #999;
+}
+
+#sidebar.affix {
+    position: fixed;
+    top: 60px;
+}
+
+@media(max-width:767px){
+   #sidebar.affix {
+     position: static;
+     top: 0;
+    }
+}

@@ -1,0 +1,31 @@
+{#
+    errors/404.html
+    ~~~~~~~~~~~~~~~
+
+    This template is shown if the page requested does not exist.
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{% extends '../../../themes/default/templates/portal/overall.html' %}
+
+{% block portal_content %}
+  <div class="not_found">
+    <div class="not-found-message">
+      {% if err_message %}
+        <strong>{{ err_message }}</strong>
+      {% else %}
+        <h1>{% trans %}Page not found{% endtrans %}</h1>
+        {# TODO: text should be changeable via interface #}
+        <p>Beim Aufruf dieser Seite ist leider ein Fehler aufgetreten. Wenn du gerade einen Beitrag abgesendet hast, lade die Seite bitte nicht sofort neu, sondern überprüfe erst, ob er eingetragen wurde. Falls nicht, kannst du es noch einmal versuchen.</p>
+
+        <p>Die von dir aufgerufene Seite wurde leider nicht gefunden.  Bitte prüfe die von dir aufgerufene Adresse, es kann auch sein das du nicht berechtigt bist diese Seite aufzurufen.</p>
+
+        <p>Falls du dringend Hilfe bei Problemen mit Ubuntu benötigst und ubuntuusers.de weiterhin nicht funktionieren sollte, kannst du im IRC-Channel #ubuntu-de auf Freenode fragen.</p>
+
+        <p>Bitte lies auf jeden Fall das jeweilige Topic im IRC, da dieses die meisten Fragen bereits beantwortet und die wichtigsten Regeln erklärt.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

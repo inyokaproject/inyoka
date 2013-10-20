@@ -1,0 +1,43 @@
+{#
+    templates/portal/about_inyoka
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    A template about the inyoka software.
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends '../../../themes/default/templates/portal/overall.html' %}
+{% macro badge(link, alt, img) -%}
+  <a href="{{ link|e }}"><img src="{{ href('static',
+    'img/badges/' + img)|e }}" alt="{{ alt|e }}" /></a>
+{%- endmacro %}
+
+{% block portal_content %}
+  <h3>Was treibt ubuntuusers an?</h3>
+  <p>
+    Seit Juli 2008 läuft das gesamte ubuntuusers-Portal auf einer
+    einzigen <a href="http://www.python.org/">Python</a>-Anwendung mit dem
+    Namen „Inyoka“ (zulu für „Schlange“).
+  </p>
+  <p>
+    Inyoka selbst baut dabei auf eine Vielzahl von OpenSource-Programmen,
+    -Bibliotheken und -Technologien auf:
+  </p>
+  <p class="badges">
+    {{ badge('http://ubuntu.com/', 'ubuntu', 'ubuntu.gif') }}
+    {{ badge('http://python.org/', 'Python', 'python.png') }}
+    {{ badge('http://djangoproject.com/', 'Django', 'django.gif') }}
+    {{ badge('http://mysql.com/', 'MySQL', 'mysql.png') }}
+    {{ badge('http://jinja.pocoo.org/', 'Jinja', 'jinja.png') }}
+    {{ badge('http://pygments.org/', 'Pygments', 'pygments.png') }}
+    {{ badge('http://xapian.org/', 'Xapian', 'xapian.png') }}
+    {{ badge('http://memcached.org/', 'memcached', 'memcached.png') }}
+    {{ badge('http://jquery.com/', 'jquery', 'jquery.png') }}
+    {{ badge('http://code.google.com/p/feedparser/', 'Universal Feed Parser', 'feedparser.png') }}
+    {{ badge('http://imagemagick.org/', 'Image Magick', 'imagemagick.png') }}
+    {{ badge('http://tango.freedesktop.org/', 'Tango Project', 'tango.png') }}
+    {{ badge('http://werkzeug.pocoo.org/', 'Werkzeug', 'werkzeug.png') }}
+  </p>
+{% endblock %}

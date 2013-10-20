@@ -1,0 +1,33 @@
+{#
+    ikhaya/index.m.html
+    ~~~~~~~~~~~~~~~~~~~
+
+    This page shows the latest ikhaya entries for mobiles.
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends '../../../themes/default/templates/ikhaya/page.m.html' %}
+
+{% block content %}
+  {{ pagination.generate() }}
+  {%- for article in articles %}
+    <div class="intro{% if article.hidden %} hidden{% endif %}">
+      <a href="{{ article|url }}"><h3 class="title">{{ article.subject|e }}</h3></a>
+      <span class="meta">
+        {{ article.pub_datetime|dateformat }}
+        {% if article.comments_enabled %}
+          | {% trans pluralindicator=article.comment_count, count=article.comment_count|hnumber('masculine')|capitalize, link=article|url + '#comments' -%}
+            {{ count }} <a href="{{ link }}">comment</a>
+          {%- pluralize pluralindicator -%}
+            {{ count }} <a href="{{ link }}">comments</a>
+          {%- endtrans %}
+        {% endif %}
+      </span>
+      <div class="text">{{ article.rendered_intro }}</div>
+    </div>
+  {%- else %}
+    <p>{% trans %}There is no article.{% endtrans %}</p>
+  {%- endfor %}
+  {{ pagination.generate() }}
+{% endblock %}

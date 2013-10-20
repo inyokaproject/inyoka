@@ -1,0 +1,33 @@
+{#
+    templates.admin.forum_edit
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Admin template for editing forums.
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends '../../../themes/default/templates/forum/page.html' %}
+{% from 'macros.html' import render_form %}
+{% set styles = ['editor-sprite', 'datetimefield'] %}
+{% set scripts = ['WikiEditor', 'DateTime'] %}
+
+{% if not forum %}
+  {% do BREADCRUMB.append(_('Create forum'), href('forum', 'forum', 'new'), True) %}
+{% else %}
+  {% do BREADCRUMB.append(_('Edit'), forum|url('edit'), True) %}
+  {% do BREADCRUMB.append(forum.name|e, forum|url(), True) %}
+{% endif %}
+{% do BREADCRUMB.append(_('Forum'), href('forum'), True) %}
+
+{% block content %}
+<form action="" method="post" class="forum">
+  {{ csrf_token() }}
+  {{ render_form(form, ['name', 'slug','description', 'parent', 'position', 'newtopic_default_text', 'force_version', 'count_posts']) }}
+  <h3>{% trans %}Welcome message{% endtrans %}</h3>
+  {{ render_form(form, ['welcome_msg_subject', 'welcome_msg_text']) }}
+  <p>
+    <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+  </p>
+</form>
+{%- endblock %}

@@ -1,0 +1,43 @@
+{#
+    portal/usercp/subscriptions.m.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page shows all subscriptions of the user and let him
+    manage them.
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends '../../../../themes/default/templates/portal/usercp/overall.m.html' %}
+
+{% block content %}
+<h3>{% trans %}Subscriptions{% endtrans %}</h3>
+<table class="usercp_subscriptions">
+  {%- for sub in subscriptions %}
+  {%- if sub.can_read -%}
+    <tr class="item {% if sub.notified %}unread{% endif %}">
+      <td>
+      {%- set type = sub.content_type.model -%}
+      {%- set object = sub.content_object -%}
+
+      {%- if type == 'topic' -%}
+        {% trans %}Topic:{% endtrans %} <a href="{{ object|url('first_unread') }}">{{ object.title|e }}</a>
+      {%- elif type == 'page' -%}
+        {% trans %}Wiki page:{% endtrans %} <a href="{{ object|url }}">{{ object.title|e }}</a>
+      {%- elif type == 'forum' -%}
+        {% trans %}Forum:{% endtrans %} <a href="{{ object|url }}">{{ object.name|e }}</a>
+      {%- elif type == 'user' -%}
+        {% trans %}User:{% endtrans %} <a href="{{ object|url }}">{{ object.username|e }}</a>
+      {%- elif type == 'article' -%}
+        {% trans %}Article:{% endtrans %} <a href="{{ object|url('last_comment') }}">{{ object.subject|e }}</a>
+      {%- endif -%}
+      </td>
+    </tr>
+  {%- endif -%}
+  {%- else -%}
+    <tr><td>{% trans %}You did not yet subscribed to any topics or articles.{% endtrans %}</td></tr>
+  {%- endfor -%}
+  </table>
+  {{ pagination.generate() }}
+{% endblock %}

@@ -1,0 +1,69 @@
+{#
+    portal/calendar_detail.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Show a single event, header etc. part
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends '../../../themes/default/templates/portal/overall.html' %}
+{% block html_head %}
+    {{ super() }}
+    <link rel="profile" href="http://microformats.org/profile/hcalendar">
+{% endblock %}
+{% set styles = ['calendar'] %}
+{% set month = event.date.month %}
+{% set year = event.date.year %}
+{% do BREADCRUMB.append(event.name, event|url, True) %}
+{% do BREADCRUMB.append('%s %d'|format(MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month), True) %}
+{% do BREADCRUMB.append('Kalender', href('portal', 'calendar')) %}
+
+{% block portal_content %}
+<h3>
+  {%- trans title=event.name|e %}Event “{{ title }}”{% endtrans -%}
+</h3>
+<table class="vevent admin_link_hover">
+  <tr><th>{% trans %}Date{% endtrans %}</th><td>
+    {{ _('from') }} {{ event.date|dateformat }}
+    {% if event.time %}
+      {{ event.time|timeformat(event.date) }}
+    {% endif %}
+    {%- if event.enddate or event.endtime %}
+      {{ _('to') }}
+      {% if event.enddate %}
+        {{ event.enddate|dateformat }}
+      {% endif %}
+      {% if event.endtime %}
+        {{ event.endtime|timeformat(event.date) }}
+      {% endif %}
+    {% endif %}
+  </td></tr>
+  {%- if event.location_town %}
+  <tr>
+    <th>{% trans %}Venue{% endtrans %}</th>
+    <td>
+      {% if event.location %}<span class="location">{{ event.location|e }} in {% endif %}{{ event.location_town|e }}</span>
+      {%- if event.location_lat and event.location_long %}
+        (<a href="{{ event.coordinates_url|e }}"><abbr class="geo" title="{{ event.simple_coordinates|e }}">{{ event.natural_coordinates|e }}</abbr></a>)
+      {%- endif %}
+    </td>
+  </tr>
+  {%- endif %}
+  <tr>
+    <th colspan="2">{% trans %}Details{% endtrans %}
+      {%- if USER.can('event_edit') %}
+        <small class="admin_link">
+          (<a href="{{ event|url('edit') }}">{% trans %}edit{% endtrans %}</a>)
+        </small>
+      {% endif %}
+    </th>
+  </tr>
+  <tr><td colspan="2"><span class="description">{{ event.rendered_description or '–' }}</span></td></tr>
+</table>
+<span class="hcal-downloads extension-note">
+  <a href="{{ "http://h2vx.com/ics/%s"|format(CURRENT_URL) }}">{% trans %}Download iCal{% endtrans %}</a> |
+  <a href="{{ google_link }}">{% trans %}Enter in Google Calendar{% endtrans %}</a>
+</span>
+{% endblock %}

@@ -1,0 +1,51 @@
+{#
+    portal/login.html
+    ~~~~~~~~~~~~~~~~~
+
+    This page displays a formular where the user can log in.
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends '../../../themes/default/templates/portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+{% do BREADCRUMB.append(_('Login'), href('portal', 'login'), True) %}
+{% block portal_content %}
+  <h3>{% trans %}Login{% endtrans %}</h3>
+  <p>
+    {%- trans register=href('portal', 'register'), lost_password=href('portal', 'lost_password') -%}
+      You can login here if you are already <a href="{{ register }}">registered</a>. If you lost your password, you can <a href="{{ lost_password }}">request a new one</a>.
+    {%- endtrans -%}
+  </p>
+  {% include '../../../themes/default/templates/portal/login_text.html' with context %}
+  <form action="" method="post" class="loginform">
+		{{ csrf_token() }}
+    <dl>
+      {{ render_form(form, ['username', 'password'], inline=true) }}
+      <dd>
+        {{ form.permanent }} <label for="id_permanent">{{ form.permanent.label }}</label>
+        <div class="help_text">{% trans -%}
+          Don’t choose this option if you are using a public computer. Otherwise, unauthorized persons may enter your account.
+        {%- endtrans %}</div>
+      </dd>
+    </dl>
+    <div class="actions">
+      <input type="hidden" name="redirect" value="" />
+      <input type="submit" id="login" value="{% trans %}Login{% endtrans %}" tabindex="1" />
+    </div>
+  </form>
+{% endblock %}
+
+{% block additional_scripts %}
+  <script type="text/javascript">
+    /*<![CDATA[*/
+    if ( $('#id_username')[0].value )
+      $('#id_password').select().focus();
+    else
+      $('#id_username')[0].focus();
+
+    var input = OpenIDHelper($('input[name="username"]'), {{ OPENID_PROVIDERS|jsonencode }});
+    /*]]>*/
+  </script>
+{% endblock %}

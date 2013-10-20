@@ -1,0 +1,62 @@
+{% extends '/base.html' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ href('forum') }}">Forum</a></li>
+  {% if forum.parent.parent %}
+    <li><a href="{{ forum.parent|url }}">{{ forum.parent }}</a></li>
+  {% endif %}
+  <li class="active">{{ forum }}</li>
+{% endblock %}
+
+{% block sidebar %}
+  <ul class="nav nav-pills nav-stacked">
+  {% if is_subscribed %}
+    <li><a href="{{ forum|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a></li>
+  {% else %}
+    <li><a href="{{ forum|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a></li>
+  {% endif %}
+    <li><a href="{{ forum|url('newtopic') }}">{% trans %}New topic{% endtrans %}</a></li>
+    <li><a href="{{ forum|url('markread') }}">{% trans %}Mark as read{% endtrans %}</a></li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+  {# TODO: Paging generation by macro, so it will be possible to design it properly #}
+  {{ pagination.generate() }}
+  {% if subforums %}
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <a href="#" onclick="return false;" class="accordion-toggle" data-toggle="collapse" data-target="#subforums">
+            {% trans %}Subforums{% endtrans %}
+          </a>
+        </h3></div>
+      <ul class="list-group collapse" id="subforums">
+        {% for forum in subforums %}
+          <a href="{{ forum|url }}" class="list-group-item">
+            <h4 class="list-group-item-heading">{{ forum }}</h4>
+
+            <p class="list-group-item-text">{{ forum.description }}</p>
+          </a>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">{% trans %}Topics{% endtrans %}</h3>
+    </div>
+    <ul class="list-group">
+      {% for topic in topics %}
+        <li class="list-group-item">
+          {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
+          {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
+          <a href="{{ topic|url }}">{{ topic }}</a><br />
+          <small class="text-muted">{{ topic.first_post.pub_date|datetimeformat }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {# TODO: Paging generation by macro, so it will be possible to design it properly #}
+  {{ pagination.generate() }}
+{% endblock %}

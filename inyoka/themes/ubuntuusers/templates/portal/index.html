@@ -1,0 +1,92 @@
+{#
+    portal/index.html
+    ~~~~~~~~~~~~~~~~~
+
+    This is ubuntuusers' main page that provides links to quite many pages.
+
+    It also displays some of the latest ikhaya messages.
+
+    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+{%- extends '../../../themes/default/templates/portal/overall.html' %}
+{%- do BREADCRUMB.append(_('Portal'), href('portal'), True) -%}
+
+{% block pre_navigation %}
+  {%- if countdown_active -%}
+    <div class="container" id="counter" style="text-align:center; padding-top: 7px;">
+      <a href="{{ countdown_target_page|e }}"><img src="{{ countdown_image_url|e }}"/></a>
+    </div>
+  {%- endif -%}
+  <div class="container get_ubuntu">
+    <div>
+      <h3><a href="{{ get_ubuntu_link }}">Hol dir Ubuntu!</a></h3>
+      <span><a href="{{ get_ubuntu_link }}">{{ get_ubuntu_description }}</a></span>
+    </div>
+  </div>
+  <div class="container calendar">
+    <div class="calendar link">
+      <h3><a href="{{ href('portal', 'calendar') }}">{% trans %}Calendar{% endtrans %}</a></h3>
+      <span><a href="/calendar/" class="calendar_link">{% trans %}Upcoming events{% endtrans %}</a></span>
+    </div>
+    <div class="calendar overview">
+    {% if calendar_events %}
+      <ul class="events">
+      {% for event in calendar_events %}
+        <li>{{ event.friendly_title(with_html_link=true) }}</li>
+      {%- endfor %}
+      </ul>
+    {% else %}
+    <p>{% trans %}There are no upcoming events.{% endtrans %}</p>
+    {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block portal_content %}
+  <h3>Hallo</h3>
+  <img src="{{ href('static', 'img', 'portal', 'ubuntu.png') }}" alt="Ubuntu" class="cat" />
+  <p>
+    Hier findest Du freundliche Hilfe zu Ubuntu. Im
+    <a href="{{ href('forum') }}">Forum</a> beantworten Dir hilfsbereite
+    Benutzer gerne Deine Fragen (siehe
+    <a href="{{ href('wiki', 'ubuntuusers', 'Moderatoren', 'Forenregeln') }}">Regeln</a>).
+    Neben dem <a href="{{ href('wiki') }}">Wiki</a> mit einem
+    <a href="{{ href('wiki', 'Einsteiger') }}">Einsteigerbereich</a> gibt es
+    <a href="{{ href('ikhaya') }}">Ikhaya</a> (Nachrichten) und einen
+    <a href="{{ href('planet') }}">Planeten</a> (Blogsammlung der
+    Ubuntu-Gemeinschaft). Viel Spaß! :)
+  </p>
+  {%- if ikhaya_latest %}
+  {{ feed_button(href('portal', 'feeds', _anchor='ikhaya')) }}
+  <h3>Neuigkeiten rund um Ubuntu, Linux und Open Source</h3>
+  <div class="articles">
+    {%- for article in ikhaya_latest %}
+    <div class="article">
+      <div class="meta">
+        {%- if article.pub_datetime == article.updated %}
+          <a href="{{ article|url }}">{{ article.updated|datetimeformat }}</a>
+        {%- else %}
+          <a href="{{ article|url }}" title="{% trans %}Last update:{% endtrans %} {{ article.updated|specificdatetimeformat
+             }} / {% trans %}Created:{% endtrans %} {{ article.pub_datetime|datetimeformat }}">{{ article.updated|datetimeformat }}</a>
+        {%- endif %}
+        {%- if article.comments_enabled %}
+          <a href="{{ article|url('comments') }}" class="comments">
+            {%- trans pluralindicator=article.comment_count, count=article.comment_count|hnumber('masculine')|capitalize -%}
+              {{ count }} comment
+            {%- pluralize pluralindicator -%}
+              {{ count }} comments
+            {%- endtrans -%}
+          </a>
+        {%- endif %}
+      </div>
+      <h4><a href="{{ article|url }}">{{ article.subject|e }}</a></h4>
+      <p class="text">
+        {{ article.simplified_intro|truncate(250, true)|e }}
+      </p>
+    </div>
+    {%- endfor %}
+  </div>
+  {%- endif %}
+{% endblock %}
+
