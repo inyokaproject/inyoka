@@ -6,7 +6,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 
-{%- extends '../../../../themes/default/templates/portal/overall.html' %}
+{%- extends '../portal/overall.html' %}
 {% do BREADCRUMB.append(_('Private message'), href('portal', 'privmsg'), True) %}
 {% set navi_type = 'both' %}
 

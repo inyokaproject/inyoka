@@ -8,7 +8,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 
-{%- extends '../../../themes/default/templates/portal/overall.m.html' %}
+{%- extends 'portal/overall.m.html' %}
 {% from 'macros.html' import render_form %}
 {% do BREADCRUMB.append('Login', href('portal', 'login'), True) %}
 {% block content %}
@@ -18,7 +18,7 @@
       You can login here if you are already <a href="{{ register }}">registered</a>. If you lost your password, you can <a href="{{ lost_password }}">request a new one</a>.
     {%- endtrans -%}
   </p>
-  {% include '../../../themes/default/templates/portal/login_text.m.html' with context %}
+  {% include 'portal/login_text.m.html' with context %}
   <form action="" method="post" class="loginform">
 		{{ csrf_token() }}
     <dl>

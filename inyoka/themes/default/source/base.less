@@ -2,21 +2,29 @@
 @import "variables";
 
 body {
-    padding-top: 40px;
+  padding-top: 40px;
 }
 
-.shadowed {
+#main-navbar {
+
+  &.shadowed {
     box-shadow: 0 5px 30px #999;
+  }
+
+  ul.apps {
+    .nav;
+    .navbar-nav;
+  }
 }
 
 #sidebar.affix {
-    position: fixed;
-    top: 60px;
+  position: fixed;
+  top: 60px;
 }
 
-@media(max-width:767px){
-   #sidebar.affix {
-     position: static;
-     top: 0;
-    }
+@media (max-width: 767px) {
+  #sidebar.affix {
+    position: static;
+    top: 0;
+  }
 }

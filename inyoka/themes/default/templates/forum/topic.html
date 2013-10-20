@@ -1,4 +1,4 @@
-{% extends '/base.html' %}
+{% extends 'forum/base.html' %}
 
 {% block breadcrumb %}
   <li><a href="{{ href('forum') }}">{% block trans %}Forum{% endblock %}</a></li>
@@ -46,18 +46,18 @@
             <a href="{{ post|url('edit') }}" class="btn btn-primary">{% trans %}Edit{% endtrans %}</a>
           {% endif %}
         </div>
-      {% if can_moderate %}
-        <div class="btn-group btn-group-sm pull-right">
-          <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
-            {% trans %}More{% endtrans %}
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
-            <li><a href="#">{% trans %}Hide{% endtrans %}</a></li>
-          </ul>
-        </div>
-      {% endif %}
+        {% if can_moderate %}
+          <div class="btn-group btn-group-sm pull-right">
+            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+              {% trans %}More{% endtrans %}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
+              <li><a href="#">{% trans %}Hide{% endtrans %}</a></li>
+            </ul>
+          </div>
+        {% endif %}
       </div>
     </div>
   {% endfor %}

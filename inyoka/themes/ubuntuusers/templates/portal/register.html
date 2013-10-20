@@ -8,7 +8,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 
-{%- extends '../../../themes/default/templates/portal/overall.html' %}
+{%- extends 'portal/overall.html' %}
 {% from 'macros.html' import render_form %}
 {% do BREADCRUMB.append('Registrierung', href('portal', 'register'), True) %}
 {% block portal_content %}

@@ -8,7 +8,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 
-{%- extends '../../../themes/default/templates/portal/overall.html' %}
+{%- extends 'portal/overall.html' %}
 {% set styles = ['calendar'] %}
 {% do BREADCRUMB.append('%s %d'|format(MONTHS[month], year), href('portal', 'calendar', year, '%02d' % month), True) %}
 {% do BREADCRUMB.append('Kalender', href('portal', 'calendar'), True) %}

@@ -9,9 +9,9 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends '../../../themes/default/templates/forum/page.html' %}
+{%- extends 'forum/page.html' %}
 {% from 'macros.html' import breadcrumb %}
-{% from '../../../themes/default/templates/forum/_forum.html' import render_article_list %}
+{% from 'forum/_forum.html' import render_article_list %}
 
 {% do BREADCRUMB.append(topic.title, topic|url, True) %}
 {% set name = topic.title|e %}

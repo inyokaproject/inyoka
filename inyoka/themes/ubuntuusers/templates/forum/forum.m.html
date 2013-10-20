@@ -7,8 +7,8 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends '../../../themes/default/templates/forum/page.m.html' %}
-{% from '../../../themes/default/templates/forum/_forum.html' import generate_subscription_link with context %}
+{%- extends 'forum/page.m.html' %}
+{% from 'forum/_forum.html' import generate_subscription_link with context %}
 
 {% set back = href('forum') %}
 

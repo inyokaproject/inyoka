@@ -8,7 +8,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 
-{%- extends '../../../themes/default/templates/portal/overall.html' %}
+{%- extends 'portal/overall.html' %}
 {% do BREADCRUMB.append(_('Groups'), href('portal', 'groups'), True) %}
 {% block content %}
   <h3>{% trans %}Groups{% endtrans %}</h3>

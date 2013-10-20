@@ -10,7 +10,7 @@
 
 #}
 {% from 'macros.html' import render_form %}
-{%- extends '../../../themes/default/templates/forum/page.html' %}
+{%- extends 'forum/page.html' %}
 {% if not topic %}
   {% do BREADCRUMB.append(_('New topic'), forum|url('newtopic'), True) %}
 {% else %}
@@ -29,8 +29,8 @@
 {% set scripts = ['WikiEditor', 'NewTopic'] %}
 {% set styles = ['editor-sprite'] %}
 
-{% from '../../../themes/default/templates/forum/_edit_latestpost_row.html' import post_row %}
-{% from '../../../themes/default/templates/forum/_forum.html' import render_article_list %}
+{% from 'forum/_edit_latestpost_row.html' import post_row %}
+{% from 'forum/_forum.html' import render_article_list %}
 
 {% block forum_content %}
   <form action="" method="post" enctype="multipart/form-data" class="post_editor">

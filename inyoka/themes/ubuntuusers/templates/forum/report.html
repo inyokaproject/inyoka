@@ -9,7 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 
-{%- extends '../../../themes/default/templates/forum/page.html' %}
+{%- extends 'forum/page.html' %}
 {% do BREADCRUMB.append(_('Report'), topic|url('report'), True) %}
 {% do BREADCRUMB.append(topic.title, topic|url, True) %}
 {% do BREADCRUMB.append(topic.forum.name, topic.forum|url) %}

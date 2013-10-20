@@ -9,9 +9,9 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
-{%- extends '../../../themes/default/templates/forum/page.html' %}
+{%- extends 'forum/page.html' %}
 {% set scripts = ['jquery.cookie'] %}
-{% from '../../../themes/default/templates/forum/_forum.html' import render_forum %}
+{% from 'forum/_forum.html' import render_forum %}
 {% if not is_index and categories %}
   {% do BREADCRUMB.append(categories[0].name, categories[0]|url, True) %}
 {% else %}

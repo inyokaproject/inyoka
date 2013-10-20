@@ -6,7 +6,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 
-{% extends '../../../themes/default/templates/portal/overall.html' %}
+{% extends 'portal/overall.html' %}
 {% from 'macros.html' import render_form %}
 
 {%- block portal_content %}
@@ -14,7 +14,7 @@
   <p>{% trans -%}
     There is no account linked to the OpenID “{{ openid }}”. Please log in with your user name and password to connect the OpenID with your account:
   {%- endtrans %}</p>
-  {% include '../../../themes/default/templates/portal/login_text.html' with context %}
+  {% include 'portal/login_text.html' with context %}
   <form method="post" action="">
 		{{ csrf_token() }}
     <div>

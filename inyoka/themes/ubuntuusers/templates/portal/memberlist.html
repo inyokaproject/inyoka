@@ -8,7 +8,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 
-{%- extends '../../../themes/default/templates/portal/overall.html' %}
+{%- extends 'portal/overall.html' %}
 {% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 {% set scripts = ['DateTime'] %}
 {% set styles = ['datetimefield'] %}

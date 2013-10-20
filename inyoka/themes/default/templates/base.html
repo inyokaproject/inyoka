@@ -15,7 +15,7 @@
     {% endblock %}
   </head>
   <body>
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <nav id="main-navbar" class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -28,15 +28,9 @@
           <ul class="nav navbar-nav">
             {# TODO: Apps should register themself, and the template should receive some list of active apps #}
             {% for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
-              {% if app == active_app %}
-                <li class="{{ app }} active">
-                  <a href="{{ href(app) }}">{{ app|capitalize }}</a>
-                </li>
-              {% else %}
-                <li class="{{ app }}">
-                  <a href="{{ href(app) }}">{{ app|capitalize }}</a>
-                </li>
-              {% endif %}
+              <li class="{{ app }}{% if app == active_app %} active{% endif %}">
+                <a href="{{ href(app) }}">{{ app|capitalize }}</a>
+              </li>
             {% endfor %}
           </ul>
           <ul class="nav navbar-nav pull-right">
@@ -52,7 +46,7 @@
           </ul>
         </div>
       </div>
-    </div>
+    </nav>
     <div class="container">
       <div class="header">
         <h1><a href="#">PAGENAME</a>
