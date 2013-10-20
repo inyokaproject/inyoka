@@ -125,10 +125,10 @@ def _get_privilege_map(user, forum_ids):
 
     filter = Q(user_id=user.id)
 
-    if len(group_ids) > 1:
-        filter |= Q(group_id__in=group_ids)
-    elif group_ids:
+    if len(group_ids) == 1:
         filter |= Q(group_id=list(group_ids)[0])
+    else:
+        filter |= Q(group_id__in=group_ids)
 
     query = Privilege.objects.filter(filter)
 
@@ -149,10 +149,10 @@ def _get_privilege_map(user, forum_ids):
         # Do only filter IN if required.  This is not required most of the time
         # so that this saves a bit bandwith and quite a few time for the query
         if len(forum_ids) != len(all_ids):
-            if len(forum_ids) > 1:
-                query = query.filter(forum_id__in=forum_ids)
-            elif forum_ids:
+            if len(forum_ids) == 1:
                 query = query.filter(forum_id=forum_ids[0])
+            else:
+                query = query.filter(forum_id__in=forum_ids)
         privilege_map = query.values_list(*cols)
 
     return privilege_map
