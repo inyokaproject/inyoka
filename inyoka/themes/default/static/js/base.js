@@ -8,9 +8,9 @@ $(function () {
     $(window).scroll(function () {
         var y = $(window).scrollTop();
         if (y > 0) {
-            $(".navbar-fixed-top").addClass('shadowed');
+            $("#main-navbar").addClass('shadowed');
         } else {
-            $(".navbar-fixed-top").removeClass('shadowed');
+            $("#main-navbar").removeClass('shadowed');
         }
     });
 

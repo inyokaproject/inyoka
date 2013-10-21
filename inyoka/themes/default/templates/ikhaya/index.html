@@ -7,30 +7,27 @@
 {% block content %}
   {{ pagination.generate() }}
   {% for article in articles %}
-    <div class="panel panel-default post" id="article-{{ article.id }}">
+    <div class="panel panel-default article" id="article-{{ article.id }}">
       <div class="panel-heading">
+        <time datetime="{{ article.pub_datetime }}" class="pull-right">TODO: datetime Attr</time>
         <a href="{{ article|url }}">{{ article.subject }}</a>
+
+        <div class="clearfix"></div>
       </div>
       <div class="panel-body">
         {{ article.rendered_intro }}
       </div>
-      <div class="panel-footer text-muted">
-        <small>
-          <div class="pull-left">
-            {{ article.pub_datetime|datetimeformat }}
-          </div>
-          <div class="text-right hidden-xs">
-            {% trans %}Category:{% endtrans %}
-            <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
-          </div>
-          {% if article.updated > article.pub_datetime %}
-            <div class="hidden-xs hidden-sm">
-              {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }}
-            </div>
-          {% endif %}
-          <div class="cle
-          arfix"></div>
-        </small>
+      <div class="panel-footer">
+        <span>
+          {% trans %}Category:{% endtrans %}
+          <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
+        </span>
+        {% if article.updated > article.pub_datetime %}
+          <time datetime="{{ article.updated }}" class="pull-right">
+            {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }}
+          </time>
+        {% endif %}
+        <div class="clearfix"></div>
       </div>
     </div>
   {% endfor %}

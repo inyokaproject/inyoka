@@ -20,7 +20,7 @@
   </p>
   {% include 'portal/login_text.html' with context %}
   <form action="" method="post" class="loginform">
-		{{ csrf_token() }}
+    {{ csrf_token() }}
     <dl>
       {{ render_form(form, ['username', 'password'], inline=true) }}
       <dd>

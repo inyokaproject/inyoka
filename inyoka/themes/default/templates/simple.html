@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block body %}
+  <body class="simple">
+    <nav id="main-navbar" class="navbar navbar-default navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{{ href('portal') }}">PAGENAME</a>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="well">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+  </body>
+{% endblock %}
