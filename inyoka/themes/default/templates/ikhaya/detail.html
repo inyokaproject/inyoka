@@ -16,11 +16,11 @@
           {% endtrans %}
         </li>
         <li>
-          <time datetime="{{ article.pub_datetime }}">TODO: datetime Attr</time>
+          <time datetime="{{ article.pub_datetime|datetime('c') }}">{{ article.pub_datetime|datetime }}</time>
         </li>
         {% if article.updated > article.pub_datetime %}
           <li>
-            <time datetime="{{ article.updated }}">{% trans %}Last update:{% endtrans %} TODO: datetime Attr</time>
+            <time datetime="{{ article.updated|datetime('c') }}">{% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}</time>
           </li>
         {% endif %}
         <li class="category">

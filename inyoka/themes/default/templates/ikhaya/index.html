@@ -9,7 +9,7 @@
   {% for article in articles %}
     <div class="panel panel-default article" id="article-{{ article.id }}">
       <div class="panel-heading">
-        <time datetime="{{ article.pub_datetime }}" class="pull-right">TODO: datetime Attr</time>
+        <time datetime="{{ article.pub_datetime|datetime('c') }}" class="pull-right">{{ article.pub_datetime|datetime }}</time>
         <a href="{{ article|url }}">{{ article.subject }}</a>
 
         <div class="clearfix"></div>
@@ -23,8 +23,8 @@
           <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
         </span>
         {% if article.updated > article.pub_datetime %}
-          <time datetime="{{ article.updated }}" class="pull-right">
-            {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }}
+          <time datetime="{{ article.updated|datetime('c') }}" class="pull-right">
+            {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}
           </time>
         {% endif %}
         <div class="clearfix"></div>

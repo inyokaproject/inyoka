@@ -33,7 +33,7 @@
       <div class="panel-heading">
         <a href="{{ post.author|url }}">{{ post.author }}</a>
         <span class="pull-right">
-          <a href="{{ post|url }}">{{ post.pub_date|datetimeformat }}</a>
+          <a href="{{ post|url }}"><time datetime="{{ post.pub_date|datetime('c') }}">{{ post.pub_date|datetime }}</time></a>
         </span>
       </div>
       <div class="panel-body">

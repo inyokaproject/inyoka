@@ -52,7 +52,7 @@
           {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
           {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
           <a href="{{ topic|url }}">{{ topic }}</a><br />
-          <small class="text-muted">{{ topic.first_post.pub_date|datetimeformat }}</small>
+          <small class="text-muted"><time datetime="{{ topic.first_post.pub_date|datetime('c') }}">{{ topic.first_post.pub_date|datetime }}</time></small>
         </li>
       {% endfor %}
     </ul>
