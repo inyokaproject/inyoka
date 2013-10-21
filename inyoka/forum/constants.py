@@ -11,7 +11,7 @@
 from PIL import Image
 from django.utils.translation import ugettext_lazy
 
-from inyoka.portal.utils import UBUNTU_VERSIONS
+from inyoka.portal.utils import get_ubuntu_versions
 
 # initialize PIL to make Image.ID available
 Image.init()
@@ -45,8 +45,14 @@ UBUNTU_DISTROS = [
     ('unity', ugettext_lazy('Unity')),
 ]
 
-SIMPLE_VERSION_CHOICES = [
-    (v.number, str(v)) for v in UBUNTU_VERSIONS
-    if v.is_active()]
-VERSION_CHOICES = [('', ugettext_lazy('Version'))] + SIMPLE_VERSION_CHOICES
-DISTRO_CHOICES = [('', ugettext_lazy('Distribution'))] + UBUNTU_DISTROS
+
+def get_simple_version_choices():
+    return [(v.number, str(v)) for v in get_ubuntu_versions() if v.is_active()]
+
+
+def get_version_choices():
+    return [('', ugettext_lazy('Version'))] + get_simple_version_choices()
+
+
+def get_distro_choices():
+    return [('', ugettext_lazy('Distribution'))] + UBUNTU_DISTROS

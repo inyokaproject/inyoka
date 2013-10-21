@@ -41,11 +41,7 @@ DATABASES = {
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be avilable on all operating systems.
 # the setting here has nothing to do with the timezone the user is
-#
-# We set the TIME_ZONE to `None` on default so that Django does not
-# issue time zone aware columns on postgresql.  This finally should fix
-# the last standing bugs regarding postgresql. --entequak
-TIME_ZONE = None
+TIME_ZONE = 'Europe/Berlin'
 
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
@@ -56,6 +52,7 @@ LOCALE_PATHS = (join(BASE_PATH, 'locale'),)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+#SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 SESSION_COOKIE_DOMAIN = '.%s' % BASE_DOMAIN_NAME.split(':')[0]
 SESSION_COOKIE_NAME = 'session'
 SESSION_COOKIE_HTTPONLY = True
@@ -183,6 +180,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'inyoka.middlewares.tz.TimezoneMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
     'inyoka.middlewares.common.MobileDetectionMiddleware',
@@ -335,6 +333,8 @@ TEMPLATE_LOADERS = (
 TEMPLATE_CONTEXT_PROCESSORS = ()
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
+
+FORMAT_MODULE_PATH = 'inyoka.locale'
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

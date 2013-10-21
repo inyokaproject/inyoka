@@ -11,9 +11,9 @@
 import json
 import operator
 
-from django.db import models
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import models
 from django.db.models.expressions import F, ExpressionNode
 
 

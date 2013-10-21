@@ -25,7 +25,7 @@
           Reported by <a href="{{ link }}">{{ author }}</a>
         {%- endtrans %}
         <span class="linklist"> | </span>
-        {{ report.pub_date|datetimeformat }}
+        {{ report.pub_date|datetime }}
         <span class="linklist"> | </span>
         {% trans link=report.article|url, article=report.article.subject|e -%}
           Concerns article “<a href="{{ link }}">{{ article }}</a>”

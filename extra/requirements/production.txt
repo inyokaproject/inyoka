@@ -29,3 +29,4 @@ transifex-client==0.9.1
 Pillow==2.1.0
 defusedxml==0.4.1
 python-dateutil==2.1
+python-magic==0.4.6

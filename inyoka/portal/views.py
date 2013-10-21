@@ -14,117 +14,66 @@ import time
 import binascii
 from datetime import date, datetime, timedelta
 
-import dateutil
 from PIL import Image
-from django.core import signing
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django_mobile import get_flavour
+from django_openid.consumer import Consumer, SessionPersist
+
 from django.conf import settings
 from django.contrib import auth, messages
-from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from django.forms.util import ErrorList
-from django.core.cache import cache
-from django.utils.html import escape
-from django.utils.dates import MONTHS, WEEKDAYS
-from django.forms.models import model_to_dict
-from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
-from django.utils.translation import ungettext
-from django.core.files.storage import default_storage
 from django.contrib.auth.views import password_reset, password_reset_confirm
+from django.core import signing
+from django.core.cache import cache
+from django.core.files.storage import default_storage
+from django.db.models import Q
+from django.forms.models import model_to_dict
+from django.forms.util import ErrorList
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.utils.dates import MONTHS, WEEKDAYS
+from django.utils.decorators import method_decorator
+from django.utils.html import escape
+from django.utils.translation import ugettext as _, ungettext
 from django.views.decorators.http import require_POST
 
-import pytz
-from inyoka.utils import generic
-from inyoka.markup import parse, RenderContext
-from django_mobile import get_flavour
-from inyoka.forum.acl import (
-    split_bits,
-    filter_invisible,
-    PRIVILEGES_DETAILS,
-    split_negative_positive,
-    REVERSED_PRIVILEGES_BITS
-)
-from inyoka.utils.text import normalize_pagename, get_random_password
-from inyoka.utils.urls import href, url_for, is_safe_domain
-from inyoka.utils.mail import send_mail
-from inyoka.wiki.utils import quote_text
-from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
-from inyoka.utils.user import check_activation_key
-from inyoka.wiki.models import Page as WikiPage
-from inyoka.utils.dates import DEFAULT_TIMEZONE, get_user_timezone, find_best_timezone
-from inyoka.portal.user import (
-    User,
-    Group,
-    UserData,
-    UserBanned,
-    reset_email,
-    set_new_email,
-    deactivate_user,
-    reactivate_user,
-    PERMISSION_NAMES,
-    send_activation_mail
-)
+
+from inyoka.forum.acl import (split_bits, filter_invisible, PRIVILEGES_DETAILS,
+    split_negative_positive, REVERSED_PRIVILEGES_BITS)
 from inyoka.forum.models import Post, Topic, Forum, Privilege
-from inyoka.portal.forms import (
-    LoginForm,
-    SearchForm,
-    UserMailForm,
-    EditFileForm,
-    RegisterForm,
-    EditStyleForm,
-    EditGroupForm,
-    CreateUserForm,
-    LostPasswordForm,
-    SubscriptionForm,
-    UserCPProfileForm,
-    OpenIDConnectForm,
-    ConfigurationForm,
-    EditUserGroupsForm,
-    EditStaticPageForm,
-    DeactivateUserForm,
-    UserCPSettingsForm,
-    ChangePasswordForm,
-    PrivateMessageForm,
-    EditUserStatusForm,
-    SetNewPasswordForm,
-    EditUserProfileForm,
-    WikiFeedSelectorForm,
-    EditUserPasswordForm,
-    NOTIFICATION_CHOICES,
-    ForumFeedSelectorForm,
-    PlanetFeedSelectorForm,
-    EditUserPrivilegesForm,
-    IkhayaFeedSelectorForm,
-    PrivateMessageIndexForm,
-    PrivateMessageFormProtected
-)
-from inyoka.portal.utils import (
-    check_login,
-    UBUNTU_VERSIONS,
-    UbuntuVersionList,
-    require_permission,
-    google_calendarize,
-    abort_access_denied,
-    calendar_entries_for_month
-)
-from inyoka.utils.storage import storage
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
-from inyoka.portal.models import (
-    StaticPage,
-    StaticFile,
-    Subscription,
-    PrivateMessage,
-    PRIVMSG_FOLDERS,
-    PrivateMessageEntry
-)
+from inyoka.markup import parse, RenderContext
 from inyoka.portal.filters import SubscriptionFilter
+from inyoka.portal.forms import (LoginForm, SearchForm, UserMailForm,
+    EditFileForm, RegisterForm, EditStyleForm, EditGroupForm, CreateUserForm,
+    LostPasswordForm, SubscriptionForm, UserCPProfileForm, OpenIDConnectForm,
+    ConfigurationForm, EditUserGroupsForm, EditStaticPageForm, DeactivateUserForm,
+    UserCPSettingsForm, ChangePasswordForm, PrivateMessageForm, EditUserStatusForm,
+    SetNewPasswordForm, EditUserProfileForm, WikiFeedSelectorForm,
+    EditUserPasswordForm, NOTIFICATION_CHOICES, ForumFeedSelectorForm,
+    PlanetFeedSelectorForm, EditUserPrivilegesForm, IkhayaFeedSelectorForm,
+    PrivateMessageIndexForm, PrivateMessageFormProtected)
+from inyoka.portal.models import (StaticPage, StaticFile, Subscription,
+    PrivateMessage, PRIVMSG_FOLDERS, PrivateMessageEntry)
+from inyoka.portal.user import (User, Group, UserData, UserBanned, reset_email,
+    set_new_email, deactivate_user, reactivate_user, PERMISSION_NAMES,
+    send_activation_mail)
+from inyoka.portal.utils import (abort_access_denied, calendar_entries_for_month,
+    check_login, get_ubuntu_versions, google_calendarize, require_permission)
+from inyoka.utils import generic
+from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
+from inyoka.utils.mail import send_mail
+from inyoka.utils.notification import send_notification
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.sessions import get_sessions, make_permanent, get_user_record
 from inyoka.utils.sortable import Sortable
-from django_openid.consumer import Consumer, SessionPersist
+from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
-from inyoka.utils.pagination import Pagination
-from inyoka.utils.notification import send_notification
+from inyoka.utils.text import normalize_pagename, get_random_password
+from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.utils.user import check_activation_key
+from inyoka.wiki.models import Page as WikiPage
+from inyoka.wiki.utils import quote_text
+
 
 # TODO: move into some kind of config, but as a quick fix for now...
 AUTOBAN_SPAMMER_WORDS = (
@@ -286,13 +235,6 @@ def register(request):
                 username=data['username'],
                 email=data['email'],
                 password=data['password'])
-
-            timezone = find_best_timezone(request)
-
-            # utc is default, no need for another update statement
-            if timezone != DEFAULT_TIMEZONE:
-                user.settings['timezone'] = timezone
-                user.save()
 
             messages.success(request,
                 _(u'The username “%(username)s” was successfully registered. '
@@ -706,7 +648,7 @@ def usercp_settings(request):
             new_versions = data.pop('ubuntu_version')
             old_versions = [s.ubuntu_version for s in Subscription.objects \
                           .filter(user=request.user).exclude(ubuntu_version__isnull=True)]
-            for version in [v.number for v in UBUNTU_VERSIONS]:
+            for version in [v.number for v in get_ubuntu_versions()]:
                 if version in new_versions and version not in old_versions:
                     Subscription(user=request.user, ubuntu_version=version).save()
                 elif version not in new_versions and version in old_versions:
@@ -714,6 +656,9 @@ def usercp_settings(request):
                                                 ubuntu_version=version).delete()
             for key, value in data.iteritems():
                 request.user.settings[key] = data[key]
+                if key == 'timezone':
+                    timezone.activate(data[key])
+                    request.session['django_timezone'] = data[key]
             request.user.save(update_fields=['settings'])
             messages.success(request, _(u'Your settings were successfully changed.'))
         else:
@@ -727,7 +672,7 @@ def usercp_settings(request):
             'notifications': settings.get('notifications', [c[0] for c in
                                                     NOTIFICATION_CHOICES]),
             'ubuntu_version': ubuntu_version,
-            'timezone': get_user_timezone(),
+            'timezone': timezone.get_current_timezone(),
             'hide_avatars': settings.get('hide_avatars', False),
             'hide_signatures': settings.get('hide_signatures', False),
             'hide_profile': settings.get('hide_profile', False),
@@ -950,17 +895,12 @@ def user_edit_settings(request, username):
 
     ubuntu_version = [s.ubuntu_version for s in Subscription.objects.\
                       filter(user=user, ubuntu_version__isnull=False)]
-    try:
-        timezone = pytz.timezone(user.settings.get('timezone', ''))
-    except pytz.UnknownTimeZoneError:
-        # TODO: set the default timezone in some config file
-        timezone = pytz.timezone('Europe/Berlin')
     initial = {
         'notify': user.settings.get('notify', ['mail']),
         'notifications': user.settings.get('notifications',
             [c[0] for c in NOTIFICATION_CHOICES]),
         'ubuntu_version': ubuntu_version,
-        'timezone': timezone,
+        'timezone': timezone.get_current_timezone(),
         'hide_avatars': user.settings.get('hide_avatars', False),
         'hide_signatures': user.settings.get('hide_signatures', False),
         'hide_profile': user.settings.get('hide_profile', False),
@@ -978,7 +918,7 @@ def user_edit_settings(request, username):
             new_versions = data.pop('ubuntu_version')
             old_versions = [s.ubuntu_version for s in Subscription.objects \
                           .filter(user=user).exclude(ubuntu_version__isnull=True)]
-            for version in [v.number for v in UBUNTU_VERSIONS]:
+            for version in [v.number for v in get_ubuntu_versions()]:
                 if version in new_versions and version not in old_versions:
                     Subscription(user=user, ubuntu_version=version).save()
                 elif version not in new_versions and version in old_versions:
@@ -1281,6 +1221,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
                             len(d['delete']))
             messages.success(request, msg % {'n': len(d['delete'])})
             entries = filter(lambda s: str(s.id) not in d['delete'], entries)
+            cache.delete('portal/pm_count/%s' % request.user.id)
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
 
@@ -1992,7 +1933,7 @@ def config(request):
     return {
         'form': form,
         'team_icon_url': team_icon and href('media', team_icon) or None,
-        'versions': list(sorted(UbuntuVersionList())),
+        'versions': get_ubuntu_versions(),
     }
 
 

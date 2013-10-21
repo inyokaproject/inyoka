@@ -8,21 +8,21 @@
     :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.http import Http404, HttpResponseRedirect
 from django.contrib import messages
-from django.utils.html import escape
-from django.views.generic import edit, base, list
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404, HttpResponseRedirect
+from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
+from django.views.generic import edit, base, list
 
-from inyoka.utils.urls import href
-from inyoka.utils.http import TemplateResponse
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
+from inyoka.utils.http import TemplateResponse
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
-from inyoka.utils.pagination import Pagination
+from inyoka.utils.urls import href
 
 
 def trigger_fix_errors_message(request):

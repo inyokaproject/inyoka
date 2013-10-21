@@ -13,8 +13,8 @@ from django.conf import settings
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from inyoka.utils.templating import render_template
 from inyoka.utils.decorators import patch_wrapper
+from inyoka.utils.templating import render_template
 
 
 def templated(template_name, status=None, modifier=None,

@@ -17,18 +17,19 @@ from django import forms
 from django.conf import settings
 from django.core import validators
 from django.forms.widgets import Input
+from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext as _
-
 import pytz
+
 from inyoka.markup import parse, StackExhaused
-from inyoka.utils.text import slugify
-from inyoka.utils.mail import is_blocked_host
-from inyoka.utils.urls import href
 from inyoka.portal.user import User
-from inyoka.utils.local import current_request
-from inyoka.utils.dates import get_user_timezone, datetime_to_timezone
+from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.jabber import may_be_valid_jabber
+from inyoka.utils.local import current_request
+from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.storage import storage
+from inyoka.utils.text import slugify
+from inyoka.utils.urls import href
 
 
 def clear_surge_protection(request, form):
@@ -163,7 +164,7 @@ class DateTimeField(forms.DateTimeField):
         datetime = super(DateTimeField, self).clean(value)
         if not datetime:
             return
-        datetime = get_user_timezone().localize(datetime) \
+        datetime = get_current_timezone().localize(datetime) \
                        .astimezone(pytz.utc).replace(tzinfo=None)
         return datetime
 
@@ -251,7 +252,7 @@ class ImageCaptchaField(forms.Field):
                 value = value.encode('utf-8')
             if value:
                 h.update(value)
-            if h.digest() == solution:
+            if h.hexdigest() == solution:
                 return True
         raise forms.ValidationError(_(u'The entered CAPTCHA was incorrect.'))
 

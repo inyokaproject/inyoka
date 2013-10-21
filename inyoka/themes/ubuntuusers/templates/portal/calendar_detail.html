@@ -26,17 +26,17 @@
 </h3>
 <table class="vevent admin_link_hover">
   <tr><th>{% trans %}Date{% endtrans %}</th><td>
-    {{ _('from') }} {{ event.date|dateformat }}
+    {{ _('from') }} {{ event.date|naturalday }}
     {% if event.time %}
-      {{ event.time|timeformat(event.date) }}
+      {{ event.startdatetime|time }}
     {% endif %}
     {%- if event.enddate or event.endtime %}
       {{ _('to') }}
       {% if event.enddate %}
-        {{ event.enddate|dateformat }}
+        {{ event.enddate|naturalday }}
       {% endif %}
       {% if event.endtime %}
-        {{ event.endtime|timeformat(event.date) }}
+        {{ event.enddatetime|time }}
       {% endif %}
     {% endif %}
   </td></tr>

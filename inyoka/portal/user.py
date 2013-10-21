@@ -12,34 +12,30 @@
 from os import path
 from StringIO import StringIO
 from datetime import datetime
-
 from PIL import Image
-from django.db import models
-from django.core import signing
+
 from django.conf import settings
-from django.dispatch import receiver
-from django.core.cache import cache
-from django.utils.html import escape
-from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext_lazy
-from django.contrib.auth.models import (
-    BaseUserManager,
-    AbstractBaseUser,
-    update_last_login
-)
+from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, update_last_login)
 from django.contrib.auth.signals import user_logged_in
+from django.core import signing
+from django.core.cache import cache
+from django.db import models
+from django.dispatch import receiver
+from django.utils.html import escape
+from django.utils.translation import ugettext as _, ugettext_lazy
 
 from inyoka.markup import parse, render, RenderContext
+from inyoka.utils.database import JSONField, update_model
+from inyoka.utils.decorators import deferred
+from inyoka.utils.gravatar import get_gravatar
+from inyoka.utils.local import current_request
 from inyoka.utils.mail import send_mail
-from inyoka.utils.user import normalize_username, gen_activation_key
+from inyoka.utils.storage import storage
+from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
-from inyoka.utils.local import current_request
-from inyoka.utils.storage import storage
-from inyoka.utils.gravatar import get_gravatar
-from inyoka.utils.database import JSONField, update_model
-from inyoka.utils.templating import render_template
-from inyoka.utils.decorators import deferred
+from inyoka.utils.user import normalize_username, gen_activation_key
+
 
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
 DEFAULT_GROUP_ID = 1  # group id for all registered users
@@ -656,10 +652,12 @@ class UserData(models.Model):
     value = models.CharField(max_length=255)
 
 
-# TODO: The original signal can get reused as soon as we turn USE_TZ on.
 @receiver(user_logged_in)
 def update_user_flags(sender, request, user, **kwargs):
     user.last_login = datetime.utcnow()
     user.save(update_fields=['last_login'])
+    tz = user.settings.get('timezone')
+    if tz and tz != settings.TIME_ZONE:
+        request.session['django_timezone'] = tz
 
 user_logged_in.disconnect(update_last_login)

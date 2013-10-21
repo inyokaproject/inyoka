@@ -8,8 +8,8 @@
     :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from datetime import time as dt_time
-from datetime import date, datetime
+from datetime import date, datetime, time as dt_time
+import pytz
 
 from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
@@ -20,37 +20,28 @@ from django.core.cache import cache
 from django.utils.http import urlencode
 from django.utils.dates import MONTHS
 from django.utils.translation import ugettext as _
+from django.utils.timezone import get_current_timezone
 from django.contrib.contenttypes.models import ContentType
 
-import pytz
-from inyoka.utils import ctype, generic
+from inyoka.ikhaya.forms import (NewEventForm, EditEventForm, EditCommentForm,
+    EditArticleForm, EditCategoryForm, SuggestArticleForm, EditPublicArticleForm)
+from inyoka.ikhaya.models import Event, Report, Comment, Article, Category, Suggestion
+from inyoka.ikhaya.notifications import (send_comment_notifications,
+    send_new_suggestion_notifications)
 from inyoka.markup import parse, RenderContext
+from inyoka.portal.models import Subscription, PrivateMessage, PrivateMessageEntry
+from inyoka.portal.user import User
+from inyoka.portal.utils import check_login, require_permission
+from inyoka.utils import ctype, generic
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.http import templated, AccessDeniedResponse, does_not_exist_is_404
-from inyoka.portal.user import User
 from inyoka.utils.feeds import AtomFeed, atom_feed
-from inyoka.utils.dates import get_user_timezone, date_time_to_datetime
-from inyoka.portal.utils import check_login, require_permission
-from inyoka.ikhaya.forms import (
-    NewEventForm,
-    EditEventForm,
-    EditCommentForm,
-    EditArticleForm,
-    EditCategoryForm,
-    SuggestArticleForm,
-    EditPublicArticleForm
-)
-from inyoka.ikhaya.models import Event, Report, Comment, Article, Category, Suggestion
-from inyoka.portal.models import Subscription, PrivateMessage, PrivateMessageEntry
+from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.storage import storage
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.notification import send_notification
-from inyoka.ikhaya.notifications import (
-    send_comment_notifications,
-    send_new_suggestion_notifications
-)
 from inyoka.utils.flash_confirmation import confirm_action
 
 
@@ -778,7 +769,7 @@ def event_suggest(request):
         form = NewEventForm(request.POST)
         if form.is_valid():
             event = Event()
-            convert = (lambda v: get_user_timezone().localize(v)
+            convert = (lambda v: get_current_timezone().localize(v)
                                 .astimezone(pytz.utc).replace(tzinfo=None))
             data = form.cleaned_data
             event.name = data['name']

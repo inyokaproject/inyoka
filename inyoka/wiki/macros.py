@@ -16,22 +16,21 @@ from datetime import date, datetime, timedelta
 from collections import OrderedDict
 
 from django.conf import settings
-from django.utils.translation import ugettext as _
-from django.utils.translation import ungettext
+from django.utils.translation import ugettext as _, ungettext
 
 from inyoka.markup import nodes, macros
-from inyoka.wiki.views import fetch_real_target
-from inyoka.utils.urls import href, url_for, urlencode, is_external_target
-from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
-from inyoka.wiki.models import Page, MetaData, Revision
+from inyoka.markup.parsertools import MultiMap, flatten_iterator
+from inyoka.markup.templates import expand_page_template
+from inyoka.markup.utils import simple_filter
 from inyoka.utils.cache import cache
 from inyoka.utils.dates import format_time, datetime_to_timezone
-from inyoka.wiki.signals import build_picture_node
-from inyoka.markup.utils import simple_filter
 from inyoka.utils.imaging import parse_dimensions
-from inyoka.markup.templates import expand_page_template
 from inyoka.utils.pagination import Pagination
-from inyoka.markup.parsertools import MultiMap, flatten_iterator
+from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
+from inyoka.utils.urls import href, url_for, urlencode, is_external_target
+from inyoka.wiki.models import Page, MetaData, Revision
+from inyoka.wiki.signals import build_picture_node
+from inyoka.wiki.views import fetch_real_target
 
 
 def make_int(s, default):

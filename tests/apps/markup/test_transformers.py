@@ -12,12 +12,8 @@
 import unittest
 
 from inyoka.markup import nodes, Parser, transformers
-from inyoka.markup.transformers import (
-    get_smiley_re,
-    FootnoteSupport,
-    HeadlineProcessor,
-    AutomaticParagraphs
-)
+from inyoka.markup.transformers import (get_smiley_re, FootnoteSupport,
+    HeadlineProcessor, AutomaticParagraphs)
 
 
 def parse(source, transformer):

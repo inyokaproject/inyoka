@@ -58,7 +58,7 @@
           </a>
         {%- endfor %}
         <div class="separator">{% trans %}More{% endtrans %}</div>
-        {%- if USER.is_authenticated %}
+        {%- if USER.is_authenticated() %}
           <a class="button" href="{{ href('portal', 'privmsg') }}">
             <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', 'messages.png') }}" />
             <div class="title">{% trans %}Messages{% endtrans %}</div>

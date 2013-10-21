@@ -9,20 +9,21 @@
     :license: GNU GPL, see LICENSE for more details.
 """
 from werkzeug import cached_property
-from django.db import models, transaction
-from django.core.cache import cache
-from django.utils.translation import ugettext_lazy
+
 from django.contrib.contenttypes import models as gmodels
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
+from django.db import models, transaction
+from django.utils.translation import ugettext_lazy
 
-from inyoka.markup import parse, render, RenderContext
-from inyoka.wiki.acl import has_privilege as have_wiki_privilege
 from inyoka.forum.acl import have_privilege as have_forum_privilege
-from inyoka.utils.urls import href
-from inyoka.utils.text import slugify
+from inyoka.markup import parse, render, RenderContext
 from inyoka.portal.user import User
 from inyoka.utils.local import current_request
+from inyoka.utils.text import slugify
+from inyoka.utils.urls import href
+from inyoka.wiki.acl import has_privilege as have_wiki_privilege
 
 
 class SubscriptionManager(gmodels.ContentTypeManager):
@@ -48,10 +49,12 @@ class SubscriptionManager(gmodels.ContentTypeManager):
             return False
         filter = self._get_filter(user, object, ctype_query)
 
-        subscribed = Subscription.objects.filter(**filter).exists()
-        if clear_notified and subscribed:
+        notifies = Subscription.objects.filter(**filter)\
+                                       .values_list('notified', flat=True)[:1]
+        notified = notifies and notifies[0] == True
+        if clear_notified and notified:
             Subscription.objects.filter(**filter).update(notified=False)
-        return subscribed
+        return bool(notifies)
 
     def get_for_user(self, user, object, ctype_query=None):
         filter = self._get_filter(user, object, ctype_query)
@@ -200,7 +203,7 @@ class PrivateMessageEntry(models.Model):
         trash = PRIVMSG_FOLDERS['trash'][0]
         for message in messages:
             message.folder = None if message.folder == trash else trash
-            message.read = True if folder == trash else message.read
+            message.read = True if message.folder == trash else message.read
             message.save()
         transaction.commit()
 

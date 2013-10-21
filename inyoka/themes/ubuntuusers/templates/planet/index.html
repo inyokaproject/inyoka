@@ -32,7 +32,7 @@
       {% set article_index = 0 %}
       {%- for day in days %}
         <div class="day">
-          <h2>{{ day.date|dateformat }}</h2>
+          <h2>{{ day.date|naturalday }}</h2>
           {% set dayloop = loop %}
           {% for article in day.articles %}
             <div class="article admin_link_hover" id="article_{{ article_index + loop.index0 }}">
@@ -42,7 +42,7 @@
                 #}</a>
                 <p>
                   <a href="{{ article.blog|url|e }}">{{ article.blog.name|e }}</a>
-                  {{ article.pub_date|datetimeformat }}
+                  {{ article.pub_date|datetime }}
                 </p>
                 <h3>
                   <a href="{{ article|url|e }}">{{ article.title }}</a>

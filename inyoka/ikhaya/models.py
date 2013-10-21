@@ -20,16 +20,16 @@ from django.utils.html import escape
 from django.utils.translation import ugettext_lazy
 
 from inyoka.markup import parse, render, RenderContext
-from inyoka.utils.urls import href
-from inyoka.utils.text import slugify
-from inyoka.utils.html import striptags
-from inyoka.portal.user import User
-from inyoka.utils.local import current_request
-from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
-from inyoka.utils.search import search
 from inyoka.portal.models import StaticFile
+from inyoka.portal.user import User
 from inyoka.utils.database import LockableObject, find_next_increment
+from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
 from inyoka.utils.decorators import deferred
+from inyoka.utils.html import striptags
+from inyoka.utils.local import current_request
+from inyoka.utils.search import search
+from inyoka.utils.text import slugify
+from inyoka.utils.urls import href
 
 
 def _get_not_cached_articles(keys, cache_values):
@@ -576,3 +576,17 @@ class Event(models.Model):
                                       or '%g_W' % -self.location_long
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
                '=de&params=%s_%s' % (lat, long)
+
+    def _construct_datetimes(self, day, time):
+        if not day:
+            day = datetime.utcnow().date()
+        return datetime_to_timezone(datetime.combine(day, time))
+
+    @property
+    def startdatetime(self):
+        return self._construct_datetimes(self.date, self.time)
+
+    @property
+    def enddatetime(self):
+        return self._construct_datetimes(self.enddate or self.date, self.endtime)
+

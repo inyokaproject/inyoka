@@ -14,10 +14,10 @@ from django.conf import settings
 from django.dispatch import receiver
 
 from inyoka.markup import nodes
-from inyoka.utils.urls import url_for
-from inyoka.wiki.signals import build_picture_node
-from inyoka.utils.imaging import get_thumbnail
 from inyoka.portal.models import StaticFile
+from inyoka.utils.urls import url_for
+from inyoka.utils.imaging import get_thumbnail
+from inyoka.wiki.signals import build_picture_node
 
 
 @receiver(build_picture_node)

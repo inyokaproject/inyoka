@@ -31,7 +31,7 @@
           Reported by <a href="{{ link }}">{{ author }}</a>
         {%- endtrans %}
         <span class="linklist"> | </span>
-        {{ report.pub_date|datetimeformat }}
+        {{ report.pub_date|datetime }}
         {%- if can_edit %}
           <span class="admin_link">
             <span class="linklist"> |</span>

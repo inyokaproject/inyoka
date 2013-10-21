@@ -27,7 +27,7 @@
         <dt>{% trans %}Subject:{% endtrans %}</dt>
         <dd>{{ message.subject|e }}</dd>
         <dt>{% trans %}Date:{% endtrans %}</dt>
-        <dd>{{ message.pub_date|datetimeformat }}</dd>
+        <dd>{{ message.pub_date|datetime }}</dd>
       </dl>
       <div class="prvmsg_body">
         {{ message.rendered_text }}
@@ -96,7 +96,7 @@
               {%- endif %}
               {%- if entry.message.recipients|length > 1 %}, …{% endif %}
             </td>
-            <td>{{ entry.message.pub_date|datetimeformat }}</td>
+            <td>{{ entry.message.pub_date|datetime }}</td>
             <td class="actions">
               {%- if not entry.is_own_message %}
                 {% if entry.message.author.is_active %}
@@ -157,6 +157,10 @@
       </tfoot>
     </table>
   </form>
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
   <script type="text/javascript">
     /* <![CDATA[ */
     var all_checked = false;

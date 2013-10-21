@@ -33,7 +33,7 @@
           <a href="{{ href('portal', 'user', user.username, 'edit') }}">{{ user.username|e }}</a>
         </td>
         <td>{{ user.location }}</td>
-        <td>{{ user.date_joined|dateformat }}</td>
+        <td>{{ user.date_joined|naturalday }}</td>
         <td>{{ user.post_count }}</td>
       </tr>
     {%- endfor %}
