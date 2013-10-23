@@ -833,8 +833,17 @@ th.hidden-lg,td.hidden-lg{display:table-cell !important}
 @media (min-width:1200px){.hidden-lg{display:none !important}tr.hidden-lg{display:none !important} th.hidden-lg,td.hidden-lg{display:none !important}}
 .visible-print{display:none !important}tr.visible-print{display:none !important}
 th.visible-print,td.visible-print{display:none !important}
-@media print{.visible-print{display:block !important}tr.visible-print{display:table-row !important} th.visible-print,td.visible-print{display:table-cell !important} .hidden-print{display:none !important}tr.hidden-print{display:none !important} th.hidden-print,td.hidden-print{display:none !important}}body.simple{background-color:#2f2f2f}
-article .meta,article time{color:#999}
+@media print{.visible-print{display:block !important}tr.visible-print{display:table-row !important} th.visible-print,td.visible-print{display:table-cell !important} .hidden-print{display:none !important}tr.hidden-print{display:none !important} th.hidden-print,td.hidden-print{display:none !important}}article .meta,article time,article .panel-footer{font-size:12px;color:#999}
+.headerlink{display:none;margin:0 0 0 .2em;text-decoration:none;color:#999}
+h1:hover *,h2:hover *,h3:hover *,h4:hover *,h5:hover *,h6:hover *{display:inline}
+body.simple{background-color:#2f2f2f}
+#wikipage table{width:100%;margin-bottom:20px}#wikipage table thead>tr>th,#wikipage table tbody>tr>th,#wikipage table tfoot>tr>th,#wikipage table thead>tr>td,#wikipage table tbody>tr>td,#wikipage table tfoot>tr>td{padding:8px;line-height:1.428571429;vertical-align:top;border-top:1px solid #ddd}
+#wikipage table thead>tr>th{vertical-align:bottom;border-bottom:2px solid #ddd}
+#wikipage table caption+thead tr:first-child th,#wikipage table colgroup+thead tr:first-child th,#wikipage table thead:first-child tr:first-child th,#wikipage table caption+thead tr:first-child td,#wikipage table colgroup+thead tr:first-child td,#wikipage table thead:first-child tr:first-child td{border-top:0}
+#wikipage table tbody+tbody{border-top:2px solid #ddd}
+#wikipage table .table{background-color:#fff}
+#wikipage table>tbody>tr:nth-child(odd)>td,#wikipage table>tbody>tr:nth-child(odd)>th{background-color:#f9f9f9}
+.headerlink{display:none}.headerlink:hover{display:inline}
 body{padding-top:50px}
 #main-navbar.shadowed{box-shadow:0 5px 30px #999}
 #sidebar.affix{position:fixed;top:60px}

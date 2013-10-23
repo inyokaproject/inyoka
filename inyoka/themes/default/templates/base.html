@@ -63,7 +63,7 @@
           <div class="col-md-12">
             <ol class="breadcrumb">
               {% block breadcrumb %}
-                <li class="active"><em>Breadcrumb not implemented for this page</em></li>
+                <li class="active"><em>Breadcrumb not yet implemented for this page</em></li>
               {% endblock %}
             </ol>
           </div>
@@ -110,6 +110,7 @@
       </footer>
       <script src="{{ href('static', 'js', 'jquery-2.0.3.min.js') }}"></script>
       <script src="{{ href('static', 'js', 'bootstrap.min.js') }}"></script>
+      <script src="{{ href('static', 'js', 'smoothscrolling.js') }}"></script>
       <script src="{{ href('static', 'js', 'base.js') }}"></script>
       {% block scripts %}
       {% endblock %}
