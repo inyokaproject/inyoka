@@ -1,0 +1,8 @@
+Hallo {{ username }},
+
+der Benutzer {{ creator }} hat eine neue Diskussion über die Wiki-Seite „{{ page_title }}“ angelegt:
+{{ topic_url }}
+
+Wenn du auch über neue Beiträge in der Diskussion benachrichtigt werden möchtest, so abonniere das Foren-Thema hier: {{ topic_subscribe }}
+
+Falls du bei Änderungen dieser Wiki-Seite in Zukunft nicht mehr benachrichtigt werden willst, so kannst du das hier deaktivieren: {{ page_unsubscribe }}

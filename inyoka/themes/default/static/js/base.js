@@ -26,7 +26,7 @@ $(function () {
     if (window.location.hash) {
         var pos = $(window.location.hash).offset().top - 60;
         window.setTimeout(function() {
-        $("html, body").animate({ scrollTop: pos }, 100);
+        $('html, body').animate({ scrollTop: pos }, 100);
         }, 50);
     }
 });

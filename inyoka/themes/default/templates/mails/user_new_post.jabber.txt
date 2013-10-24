@@ -1,0 +1,1 @@
+Neuer Beitrag vom beobachteten Benutzer „{{ author_username }}“ im Thema „{{ topic_title }}“: {{ post_url }}

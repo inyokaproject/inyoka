@@ -38,7 +38,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
               {% if USER.is_authenticated() %}
-                <li><a href="{{ USER|url }}" class="navbar-link">{{ USER }}</a></li>
+                <li><a href="{{ USER|url }}" class="navbar-link hidden-sm">{{ USER }}</a></li>
                 <li><a class="glyphicon glyphicon-log-out" href="{{ href('portal', 'logout') }}"></a></li>
                 <li><a class="glyphicon glyphicon-wrench" href="{{ href('portal', 'usercp') }}"></a></li>
                 <li><a class="glyphicon glyphicon-envelope" href="{{ href('portal', 'privmsg') }}"></a></li>

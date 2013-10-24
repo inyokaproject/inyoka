@@ -1,0 +1,6 @@
+Hallo {{ username }},
+
+der Benutzer {{ author_username }} hat einen neuen Thread im Forum „{{ forum_name }}“ geschrieben und ihn mit der Ubuntu Version „{{ topic_version }}“ gekennzeichnet:
+{{ topic_title }} - {{ post_url }}
+
+Falls du zu neuen Themen mit dieser Ubuntu Version in Zukunft nicht mehr benachrichtigt werden möchtest, so kannst du das hier deaktivieren: {{ href('portal', 'usercp', 'settings') }}
