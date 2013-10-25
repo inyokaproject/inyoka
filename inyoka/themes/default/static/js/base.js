@@ -18,13 +18,14 @@ $(function () {
         sidebar_resize();
     });
 
+    var navbar_height = parseFloat($('#main-navbar').css('height'), 10) * 1.38;
     $('#sidebar').affix({
-        offset: { top: $('#sidebar').offset().top - 60 }
+        offset: { top: $('#sidebar').offset().top - navbar_height }
     });
 
     sidebar_resize();
     if (window.location.hash) {
-        var pos = $(window.location.hash).offset().top - 60;
+        var pos = $(window.location.hash).offset().top - navbar_height;
         window.setTimeout(function() {
         $('html, body').animate({ scrollTop: pos }, 100);
         }, 50);

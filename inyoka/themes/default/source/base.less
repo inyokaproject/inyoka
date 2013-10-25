@@ -1,16 +1,5 @@
-@import "bootstrap-3.0.0/less/bootstrap";
-@import "variables";
-
-@import "ikhaya/base";
-@import "markup";
-@import "simple";
-@import "wiki/base";
-
-@import "bootswatch";
-@import "bootstrap-3.0.0/less/utilities";
-
 body {
-  padding-top: 50px;
+  padding-top: @navbar-height * 1.38;
 }
 
 #main-navbar {
@@ -21,7 +10,7 @@ body {
 
 #sidebar.affix {
   position: fixed;
-  top: 60px;
+  top: @navbar-height * 1.38;
 }
 
 @media (max-width: 767px) {
