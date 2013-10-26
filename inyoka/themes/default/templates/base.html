@@ -16,96 +16,108 @@
   {% endblock %}
   {% block body %}
     <body>
-      <nav id="main-navbar" class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-          <a class="navbar-brand" href="{{ href('portal') }}">PAGENAME</a>
+      <div id="main-wrap">
+        <div id="main-content">
+          <nav id="main-navbar" class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+              <a class="navbar-brand" href="{{ href('portal') }}">PAGENAME</a>
 
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-          </div>
-          <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-              {# TODO: Apps should register themself, and the template should receive some list of active apps #}
-              {% for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
-                <li class="{{ app }}{% if app == active_app %} active{% endif %}">
-                  <a href="{{ href(app) }}">{{ app|capitalize }}</a>
-                </li>
-              {% endfor %}
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              {% if USER.is_authenticated() %}
-                <li><a href="{{ USER|url }}" class="navbar-link hidden-sm">{{ USER }}</a></li>
-                <li><a class="glyphicon glyphicon-log-out" href="{{ href('portal', 'logout') }}"></a></li>
-                <li><a class="glyphicon glyphicon-wrench" href="{{ href('portal', 'usercp') }}"></a></li>
-                <li><a class="glyphicon glyphicon-envelope" href="{{ href('portal', 'privmsg') }}"></a></li>
-              {% else %}
-                <li><a class="glyphicon glyphicon-log-in" href="{{ href('portal', 'login') }}"></a></li>
-              {% endif %}
-              <li><a class="glyphicon glyphicon-search" href="{{ href('portal', 'search') }}"></a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      {#      <div class="container">#}
-      {#        <div class="header">#}
-      {#          <h1><a href="#">PAGENAME</a>#}
-      {#            <small>pagemotto</small>#}
-      {#          </h1>#}
-      {#        </div>#}
-      {#      </div>#}
-
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12">
-            <ol class="breadcrumb">
-              {% block breadcrumb %}
-                <li class="active"><em>Breadcrumb not yet implemented for this page</em></li>
-              {% endblock %}
-            </ol>
-          </div>
-        </div>
-        {% for message in MESSAGES %}
-          <div class="row">
-            <div class="col-md-12">
-              {% if message.tags == 'error' %}
-                {% set alert_class = 'danger' %}
-              {% elif message.tags == 'debug' %}
-                {% set alert_class = 'info' %}
-              {% else %}
-                {% set alert_class = message.tags %}
-              {% endif %}
-              <div class="alert alert-{{ alert_class }}">
-                {{ message }}
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+              </div>
+              <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                  {# TODO: Apps should register themself, and the template should receive some list of active apps #}
+                  {% for app in ('portal', 'forum', 'wiki', 'ikhaya', 'planet') %}
+                    <li class="{{ app }}{% if app == active_app %} active{% endif %}">
+                      <a href="{{ href(app) }}">{{ app|capitalize }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  {% if USER.is_authenticated() %}
+                    <li><a href="{{ USER|url }}" class="navbar-link hidden-sm">{{ USER }}</a></li>
+                    <li><a class="glyphicon glyphicon-log-out" href="{{ href('portal', 'logout') }}"></a></li>
+                    <li><a class="glyphicon glyphicon-wrench" href="{{ href('portal', 'usercp') }}"></a></li>
+                    <li><a class="glyphicon glyphicon-envelope" href="{{ href('portal', 'privmsg') }}"></a></li>
+                  {% else %}
+                    <li><a class="glyphicon glyphicon-log-in" href="{{ href('portal', 'login') }}"></a></li>
+                  {% endif %}
+                  <li><a class="glyphicon glyphicon-search" href="{{ href('portal', 'search') }}"></a></li>
+                </ul>
               </div>
             </div>
-          </div>
-        {% endfor %}
-        <div class="row">
-          <div class="col-sm-3">
-            <div class="container content_sidebar" id="sidebar">
-              {% block sidebar %}
-              {% endblock %}
+          </nav>
+          {#      <div class="container">#}
+          {#        <div class="header">#}
+          {#          <h1><a href="#">PAGENAME</a>#}
+          {#            <small>pagemotto</small>#}
+          {#          </h1>#}
+          {#        </div>#}
+          {#      </div>#}
+
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <ol class="breadcrumb">
+                  {% block breadcrumb %}
+                    <li class="active"><em>Breadcrumb not yet implemented for this page</em></li>
+                  {% endblock %}
+                </ol>
+              </div>
             </div>
-          </div>
-          <div class="col-sm-9 content">
-            <div class="container">
-              {% block content %}
-              {% endblock %}
+            {% for message in MESSAGES %}
+              <div class="row">
+                <div class="col-md-12">
+                  {% if message.tags == 'error' %}
+                    {% set alert_class = 'danger' %}
+                  {% elif message.tags == 'debug' %}
+                    {% set alert_class = 'info' %}
+                  {% else %}
+                    {% set alert_class = message.tags %}
+                  {% endif %}
+                  <div class="alert alert-{{ alert_class }}">
+                    {{ message }}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="container content_sidebar" id="sidebar">
+                  {% block sidebar %}
+                  {% endblock %}
+                </div>
+              </div>
+              <div class="col-sm-9 content">
+                <div class="container">
+                  {% block content %}
+                  {% endblock %}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <footer>
+      <footer id="main-footer">
         <div class="container">
-          <small class="col-md-12">
-            {% trans link='http://inyokaproject.org/' %}
-              Powered by <a href="{{ link }}">Inyoka</a>
-            {% endtrans %}
-          </small>
+          <ul class="list list-unstyled">
+            <li>
+              {% trans link='http://inyokaproject.org/' %}Powered by <a href="{{ link }}">Inyoka</a>{% endtrans %}
+            </li>
+            <li>Item</li>
+            <li>Item</li>
+            <li>Item</li>
+            <li>Item</li>
+            <li>Item</li>
+            <li>Item</li>
+            <li>Item</li>
+            <li>Item</li>
+          </ul>
         </div>
       </footer>
       <script src="{{ href('static', 'js', 'jquery-2.0.3.min.js') }}"></script>

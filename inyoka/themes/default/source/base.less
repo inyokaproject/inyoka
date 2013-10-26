@@ -1,5 +1,49 @@
+html, body {
+  height: 100%;
+}
+
 body {
   padding-top: @navbar-height * 1.38;
+}
+
+#main-footer {
+  .text-muted;
+  font-size: @font-size-small;
+  background-color: @gray-lighter;
+
+  ul li {
+    padding: @navbar-padding-vertical @navbar-padding-horizontal;
+  }
+}
+
+@media (min-width: @screen-sm) {
+  #main-wrap {
+    min-height: 100%;
+
+    #main-content {
+      overflow: auto;
+      padding-bottom: @footer-height * 1.25;
+    }
+  }
+
+  #main-footer {
+      margin-top: -@footer-height;
+      height: @footer-height;
+      clear: both;
+      padding: 0;
+      line-height: @footer-height;
+
+      .container {
+        height: @footer-height;
+      }
+
+      ul {
+        .list-inline;
+        li {
+          padding: 0 @navbar-padding-horizontal;
+        }
+      }
+  }
 }
 
 #main-navbar {
