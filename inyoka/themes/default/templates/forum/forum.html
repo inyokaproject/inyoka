@@ -9,14 +9,14 @@
 {% endblock %}
 
 {% block sidebar %}
-  <ul class="nav nav-pills nav-stacked">
+  <ul class="list-group">
   {% if is_subscribed %}
-    <li><a href="{{ forum|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a></li>
+    <li class="list-group-item"><a href="{{ forum|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a></li>
   {% else %}
-    <li><a href="{{ forum|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a></li>
+    <li class="list-group-item"><a href="{{ forum|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a></li>
   {% endif %}
-    <li><a href="{{ forum|url('newtopic') }}">{% trans %}New topic{% endtrans %}</a></li>
-    <li><a href="{{ forum|url('markread') }}">{% trans %}Mark as read{% endtrans %}</a></li>
+    <li class="list-group-item"><a href="{{ forum|url('newtopic') }}">{% trans %}New topic{% endtrans %}</a></li>
+    <li class="list-group-item"><a href="{{ forum|url('markread') }}">{% trans %}Mark as read{% endtrans %}</a></li>
   </ul>
 {% endblock %}
 

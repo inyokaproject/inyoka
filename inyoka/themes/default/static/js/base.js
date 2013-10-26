@@ -30,4 +30,7 @@ $(function () {
         $('html, body').animate({ scrollTop: pos }, 100);
         }, 50);
     }
+
+    // initialize fancy tooltips
+    $('[data-toggle="tooltip"]').tooltip();
 });
