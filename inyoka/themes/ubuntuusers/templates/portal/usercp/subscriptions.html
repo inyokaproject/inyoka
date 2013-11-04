@@ -9,7 +9,7 @@
     :license: GNU GPL, see LICENSE for more details.
 #}
 
-{%- extends '../portal/usercp/overall.html' %}
+{%- extends 'portal/usercp/overall.html' %}
 {% do BREADCRUMB.append(_('Subscriptions'), href('portal', 'usercp', 'subscriptions'), True) %}
 {% set selected = 'subscriptions' %}
 
