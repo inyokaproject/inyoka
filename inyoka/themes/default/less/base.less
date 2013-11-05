@@ -27,22 +27,22 @@ body {
   }
 
   #main-footer {
-      margin-top: -@footer-height;
+    margin-top: -@footer-height;
+    height: @footer-height;
+    clear: both;
+    padding: 0;
+    line-height: @footer-height;
+
+    .container {
       height: @footer-height;
-      clear: both;
-      padding: 0;
-      line-height: @footer-height;
+    }
 
-      .container {
-        height: @footer-height;
+    ul {
+      .list-inline;
+      li {
+        padding: 0 @navbar-padding-horizontal;
       }
-
-      ul {
-        .list-inline;
-        li {
-          padding: 0 @navbar-padding-horizontal;
-        }
-      }
+    }
   }
 }
 

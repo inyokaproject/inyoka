@@ -831,7 +831,10 @@ body{padding-top:69px}
 #sidebar.affix{position:fixed;top:69px}
 @media (max-width:767px){#sidebar.affix{position:static;top:0}}.headerlink{display:none;margin:0 0 0 .2em;text-decoration:none;color:#999}
 h1:hover *,h2:hover *,h3:hover *,h4:hover *,h5:hover *,h6:hover *{display:inline}
-body.simple{background-color:#2f2f2f}
+pre{white-space:pre;word-break:normal;word-wrap:normal;overflow:auto}
+div.code{font-size:10px;color:#333;background-color:#f5f5f5;border:1px solid #ccc;border-radius:4px;margin:0 0 10px}div.code table{table-layout:fixed;width:100%;background:none;margin:0 !important}div.code table td{border:none !important;background:none !important}div.code table td.linenos{width:40px;border-right:1px solid #ddd}
+div.code table pre{border:none;background:none;margin:0;padding:0}
+@media (max-width:768px){div.code table td.linenos{display:none}}body.simple{background-color:#2f2f2f}
 article .meta,article time,article .panel-footer{font-size:12px;color:#999}
 #wikipage table{width:100%;margin-bottom:20px}#wikipage table thead>tr>th,#wikipage table tbody>tr>th,#wikipage table tfoot>tr>th,#wikipage table thead>tr>td,#wikipage table tbody>tr>td,#wikipage table tfoot>tr>td{padding:8px;line-height:1.428571429;vertical-align:top;border-top:1px solid #ddd}
 #wikipage table thead>tr>th{vertical-align:bottom;border-bottom:2px solid #ddd}
