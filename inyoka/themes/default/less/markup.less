@@ -19,6 +19,10 @@ pre {
   overflow: auto;
 }
 
+.codeblock_resizer {
+  margin: -(@line-height-computed / 4) 0 10px;
+}
+
 div.code {
   font-size: 10px;
   color: @pre-color;
@@ -26,10 +30,11 @@ div.code {
   border: 1px solid @pre-border-color;
   border-radius: @border-radius-base;
   margin: 0 0 (@line-height-computed / 2);
+  max-height: 300px;
+  overflow: auto;
 
   table {
     table-layout: fixed;
-    width: 100%;
     background: none;
     margin: 0 !important;
 
@@ -40,6 +45,7 @@ div.code {
       &.linenos {
         width: 40px;
         border-right: 1px solid @table-border-color;
+        text-align: right;
       }
 
       &.code {
