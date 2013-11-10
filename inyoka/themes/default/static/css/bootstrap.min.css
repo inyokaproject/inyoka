@@ -829,7 +829,75 @@ body{padding-top:69px}
 #main-footer{color:#999;font-size:12px;background-color:#eee}#main-footer ul li{padding:15px 15px}
 @media (min-width:768px){#main-wrap{min-height:100%}#main-wrap #main-content{overflow:auto;padding-bottom:62.5px} #main-footer{margin-top:-50px;height:50px;clear:both;padding:0;line-height:50px}#main-footer .container{height:50px} #main-footer ul{padding-left:0;list-style:none}#main-footer ul>li{display:inline-block;padding-left:5px;padding-right:5px} #main-footer ul li{padding:0 15px}}#main-navbar.shadowed{box-shadow:0 5px 30px #222}
 #sidebar.affix{position:fixed;top:69px}
-@media (max-width:767px){#sidebar.affix{position:static;top:0}}.headerlink{display:none;margin:0 0 0 .2em;text-decoration:none;color:#999}
+@media (max-width:767px){#sidebar.affix{position:static;top:0}}.syntax .w{color:none}
+.syntax .err{color:#d9534f;background-color:#f4cecd}
+.syntax .x{color:#333}
+.syntax .k{color:#0063b9;font-weight:bold}
+.syntax .kc{color:#0063b9}
+.syntax .kd{color:#0063b9}
+.syntax .kn{color:#0063b9}
+.syntax .kp{color:#0063b9}
+.syntax .kr{color:#0063b9}
+.syntax .kt{color:#721a3a;font-weight:bold}
+.syntax .n{color:#333}
+.syntax .na{color:#7d9029}
+.syntax .nb{color:#1a6f1a}
+.syntax .bp{color:#1a6f1a}
+.syntax .nc{color:#b84d49;font-weight:bold}
+.syntax .no{color:#800}
+.syntax .nd{color:#333;font-weight:bold}
+.syntax .ni{color:#999}
+.syntax .ne{color:#d2413a;font-weight:bold}
+.syntax .nf{color:#b84d49}
+.syntax .py{color:#333}
+.syntax .nl{color:#a0a000}
+.syntax .nn{color:#b84d49}
+.syntax .nx{color:#333}
+.syntax .nt{color:#333}
+.syntax .nv{color:#19177c}
+.syntax .vc{color:#19177c}
+.syntax .vg{color:#19177c}
+.syntax .vi{color:#19177c}
+.syntax .l{color:#d27b00}
+.syntax .ld{color:#d27b00}
+.syntax .s{color:#d27b00}
+.syntax .sb{color:#d27b00}
+.syntax .sc{color:#d27b00}
+.syntax .sd{color:#9e7234;font-style:italic}
+.syntax .s2{color:#d27b00}
+.syntax .se{color:#b62}
+.syntax .sh{color:#d27b00}
+.syntax .si{color:#b68}
+.syntax .sx{color:#008000}
+.syntax .sr{color:#b68}
+.syntax .s1{color:#d27b00}
+.syntax .ss{color:#19177c}
+.syntax .m{color:#245682;font-weight:bold}
+.syntax .mf{color:#245682}
+.syntax .mh{color:#245682}
+.syntax .mi{color:#245682}
+.syntax .il{color:#245682}
+.syntax .mo{color:#245682}
+.syntax .o{color:#333;font-weight:bold}
+.syntax .ow{color:#0063b9;font-weight:bold}
+.syntax .p{color:#333}
+.syntax .c{color:#999}
+.syntax .cm{color:#999;font-style:italic}
+.syntax .cp{color:#3b5f7f;font-weight:bold}
+.syntax .c1{color:#999}
+.syntax .cs{color:#999}
+.syntax .g{color:#333}
+.syntax .gd{color:#d9534f}
+.syntax .ge{color:#333}
+.syntax .gr{color:#ee3f3a;font-weight:bold}
+.syntax .gh{color:#222}
+.syntax .gi{color:#5cb85c}
+.syntax .go{color:#888}
+.syntax .gp{color:#000080}
+.syntax .gs{color:#333}
+.syntax .gu{color:#555}
+.syntax .gt{color:#de4e4a;font-weight:bold}
+.headerlink{display:none;margin:0 0 0 .2em;text-decoration:none;color:#999}
 h1:hover *,h2:hover *,h3:hover *,h4:hover *,h5:hover *,h6:hover *{display:inline}
 pre{white-space:pre;word-break:normal;word-wrap:normal;overflow:auto}
 div.code{font-size:10px;color:#333;background-color:#f5f5f5;border:1px solid #ccc;border-radius:4px;margin:0 0 10px}div.code table{table-layout:fixed;width:100%;background:none;margin:0 !important}div.code table td{border:none !important;background:none !important}div.code table td.linenos{width:40px;border-right:1px solid #ddd}

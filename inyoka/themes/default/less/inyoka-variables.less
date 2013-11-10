@@ -1,1 +1,85 @@
 @footer-height: @navbar-height;
+
+// Colors for syntaxhighlighting
+
+@pygments-default: @pre-color;
+
+@pygments-comment: @text-muted;
+@pygments-comment-multiline: @pygments-comment;
+@pygments-comment-preproc: mix(@brand-primary, @pygments-default);
+@pygments-comment-single: @pygments-comment;
+@pygments-comment-special: @pygments-comment;
+
+@pygments-error: @brand-danger;
+
+@pygments-generic: @pygments-default;
+@pygments-generic-heading: @gray-darker;
+@pygments-generic-subheading: @gray;
+@pygments-generic-deleted: @brand-danger;
+@pygments-generic-inserted: @brand-success;
+@pygments-generic-error: saturate(@brand-danger, 20%);
+@pygments-generic-emph: @pygments-generic;
+@pygments-generic-strong: @pygments-generic;
+@pygments-generic-prompt: #000080;
+@pygments-generic-output: #888888;
+@pygments-generic-traceback: saturate(@brand-danger, 5%);
+
+@pygments-keyword: saturate(mix(@brand-primary, @pygments-default), 90%);
+@pygments-keyword-constant: @pygments-keyword;
+@pygments-keyword-declaration: @pygments-keyword;
+@pygments-keyword-namespace: @pygments-keyword;
+@pygments-keyword-pseudo: @pygments-keyword;
+@pygments-keyword-reserved: @pygments-keyword;
+@pygments-keyword-type: mix(#b00040, @pygments-default);
+
+@pygments-literal: saturate(mix(@brand-warning, @pygments-default), 70%);
+@pygments-literal-date: @pygments-literal;
+
+@pygments-operator: @pygments-default;
+@pygments-operator-word: @pygments-keyword;
+
+@pygments-punctuation: @pygments-default;
+
+@pygments-name: @pygments-default;
+@pygments-name-attribute: #7d9029;
+@pygments-name-builtin: mix(#00aa00, @pygments-name);
+@pygments-name-builtin-pseudo: @pygments-name-builtin;
+@pygments-name-class: @pygments-name-function;
+@pygments-name-constant: #880000;
+@pygments-name-decorator: @pygments-name;
+@pygments-name-entity: #999999;
+@pygments-name-exception: #d2413a;
+@pygments-name-function: mix(@brand-danger, @pygments-default, 80%);
+@pygments-name-label: #a0a000;
+@pygments-name-namespace: @pygments-name-function;
+@pygments-name-other: @pygments-name;
+@pygments-name-property: @pygments-name;
+@pygments-name-tag: @pygments-name;
+@pygments-name-variable: #19177c;
+@pygments-name-variable-class: @pygments-name-variable;
+@pygments-name-variable-global: @pygments-name-variable;
+@pygments-name-variable-instance: @pygments-name-variable;
+
+@pygments-number: darken(@brand-primary, 20%);
+@pygments-number-float: @pygments-number;
+@pygments-number-hex: @pygments-number;
+@pygments-number-integer: @pygments-number;
+@pygments-number-integer-long: @pygments-number-integer;
+@pygments-number-oct: @pygments-number;
+
+@pygments-other: @pygments-default;
+
+@pygments-string: @pygments-literal;
+@pygments-string-backtick: @pygments-string;
+@pygments-string-char: @pygments-string;
+@pygments-string-doc: desaturate(@pygments-string, 50%);
+@pygments-string-double: @pygments-string;
+@pygments-string-escape: #bb6622;
+@pygments-string-heredoc: @pygments-string;
+@pygments-string-interpol: #bb6688;
+@pygments-string-regex: @pygments-string-interpol;
+@pygments-string-single: @pygments-string;
+@pygments-string-symbol: #19177c;
+@pygments-string-other: #008000;
+
+@pygments-whitespace: none;
