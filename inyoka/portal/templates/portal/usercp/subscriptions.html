@@ -90,14 +90,20 @@
     </div>
   </form>
   {{ pagination.generate(position='right') }}
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
   <script type="text/javascript">
     /* <![CDATA[ */
-    $('#check_all').click(function() {
-      var checked = this.checked
-      $('input[name="select"]').each(function() {
-        this.checked = checked;
+    (function () {
+      $('#check_all').click(function() {
+        var checked = this.checked
+        $('input[name="select"]').each(function() {
+          this.checked = checked;
+        });
       });
-    });
-    /* ]]> */
+    })();
+  /*]]> */
   </script>
 {% endblock %}
