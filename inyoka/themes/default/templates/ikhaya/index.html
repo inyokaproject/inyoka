@@ -19,13 +19,25 @@
         {{ article.rendered_intro }}
       </div>
       <div class="panel-footer">
-        {% trans %}Category:{% endtrans %}
-        <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
-        {% if article.updated > article.pub_datetime %}
-          <time datetime="{{ article.updated|datetime('c') }}" class="pull-right">
-            {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}
-          </time>
-        {% endif %}
+        <ul class="list-inline">
+          <li>
+            {% trans %}Category:{% endtrans %}
+            <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
+          </li>
+          <li>
+            {% trans count=article.comment_count %}
+              {{ count }} comment
+              {% pluralize %}
+              {{ count }} comments
+            {% endtrans %}
+          </li>
+          {% if article.updated > article.pub_datetime %}
+            <li class="pull-right">
+              <time datetime="{{ article.updated|datetime('c') }}">
+                {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}
+              </time>
+            </li>
+          {% endif %}</ul>
         <div class="clearfix"></div>
       </div>
     </article>

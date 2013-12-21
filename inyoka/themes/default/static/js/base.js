@@ -2,6 +2,9 @@ $(function () {
 
     function sidebar_resize() {
         var width = $('.col-sm-3').width();
+        var padding_left = parseFloat($('#sidebar').css('padding-left').replace('px', ''));
+        var padding_right = parseFloat($('#sidebar').css('padding-right').replace('px', ''));
+        width -=  padding_left + padding_right;
         $('#sidebar').width(width);
     };
 
