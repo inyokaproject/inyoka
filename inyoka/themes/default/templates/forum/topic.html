@@ -1,4 +1,5 @@
 {% extends 'forum/base.html' %}
+{% import 'macros.html' as macros %}
 
 {% block breadcrumb %}
   <li><a href="{{ href('forum') }}">{% block trans %}Forum{% endblock %}</a></li>
@@ -11,19 +12,18 @@
 
 {% block sidebar %}
   <ul class="list-group">
-    <li class="list-group-item"><a href="{{ topic|url('reply') }}">{% trans %}Reply{% endtrans %}</a></li>
+    {{ macros.sidebar_item(gettext('Reply'), topic|url('reply')) }}
     {% if is_subscribed %}
-      <li class="list-group-item"><a href="{{ topic|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a></li>
+      {{ macros.sidebar_item(gettext('Unsubscribe'), topic|url('unsubscribe')) }}
     {% else %}
-      <li class="list-group-item"><a href="{{ topic|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a></li>
+      {{ macros.sidebar_item(gettext('Subscribe'), topic|url('subscribe')) }}
     {% endif %}
     {% if topic.solved %}
-      <li class="list-group-item"><a href="{{ topic|url('unsolve') }}">{% trans %}Mark as unsolved{% endtrans %}</a>
-      </li>
+      {{ macros.sidebar_item(gettext('Mark as unsolved'), topic|url('unsolve')) }}
     {% else %}
-      <li class="list-group-item"><a href="{{ topic|url('solve') }}">{% trans %}Mark as solved{% endtrans %}</a></li>
+      {{ macros.sidebar_item(gettext('Mark as solved'), topic|url('solve')) }}
     {% endif %}
-    <li class="list-group-item"><a href="{{ topic|url('report') }}">{% trans %}Report{% endtrans %}</a></li>
+  {{ macros.sidebar_item(gettext('Report'), topic|url('report')) }}
   </ul>
 {% endblock %}
 

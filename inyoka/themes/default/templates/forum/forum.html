@@ -1,4 +1,5 @@
 {% extends 'forum/base.html' %}
+{% import 'macros.html' as macros %}
 
 {% block breadcrumb %}
   <li><a href="{{ href('forum') }}">Forum</a></li>
@@ -10,13 +11,13 @@
 
 {% block sidebar %}
   <ul class="list-group">
-  {% if is_subscribed %}
-    <li class="list-group-item"><a href="{{ forum|url('unsubscribe') }}">{% trans %}Unsubscribe{% endtrans %}</a></li>
-  {% else %}
-    <li class="list-group-item"><a href="{{ forum|url('subscribe') }}">{% trans %}Subscribe{% endtrans %}</a></li>
-  {% endif %}
-    <li class="list-group-item"><a href="{{ forum|url('newtopic') }}">{% trans %}New topic{% endtrans %}</a></li>
-    <li class="list-group-item"><a href="{{ forum|url('markread') }}">{% trans %}Mark as read{% endtrans %}</a></li>
+    {% if is_subscribed %}
+      {{ macros.sidebar_item(gettext('Unsubscribe'), forum|url('unsubscribe')) }}
+    {% else %}
+      {{ macros.sidebar_item(gettext('Subscribe'), forum|url('subscribe')) }}
+    {% endif %}
+    {{ macros.sidebar_item(gettext('New topic'), forum|url('newtopic')) }}
+    {{ macros.sidebar_item(gettext('Mark as read'), forum|url('markread')) }}
   </ul>
 {% endblock %}
 
@@ -52,7 +53,10 @@
           {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
           {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
           <a href="{{ topic|url }}">{{ topic }}</a><br />
-          <small class="text-muted"><time datetime="{{ topic.first_post.pub_date|datetime('c') }}">{{ topic.first_post.pub_date|datetime }}</time></small>
+          <small class="text-muted">
+            <time
+                datetime="{{ topic.first_post.pub_date|datetime('c') }}">{{ topic.first_post.pub_date|datetime }}</time>
+          </small>
         </li>
       {% endfor %}
     </ul>

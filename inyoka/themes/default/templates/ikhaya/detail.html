@@ -1,8 +1,32 @@
 {% extends 'ikhaya/base.html' %}
+{% import 'macros.html' as macros %}
 
 {% block breadcrumb %}
   <li><a href="{{ href('ikhaya') }}">{% trans %}News{% endtrans %}</a></li>
   <li class="active">{{ article.subject }}</li>
+{% endblock %}
+
+{% block sidebar %}
+  <ul class="list-group">
+    {% if can_subscribe and article.comments_enabled %}
+      {% if is_subscribed %}
+        {{ macros.sidebar_item(gettext('Unsubscribe comments'), article|url('unsubscribe')) }}
+      {% else %}
+        {{ macros.sidebar_item(gettext('Subscribe comments'), article|url('subscribe')) }}
+      {% endif %}
+    {% endif %}
+    {{ macros.sidebar_item(gettext('Report misspelling'), article|url('reports')) }}
+  </ul>
+  {% if can_edit_article %}
+    <div class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title">{% trans %}Staff{% endtrans %}</h3>
+      </div>
+      <ul class="list-group">
+        {{ macros.sidebar_item(gettext('Edit'), article|url('edit')) }}
+      </ul>
+    </div>
+  {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -20,7 +44,8 @@
         </li>
         {% if article.updated > article.pub_datetime %}
           <li>
-            <time datetime="{{ article.updated|datetime('c') }}">{% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}</time>
+            <time datetime="{{ article.updated|datetime('c') }}">{% trans %}Last
+              update:{% endtrans %} {{ article.updated|datetime }}</time>
           </li>
         {% endif %}
         <li class="category">
@@ -32,24 +57,5 @@
     <div class="clearfix"></div>
     <div class="intro">{{ article.rendered_intro }}</div>
     <div class="text">{{ article.rendered_text }}</div>
-    <div class="btn-group btn-group-sm">
-      {% if can_subscribe and article.comments_enabled %}
-        {% if is_subscribed %}
-          <a href="{{ article|url('unsubscribe') }}" class="btn btn-default">
-            {% trans %}Unsubscribe comments{% endtrans %}
-          </a>
-        {% else %}
-          <a href="{{ article|url('subscribe') }}" class="btn btn-default">
-            {% trans %}Subscribe comments{% endtrans %}
-          </a>
-        {% endif %}
-      {% endif %}
-      <a href="{{ article|url('reports') }}" class="btn btn-default">
-        {% trans %}Report misspelling{% endtrans %}
-      </a>
-      {% if can_edit_article %}
-        <a href="{{ article|url('edit') }}" class="btn btn-danger">{% trans %}Edit{% endtrans %}</a>
-      {% endif %}
-    </div>
   </article>
 {% endblock %}
