@@ -23,14 +23,14 @@
     {% else %}
       {{ macros.sidebar_item(gettext('Mark as solved'), topic|url('solve')) }}
     {% endif %}
-  {{ macros.sidebar_item(gettext('Report'), topic|url('report')) }}
+    {{ macros.sidebar_item(gettext('Report'), topic|url('report')) }}
   </ul>
 {% endblock %}
 
 {% block content %}
   {{ pagination.generate() }}
   {% for post in posts %}
-    <div class="panel panel-default post" id="post-{{ post.id }}">
+    <div class="panel panel-default post{% if post.hidden %} muted{% endif %}" id="post-{{ post.id }}">
       <div class="panel-heading">
         <a href="{{ post.author|url }}">{{ post.author }}</a>
         <span class="pull-right">
@@ -61,7 +61,11 @@
             </button>
             <ul class="dropdown-menu">
               <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
-              <li><a href="#">{% trans %}Hide{% endtrans %}</a></li>
+              {% if post.hidden %}
+                <li><a href="#">{% trans %}Restore{% endtrans %}</a></li>
+              {% else %}
+                <li><a href="#">{% trans %}Hide{% endtrans %}</a></li>
+              {% endif %}
               {% if can_moderate and topic.locked %}
                 <li><a href="{{ post|url('quote') }}">{% trans %}Quote{% endtrans %}</a></li>
               {% endif %}

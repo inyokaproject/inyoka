@@ -63,3 +63,21 @@ body {
     top: 0;
   }
 }
+
+.panel-body {
+  overflow: auto;
+}
+
+.list-group-item {
+  overflow: hidden;
+}
+
+.muted {
+  opacity: 0.4;
+  .transition(ease-out);
+  .transition-duration(200ms);
+
+  &:hover {
+    opacity: 1;
+  }
+}

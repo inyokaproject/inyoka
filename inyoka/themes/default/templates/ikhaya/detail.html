@@ -3,6 +3,7 @@
 
 {% block breadcrumb %}
   <li><a href="{{ href('ikhaya') }}">{% trans %}News{% endtrans %}</a></li>
+  <li><a href="{{ article.category|url }}">{{ article.category }}</a></li>
   <li class="active">{{ article.subject }}</li>
 {% endblock %}
 
@@ -59,4 +60,52 @@
     <div class="intro">{{ article.rendered_intro }}</div>
     <div class="text">{{ article.rendered_text }}</div>
   </article>
+  <hr />
+  <h3>{% trans %}Comments{% endtrans %}</h3>
+  {% for comment in comments %}
+    {% if not comment.deleted or can_admin_comment %}
+      <div class="panel panel-default comment{% if comment.deleted %} muted{% endif %}" id="comment_{{ loop.index }}">
+        <div class="panel-heading">
+          <a href="#comment_{{ loop.index }}">#{{ loop.index }}</a>
+          <a href="{{ comment.author|url }}">{{ comment.author }}</a>
+        <span class="pull-right">
+          <a href="#comment_{{ loop.index }}">
+            <time datetime="{{ comment.pub_date|datetime('c') }}">{{ comment.pub_date|datetime }}</time>
+          </a>
+        </span>
+        </div>
+        <div class="panel-body">
+          {{ comment.rendered_text }}
+        </div>
+        <div class="panel-footer">
+          <div class="btn-group btn-group-sm">
+            <a href="#" class="btn btn-default">
+              {% trans %}Reply{% endtrans %}
+            </a>
+            {% if comment.author_id == USER.id %}
+              <a href="{{ comment|url('edit') }}" class="btn btn-primary">
+                {% trans %}Edit{% endtrans %}</a>
+            {% endif %}
+          </div>
+          {% if can_admin_comment %}
+            <div class="btn-group btn-group-sm pull-right">
+              <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                {% trans %}More{% endtrans %}
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
+                {% if comment.deleted %}
+                  <li><a href="#">{% trans %}Restore{% endtrans %}</a></li>
+                {% else %}
+                  <li><a href="#">{% trans %}Hide{% endtrans %}</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          {% endif %}
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
 {% endblock %}
