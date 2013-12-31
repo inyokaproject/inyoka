@@ -15,17 +15,4 @@ $(function () {
             state: 'hide'
         });
     });
-
-    $('.topic').hover(function () {
-        var placement;
-        if ($('body').width() < 753) {
-            placement = 'bottom';
-        } else {
-            placement = 'left';
-        }
-        $(this).data('bs.tooltip').options.placement = placement;
-        $(this).tooltip('show');
-    }, function() {
-        $(this).tooltip('hide');
-    });
 });

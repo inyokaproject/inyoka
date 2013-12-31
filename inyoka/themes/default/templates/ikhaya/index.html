@@ -12,7 +12,10 @@
 {% block content %}
   {{ pagination.generate() }}
   {% for article in articles %}
-    <article class="panel panel-default article{% if article.hidden %} muted{% endif %}" id="article-{{ article.id }}">
+    <article class="panel panel-default article{% if article.hidden %} muted{% endif %}"
+        {% if article.hidden %} data-toggle="tooltip"
+             title="{% trans %}This article is not visible for regular users{% endtrans %}" data-trigger="manual"
+        {% endif %} id="article-{{ article.id }}">
       <div class="panel-heading">
         <time datetime="{{ article.pub_datetime|datetime('c') }}"
               class="pull-right">{{ article.pub_datetime|datetime }}</time>
