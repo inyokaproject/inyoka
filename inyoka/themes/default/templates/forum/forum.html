@@ -45,18 +45,52 @@
   {% endif %}
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">{% trans %}Topics{% endtrans %}</h3>
+      <h3 class="panel-title text-left">
+        {% trans %}Topics{% endtrans %}
+      </h3>
+
+
     </div>
     <ul class="list-group">
       {% for topic in topics %}
-        <li class="list-group-item">
-          {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
-          {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
-          <a href="{{ topic|url }}">{{ topic }}</a><br />
-          <small class="text-muted">
-            <time
-                datetime="{{ topic.first_post.pub_date|datetime('c') }}">{{ topic.first_post.pub_date|datetime }}</time>
-          </small>
+        <li class="list-group-item topic" title="{{ topic.first_post.text|truncate(500)|e }}" data-toggle="tooltip"
+            data-trigger="manual">
+          <div class="row">
+            <div class="col-sm-8">
+              {% if topic.sticky %}<strong>{% trans %}Sticky:{% endtrans %}</strong>{% endif %}
+              {% if topic.has_poll %}<strong>{% trans %}Poll:{% endtrans %}</strong>{% endif %}
+              <a href="{{ topic|url }}">{{ topic }}</a><br />
+              <small class="text-muted">
+                {% trans %}
+                  Created on:
+                {% endtrans %}
+                <time
+                    datetime="{{ topic.first_post.pub_date|datetime('c') }}">{{ topic.first_post.pub_date|datetime }}</time>
+              </small>
+            </div>
+            <div class="col-sm-4 hidden-xs">
+              <a href="{{ topic.last_post|url }}" class="pull-right">
+                <time
+                    datetime="{{ topic.last_post.pub_date|datetime('c') }}">{{ topic.last_post.pub_date|datetime }}</time>
+              </a><br />
+              <small class="text-muted pull-right">
+                {% trans author=topic.last_post.author|e, link=topic.last_post.author|url %}
+                  Last post by <a href="{{ link }}">{{ author }}</a>
+                {% endtrans %}
+              </small>
+            </div>
+            <div class="col-sm-4 visible-xs">
+              <small class="text-muted">
+                {% trans %}
+                  Last post:
+                {% endtrans %}
+                <a href="{{ topic.last_post|url }}">
+                  <time
+                      datetime="{{ topic.last_post.pub_date|datetime('c') }}">{{ topic.last_post.pub_date|datetime }}</time>
+                </a>
+              </small>
+            </div>
+          </div>
         </li>
       {% endfor %}
     </ul>

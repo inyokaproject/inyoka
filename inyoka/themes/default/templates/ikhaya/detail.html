@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block sidebar %}
-  <ul class="list-group">
+  <ul class="list-group hidden-xs">
     {% if can_subscribe and article.comments_enabled %}
       {% if is_subscribed %}
         {{ macros.sidebar_item(gettext('Unsubscribe comments'), article|url('unsubscribe')) }}
