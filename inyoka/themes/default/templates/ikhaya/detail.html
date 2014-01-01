@@ -66,13 +66,15 @@
     {% if not comment.deleted or can_admin_comment %}
       <div class="panel panel-default comment{% if comment.deleted %} muted{% endif %}" id="comment_{{ loop.index }}">
         <div class="panel-heading">
+          <span class="pull-right">
+            <a href="#comment_{{ loop.index }}">
+              <time datetime="{{ comment.pub_date|datetime('c') }}">{{ comment.pub_date|datetime }}</time>
+            </a>
+          </span>
           <a href="#comment_{{ loop.index }}">#{{ loop.index }}</a>
           <a href="{{ comment.author|url }}">{{ comment.author }}</a>
-        <span class="pull-right">
-          <a href="#comment_{{ loop.index }}">
-            <time datetime="{{ comment.pub_date|datetime('c') }}">{{ comment.pub_date|datetime }}</time>
-          </a>
-        </span>
+
+          <div class="clearfix"></div>
         </div>
         <div class="panel-body">
           {{ comment.rendered_text }}
