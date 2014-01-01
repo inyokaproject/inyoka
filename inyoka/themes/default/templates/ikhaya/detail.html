@@ -60,6 +60,18 @@
     <div class="intro">{{ article.rendered_intro }}</div>
     <div class="text">{{ article.rendered_text }}</div>
   </article>
+  <div class="btn-group btn-group-sm visible-xs">
+    {% if is_subscribed %}
+      <a href="{{ article|url('unsubscribe') }}" class="btn btn-default" role="button">{% trans %}Unsubscribe
+        comments{% endtrans %}</a>
+    {% else %}
+      <a href="{{ article|url('subscribe') }}" class="btn btn-default" role="button">{% trans %}Subscribe
+        comments{% endtrans %}</a>
+    {% endif %}
+    <a href="{{ article|url('reports') }}" class="btn btn-default" role="button">{% trans %}Report
+      misspelling{% endtrans %}</a>
+  </div>
+  <div class="clearfix"></div>
   <hr />
   <h3>{% trans %}Comments{% endtrans %}</h3>
   {% for comment in comments %}

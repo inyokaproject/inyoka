@@ -40,25 +40,50 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                   {% if USER.is_authenticated() %}
-                    <li><a href="{{ USER|url }}" class="navbar-link hidden-sm"
-                           title="{% trans %}My profile{% endtrans %}" data-toggle="tooltip"
-                           data-placement="bottom">{{ USER }}</a></li>
-                    <li><a class="glyphicon glyphicon-log-out" href="{{ href('portal', 'logout') }}"
-                           title="{% trans %}Logout{% endtrans %}" data-toggle="tooltip" data-placement="bottom"></a>
+                    <li>
+                      <a href="{{ USER|url }}" class="navbar-link hidden-sm"
+                         title="{% trans %}My profile{% endtrans %}" data-toggle="tooltip"
+                         data-placement="bottom">{{ USER }}</a>
                     </li>
-                    <li><a class="glyphicon glyphicon-wrench" href="{{ href('portal', 'usercp') }}"
-                           title="{% trans %}Controlpanel{% endtrans %}" data-toggle="tooltip"
-                           data-placement="bottom"></a></li>
-                    <li><a class="glyphicon glyphicon-envelope" href="{{ href('portal', 'privmsg') }}"
-                           title="{% trans %}Messages{% endtrans %}" data-toggle="tooltip" data-placement="bottom"></a>
+                    <li>
+                      <a href="{{ href('portal', 'logout') }}" class="navbar-link"
+                         title="{% trans %}Logout{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        {# TODO: Custom visible-xs-inline class to work around this issue: https://github.com/twbs/bootstrap/issues/8869 #}
+                        <span class="visible-xs-inline">{% trans %}Logout{% endtrans %}</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="{{ href('portal', 'usercp') }}" class="navbar-link"
+                         title="{% trans %}Controlpanel{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+                        <span class="glyphicon glyphicon-wrench"></span>
+                        {# TODO: Custom visible-xs-inline class to work around this issue: https://github.com/twbs/bootstrap/issues/8869 #}
+                        <span class="visible-xs-inline">{% trans %}Controlpanel{% endtrans %}</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="{{ href('portal', 'privmsg') }}" class="navbar-link"
+                         title="{% trans %}Messages{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+                        <span class="glyphicon glyphicon-envelope"></span>
+                        {# TODO: Custom visible-xs-inline class to work around this issue: https://github.com/twbs/bootstrap/issues/8869 #}
+                        <span class="visible-xs-inline">{% trans %}Messages{% endtrans %}</span>
+                      </a>
                     </li>
                   {% else %}
-                    <li><a class="glyphicon glyphicon-log-in" href="{{ href('portal', 'login') }}"
-                           title="{% trans %}Login{% endtrans %}" data-toggle="tooltip" data-placement="bottom"></a>
+                    <li><a href="{{ href('portal', 'login') }}" class="navbar-link"
+                           title="{% trans %}Login{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+                      <span class="glyphicon glyphicon-log-in"></span>
+                      {# TODO: Custom visible-xs-inline class to work around this issue: https://github.com/twbs/bootstrap/issues/8869 #}
+                      <span class="visible-xs-inline">{% trans %}Login{% endtrans %}</span>
+                    </a>
                     </li>
                   {% endif %}
-                  <li><a class="glyphicon glyphicon-search" href="{{ href('portal', 'search') }}"
-                         title="{% trans %}Search{% endtrans %}" data-toggle="tooltip" data-placement="bottom"></a></li>
+                  <li><a href="{{ href('portal', 'search') }}" class="navbar-link"
+                         title="{% trans %}Search{% endtrans %}" data-toggle="tooltip" data-placement="bottom">
+                    <span class="glyphicon glyphicon-search"></span>
+                    {# TODO: Custom visible-xs-inline class to work around this issue: https://github.com/twbs/bootstrap/issues/8869 #}
+                    <span class="visible-xs-inline">{% trans %}Search{% endtrans %}</span>
+                  </a></li>
                 </ul>
               </div>
             </div>

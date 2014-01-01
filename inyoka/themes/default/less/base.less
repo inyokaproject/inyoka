@@ -1,3 +1,16 @@
+// TODO: Custom visible-xs-inline class to work around this issue: https://github.com/twbs/bootstrap/issues/8869
+@media screen and (max-width: 768px) {
+    .visible-xs-inline {
+        display: inline-block !important;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .visible-xs-inline {
+        display: none !important;
+    }
+}
+
 html, body {
   height: 100%;
 }

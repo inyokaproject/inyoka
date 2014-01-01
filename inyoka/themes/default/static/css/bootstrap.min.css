@@ -824,7 +824,7 @@ th.hidden-lg,td.hidden-lg{display:table-cell !important}
 @media (min-width:1200px){.hidden-lg{display:none !important}tr.hidden-lg{display:none !important} th.hidden-lg,td.hidden-lg{display:none !important}}
 .visible-print{display:none !important}tr.visible-print{display:none !important}
 th.visible-print,td.visible-print{display:none !important}
-@media print{.visible-print{display:block !important}tr.visible-print{display:table-row !important} th.visible-print,td.visible-print{display:table-cell !important} .hidden-print{display:none !important}tr.hidden-print{display:none !important} th.hidden-print,td.hidden-print{display:none !important}}html,body{height:100%}
+@media print{.visible-print{display:block !important}tr.visible-print{display:table-row !important} th.visible-print,td.visible-print{display:table-cell !important} .hidden-print{display:none !important}tr.hidden-print{display:none !important} th.hidden-print,td.hidden-print{display:none !important}}@media screen and (max-width:768px){.visible-xs-inline{display:inline-block !important}}@media screen and (min-width:768px){.visible-xs-inline{display:none !important}}html,body{height:100%}
 body{padding-top:62.099999999999994px}
 #main-footer{color:#999;font-size:12px;background-color:#eee}#main-footer ul li{padding:12px 15px}
 @media (min-width:768px){#main-wrap{min-height:100%}#main-wrap #main-content{overflow:auto;padding-bottom:56.25px} #main-footer{margin-top:-45px;height:45px;clear:both;padding:0;line-height:45px}#main-footer .container{height:45px} #main-footer ul{padding-left:0;list-style:none}#main-footer ul>li{display:inline-block;padding-left:5px;padding-right:5px} #main-footer ul li{padding:0 15px}}#main-navbar.shadowed{box-shadow:0 5px 30px #222}
