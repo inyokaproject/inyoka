@@ -32,12 +32,13 @@
   {% for post in posts %}
     <div class="panel panel-default post{% if post.hidden %} muted{% endif %}" id="post-{{ post.id }}">
       <div class="panel-heading">
-        <a href="{{ post.author|url }}">{{ post.author }}</a>
         <span class="pull-right">
           <a href="{{ post|url }}">
             <time datetime="{{ post.pub_date|datetime('c') }}">{{ post.pub_date|datetime }}</time>
           </a>
         </span>
+        <a href="{{ post.author|url }}">{{ post.author }}</a>
+        <div class="clearfix"></div>
       </div>
       <div class="panel-body">
         {{ post.get_text() }}
@@ -56,7 +57,7 @@
         {% if can_moderate %}
           <div class="btn-group btn-group-sm pull-right">
             <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
-              {% trans %}More{% endtrans %}
+              {% trans %}Staff{% endtrans %}
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
@@ -76,5 +77,20 @@
       </div>
     </div>
   {% endfor %}
+  <div class="btn-group btn-group-sm">
+    <a href="{{ topic|url('reply') }}" class="btn btn-primary">{% trans %}Reply{% endtrans %}</a>
+    {% if is_subscribed %}
+      <a href="{{ topic|url('unsubscribe') }}" class="btn btn-default">{% trans %}Unsubscribe{% endtrans %}</a>
+    {% else %}
+      <a href="{{ topic|url('subscribe') }}" class="btn btn-default"
+         title="{% trans %}Get notified as soon someone replies to this topic{% endtrans %}"
+         data-toggle="tooltip" data-placement="bottom" data-delay="700">{% trans %}Subscribe{% endtrans %}</a>
+    {% endif %}
+    <a href="{{ topic|url('report') }}" class="btn btn-default"
+       title="{% trans %}Report this topic if you think it needs moderators attention{% endtrans %}"
+       data-toggle="tooltip" data-placement="bottom" data-delay="700">
+      <span class="glyphicon glyphicon-bell"></span> {% trans %}Report{% endtrans %}</a>
+  </div>
+  <div class="clearfix"></div>
   {{ pagination.generate() }}
 {% endblock %}
