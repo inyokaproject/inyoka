@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block sidebar %}
-  <ul class="list-group">
+  <ul class="list-group hidden-xs">
     {{ macros.sidebar_item(gettext('Reply'), topic|url('reply')) }}
     {% if is_subscribed %}
       {{ macros.sidebar_item(gettext('Unsubscribe'), topic|url('unsubscribe')) }}
@@ -38,6 +38,7 @@
           </a>
         </span>
         <a href="{{ post.author|url }}">{{ post.author }}</a>
+
         <div class="clearfix"></div>
       </div>
       <div class="panel-body">
@@ -73,18 +74,25 @@
             </ul>
           </div>
         {% endif %}
-        <div class="clearfix"></div>
       </div>
     </div>
   {% endfor %}
-  <div class="btn-group btn-group-sm">
-    <a href="{{ topic|url('reply') }}" class="btn btn-primary">{% trans %}Reply{% endtrans %}</a>
+  <div class="btn-group btn-group-sm visible-xs">
+    <a href="{{ topic|url('reply') }}" class="btn btn-primary">
+      <span class="glyphicon glyphicon-pencil"></span> {% trans %}Reply{% endtrans %}</a>
     {% if is_subscribed %}
       <a href="{{ topic|url('unsubscribe') }}" class="btn btn-default">{% trans %}Unsubscribe{% endtrans %}</a>
     {% else %}
       <a href="{{ topic|url('subscribe') }}" class="btn btn-default"
          title="{% trans %}Get notified as soon someone replies to this topic{% endtrans %}"
          data-toggle="tooltip" data-placement="bottom" data-delay="700">{% trans %}Subscribe{% endtrans %}</a>
+    {% endif %}
+    {% if topic.solved %}
+      <a href="{{ topic|url('unsolve') }}" class="btn btn-default">
+        <span class="glyphicon glyphicon-remove"></span> {% trans %}Mark as unsolved{% endtrans %}</a>
+    {% else %}
+      <a href="{{ topic|url('solve') }}" class="btn btn-default">
+        <span class="glyphicon glyphicon-ok"></span> {% trans %}Mark as solved{% endtrans %}</a>
     {% endif %}
     <a href="{{ topic|url('report') }}" class="btn btn-default"
        title="{% trans %}Report this topic if you think it needs moderators attention{% endtrans %}"
