@@ -5,13 +5,13 @@
 # Translators:
 # Markus Holtermann <inyoka@markusholtermann.eu>, 2012
 # Markus Holtermann <inyoka@markusholtermann.eu>, 2012
-# Sören Wegener <wegener92@googlemail.com>, 2011,2013
+# Sören Wegener <wegener92@googlemail.com>, 2011,2013-2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2013-05-26 10:23+0200\n"
-"PO-Revision-Date: 2013-12-30 21:07+0000\n"
+"PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -316,7 +316,7 @@ msgstr "Du antwortest auf ein bereits geschlossenes Thema. Dies wird oft als unh
 msgid ""
 "This topic was already created. Please think about editing your topic before"
 " creating a new one."
-msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen vorherigen Beitrag bearbeiten möchtest. "
+msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen vorherigen Beitrag bearbeiten möchtest."
 
 #: inyoka/forum/views.py:613
 msgid "The post was saved successfully."
