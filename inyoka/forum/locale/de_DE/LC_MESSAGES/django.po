@@ -393,6 +393,10 @@ msgstr "Gemeldetes Thema: „%(topic)s“"
 msgid "The topic was reported."
 msgstr "Das Thema wurde gemeldet."
 
+#: inyoka/forum/views.py:845
+msgid "This report has already been claimed."
+msgstr "Diese Meldung wird bereits bearbeitet."
+
 #: inyoka/forum/views.py:856
 msgid "No topics selected."
 msgstr "Keine Themen ausgewählt."
