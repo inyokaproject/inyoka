@@ -76,7 +76,7 @@ class ForumManager(models.Manager):
 
     def get_ids(self):
         """Return all forum ids from cache."""
-        return [id for id in self.get_slugs().iterkeys()]
+        return self.get_slugs().keys()
 
     def get(self, ident=None, slug=None, id=None):
         """Unified .get method that accepts either a id or a slug.
@@ -1158,16 +1158,18 @@ class Privilege(models.Model):
     group = models.ForeignKey(Group, null=True)
     user = models.ForeignKey(User, null=True)
     forum = models.ForeignKey(Forum)
-    positive = models.IntegerField(null=True)
-    negative = models.IntegerField(null=True)
+    positive = models.IntegerField(null=True, default=0)
+    negative = models.IntegerField(null=True, default=0)
 
     def save(self, *args, **kwargs):
-        # Check that the value is not a - value as this
+        # Check that the value is not a negative value as this
         # would raise nasty bugs in inyoka.forum.acl.  Change values
         # to positive integers everytime.
+        # Additionally make `None` to be converted to 0
         for name in ('positive', 'negative'):
             value = getattr(self, name)
-            setattr(self, name, abs(value) if value is not None and value < 0 else value)
+            value = value or 0
+            setattr(self, name, abs(value))
         super(Privilege, self).save(*args, **kwargs)
 
     def __repr__(self):

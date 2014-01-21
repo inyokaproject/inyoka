@@ -80,7 +80,7 @@ def join_bits(result, forum_ids, rows):
     Join the positive bits of all forums and subtract the negative ones of
     them.
     """
-    negative_set = dict(map(lambda a: (a, set()), forum_ids))
+    negative_set = {forum_id: set() for forum_id in forum_ids}
     for forum_id, _, __, positive, negative in rows:
         result[forum_id] |= positive
         negative_set[forum_id].add(negative)
@@ -125,23 +125,25 @@ def _get_privilege_map(user, forum_ids):
 
     filter = Q(user_id=user.id)
 
-    if len(group_ids) > 1:
-        filter |= Q(group_id__in=group_ids)
-    elif group_ids:
+    if len(group_ids) == 1:
         filter |= Q(group_id=list(group_ids)[0])
+    else:
+        filter |= Q(group_id__in=group_ids)
 
     query = Privilege.objects.filter(filter)
 
-    # If we have an anonymous user we can cache the results
-    # We do that for all forums, this makes it possible to cache the privileges.
-    # Once we get an authenticated user we filter for the ids requested.
-    cache_key = 'forum/acls/anonymous'
     if user.is_anonymous:
+        # If we have an anonymous user we can cache the results. We MUST that
+        # for all forums, this makes it possible to cache the privileges. Once
+        # we get an authenticated user we filter for the ids requested.
+        cache_key = 'forum/acls/anonymous'
         privilege_map = cache.get(cache_key)
         if privilege_map is None:
             privilege_map = query.values_list(*cols)
             cache.set(cache_key, list(privilege_map), 86400)
         # filter the privilege_map for ids not requested (api compatibility)
+        # XXX: We might consider do use get_many and store the privileges
+        #      per forum id: 'forum/acls/anonymous/<forum_id>'
         privilege_map = [row for row in privilege_map if row[0] in forum_ids]
     else:
         # we filter for the privilege ids if we don't have an anonymous user
@@ -149,10 +151,10 @@ def _get_privilege_map(user, forum_ids):
         # Do only filter IN if required.  This is not required most of the time
         # so that this saves a bit bandwith and quite a few time for the query
         if len(forum_ids) != len(all_ids):
-            if len(forum_ids) > 1:
-                query = query.filter(forum_id__in=forum_ids)
-            elif forum_ids:
+            if len(forum_ids) == 1:
                 query = query.filter(forum_id=forum_ids[0])
+            else:
+                query = query.filter(forum_id__in=forum_ids)
         privilege_map = query.values_list(*cols)
 
     return privilege_map
@@ -169,7 +171,9 @@ def get_privileges(user, forums):
         forum_ids = forums.values_list('id', flat=True)
     privilege_map = _get_privilege_map(user, forum_ids)
 
-    result = dict(map(lambda a: (a, DISALLOW_ALL), forum_ids))
+    result = {forum_id: DISALLOW_ALL for forum_id in forum_ids}
+    # `row[1]` maps to `user_id` in the `cols` as defined in the
+    # `_get_privilege_map()` function
     # first join the group privileges
     result = join_bits(result, forum_ids, [row for row in privilege_map if not row[1]])
     # now join the user privileges (this allows to override group privileges)
