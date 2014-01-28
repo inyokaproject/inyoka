@@ -1,0 +1,12 @@
+.header,.navigation,.topic_box,.footer,.message,.linklist,.signature,.appheader>*,.pathbar>*,.author>*{display:none;}
+.appheader h1,.appheader h2{display:inline;}
+.pathbar .trace{display:block;}
+.pathbar:last-child{display:none;}
+.author .username{display:block;}
+.text a:link:after,.text a:link::after,.text a:visited:after,.text a:visited::after{content:"(" attr(href) ")";font-size:75%;color:#999;background:transparent;text-decoration:none;}
+table.forum thead,table.forum tfoot{display:none;}
+.codeblock_resizer{display:none;}
+div.code,pre{max-height:100% !important;height:100% !important;color:black !important;}
+body,html{width:100%;padding:0;margin:0;}
+.content{margin:0;border:0;}
+#admin_menu{display:none;}
