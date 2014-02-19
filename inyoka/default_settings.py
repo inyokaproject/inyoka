@@ -213,7 +213,7 @@ INSTALLED_APPS = (
     'inyoka.ikhaya',
     'inyoka.pastebin',
     'inyoka.planet',
-    'social_auth',
+    'social.apps.django_app.default',
     'inyoka.markup',
     'raven.contrib.django',
     'south',
@@ -324,13 +324,13 @@ AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)
 AUTH_USER_MODEL = 'portal.User'
 
 SOCIAL_AUTH_PIPELINE = (
-    'social_auth.backends.pipeline.social.social_auth_user',
-    'social_auth.backends.pipeline.misc.save_status_to_session',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.misc.save_status_to_session',
     'inyoka.portal.auth_pipeline.collect_registration_info',
     'inyoka.portal.auth_pipeline.get_username',
     'inyoka.portal.auth_pipeline.create_user',
     'inyoka.portal.auth_pipeline.clear_session',
-    'social_auth.backends.pipeline.social.associate_user',
+    'social.pipeline.social_auth.associate_user',
 )
 
 LOGIN_URL = '/login/'
@@ -338,9 +338,9 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_MESSAGE = gettext_noop(u'Login via 3rd party failed.')
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.google.GoogleBackend',
-    'social_auth.backends.browserid.BrowserIDBackend',
-    'social_auth.backends.OpenIDBackend',
+    'social.backends.google.GoogleOpenId',
+    'social.backends.persona.PersonaAuth',
+    'social.backends.open_id.OpenIdAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -355,7 +355,10 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = ()
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
+)
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 

@@ -18,7 +18,7 @@ from datetime import date, datetime, timedelta
 import dateutil
 from PIL import Image
 from django_mobile import get_flavour
-from social_auth.models import UserSocialAuth
+from social.apps.django_app.default.models import UserSocialAuth
 
 from django.core import signing
 from django.http import Http404, HttpResponse, HttpResponseRedirect
