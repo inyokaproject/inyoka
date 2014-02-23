@@ -692,11 +692,10 @@ def usercp_profile(request):
             user = form.save(request)
             accounts_to_delete = map(int, request.POST.getlist('delete_accounts'))
             # Ensure that the user can only delete his own accounts
-            accounts_to_delete = UserSocialAuth.objects\
-                .filter(user=request.user, pk__in=accounts_to_delete)\
-                .values_list('pk', flat=True)
-            UserSocialAuth.objects.filter(pk__in=accounts_to_delete).delete()
-            messages.success(request, _(u'Your profile information were updated successfully.'))
+            UserSocialAuth.objects.filter(user=request.user,
+                                          pk__in=accounts_to_delete).delete()
+            messages.success(request,
+                _(u'Your profile information were updated successfully.'))
             return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
             generic.trigger_fix_errors_message(request)

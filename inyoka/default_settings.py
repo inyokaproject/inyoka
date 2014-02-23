@@ -325,7 +325,7 @@ AUTH_USER_MODEL = 'portal.User'
 
 SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_user',
-    'social.pipeline.misc.save_status_to_session',
+    'social.pipeline.partial.save_status_to_session',
     'inyoka.portal.auth_pipeline.collect_registration_info',
     'inyoka.portal.auth_pipeline.get_username',
     'inyoka.portal.auth_pipeline.create_user',

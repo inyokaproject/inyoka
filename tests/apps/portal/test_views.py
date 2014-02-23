@@ -333,7 +333,7 @@ class TestAuthViews(TestCase):
         postdata = {'email': 'newmail@example.com'}
         with translation.override('en-us'):
             response = self.client.post('/usercp/profile/', postdata, follow=True)
-        self.assertContains(response, 'You’ve been sent an email to confirm your new email address.')
+        self.assertContains(response, "You've been sent an email to confirm your new email address.")
 
         # Changing an email address requires a valid session
         self.client.logout()

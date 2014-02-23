@@ -2,7 +2,7 @@
 from django.http import HttpResponseRedirect
 from django.utils.html import escape
 from django.utils.http import urlencode
-from django.utils.translation import ungettext, ugettext as _
+from django.utils.translation import ugettext as _
 
 from django.contrib import messages
 

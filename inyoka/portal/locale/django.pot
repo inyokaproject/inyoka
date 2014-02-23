@@ -302,7 +302,7 @@ msgid "This email address is already in use."
 msgstr ""
 
 #: inyoka/portal/forms.py:399
-msgid "You’ve been sent an email to confirm your new email address."
+msgid "You've been sent an email to confirm your new email address."
 msgstr ""
 
 #: inyoka/portal/forms.py:432
