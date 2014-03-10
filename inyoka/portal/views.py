@@ -37,10 +37,8 @@ from django.utils.translation import ugettext as _, ungettext
 from django.views.decorators.http import require_POST
 
 
-from inyoka.forum.acl import (split_bits, filter_invisible, PRIVILEGES_DETAILS,
-    split_negative_positive, REVERSED_PRIVILEGES_BITS)
-from inyoka.forum.models import Post, Topic, Forum, Privilege
-from inyoka.ikhaya.models import Event, Article, Category, Suggestion
+from haystack.views import SearchView, search_view_factory
+
 from inyoka.markup import parse, RenderContext
 from inyoka.portal.filters import SubscriptionFilter
 from inyoka.portal.forms import (LoginForm, UserMailForm,
@@ -69,7 +67,7 @@ from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename, get_random_password
-from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
 from inyoka.utils.user import check_activation_key
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.forum.models import Forum, Topic, Post, Privilege
@@ -427,8 +425,37 @@ def logout(request):
     return HttpResponseRedirect(redirect)
 
 
-def search(request):
-    return HttpResponse('Search Dummy')
+class InyokaSearchView(SearchView):
+
+    def create_response(self):
+        """
+        Generates the actual HttpResponse to send back to the user.
+        """
+        def link_func(p, parameters):
+            if p == 1:
+                parameters.pop('page', None)
+            else:
+                parameters['page'] = str(p)
+            url = href('portal', 'search')
+            return url + (parameters and u'?' + urlencode(parameters) or u'')
+
+        page = int(self.request.GET.get('page', 1))
+        pagination = Pagination(self.request, self.results, page, link=link_func)
+        context = {
+            'query': self.query,
+            'form': self.form,
+            'object_list': pagination.get_queryset(),
+            'suggestion': None,
+            'pagination': pagination,
+        }
+
+        if self.results and hasattr(self.results, 'query') and self.results.query.backend.include_spelling:
+            context['suggestion'] = self.form.get_suggestion()
+
+        context.update(self.extra_context())
+        return context
+
+search = templated('portal/search.html')(search_view_factory(InyokaSearchView))
 
 
 @check_login(message=_(u'You need to be logged in to view a user profile.'))

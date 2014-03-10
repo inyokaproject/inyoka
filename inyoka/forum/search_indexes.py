@@ -1,4 +1,5 @@
-import datetime
+# -*- coding: utf-8 -*-
+
 from haystack import indexes
 from celery_haystack.indexes import CelerySearchIndex
 from inyoka.forum.models import Post
@@ -24,6 +25,8 @@ class PostIndex(CelerySearchIndex, indexes.Indexable):
 
     topic_auto = indexes.EdgeNgramField(model_attr='topic__title')
 
+    additional_model_attrs = ('text', 'position', 'rendered_text',)
+
     def prepare_text(self, obj):
         return obj.stripped_text
 
@@ -39,9 +42,8 @@ class PostIndex(CelerySearchIndex, indexes.Indexable):
         Automatically preloads related fields and optimizes the db query
         """
         fields = filter(None, (obj.model_attr for name, obj in self.fields.items()))
-        fields = tuple(set(fields))
-        related_fields = tuple(set(name for name in fields if '__' in fields))
-        return (self.get_model().objects
-                    .select_related(*related_fields)
-                    .only(*fields)
-                    .all())
+        fields = tuple(set(fields) | set(PostIndex.additional_model_attrs))
+        related_fields = tuple(set(name for name in fields if '__' in name))
+        return self.get_model().objects.select_related(*related_fields) \
+                                       .only(*fields) \
+                                       .all()

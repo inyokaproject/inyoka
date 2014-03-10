@@ -347,11 +347,11 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': 'http://127.0.0.1:9200/',
         'INDEX_NAME': 'inyoka',
-        'SILENTLY_FAIL': False
+        'SILENTLY_FAIL': True
     },
 }
 
-#HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
+HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 

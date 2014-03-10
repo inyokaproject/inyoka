@@ -1,0 +1,105 @@
+{#
+    portal/search_results.html
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This page displays the search results.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: GNU GPL, see LICENSE for more details.
+#}
+
+{%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_form %}
+{% set navi_type = 'none' %}
+{% set title = 'Suche' %}
+{% set active_app = area %}
+{% set deny_robots = 'noindex' %}
+{% if query %}
+  {% do BREADCRUMB.append('Ergebnisse für „%s“' % query, '', True) %}
+{% endif %}
+{% do BREADCRUMB.append('Suche', href('portal', 'search'), True) %}
+
+{% block portal_content %}
+  <h3>Suche</h3>
+  <p>Hier kannst du nach Informationen im gesamten ubuntuusers Portal suchen.
+  Die Suche berücksichtigt keine Groß- und Kleinschreibung und mehrere
+  Suchausdrücke können mit <strong>UND</strong>, <strong>ODER</strong> sowie
+  <strong>UND&nbsp;NICHT</strong> kombiniert werden, wobei gegebenenfalls
+  eine Klammer zu setzen ist.  Weitere Informationen zur Suche auf ubuntuusers.de findet man im Wiki unter <a href="{{ href('wiki', 'Suchfunktion') }}">Suchfunktion</a>.</p>
+  <form action="{{ href('portal', 'search') }}" method="GET" class="search_page">
+    <p>{{ query }}</p>
+    <input type="text" name="q" value="{{ query }}">
+    <div class="submit">
+      <input type="submit" value="Suchen" />
+   </div>
+
+
+
+    {% if query %}
+      <h3>Results</h3>
+
+      {% for result in object_list %}
+          <p>
+              <a href="{{ result.object.get_absolute_url() }}">{{ result.object.topic.title }}</a>
+          </p>
+      {% else %}
+          <p>No results found.</p>
+      {% endfor %}
+
+      <div class="pagination">
+      {{ pagination.generate() }}
+      <div style="clear: both"></div>
+  {% else %}
+      {# Show some example queries to run, maybe query syntax, something else? #}
+  {% endif %}
+
+
+
+  {#
+  {%- if query %}
+  {% if page.object_list %}{{ pagination }}{% endif %}
+  <ul class="search_results">
+    {%- for doc in results.results if not doc.hidden %}
+    <li>
+      <h2>
+        <img src="{{ href('static', 'img/icons/small/%s.png' % doc.component|lower) }}"
+          alt="{{ doc.component }}" title="{{ doc.component }}" />
+        <a href="{{ doc.url }}{% if doc.highlight and highlight %}?highlight={{ highlight|urlencode|e }}{% endif %}">
+          {{- doc.title -}}
+        </a>
+        {%- if doc.solved %}
+        <img src="{{ href('static', 'img/check.png') }}" alt="Gelöst" title="Gelöst" />
+        {%- endif %}
+        {%- if doc.version %}
+        <span class="ubuntu_version">{{ doc.version }}</span>
+        {%- endif %}
+      </h2>
+      <p class="description">
+        {% if doc.excerpt %}
+        {{ doc.excerpt }}
+        {% endif %}
+      </p>
+      <p class="meta">
+        {%- if doc.component in ('Forum', 'Ikhaya', 'Planet') %}
+        geschrieben von <a href="{{ doc.user_url }}">{{ doc.user|e }}</a> {{ doc.date }}{% if not doc.component in ('Planet',) %} in <a href="{{ doc.group_url }}">{{ doc.group|e }}</a>{% endif %}
+        {%- elif doc.component == 'Wiki' %}
+        zuletzt bearbeitet von <a href="{{ doc.user_url }}">{{ doc.user|e }}</a> {{ doc.date }}
+        {%- endif %}
+        {%- if doc.component == 'Forum' %}
+        <a href="{{ doc.last_post_url }}" alt="Springe zu letztem Beitrag"><img src="{{ href('static', 'img/forum/goto.png') }}" /></a>
+        {%- endif %}
+      </p>
+    </li>
+    {%- else %}
+      {%- if not wiki_result %}
+        <li class="no_results">Es wurden keine passenden Ergebnisse gefunden.</li>
+      {%- endif %}
+    {%- endfor %}
+  </ul>
+  <br />
+  {% if results.results %}{{ pagination }}{% endif %}
+  <br clear="both" />
+  {%- endif %}
+  #}
+  </div>
+{% endblock %}
