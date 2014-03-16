@@ -5,15 +5,14 @@
 
     "Add new paste" formular.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
-from django.utils.translation import ugettext_lazy, ugettext
+from django.utils.translation import ugettext, ugettext_lazy
 
-from inyoka.utils.forms import CaptchaField
 from inyoka.pastebin.models import Entry
-
+from inyoka.utils.forms import CaptchaField
 
 # languages for highlighting. We do not use the full list of pygments
 # lexers because that is just insane ;-)

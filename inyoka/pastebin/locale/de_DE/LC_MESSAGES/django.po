@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-08-18 15:47+0200\n"
+"POT-Creation-Date: 2013-10-19 16:33+0200\n"
 "PO-Revision-Date: 2012-04-29 22:39+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -21,175 +21,175 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: inyoka/pastebin/forms.py:21
+#: inyoka/pastebin/forms.py:20
 msgid "Plain text"
 msgstr "Klartext"
 
-#: inyoka/pastebin/forms.py:22
+#: inyoka/pastebin/forms.py:21
 msgid "Apache Config (.htaccess)"
 msgstr "Apache Config (.htaccess)"
 
-#: inyoka/pastebin/forms.py:23
+#: inyoka/pastebin/forms.py:22
 msgid "Bash"
 msgstr "Bash"
 
-#: inyoka/pastebin/forms.py:24
+#: inyoka/pastebin/forms.py:23
 msgid "Batch (.bat)"
 msgstr "Batch (.bat)"
 
-#: inyoka/pastebin/forms.py:25
+#: inyoka/pastebin/forms.py:24
 msgid "C"
 msgstr "C"
 
-#: inyoka/pastebin/forms.py:26
+#: inyoka/pastebin/forms.py:25
 msgid "C#"
 msgstr "C#"
 
-#: inyoka/pastebin/forms.py:27
+#: inyoka/pastebin/forms.py:26
 msgid "C++"
 msgstr "C++"
 
-#: inyoka/pastebin/forms.py:28
+#: inyoka/pastebin/forms.py:27
 msgid "CSS"
 msgstr "CSS"
 
-#: inyoka/pastebin/forms.py:29
+#: inyoka/pastebin/forms.py:28
 msgid "D"
 msgstr "D"
 
-#: inyoka/pastebin/forms.py:30
+#: inyoka/pastebin/forms.py:29
 msgid "Django / Jinja Templates"
 msgstr "Django / Jinja Templates"
 
-#: inyoka/pastebin/forms.py:31
+#: inyoka/pastebin/forms.py:30
 msgid "eRuby / rhtml"
 msgstr "eRuby / rhtml"
 
-#: inyoka/pastebin/forms.py:32
+#: inyoka/pastebin/forms.py:31
 msgid "Genshi Templates"
 msgstr "Genshi Templates"
 
-#: inyoka/pastebin/forms.py:33
+#: inyoka/pastebin/forms.py:32
 msgid "Haskell"
 msgstr "Haskell"
 
-#: inyoka/pastebin/forms.py:34
+#: inyoka/pastebin/forms.py:33
 msgid "HTML"
 msgstr "HTML"
 
-#: inyoka/pastebin/forms.py:35
+#: inyoka/pastebin/forms.py:34
 msgid "IRC Logs"
 msgstr "IRC Logs"
 
-#: inyoka/pastebin/forms.py:36
+#: inyoka/pastebin/forms.py:35
 msgid "Java"
 msgstr "Java"
 
-#: inyoka/pastebin/forms.py:37
+#: inyoka/pastebin/forms.py:36
 msgid "JavaScript"
 msgstr "JavaScript"
 
-#: inyoka/pastebin/forms.py:38
+#: inyoka/pastebin/forms.py:37
 msgid "JSP"
 msgstr "JSP"
 
-#: inyoka/pastebin/forms.py:39
+#: inyoka/pastebin/forms.py:38
 msgid "Lua"
 msgstr "Lua"
 
-#: inyoka/pastebin/forms.py:40
+#: inyoka/pastebin/forms.py:39
 msgid "Mako Templates"
 msgstr "Mako Templates"
 
-#: inyoka/pastebin/forms.py:41
+#: inyoka/pastebin/forms.py:40
 msgid "MiniD"
 msgstr "MiniD"
 
-#: inyoka/pastebin/forms.py:42
+#: inyoka/pastebin/forms.py:41
 msgid "Myghty Templates"
 msgstr "Myghty Templates"
 
-#: inyoka/pastebin/forms.py:43
+#: inyoka/pastebin/forms.py:42
 msgid "OCaml"
 msgstr "OCaml"
 
-#: inyoka/pastebin/forms.py:44
+#: inyoka/pastebin/forms.py:43
 msgid "Perl"
 msgstr "Perl"
 
-#: inyoka/pastebin/forms.py:45
+#: inyoka/pastebin/forms.py:44
 msgid "PHP"
 msgstr "PHP"
 
-#: inyoka/pastebin/forms.py:46
+#: inyoka/pastebin/forms.py:45
 msgid "Python"
 msgstr "Python"
 
-#: inyoka/pastebin/forms.py:47
+#: inyoka/pastebin/forms.py:46
 msgid "Python Console Sessions"
 msgstr "Python Console Sessions"
 
-#: inyoka/pastebin/forms.py:48
+#: inyoka/pastebin/forms.py:47
 msgid "Python Tracebacks"
 msgstr "Python Tracebacks"
 
-#: inyoka/pastebin/forms.py:49
+#: inyoka/pastebin/forms.py:48
 msgid "reStructuredText"
 msgstr "reStructuredText"
 
-#: inyoka/pastebin/forms.py:50
+#: inyoka/pastebin/forms.py:49
 msgid "Ruby"
 msgstr "Ruby"
 
-#: inyoka/pastebin/forms.py:51
+#: inyoka/pastebin/forms.py:50
 msgid "Scheme"
 msgstr "Scheme"
 
-#: inyoka/pastebin/forms.py:52
+#: inyoka/pastebin/forms.py:51
 msgid "Smarty"
 msgstr "Smarty"
 
-#: inyoka/pastebin/forms.py:53
+#: inyoka/pastebin/forms.py:52
 msgid "sources.list"
 msgstr "sources.list"
 
-#: inyoka/pastebin/forms.py:54
+#: inyoka/pastebin/forms.py:53
 msgid "SQL"
 msgstr "SQL"
 
-#: inyoka/pastebin/forms.py:55
+#: inyoka/pastebin/forms.py:54
 msgid "SquidConf"
 msgstr "SquidConf"
 
-#: inyoka/pastebin/forms.py:56
+#: inyoka/pastebin/forms.py:55
 msgid "TeX / LaTeX"
 msgstr "TeX / LaTeX"
 
-#: inyoka/pastebin/forms.py:57
+#: inyoka/pastebin/forms.py:56
 msgid "Unified Diff"
 msgstr "Unified Diff"
 
-#: inyoka/pastebin/forms.py:58
+#: inyoka/pastebin/forms.py:57
 msgid "Vim Scripts"
 msgstr "Vim Scripts"
 
-#: inyoka/pastebin/forms.py:59
+#: inyoka/pastebin/forms.py:58
 msgid "XML"
 msgstr "XML"
 
-#: inyoka/pastebin/forms.py:64 inyoka/pastebin/models.py:23
+#: inyoka/pastebin/forms.py:63 inyoka/pastebin/models.py:23
 msgid "Title"
 msgstr "Titel"
 
-#: inyoka/pastebin/forms.py:65 inyoka/pastebin/models.py:24
+#: inyoka/pastebin/forms.py:64 inyoka/pastebin/models.py:24
 msgid "Language"
 msgstr "Sprache"
 
-#: inyoka/pastebin/forms.py:67
+#: inyoka/pastebin/forms.py:66
 msgid "CAPTCHA"
 msgstr "CAPTCHA"
 
-#: inyoka/pastebin/forms.py:72
+#: inyoka/pastebin/forms.py:71
 msgid "Untitled"
 msgstr "Unbenannt"
 

@@ -5,47 +5,50 @@
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
+
 import re
 import cPickle
 import operator
 from os import path
-from hashlib import md5
 from time import time
+from hashlib import md5
 from datetime import datetime
-from itertools import groupby
-from functools import reduce
 from operator import attrgetter, itemgetter
+from functools import reduce
+from itertools import groupby
 
-from django.conf import settings
-from django.core.cache import cache
 from django.db import models, transaction
-from django.db.models import F, Count, Max
-from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.conf import settings
+from django.db.models import F, Max, Count
 from django.utils.html import escape
-from django.utils.translation import ugettext_lazy, ugettext as _
+from django.core.cache import cache
+from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.utils.html import escape, format_html
+from django.utils.translation import pgettext, ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 
+from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
+    check_privilege, filter_invisible)
+from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
+    SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS_LEGACY)
+from inyoka.markup import parse, RenderContext
+from inyoka.portal.models import Subscription
+from inyoka.portal.user import User, Group
+from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import request_cache
-from inyoka.utils.database import LockableObject, update_model, model_or_none
+from inyoka.utils.database import update_model, model_or_none, LockableObject
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
 from inyoka.utils.files import get_filename
+from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
 from inyoka.utils.urls import href
-
-from inyoka.markup import parse, RenderContext
-from inyoka.portal.user import User, Group
-from inyoka.portal.utils import UBUNTU_VERSIONS
-from inyoka.forum.acl import filter_invisible, get_privileges, CAN_READ, \
-    filter_visible, check_privilege
-from inyoka.forum.constants import CACHE_PAGES_COUNT, VERSION_CHOICES, \
-    DISTRO_CHOICES, POSTS_PER_PAGE, UBUNTU_DISTROS_LEGACY, \
-    SUPPORTED_IMAGE_TYPES
+from inyoka.wiki.models import Page as WikiPage
 
 _newline_re = re.compile(r'\r?\n')
 
@@ -72,7 +75,7 @@ class ForumManager(models.Manager):
 
     def get_ids(self):
         """Return all forum ids from cache."""
-        return [id for id in self.get_slugs().iterkeys()]
+        return self.get_slugs().keys()
 
     def get(self, ident=None, slug=None, id=None):
         """Unified .get method that accepts either a id or a slug.
@@ -337,6 +340,7 @@ class Forum(models.Model):
         Yield all forums sorted as in the index page, with indentation.
         `forums` must be sorted by position.
         Every entry is a tuple (offset, forum). Example usage::
+
             forums = Forum.objects.order_by('-position').all()
             for offset, f in Forum.get_children_recursive(forums):
                 choices.append((f.id, u'  ' * offset + f.name))
@@ -390,10 +394,8 @@ class Topic(models.Model):
     locked = models.BooleanField(default=False)
     reported = models.TextField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
-    ubuntu_version = models.CharField(max_length=5, null=True, blank=True,
-                                      choices=VERSION_CHOICES)
-    ubuntu_distro = models.CharField(max_length=40, null=True, blank=True,
-                                     choices=DISTRO_CHOICES)
+    ubuntu_version = models.CharField(max_length=5, null=True, blank=True)
+    ubuntu_distro = models.CharField(max_length=40, null=True, blank=True)
     has_poll = models.BooleanField(default=False)
 
     forum = models.ForeignKey(Forum, related_name='topics',
@@ -545,7 +547,7 @@ class Topic(models.Model):
 
     def get_ubuntu_version(self):
         if self.ubuntu_version:
-            version = filter(lambda v: v.number == self.ubuntu_version, UBUNTU_VERSIONS)
+            version = filter(lambda v: v.number == self.ubuntu_version, get_ubuntu_versions())
             if len(version) > 0:
                 return version[0]
             return ''
@@ -1017,11 +1019,9 @@ class Attachment(models.Model):
     def update_post_ids(att_ids, post):
         """
         Update the post_id of a few unbound attachments.
-        :Parameters:
-            att_ids
-                A list of the attachment's ids.
-            post
-                The new post object.
+
+        :param list att_ids: A list of the attachment's ids.
+        :param Post post: The new post object.
         """
         if not att_ids or not post:
             return False
@@ -1108,23 +1108,27 @@ class Attachment(models.Model):
         if show_preview and show_thumbnails and isimage():
             thumb = thumbnail()
             if thumb:
-                return u'<a href="%s"><img class="preview" src="%s" ' \
-                       u'alt="%s" title="%s"></a>' \
-                       % (url, thumb, escape(self.comment), escape(self.comment))
+                return format_html(u'<a href="{}"><img class="preview" src="{}" alt="{}" title="{}"></a>',
+                                   url, thumb, self.comment, self.comment
+                )
             else:
-                return u'<a href="%s" type="%s" title="%s">%s ansehen</a>' \
-                    % (url, self.mimetype, escape(self.comment), self.name)
+                linktext = pgettext('Link text to an image attachment',
+                    u'View %(name)s') % {'name': self.name}
+                return format_html(u'<a href="{}" type="{}" title="{}">{}</a>',
+                                   url, self.mimetype, self.comment, linktext)
         elif show_preview and istext():
             contents = self.contents
             if contents is not None:
                 try:
                     highlighted = highlight_code(force_unicode(contents), mimetype=self.mimetype)
-                    return u'<div class="code">%s</div>' % highlighted
+                    return format_html(u'<div class="code">{}</div>', highlighted)
                 except DjangoUnicodeDecodeError:
                     pass
 
-        return u'<a href="%s" type="%s" title="%s">%s herunterladen</a>' \
-                    % (url, self.mimetype, escape(self.comment), self.name)
+        linktext = pgettext('Link text to download an attachment',
+            u'Download %(name)s') % {'name': self.name}
+        return format_html(u'<a href="{}" type="{}" title="{}">{}</a>',
+                           url, self.mimetype, self.comment, linktext)
 
     def get_absolute_url(self, action=None):
         return self.file.url
@@ -1134,16 +1138,18 @@ class Privilege(models.Model):
     group = models.ForeignKey(Group, null=True)
     user = models.ForeignKey(User, null=True)
     forum = models.ForeignKey(Forum)
-    positive = models.IntegerField(null=True)
-    negative = models.IntegerField(null=True)
+    positive = models.IntegerField(null=True, default=0)
+    negative = models.IntegerField(null=True, default=0)
 
     def save(self, *args, **kwargs):
-        # Check that the value is not a - value as this
+        # Check that the value is not a negative value as this
         # would raise nasty bugs in inyoka.forum.acl.  Change values
         # to positive integers everytime.
+        # Additionally make `None` to be converted to 0
         for name in ('positive', 'negative'):
             value = getattr(self, name)
-            setattr(self, name, abs(value) if value is not None and value < 0 else value)
+            value = value or 0
+            setattr(self, name, abs(value))
         super(Privilege, self).save(*args, **kwargs)
 
     def __repr__(self):
@@ -1309,9 +1315,3 @@ def mark_all_forums_read(user):
         user._readstatus.mark(forum)
     user.forum_read_status = user._readstatus.serialize()
     user.save(update_fields=('forum_read_status',))
-
-
-# Circular imports
-from inyoka.wiki.models import Page as WikiPage
-from inyoka.portal.models import Subscription
-from inyoka.utils.highlight import highlight_code

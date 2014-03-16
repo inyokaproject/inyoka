@@ -15,24 +15,21 @@
     a required by the `DeferredNode`.
 
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from urlparse import urlparse
 
 from django.conf import settings
 from django.utils.html import escape
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy, ugettext as _
 
+from inyoka.markup.machine import NodeRenderer, NodeCompiler, NodeQueryInterface
 from inyoka.markup.utils import debug_repr
-
-from inyoka.utils.text import slugify, normalize_pagename, get_pagetitle
-from inyoka.utils.html import build_html_tag, striptags
-from inyoka.utils.urls import href, urlquote_plus, get_url
+from inyoka.utils.html import striptags, build_html_tag
 from inyoka.utils.templating import render_template
-
-from inyoka.markup.machine import NodeCompiler, NodeRenderer, \
-    NodeQueryInterface
+from inyoka.utils.text import slugify, get_pagetitle, normalize_pagename
+from inyoka.utils.urls import get_url, href, urlquote_plus
 
 
 def error_box(title, message):

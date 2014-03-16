@@ -5,26 +5,25 @@
 
     Database models for Ikhaya.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+from operator import attrgetter, itemgetter
 from datetime import datetime
-from operator import itemgetter, attrgetter
 
-from django.core.cache import cache
-from django.conf import settings
 from django.db import models
-from django.db.models import Q
-from django.utils.translation import ugettext_lazy
+from django.conf import settings
 from django.utils import datetime_safe
+from django.db.models import Q
+from django.core.cache import cache
 from django.utils.html import escape
+from django.utils.translation import ugettext_lazy
 
-from inyoka.markup import render, parse, RenderContext
-from inyoka.portal.user import User
+from inyoka.markup import parse, render, RenderContext
 from inyoka.portal.models import StaticFile
-
-from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
-from inyoka.utils.database import find_next_increment, LockableObject
+from inyoka.portal.user import User
+from inyoka.utils.database import LockableObject, find_next_increment
+from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
 from inyoka.utils.decorators import deferred
 from inyoka.utils.html import striptags
 from inyoka.utils.local import current_request
@@ -342,9 +341,8 @@ class Article(models.Model, LockableObject):
         if not self.slug:
             self.slug = find_next_increment(Article, 'slug',
                 slugify(self.subject), pub_date=self.pub_date)
-
-        # Force to use a valid slug
-        self.slug = slugify(self.slug)
+        else:
+            self.slug = slugify(self.slug)
 
         super(Article, self).save(*args, **kwargs)
 
@@ -518,7 +516,7 @@ class Event(models.Model):
         if not self.slug:
             name = datetime_safe.new_date(self.date) \
                                 .strftime('%Y/%m/%d/') + slugify(self.name)
-            self.slug = find_next_increment(Event, 'slug', name, stripdate=True)
+            self.slug = find_next_increment(Event, 'slug', name)
         super(self.__class__, self).save(*args, **kwargs)
         cache.delete('ikhaya/event/%s' % self.id)
         cache.delete('ikhaya/event_count')
@@ -559,3 +557,17 @@ class Event(models.Model):
                                       or '%g_W' % -self.location_long
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
                '=de&params=%s_%s' % (lat, long)
+
+    def _construct_datetimes(self, day, time):
+        if not day:
+            day = datetime.utcnow().date()
+        return datetime_to_timezone(datetime.combine(day, time))
+
+    @property
+    def startdatetime(self):
+        return self._construct_datetimes(self.date, self.time)
+
+    @property
+    def enddatetime(self):
+        return self._construct_datetimes(self.enddate or self.date, self.endtime)
+

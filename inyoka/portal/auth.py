@@ -5,11 +5,13 @@
 
     Custom authorization functions for Inyoka.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from datetime import datetime
+
 from django.contrib.auth.backends import ModelBackend
+
 from inyoka.portal.user import User, UserBanned
 
 

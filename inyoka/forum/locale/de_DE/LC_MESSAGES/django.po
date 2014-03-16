@@ -1,54 +1,55 @@
-# German (Germany) translations for .
-# Copyright (C) 2012 ORGANIZATION
-# This file is distributed under the same license as the  project.
-#
+# Translations template for PROJECT.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# 
 # Translators:
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012.
-# Sören Wegener <wegener92@googlemail.com>, 2011.
+# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
+# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
+# Sören Wegener <wegener92@googlemail.com>, 2011,2013-2014
 msgid ""
 msgstr ""
-"Project-Id-Version:  Inyoka\n"
-"Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-08-18 15:47+0200\n"
-"PO-Revision-Date: 2012-11-03 10:40+0000\n"
-"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
-"Language-Team: German (Germany) "
-"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Project-Id-Version: Inyoka\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-05-26 10:23+0200\n"
+"PO-Revision-Date: 2014-01-10 17:27+0000\n"
+"Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
+"Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.3\n"
+"Generated-By: Babel 1.0dev\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: inyoka/forum/acl.py:19
+#: inyoka/forum/acl.py:18
 msgid "can read"
 msgstr "kann lesen"
 
-#: inyoka/forum/acl.py:20
+#: inyoka/forum/acl.py:19
 msgid "can vote"
 msgstr "kann abstimmen"
 
-#: inyoka/forum/acl.py:21
+#: inyoka/forum/acl.py:20
 msgid "can create topics"
 msgstr "kann Themen erstellen"
 
-#: inyoka/forum/acl.py:22
+#: inyoka/forum/acl.py:21
 msgid "can reply"
 msgstr "kann antworten"
 
-#: inyoka/forum/acl.py:23
+#: inyoka/forum/acl.py:22
 msgid "can upload attachments"
 msgstr "kann Anhänge hochladen"
 
-#: inyoka/forum/acl.py:24
+#: inyoka/forum/acl.py:23
 msgid "can create polls"
 msgstr "kann Umfragen erstellen"
 
-#: inyoka/forum/acl.py:25
+#: inyoka/forum/acl.py:24
 msgid "can make sticky"
 msgstr "kann Themen anpinnen"
 
-#: inyoka/forum/acl.py:26
+#: inyoka/forum/acl.py:25
 msgid "can moderate"
 msgstr "kann moderieren"
 
@@ -276,21 +277,17 @@ msgstr "Der Anhang „%(attachment)s“ wurde gelöscht."
 
 #: inyoka/forum/views.py:421
 #, python-format
-msgid "The article “%(article)s” does not exist. However, you can create it now."
-msgstr ""
-"Der Artikel „%(article)s“ existiert nicht, du kannst ihn jedoch jetzt "
-"erstellen."
+msgid ""
+"The article “%(article)s” does not exist. However, you can create it now."
+msgstr "Der Artikel „%(article)s“ existiert nicht, du kannst ihn jedoch jetzt erstellen."
 
 #: inyoka/forum/views.py:426
 #, python-format
 msgid ""
-"No discussion is linked yet to the article “%(article)s”. You can create "
-"a discussion now or <a href=\"%(link)s\">link an existing topic</a> to "
-"the article."
-msgstr ""
-"Es wurde noch keine Diskussion mit dem Artikel „%(article)s“ verknüpft. "
-"Du kannst eine Diskussion erstellen oder <a href=\"%(link)s\">ein "
-"vorhandenes Thema verknüpfen</a>."
+"No discussion is linked yet to the article “%(article)s”. You can create a "
+"discussion now or <a href=\"%(link)s\">link an existing topic</a> to the "
+"article."
+msgstr "Es wurde noch keine Diskussion mit dem Artikel „%(article)s“ verknüpft. Du kannst eine Diskussion erstellen oder <a href=\"%(link)s\">ein vorhandenes Thema verknüpfen</a>."
 
 #: inyoka/forum/views.py:445
 #, python-format
@@ -303,9 +300,7 @@ msgstr "Du kannst diesen Beitrag nicht bearbeiten."
 
 #: inyoka/forum/views.py:488
 msgid "You cannot reply in this topic because it was deleted by a moderator."
-msgstr ""
-"Du kannst in diesem Thema nicht antworten, da es von einem Moderator "
-"gelöscht wurde."
+msgstr "Du kannst in diesem Thema nicht antworten, da es von einem Moderator gelöscht wurde."
 
 #: inyoka/forum/views.py:494
 msgid "You cannot reply to this topic because it was locked."
@@ -313,19 +308,15 @@ msgstr "Du kannst auf dieses Thema nicht antworten, da es gesperrt wurde."
 
 #: inyoka/forum/views.py:499
 msgid ""
-"You are replying to a locked topic. Please note that this may be "
-"considered as impolite!"
-msgstr ""
-"Du antwortest auf ein bereits geschlossenes Thema. Dies wird oft als "
-"unhöflich aufgefasst, bitte sei dir dessen bewusst!"
+"You are replying to a locked topic. Please note that this may be considered "
+"as impolite!"
+msgstr "Du antwortest auf ein bereits geschlossenes Thema. Dies wird oft als unhöflich aufgefasst, bitte sei dir dessen bewusst!"
 
 #: inyoka/forum/views.py:555
 msgid ""
-"This topic was already created. Please think about editing your topic "
-"before creating a new one."
-msgstr ""
-"Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen "
-"vorherigen Beitrag bearbeiten möchtest. "
+"This topic was already created. Please think about editing your topic before"
+" creating a new one."
+msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen vorherigen Beitrag bearbeiten möchtest."
 
 #: inyoka/forum/views.py:613
 msgid "The post was saved successfully."
@@ -341,7 +332,8 @@ msgstr "(Ent)sperren"
 
 #: inyoka/forum/views.py:669 inyoka/forum/views.py:1149
 #: inyoka/forum/views.py:1167 inyoka/forum/views.py:1231
-#: inyoka/forum/views.py:1242 inyoka/forum/templates/forum/delete_topic.html:33
+#: inyoka/forum/views.py:1242
+#: inyoka/forum/templates/forum/delete_topic.html:33
 #: inyoka/forum/templates/forum/edit.html:156
 #: inyoka/forum/templates/forum/edit.m.html:73
 #: inyoka/forum/templates/forum/post_delete.html:26
@@ -377,19 +369,16 @@ msgstr "Du erhältst ab nun Benachrichtigungen zu neuen Themen in diesem Forum."
 msgid ""
 "No notifications on new topics within this forum will be sent to you any "
 "more."
-msgstr ""
-"Du erhältst ab sofort keine Benachrichtigungen mehr zu neuen Themen in "
-"diesem Forum."
+msgstr "Du erhältst ab sofort keine Benachrichtigungen mehr zu neuen Themen in diesem Forum."
 
 #: inyoka/forum/views.py:787
 msgid "Notifications on new posts in this topic will be sent to you."
 msgstr "Du wirst ab nun über neue Beiträge in diesem Thema benachrichtigt."
 
 #: inyoka/forum/views.py:791
-msgid "No notifications on new posts in this topic will be sent to you any more"
-msgstr ""
-"Du wirst ab nun nicht mehr über neue Beiträge in diesem Thema "
-"benachrichtigt."
+msgid ""
+"No notifications on new posts in this topic will be sent to you any more"
+msgstr "Du wirst ab nun nicht mehr über neue Beiträge in diesem Thema benachrichtigt."
 
 #: inyoka/forum/views.py:803
 msgid "This topic was already reported."
@@ -404,6 +393,10 @@ msgstr "Gemeldetes Thema: „%(topic)s“"
 msgid "The topic was reported."
 msgstr "Das Thema wurde gemeldet."
 
+#: inyoka/forum/views.py:845
+msgid "This report has already been claimed."
+msgstr "Diese Meldung wird bereits bearbeitet."
+
 #: inyoka/forum/views.py:856
 msgid "No topics selected."
 msgstr "Keine Themen ausgewählt."
@@ -416,9 +409,7 @@ msgstr "Die gewählten Tickets wurden geschlossen."
 msgid ""
 "Only a subset of selected tickets has been closed, considering your "
 "moderation privileges for the regarding forums."
-msgstr ""
-"Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du "
-"Moderationsrechte im jeweiligen Forum benötigst."
+msgstr "Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du Moderationsrechte im jeweiligen Forum benötigst."
 
 #: inyoka/forum/views.py:903
 msgid "A notification will be sent when a topic is reported."
@@ -675,11 +666,9 @@ msgstr "Gemeldetes Thema"
 #: inyoka/forum/templates/forum/delete_topic.html:16
 #, python-format
 msgid ""
-"Do you really want to delete the topic “%(title)s”? This action cannot be"
-" undone!"
-msgstr ""
-"Möchtest du das Thema „%(title)s“ wirklich löschen? Diese Aktion kann "
-"nicht rückgängig gemacht werden!"
+"Do you really want to delete the topic “%(title)s”? This action cannot be "
+"undone!"
+msgstr "Möchtest du das Thema „%(title)s“ wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!"
 
 #: inyoka/forum/templates/forum/delete_topic.html:20
 #, python-format
@@ -727,11 +716,9 @@ msgstr "Neue Antwort"
 
 #: inyoka/forum/templates/forum/edit.html:38
 msgid ""
-"Please save long code snippets or program outputs in our paste service "
-"and link to the respective entry."
-msgstr ""
-"Bitte speichere lange Code-Ausschnitte oder Programmausgaben in unserer "
-"Ablage und verlinke den entsprechenden Beitrag."
+"Please save long code snippets or program outputs in our paste service and "
+"link to the respective entry."
+msgstr "Bitte speichere lange Code-Ausschnitte oder Programmausgaben in unserer Ablage und verlinke den entsprechenden Beitrag."
 
 #: inyoka/forum/templates/forum/edit.html:39
 msgid "Paste"
@@ -788,9 +775,7 @@ msgstr "Dauer der Umfrage: %(duration)s Tage"
 
 #: inyoka/forum/templates/forum/edit.html:118
 msgid "Leave that feel empty for an endless duration"
-msgstr ""
-"Lasse dieses Feld frei, um die Umfrage zeitlich unbegrenzt offen zu "
-"lassen."
+msgstr "Lasse dieses Feld frei, um die Umfrage zeitlich unbegrenzt offen zu lassen."
 
 #: inyoka/forum/templates/forum/edit.html:119
 msgid "Add poll"
@@ -1090,10 +1075,7 @@ msgstr "Thema „%(topic)s“ melden"
 msgid ""
 "Here you can report a topic to the moderators if it is against our <a "
 "href=\"%(link)s\">rules</a>. Please add a short explanation:"
-msgstr ""
-"Hier kannst du ein Thema den Moderatoren melden, falls es gegen unsere <a"
-" href=\"%(link)s\">Forenregeln</a> verstößt. Bitte füge eine kurze "
-"Beschreibung hinzu:"
+msgstr "Hier kannst du ein Thema den Moderatoren melden, falls es gegen unsere <a href=\"%(link)s\">Portalregeln</a> verstößt. Bitte füge eine kurze Beschreibung hinzu:"
 
 #: inyoka/forum/templates/forum/report.html:27
 #: inyoka/forum/templates/forum/report.m.html:25
@@ -1269,10 +1251,9 @@ msgstr "Die Umfrage wurde am %(start_date)s gestartet und endete am %(end_date)s
 #: inyoka/forum/templates/forum/topic.html:166
 #: inyoka/forum/templates/forum/topic.m.html:52
 #, python-format
-msgid "The poll was started on %(start_date)s and it will end on %(end_date)s."
-msgstr ""
-"Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s "
-"enden."
+msgid ""
+"The poll was started on %(start_date)s and it will end on %(end_date)s."
+msgstr "Die Umfrage wurde am %(start_date)s gestartet und wird am %(end_date)s enden."
 
 #: inyoka/forum/templates/forum/topic.html:171
 #: inyoka/forum/templates/forum/topic.m.html:58
@@ -1362,4 +1343,3 @@ msgstr "Gelesen und akzeptiert"
 #: inyoka/forum/templates/forum/welcome.html:21
 msgid "Reject"
 msgstr "Ablehnen"
-

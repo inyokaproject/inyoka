@@ -1,0 +1,19 @@
+.datetime{text-align:center;background:white;font-size:0.7em;border:0;width:1px;z-index:1;}
+.datetime td{border:0 !important;vertical-align:top;padding:0.4em 0 0 0;}
+.calendar{border-collapse:collapse;width:1px;}.calendar span{cursor:pointer;}
+.calendar input{width:5em;}
+.calendar th.weekday{color:#666;text-align:center;background:#e1e1e1 url(../img/table_bg.png) 0 50% repeat-x;border-bottom:1px solid #ddd;}
+.calendar td.nonday{background:#efefef;}
+.calendar td.selected a{background-color:#dabe9a;}
+.timetable{border-collapse:collapse;width:15em;}.timetable a.close{background-color:#EFEFEF;color:#888;border-top:1px solid #ccc;}
+.calendar th.caption,.timetable th.caption{text-align:center;border-top:none;background:#dabe9a url(../img/caption.png) repeat-x scroll left top;color:#666;font-weight:bold;border-collapse:collapse;border:1px solid #CCC;padding:0.3em 0.4em;}
+.calendar td,.timetable td{text-align:center;padding:0;border-top:1px solid #eee;border-bottom:none;}
+.calendar td a,.timetable td a{display:block;font-weight:bold;padding:4px;text-decoration:none;color:#444;cursor:pointer;}
+.calendar td a:hover,.timetable td a:hover{background:#c8a06d;color:white;}
+.calendar td a:active,.timetable td a:active{background:#a4773d;color:white;}
+.calendarnav{text-align:center;color:#ccc;margin:0;padding:1px 3px;}.calendarnav a:link{color:#999;}
+.calendar-shortcuts{background:white;font-size:10px;line-height:11px;border-top:1px solid #eee;padding:3px 0 4px;color:#ccc;}
+.calendarnav-previous{float:left;}
+.calendarnav-next{float:right;}
+.calendarnav-previous,.calendarnav-next{display:block;font-weight:bold;background:#7ca0c7 url(../img/caption.png) bottom left repeat-x;margin:-0.3em -0.4em;padding:0.3em 0.4em;color:white;cursor:pointer;}
+.calendarnav-previous:hover,.calendarnav-next:hover{background:#a4773d;}

@@ -6,15 +6,14 @@
     This script is used by fabric for easy deployment.
 
     :copyright: Copyright 2008-2011 by Florian Apolloner.
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 import os
-from fabric.api import env, run, local, put, require, prompt, open_shell, \
-    roles, settings
+
+from fabric.api import env, put, run, roles, local, prompt, require, settings, open_shell
 from fabric.contrib.project import rsync_project
 from fabric.context_managers import cd
-
 
 env.roledefs.update({
     'web': ['ubuntu_de@dongo.ubuntu-eu.org',

@@ -4,7 +4,7 @@
 
     This is the overview of the static pages configuration.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'planet/page.html' %}
@@ -34,7 +34,7 @@
       <tr{% if not blog.active %} class="not_published"{% endif %}>
         <td><a href="{{ blog|url('edit') }}">{{ blog.name|e }}</a></td>
         <td>{% if blog.user %}<a href="{{ href('portal', 'user', blog.user) }}">{{ blog.user }}</a>{%else%} - {% endif %}</td>
-        <td>{{ blog.latest_update|datetimeformat if blog.latest_update else _('No entry') }}</td>
+        <td>{{ blog.latest_update|datetime if blog.latest_update else _('No entry') }}</td>
         <td><img src="{{ href('static', 'img', blog.active and 'check.png' or 'hide.png') }}" /></td>
       </tr>
     {%- endfor %}

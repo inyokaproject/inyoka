@@ -3,12 +3,12 @@
     inyoka.ikhaya.services
     ~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from inyoka.utils.services import SimpleDispatcher, permit_methods
 from inyoka.ikhaya.models import Suggestion
 from inyoka.portal.models import User
+from inyoka.utils.services import permit_methods, SimpleDispatcher
 
 
 @permit_methods(('POST',))

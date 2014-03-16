@@ -7,14 +7,14 @@
 
     Some parts are ported from the django auth-module.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
 import hashlib
+
 from django.conf import settings
 from django.contrib.auth import hashers
-
 
 _username_re = re.compile(ur'^[@\-\.a-z0-9 öäüß]{1,30}$', re.I | re.U)
 _username_url_re = re.compile(ur'^[@\-\._a-z0-9 öäüß]{1,30}$', re.I | re.U)

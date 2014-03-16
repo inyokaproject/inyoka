@@ -6,7 +6,7 @@
     Forum specific services.
 
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from urllib import unquote
@@ -15,12 +15,11 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.utils.datastructures import MultiValueDictKeyError
 
-from inyoka.forum.models import Topic, Post, Forum
-from inyoka.forum.acl import get_forum_privileges, check_privilege, \
-    have_privilege
+from inyoka.forum.acl import have_privilege, check_privilege, get_forum_privileges
+from inyoka.portal.utils import abort_access_denied, get_ubuntu_versions
+from inyoka.forum.models import Post, Topic, Forum
 from inyoka.portal.models import Subscription
-from inyoka.portal.utils import abort_access_denied, UBUNTU_VERSIONS
-from inyoka.utils.services import SimpleDispatcher, permit_methods, never_cache
+from inyoka.utils.services import never_cache, permit_methods, SimpleDispatcher
 from inyoka.utils.templating import render_template
 
 
@@ -112,7 +111,7 @@ def on_change_status(request, solved=None):
 def on_get_version_details(request):
     try:
         version = request.GET['version']
-        obj = [x for x in UBUNTU_VERSIONS if x.number == version][0]
+        obj = [x for x in get_ubuntu_versions() if x.number == version][0]
     except (IndexError, KeyError, MultiValueDictKeyError):
         return {}
 

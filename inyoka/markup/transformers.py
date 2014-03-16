@@ -12,7 +12,7 @@
     stage attribute set to 'final' are expanded after all the transformers
     finished their job.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
@@ -20,7 +20,6 @@ import re
 from django.utils.encoding import smart_unicode
 
 from inyoka.markup import nodes
-
 
 _newline_re = re.compile(r'(\n)')
 _paragraph_re = re.compile(r'(\s*?\n){2,}')

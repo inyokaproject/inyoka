@@ -5,14 +5,17 @@
 
     `QuerySet` filter based on `django-filters <https://github.com/alex/django-filter>`_
 
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from itertools import chain
+
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy
+
 from django_filters import FilterSet, ChoiceFilter
 from django_filters.widgets import LinkWidget as BaseLinkWidget
+
 from inyoka.portal.models import Subscription
 from inyoka.utils.urls import urlencode
 

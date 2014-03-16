@@ -8,7 +8,7 @@
     and will all rights to modify e.g. users or user content (e.g forum,
     ikhaya, wiki, etc.)
 
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from getpass import getpass
@@ -16,9 +16,9 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand
 
-from inyoka.portal.user import User, PERMISSION_NAMES
+from inyoka.forum.acl import join_flags, PRIVILEGES_DETAILS
 from inyoka.forum.models import Forum, Privilege
-from inyoka.forum.acl import PRIVILEGES_DETAILS, join_flags
+from inyoka.portal.user import User, PERMISSION_NAMES
 
 
 class Command(BaseCommand):

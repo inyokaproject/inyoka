@@ -4,7 +4,7 @@
 
     Show a single ikhaya article.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
@@ -55,10 +55,10 @@
       {% trans link=article.author|url, author=article.author.username|e -%}
         Published by <a href="{{ link }}">{{ author }}</a>
       {%- endtrans %} |
-      {{ article.pub_datetime|datetimeformat }} |
+      {{ article.pub_datetime|datetime }} |
       {% trans %}Category:{% endtrans %} <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
       {%- if article.updated > article.pub_datetime %}
-        | {% trans %}Last update:{% endtrans %} {{ article.updated|datetimeformat }}
+        | {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}
       {%- endif %}
       {% if can_edit_article %}
         <span class="admin_link">|
@@ -105,7 +105,7 @@
                     {%- endif %}
                   </div>
                   <a href="#comment_{{ loop.index }}"><strong>{{ loop.index }}</strong></a>
-                  {{ comment.pub_date|datetimeformat }}
+                  {{ comment.pub_date|datetime }}
                 </div>
                 <div class="text">
                   {{ comment.rendered_text }}

@@ -22,20 +22,19 @@ r"""
     The start tags (``<@``) delete one leading newline.
 
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
-import operator
 import random
+import operator
 
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext as _
 
-from inyoka.markup import unescape_string, escape
+from inyoka.markup import escape, unescape_string
 from inyoka.markup.parsertools import TokenStream
-from inyoka.markup.utils import debug_repr, has_key, join_array, regex_match, \
-    simple_match
+from inyoka.markup.utils import debug_repr, has_key, join_array, regex_match, simple_match
 
 
 def process(source, context=()):

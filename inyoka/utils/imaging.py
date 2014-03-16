@@ -5,15 +5,15 @@
 
     This module implements some helper methods to generate thumbnails
 
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import os
 from contextlib import closing
 
+from PIL import Image
 from django.conf import settings
 from django.utils.encoding import force_unicode
-from PIL import Image
 
 from inyoka.utils.urls import is_external_target
 

@@ -5,11 +5,10 @@
 
     URL list for the forum.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf.urls import patterns
-
 
 urlpatterns = patterns('inyoka.forum.views',
     (r'^$', 'index'),
@@ -104,4 +103,4 @@ urlpatterns = patterns('inyoka.forum.views',
 )
 
 
-handler404 = 'inyoka.utils.urls.global_not_found'
+handler404 = 'inyoka.utils.http.global_not_found'

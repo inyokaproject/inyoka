@@ -11,23 +11,28 @@
     It'd be ideal if ``sync`` was called every 30 minutes.
 
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 # Secure XML libraries till a python solution exists.
 # We already patch in inyoka, hence we just import inyoka before feedparser.
 import inyoka
+
 # And further patch it so feedparser works :/
 import xml.sax
 make_parser = xml.sax.make_parser
 xml.sax.make_parser = lambda x: make_parser()
 # End XML patching.
-import re
-import sys
+
 import dateutil
 import feedparser
+import re
+import socket
+import sys
+
 from time import time
 from datetime import datetime
+
 from django.conf import settings
 from django.utils.encoding import force_unicode
 from django.utils.html import escape
@@ -35,9 +40,9 @@ from django.utils.html import escape
 from inyoka.planet.models import Blog, Entry
 from inyoka.utils.html import cleanup_html
 
+
 # set a default timeout. Otherwise fetching some feeds might cause the script
 # to block forever
-import socket
 socket.setdefaulttimeout(20.0)
 
 

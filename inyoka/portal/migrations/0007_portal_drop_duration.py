@@ -1,7 +1,9 @@
 # encoding: utf-8
 from south.db import db
 from south.v2 import SchemaMigration
+
 from inyoka.utils.dates import date_time_to_datetime
+
 
 class Migration(SchemaMigration):
 

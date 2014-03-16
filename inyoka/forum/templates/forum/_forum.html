@@ -4,7 +4,7 @@
 
     Some macros for the forum.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {% macro render_forum(forum, subforums, last_posts) %}
@@ -42,7 +42,7 @@
     <td class="last_post">
       {%- if forum.last_post_id in last_posts -%}
         {% set last_post = last_posts[forum.last_post_id] %}
-        <a href="{{ last_post|url }}">{{ last_post.pub_date|datetimeformat }}</a><br />
+        <a href="{{ last_post|url }}">{{ last_post.pub_date|datetime }}</a><br />
         {%- trans link=last_post.author|url, name=last_post.author|e -%}
           by <a href="{{ link }}">{{ name }}</a>
         {%- endtrans -%}

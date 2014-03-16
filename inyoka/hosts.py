@@ -5,14 +5,15 @@
 
     Subdomain specifications.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import sys
 
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect
-from django_hosts import patterns, host
+
+from django_hosts import host, patterns
 
 
 def redirect_www(request):

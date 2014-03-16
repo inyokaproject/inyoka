@@ -12,7 +12,7 @@
     For development purposes we also set up virtual url dispatching modules for
     static and media.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.conf import settings
@@ -20,12 +20,11 @@ from django.contrib import messages
 from django.middleware.common import CommonMiddleware
 
 from django_hosts.middleware import HostsMiddleware
-from django_mobile.middleware import \
-    MobileDetectionMiddleware as BaseMobileDetectionMiddleware
+from django_mobile.middleware import MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
-from inyoka.utils.local import local, _request_cache, local_manager
-from inyoka.utils.timer import StopWatch
+from inyoka.utils.local import local, local_manager, _request_cache
 from inyoka.utils.logger import logger
+from inyoka.utils.timer import StopWatch
 
 
 class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):

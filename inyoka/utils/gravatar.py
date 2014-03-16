@@ -5,14 +5,14 @@
 
     Various application independent utilities.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import json
-import requests
-from hashlib import md5
 from urllib import urlencode
+from hashlib import md5
 
+import requests
 
 BASE_URL = 'http://www.gravatar.com/avatar/'
 SECURE_BASE_URL = 'https://secure.gravatar.com/avatar/'

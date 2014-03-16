@@ -5,12 +5,13 @@
 
     Macros for the forum.
 
-    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.dispatch import receiver
-from inyoka.forum.models import Attachment
+
 from inyoka.markup import nodes
+from inyoka.forum.models import Attachment
 from inyoka.wiki.signals import build_picture_node
 
 

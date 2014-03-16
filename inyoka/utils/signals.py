@@ -7,15 +7,15 @@
     `django.db.models.signals` as well as a Inyoka specific implementation of
     signals, e.g. for removal of `Subscriptions`.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 
-from django.dispatch import receiver
-from django.db.models.signals import pre_delete
 from django.contrib.contenttypes.models import ContentType
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
-from inyoka.ikhaya.models import Article, Comment
+from inyoka.ikhaya.models import Comment, Article
 from inyoka.portal.models import Subscription
 
 

@@ -5,18 +5,18 @@
 
     Signals for the forum.
 
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.core.cache import cache
 from django.dispatch import receiver
-from django.db.models import Max, F
-from django.db.models.signals import post_save, post_delete, pre_save
+from django.db.models import F, Max
+from django.core.cache import cache
+from django.db.models.signals import pre_save, post_save, post_delete
 
+from inyoka.portal.user import User
+from inyoka.forum.models import Post, Topic, Forum, Privilege
 from inyoka.utils.database import find_next_increment
 from inyoka.utils.text import slugify
-from inyoka.portal.user import User
-from inyoka.forum.models import Forum, Topic, Post, Privilege
 
 
 @receiver(pre_save, sender=Forum)

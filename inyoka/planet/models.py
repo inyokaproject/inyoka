@@ -5,17 +5,17 @@
 
     Database models for the planet.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.core.cache import cache
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 from django.utils.translation import ugettext_lazy
 
-from inyoka.utils.urls import href
-from inyoka.utils.html import striptags
 from inyoka.portal.user import User
+from inyoka.utils.html import striptags
+from inyoka.utils.urls import href
 
 
 class EntryManager(models.Manager):

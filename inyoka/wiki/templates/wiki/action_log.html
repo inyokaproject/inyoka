@@ -5,7 +5,7 @@
     This template is used to show the user a small dialog that let
     him / her compare various revisions (and later restoring them too).
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -27,12 +27,12 @@
       {%- endtrans %}
 
       {% if latest_rev.user %}
-        {% trans rev_link=latest_rev|url, rev=latest_rev.change_date|datetimeformat,
+        {% trans rev_link=latest_rev|url, rev=latest_rev.change_date|datetime,
                  author_link=latest_rev.user|url, author=latest_rev.user.username|e -%}
           The <a href="{{ rev_link }}">most recent revision</a> is {{ rev }} and was created by <a href="{{ author_link }}">{{ author }}</a>.
         {%- endtrans %}
       {% else %}
-        {% trans rev_link=latest_rev|url, rev=latest_rev.change_date|datetimeformat,
+        {% trans rev_link=latest_rev|url, rev=latest_rev.change_date|datetime,
                  author=latest_rev.remote_addr|e -%}
           The <a href="{{ rev_link }}">most recent revision</a> is {{ rev }} and was created by {{ author }}.
         {%- endtrans %}
@@ -67,7 +67,7 @@
             </td>
             <td class="changeset">
               <span class="time-elapsed">
-                <abbr title="{{ revision.change_date|timedeltaformat }}">{{ revision.change_date|datetimeformat }}</abbr>
+                <abbr title="{{ revision.change_date|timedeltaformat }}">{{ revision.change_date|datetime }}</abbr>
                 {% if revision.note %}:{% endif %}</span>
               &nbsp;
               {% if revision.note %}{{ revision.note|e }}{% endif %}

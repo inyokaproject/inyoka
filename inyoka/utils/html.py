@@ -6,20 +6,24 @@
     This module implements various HTML/XHTML utility functions.  Some parts
     of this module require the lxml and html5lib libraries.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
+
 import re
-import lxml.html.clean
-from lxml.html.defs import empty_tags
 from htmlentitydefs import name2codepoint
 from xml.sax.saxutils import quoteattr
-from html5lib import HTMLParser, treewalkers, treebuilders
-from html5lib.serializer import HTMLSerializer
-from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
+
 from django.utils.encoding import force_unicode
 
+from html5lib import HTMLParser, treewalkers, treebuilders
+from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
+from html5lib.serializer import HTMLSerializer
+from lxml.html.defs import empty_tags
+import lxml.html.clean
+
+from inyoka.utils.text import increment_string
 
 _entity_re = re.compile(r'&([^;]+);')
 _strip_re = re.compile(r'<!--.*?-->|<[^>]*>(?s)')
@@ -249,4 +253,3 @@ class CleanupFilter(object):
             yield token
 
 # circ import
-from inyoka.utils.text import increment_string

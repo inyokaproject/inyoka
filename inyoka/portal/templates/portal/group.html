@@ -4,7 +4,7 @@
 
     This page shows details about a group.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 
@@ -41,7 +41,7 @@
       <td>
         <a href="{{ user|url }}">{{ user.username|e }}</a></td>
       <td>{{ user.location }}</td>
-      <td>{{ user.date_joined|datetimeformat }}</td>
+      <td>{{ user.date_joined|datetime }}</td>
       <td>{{ user.post_count }}</td>
     </tr>
     {%- endfor %}

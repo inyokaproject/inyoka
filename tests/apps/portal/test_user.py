@@ -5,13 +5,15 @@
 
     Test some user model functions
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import unittest
 from datetime import datetime, timedelta
+
 from django.test import TestCase
-from inyoka.portal.user import User, Group, reactivate_user, deactivate_user
+
+from inyoka.portal.user import User, Group, deactivate_user, reactivate_user
 
 
 class TestUserModel(TestCase):

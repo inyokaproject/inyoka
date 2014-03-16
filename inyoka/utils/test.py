@@ -5,13 +5,13 @@
 
     Various utilities and helpers that improve our unittest experience.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import gc
 
-from django.contrib.auth import authenticate, login
 from django.conf import settings
+from django.contrib.auth import login, authenticate
 from django.http import HttpRequest
 from django.test.client import Client
 from django.utils.importlib import import_module

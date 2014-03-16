@@ -6,7 +6,7 @@
     This module tests the the storage object that uses a combination of cache
     and database storing.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import time
@@ -14,9 +14,9 @@ import time
 from django.test import TestCase
 from django.core.cache import get_cache
 
+from inyoka.utils.local import local
 from inyoka.portal.models import Storage
 from inyoka.utils.storage import storage
-from inyoka.utils.local import local
 
 
 class TestStorage(TestCase):

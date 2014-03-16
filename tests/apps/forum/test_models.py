@@ -5,7 +5,7 @@
 
     Test forum models.
 
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 from django.conf import settings
@@ -14,7 +14,7 @@ from django.core.files.base import ContentFile
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from inyoka.forum.models import Forum, Topic, Post, Attachment
+from inyoka.forum.models import Post, Topic, Forum, Attachment
 from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
 

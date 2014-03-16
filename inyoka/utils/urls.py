@@ -7,18 +7,17 @@
     to build urls for different subdomains using the `href` function.
 
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
 from urlparse import urlparse
 
 from django.conf import settings
+from django.utils.http import urlquote, urlencode, urlquote_plus
 from django.utils.importlib import import_module
-from django.utils.http import urlencode, urlquote, urlquote_plus
 
 from django_hosts.reverse import get_host
-
 
 # extended at runtime with module introspection information
 _append_slash_map = {'static': False, 'media': False}
@@ -108,12 +107,3 @@ def is_external_target(location):
     `True` if the target is an external URL.
     """
     return _schema_re.match(location) is not None
-
-
-def global_not_found(request, err_message=None):
-    return TemplateResponse('errors/404.html', {
-        'err_message': err_message,
-    }, 404)
-
-
-from inyoka.utils.http import TemplateResponse

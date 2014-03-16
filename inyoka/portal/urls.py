@@ -5,10 +5,10 @@
 
     The urls for the main portal (index page, error pages, login page etc.)
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.conf.urls import patterns, url
+from django.conf.urls import url, patterns
 
 urlpatterns = patterns('inyoka.portal.views',
     (r'^$', 'index'),
@@ -100,4 +100,4 @@ urlpatterns += patterns('inyoka.portal.views',
     (r'^(?P<pk>[-A-Za-z_]+)/delete/$', 'page_delete'),
 )
 
-handler404 = 'inyoka.utils.urls.global_not_found'
+handler404 = 'inyoka.utils.http.global_not_found'

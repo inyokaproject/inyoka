@@ -5,14 +5,14 @@
 
     Test the wiki acl.
 
-    :copyright: Copyright 2007-2013 by the Inyoka-Team.
+    :copyright: Copyright 2007-2014 by the Inyoka-Team.
     :license: GNU GPL.
 """
 from django.test import TestCase
 
-from inyoka.portal.user import User
-from inyoka.wiki.models import Page
 from inyoka.wiki.acl import *
+from inyoka.wiki.models import Page
+from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
 
 

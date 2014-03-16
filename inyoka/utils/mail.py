@@ -5,10 +5,11 @@
 
     This module provides various e-mail related functionality.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from subprocess import Popen, PIPE
+from subprocess import PIPE, Popen
+
 from django.conf import settings
 from django.core.mail import send_mail as django_send_mail
 from django.core.mail.backends.base import BaseEmailBackend

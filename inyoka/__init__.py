@@ -102,7 +102,7 @@
         diffing yet but allows to download pastes.
 
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 # Secure XML libraries till a python solution exists.
@@ -111,10 +111,13 @@ defusedxml.defuse_stdlib()
 import xml
 assert xml.sax.make_parser is defusedxml.sax.make_parser
 # End XML patching.
+
 import socket
+from os.path import join, dirname, realpath
 from distutils.version import LooseVersion as V
-from os.path import realpath, join, dirname
+
 from django.utils.translation import ugettext_lazy
+
 from dulwich.repo import Repo
 
 #: Inyoka revision present in the current mercurial working copy

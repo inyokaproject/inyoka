@@ -5,13 +5,13 @@
 
     Test for global macros.
 
-    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 import unittest
 
-from inyoka.wiki.models import Page
 from inyoka.markup import parse, RenderContext
+from inyoka.wiki.models import Page
 
 
 class TestMacros(unittest.TestCase):

@@ -6,15 +6,14 @@
     Utils for creating an atom feed.  This module relies on
     :mod:`werkzeug.contrib.atom`.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from werkzeug.contrib.atom import AtomFeed
 from django.conf import settings
 from django.http import Http404, HttpResponse
-from django.utils.encoding import force_unicode
 from django.utils.cache import patch_response_headers
-
+from django.utils.encoding import force_unicode
+from werkzeug.contrib.atom import AtomFeed
 
 MODES = frozenset(('full', 'short', 'title'))
 

@@ -5,7 +5,7 @@
 
     Test Ikhaya views.
 
-    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 import datetime
@@ -13,10 +13,10 @@ import datetime
 from django.conf import settings
 from django.test import TestCase
 
-from inyoka.ikhaya.models import Article, Category, Comment, Report
-from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.utils.test import InyokaClient
 from inyoka.utils.urls import href
+from inyoka.portal.user import User, PERMISSION_NAMES
+from inyoka.ikhaya.models import Report, Article, Comment, Category
 
 
 class TestViews(TestCase):

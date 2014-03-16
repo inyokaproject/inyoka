@@ -5,32 +5,35 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     :copyright: 2007 by Benjamin Wiegand.
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from __future__ import division
-import math
+
 import os
+import math
 import time
-from random import randint, choice
+from random import choice, randint
 from datetime import datetime
 from itertools import izip
-from jinja2.constants import LOREM_IPSUM_WORDS
-from django.conf import settings
 
-if not os.environ.has_key('DJANGO_SETTINGS_MODULE'):
+from django.conf import settings
+from jinja2.constants import LOREM_IPSUM_WORDS
+
+if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
 settings.DEBUG = settings.DATABASE_DEBUG = False # for nice progressbar output ;)
 
-from inyoka.portal.user import User, Group
-from inyoka.forum.models import Forum, Topic, Post
-from inyoka.ikhaya.models import Category, Article, Comment
-from inyoka.wiki.models import Page
-from inyoka.planet.models import Blog
-from inyoka.utils.captcha import generate_word
 from inyoka.utils.text import increment_string
-from inyoka.utils.terminal import ProgressBar, percentize, show
+from inyoka.wiki.models import Page
+from inyoka.portal.user import User, Group
+from inyoka.forum.models import Post, Topic, Forum
+from inyoka.ikhaya.models import Comment, Article, Category
+from inyoka.utils.captcha import generate_word
+from inyoka.planet.models import Blog
+from inyoka.utils.terminal import show, percentize, ProgressBar
 from inyoka.scripts.planet_sync import sync
+
 
 
 MARKS = ('.', ';', '!', '?')

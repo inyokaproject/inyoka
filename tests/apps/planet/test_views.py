@@ -5,9 +5,9 @@ from django.conf import settings
 from django.test import TestCase
 from django.utils import translation
 
+from inyoka.utils.test import InyokaClient
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.planet.models import Blog, Entry
-from inyoka.utils.test import InyokaClient
 
 
 class TestViews(TestCase):
@@ -51,4 +51,3 @@ class TestViews(TestCase):
             response = self.client.post('/feeds/full/10/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "No title given", count=1)
-

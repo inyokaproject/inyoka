@@ -5,16 +5,18 @@
 
     Forms for the forum.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
 from django.utils.html import escape
-from django.utils.translation import ugettext as _, ugettext_lazy
-from inyoka.utils.forms import MultiField, SlugField, StrippedCharField
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
+
 from inyoka.forum.acl import CAN_READ
+from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import Topic, Forum
-from inyoka.forum.constants import VERSION_CHOICES, DISTRO_CHOICES
+from inyoka.utils.forms import SlugField, MultiField, StrippedCharField
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 
@@ -55,13 +57,14 @@ class EditPostForm(forms.Form):
     #: the user can select, whether the post's topic should be sticky or not.
     sticky = forms.BooleanField(required=False)
     title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}))
-    ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
-                                                required=False)
-    ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
+    ubuntu_version = forms.ChoiceField(required=False)
+    ubuntu_distro = forms.ChoiceField(required=False)
 
     def __init__(self, *args, **kwargs):
         is_first_post = kwargs.pop('is_first_post', False)
-        forms.Form.__init__(self, *args, **kwargs)
+        super(EditPostForm, self).__init__(*args, **kwargs)
+        self.fields['ubuntu_version'].choices = get_version_choices()
+        self.fields['ubuntu_distro'].choices = get_distro_choices()
         if not is_first_post:
             for k in ['sticky', 'title', 'ubuntu_version', 'ubuntu_distro']:
                 del self.fields[k]
@@ -69,27 +72,37 @@ class EditPostForm(forms.Form):
 
 class NewTopicForm(SurgeProtectionMixin, forms.Form):
     """
-    Allows the user to create a new topic.
-    It provides the following fields:
+    Allows the user to create a new topic. It provides the following fields:
+
     `title`
         The title of the topic.
+
     `text`
         The text of the first post inside the topic.
+
     `polls`
         A list of new polls bound to this topic.
+
     `ubuntu_version`
         The ubuntu version the user has.
+
     `ubuntu_distro`
         The ubuntu distribution the user has.
+
     It's used together with `AddAttachmentForm` in general.
     """
     title = StrippedCharField(widget=forms.TextInput(attrs={'size': 60}),
                             max_length=100)
     text = StrippedCharField(widget=forms.Textarea)
-    ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
-                                                required=False)
-    ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
+    ubuntu_version = forms.ChoiceField(required=False)
+    ubuntu_distro = forms.ChoiceField(required=False)
     sticky = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.force_version = kwargs.pop('force_version', False)
+        super(NewTopicForm, self).__init__(*args, **kwargs)
+        self.fields['ubuntu_version'].choices = get_version_choices()
+        self.fields['ubuntu_distro'].choices = get_distro_choices()
 
     def clean_ubuntu_version(self):
         ubuntu_version = self.cleaned_data.get('ubuntu_version', None)
@@ -104,10 +117,6 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
             raise forms.ValidationError(forms.fields.Field.
                                         default_error_messages['required'])
         return ubuntu_distro
-
-    def __init__(self, *args, **kwargs):
-        self.force_version = kwargs.pop('force_version', False)
-        forms.Form.__init__(self, *args, **kwargs)
 
 
 class MoveTopicForm(forms.Form):
@@ -131,9 +140,13 @@ class SplitTopicForm(forms.Form):
     #: the slug of the existing topic
     topic = forms.CharField(max_length=200)
     #: version info. defaults to the values set in the old topic.
-    ubuntu_version = forms.ChoiceField(choices=VERSION_CHOICES,
-                                       required=False)
-    ubuntu_distro = forms.ChoiceField(choices=DISTRO_CHOICES, required=False)
+    ubuntu_version = forms.ChoiceField(required=False)
+    ubuntu_distro = forms.ChoiceField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(SplitTopicForm, self).__init__(*args, **kwargs)
+        self.fields['ubuntu_version'].choices = get_version_choices()
+        self.fields['ubuntu_distro'].choices = get_distro_choices()
 
     def clean(self):
         data = self.cleaned_data
@@ -166,6 +179,7 @@ class SplitTopicForm(forms.Form):
 class AddAttachmentForm(forms.Form):
     """
     Allows the user to upload new attachments.  It provides the following fields:
+
     `attachment`
         A file field for the uploaded file.
 

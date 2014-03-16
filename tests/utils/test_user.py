@@ -3,14 +3,16 @@
     tests.utils.test_user
     ~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import unittest
 from hashlib import sha1
+
 from django.conf import settings
-from inyoka.portal.user import User
+
 from inyoka.utils.user import gen_activation_key
+from inyoka.portal.user import User
 
 
 class TestUtilsUser(unittest.TestCase):

@@ -5,12 +5,11 @@
 
     Provides tools for terminals.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import sys
 from itertools import cycle
-
 
 _color_mapping = zip(xrange(8),
     ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'))

@@ -5,19 +5,19 @@
 
     Contains all the forms we use in the wiki.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django import forms
-from django.utils.translation import ugettext_lazy, ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 
+from inyoka.forum.models import Topic
 from inyoka.markup import parse, StackExhaused
 from inyoka.utils.forms import UserField, DateWidget
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.urls import href
-from inyoka.forum.models import Topic
-from inyoka.wiki.utils import has_conflicts
 from inyoka.wiki.acl import test_changes_allowed
+from inyoka.wiki.utils import has_conflicts
 
 
 class PageEditForm(SurgeProtectionMixin, forms.Form):

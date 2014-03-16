@@ -6,13 +6,13 @@
     Helper functions to communicate with the bot.  The communication uses
     basic XMLRPC.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
+
 import zmq
 from django.conf import settings
-
 
 # NOTE: according to rfc4622 a nodeid is optional. But we require one
 #       'cause nobody should enter a service-jid in the jabber field.

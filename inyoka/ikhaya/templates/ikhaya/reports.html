@@ -4,7 +4,7 @@
 
     Shows a list of suggested improved verions of an article.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
@@ -31,7 +31,7 @@
           Reported by <a href="{{ link }}">{{ author }}</a>
         {%- endtrans %}
         <span class="linklist"> | </span>
-        {{ report.pub_date|datetimeformat }}
+        {{ report.pub_date|datetime }}
         {%- if can_edit %}
           <span class="admin_link">
             <span class="linklist"> |</span>

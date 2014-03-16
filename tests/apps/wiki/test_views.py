@@ -5,7 +5,7 @@
 
     Test wiki views.
 
-    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 from mock import patch
@@ -13,9 +13,9 @@ from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
 
+from inyoka.utils.test import InyokaClient
 from inyoka.wiki.models import Page
 from inyoka.portal.user import User
-from inyoka.utils.test import InyokaClient
 
 
 class TestViews(TestCase):

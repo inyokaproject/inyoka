@@ -22,16 +22,19 @@
     provides a function called `test_changes_allowed` that checks for that.
 
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.http import HttpResponseRedirect
+
+from inyoka.portal.user import User
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.text import normalize_pagename
+from inyoka.utils.urls import href
 from inyoka.utils.user import normalize_username
-from inyoka.wiki.storage import storage
 from inyoka.wiki.models import Page
+from inyoka.wiki.storage import storage
 
 
 #: metadata users without the `PRIV_MANAGE` privilege can edit.
@@ -257,7 +260,3 @@ def test_changes_allowed(user, page_name, old_text, new_text):
                 for value in node.values:
                     metadata.add((node.key, value))
     return old == new
-
-
-from inyoka.portal.user import User
-from inyoka.utils.urls import href

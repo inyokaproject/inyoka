@@ -36,18 +36,20 @@
     problems.
 
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 import re
 from urlparse import urljoin
 from collections import OrderedDict
+
 from django.conf import settings
 
 from inyoka.utils.cache import request_cache
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.user import normalize_username
-from inyoka.wiki.models import MetaData, Page
+from inyoka.wiki.models import Page, MetaData
+
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
 

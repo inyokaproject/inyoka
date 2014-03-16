@@ -5,19 +5,19 @@
 
     Views for the pastebin.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib import messages
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
 from inyoka.portal.utils import require_permission
-from inyoka.utils.http import templated
+from inyoka.utils.http import templated, global_not_found
 from inyoka.utils.templating import render_template
-from inyoka.utils.urls import global_not_found, href
+from inyoka.utils.urls import href
 
 
 @templated('pastebin/add.html')

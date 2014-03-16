@@ -10,12 +10,14 @@
     memcached-commands in a thread-local dictionary.  This saves a lot of
     memcached-commands in some szenarios.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
-from django.core.cache import get_cache, cache
+from django.conf import settings
+from django.core.cache import cache, get_cache
 from django.core.cache.backends.base import BaseCache
-from inyoka.utils.local import _request_cache, local_has_key
+
+from inyoka.utils.local import local_has_key, _request_cache
 
 
 class RequestCache(BaseCache):
@@ -75,5 +77,6 @@ class RequestCache(BaseCache):
             self.request_cache.clear()
         self.real_cache.clear()
 
-
+if 'debug_toolbar' in settings.INSTALLED_APPS:
+    from debug_toolbar.panels.cache import get_cache_debug as get_cache
 request_cache = get_cache('request')

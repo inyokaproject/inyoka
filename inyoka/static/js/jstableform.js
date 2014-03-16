@@ -4,7 +4,7 @@
     JavaScript Table Form. This is an independent script to create fancy JS
     table forms. An example can be seen in the portal configuration.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 */
 $(function () {
@@ -50,8 +50,8 @@ $(function () {
          * requires JavaScript. The parent HTML element of this cell, normally
          * an <tr> tag, will be removed if JavaScript is activated.
          */
-        var int_re = /^\d+$/
-        var float_re = /^\d+|\d+\.\d+|\.\d+$/
+        var int_re = /^\d+$/;
+        var float_re = /^\d+|\d+\.\d+|\.\d+$/;
         var versionnumber_re = /^\d\d?\.\d\d$/;
         var versionname_re = /^[A-Z][a-z]+ [A-Z][a-z]+$/;
         var revert = {};
@@ -147,7 +147,7 @@ $(function () {
                     // and no / true and false
                     $td.addClass('jstableform-status-no');
                     $td.addClass('pointer');
-                    $td.click(toggleBooleanStatus)
+                    $td.click(toggleBooleanStatus);
                 } else if (obj.type == '_edit') {
                     // do nothing -- a new row is always in
                     // edit mode and cannot even be reverted
@@ -162,7 +162,7 @@ $(function () {
                 $td.appendTo($row);
             });
             // And finally we add the row to the table body
-            $row.appendTo('tbody', $table);
+            $('tbody', $table).append($row);
         }
 
         function delete_row(event) {

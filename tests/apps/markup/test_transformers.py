@@ -6,15 +6,14 @@
     This module tests the AST transformers.
 
     :copyright: Copyright 2007 by Armin Ronacher.
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 import unittest
 
-from inyoka.markup import transformers
-from inyoka.markup.transformers import AutomaticParagraphs, \
-    FootnoteSupport, HeadlineProcessor, get_smiley_re
-from inyoka.markup import Parser, nodes
+from inyoka.markup import nodes, Parser, transformers
+from inyoka.markup.transformers import (get_smiley_re, FootnoteSupport,
+    HeadlineProcessor, AutomaticParagraphs)
 
 
 def parse(source, transformer):
