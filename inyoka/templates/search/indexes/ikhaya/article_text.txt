@@ -1,0 +1,5 @@
+{{ object.subject }}
+{{ object.author.username }}
+{{ object.category.name }}
+{{ object.simplified_intro }}
+{{ object.simplified_text }}

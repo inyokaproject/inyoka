@@ -30,6 +30,7 @@ from inyoka import INYOKA_REVISION
 from inyoka.utils.cache import request_cache
 from inyoka.utils.dates import format_date, format_datetime, format_time, naturalday
 from inyoka.utils.local import current_request
+from inyoka.utils.search import search_highlight
 from inyoka.utils.text import human_number
 from inyoka.utils.urls import href, url_for, urlquote, urlencode
 
@@ -342,6 +343,7 @@ FILTERS = {
     'date': format_date,
     'datetime': format_datetime,
     'time': format_time,
+    'search_highlight': search_highlight,
 }
 
 # setup the template environment
