@@ -15,7 +15,6 @@ from django.utils.translation import ugettext_lazy
 
 from inyoka.portal.user import User
 from inyoka.utils.html import striptags
-from inyoka.utils.search import search
 from inyoka.utils.urls import href
 
 
@@ -102,23 +101,6 @@ class Entry(models.Model):
             return href(*{
                 'hide': ('planet', 'hide', self.id),
             }[action])
-
-    def update_search(self):
-        """
-        This updates the xapian search index.
-        """
-        search.queue('p', self.id)
-
-    def save(self, *args, **kwargs):
-        super(Entry, self).save(*args, **kwargs)
-        blog = self.blog
-        if (not blog.last_sync or self.updated > blog.last_sync) and blog.active:
-            self.update_search()
-
-    def delete(self):
-        super(Entry, self).delete()
-        # update search
-        self.update_search()
 
     class Meta:
         verbose_name = ugettext_lazy(u'Entry')

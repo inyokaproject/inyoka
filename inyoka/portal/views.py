@@ -37,13 +37,11 @@ from django.utils.translation import ugettext as _, ungettext
 from django.views.decorators.http import require_POST
 
 
-from inyoka.forum.acl import (split_bits, filter_invisible, PRIVILEGES_DETAILS,
-    split_negative_positive, REVERSED_PRIVILEGES_BITS)
-from inyoka.forum.models import Post, Topic, Forum, Privilege
-from inyoka.ikhaya.models import Event, Article, Category, Suggestion
+from haystack.views import SearchView, search_view_factory
+
 from inyoka.markup import parse, RenderContext
 from inyoka.portal.filters import SubscriptionFilter
-from inyoka.portal.forms import (LoginForm, SearchForm, UserMailForm,
+from inyoka.portal.forms import (LoginForm, UserMailForm,
     EditFileForm, RegisterForm, EditStyleForm, EditGroupForm, CreateUserForm,
     LostPasswordForm, SubscriptionForm, UserCPProfileForm, OpenIDConnectForm,
     ConfigurationForm, EditUserGroupsForm, EditStaticPageForm, DeactivateUserForm,
@@ -69,9 +67,29 @@ from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename, get_random_password
-from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
 from inyoka.utils.user import check_activation_key
 from inyoka.wiki.models import Page as WikiPage
+from inyoka.forum.models import Forum, Topic, Post, Privilege
+from inyoka.ikhaya.models import Event, Article, Category, Suggestion
+from inyoka.forum.acl import filter_invisible, split_bits, PRIVILEGES_DETAILS, \
+     REVERSED_PRIVILEGES_BITS, split_negative_positive
+from inyoka.portal.forms import LoginForm, RegisterForm, \
+     UserCPSettingsForm, PrivateMessageForm, DeactivateUserForm, \
+     LostPasswordForm, ChangePasswordForm, SubscriptionForm, \
+     UserCPProfileForm, SetNewPasswordForm, ForumFeedSelectorForm, \
+     IkhayaFeedSelectorForm, PlanetFeedSelectorForm, WikiFeedSelectorForm, \
+     NOTIFICATION_CHOICES, PrivateMessageIndexForm, PrivateMessageFormProtected, \
+     OpenIDConnectForm, EditUserProfileForm, EditUserGroupsForm, \
+     EditStaticPageForm, EditFileForm, ConfigurationForm, EditStyleForm, \
+     EditUserPrivilegesForm, EditUserPasswordForm, EditUserStatusForm, \
+     CreateUserForm, UserMailForm, EditGroupForm
+from inyoka.portal.models import StaticPage, PrivateMessage, Subscription, \
+    PrivateMessageEntry, PRIVMSG_FOLDERS, StaticFile
+from inyoka.portal.user import User, Group, UserBanned, UserData, \
+    deactivate_user, reactivate_user, set_new_email, \
+    reset_email, send_activation_mail, PERMISSION_NAMES
+from inyoka.portal.filters import SubscriptionFilter
 from inyoka.wiki.utils import quote_text
 
 
@@ -407,79 +425,37 @@ def logout(request):
     return HttpResponseRedirect(redirect)
 
 
-@templated('portal/search.html')
-def search(request):
-    """Search dialog for the Xapian search engine."""
-    if 'query' in request.GET:
-        f = SearchForm(request.REQUEST, user=request.user)
-    else:
-        f = SearchForm(user=request.user)
-    f.fields['forums'].refresh(add=[(u'support', _(u'All support forums'))])
+class InyokaSearchView(SearchView):
 
-    if f.is_valid():
-        results = f.search()
-        if not results or not results.success:
-            messages.error(request,
-                _(u'An error occurred while processing your search request. '
-                  u'Please check your input.'))
+    def create_response(self):
+        """
+        Generates the actual HttpResponse to send back to the user.
+        """
+        def link_func(p, parameters):
+            if p == 1:
+                parameters.pop('page', None)
+            else:
+                parameters['page'] = str(p)
+            url = href('portal', 'search')
+            return url + (parameters and u'?' + urlencode(parameters) or u'')
 
-        normal = u'<a href="%(href)s" class="pageselect">%(text)s</a>'
-        disabled = u'<span class="disabled next">%(text)s</span>'
-        active = u'<span class="pageselect active">%(text)s</span>'
-        pagination = [u'<div class="pagination pagination_right">']
-        add = pagination.append
-
-        d = f.cleaned_data
-
-        def _link(page):
-            return href('portal', 'search', page=page, query=d['query'],
-                        area=d['area'], per_page=results.per_page,
-                        sort=d['sort'], forums=d['forums'])
-
-        if results:
-            add(((results.page == 1) and disabled or normal) % {
-                'href': _link(results.page - 1),
-                'text': _(u'« Previous'),
-            })
-            add(active % {
-                'text': _(u'Page %(page)d of about %(total)d') % {
-                            'page': results.page,
-                            'total': results.page_count}
-            })
-            add(((results.page < results.page_count) and normal or disabled) % {
-                'href': _link(results.page + 1),
-                'text': _(u'Next »')
-            })
-            add(u'<div style="clear: both"></div></div>')
-
-        # only highlight for users with that setting enabled.
-        highlight = None
-        if request.user.settings.get('highlight_search', True) and results:
-            highlight = results.highlight_string
-        wiki_result = None
-        if d['area'] in ('wiki', 'all'):
-            try:
-                wiki_result = WikiPage.objects.filter(
-                    name__iexact=normalize_pagename(d['query'])).get()
-            except WikiPage.DoesNotExist:
-                pass
-        rv = {
-            'area': d['area'].lower(),
-            'query': d['query'],
-            'highlight': highlight,
-            'results': results,
-            'wiki_result': wiki_result,
-            'pagination': u''.join(pagination),
-            'sort': d['sort'],
+        page = int(self.request.GET.get('page', 1))
+        pagination = Pagination(self.request, self.results, page, link=link_func)
+        context = {
+            'query': self.query,
+            'form': self.form,
+            'object_list': pagination.get_queryset(),
+            'suggestion': None,
+            'pagination': pagination,
         }
-    else:
-        rv = {'area': (request.GET.get('area') or 'all').lower()}
 
-    rv.update({
-        'searchform': f,
-        'advanced': request.GET.get('advanced')
-    })
-    return rv
+        if self.results and hasattr(self.results, 'query') and self.results.query.backend.include_spelling:
+            context['suggestion'] = self.form.get_suggestion()
+
+        context.update(self.extra_context())
+        return context
+
+search = templated('portal/search.html')(search_view_factory(InyokaSearchView))
 
 
 @check_login(message=_(u'You need to be logged in to view a user profile.'))
@@ -679,7 +655,6 @@ def usercp_settings(request):
             'autosubscribe': settings.get('autosubscribe', True),
             'show_preview': settings.get('show_preview', False),
             'show_thumbnails': settings.get('show_thumbnails', False),
-            'highlight_search': settings.get('highlight_search', True),
             'mark_read_on_logout': settings.get('mark_read_on_logout', False)
         }
         form = UserCPSettingsForm(initial=values)
@@ -907,7 +882,6 @@ def user_edit_settings(request, username):
         'autosubscribe': user.settings.get('autosubscribe', True),
         'show_preview': user.settings.get('show_preview', False),
         'show_thumbnails': user.settings.get('show_thumbnails', False),
-        'highlight_search': user.settings.get('highlight_search', True),
         'mark_read_on_logout': user.settings.get('mark_read_on_logout', False)
     }
     form = UserCPSettingsForm(initial=initial)

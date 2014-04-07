@@ -6,7 +6,6 @@ from os import path
 
 python_version = '2.7.3'
 python_main_version = '2.7'
-xapian_version = '1.2.12'
 
 
 def install_requirements(home_dir, requirements):
@@ -18,47 +17,9 @@ def install_requirements(home_dir, requirements):
     call_subprocess(cmd)
 
 
-def install_xapian(home_dir):
-    folder = tempfile.mkdtemp(prefix='virtualenv')
-    prefix = os.path.realpath(os.path.join(home_dir))
-    pypath = path.join(prefix, 'bin', 'python')
-    xapian_config = os.path.join(folder, 'xapian-core-' +
-                    xapian_version, 'xapian-config')
-    libpath = os.path.join(prefix, 'lib', 'python%s' % python_main_version)
-    incpath = os.path.join(prefix, 'include', 'python%s' % python_main_version)
-
-    call_subprocess(['wget', 'http://oligarchy.co.uk/xapian/%s/xapian-core-%s.tar.gz' %
-                    (xapian_version, xapian_version)], cwd=folder)
-    call_subprocess(['tar', '-xzf', 'xapian-core-%s.tar.gz' % xapian_version],
-                    cwd=folder)
-    call_subprocess(['wget', 'http://oligarchy.co.uk/xapian/%s/xapian-bindings-%s.tar.gz' %
-                    (xapian_version, xapian_version)], cwd=folder)
-
-    call_subprocess(['tar', '-xzf', 'xapian-bindings-%s.tar.gz' % xapian_version],
-                    cwd=folder)
-
-    core_folder = os.path.join(folder, 'xapian-core-' + xapian_version)
-    call_subprocess(['./configure', '--prefix=%s' % prefix], cwd=core_folder)
-    call_subprocess(['make'], cwd=core_folder)
-    call_subprocess(['make', 'install'], cwd=core_folder)
-
-    binding_folder = os.path.join(folder, 'xapian-bindings-' + xapian_version)
-    call_subprocess(['./configure', '--with-python', '--prefix=%s' % prefix,
-                    'PYTHON=%s' % pypath,
-                    'XAPIAN_CONFIG=%s' % xapian_config,
-                    'PYTHON_INC=%s' % incpath,
-                    'PYTHON_LIB=%s' % libpath],
-                    cwd=binding_folder)
-    call_subprocess(['make'], cwd=binding_folder)
-    call_subprocess(['make', 'install'], cwd=binding_folder)
-
-    shutil.rmtree(folder)
-
-
 def after_install(options, home_dir):
     easy_install('pip', home_dir)
     install_requirements(home_dir, options.requirements)
-    install_xapian(home_dir)
 
 
 def easy_install(package, home_dir, optional_args=None):

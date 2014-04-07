@@ -106,8 +106,6 @@ def on_change_status(request, solved=None):
     if solved is not None:
         topic.solved = solved
         topic.save()
-        # reindex the whole topic to push the new read status to all posts.
-        topic.reindex()
 
 
 def on_get_version_details(request):

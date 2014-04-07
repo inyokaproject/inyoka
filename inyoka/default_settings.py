@@ -100,10 +100,6 @@ EMAIL_SUBJECT_PREFIX = u'%s: ' % BASE_DOMAIN_NAME
 
 EMAIL_BACKEND = 'inyoka.utils.mail.SendmailEmailBackend'
 
-# path to the xapian database
-# Examples: /path/to/inyoka.xapdb, or tcpsrv://localhost:3000/
-XAPIAN_DATABASE = join(BASE_PATH, 'inyoka.xapdb')
-
 # forum settings
 FORUM_LIMIT_UNREAD = 100
 FORUM_THUMBNAIL_SIZE = (64, 64)
@@ -203,6 +199,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.humanize',
+    'django_openid',
+    'raven.contrib.django',
+    'haystack',
+    'south',
+    'kombu.transport.django',
+    'djcelery',
+    'django_mobile',
+    'django_hosts',
+    'celery_haystack',
     'inyoka.core',
     'django.contrib.auth',
     'inyoka.forum',
@@ -212,18 +217,12 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'inyoka.markup',
-    'django_openid',
-    'raven.contrib.django',
-    'south',
-    # *must* be installed after south
-    'kombu.transport.django',
-    'djcelery',
-    'django_mobile',
-    'django_hosts',
+
 )
 
 # don't use migrations but just syncdb
 SOUTH_TESTS_MIGRATE = False
+
 
 OPENID_PROVIDERS = {
     'openid': {
@@ -243,12 +242,6 @@ OPENID_PROVIDERS = {
         'url': 'https://www.google.com/accounts/o8/id'
     },
 }
-
-# some terms to exclude by default to maintain readability
-SEARCH_DEFAULT_EXCLUDE = []
-
-# Default blocksize to delmit queries to the search index
-SEARCH_INDEX_BLOCKSIZE = 5000
 
 # Set the default sentry site
 SENTRY_SITE = 'example.com'
@@ -284,8 +277,8 @@ CELERY_IMPORTS = [
 
 CELERY_SEND_TASK_ERROR_EMAILS = False
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-CELERY_EAGER_PROPAGATES_EXCEPTIONS = False
-CELERY_ALWAYS_EAGER = DEBUG
+CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+CELERY_ALWAYS_EAGER = True
 
 # Do not hijack the root logger, avoids unicode errors
 CELERYD_HIJACK_ROOT_LOGGER = False
@@ -304,6 +297,23 @@ INTERNAL_IPS = ('127.0.0.1',)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'requests': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        }
+    }
 }
 
 WSGI_APPLICATION = 'inyoka.wsgi.application'
@@ -331,6 +341,17 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = ()
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'inyoka',
+        'SILENTLY_FAIL': True
+    },
+}
+
+HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 

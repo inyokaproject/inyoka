@@ -28,3 +28,9 @@ GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4B
 INSTALLED_APPS = INSTALLED_APPS + ('tests.utils',)
 
 SECRET_KEY='test-secret-key'
+
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+)
+
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'

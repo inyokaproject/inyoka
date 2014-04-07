@@ -106,7 +106,6 @@ from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.html import striptags
 from inyoka.utils.local import current_request
-from inyoka.utils.search import search
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href
@@ -875,9 +874,6 @@ class Page(models.Model):
             if len(key) > 30:
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
-
-        # searchindex
-        search.queue('w', self.id)
 
     def prune(self):
         """Clear the page cache."""

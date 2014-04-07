@@ -3,6 +3,7 @@
 
 *_settings.py
 *.py[co]
+static_wiki*
 inyoka.xapdb/
 inyoka/media/
 inyoka/static-collected/
