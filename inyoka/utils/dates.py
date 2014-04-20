@@ -8,9 +8,10 @@
     :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
+import datetime
 import re
+
 from operator import attrgetter
-from datetime import date, time, datetime, timedelta
 
 from django.contrib.humanize.templatetags.humanize import naturalday as djnaturalday
 from django.template import defaultfilters
@@ -31,10 +32,14 @@ _iso8601_re = re.compile(
     r'(?:T(\d{2}):(\d{2})(?::(\d{2}(?:\.\d+)?))?(Z?|[+-]\d{2}:\d{2})?)?$'
 )
 
+
 def _localtime(val):
-    if val.tzinfo is None:
-        val = timezone.make_aware(val, pytz.UTC)
-    return timezone.localtime(val)
+    if isinstance(val, datetime.datetime):
+        if val.tzinfo is None:
+            val = timezone.make_aware(val, pytz.UTC)
+        return timezone.localtime(val)
+    return val
+
 
 naturalday = lambda value, arg='DATE_FORMAT': djnaturalday(_localtime(value), arg)
 format_date = lambda value, arg='DATE_FORMAT': defaultfilters.date(_localtime(value), arg)
@@ -68,7 +73,7 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
             days_found.add(key)
         days[-1][1].append(entry)
     return [{
-        'date': date(*key),
+        'date': datetime.date(*key),
         'articles': items,
     } for key, items in days if items]
 
@@ -90,7 +95,7 @@ def datetime_to_timezone(dt, enforce_utc=False):
     return datetime_safe.new_datetime(dt.astimezone(tz))
 
 
-date_time_to_datetime = datetime.combine
+date_time_to_datetime = datetime.datetime.combine
 
 
 def parse_iso8601(value):
@@ -120,7 +125,7 @@ def parse_iso8601(value):
     tz = groups[-1]
     if tz and tz != 'Z':
         args = map(int, tz[1:].split(':'))
-        delta = timedelta(hours=args[0], minutes=args[1])
+        delta = datetime.timedelta(hours=args[0], minutes=args[1])
         if tz[0] == '+':
             rv += delta
         else:
