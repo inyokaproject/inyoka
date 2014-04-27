@@ -5,7 +5,7 @@
 
     Test Ikhaya models.
 
-    :copyright: (c) 2011-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 from datetime import date, time

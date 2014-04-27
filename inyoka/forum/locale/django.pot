@@ -398,6 +398,10 @@ msgstr ""
 msgid "The topic was reported."
 msgstr ""
 
+#: inyoka/forum/views.py:845
+msgid "This report has already been claimed."
+msgstr ""
+
 #: inyoka/forum/views.py:857
 msgid "No topics selected."
 msgstr ""

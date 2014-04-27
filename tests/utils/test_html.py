@@ -3,7 +3,7 @@
     tests.utils.test_utils
     ~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL.
 """
 from django.test import TestCase

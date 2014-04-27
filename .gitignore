@@ -6,12 +6,4 @@
 inyoka.xapdb/
 inyoka/media/
 inyoka/static-collected/
-*.min.js
-inyoka/static/style/*.css
-inyoka/*/static/*/style/*.css
-*-sprite*.png
-*-sprite*.less
 *.db
-bootstrap.py
-
-node_modules

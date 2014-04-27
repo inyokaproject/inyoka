@@ -5,7 +5,7 @@
 
     Test the wiki acl.
 
-    :copyright: Copyright 2007-2013 by the Inyoka-Team.
+    :copyright: Copyright 2007-2014 by the Inyoka-Team.
     :license: GNU GPL.
 """
 from django.test import TestCase

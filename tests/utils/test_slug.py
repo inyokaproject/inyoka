@@ -5,7 +5,7 @@
 
     Test for slug uniqueness and slug numberation
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: GNU GPL, see LICENSE for more details.
 """
 from django.test import TestCase

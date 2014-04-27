@@ -1,0 +1,31 @@
+div.content{padding:0;}
+h1.pagetitle{color:#a57205;margin:0.2em 0 0.5em 0;}
+h1.pagetitle a{color:#b58215;text-decoration:none;}
+h2,h3,h4{margin-top:1.4em;}
+#page,.preview{line-height:1.5em;font-size:1em;margin:0;}#page a img,.preview a img{vertical-align:middle;}
+div.preview{border:1px solid #ccc;margin:20px 0 20px 0;padding:10px 20px 10px 20px;background-color:#f8f8f8;background-image:url(../img/draft.png);}
+p.meta{border-top:1px solid #AAA;margin:1em 0 0 0;padding:0.4em;text-align:right;font-size:0.85em;clear:both;}
+#form_addattachment textarea{width:35em;height:6em;}
+#form_addattachment label{float:left;width:10em;}
+#form_addattachment label[for="id_override"]{float:none;}
+table.revisions{margin-bottom:0;}table.revisions td{border-left:1px solid #ccc;}
+table.revisions tr.odd{background-color:#f5f1e6;}
+table.revisions .compare{width:85px;text-align:center;}table.revisions .compare input[name="rev"]{margin-right:10px;}
+table.revisions span.time-elapsed{color:#999;}
+table.revisions .author{width:16em;margin-left:0px;}table.revisions .author a{text-decoration:none;color:#000;font-weight:bold;}
+table.revisions .author img{background-color:#FFFFFF;border:1px solid #999999;display:block;float:left;height:18px;margin:0 0.5em 0 0;overflow:hidden;padding:2px;width:18px;}
+table.revisions .actions{width:6em;text-align:center;}table.revisions .actions a{float:right;display:block;margin:0 4px 0 0;width:24px;height:24px;background-position:center center;background-repeat:no-repeat;}table.revisions .actions a span{display:none;}
+table.revisions .actions a:hover{background-color:#f2f2f2;}
+table.revisions .actions a.view{background-image:url(../img/icons/search.png);}
+table.revisions .actions a.revert{background-image:url(../img/icons/revert.png);}
+table.revisions .actions a.raw{background-image:url(../img/icons/raw.png);}
+table.revisions .old_rev{text-align:right;}
+table.revisions .new_rev{text-align:left;}
+table.diff{empty-cells:show;}table.diff tr.ellipsis th{border:1px solid #ccc;background-color:#dfdfdf;}
+table.diff tr.line td.code{padding:0.1em 0.4em 0.1em 0.4em;font-family:monospace;font-size:13px;border:1px solid #ddd;white-space:-moz-pre-wrap;white-space:-o-pre-wrap;white-space:-pre-wrap;white-space:pre-wrap;}
+table.diff tr.add td.code{background-color:#dfd;}table.diff tr.add td.code ins{background-color:#9e9;text-decoration:none;}
+table.diff tr.del td.code{background-color:#fcc;}table.diff tr.del td.code del{background-color:#e99;text-decoration:none;}
+table.diff th.old_rev,table.diff th.new_rev{width:3em;}
+table.diff tr.line th.old_rev,table.diff tr.line th.new_rev{padding:0.2em 0.5em 0.2em 0;text-align:right;font-weight:normal;font-size:0.8em;background-color:#eee;color:#444;border:1px solid #ccc;vertical-align:top;}
+div.conflict{border:1px solid #ccc;background-color:#eee;color:#999;font-size:0.9em;padding:0 0.5em 0 0.5em;line-height:1.6em;}div.conflict strong{color:black;}
+.tagcloud{text-align:center;}
