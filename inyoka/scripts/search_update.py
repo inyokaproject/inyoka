@@ -27,6 +27,11 @@ from inyoka.utils import groupby
 from inyoka.utils.search import search
 from inyoka.utils.terminal import show
 
+from inyoka.forum.search import ForumSearchAdapter
+from inyoka.ikhaya.search import IkhayaSearchAdapter
+from inyoka.planet.search import PlanetSearchAdapter
+from inyoka.wiki.search import WikiSearchAdapter
+
 
 def update_index(component, docids):
     connection = search.get_connection(True)
