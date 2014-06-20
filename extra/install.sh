@@ -2,17 +2,17 @@
 
 src_dir=$(readlink -f "$(dirname "$0")/..")
 env_dir=$HOME/.venvs/inyoka
+xapian_version="1.2.12"
 
 mkdir -p "$env_dir"
 cd "$src_dir"
 
 # install virtualenv
 virtualenv-2.7 "$env_dir"
-source "$env_dir/bin/activate"
+. "$env_dir/bin/activate"
 pip install -r extra/requirements/test.txt
 
 # get and install xapian
-xapian_version="1.2.12"
 cd /tmp
 wget "http://oligarchy.co.uk/xapian/${xapian_version}/xapian-core-${xapian_version}.tar.gz"
 wget "http://oligarchy.co.uk/xapian/${xapian_version}/xapian-bindings-${xapian_version}.tar.gz"
@@ -25,7 +25,7 @@ cd "/tmp/xapian-core-${xapian_version}"
 make && make install
 
 cd "/tmp/xapian-bindings-${xapian_version}"
-/configure --prefix="$env_dir" \
+./configure --prefix="$env_dir" \
   --with-python \
   PYTHON="$env_dir/bin/python" \
   XAPIAN_CONFIG="$env_dir/bin/xapian-config" \
@@ -34,7 +34,7 @@ cd "/tmp/xapian-bindings-${xapian_version}"
 make && make install
 
 cd "$src_dir"
-test [ ! -f development_settings.py ] && cp example_development_settings.py development_settings.py
+[ ! -f development_settings.py ] && cp example_development_settings.py development_settings.py
 
 rm -r "/tmp/xapian-core-${xapian_version}"*
 rm -r "/tmp/xapian-bindings-${xapian_version}"*
