@@ -1,4 +1,4 @@
-Django==1.5.4
+Django==1.5.8
 django-filter==0.7
 # Includes Django 1.5 fix
 https://github.com/EnTeQuAk/django-openid/tarball/fix_django/#egg=django-openid
