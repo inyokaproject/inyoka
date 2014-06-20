@@ -53,7 +53,7 @@ $(function () {
         var int_re = /^\d+$/;
         var float_re = /^\d+|\d+\.\d+|\.\d+$/;
         var versionnumber_re = /^\d\d?\.\d\d$/;
-        var versionname_re = /^[A-Z][a-z]+ [A-Z][a-z]+$/;
+        var versionname_re = /^[A-Za-z ]+$/;
         var revert = {};
         var editing = {};
         var anchor = $table.attr('id') || '';

@@ -23,6 +23,7 @@ from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
+from django.utils.text import slugify
 
 
 def check_login(message=None):
@@ -173,6 +174,15 @@ class UbuntuVersion(object):
         will be active, or if its support range is outdated.
         """
         return self.active or self.current or self.dev
+
+    @property
+    def table_ident(self):
+        """
+        This function returns an identification slug so that we can have 
+        multiple versions with the same version number, as long as the name
+        is different. The returned string is: "number-version-name".
+        """
+        return slugify('%s-%s' % (self.number, self.name))
 
     def __str__(self):
         return u'%s (%s)' % (self.number, self.name)
