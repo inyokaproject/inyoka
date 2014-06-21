@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -xe
+
 src_dir=$(readlink -f "$(dirname "$0")/..")
 env_dir=$HOME/.venvs/inyoka
 xapian_version="1.2.12"
@@ -8,7 +10,7 @@ mkdir -p "$env_dir"
 cd "$src_dir"
 
 # install virtualenv
-virtualenv-2.7 "$env_dir"
+[ -f virtualenv-2.7 ] && virtualenv-2.7 "$env_dir" || virtualenv "$env_dir"
 . "$env_dir/bin/activate"
 pip install -r extra/requirements/test.txt
 
