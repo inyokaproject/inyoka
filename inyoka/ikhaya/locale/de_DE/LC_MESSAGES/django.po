@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2014-06-21 16:54+0200\n"
+"POT-Creation-Date: 2014-06-21 22:01+0200\n"
 "PO-Revision-Date: 2012-11-03 11:11+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -473,6 +473,7 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:54
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:45
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:35
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:28
 msgid "Submit"
 msgstr "Speichern"
 
@@ -486,6 +487,9 @@ msgstr "Speichern"
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:68
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:34
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:40
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:29
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:35
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:58
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -886,6 +890,27 @@ msgstr ""
 msgid "Suggest new article"
 msgstr "Artikel vorschlagen"
 
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:19
+msgid "If you want to suggest a new article please submit your article below."
+msgstr ""
+"Du willst, dass wir etwas Bestimmtes im Ikhaya veröffentlichen? Eine "
+"wichtige Nachricht ist noch nicht online? Du hast einen "
+"Erfahrungsbericht, den Du anderen zugänglich machen willst? Du möchtest "
+"eine Software vorstellen? Dann schreibe Deinen Beitrag hier!"
+
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:22
+#, python-format
+msgid ""
+"I assure that my submission does not violate any other legal rights and "
+"it does not violate the <a href=\"%(link_rules)s\">platform rules</a>. "
+"Additionally I accept that my submission is published under the <a "
+"href=\"%(link_license)s\">license</a> of the platform."
+msgstr ""
+"Ich versichere hiermit, dass der Beitrag weder fremde Rechte noch die <a "
+"href=\"%(link_rules)s\">Portalregeln</a> verletzt. Ich willige ein, "
+"diesen Beitrag unter der von ubuntuusers.de vorgegebenen <a "
+"href=\"%(link_license)s\">Lizenz</a> zu veröffentlichen."
+
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:18
 #, python-format
 msgid "Here is one article suggestion which was not yet reviewed."
@@ -933,4 +958,3 @@ msgstr "Es gibt momentan keine Artikelvorschläge."
 
 #~ msgid "Written by <a href=\"%(link)s\">%(author)s</a>"
 #~ msgstr "Verfasst von <a href=\"%(link)s\">%(author)s</a>"
-

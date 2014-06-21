@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-06-21 16:54+0200\n"
+"POT-Creation-Date: 2014-06-21 22:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -444,6 +444,7 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:54
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:45
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:35
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:28
 msgid "Submit"
 msgstr ""
 
@@ -457,6 +458,9 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:68
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:34
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:40
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:29
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:35
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:58
 msgid "Preview"
 msgstr ""
 
@@ -843,6 +847,19 @@ msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/suggest_new.html:17
 msgid "Suggest new article"
+msgstr ""
+
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:19
+msgid "If you want to suggest a new article please submit your article below."
+msgstr ""
+
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:22
+#, python-format
+msgid ""
+"I assure that my submission does not violate any other legal rights and "
+"it does not violate the <a href=\"%(link_rules)s\">platform rules</a>. "
+"Additionally I accept that my submission is published under the <a "
+"href=\"%(link_license)s\">license</a> of the platform."
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:18
