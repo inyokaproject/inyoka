@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Installation of the development environment for Inyoka.
+
 set -xe
 
 src_dir=$(readlink -f "$(dirname "$0")/..")
@@ -10,7 +12,7 @@ mkdir -p "$env_dir"
 cd "$src_dir"
 
 # install virtualenv
-[ -f virtualenv-2.7 ] && virtualenv-2.7 "$env_dir" || virtualenv "$env_dir"
+which virtualenv-2.7 >/dev/null && virtualenv-2.7 "$env_dir" || virtualenv "$env_dir"
 . "$env_dir/bin/activate"
 pip install -r extra/requirements/test.txt
 
