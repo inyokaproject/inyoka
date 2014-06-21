@@ -16,8 +16,8 @@
 {% block content %}
   <h2>{% trans %}Suggest event{% endtrans %}</h2>
   <p>
-    {%- trans link=href('portal', 'calendar') -%}
-      Using this form you can suggest a new entry for our <a href="{{ link }}">calendar</a>. A team member will review your suggestion as soon as possible.
+    {%- trans link_calendar=href('portal', 'calendar'), link_newsteam=href('wiki', 'ubuntuusers/Ikhayateam', _anchor='Teammitglieder') -%}
+      By using this form you can suggest a new entry for the <a href="{{ link_calendar }}">calendar</a>. A team member will review your suggestion as soon as possible. If you want to change an existing calendar entry please contact the <a href="{{ link_newsteam }}">news team</a>.
     {%- endtrans -%}
   </p>
   <form action="" method="post" enctype="multipart/form-data">
