@@ -598,7 +598,7 @@ def do_mv_baustelle(request, name):
 
             messages.success(request,
                 u'Seite erfolgreich in die Baustelle verschoben - ggf. '
-                '<a href="%(link)s">Zugriffsrechte</a> anpassen' % {
+                u'<a href="%(link)s">Zugriffsrechte</a> anpassen' % {
                     'link': escape(href('wiki', 'Wiki/ACL/All-in-One'))
                 }
             )
@@ -707,7 +707,7 @@ def do_mv_back(request, name):
 
             messages.success(request,
                 u'Seite erfolgreich ins Wiki verschoben - ggf. '
-                '<a href="%(link)s">Zugriffsrechte</a> anpassen' % {
+                u'<a href="%(link)s">Zugriffsrechte</a> anpassen' % {
                     'link': escape(href('wiki', 'Wiki/ACL/All-in-One'))
                 }
             )
