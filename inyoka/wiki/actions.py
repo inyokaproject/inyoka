@@ -597,7 +597,7 @@ def do_mv_baustelle(request, name):
                     note=u'Kopie; Original in der Baustelle')
             
             messages.success(request,
-                u'Seite wurde erfolgreich in die Baustelle verschoben. Bitte denke daran sie gegebenenfalls auch in die <a href="http://wiki.ubuntuusers.de/Wiki/ACL/All-in-One">ACL-Seite</a> einzutragen.')
+                u'Seite erfolgreich in die Baustelle verschoben - ggf. <a href="http://wiki.ubuntuusers.de/Wiki/ACL/All-in-One">Zugriffsrechte</a> anpassen.')
             return HttpResponseRedirect(url_for(page))
 
     form = MvBaustelleForm()
@@ -702,7 +702,7 @@ def do_mv_back(request, name):
                 return HttpResponseRedirect(url_for(page))
 
             messages.success(request,
-                u'Seite wurde erfolgreich ins Wiki verschoben. Bitte denke daran sie gegebenenfalls auch aus der <a href="http://wiki.ubuntuusers.de/Wiki/ACL/All-in-One">ACL-Seite</a> auszutragen.')
+                u'Seite erfolgreich ins Wiki verschoben - ggf. <a href="http://wiki.ubuntuusers.de/Wiki/ACL/All-in-One">Zugriffsrechte</a> anpassen.')
             return HttpResponseRedirect(url_for(page))
     else:
         messages.info(request,
