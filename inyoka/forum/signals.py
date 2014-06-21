@@ -6,7 +6,7 @@
     Signals for the forum.
 
     :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from django.dispatch import receiver
 from django.db.models import F, Max

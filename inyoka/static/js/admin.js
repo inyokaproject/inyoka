@@ -5,7 +5,7 @@
  * Some scripts for the admin (requires jQuery).
  *
  * :copyright: (c) 2010-2014 by the Inyoka Team, see AUTHORS for more details.
- * :license: GNU GPL, see LICENSE for more details.
+ * :license: BSD, see LICENSE for more details.
  */
 
 $(document).ready(function () {
