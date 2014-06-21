@@ -595,9 +595,13 @@ def do_mv_baustelle(request, name):
                 Page.objects.create(name=name, text=copy_text,
                     user=request.user,
                     note=u'Kopie; Original in der Baustelle')
-            
+
             messages.success(request,
-                u'Seite erfolgreich in die Baustelle verschoben - ggf. <a href="/Wiki/ACL/All-in-One">Zugriffsrechte</a> anpassen.')
+                u'Seite erfolgreich in die Baustelle verschoben - ggf. '
+                '<a href="%(link)s">Zugriffsrechte</a> anpassen' % {
+                    'link': escape(href('wiki', 'Wiki/ACL/All-in-One'))
+                }
+            )
             return HttpResponseRedirect(url_for(page))
 
     form = MvBaustelleForm()
@@ -702,7 +706,11 @@ def do_mv_back(request, name):
                 return HttpResponseRedirect(url_for(page))
 
             messages.success(request,
-                u'Seite erfolgreich ins Wiki verschoben - ggf. <a href="/Wiki/ACL/All-in-One">Zugriffsrechte</a> anpassen.')
+                u'Seite erfolgreich ins Wiki verschoben - ggf. '
+                '<a href="%(link)s">Zugriffsrechte</a> anpassen' % {
+                    'link': escape(href('wiki', 'Wiki/ACL/All-in-One'))
+                }
+            )
             return HttpResponseRedirect(url_for(page))
     else:
         messages.info(request,
