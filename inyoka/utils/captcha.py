@@ -9,7 +9,7 @@
 
     :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
     :copyright: (c) by Micah Dowty.
-    :license: GNU GPL, see LICENSE for more details.
+    :license: BSD, see LICENSE for more details.
 """
 import math
 import random

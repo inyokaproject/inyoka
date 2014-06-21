@@ -6,7 +6,7 @@
     Test the wiki utilities like join_pagename and normalize_pagename.
 
     :copyright: Copyright 2007 by Armin Ronacher.
-    :license: GNU GPL.
+    :license: BSD, see LICENSE for more details.
 """
 from django.test import TestCase
 
