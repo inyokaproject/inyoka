@@ -60,6 +60,7 @@
       {%- if article.updated > article.pub_datetime %}
         | {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}
       {%- endif %}
+        | <a href="{{ article|url('id') }}">#</a>
       {% if can_edit_article %}
         <span class="admin_link">|
           <a href="{{ article|url('edit') }}">{% trans %}Edit{% endtrans %}</a></span>
