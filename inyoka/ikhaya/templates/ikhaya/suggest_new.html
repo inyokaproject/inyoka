@@ -14,26 +14,25 @@
 {% set styles = ['editor-sprite'] %}
 {% block ikhaya_content %}
 <div class="content_sidebar_bk">
-  <h2>Artikel vorschlagen</h2>
+  <h2>{% trans %}Suggest new article{% endtrans %}</h2>
   <p>
-    Du willst, dass wir etwas Bestimmtes im Ikhaya veröffentlichen?
-    Eine wichtige Nachricht ist noch nicht online?
-    Du hast einen Erfahrungsbericht, den Du anderen zugänglich machen willst?
-    Du möchtest eine Software vorstellen?
-    Dann schreibe Deinen Beitrag hier!
+    {% trans %}If you want to suggest a new article please submit your article below.{% endtrans %}
+  </p>
+  <p>
+    {% trans link_license=href('wiki', 'Wiki/Lizenz'), link_rules=href('wiki', 'Wiki/ubuntuusers/Moderatoren/Portalregeln') %}I assure that my submission does not violate any other legal rights and it does not violate the <a href="{{ link_rules }}">platform rules</a>. Additionally I accept that my submission is published under the <a href="{{ link_license }}">license</a> of the platform.{% endtrans %}
   </p>
   <form action="" method="post">
     {{ csrf_token() }}
     {{ render_form(form, ['title', 'intro', 'text', 'notes']) }}
     <p>
-      <input type="submit" value="Abschicken" />
-      <input type="submit" value="Vorschau" name="preview" />
+      <input type="submit" value="{% trans %}Submit{% endtrans %}" />
+      <input type="submit" value="{% trans %}Preview{% endtrans %}" name="preview" />
     </p>
   </form>
 
   {%- if preview %}
   <div class="preview_wrapper">
-    <h2 class="title">Vorschau</h2>
+    <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
     <div class="preview">{{ preview }}</div>
   </div>
   {%- endif %}
@@ -56,7 +55,7 @@
       output = $('<div class="preview"></div>');
     var preview = $('<div class="preview_wrapper" />')
       .hide()
-      .append('<h2 class="title">Vorschau</h2>')
+      .append('<h2 class="title">{% trans %}Preview{% endtrans %}</h2>')
       .append(output);
 
     $('form input[name="preview"]').click(function() {
