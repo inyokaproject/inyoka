@@ -4,8 +4,8 @@
 
     This page displays the search results.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 
 {%- extends 'portal/overall.html' %}
@@ -106,7 +106,7 @@
           <a href="{{ href('portal', 'user', wiki_result.last_rev.user|e) }}">
             {{- wiki_result.last_rev.user|e -}}
           </a>
-          {{ wiki_result.last_rev.change_date|specificdatetimeformat }}
+          {{ wiki_result.last_rev.change_date|datetime }}
         </p>
       </li>
     {%- endif %}
@@ -132,9 +132,9 @@
       </p>
       <p class="meta">
         {%- if doc.component in ('Forum', 'Ikhaya', 'Planet') %}
-        geschrieben von <a href="{{ doc.user_url }}">{{ doc.user|e }}</a> {{ doc.date|specificdatetimeformat|e }}{% if not doc.component in ('Planet',) %} in <a href="{{ doc.group_url }}">{{ doc.group|e }}</a>{% endif %}
+        geschrieben von <a href="{{ doc.user_url }}">{{ doc.user|e }}</a> {{ doc.date|datetime }}{% if not doc.component in ('Planet',) %} in <a href="{{ doc.group_url }}">{{ doc.group|e }}</a>{% endif %}
         {%- elif doc.component == 'Wiki' %}
-        zuletzt bearbeitet von <a href="{{ doc.user_url }}">{{ doc.user|e }}</a> {{ doc.date|specificdatetimeformat }}
+        zuletzt bearbeitet von <a href="{{ doc.user_url }}">{{ doc.user|e }}</a> {{ doc.date|datetime }}
         {%- endif %}
         {%- if doc.component == 'Forum' %}
         <a href="{{ doc.last_post_url }}" alt="Springe zu letztem Beitrag"><img src="{{ href('static', 'img/forum/goto.png') }}" /></a>

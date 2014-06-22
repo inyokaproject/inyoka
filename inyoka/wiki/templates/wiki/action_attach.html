@@ -5,8 +5,8 @@
     This template is used to show a list of attached files and for
     uploading new attachments.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 
 
@@ -62,13 +62,13 @@
             <a href="{{ attachment|url }}">{{ attachment.title|e }}</a>
             {{ attachment.rev.attachment.file.size|filesizeformat(true) }}
             {% if attachment.rev.user %}
-              {% trans date=attachment.rev.change_date|datetimeformat,
+              {% trans date=attachment.rev.change_date|datetime,
                        author=attachment.rev.user.username|e,
                        link=attachment.rev.user|url -%}
                 (last modified on {{ date }} by <a href="{{ link }}">{{ author }}</a>)
               {%- endtrans %}
             {% else %}
-              {% trans date=attachment.rev.change_date|datetimeformat,
+              {% trans date=attachment.rev.change_date|datetime,
                        author=attachment.rev.remote_addr|e -%}
                 (last modified on {{ date }} by {{ author }})
               {%- endtrans %}

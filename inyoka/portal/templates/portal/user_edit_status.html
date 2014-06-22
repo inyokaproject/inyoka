@@ -4,8 +4,8 @@
 
     Change the status of a user.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'portal/user_admin.html' %}
 
@@ -22,10 +22,10 @@
       {{ form.non_field_errors() }}
       <dt>{{ form.status.label_tag() }}:</dt>
       <dd>{{ form.status }} {{ form.errors.status }}
-        <div class="note">{% trans date=user.last_login|datetimeformat -%}
+        <div class="note">{% trans date=user.last_login|datetime -%}
           Last login: {{ date }}
         {%- endtrans %}</div>
-        <div class="note">{% trans date=user.date_joined|datetimeformat -%}
+        <div class="note">{% trans date=user.date_joined|datetime -%}
           Member since: {{ date }}
         {%- endtrans %}</div>
         <div class="note">

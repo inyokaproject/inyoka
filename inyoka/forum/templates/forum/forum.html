@@ -4,8 +4,8 @@
 
     This template shows a forum with all subforums and topics inside.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
 {% from 'forum/_forum.html' import render_forum, topic_icon,
@@ -94,6 +94,7 @@
         {% if can_moderate and topic.reported %}{% do classes.append('reported') %}{% endif %}
         {% if topic.get_ubuntu_version().dev %}{% do classes.append('unstable') %}{% endif %}
         {% if topic.author == USER %}{% do classes.append('own') %}{% endif %}
+        {% if topic.sticky %}{% do classes.append('sticky') %}{% endif %}
         <tr{% if classes %} class="{{ classes|join(' ') }}"{% endif %}>
           <td class="icon">{{ topic_icon(topic) }}</td>
           <td class="topic">
@@ -116,7 +117,7 @@
               {%- trans author=topic.author.username|e, link=topic.author|url -%}
                 by <a href="{{ link }}">{{ author }}</a>
               {%- endtrans %} |
-              {{ topic.first_post.pub_date|datetimeformat }}
+              {{ topic.first_post.pub_date|datetime }}
               {%- if topic.paginated %} |
                 {% trans pagination=topic.get_pagination() -%}
                   Go to page {{ pagination }}
@@ -129,7 +130,7 @@
           <td class="last_post">
             {%- if topic.last_post_id %}
               <a href="{{ topic.last_post|url}}" class="date">
-                {{- topic.last_post.pub_date|datetimeformat -}}
+                {{- topic.last_post.pub_date|datetime -}}
               </a><br />
               {% trans author=topic.last_post.author|e, link=topic.last_post.author|url -%}
                 by <a href="{{ link }}">{{ author }}</a>

@@ -6,8 +6,8 @@
     Our own user model used for implementing our own
     permission system and our own administration center.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from os import path
 from StringIO import StringIO
@@ -662,10 +662,12 @@ class UserData(models.Model):
     value = models.CharField(max_length=255)
 
 
-# TODO: The original signal can get reused as soon as we turn USE_TZ on.
 @receiver(user_logged_in)
 def update_user_flags(sender, request, user, **kwargs):
     user.last_login = datetime.utcnow()
     user.save(update_fields=['last_login'])
+    tz = user.settings.get('timezone')
+    if tz and tz != settings.TIME_ZONE:
+        request.session['django_timezone'] = tz
 
 user_logged_in.disconnect(update_last_login)

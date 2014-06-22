@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2013 ORGANIZATION
+# Copyright (C) 2014 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-10-18 20:23+0200\n"
+"POT-Creation-Date: 2014-06-22 11:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -702,11 +702,6 @@ msgid ""
 "Your %(domain)s team"
 msgstr ""
 
-#: inyoka/utils/dates.py:207
-#, python-format
-msgid "%(date)s at %(time)s"
-msgstr ""
-
 #: inyoka/utils/diff3.py:373
 msgid "Old"
 msgstr ""
@@ -727,61 +722,61 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: inyoka/utils/forms.py:51
+#: inyoka/utils/forms.py:52
 msgid "Text must not be empty"
 msgstr ""
 
-#: inyoka/utils/forms.py:62
+#: inyoka/utils/forms.py:63
 msgid "Your signature contains illegal elements"
 msgstr ""
 
-#: inyoka/utils/forms.py:67
+#: inyoka/utils/forms.py:68
 msgid "Your signature contains too many nested elements"
 msgstr ""
 
-#: inyoka/utils/forms.py:72
+#: inyoka/utils/forms.py:73
 #, python-format
 msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr ""
 
-#: inyoka/utils/forms.py:76
+#: inyoka/utils/forms.py:77
 #, python-format
 msgid "Your signature can only contain up to %(num)d lines"
 msgstr ""
 
-#: inyoka/utils/forms.py:127
+#: inyoka/utils/forms.py:128
 msgid "This user does not exist"
 msgstr ""
 
-#: inyoka/utils/forms.py:181
+#: inyoka/utils/forms.py:182
 msgid ""
 "The entered e-mail address belongs to a e-mail provider we had to block "
 "because of SPAM problems. Please choose another e-mail address"
 msgstr ""
 
-#: inyoka/utils/forms.py:194
+#: inyoka/utils/forms.py:195
 msgid "The entered Jabber address is invalid. Please check your input."
 msgstr ""
 
-#: inyoka/utils/forms.py:220
+#: inyoka/utils/forms.py:221
 msgid ""
 "You have entered an invisible field and were therefore classified as a "
 "bot."
 msgstr ""
 
-#: inyoka/utils/forms.py:231
+#: inyoka/utils/forms.py:232
 msgid "CAPTCHA"
 msgstr ""
 
-#: inyoka/utils/forms.py:232
+#: inyoka/utils/forms.py:233
 msgid "Please type in the code from the graphic above"
 msgstr ""
 
-#: inyoka/utils/forms.py:234
+#: inyoka/utils/forms.py:235
 msgid "Generate new code"
 msgstr ""
 
-#: inyoka/utils/forms.py:256
+#: inyoka/utils/forms.py:257
 msgid "The entered CAPTCHA was incorrect."
 msgstr ""
 

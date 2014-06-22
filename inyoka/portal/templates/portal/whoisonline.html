@@ -4,8 +4,8 @@
 
     Shows a list of active users.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'portal/overall.html' %}
 
@@ -23,7 +23,7 @@
     {% trans guests=sessions.anonymous %}{{ guests }} Guest{% pluralize %}{{ guests }} Guests{% endtrans %}
   </p>
   <p>
-    {% trans time=record_time|datetimeformat -%}
+    {% trans time=record_time|datetime -%}
       Most users ever online was {{ record }} on {{ time }}.
     {%- endtrans %}
     {% trans -%}

@@ -10,8 +10,8 @@
     memcached-commands in a thread-local dictionary.  This saves a lot of
     memcached-commands in some szenarios.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
 from django.core.cache import cache, get_cache

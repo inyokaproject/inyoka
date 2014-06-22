@@ -5,8 +5,8 @@
 
     Macros for the wiki.
 
-    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 import random
 import string
@@ -16,7 +16,7 @@ from datetime import date, datetime, timedelta
 from collections import OrderedDict
 
 from django.conf import settings
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ungettext
 
 from inyoka.markup import nodes, macros
 from inyoka.markup.parsertools import MultiMap, flatten_iterator

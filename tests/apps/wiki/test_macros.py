@@ -5,9 +5,10 @@
 
     Test wiki macros.
 
-    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL.
+    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
+import unittest
 from django.test import TestCase
 
 from inyoka.markup import macros, RenderContext
@@ -37,3 +38,7 @@ class TestWikiMacros(TestCase):
         self.assertEqual(link.href, href('wiki', '_attachment',
                             target='AttachmentTest/internal_page'))
         self.assertEqual(link.text, 'sometext')
+
+    @unittest.skip("Not implemented yet.")
+    def test_tag_cloud(self):
+        pass

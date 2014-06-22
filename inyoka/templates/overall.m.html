@@ -6,8 +6,8 @@
 
     It contains the design elements that are displayed on all pages.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 <!DOCTYPE html>
 <html>
@@ -58,7 +58,7 @@
           </a>
         {%- endfor %}
         <div class="separator">{% trans %}More{% endtrans %}</div>
-        {%- if USER.is_authenticated %}
+        {%- if USER.is_authenticated() %}
           <a class="button" href="{{ href('portal', 'privmsg') }}">
             <img class="icon" src="{{ href('static', 'img', 'mobile_menu_icons', 'messages.png') }}" />
             <div class="title">{% trans %}Messages{% endtrans %}</div>
@@ -87,7 +87,7 @@
             {%- trans %}To classic version{% endtrans -%}
           </a>
         </p>
-        2004 – 2013 ubuntuusers.de • Einige Rechte vorbehalten<br />
+        2004 – 2014 ubuntuusers.de • Einige Rechte vorbehalten<br />
         <a href="{{ href('portal', 'lizenz') }}" rel="cc:morePermissions">Lizenz</a> •
         <a href="{{ href('portal', 'kontakt') }}">Kontakt</a> •
         <a href="{{ href('portal', 'datenschutz') }}">Datenschutz</a> •

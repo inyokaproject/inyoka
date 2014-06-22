@@ -5,12 +5,13 @@
 
     Forms for the Ikhaya.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from datetime import time as dt_time
 
 from django import forms
+from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext_lazy
 
 import pytz
@@ -19,8 +20,7 @@ from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.portal.models import StaticFile
 from inyoka.utils.forms import (UserField, TimeWidget, DateWidget,
     DateTimeField, StrippedCharField)
-from inyoka.utils.dates import (get_user_timezone, datetime_to_timezone,
-    date_time_to_datetime)
+from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
 
 
 class SuggestArticleForm(forms.ModelForm):
@@ -92,7 +92,7 @@ class EditArticleForm(forms.ModelForm):
         pub_date = self.cleaned_data.get('pub_date', None)
         if not pub_date:
             return slug  # invalid anyway as pub_date is required
-        pub_date = get_user_timezone().localize(pub_date) \
+        pub_date = get_current_timezone().localize(pub_date) \
                     .astimezone(pytz.utc).replace(tzinfo=None).date()
         if slug:
             q = Article.objects.filter(slug=slug, pub_date=pub_date)
@@ -153,7 +153,7 @@ class NewEventForm(forms.ModelForm):
 
     def save(self, user):
         event = super(NewEventForm, self).save(commit=False)
-        convert = (lambda v: get_user_timezone().localize(v) \
+        convert = (lambda v: get_current_timezone().localize(v) \
                             .astimezone(pytz.utc).replace(tzinfo=None))
         # Convert local timezone to unicode
         if event.date and event.time is not None:
@@ -178,7 +178,7 @@ class NewEventForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
         start = cleaned_data.get('date')
         end = cleaned_data.get('enddate')
-        if end and end < start:
+        if start and end and end < start:
             self._errors['enddate'] = self.error_class([ugettext_lazy(u'The '
                 u'end date must occur after the start date.')])
             del cleaned_data['enddate']

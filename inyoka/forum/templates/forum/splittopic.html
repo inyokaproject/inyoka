@@ -4,8 +4,8 @@
 
     This page shows the "splittopic" form. 
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
 {% do BREADCRUMB.append(_('Split topic'), topic|url('split'), True) %}
@@ -68,7 +68,7 @@
               {%- if post.author.has_avatar and not USER.settings['hide_avatars'] %}
                 <img class="avatar" src="{{ post.author.avatar_url }}" alt="{% trans user=post.author.username|e %}Avatar of {{ user }}{% endtrans %}" />
               {%- endif %}
-              <p>{% trans %}Member since:{% endtrans %}<br />{{ post.author.date_joined|dateformat }}</p>
+              <p>{% trans %}Member since:{% endtrans %}<br />{{ post.author.date_joined|naturalday }}</p>
               <p>{% trans %}Posts:{% endtrans %} {{ post.author.post_count }}</p>
             </td>
             <td class="post"{%- if post.author_id == USER.id %} style="background-color: #F8F6F1"{% endif %}>
@@ -78,7 +78,7 @@
                 <a href="{{ post|url }}" title="{% trans %}Link to this post{% endtrans %}">{#
                   #}<img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" />{#
                 #}</a>
-                {{ post.pub_date|datetimeformat }}
+                {{ post.pub_date|datetime }}
               </div>
               <div class="text">
                 {{ post.get_text() }}

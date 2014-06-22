@@ -5,8 +5,8 @@
 
     This module contains functions for template-related things.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 import os
 import json
@@ -14,7 +14,6 @@ from glob import glob
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.humanize.templatetags.humanize import naturalday
 from django.core.context_processors import csrf
 from django.template.base import Context as DjangoContext
 from django.template.base import TemplateDoesNotExist
@@ -29,7 +28,7 @@ from jinja2 import (escape, Template, Environment, contextfunction,
 
 from inyoka import INYOKA_REVISION
 from inyoka.utils.cache import request_cache
-from inyoka.utils.dates import format_time, format_datetime, format_specific_datetime
+from inyoka.utils.dates import format_date, format_datetime, format_time, naturalday
 from inyoka.utils.local import current_request
 from inyoka.utils.text import human_number
 from inyoka.utils.urls import href, url_for, urlquote, urlencode
@@ -331,14 +330,18 @@ class DjangoLoader(BaseLoader):
 #: Filters that are globally available in the template environment
 FILTERS = {
     'timedeltaformat': timesince,
-    'datetimeformat': format_datetime,
-    'dateformat': naturalday,
     'hnumber': human_number,
-    'timeformat': format_time,
-    'specificdatetimeformat': format_specific_datetime,
     'url': url_for,
     'urlencode': urlencode_filter,
     'jsonencode': json_filter,
+    # L10N aware variants of Django's filters. They all are patched to use
+    # DATE_FORMAT (naturalday and format_date), DATETIME_FORMAT (format_datetime),
+    # and TIME_FORMAT (format_time) from the formats module and not the relevant
+    # variables from settings.py
+    'naturalday': naturalday,
+    'date': format_date,
+    'datetime': format_datetime,
+    'time': format_time,
 }
 
 # setup the template environment

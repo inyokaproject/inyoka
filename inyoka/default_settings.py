@@ -5,8 +5,8 @@
 
     The inyoka default settings.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from os import path
 from os.path import join, dirname
@@ -41,11 +41,7 @@ DATABASES = {
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be avilable on all operating systems.
 # the setting here has nothing to do with the timezone the user is
-#
-# We set the TIME_ZONE to `None` on default so that Django does not
-# issue time zone aware columns on postgresql.  This finally should fix
-# the last standing bugs regarding postgresql. --entequak
-TIME_ZONE = None
+TIME_ZONE = 'Europe/Berlin'
 
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
@@ -184,6 +180,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'inyoka.middlewares.tz.TimezoneMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
     'inyoka.middlewares.common.MobileDetectionMiddleware',
@@ -336,6 +333,8 @@ TEMPLATE_LOADERS = (
 TEMPLATE_CONTEXT_PROCESSORS = ()
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
+
+FORMAT_MODULE_PATH = 'inyoka.locale'
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

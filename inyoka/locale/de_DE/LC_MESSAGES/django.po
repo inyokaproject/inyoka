@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-10-18 20:23+0200\n"
-"PO-Revision-Date: 2013-10-18 18:07+0200\n"
+"POT-Creation-Date: 2014-06-22 11:13+0200\n"
+"PO-Revision-Date: 2012-11-03 12:49+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: American English <webteam@ubuntuusers.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -808,7 +808,8 @@ msgstr ""
 "Adresse auf die alte zurücksetzen. Bitte beachte, dass das nur einen "
 "Monat ab heute möglich ist.\n"
 "\n"
-"Besuche dazu die Seite %(reset_link)s und gib folgende Zeichenkette dort ein:\n"
+"Besuche dazu die Seite %(reset_link)s und gib folgende Zeichenkette dort "
+"ein:\n"
 "\n"
 "    %(data)s\n"
 "\n"
@@ -1012,11 +1013,6 @@ msgstr ""
 "\n"
 "Dein Team von %(domain)s"
 
-#: inyoka/utils/dates.py:207
-#, python-format
-msgid "%(date)s at %(time)s"
-msgstr "%(date)s um %(time)s"
-
 #: inyoka/utils/diff3.py:373
 msgid "Old"
 msgstr "Alt"
@@ -1037,33 +1033,33 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: inyoka/utils/forms.py:51
+#: inyoka/utils/forms.py:52
 msgid "Text must not be empty"
 msgstr "Text darf nicht leer sein"
 
-#: inyoka/utils/forms.py:62
+#: inyoka/utils/forms.py:63
 msgid "Your signature contains illegal elements"
 msgstr "Deine Signatur enthält ungültige Elemente"
 
-#: inyoka/utils/forms.py:67
+#: inyoka/utils/forms.py:68
 msgid "Your signature contains too many nested elements"
 msgstr "Deine Signatur enthält zu viele verschachtelte Elemente"
 
-#: inyoka/utils/forms.py:72
+#: inyoka/utils/forms.py:73
 #, python-format
 msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
 
-#: inyoka/utils/forms.py:76
+#: inyoka/utils/forms.py:77
 #, python-format
 msgid "Your signature can only contain up to %(num)d lines"
 msgstr "Deine Signatur darf nicht mehr als %(num)d Zeilen haben"
 
-#: inyoka/utils/forms.py:127
+#: inyoka/utils/forms.py:128
 msgid "This user does not exist"
 msgstr "Diesen Benutzer gibt es nicht"
 
-#: inyoka/utils/forms.py:181
+#: inyoka/utils/forms.py:182
 msgid ""
 "The entered e-mail address belongs to a e-mail provider we had to block "
 "because of SPAM problems. Please choose another e-mail address"
@@ -1071,13 +1067,13 @@ msgstr ""
 "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir "
 "wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
 
-#: inyoka/utils/forms.py:194
+#: inyoka/utils/forms.py:195
 msgid "The entered Jabber address is invalid. Please check your input."
 msgstr ""
 "Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die "
 "Eingabe."
 
-#: inyoka/utils/forms.py:220
+#: inyoka/utils/forms.py:221
 msgid ""
 "You have entered an invisible field and were therefore classified as a "
 "bot."
@@ -1085,19 +1081,19 @@ msgstr ""
 "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot "
 "identifiziert."
 
-#: inyoka/utils/forms.py:231
+#: inyoka/utils/forms.py:232
 msgid "CAPTCHA"
 msgstr "CAPTCHA"
 
-#: inyoka/utils/forms.py:232
+#: inyoka/utils/forms.py:233
 msgid "Please type in the code from the graphic above"
 msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
 
-#: inyoka/utils/forms.py:234
+#: inyoka/utils/forms.py:235
 msgid "Generate new code"
 msgstr "Neue Zeichenfolge generieren"
 
-#: inyoka/utils/forms.py:256
+#: inyoka/utils/forms.py:257
 msgid "The entered CAPTCHA was incorrect."
 msgstr "Die Eingabe des Captchas war nicht korrekt."
 
@@ -1196,6 +1192,6 @@ msgstr ""
 "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum "
 "abgemelet."
 
-#~ msgid ""
-#~ msgstr ""
+#~ msgid "%(date)s at %(time)s"
+#~ msgstr "%(date)s um %(time)s"
 

@@ -5,8 +5,8 @@
 
     Test for global macros.
 
-    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL.
+    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 import unittest
 

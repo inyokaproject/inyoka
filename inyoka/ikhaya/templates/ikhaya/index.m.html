@@ -4,8 +4,8 @@
 
     This page shows the latest ikhaya entries for mobiles.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.m.html' %}
 
@@ -15,7 +15,7 @@
     <div class="intro{% if article.hidden %} hidden{% endif %}">
       <a href="{{ article|url }}"><h3 class="title">{{ article.subject|e }}</h3></a>
       <span class="meta">
-        {{ article.pub_datetime|dateformat }}
+        {{ article.pub_datetime|datetime }}
         {% if article.comments_enabled %}
           | {% trans pluralindicator=article.comment_count, count=article.comment_count|hnumber('masculine')|capitalize, link=article|url + '#comments' -%}
             {{ count }} <a href="{{ link }}">comment</a>

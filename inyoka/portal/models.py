@@ -5,8 +5,8 @@
 
     Models for the portal.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from werkzeug import cached_property
 
@@ -203,7 +203,7 @@ class PrivateMessageEntry(models.Model):
         trash = PRIVMSG_FOLDERS['trash'][0]
         for message in messages:
             message.folder = None if message.folder == trash else trash
-            message.read = True if folder == trash else message.read
+            message.read = True if message.folder == trash else message.read
             message.save()
         transaction.commit()
 

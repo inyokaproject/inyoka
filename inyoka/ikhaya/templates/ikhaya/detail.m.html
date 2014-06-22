@@ -4,8 +4,8 @@
 
     Show a single ikhaya article in mobile format.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.m.html' %}
 
@@ -15,7 +15,7 @@
   <article>
     <h2 class="title"><a href="{{ article|url }}">{{ article.subject|e }}</a></h2>
     <span class="meta">
-      <span class="date">{{ article.pub_datetime|datetimeformat }}</span> |
+      <span class="date">{{ article.pub_datetime|datetime }}</span> |
       <span class="author">
         {%- trans link=article.author|url, author=article.author.username|e -%}
           Published by <a href="{{ link }}">{{ author }}</a>
@@ -39,7 +39,7 @@
         {% if not comment.deleted %}
           <div class="comment" id="comment_{{ loop.index }}">
             <p class="meta">
-              <span class="right">{{ comment.pub_date|datetimeformat }}</span>
+              <span class="right">{{ comment.pub_date|datetime }}</span>
               <span class="left">
                 <a href="#comment_{{ loop.index }}"><strong>{{ loop.index }}.</strong></a>
                 <a href="{{ comment.author|url }}">{{ comment.author.username|e }}</a></span>

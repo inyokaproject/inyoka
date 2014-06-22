@@ -5,8 +5,8 @@
 
     The views for the forum.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from operator import attrgetter
 from datetime import datetime, timedelta
@@ -835,7 +835,10 @@ def reportlist(request):
     if 'topic' in request.GET:
         topic = Topic.objects.get(slug=request.GET['topic'])
         if 'assign' in request.GET:
-            topic.report_claimed_by_id = request.user.id
+            if topic.report_claimed_by_id:
+                messages.info(request, _('This report has already been claimed.'))
+            else:
+                topic.report_claimed_by_id = request.user.id
         elif 'unassign' in request.GET and request.GET.get('unassign') == request.user.username:
             topic.report_claimed_by_id = None
         topic.save()

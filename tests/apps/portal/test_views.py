@@ -5,8 +5,8 @@
 
     Test portal views.
 
-    :copyright: (c) 2012-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL.
+    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 import re
 
@@ -14,11 +14,13 @@ from django.conf import settings
 from django.test import TestCase
 from django.core import mail
 from django.utils import translation
+from django.utils.timezone import now
 from django.utils.translation import ugettext as _
 
 from inyoka.utils.test import InyokaClient
 from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.portal.models import Subscription
+from inyoka.portal.models import (PrivateMessage, PrivateMessageEntry,
+    Subscription, PRIVMSG_FOLDERS)
 from inyoka.utils.storage import storage
 
 
@@ -402,3 +404,44 @@ class TestPrivMsgViews(TestCase):
 
         response = self.client.get('/privmsg/42/', {'flavour': 'mobile'})
         self.assertEqual(response.status_code, 200)
+
+    def test_delete_many(self):
+        user2 = User.objects.register_user('user2', 'user2@example.com', 'user', False)
+        pm1 = PrivateMessage.objects.create(author=user2, subject='Subject',
+            text='Text', pub_date=now())
+        PrivateMessageEntry.objects.create(message=pm1, user=user2,
+            read=False, folder=PRIVMSG_FOLDERS['sent'][0])
+        pme1 = PrivateMessageEntry.objects.create(message=pm1, user=self.user,
+            read=False, folder=PRIVMSG_FOLDERS['inbox'][0])
+        pm2 = PrivateMessage.objects.create(author=user2, subject='Subject',
+            text='Text', pub_date=now())
+        PrivateMessageEntry.objects.create(message=pm2, user=user2,
+            read=False, folder=PRIVMSG_FOLDERS['sent'][0])
+        pme2 = PrivateMessageEntry.objects.create(message=pm2, user=self.user,
+            read=False, folder=PRIVMSG_FOLDERS['inbox'][0])
+
+        # Check location and read status of new messages
+        self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
+            folder=PRIVMSG_FOLDERS['inbox'][0]).count(), 2)
+        self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
+            read=False).count(), 2)
+
+        # Delete messages in inbox
+        response = self.client.post('/privmsg/inbox/', {'delete': [pme1.pk, pme2.pk]})
+        self.assertEqual(response.status_code, 302)
+
+        # Check that deleted messages are in the trash and they are marked as read
+        self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
+            folder=PRIVMSG_FOLDERS['trash'][0]).count(), 2)
+        self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
+            read=True).count(), 2)
+
+        # Permanently Delete messages in trash
+        response = self.client.post('/privmsg/trash/', {'delete': [pme1.pk, pme2.pk]})
+        self.assertEqual(response.status_code, 302)
+
+        # Check that messages are not in any folder
+        self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
+            folder__isnull=True).count(), 2)
+        self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
+            read=True).count(), 2)

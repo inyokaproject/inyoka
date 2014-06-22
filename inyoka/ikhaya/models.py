@@ -5,8 +5,8 @@
 
     Database models for Ikhaya.
 
-    :copyright: (c) 2007-2013 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from operator import attrgetter, itemgetter
 from datetime import datetime
@@ -576,3 +576,17 @@ class Event(models.Model):
                                       or '%g_W' % -self.location_long
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
                '=de&params=%s_%s' % (lat, long)
+
+    def _construct_datetimes(self, day, time):
+        if not day:
+            day = datetime.utcnow().date()
+        return datetime_to_timezone(datetime.combine(day, time))
+
+    @property
+    def startdatetime(self):
+        return self._construct_datetimes(self.date, self.time)
+
+    @property
+    def enddatetime(self):
+        return self._construct_datetimes(self.enddate or self.date, self.endtime)
+
