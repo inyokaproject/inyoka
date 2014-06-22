@@ -1,1 +1,3 @@
-Das Thema „{{ topic.title }}“ ( {{ topic|url }} ) wurde von {{ mod }} aus dem Forum „{{ old_forum_name }}“ nach „{{ forum_name }}“ verschoben
+{% trans -%}
+{{ mod}} moved the topic “{{ topic_title }}” from the forum “{{ old_forum_name }}” to “{{ new_forum_name }}”: {{ topic_link }}
+{%- endtrans %}

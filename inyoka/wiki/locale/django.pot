@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2013 ORGANIZATION
+# Copyright (C) 2014 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-10-19 16:33+0200\n"
+"POT-Creation-Date: 2014-06-22 11:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgstr ""
 msgid "Used the template “<a href=\"%(link)s\">%(name)s</a>” for this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:439 inyoka/wiki/actions.py:887
+#: inyoka/wiki/actions.py:439 inyoka/wiki/actions.py:898
 msgid "Canceled."
 msgstr ""
 
@@ -102,43 +102,43 @@ msgid ""
 "merging is satisfying."
 msgstr ""
 
-#: inyoka/wiki/actions.py:876
+#: inyoka/wiki/actions.py:887
 msgid "Attachments within attachments are not allowed!"
 msgstr ""
 
-#: inyoka/wiki/actions.py:902
+#: inyoka/wiki/actions.py:913
 msgid "Please enter a name for this attachment."
 msgstr ""
 
-#: inyoka/wiki/actions.py:913
+#: inyoka/wiki/actions.py:924
 msgid "Another page or attachment with the same name exists"
 msgstr ""
 
-#: inyoka/wiki/actions.py:932
+#: inyoka/wiki/actions.py:943
 msgid "Attachment saved successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:966
+#: inyoka/wiki/actions.py:977
 msgid "Attachment edited successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:980
+#: inyoka/wiki/actions.py:991
 msgid "Emptied the page cache."
 msgstr ""
 
-#: inyoka/wiki/actions.py:1008
+#: inyoka/wiki/actions.py:1019
 msgid "You will be notified on changes on this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:1010
+#: inyoka/wiki/actions.py:1021
 msgid "You are already subscribed"
 msgstr ""
 
-#: inyoka/wiki/actions.py:1023
+#: inyoka/wiki/actions.py:1034
 msgid "No subscription for this page found."
 msgstr ""
 
-#: inyoka/wiki/actions.py:1027
+#: inyoka/wiki/actions.py:1038
 msgid "You won't be notified for changes on this page anymore"
 msgstr ""
 
@@ -289,7 +289,7 @@ msgstr ""
 msgid "Revision %(id)d (%(title)s)"
 msgstr ""
 
-#: inyoka/wiki/notifications.py:33
+#: inyoka/wiki/notifications.py:37
 #, python-format
 msgid "The page “%(name)s” was changed"
 msgstr ""

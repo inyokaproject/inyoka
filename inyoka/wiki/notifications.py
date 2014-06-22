@@ -12,6 +12,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from inyoka.utils import ctype
+from inyoka.utils.urls import href
 from inyoka.utils.notification import queue_notifications
 
 
@@ -21,13 +22,16 @@ def send_edit_notifications(user, rev, old_rev):
 
     anonymous = settings.INYOKA_ANONYMOUS_USER
 
-    data = {'old_rev_id': old_rev.id,
-            'page_id': rev.page.id,
-            'page_name': rev.page.name,
-            'page_title': rev.page.title,
-            'rev_id': rev.id,
-            'rev_note': rev.note,
-            'rev_username': rev.user.username if rev.user else anonymous}
+    old_rev_id = old_rev.id
+    page = rev.page
+    data = {
+        'changes_link': href('wiki', page.name, action='diff', rev=old_rev_id),
+        'diff_link': href('wiki', page.name, action='diff', rev=old_rev_id, new_rev=rev.id),
+        'page_title': page.title,
+        'rev_note': rev.note,
+        'rev_username': rev.user.username if rev.user else anonymous,
+        'unsubscribe_link': href('wiki', page.name, action='unsubscribe'),
+    }
 
     queue_notifications.delay(user.id, 'page_edited',
         _(u'The page “%(name)s” was changed') % {'name': data.get('page_title')},

@@ -1,4 +1,9 @@
-Hallo {{ username }},
+{% trans -%}
+Hello {{ username }},
 
-das Thema „{{ topic.title }}“ wurde von {{ mod }} aus dem Forum „{{ old_forum_name }}“ nach „{{ forum_name }}“ verschoben.
-Du kannst es dir hier ansehen: {{ topic|url }}
+{{ mod}} moved the topic “{{ topic_title }}” from the forum “{{ old_forum_name }}” to “{{ new_forum_name }}”. You can view the topic by visiting {{ topic_link }}
+
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

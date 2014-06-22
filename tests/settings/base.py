@@ -15,8 +15,8 @@ DATABASES = {
 DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = True
 
 # url settings
-BASE_DOMAIN_NAME = 'ubuntuusers.local:8080'
-SESSION_COOKIE_DOMAIN = '.ubuntuusers.local'
+BASE_DOMAIN_NAME = 'inyoka.local'
+SESSION_COOKIE_DOMAIN = '.inyoka.local'
 MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
 STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
 ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
@@ -28,3 +28,5 @@ GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4B
 INSTALLED_APPS = INSTALLED_APPS + ('tests.utils',)
 
 SECRET_KEY='test-secret-key'
+
+CELERY_ALWAYS_EAGER = True

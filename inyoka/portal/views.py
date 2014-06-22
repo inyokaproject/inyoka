@@ -534,7 +534,7 @@ def user_mail(request, username):
         if form.is_valid():
             text = form.cleaned_data['text']
             message = render_template('mails/formmailer_template.txt', {
-                'user': user,
+                'username': user.username,
                 'text': text,
                 'from': request.user.username,
             })
@@ -1385,14 +1385,18 @@ def privmsg_new(request, username=None):
                     if 'pm_new' in recipient.settings.get('notifications',
                                                           ('pm_new',)):
                         send_notification(recipient, 'new_pm',
-                            _(u'New private message from %(username)s: %(subject)s')
-                            % {'username': request.user.username,
-                               'subject': d['subject']},
-                            {'user': recipient,
-                             'sender': request.user,
-                             'subject': d['subject'],
-                             'entry': entry,
-                        })
+                            _(u'New private message from %(username)s: %(subject)s') % {
+                                'username': request.user.username,
+                                'subject': d['subject']
+                            },
+                            {
+                                'from': request.user.username,
+                                'link_view': entry.get_absolute_url(),
+                                'link_settings': href('portal', 'usercp', 'settings'),
+                                'subject': d['subject'],
+                                'username': recipient.username,
+                            }
+                        )
 
                 messages.success(request, _(u'The message was sent successfully.'))
 

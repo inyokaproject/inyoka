@@ -18,7 +18,6 @@ from django.core.files import File
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.utils import translation
-from django.utils.translation import ugettext as _
 from mock import patch
 
 from inyoka.forum import constants
@@ -33,7 +32,6 @@ from inyoka.utils.test import InyokaClient
 
 class TestForumViews(TestCase):
 
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_forum_index(self):
         client = Client(HTTP_HOST='forum.inyoka.local')
         resp = client.get('/')
@@ -97,20 +95,12 @@ class TestViews(TestCase):
         response = self.client.get('/reported_topics/')
         self.assertEqual(response.status_code, 200)
 
-    @patch('inyoka.forum.views.send_notification')
-    def test_movetopic(self, mock_send):
+    def test_movetopic(self):
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
                 self.forum2.id)
         response = self.client.post('/topic/%s/move/' % self.topic.slug,
                     {'forum': self.forum3.id})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(mock_send.call_count, 1)  # only the topic author
-        mock_send.assert_called_with(self.user, 'topic_moved',
-            _(u'Your topic “%(topic)s” was moved.') % {'topic': 'A test Topic'}, {
-                'username': self.user.username, 'topic': self.topic,
-                'mod': self.admin.username, 'forum_name': 'Forum 3',
-                'old_forum_name': 'Forum 2'})
-
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
                 self.forum3.id)
 

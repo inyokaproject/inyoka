@@ -1,1 +1,3 @@
-Neuer Kommentar von {{ comment_author }} zum Artikel „{{ article_subject }}“: {{ comment_url }}
+{% trans -%}
+{{ comment_author }} commented on the article “{{ article_subject }}”: {{ comment_url }}
+{%- endtrans %}

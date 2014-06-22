@@ -1,6 +1,11 @@
-Hallo {{ username }},
+{% trans -%}
+Hello {{ username }},
 
-der Benutzer {{ author_username }} hat einen neuen Thread im Forum „{{ forum_name }}“ geschrieben:
-{{ topic_title }} - {{ post_url }}
+{{ author_username }} created a new topic “{{ topic_title }}” in the forum “{{ forum_name }}”. You can view the topic by visiting {{ post_url }}
 
-Falls du bei Beiträgen in diesem Forum in Zukunft nicht mehr benachrichtigt werden willst, so kannst du das hier deaktivieren: {{ forum_unsubscribe }}
+To unsubscribe from further notifications within this forum visit {{ forum_unsubscribe }}
+
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

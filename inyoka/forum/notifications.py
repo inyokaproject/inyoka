@@ -14,7 +14,8 @@ from django.utils.translation import ugettext as _
 
 from celery.task import task
 from inyoka.utils import ctype
-from inyoka.utils.notification import queue_notifications
+from inyoka.utils.notification import queue_notifications, send_notification
+from inyoka.utils.urls import href
 
 
 def send_newtopic_notifications(user, post, topic, forum):
@@ -30,6 +31,7 @@ def send_newtopic_notifications(user, post, topic, forum):
           'forum_id': forum.id,
           'forum_name': forum.name,
           'forum_unsubscribe': forum.get_absolute_url('unsubscribe'),
+          'link_user_settings': href('portal', 'usercp', 'settings'),
           'post_url': post.get_absolute_url(),
           'topic_title': topic.title,
           'topic_version': topic.get_ubuntu_version(),
@@ -146,3 +148,93 @@ def send_deletion_notification(user, topic, reason):
             'topic': data.get('topic_title')},
         data,
         filter={'content_type': ctype(Topic), 'object_id': data.get('topic_id')})
+
+
+def send_reported_topics_notification(topic):
+    data = {
+        'reported_topics': href('forum', 'reported_topics'),
+        'reporter': topic.reporter.username,
+        'text': topic.reported,
+        'topic_forum': topic.forum.name,
+        'topic_link': topic.get_absolute_url(),
+        'topic_title': topic.title,
+    }
+    notify_reported_topics.delay(data)
+
+
+@task(ignore_result=True)
+def notify_reported_topics(data):
+    from inyoka.portal.models import User
+    from inyoka.utils.storage import storage
+
+    topic_title = data.get('topic_title')
+
+    subscribers = storage['reported_topics_subscribers'] or u''
+    uids = map(int, subscribers.split(','))
+    for user in User.objects.filter(pk__in=uids).all():
+        send_notification(user, 'new_reported_topic',
+            _(u'Reported topic: “%(topic)s”') % {'topic': topic_title},
+            data)
+
+
+def send_move_notification(topic, old_forum, new_forum, request_user):
+    from django.db.models import Q
+    from inyoka.forum.models import Forum, Topic
+    data = {
+        'mod': request_user.username,
+        'new_forum_name': new_forum.name,
+        'old_forum_name': old_forum.name,
+        'topic_link': topic.get_absolute_url(),
+        'topic_title': topic.title,
+    }
+
+    # Send notification to topic author
+    user_notifications = topic.author.settings.get('notifications', ('topic_move',))
+    if 'topic_move' in user_notifications and topic.author != request_user:
+        notify_move_author.delay(topic.author_id, data)
+
+    # Send notifications to topic or forum subscribers
+    queue_notifications.delay(
+        request_user.pk,
+        'topic_moved',
+        _(u'The topic “%(topic)s” was moved') % {'topic': topic.title},
+        data,
+        filter=(Q(content_type=ctype(Topic)) & Q(object_id=topic.id)) |
+               (Q(content_type=ctype(Forum)) & Q(object_id=topic.forum.id)),
+        exclude={'user__id': topic.author_id})
+
+
+@task(ignore_result=True)
+def notify_move_author(author_id, data):
+    from inyoka.portal.models import User
+    try:
+        author = User.objects.get(pk=author_id)
+        topic_title = data.get('topic_title')
+        send_notification(author, 'topic_moved',
+            _(u'Your topic “%(topic)s” was moved') % {'topic': topic_title},
+            data)
+    except User.DoesNotExist:
+        pass
+
+
+def send_split_notification(old_topic, new_topic, is_new, request_user):
+    from django.db.models import Q
+    from inyoka.forum.models import Forum, Topic
+    data = {
+        'mod': request_user.username,
+        'new_topic_title': new_topic.title,
+        'new_topic_link': new_topic.get_absolute_url(),
+        'old_topic_title': old_topic.title,
+        'old_topic_link': old_topic.get_absolute_url(),
+    }
+
+    filter = Q(content_type=ctype(Topic)) & Q(object_id=old_topic.id)
+    if is_new:
+        filter |= (Q(content_type=ctype(Forum)) & Q(object_id=new_topic.forum.id))
+
+    queue_notifications.delay(
+        request_user.pk,
+        'topic_splited',
+        _(u'The topic “%(topic)s” was split') % {'topic': old_topic.title},
+        data,
+        filter=filter)

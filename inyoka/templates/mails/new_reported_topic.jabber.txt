@@ -1,3 +1,5 @@
-Der Benutzer {{ USER.username }} hat das Thema „{{ topic.title }}“ im Forum „{{ topic.forum }}“ ( {{ topic|url }} ) gemeldet.
-    {{ text|wordwrap(75, false)|indent(4) }}
-Übersicht über alle gemeldeten Themen: {{ href('forum', 'reported_topics') }}
+{% trans text=text|wordwrap(75, false)|indent(4) -%}
+{{ reporter }} reported the topic “{{ topic_title }}” ( {{ topic_link }} ) in the forum “{{ topic_forum }}”.
+    {{ text }}
+List of reported topics: {{ reported_topics }}
+{%- endtrans %}

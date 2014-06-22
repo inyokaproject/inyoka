@@ -1,8 +1,17 @@
-Hallo {{ username }},
+{% trans reason=reason|wordwrap(75, false)|indent(4) -%}
+Hello {{ username }},
 
-dein Thema „{{ topic_title }}“ wurde von {{ mod }} gelöscht.
-Du wirst nicht mehr über Veränderungen in diesem Thema benachrichtigt.
-{%- if reason %}
+{{ mod }} deleted your topic “{{ topic_title }}”.
+{%- endtrans %}
 
-Grund: {{ reason }}
-{%- endif %}
+{% if reason -%}{% trans reason=reason %}
+The specified reason is:
+
+    {{ reason }}
+{% endtrans %}{%- endif %}
+
+{% trans -%}
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

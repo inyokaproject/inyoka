@@ -1,6 +1,11 @@
-Hallo {{ user.username }},
+{% trans -%}
+Hello {{ username }},
 
-du hast von {{ sender.username }} eine neue private Nachricht mit dem Titel „{{ subject }}“ bekommen.
-Du kannst sie dir hier ansehen: {{ entry|url }}
+{{ from }} has sent you a new private message titled “{{ subject }}”. You can view the message by visiting {{ link_view }}
 
-Falls du bei neuen Privatnachrichten in Zukunft nicht mehr benachrichtigt werden willst, so kannst du das hier deaktivieren: {{ href('portal', 'usercp', 'settings') }}
+To unsubscribe from further notifications about private messages visit {{ link_settings }}
+
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

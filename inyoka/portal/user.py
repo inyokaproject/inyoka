@@ -144,8 +144,10 @@ def deactivate_user(user):
                 % {'name': escape(user.username),
                    'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
-        'user': user,
         'data': signing.dumps(data, salt='inyoka.action.reactivate_user'),
+        'domain': settings.BASE_DOMAIN_NAME,
+        'link_reactivate': href('portal', 'confirm', 'reactivate_user'),
+        'username': user.username,
     })
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
@@ -181,8 +183,10 @@ def send_new_email_confirmation(user, email):
     }
 
     text = render_template('mails/new_email_confirmation.txt', {
-        'user': user,
         'data': signing.dumps(data, salt='inyoka.action.set_new_email'),
+        'domain': settings.BASE_DOMAIN_NAME,
+        'link_new_email': href('portal', 'confirm', 'set_new_email'),
+        'username': user.username,
     })
     subject = _(u'%(sitename)s – Confirm email address') % {
         'sitename': settings.BASE_DOMAIN_NAME
@@ -202,9 +206,11 @@ def set_new_email(id, email):
         'email': user.email,
     }
     text = render_template('mails/reset_email.txt', {
-        'user': user,
-        'new_email': email,
         'data': signing.dumps(data, salt='inyoka.action.reset_email'),
+        'domain': settings.BASE_DOMAIN_NAME,
+        'new_email': email,
+        'reset_link': href('portal', 'confirm', 'reset_email'),
+        'username': user.username,
     })
     subject = _(u'%(sitename)s – Email address changed') % {
         'sitename': settings.BASE_DOMAIN_NAME
@@ -231,9 +237,13 @@ def reset_email(id, email):
 def send_activation_mail(user):
     """send an activation mail"""
     message = render_template('mails/activation_mail.txt', {
-        'user': user,
+        'activation_key': gen_activation_key(user),
+        'domain': settings.BASE_DOMAIN_NAME,
         'email': user.email,
-        'activation_key': gen_activation_key(user)
+        'link_activate': user.get_absolute_url('activate'),
+        'link_delete': user.get_absolute_url('activate_delete'),
+        'link_license': href('portal', 'lizenz'),
+        'username': user.username,
     })
     subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
               % {'sitename': settings.BASE_DOMAIN_NAME,

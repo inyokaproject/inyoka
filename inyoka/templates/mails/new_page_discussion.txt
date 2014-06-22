@@ -1,8 +1,13 @@
-Hallo {{ username }},
+{% trans -%}
+Hello {{ username }},
 
-der Benutzer {{ creator }} hat eine neue Diskussion über die Wiki-Seite „{{ page_title }}“ angelegt:
-{{ topic_url }}
+{{ creator }} started a new discussion about the wiki page “{{ page_title }}”. You can view the discussion by visiting {{ topic_url }}
 
-Wenn du auch über neue Beiträge in der Diskussion benachrichtigt werden möchtest, so abonniere das Foren-Thema hier: {{ topic_subscribe }}
+If you want to get notified about updates on this discussion you need to subscribe: {{ topic_subscribe }}
 
-Falls du bei Änderungen dieser Wiki-Seite in Zukunft nicht mehr benachrichtigt werden willst, so kannst du das hier deaktivieren: {{ page_unsubscribe }}
+To unsubscribe from further notifications about this wiki page visit {{ page_unsubscribe }}
+
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

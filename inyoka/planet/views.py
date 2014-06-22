@@ -33,7 +33,7 @@ from inyoka.utils.urls import href
 
 def context_modifier(request, context):
     """
-    This function is called of ``templated`` automatically to copy the list of
+    This function is called by ``templated`` automatically to copy the list of
     blogs into the context.
     """
     context['blogs'] = Blog.objects.filter(active=True).all()

@@ -34,7 +34,8 @@ from inyoka.forum.models import (Post, Poll, Forum, Topic, PollVote, Attachment,
     PollOption, PostRevision, WelcomeMessage, mark_all_forums_read)
 from inyoka.forum.notifications import (send_edit_notifications,
     send_deletion_notification, send_newtopic_notifications,
-    send_discussion_notification)
+    send_discussion_notification, send_reported_topics_notification,
+    send_move_notification, send_split_notification)
 from inyoka.markup import parse, RenderContext
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
@@ -141,8 +142,7 @@ def forum(request, slug, page=1):
     qs = Topic.objects.prepare_for_overview(list(pagination.get_queryset()))
 
     # FIXME: Filter topics with no last_post or first_post
-    topics = [topic for topic in qs
-                    if topic.first_post and topic.last_post]
+    topics = [topic for topic in qs if topic.first_post and topic.last_post]
 
     if not check_privilege(privs[forum.pk], 'moderate'):
         topics = [topic for topic in topics if not topic.hidden]
@@ -807,17 +807,11 @@ def report(request, topic_slug):
     if request.method == 'POST':
         form = ReportTopicForm(request.POST)
         if form.is_valid():
-            data = form.cleaned_data
-            topic.reported = data['text']
+            topic.reported = form.cleaned_data['text']
             topic.reporter_id = request.user.id
             topic.save()
 
-            subscribers = storage['reported_topics_subscribers'] or u''
-            users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
-            for user in users:
-                send_notification(user, 'new_reported_topic',
-                                  _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
-                                  {'topic': topic, 'text': data['text']})
+            send_reported_topics_notification(topic)
 
             cache.delete('forum/reported_topic_count')
             messages.success(request, _(u'The topic was reported.'))
@@ -996,39 +990,14 @@ def movetopic(request, topic_slug):
         form.fields['forum'].refresh()
         if form.is_valid():
             data = form.cleaned_data
-            forum = mapping.get(int(data['forum']))
-            if forum is None:
+            new_forum = mapping.get(int(data['forum']))
+            if new_forum is None:
                 return abort_access_denied(request)
-            old_forum_name = topic.forum.name
-            topic.move(forum)
-            # send a notification to the topic author to inform him about
-            # the new forum.
-            nargs = {'username': topic.author.username,
-                     'topic': topic,
-                     'mod': request.user.username,
-                     'forum_name': forum.name,
-                     'old_forum_name': old_forum_name}
-
-            user_notifications = topic.author.settings.get('notifications', ('topic_move',))
-            if 'topic_move' in user_notifications and topic.author.username != request.user.username:
-                send_notification(topic.author, 'topic_moved',
-                    _(u'Your topic “%(topic)s” was moved.')
-                    % {'topic': topic.title}, nargs)
-
-            users_done = set([topic.author.id, request.user.id])
-            ct = ContentType.objects.get_for_model
-            subscriptions = Subscription.objects.filter((Q(content_type=ct(Topic)) &
-                                                         Q(object_id=topic.id)) |
-                                                        (Q(content_type=ct(Forum)) &
-                                                         Q(object_id=topic.forum.id)))
-            for subscription in subscriptions:
-                if subscription.user.id in users_done:
-                    continue
-                nargs['username'] = subscription.user.username
-                notify_about_subscription(subscription, 'topic_moved',
-                    _(u'The topic “%(topic)s” was moved.')
-                    % {'topic': topic.title}, nargs)
-                users_done.add(subscription.user.id)
+            old_forum = topic.forum
+            topic.move(new_forum)
+            # send a notification to the topic author and subscribers to inform
+            # them about the movement
+            send_move_notification(topic, old_forum, new_forum, request.user)
             return HttpResponseRedirect(url_for(topic))
     else:
         form = MoveTopicForm()
@@ -1072,16 +1041,17 @@ def splittopic(request, topic_slug, page=1):
         if form.is_valid():
             data = form.cleaned_data
 
+            as_new = (data['action'] == 'new')
             # Sanity check to not circulary split topics to the same topic
             # (they get erased in that case)
-            if data['action'] != 'new' and data['topic'].slug == old_topic.slug:
+            if not as_new and data['topic'].slug == old_topic.slug:
                 messages.error(request, _(u'You cannot set this topic as target.'))
                 return HttpResponseRedirect(request.path)
 
             posts = list(posts)
 
             try:
-                if data['action'] == 'new':
+                if as_new:
                     new_topic = Topic(title=data['title'],
                                       forum=data['forum'],
                                       slug=None,
@@ -1105,33 +1075,8 @@ def splittopic(request, topic_slug, page=1):
                       u'Please choose a forum.'))
                 return HttpResponseRedirect(request.path)
 
-            new_forum = new_topic.forum
-            nargs = {'username': None,
-                     'new_topic': new_topic,
-                     'old_topic': old_topic,
-                     'mod': request.user.username}
-            users_done = set([request.user.id])
-            filter = Q(topic_id=old_topic.id)
-            if data['action'] == 'new':
-                filter |= Q(forum_id=new_forum.id)
-            # TODO: Disable until http://forum.ubuntuusers.de/topic/benachrichtigungen-nach-teilung-einer-diskuss/ is resolved to not spam the users
-            # subscriptions = Subscription.objects.select_related('user').filter(filter)
-            subscriptions = []
+            send_split_notification(old_topic, new_topic, as_new, request.user)
 
-            for subscription in subscriptions:
-                # Skip loop for users already notified:
-                if subscription.user.id in users_done:
-                    continue
-                # Added Users to users_done which should not get any
-                # notification for splited Topics:
-                if 'topic_split' not in subscription.user.settings.get('notifications', ('topic_split',)):
-                    users_done.add(subscription.user.id)
-                    continue
-                nargs['username'] = subscription.user.username
-                notify_about_subscription(subscription, 'topic_splited',
-                    _(u'The topic “%(topic)s” was split.')
-                    % {'topic': old_topic.title}, nargs)
-                users_done.add(subscription.user.id)
             return HttpResponseRedirect(url_for(new_topic))
     else:
         form = SplitTopicForm(initial={

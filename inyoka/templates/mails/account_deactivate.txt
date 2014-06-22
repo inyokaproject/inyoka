@@ -1,9 +1,13 @@
-Hallo {{ user.username }},
+{% trans data=data|indent(4) -%}
+Hello {{ username }},
 
-du hast auf ubuntuusers.de deinen Account gelöscht. Zum Schutz vor Missbrauch kannst du deinen Account wiederherstellen. Dies ist bis zu einen Monat ab heute möglich.
+you have removed your user account from {{ domain }}. To prevent abuse you are able to recreate your account within the next 30 days.
 
-Besuche dazu {{ href('portal', 'confirm', 'reactivate_user') }} und gib die folgende Zeichenkette dort ein:
+Please visit {{ link_reactivate }} and enter the following verification code:
 
-    {{ data|indent(4) }}
+    {{ data }}
 
-Dein Team von ubuntuusers.de
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

@@ -1,14 +1,18 @@
-Neuer Vorschlag für einen Blog im Planet
-========================================
+{% trans username=USER.username, user_link=USER|url, description=description|wordwrap(75)|indent(4) -%}
+New suggestion for a blog
+=========================
 
-Vorschlag von:  {{ USER.username }} ({{ USER|url }})
-{%- if mine %}
-                Der Blog gehört {{ USER.username }}{% endif %}
-Name:	        {{ name }}
-URL:	        {{ url }}
-Feed:	        {{ feed_url or '–' }}
-Kontaktadresse: {{ contact_email or '–' }}
-Beschreibung:
+Submitted by:   {{ username }} ({{ user_link }})
+                Der Blog gehört {{ username }}
+Name:           {{ name }}
+URL:            {{ url }}
+Feed:           {{ feed_url }}
+Contact email:  {{ contact_email }}
+Description:
 
-    {{ description|wordwrap(60)|indent(4) }}
+    {{ description }}
 
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

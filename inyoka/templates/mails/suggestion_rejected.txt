@@ -1,5 +1,11 @@
-Hallo,
+{% trans note=note|wordwrap(75, false)|indent(4) -%}
+Hello,
 
-der Benutzer „{{ username }}“ hat deinen Artikelvorschlag „{{ title }}“ gelöscht. Als Begründung hat er folgendes angegeben:
+{{ username }} rejected your article suggestion “{{ title }}”. The specified reason is:
 
-{{ note|indent }}
+    {{ note }}
+
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}

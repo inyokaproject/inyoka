@@ -1,6 +1,11 @@
-Hallo {{ username }},
+{% trans -%}
+Hello {{ username }},
 
-der von dir beobachtete Benutzer „{{ author_username }}“ hat einen neuen Beitrag im Thema „{{ topic_title }}“ geschrieben.
-Du kannst ihn dir hier ansehen: {{ post_url }}
+{{ author_username }} has written a new post in the topic “{{ topic_title }}”. You can view the topic by visiting {{ post_url }}
 
-Falls du bei Beiträgen dieses Nutzers in Zukunft nicht mehr benachrichtigt werden willst, so kannst du das hier deaktivieren: {{ author_unsubscribe }}
+To unsubscribe from further notifications about this user's activity visit {{ author_unsubscribe }}
+
+Kind regards,
+
+Your {{ domain }} team
+{%- endtrans %}
