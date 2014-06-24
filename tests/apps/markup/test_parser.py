@@ -7,7 +7,7 @@
 
     :copyright: Copyright 2007 by Armin Ronacher.
     :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL.
+    :license: BSD, see LICENSE for more details.
 """
 import unittest
 
