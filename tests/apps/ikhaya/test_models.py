@@ -106,19 +106,14 @@ class TestEventModel(TestCase):
         self.user = User.objects.register_user('admin', 'admin', 'admin',
             False)
 
-    #def test_upcomingNegative_isEmpty_returnNone(self):
-    #    self.assertEqual(list(Event.objects.get_upcoming(-1)), [])
+    # Negative parameters will not be tested because this would be
+    # an invalid usage.
 
     def test_upcoming_getZero_isEmpty_returnNone(self):
         self.assertEqual(list(Event.objects.get_upcoming(0)), [])
 
     def test_upcoming_getOne_isEmpty_returnNone(self):
         self.assertEqual(list(Event.objects.get_upcoming(1)), [])
-
-    #def test_upcoming_getNegative_oneVisibleEvent_returnNone(self):
-    #    self.event = Event.objects.create(name='Event', date=date.today(),
-    #        author=self.user, visible=True)
-    #    self.assertEqual(list(Event.objects.get_upcoming(-1)), [])
 
     def test_upcoming_getZero_oneVisibleEvent_returnNone(self):
         self.event = Event.objects.create(name='Event', date=date.today(),
@@ -134,11 +129,6 @@ class TestEventModel(TestCase):
         self.event = Event.objects.create(name='Event', date=date.today(),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming(2)), [self.event])
-
-    #def test_upcoming_getNegative_oneInvisibleEvent_returnNone(self):
-    #    self.event = Event.objects.create(name='Event', date=date.today(),
-    #        author=self.user, visible=False)
-    #    self.assertEqual(list(Event.objects.get_upcoming(-1)), [])
 
     def test_upcoming_getZero_oneInvisibleEvent_returnNone(self):
         self.event = Event.objects.create(name='Event', date=date.today(),
