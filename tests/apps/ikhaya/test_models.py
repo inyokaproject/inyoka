@@ -116,100 +116,120 @@ class TestEventModel(TestCase):
         self.assertEqual(list(Event.objects.get_upcoming(1)), [])
 
     def test_upcoming_getZero_oneVisibleEvent_returnNone(self):
-        self.event = Event.objects.create(name='Event', date=date.today(),
+        Event.objects.create(name='Event', date=date.today(),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming(0)), [])
 
     def test_upcoming_getOne_oneVisibleEvent_returnEvent(self):
-        self.event = Event.objects.create(name='Event', date=date.today(),
+        event = Event.objects.create(name='Event', date=date.today(),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming(1)), [self.event])
+        self.assertEqual(list(Event.objects.get_upcoming(1)), [event])
 
     def test_upcoming_getMoreThanInside_oneVisibleEvent_returnEvent(self):
-        self.event = Event.objects.create(name='Event', date=date.today(),
+        event = Event.objects.create(name='Event', date=date.today(),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming(2)), [self.event])
+        self.assertEqual(list(Event.objects.get_upcoming(2)), [event])
 
     def test_upcoming_getZero_oneInvisibleEvent_returnNone(self):
-        self.event = Event.objects.create(name='Event', date=date.today(),
+        Event.objects.create(name='Event', date=date.today(),
             author=self.user, visible=False)
         self.assertEqual(list(Event.objects.get_upcoming(0)), [])
 
     def test_upcoming_getOne_oneInvisibleEvent_returnNone(self):
-        self.event = Event.objects.create(name='Event', date=date.today(),
+        Event.objects.create(name='Event', date=date.today(),
             author=self.user, visible=False)
         self.assertEqual(list(Event.objects.get_upcoming(1)), [])
 
     def test_upcoming_getMoreThanInside_oneInvisibleEvent_returnNone(self):
-        self.event = Event.objects.create(name='Event', date=date.today(),
+        Event.objects.create(name='Event', date=date.today(),
             author=self.user, visible=False)
         self.assertEqual(list(Event.objects.get_upcoming(2)), [])
 
+    def test_upcoming_getDefault_returnCorrectNumEvents(self):
+        events = [Event.objects.create(name='Event %d' % i, date=date.today(), 
+            author=self.user, visible=True) for i in range(10)]
+        Event.objects.create(name='Event not listed', date=date.today(),
+            author=self.user, visible=True)
+        self.assertEqual(list(Event.objects.get_upcoming()), events)
+
     def test_upcomingDate_startYesterday_returnNone(self):
-        self.event = Event.objects.create(name='Event',
+        Event.objects.create(name='Event',
             date=date.today()+timedelta(days=-1),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [])
 
     def test_upcomingDate_startToday_returnEvent(self):
-        self.event = Event.objects.create(name='Event',
+        event = Event.objects.create(name='Event',
             date=date.today()+timedelta(days=0),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming()), [self.event])
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startTomorrow_returnEvent(self):
-        self.event = Event.objects.create(name='Event',
+        event = Event.objects.create(name='Event',
             date=date.today()+timedelta(days=1),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming()), [self.event])
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startYesterdayEndYesterday_returnNone(self):
-        self.event = Event.objects.create(name='Event',
+        Event.objects.create(name='Event',
             date=date.today()+timedelta(days=-1),
             enddate=date.today()+timedelta(days=-1),
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()), [])
 
     def test_upcoming_getLessThanInside_severalEvents_returnCorrectNumber(self):
-        self.event1 = Event.objects.create(name='Event1', date=date.today(),
+        event1 = Event.objects.create(name='Event1', date=date.today(),
             author=self.user, visible=True)
-        self.event2 = Event.objects.create(name='Event2', date=date.today(),
+        event2 = Event.objects.create(name='Event2', date=date.today(),
             author=self.user, visible=True)
-        self.event3 = Event.objects.create(name='Event3', date=date.today(),
+        Event.objects.create(name='Event3', date=date.today(),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming(2)), [self.event1,self.event2])
+        self.assertEqual(list(Event.objects.get_upcoming(2)), [event1,event2])
 
     def test_upcomingDate_startYesterdayEndToday_returnEvent(self):
-        self.event = Event.objects.create(name='Event',
+        event = Event.objects.create(name='Event',
             date=date.today()+timedelta(days=-1),
             enddate=date.today()+timedelta(days=0),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming()), [self.event])
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startYesterdayEndTomorrow_returnEvent(self):
-        self.event = Event.objects.create(name='Event',
+        event = Event.objects.create(name='Event',
             date=date.today()+timedelta(days=-1),
             enddate=date.today()+timedelta(days=1),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming()), [self.event])
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startTodayEndToday_returnEvent(self):
-        self.event = Event.objects.create(name='Event',
+        event = Event.objects.create(name='Event',
             date=date.today()+timedelta(days=0),
             enddate=date.today()+timedelta(days=0),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming()), [self.event])
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startTodayEndTomorrow_returnEvent(self):
-        self.event = Event.objects.create(name='Event',
+        event = Event.objects.create(name='Event',
             date=date.today()+timedelta(days=0),
             enddate=date.today()+timedelta(days=1),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming()), [self.event])
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
 
     def test_upcomingDate_startTomorrowEndTomorrow_returnEvent(self):
-        self.event = Event.objects.create(name='Event',
+        event = Event.objects.create(name='Event',
             date=date.today()+timedelta(days=1),
             enddate=date.today()+timedelta(days=1),
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming()), [self.event])
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
+
+    def test_upcomingDateUnordered_getDefault_returnCorrectOrder(self):
+        event1 = Event.objects.create(name='Event1',
+            date=date.today()+timedelta(days=2),
+            author=self.user, visible=True)
+        event2 = Event.objects.create(name='Event2',
+            date=date.today()+timedelta(days=3),
+            author=self.user, visible=True)
+        event3 = Event.objects.create(name='Event3',
+            date=date.today()+timedelta(days=1),
+            author=self.user, visible=True)
+        self.assertEqual(list(Event.objects.get_upcoming()),
+            [event3,event1,event2])
