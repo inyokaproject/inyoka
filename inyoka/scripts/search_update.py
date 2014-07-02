@@ -12,7 +12,7 @@
     for all documents of all components.
 
     :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from __future__ import division
 
@@ -26,6 +26,11 @@ from inyoka.portal.models import SearchQueue
 from inyoka.utils import groupby
 from inyoka.utils.search import search
 from inyoka.utils.terminal import show
+
+from inyoka.forum.search import ForumSearchAdapter
+from inyoka.ikhaya.search import IkhayaSearchAdapter
+from inyoka.planet.search import PlanetSearchAdapter
+from inyoka.wiki.search import WikiSearchAdapter
 
 
 def update_index(component, docids):

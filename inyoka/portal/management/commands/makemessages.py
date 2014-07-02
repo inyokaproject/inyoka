@@ -9,7 +9,7 @@
     the regarding ``.pot`` file to ``inyoka/APP/django.pot``.
 
     :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from subprocess import call
 

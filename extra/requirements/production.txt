@@ -1,7 +1,7 @@
-Django==1.5.4
+Django==1.5.8
 django-filter==0.7
 # Includes Django 1.5 fix
-https://github.com/EnTeQuAk/django-openid/tarball/fix_django/#egg=django-openid
+-e git+https://github.com/inyokaproject/django-openid.git@1cde150b4cdaf9ce5deb74f0ba07678014ef6533#egg=django-openid
 South==0.8.2
 Jinja2==2.7.1
 MarkupSafe==0.18
@@ -23,10 +23,10 @@ requests==1.2.3
 pyzmq==13.1.0
 SleekXMPP==1.1.11
 lxml==3.2.3
-dulwich==0.9.0
+dulwich==0.9.7
 raven==3.4.1
 transifex-client==0.9.1
-Pillow==2.1.0
+Pillow==2.4.0
 defusedxml==0.4.1
 python-dateutil==2.1
 python-magic==0.4.6
