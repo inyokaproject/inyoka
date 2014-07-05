@@ -182,7 +182,7 @@ class NewEventForm(forms.ModelForm):
             self._errors['enddate'] = self.error_class([ugettext_lazy(u'The '
                 u'end date must occur after the start date.')])
             del cleaned_data['enddate']
-        else:
+        elif startdate == enddate:
             starttime = cleaned_data.get('time')
             endtime = cleaned_data.get('endtime')
             if starttime and endtime and endtime < starttime:
