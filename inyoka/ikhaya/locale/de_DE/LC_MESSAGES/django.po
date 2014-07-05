@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2014-06-21 22:01+0200\n"
+"POT-Creation-Date: 2014-07-05 12:55+0200\n"
 "PO-Revision-Date: 2012-11-03 11:11+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -239,7 +239,7 @@ msgid "Do you want to hide this report?"
 msgstr "Möchtest du die Meldung verbergen?"
 
 #: inyoka/ikhaya/views.py:426 inyoka/ikhaya/views.py:511
-#: inyoka/ikhaya/templates/ikhaya/detail.html:98
+#: inyoka/ikhaya/templates/ikhaya/detail.html:99
 #: inyoka/ikhaya/templates/ikhaya/reportlist.html:35
 #: inyoka/ikhaya/templates/ikhaya/reports.html:41
 msgid "Hide"
@@ -263,7 +263,7 @@ msgid "Do you want to restore this report?"
 msgstr "Möchtest du die Meldung wiederherstellen?"
 
 #: inyoka/ikhaya/views.py:433 inyoka/ikhaya/views.py:518
-#: inyoka/ikhaya/templates/ikhaya/detail.html:96
+#: inyoka/ikhaya/templates/ikhaya/detail.html:97
 #: inyoka/ikhaya/templates/ikhaya/reports.html:39
 msgid "Restore"
 msgstr "Wiederherstellen"
@@ -449,9 +449,9 @@ msgstr "Neuer Artikel"
 
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:18
 #: inyoka/ikhaya/templates/ikhaya/category_edit.html:16
-#: inyoka/ikhaya/templates/ikhaya/detail.html:65
-#: inyoka/ikhaya/templates/ikhaya/detail.html:88
-#: inyoka/ikhaya/templates/ikhaya/detail.html:93
+#: inyoka/ikhaya/templates/ikhaya/detail.html:66
+#: inyoka/ikhaya/templates/ikhaya/detail.html:89
+#: inyoka/ikhaya/templates/ikhaya/detail.html:94
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:17
 #: inyoka/ikhaya/templates/ikhaya/events.html:44
 #: inyoka/ikhaya/templates/ikhaya/index.html:76
@@ -468,28 +468,28 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:47
 #: inyoka/ikhaya/templates/ikhaya/category_edit.html:25
 #: inyoka/ikhaya/templates/ikhaya/comment_edit.html:21
-#: inyoka/ikhaya/templates/ikhaya/detail.html:131
+#: inyoka/ikhaya/templates/ikhaya/detail.html:132
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:64
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:54
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:45
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:35
-#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:28
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:31
 msgid "Submit"
 msgstr "Speichern"
 
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:48
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:60
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:91
-#: inyoka/ikhaya/templates/ikhaya/detail.html:130
-#: inyoka/ikhaya/templates/ikhaya/detail.html:135
-#: inyoka/ikhaya/templates/ikhaya/detail.html:182
+#: inyoka/ikhaya/templates/ikhaya/detail.html:131
+#: inyoka/ikhaya/templates/ikhaya/detail.html:136
+#: inyoka/ikhaya/templates/ikhaya/detail.html:183
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:63
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:68
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:34
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:40
-#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:29
-#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:35
-#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:58
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:32
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:38
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:61
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -549,28 +549,28 @@ msgstr "Kategorie:"
 msgid "Last update:"
 msgstr "Letzte Aktualisierung:"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:69
+#: inyoka/ikhaya/templates/ikhaya/detail.html:70
 msgid "Unsubscribe comments"
 msgstr "Kommentare abbestellen"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:71
+#: inyoka/ikhaya/templates/ikhaya/detail.html:72
 msgid "Subscribe comments"
 msgstr "Kommentare abonnieren"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:74
+#: inyoka/ikhaya/templates/ikhaya/detail.html:75
 msgid "Report misspelling"
 msgstr "Rechtschreibfehler melden"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:104
+#: inyoka/ikhaya/templates/ikhaya/detail.html:105
 msgid "Reply"
 msgstr "Antworten"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:159
+#: inyoka/ikhaya/templates/ikhaya/detail.html:160
 #, python-format
 msgid " Comments (%(count)s)"
 msgstr " Kommentare (%(count)s)"
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:161
+#: inyoka/ikhaya/templates/ikhaya/detail.html:162
 msgid "Write comment"
 msgstr "Kommentar schreiben"
 
@@ -899,6 +899,17 @@ msgstr ""
 "eine Software vorstellen? Dann schreibe Deinen Beitrag hier!"
 
 #: inyoka/ikhaya/templates/ikhaya/suggest_new.html:22
+msgid ""
+"It is not possible to submit images along with the article. If you want "
+"to use images please upload them elsewhere and insert the links in the "
+"article."
+msgstr ""
+"Bilder können in dem Artikelvorschlag leider nicht direkt eingebunden "
+"werden. Soll Dein Artikel Bilder enthalten, lade diese bitte irgendwo "
+"hoch und füge die Bildlinks an die von Dir gewünschte Stelle des "
+"Artikelvorschlags."
+
+#: inyoka/ikhaya/templates/ikhaya/suggest_new.html:25
 #, python-format
 msgid ""
 "I assure that my submission does not violate any other legal rights and "
@@ -958,3 +969,4 @@ msgstr "Es gibt momentan keine Artikelvorschläge."
 
 #~ msgid "Written by <a href=\"%(link)s\">%(author)s</a>"
 #~ msgstr "Verfasst von <a href=\"%(link)s\">%(author)s</a>"
+
