@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-05 12:55+0200\n"
+"POT-Creation-Date: 2014-07-05 16:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -651,9 +651,11 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:19
 #, python-format
 msgid ""
-"Using this form you can suggest a new entry for our <a "
-"href=\"%(link)s\">calendar</a>. A team member will review your suggestion"
-" as soon as possible."
+"By using this form you can suggest a new entry for the <a "
+"href=\"%(link_calendar)s\">calendar</a>. A team member will review your "
+"suggestion as soon as possible. If you want to change an existing "
+"calendar entry please contact the <a href=\"%(link_newsteam)s\">news "
+"team</a>."
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/events.html:17

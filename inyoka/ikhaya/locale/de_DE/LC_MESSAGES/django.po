@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2014-07-05 12:55+0200\n"
+"POT-Creation-Date: 2014-07-05 16:08+0200\n"
 "PO-Revision-Date: 2012-11-03 11:11+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -116,7 +116,7 @@ msgstr "Veröffentlicht"
 
 #: inyoka/ikhaya/models.py:214
 msgid "XHTML Markup"
-msgstr "XHTML Markup"
+msgstr ""
 
 #: inyoka/ikhaya/models.py:217
 msgid "Allow comments"
@@ -364,8 +364,8 @@ msgid ""
 "Thank you, your article suggestion was submitted. A team member will "
 "contact you shortly."
 msgstr ""
-"Vielen Dank, dein Artikelvorschlag wurde gespeichert. Ein Teammitglied "
-"wird dich sobald wie möglich kontaktieren."
+"Vielen Dank, dein Artikelvorschlag wurde gespeichert. Ein "
+"Ikhayateammitglied wird dich sobald wie möglich kontaktieren."
 
 #: inyoka/ikhaya/views.py:698
 msgid "Notifications on new suggestions will be sent to you."
@@ -682,13 +682,17 @@ msgstr "Veranstaltung vorschlagen"
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:19
 #, python-format
 msgid ""
-"Using this form you can suggest a new entry for our <a "
-"href=\"%(link)s\">calendar</a>. A team member will review your suggestion"
-" as soon as possible."
+"By using this form you can suggest a new entry for the <a "
+"href=\"%(link_calendar)s\">calendar</a>. A team member will review your "
+"suggestion as soon as possible. If you want to change an existing "
+"calendar entry please contact the <a href=\"%(link_newsteam)s\">news "
+"team</a>."
 msgstr ""
 "Mit diesem Formular kannst du einen neuen Eintrag in unseren <a "
-"href=\"%(link)s\">Kalender</a> eintragen. Ein Teammitglied wird sich "
-"deinen Vorschlag so schnell wie möglich ansehen."
+"href=\"%(link_calendar)s\">Kalender</a> eintragen. Ein Ikhayateammitglied"
+" wird sich deinen Vorschlag so schnell wie möglich ansehen. Wenn du "
+"Änderungen an einem bestehenden Kalendereintrag hast, wende dich bitte an"
+" ein Mitglied des <a href=\"%(link_newsteam)s\">Ikhayateams</a>."
 
 #: inyoka/ikhaya/templates/ikhaya/events.html:17
 #: inyoka/ikhaya/templates/ikhaya/page.html:38
