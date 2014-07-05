@@ -13,7 +13,7 @@
 
 {% block planet_content %}
   {# TODO: Text should be changeable via interface #}
-  <p>{% trans %}With this formular you can suggest a new blog for the planet.{% endtrans %}</p>
+  <p>{% trans %}With this form you can suggest a new blog for the planet.{% endtrans %}</p>
   <p>Die wichtigsten Kriterien sind:</p>
   <ul>
     <li>Ubuntu/Linux-bezogener Inhalt, bei gemischtem Inhalt muss ein separater Feed zur Verfügung gestellt werden.</li>
@@ -22,7 +22,7 @@
     <li>Die Beiträge dürfen keine Werbung enthalten.</li>
     <li>Die Beiträge müssen in deutscher Sprache verfasst sein.</li>
   </ul>
-  <p>{% trans %}Please be patient. It could take a while, until we approoved your suggestion.{% endtrans %}</p>
+  <p>{% trans %}Please be patient. It could take a while, until we approve your suggestion.{% endtrans %}</p>
   <form action="{{ href('planet', 'suggest') }}" method="post">
     {{ csrf_token() }}
     <dl>

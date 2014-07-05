@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2014-06-24 18:59+0200\n"
+"POT-Creation-Date: 2014-07-05 20:30+0200\n"
 "PO-Revision-Date: 2012-10-12 23:52+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -231,12 +231,12 @@ msgid "Suggest blog"
 msgstr "Ein Blog vorschlagen"
 
 #: inyoka/planet/templates/planet/suggest.html:16
-msgid "With this formular you can suggest a new blog for the planet."
+msgid "With this form you can suggest a new blog for the planet."
 msgstr "Hier kannst du einen Blog für den Planeten vorschlagen."
 
 #: inyoka/planet/templates/planet/suggest.html:25
 msgid ""
-"Please be patient. It could take a while, until we approoved your "
+"Please be patient. It could take a while, until we approve your "
 "suggestion."
 msgstr ""
 "Bitte habe ein wenig Geduld mit der Bearbeitung. Es kann etwas dauern, "
