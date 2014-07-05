@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-06-21 22:01+0200\n"
+"POT-Creation-Date: 2014-07-05 14:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,7 +58,11 @@ msgstr ""
 msgid "The end date must occur after the start date."
 msgstr ""
 
-#: inyoka/ikhaya/forms.py:200
+#: inyoka/ikhaya/forms.py:189
+msgid "The end time must occur after the start time."
+msgstr ""
+
+#: inyoka/ikhaya/forms.py:207
 msgid "Display event?"
 msgstr ""
 
@@ -223,7 +227,7 @@ msgid "Do you want to hide this report?"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:426 inyoka/ikhaya/views.py:511
-#: inyoka/ikhaya/templates/ikhaya/detail.html:98
+#: inyoka/ikhaya/templates/ikhaya/detail.html:99
 #: inyoka/ikhaya/templates/ikhaya/reportlist.html:35
 #: inyoka/ikhaya/templates/ikhaya/reports.html:41
 msgid "Hide"
@@ -247,7 +251,7 @@ msgid "Do you want to restore this report?"
 msgstr ""
 
 #: inyoka/ikhaya/views.py:433 inyoka/ikhaya/views.py:518
-#: inyoka/ikhaya/templates/ikhaya/detail.html:96
+#: inyoka/ikhaya/templates/ikhaya/detail.html:97
 #: inyoka/ikhaya/templates/ikhaya/reports.html:39
 msgid "Restore"
 msgstr ""
@@ -422,9 +426,9 @@ msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:18
 #: inyoka/ikhaya/templates/ikhaya/category_edit.html:16
-#: inyoka/ikhaya/templates/ikhaya/detail.html:65
-#: inyoka/ikhaya/templates/ikhaya/detail.html:88
-#: inyoka/ikhaya/templates/ikhaya/detail.html:93
+#: inyoka/ikhaya/templates/ikhaya/detail.html:66
+#: inyoka/ikhaya/templates/ikhaya/detail.html:89
+#: inyoka/ikhaya/templates/ikhaya/detail.html:94
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:17
 #: inyoka/ikhaya/templates/ikhaya/events.html:44
 #: inyoka/ikhaya/templates/ikhaya/index.html:76
@@ -439,7 +443,7 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:47
 #: inyoka/ikhaya/templates/ikhaya/category_edit.html:25
 #: inyoka/ikhaya/templates/ikhaya/comment_edit.html:21
-#: inyoka/ikhaya/templates/ikhaya/detail.html:131
+#: inyoka/ikhaya/templates/ikhaya/detail.html:132
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:64
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:54
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:45
@@ -451,9 +455,9 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:48
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:60
 #: inyoka/ikhaya/templates/ikhaya/article_edit.html:91
-#: inyoka/ikhaya/templates/ikhaya/detail.html:130
-#: inyoka/ikhaya/templates/ikhaya/detail.html:135
-#: inyoka/ikhaya/templates/ikhaya/detail.html:182
+#: inyoka/ikhaya/templates/ikhaya/detail.html:131
+#: inyoka/ikhaya/templates/ikhaya/detail.html:136
+#: inyoka/ikhaya/templates/ikhaya/detail.html:183
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:63
 #: inyoka/ikhaya/templates/ikhaya/detail.m.html:68
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:34
@@ -520,28 +524,28 @@ msgstr ""
 msgid "Last update:"
 msgstr ""
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:69
+#: inyoka/ikhaya/templates/ikhaya/detail.html:70
 msgid "Unsubscribe comments"
 msgstr ""
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:71
+#: inyoka/ikhaya/templates/ikhaya/detail.html:72
 msgid "Subscribe comments"
 msgstr ""
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:74
+#: inyoka/ikhaya/templates/ikhaya/detail.html:75
 msgid "Report misspelling"
 msgstr ""
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:104
+#: inyoka/ikhaya/templates/ikhaya/detail.html:105
 msgid "Reply"
 msgstr ""
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:159
+#: inyoka/ikhaya/templates/ikhaya/detail.html:160
 #, python-format
 msgid " Comments (%(count)s)"
 msgstr ""
 
-#: inyoka/ikhaya/templates/ikhaya/detail.html:161
+#: inyoka/ikhaya/templates/ikhaya/detail.html:162
 msgid "Write comment"
 msgstr ""
 
