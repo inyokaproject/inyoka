@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-06 11:32+0200\n"
+"POT-Creation-Date: 2014-07-07 07:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -572,16 +572,20 @@ msgid ""
 msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_log.html:48
-#: inyoka/wiki/templates/wiki/action_log.html:87
+#: inyoka/wiki/templates/wiki/action_log.html:88
 msgid "Compare"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:78
+#: inyoka/wiki/templates/wiki/action_log.html:77
+msgid "View"
+msgstr ""
+
+#: inyoka/wiki/templates/wiki/action_log.html:80
 #: inyoka/wiki/templates/wiki/action_revert.html:18
 msgid "Restore"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:81
+#: inyoka/wiki/templates/wiki/action_log.html:83
 #: inyoka/wiki/templates/wiki/action_manage.html:45
 msgid "Raw"
 msgstr ""

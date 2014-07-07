@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2014-07-06 11:32+0200\n"
+"POT-Creation-Date: 2014-07-07 07:38+0200\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -632,16 +632,20 @@ msgstr ""
 "href=\"%(subscribe_link)s\">abonnieren</a>."
 
 #: inyoka/wiki/templates/wiki/action_log.html:48
-#: inyoka/wiki/templates/wiki/action_log.html:87
+#: inyoka/wiki/templates/wiki/action_log.html:88
 msgid "Compare"
 msgstr "Vergleichen"
 
-#: inyoka/wiki/templates/wiki/action_log.html:78
+#: inyoka/wiki/templates/wiki/action_log.html:77
+msgid "View"
+msgstr "Ansehen"
+
+#: inyoka/wiki/templates/wiki/action_log.html:80
 #: inyoka/wiki/templates/wiki/action_revert.html:18
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: inyoka/wiki/templates/wiki/action_log.html:81
+#: inyoka/wiki/templates/wiki/action_log.html:83
 #: inyoka/wiki/templates/wiki/action_manage.html:45
 msgid "Raw"
 msgstr "Rohformat"
