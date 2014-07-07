@@ -249,8 +249,9 @@ def viewtopic(request, topic_slug, page=1):
     can_vote = check_privilege(privileges, 'vote')
     can_edit = lambda post: post.author_id == request.user.id and \
         can_reply and post.check_ownpost_limit('edit')
-    can_delete = lambda post: can_reply and post.author_id == request.user.id \
+    can_delete_own = lambda post: can_reply and post.author_id == request.user.id \
         and post.check_ownpost_limit('delete')
+    can_delete_all = can_mod and request.user.can('delete_topic')
     voted_all = not (polls and bool([True for p in polls if p.can_vote]))
 
     marked_split_posts = request.session.get('_split_post_ids', [])
@@ -270,7 +271,8 @@ def viewtopic(request, topic_slug, page=1):
         'can_edit': can_edit,
         'can_reply': can_reply,
         'can_vote': can_vote,
-        'can_delete': can_delete,
+        'can_delete_own': can_delete_own,
+        'can_delete_all': can_delete_all,
         'team_icon_url': team_icon,
         'discussions': Page.objects.discussions(topic),
         'marked_split_posts': marked_split_posts
@@ -1270,9 +1272,9 @@ def delete_topic(request, topic_slug, action='hide'):
 
     topic = Topic.objects.select_related('forum').get(slug=topic_slug)
     can_moderate = have_privilege(request.user, topic.forum, CAN_MODERATE)
-    can_delete = request.user.can('delete_topic')
+    can_delete = can_moderate and request.user.can('delete_topic')
 
-    if action == 'delete' and not can_delete and not can_moderate:
+    if action == 'delete' and not can_delete:
         return abort_access_denied(request)
     if action == 'hide' and not can_moderate:
         return abort_access_denied(request)
