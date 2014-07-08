@@ -80,8 +80,7 @@
       <li><a href="{{ href('portal', 'pages') }}">{% trans %}Static pages{% endtrans %}</a></li>
     {% endif %}
     {%- if USER.can('static_file_edit') %}
-      {# hard code a huge numbers of entries per page to avoid any pagination. :TODO: Find more elegant solution #}
-      <li><a href="{{ href('portal', 'files', paginate_by=42000) }}">{% trans %}Static files{% endtrans %}</a></li>
+      <li><a href="{{ href('portal', 'files') }}">{% trans %}Static files{% endtrans %}</a></li>
     {% endif %}
     </ul>
     {%- endif %}
