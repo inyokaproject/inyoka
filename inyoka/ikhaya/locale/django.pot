@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-05 14:16+0200\n"
+"POT-Creation-Date: 2014-07-07 19:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,15 +54,19 @@ msgstr ""
 msgid "There already exists an article with this slug!"
 msgstr ""
 
-#: inyoka/ikhaya/forms.py:182
+#: inyoka/ikhaya/forms.py:185
 msgid "The end date must occur after the start date."
 msgstr ""
 
 #: inyoka/ikhaya/forms.py:189
+msgid "Please fill in start time and end date if you want to use the end time."
+msgstr ""
+
+#: inyoka/ikhaya/forms.py:195
 msgid "The end time must occur after the start time."
 msgstr ""
 
-#: inyoka/ikhaya/forms.py:207
+#: inyoka/ikhaya/forms.py:213
 msgid "Display event?"
 msgstr ""
 

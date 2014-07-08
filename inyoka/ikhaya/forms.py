@@ -167,7 +167,8 @@ class NewEventForm(forms.ModelForm):
                 event.enddate or event.date, event.endtime
             ))
             event.enddate = d.date()
-            event.endtime = event.time is not None and d.time()
+            if event.time is None:
+                event.endtime = None
 
         event.author = user
         event.save()
@@ -177,17 +178,22 @@ class NewEventForm(forms.ModelForm):
     def clean(self):
         cleaned_data = self.cleaned_data
         startdate = cleaned_data.get('date')
+        starttime = cleaned_data.get('time')
         enddate = cleaned_data.get('enddate')
+        endtime = cleaned_data.get('endtime')
         if startdate and enddate and enddate < startdate:
             self._errors['enddate'] = self.error_class([ugettext_lazy(u'The '
                 u'end date must occur after the start date.')])
             del cleaned_data['enddate']
+        elif startdate and endtime is not None and (starttime is None or enddate is None):
+            self._errors['endtime'] = self.error_class([ugettext_lazy(u'Please'
+                u' fill in start time and end date if you want to use the end '
+                u'time.')])
+            del cleaned_data['endtime']
         elif startdate == enddate:
-            starttime = cleaned_data.get('time')
-            endtime = cleaned_data.get('endtime')
-            if starttime and endtime and endtime < starttime:
-                self._errors['endtime'] = self.error_class([ugettext_lazy(u'The '
-                    u'end time must occur after the start time.')])
+            if starttime is not None and endtime is not None and endtime < starttime:
+                self._errors['endtime'] = self.error_class([ugettext_lazy(u'The'
+                    u' end time must occur after the start time.')])
                 del cleaned_data['endtime']
 
         return cleaned_data
