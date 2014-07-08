@@ -13,7 +13,6 @@
 
 {% block content %}
 <h3>{% trans %}Static files{% endtrans %}</h3>
-{{ pagination.generate(position='right') }}
 <p><a href="{{ href('portal', 'files', 'new') }}">{% trans %}Create new static file{% endtrans %}</a></p>
 <table class="static_files">
   <thead>
@@ -42,5 +41,4 @@
     {%- endfor %}
   </tbody>
 </table>
-{{ pagination.generate(position='right') }}
 {% endblock %}

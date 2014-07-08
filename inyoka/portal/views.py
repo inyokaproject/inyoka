@@ -101,7 +101,7 @@ page_delete = generic.DeleteView.as_view(model=StaticPage,
     required_permission='static_page_edit')
 
 
-files = generic.ListView.as_view(model=StaticFile,
+files = generic.UnpaginatedListView.as_view(model=StaticFile,
     default_column='identifier',
     template_name='portal/files.html',
     columns=['identifier', 'is_ikhaya_icon'],
