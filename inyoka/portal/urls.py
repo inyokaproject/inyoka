@@ -76,7 +76,6 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^ikhaya/(\d+)/$', 'ikhaya_redirect'),
     # static pages
     (r'^files/$', 'files'),
-    (r'^files/(?P<page>\d+)/$', 'files'),
     (r'^files/new/$', 'file_edit'),
     (r'^files/(?P<file>.+)/edit/$', 'file_edit'),
     (r'^files/(?P<slug>.+)/delete/$', 'file_delete'),
