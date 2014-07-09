@@ -286,36 +286,3 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
 
 class ListView(LoginMixin, PermissionMixin, BaseListView):
     pass
-
-class UnpaginatedBaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
-    default_column = 'id'
-    columns = ['id']
-    base_link = None
-
-    def get_context_data(self, **kwargs):
-        """
-        Get the context for this view.
-        """
-        return kwargs
-
-    def get(self, request, *args, **context):
-        queryset = self.get_queryset()
-        table = Sortable(queryset, request.GET, self.default_column,
-                         columns=self.columns)
-
-        queryset = table.get_queryset()
-        context['table'] = table
-
-        context['object_list'] = queryset
-        context.update(self.get_context_data(**context))
-
-        context_object_name = self.get_context_object_name(queryset)
-        if context_object_name is not None:
-            context[context_object_name] = queryset
-
-        self.object_list = queryset
-
-        return self.render_to_response(context)
-
-class UnpaginatedListView(LoginMixin, PermissionMixin, UnpaginatedBaseListView):
-    pass
