@@ -49,7 +49,7 @@ from inyoka.utils.urls import urlencode
 class Pagination(object):
 
     def __init__(self, request, query, page, per_page=10, link=None,
-                 total=None, rownum_column=None):
+                 total=None, rownum_column=None, max_pages=None):
         self.page = int(page)
         self.rownum_column = rownum_column
         self.per_page = per_page
@@ -67,6 +67,9 @@ class Pagination(object):
             self.max_pages = 1
         else:
             self.max_pages = max(0, self.total - 1) // self.per_page + 1
+
+        if max_pages and self.max_pages > max_pages:
+            self.max_pages = max_pages
 
         if self.page > self.max_pages:
             raise Http404()
@@ -122,6 +125,9 @@ class Pagination(object):
         pages = 1
         if self.total:
             pages = max(0, self.total - 1) // self.per_page + 1
+
+        if pages > self.max_pages:
+            pages = self.max_pages
 
         # This unicode/utf-8 conversion exists because of some fancy hacker-bots
         # that try to fuzz the pagination with some extremly invalid unicode data.
