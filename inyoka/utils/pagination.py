@@ -190,6 +190,9 @@ class Pagination(object):
         pages = 1
         if self.total:
             pages = max(0, self.total - 1) // self.per_page + 1
+        
+        if pages > self.max_pages:
+            pages = self.max_pages
 
         params = {force_unicode(k).encode('utf-8'): _get_v(v)
                   for k, v in self.parameters.iteritems()}
