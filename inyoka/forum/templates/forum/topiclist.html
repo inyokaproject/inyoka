@@ -10,6 +10,7 @@
 {%- extends 'forum/page.html' %}
 
 {% from 'forum/_forum.html' import topic_icon with context %}
+{% from 'macros.html' import render_pagination with context %}
 
 {% block forum_content %}
   <table class="forum">
@@ -86,7 +87,7 @@
   </table>
   <div class="forum_offset_pagination">
     <div class="pagination pagination_right">
-      {{ pagination }}
+      {{ render_pagination(pagination2) }}
       <br style="clear: both" />
     </div>
   </div>

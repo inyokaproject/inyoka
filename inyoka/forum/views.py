@@ -50,7 +50,7 @@ from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.generic import trigger_fix_errors_message
 from inyoka.utils.http import templated, AccessDeniedResponse, does_not_exist_is_404
 from inyoka.utils.notification import send_notification, notify_about_subscription
-from inyoka.utils.pagination import Pagination
+from inyoka.utils.pagination import Pagination, Pagination2
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
@@ -1505,7 +1505,9 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     total_topics = get_simplified_queryset(topics).count()
     pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
                             total=total_topics, max_pages=MAX_PAGES_TOPICLIST)
-    topic_ids = [tid for tid in pagination.get_queryset()]
+    pagination2 = Pagination2(request, topics, page, TOPICS_PER_PAGE, url,
+                            total=total_topics, max_pages=MAX_PAGES_TOPICLIST)
+    topic_ids = [tid for tid in pagination2.get_queryset()]
     pagination = pagination.generate()
 
     # check for moderation permissions
@@ -1527,6 +1529,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     return {
         'topics': topics,
         'pagination': pagination,
+        'pagination2': pagination2.generate(),
         'title': title,
         'can_moderate': can_moderate,
         'hide_sticky': False,
