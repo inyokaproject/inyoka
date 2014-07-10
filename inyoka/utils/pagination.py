@@ -3,8 +3,8 @@
     inyoka.utils.pagination
     ~~~~~~~~~~~~~~~~~~~~~~~
 
-    This file helps creating a pagination. It's able to generate the HTML
-    source and to select the right database entries.
+    This file helps creating a pagination. It is able to select the right 
+    database entries and convert them into a dict that can be used in templates
 
     Usage::
 
@@ -16,13 +16,35 @@
         ...     per_page=25, total=500)
         >>> # the database entries on this page
         >>> objects = pagination.get_queryset()
-        >>> # the generated HTML code for the pagination
-        >>> html = pagination.generate()
+        >>> # the generated dict for the pagination
+        >>> pagination_dict = pagination.generate()
+
+    The dict will have the following structure:
+        {
+        'show_first': True,
+        'show_last': True,
+        'current_page': 6,
+        'pages': 10,
+        'prev': 'http://localhost/5',
+        'next': 'http://localhost/7',
+        'list': [
+                {'type': 'page', 'url': 'http://localhost/',    'current': False, 'name': 1},
+                {'type': 'page', 'url': 'http://localhost/2/',  'current': False, 'name': 1},
+                {'type': 'spacer'},
+                {'type': 'page', 'url': 'http://localhost/5/',  'current': False, 'name': 5},
+                {'type': 'page', 'url': 'http://localhost/6/',  'current': True,  'name': 6},
+                {'type': 'page', 'url': 'http://localhost/7/',  'current': False, 'name': 7},
+                {'type': 'spacer'},
+                {'type': 'page', 'url': 'http://localhost/9/',  'current': False, 'name': 9},
+                {'type': 'page', 'url': 'http://localhost/10/', 'current': False, 'name': 10},
+                ],
+        }
 
     If the page is out of range, it throws a Http404 exception.
     You can pass the optional argument `total` if you already know how
     many entries match your query. If you don't, `Pagination` will use
     a database query to find it out.
+    The number of pages can be limited with the optional argument `max_pages`.
     For tables that are quite big it's sometimes useful to use an indexed
     column determinating the position instead of using an offset / limit
     statement. In this case you can use the `rownum_column` argument.
@@ -190,7 +212,7 @@ class Pagination(object):
         pages = 1
         if self.total:
             pages = max(0, self.total - 1) // self.per_page + 1
-        
+
         if pages > self.max_pages:
             pages = self.max_pages
 
@@ -218,3 +240,138 @@ class Pagination(object):
             prev_link=self.generate_link(max(self.page - 1, 1), params),
             page=self.page
         )
+
+
+
+
+
+class Pagination2(object):
+    """
+        Handle pagination
+    """
+    def __init__(self, request, query, page, per_page=10, link=None, 
+                       total=None, rownum_column=None, max_pages=None):
+        """ Create pagination object
+
+            :param request: The current request.
+            :param query: The paginated objects, can be a list or tuple
+            :param page: Current page number.
+            :param per_page: Number of items per page.
+            :param link: The base url.
+            :param total: Total number of items in query, can be None.
+            :param rownum_column: Name of the column used to order items.
+            :param max_pages: Maximum number of pages.
+        """
+
+        self.request       = request
+        self.query         = query
+        self.page          = int(page)
+        self.per_page      = per_page
+        self.base_link     = self.get_base_link(link)
+        self.total         = self.get_total(total)
+        self.rownum_column = rownum_column
+        self.pages         = max(0, (self.total-1)) // self.per_page + 1
+
+        self.queryset      = None
+
+        if max_pages and self.pages > max_pages:
+            self.pages = max_pages
+
+        if self.page > self.pages:
+            #raise Http404()
+            pass
+
+        # This unicode/utf-8 conversion exists because of some fancy hacker-bots
+        # that try to fuzz the pagination with some extremly invalid unicode data.
+        # Catching those here fixes vulerabilty of the whole application.
+        enc = lambda v: force_unicode(v).encode('utf-8') if isinstance(v, basestring) else v
+        self.params = {enc(k): enc(v) for k, v in self.request.GET.iteritems()}
+
+    def get_base_link(self, link=None):
+        if link is None:
+            return self.request.path
+        elif isinstance(link, basestring):
+            return link
+
+    def get_total(self, total):
+        if total:
+            return total
+        elif isinstance(self.query, (list,tuple)):
+            return len(self.query)
+        else:
+            return self.query.count()
+
+    def get_queryset(self):
+        """ Get objects for current page """
+
+        if self.queryset is not None:
+            return self.queryset
+
+        index_first = (self.page - 1) * self.per_page
+        index_last = index_first + self.per_page
+
+        if self.rownum_column:
+            expr = {'{}__gte'.format(self.rownum_column): index_first,
+                    '{}__lt'.format(self.rownum_column): index_last}
+            self.queryset = self.query.filter(**expr)
+        else:
+            self.queryset = self.query[index_first:index_last]
+
+        return self.queryset
+
+    def generate_link(self, page):
+        """ Get link for page number
+
+        :param page: page number
+        :return: A URL string
+        """
+
+        if page == 1:
+            url = self.base_link
+        else:
+            url = u'{}{}/'.format(self.base_link, page)
+        return url + (self.params and u'?' + urlencode(self.params) or u'')
+
+    def generate(self, threshold=2, show_next_link=True, show_prev_link=True, position='right'):
+        """ Generate a pagination dict with links and information to be used in 
+            templates
+
+        :param threshold: Number of pages displayed at beginning, end and 
+                          before/after current page. Other pages are omitted.
+        :param show_next_link: Whether or not to show link to next page
+        :param show_prev_link: Whether or not to show link to previous page
+        :return: Dict with all links and information
+        """
+
+        result_dict = {'pages':        self.pages,
+                       'current_page': self.page,
+                       'list':         [],
+                       'position':     position}
+
+        if self.page > 2:
+            result_dict['first'] = self.generate_link(1)
+
+        if self.page < (self.pages-1):
+            result_dict['last'] = self.generate_link(self.pages)
+
+        if show_next_link and self.page < self.pages:
+            result_dict['next'] = self.generate_link(self.page + 1)
+
+        if show_prev_link and self.page > 1:
+            result_dict['prev'] = self.generate_link(self.page - 1)
+
+        for num in xrange(1, self.pages+1):
+            if num <= threshold or num > (self.pages-threshold) or \
+               abs(self.page - num) < threshold:
+                was_ellipsis = False
+                result_dict['list'] += [{'type': 'page',
+                                         'url': self.generate_link(num),
+                                         'current': (num == self.page),
+                                         'name': num, }]
+            elif not was_ellipsis:
+                result_dict['list'] += [{'type': 'spacer'}]
+                was_ellipsis = True
+
+        return result_dict
+
+
