@@ -1503,12 +1503,11 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
 
     topics = topics.distinct()
     total_topics = get_simplified_queryset(topics).count()
-    pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
+    #pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
+    #                        total=total_topics, max_pages=MAX_PAGES_TOPICLIST)
+    pagination = Pagination2(request, topics, page, TOPICS_PER_PAGE, url,
                             total=total_topics, max_pages=MAX_PAGES_TOPICLIST)
-    pagination2 = Pagination2(request, topics, page, TOPICS_PER_PAGE, url,
-                            total=total_topics, max_pages=MAX_PAGES_TOPICLIST)
-    topic_ids = [tid for tid in pagination2.get_queryset()]
-    pagination = pagination.generate()
+    topic_ids = [tid for tid in pagination.get_queryset()]
 
     # check for moderation permissions
     moderatable_forums = [obj.id for obj in
@@ -1529,7 +1528,6 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     return {
         'topics': topics,
         'pagination': pagination,
-        'pagination2': pagination2.generate(),
         'title': title,
         'can_moderate': can_moderate,
         'hide_sticky': False,

@@ -246,9 +246,8 @@ class Pagination(object):
 
 
 class Pagination2(object):
-    """
-        Handle pagination
-    """
+    """ Handle pagination """
+
     def __init__(self, request, query, page, per_page=10, link=None, 
                        total=None, rownum_column=None, max_pages=None):
         """ Create pagination object
@@ -267,8 +266,8 @@ class Pagination2(object):
         self.query         = query
         self.page          = int(page)
         self.per_page      = per_page
-        self.base_link     = self.get_base_link(link)
-        self.total         = self.get_total(total)
+        self.base_link     = self._get_base_link(link)
+        self.total         = self._get_total(total)
         self.rownum_column = rownum_column
         self.pages         = max(0, (self.total-1)) // self.per_page + 1
 
@@ -278,22 +277,22 @@ class Pagination2(object):
             self.pages = max_pages
 
         if self.page > self.pages:
-            #raise Http404()
-            pass
+            raise Http404()
 
+        # TODO: is this necessary? Do we ever pass GET-parameters in pagination links?
         # This unicode/utf-8 conversion exists because of some fancy hacker-bots
         # that try to fuzz the pagination with some extremly invalid unicode data.
         # Catching those here fixes vulerabilty of the whole application.
         enc = lambda v: force_unicode(v).encode('utf-8') if isinstance(v, basestring) else v
         self.params = {enc(k): enc(v) for k, v in self.request.GET.iteritems()}
 
-    def get_base_link(self, link=None):
+    def _get_base_link(self, link):
         if link is None:
             return self.request.path
         elif isinstance(link, basestring):
             return link
 
-    def get_total(self, total):
+    def _get_total(self, total):
         if total:
             return total
         elif isinstance(self.query, (list,tuple)):
@@ -332,21 +331,19 @@ class Pagination2(object):
             url = u'{}{}/'.format(self.base_link, page)
         return url + (self.params and u'?' + urlencode(self.params) or u'')
 
-    def generate(self, threshold=2, show_next_link=True, show_prev_link=True, position='right'):
+    def generate(self, threshold=2):
         """ Generate a pagination dict with links and information to be used in 
             templates
 
         :param threshold: Number of pages displayed at beginning, end and 
                           before/after current page. Other pages are omitted.
-        :param show_next_link: Whether or not to show link to next page
-        :param show_prev_link: Whether or not to show link to previous page
         :return: Dict with all links and information
         """
 
         result_dict = {'pages':        self.pages,
                        'current_page': self.page,
                        'list':         [],
-                       'position':     position}
+                      }
 
         if self.page > 2:
             result_dict['first'] = self.generate_link(1)
@@ -354,10 +351,10 @@ class Pagination2(object):
         if self.page < (self.pages-1):
             result_dict['last'] = self.generate_link(self.pages)
 
-        if show_next_link and self.page < self.pages:
+        if self.page < self.pages:
             result_dict['next'] = self.generate_link(self.page + 1)
 
-        if show_prev_link and self.page > 1:
+        if self.page > 1:
             result_dict['prev'] = self.generate_link(self.page - 1)
 
         for num in xrange(1, self.pages+1):
@@ -373,5 +370,3 @@ class Pagination2(object):
                 was_ellipsis = True
 
         return result_dict
-
-

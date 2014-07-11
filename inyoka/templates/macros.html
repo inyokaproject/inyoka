@@ -51,28 +51,30 @@
 
 
 {# Pagination macro #}
-{% macro render_pagination(pagination) %}
-<div class="pagination pagination_{{pagination['position']}}">
-{%- if pagination['prev'] -%}
+{% macro render_pagination(pagination, show_prev=True, show_next=True) %}
+{%- if show_prev -%}
+  {%- if pagination['prev'] -%}
     <a href="{{ pagination['prev']}}" class="prev">« {% trans %}Previous{% endtrans %}</a>
-{%- else -%}
+  {%- else -%}
     <span class="disabled prev">« {% trans %}Previous{% endtrans %}</span>
-{%- endif %}
-{% for link in pagination['list'] %}
+  {%- endif -%}
+{%- endif -%}
+{% for link in pagination['list'] -%}
     {%- if link['type'] == 'spacer' -%}
     <span class="ellipsis">…</span>
     {%- elif link['current'] -%}
     <span class="pageselect active">{{ link['name'] }}</span>
     {%- else -%}
     <a href="{{ link['url'] }}" class="pageselect">{{ link['name'] }}</a>
-    {%- endif %}
-{% endfor %}
-{%- if pagination['next'] -%}
+    {%- endif -%}
+{%- endfor -%}
+{%- if show_next -%}
+  {%- if pagination['next'] -%}
     <a href="{{ pagination['next']}}" class="next">{% trans %}Next{% endtrans %} »</a>
-{%- else -%}
+  {%- else -%}
     <span class="disabled next">{% trans %}Next{% endtrans %} »</span>
+  {%- endif -%}
 {%- endif %}
-</div>
 {% endmacro %}
 
 
