@@ -169,6 +169,8 @@ class NewEventForm(forms.ModelForm):
             event.enddate = d.date()
             if event.time is None:
                 event.endtime = None
+            else:
+                event.endtime = d.time()
 
         event.author = user
         event.save()
