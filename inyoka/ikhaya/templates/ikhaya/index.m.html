@@ -8,9 +8,11 @@
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.m.html' %}
+{% from 'macros.html' import render_pagination_mobile %}
+{% set rendered_pagination = render_pagination_mobile(pagination.generate()) %}
 
 {% block content %}
-  {{ pagination.generate() }}
+  <div class="pagination">{{ rendered_pagination }}</div>
   {%- for article in articles %}
     <div class="intro{% if article.hidden %} hidden{% endif %}">
       <a href="{{ article|url }}"><h3 class="title">{{ article.subject|e }}</h3></a>
@@ -29,5 +31,5 @@
   {%- else %}
     <p>{% trans %}There is no article.{% endtrans %}</p>
   {%- endfor %}
-  {{ pagination.generate() }}
+  <div class="pagination">{{ rendered_pagination }}</div>
 {% endblock %}

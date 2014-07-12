@@ -8,6 +8,9 @@
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'ikhaya/page.html' %}
+{%- from 'macros.html' import render_pagination %}
+
+{% set rendered_pagination = render_pagination(pagination.generate()) %}
 
 {% if category %}
   {% set name = category.name %}
@@ -84,5 +87,5 @@
     <p>{% trans %}There is no article.{% endtrans %}</p>
   {%- endif %}
 
-  {{ pagination.generate('right') }}
+  <div class="pagination pagination_right">{{ rendered_pagination }}</div>
 {% endblock %}
