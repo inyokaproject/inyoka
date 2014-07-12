@@ -8,6 +8,8 @@
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'planet/page.m.html' %}
+{% from 'macros.html' import render_pagination_mobile %}
+{% set rendered_pagination = render_pagination_mobile(pagination.generate()) %}
 
 {% block content %}
   {% set article_index = 0 %}
@@ -30,5 +32,5 @@
   {%- else %}
     <p>{% trans %}No articles were aggregated{% endtrans %}</p>
   {%- endfor %}
-  {{ pagination.generate() }}
+  <div class="pagination">{{ rendered_pagination }}</div>
 {% endblock %}

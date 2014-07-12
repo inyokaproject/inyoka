@@ -8,6 +8,8 @@
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'planet/page.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination.generate()) %}
 
 {% set feeds = [
   (_('Planet - Captions'), href('planet', 'feeds/title/20')),
@@ -82,7 +84,7 @@
       {%- endfor %}
     </div>
 
-    {{ pagination.generate('right') }}
+    <div class="pagination pagination_right">{{ rendered_pagination }}</div>
   {%- else %}
     <p>{% trans %}No articles were aggregated{% endtrans %}</p>
   {%- endif %}
