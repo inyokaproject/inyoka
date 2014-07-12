@@ -1506,7 +1506,7 @@ def grouplist(request, page=1):
         user_groups = request.user.groups.filter(is_public=True)
     table = Sortable(groups, request.GET, 'name',
                      columns=['id', 'name'])
-    pagination = Pagination(request, table.get_queryset(), page, 15,
+    pagination = Pagination2(request, table.get_queryset(), page, 15,
                             link=href('portal', 'groups'))
     return {
         'groups': pagination.get_queryset(),
