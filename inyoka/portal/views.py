@@ -1527,7 +1527,7 @@ def group(request, name, page=1):
 
     table = Sortable(users, request.GET, 'id',
         columns=['id', 'username', 'location', 'date_joined', 'post_count'])
-    pagination = Pagination(request, table.get_queryset(), page, 15,
+    pagination = Pagination2(request, table.get_queryset(), page, 15,
                             link=href('portal', 'group', name))
     return {
         'group': group,
