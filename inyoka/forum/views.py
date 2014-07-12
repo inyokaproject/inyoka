@@ -131,7 +131,7 @@ def forum(request, slug, page=1):
     topic_ids = Topic.objects.filter(forum=forum)\
                              .values_list('id', flat=True)\
                              .order_by('-sticky', '-last_post')
-    pagination = Pagination(request, topic_ids, page, TOPICS_PER_PAGE,
+    pagination = Pagination2(request, topic_ids, page, TOPICS_PER_PAGE,
                             url_for(forum), total=forum.topic_count)
 
     subforums = filter_invisible(request.user, forum.children, perm=privs)

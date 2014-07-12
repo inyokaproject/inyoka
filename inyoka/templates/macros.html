@@ -51,7 +51,7 @@
 
 
 {# Pagination macro #}
-{% macro render_pagination(pagination, show_prev=True, show_next=True) %}
+{% macro render_pagination(pagination, show_prev=True, show_next=True) %}**
 {%- if show_prev -%}
   {%- if pagination['prev'] -%}
     <a href="{{ pagination['prev']}}" class="prev">« {% trans %}Previous{% endtrans %}</a>
@@ -82,7 +82,7 @@
 {% macro render_pagination_mobile(pagination) %}
   {%- if pagination['first'] -%}<a href="{{ pagination['first'] }}" class="prev first">«</a>{%- endif -%}
   {%- if pagination['prev'] -%}<a href="{{ pagination['prev'] }}" class="prev">« {% trans %}Previous{% endtrans %}</a>{%- endif -%}
-  <span class="active">{% trans %}Page{% endtrans %} {{ pagination['current'] }} / {{ pagination['pages'] }}</span>
+  <span class="active">{% trans %}Page{% endtrans %} {{ pagination['current_page'] }} / {{ pagination['pages'] }}</span>
   {%- if pagination['next'] %}<a href="{{ pagination['next'] }}" class="next">{% trans %}Next{% endtrans %} »</a>{%- endif -%}
   {%- if pagination['last'] %}<a href="{{ pagination['last'] }}" class="next last">»</a>{%- endif -%}
 {% endmacro %}

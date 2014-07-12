@@ -340,9 +340,9 @@ class Pagination2(object):
         :return: Dict with all links and information
         """
 
-        result_dict = {'pages':        self.pages,
-                       'current_page': self.page,
-                       'list':         [],
+        result_dict = {'pages':         self.pages,
+                       'current_page':  self.page,
+                       'list':          [],
                       }
 
         if self.page > 2:
