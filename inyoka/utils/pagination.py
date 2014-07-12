@@ -327,9 +327,11 @@ class Pagination2(object):
 
         if page == 1:
             url = self.base_link
+        elif self.params:
+            url = u'{}{}?{}/'.format(self.base_link, page, urlencode(self.params))
         else:
             url = u'{}{}/'.format(self.base_link, page)
-        return url + (self.params and u'?' + urlencode(self.params) or u'')
+        return url
 
     def generate(self, threshold=2):
         """ Generate a pagination dict with links and information to be used in 
