@@ -63,7 +63,7 @@ from inyoka.utils import generic
 from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
 from inyoka.utils.mail import send_mail
 from inyoka.utils.notification import send_notification
-from inyoka.utils.pagination import Pagination
+from inyoka.utils.pagination import Pagination, Pagination2
 from inyoka.utils.sessions import get_sessions, make_permanent, get_user_record
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
@@ -1273,12 +1273,12 @@ def privmsg(request, folder=None, entry_id=None, page=1):
         message = None
     link = href('portal', 'privmsg', folder, 'page')
 
-    pagination = Pagination(request, entries, page or 1, page and 10
+    pagination = Pagination2(request, entries, page or 1, page and 10
         or len(entries), link)
 
     return {
         'entries': pagination.get_queryset(),
-        'pagination': pagination.generate(),
+        'pagination': pagination,
         'folder': {
             'name': PRIVMSG_FOLDERS[folder][2],
             'id': PRIVMSG_FOLDERS[folder][1]
