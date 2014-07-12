@@ -218,7 +218,7 @@ def viewtopic(request, topic_slug, page=1):
 
     post_ids = Post.objects.filter(topic=topic) \
                            .values_list('id', flat=True)
-    pagination = Pagination(request, post_ids, page, POSTS_PER_PAGE, url_for(topic),
+    pagination = Pagination2(request, post_ids, page, POSTS_PER_PAGE, url_for(topic),
                             total=topic.post_count, rownum_column='position')
 
     post_ids = list(pagination.get_queryset())
