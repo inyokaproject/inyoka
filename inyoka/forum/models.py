@@ -523,7 +523,7 @@ class Topic(models.Model):
                       'first_unread', 'last_post'):
             return href('forum', 'topic', self.slug, action, **query)
 
-    def get_pagination(self, threshold=3):
+    def get_pagination(self):
         request = current_request._get_current_object()
         pagination = Pagination2(request=request, query=[], page=0, total=self.post_count,
                                  per_page=POSTS_PER_PAGE, link=self.get_absolute_url())
