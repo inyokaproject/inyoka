@@ -9,7 +9,7 @@
 #}
 {%- extends 'planet/page.m.html' %}
 {% from 'macros.html' import render_pagination_mobile %}
-{% set rendered_pagination = render_pagination_mobile(pagination.generate()) %}
+{% set rendered_pagination = render_pagination_mobile(pagination) %}
 
 {% block content %}
   {% set article_index = 0 %}

@@ -59,7 +59,7 @@
                     -#}</a>
                   {%- endif %}
                   {%- if object.paginated %} &#160; &#160; [<span class="pagination">
-                    {{ render_pagination(object.get_pagination().generate(), show_prev=False, show_next=False) }}
+                    {{ render_pagination(object.get_pagination(), show_prev=False, show_next=False) }}
                   </span>]{% endif -%}
                 {% elif type == 'article' -%}
                   <a href="{{ object|url('last_comment') }}" title="{% trans %}Go to last comment{% endtrans %}">{#-
@@ -92,7 +92,7 @@
       <input type="submit" name="mark_read" value="{% trans %}Mark selected subscriptions as read{% endtrans %}" />
     </div>
   </form>
-  <div class="pagination pagination_right">{{ render_pagination(pagination.generate()) }}</div>
+  <div class="pagination pagination_right">{{ render_pagination(pagination) }}</div>
 {% endblock %}
 
 {% block additional_scripts %}

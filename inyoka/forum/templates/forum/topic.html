@@ -26,7 +26,7 @@
   {% do BREADCRUMB.append(parent.name, parent|url, False) %}
 {% endfor %}
 
-{% set rendered_pagination = render_pagination(pagination.generate()) %}
+{% set rendered_pagination = render_pagination(pagination) %}
 
 {% macro generate_subscription_link(do='subscribe') %}
   {{ href('forum', 'topic', topic.slug, do, next=CURRENT_URL)|e }}

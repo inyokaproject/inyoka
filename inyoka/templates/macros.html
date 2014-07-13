@@ -51,7 +51,8 @@
 
 
 {# Pagination macro #}
-{% macro render_pagination(pagination, show_prev=True, show_next=True) %}**
+{% macro render_pagination(pagination, show_prev=True, show_next=True, threshold=2) %}
+{% set pagination = pagination.generate(threshold=threshold) %}
 {%- if show_prev -%}
   {%- if pagination['prev'] -%}
     <a href="{{ pagination['prev']}}" class="prev">« {% trans %}Previous{% endtrans %}</a>
@@ -79,7 +80,8 @@
 
 
 {# Pagination macro for mobile #}
-{% macro render_pagination_mobile(pagination) %}
+{% macro render_pagination_mobile(pagination, threshold=2) %}
+{% set pagination=pagination.generate(threshold=threshold) %}
   {%- if pagination['first'] -%}<a href="{{ pagination['first'] }}" class="prev first">«</a>{%- endif -%}
   {%- if pagination['prev'] -%}<a href="{{ pagination['prev'] }}" class="prev">« {% trans %}Previous{% endtrans %}</a>{%- endif -%}
   <span class="active">{% trans %}Page{% endtrans %} {{ pagination['current_page'] }} / {{ pagination['pages'] }}</span>

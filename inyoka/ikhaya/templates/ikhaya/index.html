@@ -10,7 +10,7 @@
 {%- extends 'ikhaya/page.html' %}
 {%- from 'macros.html' import render_pagination %}
 
-{% set rendered_pagination = render_pagination(pagination.generate()) %}
+{% set rendered_pagination = render_pagination(pagination) %}
 
 {% if category %}
   {% set name = category.name %}

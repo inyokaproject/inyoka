@@ -10,7 +10,7 @@
 {%- extends 'portal/overall.html' %}
 {% from 'macros.html' import render_pagination %}
 {% do BREADCRUMB.append(_('Static files'), href('portal', 'files')) %}
-{% set rendered_pagination = render_pagination(pagination.generate()) %}
+{% set rendered_pagination = render_pagination(pagination) %}
 
 {% block content %}
 <h3>{% trans %}Static files{% endtrans %}</h3>

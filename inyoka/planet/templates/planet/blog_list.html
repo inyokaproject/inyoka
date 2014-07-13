@@ -10,7 +10,7 @@
 {%- extends 'planet/page.html' %}
 {% from 'macros.html' import render_pagination %}
 {% do BREADCRUMB.append(_('Bloglist'), href('planet', 'bloglist'), True) %}
-{% set rendered_pagination = render_pagination(pagination.generate()) %}
+{% set rendered_pagination = render_pagination(pagination) %}
 
 {% block content %}
   <h3>{% trans %}Blogs{% endtrans %}</h3>

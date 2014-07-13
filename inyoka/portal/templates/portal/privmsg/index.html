@@ -136,7 +136,7 @@
         <tr>
           <td colspan="6">
             <div class="pnfooter">
-              <div class="pagination pagination_right">{{ render_pagination(pagination.generate()) }}</div>
+              <div class="pagination pagination_right">{{ render_pagination(pagination) }}</div>
               <p class="onepage">
                 {% if one_page %}
                   <a href="{{ href('portal', 'privmsg', folder.id) }}">

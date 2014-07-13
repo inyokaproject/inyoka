@@ -12,7 +12,7 @@
 {% from 'macros.html' import render_pagination_mobile %}
 
 {% set back = href('forum') %}
-{% set rendered_pagination = render_pagination_mobile(pagination.generate()) %}
+{% set rendered_pagination = render_pagination_mobile(pagination) %}
 <div class="pagination pagination_right">{{ rendered_pagination }}</div>
 
 {% block content %}

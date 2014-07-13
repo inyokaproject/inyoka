@@ -29,7 +29,7 @@
 {% endmacro %}
 
 {% set name = 'Forum „%s“ - ' % forum.name|e %}
-{% set rendered_pagination = render_pagination(pagination.generate()) %}
+{% set rendered_pagination = render_pagination(pagination) %}
 {% set feeds = [
   (name + _('Captions'), href('forum', 'feeds/forum', forum.slug, 'title/20')),
   (name + _('Teaser'), href('forum', 'feeds/forum', forum.slug, 'short/20')),
@@ -123,7 +123,7 @@
               {%- if topic.paginated %} |
                 {% trans %}Go to page{% endtrans %} 
                 <span class="pagination">
-                    {{ render_pagination(topic.get_pagination().generate(), show_prev=False, show_next=False) }}
+                    {{ render_pagination(topic.get_pagination(), show_prev=False, show_next=False, threshold=3) }}
                 </span>
               {%- endif -%}
             </p>

@@ -9,7 +9,7 @@
 #}
 {%- extends 'planet/page.html' %}
 {% from 'macros.html' import render_pagination %}
-{% set rendered_pagination = render_pagination(pagination.generate()) %}
+{% set rendered_pagination = render_pagination(pagination) %}
 
 {% set feeds = [
   (_('Planet - Captions'), href('planet', 'feeds/title/20')),
