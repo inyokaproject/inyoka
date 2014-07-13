@@ -1273,8 +1273,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
         message = None
     link = href('portal', 'privmsg', folder, 'page')
 
-    pagination = Pagination2(request, entries, page or 1, page and 10
-        or len(entries), link)
+    pagination = Pagination2(request=request, query=entries, page=page, per_page=10, link=link)
 
     return {
         'entries': pagination.get_queryset(),
