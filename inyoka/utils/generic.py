@@ -275,7 +275,7 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
         if context_object_name is not None:
             context[context_object_name] = queryset
 
-        self.object_list = pagination.get_queryset()
+        self.object_list = queryset
 
         return self.render_to_response(context)
 

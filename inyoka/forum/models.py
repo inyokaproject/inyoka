@@ -528,25 +528,6 @@ class Topic(models.Model):
         pagination = Pagination2(request=request, query=[], page=0, total=self.post_count,
                                  per_page=POSTS_PER_PAGE, link=self.get_absolute_url())
         return pagination
-        #pages = max(0, self.post_count - 1) // POSTS_PER_PAGE + 1
-        #if pages == 1:
-        #    return u''
-        #result = []
-        #ellipsis = u'<span class="ellipsis"> … </span>'
-        #was_ellipsis = False
-        #for num in xrange(1, pages + 1):
-        #    if num <= threshold or num > pages - threshold:
-        #        if result and result[-1] != ellipsis:
-        #            result.append(u'<span class="comma">, </span>')
-        #        link = self.get_absolute_url()
-        #        if num != 1:
-        #            link = '%s%d/' % (link, num)
-        #        result.append(u'<a href="%s" class="pageselect">%s</a>' %
-        #                      (link, num))
-        #    elif not was_ellipsis:
-        #        was_ellipsis = True
-        #        result.append(ellipsis)
-        #return u'<span class="pagination">%s</span>' % u''.join(result)
 
     @property
     def paginated(self):
