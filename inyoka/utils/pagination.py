@@ -288,9 +288,11 @@ class Pagination2(object):
 
     def _get_base_link(self, link):
         if link is None:
-            return self.request.path
-        elif isinstance(link, basestring):
+            link = self.request.path
+        if isinstance(link, basestring):
             return link
+        else:
+            self.generate_link = link
 
     def _get_total(self, total):
         if total:
@@ -318,7 +320,7 @@ class Pagination2(object):
 
         return self.queryset
 
-    def generate_link(self, page):
+    def generate_link(self, page, params):
         """ Get link for page number
 
         :param page: page number
@@ -348,23 +350,23 @@ class Pagination2(object):
                       }
 
         if self.page > 2:
-            result_dict['first'] = self.generate_link(1)
+            result_dict['first'] = self.generate_link(1, self.params)
 
         if self.page < (self.pages-1):
-            result_dict['last'] = self.generate_link(self.pages)
+            result_dict['last'] = self.generate_link(self.pages, self.params)
 
         if self.page < self.pages:
-            result_dict['next'] = self.generate_link(self.page + 1)
+            result_dict['next'] = self.generate_link(self.page + 1, self.params)
 
         if self.page > 1:
-            result_dict['prev'] = self.generate_link(self.page - 1)
+            result_dict['prev'] = self.generate_link(self.page - 1, self.params)
 
         for num in xrange(1, self.pages+1):
             if num <= threshold or num > (self.pages-threshold) or \
                abs(self.page - num) < threshold:
                 was_ellipsis = False
                 result_dict['list'] += [{'type': 'page',
-                                         'url': self.generate_link(num),
+                                         'url': self.generate_link(num, self.params),
                                          'current': (num == self.page),
                                          'name': num, }]
             elif not was_ellipsis:
