@@ -121,9 +121,10 @@
               {%- endtrans %} |
               {{ topic.first_post.pub_date|datetime }}
               {%- if topic.paginated %} |
-                {% trans pagination=topic.get_pagination() -%}
-                  Go to page {{ pagination }}
-                {%- endtrans %}
+                {% trans %}Go to page{% endtrans %} 
+                <span class="pagination">
+                    {{ render_pagination(topic.get_pagination().generate(), show_prev=False, show_next=False) }}
+                </span>
               {%- endif -%}
             </p>
           </td>
