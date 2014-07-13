@@ -71,15 +71,16 @@
                 {% if revision.note %}:{% endif %}</span>
               &nbsp;
               {% if revision.note %}{{ revision.note|e }}{% endif %}
-              <span class="actions">
-                <a href="{{ revision|url|e }}" class="view" title="Ansehen"><span>ansehen</span></a>
-                {%- if can.manage %}
-                  <a href="?action=revert&amp;rev={{ revision.id }}" class="revert"
-                     title="{% trans %}Restore{% endtrans %}"><span>{% trans %}Restore{% endtrans %}</span></a>
-                {%- endif %}
-                <a href="?action=export&amp;format=raw&amp;rev={{ revision.id }}" class="raw"
-                   title="{% trans %}Raw{% endtrans %}"><span>{% trans %}Raw{% endtrans %}</span></a>
-              </span>
+            </td>
+            <td>{{ revision.id }}</td>
+            <td class="actions">
+              <a href="{{ revision|url|e }}" class="view" title="{% trans %}View{% endtrans %}"><span>{% trans %}View{% endtrans %}</span></a>
+              {%- if can.manage %}
+              <a href="?action=revert&amp;rev={{ revision.id }}" class="revert"
+                 title="{% trans %}Restore{% endtrans %}"><span>{% trans %}Restore{% endtrans %}</span></a>
+              {%- endif %}
+              <a href="?action=export&amp;format=raw&amp;rev={{ revision.id }}" class="raw"
+                 title="{% trans %}Raw{% endtrans %}"><span>{% trans %}Raw{% endtrans %}</span></a>
             </td>
           </tr>
         {%- endfor %}
