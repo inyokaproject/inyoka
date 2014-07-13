@@ -47,7 +47,7 @@ from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
-from inyoka.utils.pagination import Pagination2
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.search import search
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page as WikiPage
@@ -525,7 +525,7 @@ class Topic(models.Model):
 
     def get_pagination(self):
         request = current_request._get_current_object()
-        pagination = Pagination2(request=request, query=[], page=0, total=self.post_count,
+        pagination = Pagination(request=request, query=[], page=0, total=self.post_count,
                                  per_page=POSTS_PER_PAGE, link=self.get_absolute_url())
         return pagination
 

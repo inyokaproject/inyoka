@@ -63,7 +63,7 @@ from inyoka.utils import generic
 from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
 from inyoka.utils.mail import send_mail
 from inyoka.utils.notification import send_notification
-from inyoka.utils.pagination import Pagination, Pagination2
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.sessions import get_sessions, make_permanent, get_user_record
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
@@ -1273,7 +1273,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
         message = None
     link = href('portal', 'privmsg', folder, 'page')
 
-    pagination = Pagination2(request=request, query=entries, page=page, per_page=10, link=link)
+    pagination = Pagination(request=request, query=entries, page=page, per_page=10, link=link)
 
     return {
         'entries': pagination.get_queryset(),
@@ -1505,7 +1505,7 @@ def grouplist(request, page=1):
         user_groups = request.user.groups.filter(is_public=True)
     table = Sortable(groups, request.GET, 'name',
                      columns=['id', 'name'])
-    pagination = Pagination2(request, table.get_queryset(), page, 15,
+    pagination = Pagination(request, table.get_queryset(), page, 15,
                             link=href('portal', 'groups'))
     return {
         'groups': pagination.get_queryset(),
@@ -1526,7 +1526,7 @@ def group(request, name, page=1):
 
     table = Sortable(users, request.GET, 'id',
         columns=['id', 'username', 'location', 'date_joined', 'post_count'])
-    pagination = Pagination2(request, table.get_queryset(), page, 15,
+    pagination = Pagination(request, table.get_queryset(), page, 15,
                             link=href('portal', 'group', name))
     return {
         'group': group,

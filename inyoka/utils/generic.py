@@ -19,7 +19,7 @@ from django.views.generic import edit, base, list
 from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.http import TemplateResponse
-from inyoka.utils.pagination import Pagination, Pagination2
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
@@ -247,7 +247,7 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
     def get_custom_pagination(self, queryset):
         page = self.kwargs.get('page') or self.request.GET.get('page') or 1
         cqry = get_simplified_queryset(queryset)
-        pagination = Pagination2(self.request, queryset, page,
+        pagination = Pagination(self.request, queryset, page,
                                 self.get_paginate_by(queryset),
                                 total=cqry.count(),
                                 link=self.base_link)

@@ -25,7 +25,7 @@ from inyoka.markup.utils import simple_filter
 from inyoka.utils.cache import cache
 from inyoka.utils.dates import format_time, datetime_to_timezone
 from inyoka.utils.imaging import parse_dimensions
-from inyoka.utils.pagination import Pagination, Pagination2
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, url_for, urlencode, is_external_target
@@ -91,7 +91,7 @@ class RecentChanges(macros.Macro):
             revisions = Revision.objects.filter(
                 change_date__gt=(datetime.utcnow() - timedelta(days=max_days))
             ).select_related('user', 'page')
-            pagination = Pagination2(context.request, revisions,
+            pagination = Pagination(context.request, revisions,
                                     page_num, self.per_page, link_func)
 
             for revision in pagination.get_queryset():

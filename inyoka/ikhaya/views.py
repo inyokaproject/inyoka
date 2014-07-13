@@ -40,7 +40,7 @@ from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.storage import storage
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
-from inyoka.utils.pagination import Pagination, Pagination2
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.notification import send_notification
 from inyoka.utils.flash_confirmation import confirm_action
 
@@ -115,7 +115,7 @@ def index(request, year=None, month=None, category_slug=None, page=1, full=False
 
     link = href('ikhaya', *link)
     articles = articles.order_by('public', '-updated').only('pub_date', 'slug')
-    pagination = Pagination2(request, articles, page, 15, _generate_link)
+    pagination = Pagination(request, articles, page, 15, _generate_link)
     articles = Article.objects.get_cached([(a.pub_date, a.slug) for a in
         pagination.get_queryset()])
 

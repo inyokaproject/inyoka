@@ -50,7 +50,7 @@ from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.generic import trigger_fix_errors_message
 from inyoka.utils.http import templated, AccessDeniedResponse, does_not_exist_is_404
 from inyoka.utils.notification import send_notification, notify_about_subscription
-from inyoka.utils.pagination import Pagination, Pagination2
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
@@ -131,7 +131,7 @@ def forum(request, slug, page=1):
     topic_ids = Topic.objects.filter(forum=forum)\
                              .values_list('id', flat=True)\
                              .order_by('-sticky', '-last_post')
-    pagination = Pagination2(request, topic_ids, page, TOPICS_PER_PAGE,
+    pagination = Pagination(request, topic_ids, page, TOPICS_PER_PAGE,
                             url_for(forum), total=forum.topic_count)
 
     subforums = filter_invisible(request.user, forum.children, perm=privs)
@@ -218,7 +218,7 @@ def viewtopic(request, topic_slug, page=1):
 
     post_ids = Post.objects.filter(topic=topic) \
                            .values_list('id', flat=True)
-    pagination = Pagination2(request, post_ids, page, POSTS_PER_PAGE, url_for(topic),
+    pagination = Pagination(request, post_ids, page, POSTS_PER_PAGE, url_for(topic),
                             total=topic.post_count, rownum_column='position')
 
     post_ids = list(pagination.get_queryset())
@@ -1503,7 +1503,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
 
     topics = topics.distinct()
     total_topics = get_simplified_queryset(topics).count()
-    pagination = Pagination2(request, topics, page, TOPICS_PER_PAGE, url,
+    pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
                             total=total_topics, max_pages=MAX_PAGES_TOPICLIST)
     topic_ids = [tid for tid in pagination.get_queryset()]
 

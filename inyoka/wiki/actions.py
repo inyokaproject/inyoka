@@ -32,7 +32,7 @@ from inyoka.portal.utils import simple_check_login
 from inyoka.utils.diff3 import merge
 from inyoka.utils.http import (templated, TemplateResponse, AccessDeniedResponse,
     does_not_exist_is_404)
-from inyoka.utils.pagination import Pagination, Pagination2
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
@@ -755,7 +755,7 @@ def do_log(request, name):
     if request.GET.get('format') == 'atom':
         return HttpResponseRedirect(href('wiki', '_feed', page.name, 20))
 
-    pagination = Pagination2(request, page.revisions.all().order_by('-id'), pagination_page,
+    pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
                             REVISIONS_PER_PAGE, link_func)
     return {
         'page': page,

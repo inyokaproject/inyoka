@@ -25,7 +25,7 @@ from inyoka.utils.dates import group_by_day
 from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.http import templated, does_not_exist_is_404
 from inyoka.utils.mail import send_mail
-from inyoka.utils.pagination import Pagination, Pagination2
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
@@ -64,7 +64,7 @@ def index(request, page=1):
     if not request.user.can('blog_edit'):
         entries = entries.filter(hidden=False)
 
-    pagination = Pagination2(request, entries, page, 25, href('planet'))
+    pagination = Pagination(request, entries, page, 25, href('planet'))
     queryset = pagination.get_queryset()
     return {
         'days': group_by_day(queryset),
