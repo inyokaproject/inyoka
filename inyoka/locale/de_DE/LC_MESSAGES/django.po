@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2013-10-19 16:33+0200\n"
+"POT-Creation-Date: 2014-07-13 18:45+0200\n"
 "PO-Revision-Date: 2012-11-03 12:49+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -35,6 +35,20 @@ msgstr ""
 #: inyoka/templates/appheader.html:9
 msgid "Portal"
 msgstr "Portal"
+
+#: inyoka/templates/macros.html:58 inyoka/templates/macros.html:60
+#: inyoka/templates/macros.html:86
+msgid "Previous"
+msgstr "Zurück"
+
+#: inyoka/templates/macros.html:74 inyoka/templates/macros.html:76
+#: inyoka/templates/macros.html:88
+msgid "Next"
+msgstr "Weiter"
+
+#: inyoka/templates/macros.html:87
+msgid "Page"
+msgstr "Seite"
 
 #: inyoka/templates/overall.html:95
 #, python-format
@@ -314,20 +328,6 @@ msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
 #: inyoka/utils/generic.py:220
 msgid "Canceled."
 msgstr "Abgebrochen."
-
-#: inyoka/utils/pagination.py:156 inyoka/utils/pagination.py:160
-#: inyoka/utils/pagination.py:206
-msgid "Next »"
-msgstr "Weiter »"
-
-#: inyoka/utils/pagination.py:166 inyoka/utils/pagination.py:170
-#: inyoka/utils/pagination.py:208
-msgid "« Previous"
-msgstr "« Zurück"
-
-#: inyoka/utils/pagination.py:201
-msgid "Page"
-msgstr "Seite"
 
 #: inyoka/utils/sessions.py:83
 msgid ""
