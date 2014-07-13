@@ -177,28 +177,29 @@ class NewEventForm(forms.ModelForm):
 
         return event
 
-    def clean(self):
+    def clean_enddate(self):
+        cleaned_data = self.cleaned_data
+        startdate = cleaned_data.get('date')
+        enddate = cleaned_data.get('enddate')
+        if startdate and enddate and enddate < startdate:
+            raise forms.ValidationError(ugettext_lazy(u'The end date must '
+                u'occur after the start date.'))
+        return enddate
+
+    def clean_endtime(self):
         cleaned_data = self.cleaned_data
         startdate = cleaned_data.get('date')
         starttime = cleaned_data.get('time')
         enddate = cleaned_data.get('enddate')
         endtime = cleaned_data.get('endtime')
-        if startdate and enddate and enddate < startdate:
-            self._errors['enddate'] = self.error_class([ugettext_lazy(u'The '
-                u'end date must occur after the start date.')])
-            del cleaned_data['enddate']
-        elif startdate and endtime is not None and (starttime is None or enddate is None):
-            self._errors['endtime'] = self.error_class([ugettext_lazy(u'Please'
-                u' fill in start time and end date if you want to use the end '
-                u'time.')])
-            del cleaned_data['endtime']
-        elif startdate == enddate:
+        if startdate and endtime is not None and (starttime is None or enddate is None):
+            raise forms.ValidationError(ugettext_lazy(u'Please fill in start '
+                u'time and end date if you want to use the end time.'))
+        elif enddate is not None and startdate == enddate:
             if starttime is not None and endtime is not None and endtime < starttime:
-                self._errors['endtime'] = self.error_class([ugettext_lazy(u'The'
-                    u' end time must occur after the start time.')])
-                del cleaned_data['endtime']
-
-        return cleaned_data
+                raise forms.ValidationError(ugettext_lazy(u'The end time must '
+                    u'occur after the start time.'))
+        return endtime
 
     class Meta:
         model = Event
