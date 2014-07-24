@@ -23,6 +23,9 @@ master_doc = 'index'
 project = u'Inyoka'
 copyright = u'2007 - %d by the Inyoka Team, see AUTHORS for more details' % datetime.date.today().year
 
+# Show todo notes
+todo_include_todos = True
+
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
