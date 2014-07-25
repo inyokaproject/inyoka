@@ -62,6 +62,10 @@
                   <a href="{{ object|url('last_comment') }}" title="{% trans %}Go to last comment{% endtrans %}">{#-
                     -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Go to last comment{% endtrans %}" />{#-
                   -#}</a>
+                {% elif type == 'page' -%}
+                  <a href="{{ object|url('log') }}" title="{% trans %}Revisions{% endtrans %}">{#-
+                    -#}<img src="{{ href('static', 'img/icons/raw.png') }}" alt="{% trans %}Revisions{% endtrans %}" height="16" />{#-
+                  -#}</a>
                 {%- endif %}
                 {%- if not sub.can_read %} <a href="{{ object|url('unsubscribe', next=CURRENT_URL) }}">({% trans %}Unsubscribe{% endtrans %})</a>{% endif %}
               </td>
