@@ -1919,9 +1919,8 @@ def config(request):
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
 
-            data['countdown_date'] = str(data['countdown_date'])
-            if data['countdown_date'] != storage['countdown_date']:
-                storage['countdown_date'] = data['countdown_date']
+            if data['countdown_date']:
+                storage['countdown_date'] = str(data['countdown_date'])
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:
@@ -1929,7 +1928,7 @@ def config(request):
     else:
         storage['distri_versions'] = storage['distri_versions'] or u'[]'
         form = ConfigurationForm(initial=storage.get_many(keys +
-                                                ['global_message']))
+                                                ['global_message', 'countdown_date']))
 
     return {
         'form': form,
