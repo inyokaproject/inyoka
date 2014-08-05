@@ -68,8 +68,8 @@ from inyoka.utils.urls import urlencode
 class Pagination(object):
     """ Handle pagination """
 
-    def __init__(self, request, query, page, per_page=10, link=None, 
-                       total=None, rownum_column=None, max_pages=None):
+    def __init__(self, request, query, page, per_page=10, link=None, total=None,
+                       rownum_column=None, max_pages=None, one_page=False):
         """ Create pagination object
 
             :param request: The current request.
@@ -80,18 +80,22 @@ class Pagination(object):
             :param total: Total number of items in query, can be None.
             :param rownum_column: Name of the column used to order items.
             :param max_pages: Maximum number of pages.
+            :param one_page: If set, show all elements on one page
         """
 
         self.request       = request
         self.query         = query
         self.page          = int(page)
-        self.per_page      = per_page
+        self.per_page      = int(per_page)
         self.base_link     = self._get_base_link(link)
         self.total         = self._get_total(total)
         self.rownum_column = rownum_column
         self.pages         = max(0, (self.total-1)) // self.per_page + 1
-
         self.queryset      = None
+
+        if one_page:
+            self.per_page = self.total
+            self.pages = 1
 
         if max_pages and self.pages > max_pages:
             self.pages = max_pages
