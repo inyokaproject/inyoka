@@ -12,6 +12,8 @@
 
 {%- extends 'wiki/page.html' %}
 {% do BREADCRUMB.append(_('Revisions'), page|url('log'), True) %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
 {% set action = 'log' %}
 {% set feeds = [
   (_('Page revisions'), '?action=log&format=atom')
@@ -91,7 +93,7 @@
     <br />
 
     <div class="pagination left_pagination">
-      {{ pagination.generate() }}
+      {{ rendered_pagination }}
       <div style="clear: both"></div>
     </div>
   </div>

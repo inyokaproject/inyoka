@@ -12,6 +12,7 @@
 {%- extends 'portal/usercp/overall.html' %}
 {% do BREADCRUMB.append(_('Subscriptions'), href('portal', 'usercp', 'subscriptions'), True) %}
 {% set selected = 'subscriptions' %}
+{% from 'macros.html' import render_pagination %}
 
 {% block sidebar %}
   {{ super() }}
@@ -57,7 +58,9 @@
                       -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Show unread posts{% endtrans %}" />{#-
                     -#}</a>
                   {%- endif %}
-                  {%- if object.paginated %} &#160; &#160; [{{ object.get_pagination() }}]{% endif -%}
+                  {%- if object.paginated %} &#160; &#160; [<span class="pagination">
+                    {{ render_pagination(object.get_pagination(), show_prev=False, show_next=False) }}
+                  </span>]{% endif -%}
                 {% elif type == 'article' -%}
                   <a href="{{ object|url('last_comment') }}" title="{% trans %}Go to last comment{% endtrans %}">{#-
                     -#}<img src="{{ href('static', 'img/forum/goto.png') }}" alt="{% trans %}Go to last comment{% endtrans %}" />{#-
@@ -89,7 +92,7 @@
       <input type="submit" name="mark_read" value="{% trans %}Mark selected subscriptions as read{% endtrans %}" />
     </div>
   </form>
-  {{ pagination.generate(position='right') }}
+  <div class="pagination pagination_right">{{ render_pagination(pagination) }}</div>
 {% endblock %}
 
 {% block additional_scripts %}

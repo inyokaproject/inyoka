@@ -10,6 +10,7 @@
 {%- extends 'portal/privmsg/overall.html' %}
 {% set selected = folder.id %}
 {% do BREADCRUMB.append(folder.name, folder.href, True) %}
+{% from 'macros.html' import render_pagination %}
 
 {% block portal_content %}
   {%- if message %}
@@ -135,7 +136,7 @@
         <tr>
           <td colspan="6">
             <div class="pnfooter">
-              {{ pagination }}
+              <div class="pagination pagination_right">{{ render_pagination(pagination) }}</div>
               <p class="onepage">
                 {% if one_page %}
                   <a href="{{ href('portal', 'privmsg', folder.id) }}">

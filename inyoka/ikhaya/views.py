@@ -92,16 +92,13 @@ event_delete = generic.DeleteView.as_view(model=Event,
 @templated('ikhaya/index.html', modifier=context_modifier)
 def index(request, year=None, month=None, category_slug=None, page=1, full=False):
     """Shows a few articles by different criteria"""
-    def _generate_link(page, params):
-        if page == 1:
-            url = link
-        else:
-            url = u'%s%d/' % (link, page)
-        return url + (full and 'full/' or '') + (params and u'?' + urlencode(params) or u'')
 
     category = None
     can_read = request.user.can('article_read')
     articles = Article.published if not can_read else Article.objects
+
+    _page = (page if page>1 else None, )
+    _full = ('full', )
 
     if year and month:
         articles = articles.filter(pub_date__year=year, pub_date__month=month)
@@ -113,9 +110,18 @@ def index(request, year=None, month=None, category_slug=None, page=1, full=False
     else:
         link = tuple()
 
-    link = href('ikhaya', *link)
+    teaser_link = link + _page
+    full_link = link + _full + _page
+
+    if full:
+        link = link + _full
+
+    link =  href('ikhaya', *link)
+    teaser_link =  href('ikhaya', *teaser_link)
+    full_link =  href('ikhaya', *full_link)
+
     articles = articles.order_by('public', '-updated').only('pub_date', 'slug')
-    pagination = Pagination(request, articles, page, 15, _generate_link)
+    pagination = Pagination(request, articles, page, 15, link)
     articles = Article.objects.get_cached([(a.pub_date, a.slug) for a in
         pagination.get_queryset()])
 
@@ -131,6 +137,8 @@ def index(request, year=None, month=None, category_slug=None, page=1, full=False
         'subscription_ids': subscription_ids,
         'full': full,
         'show_full_choice': True,
+        'full_link': full_link,
+        'teaser_link': teaser_link,
     }
 
 
