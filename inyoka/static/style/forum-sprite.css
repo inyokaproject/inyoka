@@ -9,6 +9,7 @@ table.forum td.icon div.icon .locked{background-image:url('../img/forum-sprite1.
 table.forum td.icon div.icon .reported{background-image:url('../img/forum-sprite1.png?e4acfcec0e817e9b6dd885efcde8b989');background-position:left -72px;top:24px;left:0;z-index:40;}
 table.forum tr.entry p.name{margin:0;padding:0 0 5px 0;font-weight:bold;}
 table.forum tr.entry td.forum{padding:8px;}
+table.forum tr.sticky{background-color:#ECE1C2;font-weight:bold;}table.forum tr.sticky:hover{background-color:#e6d7af;}
 table.forum tr:hover{background-color:#F8F4E9;}
 table.forum th.view_count{text-align:center;}
 table.forum td.last_post{text-align:right;width:185px;font-size:0.9em;padding:5px 15px 5px 0;}
