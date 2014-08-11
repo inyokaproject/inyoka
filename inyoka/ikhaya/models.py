@@ -6,7 +6,7 @@
     Database models for Ikhaya.
 
     :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :license: BSD, see LICENSE for more details.
 """
 from operator import attrgetter, itemgetter
 from datetime import datetime
@@ -158,6 +158,14 @@ class CommentManager(models.Manager):
                                .select_related('author__username', 'article__subject')
                                .order_by('-id')[:maxcount])
         return comments[:count]
+
+
+class EventManager(models.Manager):
+
+    def get_upcoming(self, count=10):
+        return self.get_query_set().order_by('date').filter(Q(visible=True) & (
+            (Q(enddate__gte=datetime.utcnow()) & Q(date__lte=datetime.utcnow())) |
+            (Q(date__gte=datetime.utcnow()))))[:count]
 
 
 class Category(models.Model):
@@ -411,7 +419,9 @@ class Report(models.Model):
 
 
 class Suggestion(models.Model):
+
     objects = SuggestionManager()
+
     author = models.ForeignKey(User, related_name='suggestion_set')
     pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
     title = models.CharField(ugettext_lazy(u'Title'), max_length=100)
@@ -461,7 +471,9 @@ class Suggestion(models.Model):
 
 
 class Comment(models.Model):
+
     objects = CommentManager()
+
     article = models.ForeignKey(Article, null=True)
     text = models.TextField()
     author = models.ForeignKey(User)
@@ -492,6 +504,8 @@ class Event(models.Model):
     class Meta:
         db_table = 'portal_event'
         app_label = 'portal'
+
+    objects = EventManager()
 
     name = models.CharField(max_length=50)
     slug = models.SlugField(unique=True, max_length=100, db_index=True)

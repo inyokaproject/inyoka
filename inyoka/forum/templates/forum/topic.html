@@ -7,7 +7,7 @@
     It is "paginated".
 
     :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
 {% from 'macros.html' import breadcrumb %}
@@ -209,7 +209,7 @@
                    alt="{% trans user=post.author.username|e %}Avatar of {{ user }}{% endtrans %}" />
             {%- endif %}
             <p>{% trans %}Member since:{% endtrans %}<br />{{ post.author.date_joined|naturalday }}</p>
-            <p>{% trans %}Posts:{% endtrans %} {{ post.author.post_count }}</p>
+            <p>{% trans %}Posts:{% endtrans %} <a href="{{ href('forum', 'author', post.author.username) }}">{{ post.author.post_count }}</a></p>
             {%- if post.author.location %}
               <p>{% trans %}Residence:{% endtrans %} {{ post.author.location|e }}</p>
             {%- endif %}
@@ -268,6 +268,9 @@
                 <img src="{{ href('static', 'img', 'icon_minipost.gif') }}" alt="{% trans %}Post{% endtrans %}" />{#
               #}</a>
               {{ post.pub_date|datetime }}
+              {% if post.has_revision %}
+               ({% trans %}last edited:{% endtrans %} {{ post.revisions.latest('store_date').store_date|datetime }})
+              {% endif %}
             </div>
             {% if can_moderate %}
               <div class="splitinfo admin_link">

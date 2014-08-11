@@ -5,7 +5,7 @@
     On this page the user can suggest a new blog for the planet.
 
     :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
-    :license: GNU GPL, see LICENSE for more details.
+    :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'planet/page.html' %}
 {% from 'macros.html' import render_form %}
@@ -13,7 +13,7 @@
 
 {% block planet_content %}
   {# TODO: Text should be changeable via interface #}
-  <p>Hier kannst du einen Blog für den Planeten vorschlagen.</p>
+  <p>{% trans %}With this form you can suggest a new blog for the planet.{% endtrans %}</p>
   <p>Die wichtigsten Kriterien sind:</p>
   <ul>
     <li>Ubuntu/Linux-bezogener Inhalt, bei gemischtem Inhalt muss ein separater Feed zur Verfügung gestellt werden.</li>
@@ -22,7 +22,7 @@
     <li>Die Beiträge dürfen keine Werbung enthalten.</li>
     <li>Die Beiträge müssen in deutscher Sprache verfasst sein.</li>
   </ul>
-  <p>Bitte hab ein wenig Geduld mit der Bearbeitung. Es kann etwas dauern, bis der Blog von uns geprüft wurde.</p>
+  <p>{% trans %}Please be patient. It could take a while, until we approve your suggestion.{% endtrans %}</p>
   <form action="{{ href('planet', 'suggest') }}" method="post">
     {{ csrf_token() }}
     <dl>
