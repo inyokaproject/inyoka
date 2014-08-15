@@ -840,8 +840,7 @@ class ConfigurationForm(forms.Form):
     global_message = forms.CharField(label=ugettext_lazy(u'Global Message'),
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
         help_text=ugettext_lazy(u'This message will displayed on every page in the '
-                      u'header. To disable it, leave the field empty. '
-                      u'Needs to be valid XHTML.'))
+                      u'header. To disable it, leave the field empty.'))
     welcome_message = forms.CharField(label=ugettext_lazy(u'Welcome Message'),
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
         help_text=ugettext_lazy('This is the welcome message displayed on the main page.'))
@@ -899,9 +898,6 @@ class ConfigurationForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': 3}),
         label=ugettext_lazy(u'Description about the planet that will be used '
                             u'on the planet page and in the feed aggregations.'))
-
-    def clean_global_message(self):
-        return cleanup_html(self.cleaned_data.get('global_message', ''))
 
     def clean_distri_versions(self):
         data = self.cleaned_data

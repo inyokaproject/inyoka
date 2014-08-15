@@ -1907,6 +1907,8 @@ def config(request):
             if data['global_message'] != storage['global_message']:
                 storage['global_message'] = data['global_message']
                 storage['global_message_time'] = time.time()
+                node = parse(data['global_message'])
+                storage['global_message_rendered'] = node.render(context, 'html')
 
             if data['welcome_message']:
                 node = parse(data['welcome_message'])
