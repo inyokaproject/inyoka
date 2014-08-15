@@ -251,7 +251,7 @@ development installation:
 
 .. code-block:: console
 
-  (inyoka)$ python manage.py syncdb@localhost
+  (inyoka)$ python manage.py syncdb
   (inyoka)$  python manage.py migrate
   (inyoka)$  python manage.py create_superuser
   username: admin
