@@ -1932,6 +1932,12 @@ def config(request):
                 node = parse(data['planet_description'])
                 storage['planet_description_rendered'] = node.render(context, 'html')
 
+            if data['ikhaya_description']:
+                context = RenderContext(request, simplified=True)
+                node = parse(data['ikhaya_description'])
+                storage['ikhaya_description_rendered'] = node.render(context, 'html')
+
+
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:
             generic.trigger_fix_errors_message(request)
