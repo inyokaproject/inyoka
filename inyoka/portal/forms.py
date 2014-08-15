@@ -842,10 +842,10 @@ class ConfigurationForm(forms.Form):
         help_text=ugettext_lazy(u'This message will displayed on every page in the '
                       u'header. To disable it, leave the field empty.'))
     welcome_message = forms.CharField(label=ugettext_lazy(u'Welcome Message'),
-        widget=forms.Textarea(attrs={'rows': 3}), required=False,
+        widget=forms.Textarea(attrs={'rows': 5}), required=False,
         help_text=ugettext_lazy('This is the welcome message displayed on the main page.'))
     blocked_hosts = forms.CharField(label=ugettext_lazy(u'Blocked hosts for email addresses'),
-        widget=forms.Textarea(attrs={'rows': 3}), required=False,
+        widget=forms.Textarea(attrs={'rows': 5}), required=False,
         help_text=ugettext_lazy(u'Users cannot use email addresses from these hosts to '
                       u'register an account.'))
     team_icon = forms.ImageField(label=ugettext_lazy(u'Global team icon'), required=False,
@@ -891,11 +891,11 @@ class ConfigurationForm(forms.Form):
     distri_versions = forms.CharField(required=False, widget=HiddenInput())
 
     ikhaya_description = forms.CharField(required=False,
-        widget=forms.Textarea(attrs={'rows': 3}),
+        widget=forms.Textarea(attrs={'rows': 5}),
         label=ugettext_lazy(u'Description about Ikhaya that will be used '
                             u'on the start page and in the feed aggregations.'))
     planet_description = forms.CharField(required=False,
-        widget=forms.Textarea(attrs={'rows': 3}),
+        widget=forms.Textarea(attrs={'rows': 5}),
         label=ugettext_lazy(u'Description about the planet that will be used '
                             u'on the planet page and in the feed aggregations.'))
 
