@@ -1902,12 +1902,13 @@ def config(request):
             for k in keys:
                 storage[k] = data[k]
 
+            context = RenderContext(request, simplified=True)
+
             if data['global_message'] != storage['global_message']:
                 storage['global_message'] = data['global_message']
                 storage['global_message_time'] = time.time()
 
             if data['welcome_message']:
-                context = RenderContext(request, simplified=True)
                 node = parse(data['welcome_message'])
                 storage['welcome_message_rendered'] = node.render(context, 'html')
 
@@ -1919,7 +1920,6 @@ def config(request):
                 storage['team_icon'] = team_icon = fn
 
             if data['license_note']:
-                context = RenderContext(request, simplified=True)
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
 
@@ -1929,17 +1929,14 @@ def config(request):
                 storage['countdown_date'] = str(data['countdown_date'])
 
             if data['wiki_edit_note']:
-                context = RenderContext(request, simplified=True)
                 node = parse(data['wiki_edit_note'])
                 storage['wiki_edit_note_rendered'] = node.render(context, 'html')
 
             if data['planet_description']:
-                context = RenderContext(request, simplified=True)
                 node = parse(data['planet_description'])
                 storage['planet_description_rendered'] = node.render(context, 'html')
 
             if data['ikhaya_description']:
-                context = RenderContext(request, simplified=True)
                 node = parse(data['ikhaya_description'])
                 storage['ikhaya_description_rendered'] = node.render(context, 'html')
 
