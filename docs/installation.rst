@@ -250,6 +250,7 @@ Next you need to add a superuser so that you gain all rights in the
 development installation:
 
 .. code-block:: console
+
   (inyoka)$ python manage.py syncdb@localhost
   (inyoka)$  python manage.py migrate
   (inyoka)$  python manage.py create_superuser
