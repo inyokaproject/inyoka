@@ -175,6 +175,7 @@ def index(request):
             }
 
     return {
+        'welcome_message_rendered': storage['welcome_message_rendered'],
         'ikhaya_latest': list(ikhaya_latest),
         'sessions': get_sessions(),
         'record': record,
@@ -1884,7 +1885,7 @@ openid_consumer = OpenIdConsumer(SessionPersist)
 @require_permission('configuration_edit')
 @templated('portal/configuration.html')
 def config(request):
-    keys = ['max_avatar_width', 'max_avatar_height', 'max_avatar_size',
+    keys = ['welcome_message', 'max_avatar_width', 'max_avatar_height', 'max_avatar_size',
             'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
             'license_note', 'get_ubuntu_description', 'blocked_hosts', 'wiki_edit_note',
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'wiki_edit_note',
@@ -1904,6 +1905,11 @@ def config(request):
             if data['global_message'] != storage['global_message']:
                 storage['global_message'] = data['global_message']
                 storage['global_message_time'] = time.time()
+
+            if data['welcome_message']:
+                context = RenderContext(request, simplified=True)
+                node = parse(data['welcome_message'])
+                storage['welcome_message_rendered'] = node.render(context, 'html')
 
             if data['team_icon']:
                 default_storage.delete(storage['team_icon'])

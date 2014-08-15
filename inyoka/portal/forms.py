@@ -842,6 +842,9 @@ class ConfigurationForm(forms.Form):
         help_text=ugettext_lazy(u'This message will displayed on every page in the '
                       u'header. To disable it, leave the field empty. '
                       u'Needs to be valid XHTML.'))
+    welcome_message = forms.CharField(label=ugettext_lazy(u'Welcome Message'),
+        widget=forms.Textarea(attrs={'rows': 3}), required=False,
+        help_text=ugettext_lazy('This is the welcome message displayed on the main page.'))
     blocked_hosts = forms.CharField(label=ugettext_lazy(u'Blocked hosts for email addresses'),
         widget=forms.Textarea(attrs={'rows': 3}), required=False,
         help_text=ugettext_lazy(u'Users cannot use email addresses from these hosts to '
