@@ -867,6 +867,10 @@ class ConfigurationForm(forms.Form):
         label=ugettext_lazy(u'Information page about new wiki pages'),
         help_text=ugettext_lazy(u'Information page to which a “create” link should '
                     u'redirect to.'))
+    wiki_edit_note = forms.CharField(required=False,
+        widget=forms.Textarea(attrs={'rows': 5}),
+        label=ugettext_lazy(u'Wiki helptext'),
+        help_text=ugettext_lazy(u'This text appears above the wiki editor.'))
     team_icon_width = forms.IntegerField(min_value=1, required=False)
     team_icon_height = forms.IntegerField(min_value=1, required=False)
     license_note = forms.CharField(required=False, label=ugettext_lazy(u'License note'),

@@ -1886,8 +1886,8 @@ openid_consumer = OpenIdConsumer(SessionPersist)
 def config(request):
     keys = ['max_avatar_width', 'max_avatar_height', 'max_avatar_size',
             'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
-            'license_note', 'get_ubuntu_description', 'blocked_hosts',
-            'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
+            'license_note', 'get_ubuntu_description', 'blocked_hosts', 'wiki_edit_note',
+            'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'wiki_edit_note',
             'team_icon_height', 'team_icon_width', 'distri_versions',
             'countdown_active', 'countdown_target_page', 'countdown_image_url',
             'ikhaya_description', 'planet_description']
@@ -1921,6 +1921,11 @@ def config(request):
                 storage['countdown_date'] = '';
             else:
                 storage['countdown_date'] = str(data['countdown_date'])
+
+            if data['wiki_edit_note']:
+                context = RenderContext(request, simplified=True)
+                node = parse(data['wiki_edit_note'])
+                storage['wiki_edit_note_rendered'] = node.render(context, 'html')
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:
