@@ -99,9 +99,9 @@ files:
 
 .. code-block:: console
 
-  $  sudo apt-get install python-virtualenv libxml2-dev libxslt1-dev
+  $  sudo apt-get install libxml2-dev libxslt1-dev
   libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev
-  libmysqlclient-dev python-setuptools
+  libmysqlclient-dev
 
 Further you need the Python 2.7 files:
 
@@ -110,6 +110,13 @@ Further you need the Python 2.7 files:
   $ sudo apt-get install python2.7
   $ sudo apt-get install python2.7-dev    #(Precise)
   $ sudo apt-get install libpython2.7-dev #(Trusty)
+
+Further you need a recent pip and virtualenv for Python 2.7:
+
+.. code-block:: console
+  $ wget https://bootstrap.pypa.io/get-pip.py
+  $ sudo python get-pip.py
+  $ sudo pip install virtualenv
 
 Adding links (Ubuntu only)
 **************************
