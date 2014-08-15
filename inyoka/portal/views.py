@@ -1919,7 +1919,9 @@ def config(request):
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
 
-            if data['countdown_date']:
+            if not data['countdown_date']:
+                storage['countdown_date'] = '';
+            else:
                 storage['countdown_date'] = str(data['countdown_date'])
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
