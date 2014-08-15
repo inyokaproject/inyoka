@@ -1890,7 +1890,7 @@ def config(request):
             'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
             'team_icon_height', 'team_icon_width', 'distri_versions',
             'countdown_active', 'countdown_target_page', 'countdown_image_url',
-            'countdown_date', 'ikhaya_description', 'planet_description']
+            'ikhaya_description', 'planet_description']
 
     team_icon = storage['team_icon']
 
@@ -1917,7 +1917,9 @@ def config(request):
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
 
-            if data['countdown_date']:
+            if not data['countdown_date']:
+                storage['countdown_date'] = '';
+            else:
                 storage['countdown_date'] = str(data['countdown_date'])
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
@@ -1926,7 +1928,7 @@ def config(request):
     else:
         storage['distri_versions'] = storage['distri_versions'] or u'[]'
         form = ConfigurationForm(initial=storage.get_many(keys +
-                                                ['global_message']))
+                                                ['global_message', 'countdown_date']))
 
     return {
         'form': form,
