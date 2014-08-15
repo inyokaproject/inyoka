@@ -55,7 +55,7 @@ Then you need to add your *public* key to your profile in Git under
 Getting access to the Inyoka repository
 ***************************************
 
-Then you need to write to `a developer <https://github.com/Markush2010>`_
+Then you need to write to `a developer <https://github.com/encbladexp`_
 so that you get the correct access rights to fork the project.  Simply
 klick the "Fork" Button on `<https://github.com/inyokaproject/inyoka>`_ to
 create a new *private* Fork of this Repository.
