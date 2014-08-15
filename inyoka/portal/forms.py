@@ -895,7 +895,7 @@ class ConfigurationForm(forms.Form):
     planet_description = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 3}),
         label=ugettext_lazy(u'Description about the planet that will be used '
-                            u'in the feed aggregations.'))
+                            u'on the planet page and in the feed aggregations.'))
 
     def clean_global_message(self):
         return cleanup_html(self.cleaned_data.get('global_message', ''))

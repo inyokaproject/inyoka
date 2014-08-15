@@ -1927,6 +1927,11 @@ def config(request):
                 node = parse(data['wiki_edit_note'])
                 storage['wiki_edit_note_rendered'] = node.render(context, 'html')
 
+            if data['planet_description']:
+                context = RenderContext(request, simplified=True)
+                node = parse(data['planet_description'])
+                storage['planet_description_rendered'] = node.render(context, 'html')
+
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:
             generic.trigger_fix_errors_message(request)
