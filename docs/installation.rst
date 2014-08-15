@@ -114,6 +114,7 @@ Further you need the Python 2.7 files:
 Further you need a recent pip and virtualenv for Python 2.7:
 
 .. code-block:: console
+
   $ wget https://bootstrap.pypa.io/get-pip.py
   $ sudo python get-pip.py
   $ sudo pip install virtualenv
