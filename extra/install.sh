@@ -43,6 +43,8 @@ cd "$src_dir"
 rm -r "/tmp/xapian-core-${xapian_version}"*
 rm -r "/tmp/xapian-bindings-${xapian_version}"*
 
+set +x
+
 echo 
 echo "################################################"
 echo "Please add the following line to your /etc/hosts"
