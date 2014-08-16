@@ -21,10 +21,10 @@
 
     The dict will have the following structure:
         {
-        'show_first': True,
-        'show_last': True,
         'current_page': 6,
         'pages': 10,
+        'first': 'http://localhost/',
+        'last': 'http://localhost/10',
         'prev': 'http://localhost/5',
         'next': 'http://localhost/7',
         'list': [
