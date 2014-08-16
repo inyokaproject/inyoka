@@ -207,10 +207,10 @@ msgid "Pictures"
 msgstr "Bilder"
 
 #: inyoka/forum/models.py:1135
-#, fuzzy, python-format
+#, python-format
 msgctxt "Link text to an image attachment"
 msgid "View %(name)s"
-msgstr "Bearbeitet am: %(date)s"
+msgstr "%(name)s ansehen"
 
 #: inyoka/forum/models.py:1148
 #, python-format

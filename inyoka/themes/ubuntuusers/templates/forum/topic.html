@@ -209,7 +209,7 @@
                    alt="{% trans user=post.author.username|e %}Avatar of {{ user }}{% endtrans %}" />
             {%- endif %}
             <p>{% trans %}Member since:{% endtrans %}<br />{{ post.author.date_joined|naturalday }}</p>
-            <p>{% trans %}Posts:{% endtrans %} {{ post.author.post_count }}</p>
+            <p>{% trans %}Posts:{% endtrans %} <a href="{{ href('forum', 'author', post.author.username) }}" rel="nofollow">{{ post.author.post_count }}</a></p>
             {%- if post.author.location %}
               <p>{% trans %}Residence:{% endtrans %} {{ post.author.location|e }}</p>
             {%- endif %}
