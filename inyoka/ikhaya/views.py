@@ -832,7 +832,8 @@ def feed_article(request, slug=None, mode='short', count=10):
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
                     url=url, rights=href('portal', 'lizenz'), id=url,
                     icon=href('static', 'img', 'favicon.ico'),
-                    subtitle=storage['ikhaya_description_rendered'])
+                    subtitle=storage['ikhaya_description_rendered'],
+                    subtitle_type='xhtml')
 
     for article in articles:
         kwargs = {}

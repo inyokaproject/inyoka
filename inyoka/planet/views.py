@@ -118,6 +118,7 @@ def feed(request, mode='short', count=10):
                     feed_url=request.build_absolute_uri(),
                     id=href('planet'),
                     subtitle=storage['planet_description_rendered'],
+                    subtitle_type='xhtml',
                     rights=href('portal', 'lizenz'),
                     icon=href('static', 'img', 'favicon.ico'))
 
