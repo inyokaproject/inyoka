@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-06 13:29+0200\n"
+"POT-Creation-Date: 2014-08-16 14:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1155,6 +1155,10 @@ msgstr ""
 #: inyoka/forum/templates/forum/splittopic.html:19
 #, python-format
 msgid "Split topic “%(topic)s”"
+msgstr ""
+
+#: inyoka/forum/templates/forum/splittopic.html:21
+msgid "The chosen posts can form a new topic or be attached to an existing topic."
 msgstr ""
 
 #: inyoka/forum/templates/forum/splittopic.html:26

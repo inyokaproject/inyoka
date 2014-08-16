@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-06 13:29+0200\n"
+"POT-Creation-Date: 2014-08-16 14:14+0200\n"
 "PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -296,9 +296,9 @@ msgstr ""
 #: inyoka/forum/views.py:425
 #, python-format
 msgid ""
-"No discussion is linked yet to the article “%(article)s”. You can create a "
-"discussion now or <a href=\"%(link)s\">link an existing topic</a> to the "
-"article."
+"No discussion is linked yet to the article “%(article)s”. You can create "
+"a discussion now or <a href=\"%(link)s\">link an existing topic</a> to "
+"the article."
 msgstr ""
 "Es wurde noch keine Diskussion mit dem Artikel „%(article)s“ verknüpft. "
 "Du kannst eine Diskussion erstellen oder <a href=\"%(link)s\">ein "
@@ -1185,6 +1185,12 @@ msgstr "Thema aufteilen"
 #, python-format
 msgid "Split topic “%(topic)s”"
 msgstr "Thema „%(topic)s“ aufteilen"
+
+#: inyoka/forum/templates/forum/splittopic.html:21
+msgid "The chosen posts can form a new topic or be attached to an existing topic."
+msgstr ""
+"Die gewählten Beiträge können hier in ein eigenes Thema "
+"abgetrennt werden oder an ein bestehendes Thema angehängt werden."
 
 #: inyoka/forum/templates/forum/splittopic.html:26
 msgid "Create new topic"
