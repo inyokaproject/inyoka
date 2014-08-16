@@ -235,6 +235,7 @@ class DeleteView(LoginMixin, PermissionMixin, BaseDeleteView):
 class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
     default_column = 'id'
     columns = ['id']
+    paginated=True
     paginate_by = 25
     base_link = None
 
@@ -266,20 +267,26 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
 
         queryset = table.get_queryset()
         context['table'] = table
-        context['pagination'] = pagination = self.get_custom_pagination(queryset)
 
-        if pagination.needs_redirect_to:
-            return pagination.needs_redirect_to()
+        if self.paginated:
+            context['pagination'] = pagination = self.get_custom_pagination(queryset)
 
-        context['object_list'] = queryset = pagination.get_queryset()
-        context['paginate_by'] = self.get_paginate_by(queryset)
+            if pagination.needs_redirect_to:
+                return pagination.needs_redirect_to()
+
+            context['object_list'] = queryset = pagination.get_queryset()
+            context['paginate_by'] = self.get_paginate_by(queryset)
+
+            self.object_list = pagination.get_queryset()
+
+        else:
+            context['object_list'] = queryset
+            self.object_list = queryset
+
         context.update(self.get_context_data(**context))
-
         context_object_name = self.get_context_object_name(queryset)
         if context_object_name is not None:
             context[context_object_name] = queryset
-
-        self.object_list = pagination.get_queryset()
 
         return self.render_to_response(context)
 

@@ -105,6 +105,7 @@ files = generic.ListView.as_view(model=StaticFile,
     default_column='identifier',
     template_name='portal/files.html',
     columns=['identifier', 'is_ikhaya_icon'],
+    paginated=False,
     required_permission='static_file_edit',
     base_link=href('portal', 'files'))
 
@@ -132,7 +133,9 @@ def index(request):
     ikhaya_latest = Article.objects.get_latest_articles()
 
     # filter events that are either in the future or are ongoing
-    events = Event.objects.get_upcoming(4)
+    events = Event.objects.filter(Q(visible=True) & (
+        (Q(enddate__gte=datetime.utcnow()) & Q(date__lte=datetime.utcnow())) |
+        (Q(date__gte=datetime.utcnow()))))[:4]
 
     storage_values = storage.get_many(('get_ubuntu_link', 'get_ubuntu_description',
         'session_record', 'session_record_time', 'countdown_active',
@@ -1734,8 +1737,8 @@ def calendar_month(request, year, month):
 
 @templated('portal/calendar_overview.html')
 def calendar_overview(request):
-    events = Event.objects.get_upcoming(10)
-
+    events = Event.objects.order_by('date').filter(date__gte=datetime.utcnow(),\
+        visible=True)[:10]
     return {
         'events': events,
         'year': datetime.utcnow().year,
