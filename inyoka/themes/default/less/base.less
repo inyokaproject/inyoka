@@ -1,0 +1,96 @@
+// TODO: Custom visible-xs-inline class to work around this issue: https://github.com/twbs/bootstrap/issues/8869
+@media screen and (max-width: 768px) {
+    .visible-xs-inline {
+        display: inline-block !important;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .visible-xs-inline {
+        display: none !important;
+    }
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  padding-top: @navbar-height * 1.38;
+}
+
+#main-footer {
+  .text-muted;
+  font-size: @font-size-small;
+  background-color: @gray-lighter;
+
+  ul li {
+    padding: @navbar-padding-vertical @navbar-padding-horizontal;
+  }
+}
+
+@media (min-width: @screen-sm) {
+  #main-wrap {
+    min-height: 100%;
+
+    #main-content {
+      overflow: auto;
+      padding-bottom: @footer-height * 1.25;
+    }
+  }
+
+  #main-footer {
+    margin-top: -@footer-height;
+    height: @footer-height;
+    clear: both;
+    padding: 0;
+    line-height: @footer-height;
+
+    .container {
+      height: @footer-height;
+    }
+
+    ul {
+      .list-inline;
+      li {
+        padding: 0 @navbar-padding-horizontal;
+      }
+    }
+  }
+}
+
+#main-navbar {
+  &.shadowed {
+    box-shadow: 0 5px 30px @gray-darker;
+  }
+}
+
+#sidebar.affix {
+  position: fixed;
+  top: @navbar-height * 1.38;
+}
+
+@media (max-width: 767px) {
+  #sidebar.affix {
+    position: static;
+    top: 0;
+  }
+}
+
+.panel-body {
+  overflow: auto;
+}
+
+.list-group-item {
+  overflow: hidden;
+}
+
+.muted {
+  opacity: 0.4;
+  .transition(ease-out);
+  .transition-duration(200ms);
+
+  &:hover {
+    opacity: 1;
+  }
+}

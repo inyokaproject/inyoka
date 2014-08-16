@@ -79,7 +79,7 @@ STATIC_ROOT = join(BASE_PATH, 'static-collected')
 STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
 
 STATICFILES_DIRS = (
-    join(BASE_PATH, 'static'),
+    join(BASE_PATH, 'themes', 'default', 'static'),
 )
 
 # system settings
@@ -194,7 +194,7 @@ FILE_UPLOAD_HANDLERS = (
 )
 
 TEMPLATE_DIRS = (
-    join(BASE_PATH, 'templates'),
+    join(BASE_PATH, 'themes', 'default', 'templates'),
 )
 
 INSTALLED_APPS = (

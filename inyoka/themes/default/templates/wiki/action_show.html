@@ -1,0 +1,21 @@
+{% extends 'wiki/base.html' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ href('wiki') }}">{% block trans %}Wiki{% endblock %}</a></li>
+  {% for part in page.title.split('/') %}
+    {% if loop.first %}
+      {% set link = href('wiki', part) %}
+    {% else %}
+      {% set link = link + '/' + part %}
+    {% endif %}
+    {% if loop.last %}
+      <li class="active">{{ part }}</li>
+    {% else %}
+      <li><a href="{{ link }}">{{ part }}</a></li>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+
+{% block content %}
+  <div id="wikipage">{{ page.rev.rendered_text }}</div>
+{% endblock %}

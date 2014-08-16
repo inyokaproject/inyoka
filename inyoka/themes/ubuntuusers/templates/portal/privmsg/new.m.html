@@ -1,0 +1,34 @@
+{#
+    portal/privmsg/new.html
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+    Template for writing and sending new private messages.
+
+    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :license: BSD, see LICENSE for more details.
+#}
+{%- extends '../portal/overall.m.html' %}
+{% from 'macros.html' import render_form %}
+{% set back = href('portal', 'privmsg') %}
+
+{% block content %}
+  <form action="{{ href('portal', 'privmsg', 'new') }}" method="post">
+  {{ csrf_token() }}
+    {{ form.non_field_errors() }}
+    {% if USER.can('send_group_pm') %}
+      {{ render_form(form, ['recipient', 'group_recipient', 'subject', 'text']) }}
+    {% else %}
+      {{ render_form(form, ['recipient', 'subject', 'text']) }}
+    {% endif %}
+    <p>
+      <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}" />
+      <input type="submit" value="{% trans %}Send{% endtrans %}" />
+    </p>
+  </form>
+  {%- if preview %}
+    <div class="preview_wrapper">
+      <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
+      <div id="preview" class="preview">{{ preview }}</div>
+    </div>
+  {%- endif %}
+{% endblock %}

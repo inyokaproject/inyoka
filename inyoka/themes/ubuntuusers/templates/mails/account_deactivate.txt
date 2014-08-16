@@ -1,0 +1,9 @@
+Hallo {{ user.username }},
+
+du hast auf ubuntuusers.de deinen Account gelöscht. Zum Schutz vor Missbrauch kannst du deinen Account wiederherstellen. Dies ist bis zu einen Monat ab heute möglich.
+
+Besuche dazu {{ href('portal', 'confirm', 'reactivate_user') }} und gib die folgende Zeichenkette dort ein:
+
+    {{ data|indent(4) }}
+
+Dein Team von ubuntuusers.de

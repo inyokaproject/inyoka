@@ -1,0 +1,5 @@
+Hallo {{ user.username }},
+
+{{ from }} schickt dir folgende Nachricht:
+
+{{ text }}

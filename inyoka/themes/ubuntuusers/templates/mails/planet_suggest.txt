@@ -1,0 +1,14 @@
+Neuer Vorschlag für einen Blog im Planet
+========================================
+
+Vorschlag von:  {{ USER.username }} ({{ USER|url }})
+{%- if mine %}
+                Der Blog gehört {{ USER.username }}{% endif %}
+Name:	        {{ name }}
+URL:	        {{ url }}
+Feed:	        {{ feed_url or '–' }}
+Kontaktadresse: {{ contact_email or '–' }}
+Beschreibung:
+
+    {{ description|wordwrap(60)|indent(4) }}
+

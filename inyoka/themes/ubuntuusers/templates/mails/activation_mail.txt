@@ -1,0 +1,21 @@
+Hallo {{ user.username }},
+
+herzlich Willkommen bei ubuntuusers.de!
+
+
+Es wurde ein Benutzerkonto registriert, und diese E-Mail-Adresse ({{ user.email }}) für die Bestätigung ausgewählt.
+
+Das oben angesprochene Benutzerkonto ist im Moment inaktiv. Du kannst es erst benutzen, wenn du es durch Klicken auf folgenden Link aktiviert hast:
+{{ user.get_absolute_url('activate') }}
+
+Solltest du dieses Benutzerkonto nicht registriert haben, kannst du es unter folgendem Link wieder löschen:
+{{ user.get_absolute_url('activate_delete') }}
+
+Aus Sicherheitsgründen schicken wir Dir Dein Passwort in dieser E-Mail nicht mit und speichern dieses auch nicht im Klartext in unserer Datenbank. Wenn Du es vergisst, können wir Dir also nur ein neues schicken.
+
+Wichtiger Hinweis: Das Team von ubuntuusers.de wird Dich niemals (egal ob per E-Mail oder einer Privatnachricht oder sonstwie) nach Deinem Passwort fragen. Bitte halte dieses geheim und gib es nicht weiter!
+
+Wenn Du selber Beiträge erstellst, unterliegen diese den Lizenzbedingungen von ubuntuusers.de: {{ href('portal', 'lizenz') }}
+
+
+Vielen Dank für Deine Anmeldung!

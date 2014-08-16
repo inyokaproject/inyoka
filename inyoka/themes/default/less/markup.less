@@ -1,0 +1,68 @@
+@import 'pygments';
+
+.headerlink {
+  display: none;
+  margin: 0 0 0 0.2em;
+  text-decoration: none;
+  color: #999;
+}
+
+h1:hover *, h2:hover *, h3:hover *, h4:hover *, h5:hover *, h6:hover * {
+  display: inline;
+}
+
+// overwrite bootstraps default of breaking words in `pre` tags
+pre {
+  white-space: pre;
+  word-break: normal;
+  word-wrap: normal;
+  overflow: auto;
+}
+
+.codeblock_resizer {
+  margin: -(@line-height-computed / 4) 0 10px;
+}
+
+div.code {
+  font-size: 10px;
+  color: @pre-color;
+  background-color: @pre-bg;
+  border: 1px solid @pre-border-color;
+  border-radius: @border-radius-base;
+  margin: 0 0 (@line-height-computed / 2);
+  max-height: 300px;
+  overflow: auto;
+
+  table {
+    table-layout: fixed;
+    background: none;
+    margin: 0 !important;
+
+    td {
+      border: none !important;
+      background: none !important;
+
+      &.linenos {
+        width: 40px;
+        border-right: 1px solid @table-border-color;
+        text-align: right;
+      }
+
+      &.code {
+      }
+    }
+
+    pre {
+      border: none;
+      background: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+@media (max-width: @screen-sm) {
+  div.code table td.linenos {
+    display: none;
+  }
+}

@@ -1,0 +1,11 @@
+Hallo {{ user.username }},
+
+du hast auf ubuntuusers.de deine E-Mail-Adresse auf diese Adresse geändert. Damit diese Änderung aktiv wird, musst du sie bestätigen.
+
+Besuche dazu {{ href('portal', 'confirm', 'set_new_email') }} und gib die folgende Zeichenkette dort ein:
+
+    {{ data|indent(4) }}
+
+Falls du auf ubuntuusers.de nicht den Account „{{ user.username }}“ besitzt, brauchst du nichts weiter zu tun, deine E-Mail-Adresse wird nicht als Kontaktadresse verwendet werden.
+
+Dein Team von ubuntuusers.de

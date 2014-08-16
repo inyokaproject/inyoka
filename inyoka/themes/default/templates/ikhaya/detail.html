@@ -1,0 +1,128 @@
+{% extends 'ikhaya/base.html' %}
+{% import 'macros.html' as macros %}
+
+{% block breadcrumb %}
+  <li><a href="{{ href('ikhaya') }}">{% trans %}News{% endtrans %}</a></li>
+  <li><a href="{{ article.category|url }}">{{ article.category }}</a></li>
+  <li class="active">{{ article.subject }}</li>
+{% endblock %}
+
+{% block sidebar %}
+  <ul class="list-group hidden-xs">
+    {% if can_subscribe and article.comments_enabled %}
+      {% if is_subscribed %}
+        {{ macros.sidebar_item(gettext('Unsubscribe comments'), article|url('unsubscribe')) }}
+      {% else %}
+        {{ macros.sidebar_item(gettext('Subscribe comments'), article|url('subscribe')) }}
+      {% endif %}
+    {% endif %}
+    {{ macros.sidebar_item(gettext('Report misspelling'), article|url('reports')) }}
+  </ul>
+  {% if can_edit_article %}
+    <div class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title">{% trans %}Staff{% endtrans %}</h3>
+      </div>
+      <ul class="list-group">
+        {{ macros.sidebar_item(gettext('Edit article'), '#') }}
+        {{ macros.sidebar_item('Enable / Disable comments', '#') }}
+      </ul>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <article>
+    <header>
+      <h3>{{ article.subject }}</h3>
+      <ul class="list-inline meta">
+        <li class="author">
+          {% trans link=article.author|url, author=article.author.username|e %}
+            Published by <a href="{{ link }}">{{ author }}</a>
+          {% endtrans %}
+        </li>
+        <li>
+          <time datetime="{{ article.pub_datetime|datetime('c') }}">{{ article.pub_datetime|datetime }}</time>
+        </li>
+        {% if article.updated > article.pub_datetime %}
+          <li>
+            <time datetime="{{ article.updated|datetime('c') }}">{% trans %}Last
+              update:{% endtrans %} {{ article.updated|datetime }}</time>
+          </li>
+        {% endif %}
+        <li class="category">
+          {% trans %}Category:{% endtrans %}
+          <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
+        </li>
+      </ul>
+    </header>
+    <div class="clearfix"></div>
+    <div class="intro">{{ article.rendered_intro }}</div>
+    <div class="text">{{ article.rendered_text }}</div>
+  </article>
+  <div class="btn-group btn-group-sm visible-xs">
+    {% if is_subscribed %}
+      <a href="{{ article|url('unsubscribe') }}" class="btn btn-default" role="button">
+        {% trans %}Unsubscribe comments{% endtrans %}
+      </a>
+    {% else %}
+      <a href="{{ article|url('subscribe') }}" class="btn btn-default" role="button">
+        {% trans %}Subscribe comments{% endtrans %}
+      </a>
+    {% endif %}
+    <a href="{{ article|url('reports') }}" class="btn btn-default" role="button">
+      {% trans %}Report misspelling{% endtrans %}
+    </a>
+  </div>
+  <div class="clearfix"></div>
+  <hr />
+  <h3>{% trans %}Comments{% endtrans %}</h3>
+  {% for comment in comments %}
+    {% if not comment.deleted or can_admin_comment %}
+      <div class="panel panel-default comment{% if comment.deleted %} muted{% endif %}" id="comment_{{ loop.index }}">
+        <div class="panel-heading">
+          <span class="pull-right">
+            <a href="#comment_{{ loop.index }}">
+              <time datetime="{{ comment.pub_date|datetime('c') }}">{{ comment.pub_date|datetime }}</time>
+            </a>
+          </span>
+          <a href="#comment_{{ loop.index }}">#{{ loop.index }}</a>
+          <a href="{{ comment.author|url }}">{{ comment.author }}</a>
+
+          <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+          {{ comment.rendered_text }}
+        </div>
+        <div class="panel-footer">
+          <div class="btn-group btn-group-sm">
+            <a href="#" class="btn btn-default">
+              {% trans %}Reply{% endtrans %}
+            </a>
+            {% if comment.author_id == USER.id %}
+              <a href="{{ comment|url('edit') }}" class="btn btn-primary">
+                {% trans %}Edit{% endtrans %}</a>
+            {% endif %}
+          </div>
+          {% if can_admin_comment %}
+            <div class="btn-group btn-group-sm pull-right">
+              <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                {% trans %}Staff{% endtrans %}
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
+                {% if comment.deleted %}
+                  <li><a href="#">{% trans %}Restore{% endtrans %}</a></li>
+                {% else %}
+                  <li><a href="#">{% trans %}Hide{% endtrans %}</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          {% endif %}
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'ikhaya/base.html' %}
+
+{% block breadcrumb %}
+  {% if category %}
+    <li><a href="{{ href('ikhaya') }}">{% trans %}News{% endtrans %}</a></li>
+    <li class="active">{{ category }}</li>
+  {% else %}
+    <li class="active">{% trans %}News{% endtrans %}</li>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {{ pagination.generate() }}
+  {% for article in articles %}
+    <article class="panel panel-default article{% if article.hidden %} muted{% endif %}"
+        {% if article.hidden %} data-toggle="tooltip"
+             title="{% trans %}This article is not visible for regular users{% endtrans %}" data-trigger="manual"
+        {% endif %} id="article-{{ article.id }}">
+      <div class="panel-heading">
+        <time datetime="{{ article.pub_datetime|datetime('c') }}"
+              class="pull-right">{{ article.pub_datetime|datetime }}</time>
+        <a href="{{ article|url }}">{{ article.subject }}</a>
+
+        <div class="clearfix"></div>
+      </div>
+      <div class="panel-body">
+        {{ article.rendered_intro }}
+      </div>
+      <div class="panel-footer">
+        <ul class="list-inline">
+          <li>
+            {% trans %}Category:{% endtrans %}
+            <a href="{{ article.category|url }}">{{ article.category.name|e }}</a>
+          </li>
+          <li>
+            {% trans count=article.comment_count %}
+              {{ count }} comment
+              {% pluralize %}
+              {{ count }} comments
+            {% endtrans %}
+          </li>
+          {% if article.updated > article.pub_datetime %}
+            <li class="pull-right">
+              <time datetime="{{ article.updated|datetime('c') }}">
+                {% trans %}Last update:{% endtrans %} {{ article.updated|datetime }}
+              </time>
+            </li>
+          {% endif %}</ul>
+        <div class="clearfix"></div>
+      </div>
+    </article>
+  {% endfor %}
+  {{ pagination.generate() }}
+{% endblock %}

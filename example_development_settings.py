@@ -29,6 +29,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SECRET_KEY = None
 
+THEME = 'default'
+# THEME = 'ubuntuusers'
+TEMPLATE_DIRS = (join(BASE_PATH, 'themes', THEME, 'templates'),)
+STATICFILES_DIRS = (join(BASE_PATH, 'themes', THEME, 'static'),)
 
 # Django Debug Toolbar Integration
 #
