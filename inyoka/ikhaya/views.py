@@ -78,7 +78,7 @@ def context_modifier(request, context):
     context.update(
         MONTHS=MONTHS,
         categories=categories,
-        ikhaya_description=storage['ikhaya_description'],
+        ikhaya_description_rendered=storage['ikhaya_description_rendered'],
         **data
     )
 
@@ -832,7 +832,8 @@ def feed_article(request, slug=None, mode='short', count=10):
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
                     url=url, rights=href('portal', 'lizenz'), id=url,
                     icon=href('static', 'img', 'favicon.ico'),
-                    subtitle=storage['ikhaya_description'])
+                    subtitle=storage['ikhaya_description_rendered'],
+                    subtitle_type='xhtml')
 
     for article in articles:
         kwargs = {}
@@ -879,7 +880,7 @@ def feed_comment(request, id=None, mode='short', count=10):
     comments = Comment.objects.get_latest_comments(article.id if article else None, count)
 
     feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
-                    subtitle=storage['ikhaya_description'],
+                    subtitle=storage['ikhaya_description_rendered'],
                     rights=href('portal', 'lizenz'),
                     id=url, url=url, icon=href('static', 'img', 'favicon.ico'),)
 
