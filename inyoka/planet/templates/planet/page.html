@@ -27,14 +27,8 @@
 {% block sidebar %}
   <div class="container">
     <h3 class="navi_planet">{% trans %}Planet{% endtrans %}</h3>
-    <p>
-      Der Planet stellt Nachrichten aus Blogs der Ubuntu- und
-      Open-Source- Gemeinschaft zusammen.  Wenn du ein Ubuntu-bezogenes Blog
-      kennst oder selber führst, kannst du es beim Ikhayateam <a href="{{
-      href('planet', 'suggest') }}">vorschlagen</a> und eintragen lassen.
-      Bitte beachtet dabei die <a href="{{ href('wiki', 'ubuntuusers',
-      'Ikhayateam', 'Planetenregeln') }}">Planetenregeln</a>.
-    </p>
+    {{ planet_description_rendered|default('', True) }}
+
     <h3 class="navi_blogs">{% trans %}Export blogs{% endtrans %}</h3>
     <ul class="export">
       <li><img src="{{ href('static', 'img', 'opml.png') }}" /><a href="{{ href('planet', 'blogs', 'export', 'opml') }}">OPML</a>

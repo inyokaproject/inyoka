@@ -18,17 +18,13 @@
 {% block wiki_content %}
   <form enctype="multipart/form-data" action="?action=edit" method="post">
     {{ csrf_token() }}
-    <p>
-      {#{% trans license_link=href('wiki', 'Wiki/Lizenz'),
-               reference_link=href('wiki', 'Wiki/Referenz'),
-               syntax_link=href('wiki', 'Wiki/Syntax') %}
-        By clicking on “Submit“#}
-      Durch Anklicken von „Speichern“ stellst du deine Änderungen unter unsere <a href="{{ href('wiki', 'Wiki/Lizenz') }}">Lizenz</a>. Wenn du das nicht willst, klicke auf „Abbrechen“, um deine Änderungen zu verwerfen. Hilfe zum Bearbeiten findest du unter <a href="{{ href('wiki', 'Wiki/Referenz') }}">Wiki/Referenz</a> und <a href="{{ href('wiki', 'Wiki/Syntax') }}">Wiki/Syntax</a>.
-    </p>
+
+    {{ wiki_edit_note_rendered|default('', True) }}
+
     <div class="editor">{{ form.text }}</div>
     {{ form.errors.text }}
-    {%- if storage['license_note_rendered'] %}
-      <div class="license_note">{{ storage['license_note_rendered'] }}</div>
+    {%- if license_note_rendered is not none %}
+      <div class="license_note">{{ license_note_rendered }}</div>
     {%- endif %}
     <div class="actions">
       {% trans %}Edit summary:{% endtrans %} {{ form.note }}

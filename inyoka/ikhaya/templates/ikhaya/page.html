@@ -26,7 +26,8 @@
 {% block sidebar %}
   <div class="container">
     <h3 class="navi_about_ikhaya">{% trans %}About Ikhaya{% endtrans %}</h3>
-    <p>{{ ikhaya_description }}</p>
+    {{ ikhaya_description_rendered|default('', True) }}
+
     <h3 class="navi_new_article admin_link_hover">{% trans %}Suggest{% endtrans %}</h3>
     <ul>
       <li><a href="{{ href('ikhaya', 'suggest', 'new') }}">{% trans %}Suggest article{% endtrans %}</a></li>
