@@ -27,7 +27,8 @@
 {% block sidebar %}
   <div class="container">
     <h3 class="navi_planet">{% trans %}Planet{% endtrans %}</h3>
-    <p>{{ planet_description_rendered }}</p>
+    {{ planet_description_rendered|default('', True) }}
+
     <h3 class="navi_blogs">{% trans %}Export blogs{% endtrans %}</h3>
     <ul class="export">
       <li><img src="{{ href('static', 'img', 'opml.png') }}" /><a href="{{ href('planet', 'blogs', 'export', 'opml') }}">OPML</a>

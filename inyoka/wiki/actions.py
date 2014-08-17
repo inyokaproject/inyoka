@@ -513,7 +513,8 @@ def do_edit(request, name):
         'preview': preview,
         'edit_time': edit_time.strftime('%s'),
         'rev': current_rev_id,
-        'storage': storage,
+        'wiki_edit_note_rendered': storage['wiki_edit_note_rendered'],
+        'license_note_rendered': storage['license_note_rendered'],
         'deny_robots': True,
     }
 

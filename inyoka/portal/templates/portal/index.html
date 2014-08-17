@@ -46,7 +46,8 @@
 {% block portal_content %}
   <h3>Hallo</h3>
   <img src="{{ href('static', 'img', 'portal', 'ubuntu.png') }}" alt="Ubuntu" class="cat" />
-  <p>{{ welcome_message_rendered }}</p>
+  {{ welcome_message_rendered|default('', True) }}
+
   {%- if ikhaya_latest %}
   {{ feed_button(href('portal', 'feeds', _anchor='ikhaya')) }}
   <h3>Neuigkeiten rund um Ubuntu, Linux und Open Source</h3>
