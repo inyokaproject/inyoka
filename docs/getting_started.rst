@@ -193,3 +193,10 @@ Test someone's Pull Request
 
 .. todo::
    Fill me.
+
+Styles
+======
+
+Compile less files to CSS (``-x`` compresses the output)::
+
+    inyoka/static/style $ lessc -x FILENAME.less > FILENAME.css
