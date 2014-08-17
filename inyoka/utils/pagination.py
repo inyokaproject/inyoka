@@ -100,7 +100,7 @@ class Pagination(object):
         if max_pages and self.pages > max_pages:
             self.pages = max_pages
 
-        if self.page > self.pages:
+        if self.page > self.pages or self.page < 1:
             raise Http404()
 
         # TODO: is this necessary? Do we ever pass GET-parameters in pagination links?
