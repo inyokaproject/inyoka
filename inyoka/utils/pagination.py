@@ -24,9 +24,9 @@
         'current_page': 6,
         'pages': 10,
         'first': 'http://localhost/',
-        'last': 'http://localhost/10',
-        'prev': 'http://localhost/5',
-        'next': 'http://localhost/7',
+        'last': 'http://localhost/10/',
+        'prev': 'http://localhost/5/',
+        'next': 'http://localhost/7/',
         'list': [
                 {'type': 'page', 'url': 'http://localhost/',    'current': False, 'name': 1},
                 {'type': 'page', 'url': 'http://localhost/2/',  'current': False, 'name': 1},
@@ -48,6 +48,7 @@
     For tables that are quite big it's sometimes useful to use an indexed
     column determinating the position instead of using an offset / limit
     statement. In this case you can use the `rownum_column` argument.
+    To get all items on one page, set `one_page=True` or `per_page=0`.
 
     Caveat: paginations with link functions generated in a closure are
     not pickleable.
@@ -68,7 +69,7 @@ from inyoka.utils.urls import urlencode
 class Pagination(object):
     """ Handle pagination """
 
-    def __init__(self, request, query, page, per_page=10, link=None, total=None,
+    def __init__(self, request, query, page=1, per_page=10, link=None, total=None,
                        rownum_column=None, max_pages=None, one_page=False):
         """ Create pagination object
 
@@ -90,12 +91,14 @@ class Pagination(object):
         self.base_link     = self._get_base_link(link)
         self.total         = self._get_total(total)
         self.rownum_column = rownum_column
-        self.pages         = max(0, (self.total-1)) // self.per_page + 1
         self.queryset      = None
 
-        if one_page:
+        if one_page or self.per_page < 0:
             self.per_page = self.total
             self.pages = 1
+            self.page = 1
+        else:
+            self.pages = max(0, (self.total-1)) // self.per_page + 1
 
         if max_pages and self.pages > max_pages:
             self.pages = max_pages
