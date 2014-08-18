@@ -12,7 +12,7 @@
 {%- extends 'portal/usercp/overall.html' %}
 {% do BREADCRUMB.append(_('Subscriptions'), href('portal', 'usercp', 'subscriptions'), True) %}
 {% set selected = 'subscriptions' %}
-{% from 'macros.html' import render_pagination %}
+{% from 'macros.html' import render_pagination, render_small_pagination %}
 
 {% block sidebar %}
   {{ super() }}
@@ -59,7 +59,7 @@
                     -#}</a>
                   {%- endif %}
                   {%- if object.paginated %} &#160; &#160; [<span class="pagination">
-                    {{ render_pagination(object.get_pagination(), show_prev=False, show_next=False) }}
+                    {{ render_small_pagination(object.get_pagination()) }}
                   </span>]{% endif -%}
                 {% elif type == 'article' -%}
                   <a href="{{ object|url('last_comment') }}" title="{% trans %}Go to last comment{% endtrans %}">{#-

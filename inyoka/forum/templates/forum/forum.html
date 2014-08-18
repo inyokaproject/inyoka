@@ -10,7 +10,7 @@
 {%- extends 'forum/page.html' %}
 {% from 'forum/_forum.html' import render_forum, topic_icon,
                                    generate_subscription_link with context %}
-{% from 'macros.html' import render_pagination %}
+{% from 'macros.html' import render_pagination, render_small_pagination %}
 
 {% macro forum_actions() %}
   <p class="actions linklist">
@@ -123,7 +123,7 @@
               {%- if topic.paginated %} |
                 {% trans %}Go to page{% endtrans %} 
                 <span class="pagination">
-                    {{ render_pagination(topic.get_pagination(), show_prev=False, show_next=False, threshold=3) }}
+                    {{ render_small_pagination(topic.get_pagination()) }}
                 </span>
               {%- endif -%}
             </p>

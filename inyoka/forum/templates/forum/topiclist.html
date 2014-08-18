@@ -10,7 +10,7 @@
 {%- extends 'forum/page.html' %}
 
 {% from 'forum/_forum.html' import topic_icon with context %}
-{% from 'macros.html' import render_pagination with context %}
+{% from 'macros.html' import render_pagination, render_small_pagination %}
 
 {% block forum_content %}
   <table class="forum">
@@ -58,7 +58,7 @@
               {{ topic.first_post.pub_date|datetime }}
               {%- if topic.paginated %} |
                 {% trans %}Go to page{% endtrans %}
-                <span class="pagination">{{ render_pagination(topic.get_pagination(),show_prev=False, show_next=False, threshold=3) }}</span>
+                <span class="pagination">{{ render_small_pagination(topic.get_pagination()) }}</span>
               {%- endif -%}
             </p>
           </td>
