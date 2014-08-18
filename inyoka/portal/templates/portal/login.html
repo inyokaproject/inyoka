@@ -37,7 +37,7 @@
   </form>
 {% endblock %}
 
-{% block additional_scripts %}
+{# {% block additional_scripts %}
   <script type="text/javascript">
     /*<![CDATA[*/
     if ( $('#id_username')[0].value )
@@ -45,7 +45,6 @@
     else
       $('#id_username')[0].focus();
 
-    var input = OpenIDHelper($('input[name="username"]'), {{ OPENID_PROVIDERS|jsonencode }});
     /*]]>*/
   </script>
-{% endblock %}
+{% endblock %} #}
