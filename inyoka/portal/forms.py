@@ -106,13 +106,6 @@ class LoginForm(forms.Form):
         return data
 
 
-class OpenIDConnectForm(forms.Form):
-    username = forms.CharField(label=ugettext_lazy(u'Username'))
-    password = forms.CharField(label=_('Password'),
-        widget=forms.PasswordInput(render_value=False),
-        required=True)
-
-
 class RegisterForm(forms.Form):
     """
     Form for registering a new user account.

@@ -149,10 +149,6 @@ def _bootstrap():
     # The value *must* be a floating point value.
     socket.setdefaulttimeout(10.0)
 
-    # Silence logging output of openid library
-    from openid import oidutil
-    oidutil.log = _dummy
-
     return revision
 
 

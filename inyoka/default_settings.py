@@ -212,7 +212,6 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'inyoka.markup',
-    'django_openid',
     'raven.contrib.django',
     'south',
     # *must* be installed after south
