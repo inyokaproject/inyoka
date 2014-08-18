@@ -525,7 +525,7 @@ class Topic(models.Model):
 
     def get_pagination(self):
         request = current_request._get_current_object()
-        pagination = Pagination(request=request, query=[], page=0, total=self.post_count,
+        pagination = Pagination(request=request, query=[], page=1, total=self.post_count,
                                  per_page=POSTS_PER_PAGE, link=self.get_absolute_url())
         return pagination
 
