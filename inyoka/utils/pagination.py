@@ -70,7 +70,7 @@ class Pagination(object):
         """ Create pagination object
 
             :param request: The current request.
-            :param query: The paginated objects, can be a list or tuple
+            :param query: The objects to paginate. Can be a QuerySet, list or tuple.
             :param page: Current page number.
             :param per_page: Number of items per page.
             :param link: The base url.
@@ -94,7 +94,7 @@ class Pagination(object):
         self._next     = None
         self._prev     = None
 
-        if one_page or self.per_page < 0:
+        if one_page or self.per_page < 1:
             self.per_page = self.total
             self.pages = 1
             self.page = 1

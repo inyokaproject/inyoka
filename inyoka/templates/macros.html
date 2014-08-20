@@ -67,7 +67,7 @@
     {%- else -%}
       <a href="{{ link['url'] }}" class="pageselect">{{ link['page'] }}</a>
     {%- endif -%}
-    {% if link['page'] != pagination.pages or show_next %}<span class="comma">, </span>{% endif %}
+    {% if not loop.last or show_next %}<span class="comma">, </span>{% endif %}
   {%- endfor -%}
   {%- if show_next -%}
     {%- if pagination.next -%}
@@ -87,7 +87,7 @@
     {%- else -%}
       <a href="{{ link['url'] }}" class="pageselect">{{ link['page'] }}</a>
     {%- endif -%}
-    {% if link['page'] != pagination['pages'] %}<span class="comma">, </span>{% endif %}
+    {% if not loop.last %}<span class="comma">, </span>{% endif %}
   {%- endfor -%}
 {% endmacro %}
 
