@@ -436,7 +436,7 @@ class Topic(models.Model):
 
         old_forum = self.forum
 
-        with transaction.commit_on_success():
+        with transaction.atomic():
 
             # move the topic
             self.forum = new_forum
@@ -826,7 +826,7 @@ class Post(models.Model, LockableObject):
             # delete the topic.
             remove_topic = True
 
-        with transaction.commit_on_success():
+        with transaction.atomic():
             maxpos = new_topic.posts.all()._clone() \
                               .aggregate(count=Max('position'))['count']
             if maxpos is None:
