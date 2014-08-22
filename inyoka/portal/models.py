@@ -163,7 +163,7 @@ class PrivateMessageEntry(models.Model):
     """
     message = models.ForeignKey('PrivateMessage')
     user = models.ForeignKey(User)
-    read = models.BooleanField(ugettext_lazy(u'Read'))
+    read = models.BooleanField(ugettext_lazy(u'Read'), default=False)
     folder = models.SmallIntegerField(ugettext_lazy(u'Folder'),
         null=True,
         choices=[(f[0], f[1]) for f in PRIVMSG_FOLDERS_DATA])
