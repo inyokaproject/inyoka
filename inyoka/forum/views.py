@@ -12,7 +12,6 @@ from operator import attrgetter
 from datetime import datetime, timedelta
 from itertools import groupby
 
-from django.db import transaction
 from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
 from django.contrib import messages
