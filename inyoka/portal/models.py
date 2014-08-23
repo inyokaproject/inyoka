@@ -343,34 +343,6 @@ class Subscription(models.Model):
             return True
 
 
-class SearchQueueManager(models.Manager):
-    def append(self, component, doc_id):
-        """Append an item to the queue for later indexing."""
-        item = self.model()
-        item.component = component
-        item.doc_id = doc_id
-        item.save()
-
-    @transaction.commit_manually
-    def multi_insert(self, component, ids):
-        for doc_id in ids:
-            entry = SearchQueue(component=component, doc_id=doc_id)
-            entry.save()
-        transaction.commit()
-
-
-class SearchQueue(models.Model):
-    """
-    Managing a to-do list for asynchronous indexing.
-    """
-    objects = SearchQueueManager()
-    component = models.CharField(max_length=1)
-    doc_id = models.IntegerField()
-
-    class Meta:
-        ordering = ['id']
-
-
 class Storage(models.Model):
     key = models.CharField(max_length=200, db_index=True)
     value = models.TextField()
