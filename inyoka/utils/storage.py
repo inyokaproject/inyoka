@@ -34,7 +34,7 @@ class CachedStorage(object):
         self._update_cache(key, value, timeout)
         return value
 
-    @transaction.commit_on_success
+    @transaction.atomic
     def set(self, key, value, timeout=None):
         """
         Set *key* with *value* and if needed with a
