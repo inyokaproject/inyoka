@@ -485,8 +485,8 @@ class Topic(models.Model):
                 last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
                                                  .aggregate(count=Max('id'))['count'])
 
-        forum.invalidate_topic_cache()
-        self.forum.invalidate_topic_cache()
+        old_forum.invalidate_topic_cache()
+        new_forum.invalidate_topic_cache()
         self.reindex()
 
     def delete(self, *args, **kwargs):
