@@ -197,6 +197,13 @@ Test someone's Pull Request
 Styles
 ======
 
-Compile less files to CSS (``-x`` compresses the output)::
+Inyoka uses `less <http://lesscss.org/>`_ for creating css files. In
+``DEBUG`` mode only the less files are used, therefore you do not need to
+alter or commit any CSS file. (However, CSS files are used in master and
+after each deployment master get merged into staging, so removing all CSS
+files in staging is not a good idea.)
+
+If, for some reason, you still want to compile less files to CSS use the
+following command (``-x`` compresses the output)::
 
     inyoka/static/style $ lessc -x FILENAME.less > FILENAME.css

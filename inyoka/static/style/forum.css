@@ -34,7 +34,6 @@ table.topic td.author p.username{position:relative;}table.topic td.author p.user
 table.topic td.author p.username.inactive a{color:#444;text-decoration:line-through;}
 table.topic td.author img.teamicon{position:absolute;top:0px;right:0px;}
 table.topic td.author div.member_title{line-height:1.2em;font-size:0.6em;margin-bottom:10px;}
-table.topic td.author p.posts a{color:black;}
 table.topic td.post{font-size:0.9em;padding:10px;vertical-align:top;}table.topic td.post div.postinfo{background:repeat-x #d9d9d9 url(../img/table-header-alternative.png);background:-webkit-gradient(linear, left top, left bottom, from(#e0e0e0), to(#cacaca));background:-moz-linear-gradient(top, #e0e0e0, #cacaca);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#e0e0e0,endColorstr=#cacaca);-ms-filter:"progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#e0e0e0, endColorstr=#cacaca)";font-size:0.9em;margin:-10px -10px 10px -10px;padding:6px 25px 10px 5px;border-bottom:1px solid #CCC;}
 table.topic td.post div.signature{margin:20px 0 -5px 0;padding:5px 0 0 0;border-top:1px solid #AAA;color:#666;font-size:.9em;line-height:140%;}table.topic td.post div.signature p{padding:0 0 5px 0;margin:0;}
 table.topic td.post div.signature a{color:#666;}
