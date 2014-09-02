@@ -10,7 +10,7 @@ div.articles div.article div.text{padding:10px 30px 0 30px;}div.articles div.art
 div.articles div.article div.text h2{font-size:1.5em;}
 div.articles div.article div.text h3{font-size:1.3em;}div.articles div.article div.text h3 .note{font-size:0.7em;padding-left:0px;}
 div.articles div.article div.text h4{font-size:1.1em;}
-div.articles div.article div.text img{max-width:100% !important;}
+div.articles div.article div.text img{max-width:100% !important;height:auto;}
 div.articles div.article div.post{-moz-border-radius:10px;-webkit-border-radius:10px;border-radius:10px;background:#F8F8F8;border:1px solid #BFBFBF;}div.articles div.article div.post img.uu-float{float:right;margin-left:0.6em;}
 div.articles div.article p{margin:0;padding:0.5em 0.5em 0.5em 0;}
 div.articles div.article p.easy-navigation{text-align:right;margin-right:25px;padding-bottom:10px;}

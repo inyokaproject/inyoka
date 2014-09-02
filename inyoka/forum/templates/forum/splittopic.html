@@ -18,7 +18,7 @@
     {{ csrf_token() }}
     <h2>{% trans topic=topic.title|e %}Split topic “{{ topic }}”{% endtrans %}</h2>
     <p>
-      Mit den Eingabefeldern unten kannst du ein Thema in zwei teilen, indem du entweder die Beiträge manuell auswählst oder ab einem gewählten Beitrag teilst.
+      {% trans %}The chosen posts can form a new topic or be attached to an existing topic.{% endtrans %}
     </p>
     <dl>
       <dt>

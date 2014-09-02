@@ -55,7 +55,7 @@ Then you need to add your *public* key to your profile in Git under
 Getting access to the Inyoka repository
 ***************************************
 
-Then you need to write to `a developer <https://github.com/Markush2010>`_
+Then you need to write to `a developer <https://github.com/encbladexp>`_
 so that you get the correct access rights to fork the project.  Simply
 klick the "Fork" Button on `<https://github.com/inyokaproject/inyoka>`_ to
 create a new *private* Fork of this Repository.
@@ -99,9 +99,9 @@ files:
 
 .. code-block:: console
 
-  $  sudo apt-get install python-virtualenv libxml2-dev libxslt1-dev
+  $  sudo apt-get install libxml2-dev libxslt1-dev
   libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev
-  libmysqlclient-dev python-setuptools
+  libmysqlclient-dev build-essential
 
 Further you need the Python 2.7 files:
 
@@ -110,6 +110,14 @@ Further you need the Python 2.7 files:
   $ sudo apt-get install python2.7
   $ sudo apt-get install python2.7-dev    #(Precise)
   $ sudo apt-get install libpython2.7-dev #(Trusty)
+
+Further you need a recent pip and virtualenv for Python 2.7:
+
+.. code-block:: console
+
+  $ wget https://bootstrap.pypa.io/get-pip.py
+  $ sudo python get-pip.py
+  $ sudo pip install virtualenv
 
 Adding links (Ubuntu only)
 **************************
@@ -242,7 +250,8 @@ Next you need to add a superuser so that you gain all rights in the
 development installation:
 
 .. code-block:: console
-  (inyoka)$ python manage.py syncdb@localhost
+
+  (inyoka)$ python manage.py syncdb
   (inyoka)$  python manage.py migrate
   (inyoka)$  python manage.py create_superuser
   username: admin

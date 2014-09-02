@@ -13,7 +13,7 @@ h2,h3{border-bottom:1px solid #e0c99d;}
 h3.title{margin:0.3em 0 0.3em 0em;padding-left:0.4em;}h3.title a{color:#673B1A;text-decoration:none;}
 p{margin-bottom:0.5em;}
 div.intro{margin:0 1.5em;font-style:italic;}
-p.meta{color:#666;font-size:0.9em;margin:0.5em 0 0 0 !important;padding:0.4em;border-top:1px solid #d4d4d4;clear:right;}
+p.meta{color:#666;font-size:0.9em;margin:0.5em 0 0 0 !important;padding:0.4em;border-top:1px solid #d4d4d4;overflow:auto;clear:right;}
 img.icon{float:right;clear:right;max-width:200px;max-height:120px;margin:0px 0px 10px 10px;}
 a.show_comments,a.hide_comments{display:block;padding:1em;text-align:center;background-color:#eee;letter-spacing:0.2em;text-decoration:none;color:#444;border-top:1px solid #ccc;font-weight:bold;}
 a.show_comments:hover,a.hide_comments:hover{text-decoration:underline;}

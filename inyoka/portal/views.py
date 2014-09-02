@@ -175,6 +175,7 @@ def index(request):
             }
 
     return {
+        'welcome_message_rendered': storage['welcome_message_rendered'],
         'ikhaya_latest': list(ikhaya_latest),
         'sessions': get_sessions(),
         'record': record,
@@ -1884,13 +1885,13 @@ openid_consumer = OpenIdConsumer(SessionPersist)
 @require_permission('configuration_edit')
 @templated('portal/configuration.html')
 def config(request):
-    keys = ['max_avatar_width', 'max_avatar_height', 'max_avatar_size',
+    keys = ['welcome_message', 'max_avatar_width', 'max_avatar_height', 'max_avatar_size',
             'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
-            'license_note', 'get_ubuntu_description', 'blocked_hosts',
-            'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage',
+            'license_note', 'get_ubuntu_description', 'blocked_hosts', 'wiki_edit_note',
+            'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'wiki_edit_note',
             'team_icon_height', 'team_icon_width', 'distri_versions',
             'countdown_active', 'countdown_target_page', 'countdown_image_url',
-            'countdown_date', 'ikhaya_description', 'planet_description']
+            'ikhaya_description', 'planet_description']
 
     team_icon = storage['team_icon']
 
@@ -1901,9 +1902,17 @@ def config(request):
             for k in keys:
                 storage[k] = data[k]
 
+            context = RenderContext(request, simplified=True)
+
             if data['global_message'] != storage['global_message']:
                 storage['global_message'] = data['global_message']
                 storage['global_message_time'] = time.time()
+                node = parse(data['global_message'])
+                storage['global_message_rendered'] = node.render(context, 'html')
+
+            if data['welcome_message']:
+                node = parse(data['welcome_message'])
+                storage['welcome_message_rendered'] = node.render(context, 'html')
 
             if data['team_icon']:
                 default_storage.delete(storage['team_icon'])
@@ -1913,12 +1922,26 @@ def config(request):
                 storage['team_icon'] = team_icon = fn
 
             if data['license_note']:
-                context = RenderContext(request, simplified=True)
                 node = parse(data['license_note'])
                 storage['license_note_rendered'] = node.render(context, 'html')
 
-            if data['countdown_date']:
+            if not data['countdown_date']:
+                storage['countdown_date'] = '';
+            else:
                 storage['countdown_date'] = str(data['countdown_date'])
+
+            if data['wiki_edit_note']:
+                node = parse(data['wiki_edit_note'])
+                storage['wiki_edit_note_rendered'] = node.render(context, 'html')
+
+            if data['planet_description']:
+                node = parse(data['planet_description'])
+                storage['planet_description_rendered'] = node.render(context, 'html')
+
+            if data['ikhaya_description']:
+                node = parse(data['ikhaya_description'])
+                storage['ikhaya_description_rendered'] = node.render(context, 'html')
+
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:
@@ -1926,7 +1949,7 @@ def config(request):
     else:
         storage['distri_versions'] = storage['distri_versions'] or u'[]'
         form = ConfigurationForm(initial=storage.get_many(keys +
-                                                ['global_message']))
+                                                ['global_message', 'countdown_date']))
 
     return {
         'form': form,

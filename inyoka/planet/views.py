@@ -67,6 +67,7 @@ def index(request, page=1):
     pagination = Pagination(request, entries, page, 25, href('planet'))
     queryset = pagination.get_queryset()
     return {
+        'planet_description_rendered': storage['planet_description_rendered'],
         'days': group_by_day(queryset),
         'articles': queryset,
         'pagination': pagination,
@@ -103,7 +104,10 @@ def suggest(request):
             return HttpResponseRedirect(href('planet'))
     else:
         form = SuggestBlogForm()
-    return {'form': form}
+    return {
+        'form': form,
+        'planet_description_rendered': storage['planet_description_rendered'],
+    }
 
 
 @atom_feed(name='planet_feed')
@@ -113,7 +117,8 @@ def feed(request, mode='short', count=10):
     feed = AtomFeed(title, url=href('planet'),
                     feed_url=request.build_absolute_uri(),
                     id=href('planet'),
-                    subtitle=storage['planet_description'],
+                    subtitle=storage['planet_description_rendered'],
+                    subtitle_type='xhtml',
                     rights=href('portal', 'lizenz'),
                     icon=href('static', 'img', 'favicon.ico'))
 
@@ -122,14 +127,12 @@ def feed(request, mode='short', count=10):
     for entry in entries:
         kwargs = {}
         if mode == 'full':
-            kwargs['content'] = u'<div xmlns="http://www.w3.org/1999/' \
-                                u'xhtml">%s</div>' % entry.text
+            kwargs['content'] = entry.text
             kwargs['content_type'] = 'xhtml'
         if mode == 'short':
             summary = Truncator(entry.text).words(100, html=True)
-            kwargs['summary'] = u'<div xmlns="http://www.w3.org/1999/' \
-                                u'xhtml">%s</div>' % summary
-            kwargs['content_type'] = 'xhtml'
+            kwargs['summary'] = summary
+            kwargs['summary_type'] = 'xhtml'
         if entry.author_homepage:
             kwargs['author'] = {'name': entry.author,
                                 'uri': entry.author_homepage}

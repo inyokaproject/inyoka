@@ -100,7 +100,7 @@
         <th>{% trans %}Posts{% endtrans %}</th>
         <td>
           {{ user.post_count }}
-          (<a href="{{ href('forum', 'author', user.username) }}">{% trans %}show{% endtrans %}</a>)
+          (<a href="{{ href('forum', 'author', user.username) }}" rel="nofollow">{% trans %}show{% endtrans %}</a>)
         </td>
       </tr>
       <tr>
