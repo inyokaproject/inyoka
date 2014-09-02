@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-05 20:30+0200\n"
+"POT-Creation-Date: 2014-09-02 14:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,42 +69,42 @@ msgstr ""
 msgid "Entries"
 msgstr ""
 
-#: inyoka/planet/views.py:77
+#: inyoka/planet/views.py:78
 msgid "You need to be logged in to suggest a blog"
 msgstr ""
 
-#: inyoka/planet/views.py:95
+#: inyoka/planet/views.py:96
 msgid "A new blog was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:99
+#: inyoka/planet/views.py:100
 msgid "No user is registered as a planet administrator."
 msgstr ""
 
-#: inyoka/planet/views.py:101
+#: inyoka/planet/views.py:102
 #, python-format
 msgid "The blog “%(title)s” was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:112
+#: inyoka/planet/views.py:116
 #, python-format
 msgid "%(sitename)s planet"
 msgstr ""
 
-#: inyoka/planet/views.py:139
+#: inyoka/planet/views.py:142
 msgid "No title given"
 msgstr ""
 
-#: inyoka/planet/views.py:155
+#: inyoka/planet/views.py:158
 msgid "Canceled"
 msgstr ""
 
-#: inyoka/planet/views.py:162
+#: inyoka/planet/views.py:165
 #, python-format
 msgid "The entry “%(title)s” was successfully hidden."
 msgstr ""
 
-#: inyoka/planet/views.py:164
+#: inyoka/planet/views.py:167
 #, python-format
 msgid "The entry “%(title)s” was successfully restored."
 msgstr ""
@@ -119,12 +119,12 @@ msgid "Submit"
 msgstr ""
 
 #: inyoka/planet/templates/planet/blog_list.html:12
-#: inyoka/planet/templates/planet/page.html:70
+#: inyoka/planet/templates/planet/page.html:64
 msgid "Bloglist"
 msgstr ""
 
 #: inyoka/planet/templates/planet/blog_list.html:15
-#: inyoka/planet/templates/planet/page.html:48
+#: inyoka/planet/templates/planet/page.html:42
 msgid "Blogs"
 msgstr ""
 
@@ -215,11 +215,11 @@ msgstr ""
 msgid "Planet"
 msgstr ""
 
-#: inyoka/planet/templates/planet/page.html:38
+#: inyoka/planet/templates/planet/page.html:32
 msgid "Export blogs"
 msgstr ""
 
-#: inyoka/planet/templates/planet/page.html:66
+#: inyoka/planet/templates/planet/page.html:60
 msgid "Configuration"
 msgstr ""
 

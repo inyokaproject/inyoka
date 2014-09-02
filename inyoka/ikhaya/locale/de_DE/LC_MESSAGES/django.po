@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2014-08-16 13:51+0200\n"
+"POT-Creation-Date: 2014-09-02 14:37+0200\n"
 "PO-Revision-Date: 2012-11-03 11:11+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -86,7 +86,7 @@ msgstr "Icon"
 msgid "Category"
 msgstr "Kategorie"
 
-#: inyoka/ikhaya/models.py:197 inyoka/ikhaya/templates/ikhaya/page.html:57
+#: inyoka/ikhaya/models.py:197 inyoka/ikhaya/templates/ikhaya/page.html:58
 msgid "Categories"
 msgstr "Kategorien"
 
@@ -394,18 +394,18 @@ msgstr ""
 "Die Veranstaltung wurde gespeichert. Ein Teammitglied wird sie demnächst "
 "prüfen."
 
-#: inyoka/ikhaya/views.py:870
+#: inyoka/ikhaya/views.py:871
 #, python-format
 msgid "%(domain)s Ikhaya comments – %(title)s"
 msgstr "%(domain)s Ikhaya Kommentare – %(title)s"
 
-#: inyoka/ikhaya/views.py:875
+#: inyoka/ikhaya/views.py:876
 #, python-format
 msgid "%(domain)s Ikhaya comments"
 msgstr "%(domain)s Ikhaya Kommentare"
 
 #: inyoka/ikhaya/templates/ikhaya/archive.html:12
-#: inyoka/ikhaya/templates/ikhaya/page.html:41
+#: inyoka/ikhaya/templates/ikhaya/page.html:42
 msgid "Archive"
 msgstr "Archiv"
 
@@ -665,7 +665,7 @@ msgid "Latitude:"
 msgstr "Breitengrad:"
 
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:50
-#: inyoka/ikhaya/templates/ikhaya/page.html:86
+#: inyoka/ikhaya/templates/ikhaya/page.html:87
 msgid "General"
 msgstr "Allgemein"
 
@@ -675,7 +675,7 @@ msgstr "Veranstaltung anzeigen"
 
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:14
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:17
-#: inyoka/ikhaya/templates/ikhaya/page.html:33
+#: inyoka/ikhaya/templates/ikhaya/page.html:34
 msgid "Suggest event"
 msgstr "Veranstaltung vorschlagen"
 
@@ -695,7 +695,7 @@ msgstr ""
 " ein Mitglied des <a href=\"%(link_newsteam)s\">Ikhayateams</a>."
 
 #: inyoka/ikhaya/templates/ikhaya/events.html:17
-#: inyoka/ikhaya/templates/ikhaya/page.html:38
+#: inyoka/ikhaya/templates/ikhaya/page.html:39
 msgid "Add event"
 msgstr "Veranstaltung hinzufügen"
 
@@ -780,56 +780,56 @@ msgstr "Es gibt keinen Artikel."
 msgid "About Ikhaya"
 msgstr "Über Ikhaya"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:30
+#: inyoka/ikhaya/templates/ikhaya/page.html:31
 msgid "Suggest"
 msgstr "Vorschlagen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:32
+#: inyoka/ikhaya/templates/ikhaya/page.html:33
 msgid "Suggest article"
 msgstr "Artikel vorschlagen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:35
+#: inyoka/ikhaya/templates/ikhaya/page.html:36
 #: inyoka/ikhaya/templates/ikhaya/suggestions.html:53
 msgid "New article"
 msgstr "Neuer Artikel"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:43
+#: inyoka/ikhaya/templates/ikhaya/page.html:44
 msgid "Current articles"
 msgstr "Aktuelle Artikel"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:52
+#: inyoka/ikhaya/templates/ikhaya/page.html:53
 msgid "Entire archive"
 msgstr "Ganzes Archiv"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:60
+#: inyoka/ikhaya/templates/ikhaya/page.html:61
 msgid "Add category"
 msgstr "Kategorie hinzufügen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:73
+#: inyoka/ikhaya/templates/ikhaya/page.html:74
 msgid "Display options"
 msgstr "Anzeigeoptionen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:76
+#: inyoka/ikhaya/templates/ikhaya/page.html:77
 msgid "Show only teaser"
 msgstr "Nur Einleitung anzeigen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:78
+#: inyoka/ikhaya/templates/ikhaya/page.html:79
 msgid "Show full article"
 msgstr "Gesamten Artikel anzeigen"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:83
+#: inyoka/ikhaya/templates/ikhaya/page.html:84
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:89
+#: inyoka/ikhaya/templates/ikhaya/page.html:90
 msgid "Stylesheets"
 msgstr "Stylesheets"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:92
+#: inyoka/ikhaya/templates/ikhaya/page.html:93
 msgid "Static pages"
 msgstr "Statische Seiten"
 
-#: inyoka/ikhaya/templates/ikhaya/page.html:95
+#: inyoka/ikhaya/templates/ikhaya/page.html:96
 msgid "Static files"
 msgstr "Statische Dateien"
 
