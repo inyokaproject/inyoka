@@ -26,6 +26,7 @@ from inyoka.utils.cache import cache
 from inyoka.utils.dates import format_time, datetime_to_timezone
 from inyoka.utils.imaging import parse_dimensions
 from inyoka.utils.pagination import Pagination
+from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, url_for, urlencode, is_external_target
 from inyoka.wiki.models import Page, MetaData, Revision
@@ -166,7 +167,7 @@ class RecentChanges(macros.Macro):
                             [nodes.Text(u'')], class_='note')])
             data = {
                 'nodes': table,
-                'pagination': pagination.generate()
+                'pagination': render_template('pagination.html', {'pagination': pagination})
             }
             cache.set(cache_key, data)
 

@@ -9,6 +9,9 @@
 #}
 
 {%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
 {% do BREADCRUMB.append(group.name, group|url, True) %}
 {% do BREADCRUMB.append(_('Groups'), href('portal', 'groups'), True) %}
 {% block content %}
@@ -46,5 +49,5 @@
     </tr>
     {%- endfor %}
   </table>
-  {{ pagination.generate() }}
+  <div class="pagination pagination_right">{{ rendered_pagination }}</div>
 {% endblock %}

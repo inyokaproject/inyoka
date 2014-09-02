@@ -48,3 +48,63 @@
     #}<span class="description">{{ count }}</span>{#
   #}</a>
 {% endmacro %}
+
+{# Pagination macro #}
+{% macro render_pagination(pagination, show_prev=True, show_next=True, threshold=2) %}
+  {%- if show_prev -%}
+    {%- if pagination.prev -%}
+      <a href="{{ pagination.prev }}" class="prev">« {% trans %}Previous{% endtrans %}</a>
+    {%- else -%}
+      <span class="disabled prev">« {% trans %}Previous{% endtrans %}</span>
+    {%- endif -%}
+    <span class="comma">, </span>
+  {%- endif -%}
+  {% for link in pagination.list(threshold) -%}
+    {%- if link['type'] == 'spacer' -%}
+      <span class="ellipsis">…</span>
+    {%- elif link['type'] == 'current' -%}
+      <span class="pageselect active">{{ link['page'] }}</span>
+    {%- else -%}
+      <a href="{{ link['url'] }}" class="pageselect">{{ link['page'] }}</a>
+    {%- endif -%}
+    {% if not loop.last or show_next %}<span class="comma">, </span>{% endif %}
+  {%- endfor -%}
+  {%- if show_next -%}
+    {%- if pagination.next -%}
+      <a href="{{ pagination.next }}" class="next">{% trans %}Next{% endtrans %} »</a>
+    {%- else -%}
+      <span class="disabled next">{% trans %}Next{% endtrans %} »</span>
+    {%- endif -%}
+  {%- endif %}
+{% endmacro %}
+
+
+{# Pagination macro for small paginations in topic list views #}
+{% macro render_small_pagination(pagination, threshold=2) %}
+  {% for link in pagination.list() -%}
+    {%- if link['type'] == 'spacer' -%}
+      <span class="ellipsis">…</span>
+    {%- else -%}
+      <a href="{{ link['url'] }}" class="pageselect">{{ link['page'] }}</a>
+    {%- endif -%}
+    {% if not loop.last %}<span class="comma">, </span>{% endif %}
+  {%- endfor -%}
+{% endmacro %}
+
+
+{# Pagination macro for mobile #}
+{% macro render_pagination_mobile(pagination, threshold=2) %}
+  {%- if pagination.first -%}
+    <a href="{{ pagination.first }}" class="prev first">«</a>
+  {%- endif -%}
+  {%- if pagination.prev -%}
+    <a href="{{ pagination.prev }}" class="prev">« {% trans %}Previous{% endtrans %}</a>
+  {%- endif -%}
+  <span class="active">{% trans %}Page{% endtrans %} {{ pagination.page }} / {{ pagination.pages }}</span>
+  {%- if pagination.next -%}
+    <a href="{{ pagination.next }}" class="next">{% trans %}Next{% endtrans %} »</a>
+  {%- endif -%}
+  {%- if pagination.last %}
+    <a href="{{ pagination.last }}" class="next last">»</a>
+  {%- endif -%}
+{% endmacro %}
