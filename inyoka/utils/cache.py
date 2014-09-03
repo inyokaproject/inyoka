@@ -28,6 +28,9 @@ class RequestCache(BaseCache):
         self.request_cache = _request_cache
 
     def get(self, key, default=None, version=None):
+        # Some caching systems like memcached dont like cache keys > 250 chars.
+        if len(key) > 250:
+            return None
         if local_has_key('cache'):
             try:
                 return self.request_cache[key]
