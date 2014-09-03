@@ -36,7 +36,7 @@
       {% endif %}
       {%- if event.enddate != None %}
         {{ _('to') }}
-        {% if event.time == None %}
+        {% if event.endtime == None %}
           {{ event.enddate|naturalday }}
         {% else %}
           {{ event.enddatetime|naturalday }}
