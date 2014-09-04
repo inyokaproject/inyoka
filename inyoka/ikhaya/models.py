@@ -216,7 +216,7 @@ class Article(models.Model, LockableObject):
             verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
     intro = models.TextField(ugettext_lazy(u'Introduction'))
     text = models.TextField(ugettext_lazy(u'Text'))
-    public = models.BooleanField(ugettext_lazy(u'Public'))
+    public = models.BooleanField(ugettext_lazy(u'Public'), default=False)
     slug = models.SlugField(ugettext_lazy(u'Slug'), max_length=100,
             blank=True, db_index=True)
     is_xhtml = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
