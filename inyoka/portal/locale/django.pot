@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-09-02 14:37+0200\n"
+"POT-Creation-Date: 2014-09-06 21:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,7 +84,7 @@ msgstr ""
 
 #: inyoka/portal/forms.py:71 inyoka/portal/models.py:115
 #: inyoka/portal/templates/portal/calendar_detail.html:28
-#: inyoka/portal/templates/portal/privmsg/index.html:69
+#: inyoka/portal/templates/portal/privmsg/index.html:71
 msgid "Date"
 msgstr ""
 
@@ -96,7 +96,7 @@ msgstr ""
 msgid "Date and relevance"
 msgstr ""
 
-#: inyoka/portal/forms.py:77 inyoka/portal/views.py:416
+#: inyoka/portal/forms.py:77 inyoka/portal/views.py:417
 msgid "All support forums"
 msgstr ""
 
@@ -127,8 +127,8 @@ msgstr ""
 
 #: inyoka/portal/forms.py:110 inyoka/portal/forms.py:126
 #: inyoka/portal/forms.py:444 inyoka/portal/user.py:442
-#: inyoka/portal/templates/portal/group.html:33
-#: inyoka/portal/templates/portal/memberlist.html:41
+#: inyoka/portal/templates/portal/group.html:36
+#: inyoka/portal/templates/portal/memberlist.html:44
 #: inyoka/portal/templates/portal/special_rights.html:25
 msgid "Username"
 msgstr ""
@@ -397,7 +397,7 @@ msgid "Show attachments"
 msgstr ""
 
 #: inyoka/portal/forms.py:716
-#: inyoka/portal/templates/portal/privmsg/index.html:68
+#: inyoka/portal/templates/portal/privmsg/index.html:70
 msgid "To"
 msgstr ""
 
@@ -406,10 +406,10 @@ msgid "Separate multiple names by semicolon"
 msgstr ""
 
 #: inyoka/portal/forms.py:718 inyoka/portal/user.py:451
-#: inyoka/portal/templates/portal/group.html:13
+#: inyoka/portal/templates/portal/group.html:16
 #: inyoka/portal/templates/portal/group_edit.html:20
-#: inyoka/portal/templates/portal/grouplist.html:12
-#: inyoka/portal/templates/portal/grouplist.html:14
+#: inyoka/portal/templates/portal/grouplist.html:15
+#: inyoka/portal/templates/portal/grouplist.html:17
 #: inyoka/portal/templates/portal/overall.html:43
 msgid "Groups"
 msgstr ""
@@ -419,7 +419,7 @@ msgid "Separate multiple groups by semicolon"
 msgstr ""
 
 #: inyoka/portal/forms.py:720
-#: inyoka/portal/templates/portal/privmsg/index.html:66
+#: inyoka/portal/templates/portal/privmsg/index.html:68
 msgid "Subject"
 msgstr ""
 
@@ -610,9 +610,9 @@ msgid "Trash"
 msgstr ""
 
 #: inyoka/portal/models.py:100
-#: inyoka/portal/templates/portal/privmsg/index.html:48
-#: inyoka/portal/templates/portal/privmsg/index.html:117
-#: inyoka/portal/templates/portal/privmsg/index.html:118
+#: inyoka/portal/templates/portal/privmsg/index.html:50
+#: inyoka/portal/templates/portal/privmsg/index.html:119
+#: inyoka/portal/templates/portal/privmsg/index.html:120
 #: inyoka/portal/templates/portal/privmsg/index.m.html:29
 #: inyoka/portal/templates/portal/privmsg/index.m.html:60
 #: inyoka/portal/templates/portal/privmsg/overall.html:27
@@ -625,7 +625,7 @@ msgid "Title"
 msgstr ""
 
 #: inyoka/portal/models.py:166
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:41
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:44
 msgid "Read"
 msgstr ""
 
@@ -660,7 +660,7 @@ msgstr ""
 msgid "Static pages"
 msgstr ""
 
-#: inyoka/portal/models.py:289 inyoka/portal/templates/portal/files.html:21
+#: inyoka/portal/models.py:289 inyoka/portal/templates/portal/files.html:22
 msgid "Identifier"
 msgstr ""
 
@@ -683,8 +683,8 @@ msgid "Static file"
 msgstr ""
 
 #: inyoka/portal/models.py:300 inyoka/portal/templates/portal/file_edit.html:18
-#: inyoka/portal/templates/portal/files.html:12
-#: inyoka/portal/templates/portal/files.html:15
+#: inyoka/portal/templates/portal/files.html:14
+#: inyoka/portal/templates/portal/files.html:17
 #: inyoka/portal/templates/portal/overall.html:84
 msgid "Static files"
 msgstr ""
@@ -875,8 +875,8 @@ msgstr ""
 msgid "Activation status"
 msgstr ""
 
-#: inyoka/portal/user.py:448 inyoka/portal/templates/portal/group.html:35
-#: inyoka/portal/templates/portal/memberlist.html:43
+#: inyoka/portal/user.py:448 inyoka/portal/templates/portal/group.html:38
+#: inyoka/portal/templates/portal/memberlist.html:46
 #: inyoka/portal/templates/portal/profile.html:96
 #: inyoka/portal/templates/portal/special_rights.html:27
 msgid "Member since"
@@ -890,8 +890,8 @@ msgstr ""
 msgid "leave empty to ban permanent"
 msgstr ""
 
-#: inyoka/portal/user.py:460 inyoka/portal/templates/portal/group.html:36
-#: inyoka/portal/templates/portal/memberlist.html:44
+#: inyoka/portal/user.py:460 inyoka/portal/templates/portal/group.html:39
+#: inyoka/portal/templates/portal/memberlist.html:47
 #: inyoka/portal/templates/portal/profile.html:100
 #: inyoka/portal/templates/portal/special_rights.html:28
 msgid "Posts"
@@ -939,8 +939,8 @@ msgstr ""
 msgid "Coordinates (latitude)"
 msgstr ""
 
-#: inyoka/portal/user.py:474 inyoka/portal/templates/portal/group.html:34
-#: inyoka/portal/templates/portal/memberlist.html:42
+#: inyoka/portal/user.py:474 inyoka/portal/templates/portal/group.html:37
+#: inyoka/portal/templates/portal/memberlist.html:45
 #: inyoka/portal/templates/portal/profile.html:111
 #: inyoka/portal/templates/portal/special_rights.html:26
 msgid "Residence"
@@ -989,280 +989,280 @@ msgstr ""
 msgid "Team affiliation / Member title"
 msgstr ""
 
-#: inyoka/portal/views.py:225 inyoka/portal/views.py:318
-#: inyoka/portal/views.py:341
+#: inyoka/portal/views.py:226 inyoka/portal/views.py:319
+#: inyoka/portal/views.py:342
 msgid "You are already logged in."
 msgstr ""
 
-#: inyoka/portal/views.py:239
+#: inyoka/portal/views.py:240
 #, python-format
 msgid ""
 "The username “%(username)s” was successfully registered. An email with "
 "the activation key was sent to “%(email)s”."
 msgstr ""
 
-#: inyoka/portal/views.py:263 inyoka/portal/views.py:1370
+#: inyoka/portal/views.py:264 inyoka/portal/views.py:1370
 #: inyoka/portal/views.py:1485
 #, python-format
 msgid "The user “%(username)s” does not exist."
 msgstr ""
 
-#: inyoka/portal/views.py:271
+#: inyoka/portal/views.py:272
 msgid "You cannot enter an activation key when you are logged in."
 msgstr ""
 
-#: inyoka/portal/views.py:280
+#: inyoka/portal/views.py:281
 msgid "Your account was anonymized."
 msgstr ""
 
-#: inyoka/portal/views.py:283 inyoka/portal/views.py:1174
+#: inyoka/portal/views.py:284 inyoka/portal/views.py:1175
 #, python-format
 msgid "The account of “%(username)s” was already activated."
 msgstr ""
 
-#: inyoka/portal/views.py:286 inyoka/portal/views.py:297
+#: inyoka/portal/views.py:287 inyoka/portal/views.py:298
 msgid "Your activation key is invalid."
 msgstr ""
 
-#: inyoka/portal/views.py:293
+#: inyoka/portal/views.py:294
 msgid "Your account was successfully activated. You can now login."
 msgstr ""
 
-#: inyoka/portal/views.py:308
+#: inyoka/portal/views.py:309
 #, python-format
 msgid "The account “%(username)s” was already activated."
 msgstr ""
 
-#: inyoka/portal/views.py:312
+#: inyoka/portal/views.py:313
 msgid "An email with the activation key was sent to you."
 msgstr ""
 
-#: inyoka/portal/views.py:371 inyoka/portal/views.py:1829
+#: inyoka/portal/views.py:372 inyoka/portal/views.py:1829
 #: inyoka/portal/views.py:1866
 msgid "You have successfully logged in."
 msgstr ""
 
-#: inyoka/portal/views.py:403
+#: inyoka/portal/views.py:404
 msgid "You have successfully logged out."
 msgstr ""
 
-#: inyoka/portal/views.py:405
+#: inyoka/portal/views.py:406
 msgid "You were not logged in."
 msgstr ""
 
-#: inyoka/portal/views.py:422
+#: inyoka/portal/views.py:423
 msgid ""
 "An error occurred while processing your search request. Please check your"
 " input."
 msgstr ""
 
-#: inyoka/portal/views.py:441
+#: inyoka/portal/views.py:442
 msgid "« Previous"
 msgstr ""
 
-#: inyoka/portal/views.py:444
+#: inyoka/portal/views.py:445
 #, python-format
 msgid "Page %(page)d of about %(total)d"
 msgstr ""
 
-#: inyoka/portal/views.py:450
+#: inyoka/portal/views.py:451
 msgid "Next »"
 msgstr ""
 
-#: inyoka/portal/views.py:484
+#: inyoka/portal/views.py:485
 msgid "You need to be logged in to view a user profile."
 msgstr ""
 
-#: inyoka/portal/views.py:541
+#: inyoka/portal/views.py:542
 #, python-format
 msgid "%(sitename)s - Message from %(username)s"
 msgstr ""
 
-#: inyoka/portal/views.py:548
+#: inyoka/portal/views.py:549
 #, python-format
 msgid "The email to “%(username)s” was sent successfully."
 msgstr ""
 
-#: inyoka/portal/views.py:572
+#: inyoka/portal/views.py:573
 #, python-format
 msgid "You will now be notified about activities of “%(username)s”."
 msgstr ""
 
-#: inyoka/portal/views.py:587
+#: inyoka/portal/views.py:588
 #, python-format
 msgid ""
 "From now on you won’t be notified anymore about activities of "
 "“%(username)s”."
 msgstr ""
 
-#: inyoka/portal/views.py:596
+#: inyoka/portal/views.py:597
 msgid "You need to be logged in to access your control panel"
 msgstr ""
 
-#: inyoka/portal/views.py:606
+#: inyoka/portal/views.py:607
 msgid "You need to be logged in to change your profile"
 msgstr ""
 
-#: inyoka/portal/views.py:617
+#: inyoka/portal/views.py:618
 msgid "Your profile information were updated successfully."
 msgstr ""
 
-#: inyoka/portal/views.py:639
+#: inyoka/portal/views.py:640
 msgid "You need to be logged in to change your settings."
 msgstr ""
 
-#: inyoka/portal/views.py:662
+#: inyoka/portal/views.py:663
 msgid "Your settings were successfully changed."
 msgstr ""
 
-#: inyoka/portal/views.py:691
+#: inyoka/portal/views.py:692
 msgid "You need to be logged in to change your password."
 msgstr ""
 
-#: inyoka/portal/views.py:703
+#: inyoka/portal/views.py:704
 msgid "The entered password did not match your old password."
 msgstr ""
 
-#: inyoka/portal/views.py:707
+#: inyoka/portal/views.py:708
 msgid "Your password was changed successfully."
 msgstr ""
 
-#: inyoka/portal/views.py:758
+#: inyoka/portal/views.py:759
 #, python-format
 msgid "A subscription was deleted."
 msgid_plural "%(n)d subscriptions were deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/portal/views.py:768
+#: inyoka/portal/views.py:769
 #, python-format
 msgid "A subscription was marked as read."
 msgid_plural "%(n)d subscriptions were marked as read."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/portal/views.py:777
+#: inyoka/portal/views.py:778
 msgid "You need to be logged in to deactivate your account."
 msgstr ""
 
-#: inyoka/portal/views.py:790
+#: inyoka/portal/views.py:791
 msgid "The entered password is wrong."
 msgstr ""
 
-#: inyoka/portal/views.py:795
+#: inyoka/portal/views.py:796
 msgid "Your account was deactivated."
 msgstr ""
 
-#: inyoka/portal/views.py:807
+#: inyoka/portal/views.py:808
 msgid "You need to be logged in to change your user page."
 msgstr ""
 
-#: inyoka/portal/views.py:814
+#: inyoka/portal/views.py:815
 msgid ""
 "You were redirected to our wiki to change your user page. To get back, "
 "you can use the link or your browser’s “back” button."
 msgstr ""
 
-#: inyoka/portal/views.py:872
+#: inyoka/portal/views.py:873
 #, python-format
 msgid "The profile of “%(username)s” was changed successfully"
 msgstr ""
 
-#: inyoka/portal/views.py:930
+#: inyoka/portal/views.py:931
 #, python-format
 msgid "The setting of “%(username)s” were successfully changed."
 msgstr ""
 
-#: inyoka/portal/views.py:951
+#: inyoka/portal/views.py:952
 #, python-format
 msgid "The state of “%(username)s” was successfully changed."
 msgstr ""
 
-#: inyoka/portal/views.py:976
+#: inyoka/portal/views.py:977
 #, python-format
 msgid "The password of “%(username)s” was successfully changed."
 msgstr ""
 
-#: inyoka/portal/views.py:1037
+#: inyoka/portal/views.py:1038
 #, python-format
 msgid "The privileges of “%(username)s” were successfully changed."
 msgstr ""
 
-#: inyoka/portal/views.py:1126
+#: inyoka/portal/views.py:1127
 #, python-format
 msgid "The groups of “%(username)s” were successfully changed."
 msgstr ""
 
-#: inyoka/portal/views.py:1155
+#: inyoka/portal/views.py:1156
 #, python-format
 msgid ""
 "The user “%(username)s” was successfully created. You can now edit more "
 "details."
 msgstr ""
 
-#: inyoka/portal/views.py:1179
+#: inyoka/portal/views.py:1180
 msgid "The email with the activation key was resent."
 msgstr ""
 
-#: inyoka/portal/views.py:1183 inyoka/portal/views.py:1293
+#: inyoka/portal/views.py:1184 inyoka/portal/views.py:1293
 msgid "You need to be logged in to access your private messages."
 msgstr ""
 
-#: inyoka/portal/views.py:1220
+#: inyoka/portal/views.py:1221
 #, python-format
 msgid "A message was deleted."
 msgid_plural "%(n)d messages were deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/portal/views.py:1243
+#: inyoka/portal/views.py:1244
 msgid "The messages was moved into you archive."
 msgstr ""
 
-#: inyoka/portal/views.py:1247
+#: inyoka/portal/views.py:1248
 msgid "The message was restored."
 msgstr ""
 
-#: inyoka/portal/views.py:1250
+#: inyoka/portal/views.py:1251
 msgid "The message was deleted."
 msgstr ""
 
-#: inyoka/portal/views.py:1252
+#: inyoka/portal/views.py:1253
 msgid "The message was moved in the trash."
 msgstr ""
 
-#: inyoka/portal/views.py:1258
+#: inyoka/portal/views.py:1259
 msgid "Do you want to archive the message?"
 msgstr ""
 
-#: inyoka/portal/views.py:1261
+#: inyoka/portal/views.py:1262
 msgid "Archive it"
 msgstr ""
 
-#: inyoka/portal/views.py:1263
+#: inyoka/portal/views.py:1264
 msgid "Do you want to restore the message?"
 msgstr ""
 
-#: inyoka/portal/views.py:1264
-#: inyoka/portal/templates/portal/privmsg/index.html:46
+#: inyoka/portal/views.py:1265
+#: inyoka/portal/templates/portal/privmsg/index.html:48
 #: inyoka/portal/templates/portal/privmsg/index.m.html:59
 msgid "Restore"
 msgstr ""
 
-#: inyoka/portal/views.py:1266
+#: inyoka/portal/views.py:1267
 msgid "Do you really want to delete the message?"
 msgstr ""
 
-#: inyoka/portal/views.py:1267 inyoka/portal/templates/portal/files.html:33
+#: inyoka/portal/views.py:1268 inyoka/portal/templates/portal/files.html:34
 #: inyoka/portal/templates/portal/files_delete.html:16
 #: inyoka/portal/templates/portal/page_delete.html:19
 #: inyoka/portal/templates/portal/pages.html:32
-#: inyoka/portal/templates/portal/privmsg/index.html:71
+#: inyoka/portal/templates/portal/privmsg/index.html:73
 #: inyoka/portal/templates/portal/privmsg/index.m.html:61
 msgid "Delete"
 msgstr ""
 
-#: inyoka/portal/views.py:1271
+#: inyoka/portal/views.py:1272
 #: inyoka/portal/templates/portal/files_delete.html:17
 #: inyoka/portal/templates/portal/page_delete.html:20
 msgid "Cancel"
@@ -1538,17 +1538,17 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: inyoka/portal/templates/portal/files.html:17
+#: inyoka/portal/templates/portal/files.html:18
 msgid "Create new static file"
 msgstr ""
 
-#: inyoka/portal/templates/portal/files.html:23
+#: inyoka/portal/templates/portal/files.html:24
 #: inyoka/portal/templates/portal/pages.html:22
-#: inyoka/portal/templates/portal/privmsg/index.html:70
+#: inyoka/portal/templates/portal/privmsg/index.html:72
 msgid "Actions"
 msgstr ""
 
-#: inyoka/portal/templates/portal/files.html:32
+#: inyoka/portal/templates/portal/files.html:33
 #: inyoka/portal/templates/portal/group_edit.html:17
 #: inyoka/portal/templates/portal/page_edit.html:14
 #: inyoka/portal/templates/portal/pages.html:31
@@ -1562,7 +1562,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: inyoka/portal/templates/portal/files.html:39
+#: inyoka/portal/templates/portal/files.html:40
 msgid "There are no static files, create the first one now!"
 msgstr ""
 
@@ -1571,15 +1571,15 @@ msgstr ""
 msgid "Do you really want to delete the file “%(file)s”?"
 msgstr ""
 
-#: inyoka/portal/templates/portal/group.html:18
+#: inyoka/portal/templates/portal/group.html:21
 msgid "This group is private and the membership is not shown public."
 msgstr ""
 
-#: inyoka/portal/templates/portal/group.html:20
+#: inyoka/portal/templates/portal/group.html:23
 msgid "This is a public group."
 msgstr ""
 
-#: inyoka/portal/templates/portal/group.html:24
+#: inyoka/portal/templates/portal/group.html:27
 #, python-format
 msgid "The group “%(name)s” has %(count)s member:"
 msgid_plural "The group “%(name)s” has %(count)s members:"
@@ -1618,7 +1618,7 @@ msgstr ""
 msgid "Please turn JavaScript on to edit the privileges."
 msgstr ""
 
-#: inyoka/portal/templates/portal/grouplist.html:16
+#: inyoka/portal/templates/portal/grouplist.html:19
 #, python-format
 msgid "In total there is %(count)s group, you are in %(usercount)s group."
 msgid_plural ""
@@ -1627,13 +1627,13 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/portal/templates/portal/grouplist.html:24
+#: inyoka/portal/templates/portal/grouplist.html:27
 msgid "Create new group"
 msgstr ""
 
-#: inyoka/portal/templates/portal/grouplist.html:29
+#: inyoka/portal/templates/portal/grouplist.html:32
 #: inyoka/portal/templates/portal/profile.html:65
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:40
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:43
 msgid "Name"
 msgstr ""
 
@@ -1724,8 +1724,8 @@ msgstr ""
 msgid "Request new password"
 msgstr ""
 
-#: inyoka/portal/templates/portal/memberlist.html:12
-#: inyoka/portal/templates/portal/memberlist.html:16
+#: inyoka/portal/templates/portal/memberlist.html:15
+#: inyoka/portal/templates/portal/memberlist.html:19
 #: inyoka/portal/templates/portal/overall.html:42
 #: inyoka/portal/templates/portal/profile.html:13
 #: inyoka/portal/templates/portal/special_rights.html:13
@@ -1741,27 +1741,27 @@ msgstr ""
 msgid "Members"
 msgstr ""
 
-#: inyoka/portal/templates/portal/memberlist.html:18
+#: inyoka/portal/templates/portal/memberlist.html:21
 msgid "Choose the user you want to edit:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/memberlist.html:23
+#: inyoka/portal/templates/portal/memberlist.html:26
 msgid "Select"
 msgstr ""
 
-#: inyoka/portal/templates/portal/memberlist.html:24
+#: inyoka/portal/templates/portal/memberlist.html:27
 msgid "You can also enter an e-mail address instead of a user name."
 msgstr ""
 
-#: inyoka/portal/templates/portal/memberlist.html:30
+#: inyoka/portal/templates/portal/memberlist.html:33
 msgid "Show users with special rights"
 msgstr ""
 
-#: inyoka/portal/templates/portal/memberlist.html:33
+#: inyoka/portal/templates/portal/memberlist.html:36
 msgid "Create a new user"
 msgstr ""
 
-#: inyoka/portal/templates/portal/memberlist.html:57
+#: inyoka/portal/templates/portal/memberlist.html:60
 msgid "No users were found."
 msgstr ""
 
@@ -1874,7 +1874,7 @@ msgid "%(name)s is not available."
 msgstr ""
 
 #: inyoka/portal/templates/portal/profile.html:69
-#: inyoka/portal/templates/portal/privmsg/index.html:18
+#: inyoka/portal/templates/portal/privmsg/index.html:20
 #, python-format
 msgid "Avatar of %(user)s"
 msgstr ""
@@ -2065,7 +2065,7 @@ msgid "Note: More settings will be available after creating the user."
 msgstr ""
 
 #: inyoka/portal/templates/portal/user_overview.html:36
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:42
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:45
 msgid "State"
 msgstr ""
 
@@ -2120,79 +2120,79 @@ msgstr ""
 msgid "Members with green usernames belong to the team."
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:20
+#: inyoka/portal/templates/portal/privmsg/index.html:22
 msgid "From:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:23
+#: inyoka/portal/templates/portal/privmsg/index.html:25
 #: inyoka/portal/templates/portal/privmsg/index.m.html:43
 msgid "To:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:27
+#: inyoka/portal/templates/portal/privmsg/index.html:29
 msgid "Subject:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:29
+#: inyoka/portal/templates/portal/privmsg/index.html:31
 msgid "Date:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:38
-#: inyoka/portal/templates/portal/privmsg/index.html:103
-#: inyoka/portal/templates/portal/privmsg/index.html:104
+#: inyoka/portal/templates/portal/privmsg/index.html:40
+#: inyoka/portal/templates/portal/privmsg/index.html:105
+#: inyoka/portal/templates/portal/privmsg/index.html:106
 #: inyoka/portal/templates/portal/privmsg/index.m.html:54
 msgid "Reply"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:41
-#: inyoka/portal/templates/portal/privmsg/index.html:108
-#: inyoka/portal/templates/portal/privmsg/index.html:109
+#: inyoka/portal/templates/portal/privmsg/index.html:43
+#: inyoka/portal/templates/portal/privmsg/index.html:110
+#: inyoka/portal/templates/portal/privmsg/index.html:111
 #: inyoka/portal/templates/portal/privmsg/index.m.html:56
 msgid "Reply to all"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:44
-#: inyoka/portal/templates/portal/privmsg/index.html:113
-#: inyoka/portal/templates/portal/privmsg/index.html:114
+#: inyoka/portal/templates/portal/privmsg/index.html:46
+#: inyoka/portal/templates/portal/privmsg/index.html:115
+#: inyoka/portal/templates/portal/privmsg/index.html:116
 #: inyoka/portal/templates/portal/privmsg/index.m.html:58
 msgid "Forward"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:50
+#: inyoka/portal/templates/portal/privmsg/index.html:52
 msgid "Delete message"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:55
+#: inyoka/portal/templates/portal/privmsg/index.html:57
 #, python-format
 msgid ""
 "If you received a spam message, please forward it to a <a "
 "href=\"%(moderators)s\">moderator</a>."
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:67
+#: inyoka/portal/templates/portal/privmsg/index.html:69
 msgid "From"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:129
+#: inyoka/portal/templates/portal/privmsg/index.html:131
 msgid "Currently there are no messages in this folder."
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:142
+#: inyoka/portal/templates/portal/privmsg/index.html:144
 msgid "Split messages into multiple pages"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:146
+#: inyoka/portal/templates/portal/privmsg/index.html:148
 msgid "Display all messages on one page"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:152
+#: inyoka/portal/templates/portal/privmsg/index.html:154
 #: inyoka/portal/templates/portal/privmsg/index.m.html:35
 #: inyoka/portal/templates/portal/privmsg/new.html:14
 #: inyoka/portal/templates/portal/privmsg/overall.html:37
 msgid "Compose message"
 msgstr ""
 
-#: inyoka/portal/templates/portal/privmsg/index.html:153
+#: inyoka/portal/templates/portal/privmsg/index.html:155
 msgid "Delete marked messages"
 msgstr ""
 
@@ -2268,9 +2268,9 @@ msgstr ""
 
 #: inyoka/portal/templates/portal/usercp/index.html:28
 #: inyoka/portal/templates/portal/usercp/overall.html:21
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:13
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:27
-#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:15
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:16
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:30
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:16
 msgid "Subscriptions"
 msgstr ""
 
@@ -2343,67 +2343,67 @@ msgstr ""
 msgid "Edit your subscriptions"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:19
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:22
 msgid "Filter"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:39
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:42
 msgid "(De)select all"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:56
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:57
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:59
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:60
 msgid "Show unread posts"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:62
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:63
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:67
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:68
 msgid "Go to last comment"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:66
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:67
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:71
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:72
 msgid "Revisions"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:70
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:75
 msgid "Unsubscribe"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:74
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:79
 msgid "Changes since last visit"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:86
-#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:39
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:91
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:40
 msgid "You did not yet subscribed to any topics or articles."
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:92
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:97
 msgid "Delete selected subscriptions"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.html:93
+#: inyoka/portal/templates/portal/usercp/subscriptions.html:98
 msgid "Mark selected subscriptions as read"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:25
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:26
 msgid "Topic:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:27
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:28
 msgid "Wiki page:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:29
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:30
 msgid "Forum:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:31
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:32
 msgid "User:"
 msgstr ""
 
-#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:33
+#: inyoka/portal/templates/portal/usercp/subscriptions.m.html:34
 msgid "Article:"
 msgstr ""
 

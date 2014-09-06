@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-09-02 14:37+0200\n"
+"POT-Creation-Date: 2014-09-06 21:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +27,20 @@ msgstr ""
 
 #: inyoka/templates/appheader.html:9
 msgid "Portal"
+msgstr ""
+
+#: inyoka/templates/macros.html:56 inyoka/templates/macros.html:58
+#: inyoka/templates/macros.html:101
+msgid "Previous"
+msgstr ""
+
+#: inyoka/templates/macros.html:74 inyoka/templates/macros.html:76
+#: inyoka/templates/macros.html:105
+msgid "Next"
+msgstr ""
+
+#: inyoka/templates/macros.html:103
+msgid "Page"
 msgstr ""
 
 #: inyoka/templates/overall.html:95
@@ -290,20 +304,6 @@ msgstr ""
 
 #: inyoka/utils/generic.py:220
 msgid "Canceled."
-msgstr ""
-
-#: inyoka/utils/pagination.py:156 inyoka/utils/pagination.py:160
-#: inyoka/utils/pagination.py:206
-msgid "Next »"
-msgstr ""
-
-#: inyoka/utils/pagination.py:166 inyoka/utils/pagination.py:170
-#: inyoka/utils/pagination.py:208
-msgid "« Previous"
-msgstr ""
-
-#: inyoka/utils/pagination.py:201
-msgid "Page"
 msgstr ""
 
 #: inyoka/utils/sessions.py:83
