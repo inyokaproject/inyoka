@@ -2286,7 +2286,7 @@ msgstr "Momentan befinden sich keine Nachrichten in diesem Ordner."
 
 #: inyoka/portal/templates/portal/privmsg/index.html:144
 msgid "Split messages into multiple pages"
-msgstr "Nachrict auf mehrere Seiten aufteilen"
+msgstr "Nachricht auf mehrere Seiten aufteilen"
 
 #: inyoka/portal/templates/portal/privmsg/index.html:148
 msgid "Display all messages on one page"
@@ -2535,4 +2535,3 @@ msgstr "Artikel:"
 
 #~ msgid ""
 #~ msgstr "Beschreibung zum Planeten, die im Feed verwendet wird."
-
