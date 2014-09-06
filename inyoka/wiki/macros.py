@@ -716,15 +716,15 @@ class Attachment(macros.Macro):
     def __init__(self, target, text):
         self.target = target
         self.text = text
-        self.is_internal = is_safe_domain(target)
-        if self.is_internal:
+        self.is_external = not is_safe_domain(target)
+        if not self.is_external:
             self.metadata = [nodes.MetaData('X-Attach', [target])]
             target = normalize_pagename(target, True)
         self.children = [nodes.Text(self.text or self.target)]
 
     def build_node(self, context, format):
         target = self.target
-        if not self.is_internal:
+        if self.is_external:
             return nodes.Link(target, self.children)
         else:
             wiki_page = context.kwargs.get('wiki_page', None)
