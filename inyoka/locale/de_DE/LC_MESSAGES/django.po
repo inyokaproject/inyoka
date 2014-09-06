@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2014-09-06 21:38+0200\n"
-"PO-Revision-Date: 2012-11-03 12:49+0000\n"
-"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
+"POT-Creation-Date: 2014-09-06 21:48+0200\n"
+"PO-Revision-Date: 2014-09-06 21:47+0100\n"
+"Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -38,15 +38,13 @@ msgstr "Portal"
 
 #: inyoka/templates/macros.html:56 inyoka/templates/macros.html:58
 #: inyoka/templates/macros.html:101
-#, fuzzy
 msgid "Previous"
-msgstr "« Zurück"
+msgstr "Vorherige"
 
 #: inyoka/templates/macros.html:74 inyoka/templates/macros.html:76
 #: inyoka/templates/macros.html:105
-#, fuzzy
 msgid "Next"
-msgstr "Planet"
+msgstr "Nächste"
 
 #: inyoka/templates/macros.html:103
 msgid "Page"
