@@ -97,13 +97,13 @@ class TestForumPrivileges(TestCase):
         self.assertEqual(acl.get_privileges(self.anonymous, None), {})
         self.assertEqual(acl.get_privileges(self.anonymous, []), {})
         self.assertEqual(acl.get_privileges(self.anonymous, ()), {})
-        self.assertEqual(acl.get_privileges(self.anonymous, EmptyQuerySet()), {})
+        self.assertEqual(acl.get_privileges(self.anonymous, EmptyQuerySet), {})
 
         # test for user
         self.assertEqual(acl.get_privileges(self.user, None), {})
         self.assertEqual(acl.get_privileges(self.user, []), {})
         self.assertEqual(acl.get_privileges(self.user, ()), {})
-        self.assertEqual(acl.get_privileges(self.user, EmptyQuerySet()), {})
+        self.assertEqual(acl.get_privileges(self.user, EmptyQuerySet), {})
 
     def test_no_explicit_permissions(self):
         category = Forum.objects.create(name='Category')

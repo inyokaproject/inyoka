@@ -26,8 +26,9 @@ from inyoka.utils.cache import cache
 from inyoka.utils.dates import format_time, datetime_to_timezone
 from inyoka.utils.imaging import parse_dimensions
 from inyoka.utils.pagination import Pagination
+from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
-from inyoka.utils.urls import href, url_for, urlencode, is_external_target
+from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
 from inyoka.wiki.models import Page, MetaData, Revision
 from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
@@ -166,7 +167,7 @@ class RecentChanges(macros.Macro):
                             [nodes.Text(u'')], class_='note')])
             data = {
                 'nodes': table,
-                'pagination': pagination.generate()
+                'pagination': render_template('pagination.html', {'pagination': pagination})
             }
             cache.set(cache_key, data)
 
@@ -715,15 +716,15 @@ class Attachment(macros.Macro):
     def __init__(self, target, text):
         self.target = target
         self.text = text
-        self.is_external = is_external_target(target)
-        if not self.is_external:
+        self.is_internal = is_safe_domain(target)
+        if self.is_internal:
             self.metadata = [nodes.MetaData('X-Attach', [target])]
             target = normalize_pagename(target, True)
         self.children = [nodes.Text(self.text or self.target)]
 
     def build_node(self, context, format):
         target = self.target
-        if self.is_external:
+        if not self.is_internal:
             return nodes.Link(target, self.children)
         else:
             wiki_page = context.kwargs.get('wiki_page', None)

@@ -260,8 +260,17 @@ development installation:
   repeat: admin
   created superuser
 
-Of  course you can use another password, but you should keep the  *admin*
-as username because it will be used in some test files.
+Of course you can use another password, but you should keep the  *admin*
+as username because it will be used in some test files. It is also
+advisable to use that mail adress in order to be able to test
+notifications, see :ref:`testing notifications <test-notifies>`.
+
+.. note::
+
+   If you want to change settings in the admin's control panel, you need
+   to set the mail adress to ``admin@localhost.local`` to not raise an
+   error. The mail adress is then automatically set back to
+   ``admin@localhost``.
 
 Now you can create the real test data:
 
@@ -269,8 +278,6 @@ Now you can create the real test data:
 
   (inyoka)$ ./make_testdata.py
 
-.. todo::
-   How to receive notifications via jabber/email?
 
 Starting Inyoka
 ***************

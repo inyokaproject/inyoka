@@ -122,6 +122,28 @@ And last you can merge the changes on staging to your developement branch:
 Testing
 =======
 
+.. _test-notifies:
+
+Test notifications
+******************
+
+Notifications for an user which mail adress admin@localhost can easily be
+tested by starting celery:
+
+.. code-block:: console
+
+   (inyoka)$ python manage.py celeryd start
+
+Among other things you will see the noticiation mails for the admin user.
+
+.. note::
+
+   After changing a @task function, you need to restart the celery server.
+
+.. todo::
+
+   How to test jabber notifications?
+
 Run tests
 *********
 

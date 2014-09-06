@@ -10,6 +10,7 @@
 {%- extends 'forum/page.html' %}
 {% from 'forum/_forum.html' import render_forum, topic_icon,
                                    generate_subscription_link with context %}
+{% from 'macros.html' import render_pagination, render_small_pagination %}
 
 {% macro forum_actions() %}
   <p class="actions linklist">
@@ -28,6 +29,7 @@
 {% endmacro %}
 
 {% set name = 'Forum „%s“ - ' % forum.name|e %}
+{% set rendered_pagination = render_pagination(pagination) %}
 {% set feeds = [
   (name + _('Captions'), href('forum', 'feeds/forum', forum.slug, 'title/20')),
   (name + _('Teaser'), href('forum', 'feeds/forum', forum.slug, 'short/20')),
@@ -70,7 +72,7 @@
               {% trans n=forum.post_count %}Posts: <strong>{{ n }}</strong>{% endtrans %}
             </span>
           </p>
-          {{ pagination.generate('right') }}
+          <div class="pagination pagination_right">{{ rendered_pagination }}</div>
           {{ forum_actions() }}
         </td>
       </tr>
@@ -119,9 +121,10 @@
               {%- endtrans %} |
               {{ topic.first_post.pub_date|datetime }}
               {%- if topic.paginated %} |
-                {% trans pagination=topic.get_pagination() -%}
-                  Go to page {{ pagination }}
-                {%- endtrans %}
+                {% trans %}Go to page{% endtrans %}
+                <span class="pagination">
+                    {{ render_small_pagination(topic.get_pagination()) }}
+                </span>
               {%- endif -%}
             </p>
           </td>
@@ -157,7 +160,7 @@
           {%- if forum.description %}
             <p class="description">{{ forum.description|e }}</p>
           {%- endif %}
-          {{ pagination.generate('right') }}
+          <div class="pagination pagination_right">{{ rendered_pagination }}</div>
           {{ forum_actions() }}
         </td>
       </tr>

@@ -81,7 +81,7 @@ class Entry(models.Model):
     updated = models.DateTimeField(db_index=True)
     author = models.CharField(max_length=50)
     author_homepage = models.URLField(blank=True, null=True)
-    hidden = models.BooleanField()
+    hidden = models.BooleanField(default=False)
     hidden_by = models.ForeignKey(User, blank=True, null=True,
                                   related_name='hidden_planet_posts')
 

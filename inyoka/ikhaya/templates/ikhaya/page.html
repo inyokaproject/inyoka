@@ -73,10 +73,10 @@
     {% if show_full_choice %}
       <h3 class="navi_full_articles">{% trans %}Display options{% endtrans %}</h3>
       <ul>
-        {% if '/full/' in CURRENT_URL %}
-          <li><a href="{{ CURRENT_URL[:-6] }}">{% trans %}Show only teaser{% endtrans %}</a></li>
+        {% if full %}
+          <li><a href="{{ teaser_link }}">{% trans %}Show only teaser{% endtrans %}</a></li>
         {% else %}
-          <li><a href="{{ [CURRENT_URL[:-1], 'full', '']|join('/') }}">{% trans %}Show full article{% endtrans %}</a></li>
+          <li><a href="{{ full_link }}">{% trans %}Show full article{% endtrans %}</a></li>
         {% endif %}
       </ul>
     {% endif %}

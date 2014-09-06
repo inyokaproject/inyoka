@@ -10,6 +10,7 @@
 #}
 
 {%- extends 'portal/usercp/overall.m.html' %}
+{%- from 'macros.html' import render_pagination_mobile -%}
 
 {% block content %}
 <h3>{% trans %}Subscriptions{% endtrans %}</h3>
@@ -39,5 +40,5 @@
     <tr><td>{% trans %}You did not yet subscribed to any topics or articles.{% endtrans %}</td></tr>
   {%- endfor -%}
   </table>
-  {{ pagination.generate() }}
+  <div class="pagination">{{ render_pagination_mobile(pagination) }}</div>
 {% endblock %}

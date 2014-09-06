@@ -15,7 +15,7 @@ from PIL import Image
 from django.conf import settings
 from django.utils.encoding import force_unicode
 
-from inyoka.utils.urls import is_external_target
+from inyoka.utils.urls import is_safe_domain
 
 
 def _get_box(img, width, height):
@@ -90,7 +90,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
     if not width and not height:
         raise ValueError('neither with nor height given')
 
-    if is_external_target(location):
+    if not is_safe_domain(location):
         return None
 
     format, quality = ('png', '100')

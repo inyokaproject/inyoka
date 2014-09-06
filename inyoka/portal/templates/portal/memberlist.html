@@ -9,6 +9,9 @@
 #}
 
 {%- extends 'portal/overall.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
+
 {% do BREADCRUMB.append(_('Members'), href('portal', 'users')) %}
 {% set scripts = ['DateTime'] %}
 {% set styles = ['datetimefield'] %}
@@ -58,5 +61,5 @@
       </tr>
     {%- endfor %}
   </table>
-  {{ pagination.generate() }}
+  <div class="pagination">{{rendered_pagination}}</div>
 {% endblock %}
