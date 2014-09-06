@@ -2532,6 +2532,3 @@ msgstr "Benutzer:"
 #: inyoka/portal/templates/portal/usercp/subscriptions.m.html:34
 msgid "Article:"
 msgstr "Artikel:"
-
-#~ msgid ""
-#~ msgstr "Beschreibung zum Planeten, die im Feed verwendet wird."
