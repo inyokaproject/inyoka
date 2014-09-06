@@ -1184,7 +1184,7 @@ def admin_resend_activation_mail(request):
 @check_login(message=_(u'You need to be logged in to access your private '
                        'messages.'))
 @templated('portal/privmsg/index.html')
-def privmsg(request, folder=None, entry_id=None, page=1):
+def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     page = int(page)
     if folder is None:
         if get_flavour() == 'mobile':
@@ -1275,7 +1275,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
         message = None
     link = href('portal', 'privmsg', folder, 'page')
 
-    pagination = Pagination(request, query=entries, page=page, per_page=10, link=link)
+    pagination = Pagination(request, query=entries, page=page, per_page=10, link=link, one_page=one_page)
 
     return {
         'entries': pagination.get_queryset(),
@@ -1285,7 +1285,7 @@ def privmsg(request, folder=None, entry_id=None, page=1):
             'id': PRIVMSG_FOLDERS[folder][1]
         },
         'message': message,
-        'one_page': page == 0,
+        'one_page': one_page,
     }
 
 
