@@ -144,7 +144,7 @@
                     {%- trans %}Split messages into multiple pages{% endtrans -%}
                   </a>
                 {% else %}
-                  <a href="{{ href('portal', 'privmsg', folder.id, 'page', '0') }}">
+                  <a href="{{ href('portal', 'privmsg', folder.id, 'all') }}">
                     {%- trans %}Display all messages on one page{% endtrans -%}
                   </a>
                 {% endif %}
