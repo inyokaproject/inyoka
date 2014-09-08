@@ -1310,6 +1310,46 @@ def privmsg_restore(request, entry_id=None):
         return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
 
 
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_archive(request, entry_id=None):
+    """ Moves a message to the archive. """
+
+    if entry_id is None:
+        raise Http404()
+
+    try:
+        entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
+        folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
+    except KeyError:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    if entry.in_archive:
+        messages.error(request, _(u'This message is already archived.'))
+        return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+
+    if request.method == 'POST':
+        if 'cancel' in request.POST:
+            return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+
+        if entry.archive():
+            messages.success(request, _(u'The messages was moved into your archive.'))
+            return HttpResponseRedirect(href('portal', 'privmsg', folder_slug))
+
+    else:
+        msg = _(u'Do you want to archive the message?')
+        confirm_label = _(u'Archive it')
+        messages.info(request,
+            render_template('confirm_action_flash.html',
+                {
+                    'message': msg,
+                    'confirm_label': confirm_label,
+                    'cancel_label': _(u'Cancel'),
+                    'action_url': href('portal', 'privmsg', 'message', entry_id, 'archive'),
+                },
+                flash=True))
+        return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+
+
 @templated('portal/privmsg/new.html')
 @check_login(message=_(u'You need to be logged in to access your private '
                        'messages.'))
