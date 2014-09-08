@@ -1228,6 +1228,45 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     }
 
 
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_delete(request, entry_id=None):
+    """ Deletes messages or moves them to 'trash' """
+    if entry_id is None:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    try:
+        entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
+        folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
+    except KeyError:
+        raise Http404()
+
+    if request.method == 'POST':
+        if 'cancel' in request.POST:
+            return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+        else:
+            if entry.folder == PRIVMSG_FOLDERS['trash'][0]:
+                msg = _(u'The message was deleted.')
+            else:
+                msg = _(u'The message was moved in the trash.')
+            if entry.delete():
+                messages.success(request, msg)
+                return HttpResponseRedirect(href('portal', 'privmsg', folder_slug))
+
+    else:
+        msg = _(u'Do you really want to delete the message?')
+        confirm_label = _(u'Delete')
+        messages.info(request,
+            render_template('confirm_action_flash.html',
+                {
+                    'message': msg,
+                    'confirm_label': confirm_label,
+                    'cancel_label': _(u'Cancel'),
+                    'action_url': href('portal', 'privmsg', 'message', entry_id, 'delete'),
+                },
+                flash=True))
+        return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+
+
 @templated('portal/privmsg/new.html')
 @check_login(message=_(u'You need to be logged in to access your private '
                        'messages.'))
