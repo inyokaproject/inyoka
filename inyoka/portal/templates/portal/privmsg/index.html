@@ -37,19 +37,19 @@
       <div class="linklist pn_actions">
         {%- if not message.author == USER %}
           {% if message.author.is_active %}
-          <a class="pn_reply" href="{{ message|url('reply') }}">{% trans %}Reply{% endtrans %}</a> |
+          <a class="pn_reply" href="{{ entry|url('reply') }}">{% trans %}Reply{% endtrans %}</a> |
           {%- endif %}
           {%- if message.recipients|length > 1 %}
-          <a class="pn_reply_all" href="{{ message|url('reply_to_all') }}">{% trans %}Reply to all{% endtrans %}</a> |
+          <a class="pn_reply_all" href="{{ entry|url('reply_to_all') }}">{% trans %}Reply to all{% endtrans %}</a> |
           {%- endif %}
         {%- endif %}
-        <a class="pn_forward" href="{{ message|url('forward') }}">{% trans %}Forward{% endtrans %}</a> |
+        <a class="pn_forward" href="{{ entry|url('forward') }}">{% trans %}Forward{% endtrans %}</a> |
         {%- if folder.id == 'trash' %}
-        <a class="pn_restore" href="?action=restore">{% trans %}Restore{% endtrans %}</a> |
+        <a class="pn_restore" href="{{ entry|url('restore') }}">{% trans %}Restore{% endtrans %}</a> |
         {%- elif folder.id != 'archive' %}
-        <a class="pn_archive" href="?action=archive">{% trans %}Archive{% endtrans %}</a> |
+        <a class="pn_archive" href="{{ entry|url('archive') }}">{% trans %}Archive{% endtrans %}</a> |
         {%- endif %}
-        <a class="pn_delete" href="?action=delete">{% trans %}Delete message{% endtrans %}</a>
+        <a class="pn_delete" href="{{ entry|url('delete') }}">{% trans %}Delete message{% endtrans %}</a>
       </div>
     </div>
     <br/>
@@ -116,7 +116,7 @@
                 #}<img src="{{ href('static', 'img/icons/small/msg-forward.png') }}" alt="{% trans %}Forward{% endtrans %}" />{#
               #}</a>
               {%- if not entry.in_archive %}
-                <a href="{{ entry|url }}?action=archive" title="{% trans %}Archive{% endtrans %}">{#
+                <a href="{{ entry|url('archive') }}" title="{% trans %}Archive{% endtrans %}">{#
                   #}<img src="{{ href('static', 'img/icons/small/archive.png') }}" alt="{% trans %}Archive{% endtrans %}" />{#
                 #}</a>
               {%- endif %}
