@@ -1406,9 +1406,25 @@ def privmsg_new(request, username=None):
     }
 
 
+@templated('portal/privmsg/new.html')
+def privmsg_forward(request, entry_id=None):
+    if entry_id is None:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    try:
+        message = PrivateMessageEntry.objects.get(user=request.user, id=entry_id).message
+    except KeyError:
+        raise Http404()
+
+    subject = message.subject
+    if not subject.lower().startswith('fw:'):
+        subject = "Fw: {}".format(subject)
+    text = quote_text(message.text, message.author)
+    form = PrivateMessageForm(initial={'subject': subject, 'text': text})
+
     return {
         'form': form,
-        'preview': preview
+        'preview': None,
     }
 
 
