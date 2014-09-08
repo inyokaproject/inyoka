@@ -1351,177 +1351,61 @@ def privmsg_archive(request, entry_id=None):
 
 
 @templated('portal/privmsg/new.html')
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
 def privmsg_new(request, username=None):
-    # if the user has no posts in the forum and registered less than a week ago
-    # he can only send one pm every 5 minutes
-    form_class = PrivateMessageForm
-    if (not request.user.post_count and request.user.date_joined > (datetime.utcnow() - timedelta(days=7))):
-        form_class = PrivateMessageFormProtected
+    """ Sends private messages """
+
     preview = None
-    form = form_class()
+
     if request.method == 'POST':
-        form = form_class(request.POST)
+        form = PrivateMessageForm(request.POST)
         if 'preview' in request.POST:
-            ctx = RenderContext(request)
-            preview = parse(request.POST.get('text', '')).render(ctx, 'html')
-        elif form.is_valid():
+            context = RenderContext(request)
+            preview = parse(request.POST.get('text', '')).render(context, 'html')
+
+        if form.is_valid():
             d = form.cleaned_data
 
-            for group in AUTOBAN_SPAMMER_WORDS:
-                t = d['text']
-                if all(map(lambda x: x in t, group)):
-                    if '>' in t:
-                        continue  # User quoted, most likely a forward and no spam
-                    request.user.status = 2
-                    request.user.banned_until = None
-                    request.user.save(update_fields=['status', 'banned_until'])
-                    messages.info(request,
-                        _(u'You were automatically banned because we suspect '
-                          u'you are sending spam. If this ban is not '
-                          u'justified, contact us at %(email)s')
-                        % {'email': settings.INYOKA_CONTACT_EMAIL})
-                    auth.logout(request)
-                    return HttpResponseRedirect(href('portal'))
-
-            recipient_names = set(r.strip() for r in \
-                                  d['recipient'].split(';') if r)
-            group_recipient_names = set(r.strip() for r in \
-                                  d['group_recipient'].split(';') if r)
-
             recipients = set()
+            for username in d['recipient']:
+                user = User.objects.get(username)
+                recipients.add(user)
+            for group in d['group_recipient']:
+                users = Group.objects.get(name__iexact=group).user_set.all().exclude(pk=request.user.id)
+                recipients.update(users)
 
-            if d.get('group_recipient', None) and not request.user.can('send_group_pm'):
-                messages.error(request, _(u'You cannot send messages to groups.'))
-                return HttpResponseRedirect(href('portal', 'privmsg'))
+            message = PrivateMessage()
+            message.author = request.user
+            message.subject = d['subject']
+            message.text = d['text']
+            message.pub_date = datetime.utcnow()
+            message.send(list(recipients))
 
-            for group in group_recipient_names:
-                try:
-                    users = Group.objects.get(name__iexact=group).user_set.\
-                        all().exclude(pk=request.user.id)
-                    recipients.update(users)
-                except Group.DoesNotExist:
-                    messages.error(request,
-                        _(u'The group “%(group)s” does not exist.')
-                        % {'group': escape(group)})
-                    return HttpResponseRedirect(href('portal', 'privmsg'))
-
-            try:
-                for recipient in recipient_names:
-                    user = User.objects.get(recipient)
-                    if user.id == request.user.id:
-                        recipients = None
-                        messages.error(request, _(u'You cannot send messages to yourself.'))
-                        break
-                    elif user in (User.objects.get_system_user(),
-                                  User.objects.get_anonymous_user()):
-                        recipients = None
-                        messages.error(request, _(u'You cannot send messages to system users.'))
-                        break
-                    elif not user.is_active:
-                        recipients = None
-                        messages.error(request, (_(u'You cannot send messages to this user.')))
-                        break
-                    else:
-                        recipients.add(user)
-            except User.DoesNotExist:
-                recipients = None
-                messages.error(request,
-                    _(u'The user “%(username)s” does not exist.')
-                    % {'username': escape(recipient)})
-
-            if recipients:
-                msg = PrivateMessage()
-                msg.author = request.user
-                msg.subject = d['subject']
-                msg.text = d['text']
-                msg.pub_date = datetime.utcnow()
-                msg.send(list(recipients))
-                # send notification
-                for recipient in recipients:
-                    entry = PrivateMessageEntry.objects.get(message=msg,
-                                                            user=recipient)
-                    if 'pm_new' in recipient.settings.get('notifications',
-                                                          ('pm_new',)):
-                        send_notification(recipient, 'new_pm',
-                            _(u'New private message from %(username)s: %(subject)s')
-                            % {'username': request.user.username,
-                               'subject': d['subject']},
-                            {'user': recipient,
-                             'sender': request.user,
-                             'subject': d['subject'],
-                             'entry': entry,
+            # I would love to put this in the send() method of the model or in a separate function.
+            for recipient in recipients:
+                if 'pm_new' in recipient.settings.get('notifications', ('pm_new',)):
+                    send_notification(recipient, 'new_pm',
+                        _(u'New private message from %(username)s: %(subject)s') % {'username': request.user.username,
+                                                                                    'subject': self.subject },
+                        {'user': recipient,
+                        'sender': request.user,
+                        'subject': self.subject,
+                        'entry': entry,
                         })
 
-                messages.success(request, _(u'The message was sent successfully.'))
-
             return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    elif username is not None:
+        form = PrivateMessageForm(initial={'recipient': username})
     else:
-        data = {}
-        reply_to = request.GET.get('reply_to', '')
-        reply_to_all = request.GET.get('reply_to_all', '')
-        forward = request.GET.get('forward', '')
-        try:
-            int(reply_to or reply_to_all or forward)
-        except ValueError:
-            if ':' in (reply_to or reply_to_all or forward):
-                x = reply_to or reply_to_all or forward
-                REPLIABLES = {
-                    'suggestion': (
-                        lambda id: Suggestion.objects.get(id=int(id)),
-                        lambda x: x.title,
-                        lambda x: x.author,
-                        lambda x: u'\n\n'.join((x.intro, x.text)),
-                    ),
-                    'reportedtopic': (
-                        lambda id: Topic.objects.get(slug=id),
-                        lambda x: x.title,
-                        lambda x: User.objects.get(id=x.reporter_id),
-                        lambda x: x.reported,
-                    ),
-                    'post': (
-                        lambda id: Post.objects.get(id=int(id)),
-                        lambda x: x.topic.title,
-                        lambda x: User.objects.get(id=x.author_id),
-                        lambda x: x.text,
-                    ),
-                }
-                for repliable, params in REPLIABLES.items():
-                    if x[:len(repliable) + 1] != repliable + ':':
-                        continue
-                    try:
-                        obj = params[0](x[len(repliable) + 1:])
-                    except:
-                        break
-                    data['subject'] = params[1](obj)
-                    if not data['subject'].lower().startswith(u're: '):
-                        data['subject'] = u'Re: %s' % data['subject']
-                    author = params[2](obj)
-                    if reply_to:
-                        data['recipient'] = author
-                    data['text'] = quote_text(params[3](obj), author) + '\n'
-                    form = PrivateMessageForm(initial=data)
-        else:
-            try:
-                entry = PrivateMessageEntry.objects.get(user=request.user,
-                    message=int(reply_to or reply_to_all or forward))
-                msg = entry.message
-                data['subject'] = msg.subject
-                if reply_to or reply_to_all:
-                    data['recipient'] = msg.author.username
-                    if not data['subject'].lower().startswith(u're: '):
-                        data['subject'] = u'Re: %s' % data['subject']
-                if reply_to_all:
-                    data['recipient'] += ';' + ';'.join(x.username for x in msg.recipients if x != request.user)
-                if forward and not data['subject'].lower().startswith(u'fw: '):
-                    data['subject'] = u'Fw: %s' % data['subject']
-                data['text'] = quote_text(msg.text, msg.author) + '\n'
-                form = PrivateMessageForm(initial=data)
-            except (PrivateMessageEntry.DoesNotExist):
-                pass
-        if username:
-            form = PrivateMessageForm(initial={'recipient': username})
+        form = PrivateMessageForm()
+
+    return {
+        'form': form,
+        'preview': preview,
+    }
+
+
     return {
         'form': form,
         'preview': preview
