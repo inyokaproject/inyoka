@@ -1428,6 +1428,12 @@ def privmsg_forward(request, entry_id=None):
     }
 
 
+@templated('portal/privmsg/new.html')
+def privmsg_reply(request, entry_id=None, all=False):
+    if entry_id is None:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+
 class MemberlistView(generic.ListView):
     """Shows a list of all registered users."""
     template_name = 'portal/memberlist.html'
