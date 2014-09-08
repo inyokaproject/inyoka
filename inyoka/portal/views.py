@@ -1181,110 +1181,49 @@ def admin_resend_activation_mail(request):
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
 @templated('portal/privmsg/index.html')
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
 def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
-    page = int(page)
-    if folder is None:
-        if get_flavour() == 'mobile':
-            return {'folder': None}
-        if entry_id is None:
-            return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
-        else:
-            try:
-                entry = PrivateMessageEntry.objects.get(user=request.user,
-                                                        id=entry_id)
-                return HttpResponseRedirect(href('portal', 'privmsg',
-                                                 PRIVMSG_FOLDERS[entry.folder][1],
-                                                 entry.id))
-            except KeyError:
-                raise Http404
-
-    if folder not in PRIVMSG_FOLDERS.keys():
-        raise Http404
-
-    entries = PrivateMessageEntry.objects.filter(
-        user=request.user,
-        folder=PRIVMSG_FOLDERS[folder][0]
-    ).order_by('-id')
-
-    if request.method == 'POST':
-        # POST is only send by the "delete marked messages" button
-        form = PrivateMessageIndexForm(request.POST)
-        form.fields['delete'].choices = [(pm.id, u'') for pm in entries]
-        if form.is_valid():
-            d = form.cleaned_data
-            PrivateMessageEntry.delete_list(request.user.id, d['delete'])
-            msg = ungettext('A message was deleted.',
-                            '%(n)d messages were deleted.',
-                            len(d['delete']))
-            messages.success(request, msg % {'n': len(d['delete'])})
-            entries = filter(lambda s: str(s.id) not in d['delete'], entries)
-            cache.delete('portal/pm_count/%s' % request.user.id)
-            return HttpResponseRedirect(href('portal', 'privmsg',
-                                             PRIVMSG_FOLDERS[folder][1]))
+    """ Displays message overview and if requested individual message """
 
     if entry_id is not None:
-        entry = PrivateMessageEntry.objects.get(user=request.user,
-            folder=PRIVMSG_FOLDERS[folder][0], id=entry_id)
+        try:
+            entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
+        except KeyError:
+            raise Http404()
+
         message = entry.message
+        folder_id = entry.folder
+        folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
+        folder_name = entry.folder_name
         if not entry.read:
             entry.read = True
             entry.save()
             cache.delete('portal/pm_count/%s' % request.user.id)
-        action = request.GET.get('action')
-        if action:
-            if request.method == 'POST':
-                if 'cancel' in request.POST:
-                    return HttpResponseRedirect(href('portal', 'privmsg',
-                        folder, entry.id))
-                if action == 'archive':
-                    if entry.archive():
-                        messages.success(request, _(u'The messages was moved into you archive.'))
-                        return HttpResponseRedirect(href('portal', 'privmsg'))
-                elif action == 'restore':
-                    if entry.restore():
-                        messages.success(request, _(u'The message was restored.'))
-                        return HttpResponseRedirect(href('portal', 'privmsg'))
-                elif action == 'delete':
-                    msg = _(u'The message was deleted.') if \
-                        entry.folder == PRIVMSG_FOLDERS['trash'][0] else \
-                        _(u'The message was moved in the trash.')
-                    if entry.delete():
-                        messages.success(request, msg)
-                        return HttpResponseRedirect(href('portal', 'privmsg'))
-            else:
-                if action == 'archive':
-                    msg = _(u'Do you want to archive the message?')
-                    # confirm_label = pgettext('the verb "to archive", not the '
-                    #                         'noun.', 'Archive')
-                    confirm_label = _(u'Archive it')
-                elif action == 'restore':
-                    msg = _(u'Do you want to restore the message?')
-                    confirm_label = _(u'Restore')
-                elif action == 'delete':
-                    msg = _(u'Do you really want to delete the message?')
-                    confirm_label = _(u'Delete')
-                messages.info(request, render_template('confirm_action_flash.html', {
-                    'message': msg,
-                    'confirm_label': confirm_label,
-                    'cancel_label': _(u'Cancel'),
-                }, flash=True))
-    else:
-        message = None
-    link = href('portal', 'privmsg', folder, 'page')
 
+    elif folder is not None and folder in PRIVMSG_FOLDERS.keys():
+        entry = None
+        message = None
+        folder_id = PRIVMSG_FOLDERS[folder][0]
+        folder_slug = folder
+        folder_name = PRIVMSG_FOLDERS[folder][2]
+    else:
+        return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
+
+    link = href('portal', 'privmsg', folder_slug)
+    entries = PrivateMessageEntry.objects.filter(user=request.user, folder=folder_id).order_by('-id')
     pagination = Pagination(request, query=entries, page=page, per_page=10, link=link, one_page=one_page)
+    entries = pagination.get_queryset()
 
     return {
-        'entries': pagination.get_queryset(),
-        'pagination': pagination,
-        'folder': {
-            'name': PRIVMSG_FOLDERS[folder][2],
-            'id': PRIVMSG_FOLDERS[folder][1]
-        },
+        'entry': entry,
         'message': message,
+        'folder': {
+            'id': folder_slug,
+            'name': folder_name,
+        },
+        'entries': entries,
+        'pagination': pagination,
         'one_page': one_page,
     }
 
