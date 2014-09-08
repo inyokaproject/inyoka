@@ -1181,290 +1181,257 @@ def admin_resend_activation_mail(request):
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
 @templated('portal/privmsg/index.html')
-def privmsg(request, folder=None, entry_id=None, page=1):
-    page = int(page)
-    if folder is None:
-        if get_flavour() == 'mobile':
-            return {'folder': None}
-        if entry_id is None:
-            return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
-        else:
-            try:
-                entry = PrivateMessageEntry.objects.get(user=request.user,
-                                                        id=entry_id)
-                return HttpResponseRedirect(href('portal', 'privmsg',
-                                                 PRIVMSG_FOLDERS[entry.folder][1],
-                                                 entry.id))
-            except KeyError:
-                raise Http404
-
-    if folder not in PRIVMSG_FOLDERS.keys():
-        raise Http404
-
-    entries = PrivateMessageEntry.objects.filter(
-        user=request.user,
-        folder=PRIVMSG_FOLDERS[folder][0]
-    ).order_by('-id')
-
-    if request.method == 'POST':
-        # POST is only send by the "delete marked messages" button
-        form = PrivateMessageIndexForm(request.POST)
-        form.fields['delete'].choices = [(pm.id, u'') for pm in entries]
-        if form.is_valid():
-            d = form.cleaned_data
-            PrivateMessageEntry.delete_list(request.user.id, d['delete'])
-            msg = ungettext('A message was deleted.',
-                            '%(n)d messages were deleted.',
-                            len(d['delete']))
-            messages.success(request, msg % {'n': len(d['delete'])})
-            entries = filter(lambda s: str(s.id) not in d['delete'], entries)
-            cache.delete('portal/pm_count/%s' % request.user.id)
-            return HttpResponseRedirect(href('portal', 'privmsg',
-                                             PRIVMSG_FOLDERS[folder][1]))
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
+    """ Displays message overview and if requested individual message """
 
     if entry_id is not None:
-        entry = PrivateMessageEntry.objects.get(user=request.user,
-            folder=PRIVMSG_FOLDERS[folder][0], id=entry_id)
+        try:
+            entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
+        except KeyError:
+            raise Http404()
+
         message = entry.message
+        folder_id = entry.folder
+        folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
+        folder_name = entry.folder_name
         if not entry.read:
             entry.read = True
             entry.save()
             cache.delete('portal/pm_count/%s' % request.user.id)
-        action = request.GET.get('action')
-        if action:
-            if request.method == 'POST':
-                if 'cancel' in request.POST:
-                    return HttpResponseRedirect(href('portal', 'privmsg',
-                        folder, entry.id))
-                if action == 'archive':
-                    if entry.archive():
-                        messages.success(request, _(u'The messages was moved into you archive.'))
-                        return HttpResponseRedirect(href('portal', 'privmsg'))
-                elif action == 'restore':
-                    if entry.restore():
-                        messages.success(request, _(u'The message was restored.'))
-                        return HttpResponseRedirect(href('portal', 'privmsg'))
-                elif action == 'delete':
-                    msg = _(u'The message was deleted.') if \
-                        entry.folder == PRIVMSG_FOLDERS['trash'][0] else \
-                        _(u'The message was moved in the trash.')
-                    if entry.delete():
-                        messages.success(request, msg)
-                        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    elif folder is not None and folder in PRIVMSG_FOLDERS.keys():
+        entry = None
+        message = None
+        folder_id = PRIVMSG_FOLDERS[folder][0]
+        folder_slug = folder
+        folder_name = PRIVMSG_FOLDERS[folder][2]
+    else:
+        return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
+
+    link = href('portal', 'privmsg', folder_slug)
+    entries = PrivateMessageEntry.objects.filter(user=request.user, folder=folder_id).order_by('-id')
+    pagination = Pagination(request, query=entries, page=page, per_page=10, link=link, one_page=one_page)
+    entries = pagination.get_queryset()
+
+    return {
+        'entry': entry,
+        'message': message,
+        'folder': {
+            'id': folder_slug,
+            'name': folder_name,
+        },
+        'entries': entries,
+        'pagination': pagination,
+        'one_page': one_page,
+    }
+
+
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_delete(request, entry_id=None):
+    """ Deletes messages or moves them to 'trash' """
+    if entry_id is None:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    try:
+        entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
+        folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
+    except KeyError:
+        raise Http404()
+
+    if request.method == 'POST':
+        if 'cancel' in request.POST:
+            return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+        else:
+            if entry.folder == PRIVMSG_FOLDERS['trash'][0]:
+                msg = _(u'The message was deleted.')
             else:
-                if action == 'archive':
-                    msg = _(u'Do you want to archive the message?')
-                    # confirm_label = pgettext('the verb "to archive", not the '
-                    #                         'noun.', 'Archive')
-                    confirm_label = _(u'Archive it')
-                elif action == 'restore':
-                    msg = _(u'Do you want to restore the message?')
-                    confirm_label = _(u'Restore')
-                elif action == 'delete':
-                    msg = _(u'Do you really want to delete the message?')
-                    confirm_label = _(u'Delete')
-                messages.info(request, render_template('confirm_action_flash.html', {
+                msg = _(u'The message was moved in the trash.')
+            if entry.delete():
+                messages.success(request, msg)
+                return HttpResponseRedirect(href('portal', 'privmsg', folder_slug))
+
+    else:
+        msg = _(u'Do you really want to delete the message?')
+        confirm_label = _(u'Delete')
+        messages.info(request,
+            render_template('confirm_action_flash.html',
+                {
                     'message': msg,
                     'confirm_label': confirm_label,
                     'cancel_label': _(u'Cancel'),
-                }, flash=True))
-    else:
-        message = None
-    link = href('portal', 'privmsg', folder, 'page')
+                    'action_url': href('portal', 'privmsg', 'message', entry_id, 'delete'),
+                },
+                flash=True))
+        return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
 
-    pagination = Pagination(request, query=entries, page=page, per_page=10, link=link)
+
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_delete_multiple(request):
+    """ blah """
+    pass
+
+
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_restore(request, entry_id=None):
+    """ Moves a messages from trash back to inbox or sent. """
+
+    if entry_id is None:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    try:
+        entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
+    except KeyError:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    if entry.folder != PRIVMSG_FOLDERS['trash'][0]:
+        messages.error(request, _(u'This message is not in your trash, so it can not be restored.'))
+        return HttpResponseRedirect('portal', 'privmsg', 'message', entry_id)
+
+    if request.method == 'POST':
+        if 'cancel' in request.POST:
+            return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+        if entry.restore():
+            messages.success(request, _(u'The message was restored.'))
+            return HttpResponseRedirect(href('portal', 'privmsg'))
+    else:
+        msg = _(u'Do you want to restore the message?')
+        confirm_label = _(u'Restore')
+        messages.info(request,
+            render_template('confirm_action_flash.html',
+                {
+                    'message': msg,
+                    'confirm_label': confirm_label,
+                    'cancel_label': _(u'Cancel'),
+                    'action_url': href('portal', 'privmsg', 'message', entry_id, 'restore')
+                },
+                flash=True))
+        return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+
+
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_archive(request, entry_id=None):
+    """ Moves a message to the archive. """
+
+    if entry_id is None:
+        raise Http404()
+
+    try:
+        entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
+        folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
+    except KeyError:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    if entry.in_archive:
+        messages.error(request, _(u'This message is already archived.'))
+        return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+
+    if request.method == 'POST':
+        if 'cancel' in request.POST:
+            return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+
+        if entry.archive():
+            messages.success(request, _(u'The messages was moved into your archive.'))
+            return HttpResponseRedirect(href('portal', 'privmsg', folder_slug))
+
+    else:
+        msg = _(u'Do you want to archive the message?')
+        confirm_label = _(u'Archive it')
+        messages.info(request,
+            render_template('confirm_action_flash.html',
+                {
+                    'message': msg,
+                    'confirm_label': confirm_label,
+                    'cancel_label': _(u'Cancel'),
+                    'action_url': href('portal', 'privmsg', 'message', entry_id, 'archive'),
+                },
+                flash=True))
+        return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+
+
+@templated('portal/privmsg/new.html')
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_new(request, username=None):
+    """ Sends private messages """
+
+    preview = None
+
+    if request.method == 'POST':
+        form = PrivateMessageForm(request.POST)
+        if 'preview' in request.POST:
+            context = RenderContext(request)
+            preview = parse(request.POST.get('text', '')).render(context, 'html')
+
+        if form.is_valid():
+            d = form.cleaned_data
+
+            recipients = set()
+            for username in d['recipient']:
+                user = User.objects.get(username)
+                recipients.add(user)
+            for group in d['group_recipient']:
+                users = Group.objects.get(name__iexact=group).user_set.all().exclude(pk=request.user.id)
+                recipients.update(users)
+
+            message = PrivateMessage()
+            message.author = request.user
+            message.subject = d['subject']
+            message.text = d['text']
+            message.pub_date = datetime.utcnow()
+            message.send(list(recipients))
+
+            # I would love to put this in the send() method of the model or in a separate function.
+            for recipient in recipients:
+                if 'pm_new' in recipient.settings.get('notifications', ('pm_new',)):
+                    send_notification(recipient, 'new_pm',
+                        _(u'New private message from %(username)s: %(subject)s') % {'username': request.user.username,
+                                                                                    'subject': self.subject },
+                        {'user': recipient,
+                        'sender': request.user,
+                        'subject': self.subject,
+                        'entry': entry,
+                        })
+
+            return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    elif username is not None:
+        form = PrivateMessageForm(initial={'recipient': username})
+    else:
+        form = PrivateMessageForm()
 
     return {
-        'entries': pagination.get_queryset(),
-        'pagination': pagination,
-        'folder': {
-            'name': PRIVMSG_FOLDERS[folder][2],
-            'id': PRIVMSG_FOLDERS[folder][1]
-        },
-        'message': message,
-        'one_page': page == 0,
+        'form': form,
+        'preview': preview,
     }
 
 
 @templated('portal/privmsg/new.html')
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
-def privmsg_new(request, username=None):
-    # if the user has no posts in the forum and registered less than a week ago
-    # he can only send one pm every 5 minutes
-    form_class = PrivateMessageForm
-    if (not request.user.post_count and request.user.date_joined > (datetime.utcnow() - timedelta(days=7))):
-        form_class = PrivateMessageFormProtected
-    preview = None
-    form = form_class()
-    if request.method == 'POST':
-        form = form_class(request.POST)
-        if 'preview' in request.POST:
-            ctx = RenderContext(request)
-            preview = parse(request.POST.get('text', '')).render(ctx, 'html')
-        elif form.is_valid():
-            d = form.cleaned_data
+def privmsg_forward(request, entry_id=None):
+    if entry_id is None:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
 
-            for group in AUTOBAN_SPAMMER_WORDS:
-                t = d['text']
-                if all(map(lambda x: x in t, group)):
-                    if '>' in t:
-                        continue  # User quoted, most likely a forward and no spam
-                    request.user.status = 2
-                    request.user.banned_until = None
-                    request.user.save(update_fields=['status', 'banned_until'])
-                    messages.info(request,
-                        _(u'You were automatically banned because we suspect '
-                          u'you are sending spam. If this ban is not '
-                          u'justified, contact us at %(email)s')
-                        % {'email': settings.INYOKA_CONTACT_EMAIL})
-                    auth.logout(request)
-                    return HttpResponseRedirect(href('portal'))
+    try:
+        message = PrivateMessageEntry.objects.get(user=request.user, id=entry_id).message
+    except KeyError:
+        raise Http404()
 
-            recipient_names = set(r.strip() for r in \
-                                  d['recipient'].split(';') if r)
-            group_recipient_names = set(r.strip() for r in \
-                                  d['group_recipient'].split(';') if r)
+    subject = message.subject
+    if not subject.lower().startswith('fw:'):
+        subject = "Fw: {}".format(subject)
+    text = quote_text(message.text, message.author)
+    form = PrivateMessageForm(initial={'subject': subject, 'text': text})
 
-            recipients = set()
-
-            if d.get('group_recipient', None) and not request.user.can('send_group_pm'):
-                messages.error(request, _(u'You cannot send messages to groups.'))
-                return HttpResponseRedirect(href('portal', 'privmsg'))
-
-            for group in group_recipient_names:
-                try:
-                    users = Group.objects.get(name__iexact=group).user_set.\
-                        all().exclude(pk=request.user.id)
-                    recipients.update(users)
-                except Group.DoesNotExist:
-                    messages.error(request,
-                        _(u'The group “%(group)s” does not exist.')
-                        % {'group': escape(group)})
-                    return HttpResponseRedirect(href('portal', 'privmsg'))
-
-            try:
-                for recipient in recipient_names:
-                    user = User.objects.get(recipient)
-                    if user.id == request.user.id:
-                        recipients = None
-                        messages.error(request, _(u'You cannot send messages to yourself.'))
-                        break
-                    elif user in (User.objects.get_system_user(),
-                                  User.objects.get_anonymous_user()):
-                        recipients = None
-                        messages.error(request, _(u'You cannot send messages to system users.'))
-                        break
-                    elif not user.is_active:
-                        recipients = None
-                        messages.error(request, (_(u'You cannot send messages to this user.')))
-                        break
-                    else:
-                        recipients.add(user)
-            except User.DoesNotExist:
-                recipients = None
-                messages.error(request,
-                    _(u'The user “%(username)s” does not exist.')
-                    % {'username': escape(recipient)})
-
-            if recipients:
-                msg = PrivateMessage()
-                msg.author = request.user
-                msg.subject = d['subject']
-                msg.text = d['text']
-                msg.pub_date = datetime.utcnow()
-                msg.send(list(recipients))
-                # send notification
-                for recipient in recipients:
-                    entry = PrivateMessageEntry.objects.get(message=msg,
-                                                            user=recipient)
-                    if 'pm_new' in recipient.settings.get('notifications',
-                                                          ('pm_new',)):
-                        send_notification(recipient, 'new_pm',
-                            _(u'New private message from %(username)s: %(subject)s')
-                            % {'username': request.user.username,
-                               'subject': d['subject']},
-                            {'user': recipient,
-                             'sender': request.user,
-                             'subject': d['subject'],
-                             'entry': entry,
-                        })
-
-                messages.success(request, _(u'The message was sent successfully.'))
-
-            return HttpResponseRedirect(href('portal', 'privmsg'))
-    else:
-        data = {}
-        reply_to = request.GET.get('reply_to', '')
-        reply_to_all = request.GET.get('reply_to_all', '')
-        forward = request.GET.get('forward', '')
-        try:
-            int(reply_to or reply_to_all or forward)
-        except ValueError:
-            if ':' in (reply_to or reply_to_all or forward):
-                x = reply_to or reply_to_all or forward
-                REPLIABLES = {
-                    'suggestion': (
-                        lambda id: Suggestion.objects.get(id=int(id)),
-                        lambda x: x.title,
-                        lambda x: x.author,
-                        lambda x: u'\n\n'.join((x.intro, x.text)),
-                    ),
-                    'reportedtopic': (
-                        lambda id: Topic.objects.get(slug=id),
-                        lambda x: x.title,
-                        lambda x: User.objects.get(id=x.reporter_id),
-                        lambda x: x.reported,
-                    ),
-                    'post': (
-                        lambda id: Post.objects.get(id=int(id)),
-                        lambda x: x.topic.title,
-                        lambda x: User.objects.get(id=x.author_id),
-                        lambda x: x.text,
-                    ),
-                }
-                for repliable, params in REPLIABLES.items():
-                    if x[:len(repliable) + 1] != repliable + ':':
-                        continue
-                    try:
-                        obj = params[0](x[len(repliable) + 1:])
-                    except:
-                        break
-                    data['subject'] = params[1](obj)
-                    if not data['subject'].lower().startswith(u're: '):
-                        data['subject'] = u'Re: %s' % data['subject']
-                    author = params[2](obj)
-                    if reply_to:
-                        data['recipient'] = author
-                    data['text'] = quote_text(params[3](obj), author) + '\n'
-                    form = PrivateMessageForm(initial=data)
-        else:
-            try:
-                entry = PrivateMessageEntry.objects.get(user=request.user,
-                    message=int(reply_to or reply_to_all or forward))
-                msg = entry.message
-                data['subject'] = msg.subject
-                if reply_to or reply_to_all:
-                    data['recipient'] = msg.author.username
-                    if not data['subject'].lower().startswith(u're: '):
-                        data['subject'] = u'Re: %s' % data['subject']
-                if reply_to_all:
-                    data['recipient'] += ';' + ';'.join(x.username for x in msg.recipients if x != request.user)
-                if forward and not data['subject'].lower().startswith(u'fw: '):
-                    data['subject'] = u'Fw: %s' % data['subject']
-                data['text'] = quote_text(msg.text, msg.author) + '\n'
-                form = PrivateMessageForm(initial=data)
-            except (PrivateMessageEntry.DoesNotExist):
-                pass
-        if username:
-            form = PrivateMessageForm(initial={'recipient': username})
     return {
         'form': form,
-        'preview': preview
+        'preview': None,
     }
+
+
+@templated('portal/privmsg/new.html')
+def privmsg_reply(request, entry_id=None, all=False):
+    if entry_id is None:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
 
 
 class MemberlistView(generic.ListView):

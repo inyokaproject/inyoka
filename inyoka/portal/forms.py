@@ -710,12 +710,50 @@ class SearchForm(forms.Form):
             sort=d['sort'] or DEFAULT_SEARCH_PARAMETER
         )
 
+class MultiUserField(forms.Field):
+    def to_python(self, value):
+        if not value:
+            return []
+        return [v.strip() for v in value.split(';')]
+
+    def validate(self, value):
+        super(MultiUserField, self).validate(value)
+        for username in value:
+            try:
+                user = User.objects.get(username)
+            except User.DoesNotExist:
+                raise forms.ValidationError(_(u'The user “%(username)s” does not exist.') % {'username': username})
+            if current_request.user == user:
+                raise forms.ValidationError(_(u'You cannot send messages to yourself.'))
+            if user in (User.objects.get_system_user(), User.objects.get_anonymous_user()):
+                raise forms.ValidationError(_(u'You cannot send messages to system users.'))
+            if not user.is_active:
+                raise forms.ValidationError(_(u'You cannot send messages to this user.'))
+
+
+class MultiGroupField(forms.Field):
+    def to_python(self, value):
+        if not value:
+            return []
+        return [v.strip() for v in value.split(';')]
+
+    def validate(self, value):
+        if not current_request.user.can('send_group_pm'):
+            raise forms.ValidationError(_(u'You cannot send messages to groups.'))
+
+        super(MultiGroupField, self).validate(value)
+        for groupname in value:
+            try:
+                group = Group.objects.get(name=groupname)
+            except Group.DoesNotExist:
+                raise forms.ValidationError(_(u'The group „%(groupname)s“ does not exist') % {'groupname': groupname})
+
 
 class PrivateMessageForm(forms.Form):
     """Form for writing a new private message"""
-    recipient = forms.CharField(label=ugettext_lazy(u'To'), required=False,
+    recipient = MultiUserField(label=ugettext_lazy(u'To'), required=False,
         help_text=ugettext_lazy(u'Separate multiple names by semicolon'))
-    group_recipient = forms.CharField(label=ugettext_lazy(u'Groups'), required=False,
+    group_recipient = MultiGroupField(label=ugettext_lazy(u'Groups'), required=False,
         help_text=ugettext_lazy(u'Separate multiple groups by semicolon'))
     subject = forms.CharField(label=ugettext_lazy(u'Subject'),
                               widget=forms.TextInput(attrs={'size': 50}))
@@ -724,9 +762,14 @@ class PrivateMessageForm(forms.Form):
     def clean(self):
         d = self.cleaned_data
         if 'recipient' in d and 'group_recipient' in d:
-            if not d['recipient'].strip() and not d['group_recipient'].strip():
+            if len(d['recipient'])==0 and len(d['group_recipient'])==0:
                 raise forms.ValidationError(_(u'Please enter at least one receiver.'))
         return self.cleaned_data
+
+
+    #def clean_text():
+    #   """ Does some spam detection """
+
 
 class PrivateMessageFormProtected(SurgeProtectionMixin, PrivateMessageForm):
     source_protection_timeout = 60 * 5

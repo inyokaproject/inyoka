@@ -146,7 +146,9 @@ class PrivateMessage(models.Model):
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
-            return href('portal', 'privmsg', self.id)
+            return href('portal', 'privmsg', 'message', self.id)
+        elif action in ['delete', 'archive', 'restore']:
+            return href('portal', 'privmsg', 'message', self.id, action)
         elif action == 'reply':
             return href('portal', 'privmsg', 'new', reply_to=self.id)
         elif action == 'reply_to_all':
@@ -182,14 +184,12 @@ class PrivateMessageEntry(models.Model):
 
     def get_absolute_url(self, action='view'):
         if action == 'view':
-            return href('portal', 'privmsg', PRIVMSG_FOLDERS[self.folder][1],
-                        self.id)
-        elif action == 'reply':
-            return href('portal', 'privmsg', 'new', reply_to=self.message_id)
-        elif action == 'reply_to_all':
-            return href('portal', 'privmsg', 'new', reply_to_all=self.message_id)
-        elif action == 'forward':
-            return href('portal', 'privmsg', 'new', forward=self.message_id)
+            return href('portal', 'privmsg', 'message', self.id)
+        elif action in ['delete', 'archive', 'reply', 'forward', 'restore']:
+            return href('portal', 'privmsg', 'message', self.id, action)
+        else:
+            return href('portal', 'privmsg')
+
 
     @classmethod
     @transaction.commit_manually
