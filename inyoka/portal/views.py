@@ -1428,6 +1428,29 @@ def privmsg_forward(request, entry_id=None):
     }
 
 
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+@templated('portal/privmsg/new.html')
+def privmsg_reply(request, entry_id=None, to_all=False):
+    """Sends a reply to the author or all recipients of a message."""
+
+    message = get_object_or_404(PrivateMessageEntry, user=request.user, id=entry_id).message
+
+    subject = message.subject
+    if not subject.lower().startswith('re:'):
+        subject = "Re: {}".format(subject)
+    text = quote_text(message.text, message.author)
+    recipient = message.author.username
+    if to_all:
+        recipient += ';' + ';'.join(x.username for x in message.recipients if x != request.user)
+
+    form = PrivateMessageForm(initial={'subject': subject, 'text': text, 'recipient': recipient})
+
+    return {
+        'form': form,
+        'preview': None,
+    }
+
+
 class MemberlistView(generic.ListView):
     """Shows a list of all registered users."""
     template_name = 'portal/memberlist.html'
