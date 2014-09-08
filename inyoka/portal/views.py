@@ -1267,6 +1267,12 @@ def privmsg_delete(request, entry_id=None):
         return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
 
 
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_delete_multiple(request):
+    """ blah """
+    pass
+
+
 @templated('portal/privmsg/new.html')
 @check_login(message=_(u'You need to be logged in to access your private '
                        'messages.'))
