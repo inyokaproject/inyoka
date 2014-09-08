@@ -1273,6 +1273,43 @@ def privmsg_delete_multiple(request):
     pass
 
 
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_restore(request, entry_id=None):
+    """ Moves a messages from trash back to inbox or sent. """
+
+    if entry_id is None:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    try:
+        entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
+    except KeyError:
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    if entry.folder != PRIVMSG_FOLDERS['trash'][0]:
+        messages.error(request, _(u'This message is not in your trash, so it can not be restored.'))
+        return HttpResponseRedirect('portal', 'privmsg', 'message', entry_id)
+
+    if request.method == 'POST':
+        if 'cancel' in request.POST:
+            return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+        if entry.restore():
+            messages.success(request, _(u'The message was restored.'))
+            return HttpResponseRedirect(href('portal', 'privmsg'))
+    else:
+        msg = _(u'Do you want to restore the message?')
+        confirm_label = _(u'Restore')
+        messages.info(request,
+            render_template('confirm_action_flash.html',
+                {
+                    'message': msg,
+                    'confirm_label': confirm_label,
+                    'cancel_label': _(u'Cancel'),
+                    'action_url': href('portal', 'privmsg', 'message', entry_id, 'restore')
+                },
+                flash=True))
+        return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
+
+
 @templated('portal/privmsg/new.html')
 @check_login(message=_(u'You need to be logged in to access your private '
                        'messages.'))
