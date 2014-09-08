@@ -1405,42 +1405,43 @@ def privmsg_new(request, username=None):
             int(reply_to or reply_to_all or forward)
         except ValueError:
             if ':' in (reply_to or reply_to_all or forward):
-                x = reply_to or reply_to_all or forward
-                REPLIABLES = {
-                    'suggestion': (
-                        lambda id: Suggestion.objects.get(id=int(id)),
-                        lambda x: x.title,
-                        lambda x: x.author,
-                        lambda x: u'\n\n'.join((x.intro, x.text)),
-                    ),
-                    'reportedtopic': (
-                        lambda id: Topic.objects.get(slug=id),
-                        lambda x: x.title,
-                        lambda x: User.objects.get(id=x.reporter_id),
-                        lambda x: x.reported,
-                    ),
-                    'post': (
-                        lambda id: Post.objects.get(id=int(id)),
-                        lambda x: x.topic.title,
-                        lambda x: User.objects.get(id=x.author_id),
-                        lambda x: x.text,
-                    ),
-                }
-                for repliable, params in REPLIABLES.items():
-                    if x[:len(repliable) + 1] != repliable + ':':
-                        continue
-                    try:
-                        obj = params[0](x[len(repliable) + 1:])
-                    except:
-                        break
-                    data['subject'] = params[1](obj)
-                    if not data['subject'].lower().startswith(u're: '):
-                        data['subject'] = u'Re: %s' % data['subject']
-                    author = params[2](obj)
-                    if reply_to:
-                        data['recipient'] = author
-                    data['text'] = quote_text(params[3](obj), author) + '\n'
-                    form = PrivateMessageForm(initial=data)
+                return HttpResponseRedirect(href('portal', 'privmsg'))
+                # x = reply_to or reply_to_all or forward
+                # REPLIABLES = {
+                #     'suggestion': (
+                #         lambda id: Suggestion.objects.get(id=int(id)),
+                #         lambda x: x.title,
+                #         lambda x: x.author,
+                #         lambda x: u'\n\n'.join((x.intro, x.text)),
+                #     ),
+                #     'reportedtopic': (
+                #         lambda id: Topic.objects.get(slug=id),
+                #         lambda x: x.title,
+                #         lambda x: User.objects.get(id=x.reporter_id),
+                #         lambda x: x.reported,
+                #     ),
+                #     'post': (
+                #         lambda id: Post.objects.get(id=int(id)),
+                #         lambda x: x.topic.title,
+                #         lambda x: User.objects.get(id=x.author_id),
+                #         lambda x: x.text,
+                #     ),
+                # }
+                # for repliable, params in REPLIABLES.items():
+                #     if x[:len(repliable) + 1] != repliable + ':':
+                #         continue
+                #     try:
+                #         obj = params[0](x[len(repliable) + 1:])
+                #     except:
+                #         break
+                #     data['subject'] = params[1](obj)
+                #     if not data['subject'].lower().startswith(u're: '):
+                #         data['subject'] = u'Re: %s' % data['subject']
+                #     author = params[2](obj)
+                #     if reply_to:
+                #         data['recipient'] = author
+                #     data['text'] = quote_text(params[3](obj), author) + '\n'
+                #     form = PrivateMessageForm(initial=data)
         else:
             try:
                 entry = PrivateMessageEntry.objects.get(user=request.user,
