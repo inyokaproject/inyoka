@@ -711,6 +711,7 @@ class SearchForm(forms.Form):
         )
 
 class MultiUserField(forms.Field):
+    """Form field for multiple usernames, separated by `;`"""
     def to_python(self, value):
         if not value:
             return []
@@ -732,6 +733,7 @@ class MultiUserField(forms.Field):
 
 
 class MultiGroupField(forms.Field):
+    """Form field for multiple group names, separated by `;`"""
     def to_python(self, value):
         if not value:
             return []
@@ -742,6 +744,8 @@ class MultiGroupField(forms.Field):
             raise forms.ValidationError(_(u'You cannot send messages to groups.'))
 
         super(MultiGroupField, self).validate(value)
+
+        #Group.objects.filter(name__in=value).all()
         for groupname in value:
             try:
                 group = Group.objects.get(name=groupname)
@@ -762,13 +766,13 @@ class PrivateMessageForm(forms.Form):
     def clean(self):
         d = self.cleaned_data
         if 'recipient' in d and 'group_recipient' in d:
-            if len(d['recipient'])==0 and len(d['group_recipient'])==0:
+            if d['recipient'] and d['group_recipient']:
                 raise forms.ValidationError(_(u'Please enter at least one receiver.'))
         return self.cleaned_data
 
 
     #def clean_text():
-    #   """ Does some spam detection """
+    #   """TODO: Does some spam detection"""
 
 
 class PrivateMessageFormProtected(SurgeProtectionMixin, PrivateMessageForm):

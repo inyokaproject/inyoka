@@ -1181,17 +1181,13 @@ def admin_resend_activation_mail(request):
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
-@templated('portal/privmsg/index.html')
 @check_login(message=_(u'You need to be logged in to access your private messages.'))
+@templated('portal/privmsg/index.html')
 def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
-    """ Displays message overview and if requested individual message """
+    """Displays message overview and if requested individual message."""
 
     if entry_id is not None:
-        try:
-            entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
-        except KeyError:
-            raise Http404()
-
+        entry = get_object_or_404(PrivateMessageEntry, user=request.user, id=entry_id)
         message = entry.message
         folder_id = entry.folder
         folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
@@ -1207,11 +1203,12 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
         folder_id = PRIVMSG_FOLDERS[folder][0]
         folder_slug = folder
         folder_name = PRIVMSG_FOLDERS[folder][2]
+
     else:
         return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
 
     link = href('portal', 'privmsg', folder_slug)
-    entries = PrivateMessageEntry.objects.filter(user=request.user, folder=folder_id).order_by('-id')
+    entries = PrivateMessageEntry.objects.filter(user=request.user, folder=folder_id)
     pagination = Pagination(request, query=entries, page=page, per_page=10, link=link, one_page=one_page)
     entries = pagination.get_queryset()
 
@@ -1230,15 +1227,10 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
 
 @check_login(message=_(u'You need to be logged in to access your private messages.'))
 def privmsg_delete(request, entry_id=None):
-    """ Deletes messages or moves them to 'trash' """
-    if entry_id is None:
-        return HttpResponseRedirect(href('portal', 'privmsg'))
+    """Deletes messages or moves them to 'trash'."""
 
-    try:
-        entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
-        folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
-    except KeyError:
-        raise Http404()
+    entry = get_object_or_404(PrivateMessageEntry, user=request.user, id=entry_id)
+    folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
 
     if request.method == 'POST':
         if 'cancel' in request.POST:
@@ -1269,21 +1261,16 @@ def privmsg_delete(request, entry_id=None):
 
 @check_login(message=_(u'You need to be logged in to access your private messages.'))
 def privmsg_delete_multiple(request):
-    """ blah """
-    pass
+    """Deletes multiple messages or moves them to trash."""
+    raise NotImplementedError()
 
 
 @check_login(message=_(u'You need to be logged in to access your private messages.'))
 def privmsg_restore(request, entry_id=None):
-    """ Moves a messages from trash back to inbox or sent. """
+    """Moves a messages from trash back to inbox or sent."""
 
-    if entry_id is None:
-        return HttpResponseRedirect(href('portal', 'privmsg'))
+    entry = get_object_or_404(PrivateMessageEntry, user=request.user, id=entry_id)
 
-    try:
-        entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
-    except KeyError:
-        return HttpResponseRedirect(href('portal', 'privmsg'))
 
     if entry.folder != PRIVMSG_FOLDERS['trash'][0]:
         messages.error(request, _(u'This message is not in your trash, so it can not be restored.'))
@@ -1312,16 +1299,10 @@ def privmsg_restore(request, entry_id=None):
 
 @check_login(message=_(u'You need to be logged in to access your private messages.'))
 def privmsg_archive(request, entry_id=None):
-    """ Moves a message to the archive. """
+    """Moves a message to the archive."""
 
-    if entry_id is None:
-        raise Http404()
-
-    try:
-        entry = PrivateMessageEntry.objects.get(user=request.user, id=entry_id)
-        folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
-    except KeyError:
-        return HttpResponseRedirect(href('portal', 'privmsg'))
+    entry = get_object_or_404(PrivateMessageEntry, user=request.user, id=entry_id)
+    folder_slug = PRIVMSG_FOLDERS[entry.folder][1]
 
     if entry.in_archive:
         messages.error(request, _(u'This message is already archived.'))
@@ -1350,10 +1331,10 @@ def privmsg_archive(request, entry_id=None):
         return HttpResponseRedirect(href('portal', 'privmsg', 'message', entry_id))
 
 
-@templated('portal/privmsg/new.html')
 @check_login(message=_(u'You need to be logged in to access your private messages.'))
+@templated('portal/privmsg/new.html')
 def privmsg_new(request, username=None):
-    """ Sends private messages """
+    """Sends private messages."""
 
     preview = None
 
@@ -1395,10 +1376,8 @@ def privmsg_new(request, username=None):
 
             return HttpResponseRedirect(href('portal', 'privmsg'))
 
-    elif username is not None:
-        form = PrivateMessageForm(initial={'recipient': username})
     else:
-        form = PrivateMessageForm()
+        form = PrivateMessageForm(initial={'recipient': username if username else ''})
 
     return {
         'form': form,
@@ -1406,21 +1385,18 @@ def privmsg_new(request, username=None):
     }
 
 
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
 @templated('portal/privmsg/new.html')
-def privmsg_forward(request, entry_id=None):
-    if entry_id is None:
-        return HttpResponseRedirect(href('portal', 'privmsg'))
+def privmsg_forward(request, entry_id=None, username=None):
+    """Forwards a message."""
 
-    try:
-        message = PrivateMessageEntry.objects.get(user=request.user, id=entry_id).message
-    except KeyError:
-        raise Http404()
+    message = get_object_or_404(PrivateMessageEntry, user=request.user, id=entry_id).message
 
     subject = message.subject
     if not subject.lower().startswith('fw:'):
         subject = "Fw: {}".format(subject)
     text = quote_text(message.text, message.author)
-    form = PrivateMessageForm(initial={'subject': subject, 'text': text})
+    form = PrivateMessageForm(initial={'subject': subject, 'text': text, 'recipient': username if username else ''})
 
     return {
         'form': form,

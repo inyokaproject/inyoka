@@ -118,6 +118,12 @@ class PrivateMessage(models.Model):
     class Meta:
         ordering = ('-pub_date',)
 
+    def get_absolute_url(self, action='show'):
+        if action == 'show':
+            return href('portal', 'privmsg', 'message', self.id)
+        elif action in ('delete', 'archive', 'restore', 'reply', 'forward'):
+            return href('portal', 'privmsg', 'message', self.id, action)
+
     def send(self, recipients):
         self.save()
         PrivateMessageEntry(message=self, user=self.author, read=True,
@@ -144,18 +150,6 @@ class PrivateMessage(models.Model):
         context = RenderContext(current_request)
         return parse(self.text).render(context, 'html')
 
-    def get_absolute_url(self, action='show'):
-        if action == 'show':
-            return href('portal', 'privmsg', 'message', self.id)
-        elif action in ['delete', 'archive', 'restore']:
-            return href('portal', 'privmsg', 'message', self.id, action)
-        elif action == 'reply':
-            return href('portal', 'privmsg', 'new', reply_to=self.id)
-        elif action == 'reply_to_all':
-            return href('portal', 'privmsg', 'new', reply_to_all=self.id)
-        elif action == 'forward':
-            return href('portal', 'privmsg', 'new', forward=self.id)
-
 
 class PrivateMessageEntry(models.Model):
     """
@@ -170,6 +164,17 @@ class PrivateMessageEntry(models.Model):
         null=True,
         choices=[(f[0], f[1]) for f in PRIVMSG_FOLDERS_DATA])
 
+    class Meta:
+        order_with_respect_to = 'message'
+
+    def get_absolute_url(self, action='view'):
+        if action == 'view':
+            return href('portal', 'privmsg', 'message', self.id)
+        elif action in ('delete', 'archive', 'reply', 'forward', 'restore'):
+            return href('portal', 'privmsg', 'message', self.id, action)
+        else:
+            return href('portal', 'privmsg')
+
     @property
     def folder_name(self):
         return PRIVMSG_FOLDERS[self.folder][2]
@@ -181,15 +186,6 @@ class PrivateMessageEntry(models.Model):
     @property
     def in_archive(self):
         return self.folder == PRIVMSG_FOLDERS['archive'][0]
-
-    def get_absolute_url(self, action='view'):
-        if action == 'view':
-            return href('portal', 'privmsg', 'message', self.id)
-        elif action in ['delete', 'archive', 'reply', 'forward', 'restore']:
-            return href('portal', 'privmsg', 'message', self.id, action)
-        else:
-            return href('portal', 'privmsg')
-
 
     @classmethod
     @transaction.commit_manually
@@ -229,9 +225,6 @@ class PrivateMessageEntry(models.Model):
         self.folder = PRIVMSG_FOLDERS[f][0]
         self.save()
         return True
-
-    class Meta:
-        order_with_respect_to = 'message'
 
 
 class StaticPage(models.Model):
