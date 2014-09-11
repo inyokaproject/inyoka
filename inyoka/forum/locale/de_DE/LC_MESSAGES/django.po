@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-09-06 21:48+0200\n"
+"POT-Creation-Date: 2014-09-07 16:52+0200\n"
 "PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -962,7 +962,7 @@ msgstr "von <a href=\"%(link)s\">%(author)s</a>"
 #: inyoka/forum/templates/forum/forum.html:124
 #: inyoka/forum/templates/forum/topiclist.html:61
 msgid "Go to page"
-msgstr ""
+msgstr "Gehe zu Seite"
 
 #: inyoka/forum/templates/forum/forum.html:150
 #, python-format
@@ -1387,7 +1387,4 @@ msgstr "Gelesen und akzeptiert"
 #: inyoka/forum/templates/forum/welcome.html:21
 msgid "Reject"
 msgstr "Ablehnen"
-
-#~ msgid "Go to page %(pagination)s"
-#~ msgstr "Gehe zu Seite %(pagination)s"
 
