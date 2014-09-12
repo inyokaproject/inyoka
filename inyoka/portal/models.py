@@ -130,8 +130,19 @@ class PrivateMessage(models.Model):
                             folder=PRIVMSG_FOLDERS['sent'][0]).save()
         for recipient in recipients:
             cache.delete('portal/pm_count/%s' % recipient.id)
-            PrivateMessageEntry(message=self, user=recipient, read=False,
+            entry = PrivateMessageEntry(message=self, user=recipient, read=False,
                                 folder=PRIVMSG_FOLDERS['inbox'][0]).save()
+
+            send_notification(recipient,
+                              'new_pm',
+                              _(u'New private message from {username}: {subject}').format(username=self.author.username,
+                                                                                          subject=self.subject),
+                              {
+                                'user': recipient.username,
+                                'sender': self.author.username,
+                                'subject': self.subject,
+                                'entry': entry,
+                              })
 
     @property
     def recipients(self):
