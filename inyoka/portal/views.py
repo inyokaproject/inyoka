@@ -1260,9 +1260,25 @@ def privmsg_delete(request, entry_id=None):
 
 
 @check_login(message=_(u'You need to be logged in to access your private messages.'))
-def privmsg_delete_multiple(request):
+def privmsg_delete_multiple(request, folder=None):
     """Deletes multiple messages or moves them to trash."""
-    raise NotImplementedError()
+    if folder is None or folder not in PRIVMSG_FOLDERS.keys():
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    if request.method == 'POST':
+        entries = PrivateMessageEntry.objects.filter(user=request.user, folder=PRIVMSG_FOLDERS[folder][0])
+        form = PrivateMessageIndexForm(request.POST)
+        form.fields['delete'].choices = [(pm.id, u'') for pm in entries]
+        if form.is_valid():
+            d = form.cleaned_data
+            PrivateMessageEntry.delete_list(request.user.id, d['delete'])
+            messages.success(request, ungettext('A message was deleted.',
+                                                '%(n)d messages were deleted.',
+                                                len(d['delete'])
+                                               ) % { 'n': len(d['delete'])})
+    return HttpResponseRedirect(href('portal', 'privmsg', folder))
+
+
 
 
 @check_login(message=_(u'You need to be logged in to access your private messages.'))

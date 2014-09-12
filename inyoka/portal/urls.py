@@ -61,6 +61,7 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^privmsg/(?P<folder>[a-z]+)/$', 'privmsg'),
     (r'^privmsg/(?P<folder>[a-z]+)/(?P<page>\d+)/$', 'privmsg'),
     (r'^privmsg/(?P<folder>[a-z]+)/all/$', 'privmsg', {'one_page': True}),
+    (r'^privmsg/(?P<folder>[a-z]+)/delete/', 'privmsg_delete_multiple'),
 
     (r'^map/$', 'usermap'),
     (r'^whoisonline/$', 'whoisonline'),
