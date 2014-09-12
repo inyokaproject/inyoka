@@ -1505,7 +1505,7 @@ def privmsg_reply_suggestion(request, suggestion_id=None):
     suggestion = Suggestion.objects.get(id=suggestion_id)
 
     subject = u'Re: {}'.format(suggestion.title)
-    recipient = User.objects.get(id=suggestion.author)
+    recipient = User.objects.get(id=suggestion.author.id)
     text = u'{}\n\n{}'.format(suggestion.intro, suggestion.text)
     text = quote_text(text, recipient)
 
