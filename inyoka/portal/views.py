@@ -1279,6 +1279,31 @@ def privmsg_delete_multiple(request, folder=None):
     return HttpResponseRedirect(href('portal', 'privmsg', folder))
 
 
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+def privmsg_empty_trash(request):
+    """Deletes all messages from trash."""
+
+    if request.method == 'POST':
+        if 'cancel' in request.POST:
+            return HttpResponseRedirect(href('portal', 'privmsg', 'trash'))
+
+        entries = PrivateMessageEntry.objects.filter(user=request.user, folder='trash')
+        PrivateMessageEntry.delete_list(request.user.id, entries)
+        messages.success(request, _(u'Your trash has been emptied.'))
+
+    else:
+        msg = _(u'Do you want to empty your trash?')
+        confirm_label = _(u'Empty trash')
+        messages.info(request,
+            render_template('confirm_action_flash.html',
+                {
+                    'message': msg,
+                    'confirm_label': confirm_label,
+                    'cancel_label': _(u'Cancel'),
+                    'action_url': href('portal', 'privmsg', 'trash', 'empty')
+                },
+                flash=True))
+        return HttpResponseRedirect(href('portal', 'privmsg', 'trash'))
 
 
 @check_login(message=_(u'You need to be logged in to access your private messages.'))
