@@ -63,6 +63,7 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^privmsg/(?P<folder>[a-z]+)/delete/', 'privmsg_delete_multiple'),
     (r'^privmsg/(?P<folder>[a-z]+)/$', 'privmsg'),
     (r'^privmsg/trash/empty/$', 'privmsg_empty_trash'),
+    (r'^privmsg/reply/reported/(?P<slug>[^/]+)/$', 'privmsg_reply_reported'),
 
     (r'^map/$', 'usermap'),
     (r'^whoisonline/$', 'whoisonline'),

@@ -38,7 +38,7 @@ from django.views.decorators.http import require_POST
 
 
 from inyoka.forum.acl import (split_bits, filter_invisible, PRIVILEGES_DETAILS,
-    split_negative_positive, REVERSED_PRIVILEGES_BITS)
+    split_negative_positive, REVERSED_PRIVILEGES_BITS, CAN_MODERATE, have_privilege)
 from inyoka.forum.models import Post, Topic, Forum, Privilege
 from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.markup import parse, RenderContext
@@ -1471,6 +1471,34 @@ def privmsg_reply(request, entry_id=None, to_all=False):
                                 'recipient': recipient,
                                 'text': text,
                                 })
+
+    return {
+        'form': form,
+        'preview': None,
+    }
+
+
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+@templated('portal/privmsg/new.html')
+def privmsg_reply_reported(request, slug=None):
+    """Replies to a reported topic."""
+    if slug is None:
+        return HttpResponseRedirect(href('forum', 'reported_topics'))
+
+    topic = Topic.objects.get(slug=slug)
+    if not have_privilege(request.user, topic.forum, CAN_MODERATE):
+        return HttpResponseRedirect(href('portal', 'privmsg'))
+
+    subject = u'Re: {}'.format(topic.title)
+    recipient = User.objects.get(id=topic.reporter_id)
+    text = quote_text(topic.reported, recipient)
+
+    form = PrivateMessageForm(initial=
+                            {
+                            'subject': subject,
+                            'recipient': recipient.username,
+                            'text': text,
+                            })
 
     return {
         'form': form,
