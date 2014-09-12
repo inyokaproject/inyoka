@@ -1403,18 +1403,6 @@ def privmsg_new(request, username=None):
             message.pub_date = datetime.utcnow()
             message.send(list(recipients))
 
-            # I would love to put this in the send() method of the model or in a separate function.
-            for recipient in recipients:
-                if 'pm_new' in recipient.settings.get('notifications', ('pm_new',)):
-                    send_notification(recipient, 'new_pm',
-                        _(u'New private message from %(username)s: %(subject)s') % {'username': request.user.username,
-                                                                                    'subject': self.subject },
-                        {'user': recipient,
-                        'sender': request.user,
-                        'subject': self.subject,
-                        'entry': entry,
-                        })
-
             return HttpResponseRedirect(href('portal', 'privmsg'))
 
     else:
