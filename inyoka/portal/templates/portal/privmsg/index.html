@@ -120,6 +120,11 @@
                   #}<img src="{{ href('static', 'img/icons/small/archive.png') }}" alt="{% trans %}Archive{% endtrans %}" />{#
                 #}</a>
               {%- endif %}
+              {%- if folder.id == 'trash' %}
+                <a href="{{ entry|url('restore') }}" title="{% trans %}Restore{% endtrans %}">{#
+                  #}<img src="{{ href('static', 'img/icons/small/msg-restore.png') }}" alt="{% trans %}Restore{% endtrans %}" />{#
+                #}</a>
+              {%- endif %}
             </td>
             <td class="pn_delete">
               <input type="checkbox" name="delete" value="{{ entry.id }}" />
