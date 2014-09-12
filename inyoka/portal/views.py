@@ -1208,7 +1208,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
         return HttpResponseRedirect(href('portal', 'privmsg', 'inbox'))
 
     link = href('portal', 'privmsg', folder_slug)
-    entries = PrivateMessageEntry.objects.filter(user=request.user, folder=folder_id)
+    entries = PrivateMessageEntry.objects.filter(user=request.user, folder=folder_id).order_by('-message__pub_date')
     pagination = Pagination(request, query=entries, page=page, per_page=10, link=link, one_page=one_page)
     entries = pagination.get_queryset()
 
@@ -1435,9 +1435,14 @@ def privmsg_forward(request, entry_id=None, username=None):
 
     subject = message.subject
     if not subject.lower().startswith('fw:'):
-        subject = "Fw: {}".format(subject)
+        subject = u'Fw: {}'.format(subject)
     text = quote_text(message.text, message.author)
-    form = PrivateMessageForm(initial={'subject': subject, 'text': text, 'recipient': username if username else ''})
+    form = PrivateMessageForm(initial=
+                                {
+                                'subject': subject,
+                                'recipient': username if username else '',
+                                'text': text,
+                                })
 
     return {
         'form': form,
@@ -1454,13 +1459,18 @@ def privmsg_reply(request, entry_id=None, to_all=False):
 
     subject = message.subject
     if not subject.lower().startswith('re:'):
-        subject = "Re: {}".format(subject)
+        subject = u'Re: {}'.format(subject)
     text = quote_text(message.text, message.author)
     recipient = message.author.username
     if to_all:
         recipient += ';' + ';'.join(x.username for x in message.recipients if x != request.user)
 
-    form = PrivateMessageForm(initial={'subject': subject, 'text': text, 'recipient': recipient})
+    form = PrivateMessageForm(initial=
+                                {
+                                'subject': subject,
+                                'recipient': recipient,
+                                'text': text,
+                                })
 
     return {
         'form': form,

@@ -779,6 +779,11 @@ class PrivateMessageFormProtected(SurgeProtectionMixin, PrivateMessageForm):
     source_protection_timeout = 60 * 5
 
 
+class PrivateMessageIndexForm(forms.Form):
+    #: this is a list of integers of the pms that should get deleted
+    delete = forms.MultipleChoiceField()
+
+
 class DeactivateUserForm(forms.Form):
     """Form for the user control panel -- deactivate_user view."""
     password_confirmation = forms.CharField(widget=forms.PasswordInput)
@@ -787,11 +792,6 @@ class DeactivateUserForm(forms.Form):
 class SubscriptionForm(forms.Form):
     #: this is a list of integers of the subscriptions
     select = forms.MultipleChoiceField()
-
-
-class PrivateMessageIndexForm(forms.Form):
-    #: this is a list of integers of the pms that should get deleted
-    delete = forms.MultipleChoiceField()
 
 
 def _feed_count_cleanup(n):
