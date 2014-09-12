@@ -1506,6 +1506,34 @@ def privmsg_reply_reported(request, slug=None):
     }
 
 
+@require_permission('article_edit')
+@check_login(message=_(u'You need to be logged in to access your private messages.'))
+@templated('portal/privmsg/new.html')
+def privmsg_reply_suggestion(request, suggestion_id=None):
+    """Replies to an article suggestion."""
+    if suggestion_id is None:
+        return HttpResponseRedirect(href('ikhaya', 'suggestions'))
+
+    suggestion = Suggestion.objects.get(id=suggestion_id)
+
+    subject = u'Re: {}'.format(suggestion.title)
+    recipient = User.objects.get(id=suggestion.author)
+    text = u'{}\n\n{}'.format(suggestion.intro, suggestion.text)
+    text = quote_text(text, recipient)
+
+    form = PrivateMessageForm(initial=
+                            {
+                            'subject': subject,
+                            'recipient': recipient.username,
+                            'text': text,
+                            })
+
+    return {
+        'form': form,
+        'preview': None,
+    }
+
+
 class MemberlistView(generic.ListView):
     """Shows a list of all registered users."""
     template_name = 'portal/memberlist.html'
