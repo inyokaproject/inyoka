@@ -10,7 +10,7 @@
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'forum/page.html' %}
-{% from 'macros.html' import breadcrumb %}
+{% from 'macros.html' import breadcrumb, render_pagination %}
 {% from 'forum/_forum.html' import render_article_list %}
 
 {% do BREADCRUMB.append(topic.title, topic|url, True) %}
@@ -24,6 +24,8 @@
 {% for parent in forum.parents[:-1] %}
   {% do BREADCRUMB.append(parent.name, parent|url, False) %}
 {% endfor %}
+
+{% set rendered_pagination = render_pagination(pagination) %}
 
 {% macro generate_subscription_link(do='subscribe') %}
   {{ href('forum', 'topic', topic.slug, do, next=CURRENT_URL)|e }}
@@ -96,7 +98,7 @@
   <div class="topic_box admin_link_hover">
     <h2>{{ topic.title|e }}</h2>
     <div class="topic_box_content">
-      {{ pagination.generate('right') }}
+      <div class="pagination pagination_right">{{ rendered_pagination }}</div>
       <strong>{% trans %}Status:{% endtrans %}</strong>
       <span class="status_{{ 'solved' if topic.solved else 'unsolved' }}">
         {{ _('Solved') if topic.solved else _('Unsolved') }}
@@ -209,7 +211,7 @@
                    alt="{% trans user=post.author.username|e %}Avatar of {{ user }}{% endtrans %}" />
             {%- endif %}
             <p>{% trans %}Member since:{% endtrans %}<br />{{ post.author.date_joined|naturalday }}</p>
-            <p>{% trans %}Posts:{% endtrans %} <a href="{{ href('forum', 'author', post.author.username) }}" rel="nofollow">{{ post.author.post_count }}</a></p>
+            <p class="posts">{% trans %}Posts:{% endtrans %} <a href="{{ href('forum', 'author', post.author.username) }}" rel="nofollow">{{ post.author.post_count }}</a></p>
             {%- if post.author.location %}
               <p>{% trans %}Residence:{% endtrans %} {{ post.author.location|e }}</p>
             {%- endif %}
@@ -322,7 +324,7 @@
 
   <div class="topic_box admin_link_hover">
     <div class="topic_box_content">
-      {{ pagination.generate('right') }}
+      <div class="pagination pagination_right">{{ rendered_pagination }}</div>
       {{ topic_actions() }}
     </div>
   </div>

@@ -8,7 +8,9 @@
     :license: BSD, see LICENSE for more details.
 #}
 {% extends 'forum/page.m.html' %}
+{% from 'macros.html' import render_pagination_mobile %}
 {% set back = topic.forum|url %}
+{% set rendered_pagination = render_pagination_mobile(pagination) %}
 
 {% block content %}
   <h2>{{ topic.title|e }}</h2>
@@ -75,7 +77,7 @@
       {%- endif %}
     </form>
   {% endif %}
-  {{ pagination.generate() }}
+  <div class="pagination">{{ rendered_pagination }}</div>
   <section id="posts">
     {%- for post in posts if not post.hidden %}
       <div class="post" id="post-{{ post.id }}">
@@ -113,7 +115,7 @@
       </div>
     {%- endfor %}
   </section>
-  {{ pagination.generate() }}
+  <div class="pagination">{{ rendered_pagination }}</div>
   <div class="actions">
     <a href="{{ topic|url('reply')}}">{#
       #}<span>{% trans %}Reply{% endtrans %}</span>{#

@@ -59,3 +59,65 @@ class TestCache(TestCase):
         self.assertEqual(self.request_cache.get('foo'), 'bar')
         self.request_cache.delete('foo')
         self.assertEqual(self.request_cache.get('foo'), None)
+
+    def test_long_key(self):
+        key = 'a' * 251
+        keyhash = 'md5:21f5b107cda33036590a19419afd7fb6'
+
+        self.request_cache.set(key, 1)
+        self.assertEqual(self.request_cache.get(keyhash), 1)
+
+        self.request_cache.delete(key)
+        self.assertEqual(self.request_cache.get(keyhash), None)
+
+        self.request_cache.set(keyhash, 2)
+        self.assertEqual(self.request_cache.get(key), 2)
+
+        self.request_cache.delete(keyhash)
+        self.assertEqual(self.request_cache.get(keyhash), None)
+
+    def test_long_key_many(self):
+        keya = 'a' * 251
+        keyahash = 'md5:21f5b107cda33036590a19419afd7fb6'
+        keyb = 'b' * 251
+        keybhash = 'md5:7e1b07a8a48d8c53aa0d6144cd6b5dbb'
+
+        data = {
+            'a': 'a',
+            'b': 'b',
+            keya: 'aaa',
+            keyb: 'bbb',
+        }
+
+        datahash = {
+            'a': 'a',
+            'b': 'b',
+            keyahash: 'aaa',
+            keybhash: 'bbb',
+        }
+
+        self.request_cache.set_many(data)
+        self.assertEqual(self.request_cache.get_many(data.keys()), data)
+
+        for k in data:
+            self.request_cache.delete(k)
+
+        self.request_cache.set_many(data)
+        # If we request by the hash, we cannot map to the original key
+        self.assertEqual(self.request_cache.get_many(datahash.keys()), datahash)
+
+        for k in data:
+            self.request_cache.delete(k)
+
+        self.request_cache.set_many(datahash)
+        self.assertEqual(self.request_cache.get_many(data.keys()), data)
+
+        for k in datahash:
+            self.request_cache.delete(k)
+
+        self.request_cache.set_many(datahash)
+        # If we request by the hash, we cannot map to the original key
+        self.assertEqual(self.request_cache.get_many(datahash.keys()), datahash)
+
+        for k in datahash:
+            self.request_cache.delete(k)

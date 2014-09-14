@@ -8,6 +8,8 @@
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'portal/privmsg/overall.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
 {% set selected = folder.id %}
 {% do BREADCRUMB.append(folder.name, folder.href, True) %}
 
@@ -135,14 +137,14 @@
         <tr>
           <td colspan="6">
             <div class="pnfooter">
-              {{ pagination }}
+              <div class="pagination pagination_right">{{ rendered_pagination }}</div>
               <p class="onepage">
                 {% if one_page %}
                   <a href="{{ href('portal', 'privmsg', folder.id) }}">
                     {%- trans %}Split messages into multiple pages{% endtrans -%}
                   </a>
                 {% else %}
-                  <a href="{{ href('portal', 'privmsg', folder.id, 'page', '0') }}">
+                  <a href="{{ href('portal', 'privmsg', folder.id, 'all') }}">
                     {%- trans %}Display all messages on one page{% endtrans -%}
                   </a>
                 {% endif %}

@@ -47,6 +47,7 @@ from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.search import search
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page as WikiPage
@@ -485,8 +486,8 @@ class Topic(models.Model):
                 last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
                                                  .aggregate(count=Max('id'))['count'])
 
-        forum.invalidate_topic_cache()
-        self.forum.invalidate_topic_cache()
+        old_forum.invalidate_topic_cache()
+        new_forum.invalidate_topic_cache()
         self.reindex()
 
     def delete(self, *args, **kwargs):
@@ -522,26 +523,11 @@ class Topic(models.Model):
                       'first_unread', 'last_post'):
             return href('forum', 'topic', self.slug, action, **query)
 
-    def get_pagination(self, threshold=3):
-        pages = max(0, self.post_count - 1) // POSTS_PER_PAGE + 1
-        if pages == 1:
-            return u''
-        result = []
-        ellipsis = u'<span class="ellipsis"> … </span>'
-        was_ellipsis = False
-        for num in xrange(1, pages + 1):
-            if num <= threshold or num > pages - threshold:
-                if result and result[-1] != ellipsis:
-                    result.append(u'<span class="comma">, </span>')
-                link = self.get_absolute_url()
-                if num != 1:
-                    link = '%s%d/' % (link, num)
-                result.append(u'<a href="%s" class="pageselect">%s</a>' %
-                              (link, num))
-            elif not was_ellipsis:
-                was_ellipsis = True
-                result.append(ellipsis)
-        return u'<span class="pagination">%s</span>' % u''.join(result)
+    def get_pagination(self):
+        request = current_request._get_current_object()
+        pagination = Pagination(request=request, query=[], page=1, total=self.post_count,
+                                per_page=POSTS_PER_PAGE, link=self.get_absolute_url())
+        return pagination
 
     @property
     def paginated(self):

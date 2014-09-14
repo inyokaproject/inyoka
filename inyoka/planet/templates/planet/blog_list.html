@@ -8,6 +8,8 @@
     :license: BSD, see LICENSE for more details.
 #}
 {%- extends 'planet/page.html' %}
+{% from 'macros.html' import render_pagination %}
+{% set rendered_pagination = render_pagination(pagination) %}
 
 {% do BREADCRUMB.append(_('Bloglist'), href('planet', 'bloglist'), True) %}
 
@@ -40,5 +42,5 @@
     {%- endfor %}
     </tbody>
   </table>
-  {{ pagination.generate(position='right') }}
+  <div class="pagination pagination_right">{{ rendered_pagination }}</div>
 {% endblock %}

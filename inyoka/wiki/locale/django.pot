@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-07 07:38+0200\n"
+"POT-Creation-Date: 2014-09-06 21:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgstr ""
 msgid "Used the template “<a href=\"%(link)s\">%(name)s</a>” for this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:439 inyoka/wiki/actions.py:898
+#: inyoka/wiki/actions.py:439 inyoka/wiki/actions.py:899
 msgid "Canceled."
 msgstr ""
 
@@ -102,43 +102,43 @@ msgid ""
 "merging is satisfying."
 msgstr ""
 
-#: inyoka/wiki/actions.py:887
+#: inyoka/wiki/actions.py:888
 msgid "Attachments within attachments are not allowed!"
 msgstr ""
 
-#: inyoka/wiki/actions.py:913
+#: inyoka/wiki/actions.py:914
 msgid "Please enter a name for this attachment."
 msgstr ""
 
-#: inyoka/wiki/actions.py:924
+#: inyoka/wiki/actions.py:925
 msgid "Another page or attachment with the same name exists"
 msgstr ""
 
-#: inyoka/wiki/actions.py:943
+#: inyoka/wiki/actions.py:944
 msgid "Attachment saved successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:977
+#: inyoka/wiki/actions.py:978
 msgid "Attachment edited successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:991
+#: inyoka/wiki/actions.py:992
 msgid "Emptied the page cache."
 msgstr ""
 
-#: inyoka/wiki/actions.py:1019
+#: inyoka/wiki/actions.py:1020
 msgid "You will be notified on changes on this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:1021
+#: inyoka/wiki/actions.py:1022
 msgid "You are already subscribed"
 msgstr ""
 
-#: inyoka/wiki/actions.py:1034
+#: inyoka/wiki/actions.py:1035
 msgid "No subscription for this page found."
 msgstr ""
 
-#: inyoka/wiki/actions.py:1038
+#: inyoka/wiki/actions.py:1039
 msgid "You won't be notified for changes on this page anymore"
 msgstr ""
 
@@ -185,72 +185,72 @@ msgstr ""
 msgid "Completion date"
 msgstr ""
 
-#: inyoka/wiki/macros.py:65
+#: inyoka/wiki/macros.py:66
 msgid "Recent changes cannot be rendered on this page"
 msgstr ""
 
-#: inyoka/wiki/macros.py:357
+#: inyoka/wiki/macros.py:358
 msgid ""
 "You must apply a page name because the macro is being called outside the "
 "wiki context."
 msgstr ""
 
-#: inyoka/wiki/macros.py:359
+#: inyoka/wiki/macros.py:360
 msgid "Invalid arguments"
 msgstr ""
 
-#: inyoka/wiki/macros.py:394
+#: inyoka/wiki/macros.py:395
 #, python-format
 msgid "one page"
 msgid_plural "%(count)d pages"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/wiki/macros.py:406 inyoka/wiki/templates/wiki/page.html:39
+#: inyoka/wiki/macros.py:407 inyoka/wiki/templates/wiki/page.html:39
 msgid "Tags"
 msgstr ""
 
-#: inyoka/wiki/macros.py:445
+#: inyoka/wiki/macros.py:446
 #, python-format
 msgid "Pages with tag “%(name)s”"
 msgstr ""
 
-#: inyoka/wiki/macros.py:478 inyoka/wiki/macros.py:549
+#: inyoka/wiki/macros.py:479 inyoka/wiki/macros.py:550
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr ""
 
-#: inyoka/wiki/macros.py:480 inyoka/wiki/macros.py:548
+#: inyoka/wiki/macros.py:481 inyoka/wiki/macros.py:549
 msgid "Page not found"
 msgstr ""
 
-#: inyoka/wiki/macros.py:483
+#: inyoka/wiki/macros.py:484
 msgid "Detected a circular include macro call"
 msgstr ""
 
-#: inyoka/wiki/macros.py:484
+#: inyoka/wiki/macros.py:485
 msgid "Circular import"
 msgstr ""
 
-#: inyoka/wiki/macros.py:579
+#: inyoka/wiki/macros.py:580
 msgid "Key not defined"
 msgstr ""
 
-#: inyoka/wiki/macros.py:580
+#: inyoka/wiki/macros.py:581
 #, python-format
 msgid "The key “%(name)s” is not defined"
 msgstr ""
 
-#: inyoka/wiki/macros.py:651
+#: inyoka/wiki/macros.py:652
 msgid "No result"
 msgstr ""
 
-#: inyoka/wiki/macros.py:652
+#: inyoka/wiki/macros.py:653
 #, python-format
 msgid "The metadata filter has found no results. Query: %(query)s"
 msgstr ""
 
-#: inyoka/wiki/macros.py:677
+#: inyoka/wiki/macros.py:678
 msgid "Unknown page"
 msgstr ""
 
@@ -368,7 +368,7 @@ msgstr ""
 
 #: inyoka/wiki/templates/wiki/action_attach.html:35
 #: inyoka/wiki/templates/wiki/action_attach_edit.html:36
-#: inyoka/wiki/templates/wiki/action_edit.html:34
+#: inyoka/wiki/templates/wiki/action_edit.html:30
 msgid "Edit summary:"
 msgstr ""
 
@@ -383,7 +383,7 @@ msgstr ""
 #: inyoka/wiki/templates/wiki/action_attach.html:44
 #: inyoka/wiki/templates/wiki/action_attach_edit.html:42
 #: inyoka/wiki/templates/wiki/action_delete.html:19
-#: inyoka/wiki/templates/wiki/action_edit.html:39
+#: inyoka/wiki/templates/wiki/action_edit.html:35
 #: inyoka/wiki/templates/wiki/action_mv_back.html:19
 #: inyoka/wiki/templates/wiki/action_mv_discontinued.html:19
 #: inyoka/wiki/templates/wiki/action_revert.html:19
@@ -521,25 +521,25 @@ msgstr ""
 msgid "Current revision"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_edit.html:37
-#: inyoka/wiki/templates/wiki/action_edit.html:44
-#: inyoka/wiki/templates/wiki/action_edit.html:61
+#: inyoka/wiki/templates/wiki/action_edit.html:33
+#: inyoka/wiki/templates/wiki/action_edit.html:40
+#: inyoka/wiki/templates/wiki/action_edit.html:57
 msgid "Preview"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_edit.html:38
+#: inyoka/wiki/templates/wiki/action_edit.html:34
 msgid "Save"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:14
+#: inyoka/wiki/templates/wiki/action_log.html:17
 msgid "Revisions"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:17
+#: inyoka/wiki/templates/wiki/action_log.html:20
 msgid "Page revisions"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:23
+#: inyoka/wiki/templates/wiki/action_log.html:26
 #, python-format
 msgid ""
 "The article “<a href=\"%(link)s\">%(article)s</a>” has currently "
@@ -550,42 +550,42 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:30
+#: inyoka/wiki/templates/wiki/action_log.html:33
 #, python-format
 msgid ""
 "The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was "
 "created by <a href=\"%(author_link)s\">%(author)s</a>."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:35
+#: inyoka/wiki/templates/wiki/action_log.html:38
 #, python-format
 msgid ""
 "The <a href=\"%(rev_link)s\">most recent revision</a> is %(rev)s and was "
 "created by %(author)s."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:42
+#: inyoka/wiki/templates/wiki/action_log.html:45
 #, python-format
 msgid ""
 "To be always up to date you can read the <a href=\"%(feed_link)s\">atom "
 "feed</a> or <a href=\"%(subscribe_link)s\">subscribe</a>."
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:48
-#: inyoka/wiki/templates/wiki/action_log.html:88
+#: inyoka/wiki/templates/wiki/action_log.html:51
+#: inyoka/wiki/templates/wiki/action_log.html:91
 msgid "Compare"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:77
+#: inyoka/wiki/templates/wiki/action_log.html:80
 msgid "View"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:80
+#: inyoka/wiki/templates/wiki/action_log.html:83
 #: inyoka/wiki/templates/wiki/action_revert.html:18
 msgid "Restore"
 msgstr ""
 
-#: inyoka/wiki/templates/wiki/action_log.html:83
+#: inyoka/wiki/templates/wiki/action_log.html:86
 #: inyoka/wiki/templates/wiki/action_manage.html:45
 msgid "Raw"
 msgstr ""

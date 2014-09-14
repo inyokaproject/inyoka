@@ -52,7 +52,8 @@
               <span class="linklist"> | </span>
               <a href="{{ href('ikhaya', 'article', 'new', suggestion.id) }}" class="admin_link">{% trans %}New article{% endtrans %}</a>
               <span class="linklist"> | </span>
-              <a href="{{ href('portal', 'privmsg', 'new', reply_to='suggestion:%d' % suggestion.id) }}">{% trans author=suggestion.author.username|e %}Write message to {{ author }}{% endtrans %}</a>
+              {# Disabled for security reasons #}
+              {#<a href="{{ href('portal', 'privmsg', 'new', reply_to='suggestion:%d' % suggestion.id) }}">{% trans author=suggestion.author.username|e %}Write message to {{ author }}{% endtrans %}</a>#}
               <span class="linklist"> | </span>
               <a href="#{{ suggestion.id }}">#</a>
             </span>
