@@ -12,13 +12,10 @@
 
 @navbar-height: 48px;
 
-* {
-  margin: 0;
-  padding: 0;
-}
-
 body {
   font-family: sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -149,9 +146,20 @@ header{
 
 #content {
   padding: 0;
+
   textarea {
     width: 100%;
     .border-box;
+  }
+
+  p {
+    margin-top: 0;
+    text-align: justify;
+  }
+
+  li p {
+    margin-bottom: 0.25em;
+    text-align: left;
   }
 }
 
