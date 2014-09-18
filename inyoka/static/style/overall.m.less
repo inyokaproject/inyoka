@@ -104,10 +104,14 @@ header{
     display: block;
     font-weight: bold;
     height: 32px;
-    margin: 0.1em 0;
+    
     padding: 0.8em 0.2em;
     text-decoration: none;
     text-shadow: 1px 1px 1px #000000;
+
+    &:not(:first-child) {
+      margin: 0.1em 0;
+    }
 
     &.active {
       background: #333333;
