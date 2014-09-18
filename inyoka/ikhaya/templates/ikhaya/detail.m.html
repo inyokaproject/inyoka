@@ -51,6 +51,7 @@
     </section>
     {% if can_post_comment %}
       <section class="write-comment">
+        <h3>{% trans %}New comment{% endtrans %}</h3>
         {{ form.errors.text }}
         <form action="{{ article|url }}#new_comment" method="post" id="new_comment">
           {{ csrf_token() }}

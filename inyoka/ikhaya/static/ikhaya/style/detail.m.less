@@ -36,13 +36,17 @@ article {
   }
 }
 
+.comment-gradient-header() {
+  .table-header-gradient;
+  margin: 1em 0;
+  padding: 0.5em 0;
+  text-align: center;
+  width: 100%;
+}
+
 section#comments {
   h3 {
-    .table-header-gradient;
-    margin: 1em 0;
-    padding: 0.5em 0;
-    text-align: center;
-    width: 100%;
+    .comment-gradient-header;
   }
 
   .comment {
@@ -81,5 +85,11 @@ section#comments {
 }
 
 .write-comment {
-  .margin-left-right;
+  h3 {
+    .comment-gradient-header;
+  }
+  
+  form {
+    .margin-left-right;
+  }
 }
