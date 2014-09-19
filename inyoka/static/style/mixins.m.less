@@ -15,7 +15,8 @@
 
 .codeblock() {
   background: #EEEEEE;
-  overflow: scroll;
+  max-width: 100%;
+  .overflow;
 }
 
 .link_list() {
@@ -32,6 +33,11 @@
 
 .tap-highlight-color (@color) {
   -webkit-tap-highlight-color: @color;
+}
+
+.overflow() {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch
 }
 
 .border-box() {
