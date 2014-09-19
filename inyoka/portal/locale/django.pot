@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-09-06 21:48+0200\n"
+"POT-Creation-Date: 2014-09-19 17:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1002,7 +1002,7 @@ msgid ""
 msgstr ""
 
 #: inyoka/portal/views.py:264 inyoka/portal/views.py:1370
-#: inyoka/portal/views.py:1485
+#: inyoka/portal/views.py:1486
 #, python-format
 msgid "The user “%(username)s” does not exist."
 msgstr ""
@@ -1037,8 +1037,8 @@ msgstr ""
 msgid "An email with the activation key was sent to you."
 msgstr ""
 
-#: inyoka/portal/views.py:372 inyoka/portal/views.py:1829
-#: inyoka/portal/views.py:1866
+#: inyoka/portal/views.py:372 inyoka/portal/views.py:1830
+#: inyoka/portal/views.py:1867
 msgid "You have successfully logged in."
 msgstr ""
 
@@ -1279,7 +1279,7 @@ msgstr ""
 msgid "You cannot send messages to groups."
 msgstr ""
 
-#: inyoka/portal/views.py:1345 inyoka/portal/views.py:1552
+#: inyoka/portal/views.py:1345 inyoka/portal/views.py:1553
 #, python-format
 msgid "The group “%(group)s” does not exist."
 msgstr ""
@@ -1305,69 +1305,69 @@ msgstr ""
 msgid "The message was sent successfully."
 msgstr ""
 
-#: inyoka/portal/views.py:1594
+#: inyoka/portal/views.py:1595
 #, python-format
 msgid "The group “%(group)s” was created successfully."
 msgstr ""
 
-#: inyoka/portal/views.py:1596
+#: inyoka/portal/views.py:1597
 #, python-format
 msgid "The group “%(group)s” was changed successfully."
 msgstr ""
 
-#: inyoka/portal/views.py:1632
+#: inyoka/portal/views.py:1633
 msgid "The user map was temporarily disabled."
 msgstr ""
 
-#: inyoka/portal/views.py:1657
+#: inyoka/portal/views.py:1658
 msgid "Please choose"
 msgstr ""
 
-#: inyoka/portal/views.py:1660 inyoka/portal/views.py:1667
+#: inyoka/portal/views.py:1661 inyoka/portal/views.py:1668
 #: inyoka/portal/templates/portal/feedselector.html:37
 msgid "All"
 msgstr ""
 
-#: inyoka/portal/views.py:1775
+#: inyoka/portal/views.py:1776
 msgid "You cannot reactivate an account while you are logged in."
 msgstr ""
 
-#: inyoka/portal/views.py:1780
+#: inyoka/portal/views.py:1781
 msgid "You need to be logged in before you can continue."
 msgstr ""
 
-#: inyoka/portal/views.py:1793
+#: inyoka/portal/views.py:1794
 msgid "The entered data is invalid or has expired."
 msgstr ""
 
-#: inyoka/portal/views.py:1837
+#: inyoka/portal/views.py:1838
 msgid "The OpenID was successfully linked to your account."
 msgstr ""
 
-#: inyoka/portal/views.py:1869
+#: inyoka/portal/views.py:1870
 msgid "This user is not activated"
 msgstr ""
 
-#: inyoka/portal/views.py:1878
+#: inyoka/portal/views.py:1879
 #, python-format
 msgid "Error on OpenID login: %(message)s"
 msgstr ""
 
-#: inyoka/portal/views.py:1946
+#: inyoka/portal/views.py:1947
 msgid "Your settings have been changed successfully."
 msgstr ""
 
-#: inyoka/portal/views.py:2004
+#: inyoka/portal/views.py:2005
 #, python-format
 msgid "The page “%(page)s” was created successfully."
 msgstr ""
 
-#: inyoka/portal/views.py:2006
+#: inyoka/portal/views.py:2007
 #, python-format
 msgid "The page “%(page)s” was changed successfully."
 msgstr ""
 
-#: inyoka/portal/views.py:2027
+#: inyoka/portal/views.py:2028
 msgid "The stylesheet was saved successfully."
 msgstr ""
 
