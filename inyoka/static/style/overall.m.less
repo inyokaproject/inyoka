@@ -12,9 +12,15 @@
 
 @navbar-height: 48px;
 
-* {
+body {
+  font-family: sans-serif;
   margin: 0;
   padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 1em;
+  margin-bottom: 0.2em;
 }
 
 a {
@@ -37,6 +43,12 @@ blockquote {
   padding: 0 0 0 0.3em;
 }
 
+img {
+  max-width: 100% !important; /* important necessary for the planet
+                                 (external content → width could be defined inline) */
+  height: auto;
+}
+
 pre {
   .codeblock;
 }
@@ -56,7 +68,6 @@ header{
     a {
       color: #FFFFFF;
       display: block;
-      float: left;
       height: @navbar-height;
       margin: 0 2px;
       padding: 0 5px;
@@ -72,6 +83,7 @@ header{
 
       &.toggle_menu {
         .tap-highlight-color(rgba(0, 0, 0, 0));
+        float: right;
 
         img {
           height: @navbar-height - 24px;
@@ -98,10 +110,14 @@ header{
     display: block;
     font-weight: bold;
     height: 32px;
-    margin: 0.1em 0;
+
     padding: 0.8em 0.2em;
     text-decoration: none;
     text-shadow: 1px 1px 1px #000000;
+
+    &:not(:first-child) {
+      margin: 0.1em 0;
+    }
 
     &.active {
       background: #333333;
@@ -140,9 +156,20 @@ header{
 
 #content {
   padding: 0;
+
   textarea {
     width: 100%;
     .border-box;
+  }
+
+  p {
+    margin-top: 0;
+    text-align: justify;
+  }
+
+  li p {
+    margin-bottom: 0.25em;
+    text-align: left;
   }
 }
 
@@ -196,6 +223,7 @@ div.actions {
   line-height: 48px;
   min-height: 48px;
   text-align: center;
+  margin: 1em 0;
 
   a, input {
     .rounded;
@@ -203,7 +231,6 @@ div.actions {
     border: 1px solid @orange_s_medium;
     color: #000000;
     display: inline-block;
-    font-family: Times;
     font-size: 18px;
     font-weight: normal !important; /* !important because of input */
     height: 48px;
@@ -235,6 +262,8 @@ footer {
   font-size: 10px;
   margin: 0.5em 0 0.3em;
   padding: 0.5em 0.1em;
+  text-align: center;
+  clear: both;
 
   .flavour_switch {
     font-size: 18px;
