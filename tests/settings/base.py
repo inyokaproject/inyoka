@@ -27,4 +27,4 @@ GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4B
 # explicitly add tests.utils to apps to run unittests here
 INSTALLED_APPS = INSTALLED_APPS + ('tests.utils',)
 
-SECRET_KEY='test-secret-key'
+SECRET_KEY = 'test-secret-key'
