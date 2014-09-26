@@ -65,7 +65,7 @@
     </tr></tfoot>
     <tbody>
       {%- for version in versions -%}
-        <tr name="jstableform-{{ version.number|e }}">
+        <tr name="jstableform-{{ version.table_ident|e }}">
           <td name="jstableform-key-number">{{ version.number|e }}</td>
           <td name="jstableform-key-name">{{ version.name|e }}</td>
           <td name="jstableform-key-lts" class="jstableform-status-{% if version.lts %}yes{% else %}no{% endif %}"></td>
