@@ -71,3 +71,19 @@
 .table-header-alternative-gradient(@from: #e0e0e0, @to: #cacaca, @default: #d9d9d9 url(../img/table-header-alternative.png)) { .gradient(@from, @to, @default); }
 .table-header-alternative-solved-gradient(@from: #cfefcf, @to: #ace3ac, @default: #c4ebc4 url(../img/table-header-alternative-solved.png)) { .gradient(@from, @to, @default); }
 .table-header-alternative-target-gradient(@from: #f9f1bd, @to: #f7eb95, @default: #f7eb95 url(../img/table-header-alternative-target.png)) { .gradient(@from, @to, @default); }
+
+
+.text-wrap() {
+  /* Browser specific (not valid) styles to make preformatted text wrap */
+  white-space: pre-wrap;       /* css-3 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.reset() {
+  /* reset margin and padding */
+  padding: 0;
+  margin: 0;
+}
