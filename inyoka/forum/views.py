@@ -1460,12 +1460,12 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         title = _(u'Unsolved topics')
         url = href('forum', 'unsolved', forum)
     elif action == 'topic_author':
-        user = User.objects.get(user)
+        user = User.objects.get(username__iexact=user)
         topics = topics.filter(author=user)
         url = href('forum', 'topic_author', user.username, forum)
         title = _(u'Topics by “%(user)s”') % {'user': user.username}
     elif action == 'author':
-        user = user and User.objects.get(user) or request.user
+        user = user and User.objects.get(username__iexact=user) or request.user
         if user.is_anonymous:
             messages.info(request, _(u'You need to be logged in to use this function.'))
             return abort_access_denied(request)
