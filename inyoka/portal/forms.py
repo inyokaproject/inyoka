@@ -207,6 +207,9 @@ class LostPasswordForm(auth_forms.PasswordResetForm):
         Generates a one-use only link for resetting password and sends to the
         user.
         """
+        # FIXME: Since Django 1.6 the default save() requires is_active
+        # to be a User field. So the default function was c&p here and
+        # modified afterwards.
         from django.core.mail import send_mail
         messages.success(request, _(u'An email with further instructions was sent to you.'))
         UserModel = get_user_model()
