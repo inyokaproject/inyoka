@@ -16,10 +16,11 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
 
 from inyoka.forum.models import Post as ForumPost
 from inyoka.markup import parse, RenderContext
-from inyoka.utils.services import permit_methods, SimpleDispatcher
+from inyoka.utils.services import SimpleDispatcher
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import get_smilies
 
@@ -29,7 +30,7 @@ def on_get_smilies(request):
     return get_smilies()
 
 
-@permit_methods(('GET', 'POST'))
+@require_http_methods(['GET', 'POST'])
 def on_render_preview(request):
     """Render some preview text."""
     page = post = None

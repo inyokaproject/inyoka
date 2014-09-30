@@ -37,17 +37,6 @@ class SimpleDispatcher(object):
         return self.methods[name](request)
 
 
-def permit_methods(methods=('GET',)):
-    """Helper method to only permit a few HTTP Methods"""
-    def decorate(func):
-        def oncall(request, *args, **kwargs):
-            if not request.method.lower() in imap(str.lower, methods):
-                return HttpResponseNotAllowed(methods)
-            return func(request, *args, **kwargs)
-        return patch_wrapper(oncall, func)
-    return decorate
-
-
 def never_cache(view_func):
     view_func.__never__cache__ = True
     return view_func
