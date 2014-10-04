@@ -14,18 +14,20 @@ import os
 from fabric.api import env, put, run, roles, local, prompt, require, settings, open_shell
 from fabric.contrib.project import rsync_project
 from fabric.context_managers import cd
+from fabric.operations import sudo
 
 env.roledefs.update({
     'web': ['ubuntu_de@dongo.ubuntu-eu.org',
             'ubuntu_de@unkul.ubuntu-eu.org',
             'ubuntu_de@oya.ubuntu-eu.org'],
-    'static': ['apollo13@lisa.ubuntu-eu.org']
+    'static': ['encbladexp@ellegua.ubuntu-eu.org']
 })
 
 env.repository = 'git@github.com:inyokaproject/inyoka'
 env.target_dir = '~/virtualenv/inyoka'
 
-STATIC_DIRECTORY = '/home/ubuntu_de_static'
+STATIC_TMP = '/tmp/ubuntuusers/static/'  # mind the trailing /
+STATIC_DIRECTORY = '/srv/www/ubuntuusers/static'  # mind missing /
 
 
 def bootstrap():
@@ -64,18 +66,21 @@ def rollback(tag):
 @roles('static')
 def deploy_static():
     """Deploy static files"""
-    compile_static()
-    local('./manage.py collectstatic')
-    with settings(target_dir=STATIC_DIRECTORY):
-        rsync_project(os.path.join(env.target_dir, 'static/'), 'inyoka/static-collected/')
+    #compile_static()
+    local('python manage.py collectstatic')
+    run('mkdir -p ' + STATIC_TMP)
+    rsync_project(STATIC_TMP, os.path.join('inyoka', 'static-collected/'))
+    with settings(shell='/bin/bash -c', sudo_user='ubuntuusers'): 
+        sudo('mkdir -p ' + STATIC_DIRECTORY)
+        sudo('rsync -rt --delete ' + STATIC_TMP + ' ' + STATIC_DIRECTORY)
 
 
+@roles('web')
 def pip():
     """Run pip on the server"""
     if not getattr(env, 'parameters', None):
         prompt('pip parameters', key='parameters')
-    run('unlet PYTHONPATH;'
-        'source {target_dir}/../bin/activate;'
+    run('source {target_dir}/../bin/activate;'
         'pip {parameters}'.format(**{
             'target_dir': env.target_dir,
             'parameters': env.parameters}))

@@ -11,3 +11,16 @@
 {% if not active_app %}
   {% set active_app = 'planet' %}
 {% endif %}
+
+{% block styles %}
+  {{ super() }}
+  {% if SETTINGS.DEBUG %}
+    <link rel="stylesheet/less"
+          type="text/css"
+          href="{{ href('static', 'planet', 'style', 'overall.m.less') }}" />
+  {% else %}
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ href('static', 'planet', 'style', 'overall.m.css') }}" />
+  {% endif %}
+{% endblock %}

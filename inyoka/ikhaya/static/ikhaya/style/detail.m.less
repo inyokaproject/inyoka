@@ -7,8 +7,7 @@
  */
 
 article {
-  margin: 0.1em;
-  text-align: justify;
+  .margin-left-right;
 
   h2 {
     border-bottom: 1px dotted #000000;
@@ -36,17 +35,23 @@ article {
   }
 }
 
+.comment-gradient-header() {
+  .table-header-gradient;
+  margin: 1em 0;
+  padding: 0.5em 0;
+  text-align: center;
+  width: 100%;
+}
+
 section#comments {
   h3 {
-    .table-header-gradient;
-    margin: 1em 0;
-    padding: 0.5em 0;
-    text-align: center;
-    width: 100%;
+    .comment-gradient-header;
   }
 
   .comment {
-    text-align: justify;
+    .text {
+      .margin-left-right;
+    }
 
     .meta {
       .table-header-gradient;
@@ -73,5 +78,15 @@ section#comments {
     &:target .meta {
       .table-header-alternative-target-gradient;
     }
+  }
+}
+
+.write-comment {
+  h3 {
+    .comment-gradient-header;
+  }
+
+  form {
+    .margin-left-right;
   }
 }

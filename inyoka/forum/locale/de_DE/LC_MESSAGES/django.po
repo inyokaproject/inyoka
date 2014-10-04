@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-09-07 16:52+0200\n"
+"POT-Creation-Date: 2014-09-19 17:49+0200\n"
 "PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -1143,10 +1143,6 @@ msgstr "(rückgängig)"
 msgid "Assign to me"
 msgstr "Mir zuweisen"
 
-#: inyoka/forum/templates/forum/reportlist.html:57
-msgid "Write a pm"
-msgstr "Eine persönliche Nachricht schreiben"
-
 #: inyoka/forum/templates/forum/reportlist.html:66
 msgid "Currently there are no reported topics."
 msgstr "Es gibt zurzeit keine gemeldeten Themen."
@@ -1387,4 +1383,7 @@ msgstr "Gelesen und akzeptiert"
 #: inyoka/forum/templates/forum/welcome.html:21
 msgid "Reject"
 msgstr "Ablehnen"
+
+#~ msgid "Write a pm"
+#~ msgstr "Eine persönliche Nachricht schreiben"
 
