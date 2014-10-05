@@ -16,7 +16,6 @@ from datetime import date, datetime, timedelta
 
 from PIL import Image
 from django_mobile import get_flavour
-from django_openid.consumer import Consumer, SessionPersist
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -45,7 +44,7 @@ from inyoka.markup import parse, RenderContext
 from inyoka.portal.filters import SubscriptionFilter
 from inyoka.portal.forms import (LoginForm, SearchForm, UserMailForm,
     EditFileForm, RegisterForm, EditStyleForm, EditGroupForm, CreateUserForm,
-    LostPasswordForm, SubscriptionForm, UserCPProfileForm, OpenIDConnectForm,
+    LostPasswordForm, SubscriptionForm, UserCPProfileForm,
     ConfigurationForm, EditUserGroupsForm, EditStaticPageForm, DeactivateUserForm,
     UserCPSettingsForm, ChangePasswordForm, PrivateMessageForm, EditUserStatusForm,
     SetNewPasswordForm, EditUserProfileForm, WikiFeedSelectorForm,
@@ -258,7 +257,7 @@ def activate(request, action='', username='', activation_key=''):
     """Activate a user with the activation key send via email."""
     redirect = is_safe_domain(request.GET.get('next', ''))
     try:
-        user = User.objects.get(username)
+        user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
         messages.error(request,
             _(u'The user “%(username)s” does not exist.') % {
@@ -302,7 +301,7 @@ def activate(request, action='', username='', activation_key=''):
 @does_not_exist_is_404
 def resend_activation_mail(request, username):
     """Resend the activation mail if the user is not already activated."""
-    user = User.objects.get(username)
+    user = User.objects.get(username__iexact=username)
 
     if user.status > 0:
         messages.error(request,
@@ -347,33 +346,26 @@ def login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            if data['username'].startswith('http://') or \
-               data['username'].startswith('https://'):
-                # till https://github.com/simonw/django-openid/commit/5062aa93abc9a8d6f90837db690c26ace1c68672
-                # is resolved
-                request.session['next'] = request.GET.get('next', '/')
-                return openid_consumer.start_openid_process(request, data['username'])
-            else:
-                try:
-                    user = auth.authenticate(username=data['username'],
-                                      password=data['password'])
-                except UserBanned:
-                    banned = True
-                    user = None
+            try:
+                user = auth.authenticate(username=data['username'],
+                                  password=data['password'])
+            except UserBanned:
+                banned = True
+                user = None
 
-                if user is None:
-                    failed = True
-
-                if user is not None:
-                    if user.is_active:
-                        if data['permanent']:
-                            make_permanent(request)
-                        # username matches password and user is active
-                        messages.success(request, _(u'You have successfully logged in.'))
-                        auth.login(request, user)
-                        return HttpResponseRedirect(redirect)
-                    inactive = True
+            if user is None:
                 failed = True
+
+            if user is not None:
+                if user.is_active:
+                    if data['permanent']:
+                        make_permanent(request)
+                    # username matches password and user is active
+                    messages.success(request, _(u'You have successfully logged in.'))
+                    auth.login(request, user)
+                    return HttpResponseRedirect(redirect)
+                inactive = True
+            failed = True
     else:
         if 'username' in request.GET:
             form = LoginForm(initial={'username': request.GET['username']})
@@ -487,7 +479,7 @@ def search(request):
 def profile(request, username):
     """Show the user profile if the user is logged in."""
 
-    user = User.objects.get(username)
+    user = User.objects.get(username__iexact=username)
 
     try:
         if username != user.urlsafe_username:
@@ -526,7 +518,7 @@ def user_mail(request, username):
         if '@' in username:
             user = User.objects.get(email__iexact=username)
         else:
-            user = User.objects.get(username)
+            user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
         raise Http404
     if request.method == 'POST':
@@ -563,7 +555,7 @@ def user_mail(request, username):
 @require_permission('subscribe_to_users')
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
-    user = User.objects.get(username)
+    user = User.objects.get(username__iexact=username)
     try:
         Subscription.objects.get_for_user(request.user, user)
     except Subscription.DoesNotExist:
@@ -577,7 +569,7 @@ def subscribe_user(request, username):
 @require_POST
 def unsubscribe_user(request, username):
     """Remove a user subscription."""
-    user = User.objects.get(username)
+    user = User.objects.get(username__iexact=username)
     try:
         subscription = Subscription.objects.get_for_user(request.user, user)
     except Subscription.DoesNotExist:
@@ -613,8 +605,6 @@ def usercp_profile(request):
         form = UserCPProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             user = form.save(request)
-            openids = map(int, request.POST.getlist('openids'))
-            UserData.objects.filter(user=user, pk__in=openids).delete()
             messages.success(request, _(u'Your profile information were updated successfully.'))
             return HttpResponseRedirect(href('portal', 'usercp', 'profile'))
         else:
@@ -633,7 +623,6 @@ def usercp_profile(request):
         'max_avatar_height': storage_keys.get('max_avatar_height', -1),
         'max_avatar_size': storage_keys.get('max_avatar_size', -1),
         'max_sig_length': storage_keys.get('max_signature_length'),
-        'openids': UserData.objects.filter(user=user, key='openid'),
     }
 
 
@@ -824,7 +813,7 @@ def get_user(username):
         if '@' in username:
             user = User.objects.get(email__iexact=username)
         else:
-            user = User.objects.get(username)
+            user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
         raise Http404
     return user
@@ -1169,7 +1158,7 @@ def user_new(request):
 
 @require_permission('user_edit')
 def admin_resend_activation_mail(request):
-    user = User.objects.get(request.GET.get('user'))
+    user = User.objects.get(username__iexact=request.GET.get('user'))
     if user.status != 0:
         messages.error(request,
             _(u'The account of “%(username)s” was already activated.')
@@ -1348,7 +1337,7 @@ def privmsg_new(request, username=None):
 
             try:
                 for recipient in recipient_names:
-                    user = User.objects.get(recipient)
+                    user = User.objects.get(username__iexact=recipient)
                     if user.id == request.user.id:
                         recipients = None
                         messages.error(request, _(u'You cannot send messages to yourself.'))
@@ -1797,90 +1786,6 @@ def confirm(request, action):
     r = func(**data)
     r['action'] = action
     return r
-
-
-class OpenIdConsumer(Consumer):
-    on_complete_url = '/openid/complete/'
-    trust_root = 'http://*.' + settings.BASE_DOMAIN_NAME
-
-    @templated('portal/openid_connect.html')
-    def do_connect(self, request):
-        # TODO: This is mostly duplication of login, maybe merge those two
-        redirect = is_safe_domain(request.GET.get('next', '')) and \
-            request.GET['next'] or href('portal')
-
-        failed = inactive = banned = False
-        if request.method == 'POST' and 'openid' in request.session:
-            form = OpenIDConnectForm(request.POST)
-            if form.is_valid():
-                data = form.cleaned_data
-                try:
-                    user = auth.authenticate(username=data['username'],
-                                             password=data['password'])
-                except UserBanned:
-                    failed = banned = True
-                    user = None
-
-                if user is None:
-                    failed = True
-
-                if user is not None:
-                    if user.is_active:
-                        # username matches password and user is active
-                        messages.success(request, _(u'You have successfully logged in.'))
-                        auth.login(request, user)
-                        openid = request.session.pop('openid')
-                        if not UserData.objects.filter(key='openid',
-                                                       value=openid).count():
-                            UserData.objects.create(user=user, key='openid',
-                                                    value=openid)
-                            messages.success(request,
-                                _(u'The OpenID was successfully linked to '
-                                  u'your account.'))
-                        return HttpResponseRedirect(redirect)
-                    inactive = True
-                failed = True
-        else:
-            form = OpenIDConnectForm()
-        return {
-            'form': form,
-            'openid': request.session.get('openid', None),
-            'failed': failed,
-            'inactive': inactive,
-            'banned': banned,
-        }
-
-    def on_success(self, request, identity_url, openid_response):
-        response = self.redirect_if_valid_next(request)
-
-        # till https://github.com/simonw/django-openid/commit/5062aa93abc9a8d6f90837db690c26ace1c68672
-        # is resolved
-        next = request.session.pop('next', href('portal'))
-        if not response:
-            response = HttpResponseRedirect(next)
-
-        try:
-            user = UserData.objects.select_related('user').get(
-                    key='openid',
-                    value=openid_response.identity_url).user
-            if user.is_active:
-                messages.success(request, _(u'You have successfully logged in.'))
-                auth.login(request, user)
-            else:
-                messages.error(request, _(u'This user is not activated'))
-        except UserData.DoesNotExist:
-            request.session['openid'] = identity_url
-            response = HttpResponseRedirect(href('portal', 'openid', 'connect',
-                                                 next=next))
-
-        return response
-
-    def show_error(self, request, message, exception=None):
-        messages.error(request, _(u'Error on OpenID login: %(message)s') % {'message': message})
-        return HttpResponseRedirect('/')
-
-
-openid_consumer = OpenIdConsumer(SessionPersist)
 
 
 @require_permission('configuration_edit')

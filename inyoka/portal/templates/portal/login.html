@@ -36,16 +36,3 @@
     </div>
   </form>
 {% endblock %}
-
-{% block additional_scripts %}
-  <script type="text/javascript">
-    /*<![CDATA[*/
-    if ( $('#id_username')[0].value )
-      $('#id_password').select().focus();
-    else
-      $('#id_username')[0].focus();
-
-    var input = OpenIDHelper($('input[name="username"]'), {{ OPENID_PROVIDERS|jsonencode }});
-    /*]]>*/
-  </script>
-{% endblock %}

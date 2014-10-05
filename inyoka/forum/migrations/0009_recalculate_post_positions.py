@@ -4,7 +4,7 @@ import datetime
 
 from south.db import db
 from south.v2 import DataMigration
-from django.db import models, connection, transaction
+from django.db import models, connection
 from django.conf import settings
 
 

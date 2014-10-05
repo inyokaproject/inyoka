@@ -124,10 +124,6 @@ from dulwich.repo import Repo
 INYOKA_REVISION = ugettext_lazy('unknown')
 
 
-def _dummy(*args, **kwargs):
-    return None
-
-
 def _bootstrap():
     """Get the Inyoka version and store it."""
     # the path to the contents of the Inyoka module
@@ -148,10 +144,6 @@ def _bootstrap():
     # Socket timeouts are set globally within the whole application.
     # The value *must* be a floating point value.
     socket.setdefaulttimeout(10.0)
-
-    # Silence logging output of openid library
-    from openid import oidutil
-    oidutil.log = _dummy
 
     return revision
 
