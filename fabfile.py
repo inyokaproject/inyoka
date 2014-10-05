@@ -121,7 +121,7 @@ def compile_css(file=None):
         files = []
         for dir in dirs:
             files += [dir + fn for fn in os.listdir(dir) if fn.endswith('.less')]
-        for app in ['forum', 'ikhaya', 'portal', 'planet']:
+        for app in ['forum', 'ikhaya', 'planet', 'portal', 'wiki']:
             files.append('inyoka/%s/static/%s/style/overall.m.less' % (app, app))
     else:
         files = [file]
