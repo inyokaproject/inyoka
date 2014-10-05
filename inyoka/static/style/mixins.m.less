@@ -15,10 +15,14 @@
 
 .codeblock() {
   background: #EEEEEE;
-  overflow: scroll;
+  max-width: 100%;
+  .overflow;
 }
 
 .link_list() {
+  list-style: none;
+  padding-left: 0px;
+
   li a {
     background: #EEEEEE;
     display: block;
@@ -31,9 +35,18 @@
   -webkit-tap-highlight-color: @color;
 }
 
+.overflow() {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch
+}
+
 .border-box() {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+.margin-left-right() {
+  margin: 0 0.75em;
 }

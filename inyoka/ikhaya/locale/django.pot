@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-09-19 17:49+0200\n"
+"POT-Creation-Date: 2014-10-05 11:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -440,7 +440,7 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/category_edit.html:25
 #: inyoka/ikhaya/templates/ikhaya/comment_edit.html:21
 #: inyoka/ikhaya/templates/ikhaya/detail.html:132
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:64
+#: inyoka/ikhaya/templates/ikhaya/detail.m.html:65
 #: inyoka/ikhaya/templates/ikhaya/event_edit.html:54
 #: inyoka/ikhaya/templates/ikhaya/event_suggest.html:45
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:35
@@ -454,8 +454,8 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/detail.html:131
 #: inyoka/ikhaya/templates/ikhaya/detail.html:136
 #: inyoka/ikhaya/templates/ikhaya/detail.html:183
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:63
-#: inyoka/ikhaya/templates/ikhaya/detail.m.html:68
+#: inyoka/ikhaya/templates/ikhaya/detail.m.html:64
+#: inyoka/ikhaya/templates/ikhaya/detail.m.html:69
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:34
 #: inyoka/ikhaya/templates/ikhaya/report_new.html:40
 #: inyoka/ikhaya/templates/ikhaya/suggest_new.html:32
@@ -550,6 +550,10 @@ msgstr ""
 #: inyoka/ikhaya/templates/ikhaya/index.html:29
 #: inyoka/ikhaya/templates/ikhaya/index.html:30
 msgid "Comments"
+msgstr ""
+
+#: inyoka/ikhaya/templates/ikhaya/detail.m.html:54
+msgid "New comment"
 msgstr ""
 
 #: inyoka/ikhaya/templates/ikhaya/event_delete.html:14

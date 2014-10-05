@@ -1,12 +1,31 @@
-.header,.navigation,.topic_box,.footer,.message,.linklist,.signature,.appheader>*,.pathbar>*,.author>*{display:none;}
-.appheader h1,.appheader h2{display:inline;}
-.pathbar .trace{display:block;}
-.pathbar:last-child{display:none;}
-.author .username{display:block;}
-.text a:link:after,.text a:link::after,.text a:visited:after,.text a:visited::after{content:"(" attr(href) ")";font-size:75%;color:#999;background:transparent;text-decoration:none;}
+body,html{width:100%;padding:0;margin:0;font-size:12pt;}
+body *{color:black !important;font-family:serif !important;}
+audio,embed,object,video,.header,.navigation,.footer,#admin_menu,.admin_link_js,.codeblock_resizer,.topic_box,.message,.linklist,.signature,.pathbar{display:none;}
+div.wrap{background-image:none;border:none;border-radius:0;min-width:0;max-width:none;}div.wrap>div:last-child:after{content:"Inhalte von ubuntuusers.de lizenziert unter Creative Commons, siehe http://ubuntuusers.de/lizenz/.";}
+div.wrap,.content,.page_content{padding:0;margin:0;border:none;}
+.content p{text-align:left;}
+a{font-weight:bold !important;color:black !important;text-decoration:none !important;}a:after{content:" [" attr(href) "]";font-size:90%;font-weight:normal;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;}
+a.headerlink,a.anchor{display:none;}
+h1,h2,h3,h4,h5,h6{border-bottom:none;page-break-after:avoid;}h1 a:after,h2 a:after,h3 a:after,h4 a:after,h5 a:after,h6 a:after{content:none;}
+img{max-width:500px;max-height:500px;height:auto;}
+#page>p{orphans:3;widows:3;}
+pre span{font-family:monospace;}
+div.bash,div.code,pre{background-color:white !important;font-family:monospace !important;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;}
+div.box,div.warning,div.notice{border-width:2pt;}div.box h3,div.warning h3,div.notice h3{background-color:white;font-size:110%;}
+div.bash{border-width:2pt;}div.bash .contents{border:none;}
+div.notranslate{border-width:1pt;}
+h1.title,h2.title,h3.title,h1.pagetitle,h2.pagetitle,h3.pagetitle{display:none;}
+.appheader .admin_menu,.appheader .navi_global{display:none;}
+.appheader h1,.appheader h2{display:inline;font-size:26pt;}
+.toc{float:none;width:auto;border:none;margin:0;background:none;}.toc .head{text-align:left;}
+.toc a{font-weight:normal !important;}.toc a:after{content:none;}
+.toc .head a,.toc .toctoggle{display:none;}
+tr,td{background:white !important;}
+tr.kopf{text-align:center;}
+a.action,a.show_comments{display:none;}
+td>a[href*="media.cdn.ubuntu-de.org"]:after{content:none;}
+table.topic td.post div.postinfo{background:white !important;}
 table.forum thead,table.forum tfoot{display:none;}
-.codeblock_resizer{display:none;}
-div.code,pre{max-height:100% !important;height:100% !important;color:black !important;}
-body,html{width:100%;padding:0;margin:0;}
-.content{margin:0;border:0;}
-#admin_menu{display:none;}
+.author>*{display:none;}
+.author .username,.author .member_title{display:block;}
+.author .username>a:after{content:none;}
