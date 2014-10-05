@@ -21,7 +21,7 @@ def on_change_suggestion_assignment(request):
         suggestion.owner = None
         suggestion.save()
     else:
-        suggestion.owner = User.objects.get(username__iexact=username)
+        suggestion.owner = User.objects.get(username)
         suggestion.save()
     return True
 

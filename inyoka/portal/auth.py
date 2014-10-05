@@ -35,7 +35,7 @@ class InyokaAuthBackend(ModelBackend):
         """
         user = None
         try:
-            user = User.objects.get(username__iexact=username)
+            user = User.objects.get(username)
         except User.DoesNotExist:
             # fallback to email login
             if '@' in username:

@@ -147,7 +147,7 @@ class RegisterForm(forms.Form):
                   u'alphanumeric chars and “-” and “ ” are allowed.')
             )
         try:
-            User.objects.get(username__iexact=username)
+            User.objects.get(username)
         except User.DoesNotExist:
             # To bad we had to change the user regex…,  we need to rename users fast…
             count = User.objects.filter(username__contains=username.replace(' ', '%')) \

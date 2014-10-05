@@ -314,7 +314,7 @@ class SearchSystem(object):
             if prefix in (u'user', u'author'):
                 from inyoka.portal.user import User
                 try:
-                    user = User.objects.get(username__iexact=data)
+                    user = User.objects.get(data)
                 except User.DoesNotExist:
                     pass
                 else:
