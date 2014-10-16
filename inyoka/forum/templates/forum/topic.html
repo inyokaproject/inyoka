@@ -80,8 +80,10 @@
       {%- if topic.hidden %}
         <a href="{{ topic|url('restore') }}"
            class="action action_restore adminlink">{% trans %}Restore{% endtrans %}</a> |
-        <a href="{{ topic|url('delete') }}"
-           class="action action_delete adminlink">{% trans %}Delete{% endtrans %}</a>
+        {%- if can_delete_all %}
+          <a href="{{ topic|url('delete') }}"
+             class="action action_delete adminlink">{% trans %}Delete{% endtrans %}</a>
+        {%- endif %}
       {%- else %}
         <a href="{{ topic|url('hide') }}"
            class="action action_hide admin_link">{% trans %}Hide{% endtrans %}</a>
@@ -219,7 +221,7 @@
           <td class="post"{%- if post.author_id == USER.id %} style="background-color: #F8F6F1"{% endif %}>
             <div class="postinfo">
               <div class="linklist">
-                {%- if can_delete(post) %}
+                {%- if can_delete_own(post) %}
                   <a href="{{ post|url('hide') }}"
                      class="action action_delete">{% trans %}Delete{% endtrans %}</a> |
                 {%- endif %}
@@ -236,7 +238,7 @@
                         <a href="{{ post|url('restore') }}"
                            class="action action_restore">{% trans %}Restore{% endtrans %}</a> |
                       </span>
-                      {%- if not can_delete(post) %}
+                      {%- if not can_delete_own(post) and can_delete_all %}
                         <span class="admin_link">
                           <a href="{{ post|url('delete') }}" class="action action_delete">{% trans %}Delete{% endtrans %}</a> |
                         </span>
