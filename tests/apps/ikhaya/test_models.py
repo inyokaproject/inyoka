@@ -8,7 +8,7 @@
     :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import date, time, timedelta
+from datetime import date, datetime, time, timedelta
 
 from django.conf import settings
 from django.test import TestCase
@@ -233,3 +233,62 @@ class TestEventModel(TestCase):
             author=self.user, visible=True)
         self.assertEqual(list(Event.objects.get_upcoming()),
             [event3,event1,event2])
+
+    def test_upcomingDate_startTodayInPast_returnEvent(self):
+        start=datetime.now()+timedelta(hours=-1)
+        event = Event.objects.create(name='Event',
+            date=start.date(),time=start.time(),
+            author=self.user, visible=True)
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
+
+    def test_upcomingDate_startTodayInFuture_returnEvent(self):
+        start=datetime.now()+timedelta(hours=1)
+        event = Event.objects.create(name='Event',
+            date=start.date(),time=start.time(),
+            author=self.user, visible=True)
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
+
+    def test_upcomingDate_startTodayInPastEndTodayInPast_returnNone(self):
+        start=datetime.now()+timedelta(hours=-2)
+        end=datetime.now()+timedelta(hours=-1)
+        Event.objects.create(name='Event',
+            date=start.date(),time=start.time(),
+            enddate=end.date(),endtime=end.time(),
+            author=self.user, visible=True)
+        self.assertEqual(list(Event.objects.get_upcoming()), [])
+
+    def test_upcomingDate_startTodayInPastEndTodayInFuture_returnEvent(self):
+        start=datetime.now()+timedelta(hours=-1)
+        end=datetime.now()+timedelta(hours=1)
+        event = Event.objects.create(name='Event',
+            date=start.date(),time=start.time(),
+            enddate=end.date(),endtime=end.time(),
+            author=self.user, visible=True)
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
+
+    def test_upcomingDate_startTodayInFutureEndTodayInFuture_returnEvent(self):
+        start=datetime.now()+timedelta(hours=1)
+        end=datetime.now()+timedelta(hours=2)
+        event = Event.objects.create(name='Event',
+            date=start.date(),time=start.time(),
+            enddate=end.date(),endtime=end.time(),
+            author=self.user, visible=True)
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])
+
+    def test_upcomingDate_startYesterdayEndTodayInPast_returnNone(self):
+        start=datetime.now()+timedelta(days=-1)
+        end=datetime.now()+timedelta(hours=-1)
+        Event.objects.create(name='Event',
+            date=start.date(),time=start.time(),
+            enddate=end.date(),endtime=end.time(),
+            author=self.user, visible=True)
+        self.assertEqual(list(Event.objects.get_upcoming()), [])
+
+    def test_upcomingDate_startYesterdayEndTodayInFuture_returnEvent(self):
+        start=datetime.now()+timedelta(days=-1)
+        end=datetime.now()+timedelta(hours=2)
+        event = Event.objects.create(name='Event',
+            date=start.date(),time=start.time(),
+            enddate=end.date(),endtime=end.time(),
+            author=self.user, visible=True)
+        self.assertEqual(list(Event.objects.get_upcoming()), [event])

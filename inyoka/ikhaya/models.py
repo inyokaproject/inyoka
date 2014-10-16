@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from operator import attrgetter, itemgetter
-from datetime import datetime
+from datetime import date,datetime
 
 from django.db import models
 from django.conf import settings
@@ -161,12 +161,26 @@ class CommentManager(models.Manager):
 
 
 class EventManager(models.Manager):
-
+    # The query below returns all events that start in the future or are
+    # currently running:
+    # * If endtime and enddate is set we check if both are in the future or
+    #   later today.
+    # * If we do not have an endtime we only check the enddate if it's in the
+    #   future or today.
+    # * If only the endtime is set we ignore it because it wouldn't be a valid
+    #   entry.
+    # * If we only have a startdate we check if it's in the future or today.
+    # * The starttime can be ignored totally because even if the starttime is
+    #   earlier today we suppose the event is still running without and 
+    #   endtime.
     def get_upcoming(self, count=10):
-        return self.get_query_set().order_by('date').filter(Q(visible=True) & (
-            (Q(enddate__gte=datetime.utcnow()) & Q(date__lte=datetime.utcnow())) |
-            (Q(date__gte=datetime.utcnow()))))[:count]
-
+        return self.get_query_set().order_by('date').filter(Q(visible=True) & 
+            ((Q(endtime__isnull=False) & Q(enddate__isnull=False) & 
+            (Q(enddate__gt=date.today()) | (Q(enddate__exact=date.today()) & 
+            Q(endtime__gte=datetime.now())))) | (Q(endtime__isnull=True) & 
+            Q(enddate__isnull=False) & Q(enddate__gte=date.today())) | 
+            (Q(enddate__isnull=True) & Q(date__isnull=False) & 
+            Q(date__gte=date.today()))))[:count]
 
 class Category(models.Model):
     name = models.CharField(max_length=180)
