@@ -10,20 +10,40 @@
 #}
 
 {%- extends 'forum/page.html' %}
+{% set scripts = ['WikiEditor'] %}
+{% set styles = ['editor-sprite'] %}
 {% do BREADCRUMB.append(_('Report'), topic|url('report'), True) %}
 {% do BREADCRUMB.append(topic.title, topic|url, True) %}
 {% do BREADCRUMB.append(topic.forum.name, topic.forum|url) %}
 
 {% block forum_content %}
+  {{ form.errors.text }}
+  <h2>{% trans topic=topic.title|e %}Report topic “{{ topic }}”{% endtrans %}</h2>
+  <p>
+    {%- trans link=href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') -%}
+      Here you can report a topic to the moderators if it is against our <a href="{{ link }}">rules</a>. Please add a short explanation:
+    {%- endtrans -%}
+  </p>
   <form action="" method="post" enctype="multipart/form-data" class="new_topic">
     {{ csrf_token() }}
-    <h2>{% trans topic=topic.title|e %}Report topic “{{ topic }}”{% endtrans %}</h2>
+    {{ form.text }}
     <p>
-      {%- trans link=href('wiki', 'ubuntuusers/Moderatoren/Forenregeln') -%}
-        Here you can report a topic to the moderators if it is against our <a href="{{ link }}">rules</a>. Please add a short explanation:
-      {%- endtrans -%}
+      <input type="submit" name="preview" value="{% trans %}Preview{% endtrans %}"/>
+      <input type="submit" value="{% trans %}Report topic{% endtrans %}" />
     </p>
-    <p>{{ form.text }}</p>
-    <p><input type="submit" value="{% trans %}Report topic{% endtrans %}" /></p>
   </form>
+  {%- if preview %}
+    <div class="preview_wrapper">
+      <h2 class="title">{% trans %}Preview{% endtrans %}</h2>
+      <div class="preview">{{ preview }}</div>
+    </div>
+  {%- endif %}
+{% endblock %}
+
+{% block additional_scripts %}
+  {{ super() }}
+  <script type="text/javascript">
+    /*<![CDATA[*/
+      new WikiEditor('textarea[name="text"]', 'forum');
+  </script>
 {% endblock %}

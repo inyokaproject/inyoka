@@ -797,6 +797,7 @@ unsubscribe_topic = _generate_unsubscriber(Topic,
 @templated('forum/report.html')
 def report(request, topic_slug):
     """Change the report_status of a topic and redirect to it"""
+    preview = None
     topic = Topic.objects.get(slug=topic_slug)
     if not have_privilege(request.user, topic.forum, CAN_READ):
         return abort_access_denied(request)
@@ -808,25 +809,30 @@ def report(request, topic_slug):
         form = ReportTopicForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            topic.reported = data['text']
-            topic.reporter_id = request.user.id
-            topic.save()
+            if 'preview' in request.POST:
+                ctx = RenderContext(request)
+                preview = parse(data['text']).render(ctx, 'html')
+            elif 'send' in request.POST:
+                topic.reported = data['text']
+                topic.reporter_id = request.user.id
+                topic.save()
 
-            subscribers = storage['reported_topics_subscribers'] or u''
-            users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
-            for user in users:
-                send_notification(user, 'new_reported_topic',
-                                  _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
-                                  {'topic': topic, 'text': data['text']})
+                subscribers = storage['reported_topics_subscribers'] or u''
+                users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
+                for user in users:
+                    send_notification(user, 'new_reported_topic',
+                                      _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
+                                      {'topic': topic, 'text': data['text']})
 
-            cache.delete('forum/reported_topic_count')
-            messages.success(request, _(u'The topic was reported.'))
-            return HttpResponseRedirect(url_for(topic))
+                cache.delete('forum/reported_topic_count')
+                messages.success(request, _(u'The topic was reported.'))
+                return HttpResponseRedirect(url_for(topic))
     else:
         form = ReportTopicForm()
     return {
         'topic': topic,
-        'form': form
+        'form': form,
+        'preview': preview
     }
 
 
