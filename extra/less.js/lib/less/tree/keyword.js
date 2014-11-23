@@ -1,19 +1,14 @@
-(function (tree) {
+var Node = require("./node");
 
-tree.Keyword = function (value) { this.value = value };
-tree.Keyword.prototype = {
-    eval: function () { return this },
-    toCSS: function () { return this.value },
-    compare: function (other) {
-        if (other instanceof tree.Keyword) {
-            return other.value === this.value ? 0 : 1;
-        } else {
-            return -1;
-        }
-    }
+var Keyword = function (value) { this.value = value; };
+Keyword.prototype = new Node();
+Keyword.prototype.type = "Keyword";
+Keyword.prototype.genCSS = function (context, output) {
+    if (this.value === '%') { throw { type: "Syntax", message: "Invalid % without number" }; }
+    output.add(this.value);
 };
 
-tree.True = new(tree.Keyword)('true');
-tree.False = new(tree.Keyword)('false');
+Keyword.True = new Keyword('true');
+Keyword.False = new Keyword('false');
 
-})(require('../tree'));
+module.exports = Keyword;

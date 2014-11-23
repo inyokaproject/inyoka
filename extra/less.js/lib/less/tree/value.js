@@ -1,24 +1,34 @@
-(function (tree) {
+var Node = require("./node");
 
-tree.Value = function (value) {
+var Value = function (value) {
     this.value = value;
-    this.is = 'value';
-};
-tree.Value.prototype = {
-    eval: function (env) {
-        if (this.value.length === 1) {
-            return this.value[0].eval(env);
-        } else {
-            return new(tree.Value)(this.value.map(function (v) {
-                return v.eval(env);
-            }));
-        }
-    },
-    toCSS: function (env) {
-        return this.value.map(function (e) {
-            return e.toCSS(env);
-        }).join(env.compress ? ',' : ', ');
+    if (!value) {
+        throw new Error("Value requires an array argument");
     }
 };
-
-})(require('../tree'));
+Value.prototype = new Node();
+Value.prototype.type = "Value";
+Value.prototype.accept = function (visitor) {
+    if (this.value) {
+        this.value = visitor.visitArray(this.value);
+    }
+};
+Value.prototype.eval = function (context) {
+    if (this.value.length === 1) {
+        return this.value[0].eval(context);
+    } else {
+        return new Value(this.value.map(function (v) {
+            return v.eval(context);
+        }));
+    }
+};
+Value.prototype.genCSS = function (context, output) {
+    var i;
+    for(i = 0; i < this.value.length; i++) {
+        this.value[i].genCSS(context, output);
+        if (i+1 < this.value.length) {
+            output.add((context && context.compress) ? ',' : ', ');
+        }
+    }
+};
+module.exports = Value;

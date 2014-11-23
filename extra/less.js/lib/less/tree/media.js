@@ -1,123 +1,161 @@
-(function (tree) {
+var Ruleset = require("./ruleset"),
+    Value = require("./value"),
+    Element = require("./element"),
+    Selector = require("./selector"),
+    Anonymous = require("./anonymous"),
+    Expression = require("./expression"),
+    Directive = require("./directive");
 
-tree.Media = function (value, features) {
+var Media = function (value, features, index, currentFileInfo) {
+    this.index = index;
+    this.currentFileInfo = currentFileInfo;
+
     var selectors = this.emptySelectors();
 
-    this.features = new(tree.Value)(features);
-    this.ruleset = new(tree.Ruleset)(selectors, value);
-    this.ruleset.allowImports = true;
+    this.features = new Value(features);
+    this.rules = [new Ruleset(selectors, value)];
+    this.rules[0].allowImports = true;
 };
-tree.Media.prototype = {
-    toCSS: function (ctx, env) {
-        var features = this.features.toCSS(env);
-
-        this.ruleset.root = (ctx.length === 0 || ctx[0].multiMedia);
-        return '@media ' + features + (env.compress ? '{' : ' {\n  ') +
-               this.ruleset.toCSS(ctx, env).trim().replace(/\n/g, '\n  ') +
-                           (env.compress ? '}': '\n}\n');
-    },
-    eval: function (env) {
-        if (!env.mediaBlocks) {
-            env.mediaBlocks = [];
-            env.mediaPath = [];
-        }
-        
-        var blockIndex = env.mediaBlocks.length;
-        env.mediaPath.push(this);
-        env.mediaBlocks.push(this);
-
-        var media = new(tree.Media)([], []);
-        if(this.debugInfo) {
-            this.ruleset.debugInfo = this.debugInfo;
-            media.debugInfo = this.debugInfo;
-        }
-        media.features = this.features.eval(env);
-        
-        env.frames.unshift(this.ruleset);
-        media.ruleset = this.ruleset.eval(env);
-        env.frames.shift();
-        
-        env.mediaBlocks[blockIndex] = media;
-        env.mediaPath.pop();
-
-        return env.mediaPath.length === 0 ? media.evalTop(env) :
-                    media.evalNested(env)
-    },
-    variable: function (name) { return tree.Ruleset.prototype.variable.call(this.ruleset, name) },
-    find: function () { return tree.Ruleset.prototype.find.apply(this.ruleset, arguments) },
-    rulesets: function () { return tree.Ruleset.prototype.rulesets.apply(this.ruleset) },
-    emptySelectors: function() { 
-        var el = new(tree.Element)('', '&', 0);
-        return [new(tree.Selector)([el])];
-    },
-
-    evalTop: function (env) {
-        var result = this;
-
-        // Render all dependent Media blocks.
-        if (env.mediaBlocks.length > 1) {
-            var selectors = this.emptySelectors();
-            result = new(tree.Ruleset)(selectors, env.mediaBlocks);
-            result.multiMedia = true;
-        }
-
-        delete env.mediaBlocks;
-        delete env.mediaPath;
-
-        return result;
-    },
-    evalNested: function (env) {
-        var i, value,
-            path = env.mediaPath.concat([this]);
-
-        // Extract the media-query conditions separated with `,` (OR).
-        for (i = 0; i < path.length; i++) {
-            value = path[i].features instanceof tree.Value ?
-                        path[i].features.value : path[i].features;
-            path[i] = Array.isArray(value) ? value : [value];
-        }
-
-        // Trace all permutations to generate the resulting media-query.
-        //
-        // (a, b and c) with nested (d, e) ->
-        //    a and d
-        //    a and e
-        //    b and c and d
-        //    b and c and e
-        this.features = new(tree.Value)(this.permute(path).map(function (path) {
-            path = path.map(function (fragment) {
-                return fragment.toCSS ? fragment : new(tree.Anonymous)(fragment);
-            });
-
-            for(i = path.length - 1; i > 0; i--) {
-                path.splice(i, 0, new(tree.Anonymous)("and"));
-            }
-
-            return new(tree.Expression)(path);
-        }));
-
-        // Fake a tree-node that doesn't output anything.
-        return new(tree.Ruleset)([], []);
-    },
-    permute: function (arr) {
-      if (arr.length === 0) {
-          return [];
-      } else if (arr.length === 1) {
-          return arr[0];
-      } else {
-          var result = [];
-          var rest = this.permute(arr.slice(1));
-          for (var i = 0; i < rest.length; i++) {
-              for (var j = 0; j < arr[0].length; j++) {
-                  result.push([arr[0][j]].concat(rest[i]));
-              }
-          }
-          return result;
-      }
-    },
-    bubbleSelectors: function (selectors) {
-      this.ruleset = new(tree.Ruleset)(selectors.slice(0), [this.ruleset]);
+Media.prototype = new Directive();
+Media.prototype.type = "Media";
+Media.prototype.isRulesetLike = true;
+Media.prototype.accept = function (visitor) {
+    if (this.features) {
+        this.features = visitor.visit(this.features);
+    }
+    if (this.rules) {
+        this.rules = visitor.visitArray(this.rules);
     }
 };
+Media.prototype.genCSS = function (context, output) {
+    output.add('@media ', this.currentFileInfo, this.index);
+    this.features.genCSS(context, output);
+    this.outputRuleset(context, output, this.rules);
+};
+Media.prototype.eval = function (context) {
+    if (!context.mediaBlocks) {
+        context.mediaBlocks = [];
+        context.mediaPath = [];
+    }
 
-})(require('../tree'));
+    var media = new Media(null, [], this.index, this.currentFileInfo);
+    if(this.debugInfo) {
+        this.rules[0].debugInfo = this.debugInfo;
+        media.debugInfo = this.debugInfo;
+    }
+    var strictMathBypass = false;
+    if (!context.strictMath) {
+        strictMathBypass = true;
+        context.strictMath = true;
+    }
+    try {
+        media.features = this.features.eval(context);
+    }
+    finally {
+        if (strictMathBypass) {
+            context.strictMath = false;
+        }
+    }
+
+    context.mediaPath.push(media);
+    context.mediaBlocks.push(media);
+
+    context.frames.unshift(this.rules[0]);
+    media.rules = [this.rules[0].eval(context)];
+    context.frames.shift();
+
+    context.mediaPath.pop();
+
+    return context.mediaPath.length === 0 ? media.evalTop(context) :
+                media.evalNested(context);
+};
+//TODO merge with directive
+Media.prototype.variable = function (name) { return Ruleset.prototype.variable.call(this.rules[0], name); };
+Media.prototype.find = function () { return Ruleset.prototype.find.apply(this.rules[0], arguments); };
+Media.prototype.rulesets = function () { return Ruleset.prototype.rulesets.apply(this.rules[0]); };
+Media.prototype.emptySelectors = function() {
+    var el = new Element('', '&', this.index, this.currentFileInfo),
+        sels = [new Selector([el], null, null, this.index, this.currentFileInfo)];
+    sels[0].mediaEmpty = true;
+    return sels;
+};
+Media.prototype.markReferenced = function () {
+    var i, rules = this.rules[0].rules;
+    this.rules[0].markReferenced();
+    this.isReferenced = true;
+    for (i = 0; i < rules.length; i++) {
+        if (rules[i].markReferenced) {
+            rules[i].markReferenced();
+        }
+    }
+};
+Media.prototype.evalTop = function (context) {
+    var result = this;
+
+    // Render all dependent Media blocks.
+    if (context.mediaBlocks.length > 1) {
+        var selectors = this.emptySelectors();
+        result = new Ruleset(selectors, context.mediaBlocks);
+        result.multiMedia = true;
+    }
+
+    delete context.mediaBlocks;
+    delete context.mediaPath;
+
+    return result;
+};
+Media.prototype.evalNested = function (context) {
+    var i, value,
+        path = context.mediaPath.concat([this]);
+
+    // Extract the media-query conditions separated with `,` (OR).
+    for (i = 0; i < path.length; i++) {
+        value = path[i].features instanceof Value ?
+                    path[i].features.value : path[i].features;
+        path[i] = Array.isArray(value) ? value : [value];
+    }
+
+    // Trace all permutations to generate the resulting media-query.
+    //
+    // (a, b and c) with nested (d, e) ->
+    //    a and d
+    //    a and e
+    //    b and c and d
+    //    b and c and e
+    this.features = new Value(this.permute(path).map(function (path) {
+        path = path.map(function (fragment) {
+            return fragment.toCSS ? fragment : new Anonymous(fragment);
+        });
+
+        for(i = path.length - 1; i > 0; i--) {
+            path.splice(i, 0, new Anonymous("and"));
+        }
+
+        return new Expression(path);
+    }));
+
+    // Fake a tree-node that doesn't output anything.
+    return new Ruleset([], []);
+};
+Media.prototype.permute = function (arr) {
+  if (arr.length === 0) {
+      return [];
+  } else if (arr.length === 1) {
+      return arr[0];
+  } else {
+      var result = [];
+      var rest = this.permute(arr.slice(1));
+      for (var i = 0; i < rest.length; i++) {
+          for (var j = 0; j < arr[0].length; j++) {
+              result.push([arr[0][j]].concat(rest[i]));
+          }
+      }
+      return result;
+  }
+};
+Media.prototype.bubbleSelectors = function (selectors) {
+  if (!selectors)
+    return;
+  this.rules = [new Ruleset(selectors.slice(0), [this.rules[0]])];
+};
+module.exports = Media;

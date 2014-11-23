@@ -1,32 +1,48 @@
-(function (tree) {
+var Node = require("./node"),
+    Color = require("./color"),
+    Dimension = require("./dimension");
 
-tree.Operation = function (op, operands) {
+var Operation = function (op, operands, isSpaced) {
     this.op = op.trim();
     this.operands = operands;
+    this.isSpaced = isSpaced;
 };
-tree.Operation.prototype.eval = function (env) {
-    var a = this.operands[0].eval(env),
-        b = this.operands[1].eval(env),
-        temp;
+Operation.prototype = new Node();
+Operation.prototype.type = "Operation";
+Operation.prototype.accept = function (visitor) {
+    this.operands = visitor.visit(this.operands);
+};
+Operation.prototype.eval = function (context) {
+    var a = this.operands[0].eval(context),
+        b = this.operands[1].eval(context);
 
-    if (a instanceof tree.Dimension && b instanceof tree.Color) {
-        if (this.op === '*' || this.op === '+') {
-            temp = b, b = a, a = temp;
-        } else {
-            throw { name: "OperationError",
-                    message: "Can't substract or divide a color from a number" };
+    if (context.isMathOn()) {
+        if (a instanceof Dimension && b instanceof Color) {
+            a = a.toColor();
         }
+        if (b instanceof Dimension && a instanceof Color) {
+            b = b.toColor();
+        }
+        if (!a.operate) {
+            throw { type: "Operation",
+                    message: "Operation on an invalid type" };
+        }
+
+        return a.operate(context, this.op, b);
+    } else {
+        return new Operation(this.op, [a, b], this.isSpaced);
     }
-    return a.operate(this.op, b);
+};
+Operation.prototype.genCSS = function (context, output) {
+    this.operands[0].genCSS(context, output);
+    if (this.isSpaced) {
+        output.add(" ");
+    }
+    output.add(this.op);
+    if (this.isSpaced) {
+        output.add(" ");
+    }
+    this.operands[1].genCSS(context, output);
 };
 
-tree.operate = function (op, a, b) {
-    switch (op) {
-        case '+': return a + b;
-        case '-': return a - b;
-        case '*': return a * b;
-        case '/': return a / b;
-    }
-};
-
-})(require('../tree'));
+module.exports = Operation;
