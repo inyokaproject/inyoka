@@ -83,6 +83,18 @@ a {
     .text-wrap;
   }
 
+  /* urls that should NOT be printed:
+   *  o page-internal links
+   *  o link to user-profile
+   *  o images from cnd
+   */
+  &[href^="#"],
+  &[href*="/user/"],
+  &[href*="media.cdn.ubuntu-de.org"]
+  {
+    &:after { content: none;}
+  }
+
   &.headerlink, &.anchor {
     display: none;
   }
@@ -126,6 +138,10 @@ div.box, div.warning, div.notice {
   h3 {
     background-color: white;
     font-size: 110%;
+  }
+
+  a:after {
+    content: none;
   }
 }
 
@@ -195,15 +211,20 @@ tr.kopf {
 }
 
 /*
+ * Wiki
+ */
+
+/* hide first paragraph of package installation, because there are only
+   JS-buttons to switch between apt-get and aptitude */
+.package-list p:first-child {
+  display: none;
+}
+
+/*
  * Ikhaya
  */
 a.action, a.show_comments {
   display: none;
-}
-
-/* no hrefs after images that lie on the cdn */
-td > a[href*="media.cdn.ubuntu-de.org"]:after {
-  content: none;
 }
 
 /*
