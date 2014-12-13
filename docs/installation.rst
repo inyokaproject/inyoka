@@ -101,7 +101,7 @@ files:
 
   $  sudo apt-get install libxml2-dev libxslt1-dev
   libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev
-  libmysqlclient-dev build-essential
+  libmysqlclient-dev build-essential libmemcached-dev
 
 Further you need the Python 2.7 files:
 
