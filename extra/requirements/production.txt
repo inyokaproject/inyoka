@@ -30,3 +30,7 @@ Pillow==2.4.0
 defusedxml==0.4.1
 python-dateutil==2.1
 python-magic==0.4.6
+mysql-python==1.2.5
+dnspython==1.12.0
+pyasn1==0.1.7
+pyasn1_modules==0.0.5
