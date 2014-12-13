@@ -200,12 +200,6 @@ So first install MySQL:
 You will be asked for a password (maybe several times). You can leave it
 empty if you want to.
 
-Then you can install the Python binding for MySQL:
-
-.. code-block:: console
-
-  (inyoka)$ pip install MySQL-python
-
 Then you need to change the developer settings for the database. Edit the
 file *development_settings.py*  in the *inyoka* directory. You can leave
 the database entries if you haven't set a password during installation of
