@@ -85,8 +85,10 @@ class TestForumPrivileges(TestCase):
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 
     def tearDown(self):
+        from inyoka.portal import user
         cache.clear()
         request_cache.clear()
+        user._ANONYMOUS_USER = None
 
     @classmethod
     def tearDownClass(cls):
