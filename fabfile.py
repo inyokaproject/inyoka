@@ -17,35 +17,16 @@ from fabric.context_managers import cd
 from fabric.operations import sudo
 
 env.roledefs.update({
-    'web': ['ubuntu_de@dongo.ubuntu-eu.org',
-            'ubuntu_de@unkul.ubuntu-eu.org',
-            'ubuntu_de@oya.ubuntu-eu.org'],
+    'web': ['ubuntuusers@ruwa.ubuntu-eu.org',
+            'ubuntuusers@tali.ubuntu-eu.org'],
     'static': ['encbladexp@ellegua.ubuntu-eu.org']
 })
 
 env.repository = 'git@github.com:inyokaproject/inyoka'
-env.target_dir = '~/virtualenv/inyoka'
+env.target_dir = '/srv/local/ubuntuusers/inyoka'
 
 STATIC_TMP = '/tmp/ubuntuusers/static/'  # mind the trailing /
 STATIC_DIRECTORY = '/srv/www/ubuntuusers/static'  # mind missing /
-
-
-def bootstrap():
-    """Create a virtual environment.  Call this once on every new server."""
-    env.hosts = [x.strip() for x in raw_input('Servers: ').split(',')]
-    env.interpreter = raw_input('Python-executable (default: python2.5): ').strip() or 'python2.5'
-    env.target_dir = raw_input('Location (default: %s): ' % TARGET_DIR).strip().rstrip('/') or TARGET_DIR
-    run('mkdir {target_dir}'.format(target_dir=env.target_dir))
-    run('git clone {repository} {target_dir}/inyoka'.format(target_dir=env.target_dir))
-    run('{interpreter} {target_dir}/inyoka/make-bootstrap.py > {target_dir}/bootstrap.py'.format(**{
-        'interpreter': env.interpreter,
-        'target_dir': env.target_dir}))
-    run('unset PYTHONPATH; {interpreter} {target_dir}/bootstrap.py --no-site-packages {target_dir}'.format(**{
-        'interpreter': env.interpreter,
-        'target_dir': env.target_dir}))
-    run("ln -s {target_dir}/inyoka/inyoka {target_dir}/lib/python`{interpreter} -V 2>&1|grep -o '[0-9].[0-9]'`/site-packages".format(**{
-        'target_dir': env.target_dir,
-        'interpreter': env.interpreter}))
 
 
 @roles('web')

@@ -101,7 +101,7 @@ files:
 
   $  sudo apt-get install libxml2-dev libxslt1-dev
   libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev
-  libmysqlclient-dev build-essential
+  libmysqlclient-dev build-essential libmemcached-dev
 
 Further you need the Python 2.7 files:
 
@@ -199,12 +199,6 @@ So first install MySQL:
 
 You will be asked for a password (maybe several times). You can leave it
 empty if you want to.
-
-Then you can install the Python binding for MySQL:
-
-.. code-block:: console
-
-  (inyoka)$ pip install MySQL-python
 
 Then you need to change the developer settings for the database. Edit the
 file *development_settings.py*  in the *inyoka* directory. You can leave
