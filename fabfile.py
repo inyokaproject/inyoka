@@ -19,7 +19,7 @@ from fabric.operations import sudo
 env.roledefs.update({
     'web': ['ubuntuusers@ruwa.ubuntu-eu.org',
             'ubuntuusers@tali.ubuntu-eu.org'],
-    'static': ['encbladexp@ellegua.ubuntu-eu.org']
+    'static': ['ubuntuusers@ellegua.ubuntu-eu.org']
 })
 
 env.repository = 'git@github.com:inyokaproject/inyoka'
@@ -47,13 +47,11 @@ def rollback(tag):
 @roles('static')
 def deploy_static():
     """Deploy static files"""
-    #compile_static()
     local('python manage.py collectstatic')
     run('mkdir -p ' + STATIC_TMP)
     rsync_project(STATIC_TMP, os.path.join('inyoka', 'static-collected/'))
-    with settings(shell='/bin/bash -c', sudo_user='ubuntuusers'): 
-        sudo('mkdir -p ' + STATIC_DIRECTORY)
-        sudo('rsync -rt --delete ' + STATIC_TMP + ' ' + STATIC_DIRECTORY)
+    run('mkdir -p ' + STATIC_DIRECTORY)
+    run('rsync -rt --delete ' + STATIC_TMP + ' ' + STATIC_DIRECTORY)
 
 
 @roles('web')
