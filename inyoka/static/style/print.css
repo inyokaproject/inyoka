@@ -5,6 +5,7 @@ div.wrap{background-image:none;border:none;border-radius:0;min-width:0;max-width
 div.wrap,.content,.page_content{padding:0;margin:0;border:none;}
 .content p{text-align:left;}
 a{font-weight:bold !important;color:black !important;text-decoration:none !important;}a:after{content:" [" attr(href) "]";font-size:90%;font-weight:normal;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;}
+a[href^="#"]:after,a[href*="/user/"]:after,a[href*="media.cdn.ubuntu-de.org"]:after{content:none;}
 a.headerlink,a.anchor{display:none;}
 h1,h2,h3,h4,h5,h6{border-bottom:none;page-break-after:avoid;}h1 a:after,h2 a:after,h3 a:after,h4 a:after,h5 a:after,h6 a:after{content:none;}
 img{max-width:500px;max-height:500px;height:auto;}
@@ -12,6 +13,7 @@ img{max-width:500px;max-height:500px;height:auto;}
 pre span{font-family:monospace;}
 div.bash,div.code,pre{background-color:white !important;font-family:monospace !important;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;}
 div.box,div.warning,div.notice{border-width:2pt;}div.box h3,div.warning h3,div.notice h3{background-color:white;font-size:110%;}
+div.box a:after,div.warning a:after,div.notice a:after{content:none;}
 div.bash{border-width:2pt;}div.bash .contents{border:none;}
 div.notranslate{border-width:1pt;}
 h1.title,h2.title,h3.title,h1.pagetitle,h2.pagetitle,h3.pagetitle{display:none;}
@@ -22,8 +24,8 @@ h1.title,h2.title,h3.title,h1.pagetitle,h2.pagetitle,h3.pagetitle{display:none;}
 .toc .head a,.toc .toctoggle{display:none;}
 tr,td{background:white !important;}
 tr.kopf{text-align:center;}
+.package-list p:first-child{display:none;}
 a.action,a.show_comments{display:none;}
-td>a[href*="media.cdn.ubuntu-de.org"]:after{content:none;}
 table.topic td.post div.postinfo{background:white !important;}
 table.forum thead,table.forum tfoot{display:none;}
 .author>*{display:none;}

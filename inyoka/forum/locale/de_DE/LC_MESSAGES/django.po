@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-11-02 21:11+0100\n"
+"POT-Creation-Date: 2014-12-14 12:15+0100\n"
 "PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -635,16 +635,16 @@ msgid "The forum “%(forum)s” was created successfully."
 msgstr "Das Forum „%(forum)s“ wurde erfolgreich erstellt."
 
 #: inyoka/forum/templates/forum/_edit_latestpost_row.html:15
-#: inyoka/forum/templates/forum/splittopic.html:72
-#: inyoka/forum/templates/forum/topic.html:214
-msgid "Posts:"
-msgstr "Beiträge:"
-
-#: inyoka/forum/templates/forum/_edit_latestpost_row.html:16
 #: inyoka/forum/templates/forum/splittopic.html:71
 #: inyoka/forum/templates/forum/topic.html:213
 msgid "Member since:"
 msgstr "Anmeldungsdatum:"
+
+#: inyoka/forum/templates/forum/_edit_latestpost_row.html:16
+#: inyoka/forum/templates/forum/splittopic.html:72
+#: inyoka/forum/templates/forum/topic.html:214
+msgid "Posts:"
+msgstr "Beiträge:"
 
 #: inyoka/forum/templates/forum/_forum.html:15
 msgid "Forum read"
