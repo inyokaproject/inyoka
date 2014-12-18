@@ -226,7 +226,7 @@ def require_privilege(privilege):
             if has_privilege(request.user, name, privilege):
                 return f(request, name)
             if not request.user.is_authenticated():
-                url = href('portal', 'login', next='http://%s%s' % (
+                url = href('portal', 'login', next='//%s%s' % (
                     request.get_host(),
                     request.path
                 ))

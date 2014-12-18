@@ -38,7 +38,7 @@ def check_login(message=None):
                 return func(*args, **kwargs)
             if message is not None:
                 messages.info(req, message)
-            args = {'next': 'http://%s%s' % (req.get_host(), req.path)}
+            args = {'next': '//%s%s' % (req.get_host(), req.path)}
             return HttpResponseRedirect(href('portal', 'login', **args))
         return patch_wrapper(decorator, func)
     return _wrapper
@@ -71,7 +71,7 @@ def simple_check_login(f):
         req = args[0]
         if req.user.is_authenticated():
             return f(*args, **kwargs)
-        args = {'next': 'http://%s%s' % (req.get_host(), req.path)}
+        args = {'next': '//%s%s' % (req.get_host(), req.path)}
         return HttpResponseRedirect(href('portal', 'login', **args))
     return patch_wrapper(decorator, f)
 
@@ -79,7 +79,7 @@ def simple_check_login(f):
 def abort_access_denied(request):
     """Abort with an access denied message or go to login."""
     if request.user.is_anonymous:
-        args = {'next': 'http://%s%s' % (request.get_host(), request.path)}
+        args = {'next': '//%s%s' % (request.get_host(), request.path)}
         return HttpResponseRedirect(href('portal', 'login', **args))
     return AccessDeniedResponse()
 
@@ -133,7 +133,7 @@ def google_calendarize(event):
         dates += '%2F' + start.strftime(tfmt)
     name = urlquote_plus(event.name)
 
-    s = ('http://www.google.com/calendar/event?action=TEMPLATE&' +
+    s = ('https://www.google.com/calendar/event?action=TEMPLATE&' +
          'text=' + name + '&' +
          'dates=' + dates + '&' +
          'sprop=website:ubuntuusers.de')

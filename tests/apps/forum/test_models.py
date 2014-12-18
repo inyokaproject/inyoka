@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_models
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -133,9 +133,11 @@ class TestForumModel(TestCase):
 
     def test_get_absolute_url(self):
         url1 = self.forum.get_absolute_url('show', foo='val1', bar='val2')
-        url1_target = ''.join(['http://forum.', settings.BASE_DOMAIN_NAME,
-                                       '/forum/', self.forum.slug, '/',
-                                       '?foo=val1&bar=val2'])
+        url1_target = ''.join([
+            'http://forum.', settings.BASE_DOMAIN_NAME,
+            '/forum/', self.forum.slug, '/',
+            '?foo=val1&bar=val2'
+        ])
         self.assertEqual(url1, url1_target)
 
 

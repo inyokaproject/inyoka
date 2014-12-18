@@ -42,7 +42,7 @@ def href(_module='portal', *parts, **query):
         append_slash = _append_slash_map[_module]
     path = '/'.join(urlquote(x) for x in parts if x is not None)
 
-    base_url = 'http://%s' % settings.BASE_DOMAIN_NAME
+    base_url = '%s://%s' % (settings.INYOKA_URI_SCHEME, settings.BASE_DOMAIN_NAME)
     if _module in ('media', 'static'):
         base_url = {
             'media': settings.MEDIA_URL,
@@ -51,7 +51,7 @@ def href(_module='portal', *parts, **query):
     else:
         subdomain = get_host(_module).regex
         subdomain = subdomain + '.' if subdomain else ''
-        base_url = 'http://%s%s' % (subdomain, settings.BASE_DOMAIN_NAME)
+        base_url = '%s://%s%s' % (settings.INYOKA_URI_SCHEME, subdomain, settings.BASE_DOMAIN_NAME)
 
     return '%s/%s%s%s%s' % (
         base_url,

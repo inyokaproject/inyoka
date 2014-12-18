@@ -8,6 +8,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import re
+
 from django import forms
 from django.conf import settings
 from django.utils.html import escape
@@ -178,7 +180,7 @@ class SplitTopicForm(forms.Form):
         slug = self.cleaned_data.get('topic')
         if slug:
             # Allow URL based Slugs
-            if slug.startswith(u'http://'):
+            if re.match(r'^https?://', slug) is not None:
                 slug = slug.strip(u'/').split(u'/')[-1]
             try:
                 topic = Topic.objects.get(slug=slug)

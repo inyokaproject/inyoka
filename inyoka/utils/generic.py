@@ -109,7 +109,7 @@ class LoginMixin(object):
         if not self.required_login and not self.required_login_get or \
                 req.user.is_authenticated():
             return func(*args, **kwargs)
-        args = {'next': 'http://%s%s' % (req.get_host(), req.path)}
+        args = {'next': '//%s%s' % (req.get_host(), req.path)}
         return HttpResponseRedirect(href('portal', 'login', **args))
 
     def delete(self, *args, **kwargs):
@@ -118,7 +118,7 @@ class LoginMixin(object):
         if not self.required_login and not self.required_login_delete or \
                 req.user.is_authenticated():
             return func(*args, **kwargs)
-        args = {'next': 'http://%s%s' % (req.get_host(), req.path)}
+        args = {'next': '//%s%s' % (req.get_host(), req.path)}
         return HttpResponseRedirect(href('portal', 'login', **args))
 
     def post(self, *args, **kwargs):
@@ -127,7 +127,7 @@ class LoginMixin(object):
         if not self.required_login and self.required_login_post or \
                 req.user.is_authenticated():
             return func(*args, **kwargs)
-        args = {'next': 'http://%s%s' % (req.get_host(), req.path)}
+        args = {'next': '//%s%s' % (req.get_host(), req.path)}
         return HttpResponseRedirect(href('portal', 'login', **args))
 
 

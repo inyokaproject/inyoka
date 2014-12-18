@@ -49,6 +49,7 @@ LOCALE_PATHS = (join(BASE_PATH, 'locale'),)
 
 # the base url (without subdomain)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
+INYOKA_URI_SCHEME = 'http'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 #SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
@@ -71,11 +72,11 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media and the URL
 MEDIA_ROOT = join(BASE_PATH, 'media')
-MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
+MEDIA_URL = '//media.%s/' % BASE_DOMAIN_NAME
 
 # same for static
 STATIC_ROOT = join(BASE_PATH, 'static-collected')
-STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
+STATIC_URL = '//static.%s/' % BASE_DOMAIN_NAME
 
 # system settings
 INYOKA_SYSTEM_USER = u'ubuntuusers.de'

@@ -17,9 +17,10 @@ DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = True
 
 # url settings
 BASE_DOMAIN_NAME = 'ubuntuusers.local:8080'
+INYOKA_URI_SCHEME = 'http'
 SESSION_COOKIE_DOMAIN = '.ubuntuusers.local'
-MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
-STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
+MEDIA_URL = '//media.%s/' % BASE_DOMAIN_NAME
+STATIC_URL = '//static.%s/' % BASE_DOMAIN_NAME
 ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 INYOKA_CONTACT_EMAIL = '@'.join(['webteam', BASE_DOMAIN_NAME])
