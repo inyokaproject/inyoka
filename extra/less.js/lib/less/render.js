@@ -13,8 +13,9 @@ module.exports = function(environment, ParseTree, ImportManager) {
         }
 
         if (!callback) {
+            var self = this;
             return new PromiseConstructor(function (resolve, reject) {
-                render(input, options, function(err, output) {
+                render.call(self, input, options, function(err, output) {
                     if (err) {
                         reject(err);
                     } else {
@@ -52,12 +53,13 @@ module.exports = function(environment, ParseTree, ImportManager) {
             new Parser(context, imports, rootFileInfo)
                 .parse(input, function (e, root) {
                 if (e) { return callback(e); }
+                var result;
                 try {
                     var parseTree = new ParseTree(root, imports);
-                    var result = parseTree.toCSS(options);
-                    callback(null, result);
+                    result = parseTree.toCSS(options);
                 }
-                catch (err) { callback( err); }
+                catch (err) { return callback( err); }
+                callback(null, result);
             }, options);
         }
     };
