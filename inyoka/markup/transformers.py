@@ -159,10 +159,12 @@ class SmileyInjector(Transformer):
                 pos = 0
                 text = node.text
                 for match in smiley_re.finditer(text):
+                    code = match.group(1)
+                    if code not in smilies:
+                        continue
                     node.text = text[pos:match.start(1)]
                     if not node.text:
                         new_children.pop()
-                    code = match.group(1)
                     pos = match.end(1)
                     node = nodes.Text()
                     new_children.extend((
