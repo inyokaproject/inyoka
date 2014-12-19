@@ -1,16 +1,16 @@
+var Node = require("./node");
 
-(function (tree) {
-
-tree.Paren = function (node) {
+var Paren = function (node) {
     this.value = node;
 };
-tree.Paren.prototype = {
-    toCSS: function (env) {
-        return '(' + this.value.toCSS(env) + ')';
-    },
-    eval: function (env) {
-        return new(tree.Paren)(this.value.eval(env));
-    }
+Paren.prototype = new Node();
+Paren.prototype.type = "Paren";
+Paren.prototype.genCSS = function (context, output) {
+    output.add('(');
+    this.value.genCSS(context, output);
+    output.add(')');
 };
-
-})(require('../tree'));
+Paren.prototype.eval = function (context) {
+    return new Paren(this.value.eval(context));
+};
+module.exports = Paren;

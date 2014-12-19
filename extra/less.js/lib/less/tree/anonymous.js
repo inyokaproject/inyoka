@@ -1,27 +1,24 @@
-(function (tree) {
+var Node = require("./node");
 
-tree.Anonymous = function (string) {
-    this.value = string.value || string;
+var Anonymous = function (value, index, currentFileInfo, mapLines, rulesetLike) {
+    this.value = value;
+    this.index = index;
+    this.mapLines = mapLines;
+    this.currentFileInfo = currentFileInfo;
+    this.rulesetLike = (typeof rulesetLike === 'undefined')? false : rulesetLike;
 };
-tree.Anonymous.prototype = {
-    toCSS: function () {
-        return this.value;
-    },
-    eval: function () { return this },
-    compare: function (x) {
-        if (!x.toCSS) {
-            return -1;
-        }
-        
-        var left = this.toCSS(),
-            right = x.toCSS();
-        
-        if (left === right) {
-            return 0;
-        }
-        
-        return left < right ? -1 : 1;
-    }
+Anonymous.prototype = new Node();
+Anonymous.prototype.type = "Anonymous";
+Anonymous.prototype.eval = function () {
+    return new Anonymous(this.value, this.index, this.currentFileInfo, this.mapLines, this.rulesetLike);
 };
-
-})(require('../tree'));
+Anonymous.prototype.compare = function (other) {
+    return other.toCSS && this.toCSS() === other.toCSS() ? 0 : undefined;
+};
+Anonymous.prototype.isRulesetLike = function() {
+    return this.rulesetLike;
+};
+Anonymous.prototype.genCSS = function (context, output) {
+    output.add(this.value, this.currentFileInfo, this.index, this.mapLines);
+};
+module.exports = Anonymous;

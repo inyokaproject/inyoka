@@ -1,4 +1,10 @@
-(function (tree) {
+var Node = require("./node"),
+    Media = require("./media"),
+    URL = require("./url"),
+    Quoted = require("./quoted"),
+    Ruleset = require("./ruleset"),
+    Anonymous = require("./anonymous");
+
 //
 // CSS @import node
 //
@@ -11,30 +17,20 @@
 // `import,push`, we also pass it a callback, which it'll call once
 // the file has been fetched, and parsed.
 //
-tree.Import = function (path, imports, features, once, index) {
-    var that = this;
-
-    this.once = once;
+var Import = function (path, features, options, index, currentFileInfo) {
+    this.options = options;
     this.index = index;
-    this._path = path;
-    this.features = features && new(tree.Value)(features);
+    this.path = path;
+    this.features = features;
+    this.currentFileInfo = currentFileInfo;
 
-    // The '.less' extension is optional
-    if (path instanceof tree.Quoted) {
-        this.path = /\.(le?|c)ss(\?.*)?$/.test(path.value) ? path.value : path.value + '.less';
+    if (this.options.less !== undefined || this.options.inline) {
+        this.css = !this.options.less || this.options.inline;
     } else {
-        this.path = path.value.value || path.value;
-    }
-
-    this.css = /css(\?.*)?$/.test(this.path);
-
-    // Only pre-compile .less files
-    if (! this.css) {
-        imports.push(this.path, function (e, root, imported) {
-            if (e) { e.index = index }
-            if (imported && that.once) that.skip = imported;
-            that.root = root || new(tree.Ruleset)([], []);
-        });
+        var pathValue = this.getPath();
+        if (pathValue && /css([\?;].*)?$/.test(pathValue)) {
+            this.css = true;
+        }
     }
 };
 
@@ -47,37 +43,98 @@ tree.Import = function (path, imports, features, once, index) {
 // we end up with a flat structure, which can easily be imported in the parent
 // ruleset.
 //
-tree.Import.prototype = {
-    toCSS: function (env) {
-        var features = this.features ? ' ' + this.features.toCSS(env) : '';
-
-        if (this.css) {
-            return "@import " + this._path.toCSS() + features + ';\n';
-        } else {
-            return "";
-        }
-    },
-    eval: function (env) {
-        var ruleset, features = this.features && this.features.eval(env);
-
-        if (this.skip) return [];
-
-        if (this.css) {
-            return this;
-        } else {
-            ruleset = new(tree.Ruleset)([], this.root.rules.slice(0));
-
-            for (var i = 0; i < ruleset.rules.length; i++) {
-                if (ruleset.rules[i] instanceof tree.Import) {
-                    Array.prototype
-                         .splice
-                         .apply(ruleset.rules,
-                                [i, 1].concat(ruleset.rules[i].eval(env)));
-                }
-            }
-            return this.features ? new(tree.Media)(ruleset.rules, this.features.value) : ruleset.rules;
-        }
+Import.prototype = new Node();
+Import.prototype.type = "Import";
+Import.prototype.accept = function (visitor) {
+    if (this.features) {
+        this.features = visitor.visit(this.features);
+    }
+    this.path = visitor.visit(this.path);
+    if (!this.options.inline && this.root) {
+        this.root = visitor.visit(this.root);
     }
 };
+Import.prototype.genCSS = function (context, output) {
+    if (this.css) {
+        output.add("@import ", this.currentFileInfo, this.index);
+        this.path.genCSS(context, output);
+        if (this.features) {
+            output.add(" ");
+            this.features.genCSS(context, output);
+        }
+        output.add(';');
+    }
+};
+Import.prototype.getPath = function () {
+    if (this.path instanceof Quoted) {
+        return this.path.value;
+    } else if (this.path instanceof URL) {
+        return this.path.value.value;
+    }
+    return null;
+};
+Import.prototype.isVariableImport = function () {
+    var path = this.path;
+    if (path instanceof URL) {
+        path = path.value;
+    }
+    if (path instanceof Quoted) {
+        return path.containsVariables();
+    }
 
-})(require('../tree'));
+    return true;
+};
+Import.prototype.evalForImport = function (context) {
+    var path = this.path;
+    if (path instanceof URL) {
+        path = path.value;
+    }
+    return new Import(path.eval(context), this.features, this.options, this.index, this.currentFileInfo);
+};
+Import.prototype.evalPath = function (context) {
+    var path = this.path.eval(context);
+    var rootpath = this.currentFileInfo && this.currentFileInfo.rootpath;
+
+    if (!(path instanceof URL)) {
+        if (rootpath) {
+            var pathValue = path.value;
+            // Add the base path if the import is relative
+            if (pathValue && context.isPathRelative(pathValue)) {
+                path.value = rootpath +pathValue;
+            }
+        }
+        path.value = context.normalizePath(path.value);
+    }
+
+    return path;
+};
+Import.prototype.eval = function (context) {
+    var ruleset, features = this.features && this.features.eval(context);
+
+    if (this.skip) {
+        if (typeof this.skip === "function") {
+            this.skip = this.skip();
+        }
+        if (this.skip) {
+            return [];
+        }
+    }
+
+    if (this.options.inline) {
+        var contents = new Anonymous(this.root, 0, {filename: this.importedFilename}, true, true);
+        return this.features ? new Media([contents], this.features.value) : [contents];
+    } else if (this.css) {
+        var newImport = new Import(this.evalPath(context), features, this.options, this.index);
+        if (!newImport.css && this.error) {
+            throw this.error;
+        }
+        return newImport;
+    } else {
+        ruleset = new Ruleset(null, this.root.rules.slice(0));
+
+        ruleset.evalImports(context);
+
+        return this.features ? new Media(ruleset.rules, this.features.value) : ruleset.rules;
+    }
+};
+module.exports = Import;

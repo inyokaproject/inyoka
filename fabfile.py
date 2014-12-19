@@ -94,7 +94,7 @@ def compile_css(file=None):
           "org.carrot2.labs.smartsprites.SmartSprites"
           " %s" % files, capture=False)
 
-    less = './extra/less.js/bin/lessc -x -O2'
+    less = './extra/less.js/bin/lessc -x'
     if file is None:
         dirs = ['inyoka/static/style/']
         files = []
