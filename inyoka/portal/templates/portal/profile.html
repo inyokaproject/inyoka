@@ -29,7 +29,6 @@
     <a href="{{ href('portal', 'user', user.username, 'edit') }}" class="admin_link"><img
       src="{{ href('static', 'img/ikhaya/category_edit.png') }}" alt="{% trans %}Edit user{% endtrans %}" title="{% trans %}Edit user{% endtrans %}" /></a>
   {%- endif %}
-  </h3>
   {%- if request.user.can('subscribe_to_users') -%}
     {%- if is_subscribed %}
       <form action="{{ href('portal', 'user', user.username, 'unsubscribe')|e }}"
@@ -44,7 +43,8 @@
       </form>
     {%- else %}
       <form action="{{ href('portal', 'user', user.username, 'subscribe')|e }}"
-            method="post">
+            method="post"
+            class="subscribe_user_form">
           {{ csrf_token() }}
         <input type="image"
                class="action action_subscribe subscribe_user admin_link"
@@ -55,6 +55,7 @@
       </form>
     {%- endif -%}
   {%- endif %}
+  </h3>
   {%- if user in (User.objects.get_system_user(), User.objects.get_anonymous_user()) %}
     {% trans name=user.username|e %}{{ name }} is a system user.{% endtrans %}
   {%- elif user.is_deleted or user.is_banned %}
@@ -64,7 +65,7 @@
       <tr>
         <th>{% trans %}Name{% endtrans %}</th>
         <td>{{ user.username|e }}</td>
-        <td rowspan="6">
+        <td rowspan="7">
           <img class="userinfo_avatar" src="{{ user.avatar_url|e }}"
                alt="{% trans user=user.username|e %}Avatar of {{ user }}{% endtrans %}" />
         </td>
