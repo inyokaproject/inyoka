@@ -4,7 +4,7 @@
  *
  * Adds support for inserting quotes into the WikiEditor.
  *
- * :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+ * :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
  * :license: BSD, see LICENSE for more details.
  */
 
