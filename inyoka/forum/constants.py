@@ -32,6 +32,7 @@ UBUNTU_DISTROS_LEGACY = {
     'xubuntu': ugettext_lazy('Xubuntu'),
     'lubuntu': ugettext_lazy('Lubuntu'),
     'unity': 'Unity',
+    'gnome': ugettext_lazy('Ubuntu GNOME'),
 }
 
 UBUNTU_DISTROS = [
@@ -42,7 +43,7 @@ UBUNTU_DISTROS = [
     ('ubuntu', ugettext_lazy('Ubuntu')),
     ('xubuntu', ugettext_lazy('Xubuntu')),
     ('lubuntu', ugettext_lazy('Lubuntu')),
-    ('unity', ugettext_lazy('Unity')),
+    ('gnome', ugettext_lazy('Ubuntu GNOME')),
 ]
 
 
