@@ -63,7 +63,6 @@ class AddPasteForm(forms.ModelForm):
     title = forms.CharField(max_length=40, required=False, label=ugettext_lazy('Title'))
     lang = forms.ChoiceField(widget=forms.Select, label=ugettext_lazy('Language'),
                              choices=LANGUAGES)
-    captcha = CaptchaField(label=ugettext_lazy(u'CAPTCHA'), only_anonymous=True)
 
     def save(self, user, commit=True):
         entry = super(AddPasteForm, self).save(commit=False)

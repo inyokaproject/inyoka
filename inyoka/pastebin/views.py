@@ -14,17 +14,18 @@ from django.utils.translation import ugettext as _
 
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
-from inyoka.portal.utils import require_permission
+from inyoka.portal.utils import require_permission, simple_check_login
 from inyoka.utils.http import templated, global_not_found
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 
 
+@simple_check_login
 @templated('pastebin/add.html')
-def index(request):
+def add(request):
     if request.method == 'POST':
         form = AddPasteForm(request.POST)
-        if form.is_valid() and 'renew_captcha' not in request.POST:
+        if form.is_valid():
             entry = form.save(request.user)
             description = _(u'Your entry was successfully saved. You can use '
                             u'the following code to include it in your post:')
@@ -32,8 +33,6 @@ def index(request):
                       'id': entry.id, 'title': entry.title}
             messages.success(request, (u' '.join([description, example])))
             return HttpResponseRedirect(href('pastebin', entry.id))
-        if 'renew_captcha' in request.POST and 'captcha' in form.errors:
-            del form.errors['captcha']
     else:
         form = AddPasteForm()
     return {
