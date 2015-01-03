@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2014 ORGANIZATION
+# Copyright (C) 2015 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-12-14 12:15+0100\n"
+"POT-Creation-Date: 2015-01-03 20:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,127 +43,127 @@ msgstr ""
 msgid "Page"
 msgstr ""
 
-#: inyoka/templates/overall.html:95
+#: inyoka/templates/overall.html:96
 #, python-format
 msgid "Logout [%(user)s]"
 msgstr ""
 
-#: inyoka/templates/overall.html:100
+#: inyoka/templates/overall.html:101
 msgid "Control panel"
 msgstr ""
 
-#: inyoka/templates/overall.html:107
+#: inyoka/templates/overall.html:108
 #, python-format
 msgid "Private messages (%(count)s)"
 msgstr ""
 
-#: inyoka/templates/overall.html:112
+#: inyoka/templates/overall.html:113
 msgid "Private messages"
 msgstr ""
 
-#: inyoka/templates/overall.html:119 inyoka/templates/overall.m.html:77
+#: inyoka/templates/overall.html:120 inyoka/templates/overall.m.html:78
 msgid "Login"
 msgstr ""
 
-#: inyoka/templates/overall.html:124
+#: inyoka/templates/overall.html:125
 msgid "Register"
 msgstr ""
 
-#: inyoka/templates/overall.html:135
+#: inyoka/templates/overall.html:136
 msgid "Admin"
 msgstr ""
 
-#: inyoka/templates/overall.html:136
+#: inyoka/templates/overall.html:137
 msgid "Turn admin links on/off"
 msgstr ""
 
-#: inyoka/templates/overall.html:142
+#: inyoka/templates/overall.html:143
 msgid "Reported topics"
 msgstr ""
 
-#: inyoka/templates/overall.html:145
+#: inyoka/templates/overall.html:146
 msgid "Article suggestions"
 msgstr ""
 
-#: inyoka/templates/overall.html:149
+#: inyoka/templates/overall.html:150
 msgid "Spelling mistakes"
 msgstr ""
 
-#: inyoka/templates/overall.html:153
+#: inyoka/templates/overall.html:154
 msgid "Event suggestions"
 msgstr ""
 
-#: inyoka/templates/overall.html:157
+#: inyoka/templates/overall.html:158
 msgid "Please turn on JavaScript!"
 msgstr ""
 
-#: inyoka/templates/overall.html:175
+#: inyoka/templates/overall.html:176
 msgid "Overall"
 msgstr ""
 
-#: inyoka/templates/overall.html:178
+#: inyoka/templates/overall.html:179
 msgid "Forum"
 msgstr ""
 
-#: inyoka/templates/overall.html:181
+#: inyoka/templates/overall.html:182
 msgid "Wiki"
 msgstr ""
 
-#: inyoka/templates/overall.html:184
+#: inyoka/templates/overall.html:185
 msgid "News"
 msgstr ""
 
-#: inyoka/templates/overall.html:187
+#: inyoka/templates/overall.html:188
 msgid "Planet"
 msgstr ""
 
-#: inyoka/templates/overall.html:190
+#: inyoka/templates/overall.html:191
 msgid "Search"
 msgstr ""
 
-#: inyoka/templates/overall.html:212
+#: inyoka/templates/overall.html:213
 msgid "Please install at least Internet Explorer 8."
 msgstr ""
 
-#: inyoka/templates/overall.html:239
+#: inyoka/templates/overall.html:240
 #, python-format
 msgid "Powered by <a href=\"%(link)s\">Inyoka</a>"
 msgstr ""
 
-#: inyoka/templates/overall.html:241
+#: inyoka/templates/overall.html:242
 #, python-format
 msgid "(rendered in %(seconds)s seconds)"
 msgstr ""
 
-#: inyoka/templates/overall.html:256
+#: inyoka/templates/overall.html:257
 msgid "To mobile version"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:42
+#: inyoka/templates/overall.m.html:43
 msgid "« Back"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:53
+#: inyoka/templates/overall.m.html:54
 msgid "Applications"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:60
+#: inyoka/templates/overall.m.html:61
 msgid "More"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:64
+#: inyoka/templates/overall.m.html:65
 msgid "Messages"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:68
+#: inyoka/templates/overall.m.html:69
 msgid "Subscriptions"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:72
+#: inyoka/templates/overall.m.html:73
 msgid "Logout"
 msgstr ""
 
-#: inyoka/templates/overall.m.html:87
+#: inyoka/templates/overall.m.html:88
 msgid "To classic version"
 msgstr ""
 
@@ -306,7 +306,7 @@ msgstr ""
 msgid "Canceled."
 msgstr ""
 
-#: inyoka/utils/sessions.py:83
+#: inyoka/utils/sessions.py:73
 msgid ""
 "You cannot send data that fast in a row. Please wait a bit until you "
 "submit the form again."

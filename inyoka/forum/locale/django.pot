@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2014 ORGANIZATION
+# Copyright (C) 2015 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-12-14 12:15+0100\n"
+"POT-Creation-Date: 2015-01-03 20:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,48 +49,43 @@ msgstr ""
 msgid "can moderate"
 msgstr ""
 
-#: inyoka/forum/constants.py:26 inyoka/forum/constants.py:38
-#: inyoka/forum/models.py:545
+#: inyoka/forum/constants.py:26 inyoka/forum/models.py:545
 msgid "Not specified"
 msgstr ""
 
-#: inyoka/forum/constants.py:27 inyoka/forum/constants.py:39
+#: inyoka/forum/constants.py:27
 msgid "Edubuntu"
 msgstr ""
 
-#: inyoka/forum/constants.py:28 inyoka/forum/constants.py:40
+#: inyoka/forum/constants.py:28
 msgid "Kubuntu"
 msgstr ""
 
 #: inyoka/forum/constants.py:29
-msgid "Kubuntu (KDE 4)"
-msgstr ""
-
-#: inyoka/forum/constants.py:30 inyoka/forum/constants.py:41
 msgid "Server"
 msgstr ""
 
-#: inyoka/forum/constants.py:31 inyoka/forum/constants.py:42
+#: inyoka/forum/constants.py:30
 msgid "Ubuntu"
 msgstr ""
 
-#: inyoka/forum/constants.py:32 inyoka/forum/constants.py:43
+#: inyoka/forum/constants.py:31
 msgid "Xubuntu"
 msgstr ""
 
-#: inyoka/forum/constants.py:33 inyoka/forum/constants.py:44
+#: inyoka/forum/constants.py:32
 msgid "Lubuntu"
 msgstr ""
 
-#: inyoka/forum/constants.py:45
-msgid "Unity"
+#: inyoka/forum/constants.py:33
+msgid "Ubuntu GNOME"
 msgstr ""
 
-#: inyoka/forum/constants.py:54
+#: inyoka/forum/constants.py:41
 msgid "Version"
 msgstr ""
 
-#: inyoka/forum/constants.py:58
+#: inyoka/forum/constants.py:45
 msgid "Distribution"
 msgstr ""
 
