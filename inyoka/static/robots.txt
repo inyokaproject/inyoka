@@ -6,9 +6,6 @@ Disallow: /Benutzer/
 Disallow: /users/
 Disallow: /*?flavour=mobile
 
-User-agent: msnbot
-Disallow: /
-
 User-agent: BecomeBot
 Disallow: /
 
