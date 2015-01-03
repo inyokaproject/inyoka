@@ -76,8 +76,6 @@ def compile_js(file=None):
     #TODO: find some way to preserve comments on top
     if file is None:
         dirs = ['inyoka/static/js/']
-        for app in ['forum']:
-            dirs += ['inyoka/%s/static/%s/js/' % (app, app)]
         files = []
         for dir in dirs:
             files += [dir + fn for fn in os.listdir(dir) if not '.min.' in fn and not fn.startswith('.')]
