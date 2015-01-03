@@ -4,7 +4,7 @@
 Getting Started
 ===============
 
-Aussuming you already have :ref:`installed <installation>` Inyoka,
+Assuming you already have :ref:`installed <installation>` Inyoka,
 you can start coding/translating/documentating etc.
 
 Working with Git
@@ -47,7 +47,7 @@ You can switch to another branch via
   (inyoka)$ git checkout fix/ticket861
   Switched to branch 'fix/ticket861'
 
-Note: Only change files if you are in the correct branch! You should not change files on *staging* directly.
+Note: Only change files if you are on the correct branch! You should not change files on *staging* directly.
 
 Comitting changes
 *****************
@@ -82,8 +82,8 @@ Add pull request
 ****************
 
 Visit the `GitHub website <https://github.com/>`_ and login. Then visit
-you forked Inyoka project (mostly on
-`https://github.com/$GITNAME/inyoka`_).
+your forked Inyoka project (mostly on
+`https://github.com/$GITUSERNAME/inyoka`_).
 
 You should see a green button for adding the pull request from your
 branch to *inyokaproject/staging*. Just do it and hope that it will
@@ -98,20 +98,20 @@ Getting latest version on developement branch
 .. todo::
    Shouldn't this be done *before* comitting so merging the PR is easier?
 
-If you have developed for a while the Inyoka project files may have changed by other developers. So you need to synchronize:
+If you are developing a feature for a while, the files in the Inyoka project may have changed by other developers. In this case you need to synchronize:
 
 .. code-block:: console
 
   (inyoka)$ git checkout staging
   (inyoka)$ git pull upstream staging
 
-This will get the lates version on your staging branch. Then you need to push the changes on the staging branch to your origin:
+This will get the latest version on your staging branch. Then you need to push the changes on the staging branch to your origin:
 
 .. code-block:: console
 
   (inyoka)$ git push origin staging
 
-And last you can merge the changes on staging to your developement branch:
+And then you can merge the changes on staging to your developement branch:
 
 .. code-block:: console
 
@@ -134,7 +134,7 @@ tested by starting celery:
 
    (inyoka)$ python manage.py celeryd start
 
-Among other things you will see the noticiation mails for the admin user.
+Among other things you will see the notification mails for the admin user.
 
 .. note::
 
@@ -167,11 +167,11 @@ where ``tests.apps.ikhaya.test_forms`` is the directory structure
 Add tests
 *********
 
-If  you changed or added some Python files you should add some unit tests
+If you have changed or added some Python files you should add some unit tests
 as well for the classes. You'll find the tests under
 ``tests/apps/$APPNAME/``.
 
-The  Python test files start with ``test_*`` For adding new tests you can
+The  Python test files start with ``test_*``. For adding new tests you can
 mostly open a file and copying other test classes or test methods.
 
 
@@ -194,14 +194,14 @@ Template syntax:
 
     {% trans %}ENGLISH TEXT{% endtrans %}
 
-After changing code, extract strings from source code, updating ``*.po`` and ``*.pot`` files:
+After changing the above code, you also need to change the string in the corresponding ``*.po`` file. (e. g. ``inyoka/wiki/locale/de_DE/LC_MESSAGES/django.po``)
+Afterwards you have to run the following command to generate the ``*.pot`` file.
 
 .. code-block:: console
 
   (inyoka) $ python manage.py makemessages
 
-Change the translations in ``*.po`` files (e. g. ``inyoka/wiki/locale/de_DE/LC_MESSAGES/django.po``)
-Compile the correspondingi ``*.mo`` files
+Compile the corresponding ``*.mo`` files
 
 .. code-block:: console
 
