@@ -5,7 +5,7 @@
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from __future__ import division
@@ -34,7 +34,7 @@ from django.contrib.contenttypes.models import ContentType
 from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
     check_privilege, filter_invisible)
 from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
-    SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS_LEGACY)
+    SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS)
 from inyoka.markup import parse, RenderContext
 from inyoka.portal.models import SearchQueue, Subscription
 from inyoka.portal.user import User, Group
@@ -549,7 +549,7 @@ class Topic(models.Model):
             return _(u'No Ubuntu')
         out = []
         if self.ubuntu_distro:
-            out.append(UBUNTU_DISTROS_LEGACY[self.ubuntu_distro])
+            out.append(UBUNTU_DISTROS[self.ubuntu_distro])
         if self.ubuntu_version and self.ubuntu_version != u'none':
             out.append(force_unicode(self.get_ubuntu_version()))
         return u' '.join(force_unicode(x) for x in out)

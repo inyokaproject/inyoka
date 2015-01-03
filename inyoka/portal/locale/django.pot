@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2014 ORGANIZATION
+# Copyright (C) 2015 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-12-14 12:15+0100\n"
+"POT-Creation-Date: 2015-01-03 20:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgid "Mail"
 msgstr ""
 
 #: inyoka/portal/forms.py:52 inyoka/portal/user.py:463
-#: inyoka/portal/templates/portal/profile.html:142
+#: inyoka/portal/templates/portal/profile.html:143
 msgid "Jabber"
 msgstr ""
 
@@ -277,7 +277,7 @@ msgid "Coordinates (latitude, longitude)"
 msgstr ""
 
 #: inyoka/portal/forms.py:289 inyoka/portal/user.py:475
-#: inyoka/portal/templates/portal/profile.html:107
+#: inyoka/portal/templates/portal/profile.html:108
 msgid "GPG key"
 msgstr ""
 
@@ -867,7 +867,7 @@ msgstr ""
 msgid "deleted himself"
 msgstr ""
 
-#: inyoka/portal/user.py:444 inyoka/portal/templates/portal/profile.html:73
+#: inyoka/portal/user.py:444 inyoka/portal/templates/portal/profile.html:74
 msgid "Email address"
 msgstr ""
 
@@ -877,7 +877,7 @@ msgstr ""
 
 #: inyoka/portal/user.py:448 inyoka/portal/templates/portal/group.html:38
 #: inyoka/portal/templates/portal/memberlist.html:46
-#: inyoka/portal/templates/portal/profile.html:96
+#: inyoka/portal/templates/portal/profile.html:97
 #: inyoka/portal/templates/portal/special_rights.html:27
 msgid "Member since"
 msgstr ""
@@ -892,7 +892,7 @@ msgstr ""
 
 #: inyoka/portal/user.py:460 inyoka/portal/templates/portal/group.html:39
 #: inyoka/portal/templates/portal/memberlist.html:47
-#: inyoka/portal/templates/portal/profile.html:100
+#: inyoka/portal/templates/portal/profile.html:101
 #: inyoka/portal/templates/portal/special_rights.html:28
 msgid "Posts"
 msgstr ""
@@ -901,27 +901,27 @@ msgstr ""
 msgid "Avatar"
 msgstr ""
 
-#: inyoka/portal/user.py:464 inyoka/portal/templates/portal/profile.html:122
+#: inyoka/portal/user.py:464 inyoka/portal/templates/portal/profile.html:123
 msgid "ICQ"
 msgstr ""
 
-#: inyoka/portal/user.py:465 inyoka/portal/templates/portal/profile.html:121
+#: inyoka/portal/user.py:465 inyoka/portal/templates/portal/profile.html:122
 msgid "MSN"
 msgstr ""
 
-#: inyoka/portal/user.py:466 inyoka/portal/templates/portal/profile.html:123
+#: inyoka/portal/user.py:466 inyoka/portal/templates/portal/profile.html:124
 msgid "AIM"
 msgstr ""
 
-#: inyoka/portal/user.py:467 inyoka/portal/templates/portal/profile.html:131
+#: inyoka/portal/user.py:467 inyoka/portal/templates/portal/profile.html:132
 msgid "Yahoo Messenger"
 msgstr ""
 
-#: inyoka/portal/user.py:468 inyoka/portal/templates/portal/profile.html:132
+#: inyoka/portal/user.py:468 inyoka/portal/templates/portal/profile.html:133
 msgid "Skype"
 msgstr ""
 
-#: inyoka/portal/user.py:469 inyoka/portal/templates/portal/profile.html:133
+#: inyoka/portal/user.py:469 inyoka/portal/templates/portal/profile.html:134
 msgid "WengoPhone"
 msgstr ""
 
@@ -941,24 +941,24 @@ msgstr ""
 
 #: inyoka/portal/user.py:474 inyoka/portal/templates/portal/group.html:37
 #: inyoka/portal/templates/portal/memberlist.html:45
-#: inyoka/portal/templates/portal/profile.html:111
+#: inyoka/portal/templates/portal/profile.html:112
 #: inyoka/portal/templates/portal/special_rights.html:26
 msgid "Residence"
 msgstr ""
 
-#: inyoka/portal/user.py:476 inyoka/portal/templates/portal/profile.html:112
+#: inyoka/portal/user.py:476 inyoka/portal/templates/portal/profile.html:113
 msgid "Job"
 msgstr ""
 
-#: inyoka/portal/user.py:477 inyoka/portal/templates/portal/profile.html:113
+#: inyoka/portal/user.py:477 inyoka/portal/templates/portal/profile.html:114
 msgid "Interests"
 msgstr ""
 
-#: inyoka/portal/user.py:478 inyoka/portal/templates/portal/profile.html:77
+#: inyoka/portal/user.py:478 inyoka/portal/templates/portal/profile.html:78
 msgid "Website"
 msgstr ""
 
-#: inyoka/portal/user.py:479 inyoka/portal/templates/portal/profile.html:87
+#: inyoka/portal/user.py:479 inyoka/portal/templates/portal/profile.html:88
 msgid "Launchpad username"
 msgstr ""
 
@@ -1393,7 +1393,7 @@ msgid "Details"
 msgstr ""
 
 #: inyoka/portal/templates/portal/calendar_detail.html:65
-#: inyoka/portal/templates/portal/profile.html:181
+#: inyoka/portal/templates/portal/profile.html:182
 msgid "edit"
 msgstr ""
 
@@ -1632,7 +1632,7 @@ msgid "Create new group"
 msgstr ""
 
 #: inyoka/portal/templates/portal/grouplist.html:32
-#: inyoka/portal/templates/portal/profile.html:65
+#: inyoka/portal/templates/portal/profile.html:66
 #: inyoka/portal/templates/portal/usercp/subscriptions.html:43
 msgid "Name"
 msgstr ""
@@ -1789,7 +1789,7 @@ msgid "Downloads"
 msgstr ""
 
 #: inyoka/portal/templates/portal/overall.html:45
-#: inyoka/portal/templates/portal/profile.html:143
+#: inyoka/portal/templates/portal/profile.html:144
 msgid "Contact"
 msgstr ""
 
@@ -1853,8 +1853,8 @@ msgstr ""
 msgid "Edit user"
 msgstr ""
 
+#: inyoka/portal/templates/portal/profile.html:40
 #: inyoka/portal/templates/portal/profile.html:41
-#: inyoka/portal/templates/portal/profile.html:42
 msgid "Don’t watch anymore"
 msgstr ""
 
@@ -1863,43 +1863,43 @@ msgstr ""
 msgid "Watch"
 msgstr ""
 
-#: inyoka/portal/templates/portal/profile.html:59
+#: inyoka/portal/templates/portal/profile.html:60
 #, python-format
 msgid "%(name)s is a system user."
 msgstr ""
 
-#: inyoka/portal/templates/portal/profile.html:61
+#: inyoka/portal/templates/portal/profile.html:62
 #, python-format
 msgid "%(name)s is not available."
 msgstr ""
 
-#: inyoka/portal/templates/portal/profile.html:69
+#: inyoka/portal/templates/portal/profile.html:70
 #: inyoka/portal/templates/portal/privmsg/index.html:20
 #, python-format
 msgid "Avatar of %(user)s"
 msgstr ""
 
-#: inyoka/portal/templates/portal/profile.html:103
+#: inyoka/portal/templates/portal/profile.html:104
 msgid "show"
 msgstr ""
 
-#: inyoka/portal/templates/portal/profile.html:141
+#: inyoka/portal/templates/portal/profile.html:142
 msgid "SIP"
 msgstr ""
 
-#: inyoka/portal/templates/portal/profile.html:155
+#: inyoka/portal/templates/portal/profile.html:156
 #: inyoka/portal/templates/portal/privmsg/overall.html:10
 msgid "Private message"
 msgstr ""
 
-#: inyoka/portal/templates/portal/profile.html:159
+#: inyoka/portal/templates/portal/profile.html:160
 #: inyoka/portal/templates/portal/user_edit_groups.html:12
 #: inyoka/portal/templates/portal/user_edit_groups.html:21
 #: inyoka/portal/templates/portal/user_overview.html:33
 msgid "Group memberships"
 msgstr ""
 
-#: inyoka/portal/templates/portal/profile.html:170
+#: inyoka/portal/templates/portal/profile.html:171
 #, python-format
 msgid "“%(name)s” is no member of any group."
 msgstr ""

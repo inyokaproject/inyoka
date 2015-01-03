@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-12-14 12:15+0100\n"
+"POT-Creation-Date: 2015-01-03 20:13+0100\n"
 "PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -52,48 +52,44 @@ msgstr "kann Themen anpinnen"
 msgid "can moderate"
 msgstr "kann moderieren"
 
-#: inyoka/forum/constants.py:26 inyoka/forum/constants.py:38
-#: inyoka/forum/models.py:545
+#: inyoka/forum/constants.py:26 inyoka/forum/models.py:545
 msgid "Not specified"
 msgstr "keine Angabe"
 
-#: inyoka/forum/constants.py:27 inyoka/forum/constants.py:39
+#: inyoka/forum/constants.py:27
 msgid "Edubuntu"
 msgstr "Edubuntu"
 
-#: inyoka/forum/constants.py:28 inyoka/forum/constants.py:40
+#: inyoka/forum/constants.py:28
 msgid "Kubuntu"
 msgstr "Kubuntu"
 
 #: inyoka/forum/constants.py:29
-msgid "Kubuntu (KDE 4)"
-msgstr "Kubuntu (KDE 4)"
-
-#: inyoka/forum/constants.py:30 inyoka/forum/constants.py:41
 msgid "Server"
 msgstr "Server"
 
-#: inyoka/forum/constants.py:31 inyoka/forum/constants.py:42
+#: inyoka/forum/constants.py:30
 msgid "Ubuntu"
 msgstr "Ubuntu"
 
-#: inyoka/forum/constants.py:32 inyoka/forum/constants.py:43
+#: inyoka/forum/constants.py:31
 msgid "Xubuntu"
 msgstr "Xubuntu"
 
-#: inyoka/forum/constants.py:33 inyoka/forum/constants.py:44
+#: inyoka/forum/constants.py:32
 msgid "Lubuntu"
 msgstr "Lubuntu"
 
-#: inyoka/forum/constants.py:45
-msgid "Unity"
-msgstr "Unity"
+#: inyoka/forum/constants.py:33
+#, fuzzy
+msgid "Ubuntu GNOME"
+msgstr "Xubuntu"
 
-#: inyoka/forum/constants.py:54
+#: inyoka/forum/constants.py:41
 msgid "Version"
 msgstr "Version"
 
-#: inyoka/forum/constants.py:58
+#: inyoka/forum/constants.py:45
 msgid "Distribution"
 msgstr "Distribution"
 
@@ -1386,4 +1382,10 @@ msgstr "Ablehnen"
 
 #~ msgid "Write a pm"
 #~ msgstr "Eine persönliche Nachricht schreiben"
+
+#~ msgid "Kubuntu (KDE 4)"
+#~ msgstr "Kubuntu (KDE 4)"
+
+#~ msgid "Unity"
+#~ msgstr "Unity"
 
