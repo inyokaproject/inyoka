@@ -18,6 +18,7 @@ from django.core.context_processors import csrf
 from django.template.base import Context as DjangoContext
 from django.template.base import TemplateDoesNotExist
 from django.template.loader import BaseLoader
+from django.template.loaders.app_directories import app_template_dirs
 from django.utils import translation
 from django.utils.encoding import force_unicode
 from django.utils.functional import Promise
@@ -292,9 +293,8 @@ class InyokaEnvironment(Environment):
 
     def __init__(self):
         template_paths = list(settings.TEMPLATE_DIRS)
+        template_paths.extend(app_template_dirs)
 
-        template_paths.extend(glob(os.path.join(os.path.dirname(__file__),
-                                                os.pardir, '*/templates')))
         loader = FileSystemLoader(template_paths)
         Environment.__init__(self, loader=loader,
                              extensions=['jinja2.ext.i18n', 'jinja2.ext.do'],
