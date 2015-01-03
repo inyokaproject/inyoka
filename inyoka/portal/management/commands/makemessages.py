@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     inyoka.portal.management.commands.makemessages
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -11,9 +11,12 @@
     :copyright: (c) 2011-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from os import path
 from subprocess import call
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.utils.importlib import import_module
 
 APPS = ['forum', 'portal', 'wiki', 'ikhaya', 'pastebin', 'planet', 'markup']
 
@@ -33,8 +36,24 @@ class Command(BaseCommand):
         call(['pybabel', 'extract', '-F', 'extra/babel.cfg', '-k', '_', '-k',
               'gettext', '-k', 'pgettext:1c,2', '-k', 'ugettext', '-k',
               'ugettext_lazy', '-k', 'ungettext_lazy', '-o',
-              'inyoka/locale/django.pot', 'inyoka/templates', 'inyoka/utils',
-              'inyoka/middlewares'])
+              'inyoka/locale/django.pot', 'inyoka/utils', 'inyoka/middlewares'])
         call(['pybabel', 'update', '-D', 'django', '-i',
               'inyoka/locale/django.pot', '-d', 'inyoka/locale', '-l',
               'de_DE'])
+
+        self._make_theme_messages()
+
+    def _make_theme_messages(self):
+        for app in settings.INSTALLED_APPS:
+            module = import_module(app)
+            if hasattr(module, 'INYOKA_THEME') and module.INYOKA_THEME == app:
+                base_path = module.__path__[0]
+                locale_dir = path.join(base_path, 'locale')
+                template_dir = path.join(base_path, 'templates')
+                call(['pybabel', 'extract', '-F', 'extra/babel.cfg', '-k', '_', '-k',
+                    'gettext', '-k', 'pgettext:1c,2', '-k', 'ugettext', '-k',
+                    'ugettext_lazy', '-k', 'ungettext_lazy', '-o',
+                    path.join(locale_dir, 'django.pot'), template_dir])
+                call(['pybabel', 'update', '-D', 'django', '-i',
+                    path.join(locale_dir, 'django.pot'), '-d', locale_dir, '-l',
+                    'de_DE'])
