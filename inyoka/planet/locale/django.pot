@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2014 ORGANIZATION
+# Copyright (C) 2015 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-12-14 12:15+0100\n"
+"POT-Creation-Date: 2015-01-03 19:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "URL of the feed"
 msgstr ""
 
-#: inyoka/planet/models.py:39 inyoka/planet/templates/planet/blog_list.html:29
+#: inyoka/planet/models.py:39
 msgid "User"
 msgstr ""
 
@@ -107,133 +107,5 @@ msgstr ""
 #: inyoka/planet/views.py:167
 #, python-format
 msgid "The entry “%(title)s” was successfully restored."
-msgstr ""
-
-#: inyoka/planet/templates/planet/blog_edit.html:15
-msgid "Add blog"
-msgstr ""
-
-#: inyoka/planet/templates/planet/blog_edit.html:27
-#: inyoka/planet/templates/planet/suggest.html:33
-msgid "Submit"
-msgstr ""
-
-#: inyoka/planet/templates/planet/blog_list.html:14
-#: inyoka/planet/templates/planet/page.html:64
-msgid "Bloglist"
-msgstr ""
-
-#: inyoka/planet/templates/planet/blog_list.html:17
-#: inyoka/planet/templates/planet/page.html:42
-msgid "Blogs"
-msgstr ""
-
-#: inyoka/planet/templates/planet/blog_list.html:18
-msgid "Add new blog"
-msgstr ""
-
-#: inyoka/planet/templates/planet/blog_list.html:28
-msgid "Name"
-msgstr ""
-
-#: inyoka/planet/templates/planet/blog_list.html:30
-msgid "Latest update"
-msgstr ""
-
-#: inyoka/planet/templates/planet/blog_list.html:31
-msgid "Active"
-msgstr ""
-
-#: inyoka/planet/templates/planet/blog_list.html:39
-msgid "No entry"
-msgstr ""
-
-#: inyoka/planet/templates/planet/hide_entry.html:15
-msgid "Are you sure you want to restore the entry?"
-msgstr ""
-
-#: inyoka/planet/templates/planet/hide_entry.html:17
-msgid "Are you sure you want to hide the entry?"
-msgstr ""
-
-#: inyoka/planet/templates/planet/hide_entry.html:20
-#: inyoka/planet/templates/planet/index.html:74
-msgid "Restore"
-msgstr ""
-
-#: inyoka/planet/templates/planet/hide_entry.html:20
-#: inyoka/planet/templates/planet/index.html:74
-msgid "Hide"
-msgstr ""
-
-#: inyoka/planet/templates/planet/hide_entry.html:21
-#: inyoka/planet/templates/planet/suggest.html:34
-msgid "Cancel"
-msgstr ""
-
-#: inyoka/planet/templates/planet/index.html:15
-msgid "Planet - Captions"
-msgstr ""
-
-#: inyoka/planet/templates/planet/index.html:16
-msgid "Planet - Teaser"
-msgstr ""
-
-#: inyoka/planet/templates/planet/index.html:17
-msgid "Planet - Full article"
-msgstr ""
-
-#: inyoka/planet/templates/planet/index.html:24
-msgid "Recent articles"
-msgstr ""
-
-#: inyoka/planet/templates/planet/index.html:55
-msgid "« Previous"
-msgstr ""
-
-#: inyoka/planet/templates/planet/index.html:58
-msgid "Next »"
-msgstr ""
-
-#: inyoka/planet/templates/planet/index.html:67
-#: inyoka/planet/templates/planet/index.m.html:24
-msgid "Permanent link"
-msgstr ""
-
-#: inyoka/planet/templates/planet/index.html:70
-#, python-format
-msgid "Hidden by: <a href=\"%(link)s\">%(name)s</a>"
-msgstr ""
-
-#: inyoka/planet/templates/planet/index.html:89
-#: inyoka/planet/templates/planet/index.m.html:33
-msgid "No articles were aggregated"
-msgstr ""
-
-#: inyoka/planet/templates/planet/page.html:13
-#: inyoka/planet/templates/planet/page.html:29
-msgid "Planet"
-msgstr ""
-
-#: inyoka/planet/templates/planet/page.html:32
-msgid "Export blogs"
-msgstr ""
-
-#: inyoka/planet/templates/planet/page.html:60
-msgid "Configuration"
-msgstr ""
-
-#: inyoka/planet/templates/planet/suggest.html:12
-msgid "Suggest blog"
-msgstr ""
-
-#: inyoka/planet/templates/planet/suggest.html:16
-msgid "With this form you can suggest a new blog for the planet."
-msgstr ""
-
-#: inyoka/planet/templates/planet/suggest.html:25
-msgid ""
-"Please be patient. It could take a while, until we approve your "
-"suggestion."
 msgstr ""
 
