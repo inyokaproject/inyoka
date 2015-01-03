@@ -32,10 +32,13 @@
 {% block pathbar_extensions %}
   <div class="dropdown">
     <ul class="dropdown">
-      <li><a href="{{ href('portal', 'search') }}">{% trans %}Advanced search{% endtrans %}</a></li>
+      <li>
+        <span>{% trans %}Overview{% endtrans %}</span>
+      </li>
       <li>
         <ul>
           <li><a href="{{ href('wiki', 'Wiki', 'Letzte Änderungen') }}">{% trans %}Recent changes{% endtrans %}</a></li>
+          <li><a href="{{ href('wiki', 'Wiki', 'Index') }}">{% trans %}Index{% endtrans %}</a></li>
           <li><a href="{{ href('wiki', 'Wiki', 'Tags') }}">{% trans %}Tags{% endtrans %}</a></li>
         </ul>
       </li>
