@@ -16,9 +16,12 @@ from celery.signals import task_failure
 
 logger = logging.getLogger(settings.INYOKA_LOGGER_NAME)
 
-
-if not settings.DEBUG:
+try:
     from raven.contrib.django.handlers import SentryHandler
+except ImportError:
+    SentryHandler = None
+
+if not settings.DEBUG and SentryHandler is not None:
     logging_handler = SentryHandler()
     logging_handler.setLevel(logging.WARNING)
 else:
@@ -40,13 +43,13 @@ def process_failure_signal(sender, task_id, exception, args, kwargs, traceback,
     logger.error('Celery job exception: %s (%s)' % descr,
         exc_info=exc_info,
         extra={
-                 'data': {
-                     'task_id': task_id,
-                     'sender': sender,
-                     'args': args,
-                     'kwargs': kwargs,
-          }
+            'data': {
+                'task_id': task_id,
+                'sender': sender,
+                'args': args,
+                'kwargs': kwargs,
+            }
         }
-      )
+    )
 
 task_failure.connect(process_failure_signal)
