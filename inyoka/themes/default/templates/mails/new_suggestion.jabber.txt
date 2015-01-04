@@ -1,1 +1,0 @@
-Neuer Artikelvorschlag von {{ suggestion_author }} „{{ suggestion_title }}“: {{ suggestion_url }}

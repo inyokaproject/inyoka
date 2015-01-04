@@ -77,10 +77,6 @@ MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
 STATIC_ROOT = join(BASE_PATH, 'static-collected')
 STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
 
-STATICFILES_DIRS = (
-    join(BASE_PATH, 'themes', 'default', 'static'),
-)
-
 # system settings
 INYOKA_SYSTEM_USER = u'ubuntuusers.de'
 INYOKA_SYSTEM_USER_EMAIL = '@'.join(['system', BASE_DOMAIN_NAME])
@@ -190,10 +186,6 @@ MIDDLEWARE_CLASSES = (
 #: temporary files.
 FILE_UPLOAD_HANDLERS = (
     'django.core.files.uploadhandler.MemoryFileUploadHandler',
-)
-
-TEMPLATE_DIRS = (
-    join(BASE_PATH, 'themes', 'default', 'templates'),
 )
 
 INSTALLED_APPS = (
