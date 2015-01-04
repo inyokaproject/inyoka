@@ -33,7 +33,7 @@ STATIC_DIRECTORY = '/srv/www/ubuntuusers/static'  # mind missing /
 
 
 @roles('web')
-def bootstrap(tag):
+def bootstrap():
     """Bootstrap repository clones"""
     if not exists(env.target_dir):
         run(
