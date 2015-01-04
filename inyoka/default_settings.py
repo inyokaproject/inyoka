@@ -204,7 +204,6 @@ INSTALLED_APPS = (
     'inyoka.planet',
     'inyoka.markup',
     'django_openid',
-    'raven.contrib.django',
     'south',
     # *must* be installed after south
     'kombu.transport.django',
