@@ -8,10 +8,9 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from os import path
 from os.path import join, dirname
 
-from django.conf.global_settings import *
+from django.conf.global_settings import *  # NOQA
 
 import djcelery
 
@@ -77,10 +76,6 @@ MEDIA_URL = 'http://media.%s/' % BASE_DOMAIN_NAME
 # same for static
 STATIC_ROOT = join(BASE_PATH, 'static-collected')
 STATIC_URL = 'http://static.%s/' % BASE_DOMAIN_NAME
-
-STATICFILES_DIRS = (
-    join(BASE_PATH, 'static'),
-)
 
 # system settings
 INYOKA_SYSTEM_USER = u'ubuntuusers.de'
@@ -191,10 +186,6 @@ MIDDLEWARE_CLASSES = (
 #: temporary files.
 FILE_UPLOAD_HANDLERS = (
     'django.core.files.uploadhandler.MemoryFileUploadHandler',
-)
-
-TEMPLATE_DIRS = (
-    join(BASE_PATH, 'templates'),
 )
 
 INSTALLED_APPS = (

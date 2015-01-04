@@ -1,1 +1,0 @@
-Das Thema „{{ old_topic.title }}“ ( {{ old_topic|url }} ) wurde von {{ mod }} nach „{{ new_topic.title }}“ ( {{ new_topic|url }} ) aufgeteilt. Bitte beachte das du noch keine Benachrichtigungen für das neue Thema aktiviert hast!
