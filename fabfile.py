@@ -11,10 +11,10 @@
 """
 import os
 
-from fabric.api import env, put, run, roles, local, prompt, require, settings, open_shell
-from fabric.contrib.project import rsync_project
+from fabric.api import env, run, roles, local, prompt
 from fabric.context_managers import cd
-from fabric.operations import sudo
+from fabric.contrib.files import exists
+from fabric.contrib.project import rsync_project
 
 env.roledefs.update({
     'web': ['ubuntuusers@ruwa.ubuntu-eu.org',
@@ -25,22 +25,63 @@ env.roledefs.update({
 env.repository = 'git@github.com:inyokaproject/inyoka'
 env.target_dir = '/srv/local/ubuntuusers/inyoka'
 
+env.theme_repository = 'git@github.com:inyokaproject/theme-ubuntuusers'
+env.theme_target_dir = '/srv/local/ubuntuusers/theme-ubuntuusers'
+
 STATIC_TMP = '/tmp/ubuntuusers/static/'  # mind the trailing /
 STATIC_DIRECTORY = '/srv/www/ubuntuusers/static'  # mind missing /
+
+
+@roles('web')
+def bootstrap(tag):
+    """Bootstrap repository clones"""
+    if not exists(env.target_dir):
+        run(
+            'git clone {repo} {dir}'.format(
+                repo=env.repository,
+                dir=env.target_dir
+            )
+        )
+    if not exists(env.theme_target_dir):
+        run(
+            'git clone {repo} {dir}'.format(
+                repo=env.theme_repository,
+                dir=env.theme_target_dir
+            )
+        )
 
 
 @roles('web')
 def deploy(tag):
     """Update Inyoka to a specific tag"""
     with cd(env.target_dir):
-        run('git fetch origin master --tags;'
-            'git checkout {tag}'.format(tag=tag))
+        run(
+            'git fetch origin master --tags;'
+            'git checkout {tag}'.format(tag=tag)
+        )
 
 
 @roles('web')
 def rollback(tag):
     """Rollback to a specific tag."""
     with cd(env.target_dir):
+        run('git checkout {tag}'.format(tag=tag))
+
+
+@roles('web')
+def deploy_theme(tag):
+    """Update Inyoka to a specific tag"""
+    with cd(env.theme_target_dir):
+        run(
+            'git fetch origin master --tags;'
+            'git checkout {tag}'.format(tag=tag)
+        )
+
+
+@roles('web')
+def rollback_theme(tag):
+    """Rollback to a specific tag."""
+    with cd(env.theme_target_dir):
         run('git checkout {tag}'.format(tag=tag))
 
 
@@ -59,59 +100,12 @@ def pip():
     """Run pip on the server"""
     if not getattr(env, 'parameters', None):
         prompt('pip parameters', key='parameters')
-    run('source {target_dir}/../bin/activate;'
-        'pip {parameters}'.format(**{
-            'target_dir': env.target_dir,
-            'parameters': env.parameters}))
-
-
-def check_js():
-    rhino = 'java -jar extra/js.jar'
-    local("%s extra/jslint-check.js" % rhino, capture=False)
-
-
-def compile_js(file=None):
-    """Minimize js files"""
-    minjar = 'java -jar extra/google-compiler.jar'
-    #TODO: find some way to preserve comments on top
-    if file is None:
-        dirs = ['inyoka/static/js/']
-        files = []
-        for dir in dirs:
-            files += [dir + fn for fn in os.listdir(dir) if not '.min.' in fn and not fn.startswith('.')]
-    else:
-        files = [file]
-    for file in files:
-        local("%s --js %s > %s" % (minjar, file, file.split('.js')[0] + '.min.js'), capture=False)
-
-
-def compile_css(file=None):
-    """Create sprited css files for deployment"""
-    files = u' inyoka/static/style/'.join(('', 'main.less', 'forum.less', 'editor.less'))
-    local("java -classpath extra/smartsprites -Djava.ext.dirs=extra/smartsprites "
-          "org.carrot2.labs.smartsprites.SmartSprites"
-          " %s" % files, capture=False)
-
-    less = './extra/less.js/bin/lessc -x'
-    if file is None:
-        dirs = ['inyoka/static/style/']
-        files = []
-        for dir in dirs:
-            files += [dir + fn for fn in os.listdir(dir) if fn.endswith('.less')]
-        for app in ['forum', 'ikhaya', 'planet', 'portal', 'wiki']:
-            files.append('inyoka/%s/static/%s/style/overall.m.less' % (app, app))
-    else:
-        files = [file]
-    for file in files:
-        # we need to '_/_/' to successfully compile the less files within app directories
-        local("%s --verbose --include-path=inyoka/static/_/_/ %s > %s" % (less, file, file.split('.less')[0] + '.css'), capture=False)
-
-
-def compile_static():
-    compile_js()
-    compile_css()
-
-
-def compile_translations():
-    """Build mo files from po"""
-    local('python manage.py compilemessages', capture=False)
+    run(
+        'source {target_dir}/../bin/activate;'
+        'pip {parameters}'.format(
+            **{
+                'target_dir': env.target_dir,
+                'parameters': env.parameters
+            }
+        )
+    )
