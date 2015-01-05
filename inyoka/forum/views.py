@@ -5,7 +5,7 @@
 
     The views for the forum.
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from operator import attrgetter
@@ -1507,9 +1507,8 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     topics = topics.distinct()
     total_topics = get_simplified_queryset(topics).count()
     pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
-                            total=total_topics)
+                            total=total_topics, max_pages=MAX_PAGES_TOPICLIST)
     topic_ids = [tid for tid in pagination.get_queryset()]
-    pagination = pagination.generate()
 
     # check for moderation permissions
     moderatable_forums = [obj.id for obj in

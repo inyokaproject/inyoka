@@ -1,5 +1,0 @@
-Hallo,
-
-der Benutzer „{{ username }}“ hat deinen Artikelvorschlag „{{ title }}“ gelöscht. Als Begründung hat er folgendes angegeben:
-
-{{ note|indent }}

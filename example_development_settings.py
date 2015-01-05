@@ -1,4 +1,5 @@
 from inyoka.default_settings import *
+from os.path import join
 
 DATABASES = {
     'default': {
@@ -28,7 +29,6 @@ GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4B
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SECRET_KEY = None
-
 
 # Django Debug Toolbar Integration
 #

@@ -5,7 +5,7 @@
 
     Test forum ACL.
 
-    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
@@ -85,8 +85,10 @@ class TestForumPrivileges(TestCase):
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 
     def tearDown(self):
+        from inyoka.portal import user
         cache.clear()
         request_cache.clear()
+        user._ANONYMOUS_USER = None
 
     @classmethod
     def tearDownClass(cls):

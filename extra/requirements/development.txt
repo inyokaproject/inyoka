@@ -1,4 +1,4 @@
--r production.txt
+-r base.txt
 
 gunicorn
 gevent

@@ -1,1 +1,0 @@
-Neuer Beitrag von {{ author_username }} im Thema „{{ topic_title }}“: {{ post_url }}

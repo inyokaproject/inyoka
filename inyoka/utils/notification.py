@@ -3,7 +3,7 @@
     inyoka.utils.notification
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -58,15 +58,15 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
     if not include_notified:
         filter.update({'notified': False})
 
-    if exclude_current_user:
-        if not exclude:
-            exclude = {'user__id': request_user_id}
-        else:
-            exclude.update({'user__id': request_user_id})
-
+    # Filter subscriptions
+    # It is important to use two exludes,
+    # as a singe exclude statement excludes only the subscriptions
+    # which fulfill all criteria
     subscriptions = Subscription.objects.filter(**filter)
     if exclude is not None:
         subscriptions = subscriptions.exclude(**exclude)
+    if exclude_current_user:
+        subscriptions = subscriptions.exclude(user__id=request_user_id)
 
     notified_users = set()
 
@@ -82,7 +82,7 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
     if not include_notified:
         Subscription.objects.filter(id__in=notified).update(notified=True)
 
-    if 'user__in' in exclude:
+    if exclude and 'user__in' in exclude:
         notified_users.update(set(exclude['user__in']))
 
     if callback is not None:

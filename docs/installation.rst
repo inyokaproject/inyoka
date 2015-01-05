@@ -101,7 +101,7 @@ files:
 
   $  sudo apt-get install libxml2-dev libxslt1-dev
   libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev
-  libmysqlclient-dev build-essential
+  libmysqlclient-dev build-essential libmemcached-dev
 
 Further you need the Python 2.7 files:
 
@@ -200,12 +200,6 @@ So first install MySQL:
 You will be asked for a password (maybe several times). You can leave it
 empty if you want to.
 
-Then you can install the Python binding for MySQL:
-
-.. code-block:: console
-
-  (inyoka)$ pip install MySQL-python
-
 Then you need to change the developer settings for the database. Edit the
 file *development_settings.py*  in the *inyoka* directory. You can leave
 the database entries if you haven't set a password during installation of
@@ -260,8 +254,17 @@ development installation:
   repeat: admin
   created superuser
 
-Of  course you can use another password, but you should keep the  *admin*
-as username because it will be used in some test files.
+Of course you can use another password, but you should keep the  *admin*
+as username because it will be used in some test files. It is also
+advisable to use that mail adress in order to be able to test
+notifications, see :ref:`testing notifications <test-notifies>`.
+
+.. note::
+
+   If you want to change settings in the admin's control panel, you need
+   to set the mail adress to ``admin@localhost.local`` to not raise an
+   error. The mail adress is then automatically set back to
+   ``admin@localhost``.
 
 Now you can create the real test data:
 
@@ -269,8 +272,6 @@ Now you can create the real test data:
 
   (inyoka)$ ./make_testdata.py
 
-.. todo::
-   How to receive notifications via jabber/email?
 
 Starting Inyoka
 ***************

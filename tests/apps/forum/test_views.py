@@ -5,7 +5,7 @@
 
     Test forum views.
 
-    :copyright: (c) 2012-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import shutil
@@ -187,30 +187,6 @@ class TestViews(TestCase):
         self.assertEqual(len(self.client.get("/last24/5/").tmpl_context['topics']),
                          self.num_topics_on_last_page)
         self.assertTrue(self.client.get("/last24/6/").status_code == 404)
-
-        action_paginationurl = [
-            href('forum', 'last%d' % 24, self.forum3.slug),
-            href('forum', 'last%d' % 24),
-            href('forum', 'egosearch', self.forum3.slug),
-            href('forum', 'egosearch'),
-            href('forum', 'author', self.user.username, self.forum3.slug),
-            href('forum', 'author', self.user.username),
-            href('forum', 'unsolved', self.forum3.slug),
-            href('forum', 'unsolved'),
-            href('forum', 'topic_author', self.user.username, self.forum3.slug),
-            href('forum', 'topic_author', self.user.username),
-            href('forum', 'newposts', self.forum3.slug),
-            href('forum', 'newposts')]
-
-        for url in action_paginationurl:
-            # InyokaClient.get needs only the right part of the url
-            urlpath = url[url.index(settings.BASE_DOMAIN_NAME) +
-                      len(settings.BASE_DOMAIN_NAME):]
-            response = self.client.get(urlpath)
-            self.assertIn('%s2/' % url, response.tmpl_context['pagination'],
-                    "%s does not render pagination urls properly" % urlpath)
-            self.assertNotIn('%s6/' % url, response.tmpl_context['pagination'],
-                    "%s does display more pages than available" % urlpath)
 
     def test_service_splittopic(self):
         t1 = Topic.objects.create(title='A: topic', slug='a:-topic',

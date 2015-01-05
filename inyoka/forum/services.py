@@ -6,7 +6,7 @@
     Forum specific services.
 
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from urllib import unquote
@@ -63,6 +63,29 @@ def on_toggle_categories(request):
     else:
         request.user.settings['hidden_forum_categories'] = tuple(hidden_categories)
     request.user.save(update_fields=('settings',))
+    return True
+
+
+def on_toggle_category(request):
+    if request.user.is_anonymous:
+        return False
+    try:
+        category_id = int(request.GET.get('id'))
+    except TypeError:
+        return False
+    hidden_categories = request.user.settings.get('hidden_forum_categories', [])
+    state = request.GET.get('state')
+    if state == 'hide':
+        hidden_categories.append(category_id)
+    elif state == 'show':
+        try:
+            hidden_categories.remove(category_id)
+        except ValueError:
+            return False
+    else:
+        return False
+    request.user.settings['hidden_forum_categories'] = tuple(set(hidden_categories))
+    request.user.save()
     return True
 
 
@@ -184,6 +207,7 @@ dispatcher = SimpleDispatcher(
     get_topic_autocompletion=on_get_topic_autocompletion,
     get_post=on_get_post,
     toggle_categories=on_toggle_categories,
+    toggle_category=on_toggle_category,
     subscribe=lambda r: subscription_action(r, 'subscribe'),
     unsubscribe=lambda r: subscription_action(r, 'unsubscribe'),
     mark_solved=lambda r: on_change_status(r, True),
