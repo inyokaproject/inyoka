@@ -15,7 +15,6 @@ from django.db.models.signals import pre_save, post_save, post_delete
 
 from inyoka.utils.text import slugify
 from inyoka.portal.user import User
-from inyoka.utils.search import search
 from inyoka.forum.models import Post, Topic, Forum, Privilege
 from inyoka.utils.database import find_next_increment
 
@@ -104,8 +103,6 @@ def post_save_post(sender, **kwargs):
             post_count=F('post_count') + 1,
             last_post=instance)
         instance.topic.forum.invalidate_topic_cache()
-
-    search.queue('f', instance.id)
 
 
 @receiver(post_save, sender=Privilege)
