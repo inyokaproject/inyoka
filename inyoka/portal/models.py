@@ -192,7 +192,7 @@ class PrivateMessageEntry(models.Model):
             return href('portal', 'privmsg', 'new', forward=self.message_id)
 
     @classmethod
-    @transaction.commit_manually
+    @transaction.atomic
     def delete_list(cls, user_id, ids):
         if not ids:
             return
@@ -205,7 +205,6 @@ class PrivateMessageEntry(models.Model):
             message.folder = None if message.folder == trash else trash
             message.read = True if message.folder == trash else message.read
             message.save()
-        transaction.commit()
 
     def delete(self):
         if self.folder == PRIVMSG_FOLDERS['trash'][0]:
@@ -351,12 +350,11 @@ class SearchQueueManager(models.Manager):
         item.doc_id = doc_id
         item.save()
 
-    @transaction.commit_manually
+    @transaction.atomic
     def multi_insert(self, component, ids):
         for doc_id in ids:
             entry = SearchQueue(component=component, doc_id=doc_id)
             entry.save()
-        transaction.commit()
 
 
 class SearchQueue(models.Model):

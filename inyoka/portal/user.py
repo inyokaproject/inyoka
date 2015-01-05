@@ -320,7 +320,8 @@ class UserManager(BaseUserManager):
         if isinstance(pk, basestring) and pk.isdigit():
             try:
                 return models.Manager.get(self, pk=int(pk))
-            except User.DoesNotExist: pass
+            except User.DoesNotExist:
+                pass
         if 'username' in kwargs:
             kwargs['username'] = normalize_username(kwargs['username'])
 

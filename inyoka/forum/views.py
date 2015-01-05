@@ -12,7 +12,6 @@ from operator import attrgetter
 from datetime import datetime, timedelta
 from itertools import groupby
 
-from django.db import transaction
 from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
 from django.contrib import messages
@@ -391,7 +390,6 @@ def handle_attachments(request, post, att_ids):
     return attach_form, attachments
 
 
-@transaction.autocommit
 @templated('forum/edit.html')
 def edit(request, forum_slug=None, topic_slug=None, post_id=None,
          quote_id=None, page_name=None):
@@ -703,7 +701,6 @@ def change_status(request, topic_slug, solved=None, locked=None):
     return HttpResponseRedirect(url_for(topic))
 
 
-@transaction.autocommit
 def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
     """
     Generates a subscriber-function to deal with objects of type `obj`
@@ -738,7 +735,6 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
     return subscriber
 
 
-@transaction.autocommit
 def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
     """
     Generates an unsubscriber-function to deal with objects of type `obj`
@@ -1410,7 +1406,6 @@ def forum_feed(request, slug=None, mode='short', count=10):
     return feed
 
 
-@transaction.autocommit
 def markread(request, slug=None):
     """
     Mark either all or only the given forum as read.
