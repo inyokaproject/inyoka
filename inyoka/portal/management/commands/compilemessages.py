@@ -38,6 +38,8 @@ class Command(BaseCommand):
             module = import_module(app)
             if hasattr(module, 'INYOKA_THEME') and module.INYOKA_THEME == app:
                 base_path = module.__path__[0]
-                locale_dir = path.join(base_path, 'locale')
+                cwd = path.normpath(path.join(base_path, '..'))
+                basename = path.basename(base_path)
+                locale_dir = path.join(basename, 'locale')
                 args = args_compile + ['-d', locale_dir]
-                call(args, cwd=base_path)
+                call(args, cwd=cwd)
