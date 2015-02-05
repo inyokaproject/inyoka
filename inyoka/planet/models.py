@@ -44,9 +44,9 @@ class Blog(models.Model):
 
     @property
     def icon_url(self):
-        if not self.icon:
-            return href('static', 'img', 'planet', 'anonymous.png')
-        return self.icon.url
+        if self.icon:
+            return self.icon.url
+        return None
 
     def delete(self):
         self.icon.delete(save=False)
