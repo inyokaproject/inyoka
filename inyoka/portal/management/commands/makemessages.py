@@ -24,36 +24,55 @@ APPS = ['forum', 'portal', 'wiki', 'ikhaya', 'pastebin', 'planet', 'markup']
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        babel_cfg_path = path.abspath('extra/babel.cfg')
+        args_extract = [
+            'pybabel', 'extract', '-F', babel_cfg_path,
+            '-k', '_', '-k', 'gettext', '-k', 'pgettext:1c,2', '-k',
+            'ugettext', '-k', 'ugettext_lazy', '-k', 'ungettext_lazy',
+        ]
+        args_update = ['pybabel', 'update', '-D', 'django', '-l', 'de_DE']
+
         for app in APPS:
-            call(['pybabel', 'extract', '-F', 'extra/babel.cfg', '-k', '_',
-                  '-k', 'gettext', '-k', 'pgettext:1c,2', '-k', 'ugettext',
-                  '-k', 'ugettext_lazy', '-k', 'ungettext_lazy', '-o',
-                  'inyoka/%s/locale/django.pot' % app, 'inyoka/%s' % app])
-            call(['pybabel', 'update', '-D', 'django', '-i',
-                  'inyoka/%s/locale/django.pot' % app, '-d',
-                  'inyoka/%s/locale' % app, '-l', 'de_DE'])
+            args = args_extract + [
+                '-o', 'inyoka/%s/locale/django.pot' % app,
+                'inyoka/%s' % app
+            ]
+            call(args)
+            args = args_update + [
+                '-i', 'inyoka/%s/locale/django.pot' % app,
+                '-d', 'inyoka/%s/locale' % app,
+            ]
+            call(args)
         # global files
-        call(['pybabel', 'extract', '-F', 'extra/babel.cfg', '-k', '_', '-k',
-              'gettext', '-k', 'pgettext:1c,2', '-k', 'ugettext', '-k',
-              'ugettext_lazy', '-k', 'ungettext_lazy', '-o',
-              'inyoka/locale/django.pot', 'inyoka/utils', 'inyoka/middlewares'])
-        call(['pybabel', 'update', '-D', 'django', '-i',
-              'inyoka/locale/django.pot', '-d', 'inyoka/locale', '-l',
-              'de_DE'])
+        args = args_extract + [
+            '-o', 'inyoka/locale/django.pot',
+            'inyoka/utils', 'inyoka/middlewares'
+        ]
+        call(args)
+        args = args_update + [
+            '-i', 'inyoka/locale/django.pot',
+            '-d', 'inyoka/locale',
+        ]
+        call(args)
 
-        self._make_theme_messages()
+        self._make_theme_messages(args_extract, args_update)
 
-    def _make_theme_messages(self):
+    def _make_theme_messages(self, args_extract, args_update):
         for app in settings.INSTALLED_APPS:
             module = import_module(app)
             if hasattr(module, 'INYOKA_THEME') and module.INYOKA_THEME == app:
                 base_path = module.__path__[0]
-                locale_dir = path.join(base_path, 'locale')
-                template_dir = path.join(base_path, 'templates')
-                call(['pybabel', 'extract', '-F', 'extra/babel.cfg', '-k', '_', '-k',
-                    'gettext', '-k', 'pgettext:1c,2', '-k', 'ugettext', '-k',
-                    'ugettext_lazy', '-k', 'ungettext_lazy', '-o',
-                    path.join(locale_dir, 'django.pot'), template_dir])
-                call(['pybabel', 'update', '-D', 'django', '-i',
-                    path.join(locale_dir, 'django.pot'), '-d', locale_dir, '-l',
-                    'de_DE'])
+                cwd = path.normpath(path.join(base_path, '..'))
+                basename = path.basename(base_path)
+                locale_dir = path.join(basename, 'locale')
+                template_dir = path.join(basename, 'templates')
+                args = args_extract + [
+                    '-o', path.join(locale_dir, 'django.pot'),
+                    template_dir,
+                ]
+                call(args, cwd=cwd)
+                args = args_update + [
+                    '-i', path.join(locale_dir, 'django.pot'),
+                    '-d', locale_dir,
+                ]
+                call(args, cwd=cwd)

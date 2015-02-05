@@ -23,20 +23,21 @@ APPS = ['forum', 'portal', 'wiki', 'ikhaya', 'pastebin', 'planet', 'markup']
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        args_compile = ['pybabel', 'compile', '-D', 'django', '-l', 'de_DE']
         for app in APPS:
-            call(['pybabel', 'compile', '-D', 'django', '-d',
-                  'inyoka/%s/locale' % app, '-l', 'de_DE'])
+            args = args_compile + ['-d', 'inyoka/%s/locale' % app]
+            call(args)
         # global files
-        call(['pybabel', 'compile', '-D', 'django', '-d',
-              'inyoka/locale', '-l', 'de_DE'])
+        args = args_compile + ['-d', 'inyoka/locale']
+        call(args)
 
-        self._compile_theme_messages()
+        self._compile_theme_messages(args_compile)
 
-    def _compile_theme_messages(self):
+    def _compile_theme_messages(self, args_compile):
         for app in settings.INSTALLED_APPS:
             module = import_module(app)
             if hasattr(module, 'INYOKA_THEME') and module.INYOKA_THEME == app:
                 base_path = module.__path__[0]
                 locale_dir = path.join(base_path, 'locale')
-                call(['pybabel', 'compile', '-D', 'django', '-d',
-                      locale_dir, '-l', 'de_DE'])
+                args = args_compile + ['-d', locale_dir]
+                call(args, cwd=base_path)
