@@ -88,7 +88,7 @@ def rollback_theme(tag):
 @roles('static')
 def deploy_static():
     """Deploy static files"""
-    local('python manage.py collectstatic')
+    local('python manage.py collectstatic --clear')
     run('mkdir -p ' + STATIC_TMP)
     rsync_project(STATIC_TMP, os.path.join('inyoka', 'static-collected/'))
     run('mkdir -p ' + STATIC_DIRECTORY)
