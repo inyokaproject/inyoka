@@ -18,8 +18,8 @@
 from django.http import HttpResponse
 
 from inyoka.forum.models import Post as ForumPost
-from inyoka.markup import parse, RenderContext
-from inyoka.utils.services import permit_methods, SimpleDispatcher
+from inyoka.markup import RenderContext, parse
+from inyoka.utils.services import SimpleDispatcher, permit_methods
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import get_smilies
 

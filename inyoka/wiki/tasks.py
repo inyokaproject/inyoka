@@ -9,9 +9,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.core.cache import cache
-
 from celery.task import task
+from django.core.cache import cache
 
 
 @task(ignore_result=True)

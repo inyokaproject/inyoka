@@ -36,7 +36,6 @@ from inyoka.utils.user import normalize_username
 from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
 
-
 #: metadata users without the `PRIV_MANAGE` privilege can edit.
 LENIENT_METADATA_KEYS = frozenset(('X-Link', 'X-Attach', 'X-Redirect'))
 
