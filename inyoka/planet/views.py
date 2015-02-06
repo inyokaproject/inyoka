@@ -8,10 +8,10 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Max
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.html import escape, smart_urlquote
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
@@ -23,7 +23,7 @@ from inyoka.portal.utils import check_login, require_permission
 from inyoka.utils import generic
 from inyoka.utils.dates import group_by_day
 from inyoka.utils.feeds import AtomFeed, atom_feed
-from inyoka.utils.http import templated, does_not_exist_is_404
+from inyoka.utils.http import does_not_exist_is_404, templated
 from inyoka.utils.mail import send_mail
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage

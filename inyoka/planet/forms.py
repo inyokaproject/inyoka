@@ -12,8 +12,8 @@ from django import forms
 from django.core.validators import URLValidator
 from django.utils.translation import ugettext_lazy
 
-from inyoka.utils.forms import UserField
 from inyoka.planet.models import Blog
+from inyoka.utils.forms import UserField
 
 
 class SuggestBlogForm(forms.Form):
