@@ -8,8 +8,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from urlparse import urlparse
 from datetime import datetime
+from urlparse import urlparse
 
 from django.db import models
 from django.utils.translation import ugettext_lazy
