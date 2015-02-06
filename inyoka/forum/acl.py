@@ -10,9 +10,9 @@
 """
 import operator as ops
 
+from django.core.cache import cache
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
-from django.core.cache import cache
 from django.utils.translation import ugettext_lazy
 
 from inyoka.portal.user import DEFAULT_GROUP_ID

@@ -10,11 +10,11 @@
 """
 from django.utils.translation import ugettext_lazy
 
-from inyoka.forum.acl import get_privileges, check_privilege
-from inyoka.utils.urls import href, url_for
-from inyoka.utils.search import search, SearchAdapter
-from inyoka.forum.models import Post, Forum
+from inyoka.forum.acl import check_privilege, get_privileges
+from inyoka.forum.models import Forum, Post
 from inyoka.utils.decorators import deferred
+from inyoka.utils.search import SearchAdapter, search
+from inyoka.utils.urls import href, url_for
 
 
 class ForumSearchAuthDecider(object):

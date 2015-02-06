@@ -10,37 +10,39 @@
 """
 from __future__ import division
 
-import re
 import cPickle
 import operator
+import re
+from datetime import datetime
+from functools import reduce
+from hashlib import md5
+from itertools import groupby
+from operator import attrgetter, itemgetter
 from os import path
 from time import time
-from hashlib import md5
-from datetime import datetime
-from operator import attrgetter, itemgetter
-from functools import reduce
-from itertools import groupby
 
-from django.db import models, transaction
 from django.conf import settings
-from django.db.models import F, Max, Count
-from django.utils.html import escape
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
+from django.db import models, transaction
+from django.db.models import F, Count, Max
+from django.utils.encoding import DjangoUnicodeDecodeError, force_unicode
 from django.utils.html import escape, format_html
 from django.utils.translation import pgettext, ugettext as _, ugettext_lazy
-from django.contrib.contenttypes.models import ContentType
 
-from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
-    check_privilege, filter_invisible)
-from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
-    SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS)
-from inyoka.markup import parse, RenderContext
+from inyoka.forum.acl import (
+    CAN_READ, check_privilege, filter_invisible, filter_visible,
+    get_privileges,
+)
+from inyoka.forum.constants import (
+    CACHE_PAGES_COUNT, POSTS_PER_PAGE, SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS,
+)
+from inyoka.markup import RenderContext, parse
 from inyoka.portal.models import SearchQueue, Subscription
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import Group, User
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import request_cache
-from inyoka.utils.database import update_model, model_or_none, LockableObject
+from inyoka.utils.database import LockableObject, model_or_none, update_model
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
 from inyoka.utils.files import get_filename
