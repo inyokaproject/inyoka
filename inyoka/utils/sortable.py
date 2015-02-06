@@ -70,8 +70,8 @@ from django.contrib import messages
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
-from inyoka.utils.urls import href
 from inyoka.utils.local import current_request
+from inyoka.utils.urls import href
 
 
 class Sortable(object):

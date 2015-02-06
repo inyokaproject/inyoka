@@ -14,9 +14,8 @@ import re
 from urlparse import urlparse
 
 from django.conf import settings
-from django.utils.http import urlquote, urlencode, urlquote_plus
+from django.utils.http import urlencode, urlquote, urlquote_plus
 from django.utils.importlib import import_module
-
 from django_hosts.reverse import get_host
 
 # extended at runtime with module introspection information

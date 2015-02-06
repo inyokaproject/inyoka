@@ -20,7 +20,7 @@ from django.core.cache import cache, get_cache
 from django.core.cache.backends.base import BaseCache
 from django.utils.encoding import force_bytes
 
-from inyoka.utils.local import local_has_key, _request_cache
+from inyoka.utils.local import _request_cache, local_has_key
 
 _MAX_KEY_LENGTH = 250
 

@@ -11,10 +11,10 @@
     :copyright: (c) by Florian Festi.
     :license: BSD, see LICENSE for more details.
 """
-import re
-import heapq
 import difflib
+import heapq
 import itertools
+import re
 
 from django.utils.html import escape
 from django.utils.translation import ugettext as _

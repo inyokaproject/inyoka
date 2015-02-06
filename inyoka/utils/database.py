@@ -16,7 +16,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.expressions import F, ExpressionNode
 
-
 EXPRESSION_NODE_CALLBACKS = {
     ExpressionNode.ADD: operator.add,
     ExpressionNode.SUB: operator.sub,

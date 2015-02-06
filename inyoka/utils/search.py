@@ -12,22 +12,19 @@
 """
 import re
 import time
-from weakref import WeakKeyDictionary
+from collections import OrderedDict
 from cPickle import dumps, loads
 from datetime import date, datetime
-from threading import currentThread as get_current_thread
-from threading import local
-from collections import OrderedDict
-
-from django.conf import settings
-from django.utils.encoding import force_unicode
-from django.core.exceptions import ObjectDoesNotExist
+from threading import currentThread as get_current_thread, local
+from weakref import WeakKeyDictionary
 
 import xapian
+from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.encoding import force_unicode
 
 from inyoka.utils import get_significant_digits
 from inyoka.utils.highlight import create_excerpt
-
 
 # TODO: i18n note: This module will be rewritten and with this rewrite
 #                 i18n support will land in the search, for now it's
