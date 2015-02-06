@@ -9,40 +9,49 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import date, datetime, time as dt_time
-import pytz
 
-from django.http import Http404, HttpResponseRedirect
+import pytz
 from django.conf import settings
 from django.contrib import messages
-from django.utils.text import Truncator
-from django.utils.html import escape
-from django.core.cache import cache
-from django.utils.http import urlencode
-from django.utils.dates import MONTHS
-from django.utils.translation import ugettext as _
-from django.utils.timezone import get_current_timezone
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
+from django.http import Http404, HttpResponseRedirect
+from django.utils.dates import MONTHS
+from django.utils.html import escape
+from django.utils.http import urlencode
+from django.utils.text import Truncator
+from django.utils.timezone import get_current_timezone
+from django.utils.translation import ugettext as _
 
-from inyoka.ikhaya.forms import (NewEventForm, EditEventForm, EditCommentForm,
-    EditArticleForm, EditCategoryForm, SuggestArticleForm, EditPublicArticleForm)
-from inyoka.ikhaya.models import Event, Report, Comment, Article, Category, Suggestion
-from inyoka.ikhaya.notifications import (send_comment_notifications,
-    send_new_suggestion_notifications)
-from inyoka.markup import parse, RenderContext
-from inyoka.portal.models import Subscription, PrivateMessage, PrivateMessageEntry
+from inyoka.ikhaya.forms import (
+    EditArticleForm, EditCategoryForm, EditCommentForm, EditEventForm,
+    EditPublicArticleForm, NewEventForm, SuggestArticleForm,
+)
+from inyoka.ikhaya.models import (
+    Article, Category, Comment, Event, Report, Suggestion,
+)
+from inyoka.ikhaya.notifications import (
+    send_comment_notifications, send_new_suggestion_notifications,
+)
+from inyoka.markup import RenderContext, parse
+from inyoka.portal.models import (
+    PrivateMessage, PrivateMessageEntry, Subscription,
+)
 from inyoka.portal.user import User
 from inyoka.portal.utils import check_login, require_permission
 from inyoka.utils import ctype, generic
-from inyoka.utils.urls import href, url_for, is_safe_domain
-from inyoka.utils.http import templated, AccessDeniedResponse, does_not_exist_is_404
-from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.dates import date_time_to_datetime
-from inyoka.utils.storage import storage
-from inyoka.utils.sortable import Sortable
-from inyoka.utils.templating import render_template
-from inyoka.utils.pagination import Pagination
-from inyoka.utils.notification import send_notification
+from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.flash_confirmation import confirm_action
+from inyoka.utils.http import (
+    AccessDeniedResponse, does_not_exist_is_404, templated,
+)
+from inyoka.utils.notification import send_notification
+from inyoka.utils.pagination import Pagination
+from inyoka.utils.sortable import Sortable
+from inyoka.utils.storage import storage
+from inyoka.utils.templating import render_template
+from inyoka.utils.urls import href, is_safe_domain, url_for
 
 
 def context_modifier(request, context):

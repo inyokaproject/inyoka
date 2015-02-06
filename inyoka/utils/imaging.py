@@ -11,9 +11,9 @@
 import os
 from contextlib import closing
 
-from PIL import Image
 from django.conf import settings
 from django.utils.encoding import force_unicode
+from PIL import Image
 
 from inyoka.utils.urls import is_safe_domain
 

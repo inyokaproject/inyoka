@@ -17,7 +17,7 @@ from django.test import TestCase
 
 from inyoka.forum import acl
 from inyoka.forum.models import Forum, Privilege
-from inyoka.portal.user import Group, User, DEFAULT_GROUP_ID
+from inyoka.portal.user import DEFAULT_GROUP_ID, Group, User
 from inyoka.utils.cache import request_cache
 
 

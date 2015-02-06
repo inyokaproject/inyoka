@@ -12,8 +12,8 @@ from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 from inyoka.forum.models import Topic
-from inyoka.markup import parse, StackExhaused
-from inyoka.utils.forms import UserField, DateWidget
+from inyoka.markup import StackExhaused, parse
+from inyoka.utils.forms import DateWidget, UserField
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import test_changes_allowed

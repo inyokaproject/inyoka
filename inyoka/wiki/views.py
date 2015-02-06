@@ -28,10 +28,10 @@ from django.utils.translation import ugettext as _
 
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
-from inyoka.utils.http import templated, AccessDeniedResponse
+from inyoka.utils.http import AccessDeniedResponse, templated
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.text import join_pagename, normalize_pagename
-from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.actions import PAGE_ACTIONS
 from inyoka.wiki.models import Page, Revision

@@ -16,9 +16,9 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand
 
-from inyoka.forum.acl import join_flags, PRIVILEGES_DETAILS
+from inyoka.forum.acl import PRIVILEGES_DETAILS, join_flags
 from inyoka.forum.models import Forum, Privilege
-from inyoka.portal.user import User, PERMISSION_NAMES
+from inyoka.portal.user import PERMISSION_NAMES, User
 
 
 class Command(BaseCommand):

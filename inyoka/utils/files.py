@@ -8,12 +8,11 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import os.path
 import itertools
+import os.path
+from mimetypes import guess_all_extensions, guess_extension
+
 import magic
-
-from mimetypes import guess_extension, guess_all_extensions
-
 from django.core.files.storage import FileSystemStorage
 from werkzeug import utils
 

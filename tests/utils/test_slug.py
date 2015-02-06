@@ -10,8 +10,8 @@
 """
 from django.test import TestCase
 
+from inyoka.forum.models import Forum, Topic
 from inyoka.portal.user import User
-from inyoka.forum.models import Topic, Forum
 from inyoka.utils.database import _strip_ending_nums
 
 

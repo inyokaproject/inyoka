@@ -8,28 +8,28 @@
     :copyright: (c) 2012-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import itertools
+import operator
 import random
 import string
-import operator
-import itertools
-from datetime import date, datetime, timedelta
 from collections import OrderedDict
+from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.utils.translation import ugettext as _, ungettext
 
-from inyoka.markup import nodes, macros
+from inyoka.markup import macros, nodes
 from inyoka.markup.parsertools import MultiMap, flatten_iterator
 from inyoka.markup.templates import expand_page_template
 from inyoka.markup.utils import simple_filter
 from inyoka.utils.cache import cache
-from inyoka.utils.dates import format_time, datetime_to_timezone
+from inyoka.utils.dates import datetime_to_timezone, format_time
 from inyoka.utils.imaging import parse_dimensions
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
-from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
-from inyoka.wiki.models import Page, MetaData, Revision
+from inyoka.utils.urls import href, is_safe_domain, url_for, urlencode
+from inyoka.wiki.models import MetaData, Page, Revision
 from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
 

@@ -11,11 +11,11 @@
 """
 import time
 
-from django.test import TestCase
 from django.core.cache import get_cache
+from django.test import TestCase
 
-from inyoka.utils.local import local
 from inyoka.portal.models import Storage
+from inyoka.utils.local import local
 from inyoka.utils.storage import storage
 
 

@@ -1,12 +1,12 @@
 # encoding: utf-8
-import json
 import cPickle
 import datetime
+import json
 
-from south.db import db
-from south.v2 import DataMigration
 from django.db import models
 from django.utils.encoding import smart_str
+from south.db import db
+from south.v2 import DataMigration
 
 
 class Migration(DataMigration):

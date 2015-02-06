@@ -14,7 +14,6 @@ import os
 import sys
 
 import zmq
-
 from sleekxmpp import ClientXMPP
 
 

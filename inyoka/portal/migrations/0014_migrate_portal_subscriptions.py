@@ -1,7 +1,7 @@
 # encoding: utf-8
+from django.contrib.contenttypes import management
 from south.db import db
 from south.v2 import DataMigration
-from django.contrib.contenttypes import management
 
 from inyoka.forum.models import Forum, Topic
 from inyoka.ikhaya.models import Article

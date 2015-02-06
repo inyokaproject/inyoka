@@ -11,14 +11,14 @@
     :copyright: (c) by Micah Dowty.
     :license: BSD, see LICENSE for more details.
 """
+import colorsys
 import math
 import random
-import colorsys
 from os import listdir
-from os.path import join, pardir, abspath, dirname
+from os.path import abspath, dirname, join, pardir
 
-from PIL import Image, ImageDraw, ImageFont, ImageColor, ImageChops
 from django.http import HttpResponse
+from PIL import Image, ImageChops, ImageColor, ImageDraw, ImageFont
 
 resource_path = abspath(join(dirname(__file__), pardir, 'res'))
 

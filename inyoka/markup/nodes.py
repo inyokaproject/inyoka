@@ -22,13 +22,15 @@ from urlparse import urlparse
 
 from django.conf import settings
 from django.utils.html import escape
-from django.utils.translation import ugettext_lazy, ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 
-from inyoka.markup.machine import NodeRenderer, NodeCompiler, NodeQueryInterface
+from inyoka.markup.machine import (
+    NodeCompiler, NodeQueryInterface, NodeRenderer,
+)
 from inyoka.markup.utils import debug_repr
-from inyoka.utils.html import striptags, build_html_tag
+from inyoka.utils.html import build_html_tag, striptags
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import slugify, get_pagetitle, normalize_pagename
+from inyoka.utils.text import get_pagetitle, normalize_pagename, slugify
 from inyoka.utils.urls import get_url, href, urlquote_plus
 
 

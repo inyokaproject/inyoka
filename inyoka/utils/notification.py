@@ -6,10 +6,9 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.conf import settings
-
 from celery.task import task
 from celery.task.sets import subtask
+from django.conf import settings
 
 from inyoka.portal.models import Subscription
 from inyoka.utils.jabber import send as send_jabber

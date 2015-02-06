@@ -8,8 +8,8 @@
     :copyright: (c) 2011-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from time import time
 from datetime import datetime, timedelta
+from time import time
 
 from celery.task import periodic_task
 from celery.task.schedules import crontab

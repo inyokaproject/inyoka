@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from inyoka.planet.models import Entry
-from inyoka.utils.search import search, SearchAdapter
+from inyoka.utils.search import SearchAdapter, search
 from inyoka.utils.urls import url_for
 
 

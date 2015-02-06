@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from inyoka.portal.user import User
-from inyoka.utils.search import search, SearchAdapter
+from inyoka.utils.search import SearchAdapter, search
 from inyoka.utils.urls import href, url_for
 from inyoka.wiki.acl import PRIV_READ, MultiPrivilegeTest
 from inyoka.wiki.models import Page, Revision

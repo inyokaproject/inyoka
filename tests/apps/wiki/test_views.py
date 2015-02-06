@@ -8,14 +8,14 @@
     :copyright: (c) 2012-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from mock import patch
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
+from mock import patch
 
+from inyoka.portal.user import User
 from inyoka.utils.test import InyokaClient
 from inyoka.wiki.models import Page
-from inyoka.portal.user import User
 
 
 class TestViews(TestCase):

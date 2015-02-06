@@ -10,7 +10,7 @@
 """
 import unittest
 
-from inyoka.markup import parse, RenderContext
+from inyoka.markup import RenderContext, parse
 from inyoka.wiki.models import Page
 
 

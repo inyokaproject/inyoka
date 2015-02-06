@@ -10,18 +10,18 @@
     :license: BSD, see LICENSE for more details.
 """
 import sys
-from random import randrange
 from hashlib import md5
+from random import randrange
 
+import pytz
 from django import forms
 from django.conf import settings
 from django.core import validators
 from django.forms.widgets import Input
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext as _
-import pytz
 
-from inyoka.markup import parse, StackExhaused
+from inyoka.markup import StackExhaused, parse
 from inyoka.portal.user import User
 from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.jabber import may_be_valid_jabber

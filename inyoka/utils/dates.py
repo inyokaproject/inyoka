@@ -9,17 +9,17 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
+from datetime import date, datetime, time, timedelta
 from operator import attrgetter
-from datetime import date, time, datetime, timedelta
 
-from django.contrib.humanize.templatetags.humanize import naturalday as djnaturalday
-from django.template import defaultfilters
-from django.utils import timezone, datetime_safe
-from django.utils.translation import get_language_from_request
 import pytz
+from django.contrib.humanize.templatetags.humanize import \
+    naturalday as djnaturalday
+from django.template import defaultfilters
+from django.utils import datetime_safe, timezone
+from django.utils.translation import get_language_from_request
 
 from inyoka.utils.local import current_request
-
 
 TIMEZONES = pytz.common_timezones
 

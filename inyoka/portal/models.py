@@ -8,17 +8,15 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from werkzeug import cached_property
-
-from django.contrib.contenttypes import models as gmodels
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes import generic, models as gmodels
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy
+from werkzeug import cached_property
 
 from inyoka.forum.acl import have_privilege as have_forum_privilege
-from inyoka.markup import parse, render, RenderContext
+from inyoka.markup import RenderContext, parse, render
 from inyoka.portal.user import User
 from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify

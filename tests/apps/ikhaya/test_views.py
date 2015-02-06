@@ -13,10 +13,10 @@ import datetime
 from django.conf import settings
 from django.test import TestCase
 
+from inyoka.ikhaya.models import Article, Category, Comment, Report
+from inyoka.portal.user import PERMISSION_NAMES, User
 from inyoka.utils.test import InyokaClient
 from inyoka.utils.urls import href
-from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.ikhaya.models import Report, Article, Comment, Category
 
 
 class TestViews(TestCase):

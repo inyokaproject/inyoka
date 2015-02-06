@@ -9,8 +9,8 @@
     :license: BSD, see LICENSE for more details.
 """
 import json
-from urllib import urlencode
 from hashlib import md5
+from urllib import urlencode
 
 import requests
 

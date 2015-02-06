@@ -10,17 +10,17 @@
 """
 from datetime import time as dt_time
 
+import pytz
 from django import forms
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext_lazy
 
-import pytz
-
-from inyoka.ikhaya.models import Event, Article, Category, Suggestion
+from inyoka.ikhaya.models import Article, Category, Event, Suggestion
 from inyoka.portal.models import StaticFile
-from inyoka.utils.forms import (UserField, TimeWidget, DateWidget,
-    DateTimeField, StrippedCharField)
-from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
+from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
+from inyoka.utils.forms import (
+    DateTimeField, DateWidget, StrippedCharField, TimeWidget, UserField,
+)
 
 
 class SuggestArticleForm(forms.ModelForm):

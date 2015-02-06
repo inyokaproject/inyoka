@@ -9,7 +9,6 @@
     :license: BSD, see LICENSE for more details.
 """
 import shutil
-
 from os import makedirs, path
 from random import randint
 
@@ -23,12 +22,13 @@ from mock import patch
 
 from inyoka.forum import constants
 from inyoka.forum.acl import PRIVILEGES_BITS
-from inyoka.forum.models import (Attachment, Forum, Post, Poll, PollOption,
-    Privilege, Topic)
+from inyoka.forum.models import (
+    Attachment, Forum, Poll, PollOption, Post, Privilege, Topic,
+)
 from inyoka.portal.models import Subscription
-from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.utils.urls import href
+from inyoka.portal.user import PERMISSION_NAMES, User
 from inyoka.utils.test import InyokaClient
+from inyoka.utils.urls import href
 
 
 class TestForumViews(TestCase):
