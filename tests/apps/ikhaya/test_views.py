@@ -99,7 +99,7 @@ class TestViews(TestCase):
         user_g.save()
 
         avatar_url = href('media', user_w.avatar)
-        gravatar_url = 'http://www.gravatar.com/avatar/ca39ffdca4bd97c3a6c29a4c8f29b7dc?s=80&r=g&d=mm'
+        gravatar_url = 'http://www.gravatar.com/avatar/ca39ffdca4bd97c3a6c29a4c8f29b7dc?s=80&amp;r=g&amp;d=mm'
 
         a = Article.objects.create(author=self.admin, subject="Subject 2",
                             text="Text 3", pub_date=datetime.datetime.today().date(),
