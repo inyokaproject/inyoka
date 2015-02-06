@@ -8,7 +8,7 @@
 """
 from inyoka.ikhaya.models import Suggestion
 from inyoka.portal.models import User
-from inyoka.utils.services import permit_methods, SimpleDispatcher
+from inyoka.utils.services import SimpleDispatcher, permit_methods
 
 
 @permit_methods(('POST',))

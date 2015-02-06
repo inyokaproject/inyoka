@@ -8,22 +8,22 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from operator import attrgetter, itemgetter
 from datetime import datetime
+from operator import attrgetter, itemgetter
 
-from django.db import models
 from django.conf import settings
-from django.utils import datetime_safe
-from django.db.models import Q
 from django.core.cache import cache
+from django.db import models
+from django.db.models import Q
+from django.utils import datetime_safe
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy
 
-from inyoka.markup import parse, render, RenderContext
+from inyoka.markup import RenderContext, parse, render
 from inyoka.portal.models import StaticFile
 from inyoka.portal.user import User
 from inyoka.utils.database import LockableObject, find_next_increment
-from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
+from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
 from inyoka.utils.decorators import deferred
 from inyoka.utils.html import striptags
 from inyoka.utils.local import current_request
@@ -603,4 +603,3 @@ class Event(models.Model):
     @property
     def enddatetime(self):
         return self._construct_datetimes(self.enddate or self.date, self.endtime)
-
