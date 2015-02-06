@@ -14,7 +14,7 @@ from django.core.files.base import ContentFile
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from inyoka.forum.models import Post, Topic, Forum, Attachment
+from inyoka.forum.models import Attachment, Forum, Post, Topic
 from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
 

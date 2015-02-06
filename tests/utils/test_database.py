@@ -10,9 +10,10 @@ import datetime
 
 from django.test import TestCase
 
-from .models import JSONEntry
 from inyoka.portal.user import User
 from inyoka.utils.database import update_model
+
+from .models import JSONEntry
 
 
 class TestDatabase(TestCase):
