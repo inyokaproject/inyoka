@@ -1,7 +1,7 @@
 # encoding: utf-8
+from django.contrib.contenttypes import management
 from south.db import db
 from south.v2 import SchemaMigration
-from django.contrib.contenttypes import management
 
 
 class Migration(SchemaMigration):

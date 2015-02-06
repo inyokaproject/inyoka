@@ -1,7 +1,7 @@
 # encoding: utf-8
 from south.v2 import DataMigration
 
-from inyoka.forum.models import Topic, Forum
+from inyoka.forum.models import Forum, Topic
 
 
 class Migration(DataMigration):

@@ -1,11 +1,11 @@
 # encoding: utf-8
-import gc
 import datetime
+import gc
 
+from django.conf import settings
+from django.db import connection, models, transaction
 from south.db import db
 from south.v2 import DataMigration
-from django.db import models, connection, transaction
-from django.conf import settings
 
 
 def queryset_iterator(queryset, chunksize=1000):

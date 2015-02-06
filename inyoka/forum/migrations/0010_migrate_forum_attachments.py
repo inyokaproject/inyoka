@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import re
-import os
-import shutil
-import os.path as path
 import datetime
+import os
+import os.path as path
+import re
+import shutil
 
+from django.conf import settings
+from django.db import models
 from south.db import db
 from south.v2 import DataMigration
-from django.db import models
-from django.conf import settings
 
 _new_path_re = re.compile('forum/attachments/\d{2}/\d{2}/')
 _attachment_max_length = 100

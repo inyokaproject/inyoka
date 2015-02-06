@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import datetime
 
+from django.db import models
 from south.db import db
 from south.v2 import DataMigration
-from django.db import models
 
 IKHAYA_DESCRIPTION = u'Ikhaya ist der Nachrichtenblog der ubuntuusers-' \
     u'Community. Hier werden Nachrichten und Berichte rund um Ubuntu, Linux' \
