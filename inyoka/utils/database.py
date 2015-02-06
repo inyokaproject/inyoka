@@ -28,6 +28,10 @@ EXPRESSION_NODE_CALLBACKS = {
 }
 
 
+MAX_SLUG_INCREMENT = 999
+_SLUG_INCREMENT_SUFFIXES = set(range(2, MAX_SLUG_INCREMENT + 1))
+
+
 class CannotResolve(Exception):
     pass
 
@@ -49,8 +53,9 @@ def find_next_increment(model, column, string, **query_opts):
     max_length = field.max_length if hasattr(field, 'max_length') else None
     # We are pretty defensive here and make sure we always have 4 characters
     # left, to be able to append up to 999 slugs (-1 ... -999)
-    assert max_length is None or max_length > 4
-    slug = string[:max_length - 4] if max_length is not None else string
+    counter_length = len(str(MAX_SLUG_INCREMENT)) + 1
+    assert max_length is None or max_length > counter_length
+    slug = string[:max_length - counter_length] if max_length is not None else string
     filter = {column: slug}
     filter.update(query_opts)
     if not model.objects.filter(**filter).exists():
@@ -59,11 +64,20 @@ def find_next_increment(model, column, string, **query_opts):
     filter.update(query_opts)
     existing = model.objects.filter(**filter).values_list(column, flat=True)
     # strip of the common prefix
-    slug_numbers = [i[len(slug)+1:] for i in existing]
+    prefix_len = len(slug) + 1
+    slug_numbers = [s[prefix_len:] for s in existing]
     # find the next free slug number
-    slug_numbers = [int(i) for i in slug_numbers if i.isdigit()]
-    num = max(slug_numbers) + 1 if slug_numbers else 2
-    assert max_length is None or num < 1000
+    slug_numbers = {int(i) for i in slug_numbers if i.isdigit()}
+    unused_numbers = _SLUG_INCREMENT_SUFFIXES - slug_numbers
+    if unused_numbers:
+        num = min(unused_numbers)
+    elif max_length is None:
+        num = max(slug_numbers) + 1
+    else:
+        raise RuntimeError(
+            "No suitable slug increment for %s found. No unused increment "
+            "or max_length not None." % slug
+        )
     return '{0}-{1}'.format(slug, num)
 
 
@@ -113,8 +127,7 @@ def update_model(instance, **kwargs):
     if not instance:
         return []
 
-    instances = instance if isinstance(instance, (set, list, tuple)) \
-                         else [instance]
+    instances = instance if isinstance(instance, (set, list, tuple)) else [instance]
 
     query_kwargs = kwargs.copy()
     for instance in instances:
