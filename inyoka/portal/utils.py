@@ -8,8 +8,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import json
 import calendar
+import json
 from datetime import date, time
 
 from django.contrib import messages

@@ -10,13 +10,9 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import time
 import binascii
+import time
 from datetime import date, datetime, timedelta
-
-from PIL import Image
-from django_mobile import get_flavour
-from django_openid.consumer import Consumer, SessionPersist
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -35,45 +31,57 @@ from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils.translation import ugettext as _, ungettext
 from django.views.decorators.http import require_POST
+from django_mobile import get_flavour
+from PIL import Image
 
-
-from inyoka.forum.acl import (split_bits, filter_invisible, PRIVILEGES_DETAILS,
-    split_negative_positive, REVERSED_PRIVILEGES_BITS)
-from inyoka.forum.models import Post, Topic, Forum, Privilege
-from inyoka.ikhaya.models import Event, Article, Category, Suggestion
-from inyoka.markup import parse, RenderContext
+from django_openid.consumer import Consumer, SessionPersist
+from inyoka.forum.acl import (
+    PRIVILEGES_DETAILS, REVERSED_PRIVILEGES_BITS, filter_invisible, split_bits,
+    split_negative_positive,
+)
+from inyoka.forum.models import Forum, Post, Privilege, Topic
+from inyoka.ikhaya.models import Article, Category, Event, Suggestion
+from inyoka.markup import RenderContext, parse
 from inyoka.portal.filters import SubscriptionFilter
-from inyoka.portal.forms import (LoginForm, SearchForm, UserMailForm,
-    EditFileForm, RegisterForm, EditStyleForm, EditGroupForm, CreateUserForm,
-    LostPasswordForm, SubscriptionForm, UserCPProfileForm, OpenIDConnectForm,
-    ConfigurationForm, EditUserGroupsForm, EditStaticPageForm, DeactivateUserForm,
-    UserCPSettingsForm, ChangePasswordForm, PrivateMessageForm, EditUserStatusForm,
-    SetNewPasswordForm, EditUserProfileForm, WikiFeedSelectorForm,
-    EditUserPasswordForm, NOTIFICATION_CHOICES, ForumFeedSelectorForm,
-    PlanetFeedSelectorForm, EditUserPrivilegesForm, IkhayaFeedSelectorForm,
-    PrivateMessageIndexForm, PrivateMessageFormProtected)
-from inyoka.portal.models import (StaticPage, StaticFile, Subscription,
-    PrivateMessage, PRIVMSG_FOLDERS, PrivateMessageEntry)
-from inyoka.portal.user import (User, Group, UserData, UserBanned, reset_email,
-    set_new_email, deactivate_user, reactivate_user, PERMISSION_NAMES,
-    send_activation_mail)
-from inyoka.portal.utils import (abort_access_denied, calendar_entries_for_month,
-    check_login, get_ubuntu_versions, google_calendarize, require_permission)
+from inyoka.portal.forms import (
+    NOTIFICATION_CHOICES, ChangePasswordForm, ConfigurationForm,
+    CreateUserForm, DeactivateUserForm, EditFileForm, EditGroupForm,
+    EditStaticPageForm, EditStyleForm, EditUserGroupsForm,
+    EditUserPasswordForm, EditUserPrivilegesForm, EditUserProfileForm,
+    EditUserStatusForm, ForumFeedSelectorForm, IkhayaFeedSelectorForm,
+    LoginForm, LostPasswordForm, OpenIDConnectForm, PlanetFeedSelectorForm,
+    PrivateMessageForm, PrivateMessageFormProtected, PrivateMessageIndexForm,
+    RegisterForm, SearchForm, SetNewPasswordForm, SubscriptionForm,
+    UserCPProfileForm, UserCPSettingsForm, UserMailForm, WikiFeedSelectorForm,
+)
+from inyoka.portal.models import (
+    PRIVMSG_FOLDERS, PrivateMessage, PrivateMessageEntry, StaticFile,
+    StaticPage, Subscription,
+)
+from inyoka.portal.user import (
+    PERMISSION_NAMES, Group, User, UserBanned, UserData, deactivate_user,
+    reactivate_user, reset_email, send_activation_mail, set_new_email,
+)
+from inyoka.portal.utils import (
+    abort_access_denied, calendar_entries_for_month, check_login,
+    get_ubuntu_versions, google_calendarize, require_permission,
+)
 from inyoka.utils import generic
-from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
+from inyoka.utils.http import (
+    TemplateResponse, does_not_exist_is_404, templated,
+)
 from inyoka.utils.mail import send_mail
 from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.sessions import get_sessions, make_permanent, get_user_record
+from inyoka.utils.sessions import get_sessions, get_user_record, make_permanent
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import normalize_pagename, get_random_password
-from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.utils.text import get_random_password, normalize_pagename
+from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.wiki.utils import quote_text
-
 
 # TODO: move into some kind of config, but as a quick fix for now...
 AUTOBAN_SPAMMER_WORDS = (
