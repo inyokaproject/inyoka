@@ -11,7 +11,7 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from cPickle import dumps, loads, HIGHEST_PROTOCOL
+from cPickle import HIGHEST_PROTOCOL, dumps, loads
 
 from inyoka.utils import get_request_context
 

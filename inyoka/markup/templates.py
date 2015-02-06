@@ -25,16 +25,18 @@ r"""
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import re
-import random
 import operator
+import random
+import re
 
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext as _
 
 from inyoka.markup import escape, unescape_string
 from inyoka.markup.parsertools import TokenStream
-from inyoka.markup.utils import debug_repr, has_key, join_array, regex_match, simple_match
+from inyoka.markup.utils import (
+    debug_repr, has_key, join_array, regex_match, simple_match,
+)
 
 
 def process(source, context=()):
