@@ -18,14 +18,13 @@
     The code is mostly tested with MySQL but should work with PostgreSQL,
     SQLite or any other database Django supports.
 
-    Additionally Jinja 2.5 or higher is required as well as xapian for the
-    full text search facilities.  For the planet application the feedparser
-    library must be installed.  Additionally chardet is recommended so that
-    it can better guess broken encodings of feeds.  For the pastebin, wiki and
-    some other parts `pygments` 1.4 or higher must be available.
-    MySQL must support InnoDB or any other transaction engine like falcon
-    (untested though).  For incoming HTML data that is converted to XHTML
-    we also need html5lib.
+    Additionally Jinja 2.5 or higher is required.  For the planet application
+    the feedparser library must be installed.  Additionally chardet is
+    recommended so that it can better guess broken encodings of feeds.
+    For the pastebin, wiki and some other parts `pygments` 1.4 or higher must
+    be available. MySQL must support InnoDB or any other transaction engine
+    like falcon (untested though).  For incoming HTML data that is converted
+    to XHTML we also need html5lib.
 
     We're using the recent stable django releases.
 
@@ -124,10 +123,6 @@ from dulwich.repo import Repo
 INYOKA_REVISION = ugettext_lazy('unknown')
 
 
-def _dummy(*args, **kwargs):
-    return None
-
-
 def _bootstrap():
     """Get the Inyoka version and store it."""
     # the path to the contents of the Inyoka module
@@ -148,10 +143,6 @@ def _bootstrap():
     # Socket timeouts are set globally within the whole application.
     # The value *must* be a floating point value.
     socket.setdefaulttimeout(10.0)
-
-    # Silence logging output of openid library
-    from openid import oidutil
-    oidutil.log = _dummy
 
     return revision
 

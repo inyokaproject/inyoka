@@ -1,7 +1,5 @@
-Django==1.5.9
+Django==1.6.9
 django-filter==0.7
-# Includes Django 1.5 fix
-https://github.com/inyokaproject/django-openid/tarball/1cde150b4cdaf9ce5deb74f0ba07678014ef6533#egg=django-openid
 South==0.8.2
 Jinja2==2.7.1
 MarkupSafe==0.18

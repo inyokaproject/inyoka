@@ -36,7 +36,7 @@ from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
 from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
     SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS)
 from inyoka.markup import parse, RenderContext
-from inyoka.portal.models import SearchQueue, Subscription
+from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, Group
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import request_cache
@@ -47,8 +47,6 @@ from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
-from inyoka.utils.pagination import Pagination
-from inyoka.utils.search import search
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page as WikiPage
 
@@ -437,7 +435,7 @@ class Topic(models.Model):
 
         old_forum = self.forum
 
-        with transaction.commit_on_success():
+        with transaction.atomic():
 
             # move the topic
             self.forum = new_forum
@@ -573,12 +571,6 @@ class Topic(models.Model):
             user.forum_read_status = user._readstatus.serialize()
             user.save(update_fields=('forum_read_status',))
 
-    def reindex(self):
-        """Mark the whole topic for reindexing."""
-        posts = Post.objects.filter(topic__id=self.id).values_list('id', flat=True)
-        for post in posts:
-            search.queue('f', post)
-
     def __unicode__(self):
         return self.title
 
@@ -668,12 +660,6 @@ class Post(models.Model, LockableObject):
             return fix_plaintext(self.text)
         return self.rendered_text
 
-    def update_search(self):
-        """
-        This updates the xapian search index.
-        """
-        search.queue('f', self.id)
-
     def get_absolute_url(self, action='show'):
         if action == 'show':
             return href('forum', 'post', self.id)
@@ -688,13 +674,6 @@ class Post(models.Model, LockableObject):
         page = max(0, position) // POSTS_PER_PAGE + 1
         url = href('forum', 'topic', slug, *(page != 1 and (page,) or ()))
         return u''.join((url, paramstr and '?%s' % paramstr or '', '#post-%d' % id))
-
-    @staticmethod
-    def multi_update_search(ids):
-        """
-        Updates the search index for quite a lot of posts with a single query.
-        """
-        SearchQueue.objects.multi_insert('f', ids)
 
     def edit(self, request, text, is_plaintext=False):
         """
@@ -812,7 +791,7 @@ class Post(models.Model, LockableObject):
             # delete the topic.
             remove_topic = True
 
-        with transaction.commit_on_success():
+        with transaction.atomic():
             maxpos = new_topic.posts.all()._clone() \
                               .aggregate(count=Max('position'))['count']
             if maxpos is None:
@@ -902,9 +881,6 @@ class Post(models.Model, LockableObject):
                 .update(post_count=F('post_count') + len(posts))
             Forum.objects.filter(id__in=old_ids)\
                 .update(post_count=F('post_count') - len(posts))
-
-        # update the search index which has the post --> topic mapping indexed
-        Post.multi_update_search([post.id for post in posts])
 
         new_topic.forum.invalidate_topic_cache()
         old_topic.forum.invalidate_topic_cache()

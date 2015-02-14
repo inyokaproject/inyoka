@@ -18,10 +18,15 @@ from django import forms
 from django.conf import settings
 from django.forms import HiddenInput
 from django.contrib import messages
+from django.contrib.sites.models import get_current_site
 from django.db.models import Count
 from django.core.cache import cache
-from django.contrib.auth import forms as auth_forms
+from django.contrib.auth import forms as auth_forms, get_user_model
+from django.contrib.auth.tokens import default_token_generator
 from django.core.files.base import ContentFile
+from django.template import loader
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
@@ -41,7 +46,6 @@ from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username, normalize_username
-from inyoka.utils.search import search as search_system
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 
@@ -104,13 +108,6 @@ class LoginForm(forms.Form):
             msg = _(u'This field is required')
             self._errors['password'] = self.error_class([msg])
         return data
-
-
-class OpenIDConnectForm(forms.Form):
-    username = forms.CharField(label=ugettext_lazy(u'Username'))
-    password = forms.CharField(label=_('Password'),
-        widget=forms.PasswordInput(render_value=False),
-        required=True)
 
 
 class RegisterForm(forms.Form):
@@ -200,10 +197,51 @@ class RegisterForm(forms.Form):
 
 
 class LostPasswordForm(auth_forms.PasswordResetForm):
-    def save(self, **opts):
-        request = opts['request']
+    def save(self, domain_override=None,
+             subject_template_name='registration/password_reset_subject.txt',
+             email_template_name='registration/password_reset_email.html',
+             use_https=False, token_generator=default_token_generator,
+             from_email=None, request=None):
+        """
+        Generates a one-use only link for resetting password and sends to the
+        user.
+        """
+        # FIXME: Since Django 1.6 the default save() requires is_active
+        # to be a User field. So the default function was c&p here and
+        # modified afterwards.
+        from django.core.mail import send_mail
         messages.success(request, _(u'An email with further instructions was sent to you.'))
-        return super(LostPasswordForm, self).save(**opts)
+        UserModel = get_user_model()
+        email = self.cleaned_data["email"]
+        active_users = UserModel._default_manager.filter(
+            email__iexact=email)
+        for user in active_users:
+            # Make sure that no email is sent to a user that actually has
+            # a password marked as unusable
+            if not user.is_active:
+                continue
+            if not user.has_usable_password():
+                continue
+            if not domain_override:
+                current_site = get_current_site(request)
+                site_name = current_site.name
+                domain = current_site.domain
+            else:
+                site_name = domain = domain_override
+            c = {
+                'email': user.email,
+                'domain': domain,
+                'site_name': site_name,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'user': user,
+                'token': token_generator.make_token(user),
+                'protocol': 'https' if use_https else 'http',
+            }
+            subject = loader.render_to_string(subject_template_name, c)
+            # Email subject *must not* contain newlines
+            subject = ''.join(subject.splitlines())
+            email = loader.render_to_string(email_template_name, c)
+            send_mail(subject, email, from_email, [user.email])
 
 
 class SetNewPasswordForm(auth_forms.SetPasswordForm):
@@ -639,76 +677,6 @@ class EditGroupForm(forms.ModelForm):
             group.save()
 
         return group
-
-
-class SearchForm(forms.Form):
-    """The search formular"""
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        forms.Form.__init__(self, *args, **kwargs)
-
-        self.fields['forums'].choices = FORUM_SEARCH_CHOICES
-        forums = filter_invisible(self.user, Forum.objects.get_cached())
-        for offset, forum in Forum.get_children_recursive(forums):
-            self.fields['forums'].choices.append((forum.slug, u'  ' * offset + forum.name))
-
-    query = forms.CharField(label=ugettext_lazy(u'Search terms:'), widget=forms.TextInput)
-    area = forms.ChoiceField(label=ugettext_lazy(u'Area:'), choices=SEARCH_AREA_CHOICES,
-                      required=False, widget=forms.RadioSelect, initial='all')
-    page = forms.IntegerField(required=False, widget=forms.HiddenInput)
-    per_page = forms.IntegerField(required=False, widget=forms.HiddenInput)
-    date_begin = forms.DateTimeField(required=False, widget=DateTimeWidget)
-    date_end = forms.DateTimeField(required=False, widget=DateTimeWidget)
-    sort = forms.ChoiceField(label=ugettext_lazy(u'Order by'), choices=SEARCH_SORT_CHOICES,
-        required=False)
-    forums = ForumField(label=ugettext_lazy(u'Forums'), initial='support',
-        required=False)
-    show_wiki_attachments = forms.BooleanField(label=ugettext_lazy(u'Show attachments'),
-        required=False)
-
-    def clean(self):
-        # Default search order depends on the search area.
-        cleaned_data = forms.Form.clean(self)
-        cleaned_data['area'] = (cleaned_data.get('area') or 'all').lower()
-        if not cleaned_data.get('sort'):
-            if cleaned_data['area'] == 'wiki':
-                cleaned_data['sort'] = 'relevance'
-            else:
-                cleaned_data['sort'] = DEFAULT_SEARCH_PARAMETER
-        return cleaned_data
-
-    def search(self):
-        """Performs the actual query and return the results"""
-        d = self.cleaned_data
-
-        query = d['query']
-
-        exclude = []
-
-        # we use per default the support-forum filter
-        if not d['forums']:
-            d['forums'] = 'support'
-
-        if d['area'] in ('forum', 'all') and d['forums'] and \
-                d['forums'] not in ('support', 'all'):
-            query += ' category:"%s"' % d['forums']
-        elif d['forums'] == 'support':
-            exclude = list(settings.SEARCH_DEFAULT_EXCLUDE)
-
-        if not d['show_wiki_attachments']:
-            exclude.append('C__attachment__')
-
-        return search_system.query(self.user,
-            query,
-            page=d['page'] or 1,
-            per_page=d['per_page'] or 20,
-            date_begin=datetime_to_timezone(d['date_begin'], enforce_utc=True),
-            date_end=datetime_to_timezone(d['date_end'], enforce_utc=True),
-            component=SEARCH_AREAS.get(d['area']),
-            exclude=exclude,
-            sort=d['sort'] or DEFAULT_SEARCH_PARAMETER
-        )
 
 
 class PrivateMessageForm(forms.Form):

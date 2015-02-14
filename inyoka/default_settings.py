@@ -174,7 +174,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
     'inyoka.middlewares.tz.TimezoneMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
@@ -203,7 +202,7 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'inyoka.markup',
-    'django_openid',
+    'raven.contrib.django',
     'south',
     # *must* be installed after south
     'kombu.transport.django',
@@ -303,8 +302,6 @@ X_FRAME_OPTIONS = 'DENY'
 CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
-
-TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
 AUTH_USER_MODEL = 'portal.User'
 AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)
