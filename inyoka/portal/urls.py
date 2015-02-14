@@ -5,7 +5,7 @@
 
     The urls for the main portal (index page, error pages, login page etc.)
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf.urls import url, patterns
@@ -51,6 +51,7 @@ urlpatterns = patterns('inyoka.portal.views',
     (r'^privmsg/(?P<folder>[a-z]+)/$', 'privmsg'),
     (r'^privmsg/(?P<folder>[a-z]+)/page/$', 'privmsg'),
     (r'^privmsg/(?P<folder>[a-z]+)/page/(?P<page>\d+)/$', 'privmsg'),
+    (r'^privmsg/(?P<folder>[a-z]+)/all/$', 'privmsg', {'one_page': True}),
     (r'^privmsg/(?P<entry_id>\d+)/$', 'privmsg'),
     (r'^privmsg/(?P<folder>[a-z]+)/(?P<entry_id>\d+)/$', 'privmsg'),
     (r'^map/$', 'usermap'),

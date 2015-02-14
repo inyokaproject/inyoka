@@ -6,7 +6,7 @@
     This module tests the the storage object that uses a combination of cache
     and database storing.
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import time
@@ -37,10 +37,10 @@ class TestStorage(TestCase):
         storage['test'] = 'bar'
         _compare('test', 'bar')
 
-        storage.set('test', 'boo', .1)
+        storage.set('test', 'boo', 1)
         _compare('test', 'boo')
 
-        time.sleep(.2)
+        time.sleep(2)
         self.assertTrue(self.cache.get('storage/test') is None)
 
         storage['foo'] = 'bar'

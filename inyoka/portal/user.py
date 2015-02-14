@@ -6,7 +6,7 @@
     Our own user model used for implementing our own
     permission system and our own administration center.
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from os import path
@@ -603,18 +603,15 @@ class User(AbstractBaseUser):
 
     @property
     def avatar_url(self):
-        gravatar = self.settings.get('use_gravatar', False)
-        if not self.avatar and not gravatar:
-            return href('static', 'img', 'portal', 'no_avatar.png')
-        elif gravatar and not self.avatar:
-            return self.gravatar_url
-        return self.avatar.url
+        if self.avatar:
+            return self.avatar.url
+        return self.gravatar_url
 
     @property
     def gravatar_url(self):
-        if not self.settings.get('use_gravatar', False):
-            return href('static', 'img', 'portal', 'no_avatar.png')
-        return get_gravatar(self.email)
+        if self.settings.get('use_gravatar', False):
+            return get_gravatar(self.email)
+        return None
 
     @property
     def jabber_url(self):

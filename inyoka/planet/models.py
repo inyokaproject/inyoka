@@ -5,7 +5,7 @@
 
     Database models for the planet.
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -43,9 +43,9 @@ class Blog(models.Model):
 
     @property
     def icon_url(self):
-        if not self.icon:
-            return href('static', 'img', 'planet', 'anonymous.png')
-        return self.icon.url
+        if self.icon:
+            return self.icon.url
+        return None
 
     def delete(self):
         self.icon.delete(save=False)
@@ -80,7 +80,7 @@ class Entry(models.Model):
     updated = models.DateTimeField(db_index=True)
     author = models.CharField(max_length=50)
     author_homepage = models.URLField(blank=True, null=True)
-    hidden = models.BooleanField()
+    hidden = models.BooleanField(default=False)
     hidden_by = models.ForeignKey(User, blank=True, null=True,
                                   related_name='hidden_planet_posts')
 

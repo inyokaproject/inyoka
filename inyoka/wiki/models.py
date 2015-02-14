@@ -74,7 +74,7 @@
     that is part of the `acl` system.
 
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import pickle
@@ -1156,7 +1156,7 @@ class Revision(models.Model):
                              null=True, blank=True)
     change_date = models.DateTimeField(db_index=True)
     note = models.CharField(max_length=512)
-    deleted = models.BooleanField()
+    deleted = models.BooleanField(default=False)
     remote_addr = models.CharField(max_length=200, null=True)
     attachment = models.ForeignKey(Attachment, null=True, blank=True)
 

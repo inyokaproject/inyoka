@@ -12,7 +12,7 @@
     For development purposes we also set up virtual url dispatching modules for
     static and media.
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -64,7 +64,8 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
             response['Cache-Control'] = 'no-cache'
 
         path = request.path
-        if path.endswith('.less') and settings.DEBUG:
+        if (path.endswith(('.less', '.woff', '.eot', '.ttf', '.otf'))
+            and settings.DEBUG):
             response['Access-Control-Allow-Origin'] = '*'
 
         # warn of slow requests

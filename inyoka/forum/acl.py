@@ -5,12 +5,13 @@
 
     Authentification systen for the forum.
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import operator as ops
 
 from django.db.models import Q
+from django.db.models.query import EmptyQuerySet
 from django.core.cache import cache
 from django.utils.translation import ugettext_lazy
 
@@ -167,6 +168,8 @@ def get_privileges(user, forums):
 
     if isinstance(forums, (tuple, list)):
         forum_ids = [forum.id for forum in forums]
+    elif forums is EmptyQuerySet:
+	forum_ids = []
     else:
         forum_ids = forums.values_list('id', flat=True)
     privilege_map = _get_privilege_map(user, forum_ids)

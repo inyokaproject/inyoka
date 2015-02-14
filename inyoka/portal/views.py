@@ -7,7 +7,7 @@
     private messages, static pages and the login/register and search
     dialogs.
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import time
@@ -102,6 +102,7 @@ page_delete = generic.DeleteView.as_view(model=StaticPage,
 
 
 files = generic.ListView.as_view(model=StaticFile,
+    paginate_by=0,
     default_column='identifier',
     template_name='portal/files.html',
     columns=['identifier', 'is_ikhaya_icon'],
@@ -1108,7 +1109,7 @@ def admin_resend_activation_mail(request):
 @check_login(message=_(u'You need to be logged in to access your private '
                        'messages.'))
 @templated('portal/privmsg/index.html')
-def privmsg(request, folder=None, entry_id=None, page=1):
+def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     page = int(page)
     if folder is None:
         if get_flavour() == 'mobile':
@@ -1199,18 +1200,17 @@ def privmsg(request, folder=None, entry_id=None, page=1):
         message = None
     link = href('portal', 'privmsg', folder, 'page')
 
-    pagination = Pagination(request, entries, page or 1, page and 10
-        or len(entries), link)
+    pagination = Pagination(request, query=entries, page=page, per_page=10, link=link, one_page=one_page)
 
     return {
         'entries': pagination.get_queryset(),
-        'pagination': pagination.generate(),
+        'pagination': pagination,
         'folder': {
             'name': PRIVMSG_FOLDERS[folder][2],
             'id': PRIVMSG_FOLDERS[folder][1]
         },
         'message': message,
-        'one_page': page == 0,
+        'one_page': one_page,
     }
 
 
@@ -1330,42 +1330,43 @@ def privmsg_new(request, username=None):
             int(reply_to or reply_to_all or forward)
         except ValueError:
             if ':' in (reply_to or reply_to_all or forward):
-                x = reply_to or reply_to_all or forward
-                REPLIABLES = {
-                    'suggestion': (
-                        lambda id: Suggestion.objects.get(id=int(id)),
-                        lambda x: x.title,
-                        lambda x: x.author,
-                        lambda x: u'\n\n'.join((x.intro, x.text)),
-                    ),
-                    'reportedtopic': (
-                        lambda id: Topic.objects.get(slug=id),
-                        lambda x: x.title,
-                        lambda x: User.objects.get(id=x.reporter_id),
-                        lambda x: x.reported,
-                    ),
-                    'post': (
-                        lambda id: Post.objects.get(id=int(id)),
-                        lambda x: x.topic.title,
-                        lambda x: User.objects.get(id=x.author_id),
-                        lambda x: x.text,
-                    ),
-                }
-                for repliable, params in REPLIABLES.items():
-                    if x[:len(repliable) + 1] != repliable + ':':
-                        continue
-                    try:
-                        obj = params[0](x[len(repliable) + 1:])
-                    except:
-                        break
-                    data['subject'] = params[1](obj)
-                    if not data['subject'].lower().startswith(u're: '):
-                        data['subject'] = u'Re: %s' % data['subject']
-                    author = params[2](obj)
-                    if reply_to:
-                        data['recipient'] = author
-                    data['text'] = quote_text(params[3](obj), author) + '\n'
-                    form = PrivateMessageForm(initial=data)
+                return HttpResponseRedirect(href('portal', 'privmsg'))
+                # x = reply_to or reply_to_all or forward
+                # REPLIABLES = {
+                #     'suggestion': (
+                #         lambda id: Suggestion.objects.get(id=int(id)),
+                #         lambda x: x.title,
+                #         lambda x: x.author,
+                #         lambda x: u'\n\n'.join((x.intro, x.text)),
+                #     ),
+                #     'reportedtopic': (
+                #         lambda id: Topic.objects.get(slug=id),
+                #         lambda x: x.title,
+                #         lambda x: User.objects.get(id=x.reporter_id),
+                #         lambda x: x.reported,
+                #     ),
+                #     'post': (
+                #         lambda id: Post.objects.get(id=int(id)),
+                #         lambda x: x.topic.title,
+                #         lambda x: User.objects.get(id=x.author_id),
+                #         lambda x: x.text,
+                #     ),
+                # }
+                # for repliable, params in REPLIABLES.items():
+                #     if x[:len(repliable) + 1] != repliable + ':':
+                #         continue
+                #     try:
+                #         obj = params[0](x[len(repliable) + 1:])
+                #     except:
+                #         break
+                #     data['subject'] = params[1](obj)
+                #     if not data['subject'].lower().startswith(u're: '):
+                #         data['subject'] = u'Re: %s' % data['subject']
+                #     author = params[2](obj)
+                #     if reply_to:
+                #         data['recipient'] = author
+                #     data['text'] = quote_text(params[3](obj), author) + '\n'
+                #     form = PrivateMessageForm(initial=data)
         else:
             try:
                 entry = PrivateMessageEntry.objects.get(user=request.user,

@@ -6,13 +6,12 @@
     Session related utility functions.
 
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from time import time
 from datetime import datetime, timedelta
 
-from django.db import transaction
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy
 
@@ -38,10 +37,7 @@ def set_session_info(request):
     if request.session.new:
         return
 
-    if request.user.is_authenticated():
-        if request.user.settings.get('hide_profile', False):
-            transaction.rollback()
-            return
+    if request.user.is_authenticated() and not request.user.settings.get('hide_profile', False):
         key = 'user:%s' % request.user.id
         # XXX: Find a better way to detect whether a user is in the team
         user_type = request.user.can('article_read') and 'team' or 'user'
@@ -62,15 +58,9 @@ def set_session_info(request):
         'last_change': datetime.utcnow(),
     })
 
-    # If the user requests the site multiple times he might cause
-    # race conditions here.
-    affected_rows = SessionInfo.objects.filter(key=key).update(**args)
-    if affected_rows == 0:
-        try:
-            sid = transaction.savepoint()
-            SessionInfo.objects.create(key=key, **args)
-        except Exception:
-            transaction.savepoint_rollback(sid)
+    session_info, created = SessionInfo.objects.get_or_create(key=key, defaults=args)
+    if not created:
+        SessionInfo.objects.filter(key=key).update(**args)
 
 
 class SurgeProtectionMixin(object):

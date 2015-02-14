@@ -5,12 +5,12 @@
 
     This module contains functions for template-related things.
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import os
 import json
-from glob import glob
+import os
+import sys
 
 from django.conf import settings
 from django.contrib import messages
@@ -18,9 +18,10 @@ from django.core.context_processors import csrf
 from django.template.base import Context as DjangoContext
 from django.template.base import TemplateDoesNotExist
 from django.template.loader import BaseLoader
-from django.utils import translation
+from django.utils import six, translation
 from django.utils.encoding import force_unicode
 from django.utils.functional import Promise
+from django.utils.importlib import import_module
 from django.utils.timesince import timesince
 from django_mobile import get_flavour
 from jinja2 import (escape, Template, Environment, contextfunction,
@@ -293,8 +294,20 @@ class InyokaEnvironment(Environment):
     def __init__(self):
         template_paths = list(settings.TEMPLATE_DIRS)
 
-        template_paths.extend(glob(os.path.join(os.path.dirname(__file__),
-                                                os.pardir, '*/templates')))
+        # At compile time, cache the directories to search.
+        if not six.PY3:
+            fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
+        for app in settings.INSTALLED_APPS:
+            try:
+                mod = import_module(app)
+            except ImportError:
+                pass
+            template_dir = os.path.join(os.path.dirname(mod.__file__), 'templates')
+            if os.path.isdir(template_dir):
+                if not six.PY3:
+                    template_dir = template_dir.decode(fs_encoding)
+                template_paths.append(template_dir)
+
         loader = FileSystemLoader(template_paths)
         Environment.__init__(self, loader=loader,
                              extensions=['jinja2.ext.i18n', 'jinja2.ext.do'],
@@ -311,8 +324,7 @@ class InyokaEnvironment(Environment):
         self.install_gettext_translations(translation, newstyle=True)
 
     def _compile(self, source, filename):
-        filename = 'jinja:/' + filename if filename.startswith('/') \
-                                        else filename
+        filename = 'jinja:/' + filename if filename.startswith('/') else filename
         code = compile(source, filename, 'exec')
         return code
 

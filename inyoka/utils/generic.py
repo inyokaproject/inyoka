@@ -5,7 +5,7 @@
 
     Generic view classes.
 
-    :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.contrib import messages
@@ -267,10 +267,6 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
         queryset = table.get_queryset()
         context['table'] = table
         context['pagination'] = pagination = self.get_custom_pagination(queryset)
-
-        if pagination.needs_redirect_to:
-            return pagination.needs_redirect_to()
-
         context['object_list'] = queryset = pagination.get_queryset()
         context['paginate_by'] = self.get_paginate_by(queryset)
         context.update(self.get_context_data(**context))
@@ -279,7 +275,7 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
         if context_object_name is not None:
             context[context_object_name] = queryset
 
-        self.object_list = pagination.get_queryset()
+        self.object_list = queryset
 
         return self.render_to_response(context)
 

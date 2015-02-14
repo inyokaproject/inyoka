@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2014-07-05 20:30+0200\n"
+"POT-Creation-Date: 2015-02-05 23:50+0100\n"
 "PO-Revision-Date: 2012-10-12 23:52+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -52,7 +52,7 @@ msgstr "URL des Blogs"
 msgid "URL of the feed"
 msgstr "URL des Feeds"
 
-#: inyoka/planet/models.py:39 inyoka/planet/templates/planet/blog_list.html:27
+#: inyoka/planet/models.py:39
 msgid "User"
 msgstr "Benutzer"
 
@@ -72,173 +72,43 @@ msgstr "Eintrag"
 msgid "Entries"
 msgstr "Einträge"
 
-#: inyoka/planet/views.py:77
+#: inyoka/planet/views.py:78
 msgid "You need to be logged in to suggest a blog"
 msgstr "Du musst angemeldet sein, um ein Blog vorschlagen zu können."
 
-#: inyoka/planet/views.py:95
+#: inyoka/planet/views.py:96
 msgid "A new blog was suggested."
 msgstr "Ein neues Blog wurde vorgeschlagen."
 
-#: inyoka/planet/views.py:99
+#: inyoka/planet/views.py:100
 msgid "No user is registered as a planet administrator."
 msgstr "Es wurde kein Benutzer als Planet-Administrator eingetragen."
 
-#: inyoka/planet/views.py:101
+#: inyoka/planet/views.py:102
 #, python-format
 msgid "The blog “%(title)s” was suggested."
 msgstr "Das Blog „%(title)s“ wurde vorgeschlagen."
 
-#: inyoka/planet/views.py:112
+#: inyoka/planet/views.py:116
 #, python-format
 msgid "%(sitename)s planet"
 msgstr "%(sitename)s Planet"
 
-#: inyoka/planet/views.py:139
+#: inyoka/planet/views.py:142
 msgid "No title given"
 msgstr "Kein Titel vorhanden"
 
-#: inyoka/planet/views.py:155
+#: inyoka/planet/views.py:158
 msgid "Canceled"
 msgstr "Abgebrochen"
 
-#: inyoka/planet/views.py:162
+#: inyoka/planet/views.py:165
 #, python-format
 msgid "The entry “%(title)s” was successfully hidden."
 msgstr "Der Eintrag „%(title)s“ wurde erfolgreich verborgen."
 
-#: inyoka/planet/views.py:164
+#: inyoka/planet/views.py:167
 #, python-format
 msgid "The entry “%(title)s” was successfully restored."
 msgstr "Der Eintrag „%(title)s“ wurde erfolgreich wiederhergestellt."
-
-#: inyoka/planet/templates/planet/blog_edit.html:15
-msgid "Add blog"
-msgstr "Blog hinzufügen"
-
-#: inyoka/planet/templates/planet/blog_edit.html:27
-#: inyoka/planet/templates/planet/suggest.html:33
-msgid "Submit"
-msgstr "Absenden"
-
-#: inyoka/planet/templates/planet/blog_list.html:12
-#: inyoka/planet/templates/planet/page.html:70
-msgid "Bloglist"
-msgstr "Blogliste"
-
-#: inyoka/planet/templates/planet/blog_list.html:15
-#: inyoka/planet/templates/planet/page.html:48
-msgid "Blogs"
-msgstr "Blogs"
-
-#: inyoka/planet/templates/planet/blog_list.html:16
-msgid "Add new blog"
-msgstr "Neues Blog hinzufügen"
-
-#: inyoka/planet/templates/planet/blog_list.html:26
-msgid "Name"
-msgstr "Name"
-
-#: inyoka/planet/templates/planet/blog_list.html:28
-msgid "Latest update"
-msgstr "Letzte Aktualisierung"
-
-#: inyoka/planet/templates/planet/blog_list.html:29
-msgid "Active"
-msgstr "Aktiv"
-
-#: inyoka/planet/templates/planet/blog_list.html:37
-msgid "No entry"
-msgstr "Kein Eintrag"
-
-#: inyoka/planet/templates/planet/hide_entry.html:15
-msgid "Are you sure you want to restore the entry?"
-msgstr "Bist du sicher, dass du diesen Eintrag wiederherstellen möchtest?"
-
-#: inyoka/planet/templates/planet/hide_entry.html:17
-msgid "Are you sure you want to hide the entry?"
-msgstr "Bist du sicher, dass du diesen Eintrag verbergen möchtest?"
-
-#: inyoka/planet/templates/planet/hide_entry.html:20
-#: inyoka/planet/templates/planet/index.html:72
-msgid "Restore"
-msgstr "Wiederherstellen"
-
-#: inyoka/planet/templates/planet/hide_entry.html:20
-#: inyoka/planet/templates/planet/index.html:72
-msgid "Hide"
-msgstr "Verbergen"
-
-#: inyoka/planet/templates/planet/hide_entry.html:21
-#: inyoka/planet/templates/planet/suggest.html:34
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: inyoka/planet/templates/planet/index.html:13
-msgid "Planet - Captions"
-msgstr "Planet - Nur Überschriften"
-
-#: inyoka/planet/templates/planet/index.html:14
-msgid "Planet - Teaser"
-msgstr "Planet - Nur Einleitung"
-
-#: inyoka/planet/templates/planet/index.html:15
-msgid "Planet - Full article"
-msgstr "Planet - Ganzer Artikel"
-
-#: inyoka/planet/templates/planet/index.html:22
-msgid "Recent articles"
-msgstr "Neueste Artikel"
-
-#: inyoka/planet/templates/planet/index.html:53
-msgid "« Previous"
-msgstr "« Zurück"
-
-#: inyoka/planet/templates/planet/index.html:56
-msgid "Next »"
-msgstr "Weiter »"
-
-#: inyoka/planet/templates/planet/index.html:65
-#: inyoka/planet/templates/planet/index.m.html:22
-msgid "Permanent link"
-msgstr "Permalink"
-
-#: inyoka/planet/templates/planet/index.html:68
-#, python-format
-msgid "Hidden by: <a href=\"%(link)s\">%(name)s</a>"
-msgstr "Verborgen von: <a href=\"%(link)s\">%(name)s</a>"
-
-#: inyoka/planet/templates/planet/index.html:87
-#: inyoka/planet/templates/planet/index.m.html:31
-msgid "No articles were aggregated"
-msgstr "Es wurden keine Artikel aggregiert."
-
-#: inyoka/planet/templates/planet/page.html:13
-#: inyoka/planet/templates/planet/page.html:29
-msgid "Planet"
-msgstr "Planet"
-
-#: inyoka/planet/templates/planet/page.html:38
-msgid "Export blogs"
-msgstr "Blogs exportieren"
-
-#: inyoka/planet/templates/planet/page.html:66
-msgid "Configuration"
-msgstr "Konfiguration"
-
-#: inyoka/planet/templates/planet/suggest.html:12
-msgid "Suggest blog"
-msgstr "Ein Blog vorschlagen"
-
-#: inyoka/planet/templates/planet/suggest.html:16
-msgid "With this form you can suggest a new blog for the planet."
-msgstr "Hier kannst du einen Blog für den Planeten vorschlagen."
-
-#: inyoka/planet/templates/planet/suggest.html:25
-msgid ""
-"Please be patient. It could take a while, until we approve your "
-"suggestion."
-msgstr ""
-"Bitte habe ein wenig Geduld mit der Bearbeitung. Es kann etwas dauern, "
-"bis der Blog von uns geprüft wurde."
 

@@ -4,11 +4,13 @@
     inyoka.scripts.jabber_bot
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2014 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import argparse
+from __future__ import print_function
+
 import logging
+import os
 import sys
 
 import zmq
@@ -64,26 +66,29 @@ class JabberBot(ClientXMPP):
 
 
 def main():
-    """Parse arguments and start the server."""
-    parser = argparse.ArgumentParser(description='Jabberbot')
-    parser.add_argument('--jid', metavar='jid', type=unicode,
-                        help='Jabber ID for the Bot',
-                        required=True)
-    parser.add_argument('--password', metavar='password', type=unicode,
-                        help='Password for the JID',
-                        required=True)
-    parser.add_argument('--bind', metavar='bind', type=unicode,
-                        help='Bind for the ZeroMQ endoint',
-                        default='tcp://0.0.0.0:6203')
-    parser.add_argument('--debug', action='store_true',
-                        help='Activate debug mode')
-    args = parser.parse_args()
+    """Starts the server."""
 
-    level = logging.INFO if not args.debug else logging.DEBUG
+    debug = (len(sys.argv) == 2 and sys.argv[1] == '--debug')
+
+    error = False
+    required_keys = ('INYOKA_JABBER_ID', 'INYOKA_JABBER_PASSWORD', 'INYOKA_JABBER_BIND')
+    for key in required_keys:
+        if key not in os.environ:
+            error = True
+            sys.stderr.write('You need to set {key} in your environment!\n'.format(key=key))
+
+    if error:
+        return 1
+
+    jid = os.environ['INYOKA_JABBER_ID']
+    password = os.environ['INYOKA_JABBER_PASSWORD']
+    bind = os.environ['INYOKA_JABBER_BIND']
+
+    level = logging.INFO if not debug else logging.DEBUG
     logging.basicConfig(level=level,
                         format='%(levelname)-8s %(message)s')
 
-    xmpp = JabberBot(args.jid, args.password, args.bind)
+    xmpp = JabberBot(jid, password, bind)
     xmpp.connect()
     xmpp.process(block=True)
 
