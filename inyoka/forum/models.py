@@ -47,6 +47,7 @@ from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
+from inyoka.utils.pagination import Pagination
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page as WikiPage
 
@@ -486,7 +487,6 @@ class Topic(models.Model):
 
         old_forum.invalidate_topic_cache()
         new_forum.invalidate_topic_cache()
-        self.reindex()
 
     def delete(self, *args, **kwargs):
         if not self.forum:
