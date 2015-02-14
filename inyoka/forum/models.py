@@ -487,7 +487,6 @@ class Topic(models.Model):
 
         old_forum.invalidate_topic_cache()
         new_forum.invalidate_topic_cache()
-        self.reindex()
 
     def delete(self, *args, **kwargs):
         if not self.forum:

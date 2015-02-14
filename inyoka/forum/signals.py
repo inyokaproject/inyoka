@@ -58,7 +58,6 @@ def post_save_topic(sender, **kwargs):
 
 @receiver(post_delete, sender=Topic)
 def post_delete_topic(sender, **kwargs):
-    kwargs['instance'].reindex()
     cache.delete('forum/reported_topic_count')
 
 
