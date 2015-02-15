@@ -1685,15 +1685,6 @@ def calendar_detail(request, slug):
     }
 
 
-@templated('portal/open_search.xml', content_type='text/xml; charset=utf-8')
-def open_search(request, app):
-    if app not in ('wiki', 'forum', 'planet', 'ikhaya'):
-        app = 'portal'
-    return {
-        'app': app
-    }
-
-
 @templated('portal/confirm.html')
 def confirm(request, action):
     if action == 'reactivate_user' and request.user.is_authenticated():
