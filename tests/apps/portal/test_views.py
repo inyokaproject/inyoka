@@ -184,10 +184,10 @@ class TestAuthViews(TestCase):
         # We don't allow redirects to external pages!
         self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
 
-        next = 'http://%s/search/' % settings.BASE_DOMAIN_NAME
+        next = 'http://%s/calendar/' % settings.BASE_DOMAIN_NAME
         response = self.client.get('/login/', {'next': next}, follow=True)
         # But internal redirects are fine.
-        self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, '/calendar/', host=settings.BASE_DOMAIN_NAME)
 
     def test_logout_as_anonymous(self):
         """If a user is logging out without beeing logged in previously,
@@ -227,10 +227,10 @@ class TestAuthViews(TestCase):
         # We don't allow redirects to external pages!
         self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
 
-        next = 'http://%s/search/' % settings.BASE_DOMAIN_NAME
+        next = 'http://%s/calendar/' % settings.BASE_DOMAIN_NAME
         response = self.client.get('/logout/', {'next': next}, follow=True)
         # But internal redirects are fine.
-        self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, '/calendar/', host=settings.BASE_DOMAIN_NAME)
 
     def test_register_safe_redirects(self):
         """External redirects are not allowed after visiting the register page.
@@ -246,10 +246,10 @@ class TestAuthViews(TestCase):
         # We don't allow redirects to external pages!
         self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
 
-        next = 'http://%s/search/' % settings.BASE_DOMAIN_NAME
+        next = 'http://%s/calendar/' % settings.BASE_DOMAIN_NAME
         response = self.client.get('/register/', {'next': next}, follow=True)
         # But internal redirects are fine.
-        self.assertRedirects(response, '/search/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, '/calendar/', host=settings.BASE_DOMAIN_NAME)
 
     def test_register_as_authenticated_user(self):
         """Logged in users shall not be able to register a new account."""

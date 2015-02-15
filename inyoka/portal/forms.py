@@ -41,7 +41,6 @@ from inyoka.utils.local import current_request
 from inyoka.utils.html import cleanup_html
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username, normalize_username
-from inyoka.utils.search import search as search_system
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 
@@ -57,34 +56,6 @@ NOTIFICATION_CHOICES = (
     ('topic_split', ugettext_lazy(u'A subscribed topic was split')),
     ('pm_new', ugettext_lazy(u'I received a message'))
 )
-
-SEARCH_AREA_CHOICES = (
-    ('all', ugettext_lazy(u'Everywhere')),
-    ('forum', ugettext_lazy(u'Forum')),
-    ('wiki', ugettext_lazy(u'Wiki')),
-    ('ikhaya', 'Ikhaya'),
-    ('planet', ugettext_lazy(u'Planet')),
-)
-
-SEARCH_SORT_CHOICES = (
-    ('', ugettext_lazy(u'Use default value')),
-    ('date', ugettext_lazy(u'Date')),
-    ('relevance', ugettext_lazy(u'Relevance')),
-    ('magic', ugettext_lazy(u'Date and relevance')),
-)
-
-FORUM_SEARCH_CHOICES = (
-    ('support', ugettext_lazy(u'All support forums')),
-    ('all', ugettext_lazy(u'All forums')))
-
-DEFAULT_SEARCH_PARAMETER = 'magic'
-
-SEARCH_AREAS = {
-    'wiki': 'w',
-    'forum': 'f',
-    'ikhaya': 'i',
-    'planet': 'p'
-}
 
 
 class LoginForm(forms.Form):
@@ -639,76 +610,6 @@ class EditGroupForm(forms.ModelForm):
             group.save()
 
         return group
-
-
-class SearchForm(forms.Form):
-    """The search formular"""
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        forms.Form.__init__(self, *args, **kwargs)
-
-        self.fields['forums'].choices = FORUM_SEARCH_CHOICES
-        forums = filter_invisible(self.user, Forum.objects.get_cached())
-        for offset, forum in Forum.get_children_recursive(forums):
-            self.fields['forums'].choices.append((forum.slug, u'  ' * offset + forum.name))
-
-    query = forms.CharField(label=ugettext_lazy(u'Search terms:'), widget=forms.TextInput)
-    area = forms.ChoiceField(label=ugettext_lazy(u'Area:'), choices=SEARCH_AREA_CHOICES,
-                      required=False, widget=forms.RadioSelect, initial='all')
-    page = forms.IntegerField(required=False, widget=forms.HiddenInput)
-    per_page = forms.IntegerField(required=False, widget=forms.HiddenInput)
-    date_begin = forms.DateTimeField(required=False, widget=DateTimeWidget)
-    date_end = forms.DateTimeField(required=False, widget=DateTimeWidget)
-    sort = forms.ChoiceField(label=ugettext_lazy(u'Order by'), choices=SEARCH_SORT_CHOICES,
-        required=False)
-    forums = ForumField(label=ugettext_lazy(u'Forums'), initial='support',
-        required=False)
-    show_wiki_attachments = forms.BooleanField(label=ugettext_lazy(u'Show attachments'),
-        required=False)
-
-    def clean(self):
-        # Default search order depends on the search area.
-        cleaned_data = forms.Form.clean(self)
-        cleaned_data['area'] = (cleaned_data.get('area') or 'all').lower()
-        if not cleaned_data.get('sort'):
-            if cleaned_data['area'] == 'wiki':
-                cleaned_data['sort'] = 'relevance'
-            else:
-                cleaned_data['sort'] = DEFAULT_SEARCH_PARAMETER
-        return cleaned_data
-
-    def search(self):
-        """Performs the actual query and return the results"""
-        d = self.cleaned_data
-
-        query = d['query']
-
-        exclude = []
-
-        # we use per default the support-forum filter
-        if not d['forums']:
-            d['forums'] = 'support'
-
-        if d['area'] in ('forum', 'all') and d['forums'] and \
-                d['forums'] not in ('support', 'all'):
-            query += ' category:"%s"' % d['forums']
-        elif d['forums'] == 'support':
-            exclude = list(settings.SEARCH_DEFAULT_EXCLUDE)
-
-        if not d['show_wiki_attachments']:
-            exclude.append('C__attachment__')
-
-        return search_system.query(self.user,
-            query,
-            page=d['page'] or 1,
-            per_page=d['per_page'] or 20,
-            date_begin=datetime_to_timezone(d['date_begin'], enforce_utc=True),
-            date_end=datetime_to_timezone(d['date_end'], enforce_utc=True),
-            component=SEARCH_AREAS.get(d['area']),
-            exclude=exclude,
-            sort=d['sort'] or DEFAULT_SEARCH_PARAMETER
-        )
 
 
 class PrivateMessageForm(forms.Form):
