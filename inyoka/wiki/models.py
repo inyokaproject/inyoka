@@ -507,7 +507,7 @@ class TextManager(models.Manager):
     def get_or_create(self, value):
         """
         Works like a normal `get_or_create` function, just that it takes the
-        value as positional argument too and that it uses an hash to find the
+        value as positional argument too and that it uses a hash to find the
         correct text, rather than a string based search.
         """
         hash = sha1(value.encode('utf-8')).hexdigest()
@@ -820,10 +820,9 @@ class Page(models.Model):
 
     def update_meta(self):
         """
-        Update page metadata.  Crosslinks and the search index.  This method
-        always operates on the most recent revision, never on the revision
-        attached to the page.  If there is no revision in the database yet
-        this method fails silently.
+        Update page metadata and crosslinks. This method always operates on the
+        most recent revision, never on the revision attached to the page. If
+        there is no revision in the database yet this method fails silently.
 
         Thus the page create method has to call this after the revision was
         saved manually.

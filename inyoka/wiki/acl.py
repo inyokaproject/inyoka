@@ -131,8 +131,7 @@ class GroupContainer(object):
 
 class MultiPrivilegeTest(object):
     """
-    Efficient way for multiple privilege tests for one users to many
-    pages (eg: search auth decider).
+    Efficient way for multiple privilege tests for one users to many pages.
     """
 
     def __init__(self, user):

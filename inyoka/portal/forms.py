@@ -57,34 +57,6 @@ NOTIFICATION_CHOICES = (
     ('pm_new', ugettext_lazy(u'I received a message'))
 )
 
-SEARCH_AREA_CHOICES = (
-    ('all', ugettext_lazy(u'Everywhere')),
-    ('forum', ugettext_lazy(u'Forum')),
-    ('wiki', ugettext_lazy(u'Wiki')),
-    ('ikhaya', 'Ikhaya'),
-    ('planet', ugettext_lazy(u'Planet')),
-)
-
-SEARCH_SORT_CHOICES = (
-    ('', ugettext_lazy(u'Use default value')),
-    ('date', ugettext_lazy(u'Date')),
-    ('relevance', ugettext_lazy(u'Relevance')),
-    ('magic', ugettext_lazy(u'Date and relevance')),
-)
-
-FORUM_SEARCH_CHOICES = (
-    ('support', ugettext_lazy(u'All support forums')),
-    ('all', ugettext_lazy(u'All forums')))
-
-DEFAULT_SEARCH_PARAMETER = 'magic'
-
-SEARCH_AREAS = {
-    'wiki': 'w',
-    'forum': 'f',
-    'ikhaya': 'i',
-    'planet': 'p'
-}
-
 
 class LoginForm(forms.Form):
     """Simple form for the login dialog"""
