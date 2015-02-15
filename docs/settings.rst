@@ -108,7 +108,6 @@ Generics
             'inyoka.ikhaya',
             'inyoka.pastebin',
             'inyoka.planet',
-            'django_openid',
             'raven.contrib.django',
             'south',
             'djcelery',
@@ -564,29 +563,6 @@ Security
     Defaults to: ``''``
 
     Key for google maps
-
-.. py:data:: OPENID_PROVIDERS
-
-    Defaults to::
-
-        {
-            'openid': {
-              'name': gettext_noop('OpenID'),
-              'url': None
-            },
-            'launchpad': {
-                'name': gettext_noop('Launchpad'),
-                'url': 'https://launchpad.net/~{username}'
-            },
-            'claimid': {
-              'name': gettext_noop('ClaimID'),
-              'url': 'http://claimid.com/{username}'
-            },
-            'google': {
-              'name': gettext_noop('Google'),
-              'url': 'https://www.google.com/accounts/o8/id'
-            },
-        }
 
 .. py:data:: SECRET_KEY
 

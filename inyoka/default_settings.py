@@ -203,7 +203,6 @@ INSTALLED_APPS = (
     'inyoka.pastebin',
     'inyoka.planet',
     'inyoka.markup',
-    'django_openid',
     'south',
     # *must* be installed after south
     'kombu.transport.django',
@@ -214,25 +213,6 @@ INSTALLED_APPS = (
 
 # don't use migrations but just syncdb
 SOUTH_TESTS_MIGRATE = False
-
-OPENID_PROVIDERS = {
-    'openid': {
-        'name': gettext_noop('OpenID'),
-        'url': None
-    },
-    'launchpad': {
-        'name': gettext_noop('Launchpad'),
-        'url': 'https://launchpad.net/~{username}'
-    },
-    'claimid': {
-        'name': gettext_noop('ClaimID'),
-        'url': 'http://claimid.com/{username}'
-    },
-    'google': {
-        'name': gettext_noop('Google'),
-        'url': 'https://www.google.com/accounts/o8/id'
-    },
-}
 
 # some terms to exclude by default to maintain readability
 SEARCH_DEFAULT_EXCLUDE = []

@@ -89,11 +89,10 @@ SEARCH_AREAS = {
 
 class LoginForm(forms.Form):
     """Simple form for the login dialog"""
-    username = forms.CharField(label=ugettext_lazy(u'Username, email address or OpenID'),
+    username = forms.CharField(label=ugettext_lazy(u'Username or email address'),
         widget=forms.TextInput(attrs={'tabindex': '1'}))
     password = forms.CharField(label=ugettext_lazy(u'Password'), required=False,
-        widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),
-        help_text=ugettext_lazy(u'Leave this field empty if you are using OpenID.'),)
+        widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),)
     permanent = forms.BooleanField(label=_('Keep logged in'),
         required=False, widget=forms.CheckboxInput(attrs={'tabindex': '1'}))
 
@@ -104,13 +103,6 @@ class LoginForm(forms.Form):
             msg = _(u'This field is required')
             self._errors['password'] = self.error_class([msg])
         return data
-
-
-class OpenIDConnectForm(forms.Form):
-    username = forms.CharField(label=ugettext_lazy(u'Username'))
-    password = forms.CharField(label=_('Password'),
-        widget=forms.PasswordInput(render_value=False),
-        required=True)
 
 
 class RegisterForm(forms.Form):
