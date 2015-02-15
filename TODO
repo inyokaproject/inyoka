@@ -2,6 +2,6 @@ TODO
 ====
 
  * Pickle falls noch irgendwo in verwendung: TÖTEN
- * Alles was mit XML zu tun hat genau verifizieren (openid, feed aggregator) und gegen billion laughs und entity expansion testen
+ * Alles was mit XML zu tun hat genau verifizieren (feed aggregator) und gegen billion laughs und entity expansion testen
  * Jinja auf autoescaping schalten und dann jeden |safe call der hinzugefügt wird 5 mal verizifzieren
  * Falls möglich (würde die sicherheit gewaltig erhöhen): CSP aktivieren

@@ -23,7 +23,6 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 GOOGLE_MAPS_APIKEY = 'ABQIAAAAnGRs_sYisCDW3FXIZAzZ9RR0WYmUN-JWdjE121Rerp-F3KIi4BQQM-N93TqupJwysf0dHBu_LfF6AQ'
 
-# Removed django-openid for now as we do not support proper test setup for now.
 # explicitly add tests.utils to apps to run unittests here
 INSTALLED_APPS = INSTALLED_APPS + (
     'tests.utils',
