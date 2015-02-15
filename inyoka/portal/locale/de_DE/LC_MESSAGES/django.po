@@ -1325,18 +1325,3 @@ msgstr "Die Seite „%(page)s“ wurde erfolgreich bearbeitet."
 #: inyoka/portal/views.py:1933
 msgid "The stylesheet was saved successfully."
 msgstr "Das Stylesheet wurde erfolgreich gespeichert."
-
-#~ msgid "Username, email address or OpenID"
-#~ msgstr "Benutzername, E-Mail-Adresse oder OpenID"
-
-#~ msgid "Leave this field empty if you are using OpenID."
-#~ msgstr "Falls OpenID verwendet wird kann dieses Feld frei bleiben."
-
-#~ msgid "The OpenID was successfully linked to your account."
-#~ msgstr "Die OpenID wurde erfolgreich mit deinem Konto verknüpft."
-
-#~ msgid "This user is not activated"
-#~ msgstr "Der Benutzer ist nicht aktiviert"
-
-#~ msgid "Error on OpenID login: %(message)s"
-#~ msgstr "Fehler bei OpenId-Login: %(message)s"
