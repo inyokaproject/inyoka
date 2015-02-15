@@ -353,9 +353,6 @@ def login(request):
                 banned = True
                 user = None
 
-            if user is None:
-                failed = True
-
             if user is not None:
                 if user.is_active:
                     if data['permanent']:
@@ -365,6 +362,7 @@ def login(request):
                     auth.login(request, user)
                     return HttpResponseRedirect(redirect)
                 inactive = True
+
             failed = True
     else:
         if 'username' in request.GET:
