@@ -234,15 +234,6 @@ OPENID_PROVIDERS = {
     },
 }
 
-# some terms to exclude by default to maintain readability
-SEARCH_DEFAULT_EXCLUDE = []
-
-# Default blocksize to delmit queries to the search index
-SEARCH_INDEX_BLOCKSIZE = 5000
-
-# Set the default sentry site
-SENTRY_SITE = 'example.com'
-
 
 # Import and activate django-celery support
 djcelery.setup_loader()
