@@ -192,7 +192,7 @@ class PrivateMessageEntry(models.Model):
             return href('portal', 'privmsg', 'new', forward=self.message_id)
 
     @classmethod
-    @transaction.commit_manually
+    @transaction.atomic
     def delete_list(cls, user_id, ids):
         if not ids:
             return

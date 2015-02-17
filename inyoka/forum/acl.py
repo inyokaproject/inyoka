@@ -169,7 +169,7 @@ def get_privileges(user, forums):
     if isinstance(forums, (tuple, list)):
         forum_ids = [forum.id for forum in forums]
     elif forums is EmptyQuerySet:
-	forum_ids = []
+        forum_ids = []
     else:
         forum_ids = forums.values_list('id', flat=True)
     privilege_map = _get_privilege_map(user, forum_ids)

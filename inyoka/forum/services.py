@@ -11,7 +11,6 @@
 """
 from urllib import unquote
 
-from django.db import transaction
 from django.http import HttpResponse
 from django.utils.datastructures import MultiValueDictKeyError
 
@@ -91,7 +90,6 @@ def on_toggle_category(request):
 
 @never_cache
 @permit_methods(('POST',))
-@transaction.autocommit
 def subscription_action(request, action=None):
     assert action is not None and action in ('subscribe', 'unsubscribe')
     type = request.POST['type']

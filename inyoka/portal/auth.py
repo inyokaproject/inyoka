@@ -33,18 +33,9 @@ class InyokaAuthBackend(ModelBackend):
             UserBanned
                 If the found user was banned by an admin.
         """
-        user = None
         try:
-            user = User.objects.get(username)
-        except User.DoesNotExist:
-            # fallback to email login
-            if '@' in username:
-                try:
-                    user = User.objects.get(email__iexact=username)
-                except User.DoesNotExist:
-                    pass
-
-        if user is None:
+            user = User.objects.get_by_username_or_email(username)
+        except:
             return None
 
         if user.is_banned:

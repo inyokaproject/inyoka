@@ -123,10 +123,6 @@ from dulwich.repo import Repo
 INYOKA_REVISION = ugettext_lazy('unknown')
 
 
-def _dummy(*args, **kwargs):
-    return None
-
-
 def _bootstrap():
     """Get the Inyoka version and store it."""
     # the path to the contents of the Inyoka module

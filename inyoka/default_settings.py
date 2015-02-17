@@ -174,7 +174,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'inyoka.middlewares.auth.AuthMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
     'inyoka.middlewares.tz.TimezoneMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
