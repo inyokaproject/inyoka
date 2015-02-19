@@ -6,7 +6,6 @@ set -xe
 
 src_dir=$(readlink -f "$(dirname "$0")/..")
 env_dir="$HOME/.venvs/inyoka"
-xapian_version="1.2.12"
 
 mkdir -p "$env_dir"
 cd "$src_dir"
