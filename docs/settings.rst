@@ -547,14 +547,6 @@ Paths and URLs
 
     .. seealso:: :py:data:`BASE_PATH`
 
-.. py:data:: XAPIAN_DATABASE
-
-    Defaults to: ``'~/inyoka/inyoka/inyoka.xapdb'``
-
-    Path to the Xapian database. Examples: ``/path/to/inyoka.xapdb``, or ``tcpsrv://localhost:3000/``
-
-    .. seealso:: :py:data:`BASE_PATH`
-
 Security
 ========
 

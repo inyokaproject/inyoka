@@ -53,7 +53,6 @@
 
         DATABASE_NAME = 'inyoka'
         DATABASE_USER = 'root'
-        XAPIAN_DATABASE = '/home/user/dev/inyoka/inyoka.xapdb'
 
     After that all you have to do before working with inyoka is sourcing the
     `init.sh` file (``source init.sh`` or ``. init.sh``).
