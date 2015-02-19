@@ -137,7 +137,9 @@ Next you can start the actual Inyoka installation:
 
 .. code-block:: console
 
-  $ ./extra/install.sh
+  $ mkdir -p ~/.venvs/inyoka
+  $ virtualenv-2.7 ~/.venvs/inyoka
+  $ ~/.venvs/inyoka/bin/pip install -r extra/requirements/test.txt
 
 A lot of files will be downloaded and compiled. Further there will be
 some warnings that you can ignore. Hopefully there is not error and
