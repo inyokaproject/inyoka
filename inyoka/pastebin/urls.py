@@ -9,13 +9,15 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf.urls import patterns
+from django.views.generic import RedirectView
 
 urlpatterns = patterns('inyoka.pastebin.views',
-    (r'^$', 'index'),
+    (r'^$', 'browse'),
     (r'^(\d+)/$', 'display'),
     (r'^raw/(\d+)/$', 'raw'),
-    (r'^browse/$', 'browse'),
+    (r'^browse/$', RedirectView.as_view(url='/')),
     (r'^delete/(\d+)/$', 'delete'),
+    (r'^add/$', 'add'),
 )
 
 
