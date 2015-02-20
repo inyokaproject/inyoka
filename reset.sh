@@ -1,6 +1,4 @@
 #!/bin/bash
-#echo "Dropping database tables..." ### TODO
-#python manage-inyoka.py dropdb
 
 # create the media folders
 rm -Rf ./inyoka/media
@@ -23,8 +21,3 @@ python manage.py syncdb
 echo "Run migrations"
 python manage.py migrate
 echo "finished basic database creation"
-
-# make sure that the xapian database is recreated
-rm -rf $(python -c 'from django.conf import settings; print "\"%s\"" % settings.XAPIAN_DATABASE')
-python -c 'import xapian; from django.conf import settings; xapian.WritableDatabase(settings.XAPIAN_DATABASE, xapian.DB_CREATE_OR_OPEN)'
-echo "Created xapian database"
