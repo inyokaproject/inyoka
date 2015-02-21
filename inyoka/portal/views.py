@@ -874,26 +874,6 @@ def user_edit_status(request, username):
 
 
 @require_permission('user_edit')
-@templated('portal/user_edit_password.html')
-def user_edit_password(request, username):
-    user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'password'))
-    form = EditUserPasswordForm(request.POST)
-    if request.method == 'POST' and form.is_valid():
-        data = form.cleaned_data
-        user.set_password(data['new_password'])
-        user.save()
-        messages.success(request,
-            _(u'The password of “%(username)s” was successfully changed.')
-            % {'username': escape(user.username)})
-    return {
-        'user': user,
-        'form': form
-    }
-
-
-@require_permission('user_edit')
 @templated('portal/user_edit_privileges.html')
 def user_edit_privileges(request, username):
     user = get_user(username)
