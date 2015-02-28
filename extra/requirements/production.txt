@@ -5,3 +5,4 @@ pyasn1==0.1.7
 pyasn1_modules==0.0.5
 pylibmc==1.4.1
 raven==5.1.1
+gunicorn==19.2.1
