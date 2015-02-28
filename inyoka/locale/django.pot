@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-02-15 13:46+0100\n"
+"POT-Creation-Date: 2015-02-28 09:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -120,7 +120,7 @@ msgstr ""
 msgid "Canceled."
 msgstr ""
 
-#: inyoka/utils/sessions.py:73
+#: inyoka/utils/sessions.py:74
 msgid ""
 "You cannot send data that fast in a row. Please wait a bit until you "
 "submit the form again."

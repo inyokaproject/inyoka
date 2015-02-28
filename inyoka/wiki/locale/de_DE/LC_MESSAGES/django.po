@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-02-15 13:46+0100\n"
+"POT-Creation-Date: 2015-02-28 09:27+0100\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -274,37 +274,37 @@ msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
-#: inyoka/wiki/models.py:481
+#: inyoka/wiki/models.py:480
 msgid "Created"
 msgstr "Erstellt"
 
-#: inyoka/wiki/models.py:916
+#: inyoka/wiki/models.py:911
 msgid "Automatically deleted"
 msgstr "Von System gelöscht"
 
-#: inyoka/wiki/models.py:1039
+#: inyoka/wiki/models.py:1034
 msgid "Wiki page"
 msgstr "Wikiseite"
 
-#: inyoka/wiki/models.py:1040
+#: inyoka/wiki/models.py:1035
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
-#: inyoka/wiki/models.py:1096
+#: inyoka/wiki/models.py:1091
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
-#: inyoka/wiki/models.py:1175
+#: inyoka/wiki/models.py:1170
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr "%(rev)s (Revision %(date)s)"
 
-#: inyoka/wiki/models.py:1205
+#: inyoka/wiki/models.py:1200
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
 
-#: inyoka/wiki/models.py:1231
+#: inyoka/wiki/models.py:1226
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"

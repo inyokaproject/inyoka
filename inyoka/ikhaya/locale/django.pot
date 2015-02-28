@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-02-15 13:46+0100\n"
+"POT-Creation-Date: 2015-02-28 09:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: inyoka/ikhaya/forms.py:44 inyoka/ikhaya/models.py:218
-#: inyoka/ikhaya/models.py:428
+#: inyoka/ikhaya/forms.py:44 inyoka/ikhaya/models.py:217
+#: inyoka/ikhaya/models.py:417
 msgid "Text"
 msgstr ""
 
@@ -29,7 +29,7 @@ msgid ""
 "insert this code."
 msgstr ""
 
-#: inyoka/ikhaya/forms.py:67 inyoka/ikhaya/models.py:211
+#: inyoka/ikhaya/forms.py:67 inyoka/ikhaya/models.py:210
 msgid "Author"
 msgstr ""
 
@@ -61,83 +61,83 @@ msgstr ""
 msgid "Display event?"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:173 inyoka/ikhaya/models.py:220
+#: inyoka/ikhaya/models.py:172 inyoka/ikhaya/models.py:219
 msgid "Slug"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:176 inyoka/ikhaya/models.py:216
+#: inyoka/ikhaya/models.py:175 inyoka/ikhaya/models.py:215
 msgid "Icon"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:196 inyoka/ikhaya/models.py:213
+#: inyoka/ikhaya/models.py:195 inyoka/ikhaya/models.py:212
 msgid "Category"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:197
+#: inyoka/ikhaya/models.py:196
 msgid "Categories"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:206
+#: inyoka/ikhaya/models.py:205
 msgid "Date"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:207
+#: inyoka/ikhaya/models.py:206
 msgid "Time"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:208
+#: inyoka/ikhaya/models.py:207
 msgid "Last change"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:212
+#: inyoka/ikhaya/models.py:211
 msgid "Headline"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:217 inyoka/ikhaya/models.py:429
+#: inyoka/ikhaya/models.py:216 inyoka/ikhaya/models.py:418
 msgid "Introduction"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:219
+#: inyoka/ikhaya/models.py:218
 msgid "Public"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:222
+#: inyoka/ikhaya/models.py:221
 msgid "XHTML Markup"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:225
+#: inyoka/ikhaya/models.py:224
 msgid "Allow comments"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:386
+#: inyoka/ikhaya/models.py:375
 msgid "Article"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:387
+#: inyoka/ikhaya/models.py:376
 msgid "Articles"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:427
+#: inyoka/ikhaya/models.py:416
 msgid "Title"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:430
+#: inyoka/ikhaya/models.py:419
 msgid "Annotations to the team"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:436
+#: inyoka/ikhaya/models.py:425
 msgid "Article suggestion"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:437
+#: inyoka/ikhaya/models.py:426
 msgid "Article suggestions"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:522
+#: inyoka/ikhaya/models.py:511
 msgid "Degree of latitude"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:524
+#: inyoka/ikhaya/models.py:513
 msgid "Degree of longitude"
 msgstr ""
 

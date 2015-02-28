@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-02-15 13:46+0100\n"
+"POT-Creation-Date: 2015-02-28 09:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: inyoka/planet/forms.py:21 inyoka/planet/models.py:35
+#: inyoka/planet/forms.py:21 inyoka/planet/models.py:34
 msgid "Name of the blog"
 msgstr ""
 
@@ -29,7 +29,7 @@ msgstr ""
 msgid "Feed URL"
 msgstr ""
 
-#: inyoka/planet/forms.py:24 inyoka/planet/models.py:36
+#: inyoka/planet/forms.py:24 inyoka/planet/models.py:35
 msgid "Description"
 msgstr ""
 
@@ -41,31 +41,31 @@ msgstr ""
 msgid "Email address of the blog author"
 msgstr ""
 
-#: inyoka/planet/models.py:37
+#: inyoka/planet/models.py:36
 msgid "URL of the blog"
 msgstr ""
 
-#: inyoka/planet/models.py:38
+#: inyoka/planet/models.py:37
 msgid "URL of the feed"
 msgstr ""
 
-#: inyoka/planet/models.py:39
+#: inyoka/planet/models.py:38
 msgid "User"
 msgstr ""
 
-#: inyoka/planet/models.py:41
+#: inyoka/planet/models.py:40
 msgid "Icon"
 msgstr ""
 
-#: inyoka/planet/models.py:43
+#: inyoka/planet/models.py:42
 msgid "Index the blog"
 msgstr ""
 
-#: inyoka/planet/models.py:124
+#: inyoka/planet/models.py:113
 msgid "Entry"
 msgstr ""
 
-#: inyoka/planet/models.py:125
+#: inyoka/planet/models.py:114
 msgid "Entries"
 msgstr ""
 

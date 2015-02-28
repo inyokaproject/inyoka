@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-02-15 13:46+0100\n"
+"POT-Creation-Date: 2015-02-28 09:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -181,11 +181,7 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: inyoka/pastebin/forms.py:66
-msgid "CAPTCHA"
-msgstr ""
-
-#: inyoka/pastebin/forms.py:71
+#: inyoka/pastebin/forms.py:70
 msgid "Untitled"
 msgstr ""
 
@@ -217,22 +213,22 @@ msgstr ""
 msgid "Entries"
 msgstr ""
 
-#: inyoka/pastebin/views.py:29
+#: inyoka/pastebin/views.py:30
 msgid ""
 "Your entry was successfully saved. You can use the following code to "
 "include it in your post:"
 msgstr ""
 
-#: inyoka/pastebin/views.py:50
+#: inyoka/pastebin/views.py:49
 #, python-format
 msgid "Paste number %(id)d could not be found"
 msgstr ""
 
-#: inyoka/pastebin/views.py:71
+#: inyoka/pastebin/views.py:70
 msgid "The deletion was canceled"
 msgstr ""
 
-#: inyoka/pastebin/views.py:74
+#: inyoka/pastebin/views.py:73
 msgid "The entry in the pastebin was deleted."
 msgstr ""
 
