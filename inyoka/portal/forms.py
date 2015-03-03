@@ -33,7 +33,7 @@ from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.forms import ForumField
 from inyoka.forum.models import Forum
 from inyoka.portal.models import StaticFile, StaticPage
-from inyoka.portal.user import User, Group, PERMISSION_NAMES, send_new_email_confirmation
+from inyoka.portal.user import User, UserPage, Group, PERMISSION_NAMES, send_new_email_confirmation
 from inyoka.utils.dates import TIMEZONES, datetime_to_timezone
 from inyoka.utils.forms import (DateWidget, EmailField, CaptchaField,
     DateTimeWidget, validate_signature)
@@ -251,6 +251,8 @@ class UserCPProfileForm(forms.ModelForm):
     gpgkey = forms.RegexField('^(0x)?[0-9a-f]+$(?i)',
         label=ugettext_lazy(u'GPG key'), max_length=255, required=False)
 
+    userpage = forms.CharField(widget=forms.Textarea, required=False)
+
     class Meta:
         model = User
         fields = ['jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone',
@@ -275,6 +277,8 @@ class UserCPProfileForm(forms.ModelForm):
         ))
         initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
         initial['email'] = instance.email
+        if hasattr(instance, 'userpage'):
+            initial['userpage'] = instance.userpage.content
 
         self.old_email = instance.email
         self.old_avatar = instance.avatar.name if instance.avatar else None
@@ -369,6 +373,19 @@ class UserCPProfileForm(forms.ModelForm):
                 data['coordinates']
         for key in ('show_email', 'show_jabber', 'use_gravatar'):
             user.settings[key] = data[key]
+
+        if data['userpage']:
+            if hasattr(user, 'userpage'):
+                userpage = user.userpage
+            else:
+                userpage = UserPage(user=user)
+            userpage.content = data['userpage']
+            userpage.content_rendered = ""
+            if commit:
+                userpage.save()
+        else:
+            if hasattr(user, 'userpage'):
+                user.userpage.delete()
 
         if commit:
             user.save()

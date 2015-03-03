@@ -81,7 +81,6 @@ class UserBanned(Exception):
 
 
 def reactivate_user(id, email, status):
-    from inyoka.wiki.models import Page as WikiPage
 
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
@@ -109,16 +108,6 @@ def reactivate_user(id, email, status):
     user.set_password(User.objects.make_random_password(length=32))
     user.save()
 
-    # reactivate user page
-    try:
-        userpage = WikiPage.objects.get_by_name('%s/%s' % (
-            settings.WIKI_USER_BASE, escape(user.username)))
-        userpage.edit(user=User.objects.get_system_user(), deleted=False,
-                      note=_(u'The user “%(name)s” has reactivated his account.')
-                             % {'name': escape(user.username)})
-    except WikiPage.DoesNotExist:
-        pass
-
     return {
         'success': _(u'The account “%(name)s” was reactivated. Please use the '
                      u'password recovery function to set a new password.')
@@ -132,7 +121,6 @@ def deactivate_user(user):
     To avoid abuse he is sent an email allowing him to reactivate the
     within the next month.
     """
-    from inyoka.wiki.models import Page as WikiPage
 
     data = {
         'id': user.id,
@@ -148,16 +136,6 @@ def deactivate_user(user):
         'data': signing.dumps(data, salt='inyoka.action.reactivate_user'),
     })
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
-
-    # delete user wiki page
-    try:
-        userpage = WikiPage.objects.get_by_name('%s/%s' % (
-                settings.WIKI_USER_BASE, escape(user.username)))
-        userpage.edit(user=User.objects.get_system_user(), deleted=True,
-                      note=_(u'The user “%(name)s” has deactivated his account.')
-                             % {'name': escape(user.username)})
-    except WikiPage.DoesNotExist:
-        pass
 
     user.status = 3
     if not user.is_banned:
@@ -517,16 +495,6 @@ class User(AbstractBaseUser):
     is_banned = property(lambda x: x.status == 2)
     is_deleted = property(lambda x: x.status == 3)
 
-    @property
-    def has_wikipage(self):
-        """
-        Returns the rendered wikipage if it exists, otherwise None
-        """
-        from inyoka.wiki.models import Page as WikiPage
-        key = '%s/%s' % (settings.WIKI_USER_BASE,
-                         normalize_pagename(self.username))
-        return WikiPage.objects.exists(key)
-
     def email_user(self, subject, message, from_email=None):
         """Sends an e-mail to this User."""
         send_mail(subject, message, from_email, [self.email])
@@ -574,6 +542,26 @@ class User(AbstractBaseUser):
     def _readstatus(self):
         from inyoka.forum.models import ReadStatus
         return ReadStatus(self.forum_read_status)
+
+    @property
+    def rendered_userpage(self):
+        if hasattr(self, 'userpage'):
+            if not self.userpage.content_rendered:
+                return self.render_userpage()
+            else:
+                return self.userpage.content_rendered
+        else:
+            return ""
+
+    def render_userpage(self, request=None, format='html', nocache=False):
+        """Render the userpage."""
+        if request is None:
+            request = current_request._get_current_object()
+        if hasattr(self, 'userpage'):
+            context = RenderContext(request, simplified=True)
+            instructions = parse(self.userpage.content).compile(format)
+            self.userpage.content_rendered = render(instructions, context)
+            return self.userpage.content_rendered
 
     @property
     def rendered_signature(self):
@@ -641,6 +629,12 @@ class User(AbstractBaseUser):
 
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
+
+
+class UserPage(models.Model):
+    user = models.OneToOneField(User)
+    content = models.TextField()
+    content_rendered = models.TextField()
 
 
 @receiver(user_logged_in)
