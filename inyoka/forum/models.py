@@ -754,7 +754,7 @@ class Post(models.Model, LockableObject):
                 .values_list('last_post', flat=True)
             new_lp_id = new_lp_ids[0] if new_lp_ids else None
             update_model(forums, last_post=model_or_none(new_lp_id, self))
-            self.topic.forum.last_post_id = new_lp_id
+            update_model(self.topic.forum, last_post_id=new_lp_id)
 
         cache.delete_many('forum/forums/%s' % f.slug for f in forums)
 
