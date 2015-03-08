@@ -643,12 +643,6 @@ class User(AbstractBaseUser):
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
 
 
-class UserData(models.Model):
-    user = models.ForeignKey(User)
-    key = models.CharField(max_length=255)
-    value = models.CharField(max_length=255)
-
-
 @receiver(user_logged_in)
 def update_user_flags(sender, request, user, **kwargs):
     user.last_login = datetime.utcnow()
