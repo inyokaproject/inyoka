@@ -250,16 +250,6 @@ Wiki
     the macro or in the parser is then joined with this page name according to
     our weird joining rules
 
-.. py:data:: WIKI_USER_BASE
-
-    Defaults to: ``'User'``
-
-    The base page of all user wiki pages
-
-.. py:data:: WIKI_USERPAGE_INFO
-
-    Defaults to: ``'Userpage'``
-
 Localization and internationalization
 =====================================
 
@@ -569,22 +559,6 @@ Security
 
     Use etags. See
     https://docs.djangoproject.com/en/1.3/ref/settings/#use-etags
-
-Search
-======
-
-.. py:data:: SEARCH_DEFAULT_EXCLUDE
-
-    Defaults to: ``[]``
-
-    Some terms to exclude by default to maintain readability
-
-.. py:data:: SEARCH_INDEX_BLOCKSIZE
-
-    Defaults to: ``5000``
-
-    Default blocksize to delmit queries to the search index
-
 
 ..
     .. py:data:: ADMINS
