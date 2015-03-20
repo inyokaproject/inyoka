@@ -52,7 +52,7 @@ from inyoka.portal.forms import (LoginForm, UserMailForm,
     PrivateMessageIndexForm, PrivateMessageFormProtected)
 from inyoka.portal.models import (StaticPage, StaticFile, Subscription,
     PrivateMessage, PRIVMSG_FOLDERS, PrivateMessageEntry)
-from inyoka.portal.user import (User, Group, UserData, UserBanned, reset_email,
+from inyoka.portal.user import (User, Group, UserPage, UserBanned, reset_email,
     set_new_email, deactivate_user, reactivate_user, PERMISSION_NAMES,
     send_activation_mail)
 from inyoka.portal.utils import (abort_access_denied, calendar_entries_for_month,
@@ -409,13 +409,6 @@ def profile(request, username):
     except ValueError:
         raise Http404()
 
-    try:
-        key = '%s/%s' % (settings.WIKI_USER_BASE,
-                         normalize_pagename(user.username))
-        wikipage = WikiPage.objects.get_by_name(key, raise_on_deleted=True)
-        content = wikipage.rev.rendered_text
-    except WikiPage.DoesNotExist:
-        content = u''
     if request.user.can('group_edit') or request.user.can('user_edit'):
         groups = user.groups.all()
     else:
@@ -426,7 +419,6 @@ def profile(request, username):
     return {
         'user': user,
         'groups': groups,
-        'wikipage': content,
         'User': User,
         'is_subscribed': subscribed,
         'request': request
@@ -714,19 +706,6 @@ def usercp_deactivate(request):
         'form': form,
         'user': request.user,
     }
-
-
-@check_login(message=_(u'You need to be logged in to change your user page.'))
-def usercp_userpage(request):
-    """
-    Redirect page that shows a small flash message that
-    the user was redirected
-    """
-    messages.info(request,
-        _(u'You were redirected to our wiki to change your user page. To get '
-            u'back, you can use the link or your browser’s “back” button.'))
-    return HttpResponseRedirect(href('wiki', settings.WIKI_USER_BASE,
-                                     request.user.username, action='edit'))
 
 
 def get_user(username):
