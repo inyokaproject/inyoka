@@ -558,7 +558,7 @@ class User(AbstractBaseUser):
         if request is None:
             request = current_request._get_current_object()
         if hasattr(self, 'userpage'):
-            context = RenderContext(request, simplified=True)
+            context = RenderContext(request, simplified=False)
             instructions = parse(self.userpage.content).compile(format)
             self.userpage.content_rendered = render(instructions, context)
             self.userpage.save()
