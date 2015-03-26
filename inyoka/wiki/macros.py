@@ -738,23 +738,20 @@ class Attachment(macros.Macro):
 
 @receiver(build_picture_node)
 def build_wiki_picture_node(sender, context, format, **kwargs):
+    target, width, height = (sender.target, sender.width, sender.height)
+    wiki_page = context.kwargs.get('wiki_page', None)
+
     if not context.application == 'wiki':
         return
 
-
-    target, width, height = (sender.target, sender.width, sender.height)
-    try:
-        wiki_page = context.kwargs.get('wiki_page', None)
-        if wiki_page:
-            target = join_pagename(wiki_page.name, target)
-        source = fetch_real_target(target, width, height)
-        img = nodes.Image(source, sender.alt, class_='image-' +
-                          (sender.align or 'default'), title=sender.title)
-        if (sender.width or sender.height) and wiki_page is not None:
-            return nodes.Link(fetch_real_target(target), [img])
-        return img
-    except StaticFile.DoesNotExist:
-        return
+    if wiki_page:
+        target = join_pagename(wiki_page.name, target)
+    source = fetch_real_target(target, width, height)
+    img = nodes.Image(source, sender.alt, class_='image-' +
+                      (sender.align or 'default'), title=sender.title)
+    if (sender.width or sender.height) and wiki_page is not None:
+        return nodes.Link(fetch_real_target(target), [img])
+    return img
 
 macros.register(RecentChanges)
 macros.register(PageCount)
