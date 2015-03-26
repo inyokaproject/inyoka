@@ -10,8 +10,7 @@
 """
 import random
 import string
-import operator
-import itertools
+
 from datetime import date, datetime, timedelta
 from collections import OrderedDict
 
@@ -26,7 +25,6 @@ from inyoka.markup.templates import expand_page_template
 from inyoka.markup.utils import simple_filter
 from inyoka.utils.cache import cache
 from inyoka.utils.dates import format_time, datetime_to_timezone
-from inyoka.utils.imaging import parse_dimensions
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
