@@ -388,9 +388,7 @@ class Picture(Macro):
             self.align = None
 
     def build_node(self, context, format):
-        ret_ = build_picture_node.send(sender=self,
-                                       context=context,
-                                       format=format)
+        ret_ = build_picture_node.send(sender=self, context=context, format=format)
         ret = filter(None, itertools.chain(
             map(operator.itemgetter(1), ret_)
         ))
