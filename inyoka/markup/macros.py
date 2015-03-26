@@ -25,8 +25,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import operator
 import itertools
+import operator
 
 from datetime import datetime
 
@@ -399,7 +399,7 @@ class Picture(Macro):
             assert len(ret) == 1, "There must not be more than one node tree per context"
             return ret[0]
 
-        source = fetch_real_target(target = self.target, width=self.width, height=self.height)
+        source = fetch_real_target(target=self.target, width=self.width, height=self.height)
 
         img = nodes.Image(source, self.alt, class_='image-' +
                           (self.align or 'default'), title=self.title)

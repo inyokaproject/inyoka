@@ -737,7 +737,7 @@ class Attachment(macros.Macro):
             return nodes.Link(source, self.children)
 
 @receiver(build_picture_node)
-def build_forum_picture_node(sender, context, format, **kwargs):
+def build_wiki_picture_node(sender, context, format, **kwargs):
     if not context.application == 'wiki':
         return
 
@@ -745,12 +745,9 @@ def build_forum_picture_node(sender, context, format, **kwargs):
     target, width, height = (sender.target, sender.width, sender.height)
     try:
         wiki_page = context.kwargs.get('wiki_page', None)
-
         if wiki_page:
             target = join_pagename(wiki_page.name, target)
-
         source = fetch_real_target(target, width, height)
-
         img = nodes.Image(source, sender.alt, class_='image-' +
                           (sender.align or 'default'), title=sender.title)
         if (sender.width or sender.height) and wiki_page is not None:
