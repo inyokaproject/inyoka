@@ -16,10 +16,12 @@ from datetime import date, datetime, timedelta
 from collections import OrderedDict
 
 from django.conf import settings
+from django.dispatch import receiver
 from django.utils.translation import ugettext as _, ungettext
 
 from inyoka.markup import nodes, macros
 from inyoka.markup.parsertools import MultiMap, flatten_iterator
+from inyoka.markup.signals import build_picture_node
 from inyoka.markup.templates import expand_page_template
 from inyoka.markup.utils import simple_filter
 from inyoka.utils.cache import cache
@@ -30,7 +32,6 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
 from inyoka.wiki.models import Page, MetaData, Revision
-from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
 
 
@@ -735,70 +736,28 @@ class Attachment(macros.Macro):
             )
             return nodes.Link(source, self.children)
 
+@receiver(build_picture_node)
+def build_forum_picture_node(sender, context, format, **kwargs):
+    if not context.application == 'wiki':
+        return
 
-class Picture(macros.Macro):
-    """
-    This macro can display external images and attachments as images.  It
-    also takes care about thumbnail generation.  For any internal (attachment)
-    image included that way an ``X-Attach`` metadata is emitted.
 
-    Like for any link only absolute targets are allowed.  This might be
-    surprising behavior if you're used to the MoinMoin syntax but caused
-    by the fact that the parser does not know at parse time on which page
-    it is operating.
-    """
-    names = (u'Picture', u'Bild')
-    arguments = (
-        ('picture', unicode, u''),
-        ('size', unicode, u''),
-        ('align', unicode, u''),
-        ('alt', unicode, None),
-        ('title', unicode, None)
-    )
-
-    def __init__(self, target, dimensions, alignment, alt, title):
-        self.metadata = [nodes.MetaData('X-Attach', [target])]
-        self.width, self.height = parse_dimensions(dimensions)
-        self.target = target
-        self.alt = alt or target
-        self.title = title
-
-        self.align = alignment
-        if self.align not in ('left', 'right', 'center'):
-            self.align = None
-
-    def build_node(self, context, format):
-        ret_ = build_picture_node.send(sender=self,
-                                       context=context,
-                                       format=format)
-        ret = filter(None, itertools.chain(
-            map(operator.itemgetter(1), ret_)
-        ))
-
-        if ret:
-            assert len(ret) == 1, "There must not be more than one node tree per context"
-            return ret[0]
-
-        # TODO: refactor using signals on rendering
-        #      to get proper application independence
-        if context.application == 'wiki':
-            target = normalize_pagename(self.target, True)
-        else:
-            target = self.target
-
+    target, width, height = (sender.target, sender.width, sender.height)
+    try:
         wiki_page = context.kwargs.get('wiki_page', None)
 
         if wiki_page:
             target = join_pagename(wiki_page.name, target)
 
-        source = fetch_real_target(target, width=self.width, height=self.height)
+        source = fetch_real_target(target, width, height)
 
-        img = nodes.Image(source, self.alt, class_='image-' +
-                          (self.align or 'default'), title=self.title)
-        if (self.width or self.height) and wiki_page is not None:
+        img = nodes.Image(source, sender.alt, class_='image-' +
+                          (sender.align or 'default'), title=sender.title)
+        if (sender.width or sender.height) and wiki_page is not None:
             return nodes.Link(fetch_real_target(target), [img])
         return img
-
+    except StaticFile.DoesNotExist:
+        return
 
 macros.register(RecentChanges)
 macros.register(PageCount)
@@ -818,4 +777,3 @@ macros.register(FilterByMetaData)
 macros.register(PageName)
 macros.register(Template)
 macros.register(Attachment)
-macros.register(Picture)
