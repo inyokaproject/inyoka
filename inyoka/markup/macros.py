@@ -25,13 +25,19 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import itertools
+import operator
+
 from datetime import datetime
 
 from django.utils.translation import ugettext as _
 
 from inyoka.markup import nodes
+from inyoka.markup.signals import build_picture_node
 from inyoka.markup.utils import debug_repr, filter_style, ArgumentCollector
 from inyoka.utils.dates import parse_iso8601, format_datetime
+from inyoka.utils.imaging import parse_dimensions
+from inyoka.wiki.views import fetch_real_target
 
 ALL_MACROS = {}
 
@@ -350,9 +356,57 @@ class Span(Macro):
         return nodes.Span(children=[nodes.Text(self.content)],
                         class_=self.class_, style=self.style)
 
+class Picture(Macro):
+    """
+    This macro can display external images and attachments as images.  It
+    also takes care about thumbnail generation.  For any internal (attachment)
+    image included that way an ``X-Attach`` metadata is emitted.
+
+    Like for any link only absolute targets are allowed.  This might be
+    surprising behavior if you're used to the MoinMoin syntax but caused
+    by the fact that the parser does not know at parse time on which page
+    it is operating.
+    """
+    names = (u'Picture', u'Bild')
+    arguments = (
+        ('picture', unicode, u''),
+        ('size', unicode, u''),
+        ('align', unicode, u''),
+        ('alt', unicode, None),
+        ('title', unicode, None)
+    )
+
+    def __init__(self, target, dimensions, alignment, alt, title):
+        self.metadata = [nodes.MetaData('X-Attach', [target])]
+        self.width, self.height = parse_dimensions(dimensions)
+        self.target = target
+        self.alt = alt or target
+        self.title = title
+
+        self.align = alignment
+        if self.align not in ('left', 'right', 'center'):
+            self.align = None
+
+    def build_node(self, context, format):
+        ret_ = build_picture_node.send(sender=self, context=context, format=format)
+        ret = filter(None, itertools.chain(
+            map(operator.itemgetter(1), ret_)
+        ))
+
+        if ret:
+            assert len(ret) == 1, "There must not be more than one node tree per context"
+            return ret[0]
+
+        source = fetch_real_target(target=self.target, width=self.width, height=self.height)
+
+        img = nodes.Image(source, self.alt, class_='image-' +
+                          (self.align or 'default'), title=self.title)
+        return img
+
 
 register(Anchor)
 register(Newline)
 register(Date)
 register(TableOfContents)
 register(Span)
+register(Picture)

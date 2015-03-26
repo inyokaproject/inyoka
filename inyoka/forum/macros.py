@@ -12,7 +12,7 @@ from django.dispatch import receiver
 
 from inyoka.markup import nodes
 from inyoka.forum.models import Attachment
-from inyoka.wiki.signals import build_picture_node
+from inyoka.markup.signals import build_picture_node
 
 
 @receiver(build_picture_node)
