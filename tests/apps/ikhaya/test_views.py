@@ -117,3 +117,74 @@ class TestViews(TestCase):
         </td>''' % user_wo.get_absolute_url(action='show'), count=1, html=True)
         self.assertContains(response, gravatar_url, count=1)
         self.assertContains(response, '<td class="author">', count=3)
+
+    def test_add_event_without_data(self):
+        response = self.client.post('/event/suggest/', {'confirm': True})
+        self.assertContains(response, 'date<ul class="errorlist">', 1)
+        self.assertContains(response, 'name<ul class="errorlist">', 1)
+        self.assertContains(response, 'errorlist', 3)
+
+    def test_add_event_without_name(self):
+        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
+                                                        'enddate': datetime.date(2015, 5, 2),
+                                                        'confirm': True})
+        self.assertContains(response, 'name<ul class="errorlist"', 1)
+        self.assertContains(response, 'errorlist', 2)
+
+    def test_add_event_with_name_startdate_enddate(self):
+        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
+                                                        'enddate': datetime.date(2015, 5, 2),
+                                                        'name': 'TestEvent',
+                                                        'confirm': True})
+        self.assertEquals(response.status_code, 302)
+
+    def test_add_event_with_name_enddate_before_startdate(self):
+        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
+                                                        'enddate': datetime.date(2015, 5, 2),
+                                                        'name': 'TestEvent',
+                                                        'confirm': True})
+        self.assertContains(response, 'enddate<ul class="errorlist">', 1)
+        self.assertContains(response, 'errorlist', 2)
+
+    def test_add_event_with_name_and_startdate(self):
+        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
+                                                        'name': 'TestEvent',
+                                                        'confirm': True})
+        self.assertEquals(response.status_code, 302)
+
+    def test_add_event_with_name_startdatetime_enddatetime_midnight(self):
+        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
+                                                        'time': datetime.time(0, 0, 0),
+                                                        'enddate': datetime.date(2015, 5, 2),
+                                                        'endtime': datetime.time(0, 0, 0),
+                                                        'name': 'TestEvent',
+                                                        'confirm': True})
+        self.assertEquals(response.status_code, 302)
+
+    def test_add_event_with_name_startdatetime_enddatetime(self):
+        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
+                                                        'time': datetime.time(10, 0, 0),
+                                                        'enddate': datetime.date(2015, 5, 2),
+                                                        'endtime': datetime.time(11, 0, 0),
+                                                        'name': 'TestEvent',
+                                                        'confirm': True})
+        self.assertEquals(response.status_code, 302)
+
+    def test_add_event_with_name_enddatetime_before_startdatetime(self):
+        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
+                                                        'time': datetime.time(10, 0, 0),
+                                                        'enddate': datetime.date(2015, 5, 1),
+                                                        'endtime': datetime.time(9, 0, 0),
+                                                        'name': 'TestEvent',
+                                                        'confirm': True})
+        self.assertContains(response, 'endtime<ul class="errorlist">', 1)
+        self.assertContains(response, 'errorlist', 2)
+
+    def test_add_event_with_name_startdatetime_enddatetime(self):
+        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 4, 30),
+                                                        'time': datetime.time(23, 0, 0),
+                                                        'enddate': datetime.date(2015, 5, 1),
+                                                        'endtime': datetime.time(9, 0, 0),
+                                                        'name': 'TestEvent',
+                                                        'confirm': True})
+        self.assertEquals(response.status_code, 302)
