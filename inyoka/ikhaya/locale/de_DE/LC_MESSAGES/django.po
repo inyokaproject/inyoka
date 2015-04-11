@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-04-26 09:42+0200\n"
+"POT-Creation-Date: 2015-05-02 11:27+0200\n"
 "PO-Revision-Date: 2014-10-05 11:02+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language-Team: German (Germany) "
@@ -69,7 +69,11 @@ msgstr "Es existiert schon ein Artikel mit diesem Slug!"
 msgid "The end date must occur after the start date."
 msgstr "Das Enddatum muss nach dem Startdatum liegen."
 
-#: inyoka/ikhaya/forms.py:200
+#: inyoka/ikhaya/forms.py:189
+msgid "The end time must occur after the start time."
+msgstr "Die Endzeit muss nach der Startzeit liegen."
+
+#: inyoka/ikhaya/forms.py:207
 msgid "Display event?"
 msgstr "Kalendereintrag sichtbar?"
 
