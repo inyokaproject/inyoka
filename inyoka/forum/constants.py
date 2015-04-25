@@ -32,6 +32,7 @@ UBUNTU_DISTROS = {
     'lubuntu': ugettext_lazy('Lubuntu'),
     'gnome': ugettext_lazy('Ubuntu GNOME'),
     'touch': ugettext_lazy('Ubuntu Touch'),
+    'mate': ugettext_lazy('Ubuntu MATE'),
 }
 
 def get_simple_version_choices():
