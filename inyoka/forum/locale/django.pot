@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-03-22 07:36+0100\n"
+"POT-Creation-Date: 2015-04-26 09:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,11 +81,19 @@ msgstr ""
 msgid "Ubuntu GNOME"
 msgstr ""
 
-#: inyoka/forum/constants.py:41
+#: inyoka/forum/constants.py:34
+msgid "Ubuntu Touch"
+msgstr ""
+
+#: inyoka/forum/constants.py:35
+msgid "Ubuntu MATE"
+msgstr ""
+
+#: inyoka/forum/constants.py:43
 msgid "Version"
 msgstr ""
 
-#: inyoka/forum/constants.py:45
+#: inyoka/forum/constants.py:47
 msgid "Distribution"
 msgstr ""
 
