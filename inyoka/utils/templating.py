@@ -15,6 +15,7 @@ import sys
 from django.conf import settings
 from django.contrib import messages
 from django.core.context_processors import csrf
+from django.forms.widgets import CheckboxInput
 from django.template.base import Context as DjangoContext
 from django.template.base import TemplateDoesNotExist
 from django.template.loader import BaseLoader
@@ -243,6 +244,10 @@ def urlencode_filter(value):
     return urlquote(value)
 
 
+def ischeckbox_filter(input):
+    return isinstance(input, CheckboxInput)
+
+
 @contextfunction
 def csrf_token(context):
     csrf_token = context['_csrf_token']
@@ -345,6 +350,7 @@ FILTERS = {
     'url': url_for,
     'urlencode': urlencode_filter,
     'jsonencode': json_filter,
+    'ischeckbox' : ischeckbox_filter,
     # L10N aware variants of Django's filters. They all are patched to use
     # DATE_FORMAT (naturalday and format_date), DATETIME_FORMAT (format_datetime),
     # and TIME_FORMAT (format_time) from the formats module and not the relevant
