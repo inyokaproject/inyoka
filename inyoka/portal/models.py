@@ -205,7 +205,6 @@ class PrivateMessageEntry(models.Model):
             message.folder = None if message.folder == trash else trash
             message.read = True if message.folder == trash else message.read
             message.save()
-        transaction.commit()
 
     def delete(self):
         if self.folder == PRIVMSG_FOLDERS['trash'][0]:
