@@ -716,7 +716,13 @@ def get_user(username):
         else:
             user = User.objects.get(username)
     except User.DoesNotExist:
-        raise Http404
+        if '@' in username:
+            try:
+                user = User.objects.get(username__exact=username)
+            except User.DoesNotExist:
+                raise Http404
+        else:
+            raise Http404
     return user
 
 
