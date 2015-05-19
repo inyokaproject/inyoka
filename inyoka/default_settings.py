@@ -103,6 +103,8 @@ FORUM_THUMBNAIL_SIZE = (64, 64)
 FORUM_OWNPOST_EDIT_LIMIT = (-1, 1800)
 FORUM_OWNPOST_DELETE_LIMIT = (0, 0)
 
+FORUM_DISABLE_POSTING = False
+
 # Number of days a user is allowed to perform the respective action with his
 # user account.
 USER_REACTIVATION_LIMIT = 31
