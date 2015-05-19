@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-04-26 09:42+0200\n"
+"POT-Creation-Date: 2015-05-19 09:34+0200\n"
 "PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -281,7 +281,11 @@ msgstr "Der Anhang mit der ID „%(id)d“ existiert nicht."
 msgid "The attachment “%(attachment)s” was deleted."
 msgstr "Der Anhang „%(attachment)s“ wurde gelöscht."
 
-#: inyoka/forum/views.py:420
+#: inyoka/forum/views.py:416
+msgid "Post functionality is currently disabled."
+msgstr "Das Schreiben von Beiträgen ist aktuell deaktiviert."
+
+#: inyoka/forum/views.py:424
 #, python-format
 msgid "The article “%(article)s” does not exist. However, you can create it now."
 msgstr ""

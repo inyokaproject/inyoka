@@ -413,7 +413,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     page = None
 
     if settings.FORUM_DISABLE_POSTING:
-        messages.error(request, _('Post functionality has been disabled for spam reasons.'))
+        messages.error(request, _('Post functionality is currently disabled.'))
         return HttpResponseRedirect(href('forum'))
 
     if page_name:
