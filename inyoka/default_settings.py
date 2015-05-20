@@ -84,6 +84,8 @@ INYOKA_ANONYMOUS_USER = u'anonymous'
 INYOKA_CONTACT_EMAIL = '@'.join(['contact', BASE_DOMAIN_NAME])
 DEFAULT_FROM_EMAIL = INYOKA_SYSTEM_USER_EMAIL
 
+INYOKA_DISABLE_REGISTRATION = False
+
 # logger name for remote exception logging
 INYOKA_LOGGER_NAME = u'inyoka'
 

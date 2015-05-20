@@ -13,15 +13,17 @@ import re
 from django.conf import settings
 from django.test import TestCase
 from django.core import mail
+from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.timezone import now
 from django.utils.translation import ugettext as _
 
-from inyoka.utils.test import InyokaClient
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.portal.models import (PrivateMessage, PrivateMessageEntry,
     Subscription, PRIVMSG_FOLDERS)
 from inyoka.utils.storage import storage
+from inyoka.utils.test import InyokaClient
+from inyoka.utils.urls import href
 
 
 class TestViews(TestCase):
@@ -277,6 +279,17 @@ class TestAuthViews(TestCase):
         self.assertEqual(1, len(mail.outbox))
         subject = mail.outbox[0].subject
         self.assertIn(u'Activation of the user “apollo13”', subject)
+
+    def test_register_deactivated(self):
+        """Test the process of registering a new account.
+
+        Checks that a disabled registration doesn't allow registering new users.
+        """
+        with override_settings(INYOKA_DISABLE_REGISTRATION=True):
+            with translation.override('en-us'):
+                response = self.client.get('/register/', follow=True)
+        self.assertRedirects(response, href('portal'))
+        self.assertContains(response, u'User registration is currently disabled.')
 
     def test_lost_password(self):
         """Test the “lost password” feature.
