@@ -218,6 +218,10 @@ def whoisonline(request):
 @templated('portal/register.html')
 def register(request):
     """Register a new user."""
+    if settings.INYOKA_DISABLE_REGISTRATION:
+        messages.error(request, _('User registration is currently disabled.'))
+        return HttpResponseRedirect(href('portal'))
+
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
         else href('portal'))
     if request.user.is_authenticated():
