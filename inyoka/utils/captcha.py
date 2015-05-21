@@ -3,7 +3,7 @@
     inyoka.utils.captcha
     ~~~~~~~~~~~~~~~~~~~~
 
-    A module that produces image and audio captchas.  Uses some code of
+    A module that produces image and audio captchas. Uses some code of
     PyCAPTCHA by Micah Dowty.
 
 
@@ -25,8 +25,9 @@ resource_path = abspath(join(dirname(__file__), pardir, 'res'))
 
 def generate_word():
     """This function returns a pronounceable word."""
-    consonants = 'bcdfghjklmnprstvwz'
-    vowels = 'aeiou'
+    # Don't use O and 0 and l, I and 1
+    consonants = 'bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ23456789'
+    vowels = 'aeiouAEU'
     both = consonants + vowels
     length = random.randrange(8, 12)
     return ''.join(
@@ -70,7 +71,9 @@ class Captcha(object):
         self.solution = solution
         self.layers = [
             RandomBackground(),
-            RandomDistortion()
+            SineWarp(),
+            RandomDistortion(),
+            SineWarp(),
         ]
         text_layer = TextLayer(self.solution, bg=self.layers[0].bg)
         self.layers.extend((text_layer, SineWarp()))
