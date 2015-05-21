@@ -588,6 +588,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     if 'send' in request.POST and form.is_valid():
         d = form.cleaned_data
 
+        is_spam_post = form._spam and not form._spam_discard
+
         if not post:  # not when editing an existing post
             doublepost = Post.objects \
                 .filter(author=request.user, text=d['text'],
@@ -614,6 +616,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 topic.ubuntu_version = d.get('ubuntu_version')
             if check_privilege(privileges, 'sticky'):
                 topic.sticky = d.get('sticky', False)
+            if is_spam_post:
+                topic.hidden = True
+                topic.reported = _('This topic is hidden due to possible spam.')
+                topic.reporter = User.objects.get_system_user()
 
             topic.save()
             topic.forum.invalidate_topic_cache()
@@ -641,23 +647,48 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             Attachment.update_post_ids(att_ids, post)
         else:
             post.has_attachments = False
+
+        if is_spam_post and ((topic or not newtopic) and not firstpost):
+            # Only for posts that are neither first post of an existing topic
+            # nor the first post of a new topic
+            post.hidden = True
+            if not post.id:
+                post.save()
+            system_user = User.objects.get_system_user()
+            msg = _(
+                '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
+                'due to possible spam.'
+            ) % {
+                'username': system_user.username,
+                'post': post.id,
+            }
+            if topic.reported:
+                topic.reported += '\n\n%s' % msg
+            else:
+                topic.reported = msg
+                topic.reporter = system_user
+            topic.save(update_fields=('reported', 'reporter_id'))
+
         post.edit(request, d['text'])
 
-        if newtopic:
-            send_newtopic_notifications(request.user, post, topic, forum)
-        elif not post_id:
-            send_edit_notifications(request.user, post, topic, forum)
+        if not is_spam_post:
+            if newtopic:
+                send_newtopic_notifications(request.user, post, topic, forum)
+            elif not post_id:
+                send_edit_notifications(request.user, post, topic, forum)
         if page:
             # the topic is a wiki discussion, bind it to the wiki
             # page and send notifications.
             page.topic = topic
             page.save()
-            send_discussion_notification(request.user, page)
+            if not is_spam_post:
+                send_discussion_notification(request.user, page)
 
-        subscribed = Subscription.objects.user_subscribed(request.user, topic)
-        if request.user.settings.get('autosubscribe', True) and not subscribed and not post_id:
-            subscription = Subscription(user=request.user, content_object=topic)
-            subscription.save()
+        if not is_spam_post:
+            subscribed = Subscription.objects.user_subscribed(request.user, topic)
+            if request.user.settings.get('autosubscribe', True) and not subscribed and not post_id:
+                subscription = Subscription(user=request.user, content_object=topic)
+                subscription.save()
 
         messages.success(request, _(u'The post was saved successfully.'))
         if newtopic:
