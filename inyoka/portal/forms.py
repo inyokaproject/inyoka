@@ -639,7 +639,7 @@ class PrivateMessageForm(forms.Form):
         return self.cleaned_data
 
 class PrivateMessageFormProtected(SurgeProtectionMixin, PrivateMessageForm):
-    source_protection_timeout = 60 * 5
+    surge_protection_timeout = 60 * 5
 
 
 class DeactivateUserForm(forms.Form):

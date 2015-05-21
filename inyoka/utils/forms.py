@@ -27,6 +27,7 @@ from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request
 from inyoka.utils.mail import is_blocked_host
+from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
@@ -41,10 +42,12 @@ def clear_surge_protection(request, form):
     and sending the whole form afterwards.
     """
     # Cleanup errors in parent form if the main form was not send.
-    if request.method == 'POST' and not 'send' in request.POST:
+    if request.method == 'POST' and 'send' not in request.POST:
         form.errors.clear()
         if 'sp' in request.session:
-            del request.session['sp']
+            if isinstance(form, SurgeProtectionMixin):
+                identifier = form.get_surge_protection_identifier()
+                request.session['sp'].pop(identifier, None)
 
 
 def validate_empty_text(value):

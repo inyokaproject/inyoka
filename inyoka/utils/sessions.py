@@ -70,24 +70,29 @@ class SurgeProtectionMixin(object):
     surge protection.  Give this method a higher MRO than the form baseclass!
     """
 
-    source_protection_timeout = 15
-    source_protection_message = ugettext_lazy(
+    surge_protection_timeout = 15
+    surge_protection_message = ugettext_lazy(
         u'You cannot send data that fast in a row. '
-        u'Please wait a bit until you submit the form again.')
-    source_protection_identifier = None
+        u'Please wait a bit until you submit the form again.'
+    )
+    surge_protection_identifier = None
 
     def clean(self):
         # only perform surge protection tests if the form is valid up
         # to that point.  This is important because otherwise form
         # errors would trigger the surge protection!
-        if self.is_valid():
-            identifier = self.source_protection_identifier or \
-                self.__class__.__module__.split('.')[1]
-            protection = current_request.session.setdefault('sp', {})
-            if protection.get(identifier, 0) >= time():
-                raise ValidationError(self.source_protection_message)
-            protection[identifier] = time() + self.source_protection_timeout
+        if self.surge_protection_timeout is not None and self.is_valid():
+            identifier = self.get_surge_protection_identifier()
+            session = current_request.session
+            session.setdefault('sp', {})
+            if session['sp'].get(identifier, 0) >= time():
+                raise ValidationError(self.surge_protection_message)
+            session['sp'][identifier] = time() + self.surge_protection_timeout
         return super(SurgeProtectionMixin, self).clean()
+
+    def get_surge_protection_identifier(self):
+        return self.surge_protection_identifier or \
+            (self.__class__.__module__ + '.' + self.__class__.__name__)
 
 
 def get_user_record(values=None):
