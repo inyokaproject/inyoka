@@ -20,8 +20,6 @@ def build_forum_picture_node(sender, context, format, **kwargs):
     if not context.application == 'forum':
         return
 
-    target, width, height = (sender.target, sender.width, sender.height)
-
     try:
         # There are times when two users upload a attachment with the same
         # name, both have post=None, so we cannot .get() here
@@ -33,15 +31,15 @@ def build_forum_picture_node(sender, context, format, **kwargs):
         post = forum_post.id if forum_post else None
 
         if context.request and 'attachments' in context.request.POST:
-            att_ids = map(int, filter(bool,
-                context.request.POST.get('attachments', '').split(',')
+            att_ids = map(int, filter(
+                bool, context.request.POST.get('attachments', '').split(',')
             ))
 
-            files = Attachment.objects.filter(name=target,
+            files = Attachment.objects.filter(name=sender.target,
                     post=post, id__in=att_ids)
             return nodes.HTML(files[0].html_representation)
         else:
-            file = Attachment.objects.get(name=target, post=forum_post)
+            file = Attachment.objects.get(name=sender.target, post=forum_post)
             return nodes.HTML(file.html_representation)
     except (Attachment.DoesNotExist, IndexError):
         return

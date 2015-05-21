@@ -24,7 +24,6 @@ from itertools import groupby
 from django.db import models, transaction
 from django.conf import settings
 from django.db.models import F, Max, Count
-from django.utils.html import escape
 from django.core.cache import cache
 from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
 from django.utils.html import escape, format_html
@@ -259,8 +258,7 @@ class Forum(models.Model):
     def get_parents(self, cached=True):
         """Return a list of all parent forums up to the root level."""
         parents = []
-        forums = Forum.objects.get_cached() if cached else \
-                 Forum.objects.all()
+        forums = Forum.objects.get_cached() if cached else Forum.objects.all()
         qdct = {forum.id: forum for forum in forums}
 
         forum = qdct[self.id]
@@ -363,8 +361,10 @@ class Forum(models.Model):
                              .values_list('user__id', 'positive')
             subset = [priv[0] for priv in query if check_privilege(priv[1], 'moderate')]
             if subset:
-                supporters = list(User.objects.defer('settings', 'forum_read_status') \
-                    .filter(id__in=subset).order_by('username').all())
+                supporters = list(
+                    User.objects.defer('settings', 'forum_read_status')
+                        .filter(id__in=subset).order_by('username').all()
+                )
             cache.set('forum/forum/supporters-%s' % self.id, supporters, 86400)
         return supporters
 
@@ -478,12 +478,14 @@ class Topic(models.Model):
                 topic__forum__id=F('topic__forum__id'))
 
             Forum.objects.filter(id__in=new_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=new_ids) \
-                                                 .aggregate(count=Max('id'))['count'])
+                last_post=new_post_query._clone().filter(forum__id__in=new_ids)
+                                        .aggregate(count=Max('id'))['count']
+            )
 
             Forum.objects.filter(id__in=old_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=old_ids) \
-                                                 .aggregate(count=Max('id'))['count'])
+                last_post=new_post_query._clone().filter(forum__id__in=old_ids)
+                                        .aggregate(count=Max('id'))['count']
+            )
 
         old_forum.invalidate_topic_cache()
         new_forum.invalidate_topic_cache()
@@ -757,7 +759,6 @@ class Post(models.Model, LockableObject):
             self.topic.forum.last_post_id = new_lp_id
             self.topic.forum.save(update_fields=['last_post_id'])
 
-
         cache.delete_many('forum/forums/%s' % f.slug for f in forums)
 
         return super(Post, self).delete()
@@ -838,8 +839,9 @@ class Post(models.Model, LockableObject):
                     post_counts = User.objects.filter(post__in=posts).values('id') \
                                               .annotate(pcount=Count('post__id'))
                     for user in post_counts:
-                        User.objects.filter(pk=user['id']) \
-                                .update(post_count=op(F('post_count'), user['pcount']))
+                        User.objects.filter(pk=user['id']).update(
+                            post_count=op(F('post_count'), user['pcount'])
+                        )
                     cache.delete_many('portal/user/%d' % user['id'] for user in post_counts)
 
             if not remove_topic:
@@ -871,12 +873,14 @@ class Post(models.Model, LockableObject):
             # completly and just set the highest id (== max recent posts) as
             # last_post.
             Forum.objects.filter(id__in=new_ids).update(
-                last_post=Topic.objects.filter(forum__id__in=new_ids) \
-                            .aggregate(count=Max('last_post'))['count'])
+                last_post=Topic.objects.filter(forum__id__in=new_ids)
+                               .aggregate(count=Max('last_post'))['count']
+            )
 
             Forum.objects.filter(id__in=old_ids).update(
-                last_post=Topic.objects.filter(forum__id__in=old_ids) \
-                            .aggregate(count=Max('last_post'))['count'])
+                last_post=Topic.objects.filter(forum__id__in=old_ids)
+                               .aggregate(count=Max('last_post'))['count']
+            )
 
             # Update post_count of the forums
             Forum.objects.filter(id__in=new_ids)\
@@ -899,8 +903,10 @@ class Post(models.Model, LockableObject):
         else:
             attachments = sorted(self.attachments.all(), key=expr)
 
-        grouped = [(x[0], list(x[1]), 'broken' if not x[0] else '') \
-                   for x in groupby(attachments, expr)]
+        grouped = [
+            (x[0], list(x[1]), 'broken' if not x[0] else '')
+            for x in groupby(attachments, expr)
+        ]
         return grouped
 
     def check_ownpost_limit(self, type='edit'):
@@ -1092,14 +1098,19 @@ class Attachment(models.Model):
         if show_preview and show_thumbnails and isimage():
             thumb = thumbnail()
             if thumb:
-                return format_html(u'<a href="{}"><img class="preview" src="{}" alt="{}" title="{}"></a>',
-                                   url, thumb, self.comment, self.comment
+                return format_html(
+                    u'<a href="{}"><img class="preview" src="{}" alt="{}" title="{}"></a>',
+                    url, thumb, self.comment, self.comment,
                 )
             else:
-                linktext = pgettext('Link text to an image attachment',
-                    u'View %(name)s') % {'name': self.name}
-                return format_html(u'<a href="{}" type="{}" title="{}">{}</a>',
-                                   url, self.mimetype, self.comment, linktext)
+                linktext = pgettext(
+                    'Link text to an image attachment',
+                    u'View %(name)s'
+                ) % {'name': self.name}
+                return format_html(
+                    u'<a href="{}" type="{}" title="{}">{}</a>',
+                    url, self.mimetype, self.comment, linktext
+                )
         elif show_preview and istext():
             contents = self.contents
             if contents is not None:

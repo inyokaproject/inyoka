@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     inyoka.forum.views
     ~~~~~~~~~~~~~~~~~~
@@ -141,8 +141,7 @@ def forum(request, slug, page=1):
     qs = Topic.objects.prepare_for_overview(list(pagination.get_queryset()))
 
     # FIXME: Filter topics with no last_post or first_post
-    topics = [topic for topic in qs
-                    if topic.first_post and topic.last_post]
+    topics = [topic for topic in qs if topic.first_post and topic.last_post]
 
     if not check_privilege(privs[forum.pk], 'moderate'):
         topics = [topic for topic in topics if not topic.hidden]
@@ -247,10 +246,19 @@ def viewtopic(request, topic_slug, page=1):
     can_mod = check_privilege(privileges, 'moderate')
     can_reply = check_privilege(privileges, 'reply')
     can_vote = check_privilege(privileges, 'vote')
-    can_edit = lambda post: post.author_id == request.user.id and \
-        can_reply and post.check_ownpost_limit('edit')
-    can_delete = lambda post: can_reply and post.author_id == request.user.id \
-        and post.check_ownpost_limit('delete')
+
+    def can_edit(post):
+        return (
+            post.author_id == request.user.id and can_reply and
+            post.check_ownpost_limit('edit')
+        )
+
+    def can_delete(post):
+        return (
+            can_reply and post.author_id == request.user.id
+            and post.check_ownpost_limit('delete')
+        )
+
     voted_all = not (polls and bool([True for p in polls if p.can_vote]))
 
     marked_split_posts = request.session.get('_split_post_ids', [])
@@ -321,8 +329,10 @@ def handle_polls(request, topic, poll_ids):
         except Poll.DoesNotExist:
             pass
         else:
-            messages.info(request, _(u'The poll “%(poll)s” was removed.')
-                                     % {'poll': poll.question})
+            messages.info(
+                request,
+                _(u'The poll “%(poll)s” was removed.') % {'poll': poll.question}
+            )
             topic.has_poll = Poll.objects \
                 .filter(Q(topic=topic) & ~Q(id=poll.id)) \
                 .exists()
@@ -425,13 +435,16 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                            'can create it now.') % {'article': norm_page_name})
             return HttpResponseRedirect(href('wiki', norm_page_name))
         forum_slug = settings.WIKI_DISCUSSION_FORUM
-        messages.info(request,
-            _(u'No discussion is linked yet to the article “%(article)s”. '
-               'You can create a discussion now or <a href="%(link)s">link '
-               'an existing topic</a> to the article.') % {
-                   'article': page_name,
-                   'link': href('wiki', norm_page_name,
-                            action='manage_discussion')})
+        messages.info(
+            request, _(
+                u'No discussion is linked yet to the article “%(article)s”. '
+                u'You can create a discussion now or <a href="%(link)s">link '
+                u'an existing topic</a> to the article.'
+            ) % {
+                'article': page_name,
+                'link': href('wiki', norm_page_name, action='manage_discussion')
+            }
+        )
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
         forum = topic.forum
@@ -755,8 +768,10 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
         try:
             obj = cls.objects.get(slug=slug)
         except ObjectDoesNotExist:
-            messages.error(request, _(u'There is no “%(slug)s” anymore.')
-                                      % {'slug': slug})
+            messages.error(
+                request,
+                _(u'There is no “%(slug)s” anymore.') % {'slug': slug}
+            )
             return HttpResponseRedirect(href('forum'))
 
         try:
@@ -898,6 +913,7 @@ def reportlist(request):
         'subscribed': subscribed,
     }
 
+
 def reported_topics_subscription(request, mode):
     subscribers = storage['reported_topics_subscribers'] or u''
     users = set(int(i) for i in subscribers.split(',') if i)
@@ -968,6 +984,7 @@ def first_unread_post(request, topic_slug):
         redirect = Post.url_for_post(first_unread_post.id)
     return HttpResponseRedirect(redirect)
 
+
 def last_post(request, topic_slug):
     """
     Redirect to the last post of the given topic.
@@ -981,6 +998,7 @@ def last_post(request, topic_slug):
     except (Post.DoesNotExist, Topic.DoesNotExist):
         raise Http404()
 
+
 @templated('forum/movetopic.html')
 def movetopic(request, topic_slug):
     """Move a topic into another forum"""
@@ -989,8 +1007,11 @@ def movetopic(request, topic_slug):
     if not have_privilege(request.user, topic.forum, CAN_MODERATE):
         return abort_access_denied(request)
 
-    forums = [forum for forum in Forum.objects.get_cached()
-                    if forum.parent is not None and forum.id != topic.forum.id]
+    forums = [
+        forum
+        for forum in Forum.objects.get_cached()
+        if forum.parent is not None and forum.id != topic.forum.id
+    ]
     mapping = {forum.id: forum for forum in filter_invisible(request.user, forums)}
 
     if not mapping:
@@ -1183,8 +1204,10 @@ def delete_post(request, post_id, action='hide'):
     post = Post.objects.get(id=post_id)
     topic = post.topic
 
-    can_hide = have_privilege(request.user, topic.forum, CAN_MODERATE) and not \
-               (post.author_id == request.user.id and post.check_ownpost_limit('delete'))
+    can_hide = (
+        have_privilege(request.user, topic.forum, CAN_MODERATE) and
+        not (post.author_id == request.user.id and post.check_ownpost_limit('delete'))
+    )
     can_delete = can_hide and request.user.can('delete_topic')
 
     if action == 'delete' and not can_delete:
@@ -1205,14 +1228,18 @@ def delete_post(request, post_id, action='hide'):
         if action == 'hide':
             post.hidden = True
             post.save()
-            messages.success(request, _(u'The post by “%(user)s” was hidden.')
-                                        % {'user': post.author.username})
+            messages.success(
+                request,
+                _(u'The post by “%(user)s” was hidden.') % {'user': post.author.username}
+            )
             return HttpResponseRedirect(url_for(post))
         elif action == 'delete':
             position = post.position
             post.delete()
-            messages.success(request, _(u'The post by “%(user)s” was deleted.')
-                                        % {'user': post.author.username})
+            messages.success(
+                request,
+                _(u'The post by “%(user)s” was deleted.') % {'user': post.author.username}
+            )
             page = max(0, position) // POSTS_PER_PAGE + 1
             url = href('forum', 'topic', topic.slug, *(page != 1 and (page,) or ()))
             return HttpResponseRedirect(url)
@@ -1290,8 +1317,10 @@ def delete_topic(request, topic_slug, action='hide'):
                 topic.hidden = True
                 topic.save()
                 redirect = url_for(topic)
-                messages.success(request, _(u'The topic “%(topic)s” was hidden.')
-                                            % {'topic': topic.title})
+                messages.success(
+                    request,
+                    _(u'The topic “%(topic)s” was hidden.') % {'topic': topic.title}
+                )
 
             elif action == 'delete':
                 send_deletion_notification(request.user, topic, request.POST.get('reason', None))
@@ -1437,13 +1466,16 @@ def markread(request, slug=None):
 
 MAX_PAGES_TOPICLIST = 50
 
+
 @templated('forum/topiclist.html')
 def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=None):
     page = int(page)
 
     if action != 'author' and page > MAX_PAGES_TOPICLIST:
-        messages.info(request, _(u'You can only display the last %(n)d pages.')
-                                 % {'n': MAX_PAGES_TOPICLIST})
+        messages.info(
+            request,
+            _(u'You can only display the last %(n)d pages.') % {'n': MAX_PAGES_TOPICLIST}
+        )
         return HttpResponseRedirect(href('forum'))
 
     topics = Topic.objects.order_by('-last_post').values_list('id', flat=True)
@@ -1503,7 +1535,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     forum_obj = None
     if forum:
         forum_obj = Forum.objects.get_cached(forum)
-        if forum_obj and not forum_obj.id in invisible:
+        if forum_obj and forum_obj.id not in invisible:
             topics = topics.filter(forum=forum_obj)
 
     topics = topics.distinct()
@@ -1513,7 +1545,8 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     topic_ids = [tid for tid in pagination.get_queryset()]
 
     # check for moderation permissions
-    moderatable_forums = [obj.id for obj in
+    moderatable_forums = [
+        obj.id for obj in
         Forum.objects.get_forums_filtered(request.user, CAN_MODERATE, reverse=True)
     ]
 

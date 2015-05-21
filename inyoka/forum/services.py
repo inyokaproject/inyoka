@@ -120,7 +120,7 @@ def subscription_action(request, action=None):
 @never_cache
 @permit_methods(('POST',))
 def on_change_status(request, solved=None):
-    if not 'slug' in request.POST:
+    if 'slug' not in request.POST:
         return
     topic = Topic.objects.get(slug=request.POST['slug'])
     can_read = have_privilege(request.user, topic.forum, 'read')

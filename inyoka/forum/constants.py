@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     inyoka.forum.constants
     ~~~~~~~~~~~~~~~~~~~~~~
@@ -35,6 +35,7 @@ UBUNTU_DISTROS = {
     'mate': ugettext_lazy('Ubuntu MATE'),
 }
 
+
 def get_simple_version_choices():
     return [(v.number, str(v)) for v in get_ubuntu_versions() if v.is_active()]
 
@@ -44,4 +45,4 @@ def get_version_choices():
 
 
 def get_distro_choices():
-    return [('', ugettext_lazy('Distribution'))] + UBUNTU_DISTROS.items();
+    return [('', ugettext_lazy('Distribution'))] + UBUNTU_DISTROS.items()

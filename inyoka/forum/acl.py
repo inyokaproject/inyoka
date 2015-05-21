@@ -33,8 +33,10 @@ PRIVILEGES_DETAILS = [
 PRIVILEGES = [x[0] for x in PRIVILEGES_DETAILS]
 
 #: Mapping from privilege strings to bit representations
-PRIVILEGES_BITS = {PRIVILEGES[i - 1]: 2 ** i
-                   for i in xrange(1, len(PRIVILEGES_DETAILS) + 1)}
+PRIVILEGES_BITS = {
+    PRIVILEGES[i - 1]: 2 ** i
+    for i in xrange(1, len(PRIVILEGES_DETAILS) + 1)
+}
 #: Similar to :data:`PRIVILEGES_BITS` except a mapping from the bits to the strings
 REVERSED_PRIVILEGES_BITS = {y: x for x, y in PRIVILEGES_BITS.iteritems()}
 
@@ -169,7 +171,7 @@ def get_privileges(user, forums):
     if isinstance(forums, (tuple, list)):
         forum_ids = [forum.id for forum in forums]
     elif forums is EmptyQuerySet:
-	forum_ids = []
+        forum_ids = []
     else:
         forum_ids = forums.values_list('id', flat=True)
     privilege_map = _get_privilege_map(user, forum_ids)

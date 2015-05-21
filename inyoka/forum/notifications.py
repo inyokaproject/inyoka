@@ -51,17 +51,22 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
     translation.activate(settings.LANGUAGE_CODE)
     try:
         # Inform users who subscribed to the forum
-        queue_notifications.delay(request_user_id, 'new_topic',
-            _(u'New topic in forum “%(forum)s”: “%(topic)s”') % {
-                    'forum': data.get('forum_name'),
-                    'topic': data.get('topic_title')},
+        queue_notifications.delay(request_user_id, 'new_topic', _(
+            u'New topic in forum “%(forum)s”: “%(topic)s”') % {
+                'forum': data.get('forum_name'),
+                'topic': data.get('topic_title')
+            },
             data,
             include_notified=True,
-            filter={'content_type': ctype(Forum),
-                      'object_id': data.get('forum_id')},
+            filter={
+                'content_type': ctype(Forum),
+                'object_id': data.get('forum_id')
+            },
             callback=notify_ubuntu_version_subscriptions.subtask(
-                args=(request_user_id, data)),
-            exclude = {'user__in': notified_users})
+                args=(request_user_id, data)
+            ),
+            exclude={'user__in': notified_users},
+        )
     finally:
         translation.activate(prev_language)
 
