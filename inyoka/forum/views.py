@@ -472,18 +472,42 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     # Get the privileges here, because we need to know if the user requires
     # antispam measures
     privileges = get_forum_privileges(request.user, forum)
+    needs_spam_check = not check_privilege(privileges, 'moderate')
 
     if newtopic:
-        form = NewTopicForm(request.POST or None, initial={
-            'text': forum.newtopic_default_text,
-            'title': page and norm_page_name or '',
-        }, force_version=forum.force_version)
+        form = NewTopicForm(
+            force_version=forum.force_version,
+            needs_spam_check=needs_spam_check,
+            request=request,
+            data=request.POST or None,
+            initial={
+                'text': forum.newtopic_default_text,
+                'title': page and norm_page_name or '',
+            },
+        )
     elif quote:
-        form = EditPostForm(request.POST or None, initial={
-            'text': quote_text(quote.text, quote.author, 'post:%s:' % quote.id) + '\n',
-        }, is_first_post=firstpost)
+        form = EditPostForm(
+            is_first_post=firstpost,
+            needs_spam_check=needs_spam_check,
+            request=request,
+            data=request.POST or None,
+            initial={
+                'text': quote_text(
+                    quote.text, quote.author, 'post:%s:' % quote.id
+                ) + '\n',
+            }
+        )
     else:
-        form = EditPostForm(request.POST or None, is_first_post=firstpost)
+        form = EditPostForm(
+            is_first_post=firstpost,
+            needs_spam_check=needs_spam_check,
+            request=request,
+            data=request.POST or None,
+        )
+
+    if request.method == 'POST' and check_privilege(privileges, 'moderate'):
+        # Disable surge protection for moderators
+        form.surge_protection_timeout = None
 
     if request.method == 'POST' and check_privilege(privileges, 'moderate'):
         # Disable surge protection for moderators
@@ -650,13 +674,19 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
     # the user is going to edit an existing post/topic
     elif post:
-        form = form.__class__(request.POST or None, initial={
-            'title': topic.title,
-            'ubuntu_distro': topic.ubuntu_distro,
-            'ubuntu_version': topic.ubuntu_version,
-            'sticky': topic.sticky,
-            'text': post.text,
-        }, is_first_post=firstpost)
+        form = EditPostForm(
+            is_first_post=firstpost,
+            needs_spam_check=needs_spam_check,
+            request=request,
+            data=request.POST or None,
+            initial={
+                'title': topic.title,
+                'ubuntu_distro': topic.ubuntu_distro,
+                'ubuntu_version': topic.ubuntu_version,
+                'sticky': topic.sticky,
+                'text': post.text,
+            }
+        )
         if not attachments:
             attachments = Attachment.objects.filter(post=post)
 

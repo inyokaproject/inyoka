@@ -20,6 +20,7 @@ from inyoka.forum.models import Topic, Forum
 from inyoka.utils.forms import SlugField, MultiField, StrippedCharField
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
+from inyoka.utils.spam import block_user_if_spammer, check_form_field, is_spam
 
 
 class ForumField(forms.ChoiceField):
@@ -63,14 +64,18 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
 
     surge_protection_timeout = settings.FORUM_SURGE_PROTECTION_TIMEOUT
 
-    def __init__(self, *args, **kwargs):
-        is_first_post = kwargs.pop('is_first_post', False)
+    def __init__(self, is_first_post, needs_spam_check, request, *args, **kwargs):
+        self.needs_spam_check = needs_spam_check
+        self.request = request
         super(EditPostForm, self).__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_version_choices()
         self.fields['ubuntu_distro'].choices = get_distro_choices()
         if not is_first_post:
             for k in ['sticky', 'title', 'ubuntu_version', 'ubuntu_distro']:
                 del self.fields[k]
+
+    def clean_text(self):
+        return check_form_field(self, 'text', self.needs_spam_check, self.request, 'forum-post')
 
 
 class NewTopicForm(SurgeProtectionMixin, forms.Form):
@@ -103,8 +108,10 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
 
     surge_protection_timeout = settings.FORUM_SURGE_PROTECTION_TIMEOUT
 
-    def __init__(self, *args, **kwargs):
-        self.force_version = kwargs.pop('force_version', False)
+    def __init__(self, force_version, needs_spam_check, request, *args, **kwargs):
+        self.force_version = force_version
+        self.needs_spam_check = needs_spam_check
+        self.request = request
         super(NewTopicForm, self).__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_version_choices()
         self.fields['ubuntu_distro'].choices = get_distro_choices()
@@ -122,6 +129,9 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
             raise forms.ValidationError(forms.fields.Field.
                                         default_error_messages['required'])
         return ubuntu_distro
+
+    def clean_text(self):
+        return check_form_field(self, 'text', self.needs_spam_check, self.request, 'forum-post')
 
 
 class MoveTopicForm(forms.Form):
