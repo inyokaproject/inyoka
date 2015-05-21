@@ -9,6 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from django import forms
+from django.conf import settings
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
@@ -45,7 +46,7 @@ class ForumField(forms.ChoiceField):
         self.choices = add + choices
 
 
-class EditPostForm(forms.Form):
+class EditPostForm(SurgeProtectionMixin, forms.Form):
     """
     Allows the user to edit the text of a post.
     This form takes the additional keyword argument `is_first_post`.
@@ -59,6 +60,8 @@ class EditPostForm(forms.Form):
     title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}))
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
+
+    surge_protection_timeout = settings.FORUM_SURGE_PROTECTION_TIMEOUT
 
     def __init__(self, *args, **kwargs):
         is_first_post = kwargs.pop('is_first_post', False)
@@ -97,6 +100,8 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
     sticky = forms.BooleanField(required=False)
+
+    surge_protection_timeout = settings.FORUM_SURGE_PROTECTION_TIMEOUT
 
     def __init__(self, *args, **kwargs):
         self.force_version = kwargs.pop('force_version', False)
