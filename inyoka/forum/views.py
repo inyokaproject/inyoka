@@ -468,6 +468,11 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                             .get(id=int(quote_id))
         topic = quote.topic
         forum = topic.forum
+
+    # Get the privileges here, because we need to know if the user requires
+    # antispam measures
+    privileges = get_forum_privileges(request.user, forum)
+
     if newtopic:
         form = NewTopicForm(request.POST or None, initial={
             'text': forum.newtopic_default_text,
@@ -480,8 +485,11 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     else:
         form = EditPostForm(request.POST or None, is_first_post=firstpost)
 
+    if request.method == 'POST' and check_privilege(privileges, 'moderate'):
+        # Disable surge protection for moderators
+        form.surge_protection_timeout = None
+
     # check privileges
-    privileges = get_forum_privileges(request.user, forum)
     if post:
         if (topic.locked or topic.hidden or post.hidden) and \
            not check_privilege(privileges, 'moderate'):
