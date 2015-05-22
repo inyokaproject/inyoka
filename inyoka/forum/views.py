@@ -1302,6 +1302,22 @@ def delete_post(request, post_id, action='hide'):
                                      post.page))
 
 
+@confirm_action(message=_(u'Do you really want to mark this post as ham / spam?'),
+                confirm=_(u'Mark as ham / spam'), cancel=_(u'Cancel'))
+def mark_ham_spam(request, post_id, action='spam'):
+    post = Post.objects.select_related('topic__forum').get(id=post_id)
+    topic = post.topic
+
+    if not have_privilege(request.user, topic.forum, CAN_MODERATE):
+        return abort_access_denied(request)
+
+    if action == 'ham':
+        post.mark_ham()
+    elif action == 'spam':
+        post.mark_spam(report=False, update_akismet=True)
+    return HttpResponseRedirect(url_for(post))
+
+
 @templated('forum/revisions.html')
 def revisions(request, post_id):
     post = Post.objects.select_related('topic', 'topic.forum').get(id=post_id)

@@ -113,6 +113,14 @@ def is_spam(comment_content, comment_type):
     return settings.INYOKA_AKISMET_DEFAULT_IS_SPAM, False
 
 
+def mark_ham(text):
+    logger.critical('inyoka.utils.spam.mark_ham: NotImplementedError')
+
+
+def mark_spam(text):
+    logger.critical('inyoka.utils.spam.mark_spam: NotImplementedError')
+
+
 def check_form_field(form, text_field, needs_check, request, content_type):
     text = form.cleaned_data.get(text_field)
     form._spam, form._spam_discard = False, False
