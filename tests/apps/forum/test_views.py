@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -82,11 +82,15 @@ class TestViews(TestCase):
             t.first_post_id = p.id
             t.save()
             for i in xrange(1, randint(2, 3)):
-                posts.append(Post(text="More Posts %s" % randint(1, 100000),
-                                    topic=t, author=self.user, position=i))
+                posts.append(Post(
+                    text="More Posts %s" % randint(1, 100000), topic=t,
+                    author=self.user, position=i,
+                ))
             for i in xrange(1, randint(2, 3)):
-                posts.append(Post(text="More Posts %s" % randint(1, 100000),
-                                    topic=t, author=self.admin, position=i))
+                posts.append(Post(
+                    text="More Posts %s" % randint(1, 100000), topic=t,
+                    author=self.admin, position=i,
+                ))
 
         self.num_topics_on_last_page = int(round(constants.TOPICS_PER_PAGE * 0.66))
         for i in xrange(1, 4 * constants.TOPICS_PER_PAGE + self.num_topics_on_last_page):
@@ -129,12 +133,16 @@ class TestViews(TestCase):
         useraccess.save()
         response = self.client.get('/usercp/subscriptions/', {}, False,
                          HTTP_HOST='portal.%s' % settings.BASE_DOMAIN_NAME)
-        self.assertTrue(('/topic/%s/unsubscribe/?next=' % self.topic.slug)
-                         in response.content.decode("utf-8"))
+        self.assertTrue(
+            ('/topic/%s/unsubscribe/?next=' % self.topic.slug)
+            in response.content.decode("utf-8")
+        )
 
         forward_url = 'http://portal.%s/myfwd' % settings.BASE_DOMAIN_NAME
-        response = self.client.get('/topic/%s/unsubscribe/' % self.topic.slug,
-                                    {'next': forward_url})
+        response = self.client.get(
+            '/topic/%s/unsubscribe/' % self.topic.slug,
+            {'next': forward_url}
+        )
         self.assertFalse(
                    Subscription.objects.user_subscribed(self.user, self.topic))
         self.assertEqual(response['location'], forward_url)
@@ -217,11 +225,13 @@ class TestViews(TestCase):
 
         def valuelist(topicid, field='id'):
             if isinstance(field, (list, tuple)):
-                return list(Post.objects.filter(topic_id=topicid)\
-                    .values_list(*field).order_by('position'))
+                return list(
+                    Post.objects.filter(topic_id=topicid).values_list(*field).order_by('position')
+                )
             else:
-                return list(Post.objects.filter(topic_id=topicid)\
-                    .values_list(field, flat=True).order_by('position'))
+                return list(
+                    Post.objects.filter(topic_id=topicid).values_list(field, flat=True).order_by('position')
+                )
 
         t1 = Topic.objects.create(title='Topic 1', slug='topic-1',
                 author=self.user, forum=self.forum2)
@@ -300,7 +310,6 @@ class TestPostEditView(TestCase):
             positive=self.privileges, negative=0)
 
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
-        self.client.login(username='admin', password='admin')
 
     def tearDown(self):
         for att in Attachment.objects.all():
@@ -345,6 +354,7 @@ class TestPostEditView(TestCase):
         self.assertInHTML(pattern % text, response.content, count=1)
 
     def test_newtopic(self):
+        self.client.login(username='admin', password='admin')
         # Test preview
         postdata = {
             'title': 'newpost_title',
@@ -364,6 +374,7 @@ class TestPostEditView(TestCase):
 
     def test_newtopic_with_file(self):
         TEST_ATTACHMENT = 'test_attachment.png'
+        self.client.login(username='admin', password='admin')
         # Test file upload
         f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
         postdata = {
@@ -400,6 +411,7 @@ class TestPostEditView(TestCase):
     def test_newtopic_with_multiple_files(self):
         TEST_ATTACHMENT1 = 'test_attachment.png'
         TEST_ATTACHMENT2 = 'test_attachment2.png'
+        self.client.login(username='admin', password='admin')
         # Test file upload #1
         f1 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb')
         postdata = {
@@ -450,6 +462,7 @@ class TestPostEditView(TestCase):
         self.assertInHTML(pattern % {'url': att2.get_absolute_url(), 'comment': att2.comment, 'name': att2.name}, response.content, count=1)
 
     def test_newtopic_with_poll(self):
+        self.client.login(username='admin', password='admin')
         # Add first poll
         postdata = {
             'question': "What shall I ask?",
@@ -486,6 +499,7 @@ class TestPostEditView(TestCase):
         self.assertInHTML(pattern % {'poll_pk': poll.pk, 'opt': opt2.name, 'opt_pk': opt2.pk}, response.content, count=1)
 
     def test_newtopic_with_multiple_polls(self):
+        self.client.login(username='admin', password='admin')
         # Test add poll #1
         postdata = {
             'question': "What shall I ask?",
@@ -541,6 +555,7 @@ class TestPostEditView(TestCase):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 
+        self.client.login(username='admin', password='admin')
         # Test preview
         postdata = {
             'text': 'newpost text',
@@ -561,6 +576,7 @@ class TestPostEditView(TestCase):
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 
         TEST_ATTACHMENT = 'test_attachment.png'
+        self.client.login(username='admin', password='admin')
         # Test file upload
         f = open(path.join(path.dirname(__file__), TEST_ATTACHMENT), 'rb')
         postdata = {
@@ -598,6 +614,7 @@ class TestPostEditView(TestCase):
 
         TEST_ATTACHMENT1 = 'test_attachment.png'
         TEST_ATTACHMENT2 = 'test_attachment2.png'
+        self.client.login(username='admin', password='admin')
         # Test file upload #1
         f1 = open(path.join(path.dirname(__file__), TEST_ATTACHMENT1), 'rb')
         postdata = {
@@ -650,6 +667,7 @@ class TestPostEditView(TestCase):
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
         post = Post.objects.create(text=u'second post', author=self.admin, position=1, topic=topic)
 
+        self.client.login(username='admin', password='admin')
         # Test preview
         postdata = {
             'text': 'editpost text',
@@ -668,6 +686,7 @@ class TestPostEditView(TestCase):
     def test_edit_post_remove_attachments(self):
         TEST_ATTACHMENT1 = 'test_attachment.png'
         TEST_ATTACHMENT2 = 'test_attachment2.png'
+        self.client.login(username='admin', password='admin')
 
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
@@ -749,6 +768,7 @@ class TestPostEditView(TestCase):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
         post = Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 
+        self.client.login(username='admin', password='admin')
         # Test preview
         postdata = {
             'title': 'edited title',
@@ -767,7 +787,6 @@ class TestPostEditView(TestCase):
         self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
         self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
 
-
     def test_edit_first_post_remove_polls(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
         post = Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
@@ -778,6 +797,7 @@ class TestPostEditView(TestCase):
         PollOption.objects.create(poll=poll2, name='option21')
         PollOption.objects.create(poll=poll2, name='option22')
 
+        self.client.login(username='admin', password='admin')
         with translation.override('en-us'):
             response = self.client.get('/post/%d/edit/' % post.pk)
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
