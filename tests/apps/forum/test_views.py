@@ -13,6 +13,8 @@ import shutil
 from os import makedirs, path
 from random import randint
 
+import responses
+
 from django.conf import settings
 from django.core.files import File
 from django.test import Client, TestCase
@@ -27,8 +29,7 @@ from inyoka.forum.models import (Attachment, Forum, Post, Poll, PollOption,
     Privilege, Topic)
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.utils.urls import href
-from inyoka.utils.test import InyokaClient
+from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient
 
 
 class TestForumViews(TestCase):
@@ -290,16 +291,18 @@ class TestViews(TestCase):
         self.assertEqual(valuelist(t2.pk, 'position'), [0])
 
 
-class TestPostEditView(TestCase):
+class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
 
     client_class = InyokaClient
     permissions = sum(PERMISSION_NAMES.keys())
     privileges = sum(PRIVILEGES_BITS.values())
+    user_privileges = sum(v for k, v in PRIVILEGES_BITS.items() if k in ('read', 'create', 'reply'))
 
     def setUp(self):
         self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
         self.admin._permissions = self.permissions
         self.admin.save()
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
 
         self.category = Forum.objects.create(name='Category')
         self.forum = Forum.objects.create(name='Forum', parent=self.category)
@@ -309,9 +312,16 @@ class TestPostEditView(TestCase):
         Privilege.objects.create(user=self.admin, forum=self.forum,
             positive=self.privileges, negative=0)
 
+        Privilege.objects.create(user=self.user, forum=self.category,
+            positive=self.user_privileges, negative=0)
+        Privilege.objects.create(user=self.user, forum=self.forum,
+            positive=self.user_privileges, negative=0)
+
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 
     def tearDown(self):
+        self.client.logout()
+        self.reset_user(self.user)
         for att in Attachment.objects.all():
             att.delete()  # This removes the files too
 
@@ -371,6 +381,52 @@ class TestPostEditView(TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
         self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+
+    def test_newtopic_user(self):
+        self.client.login(username='user', password='user')
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
+            'text': 'newpost text',
+        }
+        response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0)
+        self.assertPreviewInHTML('newpost text', response)
+
+        # Test send
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_newtopic_user_spam(self):
+        self.client.login(username='user', password='user')
+        self.make_valid_key()
+        self.make_spam()
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
+            'text': 'newpost text',
+        }
+        response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0)
+        self.assertPreviewInHTML('newpost text', response)
+
+        # Test send
+        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        # FIXME: This should be 4, not 3. Double decrement due to preview call above
+        self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
+                          'your account will be blocked.</div>', response.content, count=1)
+        self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
+                          response.content, count=1)
 
     def test_newtopic_with_file(self):
         TEST_ATTACHMENT = 'test_attachment.png'
@@ -571,6 +627,52 @@ class TestPostEditView(TestCase):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
+    def test_new_post_user(self):
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+
+        self.client.login(username='user', password='user')
+        # Test preview
+        postdata = {
+            'text': 'newpost text',
+        }
+        response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1)
+        self.assertPreviewInHTML('newpost text', response)
+
+        # Test send
+        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_new_post_user_spam(self):
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+
+        self.client.login(username='user', password='user')
+        self.make_valid_key()
+        self.make_spam()
+        # Test preview
+        postdata = {
+            'text': 'newpost text',
+        }
+        response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1)
+        self.assertPreviewInHTML('newpost text', response)
+
+        # Test send
+        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
+                          'your account will be blocked.</div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+
     def test_new_post_with_file(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
@@ -683,6 +785,54 @@ class TestPostEditView(TestCase):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
 
+    def test_edit_post_user(self):
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text=u'second post', author=self.user, position=1, topic=topic)
+
+        self.client.login(username='user', password='user')
+        # Test preview
+        postdata = {
+            'text': 'editpost text',
+        }
+        response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 2)
+        self.assertPreviewInHTML('editpost text', response)
+
+        # Test send
+        self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 2, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_edit_post_user_spam(self):
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+        post = Post.objects.create(text=u'second post', author=self.user, position=1, topic=topic)
+
+        self.client.login(username='user', password='user')
+        self.make_valid_key()
+        self.make_spam()
+        # Test preview
+        postdata = {
+            'text': 'editpost text',
+        }
+        response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 2)
+        self.assertPreviewInHTML('editpost text', response)
+
+        # Test send
+        self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 2, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
+                          'your account will be blocked.</div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
+
     def test_edit_post_remove_attachments(self):
         TEST_ATTACHMENT1 = 'test_attachment.png'
         TEST_ATTACHMENT2 = 'test_attachment2.png'
@@ -786,6 +936,58 @@ class TestPostEditView(TestCase):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
         self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
+
+    def test_edit_first_post_user(self):
+        topic = Topic.objects.create(title='topic', author=self.user, forum=self.forum)
+        post = Post.objects.create(text=u'first post', author=self.user, position=0, topic=topic)
+
+        self.client.login(username='user', password='user')
+        # Test preview
+        postdata = {
+            'title': 'edited title',
+            'text': 'edited text',
+        }
+        response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
+        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertPreviewInHTML('edited text', response)
+
+        # Test send
+        self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_edit_first_post_user_spam(self):
+        topic = Topic.objects.create(title='topic', author=self.user, forum=self.forum)
+        post = Post.objects.create(text=u'first post', author=self.user, position=0, topic=topic)
+
+        self.client.login(username='user', password='user')
+        self.make_valid_key()
+        self.make_spam()
+        # Test preview
+        postdata = {
+            'title': 'edited title',
+            'text': 'edited text',
+        }
+        response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
+        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertPreviewInHTML('edited text', response)
+
+        # Test send
+        self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
+                          'your account will be blocked.</div>', response.content, count=1)
+        self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
+                          response.content, count=1)
 
     def test_edit_first_post_remove_polls(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)

@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     inyoka.testing
     ~~~~~~~~~~~~~~
@@ -10,6 +10,8 @@
 """
 import gc
 
+import responses
+
 from django.conf import settings
 from django.contrib.auth import login, authenticate
 from django.http import HttpRequest
@@ -17,6 +19,9 @@ from django.test.client import Client
 from django.utils.importlib import import_module
 
 from inyoka.portal.user import User
+from inyoka.utils.spam import (
+    get_comment_check_url, get_verify_key_url, reset_user,
+)
 
 
 def profile_memory(func):
@@ -121,3 +126,21 @@ class InyokaClient(Client):
             return True
         else:
             return False
+
+
+class AntiSpamTestCaseMixin(object):
+
+    def make_valid_key(self):
+        responses.add(
+            responses.POST, get_verify_key_url(), body='valid', status=200,
+            content_type='text/plain'
+        )
+
+    def make_spam(self):
+        responses.add(
+            responses.POST, get_comment_check_url(), body='true', status=200,
+            content_type='text/plain'
+        )
+
+    def reset_user(self, user):
+        reset_user(user)

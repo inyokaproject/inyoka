@@ -156,3 +156,8 @@ def block_user_if_spammer(user):
             )
         )
     return settings.INYOKA_SPAM_COUNTER_MAX - spam_hits
+
+
+def reset_user(user):
+    cache_key = 'spam/user/%d' % user.pk
+    cache.delete(cache_key)
