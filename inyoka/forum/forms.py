@@ -20,7 +20,7 @@ from inyoka.forum.models import Topic, Forum
 from inyoka.utils.forms import SlugField, MultiField, StrippedCharField
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
-from inyoka.utils.spam import block_user_if_spammer, check_form_field, is_spam
+from inyoka.utils.spam import check_form_field
 
 
 class ForumField(forms.ChoiceField):
@@ -75,7 +75,8 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
                 del self.fields[k]
 
     def clean_text(self):
-        return check_form_field(self, 'text', self.needs_spam_check, self.request, 'forum-post')
+        if 'send' in self.data:
+            return check_form_field(self, 'text', self.needs_spam_check, self.request, 'forum-post')
 
 
 class NewTopicForm(SurgeProtectionMixin, forms.Form):
@@ -131,7 +132,8 @@ class NewTopicForm(SurgeProtectionMixin, forms.Form):
         return ubuntu_distro
 
     def clean_text(self):
-        return check_form_field(self, 'text', self.needs_spam_check, self.request, 'forum-post')
+        if 'send' in self.data:
+            return check_form_field(self, 'text', self.needs_spam_check, self.request, 'forum-post')
 
 
 class MoveTopicForm(forms.Form):
