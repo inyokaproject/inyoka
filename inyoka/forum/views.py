@@ -472,7 +472,15 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     # Get the privileges here, because we need to know if the user requires
     # antispam measures
     privileges = get_forum_privileges(request.user, forum)
-    needs_spam_check = not check_privilege(privileges, 'moderate')
+    needs_spam_check = True
+    if check_privilege(privileges, 'moderate'):
+        # Exclude moderators for the current forum from spam checks
+        needs_spam_check = False
+    else:
+        anonymous_privileges = get_forum_privileges(User.objects.get_anonymous_user(), forum)
+        if not check_privilege(anonymous_privileges, 'read'):
+            # Don't require spam checks for not publicly readable forums
+            needs_spam_check = False
 
     if newtopic:
         form = NewTopicForm(

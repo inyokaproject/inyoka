@@ -24,9 +24,10 @@ from django.utils.translation import ugettext as _
 from mock import patch
 
 from inyoka.forum import constants
-from inyoka.forum.acl import PRIVILEGES_BITS
-from inyoka.forum.models import (Attachment, Forum, Post, Poll, PollOption,
-    Privilege, Topic)
+from inyoka.forum.acl import CAN_READ, PRIVILEGES_BITS
+from inyoka.forum.models import (
+    Attachment, Forum, Post, Poll, PollOption, Privilege, Topic
+)
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient
@@ -317,6 +318,20 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         Privilege.objects.create(user=self.user, forum=self.forum,
             positive=self.user_privileges, negative=0)
 
+        self.public_category = Forum.objects.create(name='Public category')
+        self.public_forum = Forum.objects.create(name='Public forum', parent=self.public_category)
+        anonymous = User.objects.get_anonymous_user()
+
+        Privilege.objects.create(user=self.user, forum=self.public_category,
+            positive=self.user_privileges, negative=0)
+        Privilege.objects.create(user=self.user, forum=self.public_forum,
+            positive=self.user_privileges, negative=0)
+
+        Privilege.objects.create(user=anonymous, forum=self.public_category,
+            positive=CAN_READ, negative=0)
+        Privilege.objects.create(user=anonymous, forum=self.public_forum,
+            positive=CAN_READ, negative=0)
+
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 
     def tearDown(self):
@@ -413,11 +428,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'ubuntu_distro': constants.get_distro_choices()[2][0],
             'text': 'newpost text',
         }
-        response = self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 0, 0)
+        response = self.post_request('/forum/%s/newtopic/' % self.public_forum.slug, postdata, 0, 0)
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
-        self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, submit=True)
+        self.post_request('/forum/%s/newtopic/' % self.public_forum.slug, postdata, 1, 1, submit=True)
 
         # Check for rendered post
         with translation.override('en-us'):
@@ -650,7 +665,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_new_post_user_spam(self):
-        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 
         self.client.login(username='user', password='user')
@@ -809,7 +824,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_edit_post_user_spam(self):
-        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
         post = Post.objects.create(text=u'second post', author=self.user, position=1, topic=topic)
 
@@ -963,7 +978,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_edit_first_post_user_spam(self):
-        topic = Topic.objects.create(title='topic', author=self.user, forum=self.forum)
+        topic = Topic.objects.create(title='topic', author=self.user, forum=self.public_forum)
         post = Post.objects.create(text=u'first post', author=self.user, position=0, topic=topic)
 
         self.client.login(username='user', password='user')
