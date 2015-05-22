@@ -16,6 +16,7 @@ from random import randint
 import responses
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files import File
 from django.test import Client, TestCase
 from django.test.utils import override_settings
@@ -30,10 +31,17 @@ from inyoka.forum.models import (
 )
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, PERMISSION_NAMES
+from inyoka.utils.cache import request_cache
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient
 
 
 class TestForumViews(TestCase):
+
+    def tearDown(self):
+        from inyoka.portal import user
+        cache.clear()
+        request_cache.clear()
+        user._ANONYMOUS_USER = None
 
     @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_forum_index(self):
@@ -71,6 +79,12 @@ class TestViews(TestCase):
 
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
+
+    def tearDown(self):
+        from inyoka.portal import user
+        cache.clear()
+        request_cache.clear()
+        user._ANONYMOUS_USER = None
 
     def _setup_pagination(self):
         """Create enough topics for pagination test"""
@@ -335,13 +349,17 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 
     def tearDown(self):
+        from inyoka.portal import user
+
         self.client.logout()
-        self.reset_user(self.user)
         for att in Attachment.objects.all():
             att.delete()  # This removes the files too
-
         PollOption.objects.all().delete()
         Poll.objects.all().delete()
+
+        cache.clear()
+        request_cache.clear()
+        user._ANONYMOUS_USER = None
 
     def post_request(self, path, postdata, topics, posts, attachments=None,
             polls=None, polloptions=None, submit=False):
@@ -437,7 +455,6 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        # FIXME: This should be 4, not 3. Double decrement due to preview call above
         self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
                           'your account will be blocked.</div>', response.content, count=1)
         self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',

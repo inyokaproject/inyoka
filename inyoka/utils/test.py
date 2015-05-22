@@ -19,9 +19,7 @@ from django.test.client import Client
 from django.utils.importlib import import_module
 
 from inyoka.portal.user import User
-from inyoka.utils.spam import (
-    get_comment_check_url, get_verify_key_url, reset_user,
-)
+from inyoka.utils.spam import get_comment_check_url, get_verify_key_url
 
 
 def profile_memory(func):
@@ -141,6 +139,3 @@ class AntiSpamTestCaseMixin(object):
             responses.POST, get_comment_check_url(), body='true', status=200,
             content_type='text/plain'
         )
-
-    def reset_user(self, user):
-        reset_user(user)
