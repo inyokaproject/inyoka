@@ -119,6 +119,17 @@ Further you need a recent pip and virtualenv for Python 2.7:
   $ sudo python get-pip.py
   $ sudo pip install virtualenv
 
+Finally for installing themes npm, a package manager for javascript, is
+needed:
+
+.. code-block:: console
+
+  $ sudo apt-get install npm
+
+The version of npm shipped on Ubuntu 12.04 is too old, see `these docs
+<https://docs.npmjs.com/getting-started/installing-node>`_ in order to
+update your version.
+
 Adding links (Ubuntu only)
 **************************
 
@@ -159,6 +170,14 @@ This will route all ubuntuusers.local calls in your browser to your
 localhost.
 
 Note: This is only one line! Watch for linebreaks!
+
+Installing the theme
+********************
+
+Inyoka supports multiple themes, all of them are listed (among other
+things) on `GitHub <https://github.com/inyokaproject>`_. Please refer to
+the spefific theme readme file in order to get installation instructions.
+*You will not be able to run Inyoka without installing a theme.*
 
 
 Working with Inyoka the first time
