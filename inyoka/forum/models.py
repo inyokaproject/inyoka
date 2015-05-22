@@ -932,7 +932,7 @@ class Post(models.Model, LockableObject):
         return timedelta_to_seconds(delta) < t
 
     def mark_ham(self):
-        mark_ham(self.text)
+        mark_ham(self, self.text, 'forum-post')
         topic = self.topic
         if topic.first_post == self:
             # it's the first post, i.e. the topic
@@ -945,7 +945,7 @@ class Post(models.Model, LockableObject):
 
     def mark_spam(self, report=True, update_akismet=True):
         if update_akismet:
-            mark_spam(self.text)
+            mark_spam(self, self.text, 'forum-post')
         topic = self.topic
         if topic.first_post == self:
             # it's the first post, i.e. the topic

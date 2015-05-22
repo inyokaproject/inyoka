@@ -50,7 +50,7 @@ class TestForumViews(TestCase):
         self.assertEqual(resp.status_code, 200)
 
 
-class TestViews(TestCase):
+class TestViews(AntiSpamTestCaseMixin, TestCase):
 
     client_class = InyokaClient
     permissions = sum(PERMISSION_NAMES.keys())
@@ -59,6 +59,7 @@ class TestViews(TestCase):
     def setUp(self):
         self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.system_user = User.objects.get_system_user()
         self.admin._permissions = self.permissions
         self.admin.save()
 
@@ -75,7 +76,7 @@ class TestViews(TestCase):
         self.topic = Topic.objects.create(title='A test Topic', author=self.user,
                 forum=self.forum2)
         self.post = Post.objects.create(text=u'Post 1', author=self.user,
-                topic=self.topic)
+                topic=self.topic, position=0)
 
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')
@@ -85,6 +86,7 @@ class TestViews(TestCase):
         cache.clear()
         request_cache.clear()
         user._ANONYMOUS_USER = None
+        user._SYSTEM_USER = None
 
     def _setup_pagination(self):
         """Create enough topics for pagination test"""
@@ -304,6 +306,154 @@ class TestViews(TestCase):
         self.assertEqual(valuelist(t2.pk), [p21.pk])
         self.assertEqual(valuelist(t1.pk, 'position'), list(xrange(0, 5)))
         self.assertEqual(valuelist(t2.pk, 'position'), [0])
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_topic_mark_ham_admin(self):
+        topic = Topic.objects.create(
+            title='A test Topic', author=self.user, forum=self.forum2,
+            hidden=True, reported='spam', reporter=self.system_user,
+        )
+        post = Post.objects.create(
+            text=u'Post 1', author=self.user, topic=topic, position=0, hidden=False
+        )
+        self.make_valid_key()
+        self.make_mark_ham()
+        response = self.client.post('/post/%d/ham/' % post.pk, {'confirm': 'send'})
+        self.assertEqual(response.status_code, 302)
+        post = Post.objects.select_related('topic').get(pk=post.pk)
+        self.assertFalse(post.hidden)
+        self.assertFalse(post.topic.hidden)
+        # Don't remove the reported marker
+        self.assertIn('spam', post.topic.reported)
+        self.assertEqual(post.topic.reporter, self.system_user)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_topic_mark_spam_admin(self):
+        topic = Topic.objects.create(
+            title='A test Topic', author=self.user, forum=self.forum2,
+        )
+        post = Post.objects.create(
+            text=u'Post 1', author=self.user, topic=topic, position=0,
+        )
+        self.make_valid_key()
+        self.make_mark_spam()
+        response = self.client.post('/post/%d/spam/' % post.pk, {'confirm': 'send'})
+        self.assertEqual(response.status_code, 302)
+        post = Post.objects.select_related('topic').get(pk=post.pk)
+        self.assertFalse(post.hidden)
+        self.assertTrue(post.topic.hidden)
+        # Don't mark the topic as reported
+        self.assertIsNone(post.topic.reported)
+        self.assertIsNone(post.topic.reporter)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_topic_mark_ham_user(self):
+        self.client.logout()
+        self.client.login(username='user', password='user')
+
+        topic = Topic.objects.create(
+            title='A test Topic', author=self.user, forum=self.forum2,
+            hidden=True, reported='spam', reporter=self.system_user
+        )
+        post = Post.objects.create(
+            text=u'Post 1', author=self.user, topic=topic, position=0
+        )
+        self.make_valid_key()
+        self.make_mark_ham()
+        response = self.client.post('/post/%d/ham/' % post.pk, {'confirm': 'send'})
+        self.assertEqual(response.status_code, 403)
+        post = Post.objects.select_related('topic__reporter').get(pk=post.pk)
+        self.assertFalse(post.hidden)
+        self.assertTrue(post.topic.hidden)
+        self.assertIn('spam', post.topic.reported)
+        self.assertEqual(post.topic.reporter, self.system_user)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_topic_mark_spam_user(self):
+        self.client.logout()
+        self.client.login(username='user', password='user')
+
+        topic = Topic.objects.create(
+            title='A test Topic', author=self.user, forum=self.forum2,
+        )
+        post = Post.objects.create(
+            text=u'Post 1', author=self.user, topic=topic, position=0
+        )
+        self.make_valid_key()
+        self.make_mark_spam()
+        response = self.client.post('/post/%d/spam/' % post.pk, {'confirm': 'send'})
+        self.assertEqual(response.status_code, 403)
+        post = Post.objects.select_related('topic').get(pk=post.pk)
+        self.assertFalse(post.hidden)
+        self.assertFalse(post.topic.hidden)
+        self.assertIsNone(post.topic.reported)
+        self.assertIsNone(post.topic.reporter)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_post_mark_ham_admin(self):
+        post = Post.objects.create(
+            text=u'Post 2', author=self.user, topic=self.topic, position=1, hidden=True
+        )
+        self.make_valid_key()
+        self.make_mark_ham()
+        response = self.client.post('/post/%d/ham/' % post.pk, {'confirm': 'send'})
+        self.assertEqual(response.status_code, 302)
+        post = Post.objects.select_related('topic').get(pk=post.pk)
+        self.assertFalse(post.hidden)
+        self.assertFalse(post.topic.hidden)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_post_mark_spam_admin(self):
+        post = Post.objects.create(
+            text=u'Post 2', author=self.user, topic=self.topic, position=1, hidden=False
+        )
+        self.make_valid_key()
+        self.make_mark_spam()
+        response = self.client.post('/post/%d/spam/' % post.pk, {'confirm': 'send'})
+        self.assertEqual(response.status_code, 302)
+        post = Post.objects.select_related('topic').get(pk=post.pk)
+        self.assertTrue(post.hidden)
+        self.assertFalse(post.topic.hidden)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_post_mark_ham_user(self):
+        self.client.logout()
+        self.client.login(username='user', password='user')
+
+        post = Post.objects.create(
+            text=u'Post 2', author=self.user, topic=self.topic, position=1, hidden=True
+        )
+        self.make_valid_key()
+        self.make_mark_ham()
+        response = self.client.post('/post/%d/ham/' % post.pk, {'confirm': 'send'})
+        self.assertEqual(response.status_code, 403)
+        post = Post.objects.select_related('topic').get(pk=post.pk)
+        self.assertTrue(post.hidden)
+        self.assertFalse(post.topic.hidden)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_post_mark_spam_user(self):
+        self.client.logout()
+        self.client.login(username='user', password='user')
+
+        post = Post.objects.create(
+            text=u'Post 2', author=self.user, topic=self.topic, position=1, hidden=False
+        )
+        self.make_valid_key()
+        self.make_mark_spam()
+        response = self.client.post('/post/%d/spam/' % post.pk, {'confirm': 'send'})
+        self.assertEqual(response.status_code, 403)
+        post = Post.objects.select_related('topic').get(pk=post.pk)
+        self.assertFalse(post.hidden)
+        self.assertFalse(post.topic.hidden)
 
 
 class TestPostEditView(AntiSpamTestCaseMixin, TestCase):

@@ -113,12 +113,32 @@ def is_spam(comment_content, comment_type):
     return settings.INYOKA_AKISMET_DEFAULT_IS_SPAM, False
 
 
-def mark_ham(text):
-    logger.critical('inyoka.utils.spam.mark_ham: NotImplementedError')
+def mark_ham(obj, comment_content, comment_type):
+    if settings.INYOKA_USE_AKISMET and verify_key():
+        data = {
+            'blog': settings.INYOKA_AKISMET_URL,
+            'comment_content': comment_content,
+            'comment_type': comment_type,
+            'user_ip': '127.0.0.1',
+        }
+        logger.info('Submitting %s.%s with id %d as ham' % (
+            obj.__class__.__module__, obj.__class__.__name__, obj.pk
+        ))
+        requests.post(get_mark_ham_url(), data)
 
 
-def mark_spam(text):
-    logger.critical('inyoka.utils.spam.mark_spam: NotImplementedError')
+def mark_spam(obj, comment_content, comment_type):
+    if settings.INYOKA_USE_AKISMET and verify_key():
+        data = {
+            'blog': settings.INYOKA_AKISMET_URL,
+            'comment_content': comment_content,
+            'comment_type': comment_type,
+            'user_ip': '127.0.0.1',
+        }
+        logger.info('Submitting %s.%s with id %d as spam' % (
+            obj.__class__.__module__, obj.__class__.__name__, obj.pk
+        ))
+        requests.post(get_mark_spam_url(), data)
 
 
 def check_form_field(form, text_field, needs_check, request, content_type):

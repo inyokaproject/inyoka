@@ -19,7 +19,10 @@ from django.test.client import Client
 from django.utils.importlib import import_module
 
 from inyoka.portal.user import User
-from inyoka.utils.spam import get_comment_check_url, get_verify_key_url
+from inyoka.utils.spam import (
+    get_comment_check_url, get_mark_ham_url, get_mark_spam_url,
+    get_verify_key_url,
+)
 
 
 def profile_memory(func):
@@ -137,5 +140,17 @@ class AntiSpamTestCaseMixin(object):
     def make_spam(self):
         responses.add(
             responses.POST, get_comment_check_url(), body='true', status=200,
+            content_type='text/plain'
+        )
+
+    def make_mark_ham(self):
+        responses.add(
+            responses.POST, get_mark_ham_url(), body='Thank you', status=200,
+            content_type='text/plain'
+        )
+
+    def make_mark_spam(self):
+        responses.add(
+            responses.POST, get_mark_spam_url(), body='Thank you', status=200,
             content_type='text/plain'
         )
