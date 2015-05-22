@@ -47,6 +47,7 @@ from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
 from inyoka.utils.pagination import Pagination
+from inyoka.utils.spam import mark_ham, mark_spam
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page as WikiPage
 
@@ -929,6 +930,50 @@ class Post(models.Model, LockableObject):
             return True
         delta = datetime.utcnow() - self.pub_date.replace(tzinfo=None)
         return timedelta_to_seconds(delta) < t
+
+    def mark_ham(self):
+        mark_ham(self.text)
+        topic = self.topic
+        if topic.first_post == self:
+            # it's the first post, i.e. the topic
+            topic.hidden = False
+            topic.save(update_fields=['hidden'])
+        else:
+            # it's not the first post
+            self.hidden = False
+            self.save(update_fields=['hidden'])
+
+    def mark_spam(self, report=True, update_akismet=True):
+        if update_akismet:
+            mark_spam(self.text)
+        topic = self.topic
+        if topic.first_post == self:
+            # it's the first post, i.e. the topic
+            topic.hidden = True
+            if report:
+                # Don't report a topic as spam if explicitly classified
+                topic.reported = _('This topic is hidden due to possible spam.')
+                topic.reporter = User.objects.get_system_user()
+            topic.save(update_fields=['hidden', 'reported', 'reporter'])
+        else:
+            # it's not the first post
+            self.hidden = True
+            self.save(update_fields=['hidden'])
+            if report:
+                # Don't report a post as spam if explicitly classified
+                msg = _(
+                    '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
+                    'due to possible spam.'
+                ) % {
+                    'username': User.objects.get_system_user().username,
+                    'post': self.pk,
+                }
+                if topic.reported:
+                    topic.reported += '\n\n%s' % msg
+                else:
+                    topic.reported = msg
+                    topic.reporter = User.objects.get_system_user()
+            topic.save(update_fields=['reported', 'reporter'])
 
     def __unicode__(self):
         return '%s - %s' % (

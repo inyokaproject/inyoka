@@ -624,10 +624,6 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 topic.ubuntu_version = d.get('ubuntu_version')
             if check_privilege(privileges, 'sticky'):
                 topic.sticky = d.get('sticky', False)
-            if is_spam_post:
-                topic.hidden = True
-                topic.reported = _('This topic is hidden due to possible spam.')
-                topic.reporter = User.objects.get_system_user()
 
             topic.save()
             topic.forum.invalidate_topic_cache()
@@ -656,28 +652,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         else:
             post.has_attachments = False
 
-        if is_spam_post and ((topic or not newtopic) and not firstpost):
-            # Only for posts that are neither first post of an existing topic
-            # nor the first post of a new topic
-            post.hidden = True
-            if not post.id:
-                post.save()
-            system_user = User.objects.get_system_user()
-            msg = _(
-                '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
-                'due to possible spam.'
-            ) % {
-                'username': system_user.username,
-                'post': post.id,
-            }
-            if topic.reported:
-                topic.reported += '\n\n%s' % msg
-            else:
-                topic.reported = msg
-                topic.reporter = system_user
-            topic.save(update_fields=('reported', 'reporter_id'))
-
         post.edit(request, d['text'])
+
+        if is_spam_post:
+            post.mark_spam(report=True, update_akismet=False)
 
         if not is_spam_post:
             if newtopic:
