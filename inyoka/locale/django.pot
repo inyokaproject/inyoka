@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-04-26 09:42+0200\n"
+"POT-Creation-Date: 2015-05-23 12:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,61 +37,61 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: inyoka/utils/forms.py:52
+#: inyoka/utils/forms.py:55
 msgid "Text must not be empty"
 msgstr ""
 
-#: inyoka/utils/forms.py:63
+#: inyoka/utils/forms.py:66
 msgid "Your signature contains illegal elements"
 msgstr ""
 
-#: inyoka/utils/forms.py:68
+#: inyoka/utils/forms.py:71
 msgid "Your signature contains too many nested elements"
 msgstr ""
 
-#: inyoka/utils/forms.py:73
+#: inyoka/utils/forms.py:76
 #, python-format
 msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr ""
 
-#: inyoka/utils/forms.py:77
+#: inyoka/utils/forms.py:80
 #, python-format
 msgid "Your signature can only contain up to %(num)d lines"
 msgstr ""
 
-#: inyoka/utils/forms.py:128
+#: inyoka/utils/forms.py:131
 msgid "This user does not exist"
 msgstr ""
 
-#: inyoka/utils/forms.py:182
+#: inyoka/utils/forms.py:185
 msgid ""
 "The entered e-mail address belongs to a e-mail provider we had to block "
 "because of SPAM problems. Please choose another e-mail address"
 msgstr ""
 
-#: inyoka/utils/forms.py:195
+#: inyoka/utils/forms.py:198
 msgid "The entered Jabber address is invalid. Please check your input."
 msgstr ""
 
-#: inyoka/utils/forms.py:221
+#: inyoka/utils/forms.py:224
 msgid ""
 "You have entered an invisible field and were therefore classified as a "
 "bot."
 msgstr ""
 
-#: inyoka/utils/forms.py:232
+#: inyoka/utils/forms.py:235
 msgid "CAPTCHA"
 msgstr ""
 
-#: inyoka/utils/forms.py:233
+#: inyoka/utils/forms.py:236
 msgid "Please type in the code from the graphic above"
 msgstr ""
 
-#: inyoka/utils/forms.py:235
+#: inyoka/utils/forms.py:238
 msgid "Generate new code"
 msgstr ""
 
-#: inyoka/utils/forms.py:257
+#: inyoka/utils/forms.py:260
 msgid "The entered CAPTCHA was incorrect."
 msgstr ""
 
@@ -129,6 +129,13 @@ msgstr ""
 #: inyoka/utils/sortable.py:106
 #, python-format
 msgid "The chosen sort value (“%(value)s”) is not available"
+msgstr ""
+
+#: inyoka/utils/spam.py:151
+#, python-format
+msgid ""
+"Your text is considered spam. You have %(left)d attempts left before your"
+" account will be blocked."
 msgstr ""
 
 #: inyoka/utils/text.py:143
