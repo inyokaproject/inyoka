@@ -101,7 +101,7 @@ def pip():
     if not getattr(env, 'parameters', None):
         prompt('pip parameters', key='parameters')
     run(
-        'source {target_dir}/../bin/activate;'
+        'source {target_dir}/../virtualenv/bin/activate;'
         'pip {parameters}'.format(
             **{
                 'target_dir': env.target_dir,
