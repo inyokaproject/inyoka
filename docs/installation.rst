@@ -179,18 +179,6 @@ things) on `GitHub <https://github.com/inyokaproject>`_. Please refer to
 the spefific theme readme file in order to get installation instructions.
 *You will not be able to run Inyoka without installing a theme.*
 
-Creating the documentation
-**************************
-
-In order to create or update the documentation (yes, *this*
-documentation), run
-
-.. code-block:: console
-
-  (inyoka)$ make html
-   
-in ``inyoka/inyoka/docs/``.
-
 
 Working with Inyoka the first time
 ==================================

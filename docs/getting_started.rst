@@ -216,6 +216,7 @@ Test someone's Pull Request
 .. todo::
    Fill me.
 
+
 Styles
 ======
 
@@ -226,5 +227,26 @@ Run
 
   (inyoka)$ ./node_modules/grunt-cli/bin/grunt watch
 
-in your theme base directory and the ``.css`` files are generated
-automatically. For more information read the theme documentation.
+in your theme's base directory to automatically generate the ``.css``
+files. For more information read the theme documentation.
+
+
+Documentation
+=============
+
+Installation
+************
+
+In order to create or update the documentation (yes, *this*
+documentation), run
+
+.. code-block:: console
+
+  (inyoka)$ make html
+   
+in ``inyoka/inyoka/docs/``.
+
+Documentating
+*************
+
+This documentation is incomplete, you can help by expanding it.
