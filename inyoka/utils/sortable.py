@@ -70,7 +70,6 @@ from django.contrib import messages
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
-from inyoka.utils.urls import href
 from inyoka.utils.local import current_request
 
 
@@ -79,28 +78,29 @@ class Sortable(object):
     def __init__(self, objects, args, default, columns=None):
         self.objects = objects
         self.order = args.get('order') or default
-        self.order_column = self.order.startswith('-') and self.order[1:] or \
-                            self.order
+        self.order_column = self.order.startswith('-') and self.order[1:] or self.order
         self.default = default
         self.columns = columns or []
 
     def get_html(self, key, value):
         if key == self.order_column:
-            args = (not self.order.startswith('-') and '-' or '',
-                    self.order_column)
-            new_order = '%s%s' % args
-            img = '<img src="%s" alt="" />' % href('static', 'img',
-                '%s.png' % (self.order.startswith('-') and 'down' or 'up'))
+            if self.order.startswith('-'):
+                new_order = self.order_column
+                direction = ' down'
+            else:
+                new_order = '-' + self.order_column
+                direction = ' up'
         else:
             new_order = key
-            img = ''
-        return '<a href="?order=%s">%s</a>%s' % (
-            new_order, value, img)
+            direction = ''
+        return '<a href="?order=%s" class="sortable%s">%s</a>' % (
+            new_order, direction, value
+        )
 
     def get_queryset(self):
         order = self.order
         ocol = escape(order.lstrip('-'))
-        if self.columns and not ocol in self.columns:
+        if self.columns and ocol not in self.columns:
             # safes us for some bad usage that raises an exception
             messages.info(current_request,
                 _(u'The chosen sort value (“%(value)s”) is not available')
