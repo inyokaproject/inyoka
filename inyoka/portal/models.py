@@ -131,7 +131,7 @@ class PrivateMessage(models.Model):
     def recipients(self):
         if not hasattr(self, '_recipients'):
             entries = PrivateMessageEntry.objects.filter(message=self) \
-                .exclude(user=self.author)
+                .exclude(user=self.author).select_related('user')
             self._recipients = [e.user for e in entries]
         return self._recipients
 

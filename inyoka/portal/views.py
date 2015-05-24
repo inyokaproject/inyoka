@@ -1087,7 +1087,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     entries = PrivateMessageEntry.objects.filter(
         user=request.user,
         folder=PRIVMSG_FOLDERS[folder][0]
-    ).order_by('-id')
+    ).select_related('message__author').order_by('-id')
 
     if request.method == 'POST':
         # POST is only send by the "delete marked messages" button
