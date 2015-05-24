@@ -109,7 +109,7 @@ class RegisterForm(forms.Form):
         if not is_valid_username(username):
             raise forms.ValidationError(
                 _(u'Your username contains invalid characters. Only '
-                  u'alphanumeric chars and “-” and “ ” are allowed.')
+                  u'alphanumeric chars and “-” are allowed.')
             )
         try:
             User.objects.get(username)
@@ -406,7 +406,7 @@ class EditUserProfileForm(UserCPProfileForm):
         if not is_valid_username(username):
             raise forms.ValidationError(
                 _(u'Your username contains invalid characters. Only '
-                  u'alphanumeric chars and “-” and “ ” are allowed.')
+                  u'alphanumeric chars and “-” are allowed.')
             )
         exists = User.objects.filter(username=username).exists()
         if (self.instance.username != username and exists):
@@ -441,7 +441,7 @@ class CreateUserForm(forms.Form):
         if not is_valid_username(username):
             raise forms.ValidationError(
                 _(u'Your username contains invalid characters. Only '
-                  u'alphanumeric chars and “-” and “ ” are allowed.')
+                  u'alphanumeric chars and “-” are allowed.')
             )
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError(
