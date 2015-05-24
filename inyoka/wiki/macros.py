@@ -526,78 +526,6 @@ class RandomPageList(macros.Macro):
         return result
 
 
-class RandomKeyValue(macros.Macro):
-    names = (u'RandomKeyValue', u'ZufallsZitat', u'ZufälligerServer')
-    arguments = (
-        ('page', unicode, u''),
-        ('key', unicode, u''),
-        ('node_type', {
-            'text': u'text',
-            'link': u'link'
-        }, 'text'),
-    )
-
-    def __init__(self, page, key, node_type):
-        self.page = page
-        self.key = key
-        self.node_type = node_type
-
-    def build_node(self, context, format):
-        try:
-            page = Page.objects.get_by_name(self.page)
-        except Page.DoesNotExist:
-            return nodes.error_box(_(u'Page not found'),
-                _(u'The page “%(name)s” was not found') % {
-                    'name': self.page
-            })
-
-        doc = page.rev.text.parse()
-        stack = OrderedDict()
-        last_cat = None
-        buffer = []
-        for i in doc.query.by_type(nodes.Section):
-            for node in i.children:
-                if isinstance(node, nodes.Headline) and node.level == 1:
-                    buffer = []
-                    id = node.id
-                    stack.setdefault(id, {}).update({
-                        'name': u''.join(x.text for x in node.query.children)
-                    })
-                    last_cat = id
-                elif isinstance(node, nodes.List):
-                    # values for the key
-                    items = random.choice(node.children)
-                    desc = u''.join(x.text for x in items.query.children)
-
-                    stack.setdefault(last_cat, {}).update({
-                        'desc': desc.strip()
-                    })
-                elif isinstance(node, nodes.Paragraph):
-                    buffer.append(node)
-
-        if self.key:
-            if not self.key in stack:
-                return nodes.error_box(_(u'Key not defined'),
-                    _(u'The key “%(name)s” is not defined') % {
-                        'name': self.key
-                })
-            cat = stack[self.key]
-            node_type = self.node_type == 'list' and nodes.Link or nodes.Text
-            return node_type(cat['desc'])
-        else:
-            result = nodes.Container()
-            for v in stack.values():
-                if not 'desc' in v:
-                    continue
-
-                desc = nodes.Strong(children=[nodes.Text(v['name'])])
-                value_list = nodes.List('unordered', children=[
-                    nodes.Link(v['desc'])
-                ])
-                result.children.extend([desc, value_list])
-            return result
-
-
 class FilterByMetaData(macros.Macro):
     """
     Filter pages by their metadata
@@ -813,7 +741,6 @@ macros.register(TagCloud)
 macros.register(TagList)
 macros.register(Include)
 macros.register(RandomPageList)
-macros.register(RandomKeyValue)
 macros.register(FilterByMetaData)
 macros.register(PageName)
 macros.register(Template)
