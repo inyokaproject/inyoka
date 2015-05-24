@@ -39,7 +39,9 @@ from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, Group
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import request_cache
-from inyoka.utils.database import update_model, model_or_none, LockableObject
+from inyoka.utils.database import (
+    update_model, model_or_none, LockableObject, InyokaMarkupField,
+)
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
 from inyoka.utils.files import get_filename
@@ -417,10 +419,6 @@ class Topic(models.Model):
         verbose_name = ugettext_lazy(u'Topic')
         verbose_name_plural = ugettext_lazy(u'Topics')
 
-    @property
-    def rendered_report_text(self):
-        return parse(self.reported).render(None, 'html')
-
     def cached_forum(self):
         return Forum.objects.get(self.forum_id)
 
@@ -591,21 +589,12 @@ class PostRevision(models.Model):
     or to view changes.
     """
 
-    text = models.TextField()
+    text = InyokaMarkupField(application='forum')
     store_date = models.DateTimeField(default=datetime.utcnow)
     post = models.ForeignKey('forum.Post', related_name='revisions')
 
     def get_absolute_url(self, action='restore'):
         return href('forum', 'revision', self.id, 'restore')
-
-    @property
-    def rendered_text(self):
-        if self.post.is_plaintext:
-            return fix_plaintext(self.text)
-        request = current_request._get_current_object()
-        context = RenderContext(request, forum_post=self.post,
-                                application='forum')
-        return parse(self.text).render(context, 'html')
 
     def restore(self, request):
         """
@@ -639,8 +628,8 @@ class Post(models.Model, LockableObject):
     position = models.IntegerField(default=None, db_index=True)
     pub_date = models.DateTimeField(default=datetime.utcnow, db_index=True)
     hidden = models.BooleanField(default=False)
-    text = models.TextField()
-    rendered_text = models.TextField(null=True, blank=True)
+    text = InyokaMarkupField(application='forum')
+    rendered_text_old = models.TextField(null=True, blank=True, default='', db_column='rendered_text')  # Do not use
     has_revision = models.BooleanField(default=False)
     has_attachments = models.BooleanField(default=False)
     is_plaintext = models.BooleanField(default=False)
@@ -653,15 +642,10 @@ class Post(models.Model, LockableObject):
         verbose_name = ugettext_lazy(u'Post')
         verbose_name_plural = ugettext_lazy(u'Posts')
 
-    def render_text(self, request=None, format='html', force_existing=False):
-        context = RenderContext(request, forum_post=self, application='forum')
-        node = parse(self.text, wiki_force_existing=force_existing)
-        return node.render(context, format)
-
     def get_text(self):
         if self.is_plaintext:
             return fix_plaintext(self.text)
-        return self.rendered_text
+        return self.text_rendered
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
@@ -704,11 +688,6 @@ class Post(models.Model, LockableObject):
             PostRevision(post=self, text=text).save()
 
         self.text = text
-        if not is_plaintext:
-            self.rendered_text = self.render_text(request)
-        else:
-            # cleanup that column so that we save some bytes in the database
-            self.rendered_text = None
         self.is_plaintext = is_plaintext
         self.save()
 
@@ -932,7 +911,7 @@ class Post(models.Model, LockableObject):
         return timedelta_to_seconds(delta) < t
 
     def mark_ham(self):
-        mark_ham(self, self.text, 'forum-post')
+        mark_ham(self, self.get_text(), 'forum-post')
         topic = self.topic
         if topic.first_post == self:
             # it's the first post, i.e. the topic
@@ -945,7 +924,7 @@ class Post(models.Model, LockableObject):
 
     def mark_spam(self, report=True, update_akismet=True):
         if update_akismet:
-            mark_spam(self, self.text, 'forum-post')
+            mark_spam(self, self.get_text(), 'forum-post')
         topic = self.topic
         if topic.first_post == self:
             # it's the first post, i.e. the topic
@@ -1260,21 +1239,8 @@ class WelcomeMessage(models.Model):
     """
 
     title = models.CharField(max_length=120)
-    text = models.TextField()
-    rendered_text = models.TextField()
-
-    def save(self, *args, **kwargs):
-        self.rendered_text = self.render_text()
-        super(WelcomeMessage, self).save(*args, **kwargs)
-
-    def render_text(self, request=None, format='html'):
-        if request is None:
-            try:
-                request = current_request._get_current_object()
-            except RuntimeError:
-                request = None
-        context = RenderContext(request, simplified=True)
-        return parse(self.text).render(context, format)
+    text = InyokaMarkupField(application='forum')
+    rendered_text_old = models.TextField(db_column='rendered_text')  # Do not use
 
 
 class ReadStatus(object):

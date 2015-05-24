@@ -239,7 +239,7 @@ class InyokaMarkupField(models.TextField):
         self.application = application
         self.simplify = simplify
         self.force_existing = force_existing
-        super(ContentField, self).__init__(self, *args, **kwargs)
+        super(InyokaMarkupField, self).__init__(self, *args, **kwargs)
 
     def contribute_to_class(self, cls, name):
         super(InyokaMarkupField, self).contribute_to_class(cls, name)
