@@ -114,10 +114,10 @@ msgstr "CAPTCHA"
 #: inyoka/portal/forms.py:443
 msgid ""
 "Your username contains invalid characters. Only alphanumeric chars and "
-"“-” and “ ” are allowed."
+"“-” are allowed."
 msgstr ""
-"Dein Benutzername enthält unzulässige Zeichen. Nur Buchstaben, Ziffern, "
-"Leerzeichen und der Bindestrich sind erlaubt."
+"Dein Benutzername enthält unzulässige Zeichen. Nur Buchstaben, Ziffern "
+"und der Bindestrich sind erlaubt."
 
 #: inyoka/portal/forms.py:124
 msgid "This username is not available, please try another one."
