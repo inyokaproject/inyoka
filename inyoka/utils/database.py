@@ -16,6 +16,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.expressions import F, ExpressionNode
 
+from inyoka.markup import parse, RenderContext
+
 
 EXPRESSION_NODE_CALLBACKS = {
     ExpressionNode.ADD: operator.add,
@@ -221,6 +223,40 @@ class JSONField(models.TextField):
     def contribute_to_class(self, cls, name):
         super(JSONField, self).contribute_to_class(cls, name)
         setattr(cls, self.name, SimpleDescriptor(self))
+
+    def south_field_triple(self):
+        from south.modelsinspector import introspector
+        args, kwargs = introspector(self)
+        return 'django.db.models.TextField', args, kwargs
+
+
+class InyokaMarkupField(models.TextField):
+    """
+    Field to save and render Inyoka markup.
+    """
+
+    def __init__(self, application, simplify=False, force_existing=False, *args, **kwargs):
+        self.application = application
+        self.simplify = simplify
+        self.force_existing = force_existing
+        super(ContentField, self).__init__(self, *args, **kwargs)
+
+    def contribute_to_class(self, cls, name):
+        super(InyokaMarkupField, self).contribute_to_class(cls, name)
+
+        def render(inst_self):
+            context = RenderContext(
+                obj=inst_self,
+                application=self.application,
+                simplified=self.simplify,
+            )
+            markup = getattr(inst_self, name, '')
+            node = parse(markup, wiki_force_existing=self.force_existing)
+            return node.render(context, format='html')
+
+        rendered = property(render)
+
+        setattr(cls, '%s_rendered' % name, rendered)
 
     def south_field_triple(self):
         from south.modelsinspector import introspector
