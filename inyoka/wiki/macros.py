@@ -328,10 +328,11 @@ class NewPage(macros.Macro):
         self.text = text
 
     def build_node(self):
-        return nodes.html_partial('wiki/_new_page_macro.html', True,
+        return nodes.html_partial(
+            'wiki/_new_page_macro.html', True,
             text=self.text,
             base=self.base,
-            template=self.template
+            template=self.template,
         )
 
 
@@ -547,7 +548,7 @@ class FilterByMetaData(macros.Macro):
         mapping = []
         for part in self.filters:
             # TODO: Can we do something else instead of skipping?
-            if not ':' in part:
+            if ':' not in part:
                 continue
             key = part.split(':')[0].strip()
             values = [x.strip() for x in part.split(':')[1].split(',')]
@@ -661,9 +662,7 @@ class Attachment(macros.Macro):
             wiki_page = context.kwargs.get('wiki_page', None)
             if wiki_page:
                 target = join_pagename(wiki_page.name, self.target)
-            source = href('wiki', '_attachment',
-                target=target,
-            )
+            source = href('wiki', '_attachment', target=target)
             return nodes.Link(source, self.children)
 
 

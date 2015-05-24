@@ -302,7 +302,7 @@ class PageManager(models.Manager):
         redirects = set(MetaData.objects.values_list('value', flat=True)
                                         .filter(key='X-Redirect'))
         pages = (pages - linked_pages) - redirects
-        return sorted(page for page in pages if not page in ignore)
+        return sorted(page for page in pages if page not in ignore)
 
     def get_missing(self):
         """Return a tuple of (page, count) for all missing page-links."""
