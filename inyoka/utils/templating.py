@@ -201,6 +201,13 @@ def populate_context_defaults(context, flash=False):
         if not flash:
             context['MESSAGES'] = messages.get_messages(request)
 
+    if settings.DEBUG:
+        from django.db import connection
+        context.update(
+            sql_queries_count=len(connection.queries),
+            sql_queries_time=sum(float(q['time']) for q in connection.queries),
+        )
+
     context.update(
         GLOBAL_MESSAGE=global_message,
         pm_count=pms,
