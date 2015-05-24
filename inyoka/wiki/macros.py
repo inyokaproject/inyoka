@@ -29,7 +29,10 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
-from inyoka.wiki.models import Page, MetaData, Revision
+from inyoka.wiki.models import (
+    Page, MetaData, Revision, is_privileged_wiki_page,
+    exclude_privileged_wiki_page_filter,
+)
 from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
 
@@ -212,7 +215,7 @@ class PageList(macros.Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
-        pagelist = Page.objects.get_page_list()
+        pagelist = Page.objects.get_page_list(exclude_privileged=True)
         if self.pattern:
             pagelist = simple_filter(self.pattern, pagelist,
                                      self.case_sensitive)
@@ -242,7 +245,7 @@ class AttachmentList(macros.Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
-        pagelist = Page.objects.get_attachment_list(self.page or None)
+        pagelist = Page.objects.get_attachment_list(self.page or None, exclude_privileged=False)
         for page in pagelist:
             title = [nodes.Text(get_pagetitle(page, not self.shorten_title))]
             link = nodes.InternalLink(page, title, force_existing=True)
@@ -472,7 +475,7 @@ class Include(macros.Macro):
 
     def build_node(self, context, format):
         try:
-            page = Page.objects.get_by_name(self.page)
+            page = Page.objects.get_by_name(self.page, exclude_privileged=True)
         except Page.DoesNotExist:
             if self.silent:
                 return nodes.Text('')
@@ -508,7 +511,7 @@ class RandomPageList(macros.Macro):
         #           see RedirectPages for more infos.
         redirect_pages = Page.objects.find_by_metadata('weiterleitung')
         pagelist = filter(lambda p: not p in redirect_pages,
-                          Page.objects.get_page_list())
+                          Page.objects.get_page_list(exclude_privileged=True))
 
         pages = []
         found = 0
@@ -558,7 +561,7 @@ class FilterByMetaData(macros.Macro):
             includes = [x for x in values if not x.startswith('NOT ')]
             kwargs = {'key': key, 'value__in': includes}
             q = MetaData.objects.select_related('page').filter(**kwargs)
-            res = set(x.page for x in q.all())
+            res = set(x.page for x in q.all() if not is_privileged_wiki_page(x.page))
             pages = pages.union(res)
 
         # filter the pages with `AND`
@@ -615,7 +618,7 @@ class Template(macros.Macro):
     is_static = True
 
     def __init__(self, args, kwargs):
-        if not args:
+        if not args or is_privileged_wiki_page(args[0]):
             self.template = None
             self.context = []
             return

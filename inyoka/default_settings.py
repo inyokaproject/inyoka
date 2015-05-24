@@ -151,6 +151,8 @@ WIKI_DISCUSSION_FORUM = 'discussions'
 # rules
 WIKI_TEMPLATE_BASE = 'Wiki/Templates'
 
+WIKI_PRIVILEGED_PAGES = []
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = None
 

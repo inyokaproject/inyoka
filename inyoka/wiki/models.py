@@ -116,6 +116,16 @@ from inyoka.wiki.tasks import render_article, update_object_list, update_related
 MAX_METADATA = 2 << 8
 
 
+def is_privileged_wiki_page(name):
+    return any(name.startswith(n) for n in settings.WIKI_PRIVILEGED_PAGES)
+
+
+def exclude_privileged_wiki_page_filter(queryset):
+    for name in settings.WIKI_PRIVILEGED_PAGES:
+        queryset = queryset.exclude(name__istartswith=name)
+    return queryset
+
+
 class PageManager(models.Manager):
     """
     Because our table definitions are rather complex due to shared text,
@@ -185,21 +195,26 @@ class PageManager(models.Manager):
         new_page = self.get_by_name_and_rev(name, new_rev)
         return Diff(old_page, old_page.rev, new_page.rev)
 
-    def _get_object_list(self, nocache):
+    def _get_object_list(self, nocache, exclude_privileged=False):
         """
         Get a list of all objects that are pages or attachments.  The return
         value is a list of ``(name, deleted, is_page)`` tuples
         where `is_page` is False if that object is an attachment.
         """
+        if exclude_privileged:
+            nocache = True
         key = 'wiki/object_list'
         pagelist = None
         if not nocache:
             pagelist = request_cache.get(key)
 
         if pagelist is None:
-            pagelist = Page.objects.select_related('last_rev')\
+            pagelist = exclude_privileged_wiki_page_filter(Page.objects)
+            pagelist = pagelist.select_related('last_rev') \
                 .values_list('name', 'last_rev__deleted',
-                             'last_rev__attachment__id').order_by('name').all()
+                             'last_rev__attachment__id').order_by('name')
+            if exclude_privileged:
+                pagelist = pagelist.filter()
             # force a list, can't pickle ValueQueryset that way
             pagelist = list(pagelist)
             # we cache that also if the user wants something uncached
@@ -207,7 +222,7 @@ class PageManager(models.Manager):
             request_cache.set(key, pagelist, 10000)
         return pagelist
 
-    def get_page_list(self, existing_only=True, nocache=False):
+    def get_page_list(self, existing_only=True, nocache=False, exclude_privileged=False):
         """
         Get a list of unicode strings with the page names that have a
         head that exists.  Normally the results are cached, pass it
@@ -215,16 +230,16 @@ class PageManager(models.Manager):
         is not necessary because whenever a page is deleted or created the
         pagelist cache is invalidated.
         """
-        return [x[0] for x in self._get_object_list(nocache)
+        return [x[0] for x in self._get_object_list(nocache, exclude_privileged)
                 if (not existing_only or not x[1]) and not x[2]]
 
     def get_attachment_list(self, parent=None, existing_only=True,
-                            nocache=False):
+                            nocache=False, exclude_privileged=False):
         """
         Works like `get_page_list` but just lists attachments.  If parent is
         given only pages below that page are displayed.
         """
-        filtered = (x[0] for x in self._get_object_list(nocache)
+        filtered = (x[0] for x in self._get_object_list(nocache, exclude_privileged)
                     if (not existing_only or not x[1]) and x[2])
         if parent is not None:
             parent += u'/'
@@ -320,9 +335,9 @@ class PageManager(models.Manager):
         similar name.  This also checks for similar attachments.
         """
         return [x[1] for x in get_close_matches(name, [x[0] for x in
-                self._get_object_list(False) if not x[1]], n)]
+                self._get_object_list(False, exclude_privileged=False) if not x[1]], n)]
 
-    def get_by_name(self, name, nocache=False, raise_on_deleted=False):
+    def get_by_name(self, name, nocache=False, raise_on_deleted=False, exclude_privileged=False):
         """
         Return a page with the most recent revision.  This should be used
         from the view functions if no revision is defined because it sends
@@ -333,6 +348,8 @@ class PageManager(models.Manager):
         share cached objects you should not modify it unless you bypass
         the caching backend by passing `nocache` = True.
         """
+        if exclude_privileged and is_privileged_wiki_page(name):
+            raise Page.DoesNotExist()
         rev = None
         key = 'wiki/page/' + name
         if not nocache:
@@ -357,11 +374,13 @@ class PageManager(models.Manager):
             raise Page.DoesNotExist()
         return page
 
-    def get_by_name_and_rev(self, name, rev, raise_on_deleted=False):
+    def get_by_name_and_rev(self, name, rev, raise_on_deleted=False, exclude_privileged=False):
         """
         Works like `get_by_name` but selects a specific revision of a page,
         not the most recent one.  If `rev` is `None`, `get_by_name` is called.
         """
+        if exclude_privileged and is_privileged_wiki_page(name):
+            raise Page.DoesNotExist()
         if rev is None:
             return self.get_by_name(name, True, raise_on_deleted)
         rev = Revision.objects.select_related('page', 'test', 'user') \
@@ -380,8 +399,11 @@ class PageManager(models.Manager):
         kwargs = {'key': key}
         if value is not None:
             kwargs['value'] = value
-        rv = [x.page for x in MetaData.objects.select_related(depth=1).
-              filter(**kwargs)]
+        rv = [
+            x.page
+            for x in MetaData.objects.select_related(depth=1).filter(**kwargs)
+            if not is_privileged_wiki_page(x.page.name)
+        ]
         rv.sort(key=lambda x: x.name)
         return rv
 
