@@ -97,6 +97,8 @@ class Macro(object):
 
     def render(self, context, format):
         """Dispatch to the correct render method."""
+        if context.application != 'wiki':
+            return ''
         rv = self.build_node(context, format)
         if isinstance(rv, basestring):
             return rv
