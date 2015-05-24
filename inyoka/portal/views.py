@@ -10,7 +10,6 @@
     :license: BSD, see LICENSE for more details.
 """
 import time
-import binascii
 from datetime import date, datetime, timedelta
 
 from PIL import Image
@@ -22,7 +21,6 @@ from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.core import signing
 from django.core.cache import cache
 from django.core.files.storage import default_storage
-from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -37,8 +35,8 @@ from django.views.decorators.http import require_POST
 
 from inyoka.forum.acl import (split_bits, filter_invisible, PRIVILEGES_DETAILS,
     split_negative_positive, REVERSED_PRIVILEGES_BITS)
-from inyoka.forum.models import Post, Topic, Forum, Privilege
-from inyoka.ikhaya.models import Event, Article, Category, Suggestion
+from inyoka.forum.models import Forum, Privilege
+from inyoka.ikhaya.models import Event, Article, Category
 from inyoka.markup import parse, RenderContext
 from inyoka.portal.filters import SubscriptionFilter
 from inyoka.portal.forms import (LoginForm, UserMailForm,
@@ -47,12 +45,12 @@ from inyoka.portal.forms import (LoginForm, UserMailForm,
     ConfigurationForm, EditUserGroupsForm, EditStaticPageForm, DeactivateUserForm,
     UserCPSettingsForm, ChangePasswordForm, PrivateMessageForm, EditUserStatusForm,
     SetNewPasswordForm, EditUserProfileForm, WikiFeedSelectorForm,
-    EditUserPasswordForm, NOTIFICATION_CHOICES, ForumFeedSelectorForm,
+    NOTIFICATION_CHOICES, ForumFeedSelectorForm,
     PlanetFeedSelectorForm, EditUserPrivilegesForm, IkhayaFeedSelectorForm,
     PrivateMessageIndexForm, PrivateMessageFormProtected)
 from inyoka.portal.models import (StaticPage, StaticFile, Subscription,
     PrivateMessage, PRIVMSG_FOLDERS, PrivateMessageEntry)
-from inyoka.portal.user import (User, Group, UserPage, UserBanned, reset_email,
+from inyoka.portal.user import (User, Group, UserBanned, reset_email,
     set_new_email, deactivate_user, reactivate_user, PERMISSION_NAMES,
     send_activation_mail)
 from inyoka.portal.utils import (abort_access_denied, calendar_entries_for_month,
@@ -66,7 +64,7 @@ from inyoka.utils.sessions import get_sessions, make_permanent, get_user_record
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import normalize_pagename, get_random_password
+from inyoka.utils.text import get_random_password
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.utils.user import check_activation_key
 from inyoka.wiki.models import Page as WikiPage
@@ -274,7 +272,7 @@ def activate(request, action='', username='', activation_key=''):
             _(u'You cannot enter an activation key when you are logged in.'))
         return HttpResponseRedirect(href('portal'))
 
-    if not action in ('delete', 'activate'):
+    if action not in ('delete', 'activate'):
         raise Http404()
 
     if action == 'delete':
@@ -484,6 +482,7 @@ def subscribe_user(request, username):
             % {'username': user.username})
     return HttpResponseRedirect(url_for(user))
 
+
 @require_POST
 def unsubscribe_user(request, username):
     """Remove a user subscription."""
@@ -553,7 +552,7 @@ def usercp_settings(request):
         if form.is_valid():
             data = form.cleaned_data
             new_versions = data.pop('ubuntu_version')
-            old_versions = [s.ubuntu_version for s in Subscription.objects \
+            old_versions = [s.ubuntu_version for s in Subscription.objects
                           .filter(user=request.user).exclude(ubuntu_version__isnull=True)]
             for version in [v.number for v in get_ubuntu_versions()]:
                 if version in new_versions and version not in old_versions:
@@ -572,7 +571,7 @@ def usercp_settings(request):
             generic.trigger_fix_errors_message(request)
     else:
         settings = request.user.settings
-        ubuntu_version = [s.ubuntu_version for s in Subscription.objects.\
+        ubuntu_version = [s.ubuntu_version for s in Subscription.objects.
                           filter(user=request.user, ubuntu_version__isnull=False)]
         values = {
             'notify': settings.get('notify', ['mail']),
@@ -646,7 +645,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
     def get_queryset(self):
         qs = self.request.user.subscription_set.all()
         qs = qs.filter(ubuntu_version__isnull=True) \
-                 .select_related('content_object')
+               .select_related('content_object')
         for filter in self.filtersets:
             instance = filter(self.request.GET or None, queryset=qs)
             qs = instance.qs
@@ -748,8 +747,6 @@ def user_edit(request, username):
     if username != user.urlsafe_username:
         return HttpResponseRedirect(user.get_absolute_url('admin'))
 
-    groups_joined, groups_not_joined = ([], [])
-
     return {
         'user': user
     }
@@ -793,7 +790,7 @@ def user_edit_settings(request, username):
     if username != user.urlsafe_username:
         return HttpResponseRedirect(user.get_absolute_url('admin', 'settings'))
 
-    ubuntu_version = [s.ubuntu_version for s in Subscription.objects.\
+    ubuntu_version = [s.ubuntu_version for s in Subscription.objects.
                       filter(user=user, ubuntu_version__isnull=False)]
     initial = {
         'notify': user.settings.get('notify', ['mail']),
@@ -816,7 +813,7 @@ def user_edit_settings(request, username):
         if form.is_valid():
             data = form.cleaned_data
             new_versions = data.pop('ubuntu_version')
-            old_versions = [s.ubuntu_version for s in Subscription.objects \
+            old_versions = [s.ubuntu_version for s in Subscription.objects
                           .filter(user=user).exclude(ubuntu_version__isnull=True)]
             for version in [v.number for v in get_ubuntu_versions()]:
                 if version in new_versions and version not in old_versions:
@@ -1011,7 +1008,7 @@ def user_edit_groups(request, username):
     groups_joined, groups_not_joined = ([], [])
     groups_joined = groups_joined or user.groups.all()
     groups_not_joined = groups_not_joined or \
-                        [x for x in groups.itervalues() if not x in groups_joined]
+        [x for x in groups.itervalues() if x not in groups_joined]
     return {
         'user': user,
         'form': form,
@@ -1036,7 +1033,7 @@ def user_new(request):
                 _(u'The user “%(username)s” was successfully created. '
                   u'You can now edit more details.')
                 % {'username': escape(data['username'])})
-            return HttpResponseRedirect(href('portal', 'user', \
+            return HttpResponseRedirect(href('portal', 'user',
                         escape(data['username']), 'edit'))
         else:
             generic.trigger_fix_errors_message(request)
@@ -1183,8 +1180,7 @@ def privmsg_new(request, username=None):
     if request.method == 'POST':
         form = form_class(request.POST)
         if 'preview' in request.POST:
-            ctx = RenderContext(request)
-            preview = parse(request.POST.get('text', '')).render(ctx, 'html')
+            preview = PrivateMessage.get_text_rendered(request.POST.get('text', ''))
         elif form.is_valid():
             d = form.cleaned_data
 
@@ -1204,9 +1200,9 @@ def privmsg_new(request, username=None):
                     auth.logout(request)
                     return HttpResponseRedirect(href('portal'))
 
-            recipient_names = set(r.strip() for r in \
+            recipient_names = set(r.strip() for r in
                                   d['recipient'].split(';') if r)
-            group_recipient_names = set(r.strip() for r in \
+            group_recipient_names = set(r.strip() for r in
                                   d['group_recipient'].split(';') if r)
 
             recipients = set()
@@ -1265,13 +1261,11 @@ def privmsg_new(request, username=None):
                                                           ('pm_new',)):
                         send_notification(recipient, 'new_pm',
                             _(u'New private message from %(username)s: %(subject)s')
-                            % {'username': request.user.username,
-                               'subject': d['subject']},
+                            % {'username': request.user.username, 'subject': d['subject']},
                             {'user': recipient,
                              'sender': request.user,
                              'subject': d['subject'],
-                             'entry': entry,
-                        })
+                             'entry': entry})
 
                 messages.success(request, _(u'The message was sent successfully.'))
 
@@ -1695,12 +1689,6 @@ def config(request):
             if data['global_message'] != storage['global_message']:
                 storage['global_message'] = data['global_message']
                 storage['global_message_time'] = time.time()
-                node = parse(data['global_message'])
-                storage['global_message_rendered'] = node.render(context, 'html')
-
-            if data['welcome_message']:
-                node = parse(data['welcome_message'])
-                storage['welcome_message_rendered'] = node.render(context, 'html')
 
             if data['team_icon']:
                 default_storage.delete(storage['team_icon'])
@@ -1709,27 +1697,10 @@ def config(request):
                 default_storage.save(fn, data['team_icon'])
                 storage['team_icon'] = team_icon = fn
 
-            if data['license_note']:
-                node = parse(data['license_note'])
-                storage['license_note_rendered'] = node.render(context, 'html')
-
             if not data['countdown_date']:
-                storage['countdown_date'] = '';
+                storage['countdown_date'] = ''
             else:
                 storage['countdown_date'] = str(data['countdown_date'])
-
-            if data['wiki_edit_note']:
-                node = parse(data['wiki_edit_note'])
-                storage['wiki_edit_note_rendered'] = node.render(context, 'html')
-
-            if data['planet_description']:
-                node = parse(data['planet_description'])
-                storage['planet_description_rendered'] = node.render(context, 'html')
-
-            if data['ikhaya_description']:
-                node = parse(data['ikhaya_description'])
-                storage['ikhaya_description_rendered'] = node.render(context, 'html')
-
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:
@@ -1755,7 +1726,7 @@ def static_page(request, page):
         raise Http404
     return {
         'title': q.title,
-        'content': q.rendered_content,
+        'content': q.content_rendered,
         'key': q.key,
         'page': q,
     }
@@ -1784,8 +1755,7 @@ def page_edit(request, page=None):
         form = EditStaticPageForm(request.POST, instance=page)
         if form.is_valid():
             if 'preview' in request.POST:
-                ctx = RenderContext(request)
-                preview = parse(form.cleaned_data['content']).render(ctx, 'html')
+                preview = page.get_content_rendered(form.cleaned_data['content'])
             if 'send' in request.POST:
                 page = form.save()
                 if new:

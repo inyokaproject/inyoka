@@ -27,7 +27,7 @@ def build_forum_picture_node(sender, context, format, **kwargs):
         # THIS IS A HACK and should go away once we found a way
         # to upload attachments directly to bound posts in a sane way...
 
-        forum_post = context.kwargs.get('forum_post', None)
+        forum_post = context.kwargs.get('obj', None)
         post = forum_post.id if forum_post else None
 
         if context.request and 'attachments' in context.request.POST:

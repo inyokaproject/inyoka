@@ -19,10 +19,10 @@ from django.core.cache import cache
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy
 
-from inyoka.markup import parse, render, RenderContext
+from inyoka.markup import parse
 from inyoka.portal.models import StaticFile
 from inyoka.portal.user import User
-from inyoka.utils.database import LockableObject, find_next_increment
+from inyoka.utils.database import LockableObject, find_next_increment, InyokaMarkupField
 from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
 from inyoka.utils.decorators import deferred
 from inyoka.utils.html import striptags
@@ -64,11 +64,6 @@ class ArticleManager(models.Manager):
         (pub_date, slug) pairs. Missing entries from the cache are
         automatically fetched from the database. This method should be
         also used for retrieving single objects.
-
-        ATTENTION: All articles which are returned from this function
-        don't contain any text or intro (but they will contain rendered_text
-        and rendered_intro). So do NEVER save any article returned by
-        this function.
         """
         keys = map(lambda x: ('ikhaya/article/%s/%s' % x, x[0], x[1]), keys)
         cache_values = cache.get_many(map(itemgetter(0), keys))
@@ -80,13 +75,6 @@ class ArticleManager(models.Manager):
         new_cache_values = {}
         for article in objects:
             key = 'ikhaya/article/%s/%s' % (article.pub_date, article.slug)
-            # render text and intro (and replace the getter to make caching
-            # possible)
-            article._rendered_text = unicode(article.rendered_text)
-            article._rendered_intro = unicode(article.rendered_intro)
-            article._simplified_text = unicode(article.simplified_text)
-            article._simplified_intro = unicode(article.simplified_intro)
-            article.text = article.intro = None
             new_cache_values[key] = article
         if new_cache_values:
             # cache for 24 hours
@@ -95,7 +83,7 @@ class ArticleManager(models.Manager):
         articles = filter(None, cache_values.values())
         unpublished = list(sorted([a for a in articles if not a.public],
                                   key=attrgetter('updated'), reverse=True))
-        published = list(sorted([a for a in articles if not a in unpublished],
+        published = list(sorted([a for a in articles if a not in unpublished],
                                 key=attrgetter('updated'), reverse=True))
         return unpublished + published
 
@@ -213,8 +201,8 @@ class Article(models.Model, LockableObject):
                                  on_delete=models.PROTECT)
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
             verbose_name=ugettext_lazy(u'Icon'), on_delete=models.SET_NULL)
-    intro = models.TextField(ugettext_lazy(u'Introduction'))
-    text = models.TextField(ugettext_lazy(u'Text'))
+    intro = InyokaMarkupField(verbose_name=ugettext_lazy(u'Introduction'), application='ikhaya')
+    text = InyokaMarkupField(verbose_name=ugettext_lazy(u'Text'), application='ikhaya')
     public = models.BooleanField(ugettext_lazy(u'Public'), default=False)
     slug = models.SlugField(ugettext_lazy(u'Slug'), max_length=100,
             blank=True, db_index=True)
@@ -223,6 +211,16 @@ class Article(models.Model, LockableObject):
     comment_count = models.IntegerField(default=0)
     comments_enabled = models.BooleanField(ugettext_lazy(u'Allow comments'),
                         default=True)
+
+    def get_intro(self):
+        if self.is_xhtml:
+            return self.intro
+        return self.intro_rendered
+
+    def get_text(self):
+        if self.is_xhtml:
+            return self.text
+        return self.text_rendered
 
     @property
     def article_icon(self):
@@ -239,46 +237,6 @@ class Article(models.Model, LockableObject):
     @property
     def local_updated(self):
         return datetime_to_timezone(self.updated).replace(tzinfo=None)
-
-    def _simplify(self, text):
-        """Remove markup of a text that belongs to this Article"""
-        if self.is_xhtml:
-            simple = striptags(text)
-        else:
-            simple = parse(text).text
-        return simple.strip()
-
-    def _render(self, text):
-        """Render a text that belongs to this Article to HTML"""
-        if self.is_xhtml:
-            return text
-        context = RenderContext(current_request, application='ikhaya')
-        instructions = parse(text).compile('html')
-        return render(instructions, context)
-
-    @property
-    def rendered_text(self):
-        if not hasattr(self, '_rendered_text'):
-            self._rendered_text = self._render(self.text)
-        return self._rendered_text
-
-    @property
-    def rendered_intro(self):
-        if not hasattr(self, '_rendered_intro'):
-            self._rendered_intro = self._render(self.intro)
-        return self._rendered_intro
-
-    @property
-    def simplified_text(self):
-        if not hasattr(self, '_simplified_text'):
-            self._simplified_text = self._simplify(self.text)
-        return self._simplified_text
-
-    @property
-    def simplified_intro(self):
-        if not hasattr(self, '_simplified_intro'):
-            self._simplified_intro = self._simplify(self.intro)
-        return self._simplified_intro
 
     @property
     def hidden(self):
@@ -380,12 +338,12 @@ class Article(models.Model, LockableObject):
 
 class Report(models.Model):
     article = models.ForeignKey(Article, null=True)
-    text = models.TextField()
+    text = InyokaMarkupField(application='ikhaya')
     author = models.ForeignKey(User)
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
     solved = models.BooleanField(null=False, default=False)
-    rendered_text = models.TextField()
+    rendered_text_old = models.TextField(db_column='rendered_text')  # do not use
 
     def __repr__(self):
         subject = self.article.subject if self.article else '?'
@@ -398,14 +356,6 @@ class Report(models.Model):
             return href('ikhaya', self.article.stamp, self.article.slug, 'reports')
         return href('ikhaya', 'report', self.id, action)
 
-    def save(self, *args, **kwargs):
-        context = RenderContext(current_request, simplified=True)
-        node = parse(self.text, wiki_force_existing=False)
-        self.rendered_text = node.render(context, 'html')
-        super(Report, self).save(*args, **kwargs)
-        if self.id:
-            cache.delete('ikhaya/report/%d' % self.id)
-
 
 class Suggestion(models.Model):
 
@@ -414,46 +364,19 @@ class Suggestion(models.Model):
     author = models.ForeignKey(User, related_name='suggestion_set')
     pub_date = models.DateTimeField('Datum', default=datetime.utcnow)
     title = models.CharField(ugettext_lazy(u'Title'), max_length=100)
-    text = models.TextField(ugettext_lazy(u'Text'))
-    intro = models.TextField(ugettext_lazy(u'Introduction'))
-    notes = models.TextField(ugettext_lazy(u'Annotations to the team'),
-                blank=True, default=u'')
+    text = InyokaMarkupField(verbose_name=ugettext_lazy(u'Text'), application='ikhaya')
+    intro = InyokaMarkupField(verbose_name=ugettext_lazy(u'Introduction'), application='ikhaya')
+    notes = InyokaMarkupField(
+        verbose_name=ugettext_lazy(u'Annotations to the team'),
+        blank=True,
+        default=u'',
+        application='ikhaya')
     owner = models.ForeignKey(User, related_name='owned_suggestion_set',
                               null=True, blank=True)
 
     class Meta:
         verbose_name = ugettext_lazy(u'Article suggestion')
         verbose_name_plural = ugettext_lazy(u'Article suggestions')
-
-    @property
-    def rendered_text(self):
-        context = RenderContext(current_request, simplified=True)
-        key = 'ikhaya/suggestion_text/%s' % self.id
-        instructions = cache.get(key)
-        if instructions is None:
-            instructions = parse(self.text).compile('html')
-            cache.set(key, instructions)
-        return render(instructions, context)
-
-    @property
-    def rendered_intro(self):
-        context = RenderContext(current_request, simplified=True)
-        key = 'ikhaya/suggestion_intro/%s' % self.id
-        instructions = cache.get(key)
-        if instructions is None:
-            instructions = parse(self.intro).compile('html')
-            cache.set(key, instructions)
-        return render(instructions, context)
-
-    @property
-    def rendered_notes(self):
-        context = RenderContext(current_request, simplified=True)
-        key = 'ikhaya/suggestion_notes/%s' % self.id
-        instructions = cache.get(key)
-        if instructions is None:
-            instructions = parse(self.notes).compile('html')
-            cache.set(key, instructions)
-        return render(instructions, context)
 
     def get_absolute_url(self):
         return href('ikhaya', 'suggestions', _anchor=self.id)
@@ -464,11 +387,11 @@ class Comment(models.Model):
     objects = CommentManager()
 
     article = models.ForeignKey(Article, null=True)
-    text = models.TextField()
+    text = InyokaMarkupField(application='ikhaya')
     author = models.ForeignKey(User)
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
-    rendered_text = models.TextField()
+    rendered_text_old = models.TextField(db_column='rendered_text')  # do not use
 
     def get_absolute_url(self, action='show'):
         if action in ['hide', 'restore', 'edit']:
@@ -481,11 +404,9 @@ class Comment(models.Model):
             self.article = Article.objects.get(id=self.article.id)
             self.article.comment_count = self.article.comment_count + 1
             self.article.save()
-        context = RenderContext(current_request, simplified=True)
-        node = parse(self.text, wiki_force_existing=False)
-        self.rendered_text = node.render(context, 'html')
         super(Comment, self).save(*args, **kwargs)
         if self.id:
+            # TODO: remove after using redis-cache
             cache.delete('ikhaya/comment/%d' % self.id)
 
 
@@ -504,7 +425,7 @@ class Event(models.Model):
     time = models.TimeField(blank=True, null=True)  # None -> whole day
     enddate = models.DateField(blank=True, null=True)  # None
     endtime = models.TimeField(blank=True, null=True)  # None -> whole day
-    description = models.TextField(blank=True)
+    description = InyokaMarkupField(blank=True, application='ikhaya')
     author = models.ForeignKey(User)
     location = models.CharField(max_length=128, blank=True)
     location_town = models.CharField(max_length=56, blank=True)
@@ -523,16 +444,6 @@ class Event(models.Model):
             'edit': ('ikhaya', 'event', self.id, 'edit'),
             'new': ('ikhaya', 'event', 'new'),
         }[action])
-
-    @property
-    def rendered_description(self):
-        context = RenderContext(current_request, simplified=True)
-        key = 'ikhaya/date/%s' % self.id
-        instructions = cache.get(key)
-        if instructions is None:
-            instructions = parse(self.description).compile('html')
-            cache.set(key, instructions)
-        return render(instructions, context)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -559,10 +470,12 @@ class Event(models.Model):
     @property
     def natural_coordinates(self):
         if self.location_lat and self.location_long:
-            lat = self.location_lat > 0 and u'%g° N' % self.location_lat \
-                                        or u'%g° S' % -self.location_lat
-            long = self.location_long > 0 and u'%g° O' % self.location_long\
-                                          or u'%g° W' % -self.location_long
+            lat = (self.location_lat > 0 and
+                   u'%g° N' % self.location_lat or
+                   u'%g° S' % -self.location_lat)
+            long = (self.location_long > 0 and
+                    u'%g° O' % self.location_long or
+                    u'%g° W' % -self.location_long)
             return u'%s, %s' % (lat, long)
         else:
             return u''
@@ -573,10 +486,12 @@ class Event(models.Model):
 
     @property
     def coordinates_url(self):
-        lat = self.location_lat > 0 and '%g_N' % self.location_lat \
-                                    or '%g_S' % -self.location_lat
-        long = self.location_long > 0 and '%g_E' % self.location_long\
-                                      or '%g_W' % -self.location_long
+        lat = (self.location_lat > 0 and
+               '%g_N' % self.location_lat or
+               '%g_S' % -self.location_lat)
+        long = (self.location_long > 0 and
+                '%g_E' % self.location_long or
+                '%g_W' % -self.location_long)
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
                '=de&params=%s_%s' % (lat, long)
 

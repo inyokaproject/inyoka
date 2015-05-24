@@ -560,10 +560,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Test send
         self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, submit=True)
 
-        # Check for rendered post
-        with translation.override('en-us'):
-            response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        # Check that the content is in the database
+        self.assertEqual(
+            Topic.objects.get(slug='newpost-title').last_post.text,
+            'newpost text',
+        )
 
     def test_newtopic_user(self):
         self.client.login(username='user', password='user')
@@ -579,10 +580,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Test send
         self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, submit=True)
 
-        # Check for rendered post
-        with translation.override('en-us'):
-            response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        # Check that the content is in the Database
+        self.assertEqual(
+            Topic.objects.get(slug='newpost-title').last_post.text,
+            'newpost text',
+        )
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -638,7 +640,6 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
         self.assertInHTML('Your text is considered spam', response.content, count=0)
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -662,7 +663,6 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
         self.assertContains(response, 'Your text is considered spam', count=0)
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
     def test_newtopic_with_file(self):
         TEST_ATTACHMENT = 'test_attachment.png'
@@ -858,10 +858,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Test send
         self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, submit=True)
 
-        # Check for rendered post
-        with translation.override('en-us'):
-            response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        # Test that the data is in the database
+        self.assertEqual(
+            Topic.objects.get(pk=topic.pk).last_post.text,
+            'newpost text',
+        )
 
     def test_new_post_user(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
@@ -878,10 +879,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Test send
         self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, submit=True)
 
-        # Check for rendered post
-        with translation.override('en-us'):
-            response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+        # Test that the data is in the database
+        self.assertEqual(
+            Topic.objects.get(pk=topic.pk).last_post.text,
+            'newpost text',
+        )
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
@@ -938,7 +940,6 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('Your text is considered spam', response.content, count=0)
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
