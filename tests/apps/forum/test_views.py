@@ -1040,6 +1040,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_edit_post_user_spam(self):
+        # Edited posts are never considered spam, not even from users
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
         post = Post.objects.create(text=u'second post', author=self.user, position=1, topic=topic)
@@ -1060,8 +1061,6 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
-                          'your account will be blocked.</div>', response.content, count=1)
         self.assertInHTML('<div class="text"><p>editpost text</p></div>', response.content, count=1)
 
     @responses.activate
@@ -1220,6 +1219,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_edit_first_post_user_spam(self):
+        # Edited posts are never considered spam, not even from users
         topic = Topic.objects.create(title='topic', author=self.user, forum=self.public_forum)
         post = Post.objects.create(text=u'first post', author=self.user, position=0, topic=topic)
 
@@ -1241,10 +1241,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
-                          'your account will be blocked.</div>', response.content, count=1)
-        self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
-                          response.content, count=1)
+        self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
