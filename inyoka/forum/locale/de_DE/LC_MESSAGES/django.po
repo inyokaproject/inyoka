@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-05-23 12:56+0200\n"
+"POT-Creation-Date: 2015-05-24 11:37+0200\n"
 "PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -100,71 +100,71 @@ msgstr "Version"
 msgid "Distribution"
 msgstr "Distribution"
 
-#: inyoka/forum/forms.py:186
+#: inyoka/forum/forms.py:188
 msgid "No topic with this slug found."
 msgstr "Ein Thema mit diesem Slug existiert nicht"
 
-#: inyoka/forum/forms.py:217 inyoka/forum/forms.py:250
+#: inyoka/forum/forms.py:219 inyoka/forum/forms.py:252
 msgid "Description"
 msgstr "Beschreibung"
 
-#: inyoka/forum/forms.py:235
+#: inyoka/forum/forms.py:237
 msgid "Reason"
 msgstr "Grund"
 
-#: inyoka/forum/forms.py:247
+#: inyoka/forum/forms.py:249
 msgid "Name"
 msgstr "Name"
 
-#: inyoka/forum/forms.py:248
+#: inyoka/forum/forms.py:250
 msgid "Slug"
 msgstr "Slug"
 
-#: inyoka/forum/forms.py:251
+#: inyoka/forum/forms.py:253
 msgid "Parent"
 msgstr "Elternforum"
 
-#: inyoka/forum/forms.py:252
+#: inyoka/forum/forms.py:254
 msgid "Position"
 msgstr "Position"
 
-#: inyoka/forum/forms.py:254
+#: inyoka/forum/forms.py:256
 msgid "Title"
 msgstr "Titel"
 
-#: inyoka/forum/forms.py:256
+#: inyoka/forum/forms.py:258
 msgid "Text"
 msgstr "Text"
 
-#: inyoka/forum/forms.py:258
+#: inyoka/forum/forms.py:260
 msgid "Default text for new topics"
 msgstr "Standardtext für neue Themen"
 
-#: inyoka/forum/forms.py:261
+#: inyoka/forum/forms.py:263
 msgid "Require Ubuntu version"
 msgstr "Angabe der Ubuntu-Version erzwingen"
 
-#: inyoka/forum/forms.py:263
+#: inyoka/forum/forms.py:265
 msgid "Count posts in this forum"
 msgstr "Beiträge in diesem Forum zählen"
 
-#: inyoka/forum/forms.py:264
+#: inyoka/forum/forms.py:266
 msgid "This value can only be changed by the Webteam"
 msgstr "Dieser Wert ist nur über das Webteam veränderbar"
 
-#: inyoka/forum/forms.py:274
+#: inyoka/forum/forms.py:276
 msgid "You must enter a title in order to set the welcome message"
 msgstr "Du musst einen Titel angeben für die Willkommensnachricht"
 
-#: inyoka/forum/forms.py:281
+#: inyoka/forum/forms.py:283
 msgid "You must enter a text in order to set the welcome message"
 msgstr "Du musst einen Text für die Willkommensnachricht eingeben."
 
-#: inyoka/forum/forms.py:288
+#: inyoka/forum/forms.py:290
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
 
-#: inyoka/forum/forms.py:292
+#: inyoka/forum/forms.py:294
 #, python-format
 msgid "Please select another slug, “%(slug)s” is already in use."
 msgstr "Bitte einen anderen Slug angeben, „%(slug)s“ ist schon vergeben."

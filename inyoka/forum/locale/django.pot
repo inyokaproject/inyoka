@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-05-23 12:56+0200\n"
+"POT-Creation-Date: 2015-05-24 11:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,71 +97,71 @@ msgstr ""
 msgid "Distribution"
 msgstr ""
 
-#: inyoka/forum/forms.py:186
+#: inyoka/forum/forms.py:188
 msgid "No topic with this slug found."
 msgstr ""
 
-#: inyoka/forum/forms.py:217 inyoka/forum/forms.py:250
+#: inyoka/forum/forms.py:219 inyoka/forum/forms.py:252
 msgid "Description"
 msgstr ""
 
-#: inyoka/forum/forms.py:235
+#: inyoka/forum/forms.py:237
 msgid "Reason"
 msgstr ""
 
-#: inyoka/forum/forms.py:247
+#: inyoka/forum/forms.py:249
 msgid "Name"
 msgstr ""
 
-#: inyoka/forum/forms.py:248
+#: inyoka/forum/forms.py:250
 msgid "Slug"
 msgstr ""
 
-#: inyoka/forum/forms.py:251
+#: inyoka/forum/forms.py:253
 msgid "Parent"
 msgstr ""
 
-#: inyoka/forum/forms.py:252
+#: inyoka/forum/forms.py:254
 msgid "Position"
 msgstr ""
 
-#: inyoka/forum/forms.py:254
+#: inyoka/forum/forms.py:256
 msgid "Title"
 msgstr ""
 
-#: inyoka/forum/forms.py:256
+#: inyoka/forum/forms.py:258
 msgid "Text"
 msgstr ""
 
-#: inyoka/forum/forms.py:258
+#: inyoka/forum/forms.py:260
 msgid "Default text for new topics"
 msgstr ""
 
-#: inyoka/forum/forms.py:261
+#: inyoka/forum/forms.py:263
 msgid "Require Ubuntu version"
 msgstr ""
 
-#: inyoka/forum/forms.py:263
+#: inyoka/forum/forms.py:265
 msgid "Count posts in this forum"
 msgstr ""
 
-#: inyoka/forum/forms.py:264
+#: inyoka/forum/forms.py:266
 msgid "This value can only be changed by the Webteam"
 msgstr ""
 
-#: inyoka/forum/forms.py:274
+#: inyoka/forum/forms.py:276
 msgid "You must enter a title in order to set the welcome message"
 msgstr ""
 
-#: inyoka/forum/forms.py:281
+#: inyoka/forum/forms.py:283
 msgid "You must enter a text in order to set the welcome message"
 msgstr ""
 
-#: inyoka/forum/forms.py:288
+#: inyoka/forum/forms.py:290
 msgid "“new” is not a valid forum slug"
 msgstr ""
 
-#: inyoka/forum/forms.py:292
+#: inyoka/forum/forms.py:294
 #, python-format
 msgid "Please select another slug, “%(slug)s” is already in use."
 msgstr ""
