@@ -29,10 +29,7 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
-from inyoka.wiki.models import (
-    Page, MetaData, Revision, is_privileged_wiki_page,
-    exclude_privileged_wiki_page_filter,
-)
+from inyoka.wiki.models import Page, MetaData, Revision, is_privileged_wiki_page
 from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
 
@@ -57,6 +54,7 @@ class RecentChanges(macros.Macro):
         ('days', int, 10),
     )
     is_block_tag = True
+    allowed_context = ['wiki']
 
     def __init__(self, per_page, days):
         self.per_page = per_page
@@ -191,6 +189,7 @@ class PageCount(macros.Macro):
     Return the number of existing pages.
     """
     names = (u'PageCount', 'Seitenzahl')
+    allowed_context = ['wiki']
 
     def build_node(self, context, format):
         return nodes.Text(unicode(Page.objects.get_page_count()))
@@ -207,6 +206,7 @@ class PageList(macros.Macro):
         ('case_sensitive', bool, True),
         ('shorten_title', bool, False)
     )
+    allowed_context = ['wiki']
 
     def __init__(self, pattern, case_sensitive, shorten_title):
         self.pattern = normalize_pagename(pattern)
@@ -238,6 +238,7 @@ class AttachmentList(macros.Macro):
         ('page', unicode, ''),
         ('shorten_title', bool, False)
     )
+    allowed_context = ['wiki']
 
     def __init__(self, page, shorten_title):
         self.page = normalize_pagename(page)
@@ -259,6 +260,7 @@ class OrphanedPages(macros.Macro):
     """
     names = (u'OrphanedPages', u'VerwaisteSeiten')
     is_block_tag = True
+    allowed_context = ['wiki']
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
@@ -276,6 +278,7 @@ class MissingPages(macros.Macro):
     """
     names = (u'MissingPages', u'FehlendeSeiten')
     is_block_tag = True
+    allowed_context = ['wiki']
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
@@ -293,6 +296,7 @@ class RedirectPages(macros.Macro):
     """
     names = (u'RedirectPages', u'Weiterleitungen')
     is_block_tag = True
+    allowed_context = ['wiki']
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
@@ -321,6 +325,7 @@ class NewPage(macros.Macro):
         ('template', unicode, ''),
         ('text', unicode, '')
     )
+    allowed_context = ['wiki']
 
     def __init__(self, base, template, text):
         self.base = base
@@ -346,6 +351,7 @@ class SimilarPages(macros.Macro):
     arguments = (
         ('page', unicode, ''),
     )
+    allowed_context = ['wiki']
 
     def __init__(self, page_name):
         self.page_name = page_name
@@ -383,6 +389,7 @@ class TagCloud(macros.Macro):
     arguments = (
         ('max', int, 100),
     )
+    allowed_context = ['wiki']
 
     def __init__(self, max):
         self.max = max
@@ -424,6 +431,7 @@ class TagList(macros.Macro):
     arguments = (
         ('tag', unicode, ''),
     )
+    allowed_context = ['wiki']
 
     def __init__(self, active_tag):
         self.active_tag = active_tag
@@ -466,6 +474,7 @@ class Include(macros.Macro):
         ('page', unicode, ''),
         ('silent', bool, False)
     )
+    allowed_context = ['wiki']
 
     def __init__(self, page, silent):
         self.page = normalize_pagename(page)
@@ -501,6 +510,7 @@ class RandomPageList(macros.Macro):
         ('pages', int, 10),
         ('shorten_title', bool, False)
     )
+    allowed_context = ['wiki']
 
     def __init__(self, pages, shorten_title):
         self.pages = pages
@@ -540,6 +550,7 @@ class FilterByMetaData(macros.Macro):
     arguments = (
         ('filters', unicode, ''),
     )
+    allowed_context = ['wiki']
 
     def __init__(self, filters):
         self.filters = [x.strip() for x in filters.split(';')]
@@ -562,7 +573,11 @@ class FilterByMetaData(macros.Macro):
             includes = [x for x in values if not x.startswith('NOT ')]
             kwargs = {'key': key, 'value__in': includes}
             q = MetaData.objects.select_related('page').filter(**kwargs)
-            res = set(x.page for x in q.all() if not is_privileged_wiki_page(x.page))
+            res = set(
+                x.page
+                for x in q.all()
+                if not is_privileged_wiki_page(x.page.name)
+            )
             pages = pages.union(res)
 
         # filter the pages with `AND`
@@ -602,6 +617,7 @@ class PageName(macros.Macro):
     a wiki page.
     """
     names = (u'PageName', u'Seitenname')
+    allowed_context = ['wiki']
 
     def build_node(self, context, format):
         wiki_page = context.kwargs.get('wiki_page', None)
@@ -617,18 +633,22 @@ class Template(macros.Macro):
     names = (u'Template', u'Vorlage')
     has_argument_parser = True
     is_static = True
+    allowed_context = ['forum', 'ikhaya', 'wiki']
 
     def __init__(self, args, kwargs):
-        if not args or is_privileged_wiki_page(args[0]):
+        if not args:
             self.template = None
             self.context = []
             return
+
         items = kwargs.items()
         for idx, arg in enumerate(args[1:]):
             items.append(('arguments.%d' % idx, arg))
         # TODO: kill WIKI_ prefix here
         self.template = join_pagename(settings.WIKI_TEMPLATE_BASE,
                                       normalize_pagename(args[0], False))
+        if is_privileged_wiki_page(self.template):
+            self.template = None
         self.context = items
 
     def build_node(self):
@@ -644,6 +664,7 @@ class Attachment(macros.Macro):
         ('attachment', unicode, u''),
         ('text', unicode, u''),
     )
+    allowed_context = ['wiki']
 
     def __init__(self, target, text):
         self.target = target
@@ -685,6 +706,7 @@ class Picture(macros.Macro):
         ('alt', unicode, None),
         ('title', unicode, None)
     )
+    allowed_context = ['ikhaya', 'wiki']
 
     def __init__(self, target, dimensions, alignment, alt, title):
         self.metadata = [nodes.MetaData('X-Attach', [target])]

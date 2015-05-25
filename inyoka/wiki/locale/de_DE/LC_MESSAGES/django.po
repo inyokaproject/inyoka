@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-05-24 11:37+0200\n"
+"POT-Creation-Date: 2015-05-25 03:06+0200\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -203,11 +203,11 @@ msgstr "Bearbeitet von"
 msgid "Completion date"
 msgstr "Fertigstellungsdatum"
 
-#: inyoka/wiki/macros.py:66
+#: inyoka/wiki/macros.py:67
 msgid "Recent changes cannot be rendered on this page"
 msgstr "Letzte Änderungen können von hier aus nicht dargestellt werden."
 
-#: inyoka/wiki/macros.py:358
+#: inyoka/wiki/macros.py:368
 msgid ""
 "You must apply a page name because the macro is being called outside the "
 "wiki context."
@@ -215,96 +215,87 @@ msgstr ""
 "Du musst eine Seite angeben, weil das Makro außerhalb des Wikis verwendet"
 " wird."
 
-#: inyoka/wiki/macros.py:360
+#: inyoka/wiki/macros.py:370
 msgid "Invalid arguments"
 msgstr "Parameterfehler"
 
-#: inyoka/wiki/macros.py:395
+#: inyoka/wiki/macros.py:406
 #, python-format
 msgid "one page"
 msgid_plural "%(count)d pages"
 msgstr[0] "eine Seite"
 msgstr[1] "%(count)d Seiten"
 
-#: inyoka/wiki/macros.py:407
+#: inyoka/wiki/macros.py:418
 msgid "Tags"
 msgstr "Tags"
 
-#: inyoka/wiki/macros.py:446
+#: inyoka/wiki/macros.py:458
 #, python-format
 msgid "Pages with tag “%(name)s”"
 msgstr "Seiten mit Tag „%(name)s“"
 
-#: inyoka/wiki/macros.py:479 inyoka/wiki/macros.py:550
+#: inyoka/wiki/macros.py:492
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr "Die Seite „%(name)s“ wurde nicht gefunden."
 
-#: inyoka/wiki/macros.py:481 inyoka/wiki/macros.py:549
+#: inyoka/wiki/macros.py:494
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: inyoka/wiki/macros.py:484
+#: inyoka/wiki/macros.py:497
 msgid "Detected a circular include macro call"
 msgstr "Detected a circular include macro call"
 
-#: inyoka/wiki/macros.py:485
+#: inyoka/wiki/macros.py:498
 msgid "Circular import"
 msgstr "Zirkulärer Import"
 
-#: inyoka/wiki/macros.py:580
-msgid "Key not defined"
-msgstr "Schlüssel nicht definiert"
-
-#: inyoka/wiki/macros.py:581
-#, python-format
-msgid "The key “%(name)s” is not defined"
-msgstr "Der Schlüssel „%(name)s“ wurde nicht definiert."
-
-#: inyoka/wiki/macros.py:652
+#: inyoka/wiki/macros.py:595
 msgid "No result"
 msgstr "Kein Ergebnis"
 
-#: inyoka/wiki/macros.py:653
+#: inyoka/wiki/macros.py:596
 #, python-format
 msgid "The metadata filter has found no results. Query: %(query)s"
 msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 
-#: inyoka/wiki/macros.py:678
+#: inyoka/wiki/macros.py:622
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
-#: inyoka/wiki/models.py:480
+#: inyoka/wiki/models.py:502
 msgid "Created"
 msgstr "Erstellt"
 
-#: inyoka/wiki/models.py:911
+#: inyoka/wiki/models.py:933
 msgid "Automatically deleted"
 msgstr "Von System gelöscht"
 
-#: inyoka/wiki/models.py:1034
+#: inyoka/wiki/models.py:1056
 msgid "Wiki page"
 msgstr "Wikiseite"
 
-#: inyoka/wiki/models.py:1035
+#: inyoka/wiki/models.py:1057
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
-#: inyoka/wiki/models.py:1091
+#: inyoka/wiki/models.py:1113
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
-#: inyoka/wiki/models.py:1170
+#: inyoka/wiki/models.py:1192
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr "%(rev)s (Revision %(date)s)"
 
-#: inyoka/wiki/models.py:1200
+#: inyoka/wiki/models.py:1222
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
 
-#: inyoka/wiki/models.py:1226
+#: inyoka/wiki/models.py:1248
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"

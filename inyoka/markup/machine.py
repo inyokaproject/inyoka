@@ -13,6 +13,8 @@
 """
 from cPickle import dumps, loads, HIGHEST_PROTOCOL
 
+from django.utils.translation import ugettext as _
+
 from inyoka.utils import get_request_context
 
 
@@ -214,7 +216,18 @@ class Renderer(object):
             # and other funny things are not supported. so we fail
             # silently.
             elif not context.simplified:
-                yield instruction.render(context, format)
+                allowed_context = getattr(instruction, 'allowed_context', None)
+                current_context = context.application
+                if (allowed_context is not None and current_context is not None
+                        and current_context in allowed_context):
+                    yield instruction.render(context, format)
+                else:
+                    from .nodes import error_box
+                    box = error_box(
+                        _(u'Invalid macro'),
+                        _(u'This macro is not available.')
+                    )
+                    yield box.render(context, format)
 
     def render(self, context, format=None):
         """Streams into a buffer and returns it as string."""

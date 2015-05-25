@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-05-24 11:38+0200\n"
+"POT-Creation-Date: 2015-05-25 03:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,11 +34,19 @@ msgstr ""
 msgid "The macro “%(name)s” does not exist."
 msgstr ""
 
-#: inyoka/markup/macros.py:266
+#: inyoka/markup/machine.py:227
+msgid "Invalid macro"
+msgstr ""
+
+#: inyoka/markup/machine.py:228
+msgid "This macro is not available."
+msgstr ""
+
+#: inyoka/markup/macros.py:270
 msgid "Table of contents"
 msgstr ""
 
-#: inyoka/markup/macros.py:302
+#: inyoka/markup/macros.py:307
 msgid "Invalid date"
 msgstr ""
 

@@ -209,17 +209,20 @@ class PageManager(models.Manager):
             pagelist = request_cache.get(key)
 
         if pagelist is None:
-            pagelist = exclude_privileged_wiki_page_filter(Page.objects)
-            pagelist = pagelist.select_related('last_rev') \
-                .values_list('name', 'last_rev__deleted',
-                             'last_rev__attachment__id').order_by('name')
+            pagelist = Page.objects.select_related('last_rev')
             if exclude_privileged:
-                pagelist = pagelist.filter()
+                pagelist = exclude_privileged_wiki_page_filter(pagelist)
+            pagelist = pagelist.values_list(
+                'name', 'last_rev__deleted', 'last_rev__attachment__id'
+            ).order_by('name')
             # force a list, can't pickle ValueQueryset that way
             pagelist = list(pagelist)
-            # we cache that also if the user wants something uncached
-            # because if we are already fetching it we can cache it.
-            request_cache.set(key, pagelist, 10000)
+            if not exclude_privileged:
+                # we cache that also if the user wants something uncached
+                # because if we are already fetching it we can cache it,
+                # but we still need to not cache if we're requesting only
+                # unprivileged pages.
+                request_cache.set(key, pagelist, 10000)
         return pagelist
 
     def get_page_list(self, existing_only=True, nocache=False, exclude_privileged=False):

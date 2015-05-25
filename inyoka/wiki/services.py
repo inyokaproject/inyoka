@@ -33,18 +33,20 @@ def on_get_smilies(request):
 def on_render_preview(request):
     """Render some preview text."""
     page = post = None
+    simplified = True
     if 'page' in request.REQUEST:
         try:
             page = Page.objects.get_by_name(request.REQUEST['page'])
         except Page.DoesNotExist:
             page = None
+        simplified = False
     if 'post' in request.REQUEST:
         try:
             post = ForumPost.objects.get(pk=request.REQUEST['post'])
         except ForumPost.DoesNotExist:
             post = None
 
-    context = RenderContext(request, wiki_page=page, forum_post=post)
+    context = RenderContext(request, simplified=simplified, wiki_page=page, forum_post=post)
     html = parse(request.REQUEST.get('text', '')).render(context, 'html')
     # TODO: return json.
     return HttpResponse(html, mimetype='text/plain')

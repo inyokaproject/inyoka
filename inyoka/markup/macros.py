@@ -93,6 +93,9 @@ class Macro(object):
     #: the arguments this macro expects
     arguments = ()
 
+    #: The render context this macro is allowed in. Restrictive by default
+    allowed_context = None
+
     __repr__ = debug_repr
 
     def render(self, context, format):
@@ -177,6 +180,7 @@ class TableOfContents(TreeMacro):
             'ROMAN': 'romanupper'
         }, 'arabic')
     )
+    allowed_context = ['ikhaya', 'wiki']
 
     def __init__(self, depth, list_type):
         self.depth = depth
@@ -279,6 +283,7 @@ class Date(Macro):
     arguments = (
         ('date', unicode, None),
     )
+    allowed_context = ['ikhaya', 'wiki']
 
     def __init__(self, date):
         if not date:
@@ -309,6 +314,7 @@ class Newline(Macro):
     """
     names = (u'BR',)
     is_static = True
+    allowed_context = ['forum', 'ikhaya', 'wiki']
 
     def build_node(self):
         return nodes.Newline()
@@ -323,6 +329,7 @@ class Anchor(Macro):
     arguments = (
         ('id', unicode, None),
     )
+    allowed_context = ['forum', 'ikhaya', 'wiki']
 
     def __init__(self, id):
         self.id = id
@@ -340,6 +347,7 @@ class Span(Macro):
         ('class_', unicode, None),
         ('style', unicode, None),
     )
+    allowed_context = ['forum', 'ikhaya', 'wiki']
 
     def __init__(self, content, class_, style):
         self.content = content
