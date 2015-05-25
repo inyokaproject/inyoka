@@ -119,11 +119,8 @@ def normalize_pagename(name, strip_location_markers=True):
     name = u'_'.join(_unsupported_re.sub('', name).split()).rstrip('/')
     if not strip_location_markers:
         return name
-    if name.startswith('./'):
-        return name[2:]
-    elif name.startswith('../'):
-        return name[3:]
-    return name.lstrip('/')
+    name = name.lstrip('/')
+    return _path_crop.sub('', name)
 
 
 def get_pagetitle(name, full=True):
