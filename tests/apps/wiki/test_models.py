@@ -8,6 +8,8 @@
     :copyright: (c) 2012-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import mock
+
 from django.test import TestCase
 
 from inyoka.wiki.models import Page
@@ -15,6 +17,8 @@ from inyoka.portal.user import User
 
 
 class TestModels(TestCase):
+
+    @mock.patch('inyoka.markup.RenderContext.application', 'wiki')
     def test_render_dynamic_macros(self):
         admin = User.objects.register_user('admin', 'admin', 'admin', False)
         p = Page.objects.create('BlaPage', '|[[PageName()]]|', user=admin, note='rev0')

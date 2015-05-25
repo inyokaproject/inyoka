@@ -18,8 +18,10 @@ class TestMacros(unittest.TestCase):
 
     def test_missing_link_in_picture_ticket_635(self):
         page = Page(name='Something')
-        html = parse("[[Bild(Bildname, 1)]]").render(RenderContext(wiki_page=page),
-                                                     format='html')
+        html = parse("[[Bild(Bildname, 1)]]").render(
+            RenderContext(wiki_page=page, application='wiki'),
+            format='html',
+        )
 
         result = '<a href="invalid-url" class="crosslink"><img alt="Bildname" class="image-default" /></a>'
         self.assertIn(result, html)
