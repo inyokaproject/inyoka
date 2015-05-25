@@ -603,7 +603,7 @@ class PostRevision(models.Model):
         if self.post.is_plaintext:
             return fix_plaintext(self.text)
         request = current_request._get_current_object()
-        context = RenderContext(request, simplified=False, forum_post=self.post,
+        context = RenderContext(request, forum_post=self.post,
                                 application='forum')
         return parse(self.text).render(context, 'html')
 
