@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy
 from inyoka.forum.acl import have_privilege as have_forum_privilege
 from inyoka.markup import parse, render, RenderContext
 from inyoka.portal.user import User
+from inyoka.utils.database import InyokaMarkupField
 from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
@@ -113,7 +114,7 @@ class PrivateMessage(models.Model):
     author = models.ForeignKey(User)
     subject = models.CharField(ugettext_lazy(u'Title'), max_length=255)
     pub_date = models.DateTimeField(ugettext_lazy(u'Date'))
-    text = models.TextField(ugettext_lazy(u'Text'))
+    text = InyokaMarkupField(verbose_name=ugettext_lazy(u'Text'), application='portal')
 
     class Meta:
         ordering = ('-pub_date',)
@@ -138,11 +139,6 @@ class PrivateMessage(models.Model):
     @property
     def author_avatar(self):
         return self.author.get_profile()
-
-    @property
-    def rendered_text(self):
-        context = RenderContext(current_request, simplified=True)
-        return parse(self.text).render(context, 'html')
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
@@ -244,8 +240,10 @@ class StaticPage(models.Model):
         help_text=ugettext_lazy(u'Will be used to generate the URL. '
                                 u'Cannot be changed later.'))
     title = models.CharField(ugettext_lazy(u'Title'), max_length=200)
-    content = models.TextField(ugettext_lazy(u'Content'),
-        help_text=ugettext_lazy(u'Inyoka syntax required.')
+    content = InyokaMarkupField(
+        verbose_name=ugettext_lazy(u'Content'),
+        help_text=ugettext_lazy(u'Inyoka syntax required.'),
+        application='portal',
     )
 
     class Meta:
@@ -273,16 +271,6 @@ class StaticPage(models.Model):
             'edit': ('portal', self.key, 'edit'),
             'delete': ('portal', self.key, 'delete'),
         }[action])
-
-    @property
-    def rendered_content(self):
-        context = RenderContext(current_request)
-        key = '/portal/staticpage/%s' % self.key
-        instructions = cache.get(key)
-        if instructions is None:
-            instructions = parse(self.content).compile('html')
-            cache.set(key, instructions)
-        return render(instructions, context)
 
 
 class StaticFile(models.Model):

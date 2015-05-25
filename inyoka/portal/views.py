@@ -1755,7 +1755,7 @@ def static_page(request, page):
         raise Http404
     return {
         'title': q.title,
-        'content': q.rendered_content,
+        'content': q.content_rendered,
         'key': q.key,
         'page': q,
     }
