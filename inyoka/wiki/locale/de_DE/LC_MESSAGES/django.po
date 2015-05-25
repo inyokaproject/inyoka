@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-05-25 03:06+0200\n"
+"POT-Creation-Date: 2015-05-25 11:34+0200\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -252,50 +252,50 @@ msgstr "Detected a circular include macro call"
 msgid "Circular import"
 msgstr "Zirkulärer Import"
 
-#: inyoka/wiki/macros.py:595
+#: inyoka/wiki/macros.py:599
 msgid "No result"
 msgstr "Kein Ergebnis"
 
-#: inyoka/wiki/macros.py:596
+#: inyoka/wiki/macros.py:600
 #, python-format
 msgid "The metadata filter has found no results. Query: %(query)s"
 msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 
-#: inyoka/wiki/macros.py:622
+#: inyoka/wiki/macros.py:626
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
-#: inyoka/wiki/models.py:502
+#: inyoka/wiki/models.py:505
 msgid "Created"
 msgstr "Erstellt"
 
-#: inyoka/wiki/models.py:933
+#: inyoka/wiki/models.py:936
 msgid "Automatically deleted"
 msgstr "Von System gelöscht"
 
-#: inyoka/wiki/models.py:1056
+#: inyoka/wiki/models.py:1059
 msgid "Wiki page"
 msgstr "Wikiseite"
 
-#: inyoka/wiki/models.py:1057
+#: inyoka/wiki/models.py:1060
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
-#: inyoka/wiki/models.py:1113
+#: inyoka/wiki/models.py:1116
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
-#: inyoka/wiki/models.py:1192
+#: inyoka/wiki/models.py:1195
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr "%(rev)s (Revision %(date)s)"
 
-#: inyoka/wiki/models.py:1222
+#: inyoka/wiki/models.py:1225
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
 
-#: inyoka/wiki/models.py:1248
+#: inyoka/wiki/models.py:1251
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"

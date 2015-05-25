@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-05-24 11:38+0200\n"
+"POT-Creation-Date: 2015-05-25 11:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -138,34 +138,34 @@ msgid ""
 " account will be blocked."
 msgstr ""
 
-#: inyoka/utils/text.py:143
+#: inyoka/utils/text.py:140
 msgid "ten"
 msgstr ""
 
-#: inyoka/utils/text.py:145
+#: inyoka/utils/text.py:142
 msgid "eleven"
 msgstr ""
 
-#: inyoka/utils/text.py:147
+#: inyoka/utils/text.py:144
 msgid "twelve"
 msgstr ""
 
-#: inyoka/utils/text.py:150
+#: inyoka/utils/text.py:147
 msgctxt "masculine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:151
+#: inyoka/utils/text.py:148
 msgctxt "feminine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:152
+#: inyoka/utils/text.py:149
 msgctxt "neuter"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:153
+#: inyoka/utils/text.py:150
 msgid "one"
 msgstr ""
 

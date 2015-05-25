@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-05-24 11:38+0200\n"
+"POT-Creation-Date: 2015-05-25 11:34+0200\n"
 "PO-Revision-Date: 2014-09-06 21:47+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language-Team: German (Germany) "
@@ -153,34 +153,34 @@ msgstr ""
 "Dein Beitrag wurde als Spam klassifiziert. Du hast %(left)d verbleibende "
 "Versuche bevor dein Konto gesperrt wird."
 
-#: inyoka/utils/text.py:143
+#: inyoka/utils/text.py:140
 msgid "ten"
 msgstr "zehn"
 
-#: inyoka/utils/text.py:145
+#: inyoka/utils/text.py:142
 msgid "eleven"
 msgstr "elf"
 
-#: inyoka/utils/text.py:147
+#: inyoka/utils/text.py:144
 msgid "twelve"
 msgstr "zwölf"
 
-#: inyoka/utils/text.py:150
+#: inyoka/utils/text.py:147
 msgctxt "masculine"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:151
+#: inyoka/utils/text.py:148
 msgctxt "feminine"
 msgid "one"
 msgstr "eine"
 
-#: inyoka/utils/text.py:152
+#: inyoka/utils/text.py:149
 msgctxt "neuter"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:153
+#: inyoka/utils/text.py:150
 msgid "one"
 msgstr "eins"
 
