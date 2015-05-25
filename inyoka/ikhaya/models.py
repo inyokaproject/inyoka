@@ -399,7 +399,7 @@ class Report(models.Model):
         return href('ikhaya', 'report', self.id, action)
 
     def save(self, *args, **kwargs):
-        context = RenderContext(current_request)
+        context = RenderContext(current_request, simplified=True)
         node = parse(self.text, wiki_force_existing=False)
         self.rendered_text = node.render(context, 'html')
         super(Report, self).save(*args, **kwargs)
@@ -427,7 +427,7 @@ class Suggestion(models.Model):
 
     @property
     def rendered_text(self):
-        context = RenderContext(current_request)
+        context = RenderContext(current_request, simplified=True)
         key = 'ikhaya/suggestion_text/%s' % self.id
         instructions = cache.get(key)
         if instructions is None:
@@ -437,7 +437,7 @@ class Suggestion(models.Model):
 
     @property
     def rendered_intro(self):
-        context = RenderContext(current_request)
+        context = RenderContext(current_request, simplified=True)
         key = 'ikhaya/suggestion_intro/%s' % self.id
         instructions = cache.get(key)
         if instructions is None:
@@ -447,7 +447,7 @@ class Suggestion(models.Model):
 
     @property
     def rendered_notes(self):
-        context = RenderContext(current_request)
+        context = RenderContext(current_request, simplified=True)
         key = 'ikhaya/suggestion_notes/%s' % self.id
         instructions = cache.get(key)
         if instructions is None:
@@ -481,7 +481,7 @@ class Comment(models.Model):
             self.article = Article.objects.get(id=self.article.id)
             self.article.comment_count = self.article.comment_count + 1
             self.article.save()
-        context = RenderContext(current_request)
+        context = RenderContext(current_request, simplified=True)
         node = parse(self.text, wiki_force_existing=False)
         self.rendered_text = node.render(context, 'html')
         super(Comment, self).save(*args, **kwargs)
@@ -526,7 +526,7 @@ class Event(models.Model):
 
     @property
     def rendered_description(self):
-        context = RenderContext(current_request)
+        context = RenderContext(current_request, simplified=True)
         key = 'ikhaya/date/%s' % self.id
         instructions = cache.get(key)
         if instructions is None:
