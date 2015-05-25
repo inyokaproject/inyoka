@@ -965,7 +965,7 @@ class Post(models.Model, LockableObject):
                     '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
                     'due to possible spam.'
                 ) % {
-                    'username': User.objects.get_system_user().username,
+                    'username': self.author.username,
                     'post': self.pk,
                 }
                 if topic.reported:
