@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-05-25 11:34+0200\n"
+"POT-Creation-Date: 2015-05-27 18:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -134,8 +134,9 @@ msgstr ""
 #: inyoka/utils/spam.py:151
 #, python-format
 msgid ""
-"Your text is considered spam. You have %(left)d attempts left before your"
-" account will be blocked."
+"Your text is considered spam and needs approval from one of the "
+"administrators. Please be patient, we will get to it as soon as possible."
+" You have %(left)d attempts left before your account will be blocked."
 msgstr ""
 
 #: inyoka/utils/text.py:140
