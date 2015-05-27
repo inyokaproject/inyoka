@@ -149,8 +149,10 @@ def check_form_field(form, text_field, needs_check, request, content_type):
         if form._spam:
             attempts_left = block_user_if_spammer(request.user)
             msg = _(
-                'Your text is considered spam. You have %(left)d '
-                'attempts left before your account will be blocked.'
+                'Your text is considered spam and needs approval from one of '
+                'the administrators. Please be patient, we will get to it as '
+                'soon as possible. You have %(left)d attempts left before your '
+                'account will be blocked.'
             ) % {
                 'left': attempts_left,
             }
