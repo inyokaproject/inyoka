@@ -52,7 +52,7 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
     try:
         # Inform users who subscribed to the forum
         queue_notifications.delay(request_user_id, 'new_topic', _(
-            u'New topic in forum “%(forum)s”: “%(topic)s”') % {
+            u'“%(topic)s” – Topic in forum “%(forum)s”') % {
                 'forum': data.get('forum_name'),
                 'topic': data.get('topic_title')
             },
@@ -78,7 +78,7 @@ def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
     try:
         if data.get('topic_version') is not None:
             queue_notifications.delay(request_user_id, 'new_topic_ubuntu_version',
-                _(u'New topic with version %(version)s: “%(topic)s”') % {
+                _(u'“%(topic)s” – Topic with version %(version)s') % {
                     'version': data.get('topic_version'),
                     'topic': data.get('topic_title')},
                 data,
@@ -102,8 +102,9 @@ def send_edit_notifications(user, post, topic, forum):
 
     # notify about new answer in topic for topic-subscriptions
     queue_notifications.delay(user.id, 'new_post',
-        _(u'New reply in topic “%(topic)s”') % {
-            'topic': data.get('topic_title')},
+        _(u'“%(topic)s” – Reply from “%(username)s“') % {
+            'topic': data.get('topic_title'),
+            'username': data.get('author_username')},
         data,
         filter={'content_type': ctype(Topic), 'object_id': data.get('topic_id')},
         callback=notify_member_subscriptions.subtask(args=(user.id, data)))
@@ -113,9 +114,9 @@ def send_edit_notifications(user, post, topic, forum):
 def notify_member_subscriptions(notified_users, request_user_id, data):
     from inyoka.portal.models import User
     # notify about new answer in topic for member-subscriptions
-    #: TODO fix translation
     queue_notifications.delay(request_user_id, 'user_new_post',
-        u'Neue Antwort vom Benutzer „%s”' % data.get('author_username'),
+        _(u'New answer from user „%(username)s”') % {
+            'username' : data.get('author_username')},
         data, include_notified=True,
         filter={'content_type': ctype(User), 'object_id': request_user_id},
         exclude={'user__in': notified_users})
