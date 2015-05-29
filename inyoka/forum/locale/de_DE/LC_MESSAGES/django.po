@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-05-25 11:34+0200\n"
+"POT-Creation-Date: 2015-05-28 19:34+0200\n"
 "PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -233,25 +233,30 @@ msgstr "Neues Thema vom Benutzer %(username)s"
 
 #: inyoka/forum/notifications.py:54
 #, python-format
-msgid "New topic in forum “%(forum)s”: “%(topic)s”"
-msgstr "Neues Thema im Forum „%(forum)s“: „%(topic)s“"
+msgid "“%(topic)s” – Topic in forum “%(forum)s”"
+msgstr "“%(topic)s“ – Thema im Forum „%(forum)s“"
 
 #: inyoka/forum/notifications.py:81
 #, python-format
-msgid "New topic with version %(version)s: “%(topic)s”"
-msgstr "Neues Thema mit der Version %(version)s: „%(topic)s“"
+msgid "“%(topic)s” – Topic with version %(version)s"
+msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 #: inyoka/forum/notifications.py:105
 #, python-format
-msgid "New reply in topic “%(topic)s”"
-msgstr "Neue Antwort in „%(topic)s“"
+msgid "“%(topic)s” – Reply from “%(username)s“"
+msgstr "“%(topic)s” – Antwort von “%(username)s“"
 
-#: inyoka/forum/notifications.py:136
+#: inyoka/forum/notifications.py:118
+#, python-format
+msgid "New answer from user „%(username)s”"
+msgstr "Neue Antwort von Benutzer „%(username)s”"
+
+#: inyoka/forum/notifications.py:137
 #, python-format
 msgid "New discussion regarding the page “%(page)s” created"
 msgstr "Neue Diskussion für die Seite „%(page)s“ wurde eröffnet"
 
-#: inyoka/forum/notifications.py:150
+#: inyoka/forum/notifications.py:151
 #, python-format
 msgid "The topic “%(topic)s” has been deleted"
 msgstr "Das Thema „%(topic)s“ wurde gelöscht."
@@ -644,4 +649,3 @@ msgstr "Das Forum „%(forum)s“ wurde erfolgreich geändert."
 #, python-format
 msgid "The forum “%(forum)s” was created successfully."
 msgstr "Das Forum „%(forum)s“ wurde erfolgreich erstellt."
-
