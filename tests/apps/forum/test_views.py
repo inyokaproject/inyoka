@@ -605,8 +605,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
-                          'your account will be blocked.</div>', response.content, count=1)
+        self.assertInHTML('<div class="message info">Your text is considered spam '
+                          'and needs approval from one of the administrators. '
+                          'Please be patient, we will get to it as soon as possible. '
+                          'You have 4 attempts left before your account will be blocked.</div>',
+                          response.content, count=1)
         self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
                           response.content, count=1)
 
@@ -902,8 +905,11 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
-                          'your account will be blocked.</div>', response.content, count=1)
+        self.assertInHTML('<div class="message info">Your text is considered spam '
+                          'and needs approval from one of the administrators. '
+                          'Please be patient, we will get to it as soon as possible. '
+                          'You have 4 attempts left before your account will be blocked.</div>',
+                          response.content, count=1)
         self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
     @responses.activate
@@ -1323,7 +1329,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         # Check for rendered post
         with translation.override('en-us'):
             response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertContains(response, 'Your text is considered spam.', count=0)
+        self.assertContains(response, 'Your text is considered spam', count=0)
         self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
 
     def test_edit_first_post_remove_polls(self):
