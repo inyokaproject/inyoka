@@ -473,7 +473,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     # antispam measures
     privileges = get_forum_privileges(request.user, forum)
     needs_spam_check = True
-    if check_privilege(privileges, 'moderate') or post and post.pk:
+    if request.user.post_count >= settings.INYOKA_SPAM_DETECT_LIMIT:
+        # Exclude very active users.
+        needs_spam_check = False
+    elif check_privilege(privileges, 'moderate') or post and post.pk:
         # Exclude moderators for the current forum from spam checks
         # as well as already existing posts
         needs_spam_check = False
