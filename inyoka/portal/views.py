@@ -613,7 +613,7 @@ def usercp_password(request):
             user.set_password(data['new_password'])
             user.save()
             messages.success(request, _(u'Your password was changed successfully.'))
-            return HttpResponseRedirect(href('portal', 'usercp'))
+            return HttpResponseRedirect(href('portal', 'usercp', 'password'))
         else:
             generic.trigger_fix_errors_message(request)
     else:
