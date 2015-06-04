@@ -18,10 +18,8 @@ from django.db import models, transaction
 from django.utils.translation import ugettext_lazy
 
 from inyoka.forum.acl import have_privilege as have_forum_privilege
-from inyoka.markup import parse, render, RenderContext
 from inyoka.portal.user import User
 from inyoka.utils.database import InyokaMarkupField
-from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege
@@ -52,7 +50,7 @@ class SubscriptionManager(gmodels.ContentTypeManager):
 
         notifies = Subscription.objects.filter(**filter)\
                                        .values_list('notified', flat=True)[:1]
-        notified = notifies and notifies[0] == True
+        notified = bool(notifies and notifies[0])
         if clear_notified and notified:
             Subscription.objects.filter(**filter).update(notified=False)
         return bool(notifies)
@@ -252,10 +250,10 @@ class StaticPage(models.Model):
 
     def __repr__(self):
         return '<%s:%s "%s">' % (
-                self.__class__.__name__,
-                self.key,
-                self.title,
-            )
+            self.__class__.__name__,
+            self.key,
+            self.title,
+        )
 
     def __unicode__(self):
         return self.title

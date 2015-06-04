@@ -34,7 +34,6 @@ from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
     check_privilege, filter_invisible)
 from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
     SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS)
-from inyoka.markup import parse, RenderContext
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, Group
 from inyoka.portal.utils import get_ubuntu_versions
