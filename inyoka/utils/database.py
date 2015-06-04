@@ -235,7 +235,7 @@ class InyokaMarkupField(models.TextField):
     Field to save and render Inyoka markup.
     """
 
-    def __init__(self, application, simplify=False, force_existing=False, *args, **kwargs):
+    def __init__(self, application=None, simplify=False, force_existing=False, *args, **kwargs):
         self.application = application
         self.simplify = simplify
         self.force_existing = force_existing
