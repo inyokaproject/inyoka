@@ -216,16 +216,37 @@ Test someone's Pull Request
 .. todo::
    Fill me.
 
+
 Styles
 ======
 
-Inyoka uses `less <http://lesscss.org/>`_ for creating css files. In
-``DEBUG`` mode only the less files are used, therefore you do not need to
-alter or commit any CSS file. (However, CSS files are used in master and
-after each deployment master get merged into staging, so removing all CSS
-files in staging is not a good idea.)
+Inyoka uses `less <http://lesscss.org/>`_ for creating css files.
+Run
 
-If, for some reason, you still want to compile less files to CSS use the
-following command (``-x`` compresses the output)::
+.. code-block:: console
 
-    inyoka/static/style $ lessc -x FILENAME.less > FILENAME.css
+  (inyoka)$ ./node_modules/grunt-cli/bin/grunt watch
+
+in your theme's base directory to automatically generate the ``.css``
+files. For more information read the theme documentation.
+
+
+Documentation
+=============
+
+Installation
+************
+
+In order to create or update the documentation (yes, *this*
+documentation), run
+
+.. code-block:: console
+
+  (inyoka)$ make html
+   
+in ``inyoka/inyoka/docs/``.
+
+Documentating
+*************
+
+This documentation is incomplete, you can help by expanding it.
