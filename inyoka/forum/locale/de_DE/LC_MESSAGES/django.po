@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-05-28 19:34+0200\n"
+"POT-Creation-Date: 2015-06-23 16:11+0200\n"
 "PO-Revision-Date: 2014-01-10 17:27+0000\n"
 "Last-Translator: Sören Wegener <wegener92@googlemail.com>\n"
 "Language-Team: German (Germany) "
@@ -649,3 +649,4 @@ msgstr "Das Forum „%(forum)s“ wurde erfolgreich geändert."
 #, python-format
 msgid "The forum “%(forum)s” was created successfully."
 msgstr "Das Forum „%(forum)s“ wurde erfolgreich erstellt."
+
