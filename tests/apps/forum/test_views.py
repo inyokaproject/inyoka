@@ -612,6 +612,33 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
+    def test_newtopic_frequent_user_spam(self):
+        # frequent users (>100 posts) should be excluded from spam detection
+        self.user.post_count = 100
+        self.user.save()
+        self.client.login(username='user', password='user')
+        self.make_valid_key()
+        self.make_spam()
+        # Test preview
+        postdata = {
+            'title': 'newpost_title',
+            'ubuntu_distro': constants.get_distro_choices()[2][0],
+            'text': 'newpost text',
+        }
+        response = self.post_request('/forum/%s/newtopic/' % self.public_forum.slug, postdata, 0, 0)
+        self.assertPreviewInHTML('newpost text', response)
+
+        # Test send
+        self.post_request('/forum/%s/newtopic/' % self.public_forum.slug, postdata, 1, 1, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/newpost-title/')
+        self.assertInHTML('Your text is considered spam', response.content, count=0)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
     def test_newtopic_user_spam_non_public(self):
         self.client.login(username='user', password='user')
         self.make_valid_key()
@@ -877,6 +904,34 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('<div class="message info">Your text is considered spam. You have 4 attempts left before '
                           'your account will be blocked.</div>', response.content, count=1)
+        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
+
+    @responses.activate
+    @override_settings(INYOKA_USE_AKISMET=True)
+    def test_new_post_frequent_user_spam(self):
+        # frequent users (>100 posts) should be excluded from spam detection
+        self.user.post_count = 100
+        self.user.save()
+        topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
+        Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
+
+        self.client.login(username='user', password='user')
+        self.make_valid_key()
+        self.make_spam()
+        # Test preview
+        postdata = {
+            'text': 'newpost text',
+        }
+        response = self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 1)
+        self.assertPreviewInHTML('newpost text', response)
+
+        # Test send
+        self.post_request('/topic/%s/reply/' % topic.slug, postdata, 1, 2, submit=True)
+
+        # Check for rendered post
+        with translation.override('en-us'):
+            response = self.client.get('/topic/%s/' % topic.slug)
+        self.assertInHTML('Your text is considered spam', response.content, count=0)
         self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
     @responses.activate
