@@ -45,7 +45,7 @@ If you do not have a SSH key, create one:
 
   $ ssh-keygen -t rsa -b 4096
 
-Then you need to add your *public* key to your profile in Git under
+Then you need to add your *public* key to your profile in Github under
 *"Account Profile -> SSH keys -> Add SSH key"*:
 
 .. code-block:: console
@@ -130,19 +130,7 @@ The version of npm shipped on Ubuntu 12.04 is too old, see `these docs
 <https://docs.npmjs.com/getting-started/installing-node>`_ in order to
 update your version.
 
-Adding links (Ubuntu only)
-**************************
-
-Inyoka  needs the program '''virtualenv''' and expects the version 2.7. In
-Ubuntu the installed binary does not have the version tag in the name.  So
-you need to add a softlink:
-
-.. code-block:: console
-
-  $ cd /usr/bin/
-  $ sudo ln -s virtualenv virtualenv-2.7
-
-Actual instalallation
+Actual installation
 *********************
 Next you can start the actual Inyoka installation:
 
@@ -152,11 +140,13 @@ Next you can start the actual Inyoka installation:
   $ virtualenv-2.7 ~/.venvs/inyoka
   $ ~/.venvs/inyoka/bin/pip install -r extra/requirements/test.txt
 
+Note: You need to cd to your inyoka directory for the last command to work.
+
 A lot of files will be downloaded and compiled. Further there will be
 some warnings that you can ignore. Hopefully there is not error and
 everything will compile fine.
 
-At the end you need to edit your *etc/hosts* with root privilegies
+At the end you need to edit your */etc/hosts* with root privilegies
 and add the following line:
 
 .. code-block::
@@ -221,10 +211,10 @@ So first install MySQL:
 You will be asked for a password (maybe several times). You can leave it
 empty if you want to.
 
-Then you need to change the developer settings for the database. Edit the
-file *development_settings.py*  in the *inyoka* directory. You can leave
-the database entries if you haven't set a password during installation of
-MySQL above. Otherwise  you need to add your password:
+Then you need to change the developer settings for the database. Rename and
+edit the file *example_development_settings.py*  to *development_settings.py* 
+in the *inyoka* directory. If you have set a password during installation of 
+MySQL above you need to add your password:
 
 .. code-block:: console
 
@@ -280,12 +270,10 @@ as username because it will be used in some test files. It is also
 advisable to use that mail adress in order to be able to test
 notifications, see :ref:`testing notifications <test-notifies>`.
 
-.. note::
-
-   If you want to change settings in the admin's control panel, you need
-   to set the mail adress to ``admin@localhost.local`` to not raise an
-   error. The mail adress is then automatically set back to
-   ``admin@localhost``.
+Note: If you want to change settings in the admin's control panel, you 
+need to set the mail adress to ``admin@localhost.local`` to not raise an
+error. The mail adress is then automatically set back to 
+``admin@localhost``.
 
 Now you can create the real test data:
 
