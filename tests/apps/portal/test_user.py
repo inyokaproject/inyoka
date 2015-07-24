@@ -13,7 +13,6 @@ from django.test import TestCase
 
 from inyoka.portal.user import User, Group, deactivate_user
 from inyoka.portal.views import get_user
-from posix import rename
 
 
 class TestUserModel(TestCase):
