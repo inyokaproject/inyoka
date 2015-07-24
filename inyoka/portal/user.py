@@ -32,7 +32,6 @@ from inyoka.utils.local import current_request
 from inyoka.utils.mail import send_mail
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
 from inyoka.utils.user import normalize_username, gen_activation_key,\
     is_valid_username
