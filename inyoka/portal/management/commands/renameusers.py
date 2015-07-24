@@ -17,24 +17,31 @@ import json
 
 class Command(BaseCommand):
     help = "Rename all users as specified in the given JSON file"
-    args = '<rename.json>'
+    args = '<rename.json> [silent]'
     
     def handle(self, *args, **options):
         if len(args) == 0:
             self.stderr.write(_(u"Error: No JSON file specified!"))
-            return       
+            return
+        elif "silent" in args:
+            notify = False
+        else:
+            notify = True
         
-        with open(args[0]) as json_file:
-            data = json.load(json_file)
-        
-        for username in data:
+        if isinstance(args[0], basestring):
+            with open(args[0]) as json_file:
+                data = json.load(json_file)
+        else:
+            data = json.load(args[0])
+                
+        for username in data:            
             try:
                 user = User.objects.get_by_username_or_email(username["oldname"])
             except User.DoesNotExist:
                 self.stderr.write(_(u"User '{oldname}' does not exist. Skipping...").format(oldname=username["oldname"]))
             else:
                 try:
-                    if not user.rename(username["newname"]):
+                    if not user.rename(username["newname"], notify):
                         self.stderr.write(_(u"User name '{newname}' already exists. Skipping...").format(newname=username["newname"]))
                 except ValueError:
                     self.stderr.write(_(u"New user name '{newname}' contains invalid characters. Skipping...").format(newname=username["newname"]))
