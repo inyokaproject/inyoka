@@ -498,6 +498,9 @@ class User(AbstractBaseUser):
         if not is_valid_username(new_name):
             raise ValueError('invalid username')
         
+        if self.username == new_name:
+            return True
+        
         try:
             User.objects.get_by_username_or_email(new_name)
         except User.DoesNotExist:
