@@ -34,7 +34,8 @@ from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
-from inyoka.utils.user import normalize_username, gen_activation_key
+from inyoka.utils.user import normalize_username, gen_activation_key,\
+    is_valid_username
 
 
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
@@ -488,11 +489,15 @@ class User(AbstractBaseUser):
     def __unicode__(self):
         return self.username
         
-    def rename(self, new_name):
+    def rename(self, new_name, send_mail=True):
         """
         Rename method that checks for collision and if there is non, 
-        renames the users and sends a notification. 
+        renames the users and if required sends a notification (default). 
+        Will raise a ValueError('invalid username') exception if user 
+        name is invalid.
         """
+        if not is_valid_username(new_name):
+            raise ValueError('invalid username')
         
         try:
             User.objects.get_by_username_or_email(new_name)
@@ -501,13 +506,14 @@ class User(AbstractBaseUser):
             self.username = new_name
             self.save()
             
-            subject = _(u'You user name on {sitename} has been changed to “{name}”') \
-                .format(name=escape(self.username), sitename=settings.BASE_DOMAIN_NAME)
-            text = render_template('mails/account_rename.txt', {
-                'user': self,
-                'oldname': old_name,
-            })
-            self.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
+            if send_mail:
+                subject = _(u'Your user name on {sitename} has been changed to “{name}”') \
+                    .format(name=escape(self.username), sitename=settings.BASE_DOMAIN_NAME)
+                text = render_template('mails/account_rename.txt', {
+                    'user': self,
+                    'oldname': old_name,
+                })
+                self.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
             
             return True
         else:

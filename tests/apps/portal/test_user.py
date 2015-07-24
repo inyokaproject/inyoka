@@ -13,6 +13,7 @@ from django.test import TestCase
 
 from inyoka.portal.user import User, Group, deactivate_user
 from inyoka.portal.views import get_user
+from posix import rename
 
 
 class TestUserModel(TestCase):
@@ -45,7 +46,18 @@ class TestUserModel(TestCase):
         User.objects.register_user('foo@bar.d', 'foo@bar.de', 'pwd', False)
         with self.assertRaises(Http404):
             get_user('foo@bar')
-
+    
+    def test_rename_user(self):
+        created_user = User.objects.register_user('testuser', 'test@user.de', 'pwd', False)
+        created_user.rename('testuser2')
+        self.assertEqual(created_user.__unicode__(), 'testuser2')
+    
+    def test_rename_user_collision(self):
+        User.objects.register_user('testuser', 'test@user.de', 'pwd', False)
+        created_user = User.objects.register_user('testuser2', 'test2@user.de', 'pwd', False)
+        with self.assertRaises(ValueError):
+            created_user.rename('testuser')
+        
 
 class TestGroupModel(TestCase):
     def setUp(self):
