@@ -557,7 +557,7 @@ def suggest_assign_to(request, suggestion, username):
         except User.DoesNotExist:
             raise Http404
         suggestion.save()
-        messages.ssuccess(request, _(u'The suggestion was assigned to “%(user)s”.')
+        messages.success(request, _(u'The suggestion was assigned to “%(user)s”.')
                                     % {'user': username})
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
