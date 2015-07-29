@@ -47,17 +47,17 @@ class TestUserModel(TestCase):
             get_user('foo@bar')
     
     def test_rename_user(self):
-        created_user = User.objects.register_user('testuser', 'test@user.de', 'pwd', False)        
+        created_user = User.objects.register_user('testuser', 'test@user.de', 'pwd', False)
         self.assertEqual(True, created_user.rename('testuser2', False))
         self.assertEqual(created_user.__unicode__(), 'testuser2')
     
     def test_rename_user_collision(self):
-        User.objects.register_user('testuser', 'test@user.de', 'pwd', False)
-        created_user = User.objects.register_user('testuser2', 'test2@user.de', 'pwd', False)
-        self.assertEqual(False, created_user.rename('testuser', False))
+        User.objects.register_user('testuser3', 'test3@user.de', 'pwd', False)
+        created_user = User.objects.register_user('testuser4', 'test4@user.de', 'pwd', False)
+        self.assertEqual(False, created_user.rename('testuser3', False))
             
     def test_rename_user_invalid(self):
-        created_user = User.objects.register_user('testuser', 'test@user.de', 'pwd', False)
+        created_user = User.objects.register_user('testuser5', 'test5@user.de', 'pwd', False)
         with self.assertRaises(ValueError):
             created_user.rename('**testuser**', False)
         
