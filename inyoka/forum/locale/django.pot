@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-06-23 16:11+0200\n"
+"POT-Creation-Date: 2015-08-03 15:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -316,314 +316,314 @@ msgstr ""
 msgid "This post is currently beeing edited by “%(user)s”!"
 msgstr ""
 
-#: inyoka/forum/views.py:529 inyoka/forum/views.py:537
+#: inyoka/forum/views.py:532 inyoka/forum/views.py:540
 msgid "You cannot edit this post."
 msgstr ""
 
-#: inyoka/forum/views.py:545
+#: inyoka/forum/views.py:548
 msgid "You cannot reply in this topic because it was deleted by a moderator."
 msgstr ""
 
-#: inyoka/forum/views.py:551
+#: inyoka/forum/views.py:554
 msgid "You cannot reply to this topic because it was locked."
 msgstr ""
 
-#: inyoka/forum/views.py:556
+#: inyoka/forum/views.py:559
 msgid ""
 "You are replying to a locked topic. Please note that this may be "
 "considered as impolite!"
 msgstr ""
 
-#: inyoka/forum/views.py:614
+#: inyoka/forum/views.py:617
 msgid ""
 "This topic was already created. Please think about editing your topic "
 "before creating a new one."
 msgstr ""
 
-#: inyoka/forum/views.py:680
+#: inyoka/forum/views.py:683
 msgid "The post was saved successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:741
+#: inyoka/forum/views.py:744
 msgid "Do you want to (un)lock the topic?"
 msgstr ""
 
-#: inyoka/forum/views.py:742
+#: inyoka/forum/views.py:745
 msgid "(Un)lock"
 msgstr ""
 
-#: inyoka/forum/views.py:742 inyoka/forum/views.py:1235
-#: inyoka/forum/views.py:1253 inyoka/forum/views.py:1307
-#: inyoka/forum/views.py:1339 inyoka/forum/views.py:1350
+#: inyoka/forum/views.py:745 inyoka/forum/views.py:1238
+#: inyoka/forum/views.py:1256 inyoka/forum/views.py:1310
+#: inyoka/forum/views.py:1342 inyoka/forum/views.py:1353
 msgid "Cancel"
 msgstr ""
 
-#: inyoka/forum/views.py:758
+#: inyoka/forum/views.py:761
 msgid "The topic was marked as solved."
 msgstr ""
 
-#: inyoka/forum/views.py:760
+#: inyoka/forum/views.py:763
 msgid "The topic was marked as unsolved."
 msgstr ""
 
-#: inyoka/forum/views.py:768
+#: inyoka/forum/views.py:771
 msgid "The topic was locked."
 msgstr ""
 
-#: inyoka/forum/views.py:770
+#: inyoka/forum/views.py:773
 msgid "The topic was unlocked."
 msgstr ""
 
-#: inyoka/forum/views.py:795 inyoka/forum/views.py:829
+#: inyoka/forum/views.py:798 inyoka/forum/views.py:832
 #, python-format
 msgid "There is no “%(slug)s” anymore."
 msgstr ""
 
-#: inyoka/forum/views.py:851
+#: inyoka/forum/views.py:854
 msgid "Notifications on new topics within this forum will be sent to you."
 msgstr ""
 
-#: inyoka/forum/views.py:856
+#: inyoka/forum/views.py:859
 msgid ""
 "No notifications on new topics within this forum will be sent to you any "
 "more."
 msgstr ""
 
-#: inyoka/forum/views.py:861
+#: inyoka/forum/views.py:864
 msgid "Notifications on new posts in this topic will be sent to you."
 msgstr ""
 
-#: inyoka/forum/views.py:865
+#: inyoka/forum/views.py:868
 msgid "No notifications on new posts in this topic will be sent to you any more"
 msgstr ""
 
-#: inyoka/forum/views.py:877
+#: inyoka/forum/views.py:880
 msgid "This topic was already reported."
 msgstr ""
 
-#: inyoka/forum/views.py:892
+#: inyoka/forum/views.py:895
 #, python-format
 msgid "Reported topic: “%(topic)s”"
 msgstr ""
 
-#: inyoka/forum/views.py:896
+#: inyoka/forum/views.py:899
 msgid "The topic was reported."
 msgstr ""
 
-#: inyoka/forum/views.py:918
+#: inyoka/forum/views.py:921
 msgid "This report has already been claimed."
 msgstr ""
 
-#: inyoka/forum/views.py:933
+#: inyoka/forum/views.py:936
 msgid "No topics selected."
 msgstr ""
 
-#: inyoka/forum/views.py:954
+#: inyoka/forum/views.py:957
 msgid "The selected tickets have been closed."
 msgstr ""
 
-#: inyoka/forum/views.py:956
+#: inyoka/forum/views.py:959
 msgid ""
 "Only a subset of selected tickets has been closed, considering your "
 "moderation privileges for the regarding forums."
 msgstr ""
 
-#: inyoka/forum/views.py:981
+#: inyoka/forum/views.py:984
 msgid "A notification will be sent when a topic is reported."
 msgstr ""
 
-#: inyoka/forum/views.py:987
+#: inyoka/forum/views.py:990
 msgid "You will not be notified anymore when a topic is reported."
 msgstr ""
 
-#: inyoka/forum/views.py:1097
+#: inyoka/forum/views.py:1100
 #, python-format
 msgid "Your topic “%(topic)s” was moved."
 msgstr ""
 
-#: inyoka/forum/views.py:1111
+#: inyoka/forum/views.py:1114
 #, python-format
 msgid "The topic “%(topic)s” was moved."
 msgstr ""
 
-#: inyoka/forum/views.py:1134
+#: inyoka/forum/views.py:1137
 msgid "No post selected."
 msgstr ""
 
-#: inyoka/forum/views.py:1160
+#: inyoka/forum/views.py:1163
 msgid "You cannot set this topic as target."
 msgstr ""
 
-#: inyoka/forum/views.py:1186
+#: inyoka/forum/views.py:1189
 msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1214
+#: inyoka/forum/views.py:1217
 #, python-format
 msgid "The topic “%(topic)s” was split."
 msgstr ""
 
-#: inyoka/forum/views.py:1234
+#: inyoka/forum/views.py:1237
 msgid "Do you want to restore this post?"
 msgstr ""
 
-#: inyoka/forum/views.py:1235 inyoka/forum/views.py:1339
-#: inyoka/forum/views.py:1350
+#: inyoka/forum/views.py:1238 inyoka/forum/views.py:1342
+#: inyoka/forum/views.py:1353
 msgid "Restore"
 msgstr ""
 
-#: inyoka/forum/views.py:1247
+#: inyoka/forum/views.py:1250
 #, python-format
 msgid "The post by “%(user)s” was made visible."
 msgstr ""
 
-#: inyoka/forum/views.py:1252
+#: inyoka/forum/views.py:1255
 msgid "Do you really want to hide / delete this post?"
 msgstr ""
 
-#: inyoka/forum/views.py:1253
+#: inyoka/forum/views.py:1256
 msgid "Hide / Delete"
 msgstr ""
 
-#: inyoka/forum/views.py:1279
+#: inyoka/forum/views.py:1282
 msgid "The first post of a topic cannot be deleted."
 msgstr ""
 
-#: inyoka/forum/views.py:1281
+#: inyoka/forum/views.py:1284
 msgid "The first post of a topic cannot be hidden."
 msgstr ""
 
-#: inyoka/forum/views.py:1289
+#: inyoka/forum/views.py:1292
 #, python-format
 msgid "The post by “%(user)s” was hidden."
 msgstr ""
 
-#: inyoka/forum/views.py:1297
+#: inyoka/forum/views.py:1300
 #, python-format
 msgid "The post by “%(user)s” was deleted."
 msgstr ""
 
-#: inyoka/forum/views.py:1306
+#: inyoka/forum/views.py:1309
 msgid "Do you really want to mark this post as ham / spam?"
 msgstr ""
 
-#: inyoka/forum/views.py:1307
+#: inyoka/forum/views.py:1310
 msgid "Mark as ham / spam"
 msgstr ""
 
-#: inyoka/forum/views.py:1338
+#: inyoka/forum/views.py:1341
 msgid "Do you want to restore the revision of the post?"
 msgstr ""
 
-#: inyoka/forum/views.py:1345
+#: inyoka/forum/views.py:1348
 msgid "An old revision of the post was restored."
 msgstr ""
 
-#: inyoka/forum/views.py:1349
+#: inyoka/forum/views.py:1352
 msgid "Do you want to restore the topic?"
 msgstr ""
 
-#: inyoka/forum/views.py:1362
+#: inyoka/forum/views.py:1365
 #, python-format
 msgid "The topic “%(topic)s” was restored."
 msgstr ""
 
-#: inyoka/forum/views.py:1386
+#: inyoka/forum/views.py:1389
 msgid "Action canceled."
 msgstr ""
 
-#: inyoka/forum/views.py:1394
+#: inyoka/forum/views.py:1397
 #, python-format
 msgid "The topic “%(topic)s” was hidden."
 msgstr ""
 
-#: inyoka/forum/views.py:1402
+#: inyoka/forum/views.py:1405
 #, python-format
 msgid "The topic “%(topic)s” was deleted successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1429
+#: inyoka/forum/views.py:1432
 #, python-format
 msgid "%(site)s topic – “%(topic)s”"
 msgstr ""
 
-#: inyoka/forum/views.py:1471
+#: inyoka/forum/views.py:1474
 #, python-format
 msgid "%(site)s forum – “%(forum)s”"
 msgstr ""
 
-#: inyoka/forum/views.py:1479
+#: inyoka/forum/views.py:1482
 #, python-format
 msgid "%(site)s forum"
 msgstr ""
 
-#: inyoka/forum/views.py:1523
+#: inyoka/forum/views.py:1526
 msgid "Please login to mark posts as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1530
+#: inyoka/forum/views.py:1533
 #, python-format
 msgid "The forum “%(forum)s” was marked as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1535
+#: inyoka/forum/views.py:1538
 msgid "All forums were marked as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1549
+#: inyoka/forum/views.py:1552
 #, python-format
 msgid "You can only display the last %(n)d pages."
 msgstr ""
 
-#: inyoka/forum/views.py:1563
+#: inyoka/forum/views.py:1566
 #, python-format
 msgid "Posts of the last %(n)d hours"
 msgstr ""
 
-#: inyoka/forum/views.py:1567
+#: inyoka/forum/views.py:1570
 msgid "Unanswered topics"
 msgstr ""
 
-#: inyoka/forum/views.py:1571
+#: inyoka/forum/views.py:1574
 msgid "Unsolved topics"
 msgstr ""
 
-#: inyoka/forum/views.py:1577
+#: inyoka/forum/views.py:1580
 #, python-format
 msgid "Topics by “%(user)s”"
 msgstr ""
 
-#: inyoka/forum/views.py:1581
+#: inyoka/forum/views.py:1584
 msgid "You need to be logged in to use this function."
 msgstr ""
 
-#: inyoka/forum/views.py:1586
+#: inyoka/forum/views.py:1589
 #, python-format
 msgid "Posts by “%(user)s”"
 msgstr ""
 
-#: inyoka/forum/views.py:1589
+#: inyoka/forum/views.py:1592
 msgid "My posts"
 msgstr ""
 
-#: inyoka/forum/views.py:1601
+#: inyoka/forum/views.py:1604
 msgid "New posts"
 msgstr ""
 
-#: inyoka/forum/views.py:1677
+#: inyoka/forum/views.py:1680
 msgid "No recent topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1690
+#: inyoka/forum/views.py:1693
 msgid "No older topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1752
+#: inyoka/forum/views.py:1755
 #, python-format
 msgid "The forum “%(forum)s” was changed successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1754
+#: inyoka/forum/views.py:1757
 #, python-format
 msgid "The forum “%(forum)s” was created successfully."
 msgstr ""
