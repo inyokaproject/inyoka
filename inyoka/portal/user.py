@@ -487,27 +487,24 @@ class User(AbstractBaseUser):
 
     def __unicode__(self):
         return self.username
-        
+
     def rename(self, new_name, send_mail=True):
         """
-        Rename method that checks for collision and if there is non, 
-        renames the users and if required sends a notification (default). 
-        Will raise a ValueError('invalid username') exception if user 
+        Rename method that checks for collision and if there is non,
+        renames the users and if required sends a notification (default).
+        Will raise a ValueError('invalid username') exception if user
         name is invalid.
         """
         if not is_valid_username(new_name):
             raise ValueError('invalid username')
-        
         if self.username == new_name:
             return True
-        
         try:
             User.objects.get_by_username_or_email(new_name)
         except User.DoesNotExist:
             old_name = self.username
             self.username = new_name
             self.save()
-            
             if send_mail:
                 subject = _(u'Your user name on {sitename} has been changed to “{name}”') \
                     .format(name=escape(self.username), sitename=settings.BASE_DOMAIN_NAME)
@@ -516,11 +513,10 @@ class User(AbstractBaseUser):
                     'oldname': old_name,
                 })
                 self.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
-            
             return True
         else:
             return False
-    
+
     is_anonymous = property(lambda x: x.username == settings.INYOKA_ANONYMOUS_USER)
     # No property to stay compatible with Django
     is_authenticated = lambda x: not x.is_anonymous
