@@ -24,5 +24,3 @@ class TestAdminCommands(TestCase):
         management.call_command("renameusers", *[output, "silent"])
         self.assertEqual(unicode(User.objects.get_by_username_or_email("gandalf@hdr.de")), "thewhite")
         self.assertEqual(unicode(User.objects.get_by_username_or_email("saroman@hdr.de")), "thedead")
-
-# TODO: Check if send_email() uses correct data. www.heise.de/newsticker/meldung/Datenpanne-an-der-TU-Berlin-Rueckmeldeaufforderung-enthaelt-Daten-anderer-Studis-2671551.html
