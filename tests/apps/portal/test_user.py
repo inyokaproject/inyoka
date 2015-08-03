@@ -68,6 +68,7 @@ class TestUserModel(TestCase):
         created_user1.rename('thefirst')
         created_user2.rename('thesecond')
         self.assertFalse('thefirst' in mail.outbox[1].body)
+        self.assertTrue('thesecond' in mail.outbox[1].body)
 
 
 class TestGroupModel(TestCase):
