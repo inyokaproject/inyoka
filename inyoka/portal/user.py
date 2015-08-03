@@ -9,17 +9,17 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from os import path
 from StringIO import StringIO
 from datetime import datetime
-from PIL import Image
+from os import path
 
+from PIL import Image
 from django.conf import settings
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, update_last_login)
 from django.contrib.auth.signals import user_logged_in
 from django.core import signing
 from django.core.cache import cache
-from django.db import models
+from django.db import models, transaction
 from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -33,7 +33,7 @@ from inyoka.utils.mail import send_mail
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
-from inyoka.utils.user import normalize_username, gen_activation_key,\
+from inyoka.utils.user import normalize_username, gen_activation_key, \
     is_valid_username
 
 
@@ -488,6 +488,7 @@ class User(AbstractBaseUser):
     def __unicode__(self):
         return self.username
 
+    @transaction.commit_on_success
     def rename(self, new_name, send_mail=True):
         """
         Rename method that checks for collision and if there is non,
