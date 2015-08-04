@@ -8,7 +8,6 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.core import mail
 from django.http import Http404
 from django.test import TestCase
 
@@ -61,14 +60,6 @@ class TestUserModel(TestCase):
         created_user = User.objects.register_user('testuser5', 'test5@user.de', 'pwd', False)
         with self.assertRaisesRegexp(ValueError, 'invalid username'):
             created_user.rename('**testuser**', False)
-
-    def test_rename_user_mail(self):
-        created_user1 = User.objects.register_user('testuser6', 'test6@user.de', 'pwd', False)
-        created_user2 = User.objects.register_user('testuser7', 'test7@user.de', 'pwd', False)
-        created_user1.rename('thefirst')
-        created_user2.rename('thesecond')
-        self.assertFalse('thefirst' in mail.outbox[1].body)
-        self.assertTrue('thesecond' in mail.outbox[1].body)
 
 
 class TestGroupModel(TestCase):
