@@ -6,13 +6,16 @@
     This module provides a command to the Django ``manage.py`` file to rename
     a list of users defined by a JSON file as shown in the following example:
     [{"oldname":"user1", "newname":"kloss"},{"oldname":"user2", "newname":"spinne"}]
+    If the optional parameter 'silent' is passed, no mails will be sent to the users
     :copyright: (c) 2011-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.core.management.base import BaseCommand
-from django.utils.translation import ugettext as _
-from inyoka.portal.user import User
 import json
+
+from django.core.management.base import BaseCommand, CommandError
+from django.utils.translation import ugettext as _
+
+from inyoka.portal.user import User
 
 
 class Command(BaseCommand):
@@ -21,12 +24,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if len(args) == 0:
-            self.stderr.write(_(u"Error: No JSON file specified!"))
-            return
-        elif "silent" in args:
-            notify = False
-        else:
-            notify = True
+            raise CommandError(_(u"Error: No JSON file specified!"))
+        notify = "silent" not in args
         if isinstance(args[0], basestring):
             with open(args[0]) as json_file:
                 data = json.load(json_file)
