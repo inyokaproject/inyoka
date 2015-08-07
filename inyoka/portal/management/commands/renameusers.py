@@ -11,26 +11,31 @@
     :license: BSD, see LICENSE for more details.
 """
 import json
+from optparse import make_option
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import LabelCommand
 from django.utils.translation import ugettext as _
 
 from inyoka.portal.user import User
 
 
-class Command(BaseCommand):
+class Command(LabelCommand):
     help = "Rename all users as specified in the given JSON file"
-    args = '<rename.json> [silent]'
+    label = "JSON file name"
+    args = '<filename>'
+    option_list = LabelCommand.option_list + (
+        make_option('-s', '--silent',
+            action="store_false", dest="notify", default=True,
+            help="Does not send notification mails to renamed users"),
+    )
 
-    def handle(self, *args, **options):
-        if len(args) == 0:
-            raise CommandError(_(u"Error: No JSON file specified!"))
-        notify = "silent" not in args
-        if isinstance(args[0], basestring):
-            with open(args[0]) as json_file:
+    def handle_label(self, label, **options):
+        notify = options.get('notify')
+        if isinstance(label, basestring):
+            with open(label) as json_file:
                 data = json.load(json_file)
         else:
-            data = json.load(args[0])
+            data = json.load(label)
         for username in data:
             try:
                 user = User.objects.get_by_username_or_email(username["oldname"])
