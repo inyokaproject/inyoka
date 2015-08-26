@@ -1,27 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    inyoka.scripts.generate_static_wiki
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    inyoka.wiki.management.commands.generate_static_wiki
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Creates a snapshot of all wiki pages in HTML format.
+    Creates a snapshot of all wiki pages in HTML format. Requires
+    BeautifulSoup4 to be installed.
 
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import datetime
-from re import escape, compile
-from os import path, walk, mkdir, chmod, unlink
-from shutil import copy, rmtree, copytree
-from hashlib import sha1
 from functools import partial
+from hashlib import sha1
 from itertools import izip
+from os import path, walk, mkdir, chmod, unlink
+from re import escape, compile
+from shutil import copy, rmtree, copytree
 
 from bs4 import BeautifulSoup
 from django.conf import settings
+from django.core.management.base import NoArgsCommand
+from django.template.defaultfilters import date
 from django.utils.encoding import force_unicode
 from django.utils.translation import activate
-from django.template.defaultfilters import date
 from werkzeug import url_unquote
 
 from inyoka.portal.user import User
@@ -78,6 +80,17 @@ EXCLUDE_PAGES = [x.lower() for x in EXCLUDE_PAGES]
 _iterables = (tuple, list, set, frozenset)
 
 
+class Command(NoArgsCommand):
+    help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
+
+    def handle_noargs(self, **options):
+        global SNAPSHOT_DATE, SNAPSHOT_MESSAGE
+        activate(settings.LANGUAGE_CODE)
+        SNAPSHOT_DATE = date(datetime.date.today(), settings.DATE_FORMAT)
+        SNAPSHOT_MESSAGE = SNAPSHOT_MESSAGE % (SNAPSHOT_DATE, '%s')
+        create_snapshot()
+
+
 @templated('wiki/action_show.html')
 def fetch_page(page, **kwargs):
     settings.DEBUG = False
@@ -104,15 +117,15 @@ def save_file(url, is_main_page=False, is_static=False):
         rel_path = url_unquote(rel_path)
         if rel_path:
             abs_path = path.join(base, rel_path)
-            hash = sha1(force_unicode(rel_path).encode('utf-8')).hexdigest()
-            if hash not in DONE_SRCS:
+            hash_code = sha1(force_unicode(rel_path).encode('utf-8')).hexdigest()
+            if hash_code not in DONE_SRCS:
                 ext = path.splitext(rel_path)[1]
-                fname = '%s%s' % (hash, ext)
+                fname = '%s%s' % (hash_code, ext)
                 dst = path.join(FOLDER, 'files', '_', fname)
                 copy(abs_path, dst)
-                DONE_SRCS[hash] = fname
+                DONE_SRCS[hash_code] = fname
                 chmod(dst, 0o644)
-            return path.join('_', DONE_SRCS[hash])
+            return path.join('_', DONE_SRCS[hash_code])
     except IOError:
         pass
 
@@ -126,7 +139,7 @@ def fix_path(pth, pre=''):
 
 
 def _pre(parts):
-    return parts and u''.join('../' for i in xrange(parts)) or './'
+    return parts and u''.join('../' for _ in xrange(parts)) or './'
 
 
 def handle_removals(soup, pre, is_main_page, page_name):
@@ -159,8 +172,8 @@ def handle_meta_link(soup, pre, is_main_page, page_name):
 
     def _handle_style(tag):
         if tag['href'] == href('portal', 'markup.css'):
-            hash = sha1(force_unicode('dyn.css').encode('utf-8')).hexdigest()
-            rel_path = path.join('_', '%s.css' % hash)
+            hash_code = sha1(force_unicode('dyn.css').encode('utf-8')).hexdigest()
+            rel_path = path.join('_', '%s.css' % hash_code)
             abs_path = path.join(FOLDER, 'files', rel_path)
             if not path.isfile(abs_path):
                 with open(abs_path, 'w+') as fobj:
@@ -173,7 +186,7 @@ def handle_meta_link(soup, pre, is_main_page, page_name):
             tag.extract()
         else:
             tag['href'] = u'%s%s' % (pre, rel_path)
-            if not rel_path in UPDATED_SRCS:
+            if rel_path not in UPDATED_SRCS:
                 abs_path = path.join(FOLDER, 'files', rel_path)
                 if path.isfile(abs_path):
                     content = ''
@@ -435,10 +448,3 @@ def create_snapshot():
     print
     print ("Created Wikisnapshot with %s pages; excluded %s pages"
            % (len(todo), num_excluded))
-
-
-if __name__ == '__main__':
-    activate(settings.LANGUAGE_CODE)
-    SNAPSHOT_DATE = date(datetime.date.today(), settings.DATE_FORMAT)
-    SNAPSHOT_MESSAGE = SNAPSHOT_MESSAGE % (SNAPSHOT_DATE, '%s')
-    create_snapshot()
