@@ -403,7 +403,9 @@ class Command(NoArgsCommand):
                 return
             content = content.decode('utf8')
 
-            soup = BeautifulSoup(content)
+    def _fetch_and_write(name):
+        parts = 0
+        is_main_page = False
 
             # Apply the handlers from above to modify the page content
             for handler in self.HANDLERS:
