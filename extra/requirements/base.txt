@@ -27,3 +27,4 @@ defusedxml==0.4.1
 python-dateutil==2.1
 python-magic==0.4.6
 mysql-python==1.2.5
+beautifulsoup4==4.3.2

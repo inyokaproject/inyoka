@@ -4,8 +4,7 @@
     inyoka.wiki.management.commands.generate_static_wiki
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Creates a snapshot of all wiki pages in HTML format. Requires
-    BeautifulSoup4 to be installed.
+    Creates a snapshot of all wiki pages in HTML format.
 
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
@@ -82,7 +81,8 @@ _iterables = (tuple, list, set, frozenset)
 
 
 class Command(NoArgsCommand):
-    help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
+    help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed. \
+    Run the admin command collectstatic first to make sure that all theme files are being found."
 
     def handle_noargs(self, **options):
         print "Starting Export"
@@ -342,8 +342,7 @@ class Command(NoArgsCommand):
                         (path.join(stroot, 'img', 'interwiki'), 'interwiki'),
                         ff('logo.png'), ff('favicon.ico'), ff('float-left.jpg'),
                         ff('float-right.jpg'), ff('float-top.jpg'), ff('head.jpg'),
-                        ff('head-right.png'), ff('anchor.png'), ff('1px.png'),
-                        ff('header-sprite.png'))
+                        ff('head-right.png'), ff('anchor.png'), ff('1px.png'))
         for pth in static_paths:
             _pth = pth[0] if isinstance(pth, _iterables) else pth
             if path.isdir(_pth):
@@ -403,7 +402,6 @@ class Command(NoArgsCommand):
             content = content.decode('utf8')
 
             soup = BeautifulSoup(content)
-            #self.handle_pathbar(soup, None, None, None)
 
             # Apply the handlers from above to modify the page content
             for handler in self.HANDLERS:
