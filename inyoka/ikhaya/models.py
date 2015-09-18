@@ -75,11 +75,7 @@ class ArticleManager(models.Manager):
         new_cache_values = {}
         for article in objects:
             key = 'ikhaya/article/%s/%s' % (article.pub_date, article.slug)
-            # render text and intro (and replace the getter to make caching
-            # possible)
-            article._simplified_text = unicode(article.simplified_text)
-            article._simplified_intro = unicode(article.simplified_intro)
-            new_cache_values[key] = article  # TODO: remove this cache
+            new_cache_values[key] = article
         if new_cache_values:
             # cache for 24 hours
             cache.set_many(new_cache_values, 24 * 60)
@@ -231,26 +227,6 @@ class Article(models.Model, LockableObject):
     @property
     def local_updated(self):
         return datetime_to_timezone(self.updated).replace(tzinfo=None)
-
-    def _simplify(self, text):
-        """Remove markup of a text that belongs to this Article"""
-        if self.is_xhtml:
-            simple = striptags(text)
-        else:
-            simple = parse(text).text
-        return simple.strip()
-
-    @property
-    def simplified_text(self):
-        if not hasattr(self, '_simplified_text'):
-            self._simplified_text = self._simplify(self.text)
-        return self._simplified_text
-
-    @property
-    def simplified_intro(self):
-        if not hasattr(self, '_simplified_intro'):
-            self._simplified_intro = self._simplify(self.intro)
-        return self._simplified_intro
 
     @property
     def hidden(self):

@@ -633,7 +633,6 @@ def suggest_edit(request):
         if 'preview' in request.POST:
             ctx = RenderContext(request)
             preview = parse(request.POST.get('text', '')).render(ctx, 'html')
-            preview = 'WERWERRW'
         elif form.is_valid():
             suggestion = form.save(request.user)
             cache.delete('ikhaya/suggestion_count')
@@ -845,11 +844,11 @@ def feed_article(request, slug=None, mode='short', count=10):
     for article in articles:
         kwargs = {}
         if mode == 'full':
-            kwargs['content'] = u'%s\n%s' % (article.rendered_intro,
-                                             article.rendered_text)
+            kwargs['content'] = u'%s\n%s' % (article.intro_rendered,
+                                             article.text_rendered)
             kwargs['content_type'] = 'xhtml'
         if mode == 'short':
-            kwargs['summary'] = article.rendered_intro
+            kwargs['summary'] = article.intro_rendered
             kwargs['summary_type'] = 'xhtml'
 
         feed.add(

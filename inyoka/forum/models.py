@@ -644,7 +644,7 @@ class Post(models.Model, LockableObject):
     def get_text(self):
         if self.is_plaintext:
             return fix_plaintext(self.text)
-        return self.get_text_rendered()
+        return self.text_rendered
 
     def get_absolute_url(self, action='show'):
         if action == 'show':

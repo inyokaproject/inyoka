@@ -15,6 +15,7 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.expressions import F, ExpressionNode
+from django.core.cache import get_cache
 
 from inyoka.markup import parse, RenderContext
 
@@ -32,6 +33,9 @@ EXPRESSION_NODE_CALLBACKS = {
 
 MAX_SLUG_INCREMENT = 999
 _SLUG_INCREMENT_SUFFIXES = set(range(2, MAX_SLUG_INCREMENT + 1))
+
+
+content_cache = get_cache('content')
 
 
 class CannotResolve(Exception):
@@ -244,9 +248,12 @@ class InyokaMarkupField(models.TextField):
     def contribute_to_class(self, cls, name):
         super(InyokaMarkupField, self).contribute_to_class(cls, name)
 
-        def render(text):
+        def render_method(text):
             """
             Renders a specific text with the configuration of this field.
+
+            This is needed to render text that is not in the database (for
+            example the preview).
             """
             context = RenderContext(
                 obj=None,  # TODO: The parser shoud not be object specific
@@ -257,14 +264,23 @@ class InyokaMarkupField(models.TextField):
             return node.render(context, format='html')
 
         @property
-        def render_method(inst_self):
+        def render(inst_self):
             """
             Renders the content of the field.
             """
-            return render(getattr(inst_self, name, ''))
+            key = '{application}:{model}:{id}:{field}'.format(
+                application=self.application or 'portal',
+                model=cls.__name__.lower(),
+                id=inst_self.pk,
+                field=name)
+            content = content_cache.get(key)
+            if content is None:
+                content = render_method(getattr(inst_self, name, ''))
+                content_cache.set(key, content)
+            return content
 
-        setattr(cls, '{}_rendered'.format(name), render_method)
-        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(render))
+        setattr(cls, '{}_rendered'.format(name), render)
+        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(render_method))
 
     def south_field_triple(self):
         from south.modelsinspector import introspector
