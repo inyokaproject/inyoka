@@ -542,7 +542,7 @@ class User(AbstractBaseUser):
     @property
     def rendered_userpage(self):
         if hasattr(self, 'userpage'):
-            return self.userpage.content_rendered
+            return self.userpage.get_content_rendered()
         else:
             return ""
 

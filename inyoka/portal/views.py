@@ -1180,8 +1180,7 @@ def privmsg_new(request, username=None):
     if request.method == 'POST':
         form = form_class(request.POST)
         if 'preview' in request.POST:
-            ctx = RenderContext(request)
-            preview = parse(request.POST.get('text', '')).render(ctx, 'html')
+            preview = PrivateMessage.get_text_rendered(request.POST.get('text', ''))
         elif form.is_valid():
             d = form.cleaned_data
 
@@ -1778,8 +1777,7 @@ def page_edit(request, page=None):
         form = EditStaticPageForm(request.POST, instance=page)
         if form.is_valid():
             if 'preview' in request.POST:
-                ctx = RenderContext(request)
-                preview = parse(form.cleaned_data['content']).render(ctx, 'html')
+                preview = page.get_content_rendered(form.cleaned_data['content'])
             if 'send' in request.POST:
                 page = form.save()
                 if new:

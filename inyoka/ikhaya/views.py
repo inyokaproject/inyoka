@@ -165,8 +165,7 @@ def detail(request, year, month, day, slug):
     if article.comments_enabled and request.method == 'POST':
         form = EditCommentForm(request.POST)
         if 'preview' in request.POST:
-            ctx = RenderContext(request)
-            preview = parse(request.POST.get('text', '')).render(ctx, 'html')
+            preview = Comment.get_text_rendered(request.POST.get('text', ''))
         elif form.is_valid():
             send_subscribe = False
             data = form.cleaned_data
@@ -254,7 +253,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
     article suggestion made by a user. After saving it, the suggestion will be
     deleted automatically.
     """
-    preview, locked, article = None, False, None
+    preview_intro, preview_text, locked, article = None, None, False, None
     initial = {'author': request.user}
 
     if year and month and day and slug:
@@ -302,9 +301,8 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                     cache.delete_many(keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
-            ctx = RenderContext(request)
-            preview = parse('%s\n\n%s' % (request.POST.get('intro', ''),
-                            request.POST.get('text'))).render(ctx, 'html')
+            preview_intro = Article.get_intro_rendered(request.POST.get('intro', ''))
+            preview_text = Article.get_text_rendered(request.POST.get('text', ''))
     else:
         if slug:
             if article.public:
@@ -327,7 +325,8 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
     return {
         'form': form,
         'article': article,
-        'preview': preview,
+        'preview_intro': preview_intro,
+        'preview_text': preview_text,
     }
 
 
@@ -393,8 +392,7 @@ def report_new(request, year, month, day, slug):
         if form.is_valid():
             data = form.cleaned_data
             if 'preview' in request.POST:
-                ctx = RenderContext(request)
-                preview = parse(data['text']).render(ctx, 'html')
+                preview = Report.get_text_rendered(data['text'])
             elif 'send' in request.POST:
                 report = Report(text=data['text'])
                 report.article = article
@@ -635,6 +633,7 @@ def suggest_edit(request):
         if 'preview' in request.POST:
             ctx = RenderContext(request)
             preview = parse(request.POST.get('text', '')).render(ctx, 'html')
+            preview = 'WERWERRW'
         elif form.is_valid():
             suggestion = form.save(request.user)
             cache.delete('ikhaya/suggestion_count')

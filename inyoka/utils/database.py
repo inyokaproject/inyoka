@@ -244,19 +244,27 @@ class InyokaMarkupField(models.TextField):
     def contribute_to_class(self, cls, name):
         super(InyokaMarkupField, self).contribute_to_class(cls, name)
 
-        def render(inst_self):
+        def render(text):
+            """
+            Renders a specific text with the configuration of this field.
+            """
             context = RenderContext(
-                obj=inst_self,
+                obj=None,  # TODO: The parser shoud not be object specific
                 application=self.application,
                 simplified=self.simplify,
             )
-            markup = getattr(inst_self, name, '')
-            node = parse(markup, wiki_force_existing=self.force_existing)
+            node = parse(text, wiki_force_existing=self.force_existing)
             return node.render(context, format='html')
 
-        rendered = property(render)
+        @property
+        def render_method(inst_self):
+            """
+            Renders the content of the field.
+            """
+            return render(getattr(inst_self, name, ''))
 
-        setattr(cls, '%s_rendered' % name, rendered)
+        setattr(cls, '{}_rendered'.format(name), render_method)
+        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(render))
 
     def south_field_triple(self):
         from south.modelsinspector import introspector

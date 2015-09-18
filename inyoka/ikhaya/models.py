@@ -19,7 +19,7 @@ from django.core.cache import cache
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy
 
-from inyoka.markup import parse, render, RenderContext
+from inyoka.markup import parse
 from inyoka.portal.models import StaticFile
 from inyoka.portal.user import User
 from inyoka.utils.database import LockableObject, find_next_increment, InyokaMarkupField
@@ -397,16 +397,6 @@ class Suggestion(models.Model):
     class Meta:
         verbose_name = ugettext_lazy(u'Article suggestion')
         verbose_name_plural = ugettext_lazy(u'Article suggestions')
-
-    @property
-    def rendered_text(self):
-        context = RenderContext(current_request)
-        key = 'ikhaya/suggestion_notes/%s' % self.id
-        instructions = cache.get(key)
-        if instructions is None:
-            instructions = parse(self.notes).compile('html')
-            cache.set(key, instructions)
-        return render(instructions, context)
 
     def get_absolute_url(self):
         return href('ikhaya', 'suggestions', _anchor=self.id)

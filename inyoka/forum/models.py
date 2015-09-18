@@ -395,7 +395,7 @@ class Topic(models.Model):
     sticky = models.BooleanField(default=False, db_index=True)
     solved = models.BooleanField(default=False)
     locked = models.BooleanField(default=False)
-    reported = models.TextField(blank=True, null=True)
+    reported = InyokaMarkupField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
     ubuntu_version = models.CharField(max_length=5, null=True, blank=True)
     ubuntu_distro = models.CharField(max_length=40, null=True, blank=True)
@@ -644,7 +644,7 @@ class Post(models.Model, LockableObject):
     def get_text(self):
         if self.is_plaintext:
             return fix_plaintext(self.text)
-        return self.text_rendered
+        return self.get_text_rendered()
 
     def get_absolute_url(self, action='show'):
         if action == 'show':
