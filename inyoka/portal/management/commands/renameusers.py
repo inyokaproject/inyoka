@@ -30,6 +30,21 @@ class Command(LabelCommand):
     )
 
     def handle_label(self, label, **options):
+        """
+        Opens a json-file and renames each user inside the file.
+
+        The json-format has to be a list ob objects, where any object has the
+        attributes 'oldname' and 'newname'.
+
+        'oldname' can also be an E-Mail adress of a user.
+
+        For Example:
+
+        [{'oldname': 'Kevin', 'newname': 'Max'}, {'oldname': 'schaklin@web.de', 'newname': 'Anna'}]
+
+        The argument label can be a path to a json-file or a python file
+        object to a json-file.
+        """
         notify = options.get('notify')
         verbosity = int(options.get('verbosity'))
         if isinstance(label, basestring):
@@ -37,18 +52,26 @@ class Command(LabelCommand):
                 data = json.load(json_file)
         else:
             data = json.load(label)
+
         for username in data:
+            if verbosity >= 2:
+                self.stdout.write(_(u"Renaming {oldname} to {newname}...").format(
+                    oldname=username["oldname"],
+                    newname=username["newname"]))
             try:
-                if verbosity >= 2:
-                    self.stdout.write(_(u"Renaming {oldname} to {newname}...").format(oldname=username["oldname"], newname=username["newname"]))
                 user = User.objects.get_by_username_or_email(username["oldname"])
             except User.DoesNotExist:
-                self.stderr.write(_(u"User '{oldname}' does not exist. Skipping...").format(oldname=username["oldname"]))
+                self.stderr.write(_(u"User '{oldname}' does not exist. Skipping...").format(
+                    oldname=username["oldname"]))
             else:
                 try:
-                    if not user.rename(username["newname"], notify):
-                        self.stderr.write(_(u"User name '{newname}' already exists. Skipping...").format(newname=username["newname"]))
+                    existed = user.rename(username["newname"], notify)
                 except ValueError:
-                    self.stderr.write(_(u"New user name '{newname}' contains invalid characters. Skipping...").format(newname=username["newname"]))
+                    self.stderr.write(_(u"New user name '{newname}' contains invalid characters. Skipping...").format(
+                        newname=username["newname"]))
+                else:
+                    if existed:
+                        self.stderr.write(_(u"User name '{newname}' already exists. Skipping...").format(
+                            newname=username["newname"]))
         if verbosity >= 1:
             self.stdout.write(_(u"Renaming users complete."))
