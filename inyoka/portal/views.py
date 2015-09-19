@@ -1689,12 +1689,6 @@ def config(request):
             if data['global_message'] != storage['global_message']:
                 storage['global_message'] = data['global_message']
                 storage['global_message_time'] = time.time()
-                node = parse(data['global_message'])
-                storage['global_message_rendered'] = node.render(context, 'html')
-
-            if data['welcome_message']:
-                node = parse(data['welcome_message'])
-                storage['welcome_message_rendered'] = node.render(context, 'html')
 
             if data['team_icon']:
                 default_storage.delete(storage['team_icon'])
@@ -1703,26 +1697,10 @@ def config(request):
                 default_storage.save(fn, data['team_icon'])
                 storage['team_icon'] = team_icon = fn
 
-            if data['license_note']:
-                node = parse(data['license_note'])
-                storage['license_note_rendered'] = node.render(context, 'html')
-
             if not data['countdown_date']:
                 storage['countdown_date'] = ''
             else:
                 storage['countdown_date'] = str(data['countdown_date'])
-
-            if data['wiki_edit_note']:
-                node = parse(data['wiki_edit_note'])
-                storage['wiki_edit_note_rendered'] = node.render(context, 'html')
-
-            if data['planet_description']:
-                node = parse(data['planet_description'])
-                storage['planet_description_rendered'] = node.render(context, 'html')
-
-            if data['ikhaya_description']:
-                node = parse(data['ikhaya_description'])
-                storage['ikhaya_description_rendered'] = node.render(context, 'html')
 
             messages.success(request, _(u'Your settings have been changed successfully.'))
         else:
