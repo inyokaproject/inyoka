@@ -261,17 +261,18 @@ class InyokaMarkupField(models.TextField):
 
         # Register to the post_save signal, to delete the redis cache if the
         # content changes
-        from pdb import set_trace; set_trace()
         def delete_cache_receiver(sender, instance, created, **kwargs):
-            from pdb import set_trace; set_trace()
             if not created:
                 key = self.get_redis_key(cls, instance, name)
+                content_cache.delete(key)
+                key = content_cache.make_key(key)
                 keys = key, 'puppy:{}'.format(key)
                 content_cache.delete_many(keys)
 
         model_post_save_signal.connect(
             delete_cache_receiver,
             sender=cls,
+            weak=False,
             dispatch_uid="{cls}{field}".format(
                 cls=cls.__name__,
                 field=name,
