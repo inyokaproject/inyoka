@@ -25,11 +25,21 @@ class CachedStorage(object):
         value = request_cache.get('storage/' + key)
         if value is not None:
             return value
+
+        if key.endswith('_rendered'):
+            # A rendered value is requested.
+            db_key = key[:-9]
+            rendered = True
+        else:
+            db_key = key
+            rendered = False
+
         try:
-            storage_object = Storage.objects.get(key=key)
-            value = storage_object.value
+            storage_object = Storage.objects.get(key=db_key)
         except Storage.DoesNotExist:
             return default
+        else:
+            value = storage_object.value_rendered if rendered else storage_object.value
 
         self._update_cache(key, value, timeout)
         return value
@@ -79,6 +89,7 @@ class CachedStorage(object):
 
     def _update_cache(self, key, value, timeout=None):
         request_cache.set('storage/%s' % key, value, timeout)
+        request_cache.delete('storage/%s_rendered' % key)
 
 
 storage = CachedStorage()

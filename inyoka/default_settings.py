@@ -163,6 +163,16 @@ CACHES = {
     },
     'request': {
         'BACKEND': 'inyoka.utils.cache.RequestCache',
+    },
+    'content': {
+        'BACKEND': 'inyoka.utils.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            # 'CONNECTION_POOL_KWARGS': {'max_connections': 100},
+            'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
+        },
+        'TIMEOUT': 60 * 60 * 24
     }
 }
 

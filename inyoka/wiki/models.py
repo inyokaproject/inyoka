@@ -109,6 +109,7 @@ from inyoka.utils.local import current_request
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href
+from inyoka.utils.database import InyokaMarkupField
 from inyoka.wiki.tasks import render_article, update_object_list, update_related_pages
 
 
@@ -369,7 +370,6 @@ class PageManager(models.Manager):
                     cachetime = int(rev.page.metadata['X-Cache-Time'][0]) or None
                 except (IndexError, ValueError):
                     cachetime = None
-                rev.prepare_for_caching()
                 request_cache.set(key, rev, cachetime)
         page = rev.page
         page.rev = rev
@@ -645,20 +645,8 @@ class Text(models.Model):
             The internal unique hash for this text.
     """
     objects = TextManager()
-    value = models.TextField()
+    value = InyokaMarkupField(application='wiki')
     hash = models.CharField(max_length=40, unique=True, db_index=True)
-    html_render_instructions = models.TextField(null=True)
-
-    def parse(self, template_context=None, transformers=None):
-        """
-        Parse the markup into a tree.  This also expands template code if the
-        template context provided is not None.
-        """
-        if template_context is not None:
-            value = templates.process(self.value, template_context)
-        else:
-            value = self.value
-        return markup.parse(value, transformers=transformers)
 
     def find_meta(self):
         """
@@ -686,47 +674,6 @@ class Text(models.Model):
             'metadata': metadata,
             'text': tree.text
         }
-
-    def render(self, request=None, page=None, format='html',
-               context=None, template_context=None):
-        """
-        This renders the markup of the text as html or any other
-        format supported.
-
-        If no request is given the current request is used or None
-        if no request exists (e.g while generate snapshot).
-        """
-        if context is None:
-            if request is None:
-                try:
-                    request = current_request._get_current_object()
-                except RuntimeError:
-                    # no request exists, that happens if we're generating
-                    # the snapshot.
-                    request = None
-            context = markup.RenderContext(request, wiki_page=page)
-        if template_context is not None or format != 'html':
-            return self.parse(template_context).render(context, format)
-        self.touch_html_render_instructions()
-        blob = self.html_render_instructions.decode('base64')
-        instructions = pickle.loads(blob)
-        return markup.render(instructions, context)
-
-    def touch_html_render_instructions(self):
-        """update the html render instructions if they are none."""
-        if not self.html_render_instructions:
-            self.update_html_render_instructions()
-
-    def update_html_render_instructions(self, nosave=False):
-        """Puts the render instructions for this text in the database and
-        saves.
-        """
-        self.html_render_instructions = pickle.dumps(self.parse()
-                                .compile('html'), protocol=0).encode('base64')
-        if not nosave:
-            Text.objects.filter(id=self.id).update(**{
-                'html_render_instructions': self.html_render_instructions
-            })
 
     def save(self, *args, **kwargs):
         self.html_render_instructions = None
@@ -1198,10 +1145,9 @@ class Revision(models.Model):
     @property
     def rendered_text(self):
         """
-        The rendered version of the `text` attribute.  This is equivalent
-        to calling ``text.render(page=page)``.
+        The rendered version of the `text` attribute.
         """
-        return self.text.render(page=self.page)
+        return self.text.value_rendered
 
     @property
     def short_description(self):
@@ -1242,10 +1188,6 @@ class Revision(models.Model):
         request_cache.delete('wiki/page/' + self.page.name)
         cache.delete('wiki/latest_revisions')
         cache.delete('wiki/latest_revisions/%s' % self.page.name)
-
-    def prepare_for_caching(self):
-        """Called before the page object is stored in the cache."""
-        self.text.touch_html_render_instructions()
 
     def __unicode__(self):
         return _('Revision %(id)d (%(title)s)') % {

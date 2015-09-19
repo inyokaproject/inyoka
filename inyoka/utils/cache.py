@@ -14,11 +14,13 @@
     :license: BSD, see LICENSE for more details.
 """
 import hashlib
+from time import sleep
 
 from django.conf import settings
 from django.core.cache import cache, get_cache
 from django.core.cache.backends.base import BaseCache
 from django.utils.encoding import force_bytes
+from django_redis.cache import RedisCache as _RedisCache
 
 from inyoka.utils.local import local_has_key, _request_cache
 
@@ -132,3 +134,60 @@ class RequestCache(BaseCache):
 if 'debug_toolbar' in settings.INSTALLED_APPS:
     from debug_toolbar.panels.cache import get_cache_debug as get_cache
 request_cache = get_cache('request')
+
+
+class RedisCache(_RedisCache):
+    """
+    Wrapper to redis cache that creates status keys for the time a value is
+    created.
+
+    Idea from https://github.com/funkybob/puppy
+    """
+
+    def get_or_set(self, key, callback, timeout=None, update_time=6):
+        """
+        Get a key if it exists. Creates it if other case.
+
+        Sets a status key for the time the value is created, so other workers
+        do not created the same content in the meantime.
+        """
+        redis = self.client.get_client()
+
+        # Status key
+        key = self.make_key(key)
+        state_key = key + ':status'
+
+        # Get the value and its status
+        value = redis.get(key)
+
+        while value is None:
+            # Try to gain an updating lock
+            if redis.set(state_key, 'updating', ex=update_time, nx=True):
+                try:
+                    # TODO: log how long callback needs. If it needs more then
+                    #       update_time, it should write a warning.
+                    value = self.client.encode(callback())
+
+                    # Resolve our timeout value
+                    if timeout is None:
+                        timeout = self.default_timeout
+
+                    # Set the value
+                    redis.set(key, value, ex=timeout)
+                finally:
+                    # If the key is deleted it can not be recreated before the
+                    # state_key expires. So it has to be deleted
+                    redis.delete(state_key)
+
+            # Someone else is already updating it, but we don't have a value
+            # to return, so we try again later
+            else:
+                sleep(0.1)
+                value = redis.get(key)
+
+        try:
+            return self.client.decode(value)
+        except:
+            # If value can not be decoded, then delete it from the cache
+            redis.delete(key)
+            raise

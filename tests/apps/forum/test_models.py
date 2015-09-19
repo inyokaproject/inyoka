@@ -14,7 +14,7 @@ from django.core.files.base import ContentFile
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from inyoka.forum.models import Post, Topic, Forum, Attachment
+from inyoka.forum.models import Post, Topic, Forum, Attachment, PostRevision
 from inyoka.portal.user import User
 from inyoka.utils.cache import request_cache
 
@@ -172,6 +172,20 @@ class TestPostModel(TestCase):
 
     def test_url_for_post_not_existing_post(self):
         self.assertRaises(Post.DoesNotExist, Post.url_for_post, 250000913)
+
+    def test_rendered_get_text(self):
+        post = Post(text="'''test'''")
+        self.assertEqual(post.get_text(), "<p><strong>test</strong></p>")
+
+    def test_plaintext_get_text(self):
+        post = Post(text="'''test'''", is_plaintext=True)
+        self.assertEqual(post.get_text(), "&#39;&#39;&#39;test&#39;&#39;&#39;")
+
+
+class TestPostRevisionModel(TestCase):
+    def test_text_rendered(self):
+        r = PostRevision(text="'''test'''")
+        self.assertEqual(r.text_rendered, "<p><strong>test</strong></p>")
 
 
 class TestPostSplit(TestCase):
