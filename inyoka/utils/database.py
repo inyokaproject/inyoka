@@ -15,6 +15,7 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.expressions import F, ExpressionNode
+from django.db.models.signals import post_save as model_post_save_signal
 from django.core.cache import get_cache
 
 from inyoka.markup import parse, RenderContext
@@ -247,8 +248,35 @@ class InyokaMarkupField(models.TextField):
         self.redis_timeout = None
         super(InyokaMarkupField, self).__init__(*args, **kwargs)
 
+    def get_redis_key(self, cls, instance, name):
+        return '{application}:{model}:{id}:{field}'.format(
+            application=self.application or 'portal',
+            model=cls.__name__.lower(),
+            id=instance.pk,
+            field=name,
+        )
+
     def contribute_to_class(self, cls, name):
         super(InyokaMarkupField, self).contribute_to_class(cls, name)
+
+        # Register to the post_save signal, to delete the redis cache if the
+        # content changes
+        from pdb import set_trace; set_trace()
+        def delete_cache_receiver(sender, instance, created, **kwargs):
+            from pdb import set_trace; set_trace()
+            if not created:
+                key = self.get_redis_key(cls, instance, name)
+                keys = key, 'puppy:{}'.format(key)
+                content_cache.delete_many(keys)
+
+        model_post_save_signal.connect(
+            delete_cache_receiver,
+            sender=cls,
+            dispatch_uid="{cls}{field}".format(
+                cls=cls.__name__,
+                field=name,
+            )
+        )
 
         def render_method(text):
             """
@@ -270,12 +298,7 @@ class InyokaMarkupField(models.TextField):
             """
             Renders the content of the field.
             """
-            key = '{application}:{model}:{id}:{field}'.format(
-                application=self.application or 'portal',
-                model=cls.__name__.lower(),
-                id=inst_self.pk,
-                field=name,
-            )
+            key = self.get_redis_key(cls, inst_self, name)
 
             def create_content(*args):
                 return render_method(getattr(inst_self, name, ''))
