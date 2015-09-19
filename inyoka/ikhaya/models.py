@@ -346,12 +346,6 @@ class Report(models.Model):
             return href('ikhaya', self.article.stamp, self.article.slug, 'reports')
         return href('ikhaya', 'report', self.id, action)
 
-    def save(self, *args, **kwargs):
-        super(Report, self).save(*args, **kwargs)
-        if self.id:
-            # TODO: the cache can probably be removed
-            cache.delete('ikhaya/report/%d' % self.id)
-
 
 class Suggestion(models.Model):
 

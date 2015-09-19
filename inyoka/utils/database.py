@@ -239,10 +239,12 @@ class InyokaMarkupField(models.TextField):
     Field to save and render Inyoka markup.
     """
 
-    def __init__(self, application=None, simplify=False, force_existing=False, *args, **kwargs):
+    def __init__(self, application=None, simplify=False, force_existing=False,
+                 redis_timeout=None, *args, **kwargs):
         self.application = application
         self.simplify = simplify
         self.force_existing = force_existing
+        self.redis_timeout = None
         super(InyokaMarkupField, self).__init__(*args, **kwargs)
 
     def contribute_to_class(self, cls, name):
@@ -272,15 +274,20 @@ class InyokaMarkupField(models.TextField):
                 application=self.application or 'portal',
                 model=cls.__name__.lower(),
                 id=inst_self.pk,
-                field=name)
-            content = content_cache.get(key)
-            if content is None:
-                content = render_method(getattr(inst_self, name, ''))
-                content_cache.set(key, content)
-            return content
+                field=name,
+            )
+
+            def create_content(*args):
+                return render_method(getattr(inst_self, name, ''))
+
+            # Get the content from the cache. Creates the content if it does not
+            # exist in redis, or if the cache expired. See:
+            # https://github.com/funkybob/puppy
+            return content_cache.pget(key, create_content, self.redis_timeout)
 
         setattr(cls, '{}_rendered'.format(name), render)
         setattr(cls, 'get_{}_rendered'.format(name), staticmethod(render_method))
+
 
     def south_field_triple(self):
         from south.modelsinspector import introspector

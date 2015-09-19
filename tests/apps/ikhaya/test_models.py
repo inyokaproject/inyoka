@@ -56,18 +56,6 @@ class TestArticleModel(TestCase):
         self.assertEqual(self.article3.slug, 'article')
         self.assertEqual(self.article3.stamp, '2009/04/01')
 
-    def test_simplify_xhtml(self):
-        self.assertEqual(self.article3.simplified_text, 'Text 3')
-
-    def test_simplify_wiki_markup(self):
-        self.assertEqual(self.article2.simplified_text, 'Text 2')
-
-    def test_simplify_does_strip(self):
-        _old_text = self.article1.text
-        self.article1.text = 'Text 1   '
-        self.assertEqual(self.article1.simplified_text, 'Text 1')
-        self.article1.text = _old_text
-
 
 class TestCategoryModel(TestCase):
 
