@@ -265,9 +265,6 @@ class InyokaMarkupField(models.TextField):
             if not created:
                 key = self.get_redis_key(cls, instance, name)
                 content_cache.delete(key)
-                key = content_cache.make_key(key)
-                keys = key, 'puppy:{}'.format(key)
-                content_cache.delete_many(keys)
 
         model_post_save_signal.connect(
             delete_cache_receiver,
@@ -305,9 +302,8 @@ class InyokaMarkupField(models.TextField):
                 return render_method(getattr(inst_self, name, ''))
 
             # Get the content from the cache. Creates the content if it does not
-            # exist in redis, or if the cache expired. See:
-            # https://github.com/funkybob/puppy
-            return content_cache.pget(key, create_content, self.redis_timeout)
+            # exist in redis, or if the cache expired.
+            return content_cache.get_or_set(key, create_content, self.redis_timeout)
 
         setattr(cls, '{}_rendered'.format(name), render)
         setattr(cls, 'get_{}_rendered'.format(name), staticmethod(render_method))

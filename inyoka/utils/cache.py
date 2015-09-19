@@ -20,7 +20,7 @@ from django.conf import settings
 from django.core.cache import cache, get_cache
 from django.core.cache.backends.base import BaseCache
 from django.utils.encoding import force_bytes
-from django_redis.cache import RedisCache
+from django_redis.cache import RedisCache as _RedisCache
 
 from inyoka.utils.local import local_has_key, _request_cache
 
@@ -144,7 +144,7 @@ class RedisCache(_RedisCache):
     Idea from https://github.com/funkybob/puppy
     """
 
-    def get_or_set(self, key, callback, timeout=None, update_time=3):
+    def get_or_set(self, key, callback, timeout=None, update_time=6):
         """
         Get a key if it exists. Creates it if other case.
 
@@ -166,21 +166,18 @@ class RedisCache(_RedisCache):
                 try:
                     # TODO: log how long callback needs. If it needs more then
                     #       update_time, it should write a warning.
-                    value = callback(key)
-                except:
+                    value = self.client.encode(callback())
+
+                    # Resolve our timeout value
+                    if timeout is None:
+                        timeout = self.default_timeout
+
+                    # Set the value
+                    redis.set(key, value, ex=timeout)
+                finally:
+                    # If the key is deleted it can not be recreated before the
+                    # state_key expires. So it has to be deleted
                     redis.delete(state_key)
-                    raise
-
-                # Resolve our timeout value
-                if timeout is None:
-                    timeout = self.default_timeout
-
-                # Set the value
-                redis.set(key, value, ex=timeout)
-
-                # If the key is deleted it can not be recreated before the
-                # state_key expires. So it has to be deleted
-                redis.delete(state_key)
 
             # Someone else is already updating it, but we don't have a value
             # to return, so we try again later
@@ -188,4 +185,9 @@ class RedisCache(_RedisCache):
                 sleep(0.1)
                 value = redis.get(key)
 
-        return self.client.decode(value)
+        try:
+            return self.client.decode(value)
+        except:
+            # If value can not be decoded, then delete it from the cache
+            redis.delete(key)
+            raise
