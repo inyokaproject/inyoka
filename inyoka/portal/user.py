@@ -9,17 +9,17 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from os import path
 from StringIO import StringIO
 from datetime import datetime
-from PIL import Image
+from os import path
 
+from PIL import Image
 from django.conf import settings
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, update_last_login)
 from django.contrib.auth.signals import user_logged_in
 from django.core import signing
 from django.core.cache import cache
-from django.db import models
+from django.db import models, transaction
 from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -32,9 +32,9 @@ from inyoka.utils.local import current_request
 from inyoka.utils.mail import send_mail
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
-from inyoka.utils.user import normalize_username, gen_activation_key
+from inyoka.utils.user import normalize_username, gen_activation_key, \
+    is_valid_username
 
 
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
@@ -487,6 +487,42 @@ class User(AbstractBaseUser):
 
     def __unicode__(self):
         return self.username
+
+    @transaction.commit_on_success
+    def rename(self, new_name, send_mail=True):
+        """
+        Rename method that checks for collision and if there is non,
+        renames the users and if required sends a notification (default).
+        Will raise a ValueError('invalid username') exception if user
+        name is invalid.
+
+        Returns True if the user is renamed or if the users current username is
+        already new_name.
+
+        Returns False if a user with the new_name already exists.
+        """
+        if not is_valid_username(new_name):
+            raise ValueError('invalid username')
+        if self.username == new_name:
+            return True
+
+        try:
+            User.objects.get_by_username_or_email(new_name)
+        except User.DoesNotExist:
+            old_name = self.username
+            self.username = new_name
+            self.save()
+            if send_mail:
+                subject = _(u'Your user name on {sitename} has been changed to “{name}”') \
+                    .format(name=escape(self.username), sitename=settings.BASE_DOMAIN_NAME)
+                text = render_template('mails/account_rename.txt', {
+                    'user': self,
+                    'oldname': old_name,
+                })
+                self.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
+            return True
+        else:
+            return False
 
     is_anonymous = property(lambda x: x.username == settings.INYOKA_ANONYMOUS_USER)
     # No property to stay compatible with Django

@@ -46,6 +46,21 @@ class TestUserModel(TestCase):
         with self.assertRaises(Http404):
             get_user('foo@bar')
 
+    def test_rename_user(self):
+        created_user = User.objects.register_user('testuser', 'test@user.de', 'pwd', False)
+        self.assertTrue(created_user.rename('testuser2', False))
+        self.assertEqual(unicode(created_user), 'testuser2')
+
+    def test_rename_user_collision(self):
+        User.objects.register_user('testuser3', 'test3@user.de', 'pwd', False)
+        created_user = User.objects.register_user('testuser4', 'test4@user.de', 'pwd', False)
+        self.assertFalse(created_user.rename('testuser3', False))
+
+    def test_rename_user_invalid(self):
+        created_user = User.objects.register_user('testuser5', 'test5@user.de', 'pwd', False)
+        with self.assertRaisesRegexp(ValueError, 'invalid username'):
+            created_user.rename('**testuser**', False)
+
 
 class TestGroupModel(TestCase):
     def setUp(self):
