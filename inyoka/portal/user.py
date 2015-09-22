@@ -495,11 +495,17 @@ class User(AbstractBaseUser):
         renames the users and if required sends a notification (default).
         Will raise a ValueError('invalid username') exception if user
         name is invalid.
+
+        Returns True if the user is renamed or if the users current username is
+        already new_name.
+
+        Returns False if a user with the new_name already exists.
         """
         if not is_valid_username(new_name):
             raise ValueError('invalid username')
         if self.username == new_name:
             return True
+
         try:
             User.objects.get_by_username_or_email(new_name)
         except User.DoesNotExist:
