@@ -540,12 +540,6 @@ Paths and URLs
 Security
 ========
 
-.. py:data:: GOOGLE_MAPS_APIKEY
-
-    Defaults to: ``''``
-
-    Key for google maps
-
 .. py:data:: SECRET_KEY
 
     Defaults to: ``None``

@@ -255,21 +255,13 @@ class UserCPProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['jabber', 'icq', 'msn', 'aim', 'yim', 'skype', 'wengophone',
-                  'sip', 'signature', 'location', 'occupation', 'interests',
-                  'website', 'gpgkey', 'launchpad', 'avatar', 'location',
-                  'launchpad']
+        fields = ['jabber', 'signature', 'location', 'website', 'gpgkey',
+                  'launchpad', 'avatar']
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
         self.admin_mode = kwargs.pop('admin_mode', False)
         initial = kwargs['initial'] = {}
-        lat = instance.coordinates_lat
-        long = instance.coordinates_long
-        if lat and long:
-            initial['coordinates'] = '%s, %s' % (lat, long)
-        else:
-            initial['coordinates'] = ''
 
         initial.update(dict(
             ((k, v) for k, v in instance.settings.iteritems()
@@ -295,26 +287,6 @@ class UserCPProfileForm(forms.ModelForm):
         signature = self.cleaned_data.get('signature', '')
         validate_signature(signature)
         return signature
-
-    def clean_coordinates(self):
-        coords = self.cleaned_data.get('coordinates', '').strip()
-        if not coords:
-            return None
-        try:
-            coords = [float(x.strip()) for x in coords.split(',')]
-            if len(coords) != 2:
-                raise forms.ValidationError(_(
-                    u'Coordinates needs to be passed in the format '
-                    u'“latitude, longitude”')
-                )
-            lat, long = coords
-        except ValueError:
-            raise forms.ValidationError(_(u'Coordinates needs to decimal numbers.'))
-        if not -90 < lat < 90:
-            raise forms.ValidationError(_(u'Latitude needs to be between -90 and 90.'))
-        if not -180 < long < 180:
-            raise forms.ValidationError(_(u'Longitude needs to be between -180 and 180.'))
-        return lat, long
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -367,12 +339,6 @@ class UserCPProfileForm(forms.ModelForm):
                 messages.info(request,
                     _(u'You’ve been sent an email to confirm your new email '
                       u'address.'))
-
-        if data['coordinates']:
-            user.coordinates_lat, user.coordinates_long = \
-                data['coordinates']
-        for key in ('show_email', 'show_jabber', 'use_gravatar'):
-            user.settings[key] = data[key]
 
         if data['userpage']:
             if hasattr(user, 'userpage'):
