@@ -197,12 +197,12 @@ class UbuntuVersion(object):
 
     def as_json(self):
         data = {
-                'number': self.number,
-                'name': self.name,
-                'lts': self.lts,
-                'acitve': self.active,
-                'current': self.current,
-                'dev': self.dev}
+            'number': self.number,
+            'name': self.name,
+            'lts': self.lts,
+            'acitve': self.active,
+            'current': self.current,
+            'dev': self.dev}
         return json.dumps(data)
 
 

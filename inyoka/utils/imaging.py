@@ -93,7 +93,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
     if not is_safe_domain(location):
         return None
 
-    format, quality = ('png', '100')
+    format, = 'png'
     # force unicode because of posixpath
     destination = force_unicode(destination)
     destination = u'%s.%s' % (destination.rsplit('.', 1)[0], format)

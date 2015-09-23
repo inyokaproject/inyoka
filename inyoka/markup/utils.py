@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     inyoka.markup.utils
     ~~~~~~~~~~~~~~~~~~~
@@ -66,9 +66,9 @@ def filter_style(css):
         if prop.lower() in acceptable_css_properties:
             clean.append('%s: %s' % (prop, value))
         elif prop.split('-', 1)[0].lower() in \
-             ('background', 'border', 'margin', 'padding'):
+                ('background', 'border', 'margin', 'padding'):
             for keyword in value.split():
-                if not keyword in acceptable_css_keywords and \
+                if keyword not in acceptable_css_keywords and \
                    not _css_unit_re.match(keyword):
                     break
             else:

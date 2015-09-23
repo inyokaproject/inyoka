@@ -15,7 +15,6 @@ import datetime
 from PIL import Image
 
 from django import forms
-from django.conf import settings
 from django.forms import HiddenInput
 from django.contrib import messages
 from django.db.models import Count
@@ -28,17 +27,13 @@ from django.utils.translation import ugettext_lazy
 from django.core.files.storage import default_storage
 from django.db.models.fields.files import ImageFieldFile
 
-from inyoka.forum.acl import filter_invisible
 from inyoka.forum.constants import get_simple_version_choices
-from inyoka.forum.forms import ForumField
-from inyoka.forum.models import Forum
 from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.portal.user import User, UserPage, Group, PERMISSION_NAMES, send_new_email_confirmation
-from inyoka.utils.dates import TIMEZONES, datetime_to_timezone
+from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (DateWidget, EmailField, CaptchaField,
-    DateTimeWidget, validate_signature)
+    validate_signature)
 from inyoka.utils.local import current_request
-from inyoka.utils.html import cleanup_html
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.sessions import SurgeProtectionMixin
@@ -69,8 +64,8 @@ class LoginForm(forms.Form):
 
     def clean(self):
         data = self.cleaned_data
-        if 'username' in data and not (data['username'].startswith('http://') or \
-         data['username'].startswith('https://')) and data['password'] == '':
+        if 'username' in data and not (data['username'].startswith('http://') or
+                data['username'].startswith('https://')) and data['password'] == '':
             msg = _(u'This field is required')
             self._errors['password'] = self.error_class([msg])
         return data
@@ -531,8 +526,7 @@ class UserMailForm(forms.Form):
     text = forms.CharField(label=ugettext_lazy(u'Text'),
         widget=forms.Textarea(),
         help_text=ugettext_lazy(u'The message will be send as “plain text”. Your username '
-                    u'will be noted as sender.')
-    )
+                    u'will be noted as sender.'))
 
 
 class EditGroupForm(forms.ModelForm):
@@ -581,9 +575,9 @@ class EditGroupForm(forms.ModelForm):
         group = super(EditGroupForm, self).save(commit=False)
         data = self.cleaned_data
 
-        if data['icon'] and not data['import_icon_from_global']:
-            icon_resized = group.save_icon(data['icon'])
 # TODO: Reenable?!
+#        if data['icon'] and not data['import_icon_from_global']:
+#            icon_resized = group.save_icon(data['icon'])
 #            if icon_resized:
 #                messages.info(request,
 #                    _(u'The icon you uploaded was scaled to '
@@ -637,6 +631,7 @@ class PrivateMessageForm(forms.Form):
             if not d['recipient'].strip() and not d['group_recipient'].strip():
                 raise forms.ValidationError(_(u'Please enter at least one receiver.'))
         return self.cleaned_data
+
 
 class PrivateMessageFormProtected(SurgeProtectionMixin, PrivateMessageForm):
     surge_protection_timeout = 60 * 5

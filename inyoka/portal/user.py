@@ -129,8 +129,8 @@ def deactivate_user(user):
     }
 
     subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
-                % {'name': escape(user.username),
-                   'sitename': settings.BASE_DOMAIN_NAME}
+        % {'name': escape(user.username),
+        'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
         'user': user,
         'data': signing.dumps(data, salt='inyoka.action.reactivate_user'),
@@ -214,8 +214,8 @@ def send_activation_mail(user):
         'activation_key': gen_activation_key(user)
     })
     subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
-              % {'sitename': settings.BASE_DOMAIN_NAME,
-                 'name': user.username}
+        % {'sitename': settings.BASE_DOMAIN_NAME,
+        'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 

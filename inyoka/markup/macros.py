@@ -254,7 +254,7 @@ class TableOfContents(TreeMacro):
             # of recent stack element
             ml = 42 - (headline.level - 1) * 2
             text = len(headline.text) > ml and headline.text[:ml] + '...' or \
-                   headline.text
+                headline.text
             caption = [nodes.Text(text)]
             link = nodes.Link('#' + headline.id, caption)
             stack[-1].children.append(nodes.ListItem([link]))

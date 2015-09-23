@@ -104,7 +104,6 @@ class Entry(models.Model):
 
     def save(self, *args, **kwargs):
         super(Entry, self).save(*args, **kwargs)
-        blog = self.blog
 
     def delete(self):
         super(Entry, self).delete()

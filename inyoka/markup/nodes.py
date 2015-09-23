@@ -429,8 +429,7 @@ class Span(Element):
         yield build_html_tag(u'span',
             id=self.id,
             style=self.style,
-            class_=self.class_,
-        )
+            class_=self.class_,)
         for item in Element.prepare_html(self):
             yield item
         yield u'</span>'
@@ -750,8 +749,7 @@ class Headline(Element):
         yield build_html_tag(u'h%d' % (self.level + 1),
             id=self.id,
             style=self.style,
-            class_=self.class_
-        )
+            class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
         yield u'<a href="#%s" class="headerlink">¶</a>' % self.id
@@ -961,8 +959,7 @@ class Color(Element):
         yield build_html_tag(u'span',
             id=self.id,
             style=style,
-            class_=self.class_
-        )
+            class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
         yield u'</span>'
@@ -985,8 +982,7 @@ class Size(Element):
         yield build_html_tag(u'span',
             id=self.id,
             style=style,
-            class_=self.class_
-        )
+            class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
         yield u'</span>'
@@ -1014,8 +1010,7 @@ class Font(Element):
         yield build_html_tag(u'span',
             id=self.id,
             style=style,
-            class_=self.class_
-        )
+            class_=self.class_)
         for item in Element.prepare_html(self):
             yield item
         yield u'</span>'
@@ -1217,8 +1212,7 @@ class TableCell(Element):
             rowspan=self.rowspan or None,
             style=style and u'; '.join(style) or None,
             id=self.id,
-            class_=self.class_
-        )
+            class_=self.class_)
 
         for item in Element.prepare_html(self):
             yield item

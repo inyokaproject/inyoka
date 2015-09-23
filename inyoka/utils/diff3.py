@@ -73,8 +73,8 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
     new_len = len(new)
 
     while old_lineno < old_len and \
-          other_lineno < other_len and \
-          new_lineno < new_len:
+            other_lineno < other_len and \
+            new_lineno < new_len:
 
         # unchanged
         if old[old_lineno] == other[other_lineno] == new[new_lineno]:
@@ -150,7 +150,7 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
 
     # all finished
     if (old_lineno == old_len and other_lineno == other_len
-        and new_lineno == new_len):
+            and new_lineno == new_len):
         return
 
     # new added lines

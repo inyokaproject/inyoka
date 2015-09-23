@@ -52,13 +52,10 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
         if has_conflicts(tree):
             raise forms.ValidationError(_(u'The text contains conflict markers'))
         elif self.user is not None and not \
-             test_changes_allowed(self.user, self.page_name, self.old_text,
-                                  self.cleaned_data['text']):
+                test_changes_allowed(self.user, self.page_name, self.old_text,
+                self.cleaned_data['text']):
             raise forms.ValidationError(_(u'You are not permitted to make '
-                                          u'this changes'))
-                                       # Du hast Änderungen vorgenommen, '
-                                       # u'die dir durch die Zugriffsrechte '
-                                       # u'verwehrt werden.')
+                u'this changes'))
         return self.cleaned_data['text']
 
 

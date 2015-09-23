@@ -51,7 +51,7 @@ class SubscriptionManager(gmodels.ContentTypeManager):
 
         notifies = Subscription.objects.filter(**filter)\
                                        .values_list('notified', flat=True)[:1]
-        notified = notifies and notifies[0] == True
+        notified = notifies and notifies[0] is True
         if clear_notified and notified:
             Subscription.objects.filter(**filter).update(notified=False)
         return bool(notifies)
@@ -245,8 +245,7 @@ class StaticPage(models.Model):
                                 u'Cannot be changed later.'))
     title = models.CharField(ugettext_lazy(u'Title'), max_length=200)
     content = models.TextField(ugettext_lazy(u'Content'),
-        help_text=ugettext_lazy(u'Inyoka syntax required.')
-    )
+        help_text=ugettext_lazy(u'Inyoka syntax required.'))
 
     class Meta:
         verbose_name = ugettext_lazy(u'Static page')
@@ -254,10 +253,9 @@ class StaticPage(models.Model):
 
     def __repr__(self):
         return '<%s:%s "%s">' % (
-                self.__class__.__name__,
-                self.key,
-                self.title,
-            )
+            self.__class__.__name__,
+            self.key,
+            self.title,)
 
     def __unicode__(self):
         return self.title

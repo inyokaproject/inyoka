@@ -15,8 +15,6 @@
     :license: BSD, see LICENSE for more details.
 """
 # Secure XML libraries till a python solution exists.
-# We already patch in inyoka, hence we just import inyoka before feedparser.
-import inyoka
 
 # And further patch it so feedparser works :/
 import xml.sax
@@ -138,8 +136,8 @@ def sync():
             # get the pub date and updated date. This is rather complex
             # because different feeds do different stuff
             pub_date = entry.get('published_parsed') or \
-                       entry.get('created_parsed') or \
-                       entry.get('date_parsed')
+                entry.get('created_parsed') or \
+                entry.get('date_parsed')
             updated = entry.get('updated_parsed') or pub_date
             pub_date = pub_date or updated
 
@@ -160,7 +158,7 @@ def sync():
             if not author:
                 debug(u' no author for entry %r found, skipping' % guid)
             author_homepage = author_detail and author_detail.get('href') \
-                              or url
+                or url
 
             # create a new entry object based on the data collected or
             # update the old one.

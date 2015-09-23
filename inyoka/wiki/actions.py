@@ -104,8 +104,7 @@ def do_show(request, name):
             messages.info(request,
                 _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
                     'link': escape(href('wiki', page.name, redirect='no')),
-                    'title': escape(page.title)
-            })
+                    'title': escape(page.title)})
             anchor = None
             if '#' in redirect:
                 redirect, anchor = redirect.rsplit('#', 1)
@@ -407,8 +406,7 @@ def do_edit(request, name):
             messages.info(request,
                 _(u'Used the template “<a href="%(link)s">%(name)s</a>” for this page') % {
                     'link': url_for(template),
-                    'name': escape(template.title)
-            })
+                    'name': escape(template.title)})
 
     # check for edits by other users.  If we have such an edit we try
     # to merge and set the edit time to the time of the last merge or
@@ -475,8 +473,7 @@ def do_edit(request, name):
                     messages.success(request,
                         _(u'The page <a href="%(link)s">%(name)s</a> has been created.') % {
                             'link': escape(href('wiki', page.name)),
-                            'name': escape(page.title)
-                    })
+                            'name': escape(page.title)})
 
                 last_revisions = page.revisions.all()[:2]
                 if len(last_revisions) > 1:
@@ -529,9 +526,9 @@ def do_delete(request, name):
             messages.info(request, u'Canceled.')
         else:
             page.edit(user=request.user, deleted=True,
-                      remote_addr=request.META.get('REMOTE_ADDR'),
-                      note=request.POST.get('note', '') or
-                           u'Page deleted.')
+                remote_addr=request.META.get('REMOTE_ADDR'),
+                note=request.POST.get('note', '') or
+                u'Page deleted.')
             messages.success(request, u'Page deleted successfully.')
     else:
         messages.info(request,
@@ -968,13 +965,13 @@ def do_attach_edit(request, name):
             if d['attachment']:
                 attachment = d['attachment']
                 attachment_filename = d['attachment'].name or \
-                                        page.rev.attachment.filename
+                    page.rev.attachment.filename
             page.edit(user=request.user,
-                        text=d.get('text', page.rev.text.value),
-                        remote_addr=request.META.get('remote_addr'),
-                        note=d.get('note', u''),
-                        attachment_filename=attachment_filename,
-                        attachment=attachment)
+                text=d.get('text', page.rev.text.value),
+                remote_addr=request.META.get('remote_addr'),
+                note=d.get('note', u''),
+                attachment_filename=attachment_filename,
+                attachment=attachment)
             messages.success(request, _(u'Attachment edited successfully.'))
             return HttpResponseRedirect(url_for(page))
     return {

@@ -24,12 +24,10 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('pastebin', ['Entry'])
 
-
     def backwards(self, orm):
 
         # Deleting model 'Entry'
         db.delete_table('pastebin_entry')
-
 
     models = {
         'pastebin.entry': {

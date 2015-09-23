@@ -10,12 +10,10 @@ class Migration(SchemaMigration):
         # Adding index on 'Entry', fields ['pub_date']
         db.create_index('pastebin_entry', ['pub_date'])
 
-
     def backwards(self, orm):
 
         # Removing index on 'Entry', fields ['pub_date']
         db.delete_index('pastebin_entry', ['pub_date'])
-
 
     models = {
         'pastebin.entry': {

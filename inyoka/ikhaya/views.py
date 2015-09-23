@@ -17,7 +17,6 @@ from django.contrib import messages
 from django.utils.text import Truncator
 from django.utils.html import escape
 from django.core.cache import cache
-from django.utils.http import urlencode
 from django.utils.dates import MONTHS
 from django.utils.translation import ugettext as _
 from django.utils.timezone import get_current_timezone
@@ -97,7 +96,7 @@ def index(request, year=None, month=None, category_slug=None, page=1, full=False
     can_read = request.user.can('article_read')
     articles = Article.published if not can_read else Article.objects
 
-    _page = (page if page>1 else None, )
+    _page = (page if page > 1 else None, )
     _full = ('full', )
 
     if year and month:
@@ -227,12 +226,12 @@ def article_delete(request, year, month, day, slug):
                 _(u'The publication of the article '
                   u'“<a href="%(link)s">%(title)s</a>” has been revoked.')
                 % {'link': escape(url_for(article, 'show')),
-                     'title': escape(article.subject)})
+                'title': escape(article.subject)})
         elif 'cancel' in request.POST:
             messages.info(request,
                 _(u'Deletion of the article “<a href="%(link)s">%(title)s</a>” was canceled.')
                 % {'link': escape(url_for(article, 'show')),
-                     'title': escape(article.subject)})
+                'title': escape(article.subject)})
         else:
             article.delete()
             messages.success(request,
@@ -350,7 +349,7 @@ def article_subscribe(request, year, month, day, slug):
             _(u'Notifications on new comments to this article will be sent '
               u'to you.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or url_for(article)
+        request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
 
 
@@ -373,7 +372,7 @@ def article_unsubscribe(request, year, month, day, slug):
             _(u'You will no longer be notified of new comments for this '
               u'article.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or url_for(article)
+        request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
 
 
@@ -558,14 +557,14 @@ def suggest_assign_to(request, suggestion, username):
             raise Http404
         suggestion.save()
         messages.success(request, _(u'The suggestion was assigned to “%(user)s”.')
-                                    % {'user': username})
+            % {'user': username})
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
 @require_permission('article_edit')
 def suggest_delete(request, suggestion):
     if request.method == 'POST':
-        if not 'cancel' in request.POST:
+        if 'cancel' not in request.POST:
             try:
                 s = Suggestion.objects.get(id=suggestion)
             except Suggestion.DoesNotExist:
@@ -593,16 +592,16 @@ def suggest_delete(request, suggestion):
                     if 'pm_new' in recipient.settings.get('notifications',
                                                           ('pm_new',)):
                         title = _(u'New private message from %(user)s: '
-                                  '%(subject)s') % {
-                                      'user': request.user.username,
-                                      'subject': msg.subject,
-                                  }
+                            '%(subject)s') % {
+                            'user': request.user.username,
+                            'subject': msg.subject,
+                        }
                         send_notification(recipient, 'new_pm', title, {
-                                          'user': recipient,
-                                              'sender': request.user,
-                                              'subject': msg.subject,
-                                              'entry': entry,
-                                          })
+                            'user': recipient,
+                            'sender': request.user,
+                            'subject': msg.subject,
+                            'entry': entry,
+                        })
 
             cache.delete('ikhaya/suggestion_count')
             s.delete()
@@ -668,11 +667,11 @@ def suggestions(request):
 
 
 category_edit = generic.CreateUpdateView(
-                        model=Category, form_class=EditCategoryForm,
-                        template_name='ikhaya/category_edit.html',
-                        context_object_name='category',
-                        urlgroup_name='category_slug',
-                        required_permission='category_edit')
+    model=Category, form_class=EditCategoryForm,
+    template_name='ikhaya/category_edit.html',
+    context_object_name='category',
+    urlgroup_name='category_slug',
+    required_permission='category_edit')
 
 
 @require_permission('event_edit')
@@ -705,7 +704,7 @@ def suggestions_subscribe(request):
         Subscription(user=request.user, content_type=ct).save()
         messages.info(request, _(u'Notifications on new suggestions will be sent to you.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('ikhaya', 'suggestions')
+        request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
 
 
@@ -721,7 +720,7 @@ def suggestions_unsubscribe(request):
         subscription.delete()
         messages.info(request, _(u'No notifications on suggestions will be sent to you any more.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('ikhaya', 'suggestions')
+        request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
 
 
@@ -778,7 +777,7 @@ def event_suggest(request):
         if form.is_valid():
             event = Event()
             convert = (lambda v: get_current_timezone().localize(v)
-                                .astimezone(pytz.utc).replace(tzinfo=None))
+                .astimezone(pytz.utc).replace(tzinfo=None))
             data = form.cleaned_data
             event.name = data['name']
             if data['date'] and data['time']:
@@ -877,12 +876,12 @@ def feed_comment(request, id=None, mode='short', count=10):
     if id:
         article = Article.published.get(id=id)
         title = _(u'%(domain)s Ikhaya comments – %(title)s') % {
-                    'domain': settings.BASE_DOMAIN_NAME,
-                    'title': article.subject}
+            'domain': settings.BASE_DOMAIN_NAME,
+            'title': article.subject}
         url = url_for(article)
     else:
         title = _(u'%(domain)s Ikhaya comments') % {
-                    'domain': settings.BASE_DOMAIN_NAME}
+            'domain': settings.BASE_DOMAIN_NAME}
         url = href('ikhaya')
 
     comments = Comment.objects.get_latest_comments(article.id if article else None, count)

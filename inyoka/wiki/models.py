@@ -1221,16 +1221,16 @@ class Revision(models.Model):
         # no relative date information, because it stays in the note forever
 
         note = _(u'%(note)s [Revision from %(date)s restored by %(user)s]' %
-                 {'note': note,
-                  'date': datetime_to_timezone(self.change_date).strftime(
-                  '%d.%m.%Y %H:%M %Z'),
-                  'user': self.user.username if self.user else self.remote_addr})
+            {'note': note,
+            'date': datetime_to_timezone(self.change_date).strftime(
+                '%d.%m.%Y %H:%M %Z'),
+            'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
-                           user=(user if user.is_authenticated() else None),
-                           change_date=datetime.utcnow(),
-                           note=note, deleted=False,
-                           remote_addr=remote_addr or '127.0.0.1',
-                           attachment=self.attachment)
+            user=(user if user.is_authenticated() else None),
+            change_date=datetime.utcnow(),
+            note=note, deleted=False,
+            remote_addr=remote_addr or '127.0.0.1',
+            attachment=self.attachment)
         new_rev.save()
         self.page.last_rev = new_rev
         self.page.save()

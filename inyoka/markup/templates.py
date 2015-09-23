@@ -194,8 +194,8 @@ class Parser(object):
                           u'Maybe you wanted to use the “elseif” block.'))
                 self.stream.next()
                 else_body = self.subparse(lambda:
-                                           self.stream.test('raw', 'endif'),
-                                           drop_needle=False)
+                    self.stream.test('raw', 'endif'),
+                    drop_needle=False)
             elif self.stream.test('raw', 'elseif'):
                 self.stream.next()
                 expr = self.parse_expr()
@@ -204,8 +204,8 @@ class Parser(object):
                         _(u'Conditions allow only one expression per block.'))
                 self.stream.next()
                 tests.append((expr, self.subparse(lambda:
-                             self.stream.test('raw', ('endif', 'elseif', 'else')),
-                             drop_needle=False)))
+                    self.stream.test('raw', ('endif', 'elseif', 'else')),
+                    drop_needle=False)))
                 continue
             break
         self.stream.next()
@@ -742,7 +742,7 @@ class Value(Expr):
             result.extend(other.value)
             return Value(result)
         if isinstance(self.value, dict) and \
-             isinstance(other.value, dict):
+                isinstance(other.value, dict):
             result = {}
             result.update(self.value)
             result.update(other.value)

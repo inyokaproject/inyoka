@@ -87,7 +87,7 @@ def redirect_new_page(request):
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
     messages.error(request, _(u'Another site named “%(title)s” already exists.')
-                              % {'title': escape(page.title)})
+        % {'title': escape(page.title)})
     return HttpResponseRedirect(backref)
 
 
@@ -200,22 +200,22 @@ def feed(request, page_name=None, count=10):
     #           Maybe we need even more configuration values in the storage.
     if page_name:
         feed = AtomFeed(title=_(u'%(sitename)s wiki – %(pagename)s') % {
-                                    'sitename': settings.BASE_DOMAIN_NAME,
-                                    'pagename': page_name
-                                },
-                        url=href('wiki', page_name),
-                        feed_url=request.build_absolute_uri(),
-                        id=href('wiki', page_name),
-                        rights=href('portal', 'lizenz'),
-                        icon=href('static', 'img', 'favicon.ico'))
+            'sitename': settings.BASE_DOMAIN_NAME,
+            'pagename': page_name
+            },
+            url=href('wiki', page_name),
+            feed_url=request.build_absolute_uri(),
+            id=href('wiki', page_name),
+            rights=href('portal', 'lizenz'),
+            icon=href('static', 'img', 'favicon.ico'))
     else:
         feed = AtomFeed(_(u'%(sitename)s wiki – last changes')
-                          % {'sitename': settings.BASE_DOMAIN_NAME},
-                        url=href('wiki', u'Letzte_Änderungen'),
-                        feed_url=request.build_absolute_uri(),
-                        id=href('wiki', u'Letzte_Änderungen'),
-                        rights=href('portal', 'lizenz'),
-                        icon=href('static', 'img', 'favicon.ico'))
+            % {'sitename': settings.BASE_DOMAIN_NAME},
+            url=href('wiki', u'Letzte_Änderungen'),
+            feed_url=request.build_absolute_uri(),
+            id=href('wiki', u'Letzte_Änderungen'),
+            rights=href('portal', 'lizenz'),
+            icon=href('static', 'img', 'favicon.ico'))
 
     revisions = Revision.objects.get_latest_revisions(page_name, count)
 

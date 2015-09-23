@@ -116,7 +116,7 @@ class RecentChanges(macros.Macro):
                 changes = sorted(changes, key=lambda x: x.change_date)
 
                 for rev in changes:
-                    if not rev.page in pagebuffer:
+                    if rev.page not in pagebuffer:
                         pagebuffer[rev.page] = []
                     pagebuffer[rev.page].append(rev)
 
@@ -407,8 +407,8 @@ class TagCloud(macros.Macro):
                               tag['count']) % tag
             result.children.extend((
                 nodes.Link('?' + urlencode({
-                        'tag': tag['name']
-                    }), [nodes.Text(tag['name'])],
+                    'tag': tag['name']}),
+                    [nodes.Text(tag['name'])],
                     title=title,
                     style='font-size: %s%%' % tag['size']
                 ),
@@ -449,8 +449,8 @@ class TagList(macros.Macro):
         else:
             for tag in Page.objects.get_tagcloud():
                 link = nodes.Link('?' + urlencode({
-                        'tag': tag['name']
-                    }), [nodes.Text(tag['name'])],
+                    'tag': tag['name']}),
+                    [nodes.Text(tag['name'])],
                     style='font-size: %s%%' % tag['size']
                 )
                 result.children.append(nodes.ListItem([link]))
@@ -521,7 +521,7 @@ class RandomPageList(macros.Macro):
         # TODO i18n: Again this fancy meta data... wheeeey :-)
         #           see RedirectPages for more infos.
         redirect_pages = Page.objects.find_by_metadata('weiterleitung')
-        pagelist = filter(lambda p: not p in redirect_pages,
+        pagelist = filter(lambda p: p not in redirect_pages,
                           Page.objects.get_page_list(exclude_privileged=True))
 
         pages = []

@@ -147,5 +147,5 @@ def human_number(value, gender=None):
         return {'masculine': pgettext('masculine', u'one'),
                 'feminine': pgettext('feminine', u'one'),
                 'neuter': pgettext('neuter', u'one')
-        }.get(gender, _(u'one'))
+                }.get(gender, _(u'one'))
     return apnumber(value)

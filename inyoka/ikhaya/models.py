@@ -95,7 +95,7 @@ class ArticleManager(models.Manager):
         articles = filter(None, cache_values.values())
         unpublished = list(sorted([a for a in articles if not a.public],
                                   key=attrgetter('updated'), reverse=True))
-        published = list(sorted([a for a in articles if not a in unpublished],
+        published = list(sorted([a for a in articles if a not in unpublished],
                                 key=attrgetter('updated'), reverse=True))
         return unpublished + published
 
@@ -560,9 +560,9 @@ class Event(models.Model):
     def natural_coordinates(self):
         if self.location_lat and self.location_long:
             lat = self.location_lat > 0 and u'%g° N' % self.location_lat \
-                                        or u'%g° S' % -self.location_lat
+                or u'%g° S' % -self.location_lat
             long = self.location_long > 0 and u'%g° O' % self.location_long\
-                                          or u'%g° W' % -self.location_long
+                or u'%g° W' % -self.location_long
             return u'%s, %s' % (lat, long)
         else:
             return u''
@@ -574,9 +574,9 @@ class Event(models.Model):
     @property
     def coordinates_url(self):
         lat = self.location_lat > 0 and '%g_N' % self.location_lat \
-                                    or '%g_S' % -self.location_lat
+            or '%g_S' % -self.location_lat
         long = self.location_long > 0 and '%g_E' % self.location_long\
-                                      or '%g_W' % -self.location_long
+            or '%g_W' % -self.location_long
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
                '=de&params=%s_%s' % (lat, long)
 
