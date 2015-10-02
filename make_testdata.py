@@ -22,7 +22,7 @@ from jinja2.constants import LOREM_IPSUM_WORDS
 
 if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
-settings.DEBUG = settings.DATABASE_DEBUG = False # for nice progressbar output ;)
+settings.DEBUG = settings.DATABASE_DEBUG = False  # for nice progressbar output ;)
 
 from inyoka.utils.text import increment_string
 from inyoka.wiki.models import Page
@@ -33,8 +33,6 @@ from inyoka.utils.captcha import generate_word
 from inyoka.planet.models import Blog
 from inyoka.utils.terminal import show, percentize, ProgressBar
 from inyoka.scripts.planet_sync import sync
-
-
 
 MARKS = ('.', ';', '!', '?')
 WORDS = LOREM_IPSUM_WORDS.split(' ')
@@ -55,29 +53,21 @@ WIKI_PAGES_COUNT = 20
 MAX_WIKI_REVISIONS = 5
 
 BLOGS = {
-    ## Just a few blogs taken from the uu.de planet
     '[ENC]BladeXPs Blog': ('http://blog.stefan-betz.net/',
-        'http://blog.stefan-betz.net/categories/ubuntu/feed.atom'),
-    'Dirk Deimeke': ('http://www.deimeke.net/dirk/blog/',
-        'http://www.deimeke.net/dirk/blog/rss.php?serendipity[tag]=planet-ubuntuusersdeimeke'),
-    'Helenas Blog': ('http://www.helena-morzuch.de/',
-        'http://www.helena-morzuch.de/ubuntuusers.xml'),
+                           'http://blog.stefan-betz.net/categories/ubuntu/feed.atom'),
     'Martin Gräßlin': ('http://blog.martin-graesslin.com/blog/',
-        'http://blog.martin-graesslin.com/blog/?cat=6&feed=rss2'),
+                       'http://blog.martin-graesslin.com/blog/?cat=6&feed=rss2'),
     'serenitys blog': ('http://beyondserenity.wordpress.com/',
-        'http://beyondserenity.wordpress.com/category/kde-oss-it/feed'),
-    'ubuntuusers-Webteam': ('http://behind.ubuntuusers.de/',
-        'http://behind.ubuntuusers.de/feed.atom'),
-    ## Meta!
+                       'http://beyondserenity.wordpress.com/category/kde-oss-it/feed'),
     'Ikhaya': ('http://ubuntuusers.ikhaya.de',
-        'http://ikhaya.ubuntuusers.de/feeds/full/10/')
+               'http://ikhaya.ubuntuusers.de/feeds/full/10/')
 }
 
 
 def create_names(count, func=lambda: choice(NAME_WORDS)):
     """Yields a bunch of unique names"""
     used = []
-    for _ in xrange(count+1):
+    for _ in range(count + 1):
         name = func()
         if name in used:
             # use some random...
@@ -107,7 +97,7 @@ def word(markup=True):
 
 def words(min=4, max=20, markup=True):
     ws = []
-    for i in xrange(randint(min, max)):
+    for i in range(randint(min, max)):
         w = word(markup)
         if i == 0:
             w = w.capitalize()
@@ -118,7 +108,7 @@ def words(min=4, max=20, markup=True):
 def sentences(min=5, max=35, markup=True):
     s_list = []
     nls = ['\n\n', '\n\n\n\n', '\n', '']
-    for i in xrange(randint(min, max)):
+    for i in range(randint(min, max)):
         s_list.append(words(markup) + choice(nls))
     return ' '.join(s_list)
 
@@ -153,7 +143,7 @@ def make_users():
             name, '%s@ubuntuusers.local' % name, name, False)
         u.date_joined = randtime()
         u.last_login = randtime()
-        u.groups = list(set(choice(groups) for _ in xrange(randint(0, 5))))
+        u.groups = list(set(choice(groups) for _ in range(randint(0, 5))))
         u.post_count = randint(0, 1000)
         u.jabber = '%s@%s.local' % (word(markup=False), word(markup=False))
         u.icq = word(markup=False)[:16]
@@ -185,18 +175,17 @@ def make_forum():
         f.save()
         forums.append(f)
         if parent:
-            for _ in xrange(randint(1, MAX_TOPIC_COUNT)):
+            for _ in range(randint(1, MAX_TOPIC_COUNT)):
                 author = choice(users)
                 t = Topic(title=title()[:100], author_id=author.id, forum=f)
                 t.save()
-                p = Post(topic=t, text=sentences(min=1, max=10),
-                    author_id=author.id, pub_date=randtime(), position=0)
+                p = Post(topic=t, text=sentences(min=1, max=10), author_id=author.id, pub_date=randtime(), position=0)
                 p.save()
                 t.first_post_id = p.id
                 t.save()
-                for i in xrange(randint(1, MAX_TOPIC_POST_COUNT)):
-                    p = Post(topic=t, text=sentences(min=1, max=10),
-                        position=i + 1, author_id=choice(users).id, pub_date=randtime())
+                for i in range(randint(1, MAX_TOPIC_POST_COUNT)):
+                    p = Post(topic=t, text=sentences(min=1, max=10), position=i + 1, author_id=choice(users).id,
+                             pub_date=randtime())
                     p.save()
         pb.update(percent)
     # all about the wiki - forum (and diskussions subforum)
@@ -215,13 +204,13 @@ def make_ikhaya():
     for percent, name in izip(percentize(IKHAYA_CATEGORY_COUNT), create_names(IKHAYA_CATEGORY_COUNT, title)):
         c = Category(name=name)
         c.save()
-        for name in create_names(6, title):
+        for subject in create_names(6, title):
             dt = randtime()
             a = Article(
                 pub_date=dt.date(),
                 pub_time=dt.time(),
                 author_id=choice(users).id,
-                subject=name,
+                subject=subject,
                 category_id=c.id,
                 intro=intro(),
                 text=sentences(),
@@ -229,7 +218,7 @@ def make_ikhaya():
                 is_xhtml=False
             )
             a.save()
-            for i, name in enumerate(create_names(randint(0, 5), title)):
+            for i in range(randint(0, 5)):
                 text = sentences(min=1, max=5)
                 if i > 0 and randint(0, 1) == 0:
                     text = '@%d: %s' % (randint(1, i), text)
@@ -246,10 +235,9 @@ def make_ikhaya():
 def make_wiki():
     print 'Creating wiki pages'
     pb = ProgressBar(40)
-    for percent, name in izip(percentize(len(page_names)), page_names):
-        p = Page.objects.create(name, sentences(min=10, max=20),
-                choice(users), note=title())
-        for _ in xrange(randint(0, MAX_WIKI_REVISIONS)):
+    for percent, name in izip(percentize(len(page_names)-1), page_names):
+        p = Page.objects.create(name, sentences(min=10, max=20), choice(users), note=title())
+        for i in range(randint(0, MAX_WIKI_REVISIONS)):
             text = sentences(min=10, max=20, markup=False)
             user = choice(users)
             note = title()
@@ -263,18 +251,17 @@ def make_wiki():
 def make_planet():
     print "Creating planet test data"
     pb = ProgressBar(40)
-    for percent, (name, (blogurl, feedurl)) in izip(percentize(len(BLOGS)),
+    for percent, (name, (blogurl, feedurl)) in izip(percentize(len(BLOGS)-1),
                                                     BLOGS.iteritems()):
-        Blog(name=name, blog_url=blogurl, feed_url=feedurl,
-            description=sentences(min=3, max=10)).save()
+        Blog(name=name, blog_url=blogurl, feed_url=feedurl, description=sentences(min=3, max=10)).save()
         pb.update(percent)
-    ## Syncing once
+    # Syncing once
     sync()
     show('\n')
 
 
 if __name__ == '__main__':
-    page_names = ['Startseite'] + list(create_names(WIKI_PAGES_COUNT))
+    page_names = ['Startseite', 'Welcome'] + list(create_names(WIKI_PAGES_COUNT))
     make_groups()
     make_users()
     make_wiki()
