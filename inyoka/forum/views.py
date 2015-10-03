@@ -333,9 +333,10 @@ def handle_polls(request, topic, poll_ids):
                 request,
                 _(u'The poll “%(poll)s” was removed.') % {'poll': poll.question}
             )
-            topic.has_poll = Poll.objects \
-                .filter(Q(topic=topic) & ~Q(id=poll.id)) \
-                .exists()
+            if topic is not None:
+                topic.has_poll = Poll.objects \
+                    .filter(Q(topic=topic) & ~Q(id=poll.id)) \
+                    .exists()
             poll.delete()
     query = Poll.objects.filter(topic=topic)
     if poll_ids:
