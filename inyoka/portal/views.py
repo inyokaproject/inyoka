@@ -1703,7 +1703,8 @@ def config(request):
                 storage['welcome_message_rendered'] = node.render(context, 'html')
 
             if data['team_icon']:
-                default_storage.delete(storage['team_icon'])
+                if storage['team_icon']:
+                    default_storage.delete(storage['team_icon'])
                 icon = Image.open(data['team_icon'])
                 fn = 'portal/global_team_icon.%s' % icon.format.lower()
                 default_storage.save(fn, data['team_icon'])
