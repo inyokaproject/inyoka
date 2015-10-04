@@ -168,7 +168,7 @@ class DateTimeField(forms.DateTimeField):
         if not datetime:
             return
         datetime = get_current_timezone().localize(datetime) \
-                       .astimezone(pytz.utc).replace(tzinfo=None)
+            .astimezone(pytz.utc).replace(tzinfo=None)
         return datetime
 
 

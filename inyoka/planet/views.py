@@ -100,7 +100,7 @@ def suggest(request):
                 messages.error(request, _(u'No user is registered as a planet administrator.'))
                 return HttpResponseRedirect(href('planet'))
             messages.success(request, _(u'The blog “%(title)s” was suggested.')
-                                        % {'title': escape(form.cleaned_data['name'])})
+                % {'title': escape(form.cleaned_data['name'])})
             return HttpResponseRedirect(href('planet'))
     else:
         form = SuggestBlogForm()

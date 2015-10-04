@@ -31,6 +31,7 @@ _paragraph_re = re.compile(r'(\s*?\n){2,}')
 #:       This is an awful hack but gives the wiki parser a massive speedup.
 _smiley_re = None
 
+
 def get_smiley_re(smilies):
     global _smiley_re
     if _smiley_re is None:

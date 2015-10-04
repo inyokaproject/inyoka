@@ -357,7 +357,7 @@ FILTERS = {
     'url': url_for,
     'urlencode': urlencode_filter,
     'jsonencode': json_filter,
-    'ischeckbox' : ischeckbox_filter,
+    'ischeckbox': ischeckbox_filter,
     # L10N aware variants of Django's filters. They all are patched to use
     # DATE_FORMAT (naturalday and format_date), DATETIME_FORMAT (format_datetime),
     # and TIME_FORMAT (format_time) from the formats module and not the relevant

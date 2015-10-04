@@ -52,7 +52,7 @@ BASE_DOMAIN_NAME = 'ubuntuusers.de'
 INYOKA_URI_SCHEME = 'http'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-#SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+# SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 SESSION_COOKIE_DOMAIN = '.%s' % BASE_DOMAIN_NAME.split(':')[0]
 SESSION_COOKIE_NAME = 'session'
 SESSION_COOKIE_HTTPONLY = True

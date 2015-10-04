@@ -81,8 +81,7 @@ class Highlighter(object):
         # ignore short words (since we actually search in the text and not
         # for whole words).
         self.query_words = set([word.lower() for word in query.split()
-                                             if not word.startswith('-')
-                                                and len(word) > 2])
+            if not word.startswith('-') and len(word) > 2])
 
     def highlight(self, text_block):
         self.text_block = striptags(text_block)
@@ -99,7 +98,7 @@ class Highlighter(object):
         lower_text_block = self.text_block.lower()
 
         for word in self.query_words:
-            if not word in word_positions:
+            if word not in word_positions:
                 word_positions[word] = []
 
             start_offset = 0

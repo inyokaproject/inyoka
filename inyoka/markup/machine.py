@@ -26,7 +26,7 @@ class NodeCompiler(object):
 
     def compile(self, format):
         """Return a compiled instruction set."""
-        assert not '\0' in format
+        assert '\0' not in format
         result = []
         text_buffer = []
         is_dynamic = False

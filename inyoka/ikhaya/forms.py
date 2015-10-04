@@ -93,7 +93,7 @@ class EditArticleForm(forms.ModelForm):
         if not pub_date:
             return slug  # invalid anyway as pub_date is required
         pub_date = get_current_timezone().localize(pub_date) \
-                    .astimezone(pytz.utc).replace(tzinfo=None).date()
+            .astimezone(pytz.utc).replace(tzinfo=None).date()
         if slug:
             q = Article.objects.filter(slug=slug, pub_date=pub_date)
             if 'article_id' in self.cleaned_data:
@@ -153,8 +153,8 @@ class NewEventForm(forms.ModelForm):
 
     def save(self, user):
         event = super(NewEventForm, self).save(commit=False)
-        convert = (lambda v: get_current_timezone().localize(v) \
-                            .astimezone(pytz.utc).replace(tzinfo=None))
+        convert = (lambda v: get_current_timezone().localize(v)
+            .astimezone(pytz.utc).replace(tzinfo=None))
         # Convert local timezone to unicode
         if event.date and event.time is not None:
             d = convert(date_time_to_datetime(

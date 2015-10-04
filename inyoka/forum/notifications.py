@@ -116,7 +116,7 @@ def notify_member_subscriptions(notified_users, request_user_id, data):
     # notify about new answer in topic for member-subscriptions
     queue_notifications.delay(request_user_id, 'user_new_post',
         _(u'New answer from user „%(username)s”') % {
-            'username' : data.get('author_username')},
+            'username': data.get('author_username')},
         data, include_notified=True,
         filter={'content_type': ctype(User), 'object_id': request_user_id},
         exclude={'user__in': notified_users})

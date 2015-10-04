@@ -16,7 +16,7 @@
 import hashlib
 
 from django.conf import settings
-from django.core.cache import cache, get_cache
+from django.core.cache import cache
 from django.core.cache.backends.base import BaseCache
 from django.utils.encoding import force_bytes
 
