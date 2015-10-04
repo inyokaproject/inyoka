@@ -137,9 +137,6 @@ ACTIVATION_HOURS = 48
 # days to describe an inactive user
 USER_INACTIVE_DAYS = 365
 
-# key for google maps
-GOOGLE_MAPS_APIKEY = ''
-
 # wiki settings
 WIKI_MAIN_PAGE = 'Welcome'
 

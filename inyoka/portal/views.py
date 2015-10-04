@@ -536,7 +536,6 @@ def usercp_profile(request):
     return {
         'form': form,
         'user': request.user,
-        'gmaps_apikey': settings.GOOGLE_MAPS_APIKEY,
         'max_avatar_width': storage_keys.get('max_avatar_width', -1),
         'max_avatar_height': storage_keys.get('max_avatar_height', -1),
         'max_avatar_size': storage_keys.get('max_avatar_size', -1),
