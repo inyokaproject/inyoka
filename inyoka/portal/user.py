@@ -24,11 +24,9 @@ from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext as _, ugettext_lazy
 
-from inyoka.markup import parse, render, RenderContext
-from inyoka.utils.database import JSONField, update_model
+from inyoka.utils.database import JSONField, update_model, InyokaMarkupField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
-from inyoka.utils.local import current_request
 from inyoka.utils.mail import send_mail
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
@@ -128,9 +126,9 @@ def deactivate_user(user):
         'status': user.status,
     }
 
-    subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') \
-                % {'name': escape(user.username),
-                   'sitename': settings.BASE_DOMAIN_NAME}
+    subject = _(u'Deactivation of your account “%(name)s” on %(sitename)s') % {
+        'name': escape(user.username),
+        'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
         'user': user,
         'data': signing.dumps(data, salt='inyoka.action.reactivate_user'),
@@ -213,9 +211,9 @@ def send_activation_mail(user):
         'email': user.email,
         'activation_key': gen_activation_key(user)
     })
-    subject = _(u'%(sitename)s – Activation of the user “%(name)s”') \
-              % {'sitename': settings.BASE_DOMAIN_NAME,
-                 'name': user.username}
+    subject = _(u'%(sitename)s – Activation of the user “%(name)s”') % {
+        'sitename': settings.BASE_DOMAIN_NAME,
+        'name': user.username}
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
@@ -446,7 +444,7 @@ class User(AbstractBaseUser):
     skype = models.CharField(ugettext_lazy(u'Skype'), max_length=200, blank=True)
     wengophone = models.CharField(ugettext_lazy(u'WengoPhone'), max_length=200, blank=True)
     sip = models.CharField('SIP', max_length=200, blank=True)
-    signature = models.TextField(ugettext_lazy(u'Signature'), blank=True)
+    signature = InyokaMarkupField(verbose_name=ugettext_lazy(u'Signature'), blank=True)
     coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
     coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
     location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
@@ -481,8 +479,7 @@ class User(AbstractBaseUser):
         the cache after saving the model.
         """
         super(User, self).save(*args, **kwargs)
-        cache.delete_many(['portal/user/%s/signature' % self.id,
-                           'portal/user/%s' % self.id,
+        cache.delete_many(['portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])
 
     def __unicode__(self):
@@ -582,41 +579,9 @@ class User(AbstractBaseUser):
     @property
     def rendered_userpage(self):
         if hasattr(self, 'userpage'):
-            if not self.userpage.content_rendered:
-                return self.render_userpage()
-            else:
-                return self.userpage.content_rendered
+            return self.userpage.content_rendered
         else:
             return ""
-
-    def render_userpage(self, request=None, format='html', nocache=False):
-        """Render the userpage."""
-        if request is None:
-            request = current_request._get_current_object()
-        if hasattr(self, 'userpage'):
-            context = RenderContext(request, simplified=True)
-            instructions = parse(self.userpage.content).compile(format)
-            self.userpage.content_rendered = render(instructions, context)
-            self.userpage.save()
-            return self.userpage.content_rendered
-
-    @property
-    def rendered_signature(self):
-        return self.render_signature()
-
-    def render_signature(self, request=None, format='html', nocache=False):
-        """Render the user signature and cache it if `nocache` is `False`."""
-        if request is None:
-            request = current_request._get_current_object()
-        context = RenderContext(request, simplified=True)
-        if nocache or self.id is None or format != 'html':
-            return parse(self.signature).render(context, format)
-        key = 'portal/user/%d/signature' % self.id
-        instructions = cache.get(key)
-        if instructions is None:
-            instructions = parse(self.signature).compile(format)
-            cache.set(key, instructions)
-        return render(instructions, context)
 
     @property
     def launchpad_url(self):
@@ -670,8 +635,8 @@ class User(AbstractBaseUser):
 
 class UserPage(models.Model):
     user = models.OneToOneField(User)
-    content = models.TextField()
-    content_rendered = models.TextField()
+    content = InyokaMarkupField()
+    content_rendered_old = models.TextField(db_column='content_rendered')  # Do not use
 
 
 @receiver(user_logged_in)

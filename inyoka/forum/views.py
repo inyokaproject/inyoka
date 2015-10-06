@@ -1491,8 +1491,6 @@ def forum_feed(request, slug=None, mode='short', count=10):
         kwargs = {}
         post = topic.first_post
 
-        if post.rendered_text is None:
-            post.render_text()
         text = post.get_text()
 
         if mode == 'full':

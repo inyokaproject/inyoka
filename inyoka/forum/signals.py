@@ -69,8 +69,6 @@ def pre_save_post(sender, **kwargs):
     if kwargs['raw']:
         return
     instance = kwargs.get('instance')
-    if not instance.is_plaintext:
-        instance.rendered_text = instance.render_text()
     if instance.position is None:
         position = Post.objects.filter(topic=instance.topic) \
                                .aggregate(pos=Max('position'))['pos'] or 0

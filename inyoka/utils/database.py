@@ -15,6 +15,10 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.expressions import F, ExpressionNode
+from django.db.models.signals import post_save as model_post_save_signal
+from django.core.cache import get_cache
+
+from inyoka.markup import parse, RenderContext
 
 
 EXPRESSION_NODE_CALLBACKS = {
@@ -30,6 +34,9 @@ EXPRESSION_NODE_CALLBACKS = {
 
 MAX_SLUG_INCREMENT = 999
 _SLUG_INCREMENT_SUFFIXES = set(range(2, MAX_SLUG_INCREMENT + 1))
+
+
+content_cache = get_cache('content')
 
 
 class CannotResolve(Exception):
@@ -221,6 +228,86 @@ class JSONField(models.TextField):
     def contribute_to_class(self, cls, name):
         super(JSONField, self).contribute_to_class(cls, name)
         setattr(cls, self.name, SimpleDescriptor(self))
+
+    def south_field_triple(self):
+        from south.modelsinspector import introspector
+        args, kwargs = introspector(self)
+        return 'django.db.models.TextField', args, kwargs
+
+
+class InyokaMarkupField(models.TextField):
+    """
+    Field to save and render Inyoka markup.
+    """
+
+    def __init__(self, application=None, simplify=False, force_existing=False,
+                 redis_timeout=None, *args, **kwargs):
+        self.application = application
+        self.simplify = simplify
+        self.force_existing = force_existing
+        self.redis_timeout = None
+        super(InyokaMarkupField, self).__init__(*args, **kwargs)
+
+    def get_redis_key(self, cls, instance, name):
+        return '{application}:{model}:{id}:{field}'.format(
+            application=self.application or 'portal',
+            model=cls.__name__.lower(),
+            id=instance.pk,
+            field=name,
+        )
+
+    def contribute_to_class(self, cls, name):
+        super(InyokaMarkupField, self).contribute_to_class(cls, name)
+
+        # Register to the post_save signal, to delete the redis cache if the
+        # content changes
+        def delete_cache_receiver(sender, instance, created, **kwargs):
+            if not created:
+                key = self.get_redis_key(cls, instance, name)
+                content_cache.delete(key)
+
+        model_post_save_signal.connect(
+            delete_cache_receiver,
+            sender=cls,
+            weak=False,
+            dispatch_uid="{cls}{field}".format(
+                cls=cls.__name__,
+                field=name,
+            )
+        )
+
+        def render_method(text):
+            """
+            Renders a specific text with the configuration of this field.
+
+            This is needed to render text that is not in the database (for
+            example the preview).
+            """
+            context = RenderContext(
+                obj=None,  # TODO: The parser shoud not be object specific
+                application=self.application,
+                simplified=self.simplify,
+            )
+            node = parse(text, wiki_force_existing=self.force_existing)
+            return node.render(context, format='html')
+
+        @property
+        def render(inst_self):
+            """
+            Renders the content of the field.
+            """
+            key = self.get_redis_key(cls, inst_self, name)
+
+            def create_content(*args):
+                return render_method(getattr(inst_self, name, ''))
+
+            # Get the content from the cache. Creates the content if it does not
+            # exist in redis, or if the cache expired.
+            return content_cache.get_or_set(key, create_content, self.redis_timeout)
+
+        setattr(cls, '{}_rendered'.format(name), render)
+        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(render_method))
+
 
     def south_field_triple(self):
         from south.modelsinspector import introspector
