@@ -349,7 +349,6 @@ class UserCPProfileForm(forms.ModelForm):
             else:
                 userpage = UserPage(user=user)
             userpage.content = data['userpage']
-            userpage.content_rendered = ""
             if commit:
                 userpage.save()
         else:
