@@ -340,6 +340,9 @@ class UserCPProfileForm(forms.ModelForm):
                     _(u'You’ve been sent an email to confirm your new email '
                       u'address.'))
 
+        for key in ('show_email', 'show_jabber', 'use_gravatar'):
+            user.settings[key] = data[key]
+
         if data['userpage']:
             if hasattr(user, 'userpage'):
                 userpage = user.userpage
