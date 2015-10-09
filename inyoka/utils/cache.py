@@ -20,14 +20,12 @@ from django.conf import settings
 from django.core.cache import cache, get_cache
 from django.core.cache.backends.base import BaseCache
 from django.utils.encoding import force_bytes
-try:
+
+if settings.USE_REDIS_CACHE:
     from django_redis.cache import RedisCache as _RedisCache
-except ImportError:
+else:
     # Redis is an optional dependency if USE_REDIS_CACHE is False
-    if not settings.USE_REDIS_CACHE:
-        from django.core.cache.backends.locmem import LocMemCache as _RedisCache
-    else:
-        raise
+    from django.core.cache.backends.locmem import LocMemCache as _RedisCache
 
 from inyoka.utils.local import local_has_key, _request_cache
 
