@@ -688,10 +688,6 @@ class Text(models.Model):
             'text': tree.text
         }
 
-    def save(self, *args, **kwargs):
-        self.html_render_instructions = None
-        models.Model.save(self, *args, **kwargs)
-
     def __repr__(self):
         return '<%s %r>' % (
             self.__class__.__name__,

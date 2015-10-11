@@ -16,7 +16,6 @@ from celery.task import task
 
 @task(ignore_result=True)
 def render_article(page):
-    page.last_rev.text.update_html_render_instructions()
     cache.delete('wiki/page/%s' % page.name)
 
 
@@ -31,9 +30,6 @@ def update_related_pages(page, update_meta=True):
         cache.delete('wiki/page/%s' % value)
         related_pages.add(text_id)
     cache.delete('wiki/page/%s' % page.name)
-
-    Text.objects.filter(id__in=related_pages) \
-                .update(html_render_instructions=None)
 
     if update_meta:
         page.update_meta()
