@@ -49,7 +49,7 @@ def show_page(request, name):
     """Dispatch action calls."""
     normalized_name = normalize_pagename(name)
     if not normalized_name:
-        return missing_resource(request)
+        raise Http404()
     action = request.GET.get('action')
     if normalized_name != name or action == 'show':
         args = request.GET.copy()
@@ -60,7 +60,7 @@ def show_page(request, name):
             url += '?' + args.urlencode()
         return HttpResponseRedirect(url)
     if action and action not in PAGE_ACTIONS:
-        return missing_resource(request)
+        raise Http404()
     return PAGE_ACTIONS[action or 'show'](request, normalized_name)
 
 
@@ -89,25 +89,6 @@ def redirect_new_page(request):
     messages.error(request, _(u'Another site named “%(title)s” already exists.')
                               % {'title': escape(page.title)})
     return HttpResponseRedirect(backref)
-
-
-@templated('wiki/missing_resource.html', status=404)
-def missing_resource(request):
-    """
-    Called if the templated decorator catches a `ObjectDoesNotExist`
-    exception on the wiki.  This does not affect missing pages
-    because the show view checks for that.
-
-    **Template**
-        ``'wiki/missing_resource.html'``
-
-    **Context**
-        none
-
-    Not having a context doesn't mean that a template cannot render
-    something.  The default context objects also exists for this one.
-    """
-
 
 def get_attachment(request):
     """

@@ -30,5 +30,5 @@ urlpatterns += patterns('inyoka.wiki.views',
     (r'^(.+?)$', 'show_page')
 )
 
-handler404 = 'inyoka.wiki.views.missing_resource'
+handler404 = 'inyoka.utils.http.global_not_found'
 require_trailing_slash = False
