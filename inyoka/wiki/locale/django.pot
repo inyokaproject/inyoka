@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-10-06 17:03+0200\n"
+"POT-Creation-Date: 2015-10-11 10:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -249,33 +249,33 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
-#: inyoka/wiki/models.py:936
+#: inyoka/wiki/models.py:896
 msgid "Automatically deleted"
 msgstr ""
 
-#: inyoka/wiki/models.py:1059
+#: inyoka/wiki/models.py:1019
 msgid "Wiki page"
 msgstr ""
 
-#: inyoka/wiki/models.py:1060
+#: inyoka/wiki/models.py:1020
 msgid "Wiki pages"
 msgstr ""
 
-#: inyoka/wiki/models.py:1116
+#: inyoka/wiki/models.py:1076
 msgid "Download attachment"
 msgstr ""
 
-#: inyoka/wiki/models.py:1195
+#: inyoka/wiki/models.py:1155
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr ""
 
-#: inyoka/wiki/models.py:1225
+#: inyoka/wiki/models.py:1184
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr ""
 
-#: inyoka/wiki/models.py:1251
+#: inyoka/wiki/models.py:1206
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr ""

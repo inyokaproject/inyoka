@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-10-06 17:03+0200\n"
+"POT-Creation-Date: 2015-10-11 10:53+0200\n"
 "PO-Revision-Date: 2012-04-29 22:39+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -177,11 +177,11 @@ msgstr "Vim Scripts"
 msgid "XML"
 msgstr "XML"
 
-#: inyoka/pastebin/forms.py:63 inyoka/pastebin/models.py:23
+#: inyoka/pastebin/forms.py:63 inyoka/pastebin/models.py:24
 msgid "Title"
 msgstr "Titel"
 
-#: inyoka/pastebin/forms.py:64 inyoka/pastebin/models.py:24
+#: inyoka/pastebin/forms.py:64 inyoka/pastebin/models.py:25
 msgid "Language"
 msgstr "Sprache"
 
@@ -189,31 +189,27 @@ msgstr "Sprache"
 msgid "Untitled"
 msgstr "Unbenannt"
 
-#: inyoka/pastebin/models.py:25
-msgid "Code"
-msgstr "Code"
-
-#: inyoka/pastebin/models.py:26
+#: inyoka/pastebin/models.py:27
 msgid "Rendered code"
 msgstr "Gerenderter Code"
 
-#: inyoka/pastebin/models.py:27
+#: inyoka/pastebin/models.py:28
 msgid "Date"
 msgstr "Datum"
 
-#: inyoka/pastebin/models.py:29
+#: inyoka/pastebin/models.py:30
 msgid "Author"
 msgstr "Autor"
 
-#: inyoka/pastebin/models.py:30
+#: inyoka/pastebin/models.py:31
 msgid "Referencing pages"
 msgstr "Verweisende Seiten"
 
-#: inyoka/pastebin/models.py:33
+#: inyoka/pastebin/models.py:34
 msgid "Entry"
 msgstr "Eintrag"
 
-#: inyoka/pastebin/models.py:34
+#: inyoka/pastebin/models.py:35
 msgid "Entries"
 msgstr "Einträge"
 
@@ -237,4 +233,7 @@ msgstr "Das Löschen wurde abgebrochen."
 #: inyoka/pastebin/views.py:73
 msgid "The entry in the pastebin was deleted."
 msgstr "Der Eintrag in der Ablage wurde gelöscht."
+
+#~ msgid "Code"
+#~ msgstr "Code"
 

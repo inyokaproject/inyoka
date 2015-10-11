@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-10-06 17:03+0200\n"
+"POT-Creation-Date: 2015-10-11 10:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "can moderate"
 msgstr ""
 
-#: inyoka/forum/constants.py:26 inyoka/forum/models.py:546
+#: inyoka/forum/constants.py:26 inyoka/forum/models.py:543
 msgid "Not specified"
 msgstr ""
 
@@ -166,56 +166,56 @@ msgstr ""
 msgid "Please select another slug, “%(slug)s” is already in use."
 msgstr ""
 
-#: inyoka/forum/models.py:246
+#: inyoka/forum/models.py:247
 msgid "Forum"
 msgstr ""
 
-#: inyoka/forum/models.py:247
+#: inyoka/forum/models.py:248
 msgid "Forums"
 msgstr ""
 
-#: inyoka/forum/models.py:417
+#: inyoka/forum/models.py:418
 msgid "Topic"
 msgstr ""
 
-#: inyoka/forum/models.py:418
+#: inyoka/forum/models.py:419
 msgid "Topics"
 msgstr ""
 
-#: inyoka/forum/models.py:550
+#: inyoka/forum/models.py:547
 msgid "No Ubuntu"
 msgstr ""
 
-#: inyoka/forum/models.py:653
+#: inyoka/forum/models.py:641
 msgid "Post"
 msgstr ""
 
-#: inyoka/forum/models.py:654
+#: inyoka/forum/models.py:642
 msgid "Posts"
 msgstr ""
 
-#: inyoka/forum/models.py:900
+#: inyoka/forum/models.py:878
 msgid "Pictures"
 msgstr ""
 
-#: inyoka/forum/models.py:955
+#: inyoka/forum/models.py:933
 msgid "This topic is hidden due to possible spam."
 msgstr ""
 
-#: inyoka/forum/models.py:964
+#: inyoka/forum/models.py:942
 #, python-format
 msgid ""
 "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible"
 " spam."
 msgstr ""
 
-#: inyoka/forum/models.py:1151
+#: inyoka/forum/models.py:1129
 #, python-format
 msgctxt "Link text to an image attachment"
 msgid "View %(name)s"
 msgstr ""
 
-#: inyoka/forum/models.py:1168
+#: inyoka/forum/models.py:1146
 #, python-format
 msgctxt "Link text to download an attachment"
 msgid "Download %(name)s"
@@ -557,73 +557,73 @@ msgstr ""
 msgid "%(site)s forum"
 msgstr ""
 
-#: inyoka/forum/views.py:1527
+#: inyoka/forum/views.py:1525
 msgid "Please login to mark posts as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1534
+#: inyoka/forum/views.py:1532
 #, python-format
 msgid "The forum “%(forum)s” was marked as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1539
+#: inyoka/forum/views.py:1537
 msgid "All forums were marked as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1553
+#: inyoka/forum/views.py:1551
 #, python-format
 msgid "You can only display the last %(n)d pages."
 msgstr ""
 
-#: inyoka/forum/views.py:1567
+#: inyoka/forum/views.py:1565
 #, python-format
 msgid "Posts of the last %(n)d hours"
 msgstr ""
 
-#: inyoka/forum/views.py:1571
+#: inyoka/forum/views.py:1569
 msgid "Unanswered topics"
 msgstr ""
 
-#: inyoka/forum/views.py:1575
+#: inyoka/forum/views.py:1573
 msgid "Unsolved topics"
 msgstr ""
 
-#: inyoka/forum/views.py:1581
+#: inyoka/forum/views.py:1579
 #, python-format
 msgid "Topics by “%(user)s”"
 msgstr ""
 
-#: inyoka/forum/views.py:1585
+#: inyoka/forum/views.py:1583
 msgid "You need to be logged in to use this function."
 msgstr ""
 
-#: inyoka/forum/views.py:1590
+#: inyoka/forum/views.py:1588
 #, python-format
 msgid "Posts by “%(user)s”"
 msgstr ""
 
-#: inyoka/forum/views.py:1593
+#: inyoka/forum/views.py:1591
 msgid "My posts"
 msgstr ""
 
-#: inyoka/forum/views.py:1605
+#: inyoka/forum/views.py:1603
 msgid "New posts"
 msgstr ""
 
-#: inyoka/forum/views.py:1681
+#: inyoka/forum/views.py:1679
 msgid "No recent topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1694
+#: inyoka/forum/views.py:1692
 msgid "No older topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1756
+#: inyoka/forum/views.py:1754
 #, python-format
 msgid "The forum “%(forum)s” was changed successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1758
+#: inyoka/forum/views.py:1756
 #, python-format
 msgid "The forum “%(forum)s” was created successfully."
 msgstr ""

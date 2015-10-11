@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-10-06 17:03+0200\n"
+"POT-Creation-Date: 2015-10-11 10:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -173,11 +173,11 @@ msgstr ""
 msgid "XML"
 msgstr ""
 
-#: inyoka/pastebin/forms.py:63 inyoka/pastebin/models.py:23
+#: inyoka/pastebin/forms.py:63 inyoka/pastebin/models.py:24
 msgid "Title"
 msgstr ""
 
-#: inyoka/pastebin/forms.py:64 inyoka/pastebin/models.py:24
+#: inyoka/pastebin/forms.py:64 inyoka/pastebin/models.py:25
 msgid "Language"
 msgstr ""
 
@@ -185,31 +185,27 @@ msgstr ""
 msgid "Untitled"
 msgstr ""
 
-#: inyoka/pastebin/models.py:25
-msgid "Code"
-msgstr ""
-
-#: inyoka/pastebin/models.py:26
+#: inyoka/pastebin/models.py:27
 msgid "Rendered code"
 msgstr ""
 
-#: inyoka/pastebin/models.py:27
+#: inyoka/pastebin/models.py:28
 msgid "Date"
 msgstr ""
 
-#: inyoka/pastebin/models.py:29
+#: inyoka/pastebin/models.py:30
 msgid "Author"
 msgstr ""
 
-#: inyoka/pastebin/models.py:30
+#: inyoka/pastebin/models.py:31
 msgid "Referencing pages"
 msgstr ""
 
-#: inyoka/pastebin/models.py:33
+#: inyoka/pastebin/models.py:34
 msgid "Entry"
 msgstr ""
 
-#: inyoka/pastebin/models.py:34
+#: inyoka/pastebin/models.py:35
 msgid "Entries"
 msgstr ""
 
