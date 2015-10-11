@@ -62,40 +62,27 @@ class RecentChanges(macros.Macro):
 
     def build_node(self, context, format):
         wiki_page = context.kwargs.get('wiki_page', None)
-        if not context.request or not wiki_page:
+        if not wiki_page:
             return nodes.Paragraph([
                 nodes.Text(_(u'Recent changes cannot be rendered on this page'))
             ])
 
-        max_days = make_int(context.request.GET.get('max_days'), self.default_days)
-        page_num = make_int(context.request.GET.get('page'), 1)
+        max_days = 14
         days = []
         days_found = set()
-
-        def link_func(page_num, parameters):
-            if page_num == 1:
-                parameters.pop('page', None)
-            else:
-                parameters['page'] = str(page_num)
-            rv = href('wiki', wiki_page.name)
-            if parameters:
-                rv += '?' + urlencode(parameters)
-            return rv
 
         def pagebuffer_sorter(x, y):
             pb = pagebuffer
             return cmp(pb[x][-1].change_date, pb[y][-1].change_date)
 
-        cache_key = 'wiki/recent_changes/%d-%d' % (max_days, page_num)
+        cache_key = 'wiki/recent_changes/'
         data = cache.get(cache_key)
         if data is None:
             revisions = Revision.objects.filter(
                 change_date__gt=(datetime.utcnow() - timedelta(days=max_days))
             ).select_related('user', 'page')
-            pagination = Pagination(context.request, revisions,
-                                    page_num, self.per_page, link_func)
 
-            for revision in pagination.get_queryset():
+            for revision in revisions:
                 d = datetime_to_timezone(revision.change_date)
                 key = (d.year, d.month, d.day)
                 if key not in days_found:
@@ -168,19 +155,8 @@ class RecentChanges(macros.Macro):
                             [nodes.Text(u'')], class_='note')])
             data = {
                 'nodes': table,
-                'pagination': render_template('pagination.html', {'pagination': pagination})
             }
             cache.set(cache_key, data)
-
-        # if rendering to html we add a pagination, pagination is stupid for
-        # other static representations ;)
-        if format == 'html':
-            return u'<div class="recent_changes">%s%s</div>' % (
-                data['nodes'].render(context, format),
-                '<div class="pagination">%s<div style="clear: both">'
-                '<div></div>' % data['pagination']
-            )
-
         return data['nodes']
 
 
