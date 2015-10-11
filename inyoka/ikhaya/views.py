@@ -893,10 +893,10 @@ def feed_comment(request, id=None, mode='short', count=10):
     for comment in comments[:count]:
         kwargs = {}
         if mode == 'full':
-            kwargs['content'] = comment.rendered_text
+            kwargs['content'] = comment.text_rendered
             kwargs['content_type'] = 'xhtml'
         if mode == 'short':
-            kwargs['summary'] = Truncator(comment.rendered_text).words(100, html=True)
+            kwargs['summary'] = Truncator(comment.text_rendered).words(100, html=True)
             kwargs['summary_type'] = 'xhtml'
 
         if article is None:

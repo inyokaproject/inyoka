@@ -256,6 +256,13 @@ class InyokaMarkupField(models.TextField):
             field=name,
         )
 
+    def get_render_context(self, **kwargs):
+        return RenderContext(
+            obj=None,  # TODO: The parser shoud not be object specific
+            application=self.application,
+            simplified=self.simplify,
+            **kwargs)
+
     def contribute_to_class(self, cls, name):
         super(InyokaMarkupField, self).contribute_to_class(cls, name)
 
@@ -276,37 +283,57 @@ class InyokaMarkupField(models.TextField):
             )
         )
 
-        def render_method(text):
+        def get_field_rendered(text, context=None):
             """
             Renders a specific text with the configuration of this field.
 
             This is needed to render text that is not in the database (for
             example the preview).
+
+            The argument context has to be a RenderContext object or a
+            dictonary containing additional keywordarguments to generate the
+            RenderContext object.
             """
-            context = RenderContext(
-                obj=None,  # TODO: The parser shoud not be object specific
-                application=self.application,
-                simplified=self.simplify,
-            )
+            if not isinstance(context, RenderContext):
+                if context is None:
+                    context = {}
+                context = self.get_render_context(**context)
             node = parse(text, wiki_force_existing=self.force_existing)
             return node.render(context, format='html')
 
         @property
-        def render(inst_self):
+        def field_rendered(inst_self):
             """
             Renders the content of the field.
             """
             key = self.get_redis_key(cls, inst_self, name)
 
             def create_content(*args):
-                return render_method(getattr(inst_self, name, ''))
+                """
+                Calls the render method for this field with the content of the
+                field and the specific RenderContext object.
+
+                Calls get_FIELDNAME_render_context_kwargs of the instance to
+                get additional arguments to generate the RenderContext object.
+                """
+                # Calls the method get_FIELDNAME_render_context_kwargs. Calls a
+                # lambda object that Returns an emtpy dict if does not exist.
+                render_context = getattr(
+                    inst_self,
+                    'get_{}_render_context_kwargs'.format(name),
+                    lambda: {},
+                )()
+
+                return get_field_rendered(
+                    getattr(inst_self, name, ''),
+                    context=self.get_render_context(**render_context))
 
             # Get the content from the cache. Creates the content if it does not
             # exist in redis, or if the cache expired.
             return content_cache.get_or_set(key, create_content, self.redis_timeout)
 
-        setattr(cls, '{}_rendered'.format(name), render)
-        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(render_method))
+        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(get_field_rendered))
+        setattr(cls, '{}_rendered'.format(name), field_rendered)
 
 
     def south_field_triple(self):

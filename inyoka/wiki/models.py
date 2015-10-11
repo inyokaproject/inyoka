@@ -688,9 +688,15 @@ class Text(models.Model):
             'text': tree.text
         }
 
-    def save(self, *args, **kwargs):
-        self.html_render_instructions = None
-        models.Model.save(self, *args, **kwargs)
+    def get_value_render_context_kwargs(self):
+        """
+        Adds additional kwargs to generate the RenderContext object.
+        """
+        # HACK: I don't know any other way to get the page object related to
+        #       this text object. A text object could be linked to different
+        #       pages, but this code does always return the page object from
+        #       first revision it gets.
+        return {'wiki_page': self.revisions.all()[0].page}
 
     def __repr__(self):
         return '<%s %r>' % (
