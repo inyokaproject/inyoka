@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-10-11 15:06+0200\n"
+"POT-Creation-Date: 2015-10-11 21:15+0200\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language-Team: German (Germany) "
@@ -207,7 +207,7 @@ msgstr "Fertigstellungsdatum"
 msgid "Recent changes cannot be rendered on this page"
 msgstr "Letzte Änderungen können von hier aus nicht dargestellt werden."
 
-#: inyoka/wiki/macros.py:368
+#: inyoka/wiki/macros.py:344
 msgid ""
 "You must apply a page name because the macro is being called outside the "
 "wiki context."
@@ -215,53 +215,53 @@ msgstr ""
 "Du musst eine Seite angeben, weil das Makro außerhalb des Wikis verwendet"
 " wird."
 
-#: inyoka/wiki/macros.py:370
+#: inyoka/wiki/macros.py:346
 msgid "Invalid arguments"
 msgstr "Parameterfehler"
 
-#: inyoka/wiki/macros.py:406
+#: inyoka/wiki/macros.py:382
 #, python-format
 msgid "one page"
 msgid_plural "%(count)d pages"
 msgstr[0] "eine Seite"
 msgstr[1] "%(count)d Seiten"
 
-#: inyoka/wiki/macros.py:418
+#: inyoka/wiki/macros.py:394
 msgid "Tags"
 msgstr "Tags"
 
-#: inyoka/wiki/macros.py:458
+#: inyoka/wiki/macros.py:434
 #, python-format
 msgid "Pages with tag “%(name)s”"
 msgstr "Seiten mit Tag „%(name)s“"
 
-#: inyoka/wiki/macros.py:492
+#: inyoka/wiki/macros.py:468
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr "Die Seite „%(name)s“ wurde nicht gefunden."
 
-#: inyoka/wiki/macros.py:494
+#: inyoka/wiki/macros.py:470
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: inyoka/wiki/macros.py:497
+#: inyoka/wiki/macros.py:473
 msgid "Detected a circular include macro call"
 msgstr "Detected a circular include macro call"
 
-#: inyoka/wiki/macros.py:498
+#: inyoka/wiki/macros.py:474
 msgid "Circular import"
 msgstr "Zirkulärer Import"
 
-#: inyoka/wiki/macros.py:599
+#: inyoka/wiki/macros.py:575
 msgid "No result"
 msgstr "Kein Ergebnis"
 
-#: inyoka/wiki/macros.py:600
+#: inyoka/wiki/macros.py:576
 #, python-format
 msgid "The metadata filter has found no results. Query: %(query)s"
 msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 
-#: inyoka/wiki/macros.py:626
+#: inyoka/wiki/macros.py:602
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
