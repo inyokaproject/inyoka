@@ -88,7 +88,7 @@ class RequestCache(BaseCache):
         self.real_cache.clear()
 
 if 'debug_toolbar' in settings.INSTALLED_APPS:
-    from debug_toolbar.panels.cache import get_cache_debug as get_cache
+    from debug_toolbar.panels.cache import get_cache as get_cache
 request_cache = get_cache('request')
 
 
