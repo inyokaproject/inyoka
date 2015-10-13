@@ -28,7 +28,7 @@
 
     We're using the recent stable django releases.
 
-    For deployment memcached is the preferred caching system.  Otherwise use
+    For deployment redis is the preferred caching system.  Otherwise use
     many threads and few processes and enable `locmem`.
 
 
