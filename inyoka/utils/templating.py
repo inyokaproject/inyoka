@@ -344,6 +344,8 @@ class DjangoLoader(BaseLoader):
     is_usable = True
 
     def load_template(self, template_name, template_dirs=None):
+        if template_name.startswith('debug_toolbar'):
+            raise TemplateDoesNotExist
         try:
             return load_template(template_name), template_name
         except TemplateNotFound:

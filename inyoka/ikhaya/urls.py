@@ -8,7 +8,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.conf.urls import patterns
+from django.conf import settings
+from django.conf.urls import include, patterns, url
 
 urlpatterns = patterns('inyoka.ikhaya.views',
     (r'^$', 'index'),
@@ -83,5 +84,10 @@ urlpatterns = patterns('inyoka.ikhaya.views',
     (r'^event/(?P<pk>\d+)/edit/$', 'event_edit'),
 )
 
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )
 
 handler404 = 'inyoka.utils.http.global_not_found'
