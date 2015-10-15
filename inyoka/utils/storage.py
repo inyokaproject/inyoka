@@ -9,8 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.db import transaction
-
-from inyoka.utils.cache import request_cache
+from django.core.cache import cache
 
 
 class CachedStorage(object):
@@ -22,7 +21,7 @@ class CachedStorage(object):
     def get(self, key, default=None, timeout=None):
         """get *key* from the cache or if not exist return *default*"""
         from inyoka.portal.models import Storage
-        value = request_cache.get('storage/' + key)
+        value = cache.get('storage/' + key)
         if value is not None:
             return value
 
@@ -63,7 +62,7 @@ class CachedStorage(object):
         Get many cached values with just one cache hit or database query.
         """
         from inyoka.portal.models import Storage
-        objects = request_cache.get_many(['storage/%s' % key for key in keys])
+        objects = cache.get_many(['storage/%s' % key for key in keys])
         values = {}
         for key, value in objects.iteritems():
             values[key[8:]] = value
@@ -88,8 +87,8 @@ class CachedStorage(object):
         self.set(key, value)
 
     def _update_cache(self, key, value, timeout=None):
-        request_cache.set('storage/%s' % key, value, timeout)
-        request_cache.delete('storage/%s_rendered' % key)
+        cache.set('storage/%s' % key, value, timeout)
+        cache.delete('storage/%s_rendered' % key)
 
 
 storage = CachedStorage()

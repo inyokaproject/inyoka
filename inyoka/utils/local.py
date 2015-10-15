@@ -27,4 +27,3 @@ def local_has_key(key):
 local = Local()
 local_manager = LocalManager(local)
 current_request = local('request')
-_request_cache = local('cache')

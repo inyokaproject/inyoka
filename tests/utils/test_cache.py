@@ -19,18 +19,18 @@ class TestCache(TestCase):
         local.cache = {}
         self.real = {}
         self.cache = get_cache('default')
-        self.request_cache = get_cache('request')
-        self.request_cache.request_cache = self.real
+        self.cache = get_cache('request')
+        self.cache.cache = self.real
 
     def test_seperate(self):
         def _compare(key, value, exists=True):
             self.assertEqual(value, self.cache.get(key))
-            self.assertEqual(value, self.request_cache.get(key))
-            self.assertEqual(key in self.request_cache.request_cache, exists)
+            self.assertEqual(value, self.cache.get(key))
+            self.assertEqual(key in self.cache.cache, exists)
 
-        self.request_cache.set('test', 'foo')
-        self.request_cache.set('test', 'bar')
-        self.request_cache.set('bar', 'foo')
+        self.cache.set('test', 'foo')
+        self.cache.set('test', 'bar')
+        self.cache.set('bar', 'foo')
         _compare('test', 'bar')
         _compare('blah', None, False)
         _compare('bar', 'foo')
@@ -38,14 +38,14 @@ class TestCache(TestCase):
     def test_many(self):
         def _compare_many(keys, value):
             self.assertEqual(value, self.cache.get_many(keys))
-            self.assertEqual(value, self.request_cache.get_many(keys))
+            self.assertEqual(value, self.cache.get_many(keys))
 
         def _compare(key, value, exists=True):
             self.assertEqual(value, self.cache.get(key))
-            self.assertEqual(value, self.request_cache.get(key))
-            self.assertEqual(key in self.request_cache.request_cache, exists)
+            self.assertEqual(value, self.cache.get(key))
+            self.assertEqual(key in self.cache.cache, exists)
 
-        self.request_cache.set_many({
+        self.cache.set_many({
             'test': 'bar',
             'bar': 'foo'
         })
@@ -56,42 +56,42 @@ class TestCache(TestCase):
         _compare('blah', None, False)
 
     def test_delete(self):
-        self.request_cache.set('foo', 'bar')
-        self.assertEqual(self.request_cache.get('foo'), 'bar')
-        self.request_cache.delete('foo')
-        self.assertEqual(self.request_cache.get('foo'), None)
+        self.cache.set('foo', 'bar')
+        self.assertEqual(self.cache.get('foo'), 'bar')
+        self.cache.delete('foo')
+        self.assertEqual(self.cache.get('foo'), None)
 
     def test_short_key_exceeding_with_prefix_and_version(self):
         key = 'a' * 248
         keyhash = 'md5:6af3d61e2e3ef8e189cffbea802c7e69'
 
-        self.request_cache.set(key, 1)
-        self.assertEqual(self.request_cache.get(keyhash), 1)
+        self.cache.set(key, 1)
+        self.assertEqual(self.cache.get(keyhash), 1)
 
-        self.request_cache.delete(key)
-        self.assertEqual(self.request_cache.get(keyhash), None)
+        self.cache.delete(key)
+        self.assertEqual(self.cache.get(keyhash), None)
 
-        self.request_cache.set(keyhash, 2)
-        self.assertEqual(self.request_cache.get(key), 2)
+        self.cache.set(keyhash, 2)
+        self.assertEqual(self.cache.get(key), 2)
 
-        self.request_cache.delete(keyhash)
-        self.assertEqual(self.request_cache.get(keyhash), None)
+        self.cache.delete(keyhash)
+        self.assertEqual(self.cache.get(keyhash), None)
 
     def test_long_key(self):
         key = 'a' * 251
         keyhash = 'md5:21f5b107cda33036590a19419afd7fb6'
 
-        self.request_cache.set(key, 1)
-        self.assertEqual(self.request_cache.get(keyhash), 1)
+        self.cache.set(key, 1)
+        self.assertEqual(self.cache.get(keyhash), 1)
 
-        self.request_cache.delete(key)
-        self.assertEqual(self.request_cache.get(keyhash), None)
+        self.cache.delete(key)
+        self.assertEqual(self.cache.get(keyhash), None)
 
-        self.request_cache.set(keyhash, 2)
-        self.assertEqual(self.request_cache.get(key), 2)
+        self.cache.set(keyhash, 2)
+        self.assertEqual(self.cache.get(key), 2)
 
-        self.request_cache.delete(keyhash)
-        self.assertEqual(self.request_cache.get(keyhash), None)
+        self.cache.delete(keyhash)
+        self.assertEqual(self.cache.get(keyhash), None)
 
     def test_short_key_exceeding_with_prefix_and_version_many(self):
         keya = 'a' * 248
@@ -113,31 +113,31 @@ class TestCache(TestCase):
             keybhash: 'bbb',
         }
 
-        self.request_cache.set_many(data)
-        self.assertEqual(self.request_cache.get_many(data.keys()), data)
+        self.cache.set_many(data)
+        self.assertEqual(self.cache.get_many(data.keys()), data)
 
         for k in data:
-            self.request_cache.delete(k)
+            self.cache.delete(k)
 
-        self.request_cache.set_many(data)
+        self.cache.set_many(data)
         # If we request by the hash, we cannot map to the original key
-        self.assertEqual(self.request_cache.get_many(datahash.keys()), datahash)
+        self.assertEqual(self.cache.get_many(datahash.keys()), datahash)
 
         for k in data:
-            self.request_cache.delete(k)
+            self.cache.delete(k)
 
-        self.request_cache.set_many(datahash)
-        self.assertEqual(self.request_cache.get_many(data.keys()), data)
+        self.cache.set_many(datahash)
+        self.assertEqual(self.cache.get_many(data.keys()), data)
 
         for k in datahash:
-            self.request_cache.delete(k)
+            self.cache.delete(k)
 
-        self.request_cache.set_many(datahash)
+        self.cache.set_many(datahash)
         # If we request by the hash, we cannot map to the original key
-        self.assertEqual(self.request_cache.get_many(datahash.keys()), datahash)
+        self.assertEqual(self.cache.get_many(datahash.keys()), datahash)
 
         for k in datahash:
-            self.request_cache.delete(k)
+            self.cache.delete(k)
 
     def test_long_key_many(self):
         keya = 'a' * 251
@@ -159,31 +159,31 @@ class TestCache(TestCase):
             keybhash: 'bbb',
         }
 
-        self.request_cache.set_many(data)
-        self.assertEqual(self.request_cache.get_many(data.keys()), data)
+        self.cache.set_many(data)
+        self.assertEqual(self.cache.get_many(data.keys()), data)
 
         for k in data:
-            self.request_cache.delete(k)
+            self.cache.delete(k)
 
-        self.request_cache.set_many(data)
+        self.cache.set_many(data)
         # If we request by the hash, we cannot map to the original key
-        self.assertEqual(self.request_cache.get_many(datahash.keys()), datahash)
+        self.assertEqual(self.cache.get_many(datahash.keys()), datahash)
 
         for k in data:
-            self.request_cache.delete(k)
+            self.cache.delete(k)
 
-        self.request_cache.set_many(datahash)
-        self.assertEqual(self.request_cache.get_many(data.keys()), data)
+        self.cache.set_many(datahash)
+        self.assertEqual(self.cache.get_many(data.keys()), data)
 
         for k in datahash:
-            self.request_cache.delete(k)
+            self.cache.delete(k)
 
-        self.request_cache.set_many(datahash)
+        self.cache.set_many(datahash)
         # If we request by the hash, we cannot map to the original key
-        self.assertEqual(self.request_cache.get_many(datahash.keys()), datahash)
+        self.assertEqual(self.cache.get_many(datahash.keys()), datahash)
 
         for k in datahash:
-            self.request_cache.delete(k)
+            self.cache.delete(k)
 
 
 class TestRedisCache(TestCase):

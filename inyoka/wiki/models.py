@@ -98,7 +98,6 @@ from werkzeug import cached_property
 from inyoka import markup
 from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
-from inyoka.utils.cache import request_cache
 from inyoka.utils.dates import format_datetime, datetime_to_timezone
 from inyoka.utils.decorators import deferred
 from inyoka.utils.diff3 import prepare_udiff, generate_udiff, get_close_matches
@@ -207,7 +206,7 @@ class PageManager(models.Manager):
         key = 'wiki/object_list'
         pagelist = None
         if not nocache:
-            pagelist = request_cache.get(key)
+            pagelist = cache.get(key)
 
         if pagelist is None:
             pagelist = Page.objects.select_related('last_rev')
@@ -223,7 +222,7 @@ class PageManager(models.Manager):
                 # because if we are already fetching it we can cache it,
                 # but we still need to not cache if we're requesting only
                 # unprivileged pages.
-                request_cache.set(key, pagelist, 10000)
+                cache.set(key, pagelist, 10000)
         return pagelist
 
     def get_page_list(self, existing_only=True, nocache=False, exclude_privileged=False):
@@ -357,7 +356,7 @@ class PageManager(models.Manager):
         rev = None
         key = 'wiki/page/' + name
         if not nocache:
-            rev = request_cache.get(key)
+            rev = cache.get(key)
         if rev is None:
             try:
                 rev = Revision.objects.select_related('page', 'text', 'user') \
@@ -370,7 +369,7 @@ class PageManager(models.Manager):
                     cachetime = int(rev.page.metadata['X-Cache-Time'][0]) or None
                 except (IndexError, ValueError):
                     cachetime = None
-                request_cache.set(key, rev, cachetime)
+                cache.set(key, rev, cachetime)
         page = rev.page
         page.rev = rev
         if rev.deleted and raise_on_deleted:
@@ -1204,7 +1203,7 @@ class Revision(models.Model):
     def save(self, *args, **kwargs):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
-        request_cache.delete('wiki/page/' + self.page.name)
+        cache.delete('wiki/page/' + self.page.name)
         cache.delete('wiki/latest_revisions')
         cache.delete('wiki/latest_revisions/%s' % self.page.name)
 

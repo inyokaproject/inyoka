@@ -37,7 +37,6 @@ from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, Group
 from inyoka.portal.utils import get_ubuntu_versions
-from inyoka.utils.cache import request_cache
 from inyoka.utils.database import (
     update_model, model_or_none, LockableObject, InyokaMarkupField,
 )
@@ -69,10 +68,10 @@ class ForumManager(models.Manager):
         The slug map is a dictionary of {Forum.id: Forum.slug} and is retrieved
         from cache.
         """
-        slug_map = request_cache.get('forum/slugs')
+        slug_map = cache.get('forum/slugs')
         if slug_map is None:
             slug_map = dict(Forum.objects.values_list('id', 'slug'))
-            request_cache.set('forum/slugs', slug_map, 86400)
+            cache.set('forum/slugs', slug_map, 86400)
         return slug_map
 
     def get_ids(self):

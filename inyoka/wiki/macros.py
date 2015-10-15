@@ -16,13 +16,13 @@ from datetime import date, datetime, timedelta
 from collections import OrderedDict
 
 from django.conf import settings
+from django.core.cache import cache
 from django.utils.translation import ugettext as _, ungettext
 
 from inyoka.markup import nodes, macros
 from inyoka.markup.parsertools import MultiMap, flatten_iterator
 from inyoka.markup.templates import expand_page_template
 from inyoka.markup.utils import simple_filter
-from inyoka.utils.cache import cache
 from inyoka.utils.dates import format_time, datetime_to_timezone
 from inyoka.utils.imaging import parse_dimensions
 from inyoka.utils.pagination import Pagination

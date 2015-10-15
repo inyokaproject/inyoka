@@ -44,8 +44,8 @@ from urlparse import urljoin
 from collections import OrderedDict
 
 from django.conf import settings
+from django.core.cache import cache
 
-from inyoka.utils.cache import request_cache
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.user import normalize_username
 from inyoka.wiki.models import Page, MetaData
@@ -70,7 +70,7 @@ class StorageManager(object):
     def clear_cache(self):
         """Clear all active caches."""
         for obj in self.storages.itervalues():
-            request_cache.delete('wiki/storage/' + obj.behavior_key)
+            cache.delete('wiki/storage/' + obj.behavior_key)
 
 
 class BaseStorage(object):
@@ -85,7 +85,7 @@ class BaseStorage(object):
 
     def __init__(self):
         key = 'wiki/storage/' + self.behavior_key
-        self.data = request_cache.get(key)
+        self.data = cache.get(key)
         if self.data is not None:
             return
 
@@ -102,7 +102,7 @@ class BaseStorage(object):
             objects.append(self.extract_data(block))
 
         self.data = self.combine_data(objects)
-        request_cache.set(key, self.data, 10000)
+        cache.set(key, self.data, 10000)
 
     def find_block(self, text):
         """Helper method that finds a processable block in the text."""

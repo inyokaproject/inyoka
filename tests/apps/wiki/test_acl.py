@@ -9,11 +9,11 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.test import TestCase
+from django.core.cache import cache
 
 from inyoka.wiki.acl import *
 from inyoka.wiki.models import Page
 from inyoka.portal.user import User
-from inyoka.utils.cache import request_cache
 
 
 class TestWikiAcl(TestCase):
@@ -53,4 +53,4 @@ test_normalized name=-edit,-create,-attach,-manage,-delete
         self.assertEqual(get_privilege_flags('test normalized name', 'wild cards2/test a'), PRIV_READ)
         self.assertEqual(get_privilege_flags('test normalized name', 'wild cards2/test b'), PRIV_READ)
 
-        request_cache.delete('wiki/storage/Access-Control-List')
+        cache.delete('wiki/storage/Access-Control-List')

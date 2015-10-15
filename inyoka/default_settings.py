@@ -161,9 +161,6 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
-    'request': {
-        'BACKEND': 'inyoka.utils.cache.RequestCache',
-    },
     'content': {
         'BACKEND': 'inyoka.utils.cache.RedisCache',
         'LOCATION': 'redis://127.0.0.1:6379/0',

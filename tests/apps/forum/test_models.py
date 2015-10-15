@@ -16,7 +16,6 @@ from django.test.utils import override_settings
 
 from inyoka.forum.models import Post, Topic, Forum, Attachment, PostRevision
 from inyoka.portal.user import User
-from inyoka.utils.cache import request_cache
 
 
 class TestAttachmentModel(TestCase):
@@ -38,10 +37,10 @@ class TestForumModel(TestCase):
         self.forum = Forum(name='This rocks damnit', parent=self.parent2)
         self.forum.save()
 
-        request_cache.clear()
+        cache.clear()
 
     def tearDown(self):
-        request_cache.clear()
+        cache.clear()
 
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
@@ -70,10 +69,10 @@ class TestForumModel(TestCase):
         map = {self.parent1.id: 'this-is-a-test',
                self.parent2.id: 'this-is-a-second-test',
                self.forum.id: 'this-rocks-damnit'}
-        request_cache.delete('forum/slugs')
-        self.assertEqual(request_cache.get('forum/slugs'), None)
+        cache.delete('forum/slugs')
+        self.assertEqual(cache.get('forum/slugs'), None)
         self.assertEqual(Forum.objects.get_slugs(), map)
-        self.assertEqual(request_cache.get('forum/slugs'), map)
+        self.assertEqual(cache.get('forum/slugs'), map)
 
     def test_get_ids(self):
         self.assertEqual(set(Forum.objects.get_ids()),
@@ -93,7 +92,7 @@ class TestForumModel(TestCase):
                'forum/forums/this-is-a-second-test': self.parent2,
                'forum/forums/this-rocks-damnit': self.forum}
         cache.delete_many(map.keys())
-        request_cache.delete('forum/slugs')
+        cache.delete('forum/slugs')
         self.assertEqual(Forum.objects.get_all_forums_cached(), map)
         self.assertEqual(cache.get('forum/forums/this-is-a-test'), self.parent1)
         new_forum = Forum(name='yeha')

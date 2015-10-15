@@ -16,13 +16,14 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib import messages
 from django.middleware.common import CommonMiddleware
 
 from django_hosts.middleware import HostsMiddleware
 from django_mobile.middleware import MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
-from inyoka.utils.local import local, local_manager, _request_cache
+from inyoka.utils.local import local, local_manager
 from inyoka.utils.logger import logger
 from inyoka.utils.timer import StopWatch
 
@@ -33,12 +34,6 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
     def process_request(self, request):
         # populate the request
         local.request = request
-        # create local cache object if it does not exist
-        # (so that our cache is not overwriting it every time...)
-        try:
-            _request_cache._get_current_object()
-        except RuntimeError:
-            local.cache = {}
 
         # Start time tracker
         request.watch = StopWatch()

@@ -14,6 +14,7 @@ from itertools import groupby
 
 from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib import messages
 from django.db.models import Q, F
 from django.utils.text import Truncator
@@ -40,7 +41,6 @@ from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import (require_permission, simple_check_login,
     abort_access_denied)
-from inyoka.utils.cache import request_cache
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
@@ -1744,7 +1744,7 @@ def forum_edit(request, slug=None, parent=None):
                 if old_slug is not None:
                     keys.append('forum/forums/' + old_slug)
                 cache.delete_many(keys)
-                request_cache.delete('forum/slugs')
+                cache.delete('forum/slugs')
                 if slug:
                     msg = _(u'The forum “%(forum)s” was changed successfully.')
                 else:
