@@ -19,6 +19,7 @@ from django.db.models.signals import post_save as model_post_save_signal
 from django.core.cache import get_cache
 
 from inyoka.markup import parse, RenderContext
+from inyoka.utils.highlight import highlight_code
 
 
 EXPRESSION_NODE_CALLBACKS = {
@@ -235,18 +236,15 @@ class JSONField(models.TextField):
         return 'django.db.models.TextField', args, kwargs
 
 
-class InyokaMarkupField(models.TextField):
+class BaseMarkupField(models.TextField):
     """
-    Field to save and render Inyoka markup.
+    Base Class for fields that needs to be rendered.
     """
 
-    def __init__(self, application=None, simplify=False, force_existing=False,
-                 redis_timeout=None, *args, **kwargs):
+    def __init__(self, application=None, redis_timeout=None, *args, **kwargs):
         self.application = application
-        self.simplify = simplify
-        self.force_existing = force_existing
-        self.redis_timeout = None
-        super(InyokaMarkupField, self).__init__(*args, **kwargs)
+        self.redis_timeout = redis_timeout
+        super(BaseMarkupField, self).__init__(*args, **kwargs)
 
     def get_redis_key(self, cls, instance, name):
         return '{application}:{model}:{id}:{field}'.format(
@@ -256,15 +254,8 @@ class InyokaMarkupField(models.TextField):
             field=name,
         )
 
-    def get_render_context(self, **kwargs):
-        return RenderContext(
-            obj=None,  # TODO: The parser shoud not be object specific
-            application=self.application,
-            simplified=self.simplify,
-            **kwargs)
-
     def contribute_to_class(self, cls, name):
-        super(InyokaMarkupField, self).contribute_to_class(cls, name)
+        super(BaseMarkupField, self).contribute_to_class(cls, name)
 
         # Register to the post_save signal, to delete the redis cache if the
         # content changes
@@ -283,6 +274,46 @@ class InyokaMarkupField(models.TextField):
             )
         )
 
+        @property
+        def field_rendered(inst_self):
+            """
+            Renders the content of the field.
+            """
+            key = self.get_redis_key(cls, inst_self, name)
+
+            create_content = self.get_content_create_callback(inst_self, name)
+
+            # Get the content from the cache. Creates the content if it does not
+            # exist in redis, or if the cache is expired.
+            return content_cache.get_or_set(key, create_content, self.redis_timeout)
+
+        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(self.get_render_method()))
+        setattr(cls, '{}_rendered'.format(name), field_rendered)
+
+    def south_field_triple(self):
+        from south.modelsinspector import introspector
+        args, kwargs = introspector(self)
+        return 'django.db.models.TextField', args, kwargs
+
+
+class InyokaMarkupField(BaseMarkupField):
+    """
+    Field to save and render Inyoka markup.
+    """
+
+    def __init__(self, simplify=False, force_existing=False,
+                 *args, **kwargs):
+        self.simplify = simplify
+        self.force_existing = force_existing
+        super(InyokaMarkupField, self).__init__(*args, **kwargs)
+
+    def get_render_method(self):
+        """
+        Returns a callable that can be bound as staticmethod to the django model.
+
+        This callable taks text as first argument and returns the rendered
+        content.
+        """
         def get_field_rendered(text, context=None):
             """
             Renders a specific text with the configuration of this field.
@@ -293,50 +324,90 @@ class InyokaMarkupField(models.TextField):
             The argument context has to be a RenderContext object or a
             dictonary containing additional keywordarguments to generate the
             RenderContext object.
+
+            This method is bound to the django models as staticmethod, so it
+            can also be called from the Model and not only from the instance.
             """
             if not isinstance(context, RenderContext):
                 if context is None:
                     context = {}
-                context = self.get_render_context(**context)
+                context = RenderContext(
+                    obj=None,  # TODO: The parser shoud not be object specific
+                    application=self.application,
+                    simplified=self.simplify,
+                    **context)
+
             node = parse(text, wiki_force_existing=self.force_existing)
             return node.render(context, format='html')
 
-        @property
-        def field_rendered(inst_self):
-            """
-            Renders the content of the field.
-            """
-            key = self.get_redis_key(cls, inst_self, name)
+        return get_field_rendered
 
-            def create_content(*args):
-                """
-                Calls the render method for this field with the content of the
-                field and the specific RenderContext object.
+    def get_content_create_callback(self, inst_self, field_name):
+        """
+        Returns a callable, that renders the content.
 
-                Calls get_FIELDNAME_render_context_kwargs of the instance to
-                get additional arguments to generate the RenderContext object.
-                """
-                # Calls the method get_FIELDNAME_render_context_kwargs. Calls a
-                # lambda object that Returns an emtpy dict if does not exist.
+        inst_self is an instance of a django model, which has the
+        InyokaMarkupField. field_name is the name of the InyokaMarkupField.
+        """
+
+        def create_content(*args):
+            """
+            Calls get_render_method() with object specific arguments.
+
+            get_render_method is a staticmethod and therefore can not use
+            any value of the instance.
+            """
+            # Calls the method get_FIELDNAME_render_context_kwargs if the
+            # django model has it.
+            try:
                 render_context = getattr(
                     inst_self,
-                    'get_{}_render_context_kwargs'.format(name),
-                    lambda: {},
+                    'get_{}_render_context_kwargs'.format(field_name),
                 )()
+            except AttributeError:
+                render_context = {}
 
-                return get_field_rendered(
-                    getattr(inst_self, name, ''),
-                    context=self.get_render_context(**render_context))
+            return self.get_render_method()(
+                getattr(inst_self, field_name, ''),
+                context=render_context)
 
-            # Get the content from the cache. Creates the content if it does not
-            # exist in redis, or if the cache expired.
-            return content_cache.get_or_set(key, create_content, self.redis_timeout)
-
-        setattr(cls, 'get_{}_rendered'.format(name), staticmethod(get_field_rendered))
-        setattr(cls, '{}_rendered'.format(name), field_rendered)
+        return create_content
 
 
-    def south_field_triple(self):
-        from south.modelsinspector import introspector
-        args, kwargs = introspector(self)
-        return 'django.db.models.TextField', args, kwargs
+class PygmentsField(BaseMarkupField):
+    def get_render_method(self):
+        def get_field_rendered(text, lang):
+            """
+            Renders a specific text with the configuration of this field.
+
+            This is needed to render text that is not in the database (for
+            example the preview).
+
+            This method is bound to the django models as staticmethod, so it
+            can also be called from the Model and not only from the instance.
+            """
+            return highlight_code(text, lang)
+
+        return get_field_rendered
+
+
+    def get_content_create_callback(self, inst_self, field_name):
+        """
+        Returns a callable, that renders the content.
+
+        inst_self is an instance of a django model, which has the
+        InyokaMarkupField. field_name is the name of the InyokaMarkupField.
+        """
+
+        def create_content(*args):
+            """
+            Calls get_render_method() with object specific arguments.
+
+            get_render_method is a staticmethod and therefore can not use
+            any value of the instance.
+            """
+            return self.get_render_method()(
+                getattr(inst_self, field_name, ''),
+                inst_self.lang)
+
+        return create_content

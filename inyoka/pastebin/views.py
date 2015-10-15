@@ -15,7 +15,7 @@ from django.utils.translation import ugettext as _
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
 from inyoka.portal.utils import require_permission, simple_check_login
-from inyoka.utils.http import templated, global_not_found
+from inyoka.utils.http import global_not_found, templated
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 

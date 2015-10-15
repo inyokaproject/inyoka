@@ -8,22 +8,21 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from urlparse import urlparse
 from datetime import datetime
+from urlparse import urlparse
 
 from django.db import models
 from django.utils.translation import ugettext_lazy
 
 from inyoka.portal.user import User
-from inyoka.utils.highlight import highlight_code
+from inyoka.utils.database import PygmentsField
 from inyoka.utils.urls import href, is_safe_domain
-from inyoka.utils.database import InyokaMarkupField
 
 
 class Entry(models.Model):
     title = models.CharField(ugettext_lazy('Title'), max_length=40)
     lang = models.CharField(ugettext_lazy('Language'), max_length=20)
-    code = InyokaMarkupField()
+    code = PygmentsField(application='pastebin')
     rendered_code_old = models.TextField(ugettext_lazy('Rendered code'), db_column='rendered_code')  # Do not use
     pub_date = models.DateTimeField(ugettext_lazy('Date'), db_index=True,
                                     default=datetime.utcnow)
@@ -61,6 +60,3 @@ class Entry(models.Model):
             'raw': ('pastebin', 'raw', self.id),
             'delete': ('pastebin', 'delete', self.id)
         }[action])
-
-    def save(self, *args, **kwargs):
-        super(Entry, self).save(*args, **kwargs)
