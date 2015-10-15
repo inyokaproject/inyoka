@@ -1,4 +1,4 @@
-Django==1.5.9
+Django==1.6.10
 django-filter==0.7
 South==0.8.2
 Jinja2==2.7.1

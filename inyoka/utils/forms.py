@@ -120,13 +120,13 @@ class UserField(forms.CharField):
         elif isinstance(data, User):
             return data.username
         else:
-            return User.objects.get(data).username
+            return User.objects.get(username__iexact=data).username
 
     def to_python(self, value):
         if value in validators.EMPTY_VALUES:
             return
         try:
-            return User.objects.get(username=value)
+            return User.objects.get(username__iexact=value)
         except (User.DoesNotExist, ValueError):
             raise forms.ValidationError(_(u'This user does not exist'))
 

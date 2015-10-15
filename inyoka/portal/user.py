@@ -291,38 +291,10 @@ class Group(models.Model):
 
 
 class UserManager(BaseUserManager):
-
-    def get(self, pk=None, **kwargs):
-        if 'username' in kwargs:
-            kwargs['username'] = normalize_username(kwargs['username'])
-
-        if isinstance(pk, basestring):
-            try:
-                normalized = normalize_username(pk)
-                return User.objects.get(username__iexact=normalized, **kwargs)
-            except (ValueError, User.DoesNotExist):
-                try:
-                    return User.objects.get(username__iexact=pk, **kwargs)
-                except User.DoesNotExist:
-                    return User.objects.get(username__iexact=pk.replace('_', ' '))
-
-        if pk is None:
-            pk = kwargs.pop('id__exact', None)
-        if pk is not None:
-            pk = int(pk)
-            user = cache.get('portal/user/%d' % pk)
-            if user is not None:
-                return user
-            kwargs['pk'] = pk
-        user = models.Manager.get(self, **kwargs)
-        if pk is not None:
-            cache.set('portal/user/%d' % pk, user, 300)
-        return user
-
     def get_by_username_or_email(self, name):
         """Get a user by it's username or email address"""
         try:
-            user = User.objects.get(name)
+            user = User.objects.get(username__iexact=name)
         except User.DoesNotExist as exc:
             # fallback to email
             if '@' in name:
@@ -390,7 +362,7 @@ class UserManager(BaseUserManager):
         if not _SYSTEM_USER:
             name = settings.INYOKA_SYSTEM_USER
             try:
-                user = User.objects.get(username=name)
+                user = User.objects.get(username__iexact=name)
             except User.DoesNotExist:
                 user = self.create_user(name, name)
             _SYSTEM_USER = user

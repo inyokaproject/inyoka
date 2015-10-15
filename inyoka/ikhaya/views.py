@@ -551,7 +551,7 @@ def suggest_assign_to(request, suggestion, username):
             _(u'The suggestion was assigned to nobody.'))
     else:
         try:
-            suggestion.owner = User.objects.get(username)
+            suggestion.owner = User.objects.get(username__iexact=username)
         except User.DoesNotExist:
             raise Http404
         suggestion.save()

@@ -168,7 +168,7 @@ def get_privilege_flags(user, page_name, groups=None):
     if user is None:
         user = User.objects.get_anonymous_user()
     elif isinstance(user, basestring):
-        user = User.objects.get(user)
+        user = User.objects.get(username__iexact=user)
     if groups is None:
         groups = GroupContainer(user, page_name)
 

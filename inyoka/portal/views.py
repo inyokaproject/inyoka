@@ -258,7 +258,7 @@ def activate(request, action='', username='', activation_key=''):
     """Activate a user with the activation key send via email."""
     redirect = is_safe_domain(request.GET.get('next', ''))
     try:
-        user = User.objects.get(username)
+        user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
         messages.error(request,
             _(u'The user “%(username)s” does not exist.') % {
@@ -302,7 +302,7 @@ def activate(request, action='', username='', activation_key=''):
 @does_not_exist_is_404
 def resend_activation_mail(request, username):
     """Resend the activation mail if the user is not already activated."""
-    user = User.objects.get(username)
+    user = User.objects.get(username__iexact=username)
 
     if user.status > 0:
         messages.error(request,
@@ -403,7 +403,7 @@ def logout(request):
 def profile(request, username):
     """Show the user profile if the user is logged in."""
 
-    user = User.objects.get(username)
+    user = User.objects.get(username__iexact=username)
 
     try:
         if username != user.urlsafe_username:
@@ -434,7 +434,7 @@ def user_mail(request, username):
         if '@' in username:
             user = User.objects.get(email__iexact=username)
         else:
-            user = User.objects.get(username)
+            user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
         raise Http404
     if request.method == 'POST':
@@ -471,7 +471,7 @@ def user_mail(request, username):
 @require_permission('subscribe_to_users')
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
-    user = User.objects.get(username)
+    user = User.objects.get(username__iexact=username)
     try:
         Subscription.objects.get_for_user(request.user, user)
     except Subscription.DoesNotExist:
@@ -486,7 +486,7 @@ def subscribe_user(request, username):
 @require_POST
 def unsubscribe_user(request, username):
     """Remove a user subscription."""
-    user = User.objects.get(username)
+    user = User.objects.get(username__iexact=username)
     try:
         subscription = Subscription.objects.get_for_user(request.user, user)
     except Subscription.DoesNotExist:
@@ -716,7 +716,7 @@ def get_user(username):
         if '@' in username:
             user = User.objects.get(email__iexact=username)
         else:
-            user = User.objects.get(username)
+            user = User.objects.get(username__iexact=username)
     except User.DoesNotExist:
         if '@' in username:
             try:
@@ -1045,7 +1045,7 @@ def user_new(request):
 
 @require_permission('user_edit')
 def admin_resend_activation_mail(request):
-    user = User.objects.get(request.GET.get('user'))
+    user = User.objects.get(username__iexact=request.GET.get('user'))
     if user.status != 0:
         messages.error(request,
             _(u'The account of “%(username)s” was already activated.')
@@ -1223,7 +1223,7 @@ def privmsg_new(request, username=None):
 
             try:
                 for recipient in recipient_names:
-                    user = User.objects.get(recipient)
+                    user = User.objects.get(username__iexact=recipient)
                     if user.id == request.user.id:
                         recipients = None
                         messages.error(request, _(u'You cannot send messages to yourself.'))
@@ -1279,42 +1279,6 @@ def privmsg_new(request, username=None):
         except ValueError:
             if ':' in (reply_to or reply_to_all or forward):
                 return HttpResponseRedirect(href('portal', 'privmsg'))
-                # x = reply_to or reply_to_all or forward
-                # REPLIABLES = {
-                #     'suggestion': (
-                #         lambda id: Suggestion.objects.get(id=int(id)),
-                #         lambda x: x.title,
-                #         lambda x: x.author,
-                #         lambda x: u'\n\n'.join((x.intro, x.text)),
-                #     ),
-                #     'reportedtopic': (
-                #         lambda id: Topic.objects.get(slug=id),
-                #         lambda x: x.title,
-                #         lambda x: User.objects.get(id=x.reporter_id),
-                #         lambda x: x.reported,
-                #     ),
-                #     'post': (
-                #         lambda id: Post.objects.get(id=int(id)),
-                #         lambda x: x.topic.title,
-                #         lambda x: User.objects.get(id=x.author_id),
-                #         lambda x: x.text,
-                #     ),
-                # }
-                # for repliable, params in REPLIABLES.items():
-                #     if x[:len(repliable) + 1] != repliable + ':':
-                #         continue
-                #     try:
-                #         obj = params[0](x[len(repliable) + 1:])
-                #     except:
-                #         break
-                #     data['subject'] = params[1](obj)
-                #     if not data['subject'].lower().startswith(u're: '):
-                #         data['subject'] = u'Re: %s' % data['subject']
-                #     author = params[2](obj)
-                #     if reply_to:
-                #         data['recipient'] = author
-                #     data['text'] = quote_text(params[3](obj), author) + '\n'
-                #     form = PrivateMessageForm(initial=data)
         else:
             try:
                 entry = PrivateMessageEntry.objects.get(user=request.user,
