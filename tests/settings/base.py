@@ -36,4 +36,3 @@ INYOKA_AKISMET_URL = 'http://testserver/'
 
 CACHES['content']['LOCATION'] = 'redis://127.0.0.1:6379/0'
 CACHES['content']['KEY_PREFIX'] = 'inyoka-test'
-

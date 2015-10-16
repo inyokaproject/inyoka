@@ -9,7 +9,6 @@
 import unittest
 
 from inyoka.utils.test import TestCase
-
 from inyoka.utils.text import human_number
 
 

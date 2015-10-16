@@ -9,10 +9,10 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.core.cache import cache
-from inyoka.utils.test import TestCase
 
-from inyoka.forum.models import Post, Topic, Forum
+from inyoka.forum.models import Forum, Post, Topic
 from inyoka.portal.user import User
+from inyoka.utils.test import TestCase
 
 
 class TestPostSplit(TestCase):

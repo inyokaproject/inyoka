@@ -2,12 +2,11 @@
 from datetime import datetime
 
 from django.conf import settings
-from inyoka.utils.test import TestCase
 from django.utils import translation
 
-from inyoka.utils.test import InyokaClient
-from inyoka.portal.user import User, PERMISSION_NAMES
 from inyoka.planet.models import Blog, Entry
+from inyoka.portal.user import PERMISSION_NAMES, User
+from inyoka.utils.test import InyokaClient, TestCase
 
 
 class TestViews(TestCase):

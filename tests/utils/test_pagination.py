@@ -10,12 +10,14 @@
 """
 
 import unittest
+
 from django.conf import settings
 from django.http import Http404
 from django.test import RequestFactory
 
-from inyoka.utils.test import TestCase
 from inyoka.utils.pagination import Pagination
+from inyoka.utils.test import TestCase
+
 
 class TestUtilsPagination(unittest.TestCase):
     def setUp(self):

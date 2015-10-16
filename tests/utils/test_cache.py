@@ -6,7 +6,7 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from mock import MagicMock, patch, DEFAULT
+from mock import DEFAULT, MagicMock, patch
 
 from inyoka.utils.cache import RedisCache
 from inyoka.utils.test import TestCase
