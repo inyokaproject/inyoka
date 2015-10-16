@@ -45,8 +45,8 @@ class ArticleManager(models.Manager):
         self._public = public
         self._all = all
 
-    def get_query_set(self):
-        q = super(ArticleManager, self).get_query_set()
+    def get_queryset(self):
+        q = super(ArticleManager, self).get_queryset()
         if not self._all:
             q = q.filter(public=self._public)
             if self._public:
@@ -150,7 +150,7 @@ class CommentManager(models.Manager):
 class EventManager(models.Manager):
 
     def get_upcoming(self, count=10):
-        return self.get_query_set().order_by('date').filter(Q(visible=True) & (
+        return self.get_queryset().order_by('date').filter(Q(visible=True) & (
             (Q(enddate__gte=datetime.utcnow()) & Q(date__lte=datetime.utcnow())) |
             (Q(date__gte=datetime.utcnow()))))[:count]
 

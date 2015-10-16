@@ -113,7 +113,7 @@ class ForumManager(models.Manager):
         missing = [reverted[key.split('/')[-1]] for key in cache_keys
                    if key not in forums]
         if missing:
-            query = self.get_query_set()
+            query = self.get_queryset()
             # If we query all forums, and all forums are missing we don't
             # need to use an IN (...) expression, allows us to use indexed scans.
             if not len(missing) == len(slugs):
@@ -165,7 +165,7 @@ class ForumManager(models.Manager):
         return forums
 
     def get_categories(self):
-        return self.get_query_set().filter(parent=None)
+        return self.get_queryset().filter(parent=None)
 
     def get_sorted(self, reverse=False, attr='position'):
         forums = self.get_cached()
@@ -179,7 +179,7 @@ class TopicManager(models.Manager):
         related = ('author', 'last_post', 'last_post__author', 'first_post',
                    'first_post__author')
         order = ('-sticky', '-last_post__id')
-        return self.get_query_set().filter(pk__in=topic_ids) \
+        return self.get_queryset().filter(pk__in=topic_ids) \
                    .select_related(*related).order_by(*order)
 
     def get_latest(self, forum_slug=None, allowed_forums=None, count=10):
@@ -610,7 +610,7 @@ class PostManager(models.Manager):
         """
         last_post_map = {}
         if ids:
-            query = self.get_query_set()
+            query = self.get_queryset()
             last_posts = query.filter(id__in=ids) \
                 .select_related('author') \
                 .only('id', 'pub_date', 'author__username').all()

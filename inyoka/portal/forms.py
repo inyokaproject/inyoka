@@ -736,6 +736,7 @@ class EditStaticPageForm(forms.ModelForm):
 
     class Meta:
         model = StaticPage
+        fields = ('key', 'title', 'content')
 
 
 class EditFileForm(forms.ModelForm):
