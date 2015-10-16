@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.core.cache import cache
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 
 from inyoka.forum.models import Post, Topic, Forum
 from inyoka.portal.user import User

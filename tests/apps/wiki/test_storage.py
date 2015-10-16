@@ -2,7 +2,7 @@
 from os.path import join, dirname
 
 from django.conf import settings
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 from django.core.files import File
 
 from inyoka.utils.urls import href

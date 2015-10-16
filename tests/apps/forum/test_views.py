@@ -18,7 +18,7 @@ import responses
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files import File
-from django.test import Client, TestCase
+from django.test import Client
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
@@ -31,7 +31,7 @@ from inyoka.forum.models import (
 )
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient
+from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient, TestCase
 
 
 class TestForumViews(TestCase):

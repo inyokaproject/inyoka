@@ -11,7 +11,7 @@
 from datetime import date, datetime, time, timedelta
 
 from django.conf import settings
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 
 from inyoka.utils.urls import url_for
 from inyoka.portal.user import User

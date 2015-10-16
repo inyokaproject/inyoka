@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.http import Http404
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 
 from inyoka.portal.user import User, Group, deactivate_user
 from inyoka.portal.views import get_user

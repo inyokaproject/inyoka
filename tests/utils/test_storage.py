@@ -11,7 +11,7 @@
 """
 import time
 
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 from django.core.cache import get_cache
 
 from inyoka.utils.local import local

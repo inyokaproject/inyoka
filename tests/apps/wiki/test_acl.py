@@ -8,7 +8,7 @@
     :copyright: Copyright 2007-2015 by the Inyoka-Team.
     :license: BSD, see LICENSE for more details.
 """
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 from django.core.cache import cache
 
 from inyoka.wiki.acl import *

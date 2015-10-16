@@ -13,10 +13,12 @@ import gc
 import responses
 
 from django.conf import settings
+from django.core.cache import get_cache
 from django.contrib.auth import login, authenticate
 from django.http import HttpRequest
 from django.test.client import Client
 from django.utils.importlib import import_module
+from django.test import TestCase as _TestCase
 
 from inyoka.portal.user import User
 from inyoka.utils.spam import (
@@ -154,3 +156,16 @@ class AntiSpamTestCaseMixin(object):
             responses.POST, get_mark_spam_url(), body='Thank you', status=200,
             content_type='text/plain'
         )
+
+
+class TestCase(_TestCase):
+    """
+    Default TestCase for all Inyoka tests.
+
+    Delets the content cache after each run.
+    """
+
+    def _post_teardown(self):
+        super(TestCase, self)._post_teardown()
+        content_cache = get_cache('content')
+        content_cache.delete_pattern("*")

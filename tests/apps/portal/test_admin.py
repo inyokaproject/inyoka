@@ -11,7 +11,7 @@
 import StringIO
 
 from django.core import management, mail
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 
 from inyoka.portal.user import User
 

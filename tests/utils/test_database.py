@@ -8,7 +8,7 @@
 """
 import datetime
 
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 
 from .models import JSONEntry
 from inyoka.portal.user import User

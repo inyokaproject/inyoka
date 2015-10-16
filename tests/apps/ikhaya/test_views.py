@@ -11,7 +11,7 @@
 import datetime
 
 from django.conf import settings
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 
 from inyoka.utils.test import InyokaClient
 from inyoka.utils.urls import href

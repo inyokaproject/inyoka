@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.test import TestCase
+from inyoka.utils.test import TestCase
 
 from inyoka.portal.user import User
 from inyoka.forum.models import Topic, Forum
