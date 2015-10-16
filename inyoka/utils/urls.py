@@ -17,7 +17,7 @@ from django.conf import settings
 from django.utils.http import urlquote, urlencode, urlquote_plus
 from django.utils.importlib import import_module
 
-from django_hosts.reverse import get_host
+from django_hosts.resolvers import get_host
 
 # extended at runtime with module introspection information
 _append_slash_map = {'static': False, 'media': False}
