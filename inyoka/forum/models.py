@@ -737,7 +737,11 @@ class Post(models.Model, LockableObject):
             self.topic.forum.last_post_id = new_lp_id
             self.topic.forum.save(update_fields=['last_post_id'])
 
-        cache.delete_many('forum/forums/%s' % f.slug for f in forums)
+        if forums:
+            # django_resis has a bug, that delete_many does not work with
+            # empty generators. See:
+            # https://github.com/niwinz/django-redis/pull/162
+            cache.delete_many('forum/forums/%s' % f.slug for f in forums)
 
         return super(Post, self).delete()
 

@@ -1547,7 +1547,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         )
         return HttpResponseRedirect(href('forum'))
 
-    topics = Topic.objects.order_by('-last_post').values_list('id', flat=True)
+    topics = Topic.objects.order_by('-last_post')
 
     if 'version' in request.GET:
         topics = topics.filter(ubuntu_version=request.GET['version'])
@@ -1609,6 +1609,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
 
     topics = topics.distinct()
     total_topics = get_simplified_queryset(topics).count()
+    topics = topics.values_list('id', flat=True)
     pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
                             total=total_topics, max_pages=MAX_PAGES_TOPICLIST)
     topic_ids = [tid for tid in pagination.get_queryset()]
