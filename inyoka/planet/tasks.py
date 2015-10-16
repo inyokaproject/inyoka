@@ -65,7 +65,7 @@ def dateutilDateHandler(aDateString):
 feedparser.registerDateHandler(dateutilDateHandler)
 
 
-@periodic_task(run_every=crontab(minute='*/2'))
+@periodic_task(run_every=crontab(minute='*/15'))
 def sync():
     """
     Performs a synchronization.  Articles that are already syncronized aren't
