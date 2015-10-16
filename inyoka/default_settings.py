@@ -210,25 +210,19 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.humanize',
-    'inyoka.core',
     'django.contrib.auth',
-    'inyoka.forum',
-    'inyoka.portal',
-    'inyoka.wiki',
-    'inyoka.ikhaya',
-    'inyoka.pastebin',
-    'inyoka.planet',
-    'inyoka.markup',
-    'south',
-    # *must* be installed after south
+    'inyoka.forum.apps.ForumAppConfig',
+    'inyoka.portal.apps.PortalAppConfig',
+    'inyoka.wiki.apps.WikiAppConfig',
+    'inyoka.ikhaya.apps.IkhayaAppConfig',
+    'inyoka.pastebin.apps.PastebinAppConfig',
+    'inyoka.planet.apps.PlanetAppConfig',
+    'inyoka.markup.apps.MarkupAppConfig',
     'kombu.transport.django',
     'djcelery',
     'django_mobile',
     'django_hosts',
 )
-
-# don't use migrations but just syncdb
-SOUTH_TESTS_MIGRATE = False
 
 # Set the default sentry site
 SENTRY_SITE = 'example.com'

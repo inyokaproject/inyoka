@@ -57,18 +57,16 @@ class TestArticleModel(TestCase):
         self.assertEqual(self.article3.stamp, '2009/04/01')
 
     def test_get_text(self):
-        # article3.is_xhtml = False
+        # article2.is_xhtml = False
         self.assertEqual(
             self.article2.get_text(),
-            '<p>Text 2</p>',
-            "get_text() should returned the rendered text if is_xhtml is False",
+            '<p><strong>Text 2</strong></p>',
         )
 
-        # article2.is_xhtml = True
+        # article3.is_xhtml = True
         self.assertEqual(
             self.article3.get_text(),
             '<a>Text 3</a>',
-            "get_text() should returned the unrendered text if is_xhtml is True",
         )
 
 

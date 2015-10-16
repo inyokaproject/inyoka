@@ -33,3 +33,5 @@ SECRET_KEY = 'test-secret-key'
 
 INYOKA_AKISMET_KEY = 'inyokatestkey'
 INYOKA_AKISMET_URL = 'http://testserver/'
+
+USE_REDIS_CACHE = False

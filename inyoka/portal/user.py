@@ -457,7 +457,7 @@ class User(AbstractBaseUser):
     def __unicode__(self):
         return self.username
 
-    @transaction.commit_on_success
+    @transaction.atomic
     def rename(self, new_name, send_mail=True):
         """
         Rename method that checks for collision and if there is non,

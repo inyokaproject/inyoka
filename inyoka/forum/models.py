@@ -113,7 +113,7 @@ class ForumManager(models.Manager):
         missing = [reverted[key.split('/')[-1]] for key in cache_keys
                    if key not in forums]
         if missing:
-            query = self.get_query_set()
+            query = self.get_queryset()
             # If we query all forums, and all forums are missing we don't
             # need to use an IN (...) expression, allows us to use indexed scans.
             if not len(missing) == len(slugs):
@@ -165,7 +165,7 @@ class ForumManager(models.Manager):
         return forums
 
     def get_categories(self):
-        return self.get_query_set().filter(parent=None)
+        return self.get_queryset().filter(parent=None)
 
     def get_sorted(self, reverse=False, attr='position'):
         forums = self.get_cached()
@@ -179,7 +179,7 @@ class TopicManager(models.Manager):
         related = ('author', 'last_post', 'last_post__author', 'first_post',
                    'first_post__author')
         order = ('-sticky', '-last_post__id')
-        return self.get_query_set().filter(pk__in=topic_ids) \
+        return self.get_queryset().filter(pk__in=topic_ids) \
                    .select_related(*related).order_by(*order)
 
     def get_latest(self, forum_slug=None, allowed_forums=None, count=10):
@@ -610,7 +610,7 @@ class PostManager(models.Manager):
         """
         last_post_map = {}
         if ids:
-            query = self.get_query_set()
+            query = self.get_queryset()
             last_posts = query.filter(id__in=ids) \
                 .select_related('author') \
                 .only('id', 'pub_date', 'author__username').all()
@@ -737,7 +737,11 @@ class Post(models.Model, LockableObject):
             self.topic.forum.last_post_id = new_lp_id
             self.topic.forum.save(update_fields=['last_post_id'])
 
-        cache.delete_many('forum/forums/%s' % f.slug for f in forums)
+        if forums:
+            # django_resis has a bug, that delete_many does not work with
+            # empty generators. See:
+            # https://github.com/niwinz/django-redis/pull/162
+            cache.delete_many('forum/forums/%s' % f.slug for f in forums)
 
         return super(Post, self).delete()
 

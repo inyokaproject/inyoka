@@ -1,81 +1,55 @@
-# encoding: utf-8
-from south.db import db
-from south.v2 import SchemaMigration
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    depends_on = (
-        ('portal', '0001_initial'),
-    )
+    dependencies = [
+    ]
 
-    def forwards(self, orm):
-
-        # Adding model 'Blog'
-        db.create_table('planet_blog', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=40)),
-            ('description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('blog_url', self.gf('django.db.models.fields.URLField')(max_length=200)),
-            ('feed_url', self.gf('django.db.models.fields.URLField')(max_length=200)),
-            ('icon', self.gf('django.db.models.fields.files.ImageField')(max_length=100, blank=True)),
-            ('last_sync', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('active', self.gf('django.db.models.fields.BooleanField')(default=True, blank=True)),
-        ))
-        db.send_create_signal('planet', ['Blog'])
-
-        # Adding model 'Entry'
-        db.create_table('planet_entry', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('blog', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['planet.Blog'])),
-            ('guid', self.gf('django.db.models.fields.CharField')(unique=True, max_length=200)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=140)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=200)),
-            ('text', self.gf('django.db.models.fields.TextField')()),
-            ('pub_date', self.gf('django.db.models.fields.DateTimeField')()),
-            ('updated', self.gf('django.db.models.fields.DateTimeField')()),
-            ('author', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('author_homepage', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
-            ('hidden', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
-        ))
-        db.send_create_signal('planet', ['Entry'])
-
-
-    def backwards(self, orm):
-
-        # Deleting model 'Blog'
-        db.delete_table('planet_blog')
-
-        # Deleting model 'Entry'
-        db.delete_table('planet_entry')
-
-
-    models = {
-        'planet.blog': {
-            'Meta': {'object_name': 'Blog'},
-            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
-            'blog_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
-            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'feed_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
-            'icon': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_sync': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '40'})
-        },
-        'planet.entry': {
-            'Meta': {'object_name': 'Entry'},
-            'author': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'author_homepage': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'blog': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['planet.Blog']"}),
-            'guid': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '200'}),
-            'hidden': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'pub_date': ('django.db.models.fields.DateTimeField', [], {}),
-            'text': ('django.db.models.fields.TextField', [], {}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '140'}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'})
-        }
-    }
-
-    complete_apps = ['planet']
+    operations = [
+        migrations.CreateModel(
+            name='Blog',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=40, verbose_name='Name of the blog')),
+                ('description', models.TextField(null=True, verbose_name='Description', blank=True)),
+                ('blog_url', models.URLField(verbose_name='URL of the blog')),
+                ('feed_url', models.URLField(verbose_name='URL of the feed')),
+                ('icon', models.ImageField(upload_to=b'planet/icons', verbose_name='Icon', blank=True)),
+                ('last_sync', models.DateTimeField(null=True, blank=True)),
+                ('active', models.BooleanField(default=True, verbose_name='Index the blog')),
+            ],
+            options={
+                'ordering': ('name',),
+                'verbose_name': 'Blog',
+                'verbose_name_plural': 'Blogs',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Entry',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('guid', models.CharField(unique=True, max_length=200, db_index=True)),
+                ('title', models.CharField(max_length=140)),
+                ('url', models.URLField()),
+                ('text', models.TextField()),
+                ('pub_date', models.DateTimeField(db_index=True)),
+                ('updated', models.DateTimeField(db_index=True)),
+                ('author', models.CharField(max_length=50)),
+                ('author_homepage', models.URLField(null=True, blank=True)),
+                ('hidden', models.BooleanField(default=False)),
+                ('blog', models.ForeignKey(to='planet.Blog')),
+            ],
+            options={
+                'ordering': ('-pub_date',),
+                'get_latest_by': 'pub_date',
+                'verbose_name': 'Entry',
+                'verbose_name_plural': 'Entries',
+            },
+            bases=(models.Model,),
+        ),
+    ]

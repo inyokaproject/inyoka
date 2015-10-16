@@ -230,11 +230,6 @@ class JSONField(models.TextField):
         super(JSONField, self).contribute_to_class(cls, name)
         setattr(cls, self.name, SimpleDescriptor(self))
 
-    def south_field_triple(self):
-        from south.modelsinspector import introspector
-        args, kwargs = introspector(self)
-        return 'django.db.models.TextField', args, kwargs
-
 
 class BaseMarkupField(models.TextField):
     """
@@ -245,6 +240,14 @@ class BaseMarkupField(models.TextField):
         self.application = application
         self.redis_timeout = redis_timeout
         super(BaseMarkupField, self).__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(BaseMarkupField, self).deconstruct()
+        if self.application is not None:
+            kwargs['application'] = self.application
+        if self.redis_timeout is not None:
+            kwargs['redis_timeout'] = self.redis_timeout
+        return name, path, args, kwargs
 
     def get_redis_key(self, cls, instance, name):
         return '{application}:{model}:{id}:{field}'.format(
@@ -290,11 +293,6 @@ class BaseMarkupField(models.TextField):
         setattr(cls, 'get_{}_rendered'.format(name), staticmethod(self.get_render_method()))
         setattr(cls, '{}_rendered'.format(name), field_rendered)
 
-    def south_field_triple(self):
-        from south.modelsinspector import introspector
-        args, kwargs = introspector(self)
-        return 'django.db.models.TextField', args, kwargs
-
 
 class InyokaMarkupField(BaseMarkupField):
     """
@@ -306,6 +304,14 @@ class InyokaMarkupField(BaseMarkupField):
         self.simplify = simplify
         self.force_existing = force_existing
         super(InyokaMarkupField, self).__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(BaseMarkupField, self).deconstruct()
+        if self.simplify is not None:
+            kwargs['simplify'] = self.simplify
+        if self.force_existing is not None:
+            kwargs['force_existing'] = self.force_existing
+        return name, path, args, kwargs
 
     def get_render_method(self):
         """

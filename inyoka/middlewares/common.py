@@ -79,11 +79,3 @@ class MobileDetectionMiddleware(BaseMobileDetectionMiddleware):
               'midp', 'wap', 'phone', 'windows ce', 'pda', 'mobile',
               'mini', 'palm', 'netfront', 'fennec')
     user_agents_test_search = "(?:%(agents)s)" % {'agents': '|'.join(agents)}
-
-
-# import all application modules so that we get bootstrapping
-# code executed. (in the apps __init__.py file)
-_app = None
-for _app in settings.INSTALLED_APPS:
-    __import__(_app)
-del _app

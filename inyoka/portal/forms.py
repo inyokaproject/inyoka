@@ -172,7 +172,7 @@ class LostPasswordForm(auth_forms.PasswordResetForm):
              subject_template_name='registration/password_reset_subject.txt',
              email_template_name='registration/password_reset_email.html',
              use_https=False, token_generator=default_token_generator,
-             from_email=None, request=None):
+             from_email=None, request=None, *args, **kwargs):
         """
         Generates a one-use only link for resetting password and sends to the
         user.
@@ -736,6 +736,7 @@ class EditStaticPageForm(forms.ModelForm):
 
     class Meta:
         model = StaticPage
+        fields = ('key', 'title', 'content')
 
 
 class EditFileForm(forms.ModelForm):
