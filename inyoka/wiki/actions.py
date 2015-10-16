@@ -780,7 +780,7 @@ def do_diff(request, name):
         raise Http404()
     diff = Page.objects.compare(name, old_rev, new_rev)
     if request.GET.get('format') == 'udiff':
-        return HttpResponse(diff.udiff, mimetype='text/plain; charset=utf-8')
+        return HttpResponse(diff.udiff, content_type='text/plain; charset=utf-8')
 
     return {
         'diff': diff,

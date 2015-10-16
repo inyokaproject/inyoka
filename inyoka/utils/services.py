@@ -10,11 +10,7 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from itertools import imap
-
-from django.http import Http404, HttpResponseNotAllowed
-
-from inyoka.utils.decorators import patch_wrapper
+from django.http import Http404
 
 
 class SimpleDispatcher(object):
@@ -35,17 +31,6 @@ class SimpleDispatcher(object):
         if name not in self.methods:
             return Http404('Service not found.')
         return self.methods[name](request)
-
-
-def permit_methods(methods=('GET',)):
-    """Helper method to only permit a few HTTP Methods"""
-    def decorate(func):
-        def oncall(request, *args, **kwargs):
-            if not request.method.lower() in imap(str.lower, methods):
-                return HttpResponseNotAllowed(methods)
-            return func(request, *args, **kwargs)
-        return patch_wrapper(oncall, func)
-    return decorate
 
 
 def never_cache(view_func):
