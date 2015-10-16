@@ -31,7 +31,6 @@ from inyoka.forum.models import (
 )
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.utils.cache import request_cache
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient
 
 
@@ -40,7 +39,7 @@ class TestForumViews(TestCase):
     def tearDown(self):
         from inyoka.portal import user
         cache.clear()
-        request_cache.clear()
+        cache.clear()
         user._ANONYMOUS_USER = None
 
     @override_settings(BASE_DOMAIN_NAME='inyoka.local')
@@ -84,7 +83,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
     def tearDown(self):
         from inyoka.portal import user
         cache.clear()
-        request_cache.clear()
+        cache.clear()
         user._ANONYMOUS_USER = None
         user._SYSTEM_USER = None
 
@@ -508,7 +507,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         Poll.objects.all().delete()
 
         cache.clear()
-        request_cache.clear()
+        cache.clear()
         user._ANONYMOUS_USER = None
 
     def post_request(self, path, postdata, topics, posts, attachments=None,

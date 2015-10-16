@@ -14,6 +14,7 @@ import sys
 
 from django.conf import settings
 from django.contrib import messages
+from django.core.cache import cache
 from django.core.context_processors import csrf
 from django.forms.widgets import CheckboxInput
 from django.template.base import Context as DjangoContext
@@ -29,7 +30,6 @@ from jinja2 import (escape, Template, Environment, contextfunction,
     TemplateNotFound, FileSystemLoader)
 
 from inyoka import INYOKA_REVISION
-from inyoka.utils.cache import request_cache
 from inyoka.utils.dates import format_date, format_datetime, format_time, naturalday
 from inyoka.utils.local import current_request
 from inyoka.utils.text import human_number
@@ -142,7 +142,7 @@ def populate_context_defaults(context, flash=False):
         if can['event_edit']:
             keys.append('ikhaya/event_count')
 
-        cached_values = request_cache.get_many(keys)
+        cached_values = cache.get_many(keys)
         to_update = {}
 
         key = 'portal/pm_count/%s' % user.id
@@ -179,7 +179,7 @@ def populate_context_defaults(context, flash=False):
                 to_update[key] = events
 
         if to_update:
-            request_cache.set_many(to_update)
+            cache.set_many(to_update)
 
     # we don't need to use cache here because storage does this for us
     global_message = storage['global_message_rendered']

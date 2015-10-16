@@ -18,7 +18,6 @@ from django.test import TestCase
 from inyoka.forum import acl
 from inyoka.forum.models import Forum, Privilege
 from inyoka.portal.user import Group, User, DEFAULT_GROUP_ID
-from inyoka.utils.cache import request_cache
 
 
 class TestForumAcl(unittest.TestCase):
@@ -87,7 +86,7 @@ class TestForumPrivileges(TestCase):
     def tearDown(self):
         from inyoka.portal import user
         cache.clear()
-        request_cache.clear()
+        cache.clear()
         user._ANONYMOUS_USER = None
 
     @classmethod
@@ -124,9 +123,9 @@ class TestForumPrivileges(TestCase):
 
         # test for user
         self.assertEqual(acl.get_privileges(self.user, [category, forum]), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, (category, forum)), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.all()), privs)
 
     def test_default_group_permissions(self):
@@ -152,9 +151,9 @@ class TestForumPrivileges(TestCase):
         }
         # test for user
         self.assertEqual(acl.get_privileges(self.user, [category, forum]), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, (category, forum)), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.all()), privs)
 
     def test_explicit_user_permissions(self):
@@ -182,9 +181,9 @@ class TestForumPrivileges(TestCase):
         }
         # test for user
         self.assertEqual(acl.get_privileges(self.user, [category, forum]), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, (category, forum)), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.all()), privs)
 
     def test_explicit_user_permissions_with_default_group(self):
@@ -214,9 +213,9 @@ class TestForumPrivileges(TestCase):
         }
         # test for user
         self.assertEqual(acl.get_privileges(self.user, [category, forum]), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, (category, forum)), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.all()), privs)
 
     def test_explicit_user_permissions_with_default_group_pos_neg(self):
@@ -263,9 +262,9 @@ class TestForumPrivileges(TestCase):
         }
 
         self.assertEqual(acl.get_privileges(self.user, [category]), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, (category,)), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.filter(parent__isnull=True)), privs)
 
         privs = {
@@ -274,40 +273,40 @@ class TestForumPrivileges(TestCase):
         }
         # test for user
         self.assertEqual(acl.get_privileges(self.user, [forum1, forum2]), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, (forum1, forum2)), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.filter(parent__isnull=False)), privs)
-        request_cache.clear()
+        cache.clear()
 
         privs = {
             category.pk: acl.CAN_READ | acl.CAN_CREATE,
         }
         # test for user
         self.assertEqual(acl.get_privileges(self.user, [category]), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, (category,)), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.filter(parent__isnull=True)), privs)
-        request_cache.clear()
+        cache.clear()
 
         privs = {
             forum1.pk: acl.CAN_READ,
             forum2.pk: acl.CAN_READ | acl.CAN_REPLY,
         }
         self.assertEqual(acl.get_privileges(self.user, [forum1, forum2]), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, (forum1, forum2)), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.filter(parent__isnull=False)), privs)
-        request_cache.clear()
+        cache.clear()
 
         Privilege.objects.create(user=self.user, forum=category, negative=acl.CAN_CREATE)
         privs = {
             category.pk: acl.CAN_READ,
         }
         self.assertEqual(acl.get_privileges(self.user, [category]), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, (category,)), privs)
-        request_cache.clear()
+        cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.filter(parent__isnull=True)), privs)
