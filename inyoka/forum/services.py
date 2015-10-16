@@ -12,13 +12,14 @@
 from urllib import unquote
 
 from django.http import HttpResponse
+from django.views.decorators.http import require_POST, require_GET
 from django.utils.datastructures import MultiValueDictKeyError
 
 from inyoka.forum.acl import have_privilege, check_privilege, get_forum_privileges
 from inyoka.portal.utils import abort_access_denied, get_ubuntu_versions
 from inyoka.forum.models import Post, Topic, Forum
 from inyoka.portal.models import Subscription
-from inyoka.utils.services import never_cache, permit_methods, SimpleDispatcher
+from inyoka.utils.services import never_cache, SimpleDispatcher
 from inyoka.utils.templating import render_template
 
 
@@ -89,7 +90,7 @@ def on_toggle_category(request):
 
 
 @never_cache
-@permit_methods(('POST',))
+@require_POST()
 def subscription_action(request, action=None):
     assert action is not None and action in ('subscribe', 'unsubscribe')
     type = request.POST['type']
@@ -116,7 +117,7 @@ def subscription_action(request, action=None):
 
 
 @never_cache
-@permit_methods(('POST',))
+@require_POST()
 def on_change_status(request, solved=None):
     if 'slug' not in request.POST:
         return
@@ -147,7 +148,7 @@ def on_get_version_details(request):
     }
 
 
-@permit_methods(('POST',))
+@require_POST()
 def on_get_new_latest_posts(request):
     post_id = int(request.POST['post'])
     post = Post.objects.get(id=post_id)
@@ -164,7 +165,7 @@ def on_get_new_latest_posts(request):
 
 
 @never_cache
-@permit_methods(('GET',))
+@require_GET()
 def on_mark_topic_split_point(request):
     post_id = request.GET.get('post', None)
     topic = request.GET.get('topic', None)

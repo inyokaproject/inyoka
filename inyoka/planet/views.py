@@ -180,7 +180,7 @@ def export(request, export_type):
 
     data = render_template('planet/%s.xml' % export_type,
                            {'blogs': blogs})
-    response = HttpResponse(data, mimetype='text/xml; charset=utf-8')
+    response = HttpResponse(data, content_type='text/xml; charset=utf-8')
     response['Content-Disposition'] = ('attachment; filename=ubuntuusers_%s.%s'
                                        % (export_type, ext[export_type]))
     return response
