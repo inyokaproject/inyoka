@@ -403,7 +403,7 @@ class PageManager(models.Manager):
             kwargs['value'] = value
         rv = [
             x.page
-            for x in MetaData.objects.select_related(depth=1).filter(**kwargs)
+            for x in MetaData.objects.select_related('name').filter(**kwargs)
             if not is_privileged_wiki_page(x.page.name)
         ]
         rv.sort(key=lambda x: x.name)
