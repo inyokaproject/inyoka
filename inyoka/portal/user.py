@@ -601,6 +601,44 @@ class User(AbstractBaseUser):
         elif action in ('subscribe', 'unsubscribe'):
             return href('portal', 'user', self.urlsafe_username, action, **query)
 
+    @property
+    def has_content(user):
+        """
+        Simply returns True if the user has any content, else False.
+        """
+        # forum posts
+        if user.post_set.exists():
+            return True
+        # forum topics
+        if user.topics.exists():
+            return True
+        # ikhaya article comments
+        if user.comment_set.exists():
+            return True
+        # private messages
+        if user.privatemessageentry_set.exists():
+            return True
+        # user wiki revisions
+        if user.wiki_revisions.exists():
+            return True
+        # ikhaya articles
+        if user.article_set.exists():
+            return True
+        # pastes
+        if user.entry_set.exists():
+            return True
+        # created events
+        if user.event_set.exists():
+            return True
+        # active suggestions to ikhaya articles
+        if user.suggestion_set.exists():
+            return True
+        # user subscriptions to threads/wikipages etc.
+        if user.subscription_set.exists():
+            return True
+
+        return False
+
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
 
