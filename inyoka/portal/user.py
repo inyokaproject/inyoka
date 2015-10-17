@@ -606,35 +606,10 @@ class User(AbstractBaseUser):
         """
         Simply returns True if the user has any content, else False.
         """
-        # forum posts
-        if user.post_set.exists():
-            return True
-        # forum topics
-        if user.topics.exists():
-            return True
-        # ikhaya article comments
-        if user.comment_set.exists():
-            return True
-        # private messages
-        if user.privatemessageentry_set.exists():
-            return True
-        # user wiki revisions
-        if user.wiki_revisions.exists():
-            return True
-        # ikhaya articles
-        if user.article_set.exists():
-            return True
-        # pastes
-        if user.entry_set.exists():
-            return True
-        # created events
-        if user.event_set.exists():
-            return True
-        # active suggestions to ikhaya articles
-        if user.suggestion_set.exists():
-            return True
-        # user subscriptions to threads/wikipages etc.
-        if user.subscription_set.exists():
+        if user.post_set.exists() or user.topics.exists() or user.comment_set.exists() \
+           or user.privatemessageentry_set.exists() or user.wiki_revisions.exists() \
+           or user.article_set.exists() or user.entry_set.exists() or user.event_set.exists() \
+           or user.suggestion_set.exists() or user.subscription_set.exists():
             return True
 
         return False
