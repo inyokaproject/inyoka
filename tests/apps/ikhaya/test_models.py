@@ -11,11 +11,11 @@
 from datetime import date, datetime, time, timedelta
 
 from django.conf import settings
-from django.test import TestCase
 
-from inyoka.utils.urls import url_for
-from inyoka.portal.user import User
 from inyoka.ikhaya.models import Article, Category, Event, Suggestion
+from inyoka.portal.user import User
+from inyoka.utils.test import TestCase
+from inyoka.utils.urls import url_for
 
 
 class TestArticleModel(TestCase):

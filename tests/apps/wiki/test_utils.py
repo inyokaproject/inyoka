@@ -8,8 +8,7 @@
     :copyright: Copyright 2007 by Armin Ronacher.
     :license: BSD, see LICENSE for more details.
 """
-from django.test import TestCase
-
+from inyoka.utils.test import TestCase
 from inyoka.utils.text import join_pagename, normalize_pagename
 
 

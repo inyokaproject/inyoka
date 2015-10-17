@@ -11,8 +11,8 @@ from hashlib import sha1
 
 from django.conf import settings
 
-from inyoka.utils.user import gen_activation_key
 from inyoka.portal.user import User
+from inyoka.utils.user import gen_activation_key
 
 
 class TestUtilsUser(unittest.TestCase):

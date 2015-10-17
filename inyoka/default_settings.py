@@ -154,9 +154,6 @@ WIKI_PRIVILEGED_PAGES = []
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = None
 
-# Use the redis cache. If this is false, no content is cached.
-USE_REDIS_CACHE = True
-
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',

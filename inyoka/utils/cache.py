@@ -17,11 +17,7 @@ from time import sleep
 
 from django.conf import settings
 
-if settings.USE_REDIS_CACHE:
-    from django_redis.cache import RedisCache as _RedisCache
-else:
-    # Redis is an optional dependency if USE_REDIS_CACHE is False
-    from django.core.cache.backends.locmem import LocMemCache as _RedisCache
+from django_redis.cache import RedisCache as _RedisCache
 
 
 class RedisCache(_RedisCache):
@@ -39,10 +35,6 @@ class RedisCache(_RedisCache):
         Sets a status key for the time the value is created, so other workers
         do not created the same content in the meantime.
         """
-        # If redis is disabled, then we can call the callback immediately
-        if not settings.USE_REDIS_CACHE:
-            return callback()
-
         redis = self.client.get_client()
 
         # Status key

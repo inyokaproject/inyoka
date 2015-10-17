@@ -10,10 +10,10 @@
 """
 import StringIO
 
-from django.core import management, mail
-from django.test import TestCase
+from django.core import mail, management
 
 from inyoka.portal.user import User
+from inyoka.utils.test import TestCase
 
 
 class TestAdminCommands(TestCase):

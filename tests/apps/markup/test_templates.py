@@ -11,7 +11,7 @@ import unittest
 from django.utils import translation
 
 from inyoka.markup import templates
-from inyoka.markup.templates import Value, NoneValue
+from inyoka.markup.templates import NoneValue, Value
 
 
 class TestWikiTemplates(unittest.TestCase):

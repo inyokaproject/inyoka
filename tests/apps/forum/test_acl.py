@@ -13,11 +13,11 @@ import unittest
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models.query import EmptyQuerySet
-from django.test import TestCase
 
 from inyoka.forum import acl
 from inyoka.forum.models import Forum, Privilege
-from inyoka.portal.user import Group, User, DEFAULT_GROUP_ID
+from inyoka.portal.user import DEFAULT_GROUP_ID, Group, User
+from inyoka.utils.test import TestCase
 
 
 class TestForumAcl(unittest.TestCase):

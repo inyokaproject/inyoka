@@ -25,6 +25,7 @@ from django.template.defaultfilters import date
 from django.utils.encoding import force_unicode
 from django.utils.importlib import import_module
 from django.utils.translation import activate
+from django.apps import apps
 from werkzeug import url_unquote
 
 from inyoka.portal.user import User
@@ -333,8 +334,8 @@ class Command(NoArgsCommand):
                     rmtree(path.join(root, d))
         mkdir(path.join(FOLDER, 'files'))
 
-        for app in settings.INSTALLED_APPS:
-            module = import_module(app)
+        for app in apps.get_app_configs():
+            module = app.module
             if hasattr(module, 'INYOKA_THEME') and module.INYOKA_THEME == app:
                 stroot = module.__path__[0] + '/static'
         ff = partial(path.join, stroot, 'img')
@@ -407,29 +408,29 @@ class Command(NoArgsCommand):
         parts = 0
         is_main_page = False
 
-            # Apply the handlers from above to modify the page content
-            for handler in self.HANDLERS:
-                handler(self, soup, self._pre(parts), is_main_page, page.name)
+            ## # Apply the handlers from above to modify the page content
+            ## for handler in self.HANDLERS:
+                ## handler(self, soup, self._pre(parts), is_main_page, page.name)
 
-            # If a page is a redirect page, add a forward link
-            redirect = page.metadata.get('X-Redirect')
-            if redirect:
-                self.handle_redirect_page(soup, self._pre(parts), redirect)
+            ## # If a page is a redirect page, add a forward link
+            ## redirect = page.metadata.get('X-Redirect')
+            ## if redirect:
+                ## self.handle_redirect_page(soup, self._pre(parts), redirect)
 
-            content = unicode(soup)
+            ## content = unicode(soup)
 
-            def _write_file(pth):
-                with open(pth, 'w+') as fobj:
-                    fobj.write(content.encode('utf-8'))
+            ## def _write_file(pth):
+                ## with open(pth, 'w+') as fobj:
+                    ## fobj.write(content.encode('utf-8'))
 
-            _write_file(path.join(FOLDER, 'files', '%s.html' %
-                                                   self.fix_path(page.name)))
+            ## _write_file(path.join(FOLDER, 'files', '%s.html' %
+                                                   ## self.fix_path(page.name)))
 
-            if is_main_page:
-                content = compile(r'(src|href)="\./([^"]+)"') \
-                    .sub(lambda m: '%s="./files/%s"' %
-                                   (m.groups()[0], m.groups()[1]), content)
-                _write_file(path.join(FOLDER, 'index.html'))
+            ## if is_main_page:
+                ## content = compile(r'(src|href)="\./([^"]+)"') \
+                    ## .sub(lambda m: '%s="./files/%s"' %
+                                   ## (m.groups()[0], m.groups()[1]), content)
+                ## _write_file(path.join(FOLDER, 'index.html'))
 
         percents = list(percentize(len(todo)))
         for percent, name in izip(percents, todo):
