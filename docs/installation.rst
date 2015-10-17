@@ -55,7 +55,7 @@ Then you need to add your *public* key to your profile in Github under
 Getting access to the Inyoka repository
 ***************************************
 
-Then you need to write to `a developer <https://github.com/encbladexp>`_
+Then you need to contact `a developer <https://github.com/encbladexp>`_
 so that you get the correct access rights to fork the project.  Simply
 klick the "Fork" Button on `<https://github.com/inyokaproject/inyoka>`_ to
 create a new *private* Fork of this Repository.
@@ -101,7 +101,7 @@ files:
 
   $  sudo apt-get install libxml2-dev libxslt1-dev
   libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev
-  libmysqlclient-dev build-essential
+  libmysqlclient-dev build-essential redis-server
 
 Further you need the Python 2.7 files:
 
@@ -137,8 +137,8 @@ Next you can start the actual Inyoka installation:
 .. code-block:: console
 
   $ mkdir -p ~/.venvs/inyoka
-  $ virtualenv-2.7 ~/.venvs/inyoka
-  $ ~/.venvs/inyoka/bin/pip install -r extra/requirements/test.txt
+  $ virtualenv ~/.venvs/inyoka
+  $ ~/.venvs/inyoka/bin/pip install -r extra/requirements/development.txt
 
 Note: You need to cd to your inyoka directory for the last command to work.
 
@@ -256,7 +256,6 @@ development installation:
 
 .. code-block:: console
 
-  (inyoka)$ python manage.py syncdb
   (inyoka)$  python manage.py migrate
   (inyoka)$  python manage.py create_superuser
   username: admin

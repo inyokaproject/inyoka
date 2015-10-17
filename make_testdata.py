@@ -13,6 +13,7 @@ from __future__ import division
 import os
 import math
 import time
+import django
 from random import choice, randint
 from datetime import datetime
 from itertools import izip
@@ -32,7 +33,7 @@ from inyoka.ikhaya.models import Comment, Article, Category
 from inyoka.utils.captcha import generate_word
 from inyoka.planet.models import Blog
 from inyoka.utils.terminal import show, percentize, ProgressBar
-from inyoka.scripts.planet_sync import sync
+from inyoka.planet.tasks import sync
 
 MARKS = ('.', ';', '!', '?')
 WORDS = LOREM_IPSUM_WORDS.split(' ')
@@ -261,6 +262,7 @@ def make_planet():
 
 
 if __name__ == '__main__':
+    django.setup()
     page_names = ['Startseite', 'Welcome'] + list(create_names(WIKI_PAGES_COUNT))
     make_groups()
     make_users()
