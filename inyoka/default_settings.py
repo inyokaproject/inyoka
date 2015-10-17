@@ -247,6 +247,7 @@ CELERY_IMPORTS = [
     'inyoka.tasks',
     # Application specific tasks
     'inyoka.portal.tasks',
+    'inyoka.planet.tasks',
     'inyoka.wiki.tasks',
     # Notification specific tasks
     'inyoka.wiki.notifications',
