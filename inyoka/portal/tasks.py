@@ -44,6 +44,10 @@ def check_for_user_record():
 # FIXME: Should be run ever day.
 @periodic_task(run_every=crontab(minute='*/5'))
 def clean_expired_users():
+    """
+    Deletes all never activated Users, except system users. An user will be deleted
+    after ACTIVATION_HOURS (default 48h).
+    """
     current_datetime = datetime.fromtimestamp(time())
     delta_to_activate = timedelta(hours=settings.ACTIVATION_HOURS)
 
@@ -57,6 +61,10 @@ def clean_expired_users():
 # FIXME: Should be run ever week.
 @periodic_task(run_every=crontab(minute='*/1'))
 def clean_inactive_users():
+    """
+    Deletes Users with no content and a last login more than USER_INACTIVE_DAYS (default one year)
+    ago.
+    """
     current_datetime = datetime.fromtimestamp(time())
     delta = timedelta(days=settings.USER_INACTIVE_DAYS)
 
