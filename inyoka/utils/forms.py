@@ -113,6 +113,15 @@ class UserField(forms.CharField):
     """
 
     def prepare_value(self, data):
+        """
+        Returns the username from the given data.
+
+        data can be:
+        - the a basestring, then it has to be the username,
+        - None, then the field is empty,
+        - an user object, then the username of this user is returned or
+        - an user id, then the user is fetched from the database.
+        """
         if isinstance(data, basestring):
             return data
         elif data is None:
@@ -120,7 +129,8 @@ class UserField(forms.CharField):
         elif isinstance(data, User):
             return data.username
         else:
-            return User.objects.get(username__iexact=data).username
+            # data is the user id
+            return User.objects.get(pk=data).username
 
     def to_python(self, value):
         if value in validators.EMPTY_VALUES:
