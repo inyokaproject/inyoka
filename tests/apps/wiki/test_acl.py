@@ -8,12 +8,12 @@
     :copyright: Copyright 2007-2015 by the Inyoka-Team.
     :license: BSD, see LICENSE for more details.
 """
-from django.test import TestCase
 from django.core.cache import cache
 
+from inyoka.portal.user import User
+from inyoka.utils.test import TestCase
 from inyoka.wiki.acl import *
 from inyoka.wiki.models import Page
-from inyoka.portal.user import User
 
 
 class TestWikiAcl(TestCase):

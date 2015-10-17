@@ -9,9 +9,9 @@
     :license: BSD, see LICENSE for more details.
 """
 import unittest
-from django.test import TestCase
 
-from inyoka.markup import macros, RenderContext
+from inyoka.markup import RenderContext, macros
+from inyoka.utils.test import TestCase
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page
 

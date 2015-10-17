@@ -25,10 +25,6 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 INYOKA_CONTACT_EMAIL = '@'.join(['webteam', BASE_DOMAIN_NAME])
 
-# Set to True if you have an installed redis server
-# Attention! if this is False, the renderered content is not cached!
-USE_REDIS_CACHE = False
-
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

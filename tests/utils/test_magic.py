@@ -1,8 +1,8 @@
 #-*- coding: utf-8 -*-
 import unittest
-import magic
+from os.path import dirname, join
 
-from os.path import join, dirname
+import magic
 
 
 class TestMagic(unittest.TestCase):

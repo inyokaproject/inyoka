@@ -9,16 +9,14 @@
     :license: BSD, see LICENSE for more details.
 """
 import shutil
-
 from os import makedirs, path
 from random import randint
 
 import responses
-
 from django.conf import settings
 from django.core.cache import cache
 from django.core.files import File
-from django.test import Client, TestCase
+from django.test import Client
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
@@ -27,11 +25,17 @@ from mock import patch
 from inyoka.forum import constants
 from inyoka.forum.acl import CAN_READ, PRIVILEGES_BITS
 from inyoka.forum.models import (
-    Attachment, Forum, Post, Poll, PollOption, Privilege, Topic
+    Attachment,
+    Forum,
+    Poll,
+    PollOption,
+    Post,
+    Privilege,
+    Topic,
 )
 from inyoka.portal.models import Subscription
-from inyoka.portal.user import User, PERMISSION_NAMES
-from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient
+from inyoka.portal.user import PERMISSION_NAMES, User
+from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient, TestCase
 
 
 class TestForumViews(TestCase):
