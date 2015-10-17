@@ -606,13 +606,10 @@ class User(AbstractBaseUser):
         """
         Simply returns True if the user has any content, else False.
         """
-        if user.post_set.exists() or user.topics.exists() or user.comment_set.exists() \
-           or user.privatemessageentry_set.exists() or user.wiki_revisions.exists() \
-           or user.article_set.exists() or user.entry_set.exists() or user.event_set.exists() \
-           or user.suggestion_set.exists() or user.subscription_set.exists():
-            return True
-
-        return False
+        return user.post_set.exists() or user.topics.exists() or user.comment_set.exists() \
+            or user.privatemessageentry_set.exists() or user.wiki_revisions.exists() \
+            or user.article_set.exists() or user.entry_set.exists() or user.event_set.exists() \
+            or user.suggestion_set.exists() or user.subscription_set.exists()
 
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
