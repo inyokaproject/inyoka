@@ -42,20 +42,18 @@ def check_for_user_record():
 
 
 # FIXME: Should be run ever day.
-@periodic_task(run_every=crontab(minute='*/5'))
+@periodic_task(run_every=crontab(minute='*/1'))
 def clean_expired_users():
     """
     Deletes all never activated Users, except system users. An user will be deleted
     after ACTIVATION_HOURS (default 48h).
     """
-    current_datetime = datetime.fromtimestamp(time())
-    delta_to_activate = timedelta(hours=settings.ACTIVATION_HOURS)
+    expired_datetime = datetime.fromtimestamp(time()) - timedelta(hours=settings.ACTIVATION_HOURS)
 
-    for user in User.objects.filter(status=0).exclude(username__in=set([settings.INYOKA_ANONYMOUS_USER, settings.INYOKA_SYSTEM_USER])).all():
-        if (current_datetime - user.date_joined) > delta_to_activate:
-            if not user.has_content:
-                logger.info('Deleting expiered User %s' % user.username)
-                user.delete()
+    for user in User.objects.filter(status=0).filter(date_joined__lte=expired_datetime).exclude(username__in=set([settings.INYOKA_ANONYMOUS_USER, settings.INYOKA_SYSTEM_USER])).all():
+        if not user.has_content:
+            logger.info('Deleting expiered User %s' % user.username)
+            user.delete()
 
 
 # FIXME: Should be run ever week.
@@ -66,12 +64,9 @@ def clean_inactive_users():
     ago.
     """
     current_datetime = datetime.fromtimestamp(time())
-    delta = timedelta(days=settings.USER_INACTIVE_DAYS)
+    inactive_datetime = current_datetime - timedelta(days=settings.USER_INACTIVE_DAYS)
 
-    for user in User.objects.filter(status=1).exclude(username__in=set([settings.INYOKA_ANONYMOUS_USER, settings.INYOKA_SYSTEM_USER])).all():
-        if user.last_login and (current_datetime - user.last_login) < delta:
-            continue
-
+    for user in User.objects.filter(status=1).filter(last_login__lte=inactive_datetime).exclude(username__in=set([settings.INYOKA_ANONYMOUS_USER, settings.INYOKA_SYSTEM_USER])).all():
         if not user.last_login:
             # there are some users with no last login, set it to a proper value
             user.last_login = current_datetime
