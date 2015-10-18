@@ -601,6 +601,16 @@ class User(AbstractBaseUser):
         elif action in ('subscribe', 'unsubscribe'):
             return href('portal', 'user', self.urlsafe_username, action, **query)
 
+    @property
+    def has_content(user):
+        """
+        Simply returns True if the user has any content, else False.
+        """
+        return user.post_set.exists() or user.topics.exists() or user.comment_set.exists() \
+            or user.privatemessageentry_set.exists() or user.wiki_revisions.exists() \
+            or user.article_set.exists() or user.entry_set.exists() or user.event_set.exists() \
+            or user.suggestion_set.exists() or user.subscription_set.exists()
+
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
 
