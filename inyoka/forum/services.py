@@ -90,7 +90,7 @@ def on_toggle_category(request):
 
 
 @never_cache
-@require_POST()
+@require_POST
 def subscription_action(request, action=None):
     assert action is not None and action in ('subscribe', 'unsubscribe')
     type = request.POST['type']
@@ -117,7 +117,7 @@ def subscription_action(request, action=None):
 
 
 @never_cache
-@require_POST()
+@require_POST
 def on_change_status(request, solved=None):
     if 'slug' not in request.POST:
         return
@@ -148,7 +148,7 @@ def on_get_version_details(request):
     }
 
 
-@require_POST()
+@require_POST
 def on_get_new_latest_posts(request):
     post_id = int(request.POST['post'])
     post = Post.objects.get(id=post_id)
@@ -165,7 +165,7 @@ def on_get_new_latest_posts(request):
 
 
 @never_cache
-@require_GET()
+@require_GET
 def on_mark_topic_split_point(request):
     post_id = request.GET.get('post', None)
     topic = request.GET.get('topic', None)
