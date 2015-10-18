@@ -12,7 +12,7 @@ from inyoka.portal.models import User
 from inyoka.utils.services import SimpleDispatcher
 
 
-@require_POST()
+@require_POST
 def on_change_suggestion_assignment(request):
     post = request.POST
     username, suggestion = post['username'], post['suggestion']
