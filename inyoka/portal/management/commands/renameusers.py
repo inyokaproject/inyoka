@@ -65,12 +65,12 @@ class Command(LabelCommand):
                     oldname=username["oldname"]))
             else:
                 try:
-                    existed = user.rename(username["newname"], notify)
+                    vacant = user.rename(username["newname"], notify)
                 except ValueError:
                     self.stderr.write(_(u"New user name '{newname}' contains invalid characters. Skipping...").format(
                         newname=username["newname"]))
                 else:
-                    if existed:
+                    if not vacant:
                         self.stderr.write(_(u"User name '{newname}' already exists. Skipping...").format(
                             newname=username["newname"]))
         if verbosity >= 1:
