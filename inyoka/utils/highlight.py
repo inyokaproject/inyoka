@@ -64,12 +64,6 @@ def highlight_code(code, lang=None, filename=None, mimetype=None):
     return mark_safe(highlight(code, lexer, _pygments_formatter))
 
 
-class HumanStyle(FriendlyStyle):
-    """
-    This is a pygments style that matches the ubuntuusers design.
-    """
-
-
 class Highlighter(object):
     css_class = 'highlight'
     html_tag = 'em'
