@@ -63,14 +63,9 @@ def clean_inactive_users():
     Deletes Users with no content and a last login more than USER_INACTIVE_DAYS (default one year)
     ago.
     """
-    current_datetime = datetime.fromtimestamp(time())
-    inactive_datetime = current_datetime - timedelta(days=settings.USER_INACTIVE_DAYS)
+    inactive_datetime = datetime.fromtimestamp(time()) - timedelta(days=settings.USER_INACTIVE_DAYS)
 
     for user in User.objects.filter(status=1).filter(last_login__lte=inactive_datetime).exclude(username__in=set([settings.INYOKA_ANONYMOUS_USER, settings.INYOKA_SYSTEM_USER])).all():
-        if not user.last_login:
-            # there are some users with no last login, set it to a proper value
-            user.last_login = current_datetime
-            user.save()
         if not user.has_content:
             logger.info('Deleting inactive User %s' % user.username)
             user.delete()
