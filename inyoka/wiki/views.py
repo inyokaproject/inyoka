@@ -25,10 +25,11 @@ from django.http import Http404, HttpResponseRedirect
 from django.utils.encoding import force_unicode
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
+from inyoka.utils.http import templated
 
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
-from inyoka.utils.http import templated, AccessDeniedResponse
+from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.text import join_pagename, normalize_pagename
 from inyoka.utils.urls import href, url_for, is_safe_domain
@@ -87,8 +88,9 @@ def redirect_new_page(request):
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
     messages.error(request, _(u'Another site named “%(title)s” already exists.')
-                              % {'title': escape(page.title)})
+        % {'title': escape(page.title)})
     return HttpResponseRedirect(backref)
+
 
 def get_attachment(request):
     """
@@ -181,22 +183,22 @@ def feed(request, page_name=None, count=10):
     #           Maybe we need even more configuration values in the storage.
     if page_name:
         feed = AtomFeed(title=_(u'%(sitename)s wiki – %(pagename)s') % {
-                                    'sitename': settings.BASE_DOMAIN_NAME,
-                                    'pagename': page_name
-                                },
-                        url=href('wiki', page_name),
-                        feed_url=request.build_absolute_uri(),
-                        id=href('wiki', page_name),
-                        rights=href('portal', 'lizenz'),
-                        icon=href('static', 'img', 'favicon.ico'))
+            'sitename': settings.BASE_DOMAIN_NAME,
+            'pagename': page_name
+            },
+            url=href('wiki', page_name),
+            feed_url=request.build_absolute_uri(),
+            id=href('wiki', page_name),
+            rights=href('portal', 'lizenz'),
+            icon=href('static', 'img', 'favicon.ico'))
     else:
         feed = AtomFeed(_(u'%(sitename)s wiki – last changes')
-                          % {'sitename': settings.BASE_DOMAIN_NAME},
-                        url=href('wiki', u'Letzte_Änderungen'),
-                        feed_url=request.build_absolute_uri(),
-                        id=href('wiki', u'Letzte_Änderungen'),
-                        rights=href('portal', 'lizenz'),
-                        icon=href('static', 'img', 'favicon.ico'))
+            % {'sitename': settings.BASE_DOMAIN_NAME},
+            url=href('wiki', u'Letzte_Änderungen'),
+            feed_url=request.build_absolute_uri(),
+            id=href('wiki', u'Letzte_Änderungen'),
+            rights=href('portal', 'lizenz'),
+            icon=href('static', 'img', 'favicon.ico'))
 
     revisions = Revision.objects.get_latest_revisions(page_name, count)
 
@@ -241,3 +243,26 @@ def feed(request, page_name=None, count=10):
         )
 
     return feed
+
+
+@templated('wiki/tag_list.html')
+def show_tag_list(request):
+    """
+    Show a taglist.
+    """
+    return {'tag_list': Page.objects.get_tagcloud()}
+
+
+@templated('wiki/pages_by_tag.html')
+def show_pages_by_tag(request, tag):
+    """
+    Show a list of wiki pages that are tagged with
+    the specified key word.
+    """
+    page_list = Page.objects.find_by_tag(tag)
+    if not page_list:
+        raise Http404()
+    return {
+        'page_list': page_list,
+        'active_tag': tag,
+    }
