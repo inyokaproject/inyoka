@@ -924,6 +924,8 @@ class Post(models.Model, LockableObject):
             self.hidden = False
             self.save(update_fields=['hidden'])
 
+        cache.delete('spam/user/%d' % self.author.pk)
+
     def mark_spam(self, report=True, update_akismet=True):
         if update_akismet:
             mark_spam(self, self.get_text(), 'forum-post')
