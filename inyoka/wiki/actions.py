@@ -21,25 +21,35 @@
 from datetime import datetime
 
 from django.contrib import messages
+from django.core.cache import cache
 from django.db import models
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
-from inyoka.markup import parse, RenderContext
+from inyoka.markup import RenderContext, parse
 from inyoka.portal.models import Subscription
 from inyoka.portal.utils import simple_check_login
 from inyoka.utils.diff3 import merge
-from inyoka.utils.http import (templated, TemplateResponse, AccessDeniedResponse,
-    does_not_exist_is_404)
+from inyoka.utils.http import (
+    AccessDeniedResponse,
+    TemplateResponse,
+    does_not_exist_is_404,
+    templated,
+)
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
-from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
-from inyoka.wiki.acl import has_privilege, PrivilegeTest, require_privilege
-from inyoka.wiki.forms import (PageEditForm, MvBaustelleForm, AddAttachmentForm,
-    EditAttachmentForm, ManageDiscussionForm)
+from inyoka.utils.urls import href, is_safe_domain, url_for, urlencode
+from inyoka.wiki.acl import PrivilegeTest, has_privilege, require_privilege
+from inyoka.wiki.forms import (
+    AddAttachmentForm,
+    EditAttachmentForm,
+    ManageDiscussionForm,
+    MvBaustelleForm,
+    PageEditForm,
+)
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.tasks import update_object_list
@@ -105,7 +115,8 @@ def do_show(request, name):
                 _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
                     'link': escape(href('wiki', page.name, redirect='no')),
                     'title': escape(page.title)
-            })
+                }
+            )
             anchor = None
             if '#' in redirect:
                 redirect, anchor = redirect.rsplit('#', 1)
@@ -270,15 +281,16 @@ def _rename(request, page, new_name, force=False, new_text=None):
             models.Model.delete(obj)
 
     title = page.title
+    old_name = page.name
     page.name = new_name
     if new_text:
         page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
                   user=request.user,
-                  text=new_text, remote_addr=request.META.get('REMOTE_ADDR'))
+                  text=new_text)
     else:
         page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
-                  user=request.user,
-                  remote_addr=request.META.get('REMOTE_ADDR'))
+                  user=request.user)
+    cache.delete('wiki/page/{}'.format(old_name))
 
     if request.POST.get('add_redirect'):
         old_text = u'# X-Redirect: %s\n' % new_name
@@ -408,7 +420,8 @@ def do_edit(request, name):
                 _(u'Used the template “<a href="%(link)s">%(name)s</a>” for this page') % {
                     'link': url_for(template),
                     'name': escape(template.title)
-            })
+                }
+            )
 
     # check for edits by other users.  If we have such an edit we try
     # to merge and set the edit time to the time of the last merge or
@@ -476,7 +489,8 @@ def do_edit(request, name):
                         _(u'The page <a href="%(link)s">%(name)s</a> has been created.') % {
                             'link': escape(href('wiki', page.name)),
                             'name': escape(page.title)
-                    })
+                        }
+                    )
 
                 last_revisions = page.revisions.all()[:2]
                 if len(last_revisions) > 1:
@@ -530,8 +544,7 @@ def do_delete(request, name):
         else:
             page.edit(user=request.user, deleted=True,
                       remote_addr=request.META.get('REMOTE_ADDR'),
-                      note=request.POST.get('note', '') or
-                           u'Page deleted.')
+                      note=request.POST.get('note', '') or u'Page deleted.')
             messages.success(request, u'Page deleted successfully.')
     else:
         messages.info(request,
@@ -967,14 +980,15 @@ def do_attach_edit(request, name):
             attachment_filename = None
             if d['attachment']:
                 attachment = d['attachment']
-                attachment_filename = d['attachment'].name or \
-                                        page.rev.attachment.filename
-            page.edit(user=request.user,
-                        text=d.get('text', page.rev.text.value),
-                        remote_addr=request.META.get('remote_addr'),
-                        note=d.get('note', u''),
-                        attachment_filename=attachment_filename,
-                        attachment=attachment)
+                attachment_filename = (d['attachment'].name or
+                                       page.rev.attachment.filename)
+            page.edit(
+                user=request.user,
+                text=d.get('text', page.rev.text.value),
+                remote_addr=request.META.get('remote_addr'),
+                note=d.get('note', u''),
+                attachment_filename=attachment_filename,
+                attachment=attachment)
             messages.success(request, _(u'Attachment edited successfully.'))
             return HttpResponseRedirect(url_for(page))
     return {
