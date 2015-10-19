@@ -16,6 +16,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import os
+from datetime import datetime, timedelta
 from hashlib import sha1
 from urlparse import urljoin
 
@@ -241,3 +242,13 @@ def feed(request, page_name=None, count=10):
         )
 
     return feed
+
+@templated('wiki/recentchanges.html')
+def recentchanges(request, page=None):
+    """
+    Show a table of the recent changes.
+    """
+    revisions = Revision.objects.filter(change_date__gt=(datetime.utcnow() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS)))[:settings.WIKI_RECENTCHANGES_MAX].select_related('user', 'page')
+    return {
+        'revisions': revisions if revisions.exists() else None
+    }

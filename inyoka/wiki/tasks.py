@@ -11,8 +11,8 @@
 """
 from django.core.cache import cache
 
-from celery.task import task
-
+from celery.task import task, periodic_task
+from celery.task.schedules import crontab
 
 @task(ignore_result=True)
 def render_article(page):
@@ -46,3 +46,7 @@ def update_object_list(names=None):
 
     cache.delete('wiki/object_list')
     Page.objects.get_page_list()
+
+@periodic_task(run_every=crontab(minute='*/15'))
+def update_recentchanges():
+    pass
