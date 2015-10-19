@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.apps.portal.test_user
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -8,11 +8,19 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import unittest
+from datetime import datetime
+
 from django.http import Http404
 
+from inyoka.forum.models import Forum, Post, Topic
+from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
+from inyoka.pastebin.models import Entry
+from inyoka.portal.models import PrivateMessage, Subscription
 from inyoka.portal.user import Group, User, deactivate_user
 from inyoka.portal.views import get_user
 from inyoka.utils.test import TestCase
+from inyoka.wiki.models import Page
 
 
 class TestUserModel(TestCase):
@@ -60,6 +68,135 @@ class TestUserModel(TestCase):
         created_user = User.objects.register_user('testuser5', 'test5@user.de', 'pwd', False)
         with self.assertRaisesRegexp(ValueError, 'invalid username'):
             created_user.rename('**testuser**', False)
+
+
+class TestUserHasContent(TestCase):
+    def setUp(self):
+        self.user = User.objects.register_user(
+            'testing',
+            'example@example.com',
+            'pwd', False)
+
+    def test_no_content(self):
+        self.assertFalse(self.user.has_content())
+
+    def test_post_count(self):
+        self.user.post_count = 1
+        self.assertTrue(self.user.has_content())
+
+    def test_has_forum_posts(self):
+        """
+        Test a user with one forum post in a forum that does not change the
+        users posts, so self.user.post_count is 0 in a topic from another user.
+        """
+        other_user = User.objects.register_user(
+            'other_user',
+            'example2@example.com',
+            'pwd', False)
+        forum = Forum.objects.create(user_count_posts=False)
+        topic = Topic.objects.create(forum=forum, author=other_user)
+        Post.objects.create(author=self.user, topic=topic)
+
+        self.assertTrue(self.user.has_content())
+
+    def test_has_forum_topics(self):
+        """
+        Test a user as author from a topic with no posts.
+        """
+        # This test can be deleted when the field Topic.author is removed
+        forum = Forum.objects.create(user_count_posts=False)
+        Topic.objects.create(forum=forum, author=self.user)
+
+        self.assertTrue(self.user.has_content())
+
+    @unittest.skip("Django Bug")
+    def test_ikhaya_article(self):
+        """
+        Tests a user that is an author of an Ikhaya article
+        """
+        # There seems to be an Bug in django, that user.article_set does not
+        # work.
+        now = datetime.now()
+        category = Category.objects.create(name='test_category')
+
+        Article.objects.create(
+            pub_date=now.date(),
+            pub_time=now.time(),
+            author=self.user,
+            category=category)
+
+        self.assertTrue(self.user.has_content())
+
+    def test_ikhaya_comment(self):
+        now = datetime.now()
+        category = Category.objects.create(name='test_category')
+        other_user = User.objects.register_user(
+            'other_user',
+            'example2@example.com',
+            'pwd', False)
+        article = Article.objects.create(
+            pub_date=now.date(),
+            pub_time=now.time(),
+            author=other_user,
+            category=category)
+        Comment.objects.create(
+            author=self.user,
+            article=article,
+            pub_date=now)
+
+        self.assertTrue(self.user.has_content())
+
+    def test_ikhaya_suggestion(self):
+        other_user = User.objects.register_user(
+            'other_user',
+            'example2@example.com',
+            'pwd', False)
+        Suggestion.objects.create(author=self.user, owner=other_user)
+
+        self.assertTrue(self.user.has_content())
+        self.assertTrue(other_user.has_content())
+
+    def test_privatemessage(self):
+        """
+        Test privatemessage as sender and receiver.
+        """
+        now = datetime.now()
+        other_user = User.objects.register_user(
+            'other_user',
+            'example2@example.com',
+            'pwd', False)
+        pm = PrivateMessage(author=self.user, pub_date=now)
+        pm.send([other_user])
+
+        self.assertTrue(self.user.has_content())
+        self.assertTrue(other_user.has_content())
+
+    def test_wiki_page(self):
+        Page.objects.create('foo', 'bar', self.user)
+
+        self.assertTrue(self.user.has_content())
+
+    def test_pastebin(self):
+        Entry.objects.create(author=self.user)
+
+        self.assertTrue(self.user.has_content())
+
+    def test_event(self):
+        now = datetime.now()
+        Event.objects.create(author=self.user, date=now.date())
+
+        self.assertTrue(self.user.has_content())
+
+    def test_subscription(self):
+        other_user = User.objects.register_user(
+            'other_user',
+            'example2@example.com',
+            'pwd', False)
+        forum = Forum.objects.create(user_count_posts=False)
+        topic = Topic.objects.create(forum=forum, author=other_user)
+        Subscription.objects.create(user=self.user, content_object=topic)
+
+        self.assertTrue(self.user.has_content())
 
 
 class TestGroupModel(TestCase):
