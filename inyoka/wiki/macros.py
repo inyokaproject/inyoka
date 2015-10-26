@@ -41,125 +41,6 @@ def make_int(s, default):
         return int(default)
 
 
-class RecentChanges(macros.Macro):
-    """
-    Show a table of the recent changes.  This macro does only work for HTML
-    so far, all other formats just get an empty text back.
-    """
-
-    names = (u'RecentChanges', u'LetzteÄnderungen')
-
-    arguments = (
-        ('per_page', int, 50),
-        ('days', int, 10),
-    )
-    is_block_tag = True
-    allowed_context = ['wiki']
-
-    def __init__(self, per_page, days):
-        self.per_page = per_page
-        self.default_days = days
-
-    def build_node(self, context, format):
-        wiki_page = context.kwargs.get('wiki_page', None)
-        if not wiki_page:
-            return nodes.Paragraph([
-                nodes.Text(_(u'Recent changes cannot be rendered on this page'))
-            ])
-
-        max_days = 14
-        days = []
-        days_found = set()
-
-        def pagebuffer_sorter(x, y):
-            pb = pagebuffer
-            return cmp(pb[x][-1].change_date, pb[y][-1].change_date)
-
-        cache_key = 'wiki/recent_changes/'
-        data = cache.get(cache_key)
-        if data is None:
-            revisions = Revision.objects.filter(
-                change_date__gt=(datetime.utcnow() - timedelta(days=max_days))
-            ).select_related('user', 'page')
-
-            for revision in revisions:
-                d = datetime_to_timezone(revision.change_date)
-                key = (d.year, d.month, d.day)
-                if key not in days_found:
-                    days.append((date(*key), []))
-                    days_found.add(key)
-                days[-1][1].append(revision)
-
-            table = nodes.Table(class_='recent_changes')
-
-            for day, changes in days:
-                table.children.append(nodes.TableRow([
-                    nodes.TableHeader([
-                        nodes.Text(day)
-                    ], colspan=4)
-                ]))
-
-                pagebuffer = OrderedDict()
-                changes = sorted(changes, key=lambda x: x.change_date)
-
-                for rev in changes:
-                    if not rev.page in pagebuffer:
-                        pagebuffer[rev.page] = []
-                    pagebuffer[rev.page].append(rev)
-
-                _pagebuffer = sorted(pagebuffer, cmp=pagebuffer_sorter, reverse=True)
-
-                for page in _pagebuffer:
-                    revs = pagebuffer[page]
-
-                    if len(revs) > 1:
-                        stamps = (format_time(revs[0].change_date),
-                                  format_time(revs[-1].change_date))
-                        stamp = u'%s' % (stamps[0] == stamps[-1] and stamps[0] or
-                                u'%s - %s' % stamps)
-                    else:
-                        stamp = format_time(revs[0].change_date)
-
-                    table.children.append(nodes.TableRow([
-                        nodes.TableCell([
-                            nodes.Text(stamp)
-                        ], class_='timestamp'),
-                        nodes.TableCell([
-                            nodes.InternalLink(page.name),
-                            nodes.Text(u' ('),
-                            nodes.Link(href('wiki', page.name, action='log'), [
-                                nodes.Text(str(len(revs)) + 'x')
-                            ]),
-                            nodes.Text(u')')
-                        ])]))
-
-                    page_notes = nodes.List('unordered', [], class_='note_list')
-                    for rev in revs:
-                        if rev.user_id:
-                            page_notes.children.append(nodes.ListItem([
-                                nodes.Text(rev.note or ''),
-                                nodes.Text(u'%svon ' % (rev.note and u' (' or '')),
-                                nodes.Link(url_for(rev.user), [
-                                    nodes.Text(rev.user.username)]),
-                                nodes.Text(rev.note and u')' or '')
-                            ]))
-                        else:
-                            page_notes.children.append(nodes.ListItem([
-                                nodes.Text(rev.note),
-                                nodes.Text(u'%svon ' % (rev.note and u'(' or '')),
-                                nodes.Text(rev.remote_addr),
-                                nodes.Text(rev.note and u')' or '')]))
-                    table.children[-1].children.extend([
-                        nodes.TableCell(
-                            page_notes.children and [page_notes] or
-                            [nodes.Text(u'')], class_='note')])
-            data = {
-                'nodes': table,
-            }
-            cache.set(cache_key, data)
-        return data['nodes']
-
-
 class PageCount(macros.Macro):
     """
     Return the number of existing pages.
@@ -728,7 +609,6 @@ class Picture(macros.Macro):
         return img
 
 
-macros.register(RecentChanges)
 macros.register(PageCount)
 macros.register(PageList)
 macros.register(AttachmentList)

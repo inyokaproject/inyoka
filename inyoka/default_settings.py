@@ -151,6 +151,9 @@ WIKI_TEMPLATE_BASE = 'Wiki/Templates'
 
 WIKI_PRIVILEGED_PAGES = []
 
+WIKI_RECENTCHANGES_MAX = 250
+WIKI_RECENTCHANGES_DAYS = 7
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = None
 

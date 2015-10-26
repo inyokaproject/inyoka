@@ -11,16 +11,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-10-15 20:40+0200\n"
+"POT-Creation-Date: 2015-10-26 21:04+0100\n"
 "PO-Revision-Date: 2014-09-06 21:47+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
+"Language: de_DE\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.3\n"
+"Generated-By: Babel 2.1.1\n"
 
 #: inyoka/utils/diff3.py:373
 msgid "Old"
@@ -64,11 +65,11 @@ msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
 msgid "Your signature can only contain up to %(num)d lines"
 msgstr "Deine Signatur darf nicht mehr als %(num)d Zeilen haben"
 
-#: inyoka/utils/forms.py:131
+#: inyoka/utils/forms.py:141
 msgid "This user does not exist"
 msgstr "Diesen Benutzer gibt es nicht"
 
-#: inyoka/utils/forms.py:185
+#: inyoka/utils/forms.py:195
 msgid ""
 "The entered e-mail address belongs to a e-mail provider we had to block "
 "because of SPAM problems. Please choose another e-mail address"
@@ -76,13 +77,13 @@ msgstr ""
 "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir "
 "wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
 
-#: inyoka/utils/forms.py:198
+#: inyoka/utils/forms.py:208
 msgid "The entered Jabber address is invalid. Please check your input."
 msgstr ""
 "Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die "
 "Eingabe."
 
-#: inyoka/utils/forms.py:224
+#: inyoka/utils/forms.py:234
 msgid ""
 "You have entered an invisible field and were therefore classified as a "
 "bot."
@@ -90,19 +91,19 @@ msgstr ""
 "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot "
 "identifiziert."
 
-#: inyoka/utils/forms.py:235
+#: inyoka/utils/forms.py:245
 msgid "CAPTCHA"
 msgstr "CAPTCHA"
 
-#: inyoka/utils/forms.py:236
+#: inyoka/utils/forms.py:246
 msgid "Please type in the code from the graphic above"
 msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
 
-#: inyoka/utils/forms.py:238
+#: inyoka/utils/forms.py:248
 msgid "Generate new code"
 msgstr "Neue Zeichenfolge generieren"
 
-#: inyoka/utils/forms.py:260
+#: inyoka/utils/forms.py:270
 msgid "The entered CAPTCHA was incorrect."
 msgstr "Die Eingabe des Captchas war nicht korrekt."
 
