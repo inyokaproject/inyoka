@@ -250,7 +250,6 @@ def recentchanges(request):
     """
     Show a table of the recent changes.
     """
-    cache.get('wiki/recentchanges')
     return {
         'recentchanges': cache.get('wiki/recentchanges')
     }
