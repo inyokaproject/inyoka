@@ -641,7 +641,6 @@ class Picture(macros.Macro):
         return img
 
 
-macros.register(RecentChanges)
 macros.register(PageCount)
 macros.register(PageList)
 macros.register(AttachmentList)

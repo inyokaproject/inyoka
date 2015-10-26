@@ -20,6 +20,7 @@ from hashlib import sha1
 from urlparse import urljoin
 
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
 from django.utils.encoding import force_unicode
@@ -265,4 +266,14 @@ def show_pages_by_tag(request, tag):
     return {
         'page_list': page_list,
         'active_tag': tag,
+    }
+
+
+@templated('wiki/recentchanges.html')
+def recentchanges(request):
+    """
+    Show a table of the recent changes.
+    """
+    return {
+        'recentchanges': cache.get('wiki/recentchanges')
     }

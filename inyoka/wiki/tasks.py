@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     inyoka.wiki.tasks
     ~~~~~~~~~~~~~~~~~
@@ -9,9 +9,14 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.core.cache import cache
+from datetime import datetime, timedelta
+from collections import OrderedDict
 
-from celery.task import task
+from django.core.cache import cache
+from django.conf import settings
+
+from celery.task import task, periodic_task
+from celery.task.schedules import crontab
 
 
 @task(ignore_result=True)
@@ -21,7 +26,7 @@ def render_article(page):
 
 @task(ignore_result=True)
 def update_related_pages(page, update_meta=True):
-    from inyoka.wiki.models import MetaData, Text
+    from inyoka.wiki.models import MetaData
     related_pages = set()
     values = ('value', 'page__last_rev__text_id')
     linked = MetaData.objects.values_list(*values) \
@@ -46,3 +51,24 @@ def update_object_list(names=None):
 
     cache.delete('wiki/object_list')
     Page.objects.get_page_list()
+
+
+@periodic_task(run_every=crontab(minute='*/15'))
+def update_recentchanges():
+    """
+    Updates cached data for recent changes View.
+    """
+    from inyoka.wiki.models import Revision
+    revisions = Revision.objects.filter(change_date__gt=(datetime.utcnow() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS))).order_by('-change_date')[:settings.WIKI_RECENTCHANGES_MAX].select_related('user', 'page')
+    recentchanges = OrderedDict()
+    for revision in revisions:
+        change_date = revision.change_date.date()
+        change_time = revision.change_date.time()
+        page_name = revision.page.name
+        username = revision.user.username if revision.user else None
+        if change_date not in recentchanges:
+            recentchanges[change_date] = OrderedDict()
+        if revision.page.name not in recentchanges[change_date]:
+            recentchanges[change_date][page_name] = []
+        recentchanges[change_date][page_name].append({'time': change_time, 'username': username, 'note': revision.note})
+    cache.set('wiki/recentchanges', recentchanges)

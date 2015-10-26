@@ -9,31 +9,38 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from StringIO import StringIO
 from datetime import datetime
 from os import path
+from StringIO import StringIO
 
-from PIL import Image
 from django.conf import settings
-from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, update_last_login)
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    update_last_login,
+)
 from django.contrib.auth.signals import user_logged_in
 from django.core import signing
 from django.core.cache import cache
 from django.db import models, transaction
 from django.dispatch import receiver
 from django.utils.html import escape
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
+from PIL import Image
 
-from inyoka.utils.database import JSONField, update_model, InyokaMarkupField
+from inyoka.utils.database import InyokaMarkupField, JSONField, update_model
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
-from inyoka.utils.user import normalize_username, gen_activation_key, \
-    is_valid_username
-
+from inyoka.utils.user import (
+    gen_activation_key,
+    is_valid_username,
+    normalize_username,
+)
 
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
 DEFAULT_GROUP_ID = 1  # group id for all registered users
@@ -601,15 +608,26 @@ class User(AbstractBaseUser):
         elif action in ('subscribe', 'unsubscribe'):
             return href('portal', 'user', self.urlsafe_username, action, **query)
 
-    @property
-    def has_content(user):
+    def has_content(self):
         """
-        Simply returns True if the user has any content, else False.
+        Returns True if the user has any content, else False.
         """
-        return user.post_set.exists() or user.topics.exists() or user.comment_set.exists() \
-            or user.privatemessageentry_set.exists() or user.wiki_revisions.exists() \
-            or user.article_set.exists() or user.entry_set.exists() or user.event_set.exists() \
-            or user.suggestion_set.exists() or user.subscription_set.exists()
+        return (self.post_count or
+                self.post_set.exists() or
+                self.topics.exists() or
+                self.comment_set.exists() or
+                self.privatemessageentry_set.exists() or
+                self.wiki_revisions.exists() or
+
+                # TODO: Fix me, this line does not work at the moment!
+                self.article_set.exists() or
+
+                # Pastebin
+                self.entry_set.exists() or
+                self.event_set.exists() or
+                self.suggestion_set.exists() or
+                self.owned_suggestion_set.exists() or
+                self.subscription_set.exists())
 
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'

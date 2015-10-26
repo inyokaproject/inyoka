@@ -14,9 +14,8 @@
 from os import path
 from subprocess import call
 
-from django.conf import settings
+from django.apps import apps
 from django.core.management.base import BaseCommand
-from django.utils.importlib import import_module
 
 APPS = ['forum', 'portal', 'wiki', 'ikhaya', 'pastebin', 'planet', 'markup']
 
@@ -58,9 +57,9 @@ class Command(BaseCommand):
         self._make_theme_messages(args_extract, args_update)
 
     def _make_theme_messages(self, args_extract, args_update):
-        for app in settings.INSTALLED_APPS:
-            module = import_module(app)
-            if hasattr(module, 'INYOKA_THEME') and module.INYOKA_THEME == app:
+        for app in apps.get_app_configs():
+            module = app.module
+            if hasattr(module, 'INYOKA_THEME'):
                 base_path = module.__path__[0]
                 cwd = path.normpath(path.join(base_path, '..'))
                 basename = path.basename(base_path)

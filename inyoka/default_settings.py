@@ -151,22 +151,33 @@ WIKI_TEMPLATE_BASE = 'Wiki/Templates'
 
 WIKI_PRIVILEGED_PAGES = []
 
+WIKI_RECENTCHANGES_MAX = 250
+WIKI_RECENTCHANGES_DAYS = 7
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = None
 
+
+# 24h is the recommended and tested Cache Timeout
+CACHE_TIMEOUT = 60 * 60 * 24
+# Cache Setup
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'TIMEOUT': CACHE_TIMEOUT
     },
     'content': {
         'BACKEND': 'inyoka.utils.cache.RedisCache',
         'LOCATION': 'redis://127.0.0.1:6379/0',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            # 'CONNECTION_POOL_KWARGS': {'max_connections': 100},
             'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
         },
-        'TIMEOUT': 60 * 60 * 24
+        'TIMEOUT': CACHE_TIMEOUT
     }
 }
 

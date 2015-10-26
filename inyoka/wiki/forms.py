@@ -15,6 +15,7 @@ from inyoka.forum.models import Topic
 from inyoka.markup import parse, StackExhaused
 from inyoka.utils.forms import UserField, DateWidget
 from inyoka.utils.sessions import SurgeProtectionMixin
+from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import test_changes_allowed
 from inyoka.wiki.utils import has_conflicts
@@ -33,7 +34,8 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
     """
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 50}))
     note = forms.CharField(max_length=512, required=True,
-                           widget=forms.TextInput(attrs={'size': 50}))
+                           widget=forms.TextInput(attrs={'size': 50}),
+                           help_text=storage['wiki_edit_note_rendered'])
 
     def __init__(self, user=None, page_name=None, old_text=None, data=None):
         forms.Form.__init__(self, data)
