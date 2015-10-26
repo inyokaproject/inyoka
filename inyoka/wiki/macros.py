@@ -9,7 +9,6 @@
     :license: BSD, see LICENSE for more details.
 """
 import random
-import string
 import operator
 import itertools
 from datetime import date, datetime, timedelta
@@ -17,7 +16,7 @@ from collections import OrderedDict
 
 from django.conf import settings
 from django.core.cache import cache
-from django.utils.translation import ugettext as _, ungettext
+from django.utils.translation import ugettext as _
 
 from inyoka.markup import nodes, macros
 from inyoka.markup.parsertools import MultiMap, flatten_iterator
@@ -25,10 +24,8 @@ from inyoka.markup.templates import expand_page_template
 from inyoka.markup.utils import simple_filter
 from inyoka.utils.dates import format_time, datetime_to_timezone
 from inyoka.utils.imaging import parse_dimensions
-from inyoka.utils.pagination import Pagination
-from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
-from inyoka.utils.urls import href, url_for, urlencode, is_safe_domain
+from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.wiki.models import Page, MetaData, Revision, is_privileged_wiki_page
 from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
@@ -39,6 +36,125 @@ def make_int(s, default):
         return int(s)
     except (ValueError, TypeError):
         return int(default)
+
+
+class RecentChanges(macros.Macro):
+    """
+    Show a table of the recent changes.  This macro does only work for HTML
+    so far, all other formats just get an empty text back.
+    """
+
+    names = (u'RecentChanges', u'LetzteÄnderungen')
+
+    arguments = (
+        ('per_page', int, 50),
+        ('days', int, 10),
+    )
+    is_block_tag = True
+    allowed_context = ['wiki']
+
+    def __init__(self, per_page, days):
+        self.per_page = per_page
+        self.default_days = days
+
+    def build_node(self, context, format):
+        wiki_page = context.kwargs.get('wiki_page', None)
+        if not wiki_page:
+            return nodes.Paragraph([
+                nodes.Text(_(u'Recent changes cannot be rendered on this page'))
+            ])
+
+        max_days = 14
+        days = []
+        days_found = set()
+
+        def pagebuffer_sorter(x, y):
+            pb = pagebuffer
+            return cmp(pb[x][-1].change_date, pb[y][-1].change_date)
+
+        cache_key = 'wiki/recent_changes/'
+        data = cache.get(cache_key)
+        if data is None:
+            revisions = Revision.objects.filter(
+                change_date__gt=(datetime.utcnow() - timedelta(days=max_days))
+            ).select_related('user', 'page')
+
+            for revision in revisions:
+                d = datetime_to_timezone(revision.change_date)
+                key = (d.year, d.month, d.day)
+                if key not in days_found:
+                    days.append((date(*key), []))
+                    days_found.add(key)
+                days[-1][1].append(revision)
+
+            table = nodes.Table(class_='recent_changes')
+
+            for day, changes in days:
+                table.children.append(nodes.TableRow([
+                    nodes.TableHeader([
+                        nodes.Text(day)
+                    ], colspan=4)
+                ]))
+
+                pagebuffer = OrderedDict()
+                changes = sorted(changes, key=lambda x: x.change_date)
+
+                for rev in changes:
+                    if rev.page not in pagebuffer:
+                        pagebuffer[rev.page] = []
+                    pagebuffer[rev.page].append(rev)
+
+                _pagebuffer = sorted(pagebuffer, cmp=pagebuffer_sorter, reverse=True)
+
+                for page in _pagebuffer:
+                    revs = pagebuffer[page]
+
+                    if len(revs) > 1:
+                        stamps = (format_time(revs[0].change_date),
+                                  format_time(revs[-1].change_date))
+                        stamp = u'%s' % (stamps[0] == stamps[-1] and stamps[0] or
+                                u'%s - %s' % stamps)
+                    else:
+                        stamp = format_time(revs[0].change_date)
+
+                    table.children.append(nodes.TableRow([
+                        nodes.TableCell([
+                            nodes.Text(stamp)
+                        ], class_='timestamp'),
+                        nodes.TableCell([
+                            nodes.InternalLink(page.name),
+                            nodes.Text(u' ('),
+                            nodes.Link(href('wiki', page.name, action='log'), [
+                                nodes.Text(str(len(revs)) + 'x')
+                            ]),
+                            nodes.Text(u')')
+                        ])]))
+
+                    page_notes = nodes.List('unordered', [], class_='note_list')
+                    for rev in revs:
+                        if rev.user_id:
+                            page_notes.children.append(nodes.ListItem([
+                                nodes.Text(rev.note or ''),
+                                nodes.Text(u'%svon ' % (rev.note and u' (' or '')),
+                                nodes.Link(url_for(rev.user), [
+                                    nodes.Text(rev.user.username)]),
+                                nodes.Text(rev.note and u')' or '')
+                            ]))
+                        else:
+                            page_notes.children.append(nodes.ListItem([
+                                nodes.Text(rev.note),
+                                nodes.Text(u'%svon ' % (rev.note and u'(' or '')),
+                                nodes.Text(rev.remote_addr),
+                                nodes.Text(rev.note and u')' or '')]))
+                    table.children[-1].children.extend([
+                        nodes.TableCell(
+                            page_notes.children and [page_notes] or
+                            [nodes.Text(u'')], class_='note')])
+            data = {
+                'nodes': table,
+            }
+            cache.set(cache_key, data)
+        return data['nodes']
 
 
 class PageCount(macros.Macro):
@@ -236,90 +352,6 @@ class SimilarPages(macros.Macro):
         return result
 
 
-class TagCloud(macros.Macro):
-    """
-    Show a tag cloud (or a tag list if the ?tag parameter is defined in
-    the URL).
-    """
-    names = (u'TagCloud', u'TagWolke')
-    is_block_tag = True
-    arguments = (
-        ('max', int, 100),
-    )
-    allowed_context = ['wiki']
-
-    def __init__(self, max):
-        self.max = max
-
-    def build_node(self, context, format):
-        if context.request:
-            active_tag = context.request.GET.get('tag')
-            if active_tag:
-                return TagList(active_tag, _raw=True). \
-                    build_node(context, format)
-
-        result = nodes.Layer(class_='tagcloud')
-        for tag in Page.objects.get_tagcloud(self.max):
-            title = ungettext('one page', '%(count)d pages',
-                              tag['count']) % tag
-            result.children.extend((
-                nodes.Link('?' + urlencode({
-                        'tag': tag['name']
-                    }), [nodes.Text(tag['name'])],
-                    title=title,
-                    style='font-size: %s%%' % tag['size']
-                ),
-                nodes.Text(' ')
-            ))
-
-        head = nodes.Headline(2, children=[nodes.Text(_(u'Tags'))],
-                              class_='head')
-        container = nodes.Layer(children=[head, result])
-
-        return container
-
-
-class TagList(macros.Macro):
-    """
-    Show a taglist.
-    """
-    names = ('TagList', u'TagListe')
-    is_block_tag = True
-    arguments = (
-        ('tag', unicode, ''),
-    )
-    allowed_context = ['wiki']
-
-    def __init__(self, active_tag):
-        self.active_tag = active_tag
-
-    def build_node(self, context, format):
-        active_tag = self.active_tag
-        if not active_tag and context.request:
-            active_tag = context.request.GET.get('tag')
-        result = nodes.List('unordered', class_='taglist')
-        if active_tag:
-            pages = Page.objects.find_by_tag(active_tag)
-            for page in sorted(pages, key=string.lower):
-                item = nodes.ListItem([nodes.InternalLink(page)])
-                result.children.append(item)
-        else:
-            for tag in Page.objects.get_tagcloud():
-                link = nodes.Link('?' + urlencode({
-                        'tag': tag['name']
-                    }), [nodes.Text(tag['name'])],
-                    style='font-size: %s%%' % tag['size']
-                )
-                result.children.append(nodes.ListItem([link]))
-        head = nodes.Headline(2, children=[
-            nodes.Text(_(u'Pages with tag “%(name)s”') % {
-                'name': self.active_tag
-            })
-        ], class_='head')
-        container = nodes.Layer(children=[head, result])
-        return container
-
-
 class Include(macros.Macro):
     """
     Include a page.  This macro works dynamically thus the included headlines
@@ -378,7 +410,7 @@ class RandomPageList(macros.Macro):
         # TODO i18n: Again this fancy meta data... wheeeey :-)
         #           see RedirectPages for more infos.
         redirect_pages = Page.objects.find_by_metadata('weiterleitung')
-        pagelist = filter(lambda p: not p in redirect_pages,
+        pagelist = filter(lambda p: p not in redirect_pages,
                           Page.objects.get_page_list(exclude_privileged=True))
 
         pages = []
@@ -617,8 +649,6 @@ macros.register(MissingPages)
 macros.register(RedirectPages)
 macros.register(NewPage)
 macros.register(SimilarPages)
-macros.register(TagCloud)
-macros.register(TagList)
 macros.register(Include)
 macros.register(RandomPageList)
 macros.register(FilterByMetaData)

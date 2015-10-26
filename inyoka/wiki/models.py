@@ -77,10 +77,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import pickle
 import magic
 
-from math import log
 from hashlib import sha1
 from operator import itemgetter
 from datetime import datetime
@@ -104,7 +102,6 @@ from inyoka.utils.diff3 import prepare_udiff, generate_udiff, get_close_matches
 from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.html import striptags
-from inyoka.utils.local import current_request
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href
@@ -154,7 +151,7 @@ class PageManager(models.Manager):
         if revs:
             return revs[0]
 
-    def get_tagcloud(self, max=100):
+    def get_tagcloud(self, show_max=100):
         """
         Get a tagcloud.  Note that this is one of the few operations that
         also returns attachments, not only pages.  A tag cloud is represented
@@ -167,21 +164,20 @@ class PageManager(models.Manager):
             Number of pages flagged with this tag.
 
         ``'size'``:
-            The relative size of this page in percent.  One page means a size
-            of 100%.  The number is calculated using the natural logarithm.
-            In theory there is no upper limit for the tag size but it won't
-            grow unnecessary high with a sane page count (< 1000000 pages)
+            The size of a page as an integer within 1 and 10 in relation to
+            the highest count value. One page means a size of 1. The tag with
+            the highest count value has the size 10.
         """
         tags = MetaData.objects.filter(key='tag').values_list('value')\
-                               .annotate(count=Count('value'))\
-                               .order_by('-count')
-        if max is not None:
-            tags = tags[:max]
+            .annotate(count=Count('value'))\
+            .order_by('-count')
+        if show_max is not None:
+            tags = tags[:show_max]
 
         return [{'name': tag[0],
-                 'count': tag[1],
-                 'size': round(100 + log(tag[1] or 1) * 20, 2)}
-                for tag in sorted(tags, key=lambda x: x[0].lower())]
+            'count': tag[1],
+            'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
+            for tag in sorted(tags, key=lambda x: x[0].lower())]
 
     def compare(self, name, old_rev, new_rev=None):
         """
@@ -1185,10 +1181,10 @@ class Revision(models.Model):
         # no relative date information, because it stays in the note forever
 
         note = _(u'%(note)s [Revision from %(date)s restored by %(user)s]' %
-                 {'note': note,
-                  'date': datetime_to_timezone(self.change_date).strftime(
-                  '%d.%m.%Y %H:%M %Z'),
-                  'user': self.user.username if self.user else self.remote_addr})
+            {'note': note,
+            'date': datetime_to_timezone(self.change_date).strftime(
+                '%d.%m.%Y %H:%M %Z'),
+            'user': self.user.username if self.user else self.remote_addr})
         new_rev = Revision(page=self.page, text=self.text,
                            user=(user if user.is_authenticated() else None),
                            change_date=datetime.utcnow(),
