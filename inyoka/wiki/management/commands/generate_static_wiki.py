@@ -336,7 +336,7 @@ class Command(NoArgsCommand):
 
         for app in apps.get_app_configs():
             module = app.module
-            if hasattr(module, 'INYOKA_THEME') and module.INYOKA_THEME == app:
+            if hasattr(module, 'INYOKA_THEME'):
                 stroot = module.__path__[0] + '/static'
         ff = partial(path.join, stroot, 'img')
         static_paths = ((path.join(stroot, 'img', 'icons'), 'icons'),
