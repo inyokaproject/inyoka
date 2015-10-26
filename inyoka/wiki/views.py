@@ -16,11 +16,11 @@
     :license: BSD, see LICENSE for more details.
 """
 import os
-from datetime import datetime, timedelta
 from hashlib import sha1
 from urlparse import urljoin
 
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
 from django.utils.encoding import force_unicode
@@ -88,8 +88,9 @@ def redirect_new_page(request):
                                                 template)
         return HttpResponseRedirect(href('wiki', page, **options))
     messages.error(request, _(u'Another site named “%(title)s” already exists.')
-                              % {'title': escape(page.title)})
+                   % {'title': escape(page.title)})
     return HttpResponseRedirect(backref)
+
 
 def get_attachment(request):
     """
@@ -243,12 +244,13 @@ def feed(request, page_name=None, count=10):
 
     return feed
 
+
 @templated('wiki/recentchanges.html')
-def recentchanges(request, page=None):
+def recentchanges(request):
     """
     Show a table of the recent changes.
     """
-    revisions = Revision.objects.filter(change_date__gt=(datetime.utcnow() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS)))[:settings.WIKI_RECENTCHANGES_MAX].select_related('user', 'page')
+    cache.get('wiki/recentchanges')
     return {
-        'revisions': revisions if revisions.exists() else None
+        'recentchanges': cache.get('wiki/recentchanges')
     }

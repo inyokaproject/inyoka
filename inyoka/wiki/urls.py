@@ -18,7 +18,7 @@ urlpatterns = patterns('inyoka.wiki.views',
     (r'^_attachment$', 'get_attachment'),
     (r'^_feed/(?P<count>\d+)', 'feed'),
     (r'^_feed/(?P<page_name>.+)/(?P<count>\d+)', 'feed'),
-    (r'^Wiki/RecentChanges', 'recentchanges')
+    (r'^wiki/recentchanges', 'recentchanges')
 )
 
 if settings.DEBUG:
