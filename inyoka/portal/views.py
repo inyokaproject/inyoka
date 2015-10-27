@@ -376,8 +376,8 @@ def set_new_password(request, uidb36, token):
     response = password_reset_confirm(request, uidb36, token,
         post_reset_redirect=href('portal', 'login'),
         template_name='portal/set_new_password.html')
-
-    if response.context_data['form'].is_valid():
+    form = response.context_data['form']
+    if form is not None and form.is_valid():
         messages.success(request,
             _(u'You successfully changed your password and are now '
               u'able to login.'))
