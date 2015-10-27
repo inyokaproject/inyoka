@@ -44,7 +44,7 @@ from inyoka.portal.forms import (LoginForm, UserMailForm,
     LostPasswordForm, SubscriptionForm, UserCPProfileForm,
     ConfigurationForm, EditUserGroupsForm, EditStaticPageForm, DeactivateUserForm,
     UserCPSettingsForm, ChangePasswordForm, PrivateMessageForm, EditUserStatusForm,
-    SetNewPasswordForm, EditUserProfileForm, WikiFeedSelectorForm,
+    EditUserProfileForm, WikiFeedSelectorForm,
     NOTIFICATION_CHOICES, ForumFeedSelectorForm,
     PlanetFeedSelectorForm, EditUserPrivilegesForm, IkhayaFeedSelectorForm,
     PrivateMessageIndexForm, PrivateMessageFormProtected)
@@ -327,10 +327,16 @@ def lost_password(request):
 
 
 def set_new_password(request, uidb36, token):
-    return password_reset_confirm(request, uidb36, token,
+    response = password_reset_confirm(request, uidb36, token,
         post_reset_redirect=href('portal', 'login'),
-        template_name='portal/set_new_password.html',
-        set_password_form=SetNewPasswordForm)
+        template_name='portal/set_new_password.html')
+
+    if response.context_data['form'].is_valid():
+        messages.success(current_request,
+            _(u'You successfully changed your password and are now '
+              u'able to login.'))
+
+    return response
 
 
 @templated('portal/login.html')

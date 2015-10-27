@@ -214,15 +214,6 @@ class LostPasswordForm(auth_forms.PasswordResetForm):
             send_mail(subject, email, from_email, [user.email])
 
 
-class SetNewPasswordForm(auth_forms.SetPasswordForm):
-    def save(self, commit=True):
-        instance = super(SetNewPasswordForm, self).save(commit)
-        messages.success(current_request,
-            _(u'You successfully changed your password and are now '
-              u'able to login.'))
-        return instance
-
-
 class ChangePasswordForm(forms.Form):
     """Simple form for changing the password."""
     old_password = forms.CharField(label=ugettext_lazy(u'Old password'),
