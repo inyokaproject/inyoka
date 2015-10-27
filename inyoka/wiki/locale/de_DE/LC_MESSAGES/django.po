@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-10-26 21:04+0100\n"
+"POT-Creation-Date: 2015-10-27 19:41+0100\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language: de_DE\n"
@@ -204,7 +204,7 @@ msgstr "Bearbeitet von"
 msgid "Completion date"
 msgstr "Fertigstellungsdatum"
 
-#: inyoka/wiki/macros.py:225
+#: inyoka/wiki/macros.py:219
 msgid ""
 "You must apply a page name because the macro is being called outside the "
 "wiki context."
@@ -212,87 +212,76 @@ msgstr ""
 "Du musst eine Seite angeben, weil das Makro außerhalb des Wikis verwendet"
 " wird."
 
-#: inyoka/wiki/macros.py:227
+#: inyoka/wiki/macros.py:221
 msgid "Invalid arguments"
 msgstr "Parameterfehler"
 
-#: inyoka/wiki/macros.py:263
-#, python-format
-msgid "one page"
-msgid_plural "%(count)d pages"
-msgstr[0] "eine Seite"
-msgstr[1] "%(count)d Seiten"
-
-#: inyoka/wiki/macros.py:275
-msgid "Tags"
-msgstr "Tags"
-
-#: inyoka/wiki/macros.py:315
+#: inyoka/wiki/macros.py:266
 #, python-format
 msgid "Pages with tag “%(name)s”"
 msgstr "Seiten mit Tag „%(name)s“"
 
-#: inyoka/wiki/macros.py:349
+#: inyoka/wiki/macros.py:300
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr "Die Seite „%(name)s“ wurde nicht gefunden."
 
-#: inyoka/wiki/macros.py:351
+#: inyoka/wiki/macros.py:302
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: inyoka/wiki/macros.py:354
+#: inyoka/wiki/macros.py:305
 msgid "Detected a circular include macro call"
 msgstr "Detected a circular include macro call"
 
-#: inyoka/wiki/macros.py:355
+#: inyoka/wiki/macros.py:306
 msgid "Circular import"
 msgstr "Zirkulärer Import"
 
-#: inyoka/wiki/macros.py:456
+#: inyoka/wiki/macros.py:407
 msgid "No result"
 msgstr "Kein Ergebnis"
 
-#: inyoka/wiki/macros.py:457
+#: inyoka/wiki/macros.py:408
 #, python-format
 msgid "The metadata filter has found no results. Query: %(query)s"
 msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 
-#: inyoka/wiki/macros.py:483
+#: inyoka/wiki/macros.py:434
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
-#: inyoka/wiki/models.py:504
+#: inyoka/wiki/models.py:500
 msgid "Created"
 msgstr "Erstellt"
 
-#: inyoka/wiki/models.py:901
+#: inyoka/wiki/models.py:897
 msgid "Automatically deleted"
 msgstr "Von System gelöscht"
 
-#: inyoka/wiki/models.py:1024
+#: inyoka/wiki/models.py:1020
 msgid "Wiki page"
 msgstr "Wikiseite"
 
-#: inyoka/wiki/models.py:1025
+#: inyoka/wiki/models.py:1021
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
-#: inyoka/wiki/models.py:1081
+#: inyoka/wiki/models.py:1077
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
-#: inyoka/wiki/models.py:1160
+#: inyoka/wiki/models.py:1156
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr "%(rev)s (Revision %(date)s)"
 
-#: inyoka/wiki/models.py:1189
+#: inyoka/wiki/models.py:1185
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
 
-#: inyoka/wiki/models.py:1211
+#: inyoka/wiki/models.py:1207
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"
@@ -302,28 +291,28 @@ msgstr "Revision %(id)d (%(title)s)"
 msgid "The page “%(name)s” was changed"
 msgstr "Die Seite „%(name)s“ wurde geändert"
 
-#: inyoka/wiki/views.py:79
+#: inyoka/wiki/views.py:80
 msgid "A site name needs to be entered to create this page."
 msgstr ""
 "Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben "
 "wurde."
 
-#: inyoka/wiki/views.py:90
+#: inyoka/wiki/views.py:91
 #, python-format
 msgid "Another site named “%(title)s” already exists."
 msgstr "Eine andere Seite mit dem Namen „%(title)s“ existiert bereits."
 
-#: inyoka/wiki/views.py:185
+#: inyoka/wiki/views.py:186
 #, python-format
 msgid "%(sitename)s wiki – %(pagename)s"
 msgstr "%(sitename)s Wiki – %(pagename)s"
 
-#: inyoka/wiki/views.py:195
+#: inyoka/wiki/views.py:196
 #, python-format
 msgid "%(sitename)s wiki – last changes"
 msgstr "%(sitename)s Wiki – Letzte Änderungen"
 
-#: inyoka/wiki/views.py:210
+#: inyoka/wiki/views.py:211
 #, python-format
 msgid ""
 "%(user)s deleted the article “%(article)s” on %(date)s. Summary: "
@@ -332,7 +321,7 @@ msgstr ""
 "%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. "
 "Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:213
+#: inyoka/wiki/views.py:214
 #, python-format
 msgid ""
 "%(user)s edited the article “%(article)s” on %(date)s. Summary: "
@@ -341,7 +330,7 @@ msgstr ""
 "%(user)s hat den Artikel „%(article)s” am %(date)s bearbeitet. "
 "Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:217
+#: inyoka/wiki/views.py:218
 #, python-format
 msgid ""
 "An anonymous user deleted the article “%(article)s” on %(date)s. Summary:"
@@ -350,7 +339,7 @@ msgstr ""
 "Ein anonymer Benutzer hat den Artikel „%(article)s“ am %(date)s gelöscht."
 " Zusammenfassung: %(summary)s"
 
-#: inyoka/wiki/views.py:220
+#: inyoka/wiki/views.py:221
 #, python-format
 msgid ""
 "An anonymous user edited the article “%(article)s” on %(date)s. Summary: "
@@ -358,7 +347,4 @@ msgid ""
 msgstr ""
 "Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s "
 "bearbeitet. Zusammenfassung: %(summary)s"
-
-#~ msgid "Recent changes cannot be rendered on this page"
-#~ msgstr "Letzte Änderungen können von hier aus nicht dargestellt werden."
 
