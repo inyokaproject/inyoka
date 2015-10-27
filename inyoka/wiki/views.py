@@ -251,8 +251,7 @@ def recentchanges(request):
     """
     Show a table of the recent changes.
     """
-    return {
-        'recentchanges': cache.get('wiki/recentchanges')
+    return {'recentchanges': cache.get('wiki/recentchanges')}
 
 
 @templated('wiki/tag_list.html')
@@ -274,5 +273,5 @@ def show_pages_by_tag(request, tag):
         raise Http404()
     return {
         'page_list': page_list,
-        'active_tag': tag,
+        'active_tag': tag
     }
