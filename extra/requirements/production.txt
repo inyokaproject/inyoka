@@ -1,3 +1,4 @@
+--no-binary :all:
 Babel==2.1.1
 beautifulsoup4==4.3.2
 celery==3.1.18
