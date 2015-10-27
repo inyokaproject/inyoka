@@ -11,22 +11,19 @@
 import random
 import operator
 import itertools
-from datetime import date, datetime, timedelta
-from collections import OrderedDict
+import string
 
 from django.conf import settings
-from django.core.cache import cache
 from django.utils.translation import ugettext as _
 
 from inyoka.markup import nodes, macros
 from inyoka.markup.parsertools import MultiMap, flatten_iterator
 from inyoka.markup.templates import expand_page_template
 from inyoka.markup.utils import simple_filter
-from inyoka.utils.dates import format_time, datetime_to_timezone
 from inyoka.utils.imaging import parse_dimensions
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
-from inyoka.utils.urls import href, url_for, is_safe_domain
-from inyoka.wiki.models import Page, MetaData, Revision, is_privileged_wiki_page
+from inyoka.utils.urls import href, is_safe_domain, urlencode
+from inyoka.wiki.models import Page, MetaData, is_privileged_wiki_page
 from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
 
@@ -231,6 +228,47 @@ class SimilarPages(macros.Macro):
                                       force_existing=True)
             result.children.append(nodes.ListItem([link]))
         return result
+
+
+class TagList(macros.Macro):
+    """
+    Show a taglist.
+    """
+    names = ('TagList', u'TagListe')
+    is_block_tag = True
+    arguments = (
+        ('tag', unicode, ''),
+    )
+    allowed_context = ['wiki']
+
+    def __init__(self, active_tag):
+        self.active_tag = active_tag
+
+    def build_node(self, context, format):
+        active_tag = self.active_tag
+        if not active_tag and context.request:
+            active_tag = context.request.GET.get('tag')
+        result = nodes.List('unordered', class_='taglist')
+        if active_tag:
+            pages = Page.objects.find_by_tag(active_tag)
+            for page in sorted(pages, key=string.lower):
+                item = nodes.ListItem([nodes.InternalLink(page)])
+                result.children.append(item)
+        else:
+            for tag in Page.objects.get_tagcloud():
+                link = nodes.Link('?' + urlencode({
+                        'tag': tag['name']
+                    }), [nodes.Text(tag['name'])],
+                    style='font-size: %s%%' % tag['size']
+                )
+                result.children.append(nodes.ListItem([link]))
+        head = nodes.Headline(2, children=[
+            nodes.Text(_(u'Pages with tag “%(name)s”') % {
+                'name': self.active_tag
+            })
+        ], class_='head')
+        container = nodes.Layer(children=[head, result])
+        return container
 
 
 class Include(macros.Macro):
