@@ -12,9 +12,6 @@
 import time
 from datetime import date, datetime, timedelta
 
-from PIL import Image
-from django_mobile import get_flavour
-
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.views import password_reset, password_reset_confirm
@@ -29,47 +26,96 @@ from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.utils.translation import ugettext as _, ungettext
+from django.utils.translation import ugettext as _
+from django.utils.translation import ungettext
 from django.views.decorators.http import require_POST
+from django_mobile import get_flavour
+from PIL import Image
 
-
-from inyoka.forum.acl import (split_bits, filter_invisible, PRIVILEGES_DETAILS,
-    split_negative_positive, REVERSED_PRIVILEGES_BITS)
+from inyoka.forum.acl import (
+    PRIVILEGES_DETAILS,
+    REVERSED_PRIVILEGES_BITS,
+    filter_invisible,
+    split_bits,
+    split_negative_positive,
+)
 from inyoka.forum.models import Forum, Privilege
-from inyoka.ikhaya.models import Event, Article, Category
-from inyoka.markup import parse, RenderContext
+from inyoka.ikhaya.models import Article, Category, Event
 from inyoka.portal.filters import SubscriptionFilter
-from inyoka.portal.forms import (LoginForm, UserMailForm,
-    EditFileForm, RegisterForm, EditStyleForm, EditGroupForm, CreateUserForm,
-    LostPasswordForm, SubscriptionForm, UserCPProfileForm,
-    ConfigurationForm, EditUserGroupsForm, EditStaticPageForm, DeactivateUserForm,
-    UserCPSettingsForm, ChangePasswordForm, PrivateMessageForm, EditUserStatusForm,
-    SetNewPasswordForm, EditUserProfileForm, WikiFeedSelectorForm,
-    NOTIFICATION_CHOICES, ForumFeedSelectorForm,
-    PlanetFeedSelectorForm, EditUserPrivilegesForm, IkhayaFeedSelectorForm,
-    PrivateMessageIndexForm, PrivateMessageFormProtected)
-from inyoka.portal.models import (StaticPage, StaticFile, Subscription,
-    PrivateMessage, PRIVMSG_FOLDERS, PrivateMessageEntry)
-from inyoka.portal.user import (User, Group, UserBanned, reset_email,
-    set_new_email, deactivate_user, reactivate_user, PERMISSION_NAMES,
-    send_activation_mail)
-from inyoka.portal.utils import (abort_access_denied, calendar_entries_for_month,
-    check_login, get_ubuntu_versions, google_calendarize, require_permission)
+from inyoka.portal.forms import (
+    NOTIFICATION_CHOICES,
+    ChangePasswordForm,
+    ConfigurationForm,
+    CreateUserForm,
+    DeactivateUserForm,
+    EditFileForm,
+    EditGroupForm,
+    EditStaticPageForm,
+    EditStyleForm,
+    EditUserGroupsForm,
+    EditUserPrivilegesForm,
+    EditUserProfileForm,
+    EditUserStatusForm,
+    ForumFeedSelectorForm,
+    IkhayaFeedSelectorForm,
+    LoginForm,
+    LostPasswordForm,
+    PlanetFeedSelectorForm,
+    PrivateMessageForm,
+    PrivateMessageFormProtected,
+    PrivateMessageIndexForm,
+    RegisterForm,
+    SubscriptionForm,
+    UserCPProfileForm,
+    UserCPSettingsForm,
+    UserMailForm,
+    WikiFeedSelectorForm,
+)
+from inyoka.portal.models import (
+    PRIVMSG_FOLDERS,
+    PrivateMessage,
+    PrivateMessageEntry,
+    StaticFile,
+    StaticPage,
+    Subscription,
+)
+from inyoka.portal.user import (
+    PERMISSION_NAMES,
+    Group,
+    User,
+    UserBanned,
+    deactivate_user,
+    reactivate_user,
+    reset_email,
+    send_activation_mail,
+    set_new_email,
+)
+from inyoka.portal.utils import (
+    abort_access_denied,
+    calendar_entries_for_month,
+    check_login,
+    get_ubuntu_versions,
+    google_calendarize,
+    require_permission,
+)
 from inyoka.utils import generic
-from inyoka.utils.http import templated, TemplateResponse, does_not_exist_is_404
+from inyoka.utils.http import (
+    TemplateResponse,
+    does_not_exist_is_404,
+    templated,
+)
 from inyoka.utils.mail import send_mail
 from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.sessions import get_sessions, make_permanent, get_user_record
+from inyoka.utils.sessions import get_sessions, get_user_record, make_permanent
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_random_password
-from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.wiki.utils import quote_text
-
 
 # TODO: move into some kind of config, but as a quick fix for now...
 AUTOBAN_SPAMMER_WORDS = (
@@ -327,10 +373,16 @@ def lost_password(request):
 
 
 def set_new_password(request, uidb36, token):
-    return password_reset_confirm(request, uidb36, token,
+    response = password_reset_confirm(request, uidb36, token,
         post_reset_redirect=href('portal', 'login'),
-        template_name='portal/set_new_password.html',
-        set_password_form=SetNewPasswordForm)
+        template_name='portal/set_new_password.html')
+
+    if isinstance(response, HttpResponseRedirect):
+        messages.success(request,
+            _(u'You successfully changed your password and are now '
+              u'able to login.'))
+
+    return response
 
 
 @templated('portal/login.html')
@@ -1646,8 +1698,6 @@ def config(request):
             data = form.cleaned_data
             for k in keys:
                 storage[k] = data[k]
-
-            context = RenderContext(request, simplified=True)
 
             if data['global_message'] != storage['global_message']:
                 storage['global_message'] = data['global_message']

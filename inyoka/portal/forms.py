@@ -8,47 +8,51 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import datetime
 import json
 import StringIO
-import datetime
-
-from PIL import Image
 
 from django import forms
-from django.conf import settings
-from django.forms import HiddenInput
 from django.contrib import messages
-from django.contrib.sites.models import get_current_site
-from django.db.models import Count
-from django.core.cache import cache
-from django.contrib.auth import forms as auth_forms, get_user_model
+from django.contrib.auth import forms as auth_forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.models import get_current_site
+from django.core.cache import cache
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.db.models import Count
+from django.db.models.fields.files import ImageFieldFile
+from django.forms import HiddenInput
 from django.template import loader
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-from django.core.files.storage import default_storage
-from django.db.models.fields.files import ImageFieldFile
+from PIL import Image
 
-from inyoka.forum.acl import filter_invisible
 from inyoka.forum.constants import get_simple_version_choices
-from inyoka.forum.forms import ForumField
-from inyoka.forum.models import Forum
 from inyoka.portal.models import StaticFile, StaticPage
-from inyoka.portal.user import User, UserPage, Group, PERMISSION_NAMES, send_new_email_confirmation
-from inyoka.utils.dates import TIMEZONES, datetime_to_timezone
-from inyoka.utils.forms import (DateWidget, EmailField, CaptchaField,
-    DateTimeWidget, validate_signature)
+from inyoka.portal.user import (
+    PERMISSION_NAMES,
+    Group,
+    User,
+    UserPage,
+    send_new_email_confirmation,
+)
+from inyoka.utils.dates import TIMEZONES
+from inyoka.utils.forms import (
+    CaptchaField,
+    DateWidget,
+    EmailField,
+    validate_signature,
+)
 from inyoka.utils.local import current_request
-from inyoka.utils.html import cleanup_html
-from inyoka.utils.urls import href
-from inyoka.utils.user import is_valid_username, normalize_username
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
-
+from inyoka.utils.urls import href
+from inyoka.utils.user import is_valid_username, normalize_username
 
 #: Some constants used for ChoiceFields
 NOTIFY_BY_CHOICES = (
@@ -74,8 +78,10 @@ class LoginForm(forms.Form):
 
     def clean(self):
         data = self.cleaned_data
-        if 'username' in data and not (data['username'].startswith('http://') or \
-         data['username'].startswith('https://')) and data['password'] == '':
+        if ('username' in data and
+                not (data['username'].startswith('http://') or
+                     data['username'].startswith('https://')) and
+                data['password'] == ''):
             msg = _(u'This field is required')
             self._errors['password'] = self.error_class([msg])
         return data
@@ -212,15 +218,6 @@ class LostPasswordForm(auth_forms.PasswordResetForm):
             subject = ''.join(subject.splitlines())
             email = loader.render_to_string(email_template_name, c)
             send_mail(subject, email, from_email, [user.email])
-
-
-class SetNewPasswordForm(auth_forms.SetPasswordForm):
-    def save(self, commit=True):
-        instance = super(SetNewPasswordForm, self).save(commit)
-        messages.success(current_request,
-            _(u'You successfully changed your password and are now '
-              u'able to login.'))
-        return instance
 
 
 class ChangePasswordForm(forms.Form):
@@ -541,10 +538,12 @@ class EditUserPrivilegesForm(forms.Form):
 
 
 class UserMailForm(forms.Form):
-    text = forms.CharField(label=ugettext_lazy(u'Text'),
+    text = forms.CharField(
+        label=ugettext_lazy(u'Text'),
         widget=forms.Textarea(),
-        help_text=ugettext_lazy(u'The message will be send as “plain text”. Your username '
-                    u'will be noted as sender.')
+        help_text=ugettext_lazy(
+            u'The message will be send as “plain text”. Your username '
+            u'will be noted as sender.'),
     )
 
 
@@ -595,7 +594,7 @@ class EditGroupForm(forms.ModelForm):
         data = self.cleaned_data
 
         if data['icon'] and not data['import_icon_from_global']:
-            icon_resized = group.save_icon(data['icon'])
+            icon_resized = group.save_icon(data['icon'])  # noqa
 # TODO: Reenable?!
 #            if icon_resized:
 #                messages.info(request,
@@ -650,6 +649,7 @@ class PrivateMessageForm(forms.Form):
             if not d['recipient'].strip() and not d['group_recipient'].strip():
                 raise forms.ValidationError(_(u'Please enter at least one receiver.'))
         return self.cleaned_data
+
 
 class PrivateMessageFormProtected(SurgeProtectionMixin, PrivateMessageForm):
     surge_protection_timeout = 60 * 5
