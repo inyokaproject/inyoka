@@ -627,7 +627,6 @@ class Post(models.Model, LockableObject):
     pub_date = models.DateTimeField(default=datetime.utcnow, db_index=True)
     hidden = models.BooleanField(default=False)
     text = InyokaMarkupField(application='forum')
-    rendered_text_old = models.TextField(null=True, blank=True, default='', db_column='rendered_text')  # Do not use
     has_revision = models.BooleanField(default=False)
     has_attachments = models.BooleanField(default=False)
     is_plaintext = models.BooleanField(default=False)
@@ -1244,7 +1243,6 @@ class WelcomeMessage(models.Model):
 
     title = models.CharField(max_length=120)
     text = InyokaMarkupField(application='forum')
-    rendered_text_old = models.TextField(db_column='rendered_text')  # Do not use
 
 
 class ReadStatus(object):
