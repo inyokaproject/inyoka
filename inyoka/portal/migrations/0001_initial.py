@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
 import datetime
-import inyoka.portal.user
-import inyoka.utils.database
+
 import django.utils.timezone
 from django.conf import settings
+from django.db import migrations, models
+
+import inyoka.portal.user
+import inyoka.utils.database
 
 
 class Migration(migrations.Migration):

@@ -642,7 +642,6 @@ class Text(models.Model):
     objects = TextManager()
     value = InyokaMarkupField(application='wiki')
     hash = models.CharField(max_length=40, unique=True, db_index=True)
-    html_render_instructions_old = models.TextField(null=True, db_column='html_render_instructions')  # DO not use
 
     # TODO: Remove this method. It is not used for the real rendering!
     def parse(self, template_context=None, transformers=None):

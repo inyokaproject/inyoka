@@ -636,7 +636,6 @@ class User(AbstractBaseUser):
 class UserPage(models.Model):
     user = models.OneToOneField(User)
     content = InyokaMarkupField()
-    content_rendered_old = models.TextField(db_column='content_rendered')  # Do not use
 
 
 @receiver(user_logged_in)
