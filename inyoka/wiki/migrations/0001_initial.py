@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('key', models.CharField(max_length=30, db_index=True)),
-                ('value', models.CharField(max_length=512, db_index=True)),
+                ('value', models.CharField(max_length=255, db_index=True)),
             ],
             options={
             },

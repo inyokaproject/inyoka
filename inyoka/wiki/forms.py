@@ -10,6 +10,7 @@
 """
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.functional import allow_lazy
 
 from inyoka.forum.models import Topic
 from inyoka.markup import parse, StackExhaused
@@ -35,7 +36,7 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 50}))
     note = forms.CharField(max_length=512, required=True,
                            widget=forms.TextInput(attrs={'size': 50}),
-                           help_text=storage['wiki_edit_note_rendered'])
+                           help_text=storage.get_lazy('wiki_edit_note_rendered'))
 
     def __init__(self, user=None, page_name=None, old_text=None, data=None):
         forms.Form.__init__(self, data)

@@ -10,6 +10,7 @@
 """
 from django.db import transaction
 from django.core.cache import cache
+from django.utils.functional import lazy
 
 
 class CachedStorage(object):
@@ -42,6 +43,10 @@ class CachedStorage(object):
 
         self._update_cache(key, value, timeout)
         return value
+
+    @lazy
+    def get_lazy(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
 
     @transaction.atomic
     def set(self, key, value, timeout=None):
