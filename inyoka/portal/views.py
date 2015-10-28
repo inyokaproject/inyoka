@@ -16,7 +16,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.core import signing
-from django.core.cache import cache
+from django.core.cache import cache, caches
 from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
@@ -130,6 +130,9 @@ PRIVILEGE_DICT = {bits: tmp[key]
                   for bits, key in REVERSED_PRIVILEGES_BITS.iteritems()}
 del tmp
 
+# additional caches
+content_cache = caches['content']
+
 CONFIRM_ACTIONS = {
     'reactivate_user': (reactivate_user, settings.USER_REACTIVATION_LIMIT,),
     'set_new_email': (set_new_email, settings.USER_SET_NEW_EMAIL_LIMIT,),
@@ -174,9 +177,6 @@ def index(request):
     """
     ikhaya_latest = Article.objects.get_latest_articles()
 
-    # filter events that are either in the future or are ongoing
-    events = Event.objects.get_upcoming(4)
-
     storage_values = storage.get_many(('get_ubuntu_link', 'get_ubuntu_description',
         'session_record', 'session_record_time', 'countdown_active',
         'countdown_target_page', 'countdown_image_url', 'countdown_date'))
@@ -217,6 +217,12 @@ def index(request):
                 'remaining': countdown_remaining
             }
 
+    def update_minicalendar():
+        """
+        Updates the Mini Calendar from the portal landing page.
+        """
+        return render_template('portal/minicalendar.html', {'events': Event.objects.get_upcoming(4)}, populate_defaults=False)
+
     return {
         'welcome_message_rendered': storage['welcome_message_rendered'],
         'ikhaya_latest': list(ikhaya_latest),
@@ -225,7 +231,7 @@ def index(request):
         'record_time': record_time,
         'get_ubuntu_link': storage_values.get('get_ubuntu_link', ''),
         'get_ubuntu_description': storage_values.get('get_ubuntu_description', ''),
-        'calendar_events': events,
+        'calendar_events': content_cache.get_or_set('portal/calendar', update_minicalendar, 600),
         'countdown_active': countdown_active,
         'countdown_target_page': storage_values.get('countdown_target_page', None),
         'countdown_image_url': countdown_image_url,
