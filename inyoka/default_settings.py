@@ -128,8 +128,15 @@ USER_RESET_EMAIL_LIMIT = 31
 # the id of the ikhaya team group
 IKHAYA_GROUP_ID = 1
 
-# settings for the jabber bot
+# settings for the jabber bot (client)
 JABBER_BOT_SERVER = 'tcp://127.0.0.1:6203'
+
+# settings for the jabber bot (server)
+# where to listen for client connections:
+JABBER_BIND = 'tcp://127.0.0.1:6203'
+# Jabber-ID without ressource
+JABBER_ID = None
+JABBER_PASSWORD = None
 
 # hours for a user to activate the account
 ACTIVATION_HOURS = 48

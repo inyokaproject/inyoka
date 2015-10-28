@@ -1,21 +1,17 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-    inyoka.scripts.jabber_bot
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    inyoka.portal.jabberbot
+    ~~~~~~~~~~~~~~~~~~~~~~~
 
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import print_function
-
-import logging
-import os
-import sys
-
 import zmq
-
+from django.conf import settings
+from django.core.management.base import NoArgsCommand
 from sleekxmpp import ClientXMPP
+
+from inyoka.utils.logger import logger
 
 
 class JabberBot(ClientXMPP):
@@ -33,10 +29,10 @@ class JabberBot(ClientXMPP):
     def handle_session_start(self, event):
         self.send_presence()
 
-        logging.debug('Starting ZeroMQ Connection')
+        logger.debug('Starting ZeroMQ Connection')
         socket = self.zmq.socket(zmq.REP)
         socket.setsockopt(zmq.LINGER, 0)
-        logging.debug('Connecting to ZeroMQ Socket')
+        logger.debug('Connecting to ZeroMQ Socket')
         socket.bind(self.zeromq_bind)
 
         while True:
@@ -59,39 +55,23 @@ class JabberBot(ClientXMPP):
                     break
 
     def handle_disconnected(self, data):
-        logging.info('DISCONNECTED :: %s' % data)
+        logger.info('DISCONNECTED :: %s' % data)
         self.zmq.term()
         # reset the context, since the bot automatically reconnects!
         self.zmq = zmq.Context()
 
 
-def main():
-    """Starts the server."""
+class Command(NoArgsCommand):
+    """
+    Custom Management Command for our Jabber Bot Service. Requires no arguments and logs
+    everything with django logging.
+    """
+    help = 'Jabberbot Service'
 
-    debug = (len(sys.argv) == 2 and sys.argv[1] == '--debug')
-
-    error = False
-    required_keys = ('INYOKA_JABBER_ID', 'INYOKA_JABBER_PASSWORD', 'INYOKA_JABBER_BIND')
-    for key in required_keys:
-        if key not in os.environ:
-            error = True
-            sys.stderr.write('You need to set {key} in your environment!\n'.format(key=key))
-
-    if error:
-        return 1
-
-    jid = os.environ['INYOKA_JABBER_ID']
-    password = os.environ['INYOKA_JABBER_PASSWORD']
-    bind = os.environ['INYOKA_JABBER_BIND']
-
-    level = logging.INFO if not debug else logging.DEBUG
-    logging.basicConfig(level=level,
-                        format='%(levelname)-8s %(message)s')
-
-    xmpp = JabberBot(jid, password, bind)
-    xmpp.connect()
-    xmpp.process(block=True)
-
-
-if __name__ == '__main__':
-    sys.exit(main())
+    def handle_noargs(self, *args, **kwargs):
+        if not (settings.JABBER_ID and settings.JABBER_PASSWORD and settings.JABBER_BIND):
+            logger.warning('Jabberbot Configuration missing or incomplete.')
+            raise SystemExit(1)
+        xmpp = JabberBot(settings.JABBER_ID, settings.JABBER_PASSWORD, settings.JABBER_BIND)
+        xmpp.connect()
+        xmpp.process(block=True)
