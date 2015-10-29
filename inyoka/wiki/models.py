@@ -305,28 +305,13 @@ class PageManager(models.Manager):
 
     def get_missing(self):
         """Return a tuple of (page, count) for all missing page-links."""
-        missing = MetaData.objects.filter(key='X-Link') \
-                                  .values_list('value', flat=True) \
-                                  .extra(where=["wiki_page.id IS NULL"])
-        missing.query.join(('wiki_metadata', 'wiki_page', 'value', 'name'),
-                           promote=True, nullable=True)
-        missing = list(missing)
-        pages = set(missing)
+        page_names = Page.objects.filter(last_rev__deleted=False).values('name')
 
-        # Exclude deleted pages
-        deleted = MetaData.objects.values_list('value', flat=True) \
-            .extra(tables=['wiki_metadata', 'wiki_page', 'wiki_revision'],
-                   where=["wiki_metadata.key = 'X-Link'",
-                          "wiki_metadata.value = wiki_page.name",
-                          "wiki_revision.deleted",
-                          "wiki_page.id = wiki_revision.page_id",
-                          "wiki_revision.id = wiki_page.last_rev_id"])
-        pages.union(deleted)
-
-        # group and sort pages
-        grouped = sorted([(page, missing.count(page)) for page in pages],
-                         key=itemgetter(1), reverse=True)
-        return grouped
+        return (MetaData.objects
+            .filter(key='X-Link')
+            .exclude(value__in=page_names)
+            .values_list('value')
+            .annotate(count=Count('value')))
 
     def get_similar(self, name, n=10):
         """
