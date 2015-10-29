@@ -147,12 +147,9 @@ def deactivate_user(user):
         user.email = 'user%d@ubuntuusers.de.invalid' % user.id
     user.set_unusable_password()
     user.groups.remove(*user.groups.all())
-    user.avatar = user.coordinates_long = user.coordinates_lat = \
-        user._primary_group = None
-    user.icq = user.jabber = user.msn = user.aim = user.yim = user.skype = \
-        user.wengophone = user.sip = user.location = user.signature = \
-        user.gpgkey = user.location = user.occupation = user.interests = \
-        user.website = user.launchpad = user.member_title = ''
+    user.avatar = user._primary_group = None
+    user.jabber = user.location = user.signature = user.gpgkey = \
+        user.location = user.website = user.launchpad = user.member_title = ''
     user.save()
 
 
@@ -416,20 +413,9 @@ class User(AbstractBaseUser):
     avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
     jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
-    icq = models.CharField(ugettext_lazy(u'ICQ'), max_length=16, blank=True)
-    msn = models.CharField(ugettext_lazy(u'MSN'), max_length=200, blank=True)
-    aim = models.CharField(ugettext_lazy(u'AIM'), max_length=200, blank=True)
-    yim = models.CharField(ugettext_lazy(u'Yahoo Messenger'), max_length=200, blank=True)
-    skype = models.CharField(ugettext_lazy(u'Skype'), max_length=200, blank=True)
-    wengophone = models.CharField(ugettext_lazy(u'WengoPhone'), max_length=200, blank=True)
-    sip = models.CharField('SIP', max_length=200, blank=True)
     signature = InyokaMarkupField(verbose_name=ugettext_lazy(u'Signature'), blank=True)
-    coordinates_long = models.FloatField(ugettext_lazy(u'Coordinates (longitude)'), blank=True, null=True)
-    coordinates_lat = models.FloatField(ugettext_lazy(u'Coordinates (latitude)'), blank=True, null=True)
     location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
     gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=255, blank=True)
-    occupation = models.CharField(ugettext_lazy(u'Job'), max_length=200, blank=True)
-    interests = models.CharField(ugettext_lazy(u'Interests'), max_length=200, blank=True)
     website = models.URLField(ugettext_lazy(u'Website'), blank=True)
     launchpad = models.CharField(ugettext_lazy(u'Launchpad username'), max_length=50, blank=True)
     settings = JSONField(ugettext_lazy(u'Settings'), default={})
@@ -636,7 +622,6 @@ class User(AbstractBaseUser):
 class UserPage(models.Model):
     user = models.OneToOneField(User)
     content = InyokaMarkupField()
-    content_rendered_old = models.TextField(db_column='content_rendered')  # Do not use
 
 
 @receiver(user_logged_in)

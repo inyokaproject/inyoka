@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
 import django.db.models.deletion
 from django.conf import settings
+from django.db import migrations, models
+
 import inyoka.utils.database
 
 
@@ -30,7 +31,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('key', models.CharField(max_length=30, db_index=True)),
-                ('value', models.CharField(max_length=512, db_index=True)),
+                ('value', models.CharField(max_length=255, db_index=True)),
             ],
             options={
             },

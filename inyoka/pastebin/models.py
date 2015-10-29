@@ -23,7 +23,6 @@ class Entry(models.Model):
     title = models.CharField(ugettext_lazy('Title'), max_length=40)
     lang = models.CharField(ugettext_lazy('Language'), max_length=20)
     code = PygmentsField(application='pastebin')
-    rendered_code_old = models.TextField(ugettext_lazy('Rendered code'), db_column='rendered_code')  # Do not use
     pub_date = models.DateTimeField(ugettext_lazy('Date'), db_index=True,
                                     default=datetime.utcnow)
     author = models.ForeignKey(User, verbose_name=ugettext_lazy('Author'))

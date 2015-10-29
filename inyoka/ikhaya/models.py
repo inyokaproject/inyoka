@@ -343,7 +343,6 @@ class Report(models.Model):
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
     solved = models.BooleanField(null=False, default=False)
-    rendered_text_old = models.TextField(db_column='rendered_text')  # do not use
 
     def __repr__(self):
         subject = self.article.subject if self.article else '?'
@@ -391,7 +390,6 @@ class Comment(models.Model):
     author = models.ForeignKey(User)
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
-    rendered_text_old = models.TextField(db_column='rendered_text')  # do not use
 
     def get_absolute_url(self, action='show'):
         if action in ['hide', 'restore', 'edit']:
