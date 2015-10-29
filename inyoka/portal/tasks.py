@@ -41,7 +41,7 @@ def check_for_user_record():
         storage['session_record_time'] = int(time())
 
 
-@periodic_task(run_every=crontab(hour=5,minute=30))
+@periodic_task(run_every=crontab(hour=5, minute=30))
 def clean_expired_users():
     """
     Deletes all never activated Users, except system users. An user will be deleted
@@ -58,7 +58,7 @@ def clean_expired_users():
                 logger.warning('Deleting expired User %s failed.' % user.username)
 
 
-@periodic_task(run_every=crontab(hour=4,minute=15,day_of_week='sunday'))
+@periodic_task(run_every=crontab(hour=4, minute=15, day_of_week='sunday'))
 def clean_inactive_users():
     """
     Deletes Users with no content and a last login more than USER_INACTIVE_DAYS (default one year)
