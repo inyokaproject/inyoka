@@ -219,7 +219,7 @@ def index(request):
 
     def update_minicalendar():
         """
-        Updates the Mini Calendar from the portal landing page.
+        Renders the Mini Calendar from the portal landing page.
         """
         return render_template('portal/minicalendar.html', {'events': Event.objects.get_upcoming(4)}, populate_defaults=False)
 
@@ -231,7 +231,7 @@ def index(request):
         'record_time': record_time,
         'get_ubuntu_link': storage_values.get('get_ubuntu_link', ''),
         'get_ubuntu_description': storage_values.get('get_ubuntu_description', ''),
-        'calendar_events': content_cache.get_or_set('portal/calendar', update_minicalendar, 600),
+        'calendar_events': content_cache.get_or_set('portal/calendar', update_minicalendar, 300),
         'countdown_active': countdown_active,
         'countdown_target_page': storage_values.get('countdown_target_page', None),
         'countdown_image_url': countdown_image_url,
