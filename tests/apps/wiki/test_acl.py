@@ -12,7 +12,7 @@ from django.core.cache import cache
 
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
-from inyoka.wiki.acl import get_privilege_flags, PRIV_ALL, PRIV_READ
+from inyoka.wiki.acl import PRIV_ALL, PRIV_READ, get_privilege_flags
 from inyoka.wiki.models import Page
 
 

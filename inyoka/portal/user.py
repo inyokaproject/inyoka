@@ -36,10 +36,7 @@ from inyoka.utils.mail import send_mail
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
-from inyoka.utils.user import (
-    gen_activation_key,
-    is_valid_username,
-)
+from inyoka.utils.user import gen_activation_key, is_valid_username
 
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
 DEFAULT_GROUP_ID = 1  # group id for all registered users

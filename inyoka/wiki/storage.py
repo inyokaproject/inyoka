@@ -40,15 +40,14 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
-from urlparse import urljoin
 from collections import OrderedDict
+from urlparse import urljoin
 
 from django.conf import settings
 from django.core.cache import cache
 
 from inyoka.utils.text import normalize_pagename
-from inyoka.wiki.models import Page, MetaData
-
+from inyoka.wiki.models import MetaData, Page
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
 
