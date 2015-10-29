@@ -32,7 +32,6 @@ from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
-from inyoka.utils.user import normalize_username
 from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
 
@@ -115,7 +114,7 @@ class GroupContainer(object):
 
     def load(self):
         """Load the data from the database."""
-        self.cache = set(normalize_username(x.name)
+        self.cache = set(x.name
                          for x in self.user.get_groups())
         for item in Page.objects.get_owners(self.page):
             if item == self.user.username or \
@@ -172,7 +171,6 @@ def get_privilege_flags(user, page_name, groups=None):
     if groups is None:
         groups = GroupContainer(user, page_name)
 
-    user = normalize_username(user.username)
     page_name = normalize_pagename(page_name)
 
     rules = storage.acl
@@ -180,7 +178,7 @@ def get_privilege_flags(user, page_name, groups=None):
         return PRIV_DEFAULT
     privileges = PRIV_NONE
     for pattern, subject, add_privs, del_privs in rules:
-        if (subject == user or
+        if (subject == user.username or
             (subject.startswith('@') and subject[1:] in groups)) and \
                 pattern.match(page_name) is not None:
             privileges = (privileges | add_privs) & ~del_privs

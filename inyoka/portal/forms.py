@@ -52,7 +52,7 @@ from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
-from inyoka.utils.user import is_valid_username, normalize_username
+from inyoka.utils.user import is_valid_username
 
 #: Some constants used for ChoiceFields
 NOTIFY_BY_CHOICES = (
@@ -577,12 +577,10 @@ class EditGroupForm(forms.ModelForm):
     def clean_name(self):
         """Validates that the name is alphanumeric"""
         data = self.cleaned_data
-        try:
-            name = normalize_username(data['name'])
-        except ValueError:
+        if not is_valid_username(data['name']):
             raise forms.ValidationError(_(
                 u'The group name contains invalid chars'))
-        return name
+        return data['name']
 
     def clean_import_icon_from_global(self):
         import_from_global = self.cleaned_data['import_icon_from_global']

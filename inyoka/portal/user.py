@@ -39,7 +39,6 @@ from inyoka.utils.urls import href
 from inyoka.utils.user import (
     gen_activation_key,
     is_valid_username,
-    normalize_username,
 )
 
 _ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
@@ -338,7 +337,9 @@ class UserManager(BaseUserManager):
                 Whether to send an activation mail or not.
                 If *False* the user will be saved as active.
         """
-        user = self.create_user(normalize_username(username), email, password)
+        if not is_valid_username(username):
+            raise ValueError('invalid username')
+        user = self.create_user(username, email, password)
         if not send_mail:
             # save the user as an active one
             user.status = 1
