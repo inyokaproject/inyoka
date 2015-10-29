@@ -16,7 +16,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.core import signing
-from django.core.cache import cache, caches
+from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
@@ -130,8 +130,6 @@ PRIVILEGE_DICT = {bits: tmp[key]
                   for bits, key in REVERSED_PRIVILEGES_BITS.iteritems()}
 del tmp
 
-# additional caches
-content_cache = caches['content']
 
 CONFIRM_ACTIONS = {
     'reactivate_user': (reactivate_user, settings.USER_REACTIVATION_LIMIT,),
@@ -231,7 +229,7 @@ def index(request):
         'record_time': record_time,
         'get_ubuntu_link': storage_values.get('get_ubuntu_link', ''),
         'get_ubuntu_description': storage_values.get('get_ubuntu_description', ''),
-        'calendar_events': content_cache.get_or_set('portal/calendar', update_minicalendar, 300),
+        'calendar_events': cache.get_or_set('portal/calendar', update_minicalendar, 300),
         'countdown_active': countdown_active,
         'countdown_target_page': storage_values.get('countdown_target_page', None),
         'countdown_image_url': countdown_image_url,
