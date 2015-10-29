@@ -52,7 +52,10 @@ def clean_expired_users():
     for user in User.objects.filter(status=0).filter(date_joined__lte=expired_datetime).exclude(username__in=set([settings.INYOKA_ANONYMOUS_USER, settings.INYOKA_SYSTEM_USER])).all():
         if not user.has_content():
             logger.info('Deleting expiered User %s' % user.username)
-            user.delete()
+            try:
+                user.delete()
+            except:
+                logger.warning('Deleting expired User %s failed.' % user.username)
 
 
 @periodic_task(run_every=crontab(hour=4,minute=15,day_of_week='sunday'))
@@ -66,4 +69,7 @@ def clean_inactive_users():
     for user in User.objects.filter(status=1).filter(last_login__lte=inactive_datetime).exclude(username__in=set([settings.INYOKA_ANONYMOUS_USER, settings.INYOKA_SYSTEM_USER])).all():
         if not user.has_content():
             logger.info('Deleting inactive User %s' % user.username)
-            user.delete()
+            try:
+                user.delete()
+            except:
+                logger.warning('Deleting inactive User %s failed.' % user.username)
