@@ -408,7 +408,6 @@ class User(AbstractBaseUser):
                                         help_text=ugettext_lazy(u'leave empty to ban permanent'))
 
     # profile attributes
-    post_count_old = models.IntegerField(ugettext_lazy(u'Posts'), default=0, db_column='post_count')  # TODO: can be removed
     avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
     jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)

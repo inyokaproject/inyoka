@@ -46,12 +46,15 @@ class QueryCounter(object):
     def __call__(self, default=None):
         return self.value(default=default)
 
-    def build_cache(self):
+    def db_count(self, into_cache=False):
         """
-        Executes the query with .count() and saves the result into the cache.
+        Executes the query with .count() and returns the value.
+
+        Saves the value into the cache in into_cache is True.
         """
-        count = self.query.count()
-        cache.set(self.cache_key, count, timeout=self.timeout)
+        value = self.query.count()
+        cache.set(self.cache_key, value, timeout=self.timeout)
+        return value
 
     def value(self, default=None):
         """
@@ -65,7 +68,7 @@ class QueryCounter(object):
         done for fast queries.
         """
         if not self.use_task:
-            count = cache.get_or_set(self.cache_key, self.build_cache, self.timeout)
+            count = cache.get_or_set(self.cache_key, self.db_count, self.timeout)
         else:
             count = cache.get(self.cache_key)
             if count is None:

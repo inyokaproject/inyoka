@@ -46,6 +46,7 @@ from inyoka.forum.constants import (
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import Group, User
 from inyoka.portal.utils import get_ubuntu_versions
+from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import (
     InyokaMarkupField,
     LockableObject,
@@ -241,8 +242,6 @@ class Forum(models.Model):
     slug = models.CharField(max_length=100, unique=True, db_index=True)
     description = models.CharField(max_length=500, blank=True)
     position = models.IntegerField(default=0, db_index=True)
-    post_count = models.IntegerField(default=0)
-    topic_count = models.IntegerField(default=0)
     newtopic_default_text = models.TextField(null=True, blank=True)
     user_count_posts = models.BooleanField(default=True)
     force_version = models.BooleanField(default=False)
@@ -391,6 +390,19 @@ class Forum(models.Model):
             self.position,
         )
 
+    @property
+    def post_count(self):
+        return QueryCounter(
+            cache_key="forum_post_count:{}".format(self.id),
+            query=Post.objects.filter(topic__forum=self),
+            use_task=False)
+
+    @property
+    def topic_count(self):
+        return QueryCounter(
+            cache_key="forum_topic_count:{}".format(self.id),
+            query=self.topics.all(),
+            use_task=False)
 
 class Topic(models.Model):
     """A topic symbolizes a bunch of posts (at least one) that is located
@@ -402,7 +414,6 @@ class Topic(models.Model):
     title = models.CharField(max_length=100, blank=True)
     slug = models.CharField(max_length=50, blank=True)
     view_count = models.IntegerField(default=0)
-    post_count = models.IntegerField(default=0)
     sticky = models.BooleanField(default=False, db_index=True)
     solved = models.BooleanField(default=False)
     locked = models.BooleanField(default=False)
@@ -449,14 +460,14 @@ class Topic(models.Model):
             self.forum = new_forum
 
             # recalculate post counters
-            new_forum.topic_count += 1
-            old_forum.topic_count -= 1
+            new_forum.topic_count.incr()
+            old_forum.topic_count.decr()
 
             for forum in new_forums:
-                forum.post_count += 1
+                forum.post_count.incr()
 
             for forum in old_forums:
-                forum.post_count -= 1
+                forum.post_count.decr()
 
             # Decrement or increment the user post count regarding
             # posts are counted in the new forum or not.
@@ -508,10 +519,9 @@ class Topic(models.Model):
 
         update_model(forums, last_post=model_or_none(last_post, self.last_post))
         update_model(self, last_post=None, first_post=None)
-        update_model(self.forum, topic_count=F('topic_count') - 1)
+        forum.topic_count.decr()
 
-        for post in self.posts.all():
-            post.delete()
+        self.posts.all().delete()
 
         # Delete subscriptions and remove wiki page discussions
         ctype = ContentType.objects.get_for_model(Topic)
@@ -530,13 +540,18 @@ class Topic(models.Model):
 
     def get_pagination(self):
         request = current_request._get_current_object()
-        pagination = Pagination(request=request, query=[], page=1, total=self.post_count,
-                                per_page=POSTS_PER_PAGE, link=self.get_absolute_url())
+        pagination = Pagination(
+            request=request,
+            query=[],
+            page=1,
+            total=self.post_count.value(),
+            per_page=POSTS_PER_PAGE,
+            link=self.get_absolute_url())
         return pagination
 
     @property
     def paginated(self):
-        return bool((self.post_count - 1) // POSTS_PER_PAGE)
+        return bool((self.post_count.value() - 1) // POSTS_PER_PAGE)
 
     def get_ubuntu_version(self):
         if self.ubuntu_version:
@@ -577,6 +592,14 @@ class Topic(models.Model):
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
             user.save(update_fields=('forum_read_status',))
+
+    @property
+    def post_count(self):
+        return QueryCounter(
+            cache_key="topic_post_count:{}".format(self.id),
+            query=self.posts.all(),
+            use_task=False)
+
 
     def __unicode__(self):
         return self.title
@@ -724,8 +747,8 @@ class Post(models.Model, LockableObject):
 
         # decrement post_counts
         forums = self.topic.forum.parents + [self.topic.forum]
-        update_model(self.topic, post_count=F('post_count') - 1)
-        update_model(forums, post_count=F('post_count') - 1)
+        self.topic.post_count.decr()
+        self.forum.post_count.decr()
 
         # decrement position
         Post.objects.filter(position__gt=self.position, topic=self.topic) \
@@ -816,7 +839,7 @@ class Post(models.Model, LockableObject):
             if old_topic.forum.id != new_topic.forum.id:
                 # Decrease the post counts in the old forum (counter in the new
                 # one are handled by signals)
-                old_topic.forum.post_count -= len(posts)
+                old_topic.forum.post_count.decr(len(posts))
 
                 # the new forum or not.
                 new_forum, old_forum = new_topic.forum, old_topic.forum
@@ -833,8 +856,8 @@ class Post(models.Model, LockableObject):
 
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \
-                             .update(post_count=F('post_count') - len(posts),
-                                     last_post=old_topic.posts.order_by('-position')[0])
+                             .update(last_post=old_topic.posts.order_by('-position')[0])
+                old_topic.post_count.decr(len(posts))
             else:
                 if old_topic.has_poll:
                     new_topic.has_poll = True
@@ -843,7 +866,6 @@ class Post(models.Model, LockableObject):
                 old_topic.delete()
 
             values = {'last_post': sorted(posts, key=lambda o: o.position)[-1],
-                      'post_count': new_topic.posts.count(),
                       'first_post': new_topic.first_post}
             if new_topic.first_post is None:
                 values['first_post'] = sorted(posts, key=lambda o: o.position)[0]
@@ -870,10 +892,10 @@ class Post(models.Model, LockableObject):
             )
 
             # Update post_count of the forums
-            Forum.objects.filter(id__in=new_ids)\
-                .update(post_count=F('post_count') + len(posts))
-            Forum.objects.filter(id__in=old_ids)\
-                .update(post_count=F('post_count') - len(posts))
+            for forum in new_forums:
+                forum.post_count.incr(len(posts))
+            for forum in old_forums:
+                forum.post_count.decr(len(posts))
 
         new_topic.forum.invalidate_topic_cache()
         old_topic.forum.invalidate_topic_cache()

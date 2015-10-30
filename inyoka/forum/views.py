@@ -167,7 +167,7 @@ def forum(request, slug, page=1):
                              .values_list('id', flat=True)\
                              .order_by('-sticky', '-last_post')
     pagination = Pagination(request, topic_ids, page, TOPICS_PER_PAGE,
-                            url_for(forum), total=forum.topic_count)
+                            url_for(forum), total=forum.topic_count.value())
 
     subforums = filter_invisible(request.user, forum.children, perm=privs)
     last_post_ids = map(lambda f: f.last_post_id, subforums)
@@ -253,7 +253,7 @@ def viewtopic(request, topic_slug, page=1):
     post_ids = Post.objects.filter(topic=topic) \
                            .values_list('id', flat=True)
     pagination = Pagination(request, post_ids, page, POSTS_PER_PAGE, url_for(topic),
-                            total=topic.post_count, rownum_column='position')
+                            total=topic.post_count.value(), rownum_column='position')
 
     post_ids = list(pagination.get_queryset())
     posts = Post.objects.filter(id__in=post_ids) \
