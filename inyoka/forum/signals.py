@@ -54,8 +54,7 @@ def post_save_topic(sender, **kwargs):
         return
     instance = kwargs.get('instance')
     if kwargs.get('created', False):
-        Forum.objects.filter(id=instance.forum.id) \
-                     .update(topic_count=F('topic_count') + 1)
+        instance.forum.topic_count.incr()
 
 
 @receiver(post_delete, sender=Topic)
@@ -85,22 +84,23 @@ def post_save_post(sender, **kwargs):
         if instance.topic.forum.user_count_posts:
             instance.author.post_count.incr()
 
-        values = {'post_count': F('post_count') + 1,
-                  'last_post': instance}
+        values = {'last_post': instance}
 
         if instance.topic.first_post is None:
             instance.topic.first_post = instance
             instance.topic.save()
 
         Topic.objects.filter(pk=instance.topic.pk).update(**values)
+        instance.topic.post_count.incr()
         # refetch the topic instance since we use it later on
         instance.topic = Topic.objects.get(pk=instance.topic.pk)
 
         parent_ids = list(p.id for p in instance.topic.forum.parents)
         parent_ids.append(instance.topic.forum.id)
-        Forum.objects.filter(id__in=parent_ids).update(
-            post_count=F('post_count') + 1,
-            last_post=instance)
+        instance.topic.forum.post_count.incr()
+        for forum in instance.topic.forum.parents:
+            forum.post_count.incr()
+        Forum.objects.filter(id__in=parent_ids).update(last_post=instance)
         instance.topic.forum.invalidate_topic_cache()
 
 

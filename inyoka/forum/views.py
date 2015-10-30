@@ -508,7 +508,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     # antispam measures
     privileges = get_forum_privileges(request.user, forum)
     needs_spam_check = True
-    if request.user.post_count(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
+    if request.user.post_count.value(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
         # Exclude very active users.
         needs_spam_check = False
     elif check_privilege(privileges, 'moderate') or post and post.pk:
@@ -747,7 +747,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             attachments = Attachment.objects.filter(post=post)
 
     if not newtopic:
-        max = topic.post_count
+        max = topic.post_count.value()
         posts = topic.posts.select_related('author') \
                            .filter(hidden=False, position__gt=max - 15) \
                            .order_by('-position')
@@ -1200,16 +1200,15 @@ def splittopic(request, topic_slug, page=1):
 
             try:
                 if data['action'] == 'new':
-                    new_topic = Topic(title=data['title'],
-                                      forum=data['forum'],
-                                      slug=None,
-                                      post_count=0,
-                                      author_id=posts[0].author_id,
-                                      ubuntu_version=data['ubuntu_version'],
-                                      ubuntu_distro=data['ubuntu_distro'])
-                    new_topic.save()
-                    Forum.objects.filter(id=new_topic.forum.id) \
-                                 .update(topic_count=F('topic_count') + 1)
+                    new_topic = Topic.objects.create(
+                        title=data['title'],
+                        forum=data['forum'],
+                        slug=None,
+                        author_id=posts[0].author_id,
+                        ubuntu_version=data['ubuntu_version'],
+                        ubuntu_distro=data['ubuntu_distro'])
+                    new_topic.forum.topic_count.incr()
+
                     Post.split(posts, old_topic, new_topic)
                 else:
                     new_topic = data['topic']
@@ -1308,7 +1307,7 @@ def delete_post(request, post_id, action='hide'):
         return abort_access_denied(request)
 
     if post.id == topic.first_post_id:
-        if topic.post_count == 1:
+        if topic.post_count.value() == 1:
             return HttpResponseRedirect(href('forum', 'topic',
                                              topic.slug, action))
         if action == 'delete':
@@ -1596,6 +1595,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         title = _(u'Posts of the last %(n)d hours') % {'n': hours}
         url = href('forum', 'last%d' % hours, forum)
     elif action == 'unanswered':
+        # TODO: fixme
         topics = topics.filter(post_count=1)
         title = _(u'Unanswered topics')
         url = href('forum', 'unanswered', forum)

@@ -510,16 +510,18 @@ class Topic(models.Model):
         if not self.forum:
             return super(Topic, self).delete()
 
-        forums = self.forum.parents + [self]
+        forums = self.forum.parents + [self.forum]
         pks = [f.pk for f in forums]
 
         last_post = Post.objects.filter(topic__id=F('topic__id'),
                                         topic__forum__pk__in=pks) \
                                 .aggregate(count=Max('id'))['count']
 
+        for forum in forums:
+            forum.topic_count.decr()
+
         update_model(forums, last_post=model_or_none(last_post, self.last_post))
         update_model(self, last_post=None, first_post=None)
-        forum.topic_count.decr()
 
         self.posts.all().delete()
 
@@ -748,7 +750,7 @@ class Post(models.Model, LockableObject):
         # decrement post_counts
         forums = self.topic.forum.parents + [self.topic.forum]
         self.topic.post_count.decr()
-        self.forum.post_count.decr()
+        self.topic.forum.post_count.decr()
 
         # decrement position
         Post.objects.filter(position__gt=self.position, topic=self.topic) \

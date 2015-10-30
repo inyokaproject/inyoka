@@ -61,8 +61,8 @@ class TestPostSplitNewTopic(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 9)
-        self.assertEqual(t2.post_count, 1)
+        self.assertEqual(t1.post_count.value(), 9)
+        self.assertEqual(t2.post_count.value(), 1)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t1_posts[9].id)
@@ -70,8 +70,8 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[8].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[9].id)
 
-        self.assertEqual(f1.post_count, 9)
-        self.assertEqual(f2.post_count, 1)
+        self.assertEqual(f1.post_count.value(), 9)
+        self.assertEqual(f2.post_count.value(), 1)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[8].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
@@ -101,8 +101,8 @@ class TestPostSplitNewTopic(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 8)
-        self.assertEqual(t2.post_count, 2)
+        self.assertEqual(t1.post_count.value(), 8)
+        self.assertEqual(t2.post_count.value(), 2)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t1_posts[8].id)
@@ -110,8 +110,8 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[7].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[9].id)
 
-        self.assertEqual(f1.post_count, 8)
-        self.assertEqual(f2.post_count, 2)
+        self.assertEqual(f1.post_count.value(), 8)
+        self.assertEqual(f2.post_count.value(), 2)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[7].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
@@ -141,8 +141,8 @@ class TestPostSplitNewTopic(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 9)
-        self.assertEqual(t2.post_count, 1)
+        self.assertEqual(t1.post_count.value(), 9)
+        self.assertEqual(t2.post_count.value(), 1)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t1_posts[3].id)
@@ -150,8 +150,8 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[3].id)
 
-        self.assertEqual(f1.post_count, 9)
-        self.assertEqual(f2.post_count, 1)
+        self.assertEqual(f1.post_count.value(), 9)
+        self.assertEqual(f2.post_count.value(), 1)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[3].id)
@@ -184,8 +184,8 @@ class TestPostSplitNewTopic(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 8)
-        self.assertEqual(t2.post_count, 2)
+        self.assertEqual(t1.post_count.value(), 8)
+        self.assertEqual(t2.post_count.value(), 2)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t1_posts[5].id)
@@ -193,8 +193,8 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[6].id)
 
-        self.assertEqual(f1.post_count, 8)
-        self.assertEqual(f2.post_count, 2)
+        self.assertEqual(f1.post_count.value(), 8)
+        self.assertEqual(f2.post_count.value(), 2)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[6].id)
@@ -227,8 +227,8 @@ class TestPostSplitNewTopic(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 7)
-        self.assertEqual(t2.post_count, 3)
+        self.assertEqual(t1.post_count.value(), 7)
+        self.assertEqual(t2.post_count.value(), 3)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t1_posts[2].id)
@@ -236,8 +236,8 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[8].id)
 
-        self.assertEqual(f1.post_count, 7)
-        self.assertEqual(f2.post_count, 3)
+        self.assertEqual(f1.post_count.value(), 7)
+        self.assertEqual(f2.post_count.value(), 3)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
@@ -271,8 +271,8 @@ class TestPostSplitNewTopic(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 5)
-        self.assertEqual(t2.post_count, 5)
+        self.assertEqual(t1.post_count.value(), 5)
+        self.assertEqual(t2.post_count.value(), 5)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t1_posts[2].id)
@@ -280,8 +280,8 @@ class TestPostSplitNewTopic(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[8].id)
 
-        self.assertEqual(f1.post_count, 5)
-        self.assertEqual(f2.post_count, 5)
+        self.assertEqual(f1.post_count.value(), 5)
+        self.assertEqual(f2.post_count.value(), 5)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
