@@ -14,8 +14,8 @@ from time import time
 from celery.task import periodic_task, task
 from celery.task.schedules import crontab
 from django.conf import settings
-from django.db import connection
 from django.core.cache import cache
+from django.db import connection
 
 from inyoka.portal.models import SessionInfo
 from inyoka.portal.user import User

@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_split_new_topic
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,8 +41,8 @@ class TestPostSplitNewTopic(TestCase):
             self.topic1.posts.add(self.t1_posts[i])
 
     def _test_position(self, topic_id, postcount):
-        vl = list(Post.objects.filter(topic_id=topic_id)\
-                    .values_list('position', flat=True).order_by('position'))
+        vl = list(Post.objects.filter(topic_id=topic_id)
+                      .values_list('position', flat=True).order_by('position'))
         self.assertEqual(vl, list(xrange(postcount)))
 
     def test_single_last_post(self):

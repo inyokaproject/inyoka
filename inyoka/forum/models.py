@@ -404,6 +404,7 @@ class Forum(models.Model):
             query=self.topics.all(),
             use_task=False)
 
+
 class Topic(models.Model):
     """A topic symbolizes a bunch of posts (at least one) that is located
     insside a forum.  Wen creating a new topic, a new post is added to it
@@ -601,7 +602,6 @@ class Topic(models.Model):
             cache_key="topic_post_count:{}".format(self.id),
             query=self.posts.all(),
             use_task=False)
-
 
     def __unicode__(self):
         return self.title

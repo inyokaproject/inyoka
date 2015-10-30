@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_split_append_topic
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,8 +49,8 @@ class TestPostSplit(TestCase):
             self.topic2.posts.add(self.t2_posts[i])
 
     def _test_position(self, topic_id, postcount):
-        vl = list(Post.objects.filter(topic_id=topic_id)\
-                    .values_list('position', flat=True).order_by('position'))
+        vl = list(Post.objects.filter(topic_id=topic_id)
+                      .values_list('position', flat=True).order_by('position'))
         self.assertEqual(vl, list(xrange(postcount)))
 
     def test_single_last_post(self):
@@ -285,8 +285,8 @@ class TestPostSplit(TestCase):
         post_ids = ids[0:2] + ids[4:6] + ids[9:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
-        post_ids = [p.id for k, p in self.t2_posts.items()] + \
-                ids[2:4] + ids[6:9]
+        post_ids = ([p.id for k, p in self.t2_posts.items()] +
+                    ids[2:4] + ids[6:9])
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
         self._test_position(t1, 5)
