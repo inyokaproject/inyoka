@@ -17,7 +17,7 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import F, Q
+from django.db.models import F, Q, Count
 from django.http import Http404, HttpResponseRedirect
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
@@ -1595,8 +1595,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         title = _(u'Posts of the last %(n)d hours') % {'n': hours}
         url = href('forum', 'last%d' % hours, forum)
     elif action == 'unanswered':
-        # TODO: fixme
-        topics = topics.filter(post_count=1)
+        topics = topics.annotate(p_count=Count('posts')).filter(p_count=1)
         title = _(u'Unanswered topics')
         url = href('forum', 'unanswered', forum)
     elif action == 'unsolved':
