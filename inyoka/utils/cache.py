@@ -15,6 +15,7 @@
 """
 from time import sleep
 
+from django.conf import settings
 from django.core.cache import cache
 from django.utils.translation import ugettext as _
 from django_redis.cache import RedisCache as _RedisCache
@@ -25,7 +26,7 @@ class QueryCounter(object):
     Calls .count() for a query and saves this value into redis.
     """
 
-    def __init__(self, cache_key, query, use_task=False, timeout=1209600):
+    def __init__(self, cache_key, query, use_task=False, timeout=None):
         """
         task has to be a celery task that generates the counter.
 
@@ -34,7 +35,7 @@ class QueryCounter(object):
         self.cache_key = cache_key
         self.query = query
         self.use_task = use_task
-        self.timeout = timeout
+        self.timeout = timeout or settings.COUNTER_CACHE_TIMEOUT
 
     def __str__(self):
         """
