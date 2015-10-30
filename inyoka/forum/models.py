@@ -467,9 +467,9 @@ class Topic(models.Model):
 
                 for user in users:
                     if new_forum.user_count_posts:
-                        user.post_count_incr(user.p_count)
+                        user.post_count.incr(user.p_count)
                     else:
-                        user.post_count_decr(user.p_count)
+                        user.post_count.decr(user.p_count)
 
             self.save()
 
@@ -712,7 +712,7 @@ class Post(models.Model, LockableObject):
 
         # degrade user post count
         if self.topic.forum.user_count_posts:
-            self.author.post_count_decr()
+            self.author.post_count.decr()
 
         # update topic.last_post_id
         if self.pk == self.topic.last_post_id:
@@ -827,9 +827,9 @@ class Post(models.Model, LockableObject):
 
                     for user in users:
                         if new_forum.user_count_posts:
-                            user.post_count_incr(user.p_count)
+                            user.post_count.incr(user.p_count)
                         else:
-                            user.post_count_decr(user.p_count)
+                            user.post_count.decr(user.p_count)
 
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \

@@ -83,7 +83,7 @@ def post_save_post(sender, **kwargs):
 
     if created:
         if instance.topic.forum.user_count_posts:
-            instance.author.post_count_incr()
+            instance.author.post_count.incr()
 
         values = {'post_count': F('post_count') + 1,
                   'last_post': instance}

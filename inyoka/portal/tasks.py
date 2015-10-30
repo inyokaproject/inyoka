@@ -14,6 +14,8 @@ from time import time
 from celery.task import periodic_task, task
 from celery.task.schedules import crontab
 from django.conf import settings
+from django.db import connection
+from django.core.cache import cache
 
 from inyoka.portal.models import SessionInfo
 from inyoka.portal.user import User
@@ -74,9 +76,11 @@ def clean_inactive_users():
                 logger.warning('Deleting inactive User %s failed.' % user.username)
 
 
-@task
-def count_user_posts(user_id):
+@task(ignore_result=True)
+def query_counter_task(cache_key, sql):
     """
     Counts all posts from a specific user.
     """
-    User.objects.get(id=user_id).get_post_count(from_db=True)
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    cache.set(cache_key, cursor.fetchone()[0])

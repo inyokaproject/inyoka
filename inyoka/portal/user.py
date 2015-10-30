@@ -29,6 +29,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from PIL import Image
 
+from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import InyokaMarkupField, JSONField, update_model
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
@@ -606,66 +607,13 @@ class User(AbstractBaseUser):
                 self.subscription_set.exists())
 
     @property
-    def post_count_cache_key(self):
-        return u'user_posts:{}'.format(self.pk)
-
-    def get_post_count(self, from_db=False, default=None):
-        """
-        Returns the post count for the user.
-
-        Uses the redis cache as default.
-
-        If from_db is True, then the value is calculated from the database
-        and the result saved into the cache.
-
-        Returns default if from_db is False and the cache key does not exist.
-        """
-        cache_key = self.post_count_cache_key
-
-        if from_db:
-            count = (self.post_set
-                         .filter(hidden=False)
-                         .filter(topic__forum__user_count_posts=True)
-                         .count())
-            cache.set(cache_key, count, timeout=1209600)  # timeout = 2 weeks
-            return count
-        count = cache.get(cache_key)
-        if count is None:
-            from inyoka.portal.tasks import count_user_posts
-            count_user_posts.delay(self.id)
-            return default
-        return count
-
-    @property
     def post_count(self):
-        """
-        Returns the post count as property.
-
-        This is only for the template. Use get_post_count() in python.
-        """
-        return self.get_post_count(default=_("counting..."))
-
-    def post_count_incr(self, count=1):
-        """
-        Adds one to the post counter.
-
-        Does nothing if the counter is not in the cache.
-        """
-        try:
-            cache.incr(self.post_count_cache_key, count)
-        except ValueError:
-            pass
-
-    def post_count_decr(self, count=1):
-        """
-        Decreace post counter by one.
-
-        Does nothing if the counter is not in the cache.
-        """
-        try:
-            cache.decr(self.post_count_cache_key, count)
-        except ValueError:
-            pass
+        return QueryCounter(
+            cache_key="user_post_count:{}".format(self.id),
+            query=self.post_set
+                      .filter(hidden=False)
+                      .filter(topic__forum__user_count_posts=True),
+            use_task=True)
 
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
