@@ -219,11 +219,11 @@ class TestPostSplit(TestCase):
                     position=i)
             self.topic2.posts.add(self.t2_posts[i])
 
-        self.user.get_post_count(from_db=True)
+        self.user.post_count.build_cache()
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
-        self.assertEqual(user.post_count, 10)
+        self.assertEqual(user.post_count(), 10)
 
     def test_topic_count(self):
         self.assertEqual(Topic.objects.get(id=self.topic1.id).post_count, 5)
@@ -309,14 +309,14 @@ class TestPostMove(TestCase):
             topic=self.topic2)
 
         # Calculate user posts
-        self.user.get_post_count(from_db=True)
+        self.user.post_count.build_cache()
 
         # Reload objects. Use topic1.refresh_from_db() in django 1.8
         self.topic1 = Topic.objects.get(pk=self.topic1.pk)
 
     def test_post_counter(self):
         self.assertEqual(
-            self.user.get_post_count(),
+            self.user.post_count(),
             3)
 
     def test_topic_count(self):
@@ -332,7 +332,7 @@ class TestPostMove(TestCase):
 
         self.topic1 = Topic.objects.get(id=self.topic1.id)
         self.assertEqual(
-            self.user.get_post_count(),
+            self.user.post_count(),
             0)
         self.assertEqual(
             self.topic1.post_count,

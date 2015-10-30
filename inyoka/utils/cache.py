@@ -15,7 +15,6 @@
 """
 from time import sleep
 
-from django.conf import settings
 from django.core.cache import cache
 from django.utils.translation import ugettext as _
 

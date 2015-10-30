@@ -74,7 +74,7 @@ class TestUserHasContent(TestCase):
         self.assertFalse(self.user.has_content())
 
     def test_post_count(self):
-        cache.set(self.user.post_count_cache_key, 1)
+        cache.set(self.user.post_count.cache_key, 1)
         self.assertTrue(self.user.has_content())
 
     def test_has_forum_posts(self):

@@ -622,7 +622,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_newtopic_frequent_user_spam(self):
         # frequent users (>100 posts) should be excluded from spam detection
-        cache.set(self.user.post_count_cache_key, 100)
+        cache.set(self.user.post_count.cache_key, 100)
         self.client.login(username='user', password='user')
         self.make_valid_key()
         self.make_spam()
@@ -920,7 +920,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_new_post_frequent_user_spam(self):
         # frequent users (>100 posts) should be excluded from spam detection
-        cache.set(self.user.post_count_cache_key, 100)
+        cache.set(self.user.post_count.cache_key, 100)
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 
