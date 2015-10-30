@@ -11,6 +11,7 @@
 import unittest
 from datetime import datetime
 
+from django.core.cache import cache
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.pastebin.models import Entry
@@ -73,7 +74,7 @@ class TestUserHasContent(TestCase):
         self.assertFalse(self.user.has_content())
 
     def test_post_count(self):
-        self.user.post_count = 1
+        cache.set(self.user.post_count_cache_key, 1)
         self.assertTrue(self.user.has_content())
 
     def test_has_forum_posts(self):

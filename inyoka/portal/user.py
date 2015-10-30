@@ -591,16 +591,13 @@ class User(AbstractBaseUser):
         """
         Returns True if the user has any content, else False.
         """
-        return (self.post_count or
+        return (self.get_post_count() or
                 self.post_set.exists() or
                 self.topics.exists() or
                 self.comment_set.exists() or
                 self.privatemessageentry_set.exists() or
                 self.wiki_revisions.exists() or
-
-                # TODO: Fix me, this line does not work at the moment!
                 self.article_set.exists() or
-
                 # Pastebin
                 self.entry_set.exists() or
                 self.event_set.exists() or
@@ -646,31 +643,27 @@ class User(AbstractBaseUser):
 
         This is only for the template. Use get_post_count() in python.
         """
-        return self.get_post_count(default="Wird berechnet")
+        return self.get_post_count(default=_("counting..."))
 
-    def post_count_incr(self):
+    def post_count_incr(self, count=1):
         """
         Adds one to the post counter.
 
         Does nothing if the counter is not in the cache.
         """
-        cache_key = self.post_count_cache_key
-
         try:
-            cache.incr(cache_key)
+            cache.incr(self.post_count_cache_key, count)
         except ValueError:
             pass
 
-    def post_count_decr(self):
+    def post_count_decr(self, count=1):
         """
         Decreace post counter by one.
 
         Does nothing if the counter is not in the cache.
         """
-        cache_key = self.post_count_cache_key
-
         try:
-            cache.decr(cache_key)
+            cache.decr(self.post_count_cache_key, count)
         except ValueError:
             pass
 

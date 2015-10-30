@@ -10,35 +10,47 @@
 """
 from __future__ import division
 
-import re
 import cPickle
-import operator
+import re
+from datetime import datetime
+from functools import reduce
+from hashlib import md5
+from itertools import groupby
+from operator import attrgetter, itemgetter
 from os import path
 from time import time
-from hashlib import md5
-from datetime import datetime
-from operator import attrgetter, itemgetter
-from functools import reduce
-from itertools import groupby
 
-from django.db import models, transaction
 from django.conf import settings
-from django.db.models import F, Max, Count
-from django.core.cache import cache
-from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
-from django.utils.html import escape, format_html
-from django.utils.translation import pgettext, ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
+from django.db import models, transaction
+from django.db.models import F, Count, Max
+from django.utils.encoding import DjangoUnicodeDecodeError, force_unicode
+from django.utils.html import escape, format_html
+from django.utils.translation import ugettext as _
+from django.utils.translation import pgettext, ugettext_lazy
 
-from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
-    check_privilege, filter_invisible)
-from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
-    SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS)
+from inyoka.forum.acl import (
+    CAN_READ,
+    check_privilege,
+    filter_invisible,
+    filter_visible,
+    get_privileges,
+)
+from inyoka.forum.constants import (
+    CACHE_PAGES_COUNT,
+    POSTS_PER_PAGE,
+    SUPPORTED_IMAGE_TYPES,
+    UBUNTU_DISTROS,
+)
 from inyoka.portal.models import Subscription
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import Group, User
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.database import (
-    update_model, model_or_none, LockableObject, InyokaMarkupField,
+    InyokaMarkupField,
+    LockableObject,
+    model_or_none,
+    update_model,
 )
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
@@ -430,11 +442,9 @@ class Topic(models.Model):
         old_forums.append(self.forum)
         new_forums = [parent for parent in new_forum.parents]
         new_forums.append(new_forum)
-
         old_forum = self.forum
 
         with transaction.atomic():
-
             # move the topic
             self.forum = new_forum
 
@@ -451,13 +461,15 @@ class Topic(models.Model):
             # Decrement or increment the user post count regarding
             # posts are counted in the new forum or not.
             if old_forum.user_count_posts != new_forum.user_count_posts:
-                users = User.objects.filter(post__topic=self).distinct()
+                users = (User.objects
+                             .filter(post__topic=self)
+                             .annotate(p_count=Count('post__id')))
 
                 for user in users:
                     if new_forum.user_count_posts:
-                        user.post_count_incr()
+                        user.post_count_incr(user.p_count)
                     else:
-                        user.post_count_decr()
+                        user.post_count_decr(user.p_count)
 
             self.save()
 
@@ -809,12 +821,15 @@ class Post(models.Model, LockableObject):
                 # the new forum or not.
                 new_forum, old_forum = new_topic.forum, old_topic.forum
                 if old_forum.user_count_posts != new_forum.user_count_posts:
-                    users = User.objects.filter(post__in=posts).distinct()
+                    users = (User.objects
+                                 .filter(post__in=posts)
+                                 .annotate(p_count=Count('post__id')))
+
                     for user in users:
                         if new_forum.user_count_posts:
-                            user.post_count_incr()
+                            user.post_count_incr(user.p_count)
                         else:
-                            user.post_count_decr()
+                            user.post_count_decr(user.p_count)
 
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \

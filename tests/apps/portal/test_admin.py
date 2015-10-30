@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 """
     tests.apps.portal.test_user
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~

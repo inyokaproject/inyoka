@@ -1,6 +1,4 @@
-from inyoka.default_settings import *
-
-from .base import *
+from .base import *  # noqa
 
 DATABASES = {
     'default': {
