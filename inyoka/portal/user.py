@@ -407,7 +407,7 @@ class User(AbstractBaseUser):
                                         help_text=ugettext_lazy(u'leave empty to ban permanent'))
 
     # profile attributes
-    post_count = models.IntegerField(ugettext_lazy(u'Posts'), default=0)
+    post_count_old = models.IntegerField(ugettext_lazy(u'Posts'), default=0, db_column='post_count')  # TODO: can be removed
     avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
     jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
@@ -607,6 +607,72 @@ class User(AbstractBaseUser):
                 self.suggestion_set.exists() or
                 self.owned_suggestion_set.exists() or
                 self.subscription_set.exists())
+
+    @property
+    def post_count_cache_key(self):
+        return u'user_posts:{}'.format(self.pk)
+
+    def get_post_count(self, from_db=False, default=None):
+        """
+        Returns the post count for the user.
+
+        Uses the redis cache as default.
+
+        If from_db is True, then the value is calculated from the database
+        and the result saved into the cache.
+
+        Returns default if from_db is False and the cache key does not exist.
+        """
+        cache_key = self.post_count_cache_key
+
+        if from_db:
+            count = (self.post_set
+                         .filter(hidden=False)
+                         .filter(topic__forum__user_count_posts=True)
+                         .count())
+            cache.set(cache_key, count, timeout=1209600)  # timeout = 2 weeks
+            return count
+        count = cache.get(cache_key)
+        if count is None:
+            from inyoka.portal.tasks import count_user_posts
+            count_user_posts.delay(self.id)
+            return default
+        return count
+
+    @property
+    def post_count(self):
+        """
+        Returns the post count as property.
+
+        This is only for the template. Use get_post_count() in python.
+        """
+        return self.get_post_count(default="Wird berechnet")
+
+    def post_count_incr(self):
+        """
+        Adds one to the post counter.
+
+        Does nothing if the counter is not in the cache.
+        """
+        cache_key = self.post_count_cache_key
+
+        try:
+            cache.incr(cache_key)
+        except ValueError:
+            pass
+
+    def post_count_decr(self):
+        """
+        Decreace post counter by one.
+
+        Does nothing if the counter is not in the cache.
+        """
+        cache_key = self.post_count_cache_key
+
+        try:
+            cache.decr(cache_key)
+        except ValueError:
+            pass
 
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'

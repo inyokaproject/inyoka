@@ -472,7 +472,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     # antispam measures
     privileges = get_forum_privileges(request.user, forum)
     needs_spam_check = True
-    if request.user.post_count >= settings.INYOKA_SPAM_DETECT_LIMIT:
+    if request.user.get_post_count(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
         # Exclude very active users.
         needs_spam_check = False
     elif check_privilege(privileges, 'moderate') or post and post.pk:

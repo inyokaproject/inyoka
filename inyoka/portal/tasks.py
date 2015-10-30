@@ -11,7 +11,7 @@
 from time import time
 from datetime import datetime, timedelta
 
-from celery.task import periodic_task
+from celery.task import task, periodic_task
 from celery.task.schedules import crontab
 
 from django.conf import settings
@@ -73,3 +73,10 @@ def clean_inactive_users():
                 user.delete()
             except:
                 logger.warning('Deleting inactive User %s failed.' % user.username)
+
+@task
+def count_user_posts(user_id):
+    """
+    Counts all posts from a specific user.
+    """
+    User.objects.get(id=user_id).get_post_count(from_db=True)

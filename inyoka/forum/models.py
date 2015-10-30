@@ -451,17 +451,13 @@ class Topic(models.Model):
             # Decrement or increment the user post count regarding
             # posts are counted in the new forum or not.
             if old_forum.user_count_posts != new_forum.user_count_posts:
-                if new_forum.user_count_posts and not old_forum.user_count_posts:
-                    op = operator.add
-                elif not new_forum.user_count_posts and old_forum.user_count_posts:
-                    op = operator.sub
+                users = User.objects.filter(post__topic=self).distinct()
 
-                post_counts = User.objects.filter(post__topic__id=self.id).distinct() \
-                                          .annotate(pcount=Count('post__id'))
-
-                for user in post_counts:
-                    user.post_count = op(user.post_count, user.pcount)
-                    user.save(update_fields=('post_count',))
+                for user in users:
+                    if new_forum.user_count_posts:
+                        user.post_count_incr()
+                    else:
+                        user.post_count_decr()
 
             self.save()
 
@@ -704,8 +700,7 @@ class Post(models.Model, LockableObject):
 
         # degrade user post count
         if self.topic.forum.user_count_posts:
-            update_model(self.author, post_count=F('post_count') - 1)
-            cache.delete('portal/user/%d' % self.author.id)
+            self.author.post_count_decr()
 
         # update topic.last_post_id
         if self.pk == self.topic.last_post_id:
@@ -814,18 +809,12 @@ class Post(models.Model, LockableObject):
                 # the new forum or not.
                 new_forum, old_forum = new_topic.forum, old_topic.forum
                 if old_forum.user_count_posts != new_forum.user_count_posts:
-                    if new_forum.user_count_posts and not old_forum.user_count_posts:
-                        op = operator.add
-                    elif not new_forum.user_count_posts and old_forum.user_count_posts:
-                        op = operator.sub
-
-                    post_counts = User.objects.filter(post__in=posts).values('id') \
-                                              .annotate(pcount=Count('post__id'))
-                    for user in post_counts:
-                        User.objects.filter(pk=user['id']).update(
-                            post_count=op(F('post_count'), user['pcount'])
-                        )
-                    cache.delete_many('portal/user/%d' % user['id'] for user in post_counts)
+                    users = User.objects.filter(post__in=posts).distinct()
+                    for user in users:
+                        if new_forum.user_count_posts:
+                            user.post_count_incr()
+                        else:
+                            user.post_count_decr()
 
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \
