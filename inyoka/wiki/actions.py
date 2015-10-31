@@ -757,22 +757,21 @@ def do_log(request, name, pagination_page=1):
     }
 
 
+@clean_article_name
 @require_privilege('read')
 @templated('wiki/action_diff.html', modifier=context_modifier)
 @case_sensitive_redirect
-def do_diff(request, name):
+def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
     """Render a diff between two pages."""
-    old_rev = request.GET.get('rev', '')
     if not old_rev.isdigit():
         old_rev = Page.objects.get_head(name, -1)
         if old_rev is None:
             raise Revision.DoesNotExist()
-    new_rev = request.GET.get('new_rev') or None
     if new_rev and not new_rev.isdigit():
         raise Http404()
     diff = Page.objects.compare(name, old_rev, new_rev)
-    if request.GET.get('format') == 'udiff':
-        return HttpResponse(diff.udiff, content_type='text/plain; charset=utf-8')
+    if udiff:
+        return HttpResponse(diff.udiff, mimetype='text/plain; charset=utf-8')
 
     return {
         'diff': diff,
