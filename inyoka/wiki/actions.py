@@ -780,6 +780,7 @@ def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
     }
 
 
+@clean_article_name
 @require_privilege('read')
 @templated('wiki/action_backlinks.html', modifier=context_modifier)
 @case_sensitive_redirect
