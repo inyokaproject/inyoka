@@ -219,9 +219,9 @@ def require_privilege(privilege):
     user does have the privilege required to perform that action.
     """
     def decorate(f):
-        def oncall(request, name):
+        def oncall(request, name, *args, **kwargs):
             if has_privilege(request.user, name, privilege):
-                return f(request, name)
+                return f(request, name, *args, **kwargs)
             if not request.user.is_authenticated():
                 url = href('portal', 'login', next='//%s%s' % (
                     request.get_host(),
