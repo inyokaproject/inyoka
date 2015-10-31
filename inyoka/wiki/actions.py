@@ -800,10 +800,11 @@ def do_backlinks(request, name):
     }
 
 
+@clean_article_name
 @require_privilege('read')
 @does_not_exist_is_404
 @case_sensitive_redirect
-def do_export(request, name):
+def do_export(request, name, format='raw', rev=None, fragment=False):
     """
     Export the given revision or the most recent one to the specified format
     (raw, html or ast so far).
@@ -833,17 +834,15 @@ def do_export(request, name):
         ``page``
             The bound `Page` object which should be rendered.
     """
-    rev = request.GET.get('rev')
     if rev is None or not rev.isdigit():
         page = Page.objects.get_by_name(name, raise_on_deleted=True)
     else:
         page = Page.objects.get_by_name_and_rev(name, rev,
                                                 raise_on_deleted=True)
     ctx = {
-        'fragment': request.GET.get('fragment', 'no') == 'yes',
+        'fragment': fragment,
         'page': page
     }
-    format = request.GET.get('format', 'raw').lower()
     if format == 'html':
         return TemplateResponse('wiki/export.html', ctx,
                                 content_type='text/html; charset=utf-8')
