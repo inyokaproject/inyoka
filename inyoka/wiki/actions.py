@@ -85,10 +85,11 @@ def context_modifier(request, context):
             context['can'] = PrivilegeTest(request.user, page_name)
 
 
+@clean_article_name
 @require_privilege('read')
 @templated('wiki/action_show.html', modifier=context_modifier)
 @case_sensitive_redirect
-def do_show(request, name):
+def do_show(request, name, rev=None, allow_redirect=True):
     """
     Show a given revision or the most recent one.  This action requires the
     read privilege.  If a page does not exist yet and no revision was provided
@@ -109,7 +110,6 @@ def do_show(request, name):
             automatically dispatches to `do_missing_page` if a revision is
             maked as deleted.
     """
-    rev = request.GET.get('rev')
     try:
         if rev is None or not rev.isdigit():
             page = Page.objects.get_by_name(name)
@@ -118,19 +118,19 @@ def do_show(request, name):
             page = Page.objects.get_by_name_and_rev(name, rev)
     except Page.DoesNotExist:
         return do_missing_page(request, name)
-    if request.GET.get('redirect') != 'no':
+    if allow_redirect:
         redirect = page.metadata.get('X-Redirect')
         if redirect:
             messages.info(request,
                 _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
-                    'link': escape(href('wiki', page.name, redirect='no')),
+                    'link': escape(href('wiki', page.name, 'no_redirect')),
                     'title': escape(page.title)
                 }
             )
             anchor = None
             if '#' in redirect:
                 redirect, anchor = redirect.rsplit('#', 1)
-            return HttpResponseRedirect(href('wiki', redirect, redirect='no', _anchor=anchor))
+            return HttpResponseRedirect(href('wiki', redirect, 'no_redirect', _anchor=anchor))
     if page.rev.deleted:
         return do_missing_page(request, name, page)
 
