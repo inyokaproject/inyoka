@@ -8,12 +8,14 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from datetime import datetime
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.functional import allow_lazy
 
 from inyoka.forum.models import Topic
 from inyoka.markup import parse, StackExhaused
+from inyoka.utils.diff3 import merge
 from inyoka.utils.forms import UserField, DateWidget
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
@@ -100,37 +102,90 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
 
     `note`
         A textfield for the change note.
+
+    `edit_time`:
+        A DateTimeField for the time when the user started editing. This is used
+        to determine if there are newer revisions and there may be an editing
+        conflict.
+
+    `revision`:
+        The revision the user is basing the edit on. Not necessarily the latest
+        revision.
     """
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 50}))
-    note = forms.CharField(max_length=512, required=True,
-                           widget=forms.TextInput(attrs={'size': 50}),
-                           help_text=storage.get_lazy('wiki_edit_note_rendered'))
+    note = forms.CharField(widget=forms.TextInput(attrs={'size': 50}),
+                           max_length=512, required=True,
+                           help_text=storage['wiki_edit_note_rendered'])
+    edit_time = forms.CharField(widget=forms.HiddenInput(), required=True)
+    revision = forms.CharField(widget=forms.HiddenInput(), required=True)
 
-    def __init__(self, user=None, page_name=None, old_text=None, data=None):
-        forms.Form.__init__(self, data)
+    def __init__(self, user=None, name=None, revision=None, data=None):
+        """Initialize the form.
+
+        `user`:
+            The user editing the page.
+
+        `name`:
+            The name of the page being edited.
+
+        `data`:
+            A dict containing the initial values for the fields.
+        """
+        super(PageEditForm, self).__init__(data=data)
         self.user = user
-        self.page_name = page_name
-        self.old_text = old_text
+        self.name = name
+        revision = data['revision'] if data is not None else revision
+        self.old_rev = Page.objects.get_by_name_and_rev(self.name,
+                                                        revision).rev
+        self.latest_rev = Page.objects.get_by_name(self.name).revisions.latest()
+
+    def clean(self):
+        """Test if we need to merge."""
+        super(PageEditForm, self).clean()
+
+        data = self.data.copy()
+        latest_change_time = self.latest_rev.change_date
+        edit_time = datetime.strptime(data['edit_time'], '%Y-%m-%d %H:%M:%S.%f')
+
+        if edit_time < latest_change_time:
+            # The user started editing (edit_time) before the last change.
+            data['text'] = merge(old=self.old_rev.text.value,
+                                 other=self.latest_rev.text.value,
+                                 new=data['text'])
+            data['edit_time'] = datetime.utcnow()
+            self.data = data
+            self.add_error('text', _(u'Somebody else edited the page while you '
+                                     u'were making your changes. We tried to '
+                                     u'merge the text automatically. Please '
+                                     u'confirm that everything is ok.'))
 
     def clean_text(self):
-        if 'text' not in self.cleaned_data:
-            return
+        text = self.cleaned_data['text']
+
+        if text == self.old_rev.text.value:
+            raise forms.ValidationError(_(u'You have not made any changes.'),
+                                        code='unchanged')
+
         try:
-            tree = parse(self.cleaned_data['text'], catch_stack_errors=False)
+            tree = parse(text, catch_stack_errors=False)
         except StackExhaused:
             raise forms.ValidationError(_(u'The text contains too many nested '
-                                          u'elements.'))
+                                          u'elements.'),
+                                        code='stack_exhausted')
+
         if has_conflicts(tree):
-            raise forms.ValidationError(_(u'The text contains conflict markers'))
-        elif self.user is not None and not \
-             test_changes_allowed(self.user, self.page_name, self.old_text,
-                                  self.cleaned_data['text']):
+            raise forms.ValidationError(_(u'The text contains conflict markers.'),
+                                        code='contains_conflicts')
+
+        if not test_changes_allowed(self.user,
+                                    self.name,
+                                    self.old_rev.text.value,
+                                    text):
             raise forms.ValidationError(_(u'You are not permitted to make '
-                                          u'this changes'))
-                                       # Du hast Änderungen vorgenommen, '
-                                       # u'die dir durch die Zugriffsrechte '
-                                       # u'verwehrt werden.')
-        return self.cleaned_data['text']
+                                          u'this change.'),
+                                        code='require_privilege')
+
+        return text
 
 
 class AddAttachmentForm(forms.Form):

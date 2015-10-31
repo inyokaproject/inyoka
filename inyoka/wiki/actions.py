@@ -30,7 +30,6 @@ from django.utils.translation import ugettext as _
 from inyoka.markup import RenderContext, parse
 from inyoka.portal.models import Subscription
 from inyoka.portal.utils import simple_check_login
-from inyoka.utils.diff3 import merge
 from inyoka.utils.http import (
     AccessDeniedResponse,
     TemplateResponse,
@@ -416,17 +415,17 @@ def do_create(request, name=None):
     return {'form': form}
 
 
+@clean_article_name
 @require_privilege('edit')
 @templated('wiki/action_edit.html', modifier=context_modifier)
 @case_sensitive_redirect
-def do_edit(request, name):
-    """
-    Edit or create a wiki page.  If the page is an attachment this displays a
-    form to update the attachment next to the description box.  If it's a
-    normal page or no page yet this just displays a text box for the page
-    text and an input field for the change note.
-    If the user is not logged in, he gets a warning that his IP will be
-    visible for everyone until Sankt-nimmerleinstag (forever).
+def do_edit(request, name, rev=None):
+    """Edit an existing wiki page.
+
+    If the page is an attachment this redirects to a form to update the
+    attachment.
+    If it's a normal page this just displays a text box for the page text
+    and an input field for the change note.
 
     **Template**
         ``'wiki/action_edit.html'``
@@ -445,151 +444,60 @@ def do_edit(request, name):
         ``preview``
             If we are in preview mode this is a rendered HTML preview.
     """
-    rev = request.POST.get('rev')
-    rev = rev is not None and rev.isdigit() and int(rev) or None
     try:
-        page = Page.objects.get_by_name_and_rev(name, rev)
+        page = Page.objects.get_by_name_and_rev(name=name, rev=rev)
     except Page.DoesNotExist:
-        page = None
-        if not has_privilege(request.user, name, 'create'):
-            if has_privilege(request.user, u'%s/%s' % (
-                                           storage['wiki_newpage_template'],
-                                           name),
-                             'create'):
-                return HttpResponseRedirect(href('wiki', storage['wiki_newpage_template'], name, action='edit'))
-            return AccessDeniedResponse()
-        current_rev_id = ''
+        if Page.objects.filter(name=name).exists():
+            msg = _(u'The given revision does not exist for this article,'
+                    u'using last revision instead.')
+            url = href('wiki', name, 'edit')
+        else:
+            msg = _(u'The article „{name}“ does not exist, you can'
+                    u'try to create it now.').format(name=name)
+            url = href('wiki', 'create', name)
+        messages.info(request, msg)
+        return HttpResponseRedirect(url)
     else:
-        # If the page is deleted it requires creation privilege
         if page.rev.deleted and not has_privilege(request.user, name, 'create'):
             return AccessDeniedResponse()
-        current_rev_id = str(page.rev.id)
 
     # attachments have a custom editor
     if page and page.rev.attachment:
-        return do_attach_edit(request, page.name)
+        return do_attach_edit(request, name=page.name)
 
-    # form defaults
-    form_data = request.POST.copy()
     preview = None
-    form = PageEditForm()
-    if page is not None:
-        form.initial = {'text': page.rev.text.value}
-    else:
-        form.initial = {'text': storage['wiki_newpage_template'] or ''}
+    rev = page.rev.id
 
-    # if there a template is in use, load initial text from the template
-    template = request.GET.get('template')
-    if not request.method == 'POST' and template and \
-       has_privilege(request.user, template, 'read'):
-        try:
-            template = Page.objects.get_by_name(template)
-        except Page.DoesNotExist:
-            pass
-        else:
-            form.initial['text'] = template.rev.text.value
-            messages.info(request,
-                _(u'Used the template “<a href="%(link)s">%(name)s</a>” for this page') % {
-                    'link': url_for(template),
-                    'name': escape(template.title)
-                }
-            )
-
-    # check for edits by other users.  If we have such an edit we try
-    # to merge and set the edit time to the time of the last merge or
-    # conflict.  We do that before the actual form processing
-    merged_this_request = False
-    try:
-        # Don't change to utcfromtimestamp, the data is already in utc.
-        edit_time = datetime.fromtimestamp(int(request.POST['edit_time']))
-    except (KeyError, ValueError):
-        edit_time = datetime.utcnow()
-    if rev is None:
-        latest_rev = page and page.rev or None
-    else:
-        try:
-            latest_rev = Page.objects.get_by_name(name).rev
-        except Page.DoesNotExist:
-            latest_rev = None
-    if latest_rev is not None and edit_time < latest_rev.change_date:
-        form_data['text'] = merge(page.rev.text.value,
-                                  latest_rev.text.value,
-                                  form_data.get('text', ''))
-        edit_time = latest_rev.change_date
-        merged_this_request = True
-
-    # form validation and handling
     if request.method == 'POST':
-        if request.POST.get('cancel'):
-            messages.info(request, _(u'Canceled.'))
-            if page and page.metadata.get('redirect'):
-                url = href('wiki', page.name, redirect='no')
-            else:
-                url = href('wiki', name)
-            return HttpResponseRedirect(url)
-        elif request.POST.get('preview'):
-            text = request.POST.get('text') or ''
-            context = RenderContext(request, wiki_page=page)
-            preview = parse(text).render(context, 'html')
-            form.initial['text'] = text
-        else:
-            form = PageEditForm(request.user, name, page and
-                                page.rev.text.value or '', form_data)
-            if form.is_valid() and not merged_this_request:
-                remote_addr = request.META.get('REMOTE_ADDR')
-                if page is not None:
-                    if form.cleaned_data['text'] == page.rev.text.value:
-                        messages.info(request, _(u'No changes.'))
-                    else:
-                        page.edit(user=request.user,
-                                  deleted=False,
-                                  remote_addr=remote_addr,
-                                  **form.cleaned_data)
-                        if page.rev.deleted:
-                            msg = _(u'The page <a href="%(link)s">%(name)s</a> has been created.')
-                        else:
-                            msg = _(u'The page <a href="%(link)s">%(name)s</a> has been edited.')
-
-                        messages.success(request, msg % {'link': escape(href('wiki', page.name)),
-                                                         'name': escape(page.title)})
-                else:
-                    page = Page.objects.create(user=request.user,
-                                               remote_addr=remote_addr,
-                                               name=name,
-                                               **form.cleaned_data)
-                    messages.success(request,
-                        _(u'The page <a href="%(link)s">%(name)s</a> has been created.') % {
-                            'link': escape(href('wiki', page.name)),
-                            'name': escape(page.title)
-                        }
-                    )
-
-                last_revisions = page.revisions.all()[:2]
-                if len(last_revisions) > 1:
-                    rev, old_rev = last_revisions
-                else:
-                    rev = old_rev = page.last_rev
-
-                # send notifications
-                send_edit_notifications(request.user, rev, old_rev)
-
-                if page.metadata.get('redirect'):
-                    url = href('wiki', page.name, redirect='no')
-                else:
-                    url = href('wiki', page.name)
-                return HttpResponseRedirect(url)
-    elif not request.user.is_authenticated():
-        messages.info(request,
-            _(u'You are in the process of editing this page unauthenticated. '
-                u'If you save, your IP-Address will be recorded in the '
-                u'revision history and is irrevocable publicly visible.'))
-
-    # if we have merged this request we should inform the user about that,
-    # and that we haven't saved the page yet.
-    if merged_this_request:
-        messages.info(request,
-            _(u'Another user edited this page also.  '
-              u'Please check if the automatic merging is satisfying.'))
+        form = PageEditForm(user=request.user,
+                            name=name,
+                            data=request.POST.copy())
+        if 'cancel' in request.POST:
+            messages.info(request, _(u'Editing of this page was canceled.'))
+            return HttpResponseRedirect(href('wiki', name))
+        elif 'preview' in request.POST:
+            ctx = RenderContext(request, wiki_page=page)
+            tt = request.POST.get('text', '')
+            preview = parse(tt).render(ctx, 'html')
+        elif form.is_valid():
+            old_rev = page.rev
+            page.edit(user=request.user,
+                      text=form.cleaned_data['text'],
+                      note=form.cleaned_data['note'],
+                      change_date=datetime.utcnow(),
+                      deleted=None)
+            current_rev = page.rev
+            send_edit_notifications(user=request.user,
+                                    rev=current_rev,
+                                    old_rev=old_rev)
+            messages.success(request, _(u'The page has been edited.'))
+            return HttpResponseRedirect(href('wiki', page.name))
+    else:
+        form = PageEditForm(user=request.user,
+                            name=name)
+        form.initial = {'text': page.rev.text.value,
+                        'edit_time': datetime.utcnow(),
+                        'revision': page.rev.id}
 
     return {
         'name': name,
@@ -597,14 +505,13 @@ def do_edit(request, name):
         'page': page,
         'form': form,
         'preview': preview,
-        'edit_time': edit_time.strftime('%s'),
-        'rev': current_rev_id,
         'wiki_edit_note_rendered': storage['wiki_edit_note_rendered'],
         'license_note_rendered': storage['license_note_rendered'],
         'deny_robots': True,
     }
 
 
+@clean_article_name
 @require_privilege('delete')
 @does_not_exist_is_404
 @case_sensitive_redirect
