@@ -1046,25 +1046,3 @@ def do_manage_discussion(request, name):
         'page': page,
         'form': form,
     }
-
-PAGE_ACTIONS = {
-    'show': do_show,
-    'metaexport': do_metaexport,
-    'log': do_log,
-    'diff': do_diff,
-    'revert': do_revert,
-    'rename': do_rename,
-    'edit': do_edit,
-    'delete': do_delete,
-    'mv_baustelle': do_mv_baustelle,
-    'mv_discontinued': do_mv_discontinued,
-    'mv_back': do_mv_back,
-    'backlinks': do_backlinks,
-    'export': do_export,
-    'attach': do_attach,
-    'prune': do_prune,
-    'manage': do_manage,
-    'subscribe': do_subscribe,
-    'unsubscribe': do_unsubscribe,
-    'manage_discussion': do_manage_discussion,
-}
