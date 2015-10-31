@@ -373,7 +373,7 @@ def do_edit(request, name):
         ``preview``
             If we are in preview mode this is a rendered HTML preview.
     """
-    rev = request.REQUEST.get('rev')
+    rev = request.POST.get('rev')
     rev = rev is not None and rev.isdigit() and int(rev) or None
     try:
         page = Page.objects.get_by_name_and_rev(name, rev)

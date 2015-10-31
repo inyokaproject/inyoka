@@ -35,20 +35,20 @@ def on_render_preview(request):
     """Render some preview text."""
     page = post = None
     simplified = True
-    if 'page' in request.REQUEST:
+    if 'page' in request.POST:
         try:
-            page = Page.objects.get_by_name(request.REQUEST['page'])
+            page = Page.objects.get_by_name(request.POST['page'])
         except Page.DoesNotExist:
             page = None
         simplified = False
-    if 'post' in request.REQUEST:
+    if 'post' in request.POST
         try:
-            post = ForumPost.objects.get(pk=request.REQUEST['post'])
+            post = ForumPost.objects.get(pk=request.POST['post'])
         except ForumPost.DoesNotExist:
             post = None
 
     context = RenderContext(request, simplified=simplified, wiki_page=page, forum_post=post)
-    html = parse(request.REQUEST.get('text', '')).render(context, 'html')
+    html = parse(request.POST.get('text', '')).render(context, 'html')
     # TODO: return json.
     return HttpResponse(html, content_type='text/plain')
 
