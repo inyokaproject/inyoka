@@ -9,6 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
+
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.functional import allow_lazy
@@ -59,8 +60,8 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
             name = join_pagename(storage['wiki_construction_area'], name)
             # See if the user now has the right to create this page.
             if not has_privilege(self.user, name, 'create'):
-                # This could mean that the page exists and was previously marked
-                # as deleted.
+                # This could mean that the page exists and was previously
+                # marked as deleted.
                 raise forms.ValidationError(_(u'You do not have permission to '
                                               u'create this page.'),
                                             code='requires_privilege')
