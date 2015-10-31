@@ -981,6 +981,7 @@ def do_attach_edit(request, name):
     }
 
 
+@clean_article_name
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
@@ -1008,11 +1009,11 @@ def do_manage(request, name):
 
 
 @simple_check_login
-def do_subscribe(request, page_name):
+def do_subscribe(request, name):
     """
     Subscribe the user to the page with `page_name`
     """
-    page = Page.objects.get(name__exact=page_name)
+    page = Page.objects.get_by_name(name)
     if not Subscription.objects.user_subscribed(request.user, page):
         # there's no such subscription yet, create a new one
         Subscription(user=request.user, content_object=page).save()
@@ -1023,12 +1024,13 @@ def do_subscribe(request, page_name):
     return HttpResponseRedirect(url_for(page))
 
 
+@clean_article_name
 @simple_check_login
-def do_unsubscribe(request, page_name):
+def do_unsubscribe(request, name):
     """
     Unsubscribe the user from the page with `page_name`
     """
-    page = Page.objects.get(name__exact=page_name)
+    page = Page.objects.get_by_name(name)
     try:
         subscription = Subscription.objects.get_for_user(request.user, page)
     except Subscription.DoesNotExist:
@@ -1049,7 +1051,7 @@ def do_unsubscribe(request, page_name):
 @templated('wiki/action_manage_discussion.html')
 @case_sensitive_redirect
 def do_manage_discussion(request, name):
-    page = Page.objects.get(name=name)
+    page = Page.objects.get_by_name(name)
     if request.method == 'POST':
         form = ManageDiscussionForm(request.POST)
         if form.is_valid():
