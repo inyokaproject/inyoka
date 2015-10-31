@@ -227,37 +227,37 @@ def do_missing_page(request, name, _page=None):
     }
 
 
+@clean_article_name
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
-def do_revert(request, name):
+def do_revert(request, name, rev=None):
     """The revert action has no template, it uses a flashed form."""
+    url = href('wiki', name, 'revision', rev)
     try:
-        rev = int(request.GET['rev'])
-    except (KeyError, ValueError):
+        page = Page.objects.get_by_name_and_rev(name, rev)
+    except Page.DoesNotExist:
         raise Http404()
-    url = href('wiki', name, rev=rev)
-    page = Page.objects.get_by_name_and_rev(name, rev)
     latest_rev = page.revisions.latest()
     if latest_rev == page.rev:
         messages.error(request,
-            _(u'Revision is the latest one, revert aborted.'))
+                       _(u'Revision is the latest one, revert aborted.'))
     elif request.method == 'POST':
         if 'cancel' in request.POST:
             messages.info(request, _(u'Revert aborted.'))
-            url = href('wiki', name, rev=page.rev.id)
         else:
             new_revision = page.rev.revert(request.POST.get('note'),
                                            request.user,
                                            request.META.get('REMOTE_ADDR'))
             page.last_rev = new_revision
             messages.success(request,
-                _(u'“%(title)s” was reverted successfully') % {
-                    'title': escape(page.rev.title)})
+                             _(u'“%(title)s” was reverted successfully') % {
+                                 'title': escape(page.rev.title)})
             url = href('wiki', name)
     else:
         messages.info(request,
-            render_template('wiki/action_revert.html', {'page': page}))
+                      render_template('wiki/action_revert.html',
+                                      {'page': page}))
     return HttpResponseRedirect(url)
 
 
