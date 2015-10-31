@@ -325,16 +325,14 @@ def _rename(request, page, new_name, force=False, new_text=None):
     return True
 
 
+@clean_article_name
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
-def do_rename(request, name):
+def do_rename(request, name, new_name=None, force=False):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
-    new_name = request.GET.get('page_name') or page.name
-    force = request.GET.get('force', False)
     if request.method == 'POST':
-        force = request.POST.get('force', False)
         new_name = normalize_pagename(request.POST.get('new_name', ''))
         if not new_name:
             messages.error(request, _(u'No page name given.'))
@@ -356,7 +354,7 @@ def do_rename(request, name):
         'new_name': new_name,
         'force': force
     }))
-    return HttpResponseRedirect(url_for(page, 'show_no_redirect'))
+    return HttpResponseRedirect(url_for(page, 'show'))
 
 
 @require_privilege('edit')
