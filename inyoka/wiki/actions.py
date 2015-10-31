@@ -982,32 +982,6 @@ def do_attach_edit(request, name):
 
 
 @clean_article_name
-@require_privilege('manage')
-@does_not_exist_is_404
-@case_sensitive_redirect
-def do_prune(request, name):
-    """Clear the page cache."""
-    page = Page.objects.get_by_name(name)
-    page.prune()
-    messages.success(request, _(u'Emptied the page cache.'))
-    return HttpResponseRedirect(url_for(page))
-
-
-@templated('wiki/action_manage.html', modifier=context_modifier)
-@case_sensitive_redirect
-def do_manage(request, name):
-    """
-    Show a list of all actions for this page.
-
-    **Template**
-        ``'wiki/action_manage.html'``
-    """
-    return {
-        'page': Page.objects.get_by_name(name),
-        'deny_robots': True,
-    }
-
-
 @simple_check_login
 def do_subscribe(request, name):
     """
