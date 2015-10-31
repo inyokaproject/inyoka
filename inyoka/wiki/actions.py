@@ -40,14 +40,16 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
-from inyoka.utils.urls import href, is_safe_domain, url_for, urlencode
+from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.acl import PrivilegeTest, has_privilege, require_privilege
-from inyoka.wiki.forms import (AddAttachmentForm,
-                               EditAttachmentForm,
-                               ManageDiscussionForm,
-                               MvBaustelleForm,
-                               NewArticleForm,
-                               PageEditForm)
+from inyoka.wiki.forms import (
+    AddAttachmentForm,
+    EditAttachmentForm,
+    ManageDiscussionForm,
+    MvBaustelleForm,
+    NewArticleForm,
+    PageEditForm,
+)
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.tasks import update_object_list

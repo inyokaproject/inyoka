@@ -11,13 +11,14 @@
 from datetime import datetime
 
 from django import forms
-from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.functional import allow_lazy
+from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy
 
 from inyoka.forum.models import Topic
-from inyoka.markup import parse, StackExhaused
+from inyoka.markup import StackExhaused, parse
 from inyoka.utils.diff3 import merge
-from inyoka.utils.forms import UserField, DateWidget
+from inyoka.utils.forms import DateWidget, UserField
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.text import join_pagename, normalize_pagename
