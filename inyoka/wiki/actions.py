@@ -58,6 +58,14 @@ from inyoka.wiki.utils import case_sensitive_redirect
 REVISIONS_PER_PAGE = 100
 
 
+def clean_article_name(view):
+    """Decorator to clean pagenames as they are passed to the view functions."""
+    def decorate(request, *args, **kwargs):
+        kwargs['name'] = normalize_pagename(kwargs['name'])
+        return view(request, *args, **kwargs)
+    return decorate
+
+
 def context_modifier(request, context):
     """
     If a key called ``'page'`` that points to a page object is part of the
