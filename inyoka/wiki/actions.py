@@ -43,13 +43,12 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for, urlencode
 from inyoka.wiki.acl import PrivilegeTest, has_privilege, require_privilege
-from inyoka.wiki.forms import (
-    AddAttachmentForm,
-    EditAttachmentForm,
-    ManageDiscussionForm,
-    MvBaustelleForm,
-    PageEditForm,
-)
+from inyoka.wiki.forms import (AddAttachmentForm,
+                               EditAttachmentForm,
+                               ManageDiscussionForm,
+                               MvBaustelleForm,
+                               NewArticleForm,
+                               PageEditForm)
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.tasks import update_object_list
@@ -355,6 +354,66 @@ def do_rename(request, name, new_name=None, force=False):
         'force': force
     }))
     return HttpResponseRedirect(url_for(page, 'show'))
+
+
+def _get_wiki_article_templates():
+    """Return a list of template choices for use in NewArticleForm."""
+    # TODO: this is a hack, do not have these hardcoded here!
+    return [('Vorlage/Artikel_normal', _(u'Normal (für erfahrene Autoren)')),
+            ('Vorlage/Artikel_umfangreich', _(u'Umfangreich (Für Einsteiger)')),
+            (None, _(u'I don\'t want a template'))]
+
+
+def _get_wiki_reserved_names():
+    """Return a list of words that should not be used as article names."""
+    # TODO: this is a hack, do not have these hardcoded here!
+    return ['attachments', 'backlinks', 'create', 'delete', 'diff', 'discussion',
+            'edit', 'export', 'feed', 'log', 'manage', 'metaexport', 'mv_back',
+            'mv_construction', 'mv_discontinued', 'no_redirect', 'recentchanges',
+            'rename', 'revision', 'revert', 'subscribe', 'udiff', 'unsubscribe',
+            'tags']
+
+
+@templated('wiki/action_create.html', modifier=context_modifier)
+def do_create(request, name=None):
+    """Create a new wiki page."""
+    template_choices = _get_wiki_article_templates()
+    reserved_names = _get_wiki_reserved_names()
+
+    # All authentication and permission checks are done in the form validation.
+    if request.method == 'POST':
+        form = NewArticleForm(user=request.user,
+                              template_choices=template_choices,
+                              reserved_names=reserved_names,
+                              data=request.POST.copy())
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            template_name = form.cleaned_data['template']
+
+            if template_name is None:
+                text = storage['wiki_newpage_template']
+            else:
+                template = Page.objects.get_by_name(name=template_name)
+                text = template.rev.text.value
+
+            msg = _(u'The page <a href="{link}">{name}</a> has been created.')
+            messages.success(request, msg.format(link=href('wiki', name),
+                                                 name=name))
+            Page.objects.create(user=request.user,
+                                name=name,
+                                # TODO: Kick out anonymous editing
+                                remote_addr=request.META.get('REMOTE_ADDR'),
+                                text=text,
+                                )
+            return HttpResponseRedirect(href('wiki', name, 'edit'))
+    else:
+        form = NewArticleForm(user=request.user,
+                              template_choices=template_choices,
+                              reserved_names=reserved_names)
+        if name is not None:
+            form.initial = {'name': name}
+
+    return {'form': form}
 
 
 @require_privilege('edit')
