@@ -854,6 +854,7 @@ def do_export(request, name, format='raw', rev=None, fragment=False):
                             content_type='text/plain; charset=utf-8')
 
 
+@clean_article_name
 @require_privilege('attach')
 @templated('wiki/action_attach.html', modifier=context_modifier)
 @case_sensitive_redirect
@@ -892,7 +893,7 @@ def do_attach(request, name):
         if request.POST.get('cancel'):
             messages.info(request, _(u'Canceled.'))
             if page and page.metadata.get('redirect'):
-                url = href('wiki', page.name, redirect='no')
+                url = href('wiki', page.name, 'no_redirect')
             else:
                 url = href('wiki', name)
             return HttpResponseRedirect(url)
@@ -937,7 +938,7 @@ def do_attach(request, name):
         messages.success(request,
             _(u'Attachment saved successfully.'))
         if ap.metadata.get('weiterleitung'):
-            url = href('wiki', ap, redirect='no')
+            url = href('wiki', ap, 'no_redirect')
         else:
             url = href('wiki', ap)
         return HttpResponseRedirect(url)
@@ -946,6 +947,7 @@ def do_attach(request, name):
     return context
 
 
+@clean_article_name
 @require_privilege('attach')
 @templated('wiki/action_attach_edit.html', modifier=context_modifier)
 @case_sensitive_redirect
