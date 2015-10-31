@@ -718,10 +718,11 @@ def do_mv_back(request, name):
     return HttpResponseRedirect(url_for(page))
 
 
+@clean_article_name
 @require_privilege('read')
 @templated('wiki/action_log.html', modifier=context_modifier)
 @case_sensitive_redirect
-def do_log(request, name):
+def do_log(request, name, pagination_page=1):
     """
     Show a revision log for this page.
 
@@ -737,27 +738,17 @@ def do_log(request, name):
             The list of revisions ordered by date.  The newest revision
             first.
     """
-    try:
-        pagination_page = int(request.GET['page'])
-    except (ValueError, KeyError):
-        pagination_page = 1
-    page = Page.objects.get(name__exact=name)
+    if request.method == 'POST':
+        if 'rev' in request.POST and 'new_rev' in request.POST:
+            return HttpResponseRedirect(href('wiki', name, 'diff',
+                                        request.POST.get('rev'),
+                                        request.POST.get('new_rev')))
 
-    def link_func(p, parameters):
-        if p == 1:
-            parameters.pop('page', None)
-        else:
-            parameters['page'] = str(p)
-        rv = url_for(page)
-        if parameters:
-            rv += '?' + urlencode(parameters)
-        return rv
-
-    if request.GET.get('format') == 'atom':
-        return HttpResponseRedirect(href('wiki', '_feed', page.name, 20))
+    page = Page.objects.get_by_name(name)
+    url = href('wiki', name, 'log')
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
-                            REVISIONS_PER_PAGE, link_func)
+                            REVISIONS_PER_PAGE, url)
     return {
         'page': page,
         'revisions': pagination.get_queryset(),
