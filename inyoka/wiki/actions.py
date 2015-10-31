@@ -141,6 +141,7 @@ def do_show(request, name, rev=None, allow_redirect=True):
     }
 
 
+@clean_article_name
 @require_privilege('read')
 @case_sensitive_redirect
 def do_metaexport(request, name):
