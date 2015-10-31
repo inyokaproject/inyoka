@@ -189,11 +189,11 @@ def do_missing_page(request, name, _page=None):
     """
     can_create = has_privilege(request.user, name, 'create')
     if can_create:
-        create_link = href('wiki', name, action='edit')
+        create_link = href('wiki', name, 'edit')
     else:
         new_name = u'%s/%s' % (storage['wiki_newpage_root'], name)
         if has_privilege(request.user, new_name, 'create'):
-            create_link = href('wiki', new_name, action='edit')
+            create_link = href('wiki', new_name, 'edit')
         else:
             create_link = None
 
