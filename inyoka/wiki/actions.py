@@ -534,6 +534,7 @@ def do_delete(request, name):
 
 # TODO: This damn function is much too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
+@clean_article_name
 @require_privilege('manage')
 @templated('wiki/action_mv_baustelle.html')
 @case_sensitive_redirect
@@ -613,6 +614,7 @@ def do_mv_baustelle(request, name):
 
 # TODO: This damn function is way too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
+@clean_article_name
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
@@ -649,6 +651,7 @@ def do_mv_discontinued(request, name):
 
 # TODO: This damn function is way too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
+@clean_article_name
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
