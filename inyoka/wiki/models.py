@@ -77,16 +77,14 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import magic
-
-from hashlib import sha1
-from operator import itemgetter
 from datetime import datetime
+from hashlib import sha1
 
+import magic
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
-from django.db.models import Max, Count
+from django.db.models import Count, Max
 from django.db.models.loading import get_model
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
@@ -96,18 +94,21 @@ from werkzeug import cached_property
 from inyoka import markup
 from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
-from inyoka.utils.dates import format_datetime, datetime_to_timezone
+from inyoka.utils.database import InyokaMarkupField
+from inyoka.utils.dates import datetime_to_timezone, format_datetime
 from inyoka.utils.decorators import deferred
-from inyoka.utils.diff3 import prepare_udiff, generate_udiff, get_close_matches
+from inyoka.utils.diff3 import generate_udiff, get_close_matches, prepare_udiff
 from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.html import striptags
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href
-from inyoka.utils.database import InyokaMarkupField
-from inyoka.wiki.tasks import render_article, update_object_list, update_related_pages
-
+from inyoka.wiki.tasks import (
+    render_article,
+    update_object_list,
+    update_related_pages,
+)
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
@@ -335,13 +336,13 @@ class PageManager(models.Manager):
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
         rev = None
-        key = 'wiki/page/' + name
+        key = u'wiki/page/{}'.format(name.lower())
         if not nocache:
             rev = cache.get(key)
         if rev is None:
             try:
                 rev = Revision.objects.select_related('page', 'text', 'user') \
-                                      .filter(page__name__exact=name) \
+                                      .filter(page__name__iexact=name) \
                                       .latest()
             except Revision.DoesNotExist:
                 raise Page.DoesNotExist()
