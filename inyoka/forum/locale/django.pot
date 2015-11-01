@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-10-27 19:41+0100\n"
+"POT-Creation-Date: 2015-11-01 09:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -186,36 +186,36 @@ msgstr ""
 msgid "No Ubuntu"
 msgstr ""
 
-#: inyoka/forum/models.py:640
+#: inyoka/forum/models.py:639
 msgid "Post"
 msgstr ""
 
-#: inyoka/forum/models.py:641
+#: inyoka/forum/models.py:640
 msgid "Posts"
 msgstr ""
 
-#: inyoka/forum/models.py:881
+#: inyoka/forum/models.py:880
 msgid "Pictures"
 msgstr ""
 
-#: inyoka/forum/models.py:938
+#: inyoka/forum/models.py:937
 msgid "This topic is hidden due to possible spam."
 msgstr ""
 
-#: inyoka/forum/models.py:947
+#: inyoka/forum/models.py:946
 #, python-format
 msgid ""
 "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible"
 " spam."
 msgstr ""
 
-#: inyoka/forum/models.py:1134
+#: inyoka/forum/models.py:1133
 #, python-format
 msgctxt "Link text to an image attachment"
 msgid "View %(name)s"
 msgstr ""
 
-#: inyoka/forum/models.py:1151
+#: inyoka/forum/models.py:1150
 #, python-format
 msgctxt "Link text to download an attachment"
 msgid "Download %(name)s"

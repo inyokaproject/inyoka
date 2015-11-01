@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-10-27 19:41+0100\n"
+"POT-Creation-Date: 2015-11-01 09:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -142,46 +142,46 @@ msgstr ""
 msgid "You won't be notified for changes on this page anymore"
 msgstr ""
 
-#: inyoka/wiki/forms.py:52
+#: inyoka/wiki/forms.py:53
 msgid "The text contains too many nested elements."
 msgstr ""
 
-#: inyoka/wiki/forms.py:55
+#: inyoka/wiki/forms.py:56
 msgid "The text contains conflict markers"
 msgstr ""
 
-#: inyoka/wiki/forms.py:59
+#: inyoka/wiki/forms.py:60
 msgid "You are not permitted to make this changes"
 msgstr ""
 
-#: inyoka/wiki/forms.py:92 inyoka/wiki/forms.py:104
+#: inyoka/wiki/forms.py:93 inyoka/wiki/forms.py:105
 msgid "Description"
 msgstr ""
 
-#: inyoka/wiki/forms.py:112
+#: inyoka/wiki/forms.py:113
 msgid "Slug of the topic"
 msgstr ""
 
-#: inyoka/wiki/forms.py:113
+#: inyoka/wiki/forms.py:114
 #, python-format
 msgid ""
 "You can find the slug of a topic in the URL (e.g. <var>example</var> when"
 " <em>%(example)s</em>)"
 msgstr ""
 
-#: inyoka/wiki/forms.py:125
+#: inyoka/wiki/forms.py:126
 msgid "This topic does not exist."
 msgstr ""
 
-#: inyoka/wiki/forms.py:131
+#: inyoka/wiki/forms.py:132
 msgid "New page name"
 msgstr ""
 
-#: inyoka/wiki/forms.py:132
+#: inyoka/wiki/forms.py:133
 msgid "Edited by"
 msgstr ""
 
-#: inyoka/wiki/forms.py:133
+#: inyoka/wiki/forms.py:134
 msgid "Completion date"
 msgstr ""
 
@@ -230,37 +230,37 @@ msgstr ""
 msgid "Unknown page"
 msgstr ""
 
-#: inyoka/wiki/models.py:500
+#: inyoka/wiki/models.py:485
 msgid "Created"
 msgstr ""
 
-#: inyoka/wiki/models.py:897
+#: inyoka/wiki/models.py:881
 msgid "Automatically deleted"
 msgstr ""
 
-#: inyoka/wiki/models.py:1020
+#: inyoka/wiki/models.py:1004
 msgid "Wiki page"
 msgstr ""
 
-#: inyoka/wiki/models.py:1021
+#: inyoka/wiki/models.py:1005
 msgid "Wiki pages"
 msgstr ""
 
-#: inyoka/wiki/models.py:1077
+#: inyoka/wiki/models.py:1061
 msgid "Download attachment"
 msgstr ""
 
-#: inyoka/wiki/models.py:1156
+#: inyoka/wiki/models.py:1140
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr ""
 
-#: inyoka/wiki/models.py:1185
+#: inyoka/wiki/models.py:1169
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr ""
 
-#: inyoka/wiki/models.py:1207
+#: inyoka/wiki/models.py:1191
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr ""

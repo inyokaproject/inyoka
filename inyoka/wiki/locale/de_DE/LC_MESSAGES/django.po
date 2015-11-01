@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-10-27 19:41+0100\n"
+"POT-Creation-Date: 2015-11-01 09:07+0100\n"
 "PO-Revision-Date: 2012-11-03 13:01+0000\n"
 "Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
 "Language: de_DE\n"
@@ -159,27 +159,27 @@ msgstr "Du wirst über diese Seite gar nicht benachrichtigt!"
 msgid "You won't be notified for changes on this page anymore"
 msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachrichtigt"
 
-#: inyoka/wiki/forms.py:52
+#: inyoka/wiki/forms.py:53
 msgid "The text contains too many nested elements."
 msgstr "Der Text enthält zu viele verschachtelte Elemente."
 
-#: inyoka/wiki/forms.py:55
+#: inyoka/wiki/forms.py:56
 msgid "The text contains conflict markers"
 msgstr "Der Text enthält Konfliktmarkierungen"
 
-#: inyoka/wiki/forms.py:59
+#: inyoka/wiki/forms.py:60
 msgid "You are not permitted to make this changes"
 msgstr "Du bist nicht dazu berechtigt, diese Änderung vorzunehmen"
 
-#: inyoka/wiki/forms.py:92 inyoka/wiki/forms.py:104
+#: inyoka/wiki/forms.py:93 inyoka/wiki/forms.py:105
 msgid "Description"
 msgstr "Beschreibung"
 
-#: inyoka/wiki/forms.py:112
+#: inyoka/wiki/forms.py:113
 msgid "Slug of the topic"
 msgstr "Slug des Themas"
 
-#: inyoka/wiki/forms.py:113
+#: inyoka/wiki/forms.py:114
 #, python-format
 msgid ""
 "You can find the slug of a topic in the URL (e.g. <var>example</var> when"
@@ -188,19 +188,19 @@ msgstr ""
 "Den Slug eines Themas findest du in der URL (z. B. <var>example</var> bei"
 " <em>%(example)s</em>)"
 
-#: inyoka/wiki/forms.py:125
+#: inyoka/wiki/forms.py:126
 msgid "This topic does not exist."
 msgstr "Dieses Thema existiert nicht."
 
-#: inyoka/wiki/forms.py:131
+#: inyoka/wiki/forms.py:132
 msgid "New page name"
 msgstr "Neuer Seitenname"
 
-#: inyoka/wiki/forms.py:132
+#: inyoka/wiki/forms.py:133
 msgid "Edited by"
 msgstr "Bearbeitet von"
 
-#: inyoka/wiki/forms.py:133
+#: inyoka/wiki/forms.py:134
 msgid "Completion date"
 msgstr "Fertigstellungsdatum"
 
@@ -251,37 +251,37 @@ msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
-#: inyoka/wiki/models.py:500
+#: inyoka/wiki/models.py:485
 msgid "Created"
 msgstr "Erstellt"
 
-#: inyoka/wiki/models.py:897
+#: inyoka/wiki/models.py:881
 msgid "Automatically deleted"
 msgstr "Von System gelöscht"
 
-#: inyoka/wiki/models.py:1020
+#: inyoka/wiki/models.py:1004
 msgid "Wiki page"
 msgstr "Wikiseite"
 
-#: inyoka/wiki/models.py:1021
+#: inyoka/wiki/models.py:1005
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
-#: inyoka/wiki/models.py:1077
+#: inyoka/wiki/models.py:1061
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
-#: inyoka/wiki/models.py:1156
+#: inyoka/wiki/models.py:1140
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr "%(rev)s (Revision %(date)s)"
 
-#: inyoka/wiki/models.py:1185
+#: inyoka/wiki/models.py:1169
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
 
-#: inyoka/wiki/models.py:1207
+#: inyoka/wiki/models.py:1191
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-10-27 19:41+0100\n"
+"POT-Creation-Date: 2015-11-01 09:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Generated-By: Babel 2.1.1\n"
 
 #: inyoka/ikhaya/forms.py:44 inyoka/ikhaya/models.py:205
-#: inyoka/ikhaya/models.py:367
+#: inyoka/ikhaya/models.py:366
 msgid "Text"
 msgstr ""
 
@@ -97,7 +97,7 @@ msgstr ""
 msgid "Headline"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:204 inyoka/ikhaya/models.py:368
+#: inyoka/ikhaya/models.py:204 inyoka/ikhaya/models.py:367
 msgid "Introduction"
 msgstr ""
 
@@ -121,27 +121,27 @@ msgstr ""
 msgid "Articles"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:366
+#: inyoka/ikhaya/models.py:365
 msgid "Title"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:370
+#: inyoka/ikhaya/models.py:369
 msgid "Annotations to the team"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:378
+#: inyoka/ikhaya/models.py:377
 msgid "Article suggestion"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:379
+#: inyoka/ikhaya/models.py:378
 msgid "Article suggestions"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:432
+#: inyoka/ikhaya/models.py:430
 msgid "Degree of latitude"
 msgstr ""
 
-#: inyoka/ikhaya/models.py:434
+#: inyoka/ikhaya/models.py:432
 msgid "Degree of longitude"
 msgstr ""
 
