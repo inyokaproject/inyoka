@@ -570,27 +570,22 @@ class User(AbstractBaseUser):
     def jabber_url(self):
         return u'xmpp:%s' % escape(self.jabber)
 
-    @property
-    def urlsafe_username(self):
-        '''return the username with space replaced by _ for urls'''
-        return self.username.replace(' ', '_')
-
     def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
-            return href('portal', 'user', self.urlsafe_username, **query)
+            return href('portal', 'user', self.username, **query)
         elif action == 'privmsg':
             return href('portal', 'privmsg', 'new',
-                        self.urlsafe_username, **query)
+                        self.username, **query)
         elif action == 'activate':
             return href('portal', 'activate',
-                        self.urlsafe_username, gen_activation_key(self), **query)
+                        self.username, gen_activation_key(self), **query)
         elif action == 'activate_delete':
             return href('portal', 'delete',
-                        self.urlsafe_username, gen_activation_key(self), **query)
+                        self.username, gen_activation_key(self), **query)
         elif action == 'admin':
-            return href('portal', 'user', self.urlsafe_username, 'edit', *args, **query)
+            return href('portal', 'user', self.username, 'edit', *args, **query)
         elif action in ('subscribe', 'unsubscribe'):
-            return href('portal', 'user', self.urlsafe_username, action, **query)
+            return href('portal', 'user', self.username, action, **query)
 
     def has_content(self):
         """
