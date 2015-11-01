@@ -335,13 +335,13 @@ class PageManager(models.Manager):
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
         rev = None
-        key = 'wiki/page/' + name
+        key = u'wiki/page/{}'.format(name.lower())
         if not nocache:
             rev = cache.get(key)
         if rev is None:
             try:
                 rev = Revision.objects.select_related('page', 'text', 'user') \
-                                      .filter(page__name__exact=name) \
+                                      .filter(page__name__iexact=name) \
                                       .latest()
             except Revision.DoesNotExist:
                 raise Page.DoesNotExist()

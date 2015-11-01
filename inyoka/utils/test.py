@@ -169,3 +169,5 @@ class TestCase(_TestCase):
         super(TestCase, self)._post_teardown()
         content_cache = caches['content']
         content_cache.delete_pattern("*")
+        default_cache = caches['default']
+        default_cache.delete_pattern("*")
