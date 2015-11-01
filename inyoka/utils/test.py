@@ -12,17 +12,18 @@ import gc
 from importlib import import_module
 
 import responses
-
 from django.conf import settings
+from django.contrib.auth import authenticate, login
 from django.core.cache import caches
-from django.contrib.auth import login, authenticate
 from django.http import HttpRequest
-from django.test.client import Client
 from django.test import TestCase as _TestCase
+from django.test.client import Client
 
 from inyoka.portal.user import User
 from inyoka.utils.spam import (
-    get_comment_check_url, get_mark_ham_url, get_mark_spam_url,
+    get_comment_check_url,
+    get_mark_ham_url,
+    get_mark_spam_url,
     get_verify_key_url,
 )
 

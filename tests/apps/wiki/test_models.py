@@ -21,7 +21,7 @@ class TestPageManager(TestCase):
         """
         Tests that get_by_name creates the correkt cache.
         """
-        p = Page.objects.create('test', 'test content')
+        Page.objects.create('test', 'test content')
 
         Page.objects.get_by_name('Test')
 
@@ -32,7 +32,7 @@ class TestPageManager(TestCase):
         """
         Tests that get_by_name get element with different case from the cache.
         """
-        p = Page.objects.create('test', 'test content')
+        Page.objects.create('test', 'test content')
         Page.objects.get_by_name('test')  # Fill the cache
 
         with self.assertNumQueries(0):
