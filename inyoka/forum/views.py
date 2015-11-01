@@ -655,7 +655,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         else:
             post.has_attachments = False
 
-        post.edit(request, d['text'])
+        post.edit(d['text'])
 
         if is_spam_post:
             post.mark_spam(report=True, update_akismet=False)
