@@ -461,12 +461,6 @@ def profile(request, username):
 
     user = User.objects.get(username__iexact=username)
 
-    try:
-        if username != user.urlsafe_username:
-            return HttpResponseRedirect(url_for(user))
-    except ValueError:
-        raise Http404()
-
     if request.user.can('group_edit') or request.user.can('user_edit'):
         groups = user.groups.all()
     else:
@@ -799,8 +793,6 @@ def users_with_special_rights(request):
 @templated('portal/user_overview.html')
 def user_edit(request, username):
     user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin'))
 
     return {
         'user': user
@@ -812,8 +804,6 @@ def user_edit(request, username):
 def user_edit_profile(request, username):
     # TODO: Merge with usercp_profile
     user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'profile'))
 
     form = EditUserProfileForm(instance=user, admin_mode=True)
     if request.method == 'POST':
@@ -842,8 +832,6 @@ def user_edit_profile(request, username):
 @templated('portal/user_edit_settings.html')
 def user_edit_settings(request, username):
     user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'settings'))
 
     ubuntu_version = [s.ubuntu_version for s in Subscription.objects.
                       filter(user=user, ubuntu_version__isnull=False)]
@@ -892,8 +880,6 @@ def user_edit_settings(request, username):
 @templated('portal/user_edit_status.html')
 def user_edit_status(request, username):
     user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'status'))
 
     form = EditUserStatusForm(instance=user)
     if request.method == 'POST':
@@ -918,8 +904,6 @@ def user_edit_status(request, username):
 @templated('portal/user_edit_privileges.html')
 def user_edit_privileges(request, username):
     user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'privileges'))
 
     checked_perms = [int(p) for p in request.POST.getlist('permissions')]
 
@@ -1021,8 +1005,6 @@ def user_edit_privileges(request, username):
 @templated('portal/user_edit_groups.html')
 def user_edit_groups(request, username):
     user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'groups'))
     initial = model_to_dict(user)
     if initial['_primary_group']:
         initial.update({
