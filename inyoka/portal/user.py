@@ -570,7 +570,6 @@ class User(AbstractBaseUser):
     def jabber_url(self):
         return u'xmpp:%s' % escape(self.jabber)
 
-
     def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
             return href('portal', 'user', self.username, **query)
