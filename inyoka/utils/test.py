@@ -9,15 +9,15 @@
     :license: BSD, see LICENSE for more details.
 """
 import gc
+from importlib import import_module
 
 import responses
 
 from django.conf import settings
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.contrib.auth import login, authenticate
 from django.http import HttpRequest
 from django.test.client import Client
-from django.utils.importlib import import_module
 from django.test import TestCase as _TestCase
 
 from inyoka.portal.user import User
@@ -167,5 +167,5 @@ class TestCase(_TestCase):
 
     def _post_teardown(self):
         super(TestCase, self)._post_teardown()
-        content_cache = get_cache('content')
+        content_cache = caches['content']
         content_cache.delete_pattern("*")

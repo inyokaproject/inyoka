@@ -16,7 +16,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.expressions import F, ExpressionNode
 from django.db.models.signals import post_save as model_post_save_signal
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 from inyoka.markup import parse, RenderContext
 from inyoka.utils.highlight import highlight_code
@@ -37,7 +37,7 @@ MAX_SLUG_INCREMENT = 999
 _SLUG_INCREMENT_SUFFIXES = set(range(2, MAX_SLUG_INCREMENT + 1))
 
 
-content_cache = get_cache('content')
+content_cache = caches['content']
 
 
 class CannotResolve(Exception):

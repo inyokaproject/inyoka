@@ -19,7 +19,7 @@ from django.core import signing
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone

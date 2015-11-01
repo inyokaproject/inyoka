@@ -11,7 +11,7 @@
 """
 import time
 
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 from inyoka.portal.models import Storage
 from inyoka.utils.local import local
@@ -23,7 +23,7 @@ class TestStorage(TestCase):
 
     def setUp(self):
         local.cache = {}
-        self.cache = get_cache('default')
+        self.cache = caches['default']
 
     def test_set(self):
         def _compare(key, value):

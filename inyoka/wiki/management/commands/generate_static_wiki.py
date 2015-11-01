@@ -13,6 +13,7 @@
 import datetime
 from functools import partial
 from hashlib import sha1
+from importlib import import_module
 from itertools import izip
 from os import path, walk, mkdir, chmod, unlink
 from re import escape, compile
@@ -23,7 +24,6 @@ from django.conf import settings
 from django.core.management.base import NoArgsCommand
 from django.template.defaultfilters import date
 from django.utils.encoding import force_unicode
-from django.utils.importlib import import_module
 from django.utils.translation import activate
 from django.apps import apps
 from werkzeug import url_unquote
