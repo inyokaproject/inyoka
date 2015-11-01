@@ -41,7 +41,7 @@ def on_render_preview(request):
         except Page.DoesNotExist:
             page = None
         simplified = False
-    if 'post' in request.POST
+    if 'post' in request.POST:
         try:
             post = ForumPost.objects.get(pk=request.POST['post'])
         except ForumPost.DoesNotExist:
