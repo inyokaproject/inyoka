@@ -40,16 +40,14 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
-from urlparse import urljoin
 from collections import OrderedDict
+from urlparse import urljoin
 
 from django.conf import settings
 from django.core.cache import cache
 
 from inyoka.utils.text import normalize_pagename
-from inyoka.utils.user import normalize_username
-from inyoka.wiki.models import Page, MetaData
-
+from inyoka.wiki.models import MetaData, Page
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
 
@@ -214,8 +212,7 @@ class AccessControlList(BaseStorage):
             if len(bits) != 2:
                 continue
 
-            subjects = [normalize_username(s.strip())
-                        for s in bits[0].split(',')]
+            subjects = [s.strip() for s in bits[0].split(',')]
 
             add_privs = del_privs = 0
             for s in bits[1].split(','):

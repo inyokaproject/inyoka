@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     inyoka.utils.user
     ~~~~~~~~~~~~~~~~~
@@ -10,29 +10,18 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import re
 import hashlib
+import re
 
 from django.conf import settings
 from django.contrib.auth import hashers
 
-_username_re = re.compile(ur'^[@\-\.a-z0-9äöüß]{1,30}$', re.I | re.U)
-_username_url_re = re.compile(ur'^[@\-\._a-z0-9 äöüß]{1,30}$', re.I | re.U)
-_username_split_re = re.compile(ur'[\s_]+')
+_username_re = re.compile(ur'^[@_\-\.a-z0-9äöüß]{1,30}$', re.I | re.U)
 
 
 def is_valid_username(name):
     """Check if the username entered is a valid one."""
     return _username_re.search(name) is not None
-
-
-def normalize_username(name):
-    """Normalize the username."""
-    if _username_url_re.search(name) is not None:
-        rv = ' '.join(p for p in _username_split_re.split(name) if p)
-        if rv:
-            return rv
-    raise ValueError('invalid username')
 
 
 def gen_activation_key(user):

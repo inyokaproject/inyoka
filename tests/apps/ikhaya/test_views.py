@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.apps.ikhaya.test_views
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,7 +111,7 @@ class TestViews(TestCase):
         self.assertContains(response, avatar_url, count=1)
         self.assertContains(response, '''<td class="author">
             <p class="username">
-                <a href="%s">user wo</a>
+                <a href="%s">user_wo</a>
             </p>
         </td>''' % user_wo.get_absolute_url(action='show'), count=1, html=True)
         self.assertContains(response, gravatar_url, count=1)
@@ -178,12 +178,3 @@ class TestViews(TestCase):
                                                         'confirm': True})
         self.assertContains(response, 'endtime<ul class="errorlist">', 1)
         self.assertContains(response, 'errorlist', 2)
-
-    def test_add_event_with_name_startdatetime_enddatetime(self):
-        response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 4, 30),
-                                                        'time': datetime.time(23, 0, 0),
-                                                        'enddate': datetime.date(2015, 5, 1),
-                                                        'endtime': datetime.time(9, 0, 0),
-                                                        'name': 'TestEvent',
-                                                        'confirm': True})
-        self.assertEquals(response.status_code, 302)
