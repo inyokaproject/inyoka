@@ -760,24 +760,6 @@ def usercp_deactivate(request):
     }
 
 
-def get_user(username):
-    """Check if the user exists and return it"""
-    try:
-        if '@' in username:
-            user = User.objects.get(email__iexact=username)
-        else:
-            user = User.objects.get(username__iexact=username)
-    except User.DoesNotExist:
-        if '@' in username:
-            try:
-                user = User.objects.get(username__exact=username)
-            except User.DoesNotExist:
-                raise Http404
-        else:
-            raise Http404
-    return user
-
-
 @require_permission('user_edit')
 @templated('portal/special_rights.html')
 def users_with_special_rights(request):
@@ -792,7 +774,10 @@ def users_with_special_rights(request):
 @require_permission('user_edit')
 @templated('portal/user_overview.html')
 def user_edit(request, username):
-    user = get_user(username)
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     return {
         'user': user
@@ -803,7 +788,10 @@ def user_edit(request, username):
 @templated('portal/user_edit_profile.html')
 def user_edit_profile(request, username):
     # TODO: Merge with usercp_profile
-    user = get_user(username)
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     form = EditUserProfileForm(instance=user, admin_mode=True)
     if request.method == 'POST':
@@ -831,7 +819,10 @@ def user_edit_profile(request, username):
 @require_permission('user_edit')
 @templated('portal/user_edit_settings.html')
 def user_edit_settings(request, username):
-    user = get_user(username)
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     ubuntu_version = [s.ubuntu_version for s in Subscription.objects.
                       filter(user=user, ubuntu_version__isnull=False)]
@@ -879,7 +870,10 @@ def user_edit_settings(request, username):
 @require_permission('user_edit')
 @templated('portal/user_edit_status.html')
 def user_edit_status(request, username):
-    user = get_user(username)
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     form = EditUserStatusForm(instance=user)
     if request.method == 'POST':
@@ -903,7 +897,10 @@ def user_edit_status(request, username):
 @require_permission('user_edit')
 @templated('portal/user_edit_privileges.html')
 def user_edit_privileges(request, username):
-    user = get_user(username)
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     checked_perms = [int(p) for p in request.POST.getlist('permissions')]
 
@@ -1004,7 +1001,11 @@ def user_edit_privileges(request, username):
 @require_permission('user_edit')
 @templated('portal/user_edit_groups.html')
 def user_edit_groups(request, username):
-    user = get_user(username)
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
+
     initial = model_to_dict(user)
     if initial['_primary_group']:
         initial.update({
