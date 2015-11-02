@@ -241,6 +241,9 @@ class BaseMarkupField(models.TextField):
         self.redis_timeout = redis_timeout
         super(BaseMarkupField, self).__init__(*args, **kwargs)
 
+    def get_application(self):
+        return self.application or 'portal'
+
     def deconstruct(self):
         name, path, args, kwargs = super(BaseMarkupField, self).deconstruct()
         if self.application is not None:
@@ -251,7 +254,7 @@ class BaseMarkupField(models.TextField):
 
     def get_redis_key(self, cls, instance, name):
         return '{application}:{model}:{id}:{field}'.format(
-            application=self.application or 'portal',
+            application=self.get_application(),
             model=cls.__name__.lower(),
             id=instance.pk,
             field=name,
@@ -338,8 +341,8 @@ class InyokaMarkupField(BaseMarkupField):
                 if context is None:
                     context = {}
                 context = RenderContext(
-                    obj=None,  # TODO: The parser shoud not be object specific
-                    application=self.application,
+                    obj=None,
+                    application=self.get_application(),
                     simplified=self.simplify,
                     **context)
 
