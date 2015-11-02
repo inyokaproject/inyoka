@@ -21,6 +21,7 @@
 from datetime import datetime
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.db import models
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -29,7 +30,6 @@ from django.utils.translation import ugettext as _
 
 from inyoka.markup import RenderContext, parse
 from inyoka.portal.models import Subscription
-from inyoka.portal.utils import simple_check_login
 from inyoka.utils.http import (
     AccessDeniedResponse,
     TemplateResponse,
@@ -50,7 +50,7 @@ from inyoka.wiki.forms import (
     NewArticleForm,
     PageEditForm,
 )
-from inyoka.wiki.models import Page, Revision
+from inyoka.wiki.models import Page
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.tasks import update_object_list
 from inyoka.wiki.utils import (
@@ -422,7 +422,7 @@ def do_create(request, name=None):
 
     return {'form': form}
 
-
+@login_required(login_url=href('portal', 'login'))
 @clean_article_name
 @require_privilege('edit')
 @templated('wiki/action_edit.html', modifier=context_modifier)
@@ -987,7 +987,7 @@ def do_attach_edit(request, name):
 
 
 @clean_article_name
-@simple_check_login
+@login_required(login_url=href('portal', 'login'))
 def do_subscribe(request, name):
     """
     Subscribe the user to the page with `page_name`
@@ -1004,7 +1004,7 @@ def do_subscribe(request, name):
 
 
 @clean_article_name
-@simple_check_login
+@login_required(login_url=href('portal', 'login'))
 def do_unsubscribe(request, name):
     """
     Unsubscribe the user from the page with `page_name`

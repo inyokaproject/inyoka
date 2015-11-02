@@ -12,8 +12,10 @@
 import time
 from datetime import date, datetime, timedelta
 
+from PIL import Image
 from django.conf import settings
 from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.core import signing
 from django.core.cache import cache
@@ -30,7 +32,6 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
 from django.views.decorators.http import require_POST
 from django_mobile import get_flavour
-from PIL import Image
 
 from inyoka.forum.acl import (
     PRIVILEGES_DETAILS,
@@ -83,7 +84,6 @@ from inyoka.portal.user import (
     PERMISSION_NAMES,
     Group,
     User,
-    UserBanned,
     deactivate_user,
     reactivate_user,
     reset_email,
@@ -93,7 +93,6 @@ from inyoka.portal.user import (
 from inyoka.portal.utils import (
     abort_access_denied,
     calendar_entries_for_month,
-    check_login,
     get_ubuntu_versions,
     google_calendarize,
     require_permission,
@@ -455,7 +454,7 @@ def logout(request):
     return HttpResponseRedirect(redirect)
 
 
-@check_login(message=_(u'You need to be logged in to view a user profile.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/profile.html')
 def profile(request, username):
     """Show the user profile if the user is logged in."""
@@ -554,7 +553,7 @@ def unsubscribe_user(request, username):
         return HttpResponseRedirect(url_for(user))
 
 
-@check_login(message=_(u'You need to be logged in to access your control panel'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/index.html')
 def usercp(request):
     """User control panel index page"""
@@ -564,7 +563,7 @@ def usercp(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your profile'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/profile.html')
 def usercp_profile(request):
     """User control panel view for changing the user's profile"""
@@ -593,7 +592,7 @@ def usercp_profile(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your settings.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/settings.html')
 def usercp_settings(request):
     """User control panel view for changing various user settings"""
@@ -645,7 +644,7 @@ def usercp_settings(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your password.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/change_password.html')
 def usercp_password(request):
     """User control panel view for changing the password."""
@@ -730,7 +729,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
 usercp_subscriptions = UserCPSubscriptions.as_view()
 
 
-@check_login(message=_(u'You need to be logged in to deactivate your account.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/deactivate.html')
 def usercp_deactivate(request):
     """
@@ -1096,8 +1095,7 @@ def admin_resend_activation_mail(request):
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/privmsg/index.html')
 def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     page = int(page)
@@ -1205,8 +1203,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
 
 
 @templated('portal/privmsg/new.html')
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
+@login_required(login_url=href('portal', 'login'))
 def privmsg_new(request, username=None):
     # if the user has no posts in the forum and registered less than a week ago
     # he can only send one pm every 5 minutes
