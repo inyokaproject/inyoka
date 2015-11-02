@@ -599,7 +599,7 @@ class PostRevision(models.Model):
         Edits the text of the post the revision belongs to and deletes the
         revision.
         """
-        self.post.edit(request, self.text)
+        self.post.edit(self.text)
 
 
 class PostManager(models.Manager):
@@ -659,7 +659,7 @@ class Post(models.Model, LockableObject):
         url = href('forum', 'topic', slug, *(page != 1 and (page,) or ()))
         return u''.join((url, paramstr and '?%s' % paramstr or '', '#post-%d' % id))
 
-    def edit(self, request, text, is_plaintext=False):
+    def edit(self, text, is_plaintext=False):
         """
         Change the text of the post. If the post is already stored in the
         database, create a post revision containing the new text.
@@ -678,11 +678,13 @@ class Post(models.Model, LockableObject):
         if self.pk and self.text.strip():
             # Create a first revision for the initial post
             if not self.has_revision:
-                PostRevision(post=self, store_date=self.pub_date,
-                             text=self.text).save()
+                PostRevision.objects.create(
+                    post=self,
+                    store_date=self.pub_date,
+                    text=self.text)
                 self.has_revision = True
 
-            PostRevision(post=self, text=text).save()
+            PostRevision.objects.create(post=self, text=text)
 
         self.text = text
         self.is_plaintext = is_plaintext
