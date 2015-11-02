@@ -31,7 +31,7 @@ from inyoka.forum.forms import (AddPollForm, NewTopicForm, EditPostForm,
     EditForumForm, MoveTopicForm, SplitTopicForm, ReportListForm,
     ReportTopicForm, AddAttachmentForm)
 from inyoka.forum.models import (Post, Poll, Forum, Topic, PollVote, Attachment,
-    PollOption, PostRevision, WelcomeMessage, mark_all_forums_read)
+    PollOption, WelcomeMessage, mark_all_forums_read)
 from inyoka.forum.notifications import (send_edit_notifications,
     send_deletion_notification, send_newtopic_notifications,
     send_discussion_notification)
@@ -56,6 +56,7 @@ from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import quote_text
+from inyoka.portal.models import Content
 
 
 @templated('forum/index.html')
@@ -603,7 +604,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
         if not post:  # not when editing an existing post
             doublepost = Post.objects \
-                .filter(author=request.user, text=d['text'],
+                .filter(author=request.user, text_revisions__text=d['text'],
                         pub_date__gt=(datetime.utcnow() - timedelta(0, 300)))
             if not newtopic:
                 doublepost = doublepost.filter(topic=topic)
@@ -655,7 +656,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         else:
             post.has_attachments = False
 
-        post.edit(request, d['text'])
+        post.edit(d['text'])
 
         if is_spam_post:
             post.mark_spam(report=True, update_akismet=False)
@@ -1326,24 +1327,25 @@ def revisions(request, post_id):
     forum = topic.forum
     if not have_privilege(request.user, forum, CAN_MODERATE):
         return abort_access_denied(request)
-    revs = PostRevision.objects.filter(post=post).all()
+    revs = post.text_revisions.all()
     return {
         'post': post,
         'topic': topic,
         'forum': forum,
-        'revisions': reversed(revs)
+        'revisions': revs
     }
 
 
 @confirm_action(message=_(u'Do you want to restore the revision of the post?'),
                 confirm=_(u'Restore'), cancel=_(u'Cancel'))
 def restore_revision(request, rev_id):
-    rev = PostRevision.objects.select_related('post.topic.forum').get(id=rev_id)
-    if not have_privilege(request.user, rev.post.topic.forum, CAN_MODERATE):
+    rev = Content.objects.get(pk=rev_id)
+    post = rev.content_object
+    if not have_privilege(request.user, post.topic.forum, CAN_MODERATE):
         return abort_access_denied(request)
-    rev.restore(request)
+    rev.restore()
     messages.success(request, _(u'An old revision of the post was restored.'))
-    return HttpResponseRedirect(href('forum', 'post', rev.post_id))
+    return HttpResponseRedirect(href('forum', 'post', post.id))
 
 
 @confirm_action(message=_(u'Do you want to restore the topic?'),

@@ -34,7 +34,7 @@ from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
     check_privilege, filter_invisible)
 from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
     SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS)
-from inyoka.portal.models import Subscription
+from inyoka.portal.models import Subscription, ContentField
 from inyoka.portal.user import User, Group
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.database import (
@@ -580,28 +580,6 @@ class Topic(models.Model):
         )
 
 
-class PostRevision(models.Model):
-    """This saves old and current revisions of posts.
-
-    It can be used to restore posts if something odd was done
-    or to view changes.
-    """
-
-    text = InyokaMarkupField(application='forum')
-    store_date = models.DateTimeField(default=datetime.utcnow)
-    post = models.ForeignKey('forum.Post', related_name='revisions')
-
-    def get_absolute_url(self, action='restore'):
-        return href('forum', 'revision', self.id, 'restore')
-
-    def restore(self, request):
-        """
-        Edits the text of the post the revision belongs to and deletes the
-        revision.
-        """
-        self.post.edit(request, self.text)
-
-
 class PostManager(models.Manager):
     def last_post_map(self, ids):
         """Return a mapping from post id to `Post` instances.
@@ -626,11 +604,9 @@ class Post(models.Model, LockableObject):
     position = models.IntegerField(default=None, db_index=True)
     pub_date = models.DateTimeField(default=datetime.utcnow, db_index=True)
     hidden = models.BooleanField(default=False)
-    text = InyokaMarkupField(application='forum')
-    has_revision = models.BooleanField(default=False)
     has_attachments = models.BooleanField(default=False)
     is_plaintext = models.BooleanField(default=False)
-
+    text = ContentField(related_query_name='posts', application='Forum')
     author = models.ForeignKey(User, on_delete=models.PROTECT)
     topic = models.ForeignKey(Topic, related_name='posts',
         on_delete=models.PROTECT)
@@ -659,7 +635,7 @@ class Post(models.Model, LockableObject):
         url = href('forum', 'topic', slug, *(page != 1 and (page,) or ()))
         return u''.join((url, paramstr and '?%s' % paramstr or '', '#post-%d' % id))
 
-    def edit(self, request, text, is_plaintext=False):
+    def edit(self, text, is_plaintext=False):
         """
         Change the text of the post. If the post is already stored in the
         database, create a post revision containing the new text.
@@ -673,20 +649,11 @@ class Post(models.Model, LockableObject):
         if self.text == text and self.is_plaintext == is_plaintext:
             return
 
-        # We need to check for the empty text to prevent a initial empty
-        # revision
-        if self.pk and self.text.strip():
-            # Create a first revision for the initial post
-            if not self.has_revision:
-                PostRevision(post=self, store_date=self.pub_date,
-                             text=self.text).save()
-                self.has_revision = True
-
-            PostRevision(post=self, text=text).save()
-
-        self.text = text
         self.is_plaintext = is_plaintext
         self.save()
+        # The next line creates a new Content objects which is a ManyToMany
+        # Table therefor self.save() has to be called before it.
+        self.text = text
 
     def delete(self, *args, **kwargs):
         """Delete the post and apply environmental changes.
@@ -743,6 +710,12 @@ class Post(models.Model, LockableObject):
             cache.delete_many('forum/forums/%s' % f.slug for f in forums)
 
         return super(Post, self).delete()
+
+    def has_revisions(self):
+        """
+        Returns True when the post has more then von revision.
+        """
+        return len(self.text_revisions.all()[:2]) > 1
 
     @property
     def page(self):
