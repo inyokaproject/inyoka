@@ -8,41 +8,65 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import date, datetime, time as dt_time
-import pytz
+from datetime import time as dt_time
+from datetime import date, datetime
 
-from django.http import Http404, HttpResponseRedirect
+import pytz
 from django.conf import settings
 from django.contrib import messages
-from django.utils.text import Truncator
-from django.utils.html import escape
-from django.core.cache import cache
-from django.utils.http import urlencode
-from django.utils.dates import MONTHS
-from django.utils.translation import ugettext as _
-from django.utils.timezone import get_current_timezone
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
+from django.http import Http404, HttpResponseRedirect
+from django.utils.dates import MONTHS
+from django.utils.html import escape
+from django.utils.text import Truncator
+from django.utils.timezone import get_current_timezone
+from django.utils.translation import ugettext as _
 
-from inyoka.ikhaya.forms import (NewEventForm, EditEventForm, EditCommentForm,
-    EditArticleForm, EditCategoryForm, SuggestArticleForm, EditPublicArticleForm)
-from inyoka.ikhaya.models import Event, Report, Comment, Article, Category, Suggestion
-from inyoka.ikhaya.notifications import (send_comment_notifications,
-    send_new_suggestion_notifications)
-from inyoka.markup import parse, RenderContext
-from inyoka.portal.models import Subscription, PrivateMessage, PrivateMessageEntry
+from inyoka.ikhaya.forms import (
+    EditArticleForm,
+    EditCategoryForm,
+    EditCommentForm,
+    EditEventForm,
+    EditPublicArticleForm,
+    NewEventForm,
+    SuggestArticleForm,
+)
+from inyoka.ikhaya.models import (
+    Article,
+    Category,
+    Comment,
+    Event,
+    Report,
+    Suggestion,
+)
+from inyoka.ikhaya.notifications import (
+    send_comment_notifications,
+    send_new_suggestion_notifications,
+)
+from inyoka.markup import RenderContext, parse
+from inyoka.portal.models import (
+    PrivateMessage,
+    PrivateMessageEntry,
+    Subscription,
+)
 from inyoka.portal.user import User
 from inyoka.portal.utils import check_login, require_permission
 from inyoka.utils import ctype, generic
-from inyoka.utils.urls import href, url_for, is_safe_domain
-from inyoka.utils.http import templated, AccessDeniedResponse, does_not_exist_is_404
-from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.dates import date_time_to_datetime
-from inyoka.utils.storage import storage
-from inyoka.utils.sortable import Sortable
-from inyoka.utils.templating import render_template
-from inyoka.utils.pagination import Pagination
-from inyoka.utils.notification import send_notification
+from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.flash_confirmation import confirm_action
+from inyoka.utils.http import (
+    AccessDeniedResponse,
+    does_not_exist_is_404,
+    templated,
+)
+from inyoka.utils.notification import send_notification
+from inyoka.utils.pagination import Pagination
+from inyoka.utils.sortable import Sortable
+from inyoka.utils.storage import storage
+from inyoka.utils.templating import render_template
+from inyoka.utils.urls import href, is_safe_domain, url_for
 
 
 def context_modifier(request, context):
@@ -58,7 +82,9 @@ def context_modifier(request, context):
     key = 'ikhaya/archive'
     data = cache.get(key)
     if data is None:
-        archive = list(Article.published.dates('pub_date', 'month', order='DESC'))
+        archive = list(Article.published.dates('pub_date',
+                                               'month',
+                                               order='DESC'))
         if len(archive) > 5:
             archive = archive[:5]
             short_archive = True
@@ -90,14 +116,15 @@ event_delete = generic.DeleteView.as_view(model=Event,
 
 
 @templated('ikhaya/index.html', modifier=context_modifier)
-def index(request, year=None, month=None, category_slug=None, page=1, full=False):
+def index(request, year=None, month=None, category_slug=None, page=1,
+          full=False):
     """Shows a few articles by different criteria"""
 
     category = None
     can_read = request.user.can('article_read')
     articles = Article.published if not can_read else Article.objects
 
-    _page = (page if page>1 else None, )
+    _page = (page if page > 1 else None, )
     _full = ('full', )
 
     if year and month:
@@ -127,7 +154,8 @@ def index(request, year=None, month=None, category_slug=None, page=1, full=False
 
     subscription_ids = []
     if not request.user.is_anonymous:
-        subscription_ids = Subscription.objects.values_list('object_id', flat=True) \
+        subscription_ids = Subscription.objects \
+            .values_list('object_id', flat=True) \
             .filter(user=request.user, content_type=ctype(Article))
 
     return {
@@ -148,19 +176,23 @@ def detail(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     preview = None
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.can('article_read'):
             return AccessDeniedResponse()
-        messages.info(request, _(u'This article is not visible for regular users.'))
+        messages.info(request, _(u'This article is not visible for regular '
+                                 u'users.'))
 
-    if request.method == 'POST' and (not article.comments_enabled or not request.user.is_authenticated()):
+    if request.method == 'POST' and (not article.comments_enabled or
+                                     not request.user.is_authenticated()):
         return AccessDeniedResponse()
 
     # clear notification status
-    subscribed = Subscription.objects.user_subscribed(request.user, article, clear_notified=True)
+    subscribed = Subscription.objects.user_subscribed(request.user,
+                                                      article,
+                                                      clear_notified=True)
 
     if article.comments_enabled and request.method == 'POST':
         form = EditCommentForm(request.POST)
@@ -172,7 +204,8 @@ def detail(request, year, month, day, slug):
             if data.get('comment_id') and request.user.can('comment_edit'):
                 c = Comment.objects.get(id=data['comment_id'])
                 c.text = data['text']
-                messages.success(request, _(u'The comment was edited successfully.'))
+                messages.success(request, _(u'The comment was edited '
+                                            u'successfully.'))
             else:
                 send_subscribe = True
                 c = Comment(text=data['text'])
@@ -216,7 +249,7 @@ def article_delete(request, year, month, day, slug):
         """
         article = Article.objects.get(pub_date=date(int(year), int(month),
             int(day)), slug=slug)
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     if request.method == 'POST':
         if 'unpublish' in request.POST:
@@ -226,12 +259,13 @@ def article_delete(request, year, month, day, slug):
                 _(u'The publication of the article '
                   u'“<a href="%(link)s">%(title)s</a>” has been revoked.')
                 % {'link': escape(url_for(article, 'show')),
-                     'title': escape(article.subject)})
+                   'title': escape(article.subject)})
         elif 'cancel' in request.POST:
             messages.info(request,
-                _(u'Deletion of the article “<a href="%(link)s">%(title)s</a>” was canceled.')
+                _(u'Deletion of the article “<a href="%(link)s">%(title)s</a>” '
+                  u'was canceled.')
                 % {'link': escape(url_for(article, 'show')),
-                     'title': escape(article.subject)})
+                   'title': escape(article.subject)})
         else:
             article.delete()
             messages.success(request,
@@ -246,7 +280,8 @@ def article_delete(request, year, month, day, slug):
 
 @require_permission('article_edit')
 @templated('ikhaya/article_edit.html', modifier=context_modifier)
-def article_edit(request, year=None, month=None, day=None, slug=None, suggestion_id=None):
+def article_edit(request, year=None, month=None, day=None, slug=None,
+                 suggestion_id=None):
     """
     Display an interface to let the user create or edit an article.
     If `suggestion_id` is given, the new ikhaya article is based on a special
@@ -262,7 +297,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             # This would lead to inconsistent form content here.
             pub_date = date(int(year), int(month), int(day))
             article = Article.objects.get(pub_date=pub_date, slug=slug)
-        except IndexError:
+        except (IndexError, ValueError):
             raise Http404()
         locked = article.lock(request)
         if locked:
@@ -297,12 +332,15 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
                                  (article.pub_date, article.slug))
                     keys = ['ikhaya/latest_articles',
                             'ikhaya/latest_articles/%s' % article.category.slug,
-                            'ikhaya/article/%s/%s' % (article.pub_date, article.slug)]
+                            'ikhaya/article/%s/%s' % (article.pub_date,
+                                                      article.slug)]
                     cache.delete_many(keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
-            preview_intro = Article.get_intro_rendered(request.POST.get('intro', ''))
-            preview_text = Article.get_text_rendered(request.POST.get('text', ''))
+            preview_intro = Article.get_intro_rendered(request.POST.get('intro',
+                                                                        ''))
+            preview_text = Article.get_text_rendered(request.POST.get('text',
+                                                                      ''))
     else:
         if slug:
             if article.public:
@@ -336,7 +374,7 @@ def article_subscribe(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.can('article_read'):
@@ -349,7 +387,7 @@ def article_subscribe(request, year, month, day, slug):
             _(u'Notifications on new comments to this article will be sent '
               u'to you.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or url_for(article)
+        request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
 
 
@@ -360,7 +398,7 @@ def article_unsubscribe(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     try:
         subscription = Subscription.objects.get_for_user(request.user, article)
@@ -372,7 +410,7 @@ def article_unsubscribe(request, year, month, day, slug):
             _(u'You will no longer be notified of new comments for this '
               u'article.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or url_for(article)
+        request.GET['next'] or url_for(article)
     return HttpResponseRedirect(redirect)
 
 
@@ -384,7 +422,7 @@ def report_new(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
 
     if request.method == 'POST':
@@ -462,7 +500,7 @@ def reports(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     return {
         'article': article,
@@ -485,7 +523,8 @@ def reportlist(request):
 def comment_edit(request, comment_id):
     comment = Comment.objects.get(id=comment_id)
     if not request.user.can('comment_edit') and request.user == comment.author:
-        messages.error(request, _(u'Sorry, editing comments is disabled for now.'))
+        messages.error(request, _(u'Sorry, editing comments is disabled for '
+                                  u'now.'))
         return HttpResponseRedirect(url_for(comment.article))
     if request.user.can('comment_edit'):
         if request.method == 'POST':
@@ -555,15 +594,16 @@ def suggest_assign_to(request, suggestion, username):
         except User.DoesNotExist:
             raise Http404
         suggestion.save()
-        messages.success(request, _(u'The suggestion was assigned to “%(user)s”.')
-                                    % {'user': username})
+        messages.success(request,
+                         _(u'The suggestion was assigned to “%(user)s”.')
+                         % {'user': username})
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
 @require_permission('article_edit')
 def suggest_delete(request, suggestion):
     if request.method == 'POST':
-        if not 'cancel' in request.POST:
+        if 'cancel' not in request.POST:
             try:
                 s = Suggestion.objects.get(id=suggestion)
             except Suggestion.DoesNotExist:
@@ -593,13 +633,12 @@ def suggest_delete(request, suggestion):
                         title = _(u'New private message from %(user)s: '
                                   '%(subject)s') % {
                                       'user': request.user.username,
-                                      'subject': msg.subject,
-                                  }
+                                      'subject': msg.subject}
                         send_notification(recipient, 'new_pm', title, {
                                           'user': recipient,
-                                              'sender': request.user,
-                                              'subject': msg.subject,
-                                              'entry': entry,
+                                          'sender': request.user,
+                                          'subject': msg.subject,
+                                          'entry': entry,
                                           })
 
             cache.delete('ikhaya/suggestion_count')
@@ -666,11 +705,12 @@ def suggestions(request):
 
 
 category_edit = generic.CreateUpdateView(
-                        model=Category, form_class=EditCategoryForm,
-                        template_name='ikhaya/category_edit.html',
-                        context_object_name='category',
-                        urlgroup_name='category_slug',
-                        required_permission='category_edit')
+    model=Category,
+    form_class=EditCategoryForm,
+    template_name='ikhaya/category_edit.html',
+    context_object_name='category',
+    urlgroup_name='category_slug',
+    required_permission='category_edit')
 
 
 @require_permission('event_edit')
@@ -701,9 +741,10 @@ def suggestions_subscribe(request):
     except Subscription.DoesNotExist:
         ct = ContentType.objects.get_by_natural_key(*ct_query)
         Subscription(user=request.user, content_type=ct).save()
-        messages.info(request, _(u'Notifications on new suggestions will be sent to you.'))
+        messages.info(request, _(u'Notifications on new suggestions will be '
+                                 u'sent to you.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('ikhaya', 'suggestions')
+        request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
 
 
@@ -717,9 +758,10 @@ def suggestions_unsubscribe(request):
         pass
     else:
         subscription.delete()
-        messages.info(request, _(u'No notifications on suggestions will be sent to you any more.'))
+        messages.info(request, _(u'No notifications on suggestions will be '
+                                 u'sent to you any more.'))
     redirect = is_safe_domain(request.GET.get('next', '')) and \
-               request.GET['next'] or href('ikhaya', 'suggestions')
+        request.GET['next'] or href('ikhaya', 'suggestions')
     return HttpResponseRedirect(redirect)
 
 
@@ -776,7 +818,7 @@ def event_suggest(request):
         if form.is_valid():
             event = Event()
             convert = (lambda v: get_current_timezone().localize(v)
-                                .astimezone(pytz.utc).replace(tzinfo=None))
+                .astimezone(pytz.utc).replace(tzinfo=None))
             data = form.cleaned_data
             event.name = data['name']
             if data['date'] and data['time']:
@@ -875,20 +917,23 @@ def feed_comment(request, id=None, mode='short', count=10):
     if id:
         article = Article.published.get(id=id)
         title = _(u'%(domain)s Ikhaya comments – %(title)s') % {
-                    'domain': settings.BASE_DOMAIN_NAME,
-                    'title': article.subject}
+            'domain': settings.BASE_DOMAIN_NAME,
+            'title': article.subject}
         url = url_for(article)
     else:
         title = _(u'%(domain)s Ikhaya comments') % {
-                    'domain': settings.BASE_DOMAIN_NAME}
+            'domain': settings.BASE_DOMAIN_NAME}
         url = href('ikhaya')
 
-    comments = Comment.objects.get_latest_comments(article.id if article else None, count)
+    comments = Comment.objects.get_latest_comments(id, count)
 
-    feed = AtomFeed(title, feed_url=request.build_absolute_uri(),
+    feed = AtomFeed(title,
+                    feed_url=request.build_absolute_uri(),
                     subtitle=storage['ikhaya_description_rendered'],
                     rights=href('portal', 'lizenz'),
-                    id=url, url=url, icon=href('static', 'img', 'favicon.ico'),)
+                    id=url,
+                    url=url,
+                    icon=href('static', 'img', 'favicon.ico'),)
 
     for comment in comments[:count]:
         kwargs = {}
