@@ -19,7 +19,8 @@ urlpatterns = patterns('inyoka.wiki.views',
     (r'^_feed/(?P<count>\d+)', 'feed'),
     (r'^_feed/(?P<page_name>.+)/(?P<count>\d+)', 'feed'),
     (r'^wiki/recentchanges', 'recentchanges'),
-    (r'^wiki/tags$', 'show_tag_list'),
+    (r'^wiki/taglist$', 'show_tag_list'),
+    (r'^wiki/tags$', 'show_tag_cloud'),
     (r'^wiki/tags/(?P<tag>.+)', 'show_pages_by_tag')
 )
 

@@ -257,7 +257,15 @@ def recentchanges(request):
 @templated('wiki/tag_list.html')
 def show_tag_list(request):
     """
-    Show a taglist.
+    Show an alphabetical tag list with all wiki tags.
+    """
+    return {'tag_list': Page.objects.get_tagcloud(None)}
+
+
+@templated('wiki/tag_cloud.html')
+def show_tag_cloud(request):
+    """
+    Show a tag cloud.
     """
     return {'tag_list': Page.objects.get_tagcloud()}
 
