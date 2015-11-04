@@ -148,7 +148,7 @@ def detail(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     preview = None
     if article.hidden or article.pub_datetime > datetime.utcnow():
@@ -216,7 +216,7 @@ def article_delete(request, year, month, day, slug):
         """
         article = Article.objects.get(pub_date=date(int(year), int(month),
             int(day)), slug=slug)
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     if request.method == 'POST':
         if 'unpublish' in request.POST:
@@ -262,7 +262,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None, suggestion
             # This would lead to inconsistent form content here.
             pub_date = date(int(year), int(month), int(day))
             article = Article.objects.get(pub_date=pub_date, slug=slug)
-        except IndexError:
+        except (IndexError, ValueError):
             raise Http404()
         locked = article.lock(request)
         if locked:
@@ -336,7 +336,7 @@ def article_subscribe(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     if article.hidden or article.pub_datetime > datetime.utcnow():
         if not request.user.can('article_read'):
@@ -360,7 +360,7 @@ def article_unsubscribe(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     try:
         subscription = Subscription.objects.get_for_user(request.user, article)
@@ -384,7 +384,7 @@ def report_new(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
 
     if request.method == 'POST':
@@ -462,7 +462,7 @@ def reports(request, year, month, day, slug):
     try:
         article = Article.objects.get_cached([(date(int(year), int(month),
             int(day)), slug)])[0]
-    except IndexError:
+    except (IndexError, ValueError):
         raise Http404()
     return {
         'article': article,
