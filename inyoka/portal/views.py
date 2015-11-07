@@ -1347,7 +1347,7 @@ def privmsg_new(request, username=None):
 class MemberlistView(generic.ListView):
     """Shows a list of all registered users."""
     template_name = 'portal/memberlist.html'
-    columns = ('id', 'username', 'location', 'date_joined', 'post_count')
+    columns = ('id', 'username', 'location', 'date_joined')
     context_object_name = 'users'
     model = User
     base_link = href('portal', 'users')
@@ -1404,7 +1404,7 @@ def group(request, name, page=1):
     users = group.user_set.all()
 
     table = Sortable(users, request.GET, 'id',
-        columns=['id', 'username', 'location', 'date_joined', 'post_count'])
+        columns=['id', 'username', 'location', 'date_joined'])
     pagination = Pagination(request, table.get_queryset(), page, 15,
                             link=href('portal', 'group', name))
     return {
