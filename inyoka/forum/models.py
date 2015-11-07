@@ -558,9 +558,9 @@ class Topic(models.Model):
         Returns True when pagination is needed to show this topic.
 
         Pagination is needed when there are more posts in the topic, then
-        POST_PER_PAGE
+        POSTS_PER_PAGE
         """
-        return self.post_count.value() > POST_PER_PAGE
+        return self.post_count.value() > POSTS_PER_PAGE
 
     def get_ubuntu_version(self):
         if self.ubuntu_version:
