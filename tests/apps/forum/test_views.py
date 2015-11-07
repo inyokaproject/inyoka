@@ -146,7 +146,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
         self.client.get('/topic/%s/subscribe/' % self.topic.slug)
         self.assertTrue(
-                   Subscription.objects.user_subscribed(self.user, self.topic))
+            Subscription.objects.user_subscribed(self.user, self.topic))
 
         # Test for unsubscribe-link in the usercp if the user has no more read
         # access to a subscription
@@ -165,7 +165,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             {'next': forward_url}
         )
         self.assertFalse(
-                   Subscription.objects.user_subscribed(self.user, self.topic))
+            Subscription.objects.user_subscribed(self.user, self.topic))
         self.assertEqual(response['location'], forward_url)
 
     def test_continue_admin_index(self):
@@ -229,16 +229,16 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
                 topic=t2)
 
         response = self.client.get('/', {
-                    '__service__': 'forum.mark_topic_split_point',
-                    'post': p1.pk,
-                    'topic': 'a%3A-topic'})
+            '__service__': 'forum.mark_topic_split_point',
+            'post': p1.pk,
+            'topic': 'a%3A-topic'})
         response = self.client.get('/topic/a%3A-topic/split/')
         self.assertEqual(response.status_code, 200)  # was 302 before
 
         response = self.client.get('/', {
-                    '__service__': 'forum.mark_topic_split_point',
-                    'post': p2.pk,
-                    'topic': t2.slug})
+            '__service__': 'forum.mark_topic_split_point',
+            'post': p2.pk,
+            'topic': t2.slug})
         response = self.client.get('/topic/%s/split/' % t2.slug)
         self.assertEqual(response.status_code, 200)
 
@@ -622,8 +622,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_newtopic_frequent_user_spam(self):
         # frequent users (>100 posts) should be excluded from spam detection
-        self.user.post_count = 100
-        self.user.save()
+        cache.set(self.user.post_count.cache_key, 100)
         self.client.login(username='user', password='user')
         self.make_valid_key()
         self.make_spam()
@@ -921,8 +920,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_new_post_frequent_user_spam(self):
         # frequent users (>100 posts) should be excluded from spam detection
-        self.user.post_count = 100
-        self.user.save()
+        cache.set(self.user.post_count.cache_key, 100)
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 

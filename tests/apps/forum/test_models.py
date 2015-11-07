@@ -30,17 +30,18 @@ class TestAttachmentModel(TestCase):
 class TestForumModel(TestCase):
 
     def setUp(self):
-        self.parent1 = Forum(name='This is a test')
-        self.parent1.save()
-        self.parent2 = Forum(name='This is a second test', parent=self.parent1)
-        self.parent2.save()
-        self.forum = Forum(name='This rocks damnit', parent=self.parent2)
-        self.forum.save()
+        self.parent1 = Forum.objects.create(
+            name='This is a test')
+        self.parent2 = Forum.objects.create(
+            name='This is a second test',
+            parent=self.parent1)
+        self.forum = Forum.objects.create(
+            name='This rocks damnit',
+            parent=self.parent2)
 
-        cache.clear()
-
-    def tearDown(self):
-        cache.clear()
+        # Fill the cache
+        for forum in (self.parent1, self.parent2, self.forum):
+            forum.post_count.db_count(into_cache=True)
 
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
@@ -106,29 +107,36 @@ class TestForumModel(TestCase):
 
     def test_post_count(self):
         user = User.objects.register_user('admin', 'admin', 'admin', False)
-        t1 = Topic(title='topic', author=user)
-        t2 = Topic(title='topic2', author=user)
-
-        self.parent2.topics.add(t1)
-        self.forum.topics.add(t2)
+        t1 = Topic.objects.create(
+            title='topic',
+            author=user,
+            forum=self.parent2)
+        t2 = Topic.objects.create(
+            title='topic2',
+            author=user,
+            forum=self.forum)
 
         for i in xrange(5):
-            t1.posts.add(Post(text='post%d t1' % i,
-                author=user, position=i))
-            t2.posts.add(Post(text='post%d t2' % i,
-                author=user, position=i))
+            Post.objects.create(
+                text='post%d t1' % i,
+                author=user,
+                position=i,
+                topic=t1)
+            Post.objects.create(
+                text='post%d t2' % i,
+                author=user,
+                position=i,
+                topic=t2)
 
-        cache.delete('forum/forums/%s' % self.parent1.slug)
-        f = Forum.objects.get(id=self.parent1.id)
-        self.assertEqual(f.post_count, 10)
-
-        cache.delete('forum/forums/%s' % self.parent2.slug)
-        f = Forum.objects.get(id=self.parent2.id)
-        self.assertEqual(f.post_count, 10)
-
-        cache.delete('forum/forums/%s' % self.forum.slug)
-        f = Forum.objects.get(id=self.forum.id)
-        self.assertEqual(f.post_count, 5)
+        self.assertEqual(
+            self.parent1.post_count.value(),
+            10)
+        self.assertEqual(
+            self.parent2.post_count.value(),
+            10)
+        self.assertEqual(
+            self.forum.post_count.value(),
+            5)
 
     def test_get_absolute_url(self):
         url1 = self.forum.get_absolute_url('show', foo='val1', bar='val2')
@@ -219,13 +227,15 @@ class TestPostSplit(TestCase):
                     position=i)
             self.topic2.posts.add(self.t2_posts[i])
 
+        self.user.post_count.db_count(into_cache=True)
+
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
-        self.assertEqual(user.post_count, 10)
+        self.assertEqual(user.post_count.value(), 10)
 
     def test_topic_count(self):
-        self.assertEqual(Topic.objects.get(id=self.topic1.id).post_count, 5)
-        self.assertEqual(Topic.objects.get(id=self.topic2.id).post_count, 5)
+        self.assertEqual(Topic.objects.get(id=self.topic1.id).post_count.value(), 5)
+        self.assertEqual(Topic.objects.get(id=self.topic2.id).post_count.value(), 5)
 
     def test_topic_first_post(self):
         self.assertEqual(Topic.objects.get(id=self.topic1.id).first_post,
@@ -260,7 +270,7 @@ class TestPostSplit(TestCase):
         t2 = Topic.objects.get(id=self.topic2.id)
 
         self.assertFalse(Topic.objects.filter(id=self.topic1.id).exists())
-        self.assertEqual(t2.post_count, 10)
+        self.assertEqual(t2.post_count.value(), 10)
         self.assertEqual(t2.first_post.id, self.t2_posts[0].id)
         self.assertEqual(t2.last_post.id, self.t1_posts[4].id)
         post_ids = [p.id for k, p in self.t2_posts.items()] + \
@@ -273,43 +283,77 @@ class TestPostMove(TestCase):
     def setUp(self):
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
-        self.category = Forum(name='category')
-        self.category.save()
-        self.forum = Forum(name='forum')
-        self.forum.user_count_posts = True
-        self.forum.save()
-        self.forum2 = Forum(name='forum2')
-        self.forum2.user_count_posts = False
-        self.forum2.save()
-        self.topic1 = Topic(title='topic', author=self.user)
-        self.forum.topics.add(self.topic1)
-        self.topic2 = Topic(title='topic2', author=self.user)
-        self.forum2.topics.add(self.topic2)
+        self.forum = Forum.objects.create(
+            name='forum',
+            user_count_posts=True)
+        self.forum2 = Forum.objects.create(
+            name='forum2',
+            user_count_posts=False)
+        self.topic1 = Topic.objects.create(
+            title='topic',
+            author=self.user,
+            forum=self.forum)
+        self.topic2 = Topic.objects.create(
+            title='topic2',
+            author=self.user,
+            forum=self.forum2)
 
-        self.topic1.posts.add(Post(text=u'test1', author=self.user))
-        self.topic1.posts.add(Post(text=u'test2', author=self.user))
-        self.lp1 = Post(text=u'test3', author=self.user)
-        self.topic1.posts.add(self.lp1)
-        self.lp2 = Post(text=u'test4', author=self.user)
-        self.topic2.posts.add(self.lp2)
+        Post.objects.create(
+            text=u'test1',
+            author=self.user,
+            topic=self.topic1)
+        Post.objects.create(
+            text=u'test2',
+            author=self.user,
+            topic=self.topic1)
+
+        self.lp1 = Post.objects.create(
+            text=u'test3',
+            author=self.user,
+            topic=self.topic1)
+        self.lp2 = Post.objects.create(
+            text=u'test4',
+            author=self.user,
+            topic=self.topic2)
+
+        # Calculate user posts
+        self.user.post_count.db_count(into_cache=True)
+
+        # Reload objects. Use topic1.refresh_from_db() in django 1.8
+        self.topic1 = Topic.objects.get(pk=self.topic1.pk)
 
     def test_post_counter(self):
-        user = User.objects.get(id=self.user.id)
-        self.assertEqual(user.post_count, 3)
+        self.assertEqual(
+            self.user.post_count(),
+            3)
 
     def test_topic_count(self):
-        self.assertEqual(Topic.objects.get(id=self.topic1.id).post_count, 3)
-        self.assertEqual(Topic.objects.get(id=self.topic2.id).post_count, 1)
+        self.assertEqual(
+            Topic.objects.get(id=self.topic1.id).post_count.value(),
+            3)
+        self.assertEqual(
+            Topic.objects.get(id=self.topic2.id).post_count.value(),
+            1)
 
     def test_topic_move(self):
-        Topic.objects.get(id=self.topic1.id).move(self.forum2)
-        user = User.objects.get(id=self.user.id)
-        topic = Topic.objects.get(id=self.topic1.id)
-        self.assertEqual(user.post_count, 0)
-        self.assertEqual(topic.post_count, 3)
-        self.assertEqual(topic.last_post, self.lp1)
-        self.assertEqual(topic.forum.last_post, self.lp2)
-        self.assertEqual(Forum.objects.get(id=self.forum.id).last_post, None)
+        self.topic1.move(self.forum2)
+
+        self.topic1 = Topic.objects.get(id=self.topic1.id)
+        self.assertEqual(
+            self.user.post_count(),
+            0)
+        self.assertEqual(
+            self.topic1.post_count.value(),
+            3)
+        self.assertEqual(
+            self.topic1.last_post,
+            self.lp1)
+        self.assertEqual(
+            self.topic1.forum.last_post,
+            self.lp2)
+        self.assertEqual(
+            Forum.objects.get(id=self.forum.id).last_post,
+            None)
 
 
 class PostDeletionTest(TestCase):

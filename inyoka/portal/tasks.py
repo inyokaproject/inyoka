@@ -8,19 +8,20 @@
     :copyright: (c) 2011-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from time import time
 from datetime import datetime, timedelta
+from time import time
 
-from celery.task import periodic_task
+from celery.task import periodic_task, task
 from celery.task.schedules import crontab
-
 from django.conf import settings
+from django.core.cache import cache
+from django.db import connection
 
 from inyoka.portal.models import SessionInfo
+from inyoka.portal.user import User
+from inyoka.utils.logger import logger
 from inyoka.utils.sessions import SESSION_DELTA
 from inyoka.utils.storage import storage
-from inyoka.utils.logger import logger
-from inyoka.portal.user import User
 
 
 @periodic_task(run_every=crontab(minute='*/5'))
@@ -73,3 +74,13 @@ def clean_inactive_users():
                 user.delete()
             except:
                 logger.warning('Deleting inactive User %s failed.' % user.username)
+
+
+@task(ignore_result=True)
+def query_counter_task(cache_key, sql):
+    """
+    Counts all posts from a specific user.
+    """
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    cache.set(cache_key, cursor.fetchone()[0])

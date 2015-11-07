@@ -16,8 +16,93 @@
 from time import sleep
 
 from django.conf import settings
-
+from django.core.cache import cache
+from django.utils.translation import ugettext as _
 from django_redis.cache import RedisCache as _RedisCache
+
+
+class QueryCounter(object):
+    """
+    Calls .count() for a query and saves this value into redis.
+    """
+
+    def __init__(self, cache_key, query, use_task=False, timeout=None):
+        """
+        task has to be a celery task that generates the counter.
+
+        All the task has to do is call this QueryCounters build_cache method.
+        """
+        self.cache_key = cache_key
+        self.query = query
+        self.use_task = use_task
+        self.timeout = timeout or settings.COUNTER_CACHE_TIMEOUT
+
+    def __str__(self):
+        """
+        Returns the value or the string "counting..."
+        """
+        return str(self.value(default=_("counting...")))
+
+    def __call__(self, default=None):
+        return self.value(default=default)
+
+    def db_count(self, into_cache=False):
+        """
+        Executes the query with .count() and returns the value.
+
+        Saves the value into the cache in into_cache is True.
+        """
+        value = self.query.count()
+        cache.set(self.cache_key, value, timeout=self.timeout)
+        return value
+
+    def value(self, default=None):
+        """
+        Returns the value from the cache.
+
+        If the value is not in the cache and this object was initialized with
+        task, then the task is executed with celery and default is returned.
+
+        In other case cache.get_or_set() is used to create the value. This
+        blocks all requests until the value is created, so this should only be
+        done for fast queries.
+        """
+        if not self.use_task:
+            count = cache.get_or_set(self.cache_key, self.db_count, self.timeout)
+        else:
+            count = cache.get(self.cache_key)
+            if count is None:
+                from inyoka.portal.tasks import query_counter_task
+                # Build a queryset like query.count()
+                count_query = self.query.query.clone()
+                count_query.add_count_column()
+                count_query.default_cols = False
+
+                query_counter_task.delay(self.cache_key, str(count_query))
+                return default
+        return count
+
+    def incr(self, count=1):
+        """
+        Adds count to the counter.
+
+        Does nothing if the counter is not in the cache.
+        """
+        try:
+            cache.incr(self.cache_key, count)
+        except ValueError:
+            pass
+
+    def decr(self, count=1):
+        """
+        Decreace the counter by count.
+
+        Does nothing if the counter is not in the cache.
+        """
+        try:
+            cache.decr(self.cache_key, count)
+        except ValueError:
+            pass
 
 
 class RedisCache(_RedisCache):

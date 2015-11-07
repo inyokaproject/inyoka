@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.apps.wiki.test_macros
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -17,14 +17,6 @@ from inyoka.wiki.models import Page
 
 
 class TestWikiMacros(TestCase):
-
-    def test_recent_changes_registered(self):
-        gm = macros.get_macro
-        self.assertEqual(gm('RecentChanges', (), {}).__class__.__name__,
-                         'RecentChanges')
-        self.assertEqual(gm(u'LetzteÄnderungen', (), {}).__class__.__name__,
-                         'RecentChanges')
-
     def test_attachment_macro(self):
         gm = macros.get_macro
         ct = RenderContext(wiki_page=Page(name='AttachmentTest'))

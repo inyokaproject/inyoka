@@ -10,35 +10,48 @@
 """
 from __future__ import division
 
-import re
 import cPickle
-import operator
+import re
+from datetime import datetime
+from functools import reduce
+from hashlib import md5
+from itertools import groupby
+from operator import attrgetter, itemgetter
 from os import path
 from time import time
-from hashlib import md5
-from datetime import datetime
-from operator import attrgetter, itemgetter
-from functools import reduce
-from itertools import groupby
 
-from django.db import models, transaction
 from django.conf import settings
-from django.db.models import F, Max, Count
-from django.core.cache import cache
-from django.utils.encoding import force_unicode, DjangoUnicodeDecodeError
-from django.utils.html import escape, format_html
-from django.utils.translation import pgettext, ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
+from django.db import models, transaction
+from django.db.models import F, Count, Max
+from django.utils.encoding import DjangoUnicodeDecodeError, force_unicode
+from django.utils.html import escape, format_html
+from django.utils.translation import ugettext as _
+from django.utils.translation import pgettext, ugettext_lazy
 
-from inyoka.forum.acl import (CAN_READ, get_privileges, filter_visible,
-    check_privilege, filter_invisible)
-from inyoka.forum.constants import (CACHE_PAGES_COUNT, POSTS_PER_PAGE,
-    SUPPORTED_IMAGE_TYPES, UBUNTU_DISTROS)
+from inyoka.forum.acl import (
+    CAN_READ,
+    check_privilege,
+    filter_invisible,
+    filter_visible,
+    get_privileges,
+)
+from inyoka.forum.constants import (
+    CACHE_PAGES_COUNT,
+    POSTS_PER_PAGE,
+    SUPPORTED_IMAGE_TYPES,
+    UBUNTU_DISTROS,
+)
 from inyoka.portal.models import Subscription
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import Group, User
 from inyoka.portal.utils import get_ubuntu_versions
+from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import (
-    update_model, model_or_none, LockableObject, InyokaMarkupField,
+    InyokaMarkupField,
+    LockableObject,
+    model_or_none,
+    update_model,
 )
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
@@ -229,8 +242,6 @@ class Forum(models.Model):
     slug = models.CharField(max_length=100, unique=True, db_index=True)
     description = models.CharField(max_length=500, blank=True)
     position = models.IntegerField(default=0, db_index=True)
-    post_count = models.IntegerField(default=0)
-    topic_count = models.IntegerField(default=0)
     newtopic_default_text = models.TextField(null=True, blank=True)
     user_count_posts = models.BooleanField(default=True)
     force_version = models.BooleanField(default=False)
@@ -379,6 +390,20 @@ class Forum(models.Model):
             self.position,
         )
 
+    @property
+    def post_count(self):
+        return QueryCounter(
+            cache_key="forum_post_count:{}".format(self.id),
+            query=Post.objects.filter(topic__forum=self),
+            use_task=False)
+
+    @property
+    def topic_count(self):
+        return QueryCounter(
+            cache_key="forum_topic_count:{}".format(self.id),
+            query=self.topics.all(),
+            use_task=False)
+
 
 class Topic(models.Model):
     """A topic symbolizes a bunch of posts (at least one) that is located
@@ -390,7 +415,6 @@ class Topic(models.Model):
     title = models.CharField(max_length=100, blank=True)
     slug = models.CharField(max_length=50, blank=True)
     view_count = models.IntegerField(default=0)
-    post_count = models.IntegerField(default=0)
     sticky = models.BooleanField(default=False, db_index=True)
     solved = models.BooleanField(default=False)
     locked = models.BooleanField(default=False)
@@ -430,38 +454,34 @@ class Topic(models.Model):
         old_forums.append(self.forum)
         new_forums = [parent for parent in new_forum.parents]
         new_forums.append(new_forum)
-
         old_forum = self.forum
 
         with transaction.atomic():
-
             # move the topic
             self.forum = new_forum
 
             # recalculate post counters
-            new_forum.topic_count += 1
-            old_forum.topic_count -= 1
+            new_forum.topic_count.incr()
+            old_forum.topic_count.decr()
 
             for forum in new_forums:
-                forum.post_count += 1
+                forum.post_count.incr()
 
             for forum in old_forums:
-                forum.post_count -= 1
+                forum.post_count.decr()
 
             # Decrement or increment the user post count regarding
             # posts are counted in the new forum or not.
             if old_forum.user_count_posts != new_forum.user_count_posts:
-                if new_forum.user_count_posts and not old_forum.user_count_posts:
-                    op = operator.add
-                elif not new_forum.user_count_posts and old_forum.user_count_posts:
-                    op = operator.sub
+                users = (User.objects
+                             .filter(post__topic=self)
+                             .annotate(p_count=Count('post__id')))
 
-                post_counts = User.objects.filter(post__topic__id=self.id).distinct() \
-                                          .annotate(pcount=Count('post__id'))
-
-                for user in post_counts:
-                    user.post_count = op(user.post_count, user.pcount)
-                    user.save(update_fields=('post_count',))
+                for user in users:
+                    if new_forum.user_count_posts:
+                        user.post_count.incr(user.p_count)
+                    else:
+                        user.post_count.decr(user.p_count)
 
             self.save()
 
@@ -491,19 +511,20 @@ class Topic(models.Model):
         if not self.forum:
             return super(Topic, self).delete()
 
-        forums = self.forum.parents + [self]
+        forums = self.forum.parents + [self.forum]
         pks = [f.pk for f in forums]
 
         last_post = Post.objects.filter(topic__id=F('topic__id'),
                                         topic__forum__pk__in=pks) \
                                 .aggregate(count=Max('id'))['count']
 
+        for forum in forums:
+            forum.topic_count.decr()
+
         update_model(forums, last_post=model_or_none(last_post, self.last_post))
         update_model(self, last_post=None, first_post=None)
-        update_model(self.forum, topic_count=F('topic_count') - 1)
 
-        for post in self.posts.all():
-            post.delete()
+        self.posts.all().delete()
 
         # Delete subscriptions and remove wiki page discussions
         ctype = ContentType.objects.get_for_model(Topic)
@@ -522,13 +543,24 @@ class Topic(models.Model):
 
     def get_pagination(self):
         request = current_request._get_current_object()
-        pagination = Pagination(request=request, query=[], page=1, total=self.post_count,
-                                per_page=POSTS_PER_PAGE, link=self.get_absolute_url())
+        pagination = Pagination(
+            request=request,
+            query=[],
+            page=1,
+            total=self.post_count.value(),
+            per_page=POSTS_PER_PAGE,
+            link=self.get_absolute_url())
         return pagination
 
     @property
     def paginated(self):
-        return bool((self.post_count - 1) // POSTS_PER_PAGE)
+        """
+        Returns True when pagination is needed to show this topic.
+
+        Pagination is needed when there are more posts in the topic, then
+        POSTS_PER_PAGE
+        """
+        return self.post_count.value() > POSTS_PER_PAGE
 
     def get_ubuntu_version(self):
         if self.ubuntu_version:
@@ -569,6 +601,13 @@ class Topic(models.Model):
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
             user.save(update_fields=('forum_read_status',))
+
+    @property
+    def post_count(self):
+        return QueryCounter(
+            cache_key="topic_post_count:{}".format(self.id),
+            query=self.posts.all(),
+            use_task=False)
 
     def __unicode__(self):
         return self.title
@@ -704,8 +743,7 @@ class Post(models.Model, LockableObject):
 
         # degrade user post count
         if self.topic.forum.user_count_posts:
-            update_model(self.author, post_count=F('post_count') - 1)
-            cache.delete('portal/user/%d' % self.author.id)
+            self.author.post_count.decr()
 
         # update topic.last_post_id
         if self.pk == self.topic.last_post_id:
@@ -717,8 +755,8 @@ class Post(models.Model, LockableObject):
 
         # decrement post_counts
         forums = self.topic.forum.parents + [self.topic.forum]
-        update_model(self.topic, post_count=F('post_count') - 1)
-        update_model(forums, post_count=F('post_count') - 1)
+        self.topic.post_count.decr()
+        self.topic.forum.post_count.decr()
 
         # decrement position
         Post.objects.filter(position__gt=self.position, topic=self.topic) \
@@ -809,28 +847,25 @@ class Post(models.Model, LockableObject):
             if old_topic.forum.id != new_topic.forum.id:
                 # Decrease the post counts in the old forum (counter in the new
                 # one are handled by signals)
-                old_topic.forum.post_count -= len(posts)
+                old_topic.forum.post_count.decr(len(posts))
 
                 # the new forum or not.
                 new_forum, old_forum = new_topic.forum, old_topic.forum
                 if old_forum.user_count_posts != new_forum.user_count_posts:
-                    if new_forum.user_count_posts and not old_forum.user_count_posts:
-                        op = operator.add
-                    elif not new_forum.user_count_posts and old_forum.user_count_posts:
-                        op = operator.sub
+                    users = (User.objects
+                                 .filter(post__in=posts)
+                                 .annotate(p_count=Count('post__id')))
 
-                    post_counts = User.objects.filter(post__in=posts).values('id') \
-                                              .annotate(pcount=Count('post__id'))
-                    for user in post_counts:
-                        User.objects.filter(pk=user['id']).update(
-                            post_count=op(F('post_count'), user['pcount'])
-                        )
-                    cache.delete_many('portal/user/%d' % user['id'] for user in post_counts)
+                    for user in users:
+                        if new_forum.user_count_posts:
+                            user.post_count.incr(user.p_count)
+                        else:
+                            user.post_count.decr(user.p_count)
 
             if not remove_topic:
                 Topic.objects.filter(pk=old_topic.pk) \
-                             .update(post_count=F('post_count') - len(posts),
-                                     last_post=old_topic.posts.order_by('-position')[0])
+                             .update(last_post=old_topic.posts.order_by('-position')[0])
+                old_topic.post_count.decr(len(posts))
             else:
                 if old_topic.has_poll:
                     new_topic.has_poll = True
@@ -839,7 +874,6 @@ class Post(models.Model, LockableObject):
                 old_topic.delete()
 
             values = {'last_post': sorted(posts, key=lambda o: o.position)[-1],
-                      'post_count': new_topic.posts.count(),
                       'first_post': new_topic.first_post}
             if new_topic.first_post is None:
                 values['first_post'] = sorted(posts, key=lambda o: o.position)[0]
@@ -866,10 +900,10 @@ class Post(models.Model, LockableObject):
             )
 
             # Update post_count of the forums
-            Forum.objects.filter(id__in=new_ids)\
-                .update(post_count=F('post_count') + len(posts))
-            Forum.objects.filter(id__in=old_ids)\
-                .update(post_count=F('post_count') - len(posts))
+            for forum in new_forums:
+                forum.post_count.incr(len(posts))
+            for forum in old_forums:
+                forum.post_count.decr(len(posts))
 
         new_topic.forum.invalidate_topic_cache()
         old_topic.forum.invalidate_topic_cache()

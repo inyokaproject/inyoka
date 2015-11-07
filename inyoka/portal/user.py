@@ -29,6 +29,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from PIL import Image
 
+from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import InyokaMarkupField, JSONField, update_model
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
@@ -407,7 +408,6 @@ class User(AbstractBaseUser):
                                         help_text=ugettext_lazy(u'leave empty to ban permanent'))
 
     # profile attributes
-    post_count = models.IntegerField(ugettext_lazy(u'Posts'), default=0)
     avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
     jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
@@ -591,22 +591,28 @@ class User(AbstractBaseUser):
         """
         Returns True if the user has any content, else False.
         """
-        return (self.post_count or
+        return (self.post_count.value() or
                 self.post_set.exists() or
                 self.topics.exists() or
                 self.comment_set.exists() or
                 self.privatemessageentry_set.exists() or
                 self.wiki_revisions.exists() or
-
-                # TODO: Fix me, this line does not work at the moment!
                 self.article_set.exists() or
-
                 # Pastebin
                 self.entry_set.exists() or
                 self.event_set.exists() or
                 self.suggestion_set.exists() or
                 self.owned_suggestion_set.exists() or
                 self.subscription_set.exists())
+
+    @property
+    def post_count(self):
+        return QueryCounter(
+            cache_key="user_post_count:{}".format(self.id),
+            query=self.post_set
+                      .filter(hidden=False)
+                      .filter(topic__forum__user_count_posts=True),
+            use_task=True)
 
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
