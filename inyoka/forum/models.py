@@ -742,7 +742,7 @@ class Post(models.Model, LockableObject):
             return super(Post, self).delete()
 
         # degrade user post count
-        if self.topic.forum.user_count_posts:
+        if self.topic.forum.user_count_posts and not self.hidden:
             self.author.post_count.decr()
 
         # update topic.last_post_id
@@ -783,6 +783,16 @@ class Post(models.Model, LockableObject):
             cache.delete_many('forum/forums/%s' % f.slug for f in forums)
 
         return super(Post, self).delete()
+
+    def hide(self):
+        self.author.post_count.decr()
+        self.hide = True
+        self.save()
+
+    def show(self):
+        self.author.post_count.incr()
+        self.hide = False
+        self.save()
 
     @property
     def page(self):
