@@ -786,12 +786,12 @@ class Post(models.Model, LockableObject):
 
     def hide(self):
         self.author.post_count.decr()
-        self.hide = True
+        self.hidden = True
         self.save()
 
     def show(self):
         self.author.post_count.incr()
-        self.hide = False
+        self.hidden = False
         self.save()
 
     @property
