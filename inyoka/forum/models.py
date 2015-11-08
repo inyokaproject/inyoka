@@ -51,7 +51,6 @@ from inyoka.utils.database import (
     InyokaMarkupField,
     LockableObject,
     model_or_none,
-    update_model,
 )
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
@@ -521,8 +520,13 @@ class Topic(models.Model):
         for forum in forums:
             forum.topic_count.decr()
 
-        update_model(forums, last_post=model_or_none(last_post, self.last_post))
-        update_model(self, last_post=None, first_post=None)
+        # Update the last_post field on all parent forums
+        (Forum.objects.filter(id__in=[forum.id for forum in forums])
+              .update(last_post=model_or_none(last_post, self.last_post)))
+
+        self.last_post = None
+        self.first_post = None
+        self.save()
 
         self.posts.all().delete()
 
@@ -751,7 +755,8 @@ class Post(models.Model, LockableObject):
                 .exclude(pk=self.pk).order_by('-position')\
                 .values_list('id', flat=True)
             new_lp_id = new_lp_ids[0] if new_lp_ids else None
-            update_model(self.topic, last_post=model_or_none(new_lp_id, self))
+            self.topic.last_post = model_or_none(new_lp_id, self)
+            self.topic.save()
 
         # decrement post_counts
         forums = self.topic.forum.parents + [self.topic.forum]
@@ -772,7 +777,8 @@ class Post(models.Model, LockableObject):
                 .exclude(last_post=self).order_by('-last_post')\
                 .values_list('last_post', flat=True)
             new_lp_id = new_lp_ids[0] if new_lp_ids else None
-            update_model(forums, last_post=model_or_none(new_lp_id, self))
+            (Forum.objects.filter(id__in=[forum.id for forum in forums])
+                  .update(last_post=model_or_none(new_lp_id, self)))
             self.topic.forum.last_post_id = new_lp_id
             self.topic.forum.save(update_fields=['last_post_id'])
 

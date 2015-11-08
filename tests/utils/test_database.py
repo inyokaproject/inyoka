@@ -9,25 +9,9 @@
 import datetime
 
 from inyoka.portal.user import User
-from inyoka.utils.database import update_model
 from inyoka.utils.test import TestCase
 
 from .models import JSONEntry
-
-
-class TestDatabase(TestCase):
-
-    def test_database_update(self):
-        user = User.objects.create_user('test123', 't@bla.xy', 'test123')
-        update_model(user, email='another.bla')
-        self.assertEqual(user.email, 'another.bla')
-        self.assertTrue(User.objects.filter(email='another.bla').exists())
-
-        update_model(user, settings={'test': 123})
-        self.assertEqual(user.settings, {'test': 123})
-        # Refresh the user from the db (don't use .get to ignore the cache)
-        user = User.objects.filter(pk=user.pk)[0]
-        self.assertEqual(user.settings, {'test': 123})
 
 
 class A(object):
