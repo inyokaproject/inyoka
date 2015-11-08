@@ -1276,8 +1276,7 @@ def restore_post(request, post_id):
     post = Post.objects.get(id=post_id)
     if not have_privilege(request.user, post.topic.forum, CAN_MODERATE):
         return abort_access_denied(request)
-    post.hidden = False
-    post.save()
+    post.show()
     messages.success(request,
         _(u'The post by “%(user)s” was made visible.')
         % {'user': post.author.username})
@@ -1317,8 +1316,7 @@ def delete_post(request, post_id, action='hide'):
         messages.error(request, msg)
     else:
         if action == 'hide':
-            post.hidden = True
-            post.save()
+            post.hide()
             messages.success(
                 request,
                 _(u'The post by “%(user)s” was hidden.') % {'user': post.author.username}
