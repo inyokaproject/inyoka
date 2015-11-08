@@ -10,15 +10,13 @@
 """
 import json
 
-from django.core.cache import cache
+from django.core.cache import cache, caches
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.signals import post_save as model_post_save_signal
-from django.core.cache import caches
 
-from inyoka.markup import parse, RenderContext
+from inyoka.markup import RenderContext, parse
 from inyoka.utils.highlight import highlight_code
-
 
 MAX_SLUG_INCREMENT = 999
 _SLUG_INCREMENT_SUFFIXES = set(range(2, MAX_SLUG_INCREMENT + 1))
