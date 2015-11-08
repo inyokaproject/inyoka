@@ -14,9 +14,9 @@ from hashlib import md5
 
 import requests
 
-BASE_URL = 'http://www.gravatar.com/avatar/'
+BASE_URL = 'https://www.gravatar.com/avatar/'
 SECURE_BASE_URL = 'https://secure.gravatar.com/avatar/'
-PROFILE_URL = 'http://www.gravatar.com/'
+PROFILE_URL = 'https://www.gravatar.com/'
 RATINGS = ('g', 'pg', 'r', 'x')
 MAX_SIZE = 512
 MIN_SIZE = 1
