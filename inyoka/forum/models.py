@@ -507,34 +507,30 @@ class Topic(models.Model):
         new_forum.invalidate_topic_cache()
 
     def delete(self, *args, **kwargs):
-        if not self.forum:
-            return super(Topic, self).delete()
+        parent_forums = self.forum.parents + [self.forum]
 
-        forums = self.forum.parents + [self.forum]
-        pks = [f.pk for f in forums]
-
-        last_post = Post.objects.filter(topic__id=F('topic__id'),
-                                        topic__forum__pk__in=pks) \
-                                .aggregate(count=Max('id'))['count']
-
-        for forum in forums:
+        # Decrease the topic count of each parent forum and update last_post
+        for forum in parent_forums:
             forum.topic_count.decr()
+            forum.post_count.decr(self.post_count.value())
+            forum.last_post_id = (
+                Post.objects
+                    .filter(topic__forum=forum)
+                    .exclude(topic=self)
+                    .aggregate(count=Max('id'))['count'])
+            forum.save()
 
-        # Update the last_post field on all parent forums
-        (Forum.objects.filter(id__in=[forum.id for forum in forums])
-              .update(last_post=model_or_none(last_post, self.last_post)))
-
+        # Clear self.last_post and self.first_post, so this posts can be deleted
         self.last_post = None
         self.first_post = None
         self.save()
-
         self.posts.all().delete()
 
         # Delete subscriptions and remove wiki page discussions
         ctype = ContentType.objects.get_for_model(Topic)
         Subscription.objects.filter(content_type=ctype, object_id=self.id).delete()
         WikiPage.objects.filter(topic=self).update(topic=None)
-        return super(Topic, self).delete()
+        return super(Topic, self).delete(*args, **kwargs)
 
     def get_absolute_url(self, action='show', **query):
         if action in ('show',):
