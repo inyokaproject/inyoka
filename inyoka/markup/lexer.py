@@ -111,7 +111,7 @@ rules = {
         rule('^#\s*(.*?)\s*:\s*(?m)', bygroups('metadata_key'),
              enter='metadata'),
         rule(r'^={1,5}\s*(?m)', enter='headline'),
-        rule(r'^\s+([^::]*?)::\s+(?m)', bygroups('definition_term'),
+        rule(r'^[ \t]+((?!::).*?)::\s+(?m)', bygroups('definition_term'),
              enter='definition'),
         rule(r'^\|\|(?m)', enter='table_row'),
         rule(r'^[ \t]+(?:[*-]|[01aAiI]\.)\s*(?m)', enter='list_item'),
