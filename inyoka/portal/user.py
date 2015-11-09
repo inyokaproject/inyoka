@@ -30,7 +30,7 @@ from django.utils.translation import ugettext_lazy
 from PIL import Image
 
 from inyoka.utils.cache import QueryCounter
-from inyoka.utils.database import InyokaMarkupField, JSONField, update_model
+from inyoka.utils.database import InyokaMarkupField, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
@@ -95,16 +95,13 @@ def reactivate_user(id, email, status):
             'failed': _(u'The account “%(name)s” was already reactivated.') %
                {'name': escape(user.username)},
         }
-    values = {
-        'email': email,
-        'status': status,
-    }
+    user.email = email
+    user.status = status
+
     if user.banned_until and user.banned_until < datetime.utcnow():
         # User was banned but the ban time exceeded
-        values['status'] = 1
-        values['banned_until'] = None
-
-    update_model(user, **values)
+        user.status = 1
+        user.banned_until = None
 
     # Set a dumy password
     user.set_password(User.objects.make_random_password(length=32))

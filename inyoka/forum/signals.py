@@ -74,34 +74,38 @@ def pre_save_post(sender, **kwargs):
 
 
 @receiver(post_save, sender=Post)
-def post_save_post(sender, **kwargs):
-    if kwargs['raw']:
+def post_save_post(sender, instance, created, raw, **kwargs):
+    if raw:
         return
-    instance = kwargs.get('instance')
-    created = kwargs.get('created', False)
 
     if created:
+        # Increase post count of the author, if the forum counts posts
         if instance.topic.forum.user_count_posts:
             instance.author.post_count.incr()
 
-        values = {'last_post': instance}
-
+        # If this is the first post of a topic, then safe it as topic.first_pots
         if instance.topic.first_post is None:
             instance.topic.first_post = instance
-            instance.topic.save()
 
-        Topic.objects.filter(pk=instance.topic.pk).update(**values)
+        # Save the post as last post of his topic
+        instance.topic.last_post = instance
+        instance.topic.save()
+
+        # Increase the post count of the topic and the forum and its parents
         instance.topic.post_count.incr()
-        # refetch the topic instance since we use it later on
-        instance.topic = Topic.objects.get(pk=instance.topic.pk)
-
-        parent_ids = list(p.id for p in instance.topic.forum.parents)
-        parent_ids.append(instance.topic.forum.id)
         instance.topic.forum.post_count.incr()
         for forum in instance.topic.forum.parents:
             forum.post_count.incr()
-        Forum.objects.filter(id__in=parent_ids).update(last_post=instance)
+
+        # Update last_post of the forum and its parents
+        parent_forums = [instance.topic.forum] + instance.topic.forum.parents
+        (Forum.objects.filter(id__in=[forum.id for forum in parent_forums])
+              .update(last_post=instance))
+
+        # Invalidate Cache
         instance.topic.forum.invalidate_topic_cache()
+        cache_keys = ['forum/forums/{}'.format(forum.slug) for forum in parent_forums]
+        cache.delete_many(cache_keys)
 
 
 @receiver(post_save, sender=Privilege)
