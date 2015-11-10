@@ -8,11 +8,10 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from os.path import join, dirname
-
-from django.conf.global_settings import *  # NOQA
+from os.path import dirname, join
 
 import djcelery
+from django.conf.global_settings import *  # NOQA
 
 gettext_noop = lambda x: x
 
@@ -52,7 +51,6 @@ BASE_DOMAIN_NAME = 'ubuntuusers.de'
 INYOKA_URI_SCHEME = 'http'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-#SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 SESSION_COOKIE_DOMAIN = '.%s' % BASE_DOMAIN_NAME.split(':')[0]
 SESSION_COOKIE_NAME = 'session'
 SESSION_COOKIE_HTTPONLY = True

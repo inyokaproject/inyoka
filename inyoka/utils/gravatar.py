@@ -9,8 +9,8 @@
     :license: BSD, see LICENSE for more details.
 """
 import json
-from urllib import urlencode
 from hashlib import md5
+from urllib import urlencode
 
 import requests
 
@@ -30,8 +30,6 @@ def get_gravatar(email, rating='g', size=80, default='mm'):
     """Generate a link to the users' Gravatar."""
     assert rating.lower() in RATINGS
     assert MIN_SIZE <= size <= MAX_SIZE
-
-    url = BASE_URL
 
     options = {'s': size, 'r': rating, 'd': default}
     return BASE_URL + email_hash(email) + '?' + urlencode(options)

@@ -8,13 +8,12 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from werkzeug import cached_property
-
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy
+from werkzeug import cached_property
 
 from inyoka.forum.acl import have_privilege as have_forum_privilege
 from inyoka.portal.user import User

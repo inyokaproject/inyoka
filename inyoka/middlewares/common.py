@@ -16,12 +16,11 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
-from django.core.cache import cache
 from django.contrib import messages
 from django.middleware.common import CommonMiddleware
-
 from django_hosts.middleware import HostsRequestMiddleware
-from django_mobile.middleware import MobileDetectionMiddleware as BaseMobileDetectionMiddleware
+from django_mobile.middleware import \
+    MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
 from inyoka.utils.local import local, local_manager
 from inyoka.utils.logger import logger
@@ -60,7 +59,7 @@ class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
 
         path = request.path
         if (path.endswith(('.less', '.woff', '.eot', '.ttf', '.otf'))
-            and settings.DEBUG):
+                and settings.DEBUG):
             response['Access-Control-Allow-Origin'] = '*'
 
         # warn of slow requests
