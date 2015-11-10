@@ -20,7 +20,7 @@ from django.core.cache import cache
 from django.contrib import messages
 from django.middleware.common import CommonMiddleware
 
-from django_hosts.middleware import HostsMiddleware
+from django_hosts.middleware import HostsRequestMiddleware
 from django_mobile.middleware import MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
 from inyoka.utils.local import local, local_manager
@@ -28,7 +28,7 @@ from inyoka.utils.logger import logger
 from inyoka.utils.timer import StopWatch
 
 
-class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
+class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
     """Hook in as first middleware for common tasks."""
 
     def process_request(self, request):
@@ -41,7 +41,7 @@ class CommonServicesMiddleware(HostsMiddleware, CommonMiddleware):
 
         # IMPORTANT: Since we run some setupcode (mainly locals), this middleware
         # needs to be the first one, hence we manually dispatch to HostsMiddleware
-        response = HostsMiddleware.process_request(self, request)
+        response = HostsRequestMiddleware.process_request(self, request)
         if response is not None:
             return response
 

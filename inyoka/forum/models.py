@@ -484,24 +484,12 @@ class Topic(models.Model):
 
             self.save()
 
-            # and find a new last post id for the new forum
-            new_ids = [p.id for p in new_forums]
-            old_ids = [p.id for p in old_forums]
-
-            # search for a new last post in the old and the new forum
-            new_post_query = Post.objects.filter(
-                topic__id=F('topic__id'),
-                topic__forum__id=F('topic__forum__id'))
-
-            Forum.objects.filter(id__in=new_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=new_ids)
-                                        .aggregate(count=Max('id'))['count']
-            )
-
-            Forum.objects.filter(id__in=old_ids).update(
-                last_post=new_post_query._clone().filter(forum__id__in=old_ids)
-                                        .aggregate(count=Max('id'))['count']
-            )
+            for forum in new_forums + old_forums:
+                forum.last_post_id = (
+                    Post.objects
+                        .filter(topic__forum=forum)
+                        .aggregate(count=Max('id'))['count'])
+                forum.save()
 
         old_forum.invalidate_topic_cache()
         new_forum.invalidate_topic_cache()

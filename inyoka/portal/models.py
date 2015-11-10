@@ -10,9 +10,8 @@
 """
 from werkzeug import cached_property
 
-from django.contrib.contenttypes import models as gmodels
-from django.contrib.contenttypes import generic
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy
@@ -25,7 +24,7 @@ from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege
 
 
-class SubscriptionManager(gmodels.ContentTypeManager):
+class SubscriptionManager(ContentTypeManager):
     """
     Manager class for the `Subscription` model.
     """
@@ -310,7 +309,7 @@ class Subscription(models.Model):
 
     content_type = models.ForeignKey(ContentType, null=True)
     object_id = models.PositiveIntegerField(null=True, db_index=True)
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     @cached_property
     def can_read(self):

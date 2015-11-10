@@ -9,7 +9,7 @@
 from django.conf import settings
 
 from celery.task import task
-from celery.task.sets import subtask
+from celery.canvas import subtask
 
 from inyoka.portal.models import Subscription
 from inyoka.utils.jabber import send as send_jabber

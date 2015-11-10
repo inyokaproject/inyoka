@@ -211,6 +211,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.http.ConditionalGetMiddleware',
     'inyoka.middlewares.common.MobileDetectionMiddleware',
     'django_mobile.middleware.SetFlavourMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware',
 )
 
 #: We only allow uploads via memory up to 2.5mb and do not stream into
