@@ -12,10 +12,34 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from django.shortcuts import redirect
 from django.utils.html import smart_urlquote
 
 from inyoka.utils.urls import href
 from inyoka.wiki.storage import storage
+
+
+class CaseSensitiveException(Exception):
+    """
+    Raised when a specific page is requested which does not exist, but an
+    wiki page exist with another case.
+    """
+    def __init__(self, page, *args, **kwargs):
+        self.page = page
+        super(CaseSensitiveException, self).__init__(*args, **kwargs)
+
+
+def case_sensitive_redirect(function):
+    """
+    Redirect to the right case of a wiki page.
+    """
+    def wrapper(request, *args, **kwargs):
+        try:
+            return function(request, *args, **kwargs)
+        except CaseSensitiveException as e:
+            url = e.page.get_absolute_url(action=request.GET.get('action', 'show'))
+            return redirect(url)
+    return wrapper
 
 
 def has_conflicts(text):

@@ -336,9 +336,9 @@ class PageManager(models.Manager):
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
         rev = None
-        key = u'wiki/page/{}'.format(name.lower())
+        cache_key = u'wiki/page/{}'.format(name.lower())
         if not nocache:
-            rev = cache.get(key)
+            rev = cache.get(cache_key)
         if rev is None:
             try:
                 rev = Revision.objects.select_related('page', 'text', 'user') \
@@ -351,7 +351,15 @@ class PageManager(models.Manager):
                     cachetime = int(rev.page.metadata['X-Cache-Time'][0]) or None
                 except (IndexError, ValueError):
                     cachetime = None
-                cache.set(key, rev, cachetime)
+                cache.set(cache_key, rev, cachetime)
+
+        # If the page exists but it has another case, raise an exception
+        # with the right case.
+        if rev.page.name != name:
+            # TODO: Fix circular imports
+            from inyoka.wiki.utils import CaseSensitiveException
+            raise CaseSensitiveException(rev.page)
+
         page = rev.page
         page.rev = rev
         if rev.deleted and raise_on_deleted:
