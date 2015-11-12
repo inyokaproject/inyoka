@@ -306,11 +306,11 @@ class TestPostMove(TestCase):
             text=u'test2',
             author=self.user,
             topic=self.topic1)
-
         self.lp1 = Post.objects.create(
             text=u'test3',
             author=self.user,
             topic=self.topic1)
+
         self.lp2 = Post.objects.create(
             text=u'test4',
             author=self.user,

@@ -81,11 +81,11 @@ from datetime import datetime
 from hashlib import sha1
 
 import magic
+from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
-from django.db.models.loading import get_model
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
@@ -472,7 +472,7 @@ class PageManager(models.Manager):
                 scripts.
         """
         if user is None:
-            user = get_model('portal', 'User').objects.get_system_user()
+            user = apps.get_model('portal', 'User').objects.get_system_user()
         elif user.is_anonymous:
             user = None
         if remote_addr is None and user is None:
@@ -940,7 +940,7 @@ class Page(models.Model):
                 scripts.
         """
         if user is None:
-            user = get_model('portal', 'User').objects.get_system_user()
+            user = apps.get_model('portal', 'User').objects.get_system_user()
         elif user.is_anonymous:
             user = None
         if remote_addr is None and user is None:
