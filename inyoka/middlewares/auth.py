@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     inyoka.middlewares.auth
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -8,9 +8,9 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.contrib import auth, messages
-from django.contrib.auth.models import AnonymousUser
+from django.contrib import messages
 from django.contrib.auth.middleware import AuthenticationMiddleware
+from django.contrib.auth.models import AnonymousUser
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
