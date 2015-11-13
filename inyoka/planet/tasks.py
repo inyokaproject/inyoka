@@ -13,33 +13,35 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-# Secure XML libraries till a python solution exists.
-# We already patch in inyoka, hence we just import inyoka before feedparser.
-import inyoka
-
+import logging
+import re
+import socket
 # And further patch it so feedparser works :/
 import xml.sax
+from datetime import datetime
+from time import time
+
+import feedparser
+from celery import shared_task
+from dateutil.parser import parse as dateutil_parse
+from django.utils.encoding import force_unicode
+from django.utils.html import escape
+
+# Secure XML libraries till a python solution exists.
+# We already patch in inyoka, hence we just import inyoka before feedparser.
+import inyoka  # noqa
+from inyoka.planet.models import Blog, Entry
+from inyoka.utils.html import cleanup_html
+
 make_parser = xml.sax.make_parser
 xml.sax.make_parser = lambda x: make_parser()
 # End XML patching.
 
-import feedparser
-import re
-import socket
-import logging
 
-from time import time
-from datetime import datetime
 
-from django.utils.encoding import force_unicode
-from django.utils.html import escape
 
-from celery import shared_task
 
-from dateutil.parser import parse as dateutil_parse
 
-from inyoka.planet.models import Blog, Entry
-from inyoka.utils.html import cleanup_html
 
 
 # set a default timeout. Otherwise fetching some feeds might cause the script

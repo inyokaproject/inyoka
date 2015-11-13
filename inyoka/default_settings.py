@@ -8,8 +8,9 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from os.path import dirname, join
 from datetime import timedelta
+from os.path import dirname, join
+
 from celery.schedules import crontab
 
 gettext_noop = lambda x: x
@@ -21,11 +22,6 @@ BASE_PATH = dirname(__file__)
 DEBUG = False
 DEBUG_NOTIFICATIONS = False
 DEBUG_PROPAGATE_EXCEPTIONS = False
-
-# per default there are no managers and admins.  I guess that's
-# unused :)
-MANAGERS = ADMINS = ()
-
 
 DATABASES = {
     'default': {

@@ -6,8 +6,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from celery.canvas import subtask
 from celery import shared_task
+from celery.canvas import subtask
 from django.conf import settings
 
 from inyoka.portal.models import Subscription
