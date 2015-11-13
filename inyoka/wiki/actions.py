@@ -360,8 +360,8 @@ def do_rename(request, name, new_name=None, force=False):
 def _get_wiki_article_templates():
     """Return a list of template choices for use in NewArticleForm."""
     # TODO: this is a hack, do not have these hardcoded here!
-    return [('Vorlage/Artikel_normal', _(u'Normal (für erfahrene Autoren)')),
-            ('Vorlage/Artikel_umfangreich', _(u'Umfangreich (Für Einsteiger)')),
+    return [('Vorlage/Artikel_normal', _(u'Normal (for experienced authors)')),
+            ('Vorlage/Artikel_umfangreich', _(u'Extensive (for beginners)')),
             (None, _(u'I don\'t want a template'))]
 
 
@@ -445,11 +445,11 @@ def do_edit(request, name, rev=None):
         page = Page.objects.get_by_name_and_rev(name=name, rev=rev)
     except Page.DoesNotExist:
         if Page.objects.filter(name=name).exists():
-            msg = _(u'The given revision does not exist for this article,'
+            msg = _(u'The given revision does not exist for this article, '
                     u'using last revision instead.')
             url = href('wiki', name, 'a', 'edit')
         else:
-            msg = _(u'The article „{name}“ does not exist, you can'
+            msg = _(u'The article „{name}“ does not exist, you can '
                     u'try to create it now.').format(name=name)
             url = href('wiki', 'wiki', 'create', name)
         messages.info(request, msg)
