@@ -290,7 +290,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
     else:
         page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
                   user=request.user)
-    cache.delete(u'wiki/page/{}'.format(old_name))
+    cache.delete(u'wiki/page/{}'.format(old_name.lower()))
 
     if request.POST.get('add_redirect'):
         old_text = u'# X-Redirect: %s\n' % new_name
