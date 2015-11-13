@@ -110,6 +110,8 @@ import xml
 assert xml.sax.make_parser is defusedxml.sax.make_parser
 # End XML patching.
 
+
+from .celery import app as celery_app  # noqa
 import socket
 from os.path import join, dirname, realpath
 from distutils.version import LooseVersion as V
