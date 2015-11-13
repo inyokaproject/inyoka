@@ -332,6 +332,8 @@ def _rename(request, page, new_name, force=False, new_text=None):
 def do_rename(request, name, new_name=None, force=False):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
+    if new_name is None:
+        new_name = name
     if request.method == 'POST':
         new_name = normalize_pagename(request.POST.get('new_name', ''))
         if not new_name:
