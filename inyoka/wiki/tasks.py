@@ -9,14 +9,13 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta
 from collections import OrderedDict
+from datetime import datetime, timedelta
 
-from django.core.cache import cache
-from django.conf import settings
-
-from celery.task import task, periodic_task
+from celery.task import periodic_task, task
 from celery.task.schedules import crontab
+from django.conf import settings
+from django.core.cache import cache
 
 
 @task(ignore_result=True)
