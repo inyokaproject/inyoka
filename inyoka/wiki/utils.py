@@ -15,7 +15,7 @@
 from django.shortcuts import redirect
 from django.utils.html import smart_urlquote
 
-from inyoka.utils.urls import href
+from inyoka.utils.urls import href, url_for
 from inyoka.wiki.storage import storage
 
 
@@ -37,7 +37,7 @@ def case_sensitive_redirect(function):
         try:
             return function(request, *args, **kwargs)
         except CaseSensitiveException as e:
-            url = e.page.get_absolute_url(action=request.GET.get('action', 'show'))
+            url = url_for(e.page)
             return redirect(url)
     return wrapper
 
