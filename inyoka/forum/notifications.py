@@ -12,7 +12,7 @@ from django.conf import settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
 
-from celery.task import task
+from celery import shared_task
 from inyoka.utils import ctype
 from inyoka.utils.notification import queue_notifications
 
@@ -44,7 +44,7 @@ def send_newtopic_notifications(user, post, topic, forum):
         callback=notify_forum_subscriptions.subtask(args=(user.id, data)))
 
 
-@task(ignore_result=True)
+@shared_task
 def notify_forum_subscriptions(notified_users, request_user_id, data):
     from inyoka.forum.models import Forum
     prev_language = translation.get_language()
@@ -71,7 +71,7 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
         translation.activate(prev_language)
 
 
-@task(ignore_result=True)
+@shared_task
 def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
     prev_language = translation.get_language()
     translation.activate(settings.LANGUAGE_CODE)
@@ -110,7 +110,7 @@ def send_edit_notifications(user, post, topic, forum):
         callback=notify_member_subscriptions.subtask(args=(user.id, data)))
 
 
-@task(ignore_result=True)
+@shared_task
 def notify_member_subscriptions(notified_users, request_user_id, data):
     from inyoka.portal.models import User
     # notify about new answer in topic for member-subscriptions

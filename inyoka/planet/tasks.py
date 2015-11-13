@@ -34,8 +34,7 @@ from datetime import datetime
 from django.utils.encoding import force_unicode
 from django.utils.html import escape
 
-from celery.task import periodic_task
-from celery.task.schedules import crontab
+from celery import shared_task
 
 from dateutil.parser import parse as dateutil_parse
 
@@ -65,10 +64,10 @@ def dateutilDateHandler(aDateString):
 feedparser.registerDateHandler(dateutilDateHandler)
 
 
-@periodic_task(run_every=crontab(minute='*/15'))
+@shared_task
 def sync():
     """
-    Performs a synchronization.  Articles that are already syncronized aren't
+    Performs a synchronization. Articles that are already syncronized aren't
     touched anymore.
     """
     for blog in Blog.objects.filter(active=True):

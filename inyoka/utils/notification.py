@@ -7,7 +7,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from celery.canvas import subtask
-from celery.task import task
+from celery import shared_task
 from django.conf import settings
 
 from inyoka.portal.models import Subscription
@@ -47,7 +47,7 @@ def notify_about_subscription(sub, template=None, subject=None, args=None):
     send_notification(sub.user, template, subject, args)
 
 
-@task
+@shared_task
 def queue_notifications(request_user_id, template=None, subject=None, args=None,
                         include_notified=False, exclude_current_user=True,
                         filter=None, exclude=None, callback=None):
