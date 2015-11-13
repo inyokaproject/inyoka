@@ -14,12 +14,26 @@ from time import time
 
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy
+from django.contrib.sessions.backends.cache import SessionStore as _SessionStore
 
 from inyoka.portal.models import SessionInfo
 from inyoka.utils.local import current_request
 from inyoka.utils.storage import storage
 
 SESSION_DELTA = 300
+
+
+class SessionStore(_SessionStore):
+    """
+    Like the django cache session store but saves a second cache key for each
+    session with a short time to live.
+    """
+
+    def save(self, *args, **kwargs):
+        value = super(SessionStore, self).save(*args, **kwargs)
+        if self.session_key is not None:
+            self._cache.set('counter.{}'.format(self.cache_key), 0, SESSION_DELTA)
+        return value
 
 
 class SurgeProtectionMixin(object):

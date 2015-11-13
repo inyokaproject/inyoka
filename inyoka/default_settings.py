@@ -45,7 +45,7 @@ LOCALE_PATHS = (join(BASE_PATH, 'locale'),)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
 INYOKA_URI_SCHEME = 'http'
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_ENGINE = 'inyoka.utils.sessions'
 
 # this url conf is used for contrib stuff like the auth system
 ROOT_URLCONF = 'inyoka.portal.urls'
