@@ -53,6 +53,7 @@ from inyoka.wiki.forms import (
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.tasks import update_object_list
+from inyoka.wiki.utils import case_sensitive_redirect
 
 REVISIONS_PER_PAGE = 100
 
@@ -78,6 +79,7 @@ def context_modifier(request, context):
 
 @require_privilege('read')
 @templated('wiki/action_show.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_show(request, name):
     """
     Show a given revision or the most recent one.  This action requires the
@@ -132,6 +134,7 @@ def do_show(request, name):
 
 
 @require_privilege('read')
+@case_sensitive_redirect
 def do_metaexport(request, name):
     """
     Export metadata as raw text.  This exists mainly for debugging reasons but
@@ -217,6 +220,7 @@ def do_missing_page(request, name, _page=None):
 
 @require_privilege('manage')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_revert(request, name):
     """The revert action has no template, it uses a flashed form."""
     try:
@@ -314,6 +318,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
 
 @require_privilege('manage')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_rename(request, name):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -347,6 +352,7 @@ def do_rename(request, name):
 
 @require_privilege('edit')
 @templated('wiki/action_edit.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_edit(request, name):
     """
     Edit or create a wiki page.  If the page is an attachment this displays a
@@ -535,6 +541,7 @@ def do_edit(request, name):
 
 @require_privilege('delete')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_delete(request, name):
     """Delete the page (deletes the last recent revision)."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -556,6 +563,7 @@ def do_delete(request, name):
 #      make sense.  We need to figure out how to rewrite this properly.
 @require_privilege('manage')
 @templated('wiki/action_mv_baustelle.html')
+@case_sensitive_redirect
 def do_mv_baustelle(request, name):
     """
     "Move" the page to an editing area called "Baustelle", ie. do:
@@ -634,6 +642,7 @@ def do_mv_baustelle(request, name):
 #      make sense.  We need to figure out how to rewrite this properly.
 @require_privilege('manage')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_mv_discontinued(request, name):
     """Move page from ``Baustelle`` to ``Baustelle/Verlassen``"""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -669,6 +678,7 @@ def do_mv_discontinued(request, name):
 #      make sense.  We need to figure out how to rewrite this properly.
 @require_privilege('manage')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_mv_back(request, name):
     """
     Move page back from ``Baustelle`` to its origin, move copy (which may exist
@@ -734,6 +744,7 @@ def do_mv_back(request, name):
 
 @require_privilege('read')
 @templated('wiki/action_log.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_log(request, name):
     """
     Show a revision log for this page.
@@ -781,6 +792,7 @@ def do_log(request, name):
 
 @require_privilege('read')
 @templated('wiki/action_diff.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_diff(request, name):
     """Render a diff between two pages."""
     old_rev = request.GET.get('rev', '')
@@ -804,6 +816,7 @@ def do_diff(request, name):
 
 @require_privilege('read')
 @templated('wiki/action_backlinks.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_backlinks(request, name):
     """
     Display a list of backlinks.
@@ -822,6 +835,7 @@ def do_backlinks(request, name):
 
 @require_privilege('read')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_export(request, name):
     """
     Export the given revision or the most recent one to the specified format
@@ -876,6 +890,7 @@ def do_export(request, name):
 
 @require_privilege('attach')
 @templated('wiki/action_attach.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_attach(request, name):
     """
     List all pages with attachments according to the given page and
@@ -967,6 +982,7 @@ def do_attach(request, name):
 
 @require_privilege('attach')
 @templated('wiki/action_attach_edit.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_attach_edit(request, name):
     page = Page.objects.get_by_name(name)
     form = EditAttachmentForm({
@@ -999,6 +1015,7 @@ def do_attach_edit(request, name):
 
 @require_privilege('manage')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_prune(request, name):
     """Clear the page cache."""
     page = Page.objects.get_by_name(name)
@@ -1008,6 +1025,7 @@ def do_prune(request, name):
 
 
 @templated('wiki/action_manage.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_manage(request, name):
     """
     Show a list of all actions for this page.
@@ -1061,6 +1079,7 @@ def do_unsubscribe(request, page_name):
 @require_privilege('edit')
 @does_not_exist_is_404
 @templated('wiki/action_manage_discussion.html')
+@case_sensitive_redirect
 def do_manage_discussion(request, name):
     page = Page.objects.get(name=name)
     if request.method == 'POST':
