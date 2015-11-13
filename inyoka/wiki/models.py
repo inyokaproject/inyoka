@@ -853,6 +853,8 @@ class Page(models.Model):
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
 
+
+    # TODO: This should be obsolete, since there is no way to call this method.
     def prune(self):
         """Clear the page cache."""
         render_article.delay(self)
@@ -988,13 +990,36 @@ class Page(models.Model):
 
         update_object_list.delay(self.name)
 
-    def get_absolute_url(self, action='show', **query):
-        if action in ('edit', 'subscribe', 'unsubscribe', 'log', 'backlinks',
-                      'manage', 'manage_discussion', 'attach', 'mv_baustelle'):
-            return href('wiki', self.name, action=action, **query)
-        if action == 'show_no_redirect':
-            return href('wiki', self.name, redirect='no', **query)
-        if action == 'show':
+    def get_absolute_url(self, action='show', revision=None, format=None, **query):
+        actions = ('attachments',
+                   'backlinks',
+                   'delete',
+                   'diff',
+                   'discussion',
+                   'edit',
+                   'feed',
+                   'log',
+                   'mv_back',
+                   'mv_baustelle',
+                   'mv_discontinued',
+                   'rename',
+                   'subscribe',
+                   'udiff',
+                   'unsubscribe')
+        if action in actions:
+            return href('wiki', self.name, 'a', action, **query)
+        elif action == 'show_no_redirect':
+            return href('wiki', self.name, 'no_redirect', **query)
+        elif action == 'revert' and revision is not None:
+            return href('wiki', self.name, 'a', 'revert', revision, **query)
+        elif action == 'export' and format is not None:
+            if revision is not None:
+                return href('wiki', self.name, 'a', 'export', format, revision, **query)
+            else:
+                return href('wiki', self.name, 'a', 'export', format, **query)
+        elif revision is not None:
+            return href('wiki', self.name, 'a', 'revision', revision, **query)
+        else:
             return href('wiki', self.name, **query)
         raise KeyError
 
@@ -1167,7 +1192,7 @@ class Revision(models.Model):
         return excerpt[:pos]
 
     def get_absolute_url(self, action=None):
-        return href('wiki', self.page.name, rev=self.id)
+        return href('wiki', self.page.name, 'a', 'revision', self.id)
 
     def revert(self, note=None, user=None, remote_addr=None):
         """Revert this revision and make it the current one."""
