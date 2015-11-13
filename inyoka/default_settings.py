@@ -10,7 +10,6 @@
 """
 from os.path import dirname, join
 
-import djcelery
 from django.conf.global_settings import *  # NOQA
 
 gettext_noop = lambda x: x
@@ -232,8 +231,6 @@ INSTALLED_APPS = (
     'inyoka.pastebin.apps.PastebinAppConfig',
     'inyoka.planet.apps.PlanetAppConfig',
     'inyoka.markup.apps.MarkupAppConfig',
-    'kombu.transport.django',
-    'djcelery',
     'django_mobile',
     'django_hosts',
 )
@@ -241,24 +238,15 @@ INSTALLED_APPS = (
 # Set the default sentry site
 SENTRY_SITE = 'example.com'
 
-# Import and activate django-celery support
-djcelery.setup_loader()
 
-# Celery broker preferences.
-# http://celeryq.org/docs/configuration.html#celery-result-backend
-CELERY_RESULT_BACKEND = 'database'
-
-# SQLAlchemy compatible uri.
-# NOTE: This is some kind of deactivated since we are using
-# django-celery for this stuff.
-CELERY_RESULT_DBURI = 'sqlite://'
+# Celery broker.
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 # Modules that hold task definitions
 CELERY_IMPORTS = [
     # register special celery task logger
     'inyoka.utils.logger',
-    # general (e.g monitoring) tasks
-    'inyoka.tasks',
     # Application specific tasks
     'inyoka.portal.tasks',
     'inyoka.planet.tasks',
@@ -270,8 +258,10 @@ CELERY_IMPORTS = [
     'inyoka.ikhaya.notifications',
 ]
 
+
+
+
 CELERY_SEND_TASK_ERROR_EMAILS = False
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_EAGER_PROPAGATES_EXCEPTIONS = False
 CELERY_ALWAYS_EAGER = DEBUG
 
@@ -283,9 +273,6 @@ CELERY_SEND_EVENTS = True
 # Make the template context available as tmpl_context in the TemplateResponse.
 # Useful for tests in combination with override_settings.
 PROPAGATE_TEMPLATE_CONTEXT = False
-
-# http://ask.github.com/kombu/introduction.html#transport-comparison
-BROKER_URL = 'django://'
 
 INTERNAL_IPS = ('127.0.0.1',)
 
