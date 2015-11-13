@@ -86,6 +86,9 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
         """Make sure user can access the chosen template."""
         template = self.cleaned_data['template']
 
+        if template == '':
+            return None
+
         if not has_privilege(self.user, template, 'read'):
             # Honestly, this should never happen.
             raise forms.ValidationError(_(u'You do not have permission to read '

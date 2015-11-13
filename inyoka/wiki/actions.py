@@ -362,7 +362,7 @@ def _get_wiki_article_templates():
     # TODO: this is a hack, do not have these hardcoded here!
     return [('Vorlage/Artikel_normal', _(u'Normal (for experienced authors)')),
             ('Vorlage/Artikel_umfangreich', _(u'Extensive (for beginners)')),
-            (None, _(u'I don\'t want a template'))]
+            ('', _(u'I don\'t want a template'))]
 
 
 def _get_wiki_reserved_names():
