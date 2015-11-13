@@ -12,18 +12,17 @@
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
-from celery.task import periodic_task, task
-from celery.task.schedules import crontab
+from celery import shared_task
 from django.conf import settings
 from django.core.cache import cache
 
 
-@task(ignore_result=True)
+@shared_task
 def render_article(page):
     cache.delete('wiki/page/{}'.format(page.name.lower()))
 
 
-@task(ignore_result=True)
+@shared_task
 def update_related_pages(page, update_meta=True):
     from inyoka.wiki.models import MetaData
     related_pages = set()
@@ -39,7 +38,7 @@ def update_related_pages(page, update_meta=True):
         page.update_meta()
 
 
-@task(ignore_result=True)
+@shared_task
 def update_object_list(names=None):
     """Refresh the wiki/object_list cache key"""
     from inyoka.wiki.models import Page
@@ -52,13 +51,20 @@ def update_object_list(names=None):
     Page.objects.get_page_list()
 
 
-@periodic_task(run_every=crontab(minute='*/15'))
+@shared_task
 def update_recentchanges():
     """
     Updates cached data for recent changes View.
     """
     from inyoka.wiki.models import Revision
-    revisions = Revision.objects.filter(change_date__gt=(datetime.utcnow() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS))).order_by('-change_date')[:settings.WIKI_RECENTCHANGES_MAX].select_related('user', 'page')
+
+    from_time = datetime.utcnow() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS)
+
+    revisions = (Revision.objects
+        .filter(change_date__gt=from_time)
+        .order_by('-change_date')
+        .select_related('user', 'page')[:settings.WIKI_RECENTCHANGES_MAX])
+
     recentchanges = OrderedDict()
     for revision in revisions:
         change_date = revision.change_date.date()

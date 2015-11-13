@@ -8,11 +8,11 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from celery import shared_task
 from django.conf import settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
 
-from celery.task import task
 from inyoka.utils import ctype
 from inyoka.utils.notification import queue_notifications
 
@@ -44,7 +44,7 @@ def send_newtopic_notifications(user, post, topic, forum):
         callback=notify_forum_subscriptions.subtask(args=(user.id, data)))
 
 
-@task(ignore_result=True)
+@shared_task
 def notify_forum_subscriptions(notified_users, request_user_id, data):
     from inyoka.forum.models import Forum
     prev_language = translation.get_language()
@@ -71,7 +71,7 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
         translation.activate(prev_language)
 
 
-@task(ignore_result=True)
+@shared_task
 def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
     prev_language = translation.get_language()
     translation.activate(settings.LANGUAGE_CODE)
@@ -110,13 +110,14 @@ def send_edit_notifications(user, post, topic, forum):
         callback=notify_member_subscriptions.subtask(args=(user.id, data)))
 
 
-@task(ignore_result=True)
+@shared_task
 def notify_member_subscriptions(notified_users, request_user_id, data):
     from inyoka.portal.models import User
     # notify about new answer in topic for member-subscriptions
-    queue_notifications.delay(request_user_id, 'user_new_post',
-        _(u'New answer from user „%(username)s”') % {
-            'username' : data.get('author_username')},
+    queue_notifications.delay(
+        request_user_id,
+        'user_new_post',
+        _(u'New answer from user „{username}”').format(username=data.get('author_username')),
         data, include_notified=True,
         filter={'content_type': ctype(User), 'object_id': request_user_id},
         exclude={'user__in': notified_users})

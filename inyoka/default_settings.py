@@ -8,9 +8,10 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from datetime import timedelta
 from os.path import dirname, join
 
-from django.conf.global_settings import *  # NOQA
+from celery.schedules import crontab
 
 gettext_noop = lambda x: x
 
@@ -21,11 +22,6 @@ BASE_PATH = dirname(__file__)
 DEBUG = False
 DEBUG_NOTIFICATIONS = False
 DEBUG_PROPAGATE_EXCEPTIONS = False
-
-# per default there are no managers and admins.  I guess that's
-# unused :)
-MANAGERS = ADMINS = ()
-
 
 DATABASES = {
     'default': {
@@ -243,32 +239,53 @@ SENTRY_SITE = 'example.com'
 BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
-# Modules that hold task definitions
-CELERY_IMPORTS = [
-    # register special celery task logger
-    'inyoka.utils.logger',
-    # Application specific tasks
-    'inyoka.portal.tasks',
-    'inyoka.planet.tasks',
-    'inyoka.wiki.tasks',
-    # Notification specific tasks
-    'inyoka.wiki.notifications',
-    'inyoka.utils.notification',
-    'inyoka.forum.notifications',
-    'inyoka.ikhaya.notifications',
-]
-
-
-
-
 CELERY_SEND_TASK_ERROR_EMAILS = False
 CELERY_EAGER_PROPAGATES_EXCEPTIONS = False
 CELERY_ALWAYS_EAGER = DEBUG
+CELERY_IGNORE_RESULT = True
 
 # Do not hijack the root logger, avoids unicode errors
 CELERYD_HIJACK_ROOT_LOGGER = False
-
 CELERY_SEND_EVENTS = True
+
+# Modules that hold task definitions
+CELERY_IMPORTS = [
+    'inyoka.utils.logger',
+    'inyoka.portal.tasks',
+    'inyoka.planet.tasks',
+    'inyoka.wiki.tasks',
+    'inyoka.utils.notification',
+    'inyoka.forum.notifications',
+]
+
+# Run tasks at specific time
+CELERYBEAT_SCHEDULE = {
+    'clean-sessions-every-5-minutes': {
+        'task': 'inyoka.portal.tasks.clean_sessions',
+        'schedule': timedelta(minutes=5),
+    },
+    'check-for-new-session-record': {
+        'task': 'inyoka.portal.tasks.check_for_user_record',
+        'schedule': timedelta(minutes=5),
+    },
+    'delete-not-activated-users': {
+        'task': 'inyoka.portal.tasks.clean_expired_users',
+        'schedule': crontab(hour=5, minute=30),
+    },
+    'delete-users-with-no-content': {
+        'task': 'inyoka.portal.tasks.clean_inactive_users',
+        'schedule': crontab(hour=4, minute=15, day_of_week='sunday'),
+    },
+    'sync-planet': {
+        'task': 'inyoka.planet.tasks.sync',
+        'schedule': timedelta(minutes=15),
+    },
+    'update_wiki_recent_changes': {
+        'task': 'inyoka.wiki.tasks.update_recentchanges',
+        'schedule': timedelta(minutes=15),
+    }
+}
+
 
 # Make the template context available as tmpl_context in the TemplateResponse.
 # Useful for tests in combination with override_settings.
