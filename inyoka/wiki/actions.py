@@ -123,7 +123,7 @@ def do_show(request, name, rev=None, allow_redirect=True):
         if redirect:
             messages.info(request,
                 _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
-                    'link': escape(href('wiki', page.name, 'no_redirect')),
+                    'link': escape(url_for(page, action='show_no_redirect')),
                     'title': escape(page.title)
                 }
             )
@@ -189,11 +189,11 @@ def do_missing_page(request, name, _page=None):
     """
     can_create = has_privilege(request.user, name, 'create')
     if can_create:
-        create_link = href('wiki', name, 'edit')
+        create_link = href('wiki', 'wiki', 'create', name)
     else:
         new_name = u'%s/%s' % (storage['wiki_newpage_root'], name)
         if has_privilege(request.user, new_name, 'create'):
-            create_link = href('wiki', new_name, 'edit')
+            create_link = href('wiki', 'wiki', 'create', new_name)
         else:
             create_link = None
 
@@ -233,9 +233,9 @@ def do_missing_page(request, name, _page=None):
 @case_sensitive_redirect
 def do_revert(request, name, rev=None):
     """The revert action has no template, it uses a flashed form."""
-    url = href('wiki', name, 'revision', rev)
     try:
         page = Page.objects.get_by_name_and_rev(name, rev)
+        url = url_for(page.rev)
     except Page.DoesNotExist:
         raise Http404()
     latest_rev = page.revisions.latest()
@@ -253,7 +253,7 @@ def do_revert(request, name, rev=None):
             messages.success(request,
                              _(u'“%(title)s” was reverted successfully') % {
                                  'title': escape(page.rev.title)})
-            url = href('wiki', name)
+            url = url_for(page)
     else:
         messages.info(request,
                       render_template('wiki/action_revert.html',
@@ -285,7 +285,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
               u'Please make sure that they are not required anymore. '
               u'<a href="%(link)s">Force rename and deletion of duplicate attachments</a>,') % {
                   'names': linklist,
-                  'link': href('wiki', page.name, action='rename', force=True)})
+                  'link': url_for(page, action='rename', force=True)})
         return False
 
     elif duplicate and force:
@@ -368,11 +368,7 @@ def _get_wiki_article_templates():
 def _get_wiki_reserved_names():
     """Return a list of words that should not be used as article names."""
     # TODO: this is a hack, do not have these hardcoded here!
-    return ['attachments', 'backlinks', 'create', 'delete', 'diff', 'discussion',
-            'edit', 'export', 'feed', 'log', 'manage', 'metaexport', 'mv_back',
-            'mv_construction', 'mv_discontinued', 'no_redirect', 'recentchanges',
-            'rename', 'revision', 'revert', 'subscribe', 'udiff', 'unsubscribe',
-            'tags']
+    return ['wiki', 'a']
 
 
 @templated('wiki/action_create.html', modifier=context_modifier)
@@ -397,16 +393,15 @@ def do_create(request, name=None):
                 template = Page.objects.get_by_name(name=template_name)
                 text = template.rev.text.value
 
+            new_page = Page.objects.create(user=request.user,
+                                           name=name,
+                                           # TODO: Kick out anonymous editing
+                                           remote_addr=request.META.get('REMOTE_ADDR'),
+                                           text=text)
             msg = _(u'The page <a href="{link}">{name}</a> has been created.')
-            messages.success(request, msg.format(link=href('wiki', name),
+            messages.success(request, msg.format(link=url_for(new_page),
                                                  name=name))
-            Page.objects.create(user=request.user,
-                                name=name,
-                                # TODO: Kick out anonymous editing
-                                remote_addr=request.META.get('REMOTE_ADDR'),
-                                text=text,
-                                )
-            return HttpResponseRedirect(href('wiki', name, 'edit'))
+            return HttpResponseRedirect(url_for(new_page, action='edit'))
     else:
         form = NewArticleForm(user=request.user,
                               template_choices=template_choices,
@@ -452,11 +447,11 @@ def do_edit(request, name, rev=None):
         if Page.objects.filter(name=name).exists():
             msg = _(u'The given revision does not exist for this article,'
                     u'using last revision instead.')
-            url = href('wiki', name, 'edit')
+            url = href('wiki', name, 'a', 'edit')
         else:
             msg = _(u'The article „{name}“ does not exist, you can'
                     u'try to create it now.').format(name=name)
-            url = href('wiki', 'create', name)
+            url = href('wiki', 'wiki', 'create', name)
         messages.info(request, msg)
         return HttpResponseRedirect(url)
     else:
@@ -476,7 +471,7 @@ def do_edit(request, name, rev=None):
                             data=request.POST.copy())
         if 'cancel' in request.POST:
             messages.info(request, _(u'Editing of this page was canceled.'))
-            return HttpResponseRedirect(href('wiki', name))
+            return HttpResponseRedirect(url_for(page))
         elif 'preview' in request.POST:
             ctx = RenderContext(request, wiki_page=page)
             tt = request.POST.get('text', '')
@@ -493,7 +488,7 @@ def do_edit(request, name, rev=None):
                                     rev=current_rev,
                                     old_rev=old_rev)
             messages.success(request, _(u'The page has been edited.'))
-            return HttpResponseRedirect(href('wiki', page.name))
+            return HttpResponseRedirect(url_for(page))
     else:
         form = PageEditForm(user=request.user,
                             name=name)
@@ -742,12 +737,12 @@ def do_log(request, name, pagination_page=1):
     """
     if request.method == 'POST':
         if 'rev' in request.POST and 'new_rev' in request.POST:
-            return HttpResponseRedirect(href('wiki', name, 'diff',
+            return HttpResponseRedirect(href('wiki', name, 'a', 'diff',
                                         request.POST.get('rev'),
                                         request.POST.get('new_rev')))
 
     page = Page.objects.get_by_name(name)
-    url = href('wiki', name, 'log')
+    url = url_for(page, action='log')
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
                             REVISIONS_PER_PAGE, url)
@@ -773,7 +768,7 @@ def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
         raise Http404()
     diff = Page.objects.compare(name, old_rev, new_rev)
     if udiff:
-        return HttpResponse(diff.udiff, mimetype='text/plain; charset=utf-8')
+        return HttpResponse(diff.udiff, content_type='text/plain; charset=utf-8')
 
     return {
         'diff': diff,
@@ -895,9 +890,9 @@ def do_attach(request, name):
         if request.POST.get('cancel'):
             messages.info(request, _(u'Canceled.'))
             if page and page.metadata.get('redirect'):
-                url = href('wiki', page.name, 'no_redirect')
+                url = url_for(page, action='show_no_redirect')
             else:
-                url = href('wiki', name)
+                url = url_for(page)
             return HttpResponseRedirect(url)
         form = AddAttachmentForm(request.POST, request.FILES)
         if not form.is_valid():
@@ -940,9 +935,9 @@ def do_attach(request, name):
         messages.success(request,
             _(u'Attachment saved successfully.'))
         if ap.metadata.get('weiterleitung'):
-            url = href('wiki', ap, 'no_redirect')
+            url = url_for(ap, action='show_no_redirect')
         else:
-            url = href('wiki', ap)
+            url = url_for(ap)
         return HttpResponseRedirect(url)
 
     context['deny_robots'] = 'noindex'
