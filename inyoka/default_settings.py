@@ -47,8 +47,6 @@ INYOKA_URI_SCHEME = 'http'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
-MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
-
 # this url conf is used for contrib stuff like the auth system
 ROOT_URLCONF = 'inyoka.portal.urls'
 # host conf for subdomain dispatching
