@@ -8,6 +8,8 @@
     :copyright: (c) 2012-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from unittest import skip
+
 from django.conf import settings
 from django.test.utils import override_settings
 from mock import patch
@@ -17,6 +19,7 @@ from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.wiki.models import Page
 
 
+@skip
 class TestViews(TestCase):
 
     client_class = InyokaClient
