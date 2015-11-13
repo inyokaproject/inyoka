@@ -20,7 +20,7 @@ from django.core.context_processors import csrf
 from django.forms.widgets import CheckboxInput
 from django.template.base import Context as DjangoContext
 from django.template.base import TemplateDoesNotExist
-from django.template.loader import BaseLoader
+from django.template.loaders.base import Loader
 from django.utils import six, translation
 from django.utils.encoding import force_unicode
 from django.utils.functional import Promise
@@ -340,7 +340,7 @@ class InyokaEnvironment(Environment):
         return code
 
 
-class DjangoLoader(BaseLoader):
+class DjangoLoader(Loader):
     is_usable = True
 
     def load_template(self, template_name, template_dirs=None):
