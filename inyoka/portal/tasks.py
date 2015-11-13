@@ -24,15 +24,6 @@ from inyoka.utils.storage import storage
 
 
 @shared_task
-def clean_sessions():
-    """
-    Clean sessions. This tasks in run by celery beat.
-    """
-    last_change = (datetime.utcnow() - timedelta(seconds=SESSION_DELTA))
-    SessionInfo.objects.filter(last_change__lt=last_change).delete()
-
-
-@shared_task
 def check_for_user_record():
     """
     Checks whether the current session count is a new record.
