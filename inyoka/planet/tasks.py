@@ -96,10 +96,21 @@ def sync():
                 logger.debug(u' no guid found, skipping')
                 continue
 
+            # normalize urls
+            if guid.startswith('https'):
+                guid_normalized = guid.strip('https')
+            elif guid.startswith('http'):
+                guid_normalized = guid.strip('http')
+
             try:
                 old_entry = Entry.objects.get(guid=guid)
             except Entry.DoesNotExist:
-                old_entry = None
+                try:
+                    old_entry = Entry.objects.get(guid=guid_normalized)
+                except Entry.DoesNotExist:
+                    old_entry = None
+
+            guid = guid_normalized
 
             # get title, url and text. skip if no title or no text is
             # given. if the link is missing we use the blog link.
