@@ -26,6 +26,7 @@ from inyoka.utils.urls import href, is_safe_domain, urlencode
 from inyoka.wiki.models import Page, MetaData, is_privileged_wiki_page
 from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
+from inyoka.wiki.utils import CaseSensitiveException
 
 
 def make_int(s, default):
@@ -272,6 +273,8 @@ class Include(macros.Macro):
             msg = _(u'The page “%(name)s” was not found') % {
                 'name': self.page}
             return nodes.error_box(_(u'Page not found'), msg)
+        except CaseSensitiveException as e:
+            page = e.page
         context.kwargs.setdefault('included_pages', set())
         if page.name in context.kwargs['included_pages']:
             msg = _(u'Detected a circular include macro call')
