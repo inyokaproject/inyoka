@@ -1674,6 +1674,77 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     }
 
 
+@templated('forum/postlist.html')
+def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
+    page = int(page)
+    
+    user = user and User.objects.get(username__iexact=user) or request.user
+    if user.is_anonymous:
+        messages.info(request, _(u'You need to be logged in to use this function.'))
+        return abort_access_denied(request)
+    
+    posts = Post.objects.filter(author=user).order_by('-pub_date').distinct()
+    
+    additional_title = None
+    
+    topic = None
+    if topic_slug is not None:
+        topic = Topic.objects.filter(slug=topic_slug)[0]
+        posts = posts.filter(topic=topic)
+        additional_title = _(u'in topic “%(topic)s”') % { 'topic': topic }
+    
+    forum = None
+    if forum_slug is not None:
+        forum = Forum.objects.get_cached(forum_slug)
+        posts = posts.filter(topic__forum=forum)
+        additional_title = _(u'in forum “%(forum)s”') % { 'forum': forum }
+
+    if additional_title is None:
+        title = _(u'Posts by “{user}”').format(user=user.username)
+    else:
+        title = _(u'Posts by “{user}” {additional_title}').format(user=user.username, \
+            additional_title=additional_title)
+    
+    url = href('forum', 'author', user.username, 'topic', topic)
+    
+    visible = [f.id for f in Forum.objects.get_forums_filtered(request.user)]
+    if visible:
+        posts = posts.filter(topic__forum__id__in=visible)
+
+    total_posts = get_simplified_queryset(posts).count()
+    posts = posts.values_list('id', flat=True)
+    pagination = Pagination(request, posts, page, TOPICS_PER_PAGE, url,
+                            total=total_posts, max_pages=MAX_PAGES_TOPICLIST)
+    post_ids = [tid for tid in pagination.get_queryset()]
+
+    # check for moderation permissions
+    moderatable_forums = [
+        obj.id for obj in
+        Forum.objects.get_forums_filtered(request.user, CAN_MODERATE)
+    ]
+
+    def can_moderate(topic):
+        return topic.forum_id in moderatable_forums
+
+    if post_ids:
+        related = ('topic', 'topic__forum', 'author')
+        posts = Post.objects.filter(id__in=post_ids).select_related(*related)
+    else:
+        posts = []
+
+    return {
+        'posts': posts,
+        'pagination': pagination,
+        'title': title,
+        'can_moderate': can_moderate,
+        'hide_sticky': False,
+        'forum': forum,
+        'topic': topic,
+        'username': user.username,
+    }
+
+
+
 @templated('forum/welcome.html')
 def welcome(request, slug, path=None):
     """
@@ -1810,3 +1881,4 @@ def forum_edit(request, slug=None, parent=None):
         'form': form,
         'forum': forum
     }
+
