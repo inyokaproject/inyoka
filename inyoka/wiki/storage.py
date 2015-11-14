@@ -87,10 +87,10 @@ class BaseStorage(object):
         if self.data is not None:
             return
 
-        data = MetaData.objects.values_list('page__last_rev__text__value',
+        data = MetaData.objects.values_list('page__reviewed_version__text__value',
                                             'page__name') \
             .filter(key='X-Behave',
-                    page__last_rev__deleted=False,
+                    page__reviewed_version__deleted=False,
                     value=self.behavior_key) \
             .order_by('page__name').all()
 
@@ -164,9 +164,9 @@ class SmileyMap(DictStorage):
         if not mapping:
             return []
 
-        data = Page.objects.values_list('last_rev__attachment__file', 'name') \
+        data = Page.objects.values_list('reviewed_version__attachment__file', 'name') \
             .filter(name__in=mapping.keys(),
-                    last_rev__deleted=False).all()
+                    reviewed_version__deleted=False).all()
 
         result = []
         for filename, page in data:
