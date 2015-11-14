@@ -1689,9 +1689,13 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
     
     topic = None
     if topic_slug is not None:
-        topic = Topic.objects.filter(slug=topic_slug)[0]
-        posts = posts.filter(topic=topic)
-        additional_title = _(u'in topic “%(topic)s”') % { 'topic': topic }
+        topics = Topic.objects.filter(slug=topic_slug)
+        if topics.exists():
+            topic = topics[0]
+            posts = posts.filter(topic=topic)
+            additional_title = _(u'in topic “%(topic)s”') % { 'topic': topic }
+        else:
+            raise Http404()
     
     forum = None
     if forum_slug is not None:
