@@ -9,9 +9,9 @@
     :license: BSD, see LICENSE for more details.
 """
 import json
-from importlib import import_module
 import os
 import sys
+from importlib import import_module
 
 from django.conf import settings
 from django.contrib import messages
@@ -20,21 +20,31 @@ from django.core.context_processors import csrf
 from django.forms.widgets import CheckboxInput
 from django.template.base import Context as DjangoContext
 from django.template.base import TemplateDoesNotExist
-from django.template.loader import BaseLoader
+from django.template.loaders.base import Loader
 from django.utils import six, translation
 from django.utils.encoding import force_unicode
 from django.utils.functional import Promise
 from django.utils.timesince import timesince
 from django_mobile import get_flavour
-from jinja2 import (escape, Template, Environment, contextfunction,
-    TemplateNotFound, FileSystemLoader)
+from jinja2 import (
+    Environment,
+    FileSystemLoader,
+    Template,
+    TemplateNotFound,
+    contextfunction,
+    escape,
+)
 
 from inyoka import INYOKA_REVISION
-from inyoka.utils.dates import format_date, format_datetime, format_time, naturalday
+from inyoka.utils.dates import (
+    format_date,
+    format_datetime,
+    format_time,
+    naturalday,
+)
 from inyoka.utils.local import current_request
 from inyoka.utils.text import human_number
-from inyoka.utils.urls import href, url_for, urlquote, urlencode
-
+from inyoka.utils.urls import href, url_for, urlencode, urlquote
 
 # path to the dtd.  In debug mode we refer to the file system, otherwise
 # URL.  We do that because the firefox validator extension is unable to
@@ -340,7 +350,7 @@ class InyokaEnvironment(Environment):
         return code
 
 
-class DjangoLoader(BaseLoader):
+class DjangoLoader(Loader):
     is_usable = True
 
     def load_template(self, template_name, template_dirs=None):
@@ -359,7 +369,7 @@ FILTERS = {
     'url': url_for,
     'urlencode': urlencode_filter,
     'jsonencode': json_filter,
-    'ischeckbox' : ischeckbox_filter,
+    'ischeckbox': ischeckbox_filter,
     # L10N aware variants of Django's filters. They all are patched to use
     # DATE_FORMAT (naturalday and format_date), DATETIME_FORMAT (format_datetime),
     # and TIME_FORMAT (format_time) from the formats module and not the relevant

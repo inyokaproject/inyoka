@@ -206,11 +206,11 @@ class PageManager(models.Manager):
             pagelist = cache.get(key)
 
         if pagelist is None:
-            pagelist = Page.objects.select_related('last_rev')
+            pagelist = Page.objects.select_related('reviewed_version')
             if exclude_privileged:
                 pagelist = exclude_privileged_wiki_page_filter(pagelist)
             pagelist = pagelist.values_list(
-                'name', 'last_rev__deleted', 'last_rev__attachment__id'
+                'name', 'reviewed_version__deleted', 'reviewed_version__attachment__id'
             ).order_by('name')
             # force a list, can't pickle ValueQueryset that way
             pagelist = list(pagelist)
@@ -306,7 +306,7 @@ class PageManager(models.Manager):
 
     def get_missing(self):
         """Return a tuple of (page, count) for all missing page-links."""
-        page_names = Page.objects.filter(last_rev__deleted=False).values('name')
+        page_names = Page.objects.filter(reviewed_version__deleted=False).values('name')
 
         return (MetaData.objects
             .filter(key='X-Link')
@@ -340,12 +340,7 @@ class PageManager(models.Manager):
         if not nocache:
             rev = cache.get(cache_key)
         if rev is None:
-            try:
-                rev = Revision.objects.select_related('page', 'text', 'user') \
-                                      .filter(page__name__iexact=name) \
-                                      .latest()
-            except Revision.DoesNotExist:
-                raise Page.DoesNotExist()
+            rev = self.get(name__iexact=name).reviewed_version
             if not nocache:
                 try:
                     cachetime = int(rev.page.metadata['X-Cache-Time'][0]) or None
@@ -376,7 +371,7 @@ class PageManager(models.Manager):
             raise Page.DoesNotExist()
         if rev is None:
             return self.get_by_name(name, True, raise_on_deleted)
-        rev = Revision.objects.select_related('page', 'test', 'user') \
+        rev = Revision.objects.select_related('page', 'text', 'user') \
                               .get(id=int(rev))
         if rev.page.name.lower() != name.lower() or \
                 (rev.deleted and raise_on_deleted):
@@ -394,7 +389,7 @@ class PageManager(models.Manager):
             kwargs['value'] = value
         rv = [
             x.page
-            for x in MetaData.objects.select_related('name').filter(**kwargs)
+            for x in MetaData.objects.filter(**kwargs)
             if not is_privileged_wiki_page(x.page.name)
         ]
         rv.sort(key=lambda x: x.name)
@@ -505,7 +500,7 @@ class PageManager(models.Manager):
                             attachment=attachment, deleted=deleted,
                             remote_addr=remote_addr)
         page.rev.save()
-        page.last_rev = page.rev
+        page.reviewed_version = page.rev
         page.save()
         if update_meta:
             page.update_meta()
@@ -724,7 +719,7 @@ class Page(models.Model):
     name = models.CharField(max_length=200, unique=True, db_index=True)
     topic = models.ForeignKey('forum.Topic', null=True,
                               on_delete=models.PROTECT)
-    last_rev = models.ForeignKey('Revision', null=True, related_name='+')
+    reviewed_version = models.ForeignKey('Revision', null=True, related_name='+')
 
     #: this points to a revision if created with a query method
     #: that attaches revisions. Also creating a page object using
@@ -986,7 +981,6 @@ class Page(models.Model):
                             attachment=attachment, deleted=deleted,
                             remote_addr=remote_addr)
         self.rev.save()
-        self.last_rev = self.rev
         self.save(update_meta=update_meta)
 
         update_object_list.delay(self.name)
@@ -1211,7 +1205,7 @@ class Revision(models.Model):
                            remote_addr=remote_addr or '127.0.0.1',
                            attachment=self.attachment)
         new_rev.save()
-        self.page.last_rev = new_rev
+        self.page.reviewed_version = new_rev
         self.page.save()
         return new_rev
 

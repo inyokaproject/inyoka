@@ -249,7 +249,7 @@ def do_revert(request, name, rev=None):
             new_revision = page.rev.revert(request.POST.get('note'),
                                            request.user,
                                            request.META.get('REMOTE_ADDR'))
-            page.last_rev = new_revision
+            page.reviewed_version = new_revision
             messages.success(request,
                              _(u'“%(title)s” was reverted successfully') % {
                                  'title': escape(page.rev.title)})
@@ -259,6 +259,21 @@ def do_revert(request, name, rev=None):
                       render_template('wiki/action_revert.html',
                                       {'page': page}))
     return HttpResponseRedirect(url)
+
+
+@clean_article_name
+@require_privilege('manage')
+@does_not_exist_is_404
+@case_sensitive_redirect
+def do_reviewed(request, name, rev):
+    """
+    Set the reviewed_version attribute of a page.
+    """
+    page = Page.objects.get_by_name_and_rev(name, rev)
+    revision = Revision.objects.get(id=rev)
+    page.reviewed_version = revision
+    page.save()
+    return HttpResponseRedirect(url_for(page))
 
 
 def _rename(request, page, new_name, force=False, new_text=None):

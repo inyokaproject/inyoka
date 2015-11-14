@@ -26,7 +26,7 @@ def render_article(page):
 def update_related_pages(page, update_meta=True):
     from inyoka.wiki.models import MetaData
     related_pages = set()
-    values = ('value', 'page__last_rev__text_id')
+    values = ('value', 'page__reviewed_version__text_id')
     linked = MetaData.objects.values_list(*values) \
                      .filter(key__in=('X-Link', 'X-Attach'), value=page.name)
     for value, text_id in linked.all():
