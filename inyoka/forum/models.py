@@ -774,13 +774,15 @@ class Post(models.Model, LockableObject):
 
         return super(Post, self).delete()
 
-    def hide(self):
-        self.author.post_count.decr()
+    def hide(self, change_post_counter=True):
+        if change_post_counter:
+            self.author.post_count.decr()
         self.hidden = True
         self.save()
 
-    def show(self):
-        self.author.post_count.incr()
+    def show(self, change_post_counter=True):
+        if change_post_counter:
+            self.author.post_count.incr()
         self.hidden = False
         self.save()
 
