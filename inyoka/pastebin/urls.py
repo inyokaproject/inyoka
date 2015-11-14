@@ -10,13 +10,11 @@
 """
 from django.conf import settings
 from django.conf.urls import include, patterns, url
-from django.views.generic import RedirectView
 
 urlpatterns = patterns('inyoka.pastebin.views',
     (r'^$', 'browse'),
     (r'^(\d+)/$', 'display'),
     (r'^raw/(\d+)/$', 'raw'),
-    (r'^browse/$', RedirectView.as_view(url='/')),
     (r'^delete/(\d+)/$', 'delete'),
     (r'^add/$', 'add'),
 )
