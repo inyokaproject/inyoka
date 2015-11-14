@@ -1218,9 +1218,9 @@ class Revision(models.Model):
     def save(self, *args, **kwargs):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
-        cache.delete('wiki/page/{}'.format(self.page.name.lower()))
-        cache.delete('wiki/latest_revisions')
-        cache.delete('wiki/latest_revisions/%s' % self.page.name)
+        cache.delete(u'wiki/page/{}'.format(self.page.name.lower()))
+        cache.delete(u'wiki/latest_revisions')
+        cache.delete(u'wiki/latest_revisions/{}'.format(self.page.name))
 
     def __unicode__(self):
         return _('Revision %(id)d (%(title)s)') % {

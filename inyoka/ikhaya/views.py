@@ -325,22 +325,22 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
                         % {'title': escape(article.subject)})
                     return HttpResponseRedirect(url_for(article, 'edit'))
                 else:
-                    messages.success(request,
-                        _(u'The article “%(title)s” was saved.')
-                        % {'title': escape(article.subject)})
-                    cache.delete('ikhaya/article/%s/%s' %
-                                 (article.pub_date, article.slug))
-                    keys = ['ikhaya/latest_articles',
-                            'ikhaya/latest_articles/%s' % article.category.slug,
-                            'ikhaya/article/%s/%s' % (article.pub_date,
-                                                      article.slug)]
-                    cache.delete_many(keys)
+                    messages.success(
+                        request,
+                        _(u'The article “{title}” was saved.').format(
+                            title= escape(article.subject)))
+
+                    cache_keys = [
+                        u'ikhaya/article/{}/{}'.format(article.pub_date, article.slug)
+                        u'ikhaya/latest_articles',
+                        u'ikhaya/latest_articles/{}'.format(article.category.slug)]
+                    cache.delete_many(cache_keys)
                     return HttpResponseRedirect(url_for(article))
         elif 'preview' in request.POST:
-            preview_intro = Article.get_intro_rendered(request.POST.get('intro',
-                                                                        ''))
-            preview_text = Article.get_text_rendered(request.POST.get('text',
-                                                                      ''))
+            preview_intro = Article.get_intro_rendered(
+                request.POST.get('intro', ''))
+            preview_text = Article.get_text_rendered(
+                request.POST.get('text', ''))
     else:
         if slug:
             if article.public:
