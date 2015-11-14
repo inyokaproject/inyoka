@@ -97,10 +97,12 @@ def sync():
                 continue
 
             # normalize urls
-            if guid.startswith('https'):
-                guid_normalized = guid.strip('https')
-            elif guid.startswith('http'):
-                guid_normalized = guid.strip('http')
+            normalize_re = re.compile('^http[s]://')
+            normalize_match = normalize_re.match(guid)
+            if normalize_match:
+                guid_normalized = guid[normalize_match.end():]
+            else:
+                guid_normalized = guid
 
             try:
                 old_entry = Entry.objects.get(guid=guid)
