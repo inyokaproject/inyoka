@@ -353,6 +353,9 @@ class PageManager(models.Manager):
                     cachetime = None
                 cache.set(cache_key, rev, cachetime)
 
+        page = rev.page
+        page.rev = rev
+
         # If the page exists but it has another case, raise an exception
         # with the right case.
         if rev.page.name != name:
@@ -360,8 +363,6 @@ class PageManager(models.Manager):
             from inyoka.wiki.utils import CaseSensitiveException
             raise CaseSensitiveException(rev.page)
 
-        page = rev.page
-        page.rev = rev
         if rev.deleted and raise_on_deleted:
             raise Page.DoesNotExist()
         return page
