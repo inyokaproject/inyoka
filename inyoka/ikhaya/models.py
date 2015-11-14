@@ -106,7 +106,8 @@ class ArticleManager(models.Manager):
             articles = Article.published.order_by('-updated') \
                                         .values_list('pub_date', 'slug')
             if category:
-                articles.filter(category__slug=category)
+                articles = articles.filter(category__slug=category)
+
             maxcount = max(settings.AVAILABLE_FEED_COUNTS['ikhaya_feed_article'])
             articles = list(articles[:maxcount])
             cache.set(key, articles, 1200)
