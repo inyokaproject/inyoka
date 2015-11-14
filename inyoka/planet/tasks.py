@@ -97,10 +97,10 @@ def sync():
                 continue
 
             # normalize urls
-            normalize_re = re.compile('^http[s]://')
+            normalize_re = re.compile('^http[s]?://(?P<n_guid>.*$)')
             normalize_match = normalize_re.match(guid)
             if normalize_match:
-                guid_normalized = guid[normalize_match.end():]
+                guid_normalized = normalize_match.group('n_guid')
             else:
                 guid_normalized = guid
 
