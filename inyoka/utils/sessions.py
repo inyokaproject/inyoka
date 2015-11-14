@@ -9,59 +9,31 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from time import time
 from datetime import datetime, timedelta
+from time import time
 
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy
+from django.contrib.sessions.backends.cache import SessionStore as _SessionStore
 
 from inyoka.portal.models import SessionInfo
 from inyoka.utils.local import current_request
 from inyoka.utils.storage import storage
-from inyoka.utils.urls import url_for
 
 SESSION_DELTA = 300
 
 
-def set_session_info(request):
-    """Set the session info."""
+class SessionStore(_SessionStore):
+    """
+    Like the django cache session store but saves a second cache key for each
+    session with a short time to live.
+    """
 
-    # Prevent extra queries for markup.css and jsi18n since they are loaded
-    # with every request, in development this also prevents extra queries for
-    # static files. In production these files are served by another server.
-    if request.path in ('/markup.css/', '/jsi18n/') or request.subdomain in ('static', 'media'):
-        return
-
-    # if the session is new we don't add an entry.  It could be that
-    # the user has no cookie support and that would fill our session
-    # table with dozens of entries
-    if request.session.new:
-        return
-
-    if request.user.is_authenticated() and not request.user.settings.get('hide_profile', False):
-        key = 'user:%s' % request.user.id
-        # XXX: Find a better way to detect whether a user is in the team
-        user_type = request.user.can('article_read') and 'team' or 'user'
-        args = {
-            'subject_text': request.user.username,
-            'subject_type': user_type,
-            'subject_link': url_for(request.user)
-        }
-    else:
-        key = request.session['sid']
-        args = {
-            'subject_text': None,
-            'subject_type': 'anonymous',
-            'subject_link': None
-        }
-
-    args.update({
-        'last_change': datetime.utcnow(),
-    })
-
-    session_info, created = SessionInfo.objects.get_or_create(key=key, defaults=args)
-    if not created:
-        SessionInfo.objects.filter(key=key).update(**args)
+    def save(self, *args, **kwargs):
+        value = super(SessionStore, self).save(*args, **kwargs)
+        if self.session_key is not None:
+            self._cache.set('counter.{}'.format(self.cache_key), 0, SESSION_DELTA)
+        return value
 
 
 class SurgeProtectionMixin(object):
@@ -134,13 +106,3 @@ def get_sessions(order_by='-last_change'):
         'sessions': sessions,
         'registered_sessions': [s for s in sessions if not s['anonymous']]
     }
-
-
-def make_permanent(request):
-    """Make this session a permanent one."""
-    request.session['_perm'] = True
-
-
-def is_permanent(request):
-    """Check if the session is permanent."""
-    return request.session.get('_perm')

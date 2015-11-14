@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from time import time
 
 from celery import shared_task
+from django.core.cache import cache
 from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
@@ -24,24 +25,15 @@ from inyoka.utils.storage import storage
 
 
 @shared_task
-def clean_sessions():
-    """
-    Clean sessions. This tasks in run by celery beat.
-    """
-    last_change = (datetime.utcnow() - timedelta(seconds=SESSION_DELTA))
-    SessionInfo.objects.filter(last_change__lt=last_change).delete()
-
-
-@shared_task
 def check_for_user_record():
     """
     Checks whether the current session count is a new record.
     """
-    delta = datetime.utcnow() - timedelta(seconds=SESSION_DELTA)
+    session_keys = len(cache.keys('counter.django.contrib.sessions.cache*'))
+
     record = int(storage.get('session_record', 0))
-    session_count = SessionInfo.objects.filter(last_change__gt=delta).count()
-    if session_count > record:
-        storage['session_record'] = unicode(session_count)
+    if session_keys > record:
+        storage['session_record'] = unicode(session_keys)
         storage['session_record_time'] = int(time())
 
 

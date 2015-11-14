@@ -45,12 +45,7 @@ LOCALE_PATHS = (join(BASE_PATH, 'locale'),)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
 INYOKA_URI_SCHEME = 'http'
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-SESSION_COOKIE_DOMAIN = '.%s' % BASE_DOMAIN_NAME.split(':')[0]
-SESSION_COOKIE_NAME = 'session'
-SESSION_COOKIE_HTTPONLY = True
-
-MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+SESSION_ENGINE = 'inyoka.utils.sessions'
 
 # this url conf is used for contrib stuff like the auth system
 ROOT_URLCONF = 'inyoka.portal.urls'
@@ -260,10 +255,6 @@ CELERY_IMPORTS = [
 
 # Run tasks at specific time
 CELERYBEAT_SCHEDULE = {
-    'clean-sessions-every-5-minutes': {
-        'task': 'inyoka.portal.tasks.clean_sessions',
-        'schedule': timedelta(minutes=5),
-    },
     'check-for-new-session-record': {
         'task': 'inyoka.portal.tasks.check_for_user_record',
         'schedule': timedelta(minutes=5),

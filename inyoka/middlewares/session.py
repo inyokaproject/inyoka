@@ -17,8 +17,6 @@ from time import time
 
 from django.contrib.sessions import middleware
 
-from inyoka.utils.sessions import is_permanent
-
 
 class SessionMiddleware(middleware.SessionMiddleware):
     """
@@ -34,7 +32,7 @@ class SessionMiddleware(middleware.SessionMiddleware):
     def process_request(self, request):
         super(SessionMiddleware, self).process_request(request)
         # Force creation of a session key so every browser is id-able.
-        if not 'sid' in request.session:
+        if 'sid' not in request.session:
             request.session['sid'] = str(uuid.uuid4())
             request.session.new = True
         else:
@@ -56,11 +54,8 @@ class SessionMiddleware(middleware.SessionMiddleware):
             else:
                 del request.session['sp']
 
-        if request.session.modified:
-            if is_permanent(request):
-                request.session.set_expiry(None)
-            else:
-                # Require a session drop on browser close.
-                request.session.set_expiry(0)
+        # Reset the session time, so it lasts for the time specified in the settings.
+        if request.session.get('permanent', False):
+            request.session.set_expiry(None)
 
         return super(SessionMiddleware, self).process_response(request, response)

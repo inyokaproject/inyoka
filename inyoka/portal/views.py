@@ -107,7 +107,7 @@ from inyoka.utils.http import (
 from inyoka.utils.mail import send_mail
 from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.sessions import get_sessions, get_user_record, make_permanent
+from inyoka.utils.sessions import get_sessions, get_user_record
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
@@ -413,7 +413,9 @@ def login(request):
             if user is not None:
                 if user.is_active:
                     if data['permanent']:
-                        make_permanent(request)
+                        request.session['permanent'] = True
+                    else:
+                        request.session.set_expiry(0)
                     # username matches password and user is active
                     messages.success(request, _(u'You have successfully logged in.'))
                     auth.login(request, user)
