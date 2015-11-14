@@ -854,7 +854,6 @@ class Page(models.Model):
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
 
-
     # TODO: This should be obsolete, since there is no way to call this method.
     def prune(self):
         """Clear the page cache."""

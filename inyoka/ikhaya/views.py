@@ -328,10 +328,10 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
                     messages.success(
                         request,
                         _(u'The article “{title}” was saved.').format(
-                            title= escape(article.subject)))
+                            title=escape(article.subject)))
 
                     cache_keys = [
-                        u'ikhaya/article/{}/{}'.format(article.pub_date, article.slug)
+                        u'ikhaya/article/{}/{}'.format(article.pub_date, article.slug),
                         u'ikhaya/latest_articles',
                         u'ikhaya/latest_articles/{}'.format(article.category.slug)]
                     cache.delete_many(cache_keys)
