@@ -132,7 +132,8 @@ tested by starting celery:
 
 .. code-block:: console
 
-   (inyoka)$ python manage.py celeryd start
+   (inyoka)$ export DJANGO_SETTINGS_MODULE=development_settings
+   (inyoka)$ celery -A inyoka worker -B -l DEBUG
 
 Among other things you will see the notification mails for the admin user.
 
