@@ -226,8 +226,7 @@ def viewtopic(request, topic_slug, page=1):
 
     polls = None
     if topic.has_poll:
-        polls = Poll.objects.select_related('options') \
-                            .filter(topic=topic).all()
+        polls = Poll.objects.filter(topic=topic).all()
 
         if request.method == 'POST' and 'vote' in request.POST:
             if not check_privilege(privileges, 'vote'):

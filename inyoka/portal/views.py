@@ -693,8 +693,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
 
     def get_queryset(self):
         qs = self.request.user.subscription_set.all()
-        qs = qs.filter(ubuntu_version__isnull=True) \
-               .select_related('content_object')
+        qs = qs.filter(ubuntu_version__isnull=True)
         for filter in self.filtersets:
             instance = filter(self.request.GET or None, queryset=qs)
             qs = instance.qs
