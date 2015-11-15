@@ -945,7 +945,7 @@ def user_edit_privileges(request, username):
                             privilege.delete()
 
             user.save()
-            cache.delete('user_permissions/%s' % user.id)
+            cache.delete(u'user_permissions/{}'.format(user.id))
 
             messages.success(request,
                 _(u'The privileges of “%(username)s” were successfully '
@@ -1136,7 +1136,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
                             len(d['delete']))
             messages.success(request, msg % {'n': len(d['delete'])})
             entries = filter(lambda s: str(s.id) not in d['delete'], entries)
-            cache.delete('portal/pm_count/%s' % request.user.id)
+            cache.delete(u'portal/pm_count/{}'.format(request.user.id))
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
 
@@ -1147,7 +1147,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
         if not entry.read:
             entry.read = True
             entry.save()
-            cache.delete('portal/pm_count/%s' % request.user.id)
+            cache.delete(u'portal/pm_count/{}'.format(request.user.id))
         action = request.GET.get('action')
         if action:
             if request.method == 'POST':

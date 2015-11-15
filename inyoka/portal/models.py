@@ -120,7 +120,7 @@ class PrivateMessage(models.Model):
         PrivateMessageEntry(message=self, user=self.author, read=True,
                             folder=PRIVMSG_FOLDERS['sent'][0]).save()
         for recipient in recipients:
-            cache.delete('portal/pm_count/%s' % recipient.id)
+            cache.delete(u'portal/pm_count/{}'.format(recipient.id))
             PrivateMessageEntry(message=self, user=recipient, read=False,
                                 folder=PRIVMSG_FOLDERS['inbox'][0]).save()
 

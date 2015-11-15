@@ -1773,10 +1773,10 @@ def forum_edit(request, slug=None, parent=None):
 
             if not form.errors and not errors:
                 forum.save()
-                keys = ['forum/index'] + ['forum/forums/' + f.slug
+                keys = ['forum/index'] + ['forum/forums/{}'.format(f.slug)
                                           for f in Forum.objects.get_cached()]
                 if old_slug is not None:
-                    keys.append('forum/forums/' + old_slug)
+                    keys.append(u'forum/forums/{}'.format(old_slug))
                 cache.delete_many(keys)
                 cache.delete('forum/slugs')
                 if slug:

@@ -854,7 +854,6 @@ class Page(models.Model):
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
 
-
     # TODO: This should be obsolete, since there is no way to call this method.
     def prune(self):
         """Clear the page cache."""
@@ -1218,9 +1217,9 @@ class Revision(models.Model):
     def save(self, *args, **kwargs):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
-        cache.delete('wiki/page/{}'.format(self.page.name.lower()))
-        cache.delete('wiki/latest_revisions')
-        cache.delete('wiki/latest_revisions/%s' % self.page.name)
+        cache.delete(u'wiki/page/{}'.format(self.page.name.lower()))
+        cache.delete(u'wiki/latest_revisions')
+        cache.delete(u'wiki/latest_revisions/{}'.format(self.page.name))
 
     def __unicode__(self):
         return _('Revision %(id)d (%(title)s)') % {
@@ -1251,6 +1250,3 @@ class MetaData(models.Model):
     page = models.ForeignKey(Page)
     key = models.CharField(max_length=30, db_index=True)
     value = models.CharField(max_length=255, db_index=True)
-
-
-# imported here because of circular references
