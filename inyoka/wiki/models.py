@@ -77,10 +77,11 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import locale
 from datetime import datetime
 from hashlib import sha1
-import locale
 
+import magic
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -89,10 +90,9 @@ from django.db.models import Count, Max
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-import magic
 from werkzeug import cached_property
 
-from inyoka import markup, default_settings
+from inyoka import default_settings, markup
 from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.database import InyokaMarkupField
@@ -110,7 +110,6 @@ from inyoka.wiki.tasks import (
     update_object_list,
     update_related_pages,
 )
-
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
