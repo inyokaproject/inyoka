@@ -1250,6 +1250,3 @@ class MetaData(models.Model):
     page = models.ForeignKey(Page)
     key = models.CharField(max_length=30, db_index=True)
     value = models.CharField(max_length=255, db_index=True)
-
-
-# imported here because of circular references

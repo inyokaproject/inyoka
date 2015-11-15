@@ -68,7 +68,7 @@ class StorageManager(object):
     def clear_cache(self):
         """Clear all active caches."""
         for obj in self.storages.itervalues():
-            cache.delete(u'wiki/storage/'.format(obj.behavior_key))
+            cache.delete(u'wiki/storage/{}'.format(obj.behavior_key))
 
 
 class BaseStorage(object):
@@ -82,7 +82,7 @@ class BaseStorage(object):
     behavior_key = None
 
     def __init__(self):
-        key = 'wiki/storage/' + self.behavior_key
+        key = u'wiki/storage/{}'.format(self.behavior_key)
         self.data = cache.get(key)
         if self.data is not None:
             return
@@ -163,7 +163,6 @@ class SmileyMap(DictStorage):
                 mapping.setdefault(page, []).append(code)
         if not mapping:
             return []
-
         data = Page.objects.values_list('last_rev__attachment__file', 'name') \
             .filter(name__in=mapping.keys(),
                     last_rev__deleted=False).all()
