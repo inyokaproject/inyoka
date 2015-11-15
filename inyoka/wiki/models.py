@@ -79,8 +79,8 @@
 """
 from datetime import datetime
 from hashlib import sha1
+import locale
 
-import magic
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -89,9 +89,10 @@ from django.db.models import Count, Max
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
+import magic
 from werkzeug import cached_property
 
-from inyoka import markup
+from inyoka import markup, default_settings
 from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.database import InyokaMarkupField
@@ -109,6 +110,7 @@ from inyoka.wiki.tasks import (
     update_object_list,
     update_related_pages,
 )
+
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
@@ -175,10 +177,11 @@ class PageManager(models.Manager):
         if show_max is not None:
             tags = tags[:show_max]
 
+        locale.setlocale(locale.LC_ALL, default_settings.LANGUAGE_CODE)
         return [{'name': tag[0],
             'count': tag[1],
             'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
-            for tag in sorted(tags, key=lambda x: x[0].lower())]
+            for tag in sorted(tags, key=lambda x: locale.strxfrm(x[0].lower()))]
 
     def compare(self, name, old_rev, new_rev=None):
         """
