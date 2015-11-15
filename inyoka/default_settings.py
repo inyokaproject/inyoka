@@ -40,6 +40,7 @@ TIME_ZONE = 'Europe/Berlin'
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 LANGUAGE_CODE = 'de-de'
 LOCALE_PATHS = (join(BASE_PATH, 'locale'),)
+LC_ALL = 'en_US.UTF-8'
 
 # the base url (without subdomain)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
