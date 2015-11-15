@@ -178,10 +178,11 @@ class PageManager(models.Manager):
             tags = tags[:show_max]
 
         locale.setlocale(locale.LC_ALL, default_settings.LANGUAGE_CODE)
+        # TODO encode("latin-1") is a workaround for a bug in Python 2.x, should not be necessary with Python 3.x
         return [{'name': tag[0],
             'count': tag[1],
             'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
-            for tag in sorted(tags, key=lambda x: locale.strxfrm(x[0].lower()))]
+            for tag in sorted(tags, key=lambda x: locale.strxfrm(x[0].lower().encode("latin-1")))]
 
     def compare(self, name, old_rev, new_rev=None):
         """
