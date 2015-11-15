@@ -107,6 +107,8 @@ def sync():
             try:
                 old_entry = Entry.objects.get(guid=guid)
             except Entry.DoesNotExist:
+                old_entry = None
+            if old_entry is None and guid_normalized != guid:
                 try:
                     old_entry = Entry.objects.get(guid=guid_normalized)
                 except Entry.DoesNotExist:
