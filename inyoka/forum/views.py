@@ -1273,10 +1273,10 @@ def restore_post(request, post_id):
     This function removes the hidden flag of a post to make it visible for
     normal users again.
     """
-    post = Post.objects.get(id=post_id)
+    post = Post.objects.select_related('topic', 'topic__forum').get(id=post_id)
     if not have_privilege(request.user, post.topic.forum, CAN_MODERATE):
         return abort_access_denied(request)
-    post.show()
+    post.show(change_post_counter=post.topic.forum.user_count_posts)
     messages.success(request,
         _(u'The post by “%(user)s” was made visible.')
         % {'user': post.author.username})
@@ -1291,7 +1291,7 @@ def delete_post(request, post_id, action='hide'):
     effect that normal users can't see it anymore (moderators still can). If
     action == 'delete' really deletes the post.
     """
-    post = Post.objects.get(id=post_id)
+    post = Post.objects.select_related('topic', 'topic__forum').get(id=post_id)
     topic = post.topic
 
     can_hide = (
@@ -1307,8 +1307,8 @@ def delete_post(request, post_id, action='hide'):
 
     if post.id == topic.first_post_id:
         if topic.post_count.value() == 1:
-            return HttpResponseRedirect(href('forum', 'topic',
-                                             topic.slug, action))
+            return HttpResponseRedirect(
+                href('forum', 'topic', topic.slug, action))
         if action == 'delete':
             msg = _(u'The first post of a topic cannot be deleted.')
         else:
@@ -1316,7 +1316,7 @@ def delete_post(request, post_id, action='hide'):
         messages.error(request, msg)
     else:
         if action == 'hide':
-            post.hide()
+            post.hide(change_post_counter=topic.forum.user_count_posts)
             messages.success(
                 request,
                 _(u'The post by “%(user)s” was hidden.') % {'user': post.author.username}
