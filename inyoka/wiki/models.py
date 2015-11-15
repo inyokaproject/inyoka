@@ -153,11 +153,12 @@ class PageManager(models.Manager):
         if revs:
             return revs[0]
 
-    def get_tagcloud(self, show_max=100):
+    def get_taglist(self, size_limit=None):
         """
-        Get a tagcloud.  Note that this is one of the few operations that
-        also returns attachments, not only pages.  A tag cloud is represented
-        as ordinary list of dicts with the following keys:
+        Get a list of all tags or just the most used ones (if size_limit is
+        set). Note that this is one of the few operations that also returns
+        attachments, not only pages.  The tag list is an ordinary list of
+        dicts with the following keys:
 
         ``'name'``
             The name of the tag
@@ -173,8 +174,8 @@ class PageManager(models.Manager):
         tags = MetaData.objects.filter(key='tag').values_list('value')\
             .annotate(count=Count('value'))\
             .order_by('-count')
-        if show_max is not None:
-            tags = tags[:show_max]
+        if size_limit is not None:
+            tags = tags[:size_limit]
 
         # set locale, so that the list is being sorted in respect to it
         locale.setlocale(locale.LC_ALL, default_settings.LC_ALL)

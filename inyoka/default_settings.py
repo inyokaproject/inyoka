@@ -96,6 +96,9 @@ INYOKA_LOGGER_NAME = u'inyoka'
 # use etags
 USE_ETAGS = True
 
+# maximal number of tags shown in the tag cloud
+TAGCLOUD_SIZE = 100
+
 # prefix for the system mails
 EMAIL_SUBJECT_PREFIX = u'%s: ' % BASE_DOMAIN_NAME
 
