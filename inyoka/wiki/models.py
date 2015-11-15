@@ -153,11 +153,12 @@ class PageManager(models.Manager):
         if revs:
             return revs[0]
 
-    def get_tagcloud(self, show_max=100):
+    def get_taglist(self, show_max=None):
         """
-        Get a tagcloud.  Note that this is one of the few operations that
-        also returns attachments, not only pages.  A tag cloud is represented
-        as ordinary list of dicts with the following keys:
+        Get a list of all tags or just the most used ones (if show_max is
+        set). Note that this is one of the few operations that also returns
+        attachments, not only pages.  The tag list is an ordinary list of
+        dicts with the following keys:
 
         ``'name'``
             The name of the tag
