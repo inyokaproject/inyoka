@@ -1672,7 +1672,7 @@ def config(request):
     keys = ['welcome_message', 'max_avatar_width', 'max_avatar_height', 'max_avatar_size',
             'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
             'license_note', 'get_ubuntu_description', 'blocked_hosts', 'wiki_edit_note',
-            'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'wiki_edit_note',
+            'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_help', 'wiki_edit_note',
             'team_icon_height', 'team_icon_width', 'distri_versions',
             'countdown_active', 'countdown_target_page', 'countdown_image_url',
             'ikhaya_description', 'planet_description']

@@ -787,10 +787,11 @@ class ConfigurationForm(forms.Form):
         label=ugettext_lazy(u'Default text of new wiki pages'))
     wiki_newpage_root = forms.CharField(required=False,
         label=ugettext_lazy(u'Location of new wiki pages'))
-    wiki_newpage_infopage = forms.CharField(required=False,
-        label=ugettext_lazy(u'Information page about new wiki pages'),
-        help_text=ugettext_lazy(u'Information page to which a “create” link should '
-                    u'redirect to.'))
+    wiki_newpage_help = forms.CharField(required=False,
+        widget=forms.Textarea(attrs={'rows': 5}),
+        label=ugettext_lazy(u'Help text for new wiki article form.'),
+        help_text=ugettext_lazy(u'This text appears above the form to create new '
+                                u'wiki articles.'))
     wiki_edit_note = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}),
         label=ugettext_lazy(u'Wiki helptext'),
