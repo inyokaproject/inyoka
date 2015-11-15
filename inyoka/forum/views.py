@@ -1683,43 +1683,32 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
         messages.info(request, _(u'You need to be logged in to use this function.'))
         return abort_access_denied(request)
     
-    posts = Post.objects.filter(author=user).order_by('-pub_date').distinct()
+    posts = Post.objects.filter(author=user).order_by('-pub_date')
     
-    additional_title = None
-    
-    topic = None
     if topic_slug is not None:
-        topics = Topic.objects.filter(slug=topic_slug)
-        if topics.exists():
-            topic = topics[0]
-            posts = posts.filter(topic=topic)
-            additional_title = _(u'in topic “%(topic)s”') % { 'topic': topic }
-        else:
-            raise Http404()
-    
-    forum = None
-    if forum_slug is not None:
-        forum = Forum.objects.get_cached(forum_slug)
-        posts = posts.filter(topic__forum=forum)
-        additional_title = _(u'in forum “%(forum)s”') % { 'forum': forum }
-
-    if additional_title is None:
-        title = _(u'Posts by “{user}”').format(user=user.username)
+        posts = posts.filter(topic__slug=topic_slug)
+        pagination_url = href('forum', 'author', user.username, 'topic', topic_slug)
+    elif forum_slug is not None:
+        posts = posts.filter(topic__forum__slug=forum_slug)
+        pagination_url = href('forum', 'author', user.username, 'forum', forum_slug)
     else:
-        title = _(u'Posts by “{user}” {additional_title}').format(user=user.username, \
-            additional_title=additional_title)
+        pagination_url = href('forum', 'author', user.username)
     
-    url = href('forum', 'author', user.username, 'topic', topic)
-    
-    visible = [f.id for f in Forum.objects.get_forums_filtered(request.user)]
-    if visible:
-        posts = posts.filter(topic__forum__id__in=visible)
+    # hidden forums is much faster than checking for visible forums
+    hidden_ids = [f.id for f in Forum.objects.get_forums_filtered(request.user, reverse=True)]
+    if hidden_ids:
+        posts = posts.exclude(topic__forum__id__in=hidden_ids)
 
     total_posts = get_simplified_queryset(posts).count()
+    
+    # at least with MySQL we need this, as it is the fastest method
     posts = posts.values_list('id', flat=True)
-    pagination = Pagination(request, posts, page, TOPICS_PER_PAGE, url,
-                            total=total_posts, max_pages=MAX_PAGES_TOPICLIST)
-    post_ids = [tid for tid in pagination.get_queryset()]
+    
+    pagination = Pagination(request, posts, page, TOPICS_PER_PAGE, pagination_url, \
+        total=total_posts, max_pages=MAX_PAGES_TOPICLIST)
+    post_ids = [post_id for post_id in pagination.get_queryset()]
+    
+    posts = Post.objects.filter(id__in=post_ids).select_related('topic', 'topic__forum', 'author')
 
     # check for moderation permissions
     moderatable_forums = [
@@ -1729,13 +1718,19 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
 
     def can_moderate(topic):
         return topic.forum_id in moderatable_forums
-
-    if post_ids:
-        related = ('topic', 'topic__forum', 'author')
-        posts = Post.objects.filter(id__in=post_ids).select_related(*related)
+    
+    topic = None
+    forum = None
+    
+    if topic_slug is not None and len(posts):
+        topic = posts[0].topic
+        title = _(u'Posts by “{user}” in topic “{topic}”').format(user=user.username, topic=topic.title)
+    elif forum_slug is not None and len(posts):
+        forum = posts[0].topic.forum
+        title = _(u'Posts by “{user}” in forum “{forum}”').format(user=user.username, forum=forum.name)
     else:
-        posts = []
-
+        title = _(u'Posts by “{user}”').format(user=user.username)
+    
     return {
         'posts': posts,
         'pagination': pagination,
