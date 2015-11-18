@@ -14,9 +14,9 @@ import datetime
 from functools import partial
 from hashlib import sha1
 from itertools import izip
-from os import path, walk, mkdir, chmod, unlink
-from re import escape, compile
-from shutil import copy, rmtree, copytree
+from os import chmod, mkdir, path, unlink, walk
+from re import compile, escape
+from shutil import copy, copytree, rmtree
 
 from bs4 import BeautifulSoup
 from django.apps import apps
@@ -31,13 +31,12 @@ from inyoka.portal.user import User
 from inyoka.utils.http import templated
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import Breadcrumb
-from inyoka.utils.terminal import percentize, ProgressBar
+from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import CaseSensitiveException
-
 
 FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False
@@ -153,7 +152,7 @@ class Command(NoArgsCommand):
     def handle_pathbar(self, soup, pre, is_main_page, page_name):
         pathbar = soup.find('div', 'pathbar')
         pathbar.find('form').decompose()
-        #pathbar.find('div').decompose()
+        # pathbar.find('div').decompose()  # leads to an exception
         children = list(pathbar.children)
         if len(children) > 4:
             # 4 because, the form and div leave a \n behind
@@ -410,7 +409,7 @@ class Command(NoArgsCommand):
             for handler in self.HANDLERS:
                 handler(self, soup, self._pre(parts), is_main_page, page.name)
 
-             # If a page is a redirect page, add a forward link
+            # If a page is a redirect page, add a forward link
             redirect = page.metadata.get('X-Redirect')
             if redirect:
                 self.handle_redirect_page(soup, self._pre(parts), redirect)
