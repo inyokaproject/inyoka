@@ -8,19 +8,20 @@
 # Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version:  Inyoka\n"
+"Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-13 17:14+0100\n"
-"PO-Revision-Date: 2012-11-03 13:01+0000\n"
-"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
+"POT-Creation-Date: 2015-11-18 22:10+0100\n"
+"PO-Revision-Date: 2015-11-18 22:25+0100\n"
+"Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
-"Language-Team: German (Germany) "
-"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/"
+"language/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
+"X-Generator: Poedit 1.8.5\n"
 
 #: inyoka/wiki/actions.py:125
 #, python-format
@@ -43,17 +44,15 @@ msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
 #: inyoka/wiki/actions.py:284
 #, python-format
 msgid ""
-"These attachments are already attached to the new page name: %(names)s. "
-"Please make sure that they are not required anymore. <a "
-"href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
+"These attachments are already attached to the new page name: %(names)s. Please "
+"make sure that they are not required anymore. <a href=\"%(link)s\">Force rename "
+"and deletion of duplicate attachments</a>,"
 msgstr ""
-"Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: "
-"%(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a"
-" href=\"%(link)s\">Umbenennen und Löschung doppelter Anhänge "
-"erzwingen</a>."
+"Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: %(names)s. Bitte "
+"stelle sicher, dass diese nicht mehr benötigt werden. <a href=\"%(link)s"
+"\">Umbenennen und Löschung doppelter Anhänge erzwingen</a>."
 
-#: inyoka/wiki/actions.py:300 inyoka/wiki/actions.py:304
-#: inyoka/wiki/actions.py:321
+#: inyoka/wiki/actions.py:300 inyoka/wiki/actions.py:304 inyoka/wiki/actions.py:321
 #, python-format
 msgid "Renamed from %(old_name)s"
 msgstr "Umbenannt von %(old_name)s"
@@ -63,93 +62,91 @@ msgstr "Umbenannt von %(old_name)s"
 msgid "Renamed to %(new_name)s"
 msgstr "Umbenannt nach %(new_name)s"
 
-#: inyoka/wiki/actions.py:338
+#: inyoka/wiki/actions.py:340
 msgid "No page name given."
 msgstr "Kein Seitenname eingegeben."
 
-#: inyoka/wiki/actions.py:345
+#: inyoka/wiki/actions.py:347
 msgid "Renamed the page successfully."
 msgstr "Die Seite wurde erfolgreich umbenannt."
 
-#: inyoka/wiki/actions.py:348
+#: inyoka/wiki/actions.py:350
 msgid "A page with this name already exists."
 msgstr "Eine andere Seite mit diesem Namen existiert bereits."
 
-#: inyoka/wiki/actions.py:363
+#: inyoka/wiki/actions.py:365
 msgid "Normal (for experienced authors)"
 msgstr "Normal (für erfahrene Autoren)"
 
-#: inyoka/wiki/actions.py:364
+#: inyoka/wiki/actions.py:366
 msgid "Extensive (for beginners)"
 msgstr "Umfangreich (für Einsteiger)"
 
-#: inyoka/wiki/actions.py:365
+#: inyoka/wiki/actions.py:367
 msgid "I don't want a template"
 msgstr "Ich möchte keine Vorlage verwenden"
 
-#: inyoka/wiki/actions.py:401
+#: inyoka/wiki/actions.py:403
 msgid "The page <a href=\"{link}\">{name}</a> has been created."
 msgstr "Die Seite „<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."
 
-#: inyoka/wiki/actions.py:448
+#: inyoka/wiki/actions.py:450
 msgid ""
-"The given revision does not exist for this article, using last revision "
-"instead."
+"The given revision does not exist for this article, using last revision instead."
 msgstr ""
-"Die angegebene Revisionsnummer existiert nicht, verwende stattdessen die "
-"letzte Revision "
+"Die angegebene Revisionsnummer existiert nicht, verwende stattdessen die letzte "
+"Revision "
 
-
-#: inyoka/wiki/actions.py:452
+#: inyoka/wiki/actions.py:454
 msgid "The article „{name}“ does not exist, you can try to create it now."
-msgstr "Der Artikel „{name}“ existiert nicht, du kannst versuchen ihn jetzt "
-"zu erstellen."
+msgstr ""
+"Der Artikel „{name}“ existiert nicht, du kannst versuchen ihn jetzt zu erstellen."
 
-#: inyoka/wiki/actions.py:473
+#: inyoka/wiki/actions.py:475
 msgid "Editing of this page was canceled."
 msgstr "Bearbeiten der Seite abgebrochen."
 
-#: inyoka/wiki/actions.py:490
+#: inyoka/wiki/actions.py:492
 msgid "The page has been edited."
 msgstr "Die Seite wurde bearbeitet."
 
-#: inyoka/wiki/actions.py:880
+#: inyoka/wiki/actions.py:882
 msgid "Attachments within attachments are not allowed!"
 msgstr "Anhänge in Anhängen sind nicht erlaubt!"
 
-#: inyoka/wiki/actions.py:891
+#: inyoka/wiki/actions.py:893
 msgid "Canceled."
 msgstr "Abgebrochen."
 
-#: inyoka/wiki/actions.py:906
+#: inyoka/wiki/actions.py:908
 msgid "Please enter a name for this attachment."
 msgstr "Bitte gib einen Dateinamen für den Anhang an."
 
-#: inyoka/wiki/actions.py:917
+#: inyoka/wiki/actions.py:919
 msgid "Another page or attachment with the same name exists"
 msgstr "Es existiert bereits eine Seite oder ein Anhang mit diesem Namen."
 
-#: inyoka/wiki/actions.py:936
+#: inyoka/wiki/actions.py:938
 msgid "Attachment saved successfully."
 msgstr "Der Dateianhang wurde erfolgreich gespeichert."
 
-#: inyoka/wiki/actions.py:973
+#: inyoka/wiki/actions.py:975
 msgid "Attachment edited successfully."
 msgstr "Der Dateianhang wurde erfolgreich bearbeitet."
 
-#: inyoka/wiki/actions.py:992
+#: inyoka/wiki/actions.py:994
 msgid "You will be notified on changes on this page"
 msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite benachrichtigt."
 
-#: inyoka/wiki/actions.py:994
+#: inyoka/wiki/actions.py:996
 msgid "You are already subscribed"
 msgstr "Du wirst bereits benachrichtigt"
 
-#: inyoka/wiki/actions.py:1008
+#: inyoka/wiki/actions.py:1010
 msgid "No subscription for this page found."
 msgstr "Du wirst über diese Seite gar nicht benachrichtigt!"
 
-#: inyoka/wiki/actions.py:1012
+#: inyoka/wiki/actions.py:1014
 msgid "You won't be notified for changes on this page anymore"
 msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachrichtigt"
 
@@ -174,117 +171,115 @@ msgstr "Du kannst keine Seiten mit einem reservierten Namen anlegen."
 msgid "The page %(name)s already exists."
 msgstr "Eine andere Seite mit dem Namen %(name)s existiert bereits."
 
-#: inyoka/wiki/forms.py:91
+#: inyoka/wiki/forms.py:94
 msgid "You do not have permission to read this template."
 msgstr "Du hast keine Berechtigung diese Vorlage zu sehen."
 
-#: inyoka/wiki/forms.py:159
+#: inyoka/wiki/forms.py:162
 msgid ""
-"Somebody else edited the page while you were making your changes. We "
-"tried to merge the text automatically. Please confirm that everything is "
-"ok."
+"Somebody else edited the page while you were making your changes. We tried to "
+"merge the text automatically. Please confirm that everything is ok."
 msgstr ""
-"Während du die Seite geöffnet hattest, wurde sie von einem anderen "
-"Benutzer ebenfalls bearbeitet. Bitte kontrolliere, ob das Zusammenführen "
-"der Änderungen zufriedenstellend funktioniert hat.
+"Während du die Seite geöffnet hattest, wurde sie von einem anderen Benutzer "
+"ebenfalls bearbeitet. Bitte kontrolliere, ob das Zusammenführen der Änderungen "
+"zufriedenstellend funktioniert hat"
 
-#: inyoka/wiki/forms.py:168
+#: inyoka/wiki/forms.py:171
 msgid "You have not made any changes."
 msgstr "Du bist nicht dazu berechtigt, diese Änderung vorzunehmen"
 
-#: inyoka/wiki/forms.py:174
+#: inyoka/wiki/forms.py:177
 msgid "The text contains too many nested elements."
 msgstr "Der Text enthält zu viele verschachtelte Elemente."
 
-#: inyoka/wiki/forms.py:179
+#: inyoka/wiki/forms.py:182
 msgid "The text contains conflict markers."
 msgstr "Der Text enthält Konfliktmarkierungen"
 
-#: inyoka/wiki/forms.py:186
+#: inyoka/wiki/forms.py:189
 msgid "You are not permitted to make this change."
 msgstr "Du bist nicht dazu berechtigt, diese Änderung vorzunehmen"
 
-#: inyoka/wiki/forms.py:218 inyoka/wiki/forms.py:230
+#: inyoka/wiki/forms.py:221 inyoka/wiki/forms.py:233
 msgid "Description"
 msgstr "Beschreibung"
 
-#: inyoka/wiki/forms.py:238
+#: inyoka/wiki/forms.py:241
 msgid "Slug of the topic"
 msgstr "Slug des Themas"
 
-#: inyoka/wiki/forms.py:239
+#: inyoka/wiki/forms.py:242
 #, python-format
 msgid ""
-"You can find the slug of a topic in the URL (e.g. <var>example</var> when"
-" <em>%(example)s</em>)"
+"You can find the slug of a topic in the URL (e.g. <var>example</var> when <em>"
+"%(example)s</em>)"
 msgstr ""
-"Den Slug eines Themas findest du in der URL (z. B. <var>example</var> bei"
-" <em>%(example)s</em>)"
+"Den Slug eines Themas findest du in der URL (z. B. <var>example</var> bei <em>"
+"%(example)s</em>)"
 
-#: inyoka/wiki/forms.py:251
+#: inyoka/wiki/forms.py:254
 msgid "This topic does not exist."
 msgstr "Dieses Thema existiert nicht."
 
-#: inyoka/wiki/forms.py:257
+#: inyoka/wiki/forms.py:260
 msgid "New page name"
 msgstr "Neuer Seitenname"
 
-#: inyoka/wiki/forms.py:258
+#: inyoka/wiki/forms.py:261
 msgid "Edited by"
 msgstr "Bearbeitet von"
 
-#: inyoka/wiki/forms.py:259
+#: inyoka/wiki/forms.py:262
 msgid "Completion date"
 msgstr "Fertigstellungsdatum"
 
-#: inyoka/wiki/macros.py:191
+#: inyoka/wiki/macros.py:192
 msgid ""
-"You must apply a page name because the macro is being called outside the "
-"wiki context."
+"You must apply a page name because the macro is being called outside the wiki "
+"context."
 msgstr ""
-"Du musst eine Seite angeben, weil das Makro außerhalb des Wikis verwendet"
-" wird."
+"Du musst eine Seite angeben, weil das Makro außerhalb des Wikis verwendet wird."
 
-#: inyoka/wiki/macros.py:193
+#: inyoka/wiki/macros.py:194
 msgid "Invalid arguments"
 msgstr "Parameterfehler"
 
-#: inyoka/wiki/macros.py:238
+#: inyoka/wiki/macros.py:239
 #, python-format
 msgid "Pages with tag “%(name)s”"
 msgstr "Seiten mit Tag „%(name)s“"
 
-#: inyoka/wiki/macros.py:272
+#: inyoka/wiki/macros.py:273
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr "Die Seite „%(name)s“ wurde nicht gefunden."
 
-#: inyoka/wiki/macros.py:274
+#: inyoka/wiki/macros.py:275
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: inyoka/wiki/macros.py:277
+#: inyoka/wiki/macros.py:280
 msgid "Detected a circular include macro call"
 msgstr "Detected a circular include macro call"
 
-#: inyoka/wiki/macros.py:278
+#: inyoka/wiki/macros.py:281
 msgid "Circular import"
 msgstr "Zirkulärer Import"
 
-#: inyoka/wiki/macros.py:379
+#: inyoka/wiki/macros.py:382
 msgid "No result"
 msgstr "Kein Ergebnis"
 
-#: inyoka/wiki/macros.py:380
+#: inyoka/wiki/macros.py:383
 #, python-format
 msgid "The metadata filter has found no results. Query: %(query)s"
 msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 
-#: inyoka/wiki/macros.py:406
+#: inyoka/wiki/macros.py:409
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
-#: inyoka/wiki/models.py:494
+#: inyoka/wiki/models.py:495
 msgid "Created"
 msgstr "Erstellt"
 
@@ -327,8 +322,7 @@ msgstr "Die Seite „%(name)s“ wurde geändert"
 #: inyoka/wiki/views.py:60
 msgid "A site name needs to be entered to create this page."
 msgstr ""
-"Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben "
-"wurde."
+"Die Seite konnte nicht erstellt werden, da kein Seitenname angegeben wurde."
 
 #: inyoka/wiki/views.py:71
 #, python-format
@@ -348,29 +342,26 @@ msgstr "%(sitename)s Wiki – Letzte Änderungen"
 #: inyoka/wiki/views.py:191
 #, python-format
 msgid ""
-"%(user)s deleted the article “%(article)s” on %(date)s. Summary: "
-"%(summary)s"
+"%(user)s deleted the article “%(article)s” on %(date)s. Summary: %(summary)s"
 msgstr ""
-"%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. "
-"Zusammenfassung: %(summary)s"
+"%(user)s hat den Artikel „%(article)s“ am %(date)s gelöscht. Zusammenfassung: "
+"%(summary)s"
 
 #: inyoka/wiki/views.py:194
 #, python-format
-msgid ""
-"%(user)s edited the article “%(article)s” on %(date)s. Summary: "
-"%(summary)s"
+msgid "%(user)s edited the article “%(article)s” on %(date)s. Summary: %(summary)s"
 msgstr ""
-"%(user)s hat den Artikel „%(article)s” am %(date)s bearbeitet. "
-"Zusammenfassung: %(summary)s"
+"%(user)s hat den Artikel „%(article)s” am %(date)s bearbeitet. Zusammenfassung: "
+"%(summary)s"
 
 #: inyoka/wiki/views.py:198
 #, python-format
 msgid ""
-"An anonymous user deleted the article “%(article)s” on %(date)s. Summary:"
-" %(summary)s"
+"An anonymous user deleted the article “%(article)s” on %(date)s. Summary: "
+"%(summary)s"
 msgstr ""
-"Ein anonymer Benutzer hat den Artikel „%(article)s“ am %(date)s gelöscht."
-" Zusammenfassung: %(summary)s"
+"Ein anonymer Benutzer hat den Artikel „%(article)s“ am %(date)s gelöscht. "
+"Zusammenfassung: %(summary)s"
 
 #: inyoka/wiki/views.py:201
 #, python-format
@@ -378,5 +369,5 @@ msgid ""
 "An anonymous user edited the article “%(article)s” on %(date)s. Summary: "
 "%(summary)s"
 msgstr ""
-"Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s "
-"bearbeitet. Zusammenfassung: %(summary)s"
+"Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s bearbeitet. "
+"Zusammenfassung: %(summary)s"

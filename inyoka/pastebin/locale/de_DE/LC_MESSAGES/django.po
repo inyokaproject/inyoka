@@ -8,19 +8,20 @@
 # Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version:  Inyoka\n"
+"Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-01 13:01+0100\n"
-"PO-Revision-Date: 2012-04-29 22:39+0000\n"
-"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
+"POT-Creation-Date: 2015-11-18 22:10+0100\n"
+"PO-Revision-Date: 2015-11-18 22:24+0100\n"
+"Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
-"Language-Team: German (Germany) "
-"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language-Team: German (Germany) (http://www.transifex.com/projects/p/"
+"inyoka/language/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
+"X-Generator: Poedit 1.8.5\n"
 
 #: inyoka/pastebin/forms.py:19
 msgid "Plain text"
@@ -236,4 +237,3 @@ msgstr "Der Eintrag in der Ablage wurde gelöscht."
 
 #~ msgid "Rendered code"
 #~ msgstr "Gerenderter Code"
-

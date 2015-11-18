@@ -9,19 +9,24 @@
 # Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version:  Inyoka\n"
+"Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-01 13:01+0100\n"
-"PO-Revision-Date: 2014-09-06 21:47+0100\n"
+"POT-Creation-Date: 2015-11-18 22:10+0100\n"
+"PO-Revision-Date: 2015-11-18 22:23+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
-"Language-Team: German (Germany) "
-"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/"
+"language/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
+"X-Generator: Poedit 1.8.5\n"
+
+#: inyoka/utils/cache.py:44
+msgid "counting..."
+msgstr "Zähle..."
 
 #: inyoka/utils/diff3.py:373
 msgid "Old"
@@ -74,8 +79,8 @@ msgid ""
 "The entered e-mail address belongs to a e-mail provider we had to block "
 "because of SPAM problems. Please choose another e-mail address"
 msgstr ""
-"Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir "
-"wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
+"Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir wegen "
+"Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
 
 #: inyoka/utils/forms.py:208
 msgid "The entered Jabber address is invalid. Please check your input."
@@ -85,8 +90,7 @@ msgstr ""
 
 #: inyoka/utils/forms.py:234
 msgid ""
-"You have entered an invisible field and were therefore classified as a "
-"bot."
+"You have entered an invisible field and were therefore classified as a bot."
 msgstr ""
 "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot "
 "identifiziert."
@@ -134,11 +138,11 @@ msgstr "Abgebrochen."
 
 #: inyoka/utils/sessions.py:74
 msgid ""
-"You cannot send data that fast in a row. Please wait a bit until you "
-"submit the form again."
+"You cannot send data that fast in a row. Please wait a bit until you submit "
+"the form again."
 msgstr ""
-"Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte "
-"noch einige Zeit, bevor du das Formular erneut absendest."
+"Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte noch "
+"einige Zeit, bevor du das Formular erneut absendest."
 
 #: inyoka/utils/sortable.py:106
 #, python-format
@@ -149,42 +153,42 @@ msgstr "Der ausgewählte Wert („%(value)s“) ist nicht verfügbar"
 #, python-format
 msgid ""
 "Your text is considered spam and needs approval from one of the "
-"administrators. Please be patient, we will get to it as soon as possible."
-" You have %(left)d attempts left before your account will be blocked."
+"administrators. Please be patient, we will get to it as soon as possible. You "
+"have %(left)d attempts left before your account will be blocked."
 msgstr ""
 "Dein Beitrag wurde als Spam klassifiziert und muss von einem Moderator "
-"freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie"
-" möglich darum kümmern. Du hast %(left)d verbleibende Versuche bevor dein"
-" Konto gesperrt wird."
+"freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie "
+"möglich darum kümmern. Du hast %(left)d verbleibende Versuche bevor dein Konto "
+"gesperrt wird."
 
-#: inyoka/utils/text.py:140
+#: inyoka/utils/text.py:142
 msgid "ten"
 msgstr "zehn"
 
-#: inyoka/utils/text.py:142
+#: inyoka/utils/text.py:144
 msgid "eleven"
 msgstr "elf"
 
-#: inyoka/utils/text.py:144
+#: inyoka/utils/text.py:146
 msgid "twelve"
 msgstr "zwölf"
 
-#: inyoka/utils/text.py:147
+#: inyoka/utils/text.py:149
 msgctxt "masculine"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:148
+#: inyoka/utils/text.py:150
 msgctxt "feminine"
 msgid "one"
 msgstr "eine"
 
-#: inyoka/utils/text.py:149
+#: inyoka/utils/text.py:151
 msgctxt "neuter"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:150
+#: inyoka/utils/text.py:152
 msgid "one"
 msgstr "eins"
 
@@ -197,6 +201,4 @@ msgstr "Der Benutzer „%(name)s“ wurde gesperrt und dadurch deine Sitzung bee
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
 msgstr ""
-"Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum "
-"abgemelet."
-
+"Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum abgemelet."

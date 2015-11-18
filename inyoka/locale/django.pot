@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-01 13:01+0100\n"
+"POT-Creation-Date: 2015-11-18 22:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
+
+#: inyoka/utils/cache.py:44
+msgid "counting..."
+msgstr ""
 
 #: inyoka/utils/diff3.py:373
 msgid "Old"
@@ -139,34 +143,34 @@ msgid ""
 " You have %(left)d attempts left before your account will be blocked."
 msgstr ""
 
-#: inyoka/utils/text.py:140
+#: inyoka/utils/text.py:142
 msgid "ten"
 msgstr ""
 
-#: inyoka/utils/text.py:142
+#: inyoka/utils/text.py:144
 msgid "eleven"
 msgstr ""
 
-#: inyoka/utils/text.py:144
+#: inyoka/utils/text.py:146
 msgid "twelve"
 msgstr ""
 
-#: inyoka/utils/text.py:147
+#: inyoka/utils/text.py:149
 msgctxt "masculine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:148
+#: inyoka/utils/text.py:150
 msgctxt "feminine"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:149
+#: inyoka/utils/text.py:151
 msgctxt "neuter"
 msgid "one"
 msgstr ""
 
-#: inyoka/utils/text.py:150
+#: inyoka/utils/text.py:152
 msgid "one"
 msgstr ""
 

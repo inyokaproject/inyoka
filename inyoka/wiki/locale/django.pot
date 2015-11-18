@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-13 17:14+0100\n"
+"POT-Creation-Date: 2015-11-18 22:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,89 +54,89 @@ msgstr ""
 msgid "Renamed to %(new_name)s"
 msgstr ""
 
-#: inyoka/wiki/actions.py:338
+#: inyoka/wiki/actions.py:340
 msgid "No page name given."
 msgstr ""
 
-#: inyoka/wiki/actions.py:345
+#: inyoka/wiki/actions.py:347
 msgid "Renamed the page successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:348
+#: inyoka/wiki/actions.py:350
 msgid "A page with this name already exists."
 msgstr ""
 
-#: inyoka/wiki/actions.py:363
+#: inyoka/wiki/actions.py:365
 msgid "Normal (for experienced authors)"
 msgstr ""
 
-#: inyoka/wiki/actions.py:364
+#: inyoka/wiki/actions.py:366
 msgid "Extensive (for beginners)"
 msgstr ""
 
-#: inyoka/wiki/actions.py:365
+#: inyoka/wiki/actions.py:367
 msgid "I don't want a template"
 msgstr ""
 
-#: inyoka/wiki/actions.py:401
+#: inyoka/wiki/actions.py:403
 msgid "The page <a href=\"{link}\">{name}</a> has been created."
 msgstr ""
 
-#: inyoka/wiki/actions.py:448
+#: inyoka/wiki/actions.py:450
 msgid ""
-"The given revision does not exist for this article,using last revision "
+"The given revision does not exist for this article, using last revision "
 "instead."
 msgstr ""
 
-#: inyoka/wiki/actions.py:452
-msgid "The article „{name}“ does not exist, you cantry to create it now."
+#: inyoka/wiki/actions.py:454
+msgid "The article „{name}“ does not exist, you can try to create it now."
 msgstr ""
 
-#: inyoka/wiki/actions.py:473
+#: inyoka/wiki/actions.py:475
 msgid "Editing of this page was canceled."
 msgstr ""
 
-#: inyoka/wiki/actions.py:490
+#: inyoka/wiki/actions.py:492
 msgid "The page has been edited."
 msgstr ""
 
-#: inyoka/wiki/actions.py:880
+#: inyoka/wiki/actions.py:882
 msgid "Attachments within attachments are not allowed!"
 msgstr ""
 
-#: inyoka/wiki/actions.py:891
+#: inyoka/wiki/actions.py:893
 msgid "Canceled."
 msgstr ""
 
-#: inyoka/wiki/actions.py:906
+#: inyoka/wiki/actions.py:908
 msgid "Please enter a name for this attachment."
 msgstr ""
 
-#: inyoka/wiki/actions.py:917
+#: inyoka/wiki/actions.py:919
 msgid "Another page or attachment with the same name exists"
 msgstr ""
 
-#: inyoka/wiki/actions.py:936
+#: inyoka/wiki/actions.py:938
 msgid "Attachment saved successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:973
+#: inyoka/wiki/actions.py:975
 msgid "Attachment edited successfully."
 msgstr ""
 
-#: inyoka/wiki/actions.py:992
+#: inyoka/wiki/actions.py:994
 msgid "You will be notified on changes on this page"
 msgstr ""
 
-#: inyoka/wiki/actions.py:994
+#: inyoka/wiki/actions.py:996
 msgid "You are already subscribed"
 msgstr ""
 
-#: inyoka/wiki/actions.py:1008
+#: inyoka/wiki/actions.py:1010
 msgid "No subscription for this page found."
 msgstr ""
 
-#: inyoka/wiki/actions.py:1012
+#: inyoka/wiki/actions.py:1014
 msgid "You won't be notified for changes on this page anymore"
 msgstr ""
 
@@ -161,110 +161,110 @@ msgstr ""
 msgid "The page %(name)s already exists."
 msgstr ""
 
-#: inyoka/wiki/forms.py:91
+#: inyoka/wiki/forms.py:94
 msgid "You do not have permission to read this template."
 msgstr ""
 
-#: inyoka/wiki/forms.py:159
+#: inyoka/wiki/forms.py:162
 msgid ""
 "Somebody else edited the page while you were making your changes. We "
 "tried to merge the text automatically. Please confirm that everything is "
 "ok."
 msgstr ""
 
-#: inyoka/wiki/forms.py:168
+#: inyoka/wiki/forms.py:171
 msgid "You have not made any changes."
 msgstr ""
 
-#: inyoka/wiki/forms.py:174
+#: inyoka/wiki/forms.py:177
 msgid "The text contains too many nested elements."
 msgstr ""
 
-#: inyoka/wiki/forms.py:179
+#: inyoka/wiki/forms.py:182
 msgid "The text contains conflict markers."
 msgstr ""
 
-#: inyoka/wiki/forms.py:186
+#: inyoka/wiki/forms.py:189
 msgid "You are not permitted to make this change."
 msgstr ""
 
-#: inyoka/wiki/forms.py:218 inyoka/wiki/forms.py:230
+#: inyoka/wiki/forms.py:221 inyoka/wiki/forms.py:233
 msgid "Description"
 msgstr ""
 
-#: inyoka/wiki/forms.py:238
+#: inyoka/wiki/forms.py:241
 msgid "Slug of the topic"
 msgstr ""
 
-#: inyoka/wiki/forms.py:239
+#: inyoka/wiki/forms.py:242
 #, python-format
 msgid ""
 "You can find the slug of a topic in the URL (e.g. <var>example</var> when"
 " <em>%(example)s</em>)"
 msgstr ""
 
-#: inyoka/wiki/forms.py:251
+#: inyoka/wiki/forms.py:254
 msgid "This topic does not exist."
 msgstr ""
 
-#: inyoka/wiki/forms.py:257
+#: inyoka/wiki/forms.py:260
 msgid "New page name"
 msgstr ""
 
-#: inyoka/wiki/forms.py:258
+#: inyoka/wiki/forms.py:261
 msgid "Edited by"
 msgstr ""
 
-#: inyoka/wiki/forms.py:259
+#: inyoka/wiki/forms.py:262
 msgid "Completion date"
 msgstr ""
 
-#: inyoka/wiki/macros.py:191
+#: inyoka/wiki/macros.py:192
 msgid ""
 "You must apply a page name because the macro is being called outside the "
 "wiki context."
 msgstr ""
 
-#: inyoka/wiki/macros.py:193
+#: inyoka/wiki/macros.py:194
 msgid "Invalid arguments"
 msgstr ""
 
-#: inyoka/wiki/macros.py:238
+#: inyoka/wiki/macros.py:239
 #, python-format
 msgid "Pages with tag “%(name)s”"
 msgstr ""
 
-#: inyoka/wiki/macros.py:272
+#: inyoka/wiki/macros.py:273
 #, python-format
 msgid "The page “%(name)s” was not found"
 msgstr ""
 
-#: inyoka/wiki/macros.py:274
+#: inyoka/wiki/macros.py:275
 msgid "Page not found"
 msgstr ""
 
-#: inyoka/wiki/macros.py:277
+#: inyoka/wiki/macros.py:280
 msgid "Detected a circular include macro call"
 msgstr ""
 
-#: inyoka/wiki/macros.py:278
+#: inyoka/wiki/macros.py:281
 msgid "Circular import"
 msgstr ""
 
-#: inyoka/wiki/macros.py:379
+#: inyoka/wiki/macros.py:382
 msgid "No result"
 msgstr ""
 
-#: inyoka/wiki/macros.py:380
+#: inyoka/wiki/macros.py:383
 #, python-format
 msgid "The metadata filter has found no results. Query: %(query)s"
 msgstr ""
 
-#: inyoka/wiki/macros.py:406
+#: inyoka/wiki/macros.py:409
 msgid "Unknown page"
 msgstr ""
 
-#: inyoka/wiki/models.py:494
+#: inyoka/wiki/models.py:495
 msgid "Created"
 msgstr ""
 
