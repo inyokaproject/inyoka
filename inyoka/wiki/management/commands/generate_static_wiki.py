@@ -79,19 +79,24 @@ EXCLUDE_PAGES = [u'Benutzer/', u'Anwendertreffen/', u'Baustelle/',
 EXCLUDE_PAGES = [x.lower() for x in EXCLUDE_PAGES]
 
 _iterables = (tuple, list, set, frozenset)
+verbosity = 0
 
 
 class Command(NoArgsCommand):
     help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
 
     def handle_noargs(self, **options):
-        print "Starting Export"
+        global verbosity
+        verbosity = int(options.get('verbosity'))
+        if verbosity >= 1:
+            print "Starting Export"
         global SNAPSHOT_DATE, SNAPSHOT_MESSAGE
         activate(settings.LANGUAGE_CODE)
         SNAPSHOT_DATE = date(datetime.date.today(), settings.DATE_FORMAT)
         SNAPSHOT_MESSAGE = SNAPSHOT_MESSAGE % (SNAPSHOT_DATE, '%s')
         self.create_snapshot()
-        print "Export complete"
+        if verbosity >= 1:
+            print "Export complete"
 
     @templated('wiki/action_show.html')
     def fetch_page(self, page, **kwargs):
@@ -353,7 +358,8 @@ class Command(NoArgsCommand):
         attachment_folder = path.join(FOLDER, 'files', '_')
         mkdir(attachment_folder)
 
-        pb = ProgressBar(40)
+        if verbosity >= 1:
+            pb = ProgressBar(40)
 
         unsorted = Page.objects.get_page_list(existing_only=True)
         todo = set()
@@ -429,10 +435,15 @@ class Command(NoArgsCommand):
                                    (m.groups()[0], m.groups()[1]), content)
                 _write_file(path.join(FOLDER, 'index.html'))
 
-        percents = list(percentize(len(todo)))
+        if len(todo) is 0:
+            percents = []
+        else:
+            percents = list(percentize(len(todo)))
         for percent, name in izip(percents, todo):
             _fetch_and_write(name)
-            pb.update(percent)
-        print
-        print ("Created Wikisnapshot with %s pages; excluded %s pages"
-               % (len(todo), num_excluded))
+            if verbosity >= 1:
+                pb.update(percent)
+        if verbosity >= 1:
+            print
+            print ("Created Wikisnapshot with %s pages; excluded %s pages"
+                % (len(todo), num_excluded))
