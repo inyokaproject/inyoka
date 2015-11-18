@@ -13,19 +13,18 @@
 import datetime
 from functools import partial
 from hashlib import sha1
-from importlib import import_module
 from itertools import izip
 from os import path, walk, mkdir, chmod, unlink
 from re import escape, compile
 from shutil import copy, rmtree, copytree
 
 from bs4 import BeautifulSoup
+from django.apps import apps
 from django.conf import settings
 from django.core.management.base import NoArgsCommand
 from django.template.defaultfilters import date
 from django.utils.encoding import force_unicode
 from django.utils.translation import activate
-from django.apps import apps
 from werkzeug import url_unquote
 
 from inyoka.portal.user import User
@@ -37,6 +36,7 @@ from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page
+from inyoka.wiki.utils import CaseSensitiveException
 
 
 FOLDER = 'static_wiki'
@@ -153,7 +153,7 @@ class Command(NoArgsCommand):
     def handle_pathbar(self, soup, pre, is_main_page, page_name):
         pathbar = soup.find('div', 'pathbar')
         pathbar.find('form').decompose()
-        pathbar.find('div').decompose()
+        #pathbar.find('div').decompose()
         children = list(pathbar.children)
         if len(children) > 4:
             # 4 because, the form and div leave a \n behind
@@ -380,6 +380,8 @@ class Command(NoArgsCommand):
 
             try:
                 page = Page.objects.get_by_name(name, False, True)
+            except CaseSensitiveException as e:
+                page = e.page
             except Page.DoesNotExist:
                 return
 
@@ -402,34 +404,31 @@ class Command(NoArgsCommand):
             if content is None:
                 return
             content = content.decode('utf8')
+            soup = BeautifulSoup(content)
 
-    def _fetch_and_write(name):
-        parts = 0
-        is_main_page = False
+            # Apply the handlers from above to modify the page content
+            for handler in self.HANDLERS:
+                handler(self, soup, self._pre(parts), is_main_page, page.name)
 
-            ## # Apply the handlers from above to modify the page content
-            ## for handler in self.HANDLERS:
-                ## handler(self, soup, self._pre(parts), is_main_page, page.name)
+             # If a page is a redirect page, add a forward link
+            redirect = page.metadata.get('X-Redirect')
+            if redirect:
+                self.handle_redirect_page(soup, self._pre(parts), redirect)
 
-            ## # If a page is a redirect page, add a forward link
-            ## redirect = page.metadata.get('X-Redirect')
-            ## if redirect:
-                ## self.handle_redirect_page(soup, self._pre(parts), redirect)
+            content = unicode(soup)
 
-            ## content = unicode(soup)
+            def _write_file(pth):
+                with open(pth, 'w+') as fobj:
+                    fobj.write(content.encode('utf-8'))
 
-            ## def _write_file(pth):
-                ## with open(pth, 'w+') as fobj:
-                    ## fobj.write(content.encode('utf-8'))
+            _write_file(path.join(FOLDER, 'files', '%s.html' %
+                                                   self.fix_path(page.name)))
 
-            ## _write_file(path.join(FOLDER, 'files', '%s.html' %
-                                                   ## self.fix_path(page.name)))
-
-            ## if is_main_page:
-                ## content = compile(r'(src|href)="\./([^"]+)"') \
-                    ## .sub(lambda m: '%s="./files/%s"' %
-                                   ## (m.groups()[0], m.groups()[1]), content)
-                ## _write_file(path.join(FOLDER, 'index.html'))
+            if is_main_page:
+                content = compile(r'(src|href)="\./([^"]+)"') \
+                    .sub(lambda m: '%s="./files/%s"' %
+                                   (m.groups()[0], m.groups()[1]), content)
+                _write_file(path.join(FOLDER, 'index.html'))
 
         percents = list(percentize(len(todo)))
         for percent, name in izip(percents, todo):
