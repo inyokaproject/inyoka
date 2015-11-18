@@ -21,7 +21,7 @@ from shutil import copy, copytree, rmtree
 from bs4 import BeautifulSoup
 from django.apps import apps
 from django.conf import settings
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.template.defaultfilters import date
 from django.utils.encoding import force_unicode
 from django.utils.translation import activate
@@ -37,8 +37,9 @@ from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import CaseSensitiveException
+from optparse import make_option
 
-FOLDER = 'static_wiki'
+#FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False
 
 UU_DE = 'http://%subuntuusers.de/'
@@ -82,12 +83,24 @@ _iterables = (tuple, list, set, frozenset)
 verbosity = 0
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
+    option_list = BaseCommand.option_list + (
+        make_option('-p', '--path',
+            type='string',
+            action='store',
+            dest='path',
+            default='static_wiki',
+            help='Define where to store the static wiki'),
+        )
 
-    def handle_noargs(self, **options):
+    def handle(self, *args, **options):
         global verbosity
-        verbosity = int(options.get('verbosity'))
+        verbosity = int(options['verbosity'])
+        path = options['path']
+        if path is not None:
+            global FOLDER
+            FOLDER = path
         if verbosity >= 1:
             print "Starting Export"
         global SNAPSHOT_DATE, SNAPSHOT_MESSAGE
