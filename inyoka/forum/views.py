@@ -1607,7 +1607,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         title = _(u'Topics by “%(user)s”') % {'user': user.username}
     elif action == 'author':
         user = user and User.objects.get(username__iexact=user) or request.user
-        if user.is_anonymous:
+        if request.user.is_anonymous:
             messages.info(request, _(u'You need to be logged in to use this function.'))
             return abort_access_denied(request)
         topics = topics.filter(posts__author=user).distinct()
@@ -1672,6 +1672,76 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         'hide_sticky': False,
         'forum': forum_obj,
     }
+
+
+@templated('forum/postlist.html')
+def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
+    page = int(page)
+    
+    user = user and User.objects.get(username__iexact=user) or request.user
+    if request.user.is_anonymous:
+        messages.info(request, _(u'You need to be logged in to use this function.'))
+        return abort_access_denied(request)
+    
+    posts = Post.objects.filter(author=user).order_by('-pub_date')
+    
+    if topic_slug is not None:
+        posts = posts.filter(topic__slug=topic_slug)
+        pagination_url = href('forum', 'author', user.username, 'topic', topic_slug)
+    elif forum_slug is not None:
+        posts = posts.filter(topic__forum__slug=forum_slug)
+        pagination_url = href('forum', 'author', user.username, 'forum', forum_slug)
+    else:
+        pagination_url = href('forum', 'author', user.username)
+    
+    # hidden forums is much faster than checking for visible forums
+    hidden_ids = [f.id for f in Forum.objects.get_forums_filtered(request.user, reverse=True)]
+    if hidden_ids:
+        posts = posts.exclude(topic__forum__id__in=hidden_ids)
+
+    total_posts = get_simplified_queryset(posts).count()
+    
+    # at least with MySQL we need this, as it is the fastest method
+    posts = posts.values_list('id', flat=True)
+    
+    pagination = Pagination(request, posts, page, TOPICS_PER_PAGE, pagination_url, \
+        total=total_posts, max_pages=MAX_PAGES_TOPICLIST)
+    post_ids = [post_id for post_id in pagination.get_queryset()]
+    
+    posts = Post.objects.filter(id__in=post_ids).select_related('topic', 'topic__forum', 'author')
+
+    # check for moderation permissions
+    moderatable_forums = [
+        obj.id for obj in
+        Forum.objects.get_forums_filtered(request.user, CAN_MODERATE)
+    ]
+
+    def can_moderate(topic):
+        return topic.forum_id in moderatable_forums
+    
+    topic = None
+    forum = None
+    
+    if topic_slug is not None and len(posts):
+        topic = posts[0].topic
+        title = _(u'Posts by “{user}” in topic “{topic}”').format(user=user.username, topic=topic.title)
+    elif forum_slug is not None and len(posts):
+        forum = posts[0].topic.forum
+        title = _(u'Posts by “{user}” in forum “{forum}”').format(user=user.username, forum=forum.name)
+    else:
+        title = _(u'Posts by “{user}”').format(user=user.username)
+    
+    return {
+        'posts': posts,
+        'pagination': pagination,
+        'title': title,
+        'can_moderate': can_moderate,
+        'hide_sticky': False,
+        'forum': forum,
+        'topic': topic,
+        'username': user.username,
+    }
+
 
 
 @templated('forum/welcome.html')
@@ -1810,3 +1880,4 @@ def forum_edit(request, slug=None, parent=None):
         'form': form,
         'forum': forum
     }
+
