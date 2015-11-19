@@ -37,12 +37,6 @@ class QueryCounter(object):
         self.use_task = use_task
         self.timeout = timeout or settings.COUNTER_CACHE_TIMEOUT
 
-    def __str__(self):
-        """
-        Returns the value or the string "counting..."
-        """
-        return unicode(self).encode('utf-8')
-
     def __unicode__(self):
         """
         Returns the value or the unicode string "counting..."
