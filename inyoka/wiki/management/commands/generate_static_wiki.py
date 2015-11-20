@@ -16,6 +16,7 @@ import datetime
 from functools import partial
 from hashlib import sha1
 from itertools import izip
+from optparse import make_option
 from os import chmod, mkdir, path, unlink, walk
 from re import compile, escape
 from shutil import copy, copytree, rmtree
@@ -39,9 +40,8 @@ from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import CaseSensitiveException
-from optparse import make_option
 
-#FOLDER = 'static_wiki'
+FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False
 
 UU_DE = 'http://%subuntuusers.de/'
@@ -92,7 +92,6 @@ class Command(BaseCommand):
             type='string',
             action='store',
             dest='path',
-            default='static_wiki',
             help='Define where to store the static wiki'),
         )
 

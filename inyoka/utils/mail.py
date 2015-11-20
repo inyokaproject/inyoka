@@ -22,7 +22,7 @@ def send_mail(subject, message, sender, to):
 
     # Do not attempt to send to invalid email addresses
     # (may occur for disabled users)
-    if to[0].endswith('.invalid') or not '@' in to[0]:
+    if to[0].endswith('.invalid') or '@' not in to[0]:
         return
 
     if settings.DEBUG_NOTIFICATIONS:
