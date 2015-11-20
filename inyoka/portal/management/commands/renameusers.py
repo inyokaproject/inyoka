@@ -11,47 +11,58 @@
     :license: BSD, see LICENSE for more details.
 """
 import json
-from optparse import make_option
 
-from django.core.management.base import LabelCommand
+from django.core.management.base import BaseCommand
 from django.utils.translation import ugettext as _
 
 from inyoka.portal.user import User
 
 
-class Command(LabelCommand):
-    help = "Rename all users as specified in the given JSON file"
-    label = "JSON file name"
-    args = '<filename>'
-    option_list = LabelCommand.option_list + (
-        make_option('-s', '--silent',
-            action="store_false", dest="notify", default=True,
-            help="Does not send notification mails to renamed users"),
-    )
+class Command(BaseCommand):
+    help = "Rename all users as specified in the given JSON file, "\
+        + "using the fromat [{'oldname': 'Kevin', 'newname': 'Max'}, "\
+        + "{'oldname': 'schaklin@web.de', 'newname': 'Anna'}]"
 
-    def handle_label(self, label, **options):
+    def add_arguments(self, parser):
+        parser.add_argument('-f', '--file',
+            action="store",
+            dest="json",
+            # required=True, # would make sense, but breaks the test
+            help="JSON file containing the list of users to rename and their new names")
+        parser.add_argument('-s', '--silent',
+            action="store_false",
+            dest="notify",
+            default=True,
+            help="Does not send notification mails to renamed users")
+
+    def handle(self, **options):
         """
-        Opens a json-file and renames each user inside the file.
+        Opens a json file and renames each user specified by the file.
 
-        The json-format has to be a list ob objects, where any object has the
+        The json format has to be a list of objects, where any object has the
         attributes 'oldname' and 'newname'.
 
         'oldname' can also be an E-Mail adress of a user.
 
         For Example:
 
-        [{'oldname': 'Kevin', 'newname': 'Max'}, {'oldname': 'schaklin@web.de', 'newname': 'Anna'}]
+        [{'oldname': 'Kevin', 'newname': 'Max'},
+        {'oldname': 'schaklin@web.de', 'newname': 'Anna'}]
 
-        The argument label can be a path to a json-file or a python file
-        object to a json-file.
+        The file argument can be either a path to a json file or a python file
+        object pointing to a json file.
         """
-        notify = options.get('notify')
-        verbosity = int(options.get('verbosity'))
-        if isinstance(label, basestring):
-            with open(label) as json_file:
+        notify = options['notify']
+        verbosity = int(options['verbosity'])
+        rename_file = options['json']
+        if rename_file is None:
+            self.stderr.write(_(u"No JSON file specified. Aborting..."))
+            return
+        if isinstance(rename_file, basestring):
+            with open(rename_file) as json_file:
                 data = json.load(json_file)
         else:
-            data = json.load(label)
+            data = json.load(rename_file)
 
         for username in data:
             if verbosity >= 2:
