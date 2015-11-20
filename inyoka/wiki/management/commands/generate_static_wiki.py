@@ -10,6 +10,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from __future__ import print_function
+
 import datetime
 from functools import partial
 from hashlib import sha1
@@ -102,14 +104,14 @@ class Command(BaseCommand):
             global FOLDER
             FOLDER = path
         if verbosity >= 1:
-            print "Starting Export"
+            print("Starting Export")
         global SNAPSHOT_DATE, SNAPSHOT_MESSAGE
         activate(settings.LANGUAGE_CODE)
         SNAPSHOT_DATE = date(datetime.date.today(), settings.DATE_FORMAT)
         SNAPSHOT_MESSAGE = SNAPSHOT_MESSAGE % (SNAPSHOT_DATE, '%s')
         self.create_snapshot()
         if verbosity >= 1:
-            print "Export complete"
+            print("Export complete")
 
     @templated('wiki/action_show.html')
     def fetch_page(self, page, **kwargs):
@@ -457,6 +459,5 @@ class Command(BaseCommand):
             if verbosity >= 1:
                 pb.update(percent)
         if verbosity >= 1:
-            print
-            print ("Created Wikisnapshot with %s pages; excluded %s pages"
-                % (len(todo), num_excluded))
+            print(("\nCreated Wikisnapshot with %s pages; excluded %s pages"
+                % (len(todo), num_excluded)))

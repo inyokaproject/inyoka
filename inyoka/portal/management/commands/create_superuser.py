@@ -11,6 +11,8 @@
     :copyright: (c) 2011-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from __future__ import print_function
+
 from getpass import getpass
 from optparse import make_option
 
@@ -19,7 +21,6 @@ from django.core.management.base import BaseCommand
 from inyoka.forum.acl import join_flags, PRIVILEGES_DETAILS
 from inyoka.forum.models import Forum, Privilege
 from inyoka.portal.user import User, PERMISSION_NAMES
-
 
 class Command(BaseCommand):
     help = "Create a user with all priviliges"
@@ -58,4 +59,4 @@ class Command(BaseCommand):
         bits = join_flags(*bits)
         for forum in Forum.objects.all():
             Privilege(user=user, forum=forum, positive=bits, negative=0).save()
-        print 'created superuser'
+        print('created superuser')

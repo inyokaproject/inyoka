@@ -8,7 +8,7 @@
     :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import os
 import math
@@ -127,7 +127,7 @@ def randtime():
 
 
 def make_groups():
-    print 'Creating groups'
+    print('Creating groups')
     pb = ProgressBar(40)
     for percent, name in izip(percentize(GROUPS_COUNT), create_names(GROUPS_COUNT)):
         groups.append(Group(name=name))
@@ -137,7 +137,7 @@ def make_groups():
 
 
 def make_users():
-    print 'Creating users'
+    print('Creating users')
     pb = ProgressBar(40)
     for percent, name in izip(percentize(USERS_COUNT), create_names(USERS_COUNT)):
         u = User.objects.register_user(
@@ -162,7 +162,7 @@ def make_users():
 
 
 def make_forum():
-    print 'Creating forum test data'
+    print('Creating forum test data')
     pb = ProgressBar(40)
     for percent, name in izip(percentize(FORUMS_COUNT), create_names(FORUMS_COUNT, title)):
         parent = None
@@ -199,7 +199,7 @@ def make_forum():
 
 
 def make_ikhaya():
-    print 'Creating ikhaya test data'
+    print('Creating ikhaya test data')
     pb = ProgressBar(40)
     for percent, name in izip(percentize(IKHAYA_CATEGORY_COUNT), create_names(IKHAYA_CATEGORY_COUNT, title)):
         c = Category(name=name)
@@ -233,7 +233,7 @@ def make_ikhaya():
 
 
 def make_wiki():
-    print 'Creating wiki pages'
+    print('Creating wiki pages')
     pb = ProgressBar(40)
     for percent, name in izip(percentize(len(page_names)-1), page_names):
         p = Page.objects.create(name, sentences(min=10, max=20), choice(users), note=title())
@@ -249,7 +249,7 @@ def make_wiki():
 
 
 def make_planet():
-    print "Creating planet test data"
+    print("Creating planet test data")
     pb = ProgressBar(40)
     for percent, (name, (blogurl, feedurl)) in izip(percentize(len(BLOGS)-1),
                                                     BLOGS.iteritems()):
@@ -269,4 +269,4 @@ if __name__ == '__main__':
     make_ikhaya()
     make_forum()
     make_planet()
-    print "created test data"
+    print("created test data")
