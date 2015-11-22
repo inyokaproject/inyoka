@@ -77,6 +77,7 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import locale
 from datetime import datetime
 from hashlib import sha1
 
@@ -91,7 +92,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from werkzeug import cached_property
 
-from inyoka import markup
+from inyoka import default_settings, markup
 from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.database import InyokaMarkupField
@@ -152,11 +153,12 @@ class PageManager(models.Manager):
         if revs:
             return revs[0]
 
-    def get_tagcloud(self, show_max=100):
+    def get_taglist(self, size_limit=None):
         """
-        Get a tagcloud.  Note that this is one of the few operations that
-        also returns attachments, not only pages.  A tag cloud is represented
-        as ordinary list of dicts with the following keys:
+        Get a list of all tags or just the most used ones (if size_limit is
+        set). Note that this is one of the few operations that also returns
+        attachments, not only pages.  The tag list is an ordinary list of
+        dicts with the following keys:
 
         ``'name'``
             The name of the tag
@@ -172,13 +174,15 @@ class PageManager(models.Manager):
         tags = MetaData.objects.filter(key='tag').values_list('value')\
             .annotate(count=Count('value'))\
             .order_by('-count')
-        if show_max is not None:
-            tags = tags[:show_max]
+        if size_limit is not None:
+            tags = tags[:size_limit]
 
+        # set locale, so that the list is being sorted in respect to it
+        locale.setlocale(locale.LC_ALL, default_settings.LC_ALL)
         return [{'name': tag[0],
             'count': tag[1],
             'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
-            for tag in sorted(tags, key=lambda x: x[0].lower())]
+            for tag in sorted(tags, cmp=locale.strcoll, key=lambda x: x[0])]
 
     def compare(self, name, old_rev, new_rev=None):
         """
