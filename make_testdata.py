@@ -8,36 +8,37 @@
     :copyright: (c) 2011-2014 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import division
+from __future__ import division, print_function
 
-import os
 import math
+import os
 import time
-import django
-from random import choice, randint
 from datetime import datetime
 from itertools import izip
+from random import choice, randint
 
+import django
 from django.conf import settings
 from jinja2.constants import LOREM_IPSUM_WORDS
+
+from inyoka.forum.models import Forum, Post, Topic
+from inyoka.ikhaya.models import Article, Category, Comment
+from inyoka.planet.models import Blog
+from inyoka.planet.tasks import sync
+from inyoka.portal.user import Group, User
+from inyoka.utils.captcha import generate_word
+from inyoka.utils.terminal import ProgressBar, percentize, show
+from inyoka.utils.text import increment_string
+from inyoka.wiki.models import Page
 
 if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
 settings.DEBUG = settings.DATABASE_DEBUG = False  # for nice progressbar output ;)
 
-from inyoka.utils.text import increment_string
-from inyoka.wiki.models import Page
-from inyoka.portal.user import User, Group
-from inyoka.forum.models import Post, Topic, Forum
-from inyoka.ikhaya.models import Comment, Article, Category
-from inyoka.utils.captcha import generate_word
-from inyoka.planet.models import Blog
-from inyoka.utils.terminal import show, percentize, ProgressBar
-from inyoka.planet.tasks import sync
 
 MARKS = ('.', ';', '!', '?')
 WORDS = LOREM_IPSUM_WORDS.split(' ')
-NAME_WORDS = [w for w in WORDS if not '\n' in w]
+NAME_WORDS = [w for w in WORDS if '\n' not in w]
 
 groups = []
 users = []
@@ -115,7 +116,7 @@ def sentences(min=5, max=35, markup=True):
 
 
 def title():
-    return u''.join(w for w in words(2, 3, markup=False) if not '\n' in w)
+    return u''.join(w for w in words(2, 3, markup=False) if '\n' not in w)
 
 
 def intro(markup=True):
@@ -127,7 +128,7 @@ def randtime():
 
 
 def make_groups():
-    print 'Creating groups'
+    print('Creating groups')
     pb = ProgressBar(40)
     for percent, name in izip(percentize(GROUPS_COUNT), create_names(GROUPS_COUNT)):
         groups.append(Group(name=name))
@@ -137,7 +138,7 @@ def make_groups():
 
 
 def make_users():
-    print 'Creating users'
+    print('Creating users')
     pb = ProgressBar(40)
     for percent, name in izip(percentize(USERS_COUNT), create_names(USERS_COUNT)):
         u = User.objects.register_user(
@@ -162,7 +163,7 @@ def make_users():
 
 
 def make_forum():
-    print 'Creating forum test data'
+    print('Creating forum test data')
     pb = ProgressBar(40)
     for percent, name in izip(percentize(FORUMS_COUNT), create_names(FORUMS_COUNT, title)):
         parent = None
@@ -199,7 +200,7 @@ def make_forum():
 
 
 def make_ikhaya():
-    print 'Creating ikhaya test data'
+    print('Creating ikhaya test data')
     pb = ProgressBar(40)
     for percent, name in izip(percentize(IKHAYA_CATEGORY_COUNT), create_names(IKHAYA_CATEGORY_COUNT, title)):
         c = Category(name=name)
@@ -233,9 +234,9 @@ def make_ikhaya():
 
 
 def make_wiki():
-    print 'Creating wiki pages'
+    print('Creating wiki pages')
     pb = ProgressBar(40)
-    for percent, name in izip(percentize(len(page_names)-1), page_names):
+    for percent, name in izip(percentize(len(page_names) - 1), page_names):
         p = Page.objects.create(name, sentences(min=10, max=20), choice(users), note=title())
         for i in range(randint(0, MAX_WIKI_REVISIONS)):
             text = sentences(min=10, max=20, markup=False)
@@ -249,9 +250,9 @@ def make_wiki():
 
 
 def make_planet():
-    print "Creating planet test data"
+    print("Creating planet test data")
     pb = ProgressBar(40)
-    for percent, (name, (blogurl, feedurl)) in izip(percentize(len(BLOGS)-1),
+    for percent, (name, (blogurl, feedurl)) in izip(percentize(len(BLOGS) - 1),
                                                     BLOGS.iteritems()):
         Blog(name=name, blog_url=blogurl, feed_url=feedurl, description=sentences(min=3, max=10)).save()
         pb.update(percent)
@@ -269,4 +270,4 @@ if __name__ == '__main__':
     make_ikhaya()
     make_forum()
     make_planet()
-    print "created test data"
+    print("created test data")

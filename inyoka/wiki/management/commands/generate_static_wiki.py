@@ -10,10 +10,13 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from __future__ import print_function
+
 import datetime
 from functools import partial
 from hashlib import sha1
 from itertools import izip
+from optparse import make_option
 from os import chmod, mkdir, path, unlink, walk
 from re import compile, escape
 from shutil import copy, copytree, rmtree
@@ -37,9 +40,8 @@ from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import CaseSensitiveException
-from optparse import make_option
 
-#FOLDER = 'static_wiki'
+FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False
 
 UU_DE = 'http://%subuntuusers.de/'
@@ -90,7 +92,6 @@ class Command(BaseCommand):
             type='string',
             action='store',
             dest='path',
-            default='static_wiki',
             help='Define where to store the static wiki'),
         )
 
@@ -102,14 +103,14 @@ class Command(BaseCommand):
             global FOLDER
             FOLDER = path
         if verbosity >= 1:
-            print "Starting Export"
+            print("Starting Export")
         global SNAPSHOT_DATE, SNAPSHOT_MESSAGE
         activate(settings.LANGUAGE_CODE)
         SNAPSHOT_DATE = date(datetime.date.today(), settings.DATE_FORMAT)
         SNAPSHOT_MESSAGE = SNAPSHOT_MESSAGE % (SNAPSHOT_DATE, '%s')
         self.create_snapshot()
         if verbosity >= 1:
-            print "Export complete"
+            print("Export complete")
 
     @templated('wiki/action_show.html')
     def fetch_page(self, page, **kwargs):
@@ -457,6 +458,5 @@ class Command(BaseCommand):
             if verbosity >= 1:
                 pb.update(percent)
         if verbosity >= 1:
-            print
-            print ("Created Wikisnapshot with %s pages; excluded %s pages"
-                % (len(todo), num_excluded))
+            print(("\nCreated Wikisnapshot with %s pages; excluded %s pages"
+                % (len(todo), num_excluded)))
