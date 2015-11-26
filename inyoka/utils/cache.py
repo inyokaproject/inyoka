@@ -71,7 +71,7 @@ class QueryCounter(object):
             return self._value
         except AttributeError:
             # The value was not cached yet.
-            continue
+            pass
         if not self.use_task:
             count = cache.get_or_set(self.cache_key, self.db_count, self.timeout)
         else:
