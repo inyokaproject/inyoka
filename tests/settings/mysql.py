@@ -1,6 +1,4 @@
-from inyoka.default_settings import *
-
-from .base import *
+from .base import *  # noqa
 
 DATABASES = {
     'default': {
@@ -12,3 +10,6 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+CACHES['content']['KEY_PREFIX'] = 'test-mysql'
+CACHES['default']['KEY_PREFIX'] = 'test-mysql'

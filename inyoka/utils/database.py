@@ -9,35 +9,20 @@
     :license: BSD, see LICENSE for more details.
 """
 import json
-import operator
 
-from django.core.cache import cache
+from django.core.cache import cache, caches
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.db.models.expressions import F, ExpressionNode
 from django.db.models.signals import post_save as model_post_save_signal
-from django.core.cache import get_cache
 
-from inyoka.markup import parse, RenderContext
+from inyoka.markup import RenderContext, parse
 from inyoka.utils.highlight import highlight_code
-
-
-EXPRESSION_NODE_CALLBACKS = {
-    ExpressionNode.ADD: operator.add,
-    ExpressionNode.SUB: operator.sub,
-    ExpressionNode.MUL: operator.mul,
-    ExpressionNode.DIV: operator.div,
-    ExpressionNode.MOD: operator.mod,
-    ExpressionNode.BITAND: operator.and_,
-    ExpressionNode.BITOR: operator.or_,
-}
-
 
 MAX_SLUG_INCREMENT = 999
 _SLUG_INCREMENT_SUFFIXES = set(range(2, MAX_SLUG_INCREMENT + 1))
 
 
-content_cache = get_cache('content')
+content_cache = caches['content']
 
 
 class CannotResolve(Exception):
@@ -108,63 +93,6 @@ def get_simplified_queryset(queryset):
     cqry.query.related_select_cols = []
     cqry.query.related_select_fields = []
     return cqry
-
-
-def _resolve(instance, node):
-    if isinstance(node, F):
-        return getattr(instance, node.name)
-    elif isinstance(node, ExpressionNode):
-        return _resolve(instance, node)
-    return node
-
-
-def resolve_expression_node(instance, node):
-    op = EXPRESSION_NODE_CALLBACKS.get(node.connector, None)
-    if not op:
-        raise CannotResolve
-    runner = _resolve(instance, node.children[0])
-    for n in node.children[1:]:
-        runner = op(runner, _resolve(instance, n))
-    return runner
-
-
-# Partially copied from
-# https://github.com/andymccurdy/django-tips-and-tricks/
-def update_model(instance, **kwargs):
-    """Atomically update instance, setting field/value pairs from kwargs"""
-    if not instance:
-        return []
-
-    instances = instance if isinstance(instance, (set, list, tuple)) else [instance]
-
-    query_kwargs = kwargs.copy()
-    for instance in instances:
-        # fields that use auto_now=True should be updated corrected, too!
-        for field in instance._meta.fields:
-            exists = hasattr(field, 'auto_now')
-            if exists and field.auto_now and field.name not in kwargs:
-                kwargs[field.name] = field.pre_save(instance, False)
-            if field.name in kwargs and isinstance(field, JSONField):
-                query_kwargs[field.name] = field.dumps(kwargs[field.name])
-
-    manager = instances[0].__class__._default_manager
-    if len(instances) == 1:
-        qset = manager.filter(pk=instances[0].pk)
-    else:
-        qset = manager.filter(pk__in=[i.pk for i in instances])
-    rows_affected = qset.update(**query_kwargs)
-
-    # apply the updated args to the instance to mimic the change
-    # note that these might slightly differ from the true database values
-    # as the DB could have been updated by another thread. callers should
-    # retrieve a new copy of the object if up-to-date values are required
-    for k, v in kwargs.iteritems():
-        if isinstance(v, ExpressionNode):
-            v = resolve_expression_node(instance, v)
-        for instance in instances:
-            setattr(instance, k, v)
-
-    return rows_affected
 
 
 def model_or_none(pk, reference):
@@ -395,7 +323,6 @@ class PygmentsField(BaseMarkupField):
             return highlight_code(text, lang)
 
         return get_field_rendered
-
 
     def get_content_create_callback(self, inst_self, field_name):
         """

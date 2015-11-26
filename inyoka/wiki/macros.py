@@ -26,6 +26,7 @@ from inyoka.utils.urls import href, is_safe_domain, urlencode
 from inyoka.wiki.models import Page, MetaData, is_privileged_wiki_page
 from inyoka.wiki.signals import build_picture_node
 from inyoka.wiki.views import fetch_real_target
+from inyoka.wiki.utils import CaseSensitiveException
 
 
 def make_int(s, default):
@@ -164,34 +165,6 @@ class RedirectPages(macros.Macro):
         return result
 
 
-class NewPage(macros.Macro):
-    """
-    Show a small form to create a new page below a page or in
-    top level and with a given template.
-    """
-    names = (u'NewPage', u'NeueSeite')
-    is_static = True
-    arguments = (
-        ('base', unicode, ''),
-        ('template', unicode, ''),
-        ('text', unicode, '')
-    )
-    allowed_context = ['wiki']
-
-    def __init__(self, base, template, text):
-        self.base = base
-        self.template = template
-        self.text = text
-
-    def build_node(self):
-        return nodes.html_partial(
-            'wiki/_new_page_macro.html', True,
-            text=self.text,
-            base=self.base,
-            template=self.template,
-        )
-
-
 class SimilarPages(macros.Macro):
     """
     Show a list of pages similar to the page name given or the
@@ -300,6 +273,8 @@ class Include(macros.Macro):
             msg = _(u'The page “%(name)s” was not found') % {
                 'name': self.page}
             return nodes.error_box(_(u'Page not found'), msg)
+        except CaseSensitiveException as e:
+            page = e.page
         context.kwargs.setdefault('included_pages', set())
         if page.name in context.kwargs['included_pages']:
             msg = _(u'Detected a circular include macro call')
@@ -566,7 +541,6 @@ macros.register(AttachmentList)
 macros.register(OrphanedPages)
 macros.register(MissingPages)
 macros.register(RedirectPages)
-macros.register(NewPage)
 macros.register(SimilarPages)
 macros.register(TagList)
 macros.register(Include)

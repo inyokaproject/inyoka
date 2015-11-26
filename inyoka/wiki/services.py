@@ -22,7 +22,7 @@ from inyoka.forum.models import Post as ForumPost
 from inyoka.markup import parse, RenderContext
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import get_smilies
+from inyoka.wiki.utils import get_smilies, CaseSensitiveException
 
 
 def on_get_smilies(request):
@@ -35,20 +35,22 @@ def on_render_preview(request):
     """Render some preview text."""
     page = post = None
     simplified = True
-    if 'page' in request.REQUEST:
+    if 'page' in request.POST:
         try:
-            page = Page.objects.get_by_name(request.REQUEST['page'])
+            page = Page.objects.get_by_name(request.POST['page'])
         except Page.DoesNotExist:
             page = None
+        except CaseSensitiveException as e:
+            page = e.page
         simplified = False
-    if 'post' in request.REQUEST:
+    if 'post' in request.POST:
         try:
-            post = ForumPost.objects.get(pk=request.REQUEST['post'])
+            post = ForumPost.objects.get(pk=request.POST['post'])
         except ForumPost.DoesNotExist:
             post = None
 
     context = RenderContext(request, simplified=simplified, wiki_page=page, forum_post=post)
-    html = parse(request.REQUEST.get('text', '')).render(context, 'html')
+    html = parse(request.POST.get('text', '')).render(context, 'html')
     # TODO: return json.
     return HttpResponse(html, content_type='text/plain')
 

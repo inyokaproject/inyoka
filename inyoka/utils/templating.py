@@ -9,6 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import json
+from importlib import import_module
 import os
 import sys
 
@@ -23,7 +24,6 @@ from django.template.loader import BaseLoader
 from django.utils import six, translation
 from django.utils.encoding import force_unicode
 from django.utils.functional import Promise
-from django.utils.importlib import import_module
 from django.utils.timesince import timesince
 from django_mobile import get_flavour
 from jinja2 import (escape, Template, Environment, contextfunction,

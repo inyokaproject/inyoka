@@ -77,37 +77,39 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import magic
-
-from hashlib import sha1
-from operator import itemgetter
+import locale
 from datetime import datetime
+from hashlib import sha1
 
+import magic
+from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
-from django.db.models import Max, Count
-from django.db.models.loading import get_model
+from django.db.models import Count, Max
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from werkzeug import cached_property
 
-from inyoka import markup
+from inyoka import default_settings, markup
 from inyoka.markup import nodes, templates
 from inyoka.markup.parsertools import MultiMap
-from inyoka.utils.dates import format_datetime, datetime_to_timezone
+from inyoka.utils.database import InyokaMarkupField
+from inyoka.utils.dates import datetime_to_timezone, format_datetime
 from inyoka.utils.decorators import deferred
-from inyoka.utils.diff3 import prepare_udiff, generate_udiff, get_close_matches
+from inyoka.utils.diff3 import generate_udiff, get_close_matches, prepare_udiff
 from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.html import striptags
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href
-from inyoka.utils.database import InyokaMarkupField
-from inyoka.wiki.tasks import render_article, update_object_list, update_related_pages
-
+from inyoka.wiki.tasks import (
+    render_article,
+    update_object_list,
+    update_related_pages,
+)
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
@@ -151,11 +153,12 @@ class PageManager(models.Manager):
         if revs:
             return revs[0]
 
-    def get_tagcloud(self, show_max=100):
+    def get_taglist(self, size_limit=None):
         """
-        Get a tagcloud.  Note that this is one of the few operations that
-        also returns attachments, not only pages.  A tag cloud is represented
-        as ordinary list of dicts with the following keys:
+        Get a list of all tags or just the most used ones (if size_limit is
+        set). Note that this is one of the few operations that also returns
+        attachments, not only pages.  The tag list is an ordinary list of
+        dicts with the following keys:
 
         ``'name'``
             The name of the tag
@@ -171,13 +174,15 @@ class PageManager(models.Manager):
         tags = MetaData.objects.filter(key='tag').values_list('value')\
             .annotate(count=Count('value'))\
             .order_by('-count')
-        if show_max is not None:
-            tags = tags[:show_max]
+        if size_limit is not None:
+            tags = tags[:size_limit]
 
+        # set locale, so that the list is being sorted in respect to it
+        locale.setlocale(locale.LC_ALL, default_settings.LC_ALL)
         return [{'name': tag[0],
             'count': tag[1],
             'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
-            for tag in sorted(tags, key=lambda x: x[0].lower())]
+            for tag in sorted(tags, cmp=locale.strcoll, key=lambda x: x[0])]
 
     def compare(self, name, old_rev, new_rev=None):
         """
@@ -335,13 +340,13 @@ class PageManager(models.Manager):
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
         rev = None
-        key = 'wiki/page/' + name
+        cache_key = u'wiki/page/{}'.format(name.lower())
         if not nocache:
-            rev = cache.get(key)
+            rev = cache.get(cache_key)
         if rev is None:
             try:
                 rev = Revision.objects.select_related('page', 'text', 'user') \
-                                      .filter(page__name__exact=name) \
+                                      .filter(page__name__iexact=name) \
                                       .latest()
             except Revision.DoesNotExist:
                 raise Page.DoesNotExist()
@@ -350,9 +355,18 @@ class PageManager(models.Manager):
                     cachetime = int(rev.page.metadata['X-Cache-Time'][0]) or None
                 except (IndexError, ValueError):
                     cachetime = None
-                cache.set(key, rev, cachetime)
+                cache.set(cache_key, rev, cachetime)
+
         page = rev.page
         page.rev = rev
+
+        # If the page exists but it has another case, raise an exception
+        # with the right case.
+        if rev.page.name != name:
+            # TODO: Fix circular imports
+            from inyoka.wiki.utils import CaseSensitiveException
+            raise CaseSensitiveException(rev.page)
+
         if rev.deleted and raise_on_deleted:
             raise Page.DoesNotExist()
         return page
@@ -471,7 +485,7 @@ class PageManager(models.Manager):
                 scripts.
         """
         if user is None:
-            user = get_model('portal', 'User').objects.get_system_user()
+            user = apps.get_model('portal', 'User').objects.get_system_user()
         elif user.is_anonymous:
             user = None
         if remote_addr is None and user is None:
@@ -844,6 +858,7 @@ class Page(models.Model):
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
 
+    # TODO: This should be obsolete, since there is no way to call this method.
     def prune(self):
         """Clear the page cache."""
         render_article.delay(self)
@@ -939,7 +954,7 @@ class Page(models.Model):
                 scripts.
         """
         if user is None:
-            user = get_model('portal', 'User').objects.get_system_user()
+            user = apps.get_model('portal', 'User').objects.get_system_user()
         elif user.is_anonymous:
             user = None
         if remote_addr is None and user is None:
@@ -979,13 +994,36 @@ class Page(models.Model):
 
         update_object_list.delay(self.name)
 
-    def get_absolute_url(self, action='show', **query):
-        if action in ('edit', 'subscribe', 'unsubscribe', 'log', 'backlinks',
-                      'manage', 'manage_discussion', 'attach', 'mv_baustelle'):
-            return href('wiki', self.name, action=action, **query)
-        if action == 'show_no_redirect':
-            return href('wiki', self.name, redirect='no', **query)
-        if action == 'show':
+    def get_absolute_url(self, action='show', revision=None, format=None, **query):
+        actions = ('attachments',
+                   'backlinks',
+                   'delete',
+                   'diff',
+                   'discussion',
+                   'edit',
+                   'feed',
+                   'log',
+                   'mv_back',
+                   'mv_baustelle',
+                   'mv_discontinued',
+                   'rename',
+                   'subscribe',
+                   'udiff',
+                   'unsubscribe')
+        if action in actions:
+            return href('wiki', self.name, 'a', action, **query)
+        elif action == 'show_no_redirect':
+            return href('wiki', self.name, 'no_redirect', **query)
+        elif action == 'revert' and revision is not None:
+            return href('wiki', self.name, 'a', 'revert', revision, **query)
+        elif action == 'export' and format is not None:
+            if revision is not None:
+                return href('wiki', self.name, 'a', 'export', format, revision, **query)
+            else:
+                return href('wiki', self.name, 'a', 'export', format, **query)
+        elif revision is not None:
+            return href('wiki', self.name, 'a', 'revision', revision, **query)
+        else:
             return href('wiki', self.name, **query)
         raise KeyError
 
@@ -1158,7 +1196,7 @@ class Revision(models.Model):
         return excerpt[:pos]
 
     def get_absolute_url(self, action=None):
-        return href('wiki', self.page.name, rev=self.id)
+        return href('wiki', self.page.name, 'a', 'revision', self.id)
 
     def revert(self, note=None, user=None, remote_addr=None):
         """Revert this revision and make it the current one."""
@@ -1183,9 +1221,9 @@ class Revision(models.Model):
     def save(self, *args, **kwargs):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
-        cache.delete('wiki/page/' + self.page.name)
-        cache.delete('wiki/latest_revisions')
-        cache.delete('wiki/latest_revisions/%s' % self.page.name)
+        cache.delete(u'wiki/page/{}'.format(self.page.name.lower()))
+        cache.delete(u'wiki/latest_revisions')
+        cache.delete(u'wiki/latest_revisions/{}'.format(self.page.name))
 
     def __unicode__(self):
         return _('Revision %(id)d (%(title)s)') % {
@@ -1216,6 +1254,3 @@ class MetaData(models.Model):
     page = models.ForeignKey(Page)
     key = models.CharField(max_length=30, db_index=True)
     value = models.CharField(max_length=255, db_index=True)
-
-
-# imported here because of circular references

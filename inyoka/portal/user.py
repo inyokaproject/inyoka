@@ -29,7 +29,8 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from PIL import Image
 
-from inyoka.utils.database import InyokaMarkupField, JSONField, update_model
+from inyoka.utils.cache import QueryCounter
+from inyoka.utils.database import InyokaMarkupField, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
@@ -94,16 +95,13 @@ def reactivate_user(id, email, status):
             'failed': _(u'The account “%(name)s” was already reactivated.') %
                {'name': escape(user.username)},
         }
-    values = {
-        'email': email,
-        'status': status,
-    }
+    user.email = email
+    user.status = status
+
     if user.banned_until and user.banned_until < datetime.utcnow():
         # User was banned but the ban time exceeded
-        values['status'] = 1
-        values['banned_until'] = None
-
-    update_model(user, **values)
+        user.status = 1
+        user.banned_until = None
 
     # Set a dumy password
     user.set_password(User.objects.make_random_password(length=32))
@@ -360,15 +358,11 @@ class UserManager(BaseUserManager):
         is the sender for welcome notices, it updates the antispam list and
         is the owner for log entries in the wiki triggered by inyoka itself.
         """
-        global _SYSTEM_USER
-        if not _SYSTEM_USER:
-            name = settings.INYOKA_SYSTEM_USER
-            try:
-                user = User.objects.get(username__iexact=name)
-            except User.DoesNotExist:
-                user = self.create_user(name, name)
-            _SYSTEM_USER = user
-        return _SYSTEM_USER
+        name = settings.INYOKA_SYSTEM_USER
+        try:
+            return User.objects.get(username__iexact=name)
+        except User.DoesNotExist:
+            return self.create_user(name, name)
 
 
 def upload_to_avatar(instance, filename):
@@ -407,7 +401,6 @@ class User(AbstractBaseUser):
                                         help_text=ugettext_lazy(u'leave empty to ban permanent'))
 
     # profile attributes
-    post_count = models.IntegerField(ugettext_lazy(u'Posts'), default=0)
     avatar = models.ImageField(ugettext_lazy(u'Avatar'), upload_to=upload_to_avatar,
                                blank=True, null=True)
     jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
@@ -570,48 +563,49 @@ class User(AbstractBaseUser):
     def jabber_url(self):
         return u'xmpp:%s' % escape(self.jabber)
 
-    @property
-    def urlsafe_username(self):
-        '''return the username with space replaced by _ for urls'''
-        return self.username.replace(' ', '_')
-
     def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':
-            return href('portal', 'user', self.urlsafe_username, **query)
+            return href('portal', 'user', self.username, **query)
         elif action == 'privmsg':
             return href('portal', 'privmsg', 'new',
-                        self.urlsafe_username, **query)
+                        self.username, **query)
         elif action == 'activate':
             return href('portal', 'activate',
-                        self.urlsafe_username, gen_activation_key(self), **query)
+                        self.username, gen_activation_key(self), **query)
         elif action == 'activate_delete':
             return href('portal', 'delete',
-                        self.urlsafe_username, gen_activation_key(self), **query)
+                        self.username, gen_activation_key(self), **query)
         elif action == 'admin':
-            return href('portal', 'user', self.urlsafe_username, 'edit', *args, **query)
+            return href('portal', 'user', self.username, 'edit', *args, **query)
         elif action in ('subscribe', 'unsubscribe'):
-            return href('portal', 'user', self.urlsafe_username, action, **query)
+            return href('portal', 'user', self.username, action, **query)
 
     def has_content(self):
         """
         Returns True if the user has any content, else False.
         """
-        return (self.post_count or
+        return (self.post_count.value() or
                 self.post_set.exists() or
                 self.topics.exists() or
                 self.comment_set.exists() or
                 self.privatemessageentry_set.exists() or
                 self.wiki_revisions.exists() or
-
-                # TODO: Fix me, this line does not work at the moment!
                 self.article_set.exists() or
-
                 # Pastebin
                 self.entry_set.exists() or
                 self.event_set.exists() or
                 self.suggestion_set.exists() or
                 self.owned_suggestion_set.exists() or
                 self.subscription_set.exists())
+
+    @property
+    def post_count(self):
+        return QueryCounter(
+            cache_key="user_post_count:{}".format(self.id),
+            query=self.post_set
+                      .filter(hidden=False)
+                      .filter(topic__forum__user_count_posts=True),
+            use_task=True)
 
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'

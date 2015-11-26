@@ -10,12 +10,12 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from importlib import import_module
 import re
 from urlparse import urlparse
 
 from django.conf import settings
 from django.utils.http import urlquote, urlencode, urlquote_plus
-from django.utils.importlib import import_module
 
 from django_hosts.resolvers import get_host
 

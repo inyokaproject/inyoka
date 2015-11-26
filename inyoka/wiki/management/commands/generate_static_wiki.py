@@ -10,34 +10,36 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from __future__ import print_function
+
 import datetime
 from functools import partial
 from hashlib import sha1
 from itertools import izip
-from os import path, walk, mkdir, chmod, unlink
-from re import escape, compile
-from shutil import copy, rmtree, copytree
+from optparse import make_option
+from os import chmod, mkdir, path, unlink, walk
+from re import compile, escape
+from shutil import copy, copytree, rmtree
 
 from bs4 import BeautifulSoup
+from django.apps import apps
 from django.conf import settings
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.template.defaultfilters import date
 from django.utils.encoding import force_unicode
-from django.utils.importlib import import_module
 from django.utils.translation import activate
-from django.apps import apps
 from werkzeug import url_unquote
 
 from inyoka.portal.user import User
 from inyoka.utils.http import templated
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import Breadcrumb
-from inyoka.utils.terminal import percentize, ProgressBar
+from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page
-
+from inyoka.wiki.utils import CaseSensitiveException
 
 FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False
@@ -80,19 +82,35 @@ EXCLUDE_PAGES = [u'Benutzer/', u'Anwendertreffen/', u'Baustelle/',
 EXCLUDE_PAGES = [x.lower() for x in EXCLUDE_PAGES]
 
 _iterables = (tuple, list, set, frozenset)
+verbosity = 0
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
+    option_list = BaseCommand.option_list + (
+        make_option('-p', '--path',
+            type='string',
+            action='store',
+            dest='path',
+            help='Define where to store the static wiki'),
+        )
 
-    def handle_noargs(self, **options):
-        print "Starting Export"
+    def handle(self, *args, **options):
+        global verbosity
+        verbosity = int(options['verbosity'])
+        path = options['path']
+        if path is not None:
+            global FOLDER
+            FOLDER = path
+        if verbosity >= 1:
+            print("Starting Export")
         global SNAPSHOT_DATE, SNAPSHOT_MESSAGE
         activate(settings.LANGUAGE_CODE)
         SNAPSHOT_DATE = date(datetime.date.today(), settings.DATE_FORMAT)
         SNAPSHOT_MESSAGE = SNAPSHOT_MESSAGE % (SNAPSHOT_DATE, '%s')
         self.create_snapshot()
-        print "Export complete"
+        if verbosity >= 1:
+            print("Export complete")
 
     @templated('wiki/action_show.html')
     def fetch_page(self, page, **kwargs):
@@ -153,7 +171,7 @@ class Command(NoArgsCommand):
     def handle_pathbar(self, soup, pre, is_main_page, page_name):
         pathbar = soup.find('div', 'pathbar')
         pathbar.find('form').decompose()
-        pathbar.find('div').decompose()
+        # pathbar.find('div').decompose()  # leads to an exception
         children = list(pathbar.children)
         if len(children) > 4:
             # 4 because, the form and div leave a \n behind
@@ -344,8 +362,7 @@ class Command(NoArgsCommand):
                         (path.join(stroot, 'img', 'interwiki'), 'interwiki'),
                         ff('logo.png'), ff('favicon.ico'), ff('float-left.jpg'),
                         ff('float-right.jpg'), ff('float-top.jpg'), ff('head.jpg'),
-                        ff('head-right.png'), ff('anchor.png'), ff('1px.png'),
-                        ff('header-sprite.png'))
+                        ff('head-right.png'), ff('anchor.png'), ff('1px.png'))
         for pth in static_paths:
             _pth = pth[0] if isinstance(pth, _iterables) else pth
             if path.isdir(_pth):
@@ -355,7 +372,8 @@ class Command(NoArgsCommand):
         attachment_folder = path.join(FOLDER, 'files', '_')
         mkdir(attachment_folder)
 
-        pb = ProgressBar(40)
+        if verbosity >= 1:
+            pb = ProgressBar(40)
 
         unsorted = Page.objects.get_page_list(existing_only=True)
         todo = set()
@@ -381,6 +399,8 @@ class Command(NoArgsCommand):
 
             try:
                 page = Page.objects.get_by_name(name, False, True)
+            except CaseSensitiveException as e:
+                page = e.page
             except Page.DoesNotExist:
                 return
 
@@ -403,39 +423,40 @@ class Command(NoArgsCommand):
             if content is None:
                 return
             content = content.decode('utf8')
+            soup = BeautifulSoup(content)
 
-    def _fetch_and_write(name):
-        parts = 0
-        is_main_page = False
+            # Apply the handlers from above to modify the page content
+            for handler in self.HANDLERS:
+                handler(self, soup, self._pre(parts), is_main_page, page.name)
 
-            ## # Apply the handlers from above to modify the page content
-            ## for handler in self.HANDLERS:
-                ## handler(self, soup, self._pre(parts), is_main_page, page.name)
+            # If a page is a redirect page, add a forward link
+            redirect = page.metadata.get('X-Redirect')
+            if redirect:
+                self.handle_redirect_page(soup, self._pre(parts), redirect)
 
-            ## # If a page is a redirect page, add a forward link
-            ## redirect = page.metadata.get('X-Redirect')
-            ## if redirect:
-                ## self.handle_redirect_page(soup, self._pre(parts), redirect)
+            content = unicode(soup)
 
-            ## content = unicode(soup)
+            def _write_file(pth):
+                with open(pth, 'w+') as fobj:
+                    fobj.write(content.encode('utf-8'))
 
-            ## def _write_file(pth):
-                ## with open(pth, 'w+') as fobj:
-                    ## fobj.write(content.encode('utf-8'))
+            _write_file(path.join(FOLDER, 'files', '%s.html' %
+                                                   self.fix_path(page.name)))
 
-            ## _write_file(path.join(FOLDER, 'files', '%s.html' %
-                                                   ## self.fix_path(page.name)))
+            if is_main_page:
+                content = compile(r'(src|href)="\./([^"]+)"') \
+                    .sub(lambda m: '%s="./files/%s"' %
+                                   (m.groups()[0], m.groups()[1]), content)
+                _write_file(path.join(FOLDER, 'index.html'))
 
-            ## if is_main_page:
-                ## content = compile(r'(src|href)="\./([^"]+)"') \
-                    ## .sub(lambda m: '%s="./files/%s"' %
-                                   ## (m.groups()[0], m.groups()[1]), content)
-                ## _write_file(path.join(FOLDER, 'index.html'))
-
-        percents = list(percentize(len(todo)))
+        if len(todo) is 0:
+            percents = []
+        else:
+            percents = list(percentize(len(todo)))
         for percent, name in izip(percents, todo):
             _fetch_and_write(name)
-            pb.update(percent)
-        print
-        print ("Created Wikisnapshot with %s pages; excluded %s pages"
-               % (len(todo), num_excluded))
+            if verbosity >= 1:
+                pb.update(percent)
+        if verbosity >= 1:
+            print(("\nCreated Wikisnapshot with %s pages; excluded %s pages"
+                % (len(todo), num_excluded)))

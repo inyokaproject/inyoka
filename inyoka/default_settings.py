@@ -8,11 +8,10 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from os.path import join, dirname
+from datetime import timedelta
+from os.path import dirname, join
 
-from django.conf.global_settings import *  # NOQA
-
-import djcelery
+from celery.schedules import crontab
 
 gettext_noop = lambda x: x
 
@@ -23,11 +22,6 @@ BASE_PATH = dirname(__file__)
 DEBUG = False
 DEBUG_NOTIFICATIONS = False
 DEBUG_PROPAGATE_EXCEPTIONS = False
-
-# per default there are no managers and admins.  I guess that's
-# unused :)
-MANAGERS = ADMINS = ()
-
 
 DATABASES = {
     'default': {
@@ -46,13 +40,13 @@ TIME_ZONE = 'Europe/Berlin'
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 LANGUAGE_CODE = 'de-de'
 LOCALE_PATHS = (join(BASE_PATH, 'locale'),)
+LC_ALL = 'en_US.UTF-8'
 
 # the base url (without subdomain)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
 INYOKA_URI_SCHEME = 'http'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-#SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 SESSION_COOKIE_DOMAIN = '.%s' % BASE_DOMAIN_NAME.split(':')[0]
 SESSION_COOKIE_NAME = 'session'
 SESSION_COOKIE_HTTPONLY = True
@@ -101,6 +95,9 @@ INYOKA_LOGGER_NAME = u'inyoka'
 
 # use etags
 USE_ETAGS = True
+
+# maximal number of tags shown in the tag cloud
+TAGCLOUD_SIZE = 100
 
 # prefix for the system mails
 EMAIL_SUBJECT_PREFIX = u'%s: ' % BASE_DOMAIN_NAME
@@ -211,6 +208,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.http.ConditionalGetMiddleware',
     'inyoka.middlewares.common.MobileDetectionMiddleware',
     'django_mobile.middleware.SetFlavourMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware',
 )
 
 #: We only allow uploads via memory up to 2.5mb and do not stream into
@@ -233,8 +231,6 @@ INSTALLED_APPS = (
     'inyoka.pastebin.apps.PastebinAppConfig',
     'inyoka.planet.apps.PlanetAppConfig',
     'inyoka.markup.apps.MarkupAppConfig',
-    'kombu.transport.django',
-    'djcelery',
     'django_mobile',
     'django_hosts',
 )
@@ -242,51 +238,62 @@ INSTALLED_APPS = (
 # Set the default sentry site
 SENTRY_SITE = 'example.com'
 
-# Import and activate django-celery support
-djcelery.setup_loader()
 
-# Celery broker preferences.
-# http://celeryq.org/docs/configuration.html#celery-result-backend
-CELERY_RESULT_BACKEND = 'database'
-
-# SQLAlchemy compatible uri.
-# NOTE: This is some kind of deactivated since we are using
-# django-celery for this stuff.
-CELERY_RESULT_DBURI = 'sqlite://'
-
-# Modules that hold task definitions
-CELERY_IMPORTS = [
-    # register special celery task logger
-    'inyoka.utils.logger',
-    # general (e.g monitoring) tasks
-    'inyoka.tasks',
-    # Application specific tasks
-    'inyoka.portal.tasks',
-    'inyoka.planet.tasks',
-    'inyoka.wiki.tasks',
-    # Notification specific tasks
-    'inyoka.wiki.notifications',
-    'inyoka.utils.notification',
-    'inyoka.forum.notifications',
-    'inyoka.ikhaya.notifications',
-]
+# Celery broker.
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 CELERY_SEND_TASK_ERROR_EMAILS = False
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_EAGER_PROPAGATES_EXCEPTIONS = False
 CELERY_ALWAYS_EAGER = DEBUG
+CELERY_IGNORE_RESULT = True
 
 # Do not hijack the root logger, avoids unicode errors
 CELERYD_HIJACK_ROOT_LOGGER = False
-
 CELERY_SEND_EVENTS = True
+
+# Modules that hold task definitions
+CELERY_IMPORTS = [
+    'inyoka.utils.logger',
+    'inyoka.portal.tasks',
+    'inyoka.planet.tasks',
+    'inyoka.wiki.tasks',
+    'inyoka.utils.notification',
+    'inyoka.forum.notifications',
+]
+
+# Run tasks at specific time
+CELERYBEAT_SCHEDULE = {
+    'clean-sessions-every-5-minutes': {
+        'task': 'inyoka.portal.tasks.clean_sessions',
+        'schedule': timedelta(minutes=5),
+    },
+    'check-for-new-session-record': {
+        'task': 'inyoka.portal.tasks.check_for_user_record',
+        'schedule': timedelta(minutes=5),
+    },
+    'delete-not-activated-users': {
+        'task': 'inyoka.portal.tasks.clean_expired_users',
+        'schedule': crontab(hour=5, minute=30),
+    },
+    'delete-users-with-no-content': {
+        'task': 'inyoka.portal.tasks.clean_inactive_users',
+        'schedule': crontab(hour=4, minute=15, day_of_week='sunday'),
+    },
+    'sync-planet': {
+        'task': 'inyoka.planet.tasks.sync',
+        'schedule': timedelta(minutes=15),
+    },
+    'update_wiki_recent_changes': {
+        'task': 'inyoka.wiki.tasks.update_recentchanges',
+        'schedule': timedelta(minutes=15),
+    }
+}
+
 
 # Make the template context available as tmpl_context in the TemplateResponse.
 # Useful for tests in combination with override_settings.
 PROPAGATE_TEMPLATE_CONTEXT = False
-
-# http://ask.github.com/kombu/introduction.html#transport-comparison
-BROKER_URL = 'django://'
 
 INTERNAL_IPS = ('127.0.0.1',)
 
@@ -322,6 +329,9 @@ TEMPLATE_CONTEXT_PROCESSORS = ()
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 
 FORMAT_MODULE_PATH = 'inyoka.locale'
+
+# Used for user.post_count, forum.topic_count etc.
+COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two weeks
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

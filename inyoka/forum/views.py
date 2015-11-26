@@ -8,52 +8,88 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from operator import attrgetter
 from datetime import datetime, timedelta
 from itertools import groupby
+from operator import attrgetter
 
-from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
-from django.core.cache import cache
 from django.contrib import messages
-from django.db.models import Q, F
-from django.utils.text import Truncator
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import F, Q, Count
+from django.http import Http404, HttpResponseRedirect
+from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
-from django.contrib.contenttypes.models import ContentType
 
-from inyoka.forum.acl import (CAN_READ, CAN_MODERATE, get_privileges,
-    have_privilege, check_privilege, filter_invisible,
-    get_forum_privileges)
+from inyoka.forum.acl import (
+    CAN_MODERATE,
+    CAN_READ,
+    check_privilege,
+    filter_invisible,
+    get_forum_privileges,
+    get_privileges,
+    have_privilege,
+)
 from inyoka.forum.constants import POSTS_PER_PAGE, TOPICS_PER_PAGE
-from inyoka.forum.forms import (AddPollForm, NewTopicForm, EditPostForm,
-    EditForumForm, MoveTopicForm, SplitTopicForm, ReportListForm,
-    ReportTopicForm, AddAttachmentForm)
-from inyoka.forum.models import (Post, Poll, Forum, Topic, PollVote, Attachment,
-    PollOption, PostRevision, WelcomeMessage, mark_all_forums_read)
-from inyoka.forum.notifications import (send_edit_notifications,
-    send_deletion_notification, send_newtopic_notifications,
-    send_discussion_notification)
-from inyoka.markup import parse, RenderContext
+from inyoka.forum.forms import (
+    AddAttachmentForm,
+    AddPollForm,
+    EditForumForm,
+    EditPostForm,
+    MoveTopicForm,
+    NewTopicForm,
+    ReportListForm,
+    ReportTopicForm,
+    SplitTopicForm,
+)
+from inyoka.forum.models import (
+    Attachment,
+    Forum,
+    Poll,
+    PollOption,
+    PollVote,
+    Post,
+    PostRevision,
+    Topic,
+    WelcomeMessage,
+    mark_all_forums_read,
+)
+from inyoka.forum.notifications import (
+    send_deletion_notification,
+    send_discussion_notification,
+    send_edit_notifications,
+    send_newtopic_notifications,
+)
+from inyoka.markup import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
-from inyoka.portal.utils import (require_permission, simple_check_login,
-    abort_access_denied)
+from inyoka.portal.utils import (
+    abort_access_denied,
+    require_permission,
+    simple_check_login,
+)
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
 from inyoka.utils.generic import trigger_fix_errors_message
-from inyoka.utils.http import templated, AccessDeniedResponse, does_not_exist_is_404
-from inyoka.utils.notification import send_notification, notify_about_subscription
+from inyoka.utils.http import (
+    AccessDeniedResponse,
+    does_not_exist_is_404,
+    templated,
+)
+from inyoka.utils.notification import (
+    notify_about_subscription,
+    send_notification,
+)
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
-from inyoka.utils.urls import href, url_for, is_safe_domain
+from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import quote_text
 
@@ -131,7 +167,7 @@ def forum(request, slug, page=1):
                              .values_list('id', flat=True)\
                              .order_by('-sticky', '-last_post')
     pagination = Pagination(request, topic_ids, page, TOPICS_PER_PAGE,
-                            url_for(forum), total=forum.topic_count)
+                            url_for(forum), total=forum.topic_count.value())
 
     subforums = filter_invisible(request.user, forum.children, perm=privs)
     last_post_ids = map(lambda f: f.last_post_id, subforums)
@@ -217,7 +253,7 @@ def viewtopic(request, topic_slug, page=1):
     post_ids = Post.objects.filter(topic=topic) \
                            .values_list('id', flat=True)
     pagination = Pagination(request, post_ids, page, POSTS_PER_PAGE, url_for(topic),
-                            total=topic.post_count, rownum_column='position')
+                            total=topic.post_count.value(), rownum_column='position')
 
     post_ids = list(pagination.get_queryset())
     posts = Post.objects.filter(id__in=post_ids) \
@@ -441,7 +477,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 u'an existing topic</a> to the article.'
             ) % {
                 'article': page_name,
-                'link': href('wiki', norm_page_name, action='manage_discussion')
+                'link': href('wiki', norm_page_name, 'discussion')
             }
         )
     if topic_slug:
@@ -472,7 +508,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     # antispam measures
     privileges = get_forum_privileges(request.user, forum)
     needs_spam_check = True
-    if request.user.post_count >= settings.INYOKA_SPAM_DETECT_LIMIT:
+    if request.user.post_count.value(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
         # Exclude very active users.
         needs_spam_check = False
     elif check_privilege(privileges, 'moderate') or post and post.pk:
@@ -655,7 +691,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         else:
             post.has_attachments = False
 
-        post.edit(request, d['text'])
+        post.edit(d['text'])
 
         if is_spam_post:
             post.mark_spam(report=True, update_akismet=False)
@@ -711,7 +747,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             attachments = Attachment.objects.filter(post=post)
 
     if not newtopic:
-        max = topic.post_count
+        max = topic.post_count.value()
         posts = topic.posts.select_related('author') \
                            .filter(hidden=False, position__gt=max - 15) \
                            .order_by('-position')
@@ -1164,16 +1200,15 @@ def splittopic(request, topic_slug, page=1):
 
             try:
                 if data['action'] == 'new':
-                    new_topic = Topic(title=data['title'],
-                                      forum=data['forum'],
-                                      slug=None,
-                                      post_count=0,
-                                      author_id=posts[0].author_id,
-                                      ubuntu_version=data['ubuntu_version'],
-                                      ubuntu_distro=data['ubuntu_distro'])
-                    new_topic.save()
-                    Forum.objects.filter(id=new_topic.forum.id) \
-                                 .update(topic_count=F('topic_count') + 1)
+                    new_topic = Topic.objects.create(
+                        title=data['title'],
+                        forum=data['forum'],
+                        slug=None,
+                        author_id=posts[0].author_id,
+                        ubuntu_version=data['ubuntu_version'],
+                        ubuntu_distro=data['ubuntu_distro'])
+                    new_topic.forum.topic_count.incr()
+
                     Post.split(posts, old_topic, new_topic)
                 else:
                     new_topic = data['topic']
@@ -1238,11 +1273,10 @@ def restore_post(request, post_id):
     This function removes the hidden flag of a post to make it visible for
     normal users again.
     """
-    post = Post.objects.get(id=post_id)
+    post = Post.objects.select_related('topic', 'topic__forum').get(id=post_id)
     if not have_privilege(request.user, post.topic.forum, CAN_MODERATE):
         return abort_access_denied(request)
-    post.hidden = False
-    post.save()
+    post.show(change_post_counter=post.topic.forum.user_count_posts)
     messages.success(request,
         _(u'The post by “%(user)s” was made visible.')
         % {'user': post.author.username})
@@ -1257,7 +1291,7 @@ def delete_post(request, post_id, action='hide'):
     effect that normal users can't see it anymore (moderators still can). If
     action == 'delete' really deletes the post.
     """
-    post = Post.objects.get(id=post_id)
+    post = Post.objects.select_related('topic', 'topic__forum').get(id=post_id)
     topic = post.topic
 
     can_hide = (
@@ -1272,9 +1306,9 @@ def delete_post(request, post_id, action='hide'):
         return abort_access_denied(request)
 
     if post.id == topic.first_post_id:
-        if topic.post_count == 1:
-            return HttpResponseRedirect(href('forum', 'topic',
-                                             topic.slug, action))
+        if topic.post_count.value() == 1:
+            return HttpResponseRedirect(
+                href('forum', 'topic', topic.slug, action))
         if action == 'delete':
             msg = _(u'The first post of a topic cannot be deleted.')
         else:
@@ -1282,8 +1316,7 @@ def delete_post(request, post_id, action='hide'):
         messages.error(request, msg)
     else:
         if action == 'hide':
-            post.hidden = True
-            post.save()
+            post.hide(change_post_counter=topic.forum.user_count_posts)
             messages.success(
                 request,
                 _(u'The post by “%(user)s” was hidden.') % {'user': post.author.username}
@@ -1560,7 +1593,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         title = _(u'Posts of the last %(n)d hours') % {'n': hours}
         url = href('forum', 'last%d' % hours, forum)
     elif action == 'unanswered':
-        topics = topics.filter(post_count=1)
+        topics = topics.annotate(p_count=Count('posts')).filter(p_count=1)
         title = _(u'Unanswered topics')
         url = href('forum', 'unanswered', forum)
     elif action == 'unsolved':
@@ -1574,7 +1607,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         title = _(u'Topics by “%(user)s”') % {'user': user.username}
     elif action == 'author':
         user = user and User.objects.get(username__iexact=user) or request.user
-        if user.is_anonymous:
+        if request.user.is_anonymous:
             messages.info(request, _(u'You need to be logged in to use this function.'))
             return abort_access_denied(request)
         topics = topics.filter(posts__author=user).distinct()
@@ -1639,6 +1672,76 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         'hide_sticky': False,
         'forum': forum_obj,
     }
+
+
+@templated('forum/postlist.html')
+def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
+    page = int(page)
+    
+    user = user and User.objects.get(username__iexact=user) or request.user
+    if request.user.is_anonymous:
+        messages.info(request, _(u'You need to be logged in to use this function.'))
+        return abort_access_denied(request)
+    
+    posts = Post.objects.filter(author=user).order_by('-pub_date')
+    
+    if topic_slug is not None:
+        posts = posts.filter(topic__slug=topic_slug)
+        pagination_url = href('forum', 'author', user.username, 'topic', topic_slug)
+    elif forum_slug is not None:
+        posts = posts.filter(topic__forum__slug=forum_slug)
+        pagination_url = href('forum', 'author', user.username, 'forum', forum_slug)
+    else:
+        pagination_url = href('forum', 'author', user.username)
+    
+    # hidden forums is much faster than checking for visible forums
+    hidden_ids = [f.id for f in Forum.objects.get_forums_filtered(request.user, reverse=True)]
+    if hidden_ids:
+        posts = posts.exclude(topic__forum__id__in=hidden_ids)
+
+    total_posts = get_simplified_queryset(posts).count()
+    
+    # at least with MySQL we need this, as it is the fastest method
+    posts = posts.values_list('id', flat=True)
+    
+    pagination = Pagination(request, posts, page, TOPICS_PER_PAGE, pagination_url, \
+        total=total_posts, max_pages=MAX_PAGES_TOPICLIST)
+    post_ids = [post_id for post_id in pagination.get_queryset()]
+    
+    posts = Post.objects.filter(id__in=post_ids).select_related('topic', 'topic__forum', 'author')
+
+    # check for moderation permissions
+    moderatable_forums = [
+        obj.id for obj in
+        Forum.objects.get_forums_filtered(request.user, CAN_MODERATE)
+    ]
+
+    def can_moderate(topic):
+        return topic.forum_id in moderatable_forums
+    
+    topic = None
+    forum = None
+    
+    if topic_slug is not None and len(posts):
+        topic = posts[0].topic
+        title = _(u'Posts by “{user}” in topic “{topic}”').format(user=user.username, topic=topic.title)
+    elif forum_slug is not None and len(posts):
+        forum = posts[0].topic.forum
+        title = _(u'Posts by “{user}” in forum “{forum}”').format(user=user.username, forum=forum.name)
+    else:
+        title = _(u'Posts by “{user}”').format(user=user.username)
+    
+    return {
+        'posts': posts,
+        'pagination': pagination,
+        'title': title,
+        'can_moderate': can_moderate,
+        'hide_sticky': False,
+        'forum': forum,
+        'topic': topic,
+        'username': user.username,
+    }
+
 
 
 @templated('forum/welcome.html')
@@ -1740,10 +1843,10 @@ def forum_edit(request, slug=None, parent=None):
 
             if not form.errors and not errors:
                 forum.save()
-                keys = ['forum/index'] + ['forum/forums/' + f.slug
+                keys = ['forum/index'] + ['forum/forums/{}'.format(f.slug)
                                           for f in Forum.objects.get_cached()]
                 if old_slug is not None:
-                    keys.append('forum/forums/' + old_slug)
+                    keys.append(u'forum/forums/{}'.format(old_slug))
                 cache.delete_many(keys)
                 cache.delete('forum/slugs')
                 if slug:
@@ -1777,3 +1880,4 @@ def forum_edit(request, slug=None, parent=None):
         'form': form,
         'forum': forum
     }
+

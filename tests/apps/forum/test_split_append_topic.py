@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.apps.forum.test_split_append_topic
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,8 +49,8 @@ class TestPostSplit(TestCase):
             self.topic2.posts.add(self.t2_posts[i])
 
     def _test_position(self, topic_id, postcount):
-        vl = list(Post.objects.filter(topic_id=topic_id)\
-                    .values_list('position', flat=True).order_by('position'))
+        vl = list(Post.objects.filter(topic_id=topic_id)
+                      .values_list('position', flat=True).order_by('position'))
         self.assertEqual(vl, list(xrange(postcount)))
 
     def test_single_last_post(self):
@@ -67,8 +67,8 @@ class TestPostSplit(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 9)
-        self.assertEqual(t2.post_count, 11)
+        self.assertEqual(t1.post_count.value(), 9)
+        self.assertEqual(t2.post_count.value(), 11)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
@@ -76,8 +76,8 @@ class TestPostSplit(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[8].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[9].id)
 
-        self.assertEqual(f1.post_count, 9)
-        self.assertEqual(f2.post_count, 11)
+        self.assertEqual(f1.post_count.value(), 9)
+        self.assertEqual(f2.post_count.value(), 11)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[8].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
@@ -105,8 +105,8 @@ class TestPostSplit(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 8)
-        self.assertEqual(t2.post_count, 12)
+        self.assertEqual(t1.post_count.value(), 8)
+        self.assertEqual(t2.post_count.value(), 12)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
@@ -114,8 +114,8 @@ class TestPostSplit(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[7].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[9].id)
 
-        self.assertEqual(f1.post_count, 8)
-        self.assertEqual(f2.post_count, 12)
+        self.assertEqual(f1.post_count.value(), 8)
+        self.assertEqual(f2.post_count.value(), 12)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[7].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[9].id)
@@ -144,8 +144,8 @@ class TestPostSplit(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 9)
-        self.assertEqual(t2.post_count, 11)
+        self.assertEqual(t1.post_count.value(), 9)
+        self.assertEqual(t2.post_count.value(), 11)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
@@ -153,8 +153,8 @@ class TestPostSplit(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[3].id)
 
-        self.assertEqual(f1.post_count, 9)
-        self.assertEqual(f2.post_count, 11)
+        self.assertEqual(f1.post_count.value(), 9)
+        self.assertEqual(f2.post_count.value(), 11)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[3].id)
@@ -183,8 +183,8 @@ class TestPostSplit(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 8)
-        self.assertEqual(t2.post_count, 12)
+        self.assertEqual(t1.post_count.value(), 8)
+        self.assertEqual(t2.post_count.value(), 12)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
@@ -192,8 +192,8 @@ class TestPostSplit(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[6].id)
 
-        self.assertEqual(f1.post_count, 8)
-        self.assertEqual(f2.post_count, 12)
+        self.assertEqual(f1.post_count.value(), 8)
+        self.assertEqual(f2.post_count.value(), 12)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[6].id)
@@ -225,8 +225,8 @@ class TestPostSplit(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 7)
-        self.assertEqual(t2.post_count, 13)
+        self.assertEqual(t1.post_count.value(), 7)
+        self.assertEqual(t2.post_count.value(), 13)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
@@ -234,8 +234,8 @@ class TestPostSplit(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[8].id)
 
-        self.assertEqual(f1.post_count, 7)
-        self.assertEqual(f2.post_count, 13)
+        self.assertEqual(f1.post_count.value(), 7)
+        self.assertEqual(f2.post_count.value(), 13)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
@@ -266,8 +266,8 @@ class TestPostSplit(TestCase):
         f1 = Forum.objects.get(id=self.forum1.id)
         f2 = Forum.objects.get(id=self.forum2.id)
 
-        self.assertEqual(t1.post_count, 5)
-        self.assertEqual(t2.post_count, 15)
+        self.assertEqual(t1.post_count.value(), 5)
+        self.assertEqual(t2.post_count.value(), 15)
 
         self.assertEqual(t1.first_post_id, self.t1_posts[0].id)
         self.assertEqual(t2.first_post_id, self.t2_posts[0].id)
@@ -275,8 +275,8 @@ class TestPostSplit(TestCase):
         self.assertEqual(t1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(t2.last_post_id, self.t1_posts[8].id)
 
-        self.assertEqual(f1.post_count, 5)
-        self.assertEqual(f2.post_count, 15)
+        self.assertEqual(f1.post_count.value(), 5)
+        self.assertEqual(f2.post_count.value(), 15)
 
         self.assertEqual(f1.last_post_id, self.t1_posts[9].id)
         self.assertEqual(f2.last_post_id, self.t1_posts[8].id)
@@ -285,8 +285,8 @@ class TestPostSplit(TestCase):
         post_ids = ids[0:2] + ids[4:6] + ids[9:]
         self.assertEqual([p.id for p in t1.posts.order_by('position')], post_ids)
 
-        post_ids = [p.id for k, p in self.t2_posts.items()] + \
-                ids[2:4] + ids[6:9]
+        post_ids = ([p.id for k, p in self.t2_posts.items()] +
+                    ids[2:4] + ids[6:9])
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
 
         self._test_position(t1, 5)

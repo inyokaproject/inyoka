@@ -11,14 +11,13 @@
 import unittest
 from datetime import datetime
 
-from django.http import Http404
+from django.core.cache import cache
 
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.pastebin.models import Entry
 from inyoka.portal.models import PrivateMessage, Subscription
 from inyoka.portal.user import Group, User, deactivate_user
-from inyoka.portal.views import get_user
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
 
@@ -37,22 +36,17 @@ class TestUserModel(TestCase):
         self.assertEqual(self.user.status, 3)
 
     def test_get_user_by_username(self):
-        user = get_user('testing')
+        user = User.objects.get_by_username_or_email('testing')
         self.assertEqual(user, self.user)
 
     def test_get_user_by_email(self):
-        user = get_user('example@example.com')
+        user = User.objects.get_by_username_or_email('example@example.com')
         self.assertEqual(user, self.user)
 
-    def test_get_user_fallback_to_username(self):
-        created_user = User.objects.register_user('foo@bar.d', 'foo@bar.de', 'pwd', False)
-        user = get_user('foo@bar.d')
-        self.assertEqual(user, created_user)
-
-    def test_get_user_fallback_fails(self):
+    def test_get_user_fails(self):
         User.objects.register_user('foo@bar.d', 'foo@bar.de', 'pwd', False)
-        with self.assertRaises(Http404):
-            get_user('foo@bar')
+        with self.assertRaises(User.DoesNotExist):
+            User.objects.get_by_username_or_email('foo@bar')
 
     def test_rename_user(self):
         created_user = User.objects.register_user('testuser', 'test@user.de', 'pwd', False)
@@ -81,7 +75,7 @@ class TestUserHasContent(TestCase):
         self.assertFalse(self.user.has_content())
 
     def test_post_count(self):
-        self.user.post_count = 1
+        cache.set(self.user.post_count.cache_key, 1)
         self.assertTrue(self.user.has_content())
 
     def test_has_forum_posts(self):

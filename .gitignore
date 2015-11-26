@@ -8,3 +8,4 @@ inyoka/media/
 inyoka/static-collected/
 *.db
 tests/settings/custom.py
+celerybeat-schedule

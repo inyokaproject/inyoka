@@ -6,10 +6,9 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from celery import shared_task
+from celery.canvas import subtask
 from django.conf import settings
-
-from celery.task import task
-from celery.task.sets import subtask
 
 from inyoka.portal.models import Subscription
 from inyoka.utils.jabber import send as send_jabber
@@ -48,7 +47,7 @@ def notify_about_subscription(sub, template=None, subject=None, args=None):
     send_notification(sub.user, template, subject, args)
 
 
-@task
+@shared_task
 def queue_notifications(request_user_id, template=None, subject=None, args=None,
                         include_notified=False, exclude_current_user=True,
                         filter=None, exclude=None, callback=None):

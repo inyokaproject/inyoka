@@ -30,7 +30,6 @@ from django.utils.translation import ugettext as _
 from inyoka.markup import RenderContext, parse
 from inyoka.portal.models import Subscription
 from inyoka.portal.utils import simple_check_login
-from inyoka.utils.diff3 import merge
 from inyoka.utils.http import (
     AccessDeniedResponse,
     TemplateResponse,
@@ -41,20 +40,30 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
-from inyoka.utils.urls import href, is_safe_domain, url_for, urlencode
+from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.acl import PrivilegeTest, has_privilege, require_privilege
 from inyoka.wiki.forms import (
     AddAttachmentForm,
     EditAttachmentForm,
     ManageDiscussionForm,
     MvBaustelleForm,
+    NewArticleForm,
     PageEditForm,
 )
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.tasks import update_object_list
+from inyoka.wiki.utils import case_sensitive_redirect
 
 REVISIONS_PER_PAGE = 100
+
+
+def clean_article_name(view):
+    """Decorator to clean pagenames as they are passed to the view functions."""
+    def decorate(request, *args, **kwargs):
+        kwargs['name'] = normalize_pagename(kwargs['name'])
+        return view(request, *args, **kwargs)
+    return decorate
 
 
 def context_modifier(request, context):
@@ -76,9 +85,11 @@ def context_modifier(request, context):
             context['can'] = PrivilegeTest(request.user, page_name)
 
 
+@clean_article_name
 @require_privilege('read')
 @templated('wiki/action_show.html', modifier=context_modifier)
-def do_show(request, name):
+@case_sensitive_redirect
+def do_show(request, name, rev=None, allow_redirect=True):
     """
     Show a given revision or the most recent one.  This action requires the
     read privilege.  If a page does not exist yet and no revision was provided
@@ -99,7 +110,6 @@ def do_show(request, name):
             automatically dispatches to `do_missing_page` if a revision is
             maked as deleted.
     """
-    rev = request.GET.get('rev')
     try:
         if rev is None or not rev.isdigit():
             page = Page.objects.get_by_name(name)
@@ -108,19 +118,19 @@ def do_show(request, name):
             page = Page.objects.get_by_name_and_rev(name, rev)
     except Page.DoesNotExist:
         return do_missing_page(request, name)
-    if request.GET.get('redirect') != 'no':
+    if allow_redirect:
         redirect = page.metadata.get('X-Redirect')
         if redirect:
             messages.info(request,
                 _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
-                    'link': escape(href('wiki', page.name, redirect='no')),
+                    'link': escape(url_for(page, action='show_no_redirect')),
                     'title': escape(page.title)
                 }
             )
             anchor = None
             if '#' in redirect:
                 redirect, anchor = redirect.rsplit('#', 1)
-            return HttpResponseRedirect(href('wiki', redirect, redirect='no', _anchor=anchor))
+            return HttpResponseRedirect(href('wiki', redirect, 'no_redirect', _anchor=anchor))
     if page.rev.deleted:
         return do_missing_page(request, name, page)
 
@@ -131,7 +141,9 @@ def do_show(request, name):
     }
 
 
+@clean_article_name
 @require_privilege('read')
+@case_sensitive_redirect
 def do_metaexport(request, name):
     """
     Export metadata as raw text.  This exists mainly for debugging reasons but
@@ -177,11 +189,11 @@ def do_missing_page(request, name, _page=None):
     """
     can_create = has_privilege(request.user, name, 'create')
     if can_create:
-        create_link = href('wiki', name, action='edit')
+        create_link = href('wiki', 'wiki', 'create', name)
     else:
         new_name = u'%s/%s' % (storage['wiki_newpage_root'], name)
         if has_privilege(request.user, new_name, 'create'):
-            create_link = href('wiki', new_name, action='edit')
+            create_link = href('wiki', 'wiki', 'create', new_name)
         else:
             create_link = None
 
@@ -215,36 +227,37 @@ def do_missing_page(request, name, _page=None):
     }
 
 
+@clean_article_name
 @require_privilege('manage')
 @does_not_exist_is_404
-def do_revert(request, name):
+@case_sensitive_redirect
+def do_revert(request, name, rev=None):
     """The revert action has no template, it uses a flashed form."""
     try:
-        rev = int(request.GET['rev'])
-    except (KeyError, ValueError):
+        page = Page.objects.get_by_name_and_rev(name, rev)
+        url = url_for(page.rev)
+    except Page.DoesNotExist:
         raise Http404()
-    url = href('wiki', name, rev=rev)
-    page = Page.objects.get_by_name_and_rev(name, rev)
     latest_rev = page.revisions.latest()
     if latest_rev == page.rev:
         messages.error(request,
-            _(u'Revision is the latest one, revert aborted.'))
+                       _(u'Revision is the latest one, revert aborted.'))
     elif request.method == 'POST':
         if 'cancel' in request.POST:
             messages.info(request, _(u'Revert aborted.'))
-            url = href('wiki', name, rev=page.rev.id)
         else:
             new_revision = page.rev.revert(request.POST.get('note'),
                                            request.user,
                                            request.META.get('REMOTE_ADDR'))
             page.last_rev = new_revision
             messages.success(request,
-                _(u'“%(title)s” was reverted successfully') % {
-                    'title': escape(page.rev.title)})
-            url = href('wiki', name)
+                             _(u'“%(title)s” was reverted successfully') % {
+                                 'title': escape(page.rev.title)})
+            url = url_for(page)
     else:
         messages.info(request,
-            render_template('wiki/action_revert.html', {'page': page}))
+                      render_template('wiki/action_revert.html',
+                                      {'page': page}))
     return HttpResponseRedirect(url)
 
 
@@ -272,7 +285,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
               u'Please make sure that they are not required anymore. '
               u'<a href="%(link)s">Force rename and deletion of duplicate attachments</a>,') % {
                   'names': linklist,
-                  'link': href('wiki', page.name, action='rename', force=True)})
+                  'link': url_for(page, action='rename', force=True)})
         return False
 
     elif duplicate and force:
@@ -290,7 +303,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
     else:
         page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
                   user=request.user)
-    cache.delete(u'wiki/page/{}'.format(old_name))
+    cache.delete(u'wiki/page/{}'.format(old_name.lower()))
 
     if request.POST.get('add_redirect'):
         old_text = u'# X-Redirect: %s\n' % new_name
@@ -312,15 +325,16 @@ def _rename(request, page, new_name, force=False, new_text=None):
     return True
 
 
+@clean_article_name
 @require_privilege('manage')
 @does_not_exist_is_404
-def do_rename(request, name):
+@case_sensitive_redirect
+def do_rename(request, name, new_name=None, force=False):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
-    new_name = request.GET.get('page_name') or page.name
-    force = request.GET.get('force', False)
+    if new_name is None:
+        new_name = name
     if request.method == 'POST':
-        force = request.POST.get('force', False)
         new_name = normalize_pagename(request.POST.get('new_name', ''))
         if not new_name:
             messages.error(request, _(u'No page name given.'))
@@ -342,19 +356,75 @@ def do_rename(request, name):
         'new_name': new_name,
         'force': force
     }))
-    return HttpResponseRedirect(url_for(page, 'show_no_redirect'))
+    return HttpResponseRedirect(url_for(page, 'show'))
 
 
+def _get_wiki_article_templates():
+    """Return a list of template choices for use in NewArticleForm."""
+    # TODO: this is a hack, do not have these hardcoded here!
+    return [('Vorlage/Artikel_normal', _(u'Normal (for experienced authors)')),
+            ('Vorlage/Artikel_umfangreich', _(u'Extensive (for beginners)')),
+            ('', _(u'I don\'t want a template'))]
+
+
+def _get_wiki_reserved_names():
+    """Return a list of words that should not be used as article names."""
+    # TODO: this is a hack, do not have these hardcoded here!
+    return ['wiki', 'a']
+
+
+@templated('wiki/action_create.html', modifier=context_modifier)
+def do_create(request, name=None):
+    """Create a new wiki page."""
+    template_choices = _get_wiki_article_templates()
+    reserved_names = _get_wiki_reserved_names()
+
+    # All authentication and permission checks are done in the form validation.
+    if request.method == 'POST':
+        form = NewArticleForm(user=request.user,
+                              template_choices=template_choices,
+                              reserved_names=reserved_names,
+                              data=request.POST.copy())
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            template_name = form.cleaned_data['template']
+
+            if template_name is None:
+                text = storage['wiki_newpage_template']
+            else:
+                template = Page.objects.get_by_name(name=template_name)
+                text = template.rev.text.value
+
+            new_page = Page.objects.create(user=request.user,
+                                           name=name,
+                                           # TODO: Kick out anonymous editing
+                                           remote_addr=request.META.get('REMOTE_ADDR'),
+                                           text=text)
+            msg = _(u'The page <a href="{link}">{name}</a> has been created.')
+            messages.success(request, msg.format(link=url_for(new_page),
+                                                 name=name))
+            return HttpResponseRedirect(url_for(new_page, action='edit'))
+    else:
+        form = NewArticleForm(user=request.user,
+                              template_choices=template_choices,
+                              reserved_names=reserved_names)
+        if name is not None:
+            form.initial = {'name': name}
+
+    return {'form': form}
+
+
+@clean_article_name
 @require_privilege('edit')
 @templated('wiki/action_edit.html', modifier=context_modifier)
-def do_edit(request, name):
-    """
-    Edit or create a wiki page.  If the page is an attachment this displays a
-    form to update the attachment next to the description box.  If it's a
-    normal page or no page yet this just displays a text box for the page
-    text and an input field for the change note.
-    If the user is not logged in, he gets a warning that his IP will be
-    visible for everyone until Sankt-nimmerleinstag (forever).
+@case_sensitive_redirect
+def do_edit(request, name, rev=None):
+    """Edit an existing wiki page.
+
+    If the page is an attachment this redirects to a form to update the
+    attachment.
+    If it's a normal page this just displays a text box for the page text
+    and an input field for the change note.
 
     **Template**
         ``'wiki/action_edit.html'``
@@ -373,151 +443,60 @@ def do_edit(request, name):
         ``preview``
             If we are in preview mode this is a rendered HTML preview.
     """
-    rev = request.REQUEST.get('rev')
-    rev = rev is not None and rev.isdigit() and int(rev) or None
     try:
-        page = Page.objects.get_by_name_and_rev(name, rev)
+        page = Page.objects.get_by_name_and_rev(name=name, rev=rev)
     except Page.DoesNotExist:
-        page = None
-        if not has_privilege(request.user, name, 'create'):
-            if has_privilege(request.user, u'%s/%s' % (
-                                           storage['wiki_newpage_template'],
-                                           name),
-                             'create'):
-                return HttpResponseRedirect(href('wiki', storage['wiki_newpage_template'], name, action='edit'))
-            return AccessDeniedResponse()
-        current_rev_id = ''
+        if Page.objects.filter(name=name).exists():
+            msg = _(u'The given revision does not exist for this article, '
+                    u'using last revision instead.')
+            url = href('wiki', name, 'a', 'edit')
+        else:
+            msg = _(u'The article „{name}“ does not exist, you can '
+                    u'try to create it now.').format(name=name)
+            url = href('wiki', 'wiki', 'create', name)
+        messages.info(request, msg)
+        return HttpResponseRedirect(url)
     else:
-        # If the page is deleted it requires creation privilege
         if page.rev.deleted and not has_privilege(request.user, name, 'create'):
             return AccessDeniedResponse()
-        current_rev_id = str(page.rev.id)
 
     # attachments have a custom editor
     if page and page.rev.attachment:
-        return do_attach_edit(request, page.name)
+        return do_attach_edit(request, name=page.name)
 
-    # form defaults
-    form_data = request.POST.copy()
     preview = None
-    form = PageEditForm()
-    if page is not None:
-        form.initial = {'text': page.rev.text.value}
-    else:
-        form.initial = {'text': storage['wiki_newpage_template'] or ''}
+    rev = page.rev.id
 
-    # if there a template is in use, load initial text from the template
-    template = request.GET.get('template')
-    if not request.method == 'POST' and template and \
-       has_privilege(request.user, template, 'read'):
-        try:
-            template = Page.objects.get_by_name(template)
-        except Page.DoesNotExist:
-            pass
-        else:
-            form.initial['text'] = template.rev.text.value
-            messages.info(request,
-                _(u'Used the template “<a href="%(link)s">%(name)s</a>” for this page') % {
-                    'link': url_for(template),
-                    'name': escape(template.title)
-                }
-            )
-
-    # check for edits by other users.  If we have such an edit we try
-    # to merge and set the edit time to the time of the last merge or
-    # conflict.  We do that before the actual form processing
-    merged_this_request = False
-    try:
-        # Don't change to utcfromtimestamp, the data is already in utc.
-        edit_time = datetime.fromtimestamp(int(request.POST['edit_time']))
-    except (KeyError, ValueError):
-        edit_time = datetime.utcnow()
-    if rev is None:
-        latest_rev = page and page.rev or None
-    else:
-        try:
-            latest_rev = Page.objects.get_by_name(name).rev
-        except Page.DoesNotExist:
-            latest_rev = None
-    if latest_rev is not None and edit_time < latest_rev.change_date:
-        form_data['text'] = merge(page.rev.text.value,
-                                  latest_rev.text.value,
-                                  form_data.get('text', ''))
-        edit_time = latest_rev.change_date
-        merged_this_request = True
-
-    # form validation and handling
     if request.method == 'POST':
-        if request.POST.get('cancel'):
-            messages.info(request, _(u'Canceled.'))
-            if page and page.metadata.get('redirect'):
-                url = href('wiki', page.name, redirect='no')
-            else:
-                url = href('wiki', name)
-            return HttpResponseRedirect(url)
-        elif request.POST.get('preview'):
-            text = request.POST.get('text') or ''
-            context = RenderContext(request, wiki_page=page)
-            preview = parse(text).render(context, 'html')
-            form.initial['text'] = text
-        else:
-            form = PageEditForm(request.user, name, page and
-                                page.rev.text.value or '', form_data)
-            if form.is_valid() and not merged_this_request:
-                remote_addr = request.META.get('REMOTE_ADDR')
-                if page is not None:
-                    if form.cleaned_data['text'] == page.rev.text.value:
-                        messages.info(request, _(u'No changes.'))
-                    else:
-                        page.edit(user=request.user,
-                                  deleted=False,
-                                  remote_addr=remote_addr,
-                                  **form.cleaned_data)
-                        if page.rev.deleted:
-                            msg = _(u'The page <a href="%(link)s">%(name)s</a> has been created.')
-                        else:
-                            msg = _(u'The page <a href="%(link)s">%(name)s</a> has been edited.')
-
-                        messages.success(request, msg % {'link': escape(href('wiki', page.name)),
-                                                         'name': escape(page.title)})
-                else:
-                    page = Page.objects.create(user=request.user,
-                                               remote_addr=remote_addr,
-                                               name=name,
-                                               **form.cleaned_data)
-                    messages.success(request,
-                        _(u'The page <a href="%(link)s">%(name)s</a> has been created.') % {
-                            'link': escape(href('wiki', page.name)),
-                            'name': escape(page.title)
-                        }
-                    )
-
-                last_revisions = page.revisions.all()[:2]
-                if len(last_revisions) > 1:
-                    rev, old_rev = last_revisions
-                else:
-                    rev = old_rev = page.last_rev
-
-                # send notifications
-                send_edit_notifications(request.user, rev, old_rev)
-
-                if page.metadata.get('redirect'):
-                    url = href('wiki', page.name, redirect='no')
-                else:
-                    url = href('wiki', page.name)
-                return HttpResponseRedirect(url)
-    elif not request.user.is_authenticated():
-        messages.info(request,
-            _(u'You are in the process of editing this page unauthenticated. '
-                u'If you save, your IP-Address will be recorded in the '
-                u'revision history and is irrevocable publicly visible.'))
-
-    # if we have merged this request we should inform the user about that,
-    # and that we haven't saved the page yet.
-    if merged_this_request:
-        messages.info(request,
-            _(u'Another user edited this page also.  '
-              u'Please check if the automatic merging is satisfying.'))
+        form = PageEditForm(user=request.user,
+                            name=name,
+                            data=request.POST.copy())
+        if 'cancel' in request.POST:
+            messages.info(request, _(u'Editing of this page was canceled.'))
+            return HttpResponseRedirect(url_for(page))
+        elif 'preview' in request.POST:
+            ctx = RenderContext(request, wiki_page=page)
+            tt = request.POST.get('text', '')
+            preview = parse(tt).render(ctx, 'html')
+        elif form.is_valid():
+            old_rev = page.rev
+            page.edit(user=request.user,
+                      text=form.cleaned_data['text'],
+                      note=form.cleaned_data['note'],
+                      change_date=datetime.utcnow(),
+                      deleted=None)
+            current_rev = page.rev
+            send_edit_notifications(user=request.user,
+                                    rev=current_rev,
+                                    old_rev=old_rev)
+            messages.success(request, _(u'The page has been edited.'))
+            return HttpResponseRedirect(url_for(page))
+    else:
+        form = PageEditForm(user=request.user,
+                            name=name)
+        form.initial = {'text': page.rev.text.value,
+                        'edit_time': datetime.utcnow(),
+                        'revision': page.rev.id}
 
     return {
         'name': name,
@@ -525,16 +504,16 @@ def do_edit(request, name):
         'page': page,
         'form': form,
         'preview': preview,
-        'edit_time': edit_time.strftime('%s'),
-        'rev': current_rev_id,
         'wiki_edit_note_rendered': storage['wiki_edit_note_rendered'],
         'license_note_rendered': storage['license_note_rendered'],
         'deny_robots': True,
     }
 
 
+@clean_article_name
 @require_privilege('delete')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_delete(request, name):
     """Delete the page (deletes the last recent revision)."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -554,8 +533,10 @@ def do_delete(request, name):
 
 # TODO: This damn function is much too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
+@clean_article_name
 @require_privilege('manage')
 @templated('wiki/action_mv_baustelle.html')
+@case_sensitive_redirect
 def do_mv_baustelle(request, name):
     """
     "Move" the page to an editing area called "Baustelle", ie. do:
@@ -632,8 +613,10 @@ def do_mv_baustelle(request, name):
 
 # TODO: This damn function is way too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
+@clean_article_name
 @require_privilege('manage')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_mv_discontinued(request, name):
     """Move page from ``Baustelle`` to ``Baustelle/Verlassen``"""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -667,8 +650,10 @@ def do_mv_discontinued(request, name):
 
 # TODO: This damn function is way too specific as translation would
 #      make sense.  We need to figure out how to rewrite this properly.
+@clean_article_name
 @require_privilege('manage')
 @does_not_exist_is_404
+@case_sensitive_redirect
 def do_mv_back(request, name):
     """
     Move page back from ``Baustelle`` to its origin, move copy (which may exist
@@ -732,9 +717,11 @@ def do_mv_back(request, name):
     return HttpResponseRedirect(url_for(page))
 
 
+@clean_article_name
 @require_privilege('read')
 @templated('wiki/action_log.html', modifier=context_modifier)
-def do_log(request, name):
+@case_sensitive_redirect
+def do_log(request, name, pagination_page=1):
     """
     Show a revision log for this page.
 
@@ -750,27 +737,17 @@ def do_log(request, name):
             The list of revisions ordered by date.  The newest revision
             first.
     """
-    try:
-        pagination_page = int(request.GET['page'])
-    except (ValueError, KeyError):
-        pagination_page = 1
-    page = Page.objects.get(name__exact=name)
+    if request.method == 'POST':
+        if 'rev' in request.POST and 'new_rev' in request.POST:
+            return HttpResponseRedirect(href('wiki', name, 'a', 'diff',
+                                        request.POST.get('rev'),
+                                        request.POST.get('new_rev')))
 
-    def link_func(p, parameters):
-        if p == 1:
-            parameters.pop('page', None)
-        else:
-            parameters['page'] = str(p)
-        rv = url_for(page)
-        if parameters:
-            rv += '?' + urlencode(parameters)
-        return rv
-
-    if request.GET.get('format') == 'atom':
-        return HttpResponseRedirect(href('wiki', '_feed', page.name, 20))
+    page = Page.objects.get_by_name(name)
+    url = url_for(page, action='log')
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
-                            REVISIONS_PER_PAGE, link_func)
+                            REVISIONS_PER_PAGE, url)
     return {
         'page': page,
         'revisions': pagination.get_queryset(),
@@ -779,20 +756,20 @@ def do_log(request, name):
     }
 
 
+@clean_article_name
 @require_privilege('read')
 @templated('wiki/action_diff.html', modifier=context_modifier)
-def do_diff(request, name):
+@case_sensitive_redirect
+def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
     """Render a diff between two pages."""
-    old_rev = request.GET.get('rev', '')
     if not old_rev.isdigit():
         old_rev = Page.objects.get_head(name, -1)
         if old_rev is None:
             raise Revision.DoesNotExist()
-    new_rev = request.GET.get('new_rev') or None
     if new_rev and not new_rev.isdigit():
         raise Http404()
     diff = Page.objects.compare(name, old_rev, new_rev)
-    if request.GET.get('format') == 'udiff':
+    if udiff:
         return HttpResponse(diff.udiff, content_type='text/plain; charset=utf-8')
 
     return {
@@ -802,8 +779,10 @@ def do_diff(request, name):
     }
 
 
+@clean_article_name
 @require_privilege('read')
 @templated('wiki/action_backlinks.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_backlinks(request, name):
     """
     Display a list of backlinks.
@@ -820,9 +799,11 @@ def do_backlinks(request, name):
     }
 
 
+@clean_article_name
 @require_privilege('read')
 @does_not_exist_is_404
-def do_export(request, name):
+@case_sensitive_redirect
+def do_export(request, name, format='raw', rev=None, fragment=False):
     """
     Export the given revision or the most recent one to the specified format
     (raw, html or ast so far).
@@ -852,17 +833,15 @@ def do_export(request, name):
         ``page``
             The bound `Page` object which should be rendered.
     """
-    rev = request.GET.get('rev')
     if rev is None or not rev.isdigit():
         page = Page.objects.get_by_name(name, raise_on_deleted=True)
     else:
         page = Page.objects.get_by_name_and_rev(name, rev,
                                                 raise_on_deleted=True)
     ctx = {
-        'fragment': request.GET.get('fragment', 'no') == 'yes',
+        'fragment': fragment,
         'page': page
     }
-    format = request.GET.get('format', 'raw').lower()
     if format == 'html':
         return TemplateResponse('wiki/export.html', ctx,
                                 content_type='text/html; charset=utf-8')
@@ -874,8 +853,10 @@ def do_export(request, name):
                             content_type='text/plain; charset=utf-8')
 
 
+@clean_article_name
 @require_privilege('attach')
 @templated('wiki/action_attach.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_attach(request, name):
     """
     List all pages with attachments according to the given page and
@@ -911,9 +892,9 @@ def do_attach(request, name):
         if request.POST.get('cancel'):
             messages.info(request, _(u'Canceled.'))
             if page and page.metadata.get('redirect'):
-                url = href('wiki', page.name, redirect='no')
+                url = url_for(page, action='show_no_redirect')
             else:
-                url = href('wiki', name)
+                url = url_for(page)
             return HttpResponseRedirect(url)
         form = AddAttachmentForm(request.POST, request.FILES)
         if not form.is_valid():
@@ -956,17 +937,19 @@ def do_attach(request, name):
         messages.success(request,
             _(u'Attachment saved successfully.'))
         if ap.metadata.get('weiterleitung'):
-            url = href('wiki', ap, redirect='no')
+            url = url_for(ap, action='show_no_redirect')
         else:
-            url = href('wiki', ap)
+            url = url_for(ap)
         return HttpResponseRedirect(url)
 
     context['deny_robots'] = 'noindex'
     return context
 
 
+@clean_article_name
 @require_privilege('attach')
 @templated('wiki/action_attach_edit.html', modifier=context_modifier)
+@case_sensitive_redirect
 def do_attach_edit(request, name):
     page = Page.objects.get_by_name(name)
     form = EditAttachmentForm({
@@ -997,36 +980,13 @@ def do_attach_edit(request, name):
     }
 
 
-@require_privilege('manage')
-@does_not_exist_is_404
-def do_prune(request, name):
-    """Clear the page cache."""
-    page = Page.objects.get_by_name(name)
-    page.prune()
-    messages.success(request, _(u'Emptied the page cache.'))
-    return HttpResponseRedirect(url_for(page))
-
-
-@templated('wiki/action_manage.html', modifier=context_modifier)
-def do_manage(request, name):
-    """
-    Show a list of all actions for this page.
-
-    **Template**
-        ``'wiki/action_manage.html'``
-    """
-    return {
-        'page': Page.objects.get_by_name(name),
-        'deny_robots': True,
-    }
-
-
+@clean_article_name
 @simple_check_login
-def do_subscribe(request, page_name):
+def do_subscribe(request, name):
     """
     Subscribe the user to the page with `page_name`
     """
-    page = Page.objects.get(name__exact=page_name)
+    page = Page.objects.get_by_name(name)
     if not Subscription.objects.user_subscribed(request.user, page):
         # there's no such subscription yet, create a new one
         Subscription(user=request.user, content_object=page).save()
@@ -1037,12 +997,13 @@ def do_subscribe(request, page_name):
     return HttpResponseRedirect(url_for(page))
 
 
+@clean_article_name
 @simple_check_login
-def do_unsubscribe(request, page_name):
+def do_unsubscribe(request, name):
     """
     Unsubscribe the user from the page with `page_name`
     """
-    page = Page.objects.get(name__exact=page_name)
+    page = Page.objects.get_by_name(name)
     try:
         subscription = Subscription.objects.get_for_user(request.user, page)
     except Subscription.DoesNotExist:
@@ -1061,8 +1022,9 @@ def do_unsubscribe(request, page_name):
 @require_privilege('edit')
 @does_not_exist_is_404
 @templated('wiki/action_manage_discussion.html')
+@case_sensitive_redirect
 def do_manage_discussion(request, name):
-    page = Page.objects.get(name=name)
+    page = Page.objects.get_by_name(name)
     if request.method == 'POST':
         form = ManageDiscussionForm(request.POST)
         if form.is_valid():
@@ -1083,25 +1045,3 @@ def do_manage_discussion(request, name):
         'page': page,
         'form': form,
     }
-
-PAGE_ACTIONS = {
-    'show': do_show,
-    'metaexport': do_metaexport,
-    'log': do_log,
-    'diff': do_diff,
-    'revert': do_revert,
-    'rename': do_rename,
-    'edit': do_edit,
-    'delete': do_delete,
-    'mv_baustelle': do_mv_baustelle,
-    'mv_discontinued': do_mv_discontinued,
-    'mv_back': do_mv_back,
-    'backlinks': do_backlinks,
-    'export': do_export,
-    'attach': do_attach,
-    'prune': do_prune,
-    'manage': do_manage,
-    'subscribe': do_subscribe,
-    'unsubscribe': do_unsubscribe,
-    'manage_discussion': do_manage_discussion,
-}

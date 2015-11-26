@@ -3,11 +3,9 @@ Babel==2.1.1
 beautifulsoup4==4.3.2
 celery==3.1.18
 defusedxml==0.4.1
-Django==1.7.10
-django-celery==3.1.17  # TODO: remove this by using http://docs.celeryproject.org/en/latest/django/first-steps-with-django.html
+Django==1.7.11
 django-filter==0.11.0
 django-hosts==1.2
-django-kombu==0.9.4
 django-mobile==0.5.1
 django-redis==4.2.0
 dnspython==1.12.0

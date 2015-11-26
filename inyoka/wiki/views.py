@@ -35,7 +35,6 @@ from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.text import join_pagename, normalize_pagename
 from inyoka.utils.urls import href, url_for, is_safe_domain
 from inyoka.wiki.acl import has_privilege
-from inyoka.wiki.actions import PAGE_ACTIONS
 from inyoka.wiki.models import Page, Revision
 
 
@@ -45,25 +44,6 @@ def index(request):
         href('wiki', settings.WIKI_MAIN_PAGE) +
         (request.GET and '?' + request.GET.urlencode() or '')
     )
-
-
-def show_page(request, name):
-    """Dispatch action calls."""
-    normalized_name = normalize_pagename(name)
-    if not normalized_name:
-        raise Http404()
-    action = request.GET.get('action')
-    if normalized_name != name or action == 'show':
-        args = request.GET.copy()
-        if action == 'show':
-            del args['action']
-        url = href('wiki', normalized_name)
-        if args:
-            url += '?' + args.urlencode()
-        return HttpResponseRedirect(url)
-    if action and action not in PAGE_ACTIONS:
-        raise Http404()
-    return PAGE_ACTIONS[action or 'show'](request, normalized_name)
 
 
 def redirect_new_page(request):
@@ -257,9 +237,17 @@ def recentchanges(request):
 @templated('wiki/tag_list.html')
 def show_tag_list(request):
     """
-    Show a taglist.
+    Show an alphabetical tag list with all wiki tags.
     """
-    return {'tag_list': Page.objects.get_tagcloud()}
+    return {'tag_list': Page.objects.get_taglist()}
+
+
+@templated('wiki/tag_cloud.html')
+def show_tag_cloud(request):
+    """
+    Show a tag cloud of the 100 most used tags.
+    """
+    return {'tag_list': Page.objects.get_taglist(settings.TAGCLOUD_SIZE)}
 
 
 @templated('wiki/pages_by_tag.html')

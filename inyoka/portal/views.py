@@ -19,7 +19,7 @@ from django.core import signing
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -461,12 +461,6 @@ def profile(request, username):
 
     user = User.objects.get(username__iexact=username)
 
-    try:
-        if username != user.urlsafe_username:
-            return HttpResponseRedirect(url_for(user))
-    except ValueError:
-        raise Http404()
-
     if request.user.can('group_edit') or request.user.can('user_edit'):
         groups = user.groups.all()
     else:
@@ -766,24 +760,6 @@ def usercp_deactivate(request):
     }
 
 
-def get_user(username):
-    """Check if the user exists and return it"""
-    try:
-        if '@' in username:
-            user = User.objects.get(email__iexact=username)
-        else:
-            user = User.objects.get(username__iexact=username)
-    except User.DoesNotExist:
-        if '@' in username:
-            try:
-                user = User.objects.get(username__exact=username)
-            except User.DoesNotExist:
-                raise Http404
-        else:
-            raise Http404
-    return user
-
-
 @require_permission('user_edit')
 @templated('portal/special_rights.html')
 def users_with_special_rights(request):
@@ -798,9 +774,10 @@ def users_with_special_rights(request):
 @require_permission('user_edit')
 @templated('portal/user_overview.html')
 def user_edit(request, username):
-    user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin'))
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     return {
         'user': user
@@ -811,9 +788,10 @@ def user_edit(request, username):
 @templated('portal/user_edit_profile.html')
 def user_edit_profile(request, username):
     # TODO: Merge with usercp_profile
-    user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'profile'))
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     form = EditUserProfileForm(instance=user, admin_mode=True)
     if request.method == 'POST':
@@ -841,9 +819,10 @@ def user_edit_profile(request, username):
 @require_permission('user_edit')
 @templated('portal/user_edit_settings.html')
 def user_edit_settings(request, username):
-    user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'settings'))
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     ubuntu_version = [s.ubuntu_version for s in Subscription.objects.
                       filter(user=user, ubuntu_version__isnull=False)]
@@ -891,9 +870,10 @@ def user_edit_settings(request, username):
 @require_permission('user_edit')
 @templated('portal/user_edit_status.html')
 def user_edit_status(request, username):
-    user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'status'))
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     form = EditUserStatusForm(instance=user)
     if request.method == 'POST':
@@ -917,9 +897,10 @@ def user_edit_status(request, username):
 @require_permission('user_edit')
 @templated('portal/user_edit_privileges.html')
 def user_edit_privileges(request, username):
-    user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'privileges'))
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
 
     checked_perms = [int(p) for p in request.POST.getlist('permissions')]
 
@@ -964,7 +945,7 @@ def user_edit_privileges(request, username):
                             privilege.delete()
 
             user.save()
-            cache.delete('user_permissions/%s' % user.id)
+            cache.delete(u'user_permissions/{}'.format(user.id))
 
             messages.success(request,
                 _(u'The privileges of “%(username)s” were successfully '
@@ -1020,9 +1001,11 @@ def user_edit_privileges(request, username):
 @require_permission('user_edit')
 @templated('portal/user_edit_groups.html')
 def user_edit_groups(request, username):
-    user = get_user(username)
-    if username != user.urlsafe_username:
-        return HttpResponseRedirect(user.get_absolute_url('admin', 'groups'))
+    try:
+        user = User.objects.get_by_username_or_email(username)
+    except User.DoesNotExist:
+        raise Http404
+
     initial = model_to_dict(user)
     if initial['_primary_group']:
         initial.update({
@@ -1153,7 +1136,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
                             len(d['delete']))
             messages.success(request, msg % {'n': len(d['delete'])})
             entries = filter(lambda s: str(s.id) not in d['delete'], entries)
-            cache.delete('portal/pm_count/%s' % request.user.id)
+            cache.delete(u'portal/pm_count/{}'.format(request.user.id))
             return HttpResponseRedirect(href('portal', 'privmsg',
                                              PRIVMSG_FOLDERS[folder][1]))
 
@@ -1164,7 +1147,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
         if not entry.read:
             entry.read = True
             entry.save()
-            cache.delete('portal/pm_count/%s' % request.user.id)
+            cache.delete(u'portal/pm_count/{}'.format(request.user.id))
         action = request.GET.get('action')
         if action:
             if request.method == 'POST':
@@ -1364,7 +1347,7 @@ def privmsg_new(request, username=None):
 class MemberlistView(generic.ListView):
     """Shows a list of all registered users."""
     template_name = 'portal/memberlist.html'
-    columns = ('id', 'username', 'location', 'date_joined', 'post_count')
+    columns = ('id', 'username', 'location', 'date_joined')
     context_object_name = 'users'
     model = User
     base_link = href('portal', 'users')
@@ -1421,7 +1404,7 @@ def group(request, name, page=1):
     users = group.user_set.all()
 
     table = Sortable(users, request.GET, 'id',
-        columns=['id', 'username', 'location', 'date_joined', 'post_count'])
+        columns=['id', 'username', 'location', 'date_joined'])
     pagination = Pagination(request, table.get_queryset(), page, 15,
                             link=href('portal', 'group', name))
     return {

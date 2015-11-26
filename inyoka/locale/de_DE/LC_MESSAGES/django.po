@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-01 13:01+0100\n"
-"PO-Revision-Date: 2014-09-06 21:47+0100\n"
+"POT-Creation-Date: 2015-11-26 11:19+0100\n"
+"PO-Revision-Date: 2015-11-18 22:23+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) "
@@ -22,6 +22,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
+
+#: inyoka/utils/cache.py:44
+msgid "counting..."
+msgstr "Zähle..."
 
 #: inyoka/utils/diff3.py:373
 msgid "Old"
@@ -157,34 +161,34 @@ msgstr ""
 " möglich darum kümmern. Du hast %(left)d verbleibende Versuche bevor dein"
 " Konto gesperrt wird."
 
-#: inyoka/utils/text.py:140
+#: inyoka/utils/text.py:142
 msgid "ten"
 msgstr "zehn"
 
-#: inyoka/utils/text.py:142
+#: inyoka/utils/text.py:144
 msgid "eleven"
 msgstr "elf"
 
-#: inyoka/utils/text.py:144
+#: inyoka/utils/text.py:146
 msgid "twelve"
 msgstr "zwölf"
 
-#: inyoka/utils/text.py:147
+#: inyoka/utils/text.py:149
 msgctxt "masculine"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:148
+#: inyoka/utils/text.py:150
 msgctxt "feminine"
 msgid "one"
 msgstr "eine"
 
-#: inyoka/utils/text.py:149
+#: inyoka/utils/text.py:151
 msgctxt "neuter"
 msgid "one"
 msgstr "ein"
 
-#: inyoka/utils/text.py:150
+#: inyoka/utils/text.py:152
 msgid "one"
 msgstr "eins"
 

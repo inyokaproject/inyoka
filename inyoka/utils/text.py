@@ -94,6 +94,8 @@ def join_pagename(name1, name2):
     >>> join_pagename('Foo', './Bar/Baz')
     'Foo/Bar/Baz'
     """
+    if name1 is None or name2 is None:
+        return name1 or name2 or ''
     if not isinstance(name1, basestring):
         name1 = name1.name
     if not isinstance(name2, basestring):

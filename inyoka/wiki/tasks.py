@@ -9,22 +9,20 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta
 from collections import OrderedDict
+from datetime import datetime, timedelta
 
-from django.core.cache import cache
+from celery import shared_task
 from django.conf import settings
-
-from celery.task import task, periodic_task
-from celery.task.schedules import crontab
+from django.core.cache import cache
 
 
-@task(ignore_result=True)
+@shared_task
 def render_article(page):
-    cache.delete('wiki/page/%s' % page.name)
+    cache.delete(u'wiki/page/{}'.format(page.name.lower()))
 
 
-@task(ignore_result=True)
+@shared_task
 def update_related_pages(page, update_meta=True):
     from inyoka.wiki.models import MetaData
     related_pages = set()
@@ -32,34 +30,41 @@ def update_related_pages(page, update_meta=True):
     linked = MetaData.objects.values_list(*values) \
                      .filter(key__in=('X-Link', 'X-Attach'), value=page.name)
     for value, text_id in linked.all():
-        cache.delete('wiki/page/%s' % value)
+        cache.delete(u'wiki/page/{}'.format(value.lower()))
         related_pages.add(text_id)
-    cache.delete('wiki/page/%s' % page.name)
+    cache.delete(u'wiki/page/{}'.format(page.name.lower()))
 
     if update_meta:
         page.update_meta()
 
 
-@task(ignore_result=True)
+@shared_task
 def update_object_list(names=None):
     """Refresh the wiki/object_list cache key"""
     from inyoka.wiki.models import Page
     if isinstance(names, list):
-        cache.delete_many(['wiki/page/%s' % name for name in names])
+        cache.delete_many([u'wiki/page/{}'.format(name.lower()) for name in names])
     elif isinstance(names, basestring):
-        cache.delete('wiki/page/%s' % names)
+        cache.delete(u'wiki/page/{}'.format(names.lower()))
 
     cache.delete('wiki/object_list')
     Page.objects.get_page_list()
 
 
-@periodic_task(run_every=crontab(minute='*/15'))
+@shared_task
 def update_recentchanges():
     """
     Updates cached data for recent changes View.
     """
     from inyoka.wiki.models import Revision
-    revisions = Revision.objects.filter(change_date__gt=(datetime.utcnow() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS))).order_by('-change_date')[:settings.WIKI_RECENTCHANGES_MAX].select_related('user', 'page')
+
+    from_time = datetime.utcnow() - timedelta(days=settings.WIKI_RECENTCHANGES_DAYS)
+
+    revisions = (Revision.objects
+        .filter(change_date__gt=from_time)
+        .order_by('-change_date')
+        .select_related('user', 'page')[:settings.WIKI_RECENTCHANGES_MAX])
+
     recentchanges = OrderedDict()
     for revision in revisions:
         change_date = revision.change_date.date()

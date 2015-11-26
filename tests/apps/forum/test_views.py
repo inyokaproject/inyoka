@@ -86,8 +86,6 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
     def tearDown(self):
         from inyoka.portal import user
-        cache.clear()
-        cache.clear()
         user._ANONYMOUS_USER = None
         user._SYSTEM_USER = None
 
@@ -146,7 +144,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
         self.client.get('/topic/%s/subscribe/' % self.topic.slug)
         self.assertTrue(
-                   Subscription.objects.user_subscribed(self.user, self.topic))
+            Subscription.objects.user_subscribed(self.user, self.topic))
 
         # Test for unsubscribe-link in the usercp if the user has no more read
         # access to a subscription
@@ -165,7 +163,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             {'next': forward_url}
         )
         self.assertFalse(
-                   Subscription.objects.user_subscribed(self.user, self.topic))
+            Subscription.objects.user_subscribed(self.user, self.topic))
         self.assertEqual(response['location'], forward_url)
 
     def test_continue_admin_index(self):
@@ -229,16 +227,16 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
                 topic=t2)
 
         response = self.client.get('/', {
-                    '__service__': 'forum.mark_topic_split_point',
-                    'post': p1.pk,
-                    'topic': 'a%3A-topic'})
+            '__service__': 'forum.mark_topic_split_point',
+            'post': p1.pk,
+            'topic': 'a%3A-topic'})
         response = self.client.get('/topic/a%3A-topic/split/')
         self.assertEqual(response.status_code, 200)  # was 302 before
 
         response = self.client.get('/', {
-                    '__service__': 'forum.mark_topic_split_point',
-                    'post': p2.pk,
-                    'topic': t2.slug})
+            '__service__': 'forum.mark_topic_split_point',
+            'post': p2.pk,
+            'topic': t2.slug})
         response = self.client.get('/topic/%s/split/' % t2.slug)
         self.assertEqual(response.status_code, 200)
 
@@ -459,6 +457,60 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.assertFalse(post.topic.hidden)
 
 
+class TestUserPostCounter(TestCase):
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.user._permissions = sum(PERMISSION_NAMES.keys())
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
+
+        self.forum = Forum.objects.create()
+        Privilege.objects.create(
+            user=self.user,
+            forum=self.forum,
+            positive=sum(PRIVILEGES_BITS.values()),
+            negative=0)
+
+    def test_hide_post(self):
+        """
+        Tests that the user post counter is decreased, when a post is hidden.
+        """
+        topic = Topic.objects.create(forum=self.forum, author=self.user)
+        Post.objects.create(author=self.user, topic=topic)
+        post2 = Post.objects.create(author=self.user, topic=topic)
+        cache.set(self.user.post_count.cache_key, 2)
+
+        self.client.post('/post/{}/hide/'.format(post2.id), {'confirm': 'yes'})
+
+        self.assertEqual(self.user.post_count.value(), 1)
+
+    def test_show_post(self):
+        """
+        Tests that the user post counter is increased, when a post is un hidden.
+        """
+        topic = Topic.objects.create(forum=self.forum, author=self.user)
+        Post.objects.create(author=self.user, topic=topic)
+        post2 = Post.objects.create(author=self.user, topic=topic, hidden=True)
+        cache.set(self.user.post_count.cache_key, 1)
+
+        self.client.post('/post/{}/restore/'.format(post2.id), {'confirm': 'yes'})
+
+        self.assertEqual(self.user.post_count.value(), 2)
+
+    def test_delete_hidden_post(self):
+        """
+        Tests that the post counter is not chaned when a hidden post is deleted.
+        """
+        topic = Topic.objects.create(forum=self.forum, author=self.user)
+        Post.objects.create(author=self.user, topic=topic)
+        post2 = Post.objects.create(author=self.user, topic=topic, hidden=True)
+        cache.set(self.user.post_count.cache_key, 1)
+
+        self.client.post('/post/{}/delete/'.format(post2.id), {'confirm': 'yes'})
+
+        self.assertEqual(self.user.post_count.value(), 1)
+
+
 class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
 
     client_class = InyokaClient
@@ -622,8 +674,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_newtopic_frequent_user_spam(self):
         # frequent users (>100 posts) should be excluded from spam detection
-        self.user.post_count = 100
-        self.user.save()
+        cache.set(self.user.post_count.cache_key, 100)
         self.client.login(username='user', password='user')
         self.make_valid_key()
         self.make_spam()
@@ -921,8 +972,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     @override_settings(INYOKA_USE_AKISMET=True)
     def test_new_post_frequent_user_spam(self):
         # frequent users (>100 posts) should be excluded from spam detection
-        self.user.post_count = 100
-        self.user.save()
+        cache.set(self.user.post_count.cache_key, 100)
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.public_forum)
         Post.objects.create(text=u'first post', author=self.admin, position=0, topic=topic)
 
