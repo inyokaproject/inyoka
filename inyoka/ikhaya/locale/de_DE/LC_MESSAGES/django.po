@@ -9,20 +9,19 @@
 # Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-18 22:10+0100\n"
+"POT-Creation-Date: 2015-11-26 11:19+0100\n"
 "PO-Revision-Date: 2015-11-18 22:22+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
-"Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/"
-"language/de_DE/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Team: German (Germany) "
+"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
-"X-Generator: Poedit 1.8.5\n"
 
 #: inyoka/ikhaya/forms.py:44 inyoka/ikhaya/models.py:208
 #: inyoka/ikhaya/models.py:369
@@ -31,12 +30,13 @@ msgstr "Text"
 
 #: inyoka/ikhaya/forms.py:45
 msgid ""
-"To refer to another comment, you can write <code>@commentnumber</code>.<br /"
-">Clicking on “reply” will automatically insert this code."
+"To refer to another comment, you can write "
+"<code>@commentnumber</code>.<br />Clicking on “reply” will automatically "
+"insert this code."
 msgstr ""
 "Um dich auf einen anderen Kommentar zu beziehen, kannst du "
-"<code>@kommentarnummer</code> verwenden.<br />Dieser wird automatisch eingefügt, "
-"wenn du bei einem Beitrag auf „Antworten“ klickst."
+"<code>@kommentarnummer</code> verwenden.<br />Dieser wird automatisch "
+"eingefügt, wenn du bei einem Beitrag auf „Antworten“ klickst."
 
 #: inyoka/ikhaya/forms.py:67 inyoka/ikhaya/models.py:201
 msgid "Author"
@@ -49,8 +49,8 @@ msgstr "Datum der Veröffentlichung"
 #: inyoka/ikhaya/forms.py:69
 msgid "If the date is in the future, the article will not appear until then."
 msgstr ""
-"Wenn das Datum in der Zukunft liegt, wird der Artikel bis zu diesem Zeitpunkt "
-"nicht angezeigt."
+"Wenn das Datum in der Zukunft liegt, wird der Artikel bis zu diesem "
+"Zeitpunkt nicht angezeigt."
 
 #: inyoka/ikhaya/forms.py:72
 msgid "Last update"
@@ -59,8 +59,8 @@ msgstr "Letzte Aktualisierung"
 #: inyoka/ikhaya/forms.py:73
 msgid "If you keep this field empty, the publication date will be used."
 msgstr ""
-"Wenn du dieses Feld leer lässt, wird automatisch das Veröffentlichungsdatum "
-"verwendet."
+"Wenn du dieses Feld leer lässt, wird automatisch das "
+"Veröffentlichungsdatum verwendet."
 
 #: inyoka/ikhaya/forms.py:102
 msgid "There already exists an article with this slug!"
@@ -183,17 +183,18 @@ msgstr "Dein Kommentar wurde erstellt."
 #: inyoka/ikhaya/views.py:259
 #, python-format
 msgid ""
-"The publication of the article “<a href=\"%(link)s\">%(title)s</a>” has been "
-"revoked."
+"The publication of the article “<a href=\"%(link)s\">%(title)s</a>” has "
+"been revoked."
 msgstr ""
-"Die Veröffentlichung des Artikels „<a href=\"%(link)s\">%(title)s</a>“ wurde "
-"aufgehoben."
+"Die Veröffentlichung des Artikels „<a href=\"%(link)s\">%(title)s</a>“ "
+"wurde aufgehoben."
 
 #: inyoka/ikhaya/views.py:265
 #, python-format
 msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>” was canceled."
 msgstr ""
-"Löschen des Artikels „<a href=\"%(link)s\">%(title)s</a>“ wurde abgebrochen."
+"Löschen des Artikels „<a href=\"%(link)s\">%(title)s</a>“ wurde "
+"abgebrochen."
 
 #: inyoka/ikhaya/views.py:272
 #, python-format
@@ -242,8 +243,9 @@ msgstr "Möchtest du die Meldung verbergen?"
 msgid "Hide"
 msgstr "Verbergen"
 
-#: inyoka/ikhaya/views.py:470 inyoka/ikhaya/views.py:477 inyoka/ikhaya/views.py:484
-#: inyoka/ikhaya/views.py:491 inyoka/ikhaya/views.py:556 inyoka/ikhaya/views.py:563
+#: inyoka/ikhaya/views.py:470 inyoka/ikhaya/views.py:477
+#: inyoka/ikhaya/views.py:484 inyoka/ikhaya/views.py:491
+#: inyoka/ikhaya/views.py:556 inyoka/ikhaya/views.py:563
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -352,11 +354,11 @@ msgstr "Bitte melde dich an, um einen Artikel vorzuschlagen."
 
 #: inyoka/ikhaya/views.py:679
 msgid ""
-"Thank you, your article suggestion was submitted. A team member will contact you "
-"shortly."
+"Thank you, your article suggestion was submitted. A team member will "
+"contact you shortly."
 msgstr ""
-"Vielen Dank, dein Artikelvorschlag wurde gespeichert. Ein Ikhayateammitglied "
-"wird dich sobald wie möglich kontaktieren."
+"Vielen Dank, dein Artikelvorschlag wurde gespeichert. Ein "
+"Ikhayateammitglied wird dich sobald wie möglich kontaktieren."
 
 #: inyoka/ikhaya/views.py:744
 msgid "Notifications on new suggestions will be sent to you."
@@ -369,11 +371,11 @@ msgstr "Du wirst über neue Vorschläge nicht mehr benachrichtigt."
 #: inyoka/ikhaya/views.py:781
 #, python-format
 msgid ""
-"The event with the id %(id)s could not be used as draft for a new event because "
-"it does not exist."
+"The event with the id %(id)s could not be used as draft for a new event "
+"because it does not exist."
 msgstr ""
-"Die Veranstaltung mit der ID %(id)s existiert nicht und kann daher nicht als "
-"Basis für den Kopiervorgang benutzt werden."
+"Die Veranstaltung mit der ID %(id)s existiert nicht und kann daher nicht "
+"als Basis für den Kopiervorgang benutzt werden."
 
 #: inyoka/ikhaya/views.py:797
 msgid "The event was saved."
@@ -382,7 +384,8 @@ msgstr "Die Veranstaltung wurde gespeichert."
 #: inyoka/ikhaya/views.py:854
 msgid "The event has been saved. A team member will review it soon."
 msgstr ""
-"Die Veranstaltung wurde gespeichert. Ein Teammitglied wird sie demnächst prüfen."
+"Die Veranstaltung wurde gespeichert. Ein Teammitglied wird sie demnächst "
+"prüfen."
 
 #: inyoka/ikhaya/views.py:919
 #, python-format
@@ -393,3 +396,4 @@ msgstr "%(domain)s Ikhaya Kommentare – %(title)s"
 #, python-format
 msgid "%(domain)s Ikhaya comments"
 msgstr "%(domain)s Ikhaya Kommentare"
+

@@ -6,20 +6,19 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-18 22:10+0100\n"
+"POT-Creation-Date: 2015-11-26 11:19+0100\n"
 "PO-Revision-Date: 2015-11-18 22:23+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
-"Language-Team: German (Germany) (http://www.transifex.com/projects/p/"
-"inyoka/language/de_DE/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Team: German (Germany) "
+"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
-"X-Generator: Poedit 1.8.5\n"
 
 #: inyoka/markup/__init__.py:196
 msgid "Internal error: "
@@ -97,10 +96,11 @@ msgstr "Ungültige Schleifen-Syntax. Erstes Argument muss eine Variable sein."
 
 #: inyoka/markup/templates.py:167
 msgid ""
-"Invalid syntax for this loop. After the first variable an “in” is required."
+"Invalid syntax for this loop. After the first variable an “in” is "
+"required."
 msgstr ""
-"Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort \"in"
-"\" folgen."
+"Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort "
+"\"in\" folgen."
 
 #: inyoka/markup/templates.py:172
 msgid "Loop header contains too many arguments."
@@ -161,3 +161,4 @@ msgstr "Zu viele Argumente für Wertausgabe."
 #: inyoka/markup/templates.py:475
 msgid "Invalid syntax: "
 msgstr "Syntaxfehler: "
+
