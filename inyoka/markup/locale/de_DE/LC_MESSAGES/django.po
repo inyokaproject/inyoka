@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-01 13:01+0100\n"
-"PO-Revision-Date: 2012-11-03 11:11+0000\n"
-"Last-Translator: Markus Holtermann <inyoka@markusholtermann.eu>\n"
+"POT-Creation-Date: 2015-11-26 11:19+0100\n"
+"PO-Revision-Date: 2015-11-18 22:23+0100\n"
+"Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
@@ -73,28 +73,28 @@ msgstr "Bearbeitet von"
 msgid "Moderated by"
 msgstr "Moderiert von"
 
-#: inyoka/markup/templates.py:52
+#: inyoka/markup/templates.py:53
 msgid "Invalid arguments"
 msgstr "Parameterfehler"
 
-#: inyoka/markup/templates.py:53
+#: inyoka/markup/templates.py:54
 msgid "The first argument must be the name of the template."
 msgstr "Das erste Argument muss der Name des Templates sein."
 
-#: inyoka/markup/templates.py:59
+#: inyoka/markup/templates.py:60
 msgid "Missing template"
 msgstr "Fehlende Vorlage"
 
-#: inyoka/markup/templates.py:60
+#: inyoka/markup/templates.py:61
 #, python-format
 msgid "The template “%(name)s” could not be found."
 msgstr "Das gewünschte Template „%(name)s“ existiert nicht."
 
-#: inyoka/markup/templates.py:158
+#: inyoka/markup/templates.py:161
 msgid "Invalid syntax for this loop. The first argument must be a variable."
 msgstr "Ungültige Schleifen-Syntax. Erstes Argument muss eine Variable sein."
 
-#: inyoka/markup/templates.py:164
+#: inyoka/markup/templates.py:167
 msgid ""
 "Invalid syntax for this loop. After the first variable an “in” is "
 "required."
@@ -102,19 +102,19 @@ msgstr ""
 "Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort "
 "\"in\" folgen."
 
-#: inyoka/markup/templates.py:169
+#: inyoka/markup/templates.py:172
 msgid "Loop header contains too many arguments."
 msgstr "Schleifenkopf enthält zu viele Argumente."
 
-#: inyoka/markup/templates.py:173
+#: inyoka/markup/templates.py:176
 msgid "Loop end contains too many arguments."
 msgstr "Schleifenende enthält zu viele Argumente."
 
-#: inyoka/markup/templates.py:182 inyoka/markup/templates.py:204
+#: inyoka/markup/templates.py:185 inyoka/markup/templates.py:207
 msgid "Conditions allow only one expression per block."
 msgstr "Bedingungen erlauben nur einen Ausdruck pro Block."
 
-#: inyoka/markup/templates.py:193
+#: inyoka/markup/templates.py:196
 msgid ""
 "The “else” block does not allow any expressions. Maybe you wanted to use "
 "the “elseif” block."
@@ -122,43 +122,43 @@ msgstr ""
 "„else“-Block erlaubt keinen Ausdruck. Möglicherweise wolltest du einen "
 "„elseif“-Block verwenden."
 
-#: inyoka/markup/templates.py:213
+#: inyoka/markup/templates.py:216
 msgid "“endif” does not allow any arguments"
 msgstr "„endif“ erlaubt keine Argumente."
 
-#: inyoka/markup/templates.py:249
+#: inyoka/markup/templates.py:252
 msgid "Unknown expression after “as” operator."
 msgstr "Unbekannter Ausdruck nach „as“ Operator."
 
-#: inyoka/markup/templates.py:266
+#: inyoka/markup/templates.py:269
 msgid "Unknown expression after “is” operator"
 msgstr "Unbekannter Ausdruck nach „is“ Operator."
 
-#: inyoka/markup/templates.py:344
+#: inyoka/markup/templates.py:347
 msgid "Unexpected end of expression."
 msgstr "Unerwartetes Ausdrucksende."
 
-#: inyoka/markup/templates.py:356
+#: inyoka/markup/templates.py:359
 msgid "Parentheses were not closed properly."
 msgstr "Klammerausdruck wurde nicht geschlossen."
 
-#: inyoka/markup/templates.py:366
+#: inyoka/markup/templates.py:369
 msgid "Missing comma between array entries"
 msgstr "Fehlendes Komma zwischen Array Einträgen."
 
-#: inyoka/markup/templates.py:389
+#: inyoka/markup/templates.py:392
 msgid "Unexpected operator"
 msgstr "Unerwarteter Operator"
 
-#: inyoka/markup/templates.py:416
+#: inyoka/markup/templates.py:419
 msgid "expected variable, integer or attribute"
 msgstr "Variable, Zahl oder Attribut erwartet."
 
-#: inyoka/markup/templates.py:447
+#: inyoka/markup/templates.py:450
 msgid "Too many arguments for this value output"
 msgstr "Zu viele Argumente für Wertausgabe."
 
-#: inyoka/markup/templates.py:472
+#: inyoka/markup/templates.py:475
 msgid "Invalid syntax: "
 msgstr "Syntaxfehler: "
 

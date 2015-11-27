@@ -10,3 +10,6 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+CACHES['content']['KEY_PREFIX'] = 'test-mysql'
+CACHES['default']['KEY_PREFIX'] = 'test-mysql'

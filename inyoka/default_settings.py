@@ -40,6 +40,7 @@ TIME_ZONE = 'Europe/Berlin'
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 LANGUAGE_CODE = 'de-de'
 LOCALE_PATHS = (join(BASE_PATH, 'locale'),)
+LC_ALL = 'en_US.UTF-8'
 
 # the base url (without subdomain)
 BASE_DOMAIN_NAME = 'ubuntuusers.de'
@@ -94,6 +95,9 @@ INYOKA_LOGGER_NAME = u'inyoka'
 
 # use etags
 USE_ETAGS = True
+
+# maximal number of tags shown in the tag cloud
+TAGCLOUD_SIZE = 100
 
 # prefix for the system mails
 EMAIL_SUBJECT_PREFIX = u'%s: ' % BASE_DOMAIN_NAME

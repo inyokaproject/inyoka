@@ -8,6 +8,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from __future__ import print_function
+
 from subprocess import PIPE, Popen
 
 from django.conf import settings
@@ -20,12 +22,12 @@ def send_mail(subject, message, sender, to):
 
     # Do not attempt to send to invalid email addresses
     # (may occur for disabled users)
-    if to[0].endswith('.invalid') or not '@' in to[0]:
+    if to[0].endswith('.invalid') or '@' not in to[0]:
         return
 
     if settings.DEBUG_NOTIFICATIONS:
-        print "Subject: %s\nMessage:%s\n\nSender: %s\nTo: %s" % (
-              subject, message, sender, to)
+        print("Subject: %s\nMessage:%s\n\nSender: %s\nTo: %s" % (
+              subject, message, sender, to))
     else:
         django_send_mail(subject, message, sender, to,
                          fail_silently=not settings.DEBUG)

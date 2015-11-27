@@ -48,21 +48,21 @@ class TestViews(TestCase):
             p250.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
         p250.save()
 
-        req = self.client.get("/Testpage50/log").content
+        req = self.client.get("/Testpage50/a/log").content
         self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 2)
-        req = self.client.get("/Testpage50/log/2")
+        req = self.client.get("/Testpage50/a/log/2")
         self.assertEqual(req.status_code, 404)
 
-        req = self.client.get("/Testpage100/log").content
+        req = self.client.get("/Testpage100/a/log").content
         self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 5)
-        req = self.client.get("/Testpage100/log/2")
+        req = self.client.get("/Testpage100/a/log/2")
         self.assertEqual(req.status_code, 404)
 
-        req = self.client.get("/Testpage250/log").content
+        req = self.client.get("/Testpage250/a/log").content
         self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 5)
-        req = self.client.get("/Testpage250/log/2").content
+        req = self.client.get("/Testpage250/a/log/2").content
         self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 5)
-        req = self.client.get("/Testpage250/log/3").content
+        req = self.client.get("/Testpage250/a/log/3").content
         self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 2)
-        req = self.client.get("/Testpage250/log/4")
+        req = self.client.get("/Testpage250/a/log/4")
         self.assertEqual(req.status_code, 404)

@@ -1,6 +1,6 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
-    tests.apps.portal.test_user
+    tests.apps.portal.test_admin
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Test some admin commands

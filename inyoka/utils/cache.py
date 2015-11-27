@@ -38,11 +38,11 @@ class QueryCounter(object):
         self.use_task = use_task
         self.timeout = timeout or settings.COUNTER_CACHE_TIMEOUT
 
-    def __str__(self):
+    def __unicode__(self):
         """
-        Returns the value or the string "counting..."
+        Returns the value or the unicode string "counting..."
         """
-        return str(self.value(default=_("counting...")))
+        return unicode(self.value(default=_(u"counting...")))
 
     def __call__(self, default=None):
         return self.value(default=default)
@@ -68,6 +68,11 @@ class QueryCounter(object):
         blocks all requests until the value is created, so this should only be
         done for fast queries.
         """
+        try:
+            return self._value
+        except AttributeError:
+            # The value was not cached yet.
+            pass
         if not self.use_task:
             count = cache.get_or_set(self.cache_key, self.db_count, self.timeout)
         else:
@@ -80,7 +85,11 @@ class QueryCounter(object):
                 count_query.default_cols = False
 
                 query_counter_task.delay(self.cache_key, str(count_query))
-                return default
+                count = None
+        self._value = count
+        # If count is None, then we cache None and not the default value
+        if count is None:
+            return default
         return count
 
     def incr(self, count=1):

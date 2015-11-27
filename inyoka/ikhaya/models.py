@@ -8,24 +8,26 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from operator import attrgetter, itemgetter
 from datetime import datetime
+from operator import attrgetter, itemgetter
 
-from django.db import models
 from django.conf import settings
-from django.utils import datetime_safe
-from django.db.models import Q
 from django.core.cache import cache
+from django.db import models
+from django.db.models import Q
+from django.utils import datetime_safe
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy
 
-from inyoka.markup import parse
 from inyoka.portal.models import StaticFile
 from inyoka.portal.user import User
-from inyoka.utils.database import LockableObject, find_next_increment, InyokaMarkupField
-from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
+from inyoka.utils.database import (
+    InyokaMarkupField,
+    LockableObject,
+    find_next_increment,
+)
+from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
 from inyoka.utils.decorators import deferred
-from inyoka.utils.html import striptags
 from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
@@ -106,7 +108,8 @@ class ArticleManager(models.Manager):
             articles = Article.published.order_by('-updated') \
                                         .values_list('pub_date', 'slug')
             if category:
-                articles.filter(category__slug=category)
+                articles = articles.filter(category__slug=category)
+
             maxcount = max(settings.AVAILABLE_FEED_COUNTS['ikhaya_feed_article'])
             articles = list(articles[:maxcount])
             cache.set(key, articles, 1200)
@@ -317,9 +320,9 @@ class Article(models.Model, LockableObject):
             self.slug = '%s-%s' % (self.slug, self.id)
             Article.objects.filter(id=self.id).update(slug=self.slug)
         cache.delete('ikhaya/archive')
-        cache.delete('ikhaya/article_text/%s' % self.id)
-        cache.delete('ikhaya/article_intro/%s' % self.id)
-        cache.delete('ikhaya/article/%s' % self.slug)
+        cache.delete(u'ikhaya/article_text/{}'.format(self.id))
+        cache.delete(u'ikhaya/article_intro/{}'.format(self.id))
+        cache.delete(u'ikhaya/article/{}'.format(self.slug))
 
     def delete(self):
         """
@@ -404,8 +407,7 @@ class Comment(models.Model):
             self.article.save()
         super(Comment, self).save(*args, **kwargs)
         if self.id:
-            # TODO: remove after using redis-cache
-            cache.delete('ikhaya/comment/%d' % self.id)
+            cache.delete(u'ikhaya/comment/{}'.format(self.id))
 
 
 class Event(models.Model):
@@ -449,7 +451,7 @@ class Event(models.Model):
                                 .strftime('%Y/%m/%d/') + slugify(self.name)
             self.slug = find_next_increment(Event, 'slug', name)
         super(self.__class__, self).save(*args, **kwargs)
-        cache.delete('ikhaya/event/%s' % self.id)
+        cache.delete(u'ikhaya/event/{}'.format(self.id))
         cache.delete('ikhaya/event_count')
 
     def friendly_title(self, with_html_link=False):

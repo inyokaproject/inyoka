@@ -239,15 +239,15 @@ def show_tag_list(request):
     """
     Show an alphabetical tag list with all wiki tags.
     """
-    return {'tag_list': Page.objects.get_tagcloud(None)}
+    return {'tag_list': Page.objects.get_taglist()}
 
 
 @templated('wiki/tag_cloud.html')
 def show_tag_cloud(request):
     """
-    Show a tag cloud.
+    Show a tag cloud of the 100 most used tags.
     """
-    return {'tag_list': Page.objects.get_tagcloud()}
+    return {'tag_list': Page.objects.get_taglist(settings.TAGCLOUD_SIZE)}
 
 
 @templated('wiki/pages_by_tag.html')

@@ -145,12 +145,12 @@ class ForumManager(models.Manager):
         if slug:
             # we only select one forum and query only one if it's
             # not cached yet.
-            forum = cache.get('forum/forums/%s' % slug)
+            forum = cache.get(u'forum/forums/{}'.format(slug))
             if forum is None:
                 forum = super(ForumManager, self).get(slug=slug)
                 if forum:
                     forum.__dict__.pop('last_post', None)
-                    cache.set('forum/forums/%s' % slug, forum, 300)
+                    cache.set(u'forum/forums/{}'.format(slug), forum, 300)
             return forum
         # return all forums instead
         return self.get_all_forums_cached().values()
@@ -341,8 +341,9 @@ class Forum(models.Model):
         user.save(update_fields=('forum_welcome',))
 
     def invalidate_topic_cache(self):
-        cache.delete_many('forum/topics/%d/%d' % (self.id, page + 1) for page in
-            range(CACHE_PAGES_COUNT))
+        cache.delete_many(
+            u'forum/topics/{}/{}'.format(self.id, page + 1)
+            for page in range(CACHE_PAGES_COUNT))
 
     @staticmethod
     def get_children_recursive(forums, parent=None, offset=0):
@@ -364,7 +365,7 @@ class Forum(models.Model):
                 yield l
 
     def get_supporters(self):
-        supporters = cache.get('forum/forum/supporters-%s' % self.id)
+        supporters = cache.get(u'forum/forum/supporters-{}'.format(self.id))
         if supporters is None:
             supporters = []
             query = Privilege.objects \
@@ -376,7 +377,7 @@ class Forum(models.Model):
                     User.objects.defer('settings', 'forum_read_status')
                         .filter(id__in=subset).order_by('username').all()
                 )
-            cache.set('forum/forum/supporters-%s' % self.id, supporters, 86400)
+            cache.set(u'forum/forum/supporters-{}'.format(self.id), supporters, 86400)
         return supporters
 
     def __unicode__(self):
@@ -770,17 +771,19 @@ class Post(models.Model, LockableObject):
             # django_resis has a bug, that delete_many does not work with
             # empty generators. See:
             # https://github.com/niwinz/django-redis/pull/162
-            cache.delete_many('forum/forums/%s' % f.slug for f in forums)
+            cache.delete_many(u'forum/forums/{}'.format(f.slug) for f in forums)
 
         return super(Post, self).delete()
 
-    def hide(self):
-        self.author.post_count.decr()
+    def hide(self, change_post_counter=True):
+        if change_post_counter:
+            self.author.post_count.decr()
         self.hidden = True
         self.save()
 
-    def show(self):
-        self.author.post_count.incr()
+    def show(self, change_post_counter=True):
+        if change_post_counter:
+            self.author.post_count.incr()
         self.hidden = False
         self.save()
 
@@ -959,7 +962,7 @@ class Post(models.Model, LockableObject):
             self.hidden = False
             self.save(update_fields=['hidden'])
 
-        cache.delete('spam/user/%d' % self.author.pk)
+        cache.delete(u'spam/user/{}'.format(self.author.pk))
 
     def mark_spam(self, report=True, update_akismet=True):
         if update_akismet:

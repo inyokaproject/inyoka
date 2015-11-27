@@ -22,7 +22,7 @@ from inyoka.forum.models import Post as ForumPost
 from inyoka.markup import parse, RenderContext
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import get_smilies
+from inyoka.wiki.utils import get_smilies, CaseSensitiveException
 
 
 def on_get_smilies(request):
@@ -40,6 +40,8 @@ def on_render_preview(request):
             page = Page.objects.get_by_name(request.POST['page'])
         except Page.DoesNotExist:
             page = None
+        except CaseSensitiveException as e:
+            page = e.page
         simplified = False
     if 'post' in request.POST:
         try:

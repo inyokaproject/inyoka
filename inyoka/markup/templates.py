@@ -46,6 +46,7 @@ def expand_page_template(template, context, macro_behavior=False):
     """A helper for the template macro and wiki-parser."""
     from inyoka.wiki.models import Page
     from inyoka.markup import nodes
+    from inyoka.wiki.utils import CaseSensitiveException
     if template is None:
         if not macro_behavior:
             raise ValueError('no template given')
@@ -59,6 +60,8 @@ def expand_page_template(template, context, macro_behavior=False):
         return nodes.error_box(_(u'Missing template'),
                                _(u'The template “%(name)s” could not be found.')
                                % {'name': template})
+    except CaseSensitiveException as e:
+        page = e.page
     doc = page.rev.text.parse(context)
     children, is_block_tag = doc.get_fragment_nodes(True)
 

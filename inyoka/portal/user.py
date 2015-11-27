@@ -358,15 +358,11 @@ class UserManager(BaseUserManager):
         is the sender for welcome notices, it updates the antispam list and
         is the owner for log entries in the wiki triggered by inyoka itself.
         """
-        global _SYSTEM_USER
-        if not _SYSTEM_USER:
-            name = settings.INYOKA_SYSTEM_USER
-            try:
-                user = User.objects.get(username__iexact=name)
-            except User.DoesNotExist:
-                user = self.create_user(name, name)
-            _SYSTEM_USER = user
-        return _SYSTEM_USER
+        name = settings.INYOKA_SYSTEM_USER
+        try:
+            return User.objects.get(username__iexact=name)
+        except User.DoesNotExist:
+            return self.create_user(name, name)
 
 
 def upload_to_avatar(instance, filename):

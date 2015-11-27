@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-01 13:01+0100\n"
+"POT-Creation-Date: 2015-11-26 11:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,88 +70,88 @@ msgstr ""
 msgid "Moderated by"
 msgstr ""
 
-#: inyoka/markup/templates.py:52
+#: inyoka/markup/templates.py:53
 msgid "Invalid arguments"
 msgstr ""
 
-#: inyoka/markup/templates.py:53
+#: inyoka/markup/templates.py:54
 msgid "The first argument must be the name of the template."
 msgstr ""
 
-#: inyoka/markup/templates.py:59
+#: inyoka/markup/templates.py:60
 msgid "Missing template"
 msgstr ""
 
-#: inyoka/markup/templates.py:60
+#: inyoka/markup/templates.py:61
 #, python-format
 msgid "The template “%(name)s” could not be found."
 msgstr ""
 
-#: inyoka/markup/templates.py:158
+#: inyoka/markup/templates.py:161
 msgid "Invalid syntax for this loop. The first argument must be a variable."
 msgstr ""
 
-#: inyoka/markup/templates.py:164
+#: inyoka/markup/templates.py:167
 msgid ""
 "Invalid syntax for this loop. After the first variable an “in” is "
 "required."
 msgstr ""
 
-#: inyoka/markup/templates.py:169
+#: inyoka/markup/templates.py:172
 msgid "Loop header contains too many arguments."
 msgstr ""
 
-#: inyoka/markup/templates.py:173
+#: inyoka/markup/templates.py:176
 msgid "Loop end contains too many arguments."
 msgstr ""
 
-#: inyoka/markup/templates.py:182 inyoka/markup/templates.py:204
+#: inyoka/markup/templates.py:185 inyoka/markup/templates.py:207
 msgid "Conditions allow only one expression per block."
 msgstr ""
 
-#: inyoka/markup/templates.py:193
+#: inyoka/markup/templates.py:196
 msgid ""
 "The “else” block does not allow any expressions. Maybe you wanted to use "
 "the “elseif” block."
 msgstr ""
 
-#: inyoka/markup/templates.py:213
+#: inyoka/markup/templates.py:216
 msgid "“endif” does not allow any arguments"
 msgstr ""
 
-#: inyoka/markup/templates.py:249
+#: inyoka/markup/templates.py:252
 msgid "Unknown expression after “as” operator."
 msgstr ""
 
-#: inyoka/markup/templates.py:266
+#: inyoka/markup/templates.py:269
 msgid "Unknown expression after “is” operator"
 msgstr ""
 
-#: inyoka/markup/templates.py:344
+#: inyoka/markup/templates.py:347
 msgid "Unexpected end of expression."
 msgstr ""
 
-#: inyoka/markup/templates.py:356
+#: inyoka/markup/templates.py:359
 msgid "Parentheses were not closed properly."
 msgstr ""
 
-#: inyoka/markup/templates.py:366
+#: inyoka/markup/templates.py:369
 msgid "Missing comma between array entries"
 msgstr ""
 
-#: inyoka/markup/templates.py:389
+#: inyoka/markup/templates.py:392
 msgid "Unexpected operator"
 msgstr ""
 
-#: inyoka/markup/templates.py:416
+#: inyoka/markup/templates.py:419
 msgid "expected variable, integer or attribute"
 msgstr ""
 
-#: inyoka/markup/templates.py:447
+#: inyoka/markup/templates.py:450
 msgid "Too many arguments for this value output"
 msgstr ""
 
-#: inyoka/markup/templates.py:472
+#: inyoka/markup/templates.py:475
 msgid "Invalid syntax: "
 msgstr ""
 
