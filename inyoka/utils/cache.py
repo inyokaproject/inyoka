@@ -46,11 +46,11 @@ class QueryCounter(object):
     def __call__(self, default=None):
         return self.value(default=default)
 
-    def db_count(self, into_cache=False):
+    def db_count(self):
         """
         Executes the query with .count() and returns the value.
 
-        Saves the value into the cache in into_cache is True.
+        Also saves the calculated value into the cache.
         """
         value = self.query.count()
         cache.set(self.cache_key, value, timeout=self.timeout)
