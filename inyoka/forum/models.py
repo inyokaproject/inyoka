@@ -880,6 +880,7 @@ class Post(models.Model, LockableObject):
                       'first_post': new_topic.first_post}
             if new_topic.first_post is None:
                 values['first_post'] = sorted(posts, key=lambda o: o.position)[0]
+            new_topic.post_count.incr(len(posts))
             Topic.objects.filter(pk=new_topic.pk).update(**values)
             Post.objects.filter(pk=values['first_post'].pk).update(position=0)
 

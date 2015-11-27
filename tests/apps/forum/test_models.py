@@ -227,7 +227,14 @@ class TestPostSplit(TestCase):
                     position=i)
             self.topic2.posts.add(self.t2_posts[i])
 
-        self.user.post_count.db_count(into_cache=True)
+        # Setup the cache
+        self.user.post_count.db_count()
+        self.topic1.post_count.db_count()
+        self.topic2.post_count.db_count()
+        self.forum1.post_count.db_count()
+        self.forum2.post_count.db_count()
+        self.forum1.topic_count.db_count()
+        self.forum2.topic_count.db_count()
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
@@ -276,6 +283,16 @@ class TestPostSplit(TestCase):
         post_ids = [p.id for k, p in self.t2_posts.items()] + \
                    [p.id for k, p in self.t1_posts.items()]
         self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
+
+    def test_split_topic_post_count(self):
+        """
+        Tests that the post_count of the new topic is correct after the split.
+        """
+        Post.split(self.topic1.posts.all(), self.topic1, self.topic2)
+
+        self.assertEqual(
+            self.topic2.post_count.value(),
+            self.topic2.posts.count())
 
 
 class TestPostMove(TestCase):
