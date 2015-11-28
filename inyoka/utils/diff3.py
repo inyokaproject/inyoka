@@ -11,10 +11,10 @@
     :copyright: (c) by Florian Festi.
     :license: BSD, see LICENSE for more details.
 """
-import re
-import heapq
 import difflib
+import heapq
 import itertools
+import re
 
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
@@ -72,9 +72,9 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
     other_len = len(other)
     new_len = len(new)
 
-    while old_lineno < old_len and \
-          other_lineno < other_len and \
-          new_lineno < new_len:
+    while (old_lineno < old_len and
+            other_lineno < other_len and
+            new_lineno < new_len):
 
         # unchanged
         if old[old_lineno] == other[other_lineno] == new[new_lineno]:
@@ -149,8 +149,9 @@ def stream_merge(old, other, new, allow_conflicts=True, markers=None):
                 new_lineno = new_m
 
     # all finished
-    if (old_lineno == old_len and other_lineno == other_len
-        and new_lineno == new_len):
+    if (old_lineno == old_len and
+            other_lineno == other_len and
+            new_lineno == new_len):
         return
 
     # new added lines

@@ -10,9 +10,8 @@
 """
 import logging
 
-from django.conf import settings
-
 from celery.signals import task_failure
+from django.conf import settings
 
 logger = logging.getLogger(settings.INYOKA_LOGGER_NAME)
 

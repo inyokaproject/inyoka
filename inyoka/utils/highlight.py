@@ -19,16 +19,17 @@ import re
 from itertools import chain
 
 from django.utils.safestring import mark_safe
-
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
-from pygments.lexers import (TextLexer, get_lexer_by_name,
-    get_lexer_for_mimetype, get_lexer_for_filename)
-from pygments.styles.friendly import FriendlyStyle
+from pygments.lexers import (
+    TextLexer,
+    get_lexer_by_name,
+    get_lexer_for_filename,
+    get_lexer_for_mimetype,
+)
 from pygments.util import ClassNotFound
 
 from inyoka.utils.html import striptags
-
 
 _pygments_formatter = HtmlFormatter(style='colorful',
                                     cssclass='notranslate syntax',
@@ -74,9 +75,9 @@ class Highlighter(object):
         self.query = query
         # ignore short words (since we actually search in the text and not
         # for whole words).
-        self.query_words = set([word.lower() for word in query.split()
-                                             if not word.startswith('-')
-                                                and len(word) > 2])
+        self.query_words = set(word.lower()
+                               for word in query.split()
+                               if not word.startswith('-') and len(word) > 2)
 
     def highlight(self, text_block):
         self.text_block = striptags(text_block)
@@ -93,7 +94,7 @@ class Highlighter(object):
         lower_text_block = self.text_block.lower()
 
         for word in self.query_words:
-            if not word in word_positions:
+            if word not in word_positions:
                 word_positions[word] = []
 
             start_offset = 0

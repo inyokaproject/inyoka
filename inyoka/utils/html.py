@@ -15,13 +15,12 @@ import re
 from htmlentitydefs import name2codepoint
 from xml.sax.saxutils import quoteattr
 
+import lxml.html.clean
 from django.utils.encoding import force_unicode
-
-from html5lib import HTMLParser, treewalkers, treebuilders
+from html5lib import HTMLParser, treebuilders, treewalkers
 from html5lib.filters.optionaltags import Filter as OptionalTagsFilter
 from html5lib.serializer import HTMLSerializer
 from lxml.html.defs import empty_tags
-import lxml.html.clean
 
 from inyoka.utils.text import increment_string
 

@@ -54,8 +54,6 @@
 """
 from __future__ import division
 
-import math
-
 from django.http import Http404
 from django.utils.encoding import force_unicode
 
@@ -66,7 +64,7 @@ class Pagination(object):
     """ Handle pagination """
 
     def __init__(self, request, query, page=1, per_page=10, link=None, total=None,
-                       rownum_column=None, max_pages=None, one_page=False):
+            rownum_column=None, max_pages=None, one_page=False):
         """ Create pagination object
 
             :param request: The current request.
@@ -80,26 +78,26 @@ class Pagination(object):
             :param one_page: If set, show all elements on one page
         """
 
-        self.request       = request
-        self.query         = query
-        self.page          = int(page)
-        self.per_page      = int(per_page)
-        self.base_link     = self._get_base_link(link)
-        self.total         = self._get_total(total)
+        self.request = request
+        self.query = query
+        self.page = int(page)
+        self.per_page = int(per_page)
+        self.base_link = self._get_base_link(link)
+        self.total = self._get_total(total)
         self.rownum_column = rownum_column
 
         self._queryset = None
-        self._first    = None
-        self._last     = None
-        self._next     = None
-        self._prev     = None
+        self._first = None
+        self._last = None
+        self._next = None
+        self._prev = None
 
         if one_page or self.per_page < 1:
             self.per_page = self.total
             self.pages = 1
             self.page = 1
         else:
-            self.pages = max(0, (self.total-1)) // self.per_page + 1
+            self.pages = max(0, (self.total - 1)) // self.per_page + 1
 
         if max_pages and self.pages > max_pages:
             self.pages = max_pages
@@ -124,7 +122,7 @@ class Pagination(object):
     def _get_total(self, total):
         if total:
             return total
-        elif isinstance(self.query, (list,tuple)):
+        elif isinstance(self.query, (list, tuple)):
             return len(self.query)
         else:
             return self.query.count()
@@ -184,7 +182,7 @@ class Pagination(object):
         if self.page <= 1:
             return False
         if self._prev is None:
-            self._prev = self.generate_link(self.page-1, self.params)
+            self._prev = self.generate_link(self.page - 1, self.params)
         return self._prev
 
     @property
@@ -194,7 +192,7 @@ class Pagination(object):
         if self.page >= self.pages:
             return False
         if self._next is None:
-            self._next = self.generate_link(self.page+1, self.params)
+            self._next = self.generate_link(self.page + 1, self.params)
         return self._next
 
     def list(self, threshold=2):
@@ -207,9 +205,9 @@ class Pagination(object):
                  keys 'url' and 'page'.
         """
 
-        for num in xrange(1,self.pages+1):
-            if num <= threshold or num > (self.pages-threshold) or \
-               abs(self.page - num) < threshold:
+        for num in xrange(1, self.pages + 1):
+            if (num <= threshold or num > (self.pages - threshold) or
+                    abs(self.page - num) < threshold):
                 was_ellipsis = False
                 yield {
                     'type': 'current' if self.page == num else 'link',
