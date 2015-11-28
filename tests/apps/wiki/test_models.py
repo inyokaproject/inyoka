@@ -26,3 +26,15 @@ class TestPageManager(TestCase):
 
         self.assertIsNone(cache.get('wiki/page/Test'))
         self.assertIsNotNone(cache.get('wiki/page/test'))
+
+    def test_get_missing(self):
+        """
+        Tests, that get_missing returns a dict with the correct conent.
+        """
+        Page.objects.create('test1', 'test content')
+        Page.objects.create('test2', '[:test1:] content')
+        test3 = Page.objects.create('test3', '[:missing:] content')
+
+        missing_pages = Page.objects.get_missing()
+
+        self.assertEqual(dict(missing_pages), {'missing': [test3]})
