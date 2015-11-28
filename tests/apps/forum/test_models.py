@@ -41,7 +41,7 @@ class TestForumModel(TestCase):
 
         # Fill the cache
         for forum in (self.parent1, self.parent2, self.forum):
-            forum.post_count.db_count(into_cache=True)
+            forum.post_count.db_count()
 
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
@@ -334,7 +334,7 @@ class TestPostMove(TestCase):
             topic=self.topic2)
 
         # Calculate user posts
-        self.user.post_count.db_count(into_cache=True)
+        self.user.post_count.db_count()
 
         # Reload objects. Use topic1.refresh_from_db() in django 1.8
         self.topic1 = Topic.objects.get(pk=self.topic1.pk)
