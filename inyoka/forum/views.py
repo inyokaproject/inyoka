@@ -1617,7 +1617,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
             title = _(u'Posts by “%(user)s”') % {'user': user.username}
             url = href('forum', 'author', user.username, forum)
         else:
-            title = _(u'My posts')
+            title = _(u'Involved topics')
             url = href('forum', 'egosearch', forum)
     elif action == 'newposts':
         forum_ids = tuple(forum.id for forum in Forum.objects.get_cached())
