@@ -880,20 +880,13 @@ class Page(models.Model):
 
     def delete(self):
         """
-        This deletes the page.  In fact it does not delete the page but add a
-        "deleted" revision.  You should never use this method directly, always
-        use `edit()` with `delete` set to `True` to get user data into the
-        revision log.
-
-        This method exists mainly to automatically delete pages without further
-        information, for example if you want a cronjob to prune data
-        automatically.
+        This simply raises an exception, as we never want to delete pages really.
+        Instead we just mark pages as deleted, which is done with edit(deleted=True).
+        
+        The purpose of this method is to avoid using the django default delete() and
+        avoid some side effects with it.
         """
-        self.revisions.latest() \
-            .edit(deleted=True,
-                  text=u'',
-                  file=None,
-                  note=_(u'Automatically deleted'))
+        raise NotImplementedError('Please use edit(deleted=True) instead.')
 
     def edit(self, text=None, user=None, change_date=None,
              note=u'', attachment=None, attachment_filename=None,
