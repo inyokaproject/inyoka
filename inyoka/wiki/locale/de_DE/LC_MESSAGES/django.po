@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-28 18:07+0100\n"
-"PO-Revision-Date: 2015-11-28 18:09+0100\n"
-"Last-Translator: Unknown <chris@Arch-Dev-Virtual>\n"
+"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"PO-Revision-Date: 2015-11-28 18:34+0100\n"
+"Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
@@ -89,7 +89,7 @@ msgstr "Ich möchte keine Vorlage verwenden"
 
 #: inyoka/wiki/actions.py:403
 msgid "The page <a href=\"{link}\">{name}</a> has been created."
-msgstr "Die Seite „<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."
+msgstr "Die Seite „<a href=\"{link}\">{name}</a>“ wurde erstellt."
 
 #: inyoka/wiki/actions.py:450
 msgid ""
@@ -288,33 +288,29 @@ msgstr "Unbekannte Seite"
 msgid "Created"
 msgstr "Erstellt"
 
-#: inyoka/wiki/models.py:897
-msgid "Automatically deleted"
-msgstr "Von System gelöscht"
-
-#: inyoka/wiki/models.py:1046
+#: inyoka/wiki/models.py:1039
 msgid "Wiki page"
 msgstr "Wikiseite"
 
-#: inyoka/wiki/models.py:1047
+#: inyoka/wiki/models.py:1040
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
-#: inyoka/wiki/models.py:1103
+#: inyoka/wiki/models.py:1096
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
-#: inyoka/wiki/models.py:1182
+#: inyoka/wiki/models.py:1175
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr "%(rev)s (Revision %(date)s)"
 
-#: inyoka/wiki/models.py:1211
+#: inyoka/wiki/models.py:1204
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
 
-#: inyoka/wiki/models.py:1233
+#: inyoka/wiki/models.py:1226
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"
@@ -379,4 +375,7 @@ msgid ""
 msgstr ""
 "Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s "
 "bearbeitet. Zusammenfassung: %(summary)s"
+
+#~ msgid "Automatically deleted"
+#~ msgstr "Von System gelöscht"
 
