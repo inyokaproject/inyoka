@@ -32,6 +32,7 @@ from jinja2 import (escape, Template, Environment, contextfunction,
 from inyoka import INYOKA_REVISION
 from inyoka.utils.dates import format_date, format_datetime, format_time, naturalday
 from inyoka.utils.local import current_request
+from inyoka.utils.special_day import check_special_day
 from inyoka.utils.text import human_number
 from inyoka.utils.urls import href, url_for, urlquote, urlencode
 
@@ -195,7 +196,8 @@ def populate_context_defaults(context, flash=False):
             USER=user,
             BREADCRUMB=Breadcrumb(),
             MOBILE=get_flavour() == 'mobile',
-            _csrf_token=force_unicode(csrf(request)['csrf_token'])
+            _csrf_token=force_unicode(csrf(request)['csrf_token']),
+            special_day_css=check_special_day()
         )
 
         if not flash:
