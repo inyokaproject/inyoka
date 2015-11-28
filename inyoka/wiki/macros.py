@@ -134,11 +134,11 @@ class MissingPages(macros.Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
-        for page, count in Page.objects.get_missing():
-            title = [nodes.Text(get_pagetitle(page, True))]
-            link = nodes.InternalLink(page, title,
+        for missing_name, pages in Page.objects.get_missing().items():
+            title = [nodes.Text(missing_name)]
+            link = nodes.InternalLink(missing_name, title,
                                       force_existing=True)
-            result.children.append(nodes.ListItem([link, nodes.Text(u' (%sx)' % count)]))
+            result.children.append(nodes.ListItem([link, nodes.Text(u' (%sx)' % len(pages))]))
         return result
 
 

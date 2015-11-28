@@ -77,6 +77,7 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from collections import defaultdict
 import locale
 from datetime import datetime
 from hashlib import sha1
@@ -309,14 +310,20 @@ class PageManager(models.Manager):
         return sorted(page for page in pages if page not in ignore)
 
     def get_missing(self):
-        """Return a tuple of (page, count) for all missing page-links."""
+        """
+        Returns a dictonary where the keys are the names of a pages that do
+        not exist and the value is a list of page objects which have a link to
+        that missing page.
+        """
         page_names = Page.objects.filter(last_rev__deleted=False).values('name')
 
-        return (MetaData.objects
-            .filter(key='X-Link')
-            .exclude(value__in=page_names)
-            .values_list('value')
-            .annotate(count=Count('value')))
+        missing_pages = defaultdict(list)
+        for meta in (MetaData.objects
+                .filter(key='X-Link')
+                .exclude(value__in=page_names)
+                .select_related('page')):
+            missing_pages[meta.value].append(meta.page)
+        return missing_pages
 
     def get_similar(self, name, n=10):
         """
