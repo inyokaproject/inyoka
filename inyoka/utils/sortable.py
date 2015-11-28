@@ -66,11 +66,7 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.contrib import messages
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
-
-from inyoka.utils.local import current_request
 
 
 class Sortable(object):
@@ -101,10 +97,6 @@ class Sortable(object):
         order = self.order
         ocol = escape(order.lstrip('-'))
         if self.columns and ocol not in self.columns:
-            # safes us for some bad usage that raises an exception
-            messages.info(current_request,
-                _(u'The chosen sort value (“%(value)s”) is not available')
-                % {'value': ocol})
             return self.objects
 
         q = self.objects.order_by(order)
