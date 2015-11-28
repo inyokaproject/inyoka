@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-26 11:19+0100\n"
+"POT-Creation-Date: 2015-11-28 18:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,28 +194,28 @@ msgstr ""
 msgid "Posts"
 msgstr ""
 
-#: inyoka/forum/models.py:919
+#: inyoka/forum/models.py:920
 msgid "Pictures"
 msgstr ""
 
-#: inyoka/forum/models.py:976
+#: inyoka/forum/models.py:977
 msgid "This topic is hidden due to possible spam."
 msgstr ""
 
-#: inyoka/forum/models.py:985
+#: inyoka/forum/models.py:986
 #, python-format
 msgid ""
 "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible"
 " spam."
 msgstr ""
 
-#: inyoka/forum/models.py:1172
+#: inyoka/forum/models.py:1173
 #, python-format
 msgctxt "Link text to an image attachment"
 msgid "View %(name)s"
 msgstr ""
 
-#: inyoka/forum/models.py:1189
+#: inyoka/forum/models.py:1190
 #, python-format
 msgctxt "Link text to download an attachment"
 msgid "Download %(name)s"
@@ -592,7 +592,7 @@ msgstr ""
 msgid "Topics by “%(user)s”"
 msgstr ""
 
-#: inyoka/forum/views.py:1611 inyoka/forum/views.py:1683
+#: inyoka/forum/views.py:1611 inyoka/forum/views.py:1682
 msgid "You need to be logged in to use this function."
 msgstr ""
 
@@ -602,39 +602,39 @@ msgid "Posts by “%(user)s”"
 msgstr ""
 
 #: inyoka/forum/views.py:1619
-msgid "My posts"
+msgid "Involved topics"
 msgstr ""
 
 #: inyoka/forum/views.py:1631
 msgid "New posts"
 msgstr ""
 
-#: inyoka/forum/views.py:1727
+#: inyoka/forum/views.py:1726
 msgid "Posts by “{user}” in topic “{topic}”"
 msgstr ""
 
-#: inyoka/forum/views.py:1730
+#: inyoka/forum/views.py:1729
 msgid "Posts by “{user}” in forum “{forum}”"
 msgstr ""
 
-#: inyoka/forum/views.py:1732
+#: inyoka/forum/views.py:1731
 msgid "Posts by “{user}”"
 msgstr ""
 
-#: inyoka/forum/views.py:1778
+#: inyoka/forum/views.py:1777
 msgid "No recent topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1791
+#: inyoka/forum/views.py:1790
 msgid "No older topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1853
+#: inyoka/forum/views.py:1852
 #, python-format
 msgid "The forum “%(forum)s” was changed successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1855
+#: inyoka/forum/views.py:1854
 #, python-format
 msgid "The forum “%(forum)s” was created successfully."
 msgstr ""

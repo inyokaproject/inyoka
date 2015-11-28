@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-26 11:19+0100\n"
+"POT-Creation-Date: 2015-11-28 18:37+0100\n"
 "PO-Revision-Date: 2015-11-18 22:23+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
@@ -144,11 +144,6 @@ msgstr ""
 "Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte "
 "noch einige Zeit, bevor du das Formular erneut absendest."
 
-#: inyoka/utils/sortable.py:106
-#, python-format
-msgid "The chosen sort value (“%(value)s”) is not available"
-msgstr "Der ausgewählte Wert („%(value)s“) ist nicht verfügbar"
-
 #: inyoka/utils/spam.py:151
 #, python-format
 msgid ""
@@ -203,4 +198,7 @@ msgid "The user “%(name)s” deleted his profile. Your session has ended."
 msgstr ""
 "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum "
 "abgemelet."
+
+#~ msgid "The chosen sort value (“%(value)s”) is not available"
+#~ msgstr "Der ausgewählte Wert („%(value)s“) ist nicht verfügbar"
 
