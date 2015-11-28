@@ -79,6 +79,7 @@
 """
 import locale
 from datetime import datetime
+from functools import partial
 from hashlib import sha1
 
 import magic
@@ -987,11 +988,11 @@ class Page(models.Model):
 
         update_object_list.delay(self.name)
 
-    def get_absolute_url(self, action='show', revision=None, format=None, **query):
+    def get_absolute_url(self, action='show', revision=None, old_revision=None,
+                         format=None, **query):
         actions = ('attachments',
                    'backlinks',
                    'delete',
-                   'diff',
                    'discussion',
                    'edit',
                    'feed',
@@ -1001,24 +1002,27 @@ class Page(models.Model):
                    'mv_discontinued',
                    'rename',
                    'subscribe',
-                   'udiff',
                    'unsubscribe')
+
+        action_href = partial(href, 'wiki', self.name, 'a')
+
         if action in actions:
-            return href('wiki', self.name, 'a', action, **query)
+            return action_href(action, **query)
+        elif action == 'diff' or action == 'udiff':
+            return action_href(action, old_revision, revision)
         elif action == 'show_no_redirect':
             return href('wiki', self.name, 'no_redirect', **query)
         elif action == 'revert' and revision is not None:
-            return href('wiki', self.name, 'a', 'revert', revision, **query)
+            return action_href('revert', revision, **query)
         elif action == 'export' and format is not None:
             if revision is not None:
-                return href('wiki', self.name, 'a', 'export', format, revision, **query)
+                return action_href('export', format, revision, **query)
             else:
-                return href('wiki', self.name, 'a', 'export', format, **query)
+                return action_href('export', format, **query)
         elif revision is not None:
-            return href('wiki', self.name, 'a', 'revision', revision, **query)
+            return action_href('revision', revision, **query)
         else:
             return href('wiki', self.name, **query)
-        raise KeyError
 
     def __unicode__(self):
         return self.name
