@@ -9,8 +9,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from time import time
 from datetime import datetime, timedelta
+from time import time
 
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy

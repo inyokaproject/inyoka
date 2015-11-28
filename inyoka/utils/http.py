@@ -10,8 +10,8 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
-from django.http import Http404, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404, HttpResponse
 
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.templating import render_template

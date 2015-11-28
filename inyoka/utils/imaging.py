@@ -11,9 +11,9 @@
 import os
 from contextlib import closing
 
-from PIL import Image
 from django.conf import settings
 from django.utils.encoding import force_unicode
+from PIL import Image
 
 from inyoka.utils.urls import is_safe_domain
 
@@ -93,7 +93,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
     if not is_safe_domain(location):
         return None
 
-    format, quality = ('png', '100')
+    format = 'png'
     # force unicode because of posixpath
     destination = force_unicode(destination)
     destination = u'%s.%s' % (destination.rsplit('.', 1)[0], format)
