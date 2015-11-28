@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-26 11:19+0100\n"
-"PO-Revision-Date: 2015-11-18 22:25+0100\n"
-"Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
+"POT-Creation-Date: 2015-11-28 18:07+0100\n"
+"PO-Revision-Date: 2015-11-28 18:09+0100\n"
+"Last-Translator: Unknown <chris@Arch-Dev-Virtual>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) "
 "(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
@@ -284,45 +284,44 @@ msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
-#: inyoka/wiki/models.py:499
+#: inyoka/wiki/models.py:500
 msgid "Created"
 msgstr "Erstellt"
 
-#: inyoka/wiki/models.py:896
+#: inyoka/wiki/models.py:897
 msgid "Automatically deleted"
 msgstr "Von System gelöscht"
 
-#: inyoka/wiki/models.py:1042
+#: inyoka/wiki/models.py:1046
 msgid "Wiki page"
 msgstr "Wikiseite"
 
-#: inyoka/wiki/models.py:1043
+#: inyoka/wiki/models.py:1047
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
-#: inyoka/wiki/models.py:1099
+#: inyoka/wiki/models.py:1103
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
-#: inyoka/wiki/models.py:1178
+#: inyoka/wiki/models.py:1182
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr "%(rev)s (Revision %(date)s)"
 
-#: inyoka/wiki/models.py:1207
+#: inyoka/wiki/models.py:1211
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
 
-#: inyoka/wiki/models.py:1229
+#: inyoka/wiki/models.py:1233
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"
 
-#: inyoka/wiki/notifications.py:33
-#, python-format
-msgid "The page “%(name)s” was changed"
-msgstr "Die Seite „%(name)s“ wurde geändert"
+#: inyoka/wiki/notifications.py:37
+msgid "The page “{name}” was changed"
+msgstr "Die Seite „{name}s“ wurde geändert"
 
 #: inyoka/wiki/views.py:60
 msgid "A site name needs to be entered to create this page."
