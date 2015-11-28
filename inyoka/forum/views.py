@@ -1593,9 +1593,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         title = _(u'Posts of the last %(n)d hours') % {'n': hours}
         url = href('forum', 'last%d' % hours, forum)
     elif action == 'unanswered':
-        # Deactivated for the moment
-        raise Http404()
-        topics = topics.annotate(p_count=Count('posts')).filter(p_count=1)
+        topics = topics.filter(first_post=F('last_post'))
         title = _(u'Unanswered topics')
         url = href('forum', 'unanswered', forum)
     elif action == 'unsolved':
@@ -1642,7 +1640,6 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         if forum_obj and forum_obj.id not in invisible:
             topics = topics.filter(forum=forum_obj)
 
-    topics = topics.distinct()
     total_topics = get_simplified_queryset(topics).count()
     topics = topics.values_list('id', flat=True)
     pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
