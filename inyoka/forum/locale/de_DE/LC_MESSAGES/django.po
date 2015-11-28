@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-26 11:19+0100\n"
-"PO-Revision-Date: 2015-11-18 22:20+0100\n"
+"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"PO-Revision-Date: 2015-11-28 18:37+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) "
@@ -198,15 +198,15 @@ msgstr "Beitrag"
 msgid "Posts"
 msgstr "Beiträge"
 
-#: inyoka/forum/models.py:919
+#: inyoka/forum/models.py:920
 msgid "Pictures"
 msgstr "Bilder"
 
-#: inyoka/forum/models.py:976
+#: inyoka/forum/models.py:977
 msgid "This topic is hidden due to possible spam."
 msgstr "Dieses Thema wurde aufgrund möglichen Spams verborgen"
 
-#: inyoka/forum/models.py:985
+#: inyoka/forum/models.py:986
 #, python-format
 msgid ""
 "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible"
@@ -215,13 +215,13 @@ msgstr ""
 "[user:%(username)s:]: Der Beitrag [post:%(post)s:] wurde aufgrund "
 "möglichen Spams verborgen."
 
-#: inyoka/forum/models.py:1172
+#: inyoka/forum/models.py:1173
 #, python-format
 msgctxt "Link text to an image attachment"
 msgid "View %(name)s"
 msgstr "%(name)s ansehen"
 
-#: inyoka/forum/models.py:1189
+#: inyoka/forum/models.py:1190
 #, python-format
 msgctxt "Link text to download an attachment"
 msgid "Download %(name)s"
@@ -615,7 +615,7 @@ msgstr "Ungelöste Themen"
 msgid "Topics by “%(user)s”"
 msgstr "Themen von „%(user)s“"
 
-#: inyoka/forum/views.py:1611 inyoka/forum/views.py:1683
+#: inyoka/forum/views.py:1611 inyoka/forum/views.py:1682
 msgid "You need to be logged in to use this function."
 msgstr "Für diese Funktion musst du eingeloggt sein."
 
@@ -625,40 +625,43 @@ msgid "Posts by “%(user)s”"
 msgstr "Beiträge von „%(user)s“"
 
 #: inyoka/forum/views.py:1619
-msgid "My posts"
-msgstr "Eigene Beiträge"
+msgid "Involved topics"
+msgstr "Beteiligte Themen"
 
 #: inyoka/forum/views.py:1631
 msgid "New posts"
 msgstr "Neue Beiträge"
 
-#: inyoka/forum/views.py:1727
+#: inyoka/forum/views.py:1726
 msgid "Posts by “{user}” in topic “{topic}”"
 msgstr "Beiträge von “{user}” im Thema “{topic}”"
 
-#: inyoka/forum/views.py:1730
+#: inyoka/forum/views.py:1729
 msgid "Posts by “{user}” in forum “{forum}”"
 msgstr "Beiträge von “{user}” im Forum “{forum}”"
 
-#: inyoka/forum/views.py:1732
+#: inyoka/forum/views.py:1731
 msgid "Posts by “{user}”"
 msgstr "Beiträge von „{user}“"
 
-#: inyoka/forum/views.py:1778
+#: inyoka/forum/views.py:1777
 msgid "No recent topics within this forum."
 msgstr "Es existieren keine neueren Themen in diesem Forum."
 
-#: inyoka/forum/views.py:1791
+#: inyoka/forum/views.py:1790
 msgid "No older topics within this forum."
 msgstr "Es existieren keine älteren Themen in diesem Forum."
 
-#: inyoka/forum/views.py:1853
+#: inyoka/forum/views.py:1852
 #, python-format
 msgid "The forum “%(forum)s” was changed successfully."
 msgstr "Das Forum „%(forum)s“ wurde erfolgreich geändert."
 
-#: inyoka/forum/views.py:1855
+#: inyoka/forum/views.py:1854
 #, python-format
 msgid "The forum “%(forum)s” was created successfully."
 msgstr "Das Forum „%(forum)s“ wurde erfolgreich erstellt."
+
+#~ msgid "My posts"
+#~ msgstr "Eigene Beiträge"
 

@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-26 11:19+0100\n"
-"PO-Revision-Date: 2015-11-18 22:25+0100\n"
+"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"PO-Revision-Date: 2015-11-28 18:34+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) "
@@ -89,7 +89,7 @@ msgstr "Ich möchte keine Vorlage verwenden"
 
 #: inyoka/wiki/actions.py:403
 msgid "The page <a href=\"{link}\">{name}</a> has been created."
-msgstr "Die Seite „<a href=\"%(link)s\">%(name)s</a>“ wurde erstellt."
+msgstr "Die Seite „<a href=\"{link}\">{name}</a>“ wurde erstellt."
 
 #: inyoka/wiki/actions.py:450
 msgid ""
@@ -284,45 +284,40 @@ msgstr "Der Metadaten-Filter hat keine Ergebnisse gefunden. Query: %(query)s"
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
-#: inyoka/wiki/models.py:499
+#: inyoka/wiki/models.py:500
 msgid "Created"
 msgstr "Erstellt"
 
-#: inyoka/wiki/models.py:896
-msgid "Automatically deleted"
-msgstr "Von System gelöscht"
-
-#: inyoka/wiki/models.py:1042
+#: inyoka/wiki/models.py:1039
 msgid "Wiki page"
 msgstr "Wikiseite"
 
-#: inyoka/wiki/models.py:1043
+#: inyoka/wiki/models.py:1040
 msgid "Wiki pages"
 msgstr "Wikiseiten"
 
-#: inyoka/wiki/models.py:1099
+#: inyoka/wiki/models.py:1096
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
 
-#: inyoka/wiki/models.py:1178
+#: inyoka/wiki/models.py:1175
 #, python-format
 msgid "%(rev)s (Revision %(date)s)rev"
 msgstr "%(rev)s (Revision %(date)s)"
 
-#: inyoka/wiki/models.py:1207
+#: inyoka/wiki/models.py:1204
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
 msgstr "%(note)s [Revision vom %(date)s wiederhergestellt von %(user)s]"
 
-#: inyoka/wiki/models.py:1229
+#: inyoka/wiki/models.py:1226
 #, python-format
 msgid "Revision %(id)d (%(title)s)"
 msgstr "Revision %(id)d (%(title)s)"
 
-#: inyoka/wiki/notifications.py:33
-#, python-format
-msgid "The page “%(name)s” was changed"
-msgstr "Die Seite „%(name)s“ wurde geändert"
+#: inyoka/wiki/notifications.py:37
+msgid "The page “{name}” was changed"
+msgstr "Die Seite „{name}s“ wurde geändert"
 
 #: inyoka/wiki/views.py:60
 msgid "A site name needs to be entered to create this page."
@@ -380,4 +375,7 @@ msgid ""
 msgstr ""
 "Ein anonymer Benutzer hat den Artikel „%(article)s” am %(date)s "
 "bearbeitet. Zusammenfassung: %(summary)s"
+
+#~ msgid "Automatically deleted"
+#~ msgstr "Von System gelöscht"
 
