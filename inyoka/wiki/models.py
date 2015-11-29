@@ -388,7 +388,7 @@ class PageManager(models.Manager):
             raise Page.DoesNotExist()
         if rev is None:
             return self.get_by_name(name, True, raise_on_deleted)
-        rev = Revision.objects.select_related('page', 'test', 'user') \
+        rev = Revision.objects.select_related('page', 'user') \
                               .get(id=int(rev))
         if rev.page.name.lower() != name.lower() or \
                 (rev.deleted and raise_on_deleted):
@@ -406,7 +406,7 @@ class PageManager(models.Manager):
             kwargs['value'] = value
         rv = [
             x.page
-            for x in MetaData.objects.select_related('name').filter(**kwargs)
+            for x in MetaData.objects.select_related('page').filter(**kwargs)
             if not is_privileged_wiki_page(x.page.name)
         ]
         rv.sort(key=lambda x: x.name)
@@ -890,7 +890,7 @@ class Page(models.Model):
         """
         This simply raises an exception, as we never want to delete pages really.
         Instead we just mark pages as deleted, which is done with edit(deleted=True).
-        
+
         The purpose of this method is to avoid using the django default delete() and
         avoid some side effects with it.
         """
