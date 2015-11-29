@@ -1589,6 +1589,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         if hours > 24:
             raise Http404()
         topics = topics.filter(posts__pub_date__gt=datetime.utcnow() - timedelta(hours=hours))
+        topics = topics.distinct()
         title = _(u'Posts of the last %(n)d hours') % {'n': hours}
         url = href('forum', 'last%d' % hours, forum)
     elif action == 'unanswered':
