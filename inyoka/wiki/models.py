@@ -77,8 +77,8 @@
     :copyright: (c) 2007-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from collections import defaultdict
 import locale
+from collections import defaultdict
 from datetime import datetime
 from functools import partial
 from hashlib import sha1

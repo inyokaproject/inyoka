@@ -17,7 +17,7 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import F, Q, Count
+from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
@@ -1703,7 +1703,7 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
     # at least with MySQL we need this, as it is the fastest method
     posts = posts.values_list('id', flat=True)
 
-    pagination = Pagination(request, posts, page, TOPICS_PER_PAGE, pagination_url, \
+    pagination = Pagination(request, posts, page, TOPICS_PER_PAGE, pagination_url,
         total=total_posts, max_pages=MAX_PAGES_TOPICLIST)
     post_ids = [post_id for post_id in pagination.get_queryset()]
 
@@ -1740,7 +1740,6 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
         'topic': topic,
         'username': user.username,
     }
-
 
 
 @templated('forum/welcome.html')
@@ -1879,4 +1878,3 @@ def forum_edit(request, slug=None, parent=None):
         'form': form,
         'forum': forum
     }
-
