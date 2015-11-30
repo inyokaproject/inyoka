@@ -386,7 +386,7 @@ class User(AbstractBaseUser):
     username = models.CharField(ugettext_lazy(u'Username'),
                                 max_length=30, unique=True, db_index=True)
     email = models.EmailField(ugettext_lazy(u'Email address'),
-                              unique=True, max_length=50, db_index=True)
+                              unique=True, db_index=True)
     status = models.IntegerField(ugettext_lazy(u'Activation status'), default=0,
                                  choices=STATUS_CHOICES)
     date_joined = models.DateTimeField(ugettext_lazy(u'Member since'),

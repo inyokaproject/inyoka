@@ -17,6 +17,7 @@ from time import sleep
 
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models.aggregates import Count
 from django.utils.translation import ugettext as _
 from django_redis.cache import RedisCache as _RedisCache
 
@@ -88,7 +89,7 @@ class QueryCounter(object):
                     from inyoka.portal.tasks import query_counter_task
                     # Build a queryset like query.count()
                     count_query = self.query.query.clone()
-                    count_query.add_count_column()
+                    count_query.add_annotation(Count('*'), alias='count', is_summary=True)
                     count_query.default_cols = False
 
                     query_counter_task.delay(self.cache_key, str(count_query))

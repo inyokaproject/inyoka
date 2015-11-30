@@ -9,17 +9,14 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
+from datetime import date, datetime, timedelta
 from operator import attrgetter
-from datetime import date, time, datetime, timedelta
 
-from django.contrib.humanize.templatetags.humanize import naturalday as djnaturalday
-from django.template import defaultfilters
-from django.utils import timezone, datetime_safe
-from django.utils.translation import get_language_from_request
 import pytz
-
-from inyoka.utils.local import current_request
-
+from django.contrib.humanize.templatetags.humanize import \
+    naturalday as djnaturalday
+from django.template import defaultfilters
+from django.utils import datetime_safe, timezone
 
 TIMEZONES = pytz.common_timezones
 
@@ -30,6 +27,7 @@ _iso8601_re = re.compile(
     # time
     r'(?:T(\d{2}):(\d{2})(?::(\d{2}(?:\.\d+)?))?(Z?|[+-]\d{2}:\d{2})?)?$'
 )
+
 
 def _localtime(val):
     if val.tzinfo is None:
@@ -68,9 +66,9 @@ def group_by_day(entries, date_func=attrgetter('pub_date'),
             days_found.add(key)
         days[-1][1].append(entry)
     return [{
-        'date': date(*key),
+        'date': date(*k),
         'articles': items,
-    } for key, items in days if items]
+    } for k, items in days if items]
 
 
 def datetime_to_timezone(dt, enforce_utc=False):

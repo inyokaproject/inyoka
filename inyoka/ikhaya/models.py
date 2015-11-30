@@ -71,7 +71,7 @@ class ArticleManager(models.Manager):
         cache_values = cache.get_many(map(itemgetter(0), keys))
         dates, slugs = _get_not_cached_articles(keys, cache_values)
 
-        related = ('author__username', 'category', 'icon', 'category__icon')
+        related = ('author', 'category', 'icon', 'category__icon')
         objects = Article.objects.filter(slug__in=slugs, pub_date__in=dates) \
                          .select_related(*related).order_by()
         new_cache_values = {}
@@ -145,7 +145,7 @@ class CommentManager(models.Manager):
             cache.set(key, comment_ids, 300)
 
         comments = list(Comment.objects.filter(id__in=comment_ids)
-                               .select_related('author__username', 'article__subject')
+                               .select_related('author', 'article')
                                .order_by('-id')[:maxcount])
         return comments[:count]
 

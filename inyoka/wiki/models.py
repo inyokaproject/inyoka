@@ -78,6 +78,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import locale
+from collections import defaultdict
 from datetime import datetime
 from functools import partial
 from hashlib import sha1
@@ -310,14 +311,20 @@ class PageManager(models.Manager):
         return sorted(page for page in pages if page not in ignore)
 
     def get_missing(self):
-        """Return a tuple of (page, count) for all missing page-links."""
+        """
+        Returns a dictonary where the keys are the names of a pages that do
+        not exist and the value is a list of page objects which have a link to
+        that missing page.
+        """
         page_names = Page.objects.filter(last_rev__deleted=False).values('name')
 
-        return (MetaData.objects
-            .filter(key='X-Link')
-            .exclude(value__in=page_names)
-            .values_list('value')
-            .annotate(count=Count('value')))
+        missing_pages = defaultdict(list)
+        for meta in (MetaData.objects
+                .filter(key='X-Link')
+                .exclude(value__in=page_names)
+                .select_related('page')):
+            missing_pages[meta.value].append(meta.page)
+        return missing_pages
 
     def get_similar(self, name, n=10):
         """
@@ -381,7 +388,7 @@ class PageManager(models.Manager):
             raise Page.DoesNotExist()
         if rev is None:
             return self.get_by_name(name, True, raise_on_deleted)
-        rev = Revision.objects.select_related('page', 'test', 'user') \
+        rev = Revision.objects.select_related('page', 'user') \
                               .get(id=int(rev))
         if rev.page.name.lower() != name.lower() or \
                 (rev.deleted and raise_on_deleted):
@@ -399,7 +406,7 @@ class PageManager(models.Manager):
             kwargs['value'] = value
         rv = [
             x.page
-            for x in MetaData.objects.select_related('name').filter(**kwargs)
+            for x in MetaData.objects.select_related('page').filter(**kwargs)
             if not is_privileged_wiki_page(x.page.name)
         ]
         rv.sort(key=lambda x: x.name)
@@ -883,7 +890,7 @@ class Page(models.Model):
         """
         This simply raises an exception, as we never want to delete pages really.
         Instead we just mark pages as deleted, which is done with edit(deleted=True).
-        
+
         The purpose of this method is to avoid using the django default delete() and
         avoid some side effects with it.
         """

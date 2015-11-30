@@ -14,7 +14,6 @@
 from __future__ import print_function
 
 from getpass import getpass
-from optparse import make_option
 
 from django.core.management.base import BaseCommand
 
@@ -26,14 +25,13 @@ from inyoka.portal.user import PERMISSION_NAMES, User
 class Command(BaseCommand):
     help = "Create a user with all priviliges"
 
-    option_list = BaseCommand.option_list + (
-        make_option('-u', '--username', action='store',
-                    default=None, dest='username'),
-        make_option('-e', '--email', action='store',
-                    default=None, dest='email'),
-        make_option('-p', '--password', action='store',
+    def add_arguments(self, parser):
+        parser.add_argument('-u', '--username', action='store',
+                    default=None, dest='username')
+        parser.add_argument('-e', '--email', action='store',
+                    default=None, dest='email')
+        parser.add_argument('-p', '--password', action='store',
                     default=None, dest='password')
-    )
 
     def handle(self, *args, **options):
         username = options['username']

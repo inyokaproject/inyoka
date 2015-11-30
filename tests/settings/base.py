@@ -1,3 +1,5 @@
+from uuid import uuid1
+
 from inyoka.default_settings import *  # NOQA
 
 DATABASES = {
@@ -35,7 +37,7 @@ INYOKA_AKISMET_KEY = 'inyokatestkey'
 INYOKA_AKISMET_URL = 'http://testserver/'
 
 CACHES['content']['LOCATION'] = 'redis://127.0.0.1:6379/0'
-CACHES['content']['KEY_PREFIX'] = 'test-base'
+CACHES['content']['KEY_PREFIX'] = uuid1()
 
 CACHES['default']['LOCATION'] = 'redis://127.0.0.1:6379/1'
-CACHES['default']['KEY_PREFIX'] = 'test-base'
+CACHES['default']['KEY_PREFIX'] = uuid1()
