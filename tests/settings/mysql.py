@@ -1,15 +1,14 @@
+from uuid import uuid1
+
 from .base import *  # noqa
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'inyoka_testrunner',
+        'NAME': 'inyoka_{}'.format(uuid1()),
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
     }
 }
-
-CACHES['content']['KEY_PREFIX'] = 'test-mysql'
-CACHES['default']['KEY_PREFIX'] = 'test-mysql'
