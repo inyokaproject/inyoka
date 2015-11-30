@@ -435,6 +435,9 @@ class Event(models.Model):
                                       blank=True, null=True)
     visible = models.BooleanField(default=False)
 
+    def __unicode__(self):
+        return self.name
+
     def get_absolute_url(self, action='show'):
         if action == 'copy':
             return href('ikhaya', 'event', 'new', copy_from=self.id)

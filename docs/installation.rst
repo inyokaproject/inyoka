@@ -101,7 +101,7 @@ files:
 
   $  sudo apt-get install libxml2-dev libxslt1-dev
   libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev
-  libmysqlclient-dev build-essential redis-server
+  libmysqlclient-dev build-essential redis-server libpq-dev
 
 Further you need the Python 2.7 files:
 
@@ -212,8 +212,8 @@ You will be asked for a password (maybe several times). You can leave it
 empty if you want to.
 
 Then you need to change the developer settings for the database. Rename and
-edit the file *example_development_settings.py*  to *development_settings.py* 
-in the *inyoka* directory. If you have set a password during installation of 
+edit the file *example_development_settings.py*  to *development_settings.py*
+in the *inyoka* directory. If you have set a password during installation of
 MySQL above you need to add your password:
 
 .. code-block:: console
@@ -269,9 +269,9 @@ as username because it will be used in some test files. It is also
 advisable to use that mail adress in order to be able to test
 notifications, see :ref:`testing notifications <test-notifies>`.
 
-Note: If you want to change settings in the admin's control panel, you 
+Note: If you want to change settings in the admin's control panel, you
 need to set the mail adress to ``admin@localhost.local`` to not raise an
-error. The mail adress is then automatically set back to 
+error. The mail adress is then automatically set back to
 ``admin@localhost``.
 
 Now you can create the real test data:

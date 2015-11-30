@@ -179,13 +179,14 @@ class TestEventModel(TestCase):
         self.assertEqual(list(Event.objects.get_upcoming()), [])
 
     def test_upcoming_getLessThanInside_severalEvents_returnCorrectNumber(self):
-        event1 = Event.objects.create(name='Event1', date=datetime.utcnow().date(),
+        date = datetime.utcnow().date()
+        event1 = Event.objects.create(name='Event1', date=date,
             author=self.user, visible=True)
-        event2 = Event.objects.create(name='Event2', date=datetime.utcnow().date(),
+        event2 = Event.objects.create(name='Event2', date=date,
             author=self.user, visible=True)
-        Event.objects.create(name='Event3', date=datetime.utcnow().date(),
+        Event.objects.create(name='Event3', date=date,
             author=self.user, visible=True)
-        self.assertEqual(list(Event.objects.get_upcoming(2)), [event1, event2])
+        self.assertEqual(len(Event.objects.get_upcoming(2)), 2)
 
     def test_upcomingDate_startYesterdayEndToday_returnEvent(self):
         event = Event.objects.create(name='Event',
