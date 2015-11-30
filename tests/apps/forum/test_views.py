@@ -881,21 +881,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertPreviewInHTML('newpost text', response)
 
         # Test send
+        # The assert calls are inside the function self.post_request()
         self.post_request('/forum/%s/newtopic/' % self.forum.slug, postdata, 1, 1, polls=2, polloptions=4, submit=True)
-
-        # Check for rendered post
-        with translation.override('en-us'):
-            response = self.client.get('/topic/newpost-title/')
-        self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
-        poll1, poll2 = Poll.objects.all()
-        opt11, opt12, opt21, opt22 = PollOption.objects.order_by('pk').all()
-        pattern = '<tr><td><input type="radio" name="poll_%(poll_pk)d" id="option_%(opt_pk)d" value="%(opt_pk)d"/><label for="option_%(opt_pk)d">%(opt)s</label></td></tr>'
-        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {'question': poll1.question}, response.content, count=1)
-        self.assertInHTML(pattern % {'poll_pk': poll1.pk, 'opt': opt11.name, 'opt_pk': opt11.pk}, response.content, count=1)
-        self.assertInHTML(pattern % {'poll_pk': poll1.pk, 'opt': opt12.name, 'opt_pk': opt12.pk}, response.content, count=1)
-        self.assertInHTML('<div><strong>%(question)s</strong></div>' % {'question': poll2.question}, response.content, count=1)
-        self.assertInHTML(pattern % {'poll_pk': poll2.pk, 'opt': opt21.name, 'opt_pk': opt21.pk}, response.content, count=1)
-        self.assertInHTML(pattern % {'poll_pk': poll2.pk, 'opt': opt22.name, 'opt_pk': opt22.pk}, response.content, count=1)
 
     def test_new_post(self):
         topic = Topic.objects.create(title='topic', author=self.admin, forum=self.forum)
