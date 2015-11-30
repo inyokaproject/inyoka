@@ -87,13 +87,12 @@ verbosity = 0
 
 class Command(BaseCommand):
     help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
-    option_list = BaseCommand.option_list + (
-        make_option('-p', '--path',
-            type='string',
+
+    def add_arguments(self, parser):
+        parser.add_argument('-p', '--path',
             action='store',
             dest='path',
-            help='Define where to store the static wiki'),
-        )
+            help='Define where to store the static wiki')
 
     def handle(self, *args, **options):
         global verbosity
