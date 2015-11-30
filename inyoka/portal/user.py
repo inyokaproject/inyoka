@@ -584,7 +584,7 @@ class User(AbstractBaseUser):
         """
         Returns True if the user has any content, else False.
         """
-        return (self.post_count.value() or
+        return (self.post_count.value(calculate=False) or
                 self.post_set.exists() or
                 self.topics.exists() or
                 self.comment_set.exists() or

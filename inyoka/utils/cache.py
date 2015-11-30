@@ -57,7 +57,7 @@ class QueryCounter(object):
         cache.set(self.cache_key, value, timeout=self.timeout)
         return value
 
-    def value(self, default=None):
+    def value(self, default=None, calculate=True):
         """
         Returns the value from the cache.
 
@@ -67,6 +67,9 @@ class QueryCounter(object):
         In other case cache.get_or_set() is used to create the value. This
         blocks all requests until the value is created, so this should only be
         done for fast queries.
+
+        If the value is not in the cache, the counter was initialized with
+        use_task and calculate is False, then the counter is not calculated.
         """
         try:
             return self._value
@@ -77,14 +80,19 @@ class QueryCounter(object):
             count = cache.get_or_set(self.cache_key, self.db_count, self.timeout)
         else:
             count = cache.get(self.cache_key)
-            if count is None:
-                from inyoka.portal.tasks import query_counter_task
-                # Build a queryset like query.count()
-                count_query = self.query.query.clone()
-                count_query.add_annotation(Count('*'), alias='count', is_summary=True)
-                count_query.default_cols = False
+            if count is None and calculate:
+                # Try to set a status_key. If this fails, then the task is
+                # already delayed.
+                redis = cache.client.get_client()
+                status_key = '{}:status'.format(cache.make_key(self.cache_key))
+                if redis.set(status_key, 'updating', ex=60, nx=True):
+                    from inyoka.portal.tasks import query_counter_task
+                    # Build a queryset like query.count()
+                    count_query = self.query.query.clone()
+                    count_query.add_annotation(Count('*'), alias='count', is_summary=True)
+                    count_query.default_cols = False
 
-                query_counter_task.delay(self.cache_key, str(count_query))
+                    query_counter_task.delay(self.cache_key, str(count_query))
                 count = None
         self._value = count
         # If count is None, then we cache None and not the default value
@@ -113,6 +121,14 @@ class QueryCounter(object):
             cache.decr(self.cache_key, count)
         except ValueError:
             pass
+
+    def delete_cache(self):
+        """
+        Delets the counter from the cache.
+
+        This should only be used for debuging.
+        """
+        cache.delete(self.cache_key)
 
 
 class RedisCache(_RedisCache):
