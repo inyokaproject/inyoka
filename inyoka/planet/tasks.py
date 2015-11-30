@@ -109,12 +109,12 @@ def sync():
             except Entry.DoesNotExist:
                 old_entry = None
             if old_entry is None and guid_normalized != guid:
+                # no db entry with non normalized guid, so normalize
+                guid = guid_normalized
                 try:
                     old_entry = Entry.objects.get(guid=guid_normalized)
                 except Entry.DoesNotExist:
                     old_entry = None
-
-            guid = guid_normalized
 
             # get title, url and text. skip if no title or no text is
             # given. if the link is missing we use the blog link.
