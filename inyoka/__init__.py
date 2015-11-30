@@ -118,5 +118,8 @@ from distutils.version import LooseVersion as V
 
 from django.utils.translation import ugettext_lazy
 
+# Set a global socket timeout to avoid blocking worker processes:
+socket.setdefaulttimeout(10.0)
+
 # Inyoka version is updated through bumpversion and can stay hardcoded here.
 INYOKA_VERSION = "v0.12.5"
