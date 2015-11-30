@@ -124,24 +124,6 @@ class OrphanedPages(macros.Macro):
         return result
 
 
-class MissingPages(macros.Macro):
-    """
-    Return a list of missing pages.
-    """
-    names = (u'MissingPages', u'FehlendeSeiten')
-    is_block_tag = True
-    allowed_context = ['wiki']
-
-    def build_node(self, context, format):
-        result = nodes.List('unordered')
-        for missing_name, pages in Page.objects.get_missing().items():
-            title = [nodes.Text(missing_name)]
-            link = nodes.InternalLink(missing_name, title,
-                                      force_existing=True)
-            result.children.append(nodes.ListItem([link, nodes.Text(u' (%sx)' % len(pages))]))
-        return result
-
-
 class RedirectPages(macros.Macro):
     """
     Return a list of pages that redirect to somewhere.

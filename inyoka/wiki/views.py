@@ -234,6 +234,14 @@ def recentchanges(request):
     return {'recentchanges': cache.get('wiki/recentchanges')}
 
 
+@templated('wiki/missingpages.html')
+def missingpages(request):
+    """
+    Show a table of links to missing pages and where they are located.
+    """
+    return {'missingpages': Page.objects.get_missing()}
+
+
 @templated('wiki/tag_list.html')
 def show_tag_list(request):
     """
