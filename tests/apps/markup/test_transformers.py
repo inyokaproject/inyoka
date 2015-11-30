@@ -98,7 +98,7 @@ class TestTransformers(unittest.TestCase):
         self.assertEqual(t(':)apo'), [])
         # crazy stuff like that won't work, since smileys aren't
         # allowed to be precised by alphanumeric characters
-        #self.assertEqual(t(':)8-o:)'), [':)', '8-o', ':)'])
+        # self.assertEqual(t(':)8-o:)'), [':)', '8-o', ':)'])
         # but this should work:
         self.assertEqual(t(':):/'), [':)', ':/'])
         # and so do the language tags:

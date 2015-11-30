@@ -180,9 +180,9 @@ class TestEventModel(TestCase):
 
     def test_upcoming_getLessThanInside_severalEvents_returnCorrectNumber(self):
         date = datetime.utcnow().date()
-        event1 = Event.objects.create(name='Event1', date=date,
+        Event.objects.create(name='Event1', date=date,
             author=self.user, visible=True)
-        event2 = Event.objects.create(name='Event2', date=date,
+        Event.objects.create(name='Event2', date=date,
             author=self.user, visible=True)
         Event.objects.create(name='Event3', date=date,
             author=self.user, visible=True)

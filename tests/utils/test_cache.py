@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.utils.test_cache
     ~~~~~~~~~~~~~~~~~~~~~~

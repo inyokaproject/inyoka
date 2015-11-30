@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from os.path import dirname, join
 
 from django.conf import settings
@@ -7,7 +7,7 @@ from django.core.files import File
 from inyoka.portal.user import User
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
-from inyoka.wiki.models import Attachment, Page
+from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
 from inyoka.wiki.utils import get_smilies
 

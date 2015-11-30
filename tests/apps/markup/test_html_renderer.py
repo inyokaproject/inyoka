@@ -43,11 +43,11 @@ class TestHtmlRenderer(unittest.TestCase):
         html = render(' * 1\n * 2\n  1. 3\n * 4')
         self.assertEqual(html, (
             '<ul>'
-              '<li>1</li>'
-              '<li>2<ol class="arabic">'
-                '<li>3</li>'
-              '</ol></li>'
-              '<li>4</li>'
+            '<li>1</li>'
+            '<li>2<ol class="arabic">'
+            '<li>3</li>'
+            '</ol></li>'
+            '<li>4</li>'
             '</ul>'
         ))
 
@@ -56,7 +56,7 @@ class TestHtmlRenderer(unittest.TestCase):
         html = render("> ''foo\n> bar''\n>> nested")
         self.assertEqual(html, (
             '<blockquote>'
-              '<em>foo\nbar</em>'
-              '<blockquote>nested</blockquote>'
+            '<em>foo\nbar</em>'
+            '<blockquote>nested</blockquote>'
             '</blockquote>'
         ))

@@ -8,10 +8,15 @@
 """
 
 import unittest
-from datetime import date
+from datetime import date, timedelta
 
 from freezegun import freeze_time
-from inyoka.utils.special_day import *
+
+from inyoka.utils.special_day import (
+    check_special_day,
+    easter_sunday,
+    fourth_advent,
+)
 
 
 class GeneralTestCase(unittest.TestCase):
@@ -30,7 +35,7 @@ class GeneralEqualTestCase(GeneralTestCase):
 
 
 def add_easter_tests(suite):
-    easter_dates = [date(1901, 4, 7), date(1943, 4, 25),  date(2000, 4, 23),
+    easter_dates = [date(1901, 4, 7), date(1943, 4, 25), date(2000, 4, 23),
                     date(2001, 4, 15), date(2002, 3, 31), date(2008, 3, 23),
                     date(2015, 4, 5), date(2018, 4, 1), date(2026, 4, 5),
                     date(2030, 4, 21), date(2069, 4, 14)]
@@ -44,7 +49,7 @@ def add_advent_tests(suite):
                           date(2017, 12, 3), date(2018, 12, 2), date(2019, 12, 1),
                           date(2020, 11, 29), date(2021, 11, 28)]
 
-    fourth_advent_dates = map(lambda d: d+timedelta(3*7), first_advent_dates)
+    fourth_advent_dates = map(lambda d: d + timedelta(3 * 7), first_advent_dates)
 
     for d in fourth_advent_dates:
         suite.addTest(GeneralEqualTestCase('runTest', d, fourth_advent(d.year)))
