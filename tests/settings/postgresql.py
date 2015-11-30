@@ -1,8 +1,10 @@
+from uuid import uuid1
+
 from .base import *  # noqa
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'inyoka_testrunner',
+        'NAME': 'inyoka_{}'.format(uuid1()),
     }
 }
