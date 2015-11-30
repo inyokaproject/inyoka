@@ -35,7 +35,7 @@ from jinja2 import (
     escape,
 )
 
-from inyoka import INYOKA_REVISION
+from inyoka import INYOKA_VERSION
 from inyoka.utils.dates import (
     format_date,
     format_datetime,
@@ -337,7 +337,7 @@ class InyokaEnvironment(Environment):
                              auto_reload=settings.DEBUG,
                              cache_size=-1)
 
-        self.globals.update(INYOKA_REVISION=INYOKA_REVISION,
+        self.globals.update(INYOKA_VERSION=INYOKA_VERSION,
                             SETTINGS=settings,
                             REQUEST=current_request,
                             href=href,
