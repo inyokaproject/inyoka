@@ -113,40 +113,9 @@ assert xml.sax.make_parser is defusedxml.sax.make_parser
 
 from .celery_app import app as celery_app  # noqa
 import socket
-from os.path import join, dirname, realpath
-from distutils.version import LooseVersion as V
 
-from django.utils.translation import ugettext_lazy
+# Set a global socket timeout to avoid blocking worker processes:
+socket.setdefaulttimeout(10.0)
 
-from dulwich.repo import Repo
-
-#: Inyoka revision present in the current mercurial working copy
-INYOKA_REVISION = ugettext_lazy('unknown')
-
-
-def _bootstrap():
-    """Get the Inyoka version and store it."""
-    # the path to the contents of the Inyoka module
-    repo_path = realpath(join(dirname(__file__), '..'))
-
-    try:
-        repo = Repo(repo_path)
-        tags = sorted([ref for ref in repo.get_refs() if ref.startswith('refs/tags')],
-                      key=lambda obj: V(obj))
-        tag = tags[-1][10:].strip()
-        commit = repo.head()[:8]
-        revision = {'tag': tag, 'commit': commit}
-    except Exception:
-        revision = {'tag': INYOKA_REVISION, 'commit': ''}
-
-    # This value defines the timeout for sockets in seconds.  Per default
-    # python sockets do never timeout and as such we have blocking workers.
-    # Socket timeouts are set globally within the whole application.
-    # The value *must* be a floating point value.
-    socket.setdefaulttimeout(10.0)
-
-    return revision
-
-
-INYOKA_REVISION = _bootstrap()
-del _bootstrap
+# Inyoka version is updated through bumpversion and can stay hardcoded here.
+INYOKA_VERSION = "v0.12.5"
