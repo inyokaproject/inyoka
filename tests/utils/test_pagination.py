@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.utils.test_pagination
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -11,12 +11,10 @@
 
 import unittest
 
-from django.conf import settings
 from django.http import Http404
 from django.test import RequestFactory
 
 from inyoka.utils.pagination import Pagination
-from inyoka.utils.test import TestCase
 
 
 class TestUtilsPagination(unittest.TestCase):
@@ -45,9 +43,9 @@ class TestUtilsPagination(unittest.TestCase):
 
     def test_pagination_invalid_page(self):
         with self.assertRaises(Http404):
-            p = Pagination(self.request, query=self.items, page=0, per_page=3)
+            Pagination(self.request, query=self.items, page=0, per_page=3)
         with self.assertRaises(Http404):
-            p = Pagination(self.request, query=self.items, page=6, per_page=3)
+            Pagination(self.request, query=self.items, page=6, per_page=3)
 
     def test_pagination_get_queryset(self):
         self.assertEqual(self.p.get_queryset(), [1, 2, 3])
@@ -67,11 +65,11 @@ class TestUtilsPagination(unittest.TestCase):
 
     def test_pagination_list(self):
         expect = [
-            { 'type': 'current', 'url': 'http://localhost/', 'page': 1 },
-            { 'type': 'link', 'url': 'http://localhost/2/', 'page': 2 },
-            { 'type': 'spacer' },
-            { 'type': 'link', 'url': 'http://localhost/4/', 'page': 4 },
-            { 'type': 'link', 'url': 'http://localhost/5/', 'page': 5 },
+            {'type': 'current', 'url': 'http://localhost/', 'page': 1},
+            {'type': 'link', 'url': 'http://localhost/2/', 'page': 2},
+            {'type': 'spacer'},
+            {'type': 'link', 'url': 'http://localhost/4/', 'page': 4},
+            {'type': 'link', 'url': 'http://localhost/5/', 'page': 5},
         ]
         for l, e in zip(self.p.list(), expect):
             self.assertEqual(l, e)

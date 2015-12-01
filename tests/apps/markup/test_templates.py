@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.apps.markup.test_templates
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -145,7 +145,7 @@ class TestValue(unittest.TestCase):
         self.assertEqual(unicode(self.list1), u'1, str, 1.2')
         self.assertEqual(unicode(self.tuple1), u'1, str, 1.2')
         # TODO: Can we reliably test the next line?
-        #self.assertEqual(unicode(self.dict1), u'a: A, c: 2.3, b: 2')
+        # self.assertEqual(unicode(self.dict1), u'a: A, c: 2.3, b: 2')
 
         self.assertEqual(str(self.int1), '42')
         self.assertEqual(str(self.float1), '8.15')
@@ -153,7 +153,7 @@ class TestValue(unittest.TestCase):
         self.assertEqual(str(self.list1), '1, str, 1.2')
         self.assertEqual(str(self.tuple1), '1, str, 1.2')
         # TODO: Can we reliably test the next line?
-        #self.assertEqual(str(self.dict1), 'a: A, c: 2.3, b: 2')
+        # self.assertEqual(str(self.dict1), 'a: A, c: 2.3, b: 2')
 
     def test_list(self):
         self.assertEqual(len(self.int1), 0)
@@ -169,11 +169,11 @@ class TestValue(unittest.TestCase):
         self.assertEqual(list(iter(self.list1)), [Value(1), Value('str'), Value(1.2)])
         self.assertEqual(list(iter(self.tuple1)), [Value(1), Value('str'), Value(1.2)])
         # TODO: Can we reliably test the next lines?
-        #self.assertEqual(list(iter(self.dict1)), [
-        #    Value({'key': 'a', 'value': Value('A')}),
-        #    Value({'key': 'c', 'value': Value(2.3)}),
-        #    Value({'key': 'b', 'value': Value(2)})
-        #])
+        # self.assertEqual(list(iter(self.dict1)), [
+        #     Value({'key': 'a', 'value': Value('A')}),
+        #     Value({'key': 'c', 'value': Value(2.3)}),
+        #     Value({'key': 'b', 'value': Value(2)})
+        # ])
 
     def test_getter(self):
         self.assertEqual(self.int1[1], NoneValue)
@@ -187,7 +187,7 @@ class TestValue(unittest.TestCase):
     def test_compare(self):
         self.assertEqual(self.int1, Value(42))
         self.assertEqual(self.float1, Value(8.15))
-        self.assertEqual(self.string1,  Value('lorem'))
+        self.assertEqual(self.string1, Value('lorem'))
         self.assertEqual(self.list1, Value([Value(1), Value('str'), Value(1.2)]))
         self.assertEqual(self.tuple1, Value((Value(1), Value('str'), Value(1.2))))
         self.assertEqual(self.dict1, Value({'a': Value('A'), 'b': Value(2), 'c': Value(2.3)}))
@@ -250,7 +250,7 @@ class TestValue(unittest.TestCase):
         self.assertEqual(self.list1 & self.list2, Value("1, str, 1.25, unicode, 11.47"))
         self.assertEqual(self.tuple1 & self.tuple2, Value("1, str, 1.25, unicode, 11.47"))
         # TODO: Can we reliably test the next line?
-        #self.assertEqual(self.dict1 & self.dict2, Value("a: A, c: 2.3, b: 2e: 6, d: D, f: 9.8"))
+        # self.assertEqual(self.dict1 & self.dict2, Value("a: A, c: 2.3, b: 2e: 6, d: D, f: 9.8"))
 
     def test_boolean(self):
         self.assertIn(Value('str'), self.list1)

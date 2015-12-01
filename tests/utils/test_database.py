@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     tests.utils.test_database
     ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -8,7 +8,6 @@
 """
 import datetime
 
-from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 
 from .models import JSONEntry
