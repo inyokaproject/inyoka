@@ -8,25 +8,25 @@
     :copyright: (c) 2012-2015 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import random
-import operator
 import itertools
+import operator
+import random
 import string
 
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from inyoka.markup import nodes, macros
+from inyoka.markup import macros, nodes
 from inyoka.markup.parsertools import MultiMap, flatten_iterator
 from inyoka.markup.templates import expand_page_template
 from inyoka.markup.utils import simple_filter
 from inyoka.utils.imaging import parse_dimensions
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, urlencode
-from inyoka.wiki.models import Page, MetaData, is_privileged_wiki_page
+from inyoka.wiki.models import MetaData, Page, is_privileged_wiki_page
 from inyoka.wiki.signals import build_picture_node
-from inyoka.wiki.views import fetch_real_target
 from inyoka.wiki.utils import CaseSensitiveException
+from inyoka.wiki.views import fetch_real_target
 
 
 def make_int(s, default):
@@ -124,24 +124,6 @@ class OrphanedPages(macros.Macro):
         return result
 
 
-class MissingPages(macros.Macro):
-    """
-    Return a list of missing pages.
-    """
-    names = (u'MissingPages', u'FehlendeSeiten')
-    is_block_tag = True
-    allowed_context = ['wiki']
-
-    def build_node(self, context, format):
-        result = nodes.List('unordered')
-        for missing_name, pages in Page.objects.get_missing().items():
-            title = [nodes.Text(missing_name)]
-            link = nodes.InternalLink(missing_name, title,
-                                      force_existing=True)
-            result.children.append(nodes.ListItem([link, nodes.Text(u' (%sx)' % len(pages))]))
-        return result
-
-
 class RedirectPages(macros.Macro):
     """
     Return a list of pages that redirect to somewhere.
@@ -228,9 +210,9 @@ class TagList(macros.Macro):
                 item = nodes.ListItem([nodes.InternalLink(page)])
                 result.children.append(item)
         else:
-            for tag in Page.objects.get_tagcloud():
+            for tag in Page.objects.get_taglist(100):
                 link = nodes.Link('?' + urlencode({
-                        'tag': tag['name']
+                    'tag': tag['name']
                     }), [nodes.Text(tag['name'])],
                     style='font-size: %s%%' % tag['size']
                 )
@@ -539,7 +521,6 @@ macros.register(PageCount)
 macros.register(PageList)
 macros.register(AttachmentList)
 macros.register(OrphanedPages)
-macros.register(MissingPages)
 macros.register(RedirectPages)
 macros.register(SimilarPages)
 macros.register(TagList)
