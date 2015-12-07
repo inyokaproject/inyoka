@@ -1707,7 +1707,7 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
         total=total_posts, max_pages=MAX_PAGES_TOPICLIST)
     post_ids = [post_id for post_id in pagination.get_queryset()]
 
-    posts = Post.objects.filter(id__in=post_ids).select_related('topic', 'topic__forum', 'author')
+    posts = Post.objects.filter(id__in=post_ids).order_by('-pub_date').select_related('topic', 'topic__forum', 'author')
 
     # check for moderation permissions
     moderatable_forums = [
