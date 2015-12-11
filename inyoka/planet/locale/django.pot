@@ -1,14 +1,14 @@
-# Translations template for PROJECT.
-# Copyright (C) 2015 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# Translations template for Inyoka Project.
+# Copyright (C) 2015 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
+"Project-Id-Version: Inyoka Project v0.12.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"POT-Creation-Date: 2015-12-11 22:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,95 +17,73 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
 
-#: inyoka/planet/forms.py:21 inyoka/planet/models.py:34
-msgid "Name of the blog"
-msgstr ""
-
-#: inyoka/planet/forms.py:22
-msgid "URL"
-msgstr ""
-
-#: inyoka/planet/forms.py:23
-msgid "Feed URL"
-msgstr ""
-
-#: inyoka/planet/forms.py:24 inyoka/planet/models.py:35
-msgid "Description"
-msgstr ""
-
-#: inyoka/planet/forms.py:26
-msgid "This is my own blog"
-msgstr ""
-
-#: inyoka/planet/forms.py:29
-msgid "Email address of the blog author"
-msgstr ""
-
-#: inyoka/planet/models.py:36
-msgid "URL of the blog"
-msgstr ""
-
-#: inyoka/planet/models.py:37
-msgid "URL of the feed"
-msgstr ""
-
-#: inyoka/planet/models.py:38
-msgid "User"
-msgstr ""
-
-#: inyoka/planet/models.py:40
-msgid "Icon"
-msgstr ""
-
-#: inyoka/planet/models.py:42
-msgid "Index the blog"
-msgstr ""
-
-#: inyoka/planet/models.py:113
-msgid "Entry"
-msgstr ""
-
-#: inyoka/planet/models.py:114
-msgid "Entries"
-msgstr ""
-
-#: inyoka/planet/views.py:78
-msgid "You need to be logged in to suggest a blog"
-msgstr ""
-
-#: inyoka/planet/views.py:96
-msgid "A new blog was suggested."
-msgstr ""
-
-#: inyoka/planet/views.py:100
-msgid "No user is registered as a planet administrator."
-msgstr ""
-
-#: inyoka/planet/views.py:102
-#, python-format
-msgid "The blog “%(title)s” was suggested."
-msgstr ""
-
-#: inyoka/planet/views.py:116
 #, python-format
 msgid "%(sitename)s planet"
 msgstr ""
 
-#: inyoka/planet/views.py:142
-msgid "No title given"
+msgid "A new blog was suggested."
 msgstr ""
 
-#: inyoka/planet/views.py:158
 msgid "Canceled"
 msgstr ""
 
-#: inyoka/planet/views.py:165
+msgid "Description"
+msgstr ""
+
+msgid "Email address of the blog author"
+msgstr ""
+
+msgid "Entries"
+msgstr ""
+
+msgid "Entry"
+msgstr ""
+
+msgid "Feed URL"
+msgstr ""
+
+msgid "Icon"
+msgstr ""
+
+msgid "Index the blog"
+msgstr ""
+
+msgid "Name of the blog"
+msgstr ""
+
+msgid "No title given"
+msgstr ""
+
+msgid "No user is registered as a planet administrator."
+msgstr ""
+
+#, python-format
+msgid "The blog “%(title)s” was suggested."
+msgstr ""
+
 #, python-format
 msgid "The entry “%(title)s” was successfully hidden."
 msgstr ""
 
-#: inyoka/planet/views.py:167
 #, python-format
 msgid "The entry “%(title)s” was successfully restored."
+msgstr ""
+
+msgid "This is my own blog"
+msgstr ""
+
+msgid "URL"
+msgstr ""
+
+msgid "URL of the blog"
+msgstr ""
+
+msgid "URL of the feed"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "You need to be logged in to suggest a blog"
 msgstr ""
 

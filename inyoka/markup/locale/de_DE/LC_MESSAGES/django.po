@@ -8,157 +8,115 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"POT-Creation-Date: 2015-12-11 22:49+0100\n"
 "PO-Revision-Date: 2015-11-18 22:23+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
-"Language-Team: German (Germany) "
-"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
+"Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
 
-#: inyoka/markup/__init__.py:196
+msgid "<strong>Conflict End</strong>"
+msgstr "<strong>Konlikt Ende</strong>"
+
+msgid "<strong>Conflict</strong> – local Version"
+msgstr "<strong>Konflikt</strong> – eigene Version"
+
+msgid "<strong>Conflict</strong> – remote version"
+msgstr "<strong>Konflikt</strong> – vorherige Version"
+
+msgid "Conditions allow only one expression per block."
+msgstr "Bedingungen erlauben nur einen Ausdruck pro Block."
+
+msgid "Edited by"
+msgstr "Bearbeitet von"
+
 msgid "Internal error: "
 msgstr "Interner Fehler: "
 
-#: inyoka/markup/__init__.py:197
-msgid "The parser found too deeply nested elements."
-msgstr "Der Text enthält zu viele verschachtelte Elemente."
+msgid "Invalid arguments"
+msgstr "Parameterfehler"
 
-#: inyoka/markup/__init__.py:887
+msgid "Invalid date"
+msgstr "Ungültiges Datum"
+
+msgid "Invalid macro"
+msgstr "Ungültiges Makro"
+
+msgid "Invalid syntax for this loop. After the first variable an “in” is required."
+msgstr "Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort \"in\" folgen."
+
+msgid "Invalid syntax for this loop. The first argument must be a variable."
+msgstr "Ungültige Schleifen-Syntax. Erstes Argument muss eine Variable sein."
+
+msgid "Invalid syntax: "
+msgstr "Syntaxfehler: "
+
+msgid "Loop end contains too many arguments."
+msgstr "Schleifenende enthält zu viele Argumente."
+
+msgid "Loop header contains too many arguments."
+msgstr "Schleifenkopf enthält zu viele Argumente."
+
+msgid "Missing comma between array entries"
+msgstr "Fehlendes Komma zwischen Array Einträgen."
+
 msgid "Missing macro"
 msgstr "Fehlendes Makro"
 
-#: inyoka/markup/__init__.py:888
+msgid "Missing template"
+msgstr "Fehlende Vorlage"
+
+msgid "Moderated by"
+msgstr "Moderiert von"
+
+msgid "Parentheses were not closed properly."
+msgstr "Klammerausdruck wurde nicht geschlossen."
+
+msgid "Table of contents"
+msgstr "Inhaltsverzeichnis"
+
+msgid "The first argument must be the name of the template."
+msgstr "Das erste Argument muss der Name des Templates sein."
+
 #, python-format
 msgid "The macro “%(name)s” does not exist."
 msgstr "Das Makro „%(name)s“ konnte nicht gefunden werden."
 
-#: inyoka/markup/machine.py:227
-msgid "Invalid macro"
-msgstr "Ungültiges Makro"
+msgid "The parser found too deeply nested elements."
+msgstr "Der Text enthält zu viele verschachtelte Elemente."
 
-#: inyoka/markup/machine.py:228
-msgid "This macro is not available."
-msgstr "Dieses Makro ist nicht verfügbar"
-
-#: inyoka/markup/macros.py:270
-msgid "Table of contents"
-msgstr "Inhaltsverzeichnis"
-
-#: inyoka/markup/macros.py:307
-msgid "Invalid date"
-msgstr "Ungültiges Datum"
-
-#: inyoka/markup/nodes.py:254
-msgid "<strong>Conflict</strong> – remote version"
-msgstr "<strong>Konflikt</strong> – vorherige Version"
-
-#: inyoka/markup/nodes.py:255
-msgid "<strong>Conflict</strong> – local Version"
-msgstr "<strong>Konflikt</strong> – eigene Version"
-
-#: inyoka/markup/nodes.py:256
-msgid "<strong>Conflict End</strong>"
-msgstr "<strong>Konlikt Ende</strong>"
-
-#: inyoka/markup/nodes.py:692
-msgid "Edited by"
-msgstr "Bearbeitet von"
-
-#: inyoka/markup/nodes.py:717
-msgid "Moderated by"
-msgstr "Moderiert von"
-
-#: inyoka/markup/templates.py:53
-msgid "Invalid arguments"
-msgstr "Parameterfehler"
-
-#: inyoka/markup/templates.py:54
-msgid "The first argument must be the name of the template."
-msgstr "Das erste Argument muss der Name des Templates sein."
-
-#: inyoka/markup/templates.py:60
-msgid "Missing template"
-msgstr "Fehlende Vorlage"
-
-#: inyoka/markup/templates.py:61
 #, python-format
 msgid "The template “%(name)s” could not be found."
 msgstr "Das gewünschte Template „%(name)s“ existiert nicht."
 
-#: inyoka/markup/templates.py:161
-msgid "Invalid syntax for this loop. The first argument must be a variable."
-msgstr "Ungültige Schleifen-Syntax. Erstes Argument muss eine Variable sein."
+msgid "The “else” block does not allow any expressions. Maybe you wanted to use the “elseif” block."
+msgstr "„else“-Block erlaubt keinen Ausdruck. Möglicherweise wolltest du einen „elseif“-Block verwenden."
 
-#: inyoka/markup/templates.py:167
-msgid ""
-"Invalid syntax for this loop. After the first variable an “in” is "
-"required."
-msgstr ""
-"Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort "
-"\"in\" folgen."
+msgid "This macro is not available."
+msgstr "Dieses Makro ist nicht verfügbar"
 
-#: inyoka/markup/templates.py:172
-msgid "Loop header contains too many arguments."
-msgstr "Schleifenkopf enthält zu viele Argumente."
-
-#: inyoka/markup/templates.py:176
-msgid "Loop end contains too many arguments."
-msgstr "Schleifenende enthält zu viele Argumente."
-
-#: inyoka/markup/templates.py:185 inyoka/markup/templates.py:207
-msgid "Conditions allow only one expression per block."
-msgstr "Bedingungen erlauben nur einen Ausdruck pro Block."
-
-#: inyoka/markup/templates.py:196
-msgid ""
-"The “else” block does not allow any expressions. Maybe you wanted to use "
-"the “elseif” block."
-msgstr ""
-"„else“-Block erlaubt keinen Ausdruck. Möglicherweise wolltest du einen "
-"„elseif“-Block verwenden."
-
-#: inyoka/markup/templates.py:216
-msgid "“endif” does not allow any arguments"
-msgstr "„endif“ erlaubt keine Argumente."
-
-#: inyoka/markup/templates.py:252
-msgid "Unknown expression after “as” operator."
-msgstr "Unbekannter Ausdruck nach „as“ Operator."
-
-#: inyoka/markup/templates.py:269
-msgid "Unknown expression after “is” operator"
-msgstr "Unbekannter Ausdruck nach „is“ Operator."
-
-#: inyoka/markup/templates.py:347
-msgid "Unexpected end of expression."
-msgstr "Unerwartetes Ausdrucksende."
-
-#: inyoka/markup/templates.py:359
-msgid "Parentheses were not closed properly."
-msgstr "Klammerausdruck wurde nicht geschlossen."
-
-#: inyoka/markup/templates.py:369
-msgid "Missing comma between array entries"
-msgstr "Fehlendes Komma zwischen Array Einträgen."
-
-#: inyoka/markup/templates.py:392
-msgid "Unexpected operator"
-msgstr "Unerwarteter Operator"
-
-#: inyoka/markup/templates.py:419
-msgid "expected variable, integer or attribute"
-msgstr "Variable, Zahl oder Attribut erwartet."
-
-#: inyoka/markup/templates.py:450
 msgid "Too many arguments for this value output"
 msgstr "Zu viele Argumente für Wertausgabe."
 
-#: inyoka/markup/templates.py:475
-msgid "Invalid syntax: "
-msgstr "Syntaxfehler: "
+msgid "Unexpected end of expression."
+msgstr "Unerwartetes Ausdrucksende."
+
+msgid "Unexpected operator"
+msgstr "Unerwarteter Operator"
+
+msgid "Unknown expression after “as” operator."
+msgstr "Unbekannter Ausdruck nach „as“ Operator."
+
+msgid "Unknown expression after “is” operator"
+msgstr "Unbekannter Ausdruck nach „is“ Operator."
+
+msgid "expected variable, integer or attribute"
+msgstr "Variable, Zahl oder Attribut erwartet."
+
+msgid "“endif” does not allow any arguments"
+msgstr "„endif“ erlaubt keine Argumente."
 

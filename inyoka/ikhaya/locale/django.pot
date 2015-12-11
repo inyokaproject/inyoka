@@ -1,14 +1,14 @@
-# Translations template for PROJECT.
-# Copyright (C) 2015 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# Translations template for Inyoka Project.
+# Copyright (C) 2015 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
+"Project-Id-Version: Inyoka Project v0.12.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"POT-Creation-Date: 2015-12-11 22:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,360 +17,265 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
 
-#: inyoka/ikhaya/forms.py:44 inyoka/ikhaya/models.py:208
-#: inyoka/ikhaya/models.py:369
-msgid "Text"
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:45
-msgid ""
-"To refer to another comment, you can write "
-"<code>@commentnumber</code>.<br />Clicking on “reply” will automatically "
-"insert this code."
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:67 inyoka/ikhaya/models.py:201
-msgid "Author"
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:68
-msgid "Publication date"
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:69
-msgid "If the date is in the future, the article will not appear until then."
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:72
-msgid "Last update"
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:73
-msgid "If you keep this field empty, the publication date will be used."
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:102
-msgid "There already exists an article with this slug!"
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:182
-msgid "The end date must occur after the start date."
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:189
-msgid "The end time must occur after the start time."
-msgstr ""
-
-#: inyoka/ikhaya/forms.py:207
-msgid "Display event?"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:163 inyoka/ikhaya/models.py:210
-msgid "Slug"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:166 inyoka/ikhaya/models.py:206
-msgid "Icon"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:186 inyoka/ikhaya/models.py:203
-msgid "Category"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:187
-msgid "Categories"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:196
-msgid "Date"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:197
-msgid "Time"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:198
-msgid "Last change"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:202
-msgid "Headline"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:207 inyoka/ikhaya/models.py:370
-msgid "Introduction"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:209
-msgid "Public"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:212
-msgid "XHTML Markup"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:215
-msgid "Allow comments"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:336
-msgid "Article"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:337
-msgid "Articles"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:368
-msgid "Title"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:372
-msgid "Annotations to the team"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:380
-msgid "Article suggestion"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:381
-msgid "Article suggestions"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:432
-msgid "Degree of latitude"
-msgstr ""
-
-#: inyoka/ikhaya/models.py:434
-msgid "Degree of longitude"
-msgstr ""
-
-#: inyoka/ikhaya/notifications.py:24
 #, python-format
-msgid "New article suggestion “%(suggestion)s”"
+msgid "%(domain)s Ikhaya comments"
 msgstr ""
 
-#: inyoka/ikhaya/notifications.py:39
-#, python-format
-msgid "New comment on article “%(article)s”"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:185
-msgid "This article is not visible for regular users."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:207
-msgid "The comment was edited successfully."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:215
-msgid "Your comment was created."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:259
-#, python-format
-msgid ""
-"The publication of the article “<a href=\"%(link)s\">%(title)s</a>” has "
-"been revoked."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:265
-#, python-format
-msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>” was canceled."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:272
-#, python-format
-msgid "The article “%(title)s” was deleted."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:305
-#, python-format
-msgid "This article is currently being edited by “%(user)s”!"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:324
-#, python-format
-msgid "The article “%(title)s” was created."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:330
-msgid "The article “{title}” was saved."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:371
-msgid "You need to be logged in to subscribe to comments."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:387
-msgid "Notifications on new comments to this article will be sent to you."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:394
-msgid "You need to be logged in to unsubscribe from comments."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:410
-msgid "You will no longer be notified of new comments for this article."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:441
-msgid "Thanks for your report."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:469
-msgid "Do you want to hide this report?"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:470 inyoka/ikhaya/views.py:556
-msgid "Hide"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:470 inyoka/ikhaya/views.py:477
-#: inyoka/ikhaya/views.py:484 inyoka/ikhaya/views.py:491
-#: inyoka/ikhaya/views.py:556 inyoka/ikhaya/views.py:563
-msgid "Cancel"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:473
-msgid "The report was hidden."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:476
-msgid "Do you want to restore this report?"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:477 inyoka/ikhaya/views.py:563
-msgid "Restore"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:480
-msgid "The report was restored."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:483
-msgid "Do you want to mark this report as solved?"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:484
-msgid "Mark as solved"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:487
-msgid "The report was marked as solved."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:490
-msgid "Do you want to mark this report as unsolved?"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:491
-msgid "Mark as unsolved"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:494
-msgid "The report was marked as unsolved."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:526
-msgid "Sorry, editing comments is disabled for now."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:535
-msgid "The comment was saved."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:555
-msgid "Do you want to hide this comment?"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:559
-msgid "The comment was hidden."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:562
-msgid "Do you want to restore this comment?"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:566
-msgid "The comment was restored."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:583
-#, python-format
-msgid "The suggestion “%(title)s” does not exist."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:590
-msgid "The suggestion was assigned to nobody."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:598
-#, python-format
-msgid "The suggestion was assigned to “%(user)s”."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:610 inyoka/ikhaya/views.py:654
-msgid "This suggestion does not exist."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:617 inyoka/ikhaya/views.py:622
-msgid "Article suggestion deleted"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:633
-#, python-format
-msgid "New private message from %(user)s: %(subject)s"
-msgstr ""
-
-#: inyoka/ikhaya/views.py:646
-msgid "The suggestion was deleted."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:648
-msgid "The suggestion was not deleted."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:661
-msgid "Please login to suggest an article."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:679
-msgid ""
-"Thank you, your article suggestion was submitted. A team member will "
-"contact you shortly."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:744
-msgid "Notifications on new suggestions will be sent to you."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:761
-msgid "No notifications on suggestions will be sent to you any more."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:781
-#, python-format
-msgid ""
-"The event with the id %(id)s could not be used as draft for a new event "
-"because it does not exist."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:797
-msgid "The event was saved."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:854
-msgid "The event has been saved. A team member will review it soon."
-msgstr ""
-
-#: inyoka/ikhaya/views.py:919
 #, python-format
 msgid "%(domain)s Ikhaya comments – %(title)s"
 msgstr ""
 
-#: inyoka/ikhaya/views.py:924
+msgid "Allow comments"
+msgstr ""
+
+msgid "Annotations to the team"
+msgstr ""
+
+msgid "Article"
+msgstr ""
+
+msgid "Article suggestion"
+msgstr ""
+
+msgid "Article suggestion deleted"
+msgstr ""
+
+msgid "Article suggestions"
+msgstr ""
+
+msgid "Articles"
+msgstr ""
+
+msgid "Author"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Degree of latitude"
+msgstr ""
+
+msgid "Degree of longitude"
+msgstr ""
+
 #, python-format
-msgid "%(domain)s Ikhaya comments"
+msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>” was canceled."
+msgstr ""
+
+msgid "Display event?"
+msgstr ""
+
+msgid "Do you want to hide this comment?"
+msgstr ""
+
+msgid "Do you want to hide this report?"
+msgstr ""
+
+msgid "Do you want to mark this report as solved?"
+msgstr ""
+
+msgid "Do you want to mark this report as unsolved?"
+msgstr ""
+
+msgid "Do you want to restore this comment?"
+msgstr ""
+
+msgid "Do you want to restore this report?"
+msgstr ""
+
+msgid "Headline"
+msgstr ""
+
+msgid "Hide"
+msgstr ""
+
+msgid "Icon"
+msgstr ""
+
+msgid "If the date is in the future, the article will not appear until then."
+msgstr ""
+
+msgid "If you keep this field empty, the publication date will be used."
+msgstr ""
+
+msgid "Introduction"
+msgstr ""
+
+msgid "Last change"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Mark as solved"
+msgstr ""
+
+msgid "Mark as unsolved"
+msgstr ""
+
+#, python-format
+msgid "New article suggestion “%(suggestion)s”"
+msgstr ""
+
+#, python-format
+msgid "New comment on article “%(article)s”"
+msgstr ""
+
+#, python-format
+msgid "New private message from %(user)s: %(subject)s"
+msgstr ""
+
+msgid "No notifications on suggestions will be sent to you any more."
+msgstr ""
+
+msgid "Notifications on new comments to this article will be sent to you."
+msgstr ""
+
+msgid "Notifications on new suggestions will be sent to you."
+msgstr ""
+
+msgid "Please login to suggest an article."
+msgstr ""
+
+msgid "Public"
+msgstr ""
+
+msgid "Publication date"
+msgstr ""
+
+msgid "Restore"
+msgstr ""
+
+msgid "Slug"
+msgstr ""
+
+msgid "Sorry, editing comments is disabled for now."
+msgstr ""
+
+msgid "Text"
+msgstr ""
+
+msgid "Thank you, your article suggestion was submitted. A team member will contact you shortly."
+msgstr ""
+
+msgid "Thanks for your report."
+msgstr ""
+
+#, python-format
+msgid "The article “%(title)s” was created."
+msgstr ""
+
+#, python-format
+msgid "The article “%(title)s” was deleted."
+msgstr ""
+
+msgid "The article “{title}” was saved."
+msgstr ""
+
+msgid "The comment was edited successfully."
+msgstr ""
+
+msgid "The comment was hidden."
+msgstr ""
+
+msgid "The comment was restored."
+msgstr ""
+
+msgid "The comment was saved."
+msgstr ""
+
+msgid "The end date must occur after the start date."
+msgstr ""
+
+msgid "The end time must occur after the start time."
+msgstr ""
+
+msgid "The event has been saved. A team member will review it soon."
+msgstr ""
+
+msgid "The event was saved."
+msgstr ""
+
+#, python-format
+msgid "The event with the id %(id)s could not be used as draft for a new event because it does not exist."
+msgstr ""
+
+#, python-format
+msgid "The publication of the article “<a href=\"%(link)s\">%(title)s</a>” has been revoked."
+msgstr ""
+
+msgid "The report was hidden."
+msgstr ""
+
+msgid "The report was marked as solved."
+msgstr ""
+
+msgid "The report was marked as unsolved."
+msgstr ""
+
+msgid "The report was restored."
+msgstr ""
+
+msgid "The suggestion was assigned to nobody."
+msgstr ""
+
+#, python-format
+msgid "The suggestion was assigned to “%(user)s”."
+msgstr ""
+
+msgid "The suggestion was deleted."
+msgstr ""
+
+msgid "The suggestion was not deleted."
+msgstr ""
+
+#, python-format
+msgid "The suggestion “%(title)s” does not exist."
+msgstr ""
+
+msgid "There already exists an article with this slug!"
+msgstr ""
+
+#, python-format
+msgid "This article is currently being edited by “%(user)s”!"
+msgstr ""
+
+msgid "This article is not visible for regular users."
+msgstr ""
+
+msgid "This suggestion does not exist."
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "To refer to another comment, you can write <code>@commentnumber</code>.<br />Clicking on “reply” will automatically insert this code."
+msgstr ""
+
+msgid "XHTML Markup"
+msgstr ""
+
+msgid "You need to be logged in to subscribe to comments."
+msgstr ""
+
+msgid "You need to be logged in to unsubscribe from comments."
+msgstr ""
+
+msgid "You will no longer be notified of new comments for this article."
+msgstr ""
+
+msgid "Your comment was created."
 msgstr ""
 

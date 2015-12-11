@@ -10,226 +10,170 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"POT-Creation-Date: 2015-12-11 22:49+0100\n"
 "PO-Revision-Date: 2015-11-18 22:24+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
-"Language-Team: German (Germany) "
-"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
+"Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
 
-#: inyoka/pastebin/forms.py:19
-msgid "Plain text"
-msgstr "Klartext"
-
-#: inyoka/pastebin/forms.py:20
 msgid "Apache Config (.htaccess)"
 msgstr "Apache Config (.htaccess)"
 
-#: inyoka/pastebin/forms.py:21
-msgid "Bash"
-msgstr "Bash"
-
-#: inyoka/pastebin/forms.py:22
-msgid "Batch (.bat)"
-msgstr "Batch (.bat)"
-
-#: inyoka/pastebin/forms.py:23
-msgid "C"
-msgstr "C"
-
-#: inyoka/pastebin/forms.py:24
-msgid "C#"
-msgstr "C#"
-
-#: inyoka/pastebin/forms.py:25
-msgid "C++"
-msgstr "C++"
-
-#: inyoka/pastebin/forms.py:26
-msgid "CSS"
-msgstr "CSS"
-
-#: inyoka/pastebin/forms.py:27
-msgid "D"
-msgstr "D"
-
-#: inyoka/pastebin/forms.py:28
-msgid "Django / Jinja Templates"
-msgstr "Django / Jinja Templates"
-
-#: inyoka/pastebin/forms.py:29
-msgid "eRuby / rhtml"
-msgstr "eRuby / rhtml"
-
-#: inyoka/pastebin/forms.py:30
-msgid "Genshi Templates"
-msgstr "Genshi Templates"
-
-#: inyoka/pastebin/forms.py:31
-msgid "Haskell"
-msgstr "Haskell"
-
-#: inyoka/pastebin/forms.py:32
-msgid "HTML"
-msgstr "HTML"
-
-#: inyoka/pastebin/forms.py:33
-msgid "IRC Logs"
-msgstr "IRC Logs"
-
-#: inyoka/pastebin/forms.py:34
-msgid "Java"
-msgstr "Java"
-
-#: inyoka/pastebin/forms.py:35
-msgid "JavaScript"
-msgstr "JavaScript"
-
-#: inyoka/pastebin/forms.py:36
-msgid "JSP"
-msgstr "JSP"
-
-#: inyoka/pastebin/forms.py:37
-msgid "Lua"
-msgstr "Lua"
-
-#: inyoka/pastebin/forms.py:38
-msgid "Mako Templates"
-msgstr "Mako Templates"
-
-#: inyoka/pastebin/forms.py:39
-msgid "MiniD"
-msgstr "MiniD"
-
-#: inyoka/pastebin/forms.py:40
-msgid "Myghty Templates"
-msgstr "Myghty Templates"
-
-#: inyoka/pastebin/forms.py:41
-msgid "OCaml"
-msgstr "OCaml"
-
-#: inyoka/pastebin/forms.py:42
-msgid "Perl"
-msgstr "Perl"
-
-#: inyoka/pastebin/forms.py:43
-msgid "PHP"
-msgstr "PHP"
-
-#: inyoka/pastebin/forms.py:44
-msgid "Python"
-msgstr "Python"
-
-#: inyoka/pastebin/forms.py:45
-msgid "Python Console Sessions"
-msgstr "Python Console Sessions"
-
-#: inyoka/pastebin/forms.py:46
-msgid "Python Tracebacks"
-msgstr "Python Tracebacks"
-
-#: inyoka/pastebin/forms.py:47
-msgid "reStructuredText"
-msgstr "reStructuredText"
-
-#: inyoka/pastebin/forms.py:48
-msgid "Ruby"
-msgstr "Ruby"
-
-#: inyoka/pastebin/forms.py:49
-msgid "Scheme"
-msgstr "Scheme"
-
-#: inyoka/pastebin/forms.py:50
-msgid "Smarty"
-msgstr "Smarty"
-
-#: inyoka/pastebin/forms.py:51
-msgid "sources.list"
-msgstr "sources.list"
-
-#: inyoka/pastebin/forms.py:52
-msgid "SQL"
-msgstr "SQL"
-
-#: inyoka/pastebin/forms.py:53
-msgid "SquidConf"
-msgstr "SquidConf"
-
-#: inyoka/pastebin/forms.py:54
-msgid "TeX / LaTeX"
-msgstr "TeX / LaTeX"
-
-#: inyoka/pastebin/forms.py:55
-msgid "Unified Diff"
-msgstr "Unified Diff"
-
-#: inyoka/pastebin/forms.py:56
-msgid "Vim Scripts"
-msgstr "Vim Scripts"
-
-#: inyoka/pastebin/forms.py:57
-msgid "XML"
-msgstr "XML"
-
-#: inyoka/pastebin/forms.py:62 inyoka/pastebin/models.py:23
-msgid "Title"
-msgstr "Titel"
-
-#: inyoka/pastebin/forms.py:63 inyoka/pastebin/models.py:24
-msgid "Language"
-msgstr "Sprache"
-
-#: inyoka/pastebin/forms.py:69
-msgid "Untitled"
-msgstr "Unbenannt"
-
-#: inyoka/pastebin/models.py:26
-msgid "Date"
-msgstr "Datum"
-
-#: inyoka/pastebin/models.py:28
 msgid "Author"
 msgstr "Autor"
 
-#: inyoka/pastebin/models.py:29
-msgid "Referencing pages"
-msgstr "Verweisende Seiten"
+msgid "Bash"
+msgstr "Bash"
 
-#: inyoka/pastebin/models.py:32
-msgid "Entry"
-msgstr "Eintrag"
+msgid "Batch (.bat)"
+msgstr "Batch (.bat)"
 
-#: inyoka/pastebin/models.py:33
+msgid "C"
+msgstr "C"
+
+msgid "C#"
+msgstr "C#"
+
+msgid "C++"
+msgstr "C++"
+
+msgid "CSS"
+msgstr "CSS"
+
+msgid "D"
+msgstr "D"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Django / Jinja Templates"
+msgstr "Django / Jinja Templates"
+
 msgid "Entries"
 msgstr "Einträge"
 
-#: inyoka/pastebin/views.py:30
-msgid ""
-"Your entry was successfully saved. You can use the following code to "
-"include it in your post:"
-msgstr ""
-"Dein Eintrag wurde erfolgreich gespeichert. Du kannst ihn mit dem "
-"folgenden Code in deinen Beitrag einbinden:"
+msgid "Entry"
+msgstr "Eintrag"
 
-#: inyoka/pastebin/views.py:49
+msgid "Genshi Templates"
+msgstr "Genshi Templates"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "Haskell"
+msgstr "Haskell"
+
+msgid "IRC Logs"
+msgstr "IRC Logs"
+
+msgid "JSP"
+msgstr "JSP"
+
+msgid "Java"
+msgstr "Java"
+
+msgid "JavaScript"
+msgstr "JavaScript"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Lua"
+msgstr "Lua"
+
+msgid "Mako Templates"
+msgstr "Mako Templates"
+
+msgid "MiniD"
+msgstr "MiniD"
+
+msgid "Myghty Templates"
+msgstr "Myghty Templates"
+
+msgid "OCaml"
+msgstr "OCaml"
+
+msgid "PHP"
+msgstr "PHP"
+
 #, python-format
 msgid "Paste number %(id)d could not be found"
 msgstr "Eintrag Nummer %(id)d konnte nicht gefunden werden."
 
-#: inyoka/pastebin/views.py:70
+msgid "Perl"
+msgstr "Perl"
+
+msgid "Plain text"
+msgstr "Klartext"
+
+msgid "Python"
+msgstr "Python"
+
+msgid "Python Console Sessions"
+msgstr "Python Console Sessions"
+
+msgid "Python Tracebacks"
+msgstr "Python Tracebacks"
+
+msgid "Referencing pages"
+msgstr "Verweisende Seiten"
+
+msgid "Ruby"
+msgstr "Ruby"
+
+msgid "SQL"
+msgstr "SQL"
+
+msgid "Scheme"
+msgstr "Scheme"
+
+msgid "Smarty"
+msgstr "Smarty"
+
+msgid "SquidConf"
+msgstr "SquidConf"
+
+msgid "TeX / LaTeX"
+msgstr "TeX / LaTeX"
+
 msgid "The deletion was canceled"
 msgstr "Das Löschen wurde abgebrochen."
 
-#: inyoka/pastebin/views.py:73
 msgid "The entry in the pastebin was deleted."
 msgstr "Der Eintrag in der Ablage wurde gelöscht."
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Unified Diff"
+msgstr "Unified Diff"
+
+msgid "Untitled"
+msgstr "Unbenannt"
+
+msgid "Vim Scripts"
+msgstr "Vim Scripts"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Your entry was successfully saved. You can use the following code to include it in your post:"
+msgstr "Dein Eintrag wurde erfolgreich gespeichert. Du kannst ihn mit dem folgenden Code in deinen Beitrag einbinden:"
+
+msgid "eRuby / rhtml"
+msgstr "eRuby / rhtml"
+
+msgid "reStructuredText"
+msgstr "reStructuredText"
+
+msgid "sources.list"
+msgstr "sources.list"
 
 #~ msgid "Code"
 #~ msgstr "Code"

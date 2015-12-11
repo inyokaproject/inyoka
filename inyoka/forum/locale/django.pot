@@ -1,14 +1,14 @@
-# Translations template for PROJECT.
-# Copyright (C) 2015 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# Translations template for Inyoka Project.
+# Copyright (C) 2015 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
+"Project-Id-Version: Inyoka Project v0.12.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"POT-Creation-Date: 2015-12-11 22:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,625 +17,468 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
 
-#: inyoka/forum/acl.py:22
-msgid "can read"
+#, python-format
+msgid "%(site)s forum"
 msgstr ""
 
-#: inyoka/forum/acl.py:23
-msgid "can vote"
+#, python-format
+msgid "%(site)s forum – “%(forum)s”"
 msgstr ""
 
-#: inyoka/forum/acl.py:24
-msgid "can create topics"
+#, python-format
+msgid "%(site)s topic – “%(topic)s”"
 msgstr ""
 
-#: inyoka/forum/acl.py:25
-msgid "can reply"
+#, python-format
+msgid "%(username)s has created a new topic"
 msgstr ""
 
-#: inyoka/forum/acl.py:26
-msgid "can upload attachments"
+msgid "(Un)lock"
 msgstr ""
 
-#: inyoka/forum/acl.py:27
-msgid "can create polls"
+msgid "A notification will be sent when a topic is reported."
 msgstr ""
 
-#: inyoka/forum/acl.py:28
-msgid "can make sticky"
+msgid "Action canceled."
 msgstr ""
 
-#: inyoka/forum/acl.py:29
-msgid "can moderate"
+msgid "All forums were marked as read."
 msgstr ""
 
-#: inyoka/forum/constants.py:26 inyoka/forum/models.py:563
-msgid "Not specified"
+msgid "An old revision of the post was restored."
 msgstr ""
 
-#: inyoka/forum/constants.py:27
-msgid "Edubuntu"
+msgid "Cancel"
 msgstr ""
 
-#: inyoka/forum/constants.py:28
-msgid "Kubuntu"
-msgstr ""
-
-#: inyoka/forum/constants.py:29
-msgid "Server"
-msgstr ""
-
-#: inyoka/forum/constants.py:30
-msgid "Ubuntu"
-msgstr ""
-
-#: inyoka/forum/constants.py:31
-msgid "Xubuntu"
-msgstr ""
-
-#: inyoka/forum/constants.py:32
-msgid "Lubuntu"
-msgstr ""
-
-#: inyoka/forum/constants.py:33
-msgid "Ubuntu GNOME"
-msgstr ""
-
-#: inyoka/forum/constants.py:34
-msgid "Ubuntu Touch"
-msgstr ""
-
-#: inyoka/forum/constants.py:35
-msgid "Ubuntu MATE"
-msgstr ""
-
-#: inyoka/forum/constants.py:44
-msgid "Version"
-msgstr ""
-
-#: inyoka/forum/constants.py:48
-msgid "Distribution"
-msgstr ""
-
-#: inyoka/forum/forms.py:188
-msgid "No topic with this slug found."
-msgstr ""
-
-#: inyoka/forum/forms.py:219 inyoka/forum/forms.py:252
-msgid "Description"
-msgstr ""
-
-#: inyoka/forum/forms.py:237
-msgid "Reason"
-msgstr ""
-
-#: inyoka/forum/forms.py:249
-msgid "Name"
-msgstr ""
-
-#: inyoka/forum/forms.py:250
-msgid "Slug"
-msgstr ""
-
-#: inyoka/forum/forms.py:253
-msgid "Parent"
-msgstr ""
-
-#: inyoka/forum/forms.py:254
-msgid "Position"
-msgstr ""
-
-#: inyoka/forum/forms.py:256
-msgid "Title"
-msgstr ""
-
-#: inyoka/forum/forms.py:258
-msgid "Text"
-msgstr ""
-
-#: inyoka/forum/forms.py:260
-msgid "Default text for new topics"
-msgstr ""
-
-#: inyoka/forum/forms.py:263
-msgid "Require Ubuntu version"
-msgstr ""
-
-#: inyoka/forum/forms.py:265
 msgid "Count posts in this forum"
 msgstr ""
 
-#: inyoka/forum/forms.py:266
-msgid "This value can only be changed by the Webteam"
+msgid "Default text for new topics"
 msgstr ""
 
-#: inyoka/forum/forms.py:276
-msgid "You must enter a title in order to set the welcome message"
+msgid "Description"
 msgstr ""
 
-#: inyoka/forum/forms.py:283
-msgid "You must enter a text in order to set the welcome message"
+msgid "Distribution"
 msgstr ""
 
-#: inyoka/forum/forms.py:290
-msgid "“new” is not a valid forum slug"
+msgid "Do you really want to hide / delete this post?"
 msgstr ""
 
-#: inyoka/forum/forms.py:294
-#, python-format
-msgid "Please select another slug, “%(slug)s” is already in use."
+msgid "Do you really want to mark this post as ham / spam?"
 msgstr ""
 
-#: inyoka/forum/models.py:256
-msgid "Forum"
+msgid "Do you want to (un)lock the topic?"
 msgstr ""
 
-#: inyoka/forum/models.py:257
-msgid "Forums"
+msgid "Do you want to restore the revision of the post?"
 msgstr ""
 
-#: inyoka/forum/models.py:441
-msgid "Topic"
+msgid "Do you want to restore the topic?"
 msgstr ""
 
-#: inyoka/forum/models.py:442
-msgid "Topics"
+msgid "Do you want to restore this post?"
 msgstr ""
 
-#: inyoka/forum/models.py:567
-msgid "No Ubuntu"
-msgstr ""
-
-#: inyoka/forum/models.py:667
-msgid "Post"
-msgstr ""
-
-#: inyoka/forum/models.py:668
-msgid "Posts"
-msgstr ""
-
-#: inyoka/forum/models.py:920
-msgid "Pictures"
-msgstr ""
-
-#: inyoka/forum/models.py:977
-msgid "This topic is hidden due to possible spam."
-msgstr ""
-
-#: inyoka/forum/models.py:986
-#, python-format
-msgid ""
-"[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible"
-" spam."
-msgstr ""
-
-#: inyoka/forum/models.py:1173
-#, python-format
-msgctxt "Link text to an image attachment"
-msgid "View %(name)s"
-msgstr ""
-
-#: inyoka/forum/models.py:1190
 #, python-format
 msgctxt "Link text to download an attachment"
 msgid "Download %(name)s"
 msgstr ""
 
-#: inyoka/forum/notifications.py:39
-#, python-format
-msgid "%(username)s has created a new topic"
+msgid "Edubuntu"
 msgstr ""
 
-#: inyoka/forum/notifications.py:54
-#, python-format
-msgid "“%(topic)s” – Topic in forum “%(forum)s”"
+msgid "Forum"
 msgstr ""
 
-#: inyoka/forum/notifications.py:81
-#, python-format
-msgid "“%(topic)s” – Topic with version %(version)s"
+msgid "Forums"
 msgstr ""
 
-#: inyoka/forum/notifications.py:105
-#, python-format
-msgid "“%(topic)s” – Reply from “%(username)s“"
+msgid "Hide / Delete"
 msgstr ""
 
-#: inyoka/forum/notifications.py:120
+msgid "Involved topics"
+msgstr ""
+
+msgid "Kubuntu"
+msgstr ""
+
+msgid "Lubuntu"
+msgstr ""
+
+msgid "Mark as ham / spam"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
 msgid "New answer from user „{username}”"
 msgstr ""
 
-#: inyoka/forum/notifications.py:138
 #, python-format
 msgid "New discussion regarding the page “%(page)s” created"
 msgstr ""
 
-#: inyoka/forum/notifications.py:152
+msgid "New posts"
+msgstr ""
+
+msgid "No Ubuntu"
+msgstr ""
+
 #, python-format
-msgid "The topic “%(topic)s” has been deleted"
+msgid "No discussion is linked yet to the article “%(article)s”. You can create a discussion now or <a href=\"%(link)s\">link an existing topic</a> to the article."
 msgstr ""
 
-#: inyoka/forum/views.py:217
-msgid "This topic is not visible for regular users."
-msgstr ""
-
-#: inyoka/forum/views.py:247
-msgid "The poll already ended."
-msgstr ""
-
-#: inyoka/forum/views.py:355
-#, python-format
-msgid "The poll “%(poll)s” was added."
-msgstr ""
-
-#: inyoka/forum/views.py:369
-#, python-format
-msgid "The poll “%(poll)s” was removed."
-msgstr ""
-
-#: inyoka/forum/views.py:415
-#, python-format
-msgid "The attachment “%(attachment)s” does already exist."
-msgstr ""
-
-#: inyoka/forum/views.py:420
-#, python-format
-msgid "The attachment “%(attachment)s” was added successfully."
-msgstr ""
-
-#: inyoka/forum/views.py:427
-#, python-format
-msgid "The attachment with the ID “%(id)d” does not exist."
-msgstr ""
-
-#: inyoka/forum/views.py:435
-#, python-format
-msgid "The attachment “%(attachment)s” was deleted."
-msgstr ""
-
-#: inyoka/forum/views.py:461
-msgid "Post functionality is currently disabled."
-msgstr ""
-
-#: inyoka/forum/views.py:469
-#, python-format
-msgid "The article “%(article)s” does not exist. However, you can create it now."
-msgstr ""
-
-#: inyoka/forum/views.py:474
-#, python-format
-msgid ""
-"No discussion is linked yet to the article “%(article)s”. You can create "
-"a discussion now or <a href=\"%(link)s\">link an existing topic</a> to "
-"the article."
-msgstr ""
-
-#: inyoka/forum/views.py:496
-#, python-format
-msgid "This post is currently beeing edited by “%(user)s”!"
-msgstr ""
-
-#: inyoka/forum/views.py:567 inyoka/forum/views.py:575
-msgid "You cannot edit this post."
-msgstr ""
-
-#: inyoka/forum/views.py:583
-msgid "You cannot reply in this topic because it was deleted by a moderator."
-msgstr ""
-
-#: inyoka/forum/views.py:589
-msgid "You cannot reply to this topic because it was locked."
-msgstr ""
-
-#: inyoka/forum/views.py:594
-msgid ""
-"You are replying to a locked topic. Please note that this may be "
-"considered as impolite!"
-msgstr ""
-
-#: inyoka/forum/views.py:652
-msgid ""
-"This topic was already created. Please think about editing your topic "
-"before creating a new one."
-msgstr ""
-
-#: inyoka/forum/views.py:718
-msgid "The post was saved successfully."
-msgstr ""
-
-#: inyoka/forum/views.py:779
-msgid "Do you want to (un)lock the topic?"
-msgstr ""
-
-#: inyoka/forum/views.py:780
-msgid "(Un)lock"
-msgstr ""
-
-#: inyoka/forum/views.py:780 inyoka/forum/views.py:1270
-#: inyoka/forum/views.py:1287 inyoka/forum/views.py:1340
-#: inyoka/forum/views.py:1372 inyoka/forum/views.py:1383
-msgid "Cancel"
-msgstr ""
-
-#: inyoka/forum/views.py:796
-msgid "The topic was marked as solved."
-msgstr ""
-
-#: inyoka/forum/views.py:798
-msgid "The topic was marked as unsolved."
-msgstr ""
-
-#: inyoka/forum/views.py:806
-msgid "The topic was locked."
-msgstr ""
-
-#: inyoka/forum/views.py:808
-msgid "The topic was unlocked."
-msgstr ""
-
-#: inyoka/forum/views.py:832 inyoka/forum/views.py:865
-#, python-format
-msgid "There is no “%(slug)s” anymore."
-msgstr ""
-
-#: inyoka/forum/views.py:887
-msgid "Notifications on new topics within this forum will be sent to you."
-msgstr ""
-
-#: inyoka/forum/views.py:892
-msgid ""
-"No notifications on new topics within this forum will be sent to you any "
-"more."
-msgstr ""
-
-#: inyoka/forum/views.py:897
-msgid "Notifications on new posts in this topic will be sent to you."
-msgstr ""
-
-#: inyoka/forum/views.py:901
 msgid "No notifications on new posts in this topic will be sent to you any more"
 msgstr ""
 
-#: inyoka/forum/views.py:913
-msgid "This topic was already reported."
+msgid "No notifications on new topics within this forum will be sent to you any more."
 msgstr ""
 
-#: inyoka/forum/views.py:928
-#, python-format
-msgid "Reported topic: “%(topic)s”"
+msgid "No older topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:932
-msgid "The topic was reported."
-msgstr ""
-
-#: inyoka/forum/views.py:954
-msgid "This report has already been claimed."
-msgstr ""
-
-#: inyoka/forum/views.py:969
-msgid "No topics selected."
-msgstr ""
-
-#: inyoka/forum/views.py:990
-msgid "The selected tickets have been closed."
-msgstr ""
-
-#: inyoka/forum/views.py:992
-msgid ""
-"Only a subset of selected tickets has been closed, considering your "
-"moderation privileges for the regarding forums."
-msgstr ""
-
-#: inyoka/forum/views.py:1017
-msgid "A notification will be sent when a topic is reported."
-msgstr ""
-
-#: inyoka/forum/views.py:1023
-msgid "You will not be notified anymore when a topic is reported."
-msgstr ""
-
-#: inyoka/forum/views.py:1133
-#, python-format
-msgid "Your topic “%(topic)s” was moved."
-msgstr ""
-
-#: inyoka/forum/views.py:1147
-#, python-format
-msgid "The topic “%(topic)s” was moved."
-msgstr ""
-
-#: inyoka/forum/views.py:1170
 msgid "No post selected."
 msgstr ""
 
-#: inyoka/forum/views.py:1196
-msgid "You cannot set this topic as target."
+msgid "No recent topics within this forum."
 msgstr ""
 
-#: inyoka/forum/views.py:1221
-msgid "You cannot move a topic into a category. Please choose a forum."
+msgid "No topic with this slug found."
 msgstr ""
 
-#: inyoka/forum/views.py:1249
-#, python-format
-msgid "The topic “%(topic)s” was split."
+msgid "No topics selected."
 msgstr ""
 
-#: inyoka/forum/views.py:1269
-msgid "Do you want to restore this post?"
+msgid "Not specified"
 msgstr ""
 
-#: inyoka/forum/views.py:1270 inyoka/forum/views.py:1372
-#: inyoka/forum/views.py:1383
-msgid "Restore"
+msgid "Notifications on new posts in this topic will be sent to you."
 msgstr ""
 
-#: inyoka/forum/views.py:1281
-#, python-format
-msgid "The post by “%(user)s” was made visible."
+msgid "Notifications on new topics within this forum will be sent to you."
 msgstr ""
 
-#: inyoka/forum/views.py:1286
-msgid "Do you really want to hide / delete this post?"
+msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
 msgstr ""
 
-#: inyoka/forum/views.py:1287
-msgid "Hide / Delete"
+msgid "Parent"
 msgstr ""
 
-#: inyoka/forum/views.py:1313
-msgid "The first post of a topic cannot be deleted."
+msgid "Pictures"
 msgstr ""
 
-#: inyoka/forum/views.py:1315
-msgid "The first post of a topic cannot be hidden."
-msgstr ""
-
-#: inyoka/forum/views.py:1322
-#, python-format
-msgid "The post by “%(user)s” was hidden."
-msgstr ""
-
-#: inyoka/forum/views.py:1330
-#, python-format
-msgid "The post by “%(user)s” was deleted."
-msgstr ""
-
-#: inyoka/forum/views.py:1339
-msgid "Do you really want to mark this post as ham / spam?"
-msgstr ""
-
-#: inyoka/forum/views.py:1340
-msgid "Mark as ham / spam"
-msgstr ""
-
-#: inyoka/forum/views.py:1371
-msgid "Do you want to restore the revision of the post?"
-msgstr ""
-
-#: inyoka/forum/views.py:1378
-msgid "An old revision of the post was restored."
-msgstr ""
-
-#: inyoka/forum/views.py:1382
-msgid "Do you want to restore the topic?"
-msgstr ""
-
-#: inyoka/forum/views.py:1395
-#, python-format
-msgid "The topic “%(topic)s” was restored."
-msgstr ""
-
-#: inyoka/forum/views.py:1419
-msgid "Action canceled."
-msgstr ""
-
-#: inyoka/forum/views.py:1427
-#, python-format
-msgid "The topic “%(topic)s” was hidden."
-msgstr ""
-
-#: inyoka/forum/views.py:1435
-#, python-format
-msgid "The topic “%(topic)s” was deleted successfully."
-msgstr ""
-
-#: inyoka/forum/views.py:1462
-#, python-format
-msgid "%(site)s topic – “%(topic)s”"
-msgstr ""
-
-#: inyoka/forum/views.py:1504
-#, python-format
-msgid "%(site)s forum – “%(forum)s”"
-msgstr ""
-
-#: inyoka/forum/views.py:1512
-#, python-format
-msgid "%(site)s forum"
-msgstr ""
-
-#: inyoka/forum/views.py:1553
 msgid "Please login to mark posts as read."
 msgstr ""
 
-#: inyoka/forum/views.py:1560
 #, python-format
-msgid "The forum “%(forum)s” was marked as read."
+msgid "Please select another slug, “%(slug)s” is already in use."
 msgstr ""
 
-#: inyoka/forum/views.py:1565
-msgid "All forums were marked as read."
+msgid "Position"
 msgstr ""
 
-#: inyoka/forum/views.py:1579
-#, python-format
-msgid "You can only display the last %(n)d pages."
+msgid "Post"
 msgstr ""
 
-#: inyoka/forum/views.py:1593
-#, python-format
-msgid "Posts of the last %(n)d hours"
+msgid "Post functionality is currently disabled."
 msgstr ""
 
-#: inyoka/forum/views.py:1597
-msgid "Unanswered topics"
+msgid "Posts"
 msgstr ""
 
-#: inyoka/forum/views.py:1601
-msgid "Unsolved topics"
-msgstr ""
-
-#: inyoka/forum/views.py:1607
-#, python-format
-msgid "Topics by “%(user)s”"
-msgstr ""
-
-#: inyoka/forum/views.py:1611 inyoka/forum/views.py:1682
-msgid "You need to be logged in to use this function."
-msgstr ""
-
-#: inyoka/forum/views.py:1616
 #, python-format
 msgid "Posts by “%(user)s”"
 msgstr ""
 
-#: inyoka/forum/views.py:1619
-msgid "Involved topics"
-msgstr ""
-
-#: inyoka/forum/views.py:1631
-msgid "New posts"
-msgstr ""
-
-#: inyoka/forum/views.py:1726
-msgid "Posts by “{user}” in topic “{topic}”"
-msgstr ""
-
-#: inyoka/forum/views.py:1729
-msgid "Posts by “{user}” in forum “{forum}”"
-msgstr ""
-
-#: inyoka/forum/views.py:1731
 msgid "Posts by “{user}”"
 msgstr ""
 
-#: inyoka/forum/views.py:1777
-msgid "No recent topics within this forum."
+msgid "Posts by “{user}” in forum “{forum}”"
 msgstr ""
 
-#: inyoka/forum/views.py:1790
-msgid "No older topics within this forum."
+msgid "Posts by “{user}” in topic “{topic}”"
 msgstr ""
 
-#: inyoka/forum/views.py:1852
+#, python-format
+msgid "Posts of the last %(n)d hours"
+msgstr ""
+
+msgid "Reason"
+msgstr ""
+
+#, python-format
+msgid "Reported topic: “%(topic)s”"
+msgstr ""
+
+msgid "Require Ubuntu version"
+msgstr ""
+
+msgid "Restore"
+msgstr ""
+
+msgid "Server"
+msgstr ""
+
+msgid "Slug"
+msgstr ""
+
+msgid "Text"
+msgstr ""
+
+#, python-format
+msgid "The article “%(article)s” does not exist. However, you can create it now."
+msgstr ""
+
+#, python-format
+msgid "The attachment with the ID “%(id)d” does not exist."
+msgstr ""
+
+#, python-format
+msgid "The attachment “%(attachment)s” does already exist."
+msgstr ""
+
+#, python-format
+msgid "The attachment “%(attachment)s” was added successfully."
+msgstr ""
+
+#, python-format
+msgid "The attachment “%(attachment)s” was deleted."
+msgstr ""
+
+msgid "The first post of a topic cannot be deleted."
+msgstr ""
+
+msgid "The first post of a topic cannot be hidden."
+msgstr ""
+
 #, python-format
 msgid "The forum “%(forum)s” was changed successfully."
 msgstr ""
 
-#: inyoka/forum/views.py:1854
 #, python-format
 msgid "The forum “%(forum)s” was created successfully."
+msgstr ""
+
+#, python-format
+msgid "The forum “%(forum)s” was marked as read."
+msgstr ""
+
+msgid "The poll already ended."
+msgstr ""
+
+#, python-format
+msgid "The poll “%(poll)s” was added."
+msgstr ""
+
+#, python-format
+msgid "The poll “%(poll)s” was removed."
+msgstr ""
+
+#, python-format
+msgid "The post by “%(user)s” was deleted."
+msgstr ""
+
+#, python-format
+msgid "The post by “%(user)s” was hidden."
+msgstr ""
+
+#, python-format
+msgid "The post by “%(user)s” was made visible."
+msgstr ""
+
+msgid "The post was saved successfully."
+msgstr ""
+
+msgid "The selected tickets have been closed."
+msgstr ""
+
+msgid "The topic was locked."
+msgstr ""
+
+msgid "The topic was marked as solved."
+msgstr ""
+
+msgid "The topic was marked as unsolved."
+msgstr ""
+
+msgid "The topic was reported."
+msgstr ""
+
+msgid "The topic was unlocked."
+msgstr ""
+
+#, python-format
+msgid "The topic “%(topic)s” has been deleted"
+msgstr ""
+
+#, python-format
+msgid "The topic “%(topic)s” was deleted successfully."
+msgstr ""
+
+#, python-format
+msgid "The topic “%(topic)s” was hidden."
+msgstr ""
+
+#, python-format
+msgid "The topic “%(topic)s” was moved."
+msgstr ""
+
+#, python-format
+msgid "The topic “%(topic)s” was restored."
+msgstr ""
+
+#, python-format
+msgid "The topic “%(topic)s” was split."
+msgstr ""
+
+#, python-format
+msgid "There is no “%(slug)s” anymore."
+msgstr ""
+
+#, python-format
+msgid "This post is currently beeing edited by “%(user)s”!"
+msgstr ""
+
+msgid "This report has already been claimed."
+msgstr ""
+
+msgid "This topic is hidden due to possible spam."
+msgstr ""
+
+msgid "This topic is not visible for regular users."
+msgstr ""
+
+msgid "This topic was already created. Please think about editing your topic before creating a new one."
+msgstr ""
+
+msgid "This topic was already reported."
+msgstr ""
+
+msgid "This value can only be changed by the Webteam"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Topic"
+msgstr ""
+
+msgid "Topics"
+msgstr ""
+
+#, python-format
+msgid "Topics by “%(user)s”"
+msgstr ""
+
+msgid "Ubuntu"
+msgstr ""
+
+msgid "Ubuntu GNOME"
+msgstr ""
+
+msgid "Ubuntu MATE"
+msgstr ""
+
+msgid "Ubuntu Touch"
+msgstr ""
+
+msgid "Unanswered topics"
+msgstr ""
+
+msgid "Unsolved topics"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+#, python-format
+msgctxt "Link text to an image attachment"
+msgid "View %(name)s"
+msgstr ""
+
+msgid "Xubuntu"
+msgstr ""
+
+msgid "You are replying to a locked topic. Please note that this may be considered as impolite!"
+msgstr ""
+
+#, python-format
+msgid "You can only display the last %(n)d pages."
+msgstr ""
+
+msgid "You cannot edit this post."
+msgstr ""
+
+msgid "You cannot move a topic into a category. Please choose a forum."
+msgstr ""
+
+msgid "You cannot reply in this topic because it was deleted by a moderator."
+msgstr ""
+
+msgid "You cannot reply to this topic because it was locked."
+msgstr ""
+
+msgid "You cannot set this topic as target."
+msgstr ""
+
+msgid "You must enter a text in order to set the welcome message"
+msgstr ""
+
+msgid "You must enter a title in order to set the welcome message"
+msgstr ""
+
+msgid "You need to be logged in to use this function."
+msgstr ""
+
+msgid "You will not be notified anymore when a topic is reported."
+msgstr ""
+
+#, python-format
+msgid "Your topic “%(topic)s” was moved."
+msgstr ""
+
+#, python-format
+msgid "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible spam."
+msgstr ""
+
+msgid "can create polls"
+msgstr ""
+
+msgid "can create topics"
+msgstr ""
+
+msgid "can make sticky"
+msgstr ""
+
+msgid "can moderate"
+msgstr ""
+
+msgid "can read"
+msgstr ""
+
+msgid "can reply"
+msgstr ""
+
+msgid "can upload attachments"
+msgstr ""
+
+msgid "can vote"
+msgstr ""
+
+#, python-format
+msgid "“%(topic)s” – Reply from “%(username)s“"
+msgstr ""
+
+#, python-format
+msgid "“%(topic)s” – Topic in forum “%(forum)s”"
+msgstr ""
+
+#, python-format
+msgid "“%(topic)s” – Topic with version %(version)s"
+msgstr ""
+
+msgid "“new” is not a valid forum slug"
 msgstr ""
 
