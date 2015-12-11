@@ -17,6 +17,8 @@ from subprocess import call
 from django.apps import apps
 from django.core.management.base import BaseCommand
 
+from inyoka import INYOKA_VERSION
+
 APPS = ['forum', 'portal', 'wiki', 'ikhaya', 'pastebin', 'planet', 'markup']
 
 
@@ -28,8 +30,12 @@ class Command(BaseCommand):
             'pybabel', 'extract', '-F', babel_cfg_path,
             '-k', '_', '-k', 'gettext', '-k', 'pgettext:1c,2', '-k',
             'ugettext', '-k', 'ugettext_lazy', '-k', 'ungettext_lazy',
+            '--no-wrap', '--no-location', '--sort-output',
+            '--copyright-holder=Inyoka Team (see AUTHORS)',
+            '--project=Inyoka Project', '--version=' + INYOKA_VERSION
         ]
-        args_update = ['pybabel', 'update', '-D', 'django', '-l', 'de_DE']
+        args_update = ['pybabel', 'update', '-D', 'django', '-l', 'de_DE',
+                       '--no-wrap']
 
         for app in APPS:
             args = args_extract + [
