@@ -123,27 +123,23 @@ def do_show(request, name, rev=None, allow_redirect=True):
     except Page.DoesNotExist:
         return do_missing_page(request, name)
 
-    if allow_redirect:
-        redirect = page.metadata.get('X-Redirect', None)
-        if redirect is not None:
-            anchor = None
-            if '#' in redirect:
-                redirect, anchor = redirect.rsplit('#', 1)
-            try:
-                redirect = get_safe_redirect_target(redirect)
-            except CircularRedirectException:
-                messages.error(request,
-                    _(u'This page contains a redirect that leads to a '
-                      u'redirect loop!'))
-                return HttpResponseRedirect(url_for(page, action='show_no_redirect'))
+    redirect = page.metadata.get('X-Redirect', None)
+    if allow_redirect and redirect is not None:
+        try:
+            redirect, anchor = get_safe_redirect_target(redirect)
+        except CircularRedirectException:
+            messages.error(request,
+                _(u'This page contains a redirect that leads to a '
+                  u'redirect loop!'))
+            return HttpResponseRedirect(url_for(page, action='show_no_redirect'))
 
-            messages.info(request,
-                _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
-                    'link': escape(url_for(page, action='show_no_redirect')),
-                    'title': escape(page.title)
-                }
-            )
-            return HttpResponseRedirect(href('wiki', redirect, _anchor=anchor))
+        messages.info(request,
+            _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
+                'link': escape(url_for(page, action='show_no_redirect')),
+                'title': escape(page.title)
+            }
+        )
+        return HttpResponseRedirect(href('wiki', redirect, _anchor=anchor))
     if page.rev.deleted:
         return do_missing_page(request, name, page)
 

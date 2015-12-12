@@ -114,8 +114,6 @@ class CircularRedirectException(Exception):
     """
     Raised when a sequence of redirects becomes circular.
     """
-    def __init__(self, *args, **kwargs):
-        super(CircularRedirectException, self).__init__(*args, **kwargs)
 
 
 def get_safe_redirect_target(target=None):
@@ -127,6 +125,11 @@ def get_safe_redirect_target(target=None):
     previous = []
 
     while target is not None:
+        if '#' in target:
+            target, anchor = target.rsplit('#', 1)
+        else:
+            anchor = None
+
         if target in previous:
             raise CircularRedirectException()
         else:
@@ -138,4 +141,4 @@ def get_safe_redirect_target(target=None):
             # This can happen, if the target of the redirect is a view
             break
 
-    return previous.pop()
+    return (previous.pop(), anchor)
