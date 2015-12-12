@@ -53,7 +53,11 @@ from inyoka.wiki.forms import (
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.tasks import update_object_list
-from inyoka.wiki.utils import case_sensitive_redirect
+from inyoka.wiki.utils import (
+    case_sensitive_redirect,
+    CircularRedirectException,
+    get_safe_redirect_target
+)
 
 REVISIONS_PER_PAGE = 100
 
@@ -118,19 +122,28 @@ def do_show(request, name, rev=None, allow_redirect=True):
             page = Page.objects.get_by_name_and_rev(name, rev)
     except Page.DoesNotExist:
         return do_missing_page(request, name)
+
     if allow_redirect:
-        redirect = page.metadata.get('X-Redirect')
-        if redirect:
+        redirect = page.metadata.get('X-Redirect', None)
+        if redirect is not None:
+            anchor = None
+            if '#' in redirect:
+                redirect, anchor = redirect.rsplit('#', 1)
+            try:
+                redirect = get_safe_redirect_target(redirect)
+            except CircularRedirectException:
+                messages.error(request,
+                    _(u'This page contains a redirect that leads to a '
+                      u'redirect loop!'))
+                return HttpResponseRedirect(url_for(page, action='show_no_redirect'))
+
             messages.info(request,
                 _(u'Redirected from “<a href="%(link)s">%(title)s</a>”.') % {
                     'link': escape(url_for(page, action='show_no_redirect')),
                     'title': escape(page.title)
                 }
             )
-            anchor = None
-            if '#' in redirect:
-                redirect, anchor = redirect.rsplit('#', 1)
-            return HttpResponseRedirect(href('wiki', redirect, 'no_redirect', _anchor=anchor))
+            return HttpResponseRedirect(href('wiki', redirect, _anchor=anchor))
     if page.rev.deleted:
         return do_missing_page(request, name, page)
 
