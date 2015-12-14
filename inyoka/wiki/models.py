@@ -995,7 +995,7 @@ class Page(models.Model):
 
         update_object_list.delay(self.name)
 
-    def get_absolute_url(self, action='show', revision=None, old_revision=None,
+    def get_absolute_url(self, action='show', revision=None, new_revision=None,
                          format=None, **query):
         actions = ('attachments',
                    'backlinks',
@@ -1016,7 +1016,12 @@ class Page(models.Model):
         if action in actions:
             return action_href(action, **query)
         elif action == 'diff' or action == 'udiff':
-            return action_href(action, old_revision, revision)
+            if revision is None and new_revision is None:
+                return action_href(action)
+            elif new_revision is None:
+                return action_href(action, revision)
+            else:
+                return action_href(action, revision, new_revision)
         elif action == 'show_no_redirect':
             return href('wiki', self.name, 'no_redirect', **query)
         elif action == 'revert' and revision is not None:

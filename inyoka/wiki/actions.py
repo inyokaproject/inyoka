@@ -762,10 +762,8 @@ def do_log(request, name, pagination_page=1):
 @case_sensitive_redirect
 def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
     """Render a diff between two pages."""
-    if not old_rev.isdigit():
+    if old_rev is None:
         old_rev = Page.objects.get_head(name, -1)
-        if old_rev is None:
-            raise Revision.DoesNotExist()
     if new_rev and not new_rev.isdigit():
         raise Http404()
     diff = Page.objects.compare(name, old_rev, new_rev)
