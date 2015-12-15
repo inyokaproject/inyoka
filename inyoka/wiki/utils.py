@@ -16,6 +16,7 @@ from django.shortcuts import redirect
 from django.utils.html import smart_urlquote
 
 from inyoka.utils.urls import href, url_for
+from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
 
 
@@ -107,3 +108,37 @@ def quote_text(text, author=None, item_url=None):
         '>' + (not line.startswith('>') and ' ' or '') + line
         for line in text.split('\n')
     ) or u''
+
+
+class CircularRedirectException(Exception):
+    """
+    Raised when a sequence of redirects becomes circular.
+    """
+
+
+def get_safe_redirect_target(target=None):
+    """ Resolve X-Redirect headers without circular redirects. """
+    if target is None:
+        # shouldn't happen ;)
+        return False
+
+    previous = []
+
+    while target is not None:
+        if '#' in target:
+            target, anchor = target.rsplit('#', 1)
+        else:
+            anchor = None
+
+        if target in previous:
+            raise CircularRedirectException()
+        else:
+            previous.append(target)
+
+        try:
+            target = Page.objects.get_by_name(target).metadata.get('X-Redirect', None)
+        except Page.DoesNotExist:
+            # This can happen, if the target of the redirect is a view
+            break
+
+    return (previous.pop(), anchor)

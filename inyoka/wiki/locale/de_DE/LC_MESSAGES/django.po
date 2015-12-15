@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-12-11 22:49+0100\n"
+"POT-Creation-Date: 2015-12-15 16:55+0100\n"
 "PO-Revision-Date: 2015-11-28 18:34+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
@@ -210,6 +210,9 @@ msgstr "Der Titel der Seite, die du anlegen möchtest."
 msgid "These attachments are already attached to the new page name: %(names)s. Please make sure that they are not required anymore. <a href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
 msgstr "Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: %(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a href=\"%(link)s\">Umbenennen und Löschung doppelter Anhänge erzwingen</a>."
 
+msgid "This page contains a redirect that leads to a redirect loop!"
+msgstr "Diese Seite enthält eine Weiterleitung die zu einer Endlosschleife führt."
+
 msgid "This topic does not exist."
 msgstr "Dieses Thema existiert nicht."
 
@@ -259,4 +262,3 @@ msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
 
 #~ msgid "Automatically deleted"
 #~ msgstr "Von System gelöscht"
-
