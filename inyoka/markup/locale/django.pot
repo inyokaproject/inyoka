@@ -1,14 +1,14 @@
-# Translations template for PROJECT.
-# Copyright (C) 2015 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# Translations template for Inyoka Project.
+# Copyright (C) 2015 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
+"Project-Id-Version: Inyoka Project v0.12.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"POT-Creation-Date: 2015-12-11 22:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,141 +17,104 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
 
-#: inyoka/markup/__init__.py:196
+msgid "<strong>Conflict End</strong>"
+msgstr ""
+
+msgid "<strong>Conflict</strong> – local Version"
+msgstr ""
+
+msgid "<strong>Conflict</strong> – remote version"
+msgstr ""
+
+msgid "Conditions allow only one expression per block."
+msgstr ""
+
+msgid "Edited by"
+msgstr ""
+
 msgid "Internal error: "
 msgstr ""
 
-#: inyoka/markup/__init__.py:197
-msgid "The parser found too deeply nested elements."
+msgid "Invalid arguments"
 msgstr ""
 
-#: inyoka/markup/__init__.py:887
+msgid "Invalid date"
+msgstr ""
+
+msgid "Invalid macro"
+msgstr ""
+
+msgid "Invalid syntax for this loop. After the first variable an “in” is required."
+msgstr ""
+
+msgid "Invalid syntax for this loop. The first argument must be a variable."
+msgstr ""
+
+msgid "Invalid syntax: "
+msgstr ""
+
+msgid "Loop end contains too many arguments."
+msgstr ""
+
+msgid "Loop header contains too many arguments."
+msgstr ""
+
+msgid "Missing comma between array entries"
+msgstr ""
+
 msgid "Missing macro"
 msgstr ""
 
-#: inyoka/markup/__init__.py:888
+msgid "Missing template"
+msgstr ""
+
+msgid "Moderated by"
+msgstr ""
+
+msgid "Parentheses were not closed properly."
+msgstr ""
+
+msgid "Table of contents"
+msgstr ""
+
+msgid "The first argument must be the name of the template."
+msgstr ""
+
 #, python-format
 msgid "The macro “%(name)s” does not exist."
 msgstr ""
 
-#: inyoka/markup/machine.py:227
-msgid "Invalid macro"
+msgid "The parser found too deeply nested elements."
 msgstr ""
 
-#: inyoka/markup/machine.py:228
-msgid "This macro is not available."
-msgstr ""
-
-#: inyoka/markup/macros.py:270
-msgid "Table of contents"
-msgstr ""
-
-#: inyoka/markup/macros.py:307
-msgid "Invalid date"
-msgstr ""
-
-#: inyoka/markup/nodes.py:254
-msgid "<strong>Conflict</strong> – remote version"
-msgstr ""
-
-#: inyoka/markup/nodes.py:255
-msgid "<strong>Conflict</strong> – local Version"
-msgstr ""
-
-#: inyoka/markup/nodes.py:256
-msgid "<strong>Conflict End</strong>"
-msgstr ""
-
-#: inyoka/markup/nodes.py:692
-msgid "Edited by"
-msgstr ""
-
-#: inyoka/markup/nodes.py:717
-msgid "Moderated by"
-msgstr ""
-
-#: inyoka/markup/templates.py:53
-msgid "Invalid arguments"
-msgstr ""
-
-#: inyoka/markup/templates.py:54
-msgid "The first argument must be the name of the template."
-msgstr ""
-
-#: inyoka/markup/templates.py:60
-msgid "Missing template"
-msgstr ""
-
-#: inyoka/markup/templates.py:61
 #, python-format
 msgid "The template “%(name)s” could not be found."
 msgstr ""
 
-#: inyoka/markup/templates.py:161
-msgid "Invalid syntax for this loop. The first argument must be a variable."
+msgid "The “else” block does not allow any expressions. Maybe you wanted to use the “elseif” block."
 msgstr ""
 
-#: inyoka/markup/templates.py:167
-msgid ""
-"Invalid syntax for this loop. After the first variable an “in” is "
-"required."
+msgid "This macro is not available."
 msgstr ""
 
-#: inyoka/markup/templates.py:172
-msgid "Loop header contains too many arguments."
-msgstr ""
-
-#: inyoka/markup/templates.py:176
-msgid "Loop end contains too many arguments."
-msgstr ""
-
-#: inyoka/markup/templates.py:185 inyoka/markup/templates.py:207
-msgid "Conditions allow only one expression per block."
-msgstr ""
-
-#: inyoka/markup/templates.py:196
-msgid ""
-"The “else” block does not allow any expressions. Maybe you wanted to use "
-"the “elseif” block."
-msgstr ""
-
-#: inyoka/markup/templates.py:216
-msgid "“endif” does not allow any arguments"
-msgstr ""
-
-#: inyoka/markup/templates.py:252
-msgid "Unknown expression after “as” operator."
-msgstr ""
-
-#: inyoka/markup/templates.py:269
-msgid "Unknown expression after “is” operator"
-msgstr ""
-
-#: inyoka/markup/templates.py:347
-msgid "Unexpected end of expression."
-msgstr ""
-
-#: inyoka/markup/templates.py:359
-msgid "Parentheses were not closed properly."
-msgstr ""
-
-#: inyoka/markup/templates.py:369
-msgid "Missing comma between array entries"
-msgstr ""
-
-#: inyoka/markup/templates.py:392
-msgid "Unexpected operator"
-msgstr ""
-
-#: inyoka/markup/templates.py:419
-msgid "expected variable, integer or attribute"
-msgstr ""
-
-#: inyoka/markup/templates.py:450
 msgid "Too many arguments for this value output"
 msgstr ""
 
-#: inyoka/markup/templates.py:475
-msgid "Invalid syntax: "
+msgid "Unexpected end of expression."
+msgstr ""
+
+msgid "Unexpected operator"
+msgstr ""
+
+msgid "Unknown expression after “as” operator."
+msgstr ""
+
+msgid "Unknown expression after “is” operator"
+msgstr ""
+
+msgid "expected variable, integer or attribute"
+msgstr ""
+
+msgid "“endif” does not allow any arguments"
 msgstr ""
 

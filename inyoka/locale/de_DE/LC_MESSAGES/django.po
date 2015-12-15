@@ -11,193 +11,133 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-11-28 18:37+0100\n"
+"POT-Creation-Date: 2015-12-11 22:49+0100\n"
 "PO-Revision-Date: 2015-11-18 22:23+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
-"Language-Team: German (Germany) "
-"(http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
+"Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
 
-#: inyoka/utils/cache.py:44
-msgid "counting..."
-msgstr "Zähle..."
-
-#: inyoka/utils/diff3.py:373
-msgid "Old"
-msgstr "Alt"
-
-#: inyoka/utils/diff3.py:373
-msgid "New"
-msgstr "Neu"
-
-#: inyoka/utils/flash_confirmation.py:33
 msgid "Are you sure?"
 msgstr "Bist du sicher"
 
-#: inyoka/utils/flash_confirmation.py:34
-msgid "Yes"
-msgstr "Ja"
-
-#: inyoka/utils/flash_confirmation.py:35
-msgid "No"
-msgstr "Nein"
-
-#: inyoka/utils/forms.py:55
-msgid "Text must not be empty"
-msgstr "Text darf nicht leer sein"
-
-#: inyoka/utils/forms.py:66
-msgid "Your signature contains illegal elements"
-msgstr "Deine Signatur enthält ungültige Elemente"
-
-#: inyoka/utils/forms.py:71
-msgid "Your signature contains too many nested elements"
-msgstr "Deine Signatur enthält zu viele verschachtelte Elemente"
-
-#: inyoka/utils/forms.py:76
-#, python-format
-msgid "Your signature is too long, only %(length)s characters allowed"
-msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
-
-#: inyoka/utils/forms.py:80
-#, python-format
-msgid "Your signature can only contain up to %(num)d lines"
-msgstr "Deine Signatur darf nicht mehr als %(num)d Zeilen haben"
-
-#: inyoka/utils/forms.py:141
-msgid "This user does not exist"
-msgstr "Diesen Benutzer gibt es nicht"
-
-#: inyoka/utils/forms.py:195
-msgid ""
-"The entered e-mail address belongs to a e-mail provider we had to block "
-"because of SPAM problems. Please choose another e-mail address"
-msgstr ""
-"Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir "
-"wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
-
-#: inyoka/utils/forms.py:208
-msgid "The entered Jabber address is invalid. Please check your input."
-msgstr ""
-"Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die "
-"Eingabe."
-
-#: inyoka/utils/forms.py:234
-msgid ""
-"You have entered an invisible field and were therefore classified as a "
-"bot."
-msgstr ""
-"Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot "
-"identifiziert."
-
-#: inyoka/utils/forms.py:245
 msgid "CAPTCHA"
 msgstr "CAPTCHA"
 
-#: inyoka/utils/forms.py:246
-msgid "Please type in the code from the graphic above"
-msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
+msgid "Canceled."
+msgstr "Abgebrochen."
 
-#: inyoka/utils/forms.py:248
-msgid "Generate new code"
-msgstr "Neue Zeichenfolge generieren"
-
-#: inyoka/utils/forms.py:270
-msgid "The entered CAPTCHA was incorrect."
-msgstr "Die Eingabe des Captchas war nicht korrekt."
-
-#: inyoka/utils/generic.py:29
 msgid "Errors occurred, please fix them."
 msgstr "Bitte die aufgetretenen Fehler beheben."
 
-#: inyoka/utils/generic.py:59
-msgid "{verbose_name} “{object_name}” was successfully created."
-msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
+msgid "Generate new code"
+msgstr "Neue Zeichenfolge generieren"
 
-#: inyoka/utils/generic.py:61
-msgid "{verbose_name} “{object_name}” was successfully changed."
-msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
+msgid "New"
+msgstr "Neu"
 
-#: inyoka/utils/generic.py:175
+msgid "No"
+msgstr "Nein"
+
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
 msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
 
-#: inyoka/utils/generic.py:202
-msgid "{verbose_name} “{object_name}” was deleted successfully!"
-msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
+msgid "Old"
+msgstr "Alt"
 
-#: inyoka/utils/generic.py:220
-msgid "Canceled."
-msgstr "Abgebrochen."
+msgid "Please type in the code from the graphic above"
+msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
 
-#: inyoka/utils/sessions.py:74
-msgid ""
-"You cannot send data that fast in a row. Please wait a bit until you "
-"submit the form again."
-msgstr ""
-"Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte "
-"noch einige Zeit, bevor du das Formular erneut absendest."
+msgid "Text must not be empty"
+msgstr "Text darf nicht leer sein"
 
-#: inyoka/utils/spam.py:151
+msgid "The entered CAPTCHA was incorrect."
+msgstr "Die Eingabe des Captchas war nicht korrekt."
+
+msgid "The entered Jabber address is invalid. Please check your input."
+msgstr "Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die Eingabe."
+
+msgid "The entered e-mail address belongs to a e-mail provider we had to block because of SPAM problems. Please choose another e-mail address"
+msgstr "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
+
 #, python-format
-msgid ""
-"Your text is considered spam and needs approval from one of the "
-"administrators. Please be patient, we will get to it as soon as possible."
-" You have %(left)d attempts left before your account will be blocked."
-msgstr ""
-"Dein Beitrag wurde als Spam klassifiziert und muss von einem Moderator "
-"freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie"
-" möglich darum kümmern. Du hast %(left)d verbleibende Versuche bevor dein"
-" Konto gesperrt wird."
+msgid "The user “%(name)s” deleted his profile. Your session has ended."
+msgstr "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum abgemelet."
 
-#: inyoka/utils/text.py:142
-msgid "ten"
-msgstr "zehn"
-
-#: inyoka/utils/text.py:144
-msgid "eleven"
-msgstr "elf"
-
-#: inyoka/utils/text.py:146
-msgid "twelve"
-msgstr "zwölf"
-
-#: inyoka/utils/text.py:149
-msgctxt "masculine"
-msgid "one"
-msgstr "ein"
-
-#: inyoka/utils/text.py:150
-msgctxt "feminine"
-msgid "one"
-msgstr "eine"
-
-#: inyoka/utils/text.py:151
-msgctxt "neuter"
-msgid "one"
-msgstr "ein"
-
-#: inyoka/utils/text.py:152
-msgid "one"
-msgstr "eins"
-
-#: inyoka/middlewares/auth.py:34
 #, python-format
 msgid "The user “%(name)s” was banned. Your session has ended."
 msgstr "Der Benutzer „%(name)s“ wurde gesperrt und dadurch deine Sitzung beendet"
 
-#: inyoka/middlewares/auth.py:38
+msgid "This user does not exist"
+msgstr "Diesen Benutzer gibt es nicht"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "You cannot send data that fast in a row. Please wait a bit until you submit the form again."
+msgstr "Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte noch einige Zeit, bevor du das Formular erneut absendest."
+
+msgid "You have entered an invisible field and were therefore classified as a bot."
+msgstr "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot identifiziert."
+
 #, python-format
-msgid "The user “%(name)s” deleted his profile. Your session has ended."
-msgstr ""
-"Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum "
-"abgemelet."
+msgid "Your signature can only contain up to %(num)d lines"
+msgstr "Deine Signatur darf nicht mehr als %(num)d Zeilen haben"
+
+msgid "Your signature contains illegal elements"
+msgstr "Deine Signatur enthält ungültige Elemente"
+
+msgid "Your signature contains too many nested elements"
+msgstr "Deine Signatur enthält zu viele verschachtelte Elemente"
+
+#, python-format
+msgid "Your signature is too long, only %(length)s characters allowed"
+msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
+
+#, python-format
+msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible. You have %(left)d attempts left before your account will be blocked."
+msgstr "Dein Beitrag wurde als Spam klassifiziert und muss von einem Moderator freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie möglich darum kümmern. Du hast %(left)d verbleibende Versuche bevor dein Konto gesperrt wird."
+
+msgid "counting..."
+msgstr "Zähle..."
+
+msgid "eleven"
+msgstr "elf"
+
+msgctxt "masculine"
+msgid "one"
+msgstr "ein"
+
+msgctxt "feminine"
+msgid "one"
+msgstr "eine"
+
+msgctxt "neuter"
+msgid "one"
+msgstr "ein"
+
+msgid "one"
+msgstr "eins"
+
+msgid "ten"
+msgstr "zehn"
+
+msgid "twelve"
+msgstr "zwölf"
+
+msgid "{verbose_name} “{object_name}” was deleted successfully!"
+msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
+
+msgid "{verbose_name} “{object_name}” was successfully changed."
+msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
+
+msgid "{verbose_name} “{object_name}” was successfully created."
+msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
 
 #~ msgid "The chosen sort value (“%(value)s”) is not available"
 #~ msgstr "Der ausgewählte Wert („%(value)s“) ist nicht verfügbar"
