@@ -16,7 +16,7 @@ from importlib import import_module
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.forms.widgets import CheckboxInput
 from django.template.base import Context as DjangoContext
 from django.template.base import TemplateDoesNotExist

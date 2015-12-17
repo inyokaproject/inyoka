@@ -74,7 +74,7 @@ class MaxLengthStorageMixin(object):
     #: filename, even if it needs to be enumerated.
     min_file_root_length = 8
 
-    def get_available_name(self, name):
+    def get_available_name(self, name, max_length=None):
         """
         Returns a filename that's free on the target storage system, and
         available for new content to be written to.
@@ -134,3 +134,6 @@ class InyokaFSStorage(MaxLengthStorageMixin, FileSystemStorage):
     """
     Default storage backend for Inyoka.
     """
+    # TODO: Sice django 1.8 django supports max_length. So this class can be
+    #       removed be finding all places in inyoka where storage.save() is
+    #       used and set the max_length attribute

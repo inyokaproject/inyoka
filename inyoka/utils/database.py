@@ -42,7 +42,7 @@ def find_next_increment(model, column, string, **query_opts):
 
         find_next_increment(Article, 'slug', 'article name')
     """
-    field = model._meta.get_field_by_name(column)[0]
+    field = model._meta.get_field(column)
     max_length = field.max_length if hasattr(field, 'max_length') else None
     # We are pretty defensive here and make sure we always have 4 characters
     # left, to be able to append up to 999 slugs (-1 ... -999)
