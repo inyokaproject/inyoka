@@ -12,14 +12,13 @@ import re
 
 from django import forms
 from django.conf import settings
-from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
 from inyoka.forum.acl import CAN_READ
 from inyoka.forum.constants import get_distro_choices, get_version_choices
-from inyoka.forum.models import Topic, Forum
-from inyoka.utils.forms import SlugField, MultiField, StrippedCharField
+from inyoka.forum.models import Forum, Topic
+from inyoka.utils.forms import MultiField, StrippedCharField
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
@@ -245,52 +244,38 @@ class ReportListForm(forms.Form):
     selected = forms.MultipleChoiceField()
 
 
-class EditForumForm(forms.Form):
-    name = forms.CharField(label=ugettext_lazy(u'Name'), max_length=100)
-    slug = SlugField(label=ugettext_lazy(u'Slug'), max_length=100, required=False)
-    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}),
-                                  label=ugettext_lazy(u'Description'), required=False)
-    parent = ForumField(label=ugettext_lazy(u'Parent'), required=False)
-    position = forms.IntegerField(label=ugettext_lazy(u'Position'), initial=0)
+class EditForumForm(forms.ModelForm):
+    class Meta:
+        model = Forum
+        fields = [
+            'name',
+            'slug',
+            'description',
+            'parent',
+            'position',
+            'newtopic_default_text',
+            'force_version',
+            'user_count_posts',
+            'support_group',
+            'welcome_title',
+            'welcome_text']
 
-    welcome_msg_subject = forms.CharField(label=ugettext_lazy(u'Title'), max_length=120,
-        required=False)
-    welcome_msg_text = forms.CharField(label=ugettext_lazy(u'Text'), required=False,
-                                       widget=forms.Textarea(attrs={'rows': 3}))
-    newtopic_default_text = forms.CharField(label=ugettext_lazy(u'Default text for new topics'),
-                                            widget=forms.Textarea(attrs={'rows': 3}),
-                                            required=False)
-    force_version = forms.BooleanField(label=ugettext_lazy(u'Require Ubuntu version'),
-                                       required=False)
-    count_posts = forms.BooleanField(label=ugettext_lazy(u'Count posts in this forum'),
-        help_text=ugettext_lazy(u'This value can only be changed by the Webteam'),
-        required=False, widget=forms.CheckboxInput({'readonly': True}))
-
-    def __init__(self, *args, **kwargs):
-        self.forum = kwargs.pop('forum', None)
-        super(EditForumForm, self).__init__(*args, **kwargs)
-
-    def clean_welcome_msg_subject(self):
+    def clean_welcome_title(self):
         data = self.cleaned_data
-        if data.get('welcome_msg_text') and not data.get('welcome_msg_subject'):
+        if data.get('welcome_text') and not data.get('welcome_title'):
             raise forms.ValidationError(ugettext_lazy(u'You must enter a title '
                 u'in order to set the welcome message'))
-        return data['welcome_msg_subject']
+        return data['welcome_title']
 
     def clean_welcome_msg_text(self):
         data = self.cleaned_data
-        if data.get('welcome_msg_subject') and not data.get('welcome_msg_text'):
+        if data.get('welcome_title') and not data.get('welcome_text'):
             raise forms.ValidationError(ugettext_lazy(u'You must enter a text '
                 u'in order to set the welcome message'))
-        return data['welcome_msg_text']
+        return data['welcome_text']
 
     def clean_slug(self):
         data = self.cleaned_data['slug']
         if data == 'new':
             raise forms.ValidationError(ugettext_lazy(u'“new” is not a valid forum slug'))
-
-        slug = self.forum.slug if self.forum else ''
-        if data != slug and Forum.objects.filter(slug=data).exists():
-            raise forms.ValidationError(_(u'Please select another slug, '
-                u'“%(slug)s” is already in use.') % {'slug': escape(data)})
         return data

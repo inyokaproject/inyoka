@@ -416,8 +416,6 @@ class User(AbstractBaseUser):
     forum_last_read = models.IntegerField(ugettext_lazy(u'Last read post'),
                                           default=0, blank=True)
     forum_read_status = models.TextField(ugettext_lazy(u'Read posts'), blank=True)
-    forum_welcome = models.TextField(ugettext_lazy(u'Read welcome message'),
-                                     blank=True)
 
     # member title
     member_title = models.CharField(ugettext_lazy(u'Team affiliation / Member title'),

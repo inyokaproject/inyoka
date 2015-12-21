@@ -21,6 +21,7 @@ from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
+from django.views.generic import CreateView, UpdateView
 
 from inyoka.forum.acl import (
     CAN_MODERATE,
@@ -52,7 +53,6 @@ from inyoka.forum.models import (
     Post,
     PostRevision,
     Topic,
-    WelcomeMessage,
     mark_all_forums_read,
 )
 from inyoka.forum.notifications import (
@@ -75,7 +75,6 @@ from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
-from inyoka.utils.generic import trigger_fix_errors_message
 from inyoka.utils.http import (
     AccessDeniedResponse,
     does_not_exist_is_404,
@@ -90,6 +89,7 @@ from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
+from inyoka.utils.views import PermissionRequiredMixin
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import quote_text
 
@@ -1749,7 +1749,7 @@ def welcome(request, slug, path=None):
     inform him about special rules.
     """
     forum = Forum.objects.get(slug=slug)
-    if not forum.welcome_message:
+    if not forum.welcome_title:
         raise Http404()
     goto_url = path or url_for(forum)
     if request.method == 'POST':
@@ -1761,7 +1761,6 @@ def welcome(request, slug, path=None):
             return HttpResponseRedirect(href('forum'))
     return {
         'goto_url': goto_url,
-        'message': forum.welcome_message,
         'forum': forum
     }
 
@@ -1791,90 +1790,23 @@ def previous_topic(request, topic_slug):
     return HttpResponseRedirect(url_for(previous[0]))
 
 
-@require_permission('forum_edit')
-@templated('forum/forum_edit.html')
-def forum_edit(request, slug=None, parent=None):
+class ForumEditMixin(PermissionRequiredMixin):
     """
-    Display an interface to let the user create or edit an forum.
-    If `id` is given, the forum with id `id` will be edited.
+    Mixin for the ForumCreateView and the ForumUpdateView.
+    """
+    permission_required = 'forum_edit'
+    model = Forum
+    form_class = EditForumForm
+    template_name = 'forum/forum_edit.html'
+
+
+class ForumCreateView(ForumEditMixin, CreateView):
+    """
+    View to create a new forum.
     """
 
-    forum = None
-    errors = False
-    initial = {'parent': parent} if parent else {}
 
-    if slug:
-        forum = Forum.objects.get_cached(slug)
-        if forum is None:
-            raise Http404()
-
-    if request.method == 'POST':
-        form = EditForumForm(request.POST, forum=forum)
-        form.fields['parent'].refresh(add=[(0, u'-')], remove=[forum])
-
-        if form.is_valid():
-            data = form.cleaned_data
-            if not slug:
-                forum = Forum()
-            forum.name = data['name']
-            forum.position = data['position']
-            old_slug = forum.slug
-            forum.slug = data['slug']
-            forum.description = data['description']
-            if int(data['parent']) > 0:
-                forum.parent = Forum.objects.get(id=int(data['parent']))
-            else:
-                forum.parent = None
-
-            if data['welcome_msg_subject']:
-                # subject and text are bound to each other, validation
-                # is done in admin.forms
-                welcome_msg = WelcomeMessage(
-                    title=data['welcome_msg_subject'],
-                    text=data['welcome_msg_text']
-                )
-                welcome_msg.save()
-                forum.welcome_message_id = welcome_msg.id
-
-            forum.newtopic_default_text = data.get('newtopic_default_text', None)
-            forum.force_version = data['force_version']
-
-            if not form.errors and not errors:
-                forum.save()
-                keys = ['forum/index'] + ['forum/forums/{}'.format(f.slug)
-                                          for f in Forum.objects.get_cached()]
-                if old_slug is not None:
-                    keys.append(u'forum/forums/{}'.format(old_slug))
-                cache.delete_many(keys)
-                cache.delete('forum/slugs')
-                if slug:
-                    msg = _(u'The forum “%(forum)s” was changed successfully.')
-                else:
-                    msg = _(u'The forum “%(forum)s” was created successfully.')
-                messages.success(request, msg % {'forum': forum.name})
-                return HttpResponseRedirect(href('forum'))
-        else:
-            trigger_fix_errors_message(request)
-
-    else:
-        if slug is None:
-            form = EditForumForm(initial=initial)
-        else:
-            welcome_msg = forum.welcome_message
-
-            form = EditForumForm(initial={
-                'name': forum.name,
-                'slug': forum.slug,
-                'description': forum.description,
-                'parent': forum.parent_id,
-                'position': forum.position,
-                'welcome_msg_subject': welcome_msg and welcome_msg.title or u'',
-                'welcome_msg_text': welcome_msg and welcome_msg.text or u'',
-                'force_version': forum.force_version,
-                'count_posts': forum.user_count_posts,
-            })
-        form.fields['parent'].refresh(add=[(0, u'-')], remove=[forum])
-    return {
-        'form': form,
-        'forum': forum
-    }
+class ForumUpdateView(ForumEditMixin, UpdateView):
+    """
+    View to update an existing forum.
+    """
