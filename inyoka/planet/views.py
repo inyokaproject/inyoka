@@ -40,12 +40,18 @@ def context_modifier(request, context):
 
 
 blog_list = generic.ListView.as_view(default_column='-latest_update',
-    queryset=Blog.objects.annotate(latest_update=Max('entry__pub_date')),
+    queryset=Blog.objects.exclude(active=False).annotate(latest_update=Max('entry__pub_date')),
     template_name='planet/blog_list.html',
-    columns=['name', 'user', 'latest_update', 'active'],
+    columns=['name', 'user', 'latest_update'],
     required_permission='blog_edit',
     base_link=href('planet', 'blogs'))
 
+blog_list_inactive = generic.ListView.as_view(default_column='-latest_update',
+    queryset=Blog.objects.exclude(active=True).annotate(latest_update=Max('entry__pub_date')),
+    template_name='planet/blog_list_inactive.html',
+    columns=['name', 'user', 'latest_update'],
+    required_permission='blog_edit',
+    base_link=href('planet', 'blogs'))
 
 blog_edit = generic.CreateUpdateView(model=Blog,
     form_class=EditBlogForm,
