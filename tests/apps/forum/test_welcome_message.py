@@ -65,13 +65,14 @@ class TestModel(TestCase):
         self.assertIsNone(forum.find_welcome(user))
 
     def test_read_welcome_on_anonymous(self):
+        """
+        Test that forum.read_welcome does nothing for anonymous users.
+        """
         anonymous = User.objects.get_anonymous_user()
         forum = Forum.objects.create(
             name='test forum',
             welcome_title='Message title',
             welcome_text='Message text')
-        # Let anonymous accept the text. That should not happend in our views.
-        forum.welcome_read_users.add(anonymous)
 
         forum.read_welcome(anonymous)
 
