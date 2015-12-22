@@ -9,19 +9,21 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
-from django.conf.urls import include, patterns, url
+from django.conf.urls import include, url
 
-urlpatterns = patterns('inyoka.pastebin.views',
-    (r'^$', 'browse'),
-    (r'^(\d+)/$', 'display'),
-    (r'^raw/(\d+)/$', 'raw'),
-    (r'^delete/(\d+)/$', 'delete'),
-    (r'^add/$', 'add'),
-)
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.browse),
+    url(r'^(\d+)/$', views.display),
+    url(r'^raw/(\d+)/$', views.raw),
+    url(r'^delete/(\d+)/$', views.delete),
+    url(r'^add/$', views.add),
+]
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += patterns('',
+    urlpatterns.append(
         url(r'^__debug__/', include(debug_toolbar.urls)),
     )
 
