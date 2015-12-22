@@ -1,0 +1,17 @@
+In this folder are settings to test inyoka with different dabaseses.
+
+To run the tests, call:
+
+python manage.py --settings tests.settings.DATABASE
+
+where DATABASE is sqlite, mysql or postgres.
+
+To run the tests with a specific database server, the database has to be
+installed and configured. There has also be a redis server for the tests to
+work.
+
+As default, the tests expect the database servers to run on localhost, but
+another host can be used by creating a file custom.py in the settings folder
+with the content:
+
+test_host = MY_HOST_NAME

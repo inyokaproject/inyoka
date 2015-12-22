@@ -7,8 +7,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'inyoka_{}'.format(uuid1()),
         'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'HOST': test_host,
     }
 }
