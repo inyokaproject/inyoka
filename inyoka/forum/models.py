@@ -288,6 +288,17 @@ class Forum(models.Model):
         children = [forum for forum in forums if forum.parent_id == self.id]
         return children
 
+    @property
+    def descendants(self):
+        """
+        Linke children but also returns the children of the children and so on.
+        """
+        descedants = []
+        for child in self.children:
+            descedants.append(child)
+            descedants.extend(child.descendants)
+        return descedants
+
     def filter_children(self, forums):
         return [forum for forum in forums if forum.parent_id == self.id]
 
@@ -392,17 +403,40 @@ class Forum(models.Model):
 
     @property
     def post_count(self):
-        return QueryCounter(
+        """
+        Counts all posts from this forum and all child forums.
+        """
+        try:
+            return self._post_count_query_counter
+        except AttributeError:
+            # If the attribute does not exist, then create the query counter
+            pass
+        forums = self.descendants + [self]
+        self._post_count_query_counter = QueryCounter(
             cache_key="forum_post_count:{}".format(self.id),
-            query=Post.objects.filter(topic__forum=self),
+            query=Post.objects.filter(topic__forum__in=forums),
             use_task=False)
+        return self._post_count_query_counter
 
     @property
     def topic_count(self):
-        return QueryCounter(
+        """
+        Count all topics from this forum *and not* of the child forums.
+
+        The child forums can not be counted, because the counter is used
+        for the pagination of the forum.
+        """
+        try:
+            return self._topic_count_query_counter
+        except AttributeError:
+            # If the attribute does not exist, then create the query counter
+            pass
+
+        self._topic_count_query_counter = QueryCounter(
             cache_key="forum_topic_count:{}".format(self.id),
             query=self.topics.all(),
             use_task=False)
+        return self._topic_count_query_counter
 
 
 class Topic(models.Model):

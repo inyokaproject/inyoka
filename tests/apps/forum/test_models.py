@@ -41,7 +41,7 @@ class TestForumModel(TestCase):
 
         # Fill the cache
         for forum in (self.parent1, self.parent2, self.forum):
-            forum.post_count.db_count()
+            forum.post_count.db_count(write_cache=True)
 
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
@@ -65,6 +65,11 @@ class TestForumModel(TestCase):
         self.assertEqual(rec2, [])
         self.assertEqual(rec3, [])
         self.assertEqual(rec4, [(0, self.parent2)])
+
+    def test_descendants(self):
+        self.assertEqual(self.forum.descendants, [])
+        self.assertEqual(self.parent2.descendants, [self.forum])
+        self.assertEqual(self.parent1.descendants, [self.parent2, self.forum])
 
     def test_get_slugs(self):
         map = {self.parent1.id: 'this-is-a-test',
@@ -104,39 +109,6 @@ class TestForumModel(TestCase):
         self.assertEqual(Forum.objects.get_all_forums_cached(), new_map)
         self.assertEqual(cache.get('forum/forums/yeha'), new_forum)
         new_forum.delete()
-
-    def test_post_count(self):
-        user = User.objects.register_user('admin', 'admin', 'admin', False)
-        t1 = Topic.objects.create(
-            title='topic',
-            author=user,
-            forum=self.parent2)
-        t2 = Topic.objects.create(
-            title='topic2',
-            author=user,
-            forum=self.forum)
-
-        for i in xrange(5):
-            Post.objects.create(
-                text='post%d t1' % i,
-                author=user,
-                position=i,
-                topic=t1)
-            Post.objects.create(
-                text='post%d t2' % i,
-                author=user,
-                position=i,
-                topic=t2)
-
-        self.assertEqual(
-            self.parent1.post_count.value(),
-            10)
-        self.assertEqual(
-            self.parent2.post_count.value(),
-            10)
-        self.assertEqual(
-            self.forum.post_count.value(),
-            5)
 
     def test_get_absolute_url(self):
         url1 = self.forum.get_absolute_url('show', foo='val1', bar='val2')
@@ -228,13 +200,13 @@ class TestPostSplit(TestCase):
             self.topic2.posts.add(self.t2_posts[i])
 
         # Setup the cache
-        self.user.post_count.db_count()
-        self.topic1.post_count.db_count()
-        self.topic2.post_count.db_count()
-        self.forum1.post_count.db_count()
-        self.forum2.post_count.db_count()
-        self.forum1.topic_count.db_count()
-        self.forum2.topic_count.db_count()
+        self.user.post_count.db_count(write_cache=True)
+        self.topic1.post_count.db_count(write_cache=True)
+        self.topic2.post_count.db_count(write_cache=True)
+        self.forum1.post_count.db_count(write_cache=True)
+        self.forum2.post_count.db_count(write_cache=True)
+        self.forum1.topic_count.db_count(write_cache=True)
+        self.forum2.topic_count.db_count(write_cache=True)
 
     def test_post_counter(self):
         user = User.objects.get(id=self.user.id)
@@ -334,7 +306,7 @@ class TestPostMove(TestCase):
             topic=self.topic2)
 
         # Calculate user posts
-        self.user.post_count.db_count()
+        self.user.post_count.db_count(write_cache=True)
 
         # Reload objects. Use topic1.refresh_from_db() in django 1.8
         self.topic1 = Topic.objects.get(pk=self.topic1.pk)
