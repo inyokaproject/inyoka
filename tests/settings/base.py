@@ -23,6 +23,9 @@ DATABASES = {
 # debug settings
 DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = True
 
+# Use the default language of django for the tests
+del LANGUAGE_CODE  # NOQA
+
 # url settings
 BASE_DOMAIN_NAME = 'ubuntuusers.local:8080'
 INYOKA_URI_SCHEME = 'http'

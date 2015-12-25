@@ -16,13 +16,14 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic.base import RedirectView
 
 from inyoka.forum.acl import (
     CAN_MODERATE,
@@ -90,7 +91,7 @@ from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
-from inyoka.utils.views import PermissionRequiredMixin
+from inyoka.utils.views import PermissionRequiredMixin, SingleObjectMixin
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import quote_text
 
@@ -1787,29 +1788,45 @@ class WelcomeMessageView(PermissionRequiredMixin, DetailView):
         return HttpResponseRedirect(href('forum'))
 
 
-@does_not_exist_is_404
-def next_topic(request, topic_slug):
-    this = Topic.objects.get(slug=topic_slug)
-    next = Topic.objects.filter(forum=this.forum,
-                                last_post__gt=this.last_post) \
-                        .order_by('last_post').all()
-    if not next.exists():
-        messages.info(request, _(u'No recent topics within this forum.'))
-        next = [this.forum]
-    return HttpResponseRedirect(url_for(next[0]))
+class NextTopicView(PermissionRequiredMixin, SingleObjectMixin, RedirectView):
+    """
+    View that redirects to the next or the previous topic of a forum.
 
+    Redirects to the forum, if there is no next or previous topic.
 
-@does_not_exist_is_404
-def previous_topic(request, topic_slug):
-    this = Topic.objects.get(slug=topic_slug)
+    Set direction to the string 'recent' or 'older'. Default is 'recent'.
+    """
+    permanent = False  # This is the default in django 1.9
+    model = Topic
+    direction = 'recent'  # Can be 'recent' or 'older'
 
-    previous = Topic.objects.filter(forum=this.forum,
-                                    last_post__lt=this.last_post) \
-                            .order_by('-last_post').all()
-    if not previous.exists():
-        messages.info(request, _(u'No older topics within this forum.'))
-        previous = [this.forum]
-    return HttpResponseRedirect(url_for(previous[0]))
+    def has_permission(self):
+        privileges = get_forum_privileges(
+            self.request.user,
+            self.object.cached_forum())
+
+        if not check_privilege(privileges, 'read'):
+            return False
+        return True
+
+    def get_redirect_url(self, *args, **kwargs):
+        query = Topic.objects.filter(forum=self.object.forum)
+        if self.direction == 'recent':
+            query = query.filter(last_post__gt=self.object.last_post).order_by('last_post')
+        elif self.direction == 'older':
+            query = query.filter(last_post__lt=self.object.last_post).order_by('-last_post')
+        else:
+            raise ImproperlyConfigured(
+                'You have to set direction to "recent" or "older" in the '
+                'NextTopicView, not {}'.format(self.direction))
+
+        try:
+            return url_for(query[0])
+        except IndexError:
+            messages.info(self.request, _(
+                u'No {direction} topics within this forum.'.format(
+                    direction=_(self.direction))))
+            return url_for(self.object.forum)
 
 
 class ForumEditMixin(PermissionRequiredMixin):

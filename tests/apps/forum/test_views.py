@@ -1430,6 +1430,72 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertInHTML('<div class="text"><p>edited text 4</p></div>', response.content, count=1)
 
 
+class TestNextTopicView(TestCase):
+    client_host = 'forum'
+
+    def test_recent_topic(self):
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic1 = Topic.objects.create(slug='t1', forum=forum, author=user)
+        topic2 = Topic.objects.create(slug='t2', forum=forum, author=user)
+        Post.objects.create(topic=topic1, author=user)
+        Post.objects.create(topic=topic2, author=user)
+        request = RequestFactory().get('/fake/')
+
+        with patch.object(views.NextTopicView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            response = views.NextTopicView.as_view()(request, slug='t1')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], url_for(topic2))
+
+    def test_recent_topic_no_result(self):
+        """
+        Tests that the view redirects to the forum if there is no next topic.
+        """
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic1 = Topic.objects.create(slug='t1', forum=forum, author=user)
+        Post.objects.create(topic=topic1, author=user)
+        request = RequestFactory().get('/fake/')
+        request._messages = MagicMock()
+
+        with patch.object(views.NextTopicView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            response = views.NextTopicView.as_view()(request, slug='t1')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], url_for(forum))
+        request._messages.add.assert_called_once_with(
+            INFO,
+            u'No recent topics within this forum.',
+            '')
+
+    def test_older_topic(self):
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic1 = Topic.objects.create(slug='t1', forum=forum, author=user)
+        topic2 = Topic.objects.create(slug='t2', forum=forum, author=user)
+        Post.objects.create(topic=topic1, author=user)
+        Post.objects.create(topic=topic2, author=user)
+        request = RequestFactory().get('/fake/')
+
+        with patch.object(views.NextTopicView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            response = views.NextTopicView.as_view(direction='older')(request, slug='t2')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], url_for(topic1))
+
+    def test_on_non_existing_topic(self):
+        request = RequestFactory().get('/fake/')
+
+        with patch.object(views.NextTopicView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            with self.assertRaises(Http404):
+                views.NextTopicView.as_view()(request, slug='no_topic')
+
+
 class TestWelcomeMessageView(TestCase):
     def test_post_accept(self):
         user = User.objects.create(username='testuser')
