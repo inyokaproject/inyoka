@@ -5,8 +5,8 @@ from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 
 
-class TestModel(TestCase):
-    def test_find_welcome_anonymous(self):
+class TestModelFindWelcome(TestCase):
+    def test_anonymous(self):
         """
         Tests that find_welcome returns None, when given with the anonymous user
         even when he accepted it.
@@ -21,7 +21,7 @@ class TestModel(TestCase):
 
         self.assertIsNone(forum.find_welcome(anonymous))
 
-    def test_find_welcome_with_message(self):
+    def test_with_message(self):
         user = User.objects.create(username='test_user')
         forum = Forum.objects.create(
             name='test forum',
@@ -30,7 +30,7 @@ class TestModel(TestCase):
 
         self.assertEqual(forum.find_welcome(user), forum)
 
-    def test_find_welcome_with_message_parent(self):
+    def test_with_message_parent(self):
         """
         Test the method on a child forum where the parent has a welcome message.
         """
@@ -45,7 +45,7 @@ class TestModel(TestCase):
 
         self.assertEqual(forum2.find_welcome(user), forum1)
 
-    def test_find_welcome_without_message(self):
+    def test_without_message(self):
         """
         Tests the method on a forum without a message.
         """
@@ -54,7 +54,7 @@ class TestModel(TestCase):
 
         self.assertIsNone(forum.find_welcome(user))
 
-    def test_find_welcome_user_has_accepted(self):
+    def test_user_has_accepted(self):
         user = User.objects.create(username='test_user')
         forum = Forum.objects.create(
             name='test forum',
@@ -64,7 +64,85 @@ class TestModel(TestCase):
 
         self.assertIsNone(forum.find_welcome(user))
 
-    def test_read_welcome_on_anonymous(self):
+    def test_sub_forum(self):
+        """
+        Tests a forum, where the child forum has a welcome message but not
+        the parent forum.
+        """
+        user = User.objects.create(username='test_user')
+        forum = Forum.objects.create(
+            name='test forum')
+        sub_forum = Forum.objects.create(
+            name='test forum',
+            parent=forum,
+            welcome_title='Message title',
+            welcome_text='Message text')
+
+        self.assertEqual(sub_forum.find_welcome(user), sub_forum)
+
+    def test_sub_forum_and_parent(self):
+        """
+        Tests a forum, where the child forum and the parent have welcome
+        messages.
+        """
+        user = User.objects.create(username='test_user')
+        forum = Forum.objects.create(
+            name='test forum',
+            welcome_title='Message title',
+            welcome_text='Message text')
+        sub_forum = Forum.objects.create(
+            name='test forum',
+            parent=forum,
+            welcome_title='Message title',
+            welcome_text='Message text')
+
+        self.assertEqual(sub_forum.find_welcome(user), forum)
+
+    def test_sub_forum_and_parent_accepted_sub_forum(self):
+        """
+        Tests a forum, where the child forum and the parent have welcome
+        messages.
+
+        The user has accepted the sub forum
+        """
+        user = User.objects.create(username='test_user')
+        forum = Forum.objects.create(
+            name='test forum',
+            welcome_title='Message title',
+            welcome_text='Message text')
+        sub_forum = Forum.objects.create(
+            name='test forum',
+            parent=forum,
+            welcome_title='Message title',
+            welcome_text='Message text')
+        sub_forum.welcome_read_users.add(user)
+
+        self.assertEqual(sub_forum.find_welcome(user), forum)
+
+    def test_sub_forum_and_parent_accepted_parent(self):
+        """
+        Tests a forum, where the child forum and the parent have welcome
+        messages.
+
+        The user has accepted the parent forum
+        """
+        user = User.objects.create(username='test_user')
+        forum = Forum.objects.create(
+            name='test forum',
+            welcome_title='Message title',
+            welcome_text='Message text')
+        sub_forum = Forum.objects.create(
+            name='test forum',
+            parent=forum,
+            welcome_title='Message title',
+            welcome_text='Message text')
+        forum.welcome_read_users.add(user)
+
+        self.assertEqual(sub_forum.find_welcome(user), sub_forum)
+
+
+class TestModelReadWelcome(TestCase):
+    def test_on_anonymous(self):
         """
         Test that forum.read_welcome does nothing for anonymous users.
         """
@@ -78,7 +156,7 @@ class TestModel(TestCase):
 
         self.assertFalse(forum.welcome_read_users.filter(pk=anonymous.pk).exists())
 
-    def test_read_welcome_accept(self):
+    def test_accept(self):
         user = User.objects.create(username='test_user')
         forum = Forum.objects.create(
             name='test forum',
@@ -89,7 +167,7 @@ class TestModel(TestCase):
 
         self.assertIsNone(forum.find_welcome(user))
 
-    def test_read_welcome_not_accepted(self):
+    def test_not_accepted(self):
         """
         Tests that a user that accepted the message is "unaccepting" it when
         the read_welcome is called with accepted is False.
@@ -105,7 +183,7 @@ class TestModel(TestCase):
 
         self.assertEqual(forum.find_welcome(user), forum)
 
-    def test_read_welcome_on_forum_without_message(self):
+    def test_on_forum_without_message(self):
         """
         Tests that read_welcome works also on forums without a message.
         """

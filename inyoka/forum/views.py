@@ -21,7 +21,7 @@ from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 from inyoka.forum.acl import (
     CAN_MODERATE,
@@ -92,6 +92,7 @@ from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.views import PermissionRequiredMixin
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import quote_text
+from django.shortcuts import redirect
 
 
 @templated('forum/index.html')
@@ -111,9 +112,9 @@ def index(request, category=None):
         category = category
         categories = [category]
 
-        wmsg = category.find_welcome(request.user)
-        if wmsg is not None:
-            return welcome(request, wmsg.slug, request.path)
+        unread_forum = category.find_welcome(request.user)
+        if unread_forum is not None:
+            return redirect(url_for(unread_forum, 'welcome'))
     else:
         categories = tuple(forum for forum in forums if forum.parent_id is None)
 
@@ -159,9 +160,9 @@ def forum(request, slug, page=1):
     if not check_privilege(privs[forum.pk], 'read'):
         return abort_access_denied(request)
 
-    fmsg = forum.find_welcome(request.user)
-    if fmsg is not None:
-        return welcome(request, fmsg.slug, request.path)
+    unread_forum = forum.find_welcome(request.user)
+    if unread_forum is not None:
+        return redirect(url_for(unread_forum, 'welcome'))
 
     topic_ids = Topic.objects.filter(forum=forum)\
                              .values_list('id', flat=True)\
@@ -218,9 +219,9 @@ def viewtopic(request, topic_slug, page=1):
         else:
             return abort_access_denied(request)
 
-    fmsg = topic.cached_forum().find_welcome(request.user)
-    if fmsg is not None:
-        return welcome(request, fmsg.slug, request.path)
+    unread_forum = topic.cached_forum().find_welcome(request.user)
+    if unread_forum is not None:
+        return redirect(url_for(unread_forum, 'welcome'))
 
     topic.touch()
 
@@ -1742,27 +1743,48 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
     }
 
 
-@templated('forum/welcome.html')
-def welcome(request, slug, path=None):
+class WelcomeMessageView(PermissionRequiredMixin, DetailView):
     """
-    Show a welcome message on the first visit to greet the users or
-    inform him about special rules.
+    View has shows the welcome message of a forum.
+
+    The user can accept the message with a post request with the key accept
+    set to True.
     """
-    forum = Forum.objects.get(slug=slug)
-    if not forum.welcome_title:
-        raise Http404()
-    goto_url = path or url_for(forum)
-    if request.method == 'POST':
-        accepted = request.POST.get('accept', False)
-        forum.read_welcome(request.user, accepted)
+    model = Forum
+    template_name = 'forum/welcome.html'
+
+    def has_permission(self):
+        """
+        The user needs permissions to read the forum to get the welcome page.
+        """
+        privileges = get_forum_privileges(
+            self.request.user,
+            self.object)
+
+        if not check_privilege(privileges, 'read'):
+            return False
+        return True
+
+    def dispatch(self, *args, **kwargs):
+        """
+        If the forum does not have a welcome message, then 404 is raised.
+        """
+        self.object = self.get_object()
+        if not self.object.welcome_title:
+            raise Http404()
+        return super(WelcomeMessageView, self).dispatch(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        """
+        Set the accepted status of the request.user to either accepted or
+        rejected and redirects to the main forum page if rejected or to the
+        forum if accepted.
+        """
+        accepted = self.request.POST.get('accept', False)
+        self.object.read_welcome(self.request.user, accepted)
         if accepted:
-            return HttpResponseRedirect(request.POST.get('goto_url'))
-        else:
-            return HttpResponseRedirect(href('forum'))
-    return {
-        'goto_url': goto_url,
-        'forum': forum
-    }
+            return HttpResponseRedirect(url_for(self.object))
+        return HttpResponseRedirect(href('forum'))
 
 
 @does_not_exist_is_404

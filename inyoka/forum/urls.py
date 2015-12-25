@@ -98,8 +98,8 @@ urlpatterns = [
     url(r'^topic_author/(?P<user>[^/]+)/(?P<forum>[^/]+)/$', views.topiclist, {'action': 'topic_author'}),
     url(r'^topic_author/(?P<user>[^/]+)/(?P<forum>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'topic_author'}),
 
-    url(r'^category/(?P<slug>[^/]+)/welcome/$', views.welcome),
-    url(r'^forum/(?P<slug>[^/]+)/welcome/$', views.welcome),
+    url(r'^category/(?P<slug>[^/]+)/welcome/$', views.WelcomeMessageView.as_view()),
+    url(r'^forum/(?P<slug>[^/]+)/welcome/$', views.WelcomeMessageView.as_view()),
 ]
 
 if settings.DEBUG:
