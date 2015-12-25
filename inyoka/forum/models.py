@@ -252,6 +252,7 @@ class Forum(models.Model):
         Group,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name='forums')
 
     welcome_title = models.CharField(max_length=120, null=True)
