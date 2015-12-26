@@ -16,10 +16,10 @@ from importlib import import_module
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
-from django.template.context_processors import csrf
 from django.forms.widgets import CheckboxInput
 from django.template.base import Context as DjangoContext
 from django.template.base import TemplateDoesNotExist
+from django.template.context_processors import csrf
 from django.template.loaders.base import Loader
 from django.utils import six, translation
 from django.utils.encoding import force_unicode
@@ -43,6 +43,10 @@ from inyoka.utils.dates import (
     naturalday,
 )
 from inyoka.utils.local import current_request
+from inyoka.utils.pagination import (
+    django_pagination_generate_link,
+    django_pagination_list,
+)
 from inyoka.utils.special_day import check_special_day
 from inyoka.utils.text import human_number
 from inyoka.utils.urls import href, url_for, urlencode, urlquote
@@ -341,7 +345,9 @@ class InyokaEnvironment(Environment):
                             SETTINGS=settings,
                             REQUEST=current_request,
                             href=href,
-                            csrf_token=csrf_token)
+                            csrf_token=csrf_token,
+                            pagination_list=django_pagination_list,
+                            pagination_url=django_pagination_generate_link,)
         self.filters.update(FILTERS)
 
         self.install_gettext_translations(translation, newstyle=True)

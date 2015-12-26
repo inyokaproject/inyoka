@@ -86,12 +86,36 @@ urlpatterns = [
     url(r'^egosearch/(?P<forum>[^/]+)/$', views.topiclist, {'action': 'author'}),
     url(r'^egosearch/(?P<forum>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'author'}),
 
-    url(r'^author/(?P<user>[^/]+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/(?P<page>\d+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/topic/(?P<topic_slug>[^/]+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/topic/(?P<topic_slug>[^/]+)/(?P<page>\d+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/forum/(?P<forum_slug>[^/]+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/forum/(?P<forum_slug>[^/]+)/(?P<page>\d+)/$', views.postlist),
+    url(
+        r'^author/(?P<username>[^/]+)/$',
+        views.AuthorPostListView.as_view(),
+        name='forum_author_post_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/(?P<page>\d+)/$',
+        views.AuthorPostListView.as_view(),
+        name='forum_author_post_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/topic/(?P<slug>[^/]+)/$',
+        views.AuthorPostTopicListView.as_view(),
+        name='forum_author_post_topic_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/topic/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.AuthorPostTopicListView.as_view(),
+        name='forum_author_post_topic_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/forum/(?P<slug>[^/]+)/$',
+        views.AuthorPostForumListView.as_view(),
+        name='forum_author_post_forum_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/forum/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.AuthorPostForumListView.as_view(),
+        name='forum_author_post_forum_list',
+    ),
 
     url(r'^topic_author/(?P<user>[^/]+)/$', views.topiclist, {'action': 'topic_author'}),
     url(r'^topic_author/(?P<user>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'topic_author'}),

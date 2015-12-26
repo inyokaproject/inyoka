@@ -54,6 +54,7 @@
 """
 from __future__ import division
 
+from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.utils.encoding import force_unicode
 
@@ -219,3 +220,50 @@ class Pagination(object):
                 yield {
                     'type': 'spacer'
                 }
+
+
+def django_pagination_list(page, url_pattern, url_pattern_kwargs=None, threshold=2):
+    """
+    Like Pagination.list but works with django pagination objects.
+
+    url_pattern has to be the name of a url that optional supports a page
+    argument.
+
+    The optional argument url_pattern_kwargs can be a dictonary with kwars to
+    create the url.
+    """
+    for num in page.paginator.page_range:
+        if (num <= threshold or num > (page.paginator.num_pages - threshold) or
+                abs(page.number - num) < threshold):
+            was_ellipsis = False
+            yield {
+                'type': 'current' if page.number == num else 'link',
+                'page': num,
+                'url': django_pagination_generate_link(num, url_pattern, url_pattern_kwargs)
+            }
+        elif not was_ellipsis:
+            was_ellipsis = True
+            yield {
+                'type': 'spacer'
+            }
+
+
+def django_pagination_generate_link(page_num, url_pattern, url_pattern_kwargs=None):
+    """
+    Generats an url for a pagination link.
+
+    page_num has to be an integer which represents the counter for which page
+    the url should be generated.
+
+    url_pattern has to be the name of an url. url_pattern_kwargs has to be a
+    dictonary with keywords needed to generate the url.
+
+    There have to be two urls defined with the url_pattern. One which accepts
+    a keyword argument 'page' and one that does not.
+    """
+    if url_pattern_kwargs is None:
+        url_pattern_kwargs = {}
+    url_kwargs = url_pattern_kwargs.copy()
+    if page_num != 1:
+        url_kwargs['page'] = page_num
+    return reverse(url_pattern, kwargs=url_kwargs)

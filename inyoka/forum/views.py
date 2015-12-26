@@ -24,6 +24,7 @@ from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import RedirectView
+from django.views.generic.list import ListView
 
 from inyoka.forum.acl import (
     CAN_MODERATE,
@@ -74,6 +75,7 @@ from inyoka.portal.utils import (
 )
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.dates import format_datetime
+from inyoka.utils.django_19_auth_mixins import LoginRequiredMixin
 from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
@@ -1675,73 +1677,121 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     }
 
 
-@templated('forum/postlist.html')
-def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
-    page = int(page)
+class AuthorPostListView(LoginRequiredMixin, ListView):
+    """
+    View that shows a list of posts from a specific user.
 
-    user = user and User.objects.get(username__iexact=user) or request.user
-    if request.user.is_anonymous:
-        messages.info(request, _(u'You need to be logged in to use this function.'))
-        return abort_access_denied(request)
+    The username is a required argument for this view.
+    """
+    template_name = 'forum/postlist.html'
+    context_object_name = 'posts'
+    paginate_by = TOPICS_PER_PAGE
 
-    posts = Post.objects.filter(author=user).order_by('-pub_date')
+    def handle_no_permission(self):
+        if self.request.user.is_anonymous:
+            messages.info(self.request, _(u'You need to be logged in to use this function.'))
+        return super(AuthorPostListView, self).handle_no_permission()
 
-    if topic_slug is not None:
-        posts = posts.filter(topic__slug=topic_slug)
-        pagination_url = href('forum', 'author', user.username, 'topic', topic_slug)
-    elif forum_slug is not None:
-        posts = posts.filter(topic__forum__slug=forum_slug)
-        pagination_url = href('forum', 'author', user.username, 'forum', forum_slug)
-    else:
-        pagination_url = href('forum', 'author', user.username)
+    def get_queryset(self):
+        try:
+            self.user = User.objects.get(username__iexact=self.kwargs['username'])
+        except User.DoesNotExist:
+            raise Http404()
+        query = Post.objects.filter(author=self.user).order_by('-pub_date')
+        query = query.select_related('topic', 'topic__forum')
 
-    # hidden forums is much faster than checking for visible forums
-    hidden_ids = [f.id for f in Forum.objects.get_forums_filtered(request.user, reverse=True)]
-    if hidden_ids:
-        posts = posts.exclude(topic__forum__id__in=hidden_ids)
+        # hidden forums is much faster than checking for visible forums
+        hidden_ids = [f.id for f in Forum.objects.get_forums_filtered(self.request.user, reverse=True)]
+        if hidden_ids:
+            query = query.exclude(topic__forum__id__in=hidden_ids)
 
-    total_posts = get_simplified_queryset(posts).count()
+        return query
 
-    # at least with MySQL we need this, as it is the fastest method
-    posts = posts.values_list('id', flat=True)
+    def get_context_data(self, **context):
 
-    pagination = Pagination(request, posts, page, TOPICS_PER_PAGE, pagination_url,
-        total=total_posts, max_pages=MAX_PAGES_TOPICLIST)
-    post_ids = [post_id for post_id in pagination.get_queryset()]
+        # check for moderation permissions
+        moderatable_forums = [
+            obj.id for obj in
+            Forum.objects.get_forums_filtered(self.request.user, CAN_MODERATE)
+        ]
 
-    posts = Post.objects.filter(id__in=post_ids).order_by('-pub_date').select_related('topic', 'topic__forum', 'author')
+        def can_moderate(topic):
+            return topic.forum_id in moderatable_forums
 
-    # check for moderation permissions
-    moderatable_forums = [
-        obj.id for obj in
-        Forum.objects.get_forums_filtered(request.user, CAN_MODERATE)
-    ]
+        return super(AuthorPostListView, self).get_context_data(
+            title=self.get_page_title(),
+            username=self.user.username,
+            can_moderate=can_moderate,
+            url_pattern=self.get_url_pattern(),
+            url_pattern_kwargs=self.get_url_pattern_kwargs(),
+            **context)
 
-    def can_moderate(topic):
-        return topic.forum_id in moderatable_forums
+    def get_page_title(self):
+        return _(u'Posts by “{user}”').format(user=self.user.username)
 
-    topic = None
-    forum = None
+    def get_url_pattern(self):
+        return 'forum_author_post_list'
 
-    if topic_slug is not None and len(posts):
-        topic = posts[0].topic
-        title = _(u'Posts by “{user}” in topic “{topic}”').format(user=user.username, topic=topic.title)
-    elif forum_slug is not None and len(posts):
-        forum = posts[0].topic.forum
-        title = _(u'Posts by “{user}” in forum “{forum}”').format(user=user.username, forum=forum.name)
-    else:
-        title = _(u'Posts by “{user}”').format(user=user.username)
+    def get_url_pattern_kwargs(self, **kwargs):
+        return {'username': self.user.username}
 
-    return {
-        'posts': posts,
-        'pagination': pagination,
-        'title': title,
-        'can_moderate': can_moderate,
-        'hide_sticky': False,
-        'forum': forum,
-        'topic': topic,
-        'username': user.username,
-    }
+
+class AuthorPostTopicListView(AuthorPostListView):
+    """
+    Like PostListView but filters the shown posts to the posts of one topic.
+
+    The slug of the topic is a required argument for this view. It has to be
+    called 'slug'.
+    """
+    def get_queryset(self):
+        try:
+            self.topic = Topic.objects.get(slug=self.kwargs['slug'])
+        except Topic.DoesNotExist:
+            raise Http404()
+        queryset = super(AuthorPostTopicListView, self).get_queryset()
+        return queryset.filter(topic=self.topic)
+
+    def get_page_title(self):
+        return _(u'Posts by “{user}” in topic “{topic}”').format(
+            user=self.user.username,
+            topic=self.topic.title)
+
+    def get_url_pattern(self):
+        return 'forum_author_post_topic_list'
+
+    def get_url_pattern_kwargs(self, **kwargs):
+        return super(AuthorPostTopicListView, self).get_url_pattern_kwargs(
+            topic=self.topic,
+            **kwargs)
+
+
+class AuthorPostForumListView(AuthorPostListView):
+    """
+    Like PostListView but filters the shown posts to the posts of one forum.
+
+    The slug of the forum is a required argument for this view. It has to be
+    called 'slug'.
+    """
+    def get_queryset(self):
+        try:
+            self.forum = Forum.objects.get(slug=self.kwargs['slug'])
+        except Forum.DoesNotExist:
+            raise Http404()
+        queryset = super(AuthorPostForumListView, self).get_queryset()
+        return queryset.filter(topic__forum=self.forum)
+
+    def get_page_title(self):
+        return _(u'Posts by “{user}” in forum “{forum}”').format(
+            user=self.user.username,
+            forum=self.forum.name)
+
+    def get_url_pattern(self):
+        return 'forum_author_post_forum_list'
+
+    def get_url_pattern_kwargs(self, **kwargs):
+        return super(AuthorPostForumListView, self).get_url_pattern_kwargs(
+            forum=self.forum,
+            **kwargs)
 
 
 class WelcomeMessageView(PermissionRequiredMixin, DetailView):
