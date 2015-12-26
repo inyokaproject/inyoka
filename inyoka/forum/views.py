@@ -21,10 +21,11 @@ from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.utils.text import Truncator
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.base import RedirectView
 from django.views.generic.list import ListView
+from django.shortcuts import get_object_or_404
 
 from inyoka.forum.acl import (
     CAN_MODERATE,
@@ -1568,11 +1569,269 @@ def markread(request, slug=None):
         messages.success(request, _(u'All forums were marked as read.'))
     return HttpResponseRedirect(href('forum'))
 
+# TODO:
+# rename user to username in urls
+# get_object_or_404() nutzen
+# translations
+# Sperre bei langen topics lists einbauen
+# Teste hours kein integer
+# teste hours größer 24
+# teste hours kleiner 0 oder 0
+
+
+class BaseTopicListView(ListView):
+    """
+    BaseView that shows a list of topics.
+    """
+    template_name = 'forum/topiclist.html'
+    context_object_name = 'topics'
+    paginate_by = TOPICS_PER_PAGE
+    page_title = None
+
+    def get_queryset(self):
+        query = Topic.objects.order_by('-last_post')
+        query = query.select_related(
+            'last_post',
+            'first_post',
+        )
+        # It should be faster to get this data with select_related but it is not.
+        # Retry this after the migration to postgresql.
+        # The problem can best be tested in the UnansweredTopicsListView.
+        query = query.prefetch_related('author', 'forum', 'last_post__author')
+
+        # hidden forums is much faster than checking for visible forums
+        hidden_ids = [f.id for f in Forum.objects.get_forums_filtered(self.request.user, reverse=True)]
+        if hidden_ids:
+            query = query.exclude(topic__forum__id__in=hidden_ids)
+
+        return query
+
+    def get_context_data(self, **context):
+
+        # check for moderation permissions
+        moderatable_forums = [
+            obj.id for obj in
+            Forum.objects.get_forums_filtered(self.request.user, CAN_MODERATE)
+        ]
+
+        def can_moderate(topic):
+            return topic.forum_id in moderatable_forums
+
+        return super(BaseTopicListView, self).get_context_data(
+            title=self.get_page_title(),
+            can_moderate=can_moderate,
+            url_pattern=self.get_url_pattern(),
+            url_pattern_kwargs=self.get_url_pattern_kwargs(),
+            **context)
+
+    def get_page_title(self):
+        """
+        Returns the attribute page_title of a view.
+        """
+        if self.page_title is None:
+            raise NotImplementedError(
+                "You have to specify the attribute page_title or implement "
+                "the method get_page_title.")
+        return self.page_title
+
+    def get_url_pattern_kwargs(self, **kwargs):
+        return kwargs
+
+
+class TopicListForumMixin(object):
+    """
+    Mixin for BaseTopicListViews to filter the query to a specific forum.
+
+    Requires an argument slug that is a slug for a forum.
+    """
+
+    def get_queryset(self):
+        self.forum = get_object_or_404(Forum, slug=self.kwargs['slug'])
+        query = super(AuthorTopicForumListView, self).get_queryset()
+        return query.filter(forum=self.forum)
+
+    def get_url_pattern_kwargs(self, **kwargs):
+        return super(AuthorTopicForumListView, self).get_url_pattern_kwargs(
+            slug=self.forum.slug)
+
+
+class AuthorTopicListView(BaseTopicListView):
+    """
+    View that shows all topics that an user has created.
+
+    The argument username is required
+    """
+
+    def get_queryset(self):
+        """
+        Filter the topic list to the user defined in the url
+        """
+        self.user = get_object_or_404(User, username__iexact=self.kwargs['username'])
+        return super(AuthorTopicListView, self).get_queryset().filter(author=self.user)
+
+    def get_page_title(self):
+        return _(u'Topics created by “{username}”').format(
+            username=self.user.username)
+
+    def get_url_pattern(self):
+        return 'forum_author_topic_list'
+
+    def get_url_pattern_kwargs(self, **kwargs):
+        return super(AuthorTopicListView, self).get_url_pattern_kwargs(
+            username=self.user.username)
+
+
+class AuthorTopicForumListView(TopicListForumMixin, AuthorTopicListView):
+    """
+    Lists all topics created by a user in one forum.
+    """
+
+
+class EgosearchView(LoginRequiredMixin, BaseTopicListView):
+    """
+    Lists all topics in which the request.user has at least one post.
+    """
+
+    def handle_no_permission(self):
+        """
+        Shows a message, that this view can not be visited by anonymous users.
+        """
+        if self.request.user.is_anonymous:
+            messages.info(self.request, _(u'You need to be logged in to use this function.'))
+        return super(AuthorPostListView, self).handle_no_permission()
+
+    def get_queryset(self):
+        """
+        Filter the topic list to the user defined in the url or the request.user.
+        """
+        query = super(AuthorTopicListView, self).get_queryset()
+        return query.filter(posts__author=user).distinct()
+
+    def get_page_title(self):
+        return _(u'Topics with posts created by “{username}”').format(user=self.request.user.username)
+
+    def get_url_pattern(self):
+        return 'forum_egosearch'
+
+
+class EgosearchForumView(TopicListForumMixin, EgosearchView):
+    """
+    Like the egosearch but only in one forum.
+    """
+
+
+class UnsolvedTopicsListView(BaseTopicListView):
+    """
+    Lists all topics that are not solved.
+    """
+    page_title = ugettext_lazy(u'Unsolved topics')
+
+    def get_queryset(self):
+        return super(UnsolvedTopicsListView, self).get_queryset().filter(solved=False)
+
+    def get_url_pattern(self):
+        return 'forum_list_unsolved_topics'
+
+
+class UnsolvedTopicsForumListView(TopicListForumMixin, UnsolvedTopicsListView):
+    """
+    Like UnsolvedTopicsListView but only in one forum.
+    """
+
+
+class UnansweredTopicsListView(BaseTopicListView):
+    """
+    Lists all topics that are not answered.
+    """
+    page_title = ugettext_lazy(u'Unanswered topics')
+
+    def get_queryset(self):
+        # Filter topics where first_post == last_post
+        return super(UnansweredTopicsListView, self).get_queryset().filter(first_post=F('last_post'))
+
+    def get_url_pattern(self):
+        return 'forum_list_unanswered_topics'
+
+
+class UnansweredTopicsForumListView(TopicListForumMixin, UnansweredTopicsListView):
+    """
+    Like UnansweredTopicsListView but only in one forum.
+    """
+
+
+class LastTopicsListView(BaseTopicListView):
+    """
+    Lists all topics which have posts that are newer then a specific time.
+
+    The argument hours is required and has to be an integer between 0 and 24.
+    """
+    page_title = ugettext_lazy(u'Unanswered topics')
+
+    def get(self, *args, **kwargs):
+        """
+        Checks that not more then the last 24 hours are requested.
+        """
+        self.hours = int(self.kwargs['hours'])
+        if self.hours > 24:
+            raise Http404()
+        return super(LastTopicsListView, self).get(*args, **kwargs)
+
+    def get_queryset(self):
+        query = super(LastTopicsListView, self).get_queryset()
+        return query.filter(last_post__pub_date__gt=datetime.utcnow() - timedelta(hours=self.hours))
+
+    def get_title(self):
+        return _(u'Posts of the last {hours} hours').format(hours=hours)
+
+    def get_url_pattern(self):
+        return 'forum_last_topics'
+
+    def get_url_pattern_kwargs(self, **kwargs):
+        return super(LastTopicsListView, self).get_url_pattern_kwargs(
+            hours=self.hours)
+
+
+class LastTopicsForumListView(TopicListForumMixin, LastTopicsListView):
+    """
+    Like LastTopicsListView but only in one forum.
+    """
+
+
+class UnreadTopicsListView(LoginRequiredMixin, BaseTopicListView):
+    """
+    Lists all topics that are unread by the request.user.
+
+    The user has to be logged in to visit this view.
+    """
+    page_title = ugettext_lazy(u'New posts')
+
+    def get_queryset(self):
+        query = super(UnansweredTopicsListView, self).get_queryset()
+        forum_ids = tuple(forum.id for forum in Forum.objects.get_cached())
+        # get read status data
+        read_status = request.user._readstatus.data
+        read_topics = tuple(flatten_iterator(
+            read_status.get(id, [None, []])[1] for id in forum_ids
+        ))
+        if read_topics:
+            query = query.exclude(last_post__id__in=read_topics)
+        return query
+
+    def get_url_pattern(self):
+        return 'forum_unread_topic_list'
+
+
+class UnreadTopicsForumListView(TopicListForumMixin, UnreadTopicsListView):
+    """
+    Like UnansweredTopicsListView but only in one forum.
+    """
+
+
 
 MAX_PAGES_TOPICLIST = 50
 
 
-@templated('forum/topiclist.html')
+@templated('forum/topiclist_old.html')
 def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=None):
     page = int(page)
 
@@ -1677,7 +1936,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     }
 
 
-class AuthorPostListView(LoginRequiredMixin, ListView):
+class AuthorPostListView(ListView):
     """
     View that shows a list of posts from a specific user.
 
@@ -1686,11 +1945,6 @@ class AuthorPostListView(LoginRequiredMixin, ListView):
     template_name = 'forum/postlist.html'
     context_object_name = 'posts'
     paginate_by = TOPICS_PER_PAGE
-
-    def handle_no_permission(self):
-        if self.request.user.is_anonymous:
-            messages.info(self.request, _(u'You need to be logged in to use this function.'))
-        return super(AuthorPostListView, self).handle_no_permission()
 
     def get_queryset(self):
         try:
@@ -1733,7 +1987,8 @@ class AuthorPostListView(LoginRequiredMixin, ListView):
         return 'forum_author_post_list'
 
     def get_url_pattern_kwargs(self, **kwargs):
-        return {'username': self.user.username}
+        kwargs.update({'username': self.user.username})
+        return kwargs
 
 
 class AuthorPostTopicListView(AuthorPostListView):
