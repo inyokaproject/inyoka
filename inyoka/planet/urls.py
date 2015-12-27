@@ -9,24 +9,26 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
-from django.conf.urls import include, patterns, url
+from django.conf.urls import include, url
 
-urlpatterns = patterns('inyoka.planet.views',
-    (r'^$', 'index'),
-    (r'^(\d+)/$', 'index'),
-    (r'^hide/(?P<id>\d+)/$', 'hide_entry'),
-    (r'^suggest/$', 'suggest'),
-    (r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', 'feed'),
-    (r'^blogs/$', 'blog_list'),
-    (r'^blogs/(?P<page>\d)/$', 'blog_list'),
-    (r'^blogs/export/(?P<export_type>[a-z]+)/$', 'export'),
-    (r'^blog/new/$', 'blog_edit'),
-    (r'^blog/(?P<blog>\d+)/edit/$', 'blog_edit'),
-)
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.index),
+    url(r'^(\d+)/$', views.index),
+    url(r'^hide/(?P<id>\d+)/$', views.hide_entry),
+    url(r'^suggest/$', views.suggest),
+    url(r'^feeds/(?P<mode>[a-z]+)/(?P<count>\d+)/$', views.feed),
+    url(r'^blogs/$', views.blog_list),
+    url(r'^blogs/(?P<page>\d)/$', views.blog_list),
+    url(r'^blogs/export/(?P<export_type>[a-z]+)/$', views.export),
+    url(r'^blog/new/$', views.blog_edit),
+    url(r'^blog/(?P<blog>\d+)/edit/$', views.blog_edit),
+]
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += patterns('',
+    urlpatterns.append(
         url(r'^__debug__/', include(debug_toolbar.urls)),
     )
 

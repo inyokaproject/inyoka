@@ -2,6 +2,13 @@ from uuid import uuid1
 
 from inyoka.default_settings import *  # NOQA
 
+try:
+    from .custom import test_host
+except ImportError:
+    # The file custom.py is optional. If it does not exist, then use an empty
+    # string test_host.
+    test_host = ''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -36,8 +43,11 @@ SECRET_KEY = 'test-secret-key'
 INYOKA_AKISMET_KEY = 'inyokatestkey'
 INYOKA_AKISMET_URL = 'http://testserver/'
 
-CACHES['content']['LOCATION'] = 'redis://127.0.0.1:6379/0'
+CACHES['content']['LOCATION'] = 'redis://{}:6379/0'.format(test_host or 'localhost')
 CACHES['content']['KEY_PREFIX'] = uuid1()
 
-CACHES['default']['LOCATION'] = 'redis://127.0.0.1:6379/1'
+CACHES['default']['LOCATION'] = 'redis://{}:6379/1'.format(test_host or 'localhost')
 CACHES['default']['KEY_PREFIX'] = uuid1()
+
+BROKER_URL = 'redis://{}:6379/0'.format(test_host or 'localhost')
+CELERY_RESULT_BACKEND = 'redis://{}:6379/0'.format(test_host or 'localhost')
