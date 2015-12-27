@@ -1570,8 +1570,6 @@ def markread(request, slug=None):
     return HttpResponseRedirect(href('forum'))
 
 # TODO:
-# rename user to username in urls
-# get_object_or_404() nutzen
 # translations
 # Sperre bei langen topics lists einbauen
 # Teste hours kein integer
@@ -1947,10 +1945,7 @@ class AuthorPostListView(ListView):
     paginate_by = TOPICS_PER_PAGE
 
     def get_queryset(self):
-        try:
-            self.user = User.objects.get(username__iexact=self.kwargs['username'])
-        except User.DoesNotExist:
-            raise Http404()
+        self.user = get_object_or_404(User, username__iexact=self.kwargs['username'])
         query = Post.objects.filter(author=self.user).order_by('-pub_date')
         query = query.select_related('topic', 'topic__forum')
 
@@ -1999,10 +1994,7 @@ class AuthorPostTopicListView(AuthorPostListView):
     called 'slug'.
     """
     def get_queryset(self):
-        try:
-            self.topic = Topic.objects.get(slug=self.kwargs['slug'])
-        except Topic.DoesNotExist:
-            raise Http404()
+        self.topic = get_object_or_404(Topic, slug=self.kwargs['slug'])
         queryset = super(AuthorPostTopicListView, self).get_queryset()
         return queryset.filter(topic=self.topic)
 
@@ -2028,10 +2020,7 @@ class AuthorPostForumListView(AuthorPostListView):
     called 'slug'.
     """
     def get_queryset(self):
-        try:
-            self.forum = Forum.objects.get(slug=self.kwargs['slug'])
-        except Forum.DoesNotExist:
-            raise Http404()
+        self.forum = get_object_or_404(Forum, slug=self.kwargs['slug'])
         queryset = super(AuthorPostForumListView, self).get_queryset()
         return queryset.filter(topic__forum=self.forum)
 
