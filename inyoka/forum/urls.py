@@ -155,12 +155,12 @@ urlpatterns = [
     ),
     url(
         r'^egosearch/$',
-        views.AuthorTopicListView.as_view(),
+        views.EgosearchView.as_view(),
         name='forum_egosearch',
     ),
     url(
         r'^egosearch/(?P<page>\d+)/$',
-        views.AuthorTopicListView.as_view(),
+        views.EgosearchView.as_view(),
         name='forum_egosearch',
     ),
     url(

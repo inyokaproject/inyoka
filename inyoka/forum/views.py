@@ -1571,7 +1571,6 @@ def markread(request, slug=None):
 
 # TODO:
 # translations
-# Sperre bei langen topics lists einbauen
 # Teste hours kein integer
 # teste hours größer 24
 # teste hours kleiner 0 oder 0
@@ -1702,11 +1701,11 @@ class EgosearchView(LoginRequiredMixin, BaseTopicListView):
         """
         Filter the topic list to the user defined in the url or the request.user.
         """
-        query = super(AuthorTopicListView, self).get_queryset()
-        return query.filter(posts__author=user).distinct()
+        query = super(EgosearchView, self).get_queryset()
+        return query.filter(posts__author=self.request.user).distinct()
 
     def get_page_title(self):
-        return _(u'Topics with posts created by “{username}”').format(user=self.request.user.username)
+        return _(u'Topics with posts created by “{username}”').format(username=self.request.user.username)
 
     def get_url_pattern(self):
         return 'forum_egosearch'
@@ -1725,7 +1724,9 @@ class UnsolvedTopicsListView(BaseTopicListView):
     page_title = ugettext_lazy(u'Unsolved topics')
 
     def get_queryset(self):
-        return super(UnsolvedTopicsListView, self).get_queryset().filter(solved=False)
+        query = super(UnsolvedTopicsListView, self).get_queryset()
+        query = query.filter(solved=False)
+        return query[:100 * TOPICS_PER_PAGE]
 
     def get_url_pattern(self):
         return 'forum_list_unsolved_topics'
@@ -1745,7 +1746,9 @@ class UnansweredTopicsListView(BaseTopicListView):
 
     def get_queryset(self):
         # Filter topics where first_post == last_post
-        return super(UnansweredTopicsListView, self).get_queryset().filter(first_post=F('last_post'))
+        query = super(UnansweredTopicsListView, self).get_queryset()
+        query = query.filter(first_post=F('last_post'))
+        return query[:100 * TOPICS_PER_PAGE]
 
     def get_url_pattern(self):
         return 'forum_list_unanswered_topics'
@@ -1800,20 +1803,23 @@ class UnreadTopicsListView(LoginRequiredMixin, BaseTopicListView):
     Lists all topics that are unread by the request.user.
 
     The user has to be logged in to visit this view.
+
+    This view limits the paginator to 100 pages
     """
     page_title = ugettext_lazy(u'New posts')
 
     def get_queryset(self):
-        query = super(UnansweredTopicsListView, self).get_queryset()
+        query = super(UnreadTopicsListView, self).get_queryset()
         forum_ids = tuple(forum.id for forum in Forum.objects.get_cached())
         # get read status data
-        read_status = request.user._readstatus.data
+        read_status = self.request.user._readstatus.data
         read_topics = tuple(flatten_iterator(
             read_status.get(id, [None, []])[1] for id in forum_ids
         ))
         if read_topics:
             query = query.exclude(last_post__id__in=read_topics)
-        return query
+
+        return query[:100 * TOPICS_PER_PAGE]
 
     def get_url_pattern(self):
         return 'forum_unread_topic_list'
@@ -1821,7 +1827,7 @@ class UnreadTopicsListView(LoginRequiredMixin, BaseTopicListView):
 
 class UnreadTopicsForumListView(TopicListForumMixin, UnreadTopicsListView):
     """
-    Like UnansweredTopicsListView but only in one forum.
+    Like UnreadTopicsListView but only in one forum.
     """
 
 
