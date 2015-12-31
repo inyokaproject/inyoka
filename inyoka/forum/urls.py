@@ -74,12 +74,12 @@ urlpatterns = [
     ),
     url(
         r'^unanswered/(?P<slug>[^/]+)/$',
-        views.UnansweredTopicsForumListView.as_view(),
+        views.UnansweredTopicsListView.as_view(),
         name='forum_list_unanswered_topics',
     ),
     url(
         r'^unanswered/(?P<slug>[^/]+)/(?P<page>\d+)/$',
-        views.UnansweredTopicsForumListView.as_view(),
+        views.UnansweredTopicsListView.as_view(),
         name='forum_list_unanswered_topics',
     ),
 
@@ -95,12 +95,12 @@ urlpatterns = [
     ),
     url(
         r'^unsolved/(?P<slug>[^/]+)/$',
-        views.UnsolvedTopicsForumListView.as_view(),
+        views.UnsolvedTopicsListView.as_view(),
         name='forum_list_unsolved_topics',
     ),
     url(
         r'^unsolved/(?P<slug>[^/]+)/(?P<page>\d+)/$',
-        views.UnsolvedTopicsForumListView.as_view(),
+        views.UnsolvedTopicsListView.as_view(),
         name='forum_list_unsolved_topics',
     ),
     url(
@@ -115,12 +115,12 @@ urlpatterns = [
     ),
     url(
         r'^author/(?P<username>[^/]+)/topic/(?P<slug>[^/]+)/$',
-        views.AuthorPostTopicListView.as_view(),
+        views.AuthorPostListView.as_view(),
         name='forum_author_post_topic_list',
     ),
     url(
         r'^author/(?P<username>[^/]+)/topic/(?P<slug>[^/]+)/(?P<page>\d+)/$',
-        views.AuthorPostTopicListView.as_view(),
+        views.AuthorPostListView.as_view(),
         name='forum_author_post_topic_list',
     ),
     url(
@@ -130,7 +130,7 @@ urlpatterns = [
     ),
     url(
         r'^author/(?P<username>[^/]+)/forum/(?P<slug>[^/]+)/(?P<page>\d+)/$',
-        views.AuthorPostForumListView.as_view(),
+        views.AuthorPostListView.as_view(),
         name='forum_author_post_forum_list',
     ),
     url(
@@ -145,12 +145,12 @@ urlpatterns = [
     ),
     url(
         r'^topic_author/(?P<username>[^/]+)/(?P<slug>[^/]+)/$',
-        views.AuthorTopicForumListView.as_view(),
+        views.AuthorTopicListView.as_view(),
         name='forum_author_topic_list',
     ),
     url(
         r'^topic_author/(?P<username>[^/]+)/(?P<slug>[^/]+)/(?P<page>\d+)/$',
-        views.AuthorTopicForumListView.as_view(),
+        views.AuthorTopicListView.as_view(),
         name='forum_author_topic_list',
     ),
     url(
@@ -165,12 +165,12 @@ urlpatterns = [
     ),
     url(
         r'^egosearch/(?P<slug>[^/]+)/$',
-        views.EgosearchForumView.as_view(),
+        views.EgosearchView.as_view(),
         name='forum_egosearch',
     ),
     url(
         r'^egosearch/(?P<slug>[^/]+)/(?P<page>\d+)/$',
-        views.EgosearchForumView.as_view(),
+        views.EgosearchView.as_view(),
         name='forum_egosearch',
     ),
     url(
@@ -185,12 +185,12 @@ urlpatterns = [
     ),
     url(
         r'^last(?P<hours>\d+)/(?P<slug>[^/]+)/$',
-        views.LastTopicsForumListView.as_view(),
+        views.LastTopicsListView.as_view(),
         name='forum_last_topics',
     ),
     url(
         r'^last(?P<hours>\d+)/(?P<slug>[^/]+)/(?P<page>\d+)/$',
-        views.LastTopicsForumListView.as_view(),
+        views.LastTopicsListView.as_view(),
         name='forum_last_topics',
     ),
     url(
@@ -205,12 +205,12 @@ urlpatterns = [
     ),
     url(
         r'^newposts/(?P<slug>[^/]+)/$',
-        views.UnreadTopicsForumListView.as_view(),
+        views.UnreadTopicsListView.as_view(),
         name='forum_unread_topic_list',
     ),
     url(
         r'^newposts/(?P<slug>[^/]+)/(?P<page>\d+)/$',
-        views.UnreadTopicsForumListView.as_view(),
+        views.UnreadTopicsListView.as_view(),
         name='forum_unread_topic_list',
     ),
 

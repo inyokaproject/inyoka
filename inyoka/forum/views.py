@@ -1579,6 +1579,9 @@ def markread(request, slug=None):
 class BaseTopicListView(ListView):
     """
     BaseView that shows a list of topics.
+
+    Accepts an optional argument 'slug' which has to be a slug of a forum.
+    Limits the query to topics of that forum, if given.
     """
     template_name = 'forum/topiclist.html'
     context_object_name = 'topics'
@@ -1596,15 +1599,23 @@ class BaseTopicListView(ListView):
         # The problem can best be tested in the UnansweredTopicsListView.
         query = query.prefetch_related('author', 'forum', 'last_post__author')
 
-        # hidden forums is much faster than checking for visible forums
-        hidden_ids = [f.id for f in Forum.objects.get_forums_filtered(self.request.user, reverse=True)]
-        if hidden_ids:
-            query = query.exclude(topic__forum__id__in=hidden_ids)
+        if self.kwargs.get('slug', None) is not None:
+            self.forum = get_object_or_404(Forum, slug=self.kwargs['slug'])
+            if check_privilege(get_forum_privileges(self.request.user, self.forum), CAN_READ):
+                # The user has no permission at this place. Some exeption should
+                # be raised that redirects an anonymous user to the login
+                # page and returns 403 for other users
+                query = query.none()
+            query = query.filter(forum=self.forum)
+        else:
+            # hidden forums is much faster than checking for visible forums
+            hidden_ids = [f.id for f in Forum.objects.get_forums_filtered(self.request.user, reverse=True)]
+            if hidden_ids:
+                query = query.exclude(topic__forum__id__in=hidden_ids)
 
         return query
 
     def get_context_data(self, **context):
-
         # check for moderation permissions
         moderatable_forums = [
             obj.id for obj in
@@ -1632,24 +1643,9 @@ class BaseTopicListView(ListView):
         return self.page_title
 
     def get_url_pattern_kwargs(self, **kwargs):
+        if self.kwargs.get('slug', None) is not None:
+            kwargs['slug'] = self.forum.slug
         return kwargs
-
-
-class TopicListForumMixin(object):
-    """
-    Mixin for BaseTopicListViews to filter the query to a specific forum.
-
-    Requires an argument slug that is a slug for a forum.
-    """
-
-    def get_queryset(self):
-        self.forum = get_object_or_404(Forum, slug=self.kwargs['slug'])
-        query = super(AuthorTopicForumListView, self).get_queryset()
-        return query.filter(forum=self.forum)
-
-    def get_url_pattern_kwargs(self, **kwargs):
-        return super(AuthorTopicForumListView, self).get_url_pattern_kwargs(
-            slug=self.forum.slug)
 
 
 class AuthorTopicListView(BaseTopicListView):
@@ -1676,12 +1672,6 @@ class AuthorTopicListView(BaseTopicListView):
     def get_url_pattern_kwargs(self, **kwargs):
         return super(AuthorTopicListView, self).get_url_pattern_kwargs(
             username=self.user.username)
-
-
-class AuthorTopicForumListView(TopicListForumMixin, AuthorTopicListView):
-    """
-    Lists all topics created by a user in one forum.
-    """
 
 
 class EgosearchView(LoginRequiredMixin, BaseTopicListView):
@@ -1711,12 +1701,6 @@ class EgosearchView(LoginRequiredMixin, BaseTopicListView):
         return 'forum_egosearch'
 
 
-class EgosearchForumView(TopicListForumMixin, EgosearchView):
-    """
-    Like the egosearch but only in one forum.
-    """
-
-
 class UnsolvedTopicsListView(BaseTopicListView):
     """
     Lists all topics that are not solved.
@@ -1730,12 +1714,6 @@ class UnsolvedTopicsListView(BaseTopicListView):
 
     def get_url_pattern(self):
         return 'forum_list_unsolved_topics'
-
-
-class UnsolvedTopicsForumListView(TopicListForumMixin, UnsolvedTopicsListView):
-    """
-    Like UnsolvedTopicsListView but only in one forum.
-    """
 
 
 class UnansweredTopicsListView(BaseTopicListView):
@@ -1752,12 +1730,6 @@ class UnansweredTopicsListView(BaseTopicListView):
 
     def get_url_pattern(self):
         return 'forum_list_unanswered_topics'
-
-
-class UnansweredTopicsForumListView(TopicListForumMixin, UnansweredTopicsListView):
-    """
-    Like UnansweredTopicsListView but only in one forum.
-    """
 
 
 class LastTopicsListView(BaseTopicListView):
@@ -1792,12 +1764,6 @@ class LastTopicsListView(BaseTopicListView):
             hours=self.hours)
 
 
-class LastTopicsForumListView(TopicListForumMixin, LastTopicsListView):
-    """
-    Like LastTopicsListView but only in one forum.
-    """
-
-
 class UnreadTopicsListView(LoginRequiredMixin, BaseTopicListView):
     """
     Lists all topics that are unread by the request.user.
@@ -1823,12 +1789,6 @@ class UnreadTopicsListView(LoginRequiredMixin, BaseTopicListView):
 
     def get_url_pattern(self):
         return 'forum_unread_topic_list'
-
-
-class UnreadTopicsForumListView(TopicListForumMixin, UnreadTopicsListView):
-    """
-    Like UnreadTopicsListView but only in one forum.
-    """
 
 
 
