@@ -1589,6 +1589,10 @@ class BaseTopicListView(ListView):
     page_title = None
 
     def get_queryset(self):
+        """
+        Generats a base queryset that returns all topics where the request.user
+        has the permission to read the forum.
+        """
         query = Topic.objects.order_by('-last_post')
         query = query.select_related(
             'last_post',
@@ -1616,6 +1620,9 @@ class BaseTopicListView(ListView):
         return query
 
     def get_context_data(self, **context):
+        """
+        Add variables for the template.
+        """
         # check for moderation permissions
         moderatable_forums = [
             obj.id for obj in
@@ -1634,7 +1641,7 @@ class BaseTopicListView(ListView):
 
     def get_page_title(self):
         """
-        Returns the attribute page_title of a view.
+        Returns a title for the page that can be used in the template.
         """
         if self.page_title is None:
             raise NotImplementedError(
@@ -1643,6 +1650,10 @@ class BaseTopicListView(ListView):
         return self.page_title
 
     def get_url_pattern_kwargs(self, **kwargs):
+        """
+        Returns a dictonary of keyword arguments that are needed to generate
+        the url for this view.
+        """
         if self.kwargs.get('slug', None) is not None:
             kwargs['slug'] = self.forum.slug
         return kwargs
@@ -1770,7 +1781,7 @@ class UnreadTopicsListView(LoginRequiredMixin, BaseTopicListView):
 
     The user has to be logged in to visit this view.
 
-    This view limits the paginator to 100 pages
+    This view limits the paginator to 100 pages.
     """
     page_title = ugettext_lazy(u'New posts')
 
@@ -1789,115 +1800,6 @@ class UnreadTopicsListView(LoginRequiredMixin, BaseTopicListView):
 
     def get_url_pattern(self):
         return 'forum_unread_topic_list'
-
-
-
-MAX_PAGES_TOPICLIST = 50
-
-
-@templated('forum/topiclist_old.html')
-def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=None):
-    page = int(page)
-
-    if action != 'author' and page > MAX_PAGES_TOPICLIST:
-        messages.info(
-            request,
-            _(u'You can only display the last %(n)d pages.') % {'n': MAX_PAGES_TOPICLIST}
-        )
-        return HttpResponseRedirect(href('forum'))
-
-    topics = Topic.objects.order_by('-last_post')
-
-    if 'version' in request.GET:
-        topics = topics.filter(ubuntu_version=request.GET['version'])
-
-    if action == 'last':
-        hours = int(hours)
-        if hours > 24:
-            raise Http404()
-        topics = topics.filter(posts__pub_date__gt=datetime.utcnow() - timedelta(hours=hours))
-        topics = topics.distinct()
-        title = _(u'Posts of the last %(n)d hours') % {'n': hours}
-        url = href('forum', 'last%d' % hours, forum)
-    elif action == 'unanswered':
-        topics = topics.filter(first_post=F('last_post'))
-        title = _(u'Unanswered topics')
-        url = href('forum', 'unanswered', forum)
-    elif action == 'unsolved':
-        topics = topics.filter(solved=False)
-        title = _(u'Unsolved topics')
-        url = href('forum', 'unsolved', forum)
-    elif action == 'topic_author':
-        user = User.objects.get(username__iexact=user)
-        topics = topics.filter(author=user)
-        url = href('forum', 'topic_author', user.username, forum)
-        title = _(u'Topics by “%(user)s”') % {'user': user.username}
-    elif action == 'author':
-        user = user and User.objects.get(username__iexact=user) or request.user
-        if request.user.is_anonymous:
-            messages.info(request, _(u'You need to be logged in to use this function.'))
-            return abort_access_denied(request)
-        topics = topics.filter(posts__author=user).distinct()
-
-        if user != request.user:
-            title = _(u'Posts by “%(user)s”') % {'user': user.username}
-            url = href('forum', 'author', user.username, forum)
-        else:
-            title = _(u'Involved topics')
-            url = href('forum', 'egosearch', forum)
-    elif action == 'newposts':
-        forum_ids = tuple(forum.id for forum in Forum.objects.get_cached())
-        # get read status data
-        read_status = request.user._readstatus.data
-        read_topics = tuple(flatten_iterator(
-            read_status.get(id, [None, []])[1] for id in forum_ids
-        ))
-        if read_topics:
-            topics = topics.exclude(last_post__id__in=read_topics)
-        url = href('forum', 'newposts', forum)
-        title = _(u'New posts')
-
-    invisible = [f.id for f in Forum.objects.get_forums_filtered(request.user, reverse=True)]
-    if invisible:
-        topics = topics.exclude(forum__id__in=invisible)
-
-    forum_obj = None
-    if forum:
-        forum_obj = Forum.objects.get_cached(forum)
-        if forum_obj and forum_obj.id not in invisible:
-            topics = topics.filter(forum=forum_obj)
-
-    total_topics = get_simplified_queryset(topics).count()
-    topics = topics.values_list('id', flat=True)
-    pagination = Pagination(request, topics, page, TOPICS_PER_PAGE, url,
-                            total=total_topics, max_pages=MAX_PAGES_TOPICLIST)
-    topic_ids = [tid for tid in pagination.get_queryset()]
-
-    # check for moderation permissions
-    moderatable_forums = [
-        obj.id for obj in
-        Forum.objects.get_forums_filtered(request.user, CAN_MODERATE, reverse=True)
-    ]
-
-    def can_moderate(topic):
-        return topic.forum_id not in moderatable_forums
-
-    if topic_ids:
-        related = ('forum', 'author', 'last_post', 'last_post__author',
-                   'first_post')
-        topics = Topic.objects.filter(id__in=topic_ids).select_related(*related) \
-                              .order_by('-last_post__id')
-    else:
-        topics = []
-
-    return {
-        'topics': topics,
-        'pagination': pagination,
-        'title': title,
-        'can_moderate': can_moderate,
-        'hide_sticky': False,
-        'forum': forum_obj,
-    }
 
 
 class AuthorPostListView(ListView):
