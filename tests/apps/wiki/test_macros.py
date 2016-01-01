@@ -5,7 +5,7 @@
 
     Test wiki macros.
 
-    :copyright: (c) 2012-2015 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest

@@ -5,7 +5,7 @@
 
     Various constants for the forum application.
 
-    :copyright: (c) 2011-2015 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from PIL import Image
