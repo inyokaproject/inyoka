@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.views.i18n import javascript_catalog
 
 from . import views
@@ -46,15 +46,6 @@ urlpatterns = [
     url(r'^usercp/subscriptions/$', views.usercp_subscriptions),
     url(r'^usercp/subscriptions/(?P<page>\d+)/$', views.usercp_subscriptions),
     url(r'^usercp/deactivate/$', views.usercp_deactivate),
-    url(r'^privmsg/$', views.privmsg),
-    url(r'^privmsg/new/$', views.privmsg_new),
-    url(r'^privmsg/new/(?P<username>.+)/$', views.privmsg_new),
-    url(r'^privmsg/(?P<folder>[a-z]+)/$', views.privmsg),
-    url(r'^privmsg/(?P<folder>[a-z]+)/page/$', views.privmsg),
-    url(r'^privmsg/(?P<folder>[a-z]+)/page/(?P<page>\d+)/$', views.privmsg),
-    url(r'^privmsg/(?P<folder>[a-z]+)/all/$', views.privmsg, {'one_page': True}),
-    url(r'^privmsg/(?P<entry_id>\d+)/$', views.privmsg),
-    url(r'^privmsg/(?P<folder>[a-z]+)/(?P<entry_id>\d+)/$', views.privmsg),
     url(r'^map/$', views.usermap),
     url(r'^whoisonline/$', views.whoisonline),
     url(r'^inyoka/$', views.about_inyoka),
@@ -81,6 +72,7 @@ urlpatterns = [
     url(r'^files/(?P<slug>.+)/delete/$', views.file_delete),
     url(r'^pages/$', views.pages),
     url(r'^page/new/$', views.page_edit),
+    url(r'^messages/', include('inyoka.privmsg.urls')),
 ]
 
 

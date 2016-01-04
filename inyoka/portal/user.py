@@ -607,6 +607,14 @@ class User(AbstractBaseUser):
                       .filter(topic__forum__user_count_posts=True),
             use_task=True)
 
+    @property
+    def privmsg_count(self):
+        return QueryCounter(
+            cache_key='user_privmsg_unread_count:{}'.format(self.id),
+            query=self.message_set.unread(),
+            use_task=False,
+        )
+
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
 

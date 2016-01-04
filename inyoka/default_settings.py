@@ -226,6 +226,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'inyoka.forum.apps.ForumAppConfig',
     'inyoka.portal.apps.PortalAppConfig',
+    'inyoka.privmsg.apps.PrivmsgAppConfig',
     'inyoka.wiki.apps.WikiAppConfig',
     'inyoka.ikhaya.apps.IkhayaAppConfig',
     'inyoka.pastebin.apps.PastebinAppConfig',

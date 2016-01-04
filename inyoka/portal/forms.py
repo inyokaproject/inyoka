@@ -631,28 +631,6 @@ class EditGroupForm(forms.ModelForm):
         return group
 
 
-class PrivateMessageForm(forms.Form):
-    """Form for writing a new private message"""
-    recipient = forms.CharField(label=ugettext_lazy(u'To'), required=False,
-        help_text=ugettext_lazy(u'Separate multiple names by semicolon'))
-    group_recipient = forms.CharField(label=ugettext_lazy(u'Groups'), required=False,
-        help_text=ugettext_lazy(u'Separate multiple groups by semicolon'))
-    subject = forms.CharField(label=ugettext_lazy(u'Subject'),
-                              widget=forms.TextInput(attrs={'size': 50}))
-    text = forms.CharField(label=ugettext_lazy(u'Message'), widget=forms.Textarea)
-
-    def clean(self):
-        d = self.cleaned_data
-        if 'recipient' in d and 'group_recipient' in d:
-            if not d['recipient'].strip() and not d['group_recipient'].strip():
-                raise forms.ValidationError(_(u'Please enter at least one receiver.'))
-        return self.cleaned_data
-
-
-class PrivateMessageFormProtected(SurgeProtectionMixin, PrivateMessageForm):
-    surge_protection_timeout = 60 * 5
-
-
 class DeactivateUserForm(forms.Form):
     """Form for the user control panel -- deactivate_user view."""
     password_confirmation = forms.CharField(widget=forms.PasswordInput)
@@ -661,11 +639,6 @@ class DeactivateUserForm(forms.Form):
 class SubscriptionForm(forms.Form):
     #: this is a list of integers of the subscriptions
     select = forms.MultipleChoiceField()
-
-
-class PrivateMessageIndexForm(forms.Form):
-    #: this is a list of integers of the pms that should get deleted
-    delete = forms.MultipleChoiceField()
 
 
 def _feed_count_cleanup(n):
