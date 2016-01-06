@@ -21,11 +21,6 @@ against. I really need to learn mocking. :/
 * The views are currently untested.
 * I introduced a few helpers (mixins) that should get tested separately.
 
-## Pagination
-Nothing much to tell here. django has pagination, we should probably use it.
-It's part of the Generic Class Based Views, I just need to add it, once I
-wrapped my head around how it works.
-
 ## Spam protection
 Ideally we get a simple mixin we can use for all kinds of forms. For starters a
 blacklist of bad words might like we had before might be reasonable.

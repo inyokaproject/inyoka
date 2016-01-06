@@ -387,6 +387,7 @@ class MessageForwardView(MessageComposeView):
 
 
 class MessageReplyView(MessageComposeView):
+    reply_to_all = False
     """
     Reply to a private message.
     """
@@ -399,7 +400,7 @@ class MessageReplyView(MessageComposeView):
                                recipient=self.request.user)
 
         recipients = set([pm.author])
-        if self.kwargs.get('reply_to_all', False):
+        if self.reply_to_all:
             recipients.update(pm.recipients)
         recipients.discard(self.request.user)
         recipients = ';'.join(r.username for r in recipients)
