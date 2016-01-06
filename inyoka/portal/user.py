@@ -282,10 +282,7 @@ class Group(models.Model):
     @classmethod
     def get_default_group(self):
         """Return a default group for all registered users."""
-        global _DEFAULT_GROUP
-        if not _DEFAULT_GROUP:
-            _DEFAULT_GROUP = Group.objects.get(id=DEFAULT_GROUP_ID)
-        return _DEFAULT_GROUP
+        return Group.objects.get(id=DEFAULT_GROUP_ID)
 
 
 class UserManager(BaseUserManager):
@@ -342,15 +339,11 @@ class UserManager(BaseUserManager):
         return user
 
     def get_anonymous_user(self):
-        global _ANONYMOUS_USER
-        if not _ANONYMOUS_USER:
-            name = settings.INYOKA_ANONYMOUS_USER
-            try:
-                user = User.objects.get(username=name)
-            except User.DoesNotExist:
-                user = self.create_user(name, name)
-            _ANONYMOUS_USER = user
-        return _ANONYMOUS_USER
+        name = settings.INYOKA_ANONYMOUS_USER
+        try:
+            return User.objects.get(username=name)
+        except User.DoesNotExist:
+            return self.create_user(name, name)
 
     def get_system_user(self):
         """
@@ -416,8 +409,6 @@ class User(AbstractBaseUser):
     forum_last_read = models.IntegerField(ugettext_lazy(u'Last read post'),
                                           default=0, blank=True)
     forum_read_status = models.TextField(ugettext_lazy(u'Read posts'), blank=True)
-    forum_welcome = models.TextField(ugettext_lazy(u'Read welcome message'),
-                                     blank=True)
 
     # member title
     member_title = models.CharField(ugettext_lazy(u'Team affiliation / Member title'),
