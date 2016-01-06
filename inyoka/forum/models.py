@@ -244,7 +244,11 @@ class Forum(models.Model):
     user_count_posts = models.BooleanField(default=True)
     force_version = models.BooleanField(default=False)
 
-    parent = models.ForeignKey('self', null=True, related_name='_children',
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='_children',
         on_delete=models.PROTECT)
     last_post = models.ForeignKey('forum.Post', null=True, blank=True,
         on_delete=models.PROTECT)
@@ -255,8 +259,8 @@ class Forum(models.Model):
         blank=True,
         related_name='forums')
 
-    welcome_title = models.CharField(max_length=120, null=True)
-    welcome_text = InyokaMarkupField(application='forum', null=True)
+    welcome_title = models.CharField(max_length=120, null=True, blank=True)
+    welcome_text = InyokaMarkupField(application='forum', null=True, blank=True)
     welcome_read_users = models.ManyToManyField(User)
 
     class Meta:
@@ -343,7 +347,7 @@ class Forum(models.Model):
         forums.append(self)
 
         for forum in forums:
-            if (forum.welcome_title is not None and
+            if (forum.welcome_title and
                     not forum.welcome_read_users.filter(pk=user.pk).exists()):
                 return forum
         return None

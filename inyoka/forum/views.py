@@ -19,6 +19,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F, Q
 from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import redirect
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.views.generic import CreateView, DetailView, UpdateView
@@ -92,7 +93,6 @@ from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.views import PermissionRequiredMixin
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import quote_text
-from django.shortcuts import redirect
 
 
 @templated('forum/index.html')
