@@ -257,18 +257,48 @@ class FormPreviewMixin(object):
         """
         context = super(FormPreviewMixin, self).get_context_data(**kwargs)
         if 'preview' in self.request.POST:
-            context['preview'] = self.render_preview()
+            context['previews'] = self.render_previews()
         return context
 
-    def render_preview(self):
+    def render_previews(self):
         """
-        Render the preview.
+        Render the previews.
         """
-        p = getattr(self.preview_model, self.preview_method)
-        return p(self.request.POST.get(self.preview_form_field, ''))
+        previews = {}
+        preview_method = self.get_preview_method()
+
+        for field in self.get_preview_fields():
+            previews[field] = preview_method(self.request.POST.get(field, ''))
+        return previews
         # I don't know why this doesn't work if the getattr is defined in the class itself:
         # This would be so much easier and prettier.
         # return self.preview_callable(self.request.POST.get(self.preview_form_field, ''))
+
+    def get_preview_fields(self):
+        """
+        Return the list of form field names that should be rendered.
+        """
+        if hasattr(self, 'preview_fields'):
+            return self.preview_fields
+        else:
+            raise ImproperlyConfigured(
+                '{0} is missing the preview_fields attribute. Define {0}.preview_fields or '
+                'overwrite {0}.get_preview_fields().'.format(
+                    self.__class__.__name__)
+            )
+
+    def get_preview_method(self):
+        """
+        Return the method (callable) that renders the preview.
+        """
+        if hasattr(self, 'preview_method'):
+            return self.preview_method
+        else:
+            raise ImproperlyConfigured(
+                '{0} is missing the preview_method attribute. Define {0}.preview_method or '
+                'overwrite {0}.get_preview_method().'.format(
+                    self.__class__.__name__)
+            )
 
     def post(self, request):
         """
@@ -317,6 +347,14 @@ def compose(request):
     }
 
 
+def preview_helper(self, text):
+    """
+    Render a preview
+    """
+    print(self)
+    return MessageData.get_text_rendered(text)
+
+
 class MessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
     """
     View to compose private messages.
@@ -325,8 +363,9 @@ class MessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
     success_url = reverse_lazy('privmsg-sent')
     preview_model = MessageData
     preview_method = 'get_text_rendered'
-    preview_form_field = 'text'
     # preview_callable = getattr(MessageData, 'get_text_rendered')  # doesn't work?!
+    preview_fields = ['text']
+    preview_method = preview_helper
 
     def get_form_class(self):
         if self.request.user.can('send_group_pm'):
