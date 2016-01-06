@@ -236,31 +236,74 @@ class Forum(models.Model):
     """
     objects = ForumManager()
 
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
-    description = models.CharField(max_length=500, blank=True)
-    position = models.IntegerField(default=0, db_index=True)
-    newtopic_default_text = models.TextField(null=True, blank=True)
-    user_count_posts = models.BooleanField(default=True)
-    force_version = models.BooleanField(default=False)
+    name = models.CharField(
+        verbose_name=ugettext_lazy('Name'),
+        max_length=100)
+
+    slug = models.SlugField(
+        verbose_name=ugettext_lazy('Slug'),
+        max_length=100,
+        unique=True)
+
+    description = models.CharField(
+        verbose_name=ugettext_lazy('Description'),
+        max_length=500,
+        blank=True)
+
+    position = models.IntegerField(
+        verbose_name=ugettext_lazy('Position'),
+        default=0,
+        db_index=True)
+
+    newtopic_default_text = models.TextField(
+        verbose_name=ugettext_lazy('Default text for new topics'),
+        null=True,
+        blank=True)
+
+    user_count_posts = models.BooleanField(
+        verbose_name=ugettext_lazy('Count user posts'),
+        help_text=ugettext_lazy('If not set then posts of users in this forum are '
+                                'ignored in the post counter of the user.'),
+        default=True)
+
+    force_version = models.BooleanField(
+        verbose_name=ugettext_lazy('Force version'),
+        default=False)
 
     parent = models.ForeignKey(
         'self',
+        verbose_name=ugettext_lazy('Parent forum'),
         null=True,
         blank=True,
         related_name='_children',
         on_delete=models.PROTECT)
-    last_post = models.ForeignKey('forum.Post', null=True, blank=True,
+
+    last_post = models.ForeignKey(
+        'forum.Post',
+        null=True,
+        blank=True,
         on_delete=models.PROTECT)
+
     support_group = models.ForeignKey(
         Group,
+        verbose_name=ugettext_lazy('Support group'),
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='forums')
 
-    welcome_title = models.CharField(max_length=120, null=True, blank=True)
-    welcome_text = InyokaMarkupField(application='forum', null=True, blank=True)
+    welcome_title = models.CharField(
+        verbose_name=ugettext_lazy('Welcome title'),
+        max_length=120,
+        null=True,
+        blank=True)
+
+    welcome_text = InyokaMarkupField(
+        verbose_name=ugettext_lazy('Welcome text'),
+        application='forum',
+        null=True,
+        blank=True)
+
     welcome_read_users = models.ManyToManyField(User)
 
     class Meta:
