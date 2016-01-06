@@ -369,6 +369,12 @@ class Forum(models.Model):
         else:
             self.welcome_read_users.remove(user)
 
+    def clear_welcome(self):
+        """
+        Resets the read status of all users to this forum.
+        """
+        self.welcome_read_users.clear()
+
     def invalidate_topic_cache(self):
         cache.delete_many(
             u'forum/topics/{}/{}'.format(self.id, page + 1)

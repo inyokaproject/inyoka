@@ -1821,6 +1821,11 @@ class ForumEditMixin(PermissionRequiredMixin):
     form_class = EditForumForm
     template_name = 'forum/forum_edit.html'
 
+    def form_valid(self, form):
+        if 'welcome_title' in form.changed_data or 'welcome_text' in form.changed_data:
+            self.object.clear_welcome()
+        return super(ForumEditMixin, self).form_valid(form)
+
 
 class ForumCreateView(ForumEditMixin, CreateView):
     """
