@@ -8,55 +8,33 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-# import locale
-
 from django.contrib import messages
+from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from django.http import HttpResponseRedirect
+from django.views.generic import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView, MultipleObjectMixin
-from django.views.generic import DetailView
-
-
 from inyoka.forum.acl import CAN_MODERATE, have_privilege
 from inyoka.forum.models import Topic
 from inyoka.ikhaya.models import Suggestion
+from inyoka.portal.user import User
+from inyoka.privmsg.forms import (
+    MessageComposeForm,
+    PrivilegedMessageComposeForm,
+)
+from inyoka.privmsg.models import Message, MessageData
 from inyoka.utils.django_19_auth_mixins import LoginRequiredMixin
 from inyoka.utils.flash_confirmation import ConfirmActionMixin
-from inyoka.utils.http import templated
-from inyoka.utils.templating import render_template
-from inyoka.portal.user import User
-from inyoka.portal.utils import simple_check_login
-from inyoka.privmsg.forms import MessageComposeForm, PrivilegedMessageComposeForm
-from inyoka.privmsg.models import Message, MessageData
 from inyoka.wiki.utils import quote_text
-
 
 MESSAGES_PER_PAGE = 20
 
 
 # "Folder" level views
 # --------------------
-
-
-# for reference, this would be the equivalent function based view:
-@simple_check_login
-@templated('privmsg/folder.html')
-def inbox(request):
-    """
-    View the users private message inbox.
-    """
-    messages = request.user.message_set.inbox()
-    # actually pagination is missing.
-    return {
-        'folder': 'inbox',
-        'folder_name': _(u'Inbox'),
-        'messages': messages,
-    }
-
-
 class MessagesFolderView(LoginRequiredMixin, ListView, MultipleObjectMixin):
     """
     Base View to Show a list of private messages for a user.
@@ -138,18 +116,6 @@ class UnreadMessagesView(MessagesFolderView):
 
 # Message level views
 # -------------------
-
-# For reference, this is the function based view:
-@simple_check_login
-@templated('privmsg/message.html')
-def message(request, pk=None):
-    message = get_object_or_404(Message, pk=pk, recipient=request.user)
-    message.mark_read()
-    return {
-        'message': message,
-    }
-
-
 class MessageView(LoginRequiredMixin, DetailView):
     """
     Display a message.
@@ -165,30 +131,6 @@ class MessageView(LoginRequiredMixin, DetailView):
                                    recipient=self.request.user)
         object.mark_read()
         return object
-
-
-# Moving stuff as function based view:
-@simple_check_login
-@templated('privmsg/message')
-def message_archive(request, pk=None):
-    message = get_object_or_404(Message, pk=pk, recipient=request.user)
-
-    if request.method == 'POST':
-        if 'cancel' in request.POST:
-            return HttpResponseRedirect(message.get_absolute_url())
-        else:
-            message.archive()
-            return HttpResponseRedirect(reverse('privmsg-archive'))
-    else:
-        messages.info(request,
-                      render_template('confirm_action_flash.html',
-                                      {'message': _(u'Do you want to archive this message?'),
-                                       'confirm_label': _(u'Archive'),
-                                       'cancel_label': _(u'Cancel')},
-                                      flash=True))
-        return {
-            'message': message,
-        }
 
 
 class MessageToArchiveView(ConfirmActionMixin, MessageView):
@@ -251,6 +193,7 @@ class FormPreviewMixin(object):
     """
     Mixin to enable FormViews to display a preview.
     """
+
     def get_context_data(self, **kwargs):
         """
         Inject the preview into the context dict, if it was requested.
@@ -270,9 +213,6 @@ class FormPreviewMixin(object):
         for field in self.get_preview_fields():
             previews[field] = preview_method(self.request.POST.get(field, ''))
         return previews
-        # I don't know why this doesn't work if the getattr is defined in the class itself:
-        # This would be so much easier and prettier.
-        # return self.preview_callable(self.request.POST.get(self.preview_form_field, ''))
 
     def get_preview_fields(self):
         """
@@ -282,9 +222,8 @@ class FormPreviewMixin(object):
             return self.preview_fields
         else:
             raise ImproperlyConfigured(
-                '{0} is missing the preview_fields attribute. Define {0}.preview_fields or '
-                'overwrite {0}.get_preview_fields().'.format(
-                    self.__class__.__name__)
+                '{0} is missing the preview_fields attribute. Define {0}.preview_fields '
+                'or overwrite {0}.get_preview_fields().'.format(self.__class__.__name__)
             )
 
     def get_preview_method(self):
@@ -295,9 +234,8 @@ class FormPreviewMixin(object):
             return self.preview_method
         else:
             raise ImproperlyConfigured(
-                '{0} is missing the preview_method attribute. Define {0}.preview_method or '
-                'overwrite {0}.get_preview_method().'.format(
-                    self.__class__.__name__)
+                '{0} is missing the preview_method attribute. Define {0}.preview_method '
+                'or overwrite {0}.get_preview_method().'.format(self.__class__.__name__)
             )
 
     def post(self, request):
@@ -315,44 +253,16 @@ class FormPreviewMixin(object):
             return self.form_invalid(form)
 
 
-# for reference, the equivalent function based view:
-# (no it's not pretty ;) but mostly because of the preview rendering)
-# it only gets worse when replying or forwarding.
-@simple_check_login
-@templated('privmsg/compose.html')
-def compose(request):
-    preview = ''
-    if request.method == 'POST':
-        if request.user.can('send_group_pm'):
-            form = PrivilegedMessageComposeForm(request.POST, user=request.user)
-        else:
-            form = MessageComposeForm(request.POST, user=request.user)
-        if 'preview' in request.POST:
-            preview = MessageData.get_text_rendered(request.POST.get('text', ''))
-        elif form.is_valid():
-            message = MessageData.objects.create(author=request.user,
-                                                 subject=form.cleaned_data['subject'],
-                                                 text=form.cleaned_data['text'],)
-            message.send(form.cleaned_data['recipients'])
-            messages.success(_(u'Your message has been sent.'))
-            return HttpResponseRedirect(reverse('privmsg-sent'))
-    elif request.user.can('send_group_pm'):
-        form = PrivilegedMessageComposeForm(user=request.user)
-    else:
-        form = MessageComposeForm(user=request.user)
-
-    return {
-        'form': form,
-        'preview': preview,
-    }
-
-
 def preview_helper(self, text):
     """
     Render a preview
     """
-    print(self)
     return MessageData.get_text_rendered(text)
+    # Note: I really don't understand why it doesn't work if I just put
+    # preview_method = getattr(MessageData, 'get_text_rendered')
+    # on the `MessageComposeView` class. In that case the get_field_rendered
+    # method will think it is a child of MessageComposeView and things break
+    # horribly.
 
 
 class MessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
@@ -361,13 +271,13 @@ class MessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
     """
     template_name = 'privmsg/compose.html'
     success_url = reverse_lazy('privmsg-sent')
-    preview_model = MessageData
-    preview_method = 'get_text_rendered'
-    # preview_callable = getattr(MessageData, 'get_text_rendered')  # doesn't work?!
     preview_fields = ['text']
     preview_method = preview_helper
 
     def get_form_class(self):
+        """
+        Get the form class based on user permission.
+        """
         if self.request.user.can('send_group_pm'):
             return PrivilegedMessageComposeForm
         else:
@@ -389,7 +299,7 @@ class MessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
                                              subject=form.cleaned_data['subject'],
                                              text=form.cleaned_data['text'],)
         message.send(recipients=form.cleaned_data['recipients'])
-        messages.success(_(u'Your message has been sent.'))
+        messages.success(self.request, _(u'Your message has been sent.'))
         return super(MessageComposeView, self).form_valid(form)
 
     def get_initial(self):
@@ -405,6 +315,7 @@ class MessageForwardView(MessageComposeView):
     """
     Forward a private message.
     """
+
     def get_initial(self):
         """
         Return the `inital` data for the form.
@@ -426,15 +337,16 @@ class MessageForwardView(MessageComposeView):
 
 
 class MessageReplyView(MessageComposeView):
-    reply_to_all = False
     """
     Reply to a private message.
     """
+    reply_to_all = False
+
     def get_initial(self):
         """
         Return the `inital` data for the form.
         """
-        pm = get_object_or_404(Message,
+        pm = get_object_or_404(Message.objects.include_related(),
                                pk=self.kwargs['pk'],
                                recipient=self.request.user)
 
@@ -460,6 +372,7 @@ class MessageReplyReportedTopicView(MessageComposeView):
     """
     Reply to reported topics on the forum.
     """
+
     def get_initial(self):
         """
         Return the `inital` data for the form.
@@ -481,6 +394,7 @@ class MessageReplySuggestedArticleView(MessageComposeView):
     """
     Reply to suggested articles.
     """
+
     def get_initial(self):
         """
         Return the `inital` data for the form.

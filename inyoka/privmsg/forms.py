@@ -9,11 +9,11 @@
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
+
 from django import forms
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import Group, User
 from inyoka.utils.sessions import SurgeProtectionMixin
 
 
@@ -61,6 +61,9 @@ class MultiUserField(CSVField):
 
 
 class MultiGroupField(CSVField):
+    """
+    A field that takes multiple group names and returns the list of user objects in those groups.
+    """
     def clean(self, values):
         """
         Validate that all groups exist and return a list of users in those groups.

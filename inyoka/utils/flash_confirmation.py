@@ -82,6 +82,7 @@ class ConfirmActionMixin(object):
             return HttpResponseRedirect(self.get_success_url())
 
         else:
+            messages.info(request, self.cancel_message)
             return HttpResponseRedirect(self.get_cancel_url())
 
     def get_success_url(self):

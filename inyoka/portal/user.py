@@ -22,6 +22,7 @@ from django.contrib.auth.models import (
 from django.contrib.auth.signals import user_logged_in
 from django.core import signing
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.dispatch import receiver
 from django.utils.html import escape
@@ -567,8 +568,7 @@ class User(AbstractBaseUser):
         if action == 'show':
             return href('portal', 'user', self.username, **query)
         elif action == 'privmsg':
-            return href('portal', 'privmsg', 'new',
-                        self.username, **query)
+            return reverse('privmsg-compose-user', kwargs={'user': self.username})
         elif action == 'activate':
             return href('portal', 'activate',
                         self.username, gen_activation_key(self), **query)
