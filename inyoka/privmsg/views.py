@@ -57,20 +57,16 @@ def inbox(request):
     }
 
 
-class BaseFolderMessagesView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+class MessagesFolderView(LoginRequiredMixin, ListView, MultipleObjectMixin):
     """
     Base View to Show a list of private messages for a user.
     """
     template_name = 'privmsg/folder.html'
     context_object_name = 'messages'
     paginate_by = MESSAGES_PER_PAGE
-
-    def get_context_data(self, **context):
-        context = super(BaseFolderMessagesView, self).get_context_data()
-        # we need two more keys to the context.
-        context['folder'] = self.folder
-        context['folder_name'] = self.folder_name
-        return context
+    queryset_name = None
+    folder = None
+    folder_name = None
 
     def get_queryset(self):
         """
@@ -80,12 +76,13 @@ class BaseFolderMessagesView(LoginRequiredMixin, ListView, MultipleObjectMixin):
             # basically, take the `queryset_name` string and call it as a method
             # on the current users `message_set`
             q = getattr(self.request.user.message_set, self.queryset_name)
-            return q()
+            return q().include_related()
         else:
-            super(BaseFolderMessagesView, self).get_queryset()
+            # Let other classes deal with the exception, if any.
+            return super(MessagesFolderView, self).get_queryset()
 
 
-class InboxedMessagesView(BaseFolderMessagesView):
+class InboxedMessagesView(MessagesFolderView):
     """
     Show the list of messages that are in the inbox (i.e. not archived).
     """
@@ -94,7 +91,7 @@ class InboxedMessagesView(BaseFolderMessagesView):
     folder_name = _(u'Inbox')
 
 
-class SentMessagesView(BaseFolderMessagesView):
+class SentMessagesView(MessagesFolderView):
     """
     Show the list of messages that the user sent himself.
     """
@@ -103,7 +100,7 @@ class SentMessagesView(BaseFolderMessagesView):
     folder_name = _(u'Sent')
 
 
-class ArchivedMessagesView(BaseFolderMessagesView):
+class ArchivedMessagesView(MessagesFolderView):
     """
     Show the list of messages that are in the archive.
     """
@@ -112,7 +109,7 @@ class ArchivedMessagesView(BaseFolderMessagesView):
     folder_name = _(u'Archive')
 
 
-class TrashedMessagesView(BaseFolderMessagesView):
+class TrashedMessagesView(MessagesFolderView):
     """
     Show the list of messages that are in the trash.
     """
@@ -121,7 +118,7 @@ class TrashedMessagesView(BaseFolderMessagesView):
     folder_name = _(u'Trash')
 
 
-class ReadMessagesView(BaseFolderMessagesView):
+class ReadMessagesView(MessagesFolderView):
     """
     Show the list of messages that were read.
     """
@@ -130,7 +127,7 @@ class ReadMessagesView(BaseFolderMessagesView):
     folder_name = _(u'Read')
 
 
-class UnreadMessagesView(BaseFolderMessagesView):
+class UnreadMessagesView(MessagesFolderView):
     """
     Show the list of messages that are unread.
     """

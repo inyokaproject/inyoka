@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.db import models
+from django.db import models, transaction
 from django.db.models import F, Q
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
@@ -25,6 +25,14 @@ from inyoka.utils.urls import url_for
 
 
 class MessageQuerySet(models.QuerySet):
+    def include_related(self):
+        """
+        Reduce the number of queries that hit the database.
+        """
+        return self.select_related('messagedata', 'recipient') \
+                   .prefetch_related('messagedata__author',
+                                     'messagedata__original_recipients')
+
     def for_user(self, user):
         """
         Return messages for user.
@@ -155,45 +163,51 @@ class Message(models.Model):
     @property
     def author(self):
         """
-        Return the author of the message. This is a shortcut.
+        Return the author of the message. This is a proxy.
         """
         return self.messagedata.author
 
     @property
     def recipients(self):
         """
-        Return the list of recipients. This is a shortcut.
+        Return the list of recipients. This is a proxy.
         """
         return self.messagedata.original_recipients.all()
 
     @property
     def subject(self):
         """
-        Return the subject of the message. This is a shortcut.
+        Return the subject of the message. This is a proxy.
         """
         return self.messagedata.subject
 
     @property
     def text(self):
         """
-        Return the text of this message. This is a shortcut.
+        Return the text of this message. This is a proxy.
         """
         return self.messagedata.text
 
     @property
     def text_rendered(self):
+        """
+        Return the rendered text of this message. This is a proxy.
+        """
         return self.messagedata.text_rendered
 
     @property
     def pub_date(self):
+        """
+        Return the publication date of this message. This is a proxy.
+        """
         return self.messagedata.pub_date
 
     @property
     def folder(self):
         """
-        Return the folder name identifier.
+        Return the folder identifier.
 
-        Note, the actual names of these folders only appear in the templates where
+        Note, the actual names of these folders only appear in the views/templates where
         strings can be translated.
         """
         if self.status == self.MESSAGE_SENT:
@@ -257,21 +271,23 @@ class MessageData(models.Model):
     text = InyokaMarkupField()
     original_recipients = models.ManyToManyField(User, related_name='+')
 
+    @transaction.atomic
     def send(self, recipients=None):
         """
         Send a copy of this message to each recipient.
         """
+        self.original_recipients = recipients
+
         # Create a message object for the author.
         Message.objects.create(messagedata=self,
                                recipient=self.author,
                                status=Message.MESSAGE_SENT)
         # Create message objects for each recipient, set counter and notify recipients.
         for user in recipients:
-            user.privmsg_count.incr()
             message = Message.objects.create(messagedata=self,
                                              recipient=user)
             send_privmsg_notification(recipient=user,
                                       author=self.author,
                                       subject=self.subject,
                                       url=url_for(message),)
-            self.original_recipients.add(user)
+            user.privmsg_count.incr()
