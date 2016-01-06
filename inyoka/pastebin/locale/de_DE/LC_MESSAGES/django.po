@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-12-27 11:29+0100\n"
+"POT-Creation-Date: 2016-01-06 12:42+0100\n"
 "PO-Revision-Date: 2015-11-18 22:24+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
@@ -174,10 +174,4 @@ msgstr "reStructuredText"
 
 msgid "sources.list"
 msgstr "sources.list"
-
-#~ msgid "Code"
-#~ msgstr "Code"
-
-#~ msgid "Rendered code"
-#~ msgstr "Gerenderter Code"
 

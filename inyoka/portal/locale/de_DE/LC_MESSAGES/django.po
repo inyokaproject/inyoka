@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-12-27 11:29+0100\n"
-"PO-Revision-Date: 2015-11-18 22:25+0100\n"
+"POT-Creation-Date: 2016-01-06 12:42+0100\n"
+"PO-Revision-Date: 2016-01-06 12:23+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
@@ -335,7 +335,7 @@ msgid "New user name '{newname}' contains invalid characters. Skipping..."
 msgstr "Der neue Benutzername „{newname}“ enthält ungültige Zeichen. Überspringe..."
 
 msgid "No JSON file specified. Aborting..."
-msgstr ""
+msgstr "Keine json Datei angegeben. Breche ab..."
 
 msgid "No effect if “attachment preview” is disabled"
 msgstr "Automatisch deaktiviert wenn „Anhang-Vorschau“ deaktiviert ist"
@@ -426,9 +426,6 @@ msgstr "Lesen"
 
 msgid "Read posts"
 msgstr "Gelesene Beiträge"
-
-msgid "Read welcome message"
-msgstr "Willkommensnachricht lesen"
 
 msgid "Release date"
 msgstr "Veröffentlichungsdatum"
@@ -858,37 +855,4 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
-
-#~ msgid "ICQ"
-#~ msgstr "ICQ"
-
-#~ msgid "MSN"
-#~ msgstr "MSN"
-
-#~ msgid "AIM"
-#~ msgstr "AIM"
-
-#~ msgid "Yahoo Messenger"
-#~ msgstr "Yahoo Messenger"
-
-#~ msgid "Skype"
-#~ msgstr "Skype"
-
-#~ msgid "WengoPhone"
-#~ msgstr "WengoPhone"
-
-#~ msgid "Coordinates (longitude)"
-#~ msgstr "Koordinaten (Längengrad)"
-
-#~ msgid "Coordinates (latitude)"
-#~ msgstr "Koordinaten (Breitengrad)"
-
-#~ msgid "Job"
-#~ msgstr "Beruf"
-
-#~ msgid "Interests"
-#~ msgstr "Interessen"
-
-#~ msgid "Posts"
-#~ msgstr "Beiträge"
 
