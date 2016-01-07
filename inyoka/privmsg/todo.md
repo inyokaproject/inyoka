@@ -1,11 +1,13 @@
 # TODO!
 
 ## Features
-* Moving messages to trash in bulk. Currently there is no (functioning) way to
-  select multiple messages and move them to trash. This needs some backend
-  method on the model/manager, as well as a view and a form.
-* Tasks: Messages should be deleted from trash automatically. There is a
-  queryset for it `to_expunge()` but no task that takes advantage of it.
+Moving messages to trash in bulk. Currently there is no (functioning) way to
+select multiple messages and move them to trash. This needs some backend
+method on the model/manager, as well as a view and a form.
+This is more difficult than it seems. Particularly with class based views.
+I think the easiest would be a a Service-URL that is just handling POST requests
+and deletes them. The form would be rendered in the template without being
+instantiated. Does this work with csrf_token? I'll have to experiment.
 
 ## Migrations
 This is a pretty big point. Since the model changes, we will need migrations!

@@ -9,13 +9,20 @@
     :license: BSD, see LICENSE for more details.
 """
 from celery import shared_task
+from inyoka.privmsg.models import Message, MessageData
 
-from inyoka.privmsg.models import Message
+
+@shared_task
+def clean_abandoned_messages():
+    """
+    Delete abandoned messages of which no users have copies any more.
+    """
+    MessageData.objects.abandoned().all().delete()
 
 
 @shared_task
 def expunge_private_messages():
     """
-    Delete old private messages from users trash folder.
+    Delete old private messages from users trash folders.
     """
-    Message.objects.to_expunge().delete()
+    Message.objects.to_expunge().all().delete()

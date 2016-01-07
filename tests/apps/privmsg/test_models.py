@@ -8,9 +8,8 @@
     :copyright: (c) 2011-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest import skip
-from django.db.models import Q
 
 from inyoka.privmsg.models import Message, MessageData
 from inyoka.portal.user import User
@@ -62,8 +61,16 @@ class TestMessageQuerySet(TestCase):
                          [])
 
     def test_messagequeryset_to_expunge(self):
-        self.assertEqual(list(Message.objects.for_user(self.author).to_expunge()),
-                         [])
+        messagedata = MessageData.objects.create(author=self.author, subject='test', text='text')
+        messagedata.original_recipients = [self.recipient]
+        messagedata.send([self.recipient])
+        messages = self.author.message_set.sent().all() | self.recipient.message_set.inbox().all()
+        yesterday = datetime.utcnow() - timedelta(1)
+        for m in messages:
+            m.trash()
+            m.trashed_date = yesterday
+            m.save()
+        self.assertListEqual(list(Message.objects.to_expunge()), list(messages))
 
 
 class TestMessageModel(TestCase):
@@ -157,6 +164,20 @@ class TestMessageModel(TestCase):
 
     def test_message_restore_received_message(self):
         pass
+
+
+class TestMessageDataManager(TestCase):
+    def test_messagedatamanager_abandoned(self):
+        author = User.objects.register_user(username='author', email='author', password='', send_mail=False)
+        recipient = User.objects.register_user(username='recipient', email='recipient', password='', send_mail=False)
+        messagedata = MessageData.objects.create(author=author, subject='test', text='text')
+        messagedata.original_recipients = [recipient]
+        messagedata.send([recipient])
+        messages = author.message_set.sent().all() | recipient.message_set.inbox().all()
+        for m in messages:
+            m.delete()
+        self.assertListEqual(list(MessageData.objects.abandoned().all()), [messagedata])
+
 
 @skip
 class TestMessageData(TestCase):

@@ -258,6 +258,7 @@ CELERY_IMPORTS = [
     'inyoka.utils.logger',
     'inyoka.portal.tasks',
     'inyoka.planet.tasks',
+    'inyoka.privmsg.tasks',
     'inyoka.wiki.tasks',
     'inyoka.utils.notification',
     'inyoka.forum.notifications',
@@ -288,6 +289,14 @@ CELERYBEAT_SCHEDULE = {
     'update_wiki_recent_changes': {
         'task': 'inyoka.wiki.tasks.update_recentchanges',
         'schedule': timedelta(minutes=15),
+    },
+    'expunge_private_messages': {
+        'task': 'inyoka.privmsg.tasks.expunge_private_messages',
+        'schedule': timedelta(days=1),
+    },
+    'clean_abandoned_messages': {
+        'task': 'inyoka.privmsg.tasks.clean_abandoned_messages',
+        'schedule': timedelta(days=1),
     }
 }
 
@@ -295,6 +304,8 @@ CELERYBEAT_SCHEDULE = {
 # Make the template context available as tmpl_context in the TemplateResponse.
 # Useful for tests in combination with override_settings.
 PROPAGATE_TEMPLATE_CONTEXT = False
+
+PRIVATE_MESSAGE_EXPUNGE_DAYS = 1
 
 INTERNAL_IPS = ('127.0.0.1',)
 

@@ -8,16 +8,14 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-# import locale
 from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
-from django.db.models import F, Q
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-
 from inyoka.portal.user import User
 from inyoka.privmsg.notifications import send_privmsg_notification
 from inyoka.utils.database import InyokaMarkupField
@@ -91,8 +89,8 @@ class MessageQuerySet(models.QuerySet):
         """
         Return list of messages that can be deleted from the database.
         """
-        delta = timedelta(days=settings.PRIVATE_MESSAGE_EXPUNGE_DAYS)
-        return self.filter(trashed_date__lt=F('trashed_date') - delta).trashed()
+        delete_before = datetime.now() - timedelta(days=settings.PRIVATE_MESSAGE_EXPUNGE_DAYS)
+        return self.filter(trashed_date__lt=delete_before).trashed()
 
 
 class Message(models.Model):
@@ -261,6 +259,17 @@ class Message(models.Model):
         self.save()
 
 
+class MessageDataManager(models.Manager):
+    def abandoned(self):
+        """
+        Return abandoned MessageData objects.
+
+        Abandoned `MessageData` objects arise when all recipients have deleted their
+        `Message` entries and there are no ForeignKeys pointing to it any more.
+        """
+        return self.get_queryset().filter(message=None)
+
+
 class MessageData(models.Model):
     """
     Hold the metadata for a private message.
@@ -270,6 +279,8 @@ class MessageData(models.Model):
     pub_date = models.DateTimeField(ugettext_lazy(u'Date'), auto_now_add=True)
     text = InyokaMarkupField()
     original_recipients = models.ManyToManyField(User, related_name='+')
+
+    objects = MessageDataManager()
 
     @transaction.atomic
     def send(self, recipients=None):
