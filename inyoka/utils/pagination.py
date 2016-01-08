@@ -155,7 +155,7 @@ class Pagination(object):
         if page == 1:
             url = self.base_link
         else:
-            url = u'{}{}/'.format(self.base_link, page)
+            url = u'{}/{}/'.format(self.base_link.rstrip(u'/'), page)
         if self.params:
             url = url + u'?{}'.format(urlencode(self.params))
         return url
