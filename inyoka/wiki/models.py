@@ -884,7 +884,9 @@ class Page(models.Model):
         if self.rev is not None:
             self.rev.save()
         deferred.clear(self)
-        update_related_pages.delay(self, update_meta)
+        # FIXME: We are using apply_async() instead of delay() because there is
+        #        a real dumb race condition between the celery task and this save().
+        update_related_pages.apply_async(args=[self, update_meta], countdown=5)
 
     def delete(self):
         """
