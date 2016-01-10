@@ -477,7 +477,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 u'an existing topic</a> to the article.'
             ) % {
                 'article': page_name,
-                'link': href('wiki', norm_page_name, 'discussion')
+                'link': url_for(page, 'discussion')
             }
         )
     if topic_slug:
