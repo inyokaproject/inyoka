@@ -108,7 +108,7 @@ def on_toggle_sidebar(request):
     if request.GET.get('hide') == 'true':
         request.user.settings[component] = True
     else:
-        request.user.settings.pop(component)
+        request.user.settings.pop(component, None)
     request.user.save(update_fields=['settings'])
     return True
 
