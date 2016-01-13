@@ -413,8 +413,11 @@ class PageManager(models.Manager):
         return rv
 
     def find_by_tag(self, tag):
-        """Return a list of page names tagged with `tag`."""
-        pages = MetaData.objects.filter(key='tag', value=tag)\
+        """
+        Return a list of page names tagged with `tag`.
+        The list will be sorted alphabetically.
+        """
+        pages = MetaData.objects.filter(key='tag', value=tag).order_by('page__name')\
                                 .values_list('page__name', flat=True)
         return pages
 
