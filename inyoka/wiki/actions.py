@@ -834,9 +834,6 @@ def do_export(request, name, format='raw', rev=None, fragment=False):
         The context is of course only passed if a template is rendered but
         the same for all the templates.
 
-        ``fragment``
-            `True` if a fragment should be rendered (no xml preamble etc)
-
         ``page``
             The bound `Page` object which should be rendered.
     """
@@ -846,7 +843,6 @@ def do_export(request, name, format='raw', rev=None, fragment=False):
         page = Page.objects.get_by_name_and_rev(name, rev,
                                                 raise_on_deleted=True)
     ctx = {
-        'fragment': fragment,
         'page': page
     }
     if format == 'html':
