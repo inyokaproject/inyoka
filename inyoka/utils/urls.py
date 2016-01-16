@@ -11,15 +11,12 @@
     :license: BSD, see LICENSE for more details.
 """
 import re
-from importlib import import_module
 from urlparse import urlparse
 
 from django.conf import settings
 from django.utils.http import urlencode, urlquote, urlquote_plus
 from django_hosts.resolvers import get_host
 
-# extended at runtime with module introspection information
-_append_slash_map = {'static': False, 'media': False}
 _schema_re = re.compile(r'[a-z]+://')
 acceptable_protocols = frozenset((
     'ed2k', 'ftp', 'http', 'https', 'irc', 'mailto', 'news', 'gopher',
@@ -31,14 +28,7 @@ acceptable_protocols = frozenset((
 def href(_module='portal', *parts, **query):
     """Generates an internal URL for different subdomains."""
     anchor = query.pop('_anchor', None)
-
-    if _module not in _append_slash_map:
-        host = get_host(_module)
-        module = import_module(host.urlconf)
-        append_slash = getattr(module, 'require_trailing_slash', True)
-        _append_slash_map[_module] = append_slash
-    else:
-        append_slash = _append_slash_map[_module]
+    append_slash = False if _module in ['static', 'media'] else True
     path = '/'.join(urlquote(x) for x in parts if x is not None)
 
     base_url = '%s://%s' % (settings.INYOKA_URI_SCHEME, settings.BASE_DOMAIN_NAME)
