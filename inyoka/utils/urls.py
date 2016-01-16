@@ -10,29 +10,18 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import re
-from urlparse import urlparse
-
 from django.conf import settings
-from django.utils.http import urlencode, urlquote, urlquote_plus
-from django_hosts.resolvers import get_host
-
-_schema_re = re.compile(r'[a-z]+://')
-acceptable_protocols = frozenset((
-    'ed2k', 'ftp', 'http', 'https', 'irc', 'mailto', 'news', 'gopher',
-    'nntp', 'telnet', 'webcal', 'xmpp', 'callto', 'feed', 'urn',
-    'aim', 'rsync', 'tag', 'ssh', 'sftp', 'rtsp', 'afs', 'git', 'msn'
-))
+from django.utils.http import urlencode, urlquote, urlquote_plus, is_safe_url
+from django_hosts.resolvers import get_host, get_host_patterns
 
 
 def href(_module='portal', *parts, **query):
     """Generates an internal URL for different subdomains."""
     anchor = query.pop('_anchor', None)
-    append_slash = False if _module in ['static', 'media'] else True
+    append_slash = _module not in ['static', 'media']
     path = '/'.join(urlquote(x) for x in parts if x is not None)
 
-    base_url = '%s://%s' % (settings.INYOKA_URI_SCHEME, settings.BASE_DOMAIN_NAME)
-    if _module in ('media', 'static'):
+    if not append_slash:
         base_url = {
             'media': settings.MEDIA_URL,
             'static': settings.STATIC_URL,
@@ -87,27 +76,12 @@ def is_safe_domain(url):
     Return ``True`` if the url is a safe redirection (i.e. it doesn't point to
     a different host and uses a safe scheme).
     Always returns ``False`` on an empty url.
-
-    Adopted from :func:`django.utils.http.is_safe_url` and related to
-    CVE-2014-3730
     """
-    if not url:
-        return False
-
-    # Chrome treats \ completely as /
-    url = url.replace('\\', '/')
-
-    # Chrome considers any URL with more than two slashes to be absolute, but
-    # urlaprse is not so flexible. Treat any url with three slashes as unsafe.
-    if url.startswith('///'):
-        return False
-    scheme, netloc = urlparse(url)[:2]
-
-    # Forbid URLs like http:///example.com - with a scheme, but without a hostname.
-    # In that URL, example.com is not the hostname but, a path component. However,
-    # Chrome will still consider example.com to be the hostname, so we must not
-    # allow this syntax.
-    if not netloc and scheme:
-        return False
-    return ((not netloc or ('.' + netloc).endswith('.' + settings.BASE_DOMAIN_NAME)) and
-            (not scheme or scheme in acceptable_protocols))
+    services = (host.regex for host in get_host_patterns())
+    # service > service.domain.tld:
+    safe_hostnames = ['{}.{}'.format(service, settings.BASE_DOMAIN_NAME).lstrip('.') for service in services]
+    # Only one successfully matching is_safe_url() must match:
+    for hostname in safe_hostnames:
+        if is_safe_url(url, hostname):
+            return True
+    return False

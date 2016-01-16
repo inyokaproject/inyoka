@@ -139,13 +139,13 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         useraccess.positive = 0
         useraccess.save()
         response = self.client.get('/usercp/subscriptions/', {}, False,
-                         HTTP_HOST='portal.%s' % settings.BASE_DOMAIN_NAME)
+                         HTTP_HOST=settings.BASE_DOMAIN_NAME)
         self.assertTrue(
             ('/topic/%s/unsubscribe/?next=' % self.topic.slug)
             in response.content.decode("utf-8")
         )
 
-        forward_url = 'http://portal.%s/myfwd' % settings.BASE_DOMAIN_NAME
+        forward_url = 'http://%s/myfwd' % settings.BASE_DOMAIN_NAME
         response = self.client.get(
             '/topic/%s/unsubscribe/' % self.topic.slug,
             {'next': forward_url}
