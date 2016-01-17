@@ -45,8 +45,8 @@ def templated(template_name, status=None, modifier=None,
                 rv = {}
             if modifier is not None:
                 modifier(request, rv)
-            return TemplateResponse(template_name, rv, status=status,
-                                    content_type=content_type)
+            return TemplateResponse(template_name, rv, request=request,
+                                    status=status, content_type=content_type)
         return patch_wrapper(proxy, f)
     return decorator
 
@@ -71,11 +71,11 @@ class TemplateResponse(HttpResponse):
     """
     Returns a rendered template as response.
     """
-    def __init__(self, template_name, context, status=200,
+    def __init__(self, template_name, context, request, status=200,
                  content_type='text/html; charset=utf-8'):
         if settings.DEBUG or settings.PROPAGATE_TEMPLATE_CONTEXT:
             self.tmpl_context = context
-        tmpl = render_template(template_name, context)
+        tmpl = render_template(template_name, context, request)
         HttpResponse.__init__(self, tmpl, status=status,
                               content_type=content_type)
 
