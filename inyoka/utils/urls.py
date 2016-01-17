@@ -40,22 +40,6 @@ def href(_module='portal', *parts, **query):
     )
 
 
-def get_url(data):
-    """Drop in replacement for urlparse.urlunparse"""
-    scheme, netloc, url, params, query, fragment = data
-    if params:
-        url = "%s;%s" % (url, params)
-    if netloc:
-        url = '//' + (netloc or '') + url
-    if scheme:
-        url = scheme + ':' + url
-    if query:
-        url = url + '?' + query
-    if fragment:
-        url = url + '#' + fragment
-    return url
-
-
 def url_for(obj, action=None, **kwargs):
     """
     Get the URL for an object.  As we are not using django contrib stuff

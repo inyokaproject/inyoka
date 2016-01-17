@@ -18,7 +18,7 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from urlparse import urlparse
+from urlparse import urlparse, urlunparse
 
 from django.conf import settings
 from django.utils.html import escape
@@ -29,7 +29,7 @@ from inyoka.markup.utils import debug_repr
 from inyoka.utils.html import striptags, build_html_tag
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import slugify, get_pagetitle, normalize_pagename
-from inyoka.utils.urls import get_url, href, urlquote_plus
+from inyoka.utils.urls import href, urlquote_plus
 
 
 def error_box(title, message):
@@ -552,8 +552,8 @@ class Link(Element):
         if not self.valid_url:
             return 'invalid-url'
         else:
-            return get_url((self.scheme, self.netloc, self.path, self.params,
-                            self.querystring, self.anchor))
+            return urlunparse((self.scheme, self.netloc, self.path, self.params,
+                               self.querystring, self.anchor))
 
     def prepare_html(self):
         if self.scheme == 'javascript':
