@@ -846,14 +846,17 @@ def do_export(request, name, format='raw', rev=None, fragment=False):
         'page': page
     }
     if format == 'html':
-        return TemplateResponse('wiki/export.html', ctx,
+        response = TemplateResponse('wiki/export.html', ctx,
                                 content_type='text/html; charset=utf-8')
     elif format == 'ast':
-        return HttpResponse(repr(page.rev.text.parse()),
+        response = HttpResponse(repr(page.rev.text.parse()),
                             content_type='text/plain; charset=ascii')
     else:
-        return HttpResponse(page.rev.text.value.encode('utf-8'),
+        response = HttpResponse(page.rev.text.value.encode('utf-8'),
                             content_type='text/plain; charset=utf-8')
+
+    response['X-Robots-Tag'] = 'noindex'
+    return response
 
 
 @clean_article_name
