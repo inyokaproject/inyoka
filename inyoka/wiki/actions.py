@@ -810,7 +810,7 @@ def do_backlinks(request, name):
 @require_privilege('read')
 @does_not_exist_is_404
 @case_sensitive_redirect
-def do_export(request, name, format='raw', rev=None, fragment=False):
+def do_export(request, name, format='raw', rev=None):
     """
     Export the given revision or the most recent one to the specified format
     (raw, html or ast so far).
