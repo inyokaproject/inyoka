@@ -30,6 +30,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SECRET_KEY = None
 
+INSTALLED_APPS = INSTALLED_APPS + (
+    'inyoka_theme_default',
+)
+
 # Django Debug Toolbar Integration
 #
 # uncomment to activate debug toolbar support
