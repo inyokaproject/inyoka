@@ -265,46 +265,6 @@ class Include(macros.Macro):
         return page.rev.text.render(context=context, format=format)
 
 
-class RandomPageList(macros.Macro):
-    """
-    Return random a list of pages.
-    """
-    names = (u'RandomPageList', u'Zufallsseite')
-    is_block_tag = True
-    arguments = (
-        ('pages', int, 10),
-        ('shorten_title', bool, False)
-    )
-    allowed_context = ['wiki']
-
-    def __init__(self, pages, shorten_title):
-        self.pages = pages
-        self.shorten_title = shorten_title
-
-    def build_node(self, context, format):
-        result = nodes.List('unordered')
-        # TODO i18n: Again this fancy meta data... wheeeey :-)
-        #           see RedirectPages for more infos.
-        redirect_pages = Page.objects.find_by_metadata('weiterleitung')
-        pagelist = filter(lambda p: p not in redirect_pages,
-                          Page.objects.get_page_list(exclude_privileged=True))
-
-        pages = []
-        found = 0
-        while found < self.pages and pagelist:
-            pagename = random.choice(pagelist)
-            pagelist.remove(pagename)
-            pages.append(pagename)
-            found += 1
-
-        for page in pages:
-            title = [nodes.Text(get_pagetitle(page, not self.shorten_title))]
-            link = nodes.InternalLink(page, title, force_existing=True)
-            result.children.append(nodes.ListItem([link]))
-
-        return result
-
-
 class FilterByMetaData(macros.Macro):
     """
     Filter pages by their metadata
@@ -525,7 +485,6 @@ macros.register(RedirectPages)
 macros.register(SimilarPages)
 macros.register(TagList)
 macros.register(Include)
-macros.register(RandomPageList)
 macros.register(FilterByMetaData)
 macros.register(PageName)
 macros.register(Template)
