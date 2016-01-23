@@ -77,13 +77,13 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import locale
 from collections import defaultdict
 from datetime import datetime
 from functools import partial
 from hashlib import sha1
+import locale
+import random
 
-import magic
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -92,6 +92,7 @@ from django.db.models import Count, Max
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
+import magic
 from werkzeug import cached_property
 
 from inyoka import default_settings, markup
@@ -112,6 +113,7 @@ from inyoka.wiki.tasks import (
     update_object_list,
     update_related_pages,
 )
+
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
@@ -185,6 +187,18 @@ class PageManager(models.Manager):
             'count': tag[1],
             'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
             for tag in sorted(tags, cmp=locale.strcoll, key=lambda x: x[0])]
+
+    def get_randompages(self, size=10):
+        """
+        Get a list of random wiki articles. Redirects are excluded as well as
+        everything defined in WIKI_PRIVILEGED_PAGES.
+        """
+        redirect_pages = [red_page.title for red_page in Page.objects.find_by_metadata('X-Redirect')]
+        pagelist = [page for page
+            in Page.objects.get_page_list(exclude_privileged=True)
+            if page not in redirect_pages]
+        size = min(size, len(pagelist))
+        return random.sample(pagelist, size)
 
     def compare(self, name, old_rev, new_rev=None):
         """

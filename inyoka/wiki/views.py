@@ -242,6 +242,14 @@ def missingpages(request):
     return {'missingpages': Page.objects.get_missing()}
 
 
+@templated('wiki/randompages.html')
+def randompages(request):
+    """
+    Show a list of random wiki articles.
+    """
+    return {'randompages': Page.objects.get_randompages()}
+
+
 @templated('wiki/tag_list.html')
 def show_tag_list(request):
     """

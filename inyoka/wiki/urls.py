@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^(?P<page_name>.+)/a/feed/(?P<count>\d+)/$', views.feed),
     url(r'(?i)^wiki/recentchanges/$', views.recentchanges),
     url(r'(?i)^wiki/missingpages/$', views.missingpages),
+    url(r'(?i)^wiki/randompages/$', views.randompages),
     url(r'(?i)^wiki/tagcloud/$', views.show_tag_cloud),
     url(r'(?i)^wiki/tags/$', views.show_tag_list),
     url(r'(?i)^wiki/tags/(?P<tag>.+)/$', views.show_pages_by_tag)
