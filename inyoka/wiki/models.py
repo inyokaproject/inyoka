@@ -413,8 +413,11 @@ class PageManager(models.Manager):
         return rv
 
     def find_by_tag(self, tag):
-        """Return a list of page names tagged with `tag`."""
-        pages = MetaData.objects.filter(key='tag', value=tag)\
+        """
+        Return a list of page names tagged with `tag`.
+        The list will be sorted alphabetically.
+        """
+        pages = MetaData.objects.filter(key='tag', value=tag).order_by('page__name')\
                                 .values_list('page__name', flat=True)
         return pages
 
@@ -884,7 +887,9 @@ class Page(models.Model):
         if self.rev is not None:
             self.rev.save()
         deferred.clear(self)
-        update_related_pages.delay(self, update_meta)
+        # FIXME: We are using apply_async() instead of delay() because there is
+        #        a real dumb race condition between the celery task and this save().
+        update_related_pages.apply_async(args=[self, update_meta], countdown=5)
 
     def delete(self):
         """

@@ -21,11 +21,11 @@ urlpatterns = [
     url(r'^_feed/(?P<count>\d+)/$', views.feed),
     url(r'^(?P<page_name>.+)/a/feed/$', views.feed, {'count': 10}),
     url(r'^(?P<page_name>.+)/a/feed/(?P<count>\d+)/$', views.feed),
-    url(r'(?i)^wiki/recentchanges', views.recentchanges),
-    url(r'(?i)^wiki/missingpages', views.missingpages),
-    url(r'(?i)^wiki/tagcloud$', views.show_tag_cloud),
-    url(r'(?i)^wiki/tags$', views.show_tag_list),
-    url(r'(?i)^wiki/tags/(?P<tag>.+)', views.show_pages_by_tag)
+    url(r'(?i)^wiki/recentchanges/$', views.recentchanges),
+    url(r'(?i)^wiki/missingpages/$', views.missingpages),
+    url(r'(?i)^wiki/tagcloud/$', views.show_tag_cloud),
+    url(r'(?i)^wiki/tags/$', views.show_tag_list),
+    url(r'(?i)^wiki/tags/(?P<tag>.+)/$', views.show_pages_by_tag)
 ]
 
 if settings.DEBUG:
@@ -47,9 +47,7 @@ urlpatterns.extend([
     url(r'^(?P<name>.+)/a/edit/$', actions.do_edit),
     url(r'^(?P<name>.+)/a/edit/revision/(?P<rev>\d+)/$', actions.do_edit),
     url(r'^(?P<name>.+)/a/export/(?P<format>(raw|html|ast))/$', actions.do_export),
-    url(r'^(?P<name>.+)/a/export/(?P<format>(raw|html|ast))/fragment/$', actions.do_export, {'fragment': True}),
     url(r'^(?P<name>.+)/a/export/(?P<format>(raw|html|ast))/(?P<rev>\d+)/$', actions.do_export),
-    url(r'^(?P<name>.+)/a/export/(?P<format>(raw|html|ast))/(?P<rev>\d+)/fragment/$', actions.do_export, {'fragment': True}),
     url(r'^(?P<name>.+)/a/export/meta/$', actions.do_metaexport),
     url(r'^(?P<name>.+)/a/log/(?P<pagination_page>\d+)/$', actions.do_log),
     url(r'^(?P<name>.+)/a/log/$', actions.do_log),

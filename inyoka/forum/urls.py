@@ -45,10 +45,9 @@ urlpatterns = [
     url(r'^post/(?P<post_id>\d+)/(?P<action>ham|spam)/$', views.mark_ham_spam),
     url(r'^post/(?P<post_id>\d+)/revisions/$', views.revisions),
     url(r'^revision/(?P<rev_id>\d+)/restore/$', views.restore_revision),
-    url(r'^forum/new/$', views.forum_edit),
-    url(r'^forum/new/(?P<parent>[^/]+)/$', views.forum_edit),
+    url(r'^forum/new/$', views.ForumCreateView.as_view()),
     url(r'^forum/(?P<slug>[^/]+)/$', views.forum),
-    url(r'^forum/(?P<slug>[^/]+)/edit/$', views.forum_edit),
+    url(r'^forum/(?P<slug>[^/]+)/edit/$', views.ForumUpdateView.as_view()),
     url(r'^forum/(?P<slug>[^/]+)/subscribe/$', views.subscribe_forum),
     url(r'^forum/(?P<slug>[^/]+)/unsubscribe/$', views.unsubscribe_forum),
     url(r'^forum/(?P<slug>[^/]+)/(?P<page>\d+)/$', views.forum),
@@ -99,8 +98,8 @@ urlpatterns = [
     url(r'^topic_author/(?P<user>[^/]+)/(?P<forum>[^/]+)/$', views.topiclist, {'action': 'topic_author'}),
     url(r'^topic_author/(?P<user>[^/]+)/(?P<forum>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'topic_author'}),
 
-    url(r'^category/(?P<slug>[^/]+)/welcome/$', views.welcome),
-    url(r'^forum/(?P<slug>[^/]+)/welcome/$', views.welcome),
+    url(r'^category/(?P<slug>[^/]+)/welcome/$', views.WelcomeMessageView.as_view()),
+    url(r'^forum/(?P<slug>[^/]+)/welcome/$', views.WelcomeMessageView.as_view()),
 ]
 
 if settings.DEBUG:

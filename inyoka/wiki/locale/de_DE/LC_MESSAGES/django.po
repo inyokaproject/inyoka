@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-12-27 11:29+0100\n"
+"POT-Creation-Date: 2016-01-06 12:42+0100\n"
 "PO-Revision-Date: 2015-12-19 20:35+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -259,7 +259,4 @@ msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachricht
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
-
-#~ msgid "Automatically deleted"
-#~ msgstr "Von System gelöscht"
 
