@@ -78,6 +78,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import locale
+import random
 from collections import defaultdict
 from datetime import datetime
 from functools import partial
@@ -185,6 +186,18 @@ class PageManager(models.Manager):
             'count': tag[1],
             'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
             for tag in sorted(tags, cmp=locale.strcoll, key=lambda x: x[0])]
+
+    def get_randompages(self, size=10):
+        """
+        Get a list of random wiki articles. Redirects are excluded as well as
+        everything defined in WIKI_PRIVILEGED_PAGES.
+        """
+        redirect_pages = [red_page.title for red_page in Page.objects.find_by_metadata('X-Redirect')]
+        pagelist = [page for page
+            in Page.objects.get_page_list(exclude_privileged=True)
+            if page not in redirect_pages]
+        size = min(size, len(pagelist))
+        return random.sample(pagelist, size)
 
     def compare(self, name, old_rev, new_rev=None):
         """
