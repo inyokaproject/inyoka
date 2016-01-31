@@ -319,12 +319,18 @@ PASSWORD_HASHERS = (
     'inyoka.utils.user.UnsaltedMD5PasswordHasher',
 )
 
-TEMPLATE_LOADERS = (
-    'inyoka.utils.templating.DjangoLoader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = ()
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'inyoka.utils.templating.inyoka_environment',
+            'autoescape': False,
+            'extensions': ['jinja2.ext.i18n', 'jinja2.ext.do'],
+        },
+    },
+]
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 

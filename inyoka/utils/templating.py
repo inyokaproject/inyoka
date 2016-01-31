@@ -10,31 +10,19 @@
 """
 import json
 import os
-import sys
-from importlib import import_module
 
+import jinja2
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
-from django.template.context_processors import csrf
 from django.forms.widgets import CheckboxInput
-from django.template.base import Context as DjangoContext
-from django.template.base import TemplateDoesNotExist
-from django.template.loaders.base import Loader
-from django.utils import six, translation
+from django.template.backends import jinja2 as jinja2backend
+from django.template.loader import get_template
+from django.utils import translation
 from django.utils.encoding import force_unicode
 from django.utils.functional import Promise
 from django.utils.timesince import timesince
 from django_mobile import get_flavour
-from jinja2 import (
-    Environment,
-    FileSystemLoader,
-    Template,
-    TemplateNotFound,
-    contextfunction,
-    escape,
-)
-
 from inyoka import INYOKA_VERSION
 from inyoka.utils.dates import (
     format_date,
@@ -47,81 +35,30 @@ from inyoka.utils.special_day import check_special_day
 from inyoka.utils.text import human_number
 from inyoka.utils.urls import href, url_for, urlencode, urlquote
 
-# path to the dtd.  In debug mode we refer to the file system, otherwise
-# URL.  We do that because the firefox validator extension is unable to
-# load DTDs from URLs...  On first rendering the path is calculated because
-# of circular imports "href()" could cause.
-inyoka_dtd = None
+
+def inyoka_environment(**options):
+    env = jinja2.Environment(**options)
+    env.install_gettext_translations(translation, newstyle=True)
+    env.filters.update(FILTERS)
+    env.globals.update(
+        INYOKA_VERSION=INYOKA_VERSION,
+        SETTINGS=settings,
+        href=href,
+    )
+    return env
 
 
-def get_dtd():
-    """
-    This returns either our dtd or our dtd + xml comment.  Neither is stricly
-    valid as XML documents with custom doctypes must be served as XML but
-    currently as MSIE is pain in the ass we have to workaround that IE bug
-    by removing the XML PI comment.
-    """
-    global inyoka_dtd
-    if inyoka_dtd is None:
-        if settings.DEBUG:
-            path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                                 'static',
-                                                 'xhtml1-strict-uu.dtd'))
-        else:
-            path = href('static', 'xhtml1-strict-uu.dtd')
-        inyoka_dtd = u'<!DOCTYPE html SYSTEM "%s">' % path
-
-    try:
-        if 'msie' in current_request.META['HTTP_USER_AGENT'].lower():
-            return inyoka_dtd
-    except Exception:
-        pass
-    return u'<?xml version="1.0" encoding="utf-8"?>\n' + inyoka_dtd
+def render_template(template_name, context, request=None, flash=False, populate_defaults=True):
+    """Render a template.  You might want to set `req` to `None`."""
+    template = get_template(template_name)
+    if populate_defaults:
+        populate_context_defaults(context)
+    if flash:
+        context['MESSAGES'] = messages.get_messages(request)
+    return template.render(context=context, request=request)
 
 
-class Breadcrumb(object):
-    """
-    Class to dynamically generate breadcrumb and title trace.
-    """
-
-    def __init__(self):
-        self.path = []
-        self.final = False
-
-    def append(self, value, link=None, title=False, position=None):
-        value = escape(value)
-        if position is None:
-            self.path.append((value, link, title))
-        else:
-            self.path.insert(position, (value, link, title))
-
-    def render(self, target='breadcrumb'):
-        if not self.final:
-            base_name = settings.BASE_DOMAIN_NAME.rsplit(':', 1)[0]
-            self.path.append((base_name, href('portal'), True))
-            self.path.reverse()
-            self.final = True
-        if target == 'breadcrumb':
-            result = []
-            for element in self.path:
-                result.append(u'<a href="{0}">{1}</a>'.format(element[1],
-                                                              element[0]))
-            return u' › '.join(result)
-        elif target == 'appheader':
-            if len(self.path) < 2:
-                context = {'fallback': True}
-            else:
-                context = {
-                    'h1_text': self.path[1][0],
-                    'h1_link': self.path[1][1],
-                    'h2_text': self.path[-1][0],
-                    'h2_link': self.path[-1][1],
-                }
-            return render_template('appheader.html', context, populate_defaults=False)
-        elif target == 'title':
-            return u' › '.join(i[0] for i in self.path[::-1] if i[2])
-
-
+# TODO: clean this mess up.
 def populate_context_defaults(context, flash=False):
     """Fill in context defaults."""
     from inyoka.forum.acl import have_privilege
@@ -206,12 +143,9 @@ def populate_context_defaults(context, flash=False):
             USER=user,
             BREADCRUMB=Breadcrumb(),
             MOBILE=get_flavour() == 'mobile',
-            _csrf_token=force_unicode(csrf(request)['csrf_token']),
-            special_day_css=check_special_day()
+            special_day_css=check_special_day(),
+            REQUEST=request,
         )
-
-        if not flash:
-            context['MESSAGES'] = messages.get_messages(request)
 
     if settings.DEBUG:
         from django.db import connection
@@ -231,31 +165,72 @@ def populate_context_defaults(context, flash=False):
     )
 
 
-def load_template(template_name):
-    # if available, use dedicated mobile template
-    mobile_template_name = template_name
-    if get_flavour() == 'mobile':
-        path = os.path.splitext(template_name)
-        mobile_template_name = '{0}m'.join(path).format(os.extsep)
-    try:
-        tmpl = jinja_env.get_template(mobile_template_name)
-    except TemplateNotFound:
-        tmpl = jinja_env.get_template(template_name)
-    return tmpl
+inyoka_dtd = None
 
 
-def render_template(template_name, context, flash=False,
-                    populate_defaults=True):
-    """Render a template.  You might want to set `req` to `None`."""
-    tmpl = load_template(template_name)
-    return tmpl.render(context, flash, populate_defaults)
+# TODO: Evaluate if we still need this.
+def get_dtd():
+    """
+    This returns either our dtd + xml comment.
+    """
+    global inyoka_dtd
+    if inyoka_dtd is None:
+        if settings.DEBUG:
+            path = os.path.realpath(os.path.join(os.path.dirname(__file__),
+                                                 'static',
+                                                 'xhtml1-strict-uu.dtd'))
+        else:
+            path = href('static', 'xhtml1-strict-uu.dtd')
+        inyoka_dtd = u'<!DOCTYPE html SYSTEM "%s">' % path
+
+    return u'<?xml version="1.0" encoding="utf-8"?>\n' + inyoka_dtd
 
 
-def render_string(source, context):
-    tmpl = jinja_env.from_string(source)
-    return tmpl.render(context)
+# TODO: Find a better way to do this.
+class Breadcrumb(object):
+    """
+    Class to dynamically generate breadcrumb and title trace.
+    """
+
+    def __init__(self):
+        self.path = []
+        self.final = False
+
+    def append(self, value, link=None, title=False, position=None):
+        value = jinja2.escape(value)
+        if position is None:
+            self.path.append((value, link, title))
+        else:
+            self.path.insert(position, (value, link, title))
+
+    def render(self, target='breadcrumb'):
+        if not self.final:
+            base_name = settings.BASE_DOMAIN_NAME.rsplit(':', 1)[0]
+            self.path.append((base_name, href('portal'), True))
+            self.path.reverse()
+            self.final = True
+        if target == 'breadcrumb':
+            result = []
+            for element in self.path:
+                result.append(u'<a href="{0}">{1}</a>'.format(element[1],
+                                                              element[0]))
+            return u' › '.join(result)
+        elif target == 'appheader':
+            if len(self.path) < 2:
+                context = {'fallback': True}
+            else:
+                context = {
+                    'h1_text': self.path[1][0],
+                    'h1_link': self.path[1][1],
+                    'h2_text': self.path[-1][0],
+                    'h2_link': self.path[-1][1],
+                }
+            return render_template('appheader.html', context, populate_defaults=False)
+        elif target == 'title':
+            return u' › '.join(i[0] for i in self.path[::-1] if i[2])
 
 
+# TODO: for the rest of this file: evaluate if we need these things.
 def urlencode_filter(value):
     """URL encode a string or dict."""
     if isinstance(value, dict):
@@ -265,16 +240,6 @@ def urlencode_filter(value):
 
 def ischeckbox_filter(input):
     return isinstance(input, CheckboxInput)
-
-
-@contextfunction
-def csrf_token(context):
-    csrf_token = context['_csrf_token']
-    if csrf_token == 'NOTPROVIDED':
-        return u''
-    else:
-        return ("<div style='display:none'><input type='hidden' "
-                "name='csrfmiddlewaretoken' value='%s' /></div>") % csrf_token
 
 
 class LazyJSONEncoder(json.JSONEncoder):
@@ -293,78 +258,6 @@ def json_filter(value):
     return LazyJSONEncoder().encode(value)
 
 
-class JinjaTemplate(Template):
-    def render(self, context, flash=False, populate_defaults=True):
-        context = {} if context is None else context
-        if isinstance(context, DjangoContext):
-            c = context
-            context = {}
-            for d in c.dicts:
-                context.update(d)
-            context.pop('csrf_token', None)  # We have our own...
-        if populate_defaults:
-            populate_context_defaults(context, flash)
-        return super(JinjaTemplate, self).render(context)
-
-
-class InyokaEnvironment(Environment):
-    """
-    Beefed up version of the jinja environment but without security features
-    to improve the performance of the lookups.
-    """
-    template_class = JinjaTemplate
-
-    def __init__(self):
-        template_paths = list(settings.TEMPLATE_DIRS)
-
-        # At compile time, cache the directories to search.
-        if not six.PY3:
-            fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
-        for app in settings.INSTALLED_APPS:
-            try:
-                mod = import_module(app)
-            except ImportError:
-                pass
-            template_dir = os.path.join(os.path.dirname(mod.__file__), 'templates')
-            if os.path.isdir(template_dir):
-                if not six.PY3:
-                    template_dir = template_dir.decode(fs_encoding)
-                template_paths.append(template_dir)
-
-        loader = FileSystemLoader(template_paths)
-        Environment.__init__(self, loader=loader,
-                             extensions=['jinja2.ext.i18n', 'jinja2.ext.do'],
-                             auto_reload=settings.DEBUG,
-                             cache_size=-1)
-
-        self.globals.update(INYOKA_VERSION=INYOKA_VERSION,
-                            SETTINGS=settings,
-                            REQUEST=current_request,
-                            href=href,
-                            csrf_token=csrf_token)
-        self.filters.update(FILTERS)
-
-        self.install_gettext_translations(translation, newstyle=True)
-
-    def _compile(self, source, filename):
-        filename = 'jinja:/' + filename if filename.startswith('/') else filename
-        code = compile(source, filename, 'exec')
-        return code
-
-
-class DjangoLoader(Loader):
-    is_usable = True
-
-    def load_template(self, template_name, template_dirs=None):
-        if template_name.startswith('debug_toolbar'):
-            raise TemplateDoesNotExist
-        try:
-            return load_template(template_name), template_name
-        except TemplateNotFound:
-            raise TemplateDoesNotExist(template_name)
-
-
-#: Filters that are globally available in the template environment
 FILTERS = {
     'timedeltaformat': timesince,
     'hnumber': human_number,
@@ -381,6 +274,3 @@ FILTERS = {
     'datetime': format_datetime,
     'time': format_time,
 }
-
-# setup the template environment
-jinja_env = InyokaEnvironment()
