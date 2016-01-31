@@ -403,22 +403,23 @@ def login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            try:
-                user = auth.authenticate(username=data['username'],
-                                  password=data['password'])
-            except UserBanned:
-                banned = True
-                user = None
+
+            user = auth.authenticate(username=data['username'],
+                              password=data['password'])
 
             if user is not None:
+                if user.is_banned and user.can_reactivate():
+                    user.reactivate()
+
                 if user.is_active:
                     if data['permanent']:
                         make_permanent(request)
-                    # username matches password and user is active
                     messages.success(request, _(u'You have successfully logged in.'))
                     auth.login(request, user)
                     return HttpResponseRedirect(redirect)
-                inactive = True
+                else:
+                    inactive = True
+                    banned = user.is_banned
 
             failed = True
     else:

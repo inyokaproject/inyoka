@@ -614,8 +614,15 @@ class User(AbstractBaseUser):
                       .filter(topic__forum__user_count_posts=True),
             use_task=True)
 
-    # TODO: reevaluate if needed.
-    backend = 'inyoka.portal.auth.InyokaAuthBackend'
+    def can_reactivate(self):
+        return self.banned_until is not None and self.banned_until < datetime.utcnow()
+
+    def reactivate(self):
+        self.status = 1
+        self.banned_until = None
+        self.save()
+
+    backend = 'django.contrib.auth.backends.ModelBackend'
 
 
 class UserPage(models.Model):
