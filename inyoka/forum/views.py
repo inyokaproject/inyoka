@@ -924,9 +924,15 @@ def report(request, topic_slug):
             subscribers = storage['reported_topics_subscribers'] or u''
             users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
             for user in users:
-                send_notification(user, 'new_reported_topic',
-                                  _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
-                                  {'topic': topic, 'text': data['text']})
+                if user.can('manage_topics'):
+                    send_notification(user, 'new_reported_topic',
+                                    _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
+                                    {'topic': topic, 'text': data['text']})
+                else:
+                    # unsubscribe this user automatically, he has no right to be here.
+                    user_ids = [i for i in subscribers.split(',')]
+                    user_ids.remove(str(user.id))
+                    storage['reported_topics_subscribers'] = ','.join(user_ids)
 
             cache.delete('forum/reported_topic_count')
             messages.success(request, _(u'The topic was reported.'))
