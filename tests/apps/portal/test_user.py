@@ -33,7 +33,7 @@ class TestUserModel(TestCase):
         """
         deactivate_user(self.user)
         self.user = User.objects.get(pk=self.user.id)
-        self.assertEqual(self.user.status, 3)
+        self.assertTrue(self.user.is_deleted)
 
     def test_get_user_by_username(self):
         user = User.objects.get_by_username_or_email('testing')
