@@ -14,15 +14,15 @@ from inyoka.utils.notification import queue_notifications
 
 
 def send_privmsg_notification(recipient, author, subject, url):
-    data = {'author': author,
-            'subject': subject,
-            'url': url}
+    template_data = {
+        'author': author,
+        'subject': subject,
+        'url': url,
+    }
 
     queue_notifications.delay(
-        recipient.id,
-        'new_privmsg',
-        _(u'New private message from {author}: {subject}').format(
-            author=author,
-            subject=subject),
-        data
+        request_user_id=recipient.id,
+        template='new_privmsg',
+        subject=_(u'New private message from {author}: {subject}').format(**template_data),
+        args=template_data,
     )
