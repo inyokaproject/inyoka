@@ -149,6 +149,7 @@ def feed(request, mode='short', count=10):
     return feed
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('blog_edit')
 @does_not_exist_is_404
 def hide_entry(request, id):

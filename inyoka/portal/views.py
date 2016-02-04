@@ -477,6 +477,7 @@ def profile(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_mail.html')
 def user_mail(request, username):
@@ -518,6 +519,7 @@ def user_mail(request, username):
 
 
 @require_POST
+@login_required(login_url=href('portal', 'login'))
 @require_permission('subscribe_to_users')
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
@@ -759,6 +761,7 @@ def usercp_deactivate(request):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/special_rights.html')
 def users_with_special_rights(request):
@@ -770,6 +773,7 @@ def users_with_special_rights(request):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_overview.html')
 def user_edit(request, username):
@@ -783,6 +787,7 @@ def user_edit(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_profile.html')
 def user_edit_profile(request, username):
@@ -815,6 +820,7 @@ def user_edit_profile(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_settings.html')
 def user_edit_settings(request, username):
@@ -866,6 +872,7 @@ def user_edit_settings(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_status.html')
 def user_edit_status(request, username):
@@ -893,6 +900,7 @@ def user_edit_status(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_privileges.html')
 def user_edit_privileges(request, username):
@@ -997,6 +1005,7 @@ def user_edit_privileges(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_groups.html')
 def user_edit_groups(request, username):
@@ -1054,6 +1063,7 @@ def user_edit_groups(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_new.html')
 def user_new(request):
@@ -1081,6 +1091,7 @@ def user_new(request):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 def admin_resend_activation_mail(request):
     user = User.objects.get(username__iexact=request.GET.get('user'))
@@ -1413,6 +1424,7 @@ def group(request, name, page=1):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('group_edit')
 @templated('portal/group_edit.html')
 def group_edit(request, name=None):
@@ -1663,6 +1675,7 @@ def confirm(request, action):
     return r
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('configuration_edit')
 @templated('portal/configuration.html')
 def config(request):
@@ -1730,6 +1743,7 @@ def static_page(request, page):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('static_page_edit')
 @templated('portal/pages.html')
 def pages(request):
@@ -1741,6 +1755,7 @@ def pages(request):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('static_page_edit')
 @templated('portal/page_edit.html')
 def page_edit(request, page=None):
@@ -1772,6 +1787,7 @@ def page_edit(request, page=None):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('markup_css_edit')
 @templated('portal/styles.html')
 def styles(request):

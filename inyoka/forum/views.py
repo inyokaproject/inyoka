@@ -944,6 +944,7 @@ def report(request, topic_slug):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('manage_topics')
 @templated('forum/reportlist.html')
 def reportlist(request):

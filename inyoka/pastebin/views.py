@@ -58,6 +58,7 @@ def display(request, entry_id):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('manage_pastebin')
 def delete(request, entry_id):
     """
