@@ -9,181 +9,399 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime, timedelta
-from unittest import skip
+# from unittest import skip
+from mock import patch
+
+from django.core.urlresolvers import reverse
 
 from inyoka.privmsg.models import Message, MessageData
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 
 
-@skip
 class TestMessageQuerySet(TestCase):
-    def setUp(self):
-        self.author = User.objects.register_user('author', 'author', 'author', False)
-        self.recipient = User.objects.register_user('recipient', 'recipient', 'recipient', False)
-        self.subject = 'Testsubject'
-        self.text = 'TestText'
+    """
+    Unit Tests for MessageQuerySet.
+    """
+
+    @classmethod
+    def setUpClass(self):
+        yesterday = datetime.utcnow() - timedelta(days=1)
+        self.author = User.objects.register_user(
+            username='author',
+            email='author',
+            password='',
+            send_mail=True,
+        )
+        self.recipient = User.objects.register_user(
+            username='recipient',
+            email='recipient',
+            password='',
+            send_mail=True,
+        )
+        self.subject = u'Test'
+        self.text = u'Text'
+        self.messagedata = MessageData.objects.create(
+            author=self.author,
+            subject=self.subject,
+            text=self.text,
+        )
+        self.sent_message = Message.objects.create(
+            messagedata=self.messagedata,
+            recipient=self.author,
+            status=Message.STATUS_SENT,
+        )
+        self.read_message = Message.objects.create(
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_READ,
+        )
+        self.unread_message = Message.objects.create(
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_UNREAD,
+        )
+        self.archived_message = Message.objects.create(
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_ARCHIVED,
+        )
+        self.trashed_message = Message.objects.create(
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_TRASHED,
+            trashed_date=yesterday,
+        )
+        self.deleted_message = Message.objects.create(
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_DELETED,
+        )
+
+    @classmethod
+    def tearDownClass(self):
+        pass
 
     def test_messagequeryset_for_user(self):
-        self.assertEqual(list(Message.objects.for_user(self.author)),
-                         [])
+        """
+        Test
+        """
+        expected_values = [self.sent_message]
+        actual_values = Message.objects.for_user(self.author)
+        self.assertItemsEqual(actual_values, expected_values)
 
     def test_messagequeryset_from_user(self):
-        self.assertEqual(list(Message.objects.for_user(self.author)),
-                         [])
-
-    def test_messagequeryset_archived(self):
-        self.assertEqual(list(Message.objects.for_user(self.author).archived()),
-                         [])
+        """
+        Test
+        """
+        expected_values = [
+            self.sent_message,
+            self.read_message,
+            self.unread_message,
+            self.archived_message,
+            self.trashed_message,
+            self.deleted_message,
+        ]
+        actual_values = Message.objects.from_user(self.author)
+        self.assertItemsEqual(actual_values, expected_values)
 
     def test_messagequeryset_inboxed(self):
-        self.assertEqual(list(Message.objects.for_user(self.author).inbox()),
-                         [])
-
-    def test_messagequeryset_sent(self):
-        self.assertEqual(list(Message.objects.for_user(self.author).sent()),
-                         [])
-
-    def test_messagequeryset_trashed(self):
-        self.assertEqual(list(Message.objects.for_user(self.author).trashed()),
-                         [])
-
-    def test_messagequeryset_deleted(self):
-        self.assertEqual(list(Message.objects.for_user(self.author).deleted()),
-                         [])
+        """
+        Test
+        """
+        expected_values = [self.read_message, self.unread_message]
+        actual_values = Message.objects.inboxed()
+        self.assertItemsEqual(actual_values, expected_values)
 
     def test_messagequeryset_read(self):
-        self.assertEqual(list(Message.objects.for_user(self.author).read()),
-                         [])
+        """
+        Test
+        """
+        expected_values = [self.read_message]
+        actual_values = Message.objects.read()
+        self.assertItemsEqual(actual_values, expected_values)
 
     def test_messagequeryset_unread(self):
-        self.assertEqual(list(Message.objects.for_user(self.author).unread()),
-                         [])
+        """
+        Test
+        """
+        expected_values = [self.unread_message]
+        actual_values = Message.objects.unread()
+        self.assertItemsEqual(actual_values, expected_values)
+
+    def test_messagequeryset_sent(self):
+        """
+        Test
+        """
+        expected_values = [self.sent_message]
+        actual_values = Message.objects.sent()
+        self.assertItemsEqual(actual_values, expected_values)
+
+    def test_messagequeryset_archived(self):
+        """
+        Test
+        """
+        expected_values = [self.archived_message]
+        actual_values = Message.objects.archived()
+        self.assertItemsEqual(actual_values, expected_values)
+
+    def test_messagequeryset_trashed(self):
+        """
+        Test
+        """
+        expected_values = [self.trashed_message]
+        actual_values = Message.objects.trashed()
+        self.assertItemsEqual(actual_values, expected_values)
+
+    def test_messagequeryset_deleted(self):
+        """
+        Test
+        """
+        expected_values = [self.deleted_message]
+        actual_values = Message.objects.deleted()
+        self.assertItemsEqual(actual_values, expected_values)
 
     def test_messagequeryset_to_expunge(self):
-        messagedata = MessageData.objects.create(author=self.author, subject='test', text='text')
-        messagedata.original_recipients = [self.recipient]
-        messagedata.send([self.recipient])
-        messages = self.author.message_set.sent().all() | self.recipient.message_set.inbox().all()
-        yesterday = datetime.utcnow() - timedelta(1)
-        for m in messages:
-            m.trash()
-            m.trashed_date = yesterday
-            m.save()
-        self.assertListEqual(list(Message.objects.to_expunge()), list(messages))
+        """
+        Test
+        """
+        expected_values = [self.trashed_message]
+        actual_values = Message.objects.to_expunge()
+        self.assertItemsEqual(actual_values, expected_values)
 
 
 class TestMessageModel(TestCase):
+    """
+    Unit Tests for the Message model
+    """
+
     def setUp(self):
-        self.author = User.objects.register_user('author', 'author', 'author', False)
-        self.recipient = User.objects.register_user('recipient', 'recipient', 'recipient', False)
-        self.subject = 'Testsubject'
+        self.author = User(username='author')
+        self.recipient = User(username='recipient')
+        self.subject = 'TestSubject'
         self.text = 'TestText'
-        self.messagedata = MessageData.objects.create(author=self.author,
-                                                 subject=self.subject,
-                                                 text=self.text)
-        self.messagedata.send(recipients=[self.recipient])
-        self.message = Message.objects.for_user(self.recipient).first()
-        self.sent_message = Message.objects.for_user(self.author).first()
+        self.pub_date = datetime.utcnow()
+        self.messagedata = MessageData(
+            pk=1,
+            author=self.author,
+            subject=self.subject,
+            text=self.text,
+            pub_date=self.pub_date,
+        )
+        self.sent_message = Message(
+            pk=1,
+            messagedata=self.messagedata,
+            recipient=self.author,
+            status=Message.STATUS_SENT,
+        )
+        self.read_message = Message(
+            pk=2,
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_READ,
+        )
+        self.unread_message = Message(
+            pk=3,
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_UNREAD,
+        )
+        self.archived_message = Message(
+            pk=4,
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_ARCHIVED,
+        )
+        self.trashed_message = Message(
+            pk=5,
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_TRASHED,
+        )
 
-    def test_message_get_absolute_url(self):
-        self.assertEqual(self.sent_message.get_absolute_url(),
-                         u'/messages/1/')
-        self.assertEqual(self.message.get_absolute_url(),
-                         u'/messages/2/')
-        self.assertEqual(self.message.get_absolute_url('archive'),
-                         u'/messages/2/archive/')
-        self.assertEqual(self.message.get_absolute_url('delete'),
-                         u'/messages/2/delete/')
-        self.assertEqual(self.message.get_absolute_url('forward'),
-                         u'/messages/2/forward/')
-        self.assertEqual(self.message.get_absolute_url('restore'),
-                         u'/messages/2/restore/')
-        self.assertEqual(self.message.get_absolute_url('reply'),
-                         u'/messages/2/reply/')
-        self.assertEqual(self.message.get_absolute_url('trash'),
-                         u'/messages/2/trash/')
-        self.assertEqual(self.message.get_absolute_url('reply_to_all'),
-                         u'/messages/2/reply/all/')
-        self.assertEqual(self.sent_message.get_absolute_url('folder'),
-                         u'/messages/sent/')
-        self.assertEqual(self.message.get_absolute_url('folder'),
-                         u'/messages/inbox/')
+    @classmethod
+    def tearDownClass(self):
+        pass
 
-    def test_message_is_unread(self):
-        self.assertFalse(self.sent_message.is_unread)
-        self.assertTrue(self.message.is_unread)
+    def test_messagemodel_is_unread_with_unread_message(self):
+        self.assertTrue(self.unread_message.is_unread)
 
-    def test_message_is_own_message(self):
+    def test_messagemodel_is_unread_with_read_message(self):
+        self.assertFalse(self.read_message.is_unread)
+
+    def test_messagemodel_is_own_message_with_sent_message(self):
         self.assertTrue(self.sent_message.is_own_message)
-        self.assertFalse(self.message.is_own_message)
 
-    def test_message_author(self):
-        self.assertEqual(self.message.author, self.author)
+    def test_messagemodel_is_own_message_with_received_message(self):
+        self.assertFalse(self.read_message.is_own_message)
+
+    def test_messagemodel_author(self):
         self.assertEqual(self.sent_message.author, self.author)
 
-    def test_message_recipients(self):
-        self.assertListEqual(list(self.message.recipients), [self.recipient])
+    # def test_messagemodel_recipients(self):
+    #     # this needs to somehow mock the m2m relation
 
-    def test_message_subject(self):
-        self.assertEqual(self.message.subject, self.subject)
+    def test_messagemodel_subject(self):
+        self.assertEqual(self.sent_message.subject, self.subject)
 
-    def test_message_text(self):
-        self.assertEqual(self.message.text, self.text)
+    def test_messagemodel_text(self):
+        self.assertEqual(self.sent_message.text, self.text)
 
-    def test_message_text_rendered(self):
-        self.assertEqual(self.message.text_rendered,
-                         MessageData.get_text_rendered(self.text))
+    # def test_messagemodel_text_rendered(self):
+    #     # shouldn't be a problem, but I need the rendered text
 
-    def test_message_pub_date(self):
-        # umm ... mock?
-        # self.assertEqual(self.message.pub_date, datetime.utcnow())
-        pass
+    def test_messagemodel_pub_date(self):
+        self.assertEqual(self.sent_message.pub_date, self.pub_date)
 
-    def test_message_mark_read(self):
-        self.message.mark_read()
-        self.assertFalse(self.message.is_unread)
-        # mock datetime.utcnow() to make this work:
-        # self.assertEqual(self.message.read_date, datetime.utcnow())
+    def test_messagemodel_folder_with_read_message(self):
+        self.assertEqual(self.read_message.folder, 'inbox')
 
-    def test_message_folder(self):
-        self.assertEqual(self.message.folder, 'inbox')
+    def test_messagemodel_folder_with_unread_message(self):
+        self.assertEqual(self.unread_message.folder, 'inbox')
+
+    def test_messagemodel_folder_with_sent_message(self):
         self.assertEqual(self.sent_message.folder, 'sent')
 
-    def test_message_archive(self):
-        self.message.archive()
-        self.assertEqual(self.message.status, Message.MESSAGE_ARCHIVED)
+    def test_messagemodel_folder_with_archived_message(self):
+        self.assertEqual(self.archived_message.folder, 'archive')
 
-    def test_message_trash(self):
-        self.message.trash()
-        self.assertEqual(self.message.status, Message.MESSAGE_TRASHED)
-        # self.assertEqual(self.message.trashed_date, datetime.utcnow())
+    def test_messagemodel_folder_with_trashed_message(self):
+        self.assertEqual(self.trashed_message.folder, 'trash')
 
-    def test_message_restore_sent_message(self):
-        pass
+    def test_messagemodel_get_absolute_url_with_action_archive(self):
+        expected_value = reverse('privmsg-message-archive', args=[self.read_message.id])
+        actual_value = self.read_message.get_absolute_url('archive')
+        self.assertEqual(actual_value, expected_value)
 
-    def test_message_restore_received_message(self):
-        pass
+    def test_messagemodel_get_absolute_url_with_action_delete(self):
+        expected_value = reverse('privmsg-message-delete', args=[self.read_message.id])
+        actual_value = self.read_message.get_absolute_url('delete')
+        self.assertEqual(actual_value, expected_value)
+
+    def test_messagemodel_get_absolute_url_with_action_forward(self):
+        expected_value = reverse('privmsg-message-forward', args=[self.read_message.id])
+        actual_value = self.read_message.get_absolute_url('forward')
+        self.assertEqual(actual_value, expected_value)
+
+    def test_messagemodel_get_absolute_url_with_action_restore(self):
+        expected_value = reverse('privmsg-message-restore', args=[self.read_message.id])
+        actual_value = self.read_message.get_absolute_url('restore')
+        self.assertEqual(actual_value, expected_value)
+
+    def test_messagemodel_get_absolute_url_with_action_reply(self):
+        expected_value = reverse('privmsg-message-reply', args=[self.read_message.id])
+        actual_value = self.read_message.get_absolute_url('reply')
+        self.assertEqual(actual_value, expected_value)
+
+    def test_messagemodel_get_absolute_url_with_action_reply_to_all(self):
+        expected_value = reverse('privmsg-message-reply-all', args=[self.read_message.id])
+        actual_value = self.read_message.get_absolute_url('reply_to_all')
+        self.assertEqual(actual_value, expected_value)
+
+    def test_messagemodel_get_absolute_url_with_action_trash(self):
+        expected_value = reverse('privmsg-message-trash', args=[self.read_message.id])
+        actual_value = self.read_message.get_absolute_url('trash')
+        self.assertEqual(actual_value, expected_value)
+
+    def test_messagemodel_get_absolute_url_with_action_folder(self):
+        expected_value = reverse('privmsg-inbox')
+        actual_value = self.read_message.get_absolute_url('folder')
+        self.assertEqual(actual_value, expected_value)
+
+    def test_messagemodel_get_absolute_url_with_action_show(self):
+        expected_value = reverse('privmsg-message', args=[self.read_message.id])
+        actual_value = self.read_message.get_absolute_url('show')
+        self.assertEqual(actual_value, expected_value)
+
+    @patch('inyoka.privmsg.models.Message.save')
+    @patch('inyoka.privmsg.models.datetime')
+    def test_messagemodel_mark_read(self, mock_datetime, mock_save):
+        expected_time = datetime.utcnow()
+        mock_datetime.utcnow.return_value = expected_time
+        self.unread_message.mark_read()
+
+        self.assertFalse(self.unread_message.is_unread)
+        self.assertEqual(self.unread_message.read_date, expected_time)
+
+    @patch('inyoka.privmsg.models.Message.save')
+    def test_messagemodel_archive(self, mock_save):
+        self.unread_message.archive()
+        self.assertEqual(self.unread_message.status, Message.STATUS_ARCHIVED)
+
+    @patch('inyoka.privmsg.models.Message.save')
+    @patch('inyoka.privmsg.models.datetime')
+    def test_messagemodel_trash(self, mock_datetime, mock_save):
+        expected_time = datetime.utcnow()
+        mock_datetime.utcnow.return_value = expected_time
+        self.unread_message.trash()
+
+        self.assertEqual(self.unread_message.status, Message.STATUS_TRASHED)
+        self.assertEqual(self.unread_message.trashed_date, expected_time)
+
+    @patch('inyoka.privmsg.models.Message.save')
+    def test_messagemodel_restore_with_received_message(self, mock_save):
+        message = Message(messagedata=self.messagedata, recipient=self.recipient, status=Message.STATUS_ARCHIVED)
+        message.restore()
+        self.assertEqual(message.status, Message.STATUS_READ)
+
+    @patch('inyoka.privmsg.models.Message.save')
+    def test_messagemodel_restore_with_sent_message(self, mock_save):
+        message = Message(messagedata=self.messagedata, recipient=self.author, status=Message.STATUS_ARCHIVED)
+        message.restore()
+        self.assertEqual(message.status, Message.STATUS_SENT)
+
+    @patch('inyoka.privmsg.models.Message.save')
+    def test_messagemodel_restore_from_trash_with_received_message(self, mock_save):
+        self.trashed_message.restore()
+        self.assertEqual(self.trashed_message.status, Message.STATUS_READ)
+        self.assertIsNone(self.trashed_message.trashed_date)
+
+    @patch('inyoka.privmsg.models.Message.save')
+    def test_messagemodel_restore_from_trash_with_received_message(self, mock_save):
+        self.sent_message.status = Message.STATUS_TRASHED
+        self.sent_message.restore()
+        self.assertEqual(self.sent_message.status, Message.STATUS_SENT)
+        self.assertIsNone(self.sent_message.trashed_date)
 
 
 class TestMessageDataManager(TestCase):
+    """
+    Test MessageDataManager
+    """
+
     def test_messagedatamanager_abandoned(self):
-        author = User.objects.register_user(username='author', email='author', password='', send_mail=False)
-        recipient = User.objects.register_user(username='recipient', email='recipient', password='', send_mail=False)
-        messagedata = MessageData.objects.create(author=author, subject='test', text='text')
-        messagedata.original_recipients = [recipient]
-        messagedata.send([recipient])
-        messages = author.message_set.sent().all() | recipient.message_set.inbox().all()
-        for m in messages:
-            m.delete()
-        self.assertListEqual(list(MessageData.objects.abandoned().all()), [messagedata])
+        """
+        Test that abandoned() method returns list of messagedata objects that have no messages assigned to them.
+        """
+        author = User.objects.register_user(
+            username='author',
+            email='author',
+            password='',
+            send_mail=True,
+        )
+        messagedata = MessageData.objects.create(
+            author=author,
+            subject='Test',
+            text='Text',
+        )
+        expected_values = [messagedata]
+
+        actual_values = MessageData.objects.abandoned()
+
+        self.assertItemsEqual(actual_values, expected_values)
 
 
-@skip
 class TestMessageData(TestCase):
-    def setUp(self):
-        pass
+    """
+    Test MessageData
+    """
 
-    def test_messagedata_send(self):
-        # mock send_notification
-        pass
+    # This is complicated to mock :( Might just write it as implementation test.
+    # @patch('inyoka.privmsg.models.Message.objects.create')
+    # @patch('inyoka.privmsg.models.MessageData.objects.create')
+    # def test_messagedata_send(self, mock_messagedata, mock_message):
+    #     author = User(username='author')
+    #     recipient = User(username='recipient')
+    #     mock_message.return_value = Message()
+    #     mock_messagedata.return_value = MessageData()
+    #     pass

@@ -64,7 +64,7 @@ class InboxedMessagesView(MessagesFolderView):
     """
     Show the list of messages that are in the inbox (i.e. not archived).
     """
-    queryset_name = 'inbox'
+    queryset_name = 'inboxed'
     folder = 'inbox'
     folder_name = _(u'Inbox')
 

@@ -47,43 +47,43 @@ class MessageQuerySet(models.QuerySet):
         """
         Return archived messages.
         """
-        return self.filter(status=Message.MESSAGE_ARCHIVED)
+        return self.filter(status=Message.STATUS_ARCHIVED)
 
-    def inbox(self):
+    def inboxed(self):
         """
         Return messages in the inbox (i.e. not archived).
         """
-        return self.filter(Q(status=Message.MESSAGE_UNREAD) | Q(status=Message.MESSAGE_READ))
+        return self.filter(Q(status=Message.STATUS_UNREAD) | Q(status=Message.STATUS_READ))
 
     def sent(self):
         """
         Return sent messages.
         """
-        return self.filter(status=Message.MESSAGE_SENT)
+        return self.filter(status=Message.STATUS_SENT)
 
     def trashed(self):
         """
         Return messages in the trash.
         """
-        return self.filter(status=Message.MESSAGE_TRASHED)
+        return self.filter(status=Message.STATUS_TRASHED)
 
     def deleted(self):
         """
         Return a list of messages that are marked as deleted.
         """
-        return self.filter(status=Message.MESSAGE_DELETED)
+        return self.filter(status=Message.STATUS_DELETED)
 
     def read(self):
         """
         Return read messages.
         """
-        return self.filter(status=Message.MESSAGE_READ)
+        return self.filter(status=Message.STATUS_READ)
 
     def unread(self):
         """
         Return unread messages.
         """
-        return self.filter(status=Message.MESSAGE_UNREAD)
+        return self.filter(status=Message.STATUS_UNREAD)
 
     def to_expunge(self):
         """
@@ -97,19 +97,19 @@ class Message(models.Model):
     """
     Hold an entry for every recipient of a private message.
     """
-    MESSAGE_ARCHIVED = 'A'
-    MESSAGE_DELETED = 'D'
-    MESSAGE_READ = 'R'
-    MESSAGE_SENT = 'S'
-    MESSAGE_TRASHED = 'T'
-    MESSAGE_UNREAD = 'U'
-    MESSAGE_STATUS_CHOICES = (
-        (MESSAGE_ARCHIVED, _(u'Archived')),
-        (MESSAGE_DELETED, _(u'Deleted')),
-        (MESSAGE_READ, _(u'Read')),
-        (MESSAGE_SENT, _(u'Sent')),
-        (MESSAGE_TRASHED, _(u'Trashed')),
-        (MESSAGE_UNREAD, _(u'Unread')),
+    STATUS_ARCHIVED = 'A'
+    STATUS_DELETED = 'D'
+    STATUS_READ = 'R'
+    STATUS_SENT = 'S'
+    STATUS_TRASHED = 'T'
+    STATUS_UNREAD = 'U'
+    STATUS_CHOICES = (
+        (STATUS_ARCHIVED, _(u'Archived')),
+        (STATUS_DELETED, _(u'Deleted')),
+        (STATUS_READ, _(u'Read')),
+        (STATUS_SENT, _(u'Sent')),
+        (STATUS_TRASHED, _(u'Trashed')),
+        (STATUS_UNREAD, _(u'Unread')),
     )
 
     messagedata = models.ForeignKey('MessageData', on_delete=models.CASCADE)
@@ -117,8 +117,8 @@ class Message(models.Model):
     read_date = models.DateTimeField(null=True, blank=True)
     trashed_date = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=1,
-                              choices=MESSAGE_STATUS_CHOICES,
-                              default=MESSAGE_UNREAD)
+                              choices=STATUS_CHOICES,
+                              default=STATUS_UNREAD)
 
     objects = MessageQuerySet.as_manager()
 
@@ -149,7 +149,7 @@ class Message(models.Model):
         """
         Return True, if the message is unread.
         """
-        return self.status == self.MESSAGE_UNREAD
+        return self.status == self.STATUS_UNREAD
 
     @property
     def is_own_message(self):
@@ -208,12 +208,14 @@ class Message(models.Model):
         Note, the actual names of these folders only appear in the views/templates where
         strings can be translated.
         """
-        if self.status == self.MESSAGE_SENT:
+        if self.status == self.STATUS_SENT:
             return 'sent'
-        elif self.status == self.MESSAGE_ARCHIVED:
+        elif self.status == self.STATUS_ARCHIVED:
             return 'archive'
-        elif self.status == self.MESSAGE_TRASHED:
+        elif self.status == self.STATUS_TRASHED:
             return 'trash'
+        elif self.status == self.STATUS_DELETED:
+            return 'deleted'
         else:
             return 'inbox'
 
@@ -223,7 +225,7 @@ class Message(models.Model):
         """
         if self.is_unread:
             self.recipient.privmsg_count.decr()
-            self.status = self.MESSAGE_READ
+            self.status = self.STATUS_READ
             self.read_date = datetime.utcnow()
             self.save()
 
@@ -233,7 +235,7 @@ class Message(models.Model):
         """
         if self.is_unread:
             self.recipient.privmsg_count.decr()
-        self.status = self.MESSAGE_ARCHIVED
+        self.status = self.STATUS_ARCHIVED
         self.save()
 
     def trash(self):
@@ -242,7 +244,7 @@ class Message(models.Model):
         """
         if self.is_unread:
             self.recipient.privmsg_count.decr()
-        self.status = self.MESSAGE_TRASHED
+        self.status = self.STATUS_TRASHED
         self.trashed_date = datetime.utcnow()
         self.save()
 
@@ -250,12 +252,12 @@ class Message(models.Model):
         """
         Move the message back to the inbox.
         """
-        if self.status == self.MESSAGE_TRASHED:
+        if self.status == self.STATUS_TRASHED:
             self.trashed_date = None
         if self.is_own_message:
-            self.status = self.MESSAGE_SENT
+            self.status = self.STATUS_SENT
         else:
-            self.status = self.MESSAGE_READ
+            self.status = self.STATUS_READ
         self.save()
 
 
@@ -282,23 +284,35 @@ class MessageData(models.Model):
 
     objects = MessageDataManager()
 
+    @classmethod
     @transaction.atomic
-    def send(self, recipients=None):
+    def send(cls, author, recipients, subject, text):
         """
         Send a copy of this message to each recipient.
         """
-        self.original_recipients = recipients
+        messagedata = MessageData.objects.create(
+            author=author,
+            subject=subject,
+            text=text,
+        )
+        messagedata.original_recipients = recipients
 
         # Create a message object for the author.
-        Message.objects.create(messagedata=self,
-                               recipient=self.author,
-                               status=Message.MESSAGE_SENT)
+        Message.objects.create(
+            messagedata=messagedata,
+            recipient=author,
+            status=Message.STATUS_SENT
+        )
         # Create message objects for each recipient, set counter and notify recipients.
         for user in recipients:
-            message = Message.objects.create(messagedata=self,
-                                             recipient=user)
-            send_privmsg_notification(recipient=user,
-                                      author=self.author,
-                                      subject=self.subject,
-                                      url=url_for(message),)
+            message = Message.objects.create(
+                messagedata=messagedata,
+                recipient=user,
+            )
+            send_privmsg_notification(
+                recipient=user,
+                author=author,
+                subject=subject,
+                url=url_for(message),
+            )
             user.privmsg_count.incr()

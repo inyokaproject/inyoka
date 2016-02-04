@@ -616,10 +616,12 @@ def suggest_delete(request, suggestion):
                     _(u'Article suggestion deleted'), args)
 
                 # Send the user a private message
-                msg = MessageData(author=request.user,
-                                  subject=_(u'Article suggestion deleted'),
-                                  text=render_template('mails/suggestion_rejected.txt', args))
-                msg.send(recipients=[s.author])
+                MessageData.send(
+                    author=request.user,
+                    recipients=[s.author],
+                    subject=_(u'Article suggestion deleted'),
+                    text=render_template('mails/suggestion_rejected.txt', args),
+                )
 
             cache.delete('ikhaya/suggestion_count')
             s.delete()
