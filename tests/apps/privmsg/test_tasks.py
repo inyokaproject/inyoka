@@ -20,17 +20,20 @@ class TestTasks(TestCase):
     """
     Tests for privmsg tasks.
     """
-    def test_clean_abandoned_messages(self):
-        """
-        clean_abandoned_messages() should delete messages that are no longer referenced by any users.
-        """
-        author = User.objects.register_user(
+
+    def setUp(self):
+        self.author = User.objects.register_user(
             username='author',
             email='author',
             password='',
             send_mail=False,
         )
-        MessageData.objects.create(author=author, subject='Test', text='Text')
+
+    def test_clean_abandoned_messages(self):
+        """
+        clean_abandoned_messages() should delete messages that are no longer referenced by any users.
+        """
+        MessageData.objects.create(author=self.author, subject='Test', text='Text')
 
         clean_abandoned_messages()
 
@@ -41,20 +44,14 @@ class TestTasks(TestCase):
         expunde_private_messages() should delete trashed messages after a grace period (defined in settings).
         """
         yesterday = datetime.utcnow() - timedelta(days=1)
-        author = User.objects.register_user(
-            username='author',
-            email='author',
-            password='',
-            send_mail=False,
-        )
         messagedata = MessageData.objects.create(
-            author=author,
+            author=self.author,
             subject='Test',
             text='Text',
         )
         Message.objects.create(
             messagedata=messagedata,
-            recipient=author,
+            recipient=self.author,
             status=Message.STATUS_TRASHED,
             trashed_date=yesterday,
         )
@@ -67,20 +64,14 @@ class TestTasks(TestCase):
         """
         expunde_private_messages() should not delete trashed messages before the grace period is over.
         """
-        author = User.objects.register_user(
-            username='author',
-            email='author',
-            password='',
-            send_mail=False,
-        )
         messagedata = MessageData.objects.create(
-            author=author,
+            author=self.author,
             subject='Test',
             text='Text',
         )
         Message.objects.create(
             messagedata=messagedata,
-            recipient=author,
+            recipient=self.author,
             status=Message.STATUS_TRASHED,
             trashed_date=datetime.utcnow(),
         )

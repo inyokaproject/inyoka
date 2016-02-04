@@ -284,6 +284,8 @@ class MessageData(models.Model):
 
     objects = MessageDataManager()
 
+    # Not sure if this should be a classmethodhere. It would also fit on the Message class.
+    # It seems to do a lot of things and is difficult to test.
     @classmethod
     @transaction.atomic
     def send(cls, author, recipients, subject, text):
