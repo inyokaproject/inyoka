@@ -579,7 +579,7 @@ class User(AbstractBaseUser):
                 self.post_set.exists() or
                 self.topics.exists() or
                 self.comment_set.exists() or
-                self.privatemessageentry_set.exists() or
+                self.message_set.exists() or
                 self.wiki_revisions.exists() or
                 self.article_set.exists() or
                 # Pastebin
