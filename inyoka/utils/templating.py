@@ -293,7 +293,8 @@ class InyokaEnvironment(Environment):
                              auto_reload=settings.DEBUG,
                              cache_size=-1)
 
-        self.globals.update(INYOKA_VERSION=INYOKA_VERSION,
+        self.globals.update(BASE_DOMAIN_NAME=settings.BASE_DOMAIN_NAME,
+                            INYOKA_VERSION=INYOKA_VERSION,
                             SETTINGS=settings,
                             REQUEST=current_request,
                             href=href,
