@@ -79,49 +79,6 @@ def get_dtd():
     return u'<?xml version="1.0" encoding="utf-8"?>\n' + inyoka_dtd
 
 
-class Breadcrumb(object):
-    """
-    Class to dynamically generate breadcrumb and title trace.
-    """
-
-    def __init__(self):
-        self.path = []
-        self.final = False
-
-    def append(self, value, link=None, title=False, position=None):
-        value = escape(value)
-        if position is None:
-            self.path.append((value, link, title))
-        else:
-            self.path.insert(position, (value, link, title))
-
-    def render(self, target='breadcrumb'):
-        if not self.final:
-            base_name = settings.BASE_DOMAIN_NAME.rsplit(':', 1)[0]
-            self.path.append((base_name, href('portal'), True))
-            self.path.reverse()
-            self.final = True
-        if target == 'breadcrumb':
-            result = []
-            for element in self.path:
-                result.append(u'<a href="{0}">{1}</a>'.format(element[1],
-                                                              element[0]))
-            return u' › '.join(result)
-        elif target == 'appheader':
-            if len(self.path) < 2:
-                context = {'fallback': True}
-            else:
-                context = {
-                    'h1_text': self.path[1][0],
-                    'h1_link': self.path[1][1],
-                    'h2_text': self.path[-1][0],
-                    'h2_link': self.path[-1][1],
-                }
-            return render_template('appheader.html', context, populate_defaults=False)
-        elif target == 'title':
-            return u' › '.join(i[0] for i in self.path[::-1] if i[2])
-
-
 def populate_context_defaults(context, flash=False):
     """Fill in context defaults."""
     from inyoka.forum.acl import have_privilege
@@ -204,7 +161,6 @@ def populate_context_defaults(context, flash=False):
             XHTML_DTD=get_dtd(),
             CURRENT_URL=request.build_absolute_uri(),
             USER=user,
-            BREADCRUMB=Breadcrumb(),
             MOBILE=get_flavour() == 'mobile',
             _csrf_token=force_unicode(csrf(request)['csrf_token']),
             special_day_css=check_special_day()
