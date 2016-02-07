@@ -46,12 +46,11 @@ from inyoka.ikhaya.notifications import (
 )
 from inyoka.markup import RenderContext, parse
 from inyoka.portal.models import (
-    PrivateMessage,
-    PrivateMessageEntry,
     Subscription,
 )
 from inyoka.portal.user import User
 from inyoka.portal.utils import check_login, require_permission
+from inyoka.privmsg.models import MessageData
 from inyoka.utils import ctype, generic
 from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
@@ -617,29 +616,12 @@ def suggest_delete(request, suggestion):
                     _(u'Article suggestion deleted'), args)
 
                 # Send the user a private message
-                msg = PrivateMessage()
-                msg.author = request.user
-                msg.subject = _(u'Article suggestion deleted')
-                msg.text = render_template('mails/suggestion_rejected.txt', args)
-                msg.pub_date = datetime.utcnow()
-                recipients = [s.author]
-                msg.send(recipients)
-                # send notification
-                for recipient in recipients:
-                    entry = PrivateMessageEntry.objects \
-                        .filter(message=msg, user=recipient)[0]
-                    if 'pm_new' in recipient.settings.get('notifications',
-                                                          ('pm_new',)):
-                        title = _(u'New private message from %(user)s: '
-                                  '%(subject)s') % {
-                                      'user': request.user.username,
-                                      'subject': msg.subject}
-                        send_notification(recipient, 'new_pm', title, {
-                                          'user': recipient,
-                                          'sender': request.user,
-                                          'subject': msg.subject,
-                                          'entry': entry,
-                                          })
+                MessageData.send(
+                    author=request.user,
+                    recipients=[s.author],
+                    subject=_(u'Article suggestion deleted'),
+                    text=render_template('mails/suggestion_rejected.txt', args),
+                )
 
             cache.delete('ikhaya/suggestion_count')
             s.delete()

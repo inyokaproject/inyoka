@@ -16,7 +16,7 @@ from django.core.cache import cache
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.pastebin.models import Entry
-from inyoka.portal.models import PrivateMessage, Subscription
+from inyoka.portal.models import Subscription
 from inyoka.portal.user import Group, User, deactivate_user
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
@@ -146,21 +146,6 @@ class TestUserHasContent(TestCase):
             'example2@example.com',
             'pwd', False)
         Suggestion.objects.create(author=self.user, owner=other_user)
-
-        self.assertTrue(self.user.has_content())
-        self.assertTrue(other_user.has_content())
-
-    def test_privatemessage(self):
-        """
-        Test privatemessage as sender and receiver.
-        """
-        now = datetime.now()
-        other_user = User.objects.register_user(
-            'other_user',
-            'example2@example.com',
-            'pwd', False)
-        pm = PrivateMessage(author=self.user, pub_date=now)
-        pm.send([other_user])
 
         self.assertTrue(self.user.has_content())
         self.assertTrue(other_user.has_content())

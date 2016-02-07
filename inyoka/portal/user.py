@@ -22,6 +22,7 @@ from django.contrib.auth.models import (
 from django.contrib.auth.signals import user_logged_in
 from django.core import signing
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.dispatch import receiver
 from django.utils.html import escape
@@ -558,8 +559,7 @@ class User(AbstractBaseUser):
         if action == 'show':
             return href('portal', 'user', self.username, **query)
         elif action == 'privmsg':
-            return href('portal', 'privmsg', 'new',
-                        self.username, **query)
+            return reverse('privmsg-compose-user', kwargs={'user': self.username})
         elif action == 'activate':
             return href('portal', 'activate',
                         self.username, gen_activation_key(self), **query)
@@ -579,7 +579,7 @@ class User(AbstractBaseUser):
                 self.post_set.exists() or
                 self.topics.exists() or
                 self.comment_set.exists() or
-                self.privatemessageentry_set.exists() or
+                self.message_set.exists() or
                 self.wiki_revisions.exists() or
                 self.article_set.exists() or
                 # Pastebin
@@ -597,6 +597,14 @@ class User(AbstractBaseUser):
                       .filter(hidden=False)
                       .filter(topic__forum__user_count_posts=True),
             use_task=True)
+
+    @property
+    def privmsg_count(self):
+        return QueryCounter(
+            cache_key='user_privmsg_unread_count:{}'.format(self.id),
+            query=self.message_set.unread(),
+            use_task=False,
+        )
 
     # TODO: reevaluate if needed.
     backend = 'inyoka.portal.auth.InyokaAuthBackend'

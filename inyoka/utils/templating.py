@@ -126,7 +126,6 @@ def populate_context_defaults(context, flash=False):
     """Fill in context defaults."""
     from inyoka.forum.acl import have_privilege
     from inyoka.forum.models import Topic
-    from inyoka.portal.models import PrivateMessageEntry
     from inyoka.utils.storage import storage
     from inyoka.ikhaya.models import Suggestion, Event, Report
 
@@ -143,7 +142,7 @@ def populate_context_defaults(context, flash=False):
                'article_edit': user.can('article_edit'),
                'event_edit': user.can('event_edit')}
 
-        keys = ['portal/pm_count/%s' % user.id]
+        keys = []
 
         if can['manage_topics']:
             keys.append('forum/reported_topic_count')
@@ -156,13 +155,8 @@ def populate_context_defaults(context, flash=False):
         cached_values = cache.get_many(keys)
         to_update = {}
 
-        key = 'portal/pm_count/%s' % user.id
-        pms = cached_values.get(key)
-        if pms is None:
-            pms = PrivateMessageEntry.objects \
-                .filter(user__id=user.id, read=False) \
-                .exclude(folder=None).count()
-            to_update[key] = pms
+        pms = user.privmsg_count()
+
         if can['manage_topics']:
             key = 'forum/reported_topic_count'
             reported = cached_values.get(key)
