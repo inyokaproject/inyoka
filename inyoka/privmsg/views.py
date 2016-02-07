@@ -11,11 +11,11 @@
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
-from django.views.generic import DetailView
-from django.views.generic.edit import FormView
+from django.views.generic import DetailView, View
+from django.views.generic.edit import FormMixin, FormView
 from django.views.generic.list import ListView, MultipleObjectMixin
 from inyoka.forum.acl import CAN_MODERATE, have_privilege
 from inyoka.forum.models import Topic
@@ -23,9 +23,10 @@ from inyoka.ikhaya.models import Suggestion
 from inyoka.portal.user import User
 from inyoka.privmsg.forms import (
     MessageComposeForm,
+    MultiMessageSelectForm,
     PrivilegedMessageComposeForm,
 )
-from inyoka.privmsg.models import Message, MessageData
+from inyoka.privmsg.models import MessageData
 from inyoka.utils.django_19_auth_mixins import LoginRequiredMixin
 from inyoka.utils.flash_confirmation import ConfirmActionMixin
 from inyoka.wiki.utils import quote_text
@@ -52,9 +53,9 @@ class MessagesFolderView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         """
         if self.queryset_name is not None:
             # basically, take the `queryset_name` string and call it as a method
-            # on the current users `message_set`
+            # on the current users `message_set`.
             q = getattr(self.request.user.message_set, self.queryset_name)
-            return q().include_related()
+            return q().optimized()
         else:
             # Let other classes deal with the exception, if any.
             return super(MessagesFolderView, self).get_queryset()
@@ -120,15 +121,20 @@ class MessageView(LoginRequiredMixin, DetailView):
     """
     Display a message.
     """
-    model = Message
     context_object_name = 'message'
     template_name = 'privmsg/message.html'
 
+    def get_queryset(self):
+        """
+        Return the queryset that will be used to retrieve the object.
+        """
+        return self.request.user.message_set.optimized()
+
     def get_object(self):
-        # Getting the message by pk is not enough, the message must belong to the user.
-        object = get_object_or_404(self.model,
-                                   pk=self.kwargs.get(self.pk_url_kwarg),
-                                   recipient=self.request.user)
+        """
+        When retrieving the object by pk, make sure it is marked as read.
+        """
+        object = super(MessageView, self).get_object()
         object.mark_read()
         return object
 
@@ -295,10 +301,12 @@ class MessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
         """
         Commit the message to the database.
         """
-        message = MessageData.objects.create(author=self.request.user,
-                                             subject=form.cleaned_data['subject'],
-                                             text=form.cleaned_data['text'],)
-        message.send(recipients=form.cleaned_data['recipients'])
+        MessageData.send(
+            author=self.request.user,
+            recipients=form.cleaned_data['recipients'],
+            subject=form.cleaned_data['subject'],
+            text=form.cleaned_data['text'],
+        )
         messages.success(self.request, _(u'Your message has been sent.'))
         return super(MessageComposeView, self).form_valid(form)
 
@@ -320,19 +328,18 @@ class MessageForwardView(MessageComposeView):
         """
         Return the `inital` data for the form.
         """
-        pm = get_object_or_404(Message,
-                               pk=self.kwargs['pk'],
-                               recipient=self.request.user)
+        message = get_object_or_404(self.request.user.message_set.optimized(),
+                                    pk=self.kwargs['pk'])
 
-        if not pm.subject.lower().startswith('fw:'):
-            subject = u'Fw: {}'.format(pm.subject)
+        if not message.subject.lower().startswith('fw:'):
+            subject = u'Fw: {}'.format(message.subject)
         else:
-            subject = pm.subject
+            subject = message.subject
 
         return {
             'recipients': self.kwargs.get('user', None),
             'subject': subject,
-            'text': quote_text(text=pm.text, author=pm.author,),
+            'text': quote_text(text=message.text, author=message.author,),
         }
 
 
@@ -346,25 +353,24 @@ class MessageReplyView(MessageComposeView):
         """
         Return the `inital` data for the form.
         """
-        pm = get_object_or_404(Message.objects.include_related(),
-                               pk=self.kwargs['pk'],
-                               recipient=self.request.user)
+        message = get_object_or_404(self.request.user.message_set.optimized(),
+                                    pk=self.kwargs['pk'])
 
-        recipients = set([pm.author])
+        recipients = set([message.author])
         if self.reply_to_all:
-            recipients.update(pm.recipients)
+            recipients.update(message.recipients)
         recipients.discard(self.request.user)
         recipients = ';'.join(r.username for r in recipients)
 
-        if not pm.subject.lower().startswith('re:'):
-            subject = u'Re: {}'.format(pm.subject)
+        if not message.subject.lower().startswith('re:'):
+            subject = u'Re: {}'.format(message.subject)
         else:
-            subject = pm.subject
+            subject = message.subject
 
         return {
             'recipients': recipients,
             'subject': subject,
-            'text': quote_text(text=pm.text, author=pm.author),
+            'text': quote_text(text=message.text, author=message.author),
         }
 
 
@@ -410,3 +416,60 @@ class MessageReplySuggestedArticleView(MessageComposeView):
             'subject': subject,
             'text': text,
         }
+
+
+class MultiMessageProcessView(LoginRequiredMixin, FormMixin, View):
+    """
+    View to process forms and move multiple selected messages to a different folder.
+    """
+    form_class = MultiMessageSelectForm
+
+    def get_form_kwargs(self):
+        """
+        Provide the form with the queryset for valid choices.
+        """
+        kwargs = super(MultiMessageProcessView, self).get_form_kwargs()
+        kwargs['queryset'] = self.get_queryset()
+        return kwargs
+
+    def get_queryset(self):
+        """
+        The queryset containing the messages this user can process.
+        """
+        return self.request.user.message_set
+
+    def post(self, request):
+        """
+        Respond to HTTP POST requests.
+        """
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            # User gave invalid input
+            raise Http404()
+
+    def form_valid(self, form):
+        """
+        Process the filtered queryset.
+        """
+        queryset = form.cleaned_data['selected_messages']
+        action = form.cleaned_data['action']
+
+        if action == u'archive':
+            queryset.bulk_archive()
+            self.request.user.privmsg_count.db_count(write_cache=True)
+            return HttpResponseRedirect(reverse_lazy('privmsg-archive'))
+
+        elif action == u'trash':
+            queryset.bulk_trash()
+            self.request.user.privmsg_count.db_count(write_cache=True)
+            return HttpResponseRedirect(reverse_lazy('privmsg-trash'))
+
+        elif action == u'restore':
+            queryset.bulk_restore()
+            return HttpResponseRedirect(reverse_lazy('privmsg-inbox'))
+
+        else:
+            # currently shouldn't happen
+            return HttpResponseRedirect(reverse_lazy('privmsg-inbox'))

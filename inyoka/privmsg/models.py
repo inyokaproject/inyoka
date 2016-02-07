@@ -13,23 +13,26 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
-from django.db.models import Q
+from django.db.models import F
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from inyoka.portal.user import User
 from inyoka.privmsg.notifications import send_privmsg_notification
 from inyoka.utils.database import InyokaMarkupField
-from inyoka.utils.urls import url_for
 
 
 class MessageQuerySet(models.QuerySet):
-    def include_related(self):
+    def optimized(self):
         """
         Reduce the number of queries that hit the database.
         """
-        return self.select_related('messagedata', 'recipient') \
-                   .prefetch_related('messagedata__author',
-                                     'messagedata__original_recipients')
+        return self.select_related(
+            'messagedata',
+            'messagedata__author',
+            'recipient',
+        ).prefetch_related(
+            'messagedata__original_recipients',
+        )
 
     def for_user(self, user):
         """
@@ -53,7 +56,8 @@ class MessageQuerySet(models.QuerySet):
         """
         Return messages in the inbox (i.e. not archived).
         """
-        return self.filter(Q(status=Message.STATUS_UNREAD) | Q(status=Message.STATUS_READ))
+        inboxed_states = (Message.STATUS_READ, Message.STATUS_UNREAD)
+        return self.filter(status__in=inboxed_states)
 
     def sent(self):
         """
@@ -91,6 +95,31 @@ class MessageQuerySet(models.QuerySet):
         """
         delete_before = datetime.now() - timedelta(days=settings.PRIVATE_MESSAGE_EXPUNGE_DAYS)
         return self.filter(trashed_date__lt=delete_before).trashed()
+
+    def bulk_archive(self):
+        """
+        Move the selected messages to archive.
+        """
+        self.update(status=Message.STATUS_ARCHIVED, trashed_date=None)
+
+    def bulk_restore(self):
+        """
+        Restore filtered messages to sent folder.
+        """
+        self.filter(recipient=F('messagedata__author')).update(
+            status=Message.STATUS_SENT,
+            trashed_date=None,
+        )
+        self.exclude(recipient=F('messagedata__author')).update(
+            status=Message.STATUS_READ,
+            trashed_date=None,
+        )
+
+    def bulk_trash(self):
+        """
+        Move the selected messages to trash.
+        """
+        self.update(status=Message.STATUS_TRASHED, trashed_date=datetime.utcnow())
 
 
 class Message(models.Model):
@@ -315,6 +344,6 @@ class MessageData(models.Model):
                 recipient=user,
                 author=author,
                 subject=subject,
-                url=url_for(message),
+                url=message.get_absolute_url(),
             )
             user.privmsg_count.incr()

@@ -14,11 +14,12 @@ from inyoka.privmsg.forms import (
     CSVField,
     MessageComposeForm,
     MultiGroupField,
+    MultiMessageSelectForm,
     MultiUserField,
     PrivilegedMessageComposeForm,
 )
 from inyoka.utils.test import TestCase
-from mock import patch
+from mock import patch, Mock
 
 
 class TestCSVField(TestCase):
@@ -91,7 +92,7 @@ class TestCSVField(TestCase):
         """
         Test CSVField configured to ignore duplicate items in the return list.
         """
-        field = CSVField(unique=True)
+        field = CSVField(deduplicate=True)
         input_string = 'test, test, test2'
         expected_value = ['test', 'test2']
 
@@ -103,7 +104,7 @@ class TestCSVField(TestCase):
         """
         Test CSVField with custom separator and ignoring duplicates.
         """
-        field = CSVField(separator=';', unique=True)
+        field = CSVField(separator=';', deduplicate=True)
         input_string = 'test; test; test2'
         expected_value = ['test', 'test2']
 
@@ -137,7 +138,7 @@ class TestMultiUserField(TestCase):
         cls.user1 = User(username='user1')
         cls.user2 = User(username='user2')
         cls.user3 = User(username='user3')
-        cls.field = MultiUserField(separator=';', unique=True)
+        cls.field = MultiUserField(separator=';', deduplicate=True)
 
     @patch('inyoka.portal.user.User.objects.filter')
     def test_multiuserfield_with_one_user(self, mock_user_filter):
@@ -208,7 +209,7 @@ class TestMultiGroupField(TestCase):
         cls.user3 = User(username='user3')
         cls.group1 = Group(name='group1')
         cls.group2 = Group(name='group2')
-        cls.field = MultiGroupField(separator=';', unique=True)
+        cls.field = MultiGroupField(separator=';', deduplicate=True)
 
     @patch('inyoka.portal.user.Group.objects.filter')
     @patch('inyoka.portal.user.User.objects.filter')
@@ -546,3 +547,95 @@ class TestComposeFormIntegration(TestCase):
         result = form.is_valid
 
         self.assertTrue(result)
+
+
+class TestMultiMessageSelectForm(TestCase):
+    """
+    Tests for the MultiMessageSelectForm.
+    """
+
+    def test_multimessageselectform_init(self):
+        """
+        Test form init method.
+        """
+        mock_queryset = Mock()
+        mock_queryset.values_list.return_value = ((1, ''))
+
+        form = MultiMessageSelectForm(queryset=mock_queryset)
+
+        self.assertEqual(form.queryset, mock_queryset)
+        self.assertEqual(mock_queryset.values_list.call_count, 1)
+        mock_queryset.values_list.assert_called_once_with('id', 'id')
+
+    def test_multimessageselectform_init_without_queryset(self):
+        """
+        Test form initialisation fails without queryset parameter.
+        """
+        with self.assertRaises(KeyError):
+            MultiMessageSelectForm()
+
+    def test_multimessageselectform_clean_selected_messages(self):
+        """
+        Test form field validation applies correct filter to queryset and returns the correct queryset.
+        """
+        queryset = Mock()
+        test_list = [1, 3, 5]
+        form = MultiMessageSelectForm(queryset=queryset)
+        form.cleaned_data = {'selected_messages': test_list}
+
+        form.clean_selected_messages()
+
+        queryset.filter.assert_called_once_with(pk__in=test_list)
+
+
+class TestMultiMessageSelectFormIntegration(TestCase):
+    def test_multimessageselectform_wrong_action(self):
+        """
+        Test form validation fails when an invalid choice for `action` is made.
+        """
+        mock_queryset = Mock()
+        mock_queryset.values_list.return_value = ((1, 1), (2, 2), (3, 3))
+        initial_data = {
+            'action': 'nonexistant',
+            'selected_messages': [1],
+        }
+        form = MultiMessageSelectForm(
+            queryset=mock_queryset,
+            data=initial_data,
+        )
+
+        self.assertFalse(form.is_valid())
+
+    def test_multimessageselectform_invalid_message_id(self):
+        """
+        Test form validation fails when a message id is passed that does not belong to the user.
+        """
+        mock_queryset = Mock()
+        mock_queryset.values_list.return_value = ((1, 1), (2, 2), (3, 3))
+        initial_data = {
+            'action': 'archive',
+            'selected_messages': [2, 8],
+        }
+        form = MultiMessageSelectForm(
+            queryset=mock_queryset,
+            data=initial_data,
+        )
+
+        self.assertFalse(form.is_valid())
+
+    def test_multimessageselectform_valid_data(self):
+        """
+        Test form validates successfully with valid inputs.
+        """
+        mock_queryset = Mock()
+        mock_queryset.values_list.return_value = ((1, 1), (2, 2), (3, 3))
+        initial_data = {
+            'action': 'archive',
+            'selected_messages': [2, 3],
+        }
+        form = MultiMessageSelectForm(
+            queryset=mock_queryset,
+            data=initial_data,
+        )
+
+        self.assertTrue(form.is_valid())

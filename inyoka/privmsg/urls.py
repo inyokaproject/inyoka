@@ -78,6 +78,11 @@ urlpatterns = [
         name='privmsg-message-restore'),
     url(r'^(?P<pk>\d+)/$', views.MessageView.as_view(),
         name='privmsg-message'),
+
+    # Service url to process multiple messages at once (e.g. move to trash) only accepts POST
+    url(r'^bulk-process/$', views.MultiMessageProcessView.as_view(),
+        name='privmsg-bulk-process'),
+
     url(r'^$', RedirectView.as_view(pattern_name='privmsg-inbox', permanent=False))
 ]
 

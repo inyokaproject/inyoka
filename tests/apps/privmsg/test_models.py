@@ -9,14 +9,13 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime, timedelta
-# from unittest import skip
-from mock import patch
 
 from django.core.urlresolvers import reverse
-
-from inyoka.privmsg.models import Message, MessageData
 from inyoka.portal.user import User
+from inyoka.privmsg.models import Message, MessageData
 from inyoka.utils.test import TestCase
+# from unittest import skip
+from mock import patch
 
 
 class TestMessageQuerySet(TestCase):
@@ -179,8 +178,58 @@ class TestMessageQuerySet(TestCase):
         self.trashed_message.trashed_date = datetime.utcnow()
         self.trashed_message.save()
         expected_values = []
+
         actual_values = Message.objects.to_expunge()
+
         self.assertItemsEqual(actual_values, expected_values)
+
+    def test_messagequeryset_bulk_archive(self):
+        """
+        Test `bulk_archive()` should give all messages in the queryset the "archived" status.
+        """
+        Message.objects.filter(pk=self.sent_message.id).bulk_archive()
+
+        self.sent_message = Message.objects.get(pk=self.sent_message.id)
+        self.assertEqual(self.sent_message.status, Message.STATUS_ARCHIVED)
+
+    @patch('inyoka.privmsg.models.datetime')
+    def test_messagequeryset_bulk_trash(self, mock_datetime):
+        """
+        Test `bulk_trash()` should give all messages in the queryset the "trashed" status and set their trashed_date.
+        """
+        expected_datetime = datetime.utcnow()
+        mock_datetime.utcnow.return_value = expected_datetime
+        queryset = Message.objects.filter(pk=self.sent_message.id)
+
+        queryset.bulk_trash()
+
+        self.sent_message = Message.objects.get(pk=self.sent_message.id)
+        self.assertEqual(self.sent_message.status, Message.STATUS_TRASHED)
+        self.assertEqual(self.sent_message.trashed_date, expected_datetime)
+
+    def test_messagequeryset_bulk_restore_with_sent_message(self):
+        """
+        Test `bulk_restore` should remove trashed_date and reset the status to sent for sent messages.
+        """
+        self.sent_message.trash()
+
+        Message.objects.filter(pk=self.sent_message.id).bulk_restore()
+
+        self.sent_message = Message.objects.get(pk=self.sent_message.id)
+        self.assertEqual(self.sent_message.status, Message.STATUS_SENT)
+        self.assertIsNone(self.sent_message.trashed_date)
+
+    def test_messagequeryset_bulk_restore_with_received_message(self):
+        """
+        Test `bulk_restore` should remove trashed_date and reset the status to read for received messages.
+        """
+        self.read_message.trash()
+
+        Message.objects.filter(pk=self.read_message.id).bulk_restore()
+
+        self.read_message = Message.objects.get(pk=self.read_message.id)
+        self.assertEqual(self.read_message.status, Message.STATUS_READ)
+        self.assertIsNone(self.read_message.trashed_date)
 
 
 class TestMessageModel(TestCase):
@@ -428,6 +477,7 @@ class TestMessageModel(TestCase):
         """
         expected_time = datetime.utcnow()
         mock_datetime.utcnow.return_value = expected_time
+
         self.unread_message.trash()
 
         self.assertEqual(self.unread_message.status, Message.STATUS_TRASHED)
@@ -440,7 +490,9 @@ class TestMessageModel(TestCase):
         Test `restore()` returns sent message to read status.
         """
         message = Message(messagedata=self.messagedata, recipient=self.recipient, status=Message.STATUS_ARCHIVED)
+
         message.restore()
+
         self.assertEqual(message.status, Message.STATUS_READ)
         self.assertTrue(mock_save.called)
 
@@ -450,7 +502,9 @@ class TestMessageModel(TestCase):
         Test `restore()` returns sent message to sent status.
         """
         message = Message(messagedata=self.messagedata, recipient=self.author, status=Message.STATUS_ARCHIVED)
+
         message.restore()
+
         self.assertEqual(message.status, Message.STATUS_SENT)
         self.assertTrue(mock_save.called)
 
@@ -460,6 +514,7 @@ class TestMessageModel(TestCase):
         Test `restore()` returns received message to unread status and unsets trashed_date.
         """
         self.trashed_message.restore()
+
         self.assertEqual(self.trashed_message.status, Message.STATUS_READ)
         self.assertIsNone(self.trashed_message.trashed_date)
         self.assertTrue(mock_save.called)
@@ -470,7 +525,9 @@ class TestMessageModel(TestCase):
         Test `restore()` returns sent message to sent status and unsets trashed_date.
         """
         self.sent_message.status = Message.STATUS_TRASHED
+
         self.sent_message.restore()
+
         self.assertEqual(self.sent_message.status, Message.STATUS_SENT)
         self.assertIsNone(self.sent_message.trashed_date)
         self.assertTrue(mock_save.called)
@@ -481,22 +538,24 @@ class TestMessageDataManager(TestCase):
     Test MessageDataManager
     """
 
-    def test_messagedatamanager_abandoned(self):
-        """
-        Test that abandoned() method returns list of messagedata objects that have no messages assigned to them.
-        """
-        author = User.objects.register_user(
+    def setUp(self):
+        self.author = User.objects.register_user(
             username='author',
             email='author',
             password='',
             send_mail=True,
         )
-        messagedata = MessageData.objects.create(
-            author=author,
+        self.messagedata = MessageData.objects.create(
+            author=self.author,
             subject='Test',
             text='Text',
         )
-        expected_values = [messagedata]
+
+    def test_messagedatamanager_abandoned(self):
+        """
+        Test that abandoned() method returns list of messagedata objects that have no messages assigned to them.
+        """
+        expected_values = [self.messagedata]
 
         actual_values = MessageData.objects.abandoned()
 

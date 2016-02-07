@@ -25,7 +25,7 @@ class CSVField(forms.CharField):
 
     def __init__(self, *args, **kwargs):
         self.separator = kwargs.pop('separator', ',')
-        self.unique = kwargs.pop('unique', False)
+        self.deduplicate = kwargs.pop('deduplicate', False)
         super(CSVField, self).__init__(*args, **kwargs)
 
     def to_python(self, values):
@@ -34,7 +34,7 @@ class CSVField(forms.CharField):
 
         values = [v.strip() for v in values.split(self.separator) if v.strip() != u'']
 
-        if self.unique:
+        if self.deduplicate:
             values = list(set(values))
 
         return values
@@ -93,7 +93,7 @@ class MultiGroupField(CSVField):
                 params={'groupname': missing_group},
             )
 
-        group_users = User.objects.filter(groups__in=groups, status=1).distinct()
+        group_users = User.objects.filter(groups__name__in=values, status=1).distinct()
         return list(group_users)
 
 
@@ -106,7 +106,7 @@ class MessageComposeForm(SurgeProtectionMixin, forms.Form):
         label=ugettext_lazy(u'To'),
         required=True,
         separator=';',
-        unique=True,
+        deduplicate=True,
         help_text=ugettext_lazy(u'Separate multiple names by semicolon'),
     )
     subject = forms.CharField(
@@ -169,7 +169,7 @@ class PrivilegedMessageComposeForm(MessageComposeForm):
         label=ugettext_lazy(u'Groups'),
         required=False,
         separator=';',
-        unique=True,
+        deduplicate=True,
         help_text=ugettext_lazy(u'Separate multiple groups by semicolon'),
     )
 
@@ -197,7 +197,6 @@ class PrivilegedMessageComposeForm(MessageComposeForm):
         """
         super(PrivilegedMessageComposeForm, self).clean()
 
-        # import pdb; pdb.set_trace()
         cleaned_data = self.cleaned_data
 
         # Join recipients and group recipients lists
@@ -223,3 +222,32 @@ class PrivilegedMessageComposeForm(MessageComposeForm):
         if self.user in group_recipients:
             group_recipients.remove(self.user)
         return group_recipients
+
+
+class MultiMessageSelectForm(forms.Form):
+    """
+    Form to select messages to be archived or trashed.
+    """
+    CHOICE_ARCHIVE = 'archive'
+    CHOICE_TRASH = 'trash'
+    CHOICE_RESTORE = 'restore'
+    ACTION_CHOICES = (
+        (CHOICE_ARCHIVE, _(u'Archive')),
+        (CHOICE_TRASH, _(u'Trash')),
+        (CHOICE_RESTORE, _(u'Restore')),
+    )
+
+    selected_messages = forms.MultipleChoiceField(required=True)
+    action = forms.ChoiceField(required=True, choices=ACTION_CHOICES)
+
+    def __init__(self, *args, **kwargs):
+        self.queryset = kwargs.pop('queryset')
+        super(MultiMessageSelectForm, self).__init__(*args, **kwargs)
+        self.fields['selected_messages'].choices = self.queryset.values_list('id', 'id')
+
+    def clean_selected_messages(self):
+        """
+        Filter the queryset by the given selected_messages (ids) and return the queryset.
+        """
+        selected_messages = self.cleaned_data['selected_messages']
+        return self.queryset.filter(pk__in=selected_messages)
