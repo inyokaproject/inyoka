@@ -166,7 +166,7 @@ def block_user_if_spammer(user):
     cache_key = 'spam/user/%d' % user.pk
     spam_hits = cache.get(cache_key, 0) + 1
     if spam_hits >= settings.INYOKA_SPAM_COUNTER_MAX:
-        user.status = 2
+        user.status = user.STATUS_BANNED
         user.save(update_fields=['status'])
         logger.info(
             u'User %s (%d) hit spam counter maximum of %d. Blocked!' % (

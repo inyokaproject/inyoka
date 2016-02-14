@@ -66,12 +66,6 @@ PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
 PERMISSION_NAMES = {val: desc for val, name, desc in PERMISSIONS}
 PERMISSION_MAPPING = {name: val for val, name, desc in PERMISSIONS}
 
-USER_STATUSES = {
-    0: 'inactive',  # not yet activated
-    1: 'normal',
-    2: 'banned',
-    3: 'deleted',  # deleted itself
-}
 
 
 class UserBanned(Exception):
@@ -100,7 +94,7 @@ def reactivate_user(id, email, status):
 
     if user.banned_until and user.banned_until < datetime.utcnow():
         # User was banned but the ban time exceeded
-        user.status = 1
+        user.status = User.STATUS_ACTIVE
         user.banned_until = None
 
     # Set a dumy password
@@ -136,7 +130,7 @@ def deactivate_user(user):
     })
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
-    user.status = 3
+    user.status = User.STATUS_DELETED
     if not user.is_banned:
         user.email = 'user%d@ubuntuusers.de.invalid' % user.id
     user.set_unusable_password()
@@ -331,9 +325,9 @@ class UserManager(BaseUserManager):
         user = self.create_user(username, email, password)
         if not send_mail:
             # save the user as an active one
-            user.status = 1
+            user.status = User.STATUS_ACTIVE
         else:
-            user.status = 0
+            user.status = User.STATUS_INACTIVE
             send_activation_mail(user)
         user.save()
         return user
@@ -365,31 +359,36 @@ def upload_to_avatar(instance, filename):
 
 class User(AbstractBaseUser):
     """User model that contains all informations about an user."""
-
-    STATUS_CHOICES = enumerate([ugettext_lazy(u'not yet activated'),
-                                ugettext_lazy(u'active'),
-                                ugettext_lazy(u'banned'),
-                                ugettext_lazy(u'deleted himself')])
-
+    STATUS_INACTIVE = 0
+    STATUS_ACTIVE = 1
+    STATUS_BANNED = 2
+    STATUS_DELETED = 3
+    STATUS_CHOICES = (
+        (STATUS_INACTIVE, ugettext_lazy(u'not yet activated')),
+        (STATUS_ACTIVE, ugettext_lazy(u'active')),
+        (STATUS_BANNED, ugettext_lazy(u'banned')),
+        (STATUS_DELETED, ugettext_lazy(u'deleted himself')),
+    )
     #: Assign the `username` field
     USERNAME_FIELD = 'username'
 
     objects = UserManager()
 
-    username = models.CharField(ugettext_lazy(u'Username'),
+    username = models.CharField(verbose_name=ugettext_lazy(u'Username'),
                                 max_length=30, unique=True, db_index=True)
-    email = models.EmailField(ugettext_lazy(u'Email address'),
+    email = models.EmailField(verbose_name=ugettext_lazy(u'Email address'),
                               unique=True, db_index=True)
-    status = models.IntegerField(ugettext_lazy(u'Activation status'), default=0,
+    status = models.IntegerField(verbose_name=ugettext_lazy(u'Activation status'),
+                                 default=STATUS_INACTIVE,
                                  choices=STATUS_CHOICES)
-    date_joined = models.DateTimeField(ugettext_lazy(u'Member since'),
+    date_joined = models.DateTimeField(verbose_name=ugettext_lazy(u'Member since'),
                                        default=datetime.utcnow)
     groups = models.ManyToManyField(Group,
                                     verbose_name=ugettext_lazy(u'Groups'),
                                     blank=True,
                                     related_name='user_set')
 
-    banned_until = models.DateTimeField(ugettext_lazy(u'Banned until'),
+    banned_until = models.DateTimeField(verbose_name=ugettext_lazy(u'Banned until'),
                                         null=True, blank=True,
                                         help_text=ugettext_lazy(u'leave empty to ban permanent'))
 
@@ -468,12 +467,29 @@ class User(AbstractBaseUser):
         else:
             return False
 
-    is_anonymous = property(lambda x: x.username == settings.INYOKA_ANONYMOUS_USER)
-    # No property to stay compatible with Django
-    is_authenticated = lambda x: not x.is_anonymous
-    is_active = property(lambda x: x.status == 1)
-    is_banned = property(lambda x: x.status == 2)
-    is_deleted = property(lambda x: x.status == 3)
+    @property
+    def is_anonymous(self):
+        return self.username == settings.INYOKA_ANONYMOUS_USER
+
+    def is_authenticated(self):
+        # Not a property to be compatible with django.
+        return not self.is_anonymous
+
+    @property
+    def is_active(self):
+        return self.status == self.STATUS_ACTIVE
+
+    @property
+    def is_banned(self):
+        return self.status == self.STATUS_BANNED
+
+    @property
+    def is_deleted(self):
+        return self.status == self.STATUS_DELETED
+
+    @property
+    def is_inactive(self):
+        return self.status == self.STATUS_INACTIVE
 
     def email_user(self, subject, message, from_email=None):
         """Sends an e-mail to this User."""

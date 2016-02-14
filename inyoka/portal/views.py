@@ -338,7 +338,7 @@ def activate(request, action='', username='', activation_key=''):
         return HttpResponseRedirect(href('portal'))
     else:
         if check_activation_key(user, activation_key):
-            user.status = 1
+            user.status = User.STATUS_ACTIVE
             user.save()
             messages.success(request,
                 _(u'Your account was successfully activated. You can now '
@@ -354,7 +354,7 @@ def resend_activation_mail(request, username):
     """Resend the activation mail if the user is not already activated."""
     user = User.objects.get(username__iexact=username)
 
-    if user.status > 0:
+    if not user.is_inactive:
         messages.error(request,
             _(u'The account “%(username)s” was already activated.') %
             {'username': escape(user.username)})
@@ -882,7 +882,7 @@ def user_edit_status(request, username):
             messages.success(request,
                 _(u'The state of “%(username)s” was successfully changed.')
                 % {'username': escape(user.username)})
-    if user.status > 0:
+    if not user.is_inactive:
         activation_link = None
     else:
         activation_link = user.get_absolute_url('activate')
@@ -1084,7 +1084,7 @@ def user_new(request):
 @require_permission('user_edit')
 def admin_resend_activation_mail(request):
     user = User.objects.get(username__iexact=request.GET.get('user'))
-    if user.status != 0:
+    if not user.is_inactive:
         messages.error(request,
             _(u'The account of “%(username)s” was already activated.')
             % {'username': user.username})
@@ -1226,7 +1226,7 @@ def privmsg_new(request, username=None):
                 if all(map(lambda x: x in t, group)):
                     if '>' in t:
                         continue  # User quoted, most likely a forward and no spam
-                    request.user.status = 2
+                    request.user.status = User.STATUS_BANNED
                     request.user.banned_until = None
                     request.user.save(update_fields=['status', 'banned_until'])
                     messages.info(request,

@@ -48,7 +48,7 @@ class InyokaAuthBackend(ModelBackend):
                     raise UserBanned()
                 else:
                     # period of time gone, reset status
-                    user.status = 1
+                    user.status = User.STATUS_ACTIVE
                     user.banned_until = None
                     user.save()
 

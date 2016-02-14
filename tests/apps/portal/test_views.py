@@ -145,7 +145,7 @@ class TestAuthViews(TestCase):
     def test_login_as_banned_user(self):
         """Maka sure that banned users can’t login."""
         banned_user = User.objects.register_user('badboy', 'bad', 'bad', False)
-        banned_user.status = 2
+        banned_user.status = User.STATUS_BANNED
         banned_user.save()
 
         postdata = {'username': 'badboy', 'password': 'bad'}
@@ -159,7 +159,7 @@ class TestAuthViews(TestCase):
         Users who not confirmed their account via email are inactive and should
         not be able to login.
         """
-        self.user.status = 0
+        self.user.status = User.STATUS_INACTIVE
         self.user.save()
 
         postdata = {'username': 'user', 'password': 'user'}
