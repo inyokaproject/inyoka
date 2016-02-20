@@ -12,6 +12,7 @@ from datetime import timedelta
 from os.path import dirname, join
 
 from celery.schedules import crontab
+from django.core.urlresolvers import reverse_lazy
 
 gettext_noop = lambda x: x
 
@@ -344,6 +345,8 @@ FORMAT_MODULE_PATH = 'inyoka.locale'
 
 # Used for user.post_count, forum.topic_count etc.
 COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two weeks
+
+LOGIN_URL = reverse_lazy('login')
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

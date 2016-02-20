@@ -16,7 +16,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index),
     url(r'^markup.css', views.markup_styles),
-    url(r'^login/$', views.login),
+    url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout),
     url(r'^users/$', views.memberlist),
     url(r'^users/(?P<page>\d+)/$', views.memberlist),
