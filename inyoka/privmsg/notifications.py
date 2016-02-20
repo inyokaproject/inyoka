@@ -14,6 +14,9 @@ from inyoka.utils.notification import queue_notifications
 
 
 def send_privmsg_notification(recipient, author, subject, url):
+    """
+    Send notification about new private messages to the recipient.
+    """
     template_data = {
         'author': author,
         'subject': subject,
