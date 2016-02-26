@@ -118,7 +118,8 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
         revision.
     """
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 50}))
-    note = forms.CharField(widget=forms.TextInput(attrs={'size': 50}),
+    note = forms.CharField(label=ugettext_lazy(u'Edit summary'),
+                           widget=forms.TextInput(attrs={'size': 50}),
                            max_length=512, required=True,
                            help_text=storage['wiki_edit_note_rendered'])
     edit_time = forms.CharField(widget=forms.HiddenInput(), required=True)
@@ -216,12 +217,18 @@ class AddAttachmentForm(forms.Form):
         A textfield for the change note.
     """
     attachment = forms.FileField(required=True)
-    filename = forms.CharField(max_length=512, required=False)
-    override = forms.BooleanField(required=False)
-    text = forms.CharField(label=ugettext_lazy(u'Description'),
+
+    filename = forms.CharField(max_length=512, required=False,
+                help_text=ugettext_lazy(u'Rename the file after upload'))
+
+    override = forms.BooleanField(label=ugettext_lazy(u'Overwrite existing file with same name'),
+                                  required=False)
+
+    text = forms.CharField(label=ugettext_lazy(u'Description of attachment'),
                            widget=forms.Textarea,
                            required=False)
-    note = forms.CharField(max_length=512, required=False)
+
+    note = forms.CharField(label=ugettext_lazy(u'Edit summary'), max_length=512, required=False)
 
 
 class EditAttachmentForm(forms.Form):
@@ -230,10 +237,11 @@ class EditAttachmentForm(forms.Form):
     description, have a look at the AddAttachmentForm.
     """
     attachment = forms.FileField(required=False)
-    text = forms.CharField(label=ugettext_lazy(u'Description'),
+    text = forms.CharField(label=ugettext_lazy(u'Description of attachment'),
                            widget=forms.Textarea,
                            required=False)
-    note = forms.CharField(max_length=512, required=False)
+    note = forms.CharField(label=ugettext_lazy(u'Edit summary'),
+                           max_length=512, required=False)
 
 
 class ManageDiscussionForm(forms.Form):
