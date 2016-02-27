@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Inyoka Project v0.13.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-01-06 12:42+0100\n"
+"POT-Creation-Date: 2016-02-26 20:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -262,6 +262,9 @@ msgid "Title"
 msgstr ""
 
 msgid "To refer to another comment, you can write <code>@commentnumber</code>.<br />Clicking on “reply” will automatically insert this code."
+msgstr ""
+
+msgid "Unique URL-part for the article. If not given, the slug will be generated from title."
 msgstr ""
 
 msgid "XHTML Markup"

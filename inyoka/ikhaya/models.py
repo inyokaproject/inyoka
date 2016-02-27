@@ -208,7 +208,7 @@ class Article(models.Model, LockableObject):
     text = InyokaMarkupField(verbose_name=ugettext_lazy(u'Text'), application='ikhaya')
     public = models.BooleanField(ugettext_lazy(u'Public'), default=False)
     slug = models.SlugField(ugettext_lazy(u'Slug'), max_length=100,
-            blank=True, db_index=True)
+            blank=True, db_index=True, help_text=ugettext_lazy(u'Unique URL-part for the article. If not given, the slug will be generated from title.'))
     is_xhtml = models.BooleanField(ugettext_lazy(u'XHTML Markup'),
                 default=False)
     comment_count = models.IntegerField(default=0)

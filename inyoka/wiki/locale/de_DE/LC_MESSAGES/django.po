@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2016-01-06 12:42+0100\n"
-"PO-Revision-Date: 2015-12-19 20:35+0100\n"
+"POT-Creation-Date: 2016-02-26 20:30+0100\n"
+"PO-Revision-Date: 2016-02-26 20:31+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
@@ -87,14 +87,17 @@ msgstr "Fertigstellungsdatum"
 msgid "Created"
 msgstr "Erstellt"
 
-msgid "Description"
-msgstr "Beschreibung"
+msgid "Description of attachment"
+msgstr "Beschreibung des Anhangs"
 
 msgid "Detected a circular include macro call"
 msgstr "Detected a circular include macro call"
 
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
+
+msgid "Edit summary"
+msgstr "Änderungsnotiz"
 
 msgid "Edited by"
 msgstr "Bearbeitet von"
@@ -126,6 +129,9 @@ msgstr "Du wirst über diese Seite gar nicht benachrichtigt!"
 msgid "Normal (for experienced authors)"
 msgstr "Normal (für erfahrene Autoren)"
 
+msgid "Overwrite existing file with same name"
+msgstr "Überschreibe Datei mit identischem Namen"
+
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
@@ -139,6 +145,9 @@ msgstr "Bitte gib einen Dateinamen für den Anhang an."
 #, python-format
 msgid "Redirected from “<a href=\"%(link)s\">%(title)s</a>”."
 msgstr "Von „<a href=\"%(link)s\">%(title)s</a>“ weitergeleitet."
+
+msgid "Rename the file after upload"
+msgstr "Benennt die Datei nach dem Hochladen um"
 
 #, python-format
 msgid "Renamed from %(old_name)s"
@@ -259,4 +268,3 @@ msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachricht
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
-
