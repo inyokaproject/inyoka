@@ -14,8 +14,7 @@ from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
 from django.core.cache import cache
 from django.utils.translation import ugettext_lazy
-
-from inyoka.portal.user import DEFAULT_GROUP_ID
+from inyoka.portal.user import Group
 
 #: Mapping from privilege strings to human readable descriptions
 PRIVILEGES_DETAILS = [
@@ -122,7 +121,7 @@ def _get_privilege_map(user, forum_ids):
     from inyoka.forum.models import Privilege, Forum
     group_ids = set(user.groups.values_list('id', flat=True))
     if user.is_authenticated():
-        group_ids.add(DEFAULT_GROUP_ID)
+        group_ids.add(Group.objects.get_registered_group().id)
 
     cols = ('forum_id', 'user_id', 'group_id', 'positive', 'negative')
 

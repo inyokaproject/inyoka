@@ -39,8 +39,6 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key, is_valid_username
 
-_ANONYMOUS_USER = _SYSTEM_USER = _DEFAULT_GROUP = None
-DEFAULT_GROUP_ID = 1  # group id for all registered users
 PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
     ('admin_panel', u'Not in use anymore'),  # TODO: DEPRECATED
     ('article_edit', ugettext_lazy(u'Ikhaya | can edit articles')),
@@ -65,7 +63,6 @@ PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
 ])]
 PERMISSION_NAMES = {val: desc for val, name, desc in PERMISSIONS}
 PERMISSION_MAPPING = {name: val for val, name, desc in PERMISSIONS}
-
 
 
 class UserBanned(Exception):
@@ -209,6 +206,30 @@ def send_activation_mail(user):
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
+class GroupManager(models.Manager):
+
+    def get_registered_group(self):
+        """
+        Return the Group which all registered users contains. This allows us to
+        give rights to all of them at the same time.
+        """
+        return Group.objects.get_or_create(name=settings.INYOKA_REGISTERED_GROUP_NAME)[0]
+
+    def get_ikhaya_group(self):
+        """
+        Return the Group required for the Ikhaya Team.
+        """
+        return Group.objects.get_or_create(name=settings.INYOKA_IKHAYA_GROUP_NAME)[0]
+
+    def get_anonymous_group(self):
+        """
+        Return the Group which contains our anonymous user. All Permissions and Privileges
+        this group gets are only used for not registered and therfor anonymous User
+        Sessions.
+        """
+        return Group.objects.get_or_create(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)[0]
+
+
 class Group(models.Model):
     name = models.CharField(ugettext_lazy(u'Group name'), max_length=80,
                 unique=True, db_index=True, error_messages={
@@ -221,6 +242,7 @@ class Group(models.Model):
     icon = models.ImageField(ugettext_lazy(u'Team icon'),
                              upload_to='portal/team_icons',
                              blank=True, null=True)
+    objects = GroupManager()
 
     class Meta:
         verbose_name = ugettext_lazy(u'Usergroup')
@@ -272,11 +294,6 @@ class Group(models.Model):
 
     def __repr__(self):
         return unicode(self).encode('utf-8')
-
-    @classmethod
-    def get_default_group(self):
-        """Return a default group for all registered users."""
-        return Group.objects.get(id=DEFAULT_GROUP_ID)
 
 
 class UserManager(BaseUserManager):
@@ -497,7 +514,7 @@ class User(AbstractBaseUser):
 
     def get_groups(self):
         """Get groups inclusive the default group for registered users"""
-        groups = self.is_authenticated() and [Group.get_default_group()] or []
+        groups = self.is_authenticated() and [Group.objects.get_registered_group()] or []
         groups.extend(self.groups.all())
         return groups
 

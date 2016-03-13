@@ -218,15 +218,6 @@ General
 
     Days to describe an inactive user
 
-Ikhaya
-------
-
-.. py:data:: IKHAYA_GROUP_ID
-
-    Defaults to: ``1``
-
-    The id of the ikhaya team group
-
 Wiki
 ----
 
