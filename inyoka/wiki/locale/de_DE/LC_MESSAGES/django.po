@@ -1,16 +1,13 @@
-# German (Germany) translations for .
-# Copyright (C) 2012 ORGANIZATION
-# This file is distributed under the same license as the  project.
+# German (Germany) translations for Inyoka Project.
+# Copyright (C) 2016 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
-# Translators:
-# <eule_stern@web.de>, 2011.
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012.
-# Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2016-02-26 20:30+0100\n"
+"POT-Creation-Date: 2016-03-13 12:14+0100\n"
 "PO-Revision-Date: 2016-02-26 20:31+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -19,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.1.1\n"
+"Generated-By: Babel 2.2.0\n"
 
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
@@ -268,3 +265,4 @@ msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachricht
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
+
