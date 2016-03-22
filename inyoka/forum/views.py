@@ -1364,7 +1364,7 @@ def revisions(request, post_id):
     topic = post.topic
     forum = topic.forum
     if not have_privilege(request.user, forum, CAN_MODERATE):
-        return abort_access_denied(request)
+        return HttpResponseRedirect(post.get_absolute_url())
     revs = PostRevision.objects.filter(post=post).all()
     return {
         'post': post,
