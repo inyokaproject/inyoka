@@ -19,6 +19,9 @@ from random import choice, randint
 
 import django
 from django.conf import settings
+if 'DJANGO_SETTINGS_MODULE' not in os.environ:
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
+
 from jinja2.constants import LOREM_IPSUM_WORDS
 
 from inyoka.forum.models import Forum, Post, Topic
@@ -31,8 +34,6 @@ from inyoka.utils.terminal import ProgressBar, percentize, show
 from inyoka.utils.text import increment_string
 from inyoka.wiki.models import Page
 
-if 'DJANGO_SETTINGS_MODULE' not in os.environ:
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
 settings.DEBUG = settings.DATABASE_DEBUG = False  # for nice progressbar output ;)
 
 

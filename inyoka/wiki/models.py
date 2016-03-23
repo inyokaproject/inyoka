@@ -78,6 +78,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import locale
+import random
 from collections import defaultdict
 from datetime import datetime
 from functools import partial
@@ -185,6 +186,18 @@ class PageManager(models.Manager):
             'count': tag[1],
             'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
             for tag in sorted(tags, cmp=locale.strcoll, key=lambda x: x[0])]
+
+    def get_randompages(self, size=10):
+        """
+        Get a list of random wiki articles. Redirects are excluded as well as
+        everything defined in WIKI_PRIVILEGED_PAGES.
+        """
+        redirect_pages = [red_page.title for red_page in Page.objects.find_by_metadata('X-Redirect')]
+        pagelist = [page for page
+            in Page.objects.get_page_list(exclude_privileged=True)
+            if page not in redirect_pages]
+        size = min(size, len(pagelist))
+        return random.sample(pagelist, size)
 
     def compare(self, name, old_rev, new_rev=None):
         """
@@ -413,8 +426,11 @@ class PageManager(models.Manager):
         return rv
 
     def find_by_tag(self, tag):
-        """Return a list of page names tagged with `tag`."""
-        pages = MetaData.objects.filter(key='tag', value=tag)\
+        """
+        Return a list of page names tagged with `tag`.
+        The list will be sorted alphabetically.
+        """
+        pages = MetaData.objects.filter(key='tag', value=tag).order_by('page__name')\
                                 .values_list('page__name', flat=True)
         return pages
 
@@ -884,7 +900,9 @@ class Page(models.Model):
         if self.rev is not None:
             self.rev.save()
         deferred.clear(self)
-        update_related_pages.delay(self, update_meta)
+        # FIXME: We are using apply_async() instead of delay() because there is
+        #        a real dumb race condition between the celery task and this save().
+        update_related_pages.apply_async(args=[self, update_meta], countdown=5)
 
     def delete(self):
         """

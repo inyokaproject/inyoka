@@ -58,7 +58,7 @@ class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
             response['Cache-Control'] = 'no-cache'
 
         path = request.path
-        if (path.endswith(('.less', '.woff', '.eot', '.ttf', '.otf'))
+        if (path.endswith(('.less', '.woff', '.woff2', '.eot', '.ttf', '.otf'))
                 and settings.DEBUG):
             response['Access-Control-Allow-Origin'] = '*'
 

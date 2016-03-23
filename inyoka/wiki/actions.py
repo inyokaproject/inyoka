@@ -810,7 +810,7 @@ def do_backlinks(request, name):
 @require_privilege('read')
 @does_not_exist_is_404
 @case_sensitive_redirect
-def do_export(request, name, format='raw', rev=None, fragment=False):
+def do_export(request, name, format='raw', rev=None):
     """
     Export the given revision or the most recent one to the specified format
     (raw, html or ast so far).
@@ -834,9 +834,6 @@ def do_export(request, name, format='raw', rev=None, fragment=False):
         The context is of course only passed if a template is rendered but
         the same for all the templates.
 
-        ``fragment``
-            `True` if a fragment should be rendered (no xml preamble etc)
-
         ``page``
             The bound `Page` object which should be rendered.
     """
@@ -846,18 +843,20 @@ def do_export(request, name, format='raw', rev=None, fragment=False):
         page = Page.objects.get_by_name_and_rev(name, rev,
                                                 raise_on_deleted=True)
     ctx = {
-        'fragment': fragment,
         'page': page
     }
     if format == 'html':
-        return TemplateResponse('wiki/export.html', ctx,
+        response = TemplateResponse('wiki/export.html', ctx,
                                 content_type='text/html; charset=utf-8')
     elif format == 'ast':
-        return HttpResponse(repr(page.rev.text.parse()),
+        response = HttpResponse(repr(page.rev.text.parse()),
                             content_type='text/plain; charset=ascii')
     else:
-        return HttpResponse(page.rev.text.value.encode('utf-8'),
+        response = HttpResponse(page.rev.text.value.encode('utf-8'),
                             content_type='text/plain; charset=utf-8')
+
+    response['X-Robots-Tag'] = 'noindex'
+    return response
 
 
 @clean_article_name

@@ -1,21 +1,21 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2015 Inyoka Team (see AUTHORS)
+# Copyright (C) 2016 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.12.5\n"
+"Project-Id-Version: Inyoka Project v0.13.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-12-27 11:29+0100\n"
+"POT-Creation-Date: 2016-03-13 12:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.1.1\n"
+"Generated-By: Babel 2.2.0\n"
 
 #, python-format
 msgid "%(site)s forum"
@@ -51,7 +51,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-msgid "Count posts in this forum"
+msgid "Count user posts"
 msgstr ""
 
 msgid "Default text for new topics"
@@ -89,6 +89,9 @@ msgstr ""
 msgid "Edubuntu"
 msgstr ""
 
+msgid "Force version"
+msgstr ""
+
 msgid "Forum"
 msgstr ""
 
@@ -96,6 +99,9 @@ msgid "Forums"
 msgstr ""
 
 msgid "Hide / Delete"
+msgstr ""
+
+msgid "If not set then posts of users in this forum are ignored in the post counter of the user."
 msgstr ""
 
 msgid "Involved topics"
@@ -163,17 +169,13 @@ msgstr ""
 msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
 msgstr ""
 
-msgid "Parent"
+msgid "Parent forum"
 msgstr ""
 
 msgid "Pictures"
 msgstr ""
 
 msgid "Please login to mark posts as read."
-msgstr ""
-
-#, python-format
-msgid "Please select another slug, “%(slug)s” is already in use."
 msgstr ""
 
 msgid "Position"
@@ -212,9 +214,6 @@ msgstr ""
 msgid "Reported topic: “%(topic)s”"
 msgstr ""
 
-msgid "Require Ubuntu version"
-msgstr ""
-
 msgid "Restore"
 msgstr ""
 
@@ -224,7 +223,7 @@ msgstr ""
 msgid "Slug"
 msgstr ""
 
-msgid "Text"
+msgid "Support group"
 msgstr ""
 
 #, python-format
@@ -251,14 +250,6 @@ msgid "The first post of a topic cannot be deleted."
 msgstr ""
 
 msgid "The first post of a topic cannot be hidden."
-msgstr ""
-
-#, python-format
-msgid "The forum “%(forum)s” was changed successfully."
-msgstr ""
-
-#, python-format
-msgid "The forum “%(forum)s” was created successfully."
 msgstr ""
 
 #, python-format
@@ -356,12 +347,6 @@ msgstr ""
 msgid "This topic was already reported."
 msgstr ""
 
-msgid "This value can only be changed by the Webteam"
-msgstr ""
-
-msgid "Title"
-msgstr ""
-
 msgid "Topic"
 msgstr ""
 
@@ -396,6 +381,12 @@ msgstr ""
 #, python-format
 msgctxt "Link text to an image attachment"
 msgid "View %(name)s"
+msgstr ""
+
+msgid "Welcome text"
+msgstr ""
+
+msgid "Welcome title"
 msgstr ""
 
 msgid "Xubuntu"

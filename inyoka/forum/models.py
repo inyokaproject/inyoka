@@ -32,7 +32,6 @@ from django.utils.translation import pgettext, ugettext_lazy
 
 from inyoka.forum.acl import (
     CAN_READ,
-    check_privilege,
     filter_invisible,
     filter_visible,
     get_privileges,
@@ -237,20 +236,75 @@ class Forum(models.Model):
     """
     objects = ForumManager()
 
-    name = models.CharField(max_length=100)
-    slug = models.CharField(max_length=100, unique=True, db_index=True)
-    description = models.CharField(max_length=500, blank=True)
-    position = models.IntegerField(default=0, db_index=True)
-    newtopic_default_text = models.TextField(null=True, blank=True)
-    user_count_posts = models.BooleanField(default=True)
-    force_version = models.BooleanField(default=False)
+    name = models.CharField(
+        verbose_name=ugettext_lazy('Name'),
+        max_length=100)
 
-    parent = models.ForeignKey('self', null=True, related_name='_children',
+    slug = models.SlugField(
+        verbose_name=ugettext_lazy('Slug'),
+        max_length=100,
+        unique=True)
+
+    description = models.CharField(
+        verbose_name=ugettext_lazy('Description'),
+        max_length=500,
+        blank=True)
+
+    position = models.IntegerField(
+        verbose_name=ugettext_lazy('Position'),
+        default=0,
+        db_index=True)
+
+    newtopic_default_text = models.TextField(
+        verbose_name=ugettext_lazy('Default text for new topics'),
+        null=True,
+        blank=True)
+
+    user_count_posts = models.BooleanField(
+        verbose_name=ugettext_lazy('Count user posts'),
+        help_text=ugettext_lazy('If not set then posts of users in this forum are '
+                                'ignored in the post counter of the user.'),
+        default=True)
+
+    force_version = models.BooleanField(
+        verbose_name=ugettext_lazy('Force version'),
+        default=False)
+
+    parent = models.ForeignKey(
+        'self',
+        verbose_name=ugettext_lazy('Parent forum'),
+        null=True,
+        blank=True,
+        related_name='_children',
         on_delete=models.PROTECT)
-    last_post = models.ForeignKey('forum.Post', null=True, blank=True,
+
+    last_post = models.ForeignKey(
+        'forum.Post',
+        null=True,
+        blank=True,
         on_delete=models.PROTECT)
-    welcome_message = models.ForeignKey('forum.WelcomeMessage', null=True,
-        blank=True, on_delete=models.SET_NULL)
+
+    support_group = models.ForeignKey(
+        Group,
+        verbose_name=ugettext_lazy('Support group'),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='forums')
+
+    welcome_title = models.CharField(
+        verbose_name=ugettext_lazy('Welcome title'),
+        max_length=120,
+        null=True,
+        blank=True)
+
+    welcome_text = InyokaMarkupField(
+        verbose_name=ugettext_lazy('Welcome text'),
+        application='forum',
+        null=True,
+        blank=True)
+
+    welcome_read_users = models.ManyToManyField(User)
 
     class Meta:
         verbose_name = ugettext_lazy(u'Forum')
@@ -324,32 +378,45 @@ class Forum(models.Model):
 
     def find_welcome(self, user):
         """
-        Return a forum with an unread welcome message if exits.
-        The message itself, can be retrieved late, by reading the
-        welcome_message attribute.
+        Return a forum with an unread welcome message if exits. The message
+        itself, can be retrieved late, by reading the welcome_message
+        attribute.
         """
+        if user.is_anonymous:
+            # This methods woks only on authenticated users.
+            return
+
         forums = self.parents
         forums.append(self)
-        read = set()
-        if user.is_authenticated() and user.forum_welcome:
-            read = set(int(i) for i in user.forum_welcome.split(','))
+
         for forum in forums:
-            if forum.welcome_message is not None and forum.id not in read:
+            if (forum.welcome_title and
+                    not forum.welcome_read_users.filter(pk=user.pk).exists()):
                 return forum
         return None
 
-    def read_welcome(self, user, read=True):
+    def read_welcome(self, user, accepted=True):
+        """
+        Set the read status of the welcome message of the forum for the user.
+
+        If accepted is True, then the message is accepted. If it is False,
+        then the read status is removed, so it is the same like with a new
+        user.
+        """
         if user.is_anonymous:
+            # This methods woks only on authenticated users.
             return
-        status = set()
-        if user.forum_welcome:
-            status = set(int(i) for i in user.forum_welcome.split(','))
-        if read:
-            status.add(self.id)
+
+        if accepted:
+            self.welcome_read_users.add(user)
         else:
-            status.discard(self.id)
-        user.forum_welcome = ','.join(str(id) for id in status)
-        user.save(update_fields=('forum_welcome',))
+            self.welcome_read_users.remove(user)
+
+    def clear_welcome(self):
+        """
+        Resets the read status of all users to this forum.
+        """
+        self.welcome_read_users.clear()
 
     def invalidate_topic_cache(self):
         cache.delete_many(
@@ -376,20 +443,10 @@ class Forum(models.Model):
                 yield l
 
     def get_supporters(self):
-        supporters = cache.get(u'forum/forum/supporters-{}'.format(self.id))
-        if supporters is None:
-            supporters = []
-            query = Privilege.objects \
-                             .filter(forum__id=self.id, user__id__isnull=False) \
-                             .values_list('user__id', 'positive')
-            subset = [priv[0] for priv in query if check_privilege(priv[1], 'moderate')]
-            if subset:
-                supporters = list(
-                    User.objects.defer('settings', 'forum_read_status')
-                        .filter(id__in=subset).order_by('username').all()
-                )
-            cache.set(u'forum/forum/supporters-{}'.format(self.id), supporters, 86400)
-        return supporters
+        if self.support_group is None:
+            return []
+        else:
+            return self.support_group.user_set.all()
 
     def __unicode__(self):
         return self.name
@@ -1305,18 +1362,6 @@ class Poll(models.Model):
         Returns a boolean whether the current user can vote in this poll.
         """
         return not self.ended and not self.participated
-
-
-class WelcomeMessage(models.Model):
-    """This class can be used to attach additional welcome messages to
-    a category or forum.
-
-    That might be usefull for greeting users or to explain extra rules.
-    The message will be displayed only once for each user.
-    """
-
-    title = models.CharField(max_length=120)
-    text = InyokaMarkupField(application='forum')
 
 
 class ReadStatus(object):

@@ -1,17 +1,14 @@
-# German (Germany) translations for .
-# Copyright (C) 2012 ORGANIZATION
-# This file is distributed under the same license as the  project.
+# German (Germany) translations for Inyoka Project.
+# Copyright (C) 2016 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
-# Translators:
-# <eule_stern@web.de>, 2011.
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012.
-# Sören Wegener <wegener92@googlemail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2015-12-27 11:29+0100\n"
-"PO-Revision-Date: 2015-12-19 20:35+0100\n"
+"POT-Creation-Date: 2016-03-13 12:14+0100\n"
+"PO-Revision-Date: 2016-02-26 20:31+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
@@ -19,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.1.1\n"
+"Generated-By: Babel 2.2.0\n"
 
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
@@ -87,14 +84,17 @@ msgstr "Fertigstellungsdatum"
 msgid "Created"
 msgstr "Erstellt"
 
-msgid "Description"
-msgstr "Beschreibung"
+msgid "Description of attachment"
+msgstr "Beschreibung des Anhangs"
 
 msgid "Detected a circular include macro call"
 msgstr "Detected a circular include macro call"
 
 msgid "Download attachment"
 msgstr "Anhang herunterladen"
+
+msgid "Edit summary"
+msgstr "Änderungsnotiz"
 
 msgid "Edited by"
 msgstr "Bearbeitet von"
@@ -126,6 +126,9 @@ msgstr "Du wirst über diese Seite gar nicht benachrichtigt!"
 msgid "Normal (for experienced authors)"
 msgstr "Normal (für erfahrene Autoren)"
 
+msgid "Overwrite existing file with same name"
+msgstr "Überschreibe Datei mit identischem Namen"
+
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
@@ -139,6 +142,9 @@ msgstr "Bitte gib einen Dateinamen für den Anhang an."
 #, python-format
 msgid "Redirected from “<a href=\"%(link)s\">%(title)s</a>”."
 msgstr "Von „<a href=\"%(link)s\">%(title)s</a>“ weitergeleitet."
+
+msgid "Rename the file after upload"
+msgstr "Benennt die Datei nach dem Hochladen um"
 
 #, python-format
 msgid "Renamed from %(old_name)s"
@@ -259,7 +265,4 @@ msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachricht
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
-
-#~ msgid "Automatically deleted"
-#~ msgstr "Von System gelöscht"
 

@@ -14,15 +14,17 @@ from random import randint
 
 import responses
 from django.conf import settings
+from django.contrib.messages.constants import INFO
 from django.core.cache import cache
 from django.core.files import File
-from django.test import Client
+from django.http import Http404
+from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
-from mock import patch
+from mock import MagicMock, patch
 
-from inyoka.forum import constants
+from inyoka.forum import constants, views
 from inyoka.forum.acl import CAN_READ, PRIVILEGES_BITS
 from inyoka.forum.models import (
     Attachment,
@@ -36,21 +38,7 @@ from inyoka.forum.models import (
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import PERMISSION_NAMES, User
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient, TestCase
-
-
-class TestForumViews(TestCase):
-
-    def tearDown(self):
-        from inyoka.portal import user
-        cache.clear()
-        cache.clear()
-        user._ANONYMOUS_USER = None
-
-    @override_settings(BASE_DOMAIN_NAME='inyoka.local')
-    def test_forum_index(self):
-        client = Client(HTTP_HOST='forum.inyoka.local')
-        resp = client.get('/')
-        self.assertEqual(resp.status_code, 200)
+from inyoka.utils.urls import href, url_for
 
 
 class TestViews(AntiSpamTestCaseMixin, TestCase):
@@ -151,13 +139,13 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         useraccess.positive = 0
         useraccess.save()
         response = self.client.get('/usercp/subscriptions/', {}, False,
-                         HTTP_HOST='portal.%s' % settings.BASE_DOMAIN_NAME)
+                         HTTP_HOST=settings.BASE_DOMAIN_NAME)
         self.assertTrue(
             ('/topic/%s/unsubscribe/?next=' % self.topic.slug)
             in response.content.decode("utf-8")
         )
 
-        forward_url = 'http://portal.%s/myfwd' % settings.BASE_DOMAIN_NAME
+        forward_url = 'http://%s/myfwd' % settings.BASE_DOMAIN_NAME
         response = self.client.get(
             '/topic/%s/unsubscribe/' % self.topic.slug,
             {'next': forward_url}
@@ -1440,3 +1428,46 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('<h2>edited title 4</h2>', response.content, count=1)
         self.assertInHTML('<div class="text"><p>edited text 4</p></div>', response.content, count=1)
+
+
+class TestWelcomeMessageView(TestCase):
+    def test_post_accept(self):
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create(slug='f-slug', welcome_title='test')
+        request = RequestFactory().post('/fake/', {'accept': True})
+        request.user = user
+
+        with patch.object(views.WelcomeMessageView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            response = views.WelcomeMessageView.as_view()(request, slug='f-slug')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], url_for(forum))
+        self.assertTrue(forum.welcome_read_users.filter(pk=user.pk).exists())
+
+    def test_post_not_deny(self):
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create(slug='f-slug', welcome_title='test')
+        request = RequestFactory().post('/fake/', {})
+        request.user = user
+
+        with patch.object(views.WelcomeMessageView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            response = views.WelcomeMessageView.as_view()(request, slug='f-slug')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], href('forum'))
+        self.assertFalse(forum.welcome_read_users.filter(pk=user.pk).exists())
+
+    def test_forum_has_no_welcome_message(self):
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create(slug='f-slug')
+        request = RequestFactory().get('/fake/')
+        request.user = user
+
+        with patch.object(views.WelcomeMessageView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            with self.assertRaises(Http404):
+                views.WelcomeMessageView.as_view()(request, slug='f-slug')
+
+        self.assertFalse(forum.welcome_read_users.filter(pk=user.pk).exists())

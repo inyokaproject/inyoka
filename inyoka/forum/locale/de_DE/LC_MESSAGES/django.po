@@ -1,15 +1,13 @@
-# German (Germany) translations for .
-# Copyright (C) 2013 ORGANIZATION
-# This file is distributed under the same license as the  project.
+# German (Germany) translations for Inyoka Project.
+# Copyright (C) 2016 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
-# Translators:
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
-# Sören Wegener <wegener92@googlemail.com>, 2011,2013-2014
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-12-27 11:29+0100\n"
+"POT-Creation-Date: 2016-03-13 12:14+0100\n"
 "PO-Revision-Date: 2015-11-28 18:37+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
@@ -18,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.1.1\n"
+"Generated-By: Babel 2.2.0\n"
 
 #, python-format
 msgid "%(site)s forum"
@@ -54,11 +52,11 @@ msgstr "Eine ältere Revision des Beitrages wurde wiederhergestellt."
 msgid "Cancel"
 msgstr "Abbrechen"
 
-msgid "Count posts in this forum"
-msgstr "Beiträge in diesem Forum zählen"
+msgid "Count user posts"
+msgstr "Zähle Beiträge der Benutzer"
 
 msgid "Default text for new topics"
-msgstr "Standardtext für neue Themen"
+msgstr "Standard Text für neue Beiträge"
 
 msgid "Description"
 msgstr "Beschreibung"
@@ -92,6 +90,9 @@ msgstr "Download %(name)s"
 msgid "Edubuntu"
 msgstr "Edubuntu"
 
+msgid "Force version"
+msgstr "Erzwinge Version"
+
 msgid "Forum"
 msgstr "Forum"
 
@@ -100,6 +101,9 @@ msgstr "Foren"
 
 msgid "Hide / Delete"
 msgstr "Verbergen / Löschen"
+
+msgid "If not set then posts of users in this forum are ignored in the post counter of the user."
+msgstr "Wenn dies nicht gesetzt ist werden Beiträge der Nutzer in diesem Forum für den post counter der Nutzer nicht gezählt."
 
 msgid "Involved topics"
 msgstr "Beteiligte Themen"
@@ -166,18 +170,14 @@ msgstr "Du erhältst ab nun Benachrichtigungen zu neuen Themen in diesem Forum."
 msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
 msgstr "Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du Moderationsrechte im jeweiligen Forum benötigst."
 
-msgid "Parent"
-msgstr "Elternforum"
+msgid "Parent forum"
+msgstr "Elterm Forum"
 
 msgid "Pictures"
 msgstr "Bilder"
 
 msgid "Please login to mark posts as read."
 msgstr "Bitte melde dich an, um Beiträge als gelesen zu markieren."
-
-#, python-format
-msgid "Please select another slug, “%(slug)s” is already in use."
-msgstr "Bitte einen anderen Slug angeben, „%(slug)s“ ist schon vergeben."
 
 msgid "Position"
 msgstr "Position"
@@ -215,9 +215,6 @@ msgstr "Grund"
 msgid "Reported topic: “%(topic)s”"
 msgstr "Gemeldetes Thema: „%(topic)s“"
 
-msgid "Require Ubuntu version"
-msgstr "Angabe der Ubuntu-Version erzwingen"
-
 msgid "Restore"
 msgstr "Wiederherstellen"
 
@@ -227,8 +224,8 @@ msgstr "Server"
 msgid "Slug"
 msgstr "Slug"
 
-msgid "Text"
-msgstr "Text"
+msgid "Support group"
+msgstr "Gruppe der Supporter"
 
 #, python-format
 msgid "The article “%(article)s” does not exist. However, you can create it now."
@@ -255,14 +252,6 @@ msgstr "Der erste Beitrag eines Themas kann nicht gelöscht werden."
 
 msgid "The first post of a topic cannot be hidden."
 msgstr "Der erste Beitrag eines Themas kann nicht verborgen werden"
-
-#, python-format
-msgid "The forum “%(forum)s” was changed successfully."
-msgstr "Das Forum „%(forum)s“ wurde erfolgreich geändert."
-
-#, python-format
-msgid "The forum “%(forum)s” was created successfully."
-msgstr "Das Forum „%(forum)s“ wurde erfolgreich erstellt."
 
 #, python-format
 msgid "The forum “%(forum)s” was marked as read."
@@ -359,12 +348,6 @@ msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deine
 msgid "This topic was already reported."
 msgstr "Dieses Thema wurde bereits gemeldet."
 
-msgid "This value can only be changed by the Webteam"
-msgstr "Dieser Wert ist nur über das Webteam veränderbar"
-
-msgid "Title"
-msgstr "Titel"
-
 msgid "Topic"
 msgstr "Thema"
 
@@ -400,6 +383,12 @@ msgstr "Version"
 msgctxt "Link text to an image attachment"
 msgid "View %(name)s"
 msgstr "%(name)s ansehen"
+
+msgid "Welcome text"
+msgstr "Willkommens Text"
+
+msgid "Welcome title"
+msgstr "Willkommens Titel"
 
 msgid "Xubuntu"
 msgstr "Xubuntu"
@@ -484,7 +473,4 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
-
-#~ msgid "My posts"
-#~ msgstr "Eigene Beiträge"
 
