@@ -163,7 +163,8 @@ def populate_context_defaults(context, flash=False):
             USER=user,
             MOBILE=get_flavour() == 'mobile',
             _csrf_token=force_unicode(csrf(request)['csrf_token']),
-            special_day_css=check_special_day()
+            special_day_css=check_special_day(),
+            LANGUAGE_CODE = settings.LANGUAGE_CODE
         )
 
         if not flash:
