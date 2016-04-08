@@ -15,9 +15,9 @@ from . import actions, views
 
 urlpatterns = [
     url(r'^$', views.index),
-    url(r'^_image$', views.get_image_resource),
-    url(r'^_newpage$', views.redirect_new_page),
-    url(r'^_attachment$', views.get_attachment),
+    url(r'^_image/$', views.get_image_resource),
+    url(r'^_newpage/$', views.redirect_new_page),
+    url(r'^_attachment/$', views.get_attachment),
     url(r'^_feed/(?P<count>\d+)/$', views.feed),
     url(r'^(?P<page_name>.+)/a/feed/$', views.feed, {'count': 10}),
     url(r'^(?P<page_name>.+)/a/feed/(?P<count>\d+)/$', views.feed),
