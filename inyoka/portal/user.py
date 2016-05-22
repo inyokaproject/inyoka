@@ -516,13 +516,13 @@ class User(AbstractBaseUser):
         """
         Get all User groups, with some defaults:
         1. anonymous User is always in anonymous Group, this is required to give anonymous Permissions.
-        2. any User, except anonymous, is always in the registered Group. This is required to get some default Permissions.
+        2. any User, except anonymous, is always in the registered Group. This is required to give some default Permissions.
         """
         groups = []
         if self.is_authenticated():
-            groups.extend(Group.objects.get_registered_group())
+            groups.append(Group.objects.get_registered_group())
         else:
-            groups.extend(Group.objects.get_anonymous_group())
+            groups.append(Group.objects.get_anonymous_group())
         groups.extend(self.groups.all())
         return groups
 
