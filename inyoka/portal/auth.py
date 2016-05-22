@@ -41,12 +41,10 @@ class InyokaAuthBackend(ModelBackend):
         if user.is_banned:
             # user banned ad infinitum
             if user.banned_until is None:
-                user.groups.clear()
                 raise UserBanned()
             else:
                 # user banned for a specific period of time
                 if (user.banned_until >= datetime.utcnow()):
-                    user.groups.clear()
                     raise UserBanned()
                 else:
                     # period of time gone, reset status
