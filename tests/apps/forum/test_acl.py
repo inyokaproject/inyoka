@@ -16,7 +16,7 @@ from django.db.models.query import EmptyQuerySet
 
 from inyoka.forum import acl
 from inyoka.forum.models import Forum, Privilege
-from inyoka.portal.user import DEFAULT_GROUP_ID, Group, User
+from inyoka.portal.user import Group, User
 from inyoka.utils.test import TestCase
 
 
@@ -74,10 +74,6 @@ class TestForumAcl(unittest.TestCase):
 
 class TestForumPrivileges(TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        Group.objects.create(id=DEFAULT_GROUP_ID, name='Registered')
-
     def setUp(self):
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.anonymous = User.objects.get_anonymous_user()
@@ -90,8 +86,12 @@ class TestForumPrivileges(TestCase):
         user._ANONYMOUS_USER = None
 
     @classmethod
+    def setUpClass(cls):
+        Group.objects.get_registered_group()
+
+    @classmethod
     def tearDownClass(cls):
-        Group.objects.filter(id=DEFAULT_GROUP_ID).delete()
+        Group.objects.get_registered_group().delete()
 
     def test_no_forums(self):
         # test for anonymous
@@ -131,8 +131,9 @@ class TestForumPrivileges(TestCase):
     def test_default_group_permissions(self):
         category = Forum.objects.create(name='Category')
         forum = Forum.objects.create(name='Forum 1', parent=category)
-        Privilege.objects.create(group_id=DEFAULT_GROUP_ID, forum=category, positive=acl.CAN_READ)
-        Privilege.objects.create(group_id=DEFAULT_GROUP_ID, forum=forum, positive=acl.CAN_VOTE)
+        group = Group.objects.get_registered_group()
+        Privilege.objects.create(group_id=group.id, forum=category, positive=acl.CAN_READ)
+        Privilege.objects.create(group_id=group.id, forum=forum, positive=acl.CAN_VOTE)
         privs = {
             category.pk: acl.DISALLOW_ALL,
             forum.pk: acl.DISALLOW_ALL,
@@ -189,12 +190,13 @@ class TestForumPrivileges(TestCase):
     def test_explicit_user_permissions_with_default_group(self):
         category = Forum.objects.create(name='Category')
         forum = Forum.objects.create(name='Forum 1', parent=category)
+        group = Group.objects.get_registered_group()
         Privilege.objects.create(user=self.anonymous, forum=category, positive=acl.CAN_READ)
         Privilege.objects.create(user=self.anonymous, forum=forum, positive=acl.CAN_VOTE)
         Privilege.objects.create(user=self.user, forum=category, positive=acl.CAN_CREATE)
         Privilege.objects.create(user=self.user, forum=forum, positive=acl.CAN_REPLY)
-        Privilege.objects.create(group_id=DEFAULT_GROUP_ID, forum=category, positive=acl.CAN_STICKY)
-        Privilege.objects.create(group_id=DEFAULT_GROUP_ID, forum=forum, positive=acl.CAN_MODERATE)
+        Privilege.objects.create(group_id=group.id, forum=category, positive=acl.CAN_STICKY)
+        Privilege.objects.create(group_id=group.id, forum=forum, positive=acl.CAN_MODERATE)
         privs = {
             category.pk: acl.CAN_READ,
             forum.pk: acl.CAN_VOTE,
@@ -222,17 +224,18 @@ class TestForumPrivileges(TestCase):
         category = Forum.objects.create(name='Category')
         forum1 = Forum.objects.create(name='Forum 1', parent=category)
         forum2 = Forum.objects.create(name='Forum 2', parent=category)
+        group = Group.objects.get_registered_group()
         Privilege.objects.create(user=self.anonymous, forum=category, positive=acl.CAN_READ)
         Privilege.objects.create(user=self.anonymous, forum=forum1, positive=acl.CAN_VOTE)
         Privilege.objects.create(user=self.user, forum=category, positive=acl.CAN_READ)
         Privilege.objects.create(user=self.user, forum=forum1, positive=acl.CAN_READ)
         Privilege.objects.create(user=self.user, forum=forum2, positive=acl.CAN_READ | acl.CAN_REPLY)
-        Privilege.objects.create(group_id=DEFAULT_GROUP_ID, forum=category, positive=acl.CAN_CREATE)
-        Privilege.objects.create(group_id=DEFAULT_GROUP_ID, forum=forum1, negative=acl.CAN_MODERATE)
+        Privilege.objects.create(group_id=group.id, forum=category, positive=acl.CAN_CREATE)
+        Privilege.objects.create(group_id=group.id, forum=forum1, negative=acl.CAN_MODERATE)
 
         # XXX: I'd have expected a acl.CAN_READ here, but since user privileges
         # override group privileges this does not work.
-        Privilege.objects.create(group_id=DEFAULT_GROUP_ID, forum=forum2, negative=acl.CAN_REPLY)
+        Privilege.objects.create(group_id=group.id, forum=forum2, negative=acl.CAN_REPLY)
 
         privs = {
             category.pk: acl.CAN_READ,
