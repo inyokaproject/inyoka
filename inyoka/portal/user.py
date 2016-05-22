@@ -98,6 +98,10 @@ def reactivate_user(id, email, status):
     user.set_password(User.objects.make_random_password(length=32))
     user.save()
 
+    # Enforce registered group if active.
+    if user.status == User.STATUS_ACTIVE:
+        user.groups.add(Group.objects.get_registered_group())
+
     return {
         'success': _(u'The account “%(name)s” was reactivated. Please use the '
                      u'password recovery function to set a new password.')
@@ -131,7 +135,7 @@ def deactivate_user(user):
     if not user.is_banned:
         user.email = 'user%d@ubuntuusers.de.invalid' % user.id
     user.set_unusable_password()
-    user.groups.remove(*user.groups.all())
+    user.groups.clear()
     user.avatar = user._primary_group = None
     user.jabber = user.location = user.signature = user.gpgkey = \
         user.location = user.website = user.launchpad = user.member_title = ''
@@ -213,13 +217,13 @@ class GroupManager(models.Manager):
         Return the Group which all registered users contains. This allows us to
         give rights to all of them at the same time.
         """
-        return Group.objects.get_or_create(name=settings.INYOKA_REGISTERED_GROUP_NAME)[0]
+        return Group.objects.get(name__iexact=settings.INYOKA_REGISTERED_GROUP_NAME)
 
     def get_ikhaya_group(self):
         """
         Return the Group required for the Ikhaya Team.
         """
-        return Group.objects.get_or_create(name=settings.INYOKA_IKHAYA_GROUP_NAME)[0]
+        return Group.objects.get(name__iexact=settings.INYOKA_IKHAYA_GROUP_NAME)
 
     def get_anonymous_group(self):
         """
@@ -227,7 +231,19 @@ class GroupManager(models.Manager):
         this group gets are only used for not registered and therfor anonymous User
         Sessions.
         """
-        return Group.objects.get_or_create(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)[0]
+        return Group.objects.get(name__iexact=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+
+    def create_system_groups(self):
+        """
+        Creates the required system groups. Only useful in unit test or management
+        commands.
+        """
+        for groupname in (settings.INYOKA_ANONYMOUS_GROUP_NAME,
+                      settings.INYOKA_REGISTERED_GROUP_NAME,
+                      settings.INYOKA_IKHAYA_GROUP_NAME):
+            group = Group.objects.get_or_create(name=groupname)[0]
+            group.system = True
+            group.save()
 
 
 class Group(models.Model):
@@ -242,6 +258,9 @@ class Group(models.Model):
     icon = models.ImageField(ugettext_lazy(u'Team icon'),
                              upload_to='portal/team_icons',
                              blank=True, null=True)
+    system = models.BooleanField(verbose_name=ugettext_lazy(u'System group'),
+                                 default=False,
+                                 null=False)
     objects = GroupManager()
 
     class Meta:
@@ -309,10 +328,10 @@ class UserManager(BaseUserManager):
                 raise exc
         return user
 
-    def create_user(self, username, email, password=None):
+    def create_user(self, username, email, password=None, system=False):
         now = datetime.utcnow()
         user = self.model(username=username, email=email.strip().lower(),
-            status=0, date_joined=now, last_login=now)
+            status=0, date_joined=now, last_login=now, system=system)
         if password:
             user.set_password(password)
         else:
@@ -343,18 +362,16 @@ class UserManager(BaseUserManager):
         if not send_mail:
             # save the user as an active one
             user.status = User.STATUS_ACTIVE
+            user.save()
+            user.groups.add(Group.objects.get_registered_group())
         else:
             user.status = User.STATUS_INACTIVE
             send_activation_mail(user)
-        user.save()
+            user.save()
         return user
 
     def get_anonymous_user(self):
-        name = settings.INYOKA_ANONYMOUS_USER
-        try:
-            return User.objects.get(username=name)
-        except User.DoesNotExist:
-            return self.create_user(name, name)
+        return User.objects.get(username__iexact=settings.INYOKA_ANONYMOUS_USER)
 
     def get_system_user(self):
         """
@@ -362,12 +379,30 @@ class UserManager(BaseUserManager):
         is the sender for welcome notices, it updates the antispam list and
         is the owner for log entries in the wiki triggered by inyoka itself.
         """
-        name = settings.INYOKA_SYSTEM_USER
-        try:
-            return User.objects.get(username__iexact=name)
-        except User.DoesNotExist:
-            return self.create_user(name, name)
+        return User.objects.get(username__iexact=settings.INYOKA_SYSTEM_USER)
 
+    def create_system_users(self):
+        """
+        Creates the required system User as defined in INYOKA_SYSTEM_USER and
+        INYOKA_ANYONYMOUS_USER. This is only useful in unit tests and as
+        management command.
+        """
+        def get_or_create(username):
+            try:
+                return User.objects.get(username__iexact=username)
+            except User.DoestNotExist:
+                return User.objects.create_user(username, username)
+
+        user = get_or_create(settings.INYOKA_ANONYMOUS_USER)
+        user.system = True
+        user.save()
+        group = Group.objects.get(name__iexact=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+        user.groups.clear()
+        user.groups.add(group)
+
+        user = get_or_create(settings.INYOKA_SYSTEM_USER)
+        user.system = True
+        user.save()
 
 def upload_to_avatar(instance, filename):
     fn = 'portal/avatars/avatar_user%d.%s'
@@ -398,6 +433,9 @@ class User(AbstractBaseUser):
     status = models.IntegerField(verbose_name=ugettext_lazy(u'Activation status'),
                                  default=STATUS_INACTIVE,
                                  choices=STATUS_CHOICES)
+    system = models.BooleanField(verbose_name=ugettext_lazy(u'System user'),
+                                 default=False,
+                                 null=False)
     date_joined = models.DateTimeField(verbose_name=ugettext_lazy(u'Member since'),
                                        default=datetime.utcnow)
     groups = models.ManyToManyField(Group,
@@ -512,11 +550,6 @@ class User(AbstractBaseUser):
         """Sends an e-mail to this User."""
         send_mail(subject, message, from_email, [self.email])
 
-    def get_groups(self):
-        """Get groups inclusive the default group for registered users"""
-        groups = self.is_authenticated() and [Group.objects.get_registered_group()] or []
-        groups.extend(self.groups.all())
-        return groups
 
     @deferred
     def permissions(self):

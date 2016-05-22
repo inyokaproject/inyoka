@@ -113,8 +113,7 @@ class GroupContainer(object):
 
     def load(self):
         """Load the data from the database."""
-        self.cache = set(x.name
-                         for x in self.user.get_groups())
+        self.cache = set(self.user.groups.values_list('name', flat=True))
         for item in Page.objects.get_owners(self.page):
             if item == self.user.username or \
                (item.startswith('@') and item[1:] in self.cache):
@@ -134,7 +133,7 @@ class MultiPrivilegeTest(object):
 
     def __init__(self, user):
         self.user = user
-        self.groups = set(x.name for x in self.user.get_groups())
+        self.groups = set(self.user.groups.values_list('name', flat=True))
         self.owned_pages = set(Page.objects.get_owned(self.groups))
 
     def get_groups(self, page_name):

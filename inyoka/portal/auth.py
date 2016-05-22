@@ -12,7 +12,7 @@ from datetime import datetime
 
 from django.contrib.auth.backends import ModelBackend
 
-from inyoka.portal.user import User, UserBanned
+from inyoka.portal.user import User, Group, UserBanned
 
 
 class InyokaAuthBackend(ModelBackend):
@@ -41,16 +41,19 @@ class InyokaAuthBackend(ModelBackend):
         if user.is_banned:
             # user banned ad infinitum
             if user.banned_until is None:
+                user.groups.clear()
                 raise UserBanned()
             else:
                 # user banned for a specific period of time
                 if (user.banned_until >= datetime.utcnow()):
+                    user.groups.clear()
                     raise UserBanned()
                 else:
                     # period of time gone, reset status
                     user.status = User.STATUS_ACTIVE
                     user.banned_until = None
                     user.save()
+                    user.groups.add(Group.objects.get_registered_group())
 
         if user.check_password(password):
             return user

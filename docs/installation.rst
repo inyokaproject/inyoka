@@ -251,13 +251,14 @@ installation:
 
 .. code-block:: console
 
-    (inyoka)$ python manage.py migrate
-    (inyoka)$ python manage.py create_superuser
-    username: admin
-    email: admin@localhost
-    password: admin
-    repeat: admin
-    created superuser
+   (inyoka)$  python manage.py migrate
+   (inyoka)$  python manage.py create_system
+   (inyoka)$  python manage.py create_superuser
+   username: admin
+   email: admin@localhost
+   password: admin
+   repeat: admin
+   created superuser
 
 Of course you can use another password, but you should keep the *admin* as
 username because it will be used in some test files. It is also advisable to
