@@ -339,6 +339,7 @@ def activate(request, action='', username='', activation_key=''):
         if check_activation_key(user, activation_key):
             user.status = User.STATUS_ACTIVE
             user.save()
+            user.groups.add(Group.objects.get_registered_group())
             messages.success(request,
                 _(u'Your account was successfully activated. You can now '
                   u'login.'))
@@ -878,6 +879,8 @@ def user_edit_status(request, username):
         form = EditUserStatusForm(request.POST, instance=user)
         if form.is_valid():
             user.save()
+            if user.status != User.STATUS_ACTIVE:
+                user.groups.clear()
             messages.success(request,
                 _(u'The state of “%(username)s” was successfully changed.')
                 % {'username': escape(user.username)})
