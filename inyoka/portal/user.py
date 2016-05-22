@@ -513,8 +513,16 @@ class User(AbstractBaseUser):
         send_mail(subject, message, from_email, [self.email])
 
     def get_groups(self):
-        """Get groups inclusive the default group for registered users"""
-        groups = self.is_authenticated() and [Group.objects.get_registered_group()] or []
+        """
+        Get all User groups, with some defaults:
+        1. anonymous User is always in anonymous Group, this is required to give anonymous Permissions.
+        2. any User, except anonymous, is always in the registered Group. This is required to give some default Permissions.
+        """
+        groups = []
+        if self.is_authenticated():
+            groups.append(Group.objects.get_registered_group())
+        else:
+            groups.append(Group.objects.get_anonymous_group())
         groups.extend(self.groups.all())
         return groups
 
