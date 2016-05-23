@@ -120,8 +120,6 @@ def _get_privilege_map(user, forum_ids):
     # circular imports
     from inyoka.forum.models import Privilege, Forum
     group_ids = set(user.groups.values_list('id', flat=True))
-    if user.is_authenticated():
-        group_ids.add(Group.objects.get_registered_group().id)
 
     cols = ('forum_id', 'user_id', 'group_id', 'positive', 'negative')
 
