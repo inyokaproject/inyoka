@@ -132,30 +132,19 @@ def _get_privilege_map(user, forum_ids):
 
     query = Privilege.objects.filter(filter)
 
+    cache_timeout = 900
     if user.is_anonymous:
-        # If we have an anonymous user we can cache the results. We MUST that
-        # for all forums, this makes it possible to cache the privileges. Once
-        # we get an authenticated user we filter for the ids requested.
-        cache_key = 'forum/acls/anonymous'
-        privilege_map = cache.get(cache_key)
-        if privilege_map is None:
-            privilege_map = query.values_list(*cols)
-            cache.set(cache_key, list(privilege_map), 86400)
-        # filter the privilege_map for ids not requested (api compatibility)
-        # XXX: We might consider do use get_many and store the privileges
-        #      per forum id: 'forum/acls/anonymous/<forum_id>'
-        privilege_map = [row for row in privilege_map if row[0] in forum_ids]
-    else:
-        # we filter for the privilege ids if we don't have an anonymous user
-        all_ids = Forum.objects.get_ids()
-        # Do only filter IN if required.  This is not required most of the time
-        # so that this saves a bit bandwith and quite a few time for the query
-        if len(forum_ids) != len(all_ids):
-            if len(forum_ids) == 1:
-                query = query.filter(forum_id=forum_ids[0])
-            else:
-                query = query.filter(forum_id__in=forum_ids)
+        cache_timeout = 3600
+
+    # Retrieve and cache privileges for all forums, most portal have only a few
+    # forums, so this saves some logic here.
+    cache_key = 'forum/acls/{}'.format(user.id)
+    privilege_map = cache.get(cache_key)
+    if privilege_map is None:
         privilege_map = query.values_list(*cols)
+        cache.set(cache_key, list(privilege_map), cache_timeout)
+    # filter the privilege_map for ids requested
+    privilege_map = [row for row in privilege_map if row[0] in forum_ids]
 
     return privilege_map
 
