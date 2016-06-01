@@ -176,10 +176,8 @@ def get_privileges(user, forums):
     result = {forum_id: DISALLOW_ALL for forum_id in forum_ids}
     # `row[1]` maps to `user_id` in the `cols` as defined in the
     # `_get_privilege_map()` function
-    # first join the group privileges
+    # join the group privileges
     result = join_bits(result, forum_ids, [row for row in privilege_map if not row[1]])
-    # now join the user privileges (this allows to override group privileges)
-    result = join_bits(result, forum_ids, [row for row in privilege_map if row[1]])
     return result
 
 
