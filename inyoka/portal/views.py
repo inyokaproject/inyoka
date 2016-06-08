@@ -53,7 +53,6 @@ from inyoka.portal.forms import (
     EditStaticPageForm,
     EditStyleForm,
     EditUserGroupsForm,
-    EditUserPrivilegesForm,
     EditUserProfileForm,
     EditUserStatusForm,
     ForumFeedSelectorForm,
@@ -903,64 +902,6 @@ def user_edit_privileges(request, username):
     except User.DoesNotExist:
         raise Http404
 
-    checked_perms = [int(p) for p in request.POST.getlist('permissions')]
-
-    if request.method == 'POST':
-        form = EditUserPrivilegesForm(request.POST, request.FILES)
-        form.fields['permissions'].choices = [(k, '') for k in
-                                              PERMISSION_NAMES.keys()]
-        if form.is_valid():
-            # permissions
-            permissions = 0
-            for perm in checked_perms:
-                permissions |= perm
-            user._permissions = permissions
-
-            #: forum privileges
-            privileges = Privilege.objects
-            for key, value in request.POST.iteritems():
-                if key.startswith('forum_privileges_'):
-                    negative, positive = split_negative_positive(value)
-                    forum_id = int(key.split('_')[2])
-                    # Try to retrieve the privileges for the user. If they exists
-                    # set the new positive and negative values. I there are no
-                    # privileges check if new have to be set. If this validates to
-                    # true, create those.
-                    # If there is a privilege instance but there are neither
-                    # positive nor negative settings, remove the instance
-                    try:
-                        privilege = privileges.get(forum=forum_id,
-                                                   group=None, user=user)
-                    except Privilege.DoesNotExist:
-                        if (positive or negative):
-                            privilege = Privilege(user=user, forum_id=forum_id)
-                        else:
-                            privilege = None
-
-                    if privilege:
-                        if (positive or negative):
-                            privilege.positive = positive
-                            privilege.negative = negative
-                            privilege.save()
-                        else:
-                            privilege.delete()
-
-            user.save()
-            cache.delete(u'user_permissions/{}'.format(user.id))
-
-            messages.success(request,
-                _(u'The privileges of “%(username)s” were successfully '
-                  u'changed.') % {'username': escape(user.username)})
-        else:
-            generic.trigger_fix_errors_message(request)
-    else:
-        initial = model_to_dict(user)
-        if initial['_primary_group']:
-            initial.update({
-                'primary_group': Group.objects.get(id=initial['_primary_group']).name
-            })
-        form = EditUserPrivilegesForm(initial=initial)
-
     # collect forum privileges
     forum_privileges = []
     forums = Forum.objects.all()
@@ -982,10 +923,7 @@ def user_edit_privileges(request, username):
     groups = user.groups.all()
     for id, name in PERMISSION_NAMES.iteritems():
         derived = filter(lambda g: id & g.permissions, groups)
-        if request.method == 'POST':
-            checked = id in checked_perms
-        else:
-            checked = id & user._permissions
+        checked = id & user._permissions
         permissions.append((id, name, checked, derived))
 
     forum_privileges = sorted(forum_privileges, lambda x, y: cmp(x[1], y[1]))
