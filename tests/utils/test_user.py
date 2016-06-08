@@ -11,12 +11,14 @@ from hashlib import sha1
 
 from django.conf import settings
 
-from inyoka.portal.user import User
+from inyoka.portal.user import User, Group
 from inyoka.utils.user import gen_activation_key
 
 
 class TestUtilsUser(unittest.TestCase):
     def setUp(self):
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
         self.user = User.objects.register_user('testing', 'example@example.com',
                                                'pwd', False)
 
