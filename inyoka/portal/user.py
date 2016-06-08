@@ -390,7 +390,7 @@ class UserManager(BaseUserManager):
         def get_or_create(username):
             try:
                 return User.objects.get(username__iexact=username)
-            except User.DoestNotExist:
+            except User.DoesNotExist:
                 return User.objects.create_user(username, username)
 
         user = get_or_create(settings.INYOKA_ANONYMOUS_USER)
