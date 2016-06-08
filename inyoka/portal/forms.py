@@ -532,11 +532,6 @@ class EditUserPasswordForm(forms.Form):
             )
 
 
-class EditUserPrivilegesForm(forms.Form):
-    permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
-                                            required=False)
-
-
 class UserMailForm(forms.Form):
     text = forms.CharField(
         label=ugettext_lazy(u'Text'),
