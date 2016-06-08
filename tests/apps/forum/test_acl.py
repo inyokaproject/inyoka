@@ -75,6 +75,8 @@ class TestForumAcl(unittest.TestCase):
 class TestForumPrivileges(TestCase):
 
     def setUp(self):
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.anonymous = User.objects.get_anonymous_user()
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
@@ -87,6 +89,8 @@ class TestForumPrivileges(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
         Group.objects.get_registered_group()
 
     @classmethod
@@ -157,85 +161,20 @@ class TestForumPrivileges(TestCase):
         cache.clear()
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.all()), privs)
 
-    def test_explicit_user_permissions(self):
-        category = Forum.objects.create(name='Category')
-        forum = Forum.objects.create(name='Forum 1', parent=category)
-        Privilege.objects.create(user=self.anonymous, forum=category, positive=acl.CAN_READ)
-        Privilege.objects.create(user=self.anonymous, forum=forum, positive=acl.CAN_VOTE)
-        Privilege.objects.create(user=self.user, forum=category, positive=acl.CAN_CREATE)
-        Privilege.objects.create(user=self.user, forum=forum, positive=acl.CAN_REPLY)
-        privs = {
-            category.pk: acl.CAN_READ,
-            forum.pk: acl.CAN_VOTE,
-        }
-        # test for anonymous
-        self.assertEqual(acl.get_privileges(self.anonymous, [category, forum]), privs)
-        cache.clear()
-        self.assertEqual(acl.get_privileges(self.anonymous, (category, forum)), privs)
-        cache.clear()
-        self.assertEqual(acl.get_privileges(self.anonymous, Forum.objects.all()), privs)
-        cache.clear()
-
-        privs = {
-            category.pk: acl.CAN_CREATE,
-            forum.pk: acl.CAN_REPLY,
-        }
-        # test for user
-        self.assertEqual(acl.get_privileges(self.user, [category, forum]), privs)
-        cache.clear()
-        self.assertEqual(acl.get_privileges(self.user, (category, forum)), privs)
-        cache.clear()
-        self.assertEqual(acl.get_privileges(self.user, Forum.objects.all()), privs)
-
-    def test_explicit_user_permissions_with_default_group(self):
-        category = Forum.objects.create(name='Category')
-        forum = Forum.objects.create(name='Forum 1', parent=category)
-        group = Group.objects.get_registered_group()
-        Privilege.objects.create(user=self.anonymous, forum=category, positive=acl.CAN_READ)
-        Privilege.objects.create(user=self.anonymous, forum=forum, positive=acl.CAN_VOTE)
-        Privilege.objects.create(user=self.user, forum=category, positive=acl.CAN_CREATE)
-        Privilege.objects.create(user=self.user, forum=forum, positive=acl.CAN_REPLY)
-        Privilege.objects.create(group_id=group.id, forum=category, positive=acl.CAN_STICKY)
-        Privilege.objects.create(group_id=group.id, forum=forum, positive=acl.CAN_MODERATE)
-        privs = {
-            category.pk: acl.CAN_READ,
-            forum.pk: acl.CAN_VOTE,
-        }
-        # test for anonymous
-        self.assertEqual(acl.get_privileges(self.anonymous, [category, forum]), privs)
-        cache.clear()
-        self.assertEqual(acl.get_privileges(self.anonymous, (category, forum)), privs)
-        cache.clear()
-        self.assertEqual(acl.get_privileges(self.anonymous, Forum.objects.all()), privs)
-        cache.clear()
-
-        privs = {
-            category.pk: acl.CAN_CREATE | acl.CAN_STICKY,
-            forum.pk: acl.CAN_REPLY | acl.CAN_MODERATE,
-        }
-        # test for user
-        self.assertEqual(acl.get_privileges(self.user, [category, forum]), privs)
-        cache.clear()
-        self.assertEqual(acl.get_privileges(self.user, (category, forum)), privs)
-        cache.clear()
-        self.assertEqual(acl.get_privileges(self.user, Forum.objects.all()), privs)
-
-    def test_explicit_user_permissions_with_default_group_pos_neg(self):
+    def test_default_group_permissions_neg(self):
         category = Forum.objects.create(name='Category')
         forum1 = Forum.objects.create(name='Forum 1', parent=category)
         forum2 = Forum.objects.create(name='Forum 2', parent=category)
-        group = Group.objects.get_registered_group()
-        Privilege.objects.create(user=self.anonymous, forum=category, positive=acl.CAN_READ)
-        Privilege.objects.create(user=self.anonymous, forum=forum1, positive=acl.CAN_VOTE)
-        Privilege.objects.create(user=self.user, forum=category, positive=acl.CAN_READ)
-        Privilege.objects.create(user=self.user, forum=forum1, positive=acl.CAN_READ)
-        Privilege.objects.create(user=self.user, forum=forum2, positive=acl.CAN_READ | acl.CAN_REPLY)
-        Privilege.objects.create(group_id=group.id, forum=category, positive=acl.CAN_CREATE)
-        Privilege.objects.create(group_id=group.id, forum=forum1, negative=acl.CAN_MODERATE)
-
-        # XXX: I'd have expected a acl.CAN_READ here, but since user privileges
-        # override group privileges this does not work.
-        Privilege.objects.create(group_id=group.id, forum=forum2, negative=acl.CAN_REPLY)
+        registered_group = Group.objects.get_registered_group()
+        anonymous_group = Group.objects.get_anonymous_group()
+        Privilege.objects.create(group_id=anonymous_group.id, forum=category, positive=acl.CAN_READ)
+        Privilege.objects.create(group_id=anonymous_group.id, forum=forum1, positive=acl.CAN_VOTE)
+        Privilege.objects.create(group_id=registered_group.id, forum=category, positive=acl.CAN_READ)
+        Privilege.objects.create(group_id=registered_group.id, forum=category, positive=acl.CAN_CREATE)
+        Privilege.objects.create(group_id=registered_group.id, forum=forum1, positive=acl.CAN_READ)
+        Privilege.objects.create(group_id=registered_group.id, forum=forum1, negative=acl.CAN_MODERATE)
+        Privilege.objects.create(group_id=registered_group.id, forum=forum2, positive=acl.CAN_READ | acl.CAN_REPLY)
+#        Privilege.objects.create(group_id=registered_group.id, forum=forum2, negative=acl.CAN_REPLY)
 
         privs = {
             category.pk: acl.CAN_READ,
@@ -304,7 +243,7 @@ class TestForumPrivileges(TestCase):
         self.assertEqual(acl.get_privileges(self.user, Forum.objects.filter(parent__isnull=False)), privs)
         cache.clear()
 
-        Privilege.objects.create(user=self.user, forum=category, negative=acl.CAN_CREATE)
+        Privilege.objects.create(group_id=registered_group.id, forum=category, negative=acl.CAN_CREATE)
         privs = {
             category.pk: acl.CAN_READ,
         }

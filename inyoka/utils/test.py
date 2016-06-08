@@ -19,7 +19,7 @@ from django.http import HttpRequest
 from django.test import TestCase as _TestCase
 from django.test.client import Client
 
-from inyoka.portal.user import User
+from inyoka.portal.user import User, Group
 from inyoka.utils.spam import (
     get_comment_check_url,
     get_mark_ham_url,
@@ -76,6 +76,8 @@ class InyokaClient(Client):
 
         """
         super(InyokaClient, self).__init__(enforce_csrf_checks, **defaults)
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
         if isinstance(host, basestring):
             self.defaults['HTTP_HOST'] = host
         else:
@@ -172,3 +174,8 @@ class TestCase(_TestCase):
         content_cache.delete_pattern("*")
         default_cache = caches['default']
         default_cache.delete_pattern("*")
+
+    def _pre_setup(self):
+        super(TestCase, self)._pre_setup()
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()

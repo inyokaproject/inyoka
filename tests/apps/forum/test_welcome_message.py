@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from inyoka.forum.models import Forum
-from inyoka.portal.user import User
+from inyoka.portal.user import User, Group
 from inyoka.utils.test import TestCase
 
 
 class TestModelFindWelcome(TestCase):
+    def setUp(self):
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
+
     def test_anonymous(self):
         """
         Tests that find_welcome returns None, when given with the anonymous user
@@ -142,6 +146,10 @@ class TestModelFindWelcome(TestCase):
 
 
 class TestModelReadWelcome(TestCase):
+    def setUp(self):
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
+
     def test_on_anonymous(self):
         """
         Test that forum.read_welcome does nothing for anonymous users.

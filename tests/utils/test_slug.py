@@ -9,13 +9,15 @@
     :license: BSD, see LICENSE for more details.
 """
 from inyoka.forum.models import Forum, Topic
-from inyoka.portal.user import User
+from inyoka.portal.user import User, Group
 from inyoka.utils.database import _strip_ending_nums
 from inyoka.utils.test import TestCase
 
 
 class TestUtilsSlug(TestCase):
     def setUp(self):
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
         self.user = User.objects.register_user('slugadmin', 'slugadmin', 'slugadmin', False)
 
         # creating forums

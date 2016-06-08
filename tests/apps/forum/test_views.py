@@ -36,7 +36,7 @@ from inyoka.forum.models import (
     Topic,
 )
 from inyoka.portal.models import Subscription
-from inyoka.portal.user import PERMISSION_NAMES, User
+from inyoka.portal.user import PERMISSION_NAMES, User, Group
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient, TestCase
 from inyoka.utils.urls import href, url_for
 
@@ -48,11 +48,18 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
     privileges = sum(PRIVILEGES_BITS.values())
 
     def setUp(self):
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
+
+        self.admin_group = Group.objects.get_or_create(name='admins')[0]
+        self.admin_group.permissions = self.permissions
+        self.admin_group.save()
         self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
+        self.admin.groups.add(self.admin_group)
+        self.admin.save()
+
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.system_user = User.objects.get_system_user()
-        self.admin._permissions = self.permissions
-        self.admin.save()
 
         self.forum1 = Forum.objects.create(name='Forum 1')
         self.forum2 = Forum.objects.create(name='Forum 2', parent=self.forum1)
@@ -61,7 +68,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         forums = [self.forum1, self.forum2, self.forum3]
 
         for f in forums:
-            Privilege.objects.create(user=self.admin, forum=f,
+            Privilege.objects.create(group=self.admin_group, forum=f,
                     positive=self.privileges, negative=0)
 
         self.topic = Topic.objects.create(title='A test Topic', author=self.user,
@@ -127,7 +134,8 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
     def test_subscribe(self):
         self.client.login(username='user', password='user')
-        useraccess = Privilege.objects.create(user=self.user, forum=self.forum2,
+        registered = Group.objects.get_registered_group()
+        useraccess = Privilege.objects.create(group=registered, forum=self.forum2,
             positive=PRIVILEGES_BITS['read'], negative=0)
 
         self.client.get('/topic/%s/subscribe/' % self.topic.slug)
@@ -138,6 +146,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         # access to a subscription
         useraccess.positive = 0
         useraccess.save()
+        cache.clear()
         response = self.client.get('/usercp/subscriptions/', {}, False,
                          HTTP_HOST=settings.BASE_DOMAIN_NAME)
         self.assertTrue(
@@ -447,14 +456,17 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
 class TestUserPostCounter(TestCase):
     def setUp(self):
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
-        self.user._permissions = sum(PERMISSION_NAMES.keys())
+        self.registered_group = Group.objects.get_registered_group()
+        self.registered_group.permissions = sum(PERMISSION_NAMES.keys())
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 
         self.forum = Forum.objects.create()
         Privilege.objects.create(
-            user=self.user,
+            group=self.registered_group,
             forum=self.forum,
             positive=sum(PRIVILEGES_BITS.values()),
             negative=0)
@@ -507,36 +519,42 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     user_privileges = sum(v for k, v in PRIVILEGES_BITS.items() if k in ('read', 'create', 'reply'))
 
     def setUp(self):
+        Group.objects.create_system_groups()
+        User.objects.create_system_users()
+        anonymous_group = Group.objects.get_anonymous_group()
+        registered_group = Group.objects.get_registered_group()
+        admin_group = Group.objects.get_or_create(name='admins')[0]
+        admin_group.permissions = self.permissions
+        admin_group.save()
         self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
-        self.admin._permissions = self.permissions
         self.admin.save()
+        self.admin.groups.add(admin_group)
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
 
         self.category = Forum.objects.create(name='Category')
         self.forum = Forum.objects.create(name='Forum', parent=self.category)
 
-        Privilege.objects.create(user=self.admin, forum=self.category,
+        Privilege.objects.create(group=admin_group, forum=self.category,
             positive=self.privileges, negative=0)
-        Privilege.objects.create(user=self.admin, forum=self.forum,
+        Privilege.objects.create(group=admin_group, forum=self.forum,
             positive=self.privileges, negative=0)
 
-        Privilege.objects.create(user=self.user, forum=self.category,
+        Privilege.objects.create(group=registered_group, forum=self.category,
             positive=self.user_privileges, negative=0)
-        Privilege.objects.create(user=self.user, forum=self.forum,
+        Privilege.objects.create(group=registered_group, forum=self.forum,
             positive=self.user_privileges, negative=0)
 
         self.public_category = Forum.objects.create(name='Public category')
         self.public_forum = Forum.objects.create(name='Public forum', parent=self.public_category)
-        anonymous = User.objects.get_anonymous_user()
 
-        Privilege.objects.create(user=self.user, forum=self.public_category,
+        Privilege.objects.create(group=registered_group, forum=self.public_category,
             positive=self.user_privileges, negative=0)
-        Privilege.objects.create(user=self.user, forum=self.public_forum,
+        Privilege.objects.create(group=registered_group, forum=self.public_forum,
             positive=self.user_privileges, negative=0)
 
-        Privilege.objects.create(user=anonymous, forum=self.public_category,
+        Privilege.objects.create(group=anonymous_group, forum=self.public_category,
             positive=CAN_READ, negative=0)
-        Privilege.objects.create(user=anonymous, forum=self.public_forum,
+        Privilege.objects.create(group=anonymous_group, forum=self.public_forum,
             positive=CAN_READ, negative=0)
 
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
