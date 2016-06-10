@@ -16,6 +16,7 @@ from __future__ import print_function
 from getpass import getpass
 
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
 from inyoka.forum.acl import PRIVILEGES_DETAILS, join_flags
 from inyoka.forum.models import Forum, Privilege
@@ -26,12 +27,9 @@ class Command(BaseCommand):
     help = "Create a user with all priviliges"
 
     def add_arguments(self, parser):
-        parser.add_argument('-u', '--username', action='store',
-                    default=None, dest='username')
-        parser.add_argument('-e', '--email', action='store',
-                    default=None, dest='email')
-        parser.add_argument('-p', '--password', action='store',
-                    default=None, dest='password')
+        parser.add_argument('-u', '--username', action='store', default=None, dest='username')
+        parser.add_argument('-e', '--email', action='store', default=None, dest='email')
+        parser.add_argument('-p', '--password', action='store', default=None, dest='password')
 
     def handle(self, *args, **options):
         username = options['username']
@@ -48,14 +46,15 @@ class Command(BaseCommand):
                     if password == getpass('repeat: '):
                         break
                     password = ''
-        user = User.objects.register_user(username, email, password, False)
-        permissions = 0
-        for perm in PERMISSION_NAMES.keys():
-            permissions |= perm
-        user._permissions = permissions
-        user.save()
-        bits = dict(PRIVILEGES_DETAILS).keys()
-        bits = join_flags(*bits)
-        for forum in Forum.objects.all():
-            Privilege(user=user, forum=forum, positive=bits, negative=0).save()
-        print('created superuser')
+        with transaction.atomic():
+            user = User.objects.register_user(username, email, password, False)
+            permissions = 0
+            for perm in PERMISSION_NAMES.keys():
+                permissions |= perm
+            user._permissions = permissions
+            user.save()
+            bits = dict(PRIVILEGES_DETAILS).keys()
+            bits = join_flags(*bits)
+            for forum in Forum.objects.all():
+                Privilege(user=user, forum=forum, positive=bits, negative=0).save()
+            print('created superuser')
