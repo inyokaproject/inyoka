@@ -64,7 +64,6 @@ generate XML based output formats. The wiki parser also has some BBCode
 elements for compatibility with the old phpBB syntax and is used in other
 components (`forum`, `ikhaya`, ...) as well.
 
-
 References
 ==========
 

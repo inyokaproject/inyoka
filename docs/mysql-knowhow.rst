@@ -3,7 +3,8 @@
 MySQL Settings
 ===============
 
-The following two settings have to be set in the my.cnf, e.g. /etc/mysql/my.cnf
+The following two settings have to be set in the ``my.cnf``, e.g.
+``/etc/mysql/my.cnf``.
 
 .. code-block:: none
 
@@ -14,7 +15,8 @@ The following two settings have to be set in the my.cnf, e.g. /etc/mysql/my.cnf
 Importing Dumps
 ===============
 
-When importing Dumps it is advisable to disable binary logs to avoid filling up the disc. This can be done by importing the dump as follows:
+When importing Dumps it is advisable to disable binary logs to avoid filling up
+the disc. This can be done by importing the dump as follows:
 
 .. code-block:: console
 
