@@ -1,5 +1,4 @@
 -r production.txt
---no-binary :all:
 
 bumpversion==0.5.3
 coverage==4.0.3
