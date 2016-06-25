@@ -539,6 +539,14 @@ class PageManager(models.Manager):
             page.update_meta()
         return page
 
+    def clear_topic(self, topic):
+        """Unset the topic from all pages associated with it."""
+        pages = Page.objects.filter(topic=topic)
+        names = pages.values_list('name', flat=True)
+        keys = [u'wiki/page/{}'.format(n).lower() for n in names]
+        if pages.update(topic=None) > 0:
+            cache.delete_many(keys)
+
 
 class TextManager(models.Manager):
     """

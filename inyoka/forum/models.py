@@ -611,11 +611,7 @@ class Topic(models.Model):
         Subscription.objects.filter(content_type=ctype, object_id=self.id).delete()
 
         # remove wiki page discussions and clear caches
-        wiki_pages = WikiPage.objects.filter(topic=self)
-        if wiki_pages.update(topic=None) > 0:
-            names = wiki_pages.values_list('name', flat=True)
-            keys = [u'wiki/page/{}'.format(n).lower() for n in names]
-            cache.delete_many(keys)
+        WikiPage.objects.clear_topic(self)
 
         return super(Topic, self).delete(*args, **kwargs)
 
