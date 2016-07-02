@@ -17,6 +17,7 @@ from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import Group
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.core.files.base import ContentFile
@@ -35,8 +36,6 @@ from PIL import Image
 from inyoka.forum.constants import get_simple_version_choices
 from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.portal.user import (
-    PERMISSION_NAMES,
-    Group,
     User,
     UserPage,
     send_new_email_confirmation,
@@ -542,11 +541,6 @@ class UserMailForm(forms.Form):
 
 
 class EditGroupForm(forms.ModelForm):
-    permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
-        widget=forms.CheckboxSelectMultiple(attrs={'class': 'permission'}),
-        required=False)
-    forum_privileges = forms.MultipleChoiceField(label=ugettext_lazy(u'Forum privileges'),
-                                                 required=False)
 
     class Meta:
         model = Group
@@ -555,15 +549,8 @@ class EditGroupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
         initial = kwargs.setdefault('initial', {})
-        if instance:
-            initial['permissions'] = filter(lambda p: p & instance.permissions,
-                                            PERMISSION_NAMES.keys())
 
         super(EditGroupForm, self).__init__(*args, **kwargs)
-        self.fields['permissions'].choices = sorted(
-            [(k, v) for k, v in PERMISSION_NAMES.iteritems()],
-            key=lambda p: p[1]
-        )
 
     def clean_name(self):
         """Validates that the name is alphanumeric"""
@@ -576,17 +563,6 @@ class EditGroupForm(forms.ModelForm):
     def save(self, commit=True):
         group = super(EditGroupForm, self).save(commit=False)
         data = self.cleaned_data
-
-        # permissions
-        permissions = 0
-        for perm in data['permissions']:
-            permissions |= int(perm)
-        # clear permission cache of users if needed
-        if permissions != group.permissions:
-            group.permissions = permissions
-            user_ids = User.objects.filter(groups=group).values_list('id', flat=True)
-            keys = ['user_permissions/%s' % uid for uid in user_ids]
-            cache.delete_many(keys)
 
         if commit:
             group.save()
