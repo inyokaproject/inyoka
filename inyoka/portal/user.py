@@ -40,31 +40,6 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key, is_valid_username
 
-PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
-    ('admin_panel', u'Not in use anymore'),  # TODO: DEPRECATED
-    ('article_edit', ugettext_lazy(u'Ikhaya | can edit articles')),
-    ('category_edit', ugettext_lazy(u'Ikhaya | can edit categories')),
-    ('event_edit', ugettext_lazy(u'Ikhaya | can create new events')),
-    ('comment_edit', ugettext_lazy(u'Ikhaya | can manage comments')),
-    ('blog_edit', ugettext_lazy(u'Planet | can edit blogs')),
-    ('configuration_edit', ugettext_lazy(u'Portal | can edit miscellaneous settings')),
-    ('static_page_edit', ugettext_lazy(u'Portal | can edit static pages')),
-    ('markup_css_edit', ugettext_lazy(u'Portal | can edit stylesheets')),
-    ('static_file_edit', ugettext_lazy(u'Portal | can edit static files')),
-    ('user_edit', ugettext_lazy(u'Portal | can edit users')),
-    ('group_edit', ugettext_lazy(u'Portal | can edit groups')),
-    ('send_group_pm', ugettext_lazy(u'Portal | can send messages to groups')),
-    ('forum_edit', ugettext_lazy(u'Forum | can edit forums')),
-    ('manage_topics', ugettext_lazy(u'Forum | can manage reported topics')),
-    ('delete_topic', ugettext_lazy(u'Forum | can delete every topic and post')),
-    ('article_read', ugettext_lazy(u'Ikhaya | can read unpublished articles')),
-    ('manage_stats', ugettext_lazy(u'Admin | can manage statistics')),
-    ('manage_pastebin', ugettext_lazy(u'Portal | can manage pastebin')),
-    ('subscribe_to_users', ugettext_lazy(u'Portal | can watch users'))
-])]
-PERMISSION_NAMES = {val: desc for val, name, desc in PERMISSIONS}
-PERMISSION_MAPPING = {name: val for val, name, desc in PERMISSIONS}
-
 
 class UserBanned(Exception):
     """

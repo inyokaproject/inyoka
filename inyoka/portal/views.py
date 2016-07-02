@@ -15,6 +15,7 @@ from datetime import date, datetime, timedelta
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.views import password_reset, password_reset_confirm
+from django.contrib.auth.models import Group
 from django.core import signing
 from django.core.cache import cache
 from django.core.files.storage import default_storage
@@ -80,8 +81,6 @@ from inyoka.portal.models import (
     Subscription,
 )
 from inyoka.portal.user import (
-    PERMISSION_NAMES,
-    Group,
     User,
     UserBanned,
     deactivate_user,
@@ -922,10 +921,6 @@ def user_edit_privileges(request, username):
     permissions = []
 
     groups = user.groups.all()
-    for id, name in PERMISSION_NAMES.iteritems():
-        derived = filter(lambda g: id & g.permissions, groups)
-        checked = id & user._permissions
-        permissions.append((id, name, checked, derived))
 
     forum_privileges = sorted(forum_privileges, lambda x, y: cmp(x[1], y[1]))
 
