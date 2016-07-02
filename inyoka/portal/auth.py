@@ -11,8 +11,9 @@
 from datetime import datetime
 
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.models import Group
 
-from inyoka.portal.user import User, Group, UserBanned
+from inyoka.portal.user import User, UserBanned
 
 
 class InyokaAuthBackend(ModelBackend):

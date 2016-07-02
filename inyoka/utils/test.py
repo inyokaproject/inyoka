@@ -14,12 +14,13 @@ from importlib import import_module
 import responses
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import Group
 from django.core.cache import caches
 from django.http import HttpRequest
 from django.test import TestCase as _TestCase
 from django.test.client import Client
 
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import User
 from inyoka.utils.spam import (
     get_comment_check_url,
     get_mark_ham_url,

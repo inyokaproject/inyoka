@@ -13,8 +13,8 @@ import operator as ops
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
 from django.core.cache import cache
+from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy
-from inyoka.portal.user import Group
 
 #: Mapping from privilege strings to human readable descriptions
 PRIVILEGES_DETAILS = [
