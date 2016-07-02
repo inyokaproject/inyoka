@@ -15,8 +15,9 @@ from __future__ import print_function
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.contrib.auth.models import Group
 
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import User
 
 
 class Command(BaseCommand):
