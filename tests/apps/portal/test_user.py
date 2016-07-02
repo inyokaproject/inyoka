@@ -195,7 +195,7 @@ class TestUserHasContent(TestCase):
 
 class TestGroupModel(TestCase):
     def setUp(self):
-        self.group = Group.objects.create(name='testing', is_public=True)
+        self.group = Group.objects.create(name='testing')
 
     def test_icon(self):
         # TODO? What should be tested here?
