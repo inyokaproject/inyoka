@@ -19,6 +19,17 @@ from django.contrib.auth.models import Group
 
 from inyoka.portal.user import User
 
+def create_system_groups():
+    """
+    Creates the required system groups. Only useful in unit test or management
+    commands.
+    """
+    for groupname in (settings.INYOKA_ANONYMOUS_GROUP_NAME,
+                  settings.INYOKA_REGISTERED_GROUP_NAME,
+                  settings.INYOKA_IKHAYA_GROUP_NAME):
+        group = Group.objects.get_or_create(name=groupname)[0]
+        group.system = True
+        group.save()
 
 class Command(BaseCommand):
     help = "Create System Users and Groups"
@@ -26,6 +37,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print('creating system groups...')
-        Group.objects.create_system_groups()
+        create_system_groups()
         print('creating system users...')
         User.objects.create_system_users()
