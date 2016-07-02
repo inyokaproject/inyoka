@@ -946,10 +946,6 @@ def user_edit_groups(request, username):
         raise Http404
 
     initial = model_to_dict(user)
-    if initial['_primary_group']:
-        initial.update({
-            'primary_group': Group.objects.get(id=initial['_primary_group']).name
-        })
     form = EditUserGroupsForm(initial=initial)
     groups = {group.name: group for group in Group.objects.all()}
     if request.method == 'POST':
@@ -962,19 +958,6 @@ def user_edit_groups(request, username):
                                 request.POST.getlist('user_groups_not_joined')]
             user.groups.remove(*groups_not_joined)
             user.groups.add(*groups_joined)
-
-            if user._primary_group:
-                oprimary = user._primary_group.name
-            else:
-                oprimary = ""
-
-            primary = None
-            if oprimary != data['primary_group']:
-                try:
-                    primary = Group.objects.get(name=data['primary_group'])
-                except Group.DoesNotExist:
-                    primary = None
-            user._primary_group = primary
 
             user.save()
             messages.success(request,
