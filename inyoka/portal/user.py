@@ -10,8 +10,6 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
-from os import path
-from StringIO import StringIO
 
 from django.conf import settings
 from django.contrib.auth.models import (
@@ -28,14 +26,12 @@ from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-from PIL import Image
 
 from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import InyokaMarkupField, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
-from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key, is_valid_username
@@ -274,6 +270,7 @@ class UserManager(BaseUserManager):
         user = get_or_create(settings.INYOKA_SYSTEM_USER)
         user.system = True
         user.save()
+
 
 def upload_to_avatar(instance, filename):
     fn = 'portal/avatars/avatar_user%d.%s'
