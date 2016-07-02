@@ -186,42 +186,6 @@ def send_activation_mail(user):
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
-class GroupManager(models.Manager):
-
-    def get_registered_group(self):
-        """
-        Return the Group which all registered users contains. This allows us to
-        give rights to all of them at the same time.
-        """
-        return Group.objects.get(name__iexact=settings.INYOKA_REGISTERED_GROUP_NAME)
-
-    def get_ikhaya_group(self):
-        """
-        Return the Group required for the Ikhaya Team.
-        """
-        return Group.objects.get(name__iexact=settings.INYOKA_IKHAYA_GROUP_NAME)
-
-    def get_anonymous_group(self):
-        """
-        Return the Group which contains our anonymous user. All Permissions and Privileges
-        this group gets are only used for not registered and therfor anonymous User
-        Sessions.
-        """
-        return Group.objects.get(name__iexact=settings.INYOKA_ANONYMOUS_GROUP_NAME)
-
-    def create_system_groups(self):
-        """
-        Creates the required system groups. Only useful in unit test or management
-        commands.
-        """
-        for groupname in (settings.INYOKA_ANONYMOUS_GROUP_NAME,
-                      settings.INYOKA_REGISTERED_GROUP_NAME,
-                      settings.INYOKA_IKHAYA_GROUP_NAME):
-            group = Group.objects.get_or_create(name=groupname)[0]
-            group.system = True
-            group.save()
-
-
 class UserManager(BaseUserManager):
     def get_by_username_or_email(self, name):
         """Get a user by it's username or email address"""
