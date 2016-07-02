@@ -32,7 +32,6 @@ from jinja2 import (
     Template,
     TemplateNotFound,
     contextfunction,
-    escape,
 )
 
 from inyoka import INYOKA_VERSION
@@ -81,7 +80,6 @@ def get_dtd():
 
 def populate_context_defaults(context, flash=False):
     """Fill in context defaults."""
-    from inyoka.forum.acl import have_privilege
     from inyoka.forum.models import Topic
     from inyoka.portal.models import PrivateMessageEntry
     from inyoka.utils.storage import storage
@@ -164,7 +162,7 @@ def populate_context_defaults(context, flash=False):
             MOBILE=get_flavour() == 'mobile',
             _csrf_token=force_unicode(csrf(request)['csrf_token']),
             special_day_css=check_special_day(),
-            LANGUAGE_CODE = settings.LANGUAGE_CODE
+            LANGUAGE_CODE=settings.LANGUAGE_CODE
         )
 
         if not flash:
@@ -184,7 +182,6 @@ def populate_context_defaults(context, flash=False):
         article_report_count=reported_articles,
         suggestion_count=suggestions,
         event_count=events,
-        have_privilege=have_privilege,
     )
 
 

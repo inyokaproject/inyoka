@@ -18,8 +18,6 @@ from getpass import getpass
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from inyoka.forum.acl import PRIVILEGES_DETAILS, join_flags
-from inyoka.forum.models import Forum, Privilege
 from inyoka.portal.user import User
 
 

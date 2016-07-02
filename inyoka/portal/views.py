@@ -33,14 +33,7 @@ from django.views.decorators.http import require_POST
 from django_mobile import get_flavour
 from PIL import Image
 
-from inyoka.forum.acl import (
-    PRIVILEGES_DETAILS,
-    REVERSED_PRIVILEGES_BITS,
-    filter_invisible,
-    split_bits,
-    split_negative_positive,
-)
-from inyoka.forum.models import Forum, Privilege
+from inyoka.forum.models import Forum
 from inyoka.ikhaya.models import Article, Category, Event
 from inyoka.portal.filters import SubscriptionFilter
 from inyoka.portal.forms import (
@@ -122,11 +115,6 @@ AUTOBAN_SPAMMER_WORDS = (
     ('Sprachaustausch', 'gesundheitlich', 'immediately'),
 )
 # autoban gets active if all words of a tuple match
-
-tmp = dict(PRIVILEGES_DETAILS)
-PRIVILEGE_DICT = {bits: tmp[key]
-                  for bits, key in REVERSED_PRIVILEGES_BITS.iteritems()}
-del tmp
 
 
 CONFIRM_ACTIONS = {
@@ -758,17 +746,6 @@ def usercp_deactivate(request):
 
 
 @require_permission('user_edit')
-@templated('portal/special_rights.html')
-def users_with_special_rights(request):
-    users = User.objects.filter(privilege__isnull=False).distinct()\
-                .order_by('username').defer('settings')
-    return {
-        'users': users,
-        'count': len(users),
-    }
-
-
-@require_permission('user_edit')
 @templated('portal/user_overview.html')
 def user_edit(request, username):
     try:
@@ -890,45 +867,6 @@ def user_edit_status(request, username):
         'user': user,
         'form': form,
         'activation_link': activation_link
-    }
-
-
-@require_permission('user_edit')
-@templated('portal/user_edit_privileges.html')
-def user_edit_privileges(request, username):
-    try:
-        user = User.objects.get_by_username_or_email(username)
-    except User.DoesNotExist:
-        raise Http404
-
-    # collect forum privileges
-    forum_privileges = []
-    forums = Forum.objects.all()
-    for forum in forums:
-        try:
-            privilege = Privilege.objects.get(forum=forum, user=user)
-        except Privilege.DoesNotExist:
-            privilege = None
-
-        forum_privileges.append((
-            forum.id,
-            forum.name,
-            list(split_bits(privilege and privilege.positive or None)),
-            list(split_bits(privilege and privilege.negative or None))
-        ))
-
-    permissions = []
-
-    groups = user.groups.all()
-
-    forum_privileges = sorted(forum_privileges, lambda x, y: cmp(x[1], y[1]))
-
-    return {
-        'user': user,
-        'form': form,
-        'forum_privileges': PRIVILEGE_DICT,
-        'user_forum_privileges': forum_privileges,
-        'permissions': sorted(permissions, key=lambda p: p[1]),
     }
 
 
@@ -1356,34 +1294,6 @@ def group_edit(request, name=None):
         if form.is_valid():
             group = form.save()
 
-            #: forum privileges
-            for key, value in request.POST.iteritems():
-                if key.startswith('forum_privileges_'):
-                    negative, positive = split_negative_positive(value)
-                    forum_id = int(key.split('_')[2])
-                    # Try to retrieve the privileges for the group. If they exists
-                    # set the new positive and negative values. I there are no
-                    # privileges check if new have to be set. If this validates to
-                    # true, create those.
-                    # If there is a privilege instance but there are neither
-                    # positive nor negative settings, remove the instance
-                    try:
-                        privilege = Privilege.objects.get(forum=forum_id,
-                                                          user=None, group=group)
-                    except Privilege.DoesNotExist:
-                        if (positive or negative):
-                            privilege = Privilege(group=group, forum_id=forum_id)
-                        else:
-                            privilege = None
-
-                    if privilege:
-                        if (positive or negative):
-                            privilege.positive = positive
-                            privilege.negative = negative
-                            privilege.save()
-                        else:
-                            privilege.delete()
-
             if new:
                 msg = _(u'The group “%(group)s” was created successfully.')
             else:
@@ -1394,25 +1304,7 @@ def group_edit(request, name=None):
     else:
         form = EditGroupForm(instance=group)
 
-    # collect forum privileges
-    forum_privileges = []
-    forums = Forum.objects.all()
-    for forum in forums:
-        try:
-            privilege = Privilege.objects.get(forum=forum, group=group, user=None)
-        except Privilege.DoesNotExist:
-            privilege = None
-
-        forum_privileges.append((
-            forum.id,
-            forum.name,
-            list(split_bits(privilege and privilege.positive or None)),
-            list(split_bits(privilege and privilege.negative or None))
-        ))
-
     return {
-        'group_forum_privileges': forum_privileges,
-        'forum_privileges': PRIVILEGE_DICT,
         'group_name': '' or not new and group.name,
         'form': form,
         'is_new': new,
@@ -1437,7 +1329,6 @@ app_feed_forms = {
 
 @templated('portal/feedselector.html')
 def feedselector(request, app=None):
-    anonymous_user = User.objects.get_anonymous_user()
     forms = {}
     for fapp in ('forum', 'ikhaya', 'planet', 'wiki'):
         if app in (fapp, None):
@@ -1447,7 +1338,9 @@ def feedselector(request, app=None):
         else:
             forms[fapp] = None
     if forms['forum'] is not None:
-        forums = filter_invisible(anonymous_user, Forum.objects.get_cached())
+# FIXME: filter_invisble must be replaced:
+#        forums = filter_invisible(anonymous_user, Forum.objects.get_cached())
+        forums = Forum.objects.get_cached()
         forms['forum'].fields['forum'].choices = [('', _(u'Please choose'))] + \
             [(f.slug, f.name) for f in forums]
     if forms['ikhaya'] is not None:
