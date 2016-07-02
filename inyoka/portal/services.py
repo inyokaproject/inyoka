@@ -49,10 +49,7 @@ def on_get_user_list(request):
 
 def on_get_group_list(request):
     q = request.GET.get('q', '')
-    # if len(q) < 3:
-    #    return
-    qs = list(Group.objects.filter(name__istartswith=q,
-                                  is_public__exact=True)[:11])
+    qs = list(Group.objects.filter(name__istartswith=q)[:11])
     groupnames = [x.name for x in qs]
     if len(qs) > 10:
         groupnames[10] = '...'

@@ -548,13 +548,10 @@ class EditGroupForm(forms.ModelForm):
         required=False)
     forum_privileges = forms.MultipleChoiceField(label=ugettext_lazy(u'Forum privileges'),
                                                  required=False)
-    import_icon_from_global = forms.BooleanField(label=ugettext_lazy(u'Use global team icon'),
-        required=False)
 
     class Meta:
         model = Group
-        fields = ('name', 'is_public', 'icon')
-        widgets = {'icon': forms.ClearableFileInput}
+        fields = ('name',)
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance')
@@ -577,37 +574,9 @@ class EditGroupForm(forms.ModelForm):
                 u'The group name contains invalid chars'))
         return data['name']
 
-    def clean_import_icon_from_global(self):
-        import_from_global = self.cleaned_data['import_icon_from_global']
-        if import_from_global and not storage['team_icon']:
-            raise forms.ValidationError(_(u'A global team icon was not yet defined.'))
-
     def save(self, commit=True):
         group = super(EditGroupForm, self).save(commit=False)
         data = self.cleaned_data
-
-        if data['icon'] and not data['import_icon_from_global']:
-            icon_resized = group.save_icon(data['icon'])  # noqa
-# TODO: Reenable?!
-#            if icon_resized:
-#                messages.info(request,
-#                    _(u'The icon you uploaded was scaled to '
-#                      '%(w)dx%(h)d pixels. Please note that this '
-#                      'may result in lower quality.') % {
-#                          'w': icon_mw,
-#                          'h': icon_mh,
-#                      })
-
-        if data['import_icon_from_global']:
-            if group.icon:
-                group.icon.delete(save=False)
-
-            icon_path = 'portal/team_icons/team_%s.%s' % (group.name,
-                        storage['team_icon'].split('.')[-1])
-
-            icon = default_storage.open(storage['team_icon'])
-            group.icon.save(icon_path, icon)
-            icon.close()
 
         # permissions
         permissions = 0

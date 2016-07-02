@@ -464,7 +464,7 @@ def profile(request, username):
     if request.user.can('group_edit') or request.user.can('user_edit'):
         groups = user.groups.all()
     else:
-        groups = user.groups.filter(is_public=True)
+        groups = ()
 
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
@@ -1320,8 +1320,8 @@ def grouplist(request, page=1):
         groups = Group.objects.all()
         user_groups = request.user.groups.all()
     else:
-        groups = Group.objects.filter(is_public=True)
-        user_groups = request.user.groups.filter(is_public=True)
+        groups = ()
+        user_groups = ()
     table = Sortable(groups, request.GET, 'name',
                      columns=['id', 'name'])
     pagination = Pagination(request, table.get_queryset(), page, 15,
@@ -1339,7 +1339,7 @@ def grouplist(request, page=1):
 def group(request, name, page=1):
     """Shows the informations about the group named `name`."""
     group = Group.objects.get(name__iexact=name)
-    if not (group.is_public or request.user.can('group_edit') or request.user.can('user_edit')):
+    if not (request.user.can('group_edit') or request.user.can('user_edit')):
         raise Http404
     users = group.user_set.all()
 
