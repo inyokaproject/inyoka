@@ -17,6 +17,7 @@ from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
+    Group,
     update_last_login,
 )
 from django.contrib.auth.signals import user_logged_in
@@ -246,75 +247,6 @@ class GroupManager(models.Manager):
             group.save()
 
 
-class Group(models.Model):
-    name = models.CharField(ugettext_lazy(u'Group name'), max_length=80,
-                unique=True, db_index=True, error_messages={
-                    'unique': ugettext_lazy(u'This group name is already taken. '
-                                u'Please choose another one.')})
-    is_public = models.BooleanField(ugettext_lazy(u'Public profile'),
-                default=False, help_text=ugettext_lazy(u'Will be shown in the '
-                                    u'group overview and the user profile'))
-    permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
-    icon = models.ImageField(ugettext_lazy(u'Team icon'),
-                             upload_to='portal/team_icons',
-                             blank=True, null=True)
-    system = models.BooleanField(verbose_name=ugettext_lazy(u'System group'),
-                                 default=False,
-                                 null=False)
-    objects = GroupManager()
-
-    class Meta:
-        verbose_name = ugettext_lazy(u'Usergroup')
-        verbose_name_plural = ugettext_lazy(u'Usergroups')
-
-    @property
-    def icon_url(self):
-        if not self.icon:
-            return None
-        return self.icon.url
-
-    def save_icon(self, img):
-        """
-        Save `img` to the file system.
-
-        :return: a boolean if the `img` was resized or not.
-        """
-        data = img.read()
-        image = Image.open(StringIO(data))
-        fn = 'portal/team_icons/team_%s.%s' % (self.name, image.format.lower())
-        image_path = path.join(settings.MEDIA_ROOT, fn)
-        # clear the file system
-        if self.icon:
-            self.icon.delete(save=False)
-
-        std = storage.get_many(('team_icon_width', 'team_icon_height'))
-        # According to PIL.Image:
-        # "The requested size in pixels, as a 2-tuple: (width, height)."
-        max_size = (int(std['team_icon_width']),
-                    int(std['team_icon_height']))
-        resized = False
-        if image.size > max_size:
-            image = image.resize(max_size)
-            image.save(image_path)
-            resized = True
-        else:
-            image.save(image_path)
-        self.icon = fn
-
-        return resized
-
-    def get_absolute_url(self, action=None):
-        if action == 'edit':
-            return href('portal', 'group', self.name, 'edit')
-        return href('portal', 'group', self.name)
-
-    def __unicode__(self):
-        return self.name
-
-    def __repr__(self):
-        return unicode(self).encode('utf-8')
-
-
 class UserManager(BaseUserManager):
     def get_by_username_or_email(self, name):
         """Get a user by it's username or email address"""
@@ -457,7 +389,6 @@ class User(AbstractBaseUser):
     website = models.URLField(ugettext_lazy(u'Website'), blank=True)
     launchpad = models.CharField(ugettext_lazy(u'Launchpad username'), max_length=50, blank=True)
     settings = JSONField(ugettext_lazy(u'Settings'), default={})
-    _permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
 
     # forum attribues
     forum_last_read = models.IntegerField(ugettext_lazy(u'Last read post'),
@@ -549,25 +480,12 @@ class User(AbstractBaseUser):
         """Sends an e-mail to this User."""
         send_mail(subject, message, from_email, [self.email])
 
-
-    @deferred
+# FIXME: Entering Danger Zone!
     def permissions(self):
-        if not self.is_authenticated():
-            return 0
-        key = 'user_permissions/%s' % self.id
-        result = cache.get(key)
-        if result is None:
-            result = self._permissions
-            for group in self.groups.all():
-                result |= group.permissions
-            cache.set(key, result)
-        return result
+        return 65536
 
     def can(self, name):
-        """
-        Return a boolean whether the user has a special privilege.
-        """
-        return bool(PERMISSION_MAPPING[name] & self.permissions)
+        return True
 
     @deferred
     def _readstatus(self):

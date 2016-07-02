@@ -11,6 +11,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.models import Group
 from django.db.models import Max
 from django.utils.html import escape, smart_urlquote
 from django.utils.text import Truncator
@@ -18,7 +19,6 @@ from django.utils.translation import ugettext as _
 
 from inyoka.planet.forms import EditBlogForm, SuggestBlogForm
 from inyoka.planet.models import Blog, Entry
-from inyoka.portal.user import Group
 from inyoka.portal.utils import check_login, require_permission
 from inyoka.utils import generic
 from inyoka.utils.dates import group_by_day

@@ -14,11 +14,12 @@ from hashlib import md5
 from urlparse import urlparse
 
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.http import Http404
 from django.utils.dates import MONTHS, WEEKDAYS
 
 from inyoka.ikhaya.models import Event
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import User
 from inyoka.utils.captcha import Captcha
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.templating import render_template
