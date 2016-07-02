@@ -344,5 +344,8 @@ COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two weeks
 # disable anonymous user creating in django-guardian
 ANONYMOUS_USER_NAME = None
 
+# disable guardian monkey patching, for custom user model support
+GUARDIAN_MONKEY_PATCH = False
+
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
