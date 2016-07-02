@@ -22,6 +22,7 @@ from time import time
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.db import models, transaction
 from django.db.models import F, Count, Max
@@ -43,7 +44,7 @@ from inyoka.forum.constants import (
     UBUNTU_DISTROS,
 )
 from inyoka.portal.models import Subscription
-from inyoka.portal.user import Group, User
+from inyoka.portal.user import User
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import (
