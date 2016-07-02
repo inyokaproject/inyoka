@@ -236,6 +236,7 @@ INSTALLED_APPS = (
     'inyoka.markup.apps.MarkupAppConfig',
     'django_mobile',
     'django_hosts',
+    'guardian',
 )
 
 # Set the default sentry site
@@ -314,7 +315,11 @@ CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
 
 AUTH_USER_MODEL = 'portal.User'
-AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)
+AUTHENTICATION_BACKENDS = (
+    'inyoka.portal.auth.InyokaAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
+)
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
@@ -335,6 +340,9 @@ FORMAT_MODULE_PATH = 'inyoka.locale'
 
 # Used for user.post_count, forum.topic_count etc.
 COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two weeks
+
+# disable anonymous user creating in django-guardian
+ANONYMOUS_USER_NAME = None
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
