@@ -426,8 +426,7 @@ class EditUserProfileForm(UserCPProfileForm):
 
 
 class EditUserGroupsForm(forms.Form):
-    primary_group = forms.CharField(label=ugettext_lazy(u'Primary group'), required=False,
-        help_text=ugettext_lazy(u'Will be used to display the team icon'))
+    pass
 
 
 class CreateUserForm(forms.Form):

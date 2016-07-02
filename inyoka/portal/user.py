@@ -136,7 +136,7 @@ def deactivate_user(user):
         user.email = 'user%d@ubuntuusers.de.invalid' % user.id
     user.set_unusable_password()
     user.groups.clear()
-    user.avatar = user._primary_group = None
+    user.avatar = None
     user.jabber = user.location = user.signature = user.gpgkey = \
         user.location = user.website = user.launchpad = user.member_title = ''
     user.save()
@@ -473,12 +473,6 @@ class User(AbstractBaseUser):
                              upload_to='portal/team_icons',
                              blank=True, null=True)
 
-    # primary group from which the user gets some settings
-    # e.g the membericon
-    _primary_group = models.ForeignKey(Group, related_name='primary_users_set',
-                                       blank=True, null=True,
-                                       db_column='primary_group_id')
-
     def save(self, *args, **kwargs):
         """
         Save method that dumps `self.settings` before and cleanup
@@ -574,20 +568,6 @@ class User(AbstractBaseUser):
         Return a boolean whether the user has a special privilege.
         """
         return bool(PERMISSION_MAPPING[name] & self.permissions)
-
-    @deferred
-    def primary_group(self):
-        # FIXME:
-        # primary_group is currently only used to display the teammembers
-        # icons, not checking self.groups saves shitloads of queries
-        # if self._primary_group is None:
-        # we use the first assigned group as the primary one
-        #    groups = self.groups.all()
-        #    if len(groups) >= 1:
-        #        return groups[0]
-        #    else:
-        #        return None
-        return self._primary_group
 
     @deferred
     def _readstatus(self):
