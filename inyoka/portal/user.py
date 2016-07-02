@@ -468,6 +468,11 @@ class User(AbstractBaseUser):
     member_title = models.CharField(ugettext_lazy(u'Team affiliation / Member title'),
                                     blank=True, null=True, max_length=200)
 
+    # member icon
+    icon = models.ImageField(ugettext_lazy(u'Team icon'),
+                             upload_to='portal/team_icons',
+                             blank=True, null=True)
+
     # primary group from which the user gets some settings
     # e.g the membericon
     _primary_group = models.ForeignKey(Group, related_name='primary_users_set',
