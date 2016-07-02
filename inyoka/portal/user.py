@@ -15,6 +15,7 @@ from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
+    PermissionsMixin,
     Group,
     update_last_login,
 )
@@ -26,6 +27,7 @@ from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
+from guardian.mixins import GuardianUserMixin
 
 from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import InyokaMarkupField, JSONField
@@ -277,7 +279,7 @@ def upload_to_avatar(instance, filename):
     return fn % (instance.pk, filename.rsplit('.', 1)[-1])
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     """User model that contains all informations about an user."""
     STATUS_INACTIVE = 0
     STATUS_ACTIVE = 1
@@ -306,10 +308,6 @@ class User(AbstractBaseUser):
                                  null=False)
     date_joined = models.DateTimeField(verbose_name=ugettext_lazy(u'Member since'),
                                        default=datetime.utcnow)
-    groups = models.ManyToManyField(Group,
-                                    verbose_name=ugettext_lazy(u'Groups'),
-                                    blank=True,
-                                    related_name='user_set')
 
     banned_until = models.DateTimeField(verbose_name=ugettext_lazy(u'Banned until'),
                                         null=True, blank=True,
@@ -388,7 +386,6 @@ class User(AbstractBaseUser):
         else:
             return False
 
-    @property
     def is_anonymous(self):
         return self.username == settings.INYOKA_ANONYMOUS_USER
 
