@@ -499,7 +499,30 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                       .filter(topic__forum__user_count_posts=True),
             use_task=True)
 
-    # TODO: reevaluate if needed.
+    def unban(self):
+        """
+        Check if a user is banned, either permanent or temporary and remove
+        the ban if possible.
+
+        Returns `True` if user is not banned or could be unbanned, or `False` otherwise.
+        """
+        if self.is_banned:
+            # user banned ad infinitum
+            if self.banned_until is None:
+                return False
+            else:
+                # user banned for a specific period of time
+                if (self.banned_until >= datetime.utcnow()):
+                    return False
+                else:
+                    # period of time gone, reset status
+                    self.status = User.STATUS_ACTIVE
+                    self.banned_until = None
+                    self.save()
+                    registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+                    self.groups.add(registered_group)
+        return True
+
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
 
 
