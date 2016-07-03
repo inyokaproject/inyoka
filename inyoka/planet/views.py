@@ -12,6 +12,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Max
 from django.utils.html import escape, smart_urlquote
 from django.utils.text import Truncator
@@ -19,7 +20,6 @@ from django.utils.translation import ugettext as _
 
 from inyoka.planet.forms import EditBlogForm, SuggestBlogForm
 from inyoka.planet.models import Blog, Entry
-from inyoka.portal.utils import check_login, require_permission
 from inyoka.utils import generic
 from inyoka.utils.dates import group_by_day
 from inyoka.utils.feeds import AtomFeed, atom_feed
@@ -43,7 +43,7 @@ blog_list = generic.ListView.as_view(default_column='-latest_update',
     queryset=Blog.objects.annotate(latest_update=Max('entry__pub_date')),
     template_name='planet/blog_list.html',
     columns=['name', 'user', 'latest_update', 'active'],
-    required_permission='blog_edit',
+    permission_required='planet.change_blog',
     base_link=href('planet', 'blogs'))
 
 
@@ -51,9 +51,10 @@ blog_edit = generic.CreateUpdateView(model=Blog,
     form_class=EditBlogForm,
     template_name='planet/blog_edit.html',
     context_object_name='blog', slug_field='id',
-    required_permission='blog_edit')
+    permission_required='planet.change_blog')
 
 
+@permission_required('planet.view_blog', raise_exception=True)
 @templated('planet/index.html', modifier=context_modifier)
 def index(request, page=1):
     """
@@ -61,7 +62,7 @@ def index(request, page=1):
     The page number is optional.
     """
     entries = Entry.objects.select_related('blog')
-    if not request.user.can('blog_edit'):
+    if not request.user.has_perms('planet.view_hidden_entry'):
         entries = entries.filter(hidden=False)
 
     pagination = Pagination(request, entries, page, 25, href('planet'))
@@ -75,7 +76,8 @@ def index(request, page=1):
     }
 
 
-@check_login(message=_(u'You need to be logged in to suggest a blog'))
+@login_required
+@permission_required('planet.suggest_blog', raise_exception=True)
 @templated('planet/suggest.html', modifier=context_modifier)
 def suggest(request):
     """
@@ -109,6 +111,7 @@ def suggest(request):
     }
 
 
+@permission_required('planet.view_blog', raise_exception=True)
 @atom_feed(name='planet_feed')
 def feed(request, mode='short', count=10):
     """show the feeds for the planet"""
@@ -147,7 +150,8 @@ def feed(request, mode='short', count=10):
     return feed
 
 
-@require_permission('blog_edit')
+@login_required
+@permission_required('planet.hide_entry', raise_exception=True)
 @does_not_exist_is_404
 def hide_entry(request, id):
     """Hide a planet entry"""
@@ -171,6 +175,7 @@ def hide_entry(request, id):
     return HttpResponseRedirect(href('planet'))
 
 
+@permission_required('planet.view_blog', raise_exception=True)
 def export(request, export_type):
     """Export the blog ist as OPML or FOAF"""
     blogs = Blog.objects.filter(active=True).all()

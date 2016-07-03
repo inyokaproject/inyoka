@@ -9,6 +9,8 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponseRedirect
 from django.utils.html import escape
@@ -16,13 +18,13 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from django.views.generic import base, edit, list
 
-from inyoka.portal.utils import require_permission
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.http import TemplateResponse
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
+from inyoka.utils.django_19_auth_mixins import PermissionRequiredMixin as _PermissionRequiredMixin
 
 
 def trigger_fix_errors_message(request):
@@ -70,67 +72,6 @@ class EditMixin(object):
         return self.urlgroup_name or self.context_object_name
 
 
-class PermissionMixin(object):
-    """
-    Like the `permission_required` decorator, but for generic views.
-    The check can be explicitely disabled by setting `required_permission`
-    to False
-    """
-    required_permission = None
-
-    def get(self, *args, **kwargs):
-        func = super(PermissionMixin, self).get
-        if self.required_permission:
-            func = require_permission(self.required_permission)(func)
-        return func(*args, **kwargs)
-
-    def post(self, *args, **kwargs):
-        func = super(PermissionMixin, self).post
-        if self.required_permission:
-            func = require_permission(self.required_permission)(func)
-        return func(*args, **kwargs)
-
-
-class LoginMixin(object):
-    """
-    This mixin forces a redirection to the login page if the requesting user
-    is not logged in and if either :py:attr:`required_login` or
-    :py:attr:`required_login_METHOD` is `True`, depending on the current
-    request method.
-    """
-    required_login = False
-    required_login_get = False
-    required_login_post = False
-    required_login_delete = False
-
-    def get(self, *args, **kwargs):
-        func = super(LoginMixin, self).get
-        req = args[0]
-        if not self.required_login and not self.required_login_get or \
-                req.user.is_authenticated():
-            return func(*args, **kwargs)
-        args = {'next': '//%s%s' % (req.get_host(), req.path)}
-        return HttpResponseRedirect(href('portal', 'login', **args))
-
-    def delete(self, *args, **kwargs):
-        func = super(LoginMixin, self).delete
-        req = args[0]
-        if not self.required_login and not self.required_login_delete or \
-                req.user.is_authenticated():
-            return func(*args, **kwargs)
-        args = {'next': '//%s%s' % (req.get_host(), req.path)}
-        return HttpResponseRedirect(href('portal', 'login', **args))
-
-    def post(self, *args, **kwargs):
-        func = super(LoginMixin, self).post
-        req = args[0]
-        if not self.required_login and self.required_login_post or \
-                req.user.is_authenticated():
-            return func(*args, **kwargs)
-        args = {'next': '//%s%s' % (req.get_host(), req.path)}
-        return HttpResponseRedirect(href('portal', 'login', **args))
-
-
 class FilterMixin(object):
     filtersets = []
 
@@ -148,12 +89,25 @@ class FilterMixin(object):
         return qs
 
 
-class CreateView(LoginMixin, PermissionMixin, TemplateResponseMixin, EditMixin,
+class PermissionRequiredMixin(_PermissionRequiredMixin):
+    raise_exception = True
+    login_required = True
+
+    def handle_no_authentication(self):
+        return redirect_to_login(self.request.build_absolute_uri(), self.get_login_url(), self.get_redirect_field_name())
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.login_required and not request.user.is_authenticated():
+            return self.handle_no_authentication()
+        return super(PermissionRequiredMixin, self).dispatch(request, *args, **kwargs)
+
+
+class CreateView(PermissionRequiredMixin, TemplateResponseMixin, EditMixin,
                  edit.BaseCreateView):
     create = True
 
 
-class UpdateView(LoginMixin, PermissionMixin, TemplateResponseMixin, EditMixin,
+class UpdateView(PermissionRequiredMixin, TemplateResponseMixin, EditMixin,
                  edit.BaseUpdateView):
     create = False
 
@@ -228,7 +182,7 @@ class BaseDeleteView(edit.BaseDeleteView):
         return HttpResponseRedirect(self.redirect_url)
 
 
-class DeleteView(LoginMixin, PermissionMixin, BaseDeleteView):
+class DeleteView(PermissionRequiredMixin, BaseDeleteView):
     pass
 
 
@@ -280,5 +234,5 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
         return self.render_to_response(context)
 
 
-class ListView(LoginMixin, PermissionMixin, BaseListView):
+class ListView(PermissionRequiredMixin, BaseListView):
     pass
