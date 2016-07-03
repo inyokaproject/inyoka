@@ -390,7 +390,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         return self.username == settings.INYOKA_ANONYMOUS_USER
 
     def is_authenticated(self):
-        return not self.is_anonymous
+        return not self.is_anonymous()
 
     @property
     def is_active(self):
