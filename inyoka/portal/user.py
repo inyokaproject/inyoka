@@ -390,7 +390,6 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         return self.username == settings.INYOKA_ANONYMOUS_USER
 
     def is_authenticated(self):
-        # Not a property to be compatible with django.
         return not self.is_anonymous
 
     @property
