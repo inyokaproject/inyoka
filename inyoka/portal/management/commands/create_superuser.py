@@ -46,5 +46,6 @@ class Command(BaseCommand):
                     password = ''
         with transaction.atomic():
             user = User.objects.register_user(username, email, password, False)
+            user.is_superuser = True
             user.save()
             print('created superuser')
