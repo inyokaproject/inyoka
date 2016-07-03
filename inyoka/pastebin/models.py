@@ -32,6 +32,9 @@ class Entry(models.Model):
         verbose_name = ugettext_lazy('Entry')
         verbose_name_plural = ugettext_lazy('Entries')
         ordering = ('-id',)
+        permissions = (
+            ('view_entry', 'View Entry'),
+        )
 
     @property
     def referrer_list(self):
