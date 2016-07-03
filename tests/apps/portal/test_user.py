@@ -17,7 +17,7 @@ from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.pastebin.models import Entry
 from inyoka.portal.models import PrivateMessage, Subscription
-from inyoka.portal.user import Group, User, deactivate_user
+from inyoka.portal.user import User, deactivate_user
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
 
@@ -191,12 +191,3 @@ class TestUserHasContent(TestCase):
         Subscription.objects.create(user=self.user, content_object=topic)
 
         self.assertTrue(self.user.has_content())
-
-
-class TestGroupModel(TestCase):
-    def setUp(self):
-        self.group = Group.objects.create(name='testing')
-
-    def test_icon(self):
-        # TODO? What should be tested here?
-        self.assertEqual(self.group.icon_url, None)
