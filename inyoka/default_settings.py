@@ -317,7 +317,6 @@ DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
 AUTH_USER_MODEL = 'portal.User'
 AUTHENTICATION_BACKENDS = (
     'inyoka.portal.auth.InyokaAuthBackend',
-    'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
 )
 
@@ -342,7 +341,7 @@ FORMAT_MODULE_PATH = 'inyoka.locale'
 COUNTER_CACHE_TIMEOUT = 60 * 60 * 24 * 2  # two weeks
 
 # disable anonymous user creating in django-guardian
-ANONYMOUS_USER_NAME = None
+ANONYMOUS_USER_NAME = u'anonymous'
 
 # disable guardian monkey patching, for custom user model support
 GUARDIAN_MONKEY_PATCH = False
