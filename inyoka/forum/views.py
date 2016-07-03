@@ -76,6 +76,7 @@ from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
+from inyoka.utils.generic import PermissionRequiredMixin
 from inyoka.utils.http import (
     AccessDeniedResponse,
     does_not_exist_is_404,
@@ -90,7 +91,6 @@ from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
-from inyoka.utils.views import PermissionRequiredMixin
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import quote_text
 
@@ -1758,18 +1758,7 @@ class WelcomeMessageView(PermissionRequiredMixin, DetailView):
     """
     model = Forum
     template_name = 'forum/welcome.html'
-
-    def has_permission(self):
-        """
-        The user needs permissions to read the forum to get the welcome page.
-        """
-        privileges = get_forum_privileges(
-            self.request.user,
-            self.object)
-
-        if not check_privilege(privileges, 'read'):
-            return False
-        return True
+    permission_required = 'forum.read_forum'
 
     def dispatch(self, *args, **kwargs):
         """

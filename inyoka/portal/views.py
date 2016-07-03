@@ -127,7 +127,7 @@ CONFIRM_ACTIONS = {
 page_delete = generic.DeleteView.as_view(model=StaticPage,
     template_name='portal/page_delete.html',
     redirect_url=href('portal', 'pages'),
-    required_permission='static_page_edit')
+    permission_required='static_page_edit')
 
 
 files = generic.ListView.as_view(model=StaticFile,
@@ -135,7 +135,7 @@ files = generic.ListView.as_view(model=StaticFile,
     default_column='identifier',
     template_name='portal/files.html',
     columns=['identifier', 'is_ikhaya_icon'],
-    required_permission='static_file_edit',
+    permission_required='static_file_edit',
     base_link=href('portal', 'files'))
 
 
@@ -143,14 +143,14 @@ file_edit = generic.CreateUpdateView(model=StaticFile,
     form_class=EditFileForm,
     template_name='portal/file_edit.html',
     context_object_name='file', slug_field='identifier',
-    required_permission='static_file_edit')
+    permission_required='static_file_edit')
 
 
 file_delete = generic.DeleteView.as_view(model=StaticFile,
     template_name='portal/files_delete.html',
     redirect_url=href('portal', 'files'),
     slug_field='identifier',
-    required_permission='static_file_edit')
+    permission_required='static_file_edit')
 
 
 @templated('portal/index.html')
