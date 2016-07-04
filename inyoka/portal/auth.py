@@ -88,15 +88,28 @@ class InyokaAuthBackend(object):
 
         This Backend don't support object based permissions, and will always
         return `False` if requests through this backend if `obj` is given.
+
+        Inactive Users, except anonymous, always get back `False` for security
+        reasons.
         """
         if obj is not None:
             return False
+
+        if not (user_obj.is_active or user_obj.is_anonymous):
+            return False
+
         return perm in self.get_all_permissions(user_obj, obj)
 
     def has_module_perms(self, user_obj, app_label):
         """
         Returns True if user_obj has any permissions in the given app_label.
+
+        Inactive Users, except anonymous, always get back `False` for security
+        reasons.
         """
+        if not (user_obj.is_active or user_obj.is_anonymous):
+            return False
+
         for perm in self.get_all_permissions(user_obj):
             if perm[:perm.index('.')] == app_label:
                 return True
