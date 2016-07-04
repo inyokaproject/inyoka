@@ -5,6 +5,7 @@
 *.py[co]
 inyoka.xapdb/
 inyoka/media/
+inyoka/static/
 inyoka/static-collected/
 *.db
 tests/settings/custom.py
