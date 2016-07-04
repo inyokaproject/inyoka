@@ -70,7 +70,7 @@ class InyokaAuthBackend(object):
             else:
                 perms = Permission.objects.filter(group__user=user_obj)
             perms = perms.values_list('content_type__app_label', 'codename').order_by()
-            setattr(user_obj, perm_cache_name, set("%s.%s" % (ct, name) for ct, name in perms))
+            setattr(user_obj, perm_cache_name, set("%s.%s" % (app, permission) for app, permission in perms))
         return getattr(user_obj, perm_cache_name)
 
     def get_all_permissions(self, user_obj, obj=None):
