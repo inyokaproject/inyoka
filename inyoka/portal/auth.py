@@ -37,6 +37,7 @@ class InyokaAuthBackend(object):
         try:
             user = User.objects.get_by_username_or_email(username)
         except:
+            User().set_password(password)
             return None
 
         if user.is_banned:
