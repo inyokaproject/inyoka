@@ -38,14 +38,14 @@ class InyokaAuthBackend(object):
             User().set_password(password)
             return None
 
-        password_ok = user.check_password(password)
+        if not user.check_password(password):
+            return None
 
-        if user.is_banned and password_ok:
+        if user.is_banned:
             if not user.unban():
                 raise UserBanned()
 
-        if password_ok:
-            return user
+        return user
 
     def get_user_permissions(self, user_obj, obj=None):
         """
