@@ -29,8 +29,6 @@ class InyokaAuthBackend(object):
         address) and `password`.
 
         :Raises:
-            User.DoesNotExist
-                If the user with `username` does not exist
             UserBanned
                 If the found user was banned by an admin.
         """
@@ -40,11 +38,13 @@ class InyokaAuthBackend(object):
             User().set_password(password)
             return None
 
-        if user.is_banned:
+        password_ok = user.check_password(password)
+
+        if user.is_banned and password_ok:
             if not user.unban():
                 raise UserBanned()
 
-        if user.check_password(password):
+        if password_ok:
             return user
 
     def get_user_permissions(self, user_obj, obj=None):
