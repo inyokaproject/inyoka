@@ -341,6 +341,7 @@ class Article(models.Model, LockableObject):
             ('publish_article', 'User can publish articles'),
             ('view_article', 'User can view published articles'),
             ('view_unpublished_article', 'User can view unpublished articles'),
+            ('suggest_article', 'User can suggest articles'),
         )
 
 
@@ -517,4 +518,5 @@ class Event(models.Model):
         app_label = 'portal'
         permissions = (
             ('publish_event','User can publish events'),
+            ('suggest_event', 'User can suggest events'),
         )
