@@ -15,6 +15,7 @@ import pytz
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.decorators import permission_required, login_required
 from django.core.cache import cache
 from django.http import Http404, HttpResponseRedirect
 from django.utils.dates import MONTHS
@@ -51,7 +52,6 @@ from inyoka.portal.models import (
     Subscription,
 )
 from inyoka.portal.user import User
-from inyoka.portal.utils import check_login, require_permission
 from inyoka.utils import ctype, generic
 from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
@@ -112,7 +112,7 @@ def context_modifier(request, context):
 event_delete = generic.DeleteView.as_view(model=Event,
     template_name='ikhaya/event_delete.html',
     redirect_url=href('ikhaya', 'events'),
-    required_permission='event_edit')
+    permission_required='portal.change_event')
 
 
 @templated('ikhaya/index.html', modifier=context_modifier)
@@ -121,7 +121,7 @@ def index(request, year=None, month=None, category_slug=None, page=1,
     """Shows a few articles by different criteria"""
 
     category = None
-    can_read = request.user.can('article_read')
+    can_read = request.user.has_perm('ikhaya.view_article')
     articles = Article.published if not can_read else Article.objects
 
     _page = (page if page > 1 else None, )
@@ -180,7 +180,7 @@ def detail(request, year, month, day, slug):
         raise Http404()
     preview = None
     if article.hidden or article.pub_datetime > datetime.utcnow():
-        if not request.user.can('article_read'):
+        if not request.user.has_perm('ikhaya.view_article'):
             return AccessDeniedResponse()
         messages.info(request, _(u'This article is not visible for regular '
                                  u'users.'))
@@ -201,7 +201,7 @@ def detail(request, year, month, day, slug):
         elif form.is_valid():
             send_subscribe = False
             data = form.cleaned_data
-            if data.get('comment_id') and request.user.can('comment_edit'):
+            if data.get('comment_id') and request.user.has_perm('ikhaya.change_comment'):
                 c = Comment.objects.get(id=data['comment_id'])
                 c.text = data['text']
                 messages.success(request, _(u'The comment was edited '
@@ -234,13 +234,14 @@ def detail(request, year, month, day, slug):
         'preview': preview,
         'can_post_comment': request.user.is_authenticated(),
         'can_subscribe': request.user.is_authenticated(),
-        'can_admin_comment': request.user.can('comment_edit'),
-        'can_edit_article': request.user.can('article_edit'),
+        'can_admin_comment': request.user.has_perm('ikhaya.change_comment'),
+        'can_edit_article': request.user.has_perm('ikhaya.change_article'),
         'is_subscribed': subscribed
     }
 
 
-@require_permission('article_edit')
+@login_required
+@permission_required('ikhaya.change_article', raise_exception=True)
 def article_delete(request, year, month, day, slug):
     try:
         """
@@ -278,7 +279,8 @@ def article_delete(request, year, month, day, slug):
     return HttpResponseRedirect(href('ikhaya'))
 
 
-@require_permission('article_edit')
+@login_required
+@permission_required('ikhaya.change_article', raise_exception=True)
 @templated('ikhaya/article_edit.html', modifier=context_modifier)
 def article_edit(request, year=None, month=None, day=None, slug=None,
                  suggestion_id=None):
@@ -368,7 +370,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
     }
 
 
-@check_login(message=_(u'You need to be logged in to subscribe to comments.'))
+@login_required
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
     try:
@@ -377,7 +379,7 @@ def article_subscribe(request, year, month, day, slug):
     except (IndexError, ValueError):
         raise Http404()
     if article.hidden or article.pub_datetime > datetime.utcnow():
-        if not request.user.can('article_read'):
+        if not request.user.has_perm('ikhaya.view_article'):
             return AccessDeniedResponse()
     try:
         Subscription.objects.get_for_user(request.user, article)
@@ -391,8 +393,7 @@ def article_subscribe(request, year, month, day, slug):
     return HttpResponseRedirect(redirect)
 
 
-@check_login(message=_(u'You need to be logged in to unsubscribe from '
-                       'comments.'))
+@login_required
 def article_unsubscribe(request, year, month, day, slug):
     """Unsubscribe from article."""
     try:
@@ -414,7 +415,7 @@ def article_unsubscribe(request, year, month, day, slug):
     return HttpResponseRedirect(redirect)
 
 
-@check_login()
+@login_required
 @templated('ikhaya/report_new.html', modifier=context_modifier)
 def report_new(request, year, month, day, slug):
     """Report a mistake in an article."""
@@ -449,7 +450,7 @@ def report_new(request, year, month, day, slug):
     }
 
 
-@require_permission('article_edit')
+@permission_required('ikhaya.change_article', raise_exception=True)
 def _change_report_status(request, report_id, action, msg):
     report = Report.objects.get(id=report_id)
     if action == 'hide':
@@ -505,11 +506,11 @@ def reports(request, year, month, day, slug):
     return {
         'article': article,
         'reports': article.report_set.select_related(),
-        'can_edit': request.user.can('article_edit')
+        'can_edit': request.user.has_perm('ikhaya.change_article')
     }
 
 
-@require_permission('article_edit')
+@permission_required('ikhaya.change_article', raise_exception=True)
 @templated('ikhaya/reportlist.html', modifier=context_modifier)
 def reportlist(request):
     """Get a list of all unsolved article reports."""
@@ -522,11 +523,11 @@ def reportlist(request):
 @templated('ikhaya/comment_edit.html', modifier=context_modifier)
 def comment_edit(request, comment_id):
     comment = Comment.objects.get(id=comment_id)
-    if not request.user.can('comment_edit') and request.user == comment.author:
+    if not request.user.has_perm('ikhaya.change_comment') and request.user == comment.author:
         messages.error(request, _(u'Sorry, editing comments is disabled for '
                                   u'now.'))
         return HttpResponseRedirect(url_for(comment.article))
-    if request.user.can('comment_edit'):
+    if request.user.has_perm('ikhaya.change_comment'):
         if request.method == 'POST':
             form = EditCommentForm(request.POST)
             if form.is_valid():
@@ -543,7 +544,7 @@ def comment_edit(request, comment_id):
     return AccessDeniedResponse()
 
 
-@require_permission('comment_edit')
+@permission_required('ikhaya.change_comment', raise_exception=True)
 def _change_comment_status(request, comment_id, hide, msg):
     c = Comment.objects.get(id=comment_id)
     c.deleted = hide
@@ -600,7 +601,7 @@ def suggest_assign_to(request, suggestion, username):
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
-@require_permission('article_edit')
+@permission_required('ikhaya.change_article', raise_exception=True)
 def suggest_delete(request, suggestion):
     if request.method == 'POST':
         if 'cancel' not in request.POST:
@@ -658,7 +659,7 @@ def suggest_delete(request, suggestion):
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
-@check_login(message=_(u'Please login to suggest an article.'))
+@login_required
 @templated('ikhaya/suggest_new.html', modifier=context_modifier)
 def suggest_edit(request):
     """A Page to suggest a new article.
@@ -690,7 +691,7 @@ def suggest_edit(request):
     }
 
 
-@require_permission('article_edit')
+@permission_required('ikhaya.change_article', raise_exception=True)
 @templated('ikhaya/suggestions.html', modifier=context_modifier)
 def suggestions(request):
     """Get a list of all article suggestions"""
@@ -710,10 +711,10 @@ category_edit = generic.CreateUpdateView(
     template_name='ikhaya/category_edit.html',
     context_object_name='category',
     urlgroup_name='category_slug',
-    required_permission='category_edit')
+    permission_required='ikhaya.change_category')
 
 
-@require_permission('event_edit')
+@permission_required('portal.change_event', raise_exception=True)
 @templated('ikhaya/events.html', modifier=context_modifier)
 def events(request, show_all=False, invisible=False):
     if show_all:
@@ -732,7 +733,7 @@ def events(request, show_all=False, invisible=False):
     }
 
 
-@require_permission('article_edit')
+@permission_required('ikhaya.change_article', raise_exception=True)
 def suggestions_subscribe(request):
     """Subscribe to new suggestions."""
     ct_query = ['ikhaya', 'suggestion']
@@ -748,7 +749,7 @@ def suggestions_subscribe(request):
     return HttpResponseRedirect(redirect)
 
 
-@require_permission('article_edit')
+@permission_required('ikhaya.change_article', raise_exception=True)
 def suggestions_unsubscribe(request):
     """Unsubscribe from new suggestions."""
     try:
@@ -765,7 +766,7 @@ def suggestions_unsubscribe(request):
     return HttpResponseRedirect(redirect)
 
 
-@require_permission('event_edit')
+@permission_required('portal.change_event', raise_exception=True)
 @templated('ikhaya/event_edit.html', modifier=context_modifier)
 def event_edit(request, pk=None):
     new = not pk
