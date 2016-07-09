@@ -337,6 +337,11 @@ class Article(models.Model, LockableObject):
         verbose_name_plural = ugettext_lazy('Articles')
         ordering = ['-pub_date', '-pub_time', 'author']
         unique_together = ('pub_date', 'slug')
+        permissions = (
+            ('publish_article', 'User can publish articles'),
+            ('view_article', 'User can view published articles'),
+            ('view_unpublished_article', 'User can view unpublished articles'),
+        )
 
 
 class Report(models.Model):
@@ -411,10 +416,6 @@ class Comment(models.Model):
 
 
 class Event(models.Model):
-    class Meta:
-        db_table = 'portal_event'
-        app_label = 'portal'
-
     objects = EventManager()
 
     name = models.CharField(max_length=50)
@@ -510,3 +511,10 @@ class Event(models.Model):
     @property
     def enddatetime(self):
         return self._construct_datetimes(self.enddate or self.date, self.endtime)
+
+    class Meta:
+        db_table = 'portal_event'
+        app_label = 'portal'
+        permissions = (
+            ('publish_event','User can publish events'),
+        )
