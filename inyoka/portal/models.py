@@ -113,6 +113,9 @@ class PrivateMessage(models.Model):
 
     class Meta:
         ordering = ('-pub_date',)
+        permissions = (
+            ('send_group_privatemessage', 'Can send Group Private Messages'),
+        )
 
     def send(self, recipients):
         self.save()

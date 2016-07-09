@@ -525,6 +525,11 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
 
+    class Meta:
+        permissions = (
+            ('subscribe_user', 'Can subscribe Users'),
+        )
+
 
 class UserPage(models.Model):
     user = models.OneToOneField(User)
