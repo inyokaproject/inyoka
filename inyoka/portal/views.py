@@ -14,6 +14,7 @@ from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.contrib.auth.models import Group
 from django.core import signing
@@ -84,7 +85,6 @@ from inyoka.portal.user import (
 from inyoka.portal.utils import (
     abort_access_denied,
     calendar_entries_for_month,
-    check_login,
     get_ubuntu_versions,
     google_calendarize,
     require_permission,
@@ -127,7 +127,7 @@ CONFIRM_ACTIONS = {
 page_delete = generic.DeleteView.as_view(model=StaticPage,
     template_name='portal/page_delete.html',
     redirect_url=href('portal', 'pages'),
-    permission_required='static_page_edit')
+    permission_required='portal.delete_staticpage')
 
 
 files = generic.ListView.as_view(model=StaticFile,
@@ -135,7 +135,7 @@ files = generic.ListView.as_view(model=StaticFile,
     default_column='identifier',
     template_name='portal/files.html',
     columns=['identifier', 'is_ikhaya_icon'],
-    permission_required='static_file_edit',
+    permission_required='portal.change_staticfile',
     base_link=href('portal', 'files'))
 
 
@@ -143,14 +143,14 @@ file_edit = generic.CreateUpdateView(model=StaticFile,
     form_class=EditFileForm,
     template_name='portal/file_edit.html',
     context_object_name='file', slug_field='identifier',
-    permission_required='static_file_edit')
+    permission_required='portal.change_staticfile')
 
 
 file_delete = generic.DeleteView.as_view(model=StaticFile,
     template_name='portal/files_delete.html',
     redirect_url=href('portal', 'files'),
     slug_field='identifier',
-    permission_required='static_file_edit')
+    permission_required='portal.delete_staticfile')
 
 
 @templated('portal/index.html')
@@ -170,8 +170,7 @@ def index(request):
         'session_record_time': storage_values.get('session_record_time')
     })
 
-    countdown_active = storage_values.get('countdown_active', False)
-    countdown_active = countdown_active == True or countdown_active == 'True'
+    countdown_active = storage_values.get('countdown_active', False) in (True, 'True')
     countdown_date = storage_values.get('countdown_date', None)
     countdown_image_url = storage_values.get('countdown_image_url', None)
     if countdown_active and countdown_date:
@@ -440,14 +439,14 @@ def logout(request):
     return HttpResponseRedirect(redirect)
 
 
-@check_login(message=_(u'You need to be logged in to view a user profile.'))
+@login_required
 @templated('portal/profile.html')
 def profile(request, username):
     """Show the user profile if the user is logged in."""
 
     user = User.objects.get(username__iexact=username)
 
-    if request.user.can('group_edit') or request.user.can('user_edit'):
+    if request.user.has_perm('portal.change_user'):
         groups = user.groups.all()
     else:
         groups = ()
@@ -463,7 +462,8 @@ def profile(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_mail.html')
 def user_mail(request, username):
     try:
@@ -504,7 +504,7 @@ def user_mail(request, username):
 
 
 @require_POST
-@require_permission('subscribe_to_users')
+@permission_required('portal.subscribe_user')
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
     user = User.objects.get(username__iexact=username)
@@ -539,7 +539,7 @@ def unsubscribe_user(request, username):
         return HttpResponseRedirect(url_for(user))
 
 
-@check_login(message=_(u'You need to be logged in to access your control panel'))
+@login_required
 @templated('portal/usercp/index.html')
 def usercp(request):
     """User control panel index page"""
@@ -549,7 +549,7 @@ def usercp(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your profile'))
+@login_required
 @templated('portal/usercp/profile.html')
 def usercp_profile(request):
     """User control panel view for changing the user's profile"""
@@ -578,7 +578,7 @@ def usercp_profile(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your settings.'))
+@login_required
 @templated('portal/usercp/settings.html')
 def usercp_settings(request):
     """User control panel view for changing various user settings"""
@@ -630,7 +630,7 @@ def usercp_settings(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your password.'))
+@login_required
 @templated('portal/usercp/change_password.html')
 def usercp_password(request):
     """User control panel view for changing the password."""
@@ -715,7 +715,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
 usercp_subscriptions = UserCPSubscriptions.as_view()
 
 
-@check_login(message=_(u'You need to be logged in to deactivate your account.'))
+@login_required
 @templated('portal/usercp/deactivate.html')
 def usercp_deactivate(request):
     """
@@ -745,7 +745,8 @@ def usercp_deactivate(request):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user')
 @templated('portal/user_overview.html')
 def user_edit(request, username):
     try:
@@ -758,10 +759,10 @@ def user_edit(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user')
 @templated('portal/user_edit_profile.html')
 def user_edit_profile(request, username):
-    # TODO: Merge with usercp_profile
     try:
         user = User.objects.get_by_username_or_email(username)
     except User.DoesNotExist:
@@ -790,7 +791,8 @@ def user_edit_profile(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user')
 @templated('portal/user_edit_settings.html')
 def user_edit_settings(request, username):
     try:
@@ -841,7 +843,8 @@ def user_edit_settings(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_status.html')
 def user_edit_status(request, username):
     try:
@@ -870,7 +873,8 @@ def user_edit_status(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_groups.html')
 def user_edit_groups(request, username):
     try:
@@ -910,7 +914,8 @@ def user_edit_groups(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_new.html')
 def user_new(request):
     if request.method == 'POST':
@@ -937,7 +942,8 @@ def user_new(request):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 def admin_resend_activation_mail(request):
     user = User.objects.get(username__iexact=request.GET.get('user'))
     if not user.is_inactive:
@@ -951,8 +957,7 @@ def admin_resend_activation_mail(request):
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
+@login_required
 @templated('portal/privmsg/index.html')
 def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     page = int(page)
@@ -1059,9 +1064,8 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     }
 
 
+@login_required
 @templated('portal/privmsg/new.html')
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
 def privmsg_new(request, username=None):
     # if the user has no posts in the forum and registered less than a week ago
     # he can only send one pm every 5 minutes
@@ -1224,6 +1228,8 @@ class MemberlistView(generic.ListView):
 memberlist = MemberlistView.as_view()
 
 
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/grouplist.html')
 def grouplist(request, page=1):
     """
@@ -1231,12 +1237,8 @@ def grouplist(request, page=1):
 
     `page` represents the current page in the pagination.
     """
-    if request.user.can('group_edit') or request.user.can('user_edit'):
-        groups = Group.objects.all()
-        user_groups = request.user.groups.all()
-    else:
-        groups = ()
-        user_groups = ()
+    groups = Group.objects.all()
+    user_groups = request.user.groups.all()
     table = Sortable(groups, request.GET, 'name',
                      columns=['id', 'name'])
     pagination = Pagination(request, table.get_queryset(), page, 15,
@@ -1250,12 +1252,11 @@ def grouplist(request, page=1):
     }
 
 
+@login_required
 @templated('portal/group.html')
 def group(request, name, page=1):
     """Shows the informations about the group named `name`."""
     group = Group.objects.get(name__iexact=name)
-    if not (request.user.can('group_edit') or request.user.can('user_edit')):
-        raise Http404
     users = group.user_set.all()
 
     table = Sortable(users, request.GET, 'id',
@@ -1271,7 +1272,8 @@ def group(request, name, page=1):
     }
 
 
-@require_permission('group_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/group_edit.html')
 def group_edit(request, name=None):
     new = name is None
@@ -1476,7 +1478,8 @@ def confirm(request, action):
     return r
 
 
-@require_permission('configuration_edit')
+@login_required
+@permission_required('portal.change_storage', raise_exception=True)
 @templated('portal/configuration.html')
 def config(request):
     keys = ['welcome_message', 'max_avatar_width', 'max_avatar_height', 'max_avatar_size',
@@ -1543,7 +1546,8 @@ def static_page(request, page):
     }
 
 
-@require_permission('static_page_edit')
+@login_required
+@permission_required('portal.change_staticpage', raise_exception=True)
 @templated('portal/pages.html')
 def pages(request):
     sortable = Sortable(StaticPage.objects.all(), request.GET, '-key',
@@ -1554,7 +1558,8 @@ def pages(request):
     }
 
 
-@require_permission('static_page_edit')
+@login_required
+@permission_required('portal.change_staticpage', raise_exception=True)
 @templated('portal/page_edit.html')
 def page_edit(request, page=None):
     preview = None
@@ -1585,7 +1590,8 @@ def page_edit(request, page=None):
     }
 
 
-@require_permission('markup_css_edit')
+@login_required
+@permission_required('portal.change_staticpage', raise_exception=True)
 @templated('portal/styles.html')
 def styles(request):
     key = 'markup_styles'
