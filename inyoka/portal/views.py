@@ -1105,7 +1105,7 @@ def privmsg_new(request, username=None):
 
             recipients = set()
 
-            if d.get('group_recipient', None) and not request.user.can('send_group_pm'):
+            if d.get('group_recipient', None) and not request.user.has_perm('portal.send_group_privatemessage'):
                 messages.error(request, _(u'You cannot send messages to groups.'))
                 return HttpResponseRedirect(href('portal', 'privmsg'))
 
