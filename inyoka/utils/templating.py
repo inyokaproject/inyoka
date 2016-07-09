@@ -94,9 +94,9 @@ def populate_context_defaults(context, flash=False):
 
     reported = pms = suggestions = events = reported_articles = 0
     if request and user.is_authenticated():
-        can = {'manage_topics': user.can('manage_topics'),
-               'article_edit': user.can('article_edit'),
-               'event_edit': user.can('event_edit')}
+        can = {'manage_topics': user.has_perm('forum.manage_reported_topic'),
+               'article_edit': user.has_perm('ikhaya.change_article'),
+               'event_edit': user.has_perm('portal.change_event')}
 
         keys = ['portal/pm_count/%s' % user.id]
 
