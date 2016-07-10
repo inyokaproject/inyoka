@@ -87,7 +87,6 @@ from inyoka.portal.utils import (
     calendar_entries_for_month,
     get_ubuntu_versions,
     google_calendarize,
-    require_permission,
 )
 from inyoka.utils import generic
 from inyoka.utils.http import (
@@ -1211,7 +1210,7 @@ class MemberlistView(generic.ListView):
     model = User
     base_link = href('portal', 'users')
 
-    @method_decorator(require_permission('user_edit'))
+    @method_decorator(permission_required('portal.change_user', raise_exception=True))
     def post(self, request, *args, **kwargs):
         name = request.POST.get('user')
         try:
