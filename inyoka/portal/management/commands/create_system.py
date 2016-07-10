@@ -28,7 +28,6 @@ def create_system_groups():
                   settings.INYOKA_REGISTERED_GROUP_NAME,
                   settings.INYOKA_IKHAYA_GROUP_NAME):
         group = Group.objects.get_or_create(name=groupname)[0]
-        group.system = True
         group.save()
 
 class Command(BaseCommand):
