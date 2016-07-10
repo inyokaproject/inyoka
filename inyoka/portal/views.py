@@ -324,7 +324,7 @@ def activate(request, action='', username='', activation_key=''):
         if check_activation_key(user, activation_key) and user.is_inactive:
             user.status = User.STATUS_ACTIVE
             user.save()
-            user.groups.add(Group.objects.get_registered_group())
+            user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
             messages.success(request,
                 _(u'Your account was successfully activated. You can now '
                   u'login.'))
