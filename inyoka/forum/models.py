@@ -31,12 +31,6 @@ from django.utils.html import escape, format_html
 from django.utils.translation import ugettext as _
 from django.utils.translation import pgettext, ugettext_lazy
 
-from inyoka.forum.acl import (
-    CAN_READ,
-    filter_invisible,
-    filter_visible,
-    get_privileges,
-)
 from inyoka.forum.constants import (
     CACHE_PAGES_COUNT,
     POSTS_PER_PAGE,
@@ -155,7 +149,7 @@ class ForumManager(models.Manager):
         # return all forums instead
         return self.get_all_forums_cached().values()
 
-    def get_forums_filtered(self, user, priv=CAN_READ, reverse=False, sort=False):
+    def get_forums_filtered(self, user, priv='forum.view_forum', reverse=False, sort=False):
         """Return all forums the `user` has proper privileges for.
 
         :param user: :class:`User` instance.
@@ -169,11 +163,10 @@ class ForumManager(models.Manager):
         else:
             forums = self.get_cached()
 
-        privileges = get_privileges(user, forums)
         if reverse:
-            forums = filter_visible(user, forums, priv, privileges)
+            forums = [forum for forum in forums if not user.has_perm(priv, forum)]
         else:
-            forums = filter_invisible(user, forums, priv, privileges)
+            forums = [forum for forum in forums if user.has_perm(priv, forum)]
         return forums
 
     def get_categories(self):
@@ -310,6 +303,17 @@ class Forum(models.Model):
     class Meta:
         verbose_name = ugettext_lazy(u'Forum')
         verbose_name_plural = ugettext_lazy(u'Forums')
+        permissions = (
+            ('delete_topic_forum', 'Can delete Topics from Forum'),
+            ('view_forum', 'Can view Forum'),
+            ('add_topic_forum', 'Can add Topic in Forum'),
+            ('add_reply_forum', 'Can answer Topics in Forum'),
+            ('sticky_forum', 'Can make Topics Sticky in Forum'),
+            ('poll_forum', 'Can make Polls in Forum'),
+            ('vote_forum', 'Can make Votes in Forum'),
+            ('upload_forum', 'Can Upload Attachments in Forum'),
+            ('moderate_forum', 'Can moderate Forum'),
+        )
 
     def get_absolute_url(self, action='show', **query):
         if action == 'show':
@@ -532,6 +536,9 @@ class Topic(models.Model):
     class Meta:
         verbose_name = ugettext_lazy(u'Topic')
         verbose_name_plural = ugettext_lazy(u'Topics')
+        permissions = (
+            ('manage_reported_topic', 'Can Manage Reported Topics'),
+        )
 
     def cached_forum(self):
         return Forum.objects.get(self.forum_id)
@@ -1289,31 +1296,6 @@ class Attachment(models.Model):
 
     def get_absolute_url(self, action=None):
         return self.file.url
-
-
-class Privilege(models.Model):
-    group = models.ForeignKey(Group, null=True)
-    user = models.ForeignKey(User, null=True)
-    forum = models.ForeignKey(Forum)
-    positive = models.IntegerField(null=True, default=0)
-    negative = models.IntegerField(null=True, default=0)
-
-    def save(self, *args, **kwargs):
-        # Check that the value is not a negative value as this
-        # would raise nasty bugs in inyoka.forum.acl.  Change values
-        # to positive integers everytime.
-        # Additionally make `None` to be converted to 0
-        for name in ('positive', 'negative'):
-            value = getattr(self, name)
-            value = value or 0
-            setattr(self, name, abs(value))
-        super(Privilege, self).save(*args, **kwargs)
-
-    def __repr__(self):
-        gid, uid = self.group_id, self.user_id
-        return '<Privilege(id, %s, fid:%s, %s, %s)' % (
-            (self.group_id and 'gid:%s' % gid or 'uid:%s' % uid,
-             self.forum_id, self.positive, self.negative))
 
 
 class PollOption(models.Model):

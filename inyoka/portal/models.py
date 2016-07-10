@@ -319,9 +319,12 @@ class Subscription(models.Model):
             return True
 
         user = self.user
-# FIXME: Privilege check for subscriptions on forum models:
-#        if self.content_type.model in ('topic', 'forum'):
-#            return have_forum_privilege(user, self.content_object, 'read')
+        if self.content_type.model in ('topic', 'forum'):
+            if self.content_type.model == 'topic':
+                forum = self.content_object.forum
+            else:
+                forum = self.content_object
+            return user.has_perm('forum.view_forum', forum)
         if self.content_type.model == 'page':
             return have_wiki_privilege(user, self.content_object.name, 'read')
         else:
