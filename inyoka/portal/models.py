@@ -41,7 +41,7 @@ class SubscriptionManager(ContentTypeManager):
 
     def user_subscribed(self, user, object, ctype_query=None, clear_notified=False):
         """Return `True` or `False` whether the user has subscribed or not"""
-        if user.is_anonymous:
+        if user.is_anonymous():
             return False
         filter = self._get_filter(user, object, ctype_query)
 

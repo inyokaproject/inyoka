@@ -362,7 +362,7 @@ class Forum(models.Model):
         Determine the read status of the whole forum for a specific
         user.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             return True
         return user._readstatus(self)
 
@@ -371,7 +371,7 @@ class Forum(models.Model):
         Mark all topics in this forum and all related subforums as
         read for the specificed user.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             return
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
@@ -383,7 +383,7 @@ class Forum(models.Model):
         itself, can be retrieved late, by reading the welcome_message
         attribute.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             # This methods woks only on authenticated users.
             return
 
@@ -404,7 +404,7 @@ class Forum(models.Model):
         then the read status is removed, so it is the same like with a new
         user.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             # This methods woks only on authenticated users.
             return
 
@@ -668,7 +668,7 @@ class Topic(models.Model):
         return u' '.join(force_unicode(x) for x in out)
 
     def get_read_status(self, user):
-        if user.is_anonymous:
+        if user.is_anonymous():
             return True
         if not hasattr(user, '_readstatus'):
             user._readstatus = ReadStatus(user.forum_read_status)
@@ -678,7 +678,7 @@ class Topic(models.Model):
         """
         Mark the current topic as read for a given user.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             return
         if not hasattr(user, '_readstatus'):
             user._readstatus = ReadStatus(user.forum_read_status)
@@ -1440,7 +1440,7 @@ class ReadStatus(object):
 
 def mark_all_forums_read(user):
     """Shortcut to mark all forums as read to prevent serializing to often."""
-    if user.is_anonymous:
+    if user.is_anonymous():
         return
     for forum in Forum.objects.filter(parent=None):
         user._readstatus.mark(forum)

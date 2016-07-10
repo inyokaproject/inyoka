@@ -30,7 +30,7 @@ def on_get_current_user(request):
     """Get the current user."""
     user = request.user
     return {
-        'is_anonymous': user.is_anonymous,
+        'is_anonymous': user.is_anonymous(),
         'username': user.username or None,
         'email': getattr(user, 'email', None),
     }
