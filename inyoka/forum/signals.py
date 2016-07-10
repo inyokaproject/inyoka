@@ -13,7 +13,7 @@ from django.db.models import Max
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
-from inyoka.forum.models import Forum, Post, Privilege, Topic
+from inyoka.forum.models import Forum, Post, Topic
 from inyoka.utils.database import find_next_increment
 from inyoka.utils.text import slugify
 
@@ -106,14 +106,3 @@ def post_save_post(sender, instance, created, raw, **kwargs):
         instance.topic.forum.invalidate_topic_cache()
         cache_keys = [u'forum/forums/{}'.format(forum.slug) for forum in parent_forums]
         cache.delete_many(cache_keys)
-
-
-@receiver(post_save, sender=Privilege)
-@receiver(post_delete, sender=Privilege)
-def clear_anonymous_privilege_cache(sender, **kwargs):
-    if kwargs.get('raw'):
-        return
-    instance = kwargs.get('instance')
-    if instance.user and instance.user.id == 1:
-        # anonymous user, erase cache
-        cache.delete('forum/acls/anonymous')
