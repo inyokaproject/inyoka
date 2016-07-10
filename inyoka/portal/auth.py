@@ -45,6 +45,9 @@ class InyokaAuthBackend(object):
             if not user.unban():
                 raise UserBanned()
 
+        if user.system:
+            return None
+
         return user
 
     def get_user_permissions(self, user_obj, obj=None):

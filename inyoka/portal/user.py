@@ -264,6 +264,7 @@ class UserManager(BaseUserManager):
 
         user = get_or_create(settings.INYOKA_ANONYMOUS_USER)
         user.system = True
+        user.status = User.STATUS_ACTIVE
         user.save()
         group = Group.objects.get(name__iexact=settings.INYOKA_ANONYMOUS_GROUP_NAME)
         user.groups.clear()
