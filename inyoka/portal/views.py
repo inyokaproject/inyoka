@@ -675,6 +675,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
     base_link = href('portal', 'usercp', 'subscriptions')
     filtersets = [SubscriptionFilter]
     required_login = True
+    permission_required = ()
 
     def get_queryset(self):
         qs = self.request.user.subscription_set.all()
