@@ -413,13 +413,6 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         """Sends an e-mail to this User."""
         send_mail(subject, message, from_email, [self.email])
 
-# FIXME: Entering Danger Zone!
-    def permissions(self):
-        return 65536
-
-    def can(self, name):
-        return True
-
     @deferred
     def _readstatus(self):
         from inyoka.forum.models import ReadStatus
