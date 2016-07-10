@@ -510,7 +510,7 @@ class PageManager(models.Manager):
         """
         if user is None:
             user = apps.get_model('portal', 'User').objects.get_system_user()
-        elif user.is_anonymous:
+        elif user.is_anonymous():
             user = None
         if remote_addr is None and user is None:
             raise TypeError('either user or remote addr required')
@@ -982,7 +982,7 @@ class Page(models.Model):
         """
         if user is None:
             user = apps.get_model('portal', 'User').objects.get_system_user()
-        elif user.is_anonymous:
+        elif user.is_anonymous():
             user = None
         if remote_addr is None and user is None:
             raise TypeError('either user or remote addr required')

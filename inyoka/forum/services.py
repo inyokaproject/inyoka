@@ -50,7 +50,7 @@ def on_get_post(request):
 
 
 def on_toggle_categories(request):
-    if request.user.is_anonymous:
+    if request.user.is_anonymous():
         return False
     hidden_categories = set()
     for id in request.GET.getlist('hidden[]'):
@@ -67,7 +67,7 @@ def on_toggle_categories(request):
 
 
 def on_toggle_category(request):
-    if request.user.is_anonymous:
+    if request.user.is_anonymous():
         return False
     try:
         category_id = int(request.GET.get('id'))
@@ -103,8 +103,8 @@ def subscription_action(request, action=None):
         cls = Topic
 
     obj = cls.objects.get(slug=slug)
-    if request.user.is_anonymous \
        or not have_privilege(request.user, obj, 'read'):
+    if request.user.is_anonymous() \
         return abort_access_denied(request)
     try:
         subscription = Subscription.objects.get_for_user(request.user, obj)
@@ -122,8 +122,8 @@ def on_change_status(request, solved=None):
     if 'slug' not in request.POST:
         return
     topic = Topic.objects.get(slug=request.POST['slug'])
-    can_read = have_privilege(request.user, topic.forum, 'read')
-    if request.user.is_anonymous or not can_read:
+    can_read = request.user.has_perm('forum.view_forum', topic.forum)
+    if request.user.is_anonymous() or not can_read:
         return abort_access_denied(request)
     if solved is not None:
         topic.solved = solved
