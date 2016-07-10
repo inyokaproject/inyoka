@@ -74,7 +74,7 @@ def reactivate_user(id, email, status):
 
     # Enforce registered group if active.
     if user.status == User.STATUS_ACTIVE:
-        user.groups.add(Group.objects.get_registered_group())
+        user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
 
     return {
         'success': _(u'The account “%(name)s” was reactivated. Please use the '
@@ -232,7 +232,7 @@ class UserManager(BaseUserManager):
             # save the user as an active one
             user.status = User.STATUS_ACTIVE
             user.save()
-            user.groups.add(Group.objects.get_registered_group())
+            user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
         else:
             user.status = User.STATUS_INACTIVE
             send_activation_mail(user)
