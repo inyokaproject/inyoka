@@ -19,6 +19,7 @@ from inyoka.privmsg.forms import (
     MultiMessageSelectForm,
     PrivilegedMessageComposeForm,
 )
+from inyoka.privmsg.models import MessageData
 from inyoka.privmsg.views import (
     ArchivedMessagesView,
     BaseMessageComposeView,
@@ -53,9 +54,9 @@ def setup_view(view, request, *args, **kwargs):
 
 
 class TestMessagesFolderView(TestCase):
-
-    def test_messagesfolderview_get_queryset_builds_correct_queryset(self):
     """Unit Tests for the MessagesFolderView base class."""
+
+    def test_get_queryset_builds_correct_queryset(self):
         """Test that get_queryset() builds the correct queryset."""
         request = RequestFactory().get('/')
         request.user = Mock()
@@ -67,7 +68,7 @@ class TestMessagesFolderView(TestCase):
 
         request.user.assert_has_calls(expected_calls)
 
-    def test_messagesfolderview_get_queryset_without_queryset_name(self):
+    def test_get_queryset_without_queryset_name(self):
         """Test that get_queryset() raises `ImproperlyConfigured` when `queryset_name` is not set."""
         request = RequestFactory().get('/')
         request.user = Mock()
@@ -238,32 +239,25 @@ class TestFolderMessagesViewIntegration(TestCase):
 
 
 class TestMessageView(TestCase):
-
-    def test_messageview_get_queryset(self):
-        """
-        Test that get_queryset() builds the correct query.
-        """
-        request = RequestFactory().get('/')
-        request.user = Mock()
-        view = MessageView()
-        view = setup_view(view, request)
-        expected_calls = [call.message_set.optimized()]
     """Unit Tests for the `MessageView` base class."""
 
-        view.get_queryset()
+    def setUp(self):
+        """Set up the view for testing."""
+        self.request = RequestFactory().get('/')
+        self.request.user = Mock()
+        self.view = MessageView()
+        self.view = setup_view(self.view, self.request)
 
-        request.user.assert_has_calls(expected_calls)
+    def test_get_queryset(self):
+        """Test that `get_queryset()` builds the correct query."""
+        expected_calls = [call.message_set.optimized()]
+        self.view.get_queryset()
+        self.request.user.assert_has_calls(expected_calls)
 
     @patch('inyoka.privmsg.views.DetailView.get_object')
-    def test_messageview_get_object(self, mock_get_object):
-        request = RequestFactory().get('/')
-        request.user = Mock()
-        view = MessageView()
-        view = setup_view(view, request)
-
-        view.get_object()
-
+    def test_get_object(self, mock_get_object):
         """Test that `get_object()` calls `mark_read()` on the selected message."""
+        self.view.get_object()
         mock_get_object.assert_has_calls([call(None), call().mark_read()])
 
 
@@ -275,9 +269,29 @@ class TestMessageViewSubclasses(TestCase):
         self.request = RequestFactory().get('/')
         self.request.user = User(username='testuser')
 
-    def test_messagetoarchiveview_confirm_action(self):
-        view = MessageToArchiveView()
+    def test_confirm_action(self):
         """Test `confirm_action()` calls `restore()` method on the selected message object."""
+        view = MessageRestoreView()
+        view = setup_view(view, self.request)
+        view.object = Mock()
+
+        view.confirm_action()
+
+        view.object.assert_has_calls([call.restore()])
+
+    def test_get_success_url(self):
+        """Test `get_success_url()` returns the message's folder url by calling the right method."""
+        view = MessageRestoreView()
+        view = setup_view(view, self.request)
+        view.object = Mock()
+
+        view.get_success_url()
+
+        view.object.assert_has_calls([call.get_absolute_url(action='folder')])
+
+    def test_messagetoarchiveview_confirm_action(self):
+        """Test `confirm_action()` calls `archive()` method on the selected message object."""
+        view = MessageToArchiveView()
         view = setup_view(view, self.request)
         view.object = Mock()
 
@@ -286,34 +300,14 @@ class TestMessageViewSubclasses(TestCase):
         view.object.assert_has_calls([call.archive()])
 
     def test_messagetotrashview_confirm_action(self):
+        """Test `confirm_action()` calls `trash()` method on the selected message object."""
         view = MessageToTrashView()
-        """Test `get_success_url()` returns the message's folder url by calling the right method."""
         view = setup_view(view, self.request)
         view.object = Mock()
 
         view.confirm_action()
 
         view.object.assert_has_calls([call.trash()])
-
-    def test_messagerestoreview_confirm_action(self):
-        view = MessageRestoreView()
-        """Test `confirm_action()` calls `archive()` method on the selected message object."""
-        view = setup_view(view, self.request)
-        view.object = Mock()
-
-        view.confirm_action()
-
-        view.object.assert_has_calls([call.restore()])
-
-    def test_messagerestoreview_get_success_url(self):
-        view = MessageRestoreView()
-        """Test `confirm_action()` calls `trash()` method on the selected message object."""
-        view = setup_view(view, self.request)
-        view.object = Mock()
-
-        view.get_success_url()
-
-        view.object.assert_has_calls([call.get_absolute_url(action='folder')])
 
     def test_messagedeleteview_confirm_action(self):
         """Test `confirm_action()` calls `delete()` method on the selected message object."""
@@ -327,8 +321,50 @@ class TestMessageViewSubclasses(TestCase):
 
 
 class TestMessageViewIntegration(TestCase):
-    # TODO: write the tests.
     """Integration test of the Message views."""
+
+    urls = 'inyoka.portal.urls'
+
+    def setUp(self):
+        """Set up a user to test with."""
+        self.author = User.objects.register_user(
+            username='testuser',
+            email='testuser',
+            password='testuser',
+            send_mail=False,
+        )
+        self.recipient = User.objects.register_user(
+            username='testuser2',
+            email='testuser2',
+            password='testuser2',
+            send_mail=False,
+        )
+        MessageData.send(
+            author=self.author,
+            recipients=[self.recipient],
+            subject='testsubject',
+            text='testmessage',
+        )
+        self.message = self.author.message_set.sent().first()
+
+    def test_messageview_as_user(self):
+        """`MessageView` should display the message, if called by the recipient."""
+        request = RequestFactory().get('/messages/{}/'.format(self.message.id))
+        request.user = self.author
+        view = MessageView.as_view()
+
+        response = view(request, pk=self.message.id)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_messageview_as_invalid_user(self):
+        """`MessageView` should give a 404 with a message_id the user has no access to."""
+        request = RequestFactory().get('/messages/{}/'.format(self.message.id))
+        request.user = self.recipient
+        view = MessageView.as_view()
+
+        with self.assertRaises(Http404):
+            view(request, pk=self.message.id)
 
 
 class TestBaseMessageComposeView(TestCase):
@@ -361,7 +397,7 @@ class TestBaseMessageComposeView(TestCase):
 
         self.assertEqual(actual_value, expected_value)
 
-    @patch('inyoka.privmsg.views.CreateView.get_form_kwargs')
+    @patch('inyoka.privmsg.views.FormView.get_form_kwargs')
     def test_get_form_kwargs(self, mock_get_form_kwargs):
         """Test `get_form_kwargs()` adds user to returned dict."""
         mock_get_form_kwargs.return_value = {}
@@ -529,6 +565,7 @@ class TestMessageForwardView(TestCase):
 
 class TestMessageReplyView(TestCase):
     """Unit tests for `MessageReplyView`."""
+
     def setUp(self):
         """Set up the view for testing."""
         self.request = RequestFactory().get('/')
@@ -538,7 +575,7 @@ class TestMessageReplyView(TestCase):
         self.view.request = self.request
         self.view.request.user = self.user
 
-    def test_messagereplyview_get_queryset(self):
+    def test_get_queryset(self):
         """Test that get_queryset() builds the correct query."""
         request = RequestFactory().get('/')
         request.user = Mock()
