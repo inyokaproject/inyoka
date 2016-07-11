@@ -23,9 +23,7 @@ from inyoka.utils.database import InyokaMarkupField
 
 class MessageQuerySet(models.QuerySet):
     def optimized(self):
-        """
-        Reduce the number of queries that hit the database.
-        """
+        """Reduce the number of queries that hit the database."""
         return self.select_related(
             'messagedata',
             'messagedata__author',
@@ -35,77 +33,53 @@ class MessageQuerySet(models.QuerySet):
         )
 
     def for_user(self, user):
-        """
-        Return messages for user.
-        """
+        """Return messages for user."""
         return self.filter(recipient=user)
 
     def from_user(self, user):
-        """
-        Return messages the user sent himself.
-        """
+        """Return messages the user sent himself."""
         return self.filter(messagedata__author=user)
 
     def archived(self):
-        """
-        Return archived messages.
-        """
+        """Return archived messages."""
         return self.filter(status=Message.STATUS_ARCHIVED)
 
     def inboxed(self):
-        """
-        Return messages in the inbox (i.e. not archived).
-        """
+        """Return messages in the inbox (i.e. not archived)."""
         inboxed_states = (Message.STATUS_READ, Message.STATUS_UNREAD)
         return self.filter(status__in=inboxed_states)
 
     def sent(self):
-        """
-        Return sent messages.
-        """
+        """Return sent messages."""
         return self.filter(status=Message.STATUS_SENT)
 
     def trashed(self):
-        """
-        Return messages in the trash.
-        """
+        """Return messages in the trash."""
         return self.filter(status=Message.STATUS_TRASHED)
 
     def deleted(self):
-        """
-        Return a list of messages that are marked as deleted.
-        """
+        """Return a list of messages that are marked as deleted."""
         return self.filter(status=Message.STATUS_DELETED)
 
     def read(self):
-        """
-        Return read messages.
-        """
+        """Return read messages."""
         return self.filter(status=Message.STATUS_READ)
 
     def unread(self):
-        """
-        Return unread messages.
-        """
+        """Return unread messages."""
         return self.filter(status=Message.STATUS_UNREAD)
 
     def to_expunge(self):
-        """
-        Return list of messages that can be deleted from the database.
-        """
+        """Return list of messages that can be deleted from the database."""
         delete_before = datetime.now() - timedelta(days=settings.PRIVATE_MESSAGE_EXPUNGE_DAYS)
         return self.filter(trashed_date__lt=delete_before).trashed()
 
     def bulk_archive(self):
-        """
-        Move the selected messages to archive.
-        """
+        """Move the selected messages to archive."""
         self.update(status=Message.STATUS_ARCHIVED, trashed_date=None)
 
     def bulk_restore(self):
-        """
-        Restore filtered messages to sent folder.
-        """
+        """Restore filtered messages to sent folder."""
         self.filter(recipient=F('messagedata__author')).update(
             status=Message.STATUS_SENT,
             trashed_date=None,
@@ -116,16 +90,12 @@ class MessageQuerySet(models.QuerySet):
         )
 
     def bulk_trash(self):
-        """
-        Move the selected messages to trash.
-        """
+        """Move the selected messages to trash."""
         self.update(status=Message.STATUS_TRASHED, trashed_date=datetime.utcnow())
 
 
 class Message(models.Model):
-    """
-    Hold an entry for every recipient of a private message.
-    """
+    """Hold an entry for every recipient of a private message."""
     STATUS_ARCHIVED = 'A'
     STATUS_DELETED = 'D'
     STATUS_READ = 'R'
@@ -155,9 +125,7 @@ class Message(models.Model):
         ordering = ['-messagedata__pub_date']
 
     def get_absolute_url(self, action='show'):
-        """
-        Return URLs for this message.
-        """
+        """Return URLs for this message."""
         message_actions = ('archive',
                            'delete',
                            'forward',
@@ -175,67 +143,50 @@ class Message(models.Model):
 
     @property
     def is_unread(self):
-        """
-        Return True, if the message is unread.
-        """
+        """Return True, if the message is unread."""
         return self.status == self.STATUS_UNREAD
 
     @property
     def is_own_message(self):
-        """
-        Return whether or not this message was sent by the recipient.
-        """
+        """Return whether or not this message was sent by the recipient."""
         return self.recipient == self.author
 
     @property
     def author(self):
-        """
-        Return the author of the message. This is a proxy.
-        """
+        """Return the author of the message. This is a proxy."""
         return self.messagedata.author
 
     @property
     def recipients(self):
-        """
-        Return the list of recipients. This is a proxy.
-        """
+        """Return the list of recipients. This is a proxy."""
         return self.messagedata.original_recipients.all()
 
     @property
     def subject(self):
-        """
-        Return the subject of the message. This is a proxy.
-        """
+        """Return the subject of the message. This is a proxy."""
         return self.messagedata.subject
 
     @property
     def text(self):
-        """
-        Return the text of this message. This is a proxy.
-        """
+        """Return the text of this message. This is a proxy."""
         return self.messagedata.text
 
     @property
     def text_rendered(self):
-        """
-        Return the rendered text of this message. This is a proxy.
-        """
+        """Return the rendered text of this message. This is a proxy."""
         return self.messagedata.text_rendered
 
     @property
     def pub_date(self):
-        """
-        Return the publication date of this message. This is a proxy.
-        """
+        """Return the publication date of this message. This is a proxy."""
         return self.messagedata.pub_date
 
     @property
     def folder(self):
-        """
-        Return the folder identifier.
+        """Return the folder identifier.
 
-        Note, the actual names of these folders only appear in the views/templates where
-        strings can be translated.
+        Note: These are internal identifiers. The actual names of these folders
+        only appear in the templates where strings can be translated.
         """
         if self.status == self.STATUS_SENT:
             return 'sent'
@@ -249,9 +200,7 @@ class Message(models.Model):
             return 'inbox'
 
     def mark_read(self):
-        """
-        Mark the message as read by the user.
-        """
+        """Mark the message as read by the user."""
         if self.is_unread:
             self.recipient.privmsg_count.decr()
             self.status = self.STATUS_READ
@@ -259,18 +208,14 @@ class Message(models.Model):
             self.save()
 
     def archive(self):
-        """
-        Mark the message as archived.
-        """
+        """Mark the message as archived."""
         if self.is_unread:
             self.recipient.privmsg_count.decr()
         self.status = self.STATUS_ARCHIVED
         self.save()
 
     def trash(self):
-        """
-        Mark the message as trashed.
-        """
+        """Mark the message as trashed."""
         if self.is_unread:
             self.recipient.privmsg_count.decr()
         self.status = self.STATUS_TRASHED
@@ -278,9 +223,7 @@ class Message(models.Model):
         self.save()
 
     def restore(self):
-        """
-        Move the message back to the inbox.
-        """
+        """Move the message back to the inbox."""
         if self.status == self.STATUS_TRASHED:
             self.trashed_date = None
         if self.is_own_message:
@@ -291,20 +234,20 @@ class Message(models.Model):
 
 
 class MessageDataManager(models.Manager):
-    def abandoned(self):
-        """
-        Return abandoned MessageData objects.
+    """Manager for the MessageData model."""
 
-        Abandoned `MessageData` objects arise when all recipients have deleted their
-        `Message` entries and there are no ForeignKeys pointing to it any more.
+    def abandoned(self):
+        """Return abandoned MessageData objects.
+
+        Abandoned `MessageData` objects arise when all recipients have deleted
+        their `Message` entries and there are no ForeignKeys pointing to the
+        `MessageData` any more.
         """
         return self.get_queryset().filter(message=None)
 
 
 class MessageData(models.Model):
-    """
-    Hold the metadata for a private message.
-    """
+    """Hold the metadata for a private message."""
     author = models.ForeignKey(User, related_name='authored_messages')
     subject = models.CharField(ugettext_lazy(u'Title'), max_length=255)
     pub_date = models.DateTimeField(ugettext_lazy(u'Date'), auto_now_add=True)
@@ -313,14 +256,12 @@ class MessageData(models.Model):
 
     objects = MessageDataManager()
 
-    # Not sure if this should be a classmethodhere. It would also fit on the Message class.
-    # It seems to do a lot of things and is difficult to test.
+    # Not sure if this should be a classmethodhere. It would also fit on the
+    # Message class. It seems to do a lot of things and is difficult to test.
     @classmethod
     @transaction.atomic
     def send(cls, author, recipients, subject, text):
-        """
-        Send a copy of this message to each recipient.
-        """
+        """Send a copy of this message to each recipient."""
         messagedata = MessageData.objects.create(
             author=author,
             subject=subject,

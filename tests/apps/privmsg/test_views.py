@@ -45,9 +45,7 @@ from mock import Mock, call, patch
 
 
 def setup_view(view, request, *args, **kwargs):
-    """
-    Mimic as_view() but returns a view instance.
-    """
+    """Mimic as_view() but returns a view instance."""
     view.request = request
     view.args = args
     view.kwargs = kwargs
@@ -55,14 +53,10 @@ def setup_view(view, request, *args, **kwargs):
 
 
 class TestMessagesFolderView(TestCase):
-    """
-    Unit Tests for the MessagesFolderView base class.
-    """
 
     def test_messagesfolderview_get_queryset_builds_correct_queryset(self):
-        """
-        Test that get_queryset() builds the correct queryset.
-        """
+    """Unit Tests for the MessagesFolderView base class."""
+        """Test that get_queryset() builds the correct queryset."""
         request = RequestFactory().get('/')
         request.user = Mock()
         view = MessagesFolderView(queryset_name='fake')
@@ -74,9 +68,7 @@ class TestMessagesFolderView(TestCase):
         request.user.assert_has_calls(expected_calls)
 
     def test_messagesfolderview_get_queryset_without_queryset_name(self):
-        """
-        Test that get_queryset() raises `ImproperlyConfigured` when `queryset_name` is not set.
-        """
+        """Test that get_queryset() raises `ImproperlyConfigured` when `queryset_name` is not set."""
         request = RequestFactory().get('/')
         request.user = Mock()
         view = MessagesFolderView()
@@ -87,15 +79,12 @@ class TestMessagesFolderView(TestCase):
 
 
 class TestFolderMessagesViewIntegration(TestCase):
-    """
-    Integration Test for subclasses of MessagesFolderView.
-    """
+    """Integration Test for subclasses of `MessagesFolderView`."""
+
     urls = 'inyoka.portal.urls'
 
     def setUp(self):
-        """
-        Set up a user to test with.
-        """
+        """Set up a user to test with."""
         self.user = User.objects.register_user(
             username='testuser',
             email='testuser',
@@ -104,9 +93,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         )
 
     def test_inboxedmessagesview_as_user(self):
-        """
-        When called by a user, InboxedMessagesView should load and context_data be present.
-        """
+        """When called by a user, InboxedMessagesView should load and context_data be present."""
         request = RequestFactory().get('/messages/inbox/')
         request.user = self.user
         view = InboxedMessagesView.as_view()
@@ -119,9 +106,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertFalse(response.context_data['is_paginated'])
 
     def test_inboxedmessagesview_as_anonymous(self):
-        """
-        When called by anonymous, InboxedMessagesView should redirect to login.
-        """
+        """When called by anonymous, InboxedMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/inbox/')
         request.user = User.objects.get_anonymous_user()
         view = InboxedMessagesView.as_view()
@@ -132,9 +117,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertTrue(response.url.startswith(u'/login/'))
 
     def test_sentmessagesview_as_user(self):
-        """
-        When called by a user, SentMessagesView should load and context_data be present.
-        """
+        """When called by a user, SentMessagesView should load and context_data be present."""
         request = RequestFactory().get('/messages/sent/')
         request.user = self.user
         view = SentMessagesView.as_view()
@@ -147,9 +130,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertFalse(response.context_data['is_paginated'])
 
     def test_sentmessagesview_as_anonymous(self):
-        """
-        When called by anonymous, SentMessagesView should redirect to login.
-        """
+        """When called by anonymous, SentMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/sent/')
         request.user = User.objects.get_anonymous_user()
         view = SentMessagesView.as_view()
@@ -160,9 +141,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertTrue(response.url.startswith(u'/login/'))
 
     def test_archivedmessagesview_as_user(self):
-        """
-        When called by a user, ArchivedMessagesView should load and context_data be present.
-        """
+        """When called by a user, ArchivedMessagesView should load and context_data be present."""
         request = RequestFactory().get('/messages/archive/')
         request.user = self.user
         view = ArchivedMessagesView.as_view()
@@ -175,9 +154,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertFalse(response.context_data['is_paginated'])
 
     def test_archivedmessagesview_as_anonymous(self):
-        """
-        When called by anonymous, ArchivedMessagesView should redirect to login.
-        """
+        """When called by anonymous, ArchivedMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/archive/')
         request.user = User.objects.get_anonymous_user()
         view = ArchivedMessagesView.as_view()
@@ -188,9 +165,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertTrue(response.url.startswith(u'/login/'))
 
     def test_trashedmessagesview_as_user(self):
-        """
-        When called by a user, TrashedMessagesView should load and context_data be present.
-        """
+        """When called by a user, TrashedMessagesView should load and context_data be present."""
         request = RequestFactory().get('/messages/trash/')
         request.user = self.user
         view = TrashedMessagesView.as_view()
@@ -203,9 +178,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertFalse(response.context_data['is_paginated'])
 
     def test_trashedmessagesview_as_anonymous(self):
-        """
-        When called by anonymous, TrashedMessagesView should redirect to login.
-        """
+        """When called by anonymous, TrashedMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/trash/')
         request.user = User.objects.get_anonymous_user()
         view = TrashedMessagesView.as_view()
@@ -216,9 +189,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertTrue(response.url.startswith(u'/login/'))
 
     def test_readmessagesview_as_user(self):
-        """
-        When called by a user, ReadMessagesView should load and context_data be present.
-        """
+        """When called by a user, ReadMessagesView should load and context_data be present."""
         request = RequestFactory().get('/messages/read/')
         request.user = self.user
         view = ReadMessagesView.as_view()
@@ -231,9 +202,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertFalse(response.context_data['is_paginated'])
 
     def test_readmessagesview_as_anonymous(self):
-        """
-        When called by anonymous, ReadMessagesView should redirect to login.
-        """
+        """When called by anonymous, ReadMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/read/')
         request.user = User.objects.get_anonymous_user()
         view = ReadMessagesView.as_view()
@@ -244,9 +213,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertTrue(response.url.startswith(u'/login/'))
 
     def test_unreadmessagesview_as_user(self):
-        """
-        When called by a user, UnreadMessagesView should load and context_data be present.
-        """
+        """When called by a user, UnreadMessagesView should load and context_data be present."""
         request = RequestFactory().get('/messages/unread/')
         request.user = self.user
         view = UnreadMessagesView.as_view()
@@ -259,9 +226,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertFalse(response.context_data['is_paginated'])
 
     def test_unreadmessagesview_as_anonymous(self):
-        """
-        When called by anonymous, UnreadMessagesView should redirect to login.
-        """
+        """When called by anonymous, UnreadMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/unread/')
         request.user = User.objects.get_anonymous_user()
         view = UnreadMessagesView.as_view()
@@ -273,9 +238,6 @@ class TestFolderMessagesViewIntegration(TestCase):
 
 
 class TestMessageView(TestCase):
-    """
-    Unit Tests for the MessageView base class.
-    """
 
     def test_messageview_get_queryset(self):
         """
@@ -286,6 +248,7 @@ class TestMessageView(TestCase):
         view = MessageView()
         view = setup_view(view, request)
         expected_calls = [call.message_set.optimized()]
+    """Unit Tests for the `MessageView` base class."""
 
         view.get_queryset()
 
@@ -293,9 +256,6 @@ class TestMessageView(TestCase):
 
     @patch('inyoka.privmsg.views.DetailView.get_object')
     def test_messageview_get_object(self, mock_get_object):
-        """
-        Test that get_object calls mark_read() on the selected message.
-        """
         request = RequestFactory().get('/')
         request.user = Mock()
         view = MessageView()
@@ -303,26 +263,21 @@ class TestMessageView(TestCase):
 
         view.get_object()
 
+        """Test that `get_object()` calls `mark_read()` on the selected message."""
         mock_get_object.assert_has_calls([call(None), call().mark_read()])
 
 
 class TestMessageViewSubclasses(TestCase):
-    """
-    Unit tests for the subclasses of MessageView.
-    """
+    """Unit tests for the subclasses of `MessageView`."""
 
     def setUp(self):
-        """
-        Set up the request object.
-        """
+        """Set up the request object."""
         self.request = RequestFactory().get('/')
         self.request.user = User(username='testuser')
 
     def test_messagetoarchiveview_confirm_action(self):
-        """
-        Test `confirm_action()` calls `archive()` method on the selected message object.
-        """
         view = MessageToArchiveView()
+        """Test `confirm_action()` calls `restore()` method on the selected message object."""
         view = setup_view(view, self.request)
         view.object = Mock()
 
@@ -331,10 +286,8 @@ class TestMessageViewSubclasses(TestCase):
         view.object.assert_has_calls([call.archive()])
 
     def test_messagetotrashview_confirm_action(self):
-        """
-        Test `confirm_action()` calls `trash()` method on the selected message object.
-        """
         view = MessageToTrashView()
+        """Test `get_success_url()` returns the message's folder url by calling the right method."""
         view = setup_view(view, self.request)
         view.object = Mock()
 
@@ -343,10 +296,8 @@ class TestMessageViewSubclasses(TestCase):
         view.object.assert_has_calls([call.trash()])
 
     def test_messagerestoreview_confirm_action(self):
-        """
-        Test `confirm_action()` calls `restore()` method on the selected message object.
-        """
         view = MessageRestoreView()
+        """Test `confirm_action()` calls `archive()` method on the selected message object."""
         view = setup_view(view, self.request)
         view.object = Mock()
 
@@ -355,10 +306,8 @@ class TestMessageViewSubclasses(TestCase):
         view.object.assert_has_calls([call.restore()])
 
     def test_messagerestoreview_get_success_url(self):
-        """
-        Test `get_success_url()` returns the message's folder url by calling the right method.
-        """
         view = MessageRestoreView()
+        """Test `confirm_action()` calls `trash()` method on the selected message object."""
         view = setup_view(view, self.request)
         view.object = Mock()
 
@@ -367,9 +316,7 @@ class TestMessageViewSubclasses(TestCase):
         view.object.assert_has_calls([call.get_absolute_url(action='folder')])
 
     def test_messagedeleteview_confirm_action(self):
-        """
-        Test `confirm_action()` calls `delete()` method on the selected message object.
-        """
+        """Test `confirm_action()` calls `delete()` method on the selected message object."""
         view = MessageDeleteView()
         view = setup_view(view, self.request)
         view.object = Mock()
@@ -380,19 +327,16 @@ class TestMessageViewSubclasses(TestCase):
 
 
 class TestMessageViewIntegration(TestCase):
-    """
-    Integration test of the Message views.
-    """
     # TODO: write the tests.
+    """Integration test of the Message views."""
 
 
 class TestBaseMessageComposeView(TestCase):
-    """
-    Unit Tests for the MessageComposeView class.
-    """
+    """Unit Tests for the MessageComposeView class."""
     urls = 'inyoka.portal.urls'
 
     def setUp(self):
+        """Set up the view for testing."""
         self.request = RequestFactory().get('/')
         self.user = Mock()
         self.view = BaseMessageComposeView()
@@ -400,9 +344,7 @@ class TestBaseMessageComposeView(TestCase):
         self.view.request.user = self.user
 
     def test_get_form_class_normal_user(self):
-        """
-        Test `get_form_class()` returns MessageComposeForm for normal user.
-        """
+        """Test `get_form_class()` returns MessageComposeForm for normal user."""
         self.view.request.user.can.return_value = False
         expected_value = MessageComposeForm
 
@@ -411,9 +353,7 @@ class TestBaseMessageComposeView(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_get_form_class_privileged_user(self):
-        """
-        Test `get_form_class()` returns MessageComposeForm for privileged user.
-        """
+        """Test `get_form_class()` returns MessageComposeForm for privileged user."""
         self.view.request.user.can.return_value = True
         expected_value = PrivilegedMessageComposeForm
 
@@ -423,9 +363,7 @@ class TestBaseMessageComposeView(TestCase):
 
     @patch('inyoka.privmsg.views.CreateView.get_form_kwargs')
     def test_get_form_kwargs(self, mock_get_form_kwargs):
-        """
-        Test `get_form_kwargs()` adds user to returned dict.
-        """
+        """Test `get_form_kwargs()` adds user to returned dict."""
         mock_get_form_kwargs.return_value = {}
 
         actual_value = self.view.get_form_kwargs()
@@ -435,9 +373,7 @@ class TestBaseMessageComposeView(TestCase):
     @patch('inyoka.privmsg.views.MessageData.send')
     @patch('inyoka.privmsg.views.messages.success')
     def test_form_valid(self, mock_success, mock_send):
-        """
-        Test `form_valid()` calls `MessageData.send()` and adds a flash message.
-        """
+        """Test `form_valid()` calls `MessageData.send()` and adds a flash message."""
         expected_author = User(username='testuser')
         expected_subject = 'Subject'
         expected_text = 'Text'
@@ -470,9 +406,7 @@ class TestBaseMessageComposeView(TestCase):
     @patch('inyoka.privmsg.views.BaseMessageComposeView.get_subject')
     @patch('inyoka.privmsg.views.BaseMessageComposeView.get_recipients')
     def test_get_initial(self, mock_recipients, mock_subject, mock_text):
-        """
-        Test that `get_initial()` returns the correct dict.
-        """
+        """Test that `get_initial()` returns the correct dict."""
         expected_recipients = ''
         expected_subject = ''
         expected_text = ''
@@ -494,30 +428,23 @@ class TestBaseMessageComposeView(TestCase):
         self.assertEqual(self.view.get_object(), None)
 
     def test_get_recipients(self):
-        """
-        Test `get_recipients()`, this method is supposed to be implemented by subclasses.
-        """
+        """Test `get_recipients()`, this method is supposed to be implemented by subclasses."""
         self.assertEqual(self.view.get_recipients(), '')
 
     def test_get_subject(self):
-        """
-        Test `get_subject()`, this method is supposed to be implemented by subclasses.
-        """
+        """Test `get_subject()`, this method is supposed to be implemented by subclasses."""
         self.assertEqual(self.view.get_subject(), '')
 
     def test_get_text(self):
-        """
-        Test `get_text()`, this method is supposed to be implemented by subclasses.
-        """
+        """Test `get_text()`, this method is supposed to be implemented by subclasses."""
         self.assertEqual(self.view.get_text(), '')
 
 
 class TestMessageComposeView(TestCase):
-    """
-    Unit Tests for `MessageComposeView`.
-    """
+    """Unit Tests for `MessageComposeView`."""
 
     def setUp(self):
+        """Set up the view for testing."""
         self.request = RequestFactory().get('/')
         self.user = Mock()
         self.view = MessageComposeView()
@@ -525,18 +452,14 @@ class TestMessageComposeView(TestCase):
         self.view.request.user = self.user
 
     def test_get_recipients_without_user_in_url(self):
-        """
-        Test `get_recipients()` returns an empty string when called.
-        """
+        """Test `get_recipients()` returns an empty string when called."""
         self.view.kwargs = {}
         expected_value = ''
         actual_value = self.view.get_recipients()
         self.assertEqual(actual_value, expected_value)
 
     def test_get_recipients_with_user_in_url(self):
-        """
-        Test `get_recipients()` returns the username given in the URL.
-        """
+        """Test `get_recipients()` returns the username given in the URL."""
         expected_value = 'testuser'
         self.view.kwargs = {'user': expected_value}
         actual_value = self.view.get_recipients()
@@ -544,11 +467,10 @@ class TestMessageComposeView(TestCase):
 
 
 class TestMessageForwardView(TestCase):
-    """
-    Unit Tests for `MessageForwardView`.
-    """
+    """Unit Tests for `MessageForwardView`."""
 
     def setUp(self):
+        """Set up the view for testing."""
         self.request = RequestFactory().get('/')
         self.user = Mock()
         self.view = MessageForwardView()
@@ -556,9 +478,7 @@ class TestMessageForwardView(TestCase):
         self.view.request.user = self.user
 
     def test_get_queryset(self):
-        """
-        Test that `get_queryset()` returns the correct QuerySet with the users messages.
-        """
+        """Test that `get_queryset()` returns the correct QuerySet with the users messages."""
         expected_calls = [call.message_set.optimized()]
         self.view.get_queryset()
         self.request.user.assert_has_calls(expected_calls)
@@ -574,9 +494,7 @@ class TestMessageForwardView(TestCase):
         mock_get_queryset.assert_has_calls([call(), call().get(pk=expected_pk)])
 
     def test_get_subject(self):
-        """
-        Test that `get_subject()` prefixes the forwarded message's subject with 'Fw: '
-        """
+        """Test that `get_subject()` prefixes the forwarded message's subject with 'Fw: '."""
         dummy_subject = 'testsubject'
         expected_value = 'Fw: testsubject'
         self.view.object = Mock(subject=dummy_subject)
@@ -586,9 +504,7 @@ class TestMessageForwardView(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_get_subject_already_forwarded(self):
-        """
-        Test that `get_subject()` does not change the subject, when it is already prefixed.
-        """
+        """Test that `get_subject()` does not change the subject, when it is already prefixed."""
         expected_value = 'Fw: testsubject'
         self.view.object = Mock(subject=expected_value)
 
@@ -598,9 +514,7 @@ class TestMessageForwardView(TestCase):
 
     @patch('inyoka.privmsg.views.quote_text')
     def test_get_text(self, mock_quote_text):
-        """
-        Test that `get_text()` calls `quote_text()` with the correct parameters.
-        """
+        """Test that `get_text()` calls `quote_text()` with the correct parameters."""
         expected_text = 'test text'
         expected_user = User(username='testuser')
         self.view.object = Mock(text=expected_text, author=expected_user)
@@ -614,7 +528,9 @@ class TestMessageForwardView(TestCase):
 
 
 class TestMessageReplyView(TestCase):
+    """Unit tests for `MessageReplyView`."""
     def setUp(self):
+        """Set up the view for testing."""
         self.request = RequestFactory().get('/')
         self.user = Mock()
         self.view = MessageReplyView()
@@ -623,9 +539,7 @@ class TestMessageReplyView(TestCase):
         self.view.request.user = self.user
 
     def test_messagereplyview_get_queryset(self):
-        """
-        Test that get_queryset() builds the correct query.
-        """
+        """Test that get_queryset() builds the correct query."""
         request = RequestFactory().get('/')
         request.user = Mock()
         view = MessageReplyView()
@@ -647,6 +561,7 @@ class TestMessageReplyView(TestCase):
         mock_get_queryset.assert_has_calls([call(), call().get(pk=expected_pk)])
 
     def test_get_recipients(self):
+        """Test that `get_recipients()` returns the correct recipients."""
         expected_value = 'testuser'
         self.view.object = Mock(author=User(pk=1, username=expected_value))
 
@@ -655,6 +570,7 @@ class TestMessageReplyView(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_get_recipients_reply_to_all(self):
+        """Test that `get_recipients()` returns the correct recipients when replying to all."""
         self.view.reply_to_all = True
         self.view.request.user = User(pk=1, username='testuser')
         author = User(pk=2, username='author')
@@ -672,6 +588,7 @@ class TestMessageReplyView(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_get_recipients_reply_to_all_with_viewer_in_recipients(self):
+        """Test that `get_recipients()` omits the current user when replying to all."""
         self.view.reply_to_all = True
         self.view.request.user = User(pk=1, username='testuser')
         author = User(pk=2, username='author')
@@ -690,6 +607,7 @@ class TestMessageReplyView(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_get_subject(self):
+        """Test that `get_subject()` returns the correct subject."""
         dummy_subject = 'testsubject'
         expected_value = 'Re: testsubject'
         self.view.object = Mock(subject=dummy_subject)
@@ -699,6 +617,7 @@ class TestMessageReplyView(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_get_subject_already_replied(self):
+        """Test that `get_subject()` does not alter the subject, when it is already prefixed."""
         expected_value = 'Re: testsubject'
         self.view.object = Mock(subject=expected_value)
 
@@ -708,6 +627,7 @@ class TestMessageReplyView(TestCase):
 
     @patch('inyoka.privmsg.views.quote_text')
     def test_get_text(self, mock_quote_text):
+        """Test that `get_text()` returns the correct message text."""
         expected_text = 'test text'
         expected_user = User(username='testuser')
         self.view.object = Mock(author=expected_user, text=expected_text)
@@ -721,7 +641,10 @@ class TestMessageReplyView(TestCase):
 
 
 class TestMessageReplyReportedTopicView(TestCase):
+    """Unit tests for `MessageReplyReportedTopicView`."""
+
     def setUp(self):
+        """Set up the view for testing."""
         self.request = RequestFactory().get('/')
         self.user = Mock()
         self.view = MessageReplyReportedTopicView()
@@ -742,6 +665,7 @@ class TestMessageReplyReportedTopicView(TestCase):
 
     @patch('inyoka.privmsg.views.User')
     def test_get_recipients(self, mock_user):
+        """Test that `get_recipients()` returns the correct recipients."""
         expected_value = 'testuser'
         self.view.object = Mock()
         mock_user.objects.get.return_value = User(username=expected_value)
@@ -751,6 +675,7 @@ class TestMessageReplyReportedTopicView(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_get_subject(self):
+        """Test that `get_subject()` returns the correct subject."""
         dummy_subject = 'testsubject'
         expected_value = 'Re: testsubject'
         self.view.object = Mock(title=dummy_subject)
@@ -761,6 +686,7 @@ class TestMessageReplyReportedTopicView(TestCase):
 
     @patch('inyoka.privmsg.views.quote_text')
     def test_get_text(self, mock_quote_text):
+        """Test that `get_text()` returns the correct message text."""
         expected_text = 'test text'
         expected_user = User(username='testuser')
         self.view.object = Mock(author=expected_user, reported=expected_text)
@@ -774,7 +700,10 @@ class TestMessageReplyReportedTopicView(TestCase):
 
 
 class TestMessageReplySuggestedArticleView(TestCase):
+    """Unit tests for `MessageReplySuggestedArticleView`."""
+
     def setUp(self):
+        """Set up the view for testing."""
         self.request = RequestFactory().get('/')
         self.user = Mock()
         self.view = MessageReplySuggestedArticleView()
@@ -794,6 +723,7 @@ class TestMessageReplySuggestedArticleView(TestCase):
         mock_suggestion_objects_get.called_once_with(pk='some_value')
 
     def test_get_recipients(self):
+        """Test `get_recipients()` returns the correct list of recipients."""
         expected_value = 'testuser'
         self.view.object = Mock(author=User(username=expected_value))
 
@@ -802,6 +732,7 @@ class TestMessageReplySuggestedArticleView(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_get_subject(self):
+        """Test that `get_subject()` returns the correct subject string."""
         dummy_subject = 'testsubject'
         expected_value = 'Re: testsubject'
         self.view.object = Mock(title=dummy_subject)
@@ -812,6 +743,7 @@ class TestMessageReplySuggestedArticleView(TestCase):
 
     @patch('inyoka.privmsg.views.quote_text')
     def test_get_text(self, mock_quote_text):
+        """Test that `get_text()` returns the correct message text."""
         expected_intro = 'intro'
         expected_text = 'test text'
         expected_user = User(username='testuser')
@@ -831,11 +763,10 @@ class TestMessageReplySuggestedArticleView(TestCase):
 
 
 class TestMultiMessageProcessView(TestCase):
-    """
-    Unit Tests for `MultiMessageProcessView`.
-    """
+    """Unit Tests for `MultiMessageProcessView`."""
 
     def setUp(self):
+        """Set up the view for testing."""
         self.request = RequestFactory().get('/')
         self.user = Mock()
         self.view = MultiMessageProcessView()
@@ -844,9 +775,7 @@ class TestMultiMessageProcessView(TestCase):
 
     @patch('inyoka.privmsg.views.FormMixin.get_form_kwargs')
     def test_get_form_kwargs(self, mock_get_form_kwargs):
-        """
-        Test `get_form_kwargs()` returns a dict containing the queryset.
-        """
+        """Test `get_form_kwargs()` returns a dict containing the queryset."""
         expected_value = 'queryset'
         mock_get_form_kwargs.return_value = {}
         self.view.get_queryset = Mock(return_value=expected_value)
@@ -856,9 +785,7 @@ class TestMultiMessageProcessView(TestCase):
         self.assertEqual(actual_value['queryset'], expected_value)
 
     def test_get_queryset(self):
-        """
-        Test the `get_queryset()` method.
-        """
+        """Test the `get_queryset()` method."""
         expected_value = 'Faked'
         self.view.request.user.message_set = expected_value
 
@@ -867,9 +794,7 @@ class TestMultiMessageProcessView(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_post_when_form_is_valid(self):
-        """
-        Test `post()` method calls `form_valid()` when form successfully validates.
-        """
+        """Test `post()` method calls `form_valid()` when form successfully validates."""
         mock_form = Mock()
         mock_form.is_valid = Mock(return_value=True)
         mock_get_form = Mock(return_value=mock_form)
@@ -881,9 +806,7 @@ class TestMultiMessageProcessView(TestCase):
         self.view.form_valid.called_once_with(self.view.get_form)
 
     def test_post_when_form_is_invalid(self):
-        """
-        Test `post()` raises a 404 error when form is not valid.
-        """
+        """Test `post()` raises a 404 error when form is not valid."""
         mock_form = Mock()
         mock_form.is_valid = Mock(return_value=False)
         mock_get_form = Mock(return_value=mock_form)
@@ -894,9 +817,7 @@ class TestMultiMessageProcessView(TestCase):
 
     @patch('inyoka.privmsg.views.HttpResponseRedirect')
     def test_form_valid_with_action_archive(self, mock_redirect):
-        """
-        Test `form_valid()` calls `bulk_archive()` on the filtered queryset (when called with action "archive").
-        """
+        """Test `form_valid()` calls `bulk_archive()` when called with action "archive"."""
         mocked_queryset = Mock()
         form = MultiMessageSelectForm(queryset=mocked_queryset)
         form.cleaned_data = {
@@ -912,9 +833,7 @@ class TestMultiMessageProcessView(TestCase):
 
     @patch('inyoka.privmsg.views.HttpResponseRedirect')
     def test_form_valid_with_action_trash(self, mock_redirect):
-        """
-        Test `form_valid()` calls `bulk_trash()` on the filtered queryset (when called with action "trash").
-        """
+        """Test that `form_valid()` calls `bulk_trash()` when called with action "trash"."""
         mocked_queryset = Mock()
         form = MultiMessageSelectForm(queryset=mocked_queryset)
         form.cleaned_data = {
@@ -930,9 +849,7 @@ class TestMultiMessageProcessView(TestCase):
 
     @patch('inyoka.privmsg.views.HttpResponseRedirect')
     def test_form_valid_with_action_restore(self, mock_redirect):
-        """
-        Test `form_valid()` calls `bulk_restore()` on the filtered queryset (when called with action "restore").
-        """
+        """Test `form_valid()` calls `bulk_restore()` when called with action "restore"."""
         mocked_queryset = Mock()
         form = MultiMessageSelectForm(queryset=mocked_queryset)
         form.cleaned_data = {

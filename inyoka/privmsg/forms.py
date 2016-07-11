@@ -19,9 +19,7 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 
 # TODO: Relocate to inyoka.utils.forms?
 class CSVField(forms.CharField):
-    """
-    A Comma Separated Value field. (Why doesn't django have one already?)
-    """
+    """A Comma Separated Value field. (Why doesn't django have one already?)"""
 
     def __init__(self, *args, **kwargs):
         self.separator = kwargs.pop('separator', ',')
@@ -41,14 +39,10 @@ class CSVField(forms.CharField):
 
 
 class MultiUserField(CSVField):
-    """
-    A field that takes multiple usernames and returns a list of user objects.
-    """
+    """A field that takes multiple usernames and returns a list of user objects."""
 
     def clean(self, values):
-        """
-        Validate users exist and return a list of user objects.
-        """
+        """Validate users exist and return a list of user objects."""
         values = super(MultiUserField, self).clean(values)
 
         if values is None:
@@ -69,14 +63,10 @@ class MultiUserField(CSVField):
 
 
 class MultiGroupField(CSVField):
-    """
-    A field that takes multiple group names and returns a list of users in those groups.
-    """
+    """A field that takes multiple group names and returns a list of users in those groups."""
 
     def clean(self, values):
-        """
-        Validate that all groups exist and return a list of users in those groups.
-        """
+        """Validate that all groups exist and return a list of users in those groups."""
         values = super(MultiGroupField, self).clean(values)
 
         if values is None:
@@ -98,9 +88,7 @@ class MultiGroupField(CSVField):
 
 
 class MessageComposeForm(SurgeProtectionMixin, forms.Form):
-    """
-    Form to compose private messages.
-    """
+    """Form to compose private messages."""
 
     recipients = MultiUserField(
         label=ugettext_lazy(u'To'),
@@ -125,9 +113,7 @@ class MessageComposeForm(SurgeProtectionMixin, forms.Form):
         super(MessageComposeForm, self).__init__(*args, **kwargs)
 
     def clean_recipients(self):
-        """
-        Test if the user has included himself as recipient.
-        """
+        """Test if the user has included himself as recipient."""
         recipients = self.cleaned_data['recipients']
 
         reserved_users = (User.objects.get_system_user(),
@@ -161,9 +147,7 @@ class MessageComposeForm(SurgeProtectionMixin, forms.Form):
 
 
 class PrivilegedMessageComposeForm(MessageComposeForm):
-    """
-    MessageComposeForm for privileged users who can send group messages.
-    """
+    """MessageComposeForm for privileged users who can send group messages."""
 
     group_recipients = MultiGroupField(
         label=ugettext_lazy(u'Groups'),
@@ -177,9 +161,7 @@ class PrivilegedMessageComposeForm(MessageComposeForm):
         fields = ['recipients', 'group_recipients', 'subject', 'text']
 
     def __init__(self, *args, **kwargs):
-        """
-        In PrivilegedMessageComposeForm the recipients field is not required.
-        """
+        """In PrivilegedMessageComposeForm the recipients field is not required."""
         super(PrivilegedMessageComposeForm, self).__init__(*args, **kwargs)
         self.surge_protection_timeout = None
         self.fields['recipients'].required = False
@@ -192,9 +174,7 @@ class PrivilegedMessageComposeForm(MessageComposeForm):
         # self.field_order = ['recipients', 'group_recipients', 'subject', 'text']
 
     def clean(self):
-        """
-        Join `recipients` and `group_recipients`.
-        """
+        """Join `recipients` and `group_recipients`."""
         super(PrivilegedMessageComposeForm, self).clean()
 
         cleaned_data = self.cleaned_data
@@ -215,9 +195,7 @@ class PrivilegedMessageComposeForm(MessageComposeForm):
         return cleaned_data
 
     def clean_group_recipients(self):
-        """
-        Make sure the user is not in `group_recipients`.
-        """
+        """Make sure the user is not in `group_recipients`."""
         group_recipients = self.cleaned_data['group_recipients']
         if self.user in group_recipients:
             group_recipients.remove(self.user)
@@ -225,9 +203,7 @@ class PrivilegedMessageComposeForm(MessageComposeForm):
 
 
 class MultiMessageSelectForm(forms.Form):
-    """
-    Form to select messages to be archived or trashed.
-    """
+    """Form to select messages to be archived or trashed."""
     CHOICE_ARCHIVE = 'archive'
     CHOICE_TRASH = 'trash'
     CHOICE_RESTORE = 'restore'
@@ -246,8 +222,6 @@ class MultiMessageSelectForm(forms.Form):
         self.fields['selected_messages'].choices = self.queryset.values_list('id', 'id')
 
     def clean_selected_messages(self):
-        """
-        Filter the queryset by the given selected_messages (ids) and return the queryset.
-        """
+        """Filter the queryset by the given selected_messages (ids) and return the queryset."""
         selected_messages = self.cleaned_data['selected_messages']
         return self.queryset.filter(pk__in=selected_messages)

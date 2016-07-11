@@ -37,9 +37,7 @@ MESSAGES_PER_PAGE = 20
 # "Folder" level views
 # --------------------
 class MessagesFolderView(LoginRequiredMixin, ListView):
-    """
-    Base View to Show a list of private messages for a user.
-    """
+    """Base View to Show a list of private messages for a user."""
 
     template_name = 'privmsg/folder.html'
     context_object_name = 'messages'
@@ -49,9 +47,7 @@ class MessagesFolderView(LoginRequiredMixin, ListView):
     folder_name = None
 
     def get_queryset(self):
-        """
-        Return the queryset.
-        """
+        """Return the queryset."""
         if self.queryset_name is not None:
             # basically, take the `queryset_name` string and call it as a method
             # on the current users `message_set`.
@@ -65,9 +61,7 @@ class MessagesFolderView(LoginRequiredMixin, ListView):
 
 
 class InboxedMessagesView(MessagesFolderView):
-    """
-    Show the list of messages that are in the inbox (i.e. not archived).
-    """
+    """Show the list of messages that are in the inbox (i.e. not archived)."""
 
     queryset_name = 'inboxed'
     folder = 'inbox'
@@ -75,9 +69,7 @@ class InboxedMessagesView(MessagesFolderView):
 
 
 class SentMessagesView(MessagesFolderView):
-    """
-    Show the list of messages that the user sent himself.
-    """
+    """Show the list of messages that the user sent himself."""
 
     queryset_name = 'sent'
     folder = 'sent'
@@ -85,9 +77,7 @@ class SentMessagesView(MessagesFolderView):
 
 
 class ArchivedMessagesView(MessagesFolderView):
-    """
-    Show the list of messages that are in the archive.
-    """
+    """Show the list of messages that are in the archive."""
 
     queryset_name = 'archived'
     folder = 'archive'
@@ -95,9 +85,7 @@ class ArchivedMessagesView(MessagesFolderView):
 
 
 class TrashedMessagesView(MessagesFolderView):
-    """
-    Show the list of messages that are in the trash.
-    """
+    """Show the list of messages that are in the trash."""
 
     queryset_name = 'trashed'
     folder = 'trash'
@@ -105,9 +93,7 @@ class TrashedMessagesView(MessagesFolderView):
 
 
 class ReadMessagesView(MessagesFolderView):
-    """
-    Show the list of messages that were read.
-    """
+    """Show the list of messages that were read."""
 
     queryset_name = 'read'
     folder = 'read'
@@ -115,9 +101,7 @@ class ReadMessagesView(MessagesFolderView):
 
 
 class UnreadMessagesView(MessagesFolderView):
-    """
-    Show the list of messages that are unread.
-    """
+    """Show the list of messages that are unread."""
 
     queryset_name = 'unread'
     folder = 'unread'
@@ -127,32 +111,24 @@ class UnreadMessagesView(MessagesFolderView):
 # Message level views
 # -------------------
 class MessageView(LoginRequiredMixin, DetailView):
-    """
-    Display a message.
-    """
+    """Display a message."""
 
     context_object_name = 'message'
     template_name = 'privmsg/message.html'
 
     def get_queryset(self):
-        """
-        Return the queryset of this users messages and make sure it is optimized().
-        """
+        """Return the queryset of this users messages and make sure it is optimized()."""
         return self.request.user.message_set.optimized()
 
     def get_object(self, queryset=None):
-        """
-        When retrieving the object by pk, make sure it is marked as read.
-        """
+        """When retrieving the object by pk, make sure it is marked as read."""
         message = super(MessageView, self).get_object(queryset)
         message.mark_read()
         return message
 
 
 class MessageToArchiveView(ConfirmActionMixin, MessageView):
-    """
-    Move message to the archive.
-    """
+    """Move message to the archive."""
 
     confirm_message = _(u'Do you want to archive this message?')
     success_message = _(u'The message was archived.')
@@ -160,16 +136,12 @@ class MessageToArchiveView(ConfirmActionMixin, MessageView):
     success_url = reverse_lazy('privmsg-archive')
 
     def confirm_action(self):
-        """
-        Archive the message, when the flash confirmation action succeeds.
-        """
+        """Archive the message, when the flash confirmation action succeeds."""
         self.object.archive()
 
 
 class MessageToTrashView(ConfirmActionMixin, MessageView):
-    """
-    Move message to trash.
-    """
+    """Move message to trash."""
 
     confirm_message = _(u'Do you want to move this message to trash?')
     success_message = _(u'The message was moved to trash.')
@@ -177,38 +149,28 @@ class MessageToTrashView(ConfirmActionMixin, MessageView):
     success_url = reverse_lazy('privmsg-trash')
 
     def confirm_action(self):
-        """
-        Archive the message, when the flash confirmation action succeeds.
-        """
+        """Archive the message, when the flash confirmation action succeeds."""
         self.object.trash()
 
 
 class MessageRestoreView(ConfirmActionMixin, MessageView):
-    """
-    Restore message from `trash` or `archive` to `inbox` or `sent`.
-    """
+    """Restore message from `trash` or `archive` to `inbox` or `sent`."""
 
     confirm_message = _(u'Do you want to restore this message?')
     success_message = _(u'The message has been restored.')
     confirm_label = _(u'Restore')
 
     def confirm_action(self):
-        """
-        Restore the message, when the flash confirmation action succeeds.
-        """
+        """Restore the message, when the flash confirmation action succeeds."""
         self.object.restore()
 
     def get_success_url(self):
-        """
-        Get the redirection URL for a successfully restored message, depends on the message folder.
-        """
+        """Get the redirection URL for a successfully restored message."""
         return self.object.get_absolute_url(action='folder')
 
 
 class MessageDeleteView(ConfirmActionMixin, MessageView):
-    """
-    Delete a message.
-    """
+    """Delete a message."""
 
     confirm_message = _(u'Do you want to delete this message? You will not be able to recover it!')
     success_message = _(u'The message was deleted.')
@@ -216,18 +178,14 @@ class MessageDeleteView(ConfirmActionMixin, MessageView):
     success_url = reverse_lazy('privmsg-inbox')
 
     def confirm_action(self):
-        """
-        Delete the message, when the action is confirmed.
-        """
+        """Delete the message, when the action is confirmed."""
         self.object.delete()
 
 
 # Composing messages
 # ------------------
 class BaseMessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
-    """
-    Base class for the compose views.
-    """
+    """Base class for the compose views."""
     template_name = 'privmsg/compose.html'
     success_url = reverse_lazy('privmsg-sent')
     preview_fields = ['text']
@@ -235,26 +193,20 @@ class BaseMessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
     slug_url_kwarg = 'slug'
 
     def get_form_class(self):
-        """
-        Get the form class based on user permission.
-        """
+        """Get the form class based on user permission."""
         if self.request.user.can('send_group_pm'):
             return PrivilegedMessageComposeForm
         else:
             return MessageComposeForm
 
     def get_form_kwargs(self):
-        """
-        Make sure the form is called with the `user` argument.
-        """
+        """Make sure the form is called with the `user` argument."""
         kwargs = super(BaseMessageComposeView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
     def form_valid(self, form):
-        """
-        Commit the message to the database.
-        """
+        """Commit the message to the database."""
         MessageData.send(
             author=self.request.user,
             recipients=form.cleaned_data['recipients'],
@@ -265,15 +217,11 @@ class BaseMessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
         return HttpResponseRedirect(self.success_url)
 
     def preview_method(self, text):
-        """
-        Render the preview, see `FormPreviewMixin`.
-        """
+        """Render the preview, see `FormPreviewMixin`."""
         return MessageData.get_text_rendered(text)
 
     def get_initial(self):
-        """
-        Return the `inital` data for the form.
-        """
+        """Return the `inital` data for the form."""
         self.object = self.get_object()
         return {
             'recipients': self.get_recipients(),
@@ -286,37 +234,32 @@ class BaseMessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
         return None
 
     def get_recipients(self):
+        """Return a string of recipients. This is a dummy, overwrite in derived views."""
         return ''
 
     def get_subject(self):
+        """Return the subject as a string. This is a dummy, overwrite in derived views."""
         return ''
 
     def get_text(self):
+        """Return the message text as a string. This is a dummy, overwrite in derived views."""
         return ''
 
 
 class MessageComposeView(BaseMessageComposeView):
-    """
-    View to compose private messages.
-    """
+    """View to compose private messages."""
 
     def get_recipients(self):
-        """
-        Provide the initial recipient for the form.
-        """
+        """Provide the initial recipient for the form."""
         user = self.kwargs.get('user', None)
         return user if user is not None else ''
 
 
 class MessageForwardView(BaseMessageComposeView):
-    """
-    Forward a private message.
-    """
+    """Forward a private message"""
 
     def get_queryset(self):
-        """
-        Return the QuerySet of messages this user has access to.
-        """
+        """Return the QuerySet of messages this user has access to."""
         return self.request.user.message_set.optimized()
 
     def get_object(self):
@@ -325,29 +268,24 @@ class MessageForwardView(BaseMessageComposeView):
         return self.get_queryset().get(pk=pk)
 
     def get_subject(self):
-        """
-        Make sure the subject of the message starts with 'Fw: '.
-        """
+        """Make sure the subject of the message starts with 'Fw: '."""
         if self.object.subject.lower().startswith('fw:'):
             return self.object.subject
         else:
             return u'Fw: {subject}'.format(subject=self.object.subject)
 
     def get_text(self):
+        """Return the text of the forwarded message and make sure it's properly quoted."""
         return quote_text(text=self.object.text, author=self.object.author)
 
 
 class MessageReplyView(BaseMessageComposeView):
-    """
-    Reply to a private message.
-    """
+    """Reply to a private message."""
 
     reply_to_all = False
 
     def get_queryset(self):
-        """
-        Return the QuerySet of messages this user has access to.
-        """
+        """Return the QuerySet of messages this user has access to."""
         return self.request.user.message_set.optimized()
 
     def get_object(self):
@@ -356,9 +294,7 @@ class MessageReplyView(BaseMessageComposeView):
         return self.get_queryset().get(pk=pk)
 
     def get_recipients(self):
-        """
-        Return the list of usernames of recipients.
-        """
+        """Return the list of usernames of recipients."""
         recipients = set([self.object.author])
         if self.reply_to_all:
             recipients.update(self.object.recipients)
@@ -367,25 +303,19 @@ class MessageReplyView(BaseMessageComposeView):
         return recipients
 
     def get_subject(self):
-        """
-        Make sure the subject of the message starts with 'Re: '.
-        """
+        """Make sure the subject of the message starts with 'Re: '."""
         if self.object.subject.lower().startswith('re:'):
             return self.object.subject
         else:
             return u'Re: {subject}'.format(subject=self.object.subject)
 
     def get_text(self):
-        """
-        Return text for the new message by quoting the old message.
-        """
+        """Return text for the new message by quoting the old message."""
         return quote_text(text=self.object.text, author=self.object.author)
 
 
 class MessageReplyReportedTopicView(PermissionRequiredMixin, BaseMessageComposeView):
-    """
-    Reply to reported topics on the forum.
-    """
+    """Reply to reported topics on the forum."""
 
     model = Topic
     permission_required = 'manage_topics'
@@ -396,28 +326,20 @@ class MessageReplyReportedTopicView(PermissionRequiredMixin, BaseMessageComposeV
         return Topic.objects.get(slug=slug)
 
     def get_recipients(self):
-        """
-        Return the list of recipients usernames for the form.
-        """
+        """Return the list of recipients usernames for the form."""
         return User.objects.get(id=self.object.reporter_id).username
 
     def get_subject(self):
-        """
-        Return the subject of the reported topic and prefix it with 'Re:'.
-        """
+        """Return the subject of the reported topic and prefix it with 'Re:'."""
         return u'Re: {subject}'.format(subject=self.object.title)
 
     def get_text(self):
-        """
-        Return the quoted text of the report that is being answered.
-        """
+        """Return the quoted text of the report that is being answered."""
         return quote_text(text=self.object.reported, author=self.object.author)
 
 
 class MessageReplySuggestedArticleView(PermissionRequiredMixin, BaseMessageComposeView):
-    """
-    Reply to suggested articles.
-    """
+    """Reply to suggested articles."""
     model = Suggestion
     permission_required = 'article_edit'
 
@@ -427,50 +349,36 @@ class MessageReplySuggestedArticleView(PermissionRequiredMixin, BaseMessageCompo
         return Suggestion.objects.get(pk=pk)
 
     def get_recipients(self):
-        """
-        Return the list of recipients usernames for the form.
-        """
+        """Return the list of recipients usernames for the form."""
         return self.object.author.username
 
     def get_subject(self):
-        """
-        Return the subject of the suggestion and prefix it with 'Re:'.
-        """
+        """Return the subject of the suggestion and prefix it with 'Re:'."""
         return u'Re: {subject}'.format(subject=self.object.title)
 
     def get_text(self):
-        """
-        Return the quoted text of the suggestion.
-        """
+        """Return the quoted text of the suggestion."""
         text = u'{}\n\n{}'.format(self.object.intro, self.object.text)
         return quote_text(text=text, author=self.object.author)
 
 
 class MultiMessageProcessView(LoginRequiredMixin, FormMixin, View):
-    """
-    View to process forms and move multiple selected messages to a different folder.
-    """
+    """View to process forms and move multiple selected messages to a different folder."""
 
     form_class = MultiMessageSelectForm
 
     def get_form_kwargs(self):
-        """
-        Provide the form with the queryset for valid choices.
-        """
+        """Provide the form with the queryset for valid choices."""
         kwargs = super(MultiMessageProcessView, self).get_form_kwargs()
         kwargs['queryset'] = self.get_queryset()
         return kwargs
 
     def get_queryset(self):
-        """
-        The queryset containing the messages this user can access.
-        """
+        """The queryset containing the messages this user can access."""
         return self.request.user.message_set
 
     def post(self, request):
-        """
-        Respond to HTTP POST requests.
-        """
+        """Respond to HTTP POST requests."""
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
@@ -479,9 +387,7 @@ class MultiMessageProcessView(LoginRequiredMixin, FormMixin, View):
             raise Http404()
 
     def form_valid(self, form):
-        """
-        Process the filtered queryset.
-        """
+        """Process the filtered queryset."""
         queryset = form.cleaned_data['selected_messages']
         action = form.cleaned_data['action']
 

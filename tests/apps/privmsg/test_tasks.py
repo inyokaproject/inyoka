@@ -17,9 +17,7 @@ from inyoka.privmsg.tasks import clean_abandoned_messages, expunge_private_messa
 
 
 class TestTasks(TestCase):
-    """
-    Tests for privmsg tasks.
-    """
+    """Tests for privmsg tasks."""
 
     def setUp(self):
         self.author = User.objects.register_user(
@@ -30,9 +28,7 @@ class TestTasks(TestCase):
         )
 
     def test_clean_abandoned_messages(self):
-        """
-        clean_abandoned_messages() should delete messages that are no longer referenced by any users.
-        """
+        """`clean_abandoned_messages()` should delete messages no longer referenced by any users."""
         MessageData.objects.create(author=self.author, subject='Test', text='Text')
 
         clean_abandoned_messages()
@@ -40,9 +36,7 @@ class TestTasks(TestCase):
         self.assertFalse(MessageData.objects.abandoned().exists())
 
     def test_expunge_private_messages(self):
-        """
-        expunde_private_messages() should delete trashed messages after a grace period (defined in settings).
-        """
+        """`expunge_private_messages()` should delete trashed messages after a grace period."""
         yesterday = datetime.utcnow() - timedelta(days=1)
         messagedata = MessageData.objects.create(
             author=self.author,
@@ -61,9 +55,7 @@ class TestTasks(TestCase):
         self.assertFalse(Message.objects.trashed().exists())
 
     def test_expunge_private_messages_with_newer(self):
-        """
-        expunde_private_messages() should not delete trashed messages before the grace period is over.
-        """
+        """`expunge_private_messages()` should not delete trashed messages before the grace period is over."""
         messagedata = MessageData.objects.create(
             author=self.author,
             subject='Test',

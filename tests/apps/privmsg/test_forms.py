@@ -23,14 +23,10 @@ from mock import patch, Mock
 
 
 class TestCSVField(TestCase):
-    """
-    CSVField Unit Tests.
-    """
+    """CSVField Unit Tests."""
 
     def test_csvfield_single_word(self):
-        """
-        Test CSVField with a single word input.
-        """
+        """Test CSVField with a single word input."""
         field = CSVField()
         input_string = 'test'
         expected_value = ['test']
@@ -40,9 +36,7 @@ class TestCSVField(TestCase):
         self.assertListEqual(actual_value, expected_value)
 
     def test_csvfield_single_word_trailing_separator(self):
-        """
-        Test CSVField should ignore trailing separators.
-        """
+        """Test CSVField should ignore trailing separators."""
         field = CSVField()
         input_string = 'test,'
         expected_value = ['test']
@@ -52,9 +46,7 @@ class TestCSVField(TestCase):
         self.assertListEqual(actual_value, expected_value)
 
     def test_csvfield_multiple_words(self):
-        """
-        Test CSVField should split multiple items at separator character.
-        """
+        """Test CSVField should split multiple items at separator character."""
         field = CSVField()
         input_string = 'test,test2'
         expected_value = ['test', 'test2']
@@ -64,9 +56,7 @@ class TestCSVField(TestCase):
         self.assertListEqual(actual_value, expected_value)
 
     def test_csvfield_multiple_words_strip_spaces(self):
-        """
-        Test CSVField should ignore spaces around separators.
-        """
+        """Test CSVField should ignore spaces around separators."""
         field = CSVField()
         input_string = 'test, test2'
         expected_value = ['test', 'test2']
@@ -76,9 +66,7 @@ class TestCSVField(TestCase):
         self.assertListEqual(actual_value, expected_value)
 
     def test_csvfield_multiple_multiple_words_semicolon(self):
-        """
-        Test CSVField with different separator character.
-        """
+        """Test CSVField with different separator character."""
 
         field = CSVField(separator=';')
         input_string = 'test; test2'
@@ -89,9 +77,7 @@ class TestCSVField(TestCase):
         self.assertListEqual(actual_value, expected_value)
 
     def test_csvfield_multiple_words_deduplicate(self):
-        """
-        Test CSVField configured to ignore duplicate items in the return list.
-        """
+        """Test CSVField configured to ignore duplicate items in the return list."""
         field = CSVField(deduplicate=True)
         input_string = 'test, test, test2'
         expected_value = ['test', 'test2']
@@ -101,9 +87,7 @@ class TestCSVField(TestCase):
         self.assertListEqual(actual_value, expected_value)
 
     def test_csvfield_multiple_words_deduplicate_semicolon(self):
-        """
-        Test CSVField with custom separator and ignoring duplicates.
-        """
+        """Test CSVField with custom separator and ignoring duplicates."""
         field = CSVField(separator=';', deduplicate=True)
         input_string = 'test; test; test2'
         expected_value = ['test', 'test2']
@@ -113,9 +97,7 @@ class TestCSVField(TestCase):
         self.assertListEqual(actual_value, expected_value)
 
     def test_csvfield_multiple_words_wrong_separator(self):
-        """
-        Test CSVField should ignore wrong separator characters.
-        """
+        """Test CSVField should ignore wrong separator characters."""
         field = CSVField()
         input_string = 'test;test2'
         expected_value = ['test;test2']
@@ -126,15 +108,11 @@ class TestCSVField(TestCase):
 
 
 class TestMultiUserField(TestCase):
-    """
-    MultiUserField Unit Tests.
-    """
+    """MultiUserField Unit Tests."""
 
     @classmethod
     def setUpTestData(cls):
-        """
-        Set up three users to test the MultiUserField.
-        """
+        """Set up three users to test the MultiUserField."""
         cls.user1 = User(username='user1')
         cls.user2 = User(username='user2')
         cls.user3 = User(username='user3')
@@ -142,9 +120,7 @@ class TestMultiUserField(TestCase):
 
     @patch('inyoka.portal.user.User.objects.filter')
     def test_multiuserfield_with_one_user(self, mock_user_filter):
-        """
-        Test that MultiUserField should return a list of one user object, when one user is given.
-        """
+        """Test that MultiUserField should return a list of one user object, when one user is given."""
         input_string = self.user1.username
         expected_users = [self.user1]
         mock_user_filter.return_value = expected_users
@@ -155,9 +131,7 @@ class TestMultiUserField(TestCase):
 
     @patch('inyoka.portal.user.User.objects.filter')
     def test_multiuserfield_with_duplicate_user(self, mock_user_filter):
-        """
-        Test that the MultiUserField ignores duplicate users.
-        """
+        """Test that the MultiUserField ignores duplicate users."""
         input_string = 'user1; user1'
         expected_users = [self.user1]
         mock_user_filter.return_value = expected_users
@@ -168,9 +142,7 @@ class TestMultiUserField(TestCase):
 
     @patch('inyoka.portal.user.User.objects.filter')
     def test_multiuserfield_with_user_list(self, mock_user_filter):
-        """
-        Test that MultiUserField returns a list of user objects when multiple usernames are given.
-        """
+        """Test that MultiUserField returns a list of user objects when multiple usernames are given."""
         input_string = 'user1; user2;user3'
         expected_users = [self.user1, self.user2, self.user3]
         mock_user_filter.return_value = expected_users
@@ -181,9 +153,7 @@ class TestMultiUserField(TestCase):
 
     @patch('inyoka.portal.user.User.objects.filter')
     def test_multiuserfield_with_nonexistant_user(self, mock_user_filter):
-        """
-        Test that MultiUserField raises a ValidationError when a nonexistant user is given.
-        """
+        """Test that MultiUserField raises a ValidationError when a nonexistant user is given."""
         input_string = 'user1; missing; user3'
         expected_users = [self.user1, self.user3]
         mock_user_filter.return_value = expected_users
@@ -195,15 +165,11 @@ class TestMultiUserField(TestCase):
 
 
 class TestMultiGroupField(TestCase):
-    """
-    MultiGroupField Unit Tests.
-    """
+    """MultiGroupField Unit Tests."""
 
     @classmethod
     def setUpTestData(cls):
-        """
-        Set up three users to test the MultiUserField.
-        """
+        """Set up three users to test the MultiUserField."""
         cls.user1 = User(username='user1')
         cls.user2 = User(username='user2')
         cls.user3 = User(username='user3')
@@ -214,9 +180,7 @@ class TestMultiGroupField(TestCase):
     @patch('inyoka.portal.user.Group.objects.filter')
     @patch('inyoka.portal.user.User.objects.filter')
     def test_multigroupfield_with_one_group(self, mock_user_filter, mock_group_filter):
-        """
-        Test that the MultiGroupField returns a list of user objects that belong to a given group.
-        """
+        """Test that the MultiGroupField returns a list of user objects that belong to a given group."""
         input_string = 'group1'
         expected_users = [self.user1, self.user2]
         mock_group_filter.return_value = [self.group1]
@@ -229,9 +193,7 @@ class TestMultiGroupField(TestCase):
     @patch('inyoka.portal.user.Group.objects.filter')
     @patch('inyoka.portal.user.User.objects.filter')
     def test_multigroupfield_with_group_list(self, mock_user_filter, mock_group_filter):
-        """
-        Test that the MultiGroupField returns a list of user objects that belong to multiple given groups.
-        """
+        """Test that the MultiGroupField returns a list of user objects that belong to given groups."""
         input_string = 'group1; group2'
         expected_users = [self.user1, self.user2, self.user3]
         mock_group_filter.return_value = [self.group1, self.group2]
@@ -243,9 +205,7 @@ class TestMultiGroupField(TestCase):
 
     @patch('inyoka.portal.user.Group.objects.filter')
     def test_multigroupfield_with_nonexistant_group(self, mock_group_filter):
-        """
-        Test that the MultiGroupField returns a ValidationError, when a given group does not exist.
-        """
+        """Test that the MultiGroupField returns a ValidationError, when a given group does not exist."""
         input_string = 'group1; missing_group'
         mock_group_filter.return_value = [self.group1]
 
@@ -256,9 +216,7 @@ class TestMultiGroupField(TestCase):
 
 
 class TestComposeForm(TestCase):
-    """
-    MessageComposeForm and PrivilegedMessageComposeForm Tests.
-    """
+    """MessageComposeForm and PrivilegedMessageComposeForm Tests."""
 
     @classmethod
     def setUpTestData(cls):
@@ -269,22 +227,16 @@ class TestComposeForm(TestCase):
         cls.privileged_user._permissions = sum(PERMISSION_NAMES.keys())
 
     def test_composeform_init(self):
-        """
-        Test the init of `MessageComposeForm`.
-        """
+        """Test the init of `MessageComposeForm`."""
         MessageComposeForm(user=self.normal_user)
 
     def test_composeform_init_without_user(self):
-        """
-        Test that `MessageComposeForm` requires `user` argument.
-        """
+        """Test that `MessageComposeForm` requires `user` argument."""
         with self.assertRaises(KeyError):
             MessageComposeForm()
 
     def test_composeform_clean_recipients_single_valid_recipient(self):
-        """
-        Test recipient field validation, should pass when recipient is valid.
-        """
+        """Test recipient field validation, should pass when recipient is valid."""
         expected_recipients = [self.normal_user]
         form = MessageComposeForm(user=self.privileged_user)
         form.cleaned_data = {'recipients': expected_recipients}
@@ -294,9 +246,7 @@ class TestComposeForm(TestCase):
         self.assertListEqual(actual_recipients, expected_recipients)
 
     def test_composeform_clean_recipients_multiple_valid_recipient(self):
-        """
-        Test recipient field validation, should pass when recipients are valid.
-        """
+        """Test recipient field validation, should pass when recipients are valid."""
         expected_recipients = [self.normal_user, self.privileged_user]
         form = MessageComposeForm(user=self.system_user)
         form.cleaned_data = {'recipients': expected_recipients}
@@ -306,9 +256,7 @@ class TestComposeForm(TestCase):
         self.assertListEqual(actual_recipients, expected_recipients)
 
     def test_composeform_clean_recipients_self(self):
-        """
-        Test recipient field validation, should raise error when recipient is self.
-        """
+        """Test recipient field validation, should raise error when recipient is self."""
         expected_recipients = [self.privileged_user]
         form = MessageComposeForm(user=self.privileged_user)
         form.cleaned_data = {'recipients': expected_recipients}
@@ -319,9 +267,7 @@ class TestComposeForm(TestCase):
         self.assertEqual(cm.exception.code, 'recipient_is_self')
 
     def test_composeform_clean_recipients_system_user_recipient(self):
-        """
-        Test recipient field validation, should raise error when recipient is system user.
-        """
+        """Test recipient field validation, should raise error when recipient is system user."""
         expected_recipients = [self.system_user]
         form = MessageComposeForm(user=self.privileged_user)
         form.cleaned_data = {'recipients': expected_recipients}
@@ -332,9 +278,7 @@ class TestComposeForm(TestCase):
         self.assertEqual(cm.exception.code, 'recipient_is_system_user')
 
     def test_composeform_clean_recipients_inactive_recipient(self):
-        """
-        Test recipient field validation, should raise error when recipient is inactive.
-        """
+        """Test recipient field validation, should raise error when recipient is inactive."""
         expected_recipients = [self.inactive_user]
         form = MessageComposeForm(user=self.privileged_user)
         form.cleaned_data = {'recipients': expected_recipients}
@@ -345,9 +289,7 @@ class TestComposeForm(TestCase):
         self.assertEqual(cm.exception.code, 'recipient_is_inactive')
 
     def test_composeform_clean_recipients_multiple_including_self(self):
-        """
-        Test recipient field validation, should raise error when one recipient is self.
-        """
+        """Test recipient field validation, should raise error when one recipient is self."""
         expected_recipients = [self.normal_user, self.privileged_user]
         form = MessageComposeForm(user=self.privileged_user)
         form.cleaned_data = {'recipients': expected_recipients}
@@ -358,9 +300,7 @@ class TestComposeForm(TestCase):
         self.assertEqual(cm.exception.code, 'recipient_is_self')
 
     def test_composeform_clean_group_recipients(self):
-        """
-        Test group recipient field validation, should pass list through.
-        """
+        """Test group recipient field validation, should pass list through."""
 
         expected_recipients = [self.normal_user]
         form = PrivilegedMessageComposeForm(user=self.privileged_user)
@@ -371,9 +311,7 @@ class TestComposeForm(TestCase):
         self.assertListEqual(actual_recipients, expected_recipients)
 
     def test_composeform_clean_group_recipients_removes_request_user(self):
-        """
-        Test group recipient field validation, should remove active user from list of recipients.
-        """
+        """Test group recipient field validation, should remove active user from list of recipients."""
         given_recipients = [self.normal_user, self.privileged_user]
         expected_recipients = [self.normal_user]
         form = PrivilegedMessageComposeForm(user=self.privileged_user)
@@ -384,9 +322,7 @@ class TestComposeForm(TestCase):
         self.assertListEqual(actual_recipients, expected_recipients)
 
     def test_composeform_clean_joins_recipients_and_group_recipients(self):
-        """
-        Test that PrivilegedMessageComposeForm.clean() joins lists of recipients and group_recipients.
-        """
+        """Test that `clean()` joins lists of recipients and group_recipients."""
         given_recipients = [self.normal_user]
         given_group_recipients = [self.system_user]
         expected_recipients = [self.normal_user, self.system_user]
@@ -401,9 +337,7 @@ class TestComposeForm(TestCase):
         self.assertItemsEqual(actual_recipients['recipients'], expected_recipients)
 
     def test_composeform_clean_with_recipients(self):
-        """
-        Test that clean() works as expected with only recipients.
-        """
+        """Test that `clean()` works as expected with only recipients."""
         given_recipients = [self.normal_user, self.privileged_user]
         expected_recipients = given_recipients
         form = PrivilegedMessageComposeForm(user=self.privileged_user)
@@ -417,9 +351,7 @@ class TestComposeForm(TestCase):
         self.assertItemsEqual(actual_recipients['recipients'], expected_recipients)
 
     def test_composeform_clean_with_group_recipients(self):
-        """
-        Test that clean() works with only group recipients.
-        """
+        """Test that `clean()` works with only group recipients."""
         given_group_recipients = [self.normal_user, self.privileged_user]
         expected_recipients = given_group_recipients
         form = PrivilegedMessageComposeForm(user=self.privileged_user)
@@ -433,9 +365,7 @@ class TestComposeForm(TestCase):
         self.assertItemsEqual(actual_recipients['recipients'], expected_recipients)
 
     def test_composeform_clean_without_any_recipients(self):
-        """
-        Test that clean() throws an error when no recipients are given.
-        """
+        """Test that `clean()` throws an error when no recipients are given."""
         form = PrivilegedMessageComposeForm(user=self.privileged_user)
         form.cleaned_data = {
             'recipients': [],
@@ -449,15 +379,11 @@ class TestComposeForm(TestCase):
 
 
 class TestComposeFormIntegration(TestCase):
-    """
-    Integration tests for ComposeForm.
-    """
+    """Integration tests for ComposeForm."""
 
     @classmethod
     def setUpTestData(cls):
-        """
-        Make sure we have some test users and groups we can message during our tests.
-        """
+        """Make sure we have some test users and groups we can message during our tests."""
         cls.first_user = User.objects.register_user(
             username='first',
             email='first',
@@ -474,9 +400,7 @@ class TestComposeFormIntegration(TestCase):
         cls.group.user_set = [cls.first_user, cls.second_user]
 
     def test_composeform_valid_data(self):
-        """
-        Test `ComposeForm` with valid input.
-        """
+        """Test `ComposeForm` with valid input."""
         initial_data = {
             'recipients': self.second_user.username,
             'subject': u'Test',
@@ -493,9 +417,7 @@ class TestComposeFormIntegration(TestCase):
         self.assertTrue(result)
 
     def test_composeform_missing_subject(self):
-        """
-        Test `ComposeForm` without a subject.
-        """
+        """Test `ComposeForm` without a subject."""
         initial_data = {
             'recipients': self.second_user.username,
             'text': u'Test',
@@ -512,9 +434,7 @@ class TestComposeFormIntegration(TestCase):
         self.assertEqual(form.errors.as_data()['subject'][0].code, 'required')
 
     def test_composeform_missing_text(self):
-        """
-        Test `ComposeForm` without a text.
-        """
+        """Test `ComposeForm` without a text."""
         initial_data = {
             'recipients': self.second_user.username,
             'subject': u'Test',
@@ -530,10 +450,8 @@ class TestComposeFormIntegration(TestCase):
         self.assertFalse(result)
         self.assertEqual(form.errors.as_data()['text'][0].code, 'required')
 
-    def test_composeform_group_recipient(self):
-        """
-        Test `PrivilegedMessageComposeForm` with a group recipient is valid.
-        """
+    def test_composeform_with_group_recipient(self):
+        """Test `PrivilegedMessageComposeForm` with a group recipient is valid."""
         initial_data = {
             'group_recipients': self.group.name,
             'subject': u'Test',
@@ -550,14 +468,10 @@ class TestComposeFormIntegration(TestCase):
 
 
 class TestMultiMessageSelectForm(TestCase):
-    """
-    Tests for the MultiMessageSelectForm.
-    """
+    """Tests for the MultiMessageSelectForm."""
 
     def test_multimessageselectform_init(self):
-        """
-        Test form init method.
-        """
+        """Test form init method."""
         mock_queryset = Mock()
         mock_queryset.values_list.return_value = ((1, ''))
 
@@ -568,16 +482,12 @@ class TestMultiMessageSelectForm(TestCase):
         mock_queryset.values_list.assert_called_once_with('id', 'id')
 
     def test_multimessageselectform_init_without_queryset(self):
-        """
-        Test form initialisation fails without queryset parameter.
-        """
+        """Test form initialisation fails without queryset parameter."""
         with self.assertRaises(KeyError):
             MultiMessageSelectForm()
 
     def test_multimessageselectform_clean_selected_messages(self):
-        """
-        Test form field validation applies correct filter to queryset and returns the correct queryset.
-        """
+        """Test field validation applies correct filter to queryset and returns the correct queryset."""
         queryset = Mock()
         test_list = [1, 3, 5]
         form = MultiMessageSelectForm(queryset=queryset)
@@ -590,9 +500,7 @@ class TestMultiMessageSelectForm(TestCase):
 
 class TestMultiMessageSelectFormIntegration(TestCase):
     def test_multimessageselectform_wrong_action(self):
-        """
-        Test form validation fails when an invalid choice for `action` is made.
-        """
+        """Test form validation fails when an invalid choice for `action` is made."""
         mock_queryset = Mock()
         mock_queryset.values_list.return_value = ((1, 1), (2, 2), (3, 3))
         initial_data = {
@@ -607,9 +515,7 @@ class TestMultiMessageSelectFormIntegration(TestCase):
         self.assertFalse(form.is_valid())
 
     def test_multimessageselectform_invalid_message_id(self):
-        """
-        Test form validation fails when a message id is passed that does not belong to the user.
-        """
+        """Test form validation fails when a message id is passed that does not belong to the user."""
         mock_queryset = Mock()
         mock_queryset.values_list.return_value = ((1, 1), (2, 2), (3, 3))
         initial_data = {
@@ -624,9 +530,7 @@ class TestMultiMessageSelectFormIntegration(TestCase):
         self.assertFalse(form.is_valid())
 
     def test_multimessageselectform_valid_data(self):
-        """
-        Test form validates successfully with valid inputs.
-        """
+        """Test form validates successfully with valid inputs."""
         mock_queryset = Mock()
         mock_queryset.values_list.return_value = ((1, 1), (2, 2), (3, 3))
         initial_data = {
