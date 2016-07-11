@@ -416,6 +416,22 @@ class TestComposeFormIntegration(TestCase):
 
         self.assertTrue(result)
 
+    def test_composeform_missing_recipients(self):
+        """Test `ComposeForm` without recipients is not valid."""
+        initial_data = {
+            'subject': u'Test',
+            'text': u'Test',
+        }
+        form = MessageComposeForm(
+            user=self.first_user,
+            data=initial_data,
+        )
+        form.surge_protection_timeout = None
+
+        result = form.is_valid()
+
+        self.assertFalse(result)
+
     def test_composeform_missing_subject(self):
         """Test `ComposeForm` without a subject."""
         initial_data = {
@@ -462,9 +478,24 @@ class TestComposeFormIntegration(TestCase):
             data=initial_data,
         )
 
-        result = form.is_valid
+        result = form.is_valid()
 
         self.assertTrue(result)
+
+    def test_privilegedcomposeform_without_recipient(self):
+        """Test `PrivilegedMessageComposeForm` without recipient is not valid."""
+        initial_data = {
+            'subject': u'Test',
+            'text': u'Test',
+        }
+        form = PrivilegedMessageComposeForm(
+            user=self.first_user,
+            data=initial_data,
+        )
+
+        result = form.is_valid()
+
+        self.assertFalse(result)
 
 
 class TestMultiMessageSelectForm(TestCase):
