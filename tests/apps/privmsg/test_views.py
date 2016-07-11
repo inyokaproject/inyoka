@@ -489,6 +489,10 @@ class TestBaseMessageComposeView(TestCase):
 
         self.assertDictEqual(actual_value, expected_value)
 
+    def test_get_object(self):
+        """Test `get_object()`, this method is supposed to be implemented by subclasses."""
+        self.assertEqual(self.view.get_object(), None)
+
     def test_get_recipients(self):
         """
         Test `get_recipients()`, this method is supposed to be implemented by subclasses.
@@ -559,6 +563,16 @@ class TestMessageForwardView(TestCase):
         self.view.get_queryset()
         self.request.user.assert_has_calls(expected_calls)
 
+    @patch('inyoka.privmsg.views.MessageForwardView.get_queryset')
+    def test_get_object(self, mock_get_queryset):
+        """Test that `get_object()` return a `Message` object."""
+        expected_pk = 6443
+        self.view.kwargs = {'pk': expected_pk}
+
+        self.view.get_object()
+
+        mock_get_queryset.assert_has_calls([call(), call().get(pk=expected_pk)])
+
     def test_get_subject(self):
         """
         Test that `get_subject()` prefixes the forwarded message's subject with 'Fw: '
@@ -604,6 +618,7 @@ class TestMessageReplyView(TestCase):
         self.request = RequestFactory().get('/')
         self.user = Mock()
         self.view = MessageReplyView()
+        self.view.kwargs = {}
         self.view.request = self.request
         self.view.request.user = self.user
 
@@ -620,6 +635,16 @@ class TestMessageReplyView(TestCase):
         view.get_queryset()
 
         request.user.assert_has_calls(expected_calls)
+
+    @patch('inyoka.privmsg.views.MessageReplyView.get_queryset')
+    def test_get_object(self, mock_get_queryset):
+        """Test that `get_object()` returns the message that is being replied to."""
+        expected_pk = 6443
+        self.view.kwargs = {'pk': expected_pk}
+
+        self.view.get_object()
+
+        mock_get_queryset.assert_has_calls([call(), call().get(pk=expected_pk)])
 
     def test_get_recipients(self):
         expected_value = 'testuser'
@@ -703,6 +728,18 @@ class TestMessageReplyReportedTopicView(TestCase):
         self.view.request = self.request
         self.view.request.user = self.user
 
+    @patch('inyoka.privmsg.views.Topic.objects.get')
+    def test_get_object(self, mock_topic_objects_get):
+        """Test that `get_object()` returns the reported topic."""
+        expected_object = 'test'
+        mock_topic_objects_get.return_value = expected_object
+        self.view.kwargs = {'slug': 'test_slug'}
+
+        actual_object = self.view.get_object()
+
+        self.assertEqual(expected_object, actual_object)
+        mock_topic_objects_get.assert_called_once_with(slug='test_slug')
+
     @patch('inyoka.privmsg.views.User')
     def test_get_recipients(self, mock_user):
         expected_value = 'testuser'
@@ -743,6 +780,18 @@ class TestMessageReplySuggestedArticleView(TestCase):
         self.view = MessageReplySuggestedArticleView()
         self.view.request = self.request
         self.view.request.user = self.user
+
+    @patch('inyoka.privmsg.views.Suggestion.objects.get')
+    def test_get_object(self, mock_suggestion_objects_get):
+        """Test that `get_object()` returns the suggested article."""
+        expected_value = 'test_suggestion'
+        mock_suggestion_objects_get.return_value = expected_value
+        self.view.kwargs = {'pk': 'some_value'}
+
+        actual_value = self.view.get_object()
+
+        self.assertEqual(expected_value, actual_value)
+        mock_suggestion_objects_get.called_once_with(pk='some_value')
 
     def test_get_recipients(self):
         expected_value = 'testuser'

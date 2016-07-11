@@ -231,6 +231,8 @@ class BaseMessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
     template_name = 'privmsg/compose.html'
     success_url = reverse_lazy('privmsg-sent')
     preview_fields = ['text']
+    pk_url_kwarg = 'pk'
+    slug_url_kwarg = 'slug'
 
     def get_form_class(self):
         """
@@ -272,11 +274,16 @@ class BaseMessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
         """
         Return the `inital` data for the form.
         """
+        self.object = self.get_object()
         return {
             'recipients': self.get_recipients(),
             'subject': self.get_subject(),
             'text': self.get_text(),
         }
+
+    def get_object(self):
+        """Returns an object. This is a dummy, overwrite in derived views."""
+        return None
 
     def get_recipients(self):
         return ''
@@ -312,6 +319,11 @@ class MessageForwardView(BaseMessageComposeView):
         """
         return self.request.user.message_set.optimized()
 
+    def get_object(self):
+        """Return the message that is being forwarded."""
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        return self.get_queryset().get(pk=pk)
+
     def get_subject(self):
         """
         Make sure the subject of the message starts with 'Fw: '.
@@ -337,6 +349,11 @@ class MessageReplyView(BaseMessageComposeView):
         Return the QuerySet of messages this user has access to.
         """
         return self.request.user.message_set.optimized()
+
+    def get_object(self):
+        """Return the message that is being replied to."""
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        return self.get_queryset().get(pk=pk)
 
     def get_recipients(self):
         """
@@ -373,6 +390,11 @@ class MessageReplyReportedTopicView(PermissionRequiredMixin, BaseMessageComposeV
     model = Topic
     permission_required = 'manage_topics'
 
+    def get_object(self):
+        """Return the reported topic."""
+        slug = self.kwargs.get(self.slug_url_kwarg)
+        return Topic.objects.get(slug=slug)
+
     def get_recipients(self):
         """
         Return the list of recipients usernames for the form.
@@ -398,6 +420,11 @@ class MessageReplySuggestedArticleView(PermissionRequiredMixin, BaseMessageCompo
     """
     model = Suggestion
     permission_required = 'article_edit'
+
+    def get_object(self):
+        """Return the suggestion that is being replied to."""
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        return Suggestion.objects.get(pk=pk)
 
     def get_recipients(self):
         """
