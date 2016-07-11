@@ -15,7 +15,7 @@ from inyoka.portal.user import User
 from inyoka.privmsg.models import Message, MessageData
 from inyoka.utils.test import TestCase
 # from unittest import skip
-from mock import patch
+from mock import Mock, patch
 
 
 class TestMessageQuerySet(TestCase):
@@ -200,6 +200,7 @@ class TestMessageModel(TestCase):
         self.recipient = User(username='recipient')
         self.subject = 'TestSubject'
         self.text = 'TestText'
+        self.text_rendered = MessageData.get_text_rendered(self.text)
         self.pub_date = datetime.utcnow()
         self.messagedata = MessageData(
             pk=1,
@@ -259,8 +260,9 @@ class TestMessageModel(TestCase):
         """Test `author` correctly relays date from messagedata."""
         self.assertEqual(self.sent_message.author, self.author)
 
-    # def test_messagemodel_recipients(self):
-    #     # this needs to somehow mock the m2m relation
+    def test_messagemodel_recipients(self):
+        """Test `recipients` correctly relays original_recipients from the messagedata."""
+        # this needs to somehow mock the m2m relation
 
     def test_messagemodel_subject(self):
         """Test `subject` correctly relays date from messagedata."""
@@ -270,8 +272,9 @@ class TestMessageModel(TestCase):
         """Test `text` correctly relays date from messagedata."""
         self.assertEqual(self.sent_message.text, self.text)
 
-    # def test_messagemodel_text_rendered(self):
-    #     # shouldn't be a problem, but I need the rendered text
+    def test_messagemodel_text_rendered(self):
+        """Test `text_rendered` returns the rendered text."""
+        self.assertEqual(self.sent_message.text_rendered, self.text_rendered)
 
     def test_messagemodel_pub_date(self):
         """Test `pub_date` correctly relays date from messagedata."""
@@ -297,44 +300,44 @@ class TestMessageModel(TestCase):
         self.assertEqual(self.trashed_message.folder, 'trash')
 
     def test_messagemodel_get_absolute_url_with_action_archive(self):
-        expected_value = reverse('privmsg-message-archive', args=[self.read_message.id])
         """Test `get_absolute_url()` returns correct url when action='archive'."""
+        expected_value = reverse('privmsg-message-archive', args=[self.read_message.pk])
         actual_value = self.read_message.get_absolute_url('archive')
         self.assertEqual(actual_value, expected_value)
 
     def test_messagemodel_get_absolute_url_with_action_delete(self):
-        expected_value = reverse('privmsg-message-delete', args=[self.read_message.id])
         """Test `get_absolute_url()` returns correct url when action='delete'."""
+        expected_value = reverse('privmsg-message-delete', args=[self.read_message.pk])
         actual_value = self.read_message.get_absolute_url('delete')
         self.assertEqual(actual_value, expected_value)
 
     def test_messagemodel_get_absolute_url_with_action_forward(self):
-        expected_value = reverse('privmsg-message-forward', args=[self.read_message.id])
         """Test `get_absolute_url()` returns correct url when action='forward'."""
+        expected_value = reverse('privmsg-message-forward', args=[self.read_message.pk])
         actual_value = self.read_message.get_absolute_url('forward')
         self.assertEqual(actual_value, expected_value)
 
     def test_messagemodel_get_absolute_url_with_action_restore(self):
-        expected_value = reverse('privmsg-message-restore', args=[self.read_message.id])
         """Test `get_absolute_url()` returns correct url when action='restore'."""
+        expected_value = reverse('privmsg-message-restore', args=[self.read_message.pk])
         actual_value = self.read_message.get_absolute_url('restore')
         self.assertEqual(actual_value, expected_value)
 
     def test_messagemodel_get_absolute_url_with_action_reply(self):
-        expected_value = reverse('privmsg-message-reply', args=[self.read_message.id])
         """Test `get_absolute_url()` returns correct url when action='reply'."""
+        expected_value = reverse('privmsg-message-reply', args=[self.read_message.pk])
         actual_value = self.read_message.get_absolute_url('reply')
         self.assertEqual(actual_value, expected_value)
 
     def test_messagemodel_get_absolute_url_with_action_reply_to_all(self):
-        expected_value = reverse('privmsg-message-reply-all', args=[self.read_message.id])
         """Test `get_absolute_url()` returns correct url when action='reply_to_all'."""
+        expected_value = reverse('privmsg-message-reply-all', args=[self.read_message.pk])
         actual_value = self.read_message.get_absolute_url('reply_to_all')
         self.assertEqual(actual_value, expected_value)
 
     def test_messagemodel_get_absolute_url_with_action_trash(self):
-        expected_value = reverse('privmsg-message-trash', args=[self.read_message.id])
         """Test `get_absolute_url()` returns correct url when action='trash'."""
+        expected_value = reverse('privmsg-message-trash', args=[self.read_message.pk])
         actual_value = self.read_message.get_absolute_url('trash')
         self.assertEqual(actual_value, expected_value)
 
@@ -351,8 +354,8 @@ class TestMessageModel(TestCase):
         self.assertEqual(actual_value, expected_value)
 
     def test_messagemodel_get_absolute_url_with_action_show(self):
-        expected_value = reverse('privmsg-message', args=[self.read_message.id])
         """Test `get_absolute_url()` returns correct url when action='show'"""
+        expected_value = reverse('privmsg-message', args=[self.read_message.pk])
         actual_value = self.read_message.get_absolute_url('show')
         self.assertEqual(actual_value, expected_value)
 
@@ -369,11 +372,24 @@ class TestMessageModel(TestCase):
         self.assertTrue(mock_save.called)
 
     @patch('inyoka.privmsg.models.Message.save')
+    def test_messagemodel_mark_read_on_read_message(self, mock_save):
+        """Test `mark_read()` does nothing on messages that are already marked as read."""
+        self.read_message.mark_read()
+        self.assertFalse(mock_save.called)
+
+    @patch('inyoka.privmsg.models.Message.save')
     def test_messagemodel_archive(self, mock_save):
-        self.unread_message.archive()
-        self.assertEqual(self.unread_message.status, Message.STATUS_ARCHIVED)
         """Test `archive()` correctly sets status to archived."""
+        self.read_message.archive()
+        self.assertEqual(self.read_message.status, Message.STATUS_ARCHIVED)
         self.assertTrue(mock_save.called)
+
+    @patch('inyoka.privmsg.models.Message.save')
+    @patch('inyoka.privmsg.models.User.privmsg_count')
+    def test_messagemodel_archive_on_unread_message(self, mock_save, mock_privmsg_count):
+        """Test `archive()` correctly decrements unread privmsg-count when called on unread messages."""
+        self.unread_message.archive()
+        self.assertTrue(mock_privmsg_count.called)
 
     @patch('inyoka.privmsg.models.Message.save')
     @patch('inyoka.privmsg.models.datetime')
@@ -390,8 +406,12 @@ class TestMessageModel(TestCase):
 
     @patch('inyoka.privmsg.models.Message.save')
     def test_messagemodel_restore_with_received_message(self, mock_save):
-        message = Message(messagedata=self.messagedata, recipient=self.recipient, status=Message.STATUS_ARCHIVED)
         """Test `restore()` returns sent message to read status."""
+        message = Message(
+            messagedata=self.messagedata,
+            recipient=self.recipient,
+            status=Message.STATUS_ARCHIVED,
+        )
 
         message.restore()
 
@@ -400,8 +420,12 @@ class TestMessageModel(TestCase):
 
     @patch('inyoka.privmsg.models.Message.save')
     def test_messagemodel_restore_with_sent_message(self, mock_save):
-        message = Message(messagedata=self.messagedata, recipient=self.author, status=Message.STATUS_ARCHIVED)
         """Test `restore()` returns sent message to sent status."""
+        message = Message(
+            messagedata=self.messagedata,
+            recipient=self.author,
+            status=Message.STATUS_ARCHIVED,
+        )
 
         message.restore()
 
