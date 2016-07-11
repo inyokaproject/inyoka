@@ -69,11 +69,6 @@ class TestMessageQuerySet(TestCase):
             status=Message.STATUS_TRASHED,
             trashed_date=yesterday,
         )
-        cls.deleted_message = Message.objects.create(
-            messagedata=cls.messagedata,
-            recipient=cls.recipient,
-            status=Message.STATUS_DELETED,
-        )
 
     @classmethod
     def tearDownClass(cls):
@@ -96,7 +91,6 @@ class TestMessageQuerySet(TestCase):
             self.unread_message,
             self.archived_message,
             self.trashed_message,
-            self.deleted_message,
         ]
         actual_values = Message.objects.from_user(self.author)
         self.assertItemsEqual(actual_values, expected_values)
@@ -135,12 +129,6 @@ class TestMessageQuerySet(TestCase):
         """Test `trashed()` should return all trashed messages."""
         expected_values = [self.trashed_message]
         actual_values = Message.objects.trashed()
-        self.assertItemsEqual(actual_values, expected_values)
-
-    def test_messagequeryset_deleted(self):
-        """Test `deleted()` should return all messages that are marked as deleted."""
-        expected_values = [self.deleted_message]
-        actual_values = Message.objects.deleted()
         self.assertItemsEqual(actual_values, expected_values)
 
     def test_messagequeryset_to_expunge(self):

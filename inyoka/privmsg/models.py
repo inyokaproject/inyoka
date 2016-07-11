@@ -57,10 +57,6 @@ class MessageQuerySet(models.QuerySet):
         """Return messages in the trash."""
         return self.filter(status=Message.STATUS_TRASHED)
 
-    def deleted(self):
-        """Return a list of messages that are marked as deleted."""
-        return self.filter(status=Message.STATUS_DELETED)
-
     def read(self):
         """Return read messages."""
         return self.filter(status=Message.STATUS_READ)
@@ -97,14 +93,12 @@ class MessageQuerySet(models.QuerySet):
 class Message(models.Model):
     """Hold an entry for every recipient of a private message."""
     STATUS_ARCHIVED = 'A'
-    STATUS_DELETED = 'D'
     STATUS_READ = 'R'
     STATUS_SENT = 'S'
     STATUS_TRASHED = 'T'
     STATUS_UNREAD = 'U'
     STATUS_CHOICES = (
         (STATUS_ARCHIVED, _(u'Archived')),
-        (STATUS_DELETED, _(u'Deleted')),
         (STATUS_READ, _(u'Read')),
         (STATUS_SENT, _(u'Sent')),
         (STATUS_TRASHED, _(u'Trashed')),
@@ -194,8 +188,6 @@ class Message(models.Model):
             return 'archive'
         elif self.status == self.STATUS_TRASHED:
             return 'trash'
-        elif self.status == self.STATUS_DELETED:
-            return 'deleted'
         else:
             return 'inbox'
 
