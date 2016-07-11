@@ -1,26 +1,16 @@
 # TODO!
 
 ## Features
-Moving messages to trash in bulk. Currently there is no (functioning) way to
-select multiple messages and move them to trash. This needs some backend
-method on the model/manager, as well as a view and a form.
-This is more difficult than it seems. Particularly with class based views.
-I think the easiest would be a a Service-URL that is just handling POST requests
-and deletes them. The form would be rendered in the template without being
-instantiated. Does this work with csrf_token? I'll have to experiment.
+So far I think it's feature complete. Needs some work on the templates.
 
 ## Migrations
 This is a pretty big point. Since the model changes, we will need migrations!
 
 ## Tests
-A metric buttload of tests. Specifically the views are currently untested.
-I think fixtures might be a good idea to provide a default database to test
-against. I really need to learn mocking. :/
-
 * The forms seem reasonably well tested.
-* The model is partially tested. Specifically the queryset should be tested.
-  (Fixtures!)
-* The views are currently untested.
+* The model querysets seem reasonably tested.
+* The MessageData.send() method needs testing.
+* The views are partially tested. Make sure the tests are complete.
 * I introduced a few helpers (mixins) that should get tested separately.
 
 ## Spam protection

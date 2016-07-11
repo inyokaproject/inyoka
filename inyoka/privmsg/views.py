@@ -194,6 +194,7 @@ class BaseMessageComposeView(LoginRequiredMixin, FormPreviewMixin, FormView):
 
     def get_form_class(self):
         """Get the form class based on user permission."""
+        # TODO: new Permissions: User.has_perm('portal.send_group_privatemessage')
         if self.request.user.can('send_group_pm'):
             return PrivilegedMessageComposeForm
         else:
@@ -318,7 +319,7 @@ class MessageReplyReportedTopicView(PermissionRequiredMixin, BaseMessageComposeV
     """Reply to reported topics on the forum."""
 
     model = Topic
-    permission_required = 'manage_topics'
+    permission_required = 'manage_topics'  # TODO: new permissions
 
     def get_object(self):
         """Return the reported topic."""
@@ -341,7 +342,7 @@ class MessageReplyReportedTopicView(PermissionRequiredMixin, BaseMessageComposeV
 class MessageReplySuggestedArticleView(PermissionRequiredMixin, BaseMessageComposeView):
     """Reply to suggested articles."""
     model = Suggestion
-    permission_required = 'article_edit'
+    permission_required = 'article_edit'  # TODO: new permissions
 
     def get_object(self):
         """Return the suggestion that is being replied to."""

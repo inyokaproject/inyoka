@@ -186,7 +186,7 @@ class PrivilegedMessageComposeForm(MessageComposeForm):
         cleaned_data['recipients'] = list(recipients)
 
         # If there are no recipients, show an error message.
-        if len(recipients) == 0:
+        if not recipients:
             raise forms.ValidationError(
                 message=_(u'Please add a recipient.'),
                 code='required',
