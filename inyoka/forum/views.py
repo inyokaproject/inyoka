@@ -550,7 +550,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                                         post.page))
         if not (request.user.has_perm('forum.moderate_forum', forum) or
                 (post.author.id == request.user.id and
-                 request.user.has_perm('forum.add_reply_forum') and
+                 request.user.has_perm('forum.add_reply_forum', forum) and
                  post.check_ownpost_limit('edit'))):
             messages.error(request, _(u'You cannot edit this post.'))
             post.unlock()
