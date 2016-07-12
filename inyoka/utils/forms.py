@@ -17,7 +17,6 @@ import pytz
 from django import forms
 from django.conf import settings
 from django.core import validators
-from django.core.exceptions import ImproperlyConfigured
 from django.forms.widgets import Input
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext as _
@@ -299,55 +298,3 @@ class CaptchaField(forms.MultiValueField):
             return [None, None]
         value[1] = False  # Prevent beeing catched by validators.EMPTY_VALUES
         return super(CaptchaField, self).clean(value)
-
-
-class FormPreviewMixin(object):
-    """
-    Mixin to enable FormViews to display a preview.
-    """
-
-    def get_context_data(self, **kwargs):
-        """
-        Inject the preview into the context dict, if it was requested.
-        """
-        context = super(FormPreviewMixin, self).get_context_data(**kwargs)
-        if 'preview' in self.request.POST:
-            context['previews'] = self.render_previews()
-        return context
-
-    def render_previews(self):
-        """
-        Render the previews.
-        """
-        previews = {}
-
-        for field in self.get_preview_fields():
-            previews[field] = self.preview_method(self.request.POST.get(field, ''))
-
-        return previews
-
-    def get_preview_fields(self):
-        """
-        Return the list of form field names that should be rendered.
-        """
-        if hasattr(self, 'preview_fields'):
-            return self.preview_fields
-        else:
-            raise ImproperlyConfigured(
-                '{0} is missing the preview_fields attribute. Define {0}.preview_fields '
-                'or overwrite {0}.get_preview_fields().'.format(self.__class__.__name__)
-            )
-
-    def post(self, request):
-        """
-        Process POST requests.
-
-        We need to overwrite this method to make the preview work. If the word 'preview'
-        is in the `request.POST` we want to show the form again, so we treat the form as
-        invalid.
-        """
-        form = self.get_form()
-        if form.is_valid() and 'preview' not in request.POST:
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)

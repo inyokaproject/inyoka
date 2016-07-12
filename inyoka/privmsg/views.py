@@ -27,8 +27,7 @@ from inyoka.privmsg.forms import (
 from inyoka.privmsg.models import MessageData
 from inyoka.utils.django_19_auth_mixins import LoginRequiredMixin
 from inyoka.utils.flash_confirmation import ConfirmActionMixin
-from inyoka.utils.forms import FormPreviewMixin
-from inyoka.utils.views import PermissionRequiredMixin
+from inyoka.utils.views import FormPreviewMixin, PermissionRequiredMixin
 from inyoka.wiki.utils import quote_text
 
 MESSAGES_PER_PAGE = 20
