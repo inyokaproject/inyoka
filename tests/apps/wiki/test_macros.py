@@ -8,8 +8,6 @@
     :copyright: (c) 2012-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import unittest
-
 from inyoka.markup import RenderContext, macros
 from inyoka.utils.test import TestCase
 from inyoka.utils.urls import href
@@ -30,7 +28,3 @@ class TestWikiMacros(TestCase):
         self.assertEqual(link.href, href('wiki', '_attachment',
                             target='AttachmentTest/internal_page'))
         self.assertEqual(link.text, 'sometext')
-
-    @unittest.skip("Not implemented yet.")
-    def test_tag_cloud(self):
-        pass
