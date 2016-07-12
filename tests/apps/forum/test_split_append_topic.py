@@ -19,6 +19,7 @@ class TestPostSplit(TestCase):
     """Test for splitting posts and appending them to an existing topic"""
 
     def setUp(self):
+        super(TestPostSplit, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
         self.category = Forum(name='category')

@@ -21,6 +21,7 @@ from inyoka.utils.urls import url_for
 class TestArticleModel(TestCase):
 
     def setUp(self):
+        super(TestArticleModel, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin',
                 False)
 
@@ -91,6 +92,7 @@ class TestCategoryModel(TestCase):
 class TestSuggestionModel(TestCase):
 
     def setUp(self):
+        super(TestSuggestionModel, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin',
             False)
         self.suggestion1 = Suggestion(author=self.user)
@@ -104,6 +106,7 @@ class TestSuggestionModel(TestCase):
 class TestEventModel(TestCase):
 
     def setUp(self):
+        super(TestEventModel, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin',
             False)
 

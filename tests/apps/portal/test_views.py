@@ -35,6 +35,7 @@ class TestViews(TestCase):
     permissions = sum(PERMISSION_NAMES.keys())
 
     def setUp(self):
+        super(TestViews, self).setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.admin._permissions = self.permissions
@@ -110,6 +111,7 @@ class TestAuthViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
+        super(TestAuthViews, self).setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
@@ -396,6 +398,7 @@ class TestPrivMsgViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
+        super(TestPrivMsgViews, self).setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME

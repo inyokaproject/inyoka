@@ -19,6 +19,7 @@ class TestPostSplitNewTopic(TestCase):
     """Test for splitting posts and creating a new topic"""
 
     def setUp(self):
+        super(TestPostSplitNewTopic, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
         self.category = Forum(name='category')
