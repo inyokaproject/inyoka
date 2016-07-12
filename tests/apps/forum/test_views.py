@@ -14,29 +14,28 @@ from random import randint
 
 import responses
 from django.conf import settings
-from django.contrib.messages.constants import INFO
 from django.core.cache import cache
 from django.core.files import File
+from django.contrib.auth.models import Group
 from django.http import Http404
 from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
-from mock import MagicMock, patch
+from mock import patch
+from guardian.shortcuts import assign_perm, remove_perm
 
 from inyoka.forum import constants, views
-from inyoka.forum.acl import CAN_READ, PRIVILEGES_BITS
 from inyoka.forum.models import (
     Attachment,
     Forum,
     Poll,
     PollOption,
     Post,
-    Privilege,
     Topic,
 )
 from inyoka.portal.models import Subscription
-from inyoka.portal.user import PERMISSION_NAMES, User, Group
+from inyoka.portal.user import User
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient, TestCase
 from inyoka.utils.urls import href, url_for
 
@@ -44,19 +43,11 @@ from inyoka.utils.urls import href, url_for
 class TestViews(AntiSpamTestCaseMixin, TestCase):
 
     client_class = InyokaClient
-    permissions = sum(PERMISSION_NAMES.keys())
-    privileges = sum(PRIVILEGES_BITS.values())
 
     def setUp(self):
         super(TestViews, self).setUp()
-        Group.objects.create_system_groups()
-        User.objects.create_system_users()
-
-        self.admin_group = Group.objects.get_or_create(name='admins')[0]
-        self.admin_group.permissions = self.permissions
-        self.admin_group.save()
         self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
-        self.admin.groups.add(self.admin_group)
+        self.admin.is_superuser = True
         self.admin.save()
 
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
@@ -65,12 +56,6 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
         self.forum1 = Forum.objects.create(name='Forum 1')
         self.forum2 = Forum.objects.create(name='Forum 2', parent=self.forum1)
         self.forum3 = Forum.objects.create(name='Forum 3', parent=self.forum1)
-
-        forums = [self.forum1, self.forum2, self.forum3]
-
-        for f in forums:
-            Privilege.objects.create(group=self.admin_group, forum=f,
-                    positive=self.privileges, negative=0)
 
         self.topic = Topic.objects.create(title='A test Topic', author=self.user,
                 forum=self.forum2)
@@ -135,9 +120,8 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
     def test_subscribe(self):
         self.client.login(username='user', password='user')
-        registered = Group.objects.get_registered_group()
-        useraccess = Privilege.objects.create(group=registered, forum=self.forum2,
-            positive=PRIVILEGES_BITS['read'], negative=0)
+        registered = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('forum.view_forum', registered, self.forum2)
 
         self.client.get('/topic/%s/subscribe/' % self.topic.slug)
         self.assertTrue(
@@ -145,8 +129,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
         # Test for unsubscribe-link in the usercp if the user has no more read
         # access to a subscription
-        useraccess.positive = 0
-        useraccess.save()
+        remove_perm('forum.view_forum', registered, self.forum2)
         cache.clear()
         response = self.client.get('/usercp/subscriptions/', {}, False,
                          HTTP_HOST=settings.BASE_DOMAIN_NAME)
@@ -458,20 +441,13 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 class TestUserPostCounter(TestCase):
     def setUp(self):
         super(TestUserPostCounter, self).setUp()
-        Group.objects.create_system_groups()
-        User.objects.create_system_users()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
-        self.registered_group = Group.objects.get_registered_group()
-        self.registered_group.permissions = sum(PERMISSION_NAMES.keys())
+        self.user.is_superuser = True
+        self.user.save()
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 
         self.forum = Forum.objects.create()
-        Privilege.objects.create(
-            group=self.registered_group,
-            forum=self.forum,
-            positive=sum(PRIVILEGES_BITS.values()),
-            negative=0)
 
     def test_hide_post(self):
         """
@@ -516,50 +492,30 @@ class TestUserPostCounter(TestCase):
 class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
 
     client_class = InyokaClient
-    permissions = sum(PERMISSION_NAMES.keys())
-    privileges = sum(PRIVILEGES_BITS.values())
-    user_privileges = sum(v for k, v in PRIVILEGES_BITS.items() if k in ('read', 'create', 'reply'))
 
     def setUp(self):
         super(TestPostEditView, self).setUp()
         anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
-        Group.objects.create_system_groups()
-        User.objects.create_system_users()
-        anonymous_group = Group.objects.get_anonymous_group()
-        registered_group = Group.objects.get_registered_group()
-        admin_group = Group.objects.get_or_create(name='admins')[0]
-        admin_group.permissions = self.permissions
-        admin_group.save()
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
+        self.admin.is_superuser = True
         self.admin.save()
-        self.admin.groups.add(admin_group)
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
 
         self.category = Forum.objects.create(name='Category')
         self.forum = Forum.objects.create(name='Forum', parent=self.category)
 
-        Privilege.objects.create(group=admin_group, forum=self.category,
-            positive=self.privileges, negative=0)
-        Privilege.objects.create(group=admin_group, forum=self.forum,
-            positive=self.privileges, negative=0)
-
-        Privilege.objects.create(group=registered_group, forum=self.category,
-            positive=self.user_privileges, negative=0)
-        Privilege.objects.create(group=registered_group, forum=self.forum,
-            positive=self.user_privileges, negative=0)
-
         self.public_category = Forum.objects.create(name='Public category')
         self.public_forum = Forum.objects.create(name='Public forum', parent=self.public_category)
 
-        Privilege.objects.create(group=registered_group, forum=self.public_category,
-            positive=self.user_privileges, negative=0)
-        Privilege.objects.create(group=registered_group, forum=self.public_forum,
-            positive=self.user_privileges, negative=0)
+        for privilege in ('forum.view_forum', 'forum.add_topic_forum', 'forum.add_reply_forum'):
+            assign_perm(privilege, registered_group, self.category)
+            assign_perm(privilege, registered_group, self.forum)
+            assign_perm(privilege, registered_group, self.public_category)
+            assign_perm(privilege, registered_group, self.public_forum)
 
-        Privilege.objects.create(group=anonymous_group, forum=self.public_category,
-            positive=CAN_READ, negative=0)
-        Privilege.objects.create(group=anonymous_group, forum=self.public_forum,
-            positive=CAN_READ, negative=0)
+        assign_perm('forum.view_forum', anonymous_group, self.public_category)
+        assign_perm('forum.view_forum', anonymous_group, self.public_forum)
 
         self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 

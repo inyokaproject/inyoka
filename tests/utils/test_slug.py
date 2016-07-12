@@ -8,8 +8,10 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from django.contrib.auth.models import Group
+
 from inyoka.forum.models import Forum, Topic
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import User
 from inyoka.utils.database import _strip_ending_nums
 from inyoka.utils.test import TestCase
 
@@ -17,8 +19,6 @@ from inyoka.utils.test import TestCase
 class TestUtilsSlug(TestCase):
     def setUp(self):
         super(TestUtilsSlug, self).setUp()
-        Group.objects.create_system_groups()
-        User.objects.create_system_users()
         self.user = User.objects.register_user('slugadmin', 'slugadmin', 'slugadmin', False)
 
         # creating forums
