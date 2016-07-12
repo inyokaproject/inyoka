@@ -11,7 +11,9 @@
 import unittest
 from datetime import datetime
 
+from django.conf import settings
 from django.core.cache import cache
+from django.contrib.auth.models import Group
 
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
@@ -63,6 +65,10 @@ class TestUserModel(TestCase):
         created_user = User.objects.register_user('testuser5', 'test5@user.de', 'pwd', False)
         with self.assertRaisesRegexp(ValueError, 'invalid username'):
             created_user.rename('**testuser**', False)
+
+    def test_new_users_in_registered_group(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        self.assertTrue(registered_group in self.user.groups.all())
 
 
 class TestUserHasContent(TestCase):
