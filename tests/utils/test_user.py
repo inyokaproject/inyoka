@@ -6,16 +6,16 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import unittest
 from hashlib import sha1
 
 from django.conf import settings
 
 from inyoka.portal.user import User, Group
 from inyoka.utils.user import gen_activation_key
+from inyoka.utils.test import TestCase
 
 
-class TestUtilsUser(unittest.TestCase):
+class TestUtilsUser(TestCase):
     def setUp(self):
         super(TestUtilsUser, self).setUp()
         self.user = User.objects.register_user('testing', 'example@example.com',
