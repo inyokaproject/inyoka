@@ -20,6 +20,7 @@ class A(object):
 
 class JSONTest(TestCase):
     def setUp(self):
+        super(JSONTest, self).setUp()
         self.model = JSONEntry
         self.manager = self.model.objects
 

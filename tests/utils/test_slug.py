@@ -16,6 +16,7 @@ from inyoka.utils.test import TestCase
 
 class TestUtilsSlug(TestCase):
     def setUp(self):
+        super(TestUtilsSlug, self).setUp()
         Group.objects.create_system_groups()
         User.objects.create_system_users()
         self.user = User.objects.register_user('slugadmin', 'slugadmin', 'slugadmin', False)

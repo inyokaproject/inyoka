@@ -24,6 +24,7 @@ class TestViews(TestCase):
     permissions = sum(PERMISSION_NAMES.keys())
 
     def setUp(self):
+        super(TestViews, self).setUp()
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.user = User.objects.register_user('user', 'user', 'user', False)
         self.admin._permissions = self.permissions
