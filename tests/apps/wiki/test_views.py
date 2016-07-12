@@ -25,6 +25,7 @@ class TestViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
+        super(TestViews, self).setUp()
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
         self.client.login(username='admin', password='admin')

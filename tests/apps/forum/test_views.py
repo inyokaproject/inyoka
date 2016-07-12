@@ -48,6 +48,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
     privileges = sum(PRIVILEGES_BITS.values())
 
     def setUp(self):
+        super(TestViews, self).setUp()
         Group.objects.create_system_groups()
         User.objects.create_system_users()
 
@@ -456,6 +457,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
 class TestUserPostCounter(TestCase):
     def setUp(self):
+        super(TestUserPostCounter, self).setUp()
         Group.objects.create_system_groups()
         User.objects.create_system_users()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
@@ -519,6 +521,8 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
     user_privileges = sum(v for k, v in PRIVILEGES_BITS.items() if k in ('read', 'create', 'reply'))
 
     def setUp(self):
+        super(TestPostEditView, self).setUp()
+        anonymous_group = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
         Group.objects.create_system_groups()
         User.objects.create_system_users()
         anonymous_group = Group.objects.get_anonymous_group()
