@@ -77,8 +77,6 @@ class InyokaClient(Client):
 
         """
         super(InyokaClient, self).__init__(enforce_csrf_checks, **defaults)
-        Group.objects.create_system_groups()
-        User.objects.create_system_users()
         if isinstance(host, basestring):
             self.defaults['HTTP_HOST'] = host
         else:
@@ -169,14 +167,18 @@ class TestCase(_TestCase):
     Delets the content cache after each run.
     """
 
+    def _pre_setup(self):
+        super(TestCase, self)._pre_setup()
+        for groupname in (settings.INYOKA_ANONYMOUS_GROUP_NAME,
+                      settings.INYOKA_REGISTERED_GROUP_NAME,
+                      settings.INYOKA_IKHAYA_GROUP_NAME):
+            group = Group.objects.get_or_create(name=groupname)[0]
+            group.save()
+        User.objects.create_system_users()
+
     def _post_teardown(self):
         super(TestCase, self)._post_teardown()
         content_cache = caches['content']
         content_cache.delete_pattern("*")
         default_cache = caches['default']
         default_cache.delete_pattern("*")
-
-    def _pre_setup(self):
-        super(TestCase, self)._pre_setup()
-        Group.objects.create_system_groups()
-        User.objects.create_system_users()
