@@ -1450,7 +1450,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
 
 class TestWelcomeMessageView(TestCase):
     def test_post_accept(self):
-        user = User.objects.create(username='testuser')
+        user = User.objects.create(username='testuser',email='testuser')
         forum = Forum.objects.create(slug='f-slug', welcome_title='test')
         request = RequestFactory().post('/fake/', {'accept': True})
         request.user = user
@@ -1464,7 +1464,7 @@ class TestWelcomeMessageView(TestCase):
         self.assertTrue(forum.welcome_read_users.filter(pk=user.pk).exists())
 
     def test_post_not_deny(self):
-        user = User.objects.create(username='testuser')
+        user = User.objects.create(username='testuser',email='testuser')
         forum = Forum.objects.create(slug='f-slug', welcome_title='test')
         request = RequestFactory().post('/fake/', {})
         request.user = user
@@ -1478,7 +1478,7 @@ class TestWelcomeMessageView(TestCase):
         self.assertFalse(forum.welcome_read_users.filter(pk=user.pk).exists())
 
     def test_forum_has_no_welcome_message(self):
-        user = User.objects.create(username='testuser')
+        user = User.objects.create(username='testuser',email='testuser')
         forum = Forum.objects.create(slug='f-slug')
         request = RequestFactory().get('/fake/')
         request.user = user

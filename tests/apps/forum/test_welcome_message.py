@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from inyoka.forum.models import Forum
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 
 
 class TestModelFindWelcome(TestCase):
-    def setUp(self):
-        Group.objects.create_system_groups()
-        User.objects.create_system_users()
-
     def test_anonymous(self):
         """
         Tests that find_welcome returns None, when given with the anonymous user
@@ -26,7 +22,7 @@ class TestModelFindWelcome(TestCase):
         self.assertIsNone(forum.find_welcome(anonymous))
 
     def test_with_message(self):
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(
             name='test forum',
             welcome_title='Message title',
@@ -38,7 +34,7 @@ class TestModelFindWelcome(TestCase):
         """
         Test the method on a child forum where the parent has a welcome message.
         """
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum1 = Forum.objects.create(
             name='test forum',
             welcome_title='Message title',
@@ -53,13 +49,13 @@ class TestModelFindWelcome(TestCase):
         """
         Tests the method on a forum without a message.
         """
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(name='test forum')
 
         self.assertIsNone(forum.find_welcome(user))
 
     def test_user_has_accepted(self):
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(
             name='test forum',
             welcome_title='Message title',
@@ -73,7 +69,7 @@ class TestModelFindWelcome(TestCase):
         Tests a forum, where the child forum has a welcome message but not
         the parent forum.
         """
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(
             name='test forum')
         sub_forum = Forum.objects.create(
@@ -89,7 +85,7 @@ class TestModelFindWelcome(TestCase):
         Tests a forum, where the child forum and the parent have welcome
         messages.
         """
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(
             name='test forum',
             welcome_title='Message title',
@@ -109,7 +105,7 @@ class TestModelFindWelcome(TestCase):
 
         The user has accepted the sub forum
         """
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(
             name='test forum',
             welcome_title='Message title',
@@ -130,7 +126,7 @@ class TestModelFindWelcome(TestCase):
 
         The user has accepted the parent forum
         """
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(
             name='test forum',
             welcome_title='Message title',
@@ -146,10 +142,6 @@ class TestModelFindWelcome(TestCase):
 
 
 class TestModelReadWelcome(TestCase):
-    def setUp(self):
-        Group.objects.create_system_groups()
-        User.objects.create_system_users()
-
     def test_on_anonymous(self):
         """
         Test that forum.read_welcome does nothing for anonymous users.
@@ -165,7 +157,7 @@ class TestModelReadWelcome(TestCase):
         self.assertFalse(forum.welcome_read_users.filter(pk=anonymous.pk).exists())
 
     def test_accept(self):
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(
             name='test forum',
             welcome_title='Message title',
@@ -180,7 +172,7 @@ class TestModelReadWelcome(TestCase):
         Tests that a user that accepted the message is "unaccepting" it when
         the read_welcome is called with accepted is False.
         """
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(
             name='test forum',
             welcome_title='Message title',
@@ -195,7 +187,7 @@ class TestModelReadWelcome(TestCase):
         """
         Tests that read_welcome works also on forums without a message.
         """
-        user = User.objects.create(username='test_user')
+        user = User.objects.create(username='test_user',email='test_user')
         forum = Forum.objects.create(name='test forum')
 
         forum.read_welcome(user)
