@@ -504,7 +504,7 @@ def user_mail(request, username):
 
 
 @require_POST
-@permission_required('portal.subscribe_user')
+@permission_required('portal.subscribe_user', raise_exception=True)
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
     user = User.objects.get(username__iexact=username)
