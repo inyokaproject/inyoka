@@ -197,10 +197,10 @@ class UserManager(BaseUserManager):
                 raise exc
         return user
 
-    def create_user(self, username, email, password=None, system=False):
+    def create_user(self, username, email, password=None):
         now = datetime.utcnow()
         user = self.model(username=username, email=email.strip().lower(),
-            status=0, date_joined=now, last_login=now, system=system)
+            status=0, date_joined=now, last_login=now)
         if password:
             user.set_password(password)
         else:
@@ -263,7 +263,6 @@ class UserManager(BaseUserManager):
                 return User.objects.create_user(username, username)
 
         user = get_or_create(settings.INYOKA_ANONYMOUS_USER)
-        user.system = True
         user.status = User.STATUS_ACTIVE
         user.save()
         group = Group.objects.get(name__iexact=settings.INYOKA_ANONYMOUS_GROUP_NAME)
@@ -271,7 +270,6 @@ class UserManager(BaseUserManager):
         user.groups.add(group)
 
         user = get_or_create(settings.INYOKA_SYSTEM_USER)
-        user.system = True
         user.save()
 
 
@@ -304,9 +302,6 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     status = models.IntegerField(verbose_name=ugettext_lazy(u'Activation status'),
                                  default=STATUS_INACTIVE,
                                  choices=STATUS_CHOICES)
-    system = models.BooleanField(verbose_name=ugettext_lazy(u'System user'),
-                                 default=False,
-                                 null=False)
     date_joined = models.DateTimeField(verbose_name=ugettext_lazy(u'Member since'),
                                        default=datetime.utcnow)
 
