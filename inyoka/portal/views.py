@@ -1211,9 +1211,12 @@ class MemberlistView(generic.ListView):
     context_object_name = 'users'
     model = User
     base_link = href('portal', 'users')
+    permission_required = ()
 
-    @method_decorator(permission_required('portal.change_user', raise_exception=True))
     def post(self, request, *args, **kwargs):
+        if not request.user.has_perm('portal.change_user'):
+            messages.error(request, _(u'You need to be logged in before you can continue.'))
+            return abort_access_denied(request)
         name = request.POST.get('user')
         try:
             user = User.objects.get_by_username_or_email(name)
