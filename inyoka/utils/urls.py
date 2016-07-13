@@ -11,6 +11,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.utils.http import urlencode, urlquote, urlquote_plus, is_safe_url
 from django_hosts.resolvers import get_host, get_host_patterns
 
@@ -50,6 +51,10 @@ def url_for(obj, action=None, **kwargs):
         if action is not None:
             return obj.get_absolute_url(action, **kwargs)
         return obj.get_absolute_url(**kwargs)
+    if isinstance(obj, Group):
+        if action == 'edit':
+            return href('portal', 'group', obj.name, 'edit')
+        return href('portal', 'group', obj.name)
     raise TypeError('type %r has no url' % obj.__class__)
 
 
