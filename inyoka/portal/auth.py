@@ -8,6 +8,7 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from django.conf import settings
 from django.contrib.auth.models import Permission
 
 from inyoka.portal.user import User, UserBanned
@@ -45,7 +46,7 @@ class InyokaAuthBackend(object):
             if not user.unban():
                 raise UserBanned()
 
-        if user.system:
+        if user.username in (settings.INYOKA_ANONYMOUS_USER, settings.INYOKA_SYSTEM_USER):
             return None
 
         return user
