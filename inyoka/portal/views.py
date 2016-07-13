@@ -27,7 +27,6 @@ from django.middleware.csrf import REASON_NO_REFERER, REASON_NO_CSRF_COOKIE
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
-from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
@@ -1344,9 +1343,8 @@ def feedselector(request, app=None):
         else:
             forms[fapp] = None
     if forms['forum'] is not None:
-# FIXME: filter_invisble must be replaced:
-#        forums = filter_invisible(anonymous_user, Forum.objects.get_cached())
-        forums = Forum.objects.get_cached()
+        anonymous_user = User.objects.get_anonymous_user()
+        forums = [forum for forum in Forum.objects.get_cached() if anonymous_user.has_perm('forum.view_forum', forum)]
         forms['forum'].fields['forum'].choices = [('', _(u'Please choose'))] + \
             [(f.slug, f.name) for f in forums]
     if forms['ikhaya'] is not None:
