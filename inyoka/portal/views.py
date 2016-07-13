@@ -1303,7 +1303,7 @@ def group_edit(request, name=None):
                 msg = _(u'The group “%(group)s” was changed successfully.')
             messages.success(request, (msg % {'group': group.name}))
             if new:
-                return HttpResponseRedirect(group.get_absolute_url('edit'))
+                return HttpResponseRedirect(url_for(group, 'edit'))
     else:
         form = EditGroupForm(instance=group)
 
