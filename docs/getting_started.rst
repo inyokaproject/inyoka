@@ -238,13 +238,11 @@ Documentation
 Installation
 ************
 
-In order to create or update the documentation (yes, *this* documentation), run
+In order to create or update the documentation (yes, *this* documentation), simply run:
 
 .. code-block:: console
 
-    (inyoka)$ make html
-
-in ``inyoka/inyoka/docs/``.
+    (inyoka)$ make -C docs html
 
 Documentating
 *************
