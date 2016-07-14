@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 import sys
 import datetime
+import django
+from os import environ
 from os.path import join, dirname
 from subprocess import PIPE, Popen
 
 sys.path.insert(0, join(dirname(__file__), '..'))
+
+environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
+
+django.setup()
 
 extensions = ['sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
     'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.extlinks',
