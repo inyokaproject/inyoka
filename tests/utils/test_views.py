@@ -67,6 +67,15 @@ class TestFormPreviewMixin(TestCase):
 
         self.assertEqual(expected_value, actual_value)
 
+    def test_get_context_data_with_get(self):
+        """Test that `get_context_data()` does not add the `previews` key, when it's a GET request."""
+        self.view.request = RequestFactory().get('/')
+        expected_value = {}
+
+        actual_value = self.view.get_context_data()
+
+        self.assertEqual(expected_value, actual_value)
+
     @patch('inyoka.utils.views.FormPreviewMixin.get_preview_fields')
     def test_render_previews(self, mock_get_preview_fields):
         """Test that `render_previews()` returns a dict with the previews."""
