@@ -106,7 +106,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertItemsEqual(response.context_data['messages'], [])
         self.assertFalse(response.context_data['is_paginated'])
 
-    def test_inboxedmessagesview_as_anonymous(self):
+    def test_inboxedmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, InboxedMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/inbox/')
         request.user = User.objects.get_anonymous_user()
@@ -130,7 +130,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertItemsEqual(response.context_data['messages'], [])
         self.assertFalse(response.context_data['is_paginated'])
 
-    def test_sentmessagesview_as_anonymous(self):
+    def test_sentmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, SentMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/sent/')
         request.user = User.objects.get_anonymous_user()
@@ -154,7 +154,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertItemsEqual(response.context_data['messages'], [])
         self.assertFalse(response.context_data['is_paginated'])
 
-    def test_archivedmessagesview_as_anonymous(self):
+    def test_archivedmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, ArchivedMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/archive/')
         request.user = User.objects.get_anonymous_user()
@@ -178,7 +178,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertItemsEqual(response.context_data['messages'], [])
         self.assertFalse(response.context_data['is_paginated'])
 
-    def test_trashedmessagesview_as_anonymous(self):
+    def test_trashedmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, TrashedMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/trash/')
         request.user = User.objects.get_anonymous_user()
@@ -202,7 +202,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertItemsEqual(response.context_data['messages'], [])
         self.assertFalse(response.context_data['is_paginated'])
 
-    def test_readmessagesview_as_anonymous(self):
+    def test_readmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, ReadMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/read/')
         request.user = User.objects.get_anonymous_user()
@@ -226,7 +226,7 @@ class TestFolderMessagesViewIntegration(TestCase):
         self.assertItemsEqual(response.context_data['messages'], [])
         self.assertFalse(response.context_data['is_paginated'])
 
-    def test_unreadmessagesview_as_anonymous(self):
+    def test_unreadmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, UnreadMessagesView should redirect to login."""
         request = RequestFactory().get('/messages/unread/')
         request.user = User.objects.get_anonymous_user()
@@ -269,26 +269,6 @@ class TestMessageViewSubclasses(TestCase):
         self.request = RequestFactory().get('/')
         self.request.user = User(username='testuser')
 
-    def test_confirm_action(self):
-        """Test `confirm_action()` calls `restore()` method on the selected message object."""
-        view = MessageRestoreView()
-        view = setup_view(view, self.request)
-        view.object = Mock()
-
-        view.confirm_action()
-
-        view.object.assert_has_calls([call.restore()])
-
-    def test_get_success_url(self):
-        """Test `get_success_url()` returns the message's folder url by calling the right method."""
-        view = MessageRestoreView()
-        view = setup_view(view, self.request)
-        view.object = Mock()
-
-        view.get_success_url()
-
-        view.object.assert_has_calls([call.get_absolute_url(action='folder')])
-
     def test_messagetoarchiveview_confirm_action(self):
         """Test `confirm_action()` calls `archive()` method on the selected message object."""
         view = MessageToArchiveView()
@@ -308,6 +288,26 @@ class TestMessageViewSubclasses(TestCase):
         view.confirm_action()
 
         view.object.assert_has_calls([call.trash()])
+
+    def test_messagerestoreview_confirm_action(self):
+        """Test `confirm_action()` calls `restore()` method on the selected message object."""
+        view = MessageRestoreView()
+        view = setup_view(view, self.request)
+        view.object = Mock()
+
+        view.confirm_action()
+
+        view.object.assert_has_calls([call.restore()])
+
+    def test_messagerestoreview_get_success_url(self):
+        """Test `get_success_url()` returns the message's folder url by calling the right method."""
+        view = MessageRestoreView()
+        view = setup_view(view, self.request)
+        view.object = Mock()
+
+        view.get_success_url()
+
+        view.object.assert_has_calls([call.get_absolute_url(action='folder')])
 
     def test_messagedeleteview_confirm_action(self):
         """Test `confirm_action()` calls `delete()` method on the selected message object."""

@@ -14,7 +14,6 @@ from django.core.urlresolvers import reverse
 from inyoka.portal.user import User
 from inyoka.privmsg.models import Message, MessageData
 from inyoka.utils.test import TestCase
-# from unittest import skip
 from mock import Mock, patch
 
 

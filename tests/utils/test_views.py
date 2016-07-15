@@ -47,8 +47,8 @@ class TestFormPreviewMixin(TestCase):
         self.view = DummyView()
 
     @patch('inyoka.utils.views.FormPreviewMixin.render_previews')
-    def test_get_context_data(self, mock_render_previews):
-        """Test that `get_context_data()` adds the key `previews` to the returned dict."""
+    def test_get_context_data_with_preview(self, mock_render_previews):
+        """Test that `get_context_data()` adds the `previews` key to the context dict."""
         mock_render_previews.return_value = {}
         self.view.request = RequestFactory().post('/', data={'preview': 'Preview'})
         expected_value = {'previews': {}}
@@ -58,8 +58,8 @@ class TestFormPreviewMixin(TestCase):
         self.assertEqual(expected_value, actual_value)
 
     @patch('inyoka.utils.views.FormPreviewMixin.render_previews')
-    def test_get_context_data_without_preview(self, mock_render_previews):
-        """Test that `get_context_data()` does not add previews if "preview" was not pressed."""
+    def test_get_context_data_with_submit(self, mock_render_previews):
+        """Test that `get_context_data()` does not add the `previews` key, when preview was not pressed."""
         self.view.request = RequestFactory().post('/', data={'submit': 'Submit'})
         expected_value = {}
 

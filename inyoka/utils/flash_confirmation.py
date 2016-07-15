@@ -47,9 +47,7 @@ def confirm_action(message=None, confirm=None, cancel=None):
 
 
 class ConfirmActionMixin(object):
-    """
-    ConfirmActionMixin inject a flash message into the view.
-    """
+    """ConfirmActionMixin inject a flash message into the view."""
     confirm_message = None
     confirm_label = _(u'Confirm')
     success_message = _(u'Success')
@@ -59,21 +57,19 @@ class ConfirmActionMixin(object):
     cancel_url = None
 
     def get_context_data(self, **context):
-        """
-        Inject the flash confirmation form into request.
-        """
+        """Inject the flash confirmation form into request."""
         messages.info(self.request,
                       render_template('confirm_action_flash.html',
-                                      {'message': self.confirm_message,
-                                       'confirm_label': self.confirm_label,
-                                       'cancel_label': self.cancel_label},
+                                      {
+                                          'message': self.confirm_message,
+                                          'confirm_label': self.confirm_label,
+                                          'cancel_label': self.cancel_label,
+                                      },
                                       flash=True))
         return super(ConfirmActionMixin, self).get_context_data(**context)
 
     def post(self, request, pk):
-        """
-        Run the confirm_action method, when the injected form was submitted.
-        """
+        """Run the confirm_action method, when the injected form was submitted."""
         self.object = self.get_object()
 
         if 'confirm' in request.POST:
@@ -86,18 +82,14 @@ class ConfirmActionMixin(object):
             return HttpResponseRedirect(self.get_cancel_url())
 
     def get_success_url(self):
-        """
-        Return the URL to redirect to in case of confirmed action.
-        """
+        """Return the URL to redirect to in case of confirmed action."""
         if self.success_url is not None:
             return self.success_url
         else:
             return self.object.get_absolute_url()
 
     def get_cancel_url(self):
-        """
-        Return the URL to redirect to in case of aborted action.
-        """
+        """Return the URL to redirect to in case of aborted action."""
         if self.cancel_url is not None:
             return self.cancel_url
         else:
