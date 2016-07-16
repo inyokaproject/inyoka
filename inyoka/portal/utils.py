@@ -12,52 +12,15 @@ import json
 import calendar
 from datetime import date, time
 
-from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.utils.http import urlquote_plus
 
 from inyoka.utils.dates import date_time_to_datetime
-from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
-
-
-def check_login(message=None):
-    """
-    This function can be used as a decorator to check whether the user is
-    logged in or not.  Also it's possible to send the user a message if
-    he's logged out and needs to login.
-    """
-    def _wrapper(func):
-        def decorator(*args, **kwargs):
-            req = args[0]
-            if req.user.is_authenticated():
-                return func(*args, **kwargs)
-            if message is not None:
-                messages.info(req, message)
-            args = {'next': '//%s%s' % (req.get_host(), req.path)}
-            return HttpResponseRedirect(href('portal', 'login', **args))
-        return patch_wrapper(decorator, func)
-    return _wrapper
-
-
-def simple_check_login(f):
-    """
-    This function can be used as a decorator to check whether the user is
-    logged in or not.
-    If he is, the decorated function is called normally, else the login page
-    is shown without a response to the user.
-    """
-    def decorator(*args, **kwargs):
-        req = args[0]
-        if req.user.is_authenticated():
-            return f(*args, **kwargs)
-        args = {'next': '//%s%s' % (req.get_host(), req.path)}
-        return HttpResponseRedirect(href('portal', 'login', **args))
-    return patch_wrapper(decorator, f)
 
 
 def abort_access_denied(request):
@@ -181,12 +144,12 @@ class UbuntuVersion(object):
 
     def as_json(self):
         data = {
-                'number': self.number,
-                'name': self.name,
-                'lts': self.lts,
-                'acitve': self.active,
-                'current': self.current,
-                'dev': self.dev}
+            'number': self.number,
+            'name': self.name,
+            'lts': self.lts,
+            'acitve': self.active,
+            'current': self.current,
+            'dev': self.dev}
         return json.dumps(data)
 
 

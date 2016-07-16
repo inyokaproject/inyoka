@@ -21,6 +21,7 @@
 from datetime import datetime
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.db import models
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -29,7 +30,6 @@ from django.utils.translation import ugettext as _
 
 from inyoka.markup import RenderContext, parse
 from inyoka.portal.models import Subscription
-from inyoka.portal.utils import simple_check_login
 from inyoka.utils.http import (
     AccessDeniedResponse,
     TemplateResponse,
@@ -987,7 +987,7 @@ def do_attach_edit(request, name):
 
 
 @clean_article_name
-@simple_check_login
+@login_required
 def do_subscribe(request, name):
     """
     Subscribe the user to the page with `page_name`
@@ -1004,7 +1004,7 @@ def do_subscribe(request, name):
 
 
 @clean_article_name
-@simple_check_login
+@login_required
 def do_unsubscribe(request, name):
     """
     Unsubscribe the user from the page with `page_name`
