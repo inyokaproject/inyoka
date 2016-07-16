@@ -606,10 +606,13 @@ class Topic(models.Model):
         self.save()
         self.posts.all().delete()
 
-        # Delete subscriptions and remove wiki page discussions
+        # Delete subscriptions
         ctype = ContentType.objects.get_for_model(Topic)
         Subscription.objects.filter(content_type=ctype, object_id=self.id).delete()
-        WikiPage.objects.filter(topic=self).update(topic=None)
+
+        # remove wiki page discussions and clear caches
+        WikiPage.objects.clear_topic(self)
+
         return super(Topic, self).delete(*args, **kwargs)
 
     def get_absolute_url(self, action='show', **query):
