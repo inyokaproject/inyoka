@@ -33,8 +33,8 @@ urlpatterns = [
     url(r'^topic/(?P<topic_slug>[^/]+)/report_done/$', views.report, {'status': 'done'}),
     url(r'^topic/(?P<topic_slug>[^/]+)/subscribe', views.subscribe_topic),
     url(r'^topic/(?P<topic_slug>[^/]+)/unsubscribe', views.unsubscribe_topic),
-    url(r'^topic/(?P<topic_slug>[^/]+)/next/$', views.next_topic),
-    url(r'^topic/(?P<topic_slug>[^/]+)/previous/$', views.previous_topic),
+    url(r'^topic/(?P<slug>[^/]+)/next/$', views.NextTopicView.as_view()),
+    url(r'^topic/(?P<slug>[^/]+)/previous/$', views.NextTopicView.as_view(direction='older')),
     url(r'^reported_topics/$', views.reportlist),
     url(r'^reported_topics/(?P<mode>(un)?subscribe)/$', views.reported_topics_subscription),
     url(r'^post/(?P<post_id>\d+)/$', views.post),
@@ -60,43 +60,159 @@ urlpatterns = [
     url(r'^markread/$', views.markread),
     url(r'^category/(?P<slug>[^/]+)/markread/$', views.markread),
     url(r'^forum/(?P<slug>[^/]+)/markread/$', views.markread),
+
     # special searches
-    url(r'^newposts/$', views.topiclist, {'action': 'newposts'}),
-    url(r'^newposts/(?P<page>\d+)/$', views.topiclist, {'action': 'newposts'}),
-    url(r'^newposts/(?P<forum>[^/]+)/$', views.topiclist, {'action': 'newposts'}),
-    url(r'^newposts/(?P<forum>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'newposts'}),
+    url(
+        r'^unanswered/$',
+        views.UnansweredTopicsListView.as_view(),
+        name='forum_list_unanswered_topics',
+    ),
+    url(
+        r'^unanswered/(?P<page>\d+)/$',
+        views.UnansweredTopicsListView.as_view(),
+        name='forum_list_unanswered_topics',
+    ),
+    url(
+        r'^unanswered/(?P<slug>[^/]+)/$',
+        views.UnansweredTopicsListView.as_view(),
+        name='forum_list_unanswered_topics',
+    ),
+    url(
+        r'^unanswered/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.UnansweredTopicsListView.as_view(),
+        name='forum_list_unanswered_topics',
+    ),
 
-    url(r'^last(?P<hours>\d+)/$', views.topiclist, {'action': 'last'}),
-    url(r'^last(?P<hours>\d+)/(?P<page>\d+)/$', views.topiclist, {'action': 'last'}),
-    url(r'^last(?P<hours>\d+)/(?P<forum>[^/]+)/$', views.topiclist, {'action': 'last'}),
-    url(r'^last(?P<hours>\d+)/(?P<forum>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'last'}),
-
-    url(r'^unanswered/$', views.topiclist, {'action': 'unanswered'}),
-    url(r'^unanswered/(?P<page>\d+)/$', views.topiclist, {'action': 'unanswered'}),
-    url(r'^unanswered/(?P<forum>[^/]+)/$', views.topiclist, {'action': 'unanswered'}),
-    url(r'^unanswered/(?P<forum>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'unanswered'}),
-
-    url(r'^unsolved/$', views.topiclist, {'action': 'unsolved'}),
-    url(r'^unsolved/(?P<page>\d+)/$', views.topiclist, {'action': 'unsolved'}),
-    url(r'^unsolved/(?P<forum>[^/]+)/$', views.topiclist, {'action': 'unsolved'}),
-    url(r'^unsolved/(?P<forum>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'unsolved'}),
-
-    url(r'^egosearch/$', views.topiclist, {'action': 'author'}),
-    url(r'^egosearch/(?P<page>\d+)/$', views.topiclist, {'action': 'author'}),
-    url(r'^egosearch/(?P<forum>[^/]+)/$', views.topiclist, {'action': 'author'}),
-    url(r'^egosearch/(?P<forum>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'author'}),
-
-    url(r'^author/(?P<user>[^/]+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/(?P<page>\d+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/topic/(?P<topic_slug>[^/]+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/topic/(?P<topic_slug>[^/]+)/(?P<page>\d+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/forum/(?P<forum_slug>[^/]+)/$', views.postlist),
-    url(r'^author/(?P<user>[^/]+)/forum/(?P<forum_slug>[^/]+)/(?P<page>\d+)/$', views.postlist),
-
-    url(r'^topic_author/(?P<user>[^/]+)/$', views.topiclist, {'action': 'topic_author'}),
-    url(r'^topic_author/(?P<user>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'topic_author'}),
-    url(r'^topic_author/(?P<user>[^/]+)/(?P<forum>[^/]+)/$', views.topiclist, {'action': 'topic_author'}),
-    url(r'^topic_author/(?P<user>[^/]+)/(?P<forum>[^/]+)/(?P<page>\d+)/$', views.topiclist, {'action': 'topic_author'}),
+    url(
+        r'^unsolved/$',
+        views.UnsolvedTopicsListView.as_view(),
+        name='forum_list_unsolved_topics',
+    ),
+    url(
+        r'^unsolved/(?P<page>\d+)/$',
+        views.UnsolvedTopicsListView.as_view(),
+        name='forum_list_unsolved_topics',
+    ),
+    url(
+        r'^unsolved/(?P<slug>[^/]+)/$',
+        views.UnsolvedTopicsListView.as_view(),
+        name='forum_list_unsolved_topics',
+    ),
+    url(
+        r'^unsolved/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.UnsolvedTopicsListView.as_view(),
+        name='forum_list_unsolved_topics',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/$',
+        views.AuthorPostListView.as_view(),
+        name='forum_author_post_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/(?P<page>\d+)/$',
+        views.AuthorPostListView.as_view(),
+        name='forum_author_post_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/topic/(?P<slug>[^/]+)/$',
+        views.AuthorPostListView.as_view(),
+        name='forum_author_post_topic_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/topic/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.AuthorPostListView.as_view(),
+        name='forum_author_post_topic_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/forum/(?P<slug>[^/]+)/$',
+        views.AuthorPostForumListView.as_view(),
+        name='forum_author_post_forum_list',
+    ),
+    url(
+        r'^author/(?P<username>[^/]+)/forum/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.AuthorPostListView.as_view(),
+        name='forum_author_post_forum_list',
+    ),
+    url(
+        r'^topic_author/(?P<username>[^/]+)/$',
+        views.AuthorTopicListView.as_view(),
+        name='forum_author_topic_list',
+    ),
+    url(
+        r'^topic_author/(?P<username>[^/]+)/(?P<page>\d+)/$',
+        views.AuthorTopicListView.as_view(),
+        name='forum_author_topic_list',
+    ),
+    url(
+        r'^topic_author/(?P<username>[^/]+)/(?P<slug>[^/]+)/$',
+        views.AuthorTopicListView.as_view(),
+        name='forum_author_topic_list',
+    ),
+    url(
+        r'^topic_author/(?P<username>[^/]+)/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.AuthorTopicListView.as_view(),
+        name='forum_author_topic_list',
+    ),
+    url(
+        r'^egosearch/$',
+        views.EgosearchView.as_view(),
+        name='forum_egosearch',
+    ),
+    url(
+        r'^egosearch/(?P<page>\d+)/$',
+        views.EgosearchView.as_view(),
+        name='forum_egosearch',
+    ),
+    url(
+        r'^egosearch/(?P<slug>[^/]+)/$',
+        views.EgosearchView.as_view(),
+        name='forum_egosearch',
+    ),
+    url(
+        r'^egosearch/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.EgosearchView.as_view(),
+        name='forum_egosearch',
+    ),
+    url(
+        r'^last(?P<hours>\d+)/$',
+        views.LastTopicsListView.as_view(),
+        name='forum_last_topics',
+    ),
+    url(
+        r'^last(?P<hours>\d+)/(?P<page>\d+)/$',
+        views.LastTopicsListView.as_view(),
+        name='forum_last_topics',
+    ),
+    url(
+        r'^last(?P<hours>\d+)/(?P<slug>[^/]+)/$',
+        views.LastTopicsListView.as_view(),
+        name='forum_last_topics',
+    ),
+    url(
+        r'^last(?P<hours>\d+)/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.LastTopicsListView.as_view(),
+        name='forum_last_topics',
+    ),
+    url(
+        r'^newposts/$',
+        views.UnreadTopicsListView.as_view(),
+        name='forum_unread_topic_list',
+    ),
+    url(
+        r'^newposts/(?P<page>\d+)/$',
+        views.UnreadTopicsListView.as_view(),
+        name='forum_unread_topic_list',
+    ),
+    url(
+        r'^newposts/(?P<slug>[^/]+)/$',
+        views.UnreadTopicsListView.as_view(),
+        name='forum_unread_topic_list',
+    ),
+    url(
+        r'^newposts/(?P<slug>[^/]+)/(?P<page>\d+)/$',
+        views.UnreadTopicsListView.as_view(),
+        name='forum_unread_topic_list',
+    ),
 
     url(r'^category/(?P<slug>[^/]+)/welcome/$', views.WelcomeMessageView.as_view()),
     url(r'^forum/(?P<slug>[^/]+)/welcome/$', views.WelcomeMessageView.as_view()),

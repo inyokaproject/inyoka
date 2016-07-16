@@ -1430,6 +1430,72 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertInHTML('<div class="text"><p>edited text 4</p></div>', response.content, count=1)
 
 
+class TestNextTopicView(TestCase):
+    client_host = 'forum'
+
+    def test_recent_topic(self):
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic1 = Topic.objects.create(slug='t1', forum=forum, author=user)
+        topic2 = Topic.objects.create(slug='t2', forum=forum, author=user)
+        Post.objects.create(topic=topic1, author=user)
+        Post.objects.create(topic=topic2, author=user)
+        request = RequestFactory().get('/fake/')
+
+        with patch.object(views.NextTopicView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            response = views.NextTopicView.as_view()(request, slug='t1')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], url_for(topic2))
+
+    def test_recent_topic_no_result(self):
+        """
+        Tests that the view redirects to the forum if there is no next topic.
+        """
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic1 = Topic.objects.create(slug='t1', forum=forum, author=user)
+        Post.objects.create(topic=topic1, author=user)
+        request = RequestFactory().get('/fake/')
+        request._messages = MagicMock()
+
+        with patch.object(views.NextTopicView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            response = views.NextTopicView.as_view()(request, slug='t1')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], url_for(forum))
+        request._messages.add.assert_called_once_with(
+            INFO,
+            u'No recent topics within this forum.',
+            '')
+
+    def test_older_topic(self):
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic1 = Topic.objects.create(slug='t1', forum=forum, author=user)
+        topic2 = Topic.objects.create(slug='t2', forum=forum, author=user)
+        Post.objects.create(topic=topic1, author=user)
+        Post.objects.create(topic=topic2, author=user)
+        request = RequestFactory().get('/fake/')
+
+        with patch.object(views.NextTopicView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            response = views.NextTopicView.as_view(direction='older')(request, slug='t2')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], url_for(topic1))
+
+    def test_on_non_existing_topic(self):
+        request = RequestFactory().get('/fake/')
+
+        with patch.object(views.NextTopicView, 'has_permission') as mock_has_permission:
+            mock_has_permission.return_value = True
+            with self.assertRaises(Http404):
+                views.NextTopicView.as_view()(request, slug='no_topic')
+
+
 class TestWelcomeMessageView(TestCase):
     def test_post_accept(self):
         user = User.objects.create(username='testuser')
@@ -1471,3 +1537,122 @@ class TestWelcomeMessageView(TestCase):
                 views.WelcomeMessageView.as_view()(request, slug='f-slug')
 
         self.assertFalse(forum.welcome_read_users.filter(pk=user.pk).exists())
+
+
+class AuthorTestPostListView(TestCase):
+    def test_get_request(self):
+        """
+        Test to call the view. The posts objects created by the user should be
+        in the context_data of the response.
+        """
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic = Topic.objects.create(forum=forum, author=user)
+        post1 = Post.objects.create(topic=topic, author=user)
+        post2 = Post.objects.create(topic=topic, author=user)
+        request = RequestFactory().get('/fake/')
+        request.user = user
+        request.user.is_authenticated = MagicMock(return_value=True)
+
+        # Patch the Forum object, so that the user has all permissions
+        with patch(
+                'inyoka.forum.models.ForumManager.get_forums_filtered',
+                MagicMock(return_value=[])):
+            response = views.AuthorPostListView.as_view()(request, username='testuser')
+
+        self.assertEqual(list(response.context_data['posts']), [post2, post1])
+
+    def test_not_existing_username(self):
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic = Topic.objects.create(forum=forum, author=user)
+        Post.objects.create(topic=topic, author=user)
+        request = RequestFactory().get('/fake/')
+        request.user = user
+        request.user.is_authenticated = MagicMock(return_value=True)
+
+        # Patch the Forum object, so that the user has all permissions
+        with patch(
+                'inyoka.forum.models.ForumManager.get_forums_filtered',
+                MagicMock(return_value=[])):
+            with self.assertRaises(Http404):
+                views.AuthorPostListView.as_view()(request, username='not_existing')
+
+    def test_case_sensitive_username(self):
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic = Topic.objects.create(forum=forum, author=user)
+        post1 = Post.objects.create(topic=topic, author=user)
+        post2 = Post.objects.create(topic=topic, author=user)
+        request = RequestFactory().get('/fake/')
+        request.user = user
+        request.user.is_authenticated = MagicMock(return_value=True)
+
+        # Patch the Forum object, so that the user has all permissions
+        with patch(
+                'inyoka.forum.models.ForumManager.get_forums_filtered',
+                MagicMock(return_value=[])):
+            response = views.AuthorPostListView.as_view()(request, username='TESTUSER')
+
+        self.assertEqual(list(response.context_data['posts']), [post2, post1])
+
+
+class AuthorTestPostTopicListView(TestCase):
+    def test_get_request(self):
+        """
+        Test to call the view.
+
+        The tests creats two topics which one post each. The request should
+        only return the post from the requested topic.
+        """
+        user = User.objects.create(username='testuser')
+        forum = Forum.objects.create()
+        topic1 = Topic.objects.create(forum=forum, author=user)
+        topic2 = Topic.objects.create(forum=forum, author=user)
+        post1 = Post.objects.create(topic=topic1, author=user)
+        Post.objects.create(topic=topic2, author=user)
+        request = RequestFactory().get('/fake/')
+        request.user = user
+        request.user.is_authenticated = MagicMock(return_value=True)
+
+        # Patch the Forum object, so that the user has all permissions
+        with patch(
+                'inyoka.forum.models.ForumManager.get_forums_filtered',
+                MagicMock(return_value=[])):
+            response = views.AuthorPostTopicListView.as_view()(
+                request,
+                username='testuser',
+                slug=topic1.slug)
+
+        self.assertEqual(list(response.context_data['posts']), [post1])
+
+
+class AuthorPostForumListView(TestCase):
+    def test_get_request(self):
+        """
+        Test to call the view.
+
+        The tests creats two topics in two forums with one post each. The
+        request should only return the post from the requested topic.
+        """
+        user = User.objects.create(username='testuser')
+        forum1 = Forum.objects.create()
+        forum2 = Forum.objects.create()
+        topic1 = Topic.objects.create(forum=forum1, author=user)
+        topic2 = Topic.objects.create(forum=forum2, author=user)
+        post1 = Post.objects.create(topic=topic1, author=user)
+        Post.objects.create(topic=topic2, author=user)
+        request = RequestFactory().get('/fake/')
+        request.user = user
+        request.user.is_authenticated = MagicMock(return_value=True)
+
+        # Patch the Forum object, so that the user has all permissions
+        with patch(
+                'inyoka.forum.models.ForumManager.get_forums_filtered',
+                MagicMock(return_value=[])):
+            response = views.AuthorPostForumListView.as_view()(
+                request,
+                username='testuser',
+                slug=forum1.slug)
+
+        self.assertEqual(list(response.context_data['posts']), [post1])
