@@ -14,6 +14,7 @@ from operator import attrgetter
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
@@ -69,7 +70,6 @@ from inyoka.portal.user import User
 from inyoka.portal.utils import (
     abort_access_denied,
     require_permission,
-    simple_check_login,
 )
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.dates import format_datetime
@@ -93,7 +93,6 @@ from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.views import PermissionRequiredMixin
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import quote_text
-
 
 @templated('forum/index.html')
 def index(request, category=None):
@@ -778,12 +777,12 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
 @confirm_action(message=_(u'Do you want to (un)lock the topic?'),
                 confirm=_(u'(Un)lock'), cancel=_(u'Cancel'))
-@simple_check_login
+@login_required(login_url=href('portal', 'login'))
 def change_lock_status(request, topic_slug, solved=None, locked=None):
     return change_status(request, topic_slug, solved, locked)
 
 
-@simple_check_login
+@login_required(login_url=href('portal', 'login'))
 def change_status(request, topic_slug, solved=None, locked=None):
     """Change the status of a topic and redirect to it"""
     topic = Topic.objects.get(slug=topic_slug)
@@ -818,7 +817,7 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
     which have the slug `slug` and are registered in the subscription by
     `subscriptionkw` and have the flashing-test `flasher`
     """
-    @simple_check_login
+    @login_required(login_url=href('portal', 'login'))
     def subscriber(request, **kwargs):
         """
         If the user has already subscribed to this %s, it just redirects.
@@ -852,7 +851,7 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
     which have the slug `slug` and are registered in the subscription by
     `subscriptionkw` and have the flashing-test `flasher`
     """
-    @simple_check_login
+    @login_required(login_url=href('portal', 'login'))
     def unsubscriber(request, **kwargs):
         """ If the user has already subscribed to this %s, this view removes it.
         """ % obj_slug
@@ -902,7 +901,7 @@ unsubscribe_topic = _generate_unsubscriber(Topic,
        u'more')))
 
 
-@simple_check_login
+@login_required(login_url=href('portal', 'login'))
 @templated('forum/report.html')
 def report(request, topic_slug):
     """Change the report_status of a topic and redirect to it"""
@@ -945,6 +944,7 @@ def report(request, topic_slug):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('manage_topics')
 @templated('forum/reportlist.html')
 def reportlist(request):

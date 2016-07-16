@@ -8,12 +8,13 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import time as dt_time
 from datetime import date, datetime
+from datetime import time as dt_time
 
 import pytz
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.http import Http404, HttpResponseRedirect
@@ -51,7 +52,7 @@ from inyoka.portal.models import (
     Subscription,
 )
 from inyoka.portal.user import User
-from inyoka.portal.utils import check_login, require_permission
+from inyoka.portal.utils import require_permission
 from inyoka.utils import ctype, generic
 from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
@@ -240,6 +241,7 @@ def detail(request, year, month, day, slug):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('article_edit')
 def article_delete(request, year, month, day, slug):
     try:
@@ -278,6 +280,7 @@ def article_delete(request, year, month, day, slug):
     return HttpResponseRedirect(href('ikhaya'))
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('article_edit')
 @templated('ikhaya/article_edit.html', modifier=context_modifier)
 def article_edit(request, year=None, month=None, day=None, slug=None,
@@ -368,7 +371,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
     }
 
 
-@check_login(message=_(u'You need to be logged in to subscribe to comments.'))
+@login_required(login_url=href('portal', 'login'))
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
     try:
@@ -391,8 +394,7 @@ def article_subscribe(request, year, month, day, slug):
     return HttpResponseRedirect(redirect)
 
 
-@check_login(message=_(u'You need to be logged in to unsubscribe from '
-                       'comments.'))
+@login_required(login_url=href('portal', 'login'))
 def article_unsubscribe(request, year, month, day, slug):
     """Unsubscribe from article."""
     try:
@@ -414,7 +416,7 @@ def article_unsubscribe(request, year, month, day, slug):
     return HttpResponseRedirect(redirect)
 
 
-@check_login()
+@login_required(login_url=href('portal', 'login'))
 @templated('ikhaya/report_new.html', modifier=context_modifier)
 def report_new(request, year, month, day, slug):
     """Report a mistake in an article."""
@@ -449,6 +451,7 @@ def report_new(request, year, month, day, slug):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('article_edit')
 def _change_report_status(request, report_id, action, msg):
     report = Report.objects.get(id=report_id)
@@ -509,6 +512,7 @@ def reports(request, year, month, day, slug):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('article_edit')
 @templated('ikhaya/reportlist.html', modifier=context_modifier)
 def reportlist(request):
@@ -543,6 +547,7 @@ def comment_edit(request, comment_id):
     return AccessDeniedResponse()
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('comment_edit')
 def _change_comment_status(request, comment_id, hide, msg):
     c = Comment.objects.get(id=comment_id)
@@ -600,6 +605,7 @@ def suggest_assign_to(request, suggestion, username):
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('article_edit')
 def suggest_delete(request, suggestion):
     if request.method == 'POST':
@@ -658,7 +664,7 @@ def suggest_delete(request, suggestion):
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
-@check_login(message=_(u'Please login to suggest an article.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('ikhaya/suggest_new.html', modifier=context_modifier)
 def suggest_edit(request):
     """A Page to suggest a new article.
@@ -690,6 +696,7 @@ def suggest_edit(request):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('article_edit')
 @templated('ikhaya/suggestions.html', modifier=context_modifier)
 def suggestions(request):
@@ -713,6 +720,7 @@ category_edit = generic.CreateUpdateView(
     required_permission='category_edit')
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('event_edit')
 @templated('ikhaya/events.html', modifier=context_modifier)
 def events(request, show_all=False, invisible=False):
@@ -732,6 +740,7 @@ def events(request, show_all=False, invisible=False):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('article_edit')
 def suggestions_subscribe(request):
     """Subscribe to new suggestions."""
@@ -748,6 +757,7 @@ def suggestions_subscribe(request):
     return HttpResponseRedirect(redirect)
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('article_edit')
 def suggestions_unsubscribe(request):
     """Unsubscribe from new suggestions."""
@@ -765,6 +775,7 @@ def suggestions_unsubscribe(request):
     return HttpResponseRedirect(redirect)
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('event_edit')
 @templated('ikhaya/event_edit.html', modifier=context_modifier)
 def event_edit(request, pk=None):

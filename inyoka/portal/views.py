@@ -12,8 +12,10 @@
 import time
 from datetime import date, datetime, timedelta
 
+from PIL import Image
 from django.conf import settings
 from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.core import signing
 from django.core.cache import cache
@@ -30,7 +32,6 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
 from django.views.decorators.http import require_POST
 from django_mobile import get_flavour
-from PIL import Image
 
 from inyoka.forum.acl import (
     PRIVILEGES_DETAILS,
@@ -83,7 +84,6 @@ from inyoka.portal.user import (
     PERMISSION_NAMES,
     Group,
     User,
-    UserBanned,
     deactivate_user,
     reactivate_user,
     reset_email,
@@ -93,7 +93,6 @@ from inyoka.portal.user import (
 from inyoka.portal.utils import (
     abort_access_denied,
     calendar_entries_for_month,
-    check_login,
     get_ubuntu_versions,
     google_calendarize,
     require_permission,
@@ -402,22 +401,23 @@ def login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            try:
-                user = auth.authenticate(username=data['username'],
-                                  password=data['password'])
-            except UserBanned:
-                banned = True
-                user = None
+
+            user = auth.authenticate(username=data['username'],
+                              password=data['password'])
 
             if user is not None:
+                if user.is_banned and user.can_reactivate():
+                    user.reactivate()
+
                 if user.is_active:
                     if data['permanent']:
                         make_permanent(request)
-                    # username matches password and user is active
                     messages.success(request, _(u'You have successfully logged in.'))
                     auth.login(request, user)
                     return HttpResponseRedirect(redirect)
-                inactive = True
+                else:
+                    inactive = True
+                    banned = user.is_banned
 
             failed = True
     else:
@@ -453,7 +453,7 @@ def logout(request):
     return HttpResponseRedirect(redirect)
 
 
-@check_login(message=_(u'You need to be logged in to view a user profile.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/profile.html')
 def profile(request, username):
     """Show the user profile if the user is logged in."""
@@ -476,6 +476,7 @@ def profile(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_mail.html')
 def user_mail(request, username):
@@ -517,6 +518,7 @@ def user_mail(request, username):
 
 
 @require_POST
+@login_required(login_url=href('portal', 'login'))
 @require_permission('subscribe_to_users')
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
@@ -552,7 +554,7 @@ def unsubscribe_user(request, username):
         return HttpResponseRedirect(url_for(user))
 
 
-@check_login(message=_(u'You need to be logged in to access your control panel'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/index.html')
 def usercp(request):
     """User control panel index page"""
@@ -562,7 +564,7 @@ def usercp(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your profile'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/profile.html')
 def usercp_profile(request):
     """User control panel view for changing the user's profile"""
@@ -591,7 +593,7 @@ def usercp_profile(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your settings.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/settings.html')
 def usercp_settings(request):
     """User control panel view for changing various user settings"""
@@ -643,7 +645,7 @@ def usercp_settings(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your password.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/change_password.html')
 def usercp_password(request):
     """User control panel view for changing the password."""
@@ -728,7 +730,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
 usercp_subscriptions = UserCPSubscriptions.as_view()
 
 
-@check_login(message=_(u'You need to be logged in to deactivate your account.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/usercp/deactivate.html')
 def usercp_deactivate(request):
     """
@@ -758,6 +760,7 @@ def usercp_deactivate(request):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/special_rights.html')
 def users_with_special_rights(request):
@@ -769,6 +772,7 @@ def users_with_special_rights(request):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_overview.html')
 def user_edit(request, username):
@@ -782,6 +786,7 @@ def user_edit(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_profile.html')
 def user_edit_profile(request, username):
@@ -814,6 +819,7 @@ def user_edit_profile(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_settings.html')
 def user_edit_settings(request, username):
@@ -865,6 +871,7 @@ def user_edit_settings(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_status.html')
 def user_edit_status(request, username):
@@ -892,6 +899,7 @@ def user_edit_status(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_privileges.html')
 def user_edit_privileges(request, username):
@@ -996,6 +1004,7 @@ def user_edit_privileges(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_edit_groups.html')
 def user_edit_groups(request, username):
@@ -1053,6 +1062,7 @@ def user_edit_groups(request, username):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 @templated('portal/user_new.html')
 def user_new(request):
@@ -1080,6 +1090,7 @@ def user_new(request):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('user_edit')
 def admin_resend_activation_mail(request):
     user = User.objects.get(username__iexact=request.GET.get('user'))
@@ -1094,8 +1105,7 @@ def admin_resend_activation_mail(request):
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
+@login_required(login_url=href('portal', 'login'))
 @templated('portal/privmsg/index.html')
 def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     page = int(page)
@@ -1203,8 +1213,7 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
 
 
 @templated('portal/privmsg/new.html')
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
+@login_required(login_url=href('portal', 'login'))
 def privmsg_new(request, username=None):
     # if the user has no posts in the forum and registered less than a week ago
     # he can only send one pm every 5 minutes
@@ -1414,6 +1423,7 @@ def group(request, name, page=1):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('group_edit')
 @templated('portal/group_edit.html')
 def group_edit(request, name=None):
@@ -1664,6 +1674,7 @@ def confirm(request, action):
     return r
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('configuration_edit')
 @templated('portal/configuration.html')
 def config(request):
@@ -1731,6 +1742,7 @@ def static_page(request, page):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('static_page_edit')
 @templated('portal/pages.html')
 def pages(request):
@@ -1742,6 +1754,7 @@ def pages(request):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('static_page_edit')
 @templated('portal/page_edit.html')
 def page_edit(request, page=None):
@@ -1773,6 +1786,7 @@ def page_edit(request, page=None):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('markup_css_edit')
 @templated('portal/styles.html')
 def styles(request):

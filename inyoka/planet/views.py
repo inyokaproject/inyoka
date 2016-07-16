@@ -8,10 +8,11 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Max
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.html import escape, smart_urlquote
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
@@ -19,7 +20,7 @@ from django.utils.translation import ugettext as _
 from inyoka.planet.forms import EditBlogForm, SuggestBlogForm
 from inyoka.planet.models import Blog, Entry
 from inyoka.portal.user import Group
-from inyoka.portal.utils import check_login, require_permission
+from inyoka.portal.utils import require_permission
 from inyoka.utils import generic
 from inyoka.utils.dates import group_by_day
 from inyoka.utils.feeds import AtomFeed, atom_feed
@@ -75,7 +76,7 @@ def index(request, page=1):
     }
 
 
-@check_login(message=_(u'You need to be logged in to suggest a blog'))
+@login_required(login_url=href('portal', 'login'))
 @templated('planet/suggest.html', modifier=context_modifier)
 def suggest(request):
     """
@@ -147,6 +148,7 @@ def feed(request, mode='short', count=10):
     return feed
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('blog_edit')
 @does_not_exist_is_404
 def hide_entry(request, id):

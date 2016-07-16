@@ -314,7 +314,7 @@ CSRF_FAILURE_VIEW = 'inyoka.portal.views.csrf_failure'
 DEFAULT_FILE_STORAGE = 'inyoka.utils.files.InyokaFSStorage'
 
 AUTH_USER_MODEL = 'portal.User'
-AUTHENTICATION_BACKENDS = ('inyoka.portal.auth.InyokaAuthBackend',)
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',

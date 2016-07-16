@@ -9,18 +9,19 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
-from inyoka.portal.utils import require_permission, simple_check_login
+from inyoka.portal.utils import require_permission
 from inyoka.utils.http import global_not_found, templated
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 
 
-@simple_check_login
+@login_required(login_url=href('portal', 'login'))
 @templated('pastebin/add.html')
 def add(request):
     if request.method == 'POST':
@@ -57,6 +58,7 @@ def display(request, entry_id):
     }
 
 
+@login_required(login_url=href('portal', 'login'))
 @require_permission('manage_pastebin')
 def delete(request, entry_id):
     """
