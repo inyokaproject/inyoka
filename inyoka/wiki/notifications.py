@@ -20,7 +20,7 @@ def send_edit_notifications(user, rev, old_rev):
     from inyoka.wiki.models import Page
     # notify about new answer in topic for topic-subscriptions
 
-    anonymous = settings.INYOKA_ANONYMOUS_USER
+    anonymous = settings.ANONYMOUS_USER_NAME
 
     data = {
         'page_name': rev.page.name,
