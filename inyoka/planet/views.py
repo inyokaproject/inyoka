@@ -62,7 +62,7 @@ def index(request, page=1):
     The page number is optional.
     """
     entries = Entry.objects.select_related('blog')
-    if not request.user.has_perms('planet.view_hidden_entry'):
+    if not request.user.has_perm('planet.view_hidden_entry'):
         entries = entries.filter(hidden=False)
 
     pagination = Pagination(request, entries, page, 25, href('planet'))
