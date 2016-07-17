@@ -72,7 +72,7 @@ class InyokaClient(Client):
         """Update the default request variables with ``**defaults`` and disable
         CSRF checks by default. If ``host`` is given, this host is set as
         default for further request. The user of this client is an instance of
-        :class:`inyoka.portal.user.User` and :data:`INYOKA_ANONYMOUS_USER` by
+        :class:`inyoka.portal.user.User` and :data:`ANONYMOUS_USER_NAME` by
         default. To change the user, call :meth:`InyokaClient.login(user)`.
 
         """

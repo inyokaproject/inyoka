@@ -190,7 +190,7 @@ General
             'wiki_feed': (10, 20),
         }
 
-.. py:data:: INYOKA_ANONYMOUS_USER
+.. py:data:: ANONYMOUS_USER_NAME
 
     Defaults to: ``'anonymous'``
 

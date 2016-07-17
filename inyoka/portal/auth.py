@@ -46,7 +46,7 @@ class InyokaAuthBackend(object):
             if not user.unban():
                 raise UserBanned()
 
-        if user.username in (settings.INYOKA_ANONYMOUS_USER, settings.INYOKA_SYSTEM_USER):
+        if user.username in (settings.ANONYMOUS_USER_NAME, settings.INYOKA_SYSTEM_USER):
             return None
 
         return user
