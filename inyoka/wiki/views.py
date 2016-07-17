@@ -209,10 +209,10 @@ def feed(request, page_name=None, count=10):
         kwargs['summary_type'] = None
         author = (rev.user
                   and {'name': rev.user.username, 'uri': url_for(rev.user)}
-                  or settings.INYOKA_ANONYMOUS_USER)
+                  or settings.ANONYMOUS_USER_NAME)
         feed.add(
             title=u'%s (%s)' % (
-                rev.user or settings.INYOKA_ANONYMOUS_USER,
+                rev.user or settings.ANONYMOUS_USER_NAME,
                 format_datetime(rev.change_date),
             ),
             url=url_for(rev),

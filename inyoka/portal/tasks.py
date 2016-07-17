@@ -56,7 +56,7 @@ def clean_expired_users():
     for user in (User.objects.filter(status=0)
                      .filter(date_joined__lte=expired_datetime)
                      .exclude(username__in=set([
-                         settings.INYOKA_ANONYMOUS_USER,
+                         settings.ANONYMOUS_USER_NAME,
                          settings.INYOKA_SYSTEM_USER]))):
         if not user.has_content():
             logger.info('Deleting expiered User %s' % user.username)
@@ -74,7 +74,7 @@ def clean_inactive_users():
     for user in (User.objects
                      .filter(last_login__lte=inactive_datetime)
                      .exclude(username__in=set([
-                         settings.INYOKA_ANONYMOUS_USER,
+                         settings.ANONYMOUS_USER_NAME,
                          settings.INYOKA_SYSTEM_USER]))):
         if not user.has_content():
             logger.info('Deleting inactive User %s' % user.username)

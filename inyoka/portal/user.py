@@ -240,7 +240,7 @@ class UserManager(BaseUserManager):
         return user
 
     def get_anonymous_user(self):
-        return User.objects.get(username__iexact=settings.INYOKA_ANONYMOUS_USER)
+        return User.objects.get(username__iexact=settings.ANONYMOUS_USER_NAME)
 
     def get_system_user(self):
         """
@@ -262,7 +262,7 @@ class UserManager(BaseUserManager):
             except User.DoesNotExist:
                 return User.objects.create_user(username, username)
 
-        user = get_or_create(settings.INYOKA_ANONYMOUS_USER)
+        user = get_or_create(settings.ANONYMOUS_USER_NAME)
         user.status = User.STATUS_ACTIVE
         user.save()
         group = Group.objects.get(name__iexact=settings.INYOKA_ANONYMOUS_GROUP_NAME)
@@ -383,7 +383,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
             return False
 
     def is_anonymous(self):
-        return self.username == settings.INYOKA_ANONYMOUS_USER
+        return self.username == settings.ANONYMOUS_USER_NAME
 
     def is_authenticated(self):
         return not self.is_anonymous()
