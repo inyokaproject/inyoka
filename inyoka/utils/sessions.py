@@ -40,7 +40,9 @@ def set_session_info(request):
 
     if request.user.is_authenticated() and not request.user.settings.get('hide_profile', False):
         key = 'user:%s' % request.user.id
-        user_type = request.user.has_perm('ikhaya.view_unpublished_article') and 'team' or 'user'
+        user_type = 'user'
+        if request.user.has_perm('ikhaya.view_unpublished_article'):
+            user_type = 'team'
         args = {
             'subject_text': request.user.username,
             'subject_type': user_type,
