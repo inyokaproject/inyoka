@@ -10,6 +10,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
+from json import loads, dumps
 
 from django.conf import settings
 from django.contrib.auth.models import (
@@ -510,6 +511,38 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                     self.save()
                     registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
                     self.groups.add(registered_group)
+        return True
+
+    def has_perm(self, perm, obj=None):
+        """
+        Heavy cached version of has_perm() to save many DB Queries.
+
+        Stores cached Permissions inside our redis cache under /acl/<user.id> as JSON blob.
+        """
+        cache_key = '/acl/%s' % self.id
+        if not hasattr(self, 'perm_cache'):
+            self.perm_cache = loads(cache.get(cache_key, '{}'))
+
+        permkey = perm
+        if obj:
+            permkey = '%s-%s' % (perm, obj.id)
+
+        if permkey not in self.perm_cache.keys():
+            self.perm_cache[permkey] = super(User, self).has_perm(perm, obj)
+            cache.set(cache_key, dumps(self.perm_cache))
+
+        return self.perm_cache[permkey]
+
+    def has_perms(self, perm_list, obj=None):
+        """
+        Simplified version of has_perms() to load permissions from perm_list in our has_perm()
+        cache.
+
+        Returns `True` if all permissions match, else `False`.
+        """
+        for perm in perm_list:
+            if not self.has_perm(perm, obj):
+                return False
         return True
 
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
