@@ -29,6 +29,7 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from guardian.mixins import GuardianUserMixin
+from guardian.shortcuts import get_perms
 
 from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import InyokaMarkupField, JSONField
@@ -519,19 +520,30 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
         Stores cached Permissions inside our redis cache under /acl/<user.id> as JSON blob.
         """
+
+        def obj_to_key(obj):
+            return '%s-%s' % (obj.__class__.__name__.lower(), obj.id)
+
         cache_key = '/acl/%s' % self.id
         if not hasattr(self, 'perm_cache'):
-            self.perm_cache = loads(cache.get(cache_key, '{}'))
+            current_perm_cache = cache.get(cache_key, None)
+            if current_perm_cache:
+                self.perm_cache = loads(current_perm_cache)
+            else:
+                self.perm_cache = list(self.get_all_permissions())
+                cache.set(cache_key, dumps(self.perm_cache))
 
         permkey = perm
         if obj:
-            permkey = '%s-%s' % (perm, obj.id)
+            objkey = obj_to_key(obj)
+            permkey = '%s-%s' % (obj_to_key(obj), perm.split('.')[1])
+            if objkey not in self.perm_cache:
+                for permission in get_perms(self, obj):
+                    self.perm_cache.append('%s-%s' % (obj_to_key(obj), permission))
+                self.perm_cache.append(objkey)
+                cache.set(cache_key, dumps(self.perm_cache))
 
-        if permkey not in self.perm_cache.keys():
-            self.perm_cache[permkey] = super(User, self).has_perm(perm, obj)
-            cache.set(cache_key, dumps(self.perm_cache))
-
-        return self.perm_cache[permkey]
+        return permkey in self.perm_cache
 
     def has_perms(self, perm_list, obj=None):
         """
