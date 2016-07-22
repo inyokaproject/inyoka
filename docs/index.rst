@@ -18,11 +18,25 @@ Overview
     inyoka
     settings
 
+Releases
+========
+
+.. toctree::
+    :maxdepth: 2
+
+    releases/index
+
+Helpful informations
+====================
+
+.. toctree::
+    :maxdepth: 2
+
+    mysql-knowhow
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
 

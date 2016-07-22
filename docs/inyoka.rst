@@ -70,7 +70,6 @@ References
 .. toctree::
     :maxdepth: 2
 
-    ref/core/index
     ref/forum/index
     ref/ikhaya/index
     ref/markup/index

@@ -1,7 +1,9 @@
+=====
+MySQL
+=====
 
-===============
 MySQL Settings
-===============
+==============
 
 The following two settings have to be set in the ``my.cnf``, e.g.
 ``/etc/mysql/my.cnf``.
@@ -11,7 +13,6 @@ The following two settings have to be set in the ``my.cnf``, e.g.
   max_allowed_packet = 64M
   innodb_log_buffer_size = 256M
 
-===============
 Importing Dumps
 ===============
 
