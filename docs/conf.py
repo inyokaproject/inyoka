@@ -24,6 +24,10 @@ FileDescriptor.__get__ = lambda self, *args, **kwargs: self
 from inyoka.utils.database import SimpleDescriptor
 SimpleDescriptor.__get__ = lambda self, *args, **kwargs: self
 
+# Remove Redis dependency
+from inyoka.utils.storage import CachedStorage
+CachedStorage.get = lambda self, key, *args, **kwargs: key
+
 extensions = ['sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
     'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.extlinks',
     'sphinx.ext.autodoc']
