@@ -85,7 +85,7 @@ Add pull request
 ****************
 
 Visit the `GitHub website <https://github.com/>`_ and login. Then visit your
-forked Inyoka project (mostly on `https://github.com/$GITUSERNAME/inyoka`_).
+forked Inyoka project (mostly on *https://github.com/$GITUSERNAME/inyoka*).
 
 You should see a green button for adding the pull request from your branch to
 *inyokaproject/staging*. Just do it and hope that it will be pulled by a

@@ -12,6 +12,22 @@ environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
 
 django.setup()
 
+#########################################
+# Overrides to fix doc build exceptions #
+#########################################
+
+# Fix FileField
+from django.db.models.fields.files import FileDescriptor
+FileDescriptor.__get__ = lambda self, *args, **kwargs: self
+
+#Fix JSONField
+from inyoka.utils.database import SimpleDescriptor
+SimpleDescriptor.__get__ = lambda self, *args, **kwargs: self
+
+# Remove Redis dependency
+from inyoka.utils.storage import CachedStorage
+CachedStorage.get = lambda self, key, *args, **kwargs: key
+
 extensions = ['sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
     'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.extlinks',
     'sphinx.ext.autodoc']
@@ -56,8 +72,8 @@ pygments_style = 'sphinx'
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'django': ('https://docs.djangoproject.com/en/1.5',
-               'http://docs.djangoproject.com/en/1.5/_objects'),
+    'django': ('https://docs.djangoproject.com/en/1.8',
+               'http://docs.djangoproject.com/en/1.8/_objects'),
     'python': ('http://docs.python.org/2.7', None),
     'sphinx': ('http://sphinx.pocoo.org/', None),
 }
@@ -71,7 +87,7 @@ extlinks = {
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'nature'
+html_theme = 'sphinx_rtd_theme'
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'Inyokadoc'

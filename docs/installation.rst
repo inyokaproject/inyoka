@@ -1,3 +1,6 @@
+.. _Inyoka: https://github.com/inyokaproject/inyoka
+.. _GitHub: https://github.com/
+
 .. _installation:
 
 ============
@@ -7,7 +10,7 @@ Installation
 Idea
 ====
 
-Inyoka is developed via `GitHub <https://github.com/inyokaproject/inyoka>`_.
+Inyoka_ is developed via GitHub_.
 Note: You need the correct access rights to see the GitHub repository!
 Documentation for git: `<http://git-scm.com/>`_
 
@@ -24,7 +27,7 @@ Preparation
 Git access
 **********
 
-If you do not have a login on `GitHub <https://github.com/>`_ get one so that
+If you do not have a login on GitHub_ get one so that
 you can fork Inyoka and improve it.
 
 If you do not have Git installed install it:
@@ -127,7 +130,7 @@ The version of npm shipped on Ubuntu 12.04 is too old, see `these docs
 your version.
 
 Actual installation
-*********************
+*******************
 Next you can start the actual Inyoka installation:
 
 .. code-block:: console
@@ -146,7 +149,7 @@ compile fine.
 At the end you need to edit your ``/etc/hosts`` with root privileges and add
 the following line:
 
-.. code-block::
+.. code-block:: console
 
     127.0.0.1       ubuntuusers.local forum.ubuntuusers.local paste.ubuntuusers.local wiki.ubuntuusers.local planet.ubuntuusers.local ikhaya.ubuntuusers.local static.ubuntuusers.local media.ubuntuusers.local
 
@@ -158,9 +161,11 @@ Installing the theme
 ********************
 
 Inyoka supports multiple themes, all of them are listed (among other things) on
-`GitHub <https://github.com/inyokaproject>`_. Please refer to the specific
+`GitHub`__. Please refer to the specific
 theme readme file in order to get installation instructions. *You will not be
 able to run Inyoka without installing a theme.*
+
+__ Inyoka_
 
 Working with Inyoka the first time
 ==================================
