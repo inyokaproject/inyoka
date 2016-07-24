@@ -536,10 +536,10 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         permkey = perm
         if obj:
             objkey = obj_to_key(obj)
-            permkey = '%s-%s' % (obj_to_key(obj), perm.split('.')[1])
+            permkey = '%s-%s' % (objkey, perm.split('.')[1])
             if objkey not in self.perm_cache:
                 for permission in get_perms(self, obj):
-                    self.perm_cache.append('%s-%s' % (obj_to_key(obj), permission))
+                    self.perm_cache.append('%s-%s' % (objkey, permission))
                 self.perm_cache.append(objkey)
                 cache.set(cache_key, dumps(self.perm_cache))
 
