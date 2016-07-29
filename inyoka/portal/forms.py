@@ -19,7 +19,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import Group
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.models import Count
@@ -425,7 +424,9 @@ class EditUserProfileForm(UserCPProfileForm):
 
 
 class EditUserGroupsForm(forms.Form):
-    pass
+    groups = forms.ModelMultipleChoiceField(label=ugettext_lazy(u'User Groups'),
+        required=False,
+        queryset=Group.objects.all())
 
 
 class CreateUserForm(forms.Form):
