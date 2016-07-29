@@ -883,33 +883,17 @@ def user_edit_groups(request, username):
 
     initial = model_to_dict(user)
     form = EditUserGroupsForm(initial=initial)
-    groups = {group.name: group for group in Group.objects.all()}
     if request.method == 'POST':
         form = EditUserGroupsForm(request.POST)
         if form.is_valid():
-            data = form.cleaned_data
-            groups_joined = [groups[gn] for gn in
-                             request.POST.getlist('user_groups_joined')]
-            groups_not_joined = [groups[gn] for gn in
-                                request.POST.getlist('user_groups_not_joined')]
-            user.groups.remove(*groups_not_joined)
-            user.groups.add(*groups_joined)
-
-            user.save()
             messages.success(request,
                 _(u'The groups of “%(username)s” were successfully changed.')
                 % {'username': escape(user.username)})
         else:
             generic.trigger_fix_errors_message(request)
-    groups_joined, groups_not_joined = ([], [])
-    groups_joined = groups_joined or user.groups.all()
-    groups_not_joined = groups_not_joined or \
-        [x for x in groups.itervalues() if x not in groups_joined]
     return {
         'user': user,
         'form': form,
-        'joined_groups': [g.name for g in groups_joined],
-        'not_joined_groups': [g.name for g in groups_not_joined],
     }
 
 
