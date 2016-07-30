@@ -33,7 +33,7 @@ urlpatterns = [
     url(r'^users/resend_activation_mail/$', views.admin_resend_activation_mail),
     url(r'^groups/$', views.grouplist),
     url(r'^groups/(?P<page>\d+)/$', views.grouplist),
-    url(r'^group/new/$', views.group_edit),
+    url(r'^group/new/$', views.group_new),
     url(r'^group/(?P<name>[^/]+)/$', views.group),
     url(r'^group/(?P<name>[^/]+)/edit/$', views.group_edit),
     url(r'^group/(?P<name>[^/]+)/(?P<page>\d+)/$', views.group),

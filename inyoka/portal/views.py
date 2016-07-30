@@ -1261,44 +1261,45 @@ def group(request, name, page=1):
 @login_required
 @permission_required('portal.change_user', raise_exception=True)
 @templated('portal/group_edit.html')
-def group_edit(request, name=None):
-    new = name is None
-    group = None
-    if name:
-        try:
-            group = Group.objects.get(name=name)
-        except Group.DoesNotExist:
-            messages.error(request,
-                _(u'The group “%(group)s” does not exist.')
-                % {'group': escape(name)})
-            return HttpResponseRedirect(href('portal', 'groups'))
-
-    std = storage.get_many(('team_icon_width', 'team_icon_height'))
-    icon_mw = int(std['team_icon_width'])
-    icon_mh = int(std['team_icon_height'])
-
+def group_new(request):
+    form = EditGroupForm()
     if request.method == 'POST':
-        form = EditGroupForm(request.POST, request.FILES, instance=group)
+        form = EditGroupForm(request.POST)
         if form.is_valid():
             group = form.save()
+            messages.success(request,
+                _(u'The group “%s” was created successfully.') % group.name)
+            return HttpResponseRedirect(href('portal', 'group', group.name, 'edit'))
+    return {
+        'form': form,
+    }
 
-            if new:
-                msg = _(u'The group “%(group)s” was created successfully.')
-            else:
-                msg = _(u'The group “%(group)s” was changed successfully.')
-            messages.success(request, (msg % {'group': group.name}))
-            if new:
-                return HttpResponseRedirect(url_for(group, 'edit'))
+
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
+@templated('portal/group_edit.html')
+def group_edit(request, name):
+    try:
+        group = Group.objects.get(name=name)
+    except Group.DoesNotExist:
+        messages.error(request,
+            _(u'The group “%(group)s” does not exist.')
+            % {'group': escape(name)})
+        return HttpResponseRedirect(href('portal', 'groups'))
+
+    if request.method == 'POST':
+        form = EditGroupForm(request.POST, instance=group)
+        if form.is_valid():
+            group = form.save()
+            messages.success(request,
+                _(u'The group “%s” was changed successfully.') % group.name)
+            return HttpResponseRedirect(href('portal', 'group', group.name, 'edit'))
     else:
         form = EditGroupForm(instance=group)
 
     return {
-        'group_name': '' or not new and group.name,
         'form': form,
-        'is_new': new,
         'group': group,
-        'team_icon_height': icon_mh,
-        'team_icon_width': icon_mw,
     }
 
 
