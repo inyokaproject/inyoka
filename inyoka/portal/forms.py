@@ -542,16 +542,11 @@ class UserMailForm(forms.Form):
 
 
 class EditGroupForm(forms.ModelForm):
+    name = forms.CharField(label=ugettext_lazy('Groupname'), required=True)
 
     class Meta:
         model = Group
         fields = ('name',)
-
-    def __init__(self, *args, **kwargs):
-        instance = kwargs.get('instance')
-        initial = kwargs.setdefault('initial', {})
-
-        super(EditGroupForm, self).__init__(*args, **kwargs)
 
     def clean_name(self):
         """Validates that the name is alphanumeric"""
@@ -560,15 +555,6 @@ class EditGroupForm(forms.ModelForm):
             raise forms.ValidationError(_(
                 u'The group name contains invalid chars'))
         return data['name']
-
-    def save(self, commit=True):
-        group = super(EditGroupForm, self).save(commit=False)
-        data = self.cleaned_data
-
-        if commit:
-            group.save()
-
-        return group
 
 
 class PrivateMessageForm(forms.Form):
