@@ -17,8 +17,9 @@ from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.models import Count
@@ -560,6 +561,98 @@ class EditGroupForm(forms.ModelForm):
             raise forms.ValidationError(_(
                 u'The group name contains invalid chars'))
         return data['name']
+
+
+def make_permission_choices(application):
+    def wrapper():
+        GLOBAL_PRIVILEGE_MODELS = (
+            ('ikhaya', 'article'),
+            ('ikhaya', 'category'),
+            ('ikhaya', 'report'),
+            ('ikhaya', 'suggestion'),
+            ('ikhaya', 'comment'),
+            ('portal', 'event'),
+            ('portal', 'user'),
+            ('portal', 'staticpage'),
+            ('portal', 'staticfile'),
+            ('pastebin', 'entry'),
+            ('planet', 'entry'),
+            ('planet', 'blog'),
+        )
+        filtered_privileges = [
+            app
+            for app in GLOBAL_PRIVILEGE_MODELS
+            if app[0] == application
+        ]
+        content_types = [
+            ContentType.objects.get_by_natural_key(*privilege)
+            for privilege in filtered_privileges
+        ]
+        permission_keys = [
+            (permission.natural_key(), permission.name)
+            for permission in Permission.objects.filter(content_type__in=content_types)
+        ]
+        permissions = [
+            ('%s.%s' % (permission[0][1], permission[0][0]), permission[1])
+            for permission in permission_keys
+        ]
+        return permissions
+    return wrapper
+
+
+class GroupGlobalPermissionForm(forms.Form):
+    ikhaya_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('ikhaya'),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Ikhaya'),
+        required=False)
+    portal_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('portal'),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Portal'),
+        required=False)
+    pastebin_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('pastebin'),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Pastebin'),
+        required=False)
+    planet_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('planet'),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Planet'),
+        required=False)
+
+    @staticmethod
+    def permission_choices_to_permission_strings(application):
+        return set([perm[0] for perm in make_permission_choices(application)])
+
+    @staticmethod
+    def permission_to_string(permission):
+        permission_code, app_label = permission.natural_key()[0:2]
+        return '%s.%s' % (app_label, permission_code)
+
+    def _clean_permissions(self, modulename):
+        module_permissions = self.permission_choices_to_permission_strings(modulename)
+        if self.cleaned_data['%s_permissions' % modulename]:
+            active_permissions = set(self.cleaned_data['%s_permissions' % modulename])
+            if active_permissions.issubset(module_permissions):
+                return active_permissions
+            else:
+                raise ValidationError('Invalid Permissions specified.')
+
+    def clean_ikhaya_permissions(self):
+        return self._clean_permissions('ikhaya')
+
+    def clean_portal_permissions(self):
+        return self._clean_permissions('portal')
+
+    def clean_pastebin_permissions(self):
+        return self._clean_permissions('pastebin')
+
+    def clean_planet_permissions(self):
+        return self._clean_permissions('planet')
+class GroupForumPermissionForm(forms.Form):
+    pass
 
 
 class PrivateMessageForm(forms.Form):
