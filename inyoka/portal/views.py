@@ -886,8 +886,9 @@ def user_edit_groups(request, username):
     initial = model_to_dict(user)
     form = EditUserGroupsForm(initial=initial)
     if request.method == 'POST':
-        form = EditUserGroupsForm(request.POST)
+        form = EditUserGroupsForm(request.POST, instance=user)
         if form.is_valid():
+            form.save()
             messages.success(request,
                 _(u'The groups of “%(username)s” were successfully changed.')
                 % {'username': escape(user.username)})
@@ -1292,20 +1293,24 @@ def group_edit(request, name):
     if request.method == 'POST':
         form = EditGroupForm(request.POST, instance=group)
         global_permission_form = GroupGlobalPermissionForm(request.POST, instance=group)
+        forum_permission_form = GroupForumPermissionForm(request.POST, instance=group)
         if form.is_valid() and global_permission_form.is_valid():
             group = form.save()
             global_permission_form.save()
+            forum_permission_form.save()
             messages.success(request,
                 _(u'The group “%s” was changed successfully.') % group.name)
             return HttpResponseRedirect(href('portal', 'group', group.name, 'edit'))
     else:
         form = EditGroupForm(instance=group)
         global_permission_form = GroupGlobalPermissionForm(instance=group)
+        forum_permission_form = GroupForumPermissionForm(instance=group)
 
     return {
         'form': form,
         'group': group,
         'global_permission_form': global_permission_form,
+        'forum_permission_form': forum_permission_form,
     }
 
 
