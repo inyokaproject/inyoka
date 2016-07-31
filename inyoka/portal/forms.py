@@ -31,6 +31,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
+from guardian.shortcuts import assign_perm, remove_perm
 from PIL import Image
 
 from inyoka.forum.constants import get_simple_version_choices
@@ -434,7 +435,6 @@ class EditUserGroupsForm(forms.Form):
         required=False, queryset=Group.objects.all(), widget=groupWidget)
 
 
-
 class CreateUserForm(forms.Form):
     username = forms.CharField(label=ugettext_lazy(u'Username'), max_length=30)
     password = forms.CharField(label=ugettext_lazy(u'Password'),
@@ -601,6 +601,7 @@ def make_permission_choices(application):
 
 
 class GroupGlobalPermissionForm(forms.Form):
+    MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet')
     ikhaya_permissions = forms.MultipleChoiceField(
         choices=make_permission_choices('ikhaya'),
         widget=forms.CheckboxSelectMultiple,
@@ -624,7 +625,7 @@ class GroupGlobalPermissionForm(forms.Form):
 
     @staticmethod
     def permission_choices_to_permission_strings(application):
-        return set([perm[0] for perm in make_permission_choices(application)])
+        return set([perm[0] for perm in make_permission_choices(application)()])
 
     @staticmethod
     def permission_to_string(permission):
@@ -638,7 +639,23 @@ class GroupGlobalPermissionForm(forms.Form):
             if active_permissions.issubset(module_permissions):
                 return active_permissions
             else:
-                raise ValidationError('Invalid Permissions specified.')
+                raise forms.ValidationError('Invalid Permissions specified.')
+
+    def _sync_permissions(self, modulename):
+        active_permissions = set()
+        if self.cleaned_data['%s_permissions' % modulename]:
+            active_permissions = set(self.cleaned_data['%s_permissions' % modulename])
+        current_permissions = set([
+            perm
+            for perm in self.instance_permissions
+            if perm.startswith(modulename)
+        ])
+        remove_permissions = current_permissions - active_permissions
+        assign_permissions = active_permissions - current_permissions
+        for perm in remove_permissions:
+            remove_perm(perm, self.instance)
+        for perm in assign_permissions:
+            assign_perm(perm, self.instance)
 
     def clean_ikhaya_permissions(self):
         return self._clean_permissions('ikhaya')
@@ -651,6 +668,32 @@ class GroupGlobalPermissionForm(forms.Form):
 
     def clean_planet_permissions(self):
         return self._clean_permissions('planet')
+
+    def save(self, commit=True):
+        if self.instance and commit:
+            for app in self.MANAGED_APPS:
+                self._sync_permissions(app)
+
+    def __init__(self, *args, **kwargs):
+        initial = {}
+        self.instance = None
+        if 'instance' in kwargs:
+            self.instance = kwargs.pop('instance')
+            self.instance_permissions = [
+                self.permission_to_string(perm)
+                for perm in self.instance.permissions.all()
+            ]
+            initial = {}
+            for field in self.MANAGED_APPS:
+                field_permissions = [
+                    perm
+                    for perm in self.instance_permissions
+                    if perm.startswith(field)
+                ]
+                initial['%s_permissions' % field] = field_permissions
+        super(GroupGlobalPermissionForm, self).__init__(initial=initial, *args, **kwargs)
+
+
 class GroupForumPermissionForm(forms.Form):
     pass
 
