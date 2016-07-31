@@ -626,7 +626,7 @@ def make_permission_choices(application):
 
 
 def permission_choices_to_permission_strings(application):
-    return set([perm[0] for perm in make_permission_choices(application)()])
+    return set(perm[0] for perm in get_permissions_for_app(application))
 
 
 def permission_to_string(permission):
@@ -727,12 +727,14 @@ class GroupForumPermissionForm(forms.Form):
                 permission_to_string(perm)
                 for perm in self.instance.permissions.all()
             ]
+        forum_permissions = get_permissions_for_app('forum')
         for forum in Forum.objects.all():
             field = forms.MultipleChoiceField(
-                choices=make_permission_choices('forum'),
+                choices=forum_permissions,
                 widget=forms.CheckboxSelectMultiple,
                 label=forum.name,
-                required=False)
+                required=False,
+            )
             if self.instance:
                 field.initial = set([
                     'forum.%s' % perm
