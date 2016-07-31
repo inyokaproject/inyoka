@@ -427,7 +427,7 @@ class EditUserProfileForm(UserCPProfileForm):
 class EditUserGroupsForm(forms.Form):
     groupWidget = forms.CheckboxSelectMultiple(
         attrs={'id': 'portal-user-groupselector',
-               'class':'portal-user-groupselector'}
+               'class': 'portal-user-groupselector'}
     )
     groups = forms.ModelMultipleChoiceField(
         label=ugettext_lazy(u'Please select the groups for this user.'),
