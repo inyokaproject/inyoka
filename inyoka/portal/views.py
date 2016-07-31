@@ -1292,7 +1292,7 @@ def group_edit(request, name):
 
     if request.method == 'POST':
         form = EditGroupForm(request.POST, instance=group)
-        global_permission_form = GroupGlobalPermissionForm(request.POST)
+        global_permission_form = GroupGlobalPermissionForm(request.POST, instance=group)
         if form.is_valid() and global_permission_form.is_valid():
             group = form.save()
             global_permission_form.save()
@@ -1301,7 +1301,7 @@ def group_edit(request, name):
             return HttpResponseRedirect(href('portal', 'group', group.name, 'edit'))
     else:
         form = EditGroupForm(instance=group)
-        global_permission_form = GroupGlobalPermissionForm(instance=Group)
+        global_permission_form = GroupGlobalPermissionForm(instance=group)
 
     return {
         'form': form,
