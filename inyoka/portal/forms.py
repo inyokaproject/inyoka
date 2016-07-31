@@ -31,10 +31,11 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-from guardian.shortcuts import assign_perm, remove_perm
+from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from PIL import Image
 
 from inyoka.forum.constants import get_simple_version_choices
+from inyoka.forum.models import Forum
 from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.portal.user import (
     User,
@@ -458,6 +459,7 @@ class EditUserGroupsForm(forms.Form):
         self.user = kwargs.pop('instance', None)
         super(EditUserGroupsForm, self).__init__(*args, **kwargs)
 
+
 class CreateUserForm(forms.Form):
     username = forms.CharField(label=ugettext_lazy(u'Username'), max_length=30)
     password = forms.CharField(label=ugettext_lazy(u'Password'),
@@ -601,6 +603,7 @@ def make_permission_choices(application):
             ('pastebin', 'entry'),
             ('planet', 'entry'),
             ('planet', 'blog'),
+            ('forum', 'forum'),
         )
         filtered_privileges = [
             app
@@ -622,6 +625,12 @@ def make_permission_choices(application):
         return permissions
     return wrapper
 
+def permission_choices_to_permission_strings(application):
+    return set([perm[0] for perm in make_permission_choices(application)()])
+
+def permission_to_string(permission):
+    permission_code, app_label = permission.natural_key()[0:2]
+    return '%s.%s' % (app_label, permission_code)
 
 class GroupGlobalPermissionForm(forms.Form):
     MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet')
@@ -646,17 +655,8 @@ class GroupGlobalPermissionForm(forms.Form):
         label=ugettext_lazy(u'Planet'),
         required=False)
 
-    @staticmethod
-    def permission_choices_to_permission_strings(application):
-        return set([perm[0] for perm in make_permission_choices(application)()])
-
-    @staticmethod
-    def permission_to_string(permission):
-        permission_code, app_label = permission.natural_key()[0:2]
-        return '%s.%s' % (app_label, permission_code)
-
     def _clean_permissions(self, modulename):
-        module_permissions = self.permission_choices_to_permission_strings(modulename)
+        module_permissions = permission_choices_to_permission_strings(modulename)
         if self.cleaned_data['%s_permissions' % modulename]:
             active_permissions = set(self.cleaned_data['%s_permissions' % modulename])
             if active_permissions.issubset(module_permissions):
@@ -703,10 +703,9 @@ class GroupGlobalPermissionForm(forms.Form):
         if 'instance' in kwargs:
             self.instance = kwargs.pop('instance')
             self.instance_permissions = [
-                self.permission_to_string(perm)
+                permission_to_string(perm)
                 for perm in self.instance.permissions.all()
             ]
-            initial = {}
             for field in self.MANAGED_APPS:
                 field_permissions = [
                     perm
@@ -718,7 +717,26 @@ class GroupGlobalPermissionForm(forms.Form):
 
 
 class GroupForumPermissionForm(forms.Form):
-    pass
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.pop('instance', None)
+        super(GroupForumPermissionForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            self.instance_permissions = [
+                permission_to_string(perm)
+                for perm in self.instance.permissions.all()
+            ]
+        for forum in Forum.objects.all():
+            field = forms.MultipleChoiceField(
+                choices=make_permission_choices('forum'),
+                widget=forms.CheckboxSelectMultiple,
+                label=forum.name,
+                required=False)
+            if self.instance:
+                field.initial = set([
+                    'forum.%s' % perm
+                    for perm in get_perms(self.instance, forum)
+                ])
+            self.fields['forum_%s_permissions' % forum.id] = field
 
 
 class PrivateMessageForm(forms.Form):
