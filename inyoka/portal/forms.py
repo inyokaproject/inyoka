@@ -58,7 +58,7 @@ from inyoka.utils.user import is_valid_username
 
 #: Some constants used for ChoiceFields
 GLOBAL_PRIVILEGE_MODELS = {
-    'forum': ('entry',),
+    'forum': ('forum', 'topic'),
     'ikhaya': ('article', 'category', 'comment', 'report', 'suggestion',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
