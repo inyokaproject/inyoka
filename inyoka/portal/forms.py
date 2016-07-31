@@ -434,6 +434,29 @@ class EditUserGroupsForm(forms.Form):
         label=ugettext_lazy(u'Please select the groups for this user.'),
         required=False, queryset=Group.objects.all(), widget=groupWidget)
 
+    def clean_groups(self):
+        if self.cleaned_data['groups']:
+            self.all_groups = set(Group.objects.all())
+            self.selected_groups = set(self.cleaned_data['groups'])
+            if self.selected_groups.issubset(self.all_groups):
+                return self.cleaned_data['groups']
+            else:
+                raise forms.ValidationError(_(u'Invalid groups specified.'))
+        return self.cleaned_data['groups']
+
+    def save(self, commit=True):
+        if commit:
+            active_groups = set(self.user.groups.all())
+            remove_groups = active_groups - self.selected_groups
+            assign_groups = self.selected_groups - active_groups
+            for group in remove_groups:
+                self.user.groups.remove(group)
+            for group in assign_groups:
+                self.user.groups.add(group)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('instance', None)
+        super(EditUserGroupsForm, self).__init__(*args, **kwargs)
 
 class CreateUserForm(forms.Form):
     username = forms.CharField(label=ugettext_lazy(u'Username'), max_length=30)
