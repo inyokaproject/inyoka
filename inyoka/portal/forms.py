@@ -10,6 +10,7 @@
 """
 import datetime
 import json
+import functools
 import StringIO
 
 from django import forms
@@ -19,10 +20,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.db.models import Count
+from django.db.models import CharField, Count, Value
+from django.db.models.functions import Concat
 from django.db.models.fields.files import ImageFieldFile
 from django.forms import HiddenInput
 from django.template import loader
@@ -56,6 +57,14 @@ from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
 
 #: Some constants used for ChoiceFields
+GLOBAL_PRIVILEGE_MODELS = {
+    'forum': ('entry',),
+    'ikhaya': ('article', 'category', 'comment', 'report', 'suggestion',),
+    'pastebin': ('entry',),
+    'planet': ('entry', 'blog',),
+    'portal': ('event', 'user', 'staticfile', 'staticpage',),
+}
+
 NOTIFY_BY_CHOICES = (
     ('mail', ugettext_lazy(u'Mail')),
     ('jabber', ugettext_lazy(u'Jabber')),
@@ -588,49 +597,42 @@ class EditGroupForm(forms.ModelForm):
         return data['name']
 
 
-def make_permission_choices(application):
-    def wrapper():
-        GLOBAL_PRIVILEGE_MODELS = (
-            ('ikhaya', 'article'),
-            ('ikhaya', 'category'),
-            ('ikhaya', 'report'),
-            ('ikhaya', 'suggestion'),
-            ('ikhaya', 'comment'),
-            ('portal', 'event'),
-            ('portal', 'user'),
-            ('portal', 'staticpage'),
-            ('portal', 'staticfile'),
-            ('pastebin', 'entry'),
-            ('planet', 'entry'),
-            ('planet', 'blog'),
-            ('forum', 'forum'),
+def get_permissions_for_app(application):
+    """
+    Select all permissions for the models defined in
+    ``GLOBAL_PRIVILEGE_MODELS`` for ``application`` and return a "list" of
+    two-tuples of the form
+    ``('app_label.permission_codename', 'Permission Name')``
+    orderd by the ``'app_label.permission_codename'``.
+    """
+    permissions = Permission.objects.filter(
+        content_type__app_label=application,
+        content_type__model__in=GLOBAL_PRIVILEGE_MODELS[application]
+    ).select_related('content_type').annotate(
+        code=Concat(
+            'content_type__app_label', Value('.'), 'codename',
+            output_field=CharField()
         )
-        filtered_privileges = [
-            app
-            for app in GLOBAL_PRIVILEGE_MODELS
-            if app[0] == application
-        ]
-        content_types = [
-            ContentType.objects.get_by_natural_key(*privilege)
-            for privilege in filtered_privileges
-        ]
-        permission_keys = [
-            (permission.natural_key(), permission.name)
-            for permission in Permission.objects.filter(content_type__in=content_types)
-        ]
-        permissions = [
-            ('%s.%s' % (permission[0][1], permission[0][0]), permission[1])
-            for permission in permission_keys
-        ]
-        return permissions
-    return wrapper
+    ).order_by('code').values_list('code', 'name')
+    return permissions
+
+
+def make_permission_choices(application):
+    """
+    Wrapper around :func:`.get_permissions_for_app` returning a callable.
+    Useful for e.g. form field choices.
+    """
+    return functools.partial(get_permissions_for_app, application)
+
 
 def permission_choices_to_permission_strings(application):
     return set([perm[0] for perm in make_permission_choices(application)()])
 
+
 def permission_to_string(permission):
     permission_code, app_label = permission.natural_key()[0:2]
     return '%s.%s' % (app_label, permission_code)
+
 
 class GroupGlobalPermissionForm(forms.Form):
     MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet')
