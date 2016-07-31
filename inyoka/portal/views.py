@@ -21,6 +21,7 @@ from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
 from django.forms.utils import ErrorList
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.middleware.csrf import REASON_NO_REFERER, REASON_NO_CSRF_COOKIE
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
@@ -1795,4 +1796,9 @@ def ikhaya_redirect(request, id):
 
 
 def csrf_failure(request, reason=None):
-    return TemplateResponse('errors/400_csrf.html', {}, 403)
+    context = {
+        'no_cookie': reason == REASON_NO_CSRF_COOKIE,
+        'no_referer': reason == REASON_NO_REFERER,
+    }
+
+    return TemplateResponse('errors/400_csrf.html', context, 403)
