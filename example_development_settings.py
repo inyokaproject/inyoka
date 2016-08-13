@@ -26,6 +26,8 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 INYOKA_CONTACT_EMAIL = '@'.join(['webteam', BASE_DOMAIN_NAME])
 
+# Language code
+LANGUAGE_CODE = 'de-DE'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
