@@ -736,12 +736,46 @@ class GroupForumPermissionForm(forms.Form):
                 required=False,
             )
             if self.instance:
-                field.initial = set([
-                    'forum.%s' % perm
-                    for perm in get_perms(self.instance, forum)
-                ])
+                field.initial = self._forum_instance_permissions(forum)
             self.fields['forum_%s_permissions' % forum.id] = field
 
+    @property
+    def _forum_fields(self):
+        return [
+            (fieldname, self.cleaned_data[fieldname])
+            for fieldname in self.cleaned_data
+            if fieldname.startswith('forum_')
+        ]
+
+    def _forum_instance_permissions(self, forum):
+        return set([
+            'forum.%s' % perm
+            for perm in get_perms(self.instance, forum)
+        ])
+
+    def clean(self):
+        super(GroupForumPermissionForm, self).clean()
+        module_permissions = permission_choices_to_permission_strings('forum')
+        for fieldname, values in self._forum_fields:
+            if values:
+                values = set(values)
+                if not values.issubset(module_permissions):
+                    raise forms.ValidationError(_(u'Invalid Permissions specified.'))
+
+    def save(self, commit=True):
+        for forum in Forum.objects.all():
+            forum_key = 'forum_%s_permissions' % forum.id
+            if self.cleaned_data[forum_key]:
+                active_permissions = self._forum_instance_permissions(forum)
+                wanted_permissions = set(self.cleaned_data[forum_key])
+                delete_permissions = active_permissions - wanted_permissions
+                assign_permissions = wanted_permissions - active_permissions
+                for perm in assign_permissions:
+                    assign_perm(perm, self.instance, forum)
+            else:
+                delete_permissions = self._forum_instance_permissions(forum)
+            for perm in delete_permissions:
+                remove_perm(perm, self.instance, forum)
 
 class PrivateMessageForm(forms.Form):
     """Form for writing a new private message"""

@@ -36,6 +36,8 @@ urlpatterns = [
     url(r'^group/new/$', views.group_new),
     url(r'^group/(?P<name>[^/]+)/$', views.group),
     url(r'^group/(?P<name>[^/]+)/edit/$', views.group_edit),
+    url(r'^group/(?P<name>[^/]+)/edit/global_permissions/$', views.group_edit_global_permissions),
+    url(r'^group/(?P<name>[^/]+)/edit/forum_permissions/$', views.group_edit_forum_permissions),
     url(r'^group/(?P<name>[^/]+)/(?P<page>\d+)/$', views.group),
     url(r'^usercp/$', views.usercp),
     url(r'^usercp/settings/$', views.usercp_settings),

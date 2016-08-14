@@ -1293,25 +1293,60 @@ def group_edit(request, name):
 
     if request.method == 'POST':
         form = EditGroupForm(request.POST, instance=group)
-        global_permission_form = GroupGlobalPermissionForm(request.POST, instance=group)
-        forum_permission_form = GroupForumPermissionForm(request.POST, instance=group)
-        if form.is_valid() and global_permission_form.is_valid():
-            group = form.save()
-            global_permission_form.save()
-            forum_permission_form.save()
+        if form.is_valid():
+            form.save()
             messages.success(request,
                 _(u'The group “%s” was changed successfully.') % group.name)
             return HttpResponseRedirect(href('portal', 'group', group.name, 'edit'))
     else:
         form = EditGroupForm(instance=group)
-        global_permission_form = GroupGlobalPermissionForm(instance=group)
-        forum_permission_form = GroupForumPermissionForm(instance=group)
 
     return {
         'form': form,
         'group': group,
-        'global_permission_form': global_permission_form,
-        'forum_permission_form': forum_permission_form,
+    }
+
+
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
+@templated('portal/group_edit_global_permissions.html')
+def group_edit_global_permissions(request, name):
+    group = get_object_or_404(Group, name=name)
+
+    if request.method == 'POST':
+        form = GroupGlobalPermissionForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            messages.success(request,
+                _(u'The group “%s” was changed successfully.') % group.name)
+            return HttpResponseRedirect(href('portal', 'group', group.name, 'edit', 'global_permissions'))
+    else:
+        form = GroupGlobalPermissionForm(instance=group)
+
+    return {
+        'group': group,
+        'form': form,
+    }
+
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
+@templated('portal/group_edit_forum_permissions.html')
+def group_edit_forum_permissions(request, name):
+    group = get_object_or_404(Group, name=name)
+
+    if request.method == 'POST':
+        form = GroupForumPermissionForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            messages.success(request,
+                _(u'The group “%s” was changed successfully.') % group.name)
+            return HttpResponseRedirect(href('portal', 'group', group.name, 'edit', 'forum_permissions'))
+    else:
+        form = GroupForumPermissionForm(instance=group)
+
+    return {
+        'group': group,
+        'form': form,
     }
 
 
