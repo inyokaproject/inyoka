@@ -727,7 +727,18 @@ class GroupForumPermissionForm(forms.Form):
                 permission_to_string(perm)
                 for perm in self.instance.permissions.all()
             ]
-        forum_permissions = get_permissions_for_app('forum')
+        unused_permissions = (
+            'forum.add_forum',
+            'forum.add_topic',
+            'forum.change_topic',
+            'forum.delete_forum',
+            'forum.delete_topic',
+        )
+        forum_permissions = [
+            perm
+            for perm in get_permissions_for_app('forum')
+            if not perm[0] in unused_permissions
+        ]
         for forum in Forum.objects.all():
             field = forms.MultipleChoiceField(
                 choices=forum_permissions,
