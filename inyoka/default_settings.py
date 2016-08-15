@@ -76,6 +76,7 @@ STATIC_URL = '//static.%s/' % BASE_DOMAIN_NAME
 INYOKA_SYSTEM_USER = u'ubuntuusers.de'
 INYOKA_IKHAYA_GROUP_NAME = u'ikhayateam'
 INYOKA_REGISTERED_GROUP_NAME = u'registered'
+INYOKA_TEAM_GROUP_NAME = u'team'
 INYOKA_ANONYMOUS_GROUP_NAME = u'anonymous'
 
 # E-Mail settings
