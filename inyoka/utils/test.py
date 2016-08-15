@@ -167,15 +167,6 @@ class TestCase(_TestCase):
     Delets the content cache after each run.
     """
 
-    def _pre_setup(self):
-        super(TestCase, self)._pre_setup()
-        for groupname in (settings.INYOKA_ANONYMOUS_GROUP_NAME,
-                      settings.INYOKA_REGISTERED_GROUP_NAME,
-                      settings.INYOKA_IKHAYA_GROUP_NAME):
-            group = Group.objects.get_or_create(name=groupname)[0]
-            group.save()
-        User.objects.create_system_users()
-
     def _post_teardown(self):
         super(TestCase, self)._post_teardown()
         content_cache = caches['content']

@@ -252,7 +252,6 @@ installation:
 .. code-block:: console
 
    (inyoka)$  python manage.py migrate
-   (inyoka)$  python manage.py create_system
    (inyoka)$  python manage.py create_superuser
    username: admin
    email: admin@localhost

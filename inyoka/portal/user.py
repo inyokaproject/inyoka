@@ -252,28 +252,6 @@ class UserManager(BaseUserManager):
         """
         return User.objects.get(username__iexact=settings.INYOKA_SYSTEM_USER)
 
-    def create_system_users(self):
-        """
-        Creates the required system User as defined in INYOKA_SYSTEM_USER and
-        INYOKA_ANYONYMOUS_USER. This is only useful in unit tests and as
-        management command.
-        """
-        def get_or_create(username):
-            try:
-                return User.objects.get(username__iexact=username)
-            except User.DoesNotExist:
-                return User.objects.create_user(username, username)
-
-        user = get_or_create(settings.ANONYMOUS_USER_NAME)
-        user.status = User.STATUS_ACTIVE
-        user.save()
-        group = Group.objects.get(name__iexact=settings.INYOKA_ANONYMOUS_GROUP_NAME)
-        user.groups.clear()
-        user.groups.add(group)
-
-        user = get_or_create(settings.INYOKA_SYSTEM_USER)
-        user.save()
-
 
 def upload_to_avatar(instance, filename):
     fn = 'portal/avatars/avatar_user%d.%s'
