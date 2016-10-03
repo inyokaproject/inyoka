@@ -1801,4 +1801,4 @@ def csrf_failure(request, reason=None):
         'no_referer': reason == REASON_NO_REFERER,
     }
 
-    return TemplateResponse('errors/400_csrf.html', context, 403)
+    return TemplateResponse('errors/403_csrf.html', context, 403)
