@@ -105,13 +105,16 @@ class Command(BaseCommand):
         if path is not None:
             global FOLDER
             FOLDER = path
+
         if verbosity >= 1:
             print("Starting Export")
+
         global SNAPSHOT_DATE, SNAPSHOT_MESSAGE
         activate(settings.LANGUAGE_CODE)
         SNAPSHOT_DATE = date(datetime.date.today(), settings.DATE_FORMAT)
         SNAPSHOT_MESSAGE = SNAPSHOT_MESSAGE % (SNAPSHOT_DATE, '%s')
         self.create_snapshot()
+
         if verbosity >= 1:
             print("Export complete")
 
@@ -195,7 +198,6 @@ class Command(BaseCommand):
     def handle_pathbar(self, soup, pre, is_main_page, page_name):
         pathbar = soup.find('div', 'pathbar')
         pathbar.find('form').decompose()
-        # pathbar.find('div').decompose()  # leads to an exception
         children = list(pathbar.children)
         if len(children) > 4:
             # 4 because, the form and div leave a \n behind
@@ -489,6 +491,7 @@ class Command(BaseCommand):
             _fetch_and_write(name)
             if verbosity >= 1:
                 pb.update(percent)
+
         if verbosity >= 1:
             print(("\nCreated Wikisnapshot with %s pages; excluded %s pages"
                 % (len(todo), num_excluded)))
