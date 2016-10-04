@@ -33,7 +33,6 @@ from werkzeug import url_unquote
 from inyoka.portal.user import User
 from inyoka.utils.http import templated
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import Breadcrumb
 from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
@@ -116,7 +115,6 @@ class Command(BaseCommand):
         settings.DEBUG = False
         return {
             'page': page,
-            'BREADCRUMB': Breadcrumb(),
             'USER': kwargs.get('user', None),
             'SETTINGS': settings
         }
