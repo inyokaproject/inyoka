@@ -31,6 +31,7 @@ from django.utils.translation import activate
 from werkzeug import url_unquote
 
 from inyoka.portal.user import User
+from inyoka.portal.models import StaticPage
 from inyoka.utils.http import templated
 from inyoka.utils.storage import storage
 from inyoka.utils.terminal import ProgressBar, percentize
@@ -87,6 +88,10 @@ verbosity = 0
 class Command(BaseCommand):
     help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
 
+    def __init__(self):
+        BaseCommand.__init__(self)
+        self.license_file = '_lizenz.html'
+
     def add_arguments(self, parser):
         parser.add_argument('-p', '--path',
             action='store',
@@ -118,6 +123,28 @@ class Command(BaseCommand):
             'USER': kwargs.get('user', None),
             'SETTINGS': settings
         }
+
+    @templated('portal/static_page.html')
+    def _static_page(self, page, **kwargs):
+        """Renders static pages"""
+        settings.DEBUG = False
+
+        try:
+            q = StaticPage.objects.get(key=page)
+        except StaticPage.DoesNotExist:
+            raise Http404
+        return {
+            'title': q.title,
+            'content': q.content_rendered,
+            'key': q.key,
+            'page': q,
+            'USER': kwargs.get('user', None),
+            'SETTINGS': settings
+        }
+
+    def _write_file(self, pth, content):
+        with open(pth, 'w+') as fobj:
+            fobj.write(content.encode('utf-8'))
 
     def save_file(self, url, is_main_page=False, is_static=False):
         if not INCLUDE_IMAGES and not is_static and not is_main_page:
@@ -297,7 +324,10 @@ class Command(BaseCommand):
                 li.find('a', 'flavour_switch').extract()
                 li.find('br').extract()
                 for a in li.find_all('a', href=PORTAL_RE):
-                    a['href'] = '%s%s' % (UU_PORTAL,
+                    if a['href'].endswith('lizenz/'):
+                        a['href'] = path.join(pre, self.license_file)
+                    else:
+                        a['href'] = '%s%s' % (UU_PORTAL,
                                           a['href'][len(href('portal')):])
             elif key == 'poweredby':
                 tag = BeautifulSoup(CREATED_MESSAGE)
@@ -370,6 +400,14 @@ class Command(BaseCommand):
         attachment_folder = path.join(FOLDER, 'files', '_')
         mkdir(attachment_folder)
 
+        license_content = self._static_page('lizenz', user=user, settings=settings).content.decode('utf8')
+        license_soup = BeautifulSoup(license_content)
+        # Apply the handlers from above to modify the page content
+        for handler in self.HANDLERS:
+            handler(self, license_soup, self._pre(0), is_main_page=False, page_name='Lizenz')
+        license_content = unicode(license_soup)
+        self._write_file(path.join(FOLDER, 'files', self.license_file), license_content)
+
         if verbosity >= 1:
             pb = ProgressBar(40)
 
@@ -434,18 +472,14 @@ class Command(BaseCommand):
 
             content = unicode(soup)
 
-            def _write_file(pth):
-                with open(pth, 'w+') as fobj:
-                    fobj.write(content.encode('utf-8'))
-
-            _write_file(path.join(FOLDER, 'files', '%s.html' %
-                                                   self.fix_path(page.name)))
+            self._write_file(path.join(FOLDER, 'files', '%s.html' %
+                                                   self.fix_path(page.name)), content)
 
             if is_main_page:
                 content = compile(r'(src|href)="\./([^"]+)"') \
                     .sub(lambda m: '%s="./files/%s"' %
                                    (m.groups()[0], m.groups()[1]), content)
-                _write_file(path.join(FOLDER, 'index.html'))
+                self._write_file(path.join(FOLDER, 'index.html'), content)
 
         if len(todo) is 0:
             percents = []
