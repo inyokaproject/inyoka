@@ -40,4 +40,8 @@ node {
       step([$class: 'JUnitResultArchiver', testResults: '*.xml'])
     }
 
+    stage('Cleanup') {
+      sh '''rm -rf venv
+      rm -rf theme-ubuntuusers'''
+    }
 }
