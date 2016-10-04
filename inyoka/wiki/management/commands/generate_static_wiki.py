@@ -359,7 +359,8 @@ class Command(BaseCommand):
                         (path.join(stroot, 'img', 'interwiki'), 'interwiki'),
                         ff('logo.png'), ff('favicon.ico'), ff('float-left.jpg'),
                         ff('float-right.jpg'), ff('float-top.jpg'), ff('head.jpg'),
-                        ff('head-right.png'), ff('anchor.png'), ff('1px.png'))
+                        ff('head-right.png'), ff('anchor.png'), ff('1px.png'),
+                        ff('main-sprite.png'), ff('bullet.gif'))
         for pth in static_paths:
             _pth = pth[0] if isinstance(pth, _iterables) else pth
             if path.isdir(_pth):
