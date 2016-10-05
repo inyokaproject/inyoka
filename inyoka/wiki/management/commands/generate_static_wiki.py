@@ -197,8 +197,7 @@ class Command(BaseCommand):
     def handle_removals(self, soup, pre, is_main_page, page_name):
         remove = (('script',),
                   ('ul', 'navi_global'),
-                  ('div', 'navi_tabbar navigation'),
-                  ('p', 'meta'))
+                  ('div', 'navi_tabbar navigation'))
         for args in remove:
             for x in soup.find_all(*args):
                 x.extract()
