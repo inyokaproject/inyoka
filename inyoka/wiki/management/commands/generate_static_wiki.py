@@ -44,7 +44,8 @@ from inyoka.wiki.utils import CaseSensitiveException
 FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False
 
-UU_DE = 'http://%subuntuusers.de/'
+UU_DE_DOMAIN = 'ubuntuusers.de'
+UU_DE = 'http://%s' + UU_DE_DOMAIN + '/'
 UU_PORTAL = UU_DE % ''
 UU_FORUM = UU_DE % 'forum.'
 UU_WIKI = UU_DE % 'wiki.'
@@ -343,9 +344,9 @@ class Command(BaseCommand):
                 li.clear()
                 li.append(tag.find('li'))
 
-    def handle_link_unwraps(self, soup, pre, is_main_page, page_name):
+    def handle_non_wiki_link(self, soup, pre, is_main_page, page_name):
         for a in soup.find_all('a', href=NON_WIKI_RE):
-            a.unwrap()
+            a['href'] = str.replace(a['href'], settings.BASE_DOMAIN_NAME, UU_DE_DOMAIN, 1)
 
     def handle_snapshot_message(self, soup, pre, is_main_page, page_name):
         tag = BeautifulSoup(SNAPSHOT_MESSAGE % path.join(UU_WIKI, page_name))
@@ -371,7 +372,7 @@ class Command(BaseCommand):
                 handle_link,
                 handle_img,
                 handle_footer,
-                handle_link_unwraps,
+                handle_non_wiki_link,
                 handle_snapshot_message]
 
     def create_snapshot(self):
