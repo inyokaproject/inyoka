@@ -98,6 +98,9 @@ class Command(BaseCommand):
             dest='path',
             help='Define where to store the static wiki')
 
+        parser.add_argument('--images', action='store_true',
+            help='If given, images will be included in the static wiki.')
+
     def handle(self, *args, **options):
         global verbosity
         verbosity = int(options['verbosity'])
@@ -105,6 +108,10 @@ class Command(BaseCommand):
         if path is not None:
             global FOLDER
             FOLDER = path
+
+        global INCLUDE_IMAGES
+        if options['images']:
+            INCLUDE_IMAGES = True
 
         if verbosity >= 1:
             print("Starting Export")
