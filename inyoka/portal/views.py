@@ -337,7 +337,7 @@ def activate(request, action='', username='', activation_key=''):
             messages.error(request, _(u'Your activation key is invalid.'))
         return HttpResponseRedirect(href('portal'))
     else:
-        if check_activation_key(user, activation_key):
+        if check_activation_key(user, activation_key) and user.is_inactive:
             user.status = User.STATUS_ACTIVE
             user.save()
             messages.success(request,
