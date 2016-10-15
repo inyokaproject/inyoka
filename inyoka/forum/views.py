@@ -933,7 +933,7 @@ def reportlist(request):
     """Get a list of all reported topics"""
     def _add_field_choices():
         """Add dynamic field choices to the reported topic formular"""
-        form.fields['selected'].choices = [(t.id, u'') for t in topics]
+        form.fields['selected'].choices = [(topic.id, u'') for topic in topics]
 
     if 'topic' in request.GET:
         topic = Topic.objects.get(slug=request.GET['topic'])
@@ -952,29 +952,32 @@ def reportlist(request):
         form = ReportListForm(request.POST)
         _add_field_choices()
         if form.is_valid():
-            d = form.cleaned_data
-            if not d['selected']:
+            data = form.cleaned_data
+            if not data['selected']:
                 messages.error(request, _(u'No topics selected.'))
             else:
                 # We select all topics that have been selected and also
                 # select the regarding forum, 'cause we will check for the
                 # moderation privilege.
-                topics_selected = topics.filter(id__in=d['selected']).select_related('forum')
+                topics_selected = topics.filter(id__in=data['selected']).select_related('forum')
 
-                t_ids_mod = []
+                topic_ids_modrights = set()
                 # Check for the moderate privilege of the forums of selected
                 # reported topics and take only the topic IDs where the
                 # requesting user can moderate the forum.
-                for f, ts in groupby(topics_selected, attrgetter('forum')):
-                    if request.user.has_perm('forum.moderate_forum', f):
-                        t_ids_mod += map(attrgetter('id'), ts)
+                for forum, selected_topics in groupby(topics_selected, attrgetter('forum')):
+                    if request.user.has_perm('forum.moderate_forum', forum): # or check if user is assigned
+                        topic_ids_modrights.add(map(attrgetter('id'), selected_topics))
+                for topic in topics_selected:
+                    if topic.report_claimed_by_id == request.user.id:
+                        topic_ids_modrights.add(map(attrgetter('id'), selected_topics))
 
                 # Update the reported state.
-                Topic.objects.filter(id__in=t_ids_mod).update(
+                Topic.objects.filter(id__in=topic_ids_modrights).update(
                     reported=None, reporter=None, report_claimed_by=None)
                 cache.delete('forum/reported_topic_count')
-                topics = filter(lambda t: t.id not in t_ids_mod, topics)
-                if len(topics_selected) == len(t_ids_mod):
+                topics = filter(lambda t: t.id not in topic_ids_modrights, topics)
+                if len(topics_selected) == len(topic_ids_modrights):
                     messages.success(request, _(u'The selected tickets have been closed.'))
                 else:
                     messages.success(request, _(u'Only a subset of selected tickets has been '
