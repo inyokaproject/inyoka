@@ -39,21 +39,22 @@ node {
       cd .."""
     }
 
-    stage('Tests: mysql') {
-      sh '''. venv/bin/activate
-      python manage.py test --setting tests.settings.mysql --testrunner="xmlrunner.extra.djangotestrunner.XMLTestRunner"'''
-      step([$class: 'JUnitResultArchiver', testResults: '*.xml'])
+    stage('Tests') {
+      def test_databases = [ "mysql", "postgresql", "sqlite" ]
+      def test_runs = [:]
+
+      for (int i = 0; i < test_databases.size(); i++) {
+        def current_test_database = test_databases[i]
+        test_runs["${current_test_database}"] = {
+          sh """. venv/bin/activate
+          python manage.py test --setting tests.settings.${current_test_database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true"""
+        }
+      }
+
+      parallel test_runs
     }
 
-    stage('Tests: postgresql') {
-      sh '''. venv/bin/activate
-      python manage.py test --setting tests.settings.postgresql --testrunner="xmlrunner.extra.djangotestrunner.XMLTestRunner"'''
-      step([$class: 'JUnitResultArchiver', testResults: '*.xml'])
-    }
-
-    stage('Tests: sqlite') {
-      sh '''. venv/bin/activate
-      python manage.py test --setting tests.settings.sqlite --testrunner="xmlrunner.extra.djangotestrunner.XMLTestRunner"'''
+    stage('Analyse tests') {
       step([$class: 'JUnitResultArchiver', testResults: '*.xml'])
     }
 
