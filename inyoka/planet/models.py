@@ -67,6 +67,10 @@ class Blog(models.Model):
         ordering = ('name',)
         verbose_name = 'Blog'
         verbose_name_plural = 'Blogs'
+        permissions = (
+            ('view_blog','Can view Blogs'),
+            ('suggest_blog','Can suggest Blogs'),
+        )
 
 
 class Entry(models.Model):
@@ -114,3 +118,6 @@ class Entry(models.Model):
         verbose_name_plural = ugettext_lazy(u'Entries')
         get_latest_by = 'pub_date'
         ordering = ('-pub_date',)
+        permissions = (
+            ('hide_entry', 'Can hide Entry'),
+        )

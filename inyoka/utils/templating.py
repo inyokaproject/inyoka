@@ -32,7 +32,6 @@ from jinja2 import (
     Template,
     TemplateNotFound,
     contextfunction,
-    escape,
 )
 
 from inyoka import INYOKA_VERSION
@@ -81,7 +80,6 @@ def get_dtd():
 
 def populate_context_defaults(context, flash=False):
     """Fill in context defaults."""
-    from inyoka.forum.acl import have_privilege
     from inyoka.forum.models import Topic
     from inyoka.portal.models import PrivateMessageEntry
     from inyoka.utils.storage import storage
@@ -96,9 +94,9 @@ def populate_context_defaults(context, flash=False):
 
     reported = pms = suggestions = events = reported_articles = 0
     if request and user.is_authenticated():
-        can = {'manage_topics': user.can('manage_topics'),
-               'article_edit': user.can('article_edit'),
-               'event_edit': user.can('event_edit')}
+        can = {'manage_topics': user.has_perm('forum.manage_reported_topic'),
+               'article_edit': user.has_perm('ikhaya.change_article'),
+               'event_edit': user.has_perm('portal.change_event')}
 
         keys = ['portal/pm_count/%s' % user.id]
 
@@ -164,7 +162,7 @@ def populate_context_defaults(context, flash=False):
             MOBILE=get_flavour() == 'mobile',
             _csrf_token=force_unicode(csrf(request)['csrf_token']),
             special_day_css=check_special_day(),
-            LANGUAGE_CODE = settings.LANGUAGE_CODE
+            LANGUAGE_CODE=settings.LANGUAGE_CODE
         )
 
         if not flash:
@@ -184,7 +182,6 @@ def populate_context_defaults(context, flash=False):
         article_report_count=reported_articles,
         suggestion_count=suggestions,
         event_count=events,
-        have_privilege=have_privilege,
     )
 
 

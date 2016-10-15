@@ -141,6 +141,7 @@ def make_groups():
 def make_users():
     print('Creating users')
     pb = ProgressBar(40)
+    registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
     for percent, name in izip(percentize(USERS_COUNT), create_names(USERS_COUNT)):
         u = User.objects.register_user(
             name, '%s@ubuntuusers.local' % name, name, False)
@@ -158,6 +159,8 @@ def make_users():
         if not randint(0, 3):
             u.status = 0
         u.save()
+        if u.status == 1:
+            u.groups.add(registered_group)
         users.append(u)
         pb.update(percent)
     show('\n')

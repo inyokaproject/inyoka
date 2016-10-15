@@ -23,7 +23,7 @@ from inyoka.portal.models import (
     PrivateMessageEntry,
     Subscription,
 )
-from inyoka.portal.user import PERMISSION_NAMES, User
+from inyoka.portal.user import User
 from inyoka.utils.storage import storage
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
@@ -32,12 +32,12 @@ from inyoka.utils.urls import href
 class TestViews(TestCase):
 
     client_class = InyokaClient
-    permissions = sum(PERMISSION_NAMES.keys())
 
     def setUp(self):
+        super(TestViews, self).setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
-        self.admin._permissions = self.permissions
+        self.admin.is_superuser = True
         self.admin.save()
 
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
@@ -47,8 +47,6 @@ class TestViews(TestCase):
         """Test the creation of groups and if they handle invalid groupnames
         correctly.
         """
-        storage['team_icon_height'] = 80
-        storage['team_icon_width'] = 80
 
         postdata = {u'name': u'Lorem'}
         with translation.override('en-us'):
@@ -110,6 +108,7 @@ class TestAuthViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
+        super(TestAuthViews, self).setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
@@ -396,6 +395,7 @@ class TestPrivMsgViews(TestCase):
     client_class = InyokaClient
 
     def setUp(self):
+        super(TestPrivMsgViews, self).setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME

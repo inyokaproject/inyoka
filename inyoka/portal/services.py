@@ -14,11 +14,12 @@ from hashlib import md5
 from urlparse import urlparse
 
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.http import Http404
 from django.utils.dates import MONTHS, WEEKDAYS
 
 from inyoka.ikhaya.models import Event
-from inyoka.portal.user import User, Group
+from inyoka.portal.user import User
 from inyoka.utils.captcha import Captcha
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.templating import render_template
@@ -29,7 +30,7 @@ def on_get_current_user(request):
     """Get the current user."""
     user = request.user
     return {
-        'is_anonymous': user.is_anonymous,
+        'is_anonymous': user.is_anonymous(),
         'username': user.username or None,
         'email': getattr(user, 'email', None),
     }
@@ -49,10 +50,7 @@ def on_get_user_list(request):
 
 def on_get_group_list(request):
     q = request.GET.get('q', '')
-    # if len(q) < 3:
-    #    return
-    qs = list(Group.objects.filter(name__istartswith=q,
-                                  is_public__exact=True)[:11])
+    qs = list(Group.objects.filter(name__istartswith=q)[:11])
     groupnames = [x.name for x in qs]
     if len(qs) > 10:
         groupnames[10] = '...'

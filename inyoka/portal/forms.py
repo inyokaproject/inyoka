@@ -10,6 +10,7 @@
 """
 import datetime
 import json
+import functools
 import StringIO
 
 from django import forms
@@ -17,11 +18,13 @@ from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.db.models import Count
+from django.db.models import CharField, Count, Value
+from django.db.models.functions import Concat
 from django.db.models.fields.files import ImageFieldFile
 from django.forms import HiddenInput
 from django.template import loader
@@ -30,13 +33,13 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
+from guardian.shortcuts import assign_perm, remove_perm, get_perms
 from PIL import Image
 
 from inyoka.forum.constants import get_simple_version_choices
+from inyoka.forum.models import Forum
 from inyoka.portal.models import StaticFile, StaticPage
 from inyoka.portal.user import (
-    PERMISSION_NAMES,
-    Group,
     User,
     UserPage,
     send_new_email_confirmation,
@@ -55,6 +58,14 @@ from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
 
 #: Some constants used for ChoiceFields
+GLOBAL_PRIVILEGE_MODELS = {
+    'forum': ('forum', 'topic'),
+    'ikhaya': ('article', 'category', 'comment', 'report', 'suggestion',),
+    'pastebin': ('entry',),
+    'planet': ('entry', 'blog',),
+    'portal': ('event', 'user', 'staticfile', 'staticpage',),
+}
+
 NOTIFY_BY_CHOICES = (
     ('mail', ugettext_lazy(u'Mail')),
     ('jabber', ugettext_lazy(u'Jabber')),
@@ -426,8 +437,38 @@ class EditUserProfileForm(UserCPProfileForm):
 
 
 class EditUserGroupsForm(forms.Form):
-    primary_group = forms.CharField(label=ugettext_lazy(u'Primary group'), required=False,
-        help_text=ugettext_lazy(u'Will be used to display the team icon'))
+    groupWidget = forms.CheckboxSelectMultiple(
+        attrs={'id': 'portal-user-groupselector',
+               'class': 'portal-user-groupselector'}
+    )
+    groups = forms.ModelMultipleChoiceField(
+        label=ugettext_lazy(u'Please select the groups for this user.'),
+        required=False, queryset=Group.objects.all(), widget=groupWidget)
+
+    def clean_groups(self):
+        if self.cleaned_data['groups']:
+            self.all_groups = set(Group.objects.all())
+            self.selected_groups = set(self.cleaned_data['groups'])
+            if self.selected_groups.issubset(self.all_groups):
+                return self.cleaned_data['groups']
+            else:
+                raise forms.ValidationError(_(u'Invalid groups specified.'))
+        return self.cleaned_data['groups']
+
+    def save(self, commit=True):
+        if commit:
+            active_groups = set(self.user.groups.all())
+            remove_groups = active_groups - self.selected_groups
+            assign_groups = self.selected_groups - active_groups
+            for group in remove_groups:
+                self.user.groups.remove(group)
+            for group in assign_groups:
+                self.user.groups.add(group)
+            cache.delete('/acl/%s' % self.user.id)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('instance', None)
+        super(EditUserGroupsForm, self).__init__(*args, **kwargs)
 
 
 class CreateUserForm(forms.Form):
@@ -532,11 +573,6 @@ class EditUserPasswordForm(forms.Form):
             )
 
 
-class EditUserPrivilegesForm(forms.Form):
-    permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
-                                            required=False)
-
-
 class UserMailForm(forms.Form):
     text = forms.CharField(
         label=ugettext_lazy(u'Text'),
@@ -548,31 +584,11 @@ class UserMailForm(forms.Form):
 
 
 class EditGroupForm(forms.ModelForm):
-    permissions = forms.MultipleChoiceField(label=ugettext_lazy(u'Privileges'),
-        widget=forms.CheckboxSelectMultiple(attrs={'class': 'permission'}),
-        required=False)
-    forum_privileges = forms.MultipleChoiceField(label=ugettext_lazy(u'Forum privileges'),
-                                                 required=False)
-    import_icon_from_global = forms.BooleanField(label=ugettext_lazy(u'Use global team icon'),
-        required=False)
+    name = forms.CharField(label=ugettext_lazy('Groupname'), required=True)
 
     class Meta:
         model = Group
-        fields = ('name', 'is_public', 'icon')
-        widgets = {'icon': forms.ClearableFileInput}
-
-    def __init__(self, *args, **kwargs):
-        instance = kwargs.get('instance')
-        initial = kwargs.setdefault('initial', {})
-        if instance:
-            initial['permissions'] = filter(lambda p: p & instance.permissions,
-                                            PERMISSION_NAMES.keys())
-
-        super(EditGroupForm, self).__init__(*args, **kwargs)
-        self.fields['permissions'].choices = sorted(
-            [(k, v) for k, v in PERMISSION_NAMES.iteritems()],
-            key=lambda p: p[1]
-        )
+        fields = ('name',)
 
     def clean_name(self):
         """Validates that the name is alphanumeric"""
@@ -582,54 +598,218 @@ class EditGroupForm(forms.ModelForm):
                 u'The group name contains invalid chars'))
         return data['name']
 
-    def clean_import_icon_from_global(self):
-        import_from_global = self.cleaned_data['import_icon_from_global']
-        if import_from_global and not storage['team_icon']:
-            raise forms.ValidationError(_(u'A global team icon was not yet defined.'))
+
+def get_permissions_for_app(application, filtered=None):
+    """
+    Select all permissions for the models defined in
+    ``GLOBAL_PRIVILEGE_MODELS`` for ``application`` and return a "list" of
+    two-tuples of the form
+    ``('app_label.permission_codename', 'Permission Name')``
+    orderd by the ``'app_label.permission_codename'``.
+
+    An optional ``filtered`` argument helps to filter out unwanted/unused
+    permissions.
+    """
+    permissions = Permission.objects.filter(
+        content_type__app_label=application,
+        content_type__model__in=GLOBAL_PRIVILEGE_MODELS[application]
+    ).select_related('content_type').annotate(
+        code=Concat(
+            'content_type__app_label', Value('.'), 'codename',
+            output_field=CharField()
+        )
+    ).order_by('code').values_list('code', 'name')
+    if filtered:
+        return [
+            perm
+            for perm in permissions
+            if not perm[0] in filtered
+        ]
+    return permissions
+
+
+def make_permission_choices(application, filtered=None):
+    """
+    Wrapper around :func:`.get_permissions_for_app` returning a callable.
+    Useful for e.g. form field choices.
+    """
+    return functools.partial(get_permissions_for_app, application, filtered)
+
+def permission_choices_to_permission_strings(application):
+    return set(perm[0] for perm in get_permissions_for_app(application))
+
+
+def permission_to_string(permission):
+    permission_code, app_label = permission.natural_key()[0:2]
+    return '%s.%s' % (app_label, permission_code)
+
+
+class GroupGlobalPermissionForm(forms.Form):
+    MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet', 'forum')
+    FORUM_FILTERED_PERMISSIONS = (
+        'forum.add_forum',
+        'forum.add_topic',
+        'forum.change_topic',
+        'forum.delete_forum',
+        'forum.delete_topic',
+    )
+    ikhaya_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('ikhaya'),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Ikhaya'),
+        required=False)
+    portal_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('portal'),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Portal'),
+        required=False)
+    pastebin_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('pastebin'),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Pastebin'),
+        required=False)
+    planet_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('planet'),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Planet'),
+        required=False)
+    forum_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('forum', FORUM_FILTERED_PERMISSIONS),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Forum'),
+        required=False)
+
+    def _clean_permissions(self, modulename):
+        module_permissions = permission_choices_to_permission_strings(modulename)
+        if self.cleaned_data['%s_permissions' % modulename]:
+            active_permissions = set(self.cleaned_data['%s_permissions' % modulename])
+            if active_permissions.issubset(module_permissions):
+                return active_permissions
+            else:
+                raise forms.ValidationError('Invalid Permissions specified.')
+
+    def _sync_permissions(self, modulename):
+        active_permissions = set()
+        if self.cleaned_data['%s_permissions' % modulename]:
+            active_permissions = set(self.cleaned_data['%s_permissions' % modulename])
+        current_permissions = set([
+            perm
+            for perm in self.instance_permissions
+            if perm.startswith(modulename)
+        ])
+        remove_permissions = current_permissions - active_permissions
+        assign_permissions = active_permissions - current_permissions
+        for perm in remove_permissions:
+            remove_perm(perm, self.instance)
+        for perm in assign_permissions:
+            assign_perm(perm, self.instance)
+
+    def clean_ikhaya_permissions(self):
+        return self._clean_permissions('ikhaya')
+
+    def clean_portal_permissions(self):
+        return self._clean_permissions('portal')
+
+    def clean_pastebin_permissions(self):
+        return self._clean_permissions('pastebin')
+
+    def clean_planet_permissions(self):
+        return self._clean_permissions('planet')
+
+    def clean_forum_permissions(self):
+        return self._clean_permissions('forum')
 
     def save(self, commit=True):
-        group = super(EditGroupForm, self).save(commit=False)
-        data = self.cleaned_data
+        if self.instance and commit:
+            for app in self.MANAGED_APPS:
+                self._sync_permissions(app)
+            cache.delete_pattern('/acl/*')
 
-        if data['icon'] and not data['import_icon_from_global']:
-            icon_resized = group.save_icon(data['icon'])  # noqa
-# TODO: Reenable?!
-#            if icon_resized:
-#                messages.info(request,
-#                    _(u'The icon you uploaded was scaled to '
-#                      '%(w)dx%(h)d pixels. Please note that this '
-#                      'may result in lower quality.') % {
-#                          'w': icon_mw,
-#                          'h': icon_mh,
-#                      })
+    def __init__(self, *args, **kwargs):
+        initial = {}
+        self.instance = None
+        if 'instance' in kwargs:
+            self.instance = kwargs.pop('instance')
+            self.instance_permissions = [
+                permission_to_string(perm)
+                for perm in self.instance.permissions.all()
+            ]
+            for field in self.MANAGED_APPS:
+                field_permissions = [
+                    perm
+                    for perm in self.instance_permissions
+                    if perm.startswith(field)
+                ]
+                initial['%s_permissions' % field] = field_permissions
+        super(GroupGlobalPermissionForm, self).__init__(initial=initial, *args, **kwargs)
 
-        if data['import_icon_from_global']:
-            if group.icon:
-                group.icon.delete(save=False)
 
-            icon_path = 'portal/team_icons/team_%s.%s' % (group.name,
-                        storage['team_icon'].split('.')[-1])
+class GroupForumPermissionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.pop('instance', None)
+        super(GroupForumPermissionForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            self.instance_permissions = [
+                permission_to_string(perm)
+                for perm in self.instance.permissions.all()
+            ]
+        FORUM_FILTERED_PERMISSIONS = (
+            'forum.add_forum',
+            'forum.add_topic',
+            'forum.change_topic',
+            'forum.delete_forum',
+            'forum.delete_topic',
+            'forum.manage_reported_topic',
+        )
+        for forum in Forum.objects.all():
+            field = forms.MultipleChoiceField(
+                choices=make_permission_choices('forum', FORUM_FILTERED_PERMISSIONS),
+                widget=forms.CheckboxSelectMultiple,
+                label=forum.name,
+                required=False,
+            )
+            if self.instance:
+                field.initial = self._forum_instance_permissions(forum)
+            self.fields['forum_%s_permissions' % forum.id] = field
 
-            icon = default_storage.open(storage['team_icon'])
-            group.icon.save(icon_path, icon)
-            icon.close()
+    @property
+    def _forum_fields(self):
+        return [
+            (fieldname, self.cleaned_data[fieldname])
+            for fieldname in self.cleaned_data
+            if fieldname.startswith('forum_')
+        ]
 
-        # permissions
-        permissions = 0
-        for perm in data['permissions']:
-            permissions |= int(perm)
-        # clear permission cache of users if needed
-        if permissions != group.permissions:
-            group.permissions = permissions
-            user_ids = User.objects.filter(groups=group).values_list('id', flat=True)
-            keys = ['user_permissions/%s' % uid for uid in user_ids]
-            cache.delete_many(keys)
+    def _forum_instance_permissions(self, forum):
+        return set([
+            'forum.%s' % perm
+            for perm in get_perms(self.instance, forum)
+        ])
 
-        if commit:
-            group.save()
+    def clean(self):
+        super(GroupForumPermissionForm, self).clean()
+        module_permissions = permission_choices_to_permission_strings('forum')
+        for fieldname, values in self._forum_fields:
+            if values:
+                values = set(values)
+                if not values.issubset(module_permissions):
+                    raise forms.ValidationError(_(u'Invalid Permissions specified.'))
 
-        return group
-
+    def save(self, commit=True):
+        for forum in Forum.objects.all():
+            forum_key = 'forum_%s_permissions' % forum.id
+            if self.cleaned_data[forum_key]:
+                active_permissions = self._forum_instance_permissions(forum)
+                wanted_permissions = set(self.cleaned_data[forum_key])
+                delete_permissions = active_permissions - wanted_permissions
+                assign_permissions = wanted_permissions - active_permissions
+                for perm in assign_permissions:
+                    assign_perm(perm, self.instance, forum)
+            else:
+                delete_permissions = self._forum_instance_permissions(forum)
+            for perm in delete_permissions:
+                remove_perm(perm, self.instance, forum)
+        cache.delete_pattern('/acl/*')
 
 class PrivateMessageForm(forms.Form):
     """Form for writing a new private message"""

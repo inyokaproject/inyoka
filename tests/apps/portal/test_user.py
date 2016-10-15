@@ -11,19 +11,22 @@
 import unittest
 from datetime import datetime
 
+from django.conf import settings
 from django.core.cache import cache
+from django.contrib.auth.models import Group
 
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.pastebin.models import Entry
 from inyoka.portal.models import PrivateMessage, Subscription
-from inyoka.portal.user import Group, User, deactivate_user
+from inyoka.portal.user import User, deactivate_user
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
 
 
 class TestUserModel(TestCase):
     def setUp(self):
+        super(TestUserModel, self).setUp()
         self.user = User.objects.register_user('testing', 'example@example.com',
                                                'pwd', False)
 
@@ -63,9 +66,14 @@ class TestUserModel(TestCase):
         with self.assertRaisesRegexp(ValueError, 'invalid username'):
             created_user.rename('**testuser**', False)
 
+    def test_new_users_in_registered_group(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        self.assertTrue(registered_group in self.user.groups.all())
+
 
 class TestUserHasContent(TestCase):
     def setUp(self):
+        super(TestUserHasContent, self).setUp()
         self.user = User.objects.register_user(
             'testing',
             'example@example.com',
@@ -191,12 +199,3 @@ class TestUserHasContent(TestCase):
         Subscription.objects.create(user=self.user, content_object=topic)
 
         self.assertTrue(self.user.has_content())
-
-
-class TestGroupModel(TestCase):
-    def setUp(self):
-        self.group = Group.objects.create(name='testing', is_public=True)
-
-    def test_icon(self):
-        # TODO? What should be tested here?
-        self.assertEqual(self.group.icon_url, None)

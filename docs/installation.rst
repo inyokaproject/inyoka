@@ -251,13 +251,13 @@ installation:
 
 .. code-block:: console
 
-    (inyoka)$ python manage.py migrate
-    (inyoka)$ python manage.py create_superuser
-    username: admin
-    email: admin@localhost
-    password: admin
-    repeat: admin
-    created superuser
+   (inyoka)$  python manage.py migrate
+   (inyoka)$  python manage.py create_superuser
+   username: admin
+   email: admin@localhost
+   password: admin
+   repeat: admin
+   created superuser
 
 Of course you can use another password, but you should keep the *admin* as
 username because it will be used in some test files. It is also advisable to
@@ -285,17 +285,6 @@ Finally you can start the server the first time:
 
 In your browser open the url `<http://ubuntuusers.local:8080/>`_. You can login
 with the user  *admin* and the given password above.
-
-Before developing you should give your user full rights to everything. So click
-on *Portal -> Groups"* and click on the button *"Edit"* at the group
-"Registriert": `<http://ubuntuusers.local:8080/group/Registriert/edit/>`_
-
-Check all boxes except *Not in use anymore"*. For accessing the forum select
-all random forums via ``[Ctrl]`` and set all rights to *"Yes"*. Commit the
-changes via the button *Send"*
-
-You may should stop the running server via *[Ctrl-C]* and start it again before
-the access rights are correct.
 
 Working with Inyoka everytime
 =============================

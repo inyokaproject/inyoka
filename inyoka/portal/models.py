@@ -15,7 +15,6 @@ from django.db import models, transaction
 from django.utils.translation import ugettext_lazy
 from werkzeug import cached_property
 
-from inyoka.forum.acl import have_privilege as have_forum_privilege
 from inyoka.portal.user import User
 from inyoka.utils.database import InyokaMarkupField
 from inyoka.utils.text import slugify
@@ -42,7 +41,7 @@ class SubscriptionManager(ContentTypeManager):
 
     def user_subscribed(self, user, object, ctype_query=None, clear_notified=False):
         """Return `True` or `False` whether the user has subscribed or not"""
-        if user.is_anonymous:
+        if user.is_anonymous():
             return False
         filter = self._get_filter(user, object, ctype_query)
 
@@ -114,6 +113,9 @@ class PrivateMessage(models.Model):
 
     class Meta:
         ordering = ('-pub_date',)
+        permissions = (
+            ('send_group_privatemessage', 'Can send Group Private Messages'),
+        )
 
     def send(self, recipients):
         self.save()
@@ -318,8 +320,12 @@ class Subscription(models.Model):
 
         user = self.user
         if self.content_type.model in ('topic', 'forum'):
-            return have_forum_privilege(user, self.content_object, 'read')
-        elif self.content_type.model == 'page':
+            if self.content_type.model == 'topic':
+                forum = self.content_object.forum
+            else:
+                forum = self.content_object
+            return user.has_perm('forum.view_forum', forum)
+        if self.content_type.model == 'page':
             return have_wiki_privilege(user, self.content_object.name, 'read')
         else:
             # e.g user subscriptions

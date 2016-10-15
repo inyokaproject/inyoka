@@ -14,13 +14,14 @@ from django.utils.translation import ugettext as _
 
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
-from inyoka.portal.utils import require_permission, simple_check_login
+from django.contrib.auth.decorators import login_required, permission_required
 from inyoka.utils.http import global_not_found, templated
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 
 
-@simple_check_login
+@login_required
+@permission_required('pastebin.add_entry', raise_exception=True)
 @templated('pastebin/add.html')
 def add(request):
     if request.method == 'POST':
@@ -40,7 +41,8 @@ def add(request):
         'page': 'add'
     }
 
-
+@login_required
+@permission_required('pastebin.view_entry', raise_exception=True)
 @templated('pastebin/display.html')
 def display(request, entry_id):
     try:
@@ -56,8 +58,8 @@ def display(request, entry_id):
         'page': 'browse'
     }
 
-
-@require_permission('manage_pastebin')
+@login_required
+@permission_required('pastebin.delete_entry', raise_exception=True)
 def delete(request, entry_id):
     """
     Request Handler for Pastebin delete requests.
@@ -77,7 +79,8 @@ def delete(request, entry_id):
                       {'entry': entry}))
     return HttpResponseRedirect(href('pastebin', entry.id))
 
-
+@login_required
+@permission_required('pastebin.view_entry', raise_exception=True)
 def raw(request, entry_id):
     try:
         entry = Entry.objects.get(id=entry_id)
@@ -86,6 +89,8 @@ def raw(request, entry_id):
     return HttpResponse(entry.code, content_type='text/plain; charset=utf-8')
 
 
+@login_required
+@permission_required('pastebin.view_entry', raise_exception=True)
 @templated('pastebin/browse.html')
 def browse(request):
     return {

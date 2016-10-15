@@ -22,6 +22,7 @@ from time import time
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.db import models, transaction
 from django.db.models import F, Count, Max
@@ -30,12 +31,6 @@ from django.utils.html import escape, format_html
 from django.utils.translation import ugettext as _
 from django.utils.translation import pgettext, ugettext_lazy
 
-from inyoka.forum.acl import (
-    CAN_READ,
-    filter_invisible,
-    filter_visible,
-    get_privileges,
-)
 from inyoka.forum.constants import (
     CACHE_PAGES_COUNT,
     POSTS_PER_PAGE,
@@ -43,7 +38,7 @@ from inyoka.forum.constants import (
     UBUNTU_DISTROS,
 )
 from inyoka.portal.models import Subscription
-from inyoka.portal.user import Group, User
+from inyoka.portal.user import User
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import (
@@ -154,7 +149,7 @@ class ForumManager(models.Manager):
         # return all forums instead
         return self.get_all_forums_cached().values()
 
-    def get_forums_filtered(self, user, priv=CAN_READ, reverse=False, sort=False):
+    def get_forums_filtered(self, user, priv='forum.view_forum', reverse=False, sort=False):
         """Return all forums the `user` has proper privileges for.
 
         :param user: :class:`User` instance.
@@ -168,11 +163,10 @@ class ForumManager(models.Manager):
         else:
             forums = self.get_cached()
 
-        privileges = get_privileges(user, forums)
         if reverse:
-            forums = filter_visible(user, forums, priv, privileges)
+            forums = [forum for forum in forums if not user.has_perm(priv, forum)]
         else:
-            forums = filter_invisible(user, forums, priv, privileges)
+            forums = [forum for forum in forums if user.has_perm(priv, forum)]
         return forums
 
     def get_categories(self):
@@ -309,6 +303,17 @@ class Forum(models.Model):
     class Meta:
         verbose_name = ugettext_lazy(u'Forum')
         verbose_name_plural = ugettext_lazy(u'Forums')
+        permissions = (
+            ('delete_topic_forum', 'Can delete Topics from Forum'),
+            ('view_forum', 'Can view Forum'),
+            ('add_topic_forum', 'Can add Topic in Forum'),
+            ('add_reply_forum', 'Can answer Topics in Forum'),
+            ('sticky_forum', 'Can make Topics Sticky in Forum'),
+            ('poll_forum', 'Can make Polls in Forum'),
+            ('vote_forum', 'Can make Votes in Forum'),
+            ('upload_forum', 'Can upload Attachments in Forum'),
+            ('moderate_forum', 'Can moderate Forum'),
+        )
 
     def get_absolute_url(self, action='show', **query):
         if action == 'show':
@@ -361,7 +366,7 @@ class Forum(models.Model):
         Determine the read status of the whole forum for a specific
         user.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             return True
         return user._readstatus(self)
 
@@ -370,7 +375,7 @@ class Forum(models.Model):
         Mark all topics in this forum and all related subforums as
         read for the specificed user.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             return
         if user._readstatus.mark(self):
             user.forum_read_status = user._readstatus.serialize()
@@ -382,7 +387,7 @@ class Forum(models.Model):
         itself, can be retrieved late, by reading the welcome_message
         attribute.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             # This methods woks only on authenticated users.
             return
 
@@ -403,7 +408,7 @@ class Forum(models.Model):
         then the read status is removed, so it is the same like with a new
         user.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             # This methods woks only on authenticated users.
             return
 
@@ -531,6 +536,9 @@ class Topic(models.Model):
     class Meta:
         verbose_name = ugettext_lazy(u'Topic')
         verbose_name_plural = ugettext_lazy(u'Topics')
+        permissions = (
+            ('manage_reported_topic', 'Can manage reported Topics'),
+        )
 
     def cached_forum(self):
         return Forum.objects.get(self.forum_id)
@@ -667,7 +675,7 @@ class Topic(models.Model):
         return u' '.join(force_unicode(x) for x in out)
 
     def get_read_status(self, user):
-        if user.is_anonymous:
+        if user.is_anonymous():
             return True
         if not hasattr(user, '_readstatus'):
             user._readstatus = ReadStatus(user.forum_read_status)
@@ -677,7 +685,7 @@ class Topic(models.Model):
         """
         Mark the current topic as read for a given user.
         """
-        if user.is_anonymous:
+        if user.is_anonymous():
             return
         if not hasattr(user, '_readstatus'):
             user._readstatus = ReadStatus(user.forum_read_status)
@@ -1290,31 +1298,6 @@ class Attachment(models.Model):
         return self.file.url
 
 
-class Privilege(models.Model):
-    group = models.ForeignKey(Group, null=True)
-    user = models.ForeignKey(User, null=True)
-    forum = models.ForeignKey(Forum)
-    positive = models.IntegerField(null=True, default=0)
-    negative = models.IntegerField(null=True, default=0)
-
-    def save(self, *args, **kwargs):
-        # Check that the value is not a negative value as this
-        # would raise nasty bugs in inyoka.forum.acl.  Change values
-        # to positive integers everytime.
-        # Additionally make `None` to be converted to 0
-        for name in ('positive', 'negative'):
-            value = getattr(self, name)
-            value = value or 0
-            setattr(self, name, abs(value))
-        super(Privilege, self).save(*args, **kwargs)
-
-    def __repr__(self):
-        gid, uid = self.group_id, self.user_id
-        return '<Privilege(id, %s, fid:%s, %s, %s)' % (
-            (self.group_id and 'gid:%s' % gid or 'uid:%s' % uid,
-             self.forum_id, self.positive, self.negative))
-
-
 class PollOption(models.Model):
     poll = models.ForeignKey('forum.Poll', related_name='options')
     name = models.CharField(max_length=250)
@@ -1439,7 +1422,7 @@ class ReadStatus(object):
 
 def mark_all_forums_read(user):
     """Shortcut to mark all forums as read to prevent serializing to often."""
-    if user.is_anonymous:
+    if user.is_anonymous():
         return
     for forum in Forum.objects.filter(parent=None):
         user._readstatus.mark(forum)

@@ -14,7 +14,9 @@ from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import password_reset, password_reset_confirm
+from django.contrib.auth.models import Group
 from django.core import signing
 from django.core.cache import cache
 from django.core.files.storage import default_storage
@@ -25,7 +27,6 @@ from django.middleware.csrf import REASON_NO_REFERER, REASON_NO_CSRF_COOKIE
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dates import MONTHS, WEEKDAYS
-from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
@@ -33,14 +34,7 @@ from django.views.decorators.http import require_POST
 from django_mobile import get_flavour
 from PIL import Image
 
-from inyoka.forum.acl import (
-    PRIVILEGES_DETAILS,
-    REVERSED_PRIVILEGES_BITS,
-    filter_invisible,
-    split_bits,
-    split_negative_positive,
-)
-from inyoka.forum.models import Forum, Privilege
+from inyoka.forum.models import Forum
 from inyoka.ikhaya.models import Article, Category, Event
 from inyoka.portal.filters import SubscriptionFilter
 from inyoka.portal.forms import (
@@ -54,9 +48,10 @@ from inyoka.portal.forms import (
     EditStaticPageForm,
     EditStyleForm,
     EditUserGroupsForm,
-    EditUserPrivilegesForm,
     EditUserProfileForm,
     EditUserStatusForm,
+    GroupGlobalPermissionForm,
+    GroupForumPermissionForm,
     ForumFeedSelectorForm,
     IkhayaFeedSelectorForm,
     LoginForm,
@@ -81,8 +76,6 @@ from inyoka.portal.models import (
     Subscription,
 )
 from inyoka.portal.user import (
-    PERMISSION_NAMES,
-    Group,
     User,
     UserBanned,
     deactivate_user,
@@ -94,10 +87,8 @@ from inyoka.portal.user import (
 from inyoka.portal.utils import (
     abort_access_denied,
     calendar_entries_for_month,
-    check_login,
     get_ubuntu_versions,
     google_calendarize,
-    require_permission,
 )
 from inyoka.utils import generic
 from inyoka.utils.http import (
@@ -126,11 +117,6 @@ AUTOBAN_SPAMMER_WORDS = (
 )
 # autoban gets active if all words of a tuple match
 
-tmp = dict(PRIVILEGES_DETAILS)
-PRIVILEGE_DICT = {bits: tmp[key]
-                  for bits, key in REVERSED_PRIVILEGES_BITS.iteritems()}
-del tmp
-
 
 CONFIRM_ACTIONS = {
     'reactivate_user': (reactivate_user, settings.USER_REACTIVATION_LIMIT,),
@@ -142,7 +128,7 @@ CONFIRM_ACTIONS = {
 page_delete = generic.DeleteView.as_view(model=StaticPage,
     template_name='portal/page_delete.html',
     redirect_url=href('portal', 'pages'),
-    required_permission='static_page_edit')
+    permission_required='portal.delete_staticpage')
 
 
 files = generic.ListView.as_view(model=StaticFile,
@@ -150,7 +136,7 @@ files = generic.ListView.as_view(model=StaticFile,
     default_column='identifier',
     template_name='portal/files.html',
     columns=['identifier', 'is_ikhaya_icon'],
-    required_permission='static_file_edit',
+    permission_required='portal.change_staticfile',
     base_link=href('portal', 'files'))
 
 
@@ -158,14 +144,14 @@ file_edit = generic.CreateUpdateView(model=StaticFile,
     form_class=EditFileForm,
     template_name='portal/file_edit.html',
     context_object_name='file', slug_field='identifier',
-    required_permission='static_file_edit')
+    permission_required='portal.change_staticfile')
 
 
 file_delete = generic.DeleteView.as_view(model=StaticFile,
     template_name='portal/files_delete.html',
     redirect_url=href('portal', 'files'),
     slug_field='identifier',
-    required_permission='static_file_edit')
+    permission_required='portal.delete_staticfile')
 
 
 @templated('portal/index.html')
@@ -185,8 +171,7 @@ def index(request):
         'session_record_time': storage_values.get('session_record_time')
     })
 
-    countdown_active = storage_values.get('countdown_active', False)
-    countdown_active = countdown_active == True or countdown_active == 'True'
+    countdown_active = storage_values.get('countdown_active', False) in (True, 'True')
     countdown_date = storage_values.get('countdown_date', None)
     countdown_image_url = storage_values.get('countdown_image_url', None)
     if countdown_active and countdown_date:
@@ -340,6 +325,7 @@ def activate(request, action='', username='', activation_key=''):
         if check_activation_key(user, activation_key) and user.is_inactive:
             user.status = User.STATUS_ACTIVE
             user.save()
+            user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
             messages.success(request,
                 _(u'Your account was successfully activated. You can now '
                   u'login.'))
@@ -454,17 +440,17 @@ def logout(request):
     return HttpResponseRedirect(redirect)
 
 
-@check_login(message=_(u'You need to be logged in to view a user profile.'))
+@login_required
 @templated('portal/profile.html')
 def profile(request, username):
     """Show the user profile if the user is logged in."""
 
     user = User.objects.get(username__iexact=username)
 
-    if request.user.can('group_edit') or request.user.can('user_edit'):
+    if request.user.has_perm('portal.change_user'):
         groups = user.groups.all()
     else:
-        groups = user.groups.filter(is_public=True)
+        groups = ()
 
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
@@ -477,7 +463,8 @@ def profile(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_mail.html')
 def user_mail(request, username):
     try:
@@ -518,7 +505,7 @@ def user_mail(request, username):
 
 
 @require_POST
-@require_permission('subscribe_to_users')
+@permission_required('portal.subscribe_user', raise_exception=True)
 def subscribe_user(request, username):
     """Subscribe to a user to follow all of his activities."""
     user = User.objects.get(username__iexact=username)
@@ -553,7 +540,7 @@ def unsubscribe_user(request, username):
         return HttpResponseRedirect(url_for(user))
 
 
-@check_login(message=_(u'You need to be logged in to access your control panel'))
+@login_required
 @templated('portal/usercp/index.html')
 def usercp(request):
     """User control panel index page"""
@@ -563,7 +550,7 @@ def usercp(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your profile'))
+@login_required
 @templated('portal/usercp/profile.html')
 def usercp_profile(request):
     """User control panel view for changing the user's profile"""
@@ -592,7 +579,7 @@ def usercp_profile(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your settings.'))
+@login_required
 @templated('portal/usercp/settings.html')
 def usercp_settings(request):
     """User control panel view for changing various user settings"""
@@ -644,7 +631,7 @@ def usercp_settings(request):
     }
 
 
-@check_login(message=_(u'You need to be logged in to change your password.'))
+@login_required
 @templated('portal/usercp/change_password.html')
 def usercp_password(request):
     """User control panel view for changing the password."""
@@ -690,6 +677,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
     base_link = href('portal', 'usercp', 'subscriptions')
     filtersets = [SubscriptionFilter]
     required_login = True
+    permission_required = ()
 
     def get_queryset(self):
         qs = self.request.user.subscription_set.all()
@@ -729,7 +717,7 @@ class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
 usercp_subscriptions = UserCPSubscriptions.as_view()
 
 
-@check_login(message=_(u'You need to be logged in to deactivate your account.'))
+@login_required
 @templated('portal/usercp/deactivate.html')
 def usercp_deactivate(request):
     """
@@ -759,18 +747,8 @@ def usercp_deactivate(request):
     }
 
 
-@require_permission('user_edit')
-@templated('portal/special_rights.html')
-def users_with_special_rights(request):
-    users = User.objects.filter(privilege__isnull=False).distinct()\
-                .order_by('username').defer('settings')
-    return {
-        'users': users,
-        'count': len(users),
-    }
-
-
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user')
 @templated('portal/user_overview.html')
 def user_edit(request, username):
     try:
@@ -783,10 +761,10 @@ def user_edit(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user')
 @templated('portal/user_edit_profile.html')
 def user_edit_profile(request, username):
-    # TODO: Merge with usercp_profile
     try:
         user = User.objects.get_by_username_or_email(username)
     except User.DoesNotExist:
@@ -815,7 +793,8 @@ def user_edit_profile(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user')
 @templated('portal/user_edit_settings.html')
 def user_edit_settings(request, username):
     try:
@@ -866,7 +845,8 @@ def user_edit_settings(request, username):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_status.html')
 def user_edit_status(request, username):
     try:
@@ -879,6 +859,8 @@ def user_edit_status(request, username):
         form = EditUserStatusForm(request.POST, instance=user)
         if form.is_valid():
             user.save()
+            if user.status != User.STATUS_ACTIVE:
+                user.groups.clear()
             messages.success(request,
                 _(u'The state of “%(username)s” was successfully changed.')
                 % {'username': escape(user.username)})
@@ -893,111 +875,8 @@ def user_edit_status(request, username):
     }
 
 
-@require_permission('user_edit')
-@templated('portal/user_edit_privileges.html')
-def user_edit_privileges(request, username):
-    try:
-        user = User.objects.get_by_username_or_email(username)
-    except User.DoesNotExist:
-        raise Http404
-
-    checked_perms = [int(p) for p in request.POST.getlist('permissions')]
-
-    if request.method == 'POST':
-        form = EditUserPrivilegesForm(request.POST, request.FILES)
-        form.fields['permissions'].choices = [(k, '') for k in
-                                              PERMISSION_NAMES.keys()]
-        if form.is_valid():
-            # permissions
-            permissions = 0
-            for perm in checked_perms:
-                permissions |= perm
-            user._permissions = permissions
-
-            #: forum privileges
-            privileges = Privilege.objects
-            for key, value in request.POST.iteritems():
-                if key.startswith('forum_privileges_'):
-                    negative, positive = split_negative_positive(value)
-                    forum_id = int(key.split('_')[2])
-                    # Try to retrieve the privileges for the user. If they exists
-                    # set the new positive and negative values. I there are no
-                    # privileges check if new have to be set. If this validates to
-                    # true, create those.
-                    # If there is a privilege instance but there are neither
-                    # positive nor negative settings, remove the instance
-                    try:
-                        privilege = privileges.get(forum=forum_id,
-                                                   group=None, user=user)
-                    except Privilege.DoesNotExist:
-                        if (positive or negative):
-                            privilege = Privilege(user=user, forum_id=forum_id)
-                        else:
-                            privilege = None
-
-                    if privilege:
-                        if (positive or negative):
-                            privilege.positive = positive
-                            privilege.negative = negative
-                            privilege.save()
-                        else:
-                            privilege.delete()
-
-            user.save()
-            cache.delete(u'user_permissions/{}'.format(user.id))
-
-            messages.success(request,
-                _(u'The privileges of “%(username)s” were successfully '
-                  u'changed.') % {'username': escape(user.username)})
-        else:
-            generic.trigger_fix_errors_message(request)
-    else:
-        initial = model_to_dict(user)
-        if initial['_primary_group']:
-            initial.update({
-                'primary_group': Group.objects.get(id=initial['_primary_group']).name
-            })
-        form = EditUserPrivilegesForm(initial=initial)
-
-    # collect forum privileges
-    forum_privileges = []
-    forums = Forum.objects.all()
-    for forum in forums:
-        try:
-            privilege = Privilege.objects.get(forum=forum, user=user)
-        except Privilege.DoesNotExist:
-            privilege = None
-
-        forum_privileges.append((
-            forum.id,
-            forum.name,
-            list(split_bits(privilege and privilege.positive or None)),
-            list(split_bits(privilege and privilege.negative or None))
-        ))
-
-    permissions = []
-
-    groups = user.groups.all()
-    for id, name in PERMISSION_NAMES.iteritems():
-        derived = filter(lambda g: id & g.permissions, groups)
-        if request.method == 'POST':
-            checked = id in checked_perms
-        else:
-            checked = id & user._permissions
-        permissions.append((id, name, checked, derived))
-
-    forum_privileges = sorted(forum_privileges, lambda x, y: cmp(x[1], y[1]))
-
-    return {
-        'user': user,
-        'form': form,
-        'forum_privileges': PRIVILEGE_DICT,
-        'user_forum_privileges': forum_privileges,
-        'permissions': sorted(permissions, key=lambda p: p[1]),
-    }
-
-
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_groups.html')
 def user_edit_groups(request, username):
     try:
@@ -1006,55 +885,24 @@ def user_edit_groups(request, username):
         raise Http404
 
     initial = model_to_dict(user)
-    if initial['_primary_group']:
-        initial.update({
-            'primary_group': Group.objects.get(id=initial['_primary_group']).name
-        })
     form = EditUserGroupsForm(initial=initial)
-    groups = {group.name: group for group in Group.objects.all()}
     if request.method == 'POST':
-        form = EditUserGroupsForm(request.POST)
+        form = EditUserGroupsForm(request.POST, instance=user)
         if form.is_valid():
-            data = form.cleaned_data
-            groups_joined = [groups[gn] for gn in
-                             request.POST.getlist('user_groups_joined')]
-            groups_not_joined = [groups[gn] for gn in
-                                request.POST.getlist('user_groups_not_joined')]
-            user.groups.remove(*groups_not_joined)
-            user.groups.add(*groups_joined)
-
-            if user._primary_group:
-                oprimary = user._primary_group.name
-            else:
-                oprimary = ""
-
-            primary = None
-            if oprimary != data['primary_group']:
-                try:
-                    primary = Group.objects.get(name=data['primary_group'])
-                except Group.DoesNotExist:
-                    primary = None
-            user._primary_group = primary
-
-            user.save()
+            form.save()
             messages.success(request,
                 _(u'The groups of “%(username)s” were successfully changed.')
                 % {'username': escape(user.username)})
         else:
             generic.trigger_fix_errors_message(request)
-    groups_joined, groups_not_joined = ([], [])
-    groups_joined = groups_joined or user.groups.all()
-    groups_not_joined = groups_not_joined or \
-        [x for x in groups.itervalues() if x not in groups_joined]
     return {
         'user': user,
         'form': form,
-        'joined_groups': [g.name for g in groups_joined],
-        'not_joined_groups': [g.name for g in groups_not_joined],
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_new.html')
 def user_new(request):
     if request.method == 'POST':
@@ -1081,7 +929,8 @@ def user_new(request):
     }
 
 
-@require_permission('user_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 def admin_resend_activation_mail(request):
     user = User.objects.get(username__iexact=request.GET.get('user'))
     if not user.is_inactive:
@@ -1095,8 +944,7 @@ def admin_resend_activation_mail(request):
     return HttpResponseRedirect(request.GET.get('next') or href('portal', 'users'))
 
 
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
+@login_required
 @templated('portal/privmsg/index.html')
 def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     page = int(page)
@@ -1203,9 +1051,8 @@ def privmsg(request, folder=None, entry_id=None, page=1, one_page=False):
     }
 
 
+@login_required
 @templated('portal/privmsg/new.html')
-@check_login(message=_(u'You need to be logged in to access your private '
-                       'messages.'))
 def privmsg_new(request, username=None):
     # if the user has no posts in the forum and registered less than a week ago
     # he can only send one pm every 5 minutes
@@ -1244,7 +1091,7 @@ def privmsg_new(request, username=None):
 
             recipients = set()
 
-            if d.get('group_recipient', None) and not request.user.can('send_group_pm'):
+            if d.get('group_recipient', None) and not request.user.has_perm('portal.send_group_privatemessage'):
                 messages.error(request, _(u'You cannot send messages to groups.'))
                 return HttpResponseRedirect(href('portal', 'privmsg'))
 
@@ -1350,9 +1197,12 @@ class MemberlistView(generic.ListView):
     context_object_name = 'users'
     model = User
     base_link = href('portal', 'users')
+    permission_required = ()
 
-    @method_decorator(require_permission('user_edit'))
     def post(self, request, *args, **kwargs):
+        if not request.user.has_perm('portal.change_user'):
+            messages.error(request, _(u'You need to be logged in before you can continue.'))
+            return abort_access_denied(request)
         name = request.POST.get('user')
         try:
             user = User.objects.get_by_username_or_email(name)
@@ -1368,6 +1218,7 @@ class MemberlistView(generic.ListView):
 memberlist = MemberlistView.as_view()
 
 
+@login_required
 @templated('portal/grouplist.html')
 def grouplist(request, page=1):
     """
@@ -1375,12 +1226,8 @@ def grouplist(request, page=1):
 
     `page` represents the current page in the pagination.
     """
-    if request.user.can('group_edit') or request.user.can('user_edit'):
-        groups = Group.objects.all()
-        user_groups = request.user.groups.all()
-    else:
-        groups = Group.objects.filter(is_public=True)
-        user_groups = request.user.groups.filter(is_public=True)
+    groups = Group.objects.all()
+    user_groups = request.user.groups.all()
     table = Sortable(groups, request.GET, 'name',
                      columns=['id', 'name'])
     pagination = Pagination(request, table.get_queryset(), page, 15,
@@ -1394,12 +1241,11 @@ def grouplist(request, page=1):
     }
 
 
+@login_required
 @templated('portal/group.html')
 def group(request, name, page=1):
     """Shows the informations about the group named `name`."""
     group = Group.objects.get(name__iexact=name)
-    if not (group.is_public or request.user.can('group_edit') or request.user.can('user_edit')):
-        raise Http404
     users = group.user_set.all()
 
     table = Sortable(users, request.GET, 'id',
@@ -1415,92 +1261,91 @@ def group(request, name, page=1):
     }
 
 
-@require_permission('group_edit')
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/group_edit.html')
-def group_edit(request, name=None):
-    new = name is None
-    group = None
-    if name:
-        try:
-            group = Group.objects.get(name=name)
-        except Group.DoesNotExist:
-            messages.error(request,
-                _(u'The group “%(group)s” does not exist.')
-                % {'group': escape(name)})
-            return HttpResponseRedirect(href('portal', 'groups'))
-
-    std = storage.get_many(('team_icon_width', 'team_icon_height'))
-    icon_mw = int(std['team_icon_width'])
-    icon_mh = int(std['team_icon_height'])
-
+def group_new(request):
+    form = EditGroupForm()
     if request.method == 'POST':
-        form = EditGroupForm(request.POST, request.FILES, instance=group)
+        form = EditGroupForm(request.POST)
         if form.is_valid():
             group = form.save()
+            messages.success(request,
+                _(u'The group “%s” was created successfully.') % group.name)
+            return HttpResponseRedirect(href('portal', 'group', group.name, 'edit'))
+    return {
+        'form': form,
+    }
 
-            #: forum privileges
-            for key, value in request.POST.iteritems():
-                if key.startswith('forum_privileges_'):
-                    negative, positive = split_negative_positive(value)
-                    forum_id = int(key.split('_')[2])
-                    # Try to retrieve the privileges for the group. If they exists
-                    # set the new positive and negative values. I there are no
-                    # privileges check if new have to be set. If this validates to
-                    # true, create those.
-                    # If there is a privilege instance but there are neither
-                    # positive nor negative settings, remove the instance
-                    try:
-                        privilege = Privilege.objects.get(forum=forum_id,
-                                                          user=None, group=group)
-                    except Privilege.DoesNotExist:
-                        if (positive or negative):
-                            privilege = Privilege(group=group, forum_id=forum_id)
-                        else:
-                            privilege = None
 
-                    if privilege:
-                        if (positive or negative):
-                            privilege.positive = positive
-                            privilege.negative = negative
-                            privilege.save()
-                        else:
-                            privilege.delete()
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
+@templated('portal/group_edit.html')
+def group_edit(request, name):
+    try:
+        group = Group.objects.get(name=name)
+    except Group.DoesNotExist:
+        messages.error(request,
+            _(u'The group “%(group)s” does not exist.')
+            % {'group': escape(name)})
+        return HttpResponseRedirect(href('portal', 'groups'))
 
-            if new:
-                msg = _(u'The group “%(group)s” was created successfully.')
-            else:
-                msg = _(u'The group “%(group)s” was changed successfully.')
-            messages.success(request, (msg % {'group': group.name}))
-            if new:
-                return HttpResponseRedirect(group.get_absolute_url('edit'))
+    if request.method == 'POST':
+        form = EditGroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            messages.success(request,
+                _(u'The group “%s” was changed successfully.') % group.name)
+            return HttpResponseRedirect(href('portal', 'group', group.name, 'edit'))
     else:
         form = EditGroupForm(instance=group)
 
-    # collect forum privileges
-    forum_privileges = []
-    forums = Forum.objects.all()
-    for forum in forums:
-        try:
-            privilege = Privilege.objects.get(forum=forum, group=group, user=None)
-        except Privilege.DoesNotExist:
-            privilege = None
+    return {
+        'form': form,
+        'group': group,
+    }
 
-        forum_privileges.append((
-            forum.id,
-            forum.name,
-            list(split_bits(privilege and privilege.positive or None)),
-            list(split_bits(privilege and privilege.negative or None))
-        ))
+
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
+@templated('portal/group_edit_global_permissions.html')
+def group_edit_global_permissions(request, name):
+    group = get_object_or_404(Group, name=name)
+
+    if request.method == 'POST':
+        form = GroupGlobalPermissionForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            messages.success(request,
+                _(u'The group “%s” was changed successfully.') % group.name)
+            return HttpResponseRedirect(href('portal', 'group', group.name, 'edit', 'global_permissions'))
+    else:
+        form = GroupGlobalPermissionForm(instance=group)
 
     return {
-        'group_forum_privileges': forum_privileges,
-        'forum_privileges': PRIVILEGE_DICT,
-        'group_name': '' or not new and group.name,
-        'form': form,
-        'is_new': new,
         'group': group,
-        'team_icon_height': icon_mh,
-        'team_icon_width': icon_mw,
+        'form': form,
+    }
+
+@login_required
+@permission_required('portal.change_user', raise_exception=True)
+@templated('portal/group_edit_forum_permissions.html')
+def group_edit_forum_permissions(request, name):
+    group = get_object_or_404(Group, name=name)
+
+    if request.method == 'POST':
+        form = GroupForumPermissionForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            messages.success(request,
+                _(u'The group “%s” was changed successfully.') % group.name)
+            return HttpResponseRedirect(href('portal', 'group', group.name, 'edit', 'forum_permissions'))
+    else:
+        form = GroupForumPermissionForm(instance=group)
+
+    return {
+        'group': group,
+        'form': form,
     }
 
 
@@ -1519,7 +1364,6 @@ app_feed_forms = {
 
 @templated('portal/feedselector.html')
 def feedselector(request, app=None):
-    anonymous_user = User.objects.get_anonymous_user()
     forms = {}
     for fapp in ('forum', 'ikhaya', 'planet', 'wiki'):
         if app in (fapp, None):
@@ -1529,7 +1373,8 @@ def feedselector(request, app=None):
         else:
             forms[fapp] = None
     if forms['forum'] is not None:
-        forums = filter_invisible(anonymous_user, Forum.objects.get_cached())
+        anonymous_user = User.objects.get_anonymous_user()
+        forums = [forum for forum in Forum.objects.get_cached() if anonymous_user.has_perm('forum.view_forum', forum)]
         forms['forum'].fields['forum'].choices = [('', _(u'Please choose'))] + \
             [(f.slug, f.name) for f in forums]
     if forms['ikhaya'] is not None:
@@ -1643,7 +1488,7 @@ def confirm(request, action):
                                   u'you are logged in.'))
         return abort_access_denied(request)
     elif action in ['set_new_email', 'reset_email'] and \
-            request.user.is_anonymous:
+            request.user.is_anonymous():
         messages.error(request, _(u'You need to be logged in before you can continue.'))
         return abort_access_denied(request)
 
@@ -1665,7 +1510,8 @@ def confirm(request, action):
     return r
 
 
-@require_permission('configuration_edit')
+@login_required
+@permission_required('portal.change_storage', raise_exception=True)
 @templated('portal/configuration.html')
 def config(request):
     keys = ['welcome_message', 'max_avatar_width', 'max_avatar_height', 'max_avatar_size',
@@ -1732,7 +1578,8 @@ def static_page(request, page):
     }
 
 
-@require_permission('static_page_edit')
+@login_required
+@permission_required('portal.change_staticpage', raise_exception=True)
 @templated('portal/pages.html')
 def pages(request):
     sortable = Sortable(StaticPage.objects.all(), request.GET, '-key',
@@ -1743,7 +1590,8 @@ def pages(request):
     }
 
 
-@require_permission('static_page_edit')
+@login_required
+@permission_required('portal.change_staticpage', raise_exception=True)
 @templated('portal/page_edit.html')
 def page_edit(request, page=None):
     preview = None
@@ -1774,7 +1622,8 @@ def page_edit(request, page=None):
     }
 
 
-@require_permission('markup_css_edit')
+@login_required
+@permission_required('portal.change_staticpage', raise_exception=True)
 @templated('portal/styles.html')
 def styles(request):
     key = 'markup_styles'

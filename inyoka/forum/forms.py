@@ -15,7 +15,6 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
-from inyoka.forum.acl import CAN_READ
 from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import Forum, Topic
 from inyoka.utils.forms import MultiField, StrippedCharField
@@ -25,7 +24,7 @@ from inyoka.utils.spam import check_form_field
 
 
 class ForumField(forms.ChoiceField):
-    def refresh(self, priv=CAN_READ, add=[], remove=[]):
+    def refresh(self, priv='forum.view_forum', add=[], remove=[]):
         """
         Generates a hierarchical representation of all forums for a choice field.
         Only forums with at least `priv` for the current user are taken into

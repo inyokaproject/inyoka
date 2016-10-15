@@ -15,7 +15,6 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.utils.datastructures import MultiValueDictKeyError
 
-from inyoka.forum.acl import have_privilege, check_privilege, get_forum_privileges
 from inyoka.portal.utils import abort_access_denied, get_ubuntu_versions
 from inyoka.forum.models import Post, Topic, Forum
 from inyoka.portal.models import Subscription
@@ -38,9 +37,7 @@ def on_get_post(request):
         post = Post.objects.select_related('topic', 'author').get(id=post_id)
     except (KeyError, ValueError, Post.DoesNotexist):
         return None
-    privs = get_forum_privileges(request.user, post.topic.forum)
-    if not check_privilege(privs, 'read') or (not check_privilege(privs,
-                       'moderate') and post.topic.hidden or post.hidden):
+    if not request.user.has_perm('forum.view_forum', post.topic.forum) or (not request.user.has_perm('forum.moderate_forum', post.topic.forum) and post.topic.hidden or post.hidden):
         return None
     return {
         'id': post.id,
@@ -50,7 +47,7 @@ def on_get_post(request):
 
 
 def on_toggle_categories(request):
-    if request.user.is_anonymous:
+    if request.user.is_anonymous():
         return False
     hidden_categories = set()
     for id in request.GET.getlist('hidden[]'):
@@ -67,7 +64,7 @@ def on_toggle_categories(request):
 
 
 def on_toggle_category(request):
-    if request.user.is_anonymous:
+    if request.user.is_anonymous():
         return False
     try:
         category_id = int(request.GET.get('id'))
@@ -103,8 +100,14 @@ def subscription_action(request, action=None):
         cls = Topic
 
     obj = cls.objects.get(slug=slug)
-    if request.user.is_anonymous \
-       or not have_privilege(request.user, obj, 'read'):
+
+    if isinstance(obj, Topic):
+        forum = obj.forum
+    else:
+        forum = obj
+
+    if request.user.is_anonymous() \
+       or not request.user.has_perm('forum.view_forum', forum):
         return abort_access_denied(request)
     try:
         subscription = Subscription.objects.get_for_user(request.user, obj)
@@ -122,8 +125,8 @@ def on_change_status(request, solved=None):
     if 'slug' not in request.POST:
         return
     topic = Topic.objects.get(slug=request.POST['slug'])
-    can_read = have_privilege(request.user, topic.forum, 'read')
-    if request.user.is_anonymous or not can_read:
+    can_read = request.user.has_perm('forum.view_forum', topic.forum)
+    if request.user.is_anonymous() or not can_read:
         return abort_access_denied(request)
     if solved is not None:
         topic.solved = solved

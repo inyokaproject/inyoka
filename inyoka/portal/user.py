@@ -10,13 +10,14 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
-from os import path
-from StringIO import StringIO
+from json import loads, dumps
 
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
+    PermissionsMixin,
+    Group,
     update_last_login,
 )
 from django.contrib.auth.signals import user_logged_in
@@ -27,42 +28,17 @@ from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-from PIL import Image
+from guardian.mixins import GuardianUserMixin
+from guardian.shortcuts import get_perms
 
 from inyoka.utils.cache import QueryCounter
 from inyoka.utils.database import InyokaMarkupField, JSONField
 from inyoka.utils.decorators import deferred
 from inyoka.utils.gravatar import get_gravatar
 from inyoka.utils.mail import send_mail
-from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key, is_valid_username
-
-PERMISSIONS = [(2 ** i, p[0], p[1]) for i, p in enumerate([
-    ('admin_panel', u'Not in use anymore'),  # TODO: DEPRECATED
-    ('article_edit', ugettext_lazy(u'Ikhaya | can edit articles')),
-    ('category_edit', ugettext_lazy(u'Ikhaya | can edit categories')),
-    ('event_edit', ugettext_lazy(u'Ikhaya | can create new events')),
-    ('comment_edit', ugettext_lazy(u'Ikhaya | can manage comments')),
-    ('blog_edit', ugettext_lazy(u'Planet | can edit blogs')),
-    ('configuration_edit', ugettext_lazy(u'Portal | can edit miscellaneous settings')),
-    ('static_page_edit', ugettext_lazy(u'Portal | can edit static pages')),
-    ('markup_css_edit', ugettext_lazy(u'Portal | can edit stylesheets')),
-    ('static_file_edit', ugettext_lazy(u'Portal | can edit static files')),
-    ('user_edit', ugettext_lazy(u'Portal | can edit users')),
-    ('group_edit', ugettext_lazy(u'Portal | can edit groups')),
-    ('send_group_pm', ugettext_lazy(u'Portal | can send messages to groups')),
-    ('forum_edit', ugettext_lazy(u'Forum | can edit forums')),
-    ('manage_topics', ugettext_lazy(u'Forum | can manage reported topics')),
-    ('delete_topic', ugettext_lazy(u'Forum | can delete every topic and post')),
-    ('article_read', ugettext_lazy(u'Ikhaya | can read unpublished articles')),
-    ('manage_stats', ugettext_lazy(u'Admin | can manage statistics')),
-    ('manage_pastebin', ugettext_lazy(u'Portal | can manage pastebin')),
-    ('subscribe_to_users', ugettext_lazy(u'Portal | can watch users'))
-])]
-PERMISSION_NAMES = {val: desc for val, name, desc in PERMISSIONS}
-PERMISSION_MAPPING = {name: val for val, name, desc in PERMISSIONS}
 
 
 class UserBanned(Exception):
@@ -98,6 +74,10 @@ def reactivate_user(id, email, status):
     user.set_password(User.objects.make_random_password(length=32))
     user.save()
 
+    # Enforce registered group if active.
+    if user.status == User.STATUS_ACTIVE:
+        user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
+
     return {
         'success': _(u'The account “%(name)s” was reactivated. Please use the '
                      u'password recovery function to set a new password.')
@@ -131,8 +111,8 @@ def deactivate_user(user):
     if not user.is_banned:
         user.email = 'user%d@ubuntuusers.de.invalid' % user.id
     user.set_unusable_password()
-    user.groups.remove(*user.groups.all())
-    user.avatar = user._primary_group = None
+    user.groups.clear()
+    user.avatar = None
     user.jabber = user.location = user.signature = user.gpgkey = \
         user.location = user.website = user.launchpad = user.member_title = ''
     user.save()
@@ -206,96 +186,6 @@ def send_activation_mail(user):
     send_mail(subject, message, settings.INYOKA_SYSTEM_USER_EMAIL, [user.email])
 
 
-class GroupManager(models.Manager):
-
-    def get_registered_group(self):
-        """
-        Return the Group which all registered users contains. This allows us to
-        give rights to all of them at the same time.
-        """
-        return Group.objects.get_or_create(name=settings.INYOKA_REGISTERED_GROUP_NAME)[0]
-
-    def get_ikhaya_group(self):
-        """
-        Return the Group required for the Ikhaya Team.
-        """
-        return Group.objects.get_or_create(name=settings.INYOKA_IKHAYA_GROUP_NAME)[0]
-
-    def get_anonymous_group(self):
-        """
-        Return the Group which contains our anonymous user. All Permissions and Privileges
-        this group gets are only used for not registered and therfor anonymous User
-        Sessions.
-        """
-        return Group.objects.get_or_create(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)[0]
-
-
-class Group(models.Model):
-    name = models.CharField(ugettext_lazy(u'Group name'), max_length=80,
-                unique=True, db_index=True, error_messages={
-                    'unique': ugettext_lazy(u'This group name is already taken. '
-                                u'Please choose another one.')})
-    is_public = models.BooleanField(ugettext_lazy(u'Public profile'),
-                default=False, help_text=ugettext_lazy(u'Will be shown in the '
-                                    u'group overview and the user profile'))
-    permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
-    icon = models.ImageField(ugettext_lazy(u'Team icon'),
-                             upload_to='portal/team_icons',
-                             blank=True, null=True)
-    objects = GroupManager()
-
-    class Meta:
-        verbose_name = ugettext_lazy(u'Usergroup')
-        verbose_name_plural = ugettext_lazy(u'Usergroups')
-
-    @property
-    def icon_url(self):
-        if not self.icon:
-            return None
-        return self.icon.url
-
-    def save_icon(self, img):
-        """
-        Save `img` to the file system.
-
-        :return: a boolean if the `img` was resized or not.
-        """
-        data = img.read()
-        image = Image.open(StringIO(data))
-        fn = 'portal/team_icons/team_%s.%s' % (self.name, image.format.lower())
-        image_path = path.join(settings.MEDIA_ROOT, fn)
-        # clear the file system
-        if self.icon:
-            self.icon.delete(save=False)
-
-        std = storage.get_many(('team_icon_width', 'team_icon_height'))
-        # According to PIL.Image:
-        # "The requested size in pixels, as a 2-tuple: (width, height)."
-        max_size = (int(std['team_icon_width']),
-                    int(std['team_icon_height']))
-        resized = False
-        if image.size > max_size:
-            image = image.resize(max_size)
-            image.save(image_path)
-            resized = True
-        else:
-            image.save(image_path)
-        self.icon = fn
-
-        return resized
-
-    def get_absolute_url(self, action=None):
-        if action == 'edit':
-            return href('portal', 'group', self.name, 'edit')
-        return href('portal', 'group', self.name)
-
-    def __unicode__(self):
-        return self.name
-
-    def __repr__(self):
-        return unicode(self).encode('utf-8')
-
-
 class UserManager(BaseUserManager):
     def get_by_username_or_email(self, name):
         """Get a user by it's username or email address"""
@@ -343,18 +233,16 @@ class UserManager(BaseUserManager):
         if not send_mail:
             # save the user as an active one
             user.status = User.STATUS_ACTIVE
+            user.save()
+            user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
         else:
             user.status = User.STATUS_INACTIVE
             send_activation_mail(user)
-        user.save()
+            user.save()
         return user
 
     def get_anonymous_user(self):
-        name = settings.INYOKA_ANONYMOUS_USER
-        try:
-            return User.objects.get(username=name)
-        except User.DoesNotExist:
-            return self.create_user(name, name)
+        return User.objects.get(username__iexact=settings.ANONYMOUS_USER_NAME)
 
     def get_system_user(self):
         """
@@ -362,11 +250,7 @@ class UserManager(BaseUserManager):
         is the sender for welcome notices, it updates the antispam list and
         is the owner for log entries in the wiki triggered by inyoka itself.
         """
-        name = settings.INYOKA_SYSTEM_USER
-        try:
-            return User.objects.get(username__iexact=name)
-        except User.DoesNotExist:
-            return self.create_user(name, name)
+        return User.objects.get(username__iexact=settings.INYOKA_SYSTEM_USER)
 
 
 def upload_to_avatar(instance, filename):
@@ -374,7 +258,7 @@ def upload_to_avatar(instance, filename):
     return fn % (instance.pk, filename.rsplit('.', 1)[-1])
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     """User model that contains all informations about an user."""
     STATUS_INACTIVE = 0
     STATUS_ACTIVE = 1
@@ -400,10 +284,6 @@ class User(AbstractBaseUser):
                                  choices=STATUS_CHOICES)
     date_joined = models.DateTimeField(verbose_name=ugettext_lazy(u'Member since'),
                                        default=datetime.utcnow)
-    groups = models.ManyToManyField(Group,
-                                    verbose_name=ugettext_lazy(u'Groups'),
-                                    blank=True,
-                                    related_name='user_set')
 
     banned_until = models.DateTimeField(verbose_name=ugettext_lazy(u'Banned until'),
                                         null=True, blank=True,
@@ -419,7 +299,6 @@ class User(AbstractBaseUser):
     website = models.URLField(ugettext_lazy(u'Website'), blank=True)
     launchpad = models.CharField(ugettext_lazy(u'Launchpad username'), max_length=50, blank=True)
     settings = JSONField(ugettext_lazy(u'Settings'), default={})
-    _permissions = models.IntegerField(ugettext_lazy(u'Privileges'), default=0)
 
     # forum attribues
     forum_last_read = models.IntegerField(ugettext_lazy(u'Last read post'),
@@ -430,11 +309,10 @@ class User(AbstractBaseUser):
     member_title = models.CharField(ugettext_lazy(u'Team affiliation / Member title'),
                                     blank=True, null=True, max_length=200)
 
-    # primary group from which the user gets some settings
-    # e.g the membericon
-    _primary_group = models.ForeignKey(Group, related_name='primary_users_set',
-                                       blank=True, null=True,
-                                       db_column='primary_group_id')
+    # member icon
+    icon = models.ImageField(ugettext_lazy(u'Team icon'),
+                             upload_to='portal/team_icons',
+                             blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """
@@ -484,13 +362,11 @@ class User(AbstractBaseUser):
         else:
             return False
 
-    @property
     def is_anonymous(self):
-        return self.username == settings.INYOKA_ANONYMOUS_USER
+        return self.username == settings.ANONYMOUS_USER_NAME
 
     def is_authenticated(self):
-        # Not a property to be compatible with django.
-        return not self.is_anonymous
+        return not self.is_anonymous()
 
     @property
     def is_active(self):
@@ -511,45 +387,6 @@ class User(AbstractBaseUser):
     def email_user(self, subject, message, from_email=None):
         """Sends an e-mail to this User."""
         send_mail(subject, message, from_email, [self.email])
-
-    def get_groups(self):
-        """Get groups inclusive the default group for registered users"""
-        groups = self.is_authenticated() and [Group.objects.get_registered_group()] or []
-        groups.extend(self.groups.all())
-        return groups
-
-    @deferred
-    def permissions(self):
-        if not self.is_authenticated():
-            return 0
-        key = 'user_permissions/%s' % self.id
-        result = cache.get(key)
-        if result is None:
-            result = self._permissions
-            for group in self.groups.all():
-                result |= group.permissions
-            cache.set(key, result)
-        return result
-
-    def can(self, name):
-        """
-        Return a boolean whether the user has a special privilege.
-        """
-        return bool(PERMISSION_MAPPING[name] & self.permissions)
-
-    @deferred
-    def primary_group(self):
-        # FIXME:
-        # primary_group is currently only used to display the teammembers
-        # icons, not checking self.groups saves shitloads of queries
-        # if self._primary_group is None:
-        # we use the first assigned group as the primary one
-        #    groups = self.groups.all()
-        #    if len(groups) >= 1:
-        #        return groups[0]
-        #    else:
-        #        return None
-        return self._primary_group
 
     @deferred
     def _readstatus(self):
@@ -631,8 +468,79 @@ class User(AbstractBaseUser):
                       .filter(topic__forum__user_count_posts=True),
             use_task=True)
 
-    # TODO: reevaluate if needed.
+    def unban(self):
+        """
+        Check if a user is banned, either permanent or temporary and remove
+        the ban if possible.
+
+        Returns `True` if user is not banned or could be unbanned, or `False` otherwise.
+        """
+        if self.is_banned:
+            # user banned ad infinitum
+            if self.banned_until is None:
+                return False
+            else:
+                # user banned for a specific period of time
+                if (self.banned_until >= datetime.utcnow()):
+                    return False
+                else:
+                    # period of time gone, reset status
+                    self.status = User.STATUS_ACTIVE
+                    self.banned_until = None
+                    self.save()
+                    registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+                    self.groups.add(registered_group)
+        return True
+
+    def has_perm(self, perm, obj=None):
+        """
+        Heavy cached version of has_perm() to save many DB Queries.
+
+        Stores cached Permissions inside our redis cache under /acl/<user.id> as JSON blob.
+        """
+
+        def obj_to_key(obj):
+            return '%s-%s' % (obj.__class__.__name__.lower(), obj.id)
+
+        cache_key = '/acl/%s' % self.id
+        if not hasattr(self, 'perm_cache'):
+            current_perm_cache = cache.get(cache_key, None)
+            if current_perm_cache:
+                self.perm_cache = loads(current_perm_cache)
+            else:
+                self.perm_cache = list(self.get_all_permissions())
+                cache.set(cache_key, dumps(self.perm_cache))
+
+        permkey = perm
+        if obj:
+            objkey = obj_to_key(obj)
+            permkey = '%s-%s' % (objkey, perm)
+            if objkey not in self.perm_cache:
+                for permission in get_perms(self, obj):
+                    self.perm_cache.append('%s-%s.%s' % (objkey, obj._meta.app_label, permission))
+                self.perm_cache.append(objkey)
+                cache.set(cache_key, dumps(self.perm_cache))
+
+        return permkey in self.perm_cache
+
+    def has_perms(self, perm_list, obj=None):
+        """
+        Simplified version of has_perms() to load permissions from perm_list in our has_perm()
+        cache.
+
+        Returns `True` if all permissions match, else `False`.
+        """
+        for perm in perm_list:
+            if not self.has_perm(perm, obj):
+                return False
+        return True
+
     backend = 'inyoka.portal.auth.InyokaAuthBackend'
+
+    class Meta:
+        permissions = (
+            ('subscribe_user', 'Can subscribe Users'),
+        )
 
 
 class UserPage(models.Model):

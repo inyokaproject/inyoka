@@ -22,6 +22,7 @@ from inyoka.utils.test import TestCase
 class TestStorage(TestCase):
 
     def setUp(self):
+        super(TestStorage, self).setUp()
         local.cache = {}
         self.cache = caches['default']
 

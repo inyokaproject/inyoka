@@ -14,6 +14,7 @@ from operator import attrgetter
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
@@ -24,15 +25,6 @@ from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.views.generic import CreateView, DetailView, UpdateView
 
-from inyoka.forum.acl import (
-    CAN_MODERATE,
-    CAN_READ,
-    check_privilege,
-    filter_invisible,
-    get_forum_privileges,
-    get_privileges,
-    have_privilege,
-)
 from inyoka.forum.constants import POSTS_PER_PAGE, TOPICS_PER_PAGE
 from inyoka.forum.forms import (
     AddAttachmentForm,
@@ -66,16 +58,13 @@ from inyoka.markup import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
-from inyoka.portal.utils import (
-    abort_access_denied,
-    require_permission,
-    simple_check_login,
-)
+from inyoka.portal.utils import abort_access_denied
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.forms import clear_surge_protection
+from inyoka.utils.generic import PermissionRequiredMixin
 from inyoka.utils.http import (
     AccessDeniedResponse,
     does_not_exist_is_404,
@@ -90,7 +79,6 @@ from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
-from inyoka.utils.views import PermissionRequiredMixin
 from inyoka.wiki.models import Page
 from inyoka.wiki.utils import quote_text
 
@@ -156,8 +144,7 @@ def forum(request, slug, page=1):
     if not forum or forum.parent_id is None:
         raise Http404()
 
-    privs = get_privileges(request.user, [forum] + forum.children)
-    if not check_privilege(privs[forum.pk], 'read'):
+    if not request.user.has_perm('forum.view_forum', forum):
         return abort_access_denied(request)
 
     unread_forum = forum.find_welcome(request.user)
@@ -170,7 +157,7 @@ def forum(request, slug, page=1):
     pagination = Pagination(request, topic_ids, page, TOPICS_PER_PAGE,
                             url_for(forum), total=forum.topic_count.value())
 
-    subforums = filter_invisible(request.user, forum.children, perm=privs)
+    subforums = [children for children in forum.children if request.user.has_perm('forum.view_forum', children)]
     last_post_ids = map(lambda f: f.last_post_id, subforums)
     last_post_map = Post.objects.last_post_map(last_post_ids)
 
@@ -179,7 +166,7 @@ def forum(request, slug, page=1):
     # FIXME: Filter topics with no last_post or first_post
     topics = [topic for topic in qs if topic.first_post and topic.last_post]
 
-    if not check_privilege(privs[forum.pk], 'moderate'):
+    if not request.user.has_perm('forum.moderate_forum', forum):
         topics = [topic for topic in topics if not topic.hidden]
 
     for topic in topics:
@@ -190,8 +177,8 @@ def forum(request, slug, page=1):
         'subforums': subforums,
         'last_posts': last_post_map,
         'is_subscribed': Subscription.objects.user_subscribed(request.user, forum),
-        'can_moderate': check_privilege(privs[forum.pk], 'moderate'),
-        'can_create': check_privilege(privs[forum.pk], 'create'),
+        'can_moderate': request.user.has_perm('forum.moderate_forum', forum),
+        'can_create': request.user.has_perm('forum.add_topic_forum', forum),
         'supporters': forum.get_supporters(),
         'topics': topics,
         'pagination': pagination,
@@ -208,13 +195,12 @@ def viewtopic(request, topic_slug, page=1):
     see these topics.
     """
     topic = Topic.objects.get(slug=topic_slug)
-    privileges = get_forum_privileges(request.user, topic.cached_forum())
 
-    if not check_privilege(privileges, 'read'):
+    if not request.user.has_perm('forum.view_forum', topic.forum):
         return abort_access_denied(request)
 
     if topic.hidden:
-        if check_privilege(privileges, 'moderate'):
+        if request.user.has_perm('forum.moderate_forum', topic.forum):
             messages.info(request, _(u'This topic is not visible for regular users.'))
         else:
             return abort_access_denied(request)
@@ -230,7 +216,7 @@ def viewtopic(request, topic_slug, page=1):
         polls = Poll.objects.filter(topic=topic).all()
 
         if request.method == 'POST' and 'vote' in request.POST:
-            if not check_privilege(privileges, 'vote'):
+            if not request.user.has_perm('forum.vote_forum', topic.forum):
                 return abort_access_denied(request)
             # the user participated in a poll
             for poll in polls:
@@ -278,9 +264,9 @@ def viewtopic(request, topic_slug, page=1):
     if team_icon:
         team_icon = href('media', team_icon)
 
-    can_mod = check_privilege(privileges, 'moderate')
-    can_reply = check_privilege(privileges, 'reply')
-    can_vote = check_privilege(privileges, 'vote')
+    can_mod = request.user.has_perm('forum.moderate_forum', topic.forum)
+    can_reply = request.user.has_perm('forum.add_reply_forum', topic.forum)
+    can_vote = request.user.has_perm('forum.vote_forum', topic.forum)
 
     def can_edit(post):
         return (
@@ -504,21 +490,17 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         topic = quote.topic
         forum = topic.forum
 
-    # Get the privileges here, because we need to know if the user requires
-    # antispam measures
-    privileges = get_forum_privileges(request.user, forum)
+    # We don't need Spam Checks for these Types of Users or Forums:
+    # - Hidden Forums
+    # - Users with post_count >= INYOKA_SPAM_DETECT_LIMIT
+    # - Users with forum.moderate_forum Permission
     needs_spam_check = True
     if request.user.post_count.value(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
-        # Exclude very active users.
         needs_spam_check = False
-    elif check_privilege(privileges, 'moderate') or post and post.pk:
-        # Exclude moderators for the current forum from spam checks
-        # as well as already existing posts
+    elif request.user.has_perm('forum.moderate_forum', forum) or post and post.pk:
         needs_spam_check = False
     else:
-        anonymous_privileges = get_forum_privileges(User.objects.get_anonymous_user(), forum)
-        if not check_privilege(anonymous_privileges, 'read'):
-            # Don't require spam checks for not publicly readable forums
+        if not User.objects.get_anonymous_user().has_perm('forum.view_forum', forum):
             needs_spam_check = False
 
     if newtopic:
@@ -552,25 +534,20 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             data=request.POST or None,
         )
 
-    if request.method == 'POST' and check_privilege(privileges, 'moderate'):
-        # Disable surge protection for moderators
-        form.surge_protection_timeout = None
-
-    if request.method == 'POST' and check_privilege(privileges, 'moderate'):
-        # Disable surge protection for moderators
+    if request.method == 'POST' and request.user.has_perm('forum.moderate_forum', forum):
         form.surge_protection_timeout = None
 
     # check privileges
     if post:
         if (topic.locked or topic.hidden or post.hidden) and \
-           not check_privilege(privileges, 'moderate'):
+           not request.user.has_perm('forum.moderate_forum', forum):
             messages.error(request, _(u'You cannot edit this post.'))
             post.unlock()
             return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
                                         post.page))
-        if not (check_privilege(privileges, 'moderate') or
+        if not (request.user.has_perm('forum.moderate_forum', forum) or
                 (post.author.id == request.user.id and
-                 check_privilege(privileges, 'reply') and
+                 request.user.has_perm('forum.add_reply_forum', forum) and
                  post.check_ownpost_limit('edit'))):
             messages.error(request, _(u'You cannot edit this post.'))
             post.unlock()
@@ -578,13 +555,13 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                                              post.page))
     elif topic:
         if topic.hidden:
-            if not check_privilege(privileges, 'moderate'):
+            if not request.user.has_perm('forum.moderate_forum', forum):
                 messages.error(request,
                     _(u'You cannot reply in this topic because it was '
                       u'deleted by a moderator.'))
                 return HttpResponseRedirect(url_for(topic))
         elif topic.locked:
-            if not check_privilege(privileges, 'moderate'):
+            if not request.user.has_perm('forum.moderate_forum', forum):
                 messages.error(request,
                     _(u'You cannot reply to this topic because '
                       u'it was locked.'))
@@ -594,13 +571,13 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                     _(u'You are replying to a locked topic. '
                       u'Please note that this may be considered as impolite!'))
         elif quote and quote.hidden:
-            if not check_privilege(privileges, 'moderate'):
+            if not request.user.has_perm('forum.moderate_forum', forum):
                 return abort_access_denied(request)
         else:
-            if not check_privilege(privileges, 'reply'):
+            if not request.user.has_perm('forum.add_reply_forum', forum):
                 return abort_access_denied(request)
     else:
-        if not check_privilege(privileges, 'create'):
+        if not request.user.has_perm('forum.add_topic_forum', forum):
             return abort_access_denied(request)
 
     # the user has canceled the action
@@ -621,14 +598,14 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     # Handle polls
     poll_ids = map(int, filter(bool, request.POST.get('polls', '').split(',')))
     poll_form = poll_options = polls = None
-    if (newtopic or firstpost) and check_privilege(privileges, 'create_poll'):
+    if (newtopic or firstpost) and request.user.has_perm('forum.poll_forum', forum):
         poll_form, poll_options, polls = handle_polls(request, topic, poll_ids)
 
     # handle attachments
     att_ids = map(int, filter(bool,
         request.POST.get('attachments', '').split(',')
     ))
-    if check_privilege(privileges, 'upload'):
+    if request.user.has_perm('forum.upload_forum', forum):
         attach_form, attachments = handle_attachments(request, post, att_ids)
 
     # the user submitted a valid form
@@ -661,13 +638,13 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                or topic.ubuntu_version != d.get('ubuntu_version'):
                 topic.ubuntu_distro = d.get('ubuntu_distro')
                 topic.ubuntu_version = d.get('ubuntu_version')
-            if check_privilege(privileges, 'sticky'):
+            if request.user.has_perm('forum.sticky_forum', forum):
                 topic.sticky = d.get('sticky', False)
 
             topic.save()
             topic.forum.invalidate_topic_cache()
 
-            if check_privilege(privileges, 'create_poll'):
+            if request.user.has_perm('forum.poll_forum', forum):
                 for poll in polls:
                     topic.polls.add(poll)
                 topic.has_poll = bool(polls)
@@ -764,10 +741,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         'preview': preview,
         'isnewtopic': newtopic,
         'isfirstpost': firstpost,
-        'can_attach': check_privilege(privileges, 'upload'),
-        'can_create_poll': check_privilege(privileges, 'create_poll'),
-        'can_moderate': check_privilege(privileges, 'moderate'),
-        'can_sticky': check_privilege(privileges, 'sticky'),
+        'can_attach': request.user.has_perm('forum.upload_forum', forum),
+        'can_create_poll': request.user.has_perm('forum.poll_forum', forum),
+        'can_moderate': request.user.has_perm('forum.moderate_forum', forum),
+        'can_sticky': request.user.has_perm('forum.sticky_forum', forum),
         'attach_form': attach_form,
         'attachments': list(attachments),
         'posts': posts,
@@ -778,16 +755,16 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
 @confirm_action(message=_(u'Do you want to (un)lock the topic?'),
                 confirm=_(u'(Un)lock'), cancel=_(u'Cancel'))
-@simple_check_login
+@login_required
 def change_lock_status(request, topic_slug, solved=None, locked=None):
     return change_status(request, topic_slug, solved, locked)
 
 
-@simple_check_login
+@login_required
 def change_status(request, topic_slug, solved=None, locked=None):
     """Change the status of a topic and redirect to it"""
     topic = Topic.objects.get(slug=topic_slug)
-    if not have_privilege(request.user, topic.forum, CAN_READ):
+    if not request.user.has_perm('forum.view_forum', topic.forum):
         abort_access_denied(request)
     if solved is not None:
         topic.solved = solved
@@ -798,7 +775,7 @@ def change_status(request, topic_slug, solved=None, locked=None):
             msg = _(u'The topic was marked as unsolved.')
         messages.success(request, msg)
     if locked is not None:
-        if not have_privilege(request.user, topic.forum, CAN_MODERATE):
+        if not request.user.has_perm('forum.moderate_forum', topic.forum):
             return AccessDeniedResponse()
         topic.locked = locked
         topic.save()
@@ -818,7 +795,7 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
     which have the slug `slug` and are registered in the subscription by
     `subscriptionkw` and have the flashing-test `flasher`
     """
-    @simple_check_login
+    @login_required
     def subscriber(request, **kwargs):
         """
         If the user has already subscribed to this %s, it just redirects.
@@ -832,7 +809,11 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
                 _(u'There is no “%(slug)s” anymore.') % {'slug': slug})
             return HttpResponseRedirect(href('forum'))
 
-        if not have_privilege(request.user, obj, CAN_READ):
+        if isinstance(obj, Topic):
+            forum = obj.forum
+        else:
+            forum = obj
+        if not request.user.has_perm('forum.view_forum', forum):
             return abort_access_denied(request)
         if not Subscription.objects.user_subscribed(request.user, obj):
             # there's no such subscription yet, create a new one
@@ -852,7 +833,7 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
     which have the slug `slug` and are registered in the subscription by
     `subscriptionkw` and have the flashing-test `flasher`
     """
-    @simple_check_login
+    @login_required
     def unsubscriber(request, **kwargs):
         """ If the user has already subscribed to this %s, this view removes it.
         """ % obj_slug
@@ -902,12 +883,12 @@ unsubscribe_topic = _generate_unsubscriber(Topic,
        u'more')))
 
 
-@simple_check_login
+@login_required
 @templated('forum/report.html')
 def report(request, topic_slug):
     """Change the report_status of a topic and redirect to it"""
     topic = Topic.objects.get(slug=topic_slug)
-    if not have_privilege(request.user, topic.forum, CAN_READ):
+    if not request.user.has_perm('forum.view_forum', topic.forum):
         return abort_access_denied(request)
     if topic.reported:
         messages.info(request, _(u'This topic was already reported.'))
@@ -924,7 +905,7 @@ def report(request, topic_slug):
             subscribers = storage['reported_topics_subscribers'] or u''
             users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
             for user in users:
-                if user.can('manage_topics'):
+                if user.has_perm('forum.manage_reported_topic'):
                     send_notification(user, 'new_reported_topic',
                                     _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
                                     {'topic': topic, 'text': data['text']})
@@ -945,7 +926,8 @@ def report(request, topic_slug):
     }
 
 
-@require_permission('manage_topics')
+@login_required
+@permission_required('forum.manage_reported_topic', raise_exception=True)
 @templated('forum/reportlist.html')
 def reportlist(request):
     """Get a list of all reported topics"""
@@ -984,7 +966,7 @@ def reportlist(request):
                 # reported topics and take only the topic IDs where the
                 # requesting user can moderate the forum.
                 for f, ts in groupby(topics_selected, attrgetter('forum')):
-                    if have_privilege(request.user, f, CAN_MODERATE):
+                    if request.user.has_perm('forum.moderate_forum', f):
                         t_ids_mod += map(attrgetter('id'), ts)
 
                 # Update the reported state.
@@ -1017,7 +999,7 @@ def reported_topics_subscription(request, mode):
     users = set(int(i) for i in subscribers.split(',') if i)
 
     if mode == 'subscribe':
-        if not request.user.can('manage_topics'):
+        if not request.user.has_perm('forum.manage_reported_topic'):
             return AccessDeniedResponse()
         users.add(request.user.id)
         messages.success(request, _(u'A notification will be sent when a topic is reported.'))
@@ -1102,7 +1084,7 @@ def movetopic(request, topic_slug):
     """Move a topic into another forum"""
 
     topic = Topic.objects.get(slug=topic_slug)
-    if not have_privilege(request.user, topic.forum, CAN_MODERATE):
+    if not request.user.has_perm('forum.moderate_forum', topic.forum):
         return abort_access_denied(request)
 
     forums = [
@@ -1110,7 +1092,8 @@ def movetopic(request, topic_slug):
         for forum in Forum.objects.get_cached()
         if forum.parent is not None and forum.id != topic.forum.id
     ]
-    mapping = {forum.id: forum for forum in filter_invisible(request.user, forums)}
+    visible_forums = [forum for forum in forums if request.user.has_perm('forum.view_forum', forum)]
+    mapping = {forum.id: forum for forum in visible_forums}
 
     if not mapping:
         return abort_access_denied(request)
@@ -1168,7 +1151,7 @@ def splittopic(request, topic_slug, page=1):
     old_topic = Topic.objects.get(slug=topic_slug)
     old_posts = old_topic.posts.all()
 
-    if not have_privilege(request.user, old_topic.forum, CAN_MODERATE):
+    if not request.user.has_perm('forum.moderate_forum', old_topic.forum):
         return abort_access_denied(request)
 
     post_ids = request.session.get('_split_post_ids', {})
@@ -1280,7 +1263,7 @@ def restore_post(request, post_id):
     normal users again.
     """
     post = Post.objects.select_related('topic', 'topic__forum').get(id=post_id)
-    if not have_privilege(request.user, post.topic.forum, CAN_MODERATE):
+    if not request.user.has_perm('forum.moderate_forum', post.topic.forum):
         return abort_access_denied(request)
     post.show(change_post_counter=post.topic.forum.user_count_posts)
     messages.success(request,
@@ -1301,10 +1284,10 @@ def delete_post(request, post_id, action='hide'):
     topic = post.topic
 
     can_hide = (
-        have_privilege(request.user, topic.forum, CAN_MODERATE) and
+        request.user.has_perm('forum.moderate_forum', topic.forum) and
         not (post.author_id == request.user.id and post.check_ownpost_limit('delete'))
     )
-    can_delete = can_hide and request.user.can('delete_topic')
+    can_delete = can_hide and request.user.has_perm('forum.delete_topic_forum')
 
     if action == 'delete' and not can_delete:
         return abort_access_denied(request)
@@ -1348,7 +1331,7 @@ def mark_ham_spam(request, post_id, action='spam'):
     post = Post.objects.select_related('topic__forum').get(id=post_id)
     topic = post.topic
 
-    if not have_privilege(request.user, topic.forum, CAN_MODERATE):
+    if not request.user.has_perm('forum.moderate_forum', topic.forum):
         return abort_access_denied(request)
 
     if action == 'ham':
@@ -1363,7 +1346,7 @@ def revisions(request, post_id):
     post = Post.objects.select_related('topic', 'topic__forum').get(id=post_id)
     topic = post.topic
     forum = topic.forum
-    if not have_privilege(request.user, forum, CAN_MODERATE):
+    if not request.user.has_perm('forum.moderate_forum', forum):
         return HttpResponseRedirect(post.get_absolute_url())
     revs = PostRevision.objects.filter(post=post).all()
     return {
@@ -1378,7 +1361,7 @@ def revisions(request, post_id):
                 confirm=_(u'Restore'), cancel=_(u'Cancel'))
 def restore_revision(request, rev_id):
     rev = PostRevision.objects.select_related('post__topic__forum').get(id=rev_id)
-    if not have_privilege(request.user, rev.post.topic.forum, CAN_MODERATE):
+    if not request.user.has_perm('forum.moderate_forum', rev.post.topic.forum):
         return abort_access_denied(request)
     rev.restore(request)
     messages.success(request, _(u'An old revision of the post was restored.'))
@@ -1393,7 +1376,7 @@ def restore_topic(request, topic_slug):
     normal users again.
     """
     topic = Topic.objects.get(slug=topic_slug)
-    if not have_privilege(request.user, topic.forum, CAN_MODERATE):
+    if not request.user.has_perm('forum.moderate_forum', topic.forum):
         return abort_access_denied(request)
     topic.hidden = False
     topic.save()
@@ -1412,8 +1395,8 @@ def delete_topic(request, topic_slug, action='hide'):
     assert action in ('hide', 'delete')
 
     topic = Topic.objects.select_related('forum').get(slug=topic_slug)
-    can_moderate = have_privilege(request.user, topic.forum, CAN_MODERATE)
-    can_delete = request.user.can('delete_topic')
+    can_moderate = request.user.has_perm('forum.moderate_forum', topic.forum)
+    can_delete = request.user.has_perm('forum.delete_topic_forum')
 
     if action == 'delete' and not can_delete and not can_moderate:
         return abort_access_denied(request)
@@ -1459,7 +1442,7 @@ def topic_feed(request, slug=None, mode='short', count=10):
     if topic.hidden:
         raise Http404()
 
-    if not have_privilege(anonymous, topic.cached_forum(), CAN_READ):
+    if not anonymous.has_perm('forum.view_forum', topic.cached_forum()):
         return abort_access_denied(request)
 
     maxposts = max(settings.AVAILABLE_FEED_COUNTS['forum_topic_feed'])
@@ -1503,7 +1486,7 @@ def forum_feed(request, slug=None, mode='short', count=10):
 
     if slug:
         forum = Forum.objects.get_cached(slug=slug)
-        if not have_privilege(anonymous, forum, CAN_READ):
+        if not anonymous.has_perm('forum.view_forum', forum):
             return abort_access_denied(request)
 
         topics = Topic.objects.get_latest(forum.slug, count=count)
@@ -1511,7 +1494,7 @@ def forum_feed(request, slug=None, mode='short', count=10):
                 'site': settings.BASE_DOMAIN_NAME}
         url = url_for(forum)
     else:
-        allowed_forums = [f.id for f in filter_invisible(anonymous, Forum.objects.get_cached())]
+        allowed_forums = [forum.id for forum in Forum.objects.get_cached() if anonymous.has_perm('forum.view_forum', forum)]
         if not allowed_forums:
             return abort_access_denied(request)
         topics = Topic.objects.get_latest(allowed_forums=allowed_forums, count=count)
@@ -1555,7 +1538,7 @@ def markread(request, slug=None):
     Mark either all or only the given forum as read.
     """
     user = request.user
-    if user.is_anonymous:
+    if user.is_anonymous():
         messages.info(request, _(u'Please login to mark posts as read.'))
         return HttpResponseRedirect(href('forum'))
     if slug:
@@ -1614,7 +1597,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         title = _(u'Topics by “%(user)s”') % {'user': user.username}
     elif action == 'author':
         user = user and User.objects.get(username__iexact=user) or request.user
-        if request.user.is_anonymous:
+        if request.user.is_anonymous():
             messages.info(request, _(u'You need to be logged in to use this function.'))
             return abort_access_denied(request)
         topics = topics.filter(posts__author=user).distinct()
@@ -1656,7 +1639,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
     # check for moderation permissions
     moderatable_forums = [
         obj.id for obj in
-        Forum.objects.get_forums_filtered(request.user, CAN_MODERATE, reverse=True)
+        Forum.objects.get_forums_filtered(request.user, 'forum.moderate_forum', reverse=True)
     ]
 
     def can_moderate(topic):
@@ -1685,7 +1668,7 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
     page = int(page)
 
     user = user and User.objects.get(username__iexact=user) or request.user
-    if request.user.is_anonymous:
+    if request.user.is_anonymous():
         messages.info(request, _(u'You need to be logged in to use this function.'))
         return abort_access_denied(request)
 
@@ -1719,7 +1702,7 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
     # check for moderation permissions
     moderatable_forums = [
         obj.id for obj in
-        Forum.objects.get_forums_filtered(request.user, CAN_MODERATE)
+        Forum.objects.get_forums_filtered(request.user, 'forum.moderate_forum')
     ]
 
     def can_moderate(topic):
@@ -1758,18 +1741,7 @@ class WelcomeMessageView(PermissionRequiredMixin, DetailView):
     """
     model = Forum
     template_name = 'forum/welcome.html'
-
-    def has_permission(self):
-        """
-        The user needs permissions to read the forum to get the welcome page.
-        """
-        privileges = get_forum_privileges(
-            self.request.user,
-            self.object)
-
-        if not check_privilege(privileges, 'read'):
-            return False
-        return True
+    permission_required = 'forum.view_forum'
 
     def dispatch(self, *args, **kwargs):
         """
@@ -1822,7 +1794,7 @@ class ForumEditMixin(PermissionRequiredMixin):
     """
     Mixin for the ForumCreateView and the ForumUpdateView.
     """
-    permission_required = 'forum_edit'
+    permission_required = 'forum.change_forum'
     model = Forum
     form_class = EditForumForm
     template_name = 'forum/forum_edit.html'

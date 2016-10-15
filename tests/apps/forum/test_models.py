@@ -30,6 +30,7 @@ class TestAttachmentModel(TestCase):
 class TestForumModel(TestCase):
 
     def setUp(self):
+        super(TestForumModel, self).setUp()
         self.parent1 = Forum.objects.create(
             name='This is a test')
         self.parent2 = Forum.objects.create(
@@ -123,6 +124,7 @@ class TestForumModel(TestCase):
 class TestPostModel(TestCase):
 
     def setUp(self):
+        super(TestPostModel, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
         self.category = Forum(name='category')
@@ -170,6 +172,7 @@ class TestPostRevisionModel(TestCase):
 class TestPostSplit(TestCase):
 
     def setUp(self):
+        super(TestPostSplit, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
         self.category = Forum(name='category')
@@ -270,6 +273,7 @@ class TestPostSplit(TestCase):
 class TestPostMove(TestCase):
 
     def setUp(self):
+        super(TestPostMove, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
         self.forum = Forum.objects.create(
@@ -348,6 +352,7 @@ class TestPostMove(TestCase):
 class PostDeletionTest(TestCase):
 
     def setUp(self):
+        super(PostDeletionTest, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
         self.category = Forum.objects.create(name='category')
         self.parent = Forum.objects.create(name='parent', parent=self.category)

@@ -14,6 +14,7 @@ from importlib import import_module
 import responses
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import Group
 from django.core.cache import caches
 from django.http import HttpRequest
 from django.test import TestCase as _TestCase
@@ -71,7 +72,7 @@ class InyokaClient(Client):
         """Update the default request variables with ``**defaults`` and disable
         CSRF checks by default. If ``host`` is given, this host is set as
         default for further request. The user of this client is an instance of
-        :class:`inyoka.portal.user.User` and :data:`INYOKA_ANONYMOUS_USER` by
+        :class:`inyoka.portal.user.User` and :data:`ANONYMOUS_USER_NAME` by
         default. To change the user, call :meth:`InyokaClient.login(user)`.
 
         """

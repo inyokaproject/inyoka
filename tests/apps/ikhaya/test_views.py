@@ -13,7 +13,7 @@ import datetime
 from django.conf import settings
 
 from inyoka.ikhaya.models import Article, Category, Comment, Report
-from inyoka.portal.user import PERMISSION_NAMES, User
+from inyoka.portal.user import User
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 
@@ -21,12 +21,12 @@ from inyoka.utils.urls import href
 class TestViews(TestCase):
 
     client_class = InyokaClient
-    permissions = sum(PERMISSION_NAMES.keys())
 
     def setUp(self):
+        super(TestViews, self).setUp()
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
         self.user = User.objects.register_user('user', 'user', 'user', False)
-        self.admin._permissions = self.permissions
+        self.admin.is_superuser = True
         self.admin.save()
 
         self.cat = Category.objects.create(name="Categrory")

@@ -5,18 +5,18 @@ from django.conf import settings
 from django.utils import translation
 
 from inyoka.planet.models import Blog, Entry
-from inyoka.portal.user import PERMISSION_NAMES, User
+from inyoka.portal.user import User
 from inyoka.utils.test import InyokaClient, TestCase
 
 
 class TestViews(TestCase):
 
     client_class = InyokaClient
-    permissions = sum(PERMISSION_NAMES.keys())
 
     def setUp(self):
+        super(TestViews, self).setUp()
         self.admin = User.objects.register_user('admin', 'admin', 'admin', False)
-        self.admin._permissions = self.permissions
+        self.admin.is_superuser = True
         self.admin.save()
 
         self.client.defaults['HTTP_HOST'] = 'planet.%s' % settings.BASE_DOMAIN_NAME

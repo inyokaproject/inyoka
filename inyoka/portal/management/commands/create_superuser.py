@@ -18,9 +18,7 @@ from getpass import getpass
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from inyoka.forum.acl import PRIVILEGES_DETAILS, join_flags
-from inyoka.forum.models import Forum, Privilege
-from inyoka.portal.user import PERMISSION_NAMES, User
+from inyoka.portal.user import User
 
 
 class Command(BaseCommand):
@@ -48,13 +46,6 @@ class Command(BaseCommand):
                     password = ''
         with transaction.atomic():
             user = User.objects.register_user(username, email, password, False)
-            permissions = 0
-            for perm in PERMISSION_NAMES.keys():
-                permissions |= perm
-            user._permissions = permissions
+            user.is_superuser = True
             user.save()
-            bits = dict(PRIVILEGES_DETAILS).keys()
-            bits = join_flags(*bits)
-            for forum in Forum.objects.all():
-                Privilege(user=user, forum=forum, positive=bits, negative=0).save()
             print('created superuser')
