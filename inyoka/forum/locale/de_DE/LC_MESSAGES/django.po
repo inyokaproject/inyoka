@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-03-13 12:14+0100\n"
+"POT-Creation-Date: 2016-10-15 17:32+0200\n"
 "PO-Revision-Date: 2015-11-28 18:37+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
@@ -434,30 +434,6 @@ msgstr "Dein Thema „%(topic)s“ wurde verschoben."
 #, python-format
 msgid "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible spam."
 msgstr "[user:%(username)s:]: Der Beitrag [post:%(post)s:] wurde aufgrund möglichen Spams verborgen."
-
-msgid "can create polls"
-msgstr "kann Umfragen erstellen"
-
-msgid "can create topics"
-msgstr "kann Themen erstellen"
-
-msgid "can make sticky"
-msgstr "kann Themen anpinnen"
-
-msgid "can moderate"
-msgstr "kann moderieren"
-
-msgid "can read"
-msgstr "kann lesen"
-
-msgid "can reply"
-msgstr "kann antworten"
-
-msgid "can upload attachments"
-msgstr "kann Anhänge hochladen"
-
-msgid "can vote"
-msgstr "kann abstimmen"
 
 #, python-format
 msgid "“%(topic)s” – Reply from “%(username)s“"

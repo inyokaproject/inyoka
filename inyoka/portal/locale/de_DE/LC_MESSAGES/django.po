@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2016-03-13 12:14+0100\n"
-"PO-Revision-Date: 2016-01-06 12:23+0100\n"
+"POT-Creation-Date: 2016-10-15 17:32+0200\n"
+"PO-Revision-Date: 2016-10-15 14:30+0200\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
@@ -33,9 +33,6 @@ msgstr "%(sitename)s – E-Mail Adresse bestätigen"
 #, python-format
 msgid "%(sitename)s – Email address changed"
 msgstr "%(sitename)s – E-Mail Adresse geändert"
-
-msgid "A global team icon was not yet defined."
-msgstr "Es wurde noch kein globales Team-Icon definiert."
 
 #, python-format
 msgid "A message was deleted."
@@ -66,9 +63,6 @@ msgstr "Ein Benutzer mit diesem Namen existiert bereits."
 
 msgid "Activation status"
 msgstr "Aktivierungsstatus"
-
-msgid "Admin | can manage statistics"
-msgstr "Admin | kann Statistiken verwalten"
 
 msgid "All"
 msgstr "Alle"
@@ -182,18 +176,6 @@ msgstr "Ordner"
 msgid "Forum"
 msgstr "Forum"
 
-msgid "Forum privileges"
-msgstr "Forumsprivilegien"
-
-msgid "Forum | can delete every topic and post"
-msgstr "Forum | kann jedes Thema und jeden Beitrag löschen"
-
-msgid "Forum | can edit forums"
-msgstr "Forum | kann Foren bearbeiten"
-
-msgid "Forum | can manage reported topics"
-msgstr "Forum | kann gemeldete Themen verwalten"
-
 #, python-format
 msgid "From now on you won’t be notified anymore about activities of “%(username)s”."
 msgstr "Du wirst ab jetzt nicht mehr über Aktivitäten von „%(username)s“ benachrichtigt."
@@ -213,7 +195,7 @@ msgstr "Globale Nachricht"
 msgid "Global team icon"
 msgstr "Globales Team-Icon"
 
-msgid "Group name"
+msgid "Groupname"
 msgstr "Gruppenname"
 
 msgid "Groups"
@@ -240,23 +222,11 @@ msgstr "Bezeichner"
 msgid "If not given, the last changes will be displayed."
 msgstr "Wenn nicht angegeben, werden die letzten Änderungen angezeigt"
 
+msgid "Ikhaya"
+msgstr "Ikhaya"
+
 msgid "Ikhaya article"
 msgstr "Ikhaya Artikel"
-
-msgid "Ikhaya | can create new events"
-msgstr "Ikhaya | kann neue Veranstaltungen erstellen"
-
-msgid "Ikhaya | can edit articles"
-msgstr "Ikhaya | kann Artikel bearbeiten"
-
-msgid "Ikhaya | can edit categories"
-msgstr "Ikhaya | kann Kategorien bearbeiten"
-
-msgid "Ikhaya | can manage comments"
-msgstr "Ikhaya | kann Kommentare moderieren"
-
-msgid "Ikhaya | can read unpublished articles"
-msgstr "Ikhaya | kann nicht veröffentlichte Artikel lesen"
 
 msgid "Image URL"
 msgstr "Bild URL"
@@ -269,6 +239,12 @@ msgstr "Infoseite für neue Wiki-Seiten"
 
 msgid "Information page to which a “create” link should redirect to."
 msgstr "Infoseite, auf die ein „erstellen“ Link verweisen soll."
+
+msgid "Invalid Permissions specified."
+msgstr "Ungültige Berechtigung spezifiziert."
+
+msgid "Invalid groups specified."
+msgstr "Ungültige Gruppe spezifiziert."
 
 msgid "Invalid substitution pattern."
 msgstr "Ungültiges Ersetzungsmuster."
@@ -328,6 +304,9 @@ msgstr "Neue private Nachricht von %(username)s: %(subject)s"
 msgid "New user name '{newname}' contains invalid characters. Skipping..."
 msgstr "Der neue Benutzername „{newname}“ enthält ungültige Zeichen. Überspringe..."
 
+msgid "No JSON file specified, using stdout..."
+msgstr "Keine JSON Datei angegeben. Breche ab..."
+
 msgid "No JSON file specified. Aborting..."
 msgstr "Keine json Datei angegeben. Breche ab..."
 
@@ -361,11 +340,14 @@ msgstr "Seitenname"
 msgid "Password"
 msgstr "Passwort"
 
+msgid "Pastebin"
+msgstr "Ablage"
+
 msgid "Picture preview"
 msgstr "Bilder-Vorschau"
 
-msgid "Planet | can edit blogs"
-msgstr "Planet | kann Blogs bearbeiten"
+msgid "Planet"
+msgstr "Planet"
 
 msgid "Please choose"
 msgstr "Bitte auswählen"
@@ -379,41 +361,11 @@ msgstr "Bitte beachte die untenstehenden Angaben zur Maximalgröße"
 msgid "Please select a forum"
 msgstr "Bitte wähle ein Forum aus"
 
-msgid "Portal | can edit groups"
-msgstr "Portal | kann Gruppen bearbeiten"
+msgid "Please select the groups for this user."
+msgstr "Bitte wähle Gruppen für diesen Benutzer."
 
-msgid "Portal | can edit miscellaneous settings"
-msgstr "Portal | kann diverse Einstellungen bearbeiten"
-
-msgid "Portal | can edit static files"
-msgstr "Portal | kann statische Dateien bearbeiten"
-
-msgid "Portal | can edit static pages"
-msgstr "Portal | kann statische Seiten bearbeiten"
-
-msgid "Portal | can edit stylesheets"
-msgstr "Portal | kann Stylesheets bearbeiten"
-
-msgid "Portal | can edit users"
-msgstr "Portal | kann Benutzer bearbeiten"
-
-msgid "Portal | can manage pastebin"
-msgstr "Portal | kann Ablage verwalten"
-
-msgid "Portal | can send messages to groups"
-msgstr "Portal | kann Nachrichten an Gruppen senden"
-
-msgid "Portal | can watch users"
-msgstr "Portal | kann Benutzer beobachten"
-
-msgid "Primary group"
-msgstr "Primäre Gruppe"
-
-msgid "Privileges"
-msgstr "Privilegien"
-
-msgid "Public profile"
-msgstr "Öffentliches Profil"
+msgid "Portal"
+msgstr "Portal"
 
 msgid "Read"
 msgstr "Lesen"
@@ -532,12 +484,12 @@ msgid "The group “%(group)s” does not exist."
 msgstr "Die Gruppe „%(group)s“ existiert nicht."
 
 #, python-format
-msgid "The group “%(group)s” was changed successfully."
-msgstr "Die Gruppe „%(group)s“ wurde erfolgreich bearbeitet."
+msgid "The group “%s” was changed successfully."
+msgstr "Die Gruppe „%s“ wurde erfolgreich bearbeitet."
 
 #, python-format
-msgid "The group “%(group)s” was created successfully."
-msgstr "Die Gruppe „%(group)s“ wurde erfolgreich erstellt."
+msgid "The group “%s” was created successfully."
+msgstr "Die Gruppe „%s“ wurde erfolgreich erstellt."
 
 #, python-format
 msgid "The groups of “%(username)s” were successfully changed."
@@ -577,10 +529,6 @@ msgstr "Die Passwörter müssen übereinstimmen"
 
 msgid "The point of time is in the past."
 msgstr "Der Zeitpunkt liegt in der Vergangenheit"
-
-#, python-format
-msgid "The privileges of “%(username)s” were successfully changed."
-msgstr "Die Privilegien von „%(username)s“ wurden erfolgreich aktualisiert."
 
 #, python-format
 msgid "The profile of “%(username)s” was changed successfully"
@@ -630,9 +578,6 @@ msgstr "Diese E-Mail-Adresse wird bereits verwendet."
 msgid "This field is required"
 msgstr "Pflichtfeld"
 
-msgid "This group name is already taken. Please choose another one."
-msgstr "Der Gruppenname ist bereits vergeben, bitte wähle einen anderen."
-
 msgid "This is the welcome message displayed on the main page."
 msgstr "Dies ist die Willkommensnachricht welche auf der Hauptseite angezeigt wird."
 
@@ -663,9 +608,6 @@ msgstr "Papierkorb"
 msgid "Use Gravatar"
 msgstr "Gravatar benutzen"
 
-msgid "Use global team icon"
-msgstr "Globales Team-Icon benutzen"
-
 msgid "User '{oldname}' does not exist. Skipping..."
 msgstr "Den Benutzer „{username}“ gibt es nicht. Überspringe..."
 
@@ -677,12 +619,6 @@ msgstr "Die Registrierung ist aktuell deaktiviert."
 
 msgid "User was already notified"
 msgstr "Der Benutzer wurde bereits benachrichtigt"
-
-msgid "Usergroup"
-msgstr "Benutzergruppe"
-
-msgid "Usergroups"
-msgstr "Benutzerruppen"
 
 msgid "Username"
 msgstr "Benutzername"
@@ -708,12 +644,6 @@ msgstr "Wiki Hilfetext"
 
 msgid "Wiki page"
 msgstr "Wikiseite"
-
-msgid "Will be shown in the group overview and the user profile"
-msgstr "Wird in der Gruppenübersicht und im Benutzerprofil angezeigt"
-
-msgid "Will be used to display the team icon"
-msgstr "Wird für das Anzeigen des Team-Icons verwendet"
 
 msgid "Will be used to generate the URL. Cannot be changed later."
 msgstr "Wird für die URL verwendet. Kann nicht verändert werden."
@@ -751,27 +681,6 @@ msgstr "Du musst eine gültige <a href=\"%(link)s\">Jabber-Adresse</a> angeben, 
 
 msgid "You need to be logged in before you can continue."
 msgstr "Du musst angemeldet sein um fortzufahren."
-
-msgid "You need to be logged in to access your control panel"
-msgstr "Du musst angemeldet sein, um dein Kontrollzentrum einsehen zu können."
-
-msgid "You need to be logged in to access your private messages."
-msgstr "Du musst angemeldet sein, um deine privaten Nachrichten ansehen zu können."
-
-msgid "You need to be logged in to change your password."
-msgstr "Du musst angemeldet sein, um dein Passwort ändern zu können."
-
-msgid "You need to be logged in to change your profile"
-msgstr "Du musst angemeldet sein, um dein Profil ändern zu können."
-
-msgid "You need to be logged in to change your settings."
-msgstr "Du musst angemeldet sein, um deine Einstellungen ändern zu können."
-
-msgid "You need to be logged in to deactivate your account."
-msgstr "Du musst angemeldet sein, um dein Konto deaktivieren zu können."
-
-msgid "You need to be logged in to view a user profile."
-msgstr "Du musst angemeldet sein, um ein Benutzerprofil einsehen zu können."
 
 msgid "You need to enter a email address"
 msgstr "Du musst eine E-Mail-Adresse angeben"

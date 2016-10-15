@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.13.1\n"
+"Project-Id-Version: Inyoka Project v0.14.3\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-03-13 12:14+0100\n"
+"POT-Creation-Date: 2016-10-15 17:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,9 +31,6 @@ msgstr ""
 
 #, python-format
 msgid "%(sitename)s – Email address changed"
-msgstr ""
-
-msgid "A global team icon was not yet defined."
 msgstr ""
 
 #, python-format
@@ -64,9 +61,6 @@ msgid "A user with this name already exists."
 msgstr ""
 
 msgid "Activation status"
-msgstr ""
-
-msgid "Admin | can manage statistics"
 msgstr ""
 
 msgid "All"
@@ -181,18 +175,6 @@ msgstr ""
 msgid "Forum"
 msgstr ""
 
-msgid "Forum privileges"
-msgstr ""
-
-msgid "Forum | can delete every topic and post"
-msgstr ""
-
-msgid "Forum | can edit forums"
-msgstr ""
-
-msgid "Forum | can manage reported topics"
-msgstr ""
-
 #, python-format
 msgid "From now on you won’t be notified anymore about activities of “%(username)s”."
 msgstr ""
@@ -212,7 +194,7 @@ msgstr ""
 msgid "Global team icon"
 msgstr ""
 
-msgid "Group name"
+msgid "Groupname"
 msgstr ""
 
 msgid "Groups"
@@ -239,22 +221,10 @@ msgstr ""
 msgid "If not given, the last changes will be displayed."
 msgstr ""
 
+msgid "Ikhaya"
+msgstr ""
+
 msgid "Ikhaya article"
-msgstr ""
-
-msgid "Ikhaya | can create new events"
-msgstr ""
-
-msgid "Ikhaya | can edit articles"
-msgstr ""
-
-msgid "Ikhaya | can edit categories"
-msgstr ""
-
-msgid "Ikhaya | can manage comments"
-msgstr ""
-
-msgid "Ikhaya | can read unpublished articles"
 msgstr ""
 
 msgid "Image URL"
@@ -267,6 +237,12 @@ msgid "Information page about new wiki pages"
 msgstr ""
 
 msgid "Information page to which a “create” link should redirect to."
+msgstr ""
+
+msgid "Invalid Permissions specified."
+msgstr ""
+
+msgid "Invalid groups specified."
 msgstr ""
 
 msgid "Invalid substitution pattern."
@@ -327,6 +303,9 @@ msgstr ""
 msgid "New user name '{newname}' contains invalid characters. Skipping..."
 msgstr ""
 
+msgid "No JSON file specified, using stdout..."
+msgstr ""
+
 msgid "No JSON file specified. Aborting..."
 msgstr ""
 
@@ -360,10 +339,13 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
+msgid "Pastebin"
+msgstr ""
+
 msgid "Picture preview"
 msgstr ""
 
-msgid "Planet | can edit blogs"
+msgid "Planet"
 msgstr ""
 
 msgid "Please choose"
@@ -378,40 +360,10 @@ msgstr ""
 msgid "Please select a forum"
 msgstr ""
 
-msgid "Portal | can edit groups"
+msgid "Please select the groups for this user."
 msgstr ""
 
-msgid "Portal | can edit miscellaneous settings"
-msgstr ""
-
-msgid "Portal | can edit static files"
-msgstr ""
-
-msgid "Portal | can edit static pages"
-msgstr ""
-
-msgid "Portal | can edit stylesheets"
-msgstr ""
-
-msgid "Portal | can edit users"
-msgstr ""
-
-msgid "Portal | can manage pastebin"
-msgstr ""
-
-msgid "Portal | can send messages to groups"
-msgstr ""
-
-msgid "Portal | can watch users"
-msgstr ""
-
-msgid "Primary group"
-msgstr ""
-
-msgid "Privileges"
-msgstr ""
-
-msgid "Public profile"
+msgid "Portal"
 msgstr ""
 
 msgid "Read"
@@ -531,11 +483,11 @@ msgid "The group “%(group)s” does not exist."
 msgstr ""
 
 #, python-format
-msgid "The group “%(group)s” was changed successfully."
+msgid "The group “%s” was changed successfully."
 msgstr ""
 
 #, python-format
-msgid "The group “%(group)s” was created successfully."
+msgid "The group “%s” was created successfully."
 msgstr ""
 
 #, python-format
@@ -575,10 +527,6 @@ msgid "The password must match the password confirmation."
 msgstr ""
 
 msgid "The point of time is in the past."
-msgstr ""
-
-#, python-format
-msgid "The privileges of “%(username)s” were successfully changed."
 msgstr ""
 
 #, python-format
@@ -629,9 +577,6 @@ msgstr ""
 msgid "This field is required"
 msgstr ""
 
-msgid "This group name is already taken. Please choose another one."
-msgstr ""
-
 msgid "This is the welcome message displayed on the main page."
 msgstr ""
 
@@ -662,9 +607,6 @@ msgstr ""
 msgid "Use Gravatar"
 msgstr ""
 
-msgid "Use global team icon"
-msgstr ""
-
 msgid "User '{oldname}' does not exist. Skipping..."
 msgstr ""
 
@@ -675,12 +617,6 @@ msgid "User registration is currently disabled."
 msgstr ""
 
 msgid "User was already notified"
-msgstr ""
-
-msgid "Usergroup"
-msgstr ""
-
-msgid "Usergroups"
 msgstr ""
 
 msgid "Username"
@@ -706,12 +642,6 @@ msgid "Wiki helptext"
 msgstr ""
 
 msgid "Wiki page"
-msgstr ""
-
-msgid "Will be shown in the group overview and the user profile"
-msgstr ""
-
-msgid "Will be used to display the team icon"
 msgstr ""
 
 msgid "Will be used to generate the URL. Cannot be changed later."
@@ -749,27 +679,6 @@ msgid "You need to <a href=\"%(link)s\">enter a valid jabber address</a> to use 
 msgstr ""
 
 msgid "You need to be logged in before you can continue."
-msgstr ""
-
-msgid "You need to be logged in to access your control panel"
-msgstr ""
-
-msgid "You need to be logged in to access your private messages."
-msgstr ""
-
-msgid "You need to be logged in to change your password."
-msgstr ""
-
-msgid "You need to be logged in to change your profile"
-msgstr ""
-
-msgid "You need to be logged in to change your settings."
-msgstr ""
-
-msgid "You need to be logged in to deactivate your account."
-msgstr ""
-
-msgid "You need to be logged in to view a user profile."
 msgstr ""
 
 msgid "You need to enter a email address"

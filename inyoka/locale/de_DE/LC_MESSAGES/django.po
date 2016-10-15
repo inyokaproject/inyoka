@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2016-03-13 12:14+0100\n"
+"POT-Creation-Date: 2016-10-15 17:32+0200\n"
 "PO-Revision-Date: 2016-01-06 12:20+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
@@ -134,7 +134,4 @@ msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
-
-#~ msgid "The chosen sort value (“%(value)s”) is not available"
-#~ msgstr "Der ausgewählte Wert („%(value)s“) ist nicht verfügbar"
 

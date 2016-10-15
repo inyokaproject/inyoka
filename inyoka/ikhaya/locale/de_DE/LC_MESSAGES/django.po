@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2016-03-13 12:14+0100\n"
+"POT-Creation-Date: 2016-10-15 17:32+0200\n"
 "PO-Revision-Date: 2016-02-26 20:22+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -144,9 +144,6 @@ msgstr "Du wirst über neue Kommentare zu diesem Artikel benachrichtigt."
 msgid "Notifications on new suggestions will be sent to you."
 msgstr "Du wirst über neue Vorschläge benachrichtigt."
 
-msgid "Please login to suggest an article."
-msgstr "Bitte melde dich an, um einen Artikel vorzuschlagen."
-
 msgid "Public"
 msgstr "Veröffentlicht"
 
@@ -270,12 +267,6 @@ msgstr "Eindeutiger URL-Teil für den Artikel. Wird automatisch anhand des Titel
 
 msgid "XHTML Markup"
 msgstr "XHTML Auszeichnung"
-
-msgid "You need to be logged in to subscribe to comments."
-msgstr "Du musst angemeldet sein, um Kommentare zu abonnieren."
-
-msgid "You need to be logged in to unsubscribe from comments."
-msgstr "Du musst angemeldet sein, um Kommentare abzubestellen."
 
 msgid "You will no longer be notified of new comments for this article."
 msgstr "Du wirst über neue Kommentare zu diesem Artikel nicht mehr benachrichtigt."

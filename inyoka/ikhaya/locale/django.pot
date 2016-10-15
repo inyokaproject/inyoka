@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.13.1\n"
+"Project-Id-Version: Inyoka Project v0.14.3\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-03-13 12:14+0100\n"
+"POT-Creation-Date: 2016-10-15 17:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -143,9 +143,6 @@ msgstr ""
 msgid "Notifications on new suggestions will be sent to you."
 msgstr ""
 
-msgid "Please login to suggest an article."
-msgstr ""
-
 msgid "Public"
 msgstr ""
 
@@ -268,12 +265,6 @@ msgid "Unique URL-part for the article. If not given, the slug will be generated
 msgstr ""
 
 msgid "XHTML Markup"
-msgstr ""
-
-msgid "You need to be logged in to subscribe to comments."
-msgstr ""
-
-msgid "You need to be logged in to unsubscribe from comments."
 msgstr ""
 
 msgid "You will no longer be notified of new comments for this article."
