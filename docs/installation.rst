@@ -30,7 +30,7 @@ Git access
 If you do not have a login on GitHub_ get one so that
 you can fork Inyoka and improve it.
 
-If you do not have Git installed install it:
+Install Git if you have not yet:
 
 .. code-block:: console
 
@@ -45,7 +45,7 @@ If you do not have a SSH key, create one:
 
     $ ssh-keygen -t rsa -b 4096
 
-Then you need to add your *public* key to your profile in Github under
+You need to add your *public* key to your profile in Github under
 *"Account Profile -> SSH keys -> Add SSH key"*:
 
 .. code-block:: console
@@ -75,13 +75,13 @@ be stored. Then you can clone the repository:
     $ git clone git@github.com:$GITHUBNAME/inyoka.git
 
 ``$GITHUBNAME`` is your login name on GitHub. This command will create a new
-directory called *inyoka* in your current directory. So go to it:
+directory called *inyoka* in your current directory. So enter it:
 
 .. code-block:: console
 
     $ cd inyoka
 
-Next you need to add the upstream project for your fork and do some update
+Next you need to add the upstream project for your fork and do some updates
 afterwards so that you have the latest files:
 
 .. code-block:: console
@@ -97,10 +97,7 @@ For compiling Inyoka and its dependencies you need a lot of developer files:
 
 .. code-block:: console
 
-    $  sudo apt-get install libxml2-dev libxslt1-dev
-    libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev
-    libmysqlclient-dev build-essential redis-server libpq-dev
-    libffi-dev
+    $  sudo apt-get install libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libmysqlclient-dev build-essential redis-server libpq-dev libffi-dev nodejs-legacy
 
 Further you need the Python 2.7 files:
 
@@ -118,20 +115,19 @@ Further you need a recent pip and virtualenv for Python 2.7:
     $ sudo python get-pip.py
     $ sudo pip install virtualenv
 
-Finally for installing themes npm, a package manager for JavaScript, is
-needed:
+Finally the JavaScript package manager npm is necessary to install themes:
 
 .. code-block:: console
 
     $ sudo apt-get install npm
 
-The version of npm shipped on Ubuntu 12.04 is too old, see `these docs
+The version of npm shipped with Ubuntu 12.04 is too old, see `these docs
 <https://docs.npmjs.com/getting-started/installing-node>`_ in order to update
 your version.
 
 Actual installation
 *******************
-Next you can start the actual Inyoka installation:
+Now you can start the actual Inyoka installation:
 
 .. code-block:: console
 
@@ -142,11 +138,11 @@ Next you can start the actual Inyoka installation:
 
 Note: You need to cd to your inyoka directory for the last command to work.
 
-A lot of files will be downloaded and compiled. Further there will be some
-warnings that you can ignore. Hopefully there is not error and everything will
-compile fine.
+A lot of files will be downloaded and compiled. There will be some warnings 
+that you can ignore. Hopefully there is not error and everything will compile 
+fine.
 
-At the end you need to edit your ``/etc/hosts`` with root privileges and add
+Finally you need to edit your ``/etc/hosts`` with root privileges and add
 the following line:
 
 .. code-block:: console
@@ -167,7 +163,7 @@ able to run Inyoka without installing a theme.*
 
 __ Inyoka_
 
-Working with Inyoka the first time
+Running Inyoka the first time
 ==================================
 
 Activate Inyoka environment
@@ -197,7 +193,7 @@ The entry ``/home/$USER/.venvs/inyoka/bin`` should appear at the beginning.
 Using MySQL
 ***********
 
-Even if you can use other databases than MySQL it's mostly tested with it. So
+Even though you could use other databases than MySQL it's mostly tested with it. So
 first install MySQL:
 
 .. code-block:: console
@@ -230,8 +226,19 @@ to
 
     SECRET_KEY = 'development-key'
 
-.. todo::
-    language settings
+To change the language, set
+
+.. code-block:: console
+
+    LANGUAGE_CODE = 'en-US'
+
+to the desired value. You may also set
+
+.. code-block:: console
+
+    LC_ALL = 'en-US.UTF-8'
+
+which is used for localized alphabetic sorting.
 
 Creating test database
 **********************
@@ -288,7 +295,7 @@ with the user  *admin* and the given password above.
 
 Before developing you should give your user full rights to everything. So click
 on *Portal -> Groups"* and click on the button *"Edit"* at the group
-"Registriert": `<http://ubuntuusers.local:8080/group/Registriert/edit/>`_
+"registered": `<http://ubuntuusers.local:8080/group/registered/edit/>`_
 
 Check all boxes except *Not in use anymore"*. For accessing the forum select
 all random forums via ``[Ctrl]`` and set all rights to *"Yes"*. Commit the
@@ -297,8 +304,8 @@ changes via the button *Send"*
 You may should stop the running server via *[Ctrl-C]* and start it again before
 the access rights are correct.
 
-Working with Inyoka everytime
-=============================
+Working on Inyoka
+=================
 
 Environment and Server
 **********************

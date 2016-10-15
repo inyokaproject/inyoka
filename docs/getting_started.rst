@@ -130,7 +130,7 @@ Testing
 Test notifications
 ******************
 
-Notifications for an user which mail adress admin@localhost can easily be
+Notifications for an user with the mail adress admin@localhost can easily be
 tested by starting celery:
 
 .. code-block:: console
@@ -151,8 +151,8 @@ Among other things you will see the notification mails for the admin user.
 Run tests
 *********
 
-Before adding a pull request or before committing at all you should run all
-unit tests so that you see that you don't have broken anything:
+Before adding a pull request or even committing you should run all
+unit tests to ensure that you didn't mess up with anything:
 
 .. code-block:: console
 
@@ -162,8 +162,7 @@ You can just run some specific tests:
 
 .. code-block:: console
 
-    (inyoka)$ ./tests/runtests.sh --settings tests.settings.sqlite
-    tests.apps.ikhaya.test_forms
+    (inyoka)$ ./tests/runtests.sh --settings tests.settings.sqlite tests.apps.ikhaya.test_forms
 
 where ``tests.apps.ikhaya.test_forms`` is the directory structure
 ``tests/apps/ikhaya/test_forms``.
@@ -174,8 +173,8 @@ Add tests
 If you have changed or added some Python files you should add some unit tests
 as well for the classes. You'll find the tests under ``tests/apps/$APPNAME/``.
 
-The  Python test files start with ``test_*``. For adding new tests you can
-mostly open a file and copying other test classes or test methods.
+The  Python test files start with ``test_*``. For adding new tests you usally
+would copy and adapt existing test classes or methods.
 
 Translate Inyoka
 ================
@@ -183,36 +182,65 @@ Translate Inyoka
 .. todo::
    Put more information here.
 
-Every component of Inyoka has its own translation file. You can switch
-languages by changing the ``LANGUAGE_CODE`` variable in
+You can switch languages by changing the ``LANGUAGE_CODE`` variable in
 ``development_settings.py``
 
-.. code-block:: console
+.. code-block:: python
 
-    LANGUAGE_CODE = 'en'
+    LANGUAGE_CODE = 'en_US'
 
-Template syntax:
+To mark a string as localizable use
 
-.. code-block:: console
+.. code-block:: python
 
-    {% trans %}ENGLISH TEXT{% endtrans %}
+    _('ENGLISH TEXT')
 
-After changing the above code, you also need to change the string in the
-corresponding ``*.po`` file. (e. g.
-``inyoka/wiki/locale/de_DE/LC_MESSAGES/django.po``) Afterwards you have to run
-the following command to generate the ``*.pot`` file.
+If you are editing a template inside an inyoka theme, use the following syntax
+to mark localizable strings
+
+.. code-block:: css
+
+    {% trans %}AN ENGLISH TEXT{% endtrans %}
+
+To distinguish between a singular and plural form you can use
+
+.. code-block:: css
+
+    {% trans count=VAR %}AN ENGLISH TEXT{% pluralize %}SOME ENGLISH TEXTS{% endtrans %}
+
+where VAR is the deciding variable. You can also use variables in localizable
+strings as
+
+.. code-block:: css
+
+    {% trans count=VAR %}AN ENGLISH TEXT{% pluralize %}THERE ARE {{ count }}} ENGLISH TEXTS{% endtrans %}
+
+After applying these changes, run the following command to generate the 
+``*.pot`` files (translation templates) and automatically add the new strings
+to existing ``*.po`` files.
 
 .. code-block:: console
 
     (inyoka) $ python manage.py makemessages
+    
+.. note::
+    Each component of Inyoka has its own translation file 
 
-Compile the corresponding ``*.mo`` files
+To add a new language, you need to create the sub directory 
+``ll_CC/LC_MESSAGES`` inside the ``locale`` folder of a component (e.g. 
+``inyoka/wiki/locale/de_DE/LC_MESSAGES``). Copy the ``django.pot`` file to this 
+directory and rename it to ``django.po``. 
+
+Do the translation using the ``*.po`` files (e.g. 
+``inyoka/wiki/locale/de_DE/LC_MESSAGES/django.po``). Afterwards run the 
+following command to compile the corresponding ``*.mo`` files (binary 
+translation files)
 
 .. code-block:: console
 
     (inyoka)$ python manage.py compilemessages
 
-Restart server to test.
+Restart the server to test.
 
 Test someone's Pull Request
 ===========================
@@ -244,7 +272,7 @@ In order to create or update the documentation (yes, *this* documentation), simp
 
     (inyoka)$ make -C docs html
 
-Documentating
-*************
+Contributing
+************
 
-This documentation is incomplete, you can help by expanding it.
+This documentation is incomplete, you can help to expand it.
