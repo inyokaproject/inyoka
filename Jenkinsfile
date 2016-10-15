@@ -41,19 +41,20 @@ node {
 
     stage('Tests: mysql') {
       sh '''. venv/bin/activate
-      python manage.py test --setting tests.settings.mysql --testrunner="xmlrunner.extra.djangotestrunner.XMLTestRunner"'''
-      step([$class: 'JUnitResultArchiver', testResults: '*.xml'])
+      python manage.py test --setting tests.settings.mysql --testrunner="xmlrunner.extra.djangotestrunner.XMLTestRunner" || true'''
     }
 
     stage('Tests: postgresql') {
       sh '''. venv/bin/activate
-      python manage.py test --setting tests.settings.postgresql --testrunner="xmlrunner.extra.djangotestrunner.XMLTestRunner"'''
-      step([$class: 'JUnitResultArchiver', testResults: '*.xml'])
+      python manage.py test --setting tests.settings.postgresql --testrunner="xmlrunner.extra.djangotestrunner.XMLTestRunner" || true'''
     }
 
     stage('Tests: sqlite') {
       sh '''. venv/bin/activate
-      python manage.py test --setting tests.settings.sqlite --testrunner="xmlrunner.extra.djangotestrunner.XMLTestRunner"'''
+      python manage.py test --setting tests.settings.sqlite --testrunner="xmlrunner.extra.djangotestrunner.XMLTestRunner" || true'''
+    }
+
+    stage('Analyse tests') {
       step([$class: 'JUnitResultArchiver', testResults: '*.xml'])
     }
 
