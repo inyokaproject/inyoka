@@ -1219,7 +1219,6 @@ memberlist = MemberlistView.as_view()
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/grouplist.html')
 def grouplist(request, page=1):
     """
