@@ -20,6 +20,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import Group, Permission
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.models import CharField, Count, Value
@@ -463,6 +464,7 @@ class EditUserGroupsForm(forms.Form):
                 self.user.groups.remove(group)
             for group in assign_groups:
                 self.user.groups.add(group)
+            cache.delete('/acl/%s' % self.user.id)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('instance', None)
@@ -721,6 +723,7 @@ class GroupGlobalPermissionForm(forms.Form):
         if self.instance and commit:
             for app in self.MANAGED_APPS:
                 self._sync_permissions(app)
+            cache.delete_pattern('/acl/*')
 
     def __init__(self, *args, **kwargs):
         initial = {}
@@ -806,6 +809,7 @@ class GroupForumPermissionForm(forms.Form):
                 delete_permissions = self._forum_instance_permissions(forum)
             for perm in delete_permissions:
                 remove_perm(perm, self.instance, forum)
+        cache.delete_pattern('/acl/*')
 
 class PrivateMessageForm(forms.Form):
     """Form for writing a new private message"""
