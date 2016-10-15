@@ -938,10 +938,14 @@ def reportlist(request):
     if 'topic' in request.GET:
         topic = Topic.objects.get(slug=request.GET['topic'])
         if 'assign' in request.GET:
-            if topic.report_claimed_by_id:
-                messages.info(request, _('This report has already been claimed.'))
+            # check that user can only assign himself if he has moderation rights
+            if request.user.has_perm('forum.moderate_forum', topic.forum):
+                if topic.report_claimed_by_id:
+                    messages.info(request, _('This report has already been claimed.'))
+                else:
+                    topic.report_claimed_by_id = request.user.id
             else:
-                topic.report_claimed_by_id = request.user.id
+                messages.info(request, _('You don\'t have moderation rights for the seleted topic.'))
         elif 'unassign' in request.GET and request.GET.get('unassign') == request.user.username:
             topic.report_claimed_by_id = None
         topic.save()
@@ -966,7 +970,7 @@ def reportlist(request):
                 # reported topics and take only the topic IDs where the
                 # requesting user can moderate the forum.
                 for forum, selected_topics in groupby(topics_selected, attrgetter('forum')):
-                    if request.user.has_perm('forum.moderate_forum', forum): # or check if user is assigned
+                    if request.user.has_perm('forum.moderate_forum', forum):
                         topic_ids_modrights.add(map(attrgetter('id'), selected_topics))
                 for topic in topics_selected:
                     if topic.report_claimed_by_id == request.user.id:
