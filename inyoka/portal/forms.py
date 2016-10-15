@@ -597,13 +597,16 @@ class EditGroupForm(forms.ModelForm):
         return data['name']
 
 
-def get_permissions_for_app(application):
+def get_permissions_for_app(application, filtered=None):
     """
     Select all permissions for the models defined in
     ``GLOBAL_PRIVILEGE_MODELS`` for ``application`` and return a "list" of
     two-tuples of the form
     ``('app_label.permission_codename', 'Permission Name')``
     orderd by the ``'app_label.permission_codename'``.
+
+    An optional ``filtered`` argument helps to filter out unwanted/unused
+    permissions.
     """
     permissions = Permission.objects.filter(
         content_type__app_label=application,
@@ -614,16 +617,21 @@ def get_permissions_for_app(application):
             output_field=CharField()
         )
     ).order_by('code').values_list('code', 'name')
+    if filtered:
+        return [
+            perm
+            for perm in permissions
+            if not perm[0] in filtered
+        ]
     return permissions
 
 
-def make_permission_choices(application):
+def make_permission_choices(application, filtered=None):
     """
     Wrapper around :func:`.get_permissions_for_app` returning a callable.
     Useful for e.g. form field choices.
     """
-    return functools.partial(get_permissions_for_app, application)
-
+    return functools.partial(get_permissions_for_app, application, filtered)
 
 def permission_choices_to_permission_strings(application):
     return set(perm[0] for perm in get_permissions_for_app(application))
@@ -635,7 +643,14 @@ def permission_to_string(permission):
 
 
 class GroupGlobalPermissionForm(forms.Form):
-    MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet')
+    MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet', 'forum')
+    FORUM_FILTERED_PERMISSIONS = (
+        'forum.add_forum',
+        'forum.add_topic',
+        'forum.change_topic',
+        'forum.delete_forum',
+        'forum.delete_topic',
+    )
     ikhaya_permissions = forms.MultipleChoiceField(
         choices=make_permission_choices('ikhaya'),
         widget=forms.CheckboxSelectMultiple,
@@ -655,6 +670,11 @@ class GroupGlobalPermissionForm(forms.Form):
         choices=make_permission_choices('planet'),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Planet'),
+        required=False)
+    forum_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('forum', FORUM_FILTERED_PERMISSIONS),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Forum'),
         required=False)
 
     def _clean_permissions(self, modulename):
@@ -694,6 +714,9 @@ class GroupGlobalPermissionForm(forms.Form):
     def clean_planet_permissions(self):
         return self._clean_permissions('planet')
 
+    def clean_forum_permissions(self):
+        return self._clean_permissions('forum')
+
     def save(self, commit=True):
         if self.instance and commit:
             for app in self.MANAGED_APPS:
@@ -727,21 +750,17 @@ class GroupForumPermissionForm(forms.Form):
                 permission_to_string(perm)
                 for perm in self.instance.permissions.all()
             ]
-        unused_permissions = (
+        FORUM_FILTERED_PERMISSIONS = (
             'forum.add_forum',
             'forum.add_topic',
             'forum.change_topic',
             'forum.delete_forum',
             'forum.delete_topic',
+            'forum.manage_reported_topic',
         )
-        forum_permissions = [
-            perm
-            for perm in get_permissions_for_app('forum')
-            if not perm[0] in unused_permissions
-        ]
         for forum in Forum.objects.all():
             field = forms.MultipleChoiceField(
-                choices=forum_permissions,
+                choices=make_permission_choices('forum', FORUM_FILTERED_PERMISSIONS),
                 widget=forms.CheckboxSelectMultiple,
                 label=forum.name,
                 required=False,
