@@ -23,6 +23,8 @@ from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
 
+import urllib
+
 
 class ForumField(forms.ChoiceField):
     def refresh(self, priv=CAN_READ, add=[], remove=[]):
@@ -182,7 +184,8 @@ class SplitTopicForm(forms.Form):
             if re.match(r'^https?://', slug) is not None:
                 slug = slug.strip(u'/').split(u'/')[-1]
             try:
-                topic = Topic.objects.get(slug=slug)
+                unquoted_slug = urllib.unquote(slug)
+                topic = Topic.objects.get(slug=unquoted_slug)
             except Topic.DoesNotExist:
                 raise forms.ValidationError(_(u'No topic with this '
                                               u'slug found.'))
