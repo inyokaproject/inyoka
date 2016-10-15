@@ -46,38 +46,6 @@ from inyoka.utils.special_day import check_special_day
 from inyoka.utils.text import human_number
 from inyoka.utils.urls import href, url_for, urlencode, urlquote
 
-# path to the dtd.  In debug mode we refer to the file system, otherwise
-# URL.  We do that because the firefox validator extension is unable to
-# load DTDs from URLs...  On first rendering the path is calculated because
-# of circular imports "href()" could cause.
-inyoka_dtd = None
-
-
-def get_dtd():
-    """
-    This returns either our dtd or our dtd + xml comment.  Neither is stricly
-    valid as XML documents with custom doctypes must be served as XML but
-    currently as MSIE is pain in the ass we have to workaround that IE bug
-    by removing the XML PI comment.
-    """
-    global inyoka_dtd
-    if inyoka_dtd is None:
-        if settings.DEBUG:
-            path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                                 'static',
-                                                 'xhtml1-strict-uu.dtd'))
-        else:
-            path = href('static', 'xhtml1-strict-uu.dtd')
-        inyoka_dtd = u'<!DOCTYPE html SYSTEM "%s">' % path
-
-    try:
-        if 'msie' in current_request.META['HTTP_USER_AGENT'].lower():
-            return inyoka_dtd
-    except Exception:
-        pass
-    return u'<?xml version="1.0" encoding="utf-8"?>\n' + inyoka_dtd
-
-
 def populate_context_defaults(context, flash=False):
     """Fill in context defaults."""
     from inyoka.forum.models import Topic
@@ -156,7 +124,6 @@ def populate_context_defaults(context, flash=False):
 
     if request:
         context.update(
-            XHTML_DTD=get_dtd(),
             CURRENT_URL=request.build_absolute_uri(),
             USER=user,
             MOBILE=get_flavour() == 'mobile',
