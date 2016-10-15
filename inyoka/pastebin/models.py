@@ -33,7 +33,7 @@ class Entry(models.Model):
         verbose_name_plural = ugettext_lazy('Entries')
         ordering = ('-id',)
         permissions = (
-            ('view_entry', 'View Entry'),
+            ('view_entry', 'Can view Entry'),
         )
 
     @property

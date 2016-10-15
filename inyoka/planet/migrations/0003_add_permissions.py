@@ -13,10 +13,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='blog',
-            options={'ordering': ('name',), 'verbose_name': 'Blog', 'verbose_name_plural': 'Blogs', 'permissions': (('view_blog', 'View Blogs'), ('suggest_blog', 'Suggest Blogs'))},
+            options={'ordering': ('name',), 'verbose_name': 'Blog', 'verbose_name_plural': 'Blogs', 'permissions': (('view_blog', 'Can view Blogs'), ('suggest_blog', 'Can suggest Blogs'))},
         ),
         migrations.AlterModelOptions(
             name='entry',
-            options={'ordering': ('-pub_date',), 'get_latest_by': 'pub_date', 'verbose_name': 'Entry', 'verbose_name_plural': 'Entries', 'permissions': (('hide_entry', 'Hide Entry'),)},
+            options={'ordering': ('-pub_date',), 'get_latest_by': 'pub_date', 'verbose_name': 'Entry', 'verbose_name_plural': 'Entries', 'permissions': (('hide_entry', 'Can hide Entry'),)},
         ),
     ]

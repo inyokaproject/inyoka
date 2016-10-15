@@ -68,8 +68,8 @@ class Blog(models.Model):
         verbose_name = 'Blog'
         verbose_name_plural = 'Blogs'
         permissions = (
-            ('view_blog','View Blogs'),
-            ('suggest_blog','Suggest Blogs'),
+            ('view_blog','Can view Blogs'),
+            ('suggest_blog','Can suggest Blogs'),
         )
 
 
@@ -119,5 +119,5 @@ class Entry(models.Model):
         get_latest_by = 'pub_date'
         ordering = ('-pub_date',)
         permissions = (
-            ('hide_entry', 'Hide Entry'),
+            ('hide_entry', 'Can hide Entry'),
         )

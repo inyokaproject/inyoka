@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='event',
-            options={'permissions': (('publish_event', 'User can publish events'),)},
+            options={'permissions': (('publish_event', 'Can publish events'),)},
         ),
         migrations.AlterModelOptions(
             name='privatemessage',

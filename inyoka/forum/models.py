@@ -311,7 +311,7 @@ class Forum(models.Model):
             ('sticky_forum', 'Can make Topics Sticky in Forum'),
             ('poll_forum', 'Can make Polls in Forum'),
             ('vote_forum', 'Can make Votes in Forum'),
-            ('upload_forum', 'Can Upload Attachments in Forum'),
+            ('upload_forum', 'Can upload Attachments in Forum'),
             ('moderate_forum', 'Can moderate Forum'),
         )
 
@@ -537,7 +537,7 @@ class Topic(models.Model):
         verbose_name = ugettext_lazy(u'Topic')
         verbose_name_plural = ugettext_lazy(u'Topics')
         permissions = (
-            ('manage_reported_topic', 'Can Manage Reported Topics'),
+            ('manage_reported_topic', 'Can manage reported Topics'),
         )
 
     def cached_forum(self):
