@@ -338,10 +338,10 @@ class Article(models.Model, LockableObject):
         ordering = ['-pub_date', '-pub_time', 'author']
         unique_together = ('pub_date', 'slug')
         permissions = (
-            ('publish_article', 'User can publish articles'),
-            ('view_article', 'User can view published articles'),
-            ('view_unpublished_article', 'User can view unpublished articles'),
-            ('suggest_article', 'User can suggest articles'),
+            ('publish_article', 'Can publish articles'),
+            ('view_article', 'Can view published articles'),
+            ('view_unpublished_article', 'Can view unpublished articles'),
+            ('suggest_article', 'Can suggest articles'),
         )
 
 
@@ -517,6 +517,6 @@ class Event(models.Model):
         db_table = 'portal_event'
         app_label = 'portal'
         permissions = (
-            ('publish_event','User can publish events'),
-            ('suggest_event', 'User can suggest events'),
+            ('publish_event','Can publish events'),
+            ('suggest_event', 'Can suggest events'),
         )
