@@ -1245,6 +1245,8 @@ def grouplist(request, page=1):
 @templated('portal/group.html')
 def group(request, name, page=1):
     """Shows the informations about the group named `name`."""
+    if name == settings.INYOKA_REGISTERED_GROUP_NAME and not request.user.has_perm('portal.change_user'):
+        raise Http404
     group = Group.objects.get(name__iexact=name)
     users = group.user_set.all()
 
