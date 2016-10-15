@@ -459,6 +459,8 @@ class InternalLink(Element):
         else:
             from inyoka.wiki.models import Page
             missing = not Page.objects.exists(self.page)
+            if missing:
+                missing = not Page.objects.exists_normalized(self.page)
         url = href('wiki', self.page)
         if self.anchor:
             url += '#' + urlquote_plus(self.anchor)

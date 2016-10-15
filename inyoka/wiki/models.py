@@ -83,6 +83,7 @@ from collections import defaultdict
 from datetime import datetime
 from functools import partial
 from hashlib import sha1
+from unicodedata import normalize
 
 import magic
 from django.apps import apps
@@ -140,6 +141,21 @@ class PageManager(models.Manager):
     def exists(self, name):
         """Check if a page with that name exists."""
         return name.lower() in (item.lower() for item in self.get_page_list())
+
+    def exists_normalized(self, name):
+        """Check if a page with that name exists with a normalized name"""
+        unicode_normalization_form = "NFD"
+        
+        try:
+            normalized_name = normalize(unicode_normalization_form, unicode(name.lower(), "utf-8")).encode('ascii', 'ignore')
+        except TypeError:
+            normalized_name = normalize(unicode_normalization_form, name.lower()).encode('ascii', 'ignore')
+        
+        for item in self.get_page_list():
+            normalized_item = normalize(unicode_normalization_form, item.lower()).encode('ascii', 'ignore')
+            if normalized_name.replace(' ', '_') == normalized_item.replace(' ', '_'):
+                return True
+        return False
 
     def get_head(self, name, offset=0):
         """
