@@ -21,9 +21,11 @@ node {
       # Workaround for pip, because it will hang forever when not updated and using the cache.
       pip install --upgrade pip --no-cache-dir
       pip install unittest-xml-reporting
-      pip install -r extra/requirements/development.txt
+      pip install -r extra/requirements/development.txt"""
 
-      git clone git@github.com:inyokaproject/theme-ubuntuusers.git theme-ubuntuusers
+      checkout([$class: 'GitSCM', branches: [[name: '*/staging']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'theme-ubuntuusers']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'e081c9b5-6899-40b5-a895-7c2232be3430', url: 'git@github.com:inyokaproject/theme-ubuntuusers']]])
+
+      sh """. ./venv/bin/activate
       cd theme-ubuntuusers
       git checkout ${env.BRANCH_NAME} || git checkout staging
 
