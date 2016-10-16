@@ -51,3 +51,5 @@ CACHES['default']['KEY_PREFIX'] = uuid1()
 
 BROKER_URL = 'redis://{}:6379/0'.format(test_host or 'localhost')
 CELERY_RESULT_BACKEND = 'redis://{}:6379/0'.format(test_host or 'localhost')
+
+TEST_OUTPUT_FILE_NAME = 'sqlite.xml'

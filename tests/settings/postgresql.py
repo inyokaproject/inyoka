@@ -10,3 +10,5 @@ DATABASES = {
         'HOST': test_host,
     }
 }
+
+TEST_OUTPUT_FILE_NAME = 'postgresql.xml'
