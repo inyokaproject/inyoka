@@ -971,10 +971,10 @@ def reportlist(request):
                 # requesting user can moderate the forum.
                 for forum, selected_topics in groupby(topics_selected, attrgetter('forum')):
                     if request.user.has_perm('forum.moderate_forum', forum):
-                        topic_ids_modrights.add(map(attrgetter('id'), selected_topics))
+                        topic_ids_modrights.update(map(attrgetter('id'), selected_topics))
                 for topic in topics_selected:
                     if topic.report_claimed_by_id == request.user.id:
-                        topic_ids_modrights.add(map(attrgetter('id'), selected_topics))
+                        topic_ids_modrights.add(topic.id)
 
                 # Update the reported state.
                 Topic.objects.filter(id__in=topic_ids_modrights).update(
