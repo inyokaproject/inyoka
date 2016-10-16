@@ -335,21 +335,6 @@ def activate(request, action='', username='', activation_key=''):
             return HttpResponseRedirect(href('portal'))
 
 
-@does_not_exist_is_404
-def resend_activation_mail(request, username):
-    """Resend the activation mail if the user is not already activated."""
-    user = User.objects.get(username__iexact=username)
-
-    if not user.is_inactive:
-        messages.error(request,
-            _(u'The account “%(username)s” was already activated.') %
-            {'username': escape(user.username)})
-        return HttpResponseRedirect(href('portal'))
-    send_activation_mail(user)
-    messages.success(request, _(u'An email with the activation key was sent to you.'))
-    return HttpResponseRedirect(href('portal'))
-
-
 def lost_password(request):
     if request.user.is_authenticated():
         messages.error(request, _(u'You are already logged in.'))
