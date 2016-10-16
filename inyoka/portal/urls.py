@@ -60,7 +60,6 @@ urlpatterns = [
     url(r'^inyoka/$', views.about_inyoka),
     url(r'^register/$', views.register),
     url(r'^(?P<action>activate|delete)/(?P<username>[^/]+)/(?P<activation_key>.*?)/$', views.activate),
-    url(r'^register/resend/(?P<username>[^/]+)/$', views.resend_activation_mail),
     url(r'^confirm/(?P<action>reactivate_user|set_new_email|reset_email)/$', views.confirm),
     url(r'^lost_password/$', views.lost_password),
     url(r'^lost_password/(?P<uidb36>[0-9A-Za-z]{1,13})/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.set_new_password),
