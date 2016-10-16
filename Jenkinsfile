@@ -51,7 +51,38 @@ node {
     }
 
     stage('Analyse tests') {
-      step([$class: 'JUnitResultArchiver', testResults: '*.xml'])
+      step([$class: 'XUnitBuilder',
+            testTimeMargin: '3000',
+            thresholdMode: 1,
+            thresholds: [[$class: 'FailedThreshold',
+                          failureNewThreshold: '1',
+                          failureThreshold: '1',
+                          unstableNewThreshold: '0',
+                          unstableThreshold: '0'],
+                        [$class: 'SkippedThreshold',
+                          failureNewThreshold: '',
+                          failureThreshold: '',
+                          unstableNewThreshold: '',
+                          unstableThreshold: '']],
+                        tools: [
+                          [$class: 'JUnitType',
+                            deleteOutputFiles: true,
+                            failIfNotNew: true,
+                            pattern: 'sqlite.xml',
+                            skipNoTestFiles: false,
+                            stopProcessingIfError: true],
+                          [$class: 'JUnitType',
+                            deleteOutputFiles: true,
+                            failIfNotNew: true,
+                            pattern: 'mysql.xml',
+                            skipNoTestFiles: false,
+                            stopProcessingIfError: true],
+                          [$class: 'JUnitType',
+                            deleteOutputFiles: true,
+                            failIfNotNew: true,
+                            pattern: 'postgresql.xml',
+                            skipNoTestFiles: false,
+                            stopProcessingIfError: true]]])
     }
 
     stage('Cleanup') {
