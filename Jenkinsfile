@@ -15,17 +15,23 @@ node {
     }
 
     stage('Build virtualenv') {
-      sh """
-      virtualenv --no-download venv
-      . ./venv/bin/activate
-      # Workaround for pip, because it will hang forever when not updated and using the cache.
-      pip install --upgrade pip --no-cache-dir
-      pip install unittest-xml-reporting
-      pip install -r extra/requirements/development.txt"""
-
       checkout([$class: 'GitSCM', branches: [[name: '*/staging']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'theme-ubuntuusers']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'e081c9b5-6899-40b5-a895-7c2232be3430', url: 'git@github.com:inyokaproject/theme-ubuntuusers']]])
 
-      sh """. ./venv/bin/activate
+      sh """
+      requirementshash=\$(sha1sum extra/requirements/development.txt|awk '{print \$1}')
+
+      if [ ! -d "\$HOME/venvs/\$requirementshash" ]
+      then
+        virtualenv --no-download ~/venvs/\$requirementshash
+        . \$HOME/venvs/\$requirementshash/bin/activate
+        # Workaround for pip, because it will hang forever when not updated and using the cache.
+        pip install --upgrade pip --no-cache-dir
+        pip install unittest-xml-reporting
+        pip install -r extra/requirements/development.txt
+      else
+        . ~/venvs/\$requirementshash/bin/activate
+      fi
+
       cd theme-ubuntuusers
       git checkout ${env.BRANCH_NAME} || git checkout staging
 
@@ -42,7 +48,9 @@ node {
       for (int i = 0; i < test_databases.size(); i++) {
         def current_test_database = test_databases[i]
         test_runs["${current_test_database}"] = {
-          sh """. venv/bin/activate
+          sh """
+          requirementshash=\$(sha1sum extra/requirements/development.txt|awk '{print \$1}')
+          . \$HOME/venvs/\$requirementshash/bin/activate
           python manage.py test --setting tests.settings.${current_test_database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true"""
         }
       }
