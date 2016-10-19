@@ -116,12 +116,13 @@ event_delete = generic.DeleteView.as_view(model=Event,
 
 
 @templated('ikhaya/index.html', modifier=context_modifier)
+@permission_required('ikhaya.view_article', raise_exception=True)
 def index(request, year=None, month=None, category_slug=None, page=1,
           full=False):
     """Shows a few articles by different criteria"""
 
     category = None
-    can_read = request.user.has_perm('ikhaya.view_article')
+    can_read = request.user.has_perm('ikhaya.view_unpublished_article')
     articles = Article.published if not can_read else Article.objects
 
     _page = (page if page > 1 else None, )
@@ -171,6 +172,7 @@ def index(request, year=None, month=None, category_slug=None, page=1,
 
 
 @templated('ikhaya/detail.html', modifier=context_modifier)
+@permission_required('ikhaya.view_article', raise_exception=True)
 def detail(request, year, month, day, slug):
     """Shows a single article."""
     try:
@@ -180,7 +182,7 @@ def detail(request, year, month, day, slug):
         raise Http404()
     preview = None
     if article.hidden or article.pub_datetime > datetime.utcnow():
-        if not request.user.has_perm('ikhaya.view_article'):
+        if not request.user.has_perm('ikhaya.view_unpublished_article'):
             return AccessDeniedResponse()
         messages.info(request, _(u'This article is not visible for regular '
                                  u'users.'))
@@ -371,6 +373,7 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
 
 
 @login_required
+@permission_required('ikhaya.view_article', raise_exception=True)
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
     try:
@@ -379,7 +382,7 @@ def article_subscribe(request, year, month, day, slug):
     except (IndexError, ValueError):
         raise Http404()
     if article.hidden or article.pub_datetime > datetime.utcnow():
-        if not request.user.has_perm('ikhaya.view_article'):
+        if not request.user.has_perm('ikhaya.view_unpublished_article'):
             return AccessDeniedResponse()
     try:
         Subscription.objects.get_for_user(request.user, article)
