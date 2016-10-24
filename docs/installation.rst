@@ -169,8 +169,11 @@ Further you need to set a SECRET_KEY with a string, like this:
 
     SECRET_KEY = 'development-key'
 
-.. todo::
-    language settings
+To switch between the supported languages you have to add another setting.
+Available languages are ``en-us`` and ``de-de``.
+
+.. code-block:: console
+    LANGUAGE_CODE= 'de-de'
 
 Creating test database
 **********************
