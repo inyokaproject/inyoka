@@ -22,10 +22,8 @@ node {
 
       if [ ! -d "\$HOME/venvs/\$requirementshash" ]
       then
-        virtualenv --no-download ~/venvs/\$requirementshash
+        virtualenv ~/venvs/\$requirementshash
         . \$HOME/venvs/\$requirementshash/bin/activate
-        # Workaround for pip, because it will hang forever when not updated and using the cache.
-        pip install --upgrade pip --no-cache-dir
         pip install unittest-xml-reporting
         pip install -r extra/requirements/development.txt
       else
