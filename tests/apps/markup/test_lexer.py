@@ -231,6 +231,21 @@ class TestLexer(unittest.TestCase):
 
         expect('eof')
 
+    def test_list_2(self):
+        expect = lexer.tokenize(
+            ' * foo\n'
+            '  * foo\n'
+            ' 1. foo\n'
+            ' 10. foo'
+        ).expect
+
+        for x in xrange(4):
+            expect('list_item_begin')
+            expect('text', 'foo')
+            expect('list_item_end')
+
+        expect('eof')
+
     def test_quote(self):
         expect = lexer.tokenize(
             '> foo\n'

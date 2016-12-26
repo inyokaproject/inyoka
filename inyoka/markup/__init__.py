@@ -748,10 +748,10 @@ class Parser(object):
             full = token.value.expandtabs()
             stripped = full.lstrip()
             indentation = len(full) - len(stripped)
-            return indentation, ('unordered', 'unordered', 'arabiczero',
-                               'arabic', 'alphalower', 'alphaupper',
-                               'romanlower', 'romanupper'
-                               )['*-01aAiI'.index(stripped[0])]
+            return indentation, (('unordered', 'unordered', 'arabiczero') +
+                                ('arabic', )*9 + ('alphalower', 'alphaupper',
+                                'romanlower', 'romanupper'
+                                ))['*-0123456789aAiI'.index(stripped[0])]
 
         indentation, list_type = check_item(stream.current)
         result = nodes.List(list_type)

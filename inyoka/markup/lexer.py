@@ -114,7 +114,7 @@ rules = {
         rule(r'^[ \t]+((?!::).*?)::\s+(?m)', bygroups('definition_term'),
              enter='definition'),
         rule(r'^\|\|(?m)', enter='table_row'),
-        rule(r'^[ \t]+(?:[*-]|[01aAiI]\.)\s*(?m)', enter='list_item'),
+        rule(r'^[ \t]+(?:[*-]|[0-9aAiI]+\.)\s*(?m)', enter='list_item'),
         rule(r'\{\{\|', enter='box'),
         rule(r'\{\{\{', enter='pre'),
         rule(r'^<{40}\s*$(?m)', enter='conflict'),
