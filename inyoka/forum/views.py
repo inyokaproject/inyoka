@@ -1245,7 +1245,7 @@ def splittopic(request, topic_slug, page=1):
                     _(u'The topic “%(topic)s” was split.')
                     % {'topic': old_topic.title}, nargs)
                 users_done.add(subscription.user.id)
-            return HttpResponseRedirect(url_for(new_topic))
+            return HttpResponseRedirect(url_for(posts[0]))
     else:
         form = SplitTopicForm(initial={
             'forum': old_topic.forum_id,
