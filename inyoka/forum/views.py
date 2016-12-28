@@ -756,12 +756,12 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 @confirm_action(message=_(u'Do you want to (un)lock the topic?'),
                 confirm=_(u'(Un)lock'), cancel=_(u'Cancel'))
 @login_required
-def change_lock_status(request, topic_slug, solved=None, locked=None):
-    return change_status(request, topic_slug, solved, locked)
+def change_lock_status(request, topic_slug, page=1, solved=None, locked=None):
+    return change_status(request, topic_slug, page, solved, locked)
 
 
 @login_required
-def change_status(request, topic_slug, solved=None, locked=None):
+def change_status(request, topic_slug, page=1, solved=None, locked=None):
     """Change the status of a topic and redirect to it"""
     topic = Topic.objects.get(slug=topic_slug)
     if not request.user.has_perm('forum.view_forum', topic.forum):
@@ -786,7 +786,7 @@ def change_status(request, topic_slug, solved=None, locked=None):
         messages.info(request, msg)
     topic.forum.invalidate_topic_cache()
 
-    return HttpResponseRedirect(url_for(topic))
+    return HttpResponseRedirect(href('forum', 'topic', topic_slug, page))
 
 
 def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
@@ -827,7 +827,7 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
     return subscriber
 
 
-def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
+def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher, page=1):
     """
     Generates an unsubscriber-function to deal with objects of type `obj`
     which have the slug `slug` and are registered in the subscription by
@@ -859,7 +859,11 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
         if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
             return HttpResponseRedirect(request.GET['next'])
         else:
-            return HttpResponseRedirect(url_for(obj))
+            if obj_slug == 'topic':
+                return HttpResponseRedirect(href('forum', 'topic',
+                                                 'topic_slug', page))
+            else:
+                return HttpResponseRedirect(url_for(obj))
     return unsubscriber
 
 
@@ -885,7 +889,7 @@ unsubscribe_topic = _generate_unsubscriber(Topic,
 
 @login_required
 @templated('forum/report.html')
-def report(request, topic_slug):
+def report(request, topic_slug, page=1):
     """Change the report_status of a topic and redirect to it"""
     topic = Topic.objects.get(slug=topic_slug)
     if not request.user.has_perm('forum.view_forum', topic.forum):
@@ -917,7 +921,8 @@ def report(request, topic_slug):
 
             cache.delete('forum/reported_topic_count')
             messages.success(request, _(u'The topic was reported.'))
-            return HttpResponseRedirect(url_for(topic))
+            return HttpResponseRedirect(href('forum', 'topic', topic_slug,
+                                             page))
     else:
         form = ReportTopicForm()
     return {
