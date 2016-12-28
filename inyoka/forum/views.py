@@ -590,6 +590,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         elif post_id:
             url = href('forum', 'post', post.id)
             post.unlock()
+        elif quote_id:
+            url = href('forum', 'post', quote_id)
         return HttpResponseRedirect(url)
 
     # Clear surge protection to avoid multi-form hickups.

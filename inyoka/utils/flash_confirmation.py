@@ -28,7 +28,20 @@ def confirm_action(message=None, confirm=None, cancel=None):
             if request.method == 'POST':
                 if 'confirm' in request.POST:
                     return func(request, *args, **kwargs)
-                return HttpResponseRedirect(href('portal'))
+                if 'post_id' in kwargs:
+                    cancel_url = href('forum', 'post', kwargs['post_id'])
+                elif 'topic_slug' in kwargs:
+                    if 'page' in kwargs:
+                        cancel_url = href('forum', 'topic',
+                                          kwargs['topic_slug'], kwargs['page'])
+                    else:
+                        cancel_url = href('forum', 'topic',
+                                          kwargs['topic_slug'])
+                elif 'rev_id' in kwargs:
+                    raise NotImplementedError
+                else:
+                    cancel_url = href('portal')
+                return HttpResponseRedirect(cancel_url)
             else:
                 msg = message or _('Are you sure?')
                 confirm_label = confirm or _('Yes')
