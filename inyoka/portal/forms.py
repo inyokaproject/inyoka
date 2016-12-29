@@ -764,6 +764,7 @@ class GroupForumPermissionForm(forms.Form):
             'forum.add_forum',
             'forum.add_topic',
             'forum.change_topic',
+            'forum.change_forum',
             'forum.delete_forum',
             'forum.delete_topic',
             'forum.manage_reported_topic',
