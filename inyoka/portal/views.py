@@ -733,7 +733,7 @@ def usercp_deactivate(request):
 
 
 @login_required
-@permission_required('portal.change_user')
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_overview.html')
 def user_edit(request, username):
     try:
@@ -747,7 +747,7 @@ def user_edit(request, username):
 
 
 @login_required
-@permission_required('portal.change_user')
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_profile.html')
 def user_edit_profile(request, username):
     try:
@@ -779,7 +779,7 @@ def user_edit_profile(request, username):
 
 
 @login_required
-@permission_required('portal.change_user')
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_settings.html')
 def user_edit_settings(request, username):
     try:
