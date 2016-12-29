@@ -1807,7 +1807,7 @@ class ForumEditMixin(PermissionRequiredMixin):
     template_name = 'forum/forum_edit.html'
 
     def form_valid(self, form):
-        if 'welcome_title' in form.changed_data or 'welcome_text' in form.changed_data:
+        if self.object and ('welcome_title' in form.changed_data or 'welcome_text' in form.changed_data):
             self.object.clear_welcome()
         return super(ForumEditMixin, self).form_valid(form)
 
