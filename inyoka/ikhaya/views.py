@@ -662,7 +662,7 @@ def suggest_delete(request, suggestion):
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
-@login_required
+@permission_required('ikhaya.suggest_article', raise_exception=True)
 @templated('ikhaya/suggest_new.html', modifier=context_modifier)
 def suggest_edit(request):
     """A Page to suggest a new article.
