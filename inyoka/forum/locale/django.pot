@@ -344,6 +344,9 @@ msgstr ""
 msgid "This topic was already created. Please think about editing your topic before creating a new one."
 msgstr ""
 
+msgid "You are not allowed to mark this topic as \"important\"."
+msgstr ""
+
 msgid "This topic was already reported."
 msgstr ""
 

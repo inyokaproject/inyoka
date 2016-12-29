@@ -640,6 +640,9 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 topic.ubuntu_version = d.get('ubuntu_version')
             if request.user.has_perm('forum.sticky_forum', forum):
                 topic.sticky = d.get('sticky', False)
+            elif d.get('sticky', False):
+                messages.error(request, _(u'You are not allowed to mark this '
+                                            'topic as "important".'))
 
             topic.save()
             topic.forum.invalidate_topic_cache()
