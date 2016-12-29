@@ -579,6 +579,7 @@ def archive(request):
     }
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 def suggest_assign_to(request, suggestion, username):
     try:
         suggestion = Suggestion.objects.get(id=suggestion)
@@ -592,15 +593,12 @@ def suggest_assign_to(request, suggestion, username):
         suggestion.save()
         messages.success(request,
             _(u'The suggestion was assigned to nobody.'))
-    else:
-        try:
-            suggestion.owner = User.objects.get(username__iexact=username)
-        except User.DoesNotExist:
-            raise Http404
+    elif username == request.user.username:
+        suggestion.owner = request.user
         suggestion.save()
-        messages.success(request,
-                         _(u'The suggestion was assigned to “%(user)s”.')
-                         % {'user': username})
+        messages.success(request, _(u'The suggestion was assigned to you.'))
+    else:
+        messages.error(request, _(u'You cannot assign suggestions to others.'))
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
