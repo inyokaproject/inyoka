@@ -653,6 +653,13 @@ class GroupGlobalPermissionForm(forms.Form):
         'forum.delete_forum',
         'forum.delete_topic',
     )
+    PLANET_FILTERED_PERMISSIONS = (
+        'planet.add_blog',
+        'planet.add_entry',
+        'planet.change_entry',
+        'planet.delete_entry',
+        'planet.delete_blog',
+    )
     ikhaya_permissions = forms.MultipleChoiceField(
         choices=make_permission_choices('ikhaya'),
         widget=forms.CheckboxSelectMultiple,
@@ -669,7 +676,7 @@ class GroupGlobalPermissionForm(forms.Form):
         label=ugettext_lazy(u'Pastebin'),
         required=False)
     planet_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('planet'),
+        choices=make_permission_choices('planet', PLANET_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Planet'),
         required=False)
