@@ -812,6 +812,7 @@ def event_edit(request, pk=None):
     }
 
 
+@permission_required('portal.suggest_event', raise_exception=True)
 @templated('ikhaya/event_suggest.html', modifier=context_modifier)
 def event_suggest(request):
     """
