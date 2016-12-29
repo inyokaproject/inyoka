@@ -648,10 +648,19 @@ class GroupGlobalPermissionForm(forms.Form):
     MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet', 'forum')
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
+        'forum.add_reply_forum',
         'forum.add_topic',
+        'forum.add_topic_forum',
         'forum.change_topic',
         'forum.delete_forum',
         'forum.delete_topic',
+        'forum.delete_topic_forum',
+        'forum.moderate_forum',
+        'forum.poll_forum',
+        'forum.sticky_forum',
+        'forum.upload_forum',
+        'forum.view_forum',
+        'forum.vote_forum',
     )
     PLANET_FILTERED_PERMISSIONS = (
         'planet.add_blog',
