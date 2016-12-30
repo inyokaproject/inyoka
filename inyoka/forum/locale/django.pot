@@ -402,6 +402,9 @@ msgstr ""
 msgid "You cannot edit this post."
 msgstr ""
 
+msgid "The first post of the new topic must not be hidden."
+msgstr ""
+
 msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr ""
 

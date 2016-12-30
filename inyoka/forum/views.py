@@ -1196,6 +1196,11 @@ def splittopic(request, topic_slug, page=1):
 
             try:
                 if data['action'] == 'new':
+                    if posts[0].hidden:
+                        messages.error(request,
+                           _(u'The First post of the new topic must not be '
+                              'hidden.'))
+                        return HttpResponseRedirect(request.path)
                     new_topic = Topic.objects.create(
                         title=data['title'],
                         forum=data['forum'],

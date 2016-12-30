@@ -403,6 +403,9 @@ msgstr "Du kannst dir nur die letzten %(n)d Seiten anzeigen lassen."
 msgid "You cannot edit this post."
 msgstr "Du kannst diesen Beitrag nicht bearbeiten."
 
+msgid "The first post of the new topic must not be hidden."
+msgstr "Der erste Beitrag des neuen Themas darf nicht versteckt sein."
+
 msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr "Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."
 
