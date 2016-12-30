@@ -1194,34 +1194,32 @@ def splittopic(request, topic_slug, page=1):
 
             posts = list(posts)
 
-            try:
-                if data['action'] == 'new':
-                    if posts[0].hidden:
-                        messages.error(request,
-                           _(u'The First post of the new topic must not be '
-                              'hidden.'))
-                        return HttpResponseRedirect(request.path)
-                    new_topic = Topic.objects.create(
-                        title=data['title'],
-                        forum=data['forum'],
-                        slug=None,
-                        author_id=posts[0].author_id,
-                        ubuntu_version=data['ubuntu_version'],
-                        ubuntu_distro=data['ubuntu_distro'])
-                    new_topic.forum.topic_count.incr()
+            if data['action'] == 'new':
+                if posts[0].hidden:
+                    messages.error(request,
+                       _(u'The First post of the new topic must not be '
+                          'hidden.'))
+                    return HttpResponseRedirect(request.path)
+                if data['forum'].parent is None:
+                    messages.error(request,
+                       _(u'You cannot move a topic into a category. '
+                          'Please choose a forum.'))
+                    return HttpResponseRedirect(request.path)
+                new_topic = Topic.objects.create(
+                    title=data['title'],
+                    forum=data['forum'],
+                    slug=None,
+                    author_id=posts[0].author_id,
+                    ubuntu_version=data['ubuntu_version'],
+                    ubuntu_distro=data['ubuntu_distro'])
+                new_topic.forum.topic_count.incr()
 
-                    Post.split(posts, old_topic, new_topic)
-                else:
-                    new_topic = data['topic']
-                    Post.split(posts, old_topic, new_topic)
+                Post.split(posts, old_topic, new_topic)
+            else:
+                new_topic = data['topic']
+                Post.split(posts, old_topic, new_topic)
 
-                del request.session['_split_post_ids']
-
-            except ValueError:
-                messages.error(request,
-                    _(u'You cannot move a topic into a category. '
-                      u'Please choose a forum.'))
-                return HttpResponseRedirect(request.path)
+            del request.session['_split_post_ids']
 
             new_forum = new_topic.forum
             nargs = {'username': None,
