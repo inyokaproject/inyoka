@@ -1200,11 +1200,6 @@ def splittopic(request, topic_slug, page=1):
                        _(u'The First post of the new topic must not be '
                           'hidden.'))
                     return HttpResponseRedirect(request.path)
-                if data['forum'].parent is None:
-                    messages.error(request,
-                       _(u'You cannot move a topic into a category. '
-                          'Please choose a forum.'))
-                    return HttpResponseRedirect(request.path)
                 new_topic = Topic.objects.create(
                     title=data['title'],
                     forum=data['forum'],

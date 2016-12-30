@@ -193,7 +193,11 @@ class SplitTopicForm(forms.Form):
 
     def clean_forum(self):
         id = self.cleaned_data.get('forum')
-        return Forum.objects.get(id=int(id))
+        forum = Forum.objects.get(id=int(id))
+        if forum.parent is None:  # category
+            raise forms.ValidationError(_(u'You cannot move a topic into a '
+                                          u'category. Please choose a forum.'))
+        return forum
 
 
 class AddAttachmentForm(forms.Form):
