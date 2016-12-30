@@ -470,6 +470,7 @@ def _change_report_status(request, report_id, action, msg):
     return HttpResponseRedirect(url_for(report))
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 @confirm_action(_(u'Do you want to hide this report?'),
                 confirm=_(u'Hide'), cancel=_(u'Cancel'))
 def report_hide(request, report_id):
@@ -477,6 +478,7 @@ def report_hide(request, report_id):
                 _(u'The report was hidden.'))
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 @confirm_action(_(u'Do you want to restore this report?'),
                 confirm=_(u'Restore'), cancel=_(u'Cancel'))
 def report_restore(request, report_id):
@@ -484,6 +486,7 @@ def report_restore(request, report_id):
                 _(u'The report was restored.'))
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 @confirm_action(_(u'Do you want to mark this report as solved?'),
                 confirm=_(u'Mark as solved'), cancel=_(u'Cancel'))
 def report_solve(request, report_id):
@@ -491,6 +494,7 @@ def report_solve(request, report_id):
                 _(u'The report was marked as solved.'))
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 @confirm_action(_(u'Do you want to mark this report as unsolved?'),
                 confirm=_(u'Mark as unsolved'), cancel=_(u'Cancel'))
 def report_unsolve(request, report_id):
