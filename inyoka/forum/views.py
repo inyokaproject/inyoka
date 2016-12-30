@@ -95,7 +95,7 @@ def index(request, category=None):
 
     if category:
         category = Forum.objects.get_cached(category)
-        if not category or category.parent is not None:
+        if not category or not category.is_category:
             raise Http404()
         category = category
         categories = [category]
@@ -104,7 +104,7 @@ def index(request, category=None):
         if unread_forum is not None:
             return redirect(url_for(unread_forum, 'welcome'))
     else:
-        categories = tuple(forum for forum in forums if forum.parent_id is None)
+        categories = tuple(forum for forum in forums if forum.is_category)
 
     hidden_categories = []
     if request.user.is_authenticated():
@@ -141,7 +141,7 @@ def forum(request, slug, page=1):
     forum = Forum.objects.get_cached(slug)
     # if the forum is a category we raise Http404. Categories have
     # their own url at /category.
-    if not forum or forum.parent_id is None:
+    if not forum or forum.is_category:
         raise Http404()
 
     if not request.user.has_perm('forum.view_forum', forum):
@@ -471,7 +471,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         forum = topic.forum
     elif forum_slug:
         forum = Forum.objects.get_cached(slug=forum_slug)
-        if not forum or not forum.parent_id:
+        if not forum or forum.is_category:
             raise Http404()
         newtopic = firstpost = True
     elif post_id:

@@ -52,6 +52,10 @@ class TestForumModel(TestCase):
         self.assertEqual(self.parent2.parents, [self.parent1])
         self.assertEqual(self.forum.parents, [self.parent2, self.parent1])
 
+    def test_is_category(self):
+        self.assertEqual(self.parent1.is_category, True)
+        self.assertEqual(self.forum.is_category, False)
+
     def test_children(self):
         self.assertEqual(self.forum.children, [])
         self.assertEqual(self.parent2.children, [self.forum])
