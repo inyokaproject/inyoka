@@ -265,3 +265,10 @@ class TestLexer(unittest.TestCase):
     def test_basic_unicode_handling(self):
         expect = lexer.tokenize(u'some @¹“”¹unicod€ stuff'.encode('utf-8')).expect
         expect('text', u'some @¹“”¹unicod€ stuff')
+
+    def test_escaped_code(self):
+        expect = lexer.tokenize('``text`text``').expect
+        expect('escaped_code_begin')
+        expect('text', 'text`text')
+        expect('escaped_code_end')
+        expect('eof')

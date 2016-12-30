@@ -210,7 +210,6 @@ rules = {
     ),
     'escaped_code': ruleset(
         rule('``', leave=1),
-        rule('`', enter='code')
     ),
     'code': ruleset(
         rule('`', leave=1),
