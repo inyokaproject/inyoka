@@ -345,6 +345,9 @@ msgstr "Dieses Thema ist für normale Benutzer unsichtbar."
 msgid "This topic was already created. Please think about editing your topic before creating a new one."
 msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen vorherigen Beitrag bearbeiten möchtest."
 
+msgid "You are not allowed to mark this topic as \"important\"."
+msgstr "Dir ist es nicht erlaubt, dieses Thema als \"wichtig\" zu markieren."
+
 msgid "This topic was already reported."
 msgstr "Dieses Thema wurde bereits gemeldet."
 
