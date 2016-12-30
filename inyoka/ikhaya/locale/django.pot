@@ -226,7 +226,10 @@ msgid "The suggestion was assigned to nobody."
 msgstr ""
 
 #, python-format
-msgid "The suggestion was assigned to “%(user)s”."
+msgid "The suggestion was assigned to you."
+msgstr ""
+
+msgid "You cannot assign suggestions to others."
 msgstr ""
 
 msgid "The suggestion was deleted."
