@@ -32,6 +32,8 @@ class ForumField(forms.ChoiceField):
         account. Addtitional items can be prepanded as a list of tuples
         `[(val1,repr1),(val2,repr2)]` with the `add` keyword. To remove items
         from the list use a list of Forum objects in the `remove` keyword.
+
+        Optgroups are used to disable categories in the choice field.
         """
         forums = Forum.objects.get_forums_filtered(current_request.user,
             priv, sort=True)
@@ -43,8 +45,11 @@ class ForumField(forms.ChoiceField):
         forums = Forum.get_children_recursive(forums)
         choices = []
         for offset, f in forums:
-            title = f.name[0] + u' ' + (u'   ' * offset) + f.name
-            choices.append((f.id, title))
+            if f.is_category:
+                choices.append((f.name, []))
+            else:
+                title = f.name[0] + u' ' + (u'   ' * offset) + f.name
+                choices[-1][1].append((f.id, title))
         self.choices = add + choices
 
 
