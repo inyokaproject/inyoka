@@ -8,8 +8,6 @@
     :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import re
-
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -23,6 +21,7 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
 
 import urllib
+import urlparse
 
 
 class ForumField(forms.ChoiceField):
@@ -180,11 +179,13 @@ class SplitTopicForm(forms.Form):
         slug = self.cleaned_data.get('topic')
         if slug:
             # Allow URL based Slugs
-            if re.match(r'^https?://', slug) is not None:
-                slug = slug.strip(u'/').split(u'/')[-1]
             try:
-                unquoted_slug = urllib.unquote(slug)
-                topic = Topic.objects.get(slug=unquoted_slug)
+                slug = urlparse.urlparse(slug)[2].split('/')[2]
+            except IndexError:
+                slug = urllib.unquote(slug)
+
+            try:
+                topic = Topic.objects.get(slug=slug)
             except Topic.DoesNotExist:
                 raise forms.ValidationError(_(u'No topic with this '
                                               u'slug found.'))
