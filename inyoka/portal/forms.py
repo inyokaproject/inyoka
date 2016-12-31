@@ -662,6 +662,9 @@ class GroupGlobalPermissionForm(forms.Form):
         'forum.view_forum',
         'forum.vote_forum',
     )
+    PASTEBIN_FILTERED_PERMISSIONS = (
+        'pastebin.change_entry',
+    )
     PLANET_FILTERED_PERMISSIONS = (
         'planet.add_blog',
         'planet.add_entry',
@@ -680,7 +683,7 @@ class GroupGlobalPermissionForm(forms.Form):
         label=ugettext_lazy(u'Portal'),
         required=False)
     pastebin_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('pastebin'),
+        choices=make_permission_choices('pastebin', PASTEBIN_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Pastebin'),
         required=False)
