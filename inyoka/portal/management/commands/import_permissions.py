@@ -22,7 +22,7 @@ permission_portal = {
     "portal.change_staticpage" : 8, # markup_css_edit
     "portal.change_staticfile" : 9, # static_file_edit
     "portal.change_user" : 10, # user_edit
-    "portal.change_user" : 11, # group_edit
+    "auth.change_group" : 11, # group_edit
     "portal.send_group_privatemessage" : 12, # send_group_pm
     "forum.change_forum" : 13, # forum_edit
     "forum.manage_reported_topic" : 14, # manage_topics

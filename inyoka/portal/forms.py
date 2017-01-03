@@ -61,6 +61,7 @@ from inyoka.utils.user import is_valid_username
 GLOBAL_PRIVILEGE_MODELS = {
     'forum': ('forum', 'topic'),
     'ikhaya': ('article', 'category', 'comment', 'report', 'suggestion',),
+    'auth': ('group',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
     'portal': ('event', 'user', 'staticfile', 'staticpage',),
@@ -645,7 +646,13 @@ def permission_to_string(permission):
 
 
 class GroupGlobalPermissionForm(forms.Form):
-    MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet', 'forum')
+    MANAGED_APPS = ('auth', 'ikhaya', 'portal', 'pastebin', 'planet', 'forum')
+    AUTH_FILTERED_PERMISSIONS = (
+        'auth.delete_group',
+        'auth.add_permission',
+        'auth.change_permission',
+        'auth.delete_permission',
+    )
     PORTAL_FILTERED_PERMISSIONS = (
         'portal.publish_event',
         'portal.delete_user',
@@ -678,6 +685,11 @@ class GroupGlobalPermissionForm(forms.Form):
         'planet.delete_entry',
         'planet.delete_blog',
     )
+    auth_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('auth', AUTH_FILTERED_PERMISSIONS),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Auth'),
+        required=False)
     ikhaya_permissions = forms.MultipleChoiceField(
         choices=make_permission_choices('ikhaya'),
         widget=forms.CheckboxSelectMultiple,
@@ -728,6 +740,9 @@ class GroupGlobalPermissionForm(forms.Form):
             remove_perm(perm, self.instance)
         for perm in assign_permissions:
             assign_perm(perm, self.instance)
+
+    def clean_auth_permissions(self):
+        return self._clean_permissions('auth')
 
     def clean_ikhaya_permissions(self):
         return self._clean_permissions('ikhaya')
