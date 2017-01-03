@@ -646,6 +646,12 @@ def permission_to_string(permission):
 
 class GroupGlobalPermissionForm(forms.Form):
     MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet', 'forum')
+    PORTAL_FILTERED_PERMISSIONS = (
+        'portal.publish_event',
+        'portal.delete_user',
+        'portal.add_staticfile',
+        'portal.delete_staticpage',
+    )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
         'forum.add_reply_forum',
@@ -678,7 +684,7 @@ class GroupGlobalPermissionForm(forms.Form):
         label=ugettext_lazy(u'Ikhaya'),
         required=False)
     portal_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('portal'),
+        choices=make_permission_choices('portal', PORTAL_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Portal'),
         required=False)

@@ -112,7 +112,7 @@ def context_modifier(request, context):
 event_delete = generic.DeleteView.as_view(model=Event,
     template_name='ikhaya/event_delete.html',
     redirect_url=href('ikhaya', 'events'),
-    permission_required='portal.change_event')
+    permission_required='portal.delete_event')
 
 
 @templated('ikhaya/index.html', modifier=context_modifier)
@@ -773,6 +773,8 @@ def suggestions_unsubscribe(request):
 @templated('ikhaya/event_edit.html', modifier=context_modifier)
 def event_edit(request, pk=None):
     new = not pk
+    if new and request.user.has_perm('portal.add_event'):
+        raise AccessDeniedResponse()
     event = Event.objects.get(id=pk) if not new else None
 
     if request.GET.get('copy_from', None):

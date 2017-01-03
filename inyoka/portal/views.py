@@ -887,7 +887,7 @@ def user_edit_groups(request, username):
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('portal.add_user', raise_exception=True)
 @templated('portal/user_new.html')
 def user_new(request):
     if request.method == 'POST':
