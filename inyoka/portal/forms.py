@@ -975,8 +975,8 @@ class ConfigurationForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': 5}),
         label=ugettext_lazy(u'Wiki helptext'),
         help_text=ugettext_lazy(u'This text appears above the wiki editor.'))
-    team_icon_width = forms.IntegerField(min_value=1, required=False)
-    team_icon_height = forms.IntegerField(min_value=1, required=False)
+    team_icon_width = forms.IntegerField(min_value=1)
+    team_icon_height = forms.IntegerField(min_value=1)
     license_note = forms.CharField(required=False, label=ugettext_lazy(u'License note'),
                                    widget=forms.Textarea(attrs={'rows': 2}))
     countdown_active = forms.BooleanField(required=False,
