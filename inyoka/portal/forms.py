@@ -653,6 +653,19 @@ class GroupGlobalPermissionForm(forms.Form):
         'auth.change_permission',
         'auth.delete_permission',
     )
+    IKHAYA_FILTERED_PERMISSIONS = (
+        'ikhaya.add_article',
+        'ikhaya.add_category',
+        'ikhaya.add_comment',
+        'ikhaya.add_report',
+        'ikhaya.add_suggestion',
+        'ikhaya.change_report',
+        'ikhaya.change_suggestion',
+        'ikhaya.delete_category',
+        'ikhaya.delete_comment',
+        'ikhaya.delete_report',
+        'ikhaya.publish_article',
+    )
     PORTAL_FILTERED_PERMISSIONS = (
         'portal.publish_event',
         'portal.delete_user',
@@ -691,7 +704,7 @@ class GroupGlobalPermissionForm(forms.Form):
         label=ugettext_lazy(u'Auth'),
         required=False)
     ikhaya_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('ikhaya'),
+        choices=make_permission_choices('ikhaya', IKHAYA_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Ikhaya'),
         required=False)

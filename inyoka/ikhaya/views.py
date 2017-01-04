@@ -243,7 +243,7 @@ def detail(request, year, month, day, slug):
 
 
 @login_required
-@permission_required('ikhaya.change_article', raise_exception=True)
+@permission_required('ikhaya.delete_article', raise_exception=True)
 def article_delete(request, year, month, day, slug):
     try:
         """
@@ -604,7 +604,7 @@ def suggest_assign_to(request, suggestion, username):
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
-@permission_required('ikhaya.change_article', raise_exception=True)
+@permission_required('ikhaya.delete_suggestion', raise_exception=True)
 def suggest_delete(request, suggestion):
     if request.method == 'POST':
         if 'cancel' not in request.POST:
