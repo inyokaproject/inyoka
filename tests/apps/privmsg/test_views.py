@@ -8,7 +8,7 @@
     :copyright: (c) 2011-2016 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.core.exceptions import ImproperlyConfigured, DoesNotExist
+from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse_lazy
 from django.http import Http404
 from django.test import RequestFactory
@@ -19,7 +19,7 @@ from inyoka.privmsg.forms import (
     MultiMessageSelectForm,
     PrivilegedMessageComposeForm,
 )
-from inyoka.privmsg.models import Message, MessageData
+from inyoka.privmsg.models import MessageData
 from inyoka.privmsg.views import (
     ArchivedMessagesView,
     BaseMessageComposeView,
@@ -51,6 +51,23 @@ def setup_view(view, request, *args, **kwargs):
     view.args = args
     view.kwargs = kwargs
     return view
+
+
+def request_factory(request_path="/", request_user=None, request_method="GET", request_data={}):
+        """Build a request object, this is a wrapper for Django's `RequestFactory`."""
+        if request_user is None:
+            request_user = User.get_anonymous_user()
+
+        if request_method == 'POST':
+            request = RequestFactory().post(request_path, request_data)
+        else:
+            request = RequestFactory().get(request_path, request_data)
+
+        request.user = request_user
+        setattr(request, 'session', 'session')
+        setattr(request, '_messages', Mock())
+
+        return request
 
 
 class TestMessagesFolderView(TestCase):
@@ -95,7 +112,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_inboxedmessagesview_as_user(self):
         """When called by a user, InboxedMessagesView should load and context_data be present."""
-        request = RequestFactory().get('/messages/inbox/')
+        request = RequestFactory().get(reverse_lazy('privmsg-inbox'))
         request.user = self.user
         view = InboxedMessagesView.as_view()
 
@@ -108,7 +125,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_inboxedmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, InboxedMessagesView should redirect to login."""
-        request = RequestFactory().get('/messages/inbox/')
+        request = RequestFactory().get(reverse_lazy('privmsg-inbox'))
         request.user = User.objects.get_anonymous_user()
         view = InboxedMessagesView.as_view()
 
@@ -119,7 +136,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_sentmessagesview_as_user(self):
         """When called by a user, SentMessagesView should load and context_data be present."""
-        request = RequestFactory().get('/messages/sent/')
+        request = RequestFactory().get(reverse_lazy('privmsg-sent'))
         request.user = self.user
         view = SentMessagesView.as_view()
 
@@ -132,7 +149,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_sentmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, SentMessagesView should redirect to login."""
-        request = RequestFactory().get('/messages/sent/')
+        request = RequestFactory().get(reverse_lazy('privmsg-sent'))
         request.user = User.objects.get_anonymous_user()
         view = SentMessagesView.as_view()
 
@@ -143,7 +160,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_archivedmessagesview_as_user(self):
         """When called by a user, ArchivedMessagesView should load and context_data be present."""
-        request = RequestFactory().get('/messages/archive/')
+        request = RequestFactory().get(reverse_lazy('privmsg-archive'))
         request.user = self.user
         view = ArchivedMessagesView.as_view()
 
@@ -156,7 +173,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_archivedmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, ArchivedMessagesView should redirect to login."""
-        request = RequestFactory().get('/messages/archive/')
+        request = RequestFactory().get(reverse_lazy('privmsg-archive'))
         request.user = User.objects.get_anonymous_user()
         view = ArchivedMessagesView.as_view()
 
@@ -167,7 +184,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_trashedmessagesview_as_user(self):
         """When called by a user, TrashedMessagesView should load and context_data be present."""
-        request = RequestFactory().get('/messages/trash/')
+        request = RequestFactory().get(reverse_lazy('privmsg-trash'))
         request.user = self.user
         view = TrashedMessagesView.as_view()
 
@@ -180,7 +197,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_trashedmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, TrashedMessagesView should redirect to login."""
-        request = RequestFactory().get('/messages/trash/')
+        request = RequestFactory().get(reverse_lazy('privmsg-trash'))
         request.user = User.objects.get_anonymous_user()
         view = TrashedMessagesView.as_view()
 
@@ -191,7 +208,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_readmessagesview_as_user(self):
         """When called by a user, ReadMessagesView should load and context_data be present."""
-        request = RequestFactory().get('/messages/read/')
+        request = RequestFactory().get(reverse_lazy('privmsg-read'))
         request.user = self.user
         view = ReadMessagesView.as_view()
 
@@ -204,7 +221,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_readmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, ReadMessagesView should redirect to login."""
-        request = RequestFactory().get('/messages/read/')
+        request = RequestFactory().get(reverse_lazy('privmsg-read'))
         request.user = User.objects.get_anonymous_user()
         view = ReadMessagesView.as_view()
 
@@ -215,7 +232,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_unreadmessagesview_as_user(self):
         """When called by a user, UnreadMessagesView should load and context_data be present."""
-        request = RequestFactory().get('/messages/unread/')
+        request = RequestFactory().get(reverse_lazy('privmsg-unread'))
         request.user = self.user
         view = UnreadMessagesView.as_view()
 
@@ -228,7 +245,7 @@ class TestFolderMessagesViewIntegration(TestCase):
 
     def test_unreadmessagesview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, UnreadMessagesView should redirect to login."""
-        request = RequestFactory().get('/messages/unread/')
+        request = RequestFactory().get(reverse_lazy('privmsg-unread'))
         request.user = User.objects.get_anonymous_user()
         view = UnreadMessagesView.as_view()
 
@@ -349,30 +366,31 @@ class TestMessageViewIntegration(TestCase):
 
     def test_messageview_as_user(self):
         """`MessageView` should display the message, if called by the recipient."""
-        request = RequestFactory().get('/messages/{}/'.format(self.message.id))
+        request = RequestFactory().get(reverse_lazy('privmsg-message', args=(self.message.pk,)))
         request.user = self.author
         view = MessageView.as_view()
 
-        response = view(request, pk=self.message.id)
+        response = view(request, pk=self.message.pk)
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['message'].text, self.message.text)
 
     def test_messageview_as_invalid_user(self):
         """`MessageView` should give a 404 with a message_id the user has no access to."""
-        request = RequestFactory().get('/messages/{}/'.format(self.message.id))
+        request = RequestFactory().get(reverse_lazy('privmsg-message', args=(self.message.pk,)))
         request.user = self.recipient
         view = MessageView.as_view()
 
         with self.assertRaises(Http404):
-            view(request, pk=self.message.id)
+            view(request, pk=self.message.pk)
 
     def test_messageview_as_anonymous_redirects_to_login(self):
         """When called by anonymous, `MessageView` should redirect to login."""
-        request = RequestFactory().get('/messages/{}/'.format(self.message.id))
+        request = RequestFactory().get(reverse_lazy('privmsg-message', args=(self.message.pk,)))
         request.user = User.objects.get_anonymous_user()
         view = MessageView.as_view()
 
-        response = view(request, pk=self.message.id)
+        response = view(request, pk=self.message.pk)
 
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith(u'/login/'))
@@ -380,22 +398,6 @@ class TestMessageViewIntegration(TestCase):
 
 class TestMessageViewSubclassesIntegration(TestCase):
     """Integration Tests for `MessageView` subclasses (e.g. `MessageToArchiveView`)."""
-
-    def request_factory(request_path="/", request_user=None, request_method="GET", request_data={}):
-        """Build a request object, this is a wrapper for Django's `RequestFactory`."""
-        if request_user is None:
-            request_user = User.get_anonymous_user()
-
-        if request_method == 'POST':
-            request = RequestFactory.post(request_path, request_data)
-        else:
-            request = RequestFactory.get(request_path, request_data)
-
-        request.user = request_user
-        setattr(request, 'session', 'session')
-        setattr(request, '_messages', Mock())
-
-        return request
 
     def setUp(self):
         """Set up testing users and messages."""
@@ -420,162 +422,161 @@ class TestMessageViewSubclassesIntegration(TestCase):
         self.sent_message = self.author.message_set.sent().first()
         self.received_message = self.recipient.message_set.inboxed().first()
 
-    # Note: since these are derived from `MessageView` we don't need to access as anonymous.
+    # Note: since these are derived from `MessageView` we don't need to test access as anonymous.
     def test_messagetoarchiveview_confirmed(self):
         """Test that `MessageToArchiveView` archives the message and redirects to the archive."""
-        request = self.request_factory(
-            request_path='/messages/{}/archive/'.format(self.sent_message.pk),
+        view = MessageToArchiveView.as_view()
+        request = request_factory(
+            request_path=reverse_lazy('privmsg-message-archive', args=(self.sent_message.pk,)),
             request_user=self.author,
             request_method='POST',
-            request_data={'confirmed': 'Confirm'}
+            request_data={'confirm': 'Confirm'},
         )
-        view = MessageToArchiveView.as_view()
 
         response = view(request, pk=self.sent_message.pk)
         self.sent_message.refresh_from_db()
 
         self.assertEqual(302, response.status_code)
-        self.assertEqual(u'/messages/archive/', response.url)
+        self.assertEqual(reverse_lazy('privmsg-archive'), response.url)
         self.assertEqual('archive', self.sent_message.folder)
 
     def test_messagetoarchiveview_cancelled(self):
         """Test that `MessageToArchiveView` redirects to the message without archiving it."""
-        request = self.request_factory(
-            request_path='/messages/{}/archive/'.format(self.sent_message.pk),
+        view = MessageToArchiveView.as_view()
+        request = request_factory(
+            request_path=reverse_lazy('privmsg-message-archive', args=(self.sent_message.pk,)),
             request_user=self.author,
             request_method='POST',
-            request_data={'cancel': 'Cancel'}
+            request_data={'cancel': 'Cancel'},
         )
-        view = MessageToArchiveView.as_view()
 
         response = view(request, pk=self.sent_message.pk)
         self.sent_message.refresh_from_db()
 
         self.assertEqual(302, response.status_code)
-        self.assertEqual(u'/messages/{}/'.format(self.sent_message.pk), response.url)
+        self.assertEqual(reverse_lazy('privmsg-message', args=(self.sent_message.pk,)), response.url)
         self.assertEqual(u'sent', self.sent_message.folder)
 
     def test_messagetotrashview_confirmed(self):
         """Test that `MessageToTrashView` moves the message to trash and redirects to trash."""
-        request = self.request_factory(
-            request_path='/messages/{}/trash/'.format(self.sent_message.pk),
+        view = MessageToTrashView.as_view()
+        request = request_factory(
+            request_path=reverse_lazy('privmsg-message-trash', args=(self.sent_message.pk,)),
             request_user=self.author,
             request_method='POST',
-            request_data={'confirmed': 'Confirm'}
+            request_data={'confirm': 'Confirm'},
         )
-        view = MessageToTrashView.as_view()
 
         response = view(request, pk=self.sent_message.pk)
         self.sent_message.refresh_from_db()
 
         self.assertEqual(302, response.status_code)
-        self.assertEqual(u'/messages/trash/', response.url)
+        self.assertEqual(reverse_lazy('privmsg-trash'), response.url)
         self.assertEqual(u'trash', self.sent_message.folder)
 
     def test_messagetotrashview_cancelled(self):
         """Test that `MessageToTrashView` redirects to the message without trashing it."""
-        request = self.request_factory(
-            request_path='/messages/{}/trash/'.format(self.sent_message.pk),
+        view = MessageToTrashView.as_view()
+        request = request_factory(
+            request_path=reverse_lazy('privmsg-message-trash', args=(self.sent_message.pk,)),
             request_user=self.author,
             request_method='POST',
-            request_data={'cancel': 'Cancel'}
+            request_data={'cancel': 'Cancel'},
         )
-        view = MessageToTrashView.as_view()
 
         response = view(request, pk=self.sent_message.pk)
         self.sent_message.refresh_from_db()
 
         self.assertEqual(302, response.status_code)
-        self.assertEqual(u'/messages/{}/'.format(self.sent_message.pk), response.url)
+        self.assertEqual(reverse_lazy('privmsg-message', args=(self.sent_message.pk,)), response.url)
         self.assertEqual(u'sent', self.sent_message.folder)
 
     def test_messagerestoreview_confirmed_with_received_message(self):
         """Test that `MessageRestoreView` restores a received message and redirects to inbox."""
         self.received_message.archive()
-        request = self.request_factory(
-            request_path='/messages/{}/restore/'.format(self.sent_message.pk),
-            request_user=self.author,
-            request_method='POST',
-            request_data={'confirm': 'Confirm'}
-        )
         view = MessageRestoreView.as_view()
+        request = request_factory(
+            request_path=reverse_lazy('privmsg-message-restore', args=(self.received_message.pk,)),
+            request_user=self.recipient,
+            request_method='POST',
+            request_data={'confirm': 'Confirm'},
+        )
 
         response = view(request, pk=self.received_message.pk)
         self.received_message.refresh_from_db()
 
         self.assertEqual(302, response.status_code)
-        self.assertEqual(u'/messages/inbox/', response.url)
+        self.assertEqual(reverse_lazy('privmsg-inbox'), response.url)
         self.assertEqual('inbox', self.received_message.folder)
 
     def test_messagerestoreview_confirmed_with_sent_message(self):
         """Test that `MessageRestoreView` archives a sent message and redirects to sent."""
         self.sent_message.archive()
-        request = self.request_factory(
-            request_path='/messages/{}/restore/'.format(self.sent_message.pk),
+        view = MessageRestoreView.as_view()
+        request = request_factory(
+            request_path=reverse_lazy('privmsg-message-restore', args=(self.sent_message.pk,)),
             request_user=self.author,
             request_method='POST',
-            request_data={'confirm': 'Confirm'}
+            request_data={'confirm': 'Confirm'},
         )
-        view = MessageRestoreView.as_view()
 
         response = view(request, pk=self.sent_message.pk)
         self.sent_message.refresh_from_db()
 
         self.assertEqual(302, response.status_code)
-        self.assertEqual(u'/messages/sent/', response.url)
+        self.assertEqual(reverse_lazy('privmsg-sent'), response.url)
         self.assertEqual('sent', self.sent_message.folder)
 
     def test_messagerestoreview_cancelled(self):
         """Test that `MessageRestoreView` redirects to the message without restoring it."""
         self.sent_message.archive()
-        request = self.request_factory(
-            request_path='/messages/{}/restore/'.format(self.sent_message.pk),
+        view = MessageRestoreView.as_view()
+        request = request_factory(
+            request_path=reverse_lazy('privmsg-message-restore', args=(self.sent_message.pk,)),
             request_user=self.author,
             request_method='POST',
-            request_data={'cancel': 'Cancel'}
+            request_data={'cancel': 'Cancel'},
         )
-        view = MessageRestoreView.as_view()
 
         response = view(request, pk=self.sent_message.pk)
         self.sent_message.refresh_from_db()
 
         self.assertEqual(302, response.status_code)
-        self.assertEqual(u'/messages/archive/', response.url)
+        self.assertEqual(reverse_lazy('privmsg-message', args=(self.sent_message.pk,)), response.url)
         self.assertEqual('archive', self.sent_message.folder)
 
     def test_messagedeleteview_confirmed(self):
         """Test that `MessageDeleteView` deletes the message and redirects to inbox."""
-        request = self.request_factory(
-            request_path='/messages/{}/delete/'.format(self.sent_message.pk),
+        view = MessageDeleteView.as_view()
+        request = request_factory(
+            request_path=reverse_lazy('privmsg-message-delete', args=(self.sent_message.pk,)),
             request_user=self.author,
             request_method='POST',
-            request_data={'confirm': 'Confirm'}
+            request_data={'confirm': 'Confirm'},
         )
-        view = MessageToArchiveView.as_view()
 
         response = view(request, pk=self.sent_message.pk)
-        self.sent_message.refresh_from_db()
 
         self.assertEqual(302, response.status_code)
-        self.assertEqual(u'/messages/inbox/', response.url)
-        self.assertRaises(Message.DoesNotExist, self.sent_message.folder)
+        self.assertEqual(reverse_lazy('privmsg-inbox'), response.url)
+        self.assertFalse(self.author.message_set.sent().exists())
 
     def test_messagedeleteview_cancelled(self):
-        """Test that `MessageDeleteView` redirects to trash without deleting the message."""
-        request = self.request_factory(
-            request_path='/messages/{}/delete/'.format(self.sent_message.pk),
+        """Test that `MessageDeleteView` redirects to the message without deleting it."""
+        view = MessageDeleteView.as_view()
+        request = request_factory(
+            request_path=reverse_lazy('privmsg-message-delete', args=(self.sent_message.pk,)),
             request_user=self.author,
             request_method='POST',
-            request_data={'cancel': 'Cancel'}
+            request_data={'cancel': 'Cancel'},
         )
-        view = MessageToArchiveView.as_view()
 
         response = view(request, pk=self.sent_message.pk)
         self.sent_message.refresh_from_db()
 
         self.assertEqual(302, response.status_code)
-        self.assertEqual(u'/messages/archive/', response.url)
-        self.assertEqual('archive', self.sent_message.folder)
+        self.assertEqual(reverse_lazy('privmsg-message', args=(self.sent_message.pk,)), response.url)
+        self.assertEqual('sent', self.sent_message.folder)
 
 
 class TestBaseMessageComposeView(TestCase):
