@@ -61,6 +61,7 @@ from inyoka.utils.user import is_valid_username
 GLOBAL_PRIVILEGE_MODELS = {
     'forum': ('forum', 'topic'),
     'ikhaya': ('article', 'category', 'comment', 'report', 'suggestion',),
+    'auth': ('group',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
     'portal': ('event', 'user', 'staticfile', 'staticpage',),
@@ -645,31 +646,80 @@ def permission_to_string(permission):
 
 
 class GroupGlobalPermissionForm(forms.Form):
-    MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet', 'forum')
+    MANAGED_APPS = ('auth', 'ikhaya', 'portal', 'pastebin', 'planet', 'forum')
+    AUTH_FILTERED_PERMISSIONS = (
+        'auth.delete_group',
+        'auth.add_permission',
+        'auth.change_permission',
+        'auth.delete_permission',
+    )
+    IKHAYA_FILTERED_PERMISSIONS = (
+        'ikhaya.add_article',
+        'ikhaya.add_category',
+        'ikhaya.add_comment',
+        'ikhaya.add_report',
+        'ikhaya.add_suggestion',
+        'ikhaya.change_report',
+        'ikhaya.change_suggestion',
+        'ikhaya.delete_category',
+        'ikhaya.delete_comment',
+        'ikhaya.delete_report',
+        'ikhaya.publish_article',
+    )
+    PORTAL_FILTERED_PERMISSIONS = (
+        'portal.publish_event',
+        'portal.delete_user',
+        'portal.add_staticfile',
+        'portal.delete_staticpage',
+    )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
+        'forum.add_reply_forum',
         'forum.add_topic',
+        'forum.add_topic_forum',
         'forum.change_topic',
         'forum.delete_forum',
         'forum.delete_topic',
+        'forum.delete_topic_forum',
+        'forum.moderate_forum',
+        'forum.poll_forum',
+        'forum.sticky_forum',
+        'forum.upload_forum',
+        'forum.view_forum',
+        'forum.vote_forum',
     )
+    PASTEBIN_FILTERED_PERMISSIONS = (
+        'pastebin.change_entry',
+    )
+    PLANET_FILTERED_PERMISSIONS = (
+        'planet.add_blog',
+        'planet.add_entry',
+        'planet.change_entry',
+        'planet.delete_entry',
+        'planet.delete_blog',
+    )
+    auth_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('auth', AUTH_FILTERED_PERMISSIONS),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Auth'),
+        required=False)
     ikhaya_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('ikhaya'),
+        choices=make_permission_choices('ikhaya', IKHAYA_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Ikhaya'),
         required=False)
     portal_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('portal'),
+        choices=make_permission_choices('portal', PORTAL_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Portal'),
         required=False)
     pastebin_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('pastebin'),
+        choices=make_permission_choices('pastebin', PASTEBIN_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Pastebin'),
         required=False)
     planet_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('planet'),
+        choices=make_permission_choices('planet', PLANET_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Planet'),
         required=False)
@@ -703,6 +753,9 @@ class GroupGlobalPermissionForm(forms.Form):
             remove_perm(perm, self.instance)
         for perm in assign_permissions:
             assign_perm(perm, self.instance)
+
+    def clean_auth_permissions(self):
+        return self._clean_permissions('auth')
 
     def clean_ikhaya_permissions(self):
         return self._clean_permissions('ikhaya')
@@ -757,6 +810,7 @@ class GroupForumPermissionForm(forms.Form):
             'forum.add_forum',
             'forum.add_topic',
             'forum.change_topic',
+            'forum.change_forum',
             'forum.delete_forum',
             'forum.delete_topic',
             'forum.manage_reported_topic',

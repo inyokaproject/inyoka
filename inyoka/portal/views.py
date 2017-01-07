@@ -887,7 +887,7 @@ def user_edit_groups(request, username):
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('portal.add_user', raise_exception=True)
 @templated('portal/user_new.html')
 def user_new(request):
     if request.method == 'POST':
@@ -1249,7 +1249,7 @@ def group(request, name, page=1):
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('auth.add_group', raise_exception=True)
 @templated('portal/group_edit.html')
 def group_new(request):
     form = EditGroupForm()
@@ -1266,7 +1266,7 @@ def group_new(request):
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit.html')
 def group_edit(request, name):
     try:
@@ -1294,7 +1294,7 @@ def group_edit(request, name):
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit_global_permissions.html')
 def group_edit_global_permissions(request, name):
     group = get_object_or_404(Group, name=name)
@@ -1315,7 +1315,7 @@ def group_edit_global_permissions(request, name):
     }
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit_forum_permissions.html')
 def group_edit_forum_permissions(request, name):
     group = get_object_or_404(Group, name=name)
