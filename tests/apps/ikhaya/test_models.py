@@ -5,7 +5,7 @@
 
     Test Ikhaya models.
 
-    :copyright: (c) 2011-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import date, datetime, time, timedelta
