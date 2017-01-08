@@ -9,11 +9,11 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404
 from django.test import RequestFactory
 from django.utils.translation import ugettext as _
-from inyoka.portal.user import User
+from inyoka.portal.user import User, PERMISSION_MAPPING
 from inyoka.privmsg.forms import (
     MessageComposeForm,
     MultiMessageSelectForm,
@@ -717,6 +717,81 @@ class TestMessageComposeView(TestCase):
 class TestMessageComposeViewIntegration(TestCase):
     """Integration Tests for `MessageComposeView`."""
 
+    def setUp(self):
+        """Set up users to test with."""
+        self.author = User.objects.register_user(
+            username='author',
+            email='author',
+            password='author',
+            send_mail=False,
+        )
+        self.privileged_author = User.objects.register_user(
+            username='pauthor',
+            email='pauthor',
+            password='pauthor',
+            send_mail=False,
+        )
+        self.privileged_author._permissions = PERMISSION_MAPPING['send_group_pm']  # TODO: new permissions
+        self.privileged_author.save()
+        self.recipient = User.objects.register_user(
+            username='recipient',
+            email='recipient',
+            password='recipient',
+            send_mail=False,
+        )
+        self.client.login(username='author', password='author')
+
+    def test_messagecomposeview_get(self):
+        """Test that calling privmsg-compose as user returns the form."""
+        url = reverse_lazy('privmsg-compose')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(isinstance(response.context_data['form'], MessageComposeForm))
+
+    def test_messagecomposeview_get_with_user(self):
+        """Test that calling privmsg-compose-user with a username returns a pre-filled form."""
+        url = reverse_lazy('privmsg-compose-user', args=(self.recipient.username,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.recipient.username, response.context_data['form']['recipients'].value())
+
+    def test_messagecomposeview_get_as_privileged_user(self):
+        """Test that calling privmsg-compose as privileged user returns a form with group_recipients field."""
+        self.client.logout()
+        self.client.login(username='pauthor', password='pauthor')
+        url = reverse_lazy('privmsg-compose')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(isinstance(response.context_data['form'], PrivilegedMessageComposeForm))
+
+    def test_messagecomposeview_submit_invalid_form_data(self):
+        """Test that submitting with invalid form data shows the form again with error attached."""
+        url = reverse_lazy('privmsg-compose')
+        data = {
+            'recipients': '',
+            'subject': '',
+            'text': '',
+        }
+        response = self.client.post(url, data)  # submit the form without filling it out.
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('form', response.context_data)
+        self.assertIn('recipients', response.context_data['form'].errors)
+        self.assertIn('subject', response.context_data['form'].errors)
+        self.assertIn('text', response.context_data['form'].errors)
+
+    def test_messagecomposeview_submit_with_valid_data(self):
+        """Test that submitting with valid data redirects to privmsg-sent and creates the message."""
+        url = reverse_lazy('privmsg-compose')
+        data = {
+            'recipients': self.recipient.username,
+            'subject': 'test',
+            'text': 'test',
+        }
+        response = self.client.post(url, data)
+        self.assertTrue(response.url.endswith(reverse('privmsg-sent')))
+        self.assertEqual(self.author.message_set.sent().count(), 1)
+        self.assertEqual(self.recipient.message_set.unread().count(), 1)
+
 
 class TestMessageForwardView(TestCase):
     """Unit Tests for `MessageForwardView`."""
@@ -781,6 +856,44 @@ class TestMessageForwardView(TestCase):
 
 class TestMessageForwardViewIntegration(TestCase):
     """Integration Tests for `MessageForwardView`."""
+
+    def setUp(self):
+        """Set up testing users and messages."""
+        self.author = User.objects.register_user(
+            username='author',
+            email='author',
+            password='author',
+            send_mail=False,
+        )
+        self.recipient = User.objects.register_user(
+            username='recipient',
+            email='recipient',
+            password='recipient',
+            send_mail=False,
+        )
+        MessageData.send(
+            author=self.author,
+            recipients=[self.recipient],
+            subject='testsubject',
+            text='testmessage',
+        )
+        self.message = self.author.message_set.sent().first()
+        self.other_message = self.recipient.message_set.inboxed().first()
+        self.client.login(username='author', password='author')
+
+    def test_messageforwardview_with_invalid_message(self):
+        """Test that trying to forward a message not belonging to the user gives a 404."""
+        url = reverse('privmsg-message-forward', args=(self.other_message.id,))
+        response = self.client.get(url)
+        self.assertEqual(404, response.status_code)
+
+    def test_messageforwardview_with_valid_message(self):
+        """Test that trying to forward a message returns a pre-filled form."""
+        url = reverse('privmsg-message-forward', args=(self.message.id,))
+        response = self.client.get(url)
+        self.assertIn('form', response.context_data)
+        self.assertEqual('Fw: testsubject', response.context_data['form']['subject'].value())
+        self.assertIn('> testmessage', response.context_data['form']['text'].value())
 
 
 class TestMessageReplyView(TestCase):
@@ -900,6 +1013,60 @@ class TestMessageReplyView(TestCase):
 class TestMessageReplyViewIntegration(TestCase):
     """Integration Tests for `MessageReplyView`."""
 
+    def setUp(self):
+        """Set up testing users and messages."""
+        self.author = User.objects.register_user(
+            username='author',
+            email='author',
+            password='author',
+            send_mail=False,
+        )
+        self.recipient = User.objects.register_user(
+            username='recipient',
+            email='recipient',
+            password='recipient',
+            send_mail=False,
+        )
+        self.recipient2 = User.objects.register_user(
+            username='recipient2',
+            email='recipient2',
+            password='recipient2',
+            send_mail=False,
+        )
+        MessageData.send(
+            author=self.author,
+            recipients=[self.recipient, self.recipient2],
+            subject='testsubject',
+            text='testmessage',
+        )
+        self.message = self.author.message_set.sent().first()
+        self.received_message = self.recipient.message_set.inboxed().first()
+
+    def test_messagereplyview_with_invalid_message(self):
+        """Test that trying to reply to a message not belonging to the user gives a 404."""
+        self.client.login(username='recipient', password='recipient')
+        url = reverse('privmsg-message-reply', args=(self.message.id,))
+        response = self.client.get(url)
+        self.assertEqual(404, response.status_code)
+
+    def test_messagereplyview_with_valid_message(self):
+        """Test that trying to reply to a message returns a pre-filled form."""
+        self.client.login(username='recipient', password='recipient')
+        url = reverse('privmsg-message-reply', args=(self.received_message.id,))
+        response = self.client.get(url)
+        self.assertIn('form', response.context_data)
+        self.assertEqual('Re: testsubject', response.context_data['form']['subject'].value())
+        self.assertIn('> testmessage', response.context_data['form']['text'].value())
+
+    def test_messagereplyview_reply_to_all(self):
+        """Test that replying to all returns a pre-filled form."""
+        self.client.login(username='recipient', password='recipient')
+        url = reverse('privmsg-message-reply-all', args=(self.received_message.id,))
+        response = self.client.get(url)
+        self.assertIn('form', response.context_data)
+        self.assertEqual('Re: testsubject', response.context_data['form']['subject'].value())
+        self.assertIn('> testmessage', response.context_data['form']['text'].value())
+
 
 class TestMessageReplyReportedTopicView(TestCase):
     """Unit tests for `MessageReplyReportedTopicView`."""
@@ -926,7 +1093,7 @@ class TestMessageReplyReportedTopicView(TestCase):
 
     @patch('inyoka.privmsg.views.User')
     def test_get_recipients(self, mock_user):
-        """Test that `get_recipients()` returns the correct recipients."""
+        """Test that `get_recipients()` returns the correct recipients usernames."""
         expected_value = 'testuser'
         self.view.object = Mock()
         mock_user.objects.get.return_value = User(username=expected_value)
