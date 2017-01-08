@@ -85,6 +85,8 @@ def on_get_calendar_entry(request):
             raise Http404()
     try:
         event = Event.objects.get(slug=slug)
+        if not (event.visible or request.user.has_perm('portal.change_event')):
+            raise Http404()
     except Event.DoesNotExist:
         raise Http404()
 
