@@ -264,8 +264,12 @@ class MessageForwardView(BaseMessageComposeView):
 
     def get_object(self):
         """Return the message that is being forwarded."""
+        queryset = self.get_queryset()
         pk = self.kwargs.get(self.pk_url_kwarg)
-        return self.get_queryset().get(pk=pk)
+        try:
+            return queryset.get(pk=pk)
+        except queryset.model.DoesNotExist:
+            raise Http404()
 
     def get_subject(self):
         """Make sure the subject of the message starts with 'Fw: '."""
@@ -290,8 +294,12 @@ class MessageReplyView(BaseMessageComposeView):
 
     def get_object(self):
         """Return the message that is being replied to."""
+        queryset = self.get_queryset()
         pk = self.kwargs.get(self.pk_url_kwarg)
-        return self.get_queryset().get(pk=pk)
+        try:
+            return queryset.get(pk=pk)
+        except queryset.model.DoesNotExist:
+            raise Http404()
 
     def get_recipients(self):
         """Return the list of usernames of recipients."""
@@ -323,7 +331,10 @@ class MessageReplyReportedTopicView(PermissionRequiredMixin, BaseMessageComposeV
     def get_object(self):
         """Return the reported topic."""
         slug = self.kwargs.get(self.slug_url_kwarg)
-        return Topic.objects.get(slug=slug)
+        try:
+            return Topic.objects.get(slug=slug)
+        except Topic.DoesNotExist:
+            raise Http404()
 
     def get_recipients(self):
         """Return the list of recipients usernames for the form."""
@@ -346,7 +357,10 @@ class MessageReplySuggestedArticleView(PermissionRequiredMixin, BaseMessageCompo
     def get_object(self):
         """Return the suggestion that is being replied to."""
         pk = self.kwargs.get(self.pk_url_kwarg)
-        return Suggestion.objects.get(pk=pk)
+        try:
+            return Suggestion.objects.get(pk=pk)
+        except Suggestion.DoesNotExist:
+            raise Http404()
 
     def get_recipients(self):
         """Return the list of recipients usernames for the form."""
