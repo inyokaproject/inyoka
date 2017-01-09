@@ -44,7 +44,7 @@ from inyoka.privmsg.views import (
     UnreadMessagesView,
 )
 from inyoka.utils.test import TestCase
-from mock import Mock, call, patch
+from mock import call, Mock, patch
 
 
 def setup_view(view, request, *args, **kwargs):
@@ -1393,3 +1393,64 @@ class TestMultiMessageProcessView(TestCase):
 
 class TestMultiMessageProcessViewIntegration(TestCase):
     """Integration Tests for `MultiMessageProcessView`."""
+
+    def setUp(self):
+        self.author = User.objects.register_user(
+            username='author',
+            email='author',
+            password='author',
+            send_mail=False,
+        )
+        self.recipient = User.objects.register_user(
+            username='recipient',
+            email='recipient',
+            password='recipient',
+            send_mail=False
+        )
+        MessageData.send(
+            author=self.author,
+            recipients=[self.recipient],
+            subject='message1',
+            text='text',
+        )
+        MessageData.send(
+            author=self.author,
+            recipients=[self.recipient],
+            subject='message2',
+            text='text',
+        )
+        self.received_messages = self.recipient.message_set.inboxed().all()
+
+    def test_multimessageprocessview_with_invalid_ids(self):
+        """Test that submitting a form with invalid ids raises a 404 error."""
+        self.client.login(username='recipient', password='recipient')
+        url = reverse_lazy('privmsg-bulk-process')
+        data = {
+            'selected_messages': [1, 2],
+            'action': 'archive',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(404, response.status_code)
+
+    def test_multimessageprocessview_with_invalid_action(self):
+        """Test that submitting a form with invalid action raises a 404 error."""
+        self.client.login(username='recipient', password='recipient')
+        url = reverse_lazy('privmsg-bulk-process')
+        data = {
+            'selected_messages': [2, 4],
+            'action': 'WRONG',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(404, response.status_code)
+
+    def test_multimessageprocessview_with_valid_data(self):
+        """Test that submitting the form with valid data redirects to the correct folder."""
+        self.client.login(username='recipient', password='recipient')
+        url = reverse_lazy('privmsg-bulk-process')
+        data = {
+            'selected_messages': [m.id for m in self.received_messages],
+            'action': 'archive',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(302, response.status_code)
+        self.assertIn(reverse('privmsg-archive'), response.url)
