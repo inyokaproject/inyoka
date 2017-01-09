@@ -1458,6 +1458,11 @@ def calendar_overview(request):
 def calendar_detail(request, slug):
     try:
         event = Event.objects.get(slug=slug)
+        if not event.visible:
+            if request.user.has_perm('portal.change_event'):
+                messages.info(request, _(u'This event is not visible for regular users.'))
+            else:
+                raise Http404()
     except Event.DoesNotExist:
         raise Http404()
     return {
