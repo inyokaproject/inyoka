@@ -13,6 +13,8 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404
 from django.test import RequestFactory
 from django.utils.translation import ugettext as _
+from inyoka.ikhaya.models import Suggestion
+from inyoka.forum.models import Forum, Topic
 from inyoka.portal.user import User, PERMISSION_MAPPING
 from inyoka.privmsg.forms import (
     MessageComposeForm,
@@ -1130,6 +1132,54 @@ class TestMessageReplyReportedTopicView(TestCase):
 class TestMessageReplyReportedTopicViewIntegration(TestCase):
     """Integration Tests for `MessageReplyReportedTopicView`."""
 
+    def setUp(self):
+        """Set up testing users and reported topic."""
+        # users
+        self.privileged_user = User.objects.register_user(
+            username='mod',
+            email='mod',
+            password='mod',
+            send_mail=False,
+        )
+        self.unprivileged_user = User.objects.register_user(
+            username='noob',
+            email='noob',
+            password='noob',
+            send_mail=False,
+        )
+        self.privileged_user._permissions = PERMISSION_MAPPING['manage_topics']  # TODO: new permissions
+        self.privileged_user.save()
+
+        # forum and topic
+        self.forum = Forum.objects.create(name='testforum')
+        self.topic = Topic.objects.create(
+            title='testtopic',
+            author=self.unprivileged_user,
+            forum=self.forum,
+        )
+
+        # report the topic
+        self.topic.reported = 'testreport'
+        self.topic.reporter_id = self.unprivileged_user.pk
+        self.topic.save()
+
+    def test_messagereplyreportedtopicview_as_normal_user(self):
+        """Test that trying to reply to a report as unprivileged user gives a 403."""
+        url = reverse('privmsg-reply-reported', args=(self.topic.slug,))
+        self.client.login(username='noob', password='noob')
+        response = self.client.get(url)
+        self.assertEqual(403, response.status_code)
+        # Note: Since the slug in the URL leaks information, I think the error code should be 404
+
+    def test_messagereplyreportedtopicview_as_privileged_user(self):
+        """Test that trying to reply to a report as privileged user contains reported topic data."""
+        url = reverse('privmsg-reply-reported', args=(self.topic.slug,))
+        self.client.login(username='mod', password='mod')
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual('Re: testtopic', response.context_data['form']['subject'].value())
+        self.assertEqual(self.unprivileged_user.username, response.context_data['form']['recipients'].value())
+
 
 class TestMessageReplySuggestedArticleView(TestCase):
     """Unit tests for `MessageReplySuggestedArticleView`."""
@@ -1196,6 +1246,48 @@ class TestMessageReplySuggestedArticleView(TestCase):
 
 class TestMessageReplySuggestedArticleViewIntegration(TestCase):
     """Integration Tests for `MessageReplySuggestedArticleView`."""
+
+    def setUp(self):
+        """Set up testing users and a suggestion."""
+        self.privileged_user = User.objects.register_user(
+            username='author',
+            email='author',
+            password='author',
+            send_mail=False,
+        )
+        self.unprivileged_user = User.objects.register_user(
+            username='noob',
+            email='noob',
+            password='noob',
+            send_mail=False,
+        )
+        self.privileged_user._permissions = PERMISSION_MAPPING['article_edit']  # TODO: new permissions
+        self.privileged_user.save()
+
+        # forum and topic
+        self.suggestion = Suggestion.objects.create(
+            author=self.unprivileged_user,
+            title='testsuggestion',
+            intro='testintro',
+            text='testtext',
+            notes='testnotes',
+        )
+
+    def test_messagereplysuggestedarticle_as_privileged_user(self):
+        """Test that replying to an article suggestion as a privileged user returns a pre-filled form."""
+        self.client.login(username='author', password='author')
+        url = reverse_lazy('privmsg-reply-suggestion', args=(self.suggestion.id,))
+        response = self.client.get(url)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual('Re: testsuggestion', response.context_data['form']['subject'].value())
+        self.assertEqual(self.unprivileged_user.username, response.context_data['form']['recipients'].value())
+
+    def test_messagereplysuggestedarticle_as_unprivileged_user(self):
+        """Test that replying to an article suggestion as an unprivileged user returns a 403."""
+        self.client.login(username='noob', password='noob')
+        url = reverse_lazy('privmsg-reply-suggestion', args=(self.suggestion.id,))
+        response = self.client.get(url)
+        self.assertEqual(403, response.status_code)
 
 
 class TestMultiMessageProcessView(TestCase):

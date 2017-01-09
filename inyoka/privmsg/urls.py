@@ -66,6 +66,10 @@ urlpatterns = [
         name='privmsg-compose-user'),
     url(r'^compose/$', views.MessageComposeView.as_view(),
         name='privmsg-compose'),
+    url(r'^reply_reported/(?P<slug>[^/]+)/$', views.MessageReplyReportedTopicView.as_view(),
+        name='privmsg-reply-reported'),
+    url(r'^reply_suggestion/(?P<pk>[^/]+)/$', views.MessageReplySuggestedArticleView.as_view(),
+        name='privmsg-reply-suggestion'),
 
     # message views
     url(r'^(?P<pk>\d+)/archive/$', views.MessageToArchiveView.as_view(),
