@@ -248,11 +248,11 @@ class MessageData(models.Model):
 
     objects = MessageDataManager()
 
-    # Not sure if this should be a classmethodhere. It would also fit on the
+    # Not sure if this should be a staticmethod here. It would also fit on the
     # Message class. It seems to do a lot of things and is difficult to test.
-    @classmethod
+    @staticmethod
     @transaction.atomic
-    def send(cls, author, recipients, subject, text):
+    def send(author, recipients, subject, text):
         """Send a copy of this message to each recipient."""
         messagedata = MessageData.objects.create(
             author=author,

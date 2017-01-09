@@ -224,7 +224,7 @@ class TestComposeForm(TestCase):
         cls.normal_user = User(pk=10, username='normal', status=1)
         cls.inactive_user = User(pk=11, username='inactive', status=0)
         cls.privileged_user = User(pk=12, username='privileged', status=1)
-        cls.privileged_user._permissions = sum(PERMISSION_NAMES.keys())
+        cls.privileged_user._permissions = sum(PERMISSION_NAMES.keys())  # TODO: new permissions
 
     def test_composeform_init(self):
         """Test the init of `MessageComposeForm`."""
@@ -330,7 +330,7 @@ class TestComposeForm(TestCase):
         form.cleaned_data = {
             'recipients': given_recipients,
             'group_recipients': given_group_recipients,
-            }
+        }
 
         actual_recipients = form.clean()
 
@@ -344,7 +344,7 @@ class TestComposeForm(TestCase):
         form.cleaned_data = {
             'recipients': given_recipients,
             'group_recipients': [],
-            }
+        }
 
         actual_recipients = form.clean()
 
@@ -358,7 +358,7 @@ class TestComposeForm(TestCase):
         form.cleaned_data = {
             'recipients': [],
             'group_recipients': given_group_recipients,
-            }
+        }
 
         actual_recipients = form.clean()
 
@@ -389,13 +389,13 @@ class TestComposeFormIntegration(TestCase):
             email='first',
             password='',
             send_mail=False,
-            )
+        )
         cls.second_user = User.objects.register_user(
             username='second',
             email='second',
             password='',
             send_mail=False,
-            )
+        )
         cls.group = Group.objects.create(name='group')
         cls.group.user_set = [cls.first_user, cls.second_user]
 
