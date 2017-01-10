@@ -50,9 +50,6 @@ def display(request, entry_id):
     except Entry.DoesNotExist:
         return global_not_found(request, _(u'Paste number %(id)d could not be found')
                                   % {'id': int(entry_id)})
-    referrer = request.META.get('HTTP_REFERER')
-    if referrer and entry.add_referrer(referrer):
-        entry.save()
     return {
         'entry': entry,
         'page': 'browse'
