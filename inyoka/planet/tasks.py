@@ -96,10 +96,25 @@ def sync():
                 logger.debug(u' no guid found, skipping')
                 continue
 
+            # normalize urls
+            normalize_re = re.compile('^http[s]?://(?P<n_guid>.*$)')
+            normalize_match = normalize_re.match(guid)
+            if normalize_match:
+                guid_normalized = normalize_match.group('n_guid')
+            else:
+                guid_normalized = guid
+
             try:
                 old_entry = Entry.objects.get(guid=guid)
             except Entry.DoesNotExist:
                 old_entry = None
+            if old_entry is None and guid_normalized != guid:
+                # no db entry with non normalized guid, so normalize
+                guid = guid_normalized
+                try:
+                    old_entry = Entry.objects.get(guid=guid_normalized)
+                except Entry.DoesNotExist:
+                    old_entry = None
 
             # get title, url and text. skip if no title or no text is
             # given. if the link is missing we use the blog link.
