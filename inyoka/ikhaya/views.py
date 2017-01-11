@@ -775,7 +775,7 @@ def suggestions_unsubscribe(request):
 @templated('ikhaya/event_edit.html', modifier=context_modifier)
 def event_edit(request, pk=None):
     new = not pk
-    if new and request.user.has_perm('portal.add_event'):
+    if new and not request.user.has_perm('portal.add_event'):
         raise AccessDeniedResponse()
     event = Event.objects.get(id=pk) if not new else None
 
