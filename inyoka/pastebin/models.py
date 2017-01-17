@@ -26,7 +26,6 @@ class Entry(models.Model):
     pub_date = models.DateTimeField(ugettext_lazy('Date'), db_index=True,
                                     default=datetime.utcnow)
     author = models.ForeignKey(User, verbose_name=ugettext_lazy('Author'))
-    referrer = models.TextField(ugettext_lazy('Referencing pages'), blank=True)
 
     class Meta:
         verbose_name = ugettext_lazy('Entry')
@@ -35,26 +34,6 @@ class Entry(models.Model):
         permissions = (
             ('view_entry', 'Can view Entry'),
         )
-
-    @property
-    def referrer_list(self):
-        return [x for x in self.referrer.splitlines() if x]
-
-    def add_referrer(self, referrer):
-        if is_safe_domain(referrer):
-            # make sure that the referrer isn't a pastebin url
-            netloc = urlparse(referrer)[1]
-            if ('.' + netloc).endswith(('.' + urlparse(href('pastebin'))[1])):
-                return False
-            if '?' in referrer:
-                referrer = referrer.split('?')[0]
-            r = self.referrer_list
-            if referrer in r:
-                return False
-            r.append(referrer)
-            self.referrer = u'\n'.join(sorted(r))
-            return True
-        return False
 
     def get_absolute_url(self, action='show'):
         return href(*{
