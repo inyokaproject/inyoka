@@ -15,6 +15,8 @@ DATABASES = {
 # debug settings
 DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = True
 
+ALLOWED_HOSTS = ['.ubuntuusers.local']
+
 # url settings
 BASE_DOMAIN_NAME = 'ubuntuusers.local:8080'
 INYOKA_URI_SCHEME = 'http'
