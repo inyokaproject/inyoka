@@ -116,7 +116,6 @@ event_delete = generic.DeleteView.as_view(model=Event,
 
 
 @templated('ikhaya/index.html', modifier=context_modifier)
-@permission_required('ikhaya.view_article', raise_exception=True)
 def index(request, year=None, month=None, category_slug=None, page=1,
           full=False):
     """Shows a few articles by different criteria"""
@@ -172,7 +171,6 @@ def index(request, year=None, month=None, category_slug=None, page=1,
 
 
 @templated('ikhaya/detail.html', modifier=context_modifier)
-@permission_required('ikhaya.view_article', raise_exception=True)
 def detail(request, year, month, day, slug):
     """Shows a single article."""
     try:
@@ -373,7 +371,6 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
 
 
 @login_required
-@permission_required('ikhaya.view_article', raise_exception=True)
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
     try:

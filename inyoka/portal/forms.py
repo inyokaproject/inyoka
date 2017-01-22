@@ -664,10 +664,8 @@ class GroupGlobalPermissionForm(forms.Form):
         'ikhaya.delete_category',
         'ikhaya.delete_comment',
         'ikhaya.delete_report',
-        'ikhaya.publish_article',
     )
     PORTAL_FILTERED_PERMISSIONS = (
-        'portal.publish_event',
         'portal.delete_user',
         'portal.add_staticfile',
         'portal.delete_staticpage',
