@@ -29,8 +29,7 @@ from inyoka.utils.storage import CachedStorage
 CachedStorage.get = lambda self, key, *args, **kwargs: key
 
 extensions = ['sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
-    'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.extlinks',
-    'sphinx.ext.autodoc']
+    'sphinx.ext.coverage', 'sphinx.ext.extlinks', 'sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
