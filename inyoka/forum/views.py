@@ -1406,11 +1406,15 @@ def delete_topic(request, topic_slug, action='hide'):
 
     topic = Topic.objects.select_related('forum').get(slug=topic_slug)
     can_moderate = request.user.has_perm('forum.moderate_forum', topic.forum)
-    can_delete = request.user.has_perm('forum.delete_topic_forum')
+    can_delete = request.user.has_perm('forum.delete_topic_forum', topic.forum)
 
-    if action == 'delete' and not can_delete and not can_moderate:
+    if not can_moderate:
         return abort_access_denied(request)
-    if action == 'hide' and not can_moderate:
+
+    if action == 'delete' and not can_delete:
+        return abort_access_denied(request)
+
+    if action == 'delete' and not topic.hidden:
         return abort_access_denied(request)
 
     if request.method == 'POST':
