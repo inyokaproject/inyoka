@@ -11,6 +11,7 @@
 from __future__ import division
 
 import cPickle
+import os
 import re
 from datetime import datetime
 from functools import reduce
@@ -611,12 +612,15 @@ class Topic(models.Model):
                     .exclude(topic=self)
                     .aggregate(count=Max('id'))['count'])
             forum.save()
-
         # Clear self.last_post and self.first_post, so this posts can be deleted
         self.last_post = None
         self.first_post = None
         self.save()
-        self.posts.all().delete()
+
+        # We need to call the delete() method explicitly to delete attachments
+        # too. Otherwise only the database entries are deleted.
+        for post in self.posts.all():
+            post.delete()
 
         # Delete subscriptions
         ctype = ContentType.objects.get_for_model(Topic)
@@ -833,6 +837,11 @@ class Post(models.Model, LockableObject):
         Note: The cache for all parent forums is explicitely deleted
               to update last/first post properly.
         """
+        # Delete attachments
+        if self.has_attachments:
+            for attachment in Attachment.objects.filter(post=self):
+                attachment.delete()
+
         if not self.topic:
             return super(Post, self).delete()
 
@@ -1175,6 +1184,9 @@ class Attachment(models.Model):
         Delete the attachment from the filesystem and
         also mark the database-object for deleting.
         """
+        thumb_path = self.get_thumbnail_path()
+        if thumb_path and path.exists(thumb_path):
+            os.remove(thumb_path)
         self.file.delete(save=False)
         super(Attachment, self).delete()
 
@@ -1228,6 +1240,15 @@ class Attachment(models.Model):
         with f.file as fobj:
             return fobj.read()
 
+    def get_thumbnail_path(self):
+        """
+        Returns the path to the thumbnail file.
+        """
+        thumbnail_path = self.file.name.encode('utf-8')
+        img_path = path.join(settings.MEDIA_ROOT,
+                             'forum/thumbnails/%s-%s' % (self.id, thumbnail_path.split('/')[-1]))
+        return get_thumbnail(self.file.path.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
+
     @property
     def html_representation(self):
         """
@@ -1260,10 +1281,7 @@ class Attachment(models.Model):
             This helper returns the thumbnail url of this attachment or None
             if there is no way to create a thumbnail.
             """
-            ff = self.file.name.encode('utf-8')
-            img_path = path.join(settings.MEDIA_ROOT,
-                'forum/thumbnails/%s-%s' % (self.id, ff.split('/')[-1]))
-            thumb = get_thumbnail(self.file.path.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
+            thumb = self.get_thumbnail_path()
             if thumb:
                 return href('media', 'forum/thumbnails/%s' % thumb.split('/')[-1])
             return thumb
