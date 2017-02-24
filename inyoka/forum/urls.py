@@ -30,7 +30,6 @@ urlpatterns = [
     url(r'^topic/(?P<topic_slug>[^/]+)/lock/$', views.change_lock_status, {'locked': True}),
     url(r'^topic/(?P<topic_slug>[^/]+)/unlock/$', views.change_lock_status, {'locked': False}),
     url(r'^topic/(?P<topic_slug>[^/]+)/report/$', views.report),
-    url(r'^topic/(?P<topic_slug>[^/]+)/report_done/$', views.report, {'status': 'done'}),
     url(r'^topic/(?P<topic_slug>[^/]+)/subscribe', views.subscribe_topic),
     url(r'^topic/(?P<topic_slug>[^/]+)/unsubscribe', views.unsubscribe_topic),
     url(r'^topic/(?P<topic_slug>[^/]+)/next/$', views.next_topic),
