@@ -3,14 +3,16 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
+
 def copy_user_group_relations(apps, schema_editor):
-    User = apps.get_model('portal','User')
-    Group = apps.get_model('auth','Group')
+    User = apps.get_model('portal', 'User')
+    Group = apps.get_model('auth', 'Group')
     db_alias = schema_editor.connection.alias
-    for relation in User.groups_old.through.objects.all():
-        user = User.objects.get(id=relation.user_id)
-        group = Group.objects.get(id=relation.group_id)
+    for relation in User.groups_old.through.objects.using(db_alias).all():
+        user = User.objects.using(db_alias).get(id=relation.user_id)
+        group = Group.objects.using(db_alias).get(id=relation.group_id)
         user.groups.add(group)
+
 
 class Migration(migrations.Migration):
 
