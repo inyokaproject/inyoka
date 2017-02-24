@@ -628,7 +628,7 @@ class Topic(models.Model):
             return href('forum', 'topic', self.slug, **query)
         if action in ('reply', 'delete', 'hide', 'restore', 'split', 'move',
                       'solve', 'unsolve', 'lock', 'unlock', 'report',
-                      'report_done', 'subscribe', 'unsubscribe',
+                      'subscribe', 'unsubscribe',
                       'first_unread', 'last_post'):
             return href('forum', 'topic', self.slug, action, **query)
 
