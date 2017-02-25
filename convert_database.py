@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import itertools
 import os
-import sys
 assert 'DJANGO_SETTINGS_MODULE' in os.environ
 
 import django
@@ -42,63 +41,50 @@ seq_mapping = {
     'portal_user_groups_id_seq': 'portal_user_groups_id_seq1'
 }
 
-if 'transfer' in sys.argv:
-    with transaction.atomic(using='pg'):
-        # pg_cursor.execute('SET CONSTRAINTS ALL DEFERRED')
-        # created by migrations, drop to get the real ones back
-        pg_cursor.execute('TRUNCATE django_content_type CASCADE')
-        pg_cursor.execute('TRUNCATE auth_permission CASCADE')
-        pg_cursor.execute('TRUNCATE auth_group CASCADE')
-        pg_cursor.execute('TRUNCATE portal_user CASCADE')
-        for model in all_models:
-            print "transfering", model
-            table_name = '%s_%s' % (model._meta.app_label, model._meta.model_name.lower())
-            if getattr(model._meta, 'db_table', None):
-                table_name = model._meta.db_table
-            pg_cursor.execute('ALTER TABLE %s DISABLE TRIGGER ALL' % table_name)
-            pk = get_pk(model)
-            # if data exists, chunk it to save ram
-            if pk:
-                existing_objects = model.objects.aggregate(max=models.Max('pk'))['max'] or 0
-                start, end = 0, 1000
-                while start < existing_objects:
-                    print start
-                    model.objects.using('pg').bulk_create(model.objects.filter(pk__gte=start, pk__lt=end))
-                    start = end
-                    end += 1000
-            else:
-                model.objects.using('pg').bulk_create(model.objects.all())
-            # figure out current seq value and reset sequences
-            max_val = model.objects.using('pg').aggregate(max=models.Max('pk'))['max'] or 0
-            if pk:
-                sq_name = '%s_%s_seq' % (table_name, pk.name)
-                if sq_name in seq_mapping:
-                    sq_name = seq_mapping[sq_name]
-                pg_cursor.execute("SELECT setval('%s', %%s, true)" % sq_name, [max_val + 1])
-            pg_cursor.execute('ALTER TABLE %s ENABLE TRIGGER ALL' % table_name)
+del_queries = [
+    "DELETE FROM wiki_revision WHERE NOT EXISTS (SELECT 1 FROM wiki_text WHERE wiki_text.id = wiki_revision.text_id);",
+    "DELETE FROM wiki_revision WHERE NOT EXISTS (SELECT 1 FROM wiki_page WHERE wiki_page.id = wiki_revision.page_id);",
+    "DELETE FROM forum_post WHERE NOT EXISTS (SELECT 1 FROM forum_topic WHERE forum_topic.id = forum_post.topic_id);",
+    "DELETE FROM forum_poll WHERE NOT EXISTS (SELECT 1 FROM forum_topic WHERE forum_topic.id = forum_poll.topic_id);",
+    "DELETE FROM forum_polloption WHERE NOT EXISTS (SELECT 1 FROM forum_poll WHERE forum_poll.id = forum_polloption.poll_id);",
+    "DELETE FROM forum_voter WHERE NOT EXISTS (SELECT 1 FROM forum_poll WHERE forum_poll.id = forum_voter.poll_id);",
+    "DELETE FROM forum_voter WHERE NOT EXISTS (SELECT 1 FROM portal_user WHERE portal_user.id = forum_voter.voter_id);",
+    "DELETE FROM forum_postrevision WHERE NOT EXISTS (SELECT 1 FROM forum_post WHERE forum_post.id = forum_postrevision.post_id);",
+    "DELETE FROM forum_attachment WHERE NOT EXISTS (SELECT 1 FROM forum_post WHERE forum_post.id = forum_attachment.post_id);",
+]
 
-if 'constraints' in sys.argv:
-    pg_cursor.execute("""
-    SELECT 'ALTER TABLE "'||nspname||'"."'||relname||'" DROP CONSTRAINT "'||conname||'";'
-    FROM pg_constraint
-    INNER JOIN pg_class ON conrelid=pg_class.oid
-    INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace
-    ORDER BY CASE WHEN contype='f' THEN 0 ELSE 1 END,contype,nspname,relname,conname
-    """)
+with transaction.atomic(using='pg'):
+    pg_cursor.execute('SET CONSTRAINTS ALL DEFERRED')
+    # created by migrations, drop to get the real ones back
+    pg_cursor.execute('TRUNCATE django_content_type CASCADE')
+    pg_cursor.execute('TRUNCATE auth_permission CASCADE')
+    pg_cursor.execute('TRUNCATE auth_group CASCADE')
+    pg_cursor.execute('TRUNCATE portal_user CASCADE')
+    for model in all_models:
+        print "transfering", model
+        table_name = '%s_%s' % (model._meta.app_label, model._meta.model_name.lower())
+        if getattr(model._meta, 'db_table', None):
+            table_name = model._meta.db_table
+        pk = get_pk(model)
+        # if data exists, chunk it to save ram
+        if pk:
+            existing_objects = model.objects.aggregate(max=models.Max('pk'))['max'] or 0
+            start, end = 0, 1000
+            while start < existing_objects:
+                print start
+                model.objects.using('pg').bulk_create(model.objects.filter(pk__gte=start, pk__lt=end))
+                start = end
+                end += 1000
+        else:
+            model.objects.using('pg').bulk_create(model.objects.all())
+        # figure out current seq value and reset sequences
+        max_val = model.objects.using('pg').aggregate(max=models.Max('pk'))['max'] or 0
+        if pk:
+            sq_name = '%s_%s_seq' % (table_name, pk.name)
+            if sq_name in seq_mapping:
+                sq_name = seq_mapping[sq_name]
+            pg_cursor.execute("SELECT setval('%s', %%s, true)" % sq_name, [max_val + 1])
 
-    for row in pg_cursor.fetchall():
-        print row[0]
-
-    print "\n=================================================================================\n"
-
-    pg_cursor.execute("""
-    SELECT 'ALTER TABLE "'||nspname||'"."'||relname||'" ADD CONSTRAINT "'||conname||'" '||
-    pg_get_constraintdef(pg_constraint.oid)||';'
-    FROM pg_constraint
-    INNER JOIN pg_class ON conrelid=pg_class.oid
-    INNER JOIN pg_namespace ON pg_namespace.oid=pg_class.relnamespace
-    ORDER BY CASE WHEN contype='f' THEN 0 ELSE 1 END DESC,contype DESC,nspname DESC,relname DESC,conname DESC;
-    """)
-
-    for row in pg_cursor.fetchall():
-        print row[0]
+    print "Deleting broken data"
+    for q in del_queries:
+        pg_cursor.execute(q)
