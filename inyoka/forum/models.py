@@ -332,7 +332,7 @@ class Forum(models.Model):
         qdct = {forum.id: forum for forum in forums}
 
         forum = qdct[self.id]
-        while forum.parent_id is not None:
+        while not forum.is_category:
             forum = qdct[forum.parent_id]
             parents.append(forum)
         return parents
@@ -340,6 +340,10 @@ class Forum(models.Model):
     @property
     def parents(self):
         return self.get_parents(True)
+
+    @property
+    def is_category(self):
+        return self.parent is None
 
     @property
     def children(self):

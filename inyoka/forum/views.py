@@ -95,7 +95,7 @@ def index(request, category=None):
 
     if category:
         category = Forum.objects.get_cached(category)
-        if not category or category.parent is not None:
+        if not category or not category.is_category:
             raise Http404()
         category = category
         categories = [category]
@@ -104,7 +104,7 @@ def index(request, category=None):
         if unread_forum is not None:
             return redirect(url_for(unread_forum, 'welcome'))
     else:
-        categories = tuple(forum for forum in forums if forum.parent_id is None)
+        categories = tuple(forum for forum in forums if forum.is_category)
 
     hidden_categories = []
     if request.user.is_authenticated():
@@ -141,7 +141,7 @@ def forum(request, slug, page=1):
     forum = Forum.objects.get_cached(slug)
     # if the forum is a category we raise Http404. Categories have
     # their own url at /category.
-    if not forum or forum.parent_id is None:
+    if not forum or forum.is_category:
         raise Http404()
 
     if not request.user.has_perm('forum.view_forum', forum):
@@ -471,7 +471,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         forum = topic.forum
     elif forum_slug:
         forum = Forum.objects.get_cached(slug=forum_slug)
-        if not forum or not forum.parent_id:
+        if not forum or forum.is_category:
             raise Http404()
         newtopic = firstpost = True
     elif post_id:
@@ -1197,29 +1197,27 @@ def splittopic(request, topic_slug, page=1):
 
             posts = list(posts)
 
-            try:
-                if data['action'] == 'new':
-                    new_topic = Topic.objects.create(
-                        title=data['title'],
-                        forum=data['forum'],
-                        slug=None,
-                        author_id=posts[0].author_id,
-                        ubuntu_version=data['ubuntu_version'],
-                        ubuntu_distro=data['ubuntu_distro'])
-                    new_topic.forum.topic_count.incr()
+            if data['action'] == 'new':
+                if posts[0].hidden:
+                    messages.error(request,
+                       _(u'The First post of the new topic must not be '
+                          'hidden.'))
+                    return HttpResponseRedirect(request.path)
+                new_topic = Topic.objects.create(
+                    title=data['title'],
+                    forum=data['forum'],
+                    slug=None,
+                    author_id=posts[0].author_id,
+                    ubuntu_version=data['ubuntu_version'],
+                    ubuntu_distro=data['ubuntu_distro'])
+                new_topic.forum.topic_count.incr()
 
-                    Post.split(posts, old_topic, new_topic)
-                else:
-                    new_topic = data['topic']
-                    Post.split(posts, old_topic, new_topic)
+                Post.split(posts, old_topic, new_topic)
+            else:
+                new_topic = data['topic']
+                Post.split(posts, old_topic, new_topic)
 
-                del request.session['_split_post_ids']
-
-            except ValueError:
-                messages.error(request,
-                    _(u'You cannot move a topic into a category. '
-                      u'Please choose a forum.'))
-                return HttpResponseRedirect(request.path)
+            del request.session['_split_post_ids']
 
             new_forum = new_topic.forum
             nargs = {'username': None,
