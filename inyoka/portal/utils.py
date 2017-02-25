@@ -21,6 +21,7 @@ from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
 
+from inyoka.portal.models import TicketReason
 
 def abort_access_denied(request):
     """Abort with an access denied message or go to login."""

@@ -324,6 +324,73 @@ class Subscription(models.Model):
         return self.is_accessible_for_user
 
 
+class TicketReason(models.Model):
+    """Predefined set of reasons that a user can choose from when reporting something."""
+
+    content_type = models.ForeignKey(
+        ContentType,
+        null=True,
+        blank=True,
+        db_index=True,
+        limit_choices_to={'model__in': ('topic', 'post')},
+    )
+    reason = models.CharField(max_length=200, null=False)
+    system_defined = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = ugettext_lazy(u'Ticket Reason')
+        verbose_name_plural = ugettext_lazy(u'Ticket Reasons')
+
+    def __unicode__(self):
+        return self.reason
+
+    def get_spam_reason(self, content_type):
+        """Get the reason "Spam" for the specified content_type"""
+        return TicketReason.objects.get(id=1)
+
+
+class Ticket(models.Model):
+    OPEN = 0
+    IN_PROGRESS = 1
+    CLOSED = 2
+
+    TICKET_STATUS_CHOICES = (
+        (OPEN, ugettext_lazy(u'Open')),
+        (IN_PROGRESS, ugettext_lazy(u'In progress')),
+        (CLOSED, ugettext_lazy(u'Closed'))
+    )
+
+    content_type = models.ForeignKey(ContentType, null=True, blank=True)
+    object_id = models.PositiveIntegerField(null=True, db_index=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    reporting_user = models.ForeignKey(User, related_name='%(class)s_reporting_user')
+    reporting_time = models.DateTimeField(ugettext_lazy(u'Reported at'), db_index=True)
+    owning_user = models.ForeignKey(User, related_name='%(class)s_owning_user', null=True)
+    owned_time = models.DateTimeField(ugettext_lazy(u'Owned at'), null=True)
+    closed_time = models.DateTimeField(ugettext_lazy(u'Closed at'), null=True)
+    state = models.SmallIntegerField(ugettext_lazy(u'State'),
+        default=OPEN,
+        null=False,
+        choices=TICKET_STATUS_CHOICES,
+        db_index=True)
+    reason = models.ForeignKey(TicketReason, null=True)
+    reporter_comment = InyokaMarkupField(verbose_name=ugettext_lazy(u'Reporter comment'), application='portal')
+    owner_comment = InyokaMarkupField(verbose_name=ugettext_lazy(u'Owner comment'), application='portal', null=True)
+
+    def can_moderate(self, user):
+        """Check if a user is allowed to manage tickets for the respective app as well as for the model"""
+
+        model = self.content_type.model
+
+        if model == 'topic':
+            return user.has_perm('forum.manage_tickets_forum') and user.has_perm('forum.moderate_forum', self.content_object.forum)
+        if model == 'post':
+            return user.has_perm('forum.manage_tickets_forum') and user.has_perm('forum.moderate_forum', self.content_object.topic.forum)
+
+        return False
+
+
 class Storage(models.Model):
     key = models.CharField(max_length=200, db_index=True)
     value = InyokaMarkupField(application='portal')

@@ -22,6 +22,7 @@ from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -41,8 +42,8 @@ from django.utils.translation import ugettext_lazy
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
 
 from inyoka.forum.constants import get_simple_version_choices
-from inyoka.forum.models import Forum
-from inyoka.portal.models import StaticFile, StaticPage
+from inyoka.forum.models import Forum, Topic, Post
+from inyoka.portal.models import StaticFile, StaticPage, Ticket, TicketReason
 from inyoka.portal.user import (
     User,
     UserPage,
@@ -69,7 +70,7 @@ GLOBAL_PRIVILEGE_MODELS = {
     'auth': ('group',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
-    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage'),
+    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage', 'ticketreason'),
 }
 
 NOTIFY_BY_CHOICES = (
@@ -696,6 +697,8 @@ class GroupGlobalPermissionForm(forms.Form):
         'portal.add_staticpage',
         'portal.add_storage',
         'portal.delete_storage',
+        'portal.add_ticketreason',
+        'portal.delete_ticketreason',
     )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
@@ -1124,3 +1127,50 @@ class ConfigurationForm(forms.Form):
 class EditStyleForm(forms.Form):
     styles = forms.CharField(label=ugettext_lazy(u'Styles'), widget=forms.Textarea(
                              attrs={'rows': 20}), required=False)
+
+
+class ManageTicketReasons(forms.ModelForm):
+    class Meta:
+        model = TicketReason
+        fields = ('content_type', 'reason')
+
+
+class CreateTicketForm(forms.ModelForm):
+    """
+    Allows the user to report arbirtary Django objects.
+    Contains the Ticket Reason that can be configured per Django component as well
+    as a text field where the user can put an additional comment.
+    """
+    class Meta:
+        model = Ticket
+        fields = ('reason', 'reporter_comment')
+
+
+class EditTicketForm(forms.ModelForm):
+    """
+    Allows the user to report arbirtary Django objects.
+    Contains the Ticket Reason that can be configured per Django component as well
+    as a text field where the user can put an additional comment.
+    """
+    class Meta:
+        model = Ticket
+        fields = ('reason', 'reporter_comment')
+
+
+class EditTicketOwnerCommentForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ('owner_comment',)
+
+
+class TicketListForm(forms.Form):
+    """
+    This form lets the moderator select a bunch of topics for removing the
+    reported flag.
+    """
+    selected = forms.MultipleChoiceField()
+
+    def __init__(self, tickets, *args, **kwargs):
+        super(TicketListForm, self).__init__(*args, **kwargs)
+
+        self.fields['selected'].choices = [(element.id, u'') for element in tickets]

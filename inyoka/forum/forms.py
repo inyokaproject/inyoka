@@ -23,6 +23,9 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
 from inyoka.utils.text import slugify
 
+import urllib
+import urlparse
+
 
 class ForumField(forms.ChoiceField):
     """

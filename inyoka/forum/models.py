@@ -40,7 +40,7 @@ from inyoka.forum.constants import (
     UBUNTU_DISTROS,
 )
 from inyoka.forum.notifications import notify_reported_topic_subscribers
-from inyoka.portal.models import Subscription
+from inyoka.portal.models import Subscription, Ticket, TicketReason
 from inyoka.portal.user import User
 from inyoka.portal.utils import get_ubuntu_versions
 from inyoka.utils.cache import QueryCounter
@@ -323,6 +323,7 @@ class Forum(models.Model):
             ('vote_forum', 'Can make Votes in Forum'),
             ('upload_forum', 'Can upload Attachments in Forum'),
             ('moderate_forum', 'Can moderate Forum'),
+            ('manage_tickets_forum', 'Can manage tickets for Forums'),
         )
 
     def get_absolute_url(self, action='show', **query):
@@ -644,7 +645,7 @@ class Topic(models.Model):
         if action in ('show',):
             return href('forum', 'topic', self.slug, **query)
         if action in ('reply', 'delete', 'hide', 'restore', 'split', 'move',
-                      'solve', 'unsolve', 'lock', 'unlock', 'report',
+                      'solve', 'unsolve', 'lock', 'unlock', 'ticket',
                       'subscribe', 'unsubscribe',
                       'first_unread', 'last_post'):
             return href('forum', 'topic', self.slug, action, **query)
@@ -1098,43 +1099,21 @@ class Post(models.Model, LockableObject):
         if topic.first_post == self:
             # it's the first post, i.e. the topic
             topic.hidden = True
-            if report:
-                # Don't report a topic as spam if explicitly classified
-                topic.reported = _('This topic is hidden due to possible spam.')
-                topic.reporter = User.objects.get_system_user()
-
-                notify_reported_topic_subscribers(
-                    _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
-                    {'topic': topic, 'text': topic.reported})
-
-                cache.delete('forum/reported_topic_count')
-            topic.save(update_fields=['hidden', 'reported', 'reporter'])
+            topic.save(update_fields=['hidden'])
         else:
             # it's not the first post
             self.hidden = True
             self.save(update_fields=['hidden'])
-            if report:
-                # Don't report a post as spam if explicitly classified
-                msg = _(
-                    '[user:%(username)s:]: The post [post:%(post)s:] is hidden '
-                    'due to possible spam.'
-                ) % {
-                    'username': self.author.username,
-                    'post': self.pk,
-                }
-                if topic.reported:
-                    topic.reported += '\n\n%s' % msg
-                else:
-                    topic.reported = msg
-                    topic.reporter = User.objects.get_system_user()
 
-                notify_reported_topic_subscribers(
-                    _(u'Reported post: “%(post)s”') % {'post': self.pk},
-                    {'topic': topic, 'text': msg})
-
-                cache.delete('forum/reported_topic_count')
-
-            topic.save(update_fields=['reported', 'reporter'])
+        if report:
+            Ticket.objects.create(
+                reporting_user = User.objects.get_system_user(),
+                reporting_time = datetime.utcnow(),
+                reporter_comment = _('This topic is hidden due to possible spam.'),
+                reason = TicketReason.get_spam_reason(),
+                content_object = self
+            )
+            cache.delete('portal/ticket_count')
 
     def __unicode__(self):
         return '%s - %s' % (

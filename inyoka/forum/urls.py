@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^reported_topics/(?P<mode>(un)?subscribe)/$', views.reported_topics_subscription),
     url(r'^post/(?P<post_id>\d+)/$', views.post),
     url(r'^post/(?P<post_id>\d+)/edit/$', views.edit),
+    url(r'^post/(?P<post_id>\d+)/ticket/$', views.create_ticket),
     url(r'^post/(?P<quote_id>\d+)/quote/$', views.edit),
     url(r'^post/(?P<post_id>\d+)/restore/$', views.restore_post),
     url(r'^post/(?P<post_id>\d+)/(?P<action>delete|hide)/$', views.delete_post),

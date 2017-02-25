@@ -18,8 +18,10 @@ from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.core import signing
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
 from django.forms.utils import ErrorList
@@ -67,6 +69,9 @@ from inyoka.portal.forms import (
     UserCPSettingsForm,
     UserMailForm,
     WikiFeedSelectorForm,
+    ManageTicketReasons,
+    TicketListForm,
+    EditTicketOwnerCommentForm,
 )
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
@@ -75,6 +80,8 @@ from inyoka.portal.models import (
     StaticFile,
     StaticPage,
     Subscription,
+    TicketReason,
+    Ticket
 )
 from inyoka.portal.user import (
     User,
@@ -96,6 +103,7 @@ from inyoka.utils.http import (
     TemplateResponse,
     templated,
 )
+from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.mail import send_mail
 from inyoka.utils.notification import send_notification
 from inyoka.utils.pagination import Pagination
@@ -1677,3 +1685,181 @@ def csrf_failure(request, reason=None):
     }
 
     return TemplateResponse('errors/403_csrf.html', context, 403)
+
+
+@login_required
+@permission_required('portal.change_ticketreason', raise_exception=True)
+@templated('portal/ticketreason_list.html')
+def ticket_reasons_list(request):
+
+    reasons = TicketReason.objects.all()
+
+    return {
+        'reasons': reasons,
+    }
+
+
+@permission_required('portal.change_ticketreason', raise_exception=True)
+@login_required
+@templated('portal/ticketreason_edit.html')
+def ticket_reason_edit(request, reason_id=None):
+
+    if request.method == 'POST':
+        form = ManageTicketReasons(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            if reason_id:
+                reason = TicketReason.objects.get(id=reason_id)
+            else:
+                reason = TicketReason.objects.create()
+            reason.content_type = data['content_type']
+            reason.reason = data['reason']
+            reason.save()
+            return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
+
+    else:
+        if reason_id:
+            reason = TicketReason.objects.get(id=reason_id)
+        else:
+            reason = TicketReason()
+
+        form = ManageTicketReasons(instance=reason)
+        return {
+            'form': form,
+            'reason': reason,
+        }
+
+
+@permission_required('portal.change_ticketreason', raise_exception=True)
+@confirm_action(message=_(u'Do you want to delete the ticket reason?'),
+                confirm=_(u'Delete'), cancel=_(u'Cancel'))
+@login_required
+def ticket_reason_delete(request, reason_id):
+
+    reason = TicketReason.objects.get(id=reason_id)
+
+    if reason.system_defined:
+        # don't delete, inform user
+        messages.error(request, _(u'You tried to delete a system defined ticket reason, aborting.'))
+    else:
+        reason.delete()
+
+    return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
+
+
+@permission_required('forum.manage_tickets_forum', raise_exception=True)
+@login_required
+@templated('portal/ticketlist.html')
+def ticket_list(request):
+    """Get a list of all tickets"""
+
+    tickets = Ticket.objects.filter(state__in=[Ticket.OPEN,Ticket.IN_PROGRESS]).order_by('reporting_time')
+
+    if request.method == 'POST':
+        form = TicketListForm(tickets, request.POST)
+
+        if form.is_valid():
+            data = form.cleaned_data
+            if not data['selected']:
+                messages.error(request, _(u'No tickets selected.'))
+            else:
+                # We select all topics that have been selected and also
+                # select the regarding forum, 'cause we will check for the
+                # moderation privilege.
+                tickets_selected = tickets.filter(id__in=data['selected'])
+
+                tickets_with_modrights = set()
+                # Check for the moderate privilege of the forums of selected
+                # reported topics and take only the topic IDs where the
+                # requesting user can moderate the forum.
+                for ticket in tickets_selected:
+                    if ticket.can_moderate(request.user) and ticket.owning_user == request.user:
+                        tickets_with_modrights.add(ticket.id)
+
+                # Update the reported state.
+                Ticket.objects.filter(id__in=tickets_with_modrights).update(
+                    state=Ticket.CLOSED)
+                cache.delete('portal/ticket_count')
+                tickets = tickets.exclude(id__in=tickets_with_modrights)
+                if len(tickets_selected) == len(tickets_with_modrights):
+                    messages.success(request, _(u'The selected tickets have been closed.'))
+                else:
+                    messages.success(request, _(u'Only a subset of the selected tickets has been '
+                        u'closed, considering your moderation privileges.'))
+    else:
+        form = TicketListForm(tickets=tickets)
+
+    return {
+        'elements': tickets,
+        'form': form,
+    }
+
+
+@permission_required('forum.manage_tickets_forum', raise_exception=True)
+@login_required
+@templated('portal/ticketlist.html')
+def ticket_edit(request, ticket_id):
+
+    ticket = Ticket.objects.get(id=ticket_id)
+
+    if ticket.owning_user != request.user:
+        raise PermissionDenied("You are not the owner of this ticket")
+
+    if request.method == 'POST':
+
+        form = EditTicketOwnerCommentForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            return HttpResponseRedirect(href('portal', 'tickets', 'list'))
+
+    else:
+        tickets = Ticket.objects.filter(state__in=[Ticket.OPEN,Ticket.IN_PROGRESS])
+
+        owner_comment_form = EditTicketOwnerCommentForm(instance=ticket)
+
+        return {
+            'elements': tickets,
+            'owner_comment_form': owner_comment_form,
+            'edit_ticket_id': int(ticket_id)
+        }
+
+@permission_required('forum.manage_tickets_forum', raise_exception=True)
+@login_required
+def ticket_own(request, ticket_id):
+
+    ticket = Ticket.objects.get(id=ticket_id)
+    if not ticket.owning_user and ticket.can_moderate(request.user):
+        ticket.owning_user = request.user
+        ticket.state = Ticket.IN_PROGRESS
+
+        """Do not reset the owned time if someone already tried to solve the ticket before"""
+        if not ticket.owned_time:
+            ticket.owned_time = datetime.utcnow()
+
+        ticket.save()
+
+        cache.delete('portal/ticket_count')
+    else:
+        messages.info(request, _('This ticket already has an owner.'))
+
+    return HttpResponseRedirect(href('portal', 'tickets', 'list'))
+
+@permission_required('forum.manage_tickets_forum', raise_exception=True)
+@login_required
+def ticket_disown(request, ticket_id):
+
+    ticket = Ticket.objects.get(id=ticket_id)
+
+    if ticket.owning_user != request.user:
+        raise PermissionDenied("You are not the owner of this ticket")
+
+    ticket.owning_user = None
+    ticket.state = Ticket.OPEN
+    ticket.save()
+
+    cache.delete('portal/ticket_count')
+
+    return HttpResponseRedirect(href('portal', 'tickets', 'list'))
+
+

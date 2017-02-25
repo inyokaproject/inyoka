@@ -17,6 +17,7 @@ from operator import attrgetter
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F, Q
@@ -58,7 +59,8 @@ from inyoka.forum.notifications import (
     notify_reported_topic_subscribers)
 from inyoka.markup import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
-from inyoka.portal.models import Subscription
+from inyoka.portal.models import Subscription, Ticket, TicketReason
+from inyoka.portal.forms import CreateTicketForm
 from inyoka.portal.user import User
 from inyoka.portal.utils import abort_access_denied
 from inyoka.utils.database import get_simplified_queryset
@@ -930,6 +932,46 @@ def report(request, topic_slug, page=1):
         form = ReportTopicForm()
     return {
         'topic': topic,
+        'form': form
+    }
+
+
+@login_required
+@templated('forum/ticket.html')
+def create_ticket(request, post_id):
+    """Add post to the unified ticketing system"""
+    post = Post.objects.get(id=post_id)
+
+    if not request.user.has_perm('forum.view_forum', post.topic.forum):
+        return abort_access_denied(request)
+
+    if request.method == 'POST':
+        form = CreateTicketForm(request.POST)
+        if form.is_valid():
+            ticket = Ticket()
+
+            data = form.cleaned_data
+
+            ticket.reporting_user = request.user
+            ticket.reporting_time = datetime.utcnow()
+            ticket.reporter_comment = data['reporter_comment']
+            ticket.reason = data['reason']
+
+            if ticket.reason.content_type == ContentType.objects.get_for_model(Topic):
+                ticket.content_object = post.topic
+            else:
+                ticket.content_object = post
+
+            ticket.save()
+
+            cache.delete('portal/ticket_count')
+            messages.success(request, _(u'The post was reported.'))
+            return HttpResponseRedirect(url_for(post))
+    else:
+        form = CreateTicketForm()
+        form.fields['reason'].queryset = TicketReason.objects.filter(content_type__in=ContentType.objects.get_for_models(Post, Topic).values())
+    return {
+        'post': post,
         'form': form
     }
 
