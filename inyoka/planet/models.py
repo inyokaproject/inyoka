@@ -94,10 +94,6 @@ class Entry(models.Model):
             self.title
         )
 
-    @property
-    def simplified_text(self):
-        return striptags(self.text)
-
     def get_absolute_url(self, action='show'):
         if action == 'show':
             return self.url
@@ -105,12 +101,6 @@ class Entry(models.Model):
             return href(*{
                 'hide': ('planet', 'hide', self.id),
             }[action])
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-    def delete(self):
-        super().delete()
 
     class Meta:
         verbose_name = gettext_lazy('Entry')
