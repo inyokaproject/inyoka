@@ -140,10 +140,7 @@ class Command(BaseCommand):
         """Renders static pages"""
         settings.DEBUG = False
 
-        try:
-            q = StaticPage.objects.get(key=page)
-        except StaticPage.DoesNotExist:
-            raise Http404
+        q = StaticPage.objects.get(key=page)
         return {
             'title': q.title,
             'content': q.content_rendered,
