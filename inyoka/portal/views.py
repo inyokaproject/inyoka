@@ -1490,7 +1490,7 @@ def calendar_ical(request, slug):
 
 
     cal = iCal()
-    tz = pytz.timezone("Europe/Berlin")
+    tz = pytz.timezone(settings.TIME_ZONE)
     
     start = date_time_to_datetime(event.date, event.time or time())
     
