@@ -41,13 +41,20 @@ seq_mapping = {
     'portal_user_groups_id_seq': 'portal_user_groups_id_seq1'
 }
 
+from inyoka.forum.models import PollVote, PollOption
+ignore_models=[PollVote, PollOption]
 
+sorted(all_models)
 with transaction.atomic(using='pg'):
     pg_cursor.execute('SET CONSTRAINTS ALL DEFERRED')
     # created by migrations, drop to get the real ones back
     pg_cursor.execute('TRUNCATE django_content_type CASCADE')
     pg_cursor.execute('TRUNCATE auth_permission CASCADE')
+    pg_cursor.execute('TRUNCATE auth_group CASCADE')
+    pg_cursor.execute('TRUNCATE portal_user CASCADE')
     for model in all_models:
+        if model in ignore_models:
+            continue
         print "transfering", model
         pk = get_pk(model)
         # if data exists, chunk it to save ram
@@ -55,7 +62,8 @@ with transaction.atomic(using='pg'):
             existing_objects = model.objects.aggregate(max=models.Max('pk'))['max'] or 0
             start, end = 0, 1000
             while start < existing_objects:
-                model.objects.using('pg').bulk_create(model.objects.all()[start:end])
+                print start
+                model.objects.using('pg').bulk_create(model.objects.filter(pk__gte=start,pk__lt=end))
                 start = end
                 end += 1000
         else:
@@ -70,3 +78,11 @@ with transaction.atomic(using='pg'):
             if sq_name in seq_mapping:
                 sq_name = seq_mapping[sq_name]
             pg_cursor.execute("SELECT setval('%s', %%s, true)" % sq_name, [max_val + 1])
+    pg_cursor.execute("DELETE FROM forum_voter WHERE voter_id NOT IN (SELECT id FROM portal_user)")
+#    pg_cursor.execute("DELETE FROM forum_voter WHERE poll_id NOT IN (SELECT id FROM forum_poll WHERE topic_id NOT IN (SELECT id FROM forum_topic))")
+    pg_cursor.execute("DELETE FROM forum_poll WHERE topic_id NOT IN (SELECT id FROM forum_topic)")
+    pg_cursor.execute("DELETE FROM forum_polloption WHERE poll_id NOT IN (SELECT id FROM forum_poll)")
+    pg_cursor.execute("DELETE FROM forum_voter WHERE poll_id NOT IN (SELECT id FROM forum_poll)")
+    pg_cursor.execute("DELETE FROM forum_voter WHERE voter_id NOT IN (SELECT id FROM portal_user)")
+    pg_cursor.execute("DELETE FROM wiki_revision WHERE text_id NOT IN (SELECT id FROM wiki_text)")
+    pg_cursor.execute("DELETE FROM wiki_revision WHERE page_id NOT IN (SELECT id FROM wiki_page);")
