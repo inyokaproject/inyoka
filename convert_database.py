@@ -66,7 +66,7 @@ with transaction.atomic(using='pg'):
         if getattr(model._meta, 'db_table', None):
             table_name = model._meta.db_table
         pk = get_pk(model)
-        # if data exists, chunk it to save ram
+        # if we have a pk we can use, chunk the data to save ram
         if pk:
             existing_objects = model.objects.aggregate(max=models.Max('pk'))['max'] or 0
             start, end = 0, 1000
