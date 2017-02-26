@@ -150,7 +150,7 @@ class PageManager(models.Manager):
             normalized_name = normalize(unicode_normalization_form, unicode(name.lower(), "utf-8")).encode('ascii', 'ignore')
         except TypeError:
             normalized_name = normalize(unicode_normalization_form, name.lower()).encode('ascii', 'ignore')
-        
+
         for item in self.get_page_list():
             normalized_item = normalize(unicode_normalization_form, item.lower()).encode('ascii', 'ignore')
             if normalized_name.replace(' ', '_') == normalized_item.replace(' ', '_'):
