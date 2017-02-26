@@ -95,22 +95,6 @@ class Command(BaseCommand):
             assign_perm("planet.delete_entry", group)
             assign_perm("planet.hide_entry", group)
             
-            assign_perm("wiki.add_attachment", group)
-            assign_perm("wiki.change_attachment", group)
-            assign_perm("wiki.delete_attachment", group)
-            assign_perm("wiki.add_metadata", group)
-            assign_perm("wiki.change_metadata", group)
-            assign_perm("wiki.delete_metadata", group)
-            assign_perm("wiki.add_page", group)
-            assign_perm("wiki.change_page", group)
-            assign_perm("wiki.delete_page", group)
-            assign_perm("wiki.add_revision", group)
-            assign_perm("wiki.change_revision", group)
-            assign_perm("wiki.delete_revision", group)
-            assign_perm("wiki.add_text", group)
-            assign_perm("wiki.change_text", group)
-            assign_perm("wiki.delete_text", group)
-            
             assign_perm("forum.change_forum", group)
         
         
@@ -147,27 +131,12 @@ class Command(BaseCommand):
         assign_perm("planet.change_entry", ikhayateam)
         assign_perm("planet.delete_entry", ikhayateam)
         assign_perm("planet.hide_entry", ikhayateam)
-          
-        wikiteam = Group.objects.get(name="Wikiteam")
-        assign_perm("wiki.add_attachment", wikiteam)
-        assign_perm("wiki.change_attachment", wikiteam)
-        assign_perm("wiki.delete_attachment", wikiteam)
-        assign_perm("wiki.add_metadata", wikiteam)
-        assign_perm("wiki.change_metadata", wikiteam)
-        assign_perm("wiki.delete_metadata", wikiteam)
-        assign_perm("wiki.add_page", wikiteam)
-        assign_perm("wiki.change_page", wikiteam)
-        assign_perm("wiki.delete_page", wikiteam)
-        assign_perm("wiki.add_revision", wikiteam)
-        assign_perm("wiki.change_revision", wikiteam)
-        assign_perm("wiki.delete_revision", wikiteam)
-        assign_perm("wiki.add_text", wikiteam)
-        assign_perm("wiki.change_text", wikiteam)
-        assign_perm("wiki.delete_text", wikiteam)
         
         moderatorentl = Group.objects.get(name="Teamleitung-Moderatoren")
         assign_perm("forum.change_forum", moderatorentl)
         
+        webteam = Group.objects.get(name="Webteam")
+        projektleitung = Group.objects.get(name="Projektleitung")
        
         # registered global perms
         
@@ -180,7 +149,7 @@ class Command(BaseCommand):
 
         # default forum permissions
         
-        forum_id_list = [5,6,7,8,10,13,14,18,20,23,26,27,28,29,33,36,46,47,48,51,52,53,54,56,57,58,60,61,63,66,67,68,69,70,72,73,74,76,77,79,86,87,89,92,93,98]
+        forums_public_id_list = [5,6,7,8,10,13,14,18,20,23,26,27,28,29,33,36,46,47,48,51,52,53,54,56,57,58,60,61,63,66,67,68,69,70,72,73,74,76,77,79,86,87,89,92,93,98]
         
         anonymous = Group.objects.get(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
         
@@ -188,9 +157,20 @@ class Command(BaseCommand):
         assign_perm("pastebin.view_entry", anonymous)
         assign_perm("portal.suggest_event", anonymous)
         
-        for forum_id in forum_id_list:
+        for forum_id in forums_public_id_list:
             forum = Forum.objects.get(id=forum_id)
             self.stdout.write("Adding permissions for anonymous for forum %s" % (forum.name))
             assign_perm("forum.view_forum", anonymous, forum)
-            
         
+        forums_registered_id_list = [1,5,6,7,8,10,13,14,18,20,23,26,27,28,29,33,36,46,47,48,51,52,53,54,56,57,58,60,61,62,63,66,67,68,69,70,72,73,74,76,77,79,86,87,89,90,92,93,98]
+        
+        for forum_id in forums_registered_id_list:
+            forum = Forum.objects.get(id=forum_id)
+            self.stdout.write("Adding permissions to delete topic to moderatorentl for forum %s" % (forum.name))
+            assign_perm("forum.delete_topic_forum", moderatorentl, forum)
+            
+        for forum in Forum.objects.all():
+            self.stdout.write("Adding permissions to delete topic to webteam and pl for forum %s" % (forum.name))
+            assign_perm("forum.delete_topic_forum", webteam, forum)
+            assign_perm("forum.delete_topic_forum", projektleitung, forum)
+            
