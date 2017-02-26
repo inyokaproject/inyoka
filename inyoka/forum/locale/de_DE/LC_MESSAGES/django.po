@@ -1,22 +1,24 @@
 # German (Germany) translations for Inyoka Project.
-# Copyright (C) 2016 Inyoka Team (see AUTHORS)
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  Inyoka\n"
+"Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-10-15 17:32+0200\n"
+"POT-Creation-Date: 2017-02-26 17:51+0100\n"
 "PO-Revision-Date: 2015-11-28 18:37+0100\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
+"X-Language: de_DE\n"
+"X-Source-Language: C\n"
 
 #, python-format
 msgid "%(site)s forum"
@@ -102,8 +104,12 @@ msgstr "Foren"
 msgid "Hide / Delete"
 msgstr "Verbergen / Löschen"
 
-msgid "If not set then posts of users in this forum are ignored in the post counter of the user."
-msgstr "Wenn dies nicht gesetzt ist werden Beiträge der Nutzer in diesem Forum für den post counter der Nutzer nicht gezählt."
+msgid ""
+"If not set then posts of users in this forum are ignored in the post counter "
+"of the user."
+msgstr ""
+"Wenn dies nicht gesetzt ist werden Beiträge der Nutzer in diesem Forum für "
+"den post counter der Nutzer nicht gezählt."
 
 msgid "Involved topics"
 msgstr "Beteiligte Themen"
@@ -134,14 +140,26 @@ msgid "No Ubuntu"
 msgstr "Kein Ubuntu"
 
 #, python-format
-msgid "No discussion is linked yet to the article “%(article)s”. You can create a discussion now or <a href=\"%(link)s\">link an existing topic</a> to the article."
-msgstr "Es wurde noch keine Diskussion mit dem Artikel „%(article)s“ verknüpft. Du kannst eine Diskussion erstellen oder <a href=\"%(link)s\">ein vorhandenes Thema verknüpfen</a>."
+msgid ""
+"No discussion is linked yet to the article “%(article)s”. You can create a "
+"discussion now or <a href=\"%(link)s\">link an existing topic</a> to the "
+"article."
+msgstr ""
+"Es wurde noch keine Diskussion mit dem Artikel „%(article)s“ verknüpft. Du "
+"kannst eine Diskussion erstellen oder <a href=\"%(link)s\">ein vorhandenes "
+"Thema verknüpfen</a>."
 
-msgid "No notifications on new posts in this topic will be sent to you any more"
-msgstr "Du wirst ab nun nicht mehr über neue Beiträge in diesem Thema benachrichtigt."
+msgid ""
+"No notifications on new posts in this topic will be sent to you any more"
+msgstr ""
+"Du wirst ab nun nicht mehr über neue Beiträge in diesem Thema benachrichtigt."
 
-msgid "No notifications on new topics within this forum will be sent to you any more."
-msgstr "Du erhältst ab sofort keine Benachrichtigungen mehr zu neuen Themen in diesem Forum."
+msgid ""
+"No notifications on new topics within this forum will be sent to you any "
+"more."
+msgstr ""
+"Du erhältst ab sofort keine Benachrichtigungen mehr zu neuen Themen in "
+"diesem Forum."
 
 msgid "No older topics within this forum."
 msgstr "Es existieren keine älteren Themen in diesem Forum."
@@ -167,8 +185,12 @@ msgstr "Du wirst ab nun über neue Beiträge in diesem Thema benachrichtigt."
 msgid "Notifications on new topics within this forum will be sent to you."
 msgstr "Du erhältst ab nun Benachrichtigungen zu neuen Themen in diesem Forum."
 
-msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
-msgstr "Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du Moderationsrechte im jeweiligen Forum benötigst."
+msgid ""
+"Only a subset of selected tickets has been closed, considering your "
+"moderation privileges for the regarding forums."
+msgstr ""
+"Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du "
+"Moderationsrechte im jeweiligen Forum benötigst."
 
 msgid "Parent forum"
 msgstr "Elterm Forum"
@@ -227,9 +249,15 @@ msgstr "Slug"
 msgid "Support group"
 msgstr "Gruppe der Supporter"
 
+msgid "The First post of the new topic must not be hidden."
+msgstr "Der erste Beitrag des neuen Themas darf nicht versteckt sein."
+
 #, python-format
-msgid "The article “%(article)s” does not exist. However, you can create it now."
-msgstr "Der Artikel „%(article)s“ existiert nicht, du kannst ihn jedoch jetzt erstellen."
+msgid ""
+"The article “%(article)s” does not exist. However, you can create it now."
+msgstr ""
+"Der Artikel „%(article)s“ existiert nicht, du kannst ihn jedoch jetzt "
+"erstellen."
 
 #, python-format
 msgid "The attachment with the ID “%(id)d” does not exist."
@@ -342,11 +370,12 @@ msgstr "Dieses Thema wurde aufgrund möglichen Spams verborgen"
 msgid "This topic is not visible for regular users."
 msgstr "Dieses Thema ist für normale Benutzer unsichtbar."
 
-msgid "This topic was already created. Please think about editing your topic before creating a new one."
-msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen vorherigen Beitrag bearbeiten möchtest."
-
-msgid "You are not allowed to mark this topic as \"important\"."
-msgstr "Dir ist es nicht erlaubt, dieses Thema als \"wichtig\" zu markieren."
+msgid ""
+"This topic was already created. Please think about editing your topic before "
+"creating a new one."
+msgstr ""
+"Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen "
+"vorherigen Beitrag bearbeiten möchtest."
 
 msgid "This topic was already reported."
 msgstr "Dieses Thema wurde bereits gemeldet."
@@ -396,8 +425,15 @@ msgstr "Willkommens Titel"
 msgid "Xubuntu"
 msgstr "Xubuntu"
 
-msgid "You are replying to a locked topic. Please note that this may be considered as impolite!"
-msgstr "Du antwortest auf ein bereits geschlossenes Thema. Dies wird oft als unhöflich aufgefasst, bitte sei dir dessen bewusst!"
+msgid "You are not allowed to mark this topic as \"important\"."
+msgstr "Dir ist es nicht erlaubt, dieses Thema als \"wichtig\" zu markieren."
+
+msgid ""
+"You are replying to a locked topic. Please note that this may be considered "
+"as impolite!"
+msgstr ""
+"Du antwortest auf ein bereits geschlossenes Thema. Dies wird oft als "
+"unhöflich aufgefasst, bitte sei dir dessen bewusst!"
 
 #, python-format
 msgid "You can only display the last %(n)d pages."
@@ -406,20 +442,23 @@ msgstr "Du kannst dir nur die letzten %(n)d Seiten anzeigen lassen."
 msgid "You cannot edit this post."
 msgstr "Du kannst diesen Beitrag nicht bearbeiten."
 
-msgid "The first post of the new topic must not be hidden."
-msgstr "Der erste Beitrag des neuen Themas darf nicht versteckt sein."
-
 msgid "You cannot move a topic into a category. Please choose a forum."
-msgstr "Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."
+msgstr ""
+"Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."
 
 msgid "You cannot reply in this topic because it was deleted by a moderator."
-msgstr "Du kannst in diesem Thema nicht antworten, da es von einem Moderator gelöscht wurde."
+msgstr ""
+"Du kannst in diesem Thema nicht antworten, da es von einem Moderator "
+"gelöscht wurde."
 
 msgid "You cannot reply to this topic because it was locked."
 msgstr "Du kannst auf dieses Thema nicht antworten, da es gesperrt wurde."
 
 msgid "You cannot set this topic as target."
 msgstr "Du kannst dieses Thema nicht als Ziel auswählen."
+
+msgid "You don't have moderation rights for the seleted topic."
+msgstr "Dir fehlen für das ausgewählte Thema die Moderationsrechte"
 
 msgid "You must enter a text in order to set the welcome message"
 msgstr "Du musst einen Text für die Willkommensnachricht eingeben."
@@ -438,8 +477,12 @@ msgid "Your topic “%(topic)s” was moved."
 msgstr "Dein Thema „%(topic)s“ wurde verschoben."
 
 #, python-format
-msgid "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible spam."
-msgstr "[user:%(username)s:]: Der Beitrag [post:%(post)s:] wurde aufgrund möglichen Spams verborgen."
+msgid ""
+"[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible "
+"spam."
+msgstr ""
+"[user:%(username)s:]: Der Beitrag [post:%(post)s:] wurde aufgrund möglichen "
+"Spams verborgen."
 
 #, python-format
 msgid "“%(topic)s” – Reply from “%(username)s“"
@@ -455,4 +498,3 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
-
