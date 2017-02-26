@@ -34,26 +34,34 @@ class Command(BaseCommand):
             
         # add some new permissions
         
+        team_group = Group.objects.get(name=settings.INYOKA_TEAM_GROUP_NAME)
         group_names = ["Projektleitung","Moderatoren","Supporter","Webteam","Ikhayateam","Serverteam","Wikiteam"]
         for group_name in group_names:
             self.stdout.write("Assigning team perms for group %s" % (group_name))
             group = Group.objects.get(name=group_name)
             assign_perm("portal.send_group_privatemessage", group)
+            
+            self.stdout.write("Adding users from group %s to group %s" % (group_name, team_group.name))
+            for user in group.user_set.all():
+                self.stdout.write("    %s" % (user.username))
+                user.groups.add(team_group)
+                #team_group.objects.add(user)
+            
         
         group_names = ["Projektleitung","Moderatoren","Webteam"]
         for group_name in group_names:
             self.stdout.write("Assigning default perms for group %s" % (group_name))
             group = Group.objects.get(name=group_name)
             assign_perm("pastebin.change_entry", group)
-            assign_perm("pastebin.change_entry", group)
             assign_perm("pastebin.delete_entry", group)
 
         
         group_names = ["Projektleitung","Webteam"]
         for group_name in group_names:
-            self.stdout.write("Assigning default perms for group %s" % (group_name))
             group = Group.objects.get(name=group_name)
+            self.stdout.write("Assigning additional perms for group %s" % (group.name))
             assign_perm("auth.add_group", group)
+            assign_perm("auth.change_group", group)
             assign_perm("portal.add_user", group)
             assign_perm("ikhaya.delete_article", group)
             assign_perm("ikhaya.change_suggestion", group)
