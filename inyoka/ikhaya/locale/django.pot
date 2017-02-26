@@ -1,14 +1,14 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2016 Inyoka Team (see AUTHORS)
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.14.3\n"
+"Project-Id-Version: Inyoka Project v0.14.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-10-15 17:32+0200\n"
+"POT-Creation-Date: 2017-02-26 17:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -225,11 +225,7 @@ msgstr ""
 msgid "The suggestion was assigned to nobody."
 msgstr ""
 
-#, python-format
 msgid "The suggestion was assigned to you."
-msgstr ""
-
-msgid "You cannot assign suggestions to others."
 msgstr ""
 
 msgid "The suggestion was deleted."
@@ -268,6 +264,9 @@ msgid "Unique URL-part for the article. If not given, the slug will be generated
 msgstr ""
 
 msgid "XHTML Markup"
+msgstr ""
+
+msgid "You cannot assign suggestions to others."
 msgstr ""
 
 msgid "You will no longer be notified of new comments for this article."

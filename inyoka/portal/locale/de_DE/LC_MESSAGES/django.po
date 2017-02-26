@@ -1,13 +1,13 @@
 # German (Germany) translations for Inyoka Project.
-# Copyright (C) 2016 Inyoka Team (see AUTHORS)
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
-"POT-Creation-Date: 2016-10-15 17:32+0200\n"
+"POT-Creation-Date: 2017-02-26 17:03+0100\n"
 "PO-Revision-Date: 2016-10-15 14:30+0200\n"
 "Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
 "Language: de_DE\n"
@@ -73,9 +73,6 @@ msgstr "Alle Typen"
 msgid "An email with further instructions was sent to you."
 msgstr "Eine E-Mail mit weiteren Anweisungen wurde an dich gesendet."
 
-msgid "An email with the activation key was sent to you."
-msgstr "Eine E-Mail mit dem Aktivierungsschlüssel wurde an dich gesendet."
-
 msgid "Another file with this name already exists. Please edit this file."
 msgstr "Es existiert bereits eine andere Datei mit diesem Namen. Bitte ändere sie."
 
@@ -87,6 +84,9 @@ msgstr "Archivieren"
 
 msgid "Attachment preview"
 msgstr "Anhang-Vorschau"
+
+msgid "Auth"
+msgstr ""
 
 msgid "Authenticate"
 msgstr "Authentifizieren"
@@ -194,6 +194,9 @@ msgstr "Globale Nachricht"
 
 msgid "Global team icon"
 msgstr "Globales Team-Icon"
+
+msgid "Group icon"
+msgstr ""
 
 msgid "Groupname"
 msgstr "Gruppenname"
@@ -427,9 +430,6 @@ msgstr "Thema bei Antwort automatisch abonnieren"
 msgid "Team affiliation / Member title"
 msgstr "Teamzugehörigkeit / Benutzertitel"
 
-msgid "Team icon"
-msgstr "Team-Icon"
-
 msgid "Text"
 msgstr "Text"
 
@@ -444,10 +444,6 @@ msgstr "Das Konto „%(name)s“ wurde bereits reaktiviert."
 #, python-format
 msgid "The account “%(name)s” was reactivated. Please use the password recovery function to set a new password."
 msgstr "Das Konto „%(name)s“ wurde reaktiviert. Bitte benutze die „Passwort vergessen“ Funktion um ein neues Passwort zu setzen."
-
-#, python-format
-msgid "The account “%(username)s” was already activated."
-msgstr "Das Konto von „%(username)s“ wurde bereits aktiviert."
 
 #, python-format
 msgid "The complete URL to the countdown banner. Use <code>%(remaining)s</code> to be replaced by the remaining days or <code>soon</code>."
@@ -574,6 +570,9 @@ msgstr "Diese E-Mail-Adresse wird bereits verwendet."
 
 msgid "This email address is already in use."
 msgstr "Diese E-Mail-Adresse wird bereits verwendet."
+
+msgid "This event is not visible for regular users."
+msgstr ""
 
 msgid "This field is required"
 msgstr "Pflichtfeld"
@@ -758,4 +757,13 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
+
+#~ msgid "An email with the activation key was sent to you."
+#~ msgstr "Eine E-Mail mit dem Aktivierungsschlüssel wurde an dich gesendet."
+
+#~ msgid "Team icon"
+#~ msgstr "Team-Icon"
+
+#~ msgid "The account “%(username)s” was already activated."
+#~ msgstr "Das Konto von „%(username)s“ wurde bereits aktiviert."
 
