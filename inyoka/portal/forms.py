@@ -681,6 +681,7 @@ class GroupGlobalPermissionForm(forms.Form):
     PORTAL_FILTERED_PERMISSIONS = (
         'portal.delete_user',
         'portal.add_staticfile',
+        'portal.add_staticpage',
         'portal.delete_staticpage',
     )
     FORUM_FILTERED_PERMISSIONS = (

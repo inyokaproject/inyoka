@@ -773,7 +773,7 @@ def suggestions_unsubscribe(request):
 def event_edit(request, pk=None):
     new = not pk
     if new and not request.user.has_perm('portal.add_event'):
-        raise AccessDeniedResponse()
+        return AccessDeniedResponse()
     event = Event.objects.get(id=pk) if not new else None
 
     if request.GET.get('copy_from', None):
