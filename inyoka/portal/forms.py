@@ -12,6 +12,7 @@ import datetime
 import json
 import functools
 import StringIO
+import os
 
 from django import forms
 from django.contrib import messages
@@ -56,6 +57,7 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
+from django.conf import settings
 
 #: Some constants used for ChoiceFields
 GLOBAL_PRIVILEGE_MODELS = {
@@ -310,7 +312,7 @@ class UserCPProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['jabber', 'signature', 'location', 'website', 'gpgkey',
-                  'launchpad', 'avatar']
+                  'launchpad', 'avatar', 'icon']
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
@@ -323,6 +325,8 @@ class UserCPProfileForm(forms.ModelForm):
         ))
         initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
         initial['email'] = instance.email
+        if instance.icon:
+            initial['icon'] = os.path.join(settings.MEDIA_ROOT,instance.icon)
         if hasattr(instance, 'userpage'):
             initial['userpage'] = instance.userpage.content
 
@@ -348,6 +352,13 @@ class UserCPProfileForm(forms.ModelForm):
             raise forms.ValidationError(
                 _(u'This email address is already in use.'))
         return email
+
+    def clean_icon(self):
+        icon = self.cleaned_data.get('icon')
+        if icon:
+            return os.path.relpath(icon,settings.MEDIA_ROOT)
+        else:
+            return icon
 
     def clean_avatar(self):
         """
@@ -379,6 +390,8 @@ class UserCPProfileForm(forms.ModelForm):
     def save(self, request, commit=True):
         data = self.cleaned_data
         user = super(UserCPProfileForm, self).save(commit=False)
+
+        user.icon = data['icon']
 
         # Ensure that we delete the old avatar, otherwise Django will create
         # a file with a different name.
