@@ -345,6 +345,9 @@ msgstr "Dieses Thema ist für normale Benutzer unsichtbar."
 msgid "This topic was already created. Please think about editing your topic before creating a new one."
 msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen vorherigen Beitrag bearbeiten möchtest."
 
+msgid "You are not allowed to mark this topic as \"important\"."
+msgstr "Dir ist es nicht erlaubt, dieses Thema als \"wichtig\" zu markieren."
+
 msgid "This topic was already reported."
 msgstr "Dieses Thema wurde bereits gemeldet."
 
@@ -402,6 +405,9 @@ msgstr "Du kannst dir nur die letzten %(n)d Seiten anzeigen lassen."
 
 msgid "You cannot edit this post."
 msgstr "Du kannst diesen Beitrag nicht bearbeiten."
+
+msgid "The first post of the new topic must not be hidden."
+msgstr "Der erste Beitrag des neuen Themas darf nicht versteckt sein."
 
 msgid "You cannot move a topic into a category. Please choose a forum."
 msgstr "Du kannst kein Thema in eine Kategorie verschieben. Bitte wähle ein Forum."

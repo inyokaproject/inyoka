@@ -5,7 +5,7 @@
 
     Views for Ikhaya.
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import time as dt_time
@@ -112,11 +112,10 @@ def context_modifier(request, context):
 event_delete = generic.DeleteView.as_view(model=Event,
     template_name='ikhaya/event_delete.html',
     redirect_url=href('ikhaya', 'events'),
-    permission_required='portal.change_event')
+    permission_required='portal.delete_event')
 
 
 @templated('ikhaya/index.html', modifier=context_modifier)
-@permission_required('ikhaya.view_article', raise_exception=True)
 def index(request, year=None, month=None, category_slug=None, page=1,
           full=False):
     """Shows a few articles by different criteria"""
@@ -172,7 +171,6 @@ def index(request, year=None, month=None, category_slug=None, page=1,
 
 
 @templated('ikhaya/detail.html', modifier=context_modifier)
-@permission_required('ikhaya.view_article', raise_exception=True)
 def detail(request, year, month, day, slug):
     """Shows a single article."""
     try:
@@ -243,7 +241,7 @@ def detail(request, year, month, day, slug):
 
 
 @login_required
-@permission_required('ikhaya.change_article', raise_exception=True)
+@permission_required('ikhaya.delete_article', raise_exception=True)
 def article_delete(request, year, month, day, slug):
     try:
         """
@@ -373,7 +371,6 @@ def article_edit(request, year=None, month=None, day=None, slug=None,
 
 
 @login_required
-@permission_required('ikhaya.view_article', raise_exception=True)
 def article_subscribe(request, year, month, day, slug):
     """Subscribe to article's comments."""
     try:
@@ -470,6 +467,7 @@ def _change_report_status(request, report_id, action, msg):
     return HttpResponseRedirect(url_for(report))
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 @confirm_action(_(u'Do you want to hide this report?'),
                 confirm=_(u'Hide'), cancel=_(u'Cancel'))
 def report_hide(request, report_id):
@@ -477,6 +475,7 @@ def report_hide(request, report_id):
                 _(u'The report was hidden.'))
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 @confirm_action(_(u'Do you want to restore this report?'),
                 confirm=_(u'Restore'), cancel=_(u'Cancel'))
 def report_restore(request, report_id):
@@ -484,6 +483,7 @@ def report_restore(request, report_id):
                 _(u'The report was restored.'))
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 @confirm_action(_(u'Do you want to mark this report as solved?'),
                 confirm=_(u'Mark as solved'), cancel=_(u'Cancel'))
 def report_solve(request, report_id):
@@ -491,6 +491,7 @@ def report_solve(request, report_id):
                 _(u'The report was marked as solved.'))
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 @confirm_action(_(u'Do you want to mark this report as unsolved?'),
                 confirm=_(u'Mark as unsolved'), cancel=_(u'Cancel'))
 def report_unsolve(request, report_id):
@@ -579,6 +580,7 @@ def archive(request):
     }
 
 
+@permission_required('ikhaya.change_article', raise_exception=True)
 def suggest_assign_to(request, suggestion, username):
     try:
         suggestion = Suggestion.objects.get(id=suggestion)
@@ -592,19 +594,16 @@ def suggest_assign_to(request, suggestion, username):
         suggestion.save()
         messages.success(request,
             _(u'The suggestion was assigned to nobody.'))
-    else:
-        try:
-            suggestion.owner = User.objects.get(username__iexact=username)
-        except User.DoesNotExist:
-            raise Http404
+    elif username == request.user.username:
+        suggestion.owner = request.user
         suggestion.save()
-        messages.success(request,
-                         _(u'The suggestion was assigned to “%(user)s”.')
-                         % {'user': username})
+        messages.success(request, _(u'The suggestion was assigned to you.'))
+    else:
+        messages.error(request, _(u'You cannot assign suggestions to others.'))
     return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
-@permission_required('ikhaya.change_article', raise_exception=True)
+@permission_required('ikhaya.delete_suggestion', raise_exception=True)
 def suggest_delete(request, suggestion):
     if request.method == 'POST':
         if 'cancel' not in request.POST:
@@ -662,7 +661,7 @@ def suggest_delete(request, suggestion):
         return HttpResponseRedirect(href('ikhaya', 'suggestions'))
 
 
-@login_required
+@permission_required('ikhaya.suggest_article', raise_exception=True)
 @templated('ikhaya/suggest_new.html', modifier=context_modifier)
 def suggest_edit(request):
     """A Page to suggest a new article.
@@ -773,6 +772,8 @@ def suggestions_unsubscribe(request):
 @templated('ikhaya/event_edit.html', modifier=context_modifier)
 def event_edit(request, pk=None):
     new = not pk
+    if new and not request.user.has_perm('portal.add_event'):
+        return AccessDeniedResponse()
     event = Event.objects.get(id=pk) if not new else None
 
     if request.GET.get('copy_from', None):
@@ -812,6 +813,7 @@ def event_edit(request, pk=None):
     }
 
 
+@permission_required('portal.suggest_event', raise_exception=True)
 @templated('ikhaya/event_suggest.html', modifier=context_modifier)
 def event_suggest(request):
     """

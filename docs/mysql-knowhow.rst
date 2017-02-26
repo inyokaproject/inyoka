@@ -24,3 +24,11 @@ the disc. This can be done by importing the dump as follows:
   mysql -u root -p -f ubuntuusers
   SET sql_log_bin = 0;
   source /absolute/path/to/dump.sql;
+
+Clean a dump
+============
+
+Execute this commands to clean a dump from user sensetive informations:
+
+.. include:: clean_database.sql
+   :code: sql

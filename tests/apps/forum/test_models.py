@@ -5,7 +5,7 @@
 
     Test forum models.
 
-    :copyright: (c) 2011-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -51,6 +51,10 @@ class TestForumModel(TestCase):
         self.assertEqual(self.parent1.parents, [])
         self.assertEqual(self.parent2.parents, [self.parent1])
         self.assertEqual(self.forum.parents, [self.parent2, self.parent1])
+
+    def test_is_category(self):
+        self.assertEqual(self.parent1.is_category, True)
+        self.assertEqual(self.forum.is_category, False)
 
     def test_children(self):
         self.assertEqual(self.forum.children, [])

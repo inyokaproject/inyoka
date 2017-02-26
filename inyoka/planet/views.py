@@ -5,7 +5,7 @@
 
     Views for the planet.
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.http import HttpResponse, HttpResponseRedirect
@@ -54,7 +54,6 @@ blog_edit = generic.CreateUpdateView(model=Blog,
     permission_required='planet.change_blog')
 
 
-@permission_required('planet.view_blog', raise_exception=True)
 @templated('planet/index.html', modifier=context_modifier)
 def index(request, page=1):
     """

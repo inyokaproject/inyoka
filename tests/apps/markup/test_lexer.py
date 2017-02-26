@@ -6,7 +6,7 @@
     This unittest tests various features of the wiki lexer. Just the lexer,
     not the parser.
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
@@ -265,3 +265,10 @@ class TestLexer(unittest.TestCase):
     def test_basic_unicode_handling(self):
         expect = lexer.tokenize(u'some @¹“”¹unicod€ stuff'.encode('utf-8')).expect
         expect('text', u'some @¹“”¹unicod€ stuff')
+
+    def test_escaped_code(self):
+        expect = lexer.tokenize('``text`text``').expect
+        expect('escaped_code_begin')
+        expect('text', 'text`text')
+        expect('escaped_code_end')
+        expect('eof')

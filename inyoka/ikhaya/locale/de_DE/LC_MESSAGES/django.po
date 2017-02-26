@@ -227,8 +227,11 @@ msgid "The suggestion was assigned to nobody."
 msgstr "Der Vorschlag wurde niemandem zugewiesen."
 
 #, python-format
-msgid "The suggestion was assigned to “%(user)s”."
-msgstr "Der Vorschlag wurde „%(user)s“ zugewiesen."
+msgid "The suggestion was assigned to you."
+msgstr "Der Vorschlag wurde dir zugewiesen."
+
+msgid "You cannot assign suggestions to others."
+msgstr "Es ist nicht möglich Vorschläge anderen Benutzern zuzuweisen."
 
 msgid "The suggestion was deleted."
 msgstr "Der Vorschlag wurde gelöscht."

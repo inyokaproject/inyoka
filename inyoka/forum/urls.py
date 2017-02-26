@@ -5,7 +5,7 @@
 
     URL list for the forum.
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
@@ -30,7 +30,6 @@ urlpatterns = [
     url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+/)?lock/$', views.change_lock_status, {'locked': True}),
     url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+/)?unlock/$', views.change_lock_status, {'locked': False}),
     url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+/)?report/$', views.report),
-    url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+/)?report_done/$', views.report, {'status': 'done'}),
     url(r'^topic/(?P<topic_slug>[^/]+)/subscribe', views.subscribe_topic),
     url(r'^topic/(?P<topic_slug>[^/]+)/unsubscribe', views.unsubscribe_topic),
     url(r'^topic/(?P<topic_slug>[^/]+)/next/$', views.next_topic),

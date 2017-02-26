@@ -6,7 +6,7 @@
     Our own user model used for implementing our own
     permission system and our own administration center.
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -39,6 +39,9 @@ from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key, is_valid_username
+
+from django.conf import settings as inyoka_settings
+import os
 
 
 class UserBanned(Exception):
@@ -310,9 +313,9 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                                     blank=True, null=True, max_length=200)
 
     # member icon
-    icon = models.ImageField(ugettext_lazy(u'Team icon'),
-                             upload_to='portal/team_icons',
-                             blank=True, null=True)
+    icon = models.FilePathField(ugettext_lazy(u'Group icon'),
+                            path=os.path.join(inyoka_settings.MEDIA_ROOT,'portal/team_icons'),
+                            match='.*\.png', blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """
@@ -423,6 +426,10 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     @property
     def jabber_url(self):
         return u'xmpp:%s' % escape(self.jabber)
+
+    @property
+    def icon_url(self):
+        return href('media', self.icon)
 
     def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':

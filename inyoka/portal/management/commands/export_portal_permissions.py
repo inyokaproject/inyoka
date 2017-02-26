@@ -19,7 +19,7 @@ permission_choices = {
     8 : "portal.change_staticpage", # markup_css_edit
     9 : "portal.change_staticfile", # static_file_edit
     10 : "portal.change_user", # user_edit
-    11 : "portal.change_user", # group_edit
+    11 : "auth.change_group", # group_edit
     12 : "portal.send_group_privatemessage", # send_group_pm
     13 : "forum.change_forum", # forum_edit
     14 : "forum.manage_reported_topic", # manage_topics

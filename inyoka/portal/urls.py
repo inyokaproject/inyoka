@@ -5,7 +5,7 @@
 
     The urls for the main portal (index page, error pages, login page etc.)
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.conf.urls import url
@@ -67,6 +67,7 @@ urlpatterns = [
     url(r'^feeds/(?P<app>[^/]+)/$', views.feedselector),
     url(r'^calendar/$', views.calendar_overview),
     url(r'^calendar/(?P<year>\d{4})/(?P<month>(0?\d|1[0-2]))/$', views.calendar_month),
+    url(r'^calendar/(?P<slug>.*?)/ics/$', views.calendar_ical),
     url(r'^calendar/(?P<slug>.*?)/$', views.calendar_detail),
     url(r'^config/$', views.config),
     url(r'^styles/$', views.styles),

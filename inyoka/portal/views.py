@@ -6,11 +6,14 @@
     All views for the portal including the user control panel, private messages,
     static pages and the login/register.
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import time
-from datetime import date, datetime, timedelta
+import calendar
+from datetime import date, time, datetime, timedelta
+from icalendar import Calendar as iCal, Event as iEvent
+import pytz
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -106,6 +109,7 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_random_password
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
+from inyoka.utils.dates import date_time_to_datetime
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.wiki.utils import quote_text
 
@@ -733,7 +737,7 @@ def usercp_deactivate(request):
 
 
 @login_required
-@permission_required('portal.change_user')
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_overview.html')
 def user_edit(request, username):
     try:
@@ -747,7 +751,7 @@ def user_edit(request, username):
 
 
 @login_required
-@permission_required('portal.change_user')
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_profile.html')
 def user_edit_profile(request, username):
     try:
@@ -779,7 +783,7 @@ def user_edit_profile(request, username):
 
 
 @login_required
-@permission_required('portal.change_user')
+@permission_required('portal.change_user', raise_exception=True)
 @templated('portal/user_edit_settings.html')
 def user_edit_settings(request, username):
     try:
@@ -887,7 +891,7 @@ def user_edit_groups(request, username):
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('portal.add_user', raise_exception=True)
 @templated('portal/user_new.html')
 def user_new(request):
     if request.method == 'POST':
@@ -1249,7 +1253,7 @@ def group(request, name, page=1):
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('auth.add_group', raise_exception=True)
 @templated('portal/group_edit.html')
 def group_new(request):
     form = EditGroupForm()
@@ -1266,7 +1270,7 @@ def group_new(request):
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit.html')
 def group_edit(request, name):
     try:
@@ -1294,7 +1298,7 @@ def group_edit(request, name):
 
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit_global_permissions.html')
 def group_edit_global_permissions(request, name):
     group = get_object_or_404(Group, name=name)
@@ -1315,7 +1319,7 @@ def group_edit_global_permissions(request, name):
     }
 
 @login_required
-@permission_required('portal.change_user', raise_exception=True)
+@permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit_forum_permissions.html')
 def group_edit_forum_permissions(request, name):
     group = get_object_or_404(Group, name=name)
@@ -1458,14 +1462,63 @@ def calendar_overview(request):
 def calendar_detail(request, slug):
     try:
         event = Event.objects.get(slug=slug)
+        if not event.visible:
+            if request.user.has_perm('portal.change_event'):
+                messages.info(request, _(u'This event is not visible for regular users.'))
+            else:
+                raise Http404()
     except Event.DoesNotExist:
         raise Http404()
     return {
         'google_link': google_calendarize(event),
+        'ical_link': href('portal', 'calendar', slug, 'ics'),
         'event': event,
         'MONTHS': MONTHS,
         'WEEKDAYS': WEEKDAYS,
     }
+
+
+def calendar_ical(request, slug):
+    
+    try:
+        event = Event.objects.get(slug=slug)
+        if not event.visible and not request.user.has_perm('portal.change_event'):
+            raise Http404()
+            
+    except Event.DoesNotExist:
+        raise Http404()
+
+
+    cal = iCal()
+    tz = pytz.timezone(settings.TIME_ZONE)
+    
+    start = date_time_to_datetime(event.date, event.time or time())
+    
+    if event.enddate:
+        end = date_time_to_datetime(event.enddate, event.endtime or time())
+    else:
+        end = start
+        
+    ievent = iEvent()
+    ievent.add('summary', event.name)
+    ievent.add('uid', slug)
+    ievent.add('dtstamp', datetime.utcnow())
+    ievent.add('dtstart', start)
+    ievent.add('dtend', end)
+    if event.description:
+        ievent.add('description', event.description)
+        
+    location = u'%s%s%s' % ((event.location and event.location + ', ' or ''), (event.location_town and event.location_town + ', ' or ''), (event.simple_coordinates != 'None;None' and event.simple_coordinates + ', ' or ''))
+    
+    ievent.add('location', location.rstrip(', '))
+    
+    cal.add_component(ievent)
+    
+    response = HttpResponse(content_type='text/calendar')
+    response['Content-Disposition'] = 'attachment; filename="calendar.ics"'
+    response.write(cal.to_ical())
+    
+    return response
 
 
 @templated('portal/confirm.html')

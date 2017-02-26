@@ -344,6 +344,9 @@ msgstr ""
 msgid "This topic was already created. Please think about editing your topic before creating a new one."
 msgstr ""
 
+msgid "You are not allowed to mark this topic as \"important\"."
+msgstr ""
+
 msgid "This topic was already reported."
 msgstr ""
 
@@ -400,6 +403,9 @@ msgid "You can only display the last %(n)d pages."
 msgstr ""
 
 msgid "You cannot edit this post."
+msgstr ""
+
+msgid "The first post of the new topic must not be hidden."
 msgstr ""
 
 msgid "You cannot move a topic into a category. Please choose a forum."

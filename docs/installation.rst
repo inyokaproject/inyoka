@@ -12,11 +12,11 @@ Idea
 
 Inyoka_ is developed via GitHub_.
 Note: You need the correct access rights to see the GitHub repository!
-Documentation for git: `<http://git-scm.com/>`_
+You can find a documentation on how to use Git here: `<http://git-scm.com/>`_
 
 The idea for developing Inyoka is to fork the main project, do your changes in
-your own repository and then add a “Pull Rquest” for the original Inyoka. A
-developer should then comment your changes or will directly merge it.
+your own branch in your repository and then add a “Pull Rquest” for the original
+Inyoka. A developer will then review your changes or will directly merge it.
 
 Note: The changes in Inyoka will not immediately be visible on `ubuntuusers.de
 <http://ubuntuusers.de/>`_
@@ -24,71 +24,16 @@ Note: The changes in Inyoka will not immediately be visible on `ubuntuusers.de
 Preparation
 ===========
 
-Git access
-**********
-
-If you do not have a login on GitHub_ get one so that
-you can fork Inyoka and improve it.
-
-If you do not have Git installed install it:
-
-.. code-block:: console
-
-    $ sudo apt-get install git
-
-Creating SSH key
-****************
-
-If you do not have a SSH key, create one:
-
-.. code-block:: console
-
-    $ ssh-keygen -t rsa -b 4096
-
-Then you need to add your *public* key to your profile in Github under
-*"Account Profile -> SSH keys -> Add SSH key"*:
-
-.. code-block:: console
-
-    $ cat .ssh/id_rsa.pub
-
 Getting access to the Inyoka repository
 ***************************************
 
-Then you need to contact `a developer <https://github.com/encbladexp>`_ so that
-you get the correct access rights to fork the project. Simply click the "Fork"
-Button on `<https://github.com/inyokaproject/inyoka>`_ to create a new
-*private* Fork of this Repository.
+You need to contact `encbladexp <https://github.com/encbladexp>`_ who will
+give you access right to fork the project. Simply fork the
+`<https://github.com/inyokaproject/inyoka>`_ repository to create a new
+*private* fork of this repository.
 
 Installation
 ============
-
-First setup
-***********
-
-Before you start you need to get a local copy of your forked Inyoka project.
-So open a terminal and move to a directory where you want the Inyoka files to
-be stored. Then you can clone the repository:
-
-.. code-block:: console
-
-    $ git clone git@github.com:$GITHUBNAME/inyoka.git
-
-``$GITHUBNAME`` is your login name on GitHub. This command will create a new
-directory called *inyoka* in your current directory. So go to it:
-
-.. code-block:: console
-
-    $ cd inyoka
-
-Next you need to add the upstream project for your fork and do some update
-afterwards so that you have the latest files:
-
-.. code-block:: console
-
-    $ git remote add upstream git@github.com:inyokaproject/inyoka.git
-    $ git remote update
-    $ git pull upstream staging
 
 Package installation
 ********************
@@ -97,18 +42,15 @@ For compiling Inyoka and its dependencies you need a lot of developer files:
 
 .. code-block:: console
 
-    $  sudo apt-get install libxml2-dev libxslt1-dev
-    libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev
-    libmysqlclient-dev build-essential redis-server libpq-dev
-    libffi-dev
+    $  sudo apt-get install libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libmysqlclient-dev build-essential redis-server libpq-dev libffi-dev
 
 Further you need the Python 2.7 files:
 
 .. code-block:: console
 
     $ sudo apt-get install python2.7
-    $ sudo apt-get install python2.7-dev    #(Precise)
-    $ sudo apt-get install libpython2.7-dev #(Trusty)
+    $ sudo apt-get install python2.7-dev    # (on Precise)
+    $ sudo apt-get install libpython2.7-dev # (on Trusty and newer)
 
 Further you need a recent pip and virtualenv for Python 2.7:
 
@@ -118,8 +60,7 @@ Further you need a recent pip and virtualenv for Python 2.7:
     $ sudo python get-pip.py
     $ sudo pip install virtualenv
 
-Finally for installing themes npm, a package manager for JavaScript, is
-needed:
+You also need the JavaScript package manager npm:
 
 .. code-block:: console
 
@@ -129,9 +70,10 @@ The version of npm shipped on Ubuntu 12.04 is too old, see `these docs
 <https://docs.npmjs.com/getting-started/installing-node>`_ in order to update
 your version.
 
-Actual installation
+Inyoka installation
 *******************
-Next you can start the actual Inyoka installation:
+
+Now you can start the installation of inyoka:
 
 .. code-block:: console
 
@@ -142,9 +84,8 @@ Next you can start the actual Inyoka installation:
 
 Note: You need to cd to your inyoka directory for the last command to work.
 
-A lot of files will be downloaded and compiled. Further there will be some
-warnings that you can ignore. Hopefully there is not error and everything will
-compile fine.
+The last command downloads and installs all needed libraries pip packages. During
+the installation there might be some warning which you can ignore.
 
 At the end you need to edit your ``/etc/hosts`` with root privileges and add
 the following line:
@@ -162,8 +103,8 @@ Installing the theme
 
 Inyoka supports multiple themes, all of them are listed (among other things) on
 `GitHub`__. Please refer to the specific
-theme readme file in order to get installation instructions. *You will not be
-able to run Inyoka without installing a theme.*
+theme `README` file in order to get installation instructions. You will not be
+able to run Inyoka without installing a theme!
 
 __ Inyoka_
 
@@ -173,15 +114,15 @@ Working with Inyoka the first time
 Activate Inyoka environment
 ***************************
 
-For working with Inyoka you need to activate the correct environment. It will
-change the PATH and the prompt a little bit:
+To work on Inyoka you need to activate the virtual environment. It will
+change the PATH and the prompt:
 
 .. code-block:: console
 
     $ source ~/.venvs/inyoka/bin/activate
 
 Note: You need to do this every time you open a new terminal/shell and want to
-work with Inyoka! Do not forget!
+work on Inyoka!
 
 If the environment is active you'll see the entry *(inyoka)* at the
 start of your prompt.
@@ -194,23 +135,27 @@ You can check if the environment is active:
 
 The entry ``/home/$USER/.venvs/inyoka/bin`` should appear at the beginning.
 
-Using MySQL
-***********
+Preparing the database
+**********************
 
-Even if you can use other databases than MySQL it's mostly tested with it. So
-first install MySQL:
+Inyoka supports different databases. However it's mostly tested with MySQL. Inyoka
+also needs a running redis server.
 
 .. code-block:: console
 
-    $ sudo apt-get install mysql-server
+    $ sudo apt-get install mysql-server redis-server
 
-You will be asked for a password (maybe several times). You can leave it empty
-if you want to.
+You will be asked to set a mysql root password. You can leave it empty if you want to.
 
-Then you need to change the developer settings for the database. Rename and
-edit the file *example_development_settings.py* to *development_settings.py*
-in the *inyoka* directory. If you have set a password during installation of
-MySQL above you need to add your password:
+Next, you need a ``development_settings.py`` file which can be copied from
+the example file:
+
+.. code-block:: console
+
+    $ cp example_development_settings.py development_settings.py
+
+If you have set a database password during installation of
+MySQL you need to specify the password:
 
 .. code-block:: console
 
@@ -218,36 +163,34 @@ MySQL above you need to add your password:
     'USER': 'root',
     'PASSWORD': '',
 
-Further you should change the line
-
-.. code-block:: console
-
-    SECRET_KEY = None
-
-to
+Further you need to set a SECRET_KEY with a string, like this:
 
 .. code-block:: console
 
     SECRET_KEY = 'development-key'
 
-.. todo::
-    language settings
+To switch between the supported languages you have to add another setting.
+Available languages are ``en-us`` and ``de-de``.
+
+.. code-block:: console
+    LANGUAGE_CODE= 'de-de'
 
 Creating test database
 **********************
 
-For testing you need to add a database in MySQL:
+You need to add a database in MySQL:
 
 .. code-block:: console
 
     $ mysql -u root [-p]
-    mysql> create database ubuntuusers;
+    mysql> create database ubuntuusers CHARSET utf8 COLLATE utf8_general_ci;
     mysql> quit
 
-You only need to use the ``-p`` if you have set a password in MySQL.
+You only need to use the ``-p`` parameter if you have set a root password on
+your MySQL database.
 
 Next you need to add a superuser so that you gain all rights in the development
-installation:
+installation of Inyoka:
 
 .. code-block:: console
 
@@ -259,14 +202,14 @@ installation:
    repeat: admin
    created superuser
 
-Of course you can use another password, but you should keep the *admin* as
-username because it will be used in some test files. It is also advisable to
+You can also use another password, but you should keep the *admin* username
+because it will be used in some test files. It is also advisable to
 use that mail adress in order to be able to test notifications, see
 :ref:`testing notifications <test-notifies>`.
 
 Note: If you want to change settings in the admin's control panel, you need to
-set the mail adress to ``admin@localhost.local`` to not raise an error. The
-mail adress is then automatically set back to ``admin@localhost``.
+set the email adress to ``admin@localhost.local`` to not raise an error. The
+email address is then automatically set back to ``admin@localhost``.
 
 Now you can create the real test data:
 
@@ -283,24 +226,8 @@ Finally you can start the server the first time:
 
     (inyoka)$ python manage.py runserver ubuntuusers.local:8080
 
-In your browser open the url `<http://ubuntuusers.local:8080/>`_. You can login
-with the user  *admin* and the given password above.
-
-Working with Inyoka everytime
-=============================
-
-Environment and Server
-**********************
-
-First open a terminal, set the environment and start the server:
-
-.. code-block:: console
-
-    $ source ~/.venvs/inyoka/bin/activate
-    (inyoka)$ python manage.py runserver ubuntuusers.local:8080
-
-Then open another terminal, set the environment. Here you can work normally via
-Git.
+Open the url `<http://ubuntuusers.local:8080/>`_ in your browser. You can login
+with the user *admin* and the given password above.
 
 And now?
 ========

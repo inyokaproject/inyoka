@@ -6,7 +6,7 @@
     Various services for the portal or all applications.
 
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import time
@@ -85,6 +85,8 @@ def on_get_calendar_entry(request):
             raise Http404()
     try:
         event = Event.objects.get(slug=slug)
+        if not (event.visible or request.user.has_perm('portal.change_event')):
+            raise Http404()
     except Event.DoesNotExist:
         raise Http404()
 

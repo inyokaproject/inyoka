@@ -5,7 +5,7 @@
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from __future__ import division
@@ -332,7 +332,7 @@ class Forum(models.Model):
         qdct = {forum.id: forum for forum in forums}
 
         forum = qdct[self.id]
-        while forum.parent_id is not None:
+        while not forum.is_category:
             forum = qdct[forum.parent_id]
             parents.append(forum)
         return parents
@@ -340,6 +340,10 @@ class Forum(models.Model):
     @property
     def parents(self):
         return self.get_parents(True)
+
+    @property
+    def is_category(self):
+        return self.parent is None
 
     @property
     def children(self):
@@ -628,7 +632,7 @@ class Topic(models.Model):
             return href('forum', 'topic', self.slug, **query)
         if action in ('reply', 'delete', 'hide', 'restore', 'split', 'move',
                       'solve', 'unsolve', 'lock', 'unlock', 'report',
-                      'report_done', 'subscribe', 'unsubscribe',
+                      'subscribe', 'unsubscribe',
                       'first_unread', 'last_post'):
             return href('forum', 'topic', self.slug, action, **query)
 

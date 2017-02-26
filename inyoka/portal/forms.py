@@ -5,13 +5,14 @@
 
     Various forms for the portal.
 
-    :copyright: (c) 2007-2016 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import datetime
 import json
 import functools
 import StringIO
+import os
 
 from django import forms
 from django.contrib import messages
@@ -56,11 +57,13 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
+from django.conf import settings
 
 #: Some constants used for ChoiceFields
 GLOBAL_PRIVILEGE_MODELS = {
     'forum': ('forum', 'topic'),
     'ikhaya': ('article', 'category', 'comment', 'report', 'suggestion',),
+    'auth': ('group',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
     'portal': ('event', 'user', 'staticfile', 'staticpage',),
@@ -309,7 +312,7 @@ class UserCPProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['jabber', 'signature', 'location', 'website', 'gpgkey',
-                  'launchpad', 'avatar']
+                  'launchpad', 'avatar', 'icon']
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
@@ -322,6 +325,8 @@ class UserCPProfileForm(forms.ModelForm):
         ))
         initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
         initial['email'] = instance.email
+        if instance.icon:
+            initial['icon'] = os.path.join(settings.MEDIA_ROOT,instance.icon)
         if hasattr(instance, 'userpage'):
             initial['userpage'] = instance.userpage.content
 
@@ -347,6 +352,13 @@ class UserCPProfileForm(forms.ModelForm):
             raise forms.ValidationError(
                 _(u'This email address is already in use.'))
         return email
+
+    def clean_icon(self):
+        icon = self.cleaned_data.get('icon')
+        if icon:
+            return os.path.relpath(icon,settings.MEDIA_ROOT)
+        else:
+            return icon
 
     def clean_avatar(self):
         """
@@ -378,6 +390,8 @@ class UserCPProfileForm(forms.ModelForm):
     def save(self, request, commit=True):
         data = self.cleaned_data
         user = super(UserCPProfileForm, self).save(commit=False)
+
+        user.icon = data['icon']
 
         # Ensure that we delete the old avatar, otherwise Django will create
         # a file with a different name.
@@ -645,31 +659,79 @@ def permission_to_string(permission):
 
 
 class GroupGlobalPermissionForm(forms.Form):
-    MANAGED_APPS = ('ikhaya', 'portal', 'pastebin', 'planet', 'forum')
+    MANAGED_APPS = ('auth', 'ikhaya', 'portal', 'pastebin', 'planet', 'forum')
+    AUTH_FILTERED_PERMISSIONS = (
+        'auth.delete_group',
+        'auth.add_permission',
+        'auth.change_permission',
+        'auth.delete_permission',
+    )
+    IKHAYA_FILTERED_PERMISSIONS = (
+        'ikhaya.add_article',
+        'ikhaya.add_category',
+        'ikhaya.add_comment',
+        'ikhaya.add_report',
+        'ikhaya.add_suggestion',
+        'ikhaya.change_report',
+        'ikhaya.change_suggestion',
+        'ikhaya.delete_category',
+        'ikhaya.delete_comment',
+        'ikhaya.delete_report',
+    )
+    PORTAL_FILTERED_PERMISSIONS = (
+        'portal.delete_user',
+        'portal.add_staticfile',
+        'portal.add_staticpage',
+        'portal.delete_staticpage',
+    )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
+        'forum.add_reply_forum',
         'forum.add_topic',
+        'forum.add_topic_forum',
         'forum.change_topic',
         'forum.delete_forum',
         'forum.delete_topic',
+        'forum.delete_topic_forum',
+        'forum.moderate_forum',
+        'forum.poll_forum',
+        'forum.sticky_forum',
+        'forum.upload_forum',
+        'forum.view_forum',
+        'forum.vote_forum',
     )
+    PASTEBIN_FILTERED_PERMISSIONS = (
+        'pastebin.change_entry',
+    )
+    PLANET_FILTERED_PERMISSIONS = (
+        'planet.add_blog',
+        'planet.add_entry',
+        'planet.change_entry',
+        'planet.delete_entry',
+        'planet.delete_blog',
+    )
+    auth_permissions = forms.MultipleChoiceField(
+        choices=make_permission_choices('auth', AUTH_FILTERED_PERMISSIONS),
+        widget=forms.CheckboxSelectMultiple,
+        label=ugettext_lazy(u'Auth'),
+        required=False)
     ikhaya_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('ikhaya'),
+        choices=make_permission_choices('ikhaya', IKHAYA_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Ikhaya'),
         required=False)
     portal_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('portal'),
+        choices=make_permission_choices('portal', PORTAL_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Portal'),
         required=False)
     pastebin_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('pastebin'),
+        choices=make_permission_choices('pastebin', PASTEBIN_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Pastebin'),
         required=False)
     planet_permissions = forms.MultipleChoiceField(
-        choices=make_permission_choices('planet'),
+        choices=make_permission_choices('planet', PLANET_FILTERED_PERMISSIONS),
         widget=forms.CheckboxSelectMultiple,
         label=ugettext_lazy(u'Planet'),
         required=False)
@@ -703,6 +765,9 @@ class GroupGlobalPermissionForm(forms.Form):
             remove_perm(perm, self.instance)
         for perm in assign_permissions:
             assign_perm(perm, self.instance)
+
+    def clean_auth_permissions(self):
+        return self._clean_permissions('auth')
 
     def clean_ikhaya_permissions(self):
         return self._clean_permissions('ikhaya')
@@ -757,6 +822,7 @@ class GroupForumPermissionForm(forms.Form):
             'forum.add_forum',
             'forum.add_topic',
             'forum.change_topic',
+            'forum.change_forum',
             'forum.delete_forum',
             'forum.delete_topic',
             'forum.manage_reported_topic',
@@ -975,8 +1041,8 @@ class ConfigurationForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': 5}),
         label=ugettext_lazy(u'Wiki helptext'),
         help_text=ugettext_lazy(u'This text appears above the wiki editor.'))
-    team_icon_width = forms.IntegerField(min_value=1, required=False)
-    team_icon_height = forms.IntegerField(min_value=1, required=False)
+    team_icon_width = forms.IntegerField(min_value=1)
+    team_icon_height = forms.IntegerField(min_value=1)
     license_note = forms.CharField(required=False, label=ugettext_lazy(u'License note'),
                                    widget=forms.Textarea(attrs={'rows': 2}))
     countdown_active = forms.BooleanField(required=False,
