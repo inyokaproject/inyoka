@@ -1482,7 +1482,7 @@ def calendar_ical(request, slug):
     
     try:
         event = Event.objects.get(slug=slug)
-        if not event.visible or not request.user.has_perm('portal.change_event'):
+        if not event.visible and not request.user.has_perm('portal.change_event'):
             raise Http404()
             
     except Event.DoesNotExist:
