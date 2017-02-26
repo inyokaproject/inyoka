@@ -1479,26 +1479,26 @@ def calendar_detail(request, slug):
 
 
 def calendar_ical(request, slug):
-    
+
     try:
         event = Event.objects.get(slug=slug)
         if not event.visible and not request.user.has_perm('portal.change_event'):
             raise Http404()
-            
+
     except Event.DoesNotExist:
         raise Http404()
 
 
     cal = iCal()
     tz = pytz.timezone(settings.TIME_ZONE)
-    
+
     start = date_time_to_datetime(event.date, event.time or time())
-    
+
     if event.enddate:
         end = date_time_to_datetime(event.enddate, event.endtime or time())
     else:
         end = start
-        
+
     ievent = iEvent()
     ievent.add('summary', event.name)
     ievent.add('uid', slug)
@@ -1507,17 +1507,17 @@ def calendar_ical(request, slug):
     ievent.add('dtend', end)
     if event.description:
         ievent.add('description', event.description)
-        
+
     location = u'%s%s%s' % ((event.location and event.location + ', ' or ''), (event.location_town and event.location_town + ', ' or ''), (event.simple_coordinates != 'None;None' and event.simple_coordinates + ', ' or ''))
-    
+
     ievent.add('location', location.rstrip(', '))
-    
+
     cal.add_component(ievent)
-    
+
     response = HttpResponse(content_type='text/calendar')
     response['Content-Disposition'] = 'attachment; filename="calendar.ics"'
     response.write(cal.to_ical())
-    
+
     return response
 
 

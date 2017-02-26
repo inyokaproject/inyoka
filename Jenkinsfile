@@ -3,7 +3,7 @@ properties([buildDiscarder(logRotator(
                                       artifactDaysToKeepStr: '',
                                       artifactNumToKeepStr: '',
                                       daysToKeepStr: '',
-                                      numToKeepStr: '2')), 
+                                      numToKeepStr: '2')),
                           pipelineTriggers([])
 ])
 
