@@ -9,7 +9,7 @@
     then processed by a storage class and converted into a list of tuples or
     a dict, or something different, depending what the class wants to have.
 
-    This is used for similies, interwiki links, access control and much more.
+    This is used for similies and access control.
     If a page is a storage container is determined by the special 'X-Behave'
     metadata header.  There can be multiple pages with the same behave header,
     the contents of those pages are combined afterwards.
@@ -20,9 +20,6 @@
         this page must contain a pre block that binds smiley codes to their
         image location.  If the link is relative it's assumed to be a link to
         an attachment, otherwise a full url.
-
-    ``X-Behave: Interwiki-Map``
-        Binds shortnames to wiki URLs.
 
     ``X-Behave: Access-Control-List``
         This storage contains ACL information
@@ -189,13 +186,6 @@ class SmileyMap(DictStorage):
         return result
 
 
-class InterwikiMap(DictStorage):
-    """
-    Map shortnames to full interwiki links.
-    """
-    behavior_key = 'Interwiki-Map'
-
-
 class AccessControlList(BaseStorage):
     """
     This storage holds the access control lists for the whole wiki.  The rules
@@ -258,6 +248,5 @@ class AccessControlList(BaseStorage):
 
 storage = StorageManager(
     smilies=SmileyMap,
-    interwiki=InterwikiMap,
     acl=AccessControlList
 )

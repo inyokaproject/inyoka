@@ -40,7 +40,7 @@ from guardian.shortcuts import assign_perm, remove_perm, get_perms
 
 from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.models import Forum
-from inyoka.portal.models import StaticFile, StaticPage
+from inyoka.portal.models import StaticFile, StaticPage, Linkmap
 from inyoka.portal.user import (
     User,
     UserPage,
@@ -59,6 +59,8 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
+from inyoka.portal.utils import is_valid_interwiki_token
+
 
 #: Some constants used for ChoiceFields
 GLOBAL_PRIVILEGE_MODELS = {
@@ -67,7 +69,7 @@ GLOBAL_PRIVILEGE_MODELS = {
     'auth': ('group',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
-    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage'),
+    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage', 'linkmap'),
 }
 
 NOTIFY_BY_CHOICES = (
@@ -619,6 +621,23 @@ class EditGroupForm(forms.ModelForm):
         return groupname
 
 
+class EditLinkMapForm(forms.ModelForm):
+    token = forms.CharField(label=ugettext_lazy('Token'), required=True)
+    url = forms.URLField(label=ugettext_lazy('URL'), required=True)
+
+    class Meta:
+        model = Linkmap
+        fields = ('token','url')
+
+    def clean_token(self):
+        """Validates that the token is valid"""
+        data = self.cleaned_data['token'].lower()
+        if not is_valid_interwiki_token(data):
+            raise forms.ValidationError(_(
+                u'The interwiki token contains invalid chars. Only lowercase letters are allowed.'))
+        return data
+
+
 def get_permissions_for_app(application, filtered=None):
     """
     Select all permissions for the models defined in
@@ -690,6 +709,7 @@ class GroupGlobalPermissionForm(forms.Form):
         'portal.add_staticpage',
         'portal.add_storage',
         'portal.delete_storage',
+        'portal.delete_linkmap',
     )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',

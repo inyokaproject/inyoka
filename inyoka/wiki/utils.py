@@ -60,26 +60,6 @@ def get_smiley_map(full=False):
     return result
 
 
-def resolve_interwiki_link(wiki, page):
-    """
-    Resolve an interwiki link. If no such wiki exists the return value
-    will be `None`.
-    """
-    if wiki == 'user':
-        return href('portal', 'user', page)
-    if wiki == 'attachment':
-        return href('wiki', '_attachment', target=page)
-    rule = storage.interwiki.get(wiki)
-    if rule is None:
-        return
-    quoted_page = smart_urlquote(page)
-    if '$PAGE' not in rule:
-        link = rule + quoted_page
-    else:
-        link = rule.replace('$PAGE', quoted_page)
-    return link
-
-
 def quote_text(text, author=None, item_url=None):
     """
     Returns the wiki syntax quoted version of `text`.

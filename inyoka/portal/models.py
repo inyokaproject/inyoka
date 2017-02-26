@@ -324,6 +324,11 @@ class Subscription(models.Model):
         return self.is_accessible_for_user
 
 
+class Linkmap(models.Model):
+    token = models.CharField(ugettext_lazy(u'Token'), max_length=128)
+    url = models.CharField(ugettext_lazy(u'Link'), max_length=128)
+
+
 class Storage(models.Model):
     key = models.CharField(max_length=200, db_index=True)
     value = InyokaMarkupField(application='portal')

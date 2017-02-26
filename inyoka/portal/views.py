@@ -67,8 +67,10 @@ from inyoka.portal.forms import (
     UserCPSettingsForm,
     UserMailForm,
     WikiFeedSelectorForm,
+    EditLinkMapForm,
 )
 from inyoka.portal.models import (
+    Linkmap,
     PRIVMSG_FOLDERS,
     PrivateMessage,
     PrivateMessageEntry,
@@ -1306,7 +1308,6 @@ def group_edit_global_permissions(request, name):
         'form': form,
     }
 
-
 @login_required
 @permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit_forum_permissions.html')
@@ -1679,3 +1680,89 @@ def csrf_failure(request, reason=None):
     }
 
     return TemplateResponse('errors/403_csrf.html', context, 403)
+
+
+@login_required
+@templated('portal/linkmap.html')
+def linkmap(request, page=1):
+    """
+    Shows the link map list.
+
+    `page` represents the current page in the pagination.
+    """
+    linkmap = Linkmap.objects.all()
+    table = Sortable(linkmap, request.GET, 'token',
+                     columns=['token', 'url'])
+    pagination = Pagination(request, table.get_queryset(), page, 50,
+                            link=href('portal', 'linkmap'))
+    return {
+        'linkmap': pagination.get_queryset(),
+        'shortcut_count': len(linkmap),
+        'pagination': pagination,
+        'table': table
+    }
+
+
+@login_required
+@permission_required('portal.add_linkmap', raise_exception=True)
+@templated('portal/linkmap_edit.html')
+def linkmap_new(request):
+    """
+    Lets the user create a new interwiki link shortcut
+    """
+    form = EditLinkMapForm()
+    if request.method == 'POST':
+        form = EditLinkMapForm(request.POST)
+        if form.is_valid():
+            shortcut = form.save()
+            messages.success(request,
+                _(u'The interwiki link shortcut “%s” was created successfully.') % shortcut.token)
+            return HttpResponseRedirect(href('portal', 'linkmap', shortcut.token, 'edit'))
+    return {
+        'form': form,
+    }
+
+
+@login_required
+@permission_required('portal.add_linkmap', raise_exception=True)
+def linkmap_delete(request, name):
+    """
+    Lets the user delete a interwiki link shortcut
+    """
+    Linkmap.objects.filter(token=name).delete()
+    cache.delete('portal:linkmap')
+    messages.success(request,
+        _(u'The interwiki link shortcut “%s” was deleted successfully.') % name)
+    return HttpResponseRedirect(href('portal', 'linkmap'))
+
+
+@login_required
+@permission_required('portal.change_linkmap', raise_exception=True)
+@templated('portal/linkmap_edit.html')
+def linkmap_edit(request, name):
+    """
+    Lets the user edit a interwiki link shortcut
+    """
+    try:
+        shortcut = Linkmap.objects.get(token=name)
+    except Linkmap.DoesNotExist:
+        messages.error(request,
+            _(u'The interwiki link shortcut “%(shortcut)s” does not exist.')
+            % {'shortcut': escape(name)})
+        return HttpResponseRedirect(href('portal', 'linkmap'))
+
+    if request.method == 'POST':
+        form = EditLinkMapForm(request.POST, instance=shortcut)
+        if form.is_valid():
+            form.save()
+            cache.delete('portal:linkmap')
+            messages.success(request,
+                _(u'The interwiki link shortcut “%s” was changed successfully.') % shortcut.token)
+            return HttpResponseRedirect(href('portal', 'linkmap', shortcut.token, 'edit'))
+    else:
+        form = EditLinkMapForm(instance=shortcut)
+
+    return {
+        'form': form,
+        'shortcut': shortcut,
+    }
