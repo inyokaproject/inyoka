@@ -385,18 +385,22 @@ class Command(BaseCommand):
                     rmtree(path.join(root, d))
         mkdir(path.join(FOLDER, 'files'))
 
-        for app in apps.get_app_configs():
-            module = app.module
-            if hasattr(module, 'INYOKA_THEME'):
-                stroot = module.__path__[0] + '/static'
-        ff = partial(path.join, stroot, 'img')
-        static_paths = ((path.join(stroot, 'img', 'icons'), 'icons'),
-                        (path.join(stroot, 'img', 'wiki'), 'wiki'),
-                        (path.join(stroot, 'img', 'interwiki'), 'interwiki'),
-                        ff('logo.png'), ff('favicon.ico'), ff('float-left.jpg'),
-                        ff('float-right.jpg'), ff('float-top.jpg'), ff('head.jpg'),
-                        ff('head-right.png'), ff('anchor.png'), ff('1px.png'),
-                        ff('main-sprite.png'), ff('bullet.gif'))
+        img = partial(path.join, settings.STATIC_ROOT, 'img')
+        static_paths = ((img('icons'), 'icons'),
+                        (img('wiki'), 'wiki'),
+                        (img('interwiki'), 'interwiki'),
+                        img('logo.png'),
+                        img('favicon.ico'),
+                        img('float-left.jpg'),
+                        img('float-right.jpg'),
+                        img('float-top.jpg'),
+                        img('head.jpg'),
+                        img('head-right.png'),
+                        img('anchor.png'),
+                        img('1px.png'),
+                        img('main-sprite.png'),
+                        img('bullet.gif'))
+
         for pth in static_paths:
             _pth = pth[0] if isinstance(pth, _iterables) else pth
             if path.isdir(_pth):
