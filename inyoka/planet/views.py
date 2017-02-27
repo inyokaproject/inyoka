@@ -110,7 +110,6 @@ def suggest(request):
     }
 
 
-@permission_required('planet.view_blog', raise_exception=True)
 @atom_feed(name='planet_feed')
 def feed(request, mode='short', count=10):
     """show the feeds for the planet"""
