@@ -18,7 +18,7 @@ from hashlib import sha1
 from itertools import izip
 from optparse import make_option
 from os import chmod, mkdir, path, unlink, walk
-from re import compile, escape
+from re import compile, escape, sub
 from shutil import copy, copytree, rmtree
 
 from bs4 import BeautifulSoup
@@ -157,6 +157,7 @@ class Command(BaseCommand):
     def save_file(self, url, is_main_page=False, is_static=False):
         if not INCLUDE_IMAGES and not is_static and not is_main_page:
             return ""
+
         if url.startswith(settings.STATIC_URL):
             base = settings.STATIC_ROOT
             rel_path = url[len(settings.STATIC_URL):]
@@ -165,21 +166,20 @@ class Command(BaseCommand):
             rel_path = url[len(settings.MEDIA_URL):]
         else:
             return ""
-        try:
-            rel_path = url_unquote(rel_path)
-            if rel_path:
-                abs_path = path.join(base, rel_path)
-                hash_code = sha1(force_unicode(rel_path).encode('utf-8')).hexdigest()
-                if hash_code not in DONE_SRCS:
-                    ext = path.splitext(rel_path)[1]
-                    fname = '%s%s' % (hash_code, ext)
-                    dst = path.join(FOLDER, 'files', '_', fname)
-                    copy(abs_path, dst)
-                    DONE_SRCS[hash_code] = fname
-                    chmod(dst, 0o644)
-                return path.join('_', DONE_SRCS[hash_code])
-        except IOError:
-            pass
+
+        rel_path = url_unquote(rel_path)
+        rel_path = sub('\?v=v[\d\.]*', '', rel_path)
+        if rel_path:
+            abs_path = path.join(base, rel_path)
+            hash_code = sha1(force_unicode(rel_path).encode('utf-8')).hexdigest()
+            if hash_code not in DONE_SRCS:
+                ext = path.splitext(rel_path)[1]
+                fname = '%s%s' % (hash_code, ext)
+                dst = path.join(FOLDER, 'files', '_', fname)
+                copy(abs_path, dst)
+                DONE_SRCS[hash_code] = fname
+                chmod(dst, 0o644)
+            return path.join('_', DONE_SRCS[hash_code])
 
         return ""
 
@@ -216,7 +216,7 @@ class Command(BaseCommand):
     def handle_meta_link(self, soup, pre, is_main_page, page_name):
 
         def _handle_style(tag):
-            if tag['href'] == href('portal', 'markup.css'):
+            if tag['href'].startswith(href('portal', 'markup.css')):
                 hash_code = sha1(force_unicode('dyn.css').encode('utf-8')).hexdigest()
                 rel_path = path.join('_', '%s.css' % hash_code)
                 abs_path = path.join(FOLDER, 'files', rel_path)
