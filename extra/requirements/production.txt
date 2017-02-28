@@ -9,7 +9,6 @@ django-hosts==1.4
 django-mobile==0.6.0
 django-redis==4.3.0
 dnspython==1.12.0
-Fabric==1.10.2
 feedparser==5.2.1
 gunicorn==19.4.5
 html5lib==1.0b8
