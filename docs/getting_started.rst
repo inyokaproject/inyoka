@@ -136,7 +136,7 @@ Restart the server to test.
 Test someone's Pull Request
 ===========================
 
-See the GitHub Documentation on `How to checkot Pull Requests locally<https://help.github.com/articles/checking-out-pull-requests-locally/>`_
+See the GitHub Documentation on `How to checkot Pull Requests locally <https://help.github.com/articles/checking-out-pull-requests-locally/>`_
 
 Styles
 ======
