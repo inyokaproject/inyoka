@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-node {
+node('inyoka-slave') {
     stage('Checkout') {
       checkout scm
       sh '''git clean -fdx'''
