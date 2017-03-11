@@ -1,13 +1,6 @@
 #!/usr/bin/env groovy
-properties([buildDiscarder(logRotator(
-                                      artifactDaysToKeepStr: '',
-                                      artifactNumToKeepStr: '',
-                                      daysToKeepStr: '',
-                                      numToKeepStr: '2')),
-                          pipelineTriggers([])
-])
 
-node {
+node('inyoka-slave') {
     stage('Checkout') {
       checkout scm
       sh '''git clean -fdx'''
