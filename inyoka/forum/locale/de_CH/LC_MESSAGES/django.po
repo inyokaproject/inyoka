@@ -1,0 +1,500 @@
+# German (Germany) translations for Inyoka Project.
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
+# This file is dischributed under the same license as the Inyoka Project project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Inyoka\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-02-26 17:51+0100\n"
+"PO-Revision-Date: 2015-11-28 18:37+0100\n"
+"Last-Translator: Fuchs <>\n"
+"Language: de_CH\n"
+"Language-Team: Switzerland)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.2.0\n"
+"X-Language: de_CH\n"
+"X-Source-Language: C\n"
+
+#, python-format
+msgid "%(site)s forum"
+msgstr "%(site)s Forum"
+
+#, python-format
+msgid "%(site)s forum – “%(forum)s”"
+msgstr "%(site)s Forum – „%(forum)s“"
+
+#, python-format
+msgid "%(site)s topic – “%(topic)s”"
+msgstr "%(site)s Thema – „%(topic)s“"
+
+#, python-format
+msgid "%(username)s has created a new topic"
+msgstr "Nöis Thema vom Benutzr %(username)s"
+
+msgid "(Un)lock"
+msgstr "(Ent)sperrä"
+
+msgid "A notification will be sent when a topic is reported."
+msgstr "Du bechunsch ä Benachrichtigung, wenn äs Thema isch gmäudet wordä."
+
+msgid "Action canceled."
+msgstr "Aktion abbrochä."
+
+msgid "All forums were marked as read."
+msgstr "Aui Foränä sy aus gläsä markiärt wordä."
+
+msgid "An old revision of the post was restored."
+msgstr "Ä äuteri Revision vom Bytrag isch widerhärgschteut wordä."
+
+msgid "Cancel"
+msgstr "Abbrächä"
+
+msgid "Count user posts"
+msgstr "Zeu d Byträg vo dä Benutzr"
+
+msgid "Default text for new topics"
+msgstr "Standard Texscht für nöi Byträg"
+
+msgid "Description"
+msgstr "Beschrybig"
+
+msgid "Distribution"
+msgstr "Dischtribution"
+
+msgid "Do you really want to hide / delete this post?"
+msgstr "Wettsch dä Bytrag würkli verstäckä / löschä?"
+
+msgid "Do you really want to mark this post as ham / spam?"
+msgstr "Wettsch dä Bytrag würkli aus Spam / Ham markiärä?"
+
+msgid "Do you want to (un)lock the topic?"
+msgstr "Wettsch Du das Thema (ent)sperrä?"
+
+msgid "Do you want to restore the revision of the post?"
+msgstr "Wettsch Du diä Revision vo däm Bytrag widerhärschteua?"
+
+msgid "Do you want to restore the topic?"
+msgstr "Wettsch Du das Thema widerhärschteuä?"
+
+msgid "Do you want to restore this post?"
+msgstr "Wettsch Du diesen Bytrag widerhärschteuä?"
+
+#, python-format
+msgctxt "Link text to download an attachment"
+msgid "Download %(name)s"
+msgstr "Download %(name)s"
+
+msgid "Edubuntu"
+msgstr "Edubuntu"
+
+msgid "Force version"
+msgstr "Version erzwingä"
+
+msgid "Forum"
+msgstr "Forum"
+
+msgid "Forums"
+msgstr "Forä"
+
+msgid "Hide / Delete"
+msgstr "Verbärgä / Löschä"
+
+msgid ""
+"If not set then posts of users in this forum are ignored in the post counter "
+"of the user."
+msgstr ""
+"Wenn das nid gsetzt isch wärdä Byträg vo dä Nutzer y däm Forum für "
+"ä post counter vo dä Nutzer nid zeut."
+
+msgid "Involved topics"
+msgstr "Beteiligti Themä"
+
+msgid "Kubuntu"
+msgstr "Kubuntu"
+
+msgid "Lubuntu"
+msgstr "Lubuntu"
+
+msgid "Mark as ham / spam"
+msgstr "Aus Ham / Spam markiärä"
+
+msgid "Name"
+msgstr "Namä"
+
+msgid "New answer from user „{username}”"
+msgstr "Neui Antwort vom Benutzr „{username}”"
+
+#, python-format
+msgid "New discussion regarding the page “%(page)s” created"
+msgstr "Neui Diskussion für die Seite „%(page)s“ wurde eröffnet"
+
+msgid "New posts"
+msgstr "Neui Byträg"
+
+msgid "No Ubuntu"
+msgstr "Kes Ubuntu"
+
+#, python-format
+msgid ""
+"No discussion is linked yet to the article “%(article)s”. You can create a "
+"discussion now or <a href=\"%(link)s\">link an existing topic</a> to the "
+"article."
+msgstr ""
+"Äs isch no keini Diskussion mit däm Artiku „%(article)s“ verchnüpft. Du "
+"chasch ä Diskussion erschteuä odr <a href=\"%(link)s\">äs vorhandenes "
+"Thema vrchnüpfä</a>."
+
+msgid ""
+"No notifications on new posts in this topic will be sent to you any more"
+msgstr ""
+"Du wirsch vo jiz ah nümme über nöi Byträg y däm Thema benachrichtigt."
+
+msgid ""
+"No notifications on new topics within this forum will be sent to you any "
+"more."
+msgstr ""
+"Du bechunnsch ab sofort keini Benachrichtigungä meh zu nöiä Themä y "
+"däm Forum."
+
+msgid "No older topics within this forum."
+msgstr "Äs exischtierä keini eutärä Themä y däm Forum."
+
+msgid "No post selected."
+msgstr "Ke Bytrag uusgwäut."
+
+msgid "No recent topics within this forum."
+msgstr "Äs exischtierä keini nöiärä Themä y däm Forum."
+
+msgid "No topic with this slug found."
+msgstr "Äs Thema mit däm Slug exischtiert nid"
+
+msgid "No topics selected."
+msgstr "Keini Themä uusgwäut."
+
+msgid "Not specified"
+msgstr "Kei Aagab"
+
+msgid "Notifications on new posts in this topic will be sent to you."
+msgstr "Du wirsch ab jiz über nöi Byträg y däm Thema benachrichtigt."
+
+msgid "Notifications on new topics within this forum will be sent to you."
+msgstr "Du bechunnsch ab jiz Benachrichtigungä zu nöiä Themä y däm Forum."
+
+msgid ""
+"Only a subset of selected tickets has been closed, considering your "
+"moderation privileges for the regarding forums."
+msgstr ""
+"Äs wärdä nur äs paar vo dä uusgwäuten Mäudigä gschlossä, wöu Du "
+"Modrationsrächt im jewyligä Forum bruuchsch."
+
+msgid "Parent forum"
+msgstr "Eutäräforum"
+
+msgid "Pictures"
+msgstr "Biuder"
+
+msgid "Please login to mark posts as read."
+msgstr "Bitte mäud Di ah, um Byträg aus gläsä z markiärä."
+
+msgid "Position"
+msgstr "Position"
+
+msgid "Post"
+msgstr "Bytrag"
+
+msgid "Post functionality is currently disabled."
+msgstr "Ds Schrybä vo Byträg isch aktuell deaktiviert."
+
+msgid "Posts"
+msgstr "Byträg"
+
+#, python-format
+msgid "Posts by “%(user)s”"
+msgstr "Byträg vo „%(user)s“"
+
+msgid "Posts by “{user}”"
+msgstr "Byträg vo „{user}“"
+
+msgid "Posts by “{user}” in forum “{forum}”"
+msgstr "Byträg vo “{user}” im Forum “{forum}”"
+
+msgid "Posts by “{user}” in topic “{topic}”"
+msgstr "Byträg vo “{user}” im Thema “{topic}”"
+
+#, python-format
+msgid "Posts of the last %(n)d hours"
+msgstr "Byträg y dä letschtä %(n)d Schtung"
+
+msgid "Reason"
+msgstr "Grund"
+
+#, python-format
+msgid "Reported topic: “%(topic)s”"
+msgstr "Gmäudets Thema: „%(topic)s“"
+
+msgid "Restore"
+msgstr "Wiederherschteuä"
+
+msgid "Server"
+msgstr "Server"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Support group"
+msgstr "Gruppä vo dä Supporter"
+
+msgid "The First post of the new topic must not be hidden."
+msgstr "Dr erschty Bytrag vomä nöiä Thema darf nid verborgä sy."
+
+#, python-format
+msgid ""
+"The article “%(article)s” does not exist. However, you can create it now."
+msgstr ""
+"Dr Artiku „%(article)s“ exischtiert nid, Du chasch nä aber jetz "
+"erschteuä."
+
+#, python-format
+msgid "The attachment with the ID “%(id)d” does not exist."
+msgstr "Dr Aahang mit dr ID „%(id)d“ exischtiert nid."
+
+#, python-format
+msgid "The attachment “%(attachment)s” does already exist."
+msgstr "Dr Aahang „%(attachment)s“ exischtiert scho."
+
+#, python-format
+msgid "The attachment “%(attachment)s” was added successfully."
+msgstr "Dr Aahang „%(attachment)s“ isch erfougrych hinzuägfüägt wordä."
+
+#, python-format
+msgid "The attachment “%(attachment)s” was deleted."
+msgstr "Dr Aahang „%(attachment)s“ isch glöscht wordä."
+
+msgid "The first post of a topic cannot be deleted."
+msgstr "Dr erschti Bytrag vomänä Thema cha nid glöscht wärdä."
+
+msgid "The first post of a topic cannot be hidden."
+msgstr "Dr  erschti Bytrag äs Thema cha nid vrborgä wärdä"
+
+#, python-format
+msgid "The forum “%(forum)s” was marked as read."
+msgstr "Ds Forum „%(forum)s“ isch aus gläsä markiärt."
+
+msgid "The poll already ended."
+msgstr "D Umfrag isch scho verby."
+
+#, python-format
+msgid "The poll “%(poll)s” was added."
+msgstr "D Umfrag „%(poll)s“ isch hinzuägfüägt wordä."
+wurde
+#, python-format
+msgid "The poll “%(poll)s” was removed."
+msgstr "D Umfrag „%(poll)s“ isch glöscht wordä."
+
+#, python-format
+msgid "The post by “%(user)s” was deleted."
+msgstr "Dr Bytrag vom „%(user)s“ isch glöscht wordä."
+
+#, python-format
+msgid "The post by “%(user)s” was hidden."
+msgstr "Dr Bytrag vom „%(user)s“ isch vrborgä wordä."
+
+#, python-format
+msgid "The post by “%(user)s” was made visible."
+msgstr "Dr Bytrag vom „%(user)s“ isch widr aazeigt wordä."
+
+msgid "The post was saved successfully."
+msgstr "Dr Bytrag isch erfougrych gspycheret wordä."
+
+msgid "The selected tickets have been closed."
+msgstr "Diä gwäutä Tickets si gschlossä wordä."
+
+msgid "The topic was locked."
+msgstr "Ds Thema isch gschperrt wordä"
+
+msgid "The topic was marked as solved."
+msgstr "Ds Thema isch aus glöst markiärt wordä."
+
+msgid "The topic was marked as unsolved."
+msgstr "Ds Thema isch aus ungelöst markiärt wordä."
+
+msgid "The topic was reported."
+msgstr "Ds Thema isch gmäudet wordä."
+
+msgid "The topic was unlocked."
+msgstr "Ds Thema isch entsperrt wordä"
+
+#, python-format
+msgid "The topic “%(topic)s” has been deleted"
+msgstr "Ds Thema „%(topic)s“ isch glöscht wordä."
+
+#, python-format
+msgid "The topic “%(topic)s” was deleted successfully."
+msgstr "Ds Thema „%(topic)s“ isch glöscht wordä."
+
+#, python-format
+msgid "The topic “%(topic)s” was hidden."
+msgstr "Ds Thema „%(topic)s“ isch vrborgä wordä."
+
+#, python-format
+msgid "The topic “%(topic)s” was moved."
+msgstr "Ds Thema „%(topic)s“ isch vrschobä wordä."
+
+#, python-format
+msgid "The topic “%(topic)s” was restored."
+msgstr "Ds Thema „%(topic)s“ isch widerhärgschteut wordä."
+
+#, python-format
+msgid "The topic “%(topic)s” was split."
+msgstr "Ds Thema „%(topic)s“ isch uufteilt wordä."
+
+#, python-format
+msgid "There is no “%(slug)s” anymore."
+msgstr "Äs git keini „%(slug)s“ meh."
+
+#, python-format
+msgid "This post is currently beeing edited by “%(user)s”!"
+msgstr "Dä Bytrag wird grad vom „%(user)s“ bearbeität!"
+
+msgid "This report has already been claimed."
+msgstr "Diä Mäudig wird scho bearbeität."
+
+msgid "This topic is hidden due to possible spam."
+msgstr "Das Thema isch wägä möglichäm Spam vrborgä"
+
+msgid "This topic is not visible for regular users."
+msgstr "Das Thema isch für normali Benutzr unsichtbar."
+
+msgid ""
+"This topic was already created. Please think about editing your topic before "
+"creating a new one."
+msgstr ""
+"Dä Bytrag isch bereits erschteut! Bitte überleg, ob Du nid dr "
+"vorhärig Bytrag wettisch bearbeitä."
+
+msgid "This topic was already reported."
+msgstr "Das Thema isch scho gmäudet wordä."
+
+msgid "Topic"
+msgstr "Thema"
+
+msgid "Topics"
+msgstr "Themä"
+
+#, python-format
+msgid "Topics by “%(user)s”"
+msgstr "Themä vom „%(user)s“"
+
+msgid "Ubuntu"
+msgstr "Ubuntu"
+
+msgid "Ubuntu GNOME"
+msgstr "Ubuntu GNOME"
+
+msgid "Ubuntu MATE"
+msgstr "Ubuntu MATE"
+
+msgid "Ubuntu Touch"
+msgstr "Ubuntu Touch"
+
+msgid "Unanswered topics"
+msgstr "Themä ohni Antwort"
+
+msgid "Unsolved topics"
+msgstr "Unglösti Themä"
+
+msgid "Version"
+msgstr "Version"
+
+#, python-format
+msgctxt "Link text to an image attachment"
+msgid "View %(name)s"
+msgstr "%(name)s aaluägä"
+
+msgid "Welcome text"
+msgstr "Wiukommenstexscht"
+
+msgid "Welcome title"
+msgstr "Wiukommenstitu"
+
+msgid "Xubuntu"
+msgstr "Xubuntu"
+
+msgid "You are not allowed to mark this topic as \"important\"."
+msgstr "Dir isch es nid erlaubt, das Thema aus \"wichtig\" zu markiärä."
+
+msgid ""
+"You are replying to a locked topic. Please note that this may be considered "
+"as impolite!"
+msgstr ""
+"Du antwortisch gad ufenesn bereits gschlossnigäs Thema. Ds wird oft aus "
+"unhöflich aagluäget, bis Dir dessä bewusst!"
+
+#, python-format
+msgid "You can only display the last %(n)d pages."
+msgstr "Du chasch dir nur diä letschtä %(n)d Sytä lo aazeigä."
+
+msgid "You cannot edit this post."
+msgstr "Du chasch dä Bytrag nid bearbeitä."
+
+msgid "You cannot move a topic into a category. Please choose a forum."
+msgstr ""
+"Du chasch kes Thema in ä Kategorie verschiäbä. Bitte wäu äs Forum."
+
+msgid "You cannot reply in this topic because it was deleted by a moderator."
+msgstr ""
+"Du chasch y däm Thema nümm antwortä, wöus vomänä Modrator "
+"isch glöscht wurde."
+
+msgid "You cannot reply to this topic because it was locked."
+msgstr "Du chasch uf das Thema nid antwortä, wöu s'isch gsperrt wordä."
+
+msgid "You cannot set this topic as target."
+msgstr "Du chasch das Thema nid aus Ziel uuswählä."
+
+msgid "You don't have moderation rights for the seleted topic."
+msgstr "Dir fählä für ds uusgwäute Thema d Modrationsrächt"
+
+msgid "You must enter a text in order to set the welcome message"
+msgstr "Du muäsch ä Text für d Wiukommensnachricht ygäh."
+
+msgid "You must enter a title in order to set the welcome message"
+msgstr "Du muäsch än Titel ygäh für d Wiukommensnachricht"
+
+msgid "You need to be logged in to use this function."
+msgstr "Für diä Funktion muäsch Du ygloggt sy."
+
+msgid "You will not be notified anymore when a topic is reported."
+msgstr "Du wirsch ab sofort nümm by gmäudätä Themä benachrichtigt."
+
+#, python-format
+msgid "Your topic “%(topic)s” was moved."
+msgstr "Dis Thema „%(topic)s“ isch vrschobä wordä."
+
+#, python-format
+msgid ""
+"[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible "
+"spam."
+msgstr ""
+"[user:%(username)s:]: Dr Bytrag [post:%(post)s:] isch uufgrund vo möglichäm "
+"Spam vrborgä."
+
+#, python-format
+msgid "“%(topic)s” – Reply from “%(username)s“"
+msgstr "“%(topic)s” – Antwort vom “%(username)s“"
+
+#, python-format
+msgid "“%(topic)s” – Topic in forum “%(forum)s”"
+msgstr "“%(topic)s“ – Thema im Forum „%(forum)s“"
+
+#, python-format
+msgid "“%(topic)s” – Topic with version %(version)s"
+msgstr "“%(topic)s” – Thema mit Version %(version)s"
+
+msgid "“new” is not a valid forum slug"
+msgstr "„new“ isch kei gültigä Slug"
