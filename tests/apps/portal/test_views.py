@@ -20,6 +20,7 @@ from django.utils.translation import ugettext as _
 from guardian.shortcuts import assign_perm
 
 from inyoka.portal.models import (
+    Linkmap,
     PRIVMSG_FOLDERS,
     PrivateMessage,
     PrivateMessageEntry,
@@ -71,6 +72,18 @@ class TestViews(TestCase):
                 % _(u'The group name contains invalid chars'),
                 response.content.decode('utf-8')
             )
+
+    def test_linkmap(self):
+        """Test if the link map site is reachable"""
+        lm1 = Linkmap(token="dummy1", url="http://dummy.com/")
+        lm1.save()
+        lm2 = Linkmap(token="dummy2", url="http://dummy.com/")
+        lm2.save()
+        self.client.login(username='user', password='user')
+        response = self.client.get('/linkmap/', follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(u'In total there are 2 link shortcuts.', 
+                    response.content.decode('utf-8'))
 
     def test_subscribe_user(self):
         """Test if it is possible to subscribe to users."""
@@ -462,104 +475,3 @@ class TestPrivMsgViews(TestCase):
             folder__isnull=True).count(), 2)
         self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
             read=True).count(), 2)
-
-
-class TestStaticPageEdit(TestCase):
-    client_class = InyokaClient
-
-    def setUp(self):
-        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
-        self.client.login(username='user', password='user')
-
-        self.page = StaticPage.objects.create(key='foo', title=u'foo')
-
-    def test_status_code_with_permissions(self):
-        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('portal.change_staticpage', registered_group)
-
-        response = self.client.get(self.page.get_absolute_url('edit'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_status_code_without_permissions(self):
-        response = self.client.get(self.page.get_absolute_url('edit'))
-        self.assertEqual(response.status_code, 403)
-
-    def test_create_status_code_without_permissions(self):
-        response = self.client.get(href('portal', 'page', 'new'))
-        self.assertEqual(response.status_code, 403)
-
-    def test_create_status_code_with_permissions(self):
-        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('portal.change_staticpage', registered_group)
-
-        response = self.client.get(href('portal', 'page', 'new'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_create_page__object_in_db(self):
-        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('portal.change_staticpage', registered_group)
-
-        response = self.client.post(href('portal', 'page', 'new'),
-                                    {'send': 'Send', 'title': 'foo2',
-                                     'content': 'My great content'})
-
-        StaticPage.objects.get(key='foo2')  # will raise an error, if missing
-
-    def test_create_page__redirect_url(self):
-        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('portal.change_staticpage', registered_group)
-
-        response = self.client.post(href('portal', 'page', 'new'),
-                                    {'send': 'Send', 'title': 'foo2',
-                                     'content': 'My great content'})
-
-        self.assertEqual(response.url, href('portal', 'foo2'))
-
-    def test_create_page__success_message(self):
-        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('portal.change_staticpage', registered_group)
-
-        response = self.client.post(href('portal', 'page', 'new'),
-                                    {'send': 'Send', 'title': 'foo2',
-                                     'content': 'My great content'},
-                                    follow=True)
-
-        msg = u'The page “{}” was created successfully.'.format('foo2')
-        self.assertContains(response, msg)
-
-    def test_edit_page__success_message(self):
-        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('portal.change_staticpage', registered_group)
-
-        new_title = 'foo2'
-        response = self.client.post(self.page.get_absolute_url('edit'),
-                                    {'send': 'Send', 'title': new_title,
-                                     'content': 'My great content',
-                                     'key': self.page.key}, follow=True)
-
-        msg = u'The page “{}” was changed successfully.'.format(new_title)
-        self.assertContains(response, msg)
-
-    def test_edit_page__redirect_url(self):
-        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('portal.change_staticpage', registered_group)
-
-        new_title = 'foo2'
-        response = self.client.post(self.page.get_absolute_url('edit'),
-                                    {'send': 'Send', 'title': new_title,
-                                     'content': 'My great content',
-                                     'key': self.page.key})
-
-        self.assertEqual(response.url, href('portal', self.page.key))
-
-    def test_preview(self):
-        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('portal.change_staticpage', registered_group)
-
-        content = 'My great content'
-        response = self.client.post(href('portal', 'page', 'new'),
-                                    {'preview': 'Preview', 'title': 'foo3',
-                                     'content': content})
-
-        self.assertContains(response, content)
-        self.assertContains(response, '<div class="preview">')

@@ -95,52 +95,6 @@ class TestACLStorage(StorageTest):
                                        (u'hacker', 0, 63), (u'hacker', 63, 0)])
 
 
-class TestInterwikiStorage(StorageTest):
-
-    def test_single_valid(self):
-        self._create_page(u'IWM',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'github = https://github.com/\n'
-                          u'}}}')
-        self.assertEqual(storage.interwiki.get('github'),
-                         'https://github.com/')
-
-    def test_multiple_valid(self):
-        self._create_page(u'IWM',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'github = https://github.com/\n'
-                          u'}}}')
-
-        self._create_page(u'IWM2',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'google = https://www.google.com/search?q=\n'
-                          u'}}}')
-
-        self.assertEqual(storage.interwiki.get('github'),
-                         'https://github.com/')
-        self.assertEqual(storage.interwiki.get('google'),
-                         'https://www.google.com/search?q=')
-
-    def test_single_invalid(self):
-        self._create_page(u'IWM',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'github = https://github.com/\n'
-                          u'}}}')
-
-        self._create_page(u'IWM/Evil',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'github = http://evil.com/'
-                          u'}}}')
-
-        self.assertEqual(storage.interwiki.get('github'),
-                         'http://evil.com/')
-
-
 class TestSmileyStorage(StorageTest):
 
     FILE_ANGEL = 'angel.png'

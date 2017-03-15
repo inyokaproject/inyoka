@@ -12,6 +12,8 @@
 import unittest
 
 from inyoka.markup import Parser, nodes
+from inyoka.portal.models import Linkmap
+from inyoka.markup.nodes import InterWikiLink
 
 
 def parse(code):
@@ -201,3 +203,11 @@ class TestParser(unittest.TestCase):
             nodes.Link('http://example.org', [nodes.Text(':blub:')]),
             nodes.Link('?action=edit'), nodes.Link('http://[bla')
         ]))
+
+    def test_interwiki_links(self):
+        """Test external interwiki links."""
+        Linkmap.objects.create(token=u'github', url=u'https://github.com/')
+        iwl = InterWikiLink(u'github', u'inyokaproject')
+        iwl.prepare_html()
+        self.assertEqual(iwl.resolve_interwiki_link(),
+                         u'https://github.com/inyokaproject')
