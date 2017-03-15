@@ -291,7 +291,7 @@ msgstr "D Umfrag isch scho verby."
 #, python-format
 msgid "The poll “%(poll)s” was added."
 msgstr "D Umfrag „%(poll)s“ isch hinzuägfüägt wordä."
-wurde
+
 #, python-format
 msgid "The poll “%(poll)s” was removed."
 msgstr "D Umfrag „%(poll)s“ isch glöscht wordä."
