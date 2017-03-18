@@ -3,7 +3,7 @@ Babel==2.2.0
 beautifulsoup4==4.4.1
 celery==3.1.23
 defusedxml==0.4.1
-Django==1.8.13
+Django==1.8.17
 django-filter==0.13.0
 django-hosts==1.4
 django-mobile==0.6.0
@@ -17,7 +17,7 @@ Jinja2==2.8
 lxml==3.5.0
 MarkupSafe==0.23
 mysql-python==1.2.5
-Pillow==3.1.1
+Pillow==4.0.0
 pyasn1==0.1.9
 pyasn1_modules==0.0.8
 Pygments==2.1.3
