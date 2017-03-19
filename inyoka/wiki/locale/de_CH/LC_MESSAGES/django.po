@@ -1,0 +1,268 @@
+# German (Germany) translations for Inyoka Project.
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version:  Inyoka\n"
+"Report-Msgid-Bugs-To: http://trac.inyokaproject.org/\n"
+"POT-Creation-Date: 2017-02-26 17:51+0100\n"
+"PO-Revision-Date: 2016-02-26 20:31+0100\n"
+"Last-Translator: Fuchs <>\n"
+"Language: de_CH\n"
+"Language-Team: Switzerland\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.2.0\n"
+
+#, python-format
+msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
+msgstr "%(note)s [Revision vom %(date)s widerhärgsteut vom %(user)s]"
+
+#, python-format
+msgid "%(rev)s (Revision %(date)s)rev"
+msgstr "%(rev)s (Revision %(date)s)"
+
+#, python-format
+msgid "%(sitename)s wiki – %(pagename)s"
+msgstr "%(sitename)s Wiki – %(pagename)s"
+
+#, python-format
+msgid "%(sitename)s wiki – last changes"
+msgstr "%(sitename)s Wiki – Letschti Änderige"
+
+#, python-format
+msgid "%(user)s deleted the article “%(article)s” on %(date)s. Summary: %(summary)s"
+msgstr "%(user)s het dr Artiku „%(article)s“ am %(date)s glöscht. Zämäfassig: %(summary)s"
+
+#, python-format
+msgid "%(user)s edited the article “%(article)s” on %(date)s. Summary: %(summary)s"
+msgstr "%(user)s het dr Artiku „%(article)s” am %(date)s bearbeität. Zämäfassig: %(summary)s"
+
+msgid "A page with this name already exists."
+msgstr "Ä angeri Sytä mit däm Namä exischtiert bereits."
+
+msgid "A site name needs to be entered to create this page."
+msgstr "Die Sytä het nid chönnä erschteut wärdä, wöu kei Sytänname isch ahgäh wordä."
+
+#, python-format
+msgid "An anonymous user deleted the article “%(article)s” on %(date)s. Summary: %(summary)s"
+msgstr "Ä anonymä Benutzer hett dr Artiku „%(article)s“ am %(date)s glöscht. Zämäfassig: %(summary)s"
+
+#, python-format
+msgid "An anonymous user edited the article “%(article)s” on %(date)s. Summary: %(summary)s"
+msgstr "Ä anonymä Benutzer hett dr Artiku „%(article)s” am %(date)s bearbeität. Zämäfassig: %(summary)s"
+
+msgid "Another page or attachment with the same name exists"
+msgstr "Äs exischtiert bereits ä Sytä oder än Aahang mit däm Namä."
+
+#, python-format
+msgid "Another site named “%(title)s” already exists."
+msgstr "Än angeri Sytä mit em Namä „%(title)s“ exischtiert scho."
+
+msgid "Attachment edited successfully."
+msgstr "Dr Dateiaahang isch erfougrych bearbeität wordä."
+
+msgid "Attachment saved successfully."
+msgstr "Der Dateiaahang isch erfougrych gspycheret wordä."
+
+msgid "Attachments within attachments are not allowed!"
+msgstr "Aahäng y Aahäng sy nid erloubt!"
+
+msgid "Canceled."
+msgstr "Abbrochä."
+
+msgid "Circular import"
+msgstr "Zirkulärä Import"
+
+msgid "Completion date"
+msgstr "Fertigstelligsdatum"
+
+msgid "Created"
+msgstr "Ersteut"
+
+msgid "Description of attachment"
+msgstr "Beschrybig vom Aahangs"
+
+msgid "Detected a circular include macro call"
+msgstr "Detected a circular include macro call"
+
+msgid "Download attachment"
+msgstr "Aahang abäladä"
+
+msgid "Edit summary"
+msgstr "Änderigsnotiz"
+
+msgid "Edited by"
+msgstr "Bearbeitet vom"
+
+msgid "Editing of this page was canceled."
+msgstr "Bearbeitä vor Sytä Abbrochä."
+
+msgid "Extensive (for beginners)"
+msgstr "Umfangrych (für Ystyger)"
+
+msgid "I don't want a template"
+msgstr "Ig wett kei Vorlag vrwändä"
+
+msgid "Invalid arguments"
+msgstr "Parameterfähler"
+
+msgid "New page name"
+msgstr "Namä vor nöiä Sytä"
+
+msgid "No page name given."
+msgstr "Kei Namä für d Sytä ahgäh."
+
+msgid "No result"
+msgstr "Kes Ergäbnis"
+
+msgid "No subscription for this page found."
+msgstr "Du wirsch übr diä Sytä nid benachrichtigt!"
+
+msgid "Normal (for experienced authors)"
+msgstr "Normau (für erfahrnigi Outorä)"
+
+msgid "Overwrite existing file with same name"
+msgstr "Übrschrybä d Datei mit em glych Namä"
+
+msgid "Page not found"
+msgstr "Sytä nid gfungä"
+
+#, python-format
+msgid "Pages with tag “%(name)s”"
+msgstr "Sytänä mit em Tag „%(name)s“"
+
+msgid "Please enter a name for this attachment."
+msgstr "Bitte gib ä Dateinamä für än Aahang ah."
+
+#, python-format
+msgid "Redirected from “<a href=\"%(link)s\">%(title)s</a>”."
+msgstr "Vo „<a href=\"%(link)s\">%(title)s</a>“ wytergleitet."
+
+msgid "Rename the file after upload"
+msgstr "Benennt d Datei nach äm Uufäladä um"
+
+#, python-format
+msgid "Renamed from %(old_name)s"
+msgstr "Umbenant vo %(old_name)s"
+
+msgid "Renamed the page successfully."
+msgstr "D Sytä isch erfougrych umbenannt wordä."
+
+#, python-format
+msgid "Renamed to %(new_name)s"
+msgstr "Umbenannt zuä %(new_name)s"
+
+msgid "Revert aborted."
+msgstr "Wydrhärsteuä abbrochä."
+
+#, python-format
+msgid "Revision %(id)d (%(title)s)"
+msgstr "Revision %(id)d (%(title)s)"
+
+msgid "Revision is the latest one, revert aborted."
+msgstr "Keini Änderigä dürägfüehrt, wöu d Revision scho diä aktuelli isch."
+
+msgid "Slug of the topic"
+msgstr "Slug vom Thema"
+
+msgid "Somebody else edited the page while you were making your changes. We tried to merge the text automatically. Please confirm that everything is ok."
+msgstr "Während Du d Sytä off hesch gha, het sä öpper angers ou bearbeität. Lueg bitte, öb ds Zämäfüährä vo dä Änderigä suuber funktioniert hett."
+
+msgid "The article „{name}“ does not exist, you can try to create it now."
+msgstr "Dr Artiku „{name}“ exischtiert nid, Du chasch versuächä nä jetz z erschteuä."
+
+msgid "The given revision does not exist for this article, using last revision instead."
+msgstr "Diä aahgäni Revisionsnummärö gits nid, ig nimä stattdessä diä letschti Revision "
+
+#, python-format
+msgid "The metadata filter has found no results. Query: %(query)s"
+msgstr "Dr Metadatä-Fiutr hett keini Ergäbniss gfungä. Query: %(query)s"
+
+#, python-format
+msgid "The page %(name)s already exists."
+msgstr "Än angeri Sytä mit em Namä %(name)s gits scho."
+
+msgid "The page <a href=\"{link}\">{name}</a> has been created."
+msgstr "D Sytä „<a href=\"{link}\">{name}</a>“ isch erschteut wordä."
+
+msgid "The page has been edited."
+msgstr "D Sytä isch bearbeität wordä."
+
+#, python-format
+msgid "The page “%(name)s” was not found"
+msgstr "D Sytä „%(name)s“ isch nid gfungä wordä."
+
+msgid "The page “{name}” was changed"
+msgstr "D Sytä „{name}“ isch gänderet wordä"
+
+msgid "The template that this new article should be using."
+msgstr "D Vorlag wo für dä Artiku söu verwändet wärdä."
+
+msgid "The text contains conflict markers."
+msgstr "Dr Texscht beinhautet Konfliktmarkierigä"
+
+msgid "The text contains too many nested elements."
+msgstr "Dr Texscht beinhautet viu vrschachtleti Elemänt."
+
+msgid "The title of the article you want to create."
+msgstr "Dr Titu vor Sytä wo Du wettsch aleggä."
+
+#, python-format
+msgid "These attachments are already attached to the new page name: %(names)s. Please make sure that they are not required anymore. <a href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
+msgstr "Fougendi Aahäng sy bereits däm nöi Sytänamä zuägordnet: %(names)s. Bitte steu sicher, dass diä nümm bruucht wärdä. <a href=\"%(link)s\">Umbenennig u Löschig vo doppletä Aahäng rzwingä</a>."
+
+msgid "This page contains a redirect that leads to a redirect loop!"
+msgstr "Diä Sytä beinhautet ä Wyterleitig wo zuärä Ändlosschleifä füährt."
+
+msgid "This topic does not exist."
+msgstr "Das Thema gits nid."
+
+msgid "Unknown page"
+msgstr "Unbekannti Sytä"
+
+msgid "Wiki page"
+msgstr "Wikisytä"
+
+msgid "Wiki pages"
+msgstr "Wikisytänä"
+
+msgid "You are already subscribed"
+msgstr "Du wirsch scho benachrichtigt"
+
+msgid "You are not permitted to make this change."
+msgstr "Du bisch nid berächtigt diä Änderig vorznäh."
+
+#, python-format
+msgid "You can find the slug of a topic in the URL (e.g. <var>example</var> when <em>%(example)s</em>)"
+msgstr "Dr Slug vomänä Thema fingsch Du ir URL (z. B. <var>example</var> bei <em>%(example)s</em>)"
+
+msgid "You can not create a page with a reserved name."
+msgstr "Du chasch kei Sytä mit ämä reserviertä Namä ahleggä."
+
+msgid "You do not have permission to create this page."
+msgstr "Du bisch nid derzuä berächtigt diä Sytä ahzleggä."
+
+msgid "You do not have permission to read this template."
+msgstr "Du hesch kei Berechtigung diä Vorlag ahzluägä."
+
+msgid "You have not made any changes."
+msgstr "Du hesch d Sytä nid veränderet."
+
+msgid "You must apply a page name because the macro is being called outside the wiki context."
+msgstr "Du muäsch ä Sytä ahgä, wöu ds Makro usserhaub vom Wiki vrwändet wird."
+
+msgid "You will be notified on changes on this page"
+msgstr "Du wirsch ab jetz by Vränderigä vo derä Sytä benachrichtigt."
+
+msgid "You won't be notified for changes on this page anymore"
+msgstr "Du wirsch ab jetz by Vränderigä vo derä Sytä nümm benachrichtigt."
+
+#, python-format
+msgid "“%(title)s” was reverted successfully"
+msgstr "D Sytä „%(title)s“ isch erfougrych widerhärgsteut wordä."
+
