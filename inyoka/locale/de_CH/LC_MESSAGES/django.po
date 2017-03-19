@@ -1,17 +1,18 @@
-# Translations template for Inyoka Project.
+# German (Switzerland) translations for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.15.1\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-19 03:22+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2017-03-19 03:06+0100\n"
+"PO-Revision-Date: 2017-03-19 00:59+0000\n"
+"Last-Translator: Lyra\n"
+"Language: de_CH\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/entequak/inyoka/language/de_CH/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,7 +25,7 @@ msgid "CAPTCHA"
 msgstr ""
 
 msgid "Canceled."
-msgstr ""
+msgstr "Abbrochä."
 
 msgid "Errors occurred, please fix them."
 msgstr ""

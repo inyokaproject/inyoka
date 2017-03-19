@@ -4,87 +4,85 @@
 # 
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2017
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
-# Sören Wegener <wegener92@googlemail.com>, 2011
+# Lyra, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-18 23:33+0100\n"
-"PO-Revision-Date: 2017-03-19 00:34+0000\n"
+"POT-Creation-Date: 2017-03-19 03:06+0100\n"
+"PO-Revision-Date: 2017-03-19 13:56+0000\n"
 "Last-Translator: Lyra\n"
-"Language-Team: German (Germany) (http://www.transifex.com/entequak/inyoka/language/de_DE/)\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/entequak/inyoka/language/de_CH/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
-"Language: de_DE\n"
+"Language: de_CH\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #, python-format
 msgid "%(sitename)s planet"
-msgstr "%(sitename)s Planet"
+msgstr ""
 
 msgid "A new blog was suggested."
-msgstr "Ein neues Blog wurde vorgeschlagen."
+msgstr ""
 
 msgid "Canceled"
-msgstr "Abgebrochen"
+msgstr "Abbrächä"
 
 msgid "Description"
-msgstr "Beschreibung"
+msgstr "Beschrybig"
 
 msgid "Email address of the blog author"
-msgstr "E-Mail-Adresse des Blog-Autors"
+msgstr ""
 
 msgid "Entries"
-msgstr "Einträge"
+msgstr "Yträg"
 
 msgid "Entry"
-msgstr "Eintrag"
+msgstr "Yträg"
 
 msgid "Feed URL"
-msgstr "Feed URL"
+msgstr ""
 
 msgid "Icon"
-msgstr "Icon"
+msgstr "Biudli"
 
 msgid "Index the blog"
-msgstr "Index des Blogs"
+msgstr ""
 
 msgid "Name of the blog"
-msgstr "Name des Blogs"
+msgstr ""
 
 msgid "No title given"
-msgstr "Kein Titel vorhanden"
+msgstr ""
 
 msgid "No user is registered as a planet administrator."
-msgstr "Es wurde kein Benutzer als Planet-Administrator eingetragen."
+msgstr ""
 
 #, python-format
 msgid "The blog “%(title)s” was suggested."
-msgstr "Das Blog „%(title)s“ wurde vorgeschlagen."
+msgstr ""
 
 #, python-format
 msgid "The entry “%(title)s” was successfully hidden."
-msgstr "Der Eintrag „%(title)s“ wurde erfolgreich verborgen."
+msgstr ""
 
 #, python-format
 msgid "The entry “%(title)s” was successfully restored."
-msgstr "Der Eintrag „%(title)s“ wurde erfolgreich wiederhergestellt."
+msgstr ""
 
 msgid "This is my own blog"
-msgstr "Das ist mein Blog"
+msgstr ""
 
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 msgid "URL of the blog"
-msgstr "URL des Blogs"
+msgstr ""
 
 msgid "URL of the feed"
-msgstr "URL des Feeds"
+msgstr ""
 
 msgid "User"
-msgstr "Benutzer"
+msgstr "Benutzr"
