@@ -3,122 +3,122 @@
 # This file is distributed under the same license as the Inyoka Project project.
 # 
 # Translators:
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012,2017
+# Lyra, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-18 23:33+0100\n"
-"PO-Revision-Date: 2017-03-19 00:44+0000\n"
+"POT-Creation-Date: 2017-03-19 03:06+0100\n"
+"PO-Revision-Date: 2017-03-19 13:55+0000\n"
 "Last-Translator: Lyra\n"
-"Language-Team: German (Germany) (http://www.transifex.com/entequak/inyoka/language/de_DE/)\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/entequak/inyoka/language/de_CH/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
-"Language: de_DE\n"
+"Language: de_CH\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "<strong>Conflict End</strong>"
-msgstr "<strong>Konlikt Ende</strong>"
+msgstr ""
 
 msgid "<strong>Conflict</strong> – local Version"
-msgstr "<strong>Konflikt</strong> – eigene Version"
+msgstr ""
 
 msgid "<strong>Conflict</strong> – remote version"
-msgstr "<strong>Konflikt</strong> – vorherige Version"
+msgstr ""
 
 msgid "Conditions allow only one expression per block."
-msgstr "Bedingungen erlauben nur einen Ausdruck pro Block."
+msgstr ""
 
 msgid "Edited by"
-msgstr "Bearbeitet von"
+msgstr "Bearbeitet vom"
 
 msgid "Internal error: "
-msgstr "Interner Fehler: "
+msgstr ""
 
 msgid "Invalid arguments"
-msgstr "Parameterfehler"
+msgstr "Parameterfähler"
 
 msgid "Invalid date"
-msgstr "Ungültiges Datum"
+msgstr ""
 
 msgid "Invalid macro"
-msgstr "Ungültiges Makro"
+msgstr ""
 
 msgid ""
 "Invalid syntax for this loop. After the first variable an “in” is required."
-msgstr "Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort \"in\" folgen."
+msgstr ""
 
 msgid "Invalid syntax for this loop. The first argument must be a variable."
-msgstr "Ungültige Schleifen-Syntax. Erstes Argument muss eine Variable sein."
+msgstr ""
 
 msgid "Invalid syntax: "
-msgstr "Syntaxfehler: "
+msgstr ""
 
 msgid "Loop end contains too many arguments."
-msgstr "Schleifenende enthält zu viele Argumente."
+msgstr ""
 
 msgid "Loop header contains too many arguments."
-msgstr "Schleifenkopf enthält zu viele Argumente."
+msgstr ""
 
 msgid "Missing comma between array entries"
-msgstr "Fehlendes Komma zwischen Array Einträgen."
+msgstr ""
 
 msgid "Missing macro"
-msgstr "Fehlendes Makro"
+msgstr ""
 
 msgid "Missing template"
-msgstr "Fehlende Vorlage"
+msgstr ""
 
 msgid "Moderated by"
-msgstr "Moderiert von"
+msgstr ""
 
 msgid "Parentheses were not closed properly."
-msgstr "Klammerausdruck wurde nicht geschlossen."
+msgstr ""
 
 msgid "Table of contents"
-msgstr "Inhaltsverzeichnis"
+msgstr ""
 
 msgid "The first argument must be the name of the template."
-msgstr "Das erste Argument muss der Name des Templates sein."
+msgstr ""
 
 #, python-format
 msgid "The macro “%(name)s” does not exist."
-msgstr "Das Makro „%(name)s“ konnte nicht gefunden werden."
+msgstr ""
 
 msgid "The parser found too deeply nested elements."
-msgstr "Der Text enthält zu viele verschachtelte Elemente."
+msgstr ""
 
 #, python-format
 msgid "The template “%(name)s” could not be found."
-msgstr "Das gewünschte Template „%(name)s“ existiert nicht."
+msgstr ""
 
 msgid ""
 "The “else” block does not allow any expressions. Maybe you wanted to use the"
 " “elseif” block."
-msgstr "„else“-Block erlaubt keinen Ausdruck. Möglicherweise wolltest du einen „elseif“-Block verwenden."
+msgstr ""
 
 msgid "This macro is not available."
-msgstr "Dieses Makro ist nicht verfügbar"
+msgstr ""
 
 msgid "Too many arguments for this value output"
-msgstr "Zu viele Argumente für Wertausgabe."
+msgstr ""
 
 msgid "Unexpected end of expression."
-msgstr "Unerwartetes Ausdrucksende."
+msgstr ""
 
 msgid "Unexpected operator"
-msgstr "Unerwarteter Operator"
+msgstr ""
 
 msgid "Unknown expression after “as” operator."
-msgstr "Unbekannter Ausdruck nach „as“ Operator."
+msgstr ""
 
 msgid "Unknown expression after “is” operator"
-msgstr "Unbekannter Ausdruck nach „is“ Operator."
+msgstr ""
 
 msgid "expected variable, integer or attribute"
-msgstr "Variable, Zahl oder Attribut erwartet."
+msgstr ""
 
 msgid "“endif” does not allow any arguments"
-msgstr "„endif“ erlaubt keine Argumente."
+msgstr ""

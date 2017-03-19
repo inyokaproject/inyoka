@@ -1,24 +1,24 @@
-# German (Germany) translations for Inyoka Project.
+# German (Switzerland) translations for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
-# This file is dischributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+# This file is distributed under the same license as the Inyoka Project project.
+#
+# Translators:
+# Fuchs, 2017
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-02-26 17:51+0100\n"
-"PO-Revision-Date: 2015-11-28 18:37+0100\n"
-"Last-Translator: Fuchs <>\n"
+"POT-Creation-Date: 2017-03-19 03:06+0100\n"
+"PO-Revision-Date: 2017-03-19 00:54+0000\n"
+"Last-Translator: Lyra\n"
 "Language: de_CH\n"
-"Language-Team: Switzerland)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/entequak/inyoka/language/de_CH/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
-"X-Language: de_CH\n"
-"X-Source-Language: C\n"
 
 #, python-format
 msgid "%(site)s forum"
@@ -104,12 +104,8 @@ msgstr "Forä"
 msgid "Hide / Delete"
 msgstr "Verbärgä / Löschä"
 
-msgid ""
-"If not set then posts of users in this forum are ignored in the post counter "
-"of the user."
-msgstr ""
-"Wenn das nid gsetzt isch wärdä Byträg vo dä Nutzer y däm Forum für "
-"ä post counter vo dä Nutzer nid zeut."
+msgid "If not set then posts of users in this forum are ignored in the post counter of the user."
+msgstr "Wenn das nid gsetzt isch wärdä Byträg vo dä Nutzer y däm Forum für ä post counter vo dä Nutzer nid zeut."
 
 msgid "Involved topics"
 msgstr "Beteiligti Themä"
@@ -140,26 +136,14 @@ msgid "No Ubuntu"
 msgstr "Kes Ubuntu"
 
 #, python-format
-msgid ""
-"No discussion is linked yet to the article “%(article)s”. You can create a "
-"discussion now or <a href=\"%(link)s\">link an existing topic</a> to the "
-"article."
-msgstr ""
-"Äs isch no keini Diskussion mit däm Artiku „%(article)s“ verchnüpft. Du "
-"chasch ä Diskussion erschteuä odr <a href=\"%(link)s\">äs vorhandenes "
-"Thema vrchnüpfä</a>."
+msgid "No discussion is linked yet to the article “%(article)s”. You can create a discussion now or <a href=\"%(link)s\">link an existing topic</a> to the article."
+msgstr "Äs isch no keini Diskussion mit däm Artiku „%(article)s“ verchnüpft. Du chasch ä Diskussion erschteuä odr <a href=\"%(link)s\">äs vorhandenes Thema vrchnüpfä</a>."
 
-msgid ""
-"No notifications on new posts in this topic will be sent to you any more"
-msgstr ""
-"Du wirsch vo jiz ah nümme über nöi Byträg y däm Thema benachrichtigt."
+msgid "No notifications on new posts in this topic will be sent to you any more"
+msgstr "Du wirsch vo jiz ah nümme über nöi Byträg y däm Thema benachrichtigt."
 
-msgid ""
-"No notifications on new topics within this forum will be sent to you any "
-"more."
-msgstr ""
-"Du bechunnsch ab sofort keini Benachrichtigungä meh zu nöiä Themä y "
-"däm Forum."
+msgid "No notifications on new topics within this forum will be sent to you any more."
+msgstr "Du bechunnsch ab sofort keini Benachrichtigungä meh zu nöiä Themä y däm Forum."
 
 msgid "No older topics within this forum."
 msgstr "Äs exischtierä keini eutärä Themä y däm Forum."
@@ -185,12 +169,8 @@ msgstr "Du wirsch ab jiz über nöi Byträg y däm Thema benachrichtigt."
 msgid "Notifications on new topics within this forum will be sent to you."
 msgstr "Du bechunnsch ab jiz Benachrichtigungä zu nöiä Themä y däm Forum."
 
-msgid ""
-"Only a subset of selected tickets has been closed, considering your "
-"moderation privileges for the regarding forums."
-msgstr ""
-"Äs wärdä nur äs paar vo dä uusgwäuten Mäudigä gschlossä, wöu Du "
-"Modrationsrächt im jewyligä Forum bruuchsch."
+msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
+msgstr "Äs wärdä nur äs paar vo dä uusgwäuten Mäudigä gschlossä, wöu Du Modrationsrächt im jewyligä Forum bruuchsch."
 
 msgid "Parent forum"
 msgstr "Eutäräforum"
@@ -253,11 +233,8 @@ msgid "The First post of the new topic must not be hidden."
 msgstr "Dr erschty Bytrag vomä nöiä Thema darf nid verborgä sy."
 
 #, python-format
-msgid ""
-"The article “%(article)s” does not exist. However, you can create it now."
-msgstr ""
-"Dr Artiku „%(article)s“ exischtiert nid, Du chasch nä aber jetz "
-"erschteuä."
+msgid "The article “%(article)s” does not exist. However, you can create it now."
+msgstr "Dr Artiku „%(article)s“ exischtiert nid, Du chasch nä aber jetz erschteuä."
 
 #, python-format
 msgid "The attachment with the ID “%(id)d” does not exist."
@@ -370,12 +347,8 @@ msgstr "Das Thema isch wägä möglichäm Spam vrborgä"
 msgid "This topic is not visible for regular users."
 msgstr "Das Thema isch für normali Benutzr unsichtbar."
 
-msgid ""
-"This topic was already created. Please think about editing your topic before "
-"creating a new one."
-msgstr ""
-"Dä Bytrag isch bereits erschteut! Bitte überleg, ob Du nid dr "
-"vorhärig Bytrag wettisch bearbeitä."
+msgid "This topic was already created. Please think about editing your topic before creating a new one."
+msgstr "Dä Bytrag isch bereits erschteut! Bitte überleg, ob Du nid dr vorhärig Bytrag wettisch bearbeitä."
 
 msgid "This topic was already reported."
 msgstr "Das Thema isch scho gmäudet wordä."
@@ -428,12 +401,8 @@ msgstr "Xubuntu"
 msgid "You are not allowed to mark this topic as \"important\"."
 msgstr "Dir isch es nid erlaubt, das Thema aus \"wichtig\" zu markiärä."
 
-msgid ""
-"You are replying to a locked topic. Please note that this may be considered "
-"as impolite!"
-msgstr ""
-"Du antwortisch gad ufenesn bereits gschlossnigäs Thema. Ds wird oft aus "
-"unhöflich aagluäget, bis Dir dessä bewusst!"
+msgid "You are replying to a locked topic. Please note that this may be considered as impolite!"
+msgstr "Du antwortisch gad ufenesn bereits gschlossnigäs Thema. Ds wird oft aus unhöflich aagluäget, bis Dir dessä bewusst!"
 
 #, python-format
 msgid "You can only display the last %(n)d pages."
@@ -443,13 +412,10 @@ msgid "You cannot edit this post."
 msgstr "Du chasch dä Bytrag nid bearbeitä."
 
 msgid "You cannot move a topic into a category. Please choose a forum."
-msgstr ""
-"Du chasch kes Thema in ä Kategorie verschiäbä. Bitte wäu äs Forum."
+msgstr "Du chasch kes Thema in ä Kategorie verschiäbä. Bitte wäu äs Forum."
 
 msgid "You cannot reply in this topic because it was deleted by a moderator."
-msgstr ""
-"Du chasch y däm Thema nümm antwortä, wöus vomänä Modrator "
-"isch glöscht wurde."
+msgstr "Du chasch y däm Thema nümm antwortä, wöus vomänä Modrator isch glöscht wurde."
 
 msgid "You cannot reply to this topic because it was locked."
 msgstr "Du chasch uf das Thema nid antwortä, wöu s'isch gsperrt wordä."
@@ -477,12 +443,8 @@ msgid "Your topic “%(topic)s” was moved."
 msgstr "Dis Thema „%(topic)s“ isch vrschobä wordä."
 
 #, python-format
-msgid ""
-"[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible "
-"spam."
-msgstr ""
-"[user:%(username)s:]: Dr Bytrag [post:%(post)s:] isch uufgrund vo möglichäm "
-"Spam vrborgä."
+msgid "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible spam."
+msgstr "[user:%(username)s:]: Dr Bytrag [post:%(post)s:] isch uufgrund vo möglichäm Spam vrborgä."
 
 #, python-format
 msgid "“%(topic)s” – Reply from “%(username)s“"
@@ -498,3 +460,4 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ isch kei gültigä Slug"
+
