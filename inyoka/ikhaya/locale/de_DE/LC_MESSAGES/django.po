@@ -1,28 +1,22 @@
-# Translations template for Inyoka Project.
+# German (Germany) translations for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# 
-# Translators:
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010,2017
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
-# Phaiax <phaiax@invisibletower.de>, 2012
-# Phaiax <phaiax@invisibletower.de>, 2012
-# Sören Wegener <wegener92@googlemail.com>, 2011,2013
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-18 23:33+0100\n"
+"POT-Creation-Date: 2017-03-21 16:31+0100\n"
 "PO-Revision-Date: 2017-03-19 00:44+0000\n"
 "Last-Translator: Lyra\n"
+"Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/entequak/inyoka/language/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
-"Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #, python-format
 msgid "%(domain)s Ikhaya comments"
@@ -168,9 +162,7 @@ msgstr "Entschuldigung. Das Editieren von Kommentaren ist derzeit deaktiviert."
 msgid "Text"
 msgstr "Text"
 
-msgid ""
-"Thank you, your article suggestion was submitted. A team member will contact"
-" you shortly."
+msgid "Thank you, your article suggestion was submitted. A team member will contact you shortly."
 msgstr "Vielen Dank, dein Artikelvorschlag wurde gespeichert. Ein Ikhayateammitglied wird dich sobald wie möglich kontaktieren."
 
 msgid "Thanks for your report."
@@ -212,15 +204,11 @@ msgid "The event was saved."
 msgstr "Die Veranstaltung wurde gespeichert."
 
 #, python-format
-msgid ""
-"The event with the id %(id)s could not be used as draft for a new event "
-"because it does not exist."
+msgid "The event with the id %(id)s could not be used as draft for a new event because it does not exist."
 msgstr "Die Veranstaltung mit der ID %(id)s existiert nicht und kann daher nicht als Basis für den Kopiervorgang benutzt werden."
 
 #, python-format
-msgid ""
-"The publication of the article “<a href=\"%(link)s\">%(title)s</a>” has been"
-" revoked."
+msgid "The publication of the article “<a href=\"%(link)s\">%(title)s</a>” has been revoked."
 msgstr "Die Veröffentlichung des Artikels „<a href=\"%(link)s\">%(title)s</a>“ wurde aufgehoben."
 
 msgid "The report was hidden."
@@ -270,14 +258,10 @@ msgstr "Zeit"
 msgid "Title"
 msgstr "Titel"
 
-msgid ""
-"To refer to another comment, you can write <code>@commentnumber</code>.<br "
-"/>Clicking on “reply” will automatically insert this code."
+msgid "To refer to another comment, you can write <code>@commentnumber</code>.<br />Clicking on “reply” will automatically insert this code."
 msgstr "Um dich auf einen anderen Kommentar zu beziehen, kannst du <code>@kommentarnummer</code> verwenden.<br />Dieser wird automatisch eingefügt, wenn du bei einem Beitrag auf „Antworten“ klickst."
 
-msgid ""
-"Unique URL-part for the article. If not given, the slug will be generated "
-"from title."
+msgid "Unique URL-part for the article. If not given, the slug will be generated from title."
 msgstr "Eindeutiger URL-Teil für den Artikel. Wird automatisch anhand des Titels generiert, wenn nicht ausgefüllt."
 
 msgid "XHTML Markup"
@@ -291,3 +275,4 @@ msgstr "Du wirst über neue Kommentare zu diesem Artikel nicht mehr benachrichti
 
 msgid "Your comment was created."
 msgstr "Dein Kommentar wurde erstellt."
+

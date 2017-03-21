@@ -1,27 +1,22 @@
-# Translations template for Inyoka Project.
+# German (Germany) translations for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# 
-# Translators:
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
-# Sören Wegener <wegener92@googlemail.com>, 2011,2013-2014
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-18 23:33+0100\n"
+"POT-Creation-Date: 2017-03-21 16:31+0100\n"
 "PO-Revision-Date: 2017-03-19 00:43+0000\n"
 "Last-Translator: Lyra\n"
+"Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/entequak/inyoka/language/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
-"Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 2.0\n"
 
 #, python-format
 msgid "%(site)s forum"
@@ -107,9 +102,7 @@ msgstr "Foren"
 msgid "Hide / Delete"
 msgstr "Verbergen / Löschen"
 
-msgid ""
-"If not set then posts of users in this forum are ignored in the post counter"
-" of the user."
+msgid "If not set then posts of users in this forum are ignored in the post counter of the user."
 msgstr "Wenn dies nicht gesetzt ist werden Beiträge der Nutzer in diesem Forum für den post counter der Nutzer nicht gezählt."
 
 msgid "Involved topics"
@@ -141,19 +134,13 @@ msgid "No Ubuntu"
 msgstr "Kein Ubuntu"
 
 #, python-format
-msgid ""
-"No discussion is linked yet to the article “%(article)s”. You can create a "
-"discussion now or <a href=\"%(link)s\">link an existing topic</a> to the "
-"article."
+msgid "No discussion is linked yet to the article “%(article)s”. You can create a discussion now or <a href=\"%(link)s\">link an existing topic</a> to the article."
 msgstr "Es wurde noch keine Diskussion mit dem Artikel „%(article)s“ verknüpft. Du kannst eine Diskussion erstellen oder <a href=\"%(link)s\">ein vorhandenes Thema verknüpfen</a>."
 
-msgid ""
-"No notifications on new posts in this topic will be sent to you any more"
+msgid "No notifications on new posts in this topic will be sent to you any more"
 msgstr "Du wirst ab nun nicht mehr über neue Beiträge in diesem Thema benachrichtigt."
 
-msgid ""
-"No notifications on new topics within this forum will be sent to you any "
-"more."
+msgid "No notifications on new topics within this forum will be sent to you any more."
 msgstr "Du erhältst ab sofort keine Benachrichtigungen mehr zu neuen Themen in diesem Forum."
 
 msgid "No older topics within this forum."
@@ -180,9 +167,7 @@ msgstr "Du wirst ab nun über neue Beiträge in diesem Thema benachrichtigt."
 msgid "Notifications on new topics within this forum will be sent to you."
 msgstr "Du erhältst ab nun Benachrichtigungen zu neuen Themen in diesem Forum."
 
-msgid ""
-"Only a subset of selected tickets has been closed, considering your "
-"moderation privileges for the regarding forums."
+msgid "Only a subset of selected tickets has been closed, considering your moderation privileges for the regarding forums."
 msgstr "Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du Moderationsrechte im jeweiligen Forum benötigst."
 
 msgid "Parent forum"
@@ -246,8 +231,7 @@ msgid "The First post of the new topic must not be hidden."
 msgstr "Der erste Beitrag des neuen Themas darf nicht versteckt sein."
 
 #, python-format
-msgid ""
-"The article “%(article)s” does not exist. However, you can create it now."
+msgid "The article “%(article)s” does not exist. However, you can create it now."
 msgstr "Der Artikel „%(article)s“ existiert nicht, du kannst ihn jedoch jetzt erstellen."
 
 #, python-format
@@ -361,9 +345,7 @@ msgstr "Dieses Thema wurde aufgrund möglichen Spams verborgen"
 msgid "This topic is not visible for regular users."
 msgstr "Dieses Thema ist für normale Benutzer unsichtbar."
 
-msgid ""
-"This topic was already created. Please think about editing your topic before"
-" creating a new one."
+msgid "This topic was already created. Please think about editing your topic before creating a new one."
 msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen vorherigen Beitrag bearbeiten möchtest."
 
 msgid "This topic was already reported."
@@ -417,9 +399,7 @@ msgstr "Xubuntu"
 msgid "You are not allowed to mark this topic as \"important\"."
 msgstr "Dir ist es nicht erlaubt, dieses Thema als \"wichtig\" zu markieren."
 
-msgid ""
-"You are replying to a locked topic. Please note that this may be considered "
-"as impolite!"
+msgid "You are replying to a locked topic. Please note that this may be considered as impolite!"
 msgstr "Du antwortest auf ein bereits geschlossenes Thema. Dies wird oft als unhöflich aufgefasst, bitte sei dir dessen bewusst!"
 
 #, python-format
@@ -461,9 +441,7 @@ msgid "Your topic “%(topic)s” was moved."
 msgstr "Dein Thema „%(topic)s“ wurde verschoben."
 
 #, python-format
-msgid ""
-"[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible "
-"spam."
+msgid "[user:%(username)s:]: The post [post:%(post)s:] is hidden due to possible spam."
 msgstr "[user:%(username)s:]: Der Beitrag [post:%(post)s:] wurde aufgrund möglichen Spams verborgen."
 
 #, python-format
@@ -480,3 +458,4 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
+

@@ -1,32 +1,22 @@
-# Translations template for Inyoka Project.
+# German (Germany) translations for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# 
-# Translators:
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010,2017
-# jug <frustbox@gmail.com>, 2011
-# jug <frustbox@gmail.com>, 2011
-# jug <frustbox@gmail.com>, 2011
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012-2013
-# Markus Holtermann <inyoka@markusholtermann.eu>, 2012
-# Phaiax <phaiax@invisibletower.de>, 2012
-# Phaiax <phaiax@invisibletower.de>, 2012
-# Phaiax <phaiax@invisibletower.de>, 2012
-# Sören Wegener <wegener92@googlemail.com>, 2011
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-18 23:33+0100\n"
+"POT-Creation-Date: 2017-03-21 16:31+0100\n"
 "PO-Revision-Date: 2017-03-19 00:48+0000\n"
 "Last-Translator: Lyra\n"
+"Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/entequak/inyoka/language/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
-"Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #, python-format
 msgid "%(sitename)s - Message from %(username)s"
@@ -119,9 +109,7 @@ msgstr "Abbrechen"
 msgid "Category"
 msgstr "Kategorie"
 
-msgid ""
-"Choose this if the file should appear as a article or category icon "
-"possibility"
+msgid "Choose this if the file should appear as a article or category icon possibility"
 msgstr "Wähle dieses Feld aus, wenn die Datei im Auswahlfeld für Artikel- und Kategorie-Icons erscheinen soll."
 
 msgid "Confirm new password"
@@ -149,14 +137,10 @@ msgstr "Standardtext einer neuen Wiki-Seite"
 msgid "Delete"
 msgstr "Löschen"
 
-msgid ""
-"Description about Ikhaya that will be used on the start page and in the feed"
-" aggregations."
+msgid "Description about Ikhaya that will be used on the start page and in the feed aggregations."
 msgstr "Beschreibung zu Ikhaya, die auf der Startseite und in den Feeds verwendet wird."
 
-msgid ""
-"Description about the planet that will be used on the planet page and in the"
-" feed aggregations."
+msgid "Description about the planet that will be used on the planet page and in the feed aggregations."
 msgstr "Beschreibung über den Planeten, welche auf er Startseite vom Planeten und in den Feeds angezeigt wird."
 
 msgid "Description of the link"
@@ -193,9 +177,7 @@ msgid "Forum"
 msgstr "Forum"
 
 #, python-format
-msgid ""
-"From now on you won’t be notified anymore about activities of "
-"“%(username)s”."
+msgid "From now on you won’t be notified anymore about activities of “%(username)s”."
 msgstr "Du wirst ab jetzt nicht mehr über Aktivitäten von „%(username)s“ benachrichtigt."
 
 msgid "Full article"
@@ -457,15 +439,11 @@ msgid "The account “%(name)s” was already reactivated."
 msgstr "Das Konto „%(name)s“ wurde bereits reaktiviert."
 
 #, python-format
-msgid ""
-"The account “%(name)s” was reactivated. Please use the password recovery "
-"function to set a new password."
+msgid "The account “%(name)s” was reactivated. Please use the password recovery function to set a new password."
 msgstr "Das Konto „%(name)s“ wurde reaktiviert. Bitte benutze die „Passwort vergessen“ Funktion um ein neues Passwort zu setzen."
 
 #, python-format
-msgid ""
-"The complete URL to the countdown banner. Use <code>%(remaining)s</code> to "
-"be replaced by the remaining days or <code>soon</code>."
+msgid "The complete URL to the countdown banner. Use <code>%(remaining)s</code> to be replaced by the remaining days or <code>soon</code>."
 msgstr "Die vollständige URL zum Banner, inklusive http:// . Der Platzhalter <code>%(remaining)s</code> wird verwendet um die verbleibenden Tage oder <code>soon</code> in die URL einzufügen."
 
 msgid "The download link for the start page"
@@ -488,9 +466,7 @@ msgid "The entered password is wrong."
 msgstr "Das eingegebene Passwort ist falsch"
 
 #, python-format
-msgid ""
-"The given email address is already in use. If you forgot your password, you "
-"can <a href=\"%(link)s\">restore it</a>."
+msgid "The given email address is already in use. If you forgot your password, you can <a href=\"%(link)s\">restore it</a>."
 msgstr "Die angegebene E-Mail-Adresse wird bereits benutzt. Falls du dein Passwort vergessen hast, kannst du es <a href=\"%(link)s\">wiederherstellen lassen</a>."
 
 msgid "The group name contains invalid chars"
@@ -524,9 +500,7 @@ msgstr "Die Nachricht wurde wiederhergestellt"
 msgid "The message was sent successfully."
 msgstr "Die Nachricht wurde erfolgreich versendet."
 
-msgid ""
-"The message will be send as “plain text”. Your username will be noted as "
-"sender."
+msgid "The message will be send as “plain text”. Your username will be noted as sender."
 msgstr "Die Nachricht wird als „reiner Text“ abgeschickt. Dein Benutzername wird in der E-Mail als Absender vermerkt."
 
 msgid "The messages was moved into you archive."
@@ -578,18 +552,14 @@ msgid "The user “%(username)s” does not exist."
 msgstr "Den Benutzer „%(username)s“ gibt es nicht."
 
 #, python-format
-msgid ""
-"The user “%(username)s” was successfully created. You can now edit more "
-"details."
+msgid "The user “%(username)s” was successfully created. You can now edit more details."
 msgstr "Der Benutzer „%(username)s“ wurde erfolgreich erstellt. Du kannst nun weitere Informationen eingeben."
 
 msgid "The username is already in use. Please choose another one."
 msgstr "Der Benutzername ist bereits vergeben, bitte wähle einen anderen."
 
 #, python-format
-msgid ""
-"The username “%(username)s” was successfully registered. An email with the "
-"activation key was sent to “%(email)s”."
+msgid "The username “%(username)s” was successfully registered. An email with the activation key was sent to “%(email)s”."
 msgstr "Der Benutzername „%(username)s“ wurde erfolgreich registriert. Eine E-Mail mit dem Aktivierungsschlüssel wurde an „%(email)s“ gesendet."
 
 msgid "This e-mail address is used by another user."
@@ -607,9 +577,7 @@ msgstr "Pflichtfeld"
 msgid "This is the welcome message displayed on the main page."
 msgstr "Dies ist die Willkommensnachricht welche auf der Hauptseite angezeigt wird."
 
-msgid ""
-"This message will displayed on every page in the header. To disable it, "
-"leave the field empty."
+msgid "This message will displayed on every page in the header. To disable it, leave the field empty."
 msgstr "Diese Nachricht wird auf allen Seiten im Kopfbereich angezeigt. Um sie zu deaktivieren, lasse das Feld leer."
 
 msgid "This text appears above the wiki editor."
@@ -654,15 +622,11 @@ msgstr "Benutzername"
 msgid "Username or email address"
 msgstr "Benutzername oder Mailadresse"
 
-msgid ""
-"Users cannot use email addresses from these hosts to register an account."
+msgid "Users cannot use email addresses from these hosts to register an account."
 msgstr "Benutzer können keine E-Mail-Adressen dieser Hosts zur Registrierung verwenden."
 
 #, python-format
-msgid ""
-"We need your email address to send you a new password if you forgot it. It "
-"is not visible to other users. For more information, check out our <a "
-"href=\"%(link)s\">privacy policy</a>."
+msgid "We need your email address to send you a new password if you forgot it. It is not visible to other users. For more information, check out our <a href=\"%(link)s\">privacy policy</a>."
 msgstr "Wir benötigen deine E-Mailadresse, um dir ein neues Passwort zu senden, falls du dein Passwort mal vergessen solltest. Sie ist für andere Nutzer nicht sichtbar. Mehr Informationen findest du in unseren <a href=\"%(link)s\">Datenschutzbestimmungen</a>."
 
 msgid "Website"
@@ -708,9 +672,7 @@ msgid "You have successfully logged out."
 msgstr "Du hast dich erfolgreich abgemeldet."
 
 #, python-format
-msgid ""
-"You need to <a href=\"%(link)s\">enter a valid jabber address</a> to use our"
-" jabber service."
+msgid "You need to <a href=\"%(link)s\">enter a valid jabber address</a> to use our jabber service."
 msgstr "Du musst eine gültige <a href=\"%(link)s\">Jabber-Adresse</a> angeben, um unseren Jabber-Service nutzen zu können."
 
 msgid "You need to be logged in before you can continue."
@@ -729,9 +691,7 @@ msgid "You successfully changed your password and are now able to login."
 msgstr "Dein Passwort wurde erfolgreich geändert, du kannst dich nun anmelden."
 
 #, python-format
-msgid ""
-"You were automatically banned because we suspect you are sending spam. If "
-"this ban is not justified, contact us at %(email)s"
+msgid "You were automatically banned because we suspect you are sending spam. If this ban is not justified, contact us at %(email)s"
 msgstr "Du wurdest automatisch wegen Spamverdachts gesperrt. Sollte die Sperrung ungerechtfertigt sein, wende dich bitte per E-Mail an %(email)s."
 
 msgid "You were not logged in."
@@ -774,9 +734,7 @@ msgstr "Deine Einstellungen wurden erfolgreich aktualisiert."
 msgid "Your user name on {sitename} has been changed to “{name}”"
 msgstr "Dein Benutzername auf {sitename} wurde in “{name}” geändert"
 
-msgid ""
-"Your username contains invalid characters. Only alphanumeric chars and “-” "
-"are allowed."
+msgid "Your username contains invalid characters. Only alphanumeric chars and “-” are allowed."
 msgstr "Dein Benutzername enthält unzulässige Zeichen. Nur Buchstaben, Ziffern und der Bindestrich sind erlaubt."
 
 msgid "You’ve been sent an email to confirm your new email address."
@@ -796,3 +754,4 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
+
