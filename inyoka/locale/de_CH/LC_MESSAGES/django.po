@@ -1,4 +1,4 @@
-# German (Germany) translations for Inyoka Project.
+# German (Switzerland) translations for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-21 16:31+0100\n"
-"PO-Revision-Date: 2017-03-19 00:44+0000\n"
+"POT-Creation-Date: 2017-03-19 03:06+0100\n"
+"PO-Revision-Date: 2017-03-19 00:59+0000\n"
 "Last-Translator: Lyra\n"
-"Language: de_DE\n"
-"Language-Team: German (Germany) (http://www.transifex.com/entequak/inyoka/language/de_DE/)\n"
+"Language: de_CH\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/entequak/inyoka/language/de_CH/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -19,119 +19,119 @@ msgstr ""
 "Generated-By: Babel 2.2.0\n"
 
 msgid "Are you sure?"
-msgstr "Bist du sicher?"
+msgstr ""
 
 msgid "CAPTCHA"
-msgstr "CAPTCHA"
+msgstr ""
 
 msgid "Canceled."
-msgstr "Abgebrochen."
+msgstr "Abbrochä."
 
 msgid "Errors occurred, please fix them."
-msgstr "Bitte die aufgetretenen Fehler beheben."
+msgstr ""
 
 msgid "Generate new code"
-msgstr "Neue Zeichenfolge generieren"
+msgstr ""
 
 msgid "New"
-msgstr "Neu"
+msgstr ""
 
 msgid "No"
-msgstr "Nein"
+msgstr ""
 
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
-msgstr "Keine %(verbose_name)s gefunden, die der Suche entsprechen"
+msgstr ""
 
 msgid "Old"
-msgstr "Alt"
+msgstr ""
 
 msgid "Please type in the code from the graphic above"
-msgstr "Bitte trage hier die Zeichenfolge aus der Grafik ein"
+msgstr ""
 
 msgid "Text must not be empty"
-msgstr "Text darf nicht leer sein"
+msgstr ""
 
 msgid "The entered CAPTCHA was incorrect."
-msgstr "Die Eingabe des Captchas war nicht korrekt."
+msgstr ""
 
 msgid "The entered Jabber address is invalid. Please check your input."
-msgstr "Die von dir angegebene Jabber-Adresse ist ungültig. Bitte überprüfe die Eingabe."
+msgstr ""
 
 msgid "The entered e-mail address belongs to a e-mail provider we had to block because of SPAM problems. Please choose another e-mail address"
-msgstr "Die von dir angegebene E-Mail-Adresse gehört zu einem  Anbieter, den wir wegen Spamproblemen sperren mussten. Bitte gib eine andere Adresse an."
+msgstr ""
 
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
-msgstr "Der Benutzer „%(name)s“ hat sein Profil gelöscht. Du wurdest darum abgemelet."
+msgstr ""
 
 #, python-format
 msgid "The user “%(name)s” was banned. Your session has ended."
-msgstr "Der Benutzer „%(name)s“ wurde gesperrt und dadurch deine Sitzung beendet."
+msgstr ""
 
 msgid "This user does not exist"
-msgstr "Diesen Benutzer gibt es nicht"
+msgstr ""
 
 msgid "Yes"
-msgstr "Ja"
+msgstr ""
 
 msgid "You cannot send data that fast in a row. Please wait a bit until you submit the form again."
-msgstr "Du kannst Daten nicht so schnell hintereinander absenden. Bitte warte noch einige Zeit, bevor du das Formular erneut absendest."
+msgstr ""
 
 msgid "You have entered an invisible field and were therefore classified as a bot."
-msgstr "Du hast ein unsichtbares Feld ausgefüllt und wurdest deshalb als Bot identifiziert."
+msgstr ""
 
 #, python-format
 msgid "Your signature can only contain up to %(num)d lines"
-msgstr "Deine Signatur darf nicht mehr als %(num)d Zeilen haben"
+msgstr ""
 
 msgid "Your signature contains illegal elements"
-msgstr "Deine Signatur enthält ungültige Elemente"
+msgstr ""
 
 msgid "Your signature contains too many nested elements"
-msgstr "Deine Signatur enthält zu viele verschachtelte Elemente"
+msgstr ""
 
 #, python-format
 msgid "Your signature is too long, only %(length)s characters allowed"
-msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
+msgstr ""
 
 #, python-format
 msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible. You have %(left)d attempts left before your account will be blocked."
-msgstr "Dein Beitrag wurde als Spam klassifiziert und muss von einem Moderator freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie möglich darum kümmern. Du hast %(left)d verbleibende Versuche bevor dein Konto gesperrt wird."
+msgstr ""
 
 msgid "counting..."
-msgstr "Zähle..."
+msgstr ""
 
 msgid "eleven"
-msgstr "elf"
+msgstr ""
 
 msgctxt "masculine"
 msgid "one"
-msgstr "ein"
+msgstr ""
 
 msgctxt "feminine"
 msgid "one"
-msgstr "eine"
+msgstr ""
 
 msgctxt "neuter"
 msgid "one"
-msgstr "ein"
+msgstr ""
 
 msgid "one"
-msgstr "eins"
+msgstr ""
 
 msgid "ten"
-msgstr "zehn"
+msgstr ""
 
 msgid "twelve"
-msgstr "zwölf"
+msgstr ""
 
 msgid "{verbose_name} “{object_name}” was deleted successfully!"
-msgstr "{verbose_name} „{object_name}“ erfolgreich gelöscht!"
+msgstr ""
 
 msgid "{verbose_name} “{object_name}” was successfully changed."
-msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
+msgstr ""
 
 msgid "{verbose_name} “{object_name}” was successfully created."
-msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
+msgstr ""
 

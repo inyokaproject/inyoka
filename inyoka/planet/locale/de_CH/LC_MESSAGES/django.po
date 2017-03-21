@@ -1,21 +1,24 @@
 # Translations template for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
-#
-#, fuzzy
+# 
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017
+# Lyra, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.15.1\n"
+"Project-Id-Version: Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-21 16:31+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2017-03-19 03:06+0100\n"
+"PO-Revision-Date: 2017-03-19 13:56+0000\n"
+"Last-Translator: Lyra\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/entequak/inyoka/language/de_CH/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
+"Language: de_CH\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #, python-format
 msgid "%(sitename)s planet"
@@ -25,25 +28,25 @@ msgid "A new blog was suggested."
 msgstr ""
 
 msgid "Canceled"
-msgstr ""
+msgstr "Abbrächä"
 
 msgid "Description"
-msgstr ""
+msgstr "Beschrybig"
 
 msgid "Email address of the blog author"
 msgstr ""
 
 msgid "Entries"
-msgstr ""
+msgstr "Yträg"
 
 msgid "Entry"
-msgstr ""
+msgstr "Yträg"
 
 msgid "Feed URL"
 msgstr ""
 
 msgid "Icon"
-msgstr ""
+msgstr "Biudli"
 
 msgid "Index the blog"
 msgstr ""
@@ -82,5 +85,4 @@ msgid "URL of the feed"
 msgstr ""
 
 msgid "User"
-msgstr ""
-
+msgstr "Benutzr"

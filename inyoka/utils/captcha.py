@@ -294,7 +294,7 @@ class SolidColor(Layer):
             self.bg = 'light'
 
     def render(self, image):
-        image.paste(self.color)
+        image.paste(self.color, box=(0, 0) + image.size)
         return image
 
 
