@@ -1,23 +1,22 @@
-# Translations template for Inyoka Project.
+# German (Germany) translations for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# 
-# Translators:
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012,2017
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-18 23:33+0100\n"
+"POT-Creation-Date: 2017-03-21 16:31+0100\n"
 "PO-Revision-Date: 2017-03-19 00:44+0000\n"
 "Last-Translator: Lyra\n"
+"Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/entequak/inyoka/language/de_DE/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
-"Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "<strong>Conflict End</strong>"
 msgstr "<strong>Konlikt Ende</strong>"
@@ -46,8 +45,7 @@ msgstr "Ungültiges Datum"
 msgid "Invalid macro"
 msgstr "Ungültiges Makro"
 
-msgid ""
-"Invalid syntax for this loop. After the first variable an “in” is required."
+msgid "Invalid syntax for this loop. After the first variable an “in” is required."
 msgstr "Ungültige Schleifen-Syntax. Auf erste Variable muss das Schlüsselwort \"in\" folgen."
 
 msgid "Invalid syntax for this loop. The first argument must be a variable."
@@ -94,9 +92,7 @@ msgstr "Der Text enthält zu viele verschachtelte Elemente."
 msgid "The template “%(name)s” could not be found."
 msgstr "Das gewünschte Template „%(name)s“ existiert nicht."
 
-msgid ""
-"The “else” block does not allow any expressions. Maybe you wanted to use the"
-" “elseif” block."
+msgid "The “else” block does not allow any expressions. Maybe you wanted to use the “elseif” block."
 msgstr "„else“-Block erlaubt keinen Ausdruck. Möglicherweise wolltest du einen „elseif“-Block verwenden."
 
 msgid "This macro is not available."
@@ -122,3 +118,4 @@ msgstr "Variable, Zahl oder Attribut erwartet."
 
 msgid "“endif” does not allow any arguments"
 msgstr "„endif“ erlaubt keine Argumente."
+
