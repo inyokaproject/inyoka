@@ -1,26 +1,25 @@
-# Translations template for Inyoka Project.
+# German (Switzerland) translations for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# 
+#
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2017
 # Fuchs, 2017
 # Lyra, 2017
-# Lyra, 2017
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-19 03:06+0100\n"
-"PO-Revision-Date: 2017-03-19 13:57+0000\n"
+"POT-Creation-Date: 2017-03-25 00:12+0100\n"
+"PO-Revision-Date: 2017-03-23 22:51+0000\n"
 "Last-Translator: Lyra\n"
-"Language-Team: German (Switzerland) (http://www.transifex.com/entequak/inyoka/language/de_CH/)\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
 "Language: de_CH\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/inyokaproject/inyoka/language/de_CH/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
 
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
@@ -39,13 +38,11 @@ msgid "%(sitename)s wiki – last changes"
 msgstr "%(sitename)s Wiki – Letschti Änderige"
 
 #, python-format
-msgid ""
-"%(user)s deleted the article “%(article)s” on %(date)s. Summary: %(summary)s"
+msgid "%(user)s deleted the article “%(article)s” on %(date)s. Summary: %(summary)s"
 msgstr "%(user)s het dr Artiku „%(article)s“ am %(date)s glöscht. Zämäfassig: %(summary)s"
 
 #, python-format
-msgid ""
-"%(user)s edited the article “%(article)s” on %(date)s. Summary: %(summary)s"
+msgid "%(user)s edited the article “%(article)s” on %(date)s. Summary: %(summary)s"
 msgstr "%(user)s het dr Artiku „%(article)s” am %(date)s bearbeität. Zämäfassig: %(summary)s"
 
 msgid "A page with this name already exists."
@@ -55,15 +52,11 @@ msgid "A site name needs to be entered to create this page."
 msgstr "Die Sytä het nid chönnä erschteut wärdä, wöu kei Sytänname isch ahgäh wordä."
 
 #, python-format
-msgid ""
-"An anonymous user deleted the article “%(article)s” on %(date)s. Summary: "
-"%(summary)s"
+msgid "An anonymous user deleted the article “%(article)s” on %(date)s. Summary: %(summary)s"
 msgstr "Ä anonymä Benutzer hett dr Artiku „%(article)s“ am %(date)s glöscht. Zämäfassig: %(summary)s"
 
 #, python-format
-msgid ""
-"An anonymous user edited the article “%(article)s” on %(date)s. Summary: "
-"%(summary)s"
+msgid "An anonymous user edited the article “%(article)s” on %(date)s. Summary: %(summary)s"
 msgstr "Ä anonymä Benutzer hett dr Artiku „%(article)s” am %(date)s bearbeität. Zämäfassig: %(summary)s"
 
 msgid "Another page or attachment with the same name exists"
@@ -180,17 +173,13 @@ msgstr "Keini Änderigä dürägfüehrt, wöu d Revision scho diä aktuelli isch
 msgid "Slug of the topic"
 msgstr "Slug vom Thema"
 
-msgid ""
-"Somebody else edited the page while you were making your changes. We tried "
-"to merge the text automatically. Please confirm that everything is ok."
+msgid "Somebody else edited the page while you were making your changes. We tried to merge the text automatically. Please confirm that everything is ok."
 msgstr "Während Du d Sytä off hesch gha, het sä öpper angers ou bearbeität. Lueg bitte, öb ds Zämäfüährä vo dä Änderigä suuber funktioniert hett."
 
 msgid "The article „{name}“ does not exist, you can try to create it now."
 msgstr "Dr Artiku „{name}“ exischtiert nid, Du chasch versuächä nä jetz z erschteuä."
 
-msgid ""
-"The given revision does not exist for this article, using last revision "
-"instead."
+msgid "The given revision does not exist for this article, using last revision instead."
 msgstr "Diä aahgäni Revisionsnummärö gits nid, ig nimä stattdessä diä letschti Revision "
 
 #, python-format
@@ -227,10 +216,7 @@ msgid "The title of the article you want to create."
 msgstr "Dr Titu vor Sytä wo Du wettsch aleggä."
 
 #, python-format
-msgid ""
-"These attachments are already attached to the new page name: %(names)s. "
-"Please make sure that they are not required anymore. <a "
-"href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
+msgid "These attachments are already attached to the new page name: %(names)s. Please make sure that they are not required anymore. <a href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
 msgstr "Fougendi Aahäng sy bereits däm nöi Sytänamä zuägordnet: %(names)s. Bitte steu sicher, dass diä nümm bruucht wärdä. <a href=\"%(link)s\">Umbenennig u Löschig vo doppletä Aahäng rzwingä</a>."
 
 msgid "This page contains a redirect that leads to a redirect loop!"
@@ -255,9 +241,7 @@ msgid "You are not permitted to make this change."
 msgstr "Du bisch nid berächtigt diä Änderig vorznäh."
 
 #, python-format
-msgid ""
-"You can find the slug of a topic in the URL (e.g. <var>example</var> when "
-"<em>%(example)s</em>)"
+msgid "You can find the slug of a topic in the URL (e.g. <var>example</var> when <em>%(example)s</em>)"
 msgstr "Dr Slug vomänä Thema fingsch Du ir URL (z. B. <var>example</var> bei <em>%(example)s</em>)"
 
 msgid "You can not create a page with a reserved name."
@@ -272,9 +256,7 @@ msgstr "Du hesch kei Berechtigung diä Vorlag ahzluägä."
 msgid "You have not made any changes."
 msgstr "Du hesch d Sytä nid veränderet."
 
-msgid ""
-"You must apply a page name because the macro is being called outside the "
-"wiki context."
+msgid "You must apply a page name because the macro is being called outside the wiki context."
 msgstr "Du muäsch ä Sytä ahgä, wöu ds Makro usserhaub vom Wiki vrwändet wird."
 
 msgid "You will be notified on changes on this page"
@@ -286,3 +268,4 @@ msgstr "Du wirsch ab jetz by Vränderigä vo derä Sytä nümm benachrichtigt."
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "D Sytä „%(title)s“ isch erfougrych widerhärgsteut wordä."
+

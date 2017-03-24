@@ -1,137 +1,140 @@
 # German (Switzerland) translations for Inyoka Project.
 # Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
+# Translators:
+# Christian, 2017
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017
+# Lyra, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-19 03:06+0100\n"
-"PO-Revision-Date: 2017-03-19 00:59+0000\n"
+"POT-Creation-Date: 2017-03-25 00:12+0100\n"
+"PO-Revision-Date: 2017-03-23 22:51+0000\n"
 "Last-Translator: Lyra\n"
 "Language: de_CH\n"
-"Language-Team: German (Switzerland) (http://www.transifex.com/entequak/inyoka/language/de_CH/)\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/inyokaproject/inyoka/language/de_CH/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
+"Generated-By: Babel 2.4.0\n"
 
 msgid "Are you sure?"
-msgstr ""
+msgstr "Bisch sicher?"
 
 msgid "CAPTCHA"
-msgstr ""
+msgstr "CAPTCHA"
 
 msgid "Canceled."
 msgstr "Abbrochä."
 
 msgid "Errors occurred, please fix them."
-msgstr ""
+msgstr "Äs sy Fählr uufträtä, bitte die zersch behebä"
 
 msgid "Generate new code"
-msgstr ""
+msgstr "Nöiä Code generiärä"
 
 msgid "New"
-msgstr ""
+msgstr "Nöi"
 
 msgid "No"
-msgstr ""
+msgstr "Keini"
 
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
-msgstr ""
+msgstr "Keine %(verbose_name)s gfungä wo uf diä Aafrag zuäträffä"
 
 msgid "Old"
-msgstr ""
+msgstr "Aut"
 
 msgid "Please type in the code from the graphic above"
-msgstr ""
+msgstr "Bitte schryb dr Code vom Biudli obä ab"
 
 msgid "Text must not be empty"
-msgstr ""
+msgstr "Texscht darf nid läär sy"
 
 msgid "The entered CAPTCHA was incorrect."
-msgstr ""
+msgstr "Ds CAPTCHA isch nid korräkt"
 
 msgid "The entered Jabber address is invalid. Please check your input."
-msgstr ""
+msgstr "D Jabber Adrässä isch nid gültig, bitte überprüäfä"
 
 msgid "The entered e-mail address belongs to a e-mail provider we had to block because of SPAM problems. Please choose another e-mail address"
-msgstr ""
+msgstr "D E-Mail Adrässä ghört zumänä Providr wo mir wägä Spam tüä blockiärä, bitte ä angeri näh"
 
 #, python-format
 msgid "The user “%(name)s” deleted his profile. Your session has ended."
-msgstr ""
+msgstr "Dr Nutzer %(name)s het ds Profiu glöscht, Dini Sitzig isch abglüffä"
 
 #, python-format
 msgid "The user “%(name)s” was banned. Your session has ended."
-msgstr ""
+msgstr "Dr Nutzer %(name)s isch uusgschlossä wordä, dini Sitzig isch abglüffä"
 
 msgid "This user does not exist"
-msgstr ""
+msgstr "Dä Nutzer exischtiärt nid"
 
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 msgid "You cannot send data that fast in a row. Please wait a bit until you submit the form again."
-msgstr ""
+msgstr "Du chasch nid so schnäu Datä sändä, bitte wart ä chly bevor ds Formular no mau abschicksch."
 
 msgid "You have entered an invisible field and were therefore classified as a bot."
-msgstr ""
+msgstr "Du hesch es unsichtbars Fäud uusgfüllt und drum dänkä mir Du bisch ä Roboter."
 
 #, python-format
 msgid "Your signature can only contain up to %(num)d lines"
-msgstr ""
+msgstr "Dini Signatur darf nur bis zu %(num)d Zylä läng sy."
 
 msgid "Your signature contains illegal elements"
-msgstr ""
+msgstr "Dini Signatur beinhautet nid erloubti Zeichä"
 
 msgid "Your signature contains too many nested elements"
-msgstr ""
+msgstr "Dini Signatur beinhautet z viu verschachtleti Elemänt"
 
 #, python-format
 msgid "Your signature is too long, only %(length)s characters allowed"
-msgstr ""
+msgstr "Dini Signatur isch z läng, nur %(length)s Zeichä sy erloubt"
 
 #, python-format
 msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible. You have %(left)d attempts left before your account will be blocked."
-msgstr ""
+msgstr "Di Post isch aus SPAM markiert wordä und mues zersch vomänä Administrator beguätachtet und dürägwunkä wärdä. Bitte heb Geduld, mir luägä das so baud as müglech ah.  Du hesch no %(left)d Versüech bis Di Account gsperrt wird."
 
 msgid "counting..."
-msgstr ""
+msgstr "Zeuä ..."
 
 msgid "eleven"
-msgstr ""
+msgstr "Euf"
 
 msgctxt "masculine"
 msgid "one"
-msgstr ""
+msgstr "Ei"
 
 msgctxt "feminine"
 msgid "one"
-msgstr ""
+msgstr "Ei"
 
 msgctxt "neuter"
 msgid "one"
-msgstr ""
+msgstr "Ei"
 
 msgid "one"
-msgstr ""
+msgstr "Ei"
 
 msgid "ten"
-msgstr ""
+msgstr "Zäh"
 
 msgid "twelve"
-msgstr ""
+msgstr "Zwöuf"
 
 msgid "{verbose_name} “{object_name}” was deleted successfully!"
-msgstr ""
+msgstr "{verbose_name} “{object_name}” isch erfougrych glöscht wordä!"
 
 msgid "{verbose_name} “{object_name}” was successfully changed."
-msgstr ""
+msgstr "{verbose_name} “{object_name}” isch erfougrych gänderet wordä!"
 
 msgid "{verbose_name} “{object_name}” was successfully created."
-msgstr ""
+msgstr "{verbose_name} “{object_name}” isch erfougrych ersteut wordä."
 
