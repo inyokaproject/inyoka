@@ -5,9 +5,9 @@ Getting Started
 ===============
 
 Assuming you already have :ref:`installed <installation>` Inyoka, you can start
-working on it. You need to know how to work with Git. `Pro Git<https://git-scm.com/book/en/v2>`_
+working on it. You need to know how to work with Git. `Pro Git <https://git-scm.com/book/en/v2>`_
 is a good ressource to learn Git. And see the
-`GitHub Help 'Creating a pull request'<https://help.github.com/articles/creating-a-pull-request/>`_
+`GitHub Help 'Creating a pull request' <https://help.github.com/articles/creating-a-pull-request/>`_
 to create pull requests.
 
 The base development branch is ``staging`` and all new development branches
@@ -79,6 +79,9 @@ languages by changing the ``LANGUAGE_CODE`` variable in
 
     LANGUAGE_CODE = 'en-us'
 
+Define a translation key
+************************
+
 To mark a string as localizable use:
 
 .. code-block:: python
@@ -117,21 +120,63 @@ to existing ``*.po`` files.
 
     Each component of Inyoka has its own translation file
 
-To add a new language, you need to create the sub directory
-``ll_CC/LC_MESSAGES`` inside the ``locale`` folder of a component (e.g.
-``inyoka/wiki/locale/de_DE/LC_MESSAGES``). Copy the ``django.pot`` file to this
-directory and rename it to ``django.po``.
+Add a new translation
+*********************
 
-Do the translation using the ``*.po`` files (e.g.
-``inyoka/wiki/locale/de_DE/LC_MESSAGES/django.po``). Afterwards run the
-following command to compile the corresponding ``*.mo`` files (binary
+Inyoka is translated on `transifex <https://www.transifex.com/inyokaproject/inyoka/dashboard/>`_. To upload
+new keys to transfix `configure first the client <https://docs.transifex.com/client/client-configuration>`_
+than use:
+
+.. code-block:: console
+
+    (inyoka) $ tx push -s
+
+You have two ways to do the translations.
+
+1. Locally
+    Do the translation using the ``*.po`` files (e.g. ``inyoka/wiki/locale/de_DE/LC_MESSAGES/django.po``)
+    and upload them afterwards with:
+
+    .. code-block:: console
+
+        (inyoka) $ tx push -t
+
+2. On transifex
+    Do the translation for the untranslated strings on
+    `transifex <https://www.transifex.com/inyokaproject/inyoka/dashboard/>`_. Afterwards you download
+    the changes using:
+
+    .. code-block:: console
+
+        (inyoka) $ tx pull
+
+If the translations are done, run the following command to compile the corresponding ``*.mo`` files (binary
 translation files)
 
 .. code-block:: console
 
     (inyoka)$ python manage.py compilemessages
 
-Restart the server to test.
+and restart the server to test.
+
+To prevent merge conflicts it is recomented to NOT add the ``*.mo`` files to your commit, because they cannot
+be merged by git.
+
+Add a new language
+******************
+
+The fastest way to add a new language is to add it to the transifex project and than
+download it with:
+
+.. code-block:: console
+
+    (inyoka) $ tx pull -a
+
+If you prefer to do it manually, you need to create the sub directory
+``ll_CC/LC_MESSAGES`` inside the ``locale`` folder of a component (e.g.
+``inyoka/wiki/locale/de_DE/LC_MESSAGES``). Copy the ``django.pot`` file to this
+directory and rename it to ``django.po``.
+
 
 Test someone's Pull Request
 ===========================
