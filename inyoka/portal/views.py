@@ -435,12 +435,7 @@ def profile(request, username):
     """Show the user profile if the user is logged in."""
 
     user = User.objects.get(username__iexact=username)
-
-    if request.user.has_perm('portal.change_user'):
-        groups = user.groups.all()
-    else:
-        groups = ()
-
+    groups = user.groups.all()
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
     return {
