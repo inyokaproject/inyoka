@@ -33,6 +33,7 @@ UBUNTU_DISTROS = {
     'gnome': ugettext_lazy('Ubuntu GNOME'),
     'touch': ugettext_lazy('Ubuntu Touch'),
     'mate': ugettext_lazy('Ubuntu MATE'),
+    'budgie': ugettext_lazy('Ubuntu Budgie'),
 }
 
 
