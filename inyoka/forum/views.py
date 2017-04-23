@@ -539,12 +539,16 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
     # check privileges
     if post:
-        if (topic.locked or topic.hidden or post.hidden) and \
-           not request.user.has_perm('forum.moderate_forum', forum):
-            messages.error(request, _(u'You cannot edit this post.'))
-            post.unlock()
-            return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
-                                        post.page))
+        if topic.locked or topic.hidden or post.hidden:
+            if not request.user.has_perm('forum.moderate_forum', forum):
+                messages.error(request, _(u'You cannot edit this post.'))
+                post.unlock()
+                return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
+                                            post.page))
+            elif topic.locked:
+                messages.error(request,
+                               _(u'You are editing a post on a locked topic. '
+                                 u'Please note that this may be considered as impolite!'))
         if not (request.user.has_perm('forum.moderate_forum', forum) or
                 (post.author.id == request.user.id and
                  request.user.has_perm('forum.add_reply_forum', forum) and
