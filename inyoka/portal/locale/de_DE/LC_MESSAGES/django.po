@@ -5,6 +5,7 @@
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010,2017
 # jug <frustbox@gmail.com>, 2011
+# Lyra, 2017
 # Markus Holtermann <inyoka@markusholtermann.eu>, 2012-2013
 # Markus Holtermann <inyoka@markusholtermann.eu>, 2012
 # Phaiax <phaiax@invisibletower.de>, 2012
@@ -192,8 +193,8 @@ msgstr "Ganzer Artikel"
 msgid "Full path to the target link page"
 msgstr "Vollständiger Link zur Zielseite"
 
-msgid "GPG key"
-msgstr "GPG-Schlüssel"
+msgid "GPG fingerprint"
+msgstr "GPG-Fingerprint"
 
 msgid "Global Message"
 msgstr "Globale Nachricht"

@@ -8,25 +8,27 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import datetime
-import json
-import functools
 import StringIO
+import datetime
+import functools
+import json
 import os
 
+from PIL import Image
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.models import CharField, Count, Value
-from django.db.models.functions import Concat
 from django.db.models.fields.files import ImageFieldFile
+from django.db.models.functions import Concat
 from django.forms import HiddenInput
 from django.template import loader
 from django.utils.encoding import force_bytes
@@ -35,7 +37,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
-from PIL import Image
 
 from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.models import Forum
@@ -50,6 +51,7 @@ from inyoka.utils.forms import (
     CaptchaField,
     DateWidget,
     EmailField,
+    validate_gpgkey,
     validate_signature,
 )
 from inyoka.utils.local import current_request
@@ -57,7 +59,6 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
-from django.conf import settings
 
 #: Some constants used for ChoiceFields
 GLOBAL_PRIVILEGE_MODELS = {
@@ -304,8 +305,8 @@ class UserCPProfileForm(forms.ModelForm):
 
     coordinates = forms.CharField(label=ugettext_lazy(u'Coordinates (latitude, longitude)'),
                                   required=False)
-    gpgkey = forms.RegexField('^(0x)?[0-9a-f]+$(?i)',
-        label=ugettext_lazy(u'GPG key'), max_length=255, required=False)
+    gpgkey = forms.CharField(validators=[validate_gpgkey], min_length=40, max_length=255,
+                             label=ugettext_lazy(u'GPG fingerprint'), required=False)
 
     userpage = forms.CharField(widget=forms.Textarea, required=False)
 
@@ -335,10 +336,12 @@ class UserCPProfileForm(forms.ModelForm):
         self.change_avatar = False
         super(UserCPProfileForm, self).__init__(*args, **kwargs)
 
+
     def clean_gpgkey(self):
         gpgkey = self.cleaned_data.get('gpgkey', '').upper()
         if gpgkey.startswith('0X'):
             gpgkey = gpgkey[2:]
+        gpgkey = gpgkey.replace(' ', '')
         return gpgkey
 
     def clean_signature(self):
