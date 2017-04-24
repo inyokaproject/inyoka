@@ -398,6 +398,9 @@ msgstr ""
 msgid "Xubuntu"
 msgstr ""
 
+msgid "You are editing a post on a locked topic. Please note that this may be considered as impolite!"
+msgstr ""
+
 msgid "You are not allowed to mark this topic as \"important\"."
 msgstr ""
 
