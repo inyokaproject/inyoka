@@ -298,7 +298,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
     signature = InyokaMarkupField(verbose_name=ugettext_lazy(u'Signature'), blank=True)
     location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
-    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=255, blank=True)
+    gpgkey = models.CharField(ugettext_lazy(u'GPG fingerprint'), max_length=255, blank=True)
     website = models.URLField(ugettext_lazy(u'Website'), blank=True)
     launchpad = models.CharField(ugettext_lazy(u'Launchpad username'), max_length=50, blank=True)
     settings = JSONField(ugettext_lazy(u'Settings'), default={})
