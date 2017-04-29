@@ -24,6 +24,7 @@ from django.shortcuts import redirect
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.views.generic import CreateView, DetailView, UpdateView
+from guardian.mixins import PermissionRequiredMixin as GuardianPermissionRequiredMixin
 
 from inyoka.forum.constants import POSTS_PER_PAGE, TOPICS_PER_PAGE
 from inyoka.forum.forms import (
@@ -1761,7 +1762,7 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
     }
 
 
-class WelcomeMessageView(PermissionRequiredMixin, DetailView):
+class WelcomeMessageView(GuardianPermissionRequiredMixin, DetailView):
     """
     View has shows the welcome message of a forum.
 
