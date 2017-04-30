@@ -1,5 +1,5 @@
 from inyoka.default_settings import *
-from os.path import join
+from subprocess import PIPE, Popen
 
 DATABASES = {
     'default': {
@@ -35,7 +35,13 @@ SECRET_KEY = None
 
 INSTALLED_APPS = INSTALLED_APPS + (
     'inyoka_theme_default',
+#    'raven.contrib.django.raven_compat',
 )
+
+RAVEN_CONFIG = {
+  #  'dsn': 'add your dsn here',
+    'release': Popen(["git", "describe", "--tags", "--abbrev=0"], stdout=PIPE).stdout.read(),
+}
 
 # Django Debug Toolbar Integration
 #
