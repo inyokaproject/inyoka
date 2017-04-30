@@ -19,3 +19,4 @@ urlpatterns = patterns('',
 
 
 handler404 = 'inyoka.utils.http.global_not_found'
+handler500 = 'inyoka.utils.http.server_error'
