@@ -346,5 +346,8 @@ ANONYMOUS_USER_NAME = u'anonymous'
 # disable guardian monkey patching, for custom user model support
 GUARDIAN_MONKEY_PATCH = False
 
+# Raven config
+RAVEN_PUBLIC_DSN = None
+
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())

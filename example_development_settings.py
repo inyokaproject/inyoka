@@ -1,5 +1,5 @@
+from inyoka import INYOKA_VERSION
 from inyoka.default_settings import *
-from subprocess import PIPE, Popen
 
 DATABASES = {
     'default': {
@@ -38,10 +38,13 @@ INSTALLED_APPS = INSTALLED_APPS + (
 #    'raven.contrib.django.raven_compat',
 )
 
-RAVEN_CONFIG = {
-  #  'dsn': 'add your dsn here',
-    'release': Popen(["git", "describe", "--tags", "--abbrev=0"], stdout=PIPE).stdout.read(),
-}
+# Sentry exception tracing via raven
+#
+#RAVEN_CONFIG = {
+#    'dsn': 'add your dsn here',
+#    'release': INYOKA_VERSION,
+#}
+#RAVEN_PUBLIC_DSN = 'your public dsn for user feedback'
 
 # Django Debug Toolbar Integration
 #
