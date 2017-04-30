@@ -1599,7 +1599,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         )
         return HttpResponseRedirect(href('forum'))
 
-    topics = Topic.objects.order_by('-last_post')
+    topics = Topic.objects.exclude(first_post_id__isnull=True).order_by('-last_post')
 
     if 'version' in request.GET:
         topics = topics.filter(ubuntu_version=request.GET['version'])
