@@ -398,6 +398,9 @@ class Comment(models.Model):
     pub_date = models.DateTimeField()
     deleted = models.BooleanField(null=False, default=False)
 
+    class Meta:
+        ordering = ['id']
+
     def get_absolute_url(self, action='show'):
         if action in ['hide', 'restore', 'edit']:
             return href('ikhaya', 'comment', self.id, action)
