@@ -544,6 +544,7 @@ class Topic(models.Model):
         permissions = (
             ('manage_reported_topic', 'Can manage reported Topics'),
         )
+        ordering = ['id']
 
     def cached_forum(self):
         return Forum.objects.get(self.forum_id)
