@@ -61,7 +61,7 @@ def redirect_new_page(request):
     if base:
         page = join_pagename(base, "./" + page)
     try:
-        page = Page.objects.get(name__exact=page)
+        page = Page.objects.get(name__iexact=page)
     except Page.DoesNotExist:
         if template:
             options['template'] = join_pagename(settings.WIKI_TEMPLATE_BASE,
