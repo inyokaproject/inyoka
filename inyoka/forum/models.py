@@ -382,7 +382,7 @@ class Forum(models.Model):
         """
         if user.is_anonymous():
             return
-        if user._readstatus.mark(self):
+        if user._readstatus.mark(self, user):
             user.forum_read_status = user._readstatus.serialize()
             user.save(update_fields=('forum_read_status',))
 
@@ -697,7 +697,7 @@ class Topic(models.Model):
             return
         if not hasattr(user, '_readstatus'):
             user._readstatus = ReadStatus(user.forum_read_status)
-        if user._readstatus.mark(self):
+        if user._readstatus.mark(self, user):
             user.forum_read_status = user._readstatus.serialize()
             user.save(update_fields=('forum_read_status',))
 
@@ -1400,7 +1400,7 @@ class ReadStatus(object):
             return False
         return post_id in row[1]
 
-    def mark(self, item):
+    def mark(self, item, user):
         """
         Mark a forum or topic as read. Note that you must save the database
         changes explicitely!
@@ -1413,13 +1413,13 @@ class ReadStatus(object):
         if isinstance(item, Forum):
             self.data[forum_id] = (post_id, set())
             for child in item.children:
-                self.mark(child)
+                self.mark(child, user)
             if item.parent_id:
                 parents_children = item.parent.children
                 unread_items = reduce(lambda a, b: a and b,
                                       [self(c) for c in parents_children], True)
                 if parents_children and unread_items:
-                    self.mark(item.parent)
+                    self.mark(item.parent, user)
             return True
 
         row = self.data.get(forum_id, (None, set()))
@@ -1429,13 +1429,21 @@ class ReadStatus(object):
             unread_children = reduce(lambda a, b: a and b,
                                      [self(c) for c in children], True)
             if unread_children:
-                self.mark(item.forum)
+                self.mark(item.forum, user)
                 return True
         elif len(row[1]) > settings.FORUM_LIMIT_UNREAD:
             r = sorted(row[1])
             row = (r[settings.FORUM_LIMIT_UNREAD // 2],
                 set(r[settings.FORUM_LIMIT_UNREAD // 2:]))
         self.data[forum_id] = row
+
+        # Mark the containing forum as read, if this was the last unread topic
+        topics = Topic.objects.filter(forum=item.forum)\
+                      .order_by('-sticky', '-last_post')[:settings.FORUM_LIMIT_UNREAD]
+        for topic in topics:
+            if not topic.get_read_status(user):
+                return True
+        self.mark(item.forum, user)
         return True
 
     def serialize(self):
@@ -1447,7 +1455,7 @@ def mark_all_forums_read(user):
     if user.is_anonymous():
         return
     for forum in Forum.objects.filter(parent=None):
-        user._readstatus.mark(forum)
+        user._readstatus.mark(forum, user)
     user.forum_read_status = user._readstatus.serialize()
     user.save(update_fields=('forum_read_status',))
 

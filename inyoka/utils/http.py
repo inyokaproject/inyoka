@@ -12,6 +12,7 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse
+from django.shortcuts import render
 
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.templating import render_template
@@ -65,6 +66,10 @@ def global_not_found(request, err_message=None):
     return TemplateResponse('errors/404.html', {
         'err_message': err_message,
     }, 404)
+
+
+def server_error(request):
+    return render(request, 'errors/500.html', {'request' : request, 'dsn' : settings.RAVEN_PUBLIC_DSN}, status=500)
 
 
 class TemplateResponse(HttpResponse):

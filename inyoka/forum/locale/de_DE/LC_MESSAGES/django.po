@@ -399,6 +399,11 @@ msgstr "Willkommens Titel"
 msgid "Xubuntu"
 msgstr "Xubuntu"
 
+msgid ""
+"You are editing a post on a locked topic. Please note that this may be "
+"considered as impolite!"
+msgstr "Du bearbeitest einen Post in einem geschlossenen Thema. Dies wird oft als unhöflich aufgefasst, bitte sei dir dessen bewusst!"
+
 msgid "You are not allowed to mark this topic as \"important\"."
 msgstr "Dir ist es nicht erlaubt, dieses Thema als \"wichtig\" zu markieren."
 

@@ -9,6 +9,7 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import re
 import sys
 from hashlib import md5
 from random import randrange
@@ -79,6 +80,14 @@ def validate_signature(signature):
         raise forms.ValidationError(
             _(u'Your signature can only contain up to %(num)d lines') % {
                 'num': sig_lines})
+
+
+def validate_gpgkey(value):
+    gpgkeyRegex = re.compile('^(0x)?[0-9a-f]{40}$', re.IGNORECASE)
+    trimmedValue = value.replace(' ', '')
+    if not gpgkeyRegex.match(trimmedValue):
+        raise forms.ValidationError(_('"%(fingerprint)s" is not a valid GPG Fingerprint.'),
+                              params={'fingerprint': value})
 
 
 class MultiField(forms.Field):

@@ -5,6 +5,7 @@
 # Translators:
 # katze_sonne <eule_stern@web.de>, 2011
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2017
+# Lyra, 2017
 # Markus Holtermann <inyoka@markusholtermann.eu>, 2012-2013
 # Markus Holtermann <inyoka@markusholtermann.eu>, 2012
 # Phaiax <phaiax@invisibletower.de>, 2012
@@ -23,6 +24,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.4.0\n"
+
+#, python-format
+msgid "\"%(fingerprint)s\" is not a valid GPG Fingerprint."
+msgstr "\"%(fingerprint)s\" ist kein valider GPG-Fingerprint."
 
 msgid "Are you sure?"
 msgstr "Bist du sicher?"
