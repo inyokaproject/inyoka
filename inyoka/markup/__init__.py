@@ -185,10 +185,10 @@ _table_align_re = re.compile(r'''(?x)
 
 
 def parse(markup, wiki_force_existing=False, catch_stack_errors=True,
-          transformers=None):
+          transformers=None, drop_nodes=None):
     """Parse markup into a node."""
     try:
-        return Parser(markup, transformers, wiki_force_existing).parse()
+        return Parser(markup, transformers, wiki_force_existing, drop_nodes=drop_nodes).parse()
     except StackExhaused:
         if not catch_stack_errors:
             raise
@@ -334,7 +334,8 @@ class Parser(object):
     parser unittests which can savely user the `Parser` class itself).
     """
 
-    def __init__(self, string, transformers=None, wiki_force_existing=False):
+    def __init__(self, string, transformers=None, wiki_force_existing=False,
+                 drop_nodes=None):
         """
         In theory you never have to instanciate this parser yourself because
         the high level `parse()` function encapsulates this.  However for the
@@ -349,6 +350,7 @@ class Parser(object):
             transformers = DEFAULT_TRANSFORMERS[:]
         self.transformers = transformers
         self.wiki_force_existing = wiki_force_existing
+        self.drop_nodes = drop_nodes
 
         #: node dispatchers
         self._handlers = {
@@ -1103,7 +1105,11 @@ class Parser(object):
         stream = self.lexer.tokenize(self.string)
         result = nodes.Document()
         while not stream.eof:
-            result.children.append(self.parse_node(stream))
+            node = self.parse_node(stream)
+            if self.drop_nodes:
+                if type(node) in self.drop_nodes or isinstance(node, nodes.DeferredNode) and type(node.node) in self.drop_nodes:
+                    continue
+            result.children.append(node)
         for stage in 'initial', 'late':
             self.expand_macros(result, stage)
         for transformer in self.transformers:
