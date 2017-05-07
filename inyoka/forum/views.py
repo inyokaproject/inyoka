@@ -972,7 +972,7 @@ def reportlist(request):
         topic.save()
         return HttpResponseRedirect(href('forum', 'reported_topics'))
 
-    topics = Topic.objects.filter(reported__isnull=False).all()
+    topics = Topic.objects.filter(reported__isnull=False).order_by('-report_claimed_by','slug').all()
     if request.method == 'POST':
         form = ReportListForm(request.POST)
         _add_field_choices()
