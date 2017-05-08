@@ -187,7 +187,6 @@ class DeleteView(PermissionRequiredMixin, BaseDeleteView):
 
 
 class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
-    columns = ['id']
     paginate_by = 25
     base_link = None
 
@@ -224,7 +223,9 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
 
         return context, queryset
 
+
 class SortableListView(BaseListView):
+    columns = ['id']
     default_column = 'id'
 
     def get(self, request, *args, **context):
@@ -244,9 +245,10 @@ class OrderedListView(PermissionRequiredMixin, BaseListView):
 
     def get(self, request, *args, **context):
         queryset = self.get_queryset().order_by(*self.order_by)
-        context, self.object_list = self.prepare_context({},queryset)
+        context, self.object_list = self.prepare_context({}, queryset)
 
         return self.render_to_response(context)
+
 
 class ListView(PermissionRequiredMixin, SortableListView):
     pass
