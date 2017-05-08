@@ -650,13 +650,13 @@ def usercp_password(request):
     }
 
 
-class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
+class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
     """This page shows all subscriptions for the current user and allows
     him to manage them.
     """
     template_name = 'portal/usercp/subscriptions.html'
     columns = ('notified',)
-    default_column = '-notified'
+    order_by = ['-notified', '-id']
     context_object_name = 'subscriptions'
     base_link = href('portal', 'usercp', 'subscriptions')
     filtersets = [SubscriptionFilter]

@@ -64,7 +64,7 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
     # topic.
     #: the user can select, whether the post's topic should be sticky or not.
     sticky = forms.BooleanField(required=False)
-    title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}), max_length=100)
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
 
