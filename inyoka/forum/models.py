@@ -185,7 +185,11 @@ class TopicManager(models.Manager):
         related = ('author', 'last_post', 'last_post__author', 'first_post',
                    'first_post__author')
         order = ('-sticky', '-last_post__id')
-        return self.get_queryset().filter(pk__in=topic_ids) \
+        filter_by = { 'pk__in':topic_ids,
+                      'first_post__isnull':False,
+                      'last_post__isnull':False
+                    }
+        return self.get_queryset().filter(**filter_by) \
                    .select_related(*related).order_by(*order)
 
     def get_latest(self, forum_slug=None, allowed_forums=None, count=10):
@@ -205,7 +209,11 @@ class TopicManager(models.Manager):
 
         topic_ids = cache.get(key)
         if topic_ids is None:
-            query = Topic.objects.filter(hidden=False)
+            filter_by = { 'hidden':False,
+                          'first_post__isnull':False,
+                          'last_post__isnull':False
+                        }
+            query = Topic.objects.filter(**filter_by)
             if forum_slug:
                 query = query.filter(forum__id=forum.id)
             if allowed_forums:
