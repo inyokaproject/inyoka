@@ -60,6 +60,7 @@ from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import abort_access_denied
+from inyoka.utils import ctype
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
@@ -74,7 +75,7 @@ from inyoka.utils.http import (
 from inyoka.utils.notification import (
     notify_about_subscription,
     send_notification,
-)
+    queue_notifications)
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
@@ -1234,33 +1235,26 @@ def splittopic(request, topic_slug, page=1):
 
             del request.session['_split_post_ids']
 
-            new_forum = new_topic.forum
-            nargs = {'username': None,
-                     'new_topic': new_topic,
-                     'old_topic': old_topic,
-                     'mod': request.user.username}
-            users_done = set([request.user.id])
-            filter = Q(topic_id=old_topic.id)
-            if data['action'] == 'new':
-                filter |= Q(forum_id=new_forum.id)
-            # TODO: Disable until http://forum.ubuntuusers.de/topic/benachrichtigungen-nach-teilung-einer-diskuss/ is resolved to not spam the users
-            # subscriptions = Subscription.objects.select_related('user').filter(filter)
-            subscriptions = []
+            notification_args = {
+                'request_user_id': request.user.id,
+                'template': 'topic_split',
+                'subject': _(u'The topic “%(topic)s” was split.') % {'topic': old_topic.title},
+                'args': {'new_topic': new_topic, 'old_topic': old_topic, 'mod': request.user.username}
+            }
 
-            for subscription in subscriptions:
-                # Skip loop for users already notified:
-                if subscription.user.id in users_done:
-                    continue
-                # Added Users to users_done which should not get any
-                # notification for splited Topics:
-                if 'topic_split' not in subscription.user.settings.get('notifications', ('topic_split',)):
-                    users_done.add(subscription.user.id)
-                    continue
-                nargs['username'] = subscription.user.username
-                notify_about_subscription(subscription, 'topic_splited',
-                    _(u'The topic “%(topic)s” was split.')
-                    % {'topic': old_topic.title}, nargs)
-                users_done.add(subscription.user.id)
+            topic_subscribers = {
+                'content_type': ctype(Topic),
+                'object_id__in': [old_topic.id, new_topic.id],
+            }
+            notified_users = queue_notifications(filter=topic_subscribers, **notification_args)
+
+            if data['action'] == 'new':
+                forum_subscribers = {
+                    'content_type': ctype(Forum),
+                    'object_id': new_topic.forum.id,
+                }
+                queue_notifications(filter=forum_subscribers, exclude={'user__in': notified_users}, **notification_args)
+
             return HttpResponseRedirect(url_for(posts[0]))
     else:
         form = SplitTopicForm(initial={
