@@ -538,7 +538,7 @@ class CreateUserForm(forms.Form):
         a non existing mail address.
         """
         if 'email' in self.cleaned_data:
-            if User.objects.filter(email=self.cleaned_data['email']).exists():
+            if User.objects.filter(email__iexact=self.cleaned_data['email']).exists():
                 raise forms.ValidationError(_(u'This email address is already in use.'))
             return self.cleaned_data['email']
         else:
