@@ -162,10 +162,7 @@ def forum(request, slug, page=1):
     last_post_ids = map(lambda f: f.last_post_id, subforums)
     last_post_map = Post.objects.last_post_map(last_post_ids)
 
-    qs = Topic.objects.prepare_for_overview(list(pagination.get_queryset()))
-
-    # FIXME: Filter topics with no last_post or first_post
-    topics = [topic for topic in qs if topic.first_post and topic.last_post]
+    topics = Topic.objects.prepare_for_overview(list(pagination.get_queryset()))
 
     if not request.user.has_perm('forum.moderate_forum', forum):
         topics = [topic for topic in topics if not topic.hidden]
