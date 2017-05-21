@@ -1516,7 +1516,14 @@ def forum_feed(request, slug=None, mode='short', count=10):
         if not anonymous.has_perm('forum.view_forum', forum):
             return abort_access_denied(request)
 
-        topics = Topic.objects.get_latest(forum.slug, count=count)
+        if forum.children:
+            joined_forum = [child.id for child in forum.children if anonymous.has_perm('forum.view_forum', child)]
+            joined_forum.append(forum.id)
+
+            topics = Topic.objects.get_latest(allowed_forums=joined_forum, count=count)
+        else:
+            topics = Topic.objects.get_latest(forum.slug, count=count)
+
         title = _(u'%(site)s forum – “%(forum)s”') % {'forum': forum.name,
                 'site': settings.BASE_DOMAIN_NAME}
         url = url_for(forum)
