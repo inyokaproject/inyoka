@@ -319,16 +319,20 @@ class Subscription(models.Model):
             return True
 
         user = self.user
-        if self.content_type.model in ('topic', 'forum'):
-            if self.content_type.model == 'topic':
-                forum = self.content_object.forum
-            else:
-                forum = self.content_object
-            return user.has_perm('forum.view_forum', forum)
-        if self.content_type.model == 'page':
+        model = self.content_type.model
+
+        if model == 'topic':
+            return user.has_perm('forum.view_forum',  self.content_object.forum)
+        if model == 'forum':
+            return user.has_perm('forum.view_forum', self.content_object)
+        if model == 'page':
             return have_wiki_privilege(user, self.content_object.name, 'read')
+        if model == 'user':
+            return user.has_perm('portal.subscribe_user')
+        if model == 'suggestion':
+            return user.has_perm('ikhaya.change_event')
         else:
-            # e.g user subscriptions
+            # inyoka article subscription
             return True
 
 
