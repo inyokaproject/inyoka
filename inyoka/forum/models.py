@@ -1411,7 +1411,7 @@ class ReadStatus(object):
     def mark(self, item, user):
         """
         Mark a forum or topic as read. Note that you must save the database
-        changes explicitely!
+        changes explicitly!
         """
         if self(item):
             return False
@@ -1434,12 +1434,8 @@ class ReadStatus(object):
         row[1].add(post_id)
         children = item.forum.children
         if children:
-            unread_children = reduce(lambda a, b: a and b,
-                                     [self(c) for c in children], True)
-            if unread_children:
-                self.mark(item.forum, user)
-                return True
-        elif len(row[1]) > settings.FORUM_LIMIT_UNREAD:
+            return True
+        if len(row[1]) > settings.FORUM_LIMIT_UNREAD:
             r = sorted(row[1])
             row = (r[settings.FORUM_LIMIT_UNREAD // 2],
                 set(r[settings.FORUM_LIMIT_UNREAD // 2:]))
