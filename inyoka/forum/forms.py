@@ -8,8 +8,6 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import re
-
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -23,6 +21,7 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
 
 import urllib
+import urlparse
 
 
 class ForumField(forms.ChoiceField):
@@ -33,6 +32,8 @@ class ForumField(forms.ChoiceField):
         account. Addtitional items can be prepanded as a list of tuples
         `[(val1,repr1),(val2,repr2)]` with the `add` keyword. To remove items
         from the list use a list of Forum objects in the `remove` keyword.
+
+        Optgroups are used to disable categories in the choice field.
         """
         forums = Forum.objects.get_forums_filtered(current_request.user,
             priv, sort=True)
@@ -44,8 +45,11 @@ class ForumField(forms.ChoiceField):
         forums = Forum.get_children_recursive(forums)
         choices = []
         for offset, f in forums:
-            title = f.name[0] + u' ' + (u'   ' * offset) + f.name
-            choices.append((f.id, title))
+            if f.is_category:
+                choices.append((f.name, []))
+            else:
+                title = f.name[0] + u' ' + (u'   ' * offset) + f.name
+                choices[-1][1].append((f.id, title))
         self.choices = add + choices
 
 
@@ -60,7 +64,7 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
     # topic.
     #: the user can select, whether the post's topic should be sticky or not.
     sticky = forms.BooleanField(required=False)
-    title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'size': 60}), max_length=100)
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
 
@@ -180,11 +184,13 @@ class SplitTopicForm(forms.Form):
         slug = self.cleaned_data.get('topic')
         if slug:
             # Allow URL based Slugs
-            if re.match(r'^https?://', slug) is not None:
-                slug = slug.strip(u'/').split(u'/')[-1]
             try:
-                unquoted_slug = urllib.unquote(slug)
-                topic = Topic.objects.get(slug=unquoted_slug)
+                slug = urlparse.urlparse(slug)[2].split('/')[2]
+            except IndexError:
+                slug = urllib.unquote(slug)
+
+            try:
+                topic = Topic.objects.get(slug=slug)
             except Topic.DoesNotExist:
                 raise forms.ValidationError(_(u'No topic with this '
                                               u'slug found.'))
@@ -193,7 +199,11 @@ class SplitTopicForm(forms.Form):
 
     def clean_forum(self):
         id = self.cleaned_data.get('forum')
-        return Forum.objects.get(id=int(id))
+        forum = Forum.objects.get(id=int(id))
+        if forum.is_category:
+            raise forms.ValidationError(_(u'You cannot move a topic into a '
+                                          u'category. Please choose a forum.'))
+        return forum
 
 
 class AddAttachmentForm(forms.Form):

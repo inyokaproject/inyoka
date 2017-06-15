@@ -24,6 +24,7 @@ from django.shortcuts import redirect
 from django.utils.text import Truncator
 from django.utils.translation import ugettext as _
 from django.views.generic import CreateView, DetailView, UpdateView
+from guardian.mixins import PermissionRequiredMixin as GuardianPermissionRequiredMixin
 
 from inyoka.forum.constants import POSTS_PER_PAGE, TOPICS_PER_PAGE
 from inyoka.forum.forms import (
@@ -95,7 +96,7 @@ def index(request, category=None):
 
     if category:
         category = Forum.objects.get_cached(category)
-        if not category or category.parent is not None:
+        if not category or not category.is_category:
             raise Http404()
         category = category
         categories = [category]
@@ -104,7 +105,7 @@ def index(request, category=None):
         if unread_forum is not None:
             return redirect(url_for(unread_forum, 'welcome'))
     else:
-        categories = tuple(forum for forum in forums if forum.parent_id is None)
+        categories = tuple(forum for forum in forums if forum.is_category)
 
     hidden_categories = []
     if request.user.is_authenticated():
@@ -141,7 +142,7 @@ def forum(request, slug, page=1):
     forum = Forum.objects.get_cached(slug)
     # if the forum is a category we raise Http404. Categories have
     # their own url at /category.
-    if not forum or forum.parent_id is None:
+    if not forum or forum.is_category:
         raise Http404()
 
     if not request.user.has_perm('forum.view_forum', forum):
@@ -161,10 +162,7 @@ def forum(request, slug, page=1):
     last_post_ids = map(lambda f: f.last_post_id, subforums)
     last_post_map = Post.objects.last_post_map(last_post_ids)
 
-    qs = Topic.objects.prepare_for_overview(list(pagination.get_queryset()))
-
-    # FIXME: Filter topics with no last_post or first_post
-    topics = [topic for topic in qs if topic.first_post and topic.last_post]
+    topics = Topic.objects.prepare_for_overview(list(pagination.get_queryset()))
 
     if not request.user.has_perm('forum.moderate_forum', forum):
         topics = [topic for topic in topics if not topic.hidden]
@@ -471,7 +469,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         forum = topic.forum
     elif forum_slug:
         forum = Forum.objects.get_cached(slug=forum_slug)
-        if not forum or not forum.parent_id:
+        if not forum or forum.is_category:
             raise Http404()
         newtopic = firstpost = True
     elif post_id:
@@ -539,12 +537,16 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
     # check privileges
     if post:
-        if (topic.locked or topic.hidden or post.hidden) and \
-           not request.user.has_perm('forum.moderate_forum', forum):
-            messages.error(request, _(u'You cannot edit this post.'))
-            post.unlock()
-            return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
-                                        post.page))
+        if topic.locked or topic.hidden or post.hidden:
+            if not request.user.has_perm('forum.moderate_forum', forum):
+                messages.error(request, _(u'You cannot edit this post.'))
+                post.unlock()
+                return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
+                                            post.page))
+            elif topic.locked:
+                messages.error(request,
+                               _(u'You are editing a post on a locked topic. '
+                                 u'Please note that this may be considered as impolite!'))
         if not (request.user.has_perm('forum.moderate_forum', forum) or
                 (post.author.id == request.user.id and
                  request.user.has_perm('forum.add_reply_forum', forum) and
@@ -590,6 +592,8 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         elif post_id:
             url = href('forum', 'post', post.id)
             post.unlock()
+        elif quote_id:
+            url = href('forum', 'post', quote_id)
         return HttpResponseRedirect(url)
 
     # Clear surge protection to avoid multi-form hickups.
@@ -759,37 +763,43 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 @confirm_action(message=_(u'Do you want to (un)lock the topic?'),
                 confirm=_(u'(Un)lock'), cancel=_(u'Cancel'))
 @login_required
-def change_lock_status(request, topic_slug, solved=None, locked=None):
-    return change_status(request, topic_slug, solved, locked)
+def lock_topic(request, topic_slug, locked, page=1):
+    """Lock/unlock a topic and redirect to it"""
+    topic = Topic.objects.get(slug=topic_slug)
+    if not request.user.has_perm('forum.moderate_forum', topic.forum):
+        return abort_access_denied(request)
+
+    topic.locked = locked
+    topic.save()
+    if locked:
+        msg = _(u'The topic was locked.')
+    else:
+        msg = _(u'The topic was unlocked.')
+    messages.success(request, msg)
+    topic.forum.invalidate_topic_cache()
+
+    return HttpResponseRedirect(href('forum', 'topic', topic_slug, page))
 
 
 @login_required
-def change_status(request, topic_slug, solved=None, locked=None):
-    """Change the status of a topic and redirect to it"""
+def solve_topic(request, topic_slug, solved, page=1):
+    """Solve/unsolve a topic and redirect to it"""
     topic = Topic.objects.get(slug=topic_slug)
     if not request.user.has_perm('forum.view_forum', topic.forum):
-        abort_access_denied(request)
-    if solved is not None:
-        topic.solved = solved
-        topic.save()
-        if solved:
-            msg = _(u'The topic was marked as solved.')
-        else:
-            msg = _(u'The topic was marked as unsolved.')
-        messages.success(request, msg)
-    if locked is not None:
-        if not request.user.has_perm('forum.moderate_forum', topic.forum):
-            return AccessDeniedResponse()
-        topic.locked = locked
-        topic.save()
-        if locked:
-            msg = _(u'The topic was locked.')
-        else:
-            msg = _(u'The topic was unlocked.')
-        messages.info(request, msg)
+        return abort_access_denied(request)
+    if topic.locked and not request.user.has_perm('forum.moderate_forum', topic.forum):
+        return abort_access_denied(request)
+
+    topic.solved = solved
+    topic.save()
+    if solved:
+        msg = _(u'The topic was marked as solved.')
+    else:
+        msg = _(u'The topic was marked as unsolved.')
+    messages.success(request, msg)
     topic.forum.invalidate_topic_cache()
 
-    return HttpResponseRedirect(url_for(topic))
+    return HttpResponseRedirect(href('forum', 'topic', topic_slug, page))
 
 
 def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
@@ -830,7 +840,7 @@ def _generate_subscriber(cls, obj_slug, subscriptionkw, flasher):
     return subscriber
 
 
-def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
+def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher, page=1):
     """
     Generates an unsubscriber-function to deal with objects of type `obj`
     which have the slug `slug` and are registered in the subscription by
@@ -862,7 +872,11 @@ def _generate_unsubscriber(cls, obj_slug, subscriptionkw, flasher):
         if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
             return HttpResponseRedirect(request.GET['next'])
         else:
-            return HttpResponseRedirect(url_for(obj))
+            if obj_slug == 'topic':
+                return HttpResponseRedirect(href('forum', 'topic',
+                                                 'topic_slug', page))
+            else:
+                return HttpResponseRedirect(url_for(obj))
     return unsubscriber
 
 
@@ -888,7 +902,7 @@ unsubscribe_topic = _generate_unsubscriber(Topic,
 
 @login_required
 @templated('forum/report.html')
-def report(request, topic_slug):
+def report(request, topic_slug, page=1):
     """Change the report_status of a topic and redirect to it"""
     topic = Topic.objects.get(slug=topic_slug)
     if not request.user.has_perm('forum.view_forum', topic.forum):
@@ -920,7 +934,8 @@ def report(request, topic_slug):
 
             cache.delete('forum/reported_topic_count')
             messages.success(request, _(u'The topic was reported.'))
-            return HttpResponseRedirect(url_for(topic))
+            return HttpResponseRedirect(href('forum', 'topic', topic_slug,
+                                             page))
     else:
         form = ReportTopicForm()
     return {
@@ -954,7 +969,7 @@ def reportlist(request):
         topic.save()
         return HttpResponseRedirect(href('forum', 'reported_topics'))
 
-    topics = Topic.objects.filter(reported__isnull=False).all()
+    topics = Topic.objects.filter(reported__isnull=False).order_by('-report_claimed_by','slug').all()
     if request.method == 'POST':
         form = ReportListForm(request.POST)
         _add_field_choices()
@@ -1197,29 +1212,27 @@ def splittopic(request, topic_slug, page=1):
 
             posts = list(posts)
 
-            try:
-                if data['action'] == 'new':
-                    new_topic = Topic.objects.create(
-                        title=data['title'],
-                        forum=data['forum'],
-                        slug=None,
-                        author_id=posts[0].author_id,
-                        ubuntu_version=data['ubuntu_version'],
-                        ubuntu_distro=data['ubuntu_distro'])
-                    new_topic.forum.topic_count.incr()
+            if data['action'] == 'new':
+                if posts[0].hidden:
+                    messages.error(request,
+                       _(u'The First post of the new topic must not be '
+                          'hidden.'))
+                    return HttpResponseRedirect(request.path)
+                new_topic = Topic.objects.create(
+                    title=data['title'],
+                    forum=data['forum'],
+                    slug=None,
+                    author_id=posts[0].author_id,
+                    ubuntu_version=data['ubuntu_version'],
+                    ubuntu_distro=data['ubuntu_distro'])
+                new_topic.forum.topic_count.incr()
 
-                    Post.split(posts, old_topic, new_topic)
-                else:
-                    new_topic = data['topic']
-                    Post.split(posts, old_topic, new_topic)
+                Post.split(posts, old_topic, new_topic)
+            else:
+                new_topic = data['topic']
+                Post.split(posts, old_topic, new_topic)
 
-                del request.session['_split_post_ids']
-
-            except ValueError:
-                messages.error(request,
-                    _(u'You cannot move a topic into a category. '
-                      u'Please choose a forum.'))
-                return HttpResponseRedirect(request.path)
+            del request.session['_split_post_ids']
 
             new_forum = new_topic.forum
             nargs = {'username': None,
@@ -1248,7 +1261,7 @@ def splittopic(request, topic_slug, page=1):
                     _(u'The topic “%(topic)s” was split.')
                     % {'topic': old_topic.title}, nargs)
                 users_done.add(subscription.user.id)
-            return HttpResponseRedirect(url_for(new_topic))
+            return HttpResponseRedirect(url_for(posts[0]))
     else:
         form = SplitTopicForm(initial={
             'forum': old_topic.forum_id,
@@ -1406,11 +1419,15 @@ def delete_topic(request, topic_slug, action='hide'):
 
     topic = Topic.objects.select_related('forum').get(slug=topic_slug)
     can_moderate = request.user.has_perm('forum.moderate_forum', topic.forum)
-    can_delete = request.user.has_perm('forum.delete_topic_forum')
+    can_delete = request.user.has_perm('forum.delete_topic_forum', topic.forum)
 
-    if action == 'delete' and not can_delete and not can_moderate:
+    if not can_moderate:
         return abort_access_denied(request)
-    if action == 'hide' and not can_moderate:
+
+    if action == 'delete' and not can_delete:
+        return abort_access_denied(request)
+
+    if action == 'delete' and not topic.hidden:
         return abort_access_denied(request)
 
     if request.method == 'POST':
@@ -1499,7 +1516,14 @@ def forum_feed(request, slug=None, mode='short', count=10):
         if not anonymous.has_perm('forum.view_forum', forum):
             return abort_access_denied(request)
 
-        topics = Topic.objects.get_latest(forum.slug, count=count)
+        if forum.children:
+            joined_forum = [child.id for child in forum.children if anonymous.has_perm('forum.view_forum', child)]
+            joined_forum.append(forum.id)
+
+            topics = Topic.objects.get_latest(allowed_forums=joined_forum, count=count)
+        else:
+            topics = Topic.objects.get_latest(forum.slug, count=count)
+
         title = _(u'%(site)s forum – “%(forum)s”') % {'forum': forum.name,
                 'site': settings.BASE_DOMAIN_NAME}
         url = url_for(forum)
@@ -1579,7 +1603,7 @@ def topiclist(request, page=1, action='newposts', hours=24, user=None, forum=Non
         )
         return HttpResponseRedirect(href('forum'))
 
-    topics = Topic.objects.order_by('-last_post')
+    topics = Topic.objects.exclude(first_post_id__isnull=True).order_by('-last_post')
 
     if 'version' in request.GET:
         topics = topics.filter(ubuntu_version=request.GET['version'])
@@ -1742,7 +1766,7 @@ def postlist(request, page=1, user=None, topic_slug=None, forum_slug=None):
     }
 
 
-class WelcomeMessageView(PermissionRequiredMixin, DetailView):
+class WelcomeMessageView(GuardianPermissionRequiredMixin, DetailView):
     """
     View has shows the welcome message of a forum.
 

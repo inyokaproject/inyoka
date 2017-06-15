@@ -1,13 +1,6 @@
 #!/usr/bin/env groovy
-properties([buildDiscarder(logRotator(
-                                      artifactDaysToKeepStr: '',
-                                      artifactNumToKeepStr: '',
-                                      daysToKeepStr: '',
-                                      numToKeepStr: '2')), 
-                          pipelineTriggers([])
-])
 
-node {
+node('inyoka-slave') {
     stage('Checkout') {
       checkout scm
       sh '''git clean -fdx'''
@@ -18,7 +11,7 @@ node {
       checkout([$class: 'GitSCM', branches: [[name: '*/staging']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'theme-ubuntuusers']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'e081c9b5-6899-40b5-a895-7c2232be3430', url: 'git@github.com:inyokaproject/theme-ubuntuusers']]])
 
       sh """
-      requirementshash=\$(sha1sum extra/requirements/development.txt|awk '{print \$1}')
+      requirementshash=\$(cat extra/requirements/development.txt extra/requirements/production.txt|sha256sum|awk '{print \$1}')
 
       if [ ! -d "\$HOME/venvs/\$requirementshash" ]
       then
@@ -47,7 +40,7 @@ node {
         def current_test_database = test_databases[i]
         test_runs["${current_test_database}"] = {
           sh """
-          requirementshash=\$(sha1sum extra/requirements/development.txt|awk '{print \$1}')
+          requirementshash=\$(cat extra/requirements/development.txt extra/requirements/production.txt|sha256sum|awk '{print \$1}')
           . \$HOME/venvs/\$requirementshash/bin/activate
           python manage.py test --setting tests.settings.${current_test_database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true"""
         }

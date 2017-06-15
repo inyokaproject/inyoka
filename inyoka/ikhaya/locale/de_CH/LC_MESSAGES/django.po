@@ -1,0 +1,280 @@
+# German (Switzerland) translations for Inyoka Project.
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
+#
+# Translators:
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017
+# Fuchs, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version:  Inyoka\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-03-25 00:12+0100\n"
+"PO-Revision-Date: 2017-03-23 22:51+0000\n"
+"Last-Translator: Lyra\n"
+"Language: de_CH\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/inyokaproject/inyoka/language/de_CH/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+#, python-format
+msgid "%(domain)s Ikhaya comments"
+msgstr "%(domain)s Ikhaya Kommentär"
+
+#, python-format
+msgid "%(domain)s Ikhaya comments – %(title)s"
+msgstr "%(domain)s Ikhaya Kommentär – %(title)s"
+
+msgid "Allow comments"
+msgstr "Kommentär erloubä"
+
+msgid "Annotations to the team"
+msgstr "Aamerkigä as Ikhayateam"
+
+msgid "Article"
+msgstr "Artiku"
+
+msgid "Article suggestion"
+msgstr "Artikuvorschlag"
+
+msgid "Article suggestion deleted"
+msgstr "Artikuvorschlag glöscht"
+
+msgid "Article suggestions"
+msgstr "Artikuvorschleg"
+
+msgid "Articles"
+msgstr "Artiklä"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Cancel"
+msgstr "Abbrächä"
+
+msgid "Categories"
+msgstr "Kategoriä"
+
+msgid "Category"
+msgstr "Kategory"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Degree of latitude"
+msgstr "Breitägrad"
+
+msgid "Degree of longitude"
+msgstr "Längegrad"
+
+#, python-format
+msgid "Deletion of the article “<a href=\"%(link)s\">%(title)s</a>” was canceled."
+msgstr "Löschä vom Artiku „<a href=\"%(link)s\">%(title)s</a>“ isch abbrochä wordä."
+
+msgid "Display event?"
+msgstr "Kaländerytrag sichtbar?"
+
+msgid "Do you want to hide this comment?"
+msgstr "Möchtisch Du dä Kommentar vrbärgä?"
+
+msgid "Do you want to hide this report?"
+msgstr "Möchtisch Du d Mäudig vrbärgä?"
+
+msgid "Do you want to mark this report as solved?"
+msgstr "Möchtisch Du d Mäudig aus glöst markiärä?"
+
+msgid "Do you want to mark this report as unsolved?"
+msgstr "Möchtisch Du d Mäudig aus unglöst markiärä?"
+
+msgid "Do you want to restore this comment?"
+msgstr "Möchtisch Du dä Kommentar widerhärsteuä?"
+
+msgid "Do you want to restore this report?"
+msgstr "Möchtisch Du d Mäudig widerhärsteuä?"
+
+msgid "Headline"
+msgstr "Übrschrift"
+
+msgid "Hide"
+msgstr "Vrbärgä"
+
+msgid "Icon"
+msgstr "Biudli"
+
+msgid "If the date is in the future, the article will not appear until then."
+msgstr "Wenn ds Datum i dr Zuäkunft isch, de wird dr Artiku bis zu däm Zytpunkt nid aazeigt."
+
+msgid "If you keep this field empty, the publication date will be used."
+msgstr "Wenn Du das Fäud läär laasch, de wird outomatisch ds Veröffentligsdatum vrwändet."
+
+msgid "Introduction"
+msgstr "Yleitig"
+
+msgid "Last change"
+msgstr "Letschti Änderig"
+
+msgid "Last update"
+msgstr "Letschti Aktualisiärig"
+
+msgid "Mark as solved"
+msgstr "Aus glöst markiärä"
+
+msgid "Mark as unsolved"
+msgstr "Aus unglöst markiärä"
+
+#, python-format
+msgid "New article suggestion “%(suggestion)s”"
+msgstr "Nöiä Artikuvorschlag „%(suggestion)s“"
+
+#, python-format
+msgid "New comment on article “%(article)s”"
+msgstr "Nöiä Kommentar zum Artiku „%(article)s“"
+
+#, python-format
+msgid "New private message from %(user)s: %(subject)s"
+msgstr "Nöii privati Nachricht vom %(user)s: %(subject)s"
+
+msgid "No notifications on suggestions will be sent to you any more."
+msgstr "Du wirsch übr nöii Vorschleg nümmä benachrichtigt."
+
+msgid "Notifications on new comments to this article will be sent to you."
+msgstr "Du wirsch übr nöii Kommentär zu däm Artiku benachrichtigt."
+
+msgid "Notifications on new suggestions will be sent to you."
+msgstr "Du wirsch übr nöii Vorschleg benachrichtigt."
+
+msgid "Public"
+msgstr "Veröffentlicht"
+
+msgid "Publication date"
+msgstr "Datum vom Erschynä"
+
+msgid "Restore"
+msgstr "Widerhärsteuä"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Sorry, editing comments is disabled for now."
+msgstr "Exgüse, ds Editiärä vo Kommentär isch gad deaktiviärt."
+
+msgid "Text"
+msgstr "Texscht"
+
+msgid "Thank you, your article suggestion was submitted. A team member will contact you shortly."
+msgstr "Merci viu mou, mir hei Di Artikuvorschlag gschpicheret. Äs Ikhayateammitglid wird Di baud kontaktiärä."
+
+msgid "Thanks for your report."
+msgstr "Merci für dyni Mäudig."
+
+#, python-format
+msgid "The article “%(title)s” was created."
+msgstr "Dr Artiku „%(title)s“ isch ersteut wordä."
+
+#, python-format
+msgid "The article “%(title)s” was deleted."
+msgstr "Dr Artiku „%(title)s“ isch glöscht wordä."
+
+msgid "The article “{title}” was saved."
+msgstr "Dr Artiku „{title}“ isch gspycheret wordä."
+
+msgid "The comment was edited successfully."
+msgstr "Dr Kommentar isch erfougrych bearbeität wordä."
+
+msgid "The comment was hidden."
+msgstr "Dr Kommentar isch verborgä wordä."
+
+msgid "The comment was restored."
+msgstr "Dr Kommentar isch widerhärgsteut wordä."
+
+msgid "The comment was saved."
+msgstr "Dr Kommentar isch gspycheret wordä."
+
+msgid "The end date must occur after the start date."
+msgstr "Ds Änddatum muäs nach em Startdatum ligä."
+
+msgid "The end time must occur after the start time."
+msgstr "D Ändzyt muäs nach dr Startzyt ligä."
+
+msgid "The event has been saved. A team member will review it soon."
+msgstr "D Verahstautig isch gspycheret wordä. Äs Teammitglied wird sä nöchschtens prüäfä."
+
+msgid "The event was saved."
+msgstr "D Verahstautig isch gspycheret wordä."
+
+#, python-format
+msgid "The event with the id %(id)s could not be used as draft for a new event because it does not exist."
+msgstr "D Verahstautig mit dr ID %(id)s gits nid und si ka auso nid aus Basis für ä Kopiärvorgang brucht wärdä."
+
+#, python-format
+msgid "The publication of the article “<a href=\"%(link)s\">%(title)s</a>” has been revoked."
+msgstr "D Veröffentlichig vom Artiku „<a href=\"%(link)s\">%(title)s</a>“ isch uufghobä wordä."
+
+msgid "The report was hidden."
+msgstr "D Mäudig isch vrborgä wordä."
+
+msgid "The report was marked as solved."
+msgstr "D Mäudig isch aus erledigt margiert wordä."
+
+msgid "The report was marked as unsolved."
+msgstr "D Mäudig isch aus nid erledigt margiert wordä."
+
+msgid "The report was restored."
+msgstr "D Mäudig isch widerhärgsteut wordä."
+
+msgid "The suggestion was assigned to nobody."
+msgstr "Dr Vorschlag isch niemeräm zuägwysä."
+
+msgid "The suggestion was assigned to you."
+msgstr "Dr Vorschlag isch Dir zuägwysä."
+
+msgid "The suggestion was deleted."
+msgstr "Dr Vorschlag isch glöscht wordä."
+
+msgid "The suggestion was not deleted."
+msgstr "Dr Vorschlag isch nid glöscht wordä."
+
+#, python-format
+msgid "The suggestion “%(title)s” does not exist."
+msgstr "Dr Vorschlag „%(title)s“ gits nid."
+
+msgid "There already exists an article with this slug!"
+msgstr "Äs git scho än Artiku mit däm Slug!"
+
+#, python-format
+msgid "This article is currently being edited by “%(user)s”!"
+msgstr "Dä Artiku wird gad vom „%(user)s“ bearbeität!"
+
+msgid "This article is not visible for regular users."
+msgstr "Dä Artiku isch für normali Benutzer unsichtbar."
+
+msgid "This suggestion does not exist."
+msgstr "Dä Vorschlag gits nid."
+
+msgid "Time"
+msgstr "Zyt"
+
+msgid "Title"
+msgstr "Titu"
+
+msgid "To refer to another comment, you can write <code>@commentnumber</code>.<br />Clicking on “reply” will automatically insert this code."
+msgstr "Um Di uf änä angerä Kommentar z beziäh chasch <code>@kommentarnummer</code> verwendä.<br />Das wird outomatisch ygfüegt, wenn Du bimänä Bytrag uuf „Antwortä“ kliksch."
+
+msgid "Unique URL-part for the article. If not given, the slug will be generated from title."
+msgstr "Eidütigä URL-Teil für dä Artiku. Wird outomatisch anhand vom Titu generiert wenn nid uusgfüllt."
+
+msgid "XHTML Markup"
+msgstr "XHTML Uuszeichnig"
+
+msgid "You cannot assign suggestions to others."
+msgstr "Äs isch nid müglich Vorschleg angernä Benutzer zuäzwysä."
+
+msgid "You will no longer be notified of new comments for this article."
+msgstr "Du wirsch übr nöii Kommentär zu däm Artiku nümm benachrichtigt."
+
+msgid "Your comment was created."
+msgstr "Dy Kommentar isch ersteut wordä."
+

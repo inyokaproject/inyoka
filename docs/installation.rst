@@ -183,7 +183,7 @@ You need to add a database in MySQL:
 .. code-block:: console
 
     $ mysql -u root [-p]
-    mysql> create database ubuntuusers;
+    mysql> create database ubuntuusers CHARSET utf8 COLLATE utf8_general_ci;
     mysql> quit
 
 You only need to use the ``-p`` parameter if you have set a root password on

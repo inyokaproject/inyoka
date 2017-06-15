@@ -1,17 +1,17 @@
 # German (Germany) translations for Inyoka Project.
-# Copyright (C) 2016 Inyoka Team (see AUTHORS)
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-10-15 17:32+0200\n"
-"PO-Revision-Date: 2015-11-28 18:37+0100\n"
-"Last-Translator: Stefan J. Betz <info@stefan-betz.net>\n"
+"POT-Creation-Date: 2017-05-01 07:15+0200\n"
+"PO-Revision-Date: 2017-04-15 00:22+0200\n"
+"Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
-"Language-Team: German (Germany) (http://www.transifex.com/projects/p/inyoka/language/de_DE/)\n"
+"Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -227,6 +227,9 @@ msgstr "Slug"
 msgid "Support group"
 msgstr "Gruppe der Supporter"
 
+msgid "The First post of the new topic must not be hidden."
+msgstr "Der erste Beitrag des neuen Themas darf nicht versteckt sein."
+
 #, python-format
 msgid "The article “%(article)s” does not exist. However, you can create it now."
 msgstr "Der Artikel „%(article)s“ existiert nicht, du kannst ihn jedoch jetzt erstellen."
@@ -345,9 +348,6 @@ msgstr "Dieses Thema ist für normale Benutzer unsichtbar."
 msgid "This topic was already created. Please think about editing your topic before creating a new one."
 msgstr "Dieser Beitrag wurde bereits erstellt! Bitte überlege ob du nicht deinen vorherigen Beitrag bearbeiten möchtest."
 
-msgid "You are not allowed to mark this topic as \"important\"."
-msgstr "Dir ist es nicht erlaubt, dieses Thema als \"wichtig\" zu markieren."
-
 msgid "This topic was already reported."
 msgstr "Dieses Thema wurde bereits gemeldet."
 
@@ -363,6 +363,9 @@ msgstr "Themen von „%(user)s“"
 
 msgid "Ubuntu"
 msgstr "Ubuntu"
+
+msgid "Ubuntu Budgie"
+msgstr "Ubuntu Budgie"
 
 msgid "Ubuntu GNOME"
 msgstr "Ubuntu GNOME"
@@ -396,6 +399,12 @@ msgstr "Willkommens Titel"
 msgid "Xubuntu"
 msgstr "Xubuntu"
 
+msgid "You are editing a post on a locked topic. Please note that this may be considered as impolite!"
+msgstr "Du bearbeitest einen Post in einem geschlossenen Thema. Dies wird oft als unhöflich aufgefasst, bitte sei dir dessen bewusst!"
+
+msgid "You are not allowed to mark this topic as \"important\"."
+msgstr "Dir ist es nicht erlaubt, dieses Thema als \"wichtig\" zu markieren."
+
 msgid "You are replying to a locked topic. Please note that this may be considered as impolite!"
 msgstr "Du antwortest auf ein bereits geschlossenes Thema. Dies wird oft als unhöflich aufgefasst, bitte sei dir dessen bewusst!"
 
@@ -417,6 +426,9 @@ msgstr "Du kannst auf dieses Thema nicht antworten, da es gesperrt wurde."
 
 msgid "You cannot set this topic as target."
 msgstr "Du kannst dieses Thema nicht als Ziel auswählen."
+
+msgid "You don't have moderation rights for the seleted topic."
+msgstr "Dir fehlen für das ausgewählte Thema die Moderationsrechte"
 
 msgid "You must enter a text in order to set the welcome message"
 msgstr "Du musst einen Text für die Willkommensnachricht eingeben."

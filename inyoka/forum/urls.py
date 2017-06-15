@@ -25,12 +25,11 @@ urlpatterns = [
     url(r'^topic/(?P<topic_slug>[^/]+)/split/$', views.splittopic),
     url(r'^topic/(?P<topic_slug>[^/]+)/split/(?P<page>\d+)/$', views.splittopic),
     url(r'^topic/(?P<topic_slug>[^/]+)/move/$', views.movetopic),
-    url(r'^topic/(?P<topic_slug>[^/]+)/solve/$', views.change_status, {'solved': True}),
-    url(r'^topic/(?P<topic_slug>[^/]+)/unsolve/$', views.change_status, {'solved': False}),
-    url(r'^topic/(?P<topic_slug>[^/]+)/lock/$', views.change_lock_status, {'locked': True}),
-    url(r'^topic/(?P<topic_slug>[^/]+)/unlock/$', views.change_lock_status, {'locked': False}),
-    url(r'^topic/(?P<topic_slug>[^/]+)/report/$', views.report),
-    url(r'^topic/(?P<topic_slug>[^/]+)/report_done/$', views.report, {'status': 'done'}),
+    url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+/)?solve/$', views.solve_topic, {'solved': True}),
+    url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+/)?unsolve/$', views.solve_topic, {'solved': False}),
+    url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+/)?lock/$', views.lock_topic, {'locked': True}),
+    url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+/)?unlock/$', views.lock_topic, {'locked': False}),
+    url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+/)?report/$', views.report),
     url(r'^topic/(?P<topic_slug>[^/]+)/subscribe', views.subscribe_topic),
     url(r'^topic/(?P<topic_slug>[^/]+)/unsubscribe', views.unsubscribe_topic),
     url(r'^topic/(?P<topic_slug>[^/]+)/next/$', views.next_topic),
@@ -109,3 +108,4 @@ if settings.DEBUG:
     )
 
 handler404 = 'inyoka.utils.http.global_not_found'
+handler500 = 'inyoka.utils.http.server_error'

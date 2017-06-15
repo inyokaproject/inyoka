@@ -61,7 +61,7 @@ def index(request, page=1):
     The page number is optional.
     """
     entries = Entry.objects.select_related('blog')
-    if not request.user.has_perm('planet.view_hidden_entry'):
+    if not request.user.has_perm('planet.hide_entry'):
         entries = entries.filter(hidden=False)
 
     pagination = Pagination(request, entries, page, 25, href('planet'))
@@ -89,7 +89,7 @@ def suggest(request):
     if request.method == 'POST':
         form = SuggestBlogForm(request.POST)
         if form.is_valid():
-            users = Group.objects.get_ikhaya_group().user_set.all()
+            users = Group.objects.get(name=settings.INYOKA_IKHAYA_GROUP_NAME).user_set.all()
             text = render_template('mails/planet_suggest.txt',
                                    form.cleaned_data)
             for user in users:
@@ -110,7 +110,6 @@ def suggest(request):
     }
 
 
-@permission_required('planet.view_blog', raise_exception=True)
 @atom_feed(name='planet_feed')
 def feed(request, mode='short', count=10):
     """show the feeds for the planet"""

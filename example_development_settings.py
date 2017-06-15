@@ -1,5 +1,5 @@
+from inyoka import INYOKA_VERSION
 from inyoka.default_settings import *
-from os.path import join
 
 DATABASES = {
     'default': {
@@ -28,6 +28,8 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + '/_admin/'
 INYOKA_SYSTEM_USER_EMAIL = 'system@' + BASE_DOMAIN_NAME
 INYOKA_CONTACT_EMAIL = '@'.join(['webteam', BASE_DOMAIN_NAME])
 
+# Language code
+LANGUAGE_CODE = 'de-DE'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -35,7 +37,16 @@ SECRET_KEY = None
 
 INSTALLED_APPS = INSTALLED_APPS + (
     'inyoka_theme_default',
+#    'raven.contrib.django.raven_compat',
 )
+
+# Sentry exception tracing via raven
+#
+#RAVEN_CONFIG = {
+#    'dsn': 'add your dsn here',
+#    'release': INYOKA_VERSION,
+#}
+#RAVEN_PUBLIC_DSN = 'your public dsn for user feedback'
 
 # Django Debug Toolbar Integration
 #

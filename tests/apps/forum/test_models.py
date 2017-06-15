@@ -12,6 +12,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.test.utils import override_settings
+from mock import patch
 
 from inyoka.forum.models import Attachment, Forum, Post, PostRevision, Topic
 from inyoka.portal.user import User
@@ -51,6 +52,10 @@ class TestForumModel(TestCase):
         self.assertEqual(self.parent1.parents, [])
         self.assertEqual(self.parent2.parents, [self.parent1])
         self.assertEqual(self.forum.parents, [self.parent2, self.parent1])
+
+    def test_is_category(self):
+        self.assertEqual(self.parent1.is_category, True)
+        self.assertEqual(self.forum.is_category, False)
 
     def test_children(self):
         self.assertEqual(self.forum.children, [])
@@ -414,3 +419,26 @@ class PostDeletionTest(TestCase):
         forums = [f for f in topic.forum.parents + [topic.forum] if f.last_post]
         last_post_ids = [f.last_post_id for f in forums]
         self.assertEqual(last_post_ids, [self.p3.pk, self.p3.pk, self.p3.pk])
+
+
+class TestTopic(TestCase):
+
+    def setUp(self):
+        super(TestTopic, self).setUp()
+        self.user = User.objects.register_user('admin', 'admin', 'admin', False)
+        self.category = Forum.objects.create(name='category')
+        self.parent = Forum.objects.create(name='parent', parent=self.category)
+        self.forum = Forum.objects.create(name='forum', parent=self.parent)
+
+    @patch.object(Topic, 'delete')
+    def test_topic_delete(self, mock):
+        """Tests if the .delete() of posts is called. """
+        self.topic = Topic.objects.create(forum=self.forum, title='test',
+                                          author=self.user)
+        self.attachment = Attachment.create('test.txt', ContentFile('test'), 'text/plain', [])
+        self.p1 = Post.objects.create(text='', author=self.user, topic=self.topic, position=0)
+        self.p1.attachment = self.attachment
+        self.p1.has_attachments = True
+
+        self.topic.delete()
+        mock.assert_called_once_with()

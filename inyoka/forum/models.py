@@ -11,6 +11,7 @@
 from __future__ import division
 
 import cPickle
+import os
 import re
 from datetime import datetime
 from functools import reduce
@@ -184,7 +185,11 @@ class TopicManager(models.Manager):
         related = ('author', 'last_post', 'last_post__author', 'first_post',
                    'first_post__author')
         order = ('-sticky', '-last_post__id')
-        return self.get_queryset().filter(pk__in=topic_ids) \
+        filter_by = { 'pk__in':topic_ids,
+                      'first_post__isnull':False,
+                      'last_post__isnull':False
+                    }
+        return self.get_queryset().filter(**filter_by) \
                    .select_related(*related).order_by(*order)
 
     def get_latest(self, forum_slug=None, allowed_forums=None, count=10):
@@ -204,7 +209,11 @@ class TopicManager(models.Manager):
 
         topic_ids = cache.get(key)
         if topic_ids is None:
-            query = Topic.objects.filter(hidden=False)
+            filter_by = { 'hidden':False,
+                          'first_post__isnull':False,
+                          'last_post__isnull':False
+                        }
+            query = Topic.objects.filter(**filter_by)
             if forum_slug:
                 query = query.filter(forum__id=forum.id)
             if allowed_forums:
@@ -332,7 +341,7 @@ class Forum(models.Model):
         qdct = {forum.id: forum for forum in forums}
 
         forum = qdct[self.id]
-        while forum.parent_id is not None:
+        while not forum.is_category:
             forum = qdct[forum.parent_id]
             parents.append(forum)
         return parents
@@ -340,6 +349,10 @@ class Forum(models.Model):
     @property
     def parents(self):
         return self.get_parents(True)
+
+    @property
+    def is_category(self):
+        return self.parent is None
 
     @property
     def children(self):
@@ -377,7 +390,7 @@ class Forum(models.Model):
         """
         if user.is_anonymous():
             return
-        if user._readstatus.mark(self):
+        if user._readstatus.mark(self, user):
             user.forum_read_status = user._readstatus.serialize()
             user.save(update_fields=('forum_read_status',))
 
@@ -607,12 +620,15 @@ class Topic(models.Model):
                     .exclude(topic=self)
                     .aggregate(count=Max('id'))['count'])
             forum.save()
-
         # Clear self.last_post and self.first_post, so this posts can be deleted
         self.last_post = None
         self.first_post = None
         self.save()
-        self.posts.all().delete()
+
+        # We need to call the delete() method explicitly to delete attachments
+        # too. Otherwise only the database entries are deleted.
+        for post in self.posts.all():
+            post.delete()
 
         # Delete subscriptions
         ctype = ContentType.objects.get_for_model(Topic)
@@ -628,7 +644,7 @@ class Topic(models.Model):
             return href('forum', 'topic', self.slug, **query)
         if action in ('reply', 'delete', 'hide', 'restore', 'split', 'move',
                       'solve', 'unsolve', 'lock', 'unlock', 'report',
-                      'report_done', 'subscribe', 'unsubscribe',
+                      'subscribe', 'unsubscribe',
                       'first_unread', 'last_post'):
             return href('forum', 'topic', self.slug, action, **query)
 
@@ -689,7 +705,7 @@ class Topic(models.Model):
             return
         if not hasattr(user, '_readstatus'):
             user._readstatus = ReadStatus(user.forum_read_status)
-        if user._readstatus.mark(self):
+        if user._readstatus.mark(self, user):
             user.forum_read_status = user._readstatus.serialize()
             user.save(update_fields=('forum_read_status',))
 
@@ -829,6 +845,11 @@ class Post(models.Model, LockableObject):
         Note: The cache for all parent forums is explicitely deleted
               to update last/first post properly.
         """
+        # Delete attachments
+        if self.has_attachments:
+            for attachment in Attachment.objects.filter(post=self):
+                attachment.delete()
+
         if not self.topic:
             return super(Post, self).delete()
 
@@ -1171,6 +1192,9 @@ class Attachment(models.Model):
         Delete the attachment from the filesystem and
         also mark the database-object for deleting.
         """
+        thumb_path = self.get_thumbnail_path()
+        if thumb_path and path.exists(thumb_path):
+            os.remove(thumb_path)
         self.file.delete(save=False)
         super(Attachment, self).delete()
 
@@ -1224,6 +1248,15 @@ class Attachment(models.Model):
         with f.file as fobj:
             return fobj.read()
 
+    def get_thumbnail_path(self):
+        """
+        Returns the path to the thumbnail file.
+        """
+        thumbnail_path = self.file.name.encode('utf-8')
+        img_path = path.join(settings.MEDIA_ROOT,
+                             'forum/thumbnails/%s-%s' % (self.id, thumbnail_path.split('/')[-1]))
+        return get_thumbnail(self.file.path.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
+
     @property
     def html_representation(self):
         """
@@ -1256,10 +1289,7 @@ class Attachment(models.Model):
             This helper returns the thumbnail url of this attachment or None
             if there is no way to create a thumbnail.
             """
-            ff = self.file.name.encode('utf-8')
-            img_path = path.join(settings.MEDIA_ROOT,
-                'forum/thumbnails/%s-%s' % (self.id, ff.split('/')[-1]))
-            thumb = get_thumbnail(self.file.path.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
+            thumb = self.get_thumbnail_path()
             if thumb:
                 return href('media', 'forum/thumbnails/%s' % thumb.split('/')[-1])
             return thumb
@@ -1378,10 +1408,10 @@ class ReadStatus(object):
             return False
         return post_id in row[1]
 
-    def mark(self, item):
+    def mark(self, item, user):
         """
         Mark a forum or topic as read. Note that you must save the database
-        changes explicitely!
+        changes explicitly!
         """
         if self(item):
             return False
@@ -1391,29 +1421,33 @@ class ReadStatus(object):
         if isinstance(item, Forum):
             self.data[forum_id] = (post_id, set())
             for child in item.children:
-                self.mark(child)
+                self.mark(child, user)
             if item.parent_id:
                 parents_children = item.parent.children
                 unread_items = reduce(lambda a, b: a and b,
                                       [self(c) for c in parents_children], True)
                 if parents_children and unread_items:
-                    self.mark(item.parent)
+                    self.mark(item.parent, user)
             return True
 
         row = self.data.get(forum_id, (None, set()))
         row[1].add(post_id)
         children = item.forum.children
         if children:
-            unread_children = reduce(lambda a, b: a and b,
-                                     [self(c) for c in children], True)
-            if unread_children:
-                self.mark(item.forum)
-                return True
-        elif len(row[1]) > settings.FORUM_LIMIT_UNREAD:
+            return True
+        if len(row[1]) > settings.FORUM_LIMIT_UNREAD:
             r = sorted(row[1])
             row = (r[settings.FORUM_LIMIT_UNREAD // 2],
                 set(r[settings.FORUM_LIMIT_UNREAD // 2:]))
         self.data[forum_id] = row
+
+        # Mark the containing forum as read, if this was the last unread topic
+        topics = Topic.objects.filter(forum=item.forum)\
+                      .order_by('-sticky', '-last_post')[:settings.FORUM_LIMIT_UNREAD]
+        for topic in topics:
+            if not topic.get_read_status(user):
+                return True
+        self.mark(item.forum, user)
         return True
 
     def serialize(self):
@@ -1425,7 +1459,7 @@ def mark_all_forums_read(user):
     if user.is_anonymous():
         return
     for forum in Forum.objects.filter(parent=None):
-        user._readstatus.mark(forum)
+        user._readstatus.mark(forum, user)
     user.forum_read_status = user._readstatus.serialize()
     user.save(update_fields=('forum_read_status',))
 

@@ -1249,7 +1249,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'text': 'edited text',
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
-        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
         self.assertPreviewInHTML('edited text', response)
 
         # Test send
@@ -1272,7 +1272,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'text': 'edited text',
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
-        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
         self.assertPreviewInHTML('edited text', response)
 
         # Test send
@@ -1300,7 +1300,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'text': 'edited text',
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
-        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
         self.assertPreviewInHTML('edited text', response)
 
         # Test send
@@ -1327,7 +1327,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             'text': 'edited text',
         }
         response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
-        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
         self.assertPreviewInHTML('edited text', response)
 
         # Test send
@@ -1370,7 +1370,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(PollOption.objects.count(), 2)
         pattern = '<li>%(q)s<button name="delete_poll" value="%(pk)d">Delete</button></li>'
         self.assertInHTML(pattern % {'q': poll2.question, 'pk': poll2.pk}, response.content, count=1)
-        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title">', response.content)
+        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
 
         postdata = {
             'title': 'edited title 2',
@@ -1384,7 +1384,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertEqual(Post.objects.count(), 1)
         self.assertEqual(Poll.objects.count(), 0)
         self.assertEqual(PollOption.objects.count(), 0)
-        self.assertInHTML('<input id="id_title" name="title" size="60" type="text" value="edited title 2">', response.content)
+        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title 2">', response.content)
 
         postdata = {
             'title': 'edited title 3',
@@ -1409,43 +1409,42 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
 
 
 class TestWelcomeMessageView(TestCase):
-    def test_post_accept(self):
-        user = User.objects.create(username='testuser',email='testuser')
-        forum = Forum.objects.create(slug='f-slug', welcome_title='test')
-        request = RequestFactory().post('/fake/', {'accept': True})
-        request.user = user
 
-        with patch.object(views.WelcomeMessageView, 'has_permission') as mock_has_permission:
-            mock_has_permission.return_value = True
-            response = views.WelcomeMessageView.as_view()(request, slug='f-slug')
+    def setUp(self):
+        super(TestWelcomeMessageView, self).setUp()
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.forum_welcome = Forum.objects.create(slug='f-slug-welcome', welcome_title='test')
+        self.forum_no_welcome = Forum.objects.create(slug='f-slug-no-welcome')
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        for forum in (self.forum_welcome, self.forum_no_welcome):
+            assign_perm('forum.view_forum', registered_group, forum)
+
+
+    def test_post_accept(self):
+        request = RequestFactory().post('/fake/', {'accept': True})
+        request.user = self.user
+
+        response = views.WelcomeMessageView.as_view()(request, slug='f-slug-welcome')
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], url_for(forum))
-        self.assertTrue(forum.welcome_read_users.filter(pk=user.pk).exists())
+        self.assertEqual(response['Location'], url_for(self.forum_welcome))
+        self.assertTrue(self.forum_welcome.welcome_read_users.filter(pk=self.user.pk).exists())
 
     def test_post_not_deny(self):
-        user = User.objects.create(username='testuser',email='testuser')
-        forum = Forum.objects.create(slug='f-slug', welcome_title='test')
         request = RequestFactory().post('/fake/', {})
-        request.user = user
+        request.user = self.user
 
-        with patch.object(views.WelcomeMessageView, 'has_permission') as mock_has_permission:
-            mock_has_permission.return_value = True
-            response = views.WelcomeMessageView.as_view()(request, slug='f-slug')
+        response = views.WelcomeMessageView.as_view()(request, slug='f-slug-welcome')
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], href('forum'))
-        self.assertFalse(forum.welcome_read_users.filter(pk=user.pk).exists())
+        self.assertFalse(self.forum_welcome.welcome_read_users.filter(pk=self.user.pk).exists())
 
     def test_forum_has_no_welcome_message(self):
-        user = User.objects.create(username='testuser',email='testuser')
-        forum = Forum.objects.create(slug='f-slug')
         request = RequestFactory().get('/fake/')
-        request.user = user
+        request.user = self.user
 
-        with patch.object(views.WelcomeMessageView, 'has_permission') as mock_has_permission:
-            mock_has_permission.return_value = True
-            with self.assertRaises(Http404):
-                views.WelcomeMessageView.as_view()(request, slug='f-slug')
+        with self.assertRaises(Http404):
+            views.WelcomeMessageView.as_view()(request, slug='f-slug-no-welcome')
 
-        self.assertFalse(forum.welcome_read_users.filter(pk=user.pk).exists())
+        self.assertFalse(self.forum_no_welcome.welcome_read_users.filter(pk=self.user.pk).exists())

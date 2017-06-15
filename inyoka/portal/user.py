@@ -40,6 +40,9 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 from inyoka.utils.user import gen_activation_key, is_valid_username
 
+from django.conf import settings as inyoka_settings
+import os
+
 
 class UserBanned(Exception):
     """
@@ -295,7 +298,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     jabber = models.CharField(ugettext_lazy(u'Jabber'), max_length=200, blank=True)
     signature = InyokaMarkupField(verbose_name=ugettext_lazy(u'Signature'), blank=True)
     location = models.CharField(ugettext_lazy(u'Residence'), max_length=200, blank=True)
-    gpgkey = models.CharField(ugettext_lazy(u'GPG key'), max_length=255, blank=True)
+    gpgkey = models.CharField(ugettext_lazy(u'GPG fingerprint'), max_length=255, blank=True)
     website = models.URLField(ugettext_lazy(u'Website'), blank=True)
     launchpad = models.CharField(ugettext_lazy(u'Launchpad username'), max_length=50, blank=True)
     settings = JSONField(ugettext_lazy(u'Settings'), default={})
@@ -310,9 +313,9 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                                     blank=True, null=True, max_length=200)
 
     # member icon
-    icon = models.ImageField(ugettext_lazy(u'Team icon'),
-                             upload_to='portal/team_icons',
-                             blank=True, null=True)
+    icon = models.FilePathField(ugettext_lazy(u'Group icon'),
+                            path=os.path.join(inyoka_settings.MEDIA_ROOT,'portal/team_icons'),
+                            match='.*\.png', blank=True, null=True)
 
     def save(self, *args, **kwargs):
         """
@@ -423,6 +426,10 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     @property
     def jabber_url(self):
         return u'xmpp:%s' % escape(self.jabber)
+
+    @property
+    def icon_url(self):
+        return href('media', self.icon)
 
     def get_absolute_url(self, action='show', *args, **query):
         if action == 'show':

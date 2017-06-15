@@ -1,0 +1,174 @@
+# German (Switzerland) translations for Inyoka Project.
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
+#
+# Translators:
+# Christian, 2017
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017
+# Lyra, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version:  Inyoka\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-03-25 00:12+0100\n"
+"PO-Revision-Date: 2017-03-24 21:26+0000\n"
+"Last-Translator: Christian\n"
+"Language: de_CH\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/inyokaproject/inyoka/language/de_CH/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+msgid "Apache Config (.htaccess)"
+msgstr ""
+
+msgid "Author"
+msgstr "Outor"
+
+msgid "Bash"
+msgstr "Bash"
+
+msgid "Batch (.bat)"
+msgstr "Batch (.bat)"
+
+msgid "C"
+msgstr "C"
+
+msgid "C#"
+msgstr "C#"
+
+msgid "C++"
+msgstr "C++"
+
+msgid "CSS"
+msgstr "CSS"
+
+msgid "D"
+msgstr "D"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Django / Jinja Templates"
+msgstr ""
+
+msgid "Entries"
+msgstr "Yträg"
+
+msgid "Entry"
+msgstr "Ytrag"
+
+msgid "Genshi Templates"
+msgstr ""
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "Haskell"
+msgstr "Haskell"
+
+msgid "IRC Logs"
+msgstr ""
+
+msgid "JSP"
+msgstr "JSP"
+
+msgid "Java"
+msgstr "Java"
+
+msgid "JavaScript"
+msgstr "JavaScript"
+
+msgid "Language"
+msgstr "Sprach"
+
+msgid "Lua"
+msgstr "Lua"
+
+msgid "Mako Templates"
+msgstr ""
+
+msgid "MiniD"
+msgstr "MiniD"
+
+msgid "Myghty Templates"
+msgstr ""
+
+msgid "OCaml"
+msgstr ""
+
+msgid "PHP"
+msgstr "PHP"
+
+#, python-format
+msgid "Paste number %(id)d could not be found"
+msgstr "Dr Paste mit dr Nummerä %(id)d isch nid gfungä wordä"
+
+msgid "Perl"
+msgstr "Perl"
+
+msgid "Plain text"
+msgstr "Klartexscht"
+
+msgid "Python"
+msgstr "Python"
+
+msgid "Python Console Sessions"
+msgstr ""
+
+msgid "Python Tracebacks"
+msgstr ""
+
+msgid "Ruby"
+msgstr "Ruby"
+
+msgid "SQL"
+msgstr "SQL"
+
+msgid "Scheme"
+msgstr ""
+
+msgid "Smarty"
+msgstr ""
+
+msgid "SquidConf"
+msgstr "SquidConf"
+
+msgid "TeX / LaTeX"
+msgstr "TeX / LaTeX"
+
+msgid "The deletion was canceled"
+msgstr "Ds Löschä isch abbrochä wordä"
+
+msgid "The entry in the pastebin was deleted."
+msgstr "Dr Ytrag im Pastebin isch glöschä wordä."
+
+msgid "Title"
+msgstr "Titu"
+
+msgid "Unified Diff"
+msgstr ""
+
+msgid "Untitled"
+msgstr "Ohni Titu"
+
+msgid "Vim Scripts"
+msgstr ""
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Your entry was successfully saved. You can use the following code to include it in your post:"
+msgstr "Di Ytrag isch erfougrych gspycheret wordä. Du chasch dr fougendi Code i Dim Bytrag vrwändä:"
+
+msgid "eRuby / rhtml"
+msgstr "eRuby / rhtml"
+
+msgid "reStructuredText"
+msgstr "reStructuredText"
+
+msgid "sources.list"
+msgstr ""
+

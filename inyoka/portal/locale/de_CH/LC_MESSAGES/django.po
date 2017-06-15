@@ -1,0 +1,759 @@
+# German (Switzerland) translations for Inyoka Project.
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
+#
+# Translators:
+# Christian, 2017
+# Lyra, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version:  Inyoka\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-03-25 00:12+0100\n"
+"PO-Revision-Date: 2017-03-24 21:26+0000\n"
+"Last-Translator: Christian\n"
+"Language: de_CH\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/inyokaproject/inyoka/language/de_CH/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+#, python-format
+msgid "%(sitename)s - Message from %(username)s"
+msgstr "%(sitename)s - Nachricht vo %(username)s"
+
+#, python-format
+msgid "%(sitename)s – Activation of the user “%(name)s”"
+msgstr ""
+
+#, python-format
+msgid "%(sitename)s – Confirm email address"
+msgstr ""
+
+#, python-format
+msgid "%(sitename)s – Email address changed"
+msgstr ""
+
+#, python-format
+msgid "A message was deleted."
+msgid_plural "%(n)d messages were deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "A subscribed topic was moved"
+msgstr ""
+
+msgid "A subscribed topic was split"
+msgstr ""
+
+#, python-format
+msgid "A subscription was deleted."
+msgid_plural "%(n)d subscriptions were deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "A subscription was marked as read."
+msgid_plural "%(n)d subscriptions were marked as read."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "A user with this name already exists."
+msgstr "Ä angeri Benutzr mit däm Namä exischtiert bereits."
+
+msgid "Activation status"
+msgstr ""
+
+msgid "All"
+msgstr "Aui"
+
+msgid "All types"
+msgstr ""
+
+msgid "An email with further instructions was sent to you."
+msgstr ""
+
+msgid "Another file with this name already exists. Please edit this file."
+msgstr ""
+
+msgid "Archive"
+msgstr "Archiv"
+
+msgid "Archive it"
+msgstr ""
+
+msgid "Attachment preview"
+msgstr ""
+
+msgid "Auth"
+msgstr ""
+
+msgid "Authenticate"
+msgstr ""
+
+msgid "Avatar"
+msgstr ""
+
+msgid "Banned until"
+msgstr ""
+
+msgid "Blocked hosts for email addresses"
+msgstr ""
+
+msgid "CAPTCHA"
+msgstr "CAPTCHA"
+
+msgid "Cancel"
+msgstr "Abbrächä"
+
+msgid "Category"
+msgstr "Kategory"
+
+msgid "Choose this if the file should appear as a article or category icon possibility"
+msgstr ""
+
+msgid "Confirm new password"
+msgstr ""
+
+msgid "Confirm password"
+msgstr ""
+
+msgid "Content"
+msgstr ""
+
+msgid "Coordinates (latitude, longitude)"
+msgstr ""
+
+msgid "Date"
+msgstr "Datum"
+
+#, python-format
+msgid "Deactivation of your account “%(name)s” on %(sitename)s"
+msgstr "Deaktivier mys Konto „%(name)s“ uf  %(sitename)s"
+
+msgid "Default text of new wiki pages"
+msgstr "Standard Texscht für nöi Sytä"
+
+msgid "Delete"
+msgstr "Löschä"
+
+msgid "Description about Ikhaya that will be used on the start page and in the feed aggregations."
+msgstr ""
+
+msgid "Description about the planet that will be used on the planet page and in the feed aggregations."
+msgstr ""
+
+msgid "Description of the link"
+msgstr "Beschrybig vom Link"
+
+msgid "Display countdown"
+msgstr ""
+
+msgid "Do you really want to delete the message?"
+msgstr ""
+
+msgid "Do you want to archive the message?"
+msgstr ""
+
+msgid "Do you want to restore the message?"
+msgstr ""
+
+msgid "E-mail"
+msgstr "E-Mail"
+
+msgid "Email"
+msgstr "E-Mail"
+
+msgid "Email address"
+msgstr "E-Mail-Adrässä"
+
+msgid "File"
+msgstr ""
+
+msgid "Folder"
+msgstr ""
+
+msgid "Forum"
+msgstr "Forum"
+
+#, python-format
+msgid "From now on you won’t be notified anymore about activities of “%(username)s”."
+msgstr ""
+
+msgid "Full article"
+msgstr "Gsammtä Artiku"
+
+msgid "Full path to the target link page"
+msgstr ""
+
+msgid "GPG key"
+msgstr "GPG-Schlüssu"
+
+msgid "Global Message"
+msgstr "Globali Nachrichtä"
+
+msgid "Global team icon"
+msgstr "Globali Team-Biudli"
+
+msgid "Group icon"
+msgstr ""
+
+msgid "Groupname"
+msgstr ""
+
+msgid "Groups"
+msgstr "Gruppä"
+
+msgid "Hide avatars"
+msgstr ""
+
+msgid "Hide online status"
+msgstr ""
+
+msgid "Hide signatures"
+msgstr ""
+
+msgid "Highlight search"
+msgstr ""
+
+msgid "I received a message"
+msgstr ""
+
+msgid "Identifier"
+msgstr "Bezeichnr"
+
+msgid "If not given, the last changes will be displayed."
+msgstr ""
+
+msgid "Ikhaya"
+msgstr "Ikhaya"
+
+msgid "Ikhaya article"
+msgstr "Ikhaya Artiku"
+
+msgid "Image URL"
+msgstr ""
+
+msgid "Inbox"
+msgstr "Poschtygang"
+
+msgid "Information page about new wiki pages"
+msgstr ""
+
+msgid "Information page to which a “create” link should redirect to."
+msgstr ""
+
+msgid "Invalid Permissions specified."
+msgstr ""
+
+msgid "Invalid groups specified."
+msgstr ""
+
+msgid "Invalid substitution pattern."
+msgstr ""
+
+msgid "Inyoka syntax required."
+msgstr ""
+
+msgid "Is Ikhaya icon"
+msgstr ""
+
+msgid "Jabber"
+msgstr "Jabber"
+
+msgid "Keep logged in"
+msgstr ""
+
+msgid "Key"
+msgstr "Schlüssu"
+
+msgid "Last read post"
+msgstr ""
+
+msgid "Launchpad username"
+msgstr "Launchpad-Namä"
+
+msgid "License note"
+msgstr ""
+
+msgid "Location of new wiki pages"
+msgstr ""
+
+msgid "Mail"
+msgstr "E-Mail"
+
+msgid "Mark all forums as “read” on logout"
+msgstr ""
+
+msgid "Maximum number of lines in signature"
+msgstr ""
+
+msgid "Maximum signature length"
+msgstr ""
+
+msgid "Member since"
+msgstr "Mitglid syt"
+
+msgid "Message"
+msgstr "Nachrichtä"
+
+msgid "New password"
+msgstr "Nöis Passwort"
+
+#, python-format
+msgid "New private message from %(username)s: %(subject)s"
+msgstr "Nöii privati Nachricht vom %(username)s: %(subject)s"
+
+msgid "New user name '{newname}' contains invalid characters. Skipping..."
+msgstr ""
+
+msgid "No JSON file specified. Aborting..."
+msgstr ""
+
+msgid "No effect if “attachment preview” is disabled"
+msgstr ""
+
+msgid "Notifications on topics with a specific Ubuntu version"
+msgstr ""
+
+msgid "Notify me if"
+msgstr ""
+
+msgid "Notify via"
+msgstr ""
+
+msgid "Number of entries in the feed"
+msgstr ""
+
+msgid "Old password"
+msgstr ""
+
+msgid "Only introduction"
+msgstr ""
+
+msgid "Only title"
+msgstr ""
+
+msgid "Page name"
+msgstr ""
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Pastebin"
+msgstr "Ablag"
+
+msgid "Picture preview"
+msgstr ""
+
+msgid "Planet"
+msgstr "Planet"
+
+msgid "Please choose"
+msgstr ""
+
+msgid "Please enter at least one receiver."
+msgstr ""
+
+msgid "Please note the details on the maximum size below."
+msgstr ""
+
+msgid "Please select a forum"
+msgstr ""
+
+msgid "Please select the groups for this user."
+msgstr ""
+
+msgid "Portal"
+msgstr "Portau"
+
+msgid "Read"
+msgstr "Läsä"
+
+msgid "Read posts"
+msgstr "Läsä Byträg"
+
+msgid "Release date"
+msgstr ""
+
+msgid "Renaming users complete."
+msgstr ""
+
+msgid "Renaming {oldname} to {newname}..."
+msgstr ""
+
+msgid "Residence"
+msgstr "Wohnort"
+
+msgid "Restore"
+msgstr "Wiederherschteuä"
+
+msgid "Send"
+msgstr "Sändä"
+
+msgid "Separate multiple groups by semicolon"
+msgstr ""
+
+msgid "Separate multiple names by semicolon"
+msgstr ""
+
+msgid "Settings"
+msgstr "Ystelligä"
+
+msgid "Signature"
+msgstr "Signatur"
+
+msgid "Static file"
+msgstr "Statischi Dateiä"
+
+msgid "Static files"
+msgstr "Statischi Dateiä"
+
+msgid "Static page"
+msgstr "Statischi Sytä"
+
+msgid "Static pages"
+msgstr "Statischi Sytä"
+
+msgid "Styles"
+msgstr ""
+
+msgid "Subject"
+msgstr "Beträff"
+
+msgid "Subscribe to a topic when replying"
+msgstr ""
+
+msgid "Team affiliation / Member title"
+msgstr ""
+
+msgid "Text"
+msgstr "Texscht"
+
+#, python-format
+msgid "The account of “%(username)s” was already activated."
+msgstr ""
+
+#, python-format
+msgid "The account “%(name)s” was already reactivated."
+msgstr ""
+
+#, python-format
+msgid "The account “%(name)s” was reactivated. Please use the password recovery function to set a new password."
+msgstr ""
+
+#, python-format
+msgid "The complete URL to the countdown banner. Use <code>%(remaining)s</code> to be replaced by the remaining days or <code>soon</code>."
+msgstr ""
+
+msgid "The download link for the start page"
+msgstr ""
+
+#, python-format
+msgid "The email to “%(username)s” was sent successfully."
+msgstr ""
+
+msgid "The email with the activation key was resent."
+msgstr ""
+
+msgid "The entered data is invalid or has expired."
+msgstr ""
+
+msgid "The entered password did not match your old password."
+msgstr ""
+
+msgid "The entered password is wrong."
+msgstr ""
+
+#, python-format
+msgid "The given email address is already in use. If you forgot your password, you can <a href=\"%(link)s\">restore it</a>."
+msgstr ""
+
+msgid "The group name contains invalid chars"
+msgstr ""
+
+#, python-format
+msgid "The group “%(group)s” does not exist."
+msgstr ""
+
+#, python-format
+msgid "The group “%s” was changed successfully."
+msgstr ""
+
+#, python-format
+msgid "The group “%s” was created successfully."
+msgstr ""
+
+#, python-format
+msgid "The groups of “%(username)s” were successfully changed."
+msgstr ""
+
+msgid "The message was deleted."
+msgstr ""
+
+msgid "The message was moved in the trash."
+msgstr ""
+
+msgid "The message was restored."
+msgstr ""
+
+msgid "The message was sent successfully."
+msgstr ""
+
+msgid "The message will be send as “plain text”. Your username will be noted as sender."
+msgstr ""
+
+msgid "The messages was moved into you archive."
+msgstr ""
+
+msgid "The number will be round off to keep the server load low."
+msgstr ""
+
+#, python-format
+msgid "The page “%(page)s” was changed successfully."
+msgstr ""
+
+#, python-format
+msgid "The page “%(page)s” was created successfully."
+msgstr ""
+
+msgid "The password must match the password confirmation."
+msgstr ""
+
+msgid "The point of time is in the past."
+msgstr ""
+
+#, python-format
+msgid "The profile of “%(username)s” was changed successfully"
+msgstr ""
+
+#, python-format
+msgid "The setting of “%(username)s” were successfully changed."
+msgstr ""
+
+#, python-format
+msgid "The state of “%(username)s” was successfully changed."
+msgstr ""
+
+msgid "The stylesheet was saved successfully."
+msgstr ""
+
+msgid "The user is not banned"
+msgstr ""
+
+msgid "The user map was temporarily disabled."
+msgstr ""
+
+msgid "The user will be send a confirmation mail and set to “inactive”."
+msgstr ""
+
+#, python-format
+msgid "The user “%(username)s” does not exist."
+msgstr ""
+
+#, python-format
+msgid "The user “%(username)s” was successfully created. You can now edit more details."
+msgstr ""
+
+msgid "The username is already in use. Please choose another one."
+msgstr ""
+
+#, python-format
+msgid "The username “%(username)s” was successfully registered. An email with the activation key was sent to “%(email)s”."
+msgstr ""
+
+msgid "This e-mail address is used by another user."
+msgstr ""
+
+msgid "This email address is already in use."
+msgstr ""
+
+msgid "This event is not visible for regular users."
+msgstr "Die Verahstautigä isch für normali Benutzr unsichtbar."
+
+msgid "This field is required"
+msgstr ""
+
+msgid "This is the welcome message displayed on the main page."
+msgstr ""
+
+msgid "This message will displayed on every page in the header. To disable it, leave the field empty."
+msgstr ""
+
+msgid "This text appears above the wiki editor."
+msgstr ""
+
+msgid "This username is not available, please try another one."
+msgstr ""
+
+msgid "Timezone"
+msgstr ""
+
+msgid "Title"
+msgstr "Titu"
+
+msgid "To"
+msgstr "A"
+
+msgid "Topic"
+msgstr "Thema"
+
+msgid "Trash"
+msgstr "Küdrchübu"
+
+msgid "Use Gravatar"
+msgstr ""
+
+msgid "User '{oldname}' does not exist. Skipping..."
+msgstr ""
+
+msgid "User name '{newname}' already exists. Skipping..."
+msgstr ""
+
+msgid "User registration is currently disabled."
+msgstr ""
+
+msgid "User was already notified"
+msgstr ""
+
+msgid "Username"
+msgstr "Benutzrnamä"
+
+msgid "Username or email address"
+msgstr ""
+
+msgid "Users cannot use email addresses from these hosts to register an account."
+msgstr ""
+
+#, python-format
+msgid "We need your email address to send you a new password if you forgot it. It is not visible to other users. For more information, check out our <a href=\"%(link)s\">privacy policy</a>."
+msgstr ""
+
+msgid "Website"
+msgstr "Websytä"
+
+msgid "Welcome Message"
+msgstr "Wiukommensnachricht"
+
+msgid "Wiki helptext"
+msgstr ""
+
+msgid "Wiki page"
+msgstr "Wikisytä"
+
+msgid "Will be used to generate the URL. Cannot be changed later."
+msgstr ""
+
+msgid "You are already logged in."
+msgstr ""
+
+msgid "You cannot enter an activation key when you are logged in."
+msgstr ""
+
+msgid "You cannot reactivate an account while you are logged in."
+msgstr ""
+
+msgid "You cannot send messages to groups."
+msgstr ""
+
+msgid "You cannot send messages to system users."
+msgstr ""
+
+msgid "You cannot send messages to this user."
+msgstr ""
+
+msgid "You cannot send messages to yourself."
+msgstr ""
+
+msgid "You have successfully logged in."
+msgstr ""
+
+msgid "You have successfully logged out."
+msgstr ""
+
+#, python-format
+msgid "You need to <a href=\"%(link)s\">enter a valid jabber address</a> to use our jabber service."
+msgstr ""
+
+msgid "You need to be logged in before you can continue."
+msgstr ""
+
+msgid "You need to enter a email address"
+msgstr ""
+
+msgid "You need to enter a password and a password confirmation."
+msgstr ""
+
+msgid "You need to read and accept our terms and conditions."
+msgstr ""
+
+msgid "You successfully changed your password and are now able to login."
+msgstr ""
+
+#, python-format
+msgid "You were automatically banned because we suspect you are sending spam. If this ban is not justified, contact us at %(email)s"
+msgstr ""
+
+msgid "You were not logged in."
+msgstr ""
+
+#, python-format
+msgid "You will now be notified about activities of “%(username)s”."
+msgstr ""
+
+msgid "Your account was anonymized."
+msgstr ""
+
+msgid "Your account was deactivated."
+msgstr ""
+
+msgid "Your account was successfully activated. You can now login."
+msgstr ""
+
+msgid "Your activation key is invalid."
+msgstr ""
+
+msgid "Your email address was reset."
+msgstr ""
+
+msgid "Your new email address was saved."
+msgstr ""
+
+msgid "Your password was changed successfully."
+msgstr ""
+
+msgid "Your profile information were updated successfully."
+msgstr ""
+
+msgid "Your settings have been changed successfully."
+msgstr ""
+
+msgid "Your settings were successfully changed."
+msgstr ""
+
+msgid "Your user name on {sitename} has been changed to “{name}”"
+msgstr ""
+
+msgid "Your username contains invalid characters. Only alphanumeric chars and “-” are allowed."
+msgstr ""
+
+msgid "You’ve been sent an email to confirm your new email address."
+msgstr ""
+
+msgid "active"
+msgstr "Aktiv"
+
+msgid "banned"
+msgstr ""
+
+msgid "deleted himself"
+msgstr ""
+
+msgid "leave empty to ban permanent"
+msgstr ""
+
+msgid "not yet activated"
+msgstr ""
+

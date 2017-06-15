@@ -10,7 +10,10 @@
     :license: BSD, see LICENSE for more details.
 """
 import time
-from datetime import date, datetime, timedelta
+import calendar
+from datetime import date, time, datetime, timedelta
+from icalendar import Calendar as iCal, Event as iEvent
+import pytz
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -106,6 +109,7 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_random_password
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
+from inyoka.utils.dates import date_time_to_datetime
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.wiki.utils import quote_text
 
@@ -431,12 +435,7 @@ def profile(request, username):
     """Show the user profile if the user is logged in."""
 
     user = User.objects.get(username__iexact=username)
-
-    if request.user.has_perm('portal.change_user'):
-        groups = user.groups.all()
-    else:
-        groups = ()
-
+    groups = user.groups.all()
     subscribed = Subscription.objects.user_subscribed(request.user, user)
 
     return {
@@ -651,13 +650,13 @@ def usercp_password(request):
     }
 
 
-class UserCPSubscriptions(generic.FilterMixin, generic.ListView):
+class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
     """This page shows all subscriptions for the current user and allows
     him to manage them.
     """
     template_name = 'portal/usercp/subscriptions.html'
     columns = ('notified',)
-    default_column = '-notified'
+    order_by = ['-notified', '-id']
     context_object_name = 'subscriptions'
     base_link = href('portal', 'usercp', 'subscriptions')
     filtersets = [SubscriptionFilter]
@@ -1467,10 +1466,54 @@ def calendar_detail(request, slug):
         raise Http404()
     return {
         'google_link': google_calendarize(event),
+        'ical_link': href('portal', 'calendar', slug, 'ics'),
         'event': event,
         'MONTHS': MONTHS,
         'WEEKDAYS': WEEKDAYS,
     }
+
+
+def calendar_ical(request, slug):
+
+    try:
+        event = Event.objects.get(slug=slug)
+        if not event.visible and not request.user.has_perm('portal.change_event'):
+            raise Http404()
+
+    except Event.DoesNotExist:
+        raise Http404()
+
+
+    cal = iCal()
+    tz = pytz.timezone(settings.TIME_ZONE)
+
+    start = date_time_to_datetime(event.date, event.time or time())
+
+    if event.enddate:
+        end = date_time_to_datetime(event.enddate, event.endtime or time())
+    else:
+        end = start
+
+    ievent = iEvent()
+    ievent.add('summary', event.name)
+    ievent.add('uid', slug)
+    ievent.add('dtstamp', datetime.utcnow())
+    ievent.add('dtstart', start)
+    ievent.add('dtend', end)
+    if event.description:
+        ievent.add('description', event.description)
+
+    location = u'%s%s%s' % ((event.location and event.location + ', ' or ''), (event.location_town and event.location_town + ', ' or ''), (event.simple_coordinates != 'None;None' and event.simple_coordinates + ', ' or ''))
+
+    ievent.add('location', location.rstrip(', '))
+
+    cal.add_component(ievent)
+
+    response = HttpResponse(content_type='text/calendar')
+    response['Content-Disposition'] = 'attachment; filename="calendar.ics"'
+    response.write(cal.to_ical())
+
+    return response
 
 
 @templated('portal/confirm.html')

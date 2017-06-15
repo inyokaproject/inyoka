@@ -1,14 +1,14 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2016 Inyoka Team (see AUTHORS)
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.14.3\n"
+"Project-Id-Version: Inyoka Project v0.15.3\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-10-15 17:32+0200\n"
+"POT-Creation-Date: 2017-05-01 07:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -72,9 +72,6 @@ msgstr ""
 msgid "An email with further instructions was sent to you."
 msgstr ""
 
-msgid "An email with the activation key was sent to you."
-msgstr ""
-
 msgid "Another file with this name already exists. Please edit this file."
 msgstr ""
 
@@ -85,6 +82,9 @@ msgid "Archive it"
 msgstr ""
 
 msgid "Attachment preview"
+msgstr ""
+
+msgid "Auth"
 msgstr ""
 
 msgid "Authenticate"
@@ -185,13 +185,16 @@ msgstr ""
 msgid "Full path to the target link page"
 msgstr ""
 
-msgid "GPG key"
+msgid "GPG fingerprint"
 msgstr ""
 
 msgid "Global Message"
 msgstr ""
 
 msgid "Global team icon"
+msgstr ""
+
+msgid "Group icon"
 msgstr ""
 
 msgid "Groupname"
@@ -301,9 +304,6 @@ msgid "New private message from %(username)s: %(subject)s"
 msgstr ""
 
 msgid "New user name '{newname}' contains invalid characters. Skipping..."
-msgstr ""
-
-msgid "No JSON file specified, using stdout..."
 msgstr ""
 
 msgid "No JSON file specified. Aborting..."
@@ -426,9 +426,6 @@ msgstr ""
 msgid "Team affiliation / Member title"
 msgstr ""
 
-msgid "Team icon"
-msgstr ""
-
 msgid "Text"
 msgstr ""
 
@@ -442,10 +439,6 @@ msgstr ""
 
 #, python-format
 msgid "The account “%(name)s” was reactivated. Please use the password recovery function to set a new password."
-msgstr ""
-
-#, python-format
-msgid "The account “%(username)s” was already activated."
 msgstr ""
 
 #, python-format
@@ -572,6 +565,9 @@ msgid "This e-mail address is used by another user."
 msgstr ""
 
 msgid "This email address is already in use."
+msgstr ""
+
+msgid "This event is not visible for regular users."
 msgstr ""
 
 msgid "This field is required"

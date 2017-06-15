@@ -145,12 +145,12 @@ class PageManager(models.Manager):
     def exists_normalized(self, name):
         """Check if a page with that name exists with a normalized name"""
         unicode_normalization_form = "NFD"
-        
+
         try:
             normalized_name = normalize(unicode_normalization_form, unicode(name.lower(), "utf-8")).encode('ascii', 'ignore')
         except TypeError:
             normalized_name = normalize(unicode_normalization_form, name.lower()).encode('ascii', 'ignore')
-        
+
         for item in self.get_page_list():
             normalized_item = normalize(unicode_normalization_form, item.lower()).encode('ascii', 'ignore')
             if normalized_name.replace(' ', '_') == normalized_item.replace(' ', '_'):
@@ -591,7 +591,7 @@ class RevisionManager(models.Manager):
         if page_name is not None:
             cache_key = 'wiki/latest_revisions/%s' % \
                 normalize_pagename(page_name)
-            revision_ids = revision_ids.filter(page__name__exact=page_name)
+            revision_ids = revision_ids.filter(page__name__iexact=page_name)
         max_size = max(settings.AVAILABLE_FEED_COUNTS['wiki_feed'])
         # Force evaluation to not cause a subselect in the next select.
         revision_ids = list(revision_ids.values_list('pk',

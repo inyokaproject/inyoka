@@ -187,8 +187,6 @@ class DeleteView(PermissionRequiredMixin, BaseDeleteView):
 
 
 class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
-    default_column = 'id'
-    columns = ['id']
     paginate_by = 25
     base_link = None
 
@@ -213,13 +211,7 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
         """
         return kwargs
 
-    def get(self, request, *args, **context):
-        queryset = self.get_queryset()
-        table = Sortable(queryset, request.GET, self.default_column,
-                         columns=self.columns)
-
-        queryset = table.get_queryset()
-        context['table'] = table
+    def prepare_context(self, context, queryset):
         context['pagination'] = pagination = self.get_custom_pagination(queryset)
         context['object_list'] = queryset = pagination.get_queryset()
         context['paginate_by'] = self.get_paginate_by(queryset)
@@ -229,10 +221,34 @@ class BaseListView(TemplateResponseMixin, list.MultipleObjectMixin, base.View):
         if context_object_name is not None:
             context[context_object_name] = queryset
 
-        self.object_list = queryset
+        return context, queryset
+
+
+class SortableListView(BaseListView):
+    columns = ['id']
+    default_column = 'id'
+
+    def get(self, request, *args, **context):
+        queryset = self.get_queryset()
+        table = Sortable(queryset, request.GET, self.default_column,
+                         columns=self.columns)
+
+        queryset = table.get_queryset()
+        context['table'] = table
+        context, self.object_list = self.prepare_context(context, queryset)
 
         return self.render_to_response(context)
 
 
-class ListView(PermissionRequiredMixin, BaseListView):
+class OrderedListView(PermissionRequiredMixin, BaseListView):
+    order_by = ['id']
+
+    def get(self, request, *args, **context):
+        queryset = self.get_queryset().order_by(*self.order_by)
+        context, self.object_list = self.prepare_context({}, queryset)
+
+        return self.render_to_response(context)
+
+
+class ListView(PermissionRequiredMixin, SortableListView):
     pass

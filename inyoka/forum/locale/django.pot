@@ -1,14 +1,14 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2016 Inyoka Team (see AUTHORS)
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.14.3\n"
+"Project-Id-Version: Inyoka Project v0.15.3\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-10-15 17:32+0200\n"
+"POT-Creation-Date: 2017-05-01 07:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -226,6 +226,9 @@ msgstr ""
 msgid "Support group"
 msgstr ""
 
+msgid "The First post of the new topic must not be hidden."
+msgstr ""
+
 #, python-format
 msgid "The article “%(article)s” does not exist. However, you can create it now."
 msgstr ""
@@ -344,9 +347,6 @@ msgstr ""
 msgid "This topic was already created. Please think about editing your topic before creating a new one."
 msgstr ""
 
-msgid "You are not allowed to mark this topic as \"important\"."
-msgstr ""
-
 msgid "This topic was already reported."
 msgstr ""
 
@@ -361,6 +361,9 @@ msgid "Topics by “%(user)s”"
 msgstr ""
 
 msgid "Ubuntu"
+msgstr ""
+
+msgid "Ubuntu Budgie"
 msgstr ""
 
 msgid "Ubuntu GNOME"
@@ -395,6 +398,12 @@ msgstr ""
 msgid "Xubuntu"
 msgstr ""
 
+msgid "You are editing a post on a locked topic. Please note that this may be considered as impolite!"
+msgstr ""
+
+msgid "You are not allowed to mark this topic as \"important\"."
+msgstr ""
+
 msgid "You are replying to a locked topic. Please note that this may be considered as impolite!"
 msgstr ""
 
@@ -415,6 +424,9 @@ msgid "You cannot reply to this topic because it was locked."
 msgstr ""
 
 msgid "You cannot set this topic as target."
+msgstr ""
+
+msgid "You don't have moderation rights for the seleted topic."
 msgstr ""
 
 msgid "You must enter a text in order to set the welcome message"

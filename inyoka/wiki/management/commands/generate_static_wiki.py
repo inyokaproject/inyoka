@@ -18,7 +18,7 @@ from hashlib import sha1
 from itertools import izip
 from optparse import make_option
 from os import chmod, mkdir, path, unlink, walk
-from re import compile, escape
+from re import compile, escape, sub
 from shutil import copy, copytree, rmtree
 
 from bs4 import BeautifulSoup
@@ -31,9 +31,9 @@ from django.utils.translation import activate
 from werkzeug import url_unquote
 
 from inyoka.portal.user import User
+from inyoka.portal.models import StaticPage
 from inyoka.utils.http import templated
 from inyoka.utils.storage import storage
-from inyoka.utils.templating import Breadcrumb
 from inyoka.utils.terminal import ProgressBar, percentize
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
@@ -44,7 +44,8 @@ from inyoka.wiki.utils import CaseSensitiveException
 FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False
 
-UU_DE = 'http://%subuntuusers.de/'
+UU_DE_DOMAIN = 'ubuntuusers.de'
+UU_DE = 'http://%s' + UU_DE_DOMAIN + '/'
 UU_PORTAL = UU_DE % ''
 UU_FORUM = UU_DE % 'forum.'
 UU_WIKI = UU_DE % 'wiki.'
@@ -88,11 +89,18 @@ verbosity = 0
 class Command(BaseCommand):
     help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
 
+    def __init__(self):
+        BaseCommand.__init__(self)
+        self.license_file = '_lizenz.html'
+
     def add_arguments(self, parser):
         parser.add_argument('-p', '--path',
             action='store',
             dest='path',
             help='Define where to store the static wiki')
+
+        parser.add_argument('--images', action='store_true',
+            help='If given, images will be included in the static wiki.')
 
     def handle(self, *args, **options):
         global verbosity
@@ -101,13 +109,20 @@ class Command(BaseCommand):
         if path is not None:
             global FOLDER
             FOLDER = path
+
+        global INCLUDE_IMAGES
+        if options['images']:
+            INCLUDE_IMAGES = True
+
         if verbosity >= 1:
             print("Starting Export")
+
         global SNAPSHOT_DATE, SNAPSHOT_MESSAGE
         activate(settings.LANGUAGE_CODE)
         SNAPSHOT_DATE = date(datetime.date.today(), settings.DATE_FORMAT)
         SNAPSHOT_MESSAGE = SNAPSHOT_MESSAGE % (SNAPSHOT_DATE, '%s')
         self.create_snapshot()
+
         if verbosity >= 1:
             print("Export complete")
 
@@ -116,14 +131,33 @@ class Command(BaseCommand):
         settings.DEBUG = False
         return {
             'page': page,
-            'BREADCRUMB': Breadcrumb(),
             'USER': kwargs.get('user', None),
             'SETTINGS': settings
         }
 
+    @templated('portal/static_page.html')
+    def _static_page(self, page, **kwargs):
+        """Renders static pages"""
+        settings.DEBUG = False
+
+        q = StaticPage.objects.get(key=page)
+        return {
+            'title': q.title,
+            'content': q.content_rendered,
+            'key': q.key,
+            'page': q,
+            'USER': kwargs.get('user', None),
+            'SETTINGS': settings
+        }
+
+    def _write_file(self, pth, content):
+        with open(pth, 'w+') as fobj:
+            fobj.write(content.encode('utf-8'))
+
     def save_file(self, url, is_main_page=False, is_static=False):
         if not INCLUDE_IMAGES and not is_static and not is_main_page:
             return ""
+
         if url.startswith(settings.STATIC_URL):
             base = settings.STATIC_ROOT
             rel_path = url[len(settings.STATIC_URL):]
@@ -132,21 +166,20 @@ class Command(BaseCommand):
             rel_path = url[len(settings.MEDIA_URL):]
         else:
             return ""
-        try:
-            rel_path = url_unquote(rel_path)
-            if rel_path:
-                abs_path = path.join(base, rel_path)
-                hash_code = sha1(force_unicode(rel_path).encode('utf-8')).hexdigest()
-                if hash_code not in DONE_SRCS:
-                    ext = path.splitext(rel_path)[1]
-                    fname = '%s%s' % (hash_code, ext)
-                    dst = path.join(FOLDER, 'files', '_', fname)
-                    copy(abs_path, dst)
-                    DONE_SRCS[hash_code] = fname
-                    chmod(dst, 0o644)
-                return path.join('_', DONE_SRCS[hash_code])
-        except IOError:
-            pass
+
+        rel_path = url_unquote(rel_path)
+        rel_path = sub('\?v=v[\d\.]*', '', rel_path)
+        if rel_path:
+            abs_path = path.join(base, rel_path)
+            hash_code = sha1(force_unicode(rel_path).encode('utf-8')).hexdigest()
+            if hash_code not in DONE_SRCS:
+                ext = path.splitext(rel_path)[1]
+                fname = '%s%s' % (hash_code, ext)
+                dst = path.join(FOLDER, 'files', '_', fname)
+                copy(abs_path, dst)
+                DONE_SRCS[hash_code] = fname
+                chmod(dst, 0o644)
+            return path.join('_', DONE_SRCS[hash_code])
 
         return ""
 
@@ -161,8 +194,7 @@ class Command(BaseCommand):
     def handle_removals(self, soup, pre, is_main_page, page_name):
         remove = (('script',),
                   ('ul', 'navi_global'),
-                  ('div', 'navi_tabbar navigation'),
-                  ('p', 'meta'))
+                  ('div', 'navi_tabbar navigation'))
         for args in remove:
             for x in soup.find_all(*args):
                 x.extract()
@@ -170,7 +202,6 @@ class Command(BaseCommand):
     def handle_pathbar(self, soup, pre, is_main_page, page_name):
         pathbar = soup.find('div', 'pathbar')
         pathbar.find('form').decompose()
-        # pathbar.find('div').decompose()  # leads to an exception
         children = list(pathbar.children)
         if len(children) > 4:
             # 4 because, the form and div leave a \n behind
@@ -185,7 +216,7 @@ class Command(BaseCommand):
     def handle_meta_link(self, soup, pre, is_main_page, page_name):
 
         def _handle_style(tag):
-            if tag['href'] == href('portal', 'markup.css'):
+            if tag['href'].startswith(href('portal', 'markup.css')):
                 hash_code = sha1(force_unicode('dyn.css').encode('utf-8')).hexdigest()
                 rel_path = path.join('_', '%s.css' % hash_code)
                 abs_path = path.join(FOLDER, 'files', rel_path)
@@ -299,16 +330,19 @@ class Command(BaseCommand):
                 li.find('a', 'flavour_switch').extract()
                 li.find('br').extract()
                 for a in li.find_all('a', href=PORTAL_RE):
-                    a['href'] = '%s%s' % (UU_PORTAL,
+                    if a['href'].endswith('lizenz/'):
+                        a['href'] = path.join(pre, self.license_file)
+                    else:
+                        a['href'] = '%s%s' % (UU_PORTAL,
                                           a['href'][len(href('portal')):])
             elif key == 'poweredby':
                 tag = BeautifulSoup(CREATED_MESSAGE)
                 li.clear()
                 li.append(tag.find('li'))
 
-    def handle_link_unwraps(self, soup, pre, is_main_page, page_name):
+    def handle_non_wiki_link(self, soup, pre, is_main_page, page_name):
         for a in soup.find_all('a', href=NON_WIKI_RE):
-            a.unwrap()
+            a['href'] = str.replace(a['href'], settings.BASE_DOMAIN_NAME, UU_DE_DOMAIN, 1)
 
     def handle_snapshot_message(self, soup, pre, is_main_page, page_name):
         tag = BeautifulSoup(SNAPSHOT_MESSAGE % path.join(UU_WIKI, page_name))
@@ -334,7 +368,7 @@ class Command(BaseCommand):
                 handle_link,
                 handle_img,
                 handle_footer,
-                handle_link_unwraps,
+                handle_non_wiki_link,
                 handle_snapshot_message]
 
     def create_snapshot(self):
@@ -351,17 +385,22 @@ class Command(BaseCommand):
                     rmtree(path.join(root, d))
         mkdir(path.join(FOLDER, 'files'))
 
-        for app in apps.get_app_configs():
-            module = app.module
-            if hasattr(module, 'INYOKA_THEME'):
-                stroot = module.__path__[0] + '/static'
-        ff = partial(path.join, stroot, 'img')
-        static_paths = ((path.join(stroot, 'img', 'icons'), 'icons'),
-                        (path.join(stroot, 'img', 'wiki'), 'wiki'),
-                        (path.join(stroot, 'img', 'interwiki'), 'interwiki'),
-                        ff('logo.png'), ff('favicon.ico'), ff('float-left.jpg'),
-                        ff('float-right.jpg'), ff('float-top.jpg'), ff('head.jpg'),
-                        ff('head-right.png'), ff('anchor.png'), ff('1px.png'))
+        img = partial(path.join, settings.STATIC_ROOT, 'img')
+        static_paths = ((img('icons'), 'icons'),
+                        (img('wiki'), 'wiki'),
+                        (img('interwiki'), 'interwiki'),
+                        img('logo.png'),
+                        img('favicon.ico'),
+                        img('float-left.jpg'),
+                        img('float-right.jpg'),
+                        img('float-top.jpg'),
+                        img('head.jpg'),
+                        img('head-right.png'),
+                        img('anchor.png'),
+                        img('1px.png'),
+                        img('main-sprite.png'),
+                        img('bullet.gif'))
+
         for pth in static_paths:
             _pth = pth[0] if isinstance(pth, _iterables) else pth
             if path.isdir(_pth):
@@ -370,6 +409,14 @@ class Command(BaseCommand):
                 copy(_pth, path.join(FOLDER, 'files', 'img'))
         attachment_folder = path.join(FOLDER, 'files', '_')
         mkdir(attachment_folder)
+
+        license_content = self._static_page('lizenz', user=user, settings=settings).content.decode('utf8')
+        license_soup = BeautifulSoup(license_content)
+        # Apply the handlers from above to modify the page content
+        for handler in self.HANDLERS:
+            handler(self, license_soup, self._pre(0), is_main_page=False, page_name='Lizenz')
+        license_content = unicode(license_soup)
+        self._write_file(path.join(FOLDER, 'files', self.license_file), license_content)
 
         if verbosity >= 1:
             pb = ProgressBar(40)
@@ -435,18 +482,14 @@ class Command(BaseCommand):
 
             content = unicode(soup)
 
-            def _write_file(pth):
-                with open(pth, 'w+') as fobj:
-                    fobj.write(content.encode('utf-8'))
-
-            _write_file(path.join(FOLDER, 'files', '%s.html' %
-                                                   self.fix_path(page.name)))
+            self._write_file(path.join(FOLDER, 'files', '%s.html' %
+                                                   self.fix_path(page.name)), content)
 
             if is_main_page:
                 content = compile(r'(src|href)="\./([^"]+)"') \
                     .sub(lambda m: '%s="./files/%s"' %
                                    (m.groups()[0], m.groups()[1]), content)
-                _write_file(path.join(FOLDER, 'index.html'))
+                self._write_file(path.join(FOLDER, 'index.html'), content)
 
         if len(todo) is 0:
             percents = []
@@ -456,6 +499,7 @@ class Command(BaseCommand):
             _fetch_and_write(name)
             if verbosity >= 1:
                 pb.update(percent)
+
         if verbosity >= 1:
             print(("\nCreated Wikisnapshot with %s pages; excluded %s pages"
                 % (len(todo), num_excluded)))

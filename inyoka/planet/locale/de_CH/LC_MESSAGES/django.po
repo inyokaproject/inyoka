@@ -1,0 +1,90 @@
+# German (Switzerland) translations for Inyoka Project.
+# Copyright (C) 2017 Inyoka Team (see AUTHORS)
+# This file is distributed under the same license as the Inyoka Project project.
+#
+# Translators:
+# Christian, 2017
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017
+# Lyra, 2017
+msgid ""
+msgstr ""
+"Project-Id-Version:  Inyoka\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2017-03-25 00:12+0100\n"
+"PO-Revision-Date: 2017-03-23 22:51+0000\n"
+"Last-Translator: Lyra\n"
+"Language: de_CH\n"
+"Language-Team: German (Switzerland) (http://www.transifex.com/inyokaproject/inyoka/language/de_CH/)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
+
+#, python-format
+msgid "%(sitename)s planet"
+msgstr "%(sitename)s Planet"
+
+msgid "A new blog was suggested."
+msgstr "A nöiä Blog isch vorgschlagä wordä."
+
+msgid "Canceled"
+msgstr "Abbrächä"
+
+msgid "Description"
+msgstr "Beschrybig"
+
+msgid "Email address of the blog author"
+msgstr "E-Mail Adrässä vom Blogoutor"
+
+msgid "Entries"
+msgstr "Yträg"
+
+msgid "Entry"
+msgstr "Yträg"
+
+msgid "Feed URL"
+msgstr "Feed URL"
+
+msgid "Icon"
+msgstr "Biudli"
+
+msgid "Index the blog"
+msgstr "Blog Indexiärä"
+
+msgid "Name of the blog"
+msgstr "Namä vom Blog"
+
+msgid "No title given"
+msgstr "Kei Titu aagäh"
+
+msgid "No user is registered as a planet administrator."
+msgstr "Kei Nutzer isch aus Planetadministrator regischtriärt."
+
+#, python-format
+msgid "The blog “%(title)s” was suggested."
+msgstr "Dr Blog %(title)s isch vorgschlagä wordä"
+
+#, python-format
+msgid "The entry “%(title)s” was successfully hidden."
+msgstr "Dr Ytrag %(title)s isch erfougrych versteckt wordä"
+
+#, python-format
+msgid "The entry “%(title)s” was successfully restored."
+msgstr "Dr Ytrag %(title)s isch erfougrych widerhärgsteut wordä."
+
+msgid "This is my own blog"
+msgstr "Dasch mi eiget Blog"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "URL of the blog"
+msgstr "URL vom Blog"
+
+msgid "URL of the feed"
+msgstr "URL vom Feed"
+
+msgid "User"
+msgstr "Benutzr"
+

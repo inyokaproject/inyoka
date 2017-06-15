@@ -8,24 +8,27 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import datetime
-import json
-import functools
 import StringIO
+import datetime
+import functools
+import json
+import os
 
+from PIL import Image
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db.models import CharField, Count, Value
-from django.db.models.functions import Concat
 from django.db.models.fields.files import ImageFieldFile
+from django.db.models.functions import Concat
 from django.forms import HiddenInput
 from django.template import loader
 from django.utils.encoding import force_bytes
@@ -34,7 +37,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 from guardian.shortcuts import assign_perm, remove_perm, get_perms
-from PIL import Image
 
 from inyoka.forum.constants import get_simple_version_choices
 from inyoka.forum.models import Forum
@@ -49,6 +51,7 @@ from inyoka.utils.forms import (
     CaptchaField,
     DateWidget,
     EmailField,
+    validate_gpgkey,
     validate_signature,
 )
 from inyoka.utils.local import current_request
@@ -302,15 +305,15 @@ class UserCPProfileForm(forms.ModelForm):
 
     coordinates = forms.CharField(label=ugettext_lazy(u'Coordinates (latitude, longitude)'),
                                   required=False)
-    gpgkey = forms.RegexField('^(0x)?[0-9a-f]+$(?i)',
-        label=ugettext_lazy(u'GPG key'), max_length=255, required=False)
+    gpgkey = forms.CharField(validators=[validate_gpgkey], min_length=40, max_length=255,
+                             label=ugettext_lazy(u'GPG fingerprint'), required=False)
 
     userpage = forms.CharField(widget=forms.Textarea, required=False)
 
     class Meta:
         model = User
         fields = ['jabber', 'signature', 'location', 'website', 'gpgkey',
-                  'launchpad', 'avatar']
+                  'launchpad', 'avatar', 'icon']
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
@@ -323,6 +326,8 @@ class UserCPProfileForm(forms.ModelForm):
         ))
         initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
         initial['email'] = instance.email
+        if instance.icon:
+            initial['icon'] = os.path.join(settings.MEDIA_ROOT,instance.icon)
         if hasattr(instance, 'userpage'):
             initial['userpage'] = instance.userpage.content
 
@@ -331,10 +336,12 @@ class UserCPProfileForm(forms.ModelForm):
         self.change_avatar = False
         super(UserCPProfileForm, self).__init__(*args, **kwargs)
 
+
     def clean_gpgkey(self):
         gpgkey = self.cleaned_data.get('gpgkey', '').upper()
         if gpgkey.startswith('0X'):
             gpgkey = gpgkey[2:]
+        gpgkey = gpgkey.replace(' ', '')
         return gpgkey
 
     def clean_signature(self):
@@ -348,6 +355,13 @@ class UserCPProfileForm(forms.ModelForm):
             raise forms.ValidationError(
                 _(u'This email address is already in use.'))
         return email
+
+    def clean_icon(self):
+        icon = self.cleaned_data.get('icon')
+        if icon:
+            return os.path.relpath(icon,settings.MEDIA_ROOT)
+        else:
+            return icon
 
     def clean_avatar(self):
         """
@@ -379,6 +393,8 @@ class UserCPProfileForm(forms.ModelForm):
     def save(self, request, commit=True):
         data = self.cleaned_data
         user = super(UserCPProfileForm, self).save(commit=False)
+
+        user.icon = data['icon']
 
         # Ensure that we delete the old avatar, otherwise Django will create
         # a file with a different name.
@@ -522,7 +538,7 @@ class CreateUserForm(forms.Form):
         a non existing mail address.
         """
         if 'email' in self.cleaned_data:
-            if User.objects.filter(email=self.cleaned_data['email']).exists():
+            if User.objects.filter(email__iexact=self.cleaned_data['email']).exists():
                 raise forms.ValidationError(_(u'This email address is already in use.'))
             return self.cleaned_data['email']
         else:
@@ -668,7 +684,7 @@ class GroupGlobalPermissionForm(forms.Form):
     PORTAL_FILTERED_PERMISSIONS = (
         'portal.delete_user',
         'portal.add_staticfile',
-        'portal.delete_staticpage',
+        'portal.add_staticpage',
     )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
