@@ -44,6 +44,9 @@ def notify_about_subscription(sub, template=None, subject=None, args=None):
         # don't send subscriptions to user that don't have read
         # access to the resource
         return
+    if template == 'topic_split' and 'topic_split' not in sub.user.settings.get('notifications', ('topic_split',)):
+        return
+
     send_notification(sub.user, template, subject, args)
 
 
@@ -68,13 +71,17 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
         subscriptions = subscriptions.exclude(user__id=request_user_id)
 
     notified_users = set()
-
     notified = set()
+
     for subscription in subscriptions.all():
-        notified_users.add(subscription.user)
+        user = subscription.user
+        if user in notified_users:
+            continue
+
+        notified_users.add(user)
         if callable(args):
             args = args(subscription)
-        args.update({'username': subscription.user.username})
+        args.update({'username': user.username})
         notify_about_subscription(subscription, template, subject, args)
         notified.add(subscription.id)
 
