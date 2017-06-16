@@ -206,11 +206,6 @@ def do_missing_page(request, name, _page=None):
         else:
             create_link = None
 
-    # If there's an info page for the creation of new pages configured
-    # we overwrite that create_link to that configuration.
-    if create_link is not None:
-        create_link = storage['wiki_newpage_infopage'] or create_link
-
     try:
         not_finished = Page.objects.get_by_name(join_pagename(
             storage['wiki_newpage_root'], name
@@ -420,7 +415,10 @@ def do_create(request, name=None):
         if name is not None:
             form.initial = {'name': name}
 
-    return {'form': form}
+    return {
+        'help_text': storage.get('wiki_newpage_help_rendered', u''),
+        'form': form
+    }
 
 
 @clean_article_name
