@@ -118,8 +118,10 @@ def populate_context_defaults(context, flash=False):
     # we don't need to use cache here because storage does this for us
     global_message = storage['global_message_rendered']
     if global_message and request:
-        if user.settings.get('global_message_hidden', 0) > \
-                float(storage['global_message_time'] or 0.0):
+        age_global_message = float(storage['global_message_time'] or 0.0)
+        timestamp_user_has_hidden_global_message = user.settings.get(
+            'global_message_hidden', 0)
+        if timestamp_user_has_hidden_global_message > age_global_message:
             global_message = None
 
     if request:
