@@ -189,14 +189,3 @@ class RedisCache(_RedisCache):
             # If value can not be decoded, then delete it from the cache
             redis.delete(key)
             raise
-
-    def clear(self, client=None):
-        """
-        Flush all cache keys.
-        """
-        # The implementation of django-redis flushes the hole database and
-        # ignores the KEY_PREFIX set in the configuration.
-        # See https://github.com/niwinz/django-redis/issues/168
-        # This method can be deleted when the issue is fixed or when all calls
-        # to cache.clear() are deleted.
-        self.delete_pattern("*", client=client)

@@ -8,7 +8,8 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls import include, url
 from django.views.i18n import javascript_catalog
 
 from . import views
@@ -98,6 +99,12 @@ urlpatterns.extend([
     url(r'^([-A-Za-z_]+)/edit/$', views.page_edit),
     url(r'^(?P<pk>[-A-Za-z_]+)/delete/$', views.page_delete),
 ])
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns.append(
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )
 
 handler404 = 'inyoka.utils.http.global_not_found'
 handler500 = 'inyoka.utils.http.server_error'
