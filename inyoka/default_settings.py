@@ -84,7 +84,7 @@ INYOKA_SYSTEM_USER_EMAIL = '@'.join(['system', BASE_DOMAIN_NAME])
 INYOKA_CONTACT_EMAIL = '@'.join(['contact', BASE_DOMAIN_NAME])
 DEFAULT_FROM_EMAIL = INYOKA_SYSTEM_USER_EMAIL
 
-# Disable portal registration, usefull in case of a spam problem
+# Disable portal registration, useful in case of a spam problem
 INYOKA_DISABLE_REGISTRATION = False
 
 # Spam prevention
