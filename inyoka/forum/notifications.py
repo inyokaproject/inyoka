@@ -153,3 +153,28 @@ def send_deletion_notification(user, topic, reason):
             'topic': data.get('topic_title')},
         data,
         filter={'content_type': ctype(Topic), 'object_id': data.get('topic_id')})
+
+
+def send_notification_for_topics(request_user_id, template, template_args, subject, topic_ids, include_forums=False,
+                                 forum_ids=None):
+    from inyoka.forum.models import Topic, Forum
+
+    notification_args = {
+        'request_user_id': request_user_id,
+        'template': template,
+        'subject': subject,
+        'args': template_args
+    }
+
+    topic_subscribers = {
+        'content_type': ctype(Topic),
+        'object_id__in': topic_ids,
+    }
+    notified_users = queue_notifications(filter=topic_subscribers, **notification_args)
+
+    if include_forums:
+        forum_subscribers = {
+            'content_type': ctype(Forum),
+            'object_id__in': forum_ids,
+        }
+        queue_notifications(filter=forum_subscribers, exclude={'user__in': notified_users}, **notification_args)
