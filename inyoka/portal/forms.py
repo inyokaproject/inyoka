@@ -380,9 +380,8 @@ class UserCPProfileForm(forms.ModelForm):
         # Resize the image if needed.
         image = Image.open(avatar)
         format = image.format
-        max_size = (
-            int(storage.get('max_avatar_width', 0)),
-            int(storage.get('max_avatar_height', 0)))
+        max_size = (settings.INYOKA_AVATAR_MAX_WIDTH,
+                    settings.INYOKA_AVATAR_MAX_HEIGHT)
         if any(length > max_length for max_length, length in zip(max_size, image.size)):
             image = image.resize(max_size)
         out = StringIO.StringIO()
@@ -1020,16 +1019,6 @@ class ConfigurationForm(forms.Form):
                       u'register an account.'))
     team_icon = forms.ImageField(label=ugettext_lazy(u'Global team icon'), required=False,
         help_text=ugettext_lazy(u'Please note the details on the maximum size below.'))
-    max_avatar_width = forms.IntegerField(min_value=1)
-    max_avatar_height = forms.IntegerField(min_value=1)
-    max_avatar_size = forms.IntegerField(min_value=0)
-    max_signature_length = forms.IntegerField(min_value=1,
-        label=ugettext_lazy(u'Maximum signature length'))
-    max_signature_lines = forms.IntegerField(min_value=1,
-        label=ugettext_lazy(u'Maximum number of lines in signature'))
-    get_ubuntu_link = forms.URLField(required=False,
-        label=ugettext_lazy(u'The download link for the start page'))
-    get_ubuntu_description = forms.CharField(label=ugettext_lazy(u'Description of the link'))
     wiki_newpage_template = forms.CharField(required=False,
         widget=forms.Textarea(attrs={'rows': 5}),
         label=ugettext_lazy(u'Default text of new wiki pages'))
@@ -1043,8 +1032,6 @@ class ConfigurationForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': 5}),
         label=ugettext_lazy(u'Wiki helptext'),
         help_text=ugettext_lazy(u'This text appears above the wiki editor.'))
-    team_icon_width = forms.IntegerField(min_value=1)
-    team_icon_height = forms.IntegerField(min_value=1)
     license_note = forms.CharField(required=False, label=ugettext_lazy(u'License note'),
                                    widget=forms.Textarea(attrs={'rows': 2}))
     countdown_active = forms.BooleanField(required=False,

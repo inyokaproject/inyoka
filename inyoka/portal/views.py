@@ -166,9 +166,9 @@ def index(request):
     """
     ikhaya_latest = Article.objects.get_latest_articles()
 
-    storage_values = storage.get_many(('get_ubuntu_link', 'get_ubuntu_description',
-        'session_record', 'session_record_time', 'countdown_active',
-        'countdown_target_page', 'countdown_image_url', 'countdown_date'))
+    storage_values = storage.get_many(('session_record',
+        'session_record_time', 'countdown_active', 'countdown_target_page',
+        'countdown_image_url', 'countdown_date'))
 
     record, record_time = get_user_record({
         'session_record': storage_values.get('session_record'),
@@ -216,8 +216,8 @@ def index(request):
         'sessions': get_sessions(),
         'record': record,
         'record_time': record_time,
-        'get_ubuntu_link': storage_values.get('get_ubuntu_link', ''),
-        'get_ubuntu_description': storage_values.get('get_ubuntu_description', ''),
+        'get_ubuntu_link': settings.INYOKA_GET_UBUNTU_LINK,
+        'get_ubuntu_description': settings.INYOKA_GET_UBUNTU_DESCRIPTION,
         'calendar_events': cache.get_or_set('portal/calendar', update_minicalendar, 300),
         'countdown_active': countdown_active,
         'countdown_target_page': storage_values.get('countdown_target_page', None),
@@ -550,16 +550,13 @@ def usercp_profile(request):
     else:
         form = UserCPProfileForm(instance=user)
 
-    storage_keys = storage.get_many(('max_avatar_width',
-        'max_avatar_height', 'max_avatar_size', 'max_signature_length'))
-
     return {
         'form': form,
         'user': request.user,
-        'max_avatar_width': storage_keys.get('max_avatar_width', -1),
-        'max_avatar_height': storage_keys.get('max_avatar_height', -1),
-        'max_avatar_size': storage_keys.get('max_avatar_size', -1),
-        'max_sig_length': storage_keys.get('max_signature_length'),
+        'max_avatar_width': settings.INYOKA_AVATAR_MAXIMUM_WIDTH,
+        'max_avatar_height': settings.INYOKA_AVATAR_MAXIMUM_HEIGHT,
+        'max_avatar_size': settings.INYOKA_AVATAR_MAXIMUM_FILE_SIZE,
+        'max_sig_length': settings.INYOKA_SIGNATURE_MAXIMUM_CHARACTERS,
     }
 
 
@@ -768,12 +765,11 @@ def user_edit_profile(request, username):
                 return HttpResponseRedirect(href('portal', 'user', user.username, 'edit', 'profile'))
         else:
             generic.trigger_fix_errors_message(request)
-    storage_data = storage.get_many(('max_avatar_height', 'max_avatar_width'))
     return {
         'user': user,
         'form': form,
-        'avatar_height': storage_data['max_avatar_height'],
-        'avatar_width': storage_data['max_avatar_width']
+        'avatar_height': settings.INYOKA_AVATAR_MAXIMUM_HEIGHT,
+        'avatar_width': settings.INYOKA_AVATAR_MAXIMUM_WIDTH
     }
 
 
@@ -1549,11 +1545,9 @@ def confirm(request, action):
 @permission_required('portal.change_storage', raise_exception=True)
 @templated('portal/configuration.html')
 def config(request):
-    keys = ['welcome_message', 'max_avatar_width', 'max_avatar_height', 'max_avatar_size',
-            'max_signature_length', 'max_signature_lines', 'get_ubuntu_link',
-            'license_note', 'get_ubuntu_description', 'blocked_hosts', 'wiki_edit_note',
-            'wiki_newpage_template', 'wiki_newpage_root', 'wiki_newpage_infopage', 'wiki_edit_note',
-            'team_icon_height', 'team_icon_width', 'distri_versions',
+    keys = ['welcome_message', 'license_note', 'blocked_hosts',
+            'wiki_edit_note', 'wiki_newpage_template', 'wiki_newpage_root',
+            'wiki_newpage_infopage', 'wiki_edit_note', 'distri_versions',
             'countdown_active', 'countdown_target_page', 'countdown_image_url',
             'ikhaya_description', 'planet_description']
 

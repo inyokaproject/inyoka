@@ -70,8 +70,9 @@ def validate_signature(signature):
         text = _walk(parse(signature, True, False)).text.strip()
     except StackExhaused:
         raise forms.ValidationError(_(u'Your signature contains too many nested elements'))
-    sig_len = int(storage.get('max_signature_length', -1))
-    sig_lines = int(storage.get('max_signature_lines', -1))
+
+    sig_len = int(settings.INYOKA_SIGNATURE_MAXIMUM_CHARACTERS)
+    sig_lines = int(settings.INYOKA_SIGNATURE_MAXIMUM_LINES)
     if sig_len >= 0 and len(text) > sig_len:
         raise forms.ValidationError(
             _(u'Your signature is too long, only %(length)s characters '
