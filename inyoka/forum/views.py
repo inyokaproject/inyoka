@@ -417,8 +417,8 @@ def handle_attachments(request, post, att_ids):
     return attach_form, attachments
 
 
-def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None,
-                         quote_id=None, page=None):
+def create_and_edit_post(request, forum=None, topic_slug=None, post_id=None,
+                         quote_id=None, page=None, newtopic=False):
     """
     This function allows the user to create a new topic which is created in
     the forum `slug` if `slug` is a string.
@@ -429,8 +429,8 @@ def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None
     When creating a new topic, the user has the choice to upload files bound
     to this topic or to create one or more polls.
     """
-    post = topic = forum = quote = posts = discussions = None
-    newtopic = firstpost = False
+    post = topic = quote = posts = discussions = None
+    firstpost = False
     attach_form = None
     attachments = []
     preview = None
@@ -442,11 +442,6 @@ def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
         forum = topic.forum
-    elif forum_slug:
-        forum = Forum.objects.get_cached(slug=forum_slug)
-        if not forum or forum.is_category:
-            raise Http404()
-        newtopic = firstpost = True
     elif post_id:
         post = Post.objects.get(id=int(post_id))
         locked = post.lock(request)
@@ -462,6 +457,9 @@ def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None
                             .get(id=int(quote_id))
         topic = quote.topic
         forum = topic.forum
+
+    if newtopic:
+        firstpost = True
 
     # We don't need Spam Checks for these Types of Users or Forums:
     # - Hidden Forums
@@ -560,7 +558,7 @@ def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None
     # the user has canceled the action
     if request.method == 'POST' and request.POST.get('cancel'):
         url = href('forum')
-        if forum_slug:
+        if newtopic:
             url = href('forum', 'forum', forum.slug)
         elif topic_slug:
             url = href('forum', 'topic', topic.slug)
@@ -735,7 +733,7 @@ def edit_post(request, post_id):
 
 @templated('forum/edit.html')
 def create_topic(request, forum_slug=None, page_name=None):
-
+    page = None
     if page_name:
         norm_page_name = normalize_pagename(page_name)
         try:
@@ -756,7 +754,11 @@ def create_topic(request, forum_slug=None, page_name=None):
             }
         )
 
-    return create_and_edit_post(request, forum_slug=forum_slug, page=page)
+    forum = Forum.objects.get_cached(slug=forum_slug)
+    if not forum or forum.is_category:
+        raise Http404()
+
+    return create_and_edit_post(request, forum=forum, page=page, newtopic=True)
 
 @templated('forum/edit.html')
 def reply_to_topic(request, topic_slug=None, quote_id=None):
