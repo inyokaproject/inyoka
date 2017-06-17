@@ -418,7 +418,6 @@ def handle_attachments(request, post, att_ids):
     return attach_form, attachments
 
 
-@templated('forum/edit.html')
 def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None,
                          quote_id=None, page_name=None):
     """
@@ -751,6 +750,17 @@ def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None
         'discussions': discussions,
     }
 
+@templated('forum/edit.html')
+def edit_post(request, post_id):
+    return create_and_edit_post(request, post_id=post_id)
+
+@templated('forum/edit.html')
+def create_topic(request, forum_slug=None, page_name=None):
+    return create_and_edit_post(request, forum_slug=forum_slug, page_name=page_name)
+
+@templated('forum/edit.html')
+def reply_to_topic(request, topic_slug=None, quote_id=None):
+    return create_and_edit_post(request, topic_slug=topic_slug, quote_id=quote_id)
 
 @confirm_action(message=_(u'Do you want to (un)lock the topic?'),
                 confirm=_(u'(Un)lock'), cancel=_(u'Cancel'))
