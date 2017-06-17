@@ -674,23 +674,21 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
         post.edit(d['text'])
 
+        if page:
+            # the topic is a wiki discussion, bind it to the wiki page
+            page.topic = topic
+            page.save()
+
         if is_spam_post:
             post.mark_spam(report=True, update_akismet=False)
-
-        if not is_spam_post:
+        else:
             if newtopic:
                 send_newtopic_notifications(request.user, post, topic, forum)
             elif not post_id:
                 send_edit_notifications(request.user, post, topic, forum)
-        if page:
-            # the topic is a wiki discussion, bind it to the wiki
-            # page and send notifications.
-            page.topic = topic
-            page.save()
-            if not is_spam_post:
+            if page:
                 send_discussion_notification(request.user, page)
 
-        if not is_spam_post:
             subscribed = Subscription.objects.user_subscribed(request.user, topic)
             if request.user.settings.get('autosubscribe', True) and not subscribed and not post_id:
                 subscription = Subscription(user=request.user, content_object=topic)
