@@ -419,7 +419,7 @@ def handle_attachments(request, post, att_ids):
 
 
 def create_and_edit_post(request, forum=None, topic=None, post_id=None,
-                         quote_id=None, page=None, newtopic=False, reply=False):
+                         quote=None, page=None, newtopic=False, reply=False):
     """
     This function allows the user to create a new topic which is created in
     the forum `slug` if `slug` is a string.
@@ -430,7 +430,7 @@ def create_and_edit_post(request, forum=None, topic=None, post_id=None,
     When creating a new topic, the user has the choice to upload files bound
     to this topic or to create one or more polls.
     """
-    post = quote = posts = discussions = None
+    post = posts = discussions = None
     firstpost = False
     attach_form = None
     attachments = []
@@ -450,11 +450,6 @@ def create_and_edit_post(request, forum=None, topic=None, post_id=None,
         topic = post.topic
         forum = topic.forum
         firstpost = post.id == topic.first_post_id
-    elif quote_id:
-        quote = Post.objects.select_related('topic', 'author') \
-                            .get(id=int(quote_id))
-        topic = quote.topic
-        forum = topic.forum
 
     if newtopic:
         firstpost = True
@@ -558,8 +553,8 @@ def create_and_edit_post(request, forum=None, topic=None, post_id=None,
         url = href('forum')
         if newtopic:
             url = href('forum', 'forum', forum.slug)
-        elif quote_id:
-            url = href('forum', 'post', quote_id)
+        elif quote:
+            url = href('forum', 'post', quote.id)
         elif reply:
             url = href('forum', 'topic', topic.slug)
         elif post_id:
@@ -761,11 +756,19 @@ def create_topic(request, forum_slug=None, page_name=None):
 
 @templated('forum/edit.html')
 def reply_to_topic(request, topic_slug=None, quote_id=None):
+    topic = forum = quote = None
+
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
         forum = topic.forum
 
-    return create_and_edit_post(request, topic=topic, forum=forum, quote_id=quote_id, reply=True)
+    elif quote_id:
+        quote = Post.objects.select_related('topic', 'author') \
+                            .get(id=int(quote_id))
+        topic = quote.topic
+        forum = topic.forum
+
+    return create_and_edit_post(request, topic=topic, forum=forum, quote=quote, reply=True)
 
 @confirm_action(message=_(u'Do you want to (un)lock the topic?'),
                 confirm=_(u'(Un)lock'), cancel=_(u'Cancel'))
