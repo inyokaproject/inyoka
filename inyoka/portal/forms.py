@@ -67,7 +67,7 @@ GLOBAL_PRIVILEGE_MODELS = {
     'auth': ('group',),
     'pastebin': ('entry',),
     'planet': ('entry', 'blog',),
-    'portal': ('event', 'user', 'staticfile', 'staticpage',),
+    'portal': ('event', 'user', 'staticfile', 'staticpage', 'storage'),
 }
 
 NOTIFY_BY_CHOICES = (
@@ -685,6 +685,8 @@ class GroupGlobalPermissionForm(forms.Form):
         'portal.delete_user',
         'portal.add_staticfile',
         'portal.add_staticpage',
+        'portal.add_storage',
+        'portal.delete_storage',
     )
     FORUM_FILTERED_PERMISSIONS = (
         'forum.add_forum',
