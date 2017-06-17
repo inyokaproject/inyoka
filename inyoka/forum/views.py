@@ -15,7 +15,6 @@ from operator import attrgetter
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F, Q
@@ -54,13 +53,12 @@ from inyoka.forum.notifications import (
     send_discussion_notification,
     send_edit_notifications,
     send_newtopic_notifications,
-)
+    send_notification_for_topics)
 from inyoka.markup import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import abort_access_denied
-from inyoka.utils import ctype
 from inyoka.utils.database import get_simplified_queryset
 from inyoka.utils.dates import format_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
@@ -73,9 +71,7 @@ from inyoka.utils.http import (
     templated,
 )
 from inyoka.utils.notification import (
-    notify_about_subscription,
-    send_notification,
-    queue_notifications)
+    send_notification)
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
@@ -1148,20 +1144,15 @@ def movetopic(request, topic_slug):
                     _(u'Your topic “%(topic)s” was moved.')
                     % {'topic': topic.title}, nargs)
 
-            users_done = set([topic.author.id, request.user.id])
-            ct = ContentType.objects.get_for_model
-            subscriptions = Subscription.objects.filter((Q(content_type=ct(Topic)) &
-                                                         Q(object_id=topic.id)) |
-                                                        (Q(content_type=ct(Forum)) &
-                                                         Q(object_id=topic.forum.id)))
-            for subscription in subscriptions:
-                if subscription.user.id in users_done:
-                    continue
-                nargs['username'] = subscription.user.username
-                notify_about_subscription(subscription, 'topic_moved',
-                    _(u'The topic “%(topic)s” was moved.')
-                    % {'topic': topic.title}, nargs)
-                users_done.add(subscription.user.id)
+            send_notification_for_topics(request.user.id,
+                                         template='topic_moved',
+                                         template_args=nargs,
+                                         subject=_(u'The topic “%(topic)s” was moved.') % {'topic': topic.title},
+                                         topic_ids=[topic.id],
+                                         include_forums=True,
+                                         forum_ids=[topic.forum.id]
+                                         )
+
             return HttpResponseRedirect(url_for(topic))
     else:
         form = MoveTopicForm()
@@ -1235,25 +1226,15 @@ def splittopic(request, topic_slug, page=1):
 
             del request.session['_split_post_ids']
 
-            notification_args = {
-                'request_user_id': request.user.id,
-                'template': 'topic_split',
-                'subject': _(u'The topic “%(topic)s” was split.') % {'topic': old_topic.title},
-                'args': {'new_topic': new_topic, 'old_topic': old_topic, 'mod': request.user.username}
-            }
-
-            topic_subscribers = {
-                'content_type': ctype(Topic),
-                'object_id__in': [old_topic.id, new_topic.id],
-            }
-            notified_users = queue_notifications(filter=topic_subscribers, **notification_args)
-
-            if data['action'] == 'new':
-                forum_subscribers = {
-                    'content_type': ctype(Forum),
-                    'object_id': new_topic.forum.id,
-                }
-                queue_notifications(filter=forum_subscribers, exclude={'user__in': notified_users}, **notification_args)
+            send_notification_for_topics(request.user.id,
+                                         template='topic_split',
+                                         template_args={'new_topic': new_topic, 'old_topic': old_topic,
+                                                        'mod': request.user.username},
+                                         subject=_(u'The topic “%(topic)s” was split.') % {'topic': old_topic.title},
+                                         topic_ids=[old_topic.id, new_topic.id],
+                                         include_forums=data['action'] == 'new',
+                                         forum_ids=[new_topic.forum.id]
+                                         )
 
             return HttpResponseRedirect(url_for(posts[0]))
     else:
