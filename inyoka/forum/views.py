@@ -463,6 +463,20 @@ def create_and_edit_post(request, forum, topic=None, post=None,
                 'title': page and page.name or '',
             },
         )
+    elif post_edit:
+        form = EditPostForm(
+            is_first_post=first_post,
+            needs_spam_check=needs_spam_check,
+            request=request,
+            data=request.POST or None,
+            initial={
+                'title': topic.title,
+                'ubuntu_distro': topic.ubuntu_distro,
+                'ubuntu_version': topic.ubuntu_version,
+                'sticky': topic.sticky,
+                'text': post.text,
+            }
+        )
     else:
         form = EditPostForm(
             is_first_post=first_post,
@@ -552,6 +566,8 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     ))
     if request.user.has_perm('forum.upload_forum', forum):
         attach_form, attachments = handle_attachments(request, post, att_ids)
+    if post_edit and not attachments:
+        attachments = Attachment.objects.filter(post=post)
 
     # the user submitted a valid form
     if 'send' in request.POST and form.is_valid():
@@ -647,24 +663,6 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         ctx = RenderContext(request, forum_post=post)
         tt = request.POST.get('text', '')
         preview = parse(tt).render(ctx, 'html')
-
-    # the user is going to edit an existing post/topic
-    elif post:
-        form = EditPostForm(
-            is_first_post=first_post,
-            needs_spam_check=needs_spam_check,
-            request=request,
-            data=request.POST or None,
-            initial={
-                'title': topic.title,
-                'ubuntu_distro': topic.ubuntu_distro,
-                'ubuntu_version': topic.ubuntu_version,
-                'sticky': topic.sticky,
-                'text': post.text,
-            }
-        )
-        if not attachments:
-            attachments = Attachment.objects.filter(post=post)
 
     if not newtopic:
         max = topic.post_count.value()
