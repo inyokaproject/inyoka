@@ -488,7 +488,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         form.surge_protection_timeout = None
 
     # check privileges
-    if post:
+    if post_edit:
         if topic.locked or topic.hidden or post.hidden:
             if not request.user.has_perm('forum.moderate_forum', forum):
                 messages.error(request, _(u'You cannot edit this post.'))
@@ -507,7 +507,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
             post.unlock()
             return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
                                              post.page))
-    elif topic:
+    elif reply:
         if topic.hidden:
             if not request.user.has_perm('forum.moderate_forum', forum):
                 messages.error(request,
@@ -571,7 +571,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
 
         is_spam_post = form._spam and not form._spam_discard
 
-        if not post:  # not when editing an existing post
+        if not post_edit:
             doublepost = Post.objects \
                 .filter(author=request.user, text=data['text'],
                         pub_date__gt=(datetime.utcnow() - timedelta(0, 300)))
@@ -587,8 +587,8 @@ def create_and_edit_post(request, forum, topic=None, post=None,
                       u'editing your topic before creating a new one.'))
                 return HttpResponseRedirect(url_for(doublepost.topic))
 
-        if not topic and newtopic or first_post:
-            if not topic and newtopic:
+        if newtopic or (post_edit and first_post):
+            if newtopic:
                 topic = Topic(forum=forum, author=request.user)
             topic.title = data['title']
             topic.ubuntu_distro = data.get('ubuntu_distro')
@@ -608,7 +608,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
                 topic.has_poll = bool(polls)
                 topic.save()
 
-        if not post:
+        if not post_edit:
             post = Post(topic=topic, author_id=request.user.id)
             if newtopic:
                 post.position = 0
