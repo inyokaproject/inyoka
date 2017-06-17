@@ -611,13 +611,13 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
     # the user submitted a valid form
     if 'send' in request.POST and form.is_valid():
-        d = form.cleaned_data
+        data = form.cleaned_data
 
         is_spam_post = form._spam and not form._spam_discard
 
         if not post:  # not when editing an existing post
             doublepost = Post.objects \
-                .filter(author=request.user, text=d['text'],
+                .filter(author=request.user, text=data['text'],
                         pub_date__gt=(datetime.utcnow() - timedelta(0, 300)))
             if not newtopic:
                 doublepost = doublepost.filter(topic=topic)
@@ -634,13 +634,13 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         if not topic and newtopic or firstpost:
             if not topic and newtopic:
                 topic = Topic(forum=forum, author=request.user)
-            topic.title = d['title']
-            topic.ubuntu_distro = d.get('ubuntu_distro')
-            topic.ubuntu_version = d.get('ubuntu_version')
+            topic.title = data['title']
+            topic.ubuntu_distro = data.get('ubuntu_distro')
+            topic.ubuntu_version = data.get('ubuntu_version')
 
             if request.user.has_perm('forum.sticky_forum', forum):
-                topic.sticky = d.get('sticky', False)
-            elif d.get('sticky', False):
+                topic.sticky = data.get('sticky', False)
+            elif data.get('sticky', False):
                 messages.error(request, _(u'You are not allowed to mark this topic as "important".'))
 
             topic.save()
@@ -669,7 +669,7 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
         else:
             post.has_attachments = False
 
-        post.edit(d['text'])
+        post.edit(data['text'])
 
         if page:
             # the topic is a wiki discussion, bind it to the wiki page
