@@ -418,7 +418,7 @@ def handle_attachments(request, post, att_ids):
 
 
 def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None,
-                         quote_id=None, page_name=None):
+                         quote_id=None, page=None):
     """
     This function allows the user to create a new topic which is created in
     the forum `slug` if `slug` is a string.
@@ -434,31 +434,11 @@ def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None
     attach_form = None
     attachments = []
     preview = None
-    page = None
 
     if settings.FORUM_DISABLE_POSTING:
         messages.error(request, _('Post functionality is currently disabled.'))
         return HttpResponseRedirect(href('forum'))
 
-    if page_name:
-        norm_page_name = normalize_pagename(page_name)
-        try:
-            page = Page.objects.get(name=norm_page_name)
-        except Page.DoesNotExist:
-            messages.error(request, _(u'The article “%(article)s” does not exist. However, you '
-                           'can create it now.') % {'article': norm_page_name})
-            return HttpResponseRedirect(href('wiki', norm_page_name))
-        forum_slug = settings.WIKI_DISCUSSION_FORUM
-        messages.info(
-            request, _(
-                u'No discussion is linked yet to the article “%(article)s”. '
-                u'You can create a discussion now or <a href="%(link)s">link '
-                u'an existing topic</a> to the article.'
-            ) % {
-                'article': page_name,
-                'link': url_for(page, 'discussion')
-            }
-        )
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
         forum = topic.forum
@@ -504,7 +484,7 @@ def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None
             data=request.POST or None,
             initial={
                 'text': forum.newtopic_default_text,
-                'title': page and norm_page_name or '',
+                'title': page and page.name or '',
             },
         )
     elif quote:
@@ -755,7 +735,28 @@ def edit_post(request, post_id):
 
 @templated('forum/edit.html')
 def create_topic(request, forum_slug=None, page_name=None):
-    return create_and_edit_post(request, forum_slug=forum_slug, page_name=page_name)
+
+    if page_name:
+        norm_page_name = normalize_pagename(page_name)
+        try:
+            page = Page.objects.get(name=norm_page_name)
+        except Page.DoesNotExist:
+            messages.error(request, _(u'The article “%(article)s” does not exist. However, you '
+                           'can create it now.') % {'article': norm_page_name})
+            return HttpResponseRedirect(href('wiki', norm_page_name))
+        forum_slug = settings.WIKI_DISCUSSION_FORUM
+        messages.info(
+            request, _(
+                u'No discussion is linked yet to the article “%(article)s”. '
+                u'You can create a discussion now or <a href="%(link)s">link '
+                u'an existing topic</a> to the article.'
+            ) % {
+                'article': page_name,
+                'link': url_for(page, 'discussion')
+            }
+        )
+
+    return create_and_edit_post(request, forum_slug=forum_slug, page=page)
 
 @templated('forum/edit.html')
 def reply_to_topic(request, topic_slug=None, quote_id=None):
