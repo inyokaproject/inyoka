@@ -417,8 +417,8 @@ def handle_attachments(request, post, att_ids):
     return attach_form, attachments
 
 
-def create_and_edit_post(request, forum=None, topic=None, post_id=None,
-                         quote=None, page=None, newtopic=False, reply=False):
+def create_and_edit_post(request, forum=None, topic=None, post=None,
+                         quote=None, page=None, newtopic=False, reply=False, post_edit=False):
     """
     This function allows the user to create a new topic which is created in
     the forum `slug` if `slug` is a string.
@@ -429,7 +429,7 @@ def create_and_edit_post(request, forum=None, topic=None, post_id=None,
     When creating a new topic, the user has the choice to upload files bound
     to this topic or to create one or more polls.
     """
-    post = posts = discussions = None
+    posts = discussions = None
     firstpost = False
     attach_form = None
     attachments = []
@@ -439,15 +439,7 @@ def create_and_edit_post(request, forum=None, topic=None, post_id=None,
         messages.error(request, _('Post functionality is currently disabled.'))
         return HttpResponseRedirect(href('forum'))
 
-    if post_id:
-        post = Post.objects.get(id=int(post_id))
-        locked = post.lock(request)
-        if locked:
-            messages.error(request,
-                _(u'This post is currently beeing edited by “%(user)s”!')
-                % {'user': locked})
-        topic = post.topic
-        forum = topic.forum
+    if post_edit:
         firstpost = post.id == topic.first_post_id
 
     if newtopic:
@@ -460,7 +452,7 @@ def create_and_edit_post(request, forum=None, topic=None, post_id=None,
     needs_spam_check = True
     if request.user.post_count.value(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
         needs_spam_check = False
-    elif request.user.has_perm('forum.moderate_forum', forum) or post and post.pk:
+    elif request.user.has_perm('forum.moderate_forum', forum) or post_edit:
         needs_spam_check = False
     else:
         if not User.objects.get_anonymous_user().has_perm('forum.view_forum', forum):
@@ -556,7 +548,7 @@ def create_and_edit_post(request, forum=None, topic=None, post_id=None,
             url = href('forum', 'post', quote.id)
         elif reply:
             url = href('forum', 'topic', topic.slug)
-        elif post_id:
+        elif post_edit:
             url = href('forum', 'post', post.id)
             post.unlock()
 
@@ -650,13 +642,13 @@ def create_and_edit_post(request, forum=None, topic=None, post_id=None,
         else:
             if newtopic:
                 send_newtopic_notifications(request.user, post, topic, forum)
-            elif not post_id:
+            elif not post_edit:
                 send_edit_notifications(request.user, post, topic, forum)
             if page:
                 send_discussion_notification(request.user, page)
 
             subscribed = Subscription.objects.user_subscribed(request.user, topic)
-            if request.user.settings.get('autosubscribe', True) and not subscribed and not post_id:
+            if request.user.settings.get('autosubscribe', True) and not subscribed and not post_edit:
                 subscription = Subscription(user=request.user, content_object=topic)
                 subscription.save()
 
@@ -722,7 +714,16 @@ def create_and_edit_post(request, forum=None, topic=None, post_id=None,
 
 @templated('forum/edit.html')
 def edit_post(request, post_id):
-    return create_and_edit_post(request, post_id=post_id)
+    post = Post.objects.get(id=int(post_id))
+    locked = post.lock(request)
+    if locked:
+        messages.error(request,
+                       _(u'This post is currently beeing edited by “%(user)s”!')
+                       % {'user': locked})
+    topic = post.topic
+    forum = topic.forum
+
+    return create_and_edit_post(request,forum=forum, topic=topic, post=post, post_edit=True)
 
 @templated('forum/edit.html')
 def create_topic(request, forum_slug=None, page_name=None):
