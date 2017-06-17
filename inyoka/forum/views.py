@@ -635,15 +635,13 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             if not topic and newtopic:
                 topic = Topic(forum=forum, author=request.user)
             topic.title = d['title']
-            if topic.ubuntu_distro != d.get('ubuntu_distro')\
-               or topic.ubuntu_version != d.get('ubuntu_version'):
-                topic.ubuntu_distro = d.get('ubuntu_distro')
-                topic.ubuntu_version = d.get('ubuntu_version')
+            topic.ubuntu_distro = d.get('ubuntu_distro')
+            topic.ubuntu_version = d.get('ubuntu_version')
+
             if request.user.has_perm('forum.sticky_forum', forum):
                 topic.sticky = d.get('sticky', False)
             elif d.get('sticky', False):
-                messages.error(request, _(u'You are not allowed to mark this '
-                                            'topic as "important".'))
+                messages.error(request, _(u'You are not allowed to mark this topic as "important".'))
 
             topic.save()
             topic.forum.invalidate_topic_cache()
