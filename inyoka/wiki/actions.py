@@ -399,7 +399,7 @@ def do_create(request, name=None):
             template_name = form.cleaned_data['template']
 
             if template_name is None:
-                text = storage['wiki_newpage_template']
+                text = storage.get('wiki_newpage_template', default='')
             else:
                 template = Page.objects.get_by_name(name=template_name)
                 text = template.rev.text.value

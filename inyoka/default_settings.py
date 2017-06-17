@@ -84,7 +84,7 @@ INYOKA_SYSTEM_USER_EMAIL = '@'.join(['system', BASE_DOMAIN_NAME])
 INYOKA_CONTACT_EMAIL = '@'.join(['contact', BASE_DOMAIN_NAME])
 DEFAULT_FROM_EMAIL = INYOKA_SYSTEM_USER_EMAIL
 
-# Disable portal registration, usefull in case of a spam problem
+# Disable portal registration, useful in case of a spam problem
 INYOKA_DISABLE_REGISTRATION = False
 
 # Spam prevention
@@ -95,6 +95,20 @@ INYOKA_AKISMET_DEFAULT_IS_SPAM = False
 INYOKA_SPAM_COUNTER_TIMEOUT = 60 * 5  # seconds
 INYOKA_SPAM_COUNTER_MAX = 5
 INYOKA_SPAM_DETECT_LIMIT = 100
+
+# restrictions for user avatar images
+INYOKA_AVATAR_MAXIMUM_WIDTH = 80  # in px
+INYOKA_AVATAR_MAXIMUM_HEIGHT = 100  # in px
+INYOKA_AVATAR_MAXIMUM_FILE_SIZE = 15  # in KiB, 0 → unlimited
+
+# restrictions for user signatures in the forum
+INYOKA_SIGNATURE_MAXIMUM_CHARACTERS = 500  # <= -1 → no restriction
+INYOKA_SIGNATURE_MAXIMUM_LINES = 4  # <= -1 → no restriction
+
+# download link on the start page
+INYOKA_GET_UBUNTU_LINK = u'%s://wiki.%s/Downloads' % (INYOKA_URI_SCHEME,
+                                                      BASE_DOMAIN_NAME)
+INYOKA_GET_UBUNTU_DESCRIPTION = u'Downloads'
 
 # logger name for remote exception logging
 INYOKA_LOGGER_NAME = u'inyoka'
