@@ -653,7 +653,6 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
         if not post:
             post = Post(topic=topic, author_id=request.user.id)
-            # TODO: Move this somehow to model to ease unittesting!
             if newtopic:
                 post.position = 0
 
