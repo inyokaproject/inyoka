@@ -417,7 +417,7 @@ def handle_attachments(request, post, att_ids):
     return attach_form, attachments
 
 
-def create_and_edit_post(request, forum=None, topic=None, post=None,
+def create_and_edit_post(request, forum, topic=None, post=None,
                          quote=None, page=None, newtopic=False, reply=False, post_edit=False):
     """
     This function allows the user to create a new topic which is created in
