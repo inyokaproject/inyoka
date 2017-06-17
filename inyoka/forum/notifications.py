@@ -89,7 +89,7 @@ def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
         translation.activate(prev_language)
 
 
-def send_edit_notifications(user, post, topic, forum):
+def send_reply_to_topic_notifications(user, post, topic, forum):
     from inyoka.forum.models import Topic
 
     data = {'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),

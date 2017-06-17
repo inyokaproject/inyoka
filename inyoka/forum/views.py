@@ -51,7 +51,7 @@ from inyoka.forum.models import (
 from inyoka.forum.notifications import (
     send_deletion_notification,
     send_discussion_notification,
-    send_edit_notifications,
+    send_reply_to_topic_notifications,
     send_newtopic_notifications,
     send_notification_for_topics)
 from inyoka.markup import RenderContext, parse
@@ -643,8 +643,8 @@ def create_and_edit_post(request, forum=None, topic=None, post=None,
         else:
             if newtopic:
                 send_newtopic_notifications(request.user, post, topic, forum)
-            elif not post_edit:
-                send_edit_notifications(request.user, post, topic, forum)
+            elif reply:
+                send_reply_to_topic_notifications(request.user, post, topic, forum)
             if page:
                 send_discussion_notification(request.user, page)
 
