@@ -417,8 +417,8 @@ def handle_attachments(request, post, att_ids):
     return attach_form, attachments
 
 
-def create_and_edit_post(request, forum=None, topic_slug=None, post_id=None,
-                         quote_id=None, page=None, newtopic=False):
+def create_and_edit_post(request, forum=None, topic=None, post_id=None,
+                         quote_id=None, page=None, newtopic=False, reply=False):
     """
     This function allows the user to create a new topic which is created in
     the forum `slug` if `slug` is a string.
@@ -429,7 +429,7 @@ def create_and_edit_post(request, forum=None, topic_slug=None, post_id=None,
     When creating a new topic, the user has the choice to upload files bound
     to this topic or to create one or more polls.
     """
-    post = topic = quote = posts = discussions = None
+    post = quote = posts = discussions = None
     firstpost = False
     attach_form = None
     attachments = []
@@ -439,10 +439,7 @@ def create_and_edit_post(request, forum=None, topic_slug=None, post_id=None,
         messages.error(request, _('Post functionality is currently disabled.'))
         return HttpResponseRedirect(href('forum'))
 
-    if topic_slug:
-        topic = Topic.objects.get(slug=topic_slug)
-        forum = topic.forum
-    elif post_id:
+    if post_id:
         post = Post.objects.get(id=int(post_id))
         locked = post.lock(request)
         if locked:
@@ -560,13 +557,14 @@ def create_and_edit_post(request, forum=None, topic_slug=None, post_id=None,
         url = href('forum')
         if newtopic:
             url = href('forum', 'forum', forum.slug)
-        elif topic_slug:
+        elif quote_id:
+            url = href('forum', 'post', quote_id)
+        elif reply:
             url = href('forum', 'topic', topic.slug)
         elif post_id:
             url = href('forum', 'post', post.id)
             post.unlock()
-        elif quote_id:
-            url = href('forum', 'post', quote_id)
+
         return HttpResponseRedirect(url)
 
     # Clear surge protection to avoid multi-form hickups.
@@ -762,7 +760,11 @@ def create_topic(request, forum_slug=None, page_name=None):
 
 @templated('forum/edit.html')
 def reply_to_topic(request, topic_slug=None, quote_id=None):
-    return create_and_edit_post(request, topic_slug=topic_slug, quote_id=quote_id)
+    if topic_slug:
+        topic = Topic.objects.get(slug=topic_slug)
+        forum = topic.forum
+
+    return create_and_edit_post(request, topic=topic, forum=forum, quote_id=quote_id, reply=True)
 
 @confirm_action(message=_(u'Do you want to (un)lock the topic?'),
                 confirm=_(u'(Un)lock'), cancel=_(u'Cancel'))
