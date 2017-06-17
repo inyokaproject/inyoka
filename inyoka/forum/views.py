@@ -430,7 +430,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     When creating a new topic, the user has the choice to upload files bound
     to this topic or to create one or more polls.
     """
-    posts = discussions = None
+    posts = None
     attach_form = None
     attachments = []
     preview = None
@@ -670,8 +670,6 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         posts = topic.posts.select_related('author') \
                            .filter(hidden=False, position__gt=max - 15) \
                            .order_by('-position')
-        discussions = Page.objects.filter(topic=topic)
-
     return {
         'form': form,
         'poll_form': poll_form,
@@ -691,7 +689,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         'attachments': list(attachments),
         'posts': posts,
         'storage': storage,
-        'discussions': discussions,
+        'discussions': Page.objects.filter(topic=topic) if not newtopic else None,
     }
 
 
