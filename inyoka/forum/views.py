@@ -418,8 +418,8 @@ def handle_attachments(request, post, att_ids):
 
 
 @templated('forum/edit.html')
-def edit(request, forum_slug=None, topic_slug=None, post_id=None,
-         quote_id=None, page_name=None):
+def create_and_edit_post(request, forum_slug=None, topic_slug=None, post_id=None,
+                         quote_id=None, page_name=None):
     """
     This function allows the user to create a new topic which is created in
     the forum `slug` if `slug` is a string.
