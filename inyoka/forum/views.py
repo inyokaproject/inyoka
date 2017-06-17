@@ -79,7 +79,6 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import quote_text
 
 
 @templated('forum/index.html')
@@ -464,24 +463,13 @@ def create_and_edit_post(request, forum, topic=None, post=None,
                 'title': page and page.name or '',
             },
         )
-    elif quote:
-        form = EditPostForm(
-            is_first_post=first_post,
-            needs_spam_check=needs_spam_check,
-            request=request,
-            data=request.POST or None,
-            initial={
-                'text': quote_text(
-                    quote.text, quote.author, 'post:%s:' % quote.id
-                ) + '\n',
-            }
-        )
     else:
         form = EditPostForm(
             is_first_post=first_post,
             needs_spam_check=needs_spam_check,
             request=request,
             data=request.POST or None,
+            quote=quote
         )
 
     if request.method == 'POST' and request.user.has_perm('forum.moderate_forum', forum):
