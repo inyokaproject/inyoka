@@ -22,7 +22,7 @@ from inyoka.utils.forms import MultiField, StrippedCharField
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
-from inyoka.wiki.utils import quote_text
+from inyoka.utils.generic import quote_text
 
 
 class ForumField(forms.ChoiceField):

@@ -110,7 +110,7 @@ from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
 from inyoka.utils.dates import date_time_to_datetime
 from inyoka.wiki.models import Page as WikiPage
-from inyoka.wiki.utils import quote_text
+from inyoka.utils.generic import quote_text
 
 # TODO: move into some kind of config, but as a quick fix for now...
 AUTOBAN_SPAMMER_WORDS = (
