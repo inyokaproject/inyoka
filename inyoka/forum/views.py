@@ -54,6 +54,7 @@ from inyoka.forum.notifications import (
     send_reply_to_topic_notifications,
     send_newtopic_notifications,
     send_notification_for_topics)
+from inyoka.forum.utils import forum_editable_required
 from inyoka.markup import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
@@ -433,11 +434,6 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     attach_form = None
     attachments = []
     preview = None
-
-    if settings.FORUM_DISABLE_POSTING:
-        messages.error(request, _('Post functionality is currently disabled.'))
-        return HttpResponseRedirect(href('forum'))
-
     first_post = False
     if post_edit:
         first_post = post.id == topic.first_post_id
@@ -711,7 +707,9 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         'discussions': discussions,
     }
 
+
 @templated('forum/edit.html')
+@forum_editable_required()
 def edit_post(request, post_id):
     post = Post.objects.get(id=int(post_id))
     locked = post.lock(request)
@@ -724,7 +722,9 @@ def edit_post(request, post_id):
 
     return create_and_edit_post(request,forum=forum, topic=topic, post=post, post_edit=True)
 
+
 @templated('forum/edit.html')
+@forum_editable_required()
 def create_topic(request, forum_slug=None, page_name=None):
     page = None
     if page_name:
@@ -754,6 +754,7 @@ def create_topic(request, forum_slug=None, page_name=None):
     return create_and_edit_post(request, forum=forum, page=page, newtopic=True)
 
 @templated('forum/edit.html')
+@forum_editable_required()
 def reply_to_topic(request, topic_slug=None, quote_id=None):
     topic = forum = quote = None
 
