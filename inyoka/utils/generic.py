@@ -9,7 +9,6 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.contrib import messages
-from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponseRedirect
@@ -19,12 +18,11 @@ from django.utils.translation import ugettext_lazy
 from django.views.generic import base, edit, list
 
 from inyoka.utils.database import get_simplified_queryset
+from inyoka.utils.django_19_auth_mixins import PermissionRequiredMixin as _PermissionRequiredMixin
 from inyoka.utils.http import TemplateResponse
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
-from inyoka.utils.urls import href
-from inyoka.utils.django_19_auth_mixins import PermissionRequiredMixin as _PermissionRequiredMixin
 
 
 def trigger_fix_errors_message(request):
@@ -252,3 +250,24 @@ class OrderedListView(PermissionRequiredMixin, BaseListView):
 
 class ListView(PermissionRequiredMixin, SortableListView):
     pass
+
+
+def quote_text(text, author=None, item_url=None):
+    """
+    Returns the quoted version of `text`.
+    If the optional argument `author` (username as string or User object) is
+    given, a written-by info is prepended.
+    """
+    try:  # We use try/catch here to not have to import the User model
+        author = author.username
+    except AttributeError:
+        pass
+
+    if item_url:
+        by = author and (u'[user:%s:] [%s schrieb]:\n' % (author, item_url)) or u''
+    else:
+        by = author and (u"[user:%s:] schrieb:\n" % author) or u''
+    return text and by + u'\n'.join(
+        '>' + (not line.startswith('>') and ' ' or '') + line
+        for line in text.split('\n')
+    ) or u''
