@@ -431,7 +431,6 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     to this topic or to create one or more polls.
     """
     posts = discussions = None
-    firstpost = False
     attach_form = None
     attachments = []
     preview = None
@@ -440,11 +439,11 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         messages.error(request, _('Post functionality is currently disabled.'))
         return HttpResponseRedirect(href('forum'))
 
+    first_post = False
     if post_edit:
-        firstpost = post.id == topic.first_post_id
-
+        first_post = post.id == topic.first_post_id
     if newtopic:
-        firstpost = True
+        first_post = True
 
     # We don't need Spam Checks for these Types of Users or Forums:
     # - Hidden Forums
@@ -472,7 +471,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         )
     elif quote:
         form = EditPostForm(
-            is_first_post=firstpost,
+            is_first_post=first_post,
             needs_spam_check=needs_spam_check,
             request=request,
             data=request.POST or None,
@@ -484,7 +483,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         )
     else:
         form = EditPostForm(
-            is_first_post=firstpost,
+            is_first_post=first_post,
             needs_spam_check=needs_spam_check,
             request=request,
             data=request.POST or None,
@@ -561,7 +560,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     # Handle polls
     poll_ids = map(int, filter(bool, request.POST.get('polls', '').split(',')))
     poll_form = poll_options = polls = None
-    if (newtopic or firstpost) and request.user.has_perm('forum.poll_forum', forum):
+    if (newtopic or first_post) and request.user.has_perm('forum.poll_forum', forum):
         poll_form, poll_options, polls = handle_polls(request, topic, poll_ids)
 
     # handle attachments
@@ -593,7 +592,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
                       u'editing your topic before creating a new one.'))
                 return HttpResponseRedirect(url_for(doublepost.topic))
 
-        if not topic and newtopic or firstpost:
+        if not topic and newtopic or first_post:
             if not topic and newtopic:
                 topic = Topic(forum=forum, author=request.user)
             topic.title = data['title']
@@ -669,7 +668,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     # the user is going to edit an existing post/topic
     elif post:
         form = EditPostForm(
-            is_first_post=firstpost,
+            is_first_post=first_post,
             needs_spam_check=needs_spam_check,
             request=request,
             data=request.POST or None,
@@ -701,7 +700,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         'topic': topic,
         'preview': preview,
         'isnewtopic': newtopic,
-        'isfirstpost': firstpost,
+        'isfirstpost': first_post,
         'can_attach': request.user.has_perm('forum.upload_forum', forum),
         'can_create_poll': request.user.has_perm('forum.poll_forum', forum),
         'can_moderate': request.user.has_perm('forum.moderate_forum', forum),
