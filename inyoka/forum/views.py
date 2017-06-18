@@ -488,53 +488,6 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     if request.method == 'POST' and request.user.has_perm('forum.moderate_forum', forum):
         form.surge_protection_timeout = None
 
-    # check privileges
-    if post_edit:
-        if topic.locked or topic.hidden or post.hidden:
-            if not request.user.has_perm('forum.moderate_forum', forum):
-                messages.error(request, _(u'You cannot edit this post.'))
-                post.unlock()
-                return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
-                                            post.page))
-            elif topic.locked:
-                messages.error(request,
-                               _(u'You are editing a post on a locked topic. '
-                                 u'Please note that this may be considered as impolite!'))
-        if not (request.user.has_perm('forum.moderate_forum', forum) or
-                (post.author.id == request.user.id and
-                 request.user.has_perm('forum.add_reply_forum', forum) and
-                 post.check_ownpost_limit('edit'))):
-            messages.error(request, _(u'You cannot edit this post.'))
-            post.unlock()
-            return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
-                                             post.page))
-    elif reply:
-        if topic.hidden:
-            if not request.user.has_perm('forum.moderate_forum', forum):
-                messages.error(request,
-                    _(u'You cannot reply in this topic because it was '
-                      u'deleted by a moderator.'))
-                return HttpResponseRedirect(url_for(topic))
-        elif topic.locked:
-            if not request.user.has_perm('forum.moderate_forum', forum):
-                messages.error(request,
-                    _(u'You cannot reply to this topic because '
-                      u'it was locked.'))
-                return HttpResponseRedirect(url_for(topic))
-            else:
-                messages.error(request,
-                    _(u'You are replying to a locked topic. '
-                      u'Please note that this may be considered as impolite!'))
-        elif quote and quote.hidden:
-            if not request.user.has_perm('forum.moderate_forum', forum):
-                return abort_access_denied(request)
-        else:
-            if not request.user.has_perm('forum.add_reply_forum', forum):
-                return abort_access_denied(request)
-    else:
-        if not request.user.has_perm('forum.add_topic_forum', forum):
-            return abort_access_denied(request)
-
     # the user has canceled the action
     if request.method == 'POST' and request.POST.get('cancel'):
         url = href('forum')
@@ -702,6 +655,25 @@ def edit_post(request, post_id):
     topic = post.topic
     forum = topic.forum
 
+    if topic.locked or topic.hidden or post.hidden:
+        if not request.user.has_perm('forum.moderate_forum', forum):
+            messages.error(request, _(u'You cannot edit this post.'))
+            post.unlock()
+            return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
+                                             post.page))
+        elif topic.locked:
+            messages.error(request,
+                           _(u'You are editing a post on a locked topic. '
+                             u'Please note that this may be considered as impolite!'))
+    if not (request.user.has_perm('forum.moderate_forum', forum) or
+                (post.author.id == request.user.id and
+                     request.user.has_perm('forum.add_reply_forum', forum) and
+                     post.check_ownpost_limit('edit'))):
+        messages.error(request, _(u'You cannot edit this post.'))
+        post.unlock()
+        return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
+                                         post.page))
+
     return create_and_edit_post(request,forum=forum, topic=topic, post=post, post_edit=True)
 
 
@@ -733,6 +705,9 @@ def create_topic(request, forum_slug=None, page_name=None):
     if not forum or forum.is_category:
         raise Http404()
 
+    if not request.user.has_perm('forum.add_topic_forum', forum):
+        return abort_access_denied(request)
+
     return create_and_edit_post(request, forum=forum, page=page, newtopic=True)
 
 @templated('forum/edit.html')
@@ -749,6 +724,29 @@ def reply_to_topic(request, topic_slug=None, quote_id=None):
                             .get(id=int(quote_id))
         topic = quote.topic
         forum = topic.forum
+
+    if topic.hidden:
+        if not request.user.has_perm('forum.moderate_forum', forum):
+            messages.error(request,
+                           _(u'You cannot reply in this topic because it was '
+                             u'deleted by a moderator.'))
+            return HttpResponseRedirect(url_for(topic))
+    elif topic.locked:
+        if not request.user.has_perm('forum.moderate_forum', forum):
+            messages.error(request,
+                           _(u'You cannot reply to this topic because '
+                             u'it was locked.'))
+            return HttpResponseRedirect(url_for(topic))
+        else:
+            messages.error(request,
+                           _(u'You are replying to a locked topic. '
+                             u'Please note that this may be considered as impolite!'))
+    elif quote and quote.hidden:
+        if not request.user.has_perm('forum.moderate_forum', forum):
+            return abort_access_denied(request)
+    else:
+        if not request.user.has_perm('forum.add_reply_forum', forum):
+            return abort_access_denied(request)
 
     return create_and_edit_post(request, topic=topic, forum=forum, quote=quote, reply=True)
 
