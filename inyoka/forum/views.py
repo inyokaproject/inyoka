@@ -430,7 +430,6 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     When creating a new topic, the user has the choice to upload files bound
     to this topic or to create one or more polls.
     """
-    posts = None
     attach_form = None
     attachments = []
     preview = None
@@ -665,11 +664,10 @@ def create_and_edit_post(request, forum, topic=None, post=None,
         tt = request.POST.get('text', '')
         preview = parse(tt).render(ctx, 'html')
 
+    posts = None
     if not newtopic:
-        max = topic.post_count.value()
-        posts = topic.posts.select_related('author') \
-                           .filter(hidden=False, position__gt=max - 15) \
-                           .order_by('-position')
+        posts = topic.posts.select_related('author').filter(hidden=False).order_by('-position')[:15]
+
     return {
         'form': form,
         'poll_form': poll_form,
