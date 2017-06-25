@@ -433,24 +433,13 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     attach_form = None
     attachments = []
     preview = None
+    needs_spam_check = forum.is_public and request.user.needs_spam_check
+
     first_post = False
     if post_edit:
         first_post = post.id == topic.first_post_id
     if newtopic:
         first_post = True
-
-    # We don't need Spam Checks for these Types of Users or Forums:
-    # - Hidden Forums
-    # - Users with post_count >= INYOKA_SPAM_DETECT_LIMIT
-    # - Users with forum.moderate_forum Permission
-    needs_spam_check = True
-    if request.user.post_count.value(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
-        needs_spam_check = False
-    elif request.user.has_perm('forum.moderate_forum', forum) or post_edit:
-        needs_spam_check = False
-    else:
-        if not User.objects.get_anonymous_user().has_perm('forum.view_forum', forum):
-            needs_spam_check = False
 
     if newtopic:
         form = NewTopicForm(

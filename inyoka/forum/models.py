@@ -371,6 +371,10 @@ class Forum(models.Model):
             descedants.extend(child.descendants)
         return descedants
 
+    @property
+    def is_public(self):
+        return User.objects.get_anonymous_user().has_perm('forum.view_forum', self)
+
     def filter_children(self, forums):
         return [forum for forum in forums if forum.parent_id == self.id]
 
