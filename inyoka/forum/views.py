@@ -440,6 +440,9 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     if newtopic:
         first_post = True
 
+    ###############################
+    # SETUP form
+    ################################
     if newtopic:
         form = NewTopicForm(
             force_version=forum.force_version,
@@ -474,9 +477,6 @@ def create_and_edit_post(request, forum, topic=None, post=None,
             quote=quote
         )
 
-    if request.method == 'POST' and request.user.is_team_member:
-        form.surge_protection_timeout = None
-
     # the user has canceled the action
     if request.method == 'POST' and request.POST.get('cancel'):
         url = href('forum')
@@ -491,6 +491,9 @@ def create_and_edit_post(request, forum, topic=None, post=None,
             post.unlock()
 
         return HttpResponseRedirect(url)
+
+    if request.method == 'POST' and request.user.is_team_member:
+        form.surge_protection_timeout = None
 
     # Clear surge protection to avoid multi-form hickups.
     clear_surge_protection(request, form)
@@ -510,6 +513,9 @@ def create_and_edit_post(request, forum, topic=None, post=None,
     if post_edit and not attachments:
         attachments = Attachment.objects.filter(post=post)
 
+    ###############################
+    # Acutely create/edit post
+    ################################
     # the user submitted a valid form
     if 'send' in request.POST and form.is_valid():
         data = form.cleaned_data
@@ -590,6 +596,9 @@ def create_and_edit_post(request, forum, topic=None, post=None,
             post.unlock()
             return HttpResponseRedirect(url_for(post))
 
+    ###############################
+    # Only preview
+    ################################
     # the user wants to see a preview
     elif 'preview' in request.POST:
         ctx = RenderContext(request, forum_post=post)

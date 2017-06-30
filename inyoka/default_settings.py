@@ -159,16 +159,16 @@ ACTIVATION_HOURS = 48
 USER_INACTIVE_DAYS = 365
 
 # wiki settings
-WIKI_MAIN_PAGE = 'Welcome'
+WIKI_MAIN_PAGE = 'Startseite'
 
 # The forum that should contain the wiki discussions
-WIKI_DISCUSSION_FORUM = 'discussions'
+WIKI_DISCUSSION_FORUM = 'wiki'
 
 # the page below we have our templates.  The template the
 # user specifies in the macro or in the parser is then
 # joined with this page name according to our weird joining
 # rules
-WIKI_TEMPLATE_BASE = 'Wiki/Templates'
+WIKI_TEMPLATE_BASE = 'Wiki/Vorlagen'
 
 WIKI_PRIVILEGED_PAGES = []
 
@@ -177,7 +177,6 @@ WIKI_RECENTCHANGES_DAYS = 7
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = None
-
 
 # 24h is the recommended and tested Cache Timeout
 CACHE_TIMEOUT = 60 * 60 * 24
