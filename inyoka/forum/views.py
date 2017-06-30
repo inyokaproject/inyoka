@@ -559,19 +559,10 @@ def create_and_edit_post(request, forum, topic=None, post=None,
             if newtopic:
                 post.position = 0
 
-        # If there are attachments, we need to get a post id before we render
-        # the text in order to parse the ``Bild()`` macro during first save. We
-        # can set the ``has_attachments`` attribute lazily because the post is
-        # finally saved in ``post.edit()``.
-        if attachments:
-            post.has_attachments = True
-            if not post.id:
-                post.save()
-            Attachment.update_post_ids(att_ids, post)
-        else:
-            post.has_attachments = False
+        post.has_attachments = True if attachments else False
 
         post.edit(data['text'])
+        Attachment.update_post_ids(att_ids, post)
 
         if page:
             # the topic is a wiki discussion, bind it to the wiki page
