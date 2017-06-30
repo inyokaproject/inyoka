@@ -479,11 +479,14 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     def needs_spam_check(self):
         if self.post_count.value(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
             return False
-        if self.groups.filter(name__iexact=settings.INYOKA_TEAM_GROUP_NAME).exists():
+        if self.is_team_member:
             return False
 
         return True;
 
+    @property
+    def is_team_member(self):
+        return self.groups.filter(name__iexact=settings.INYOKA_TEAM_GROUP_NAME).exists()
 
     def unban(self):
         """

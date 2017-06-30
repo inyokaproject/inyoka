@@ -474,7 +474,7 @@ def create_and_edit_post(request, forum, topic=None, post=None,
             quote=quote
         )
 
-    if request.method == 'POST' and request.user.has_perm('forum.moderate_forum', forum):
+    if request.method == 'POST' and request.user.is_team_member:
         form.surge_protection_timeout = None
 
     # the user has canceled the action
