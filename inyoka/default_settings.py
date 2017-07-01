@@ -282,10 +282,6 @@ CELERY_IMPORTS = [
 
 # Run tasks at specific time
 CELERYBEAT_SCHEDULE = {
-    'clean-sessions-every-5-minutes': {
-        'task': 'inyoka.portal.tasks.clean_sessions',
-        'schedule': timedelta(minutes=5),
-    },
     'check-for-new-session-record': {
         'task': 'inyoka.portal.tasks.check_for_user_record',
         'schedule': timedelta(minutes=5),

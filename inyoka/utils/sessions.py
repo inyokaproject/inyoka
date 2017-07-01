@@ -9,13 +9,13 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import datetime, timedelta
+from datetime import datetime
 from time import time
 
+from django.core.cache import cache
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy
 
-from inyoka.portal.models import SessionInfo
 from inyoka.utils.local import current_request
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import url_for
@@ -38,31 +38,24 @@ def set_session_info(request):
     if request.session.new:
         return
 
+    key = 'sessioninfo:%s' % request.session['sid']
+
+    session = {
+        'id': None,
+        'username': None,
+        'type': 'anonymous',
+        'anonymous': True,
+        'last_changed': datetime.utcnow()
+    }
+
     if request.user.is_authenticated() and not request.user.settings.get('hide_profile', False):
-        key = 'user:%s' % request.user.id
-        user_type = 'user'
-        if request.user.has_perm('ikhaya.view_unpublished_article'):
-            user_type = 'team'
-        args = {
-            'subject_text': request.user.username,
-            'subject_type': user_type,
-            'subject_link': url_for(request.user)
-        }
-    else:
-        key = request.session['sid']
-        args = {
-            'subject_text': None,
-            'subject_type': 'anonymous',
-            'subject_link': None
-        }
+        session['type'] = 'team' if request.user.has_perm('ikhaya.view_unpublished_article') else 'user'
+        session['anonymous'] = False
+        session['userid'] = request.user.id
+        session['text'] = request.user.username
+        session['link'] = url_for(request.user)
 
-    args.update({
-        'last_change': datetime.utcnow(),
-    })
-
-    session_info, created = SessionInfo.objects.get_or_create(key=key, defaults=args)
-    if not created:
-        SessionInfo.objects.filter(key=key).update(**args)
+    cache.set(key, session, timeout=SESSION_DELTA)
 
 
 class SurgeProtectionMixin(object):
@@ -115,17 +108,7 @@ def get_user_record(values=None):
 
 def get_sessions(order_by='-last_change'):
     """Get a simple list of active sessions for the portal index."""
-    delta = datetime.utcnow() - timedelta(seconds=SESSION_DELTA)
-    sessions = []
-    for item in SessionInfo.objects.filter(last_change__gt=delta) \
-                                   .order_by(order_by):
-        sessions.append({
-            'anonymous': item.subject_text is None,
-            'text': item.subject_text,
-            'type': item.subject_type,
-            'link': item.subject_link,
-            'last_change': item.last_change,
-        })
+    sessions = [session[1] for session in cache.get_many(cache.keys('sessioninfo:*')).iteritems()]
 
     anonymous = sum(x['anonymous'] for x in sessions)
     return {

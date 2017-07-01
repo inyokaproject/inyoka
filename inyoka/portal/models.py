@@ -72,23 +72,6 @@ class SubscriptionManager(ContentTypeManager):
                             .update(notified=0)
 
 
-class SessionInfo(models.Model):
-    """
-    A special class that holds session information.  Not every session
-    automatically has a session info.  Basically every user that is
-    active has a session info that is updated every request.  The
-    management functions for this model are in `inyoka.utils.sessions`.
-    """
-    key = models.CharField(max_length=200, unique=True, db_index=True)
-    last_change = models.DateTimeField(db_index=True)
-    subject_text = models.CharField(max_length=100, null=True)
-    subject_type = models.CharField(max_length=20)
-    subject_link = models.CharField(max_length=200, null=True)
-    action = models.CharField(max_length=500)
-    action_link = models.CharField(max_length=200, null=True)
-    category = models.CharField(max_length=200, null=True)
-
-
 PRIVMSG_FOLDERS_DATA = (
     (0, 'sent', ugettext_lazy(u'Send')),
     (1, 'inbox', ugettext_lazy(u'Inbox')),
@@ -322,7 +305,7 @@ class Subscription(models.Model):
         model = self.content_type.model
 
         if model == 'topic':
-            return user.has_perm('forum.view_forum',  self.content_object.forum)
+            return user.has_perm('forum.view_forum', self.content_object.forum)
         if model == 'forum':
             return user.has_perm('forum.view_forum', self.content_object)
         if model == 'page':
