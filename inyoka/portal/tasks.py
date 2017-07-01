@@ -16,20 +16,9 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
 
-from inyoka.portal.models import SessionInfo
 from inyoka.portal.user import User
 from inyoka.utils.logger import logger
-from inyoka.utils.sessions import SESSION_DELTA
 from inyoka.utils.storage import storage
-
-
-@shared_task
-def clean_sessions():
-    """
-    Clean sessions. This tasks in run by celery beat.
-    """
-    last_change = (datetime.utcnow() - timedelta(seconds=SESSION_DELTA))
-    SessionInfo.objects.filter(last_change__lt=last_change).delete()
 
 
 @shared_task
@@ -37,9 +26,8 @@ def check_for_user_record():
     """
     Checks whether the current session count is a new record.
     """
-    delta = datetime.utcnow() - timedelta(seconds=SESSION_DELTA)
     record = int(storage.get('session_record', 0))
-    session_count = SessionInfo.objects.filter(last_change__gt=delta).count()
+    session_count = len(cache.keys('sessioninfo:*'))
     if session_count > record:
         storage['session_record'] = unicode(session_count)
         storage['session_record_time'] = int(time())

@@ -17,7 +17,6 @@ DROP TABLE IF EXISTS south_migrationhistory;
 # Remove content from user sensetive tabels
 DELETE FROM portal_privatemessage;
 DELETE FROM portal_privatemessageentry;
-DELETE FROM portal_sessioninfo;
 DELETE FROM django_session;
 
 # Remove personal user informations
