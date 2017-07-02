@@ -93,12 +93,10 @@ def index(request, category=None):
     all_categories = Forum.objects.get_categories()
 
     if category:
-        category = Forum.objects.get_cached(category)
-        if not category or not category in all_categories:
+        categories = filter(lambda x: x.slug == category, all_categories)
+        if not categories:
             raise Http404()
-        category = category
-        categories = [category]
-
+        category = categories[0]
         unread_forum = category.find_welcome(request.user)
         if unread_forum is not None:
             return redirect(url_for(unread_forum, 'welcome'))
