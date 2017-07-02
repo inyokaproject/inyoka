@@ -510,7 +510,7 @@ class CreateUserForm(forms.Form):
                 _(u'Your username contains invalid characters. Only '
                   u'alphanumeric chars and “-” are allowed.')
             )
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username__iexact=username).exists():
             raise forms.ValidationError(
                 _(u'The username is already in use. Please choose another one.'))
         return username
