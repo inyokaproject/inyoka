@@ -609,10 +609,14 @@ class EditGroupForm(forms.ModelForm):
     def clean_name(self):
         """Validates that the name is alphanumeric"""
         data = self.cleaned_data
-        if not is_valid_username(data['name']):
+        groupname = data['name']
+        if not is_valid_username(groupname):
             raise forms.ValidationError(_(
                 u'The group name contains invalid chars'))
-        return data['name']
+        if Group.objects.filter(name__iexact=groupname).exists():
+            raise forms.ValidationError(
+                _(u'The groupname is already in use. Please choose another one.'))
+        return groupname
 
 
 def get_permissions_for_app(application, filtered=None):
