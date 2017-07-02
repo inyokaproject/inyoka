@@ -8,6 +8,7 @@
 """
 import ssl
 import zmq
+import certifi
 from django.conf import settings
 from django.core.management.base import NoArgsCommand
 from sleekxmpp import ClientXMPP
@@ -27,6 +28,7 @@ class JabberBot(ClientXMPP):
         self.zmq = zmq.Context()
         self.zeromq_bind = bind
         self.ssl_version = ssl.PROTOCOL_TLS
+        self.ca_certs = certifi.where()
 
     def handle_session_start(self, event):
         self.send_presence()

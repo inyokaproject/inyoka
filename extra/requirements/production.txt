@@ -31,3 +31,4 @@ transifex-client==0.12.4
 Werkzeug==0.12.2
 django-guardian==1.4.8
 icalendar==3.11.4
+certifi==2017.4.17
