@@ -510,7 +510,7 @@ class CreateUserForm(forms.Form):
                 _(u'Your username contains invalid characters. Only '
                   u'alphanumeric chars and “-” are allowed.')
             )
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username__iexact=username).exists():
             raise forms.ValidationError(
                 _(u'The username is already in use. Please choose another one.'))
         return username
@@ -609,10 +609,14 @@ class EditGroupForm(forms.ModelForm):
     def clean_name(self):
         """Validates that the name is alphanumeric"""
         data = self.cleaned_data
-        if not is_valid_username(data['name']):
+        groupname = data['name']
+        if not is_valid_username(groupname):
             raise forms.ValidationError(_(
                 u'The group name contains invalid chars'))
-        return data['name']
+        if Group.objects.filter(name__iexact=groupname).exists():
+            raise forms.ValidationError(
+                _(u'The groupname is already in use. Please choose another one.'))
+        return groupname
 
 
 def get_permissions_for_app(application, filtered=None):
@@ -994,7 +998,7 @@ class EditFileForm(forms.ModelForm):
     def clean_file(self):
         data = self.cleaned_data
         if 'file' in data and StaticFile.objects.filter(
-                identifier=data['file']).exists():
+                identifier__iexact=data['file']).exists():
             raise forms.ValidationError(_(u'Another file with this name '
                 u'already exists. Please edit this file.'))
         return data['file']
