@@ -90,10 +90,11 @@ def index(request, category=None):
 
     is_index = category is None
     forums = Forum.objects.get_forums_filtered(request.user, sort=True)
+    all_categories = Forum.objects.get_categories()
 
     if category:
         category = Forum.objects.get_cached(category)
-        if not category or not category.is_category:
+        if not category or not category in all_categories:
             raise Http404()
         category = category
         categories = [category]
@@ -102,7 +103,7 @@ def index(request, category=None):
         if unread_forum is not None:
             return redirect(url_for(unread_forum, 'welcome'))
     else:
-        categories = tuple(forum for forum in forums if forum.is_category)
+        categories = tuple(forum for forum in forums if forum in all_categories)
 
     hidden_categories = []
     if request.user.is_authenticated():
