@@ -7,6 +7,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import ssl
+import sys
 import zmq
 import certifi
 from django.conf import settings
@@ -27,7 +28,10 @@ class JabberBot(ClientXMPP):
         self.register_plugin('xep_0199')  # XMPP Ping
         self.zmq = zmq.Context()
         self.zeromq_bind = bind
-        self.ssl_version = ssl.PROTOCOL_TLS
+        if sys.version_info >= (2, 7, 13):
+            self.ssl_version = ssl.PROTOCOL_TLS
+        else:
+            self.ssl_version = ssl.PROTOCOL_SSLv23
         self.ca_certs = certifi.where()
 
     def handle_session_start(self, event):
