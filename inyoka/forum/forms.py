@@ -8,6 +8,9 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import urllib
+import urlparse
+
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -19,9 +22,7 @@ from inyoka.utils.forms import MultiField, StrippedCharField
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
-
-import urllib
-import urlparse
+from inyoka.utils.text import slugify
 
 
 class ForumField(forms.ChoiceField):
@@ -287,7 +288,7 @@ class EditForumForm(forms.ModelForm):
         return data['welcome_text']
 
     def clean_slug(self):
-        data = self.cleaned_data['slug']
+        data = slugify(self.cleaned_data['slug'])
         if data == 'new':
             raise forms.ValidationError(ugettext_lazy(u'“new” is not a valid forum slug'))
         return data
