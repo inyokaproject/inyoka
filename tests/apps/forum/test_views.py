@@ -498,8 +498,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         PollOption.objects.all().delete()
         Poll.objects.all().delete()
 
-        cache.clear()
-        cache.clear()
+        cache.delete_pattern('*')
         user._ANONYMOUS_USER = None
 
     def post_request(self, path, postdata, topics, posts, attachments=None,

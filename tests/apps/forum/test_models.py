@@ -368,10 +368,10 @@ class PostDeletionTest(TestCase):
         self.p1 = Post.objects.create(text='', author=self.user, topic=self.topic, position=0)
         self.p2 = Post.objects.create(text='', author=self.user, topic=self.topic)
         self.p3 = Post.objects.create(text='', author=self.user, topic=self.topic)
-        cache.clear()
+        cache.delete_pattern('*')
 
     def tearDown(self):
-        cache.clear()
+        cache.delete_pattern('*')
 
     def test_post_delete_at_end(self):
         # Warm up cache
