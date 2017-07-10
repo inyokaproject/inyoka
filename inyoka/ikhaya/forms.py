@@ -21,6 +21,7 @@ from inyoka.portal.models import StaticFile
 from inyoka.utils.forms import (UserField, TimeWidget, DateWidget,
     DateTimeField, StrippedCharField)
 from inyoka.utils.dates import datetime_to_timezone
+from inyoka.utils.text import slugify
 
 
 class SuggestArticleForm(forms.ModelForm):
@@ -53,7 +54,6 @@ class EditArticleForm(forms.ModelForm):
         readonly = kwargs.pop('readonly', False)
         if instance:
             initial = kwargs.setdefault('initial', {})
-            initial['pub_date'] = instance.pub_datetime
             if instance.pub_datetime != instance.updated:
                 initial['updated'] = instance.updated
             initial['author'] = instance.author.username
@@ -65,10 +65,6 @@ class EditArticleForm(forms.ModelForm):
                 self.fields[field].widget.attrs['readonly'] = True
 
     author = UserField(label=ugettext_lazy(u'Author'), required=True)
-    pub_date = DateTimeField(label=ugettext_lazy(u'Publication date'),
-                help_text=ugettext_lazy(u'If the date is in the future, '
-                    u'the article will not appear until then.'),
-                localize=True, required=True)
     updated = DateTimeField(label=ugettext_lazy(u'Last update'),
                 help_text=ugettext_lazy(u'If you keep this field empty, the '
                     u'publication date will be used.'),
@@ -78,26 +74,25 @@ class EditArticleForm(forms.ModelForm):
         instance = super(EditArticleForm, self).save(commit=False)
         if 'pub_date' in self.cleaned_data and (not instance.pk or
                 not instance.public or self.cleaned_data.get('public', None)):
-            instance.pub_date = self.cleaned_data['pub_date'].date()
-            instance.pub_time = self.cleaned_data['pub_date'].time()
+            instance.pub_date = self.cleaned_data['pub_date']
+            instance.pub_time = self.cleaned_data['pub_time']
         if self.cleaned_data.get('updated', None):
             instance.updated = self.cleaned_data['updated']
-        elif 'pub_date' in self.cleaned_data:
-            instance.updated = self.cleaned_data['pub_date']
+        elif set(('pub_date', 'pub_time')) in set(self.cleaned_data.keys()):
+            instance.updated = date_time_to_datetime(
+                self.cleaned_data['pub_date'],
+                self.cleaned_data['pub_time'])
         instance.save()
         return instance
 
     def clean_slug(self):
         slug = self.cleaned_data['slug']
         pub_date = self.cleaned_data.get('pub_date', None)
-        if not pub_date:
-            return slug  # invalid anyway as pub_date is required
-        pub_date = get_current_timezone().localize(pub_date) \
-                    .astimezone(pytz.utc).replace(tzinfo=None).date()
-        if slug:
+        if slug and pub_date:
+            slug = slugify(slug)
             q = Article.objects.filter(slug=slug, pub_date=pub_date)
-            if 'article_id' in self.cleaned_data:
-                q = q.exclude(id=self.cleaned_data['article_id'])
+            if self.instance.pk:
+                q = q.exclude(id=self.instance.pk)
             if q.exists():
                 raise forms.ValidationError(ugettext_lazy(u'There already '
                             u'exists an article with this slug!'))
@@ -105,11 +100,13 @@ class EditArticleForm(forms.ModelForm):
 
     class Meta:
         model = Article
-        exclude = ['pub_date', 'pub_time', 'updated', 'comment_count']
+        exclude = ['updated', 'comment_count']
         widgets = {
             'subject': forms.TextInput(attrs={'size': 50}),
             'intro': forms.Textarea(attrs={'rows': 3}),
             'text': forms.Textarea(attrs={'rows': 15}),
+            'pub_date': DateWidget(),
+            'pub_time': TimeWidget(),
         }
 
 
@@ -117,6 +114,7 @@ class EditPublicArticleForm(EditArticleForm):
     def __init__(self, *args, **kwargs):
         super(EditPublicArticleForm, self).__init__(*args, **kwargs)
         del self.fields['pub_date']
+        del self.fields['pub_time']
 
     class Meta(EditArticleForm.Meta):
         exclude = EditArticleForm.Meta.exclude + ['slug']
