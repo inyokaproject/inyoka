@@ -108,7 +108,6 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_random_password
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
-from inyoka.utils.dates import date_time_to_datetime
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.wiki.utils import quote_text
 
@@ -1482,10 +1481,10 @@ def calendar_ical(request, slug):
     cal = iCal()
     tz = pytz.timezone(settings.TIME_ZONE)
 
-    start = date_time_to_datetime(event.date, event.time or time())
+    start = datetime.combine(event.date, event.time or time())
 
     if event.enddate:
-        end = date_time_to_datetime(event.enddate, event.endtime or time())
+        end = datetime.combine(event.enddate, event.endtime or time())
     else:
         end = start
 
