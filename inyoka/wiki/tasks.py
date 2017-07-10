@@ -24,7 +24,8 @@ def render_article(page):
 
 @shared_task
 def update_related_pages(page, update_meta=True):
-    from inyoka.wiki.models import MetaData
+    from inyoka.wiki.models import MetaData, Page
+    page = Page.objects.get(id=page)
     related_pages = set()
     values = ('value', 'page__last_rev__text_id')
     linked = MetaData.objects.values_list(*values) \

@@ -68,17 +68,17 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
     if exclude is not None:
         subscriptions = subscriptions.exclude(**exclude)
     if exclude_current_user:
-        subscriptions = subscriptions.exclude(user__id=request_user_id)
+        subscriptions = subscriptions.exclude(user_id=request_user_id)
 
     notified_users = set()
     notified = set()
 
     for subscription in subscriptions.all():
         user = subscription.user
-        if user in notified_users:
+        if user.id in notified_users:
             continue
 
-        notified_users.add(user)
+        notified_users.add(user.id)
         if callable(args):
             args = args(subscription)
         args.update({'username': user.username})
@@ -88,10 +88,10 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
     if not include_notified:
         Subscription.objects.filter(id__in=notified).update(notified=True)
 
-    if exclude and 'user__in' in exclude:
-        notified_users.update(set(exclude['user__in']))
+    if exclude and 'user_id__in' in exclude:
+        notified_users.update(set(exclude['user_id__in']))
 
     if callback is not None:
-        subtask(callback).delay(notified_users)
+        subtask(callback).delay(list(notified_users))
 
     return notified_users

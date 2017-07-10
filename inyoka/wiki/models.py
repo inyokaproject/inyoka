@@ -926,7 +926,7 @@ class Page(models.Model):
         deferred.clear(self)
         # FIXME: We are using apply_async() instead of delay() because there is
         #        a real dumb race condition between the celery task and this save().
-        update_related_pages.apply_async(args=[self, update_meta], countdown=5)
+        update_related_pages.apply_async(args=[self.pk, update_meta], countdown=5)
 
     def delete(self):
         """
