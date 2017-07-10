@@ -34,6 +34,7 @@ def _localtime(val):
         val = timezone.make_aware(val, pytz.UTC)
     return timezone.localtime(val)
 
+
 naturalday = lambda value, arg='DATE_FORMAT': djnaturalday(value, arg)
 format_date = lambda value, arg='DATE_FORMAT': defaultfilters.date(value, arg)
 format_datetime = lambda value, arg='DATETIME_FORMAT': defaultfilters.date(_localtime(value), arg)

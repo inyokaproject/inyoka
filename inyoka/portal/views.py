@@ -12,7 +12,6 @@
 import time
 from datetime import date, datetime, timedelta
 from icalendar import Calendar as iCal, Event as iEvent
-import pytz
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -95,7 +94,6 @@ from inyoka.portal.utils import (
 from inyoka.utils import generic
 from inyoka.utils.http import (
     TemplateResponse,
-    does_not_exist_is_404,
     templated,
 )
 from inyoka.utils.mail import send_mail
@@ -1307,6 +1305,7 @@ def group_edit_global_permissions(request, name):
         'form': form,
     }
 
+
 @login_required
 @permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit_forum_permissions.html')
@@ -1477,9 +1476,7 @@ def calendar_ical(request, slug):
     except Event.DoesNotExist:
         raise Http404()
 
-
     cal = iCal()
-    tz = pytz.timezone(settings.TIME_ZONE)
 
     start = datetime.combine(event.date, event.time or time())
 
