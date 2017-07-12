@@ -42,15 +42,14 @@ For compiling Inyoka and its dependencies you need a lot of developer files:
 
 .. code-block:: console
 
-    $  sudo apt-get install libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libmysqlclient-dev build-essential redis-server libpq-dev libffi-dev
+    $  sudo apt-get install git nodejs-legacy libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libmysqlclient-dev build-essential libpq-dev libffi-dev
 
 Further you need the Python 2.7 files:
 
 .. code-block:: console
 
-    $ sudo apt-get install python2.7
-    $ sudo apt-get install python2.7-dev    # (on Precise)
-    $ sudo apt-get install libpython2.7-dev # (on Trusty and newer)
+    $ sudo apt-get install python2.7 libpython2.7-dev
+
 
 Further you need a recent pip and virtualenv for Python 2.7:
 
@@ -66,9 +65,6 @@ You also need the JavaScript package manager npm:
 
     $ sudo apt-get install npm
 
-The version of npm shipped on Ubuntu 12.04 is too old, see `these docs
-<https://docs.npmjs.com/getting-started/installing-node>`_ in order to update
-your version.
 
 Inyoka installation
 *******************
