@@ -10,14 +10,13 @@
 """
 import json
 import calendar
-from datetime import date, time
+from datetime import datetime, date, time
 
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.utils.http import urlquote_plus
 
-from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
@@ -71,10 +70,10 @@ def calendar_entries_for_month(year, month):
 def google_calendarize(event):
     tfmt = '%Y%m%dT000000'
 
-    start = date_time_to_datetime(event.date, event.time or time())
+    start = datetime.combine(event.date, event.time or time())
     dates = start.strftime(tfmt)
     if event.enddate:
-        end = date_time_to_datetime(event.enddate, event.endtime or time())
+        end = datetime.combine(event.enddate, event.endtime or time())
         dates += '%2F' + end.strftime(tfmt)
     else:
         dates += '%2F' + start.strftime(tfmt)

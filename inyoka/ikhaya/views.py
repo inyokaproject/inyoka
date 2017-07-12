@@ -53,7 +53,6 @@ from inyoka.portal.models import (
 )
 from inyoka.portal.user import User
 from inyoka.utils import ctype, generic
-from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.http import (
@@ -828,7 +827,7 @@ def event_suggest(request):
             data = form.cleaned_data
             event.name = data['name']
             if data['date'] and data['time']:
-                d = convert(date_time_to_datetime(
+                d = convert(datetime.combine(
                     data['date'],
                     data['time'] or dt_time(0)
                 ))
@@ -838,7 +837,7 @@ def event_suggest(request):
                 event.date = data['date']
                 event.time = None
             if data['endtime']:
-                d = convert(date_time_to_datetime(
+                d = convert(datetime.combine(
                     data['enddate'] or event.date,
                     data['endtime']
                 ))

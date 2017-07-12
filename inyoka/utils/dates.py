@@ -34,6 +34,7 @@ def _localtime(val):
         val = timezone.make_aware(val, pytz.UTC)
     return timezone.localtime(val)
 
+
 naturalday = lambda value, arg='DATE_FORMAT': djnaturalday(value, arg)
 format_date = lambda value, arg='DATE_FORMAT': defaultfilters.date(value, arg)
 format_datetime = lambda value, arg='DATETIME_FORMAT': defaultfilters.date(_localtime(value), arg)
@@ -86,9 +87,6 @@ def datetime_to_timezone(dt, enforce_utc=False):
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=pytz.UTC)
     return datetime_safe.new_datetime(dt.astimezone(tz))
-
-
-date_time_to_datetime = datetime.combine
 
 
 def parse_iso8601(value):

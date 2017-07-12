@@ -8,7 +8,7 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from datetime import time as dt_time
+from datetime import datetime, time as dt_time
 
 from django import forms
 from django.utils.timezone import get_current_timezone
@@ -20,7 +20,7 @@ from inyoka.ikhaya.models import Event, Article, Category, Suggestion
 from inyoka.portal.models import StaticFile
 from inyoka.utils.forms import (UserField, TimeWidget, DateWidget,
     DateTimeField, StrippedCharField)
-from inyoka.utils.dates import datetime_to_timezone, date_time_to_datetime
+from inyoka.utils.dates import datetime_to_timezone
 
 
 class SuggestArticleForm(forms.ModelForm):
@@ -138,13 +138,13 @@ class NewEventForm(forms.ModelForm):
         event = kwargs.get('instance', None)
         if event:  # Adjust datetime to local timezone
             if event.date and event.time is not None:
-                dt = datetime_to_timezone(date_time_to_datetime(
+                dt = datetime_to_timezone(datetime.combine(
                     event.date, event.time or dt_time(0)))
                 event.date = dt.date()
                 event.time = dt.time()
 
             if event.endtime is not None:
-                dt_end = datetime_to_timezone(date_time_to_datetime(
+                dt_end = datetime_to_timezone(datetime.combine(
                     event.enddate or event.date, event.endtime))
                 event.enddate = dt_end.date()
                 event.endtime = dt_end.time()
@@ -157,13 +157,13 @@ class NewEventForm(forms.ModelForm):
                             .astimezone(pytz.utc).replace(tzinfo=None))
         # Convert local timezone to unicode
         if event.date and event.time is not None:
-            d = convert(date_time_to_datetime(
+            d = convert(datetime.combine(
                 event.date, event.time or dt_time(0)
             ))
             event.date = d.date()
             event.time = d.time()
         if event.endtime is not None:
-            d = convert(date_time_to_datetime(
+            d = convert(datetime.combine(
                 event.enddate or event.date, event.endtime
             ))
             event.enddate = d.date()
