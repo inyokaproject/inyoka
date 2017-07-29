@@ -8,17 +8,13 @@
     :copyright: (c) 2015-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-
-import logging
-
 import requests
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
-
-logger = logging.getLogger('inyoka.antispam')
+from inyoka.utils.logger import logger
 
 
 def get_verify_key_url():

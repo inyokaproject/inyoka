@@ -13,7 +13,6 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import logging
 import re
 import socket
 # And further patch it so feedparser works :/
@@ -32,24 +31,15 @@ from django.utils.html import escape
 import inyoka  # noqa
 from inyoka.planet.models import Blog, Entry
 from inyoka.utils.html import cleanup_html
+from inyoka.utils.logger import logger
 
 make_parser = xml.sax.make_parser
 xml.sax.make_parser = lambda x: make_parser()
 # End XML patching.
 
-
-
-
-
-
-
-
 # set a default timeout. Otherwise fetching some feeds might cause the script
 # to block forever
 socket.setdefaulttimeout(20.0)
-
-# enable logging
-logger = logging.getLogger(__name__)
 
 HTML_MIMETYPES = frozenset(('text/html', 'application/xml+xhtml', 'application/xhtml+xml'))
 _par_re = re.compile(r'\n{2,}')
@@ -62,6 +52,7 @@ def nl2p(s):
 
 def dateutilDateHandler(aDateString):
     return dateutil_parse(aDateString).utctimetuple()
+
 
 feedparser.registerDateHandler(dateutilDateHandler)
 
