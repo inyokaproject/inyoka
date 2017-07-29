@@ -35,8 +35,8 @@ sentry_logger = logging.getLogger('sentry.errors')
 sentry_logger.addHandler(logging.StreamHandler())
 
 
-def process_failure_signal(sender, task_id, exception, args, kwargs, traceback,
-                           einfo, signal=None):
+@task_failure.connect
+def process_failure_signal(sender, task_id, exception, traceback, einfo, *args, **kwargs):
     exc_info = (type(exception), exception, traceback)
     descr = (exception.__class__.__name__, exception)
     logger.error('Celery job exception: %s (%s)' % descr,
@@ -50,5 +50,3 @@ def process_failure_signal(sender, task_id, exception, args, kwargs, traceback,
             }
         }
     )
-
-task_failure.connect(process_failure_signal)

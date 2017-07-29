@@ -40,7 +40,7 @@ def send_newtopic_notifications(user, post, topic, forum):
             'username': data.get('author_username')},
         data,
         include_notified=True,
-        filter={'content_type': ctype(User), 'object_id': user.id},
+        filter={'content_type_id': ctype(User).pk, 'object_id': user.id},
         callback=notify_forum_subscriptions.subtask(args=(user.id, data)))
 
 
@@ -59,13 +59,13 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
             data,
             include_notified=True,
             filter={
-                'content_type': ctype(Forum),
+                'content_type_id': ctype(Forum).pk,
                 'object_id': data.get('forum_id')
             },
             callback=notify_ubuntu_version_subscriptions.subtask(
                 args=(request_user_id, data)
             ),
-            exclude={'user__in': notified_users},
+            exclude={'user_id__in': notified_users},
         )
     finally:
         translation.activate(prev_language)
@@ -84,7 +84,7 @@ def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
                 data,
                 include_notified=True,
                 filter={'ubuntu_version': data.get('topic_version_number')},
-                exclude={'user__in': notified_users})
+                exclude={'user_id__in': notified_users})
     finally:
         translation.activate(prev_language)
 
@@ -106,7 +106,7 @@ def send_edit_notifications(user, post, topic, forum):
             'topic': data.get('topic_title'),
             'username': data.get('author_username')},
         data,
-        filter={'content_type': ctype(Topic), 'object_id': data.get('topic_id')},
+        filter={'content_type_id': ctype(Topic).pk, 'object_id': data.get('topic_id')},
         callback=notify_member_subscriptions.subtask(args=(user.id, data)))
 
 
@@ -119,8 +119,8 @@ def notify_member_subscriptions(notified_users, request_user_id, data):
         'user_new_post',
         _(u'New answer from user „{username}”').format(username=data.get('author_username')),
         data, include_notified=True,
-        filter={'content_type': ctype(User), 'object_id': request_user_id},
-        exclude={'user__in': notified_users})
+        filter={'content_type_id': ctype(User).pk, 'object_id': request_user_id},
+        exclude={'user_id__in': notified_users})
 
 
 def send_discussion_notification(user, page):
@@ -138,7 +138,7 @@ def send_discussion_notification(user, page):
         _(u'New discussion regarding the page “%(page)s” created') % {
             'page': data.get('page_title')},
         data,
-        filter={'content_type': ctype(Page), 'object_id': data.get('page_id')})
+        filter={'content_type_id': ctype(Page).pk, 'object_id': data.get('page_id')})
 
 
 def send_deletion_notification(user, topic, reason):
@@ -152,7 +152,7 @@ def send_deletion_notification(user, topic, reason):
         _(u'The topic “%(topic)s” has been deleted') % {
             'topic': data.get('topic_title')},
         data,
-        filter={'content_type': ctype(Topic), 'object_id': data.get('topic_id')})
+        filter={'content_type_id': ctype(Topic).pk, 'object_id': data.get('topic_id')})
 
 
 def send_notification_for_topics(request_user_id, template, template_args, subject, topic_ids, include_forums=False,
@@ -167,14 +167,14 @@ def send_notification_for_topics(request_user_id, template, template_args, subje
     }
 
     topic_subscribers = {
-        'content_type': ctype(Topic),
+        'content_type_id': ctype(Topic).pk,
         'object_id__in': topic_ids,
     }
     notified_users = queue_notifications(filter=topic_subscribers, **notification_args)
 
     if include_forums:
         forum_subscribers = {
-            'content_type': ctype(Forum),
+            'content_type_id': ctype(Forum).pk,
             'object_id__in': forum_ids,
         }
-        queue_notifications(filter=forum_subscribers, exclude={'user__in': notified_users}, **notification_args)
+        queue_notifications(filter=forum_subscribers, exclude={'user_id__in': notified_users}, **notification_args)

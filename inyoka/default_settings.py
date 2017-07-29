@@ -258,16 +258,16 @@ SENTRY_SITE = 'example.com'
 
 
 # Celery broker.
-BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 CELERY_SEND_TASK_ERROR_EMAILS = False
-CELERY_EAGER_PROPAGATES_EXCEPTIONS = False
-CELERY_ALWAYS_EAGER = DEBUG
-CELERY_IGNORE_RESULT = True
+CELERY_TASK_EAGER_PROPAGATES = False
+CELERY_TASK_ALWAYS_EAGER = DEBUG
+CELERY_TASK_IGNORE_RESULT = True
 
 # Do not hijack the root logger, avoids unicode errors
-CELERYD_HIJACK_ROOT_LOGGER = False
+CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 CELERY_SEND_EVENTS = True
 
 # Modules that hold task definitions
@@ -281,7 +281,7 @@ CELERY_IMPORTS = [
 ]
 
 # Run tasks at specific time
-CELERYBEAT_SCHEDULE = {
+CELERY_BEAT_SCHEDULE = {
     'check-for-new-session-record': {
         'task': 'inyoka.portal.tasks.check_for_user_record',
         'schedule': timedelta(minutes=5),
