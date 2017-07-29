@@ -32,7 +32,7 @@ def send_newtopic_notifications(user, post, topic, forum):
           'forum_unsubscribe': forum.get_absolute_url('unsubscribe'),
           'post_url': post.get_absolute_url(),
           'topic_title': topic.title,
-          'topic_version': topic.get_ubuntu_version(),
+          'topic_version': str(topic.get_ubuntu_version()),
           'topic_version_number': version_number.number if version_number else None}
 
     queue_notifications.delay(user.id, 'user_new_topic',
