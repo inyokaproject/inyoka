@@ -981,9 +981,15 @@ class WikiFeedSelectorForm(FeedSelectorForm):
 
 
 class EditStaticPageForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(EditStaticPageForm, self).__init__(*args, **kwargs)
-        self.fields['key'].required = False
+
+    def clean_key(self):
+        key = self.cleaned_data.get('key')
+        if self.instance.key and self.instance.key != key:
+            raise forms.ValidationError(_(u'It is not allowed to change this key.'))
+        if StaticPage.objects.filter(key__iexact=key).exists():
+            raise forms.ValidationError(_(u'Another page with this name '
+                u'already exists. Please edit this page.'))
+        return key
 
     class Meta:
         model = StaticPage
