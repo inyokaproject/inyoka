@@ -12,6 +12,7 @@ from django.conf import settings
 
 from inyoka.portal.models import Subscription
 from inyoka.utils.jabber import send as send_jabber
+from inyoka.utils.logger import logger
 from inyoka.utils.mail import send_mail
 from inyoka.utils.templating import render_template
 
@@ -93,5 +94,7 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
 
     if callback is not None:
         subtask(callback).delay(list(notified_users))
+
+    logger.debug('Notified for {}: {}'.format(template, notified_users))
 
     return notified_users
