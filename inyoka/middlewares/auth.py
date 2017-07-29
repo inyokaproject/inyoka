@@ -8,7 +8,10 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import uuid
+
 from django.contrib import auth, messages
+from django.utils.crypto import constant_time_compare
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
@@ -23,7 +26,20 @@ class AuthMiddleware(object):
             user_id = request.session[auth.SESSION_KEY]
             backend_path = request.session[auth.BACKEND_SESSION_KEY]
             backend = auth.load_backend(backend_path)
-            user = backend.get_user(user_id) or User.objects.get_anonymous_user()
+            user = backend.get_user(user_id)
+            if user:
+                session_hash = request.session.get(auth.HASH_SESSION_KEY)
+                session_hash_verified = session_hash and constant_time_compare(
+                    session_hash,
+                    user.get_session_auth_hash()
+                )
+                if not session_hash_verified:
+                    request.session.flush()
+                    request.session['sid'] = str(uuid.uuid4())
+                    request.session.new = True
+                    user = None
+
+            user = user or User.objects.get_anonymous_user()
         except (User.DoesNotExist, KeyError):
             user = User.objects.get_anonymous_user()
 
