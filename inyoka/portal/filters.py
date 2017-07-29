@@ -41,7 +41,7 @@ class LinkWidget(BaseLinkWidget):
     def render_option(self, name, selected_choices, option_value, option_label):
         option_value = force_unicode(option_value)
         if option_label == '':
-            option_label = u'Alle'
+            option_label = ugettext_lazy(u'All types')
         data = self.data.copy()
         data[name] = option_value
         selected = data == self.data or option_value in selected_choices
@@ -61,8 +61,8 @@ class LinkWidget(BaseLinkWidget):
 
 class SubscriptionFilter(FilterSet):
     content_type = ChoiceFilter(name='content_type__model', label='',
-        choices=(('', ugettext_lazy(u'All types')),) + tuple(SUPPORTED_SUBSCRIPTION_TYPES.iteritems()),
-        widget=LinkWidget)
+        choices=tuple(SUPPORTED_SUBSCRIPTION_TYPES.iteritems()),
+        widget=LinkWidget, empty_label=ugettext_lazy(u'All types'))
 
     class Meta:
         model = Subscription
