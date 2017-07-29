@@ -51,9 +51,10 @@ from inyoka.forum.models import (
 from inyoka.forum.notifications import (
     send_deletion_notification,
     send_discussion_notification,
-    send_edit_notifications,
+    send_reply_to_topic_notifications,
     send_newtopic_notifications,
     send_notification_for_topics)
+from inyoka.forum.utils import forum_editable_required
 from inyoka.markup import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
@@ -78,7 +79,6 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import quote_text
 
 
 @templated('forum/index.html')
@@ -417,9 +417,8 @@ def handle_attachments(request, post, att_ids):
     return attach_form, attachments
 
 
-@templated('forum/edit.html')
-def edit(request, forum_slug=None, topic_slug=None, post_id=None,
-         quote_id=None, page_name=None):
+def create_and_edit_post(request, forum, topic=None, post=None,
+                         quote=None, page=None, newtopic=False, reply=False, post_edit=False):
     """
     This function allows the user to create a new topic which is created in
     the forum `slug` if `slug` is a string.
@@ -430,17 +429,238 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     When creating a new topic, the user has the choice to upload files bound
     to this topic or to create one or more polls.
     """
-    post = topic = forum = quote = posts = discussions = None
-    newtopic = firstpost = False
     attach_form = None
     attachments = []
     preview = None
+    needs_spam_check = forum.is_public and request.user.needs_spam_check
+
+    first_post = False
+    if post_edit:
+        first_post = post.id == topic.first_post_id
+    if newtopic:
+        first_post = True
+
+    if newtopic:
+        form = NewTopicForm(
+            force_version=forum.force_version,
+            needs_spam_check=needs_spam_check,
+            request=request,
+            data=request.POST or None,
+            initial={
+                'text': forum.newtopic_default_text,
+                'title': page and page.name or '',
+            },
+        )
+    elif post_edit:
+        form = EditPostForm(
+            is_first_post=first_post,
+            needs_spam_check=needs_spam_check,
+            request=request,
+            data=request.POST or None,
+            initial={
+                'title': topic.title,
+                'ubuntu_distro': topic.ubuntu_distro,
+                'ubuntu_version': topic.ubuntu_version,
+                'sticky': topic.sticky,
+                'text': post.text,
+            }
+        )
+    else:
+        form = EditPostForm(
+            is_first_post=first_post,
+            needs_spam_check=needs_spam_check,
+            request=request,
+            data=request.POST or None,
+            quote=quote
+        )
+
+    if request.method == 'POST' and request.user.is_team_member:
+        form.surge_protection_timeout = None
+
+    # the user has canceled the action
+    if request.method == 'POST' and request.POST.get('cancel'):
+        url = href('forum')
+        if newtopic:
+            url = href('forum', 'forum', forum.slug)
+        elif quote:
+            url = href('forum', 'post', quote.id)
+        elif reply:
+            url = href('forum', 'topic', topic.slug)
+        elif post_edit:
+            url = href('forum', 'post', post.id)
+            post.unlock()
+
+        return HttpResponseRedirect(url)
+
+    # Clear surge protection to avoid multi-form hickups.
+    clear_surge_protection(request, form)
+
+    # Handle polls
+    poll_ids = map(int, filter(bool, request.POST.get('polls', '').split(',')))
+    poll_form = poll_options = polls = None
+    if (newtopic or first_post) and request.user.has_perm('forum.poll_forum', forum):
+        poll_form, poll_options, polls = handle_polls(request, topic, poll_ids)
+
+    # handle attachments
+    att_ids = map(int, filter(bool,
+        request.POST.get('attachments', '').split(',')
+    ))
+    if request.user.has_perm('forum.upload_forum', forum):
+        attach_form, attachments = handle_attachments(request, post, att_ids)
+    if post_edit and not attachments:
+        attachments = Attachment.objects.filter(post=post)
+
+    # the user submitted a valid form
+    if 'send' in request.POST and form.is_valid():
+        data = form.cleaned_data
+
+        is_spam_post = form._spam and not form._spam_discard
+
+        if not post_edit:
+            doublepost = Post.objects \
+                .filter(author=request.user, text=data['text'],
+                        pub_date__gt=(datetime.utcnow() - timedelta(0, 300)))
+            if not newtopic:
+                doublepost = doublepost.filter(topic=topic)
+            try:
+                doublepost = doublepost.select_related('topic').all()[0]
+            except IndexError:
+                pass
+            else:
+                messages.info(request,
+                    _(u'This topic was already created. Please think about '
+                      u'editing your topic before creating a new one.'))
+                return HttpResponseRedirect(url_for(doublepost.topic))
+
+        if newtopic or (post_edit and first_post):
+            if newtopic:
+                topic = Topic(forum=forum, author=request.user)
+            topic.title = data['title']
+            topic.ubuntu_distro = data.get('ubuntu_distro')
+            topic.ubuntu_version = data.get('ubuntu_version')
+
+            if request.user.has_perm('forum.sticky_forum', forum):
+                topic.sticky = data.get('sticky', False)
+            elif data.get('sticky', False):
+                messages.error(request, _(u'You are not allowed to mark this topic as "important".'))
+
+            topic.save()
+            topic.forum.invalidate_topic_cache()
+
+            if request.user.has_perm('forum.poll_forum', forum):
+                for poll in polls:
+                    topic.polls.add(poll)
+                topic.has_poll = bool(polls)
+                topic.save()
+
+        if not post_edit:
+            post = Post(topic=topic, author_id=request.user.id)
+            if newtopic:
+                post.position = 0
+
+        post.has_attachments = True if attachments else False
+
+        post.edit(data['text'])
+        Attachment.update_post_ids(att_ids, post)
+
+        if page:
+            # the topic is a wiki discussion, bind it to the wiki page
+            page.topic = topic
+            page.save()
+
+        if is_spam_post:
+            post.mark_spam(report=True, update_akismet=False)
+        else:
+            if newtopic:
+                send_newtopic_notifications(request.user, post, topic, forum)
+            elif reply:
+                send_reply_to_topic_notifications(request.user, post, topic, forum)
+            if page:
+                send_discussion_notification(request.user, page)
+
+            subscribed = Subscription.objects.user_subscribed(request.user, topic)
+            if request.user.settings.get('autosubscribe', True) and not subscribed and not post_edit:
+                subscription = Subscription(user=request.user, content_object=topic)
+                subscription.save()
+
+        messages.success(request, _(u'The post was saved successfully.'))
+        if newtopic:
+            return HttpResponseRedirect(url_for(post.topic))
+        else:
+            post.unlock()
+            return HttpResponseRedirect(url_for(post))
+
+    # the user wants to see a preview
+    elif 'preview' in request.POST:
+        ctx = RenderContext(request, forum_post=post)
+        tt = request.POST.get('text', '')
+        preview = parse(tt).render(ctx, 'html')
+
+    posts = None
+    if not newtopic:
+        posts = topic.posts.select_related('author').filter(hidden=False).order_by('-position')[:15]
+
+    return {
+        'form': form,
+        'poll_form': poll_form,
+        'options': poll_options,
+        'polls': polls,
+        'post': post,
+        'forum': forum,
+        'topic': topic,
+        'preview': preview,
+        'isnewtopic': newtopic,
+        'isfirstpost': first_post,
+        'can_attach': request.user.has_perm('forum.upload_forum', forum),
+        'can_create_poll': request.user.has_perm('forum.poll_forum', forum),
+        'can_moderate': request.user.has_perm('forum.moderate_forum', forum),
+        'can_sticky': request.user.has_perm('forum.sticky_forum', forum),
+        'attach_form': attach_form,
+        'attachments': list(attachments),
+        'posts': posts,
+        'storage': storage,
+        'discussions': Page.objects.filter(topic=topic) if not newtopic else None,
+    }
+
+
+@templated('forum/edit.html')
+@forum_editable_required()
+def edit_post(request, post_id):
+    post = Post.objects.get(id=int(post_id))
+    locked = post.lock(request)
+    if locked:
+        messages.error(request,
+                       _(u'This post is currently beeing edited by “%(user)s”!')
+                       % {'user': locked})
+    topic = post.topic
+    forum = topic.forum
+
+    if topic.locked or topic.hidden or post.hidden:
+        if not request.user.has_perm('forum.moderate_forum', forum):
+            messages.error(request, _(u'You cannot edit this post.'))
+            post.unlock()
+            return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
+                                             post.page))
+        elif topic.locked:
+            messages.error(request,
+                           _(u'You are editing a post on a locked topic. '
+                             u'Please note that this may be considered as impolite!'))
+    if not (request.user.has_perm('forum.moderate_forum', forum) or
+                (post.author.id == request.user.id and
+                     request.user.has_perm('forum.add_reply_forum', forum) and
+                     post.check_ownpost_limit('edit'))):
+        messages.error(request, _(u'You cannot edit this post.'))
+        post.unlock()
+        return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
+                                         post.page))
+
+    return create_and_edit_post(request,forum=forum, topic=topic, post=post, post_edit=True)
+
+
+@templated('forum/edit.html')
+@forum_editable_required()
+def create_topic(request, forum_slug=None, page_name=None):
     page = None
-
-    if settings.FORUM_DISABLE_POSTING:
-        messages.error(request, _('Post functionality is currently disabled.'))
-        return HttpResponseRedirect(href('forum'))
-
     if page_name:
         norm_page_name = normalize_pagename(page_name)
         try:
@@ -460,301 +680,55 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
                 'link': url_for(page, 'discussion')
             }
         )
+
+    forum = Forum.objects.get_cached(slug=forum_slug)
+    if not forum or forum.is_category:
+        raise Http404()
+
+    if not request.user.has_perm('forum.add_topic_forum', forum):
+        return abort_access_denied(request)
+
+    return create_and_edit_post(request, forum=forum, page=page, newtopic=True)
+
+@templated('forum/edit.html')
+@forum_editable_required()
+def reply_to_topic(request, topic_slug=None, quote_id=None):
+    topic = forum = quote = None
+
     if topic_slug:
         topic = Topic.objects.get(slug=topic_slug)
         forum = topic.forum
-    elif forum_slug:
-        forum = Forum.objects.get_cached(slug=forum_slug)
-        if not forum or forum.is_category:
-            raise Http404()
-        newtopic = firstpost = True
-    elif post_id:
-        post = Post.objects.get(id=int(post_id))
-        locked = post.lock(request)
-        if locked:
-            messages.error(request,
-                _(u'This post is currently beeing edited by “%(user)s”!')
-                % {'user': locked})
-        topic = post.topic
-        forum = topic.forum
-        firstpost = post.id == topic.first_post_id
+
     elif quote_id:
         quote = Post.objects.select_related('topic', 'author') \
                             .get(id=int(quote_id))
         topic = quote.topic
         forum = topic.forum
 
-    # We don't need Spam Checks for these Types of Users or Forums:
-    # - Hidden Forums
-    # - Users with post_count >= INYOKA_SPAM_DETECT_LIMIT
-    # - Users with forum.moderate_forum Permission
-    needs_spam_check = True
-    if request.user.post_count.value(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
-        needs_spam_check = False
-    elif request.user.has_perm('forum.moderate_forum', forum) or post and post.pk:
-        needs_spam_check = False
-    else:
-        if not User.objects.get_anonymous_user().has_perm('forum.view_forum', forum):
-            needs_spam_check = False
-
-    if newtopic:
-        form = NewTopicForm(
-            force_version=forum.force_version,
-            needs_spam_check=needs_spam_check,
-            request=request,
-            data=request.POST or None,
-            initial={
-                'text': forum.newtopic_default_text,
-                'title': page and norm_page_name or '',
-            },
-        )
-    elif quote:
-        form = EditPostForm(
-            is_first_post=firstpost,
-            needs_spam_check=needs_spam_check,
-            request=request,
-            data=request.POST or None,
-            initial={
-                'text': quote_text(
-                    quote.text, quote.author, 'post:%s:' % quote.id
-                ) + '\n',
-            }
-        )
-    else:
-        form = EditPostForm(
-            is_first_post=firstpost,
-            needs_spam_check=needs_spam_check,
-            request=request,
-            data=request.POST or None,
-        )
-
-    if request.method == 'POST' and request.user.has_perm('forum.moderate_forum', forum):
-        form.surge_protection_timeout = None
-
-    # check privileges
-    if post:
-        if topic.locked or topic.hidden or post.hidden:
-            if not request.user.has_perm('forum.moderate_forum', forum):
-                messages.error(request, _(u'You cannot edit this post.'))
-                post.unlock()
-                return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
-                                            post.page))
-            elif topic.locked:
-                messages.error(request,
-                               _(u'You are editing a post on a locked topic. '
-                                 u'Please note that this may be considered as impolite!'))
-        if not (request.user.has_perm('forum.moderate_forum', forum) or
-                (post.author.id == request.user.id and
-                 request.user.has_perm('forum.add_reply_forum', forum) and
-                 post.check_ownpost_limit('edit'))):
-            messages.error(request, _(u'You cannot edit this post.'))
-            post.unlock()
-            return HttpResponseRedirect(href('forum', 'topic', post.topic.slug,
-                                             post.page))
-    elif topic:
-        if topic.hidden:
-            if not request.user.has_perm('forum.moderate_forum', forum):
-                messages.error(request,
-                    _(u'You cannot reply in this topic because it was '
-                      u'deleted by a moderator.'))
-                return HttpResponseRedirect(url_for(topic))
-        elif topic.locked:
-            if not request.user.has_perm('forum.moderate_forum', forum):
-                messages.error(request,
-                    _(u'You cannot reply to this topic because '
-                      u'it was locked.'))
-                return HttpResponseRedirect(url_for(topic))
-            else:
-                messages.error(request,
-                    _(u'You are replying to a locked topic. '
-                      u'Please note that this may be considered as impolite!'))
-        elif quote and quote.hidden:
-            if not request.user.has_perm('forum.moderate_forum', forum):
-                return abort_access_denied(request)
+    if topic.hidden:
+        if not request.user.has_perm('forum.moderate_forum', forum):
+            messages.error(request,
+                           _(u'You cannot reply in this topic because it was '
+                             u'deleted by a moderator.'))
+            return HttpResponseRedirect(url_for(topic))
+    elif topic.locked:
+        if not request.user.has_perm('forum.moderate_forum', forum):
+            messages.error(request,
+                           _(u'You cannot reply to this topic because '
+                             u'it was locked.'))
+            return HttpResponseRedirect(url_for(topic))
         else:
-            if not request.user.has_perm('forum.add_reply_forum', forum):
-                return abort_access_denied(request)
+            messages.error(request,
+                           _(u'You are replying to a locked topic. '
+                             u'Please note that this may be considered as impolite!'))
+    elif quote and quote.hidden:
+        if not request.user.has_perm('forum.moderate_forum', forum):
+            return abort_access_denied(request)
     else:
-        if not request.user.has_perm('forum.add_topic_forum', forum):
+        if not request.user.has_perm('forum.add_reply_forum', forum):
             return abort_access_denied(request)
 
-    # the user has canceled the action
-    if request.method == 'POST' and request.POST.get('cancel'):
-        url = href('forum')
-        if forum_slug:
-            url = href('forum', 'forum', forum.slug)
-        elif topic_slug:
-            url = href('forum', 'topic', topic.slug)
-        elif post_id:
-            url = href('forum', 'post', post.id)
-            post.unlock()
-        elif quote_id:
-            url = href('forum', 'post', quote_id)
-        return HttpResponseRedirect(url)
-
-    # Clear surge protection to avoid multi-form hickups.
-    clear_surge_protection(request, form)
-
-    # Handle polls
-    poll_ids = map(int, filter(bool, request.POST.get('polls', '').split(',')))
-    poll_form = poll_options = polls = None
-    if (newtopic or firstpost) and request.user.has_perm('forum.poll_forum', forum):
-        poll_form, poll_options, polls = handle_polls(request, topic, poll_ids)
-
-    # handle attachments
-    att_ids = map(int, filter(bool,
-        request.POST.get('attachments', '').split(',')
-    ))
-    if request.user.has_perm('forum.upload_forum', forum):
-        attach_form, attachments = handle_attachments(request, post, att_ids)
-
-    # the user submitted a valid form
-    if 'send' in request.POST and form.is_valid():
-        d = form.cleaned_data
-
-        is_spam_post = form._spam and not form._spam_discard
-
-        if not post:  # not when editing an existing post
-            doublepost = Post.objects \
-                .filter(author=request.user, text=d['text'],
-                        pub_date__gt=(datetime.utcnow() - timedelta(0, 300)))
-            if not newtopic:
-                doublepost = doublepost.filter(topic=topic)
-            try:
-                doublepost = doublepost.select_related('topic').all()[0]
-            except IndexError:
-                pass
-            else:
-                messages.info(request,
-                    _(u'This topic was already created. Please think about '
-                      u'editing your topic before creating a new one.'))
-                return HttpResponseRedirect(url_for(doublepost.topic))
-
-        if not topic and newtopic or firstpost:
-            if not topic and newtopic:
-                topic = Topic(forum=forum, author=request.user)
-            topic.title = d['title']
-            if topic.ubuntu_distro != d.get('ubuntu_distro')\
-               or topic.ubuntu_version != d.get('ubuntu_version'):
-                topic.ubuntu_distro = d.get('ubuntu_distro')
-                topic.ubuntu_version = d.get('ubuntu_version')
-            if request.user.has_perm('forum.sticky_forum', forum):
-                topic.sticky = d.get('sticky', False)
-            elif d.get('sticky', False):
-                messages.error(request, _(u'You are not allowed to mark this '
-                                            'topic as "important".'))
-
-            topic.save()
-            topic.forum.invalidate_topic_cache()
-
-            if request.user.has_perm('forum.poll_forum', forum):
-                for poll in polls:
-                    topic.polls.add(poll)
-                topic.has_poll = bool(polls)
-                topic.save()
-
-        if not post:
-            post = Post(topic=topic, author_id=request.user.id)
-            # TODO: Move this somehow to model to ease unittesting!
-            if newtopic:
-                post.position = 0
-
-        # If there are attachments, we need to get a post id before we render
-        # the text in order to parse the ``Bild()`` macro during first save. We
-        # can set the ``has_attachments`` attribute lazily because the post is
-        # finally saved in ``post.edit()``.
-        if attachments:
-            post.has_attachments = True
-            if not post.id:
-                post.save()
-            Attachment.update_post_ids(att_ids, post)
-        else:
-            post.has_attachments = False
-
-        post.edit(d['text'])
-
-        if is_spam_post:
-            post.mark_spam(report=True, update_akismet=False)
-
-        if not is_spam_post:
-            if newtopic:
-                send_newtopic_notifications(request.user, post, topic, forum)
-            elif not post_id:
-                send_edit_notifications(request.user, post, topic, forum)
-        if page:
-            # the topic is a wiki discussion, bind it to the wiki
-            # page and send notifications.
-            page.topic = topic
-            page.save()
-            if not is_spam_post:
-                send_discussion_notification(request.user, page)
-
-        if not is_spam_post:
-            subscribed = Subscription.objects.user_subscribed(request.user, topic)
-            if request.user.settings.get('autosubscribe', True) and not subscribed and not post_id:
-                subscription = Subscription(user=request.user, content_object=topic)
-                subscription.save()
-
-        messages.success(request, _(u'The post was saved successfully.'))
-        if newtopic:
-            return HttpResponseRedirect(url_for(post.topic))
-        else:
-            post.unlock()
-            return HttpResponseRedirect(url_for(post))
-
-    # the user wants to see a preview
-    elif 'preview' in request.POST:
-        ctx = RenderContext(request, forum_post=post)
-        tt = request.POST.get('text', '')
-        preview = parse(tt).render(ctx, 'html')
-
-    # the user is going to edit an existing post/topic
-    elif post:
-        form = EditPostForm(
-            is_first_post=firstpost,
-            needs_spam_check=needs_spam_check,
-            request=request,
-            data=request.POST or None,
-            initial={
-                'title': topic.title,
-                'ubuntu_distro': topic.ubuntu_distro,
-                'ubuntu_version': topic.ubuntu_version,
-                'sticky': topic.sticky,
-                'text': post.text,
-            }
-        )
-        if not attachments:
-            attachments = Attachment.objects.filter(post=post)
-
-    if not newtopic:
-        max = topic.post_count.value()
-        posts = topic.posts.select_related('author') \
-                           .filter(hidden=False, position__gt=max - 15) \
-                           .order_by('-position')
-        discussions = Page.objects.filter(topic=topic)
-
-    return {
-        'form': form,
-        'poll_form': poll_form,
-        'options': poll_options,
-        'polls': polls,
-        'post': post,
-        'forum': forum,
-        'topic': topic,
-        'preview': preview,
-        'isnewtopic': newtopic,
-        'isfirstpost': firstpost,
-        'can_attach': request.user.has_perm('forum.upload_forum', forum),
-        'can_create_poll': request.user.has_perm('forum.poll_forum', forum),
-        'can_moderate': request.user.has_perm('forum.moderate_forum', forum),
-        'can_sticky': request.user.has_perm('forum.sticky_forum', forum),
-        'attach_form': attach_form,
-        'attachments': list(attachments),
-        'posts': posts,
-        'storage': storage,
-        'discussions': discussions,
-    }
-
+    return create_and_edit_post(request, topic=topic, forum=forum, quote=quote, reply=True)
 
 @confirm_action(message=_(u'Do you want to (un)lock the topic?'),
                 confirm=_(u'(Un)lock'), cancel=_(u'Cancel'))

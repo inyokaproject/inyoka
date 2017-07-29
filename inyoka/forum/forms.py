@@ -8,6 +8,9 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import urllib
+import urlparse
+
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -19,9 +22,7 @@ from inyoka.utils.forms import MultiField, StrippedCharField
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
-
-import urllib
-import urlparse
+from inyoka.utils.generic import quote_text
 
 
 class ForumField(forms.ChoiceField):
@@ -70,12 +71,19 @@ class EditPostForm(SurgeProtectionMixin, forms.Form):
 
     surge_protection_timeout = settings.FORUM_SURGE_PROTECTION_TIMEOUT
 
-    def __init__(self, is_first_post, needs_spam_check, request, *args, **kwargs):
+    def __init__(self, is_first_post, needs_spam_check, request, quote=None, *args, **kwargs):
         self.needs_spam_check = needs_spam_check
         self.request = request
         super(EditPostForm, self).__init__(*args, **kwargs)
         self.fields['ubuntu_version'].choices = get_version_choices()
         self.fields['ubuntu_distro'].choices = get_distro_choices()
+        if quote:
+            self.initial = {
+                'text': quote_text(
+                    quote.text, quote.author, 'post:%s:' % quote.id
+                ) + '\n',
+            }
+
         if not is_first_post:
             for k in ['sticky', 'title', 'ubuntu_version', 'ubuntu_distro']:
                 del self.fields[k]

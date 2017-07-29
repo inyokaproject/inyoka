@@ -475,6 +475,19 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
                       .filter(topic__forum__user_count_posts=True),
             use_task=True)
 
+    @property
+    def needs_spam_check(self):
+        if self.post_count.value(default=0) >= settings.INYOKA_SPAM_DETECT_LIMIT:
+            return False
+        if self.is_team_member:
+            return False
+
+        return True;
+
+    @property
+    def is_team_member(self):
+        return self.groups.filter(name__iexact=settings.INYOKA_TEAM_GROUP_NAME).exists()
+
     def unban(self):
         """
         Check if a user is banned, either permanent or temporary and remove

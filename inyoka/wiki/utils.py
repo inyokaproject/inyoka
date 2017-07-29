@@ -89,27 +89,6 @@ def resolve_interwiki_link(wiki, page):
     return link
 
 
-def quote_text(text, author=None, item_url=None):
-    """
-    Returns the wiki syntax quoted version of `text`.
-    If the optional argument `author` (username as string or User object) is
-    given, a written-by info is prepended.
-    """
-    try:  # We use try/catch here to not have to import the User model
-        author = author.username
-    except AttributeError:
-        pass
-
-    if item_url:
-        by = author and (u'[user:%s:] [%s schrieb]:\n' % (author, item_url)) or u''
-    else:
-        by = author and (u"[user:%s:] schrieb:\n" % author) or u''
-    return text and by + u'\n'.join(
-        '>' + (not line.startswith('>') and ' ' or '') + line
-        for line in text.split('\n')
-    ) or u''
-
-
 class CircularRedirectException(Exception):
     """
     Raised when a sequence of redirects becomes circular.

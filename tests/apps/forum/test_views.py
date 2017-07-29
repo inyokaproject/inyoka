@@ -1284,33 +1284,6 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
         self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
         self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
 
-    @responses.activate
-    @override_settings(INYOKA_USE_AKISMET=True)
-    def test_edit_first_post_user_spam(self):
-        # Edited posts are never considered spam, not even from users
-        topic = Topic.objects.create(title='topic', author=self.user, forum=self.public_forum)
-        post = Post.objects.create(text=u'first post', author=self.user, position=0, topic=topic)
-
-        self.client.login(username='user', password='user')
-        self.make_valid_key()
-        self.make_spam()
-        # Test preview
-        postdata = {
-            'title': 'edited title',
-            'text': 'edited text',
-        }
-        response = self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1)
-        self.assertInHTML('<input id="id_title" maxlength="100" name="title" size="60" type="text" value="edited title">', response.content)
-        self.assertPreviewInHTML('edited text', response)
-
-        # Test send
-        self.post_request('/post/%d/edit/' % post.pk, postdata, 1, 1, submit=True)
-
-        # Check for rendered post
-        with translation.override('en-us'):
-            response = self.client.get('/topic/%s/' % topic.slug)
-        self.assertInHTML('<h2>edited title</h2>', response.content, count=1)
-        self.assertInHTML('<div class="text"><p>edited text</p></div>', response.content, count=1)
 
     @responses.activate
     @override_settings(INYOKA_USE_AKISMET=True)
