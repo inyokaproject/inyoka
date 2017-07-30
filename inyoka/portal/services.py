@@ -24,7 +24,6 @@ from inyoka.portal.user import User
 from inyoka.utils.captcha import Captcha
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import get_random_password
 
 MIN_AUTOCOMPLETE_CHARS = 3
 MAX_AUTOCOMPLETE_ITEMS = 10
@@ -62,10 +61,6 @@ def on_get_group_list(request):
                               .order_by(Length('name').asc())\
                               .values_list('name', flat=True)[:MAX_AUTOCOMPLETE_ITEMS]
     return list(groupnames)
-
-
-def on_get_random_password(request):
-    return {'password': get_random_password()}
 
 
 def on_get_captcha(request):
@@ -132,7 +127,6 @@ dispatcher = SimpleDispatcher(
     get_current_user=on_get_current_user,
     get_user_autocompletion=on_get_user_list,
     get_group_autocompletion=on_get_group_list,
-    get_random_password=on_get_random_password,
     get_captcha=on_get_captcha,
     get_calendar_entry=on_get_calendar_entry,
     toggle_sidebar=on_toggle_sidebar,
