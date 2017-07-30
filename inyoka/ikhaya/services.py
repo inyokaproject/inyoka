@@ -12,8 +12,12 @@ from inyoka.portal.models import User
 from inyoka.utils.services import SimpleDispatcher
 
 
+dispatcher = SimpleDispatcher()
+
+
 @require_POST
-def on_change_suggestion_assignment(request):
+@dispatcher.register()
+def change_suggestion_assignment(request):
     post = request.POST
     username, suggestion = post['username'], post['suggestion']
     suggestion = Suggestion.objects.get(id=suggestion)
@@ -25,8 +29,3 @@ def on_change_suggestion_assignment(request):
         suggestion.owner = User.objects.get(username__iexact=username)
         suggestion.save()
     return True
-
-
-dispatcher = SimpleDispatcher(
-    change_suggestion_assignment=on_change_suggestion_assignment
-)
