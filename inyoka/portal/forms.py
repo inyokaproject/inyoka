@@ -459,7 +459,7 @@ class EditUserGroupsForm(forms.Form):
     )
     groups = forms.ModelMultipleChoiceField(
         label=ugettext_lazy(u'Please select the groups for this user.'),
-        required=False, queryset=Group.objects.all(), widget=groupWidget)
+        required=False, queryset=Group.objects.all().order_by('name'), widget=groupWidget)
 
     def clean_groups(self):
         if self.cleaned_data['groups']:
