@@ -8,13 +8,13 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import print_function
-
 from subprocess import PIPE, Popen
 
 from django.conf import settings
 from django.core.mail import send_mail as django_send_mail
 from django.core.mail.backends.base import BaseEmailBackend
+
+from inyoka.utils.logger import logger
 
 
 def send_mail(subject, message, sender, to):
@@ -25,10 +25,11 @@ def send_mail(subject, message, sender, to):
     if to[0].endswith('.invalid') or '@' not in to[0]:
         return
 
-    if settings.DEBUG_NOTIFICATIONS:
-        print("Subject: %s\nMessage:%s\n\nSender: %s\nTo: %s" % (
-              subject, message, sender, to))
-    else:
+    logger.debug(
+        "Subject: %s\nMessage:%s\n\nSender: %s\nTo: %s" %
+                (subject, message, sender, to)
+    )
+    if not settings.DEBUG_NOTIFICATIONS:
         django_send_mail(subject, message, sender, to,
                          fail_silently=not settings.DEBUG)
 

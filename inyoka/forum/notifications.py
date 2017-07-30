@@ -14,6 +14,7 @@ from django.utils import translation
 from django.utils.translation import ugettext as _
 
 from inyoka.utils import ctype
+from inyoka.utils.logger import logger
 from inyoka.utils.notification import queue_notifications
 
 
@@ -172,9 +173,12 @@ def send_notification_for_topics(request_user_id, template, template_args, subje
     }
     notified_users = queue_notifications(filter=topic_subscribers, **notification_args)
 
+    logger.debug('Notified for template {}: {}'.format(template, notified_users))
+
     if include_forums:
         forum_subscribers = {
             'content_type_id': ctype(Forum).pk,
             'object_id__in': forum_ids,
         }
-        queue_notifications(filter=forum_subscribers, exclude={'user_id__in': notified_users}, **notification_args)
+        notified_users = queue_notifications(filter=forum_subscribers, exclude={'user_id__in': notified_users}, **notification_args)
+        logger.debug('Notified for include_forums with template {}: {}'.format(template, notified_users))
