@@ -366,18 +366,22 @@ LOGGING = {
         },
         'django.db.backends': {
             'handlers': ['inyokalog',],
+            'level': 'INFO',
             'propagate': False,
         },
         'PIL': {
             'handlers': ['null',],
+            'level': 'ERROR',
             'propagate': False,
         },
         'celery': {
-            'handlers': ['celerylog',],
+            'handlers': ['console', 'celerylog',],
+            'level': 'INFO',
             'propagate': False,
         },
         'kombu': {
-            'handlers': ['celerylog',],
+            'handlers': ['console', 'celerylog',],
+            'level': 'ERROR',
             'propagate': False,
         },
     }
