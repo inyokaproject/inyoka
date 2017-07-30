@@ -36,6 +36,7 @@ def autocompletable(string):
     """
     return len(string) < MIN_AUTOCOMPLETE_CHARS
 
+
 def on_get_user_list(request):
     q = request.GET.get('q', '')
     if autocompletable(q):
@@ -44,6 +45,7 @@ def on_get_user_list(request):
                             .order_by(Length('username').asc())\
                             .values_list('username', flat=True)[:MAX_AUTOCOMPLETE_ITEMS]
     return list(usernames)
+
 
 def on_get_group_list(request):
     q = request.GET.get('q', '')
