@@ -110,9 +110,6 @@ INYOKA_GET_UBUNTU_LINK = u'%s://wiki.%s/Downloads' % (INYOKA_URI_SCHEME,
                                                       BASE_DOMAIN_NAME)
 INYOKA_GET_UBUNTU_DESCRIPTION = u'Downloads'
 
-# logger name for remote exception logging
-INYOKA_LOGGER_NAME = u'inyoka'
-
 # use etags
 USE_ETAGS = True
 
@@ -314,6 +311,77 @@ INTERNAL_IPS = ('127.0.0.1',)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'formatters': {
+        'console': {
+            'format': '[%(asctime)s] %(levelname)s:%(name)s: %(message)s',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+            'filters': ['require_debug_true'],
+        },
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'raven.contrib.django.handlers.SentryHandler',
+            'filters': ['require_debug_false'],
+        },
+        'inyokalog': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'console',
+            'filename': 'inyoka.log',
+            'filters': ['require_debug_true'],
+        },
+        'celerylog': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'console',
+            'filename': 'celery.log',
+            'filters': ['require_debug_true'],
+        },
+        'null': {
+            'class': 'logging.NullHandler',
+        }
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console', 'sentry'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'handlers': ['console',],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': ['inyokalog',],
+            'propagate': False,
+        },
+        'PIL': {
+            'handlers': ['null',],
+            'propagate': False,
+        },
+        'celery': {
+            'handlers': ['celerylog',],
+            'propagate': False,
+        },
+        'kombu': {
+            'handlers': ['celerylog',],
+            'propagate': False,
+        },
+    }
 }
 
 WSGI_APPLICATION = 'inyoka.wsgi.application'

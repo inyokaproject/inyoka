@@ -278,23 +278,6 @@ Localization and internationalization
 Logging
 =======
 
-.. py:data:: INYOKA_LOGGER_NAME
-
-    Defaults to: ``'inyoka'``
-
-    Logger name for remote exception logging
-
-.. py:data:: LOGGING
-
-    Defaults to::
-
-        {
-            'version': 1,
-            'disable_existing_loggers': False,
-        }
-
-    See https://docs.djangoproject.com/en/1.3/ref/settings/#logging
-
 .. py:data:: SENTRY_SITE
 
     Defaults to: ``'example.com'``
