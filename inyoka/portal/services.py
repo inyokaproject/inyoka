@@ -15,6 +15,7 @@ from urlparse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.db.models.functions import Length
 from django.http import Http404
 from django.utils.dates import MONTHS, WEEKDAYS
 
@@ -25,6 +26,8 @@ from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_random_password
 
+MIN_AUTOCOMPLETE_CHARS = 3
+MAX_AUTOCOMPLETE_ITEMS = 10
 
 def on_get_current_user(request):
     """Get the current user."""
@@ -35,26 +38,30 @@ def on_get_current_user(request):
         'email': getattr(user, 'email', None),
     }
 
+def autocompletable(string):
+    """
+    Returns `True` if `string` is autocompletable, e.g. at least
+    as long than `MIN_AUTOCOMPLETE_CHARS`.
+    """
+    return len(string) < MIN_AUTOCOMPLETE_CHARS
 
 def on_get_user_list(request):
     q = request.GET.get('q', '')
-    if len(q) < 3:
+    if autocompletable(q):
         return
-    qs = list(User.objects.filter(username__istartswith=q,
-                                  status__exact=1)[:11])
-    usernames = [x.username for x in qs]
-    if len(qs) > 10:
-        usernames[10] = '...'
-    return usernames
-
+    usernames = User.objects.filter(username__istartswith=q, status__exact=1)\
+                            .order_by(Length('username').asc())\
+                            .values_list('username', flat=True)[:MAX_AUTOCOMPLETE_ITEMS]
+    return list(usernames)
 
 def on_get_group_list(request):
     q = request.GET.get('q', '')
-    qs = list(Group.objects.filter(name__istartswith=q)[:11])
-    groupnames = [x.name for x in qs]
-    if len(qs) > 10:
-        groupnames[10] = '...'
-    return groupnames
+    if autocompletable(q):
+        return
+    groupnames = Group.objects.filter(name__istartswith=q)\
+                              .order_by(Length('name').asc())\
+                              .values_list('name', flat=True)[:MAX_AUTOCOMPLETE_ITEMS]
+    return list(groupnames)
 
 
 def on_get_random_password(request):
