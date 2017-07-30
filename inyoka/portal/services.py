@@ -28,14 +28,6 @@ from inyoka.utils.templating import render_template
 MIN_AUTOCOMPLETE_CHARS = 3
 MAX_AUTOCOMPLETE_ITEMS = 10
 
-def on_get_current_user(request):
-    """Get the current user."""
-    user = request.user
-    return {
-        'is_anonymous': user.is_anonymous(),
-        'username': user.username or None,
-        'email': getattr(user, 'email', None),
-    }
 
 def autocompletable(string):
     """
@@ -124,7 +116,6 @@ def hide_global_message(request):
 
 
 dispatcher = SimpleDispatcher(
-    get_current_user=on_get_current_user,
     get_user_autocompletion=on_get_user_list,
     get_group_autocompletion=on_get_group_list,
     get_captcha=on_get_captcha,
