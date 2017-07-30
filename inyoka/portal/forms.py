@@ -53,7 +53,7 @@ from inyoka.utils.forms import (
     EmailField,
     validate_gpgkey,
     validate_signature,
-)
+    ForumMulitpleChoiceField)
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
@@ -834,11 +834,13 @@ class GroupForumPermissionForm(forms.Form):
             'forum.delete_topic',
             'forum.manage_reported_topic',
         )
-        for forum in Forum.objects.all():
-            field = forms.MultipleChoiceField(
+        forums = [tuple[1] for tuple in Forum.get_children_recursive(Forum.objects.get_sorted())]
+        for forum in forums:
+            field = ForumMulitpleChoiceField(
                 choices=make_permission_choices('forum', FORUM_FILTERED_PERMISSIONS),
                 widget=forms.CheckboxSelectMultiple,
                 label=forum.name,
+                is_category=forum.is_category,
                 required=False,
             )
             if self.instance:
