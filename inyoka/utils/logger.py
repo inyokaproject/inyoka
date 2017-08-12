@@ -11,28 +11,8 @@
 import logging
 
 from celery.signals import task_failure
-from django.conf import settings
 
-logger = logging.getLogger(settings.INYOKA_LOGGER_NAME)
-
-try:
-    from raven.contrib.django.handlers import SentryHandler
-except ImportError:
-    SentryHandler = None
-
-if not settings.DEBUG and SentryHandler is not None:
-    logging_handler = SentryHandler()
-    logging_handler.setLevel(logging.WARNING)
-else:
-    tmpl = '[%(asctime)s] %(levelname)s:%(name)s: %(message)s'
-    logging_handler = logging.StreamHandler()
-    logging_handler.setFormatter(logging.Formatter(tmpl))
-    logging_handler.setLevel(logging.DEBUG)
-logger.addHandler(logging_handler)
-
-
-sentry_logger = logging.getLogger('sentry.errors')
-sentry_logger.addHandler(logging.StreamHandler())
+logger = logging.getLogger(u'inyoka')
 
 
 @task_failure.connect
