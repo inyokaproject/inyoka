@@ -34,12 +34,12 @@ def autocompletable(string):
     Returns `True` if `string` is autocompletable, e.g. at least
     as long than `MIN_AUTOCOMPLETE_CHARS`.
     """
-    return len(string) < MIN_AUTOCOMPLETE_CHARS
+    return len(string) >= MIN_AUTOCOMPLETE_CHARS
 
 
 def on_get_user_list(request):
     q = request.GET.get('q', '')
-    if autocompletable(q):
+    if not autocompletable(q):
         return
     usernames = User.objects.filter(username__istartswith=q, status__exact=1)\
                             .order_by(Length('username').asc())\
@@ -49,7 +49,7 @@ def on_get_user_list(request):
 
 def on_get_group_list(request):
     q = request.GET.get('q', '')
-    if autocompletable(q):
+    if not autocompletable(q):
         return
     groupnames = Group.objects.filter(name__istartswith=q)\
                               .order_by(Length('name').asc())\
