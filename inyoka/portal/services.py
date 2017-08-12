@@ -28,6 +28,8 @@ from inyoka.utils.templating import render_template
 MIN_AUTOCOMPLETE_CHARS = 3
 MAX_AUTOCOMPLETE_ITEMS = 10
 
+dispatcher = SimpleDispatcher()
+
 
 def autocompletable(string):
     """
@@ -35,8 +37,6 @@ def autocompletable(string):
     as long than `MIN_AUTOCOMPLETE_CHARS`.
     """
     return len(string) >= MIN_AUTOCOMPLETE_CHARS
-
-dispatcher = SimpleDispatcher()
 
 
 @dispatcher.register()
