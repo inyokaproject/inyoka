@@ -103,7 +103,6 @@ from inyoka.utils.sessions import get_sessions, get_user_record, make_permanent
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import get_random_password
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
 from inyoka.wiki.models import Page as WikiPage
@@ -612,7 +611,6 @@ def usercp_settings(request):
 @templated('portal/usercp/change_password.html')
 def usercp_password(request):
     """User control panel view for changing the password."""
-    random_pw = None
     if request.method == 'POST':
         form = ChangePasswordForm(request.POST)
         if form.is_valid():
@@ -630,16 +628,10 @@ def usercp_password(request):
         else:
             generic.trigger_fix_errors_message(request)
     else:
-        if 'random' in request.GET:
-            random_pw = get_random_password()
-            form = ChangePasswordForm(initial={'new_password': random_pw,
-                                        'new_password_confirm': random_pw})
-        else:
-            form = ChangePasswordForm()
+        form = ChangePasswordForm()
 
     return {
         'form': form,
-        'random_pw': random_pw,
         'user': request.user,
     }
 
