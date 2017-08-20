@@ -25,18 +25,13 @@ from inyoka.wiki.models import Page
 from inyoka.wiki.utils import get_smilies, CaseSensitiveException
 
 
-dispatcher = SimpleDispatcher()
-
-
-@dispatcher.register()
-def get_smilies(request):
+def on_get_smilies(request):
     """Get a list of smilies"""
     return get_smilies()
 
 
 @require_http_methods(['GET','POST'])
-@dispatcher.register()
-def render_preview(request):
+def on_render_preview(request):
     """Render some preview text."""
     page = post = None
     simplified = True
@@ -56,4 +51,10 @@ def render_preview(request):
 
     context = RenderContext(request, simplified=simplified, wiki_page=page, forum_post=post)
     html = parse(request.POST.get('text', '')).render(context, 'html')
+    # TODO: return json.
     return HttpResponse(html, content_type='text/plain')
+
+
+dispatcher = SimpleDispatcher(
+    get_smilies=on_get_smilies,
+    render_preview=on_render_preview)
