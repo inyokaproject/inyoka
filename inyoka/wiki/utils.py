@@ -51,7 +51,7 @@ def has_conflicts(text):
     return text.query.all.by_type(nodes.ConflictMarker).has_any
 
 
-def get_smilies(full=False):
+def get_smiley_map(full=False):
     """
     This method returns a list of tuples for all the smilies in the storage.
     Per default for multiple codes only the first one is returend, if you want
