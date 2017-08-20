@@ -22,7 +22,16 @@ from inyoka.utils.services import never_cache, SimpleDispatcher
 from inyoka.utils.templating import render_template
 
 
-def on_get_topic_autocompletion(request):
+dispatcher = SimpleDispatcher(
+    subscribe=lambda r: subscription_action(r, 'subscribe'),
+    unsubscribe=lambda r: subscription_action(r, 'unsubscribe'),
+    mark_solved=lambda r: change_status(r, True),
+    mark_unsolved=lambda r: change_status(r, False),
+)
+
+
+@dispatcher.register()
+def get_topic_autocompletion(request):
     query = request.GET.get('q', '')
     topics = Topic.objects.filter(slug__startswith=query)[:11]
     data = [t.slug for t in topics]
@@ -31,7 +40,8 @@ def on_get_topic_autocompletion(request):
     return data
 
 
-def on_get_post(request):
+@dispatcher.register()
+def get_post(request):
     try:
         post_id = int(request.GET['post_id'])
         post = Post.objects.select_related('topic', 'author').get(id=post_id)
@@ -46,7 +56,8 @@ def on_get_post(request):
     }
 
 
-def on_toggle_categories(request):
+@dispatcher.register()
+def toggle_categories(request):
     if request.user.is_anonymous():
         return False
     hidden_categories = set()
@@ -63,7 +74,8 @@ def on_toggle_categories(request):
     return True
 
 
-def on_toggle_category(request):
+@dispatcher.register()
+def toggle_category(request):
     if request.user.is_anonymous():
         return False
     try:
@@ -88,6 +100,7 @@ def on_toggle_category(request):
 
 @never_cache
 @require_POST
+@dispatcher.register()
 def subscription_action(request, action=None):
     assert action is not None and action in ('subscribe', 'unsubscribe')
     type = request.POST['type']
@@ -121,7 +134,8 @@ def subscription_action(request, action=None):
 
 @never_cache
 @require_POST
-def on_change_status(request, solved=None):
+@dispatcher.register()
+def change_status(request, solved=None):
     if 'slug' not in request.POST:
         return
     topic = Topic.objects.get(slug=request.POST['slug'])
@@ -133,7 +147,8 @@ def on_change_status(request, solved=None):
         topic.save()
 
 
-def on_get_version_details(request):
+@dispatcher.register()
+def get_version_details(request):
     try:
         version = request.GET['version']
         obj = [x for x in get_ubuntu_versions() if x.number == version][0]
@@ -152,7 +167,8 @@ def on_get_version_details(request):
 
 
 @require_POST
-def on_get_new_latest_posts(request):
+@dispatcher.register()
+def get_new_latest_posts(request):
     post_id = int(request.POST['post'])
     post = Post.objects.get(id=post_id)
 
@@ -169,7 +185,8 @@ def on_get_new_latest_posts(request):
 
 @never_cache
 @require_GET
-def on_mark_topic_split_point(request):
+@dispatcher.register()
+def mark_topic_split_point(request):
     post_id = request.GET.get('post', None)
     topic = request.GET.get('topic', None)
     from_here = request.GET.get('from_here', False)
@@ -201,18 +218,3 @@ def on_mark_topic_split_point(request):
             post_ids[topic].remove(post_id)
 
         request.session['_split_post_ids'] = post_ids
-
-
-dispatcher = SimpleDispatcher(
-    get_topic_autocompletion=on_get_topic_autocompletion,
-    get_post=on_get_post,
-    toggle_categories=on_toggle_categories,
-    toggle_category=on_toggle_category,
-    subscribe=lambda r: subscription_action(r, 'subscribe'),
-    unsubscribe=lambda r: subscription_action(r, 'unsubscribe'),
-    mark_solved=lambda r: on_change_status(r, True),
-    mark_unsolved=lambda r: on_change_status(r, False),
-    get_version_details=on_get_version_details,
-    get_new_latest_posts=on_get_new_latest_posts,
-    mark_topic_split_point=on_mark_topic_split_point
-)
