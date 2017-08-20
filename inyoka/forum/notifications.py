@@ -63,9 +63,6 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
                 'content_type_id': ctype(Forum).pk,
                 'object_id': data.get('forum_id')
             },
-            callback=notify_ubuntu_version_subscriptions.subtask(
-                args=(request_user_id, data)
-            ),
             exclude={'user_id__in': notified_users},
         )
     finally:
