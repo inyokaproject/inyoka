@@ -62,11 +62,19 @@ class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
                 and settings.DEBUG):
             response['Access-Control-Allow-Origin'] = '*'
 
-        # warn of slow requests
-        if int(request.watch.duration) > 5:
-            logger.warning(u'Slow Request', extra={
-                'request': request, 'url': request.build_absolute_uri()
-            })
+        request.watch.stop()
+        logger_extras = {
+            'request': request,
+            'url': request.build_absolute_uri(),
+            'duration': request.watch.duration,
+        }
+        duration = request.watch.duration
+        if duration < 5.0:
+            logger.debug(u'Request Duration', extra=logger_extras)
+        if duration >= 5.0 and duration < 10.0:
+            logger.info(u'Slow Request', extra=logger_extras)
+        if duration >= 10.0:
+            logger.warn(u'Very Slow Request', extra=logger_extras)
 
         local_manager.cleanup()
 

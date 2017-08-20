@@ -53,7 +53,7 @@ from inyoka.utils.forms import (
     EmailField,
     validate_gpgkey,
     validate_signature,
-)
+    ForumMulitpleChoiceField)
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
@@ -459,7 +459,7 @@ class EditUserGroupsForm(forms.Form):
     )
     groups = forms.ModelMultipleChoiceField(
         label=ugettext_lazy(u'Please select the groups for this user.'),
-        required=False, queryset=Group.objects.all(), widget=groupWidget)
+        required=False, queryset=Group.objects.all().order_by('name'), widget=groupWidget)
 
     def clean_groups(self):
         if self.cleaned_data['groups']:
@@ -834,11 +834,13 @@ class GroupForumPermissionForm(forms.Form):
             'forum.delete_topic',
             'forum.manage_reported_topic',
         )
-        for forum in Forum.objects.all():
-            field = forms.MultipleChoiceField(
+        forums = [tuple[1] for tuple in Forum.get_children_recursive(Forum.objects.get_sorted())]
+        for forum in forums:
+            field = ForumMulitpleChoiceField(
                 choices=make_permission_choices('forum', FORUM_FILTERED_PERMISSIONS),
                 widget=forms.CheckboxSelectMultiple,
                 label=forum.name,
+                is_category=forum.is_category,
                 required=False,
             )
             if self.instance:
@@ -981,9 +983,15 @@ class WikiFeedSelectorForm(FeedSelectorForm):
 
 
 class EditStaticPageForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(EditStaticPageForm, self).__init__(*args, **kwargs)
-        self.fields['key'].required = False
+
+    def clean_key(self):
+        key = self.cleaned_data.get('key')
+        if self.instance.key and self.instance.key != key:
+            raise forms.ValidationError(_(u'It is not allowed to change this key.'))
+        if StaticPage.objects.filter(key__iexact=key).exists():
+            raise forms.ValidationError(_(u'Another page with this name '
+                u'already exists. Please edit this page.'))
+        return key
 
     class Meta:
         model = StaticPage

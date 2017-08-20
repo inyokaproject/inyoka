@@ -376,10 +376,8 @@ class PageManager(models.Manager):
         """
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
-        rev = None
         cache_key = u'wiki/page/{}'.format(name.lower())
-        if not nocache:
-            rev = cache.get(cache_key)
+        rev = None if nocache else cache.get(cache_key)
         if rev is None:
             try:
                 rev = Revision.objects.select_related('page', 'text', 'user') \
@@ -926,7 +924,7 @@ class Page(models.Model):
         deferred.clear(self)
         # FIXME: We are using apply_async() instead of delay() because there is
         #        a real dumb race condition between the celery task and this save().
-        update_related_pages.apply_async(args=[self, update_meta], countdown=5)
+        update_related_pages.apply_async(args=[self.pk, update_meta], countdown=5)
 
     def delete(self):
         """

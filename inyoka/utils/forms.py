@@ -18,6 +18,7 @@ import pytz
 from django import forms
 from django.conf import settings
 from django.core import validators
+from django.forms import MultipleChoiceField
 from django.forms.widgets import Input
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext as _
@@ -209,6 +210,14 @@ class EmailField(forms.EmailField):
         return value
 
 
+class ForumMulitpleChoiceField(MultipleChoiceField):
+    is_category = False
+
+    def __init__(self, *args, **kwargs):
+        self.is_category = kwargs.pop('is_category', lambda val: val)
+        super(ForumMulitpleChoiceField, self).__init__(*args, **kwargs)
+
+
 class JabberField(forms.CharField):
 
     def clean(self, value):
@@ -244,7 +253,6 @@ class HiddenCaptchaField(forms.Field):
             raise forms.ValidationError(
                 _(u'You have entered an invisible field '
                   u'and were therefore classified as a bot.'))
-
 
 class ImageCaptchaWidget(Input):
     input_type = 'text'

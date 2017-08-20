@@ -9,7 +9,6 @@
     :license: BSD, see LICENSE for more details.
 """
 import posixpath
-import random
 import re
 import unicodedata
 
@@ -46,21 +45,6 @@ def increment_string(s):
                 next,
                 s[end:])
     return s + u'-2'
-
-
-def get_random_password():
-    """This function returns a pronounceable word."""
-    consonants = u'bcdfghjklmnprstvwz'
-    vowels = u'aeiou'
-    numbers = u'0123456789'
-    all = consonants + vowels + numbers
-    length = random.randrange(8, 12)
-    password = u''.join(
-        random.choice(consonants) +
-        random.choice(vowels) +
-        random.choice(all) for x in xrange(length // 3)
-    )[:length]
-    return password
 
 
 def slugify(string, convert_lowercase=True):

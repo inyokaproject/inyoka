@@ -15,6 +15,7 @@ from urlparse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.db.models.functions import Length
 from django.http import Http404
 from django.utils.dates import MONTHS, WEEKDAYS
 
@@ -23,45 +24,45 @@ from inyoka.portal.user import User
 from inyoka.utils.captcha import Captcha
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import get_random_password
+
+MIN_AUTOCOMPLETE_CHARS = 3
+MAX_AUTOCOMPLETE_ITEMS = 10
+
+dispatcher = SimpleDispatcher()
 
 
-def on_get_current_user(request):
-    """Get the current user."""
-    user = request.user
-    return {
-        'is_anonymous': user.is_anonymous(),
-        'username': user.username or None,
-        'email': getattr(user, 'email', None),
-    }
+def autocompletable(string):
+    """
+    Returns `True` if `string` is autocompletable, e.g. at least
+    as long than `MIN_AUTOCOMPLETE_CHARS`.
+    """
+    return len(string) >= MIN_AUTOCOMPLETE_CHARS
 
 
-def on_get_user_list(request):
+@dispatcher.register()
+def get_user_autocompletion(request):
     q = request.GET.get('q', '')
-    if len(q) < 3:
+    if not autocompletable(q):
         return
-    qs = list(User.objects.filter(username__istartswith=q,
-                                  status__exact=1)[:11])
-    usernames = [x.username for x in qs]
-    if len(qs) > 10:
-        usernames[10] = '...'
-    return usernames
+    usernames = User.objects.filter(username__istartswith=q, status__exact=1)\
+                            .order_by(Length('username').asc())\
+                            .values_list('username', flat=True)[:MAX_AUTOCOMPLETE_ITEMS]
+    return list(usernames)
 
 
-def on_get_group_list(request):
+@dispatcher.register()
+def get_group_autocompletion(request):
     q = request.GET.get('q', '')
-    qs = list(Group.objects.filter(name__istartswith=q)[:11])
-    groupnames = [x.name for x in qs]
-    if len(qs) > 10:
-        groupnames[10] = '...'
-    return groupnames
+    if not autocompletable(q):
+        return
+    groupnames = Group.objects.filter(name__istartswith=q)\
+                              .order_by(Length('name').asc())\
+                              .values_list('name', flat=True)[:MAX_AUTOCOMPLETE_ITEMS]
+    return list(groupnames)
 
 
-def on_get_random_password(request):
-    return {'password': get_random_password()}
-
-
-def on_get_captcha(request):
+@dispatcher.register()
+def get_captcha(request):
     captcha = Captcha()
     h = md5(settings.SECRET_KEY)
     h.update(captcha.solution)
@@ -72,7 +73,8 @@ def on_get_captcha(request):
     return response
 
 
-def on_get_calendar_entry(request):
+@dispatcher.register()
+def get_calendar_entry(request):
     if 'url' in request.GET:
         url = request.GET['url']
         slug = urlparse(url)[2][10:]
@@ -98,7 +100,8 @@ def on_get_calendar_entry(request):
     return render_template('portal/_calendar_detail.html', data)
 
 
-def on_toggle_sidebar(request):
+@dispatcher.register()
+def toggle_sidebar(request):
     if not request.user.is_authenticated():
         return False
     component = request.GET.get('component')
@@ -113,21 +116,10 @@ def on_toggle_sidebar(request):
     return True
 
 
+@dispatcher.register()
 def hide_global_message(request):
     if request.user.is_authenticated():
         request.user.settings['global_message_hidden'] = time.time()
         request.user.save(update_fields=['settings'])
         return True
     return False
-
-
-dispatcher = SimpleDispatcher(
-    get_current_user=on_get_current_user,
-    get_user_autocompletion=on_get_user_list,
-    get_group_autocompletion=on_get_group_list,
-    get_random_password=on_get_random_password,
-    get_captcha=on_get_captcha,
-    get_calendar_entry=on_get_calendar_entry,
-    toggle_sidebar=on_toggle_sidebar,
-    hide_global_message=hide_global_message
-)

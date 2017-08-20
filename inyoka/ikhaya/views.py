@@ -51,9 +51,7 @@ from inyoka.portal.models import (
     PrivateMessageEntry,
     Subscription,
 )
-from inyoka.portal.user import User
 from inyoka.utils import ctype, generic
-from inyoka.utils.dates import date_time_to_datetime
 from inyoka.utils.feeds import AtomFeed, atom_feed
 from inyoka.utils.flash_confirmation import confirm_action
 from inyoka.utils.http import (
@@ -216,7 +214,7 @@ def detail(request, year, month, day, slug):
             c.save()
             if send_subscribe:
                 # Send a message to users who subscribed to the article
-                send_comment_notifications(request.user, c, article)
+                send_comment_notifications(request.user.pk, c.pk, article.pk)
 
             return HttpResponseRedirect(url_for(c))
     elif request.GET.get('moderate'):
@@ -616,7 +614,7 @@ def suggest_delete(request, suggestion):
                 args = {'title': s.title,
                         'username': request.user.username,
                         'note': request.POST['note']}
-                send_notification(s.author, u'suggestion_rejected',
+                send_notification(s.author.id, u'suggestion_rejected',
                     _(u'Article suggestion deleted'), args)
 
                 # Send the user a private message
@@ -637,7 +635,7 @@ def suggest_delete(request, suggestion):
                                   '%(subject)s') % {
                                       'user': request.user.username,
                                       'subject': msg.subject}
-                        send_notification(recipient, 'new_pm', title, {
+                        send_notification(recipient.id, 'new_pm', title, {
                                           'user': recipient,
                                           'sender': request.user,
                                           'subject': msg.subject,
@@ -683,7 +681,7 @@ def suggest_edit(request):
                   u'member will contact you shortly.'))
 
             # Send a notification message
-            send_new_suggestion_notifications(request.user, suggestion)
+            send_new_suggestion_notifications(request.user.id, suggestion.id)
             return HttpResponseRedirect(href('ikhaya'))
     else:
         form = SuggestArticleForm()
@@ -828,7 +826,7 @@ def event_suggest(request):
             data = form.cleaned_data
             event.name = data['name']
             if data['date'] and data['time']:
-                d = convert(date_time_to_datetime(
+                d = convert(datetime.combine(
                     data['date'],
                     data['time'] or dt_time(0)
                 ))
@@ -838,7 +836,7 @@ def event_suggest(request):
                 event.date = data['date']
                 event.time = None
             if data['endtime']:
-                d = convert(date_time_to_datetime(
+                d = convert(datetime.combine(
                     data['enddate'] or event.date,
                     data['endtime']
                 ))

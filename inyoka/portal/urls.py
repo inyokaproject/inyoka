@@ -74,12 +74,13 @@ urlpatterns = [
     url(r'^styles/$', views.styles),
     # shortcuts
     url(r'^ikhaya/(\d+)/$', views.ikhaya_redirect),
-    # static pages
+    # static files
     url(r'^files/$', views.files),
     url(r'^files/(?P<page>\d+)/$', views.files),
     url(r'^files/new/$', views.file_edit),
     url(r'^files/(?P<file>.+)/edit/$', views.file_edit),
     url(r'^files/(?P<slug>.+)/delete/$', views.file_delete),
+    # static pages
     url(r'^pages/$', views.pages),
     url(r'^page/new/$', views.page_edit),
 ]

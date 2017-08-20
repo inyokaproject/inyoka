@@ -26,7 +26,7 @@ from inyoka.utils.database import (
     LockableObject,
     find_next_increment,
 )
-from inyoka.utils.dates import date_time_to_datetime, datetime_to_timezone
+from inyoka.utils.dates import datetime_to_timezone
 from inyoka.utils.decorators import deferred
 from inyoka.utils.local import current_request
 from inyoka.utils.text import slugify
@@ -231,7 +231,7 @@ class Article(models.Model, LockableObject):
 
     @deferred
     def pub_datetime(self):
-        return date_time_to_datetime(self.pub_date, self.pub_time)
+        return datetime.combine(self.pub_date, self.pub_time)
 
     @property
     def local_pub_datetime(self):
@@ -303,7 +303,7 @@ class Article(models.Model, LockableObject):
         suffix_id = False
 
         # We need a local pubdt variable due to caching of self.pub_datetime
-        pubdt = date_time_to_datetime(self.pub_date, self.pub_time)
+        pubdt = datetime.combine(self.pub_date, self.pub_time)
         if not self.updated or self.updated < pubdt:
             self.updated = pubdt
 

@@ -12,7 +12,6 @@
 import time
 from datetime import date, datetime, timedelta
 from icalendar import Calendar as iCal, Event as iEvent
-import pytz
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -95,7 +94,6 @@ from inyoka.portal.utils import (
 from inyoka.utils import generic
 from inyoka.utils.http import (
     TemplateResponse,
-    does_not_exist_is_404,
     templated,
 )
 from inyoka.utils.mail import send_mail
@@ -105,10 +103,8 @@ from inyoka.utils.sessions import get_sessions, get_user_record, make_permanent
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.storage import storage
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import get_random_password
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.utils.user import check_activation_key
-from inyoka.utils.dates import date_time_to_datetime
 from inyoka.wiki.models import Page as WikiPage
 from inyoka.wiki.utils import quote_text
 
@@ -615,7 +611,6 @@ def usercp_settings(request):
 @templated('portal/usercp/change_password.html')
 def usercp_password(request):
     """User control panel view for changing the password."""
-    random_pw = None
     if request.method == 'POST':
         form = ChangePasswordForm(request.POST)
         if form.is_valid():
@@ -628,20 +623,15 @@ def usercp_password(request):
             user.set_password(data['new_password'])
             user.save()
             messages.success(request, _(u'Your password was changed successfully.'))
+            auth.update_session_auth_hash(request, user)
             return HttpResponseRedirect(href('portal', 'usercp', 'password'))
         else:
             generic.trigger_fix_errors_message(request)
     else:
-        if 'random' in request.GET:
-            random_pw = get_random_password()
-            form = ChangePasswordForm(initial={'new_password': random_pw,
-                                        'new_password_confirm': random_pw})
-        else:
-            form = ChangePasswordForm()
+        form = ChangePasswordForm()
 
     return {
         'form': form,
-        'random_pw': random_pw,
         'user': request.user,
     }
 
@@ -1308,6 +1298,7 @@ def group_edit_global_permissions(request, name):
         'form': form,
     }
 
+
 @login_required
 @permission_required('auth.change_group', raise_exception=True)
 @templated('portal/group_edit_forum_permissions.html')
@@ -1478,14 +1469,12 @@ def calendar_ical(request, slug):
     except Event.DoesNotExist:
         raise Http404()
 
-
     cal = iCal()
-    tz = pytz.timezone(settings.TIME_ZONE)
 
-    start = date_time_to_datetime(event.date, event.time or time())
+    start = datetime.combine(event.date, event.time or time())
 
     if event.enddate:
-        end = date_time_to_datetime(event.enddate, event.endtime or time())
+        end = datetime.combine(event.enddate, event.endtime or time())
     else:
         end = start
 
