@@ -9,7 +9,7 @@ from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
-from inyoka.wiki.utils import get_smilies
+from inyoka.wiki.utils import get_smiley_map
 
 BASE_PATH = dirname(__file__)
 
@@ -161,7 +161,7 @@ class TestSmileyStorage(StorageTest):
 
         expect = [(u':-)', href('media', att.last_rev.attachment.file.name))]
 
-        self.assertEqual(get_smilies(), expect)
+        self.assertEqual(get_smiley_map(), expect)
 
     def test_multiple_valid(self):
         f1 = open(join(BASE_PATH, self.FILE_HAPPY), 'rb')
@@ -189,7 +189,7 @@ class TestSmileyStorage(StorageTest):
         expect = [(u'O:-)', href('media', att2.last_rev.attachment.file.name)),
                   (u':-)', href('media', att1.last_rev.attachment.file.name))]
 
-        self.assertEqual(get_smilies(), expect)
+        self.assertEqual(get_smiley_map(), expect)
 
     def test_single_invalid(self):
         f1 = open(join(BASE_PATH, self.FILE_HAPPY), 'rb')
@@ -216,4 +216,4 @@ class TestSmileyStorage(StorageTest):
 
         expect = [(u':-)', href('media', att2.last_rev.attachment.file.name)),
                   (u':-)', href('media', att1.last_rev.attachment.file.name))]
-        self.assertEqual(get_smilies(), expect)
+        self.assertEqual(get_smiley_map(), expect)

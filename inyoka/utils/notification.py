@@ -97,4 +97,4 @@ def queue_notifications(request_user_id, template=None, subject=None, args=None,
 
     logger.debug('Notified for {}: {}'.format(template, notified_users))
 
-    return notified_users
+    return list(notified_users)
