@@ -296,10 +296,9 @@ class Subscription(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
 
     @cached_property
-    def can_read(self):
+    def is_accessible_for_user(self):
         if self.content_type is None:
-            # e.g ubuntu version
-            return True
+            return False
 
         user = self.user
         model = self.content_type.model
@@ -317,6 +316,18 @@ class Subscription(models.Model):
         else:
             # inyoka article subscription
             return True
+
+    def can_read(self, forum_id = None):
+        if self.content_type is None and not forum_id is None:
+            # Check for ubuntu version subscriptions
+            from inyoka.forum.models import Forum
+
+            forum = Forum.objects.get(id=forum_id)
+
+            has_perm = self.user.has_perm('forum.view_forum', forum)
+            return has_perm
+
+        return self.is_accessible_for_user
 
 
 class Storage(models.Model):
