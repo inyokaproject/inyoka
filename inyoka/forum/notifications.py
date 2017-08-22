@@ -48,9 +48,7 @@ def send_newtopic_notifications(user, post, topic, forum):
 @shared_task
 def notify_forum_subscriptions(notified_users, request_user_id, data):
     from inyoka.forum.models import Forum
-    prev_language = translation.get_language()
-    translation.activate(settings.LANGUAGE_CODE)
-    try:
+    with translation.override(settings.LANGUAGE_CODE):
         # Inform users who subscribed to the forum
         queue_notifications.delay(request_user_id, 'new_topic', _(
             u'“%(topic)s” – Topic in forum “%(forum)s”') % {
@@ -68,15 +66,11 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
             ),
             exclude={'user_id__in': notified_users},
         )
-    finally:
-        translation.activate(prev_language)
 
 
 @shared_task
 def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
-    prev_language = translation.get_language()
-    translation.activate(settings.LANGUAGE_CODE)
-    try:
+    with translation.override(settings.LANGUAGE_CODE):
         if data.get('topic_version') is not None:
             queue_notifications.delay(request_user_id, 'new_topic_ubuntu_version',
                 _(u'“%(topic)s” – Topic with version %(version)s') % {
@@ -86,8 +80,6 @@ def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
                 include_notified=True,
                 filter={'ubuntu_version': data.get('topic_version_number')},
                 exclude={'user_id__in': notified_users})
-    finally:
-        translation.activate(prev_language)
 
 
 def send_edit_notifications(user, post, topic, forum):
