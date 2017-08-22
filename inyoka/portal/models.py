@@ -299,7 +299,7 @@ class Subscription(models.Model):
     def can_read(self):
         if self.content_type is None:
             # e.g ubuntu version
-            return False
+            return True
 
         user = self.user
         model = self.content_type.model
