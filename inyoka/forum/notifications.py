@@ -24,8 +24,6 @@ def send_newtopic_notifications(user, post, topic, forum):
     # not visited, because unlike the posts you won't see
     # other new topics
 
-    version_number = topic.get_ubuntu_version()
-
     data = {
         'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
         'author_username': post.author.username,
@@ -34,6 +32,7 @@ def send_newtopic_notifications(user, post, topic, forum):
         'forum_unsubscribe': forum.get_absolute_url('unsubscribe'),
         'post_url': post.get_absolute_url(),
         'topic_title': topic.title,
+        'topic_id': topic.id
     }
 
     queue_notifications.delay(user.id, 'user_new_topic',
@@ -70,15 +69,21 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
 
 @shared_task
 def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
+    from inyoka.forum.models import Topic
+
+    topic = Topic.objects.get(id=data['topic_id'])
+    topic_version = topic.get_ubuntu_version()
+
     with translation.override(settings.LANGUAGE_CODE):
-        if data.get('topic_version') is not None:
+        if topic_version:
+            data['topic_version'] = str(topic_version)
             queue_notifications.delay(request_user_id, 'new_topic_ubuntu_version',
                 _(u'“%(topic)s” – Topic with version %(version)s') % {
                     'version': data.get('topic_version'),
                     'topic': data.get('topic_title')},
                 data,
                 include_notified=True,
-                filter={'ubuntu_version': data.get('topic_version_number')},
+                filter={'ubuntu_version': topic_version.number},
                 exclude={'user_id__in': notified_users})
 
 
