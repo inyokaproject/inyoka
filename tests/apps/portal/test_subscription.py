@@ -37,10 +37,7 @@ class TestSubscription(AntiSpamTestCaseMixin, TestCase):
 
         response = self.client.get('/usercp/subscriptions/', {}, False, HTTP_HOST=settings.BASE_DOMAIN_NAME)
 
-        self.assertTrue(
-            ('/topic/%s/unsubscribe/?next=' % self.topic.slug)
-            in response.content.decode("utf-8")
-        )
+        self.assertContains(response, ('/topic/%s/unsubscribe/?next=' % self.topic.slug))
 
     def test_should_forward_to_defined_url_after_unsubcribe(self):
         self.set_up_subscription_to_topic()
