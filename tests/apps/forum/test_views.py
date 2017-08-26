@@ -23,7 +23,7 @@ from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
 from mock import patch
-from guardian.shortcuts import assign_perm, remove_perm
+from guardian.shortcuts import assign_perm
 
 from inyoka.forum import constants, views
 from inyoka.forum.models import (
@@ -34,7 +34,6 @@ from inyoka.forum.models import (
     Post,
     Topic,
 )
-from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.utils.test import AntiSpamTestCaseMixin, InyokaClient, TestCase
 from inyoka.utils.urls import href, url_for
@@ -117,35 +116,6 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
         self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
                 self.forum3.id)
-
-    def test_subscribe(self):
-        self.client.login(username='user', password='user')
-        registered = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('forum.view_forum', registered, self.forum2)
-
-        self.client.get('/topic/%s/subscribe/' % self.topic.slug)
-        self.assertTrue(
-            Subscription.objects.user_subscribed(self.user, self.topic))
-
-        # Test for unsubscribe-link in the usercp if the user has no more read
-        # access to a subscription
-        remove_perm('forum.view_forum', registered, self.forum2)
-        cache.clear()
-        response = self.client.get('/usercp/subscriptions/', {}, False,
-                         HTTP_HOST=settings.BASE_DOMAIN_NAME)
-        self.assertTrue(
-            ('/topic/%s/unsubscribe/?next=' % self.topic.slug)
-            in response.content.decode("utf-8")
-        )
-
-        forward_url = 'http://%s/myfwd' % settings.BASE_DOMAIN_NAME
-        response = self.client.get(
-            '/topic/%s/unsubscribe/' % self.topic.slug,
-            {'next': forward_url}
-        )
-        self.assertFalse(
-            Subscription.objects.user_subscribed(self.user, self.topic))
-        self.assertEqual(response['location'], forward_url)
 
     def test_continue_admin_index(self):
         """The Parameter continue was renamed into next"""
