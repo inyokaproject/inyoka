@@ -32,6 +32,15 @@ class TestSubscription(AntiSpamTestCaseMixin, TestCase):
         self.assertTrue(Subscription.objects.user_subscribed(self.user, self.topic),
                         "The user should be a subscriber for this topic")
 
+    def test_should_not_subscribe_to_topic_if_user_misses_permission(self):
+        remove_perm('forum.view_forum', self.registered, self.forum)
+        cache.clear()
+
+        self.client.get('/topic/%s/subscribe/' % self.topic.slug)
+
+        self.assertFalse(Subscription.objects.user_subscribed(self.user, self.topic),
+                        "It shouldn't be possible to subscribe to topics which you can't view")
+
     def test_should_contain_unsubscribe_link_in_subscription_list(self):
         self.set_up_subscription_to_topic()
 
