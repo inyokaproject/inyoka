@@ -5,7 +5,6 @@ from guardian.shortcuts import assign_perm, remove_perm
 
 from inyoka.forum.models import (
     Forum,
-    Post,
     Topic,
 )
 from inyoka.portal.models import Subscription
@@ -19,34 +18,22 @@ class TestSubscription(AntiSpamTestCaseMixin, TestCase):
 
     def setUp(self):
         super(TestSubscription, self).setUp()
-        self.admin = User.objects.register_user('admin', 'admin@example.com', 'admin', False)
-        self.admin.is_superuser = True
-        self.admin.save()
+        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
 
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
-        self.system_user = User.objects.get_system_user()
-
-        self.forum1 = Forum.objects.create(name='Forum 1')
-        self.forum2 = Forum.objects.create(name='Forum 2', parent=self.forum1)
-        self.forum3 = Forum.objects.create(name='Forum 3', parent=self.forum1)
-
+        self.forum = Forum.objects.create(name='Forum')
         self.topic = Topic.objects.create(title='A test Topic', author=self.user,
-                forum=self.forum2)
-        self.post = Post.objects.create(text=u'Post 1', author=self.user,
-                topic=self.topic, position=0)
+                forum=self.forum)
 
-        self.client.defaults['HTTP_HOST'] = 'forum.%s' % settings.BASE_DOMAIN_NAME
-        self.client.login(username='admin', password='admin')
+        self.registered = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
 
-    def tearDown(self):
-        from inyoka.portal import user
-        user._ANONYMOUS_USER = None
-        user._SYSTEM_USER = None
+
+
 
     def test_subscribe(self):
         self.client.login(username='user', password='user')
         registered = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
-        assign_perm('forum.view_forum', registered, self.forum2)
+        assign_perm('forum.view_forum', registered, self.forum)
 
         self.client.get('/topic/%s/subscribe/' % self.topic.slug)
         self.assertTrue(
@@ -54,7 +41,7 @@ class TestSubscription(AntiSpamTestCaseMixin, TestCase):
 
         # Test for unsubscribe-link in the usercp if the user has no more read
         # access to a subscription
-        remove_perm('forum.view_forum', registered, self.forum2)
+        remove_perm('forum.view_forum', registered, self.forum)
         cache.clear()
         response = self.client.get('/usercp/subscriptions/', {}, False,
                                    HTTP_HOST=settings.BASE_DOMAIN_NAME)
