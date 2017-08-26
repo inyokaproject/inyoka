@@ -32,10 +32,8 @@ class TestSubscription(AntiSpamTestCaseMixin, TestCase):
         self.assertTrue(Subscription.objects.user_subscribed(self.user, self.topic),
                         "The user should be a subscriber for this topic")
 
-    def test_should_contain_unsubscribe_link_in_subscription_list_if_user_has_no_view_permission(self):
+    def test_should_contain_unsubscribe_link_in_subscription_list(self):
         self.set_up_subscription_to_topic()
-        remove_perm('forum.view_forum', self.registered, self.forum)
-        cache.clear()
 
         response = self.client.get('/usercp/subscriptions/', {}, False, HTTP_HOST=settings.BASE_DOMAIN_NAME)
 
