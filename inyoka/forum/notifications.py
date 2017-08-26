@@ -24,17 +24,16 @@ def send_newtopic_notifications(user, post, topic, forum):
     # not visited, because unlike the posts you won't see
     # other new topics
 
-    version_number = topic.get_ubuntu_version()
-
-    data = {'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
-          'author_username': post.author.username,
-          'forum_id': forum.id,
-          'forum_name': forum.name,
-          'forum_unsubscribe': forum.get_absolute_url('unsubscribe'),
-          'post_url': post.get_absolute_url(),
-          'topic_title': topic.title,
-          'topic_version': str(topic.get_ubuntu_version()),
-          'topic_version_number': version_number.number if version_number else None}
+    data = {
+        'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
+        'author_username': post.author.username,
+        'forum_id': forum.id,
+        'forum_name': forum.name,
+        'forum_unsubscribe': forum.get_absolute_url('unsubscribe'),
+        'post_url': post.get_absolute_url(),
+        'topic_title': topic.title,
+        'topic_id': topic.id
+    }
 
     queue_notifications.delay(user.id, 'user_new_topic',
         _(u'%(username)s has created a new topic') % {
@@ -48,9 +47,7 @@ def send_newtopic_notifications(user, post, topic, forum):
 @shared_task
 def notify_forum_subscriptions(notified_users, request_user_id, data):
     from inyoka.forum.models import Forum
-    prev_language = translation.get_language()
-    translation.activate(settings.LANGUAGE_CODE)
-    try:
+    with translation.override(settings.LANGUAGE_CODE):
         # Inform users who subscribed to the forum
         queue_notifications.delay(request_user_id, 'new_topic', _(
             u'“%(topic)s” – Topic in forum “%(forum)s”') % {
@@ -63,40 +60,45 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
                 'content_type_id': ctype(Forum).pk,
                 'object_id': data.get('forum_id')
             },
+            callback=notify_ubuntu_version_subscriptions.subtask(
+                args=(request_user_id, data)
+            ),
             exclude={'user_id__in': notified_users},
         )
-    finally:
-        translation.activate(prev_language)
 
 
 @shared_task
 def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
-    prev_language = translation.get_language()
-    translation.activate(settings.LANGUAGE_CODE)
-    try:
-        if data.get('topic_version') is not None:
+    from inyoka.forum.models import Topic
+
+    topic = Topic.objects.get(id=data['topic_id'])
+    topic_version = topic.get_ubuntu_version()
+
+    with translation.override(settings.LANGUAGE_CODE):
+        if topic_version:
+            data['topic_version'] = str(topic_version)
             queue_notifications.delay(request_user_id, 'new_topic_ubuntu_version',
                 _(u'“%(topic)s” – Topic with version %(version)s') % {
                     'version': data.get('topic_version'),
                     'topic': data.get('topic_title')},
                 data,
                 include_notified=True,
-                filter={'ubuntu_version': data.get('topic_version_number')},
+                filter={'ubuntu_version': topic_version.number},
                 exclude={'user_id__in': notified_users})
-    finally:
-        translation.activate(prev_language)
 
 
 def send_edit_notifications(user, post, topic, forum):
     from inyoka.forum.models import Topic
 
-    data = {'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
-          'author_username': post.author.username,
-          'forum_name': forum.name,
-          'post_url': post.get_absolute_url(),
-          'topic_id': topic.id,
-          'topic_title': topic.title,
-          'topic_unsubscribe': topic.get_absolute_url('unsubscribe')}
+    data = {
+        'author_unsubscribe': post.author.get_absolute_url('unsubscribe'),
+        'author_username': post.author.username,
+        'forum_name': forum.name,
+        'post_url': post.get_absolute_url(),
+        'topic_id': topic.id,
+        'topic_title': topic.title,
+        'topic_unsubscribe': topic.get_absolute_url('unsubscribe')
+    }
 
     # notify about new answer in topic for topic-subscriptions
     queue_notifications.delay(user.id, 'new_post',
@@ -123,12 +125,14 @@ def notify_member_subscriptions(notified_users, request_user_id, data):
 
 def send_discussion_notification(user, page):
     from inyoka.wiki.models import Page
-    data = {'creator': user.username,
-          'page_id': page.id,
-          'page_title': page.title,
-          'page_unsubscribe': page.get_absolute_url('unsubscribe'),
-          'topic_unsubscribe': page.topic.get_absolute_url('subscribe'),
-          'topic_url': page.topic.get_absolute_url()}
+    data = {
+        'creator': user.username,
+        'page_id': page.id,
+        'page_title': page.title,
+        'page_unsubscribe': page.get_absolute_url('unsubscribe'),
+        'topic_unsubscribe': page.topic.get_absolute_url('subscribe'),
+        'topic_url': page.topic.get_absolute_url()
+    }
 
     # also notify if the user has not yet visited the page,
     # since otherwise he would never know about the topic
@@ -141,10 +145,12 @@ def send_discussion_notification(user, page):
 
 def send_deletion_notification(user, topic, reason):
     from inyoka.forum.models import Topic
-    data = {'mod': user.username,
-          'reason': reason,
-          'topic_id': topic.id,
-          'topic_title': topic.title}
+    data = {
+        'mod': user.username,
+        'reason': reason,
+        'topic_id': topic.id,
+        'topic_title': topic.title
+    }
 
     queue_notifications.delay(user.id, 'topic_deleted',
         _(u'The topic “%(topic)s” has been deleted') % {
@@ -166,7 +172,7 @@ def send_notification_for_topics(request_user_id, template, template_args, subje
 
     topic_subscribers = {
         'content_type_id': ctype(Topic).pk,
-        'object_id__in': topic_ids,
+        'object_id__in': topic_ids
     }
     notified_users = queue_notifications(filter=topic_subscribers, **notification_args)
 
@@ -175,7 +181,7 @@ def send_notification_for_topics(request_user_id, template, template_args, subje
     if include_forums:
         forum_subscribers = {
             'content_type_id': ctype(Forum).pk,
-            'object_id__in': forum_ids,
+            'object_id__in': forum_ids
         }
         notified_users = queue_notifications(filter=forum_subscribers, exclude={'user_id__in': notified_users}, **notification_args)
         logger.debug('Notified for include_forums with template {}: {}'.format(template, notified_users))
