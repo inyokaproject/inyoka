@@ -26,6 +26,9 @@ class TestSubscription(AntiSpamTestCaseMixin, TestCase):
         self.registered = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         self.client.login(username='user', password='user')
 
+    def teardown(self):
+        cache.clear()
+
     def test_should_subscribe_to_topic_if_user_has_permission(self):
         self.set_up_subscription_to_topic()
 
@@ -34,7 +37,6 @@ class TestSubscription(AntiSpamTestCaseMixin, TestCase):
 
     def test_should_not_subscribe_to_topic_if_user_misses_permission(self):
         remove_perm('forum.view_forum', self.registered, self.forum)
-        cache.clear()
 
         self.client.get('/topic/%s/subscribe/' % self.topic.slug)
 
