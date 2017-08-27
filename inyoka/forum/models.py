@@ -670,6 +670,10 @@ class Topic(models.Model):
         return self.post_count.value() > POSTS_PER_PAGE
 
     def get_ubuntu_version(self):
+        """
+        Returns a UbuntuVersion Object if this topic is linked to any Ubuntu Version,
+        else None.
+        """
         if self.ubuntu_version:
             version = filter(lambda v: v.number == self.ubuntu_version, get_ubuntu_versions())
             if len(version) > 0:

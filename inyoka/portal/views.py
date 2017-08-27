@@ -9,9 +9,9 @@
     :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import time
 from datetime import date, datetime, timedelta
 from icalendar import Calendar as iCal, Event as iEvent
+from time import time
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -1550,7 +1550,7 @@ def config(request):
 
             if data['global_message'] != storage['global_message']:
                 storage['global_message'] = data['global_message']
-                storage['global_message_time'] = time.time()
+                storage['global_message_time'] = time()
 
             if data['team_icon']:
                 if storage['team_icon']:

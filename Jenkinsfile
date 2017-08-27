@@ -42,7 +42,8 @@ node('inyoka-slave') {
           sh """
           requirementshash=\$(cat extra/requirements/development.txt extra/requirements/production.txt|sha256sum|awk '{print \$1}')
           . \$HOME/venvs/\$requirementshash/bin/activate
-          python manage.py test --setting tests.settings.${current_test_database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true"""
+          coverage run --branch manage.py test --setting tests.settings.${current_test_database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true
+          coverage xml"""
         }
       }
 
@@ -82,6 +83,16 @@ node('inyoka-slave') {
                             pattern: 'postgresql.xml',
                             skipNoTestFiles: false,
                             stopProcessingIfError: true]]])
+      step([$class: 'CoberturaPublisher',
+            autoUpdateHealth: false,
+            autoUpdateStability: false,
+            coberturaReportFile: 'coverage.xml',
+            failUnhealthy: false,
+            failUnstable: false,
+            maxNumberOfBuilds: 0,
+            onlyStable: false,
+            sourceEncoding: 'ASCII',
+            zoomCoverageChart: false])
     }
 
     stage('Cleanup') {
