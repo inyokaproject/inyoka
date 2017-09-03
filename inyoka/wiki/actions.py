@@ -214,7 +214,7 @@ def do_missing_page(request, name, _page=None):
     try:
         not_finished = Page.objects.get_by_name(join_pagename(
             storage['wiki_newpage_root'], name
-        ), nocache=True)
+        ), cached=False)
     except Page.DoesNotExist:
         not_finished = None
 
@@ -281,9 +281,9 @@ def _rename(request, page, new_name, force=False, new_text=None):
     # check that there are no duplicate attachments existing
     # pointing to the new page name.
     new_page_attachments = (p.split('/')[-1] for p in
-                            Page.objects.get_attachment_list(new_name, False))
+                            Page.objects.get_attachment_list(new_name, existing_only=False))
     old_page_attachments = (p.split('/')[-1] for p in
-                            Page.objects.get_attachment_list(page.name, False))
+                            Page.objects.get_attachment_list(page.name, existing_only=False))
     duplicate = set(new_page_attachments).intersection(set(old_page_attachments))
     if duplicate and not force:
         linklist = u', '.join('<a href="%s">%s</a>' %

@@ -98,7 +98,7 @@ class AttachmentList(macros.Macro):
 
     def build_node(self, context, format):
         result = nodes.List('unordered')
-        pagelist = Page.objects.get_attachment_list(self.page or None, exclude_privileged=False)
+        pagelist = Page.objects.get_attachment_list(self.page or None)
         for page in pagelist:
             title = [nodes.Text(get_pagetitle(page, not self.shorten_title))]
             link = nodes.InternalLink(page, title, force_existing=True)
