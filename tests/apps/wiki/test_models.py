@@ -14,7 +14,7 @@ class TestPageManager(TestCase):
         Page.objects.create('test', 'test content')
 
         with self.assertRaises(CaseSensitiveException):
-            Page.objects.get_by_name('Test', nocache=True)
+            Page.objects.get_by_name('Test', cached=False)
 
     def test_get_by_name_cache_case_sensitive_set(self):
         """
