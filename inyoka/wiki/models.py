@@ -227,18 +227,14 @@ class PageManager(models.Manager):
         new_page = self.get_by_name_and_rev(name, new_rev)
         return Diff(old_page, old_page.rev, new_page.rev)
 
-    def _get_object_list(self, nocache, exclude_privileged=False):
+    def _get_object_list(self, cached=True, exclude_privileged=False):
         """
         Get a list of all objects that are pages or attachments.  The return
         value is a list of ``(name, deleted, is_page)`` tuples
         where `is_page` is False if that object is an attachment.
         """
-        if exclude_privileged:
-            nocache = True
         key = 'wiki/object_list'
-        pagelist = None
-        if not nocache:
-            pagelist = cache.get(key)
+        pagelist = cache.get(key) if cached and not exclude_privileged else None
 
         if pagelist is None:
             pagelist = Page.objects.select_related('last_rev')
@@ -255,26 +251,27 @@ class PageManager(models.Manager):
                 # but we still need to not cache if we're requesting only
                 # unprivileged pages.
                 cache.set(key, pagelist, 10000)
+
         return pagelist
 
-    def get_page_list(self, existing_only=True, nocache=False, exclude_privileged=False):
+    def get_page_list(self, existing_only=True, cached=True, exclude_privileged=False):
         """
         Get a list of unicode strings with the page names that have a
         head that exists.  Normally the results are cached, pass it
-        `nocache` if you want to force the database query.  Normally this
+        `cached` if you want to force the database query.  Normally this
         is not necessary because whenever a page is deleted or created the
         pagelist cache is invalidated.
         """
-        return [x[0] for x in self._get_object_list(nocache, exclude_privileged)
+        return [x[0] for x in self._get_object_list(cached, exclude_privileged)
                 if (not existing_only or not x[1]) and not x[2]]
 
     def get_attachment_list(self, parent=None, existing_only=True,
-                            nocache=False, exclude_privileged=False):
+                            cached=True, exclude_privileged=False):
         """
         Works like `get_page_list` but just lists attachments.  If parent is
         given only pages below that page are displayed.
         """
-        filtered = (x[0] for x in self._get_object_list(nocache, exclude_privileged)
+        filtered = (x[0] for x in self._get_object_list(cached, exclude_privileged)
                     if (not existing_only or not x[1]) and x[2])
         if parent is not None:
             parent += u'/'
@@ -286,18 +283,18 @@ class PageManager(models.Manager):
     def discussions(self, topic):
         return Page.objects.only('name').filter(topic=topic).order_by('name')
 
-    def get_page_count(self, existing_only=True, nocache=False):
+    def get_page_count(self, existing_only=True, cached=True):
         """
         Get the number of pages.  Per default just pages with an non
         deleted head will be returned.  This in fact just counts the
         results returned by `get_page_list` because we hit the cache most
         of the time anyway.
         """
-        return len(self.get_page_list(existing_only, nocache))
+        return len(self.get_page_list(existing_only, cached))
 
-    def get_attachment_count(self, existing_only=True, nocache=False):
+    def get_attachment_count(self, existing_only=True, cached=True):
         """Get the number of attachments."""
-        return len(self.get_attachment_list(existing_only, nocache))
+        return len(self.get_attachment_list(existing_only, cached))
 
     def get_owners(self, page_name):
         """
@@ -361,9 +358,9 @@ class PageManager(models.Manager):
         similar name.  This also checks for similar attachments.
         """
         return [x[1] for x in get_close_matches(name, [x[0] for x in
-                self._get_object_list(False, exclude_privileged=False) if not x[1]], n)]
+                self._get_object_list(exclude_privileged=False) if not x[1]], n)]
 
-    def get_by_name(self, name, nocache=False, raise_on_deleted=False, exclude_privileged=False):
+    def get_by_name(self, name, cached=True, raise_on_deleted=False, exclude_privileged=False):
         """
         Return a page with the most recent revision.  This should be used
         from the view functions if no revision is defined because it sends
@@ -372,12 +369,12 @@ class PageManager(models.Manager):
         The most recent version is additionally stored in the cache so that
         we don't hit the database for that.  Because some caching backends
         share cached objects you should not modify it unless you bypass
-        the caching backend by passing `nocache` = True.
+        the caching backend by passing `cached` = False.
         """
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
         cache_key = u'wiki/page/{}'.format(name.lower())
-        rev = None if nocache else cache.get(cache_key)
+        rev = cache.get(cache_key) if cached else None
         if rev is None:
             try:
                 rev = Revision.objects.select_related('page', 'text', 'user') \
@@ -385,7 +382,7 @@ class PageManager(models.Manager):
                                       .latest()
             except Revision.DoesNotExist:
                 raise Page.DoesNotExist()
-            if not nocache:
+            if cached:
                 try:
                     cachetime = int(rev.page.metadata['X-Cache-Time'][0]) or None
                 except (IndexError, ValueError):

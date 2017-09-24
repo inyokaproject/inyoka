@@ -9,12 +9,12 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required, login_required
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
-from django.contrib.auth.decorators import login_required, permission_required
 from inyoka.utils.http import global_not_found, templated
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
@@ -41,7 +41,7 @@ def add(request):
         'page': 'add'
     }
 
-@login_required
+
 @permission_required('pastebin.view_entry', raise_exception=True)
 @templated('pastebin/display.html')
 def display(request, entry_id):
@@ -54,6 +54,7 @@ def display(request, entry_id):
         'entry': entry,
         'page': 'browse'
     }
+
 
 @login_required
 @permission_required('pastebin.delete_entry', raise_exception=True)
@@ -76,7 +77,7 @@ def delete(request, entry_id):
                       {'entry': entry}))
     return HttpResponseRedirect(href('pastebin', entry.id))
 
-@login_required
+
 @permission_required('pastebin.view_entry', raise_exception=True)
 def raw(request, entry_id):
     try:
@@ -86,7 +87,6 @@ def raw(request, entry_id):
     return HttpResponse(entry.code, content_type='text/plain; charset=utf-8')
 
 
-@login_required
 @permission_required('pastebin.view_entry', raise_exception=True)
 @templated('pastebin/browse.html')
 def browse(request):
