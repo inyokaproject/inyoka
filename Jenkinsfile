@@ -1,13 +1,9 @@
 #!/usr/bin/env groovy
 
 node('inyoka-slave') {
-    stage('Checkout') {
-      checkout scm
-      sh '''git clean -fdx'''
-      sh '''rm -rf theme-ubuntuusers'''
-    }
-
     stage('Build virtualenv') {
+      deleteDir()
+      checkout scm
       checkout([$class: 'GitSCM', branches: [[name: '*/staging']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'theme-ubuntuusers']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'e081c9b5-6899-40b5-a895-7c2232be3430', url: 'git@github.com:inyokaproject/theme-ubuntuusers']]])
 
       sh """
@@ -93,10 +89,5 @@ node('inyoka-slave') {
             onlyStable: false,
             sourceEncoding: 'ASCII',
             zoomCoverageChart: false])
-    }
-
-    stage('Cleanup') {
-      sh '''rm -rf venv
-      rm -rf theme-ubuntuusers'''
     }
 }
