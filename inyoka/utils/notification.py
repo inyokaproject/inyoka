@@ -41,7 +41,8 @@ def send_notification(user, template_name=None, subject=None, args=None):
 
 def notify_about_subscription(sub, template=None, subject=None, args=None):
     args = args or {}
-    forum_id = args['forum_id']
+    forum_id = args.get('forum_id')
+
     if not sub.can_read(forum_id):
         # don't send subscriptions to user that don't have read
         # access to the resource
