@@ -44,7 +44,8 @@ pipeline {
               git checkout ${env.BRANCH_NAME} || git checkout staging
 
               npm install
-              ./node_modules/grunt-cli/bin/grunt """
+              ./node_modules/grunt-cli/bin/grunt
+              """
             }
           }
         }
@@ -60,7 +61,7 @@ pipeline {
         }
       }
     }
-    stage('Tests') {
+    stage('Tests & Documentation') {
       parallel {
         stage('MySQL') {
           steps{
@@ -75,6 +76,27 @@ pipeline {
         stage('SQLite') {
           steps{
             runTestOnDatabase('sqlite')
+          }
+        }
+        stage('Build Documentation') {
+          when {
+            branch 'staging'
+          }
+          steps {
+            sh """
+            . ~/venvs/${requirementshash}/bin/activate
+            head -n -21 example_development_settings.py > development_settings.py
+            echo "SECRET_KEY = 'DEMO'" >> development_settings.py
+            make -C docs html
+            """
+
+            publishHTML([allowMissing: false,
+                         alwaysLinkToLastBuild: false,
+                         keepAll: false,
+                         reportDir: 'docs/build/html',
+                         reportFiles: 'index.html',
+                         reportName: 'Inyoka Documentation',
+                         reportTitles: ''])
           }
         }
       }
