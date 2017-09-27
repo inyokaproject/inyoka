@@ -4,17 +4,18 @@ def runTestOnDatabase(String database) {
   sh """
   . ~/venvs/${requirementshash}/bin/activate
   coverage run --branch manage.py test --setting tests.settings.${database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true
-  coverage xml"""
+  coverage xml
+  """
 }
 
-pipeline{
+pipeline {
   agent { label 'inyoka-slave' }
   options {
     buildDiscarder(logRotator(numToKeepStr: '10'))
   }
   stages {
     stage('Prepare build') {
-      parallel{
+      parallel {
         stage('Build Virtualenv') {
           steps {
             script {
@@ -30,11 +31,12 @@ pipeline{
               . ~/venvs/${requirementshash}/bin/activate
               pip install unittest-xml-reporting
               pip install -r extra/requirements/development.txt
-            fi"""
+            fi
+            """
           }
         }
         stage('Theme checkout') {
-          steps{
+          steps {
             dir('theme-ubuntuusers') {
               git branch: 'staging', url: 'git@github.com:inyokaproject/theme-ubuntuusers'
 
@@ -52,14 +54,15 @@ pipeline{
       steps {
         dir('theme-ubuntuusers') {
           sh """
-            . ~/venvs/${requirementshash}/bin/activate
-            python setup.py develop """
+          . ~/venvs/${requirementshash}/bin/activate
+          python setup.py develop
+          """
         }
       }
     }
     stage('Tests') {
-      parallel{
-        stage('Mysql') {
+      parallel {
+        stage('MySQL') {
           steps{
             runTestOnDatabase('mysql')
           }
