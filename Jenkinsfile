@@ -2,7 +2,7 @@
 
 def runTestOnDatabase(String database) {
   sh """
-  . ~/venvs/${requirementshash}/bin/activate
+  ${activate_venv}
   coverage run --branch manage.py test --setting tests.settings.${database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true
   coverage xml
   """
@@ -22,13 +22,15 @@ pipeline {
               requirementshash = sh returnStdout: true,
                                     script: "cat extra/requirements/development.txt extra/requirements/production.txt | sha256sum | awk '{print \$1}'"
               requirementshash = requirementshash.trim()
+              venv_path = "~/venvs/${requirementshash}"
+              activate_venv = ". ${venv_path}/bin/activate"
             }
 
             sh """
-            if [ ! -d '~/venvs/${requirementshash}' ]
+            if [ ! -d ${venv_path} ]
             then
-              virtualenv ~/venvs/${requirementshash}
-              . ~/venvs/${requirementshash}/bin/activate
+              virtualenv ${venv_path}
+              ${activate_venv}
               pip install unittest-xml-reporting
               pip install -r extra/requirements/development.txt
             fi
@@ -55,7 +57,7 @@ pipeline {
       steps {
         dir('theme-ubuntuusers') {
           sh """
-          . ~/venvs/${requirementshash}/bin/activate
+          ${activate_venv}
           python setup.py develop
           """
         }
@@ -84,7 +86,7 @@ pipeline {
           }
           steps {
             sh """
-            . ~/venvs/${requirementshash}/bin/activate
+            ${activate_venv}
             head -n -21 example_development_settings.py > development_settings.py
             echo "SECRET_KEY = 'DEMO'" >> development_settings.py
             make -C docs html
