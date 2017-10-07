@@ -1469,11 +1469,12 @@ def calendar_ical(request, slug):
         raise Http404()
 
     cal = iCal()
+    current_time = datetime.now().time()
 
-    start = datetime.combine(event.date, event.time or time())
+    start = datetime.combine(event.date, event.time or current_time)
 
     if event.enddate:
-        end = datetime.combine(event.enddate, event.endtime or time())
+        end = datetime.combine(event.enddate, event.endtime or current_time)
     else:
         end = start
 
