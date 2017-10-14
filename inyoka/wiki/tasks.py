@@ -35,19 +35,6 @@ def update_related_pages(page, update_meta=True):
 
 
 @shared_task
-def update_object_list(names=None):
-    """Refresh the wiki/object_list cache key"""
-    from inyoka.wiki.models import Page
-    if isinstance(names, list):
-        cache.delete_many([u'wiki/page/{}'.format(name.lower()) for name in names])
-    elif isinstance(names, basestring):
-        cache.delete(u'wiki/page/{}'.format(names.lower()))
-
-    cache.delete('wiki/object_list')
-    Page.objects.get_page_list()
-
-
-@shared_task
 def update_recentchanges():
     """
     Updates cached data for recent changes View.

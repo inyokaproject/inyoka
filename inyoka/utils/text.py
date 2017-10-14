@@ -89,6 +89,19 @@ def join_pagename(name1, name2):
     return _path_crop.sub('', posixpath.normpath(path))
 
 
+def unaccent(name):
+    """
+    Converts the String `name` to lowercase and replaces all decomposable accents
+    with its base character.
+    """
+    try:
+        name = unicode(name.lower(), "utf-8")
+    except TypeError:
+        name = name.lower()
+
+    return normalize('NFD', name).encode('ascii', 'ignore').replace(' ', '_')
+
+
 def normalize_pagename(name, strip_location_markers=True):
     """
     Normalize a pagename.  Strip unsupported characters.  You have to call

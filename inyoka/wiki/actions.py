@@ -52,7 +52,6 @@ from inyoka.wiki.forms import (
 )
 from inyoka.wiki.models import Page, Revision
 from inyoka.wiki.notifications import send_edit_notifications
-from inyoka.wiki.tasks import update_object_list
 from inyoka.wiki.utils import (
     case_sensitive_redirect,
     CircularRedirectException,
@@ -330,7 +329,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
         ap.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': old_attachment_name},
                 remote_addr=request.META.get('REMOTE_ADDR'))
 
-    update_object_list.delay([name, new_name])
+    Page.objects.clean_cache([name, new_name])
     return True
 
 
