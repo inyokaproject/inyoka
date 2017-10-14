@@ -172,6 +172,10 @@ WIKI_PRIVILEGED_PAGES = []
 WIKI_RECENTCHANGES_MAX = 250
 WIKI_RECENTCHANGES_DAYS = 7
 
+# 2h is the recommended and tested Cache Timeout for
+# wiki internal stuff like page or attachment lists.
+WIKI_CACHE_TIMEOUT = 60 * 60 * 2
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = None
 

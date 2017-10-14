@@ -100,7 +100,7 @@ class BaseStorage(object):
             objects.append(self.extract_data(block))
 
         self.data = self.combine_data(objects)
-        cache.set(key, self.data, 10000)
+        cache.set(key, self.data, settings.WIKI_CACHE_TIMEOUT)
 
     def find_block(self, text):
         """Helper method that finds a processable block in the text."""

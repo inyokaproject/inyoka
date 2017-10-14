@@ -250,7 +250,7 @@ class PageManager(models.Manager):
                 # because if we are already fetching it we can cache it,
                 # but we still need to not cache if we're requesting only
                 # unprivileged pages.
-                cache.set(key, pagelist, 10000)
+                cache.set(key, pagelist, settings.WIKI_CACHE_TIMEOUT)
 
         return pagelist
 
