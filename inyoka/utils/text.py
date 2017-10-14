@@ -10,7 +10,7 @@
 """
 import posixpath
 import re
-import unicodedata
+from unicodedata import normalize
 
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import apnumber
@@ -58,7 +58,7 @@ def slugify(string, convert_lowercase=True):
         if word:
             for search, replace in _slugify_replacement_table.iteritems():
                 word = word.replace(search, replace)
-            word = unicodedata.normalize('NFKD', word)
+            word = normalize('NFKD', word)
             result.append(word.encode('ascii', 'ignore'))
     return u'-'.join(result) or u'-'
 
