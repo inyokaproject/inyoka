@@ -20,6 +20,7 @@
 """
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
@@ -50,15 +51,13 @@ from inyoka.wiki.forms import (
     NewArticleForm,
     PageEditForm,
 )
-from inyoka.wiki.models import Page, Revision
+from inyoka.wiki.models import Page
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.utils import (
     case_sensitive_redirect,
     CircularRedirectException,
     get_safe_redirect_target
 )
-
-REVISIONS_PER_PAGE = 100
 
 
 def clean_article_name(view):
@@ -755,7 +754,7 @@ def do_log(request, name, pagination_page=1):
     url = url_for(page, action='log')
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
-                            REVISIONS_PER_PAGE, url)
+                            settings.WIKI_REVISIONS_PER_PAGE, url)
     return {
         'page': page,
         'revisions': pagination.get_queryset(),
