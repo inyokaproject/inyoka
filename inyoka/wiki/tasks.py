@@ -18,11 +18,6 @@ from django.core.cache import cache
 
 
 @shared_task
-def render_article(page):
-    cache.delete(u'wiki/page/{}'.format(page.name.lower()))
-
-
-@shared_task
 def update_related_pages(page, update_meta=True):
     from inyoka.wiki.models import MetaData, Page
     page = Page.objects.get(id=page)

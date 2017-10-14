@@ -110,7 +110,6 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href
 from inyoka.wiki.tasks import (
-    render_article,
     update_object_list,
     update_related_pages,
 )
