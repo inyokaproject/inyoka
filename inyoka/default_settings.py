@@ -288,6 +288,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'inyoka.portal.tasks.check_for_user_record',
         'schedule': timedelta(minutes=5),
     },
+    'cleanup_wiki_stale_attachments': {
+        'task': 'inyoka.wiki.tasks.cleanup_stale_attachments',
+        'schedule': crontab(hour=4, minute=15, day_of_week='monday'),
+    },
     'delete-not-activated-users': {
         'task': 'inyoka.portal.tasks.clean_expired_users',
         'schedule': crontab(hour=5, minute=30),
