@@ -43,6 +43,7 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.acl import PrivilegeTest, has_privilege, require_privilege
+from inyoka.wiki.exceptions import CircularRedirectException
 from inyoka.wiki.forms import (
     AddAttachmentForm,
     EditAttachmentForm,
@@ -55,7 +56,6 @@ from inyoka.wiki.models import Page
 from inyoka.wiki.notifications import send_edit_notifications
 from inyoka.wiki.utils import (
     case_sensitive_redirect,
-    CircularRedirectException,
     get_safe_redirect_target
 )
 

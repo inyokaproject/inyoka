@@ -10,8 +10,9 @@
 """
 from inyoka.utils.test import TestCase
 from inyoka.utils.text import join_pagename, normalize_pagename
+from inyoka.wiki.exceptions import CircularRedirectException
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import CircularRedirectException, get_safe_redirect_target
+from inyoka.wiki.utils import get_safe_redirect_target
 
 
 class TestWikiUtils(TestCase):

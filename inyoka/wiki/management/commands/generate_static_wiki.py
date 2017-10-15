@@ -39,7 +39,7 @@ from inyoka.utils.text import normalize_pagename
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import CaseSensitiveException
+from inyoka.wiki.exceptions import CaseSensitiveException
 
 FOLDER = 'static_wiki'
 INCLUDE_IMAGES = False

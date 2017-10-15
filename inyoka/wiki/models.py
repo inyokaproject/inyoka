@@ -109,6 +109,7 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, unaccent
 from inyoka.utils.urls import href
 from inyoka.wiki.tasks import update_related_pages
+from inyoka.wiki.exceptions import CaseSensitiveException
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
@@ -401,8 +402,6 @@ class PageManager(models.Manager):
         # If the page exists but it has another case, raise an exception
         # with the right case.
         if rev.page.name != name:
-            # TODO: Fix circular imports
-            from inyoka.wiki.utils import CaseSensitiveException
             raise CaseSensitiveException(rev.page)
 
         if rev.deleted and raise_on_deleted:
