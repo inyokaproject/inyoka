@@ -307,6 +307,10 @@ CELERY_BEAT_SCHEDULE = {
     'update_wiki_recent_changes': {
         'task': 'inyoka.wiki.tasks.update_recentchanges',
         'schedule': timedelta(minutes=15),
+    },
+    'update_page_by_slug': {
+        'task': 'inyoka.wiki.tasks.update_page_by_slug',
+        'schedule': timedelta(hours=1),
     }
 }
 

@@ -109,7 +109,7 @@ from inyoka.utils.local import local as local_cache
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, wiki_slugify
 from inyoka.utils.urls import href
-from inyoka.wiki.tasks import update_related_pages
+from inyoka.wiki.tasks import update_related_pages, update_page_by_slug
 from inyoka.wiki.exceptions import CaseSensitiveException
 
 # maximum number of bytes for metadata.  everything above is truncated
@@ -118,6 +118,9 @@ MAX_METADATA = 2 << 8
 
 def is_privileged_wiki_page(name):
     return any(name.startswith(n) for n in settings.WIKI_PRIVILEGED_PAGES)
+
+
+to_page_by_slug_key = lambda name: u'wiki/page_by_slug/{}'.format(wiki_slugify(name))
 
 
 class PageManager(models.Manager):
@@ -376,6 +379,14 @@ class PageManager(models.Manager):
         key = 'wiki/objects_similar'
         pagelist = cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
         return [x[1] for x in get_close_matches(name, pagelist, n)]
+
+    def get_by_slug(self, name):
+        """
+        Returns the true page name for `name` after slugification.
+        """
+        cache.get_or_set(u'wiki/page_by_slug_created', update_page_by_slug)
+
+        return cache.get(to_page_by_slug_key(name))
 
     def get_by_name(self, name, cached=True, raise_on_deleted=False, exclude_privileged=False):
         """
