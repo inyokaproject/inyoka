@@ -246,11 +246,11 @@ class PageManager(models.Manager):
         make_pagelist = lambda: self._get_object_list(**kwargs)
 
         if cached:
-            key = 'wiki/objects_pages'
+            key = u'wiki/objects_pages'
             if existing_only:
-                key += '_existing'
+                key += u'_existing'
             if exclude_privileged:
-                key += '_without_privileged'
+                key += u'_without_privileged'
             return cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
 
         return make_pagelist()
@@ -269,11 +269,11 @@ class PageManager(models.Manager):
         make_pagelist = lambda: self._get_object_list(**kwargs)
 
         if cached:
-            key = 'wiki/objects_attachments'
+            key = u'wiki/objects_attachments'
             if existing_only:
-                key += '_existing'
+                key += u'_existing'
             if exclude_privileged:
-                key += '_without_privileged'
+                key += u'_without_privileged'
             filtered = cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
         else:
             filtered = make_pagelist()
@@ -569,7 +569,7 @@ class PageManager(models.Manager):
                 cache.delete_many([u'wiki/page/{}'.format(name.lower()) for name in names])
             elif isinstance(names, basestring):
                 cache.delete(u'wiki/page/{}'.format(names.lower()))
-        cache.delete_pattern('wiki/objects_*')
+        cache.delete_pattern(u'wiki/objects_*')
 
 
 class TextManager(models.Manager):
