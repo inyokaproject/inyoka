@@ -10,6 +10,7 @@
 """
 import posixpath
 import re
+from string import ascii_lowercase, digits
 from unicodedata import normalize
 
 from django.conf import settings
@@ -31,6 +32,13 @@ _slugify_replacement_table = {
 }
 _slugify_word_re = re.compile(ur'[^a-zA-Z0-9%s]+' %
     u''.join(re.escape(c) for c in _slugify_replacement_table.keys()))
+_wiki_slug_allowed_chars = set(ascii_lowercase + digits + '_+-/.()')
+_wiki_slug_replace_chars = {
+    u'¹': u'1',
+    u'²': u'2',
+    u'³': u'3',
+    u' ': u'_'
+}
 
 
 def increment_string(s):
@@ -89,19 +97,6 @@ def join_pagename(name1, name2):
     return _path_crop.sub('', posixpath.normpath(path))
 
 
-def unaccent(name):
-    """
-    Converts the String `name` to lowercase and replaces all decomposable accents
-    with its base character.
-    """
-    try:
-        name = unicode(name.lower(), "utf-8")
-    except TypeError:
-        name = name.lower()
-
-    return normalize('NFD', name).encode('ascii', 'ignore').replace(' ', '_')
-
-
 def normalize_pagename(name, strip_location_markers=True):
     """
     Normalize a pagename.  Strip unsupported characters.  You have to call
@@ -119,6 +114,25 @@ def normalize_pagename(name, strip_location_markers=True):
         return name
     name = name.lstrip('/')
     return _path_crop.sub('', name)
+
+
+def wiki_slugify(name):
+    """
+    A special variant of slugify() for used in our wiki. It tries to generate
+    an internal representation of a wiki pagename, helpfull if someone
+    links a wiki pages with little differences like accents.
+    """
+    if isinstance(name, str):
+        name = name.decode(settings.DEFAULT_CHARSET)
+    name = name.lower()
+    for rchar, replacement in _wiki_slug_replace_chars.iteritems():
+        name = name.replace(rchar, replacement)
+    name = unicode(normalize('NFD', name).encode('ascii', 'ignore'))
+    existing_chars = set(name)
+    disallowed_chars = existing_chars - _wiki_slug_allowed_chars
+    for char in disallowed_chars:
+        name = name.replace(char, '')
+    return name
 
 
 def get_pagetitle(name, full=True):

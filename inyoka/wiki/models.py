@@ -105,8 +105,9 @@ from inyoka.utils.diff3 import generate_udiff, get_close_matches, prepare_udiff
 from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.html import striptags
+from inyoka.utils.local import local as local_cache
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, unaccent
+from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, wiki_slugify
 from inyoka.utils.urls import href
 from inyoka.wiki.tasks import update_related_pages
 from inyoka.wiki.exceptions import CaseSensitiveException
@@ -128,20 +129,20 @@ class PageManager(models.Manager):
     The `PageManager` singleton instance is available as `Page.objects`.
     """
 
-    def exists(self, name):
-        """Check if a page with that name exists."""
-        key = 'wiki/objects_pages_lowercase'
-        make_pagelist = lambda: [item.lower() for item in self.get_page_list()]
-        pagelist = cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
-        return name.lower() in pagelist
+    def exists(self, name, cached=True):
+        """
+        Returns `True` if `name` exists, the results are cached in a
+        request local object to avoid cache or db requests if possible.
 
-    def exists_normalized(self, name):
-        """Check if a page with that name exists with a normalized/unaccented name"""
-        normalized_name = unaccent(name)
-        key = 'wiki/objects_pages_normalized'
-        make_pagelist = lambda: [unaccent(item) for item in self.get_page_list()]
-        pagelist = cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
-        return normalized_name in pagelist
+        `name` gets slugified with `wiki_slugify()` before.
+        """
+        if cached:
+            if not hasattr(local_cache, 'slug_list'):
+                local_cache.slug_list = self.get_slug_list()
+            slug_list = local_cache('slug_list')
+        else:
+            slug_list = self.get_slug_list()
+        return wiki_slugify(name) in slug_list
 
     def get_head(self, name, offset=0):
         """
@@ -254,6 +255,15 @@ class PageManager(models.Manager):
             return cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
 
         return make_pagelist()
+
+    def get_slug_list(self):
+        """
+        Returns a cached slugified list of all wiki pages, useful to speed up
+        our parser a lot. Avoids many cache or db hits on big pages/texts.
+        """
+        make_sluglist = lambda: set([wiki_slugify(name) for name in self._get_object_list(exclude_attachments=True)])
+        key = u'wiki/objects_slugs'
+        return cache.get_or_set(key, make_sluglist, settings.WIKI_CACHE_TIMEOUT)
 
     def get_attachment_list(self, parent=None, existing_only=True,
                             cached=True, exclude_privileged=False):
