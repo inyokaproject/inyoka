@@ -449,18 +449,14 @@ class InternalLink(Element):
         if not children:
             children = [Text(get_pagetitle(page))]
         Element.__init__(self, children, id, style, class_)
-        self.force_existing = force_existing
+        self.existing = force_existing
         self.page = page
         self.anchor = anchor
 
     def prepare_html(self):
-        if self.force_existing:
-            missing = False
-        else:
+        if not self.existing:
             from inyoka.wiki.models import Page
-            missing = not Page.objects.exists(self.page)
-            if missing:
-                missing = not Page.objects.exists_normalized(self.page)
+            self.existing = Page.objects.exists(self.page)
         url = href('wiki', self.page)
         if self.anchor:
             url += '#' + urlquote_plus(self.anchor)
@@ -468,7 +464,7 @@ class InternalLink(Element):
             href=url,
             id=self.id,
             style=self.style,
-            classes=('internal', missing and u'missing' or u'', self.class_)
+            classes=('internal', u'' if self.existing else u'missing', self.class_)
         )
         for item in Element.prepare_html(self):
             yield item
