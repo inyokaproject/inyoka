@@ -409,6 +409,11 @@ class PageManager(models.Manager):
                                       .filter(page__name__iexact=name) \
                                       .latest()
             except Revision.DoesNotExist:
+                existing = self.get_by_slug(name)
+                if existing:
+                    if Page.objects.filter(name=existing).exists():
+                        page = Page.objects.get_by_name(existing, cached, raise_on_deleted, exclude_privileged)
+                        raise CaseSensitiveException(page)
                 raise Page.DoesNotExist()
             if cached:
                 try:
