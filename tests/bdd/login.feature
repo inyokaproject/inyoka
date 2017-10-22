@@ -1,5 +1,7 @@
 Feature: Logging in
   This feature tests the login to Inyoka.
+  A user should be able to login if his account is active and denied access
+  if not.
 
 
   Scenario: Open the login page
@@ -30,3 +32,19 @@ Feature: Logging in
       | bdd_user | invalid  |
       | invalid  | test     |
 
+
+  Scenario Outline: Login try with an inactive  user
+    Given I am on the login page
+     When I enter the credentials:
+      | username        | password |
+      | <inactive_type> | test     |
+     Then I should see information about
+        """
+        <inactive_type>
+        """
+
+    Examples:
+      | inactive_type |
+      | banned        |
+      | inactive      |
+      | deleted       |

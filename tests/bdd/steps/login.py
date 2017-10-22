@@ -28,3 +28,13 @@ def step_impl(context):
 def step_impl(context):
     assert context.browser.find_element_by_css_selector('.errors')
 
+
+@then('I should see information about')
+def step_impl(context):
+    messages = {
+        'banned': "gesperrt",
+        'inactive': 'inaktiv',
+        'deleted': 'inaktiv'
+    }
+    error = context.browser.find_element_by_css_selector('.errors')
+    assert messages[context.text] in error.text
