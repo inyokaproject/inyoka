@@ -26,3 +26,9 @@ def step_impl(context):
     }
     error = context.browser.find_element_by_css_selector('.errors')
     assert messages[context.text] in error.text
+
+
+@then(u'I should see a link to')
+def step_impl(context):
+    link = context.SERVER_URL +  '/' +context.table[0]['link_location']
+    assert context.browser.find_element_by_css_selector("[href*='%(link)s']" % {'link': link})
