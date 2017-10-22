@@ -7,3 +7,22 @@ Feature: Password forgotten
     Then I should see a link to:
       | link_location |
       | lost_password |
+
+
+  Scenario: The user opens the lost password page
+    Given I am on the page
+      | page_name     |
+      | lost_password |
+    Then I should see elements:
+      | item     |
+      | id_email |
+
+
+  Scenario: The user requests an new password to his mail
+    Given I am on the page
+      | page_name     |
+      | lost_password |
+    When I fill out the form
+      | field    | value                |
+      | id_email | test_mail@invalid.de |
+    Then it should be successful

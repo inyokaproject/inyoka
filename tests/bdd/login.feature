@@ -14,17 +14,19 @@ Feature: Logging in
 
   Scenario: Login with a valid user
     Given I am on the login page
-     When I enter the credentials:
-      | username | password |
-      | bdd_user | test     |
+     When I fill out the form
+       | field       | value    |
+       | id_username | bdd_user |
+       | id_password | test     |
      Then it should be successful
 
 
   Scenario Outline: Login try with invalid credentials
     Given I am on the login page
-     When I enter the credentials:
-      | username   | password   |
-      | <username> | <password> |
+     When I fill out the form
+       | field       | value      |
+       | id_username | <username> |
+       | id_password | <password> |
      Then it should fail
 
     Examples:
@@ -35,9 +37,10 @@ Feature: Logging in
 
   Scenario Outline: Login try with an inactive  user
     Given I am on the login page
-     When I enter the credentials:
-      | username        | password |
-      | <inactive_type> | test     |
+     When I fill out the form
+       | field       | value           |
+       | id_username | <inactive_type> |
+       | id_password | test            |
      Then I should see information about
         """
         <inactive_type>
