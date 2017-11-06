@@ -1613,14 +1613,16 @@ def pages(request):
 def page_edit(request, page=None):
     preview = None
     new = not bool(page)
+
     if page:
         page = StaticPage.objects.get(key=page)
 
     if request.method == 'POST':
-        form = EditStaticPageForm(request.POST, instance=page)
+        form = EditStaticPageForm(request.POST, instance=page, new=new)
         if form.is_valid():
             if 'preview' in request.POST:
-                preview = page.get_content_rendered(form.cleaned_data['content'])
+                preview = StaticPage.get_content_rendered(
+                    form.cleaned_data['content'])
             if 'send' in request.POST:
                 page = form.save()
                 if new:
@@ -1630,7 +1632,7 @@ def page_edit(request, page=None):
                 messages.success(request, msg % {'page': page.title})
                 return HttpResponseRedirect(href('portal', page.key))
     else:
-        form = EditStaticPageForm(instance=page)
+        form = EditStaticPageForm(instance=page, new=new)
 
     return {
         'form': form,

@@ -17,7 +17,6 @@ from werkzeug import cached_property
 
 from inyoka.portal.user import User
 from inyoka.utils.database import InyokaMarkupField
-from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.wiki.acl import has_privilege as have_wiki_privilege
 
@@ -239,11 +238,6 @@ class StaticPage(models.Model):
 
     def __unicode__(self):
         return self.title
-
-    def save(self, *args, **kwargs):
-        if not self.key:
-            self.key = slugify(self.title)
-        return super(StaticPage, self).save(*args, **kwargs)
 
     def get_absolute_url(self, action='show'):
         return href(*{
