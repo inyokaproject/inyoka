@@ -17,14 +17,15 @@ from django.utils import translation
 from django.utils.timezone import now
 from django.utils.translation import ugettext as _
 
+from guardian.shortcuts import assign_perm
+
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
     PrivateMessage,
     PrivateMessageEntry,
     Subscription,
-)
-from inyoka.portal.user import User
-from inyoka.utils.storage import storage
+    StaticPage)
+from inyoka.portal.user import Group, User
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 
@@ -461,3 +462,23 @@ class TestPrivMsgViews(TestCase):
             folder__isnull=True).count(), 2)
         self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
             read=True).count(), 2)
+
+
+class TestStaticPageEdit(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+        self.client.login(username='user', password='user')
+
+        self.page = StaticPage.objects.create(key='foo', title='foo')
+
+    def test_status_code_with_permissions(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_staticpage', registered_group)
+
+        response = self.client.get(self.page.get_absolute_url('edit'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_status_code_without_permissions(self):
+        response = self.client.get(self.page.get_absolute_url('edit'))
+        self.assertEqual(response.status_code, 403)
