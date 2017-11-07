@@ -989,9 +989,9 @@ class EditStaticPageForm(forms.ModelForm):
         fields = ('key', 'title', 'content')
 
     def __init__(self, *args, **kwargs):
-        self.new = kwargs.pop('new')
-
         super(EditStaticPageForm, self).__init__(*args, **kwargs)
+
+        self.new = self.instance.key == ""
 
         self.fields['key'].required = not self.new
         ## FIXME, django >=1.9: use disabled to prevent submitting content

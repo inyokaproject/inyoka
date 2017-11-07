@@ -1618,7 +1618,7 @@ def page_edit(request, page=None):
         page = StaticPage.objects.get(key=page)
 
     if request.method == 'POST':
-        form = EditStaticPageForm(request.POST, instance=page, new=new)
+        form = EditStaticPageForm(request.POST, instance=page)
         if form.is_valid():
             if 'preview' in request.POST:
                 preview = StaticPage.get_content_rendered(
@@ -1632,7 +1632,7 @@ def page_edit(request, page=None):
                 messages.success(request, msg % {'page': page.title})
                 return HttpResponseRedirect(href('portal', page.key))
     else:
-        form = EditStaticPageForm(instance=page, new=new)
+        form = EditStaticPageForm(instance=page)
 
     return {
         'form': form,
