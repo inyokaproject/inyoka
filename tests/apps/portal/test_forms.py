@@ -101,3 +101,13 @@ class TestEditStaticPageForm(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertIn('It is not allowed to change this key.', form.errors['key'])
+
+    def test_create_empty_title_and_key(self):
+        form = self.form_create({'key': '', 'title': '', 'content': 'foo'})
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required.', form.errors['title'])
+
+    def test_space_as_title(self):
+        form = self.form_create({'key': '', 'title': ' ', 'content': 'foo'})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['key'], '-')

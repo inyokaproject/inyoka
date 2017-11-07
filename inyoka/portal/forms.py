@@ -1011,7 +1011,7 @@ class EditStaticPageForm(forms.ModelForm):
         key = self.cleaned_data.get('key')
         title = self.cleaned_data.get('title')
 
-        if self.new:
+        if title and self.new:  # at least the title is needed to create a key
             if not key:
                 key = slugify(title)
 
