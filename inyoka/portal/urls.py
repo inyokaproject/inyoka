@@ -96,9 +96,9 @@ urlpatterns.append(
 )
 
 urlpatterns.extend([
-    url(r'^([-A-Za-z_]+)/$', views.static_page),
-    url(r'^([-A-Za-z_]+)/edit/$', views.page_edit),
-    url(r'^(?P<pk>[-A-Za-z_]+)/delete/$', views.page_delete),
+    url(r'^([^/]+)/$', views.static_page),
+    url(r'^([^/]+)/edit/$', views.page_edit),
+    url(r'^(?P<pk>[^/]+)/delete/$', views.page_delete),
 ])
 
 if settings.DEBUG:

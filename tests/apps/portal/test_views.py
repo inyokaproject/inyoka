@@ -515,6 +515,18 @@ class TestStaticPageEdit(TestCase):
 
         self.assertEqual(response.url, href('portal', 'foo2'))
 
+    def test_create_page__success_message(self):
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_staticpage', registered_group)
+
+        response = self.client.post(href('portal', 'page', 'new'),
+                                    {'send': 'Send', 'title': 'foo2',
+                                     'content': 'My great content'},
+                                    follow=True)
+
+        msg = u'The page “{}” was created successfully.'.format('foo2')
+        self.assertContains(response, msg)
+
     def test_edit_page__success_message(self):
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         assign_perm('portal.change_staticpage', registered_group)
