@@ -35,6 +35,7 @@ from django.utils.translation import ugettext as _
 from inyoka.markup import escape, unescape_string
 from inyoka.markup.parsertools import TokenStream
 from inyoka.markup.utils import debug_repr, has_key, join_array, regex_match, simple_match
+from inyoka.wiki.exceptions import CaseSensitiveException
 
 
 def process(source, context=()):
@@ -46,7 +47,6 @@ def expand_page_template(template, context, macro_behavior=False):
     """A helper for the template macro and wiki-parser."""
     from inyoka.wiki.models import Page
     from inyoka.markup import nodes
-    from inyoka.wiki.utils import CaseSensitiveException
     if template is None:
         if not macro_behavior:
             raise ValueError('no template given')

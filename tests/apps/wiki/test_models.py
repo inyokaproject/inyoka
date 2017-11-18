@@ -3,7 +3,7 @@ from django.core.cache import cache
 
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import CaseSensitiveException
+from inyoka.wiki.exceptions import CaseSensitiveException
 
 
 class TestPageManager(TestCase):

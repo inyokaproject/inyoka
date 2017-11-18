@@ -83,7 +83,6 @@ from collections import defaultdict
 from datetime import datetime
 from functools import partial
 from hashlib import sha1
-from unicodedata import normalize
 
 import magic
 from django.apps import apps
@@ -106,14 +105,12 @@ from inyoka.utils.diff3 import generate_udiff, get_close_matches, prepare_udiff
 from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.html import striptags
+from inyoka.utils.local import local as local_cache
 from inyoka.utils.templating import render_template
-from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
+from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, wiki_slugify
 from inyoka.utils.urls import href
-from inyoka.wiki.tasks import (
-    render_article,
-    update_object_list,
-    update_related_pages,
-)
+from inyoka.wiki.tasks import update_related_pages, update_page_by_slug
+from inyoka.wiki.exceptions import CaseSensitiveException
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8
@@ -123,10 +120,7 @@ def is_privileged_wiki_page(name):
     return any(name.startswith(n) for n in settings.WIKI_PRIVILEGED_PAGES)
 
 
-def exclude_privileged_wiki_page_filter(queryset):
-    for name in settings.WIKI_PRIVILEGED_PAGES:
-        queryset = queryset.exclude(name__istartswith=name)
-    return queryset
+to_page_by_slug_key = lambda name: u'wiki/page_by_slug/{}'.format(wiki_slugify(name))
 
 
 class PageManager(models.Manager):
@@ -138,24 +132,20 @@ class PageManager(models.Manager):
     The `PageManager` singleton instance is available as `Page.objects`.
     """
 
-    def exists(self, name):
-        """Check if a page with that name exists."""
-        return name.lower() in (item.lower() for item in self.get_page_list())
+    def exists(self, name, cached=True):
+        """
+        Returns `True` if `name` exists, the results are cached in a
+        request local object to avoid cache or db requests if possible.
 
-    def exists_normalized(self, name):
-        """Check if a page with that name exists with a normalized name"""
-        unicode_normalization_form = "NFD"
-
-        try:
-            normalized_name = normalize(unicode_normalization_form, unicode(name.lower(), "utf-8")).encode('ascii', 'ignore')
-        except TypeError:
-            normalized_name = normalize(unicode_normalization_form, name.lower()).encode('ascii', 'ignore')
-
-        for item in self.get_page_list():
-            normalized_item = normalize(unicode_normalization_form, item.lower()).encode('ascii', 'ignore')
-            if normalized_name.replace(' ', '_') == normalized_item.replace(' ', '_'):
-                return True
-        return False
+        `name` gets slugified with `wiki_slugify()` before.
+        """
+        if cached:
+            if not hasattr(local_cache, 'slug_list'):
+                local_cache.slug_list = self.get_slug_list()
+            slug_list = local_cache('slug_list')
+        else:
+            slug_list = self.get_slug_list()
+        return wiki_slugify(name) in slug_list
 
     def get_head(self, name, offset=0):
         """
@@ -227,32 +217,22 @@ class PageManager(models.Manager):
         new_page = self.get_by_name_and_rev(name, new_rev)
         return Diff(old_page, old_page.rev, new_page.rev)
 
-    def _get_object_list(self, cached=True, exclude_privileged=False):
+    def _get_object_list(self, exclude_privileged=False, exclude_pages=False, exclude_attachments=False, existing_only=True):
         """
-        Get a list of all objects that are pages or attachments.  The return
-        value is a list of ``(name, deleted, is_page)`` tuples
-        where `is_page` is False if that object is an attachment.
+        Get a list of all objects that are pages or attachments. It is possible
+        to filter out attachments, pages, privileged or deleted/existing objects.
         """
-        key = 'wiki/object_list'
-        pagelist = cache.get(key) if cached and not exclude_privileged else None
-
-        if pagelist is None:
-            pagelist = Page.objects.select_related('last_rev')
-            if exclude_privileged:
-                pagelist = exclude_privileged_wiki_page_filter(pagelist)
-            pagelist = pagelist.values_list(
-                'name', 'last_rev__deleted', 'last_rev__attachment__id'
-            ).order_by('name')
-            # force a list, can't pickle ValueQueryset that way
-            pagelist = list(pagelist)
-            if not exclude_privileged:
-                # we cache that also if the user wants something uncached
-                # because if we are already fetching it we can cache it,
-                # but we still need to not cache if we're requesting only
-                # unprivileged pages.
-                cache.set(key, pagelist, 10000)
-
-        return pagelist
+        queryset = Page.objects.select_related('last_rev')
+        if exclude_privileged:
+            for name in settings.WIKI_PRIVILEGED_PAGES:
+                queryset = queryset.exclude(name__istartswith=name)
+        if exclude_attachments:
+            queryset = queryset.exclude(last_rev__attachment__id__isnull=False)
+        if exclude_pages:
+            queryset = queryset.exclude(last_rev__attachment__id__isnull=True)
+        if existing_only:
+            queryset = queryset.exclude(last_rev__deleted=True)
+        return list(queryset.values_list('name', flat=True).order_by('name'))
 
     def get_page_list(self, existing_only=True, cached=True, exclude_privileged=False):
         """
@@ -262,8 +242,31 @@ class PageManager(models.Manager):
         is not necessary because whenever a page is deleted or created the
         pagelist cache is invalidated.
         """
-        return [x[0] for x in self._get_object_list(cached, exclude_privileged)
-                if (not existing_only or not x[1]) and not x[2]]
+        kwargs = {
+            'exclude_attachments': True,
+            'exclude_privileged': exclude_privileged,
+            'existing_only': existing_only
+        }
+        make_pagelist = lambda: self._get_object_list(**kwargs)
+
+        if cached:
+            key = u'wiki/objects_pages'
+            if existing_only:
+                key += u'_existing'
+            if exclude_privileged:
+                key += u'_without_privileged'
+            return cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
+
+        return make_pagelist()
+
+    def get_slug_list(self):
+        """
+        Returns a cached slugified list of all wiki pages, useful to speed up
+        our parser a lot. Avoids many cache or db hits on big pages/texts.
+        """
+        make_sluglist = lambda: set([wiki_slugify(name) for name in self._get_object_list(exclude_attachments=True)])
+        key = u'wiki/objects_slugs'
+        return cache.get_or_set(key, make_sluglist, settings.WIKI_CACHE_TIMEOUT)
 
     def get_attachment_list(self, parent=None, existing_only=True,
                             cached=True, exclude_privileged=False):
@@ -271,8 +274,23 @@ class PageManager(models.Manager):
         Works like `get_page_list` but just lists attachments.  If parent is
         given only pages below that page are displayed.
         """
-        filtered = (x[0] for x in self._get_object_list(cached, exclude_privileged)
-                    if (not existing_only or not x[1]) and x[2])
+        kwargs = {
+            'exclude_pages': True,
+            'exclude_privileged': exclude_privileged,
+            'existing_only': existing_only
+        }
+        make_pagelist = lambda: self._get_object_list(**kwargs)
+
+        if cached:
+            key = u'wiki/objects_attachments'
+            if existing_only:
+                key += u'_existing'
+            if exclude_privileged:
+                key += u'_without_privileged'
+            filtered = cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
+        else:
+            filtered = make_pagelist()
+
         if parent is not None:
             parent += u'/'
             parents = set(parent.split('/'))
@@ -357,8 +375,18 @@ class PageManager(models.Manager):
         Pass it a name and it will give you a list of page names with a
         similar name.  This also checks for similar attachments.
         """
-        return [x[1] for x in get_close_matches(name, [x[0] for x in
-                self._get_object_list(exclude_privileged=False) if not x[1]], n)]
+        make_pagelist = lambda: self._get_object_list(exclude_privileged=False, existing_only=True)
+        key = 'wiki/objects_similar'
+        pagelist = cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
+        return [x[1] for x in get_close_matches(name, pagelist, n)]
+
+    def get_by_slug(self, name):
+        """
+        Returns the true page name for `name` after slugification.
+        """
+        cache.get_or_set(u'wiki/page_by_slug_created', update_page_by_slug)
+
+        return cache.get(to_page_by_slug_key(name))
 
     def get_by_name(self, name, cached=True, raise_on_deleted=False, exclude_privileged=False):
         """
@@ -381,6 +409,11 @@ class PageManager(models.Manager):
                                       .filter(page__name__iexact=name) \
                                       .latest()
             except Revision.DoesNotExist:
+                existing = self.get_by_slug(name)
+                if existing:
+                    if Page.objects.filter(name=existing).exists():
+                        page = Page.objects.get_by_name(existing, cached, raise_on_deleted, exclude_privileged)
+                        raise CaseSensitiveException(page)
                 raise Page.DoesNotExist()
             if cached:
                 try:
@@ -395,8 +428,6 @@ class PageManager(models.Manager):
         # If the page exists but it has another case, raise an exception
         # with the right case.
         if rev.page.name != name:
-            # TODO: Fix circular imports
-            from inyoka.wiki.utils import CaseSensitiveException
             raise CaseSensitiveException(rev.page)
 
         if rev.deleted and raise_on_deleted:
@@ -557,6 +588,16 @@ class PageManager(models.Manager):
         keys = [u'wiki/page/{}'.format(n).lower() for n in names]
         if pages.update(topic=None) > 0:
             cache.delete_many(keys)
+
+    def clean_cache(self, names=None):
+        if names:
+            if isinstance(names, basestring):
+                names = [names, ]
+            lower_names = [name.lower() for name in names]
+            cache.delete_many([u'wiki/page/{}'.format(name) for name in lower_names])
+            cache.delete_many([to_page_by_slug_key(name) for name in lower_names])
+        cache.delete_pattern(u'wiki/objects_*')
+        update_page_by_slug.delay()
 
 
 class TextManager(models.Manager):
@@ -901,12 +942,6 @@ class Page(models.Model):
                 continue
             MetaData(page=self, key=key, value=value[:MAX_METADATA]).save()
 
-    # TODO: This should be obsolete, since there is no way to call this method.
-    def prune(self):
-        """Clear the page cache."""
-        render_article.delay(self)
-        deferred.clear(self)
-
     def save(self, update_meta=True, *args, **kwargs):
         """
         This not only saves the page but also a revision that is
@@ -914,7 +949,7 @@ class Page(models.Model):
         revision set it to `None` before calling `save()`.
         """
         if self.id is None:
-            update_object_list.delay()
+            Page.objects.clean_cache()
         models.Model.save(self)
         if self.rev is not None:
             self.rev.save()
@@ -1030,7 +1065,7 @@ class Page(models.Model):
         self.last_rev = self.rev
         self.save(update_meta=update_meta)
 
-        update_object_list.delay(self.name)
+        Page.objects.clean_cache(self.name)
 
     def get_absolute_url(self, action='show', revision=None, new_revision=None,
                          format=None, **query):

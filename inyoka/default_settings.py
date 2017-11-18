@@ -172,6 +172,12 @@ WIKI_PRIVILEGED_PAGES = []
 WIKI_RECENTCHANGES_MAX = 250
 WIKI_RECENTCHANGES_DAYS = 7
 
+WIKI_REVISIONS_PER_PAGE = 100
+
+# 2h is the recommended and tested Cache Timeout for
+# wiki internal stuff like page or attachment lists.
+WIKI_CACHE_TIMEOUT = 60 * 60 * 2
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = None
 
@@ -282,6 +288,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'inyoka.portal.tasks.check_for_user_record',
         'schedule': timedelta(minutes=5),
     },
+    'cleanup_wiki_stale_attachments': {
+        'task': 'inyoka.wiki.tasks.cleanup_stale_attachments',
+        'schedule': crontab(hour=4, minute=15, day_of_week='monday'),
+    },
     'delete-not-activated-users': {
         'task': 'inyoka.portal.tasks.clean_expired_users',
         'schedule': crontab(hour=5, minute=30),
@@ -297,6 +307,10 @@ CELERY_BEAT_SCHEDULE = {
     'update_wiki_recent_changes': {
         'task': 'inyoka.wiki.tasks.update_recentchanges',
         'schedule': timedelta(minutes=15),
+    },
+    'update_page_by_slug': {
+        'task': 'inyoka.wiki.tasks.update_page_by_slug',
+        'schedule': timedelta(hours=1),
     }
 }
 

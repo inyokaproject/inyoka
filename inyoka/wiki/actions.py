@@ -20,9 +20,9 @@
 """
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.cache import cache
 from django.db import models
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.html import escape
@@ -42,6 +42,7 @@ from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename
 from inyoka.utils.urls import href, is_safe_domain, url_for
 from inyoka.wiki.acl import PrivilegeTest, has_privilege, require_privilege
+from inyoka.wiki.exceptions import CircularRedirectException
 from inyoka.wiki.forms import (
     AddAttachmentForm,
     EditAttachmentForm,
@@ -50,16 +51,12 @@ from inyoka.wiki.forms import (
     NewArticleForm,
     PageEditForm,
 )
-from inyoka.wiki.models import Page, Revision
+from inyoka.wiki.models import Page
 from inyoka.wiki.notifications import send_edit_notifications
-from inyoka.wiki.tasks import update_object_list
 from inyoka.wiki.utils import (
     case_sensitive_redirect,
-    CircularRedirectException,
     get_safe_redirect_target
 )
-
-REVISIONS_PER_PAGE = 100
 
 
 def clean_article_name(view):
@@ -312,7 +309,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
     else:
         page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
                   user=request.user)
-    cache.delete(u'wiki/page/{}'.format(old_name.lower()))
+    Page.objects.clean_cache(old_name)
 
     if request.POST.get('add_redirect'):
         old_text = u'# X-Redirect: %s\n' % new_name
@@ -330,7 +327,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
         ap.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': old_attachment_name},
                 remote_addr=request.META.get('REMOTE_ADDR'))
 
-    update_object_list.delay([name, new_name])
+    Page.objects.clean_cache([name, new_name])
     return True
 
 
@@ -756,7 +753,7 @@ def do_log(request, name, pagination_page=1):
     url = url_for(page, action='log')
 
     pagination = Pagination(request, page.revisions.all().order_by('-id'), pagination_page,
-                            REVISIONS_PER_PAGE, url)
+                            settings.WIKI_REVISIONS_PER_PAGE, url)
     return {
         'page': page,
         'revisions': pagination.get_queryset(),
