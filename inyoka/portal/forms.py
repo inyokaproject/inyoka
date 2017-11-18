@@ -994,7 +994,6 @@ class EditStaticPageForm(forms.ModelForm):
         self.new = self.instance.key == ""
 
         self.fields['key'].required = not self.new
-        ## FIXME, django >=1.9: use disabled to prevent submitting content
         self.fields['key'].widget.attrs['readonly'] = not self.new
 
     def clean_key(self):
