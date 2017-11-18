@@ -34,8 +34,7 @@ host_patterns = patterns('',
     host('forum', 'inyoka.forum.urls', name='forum'),
 )
 
-# we don't use settings.DEBUG here so we can test with DEBUG=False.
-if len(sys.argv) and 'manage' in sys.argv[0]:
+if settings.INYOKA_HOST_STATICS:
     host_patterns += patterns('',
         host('static', 'inyoka.static_urls', name='static'),
         host('media', 'inyoka.media_urls', name='media'),
