@@ -23,7 +23,6 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.cache import cache
 from django.db import models
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.html import escape
@@ -310,7 +309,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
     else:
         page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
                   user=request.user)
-    cache.delete(u'wiki/page/{}'.format(old_name.lower()))
+    Page.objects.clean_cache(old_name)
 
     if request.POST.get('add_redirect'):
         old_text = u'# X-Redirect: %s\n' % new_name

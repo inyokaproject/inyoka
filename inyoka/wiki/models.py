@@ -591,11 +591,13 @@ class PageManager(models.Manager):
 
     def clean_cache(self, names=None):
         if names:
-            if isinstance(names, list):
-                cache.delete_many([u'wiki/page/{}'.format(name.lower()) for name in names])
-            elif isinstance(names, basestring):
-                cache.delete(u'wiki/page/{}'.format(names.lower()))
+            if isinstance(names, basestring):
+                names = [names, ]
+            lower_names = [name.lower() for name in names]
+            cache.delete_many([u'wiki/page/{}'.format(name) for name in lower_names])
+            cache.delete_many([to_page_by_slug_key(name) for name in lower_names])
         cache.delete_pattern(u'wiki/objects_*')
+        update_page_by_slug.delay()
 
 
 class TextManager(models.Manager):
