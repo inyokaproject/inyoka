@@ -1613,6 +1613,7 @@ def pages(request):
 def page_edit(request, page=None):
     preview = None
     new = not bool(page)
+
     if page:
         page = StaticPage.objects.get(key=page)
 
@@ -1620,7 +1621,8 @@ def page_edit(request, page=None):
         form = EditStaticPageForm(request.POST, instance=page)
         if form.is_valid():
             if 'preview' in request.POST:
-                preview = page.get_content_rendered(form.cleaned_data['content'])
+                preview = StaticPage.get_content_rendered(
+                    form.cleaned_data['content'])
             if 'send' in request.POST:
                 page = form.save()
                 if new:
