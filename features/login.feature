@@ -13,7 +13,8 @@ Feature: Logging in
 
 
   Scenario: Login with a valid user
-    Given I am on the "login" page
+    Given The user "bdd_user" exits
+      And I am on the "login" page
      When I fill out the form
        | field       | value    |
        | id_username | bdd_user |
@@ -22,7 +23,8 @@ Feature: Logging in
 
 
   Scenario Outline: Login try with invalid credentials
-    Given I am on the "login" page
+    Given The user "bdd_user" exits
+      And I am on the "login" page
      When I fill out the form
        | field       | value      |
        | id_username | <username> |
@@ -36,7 +38,8 @@ Feature: Logging in
 
 
   Scenario Outline: Login try with an inactive  user
-    Given I am on the "login" page
+    Given The user "<inactive_type>" with status "<inactive_type>" exists
+      And I am on the "login" page
      When I fill out the form
        | field       | value           |
        | id_username | <inactive_type> |
