@@ -110,6 +110,9 @@ INYOKA_GET_UBUNTU_LINK = u'%s://wiki.%s/Downloads' % (INYOKA_URI_SCHEME,
                                                       BASE_DOMAIN_NAME)
 INYOKA_GET_UBUNTU_DESCRIPTION = u'Downloads'
 
+# inyoka should deliver the statics
+INYOKA_HOST_STATICS = False
+
 # use etags
 USE_ETAGS = True
 
