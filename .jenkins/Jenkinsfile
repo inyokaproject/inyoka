@@ -11,7 +11,7 @@ def runTestOnDatabase(String database) {
 pipeline {
   agent { label 'inyoka-slave' }
   options {
-    buildDiscarder(logRotator(numToKeepStr: '10'))
+    buildDiscarder(logRotator(numToKeepStr: '2'))
   }
   stages {
     stage('Prepare build') {
