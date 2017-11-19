@@ -4,19 +4,19 @@ Feature: Password forgotten
 
   Scenario: The user has forgotten the password so he should be able to see the forgotten link
     Given I am on the "login" page
-    Then I should see a link to "lost_password"
+     Then I should see a link to "lost_password"
 
 
   Scenario: The user opens the lost password page
     Given I am on the "lost_password" page
-    Then I should see elements
+     Then I should see elements
       | item     |
       | id_email |
 
 
   Scenario: The user requests an new password to his mail
     Given I am on the "lost_password" page
-    When I fill out the form
+     When I fill out the form
       | field    | value                |
       | id_email | test_mail@invalid.de |
-    Then it should be successful
+     Then it should be successful
