@@ -19,11 +19,11 @@ INSTALLED_APPS = INSTALLED_APPS + (
 # debug settings
 DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = True
 
-ALLOWED_HOSTS = ['.ubuntuusers.local']
+ALLOWED_HOSTS = ['.localhost']
 
 # url settings
 
-BASE_DOMAIN_NAME = 'ubuntuusers.local:8000'
+BASE_DOMAIN_NAME = 'ubuntuusers.local:8888'
 INYOKA_URI_SCHEME = 'http'
 SESSION_COOKIE_DOMAIN = '.ubuntuusers.local'
 MEDIA_URL = '//media.%s/' % BASE_DOMAIN_NAME
@@ -40,3 +40,5 @@ LANGUAGE_CODE = 'de-DE'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SECRET_KEY = 'bdd_test_key'
+
+HEADLESS = False

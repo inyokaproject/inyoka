@@ -86,7 +86,7 @@ If you don't want to use the export of the settings you may also run
 
 .. code-block:: console
 
-    (inyoka)$ python manage.py behave --settings tests.bdd.bdd_settings
+    (inyoka)$ python manage.py behave --settings tests.bdd.settings.general
 
 
 Translate Inyoka
