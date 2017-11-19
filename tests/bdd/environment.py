@@ -4,12 +4,10 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from selenium import webdriver
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'development_settings'
-os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = 'ubuntuusers.local:8080'
-
+os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = settings.BASE_DOMAIN_NAME
 
 def before_all(context):
-    context.SERVER_URL = "http://" + os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS']
+    context.SERVER_URL = "http://" + settings.BASE_DOMAIN_NAME
 
 
 def before_scenario(context, scenario):
