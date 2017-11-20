@@ -4,7 +4,7 @@ Feature: Password forgotten
 
   Scenario: The user has forgotten the password so he should be able to see the forgotten link
     Given I am on the "login" page
-     Then I should see a link to "lost_password"
+     Then I should see a link to "BASE_DOMAIN_NAME/lost_password/"
 
 
   Scenario: The user opens the lost password page

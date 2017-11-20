@@ -12,3 +12,4 @@ tests/settings/custom.py
 celerybeat-schedule
 htmlcov/
 .coverage
+node_modules/

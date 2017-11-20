@@ -54,7 +54,7 @@ Feature: Logging in
        | field       | value           |
        | id_username | <inactive_type> |
        | id_password | test            |
-     Then I should see "<inactive_type>" information
+     Then I should see "<inactive_type>" error
 
     Examples:
       | inactive_type |

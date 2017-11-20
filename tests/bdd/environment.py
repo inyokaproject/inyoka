@@ -19,12 +19,15 @@ def before_scenario(context, scenario):
         context.browser = webdriver.Chrome()
 
     Group.objects.get_or_create(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+    Group.objects.get_or_create(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
+
     context.browser.implicitly_wait(10)
 
 
 def after_scenario(context, feature):
     if not settings.HEADLESS:
         context.browser.quit()
+
 
 def after_all(context):
     if settings.HEADLESS:

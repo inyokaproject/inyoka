@@ -9,13 +9,14 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.contrib import messages
-from django.contrib.auth.decorators import permission_required, login_required
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from inyoka.pastebin.forms import AddPasteForm
 from inyoka.pastebin.models import Entry
-from inyoka.utils.http import global_not_found, templated
+from inyoka.utils.http import templated
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
 
@@ -45,11 +46,7 @@ def add(request):
 @permission_required('pastebin.view_entry', raise_exception=True)
 @templated('pastebin/display.html')
 def display(request, entry_id):
-    try:
-        entry = Entry.objects.get(id=entry_id)
-    except Entry.DoesNotExist:
-        return global_not_found(request, _(u'Paste number %(id)d could not be found')
-                                  % {'id': int(entry_id)})
+    entry = get_object_or_404(Entry, id=entry_id)
     return {
         'entry': entry,
         'page': 'browse'
@@ -62,9 +59,8 @@ def delete(request, entry_id):
     """
     Request Handler for Pastebin delete requests.
     """
-    entry = Entry.objects.get(id=entry_id)
-    if not entry:
-        raise Http404()
+    entry = get_object_or_404(Entry, id=entry_id)
+
     if request.method == 'POST':
         if 'cancel' in request.POST:
             messages.info(request, _(u'The deletion was canceled'))
@@ -80,10 +76,7 @@ def delete(request, entry_id):
 
 @permission_required('pastebin.view_entry', raise_exception=True)
 def raw(request, entry_id):
-    try:
-        entry = Entry.objects.get(id=entry_id)
-    except Entry.DoesNotExist:
-        raise Http404()
+    entry = get_object_or_404(Entry, id=entry_id)
     return HttpResponse(entry.code, content_type='text/plain; charset=utf-8')
 
 
