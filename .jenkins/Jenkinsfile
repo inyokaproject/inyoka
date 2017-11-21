@@ -5,7 +5,7 @@ def runTestOnDatabase(String database) {
   ${activate_venv}
   export COVERAGE_FILE=.coverage-${database}
   coverage run --branch manage.py test --setting tests.settings.${database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true
-  coverage xml
+  coverage xml -o coverage-${database}.xml
   """
 }
 
@@ -110,7 +110,7 @@ pipeline {
         step([$class: 'CoberturaPublisher',
               autoUpdateHealth: false,
               autoUpdateStability: false,
-              coberturaReportFile: 'coverage.xml',
+              coberturaReportFile: 'coverage*.xml',
               failUnhealthy: false,
               failUnstable: false,
               maxNumberOfBuilds: 0,
