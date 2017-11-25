@@ -144,4 +144,9 @@ pipeline {
       }
     }
   }
+  post {
+    failure {
+      archiveArtifacts allowEmptyArchive: true, artifacts: 'bdd_screenshots/**'
+    }
+  }
 }
