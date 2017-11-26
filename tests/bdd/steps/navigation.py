@@ -1,7 +1,5 @@
 from behave import given, step
 
-from tests.bdd.steps.utils import take_screenshot
-
 
 @given('I am on the "{page_slug}" page')
 def step_impl(context, page_slug):

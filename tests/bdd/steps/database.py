@@ -1,3 +1,4 @@
+import datetime
 from behave import given, step
 from django.conf import settings
 from django.core.cache import cache
@@ -31,7 +32,7 @@ def step_impl(context, username, status_string):
     user.save()
 
 
-@given('I have the permission "{permission}"')
+@step('I have the permission "{permission}"')
 def step_impl(context, permission):
     from guardian.shortcuts import assign_perm
 
@@ -41,23 +42,57 @@ def step_impl(context, permission):
 
 
 @step('a "{item}" with caption "{caption}" exists')
-def step_impl(context, item, caption):
+def create_item(context, item, caption):
     """
     This step will create the required item for the test.
     Later steps can access this item with `context.test_item`
 
     :type context: behave.runner.Context
-    :param item: A string with the item's type at the moment only 'paste' is supported
+    :param item: Possible values: "paste", "blog", "blogpost"
     :param caption: The caption/title/keyword/... part of that item.
     """
     from inyoka.portal.user import User
 
-    default_user = User.objects.register_user("bdd", "mail", None, False)
+    default_user, created = User.objects.get_or_create(username="bdd", email="mail")
 
     if item == 'paste':
         from inyoka.pastebin.models import Entry
         context.test_item = Entry.objects.create(title=caption, author=default_user, code="TEST")
         context.test_item.save(update_fields=['code'])  # Note: needed because the code field only updates on save
+    elif item == 'blog':
+        from inyoka.planet.models import Blog
+
+        context.test_item = Blog.objects.create(name=caption,
+                                                blog_url='http://inyoka.invalid',
+                                                feed_url='http://inyoka.invalid')
+    elif item == 'blogpost':
+        from inyoka.planet.models import Entry as BlogPost
+
+        blog = create_item(context, 'blog', 'test_blog')
+        context.test_item = BlogPost.objects.create(title=caption,
+                                                    author=default_user.username,
+                                                    blog=blog,
+                                                    text="TEST",
+                                                    pub_date=datetime.datetime.now(),
+                                                    updated=datetime.datetime.now())
+    else:
+        raise ValueError("Unsupported item type")
+
+    return context.test_item
+
+
+@step('a "{item}" with caption "{caption}" is hidden')
+def step_impl(context, item, caption):
+    from inyoka.portal.user import User
+
+    create_item(context, item, caption)
+    default_user = User.objects.get(username="bdd", email="mail")
+    if item == 'blogpost':
+        context.test_item.hidden = True
+        context.test_item.hidden_by = default_user
+        context.test_item.save()
+        return
+    raise ValueError("Unsupported item type")
 
 
 @given('I am "{username}"')

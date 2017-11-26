@@ -4,6 +4,7 @@ source = inyoka/
 omit =
     inyoka/*/migrations/*
     inyoka/*/management/*
+    inyoka/planet/tasks.py
 
 [report]
 exclude_lines =
