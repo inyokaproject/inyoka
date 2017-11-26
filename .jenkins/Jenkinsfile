@@ -93,8 +93,8 @@ pipeline {
           steps {
             sh """
             ${activate_venv}
-            coverage run manage.py behave --junit
-            coverage html -d bdd_coverage
+            coverage run --rcfile tests/bdd/settings/.coveragerc  manage.py behave --junit
+            coverage html -d bdd_coverage --rcfile tests/bdd/settings/.coveragerc
             """
           }
         }
