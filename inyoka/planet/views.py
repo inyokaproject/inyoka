@@ -8,15 +8,13 @@
     :license: BSD, see LICENSE for more details.
 """
 import html
-
-from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Group
 from django.db.models import Max
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.html import escape, smart_urlquote
-from django.utils.text import Truncator
 from django.utils.translation import gettext as _
 
 from inyoka.planet.forms import EditBlogForm, SuggestBlogForm
@@ -24,7 +22,7 @@ from inyoka.planet.models import Blog, Entry
 from inyoka.utils import generic
 from inyoka.utils.dates import group_by_day
 from inyoka.utils.feeds import InyokaAtomFeed
-from inyoka.utils.http import templated, does_not_exist_is_404
+from inyoka.utils.http import does_not_exist_is_404, templated
 from inyoka.utils.mail import send_mail
 from inyoka.utils.pagination import Pagination
 from inyoka.utils.storage import storage
@@ -168,8 +166,7 @@ def hide_entry(request, id):
             messages.info(request, _('Canceled'))
         else:
             entry.hidden = False if entry.hidden else True
-            if entry.hidden:
-                entry.hidden_by = request.user
+            entry.hidden_by = request.user if entry.hidden else None
             entry.save()
             if entry.hidden:
                 msg = _('The entry “%(title)s” was successfully hidden.')
@@ -178,7 +175,7 @@ def hide_entry(request, id):
             messages.success(request, msg % {'title': entry.title})
     else:
         messages.info(request, render_template('planet/hide_entry.html',
-                      {'entry': entry}))
+                                               {'entry': entry}))
     return HttpResponseRedirect(href('planet'))
 
 

@@ -116,3 +116,31 @@ def step_impl(context, value):
             return
 
     assert False
+
+
+@then("the {item_type} should be {visible_type} by {username}")
+def check_item_visibility(context, item_type, visible_type, username):
+    expected_hidden_value = None
+    if visible_type == "visible":
+        expected_hidden_value = False
+    elif visible_type == "hidden":
+        expected_hidden_value = True
+
+    if item_type == 'blogpost':
+        from inyoka.planet.models import Entry
+
+        blogpost = Entry.objects.get(id=context.test_item.id)
+        assert blogpost.hidden == expected_hidden_value, "The blogpost should be %s" % visible_type
+        if expected_hidden_value:
+            assert blogpost.hidden_by.username == username
+        else:
+            assert blogpost.hidden_by is None
+        return
+
+    raise ValueError("The item type isn't supported")
+
+
+@then("the {item_type} should be {visible_type}")
+def step_impl(context, item_type, visible_type):
+    username = context.user.username
+    check_item_visibility(context, item_type, visible_type, username)
