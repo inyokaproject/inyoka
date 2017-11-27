@@ -39,18 +39,17 @@ def context_modifier(request, context):
 
 
 blog_list = generic.ListView.as_view(default_column='-latest_update',
-    queryset=Blog.objects.annotate(latest_update=Max('entry__pub_date')),
-    template_name='planet/blog_list.html',
-    columns=['name', 'user', 'latest_update', 'active'],
-    permission_required='planet.change_blog',
-    base_link=href('planet', 'blogs'))
-
+                                     queryset=Blog.objects.annotate(latest_update=Max('entry__pub_date')),
+                                     template_name='planet/blog_list.html',
+                                     columns=['name', 'user', 'latest_update', 'active'],
+                                     permission_required='planet.change_blog',
+                                     base_link=href('planet', 'blogs'))
 
 blog_edit = generic.CreateUpdateView(model=Blog,
-    form_class=EditBlogForm,
-    template_name='planet/blog_edit.html',
-    context_object_name='blog', slug_field='id',
-    permission_required='planet.change_blog')
+                                     form_class=EditBlogForm,
+                                     template_name='planet/blog_edit.html',
+                                     context_object_name='blog', slug_field='id',
+                                     permission_required='planet.change_blog')
 
 
 @templated('planet/index.html', modifier=context_modifier)

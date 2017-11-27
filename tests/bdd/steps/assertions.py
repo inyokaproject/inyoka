@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import re
+from pprint import pprint
 
 from behave import then
 from selenium.webdriver.common.by import By
@@ -15,7 +17,7 @@ def step_impl(context):
     for row in context.table:
         element = context.browser.find_element(by=By.ID, value=row['element'])
         value = row['value']
-        element_text = get_plain_text(element.text)
+        element_text = get_plain_text(element.text or element.get_property('value'))
         assert element_text == value, "'%s' doesn't match expected '%s'" % (element_text, value)
 
 
@@ -144,3 +146,18 @@ def check_item_visibility(context, item_type, visible_type, username):
 def step_impl(context, item_type, visible_type):
     username = context.user.username
     check_item_visibility(context, item_type, visible_type, username)
+
+
+field_error_messages = {
+    "user not found": u"Diesen Benutzer gibt es nicht",
+    "invalid url": u"Bitte eine gültige Adresse eingeben.",
+    "field is required": u"Dieses Feld ist zwingend erforderlich"
+}
+
+
+@then('I should see a "{error_type}" field error')
+def step_impl(context, error_type):
+    expected_error_text = field_error_messages[error_type]
+    error_text = context.browser.find_element_by_css_selector(".errorlist > li").text
+
+    assert expected_error_text == error_text
