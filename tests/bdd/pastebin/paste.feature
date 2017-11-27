@@ -1,6 +1,6 @@
 @paste
 Feature: Paste
-  Inyoka provides also a module to manage pastes.
+  Inyoka provides also a module to create and manage pastes.
 
 
   Scenario: Users should be able to find a connection to the paste from the main page
