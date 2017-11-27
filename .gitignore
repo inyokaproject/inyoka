@@ -15,3 +15,5 @@ htmlcov/
 node_modules/
 allure-results
 bdd_screenshots
+.idea
+*.log
