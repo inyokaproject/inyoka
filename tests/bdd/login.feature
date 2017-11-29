@@ -12,13 +12,23 @@ Feature: Logging in
       | id_password |
 
 
-  Scenario: Login with a valid user
+  Scenario: Login with a valid username
     Given The user "bdd_user" exits
       And I am on the "login" page
      When I fill out the form
        | field       | value    |
        | id_username | bdd_user |
        | id_password | test     |
+     Then it should be successful
+
+
+  Scenario: Login with a valid user's mail
+    Given The user "bdd_user" exits
+      And I am on the "login" page
+     When I fill out the form
+       | field       | value                      |
+       | id_username | bdd_user@ubuntuusers.local |
+       | id_password | test                       |
      Then it should be successful
 
 
@@ -44,7 +54,7 @@ Feature: Logging in
        | field       | value           |
        | id_username | <inactive_type> |
        | id_password | test            |
-     Then I should see "<inactive_type>" information
+     Then I should see "<inactive_type>" error
 
     Examples:
       | inactive_type |

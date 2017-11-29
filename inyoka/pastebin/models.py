@@ -9,14 +9,13 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
-from urlparse import urlparse
 
 from django.db import models
 from django.utils.translation import ugettext_lazy
 
 from inyoka.portal.user import User
 from inyoka.utils.database import PygmentsField
-from inyoka.utils.urls import href, is_safe_domain
+from inyoka.utils.urls import href
 
 
 class Entry(models.Model):
