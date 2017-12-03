@@ -68,6 +68,27 @@ as well for the classes. You'll find the tests under ``tests/apps/$APPNAME/``.
 The Python test files start with ``test_*``. For adding new tests you usually
 copy and adapt existing test classes and methods.
 
+BDD-Integration Tests
+*********************
+
+To cover the functionalty between different modules there are BDD-Style integration tests at ``tests/bdd/``.
+
+To run them you need to have Chromium installed on your system. Other browsers could be supported. But their usage
+still needs to be implemented and documented (If you are looking for a task feel free).
+
+
+.. code-block:: console
+
+    (inyoka)$ export DJANGO_SETTINGS_MODULE='tests.bdd.bdd_settings'
+    (inyoka)$ python manage.py behave
+
+If you don't want to use the export of the settings you may also run
+
+.. code-block:: console
+
+    (inyoka)$ python manage.py behave --settings tests.bdd.settings.general
+
+
 Translate Inyoka
 ================
 

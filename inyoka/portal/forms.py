@@ -56,7 +56,7 @@ from inyoka.utils.forms import (
     ForumMulitpleChoiceField)
 from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
-from inyoka.utils.storage import storage
+from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
 
@@ -984,18 +984,43 @@ class WikiFeedSelectorForm(FeedSelectorForm):
 
 class EditStaticPageForm(forms.ModelForm):
 
-    def clean_key(self):
-        key = self.cleaned_data.get('key')
-        if self.instance.key and self.instance.key != key:
-            raise forms.ValidationError(_(u'It is not allowed to change this key.'))
-        if StaticPage.objects.filter(key__iexact=key).exists():
-            raise forms.ValidationError(_(u'Another page with this name '
-                u'already exists. Please edit this page.'))
-        return key
-
     class Meta:
         model = StaticPage
         fields = ('key', 'title', 'content')
+
+    def __init__(self, *args, **kwargs):
+        super(EditStaticPageForm, self).__init__(*args, **kwargs)
+
+        self.new = self.instance.key == ""
+
+        self.fields['key'].required = not self.new
+        self.fields['key'].widget.attrs['readonly'] = not self.new
+
+    def clean_key(self):
+        key = self.cleaned_data['key']
+
+        if not self.new and self.instance.key != key:
+            raise forms.ValidationError(_(u'It is not allowed to change this key.'))
+
+        return key
+
+    def clean(self):
+        super(EditStaticPageForm, self).clean()
+
+        key = self.cleaned_data.get('key')
+        title = self.cleaned_data.get('title')
+
+        if title and self.new:  # at least the title is needed to create a key
+            if not key:
+                key = slugify(title)
+
+            if StaticPage.objects.filter(key__iexact=key).exists():
+                raise forms.ValidationError(
+                    _(u'Another page with this name already exists. Please '
+                      u'edit this page.')
+                )
+
+            self.cleaned_data['key'] = key
 
 
 class EditFileForm(forms.ModelForm):

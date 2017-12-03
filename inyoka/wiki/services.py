@@ -22,7 +22,8 @@ from inyoka.forum.models import Post as ForumPost
 from inyoka.markup import parse, RenderContext
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import get_smiley_map, CaseSensitiveException
+from inyoka.wiki.utils import get_smiley_map
+from inyoka.wiki.exceptions import CaseSensitiveException
 
 
 dispatcher = SimpleDispatcher()

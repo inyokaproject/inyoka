@@ -16,18 +16,9 @@ from django.shortcuts import redirect
 from django.utils.html import smart_urlquote
 
 from inyoka.utils.urls import href, url_for
+from inyoka.wiki.exceptions import CaseSensitiveException, CircularRedirectException
 from inyoka.wiki.models import Page
 from inyoka.wiki.storage import storage
-
-
-class CaseSensitiveException(Exception):
-    """
-    Raised when a specific page is requested which does not exist, but an
-    wiki page exist with another case.
-    """
-    def __init__(self, page, *args, **kwargs):
-        self.page = page
-        super(CaseSensitiveException, self).__init__(*args, **kwargs)
 
 
 def case_sensitive_redirect(function):
@@ -108,12 +99,6 @@ def quote_text(text, author=None, item_url=None):
         '>' + (not line.startswith('>') and ' ' or '') + line
         for line in text.split('\n')
     ) or u''
-
-
-class CircularRedirectException(Exception):
-    """
-    Raised when a sequence of redirects becomes circular.
-    """
 
 
 def get_safe_redirect_target(target=None):

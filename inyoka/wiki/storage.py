@@ -46,6 +46,7 @@ from urlparse import urljoin
 from django.conf import settings
 from django.core.cache import cache
 
+from inyoka.utils.local import local as local_cache
 from inyoka.utils.text import normalize_pagename
 from inyoka.wiki.models import MetaData, Page
 
@@ -69,6 +70,11 @@ class StorageManager(object):
         """Clear all active caches."""
         for obj in self.storages.itervalues():
             cache.delete(u'wiki/storage/{}'.format(obj.behavior_key))
+            try:
+                key = obj.behavior_key.lower().replace('-', '_')
+                delattr(local_cache, key)
+            except AttributeError:
+                pass
 
 
 class BaseStorage(object):
@@ -83,8 +89,16 @@ class BaseStorage(object):
 
     def __init__(self):
         key = u'wiki/storage/{}'.format(self.behavior_key)
-        self.data = cache.get(key)
-        if self.data is not None:
+        local_key = self.behavior_key.lower().replace('-', '_')
+
+        if not hasattr(local_cache, local_key):
+            self.data = cache.get(key)
+            if self.data:
+                setattr(local_cache, local_key, self.data)
+        else:
+            self.data = local_cache(local_key)._get_current_object()
+
+        if self.data:
             return
 
         data = MetaData.objects.values_list('page__last_rev__text__value',
@@ -100,7 +114,7 @@ class BaseStorage(object):
             objects.append(self.extract_data(block))
 
         self.data = self.combine_data(objects)
-        cache.set(key, self.data, 10000)
+        cache.set(key, self.data, settings.WIKI_CACHE_TIMEOUT)
 
     def find_block(self, text):
         """Helper method that finds a processable block in the text."""

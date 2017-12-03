@@ -3,15 +3,16 @@
 def runTestOnDatabase(String database) {
   sh """
   ${activate_venv}
+  export COVERAGE_FILE=.coverage-${database}
   coverage run --branch manage.py test --setting tests.settings.${database} --testrunner='xmlrunner.extra.djangotestrunner.XMLTestRunner' || true
-  coverage xml
+  coverage xml -o coverage-${database}.xml
   """
 }
 
 pipeline {
   agent { label 'inyoka-slave' }
   options {
-    buildDiscarder(logRotator(numToKeepStr: '10'))
+    buildDiscarder(logRotator(numToKeepStr: '2'))
   }
   stages {
     stage('Prepare build') {
@@ -51,6 +52,11 @@ pipeline {
             }
           }
         }
+        stage('Install npm tools for BDD') {
+          steps {
+            sh 'npm install phantomjs-prebuilt'
+          }
+        }
       }
     }
     stage('Link theme') {
@@ -80,6 +86,18 @@ pipeline {
             runTestOnDatabase('sqlite')
           }
         }
+        stage('Execute BDD tests'){
+          environment {
+            DJANGO_SETTINGS_MODULE = 'tests.bdd.settings.headless'
+          }
+          steps {
+            sh """
+            ${activate_venv}
+            coverage run --rcfile tests/bdd/settings/.coveragerc  manage.py behave --junit
+            coverage html -d bdd_coverage --rcfile tests/bdd/settings/.coveragerc
+            """
+          }
+        }
         stage('Build Documentation') {
           when {
             branch 'staging'
@@ -105,18 +123,30 @@ pipeline {
     }
     stage('Analyse tests') {
       steps {
-        junit 'sqlite.xml,mysql.xml,postgresql.xml'
+        junit 'sqlite.xml,mysql.xml,postgresql.xml,reports/*.xml'
         step([$class: 'CoberturaPublisher',
               autoUpdateHealth: false,
               autoUpdateStability: false,
-              coberturaReportFile: 'coverage.xml',
+              coberturaReportFile: 'coverage*.xml',
               failUnhealthy: false,
               failUnstable: false,
               maxNumberOfBuilds: 0,
               onlyStable: false,
               sourceEncoding: 'ASCII',
               zoomCoverageChart: false])
+        publishHTML([allowMissing: false,
+                     alwaysLinkToLastBuild: false,
+                     keepAll: false,
+                     reportDir: 'bdd_coverage',
+                     reportFiles: 'index.html',
+                     reportName: 'BDD Coverage',
+                     reportTitles: 'BDD Coverage'])
       }
+    }
+  }
+  post {
+    failure {
+      archiveArtifacts allowEmptyArchive: true, artifacts: 'bdd_screenshots/**'
     }
   }
 }

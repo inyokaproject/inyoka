@@ -14,13 +14,14 @@ def get_models(apps):
 
 def create_system_groups(apps, schema_editor):
     User, Group = get_models(apps)
+    db_alias = schema_editor.connection.alias
     for groupname in (settings.INYOKA_ANONYMOUS_GROUP_NAME,
                   settings.INYOKA_REGISTERED_GROUP_NAME,
                   settings.INYOKA_IKHAYA_GROUP_NAME,
                   settings.INYOKA_TEAM_GROUP_NAME):
-        group, created = Group.objects.get_or_create(name=groupname)
+        group, created = Group.objects.using(db_alias).get_or_create(name=groupname)
         if created:
-            group.save()
+            group.save(using=db_alias)
 
 
 def create_system_users(apps, schema_editor):
