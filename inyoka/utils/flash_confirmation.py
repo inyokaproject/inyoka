@@ -12,6 +12,7 @@
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
 
+from inyoka.forum.models import PostRevision
 from inyoka.utils.decorators import patch_wrapper
 from inyoka.utils.http import TemplateResponse
 from inyoka.utils.urls import href
@@ -38,7 +39,8 @@ def confirm_action(message=None, confirm=None, cancel=None):
                         cancel_url = href('forum', 'topic',
                                           kwargs['topic_slug'])
                 elif 'rev_id' in kwargs:
-                    raise NotImplementedError
+                    post = PostRevision.objects.get(id=kwargs['rev_id']).post
+                    cancel_url = post.get_absolute_url()
                 else:
                     cancel_url = href('portal')
                 return HttpResponseRedirect(cancel_url)
