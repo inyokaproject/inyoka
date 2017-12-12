@@ -173,7 +173,6 @@ def hide_entry(request, id):
     return HttpResponseRedirect(href('planet'))
 
 
-@permission_required('planet.view_blog', raise_exception=True)
 def export(request, export_type):
     """Export the blog ist as OPML or FOAF"""
     blogs = Blog.objects.filter(active=True).all()
