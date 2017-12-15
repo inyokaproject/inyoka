@@ -842,10 +842,10 @@ def do_export(request, name, format='raw', rev=None):
     }
     if format == 'html':
         response = TemplateResponse('wiki/export.html', ctx,
-                                content_type='text/html; charset=utf-8')
+                                    content_type='text/html; charset=utf-8')
     else:
         response = HttpResponse(page.rev.text.value.encode('utf-8'),
-                            content_type='text/plain; charset=utf-8')
+                                content_type='text/plain; charset=utf-8')
 
     response['X-Robots-Tag'] = 'noindex'
     return response
