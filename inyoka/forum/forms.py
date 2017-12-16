@@ -26,22 +26,16 @@ from inyoka.utils.text import slugify
 
 
 class ForumField(forms.ChoiceField):
-    def refresh(self, priv='forum.view_forum', add=[], remove=[]):
+    def refresh(self, priv='forum.view_forum'):
         """
         Generates a hierarchical representation of all forums for a choice field.
         Only forums with at least `priv` for the current user are taken into
-        account. Addtitional items can be prepanded as a list of tuples
-        `[(val1,repr1),(val2,repr2)]` with the `add` keyword. To remove items
-        from the list use a list of Forum objects in the `remove` keyword.
+        account.
 
         Optgroups are used to disable categories in the choice field.
         """
         forums = Forum.objects.get_forums_filtered(current_request.user,
             priv, sort=True)
-
-        for f in remove:
-            if f in forums:
-                forums.remove(f)
 
         forums = Forum.get_children_recursive(forums)
         choices = []
@@ -51,7 +45,7 @@ class ForumField(forms.ChoiceField):
             else:
                 title = f.name[0] + u' ' + (u'   ' * offset) + f.name
                 choices[-1][1].append((f.id, title))
-        self.choices = add + choices
+        self.choices = choices
 
 
 class EditPostForm(SurgeProtectionMixin, forms.Form):
