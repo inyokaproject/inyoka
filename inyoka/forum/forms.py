@@ -51,6 +51,16 @@ class ForumField(forms.ChoiceField):
                 choices[-1][1].append((f.id, title))
         self.choices = choices
 
+    def to_python(self, value):
+        """
+        As the choice field just contains forum-ids, we cast it to int.
+        If it is somehow empty, None will be returned.
+        """
+        if value in self.empty_values:
+            return None
+
+        return int(value)
+
 
 class EditPostForm(SurgeProtectionMixin, forms.Form):
     """
@@ -197,8 +207,7 @@ class SplitTopicForm(forms.Form):
         return slug
 
     def clean_forum(self):
-        id = self.cleaned_data.get('forum')
-        forum = Forum.objects.get(id=int(id))
+        forum = Forum.objects.get(id=self.cleaned_data.get('forum'))
         if forum.is_category:
             raise forms.ValidationError(_(u'You cannot move a topic into a '
                                           u'category. Please choose a forum.'))
