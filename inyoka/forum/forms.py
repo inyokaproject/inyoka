@@ -26,7 +26,11 @@ from inyoka.utils.text import slugify
 
 
 class ForumField(forms.ChoiceField):
-    def refresh(self, privilege='forum.view_forum'):
+    def __init__(self, *args, **kwargs):
+        super(ForumField, self).__init__(*args, **kwargs)
+        self.set_forum_choices()
+
+    def set_forum_choices(self, privilege='forum.view_forum'):
         """
         Generates a hierarchical representation of all forums for a choice field.
         Only forums with at least `privilege` for the current user are taken into

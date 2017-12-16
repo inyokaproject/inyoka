@@ -1121,7 +1121,6 @@ def movetopic(request, topic_slug):
 
     if request.method == 'POST':
         form = MoveTopicForm(request.POST)
-        form.fields['forum'].refresh()
         if form.is_valid():
             data = form.cleaned_data
             forum = mapping.get(int(data['forum']))
@@ -1155,7 +1154,6 @@ def movetopic(request, topic_slug):
             return HttpResponseRedirect(url_for(topic))
     else:
         form = MoveTopicForm()
-        form.fields['forum'].refresh()
     return {
         'form': form,
         'topic': topic
@@ -1190,7 +1188,6 @@ def splittopic(request, topic_slug, page=1):
 
     if request.method == 'POST':
         form = SplitTopicForm(request.POST)
-        form.fields['forum'].refresh()
 
         if form.is_valid():
             data = form.cleaned_data
@@ -1242,7 +1239,6 @@ def splittopic(request, topic_slug, page=1):
             'ubuntu_version': old_topic.ubuntu_version,
             'ubuntu_distro': old_topic.ubuntu_distro,
         })
-        form.fields['forum'].refresh()
 
     return {
         'topic': old_topic,
