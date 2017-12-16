@@ -810,15 +810,13 @@ def do_backlinks(request, name):
 def do_export(request, name, format='raw', rev=None):
     """
     Export the given revision or the most recent one to the specified format
-    (raw, html or ast so far).
+    (raw or html).
 
     =============== ======= ==================================================
     Format          Partial Full    Description
     =============== ======= ==================================================
     ``raw``         yes     no      The raw wiki markup exported.
     ``HTML``        yes     yes     The wiki markup converted to HTML4.
-    ``AST``         yes     no      The wiki markup as internal abstract
-                                    syntax tree.  Useful for debugging.
     =============== ======= ==================================================
 
 
@@ -844,13 +842,10 @@ def do_export(request, name, format='raw', rev=None):
     }
     if format == 'html':
         response = TemplateResponse('wiki/export.html', ctx,
-                                content_type='text/html; charset=utf-8')
-    elif format == 'ast':
-        response = HttpResponse(repr(page.rev.text.parse()),
-                            content_type='text/plain; charset=ascii')
+                                    content_type='text/html; charset=utf-8')
     else:
         response = HttpResponse(page.rev.text.value.encode('utf-8'),
-                            content_type='text/plain; charset=utf-8')
+                                content_type='text/plain; charset=utf-8')
 
     response['X-Robots-Tag'] = 'noindex'
     return response
