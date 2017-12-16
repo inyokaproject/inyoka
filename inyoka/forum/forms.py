@@ -158,6 +158,18 @@ class MoveTopicForm(forms.Form):
     """
     forum = ForumField()
 
+    def __init__(self, *args, **kwargs):
+        self.current_forum = kwargs.pop('current_forum')
+        super(MoveTopicForm, self).__init__(*args, **kwargs)
+
+    def clean_forum(self):
+        new_forum_id = self.cleaned_data['forum']
+        if new_forum_id == self.current_forum.id:
+            raise forms.ValidationError(_(u'The topic is already in this '
+                                          u'forum'))
+
+        return Forum.objects.get(id=new_forum_id)
+
 
 class SplitTopicForm(forms.Form):
     """

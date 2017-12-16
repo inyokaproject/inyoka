@@ -1108,32 +1108,19 @@ def movetopic(request, topic_slug):
     if not request.user.has_perm('forum.moderate_forum', topic.forum):
         return abort_access_denied(request)
 
-    forums = [
-        forum
-        for forum in Forum.objects.get_cached()
-        if forum.parent is not None and forum.id != topic.forum.id
-    ]
-    visible_forums = [forum for forum in forums if request.user.has_perm('forum.view_forum', forum)]
-    mapping = {forum.id: forum for forum in visible_forums}
-
-    if not mapping:
-        return abort_access_denied(request)
-
     if request.method == 'POST':
-        form = MoveTopicForm(request.POST)
+        form = MoveTopicForm(request.POST, current_forum=topic.forum)
         if form.is_valid():
-            data = form.cleaned_data
-            forum = mapping.get(int(data['forum']))
-            if forum is None:
-                return abort_access_denied(request)
+            new_forum = form.cleaned_data['forum']
             old_forum_name = topic.forum.name
-            topic.move(forum)
+            topic.move(new_forum)
+
             # send a notification to the topic author to inform him about
             # the new forum.
             nargs = {'username': topic.author.username,
                      'topic': topic,
                      'mod': request.user.username,
-                     'forum_name': forum.name,
+                     'forum_name': new_forum.name,
                      'old_forum_name': old_forum_name}
 
             user_notifications = topic.author.settings.get('notifications', ('topic_move',))
@@ -1153,7 +1140,8 @@ def movetopic(request, topic_slug):
 
             return HttpResponseRedirect(url_for(topic))
     else:
-        form = MoveTopicForm(initial={'forum': topic.forum.id})
+        form = MoveTopicForm(initial={'forum': topic.forum.id},
+                             current_forum=topic.forum)
     return {
         'form': form,
         'topic': topic
