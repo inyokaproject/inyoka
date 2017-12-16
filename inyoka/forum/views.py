@@ -1153,7 +1153,7 @@ def movetopic(request, topic_slug):
 
             return HttpResponseRedirect(url_for(topic))
     else:
-        form = MoveTopicForm()
+        form = MoveTopicForm(initial={'forum': topic.forum.id})
     return {
         'form': form,
         'topic': topic
