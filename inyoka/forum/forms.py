@@ -26,16 +26,16 @@ from inyoka.utils.text import slugify
 
 
 class ForumField(forms.ChoiceField):
-    def refresh(self, priv='forum.view_forum'):
+    def refresh(self, privilege='forum.view_forum'):
         """
         Generates a hierarchical representation of all forums for a choice field.
-        Only forums with at least `priv` for the current user are taken into
+        Only forums with at least `privilege` for the current user are taken into
         account.
 
         Optgroups are used to disable categories in the choice field.
         """
         forums = Forum.objects.get_forums_filtered(current_request.user,
-            priv, sort=True)
+                                                   privilege, sort=True)
 
         forums = Forum.get_children_recursive(forums)
         choices = []
