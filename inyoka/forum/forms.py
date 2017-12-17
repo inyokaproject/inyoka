@@ -19,14 +19,14 @@ from django.utils.translation import ugettext_lazy
 from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import Forum, Topic
 from inyoka.utils.forms import MultiField, StrippedCharField
-from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
 from inyoka.utils.text import slugify
 
 
 class ForumField(forms.ChoiceField):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
         super(ForumField, self).__init__(*args, **kwargs)
         self.set_forum_choices()
 
@@ -38,8 +38,8 @@ class ForumField(forms.ChoiceField):
 
         Optgroups are used to disable categories in the choice field.
         """
-        forums = Forum.objects.get_forums_filtered(current_request.user,
-                                                   privilege, sort=True)
+        forums = Forum.objects.get_forums_filtered(self.user, privilege,
+                                                   sort=True)
 
         forums = Forum.get_children_recursive(forums)
         choices = []
@@ -156,11 +156,13 @@ class MoveTopicForm(forms.Form):
     This form gives the user the possibility to select a new forum for a
     topic.
     """
-    forum = ForumField()
+    # forum: see __init__
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         self.current_forum = kwargs.pop('current_forum')
         super(MoveTopicForm, self).__init__(*args, **kwargs)
+        self.fields['forum'] = ForumField(user=user)
 
     def clean_forum(self):
         new_forum_id = self.cleaned_data['forum']
@@ -179,8 +181,7 @@ class SplitTopicForm(forms.Form):
     action = forms.ChoiceField(choices=(('add', ''), ('new', '')))
     #: the title of the new topic
     title = forms.CharField(max_length=200)
-    #: the forum of the new topic
-    forum = ForumField()
+    #: forum: the forum of the new topic, see __init__
     #: the slug of the existing topic
     topic = forms.CharField(max_length=200)
     #: version info. defaults to the values set in the old topic.
@@ -188,7 +189,10 @@ class SplitTopicForm(forms.Form):
     ubuntu_distro = forms.ChoiceField(required=False)
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super(SplitTopicForm, self).__init__(*args, **kwargs)
+        self.fields['forum'] = ForumField(user=user)
+
         self.fields['ubuntu_version'].choices = get_version_choices()
         self.fields['ubuntu_distro'].choices = get_distro_choices()
 

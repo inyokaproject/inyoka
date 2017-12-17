@@ -8,6 +8,8 @@
     :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from functools import partial
+
 from datetime import datetime, timedelta
 from itertools import groupby
 from operator import attrgetter
@@ -1108,8 +1110,10 @@ def movetopic(request, topic_slug):
     if not request.user.has_perm('forum.moderate_forum', topic.forum):
         return abort_access_denied(request)
 
+    form = partial(MoveTopicForm, current_forum=topic.forum, user=request.user)
+
     if request.method == 'POST':
-        form = MoveTopicForm(request.POST, current_forum=topic.forum)
+        form = form(request.POST)
         if form.is_valid():
             new_forum = form.cleaned_data['forum']
             old_forum_name = topic.forum.name
@@ -1140,8 +1144,7 @@ def movetopic(request, topic_slug):
 
             return HttpResponseRedirect(url_for(topic))
     else:
-        form = MoveTopicForm(initial={'forum': topic.forum.id},
-                             current_forum=topic.forum)
+        form = form(initial={'forum': topic.forum.id})
     return {
         'form': form,
         'topic': topic
@@ -1174,8 +1177,10 @@ def splittopic(request, topic_slug, page=1):
     # Order the posts in the same way as they will be attached to the new topic
     posts = posts.order_by('position')
 
+    form = partial(SplitTopicForm, user=request.user)
+
     if request.method == 'POST':
-        form = SplitTopicForm(request.POST)
+        form = form(request.POST)
 
         if form.is_valid():
             data = form.cleaned_data
@@ -1222,7 +1227,7 @@ def splittopic(request, topic_slug, page=1):
 
             return HttpResponseRedirect(url_for(posts[0]))
     else:
-        form = SplitTopicForm(initial={
+        form = form(initial={
             'forum': old_topic.forum_id,
             'ubuntu_version': old_topic.ubuntu_version,
             'ubuntu_distro': old_topic.ubuntu_distro,
