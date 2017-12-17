@@ -24,8 +24,8 @@ class TestAdminCommands(TestCase):
         storage['markup_styles'] = ''
 
     def tearDown(self):
-        rmtree("test_static_wiki")
+        rmtree('test_static_wiki')
 
     def test_generate_static_wiki(self):
-        management.call_command("generate_static_wiki", verbosity=0, path="test_static_wiki")
+        management.call_command('generate_static_wiki', verbosity=0, path='test_static_wiki')
 
