@@ -1345,12 +1345,14 @@ def revisions(request, post_id):
     forum = topic.forum
     if not request.user.has_perm('forum.moderate_forum', forum):
         return HttpResponseRedirect(post.get_absolute_url())
-    revs = PostRevision.objects.filter(post=post).all()
+
+    revisions = PostRevision.objects.filter(post=post).order_by('-store_date')
+
     return {
         'post': post,
         'topic': topic,
         'forum': forum,
-        'revisions': reversed(revs)
+        'revisions': revisions
     }
 
 
