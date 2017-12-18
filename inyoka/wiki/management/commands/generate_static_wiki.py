@@ -85,6 +85,8 @@ EXCLUDE_PAGES = [x.lower() for x in EXCLUDE_PAGES]
 _iterables = (tuple, list, set, frozenset)
 verbosity = 0
 
+BeautifulSoup = partial(BeautifulSoup, features='lxml')
+
 
 class Command(BaseCommand):
     help = "Creates a snapshot of all wiki pages in HTML format. Requires BeautifulSoup4 to be installed."
