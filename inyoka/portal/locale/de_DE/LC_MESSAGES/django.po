@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-05-01 07:15+0200\n"
-"PO-Revision-Date: 2017-03-23 22:57+0000\n"
-"Last-Translator: Lyra\n"
+"POT-Creation-Date: 2017-12-18 02:05+0100\n"
+"PO-Revision-Date: 2017-12-18 02:12+0100\n"
+"Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
+"Generated-By: Babel 2.5.0\n"
 
 #, python-format
 msgid "%(sitename)s - Message from %(username)s"
@@ -75,6 +75,9 @@ msgstr "Eine E-Mail mit weiteren Anweisungen wurde an dich gesendet."
 
 msgid "Another file with this name already exists. Please edit this file."
 msgstr "Es existiert bereits eine andere Datei mit diesem Namen. Bitte ändere sie."
+
+msgid "Another page with this name already exists. Please edit this page."
+msgstr "Eine Seite mit diesem Namen existiert bereits. Bitte ändere diese Seite."
 
 msgid "Archive"
 msgstr "Archiv"
@@ -142,9 +145,6 @@ msgstr "Beschreibung zu Ikhaya, die auf der Startseite und in den Feeds verwende
 
 msgid "Description about the planet that will be used on the planet page and in the feed aggregations."
 msgstr "Beschreibung über den Planeten, welche auf er Startseite vom Planeten und in den Feeds angezeigt wird."
-
-msgid "Description of the link"
-msgstr "Beschreibung des Links"
 
 msgid "Display countdown"
 msgstr "Countdown anzeigen"
@@ -258,6 +258,9 @@ msgstr "Muss Inyoka-Syntax sein."
 msgid "Is Ikhaya icon"
 msgstr "Ist Ikhaya-Icon"
 
+msgid "It is not allowed to change this key."
+msgstr "Es ist nicht erlaubt, diesen Schlüssel zu ändern."
+
 msgid "Jabber"
 msgstr "Jabber"
 
@@ -284,12 +287,6 @@ msgstr "Mail"
 
 msgid "Mark all forums as “read” on logout"
 msgstr "Alle Foren beim Abmelden als gelesen markieren."
-
-msgid "Maximum number of lines in signature"
-msgstr "Maximale Zeilenanzahl der Signatur"
-
-msgid "Maximum signature length"
-msgstr "Maximale Signaturlänge"
 
 msgid "Member since"
 msgstr "Mitglied seit"
@@ -446,9 +443,6 @@ msgstr "Das Konto „%(name)s“ wurde reaktiviert. Bitte benutze die „Passwor
 msgid "The complete URL to the countdown banner. Use <code>%(remaining)s</code> to be replaced by the remaining days or <code>soon</code>."
 msgstr "Die vollständige URL zum Banner, inklusive http:// . Der Platzhalter <code>%(remaining)s</code> wird verwendet um die verbleibenden Tage oder <code>soon</code> in die URL einzufügen."
 
-msgid "The download link for the start page"
-msgstr "Der Downloadlink für die Startseite"
-
 #, python-format
 msgid "The email to “%(username)s” was sent successfully."
 msgstr "Die E-Mail an „%(username)s“ wurde erfolgreich versendet."
@@ -483,6 +477,9 @@ msgstr "Die Gruppe „%s“ wurde erfolgreich bearbeitet."
 #, python-format
 msgid "The group “%s” was created successfully."
 msgstr "Die Gruppe „%s“ wurde erfolgreich erstellt."
+
+msgid "The groupname is already in use. Please choose another one."
+msgstr "Dieser Gruppenname wird bereits verwendet. Bitte wähle einen anderen."
 
 #, python-format
 msgid "The groups of “%(username)s” were successfully changed."
@@ -754,4 +751,3 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
-
