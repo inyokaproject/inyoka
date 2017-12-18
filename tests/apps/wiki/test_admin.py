@@ -22,6 +22,7 @@ class TestAdminCommands(TestCase):
     def setUp(self):
         StaticPage.objects.create(key='lizenz', title='Lizenz', content='(c) Meine Lizenz')
         storage['markup_styles'] = ''
+        management.call_command('collectstatic', '--noinput', '--link', verbosity=0)
 
     def tearDown(self):
         rmtree('test_static_wiki')
