@@ -25,6 +25,12 @@ from inyoka.utils.text import slugify
 
 
 class ForumField(forms.ChoiceField):
+    """
+    Custom ChoiceField, where a user can select a forum. By default, it only contains forums the user
+    can view. Furthermore, all forum categories are excluded, too.
+
+    Returns the selected forum-id (as integer).
+    """
     def __init__(self, user, *args, **kwargs):
         self.user = user
         super(ForumField, self).__init__(*args, **kwargs)
