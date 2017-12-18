@@ -68,7 +68,6 @@ class Blog(models.Model):
         verbose_name = 'Blog'
         verbose_name_plural = 'Blogs'
         permissions = (
-            ('view_blog','Can view Blogs'),
             ('suggest_blog','Can suggest Blogs'),
         )
 

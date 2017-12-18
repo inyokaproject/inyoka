@@ -13,6 +13,8 @@ pipeline {
   agent { label 'inyoka-slave' }
   options {
     buildDiscarder(logRotator(numToKeepStr: '2'))
+    timeout(time: 30, unit: 'MINUTES')
+    timestamps()
   }
   stages {
     stage('Prepare build') {

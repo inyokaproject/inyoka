@@ -16,13 +16,11 @@ import datetime
 from functools import partial
 from hashlib import sha1
 from itertools import izip
-from optparse import make_option
 from os import chmod, mkdir, path, unlink, walk
 from re import compile, escape, sub
 from shutil import copy, copytree, rmtree
 
 from bs4 import BeautifulSoup
-from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.template.defaultfilters import date
@@ -84,6 +82,8 @@ EXCLUDE_PAGES = [x.lower() for x in EXCLUDE_PAGES]
 
 _iterables = (tuple, list, set, frozenset)
 verbosity = 0
+
+BeautifulSoup = partial(BeautifulSoup, features='lxml')
 
 
 class Command(BaseCommand):
