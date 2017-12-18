@@ -16,13 +16,11 @@ import datetime
 from functools import partial
 from hashlib import sha1
 from itertools import izip
-from optparse import make_option
 from os import chmod, mkdir, path, unlink, walk
 from re import compile, escape, sub
 from shutil import copy, copytree, rmtree
 
 from bs4 import BeautifulSoup
-from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.template.defaultfilters import date
