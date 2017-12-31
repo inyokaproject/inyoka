@@ -1522,16 +1522,24 @@ def confirm(request, action):
 
     func, lifetime = CONFIRM_ACTIONS.get(action)
     data = request.POST.get('data', u'').strip()
-    if not data:
-        return {'action': action}
+    token = request.GET.get('token', u'').strip()
+    salt = 'inyoka.action.%s' % action
+    maxage = lifetime * 24 * 60 * 60
 
-    try:
-        salt = 'inyoka.action.%s' % action
-        data = signing.loads(data, max_age=lifetime * 24 * 60 * 60, salt=salt)
-    except (ValueError, signing.BadSignature):
-        return {
-            'failed': _(u'The entered data is invalid or has expired.'),
-        }
+    if token:
+        try:
+            data = signing.loads(token, max_age=maxage, salt=salt)
+        except (ValueError, signing.BadSignature):
+            return {'action': action }
+    elif not data:
+        return {'action': action}
+    else:
+        try:
+            data = signing.loads(data, max_age=maxage, salt=salt)
+        except (ValueError, signing.BadSignature):
+            return {
+                'failed': _(u'The entered data is invalid or has expired.'),
+            }
 
     r = func(**data)
     r['action'] = action
