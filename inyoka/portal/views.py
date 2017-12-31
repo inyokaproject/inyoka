@@ -63,6 +63,7 @@ from inyoka.portal.forms import (
     PrivateMessageIndexForm,
     RegisterForm,
     SubscriptionForm,
+    TokenForm,
     UserCPProfileForm,
     UserCPSettingsForm,
     UserMailForm,
@@ -1513,9 +1514,11 @@ def confirm(request, action):
 
     func, lifetime = CONFIRM_ACTIONS.get(action)
     data = request.POST.get('data', u'').strip()
-    token = request.GET.get('token', u'').strip()
-    salt = 'inyoka.action.%s' % action
-    maxage = lifetime * 24 * 60 * 60
+    form = TokenForm(initial={'data': request.GET.get('token', u'').strip()})
+
+    if not data:
+        return {'action': action,
+                'form': form}
 
     if token:
         try:
@@ -1534,6 +1537,7 @@ def confirm(request, action):
 
     r = func(**data)
     r['action'] = action
+    r['form'] = form
     return r
 
 

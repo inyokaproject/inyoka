@@ -327,7 +327,7 @@ class UserCPProfileForm(forms.ModelForm):
         initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
         initial['email'] = instance.email
         if instance.icon:
-            initial['icon'] = os.path.join(settings.MEDIA_ROOT,instance.icon)
+            initial['icon'] = os.path.join(settings.MEDIA_ROOT, instance.icon)
         if hasattr(instance, 'userpage'):
             initial['userpage'] = instance.userpage.content
 
@@ -335,7 +335,6 @@ class UserCPProfileForm(forms.ModelForm):
         self.old_avatar = instance.avatar.name if instance.avatar else None
         self.change_avatar = False
         super(UserCPProfileForm, self).__init__(*args, **kwargs)
-
 
     def clean_gpgkey(self):
         gpgkey = self.cleaned_data.get('gpgkey', '').upper()
@@ -359,7 +358,7 @@ class UserCPProfileForm(forms.ModelForm):
     def clean_icon(self):
         icon = self.cleaned_data.get('icon')
         if icon:
-            return os.path.relpath(icon,settings.MEDIA_ROOT)
+            return os.path.relpath(icon, settings.MEDIA_ROOT)
         else:
             return icon
 
@@ -655,6 +654,7 @@ def make_permission_choices(application, filtered=None):
     """
     return functools.partial(get_permissions_for_app, application, filtered)
 
+
 def permission_choices_to_permission_strings(application):
     return set(perm[0] for perm in get_permissions_for_app(application))
 
@@ -885,6 +885,7 @@ class GroupForumPermissionForm(forms.Form):
             for perm in delete_permissions:
                 remove_perm(perm, self.instance, forum)
         cache.delete_pattern('/acl/*')
+
 
 class PrivateMessageForm(forms.Form):
     """Form for writing a new private message"""
@@ -1118,3 +1119,9 @@ class ConfigurationForm(forms.Form):
 class EditStyleForm(forms.Form):
     styles = forms.CharField(label=ugettext_lazy(u'Styles'), widget=forms.Textarea(
                              attrs={'rows': 20}), required=False)
+
+
+class TokenForm(forms.Form):
+    data = forms.CharField(
+        label=ugettext_lazy(u'Please enter the string which was sent to you by email below:'),
+        widget=forms.Textarea(attrs={'rows': 5}))
