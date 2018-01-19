@@ -12,7 +12,6 @@ function usage {
     echo "${0}"
     echo "        [-i | --interpreter INTERPRETER]"
     echo "        [-s | --settings SETTINGS]"
-    echo "        [--test-mysql]"
     echo "        [--test-postgresql]"
     echo "        [--test-sqlite]"
     echo "        [-v | --verbosity VERBOSE_LEVEL]"
@@ -29,9 +28,6 @@ while [ "$1" != "" ]; do
         -s|--settings)
             shift
             settings+=("${1}")
-            ;;
-        --test-mysql)
-            settings+=("tests.settings.mysql")
             ;;
         --test-postgresql)
             settings+=("tests.settings.postgresql")
@@ -69,4 +65,3 @@ for setting in "${uniq_settings[@]}" ; do
     echo -en "\n\n--------------------------------------------------\nrunning tests for $setting\n"
     $interpreter $manage --settings=$setting --verbosity=$verbosity ${optional[@]}
 done
-

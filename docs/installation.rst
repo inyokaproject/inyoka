@@ -38,17 +38,11 @@ Installation
 Package installation
 ********************
 
-For compiling Inyoka and its dependencies you need a lot of developer files:
+For using Inyoka and its dependencies you need a lot of python and developer files:
 
 .. code-block:: console
 
-    $  sudo apt-get install git nodejs-legacy libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libmysqlclient-dev build-essential libpq-dev libffi-dev
-
-Further you need the Python 2.7 files:
-
-.. code-block:: console
-
-    $ sudo apt-get install python2.7 libpython2.7-dev
+    $  sudo apt-get install git nodejs-legacy libxml2-dev libxslt1-dev libzmq-dev zlib1g-dev libjpeg-dev uuid-dev libfreetype6-dev libpq-dev build-essential libpq-dev libffi-dev python2.7 libpython2.7-dev
 
 
 Further you need a recent pip and virtualenv for Python 2.7:
@@ -134,14 +128,12 @@ The entry ``/home/$USER/.venvs/inyoka/bin`` should appear at the beginning.
 Preparing the database
 **********************
 
-Inyoka supports different databases. However it's mostly tested with MySQL. Inyoka
-also needs a running redis server.
+Inyoka supports only PostgreSQL as database, all other databases supported by django are
+without any support! Inyoka also needs a running redis server.
 
 .. code-block:: console
 
-    $ sudo apt-get install mysql-server redis-server
-
-You will be asked to set a mysql root password. You can leave it empty if you want to.
+    $ sudo apt-get install postgresql redis-server
 
 Next, you need a ``development_settings.py`` file which can be copied from
 the example file:
@@ -151,7 +143,7 @@ the example file:
     $ cp example_development_settings.py development_settings.py
 
 If you have set a database password during installation of
-MySQL you need to specify the password:
+you need to specify the password:
 
 .. code-block:: console
 
@@ -174,16 +166,13 @@ Available languages are ``en-us`` and ``de-de``.
 Creating test database
 **********************
 
-You need to add a database in MySQL:
+You need to add a database in PostgreSQL:
 
 .. code-block:: console
 
-    $ mysql -u root [-p]
-    mysql> create database ubuntuusers CHARSET utf8 COLLATE utf8_general_ci;
-    mysql> quit
-
-You only need to use the ``-p`` parameter if you have set a root password on
-your MySQL database.
+    $ sudo -i -u postgres
+    $ createuser -P inyoka
+    $ createdb -O inyoka inyoka
 
 Next you need to add a superuser so that you gain all rights in the development
 installation of Inyoka:
