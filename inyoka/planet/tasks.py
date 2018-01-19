@@ -156,7 +156,6 @@ def sync():
             entry = old_entry or Entry()
             for n in ('blog', 'guid', 'title', 'url', 'text', 'pub_date',
                       'updated', 'author', 'author_homepage'):
-                # prevent mysql warnings
                 try:
                     max_length = entry._meta.get_field(n).max_length
                 except AttributeError:
