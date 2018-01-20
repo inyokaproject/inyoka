@@ -1427,32 +1427,40 @@ class ReadStatus(object):
             for child in item.children:
                 self.mark(child, user)
             if item.parent_id:
-                parents_children = item.parent.children
-                unread_items = reduce(lambda a, b: a and b,
-                                      [self(c) for c in parents_children], True)
-                if parents_children and unread_items:
+                other_children = item.parent.children[:]
+                other_children.remove(item)
+                topics = Topic.objects.filter(forum=item.parent) \
+                              .order_by('-sticky', '-last_post')[:settings.FORUM_LIMIT_UNREAD]
+
+                all_children_are_read = self.all_items_are_read(other_children)
+                all_topics_in_parent_are_read = self.all_items_are_read(topics)
+                if all_children_are_read and all_topics_in_parent_are_read:
                     self.mark(item.parent, user)
             return True
 
         row = self.data.get(forum_id, (None, set()))
         row[1].add(post_id)
-        children = item.forum.children
-        if children:
-            return True
         if len(row[1]) > settings.FORUM_LIMIT_UNREAD:
             r = sorted(row[1])
             row = (r[settings.FORUM_LIMIT_UNREAD // 2],
-                set(r[settings.FORUM_LIMIT_UNREAD // 2:]))
+                   set(r[settings.FORUM_LIMIT_UNREAD // 2:]))
         self.data[forum_id] = row
 
         # Mark the containing forum as read, if this was the last unread topic
-        topics = Topic.objects.filter(forum=item.forum)\
-                      .order_by('-sticky', '-last_post')[:settings.FORUM_LIMIT_UNREAD]
-        for topic in topics:
-            if not topic.get_read_status(user):
-                return True
-        self.mark(item.forum, user)
+        topics = Topic.objects.filter(forum=item.forum) \
+                     .exclude(id=item.id) \
+                     .order_by('-sticky', '-last_post')[:settings.FORUM_LIMIT_UNREAD]
+        if self.all_items_are_read(topics):
+            self.mark(item.forum, user)
         return True
+
+    def all_items_are_read(self, items):
+        """
+        Checks if all items passed over are marked as read and returns True in that case.
+        :param items: A list of Forums or Topics
+        :return: True if all items are read
+        """
+        return reduce(lambda a, b: a and b, [self(c) for c in items], True)
 
     def serialize(self):
         return cPickle.dumps(self.data)
