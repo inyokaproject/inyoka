@@ -39,8 +39,8 @@ from inyoka.utils.dates import (
     format_date,
     format_datetime,
     format_time,
-    naturalday,
-)
+    format_timetz,
+    naturalday)
 from inyoka.utils.local import current_request
 from inyoka.utils.special_day import check_special_day
 from inyoka.utils.text import human_number
@@ -304,6 +304,7 @@ FILTERS = {
     'date': format_date,
     'datetime': format_datetime,
     'time': format_time,
+    'timetz': format_timetz,
 }
 
 # setup the template environment
