@@ -3,7 +3,7 @@
     tests.utils.test_database
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2011-2017 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import datetime
