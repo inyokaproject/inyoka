@@ -142,8 +142,8 @@ the example file:
 
     $ cp example_development_settings.py development_settings.py
 
-If you have set a database password during installation of
-you need to specify the password:
+If you have set a database password during installation you need to specify
+the password:
 
 .. code-block:: console
 
