@@ -39,6 +39,7 @@ naturalday = lambda value, arg='DATE_FORMAT': djnaturalday(value, arg)
 format_date = lambda value, arg='DATE_FORMAT': defaultfilters.date(value, arg)
 format_datetime = lambda value, arg='DATETIME_FORMAT': defaultfilters.date(_localtime(value), arg)
 format_time = lambda value, arg='TIME_FORMAT': defaultfilters.time(value, arg)
+format_timetz = lambda value, arg='TIME_FORMAT': defaultfilters.time(_localtime(value), arg)
 
 
 def group_by_day(entries, date_func=attrgetter('pub_date'),
