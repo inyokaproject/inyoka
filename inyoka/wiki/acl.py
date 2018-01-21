@@ -241,7 +241,7 @@ def test_changes_allowed(user, page_name, old_text, new_text):
     """
     if has_privilege(user, page_name, PRIV_MANAGE):
         return True
-    from inyoka.markup import parse
+    from inyoka.markup.base import parse
     from inyoka.markup.nodes import MetaData
 
     old = set()

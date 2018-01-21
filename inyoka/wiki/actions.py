@@ -28,7 +28,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
-from inyoka.markup import RenderContext, parse
+from inyoka.markup.base import RenderContext, parse
 from inyoka.portal.models import Subscription
 from inyoka.utils.http import (
     AccessDeniedResponse,

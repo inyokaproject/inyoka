@@ -36,7 +36,8 @@ def case_sensitive_redirect(function):
 
 def has_conflicts(text):
     """Returns `True` if there are conflict markers in the text."""
-    from inyoka.markup import parse, nodes
+    from inyoka.markup import nodes
+    from inyoka.markup.base import parse
     if isinstance(text, basestring):
         text = parse(text)
     return text.query.all.by_type(nodes.ConflictMarker).has_any

@@ -11,7 +11,8 @@
 """
 import unittest
 
-from inyoka.markup import Parser, nodes, transformers
+from inyoka.markup import nodes, transformers
+from inyoka.markup.base import Parser
 from inyoka.markup.transformers import (
     AutomaticParagraphs,
     FootnoteSupport,

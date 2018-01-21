@@ -54,7 +54,7 @@ from inyoka.forum.notifications import (
     send_edit_notifications,
     send_newtopic_notifications,
     send_notification_for_topics)
-from inyoka.markup import RenderContext, parse
+from inyoka.markup.base import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User

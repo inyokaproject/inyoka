@@ -45,7 +45,7 @@ from inyoka.ikhaya.notifications import (
     send_comment_notifications,
     send_new_suggestion_notifications,
 )
-from inyoka.markup import RenderContext, parse
+from inyoka.markup.base import RenderContext, parse
 from inyoka.portal.models import (
     PrivateMessage,
     PrivateMessageEntry,

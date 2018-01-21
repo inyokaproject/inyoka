@@ -10,7 +10,7 @@
 """
 import unittest
 
-from inyoka.markup import Parser, RenderContext
+from inyoka.markup.base import Parser, RenderContext
 
 
 def render(source):

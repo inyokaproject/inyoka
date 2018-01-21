@@ -15,7 +15,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.signals import post_save as model_post_save_signal
 
-from inyoka.markup import RenderContext, parse
+from inyoka.markup.base import RenderContext, parse
 from inyoka.utils.highlight import highlight_code
 
 MAX_SLUG_INCREMENT = 999

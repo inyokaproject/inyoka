@@ -32,7 +32,7 @@ import operator
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext as _
 
-from inyoka.markup import escape, unescape_string
+from inyoka.markup.base import escape, unescape_string
 from inyoka.markup.parsertools import TokenStream
 from inyoka.markup.utils import debug_repr, has_key, join_array, regex_match, simple_match
 from inyoka.wiki.exceptions import CaseSensitiveException
