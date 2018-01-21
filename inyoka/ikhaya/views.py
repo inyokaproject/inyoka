@@ -5,7 +5,7 @@
 
     Views for Ikhaya.
 
-    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import time as dt_time
@@ -718,12 +718,15 @@ category_edit = generic.CreateUpdateView(
 @templated('ikhaya/events.html', modifier=context_modifier)
 def events(request, show_all=False, invisible=False):
     if show_all:
-        objects = Event.objects.filter(visible=True).all()
+        events = Event.objects.filter(visible=True).all()
     elif invisible:
-        objects = Event.objects.filter(visible=False).all()
+        events = Event.objects.filter(visible=False).all()
     else:
-        objects = Event.objects.filter(date__gt=date.today(), visible=True)
-    sortable = Sortable(objects, request.GET, '-date',
+        events = Event.objects.filter(date__gt=date.today(), visible=True)
+
+    events = events.select_related('author')
+
+    sortable = Sortable(events, request.GET, '-date',
         columns=['name', 'date'])
     return {
         'table': sortable,

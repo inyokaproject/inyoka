@@ -73,11 +73,6 @@ pipeline {
     }
     stage('Tests & Documentation') {
       parallel {
-        stage('MySQL') {
-          steps{
-            runTestOnDatabase('mysql')
-          }
-        }
         stage('PostgreSQL') {
           steps{
             runTestOnDatabase('postgresql')
@@ -125,7 +120,7 @@ pipeline {
     }
     stage('Analyse tests') {
       steps {
-        junit 'sqlite.xml,mysql.xml,postgresql.xml,reports/*.xml'
+        junit 'sqlite.xml,postgresql.xml,reports/*.xml'
         step([$class: 'CoberturaPublisher',
               autoUpdateHealth: false,
               autoUpdateStability: false,

@@ -7,7 +7,7 @@
     can still write their own but for 99% of the time this should work.
 
 
-    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.http import Http404

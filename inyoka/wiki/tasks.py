@@ -6,7 +6,7 @@
     Module that implements wiki related tasks that must be executed by
     our distributed queue implementation.
 
-    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
@@ -96,12 +96,16 @@ def update_recentchanges():
     recentchanges = OrderedDict()
     for revision in revisions:
         change_date = revision.change_date.date()
-        change_time = revision.change_date.time()
         page_name = revision.page.name
         username = revision.user.username if revision.user else None
         if change_date not in recentchanges:
             recentchanges[change_date] = OrderedDict()
         if revision.page.name not in recentchanges[change_date]:
             recentchanges[change_date][page_name] = []
-        recentchanges[change_date][page_name].append({'time': change_time, 'username': username, 'note': revision.note})
+        recentchanges[change_date][page_name].append(
+            {
+                'change_date': revision.change_date,
+                'username': username,
+                'note': revision.note
+            })
     cache.set('wiki/recentchanges', recentchanges)

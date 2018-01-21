@@ -10,7 +10,7 @@
     It'd be ideal if ``sync`` was called every 30 minutes.
 
 
-    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
@@ -156,7 +156,6 @@ def sync():
             entry = old_entry or Entry()
             for n in ('blog', 'guid', 'title', 'url', 'text', 'pub_date',
                       'updated', 'author', 'author_homepage'):
-                # prevent mysql warnings
                 try:
                     max_length = entry._meta.get_field(n).max_length
                 except AttributeError:

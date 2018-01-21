@@ -3,7 +3,7 @@ from inyoka.default_settings import *
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ubuntuusers',
         'USER': 'root',
         'PASSWORD': '',

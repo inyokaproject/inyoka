@@ -74,7 +74,7 @@
     that is part of the `acl` system.
 
 
-    :copyright: (c) 2007-2017 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import locale
@@ -482,7 +482,7 @@ class PageManager(models.Manager):
         provided.  If the page does not exist or it doesn't have an attachment
         defined the return value will be `None`.
         """
-        attachments = Revision.objects.filter(page__name=page_name, deleted=False) \
+        attachments = Revision.objects.filter(page__name__iexact=page_name, deleted=False) \
                               .values_list('attachment__file')\
                               .annotate(Max('id')).order_by('-id')[:1]
         if attachments:

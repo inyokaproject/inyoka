@@ -4,7 +4,7 @@ To run the tests, call:
 
 python manage.py --settings tests.settings.DATABASE
 
-where DATABASE is sqlite, mysql or postgres.
+where DATABASE is sqlite or postgres.
 
 To run the tests with a specific database server, the database has to be
 installed and configured. There has also be a redis server for the tests to
