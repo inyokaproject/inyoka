@@ -88,7 +88,7 @@ class LoginForm(forms.Form):
         widget=forms.TextInput(attrs={'tabindex': '1'}))
     password = forms.CharField(label=ugettext_lazy(u'Password'), required=False,
         widget=forms.PasswordInput(render_value=False, attrs={'tabindex': '1'}),)
-    permanent = forms.BooleanField(label=_('Keep logged in'),
+    permanent = forms.BooleanField(label=ugettext_lazy('Keep logged in'),
         required=False, widget=forms.CheckboxInput(attrs={'tabindex': '1'}))
 
     def clean(self):
@@ -112,18 +112,18 @@ class RegisterForm(forms.Form):
     techniques for bot catching included e.g a CAPTCHA and a hidden captcha
     for bots that just fill out everything.
     """
-    username = forms.CharField(label=_('Username'), max_length=20)
+    username = forms.CharField(label=ugettext_lazy('Username'), max_length=20)
     email = EmailField(label=ugettext_lazy(u'E-mail'),
         help_text=ugettext_lazy(u'We need your email '
         u'address to send you a new password if you forgot it. It is not '
         u'visible to other users. For more information, check out our '
         u'<a href="%(link)s">privacy policy</a>.') % {
             'link': href('portal', 'datenschutz')})
-    password = forms.CharField(label=_('Password'),
+    password = forms.CharField(label=ugettext_lazy('Password'),
         widget=forms.PasswordInput(render_value=False))
-    confirm_password = forms.CharField(label=_('Confirm password'),
+    confirm_password = forms.CharField(label=ugettext_lazy('Confirm password'),
         widget=forms.PasswordInput(render_value=False))
-    captcha = CaptchaField(label=_('CAPTCHA'))
+    captcha = CaptchaField(label=ugettext_lazy('CAPTCHA'))
     terms_of_usage = forms.BooleanField()
 
     def clean_username(self):
@@ -569,7 +569,7 @@ class EditUserStatusForm(forms.ModelForm):
 class EditUserPasswordForm(forms.Form):
     new_password = forms.CharField(label=ugettext_lazy(u'New password'),
         required=False, widget=forms.PasswordInput(render_value=False))
-    confirm_password = forms.CharField(label=_('Confirm new password'),
+    confirm_password = forms.CharField(label=ugettext_lazy('Confirm new password'),
         required=False, widget=forms.PasswordInput(render_value=False))
 
     def clean_confirm_password(self):

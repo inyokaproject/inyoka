@@ -31,10 +31,10 @@ from inyoka.wiki.utils import has_conflicts
 class NewArticleForm(SurgeProtectionMixin, forms.Form):
     """Form for creating new wiki articles."""
     name = forms.CharField(widget=forms.TextInput(), required=True,
-                           label=_(u'The title of the article you want to '
+                           label=ugettext_lazy(u'The title of the article you want to '
                                    u'create.'))
     template = forms.ChoiceField(required=False,
-                                 label=_(u'The template that this new article '
+                                 label=ugettext_lazy(u'The template that this new article '
                                          u'should be using.'))
 
     def __init__(self, user=None, reserved_names=[], template_choices=[],
@@ -246,7 +246,7 @@ class EditAttachmentForm(forms.Form):
 
 class ManageDiscussionForm(forms.Form):
     """Let the user set an existing thread as discussion of a page"""
-    topic = forms.CharField(label=_('Slug of the topic'), max_length=50,
+    topic = forms.CharField(label=ugettext_lazy('Slug of the topic'), max_length=50,
         help_text=ugettext_lazy(u'You can find the slug of a topic in the URL '
             u'(e.g. <var>example</var> when <em>%(example)s</em>)') % {
                 'example': href('forum', 'topic', 'example')},
