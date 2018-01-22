@@ -1031,7 +1031,7 @@ class EditFileForm(forms.ModelForm):
     def clean_file(self):
         data = self.cleaned_data
         if 'file' in data and StaticFile.objects.filter(
-                identifier__iexact=data['file']).exists():
+                identifier__iexact=str(data['file'])).exists():
             raise forms.ValidationError(_(u'Another file with this name '
                 u'already exists. Please edit this file.'))
         return data['file']
