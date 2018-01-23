@@ -303,9 +303,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     launchpad = models.CharField(ugettext_lazy(u'Launchpad username'), max_length=50, blank=True)
     settings = JSONField(ugettext_lazy(u'Settings'), default={})
 
-    # forum attribues
-    forum_last_read = models.IntegerField(ugettext_lazy(u'Last read post'),
-                                          default=0, blank=True)
+    # forum attribute
     forum_read_status = models.TextField(ugettext_lazy(u'Read posts'), blank=True)
 
     # member title
