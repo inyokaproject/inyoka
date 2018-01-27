@@ -614,7 +614,7 @@ def suggest_delete(request, suggestion):
                 args = {'title': s.title,
                         'username': request.user.username,
                         'note': request.POST['note']}
-                send_notification(s.author.id, u'suggestion_rejected',
+                send_notification(s.author, u'suggestion_rejected',
                     _(u'Article suggestion deleted'), args)
 
                 # Send the user a private message
@@ -635,7 +635,7 @@ def suggest_delete(request, suggestion):
                                   '%(subject)s') % {
                                       'user': request.user.username,
                                       'subject': msg.subject}
-                        send_notification(recipient.id, 'new_pm', title, {
+                        send_notification(recipient, 'new_pm', title, {
                                           'user': recipient,
                                           'sender': request.user,
                                           'subject': msg.subject,
