@@ -1,7 +1,6 @@
 from behave import given, step
-from django.conf import settings
 
-from inyoka.utils.urls import href
+from tests.bdd.steps.utils import take_screenshot
 
 
 @given('I am on the "{page_slug}" page')
@@ -11,12 +10,13 @@ def step_impl(context, page_slug):
 
 @step('I use the "{app}" and visit the "{page_slug}" page')
 def navigate_to_page(context, app, page_slug):
+    from inyoka.utils.urls import href
+
     if not app:
         app = 'portal'
     if page_slug == 'main':
         page_slug = ''
     location = href(app, page_slug)
-
     context.browser.get(location)
 
 
@@ -28,11 +28,17 @@ def step_impl(context, app, view_type):
 
 @step('I open the "{app}" {view_type} view of "{item_id}"')
 def go_to_item(context, app, view_type, item_id):
-    view_string = ''
-    if view_type and view_type != "detail":
-        view_string = '/' + view_type
+    from inyoka.utils.urls import href
 
-    location = "http://%s.%s%s/%s" % (app, settings.BASE_DOMAIN_NAME, view_string, item_id)
+    view_string = None
+    if view_type and view_type != "detail":
+        view_string = view_type
+
+    if view_string:
+        location = href(app, view_string, item_id)
+    else:
+        location = href(app, item_id)
+
     context.browser.get(location)
 
 
