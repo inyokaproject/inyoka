@@ -9,12 +9,12 @@
     :license: BSD, see LICENSE for more details.
 """
 from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+from django.views.static import serve as view
 
-urlpatterns = patterns('',
-    url(r'^(?P<path>.*)$', 'django.contrib.staticfiles.views.serve',
-        {'insecure': True}),
-)
+urlpatterns = [
+    url(r'^(?P<path>.*)$', view, {'document_root': settings.STATIC_ROOT}),
+]
 
 if settings.DEBUG:
     import debug_toolbar
