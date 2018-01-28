@@ -431,6 +431,8 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = ()
 
+TEMPLATE_DIRS = []
+
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 
 FORMAT_MODULE_PATH = 'inyoka.locale'
