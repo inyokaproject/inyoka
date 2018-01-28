@@ -255,7 +255,7 @@ def register(request):
 
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
         else href('portal'))
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
@@ -300,7 +300,7 @@ def activate(request, action='', username='', activation_key=''):
     if not redirect:
         redirect = href('portal', 'login', username=user.username)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.error(request,
             _(u'You cannot enter an activation key when you are logged in.'))
         return HttpResponseRedirect(href('portal'))
@@ -334,7 +334,7 @@ def activate(request, action='', username='', activation_key=''):
 
 
 def lost_password(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(href('portal'))
     return password_reset(request,
@@ -363,7 +363,7 @@ def login(request):
     """Login dialog that supports permanent logins"""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
         else href('portal'))
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.error(request, _(u'You are already logged in.'))
         return HttpResponseRedirect(redirect)
 
@@ -412,7 +412,7 @@ def logout(request):
     successfull or not (e.g if the user wasn't logged in)."""
     redirect = (request.GET['next'] if is_safe_domain(request.GET.get('next'))
         else href('portal'))
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         if request.user.settings.get('mark_read_on_logout'):
             for forum in Forum.objects.get_categories().all():
                 forum.mark_read(request.user)
@@ -1502,7 +1502,7 @@ def calendar_ical(request, slug):
 
 @templated('portal/confirm.html')
 def confirm(request, action):
-    if action == 'reactivate_user' and request.user.is_authenticated():
+    if action == 'reactivate_user' and request.user.is_authenticated:
         messages.error(request, _(u'You cannot reactivate an account while '
                                   u'you are logged in.'))
         return abort_access_denied(request)

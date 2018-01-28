@@ -312,7 +312,7 @@ class CaptchaField(forms.MultiValueField):
         pass  # CaptchaField doesn't have a useful value to return.
 
     def clean(self, value):
-        if current_request.user.is_authenticated() and self.only_anonymous:
+        if current_request.user.is_authenticated and self.only_anonymous:
             return [None, None]
         value[1] = False  # Prevent beeing catched by validators.EMPTY_VALUES
         return super(CaptchaField, self).clean(value)

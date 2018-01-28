@@ -97,7 +97,7 @@ class PermissionRequiredMixin(_PermissionRequiredMixin):
         return redirect_to_login(self.request.build_absolute_uri(), self.get_login_url(), self.get_redirect_field_name())
 
     def dispatch(self, request, *args, **kwargs):
-        if self.login_required and not request.user.is_authenticated():
+        if self.login_required and not request.user.is_authenticated:
             return self.handle_no_authentication()
         return super(PermissionRequiredMixin, self).dispatch(request, *args, **kwargs)
 

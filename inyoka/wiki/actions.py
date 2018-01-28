@@ -79,7 +79,7 @@ def context_modifier(request, context):
     if 'page' in context:
         page_name = getattr(context['page'], 'name', None)
         if page_name:
-            context['is_subscribed'] = request.user.is_authenticated() and \
+            context['is_subscribed'] = request.user.is_authenticated and \
                 Subscription.objects.user_subscribed(request.user,
                                                      context['page'],
                                                      clear_notified=True)

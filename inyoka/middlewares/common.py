@@ -53,7 +53,7 @@ class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
         response = CommonMiddleware.process_response(self, request, response)
 
         # update the cache control
-        if hasattr(request, 'user') and request.user.is_authenticated() \
+        if hasattr(request, 'user') and request.user.is_authenticated \
            or len(messages.get_messages(request)):
             response['Cache-Control'] = 'no-cache'
 

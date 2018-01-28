@@ -334,7 +334,7 @@ class TestAuthViews(TestCase):
         self.assertTrue(User.objects.get(pk=self.user.pk).is_deleted)
 
         # Once an account is deactivated the user session will be terminated.
-        self.assertFalse(self.client.user.is_authenticated())
+        self.assertFalse(self.client.user.is_authenticated)
 
         subject = mail.outbox[0].subject
         self.assertIn(u'Deactivation of your account “user”', subject)
@@ -355,7 +355,7 @@ class TestAuthViews(TestCase):
 
         # Changing an email address requires a valid session
         self.client.logout()
-        self.assertFalse(self.client.user.is_authenticated())
+        self.assertFalse(self.client.user.is_authenticated)
 
         # Perform invalid mail change
         subject = mail.outbox[0].subject
@@ -372,7 +372,7 @@ class TestAuthViews(TestCase):
         with translation.override('en-us'):
             response = self.client.post('/confirm/set_new_email/', postdata)
         self.client.logout()
-        self.assertFalse(self.client.user.is_authenticated())
+        self.assertFalse(self.client.user.is_authenticated)
 
         # Perform invalid mail reset
         subject = mail.outbox[1].subject

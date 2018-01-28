@@ -61,7 +61,7 @@ def populate_context_defaults(context, flash=False):
         user = None
 
     reported = pms = suggestions = events = reported_articles = 0
-    if request and user.is_authenticated():
+    if request and user.is_authenticated:
         can = {'manage_topics': user.has_perm('forum.manage_reported_topic'),
                'article_edit': user.has_perm('ikhaya.change_article'),
                'event_edit': user.has_perm('portal.change_event')}

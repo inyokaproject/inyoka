@@ -367,6 +367,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     def is_anonymous(self):
         return self.username == settings.ANONYMOUS_USER_NAME
 
+    @property
     def is_authenticated(self):
         return not self.is_anonymous
 

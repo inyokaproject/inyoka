@@ -102,7 +102,7 @@ def get_calendar_entry(request):
 
 @dispatcher.register()
 def toggle_sidebar(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return False
     component = request.GET.get('component')
     if component not in ('ikhaya', 'planet', 'admin'):
@@ -118,7 +118,7 @@ def toggle_sidebar(request):
 
 @dispatcher.register()
 def hide_global_message(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         request.user.settings['global_message_hidden'] = time.time()
         request.user.save(update_fields=['settings'])
         return True

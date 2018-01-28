@@ -184,7 +184,7 @@ def detail(request, year, month, day, slug):
                                  u'users.'))
 
     if request.method == 'POST' and (not article.comments_enabled or
-                                     not request.user.is_authenticated()):
+                                     not request.user.is_authenticated):
         return AccessDeniedResponse()
 
     # clear notification status
@@ -230,8 +230,8 @@ def detail(request, year, month, day, slug):
         'comments': article.comment_set.select_related('author'),
         'form': form,
         'preview': preview,
-        'can_post_comment': request.user.is_authenticated(),
-        'can_subscribe': request.user.is_authenticated(),
+        'can_post_comment': request.user.is_authenticated,
+        'can_subscribe': request.user.is_authenticated,
         'can_admin_comment': request.user.has_perm('ikhaya.change_comment'),
         'can_edit_article': request.user.has_perm('ikhaya.change_article'),
         'is_subscribed': subscribed

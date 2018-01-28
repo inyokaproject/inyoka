@@ -48,7 +48,7 @@ def set_session_info(request):
         'last_changed': datetime.utcnow()
     }
 
-    if request.user.is_authenticated() and not request.user.settings.get('hide_profile', False):
+    if request.user.is_authenticated and not request.user.settings.get('hide_profile', False):
         session['type'] = 'team' if request.user.has_perm('ikhaya.view_unpublished_article') else 'user'
         session['anonymous'] = False
         session['userid'] = request.user.id

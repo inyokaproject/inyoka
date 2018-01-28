@@ -104,7 +104,7 @@ def index(request, category=None):
         categories = tuple(forum for forum in forums if forum in all_categories)
 
     hidden_categories = []
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         hidden_categories.extend(request.user.settings.get(
             'hidden_forum_categories', ())
         )
@@ -247,7 +247,7 @@ def viewtopic(request, topic_slug, page=1):
         p.topic = topic
 
     # clear read status and subscriptions
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         topic.mark_read(request.user)
 
     subscribed = Subscription.objects.user_subscribed(request.user, topic,
