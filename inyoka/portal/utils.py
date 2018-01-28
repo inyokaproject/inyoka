@@ -24,7 +24,7 @@ from inyoka.utils.urls import href
 
 def abort_access_denied(request):
     """Abort with an access denied message or go to login."""
-    if request.user.is_anonymous():
+    if request.user.is_anonymous:
         args = {'next': '//%s%s' % (request.get_host(), request.path)}
         return HttpResponseRedirect(href('portal', 'login', **args))
     return AccessDeniedResponse()

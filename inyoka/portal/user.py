@@ -363,11 +363,12 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         else:
             return False
 
+    @property
     def is_anonymous(self):
         return self.username == settings.ANONYMOUS_USER_NAME
 
     def is_authenticated(self):
-        return not self.is_anonymous()
+        return not self.is_anonymous
 
     @property
     def is_active(self):

@@ -151,7 +151,7 @@ def index(request, year=None, month=None, category_slug=None, page=1,
         pagination.get_queryset()])
 
     subscription_ids = []
-    if not request.user.is_anonymous():
+    if not request.user.is_anonymous:
         subscription_ids = Subscription.objects \
             .values_list('object_id', flat=True) \
             .filter(user=request.user, content_type=ctype(Article))
