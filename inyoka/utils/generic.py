@@ -11,6 +11,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.views import redirect_to_login
+from django.contrib.auth.mixins import PermissionRequiredMixin as _PermissionRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponseRedirect
 from django.utils.html import escape
@@ -24,7 +25,6 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.sortable import Sortable
 from inyoka.utils.templating import render_template
 from inyoka.utils.urls import href
-from inyoka.utils.django_19_auth_mixins import PermissionRequiredMixin as _PermissionRequiredMixin
 
 
 def trigger_fix_errors_message(request):
