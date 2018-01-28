@@ -19,7 +19,7 @@ from django.core.cache import cache
 from django.template.context_processors import csrf
 from django.forms.widgets import CheckboxInput
 from django.template.base import Context as DjangoContext
-from django.template.base import TemplateDoesNotExist
+from django.template.exceptions import TemplateDoesNotExist
 from django.template.loaders.base import Loader
 from django.utils import six, translation
 from django.utils.encoding import force_unicode
