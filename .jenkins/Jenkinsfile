@@ -46,7 +46,7 @@ pipeline {
               git branch: 'staging', url: 'git@github.com:inyokaproject/theme-ubuntuusers'
 
               sh """
-              git checkout ${env.BRANCH_NAME} || git checkout staging
+              git checkout ${CHANGE_TARGET} || git checkout staging
 
               npm install
               ./node_modules/grunt-cli/bin/grunt
