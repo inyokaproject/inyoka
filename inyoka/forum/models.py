@@ -1427,25 +1427,19 @@ class ReadStatus(object):
             for child in item.children:
                 self.mark(child, user)
             if item.parent_id:
-                parents_children = item.parent.children
-                unread_items = reduce(lambda a, b: a and b,
-                                      [self(c) for c in parents_children], True)
-                if parents_children and unread_items:
+                siblings = item.parent.children
+                all_siblings_are_read = reduce(lambda a, b: a and b,
+                                      [self(sibling) for sibling in siblings], True)
+                if siblings and all_siblings_are_read:
                     self.mark(item.parent, user)
             return True
 
-        row = self.data.get(forum_id, (None, set()))
-        row[1].add(post_id)
+        self.__add_topics_read_state_to_forum(forum_id, post_id)
+
+        # Mark the containing forum as read, if this was the last unread topic
         children = item.forum.children
         if children:
             return True
-        if len(row[1]) > settings.FORUM_LIMIT_UNREAD:
-            r = sorted(row[1])
-            row = (r[settings.FORUM_LIMIT_UNREAD // 2],
-                set(r[settings.FORUM_LIMIT_UNREAD // 2:]))
-        self.data[forum_id] = row
-
-        # Mark the containing forum as read, if this was the last unread topic
         topics = Topic.objects.filter(forum=item.forum)\
                       .order_by('-sticky', '-last_post')[:settings.FORUM_LIMIT_UNREAD]
         for topic in topics:
@@ -1453,6 +1447,22 @@ class ReadStatus(object):
                 return True
         self.mark(item.forum, user)
         return True
+
+    def __add_topics_read_state_to_forum(self, parent_forum_id, last_post_id_in_topic):
+        """
+        This saves the read state to the parent forum.
+        It also_limits the number of topics for which the read status is stored to FORUM_LIMIT_UNREAD.
+        If this number is reached, the older half of the stored entries will be discarded.
+        """
+        row = self.data.get(parent_forum_id, (None, set()))
+        row[1].add(last_post_id_in_topic)
+        if len(row[1]) > settings.FORUM_LIMIT_UNREAD:
+            r = sorted(row[1])
+            row = (
+                r[settings.FORUM_LIMIT_UNREAD // 2],
+                set(r[settings.FORUM_LIMIT_UNREAD // 2:])
+            )
+        self.data[parent_forum_id] = row
 
     def serialize(self):
         return cPickle.dumps(self.data)
