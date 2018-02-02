@@ -725,6 +725,7 @@ def events(request, show_all=False, invisible=False):
         events = Event.objects.filter(date__gt=date.today(), visible=True)
 
     events = events.select_related('author')
+    events = events.only('author__username', 'slug', 'name', 'date')
 
     sortable = Sortable(events, request.GET, '-date',
         columns=['name', 'date'])
