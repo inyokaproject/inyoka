@@ -31,7 +31,7 @@ dispatcher = SimpleDispatcher()
 
 @dispatcher.register()
 def get_smilies(request):
-    """Get a list of smilies"""
+    """Get a list of smilies TODO: used in JS to add it to the editor?"""
     return get_smiley_map()
 
 
