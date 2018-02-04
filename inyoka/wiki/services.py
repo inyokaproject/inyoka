@@ -22,17 +22,10 @@ from inyoka.forum.models import Post as ForumPost
 from inyoka.markup import parse, RenderContext
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import get_smiley_map
 from inyoka.wiki.exceptions import CaseSensitiveException
 
 
 dispatcher = SimpleDispatcher()
-
-
-@dispatcher.register()
-def get_smilies(request):
-    """Get a list of smilies TODO: used in JS to add it to the editor?"""
-    return get_smiley_map()
 
 
 @require_http_methods(['GET','POST'])
