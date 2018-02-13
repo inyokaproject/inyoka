@@ -23,6 +23,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
+from django.core import signing
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -1129,4 +1130,15 @@ class EditStyleForm(forms.Form):
 class TokenForm(forms.Form):
     data = forms.CharField(
         label=ugettext_lazy(u'Please enter the string which was sent to you by email below:'),
-        widget=forms.Textarea(attrs={'rows': 5}))
+        widget=forms.Textarea())
+
+    def clean_data(self):
+        salt = 'inyoka.action.set_new_email'
+        data = self.cleaned_data['data']
+        try:
+            data = signing.loads(data,
+                                 max_age=settings.USER_SET_NEW_EMAIL_LIMIT * 24 * 60 * 60,
+                                 salt=salt)
+        except (ValueError, signing.BadSignature):
+            raise forms.ValidationError("Schade")
+        return data

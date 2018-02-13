@@ -18,7 +18,6 @@ from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import password_reset, password_reset_confirm
 from django.contrib.auth.models import Group
-from django.core import signing
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
@@ -1523,19 +1522,24 @@ def confirm(request, action):
 
     func, lifetime = CONFIRM_ACTIONS.get(action)
     data = request.POST.get('data', u'').strip()
-    form = TokenForm(initial={'data': request.GET.get('token', u'').strip()})
+
+    if request.method == 'POST':
+        form = TokenForm(request.POST)
+
+        if form.is_valid():
+            action = 'success'
+            data = form.cleaned_data['data']
+        else:
+            return {
+                'failed': _(u'The entered data is invalid or has expired.'),
+            }
+
+    else:
+        form = TokenForm(initial={'data': request.GET.get('token', u'')})
 
     if not data:
         return {'action': action,
                 'form': form}
-
-    try:
-        salt = 'inyoka.action.%s' % action
-        data = signing.loads(data, max_age=lifetime * 24 * 60 * 60, salt=salt)
-    except (ValueError, signing.BadSignature):
-        return {
-            'failed': _(u'The entered data is invalid or has expired.'),
-        }
 
     r = func(**data)
     r['action'] = action
