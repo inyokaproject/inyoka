@@ -1,21 +1,21 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2017 Inyoka Team (see AUTHORS)
+# Copyright (C) 2018 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.17.0\n"
+"Project-Id-Version: Inyoka Project v0.17.3\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-12-18 02:05+0100\n"
+"POT-Creation-Date: 2018-02-14 11:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.0\n"
+"Generated-By: Babel 2.5.1\n"
 
 #, python-format
 msgid "%(sitename)s - Message from %(username)s"
@@ -269,9 +269,6 @@ msgstr ""
 msgid "Key"
 msgstr ""
 
-msgid "Last read post"
-msgstr ""
-
 msgid "Launchpad username"
 msgstr ""
 
@@ -349,6 +346,9 @@ msgid "Please choose"
 msgstr ""
 
 msgid "Please enter at least one receiver."
+msgstr ""
+
+msgid "Please enter the string which was sent to you by email below"
 msgstr ""
 
 msgid "Please note the details on the maximum size below."
