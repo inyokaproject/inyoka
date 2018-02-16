@@ -162,12 +162,16 @@ def do_metaexport(request, name):
     except Page.DoesNotExist:
         return HttpResponse(u'', content_type='text/plain; charset=utf-8',
                             status=404)
+
     metadata = []
     for key, values in page.metadata.iteritems():
         for value in values:
             metadata.append(u'%s: %s' % (key, value))
-    return HttpResponse(u'\n'.join(metadata).encode('utf-8'),
-                        content_type='text/plain; charset=utf-8')
+
+    response = HttpResponse(u'\n'.join(metadata).encode('utf-8'),
+                            content_type='text/plain; charset=utf-8')
+    response['X-Robots-Tag'] = 'noindex'
+    return response
 
 
 @templated('wiki/missing_page.html', status=404, modifier=context_modifier)
