@@ -162,7 +162,6 @@ class MoveTopicForm(forms.Form):
     This form gives the user the possibility to select a new forum for a
     topic.
     """
-    # forum: see __init__
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
@@ -187,7 +186,6 @@ class SplitTopicForm(forms.Form):
     action = forms.ChoiceField(choices=(('add', ''), ('new', '')))
     #: the title of the new topic
     title = forms.CharField(max_length=200)
-    #: forum: the forum of the new topic, see __init__
     #: the slug of the existing topic
     topic = forms.CharField(max_length=200)
     #: version info. defaults to the values set in the old topic.
