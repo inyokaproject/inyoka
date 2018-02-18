@@ -1187,7 +1187,7 @@ def splittopic(request, topic_slug, page=1):
 
             # Sanity check to not circulary split topics to the same topic
             # (they get erased in that case)
-            if data['action'] != 'new' and data['topic'].slug == old_topic.slug:
+            if data['action'] != 'new' and data['topic_to_move'].slug == old_topic.slug:
                 messages.error(request, _(u'You cannot set this topic as target.'))
                 return HttpResponseRedirect(request.path)
 
@@ -1210,7 +1210,7 @@ def splittopic(request, topic_slug, page=1):
 
                 Post.split(posts, old_topic, new_topic)
             else:
-                new_topic = data['topic']
+                new_topic = data['topic_to_move']
                 Post.split(posts, old_topic, new_topic)
 
             del request.session['_split_post_ids']

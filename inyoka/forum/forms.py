@@ -185,8 +185,7 @@ class SplitTopicForm(forms.Form):
     """
     action = forms.ChoiceField(choices=(('add', ''), ('new', '')))
     new_title = forms.CharField(max_length=200)
-    #: the slug of the existing topic
-    topic = forms.CharField(max_length=200)
+    topic_to_move = forms.CharField(max_length=200)
     #: version info. defaults to the values set in the old topic.
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
