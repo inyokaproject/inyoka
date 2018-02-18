@@ -80,10 +80,7 @@ from inyoka.portal.user import (
     User,
     UserBanned,
     deactivate_user,
-    reactivate_user,
-    reset_email,
     send_activation_mail,
-    set_new_email,
 )
 from inyoka.portal.utils import (
     abort_access_denied,
@@ -115,13 +112,6 @@ AUTOBAN_SPAMMER_WORDS = (
     ('Sprachaustausch', 'gesundheitlich', 'immediately'),
 )
 # autoban gets active if all words of a tuple match
-
-
-CONFIRM_ACTIONS = {
-    'reactivate_user': (reactivate_user, settings.USER_REACTIVATION_LIMIT,),
-    'set_new_email': (set_new_email, settings.USER_SET_NEW_EMAIL_LIMIT,),
-    'reset_email': (reset_email, settings.USER_RESET_EMAIL_LIMIT,),
-}
 
 
 page_delete = generic.DeleteView.as_view(model=StaticPage,
@@ -1520,31 +1510,17 @@ def confirm(request, action):
         messages.error(request, _(u'You need to be logged in before you can continue.'))
         return abort_access_denied(request)
 
-    func, lifetime = CONFIRM_ACTIONS.get(action)
-    data = request.POST.get('data', u'').strip()
+    form = TokenForm(initial={'data': request.GET.get('token', u'')})
 
     if request.method == 'POST':
-        form = TokenForm(request.POST)
+        form = TokenForm(request.POST, action=action)
 
         if form.is_valid():
-            action = 'success'
-            data = form.cleaned_data['data']
-        else:
-            return {
-                'failed': _(u'The entered data is invalid or has expired.'),
-            }
+            messages.success(request, _(u'Your settings have been changed successfully.'))
+            return HttpResponseRedirect(href('portal', 'usercp'))
 
-    else:
-        form = TokenForm(initial={'data': request.GET.get('token', u'')})
-
-    if not data:
-        return {'action': action,
-                'form': form}
-
-    r = func(**data)
-    r['action'] = action
-    r['form'] = form
-    return r
+    return {'action': action,
+            'form': form}
 
 
 @login_required
