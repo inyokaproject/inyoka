@@ -1200,7 +1200,7 @@ def splittopic(request, topic_slug, page=1):
                           'hidden.'))
                     return HttpResponseRedirect(request.path)
                 new_topic = Topic.objects.create(
-                    title=data['title'],
+                    title=data['new_title'],
                     forum=data['forum'],
                     slug=None,
                     author_id=posts[0].author_id,

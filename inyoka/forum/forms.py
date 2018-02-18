@@ -184,8 +184,7 @@ class SplitTopicForm(forms.Form):
     the posts should be moved into an existing or a new topic.
     """
     action = forms.ChoiceField(choices=(('add', ''), ('new', '')))
-    #: the title of the new topic
-    title = forms.CharField(max_length=200)
+    new_title = forms.CharField(max_length=200)
     #: the slug of the existing topic
     topic = forms.CharField(max_length=200)
     #: version info. defaults to the values set in the old topic.
@@ -205,7 +204,7 @@ class SplitTopicForm(forms.Form):
         if data.get('action') == 'new':
             self._errors.pop('topic', None)
         elif data.get('action') == 'add':
-            self._errors.pop('title', None)
+            self._errors.pop('new_title', None)
             self._errors.pop('forum', None)
         return data
 
