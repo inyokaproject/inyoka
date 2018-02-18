@@ -46,6 +46,9 @@ from inyoka.portal.user import (
     User,
     UserPage,
     send_new_email_confirmation,
+    set_new_email,
+    reactivate_user,
+    reset_email
 )
 from inyoka.utils.dates import TIMEZONES
 from inyoka.utils.forms import (
@@ -1127,13 +1130,28 @@ class TokenForm(forms.Form):
         label=ugettext_lazy(u'Please enter the string which was sent to you by email below'),
         widget=forms.Textarea())
 
+    def __init__(self, *args, **kwargs):
+        if 'action' in kwargs:
+            self.action = kwargs.pop('action')
+        super(TokenForm, self).__init__(*args, **kwargs)
+
     def clean_data(self):
-        salt = 'inyoka.action.set_new_email'
+        def get_action_and_limit():
+            if self.action == 'reactivate_user':
+                return (reactivate_user, settings.USER_REACTIVATION_LIMIT,)
+            elif self.action == 'set_new_email':
+                return (set_new_email, settings.USER_SET_NEW_EMAIL_LIMIT,)
+            elif self.action == 'reset_email':
+                return (reset_email, settings.USER_RESET_EMAIL_LIMIT,)
+
+        salt = 'inyoka.action.%s' % self.action
         data = self.cleaned_data['data']
+        func, lifetime = get_action_and_limit()
         try:
             data = signing.loads(data,
-                                 max_age=settings.USER_SET_NEW_EMAIL_LIMIT * 24 * 60 * 60,
+                                 max_age=lifetime * 24 * 60 * 60,
                                  salt=salt)
+            func(**data)
         except (ValueError, signing.BadSignature):
-            raise forms.ValidationError("Schade")
+            raise forms.ValidationError(_(u'The entered data is invalid or has expired.'))
         return data
