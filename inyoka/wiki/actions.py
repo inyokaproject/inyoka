@@ -23,7 +23,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import models
+from django.db import models, transaction
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
@@ -339,6 +339,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
+@transaction.atomic
 def do_rename(request, name, new_name=None, force=False):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -547,6 +548,7 @@ def do_delete(request, name):
 @require_privilege('manage')
 @templated('wiki/action_mv_baustelle.html')
 @case_sensitive_redirect
+@transaction.atomic
 def do_mv_baustelle(request, name):
     """
     "Move" the page to an editing area called "Baustelle", ie. do:
@@ -627,6 +629,7 @@ def do_mv_baustelle(request, name):
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
+@transaction.atomic
 def do_mv_discontinued(request, name):
     """Move page from ``Baustelle`` to ``Baustelle/Verlassen``"""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -664,6 +667,7 @@ def do_mv_discontinued(request, name):
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
+@transaction.atomic
 def do_mv_back(request, name):
     """
     Move page back from ``Baustelle`` to its origin, move copy (which may exist
