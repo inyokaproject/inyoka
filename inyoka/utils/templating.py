@@ -9,30 +9,23 @@
     :license: BSD, see LICENSE for more details.
 """
 import json
-import os
-import sys
-from importlib import import_module
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.template.context_processors import csrf
 from django.forms.widgets import CheckboxInput
+from django.template import engines
 from django.template.base import Context as DjangoContext
-from django.template.exceptions import TemplateDoesNotExist
-from django.template.loaders.base import Loader
-from django.utils import six, translation
+from django.template.loaders.app_directories import Loader
+from django.template.backends.jinja2 import Jinja2
+from django.utils import translation
 from django.utils.encoding import force_unicode
 from django.utils.functional import Promise
 from django.utils.timesince import timesince
 #from django_mobile import get_flavour
-from jinja2 import (
-    Environment,
-    FileSystemLoader,
-    Template,
-    TemplateNotFound,
-    contextfunction,
-)
+import jinja2
+
 
 from inyoka import INYOKA_VERSION
 from inyoka.utils.dates import (
@@ -46,6 +39,8 @@ from inyoka.utils.special_day import check_special_day
 from inyoka.utils.text import human_number
 from inyoka.utils.urls import href, url_for, urlencode, urlquote
 
+
+# TODO: Move into a context processor!
 def populate_context_defaults(context, flash=False):
     """Fill in context defaults."""
     from inyoka.forum.models import Topic
@@ -154,29 +149,25 @@ def populate_context_defaults(context, flash=False):
     )
 
 
-def load_template(template_name):
+# TODO: try to get rid of
+def render_template(template_name, context, flash=False,
+                    populate_defaults=True):
+    """Render a template.  You might want to set `req` to `None`."""
+    # BIG TODO: This currently return a raw Jinja template instead of a Django Template
+    # to support flash/populate_defaults. If we were to take flash from the context instead
+    # we could use context_processor and drop this function completly and use Django's render()
+    # function.
+
     # if available, use dedicated mobile template
     mobile_template_name = template_name
     #if get_flavour() == 'mobile':
     #    path = os.path.splitext(template_name)
     #    mobile_template_name = '{0}m'.join(path).format(os.extsep)
     try:
-        tmpl = jinja_env.get_template(mobile_template_name)
-    except TemplateNotFound:
-        tmpl = jinja_env.get_template(template_name)
-    return tmpl
-
-
-def render_template(template_name, context, flash=False,
-                    populate_defaults=True):
-    """Render a template.  You might want to set `req` to `None`."""
-    tmpl = load_template(template_name)
+        tmpl = engines['jinja'].env.get_template(mobile_template_name)
+    except jinja2.TemplateNotFound:
+        tmpl = engines['jinja'].env.get_template(template_name)
     return tmpl.render(context, flash, populate_defaults)
-
-
-def render_string(source, context):
-    tmpl = jinja_env.from_string(source)
-    return tmpl.render(context)
 
 
 def urlencode_filter(value):
@@ -190,7 +181,8 @@ def ischeckbox_filter(input):
     return isinstance(input, CheckboxInput)
 
 
-@contextfunction
+# TODO: Replace with Django builtins
+@jinja2.contextfunction
 def csrf_token(context):
     csrf_token = context['_csrf_token']
     if csrf_token == 'NOTPROVIDED':
@@ -216,7 +208,7 @@ def json_filter(value):
     return LazyJSONEncoder().encode(value)
 
 
-class JinjaTemplate(Template):
+class JinjaTemplate(jinja2.Template):
     def render(self, context, flash=False, populate_defaults=True):
         context = {} if context is None else context
         if isinstance(context, DjangoContext):
@@ -224,42 +216,26 @@ class JinjaTemplate(Template):
             context = {}
             for d in c.dicts:
                 context.update(d)
-            context.pop('csrf_token', None)  # We have our own...
+        context.pop('csrf_token', None)  # We have our own...
         if populate_defaults:
             populate_context_defaults(context, flash)
         return super(JinjaTemplate, self).render(context)
 
 
-class InyokaEnvironment(Environment):
+class InyokaEnvironment(jinja2.Environment):
     """
     Beefed up version of the jinja environment but without security features
     to improve the performance of the lookups.
     """
     template_class = JinjaTemplate
 
-    def __init__(self):
-        #template_paths = list(settings.TEMPLATE_DIRS)
-        template_paths = []
-
-        # At compile time, cache the directories to search.
-        if not six.PY3:
-            fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
-        for app in settings.INSTALLED_APPS:
-            try:
-                mod = import_module(app)
-            except ImportError:
-                pass
-            template_dir = os.path.join(os.path.dirname(mod.__file__), 'templates')
-            if os.path.isdir(template_dir):
-                if not six.PY3:
-                    template_dir = template_dir.decode(fs_encoding)
-                template_paths.append(template_dir)
-
-        loader = FileSystemLoader(template_paths)
-        Environment.__init__(self, loader=loader,
-                             extensions=['jinja2.ext.i18n', 'jinja2.ext.do'],
-                             auto_reload=settings.DEBUG,
-                             cache_size=-1)
+    def __init__(self, **kwargs):
+        kwargs['autoescape'] = False
+        kwargs.pop('undefined', None)
+        jinja2.Environment.__init__(self,
+                                    extensions=['jinja2.ext.i18n', 'jinja2.ext.do'],
+                                    cache_size=-1,
+                                    **kwargs)
 
         self.globals.update(BASE_DOMAIN_NAME=settings.BASE_DOMAIN_NAME,
                             INYOKA_VERSION=INYOKA_VERSION,
@@ -271,22 +247,23 @@ class InyokaEnvironment(Environment):
 
         self.install_gettext_translations(translation, newstyle=True)
 
-    def _compile(self, source, filename):
-        filename = 'jinja:/' + filename if filename.startswith('/') else filename
-        code = compile(source, filename, 'exec')
-        return code
+# TODO: Reevaluate if needed for debug toolbar or so
+#    def _compile(self, source, filename):
+#        filename = 'jinja:/' + filename if filename.startswith('/') else filename
+#        code = compile(source, filename, 'exec')
+#        return code
 
 
 class DjangoLoader(Loader):
-    is_usable = True
+    def get_template_sources(self, template_name, skip=None):
+        if not template_name.startswith('debug_toolbar'):
+            return []
+        return super(DjangoLoader, self).get_template_sources(template_name, skip)
 
-    def load_template(self, template_name, template_dirs=None):
-        if template_name.startswith('debug_toolbar'):
-            raise TemplateDoesNotExist
-        try:
-            return load_template(template_name), template_name
-        except TemplateNotFound:
-            raise TemplateDoesNotExist(template_name)
+
+class Jinja2Templates(Jinja2):
+    # TODO: Rename the templates folder in theme to jinja2, then we can drop this class too
+    app_dirname = 'templates'
 
 
 #: Filters that are globally available in the template environment
@@ -307,6 +284,3 @@ FILTERS = {
     'time': format_time,
     'timetz': format_timetz,
 }
-
-# setup the template environment
-jinja_env = InyokaEnvironment()
