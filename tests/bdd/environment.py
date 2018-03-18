@@ -6,6 +6,8 @@ from django.test.runner import DiscoverRunner
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+from tests.bdd.steps.utils import take_screenshot
+
 os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.bdd.settings.headless'
 
 
@@ -41,11 +43,7 @@ def before_scenario(context, scenario):
 
 def after_step(context, step):
     if step.status == "failed":
-        directory = os.path.join(context.LOG_DIR, context.feature.name, context.scenario.name)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        filename = os.path.join(directory, step.name + ".png")
-        context.browser.get_screenshot_as_file(filename)
+        take_screenshot(context, step.name)
 
 
 def after_scenario(context, scenario):
