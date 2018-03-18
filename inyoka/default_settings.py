@@ -12,6 +12,7 @@ from datetime import timedelta
 from os.path import dirname, join
 
 from celery.schedules import crontab
+import jinja2
 
 gettext_noop = lambda x: x
 
@@ -442,7 +443,12 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'environment': 'inyoka.utils.templating.InyokaEnvironment',
+            'environment': 'inyoka.utils.templating.environment',
+            'autoescape': False,
+            'extensions': ['jinja2.ext.i18n', 'jinja2.ext.do'],
+            'cache_size': -1,
+            'context_processors': ['inyoka.utils.templating.context_data'],
+            'undefined': jinja2.Undefined,
         }
     }
 ]

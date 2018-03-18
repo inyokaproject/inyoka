@@ -13,12 +13,11 @@ import json
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
-from django.template.context_processors import csrf
 from django.forms.widgets import CheckboxInput
-from django.template import engines
-from django.template.base import Context as DjangoContext
+from django.template import loader
 from django.template.loaders.app_directories import Loader
 from django.template.backends.jinja2 import Jinja2
+from django.template.backends.utils import csrf_input
 from django.utils import translation
 from django.utils.encoding import force_unicode
 from django.utils.functional import Promise
@@ -40,23 +39,17 @@ from inyoka.utils.text import human_number
 from inyoka.utils.urls import href, url_for, urlencode, urlquote
 
 
-# TODO: Move into a context processor!
-def populate_context_defaults(context, flash=False):
+def context_data(request):
     """Fill in context defaults."""
     from inyoka.forum.models import Topic
     from inyoka.portal.models import PrivateMessageEntry
     from inyoka.utils.storage import storage
     from inyoka.ikhaya.models import Suggestion, Event, Report
 
-    try:
-        request = current_request._get_current_object()
-        user = request.user
-    except (RuntimeError, AttributeError):
-        request = None
-        user = None
+    user = request.user
 
     reported = pms = suggestions = events = reported_articles = 0
-    if request and user.is_authenticated:
+    if user.is_authenticated:
         can = {'manage_topics': user.has_perm('forum.manage_reported_topic'),
                'article_edit': user.has_perm('ikhaya.change_article'),
                'event_edit': user.has_perm('portal.change_event')}
@@ -112,25 +105,30 @@ def populate_context_defaults(context, flash=False):
 
     # we don't need to use cache here because storage does this for us
     global_message = storage['global_message_rendered']
-    if global_message and request:
+    if global_message:
         age_global_message = float(storage['global_message_time'] or 0.0)
         timestamp_user_has_hidden_global_message = user.settings.get(
             'global_message_hidden', 0)
         if timestamp_user_has_hidden_global_message > age_global_message:
             global_message = None
 
-    if request:
-        context.update(
-            CURRENT_URL=request.build_absolute_uri(),
-            USER=user,
-            MOBILE=None,  # get_flavour() == 'mobile',
-            _csrf_token=force_unicode(csrf(request)['csrf_token']),
-            special_day_css=check_special_day(),
-            LANGUAGE_CODE=settings.LANGUAGE_CODE
-        )
+    context = {
+        'CURRENT_URL': request.build_absolute_uri(),
+        'USER': user,
+        'MOBILE': None,  # get_flavour() == 'mobile',
+        'special_day_css': check_special_day(),
+        'LANGUAGE_CODE': settings.LANGUAGE_CODE,
+        'MESSAGES': messages.get_messages(request),
+        'GLOBAL_MESSAGE': global_message,
+        'pm_count': pms,
+        'report_count': reported,
+        'article_report_count': reported_articles,
+        'suggestion_count': suggestions,
+        'event_count': events,
+    }
 
-        if not flash:
-            context['MESSAGES'] = messages.get_messages(request)
+    # TODO: Replace with django builtins
+    context['csrf_token'] = lambda: csrf_input(request)
 
     if settings.DEBUG:
         from django.db import connection
@@ -139,14 +137,7 @@ def populate_context_defaults(context, flash=False):
             sql_queries_time=sum(float(q['time']) for q in connection.queries),
         )
 
-    context.update(
-        GLOBAL_MESSAGE=global_message,
-        pm_count=pms,
-        report_count=reported,
-        article_report_count=reported_articles,
-        suggestion_count=suggestions,
-        event_count=events,
-    )
+    return context
 
 
 # TODO: try to get rid of
@@ -163,11 +154,13 @@ def render_template(template_name, context, flash=False,
     #if get_flavour() == 'mobile':
     #    path = os.path.splitext(template_name)
     #    mobile_template_name = '{0}m'.join(path).format(os.extsep)
+
+    tmpl = loader.select_template([mobile_template_name, template_name])
     try:
-        tmpl = engines['jinja'].env.get_template(mobile_template_name)
-    except jinja2.TemplateNotFound:
-        tmpl = engines['jinja'].env.get_template(template_name)
-    return tmpl.render(context, flash, populate_defaults)
+        request = current_request._get_current_object()
+    except RuntimeError:
+        request = None
+    return tmpl.render(context, request)
 
 
 def urlencode_filter(value):
@@ -179,17 +172,6 @@ def urlencode_filter(value):
 
 def ischeckbox_filter(input):
     return isinstance(input, CheckboxInput)
-
-
-# TODO: Replace with Django builtins
-@jinja2.contextfunction
-def csrf_token(context):
-    csrf_token = context['_csrf_token']
-    if csrf_token == 'NOTPROVIDED':
-        return u''
-    else:
-        return ("<div style='display:none'><input type='hidden' "
-                "name='csrfmiddlewaretoken' value='%s' /></div>") % csrf_token
 
 
 class LazyJSONEncoder(json.JSONEncoder):
@@ -208,44 +190,20 @@ def json_filter(value):
     return LazyJSONEncoder().encode(value)
 
 
-class JinjaTemplate(jinja2.Template):
-    def render(self, context, flash=False, populate_defaults=True):
-        context = {} if context is None else context
-        if isinstance(context, DjangoContext):
-            c = context
-            context = {}
-            for d in c.dicts:
-                context.update(d)
-        context.pop('csrf_token', None)  # We have our own...
-        if populate_defaults:
-            populate_context_defaults(context, flash)
-        return super(JinjaTemplate, self).render(context)
+def environment(**options):
+    env = jinja2.Environment(**options)
 
+    env.globals.update(BASE_DOMAIN_NAME=settings.BASE_DOMAIN_NAME,
+                       INYOKA_VERSION=INYOKA_VERSION,
+                       SETTINGS=settings,
+                       # TODO: Django already passes the request as request, sed over all templates
+                       REQUEST=current_request,
+                       href=href)
+    env.filters.update(FILTERS)
 
-class InyokaEnvironment(jinja2.Environment):
-    """
-    Beefed up version of the jinja environment but without security features
-    to improve the performance of the lookups.
-    """
-    template_class = JinjaTemplate
+    env.install_gettext_translations(translation, newstyle=True)
 
-    def __init__(self, **kwargs):
-        kwargs['autoescape'] = False
-        kwargs.pop('undefined', None)
-        jinja2.Environment.__init__(self,
-                                    extensions=['jinja2.ext.i18n', 'jinja2.ext.do'],
-                                    cache_size=-1,
-                                    **kwargs)
-
-        self.globals.update(BASE_DOMAIN_NAME=settings.BASE_DOMAIN_NAME,
-                            INYOKA_VERSION=INYOKA_VERSION,
-                            SETTINGS=settings,
-                            REQUEST=current_request,
-                            href=href,
-                            csrf_token=csrf_token)
-        self.filters.update(FILTERS)
-
-        self.install_gettext_translations(translation, newstyle=True)
+    return env
 
 # TODO: Reevaluate if needed for debug toolbar or so
 #    def _compile(self, source, filename):
@@ -262,7 +220,7 @@ class DjangoLoader(Loader):
 
 
 class Jinja2Templates(Jinja2):
-    # TODO: Rename the templates folder in theme to jinja2, then we can drop this class too
+    # TODO: Rename the templates folder in theme to jinja2, then we can drop this class and DjangoLoader
     app_dirname = 'templates'
 
 
