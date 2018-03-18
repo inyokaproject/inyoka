@@ -1,3 +1,4 @@
+@password_forgotten
 Feature: Password forgotten
   A user should be able to help himself if he has forgotten his password.
 

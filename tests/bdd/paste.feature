@@ -1,3 +1,4 @@
+@paste
 Feature: Paste
   Inyoka provides also a module to manage pastes.
 
