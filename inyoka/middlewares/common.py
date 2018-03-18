@@ -19,8 +19,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.middleware.common import CommonMiddleware
 from django_hosts.middleware import HostsRequestMiddleware
-from django_mobile.middleware import \
-    MobileDetectionMiddleware as BaseMobileDetectionMiddleware
+#from django_mobile.middleware import \
+#    MobileDetectionMiddleware as BaseMobileDetectionMiddleware
 
 from inyoka.utils.local import local, local_manager
 from inyoka.utils.logger import logger
@@ -81,8 +81,8 @@ class CommonServicesMiddleware(HostsRequestMiddleware, CommonMiddleware):
         return response
 
 
-class MobileDetectionMiddleware(BaseMobileDetectionMiddleware):
-    agents = ('up.browser', 'up.link', 'mmp', 'symbian', 'smartphone',
-              'midp', 'wap', 'phone', 'windows ce', 'pda', 'mobile',
-              'mini', 'palm', 'netfront', 'fennec')
-    user_agents_test_search = "(?:%(agents)s)" % {'agents': '|'.join(agents)}
+#class MobileDetectionMiddleware(BaseMobileDetectionMiddleware):
+#    agents = ('up.browser', 'up.link', 'mmp', 'symbian', 'smartphone',
+#              'midp', 'wap', 'phone', 'windows ce', 'pda', 'mobile',
+#              'mini', 'palm', 'netfront', 'fennec')
+#    user_agents_test_search = "(?:%(agents)s)" % {'agents': '|'.join(agents)}

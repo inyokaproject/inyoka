@@ -32,7 +32,7 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
 from django.views.decorators.http import require_POST
-from django_mobile import get_flavour
+#from django_mobile import get_flavour
 from PIL import Image
 
 from inyoka.forum.models import Forum

@@ -229,8 +229,8 @@ MIDDLEWARE_CLASSES = (
     'inyoka.middlewares.tz.TimezoneMiddleware',
     'inyoka.middlewares.services.ServiceMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    'inyoka.middlewares.common.MobileDetectionMiddleware',
-    'django_mobile.middleware.SetFlavourMiddleware',
+#    'inyoka.middlewares.common.MobileDetectionMiddleware',
+#    'django_mobile.middleware.SetFlavourMiddleware',
     'django_hosts.middleware.HostsResponseMiddleware',
 )
 
@@ -254,7 +254,7 @@ INSTALLED_APPS = (
     'inyoka.pastebin.apps.PastebinAppConfig',
     'inyoka.planet.apps.PlanetAppConfig',
     'inyoka.markup.apps.MarkupAppConfig',
-    'django_mobile',
+#    'django_mobile',
     'django_hosts',
     'guardian',
 )
@@ -424,14 +424,18 @@ PASSWORD_HASHERS = (
     'inyoka.utils.user.UnsaltedMD5PasswordHasher',
 )
 
-TEMPLATE_LOADERS = (
-    'inyoka.utils.templating.DjangoLoader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = ()
-
-TEMPLATE_DIRS = []
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'OPTIONS': {
+            'loaders': [
+                'inyoka.utils.templating.DjangoLoader',
+                'django.template.loaders.app_directories.Loader',
+            ]
+        },
+    },
+]
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 
