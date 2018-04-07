@@ -23,6 +23,7 @@ from django.contrib.auth.models import (
 from django.contrib.auth.signals import user_logged_in
 from django.core import signing
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.dispatch import receiver
 from django.utils.html import escape
@@ -57,14 +58,17 @@ def reactivate_user(id, email, status):
     email_exists = User.objects.filter(email=email).exists()
     if email_exists:
         msg = _(u'This e-mail address is used by another user.')
-        return {'failed': msg}
+        raise ValidationError(msg)
+    # return {'failed': msg}
 
     user = User.objects.get(id=id)
     if not user.is_deleted:
-        return {
+        raise ValidationError(_(u'The account “%(name)s” was already reactivated.') %
+                              {'name': escape(user.username)},)
+        """return {
             'failed': _(u'The account “%(name)s” was already reactivated.') %
                {'name': escape(user.username)},
-        }
+        }"""
     user.email = email
     user.status = status
 
@@ -81,11 +85,8 @@ def reactivate_user(id, email, status):
     if user.status == User.STATUS_ACTIVE:
         user.groups.add(Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME))
 
-    return {
-        'success': _(u'The account “%(name)s” was reactivated. Please use the '
-                     u'password recovery function to set a new password.')
-        % {'name': escape(user.username)},
-    }
+    return _(u'The account “%(name)s” was reactivated. Please use the '
+             u'password recovery function to set a new password.') % {'name': escape(user.username)}
 
 
 def deactivate_user(user):
@@ -161,9 +162,7 @@ def set_new_email(id, email):
 
     user.email = email
     user.save()
-    return {
-        'success': _(u'Your new email address was saved.')
-    }
+    return _(u'Your new email address was saved.')
 
 
 def reset_email(id, email):
@@ -171,9 +170,7 @@ def reset_email(id, email):
     user.email = email
     user.save()
 
-    return {
-        'success': _(u'Your email address was reset.')
-    }
+    return _(u'Your email address was reset.')
 
 
 def send_activation_mail(user):

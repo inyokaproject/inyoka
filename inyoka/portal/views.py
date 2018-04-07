@@ -1517,6 +1517,7 @@ def confirm(request, action):
 
         if form.is_valid():
             messages.success(request, _(u'Your settings have been changed successfully.'))
+            messages.success(request, form.cleaned_data['data'])
             return HttpResponseRedirect(href('portal', 'usercp'))
 
     return {'action': action,
