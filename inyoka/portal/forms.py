@@ -1151,7 +1151,6 @@ class TokenForm(forms.Form):
             data = signing.loads(data,
                                  max_age=lifetime * 24 * 60 * 60,
                                  salt=salt)
-            func(**data)
         except (ValueError, signing.BadSignature):
             raise forms.ValidationError(_(u'The entered data is invalid or has expired.'))
-        return data
+        return func(**data)
