@@ -375,6 +375,7 @@ def _get_wiki_article_templates():
     # TODO: this is a hack, do not have these hardcoded here!
     return [('Vorlage/Artikel_normal', _(u'Normal (for experienced authors)')),
             ('Vorlage/Artikel_umfangreich', _(u'Extensive (for beginners)')),
+            ('Vorlage/Howto', _(u'Howto')),
             ('', _(u'I don\'t want a template'))]
 
 
