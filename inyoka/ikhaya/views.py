@@ -861,8 +861,7 @@ def event_suggest(request):
             messages.success(request,
                 _(u'The event has been saved. A team member will review it '
                   u'soon.'))
-            event = Event.objects.get(id=event.id)  # get truncated slug
-            return HttpResponseRedirect(url_for(event))
+            return HttpResponseRedirect(href('portal', 'calendar'))
     else:
         form = NewEventForm()
 
