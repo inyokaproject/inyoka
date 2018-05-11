@@ -14,7 +14,6 @@ DATABASES = {
 
 INSTALLED_APPS = INSTALLED_APPS + (
     'inyoka_theme_ubuntuusers',
-    'behave_django'
 )
 
 # debug settings
