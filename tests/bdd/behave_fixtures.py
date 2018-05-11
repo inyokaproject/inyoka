@@ -10,13 +10,12 @@ from selenium.webdriver import Chrome
 @fixture
 def django_test_runner(context):
     django.setup()
-    context.test_runner = DiscoverRunner()
-    context.test_runner.keepdb = True
-    context.test_runner.setup_test_environment()
+    context.test_runner = DiscoverRunner(keepdb=False)
     context.old_db_config = context.test_runner.setup_databases()
+    context.test_runner.setup_test_environment()
     yield
-    context.test_runner.teardown_databases(context.old_db_config)
     context.test_runner.teardown_test_environment()
+    context.test_runner.teardown_databases(context.old_db_config)
 
 
 @fixture
@@ -28,6 +27,7 @@ def django_test_case(context):
     yield context.base_url
     context.test_case.tearDownClass()
     del context.test_case
+
 
 
 @fixture

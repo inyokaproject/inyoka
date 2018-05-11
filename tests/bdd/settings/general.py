@@ -1,11 +1,12 @@
+from uuid import uuid1
+
 from inyoka.default_settings import *
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'bdd',
-        'USER': 'root',
-        'PASSWORD': '',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bdd_{}'.format(uuid1()),
+        'USER': 'postgres',
         'HOST': '',
         'PORT': '',
     }
