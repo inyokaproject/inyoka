@@ -3,7 +3,7 @@ import os
 from behave import use_fixture
 from django.conf import settings
 
-from tests.bdd.behave_fixtures import browser_chrome, django_test_case, django_test_runner
+from tests.bdd.behave_fixtures import browser_chrome, django_test_case, django_test_runner, setup_cache
 from tests.bdd.steps.utils import take_screenshot
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.bdd.settings.headless'
@@ -16,6 +16,7 @@ def before_all(context):
 def before_scenario(context, scenario):
     use_fixture(django_test_runner, context)
     use_fixture(django_test_case, context)
+    use_fixture(setup_cache, context)
     use_fixture(browser_chrome, context)
 
     settings.BASE_DOMAIN_NAME = context.base_url[7:]

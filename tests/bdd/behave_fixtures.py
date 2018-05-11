@@ -1,6 +1,8 @@
 from behave import fixture
 import django
+
 from django.conf import settings
+from django.core.cache import cache
 from django.test.runner import DiscoverRunner
 from django.test.testcases import LiveServerTestCase
 from selenium.webdriver.chrome.options import Options
@@ -27,6 +29,11 @@ def django_test_case(context):
     yield context.base_url
     context.test_case.tearDownClass()
     del context.test_case
+
+
+@fixture()
+def setup_cache(context):
+    cache.clear()
 
 
 @fixture
