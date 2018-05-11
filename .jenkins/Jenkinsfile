@@ -86,11 +86,12 @@ pipeline {
         stage('Execute BDD tests'){
           environment {
             DJANGO_SETTINGS_MODULE = 'tests.bdd.settings.headless'
+            PATH = "$PATH:/usr/lib/chromium-browser/"
           }
           steps {
             sh """
             ${activate_venv}
-            coverage run --rcfile tests/bdd/settings/.coveragerc  manage.py behave --junit
+            coverage run --rcfile tests/bdd/settings/.coveragerc -m behave --junit --tags=-skip
             coverage html -d bdd_coverage --rcfile tests/bdd/settings/.coveragerc
             """
           }

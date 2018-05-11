@@ -148,14 +148,14 @@ class JSONField(models.TextField):
     def dumps(self, obj):
         return json.dumps(obj, cls=DjangoJSONEncoder)
 
-    def pre_save(self, obj, create):
+    def pre_save(self, obj, add):
         value = obj.__dict__[self.name]
         if not isinstance(value, basestring):
             value = self.dumps(value)
         return value
 
-    def contribute_to_class(self, cls, name):
-        super(JSONField, self).contribute_to_class(cls, name)
+    def contribute_to_class(self, cls, name, private_only=False, virtual_only=None):
+        super(JSONField, self).contribute_to_class(cls, name, private_only, virtual_only)
         setattr(cls, self.name, SimpleDescriptor(self))
 
 

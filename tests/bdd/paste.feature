@@ -1,3 +1,4 @@
+@paste
 Feature: Paste
   Inyoka provides also a module to manage pastes.
 
@@ -20,6 +21,7 @@ Feature: Paste
       | BDD-User  |
 
 
+  @skip
   Scenario Outline: Users should see an exception if they shouldn't see entries
     Given I am "<username>"
      When I use the "pastebin" and visit the "main" page
@@ -35,7 +37,7 @@ Feature: Paste
     Given I am "<username>"
       And a "paste" with caption "BDD-TEST" exists
       And I have the permission "pastebin.view_entry"
-     When I open the "paste" in detail view
+     When I open the "pastebin" in detail view
      Then I should see elements with values
        | element      | value    |
        | entry_title  | BDD-TEST |
@@ -47,11 +49,11 @@ Feature: Paste
       | anonymous |
       | BDD-User  |
 
-
+  @skip
   Scenario Outline: Users shouldn't see the details of a paste if they haven't got the permission
     Given I am "<username>"
       And a "paste" with caption "BDD-TEST" exists
-     When I open the "paste" in <view_type> view
+     When I open the "pastebin" in <view_type> view
      Then I should see a "403" exception
 
     Examples:
@@ -65,7 +67,7 @@ Feature: Paste
   Scenario Outline: If the paste isn't found a not found message should be returned
     Given I am "<username>"
       And I have the permission "<permission>"
-     When I open the "paste" <view_type> view of "42"
+     When I open the "pastebin" <view_type> view of "42"
      Then I should see a "not-found" message
 
     Examples:
@@ -81,7 +83,7 @@ Feature: Paste
     Given I am "<username>"
       And a "paste" with caption "BDD-TEST" exists
       And I have the permission "pastebin.view_entry"
-     When I open the "paste" in raw view
+     When I open the "pastebin" in raw view
      Then I should see "TEST"
 
     Examples:
@@ -118,7 +120,7 @@ Feature: Paste
       And a "paste" with caption "BDD-TEST" exists
       And I have the permission "pastebin.view_entry"
       And I have the permission "pastebin.delete_entry"
-     When I open the "paste" in delete view
+     When I open the "pastebin" in delete view
       And I click on delete
      Then it should be successful
 
@@ -128,7 +130,7 @@ Feature: Paste
       And a "paste" with caption "BDD-TEST" exists
       And I have the permission "pastebin.view_entry"
       And I have the permission "pastebin.delete_entry"
-     When I open the "paste" in delete view
+     When I open the "pastebin" in delete view
       And I click on cancel
      Then I should see canceled info
       And I should see elements with values
@@ -142,5 +144,5 @@ Feature: Paste
     Given I am "anonymous"
       And I have the permission "pastebin.delete_entry"
       And a "paste" with caption "BDD-TEST" exists
-     When I open the "paste" in delete view
+     When I open the "pastebin" in delete view
      Then I should be on the login page
