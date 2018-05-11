@@ -86,6 +86,7 @@ pipeline {
         stage('Execute BDD tests'){
           environment {
             DJANGO_SETTINGS_MODULE = 'tests.bdd.settings.headless'
+            PATH = "$PATH:/usr/lib/chromium-browser/"
           }
           steps {
             sh """
