@@ -29,7 +29,6 @@ def django_test_case(context):
     del context.test_case
 
 
-
 @fixture
 def browser_chrome(context):
     options = Options()
