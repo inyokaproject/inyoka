@@ -17,6 +17,7 @@ from mock import patch
 from inyoka.forum.models import Attachment, Forum, Post, PostRevision, Topic
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
+from tests.apps.forum.forum_test_class import ForumTestCase
 
 
 class TestAttachmentModel(TestCase):
@@ -28,25 +29,7 @@ class TestAttachmentModel(TestCase):
             a.delete()  # Yank the file from the filesystem
 
 
-class TestForumModel(TestCase):
-
-    def setUp(self):
-        super(TestForumModel, self).setUp()
-        self.parent1 = Forum.objects.create(
-            name='This is a test')
-        self.parent1.save()
-        self.parent2 = Forum.objects.create(
-            name='This is a second test',
-            parent=self.parent1)
-        self.parent2.save()
-        self.forum = Forum.objects.create(
-            name='This rocks damnit',
-            parent=self.parent2)
-        self.forum.save()
-
-        # Fill the cache
-        for forum in (self.parent1, self.parent2, self.forum):
-            forum.post_count.db_count(write_cache=True)
+class TestForumModel(ForumTestCase):
 
     def test_automatic_slug(self):
         self.assertEqual(self.forum.slug, 'this-rocks-damnit')
@@ -70,6 +53,7 @@ class TestForumModel(TestCase):
         rec2 = list(Forum.get_children_recursive((self.forum,)))
         rec3 = list(Forum.get_children_recursive((self.parent2,)))
         rec4 = list(Forum.get_children_recursive((self.parent2,), self.parent1))
+
         self.assertEqual(rec, [(0, self.parent1), (1, self.parent2), (2, self.forum)])
         self.assertEqual(rec2, [])
         self.assertEqual(rec3, [])
@@ -85,6 +69,7 @@ class TestForumModel(TestCase):
                self.parent2.id: 'this-is-a-second-test',
                self.forum.id: 'this-rocks-damnit'}
         cache.delete('forum/slugs')
+
         self.assertEqual(cache.get('forum/slugs'), None)
         self.assertEqual(Forum.objects.get_slugs(), map)
         self.assertEqual(cache.get('forum/slugs'), map)
@@ -95,9 +80,9 @@ class TestForumModel(TestCase):
 
     def test_unified_get(self):
         cache.delete('forum/forums/%s' % self.forum.slug)
+
         self.assertEqual(self.forum, Forum.objects.get(self.forum.id))
         self.assertEqual(cache.get('forum/forums/%s' % self.forum.slug), self.forum)
-
         self.assertEqual(self.forum, Forum.objects.get(self.forum.slug))
         self.assertEqual(self.forum, Forum.objects.get(id=self.forum.id))
         self.assertEqual(self.forum, Forum.objects.get(slug=self.forum.slug))
@@ -108,25 +93,37 @@ class TestForumModel(TestCase):
                'forum/forums/this-rocks-damnit': self.forum}
         cache.delete_many(map.keys())
         cache.delete('forum/slugs')
-        self.assertEqual(Forum.objects.get_all_forums_cached(), map)
+
+        cached_forums = Forum.objects.get_all_forums_cached()
+
+        self.assertEqual(cached_forums, map)
         self.assertEqual(cache.get('forum/forums/this-is-a-test'), self.parent1)
+
+    def test_update_get_all_forums_cached_on_forum_creation(self):
+        map = {'forum/forums/this-is-a-test': self.parent1,
+               'forum/forums/this-is-a-second-test': self.parent2,
+               'forum/forums/this-rocks-damnit': self.forum}
+        cache.delete_many(map.keys())
+        cache.delete('forum/slugs')
+        Forum.objects.get_all_forums_cached()
+
         new_forum = Forum(name='yeha')
         new_forum.save()
-        new_map = map.copy()
-        new_map.update({'forum/forums/yeha': new_forum})
+        map.update({'forum/forums/yeha': new_forum})
+
         self.assertEqual(cache.get('forum/forums/yeha'), None)
-        self.assertEqual(Forum.objects.get_all_forums_cached(), new_map)
+        self.assertEqual(Forum.objects.get_all_forums_cached(), map)
         self.assertEqual(cache.get('forum/forums/yeha'), new_forum)
-        new_forum.delete()
 
     def test_get_absolute_url(self):
-        url1 = self.forum.get_absolute_url('show', foo='val1', bar='val2')
-        url1_target = ''.join([
+        forum_url = self.forum.get_absolute_url('show', foo='val1', bar='val2')
+
+        expected_url = ''.join([
             'http://forum.', settings.BASE_DOMAIN_NAME,
             '/forum/', self.forum.slug, '/',
             '?foo=val1&bar=val2'
         ])
-        self.assertEqual(url1, url1_target)
+        self.assertEqual(forum_url, expected_url)
 
 
 class TestPostModel(TestCase):
