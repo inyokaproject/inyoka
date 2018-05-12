@@ -34,12 +34,15 @@ class TestForumModel(TestCase):
         super(TestForumModel, self).setUp()
         self.parent1 = Forum.objects.create(
             name='This is a test')
+        self.parent1.save()
         self.parent2 = Forum.objects.create(
             name='This is a second test',
             parent=self.parent1)
+        self.parent2.save()
         self.forum = Forum.objects.create(
             name='This rocks damnit',
             parent=self.parent2)
+        self.forum.save()
 
         # Fill the cache
         for forum in (self.parent1, self.parent2, self.forum):
@@ -136,13 +139,13 @@ class TestPostModel(TestCase):
         self.category.save()
         self.forum = Forum(name='forum')
         self.forum.save()
-        self.topic = Topic(title='topic', author=self.user)
-        self.forum.topics.add(self.topic)
+        self.topic = Topic(title='topic', author=self.user, forum=self.forum)
+        self.topic.save()
 
     @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_url_for_post(self):
-        post = Post(text=u'test1', author=self.user)
-        self.topic.posts.add(post)
+        post = Post(text=u'test1', author=self.user, topic=self.topic)
+        post.save()
         self.assertEqual(Post.url_for_post(post.pk),
                          'http://forum.inyoka.local/topic/topic/#post-%s' % post.pk)
 
@@ -150,9 +153,10 @@ class TestPostModel(TestCase):
     def test_url_for_post_multiple_pages(self):
         posts = []
         for idx in xrange(45):
-            post = Post(text=u'test%s' % idx, author=self.user)
-            self.topic.posts.add(post)
+            post = Post(text=u'test%s' % idx, author=self.user, topic = self.topic)
+            post.save()
             posts.append(post.pk)
+
         self.assertEqual(Post.url_for_post(posts[-1]),
                          'http://forum.inyoka.local/topic/topic/4/#post-%s' % post.pk)
 
@@ -189,23 +193,22 @@ class TestPostSplit(TestCase):
         self.forum2.user_count_posts = True
         self.forum2.save()
 
-        self.topic1 = Topic(title='topic', author=self.user)
-        self.topic2 = Topic(title='topic2', author=self.user)
-
-        self.forum1.topics.add(self.topic1)
-        self.forum2.topics.add(self.topic2)
+        self.topic1 = Topic(title='topic', author=self.user, forum=self.forum1)
+        self.topic1.save()
+        self.topic2 = Topic(title='topic2', author=self.user, forum=self.forum2)
+        self.topic2.save()
 
         self.t1_posts = {}
-        for i in xrange(5):
+        for i in xrange(10):
             self.t1_posts[i] = Post(text=u'post-1-%d' % i, author=self.user,
-                    position=i)
-            self.topic1.posts.add(self.t1_posts[i])
+                    position=i, topic=self.topic1)
+            self.t1_posts[i].save()
 
         self.t2_posts = {}
-        for i in xrange(5):
+        for i in xrange(10):
             self.t2_posts[i] = Post(text=u'post-1-%d' % i, author=self.user,
-                    position=i)
-            self.topic2.posts.add(self.t2_posts[i])
+                    position=i, topic=self.topic2)
+            self.t2_posts[i].save()
 
         # Setup the cache
         self.user.post_count.db_count(write_cache=True)
@@ -237,10 +240,11 @@ class TestPostSplit(TestCase):
                          Post.objects.get(id=self.t2_posts[4].id))
 
     def test_split_renumber_old_positions(self):
-        topic = Topic(title='positions', author=self.user)
-        self.forum1.topics.add(topic)
+        topic = Topic(title='positions', author=self.user, forum =self.forum1)
+        topic.save()
         for i in range(5):
-            topic.posts.add(Post(text='test', author=self.user, position=i))
+            post = Post(text='test', author=self.user, position=i, topic=topic)
+            post.save()
 
         posts = Post.objects.filter(topic=topic, position__in=[1, 2, 4])
 

@@ -31,15 +31,14 @@ class TestPostSplitNewTopic(TestCase):
         self.forum2.user_count_posts = True
         self.forum2.save()
 
-        self.topic1 = Topic(title='topic', author=self.user)
-
-        self.forum1.topics.add(self.topic1)
+        self.topic1 = Topic(title='topic', author=self.user, forum=self.forum1)
+        self.topic1.save()
 
         self.t1_posts = {}
         for i in xrange(10):
             self.t1_posts[i] = Post(text=u'post-1-%d' % i, author=self.user,
-                    position=i)
-            self.topic1.posts.add(self.t1_posts[i])
+                    position=i, topic=self.topic1)
+            self.t1_posts[i].save()
 
     def _test_position(self, topic_id, postcount):
         vl = list(Post.objects.filter(topic_id=topic_id)
@@ -49,8 +48,8 @@ class TestPostSplitNewTopic(TestCase):
     def test_single_last_post(self):
         """Split the last post and create a new topic"""
         t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic(title='new topic', author=self.user)
-        self.forum2.topics.add(t2)
+        t2 = Topic(title='new topic', author=self.user, forum=self.forum2)
+        t2.save()
         t2_id = t2.id
 
         Post.split((self.t1_posts[9],), t1, t2)
@@ -89,8 +88,8 @@ class TestPostSplitNewTopic(TestCase):
     def test_multiple_last_posts(self):
         """Split multiple consecutive last posts and create a new topic"""
         t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic(title='new topic', author=self.user)
-        self.forum2.topics.add(t2)
+        t2 = Topic(title='new topic', author=self.user, forum=self.forum2)
+        t2.save()
         t2_id = t2.id
 
         Post.split((self.t1_posts[8], self.t1_posts[9]), t1, t2)
@@ -129,8 +128,8 @@ class TestPostSplitNewTopic(TestCase):
     def test_single_middle_post(self):
         """Split a single middle post and create a new topic"""
         t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic(title='new topic', author=self.user)
-        self.forum2.topics.add(t2)
+        t2 = Topic(title='new topic', author=self.user, forum=self.forum2)
+        t2.save()
         t2_id = t2.id
 
         Post.split((self.t1_posts[3],), t1, t2)
@@ -172,8 +171,8 @@ class TestPostSplitNewTopic(TestCase):
         create a new topic
         """
         t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic(title='new topic', author=self.user)
-        self.forum2.topics.add(t2)
+        t2 = Topic(title='new topic', author=self.user, forum=self.forum2)
+        t2.save()
         t2_id = t2.id
 
         Post.split((self.t1_posts[5], self.t1_posts[6]), t1, t2)
@@ -215,8 +214,8 @@ class TestPostSplitNewTopic(TestCase):
         and create a new topic
         """
         t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic(title='new topic', author=self.user)
-        self.forum2.topics.add(t2)
+        t2 = Topic(title='new topic', author=self.user, forum=self.forum2)
+        t2.save()
         t2_id = t2.id
 
         Post.split((self.t1_posts[2], self.t1_posts[4], self.t1_posts[8]), t1, t2)
@@ -258,8 +257,8 @@ class TestPostSplitNewTopic(TestCase):
         and create a new topic
         """
         t1 = Topic.objects.get(id=self.topic1.id)
-        t2 = Topic(title='new topic', author=self.user)
-        self.forum2.topics.add(t2)
+        t2 = Topic(title='new topic', author=self.user, forum=self.forum2)
+        t2.save()
         t2_id = t2.id
 
         Post.split((self.t1_posts[2], self.t1_posts[3], self.t1_posts[6],
