@@ -126,46 +126,35 @@ class TestForumModel(ForumTestCase):
         self.assertEqual(forum_url, expected_url)
 
 
-class TestPostModel(TestCase):
-
-    def setUp(self):
-        super(TestPostModel, self).setUp()
-        self.user = User.objects.register_user('admin', 'admin', 'admin', False)
-
-        self.category = Forum(name='category')
-        self.category.save()
-        self.forum = Forum(name='forum')
-        self.forum.save()
-        self.topic = Topic(title='topic', author=self.user, forum=self.forum)
-        self.topic.save()
+class TestPostModel(ForumTestCase):
 
     @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_url_for_post(self):
         post = Post(text=u'test1', author=self.user, topic=self.topic)
         post.save()
+
         self.assertEqual(Post.url_for_post(post.pk),
                          'http://forum.inyoka.local/topic/topic/#post-%s' % post.pk)
 
     @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_url_for_post_multiple_pages(self):
-        posts = []
-        for idx in xrange(45):
-            post = Post(text=u'test%s' % idx, author=self.user, topic = self.topic)
-            post.save()
-            posts.append(post.pk)
+        posts = self.addPosts(45)
+        last_post_id = list(posts)[-1].pk
 
-        self.assertEqual(Post.url_for_post(posts[-1]),
-                         'http://forum.inyoka.local/topic/topic/4/#post-%s' % post.pk)
+        self.assertEqual(Post.url_for_post(last_post_id),
+                         'http://forum.inyoka.local/topic/topic/4/#post-%s' % last_post_id)
 
     def test_url_for_post_not_existing_post(self):
         self.assertRaises(Post.DoesNotExist, Post.url_for_post, 250000913)
 
     def test_rendered_get_text(self):
         post = Post(text="'''test'''")
+
         self.assertEqual(post.get_text(), "<p><strong>test</strong></p>")
 
     def test_plaintext_get_text(self):
         post = Post(text="'''test'''", is_plaintext=True)
+
         self.assertEqual(post.get_text(), "&#39;&#39;&#39;test&#39;&#39;&#39;")
 
 
