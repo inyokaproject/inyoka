@@ -218,83 +218,25 @@ class TestPostSplit(ForumTestCaseWithSecondItems):
             self.other_topic.posts.count())
 
 
-class TestPostMove(TestCase):
-
-    def setUp(self):
-        super(TestPostMove, self).setUp()
-        self.user = User.objects.register_user('admin', 'admin', 'admin', False)
-
-        self.forum = Forum.objects.create(
-            name='forum',
-            user_count_posts=True)
-        self.forum2 = Forum.objects.create(
-            name='forum2',
-            user_count_posts=False)
-        self.topic1 = Topic.objects.create(
-            title='topic',
-            author=self.user,
-            forum=self.forum)
-        self.topic2 = Topic.objects.create(
-            title='topic2',
-            author=self.user,
-            forum=self.forum2)
-
-        Post.objects.create(
-            text=u'test1',
-            author=self.user,
-            topic=self.topic1)
-        Post.objects.create(
-            text=u'test2',
-            author=self.user,
-            topic=self.topic1)
-        self.lp1 = Post.objects.create(
-            text=u'test3',
-            author=self.user,
-            topic=self.topic1)
-
-        self.lp2 = Post.objects.create(
-            text=u'test4',
-            author=self.user,
-            topic=self.topic2)
-
-        # Calculate user posts
-        self.user.post_count.db_count(write_cache=True)
-
-        # Reload objects. Use topic1.refresh_from_db() in django 1.8
-        self.topic1 = Topic.objects.get(pk=self.topic1.pk)
+class TestPostMove(ForumTestCaseWithSecondItems):
 
     def test_post_counter(self):
-        self.assertEqual(
-            self.user.post_count(),
-            3)
+        self.assertEqual(self.user.post_count(), 5)
 
     def test_topic_count(self):
-        self.assertEqual(
-            Topic.objects.get(id=self.topic1.id).post_count.value(),
-            3)
-        self.assertEqual(
-            Topic.objects.get(id=self.topic2.id).post_count.value(),
-            1)
+        self.assertEqual(self.topic.post_count.value(), 5)
+        self.assertEqual(self.other_topic.post_count.value(), 5)
 
     def test_topic_move(self):
-        self.topic1.move(self.forum2)
+        self.topic.move(self.other_forum)
 
-        self.topic1 = Topic.objects.get(id=self.topic1.id)
-        self.assertEqual(
-            self.user.post_count(),
-            0)
-        self.assertEqual(
-            self.topic1.post_count.value(),
-            3)
-        self.assertEqual(
-            self.topic1.last_post,
-            self.lp1)
-        self.assertEqual(
-            self.topic1.forum.last_post,
-            self.lp2)
-        self.assertEqual(
-            Forum.objects.get(id=self.forum.id).last_post,
-            None)
+        self.topic.refresh_from_db()
+        self.forum.refresh_from_db()
+        self.assertEqual(self.user.post_count(), 0)
+        self.assertEqual(self.topic.post_count.value(), 5)
+        self.assertEqual(self.topic.last_post, self.topic_posts[-1])
+        self.assertEqual(self.topic.forum.last_post, self.other_topic_posts[-1])
+        self.assertEqual(self.forum.last_post, None)
 
 
 class PostDeletionTest(TestCase):
