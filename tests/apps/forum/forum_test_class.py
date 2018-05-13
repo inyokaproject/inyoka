@@ -21,8 +21,30 @@ class ForumTestCase(TestCase):
         self.topic = Topic(title='topic', author=self.user, forum=self.forum)
         self.topic.save()
 
-    def addPosts(self, number=1):
-        for post_id in xrange(number):
-            post = Post(text=u'test%s' % post_id, author=self.user, topic=self.topic)
+        # Setup the cache
+        self.user.post_count.db_count(write_cache=True)
+
+    def addPosts(self, number=1, topic=None):
+        if not topic:
+            topic = self.topic
+
+        for post_id in range(number):
+            post = Post(text=u'test%s' % post_id, author=self.user, topic=topic)
             post.save()
             yield post
+
+
+class ForumTestCaseWithSecondItems(ForumTestCase):
+
+    def setUp(self):
+        super(ForumTestCaseWithSecondItems, self).setUp()
+
+        self.other_forum = Forum(name='forum2')
+        self.other_forum.user_count_posts = False
+        self.other_forum.save()
+
+        self.other_topic = Topic(title='topic2', author=self.user, forum=self.other_forum)
+        self.other_topic.save()
+
+        self.topic_posts = list(self.addPosts(5))
+        self.other_topic_posts = list(self.addPosts(5, self.other_topic))

@@ -17,7 +17,7 @@ from mock import patch
 from inyoka.forum.models import Attachment, Forum, Post, PostRevision, Topic
 from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
-from tests.apps.forum.forum_test_class import ForumTestCase
+from tests.apps.forum.forum_test_class import ForumTestCase, ForumTestCaseWithSecondItems
 
 
 class TestAttachmentModel(TestCase):
@@ -159,110 +159,63 @@ class TestPostModel(ForumTestCase):
 
 
 class TestPostRevisionModel(TestCase):
+
     def test_text_rendered(self):
         r = PostRevision(text="'''test'''")
+
         self.assertEqual(r.text_rendered, "<p><strong>test</strong></p>")
 
 
-class TestPostSplit(TestCase):
-
-    def setUp(self):
-        super(TestPostSplit, self).setUp()
-        self.user = User.objects.register_user('admin', 'admin', 'admin', False)
-
-        self.category = Forum(name='category')
-        self.category.save()
-        self.forum1 = Forum(name='forum1')
-        self.forum1.user_count_posts = True
-        self.forum1.save()
-        self.forum2 = Forum(name='forum2')
-        self.forum2.user_count_posts = True
-        self.forum2.save()
-
-        self.topic1 = Topic(title='topic', author=self.user, forum=self.forum1)
-        self.topic1.save()
-        self.topic2 = Topic(title='topic2', author=self.user, forum=self.forum2)
-        self.topic2.save()
-
-        self.t1_posts = {}
-        for i in xrange(10):
-            self.t1_posts[i] = Post(text=u'post-1-%d' % i, author=self.user,
-                    position=i, topic=self.topic1)
-            self.t1_posts[i].save()
-
-        self.t2_posts = {}
-        for i in xrange(10):
-            self.t2_posts[i] = Post(text=u'post-1-%d' % i, author=self.user,
-                    position=i, topic=self.topic2)
-            self.t2_posts[i].save()
-
-        # Setup the cache
-        self.user.post_count.db_count(write_cache=True)
-        self.topic1.post_count.db_count(write_cache=True)
-        self.topic2.post_count.db_count(write_cache=True)
-        self.forum1.post_count.db_count(write_cache=True)
-        self.forum2.post_count.db_count(write_cache=True)
-        self.forum1.topic_count.db_count(write_cache=True)
-        self.forum2.topic_count.db_count(write_cache=True)
+class TestPostSplit(ForumTestCaseWithSecondItems):
 
     def test_post_counter(self):
-        user = User.objects.get(id=self.user.id)
-        self.assertEqual(user.post_count.value(), 10)
+        self.assertEqual(self.user.post_count.value(), 5)
 
     def test_topic_count(self):
-        self.assertEqual(Topic.objects.get(id=self.topic1.id).post_count.value(), 5)
-        self.assertEqual(Topic.objects.get(id=self.topic2.id).post_count.value(), 5)
+        self.assertEqual(self.topic.post_count.value(), 5)
+        self.assertEqual(self.other_topic.post_count.value(), 5)
 
     def test_topic_first_post(self):
-        self.assertEqual(Topic.objects.get(id=self.topic1.id).first_post,
-                         Post.objects.get(id=self.t1_posts[0].id))
-        self.assertEqual(Topic.objects.get(id=self.topic2.id).first_post,
-                         Post.objects.get(id=self.t2_posts[0].id))
+        self.assertEqual(self.topic.first_post, self.topic_posts[0])
+        self.assertEqual(self.other_topic.first_post, self.other_topic_posts[0])
 
     def test_topic_last_post(self):
-        self.assertEqual(Topic.objects.get(id=self.topic1.id).last_post,
-                         Post.objects.get(id=self.t1_posts[4].id))
-        self.assertEqual(Topic.objects.get(id=self.topic2.id).last_post,
-                         Post.objects.get(id=self.t2_posts[4].id))
+        self.assertEqual(self.topic.last_post, self.topic_posts[-1])
+        self.assertEqual(self.other_topic.last_post, self.other_topic_posts[-1])
 
     def test_split_renumber_old_positions(self):
-        topic = Topic(title='positions', author=self.user, forum =self.forum1)
-        topic.save()
-        for i in range(5):
-            post = Post(text='test', author=self.user, position=i, topic=topic)
-            post.save()
+        posts_to_split = Post.objects.filter(topic=self.topic, position__in=[1, 2, 4])
 
-        posts = Post.objects.filter(topic=topic, position__in=[1, 2, 4])
+        Post.split(posts_to_split, self.topic, self.other_topic)
 
-        Post.split(posts, topic, self.topic2)
-
-        old_positions = Post.objects.filter(topic=topic).order_by('position')\
+        positions_after_split = Post.objects.filter(topic=self.topic)\
+            .order_by('position')\
             .values_list('position', flat=True)
-        self.assertEqual(list(old_positions), [0, 1])
+        self.assertEqual(list(positions_after_split), [1, 2])
 
     def test_split_post_remove_topic(self):
-        Post.split(self.t1_posts.values(), self.topic1, self.topic2)
-        cache.delete('forum/forums/%s' % self.forum1.slug)
-        cache.delete('forum/forums/%s' % self.forum2.slug)
-        t2 = Topic.objects.get(id=self.topic2.id)
+        post_ids = [post.id for post in (self.other_topic_posts + self.topic_posts)]
 
-        self.assertFalse(Topic.objects.filter(id=self.topic1.id).exists())
-        self.assertEqual(t2.post_count.value(), 10)
-        self.assertEqual(t2.first_post.id, self.t2_posts[0].id)
-        self.assertEqual(t2.last_post.id, self.t1_posts[4].id)
-        post_ids = [p.id for k, p in self.t2_posts.items()] + \
-                   [p.id for k, p in self.t1_posts.items()]
-        self.assertEqual([p.id for p in t2.posts.order_by('position')], post_ids)
+        Post.split(self.topic_posts, self.topic, self.other_topic)
+
+        cache.delete('forum/forums/%s' % self.forum.slug)
+        cache.delete('forum/forums/%s' % self.other_forum.slug)
+        self.other_topic.refresh_from_db()
+        self.assertFalse(Topic.objects.filter(id=self.topic.id).exists())
+        self.assertEqual(self.other_topic.post_count.value(), 10)
+        self.assertEqual(self.other_topic.first_post.id, self.other_topic_posts[0].id)
+        self.assertEqual(self.other_topic.last_post.id, self.topic_posts[4].id)
+        self.assertEqual([post.id for post in self.other_topic.posts.order_by('position')], post_ids)
 
     def test_split_topic_post_count(self):
         """
         Tests that the post_count of the new topic is correct after the split.
         """
-        Post.split(self.topic1.posts.all(), self.topic1, self.topic2)
+        Post.split(self.topic.posts.all(), self.topic, self.other_topic)
 
         self.assertEqual(
-            self.topic2.post_count.value(),
-            self.topic2.posts.count())
+            self.other_topic.post_count.value(),
+            self.other_topic.posts.count())
 
 
 class TestPostMove(TestCase):
