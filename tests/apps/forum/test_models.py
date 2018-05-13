@@ -32,51 +32,51 @@ class TestAttachmentModel(TestCase):
 class TestForumModel(ForumTestCase):
 
     def test_automatic_slug(self):
-        self.assertEqual(self.forum.slug, 'this-rocks-damnit')
+        self.assertEqual(self.forum.slug, 'forum')
 
     def test_parents(self):
-        self.assertEqual(self.parent1.parents, [])
-        self.assertEqual(self.parent2.parents, [self.parent1])
-        self.assertEqual(self.forum.parents, [self.parent2, self.parent1])
+        self.assertEqual(self.category.parents, [])
+        self.assertEqual(self.parent.parents, [self.category])
+        self.assertEqual(self.forum.parents, [self.parent, self.category])
 
     def test_is_category(self):
-        self.assertEqual(self.parent1.is_category, True)
+        self.assertEqual(self.category.is_category, True)
         self.assertEqual(self.forum.is_category, False)
 
     def test_children(self):
         self.assertEqual(self.forum.children, [])
-        self.assertEqual(self.parent2.children, [self.forum])
-        self.assertEqual(self.parent1.children, [self.parent2])
+        self.assertEqual(self.parent.children, [self.forum])
+        self.assertEqual(self.category.children, [self.parent])
 
     def test_get_children_recursive(self):
-        rec = list(Forum.get_children_recursive((self.forum, self.parent1, self.parent2)))
+        rec = list(Forum.get_children_recursive((self.forum, self.category, self.parent)))
         rec2 = list(Forum.get_children_recursive((self.forum,)))
-        rec3 = list(Forum.get_children_recursive((self.parent2,)))
-        rec4 = list(Forum.get_children_recursive((self.parent2,), self.parent1))
+        rec3 = list(Forum.get_children_recursive((self.parent,)))
+        rec4 = list(Forum.get_children_recursive((self.parent,), self.category))
 
-        self.assertEqual(rec, [(0, self.parent1), (1, self.parent2), (2, self.forum)])
+        self.assertEqual(rec, [(0, self.category), (1, self.parent), (2, self.forum)])
         self.assertEqual(rec2, [])
         self.assertEqual(rec3, [])
-        self.assertEqual(rec4, [(0, self.parent2)])
+        self.assertEqual(rec4, [(0, self.parent)])
 
     def test_descendants(self):
         self.assertEqual(self.forum.descendants, [])
-        self.assertEqual(self.parent2.descendants, [self.forum])
-        self.assertEqual(self.parent1.descendants, [self.parent2, self.forum])
+        self.assertEqual(self.parent.descendants, [self.forum])
+        self.assertEqual(self.category.descendants, [self.parent, self.forum])
 
     def test_get_slugs(self):
-        map = {self.parent1.id: 'this-is-a-test',
-               self.parent2.id: 'this-is-a-second-test',
-               self.forum.id: 'this-rocks-damnit'}
+        slug_map = {self.category.id: 'category',
+                    self.parent.id: 'parent',
+                    self.forum.id: 'forum'}
         cache.delete('forum/slugs')
 
         self.assertEqual(cache.get('forum/slugs'), None)
-        self.assertEqual(Forum.objects.get_slugs(), map)
-        self.assertEqual(cache.get('forum/slugs'), map)
+        self.assertEqual(Forum.objects.get_slugs(), slug_map)
+        self.assertEqual(cache.get('forum/slugs'), slug_map)
 
     def test_get_ids(self):
         self.assertEqual(set(Forum.objects.get_ids()),
-                         set([self.parent1.id, self.parent2.id, self.forum.id]))
+                         {self.category.id, self.parent.id, self.forum.id})
 
     def test_unified_get(self):
         cache.delete('forum/forums/%s' % self.forum.slug)
@@ -88,31 +88,31 @@ class TestForumModel(ForumTestCase):
         self.assertEqual(self.forum, Forum.objects.get(slug=self.forum.slug))
 
     def test_get_all_forums_cached(self):
-        map = {'forum/forums/this-is-a-test': self.parent1,
-               'forum/forums/this-is-a-second-test': self.parent2,
-               'forum/forums/this-rocks-damnit': self.forum}
-        cache.delete_many(map.keys())
+        cache_key_map = {'forum/forums/category': self.category,
+                         'forum/forums/parent': self.parent,
+                         'forum/forums/forum': self.forum}
+        cache.delete_many(cache_key_map.keys())
         cache.delete('forum/slugs')
 
         cached_forums = Forum.objects.get_all_forums_cached()
 
-        self.assertEqual(cached_forums, map)
-        self.assertEqual(cache.get('forum/forums/this-is-a-test'), self.parent1)
+        self.assertEqual(cached_forums, cache_key_map)
+        self.assertEqual(cache.get('forum/forums/category'), self.category)
 
     def test_update_get_all_forums_cached_on_forum_creation(self):
-        map = {'forum/forums/this-is-a-test': self.parent1,
-               'forum/forums/this-is-a-second-test': self.parent2,
-               'forum/forums/this-rocks-damnit': self.forum}
-        cache.delete_many(map.keys())
+        cache_key_map = {'forum/forums/category': self.category,
+                         'forum/forums/parent': self.parent,
+                         'forum/forums/forum': self.forum}
+        cache.delete_many(cache_key_map.keys())
         cache.delete('forum/slugs')
         Forum.objects.get_all_forums_cached()
 
         new_forum = Forum(name='yeha')
         new_forum.save()
-        map.update({'forum/forums/yeha': new_forum})
+        cache_key_map.update({'forum/forums/yeha': new_forum})
 
         self.assertEqual(cache.get('forum/forums/yeha'), None)
-        self.assertEqual(Forum.objects.get_all_forums_cached(), map)
+        self.assertEqual(Forum.objects.get_all_forums_cached(), cache_key_map)
         self.assertEqual(cache.get('forum/forums/yeha'), new_forum)
 
     def test_get_absolute_url(self):

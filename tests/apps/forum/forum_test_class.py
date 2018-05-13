@@ -9,14 +9,14 @@ class ForumTestCase(TestCase):
         super(ForumTestCase, self).setUp()
         self.user = User.objects.register_user('admin', 'admin', 'admin', False)
 
-        self.parent1 = Forum.objects.create(
-            name='This is a test')
-        self.parent2 = Forum.objects.create(
-            name='This is a second test',
-            parent=self.parent1)
+        self.category = Forum.objects.create(
+            name='category')
+        self.parent = Forum.objects.create(
+            name='parent',
+            parent=self.category)
         self.forum = Forum.objects.create(
-            name='This rocks damnit',
-            parent=self.parent2)
+            name='forum',
+            parent=self.parent)
 
         self.topic = Topic(title='topic', author=self.user, forum=self.forum)
         self.topic.save()
