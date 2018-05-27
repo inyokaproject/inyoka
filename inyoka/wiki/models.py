@@ -77,14 +77,11 @@
     :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-import locale
-import random
-from collections import defaultdict
 from datetime import datetime
-from functools import partial
-from hashlib import sha1
 
 import magic
+import random
+from collections import defaultdict
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
@@ -93,10 +90,13 @@ from django.db.models import Count, Max
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
-from werkzeug import cached_property
+from functools import partial
+from hashlib import sha1
+from werkzeug.utils import cached_property
 
-from inyoka import default_settings, markup
-from inyoka.markup import nodes, templates
+import locale
+from inyoka import default_settings
+from inyoka.markup import nodes, templates, base as markup
 from inyoka.markup.parsertools import MultiMap
 from inyoka.utils.database import InyokaMarkupField
 from inyoka.utils.dates import datetime_to_timezone, format_datetime
@@ -109,8 +109,8 @@ from inyoka.utils.local import local as local_cache
 from inyoka.utils.templating import render_template
 from inyoka.utils.text import get_pagetitle, join_pagename, normalize_pagename, wiki_slugify
 from inyoka.utils.urls import href
-from inyoka.wiki.tasks import update_related_pages, update_page_by_slug
 from inyoka.wiki.exceptions import CaseSensitiveException
+from inyoka.wiki.tasks import update_related_pages, update_page_by_slug
 
 # maximum number of bytes for metadata.  everything above is truncated
 MAX_METADATA = 2 << 8

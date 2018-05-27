@@ -26,7 +26,7 @@ from django.core.management.base import BaseCommand
 from django.template.defaultfilters import date
 from django.utils.encoding import force_unicode
 from django.utils.translation import activate
-from werkzeug import url_unquote
+from werkzeug.urls import url_unquote
 
 from inyoka.portal.user import User
 from inyoka.portal.models import StaticPage
