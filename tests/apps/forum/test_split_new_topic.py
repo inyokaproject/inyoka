@@ -35,7 +35,7 @@ class TestPostSplitNewTopic(TestCase):
         self.topic1.save()
 
         self.t1_posts = {}
-        for i in xrange(10):
+        for i in range(10):
             self.t1_posts[i] = Post(text=u'post-1-%d' % i, author=self.user,
                     position=i, topic=self.topic1)
             self.t1_posts[i].save()
@@ -43,7 +43,7 @@ class TestPostSplitNewTopic(TestCase):
     def _test_position(self, topic_id, postcount):
         vl = list(Post.objects.filter(topic_id=topic_id)
                       .values_list('position', flat=True).order_by('position'))
-        self.assertEqual(vl, list(xrange(postcount)))
+        self.assertEqual(vl, list(range(postcount)))
 
     def test_single_last_post(self):
         """Split the last post and create a new topic"""
