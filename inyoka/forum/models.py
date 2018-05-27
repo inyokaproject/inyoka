@@ -871,7 +871,6 @@ class Post(models.Model, LockableObject):
             self.topic.save()
 
         # decrement post_counts
-        forums = self.topic.forum.parents + [self.topic.forum]
         self.topic.post_count.decr()
         self.topic.forum.post_count.decr()
 
@@ -879,7 +878,7 @@ class Post(models.Model, LockableObject):
         Post.objects.filter(position__gt=self.position, topic=self.topic) \
                     .update(position=F('position') - 1)
 
-        forums = list(Forum.objects.filter(last_post=self).all())
+        parent_forums = list(Forum.objects.filter(last_post_id=self.pk).all())
 
         # search for a new last post for al forums in the chain up.
         # We actually cheat here and set the newest post from the current
@@ -889,16 +888,14 @@ class Post(models.Model, LockableObject):
                 .exclude(last_post=self).order_by('-last_post')\
                 .values_list('last_post', flat=True)
             new_lp_id = new_lp_ids[0] if new_lp_ids else None
-            (Forum.objects.filter(id__in=[forum.id for forum in forums])
+            (Forum.objects.filter(id__in=[forum.id for forum in parent_forums])
                   .update(last_post=model_or_none(new_lp_id, self)))
-            self.topic.forum.last_post_id = new_lp_id
-            self.topic.forum.save(update_fields=['last_post_id'])
 
-        if forums:
-            # django_resis has a bug, that delete_many does not work with
+        if parent_forums:
+            # django_redis has a bug, that delete_many does not work with
             # empty generators. See:
             # https://github.com/niwinz/django-redis/pull/162
-            cache.delete_many(u'forum/forums/{}'.format(f.slug) for f in forums)
+            cache.delete_many(u'forum/forums/{}'.format(f.slug) for f in parent_forums)
 
         return super(Post, self).delete()
 
