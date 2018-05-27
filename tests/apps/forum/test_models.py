@@ -15,7 +15,6 @@ from django.test.utils import override_settings
 from mock import patch
 
 from inyoka.forum.models import Attachment, Forum, Post, PostRevision, Topic
-from inyoka.portal.user import User
 from inyoka.utils.test import TestCase
 from tests.apps.forum.forum_test_class import ForumTestCase, ForumTestCaseWithSecondItems
 
@@ -318,14 +317,7 @@ class PostDeletionTest(ForumTestCase):
         self.assertEqual(last_post_ids, [self.last_post.pk, self.last_post.pk, self.last_post.pk])
 
 
-class TestTopic(TestCase):
-
-    def setUp(self):
-        super(TestTopic, self).setUp()
-        self.user = User.objects.register_user('admin', 'admin', 'admin', False)
-        self.category = Forum.objects.create(name='category')
-        self.parent = Forum.objects.create(name='parent', parent=self.category)
-        self.forum = Forum.objects.create(name='forum', parent=self.parent)
+class TestTopic(ForumTestCase):
 
     @patch.object(Topic, 'delete')
     def test_topic_delete(self, mock):
