@@ -171,7 +171,7 @@ msgid "Only a subset of selected tickets has been closed, considering your moder
 msgstr "Es wurden nur ein paar der ausgewählten Meldungen geschlossen, da du Moderationsrechte im jeweiligen Forum benötigst."
 
 msgid "Parent forum"
-msgstr "Elterm Forum"
+msgstr "Eltern Forum"
 
 msgid "Pictures"
 msgstr "Bilder"
