@@ -498,7 +498,6 @@ def subscribe_user(request, username):
     return HttpResponseRedirect(url_for(user))
 
 
-@require_POST
 def unsubscribe_user(request, username):
     """Remove a user subscription."""
     user = User.objects.get(username__iexact=username)
