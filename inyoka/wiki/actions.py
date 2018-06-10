@@ -733,6 +733,7 @@ def do_mv_back(request, name):
 
 
 @clean_article_name
+@login_required
 @require_privilege('read')
 @templated('wiki/action_log.html', modifier=context_modifier)
 @case_sensitive_redirect
@@ -771,6 +772,7 @@ def do_log(request, name, pagination_page=1):
     }
 
 
+@login_required
 @clean_article_name
 @require_privilege('read')
 @templated('wiki/action_diff.html', modifier=context_modifier)
@@ -792,6 +794,7 @@ def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
     }
 
 
+@login_required
 @clean_article_name
 @require_privilege('read')
 @templated('wiki/action_backlinks.html', modifier=context_modifier)
