@@ -645,7 +645,7 @@ msgid "You are already logged in."
 msgstr "Du bist bereits angemeldet."
 
 msgid "You cannot enter an activation key when you are logged in."
-msgstr "Du kannst keinen Aktivierungsschlüssel, eingeben wenn du angemeldet bist."
+msgstr "Du kannst keinen Aktivierungsschlüssel eingeben, wenn du angemeldet bist."
 
 msgid "You cannot reactivate an account while you are logged in."
 msgstr "Du kannst kein Konto reaktivieren solange du angemeldet bist."
