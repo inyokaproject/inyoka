@@ -1132,7 +1132,7 @@ class EditStyleForm(forms.Form):
 
 class TokenForm(forms.Form):
     data = forms.CharField(
-        label=ugettext_lazy(u'Please enter the string which was sent to you by email below:'),
+        label=ugettext_lazy(u'Please enter the string which was sent to you by email below'),
         widget=forms.Textarea())
 
     def __init__(self, *args, **kwargs):
