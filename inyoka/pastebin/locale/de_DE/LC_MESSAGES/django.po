@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-02-14 11:04+0100\n"
+"POT-Creation-Date: 2017-05-01 07:15+0200\n"
 "PO-Revision-Date: 2017-03-23 22:51+0000\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.1\n"
+"Generated-By: Babel 2.2.0\n"
 
 msgid "Apache Config (.htaccess)"
 msgstr "Apache Config (.htaccess)"
@@ -99,6 +99,10 @@ msgstr "OCaml"
 msgid "PHP"
 msgstr "PHP"
 
+#, python-format
+msgid "Paste number %(id)d could not be found"
+msgstr "Eintrag Nummer %(id)d konnte nicht gefunden werden."
+
 msgid "Perl"
 msgstr "Perl"
 
@@ -164,7 +168,4 @@ msgstr "reStructuredText"
 
 msgid "sources.list"
 msgstr "sources.list"
-
-#~ msgid "Paste number %(id)d could not be found"
-#~ msgstr "Eintrag Nummer %(id)d konnte nicht gefunden werden."
 
