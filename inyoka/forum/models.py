@@ -878,7 +878,7 @@ class Post(models.Model, LockableObject):
         Post.objects.filter(position__gt=self.position, topic=self.topic) \
                     .update(position=F('position') - 1)
 
-        parent_forums = list(Forum.objects.filter(last_post_id=self.pk).all())
+        parent_forums = list(Forum.objects.filter(last_post=self).all())
 
         # search for a new last post for al forums in the chain up.
         # We actually cheat here and set the newest post from the current
