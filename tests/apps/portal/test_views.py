@@ -18,6 +18,7 @@ from django.utils.timezone import now
 from django.utils.translation import ugettext as _
 
 from guardian.shortcuts import assign_perm
+from unittest import skip
 
 from inyoka.portal.models import (
     PRIVMSG_FOLDERS,
@@ -76,7 +77,7 @@ class TestViews(TestCase):
         """Test if it is possible to subscribe to users."""
         with translation.override('en-us'):
             response = self.client.post('/user/user/subscribe/', follow=True)
-        self.assertRedirects(response, '/user/user/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/user/user/')
         self.assertIn(
             u'You will now be notified about activities of “user”.',
             response.content.decode('utf-8'),
@@ -96,7 +97,7 @@ class TestViews(TestCase):
         Subscription(user=self.admin, content_object=self.user).save()
         with translation.override('en-us'):
             response = self.client.post('/user/user/unsubscribe/', follow=True)
-        self.assertRedirects(response, '/user/user/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/user/user/')
         self.assertIn(
             u'From now on you won’t be notified anymore about activities of “user”.',
             response.content.decode('utf-8'),
@@ -111,14 +112,13 @@ class TestAuthViews(TestCase):
     def setUp(self):
         super(TestAuthViews, self).setUp()
         self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
-        self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
 
     def test_valid_login(self):
         """Test the login with valid credentials."""
         postdata = {'username': 'user', 'password': 'user'}
         with translation.override('en-us'):
             response = self.client.post('/login/', postdata, follow=True)
-            self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+            self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
             self.assertInHTML('<div class="message success">%s</div>'
                               % _(u'You have successfully logged in.'),
                               response.content, count=1)
@@ -127,7 +127,7 @@ class TestAuthViews(TestCase):
                             .get_expire_at_browser_close())
 
             response = self.client.get('/login/', follow=True)
-            self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+            self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
             self.assertInHTML('<div class="message error">%s</div>'
                               % _(u'You are already logged in.'),
                               response.content, count=1)
@@ -136,7 +136,7 @@ class TestAuthViews(TestCase):
         """Test the “stay logged in” function."""
         postdata = {'username': 'user', 'password': 'user', 'permanent': 'on'}
         response = self.client.post('/login/', postdata, follow=True)
-        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
 
         self.assertFalse(self.client.session.get_expire_at_browser_close())
         self.assertEqual(self.client.session.get_expiry_age(),
@@ -187,12 +187,12 @@ class TestAuthViews(TestCase):
         next = 'http://google.at'
         response = self.client.get('/login/', {'next': next}, follow=True)
         # We don't allow redirects to external pages!
-        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
 
         next = 'http://%s/calendar/' % settings.BASE_DOMAIN_NAME
         response = self.client.get('/login/', {'next': next}, follow=True)
         # But internal redirects are fine.
-        self.assertRedirects(response, '/calendar/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/calendar/')
 
     def test_logout_as_anonymous(self):
         """If a user is logging out without beeing logged in previously,
@@ -215,7 +215,7 @@ class TestAuthViews(TestCase):
         next = 'http://%s/login/' % settings.BASE_DOMAIN_NAME
         response = self.client.get('/logout/', {'next': next})
 
-        self.assertRedirects(response, '/login/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/login/')
         self.assertNotIn('_auth_user_id', self.client.session.keys())
         self.assertNotIn('_auth_user_backend', self.client.session.keys())
 
@@ -230,12 +230,12 @@ class TestAuthViews(TestCase):
         next = 'http://google.at'
         response = self.client.get('/logout/', {'next': next}, follow=True)
         # We don't allow redirects to external pages!
-        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
 
         next = 'http://%s/calendar/' % settings.BASE_DOMAIN_NAME
         response = self.client.get('/logout/', {'next': next}, follow=True)
         # But internal redirects are fine.
-        self.assertRedirects(response, '/calendar/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/calendar/')
 
     def test_register_safe_redirects(self):
         """External redirects are not allowed after visiting the register page.
@@ -249,12 +249,12 @@ class TestAuthViews(TestCase):
         next = 'http://google.at'
         response = self.client.get('/register/', {'next': next}, follow=True)
         # We don't allow redirects to external pages!
-        self.assertRedirects(response, '/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
 
         next = 'http://%s/calendar/' % settings.BASE_DOMAIN_NAME
         response = self.client.get('/register/', {'next': next}, follow=True)
         # But internal redirects are fine.
-        self.assertRedirects(response, '/calendar/', host=settings.BASE_DOMAIN_NAME)
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/calendar/')
 
     def test_register_as_authenticated_user(self):
         """Logged in users shall not be able to register a new account."""
@@ -294,6 +294,7 @@ class TestAuthViews(TestCase):
         self.assertRedirects(response, href('portal'))
         self.assertContains(response, u'User registration is currently disabled.')
 
+    @skip("Should be fixed with https://github.com/inyokaproject/inyoka/issues/971")
     def test_lost_password(self):
         """Test the “lost password” feature.
 
@@ -403,7 +404,7 @@ class TestPrivMsgViews(TestCase):
 
     def test_access(self):
         response = self.client.get('/privmsg/', follow=True)
-        self.assertRedirects(response, '/privmsg/inbox/',
+        self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/privmsg/inbox/',
                              host=settings.BASE_DOMAIN_NAME)
         self.assertEqual(response.status_code, 200)
 

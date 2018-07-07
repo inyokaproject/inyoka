@@ -11,13 +11,17 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.bdd.settings.headless'
 
 def before_all(context):
     context.LOG_DIR = "bdd_screenshots"
+    use_fixture(django_test_runner, context)
+    use_fixture(browser_chrome, context)
 
 
 def before_scenario(context, scenario):
-    use_fixture(django_test_runner, context)
-    use_fixture(django_test_case, context)
-    use_fixture(browser_chrome, context)
+    from django.contrib.auth.models import Group
 
+    use_fixture(django_test_case, context)
+
+    Group.objects.get_or_create(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+    Group.objects.get_or_create(name=settings.INYOKA_ANONYMOUS_GROUP_NAME)
     settings.BASE_DOMAIN_NAME = context.base_url[7:]
     settings.MEDIA_URL = '//media.%s/' % settings.BASE_DOMAIN_NAME
     settings.STATIC_URL = '//static.%s/' % settings.BASE_DOMAIN_NAME

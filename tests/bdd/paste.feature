@@ -21,7 +21,6 @@ Feature: Paste
       | BDD-User  |
 
 
-  @skip
   Scenario Outline: Users should see an exception if they shouldn't see entries
     Given I am "<username>"
      When I use the "pastebin" and visit the "main" page
@@ -49,7 +48,6 @@ Feature: Paste
       | anonymous |
       | BDD-User  |
 
-  @skip
   Scenario Outline: Users shouldn't see the details of a paste if they haven't got the permission
     Given I am "<username>"
       And a "paste" with caption "BDD-TEST" exists

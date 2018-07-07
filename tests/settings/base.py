@@ -24,6 +24,7 @@ DATABASES = {
 DEBUG = DEBUG_PROPAGATE_EXCEPTIONS = True
 
 # url settings
+ALLOWED_HOSTS = ['.ubuntuusers.local']
 BASE_DOMAIN_NAME = 'ubuntuusers.local:8080'
 INYOKA_URI_SCHEME = 'http'
 SESSION_COOKIE_DOMAIN = '.ubuntuusers.local'

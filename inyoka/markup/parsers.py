@@ -84,7 +84,7 @@ class PygmentsParser(Parser):
         self.data = data
         self.syntax = syntax
 
-    def build_node(self):
+    def build_node(self, context=None, format=None):
         try:
             rv = highlight_code(self.data, self.syntax)
         except ClassNotFound:
@@ -105,7 +105,7 @@ class CSVParser(Parser):
     def __init__(self, data):
         self.data = data
 
-    def build_node(self):
+    def build_node(self, context=None, format=None):
         from csv import reader
         rows = reader(self.data.encode('utf-8').splitlines())
         result = nodes.Table()
@@ -161,7 +161,7 @@ class TemplateParser(Parser):
                                       normalize_pagename(args[0], False))
         self.context = items
 
-    def build_node(self):
+    def build_node(self, context=None, format=None):
         return expand_page_template(self.template, self.context, True)
 
 
