@@ -63,11 +63,6 @@ pipeline {
             }
           }
         }
-        stage('Install npm tools for BDD') {
-          steps {
-            sh 'npm install phantomjs-prebuilt'
-          }
-        }
       }
     }
     stage('Link theme') {
@@ -128,19 +123,11 @@ pipeline {
         }
       }
     }
-    stage('Analyse tests') {
-      steps {
-        junit 'sqlite.xml,postgresql.xml,reports/*.xml'
-        step([$class: 'CoberturaPublisher',
-              autoUpdateHealth: false,
-              autoUpdateStability: false,
-              coberturaReportFile: 'coverage*.xml',
-              failUnhealthy: false,
-              failUnstable: false,
-              maxNumberOfBuilds: 0,
-              onlyStable: false,
-              sourceEncoding: 'ASCII',
-              zoomCoverageChart: false])
+  }
+  post {
+    always {
+        junit 'sqlite.xml,postgresql.xml'
+        cobertura coberturaReportFile: 'coverage*.xml', onlyStable: false
         publishHTML([allowMissing: false,
                      alwaysLinkToLastBuild: false,
                      keepAll: false,
@@ -148,15 +135,7 @@ pipeline {
                      reportFiles: 'index.html',
                      reportName: 'BDD Coverage',
                      reportTitles: 'BDD Coverage'])
-      }
-    }
-  }
-  post {
-    always {
       allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-    }
-    failure {
-      archiveArtifacts allowEmptyArchive: true, artifacts: 'bdd_screenshots/**'
     }
   }
 }
