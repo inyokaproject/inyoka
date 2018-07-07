@@ -1,5 +1,6 @@
 -r production.txt
 
+allure-behave==2.4.1
 behave==1.2.6
 bumpversion==0.5.3
 coverage==4.4.2

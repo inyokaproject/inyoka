@@ -29,5 +29,4 @@ def before_scenario(context, scenario):
 
 
 def after_step(context, step):
-    if step.status == "failed":
-        take_screenshot(context, step.name)
+    take_screenshot(context, step.name)
