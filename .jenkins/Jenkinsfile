@@ -42,15 +42,24 @@ pipeline {
         }
         stage('Theme checkout') {
           steps {
-            dir('theme-ubuntuusers') {
-              git branch: 'staging', url: 'git@github.com:inyokaproject/theme-ubuntuusers'
+            script {
+              dir('theme-ubuntuusers') {
+                git branch: 'staging', url: 'git@github.com:inyokaproject/theme-ubuntuusers'
 
-              sh """
-              git checkout ${CHANGE_TARGET} || git checkout staging
+                def branch = ""
+                try {
+                    branch = CHANGE_TARGET
+                }
+                catch (all) {
+                    branch = GIT_BRANCH
+                }
+                sh """
+                git checkout ${branch} || git checkout staging
 
-              npm install
-              ./node_modules/grunt-cli/bin/grunt
-              """
+                npm install
+                ./node_modules/grunt-cli/bin/grunt
+                """
+              }
             }
           }
         }
