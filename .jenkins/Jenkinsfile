@@ -91,7 +91,7 @@ pipeline {
           steps {
             sh """
             ${activate_venv}
-            coverage run --rcfile tests/bdd/settings/.coveragerc -m behave --junit --tags=-skip
+            coverage run --rcfile tests/bdd/settings/.coveragerc -m behave -f allure_behave.formatter:AllureFormatter -o allure-results --junit --tags=-skip
             coverage html -d bdd_coverage --rcfile tests/bdd/settings/.coveragerc
             """
           }
@@ -143,6 +143,9 @@ pipeline {
     }
   }
   post {
+    always {
+      allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+    }
     failure {
       archiveArtifacts allowEmptyArchive: true, artifacts: 'bdd_screenshots/**'
     }
