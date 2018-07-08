@@ -389,7 +389,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
 
     @property
     def is_team_member(self):
-        if self.is_anonymous():
+        if self.is_anonymous:
             return False
         return self.groups.filter(name=settings.INYOKA_TEAM_GROUP_NAME).exists()
 
