@@ -13,8 +13,23 @@ pipeline {
   agent { label 'inyoka-slave' }
   options {
     buildDiscarder(logRotator(numToKeepStr: '2'))
-    timeout(time: 30, unit: 'MINUTES')
     timestamps()
+  }
+  triggers {
+    githubBranches(cancelQueued: true,
+                   abortRunning: true,
+                   events: [branchCreated(), hashChanged()],
+                   preStatus: true,
+                   skipFirstRun: true,
+                   spec: '',
+                   triggerMode: 'HEAVY_HOOKS')
+    githubPullRequests(abortRunning: true,
+                       cancelQueued: true,
+                       events: [Open(), commitChanged(), commentPattern('Build now.')],
+                       preStatus: true,
+                       skipFirstRun: true,
+                       spec: '',
+                       triggerMode: 'HEAVY_HOOKS')
   }
   stages {
     stage('Prepare build') {
@@ -42,8 +57,8 @@ pipeline {
         }
         stage('Theme checkout') {
           steps {
-            script {
-              dir('theme-ubuntuusers') {
+            dir('theme-ubuntuusers') {
+              script {
                 git branch: 'staging', url: 'git@github.com:inyokaproject/theme-ubuntuusers'
 
                 def branch = ""

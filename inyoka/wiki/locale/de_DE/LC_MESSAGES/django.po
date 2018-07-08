@@ -105,6 +105,9 @@ msgstr "Bearbeiten der Seite abgebrochen."
 msgid "Extensive (for beginners)"
 msgstr "Umfangreich (für Einsteiger)"
 
+msgid "Howto"
+msgstr "Howto"
+
 msgid "I don't want a template"
 msgstr "Ich möchte keine Vorlage verwenden"
 

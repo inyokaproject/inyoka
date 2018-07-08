@@ -731,6 +731,7 @@ def events(request, show_all=False, invisible=False):
         events = Event.objects.filter(date__gt=date.today(), visible=True)
 
     events = events.select_related('author')
+    events = events.only('author__username', 'slug', 'name', 'date')
 
     sortable = Sortable(events, request.GET, '-date',
         columns=['name', 'date'])
@@ -866,8 +867,7 @@ def event_suggest(request):
             messages.success(request,
                 _(u'The event has been saved. A team member will review it '
                   u'soon.'))
-            event = Event.objects.get(id=event.id)  # get truncated slug
-            return HttpResponseRedirect(url_for(event))
+            return HttpResponseRedirect(href('portal', 'calendar'))
     else:
         form = NewEventForm()
 

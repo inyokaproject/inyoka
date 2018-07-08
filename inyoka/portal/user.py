@@ -387,6 +387,12 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     def is_inactive(self):
         return self.status == self.STATUS_INACTIVE
 
+    @property
+    def is_team_member(self):
+        if self.is_anonymous:
+            return False
+        return self.groups.filter(name=settings.INYOKA_TEAM_GROUP_NAME).exists()
+
     def email_user(self, subject, message, from_email=None):
         """Sends an e-mail to this User."""
         send_mail(subject, message, from_email, [self.email])
