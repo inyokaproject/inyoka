@@ -375,6 +375,7 @@ def _get_wiki_article_templates():
     # TODO: this is a hack, do not have these hardcoded here!
     return [('Vorlage/Artikel_normal', _(u'Normal (for experienced authors)')),
             ('Vorlage/Artikel_umfangreich', _(u'Extensive (for beginners)')),
+            ('Vorlage/Howto', _(u'Howto')),
             ('', _(u'I don\'t want a template'))]
 
 
@@ -732,6 +733,7 @@ def do_mv_back(request, name):
 
 
 @clean_article_name
+@login_required
 @require_privilege('read')
 @templated('wiki/action_log.html', modifier=context_modifier)
 @case_sensitive_redirect
@@ -770,6 +772,7 @@ def do_log(request, name, pagination_page=1):
     }
 
 
+@login_required
 @clean_article_name
 @require_privilege('read')
 @templated('wiki/action_diff.html', modifier=context_modifier)
@@ -791,6 +794,7 @@ def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
     }
 
 
+@login_required
 @clean_article_name
 @require_privilege('read')
 @templated('wiki/action_backlinks.html', modifier=context_modifier)

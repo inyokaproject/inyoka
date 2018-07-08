@@ -70,6 +70,18 @@ class TestUserModel(TestCase):
         registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
         self.assertTrue(registered_group in self.user.groups.all())
 
+    def test_anonymous_is_not_team_member(self):
+        anonymous = User.objects.get_anonymous_user()
+        self.assertFalse(anonymous.is_team_member)
+
+    def test_is_not_team_member(self):
+        self.assertFalse(self.user.is_team_member)
+
+    def test_is_team_member(self):
+        group = Group.objects.create(name='Team')
+        self.user.groups.add(group)
+        self.assertTrue(self.user.is_team_member)
+
 
 class TestUserHasContent(TestCase):
     def setUp(self):
