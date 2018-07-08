@@ -78,8 +78,8 @@ class TestUserModel(TestCase):
         self.assertFalse(self.user.is_team_member)
 
     def test_is_team_member(self):
-        group = Group.objects.create(name='Team')
-        self.user.groups.add(group)
+        team_group = Group.objects.get(name=settings.INYOKA_TEAM_GROUP_NAME)
+        self.user.groups.add(team_group)
         self.assertTrue(self.user.is_team_member)
 
 
