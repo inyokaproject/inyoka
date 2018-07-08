@@ -31,16 +31,6 @@ dispatcher = SimpleDispatcher(
 
 
 @dispatcher.register()
-def get_topic_autocompletion(request):
-    query = request.GET.get('q', '')
-    topics = Topic.objects.filter(slug__startswith=query)[:11]
-    data = [t.slug for t in topics]
-    if len(data) > 10:
-        data[10] = '...'
-    return data
-
-
-@dispatcher.register()
 def get_post(request):
     try:
         post_id = int(request.GET['post_id'])

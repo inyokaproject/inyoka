@@ -23,7 +23,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import models
+from django.db import models, transaction
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
@@ -162,12 +162,16 @@ def do_metaexport(request, name):
     except Page.DoesNotExist:
         return HttpResponse(u'', content_type='text/plain; charset=utf-8',
                             status=404)
+
     metadata = []
     for key, values in page.metadata.iteritems():
         for value in values:
             metadata.append(u'%s: %s' % (key, value))
-    return HttpResponse(u'\n'.join(metadata).encode('utf-8'),
-                        content_type='text/plain; charset=utf-8')
+
+    response = HttpResponse(u'\n'.join(metadata).encode('utf-8'),
+                            content_type='text/plain; charset=utf-8')
+    response['X-Robots-Tag'] = 'noindex'
+    return response
 
 
 @templated('wiki/missing_page.html', status=404, modifier=context_modifier)
@@ -335,6 +339,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
+@transaction.atomic
 def do_rename(request, name, new_name=None, force=False):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -370,6 +375,7 @@ def _get_wiki_article_templates():
     # TODO: this is a hack, do not have these hardcoded here!
     return [('Vorlage/Artikel_normal', _(u'Normal (for experienced authors)')),
             ('Vorlage/Artikel_umfangreich', _(u'Extensive (for beginners)')),
+            ('Vorlage/Howto', _(u'Howto')),
             ('', _(u'I don\'t want a template'))]
 
 
@@ -543,6 +549,7 @@ def do_delete(request, name):
 @require_privilege('manage')
 @templated('wiki/action_mv_baustelle.html')
 @case_sensitive_redirect
+@transaction.atomic
 def do_mv_baustelle(request, name):
     """
     "Move" the page to an editing area called "Baustelle", ie. do:
@@ -623,6 +630,7 @@ def do_mv_baustelle(request, name):
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
+@transaction.atomic
 def do_mv_discontinued(request, name):
     """Move page from ``Baustelle`` to ``Baustelle/Verlassen``"""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -660,6 +668,7 @@ def do_mv_discontinued(request, name):
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
+@transaction.atomic
 def do_mv_back(request, name):
     """
     Move page back from ``Baustelle`` to its origin, move copy (which may exist
@@ -724,6 +733,7 @@ def do_mv_back(request, name):
 
 
 @clean_article_name
+@login_required
 @require_privilege('read')
 @templated('wiki/action_log.html', modifier=context_modifier)
 @case_sensitive_redirect
@@ -762,6 +772,7 @@ def do_log(request, name, pagination_page=1):
     }
 
 
+@login_required
 @clean_article_name
 @require_privilege('read')
 @templated('wiki/action_diff.html', modifier=context_modifier)
@@ -783,6 +794,7 @@ def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
     }
 
 
+@login_required
 @clean_article_name
 @require_privilege('read')
 @templated('wiki/action_backlinks.html', modifier=context_modifier)

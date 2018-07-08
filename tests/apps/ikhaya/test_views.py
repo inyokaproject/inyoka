@@ -11,8 +11,13 @@
 import datetime
 
 from django.conf import settings
+from django.contrib.auth.models import Group
+from django.core.exceptions import PermissionDenied
+from django.test import RequestFactory
+from guardian.shortcuts import assign_perm
 
 from inyoka.ikhaya.models import Article, Category, Comment, Report
+from inyoka.ikhaya.views import events
 from inyoka.portal.user import User
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
@@ -178,3 +183,32 @@ class TestViews(TestCase):
                                                         'confirm': True})
         self.assertContains(response, 'endtime<ul class="errorlist">', 1)
         self.assertContains(response, 'errorlist', 2)
+
+
+class TestEventView(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = User.objects.register_user('test', 'test@example.local', password='test', send_mail=False)
+        group = Group.objects.create(name='test_event_group')
+        assign_perm('portal.change_event', group)
+        group.user_set.add(self.user)
+
+        self.client.defaults['HTTP_HOST'] = 'ikhaya.%s' % settings.BASE_DOMAIN_NAME
+        self.client.login(username='test', password='test')
+
+    def test_user_can_view_it(self):
+        response = self.client.get('/events/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_anonymous_gets_error(self):
+        request = self.factory.get('/')
+        request.user = User.objects.get_anonymous_user()
+        with self.assertRaises(PermissionDenied):
+            events(request)
+
+    def test_queries_needed(self):
+        with self.assertNumQueries(9):
+            self.client.get('/events/')

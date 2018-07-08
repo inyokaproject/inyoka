@@ -104,6 +104,9 @@ msgstr ""
 msgid "Extensive (for beginners)"
 msgstr ""
 
+msgid "Howto"
+msgstr ""
+
 msgid "I don't want a template"
 msgstr ""
 
