@@ -59,16 +59,12 @@ def reactivate_user(id, email, status):
     if email_exists:
         msg = _(u'This e-mail address is used by another user.')
         raise ValidationError(msg)
-    # return {'failed': msg}
 
     user = User.objects.get(id=id)
     if not user.is_deleted:
         raise ValidationError(_(u'The account “%(name)s” was already reactivated.') %
                               {'name': escape(user.username)},)
-        """return {
-            'failed': _(u'The account “%(name)s” was already reactivated.') %
-               {'name': escape(user.username)},
-        }"""
+
     user.email = email
     user.status = status
 

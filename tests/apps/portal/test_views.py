@@ -322,6 +322,19 @@ class TestAuthViews(TestCase):
             response = self.client.get('/lost_password/', follow=True)
         self.assertContains(response, 'You are already logged in.')
 
+    def test_reactivate_user_as_authenticated_user(self):
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.get('/confirm/reactivate_user', follow=True)
+        self.assertContains(response, 'You cannot reactivate an account while '
+                            + 'you are logged in.', status_code=403)
+
+    def test_confirm_direct_get_request(self):
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.get('/confirm/set_new_email/?token=ThisIsAToken')
+        self.assertContains(response, 'ThisIsAToken')
+
     def test_user_deactivate_and_recover(self):
         """Test the user deactivate and recover feature.
         """
@@ -343,7 +356,6 @@ class TestAuthViews(TestCase):
         postdata = {'data': code}
         with translation.override('en-us'):
             response = self.client.post('/confirm/reactivate_user/', postdata, follow=True)
-        print response.status_code
         self.assertContains(response, 'The account “user” was reactivated.', status_code=404)
         self.assertTrue(User.objects.get(pk=self.user.pk).is_active)
 
@@ -357,6 +369,14 @@ class TestAuthViews(TestCase):
         # Changing an email address requires a valid session
         self.client.logout()
         self.assertFalse(self.client.user.is_authenticated())
+
+        # Perform mail change with invalid token
+        self.client.login(username='user', password='user')
+        postdata = {'data': 'ThisIsAWrongToken'}
+        with translation.override('en-us'):
+            response = self.client.post('/confirm/set_new_email/', postdata, follow=True)
+        self.client.logout()
+        self.assertContains(response, 'The entered data is invalid or has expired.')
 
         # Perform invalid mail change
         subject = mail.outbox[0].subject
