@@ -108,8 +108,7 @@ def deactivate_user(user):
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
     user.status = User.STATUS_DELETED
-    if not user.is_banned:
-        user.email = 'user%d@ubuntuusers.de.invalid' % user.id
+    user.email = 'user%d@ubuntuusers.de.invalid' % user.id
     user.set_unusable_password()
     user.groups.clear()
     user.avatar = None
