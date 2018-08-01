@@ -9,17 +9,18 @@
     :license: BSD, see LICENSE for more details.
 """
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import Group
 
 from inyoka.forum.models import Forum, Post, Topic
 from inyoka.ikhaya.models import Article, Category, Comment, Event, Suggestion
 from inyoka.pastebin.models import Entry
 from inyoka.portal.models import PrivateMessage, Subscription
-from inyoka.portal.user import User, deactivate_user
+from inyoka.portal.user import User, deactivate_user, reactivate_user
 from inyoka.utils.test import TestCase
 from inyoka.wiki.models import Page
 
@@ -37,6 +38,35 @@ class TestUserModel(TestCase):
         deactivate_user(self.user)
         self.user = User.objects.get(pk=self.user.id)
         self.assertTrue(self.user.is_deleted)
+
+    def test_email_exists(self):
+        """Test that a ValidationError is raised if someone tries to reactivate an account
+        with an email that is used by another user.
+        """
+        with self.assertRaises(ValidationError):
+            reactivate_user(self.user.id, self.user.email, self.user.status)
+
+    def test_user_is_already_reactivated(self):
+        """Test that an ValidationError is raised if the user was already reactivated.
+        """
+        with self.assertRaises(ValidationError):
+            reactivate_user(self.user.id, 'test@example.com', self.user.status)
+
+    def test_user_reactivate_after_ban_exceeded(self):
+        """Test that a user, whose ban time exceeded, can reactivate the account.
+        """
+        bannedUser = User.objects.register_user('banned',
+                                                'ban@example.com',
+                                                'pwd',
+                                                False)
+        bannedUser.banned_until = datetime.utcnow() - timedelta(days=5)
+        deactivate_user(bannedUser)
+        bannedUser = User.objects.get(pk=bannedUser.id)
+        bannedUser.save()
+        reactivate_user(bannedUser.id, 'ban@example.com', bannedUser.status)
+        bannedUser = User.objects.get(pk=bannedUser.id)
+        self.assertEqual(bannedUser.status, User.STATUS_ACTIVE)
+        self.assertIsNone(bannedUser.banned_until)
 
     def test_get_user_by_username(self):
         user = User.objects.get_by_username_or_email('testing')
