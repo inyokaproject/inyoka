@@ -310,10 +310,6 @@ class PageManager(models.Manager):
         """
         return len(self.get_page_list(existing_only, cached))
 
-    def get_attachment_count(self, existing_only=True, cached=True):
-        """Get the number of attachments."""
-        return len(self.get_attachment_list(existing_only, cached))
-
     def get_owners(self, page_name):
         """
         Get a set of owners defined using the ``'X-Owner'`` metadata key.
