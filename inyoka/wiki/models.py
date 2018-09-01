@@ -966,7 +966,8 @@ class Page(models.Model):
 
     def edit(self, text=None, user=None, change_date=None,
              note=u'', attachment=None, attachment_filename=None,
-             deleted=None, remote_addr=None, update_meta=True):
+             deleted=None, remote_addr=None, update_meta=True,
+             clean_cache=True):
         """
         This saves outstanding changes and creates a new revision which is
         then attached to the `rev` attribute.
@@ -1061,7 +1062,8 @@ class Page(models.Model):
         self.last_rev = self.rev
         self.save(update_meta=update_meta)
 
-        Page.objects.clean_cache(self.name)
+        if clean_cache:
+            Page.objects.clean_cache(self.name)
 
     def get_absolute_url(self, action='show', revision=None, new_revision=None,
                          format=None, **query):
