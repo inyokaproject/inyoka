@@ -13,8 +13,23 @@ pipeline {
   agent { label 'inyoka-slave' }
   options {
     buildDiscarder(logRotator(numToKeepStr: '2'))
-    timeout(time: 30, unit: 'MINUTES')
     timestamps()
+  }
+  triggers {
+    githubBranches(cancelQueued: true,
+                   abortRunning: true,
+                   events: [branchCreated(), hashChanged()],
+                   preStatus: true,
+                   skipFirstRun: true,
+                   spec: '',
+                   triggerMode: 'HEAVY_HOOKS')
+    githubPullRequests(abortRunning: true,
+                       cancelQueued: true,
+                       events: [Open(), commitChanged(), commentPattern('Build now.')],
+                       preStatus: true,
+                       skipFirstRun: true,
+                       spec: '',
+                       triggerMode: 'HEAVY_HOOKS')
   }
   stages {
     stage('Prepare build') {
@@ -43,14 +58,24 @@ pipeline {
         stage('Theme checkout') {
           steps {
             dir('theme-ubuntuusers') {
-              git branch: 'staging', url: 'git@github.com:inyokaproject/theme-ubuntuusers'
+              script {
+                git branch: 'staging', url: 'git@github.com:inyokaproject/theme-ubuntuusers'
 
-              sh """
-              git checkout ${env.BRANCH_NAME} || git checkout staging
+                def branch = ""
+                try {
+                    branch = "origin/${CHANGE_TARGET}"
+                }
+                catch (all) {
+                    branch = "origin/${GIT_BRANCH}"
+                }
+                sh """
+                git checkout ${branch} || git checkout origin/staging
+                git clean -fdx
 
-              npm install
-              ./node_modules/grunt-cli/bin/grunt
-              """
+                npm install
+                ./node_modules/grunt-cli/bin/grunt
+                """
+              }
             }
           }
         }
