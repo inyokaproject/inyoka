@@ -12,14 +12,6 @@ import itertools
 import os.path
 
 from django.core.files.storage import FileSystemStorage
-from werkzeug import utils
-
-
-def get_filename(filename, file=None):
-    """
-    Returns a save filename (CAUTION: strips path components!).
-    """
-    return utils.secure_filename(filename) or 'Noname'
 
 
 class MaxLengthStorageMixin(object):
