@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 from django.db import migrations, models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -8,24 +10,52 @@ from django.utils.translation import ugettext as _
 
 import inyoka.utils.database
 
-from inyoka.portal.models import TicketReason
+
+SPAM_REASON=_(u'Spam')
+OTHER_REASON=_(u'Other')
 
 
 def add_ticketreason_defaults(apps, schema_editor):
 
+    TicketReason = apps.get_model("portal", "TicketReason")
+
     # create the system Spam reason for posts
     TicketReason.objects.create(
         system_defined = True,
-        content_type = ContentType.objects.get(app_label="forum", model="post"),
-        reason = _(u'Spam')
+        content_type = ContentType.objects.using(db_alias).get(app_label="forum", model="post"),
+        reason = SPAM_REASON
     )
 
     # create the system Other reason with for posts
     TicketReason.objects.create(
         system_defined = True,
-        content_type = ContentType.objects.get(app_label="forum", model="post"),
-        reason = _(u'Other')
+        content_type = ContentType.objects.using(db_alias).get(app_label="forum", model="post"),
+        reason = OTHER_REASON
     )
+
+
+def migrate_old_tickets(apps, schema_editor):
+
+    Topic = apps.get_model("forum", "Topic")
+    Ticket = apps.get_model("portal", "Ticket")
+    TicketReason = apps.get_model("portal", "TicketReason")
+
+    db_alias = schema_editor.connection.alias
+    topics = Topic.objects.using(db_alias).filter(reported__isnull=False).order_by('slug').all()
+
+    for topic in topics:
+        ticket = Ticket()
+
+        ticket.content_object = topic.first_post
+
+        ticket.reporting_user = topic.reporter
+        ticket.reporting_time = datetime.utcnow()
+        ticket.reporter_comment = u'Automatically migrated from old ticketing system, moved from topic to first post. Original message is: %s' % topic.reported
+        ticket.reason = TicketReason.objects.get(reason=OTHER_REASON)
+        if topic.report_claimed_by != None:
+            ticket.owning_user = topic.report_claimed_by
+
+        ticket.save(using=db_alias)
 
 
 class Migration(migrations.Migration):
@@ -75,4 +105,5 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(related_name='ticket_reporting_user', to=settings.AUTH_USER_MODEL),
         ),
         migrations.RunPython(add_ticketreason_defaults),
+        migrations.RunPython(migrate_old_tickets),
     ]
