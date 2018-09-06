@@ -1688,14 +1688,26 @@ def csrf_failure(request, reason=None):
 
 
 @login_required
-@permission_required('portal.change_ticketreason', raise_exception=True)
+@permission_required('forum.manage_tickets_forum', raise_exception=True)
 @templated('portal/ticketreason_list.html')
 def ticket_reasons_list(request):
 
     reasons = TicketReason.objects.all()
 
+    all_subscribed = True
+    some_subscribed = False
+
+    # add "subscribed" variable to all reasons
+    for reason in reasons:
+        subscribers = storage[reason.get_subscription_name()] or u''
+        reason.subscribed = str(request.user.id) in subscribers.split(',')
+        all_subscribed &= reason.subscribed
+        some_subscribed |= reason.subscribed
+
     return {
         'reasons': reasons,
+        'all_subscribed': all_subscribed,
+        'some_subscribed': some_subscribed,
     }
 
 
@@ -1743,6 +1755,52 @@ def ticket_reason_delete(request, reason_id):
         messages.error(request, _(u'You tried to delete a system defined ticket reason, aborting.'))
     else:
         reason.delete()
+
+    return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
+
+
+def ticket_reason_subscription(request, reason_id, mode):
+
+    if reason_id == u'all':
+        # (un)subscribe to all tickets
+        ticket_reasons_subscriptions = TicketReason.objects.all()
+
+    else:
+        # only (un)subscribe to a specific type of ticket (filter instead of get so we get a list we can iterate over)
+        ticket_reasons_subscriptions = TicketReason.objects.filter(id=reason_id)
+
+    for ticket_reason in ticket_reasons_subscriptions:
+        storage_string = ticket_reason.get_subscription_name()
+        subscribers = storage[storage_string] or u''
+        users = set(int(i) for i in subscribers.split(',') if i)
+
+        if mode == 'subscribe':
+            if not request.user.has_perm('forum.manage_tickets_forum'):
+                return AccessDeniedResponse()
+            users.add(request.user.id)
+            if reason_id != u'all':
+                messages.success(request, _(u'A notification will now be sent when a ticket is created with the reason "%s".') % (ticket_reason.reason))
+        elif mode == 'unsubscribe':
+            try:
+                users.remove(request.user.id)
+            except KeyError:
+                pass
+            if reason_id != u'all':
+                messages.success(request, _(u'You will not be notified anymore when a ticket is created with the reason "%s".') % (ticket_reason.reason))
+
+        storage[storage_string] = ','.join(str(i) for i in users)
+
+    # only show one message when subscribing to all ticket reasons
+    if mode == 'subscribe' and reason_id == u'all':
+        if not request.user.has_perm('forum.manage_tickets_forum'):
+            return AccessDeniedResponse()
+        messages.success(request, _(u'A notification will now be sent when a ticket is created.'))
+    elif mode == 'unsubscribe' and reason_id == 'all':
+        try:
+            users.remove(request.user.id)
+        except KeyError:
+            pass
+        messages.success(request, _(u'You will not be notified anymore when a ticket is created.'))
 
     return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
 

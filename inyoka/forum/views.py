@@ -964,6 +964,26 @@ def create_ticket(request, post_id):
 
             ticket.save()
 
+            subscribers = storage[ticket.reason.get_subscription_name()] or u''
+            users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
+            for user in users:
+                if user.has_perm('forum.manage_tickets_forum'):
+                    if ticket.reason.content_type == ContentType.objects.get_for_model(Topic):
+                        send_notification(user, 'new_reported_topic',
+                                    _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
+                                    {'topic': post.topic, 'reason': ticket.reason, 'text': data['text']})
+                    else:
+                        ticket.content_object = post
+                        send_notification(user, 'new_reported_post',
+                                    _(u'Reported post: “%(post)d”') % {'post': post.id},
+                                    {'post': post, 'reason': ticket.reason, 'text': data['text']})
+
+                else:
+                    # unsubscribe this user automatically, he has no right to be here.
+                    user_ids = [i for i in subscribers.split(',')]
+                    user_ids.remove(str(user.id))
+                    storage['reported_topics_subscribers'] = ','.join(user_ids)
+
             cache.delete('portal/ticket_count')
             messages.success(request, _(u'The post was reported.'))
             return HttpResponseRedirect(url_for(post))

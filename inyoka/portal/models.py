@@ -348,6 +348,9 @@ class TicketReason(models.Model):
         """Get the reason "Spam" for the specified content_type"""
         return TicketReason.objects.get(id=1)
 
+    def get_subscription_name(self):
+        return u'ticketreason_%d_subscribers' % (self.id)
+
 
 class Ticket(models.Model):
     OPEN = 0
