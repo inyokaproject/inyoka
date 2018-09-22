@@ -16,6 +16,7 @@ from mock import patch
 
 from inyoka.portal.user import User
 from inyoka.utils.test import InyokaClient, TestCase
+from inyoka.utils.urls import href
 from inyoka.wiki.models import Page
 
 
@@ -67,3 +68,38 @@ class TestViews(TestCase):
         self.assertEqual(req.count('<tr class="odd">') + req.count('<tr class="even">'), 2)
         req = self.client.get("/Testpage250/a/log/4")
         self.assertEqual(req.status_code, 404)
+
+
+class TestDoCreate(TestCase):
+
+    client_class = InyokaClient
+
+    def setUp(self):
+        super(TestDoCreate, self).setUp()
+        self.user = User.objects.register_user('user', 'user@example.com', 'user', False)
+
+        self.client.login(username='user', password='user')
+        self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
+        self.url = href('wiki', 'wiki', 'create')
+
+    def test_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_simple_create(self):
+        self.client.post(self.url, data={'name': 'newpage', 'template': ''})
+
+        self.assertEqual(Page.objects.get().name, 'newpage')
+
+    def test_normalization_create(self):
+        self.client.post(self.url, data={'name': 'new page', 'template': ''})
+
+        self.assertEqual(Page.objects.get().name, 'new_page')
+
+    def test_error_with_different_pagename_case(self):
+        Page.objects.create(user=self.user, name='abc', remote_addr='', text='test')
+
+        response = self.client.post(self.url, data={'name': 'Abc', 'template': ''})
+
+        self.assertEqual(Page.objects.count(), 1)
+        self.assertContains(response, 'The page Abc already exists.')
