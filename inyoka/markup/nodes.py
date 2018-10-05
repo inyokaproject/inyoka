@@ -447,7 +447,8 @@ class InternalLink(Element):
                  anchor=None, id=None, style=None, class_=None):
         page = normalize_pagename(page)
         if not children:
-            children = [Text(get_pagetitle(page))]
+            anchortext = '#' + anchor if anchor is not None else ''
+            children = [Text(get_pagetitle(page) + anchortext)]
         Element.__init__(self, children, id, style, class_)
         self.existing = force_existing
         self.page = page
