@@ -69,8 +69,11 @@ class TestLexer(unittest.TestCase):
     def test_links(self):
         expect = lexer.tokenize(
             u'[:foo:]'
+            u'[:foo#anchor:]'
             u'[:foo:bar]'
+            u'[:foo#anchor:bar]'
             u'[foo:bar:baz]'
+            u'[foo:bar#anchor:baz]'
             u'[?action=edit]'
             u'[http://example.com example]'
             u'[http://example.com] ]'
@@ -79,14 +82,28 @@ class TestLexer(unittest.TestCase):
         expect('wiki_link_begin')
         expect('link_target', (None, 'foo'))
         expect('wiki_link_end')
+        
+        expect('wiki_link_begin')
+        expect('link_target', (None, 'foo#anchor'))
+        expect('wiki_link_end')
 
         expect('wiki_link_begin')
         expect('link_target', (None, 'foo'))
         expect('text', 'bar')
         expect('wiki_link_end')
+        
+        expect('wiki_link_begin')
+        expect('link_target', (None, 'foo#anchor'))
+        expect('text', 'bar')
+        expect('wiki_link_end')
 
         expect('wiki_link_begin')
         expect('link_target', ('foo', 'bar'))
+        expect('text', 'baz')
+        expect('wiki_link_end')
+        
+        expect('wiki_link_begin')
+        expect('link_target', ('foo', 'bar#anchor'))
         expect('text', 'baz')
         expect('wiki_link_end')
 
