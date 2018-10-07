@@ -105,40 +105,40 @@ class TestLexer(unittest.TestCase):
         expect('text', ' ]')
 
         expect('eof')
-    
+
     def test_link_wiki_anchor_simple(self):
         expect = lexer.tokenize(
             u'[:foo#anchor:]'
         ).expect
-        
+
         expect('wiki_link_begin')
         expect('link_target', (None, 'foo#anchor'))
         expect('wiki_link_end')
 
         expect('eof')
-    
+
     def test_link_wiki_anchor_custom_label(self):
         expect = lexer.tokenize(
             u'[:foo#anchor:bar]'
         ).expect
-        
+
         expect('wiki_link_begin')
         expect('link_target', (None, 'foo#anchor'))
         expect('text', 'bar')
         expect('wiki_link_end')
 
         expect('eof')
-    
+
     def test_link_interwiki_custom_label(self):
         expect = lexer.tokenize(
             u'[foo:bar#anchor:baz]'
         ).expect
-    
+
         expect('wiki_link_begin')
         expect('link_target', ('foo', 'bar#anchor'))
         expect('text', 'baz')
         expect('wiki_link_end')
-        
+
         expect('eof')
 
     def test_meta(self):
