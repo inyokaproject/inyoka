@@ -818,12 +818,12 @@ class Parser(object):
             children.append(self.parse_node(stream))
         stream.expect('wiki_link_end')
         if not wiki:
-            return nodes.InternalLink(page, children, anchor=anchor,
+            return nodes.InternalLink(page.strip(), children, anchor=anchor,
                                       force_existing=self.wiki_force_existing)
         elif wiki in STANDARD_WIKI_MAP:
             if not children:
                 children = [nodes.Text(page)]
-            return nodes.Link(STANDARD_WIKI_MAP[wiki](page), children,
+            return nodes.Link(STANDARD_WIKI_MAP[wiki](page.strip()), children,
                               class_=wiki)
         return nodes.InterWikiLink(wiki, page, children, anchor=anchor)
 
