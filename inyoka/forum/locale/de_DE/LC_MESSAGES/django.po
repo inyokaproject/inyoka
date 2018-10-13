@@ -465,3 +465,5 @@ msgstr "“%(topic)s” – Thema mit Version %(version)s"
 msgid "“new” is not a valid forum slug"
 msgstr "„new“ ist kein gültiger Slug"
 
+msgid "Edit first post afterwards"
+msgstr "Danach ersten Beitrag bearbeiten"

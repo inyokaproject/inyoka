@@ -464,3 +464,5 @@ msgstr ""
 msgid "“new” is not a valid forum slug"
 msgstr ""
 
+msgid "Edit first post afterwards"
+msgstr ""

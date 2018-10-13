@@ -149,6 +149,7 @@ class MoveTopicForm(forms.Form):
     topic.
     """
     forum = ForumField()
+    edit = forms.BooleanField(required=False)
 
 
 class SplitTopicForm(forms.Form):
@@ -166,6 +167,7 @@ class SplitTopicForm(forms.Form):
     #: version info. defaults to the values set in the old topic.
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
+    edit = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(SplitTopicForm, self).__init__(*args, **kwargs)
