@@ -60,3 +60,21 @@ class TestHtmlRenderer(unittest.TestCase):
             '<blockquote>nested</blockquote>'
             '</blockquote>'
         ))
+
+    def test_topic_link(self):
+        """Test topic link rendering."""
+        html = render("[topic: with : whitespace ]")
+        self.assertEqual(html, (
+            '<a href="http://forum.ubuntuusers.local:8080/topic/with/" class="crosslink topic">'
+            'whitespace'
+            '</a>'
+        ))
+
+    def test_wiki_link(self):
+        """Test wiki link rendering."""
+        html = render("[: page :]")
+        self.assertEqual(html, (
+            '<a href="http://wiki.ubuntuusers.local:8080/page/" class="internal missing">'
+            'page'
+            '</a>'
+        ))

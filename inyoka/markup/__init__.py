@@ -825,7 +825,7 @@ class Parser(object):
                 children = [nodes.Text(page)]
             return nodes.Link(STANDARD_WIKI_MAP[wiki](page.strip()), children,
                               class_=wiki)
-        return nodes.InterWikiLink(wiki, page, children, anchor=anchor)
+        return nodes.InterWikiLink(wiki, page.strip(), children, anchor=anchor)
 
     def parse_external_link(self, stream):
         """
