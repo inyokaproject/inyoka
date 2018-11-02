@@ -1152,7 +1152,7 @@ def movetopic(request, topic_slug):
                                          forum_ids=[topic.forum.id]
                                          )
 
-            if data['edit']:
+            if data['edit_post']:
                 return HttpResponseRedirect(url_for(topic.first_post, action='edit'))
             else:
                 return HttpResponseRedirect(url_for(topic))
@@ -1238,7 +1238,7 @@ def splittopic(request, topic_slug, page=1):
                                          forum_ids=[new_topic.forum.id]
                                          )
 
-            if data['edit']:
+            if data['edit_post']:
                 return HttpResponseRedirect(url_for(posts[0], action='edit'))
             else:
                 return HttpResponseRedirect(url_for(posts[0]))
