@@ -97,6 +97,7 @@ class TestGetPageTitle(TestCase):
     def test_get_pagetitle_full(self):
         self.assertEqual(get_pagetitle("Bar/Foo_Bar"),"Bar/Foo Bar")
 
+
 class TestWikiSlugify(TestCase):
     def test_str(self):
         self.assertEqual(wiki_slugify('Test'), 'test')
