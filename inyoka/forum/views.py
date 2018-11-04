@@ -8,6 +8,8 @@
     :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from functools import partial
+
 from datetime import datetime, timedelta
 from itertools import groupby
 from operator import attrgetter
@@ -1108,33 +1110,21 @@ def movetopic(request, topic_slug):
     if not request.user.has_perm('forum.moderate_forum', topic.forum):
         return abort_access_denied(request)
 
-    forums = [
-        forum
-        for forum in Forum.objects.get_cached()
-        if forum.parent is not None and forum.id != topic.forum.id
-    ]
-    visible_forums = [forum for forum in forums if request.user.has_perm('forum.view_forum', forum)]
-    mapping = {forum.id: forum for forum in visible_forums}
-
-    if not mapping:
-        return abort_access_denied(request)
+    form = partial(MoveTopicForm, current_forum=topic.forum, user=request.user)
 
     if request.method == 'POST':
-        form = MoveTopicForm(request.POST)
-        form.fields['forum'].refresh()
+        form = form(request.POST)
         if form.is_valid():
-            data = form.cleaned_data
-            forum = mapping.get(int(data['forum']))
-            if forum is None:
-                return abort_access_denied(request)
+            new_forum = form.cleaned_data['forum']
             old_forum_name = topic.forum.name
-            topic.move(forum)
+            topic.move(new_forum)
+
             # send a notification to the topic author to inform him about
             # the new forum.
             nargs = {'username': topic.author.username,
                      'topic': topic,
                      'mod': request.user.username,
-                     'forum_name': forum.name,
+                     'forum_name': new_forum.name,
                      'old_forum_name': old_forum_name}
 
             user_notifications = topic.author.settings.get('notifications', ('topic_move',))
@@ -1152,13 +1142,12 @@ def movetopic(request, topic_slug):
                                          forum_ids=[topic.forum.id]
                                          )
 
-            if data['edit_post']:
+            if form.cleaned_data['edit_post']:
                 return HttpResponseRedirect(url_for(topic.first_post, action='edit'))
             else:
                 return HttpResponseRedirect(url_for(topic))
     else:
-        form = MoveTopicForm()
-        form.fields['forum'].refresh()
+        form = form(initial={'forum': topic.forum.id})
     return {
         'form': form,
         'topic': topic
@@ -1191,16 +1180,17 @@ def splittopic(request, topic_slug, page=1):
     # Order the posts in the same way as they will be attached to the new topic
     posts = posts.order_by('position')
 
+    form = partial(SplitTopicForm, user=request.user)
+
     if request.method == 'POST':
-        form = SplitTopicForm(request.POST)
-        form.fields['forum'].refresh()
+        form = form(request.POST)
 
         if form.is_valid():
             data = form.cleaned_data
 
             # Sanity check to not circulary split topics to the same topic
             # (they get erased in that case)
-            if data['action'] != 'new' and data['topic'].slug == old_topic.slug:
+            if data['action'] != 'new' and data['topic_to_move'].slug == old_topic.slug:
                 messages.error(request, _(u'You cannot set this topic as target.'))
                 return HttpResponseRedirect(request.path)
 
@@ -1213,7 +1203,7 @@ def splittopic(request, topic_slug, page=1):
                           'hidden.'))
                     return HttpResponseRedirect(request.path)
                 new_topic = Topic.objects.create(
-                    title=data['title'],
+                    title=data['new_title'],
                     forum=data['forum'],
                     slug=None,
                     author_id=posts[0].author_id,
@@ -1223,7 +1213,7 @@ def splittopic(request, topic_slug, page=1):
 
                 Post.split(posts, old_topic, new_topic)
             else:
-                new_topic = data['topic']
+                new_topic = data['topic_to_move']
                 Post.split(posts, old_topic, new_topic)
 
             del request.session['_split_post_ids']
@@ -1243,12 +1233,11 @@ def splittopic(request, topic_slug, page=1):
             else:
                 return HttpResponseRedirect(url_for(posts[0]))
     else:
-        form = SplitTopicForm(initial={
+        form = form(initial={
             'forum': old_topic.forum_id,
             'ubuntu_version': old_topic.ubuntu_version,
             'ubuntu_distro': old_topic.ubuntu_distro,
         })
-        form.fields['forum'].refresh()
 
     return {
         'topic': old_topic,

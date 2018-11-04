@@ -292,6 +292,9 @@ msgstr "Der Beitrag wurde erfolgreich gespeichert."
 msgid "The selected tickets have been closed."
 msgstr "Die gewählten Tickets wurden geschlossen."
 
+msgid "The topic is already in this forum"
+msgstr "Das Thema befindet sich bereits in diesem Forum."
+
 msgid "The topic was locked."
 msgstr "Das Thema wurde gesperrt"
 
