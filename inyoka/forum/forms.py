@@ -203,14 +203,14 @@ class SplitTopicForm(forms.Form):
     def clean(self):
         data = self.cleaned_data
         if data.get('action') == 'new':
-            self._errors.pop('topic', None)
+            self._errors.pop('topic_to_move', None)
         elif data.get('action') == 'add':
             self._errors.pop('new_title', None)
             self._errors.pop('forum', None)
         return data
 
-    def clean_topic(self):
-        slug = self.cleaned_data.get('topic')
+    def clean_topic_to_move(self):
+        slug = self.cleaned_data.get('topic_to_move')
         if slug:
             # Allow URL based Slugs
             try:
@@ -219,11 +219,11 @@ class SplitTopicForm(forms.Form):
                 slug = urllib.unquote(slug)
 
             try:
-                topic = Topic.objects.get(slug=slug)
+                topic_to_move = Topic.objects.get(slug=slug)
             except Topic.DoesNotExist:
                 raise forms.ValidationError(_(u'No topic with this '
                                               u'slug found.'))
-            return topic
+            return topic_to_move
         return slug
 
     def clean_forum(self):
