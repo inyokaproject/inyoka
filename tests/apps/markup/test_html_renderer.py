@@ -63,6 +63,24 @@ class TestHtmlRenderer(unittest.TestCase):
             '</blockquote>'
         ))
 
+    def test_topic_link_with_whitespace(self):
+        """Test topic link rendering with whitespace in target and describtion."""
+        html = render("[topic: with : whitespace ]")
+        self.assertEqual(html, (
+            '<a href="http://forum.ubuntuusers.local:8080/topic/with/" class="crosslink topic">'
+            'whitespace'
+            '</a>'
+        ))
+
+    def test_wiki_link_with_whitespace(self):
+        """Test wiki link rendering with whitespace in target."""
+        html = render("[: page :]")
+        self.assertEqual(html, (
+            '<a href="http://wiki.ubuntuusers.local:8080/page/" class="internal missing">'
+            'page'
+            '</a>'
+        ))
+
     def test_wikilink_with_anchor_no_description(self):
         html = render(u'[:foo#anchor:]')
 
