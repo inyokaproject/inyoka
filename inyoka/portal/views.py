@@ -1228,6 +1228,7 @@ def group(request, name, page=1):
         'user_count': group.user_set.count(),
         'pagination': pagination,
         'table': table,
+        'request': request,
     }
 
 
