@@ -139,3 +139,6 @@ msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
 
+msgid "You are viewing an old revision of this wiki page."
+msgstr "Dies ist eine alte Revision des Artikels."
+

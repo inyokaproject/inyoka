@@ -138,3 +138,6 @@ msgstr ""
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr ""
 
+msgid "You are viewing an old revision of this wiki page."
+msgstr ""
+

@@ -140,6 +140,9 @@ def do_show(request, name, rev=None, allow_redirect=True):
     if page.rev.deleted:
         return do_missing_page(request, name, page)
 
+    if page.rev.id != page.last_rev.id:
+        messages.info(request, _(u'You are viewing an old revision of this wiki page.'))
+
     return {
         'page': page,
         'tags': page.metadata['tag'],
