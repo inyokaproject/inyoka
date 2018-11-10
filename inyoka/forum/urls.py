@@ -16,7 +16,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index),
     url(r'^topic/(?P<topic_slug>[^/]+)/$', views.viewtopic),
-    url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+)/$', views.viewtopic),
+    url(r'^topic/(?P<topic_slug>[^/]+)/(?P<page>\d+|last)/$', views.viewtopic),
     url(r'^topic/(?P<topic_slug>[^/]+)/reply/$', views.edit),
     url(r'^topic/(?P<topic_slug>[^/]+)/first_unread/$', views.first_unread_post),
     url(r'^topic/(?P<topic_slug>[^/]+)/last_post/$', views.last_post),

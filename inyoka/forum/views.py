@@ -232,8 +232,11 @@ def viewtopic(request, topic_slug, page=1):
 
     post_ids = Post.objects.filter(topic=topic) \
                            .values_list('id', flat=True)
-    pagination = Pagination(request, post_ids, page, POSTS_PER_PAGE, url_for(topic),
+    pagination = Pagination(request, post_ids, 1 if page == 'last' else page,
+                            POSTS_PER_PAGE, url_for(topic),
                             total=topic.post_count.value(), rownum_column='position')
+    if page == 'last':
+        return HttpResponseRedirect(pagination.last)
 
     post_ids = list(pagination.get_queryset())
     posts = Post.objects.filter(id__in=post_ids) \
