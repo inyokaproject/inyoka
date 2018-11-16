@@ -118,8 +118,8 @@ def normalize_pagename(name, strip_location_markers=True):
 
 def wiki_slugify(name):
     """
-    A special variant of slugify() for used in our wiki. It tries to generate
-    an internal representation of a wiki pagename, helpfull if someone
+    A special variant of slugify() used in our wiki. It tries to generate
+    an internal representation of a wiki pagename, helpful if someone
     links a wiki pages with little differences like accents.
     """
     if isinstance(name, str):

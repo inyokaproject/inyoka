@@ -1142,7 +1142,10 @@ def movetopic(request, topic_slug):
                                          forum_ids=[topic.forum.id]
                                          )
 
-            return HttpResponseRedirect(url_for(topic))
+            if form.cleaned_data['edit_post']:
+                return HttpResponseRedirect(url_for(topic.first_post, action='edit'))
+            else:
+                return HttpResponseRedirect(url_for(topic))
     else:
         form = form(initial={'forum': topic.forum.id})
     return {
@@ -1225,7 +1228,10 @@ def splittopic(request, topic_slug, page=1):
                                          forum_ids=[new_topic.forum.id]
                                          )
 
-            return HttpResponseRedirect(url_for(posts[0]))
+            if data['edit_post']:
+                return HttpResponseRedirect(url_for(posts[0], action='edit'))
+            else:
+                return HttpResponseRedirect(url_for(posts[0]))
     else:
         form = form(initial={
             'forum': old_topic.forum_id,

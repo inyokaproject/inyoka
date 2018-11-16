@@ -11,7 +11,6 @@
 from datetime import datetime
 
 from django import forms
-from django.utils.functional import allow_lazy
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
@@ -75,8 +74,7 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
                                             code='reserved_name')
 
         # See if the page already exists.
-        # TODO: we should probably just redirect to the edit form in this case.
-        if Page.objects.filter(name=name).exists():
+        if Page.objects.filter(name__iexact=name).exists():
             raise forms.ValidationError(_(u'The page %(name)s already exists.'),
                                         code='page_exists',
                                         params={'name': name})

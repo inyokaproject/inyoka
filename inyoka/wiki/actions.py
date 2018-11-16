@@ -23,7 +23,7 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import models
+from django.db import models, transaction
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
@@ -162,12 +162,16 @@ def do_metaexport(request, name):
     except Page.DoesNotExist:
         return HttpResponse(u'', content_type='text/plain; charset=utf-8',
                             status=404)
+
     metadata = []
     for key, values in page.metadata.iteritems():
         for value in values:
             metadata.append(u'%s: %s' % (key, value))
-    return HttpResponse(u'\n'.join(metadata).encode('utf-8'),
-                        content_type='text/plain; charset=utf-8')
+
+    response = HttpResponse(u'\n'.join(metadata).encode('utf-8'),
+                            content_type='text/plain; charset=utf-8')
+    response['X-Robots-Tag'] = 'noindex'
+    return response
 
 
 @templated('wiki/missing_page.html', status=404, modifier=context_modifier)
@@ -270,64 +274,80 @@ def do_revert(request, name, rev=None):
 def _rename(request, page, new_name, force=False, new_text=None):
     """
     Rename all revisions of `page` to `new_name`.
-    :FIXME: attachments renamings do not work sometimes
 
     Return True if renaming was successful, else False
     """
-    name = page.name
+    old_name = page.name
     # check that there are no duplicate attachments existing
     # pointing to the new page name.
-    new_page_attachments = (p.split('/')[-1] for p in
-                            Page.objects.get_attachment_list(new_name, existing_only=False))
-    old_page_attachments = (p.split('/')[-1] for p in
-                            Page.objects.get_attachment_list(page.name, existing_only=False))
-    duplicate = set(new_page_attachments).intersection(set(old_page_attachments))
-    if duplicate and not force:
+
+    def get_attachment_set_from_pagename(pagename):
+        attachment_pages = Page.objects.get_attachment_list(pagename, existing_only=False)
+        return set((
+            attachment_page.split('/')[-1]
+            for attachment_page
+            in attachment_pages
+        ))
+
+    new_page_attachments = get_attachment_set_from_pagename(new_name)
+    old_page_attachments = get_attachment_set_from_pagename(old_name)
+    conflicting = new_page_attachments.intersection(old_page_attachments)
+
+    if conflicting and not force:
         linklist = u', '.join('<a href="%s">%s</a>' %
             (join_pagename(new_name, name), name.split('/')[-1])
-            for name in duplicate)
+            for name in conflicting)
         messages.error(request,
             _(u'These attachments are already attached to the new page name: %(names)s. '
               u'Please make sure that they are not required anymore. '
-              u'<a href="%(link)s">Force rename and deletion of duplicate attachments</a>,') % {
+              u'<a href="%(link)s">Force rename and deletion of conflicting attachments</a>,') % {
                   'names': linklist,
                   'link': url_for(page, action='rename', force=True)})
         return False
 
-    elif duplicate and force:
-        for attachment in duplicate:
+    elif conflicting and force:
+        for attachment in conflicting:
             obj = Page.objects.get_by_name(join_pagename(new_name, attachment))
             models.Model.delete(obj)
 
     title = page.title
-    old_name = page.name
     page.name = new_name
-    if new_text:
-        page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
-                  user=request.user,
-                  text=new_text)
-    else:
-        page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
-                  user=request.user)
-    Page.objects.clean_cache(old_name)
+
+    page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
+              user=request.user,
+              text=new_text,
+              clean_cache=False)
 
     if request.POST.get('add_redirect'):
         old_text = u'# X-Redirect: %s\n' % new_name
         Page.objects.create(
-            name=name, text=old_text, user=request.user,
+            name=old_name, text=old_text, user=request.user,
             note=_(u'Renamed to %(new_name)s') % {'new_name': page.title},
             remote_addr=request.META.get('REMOTE_ADDR'))
 
     # move all attachments
-    for attachment in Page.objects.get_attachment_list(name):
-        ap = Page.objects.get_by_name(attachment)
-        old_attachment_name = ap.title
-        ap.name = normalize_pagename(join_pagename(page.trace[-1],
-                                                  ap.short_title))
-        ap.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': old_attachment_name},
-                remote_addr=request.META.get('REMOTE_ADDR'))
+    attachment_pages = [
+        Page.objects.get_by_name(attachment)
+        for attachment
+        in Page.objects.get_attachment_list(old_name)
+    ]
+    old_attachment_page_names = [
+        attachmentpage.name
+        for attachmentpage
+        in attachment_pages
+    ]
+    new_attachment_page_names = []
+    for attachment_page in attachment_pages:
+        old_attachment_title = attachment_page.title
+        new_attachment_name = normalize_pagename(join_pagename(page.trace[-1],
+                                                  attachment_page.short_title))
+        attachment_page.name = new_attachment_name
+        new_attachment_page_names.append(new_attachment_name)
+        attachment_page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': old_attachment_title},
+                remote_addr=request.META.get('REMOTE_ADDR'),
+                clean_cache=False)
 
-    Page.objects.clean_cache([name, new_name])
+    Page.objects.clean_cache([old_name, new_name] + old_attachment_page_names + new_attachment_page_names)
     return True
 
 
@@ -335,6 +355,7 @@ def _rename(request, page, new_name, force=False, new_text=None):
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
+@transaction.atomic
 def do_rename(request, name, new_name=None, force=False):
     """Rename all revisions."""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -370,6 +391,7 @@ def _get_wiki_article_templates():
     # TODO: this is a hack, do not have these hardcoded here!
     return [('Vorlage/Artikel_normal', _(u'Normal (for experienced authors)')),
             ('Vorlage/Artikel_umfangreich', _(u'Extensive (for beginners)')),
+            ('Vorlage/Howto', _(u'Howto')),
             ('', _(u'I don\'t want a template'))]
 
 
@@ -543,6 +565,7 @@ def do_delete(request, name):
 @require_privilege('manage')
 @templated('wiki/action_mv_baustelle.html')
 @case_sensitive_redirect
+@transaction.atomic
 def do_mv_baustelle(request, name):
     """
     "Move" the page to an editing area called "Baustelle", ie. do:
@@ -623,6 +646,7 @@ def do_mv_baustelle(request, name):
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
+@transaction.atomic
 def do_mv_discontinued(request, name):
     """Move page from ``Baustelle`` to ``Baustelle/Verlassen``"""
     page = Page.objects.get_by_name(name, raise_on_deleted=True)
@@ -660,6 +684,7 @@ def do_mv_discontinued(request, name):
 @require_privilege('manage')
 @does_not_exist_is_404
 @case_sensitive_redirect
+@transaction.atomic
 def do_mv_back(request, name):
     """
     Move page back from ``Baustelle`` to its origin, move copy (which may exist
@@ -724,6 +749,7 @@ def do_mv_back(request, name):
 
 
 @clean_article_name
+@login_required
 @require_privilege('read')
 @templated('wiki/action_log.html', modifier=context_modifier)
 @case_sensitive_redirect
@@ -762,6 +788,7 @@ def do_log(request, name, pagination_page=1):
     }
 
 
+@login_required
 @clean_article_name
 @require_privilege('read')
 @templated('wiki/action_diff.html', modifier=context_modifier)
@@ -783,6 +810,7 @@ def do_diff(request, name, old_rev=None, new_rev=None, udiff=False):
     }
 
 
+@login_required
 @clean_article_name
 @require_privilege('read')
 @templated('wiki/action_backlinks.html', modifier=context_modifier)

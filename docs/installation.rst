@@ -15,7 +15,7 @@ Note: You need the correct access rights to see the GitHub repository!
 You can find a documentation on how to use Git here: `<http://git-scm.com/>`_
 
 The idea for developing Inyoka is to fork the main project, do your changes in
-your own branch in your repository and then add a “Pull Rquest” for the original
+your own branch in your repository and then add a “Pull Request” for the original
 Inyoka. A developer will then review your changes or will directly merge it.
 
 Note: The changes in Inyoka will not immediately be visible on `ubuntuusers.de
