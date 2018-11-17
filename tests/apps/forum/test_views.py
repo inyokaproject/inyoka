@@ -233,7 +233,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             'topic': t1.slug})
         self.client.post('/topic/%s/split/' % t1.slug, {
             'action': 'add',
-            'topic': t2.slug})
+            'topic_to_move': t2.slug})
 
         # The order in Topic 2 should now be
         # p21 p22 p23 p12 p13
@@ -252,7 +252,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             'topic': t2.slug})
         self.client.post('/topic/%s/split/' % t2.slug, {
             'action': 'add',
-            'topic': t1.slug})
+            'topic_to_move': t1.slug})
         # The order in Topic 1 should now be
         # p11 p22 p23 p12 p13
         # Previously is was
