@@ -50,6 +50,9 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
         super(NewArticleForm, self).__init__(data)
         self.fields['template'].choices = template_choices
 
+        if self.user.is_team_member:
+            self.surge_protection_timeout = None
+
     def clean_name(self):
         """Make sure page does not exist and user has privilege to create."""
         name = normalize_pagename(self.cleaned_data['name'])
@@ -142,6 +145,9 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
         self.old_rev = Page.objects.get_by_name_and_rev(self.name,
                                                         revision).rev
         self.latest_rev = Page.objects.get_by_name(self.name).revisions.latest()
+
+        if self.user.is_team_member:
+            self.surge_protection_timeout = None
 
     def clean(self):
         """Test if we need to merge."""
