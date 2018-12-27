@@ -749,3 +749,5 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
 
+msgid "Do you want to unsubscribe from the user “%(username)s”?"
+msgstr "Möchtest du die Benachrichtigungen für den Nutzer „%(username)s“ abbestellen?"
