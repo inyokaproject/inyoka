@@ -102,8 +102,9 @@ def is_spam(comment_content, comment_type):
             ))
     else:
         logger.error(
-            'Unknown error checking for spam on %s' %
-            settings.INYOKA_AKISMET_URL
+            'Other error checking for spam on %s: status %d text %r.' %
+            (settings.INYOKA_AKISMET_URL,
+             response.status_code, response.text)
         )
     return settings.INYOKA_AKISMET_DEFAULT_IS_SPAM, False
 

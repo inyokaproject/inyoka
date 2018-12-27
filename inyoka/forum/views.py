@@ -232,8 +232,11 @@ def viewtopic(request, topic_slug, page=1):
 
     post_ids = Post.objects.filter(topic=topic) \
                            .values_list('id', flat=True)
-    pagination = Pagination(request, post_ids, page, POSTS_PER_PAGE, url_for(topic),
+    pagination = Pagination(request, post_ids, 1 if page == 'last' else page,
+                            POSTS_PER_PAGE, url_for(topic),
                             total=topic.post_count.value(), rownum_column='position')
+    if page == 'last':
+        return HttpResponseRedirect(pagination.last)
 
     post_ids = list(pagination.get_queryset())
     posts = Post.objects.filter(id__in=post_ids) \
@@ -1152,7 +1155,10 @@ def movetopic(request, topic_slug):
                                          forum_ids=[topic.forum.id]
                                          )
 
-            return HttpResponseRedirect(url_for(topic))
+            if data['edit_post']:
+                return HttpResponseRedirect(url_for(topic.first_post, action='edit'))
+            else:
+                return HttpResponseRedirect(url_for(topic))
     else:
         form = MoveTopicForm()
         form.fields['forum'].refresh()
@@ -1235,7 +1241,10 @@ def splittopic(request, topic_slug, page=1):
                                          forum_ids=[new_topic.forum.id]
                                          )
 
-            return HttpResponseRedirect(url_for(posts[0]))
+            if data['edit_post']:
+                return HttpResponseRedirect(url_for(posts[0], action='edit'))
+            else:
+                return HttpResponseRedirect(url_for(posts[0]))
     else:
         form = SplitTopicForm(initial={
             'forum': old_topic.forum_id,

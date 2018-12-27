@@ -437,7 +437,6 @@ def profile(request, username):
         'groups': groups,
         'User': User,
         'is_subscribed': subscribed,
-        'request': request
     }
 
 

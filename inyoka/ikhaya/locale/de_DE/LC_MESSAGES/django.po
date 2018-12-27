@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-05-01 07:15+0200\n"
+"POT-Creation-Date: 2018-09-01 21:30+0200\n"
 "PO-Revision-Date: 2017-03-23 22:51+0000\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
+"Generated-By: Babel 2.5.1\n"
 
 #, python-format
 msgid "%(domain)s Ikhaya comments"
@@ -102,9 +102,6 @@ msgstr "Verbergen"
 msgid "Icon"
 msgstr "Icon"
 
-msgid "If the date is in the future, the article will not appear until then."
-msgstr "Wenn das Datum in der Zukunft liegt, wird der Artikel bis zu diesem Zeitpunkt nicht angezeigt."
-
 msgid "If you keep this field empty, the publication date will be used."
 msgstr "Wenn du dieses Feld leer lässt, wird automatisch das Veröffentlichungsdatum verwendet."
 
@@ -146,9 +143,6 @@ msgstr "Du wirst über neue Vorschläge benachrichtigt."
 
 msgid "Public"
 msgstr "Veröffentlicht"
-
-msgid "Publication date"
-msgstr "Datum der Veröffentlichung"
 
 msgid "Restore"
 msgstr "Wiederherstellen"
@@ -275,4 +269,3 @@ msgstr "Du wirst über neue Kommentare zu diesem Artikel nicht mehr benachrichti
 
 msgid "Your comment was created."
 msgstr "Dein Kommentar wurde erstellt."
-
