@@ -132,23 +132,19 @@ class RegisterForm(forms.Form):
         in use.
         """
         username = self.cleaned_data['username']
+
         if not is_valid_username(username):
             raise forms.ValidationError(
                 _(u'Your username contains invalid characters. Only '
                   u'alphanumeric chars and “-” are allowed.')
             )
-        try:
-            User.objects.get(username__iexact=username)
-        except User.DoesNotExist:
-            # To bad we had to change the user regex…,  we need to rename users fast…
-            count = User.objects.filter(username__contains=username.replace(' ', '%')) \
-                                .aggregate(user_count=Count('username'))['user_count']
-            if count == 0:
-                return username
 
-        raise forms.ValidationError(
-            _(u'This username is not available, please try another one.')
-        )
+        if User.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError(
+                _(u'This username is not available, please try another one.')
+            )
+
+        return username
 
     def clean(self):
         """
