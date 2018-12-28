@@ -24,8 +24,10 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.core.validators import validate_email
 from django.db.models import CharField, Count, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
@@ -144,7 +146,15 @@ class RegisterForm(forms.Form):
                 _(u'This username is not available, please try another one.')
             )
 
-        return username
+        # prevent email address as username
+        try:
+            validate_email(username)
+        except ValidationError:
+            return username
+        else:
+            raise forms.ValidationError(
+                _(u'Please do not enter an email address as username.')
+            )
 
     def clean(self):
         """

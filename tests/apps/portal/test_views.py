@@ -436,6 +436,12 @@ class TestRegister(TestCase):
 
         self.assertNotIn('username', form.errors)
 
+    def test_username__prevent_email_address(self):
+        form = self.post_username('foobar@inyoka.test')
+
+        self.assertEqual(form.errors['username'],
+                         [u'Please do not enter an email address as username.'])
+
 
 class TestPrivMsgViews(TestCase):
 
