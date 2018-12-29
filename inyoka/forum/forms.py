@@ -19,29 +19,33 @@ from django.utils.translation import ugettext_lazy
 from inyoka.forum.constants import get_distro_choices, get_version_choices
 from inyoka.forum.models import Forum, Topic
 from inyoka.utils.forms import MultiField, StrippedCharField
-from inyoka.utils.local import current_request
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.spam import check_form_field
 from inyoka.utils.text import slugify
 
 
 class ForumField(forms.ChoiceField):
-    def refresh(self, priv='forum.view_forum', add=[], remove=[]):
+    """
+    Custom ChoiceField, where a user can select a forum. By default, it only contains forums the user
+    can view. Furthermore, all forum categories are excluded, too.
+
+    Returns the selected forum-id (as integer).
+    """
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(ForumField, self).__init__(*args, **kwargs)
+        self.set_forum_choices()
+
+    def set_forum_choices(self, privilege='forum.view_forum'):
         """
         Generates a hierarchical representation of all forums for a choice field.
-        Only forums with at least `priv` for the current user are taken into
-        account. Addtitional items can be prepanded as a list of tuples
-        `[(val1,repr1),(val2,repr2)]` with the `add` keyword. To remove items
-        from the list use a list of Forum objects in the `remove` keyword.
+        Only forums with at least `privilege` for the current user are taken into
+        account.
 
         Optgroups are used to disable categories in the choice field.
         """
-        forums = Forum.objects.get_forums_filtered(current_request.user,
-            priv, sort=True)
-
-        for f in remove:
-            if f in forums:
-                forums.remove(f)
+        forums = Forum.objects.get_forums_filtered(self.user, privilege,
+                                                   sort=True)
 
         forums = Forum.get_children_recursive(forums)
         choices = []
@@ -49,9 +53,19 @@ class ForumField(forms.ChoiceField):
             if f.is_category:
                 choices.append((f.name, []))
             else:
-                title = f.name[0] + u' ' + (u'   ' * offset) + f.name
+                title = f.name[0] + u' ' + (u'   ' * offset) + f.name
                 choices[-1][1].append((f.id, title))
-        self.choices = add + choices
+        self.choices = choices
+
+    def to_python(self, value):
+        """
+        As the choice field just contains forum-ids, we cast it to int.
+        If it is somehow empty, None will be returned.
+        """
+        if value in self.empty_values:
+            return None
+
+        return int(value)
 
 
 class EditPostForm(SurgeProtectionMixin, forms.Form):
@@ -148,8 +162,21 @@ class MoveTopicForm(forms.Form):
     This form gives the user the possibility to select a new forum for a
     topic.
     """
-    forum = ForumField()
     edit_post = forms.BooleanField(required=False, label=_('Edit first post afterwards'))
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        self.current_forum = kwargs.pop('current_forum')
+        super(MoveTopicForm, self).__init__(*args, **kwargs)
+        self.fields['forum'] = ForumField(user=user)
+
+    def clean_forum(self):
+        new_forum_id = self.cleaned_data['forum']
+        if new_forum_id == self.current_forum.id:
+            raise forms.ValidationError(_(u'The topic is already in this '
+                                          u'forum'))
+
+        return Forum.objects.get(id=new_forum_id)
 
 
 class SplitTopicForm(forms.Form):
@@ -158,33 +185,32 @@ class SplitTopicForm(forms.Form):
     the posts should be moved into an existing or a new topic.
     """
     action = forms.ChoiceField(choices=(('add', ''), ('new', '')))
-    #: the title of the new topic
-    title = forms.CharField(max_length=200)
-    #: the forum of the new topic
-    forum = ForumField()
-    #: the slug of the existing topic
-    topic = forms.CharField(max_length=200)
+    new_title = forms.CharField(max_length=200)
+    topic_to_move = forms.CharField(max_length=200)
     #: version info. defaults to the values set in the old topic.
     ubuntu_version = forms.ChoiceField(required=False)
     ubuntu_distro = forms.ChoiceField(required=False)
     edit_post = forms.BooleanField(required=False, label=_('Edit first post afterwards'))
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super(SplitTopicForm, self).__init__(*args, **kwargs)
+        self.fields['forum'] = ForumField(user=user)
+
         self.fields['ubuntu_version'].choices = get_version_choices()
         self.fields['ubuntu_distro'].choices = get_distro_choices()
 
     def clean(self):
         data = self.cleaned_data
         if data.get('action') == 'new':
-            self._errors.pop('topic', None)
+            self._errors.pop('topic_to_move', None)
         elif data.get('action') == 'add':
-            self._errors.pop('title', None)
+            self._errors.pop('new_title', None)
             self._errors.pop('forum', None)
         return data
 
-    def clean_topic(self):
-        slug = self.cleaned_data.get('topic')
+    def clean_topic_to_move(self):
+        slug = self.cleaned_data.get('topic_to_move')
         if slug:
             # Allow URL based Slugs
             try:
@@ -193,16 +219,15 @@ class SplitTopicForm(forms.Form):
                 slug = urllib.unquote(slug)
 
             try:
-                topic = Topic.objects.get(slug=slug)
+                topic_to_move = Topic.objects.get(slug=slug)
             except Topic.DoesNotExist:
                 raise forms.ValidationError(_(u'No topic with this '
                                               u'slug found.'))
-            return topic
+            return topic_to_move
         return slug
 
     def clean_forum(self):
-        id = self.cleaned_data.get('forum')
-        forum = Forum.objects.get(id=int(id))
+        forum = Forum.objects.get(id=self.cleaned_data.get('forum'))
         if forum.is_category:
             raise forms.ValidationError(_(u'You cannot move a topic into a '
                                           u'category. Please choose a forum.'))

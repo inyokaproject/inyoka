@@ -291,6 +291,9 @@ msgstr ""
 msgid "The selected tickets have been closed."
 msgstr ""
 
+msgid "The topic is already in this forum"
+msgstr ""
+
 msgid "The topic was locked."
 msgstr ""
 
