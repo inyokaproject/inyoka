@@ -10,14 +10,16 @@
 """
 import json
 import calendar
-from datetime import datetime, date, time
 import re
+from datetime import datetime, date, time
 
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.utils.http import urlquote_plus
 
+from inyoka.portal.models import Linkmap
+from django.core.cache import cache
 from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
@@ -167,3 +169,21 @@ def get_ubuntu_versions():
     else:
         transaction.savepoint_commit(sid)
     return sorted(versions)
+
+
+def get_linkmap():
+    """
+    Return a Key/Value Mapping as dictionary for our external link shortcuts
+    (interwiki links)
+    """
+    def callback():
+        return dict(Linkmap.objects.values_list('token', 'url'))
+    return cache.get_or_set('portal:linkmap', callback, timeout=None)
+
+
+_interwiki_token_re = re.compile(ur'^[a-z]{1,30}$', re.U)
+
+
+def is_valid_interwiki_token(token):
+    """Check if the interwiki token entered is a valid one."""
+    return _interwiki_token_re.search(token) is not None
