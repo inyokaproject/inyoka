@@ -359,7 +359,7 @@ class TestAuthViews(TestCase):
         postdata = {'data': code}
         with translation.override('en-us'):
             response = self.client.post('/confirm/reactivate_user/', postdata, follow=True)
-        self.assertContains(response, 'The account “user” was reactivated.', status_code=404)
+        self.assertContains(response, 'The account “user” was reactivated.')
         self.assertTrue(User.objects.get(pk=self.user.pk).is_active)
 
     def test_user_change_mail_and_recover(self):
