@@ -325,8 +325,11 @@ class Subscription(models.Model):
 
 
 class Linkmap(models.Model):
-    token = models.CharField(ugettext_lazy(u'Token'), max_length=128)
-    url = models.CharField(ugettext_lazy(u'Link'), max_length=128)
+    """
+    Provides an mapping for the interwikilinks from token to urls.
+    """
+    token = models.CharField(ugettext_lazy(u'Token'), max_length=128, unique=True)
+    url = models.URLField(ugettext_lazy(u'Link'))
 
 
 class Storage(models.Model):
