@@ -1124,3 +1124,9 @@ class ConfigurationForm(forms.Form):
 class EditStyleForm(forms.Form):
     styles = forms.CharField(label=ugettext_lazy(u'Styles'), widget=forms.Textarea(
                              attrs={'rows': 20}), required=False)
+
+
+class TokenForm(forms.Form):
+    data = forms.CharField(
+        label=ugettext_lazy(u'Please enter the string which was sent to you by email below:'),
+        widget=forms.Textarea(attrs={'rows': 5}))
