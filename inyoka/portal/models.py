@@ -330,6 +330,7 @@ class Linkmap(models.Model):
     """
     token = models.CharField(ugettext_lazy(u'Token'), max_length=128, unique=True)
     url = models.URLField(ugettext_lazy(u'Link'))
+    icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to=u'linkmap/icons', blank=True)
 
 
 class Storage(models.Model):

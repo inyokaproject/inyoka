@@ -29,7 +29,7 @@ from django.core.files.storage import default_storage
 from django.db.models import CharField, Count, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
-from django.forms import HiddenInput
+from django.forms import HiddenInput, modelformset_factory
 from django.template import loader
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -59,7 +59,6 @@ from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 from inyoka.utils.user import is_valid_username
-from inyoka.portal.utils import is_valid_interwiki_token
 
 
 #: Some constants used for ChoiceFields
@@ -82,6 +81,9 @@ NOTIFICATION_CHOICES = (
     ('topic_split', ugettext_lazy(u'A subscribed topic was split')),
     ('pm_new', ugettext_lazy(u'I received a message'))
 )
+
+
+LinkMapFormset = modelformset_factory(Linkmap, fields=('token', 'url', 'icon'), extra=3, can_delete=True)
 
 
 class LoginForm(forms.Form):
@@ -619,23 +621,6 @@ class EditGroupForm(forms.ModelForm):
             raise forms.ValidationError(
                 _(u'The groupname is already in use. Please choose another one.'))
         return groupname
-
-
-class EditLinkMapForm(forms.ModelForm):
-    token = forms.CharField(label=ugettext_lazy('Token'), required=True)
-    url = forms.URLField(label=ugettext_lazy('URL'), required=True)
-
-    class Meta:
-        model = Linkmap
-        fields = ('token','url')
-
-    def clean_token(self):
-        """Validates that the token is valid"""
-        data = self.cleaned_data['token'].lower()
-        if not is_valid_interwiki_token(data):
-            raise forms.ValidationError(_(
-                u'The interwiki token contains invalid chars. Only lowercase letters are allowed.'))
-        return data
 
 
 def get_permissions_for_app(application, filtered=None):
