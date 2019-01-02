@@ -522,9 +522,8 @@ class InterWikiLink(Element):
         if self.token == 'attachment':
             return href('wiki', '_attachment', target=self.page)
 
-        # Circular import
-        from inyoka.portal.utils import get_linkmap
-        inter_wiki_map = get_linkmap()
+        from inyoka.portal.models import Linkmap  # circular import
+        inter_wiki_map = Linkmap.objects.get_linkmap()
 
         if self.token not in inter_wiki_map:
             return None

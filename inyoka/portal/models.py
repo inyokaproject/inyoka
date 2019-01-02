@@ -325,6 +325,20 @@ class Subscription(models.Model):
         return self.is_accessible_for_user
 
 
+class LinkmapManager(models.Manager):
+
+    def get_linkmap(self):
+        """
+        Return a Key/Value Mapping as dictionary for our external link shortcuts
+        (interwiki links)
+        """
+
+        def callback():
+            return dict(self.get_queryset().values_list('token', 'url'))
+
+        return cache.get_or_set('portal:linkmap', callback, timeout=None)
+
+
 class Linkmap(models.Model):
     """
     Provides an mapping for the interwikilinks from token to urls.
@@ -336,6 +350,8 @@ class Linkmap(models.Model):
                              validators=[token_validator])
     url = models.URLField(ugettext_lazy(u'Link'))
     icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to=u'linkmap/icons', blank=True)
+
+    objects = LinkmapManager()
 
 
 class Storage(models.Model):

@@ -17,8 +17,6 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.utils.http import urlquote_plus
 
-from inyoka.portal.models import Linkmap
-from django.core.cache import cache
 from inyoka.utils.http import AccessDeniedResponse
 from inyoka.utils.storage import storage
 from inyoka.utils.urls import href
@@ -168,13 +166,3 @@ def get_ubuntu_versions():
     else:
         transaction.savepoint_commit(sid)
     return sorted(versions)
-
-
-def get_linkmap():
-    """
-    Return a Key/Value Mapping as dictionary for our external link shortcuts
-    (interwiki links)
-    """
-    def callback():
-        return dict(Linkmap.objects.values_list('token', 'url'))
-    return cache.get_or_set('portal:linkmap', callback, timeout=None)
