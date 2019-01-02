@@ -76,7 +76,7 @@ from inyoka.portal.models import (
     StaticFile,
     StaticPage,
     Subscription,
-)
+    Linkmap)
 from inyoka.portal.user import (
     User,
     UserBanned,
@@ -1689,7 +1689,7 @@ def linkmap_edit(request):
         formset = LinkMapFormset(request.POST)
         if formset.is_valid():
             formset.save()
-            cache.delete('portal:linkmap')
+            cache.delete(Linkmap.CACHE_KEY)
             return HttpResponseRedirect(href('portal', 'linkmap'))
     else:
         formset = LinkMapFormset()
