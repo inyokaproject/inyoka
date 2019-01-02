@@ -493,8 +493,8 @@ class InterWikiLink(Element):
         self.anchor = anchor
 
     def prepare_html(self):
-        # Circular imports
         target = self.resolve_interwiki_link()
+
         if target is None:
             for item in Element.prepare_html(self):
                 yield item

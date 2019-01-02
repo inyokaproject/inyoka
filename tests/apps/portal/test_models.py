@@ -47,21 +47,18 @@ class TestLinkmapModel(TestCase):
 
     def test_valid_url(self):
         self.url('http://example.test')
-        self.url('https://startpage.test/do/search?cat=web&language=deutsch&query=PAGE&ff=')
-        self.url('https://PAGE.wordpress.test/')
+        self.url('https://startpage.test/do/search?cat=web&language=deutsch&query=$PAGE&ff=')
+        self.url('https://$PAGE.wordpress.test/')
         self.url('https://web.archive.test/web/*/https://')
-
-        self.url('https://PAGE')
+        self.url('https://$PAGE')
         self.url('apt://')
-        self.url('apt://PAGE')
-        self.url('apt:')
 
     def test_invalid_url(self):
-        with self.assertRaisesMessage(ValidationError, u'Enter a valid URL.'):
+        with self.assertRaisesMessage(ValidationError, u'A url needs ://'):
             self.url('foo.test')
 
-        with self.assertRaisesMessage(ValidationError, u'Enter a valid URL.'):
-            self.url('skype://')
+        with self.assertRaisesMessage(ValidationError, u'A url needs ://'):
+            self.url('apt:')
 
     def test_uniqueness_token(self):
         token = 'example'
