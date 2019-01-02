@@ -11,6 +11,7 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
+from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy
 from werkzeug import cached_property
@@ -328,7 +329,11 @@ class Linkmap(models.Model):
     """
     Provides an mapping for the interwikilinks from token to urls.
     """
-    token = models.CharField(ugettext_lazy(u'Token'), max_length=128, unique=True)
+    token_validator = RegexValidator(regex=r'[a-z\-_]+',
+                                     message=ugettext_lazy(u'Only lowercase letters, - and _ allowed.'))
+
+    token = models.CharField(ugettext_lazy(u'Token'), max_length=128, unique=True,
+                             validators=[token_validator])
     url = models.URLField(ugettext_lazy(u'Link'))
     icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to=u'linkmap/icons', blank=True)
 

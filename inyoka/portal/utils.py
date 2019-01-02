@@ -10,7 +10,6 @@
 """
 import json
 import calendar
-import re
 from datetime import datetime, date, time
 
 from django.db import transaction
@@ -179,11 +178,3 @@ def get_linkmap():
     def callback():
         return dict(Linkmap.objects.values_list('token', 'url'))
     return cache.get_or_set('portal:linkmap', callback, timeout=None)
-
-
-_interwiki_token_re = re.compile(ur'^[a-z]{1,30}$', re.U)
-
-
-def is_valid_interwiki_token(token):
-    """Check if the interwiki token entered is a valid one."""
-    return _interwiki_token_re.search(token) is not None
