@@ -76,7 +76,8 @@ from inyoka.portal.models import (
     StaticFile,
     StaticPage,
     Subscription,
-    Linkmap)
+    Linkmap
+)
 from inyoka.portal.user import (
     User,
     UserBanned,
@@ -1686,7 +1687,7 @@ def csrf_failure(request, reason=None):
 @templated('portal/linkmap.html')
 def linkmap_edit(request):
     if request.method == 'POST':
-        formset = LinkMapFormset(request.POST)
+        formset = LinkMapFormset(request.POST, request.FILES)
         if formset.is_valid():
             formset.save()
             cache.delete(Linkmap.CACHE_KEY)
