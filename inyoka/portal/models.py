@@ -9,6 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 import gzip
+import hashlib
 import uuid
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -351,24 +352,24 @@ class LinkmapManager(models.Manager):
         gzip-compressed version with the same content will be saved at the same
         place with a '.gz' postfix.
 
-        A random uuid is used to ensure that browser caches are flushed, if the
-        file changed.
+        A md5-hashsum is used to ensure that browser caches are flushed, if the
+        content of the file changed.
         """
-        path = settings.INYOKA_INTERWIKI_CSS_PATH
-        path = path.format(uuid=uuid.uuid4().hex)
+        css = 'a[class^=".interwiki-"] {' \
+              'background-repeat: no-repeat; padding-left: 20px; }'
 
-        with open(path, 'w') as css, gzip.open(path + '.gz', 'wb') as compressed:
-            start = 'a[class^=".interwiki-"] {' \
-                    'background-repeat: no-repeat; padding-left: 20px; }'
-            css.write(start)
-            compressed.write(start)
+        token_with_icons = self.get_queryset().exclude(icon='').only('token', 'icon')
+        for token in token_with_icons:
+            css += 'a.interwiki-{token} {{' \
+                   'background-image: url("{icon_url}"); }}'.format(token=token.token,
+                                                                    icon_url=token.icon.url)
 
-            token_with_icons = self.get_queryset().exclude(icon='').only('token', 'icon')
-            for token in token_with_icons:
-                line = 'a.interwiki-{token} {{' \
-                       'background-image: url("{icon_url}"); }}'.format(token=token.token, icon_url=token.icon.url)
-                css.write(line)
-                compressed.write(line)
+        md5_css = hashlib.md5(css).hexdigest()
+        path = settings.INYOKA_INTERWIKI_CSS_PATH.format(hash=md5_css)
+
+        with open(path, 'w') as f, gzip.open(path + '.gz', 'wb') as compressed:
+            f.write(css)
+            compressed.write(css)
 
 
 def url_scheme_validator(url):
