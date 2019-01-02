@@ -8,6 +8,9 @@
     :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import gzip
+import uuid
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
@@ -338,6 +341,34 @@ class LinkmapManager(models.Manager):
 
         return cache.get_or_set(Linkmap.CACHE_KEY, callback, timeout=None)
 
+    def generate_css(self):
+        """
+        Generates for each token with icon in Linkmap a piece of css. Latter will
+        display the icon near an interwiki link.
+
+        The css is saved in `settings.INYOKA_INTERWIKI_CSS_PATH`. Furthermore, a
+        gzip-compressed version with the same content will be saved at the same
+        place with a '.gz' postfix.
+
+        A random uuid is used to ensure that browser caches are flushed, if the
+        file changed.
+        """
+        path = settings.INYOKA_INTERWIKI_CSS_PATH
+        path = path.format(uuid=uuid.uuid4().hex)
+
+        with open(path, 'w') as css, gzip.open(path + '.gz', 'wb') as compressed:
+            start = 'a[class^=".interwiki-"] {' \
+                    'background-repeat: no-repeat; padding-left: 20px; }'
+            css.write(start)
+            compressed.write(start)
+
+            token_with_icons = self.get_queryset().exclude(icon='').only('token', 'icon')
+            for token in token_with_icons:
+                line = 'a.interwiki-{token} {{' \
+                       'background-image: url("{icon_url}"); }}'.format(token=token.token, icon_url=token.icon.url)
+                css.write(line)
+                compressed.write(line)
+
 
 class Linkmap(models.Model):
     """
@@ -351,7 +382,7 @@ class Linkmap(models.Model):
     token = models.CharField(ugettext_lazy(u'Token'), max_length=128, unique=True,
                              validators=[token_validator])
     url = models.URLField(ugettext_lazy(u'Link'))
-    icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to=u'linkmap/icons', blank=True)
+    icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to='linkmap/icons', blank=True)
 
     objects = LinkmapManager()
 
