@@ -376,8 +376,8 @@ class Linkmap(models.Model):
     """
     CACHE_KEY = 'portal:linkmap'
 
-    token_validator = RegexValidator(regex=r'^[a-z\-_]+$',
-                                     message=ugettext_lazy(u'Only lowercase letters, - and _ allowed.'))
+    token_validator = RegexValidator(regex=r'^[a-z\-_]+[1-9]*$',
+                                     message=ugettext_lazy(u'Only lowercase letters, - and _ allowed. Numbers as postfix.'))
 
     token = models.CharField(ugettext_lazy(u'Token'), max_length=128, unique=True,
                              validators=[token_validator])

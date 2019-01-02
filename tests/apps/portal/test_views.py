@@ -20,7 +20,6 @@ from django.utils.translation import ugettext as _
 from guardian.shortcuts import assign_perm
 
 from inyoka.portal.models import (
-    Linkmap,
     PRIVMSG_FOLDERS,
     PrivateMessage,
     PrivateMessageEntry,
@@ -73,17 +72,20 @@ class TestViews(TestCase):
                 response.content.decode('utf-8')
             )
 
-    def test_linkmap(self):
-        """Test if the link map site is reachable"""
-        lm1 = Linkmap(token="dummy1", url="http://dummy.com/")
-        lm1.save()
-        lm2 = Linkmap(token="dummy2", url="http://dummy.com/")
-        lm2.save()
+    def test_linkmap__without_permission(self):
+        """Test if the link map throws 403 without permission"""
         self.client.login(username='user', password='user')
-        response = self.client.get('/linkmap/', follow=True)
+        response = self.client.get('/linkmap/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_linkmap__with_permission(self):
+        """Test if the link map site is reachable"""
+        registered_group = Group.objects.get(name=settings.INYOKA_REGISTERED_GROUP_NAME)
+        assign_perm('portal.change_linkmap', registered_group)
+
+        self.client.login(username='user', password='user')
+        response = self.client.get('/linkmap/')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(u'In total there are 2 link shortcuts.', 
-                    response.content.decode('utf-8'))
 
     def test_subscribe_user(self):
         """Test if it is possible to subscribe to users."""
