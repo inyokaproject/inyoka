@@ -12,7 +12,6 @@ from os.path import basename
 
 import gzip
 import hashlib
-import uuid
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
@@ -334,16 +333,33 @@ class Subscription(models.Model):
 
 class LinkmapManager(models.Manager):
 
+    def flush_cache(self):
+        """
+        Removes all cache entries for the Linkmap model.
+        This should be called, if entries of Linkmap were edited.
+        """
+        cache.delete_many((Linkmap.CACHE_KEY_MAP, Linkmap.CACHE_KEY_CSS))
+
     def get_linkmap(self):
         """
-        Return a Key/Value Mapping as dictionary for our external link shortcuts
-        (interwiki links)
+        Return a token-to-url-mapping as dictionary for our interwiki links.
         """
 
         def callback():
             return dict(self.get_queryset().values_list('token', 'url'))
 
         return cache.get_or_set(Linkmap.CACHE_KEY_MAP, callback, timeout=None)
+
+    def get_css_basename(self):
+        """
+        Returns the current basename (which includes a changing hash) of the
+        current linkmap css. It will also trigger the creation of the css on
+        startup or after a change to the linkmap (as the cache key should be
+        deleted).
+
+        This method is mainly intended the be used for the template context.
+        """
+        return cache.get_or_set(Linkmap.CACHE_KEY_CSS, self.generate_css, timeout=None)
 
     def generate_css(self):
         """
@@ -356,6 +372,8 @@ class LinkmapManager(models.Manager):
 
         A md5-hashsum is used to ensure that browser caches are flushed, if the
         content of the file changed.
+
+        Returns the basename of the current css file.
         """
         css = '/* linkmap for inter wiki links \n :license: BSD*/'
 
@@ -373,7 +391,7 @@ class LinkmapManager(models.Manager):
             f.write(css)
             compressed.write(css)
 
-        cache.set(Linkmap.CACHE_KEY_CSS, basename(path), timeout=None)
+        return basename(path)
 
 
 def url_scheme_validator(url):

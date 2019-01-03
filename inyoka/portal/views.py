@@ -1694,8 +1694,7 @@ def linkmap_edit(request):
         formset = formset(request.POST, request.FILES)
         if formset.is_valid():
             formset.save()
-            cache.delete(Linkmap.CACHE_KEY_MAP)
-            Linkmap.objects.generate_css()
+            Linkmap.objects.flush_cache()
             return HttpResponseRedirect(href('portal', 'linkmap'))
     else:
         formset = formset()

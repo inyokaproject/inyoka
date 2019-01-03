@@ -126,13 +126,14 @@ def populate_context_defaults(context, flash=False):
             global_message = None
 
     if request:
+        linkmap_model = apps.get_model(app_label='portal', model_name='Linkmap')
         context.update(
             CURRENT_URL=request.build_absolute_uri(),
             USER=user,
             MOBILE=get_flavour() == 'mobile',
             _csrf_token=force_unicode(csrf(request)['csrf_token']),
             special_day_css=check_special_day(),
-            linkmap_css=cache.get(apps.get_model(app_label='portal', model_name='Linkmap').CACHE_KEY_CSS),
+            linkmap_css=linkmap_model.objects.get_css_basename(),
             LANGUAGE_CODE=settings.LANGUAGE_CODE
         )
 
