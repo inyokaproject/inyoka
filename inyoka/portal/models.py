@@ -8,13 +8,11 @@
     :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
-from os import remove
-
+import os
 import glob
-from os.path import basename
-
 import gzip
 import hashlib
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
@@ -392,17 +390,21 @@ class LinkmapManager(models.Manager):
 
         existing_files = glob.glob(settings.INYOKA_INTERWIKI_CSS_PATH.format(hash='*'))
         if path in existing_files:
-            return basename(path)
+            return os.path.basename(path)
+
+        directory = os.path.dirname(path)
+        if not os.path.exists(directory):
+            os.mkdir(directory)
 
         with open(path, 'w') as f, gzip.open(path + '.gz', 'wb') as compressed:
             f.write(css)
             compressed.write(css)
 
         for f in existing_files:
-            remove(f)
-            remove(f + '.gz')
+            os.remove(f)
+            os.remove(f + '.gz')
 
-        return basename(path)
+        return os.path.basename(path)
 
 
 def url_scheme_validator(url):
