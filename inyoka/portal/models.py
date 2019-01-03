@@ -8,6 +8,9 @@
     :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from os import remove
+
+import glob
 from os.path import basename
 
 import gzip
@@ -387,9 +390,17 @@ class LinkmapManager(models.Manager):
         md5_css = hashlib.md5(css).hexdigest()
         path = settings.INYOKA_INTERWIKI_CSS_PATH.format(hash=md5_css)
 
+        existing_files = glob.glob(settings.INYOKA_INTERWIKI_CSS_PATH.format(hash='*'))
+        if path in existing_files:
+            return basename(path)
+
         with open(path, 'w') as f, gzip.open(path + '.gz', 'wb') as compressed:
             f.write(css)
             compressed.write(css)
+
+        for f in existing_files:
+            remove(f)
+            remove(f + '.gz')
 
         return basename(path)
 
