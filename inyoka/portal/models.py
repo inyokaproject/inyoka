@@ -357,12 +357,12 @@ class LinkmapManager(models.Manager):
         A md5-hashsum is used to ensure that browser caches are flushed, if the
         content of the file changed.
         """
-        css = 'a[class^=".interwiki-"] {' \
-              'background-repeat: no-repeat; padding-left: 20px; }'
+        css = '/* linkmap for inter wiki links \n :license: BSD*/'
 
         token_with_icons = self.get_queryset().exclude(icon='').only('token', 'icon')
         for token in token_with_icons:
             css += 'a.interwiki-{token} {{' \
+                   'background-repeat: no-repeat; padding-left: 20px; ' \
                    'background-image: url("{icon_url}"); }}'.format(token=token.token,
                                                                     icon_url=token.icon.url)
 
