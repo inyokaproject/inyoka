@@ -9,6 +9,8 @@
     :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from functools import partial
+
 from datetime import date, datetime, timedelta
 from icalendar import Calendar as iCal, Event as iEvent
 from time import time
@@ -1686,15 +1688,17 @@ def csrf_failure(request, reason=None):
 @permission_required('portal.change_linkmap', raise_exception=True)
 @templated('portal/linkmap.html')
 def linkmap_edit(request):
+    formset = partial(LinkMapFormset, queryset=Linkmap.objects.order_by('token'))
+
     if request.method == 'POST':
-        formset = LinkMapFormset(request.POST, request.FILES)
+        formset = formset(request.POST, request.FILES)
         if formset.is_valid():
             formset.save()
             cache.delete(Linkmap.CACHE_KEY)
             Linkmap.objects.generate_css()
             return HttpResponseRedirect(href('portal', 'linkmap'))
     else:
-        formset = LinkMapFormset()
+        formset = formset()
     return {
         'formset': formset
     }
