@@ -13,6 +13,7 @@ import os
 import sys
 from importlib import import_module
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
@@ -131,6 +132,7 @@ def populate_context_defaults(context, flash=False):
             MOBILE=get_flavour() == 'mobile',
             _csrf_token=force_unicode(csrf(request)['csrf_token']),
             special_day_css=check_special_day(),
+            linkmap_css=cache.get(apps.get_model(app_label='portal', model_name='Linkmap').CACHE_KEY_CSS),
             LANGUAGE_CODE=settings.LANGUAGE_CODE
         )
 

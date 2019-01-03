@@ -8,6 +8,8 @@
     :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from os.path import basename
+
 import gzip
 import hashlib
 import uuid
@@ -341,7 +343,7 @@ class LinkmapManager(models.Manager):
         def callback():
             return dict(self.get_queryset().values_list('token', 'url'))
 
-        return cache.get_or_set(Linkmap.CACHE_KEY, callback, timeout=None)
+        return cache.get_or_set(Linkmap.CACHE_KEY_MAP, callback, timeout=None)
 
     def generate_css(self):
         """
@@ -371,6 +373,8 @@ class LinkmapManager(models.Manager):
             f.write(css)
             compressed.write(css)
 
+        cache.set(Linkmap.CACHE_KEY_CSS, basename(path), timeout=None)
+
 
 def url_scheme_validator(url):
     if not '://' in url:
@@ -385,7 +389,8 @@ class Linkmap(models.Model):
     """
     Provides an mapping for the interwikilinks from token to urls.
     """
-    CACHE_KEY = 'portal:linkmap'
+    CACHE_KEY_MAP = 'portal:linkmap'
+    CACHE_KEY_CSS = 'portal:linkmap:css-filname'
 
     token_validator = RegexValidator(regex=r'^[a-z\-_]+[1-9]*$',
                                      message=ugettext_lazy(u'Only lowercase letters, - and _ allowed. Numbers as postfix.'))
