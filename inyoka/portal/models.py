@@ -381,7 +381,7 @@ class LinkmapManager(models.Manager):
         token_with_icons = self.get_queryset().exclude(icon='').only('token', 'icon')
         for token in token_with_icons:
             css += 'a.interwiki-{token} {{' \
-                   'background-repeat: no-repeat; padding-left: 20px; ' \
+                   'padding-left: 20px; ' \
                    'background-image: url("{icon_url}"); }}'.format(token=token.token,
                                                                     icon_url=token.icon.url)
 
