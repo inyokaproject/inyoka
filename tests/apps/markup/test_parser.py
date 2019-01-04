@@ -206,8 +206,8 @@ class TestParser(unittest.TestCase):
 
     def test_interwiki_links(self):
         """Test external interwiki links."""
-        Linkmap.objects.create(token=u'github', url=u'https://github.com/')
+        Linkmap.objects.create(token=u'github', url=u'https://github.test/')
         iwl = InterWikiLink(u'github', u'inyokaproject')
         iwl.prepare_html()
         self.assertEqual(iwl.resolve_interwiki_link(),
-                         u'https://github.com/inyokaproject')
+                         u'https://github.test/inyokaproject')
