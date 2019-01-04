@@ -210,5 +210,5 @@ class TestEventView(TestCase):
             events(request)
 
     def test_queries_needed(self):
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             self.client.get('/events/')
