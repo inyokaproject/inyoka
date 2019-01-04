@@ -394,7 +394,7 @@ class LinkmapManager(models.Manager):
 
         directory = os.path.dirname(path)
         if not os.path.exists(directory):
-            os.mkdir(directory)
+            os.makedirs(directory)
 
         with open(path, 'w') as f, gzip.open(path + '.gz', 'wb') as compressed:
             f.write(css)
