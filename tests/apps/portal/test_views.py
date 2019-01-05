@@ -391,6 +391,58 @@ class TestAuthViews(TestCase):
         self.assertContains(response, 'Your email address was reset.')
 
 
+class TestRegister(TestCase):
+
+    client_class = InyokaClient
+    username = 'Emma29'
+
+    def setUp(self):
+        super(TestRegister, self).setUp()
+        self.url = '/register/'
+        self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
+
+    def test_get_status_code(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
+    def post_username(self, form_username):
+        User.objects.create(username=self.username)
+
+        response = self.client.post(self.url, data={'username': form_username})
+        return response.tmpl_context['form']
+
+    def test_username__invalid_characters(self):
+        form = self.post_username(' ?')
+
+        self.assertEqual(form.errors['username'],
+                         [u'Your username contains invalid characters. '
+                          u'Only alphanumeric chars and \u201c-\u201d are allowed.'])
+
+    def test_username__exists_already(self):
+        form = self.post_username(self.username)
+
+        self.assertEqual(form.errors['username'],
+                         [u'This username is not available, please try another one.'])
+
+    def test_username__exists_different_case(self):
+        form = self.post_username(self.username.lower())
+
+        self.assertEqual(form.errors['username'],
+                         [u'This username is not available, please try another one.'])
+
+    def test_username__partly_same_exists(self):
+        form = self.post_username(self.username[:-1])
+
+        self.assertNotIn('username', form.errors)
+
+    def test_username__prevent_email_address(self):
+        form = self.post_username('foobar@inyoka.test')
+
+        self.assertEqual(form.errors['username'],
+                         [u'Please do not enter an email address as username.'])
+
+
 class TestPrivMsgViews(TestCase):
 
     client_class = InyokaClient
