@@ -1592,15 +1592,13 @@ def config(request):
 @templated('portal/static_page.html')
 def static_page(request, page):
     """Renders static pages"""
-    try:
-        q = StaticPage.objects.get(key=page)
-    except StaticPage.DoesNotExist:
-        raise Http404
+    p = StaticPage.objects.get(key=page)
+
     return {
-        'title': q.title,
-        'content': q.content_rendered,
-        'key': q.key,
-        'page': q,
+        'title': p.title,
+        'content': p.content_rendered,
+        'key': p.key,
+        'page': p,
     }
 
 

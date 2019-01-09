@@ -12,6 +12,8 @@ import re
 
 from django.conf import settings
 from django.core import mail
+from django.http import Http404
+from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.timezone import now
@@ -26,6 +28,7 @@ from inyoka.portal.models import (
     Subscription,
     StaticPage)
 from inyoka.portal.user import Group, User
+from inyoka.portal.views import static_page
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 
@@ -143,7 +146,7 @@ class TestAuthViews(TestCase):
                          settings.SESSION_COOKIE_AGE)
 
     def test_login_as_banned_user(self):
-        """Maka sure that banned users can’t login."""
+        """Make sure that banned users can’t login."""
         banned_user = User.objects.register_user('badboy', 'bad', 'bad', False)
         banned_user.status = User.STATUS_BANNED
         banned_user.save()
@@ -514,6 +517,31 @@ class TestPrivMsgViews(TestCase):
             folder__isnull=True).count(), 2)
         self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
             read=True).count(), 2)
+
+
+class TestStaticPageView(TestCase):
+    client_class = InyokaClient
+
+    def test_returns_404_if_page_does_no_exist(self):
+        request = RequestFactory().get('/')
+
+        with self.assertRaises(Http404):
+            static_page(request, 'should_no_exist')
+
+    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
+    def test_content(self):
+        page = StaticPage.objects.create(key='foo', title=u'foo')
+        response = self.client.get(page.get_absolute_url())
+
+        self.assertEqual(response.tmpl_context['title'], page.title)
+
+    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
+    def test_title(self):
+        content = u'some random text'
+        page = StaticPage.objects.create(key='foo', title=u'foo', content=content)
+        response = self.client.get(page.get_absolute_url())
+
+        self.assertIn(content, response.tmpl_context['content'])
 
 
 class TestStaticPageEdit(TestCase):
