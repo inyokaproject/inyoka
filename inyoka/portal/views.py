@@ -1510,8 +1510,6 @@ def confirm(request, action):
         messages.error(request, _(u'You need to be logged in before you can continue.'))
         return abort_access_denied(request)
 
-    form = TokenForm(initial={'data': request.GET.get('token', u'')})
-
     if request.method == 'POST':
         form = TokenForm(request.POST, action=action)
 
@@ -1522,6 +1520,8 @@ def confirm(request, action):
                 return HttpResponseRedirect(href('portal', 'usercp'))
             else:
                 return HttpResponseRedirect(href('portal'))
+    else:
+        form = TokenForm(initial={'data': request.GET.get('token', u'')})
 
     return {'action': action,
             'form': form}
