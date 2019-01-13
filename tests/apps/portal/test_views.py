@@ -356,7 +356,7 @@ class TestAuthViews(TestCase):
         self.assertIn(u'Deactivation of your account “user”', subject)
         code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
                          mail.outbox[0].body).group(0).strip()
-        postdata = {'data': code}
+        postdata = {'token': code}
         with translation.override('en-us'):
             response = self.client.post('/confirm/reactivate_user/', postdata, follow=True)
         self.assertContains(response, 'The account “user” was reactivated.')
@@ -375,18 +375,18 @@ class TestAuthViews(TestCase):
 
         # Perform mail change with invalid token
         self.client.login(username='user', password='user')
-        postdata = {'data': 'ThisIsAWrongToken'}
+        postdata = {'token': 'ThisIsAWrongToken'}
         with translation.override('en-us'):
             response = self.client.post('/confirm/set_new_email/', postdata, follow=True)
         self.client.logout()
-        self.assertContains(response, 'The entered data is invalid or has expired.')
+        self.assertContains(response, 'The entered token is invalid or has expired.')
 
         # Perform invalid mail change
         subject = mail.outbox[0].subject
         self.assertIn(u'Confirm email address', subject)
         code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
                          mail.outbox[0].body).group(0).strip()
-        postdata = {'data': code}
+        postdata = {'token': code}
         with translation.override('en-us'):
             response = self.client.post('/confirm/set_new_email/', postdata, follow=True)
         self.assertContains(response, 'You need to be logged in before you can continue.')
@@ -403,7 +403,7 @@ class TestAuthViews(TestCase):
         self.assertIn(u'Email address changed', subject)
         code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
                          mail.outbox[1].body).group(0).strip()
-        postdata = {'data': code}
+        postdata = {'token': code}
         with translation.override('en-us'):
             response = self.client.post('/confirm/reset_email/', postdata, follow=True)
         self.assertContains(response, 'You need to be logged in before you can continue.')

@@ -1515,13 +1515,13 @@ def confirm(request, action):
 
         if form.is_valid():
             messages.success(request, _(u'Your settings have been changed successfully.'))
-            messages.success(request, form.cleaned_data['data'])
+            messages.success(request, form.cleaned_data['token'])
             if request.user.is_authenticated():
                 return HttpResponseRedirect(href('portal', 'usercp'))
             else:
                 return HttpResponseRedirect(href('portal'))
     else:
-        form = TokenForm(initial={'data': request.GET.get('token', u'')})
+        form = TokenForm(initial={'token': request.GET.get('token', u'')})
 
     return {'action': action,
             'form': form}

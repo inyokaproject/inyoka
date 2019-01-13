@@ -1131,8 +1131,8 @@ class EditStyleForm(forms.Form):
 
 
 class TokenForm(forms.Form):
-    data = forms.CharField(
-        label=ugettext_lazy(u'Please enter the string which was sent to you by email below'),
+    token = forms.CharField(
+        label=ugettext_lazy(u'Please enter the string which was sent to you by email'),
         widget=forms.Textarea())
 
     def __init__(self, *args, **kwargs):
@@ -1140,7 +1140,7 @@ class TokenForm(forms.Form):
             self.action = kwargs.pop('action')
         super(TokenForm, self).__init__(*args, **kwargs)
 
-    def clean_data(self):
+    def clean_token(self):
         def get_action_and_limit():
             if self.action == 'reactivate_user':
                 return reactivate_user, settings.USER_REACTIVATION_LIMIT
@@ -1150,12 +1150,12 @@ class TokenForm(forms.Form):
                 return reset_email, settings.USER_RESET_EMAIL_LIMIT
 
         salt = 'inyoka.action.%s' % self.action
-        data = self.cleaned_data['data']
+        token = self.cleaned_data['token']
         func, lifetime = get_action_and_limit()
         try:
-            data = signing.loads(data,
-                                 max_age=lifetime * 24 * 60 * 60,
-                                 salt=salt)
+            token = signing.loads(token,
+                                  max_age=lifetime * 24 * 60 * 60,
+                                  salt=salt)
         except (ValueError, signing.BadSignature):
-            raise forms.ValidationError(_(u'The entered data is invalid or has expired.'))
-        return func(**data)
+            raise forms.ValidationError(_(u'The entered token is invalid or has expired.'))
+        return func(**token)

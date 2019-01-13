@@ -103,7 +103,7 @@ def deactivate_user(user):
         'sitename': settings.BASE_DOMAIN_NAME}
     text = render_template('mails/account_deactivate.txt', {
         'user': user,
-        'data': signing.dumps(data, salt='inyoka.action.reactivate_user'),
+        'token': signing.dumps(data, salt='inyoka.action.reactivate_user'),
     })
     user.email_user(subject, text, settings.INYOKA_SYSTEM_USER_EMAIL)
 
@@ -126,7 +126,7 @@ def send_new_email_confirmation(user, email):
 
     text = render_template('mails/new_email_confirmation.txt', {
         'user': user,
-        'data': signing.dumps(data, salt='inyoka.action.set_new_email'),
+        'token': signing.dumps(data, salt='inyoka.action.set_new_email'),
     })
     subject = _(u'%(sitename)s – Confirm email address') % {
         'sitename': settings.BASE_DOMAIN_NAME
@@ -148,7 +148,7 @@ def set_new_email(id, email):
     text = render_template('mails/reset_email.txt', {
         'user': user,
         'new_email': email,
-        'data': signing.dumps(data, salt='inyoka.action.reset_email'),
+        'token': signing.dumps(data, salt='inyoka.action.reset_email'),
     })
     subject = _(u'%(sitename)s – Email address changed') % {
         'sitename': settings.BASE_DOMAIN_NAME
