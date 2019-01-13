@@ -1143,11 +1143,11 @@ class TokenForm(forms.Form):
     def clean_data(self):
         def get_action_and_limit():
             if self.action == 'reactivate_user':
-                return (reactivate_user, settings.USER_REACTIVATION_LIMIT,)
+                return reactivate_user, settings.USER_REACTIVATION_LIMIT
             elif self.action == 'set_new_email':
-                return (set_new_email, settings.USER_SET_NEW_EMAIL_LIMIT,)
+                return set_new_email, settings.USER_SET_NEW_EMAIL_LIMIT
             elif self.action == 'reset_email':
-                return (reset_email, settings.USER_RESET_EMAIL_LIMIT,)
+                return reset_email, settings.USER_RESET_EMAIL_LIMIT
 
         salt = 'inyoka.action.%s' % self.action
         data = self.cleaned_data['data']
