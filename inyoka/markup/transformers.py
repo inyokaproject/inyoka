@@ -17,30 +17,14 @@
 """
 import re
 
+from django.conf import settings
 from django.utils.encoding import smart_unicode
+from django.utils.functional import cached_property
 
 from inyoka.markup import nodes
 
 _newline_re = re.compile(r'(\n)')
 _paragraph_re = re.compile(r'(\s*?\n){2,}')
-
-#: A global cache for the smiley matching regular expression.
-#: NOTE: This is unique for every process and never gets
-#:       invalidated properly.  So theoretically every change
-#:       on the smiley map requires an process restart.
-#:       This is an awful hack but gives the wiki parser a massive speedup.
-_smiley_re = None
-
-def get_smiley_re(smilies):
-    global _smiley_re
-    if _smiley_re is None:
-        helper = u'|'.join(re.escape(smart_unicode(s)) for s in
-                           sorted(smilies, key=lambda x: -len(x)))
-        regex = (u'(?<![\d\w])'  # don't precede smileys with alnum chars
-                 u'({helper})'
-                 u'(?![\d\w])'.format(helper=helper))
-        _smiley_re = re.compile(regex, re.UNICODE)
-    return _smiley_re
 
 
 class Transformer(object):
@@ -135,21 +119,9 @@ class SmileyInjector(Transformer):
     """
     Adds smilies from the configuration.
     """
-
-    def __init__(self, smiley_set=None):
-        self.smiley_set = smiley_set
+    smilies = settings.SMILIES
 
     def transform(self, tree):
-        if self.smiley_set is not None:
-            smilies = self.smiley_set
-        else:
-            from inyoka.wiki.storage import storage
-            smilies = dict(storage.smilies)
-        if not smilies:
-            return tree
-
-        smiley_re = get_smiley_re(smilies)
-
         new_children = []
         for node in tree.children:
             new_children.append(node)
@@ -158,17 +130,17 @@ class SmileyInjector(Transformer):
             elif node.is_text_node and not node.is_raw:
                 pos = 0
                 text = node.text
-                for match in smiley_re.finditer(text):
-                    code = match.group(1)
-                    if code not in smilies:
-                        continue
+
+                for match in self.smiley_re.finditer(text):
+                    new_node = self._new_smiley_node(match)
+
                     node.text = text[pos:match.start(1)]
                     if not node.text:
                         new_children.pop()
                     pos = match.end(1)
                     node = nodes.Text()
                     new_children.extend((
-                        nodes.Image(smilies[code], code),
+                        new_node,
                         node
                     ))
                 if pos and text[pos:]:
@@ -177,6 +149,51 @@ class SmileyInjector(Transformer):
                     new_children.pop()
         tree.children[:] = new_children
         return tree
+
+    def _convert_to_regional_indicator(self, country_code):
+        """
+        A two char ASCII string (`country_code`) will be converted to
+        two regional indicator symbols. Most browsers will display
+        these regional indicators as flags.
+        See https://en.wikipedia.org/wiki/Regional_Indicator_Symbol
+        """
+        country_code = unicode.lower(country_code)
+
+        # reproduces the legacy behaviour, that {en} displayed the british flag
+        if country_code == u'en':
+            country_code = u'gb'
+
+        def to_regional_indicator(char):
+            return unichr(ord(char) - ord(u'a') + ord(u'🇦'))
+
+        return u''.join(to_regional_indicator(char) for char in country_code)
+
+    def _new_smiley_node(self, match):
+        if match.group('country_code'):
+            text = match.group('country_code')
+            text = self._convert_to_regional_indicator(text)
+        else:
+            text = self.smilies[match.group(1)]
+
+        keyword = 'css-class:'
+        if text.startswith(keyword):
+            return nodes.Span(class_=text[len(keyword):])
+
+        return nodes.Text(text)
+
+    @cached_property
+    def smiley_re(self):
+        """
+        As DEFAULT_TRANSFORMERS instances this class and it's passed around,
+        this property will be cached until the python process dies.
+        """
+        helper = u'|'.join(re.escape(smart_unicode(s)) for s in self.smilies)
+        helper += u'|\{(?P<country_code>[a-z]{2}|[A-Z]{2})\}'
+        regex = (
+            u'(?<![\d\w])'  # don't precede smileys with alnum chars
+            u'({helper})'
+            u'(?![\d\w])'.format(helper=helper))
+        return re.compile(regex, re.UNICODE)
 
 
 class KeyHandler(Transformer):
