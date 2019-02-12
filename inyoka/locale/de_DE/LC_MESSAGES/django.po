@@ -100,8 +100,8 @@ msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
 
 #, python-format
-msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible. You have %(left)d attempts left before your account will be blocked."
-msgstr "Dein Beitrag wurde als Spam klassifiziert und muss von einem Moderator freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie möglich darum kümmern. Du hast %(left)d verbleibende Versuche bevor dein Konto gesperrt wird."
+msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible."
+msgstr "Dein Beitrag wurde als Spam klassifiziert und muss von einem Moderator freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie möglich darum kümmern."
 
 msgid "counting..."
 msgstr "Zähle..."
