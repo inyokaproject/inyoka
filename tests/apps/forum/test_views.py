@@ -605,8 +605,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             response = self.client.get('/topic/newpost-title/')
         self.assertInHTML('<div class="message info">Your text is considered spam '
                           'and needs approval from one of the administrators. '
-                          'Please be patient, we will get to it as soon as possible. '
-                          'You have 4 attempts left before your account will be blocked.</div>',
+                          'Please be patient, we will get to it as soon as possible.</div>',
                           response.content, count=1)
         self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
                           response.content, count=1)
@@ -891,8 +890,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('<div class="message info">Your text is considered spam '
                           'and needs approval from one of the administrators. '
-                          'Please be patient, we will get to it as soon as possible. '
-                          'You have 4 attempts left before your account will be blocked.</div>',
+                          'Please be patient, we will get to it as soon as possible. </div>',
                           response.content, count=1)
         self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 
