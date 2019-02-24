@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-09-01 21:30+0200\n"
-"PO-Revision-Date: 2017-12-18 02:12+0100\n"
+"POT-Creation-Date: 2019-01-25 20:47+0100\n"
+"PO-Revision-Date: 2019-01-25 20:45+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -157,6 +157,10 @@ msgstr "Möchtest du die Nachricht archivieren?"
 
 msgid "Do you want to restore the message?"
 msgstr "Möchtest du die Nachricht wiederherstellen?"
+
+#, python-format
+msgid "Do you want to unsubscribe from the user “%(username)s”?"
+msgstr "Möchtest du die Benachrichtigungen für den Nutzer „%(username)s“ abbestellen?"
 
 msgid "E-mail"
 msgstr "E-Mail"
@@ -345,6 +349,9 @@ msgstr "Planet"
 
 msgid "Please choose"
 msgstr "Bitte auswählen"
+
+msgid "Please do not enter an email address as username."
+msgstr "Bitte gebe nicht eine E-Mail-Adresse als Benutzernamen ein."
 
 msgid "Please enter at least one receiver."
 msgstr "Bitte gib mindestens einen Empfänger an."
@@ -595,6 +602,9 @@ msgstr "Thema"
 msgid "Trash"
 msgstr "Papierkorb"
 
+msgid "Unsubscribe"
+msgstr "Deabonnieren"
+
 msgid "Use Gravatar"
 msgstr "Gravatar benutzen"
 
@@ -749,5 +759,3 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
 
-msgid "Do you want to unsubscribe from the user “%(username)s”?"
-msgstr "Möchtest du die Benachrichtigungen für den Nutzer „%(username)s“ abbestellen?"
