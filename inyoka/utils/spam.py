@@ -137,10 +137,11 @@ def mark_spam(obj, comment_content, comment_type):
 
 def check_form_field(form, text_field, needs_check, request, content_type):
     text = form.cleaned_data.get(text_field)
+    form._spam, form._spam_discard = False, False
 
     if needs_check:
-        _spam, _spam_discard = is_spam(text, content_type)
-        if _spam:
+        form._spam, form._spam_discard = is_spam(text, content_type)
+        if form._spam:
             msg = _(
                 'Your text is considered spam and needs approval from one of '
                 'the administrators. Please be patient, we will get to it as '
