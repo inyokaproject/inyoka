@@ -6,7 +6,7 @@
     All views for the portal including the user control panel, private messages,
     static pages and the login/register.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import date, datetime, timedelta
@@ -437,7 +437,6 @@ def profile(request, username):
         'groups': groups,
         'User': User,
         'is_subscribed': subscribed,
-        'request': request
     }
 
 
@@ -498,7 +497,6 @@ def subscribe_user(request, username):
     return HttpResponseRedirect(url_for(user))
 
 
-@require_POST
 def unsubscribe_user(request, username):
     """Remove a user subscription."""
     user = User.objects.get(username__iexact=username)
@@ -507,10 +505,21 @@ def unsubscribe_user(request, username):
     except Subscription.DoesNotExist:
         pass
     else:
-        subscription.delete()
-        messages.info(request,
-            _(u'From now on you won’t be notified anymore about activities of '
-                u'“%(username)s”.') % {'username': user.username})
+        if request.method == 'POST':
+            subscription.delete()
+            messages.info(request,
+                _(u'From now on you won’t be notified anymore about activities of '
+                    u'“%(username)s”.') % {'username': user.username})
+        else:
+            # ask for confirmation with form in case of GET (CSRF)
+            messages.info(request, render_template('confirm_action_flash.html', {
+                    'message': _(u'Do you want to unsubscribe from the user '
+                                 u'“%(username)s”?') % {'username': user.username},
+                    'confirm_label': _(u'Unsubscribe'),
+                    'cancel_label': _(u'Cancel'),
+                    'action_url': request.build_absolute_uri(),
+                }, flash=True))
+
     # redirect the user to the page he last watched
     if request.GET.get('next', False) and is_safe_domain(request.GET['next']):
         return HttpResponseRedirect(request.GET['next'])
@@ -1583,15 +1592,13 @@ def config(request):
 @templated('portal/static_page.html')
 def static_page(request, page):
     """Renders static pages"""
-    try:
-        q = StaticPage.objects.get(key=page)
-    except StaticPage.DoesNotExist:
-        raise Http404
+    p = StaticPage.objects.get(key=page)
+
     return {
-        'title': q.title,
-        'content': q.content_rendered,
-        'key': q.key,
-        'page': q,
+        'title': p.title,
+        'content': p.content_rendered,
+        'key': p.key,
+        'page': p,
     }
 
 

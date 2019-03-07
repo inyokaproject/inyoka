@@ -5,7 +5,7 @@
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from __future__ import division
@@ -31,6 +31,7 @@ from django.utils.encoding import DjangoUnicodeDecodeError, force_unicode
 from django.utils.html import escape, format_html
 from django.utils.translation import ugettext as _
 from django.utils.translation import pgettext, ugettext_lazy
+from werkzeug.utils import secure_filename
 
 from inyoka.forum.constants import (
     CACHE_PAGES_COUNT,
@@ -49,7 +50,6 @@ from inyoka.utils.database import (
 )
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
-from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
@@ -1168,7 +1168,7 @@ class Attachment(models.Model):
                 Specifies whether other attachments for the same post should
                 be overwritten if they have the same name.
         """
-        name = get_filename(name, uploaded_file)
+        name = secure_filename(name)
         # check whether an attachment with the same name already exists
         existing = filter(lambda a: a.name == name, attachments)
         exists = bool(existing)
@@ -1215,7 +1215,7 @@ class Attachment(models.Model):
         base_path = datetime.utcnow().strftime('forum/attachments/%S/%W')
 
         for attachment in attachments:
-            new_name = get_filename('%d-%s' % (post.pk, attachment.name))
+            new_name = secure_filename('%d-%s' % (post.pk, attachment.name))
             new_name = path.join(base_path, new_name)
 
             storage = attachment.file.storage

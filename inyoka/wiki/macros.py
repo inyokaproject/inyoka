@@ -5,7 +5,7 @@
 
     Macros for the wiki.
 
-    :copyright: (c) 2012-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import itertools
@@ -300,7 +300,7 @@ class FilterByMetaData(macros.Macro):
             q = MetaData.objects.select_related('page').filter(**kwargs)
             res = set(
                 x.page
-                for x in q.all()
+                for x in q
                 if not is_privileged_wiki_page(x.page.name)
             )
             pages = pages.union(res)
@@ -319,6 +319,7 @@ class FilterByMetaData(macros.Macro):
                     res.add(page)
 
         names = [p.name for p in res]
+        names = sorted(names, key=lambda s: s.lower())
 
         if not names:
             return nodes.error_box(_(u'No result'),

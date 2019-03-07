@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-05-01 07:15+0200\n"
+"POT-Creation-Date: 2019-01-25 20:47+0100\n"
 "PO-Revision-Date: 2017-03-23 22:51+0000\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
+"Generated-By: Babel 2.5.1\n"
 
 #, python-format
 msgid "\"%(fingerprint)s\" is not a valid GPG Fingerprint."
@@ -109,20 +109,20 @@ msgstr "Zähle..."
 msgid "eleven"
 msgstr "elf"
 
-msgctxt "masculine"
 msgid "one"
-msgstr "ein"
+msgstr "eins"
 
 msgctxt "feminine"
 msgid "one"
 msgstr "eine"
 
-msgctxt "neuter"
+msgctxt "masculine"
 msgid "one"
 msgstr "ein"
 
+msgctxt "neuter"
 msgid "one"
-msgstr "eins"
+msgstr "ein"
 
 msgid "ten"
 msgstr "zehn"
@@ -138,4 +138,7 @@ msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
+
+#~ msgid "You are viewing an old revision of this wiki page."
+#~ msgstr "Dies ist eine alte Revision des Artikels."
 

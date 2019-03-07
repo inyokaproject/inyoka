@@ -5,12 +5,14 @@
 
     Here we test the HTML rendering.
 
-    :copyright: (c) 2013-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2013-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
+from django.test import override_settings
 
 from inyoka.markup.base import Parser, RenderContext
+from inyoka.utils.urls import href
 
 
 def render(source):
@@ -60,3 +62,36 @@ class TestHtmlRenderer(unittest.TestCase):
             '<blockquote>nested</blockquote>'
             '</blockquote>'
         ))
+
+    def test_topic_link_with_whitespace(self):
+        """Test topic link rendering with whitespace in target and describtion."""
+        html = render("[topic: with : whitespace ]")
+        self.assertEqual(html, (
+            '<a href="http://forum.ubuntuusers.local:8080/topic/with/" class="crosslink topic">'
+            'whitespace'
+            '</a>'
+        ))
+
+    def test_wiki_link_with_whitespace(self):
+        """Test wiki link rendering with whitespace in target."""
+        html = render("[: page :]")
+        self.assertEqual(html, (
+            '<a href="http://wiki.ubuntuusers.local:8080/page/" class="internal missing">'
+            'page'
+            '</a>'
+        ))
+
+    def test_wikilink_with_anchor_no_description(self):
+        html = render(u'[:foo#anchor:]')
+
+        link = u'<a href="{url}" class="internal missing">foo (section \u201canchor\u201d)</a>'
+        link = link.format(url=href('wiki', 'foo', _anchor='anchor'))
+        self.assertEqual(html, link)
+
+    @override_settings(LANGUAGE_CODE='de-DE')
+    def test_localized_wikilink_with_anchor_no_description(self):
+        html = render(u'[:foo#anchor:]')
+
+        link = u'<a href="{url}" class="internal missing">foo (Abschnitt \u201eanchor\u201c)</a>'
+        link = link.format(url=href('wiki', 'foo', _anchor='anchor'))
+        self.assertEqual(html, link)

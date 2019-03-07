@@ -1,5 +1,15 @@
 #!/usr/bin/env groovy
 
+
+/**
+ * Debugging can sometimes be simplified by adding
+   sh """
+   env
+   """
+ * to print all current environment variables.
+ *
+ */
+
 def runTestOnDatabase(String database) {
   sh """
   ${activate_venv}
@@ -59,17 +69,25 @@ pipeline {
           steps {
             dir('theme-ubuntuusers') {
               script {
-                git branch: 'staging', url: 'git@github.com:inyokaproject/theme-ubuntuusers'
-
-                def branch = ""
                 try {
-                    branch = CHANGE_TARGET
+                    // see if we have an fork with a branch that has the same name as the inyoka PR
+                    // → assume the theme was changed and use the branch of the fork
+                    git branch: "${CHANGE_BRANCH}", url: "git@github.com:${CHANGE_FORK}/theme-ubuntuusers"
+                } catch(all) {
+                    // no fork (or correct branch) found, so use either…
+                    def branch = ""
+                    try {
+                         // … the base branch of a merge request …
+                         branch = "${CHANGE_TARGET}"
+                    } catch (all2) {
+                        // … or just where we are
+                        branch = "${GIT_BRANCH}"
+                    }
+                    git branch: "${branch}", url: "git@github.com:inyokaproject/theme-ubuntuusers"
                 }
-                catch (all) {
-                    branch = GIT_BRANCH
-                }
+
                 sh """
-                git checkout ${branch} || git checkout staging
+                git clean -fdx
 
                 npm install
                 ./node_modules/grunt-cli/bin/grunt

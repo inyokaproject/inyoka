@@ -1,21 +1,21 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2017 Inyoka Team (see AUTHORS)
+# Copyright (C) 2019 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.15.3\n"
+"Project-Id-Version: Inyoka Project v0.17.6\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-05-01 07:15+0200\n"
+"POT-Creation-Date: 2019-01-25 20:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
+"Generated-By: Babel 2.5.1\n"
 
 #, python-format
 msgid "%(domain)s Ikhaya comments"
@@ -101,9 +101,6 @@ msgstr ""
 msgid "Icon"
 msgstr ""
 
-msgid "If the date is in the future, the article will not appear until then."
-msgstr ""
-
 msgid "If you keep this field empty, the publication date will be used."
 msgstr ""
 
@@ -144,9 +141,6 @@ msgid "Notifications on new suggestions will be sent to you."
 msgstr ""
 
 msgid "Public"
-msgstr ""
-
-msgid "Publication date"
 msgstr ""
 
 msgid "Restore"

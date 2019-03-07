@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-05-01 07:15+0200\n"
-"PO-Revision-Date: 2017-03-23 22:51+0000\n"
+"POT-Creation-Date: 2019-01-25 20:47+0100\n"
+"PO-Revision-Date: 2019-01-25 20:45+0100\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
+"Generated-By: Babel 2.5.1\n"
 
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
@@ -216,8 +216,8 @@ msgid "The title of the article you want to create."
 msgstr "Der Titel der Seite, die du anlegen möchtest."
 
 #, python-format
-msgid "These attachments are already attached to the new page name: %(names)s. Please make sure that they are not required anymore. <a href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
-msgstr "Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: %(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a href=\"%(link)s\">Umbenennen und Löschung doppelter Anhänge erzwingen</a>."
+msgid "These attachments are already attached to the new page name: %(names)s. Please make sure that they are not required anymore. <a href=\"%(link)s\">Force rename and deletion of conflicting attachments</a>,"
+msgstr "Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: %(names)s. Bitte stelle sicher, dass diese nicht mehr benötigt werden. <a href=\\\"%(link)s\\\">Umbenennen und Löschung doppelter Anhänge erzwingen</a>."
 
 msgid "This page contains a redirect that leads to a redirect loop!"
 msgstr "Diese Seite enthält eine Weiterleitung die zu einer Endlosschleife führt."
@@ -239,6 +239,9 @@ msgstr "Du wirst bereits benachrichtigt"
 
 msgid "You are not permitted to make this change."
 msgstr "Du bist nicht dazu berechtigt, diese Änderung vorzunehmen"
+
+msgid "You are viewing an old revision of this wiki page."
+msgstr "Du betrachtest eine alte Revision dieser Wikiseite."
 
 #, python-format
 msgid "You can find the slug of a topic in the URL (e.g. <var>example</var> when <em>%(example)s</em>)"
