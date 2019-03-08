@@ -1125,8 +1125,3 @@ class ConfigurationForm(forms.Form):
         except KeyError:
             raise forms.ValidationError(_(u'Invalid substitution pattern.'))
         return data
-
-
-class EditStyleForm(forms.Form):
-    styles = forms.CharField(label=ugettext_lazy(u'Styles'), widget=forms.Textarea(
-                             attrs={'rows': 20}), required=False)

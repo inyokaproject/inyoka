@@ -49,7 +49,6 @@ from inyoka.portal.forms import (
     EditFileForm,
     EditGroupForm,
     EditStaticPageForm,
-    EditStyleForm,
     EditUserGroupsForm,
     EditUserProfileForm,
     EditUserStatusForm,
@@ -222,17 +221,6 @@ def index(request):
         'countdown_target_page': storage_values.get('countdown_target_page', None),
         'countdown_image_url': countdown_image_url,
     }
-
-
-def markup_styles(request):
-    """
-    This function returns a CSS file that's used for formatting wiki markup.
-    Its content is editable in the admin panel.
-    """
-    from django.utils.cache import patch_response_headers
-    response = HttpResponse(storage['markup_styles'], content_type='text/css')
-    patch_response_headers(response, 60 * 15)
-    return response
 
 
 @templated('portal/whoisonline.html')
@@ -1648,23 +1636,6 @@ def page_edit(request, page=None):
         'form': form,
         'page': page,
         'preview': preview
-    }
-
-
-@login_required
-@permission_required('portal.change_staticpage', raise_exception=True)
-@templated('portal/styles.html')
-def styles(request):
-    key = 'markup_styles'
-    if request.method == 'POST':
-        form = EditStyleForm(request.POST)
-        if form.is_valid():
-            storage[key] = form.data['styles']
-            messages.success(request, _(u'The stylesheet was saved successfully.'))
-    else:
-        form = EditStyleForm(initial={'styles': storage.get(key, u'')})
-    return {
-        'form': form
     }
 
 

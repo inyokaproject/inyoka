@@ -220,9 +220,6 @@ class Command(BaseCommand):
                 hash_code = sha1(force_unicode('dyn.css').encode('utf-8')).hexdigest()
                 rel_path = path.join('_', '%s.css' % hash_code)
                 abs_path = path.join(FOLDER, 'files', rel_path)
-                if not path.isfile(abs_path):
-                    with open(abs_path, 'w+') as fobj:
-                        fobj.write(storage['markup_styles'].encode('utf-8'))
                 tag['href'] = u'%s%s' % (pre, rel_path)
                 return
 
