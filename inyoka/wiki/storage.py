@@ -125,34 +125,6 @@ class BaseStorage(object):
         return objects
 
 
-class DictStorage(BaseStorage):
-    """
-    Helper for storing dicts.
-    """
-
-    _line_re = re.compile(r'(?<!!)=')
-    multi_key = False
-
-    def extract_data(self, text):
-        for line in text.splitlines():
-            if self.multi_key:
-                bits = self._line_re.split(line)
-                if len(bits) > 1:
-                    for key in bits[:-1]:
-                        yield key.strip(), bits[-1].strip()
-            else:
-                bits = self._line_re.split(line, 1)
-                if len(bits) == 2:
-                    yield bits[0].strip(), bits[1].strip()
-
-    def combine_data(self, objects):
-        result = {}
-        for obj in objects:
-            for key, value in obj:
-                result[key] = value
-        return result
-
-
 class AccessControlList(BaseStorage):
     """
     This storage holds the access control lists for the whole wiki.  The rules
