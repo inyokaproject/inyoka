@@ -9,16 +9,14 @@
     might be useful for the pastebin too.
 
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.shortcuts import redirect
-from django.utils.html import smart_urlquote
 
-from inyoka.utils.urls import href, url_for
+from inyoka.utils.urls import url_for
 from inyoka.wiki.exceptions import CaseSensitiveException, CircularRedirectException
 from inyoka.wiki.models import Page
-from inyoka.wiki.storage import storage
 
 
 def case_sensitive_redirect(function):
@@ -40,24 +38,6 @@ def has_conflicts(text):
     if isinstance(text, basestring):
         text = parse(text)
     return text.query.all.by_type(nodes.ConflictMarker).has_any
-
-
-def get_smiley_map(full=False):
-    """
-    This method returns a list of tuples for all the smilies in the storage.
-    Per default for multiple codes only the first one is returend, if you want
-    all codes set the full parameter to `True`.
-    """
-    if full:
-        return storage.smilies[:]
-    result = []
-    images_yielded = set()
-    for code, img in storage.smilies:
-        if img in images_yielded:
-            continue
-        result.append((code, img))
-        images_yielded.add(img)
-    return result
 
 
 def quote_text(text, author=None, item_url=None):

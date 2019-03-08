@@ -6,7 +6,7 @@
     All views for the portal including the user control panel, private messages,
     static pages and the login/register.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from functools import partial
@@ -1595,15 +1595,13 @@ def config(request):
 @templated('portal/static_page.html')
 def static_page(request, page):
     """Renders static pages"""
-    try:
-        q = StaticPage.objects.get(key=page)
-    except StaticPage.DoesNotExist:
-        raise Http404
+    p = StaticPage.objects.get(key=page)
+
     return {
-        'title': q.title,
-        'content': q.content_rendered,
-        'key': q.key,
-        'page': q,
+        'title': p.title,
+        'content': p.content_rendered,
+        'key': p.key,
+        'page': p,
     }
 
 

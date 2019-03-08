@@ -5,13 +5,15 @@
 
     Test portal views.
 
-    :copyright: (c) 2012-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
 
 from django.conf import settings
 from django.core import mail
+from django.http import Http404
+from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.timezone import now
@@ -26,6 +28,7 @@ from inyoka.portal.models import (
     Subscription,
     StaticPage)
 from inyoka.portal.user import Group, User
+from inyoka.portal.views import static_page
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
 
@@ -158,7 +161,7 @@ class TestAuthViews(TestCase):
                          settings.SESSION_COOKIE_AGE)
 
     def test_login_as_banned_user(self):
-        """Maka sure that banned users can’t login."""
+        """Make sure that banned users can’t login."""
         banned_user = User.objects.register_user('badboy', 'bad', 'bad', False)
         banned_user.status = User.STATUS_BANNED
         banned_user.save()
@@ -406,6 +409,58 @@ class TestAuthViews(TestCase):
         self.assertContains(response, 'Your email address was reset.')
 
 
+class TestRegister(TestCase):
+
+    client_class = InyokaClient
+    username = 'Emma29'
+
+    def setUp(self):
+        super(TestRegister, self).setUp()
+        self.url = '/register/'
+        self.client.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME
+
+    def test_get_status_code(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
+    def post_username(self, form_username):
+        User.objects.create(username=self.username)
+
+        response = self.client.post(self.url, data={'username': form_username})
+        return response.tmpl_context['form']
+
+    def test_username__invalid_characters(self):
+        form = self.post_username(' ?')
+
+        self.assertEqual(form.errors['username'],
+                         [u'Your username contains invalid characters. '
+                          u'Only alphanumeric chars and \u201c-\u201d are allowed.'])
+
+    def test_username__exists_already(self):
+        form = self.post_username(self.username)
+
+        self.assertEqual(form.errors['username'],
+                         [u'This username is not available, please try another one.'])
+
+    def test_username__exists_different_case(self):
+        form = self.post_username(self.username.lower())
+
+        self.assertEqual(form.errors['username'],
+                         [u'This username is not available, please try another one.'])
+
+    def test_username__partly_same_exists(self):
+        form = self.post_username(self.username[:-1])
+
+        self.assertNotIn('username', form.errors)
+
+    def test_username__prevent_email_address(self):
+        form = self.post_username('foobar@inyoka.test')
+
+        self.assertEqual(form.errors['username'],
+                         [u'Please do not enter an email address as username.'])
+
+
 class TestPrivMsgViews(TestCase):
 
     client_class = InyokaClient
@@ -477,6 +532,31 @@ class TestPrivMsgViews(TestCase):
             folder__isnull=True).count(), 2)
         self.assertEqual(PrivateMessageEntry.objects.filter(user=self.user,
             read=True).count(), 2)
+
+
+class TestStaticPageView(TestCase):
+    client_class = InyokaClient
+
+    def test_returns_404_if_page_does_no_exist(self):
+        request = RequestFactory().get('/')
+
+        with self.assertRaises(Http404):
+            static_page(request, 'should_no_exist')
+
+    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
+    def test_content(self):
+        page = StaticPage.objects.create(key='foo', title=u'foo')
+        response = self.client.get(page.get_absolute_url())
+
+        self.assertEqual(response.tmpl_context['title'], page.title)
+
+    @override_settings(PROPAGATE_TEMPLATE_CONTEXT=True)
+    def test_title(self):
+        content = u'some random text'
+        page = StaticPage.objects.create(key='foo', title=u'foo', content=content)
+        response = self.client.get(page.get_absolute_url())
+
+        self.assertIn(content, response.tmpl_context['content'])
 
 
 class TestStaticPageEdit(TestCase):

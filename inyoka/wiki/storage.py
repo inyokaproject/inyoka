@@ -33,19 +33,17 @@
     problems.
 
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
-from collections import OrderedDict
-from urlparse import urljoin
 
 from django.conf import settings
 from django.core.cache import cache
 
 from inyoka.utils.local import local as local_cache
 from inyoka.utils.text import normalize_pagename
-from inyoka.wiki.models import MetaData, Page
+from inyoka.wiki.models import MetaData
 
 _block_re = re.compile(r'\{\{\{(?:\n?#.*?$)?(.*?)\}\}\}(?sm)')
 
@@ -160,32 +158,6 @@ class DictStorage(BaseStorage):
         return result
 
 
-class SmileyMap(DictStorage):
-    """
-    Stores smiley code to image mappings.
-    """
-    behavior_key = 'Smiley-Map'
-    multi_key = True
-
-    def combine_data(self, objects):
-        mapping = OrderedDict()
-        for obj in objects:
-            for code, page in obj:
-                mapping.setdefault(page, []).append(code)
-        if not mapping:
-            return []
-        data = Page.objects.values_list('last_rev__attachment__file', 'name') \
-            .filter(name__in=mapping.keys(),
-                    last_rev__deleted=False).all()
-
-        result = []
-        for filename, page in data:
-            path = urljoin(settings.MEDIA_URL, filename)
-            for code in mapping[page]:
-                result.append((code, path))
-        return result
-
-
 class AccessControlList(BaseStorage):
     """
     This storage holds the access control lists for the whole wiki.  The rules
@@ -247,6 +219,5 @@ class AccessControlList(BaseStorage):
 
 
 storage = StorageManager(
-    smilies=SmileyMap,
     acl=AccessControlList
 )

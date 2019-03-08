@@ -5,7 +5,7 @@
 
     Various forms for the portal.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import StringIO
@@ -24,8 +24,10 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from django.core.validators import validate_email
 from django.db.models import CharField, Count, Value
 from django.db.models.fields.files import ImageFieldFile
 from django.db.models.functions import Concat
@@ -136,23 +138,27 @@ class RegisterForm(forms.Form):
         in use.
         """
         username = self.cleaned_data['username']
+
         if not is_valid_username(username):
             raise forms.ValidationError(
                 _(u'Your username contains invalid characters. Only '
                   u'alphanumeric chars and “-” are allowed.')
             )
-        try:
-            User.objects.get(username__iexact=username)
-        except User.DoesNotExist:
-            # To bad we had to change the user regex…,  we need to rename users fast…
-            count = User.objects.filter(username__contains=username.replace(' ', '%')) \
-                                .aggregate(user_count=Count('username'))['user_count']
-            if count == 0:
-                return username
 
-        raise forms.ValidationError(
-            _(u'This username is not available, please try another one.')
-        )
+        if User.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError(
+                _(u'This username is not available, please try another one.')
+            )
+
+        # prevent email address as username
+        try:
+            validate_email(username)
+        except ValidationError:
+            return username
+        else:
+            raise forms.ValidationError(
+                _(u'Please do not enter an email address as username.')
+            )
 
     def clean(self):
         """
