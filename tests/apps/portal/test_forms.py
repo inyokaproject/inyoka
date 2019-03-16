@@ -13,7 +13,6 @@ from functools import partial
 from os import path
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from unittest import skip
 
 from inyoka.portal.models import StaticPage, StaticFile
 from inyoka.utils.test import TestCase
@@ -112,11 +111,10 @@ class TestEditStaticPageForm(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('This field is required.', form.errors['title'])
 
-    @skip("Should be fixed with inyokaproject/inyoka#999")
-    def test_space_as_title(self):
+    def test_space_as_title_not_valid(self):
         form = self.form_create({'key': '', 'title': ' ', 'content': 'foo'})
-        self.assertTrue(form.is_valid())
-        self.assertEqual(form.cleaned_data['key'], '-')
+        self.assertFalse(form.is_valid())
+        self.assertIn('This field is required.', form.errors['title'])
 
 
 class TestEditFileForm(TestCase):
