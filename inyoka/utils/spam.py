@@ -11,8 +11,6 @@
 import requests
 from django.conf import settings
 from django.contrib import messages
-from django.core.cache import cache
-from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from inyoka.utils.logger import logger
 
@@ -140,45 +138,14 @@ def mark_spam(obj, comment_content, comment_type):
 def check_form_field(form, text_field, needs_check, request, content_type):
     text = form.cleaned_data.get(text_field)
     form._spam, form._spam_discard = False, False
+
     if needs_check:
         form._spam, form._spam_discard = is_spam(text, content_type)
         if form._spam:
-            attempts_left = block_user_if_spammer(request.user)
             msg = _(
                 'Your text is considered spam and needs approval from one of '
                 'the administrators. Please be patient, we will get to it as '
-                'soon as possible. You have %(left)d attempts left before your '
-                'account will be blocked.'
-            ) % {
-                'left': attempts_left,
-            }
-            if form._spam_discard:
-                raise ValidationError(msg)
-            else:
-                messages.info(request, msg)
+                'soon as possible.'
+            )
+            messages.info(request, msg)
     return text
-
-
-def block_user_if_spammer(user):
-    cache_key = 'spam/user/%d' % user.pk
-    spam_hits = cache.get(cache_key, 0) + 1
-    if spam_hits >= settings.INYOKA_SPAM_COUNTER_MAX:
-        user.status = user.STATUS_BANNED
-        user.save(update_fields=['status'])
-        logger.info(
-            u'User %s (%d) hit spam counter maximum of %d. Blocked!' % (
-                user.username, user.pk, settings.INYOKA_SPAM_COUNTER_MAX,
-            )
-        )
-    else:
-        cache.set(
-            cache_key, spam_hits,
-            timeout=settings.INYOKA_SPAM_COUNTER_TIMEOUT
-        )
-        logger.info(
-            u'User %s (%d) tried to spam. Counter at %d of %d.' % (
-                user.username, user.pk, spam_hits,
-                settings.INYOKA_SPAM_COUNTER_MAX
-            )
-        )
-    return settings.INYOKA_SPAM_COUNTER_MAX - spam_hits
