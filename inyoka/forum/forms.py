@@ -232,11 +232,13 @@ class AddAttachmentForm(forms.Form):
     `description`
         The description of the attachment as textarea.
     """
-    attachment = forms.FileField(required=True)
+    attachment = forms.FileField()
     filename = forms.CharField(max_length=512, required=False)
     override = forms.BooleanField(required=False)
     comment = forms.CharField(label=ugettext_lazy(u'Description'), required=False,
                   widget=forms.TextInput(attrs={'size': '60'}))
+
+    use_required_attribute = False
 
 
 class AddPollForm(forms.Form):
