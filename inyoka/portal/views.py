@@ -1553,7 +1553,7 @@ def config(request):
                     default_storage.delete(storage['team_icon'])
                 icon = Image.open(data['team_icon'])
                 fn = 'portal/global_team_icon.%s' % icon.format.lower()
-                default_storage.save(fn, data['team_icon'])
+                default_storage.save(fn, data['team_icon'], max_length=100)
                 storage['team_icon'] = team_icon = fn
 
             if not data['countdown_date']:
