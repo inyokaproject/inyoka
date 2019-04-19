@@ -39,6 +39,7 @@ from inyoka.forum.constants import (
     SUPPORTED_IMAGE_TYPES,
     UBUNTU_DISTROS,
 )
+from inyoka.forum.notifications import notify_reported_topic_subscribers
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import get_ubuntu_versions
@@ -57,8 +58,6 @@ from inyoka.utils.pagination import Pagination
 from inyoka.utils.spam import mark_ham, mark_spam
 from inyoka.utils.urls import href
 from inyoka.wiki.models import Page as WikiPage
-from inyoka.utils.storage import storage
-from inyoka.utils.notification import send_notification
 
 _newline_re = re.compile(r'\r?\n')
 
@@ -1104,18 +1103,10 @@ class Post(models.Model, LockableObject):
                 topic.reported = _('This topic is hidden due to possible spam.')
                 topic.reporter = User.objects.get_system_user()
 
-                subscribers = storage['reported_topics_subscribers'] or u''
-                users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
-                for user in users:
-                    if user.has_perm('forum.manage_reported_topic'):
-                        send_notification(user, 'new_reported_topic',
-                                        _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
-                                        {'topic': topic, 'text': topic.reported})
-                    else:
-                        # unsubscribe this user automatically, he has no right to be here.
-                        user_ids = [i for i in subscribers.split(',')]
-                        user_ids.remove(str(user.id))
-                        storage['reported_topics_subscribers'] = ','.join(user_ids)
+                notify_reported_topic_subscribers(
+                    _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
+                    {'topic': topic, 'text': topic.reported})
+
                 cache.delete('forum/reported_topic_count')
             topic.save(update_fields=['hidden', 'reported', 'reporter'])
         else:
@@ -1137,18 +1128,9 @@ class Post(models.Model, LockableObject):
                     topic.reported = msg
                     topic.reporter = User.objects.get_system_user()
 
-                subscribers = storage['reported_topics_subscribers'] or u''
-                users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
-                for user in users:
-                    if user.has_perm('forum.manage_reported_topic'):
-                        send_notification(user, 'new_reported_topic',
-                                        _(u'Reported post: “%(post)s”') % {'post': self.pk},
-                                        {'topic': topic, 'text': msg})
-                    else:
-                        # unsubscribe this user automatically, he has no right to be here.
-                        user_ids = [i for i in subscribers.split(',')]
-                        user_ids.remove(str(user.id))
-                        storage['reported_topics_subscribers'] = ','.join(user_ids)
+                notify_reported_topic_subscribers(
+                    _(u'Reported post: “%(post)s”') % {'post': self.pk},
+                    {'topic': topic, 'text': msg})
 
                 cache.delete('forum/reported_topic_count')
 
