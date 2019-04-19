@@ -5,7 +5,7 @@
 
     The views for the forum.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from functools import partial
@@ -617,8 +617,6 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     if 'send' in request.POST and form.is_valid():
         d = form.cleaned_data
 
-        is_spam_post = form._spam and not form._spam_discard
-
         if not post:  # not when editing an existing post
             doublepost = Post.objects \
                 .filter(author=request.user, text=d['text'],
@@ -678,10 +676,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
         post.edit(d['text'])
 
-        if is_spam_post:
+        if form._spam:
             post.mark_spam(report=True, update_akismet=False)
 
-        if not is_spam_post:
+        if not form._spam:
             if newtopic:
                 send_newtopic_notifications(request.user, post, topic, forum)
             elif not post_id:
@@ -691,10 +689,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             # page and send notifications.
             page.topic = topic
             page.save()
-            if not is_spam_post:
+            if not form._spam:
                 send_discussion_notification(request.user, page)
 
-        if not is_spam_post:
+        if not form._spam:
             subscribed = Subscription.objects.user_subscribed(request.user, topic)
             if request.user.settings.get('autosubscribe', True) and not subscribed and not post_id:
                 subscription = Subscription(user=request.user, content_object=topic)

@@ -6,17 +6,19 @@
     This module tests the AST transformers.
 
     :copyright: Copyright 2007 by Armin Ronacher.
-    :copyright: (c) 2011-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2011-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
+
+from mock import patch
 
 from inyoka.markup import Parser, nodes, transformers
 from inyoka.markup.transformers import (
     AutomaticParagraphs,
     FootnoteSupport,
     HeadlineProcessor,
-    get_smiley_re,
+    SmileyInjector
 )
 
 
@@ -88,18 +90,64 @@ class TestTransformers(unittest.TestCase):
             nodes.Headline(2, [nodes.Text('foo-2')], id='foo-2-2')
         ]))
 
-    def test_smiley_re(self):
-        transformers._smiley_re = None
-        smileys = {':)': '', ':/': '', '8-o': '', '{de}': ''}
-        smiley_re = get_smiley_re(smileys)
+
+class TestSmileyInjector(unittest.TestCase):
+
+    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {':)': '', ':/': '', '8-o': ''})
+    def test_smiley_regex(self):
+        smiley_re = transformers.SmileyInjector().smiley_re
         t = lambda x: smiley_re.findall(x)
-        self.assertEqual(t(':) :/'), [':)', ':/'])
+
+        self.assertEqual(t(':) :/'), [(':)', ''), (':/', '')])
+
+    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {':)': '', ':/': '', '8-o': ''})
+    def test_smiley_regex_text_before_smiley(self):
+        smiley_re = transformers.SmileyInjector().smiley_re
+        t = lambda x: smiley_re.findall(x)
+
         self.assertEqual(t('(text:)'), [])
+
+    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {':)': '', ':/': '', '8-o': ''})
+    def test_smiley_regex_text_after_smiley(self):
+        smiley_re = transformers.SmileyInjector().smiley_re
+        t = lambda x: smiley_re.findall(x)
+
         self.assertEqual(t(':)apo'), [])
-        # crazy stuff like that won't work, since smileys aren't
-        # allowed to be precised by alphanumeric characters
-        # self.assertEqual(t(':)8-o:)'), [':)', '8-o', ':)'])
-        # but this should work:
-        self.assertEqual(t(':):/'), [':)', ':/'])
-        # and so do the language tags:
-        self.assertEqual(t('{de}{de}'), ['{de}', '{de}'])
+
+    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {':)': '', ':/': '', '8-o': ''})
+    def test_smiley_regex_no_space_between(self):
+        smiley_re = transformers.SmileyInjector().smiley_re
+        t = lambda x: smiley_re.findall(x)
+
+        self.assertEqual(t(':):/'), [(':)', ''), (':/', '')])
+
+    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {':)': ''})
+    def test_smiley_regex_flags(self):
+        smiley_re = transformers.SmileyInjector().smiley_re
+        t = lambda x: smiley_re.findall(x)
+
+        self.assertEqual(t('{de}{de}'), [('{de}', 'de'), ('{de}', 'de')])
+
+    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {u':)': u'☺'})
+    def test_smiley_between_text(self):
+        tree = parse(u'blah :) foo', SmileyInjector())
+        self.assertEquals(tree, nodes.Document(children=[nodes.Text(text=u'blah '),
+                                                         nodes.Text(text=u'☺'),
+                                                         nodes.Text(text=u' foo')]))
+
+    def test_flag_en(self):
+        tree = parse('{en}', SmileyInjector())
+        self.assertEquals(tree, nodes.Document(children=[nodes.Text(text=u'🇬🇧')]))
+
+    def test_flag_austria(self):
+        tree = parse('{at}', SmileyInjector())
+        self.assertEquals(tree, nodes.Document(children=[nodes.Text(text=u'🇦🇹')]))
+
+    def test_flag_american_samoa(self):
+        tree = parse('{as}', SmileyInjector())
+        self.assertEquals(tree, nodes.Document(children=[nodes.Text(text=u'🇦🇸')]))
+
+    @patch('inyoka.markup.transformers.SmileyInjector.smilies', {u':tux:': u'css-class:icon-tux'})
+    def test_fallback_with_span(self):
+        tree = parse(':tux:', SmileyInjector())
+        self.assertEquals(tree, nodes.Document(children=[nodes.Span(class_=u'icon-tux')]))

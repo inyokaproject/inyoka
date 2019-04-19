@@ -36,7 +36,7 @@
     problems.
 
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import re
@@ -163,32 +163,6 @@ class DictStorage(BaseStorage):
         return result
 
 
-class SmileyMap(DictStorage):
-    """
-    Stores smiley code to image mappings.
-    """
-    behavior_key = 'Smiley-Map'
-    multi_key = True
-
-    def combine_data(self, objects):
-        mapping = OrderedDict()
-        for obj in objects:
-            for code, page in obj:
-                mapping.setdefault(page, []).append(code)
-        if not mapping:
-            return []
-        data = Page.objects.values_list('last_rev__attachment__file', 'name') \
-            .filter(name__in=mapping.keys(),
-                    last_rev__deleted=False).all()
-
-        result = []
-        for filename, page in data:
-            path = urljoin(settings.MEDIA_URL, filename)
-            for code in mapping[page]:
-                result.append((code, path))
-        return result
-
-
 class InterwikiMap(DictStorage):
     """
     Map shortnames to full interwiki links.
@@ -257,7 +231,6 @@ class AccessControlList(BaseStorage):
 
 
 storage = StorageManager(
-    smilies=SmileyMap,
     interwiki=InterwikiMap,
     acl=AccessControlList
 )

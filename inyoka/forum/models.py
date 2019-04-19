@@ -5,7 +5,7 @@
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from __future__ import division
@@ -1089,8 +1089,6 @@ class Post(models.Model, LockableObject):
             # it's not the first post
             self.hidden = False
             self.save(update_fields=['hidden'])
-
-        cache.delete(u'spam/user/{}'.format(self.author.pk))
 
     def mark_spam(self, report=True, update_akismet=True):
         if update_akismet:

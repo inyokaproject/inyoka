@@ -5,19 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka\n"
+"Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-09-01 21:30+0200\n"
-"PO-Revision-Date: 2018-09-01 21:34+0200\n"
+"POT-Creation-Date: 2019-01-25 20:47+0100\n"
+"PO-Revision-Date: 2019-01-25 20:45+0100\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.1\n"
-"X-Generator: Poedit 2.1.1\n"
 
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
@@ -240,6 +239,9 @@ msgstr "Du wirst bereits benachrichtigt"
 
 msgid "You are not permitted to make this change."
 msgstr "Du bist nicht dazu berechtigt, diese Änderung vorzunehmen"
+
+msgid "You are viewing an old revision of this wiki page."
+msgstr "Du betrachtest eine alte Revision dieser Wikiseite."
 
 #, python-format
 msgid "You can find the slug of a topic in the URL (e.g. <var>example</var> when <em>%(example)s</em>)"
