@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-09-01 21:30+0200\n"
+"POT-Creation-Date: 2019-01-25 20:47+0100\n"
 "PO-Revision-Date: 2017-03-23 22:51+0000\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
@@ -100,8 +100,8 @@ msgid "Your signature is too long, only %(length)s characters allowed"
 msgstr "Deine Signatur ist zu lang. Es sind maximal %(length)s Zeichen erlaubt"
 
 #, python-format
-msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible. You have %(left)d attempts left before your account will be blocked."
-msgstr "Dein Beitrag wurde als Spam klassifiziert und muss von einem Moderator freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie möglich darum kümmern. Du hast %(left)d verbleibende Versuche bevor dein Konto gesperrt wird."
+msgid "Your text is considered spam and needs approval from one of the administrators. Please be patient, we will get to it as soon as possible."
+msgstr "Dein Beitrag wurde als Spam klassifiziert und muss von einem Moderator freigeschaltet werden. Bitte habe etwas Geduld, wir werden uns sobald wie möglich darum kümmern."
 
 msgid "counting..."
 msgstr "Zähle..."
@@ -139,6 +139,6 @@ msgstr "{verbose_name} „{object_name}“ wurde erfolgreich geändert."
 msgid "{verbose_name} “{object_name}” was successfully created."
 msgstr "{verbose_name} „{object_name}“ wurde erfolgreich erstellt."
 
-msgid "You are viewing an old revision of this wiki page."
-msgstr "Dies ist eine alte Revision des Artikels."
+#~ msgid "You are viewing an old revision of this wiki page."
+#~ msgstr "Dies ist eine alte Revision des Artikels."
 

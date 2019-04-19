@@ -9,7 +9,7 @@
     might be useful for the pastebin too.
 
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.shortcuts import redirect
@@ -40,24 +40,6 @@ def has_conflicts(text):
     if isinstance(text, basestring):
         text = parse(text)
     return text.query.all.by_type(nodes.ConflictMarker).has_any
-
-
-def get_smiley_map(full=False):
-    """
-    This method returns a list of tuples for all the smilies in the storage.
-    Per default for multiple codes only the first one is returend, if you want
-    all codes set the full parameter to `True`.
-    """
-    if full:
-        return storage.smilies[:]
-    result = []
-    images_yielded = set()
-    for code, img in storage.smilies:
-        if img in images_yielded:
-            continue
-        result.append((code, img))
-        images_yielded.add(img)
-    return result
 
 
 def resolve_interwiki_link(wiki, page):

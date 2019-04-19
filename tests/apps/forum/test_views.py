@@ -5,7 +5,7 @@
 
     Test forum views.
 
-    :copyright: (c) 2012-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2012-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import shutil
@@ -102,20 +102,25 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
 
     @patch('inyoka.forum.views.send_notification')
     def test_movetopic(self, mock_send):
-        self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
-                self.forum2.id)
-        response = self.client.post('/topic/%s/move/' % self.topic.slug,
-                    {'forum': self.forum3.id})
+        self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id, self.forum2.id)
+        response = self.client.post('/topic/%s/move/' % self.topic.slug, {'forum': self.forum3.id})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(mock_send.call_count, 1)  # only the topic author
-        mock_send.assert_called_with(self.user, 'topic_moved',
-            _(u'Your topic “%(topic)s” was moved.') % {'topic': 'A test Topic'}, {
-                'username': self.user.username, 'topic': self.topic,
-                'mod': self.admin.username, 'forum_name': 'Forum 3',
-                'old_forum_name': 'Forum 2'})
 
-        self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id,
-                self.forum3.id)
+        self.assertEqual(mock_send.call_count, 1)  # only the topic author
+        mock_send.assert_called_with(
+            self.user,
+            'topic_moved',
+            _(u'Your topic “%(topic)s” was moved.') % {'topic': 'A test Topic'},
+            {
+                'username': self.user.username,
+                'topic': self.topic,
+                'mod': self.admin.username,
+                'forum_name': 'Forum 3',
+                'old_forum_name': 'Forum 2'
+            }
+        )
+
+        self.assertEqual(Topic.objects.get(id=self.topic.id).forum_id, self.forum3.id)
 
     def test_continue_admin_index(self):
         """The Parameter continue was renamed into next"""
@@ -228,7 +233,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             'topic': t1.slug})
         self.client.post('/topic/%s/split/' % t1.slug, {
             'action': 'add',
-            'topic': t2.slug})
+            'topic_to_move': t2.slug})
 
         # The order in Topic 2 should now be
         # p21 p22 p23 p12 p13
@@ -247,7 +252,7 @@ class TestViews(AntiSpamTestCaseMixin, TestCase):
             'topic': t2.slug})
         self.client.post('/topic/%s/split/' % t2.slug, {
             'action': 'add',
-            'topic': t1.slug})
+            'topic_to_move': t1.slug})
         # The order in Topic 1 should now be
         # p11 p22 p23 p12 p13
         # Previously is was
@@ -600,8 +605,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             response = self.client.get('/topic/newpost-title/')
         self.assertInHTML('<div class="message info">Your text is considered spam '
                           'and needs approval from one of the administrators. '
-                          'Please be patient, we will get to it as soon as possible. '
-                          'You have 4 attempts left before your account will be blocked.</div>',
+                          'Please be patient, we will get to it as soon as possible.</div>',
                           response.content, count=1)
         self.assertInHTML('<div class="error"><p>You do not have permissions to access this page.</p></div>',
                           response.content, count=1)
@@ -886,8 +890,7 @@ class TestPostEditView(AntiSpamTestCaseMixin, TestCase):
             response = self.client.get('/topic/%s/' % topic.slug)
         self.assertInHTML('<div class="message info">Your text is considered spam '
                           'and needs approval from one of the administrators. '
-                          'Please be patient, we will get to it as soon as possible. '
-                          'You have 4 attempts left before your account will be blocked.</div>',
+                          'Please be patient, we will get to it as soon as possible. </div>',
                           response.content, count=1)
         self.assertInHTML('<div class="text"><p>newpost text</p></div>', response.content, count=1)
 

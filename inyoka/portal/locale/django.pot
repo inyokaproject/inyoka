@@ -1,14 +1,14 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2018 Inyoka Team (see AUTHORS)
+# Copyright (C) 2019 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.17.4\n"
+"Project-Id-Version: Inyoka Project v0.17.6\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-09-01 21:30+0200\n"
+"POT-Creation-Date: 2019-01-25 20:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -155,6 +155,10 @@ msgid "Do you want to archive the message?"
 msgstr ""
 
 msgid "Do you want to restore the message?"
+msgstr ""
+
+#, python-format
+msgid "Do you want to unsubscribe from the user “%(username)s”?"
 msgstr ""
 
 msgid "E-mail"
@@ -343,6 +347,9 @@ msgid "Planet"
 msgstr ""
 
 msgid "Please choose"
+msgstr ""
+
+msgid "Please do not enter an email address as username."
 msgstr ""
 
 msgid "Please enter at least one receiver."
@@ -592,6 +599,9 @@ msgid "Topic"
 msgstr ""
 
 msgid "Trash"
+msgstr ""
+
+msgid "Unsubscribe"
 msgstr ""
 
 msgid "Use Gravatar"
