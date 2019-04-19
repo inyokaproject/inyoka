@@ -1514,7 +1514,6 @@ def confirm(request, action):
         form = TokenForm(request.POST, action=action)
 
         if form.is_valid():
-            messages.success(request, _(u'Your settings have been changed successfully.'))
             messages.success(request, form.cleaned_data['token'])
             if request.user.is_authenticated():
                 return HttpResponseRedirect(href('portal', 'usercp'))
