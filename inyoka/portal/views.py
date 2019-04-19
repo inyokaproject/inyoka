@@ -1505,8 +1505,7 @@ def confirm(request, action):
         messages.error(request, _(u'You cannot reactivate an account while '
                                   u'you are logged in.'))
         return abort_access_denied(request)
-    elif action in ['set_new_email', 'reset_email'] and \
-            request.user.is_anonymous():
+    elif action in ['set_new_email', 'reset_email'] and request.user.is_anonymous():
         messages.error(request, _(u'You need to be logged in before you can continue.'))
         return abort_access_denied(request)
 
