@@ -5,7 +5,6 @@ from mock import patch
 from inyoka.portal.user import User
 from inyoka.utils.storage import storage
 from inyoka.utils.test import TestCase
-from inyoka.wiki.forms import NewArticleForm
 from inyoka.wiki.models import Page
 
 
@@ -18,6 +17,7 @@ class TestNewArticleForm(TestCase):
 
         self.user = User.objects.register_user('user', 'user@example.test', 'user', False)
 
+        from inyoka.wiki.forms import NewArticleForm  # globally the storage table would not exist
         self.form = partial(NewArticleForm, user=self.user)
         self.data = {'name': 'new', 'template': ''}
 
