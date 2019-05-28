@@ -39,6 +39,7 @@ from inyoka.forum.constants import (
     SUPPORTED_IMAGE_TYPES,
     UBUNTU_DISTROS,
 )
+from inyoka.forum.notifications import notify_reported_topic_subscribers
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import get_ubuntu_versions
@@ -1101,6 +1102,12 @@ class Post(models.Model, LockableObject):
                 # Don't report a topic as spam if explicitly classified
                 topic.reported = _('This topic is hidden due to possible spam.')
                 topic.reporter = User.objects.get_system_user()
+
+                notify_reported_topic_subscribers(
+                    _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
+                    {'topic': topic, 'text': topic.reported})
+
+                cache.delete('forum/reported_topic_count')
             topic.save(update_fields=['hidden', 'reported', 'reporter'])
         else:
             # it's not the first post
@@ -1120,6 +1127,13 @@ class Post(models.Model, LockableObject):
                 else:
                     topic.reported = msg
                     topic.reporter = User.objects.get_system_user()
+
+                notify_reported_topic_subscribers(
+                    _(u'Reported post: “%(post)s”') % {'post': self.pk},
+                    {'topic': topic, 'text': msg})
+
+                cache.delete('forum/reported_topic_count')
+
             topic.save(update_fields=['reported', 'reporter'])
 
     def __unicode__(self):
