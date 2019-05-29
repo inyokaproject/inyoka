@@ -60,7 +60,7 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
         # If user has no right to create the article, alter the name to include
         # the "construction" prefix.
         if not has_privilege(self.user, name, 'create'):
-            name = join_pagename(storage['wiki_newpage_root'], name)
+            name = join_pagename(storage['wiki_newpage_root'], u'./' + name)
             # See if the user now has the right to create this page.
             if not has_privilege(self.user, name, 'create'):
                 # This could mean that the page exists and was previously
