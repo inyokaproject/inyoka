@@ -5,7 +5,7 @@
 
     Database models for the forum.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from __future__ import division
@@ -31,6 +31,7 @@ from django.utils.encoding import DjangoUnicodeDecodeError, force_unicode
 from django.utils.html import escape, format_html
 from django.utils.translation import ugettext as _
 from django.utils.translation import pgettext, ugettext_lazy
+from werkzeug.utils import secure_filename
 
 from inyoka.forum.constants import (
     CACHE_PAGES_COUNT,
@@ -38,6 +39,7 @@ from inyoka.forum.constants import (
     SUPPORTED_IMAGE_TYPES,
     UBUNTU_DISTROS,
 )
+from inyoka.forum.notifications import notify_reported_topic_subscribers
 from inyoka.portal.models import Subscription
 from inyoka.portal.user import User
 from inyoka.portal.utils import get_ubuntu_versions
@@ -49,7 +51,6 @@ from inyoka.utils.database import (
 )
 from inyoka.utils.dates import timedelta_to_seconds
 from inyoka.utils.decorators import deferred
-from inyoka.utils.files import get_filename
 from inyoka.utils.highlight import highlight_code
 from inyoka.utils.imaging import get_thumbnail
 from inyoka.utils.local import current_request
@@ -1087,8 +1088,6 @@ class Post(models.Model, LockableObject):
             self.hidden = False
             self.save(update_fields=['hidden'])
 
-        cache.delete(u'spam/user/{}'.format(self.author.pk))
-
     def mark_spam(self, report=True, update_akismet=True):
         if update_akismet:
             mark_spam(self, self.get_text(), 'forum-post')
@@ -1100,6 +1099,12 @@ class Post(models.Model, LockableObject):
                 # Don't report a topic as spam if explicitly classified
                 topic.reported = _('This topic is hidden due to possible spam.')
                 topic.reporter = User.objects.get_system_user()
+
+                notify_reported_topic_subscribers(
+                    _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
+                    {'topic': topic, 'text': topic.reported})
+
+                cache.delete('forum/reported_topic_count')
             topic.save(update_fields=['hidden', 'reported', 'reporter'])
         else:
             # it's not the first post
@@ -1119,6 +1124,13 @@ class Post(models.Model, LockableObject):
                 else:
                     topic.reported = msg
                     topic.reporter = User.objects.get_system_user()
+
+                notify_reported_topic_subscribers(
+                    _(u'Reported post: “%(post)s”') % {'post': self.pk},
+                    {'topic': topic, 'text': msg})
+
+                cache.delete('forum/reported_topic_count')
+
             topic.save(update_fields=['reported', 'reporter'])
 
     def __unicode__(self):
@@ -1168,7 +1180,7 @@ class Attachment(models.Model):
                 Specifies whether other attachments for the same post should
                 be overwritten if they have the same name.
         """
-        name = get_filename(name, uploaded_file)
+        name = secure_filename(name)
         # check whether an attachment with the same name already exists
         existing = filter(lambda a: a.name == name, attachments)
         exists = bool(existing)
@@ -1215,7 +1227,7 @@ class Attachment(models.Model):
         base_path = datetime.utcnow().strftime('forum/attachments/%S/%W')
 
         for attachment in attachments:
-            new_name = get_filename('%d-%s' % (post.pk, attachment.name))
+            new_name = secure_filename('%d-%s' % (post.pk, attachment.name))
             new_name = path.join(base_path, new_name)
 
             storage = attachment.file.storage

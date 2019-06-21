@@ -3,7 +3,7 @@
     tests.utils.test_utils
     ~~~~~~~~~~~~~~~~~~~~~~
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from unittest import TestCase
@@ -96,6 +96,7 @@ class TestGetPageTitle(TestCase):
 
     def test_get_pagetitle_full(self):
         self.assertEqual(get_pagetitle("Bar/Foo_Bar"),"Bar/Foo Bar")
+
 
 class TestWikiSlugify(TestCase):
     def test_str(self):

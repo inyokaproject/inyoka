@@ -5,21 +5,13 @@
 
     File related utilities.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import itertools
 import os.path
 
 from django.core.files.storage import FileSystemStorage
-from werkzeug import utils
-
-
-def get_filename(filename, file=None):
-    """
-    Returns a save filename (CAUTION: strips path components!).
-    """
-    return utils.secure_filename(filename) or 'Noname'
 
 
 class MaxLengthStorageMixin(object):

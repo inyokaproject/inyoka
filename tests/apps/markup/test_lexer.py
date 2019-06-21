@@ -6,7 +6,7 @@
     This unittest tests various features of the wiki lexer. Just the lexer,
     not the parser.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import unittest
@@ -103,6 +103,41 @@ class TestLexer(unittest.TestCase):
         expect('link_target', 'http://example.com')
         expect('external_link_end')
         expect('text', ' ]')
+
+        expect('eof')
+
+    def test_link_wiki_anchor_simple(self):
+        expect = lexer.tokenize(
+            u'[:foo#anchor:]'
+        ).expect
+
+        expect('wiki_link_begin')
+        expect('link_target', (None, 'foo#anchor'))
+        expect('wiki_link_end')
+
+        expect('eof')
+
+    def test_link_wiki_anchor_custom_label(self):
+        expect = lexer.tokenize(
+            u'[:foo#anchor:bar]'
+        ).expect
+
+        expect('wiki_link_begin')
+        expect('link_target', (None, 'foo#anchor'))
+        expect('text', 'bar')
+        expect('wiki_link_end')
+
+        expect('eof')
+
+    def test_link_interwiki_custom_label(self):
+        expect = lexer.tokenize(
+            u'[foo:bar#anchor:baz]'
+        ).expect
+
+        expect('wiki_link_begin')
+        expect('link_target', ('foo', 'bar#anchor'))
+        expect('text', 'baz')
+        expect('wiki_link_end')
 
         expect('eof')
 

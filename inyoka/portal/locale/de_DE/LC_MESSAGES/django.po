@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-12-18 02:05+0100\n"
-"PO-Revision-Date: 2017-12-18 02:12+0100\n"
+"POT-Creation-Date: 2019-04-12 20:37+0200\n"
+"PO-Revision-Date: 2019-01-25 20:45+0100\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
 "Language-Team: German (Germany) (http://www.transifex.com/inyokaproject/inyoka/language/de_DE/)\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.0\n"
+"Generated-By: Babel 2.5.1\n"
 
 #, python-format
 msgid "%(sitename)s - Message from %(username)s"
@@ -158,6 +158,10 @@ msgstr "Möchtest du die Nachricht archivieren?"
 msgid "Do you want to restore the message?"
 msgstr "Möchtest du die Nachricht wiederherstellen?"
 
+#, python-format
+msgid "Do you want to unsubscribe from the user “%(username)s”?"
+msgstr "Möchtest du die Benachrichtigungen für den Nutzer „%(username)s“ abbestellen?"
+
 msgid "E-mail"
 msgstr "E-Mail"
 
@@ -270,9 +274,6 @@ msgstr "Angemeldet bleiben"
 msgid "Key"
 msgstr "Schlüssel"
 
-msgid "Last read post"
-msgstr "Letzer gelesener Beitrag"
-
 msgid "Launchpad username"
 msgstr "Launchpad-Benutzername"
 
@@ -348,6 +349,9 @@ msgstr "Planet"
 
 msgid "Please choose"
 msgstr "Bitte auswählen"
+
+msgid "Please do not enter an email address as username."
+msgstr "Bitte gebe nicht eine E-Mail-Adresse als Benutzernamen ein."
 
 msgid "Please enter at least one receiver."
 msgstr "Bitte gib mindestens einen Empfänger an."
@@ -598,6 +602,9 @@ msgstr "Thema"
 msgid "Trash"
 msgstr "Papierkorb"
 
+msgid "Unsubscribe"
+msgstr "Abbestellen"
+
 msgid "Use Gravatar"
 msgstr "Gravatar benutzen"
 
@@ -751,3 +758,4 @@ msgstr "leer lassen, um dauerhaft zu sperren (wirkt nur, wenn Status = gesperrt)
 
 msgid "not yet activated"
 msgstr "noch nicht aktiviert"
+

@@ -12,7 +12,7 @@
     dispatches to ``inyoka.wiki.services.dispatcher('something')``.
 
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from django.http import HttpResponse
@@ -22,17 +22,10 @@ from inyoka.forum.models import Post as ForumPost
 from inyoka.markup.base import RenderContext, parse
 from inyoka.utils.services import SimpleDispatcher
 from inyoka.wiki.models import Page
-from inyoka.wiki.utils import get_smiley_map
 from inyoka.wiki.exceptions import CaseSensitiveException
 
 
 dispatcher = SimpleDispatcher()
-
-
-@dispatcher.register()
-def get_smilies(request):
-    """Get a list of smilies"""
-    return get_smiley_map()
 
 
 @require_http_methods(['GET','POST'])

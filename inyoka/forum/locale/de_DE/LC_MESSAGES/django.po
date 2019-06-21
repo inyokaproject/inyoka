@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-05-01 07:15+0200\n"
+"POT-Creation-Date: 2019-01-25 20:47+0100\n"
 "PO-Revision-Date: 2017-04-15 00:22+0200\n"
 "Last-Translator: Christoph Volkert <>\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
+"Generated-By: Babel 2.5.1\n"
 
 #, python-format
 msgid "%(site)s forum"
@@ -86,6 +86,9 @@ msgstr "Möchtest du diesen Beitrag wiederherstellen?"
 msgctxt "Link text to download an attachment"
 msgid "Download %(name)s"
 msgstr "Download %(name)s"
+
+msgid "Edit first post afterwards"
+msgstr "Danach ersten Beitrag bearbeiten"
 
 msgid "Edubuntu"
 msgstr "Edubuntu"
@@ -288,6 +291,9 @@ msgstr "Der Beitrag wurde erfolgreich gespeichert."
 
 msgid "The selected tickets have been closed."
 msgstr "Die gewählten Tickets wurden geschlossen."
+
+msgid "The topic is already in this forum"
+msgstr "Das Thema befindet sich bereits in diesem Forum."
 
 msgid "The topic was locked."
 msgstr "Das Thema wurde gesperrt"

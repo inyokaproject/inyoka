@@ -1,21 +1,21 @@
 # Translations template for Inyoka Project.
-# Copyright (C) 2017 Inyoka Team (see AUTHORS)
+# Copyright (C) 2019 Inyoka Team (see AUTHORS)
 # This file is distributed under the same license as the Inyoka Project project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Inyoka Project v0.15.3\n"
+"Project-Id-Version: Inyoka Project v0.17.6\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-05-01 07:15+0200\n"
+"POT-Creation-Date: 2019-01-25 20:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
+"Generated-By: Babel 2.5.1\n"
 
 #, python-format
 msgid "%(note)s [Revision from %(date)s restored by %(user)s]note"
@@ -215,7 +215,7 @@ msgid "The title of the article you want to create."
 msgstr ""
 
 #, python-format
-msgid "These attachments are already attached to the new page name: %(names)s. Please make sure that they are not required anymore. <a href=\"%(link)s\">Force rename and deletion of duplicate attachments</a>,"
+msgid "These attachments are already attached to the new page name: %(names)s. Please make sure that they are not required anymore. <a href=\"%(link)s\">Force rename and deletion of conflicting attachments</a>,"
 msgstr ""
 
 msgid "This page contains a redirect that leads to a redirect loop!"
@@ -237,6 +237,9 @@ msgid "You are already subscribed"
 msgstr ""
 
 msgid "You are not permitted to make this change."
+msgstr ""
+
+msgid "You are viewing an old revision of this wiki page."
 msgstr ""
 
 #, python-format

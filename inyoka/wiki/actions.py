@@ -15,7 +15,7 @@
     normalized.  The database models do not do this on their own!
 
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
@@ -139,6 +139,9 @@ def do_show(request, name, rev=None, allow_redirect=True):
         return HttpResponseRedirect(href('wiki', redirect, _anchor=anchor))
     if page.rev.deleted:
         return do_missing_page(request, name, page)
+
+    if page.rev.id != page.last_rev.id:
+        messages.info(request, _(u'You are viewing an old revision of this wiki page.'))
 
     return {
         'page': page,
@@ -274,64 +277,80 @@ def do_revert(request, name, rev=None):
 def _rename(request, page, new_name, force=False, new_text=None):
     """
     Rename all revisions of `page` to `new_name`.
-    :FIXME: attachments renamings do not work sometimes
 
     Return True if renaming was successful, else False
     """
-    name = page.name
+    old_name = page.name
     # check that there are no duplicate attachments existing
     # pointing to the new page name.
-    new_page_attachments = (p.split('/')[-1] for p in
-                            Page.objects.get_attachment_list(new_name, existing_only=False))
-    old_page_attachments = (p.split('/')[-1] for p in
-                            Page.objects.get_attachment_list(page.name, existing_only=False))
-    duplicate = set(new_page_attachments).intersection(set(old_page_attachments))
-    if duplicate and not force:
+
+    def get_attachment_set_from_pagename(pagename):
+        attachment_pages = Page.objects.get_attachment_list(pagename, existing_only=False)
+        return set((
+            attachment_page.split('/')[-1]
+            for attachment_page
+            in attachment_pages
+        ))
+
+    new_page_attachments = get_attachment_set_from_pagename(new_name)
+    old_page_attachments = get_attachment_set_from_pagename(old_name)
+    conflicting = new_page_attachments.intersection(old_page_attachments)
+
+    if conflicting and not force:
         linklist = u', '.join('<a href="%s">%s</a>' %
             (join_pagename(new_name, name), name.split('/')[-1])
-            for name in duplicate)
+            for name in conflicting)
         messages.error(request,
             _(u'These attachments are already attached to the new page name: %(names)s. '
               u'Please make sure that they are not required anymore. '
-              u'<a href="%(link)s">Force rename and deletion of duplicate attachments</a>,') % {
+              u'<a href="%(link)s">Force rename and deletion of conflicting attachments</a>,') % {
                   'names': linklist,
                   'link': url_for(page, action='rename', force=True)})
         return False
 
-    elif duplicate and force:
-        for attachment in duplicate:
+    elif conflicting and force:
+        for attachment in conflicting:
             obj = Page.objects.get_by_name(join_pagename(new_name, attachment))
             models.Model.delete(obj)
 
     title = page.title
-    old_name = page.name
     page.name = new_name
-    if new_text:
-        page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
-                  user=request.user,
-                  text=new_text)
-    else:
-        page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
-                  user=request.user)
-    Page.objects.clean_cache(old_name)
+
+    page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': title},
+              user=request.user,
+              text=new_text,
+              clean_cache=False)
 
     if request.POST.get('add_redirect'):
         old_text = u'# X-Redirect: %s\n' % new_name
         Page.objects.create(
-            name=name, text=old_text, user=request.user,
+            name=old_name, text=old_text, user=request.user,
             note=_(u'Renamed to %(new_name)s') % {'new_name': page.title},
             remote_addr=request.META.get('REMOTE_ADDR'))
 
     # move all attachments
-    for attachment in Page.objects.get_attachment_list(name):
-        ap = Page.objects.get_by_name(attachment)
-        old_attachment_name = ap.title
-        ap.name = normalize_pagename(join_pagename(page.trace[-1],
-                                                  ap.short_title))
-        ap.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': old_attachment_name},
-                remote_addr=request.META.get('REMOTE_ADDR'))
+    attachment_pages = [
+        Page.objects.get_by_name(attachment)
+        for attachment
+        in Page.objects.get_attachment_list(old_name)
+    ]
+    old_attachment_page_names = [
+        attachmentpage.name
+        for attachmentpage
+        in attachment_pages
+    ]
+    new_attachment_page_names = []
+    for attachment_page in attachment_pages:
+        old_attachment_title = attachment_page.title
+        new_attachment_name = normalize_pagename(join_pagename(page.trace[-1],
+                                                  attachment_page.short_title))
+        attachment_page.name = new_attachment_name
+        new_attachment_page_names.append(new_attachment_name)
+        attachment_page.edit(note=_(u'Renamed from %(old_name)s') % {'old_name': old_attachment_title},
+                remote_addr=request.META.get('REMOTE_ADDR'),
+                clean_cache=False)
 
-    Page.objects.clean_cache([name, new_name])
+    Page.objects.clean_cache([old_name, new_name] + old_attachment_page_names + new_attachment_page_names)
     return True
 
 

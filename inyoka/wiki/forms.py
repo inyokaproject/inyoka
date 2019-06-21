@@ -5,13 +5,12 @@
 
     Contains all the forms we use in the wiki.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
 
 from django import forms
-from django.utils.functional import allow_lazy
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
@@ -51,6 +50,9 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
         super(NewArticleForm, self).__init__(data)
         self.fields['template'].choices = template_choices
 
+        if self.user.is_team_member:
+            self.surge_protection_timeout = None
+
     def clean_name(self):
         """Make sure page does not exist and user has privilege to create."""
         name = normalize_pagename(self.cleaned_data['name'])
@@ -58,7 +60,7 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
         # If user has no right to create the article, alter the name to include
         # the "construction" prefix.
         if not has_privilege(self.user, name, 'create'):
-            name = join_pagename(storage['wiki_newpage_root'], name)
+            name = join_pagename(storage['wiki_newpage_root'], u'./' + name)
             # See if the user now has the right to create this page.
             if not has_privilege(self.user, name, 'create'):
                 # This could mean that the page exists and was previously
@@ -75,8 +77,7 @@ class NewArticleForm(SurgeProtectionMixin, forms.Form):
                                             code='reserved_name')
 
         # See if the page already exists.
-        # TODO: we should probably just redirect to the edit form in this case.
-        if Page.objects.filter(name=name).exists():
+        if Page.objects.filter(name__iexact=name).exists():
             raise forms.ValidationError(_(u'The page %(name)s already exists.'),
                                         code='page_exists',
                                         params={'name': name})
@@ -144,6 +145,9 @@ class PageEditForm(SurgeProtectionMixin, forms.Form):
         self.old_rev = Page.objects.get_by_name_and_rev(self.name,
                                                         revision).rev
         self.latest_rev = Page.objects.get_by_name(self.name).revisions.latest()
+
+        if self.user.is_team_member:
+            self.surge_protection_timeout = None
 
     def clean(self):
         """Test if we need to merge."""

@@ -5,9 +5,10 @@
 
     The inyoka default settings.
 
-    :copyright: (c) 2007-2018 by the Inyoka Team, see AUTHORS for more details.
+    :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+from collections import OrderedDict
 from datetime import timedelta
 from os.path import dirname, join
 
@@ -92,8 +93,6 @@ INYOKA_USE_AKISMET = False
 INYOKA_AKISMET_KEY = None
 INYOKA_AKISMET_URL = None
 INYOKA_AKISMET_DEFAULT_IS_SPAM = False
-INYOKA_SPAM_COUNTER_TIMEOUT = 60 * 5  # seconds
-INYOKA_SPAM_COUNTER_MAX = 5
 INYOKA_SPAM_DETECT_LIMIT = 100
 
 # restrictions for user avatar images
@@ -448,6 +447,80 @@ GUARDIAN_MONKEY_PATCH = False
 
 # Raven config
 RAVEN_PUBLIC_DSN = None
+
+SMILIES = OrderedDict([
+    (u':?:', u'❓'),  # has to come before :?
+    (u':???:', u'⁇'),  # has to come before :?
+    # normal smilies
+    (u':-)', u'☺'),
+    (u':)', u'☺'),
+    (u':-(', u'☹'),
+    (u':(', u'☹'),
+    (u';-)', u'😉'),
+    (u';)', u'😉'),
+    (u':-P', u'😛'),
+    (u':P', u'😛'),
+    (u':-D', u'😀'),
+    (u':D', u'😀'),
+    (u':-o', u'😮'),
+    (u':-O', u'😮'),
+    (u':o', u'😮'),
+    (u':-?', u'😕'),
+    (u':?', u'😕'),
+    (u':-x', u'😠'),
+    (u':x', u'😠'),
+    (u'8-)', u'😎'),
+    (u'# 8)', u'😎'),
+    (u':-$', u'😳'),
+    (u'<3', u'♥'),
+    (u':[]', u'😬'),
+    (u':-[]', u'😬'),
+    (u'§)', u'🤓'),
+    (u'8-o', u'😲'),
+    (u'8-}', u'🐸'),
+    (u':-|', u'😐'),
+    (u':|', u'😐'),
+    (u';-(', u'😢'),
+    (u']:-(', u'👿'),
+    (u']:-)', u'😈'),
+    (u'O:-)', u'😇'),
+    (u':->', u'😊'),
+    # text smilies
+    (u':!:', u'❗'),
+    (u':arrow:', u'▶'),
+    (u':backarrow:', u'◀'),
+    (u':cool:', u'😎'),
+    (u':cry:', u'😢'),
+    (u':eek:', u'😮'),
+    (u':ente:', u'🦆'),
+    (u':grin:', u'😀'),
+    (u':idea:', u'💡'),
+    (u':lol:', u'🤣'),
+    (u':mad:', u'😠'),
+    (u':mrgreen:', u'😀'),
+    (u':neutral:', u'😐'),
+    (u':oops:', u'😳'),
+    (u':razz:', u'😛'),
+    (u':roll:', u'🙄'),
+    (u':sad:', u'☹'),
+    (u':shock:', u'😲'),
+    (u':smile:', u'☺'),
+    (u':thumbsup:', u'👍'),
+    (u':wink:', u'😉'),
+    (u'{dl}', u'⮷'),
+    # icons (with no equivalent in unicode)
+    (u'# <8-} ', u'css-class:icon-frog-xmas'),
+    (u':tux:', u'css-class:icon-tux'),
+    (u'{*}', u'css-class:icon-ubuntu'),
+    (u'{g}', u'css-class:icon-ubuntugnome'),
+    (u'{k}', u'css-class:icon-kubuntu'),
+    (u'{l}', u'css-class:icon-lubuntu'),
+    (u'{ma}', u'css-class:icon-ubuntumate'),
+    (u'{m}', u'css-class:icon-mythbuntu'),
+    (u'{ut}', u'css-class:icon-ubuntutouch'),
+    (u'{x}', u'css-class:icon-xubuntu'),
+    (u'{Übersicht}', u'css-class:icon-overview')
+])
 
 # export only uppercase keys
 __all__ = list(x for x in locals() if x.isupper())
