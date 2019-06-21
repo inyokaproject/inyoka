@@ -59,7 +59,6 @@ pipeline {
             then
               virtualenv ${venv_path}
               ${activate_venv}
-              pip install unittest-xml-reporting
               pip install -r extra/requirements/development.txt
             fi
             """

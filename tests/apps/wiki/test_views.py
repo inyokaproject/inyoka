@@ -19,6 +19,7 @@ from inyoka.portal.user import User
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.test import InyokaClient, TestCase
 from inyoka.utils.urls import href
+from inyoka.wiki.storage import storage
 from inyoka.wiki.models import Page
 
 
@@ -85,6 +86,8 @@ class TestDoCreate(TestCase):
         self.client.login(username='user', password='user')
         self.client.defaults['HTTP_HOST'] = 'wiki.%s' % settings.BASE_DOMAIN_NAME
         self.url = href('wiki', 'wiki', 'create')
+
+        storage.clear_cache()
 
     def test_get(self):
         response = self.client.get(self.url)
