@@ -7,6 +7,7 @@ from django.db import migrations, models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 import inyoka.utils.database
 
@@ -20,18 +21,20 @@ def add_ticketreason_defaults(apps, schema_editor):
     TicketReason = apps.get_model("portal", "TicketReason")
 
     # create the system Spam reason for posts
-    TicketReason.objects.create(
+    spam_reason = TicketReason.objects.create(
         system_defined = True,
         content_type = ContentType.objects.using(db_alias).get(app_label="forum", model="post"),
         reason = SPAM_REASON
     )
+    settings.TICKET_REASON_SPAM = spam_reason.id
 
     # create the system Other reason with for posts
-    TicketReason.objects.create(
+    other_reason = TicketReason.objects.create(
         system_defined = True,
         content_type = ContentType.objects.using(db_alias).get(app_label="forum", model="post"),
         reason = OTHER_REASON
     )
+    settings.TICKET_REASON_OTHER = other_reason.id
 
 
 def migrate_old_tickets(apps, schema_editor):
@@ -51,7 +54,7 @@ def migrate_old_tickets(apps, schema_editor):
         ticket.reporting_user = topic.reporter
         ticket.reporting_time = datetime.utcnow()
         ticket.reporter_comment = u'Automatically migrated from old ticketing system, moved from topic to first post. Original message is: %s' % topic.reported
-        ticket.reason = TicketReason.objects.get(reason=OTHER_REASON)
+        ticket.reason = TicketReason.objects.get(id=settings.TICKET_REASON_OTHER)
         if topic.report_claimed_by != None:
             ticket.owning_user = topic.report_claimed_by
 

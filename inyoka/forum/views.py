@@ -902,41 +902,6 @@ unsubscribe_topic = _generate_unsubscriber(Topic,
 
 
 @login_required
-@templated('forum/report.html')
-def report(request, topic_slug, page=1):
-    """Change the report_status of a topic and redirect to it"""
-    topic = Topic.objects.get(slug=topic_slug)
-    if not request.user.has_perm('forum.view_forum', topic.forum):
-        return abort_access_denied(request)
-    if topic.reported:
-        messages.info(request, _(u'This topic was already reported.'))
-        return HttpResponseRedirect(url_for(topic))
-
-    if request.method == 'POST':
-        form = ReportTopicForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            topic.reported = data['text']
-            topic.reporter_id = request.user.id
-            topic.save()
-
-            notify_reported_topic_subscribers(
-                _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
-                {'topic': topic, 'text': data['text']})
-
-            cache.delete('forum/reported_topic_count')
-            messages.success(request, _(u'The topic was reported.'))
-            return HttpResponseRedirect(href('forum', 'topic', topic_slug,
-                                             page))
-    else:
-        form = ReportTopicForm()
-    return {
-        'topic': topic,
-        'form': form
-    }
-
-
-@login_required
 @templated('forum/ticket.html')
 def create_ticket(request, post_id):
     """Add post to the unified ticketing system"""
