@@ -1110,7 +1110,7 @@ class Post(models.Model, LockableObject):
                 reporting_user = User.objects.get_system_user(),
                 reporting_time = datetime.utcnow(),
                 reporter_comment = _('This topic is hidden due to possible spam.'),
-                reason = TicketReason.get_spam_reason(),
+                reason = TicketReason.objects.get(id=settings.TICKET_REASON_SPAM),
                 content_object = self
             )
             cache.delete('portal/ticket_count')

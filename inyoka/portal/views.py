@@ -1717,16 +1717,15 @@ def ticket_reasons_list(request):
 def ticket_reason_edit(request, reason_id=None):
 
     if request.method == 'POST':
-        form = ManageTicketReasons(request.POST)
+        if reason_id:
+            reason = TicketReason.objects.get(id=reason_id)
+            form = ManageTicketReasons(request.POST, instance=reason)
+
+        else:
+            form = ManageTicketReasons(request.POST)
+
         if form.is_valid():
-            data = form.cleaned_data
-            if reason_id:
-                reason = TicketReason.objects.get(id=reason_id)
-            else:
-                reason = TicketReason.objects.create()
-            reason.content_type = data['content_type']
-            reason.reason = data['reason']
-            reason.save()
+            form.save()
             return HttpResponseRedirect(href('portal', 'ticketreason', 'list'))
 
     else:
@@ -1865,7 +1864,7 @@ def ticket_edit(request, ticket_id):
 
     if request.method == 'POST':
 
-        form = EditTicketOwnerCommentForm(request.POST)
+        form = EditTicketOwnerCommentForm(request.POST, instance=ticket)
         if form.is_valid():
             form.save()
 
