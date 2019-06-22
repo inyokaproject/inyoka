@@ -19,6 +19,8 @@ OTHER_REASON=_(u'Other')
 def add_ticketreason_defaults(apps, schema_editor):
 
     TicketReason = apps.get_model("portal", "TicketReason")
+    db_alias = schema_editor.connection.alias
+    ContentType = apps.get_model("contenttypes", "ContentType")
 
     # create the system Spam reason for posts
     spam_reason = TicketReason.objects.create(
