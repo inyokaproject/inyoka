@@ -9,6 +9,8 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
+import urllib
+import urlparse
 
 from django import forms
 from django.utils.translation import ugettext as _
@@ -258,10 +260,17 @@ class ManageDiscussionForm(forms.Form):
 
     def clean_topic(self):
         d = self.cleaned_data
-        if not d.get('topic'):
+        try:
+            slug = d['topic']
+        except KeyError:
             return None
         try:
-            topic = Topic.objects.get(slug=d['topic'])
+            # Allow URL based Slugs
+            try:
+                slug = urlparse.urlparse(slug)[2].split('/')[2]
+            except IndexError:
+                slug = urllib.unquote(slug)
+            topic = Topic.objects.get(slug=slug)
         except Topic.DoesNotExist:
             raise forms.ValidationError(_(u'This topic does not exist.'))
         return topic
