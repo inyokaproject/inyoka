@@ -269,3 +269,8 @@ msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachricht
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
 
+msgid "Successfully linked the discussion with the article."
+msgstr "Diskussion erfolgreich mit dem Artikel verknüpft."
+
+msgid "Successfully unlinked the discussion from the article."
+msgstr "Diskussion erfolgreich vom Artikel gelöst."

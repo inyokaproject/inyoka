@@ -1061,10 +1061,14 @@ def do_manage_discussion(request, name):
             if data['topic']:
                 page.topic = data['topic']
                 page.save()
+                messages.success(request,
+                                 _(u'Successfully linked the discussion with the article.'))
                 return HttpResponseRedirect(url_for(data['topic']))
             else:
                 page.topic = None
                 page.save()
+                messages.success(request,
+                                 _(u'Successfully unlinked the discussion from the article.'))
                 return HttpResponseRedirect(url_for(page))
     elif page.topic is None:
         form = ManageDiscussionForm()

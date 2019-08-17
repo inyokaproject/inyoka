@@ -271,3 +271,8 @@ msgstr ""
 msgid "“%(title)s” was reverted successfully"
 msgstr ""
 
+msgid "Successfully linked the discussion with the article."
+msgstr ""
+
+msgid "Successfully unlinked the discussion from the article."
+msgstr ""
