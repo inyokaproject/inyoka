@@ -13,6 +13,8 @@ import re
 import sys
 from hashlib import md5
 from random import randrange
+import urllib
+import urlparse
 
 import pytz
 from django import forms
@@ -23,6 +25,7 @@ from django.forms.widgets import Input
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext as _
 
+from inyoka.forum.models import Topic
 from inyoka.markup import StackExhaused, parse
 from inyoka.portal.user import User
 from inyoka.utils.dates import datetime_to_timezone
@@ -316,3 +319,25 @@ class CaptchaField(forms.MultiValueField):
             return [None, None]
         value[1] = False  # Prevent beeing catched by validators.EMPTY_VALUES
         return super(CaptchaField, self).clean(value)
+
+
+class TopicField(forms.CharField):
+    label = _('URL of the topic')
+
+    def clean(self, value):
+        # forms need to differentiate between no value at all and not existing topics
+        # See usage in wiki.forms.ManageDiscussionForm
+        if not self.required and not value:
+                return None
+        value = super(TopicField, self).clean(value)
+
+        try:
+            # Allow URL based Slugs
+            try:
+                slug = urlparse.urlparse(value)[2].split('/')[2]
+            except IndexError:
+                slug = urllib.unquote(value)
+            topic = Topic.objects.get(slug=slug)
+        except Topic.DoesNotExist:
+            raise forms.ValidationError(_(u'This topic does not exist.'))
+        return topic

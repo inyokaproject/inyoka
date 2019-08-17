@@ -9,17 +9,14 @@
     :license: BSD, see LICENSE for more details.
 """
 from datetime import datetime
-import urllib
-import urlparse
 
 from django import forms
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
-from inyoka.forum.models import Topic
 from inyoka.markup import StackExhaused, parse
 from inyoka.utils.diff3 import merge
-from inyoka.utils.forms import DateWidget, UserField
+from inyoka.utils.forms import DateWidget, UserField, TopicField
 from inyoka.utils.sessions import SurgeProtectionMixin
 from inyoka.utils.storage import storage
 from inyoka.utils.text import join_pagename, normalize_pagename
@@ -252,28 +249,14 @@ class EditAttachmentForm(forms.Form):
 
 class ManageDiscussionForm(forms.Form):
     """Let the user set an existing thread as discussion of a page"""
-    topic = forms.CharField(label=_('Slug of the topic'), max_length=50,
-        help_text=ugettext_lazy(u'You can find the slug of a topic in the URL '
-            u'(e.g. <var>example</var> when <em>%(example)s</em>)') % {
-                'example': href('forum', 'topic', 'example')},
-            required=False)
+    topic = TopicField(required=False)
 
     def clean_topic(self):
         d = self.cleaned_data
         try:
-            slug = d['topic']
+            return d['topic']
         except KeyError:
             return None
-        try:
-            # Allow URL based Slugs
-            try:
-                slug = urlparse.urlparse(slug)[2].split('/')[2]
-            except IndexError:
-                slug = urllib.unquote(slug)
-            topic = Topic.objects.get(slug=slug)
-        except Topic.DoesNotExist:
-            raise forms.ValidationError(_(u'This topic does not exist.'))
-        return topic
 
 
 class MvBaustelleForm(forms.Form):

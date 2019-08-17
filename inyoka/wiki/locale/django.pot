@@ -169,7 +169,7 @@ msgstr ""
 msgid "Revision is the latest one, revert aborted."
 msgstr ""
 
-msgid "Slug of the topic"
+msgid "URL of the topic"
 msgstr ""
 
 msgid "Somebody else edited the page while you were making your changes. We tried to merge the text automatically. Please confirm that everything is ok."
