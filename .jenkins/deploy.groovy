@@ -33,7 +33,7 @@ pipeline {
 
         if ${REBUILD_STATICS}
         then
-            npm install
+            npm ci
             ./node_modules/grunt-cli/bin/grunt
         else
             echo 'Not rebuildung statics'

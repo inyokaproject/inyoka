@@ -43,7 +43,7 @@ pipeline {
           sh '''
           . ../venv/bin/activate
           python setup.py develop
-          npm install
+          npm ci
           ./node_modules/grunt-cli/bin/grunt
           '''
         }

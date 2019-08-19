@@ -88,7 +88,7 @@ pipeline {
                 sh """
                 git clean -fdx
 
-                npm install
+                npm ci
                 ./node_modules/grunt-cli/bin/grunt
                 """
               }
