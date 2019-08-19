@@ -1058,7 +1058,7 @@ def do_manage_discussion(request, name):
         form = ManageDiscussionForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            if data['topic']:
+            if data.get('topic'):
                 page.topic = data['topic']
                 page.save()
                 messages.success(request,

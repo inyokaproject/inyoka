@@ -331,12 +331,13 @@ class TopicField(forms.CharField):
                 return None
         value = super(TopicField, self).clean(value)
 
+        # Allow URL based Slugs
         try:
-            # Allow URL based Slugs
-            try:
-                slug = urlparse.urlparse(value)[2].split('/')[2]
-            except IndexError:
-                slug = urllib.unquote(value)
+            slug = urlparse.urlparse(value)[2].split('/')[2]
+        except IndexError:
+            slug = urllib.unquote(value)
+
+        try:
             topic = Topic.objects.get(slug=slug)
         except Topic.DoesNotExist:
             raise forms.ValidationError(_(u'This topic does not exist.'))

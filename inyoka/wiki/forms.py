@@ -251,13 +251,6 @@ class ManageDiscussionForm(forms.Form):
     """Let the user set an existing thread as discussion of a page"""
     topic = TopicField(required=False)
 
-    def clean_topic(self):
-        d = self.cleaned_data
-        try:
-            return d['topic']
-        except KeyError:
-            return None
-
 
 class MvBaustelleForm(forms.Form):
     """Move page to the "Baustelle"""
