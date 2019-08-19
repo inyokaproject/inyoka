@@ -325,11 +325,10 @@ class TopicField(forms.CharField):
     label = _('URL of the topic')
 
     def clean(self, value):
-        # forms need to differentiate between no value at all and not existing topics
-        # See usage in wiki.forms.ManageDiscussionForm
-        if not self.required and not value:
-                return None
         value = super(TopicField, self).clean(value)
+
+        if not value:
+            return None
 
         # Allow URL based Slugs
         try:
