@@ -32,6 +32,8 @@ def get_mark_spam_url():
 
 
 verified = None
+# GTUBE string similar to spamassassin: https://en.wikipedia.org/wiki/GTUBE
+GTUBE = "XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-INYOKA*C.34X"
 
 
 def verify_key():
@@ -73,6 +75,9 @@ def is_spam(comment_content, comment_type):
     :return: Returns a 2-tuple with Spam / Ham (``True``/``False``) as first
         item and ``True`` as second item iff the post should be discarded.
     """
+    if GTUBE in comment_content:
+        return True, False
+
     if not settings.INYOKA_USE_AKISMET:
         return False, False
     if not verify_key():
