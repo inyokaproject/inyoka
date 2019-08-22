@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Inyoka\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-01-25 20:47+0100\n"
+"POT-Creation-Date: 2019-08-19 17:15+0200\n"
 "PO-Revision-Date: 2019-01-25 20:45+0100\n"
 "Last-Translator: Lyra\n"
 "Language: de_DE\n"
@@ -170,11 +170,14 @@ msgstr "Revision %(id)d (%(title)s)"
 msgid "Revision is the latest one, revert aborted."
 msgstr "Keine Änderungen durchgeführt, da die Revision bereits die aktuelle ist."
 
-msgid "Slug of the topic"
-msgstr "Slug des Themas"
-
 msgid "Somebody else edited the page while you were making your changes. We tried to merge the text automatically. Please confirm that everything is ok."
 msgstr "Während du die Seite geöffnet hattest, wurde sie von einem anderen Benutzer ebenfalls bearbeitet. Bitte kontrolliere, ob das Zusammenführen der Änderungen zufriedenstellend funktioniert hat"
+
+msgid "Successfully linked the discussion with the article."
+msgstr "Diskussion erfolgreich mit dem Artikel verknüpft."
+
+msgid "Successfully unlinked the discussion from the article."
+msgstr "Diskussion erfolgreich vom Artikel gelöst."
 
 msgid "The article „{name}“ does not exist, you can try to create it now."
 msgstr "Der Artikel „{name}“ existiert nicht, du kannst versuchen ihn jetzt zu erstellen."
@@ -222,9 +225,6 @@ msgstr "Folgende Anhänge sind bereits dem neuen Seitennamen zugeordnet: %(names
 msgid "This page contains a redirect that leads to a redirect loop!"
 msgstr "Diese Seite enthält eine Weiterleitung die zu einer Endlosschleife führt."
 
-msgid "This topic does not exist."
-msgstr "Dieses Thema existiert nicht."
-
 msgid "Unknown page"
 msgstr "Unbekannte Seite"
 
@@ -242,10 +242,6 @@ msgstr "Du bist nicht dazu berechtigt, diese Änderung vorzunehmen"
 
 msgid "You are viewing an old revision of this wiki page."
 msgstr "Du betrachtest eine alte Revision dieser Wikiseite."
-
-#, python-format
-msgid "You can find the slug of a topic in the URL (e.g. <var>example</var> when <em>%(example)s</em>)"
-msgstr "Den Slug eines Themas findest du in der URL (z. B. <var>example</var> bei <em>%(example)s</em>)"
 
 msgid "You can not create a page with a reserved name."
 msgstr "Du kannst keine Seiten mit einem reservierten Namen anlegen."
@@ -271,4 +267,3 @@ msgstr "Du wirst ab jetzt bei Veränderungen dieser Seite nicht mehr benachricht
 #, python-format
 msgid "“%(title)s” was reverted successfully"
 msgstr "Die Seite „%(title)s“ wurde erfolgreich wiederhergestellt."
-
