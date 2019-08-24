@@ -15,7 +15,7 @@ feedparser==5.2.1
 gunicorn==19.7.1
 html5lib==1.0b8
 icalendar==4.0.0
-Jinja2==2.10
+Jinja2==2.10.1
 kombu==4.3.0
 lxml==4.1.1
 MarkupSafe==1.0
