@@ -378,8 +378,8 @@ class TestAuthViews(TestCase):
         postdata = {'token': 'ThisIsAWrongToken'}
         with translation.override('en-us'):
             response = self.client.post('/confirm/set_new_email/', postdata, follow=True)
-        self.client.logout()
         self.assertContains(response, 'The entered token is invalid or has expired.')
+        self.client.logout()
 
         # Perform invalid mail change
         subject = mail.outbox[0].subject
