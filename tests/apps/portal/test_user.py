@@ -55,18 +55,18 @@ class TestUserModel(TestCase):
     def test_user_reactivate_after_ban_exceeded(self):
         """Test that a user, whose ban time exceeded, can reactivate the account.
         """
-        bannedUser = User.objects.register_user('banned',
+        banned_user = User.objects.register_user('banned',
                                                 'ban@example.com',
                                                 'pwd',
                                                 False)
-        bannedUser.banned_until = datetime.utcnow() - timedelta(days=5)
-        deactivate_user(bannedUser)
-        bannedUser = User.objects.get(pk=bannedUser.id)
-        bannedUser.save()
-        reactivate_user(bannedUser.id, 'ban@example.com', bannedUser.status)
-        bannedUser = User.objects.get(pk=bannedUser.id)
-        self.assertEqual(bannedUser.status, User.STATUS_ACTIVE)
-        self.assertIsNone(bannedUser.banned_until)
+        banned_user.banned_until = datetime.utcnow() - timedelta(days=5)
+        deactivate_user(banned_user)
+        banned_user = User.objects.get(pk=banned_user.id)
+        banned_user.save()
+        reactivate_user(banned_user.id, 'ban@example.com', banned_user.status)
+        banned_user = User.objects.get(pk=banned_user.id)
+        self.assertEqual(banned_user.status, User.STATUS_ACTIVE)
+        self.assertIsNone(banned_user.banned_until)
 
     def test_get_user_by_username(self):
         user = User.objects.get_by_username_or_email('testing')
