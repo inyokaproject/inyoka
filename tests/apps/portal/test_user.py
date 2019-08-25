@@ -40,31 +40,29 @@ class TestUserModel(TestCase):
         self.assertTrue(self.user.is_deleted)
 
     def test_email_exists(self):
-        """Test that a ValidationError is raised if someone tries to reactivate an account
-        with an email that is used by another user.
-        """
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesMessage(ValidationError,
+                                      u'This e-mail address is used by another user.'):
             reactivate_user(self.user.id, self.user.email, self.user.status)
 
     def test_user_is_already_reactivated(self):
-        """Test that an ValidationError is raised if the user was already reactivated.
-        """
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesMessage(ValidationError,
+                                      'The account \u201ctesting\u201d was already reactivated.'):
             reactivate_user(self.user.id, 'test@example.com', self.user.status)
 
     def test_user_reactivate_after_ban_exceeded(self):
         """Test that a user, whose ban time exceeded, can reactivate the account.
         """
         banned_user = User.objects.register_user('banned',
-                                                'ban@example.com',
-                                                'pwd',
-                                                False)
+                                                 'ban@example.com',
+                                                 'pwd',
+                                                 False)
         banned_user.banned_until = datetime.utcnow() - timedelta(days=5)
         deactivate_user(banned_user)
-        banned_user = User.objects.get(pk=banned_user.id)
-        banned_user.save()
+        banned_user.refresh_from_db()
+
         reactivate_user(banned_user.id, 'ban@example.com', banned_user.status)
-        banned_user = User.objects.get(pk=banned_user.id)
+        banned_user.refresh_from_db()
+
         self.assertEqual(banned_user.status, User.STATUS_ACTIVE)
         self.assertIsNone(banned_user.banned_until)
 
