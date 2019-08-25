@@ -17,7 +17,6 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType, ContentTypeManager
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy
@@ -407,15 +406,6 @@ class LinkmapManager(models.Manager):
         return os.path.basename(path)
 
 
-def url_scheme_validator(url):
-    if not '://' in url:
-        raise ValidationError(ugettext_lazy('A url needs ://'))
-
-    scheme = url.split('://', 1)[0]
-    if ':' in scheme:
-        raise ValidationError(ugettext_lazy('No : in scheme of url allowed.'))
-
-
 class Linkmap(models.Model):
     """
     Provides an mapping for the interwikilinks from token to urls.
@@ -428,7 +418,7 @@ class Linkmap(models.Model):
 
     token = models.CharField(ugettext_lazy(u'Token'), max_length=128, unique=True,
                              validators=[token_validator])
-    url = models.CharField(ugettext_lazy(u'Link'), max_length=200, validators=[url_scheme_validator])
+    url = models.URLField(ugettext_lazy(u'Link'))
     icon = models.ImageField(ugettext_lazy(u'Icon'), upload_to='linkmap/icons', blank=True)
 
     objects = LinkmapManager()

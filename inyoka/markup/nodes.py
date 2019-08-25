@@ -530,10 +530,11 @@ class InterWikiLink(Element):
         rule = inter_wiki_map[self.token]
 
         quoted_page = smart_urlquote(self.page)
-        if '$PAGE' not in rule:
+        to_replace = 'PAGE'
+        if to_replace not in rule:
             link = rule + quoted_page
         else:
-            link = rule.replace('$PAGE', quoted_page)
+            link = rule.replace(to_replace, quoted_page)
         return link
 
 
