@@ -355,6 +355,9 @@ msgstr ""
 msgid "Please enter at least one receiver."
 msgstr ""
 
+msgid "Please enter the string which was sent to you by email below"
+msgstr ""
+
 msgid "Please note the details on the maximum size below."
 msgstr ""
 
