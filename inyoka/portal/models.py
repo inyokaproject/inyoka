@@ -366,7 +366,7 @@ class LinkmapManager(models.Manager):
         Generates for each token with icon in Linkmap a piece of css. Latter will
         display the icon near an interwiki link.
 
-        The css is saved in `settings.INYOKA_INTERWIKI_CSS_PATH`. Furthermore, a
+        The css is saved at `settings.INYOKA_INTERWIKI_CSS_PATH`. Furthermore, a
         gzip-compressed version with the same content will be saved at the same
         place with a '.gz' postfix.
 
