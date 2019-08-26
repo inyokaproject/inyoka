@@ -621,11 +621,11 @@ class Section(Element):
         class_ = 'section_%d' % self.level
         if self.class_:
             class_ += ' ' + self.class_
-        yield build_html_tag(u'div', id=self.id, style=self.style,
+        yield build_html_tag(u'section', id=self.id, style=self.style,
                              class_=class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</div>'
+        yield u'</section>'
 
 
 class Paragraph(Element):

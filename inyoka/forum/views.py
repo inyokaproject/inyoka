@@ -48,14 +48,14 @@ from inyoka.forum.models import (
     Post,
     PostRevision,
     Topic,
-    mark_all_forums_read,
-)
+    mark_all_forums_read)
 from inyoka.forum.notifications import (
     send_deletion_notification,
     send_discussion_notification,
     send_edit_notifications,
     send_newtopic_notifications,
-    send_notification_for_topics)
+    send_notification_for_topics,
+    notify_reported_topic_subscribers)
 from inyoka.markup import RenderContext, parse
 from inyoka.markup.parsertools import flatten_iterator
 from inyoka.portal.models import Subscription
@@ -617,8 +617,6 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
     if 'send' in request.POST and form.is_valid():
         d = form.cleaned_data
 
-        is_spam_post = form._spam and not form._spam_discard
-
         if not post:  # not when editing an existing post
             doublepost = Post.objects \
                 .filter(author=request.user, text=d['text'],
@@ -678,10 +676,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
 
         post.edit(d['text'])
 
-        if is_spam_post:
+        if form._spam:
             post.mark_spam(report=True, update_akismet=False)
 
-        if not is_spam_post:
+        if not form._spam:
             if newtopic:
                 send_newtopic_notifications(request.user, post, topic, forum)
             elif not post_id:
@@ -691,10 +689,10 @@ def edit(request, forum_slug=None, topic_slug=None, post_id=None,
             # page and send notifications.
             page.topic = topic
             page.save()
-            if not is_spam_post:
+            if not form._spam:
                 send_discussion_notification(request.user, page)
 
-        if not is_spam_post:
+        if not form._spam:
             subscribed = Subscription.objects.user_subscribed(request.user, topic)
             if request.user.settings.get('autosubscribe', True) and not subscribed and not post_id:
                 subscription = Subscription(user=request.user, content_object=topic)
@@ -920,18 +918,9 @@ def report(request, topic_slug, page=1):
             topic.reporter_id = request.user.id
             topic.save()
 
-            subscribers = storage['reported_topics_subscribers'] or u''
-            users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
-            for user in users:
-                if user.has_perm('forum.manage_reported_topic'):
-                    send_notification(user, 'new_reported_topic',
-                                    _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
-                                    {'topic': topic, 'text': data['text']})
-                else:
-                    # unsubscribe this user automatically, he has no right to be here.
-                    user_ids = [i for i in subscribers.split(',')]
-                    user_ids.remove(str(user.id))
-                    storage['reported_topics_subscribers'] = ','.join(user_ids)
+            notify_reported_topic_subscribers(
+                _(u'Reported topic: “%(topic)s”') % {'topic': topic.title},
+                {'topic': topic, 'text': data['text']})
 
             cache.delete('forum/reported_topic_count')
             messages.success(request, _(u'The topic was reported.'))
