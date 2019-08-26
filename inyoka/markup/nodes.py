@@ -20,6 +20,7 @@
 """
 from urlparse import urlparse, urlunparse
 
+from django.apps import apps
 from django.conf import settings
 from django.utils.html import escape, smart_urlquote
 from django.utils.translation import ugettext_lazy, ugettext as _
@@ -522,7 +523,7 @@ class InterWikiLink(Element):
         if self.token == 'attachment':
             return href('wiki', '_attachment', target=self.page)
 
-        from inyoka.portal.models import Linkmap  # circular import
+        Linkmap = apps.get_model(app_label='portal', model_name='Linkmap')
         inter_wiki_map = Linkmap.objects.get_linkmap()
 
         if self.token not in inter_wiki_map:
