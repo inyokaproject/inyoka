@@ -17,6 +17,7 @@ from django.db import IntegrityError
 from django.test import TestCase
 
 from inyoka.portal.models import Linkmap
+from inyoka.utils.urls import href
 
 
 class TestLinkmapModel(TestCase):
@@ -90,7 +91,8 @@ class TestLinkmapManager(TestCase):
         self.assertIsNotNone(self.css_file)
 
         with open(self.full_path) as f:
-            self.assertEqual(f.read(),  '/* linkmap for inter wiki links \n :license: BSD*/a.interwiki-example {padding-left: 20px; background-image: url("http://media.ubuntuusers.local:8080/example.png"); }')
+            css = '/* linkmap for inter wiki links \n :license: BSD*/a.interwiki-example {padding-left: 20px; background-image: url("%s"); }'
+            self.assertEqual(f.read(), css % href('media', 'example.png'))
 
     def test_generate_css__generates_gzip_file(self):
         with open(self.full_path) as f, gzip.open(self.full_path + '.gz') as gzip_f:
