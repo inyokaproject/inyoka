@@ -13,7 +13,6 @@ from shutil import rmtree
 from django.core import management
 
 from inyoka.portal.models import StaticPage
-from inyoka.utils.storage import storage
 from inyoka.utils.test import TestCase
 
 
