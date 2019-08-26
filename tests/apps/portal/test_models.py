@@ -8,6 +8,10 @@
     :copyright: (c) 2012-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import gzip
+from os import path
+
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
@@ -70,3 +74,33 @@ class TestLinkmapModel(TestCase):
 
         with self.assertRaises(IntegrityError):
             Linkmap.objects.create(token=token, url='http://example2.test')
+
+
+class TestLinkmapManager(TestCase):
+
+    def setUp(self):
+        super(TestLinkmapManager, self).setUp()
+
+        Linkmap.objects.create(token='example', url='http://example.test', icon='example.png')
+
+        self.css_file = Linkmap.objects.generate_css()
+        self.full_path = path.join(settings.MEDIA_ROOT, 'linkmap', self.css_file)
+
+    def test_generate_css__created_css(self):
+        self.assertIsNotNone(self.css_file)
+
+        with open(self.full_path) as f:
+            self.assertEqual(f.read(),  '/* linkmap for inter wiki links \n :license: BSD*/a.interwiki-example {padding-left: 20px; background-image: url("http://media.ubuntuusers.local:8080/example.png"); }')
+
+    def test_generate_css__generates_gzip_file(self):
+        with open(self.full_path) as f, gzip.open(self.full_path + '.gz') as gzip_f:
+            self.assertEqual(gzip_f.read(), f.read())
+
+    def test_generate_css__deletes_old_files(self):
+        self.assertTrue(path.exists(self.full_path))
+
+        Linkmap.objects.create(token='example2', url='http://example.test', icon='example2.png')
+        self.css_file = Linkmap.objects.generate_css()
+
+        self.assertFalse(path.exists(self.full_path))
+        self.assertTrue(path.exists(path.join(settings.MEDIA_ROOT, 'linkmap', self.css_file)))
