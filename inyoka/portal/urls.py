@@ -71,6 +71,7 @@ urlpatterns = [
     url(r'^calendar/(?P<slug>.*?)/$', views.calendar_detail),
     url(r'^config/$', views.config),
     url(r'^linkmap/$', views.linkmap_edit),
+    url(r'^linkmap/export/$', views.linkmap_export),
     # shortcuts
     url(r'^ikhaya/(\d+)/$', views.ikhaya_redirect),
     # static files

@@ -9,6 +9,7 @@
     :copyright: (c) 2007-2019 by the Inyoka Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import csv
 from functools import partial
 
 from datetime import date, datetime, timedelta
@@ -1657,3 +1658,15 @@ def linkmap_edit(request):
     return {
         'formset': formset
     }
+
+
+def linkmap_export(request):
+    """Exports all current links of the Linkmap. Useful f.e. for InyokaEdit."""
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="linkmap.csv"'
+
+    writer = csv.writer(response)
+    rows = Linkmap.objects.values_list('token', 'url')
+    writer.writerows(rows)
+
+    return response

@@ -130,6 +130,13 @@ class TestViews(TestCase):
         response = self.client.post('/linkmap/', data=data)
         self.assertIn('Enter a valid URL.', response.content)
 
+    def test_linkmap_export(self):
+        Linkmap.objects.create(token='uu', url='https://uu.test/')
+
+        response = self.client.get('/linkmap/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, 'uu,https://uu.test/\r\n')
+
     def test_subscribe_user(self):
         """Test if it is possible to subscribe to users."""
         with translation.override('en-us'):
