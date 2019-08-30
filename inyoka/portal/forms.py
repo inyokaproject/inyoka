@@ -331,12 +331,14 @@ class UserCPProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['jabber', 'signature', 'location', 'website', 'gpgkey',
-                  'launchpad', 'avatar', 'icon']
+                  'launchpad', 'avatar']
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
         self.admin_mode = kwargs.pop('admin_mode', False)
-        initial = kwargs['initial'] = {}
+
+        # kwargs['initial'] can already exist from subclass EditUserProfileForm
+        initial = kwargs['initial'] = kwargs.get('initial', {})
 
         initial.update(dict(
             ((k, v) for k, v in instance.settings.items()
@@ -344,15 +346,14 @@ class UserCPProfileForm(forms.ModelForm):
         ))
         initial['use_gravatar'] = instance.settings.get('use_gravatar', False)
         initial['email'] = instance.email
-        if instance.icon:
-            initial['icon'] = os.path.join(settings.MEDIA_ROOT,instance.icon)
+
         if hasattr(instance, 'userpage'):
             initial['userpage'] = instance.userpage.content
 
         self.old_email = instance.email
         self.old_avatar = instance.avatar.name if instance.avatar else None
         self.change_avatar = False
-        super(UserCPProfileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_gpgkey(self):
         gpgkey = self.cleaned_data.get('gpgkey', '').upper()
@@ -372,13 +373,6 @@ class UserCPProfileForm(forms.ModelForm):
             raise forms.ValidationError(
                 _('This email address is already in use.'))
         return email
-
-    def clean_icon(self):
-        icon = self.cleaned_data.get('icon')
-        if icon:
-            return os.path.relpath(icon, settings.MEDIA_ROOT)
-        else:
-            return icon
 
     def clean_avatar(self):
         """
@@ -409,8 +403,6 @@ class UserCPProfileForm(forms.ModelForm):
     def save(self, request, commit=True):
         data = self.cleaned_data
         user = super().save(commit=False)
-
-        user.icon = data['icon']
 
         # Ensure that we delete the old avatar, otherwise Django will create
         # a file with a different name.
@@ -448,7 +440,16 @@ class UserCPProfileForm(forms.ModelForm):
 
 class EditUserProfileForm(UserCPProfileForm):
     class Meta(UserCPProfileForm.Meta):
-        fields = UserCPProfileForm.Meta.fields + ['username', 'member_title']
+        fields = UserCPProfileForm.Meta.fields + ['icon', 'username', 'member_title']
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs['instance']
+
+        initial = kwargs['initial'] = {}
+        if instance.icon:
+            initial['icon'] = os.path.join(settings.MEDIA_ROOT, instance.icon)
+
+        super().__init__(*args, **kwargs)
 
     def clean_username(self):
         """
@@ -467,6 +468,13 @@ class EditUserProfileForm(UserCPProfileForm):
             raise forms.ValidationError(
                 _('A user with this name already exists.'))
         return username
+
+    def clean_icon(self):
+        icon = self.cleaned_data.get('icon')
+        if icon:
+            return os.path.relpath(icon, settings.MEDIA_ROOT)
+        else:
+            return icon
 
 
 class EditUserGroupsForm(forms.Form):
