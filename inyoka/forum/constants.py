@@ -23,7 +23,7 @@ TOPICS_PER_PAGE = 30
 CACHE_PAGES_COUNT = 5
 
 UBUNTU_DISTROS = {
-    'none': ugettext_lazy(u'Not specified'),
+    'none': ugettext_lazy(u'No Ubuntu'),
     'edubuntu': ugettext_lazy('Edubuntu'),
     'kubuntu': ugettext_lazy('Kubuntu'),
     'server': ugettext_lazy('Server'),

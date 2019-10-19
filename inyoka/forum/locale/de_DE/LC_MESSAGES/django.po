@@ -158,8 +158,8 @@ msgstr "Es existieren keine neueren Themen in diesem Forum."
 msgid "No topics selected."
 msgstr "Keine Themen ausgewählt."
 
-msgid "Not specified"
-msgstr "keine Angabe"
+msgid "No Ubuntu"
+msgstr "Kein Ubuntu"
 
 msgid "Notifications on new posts in this topic will be sent to you."
 msgstr "Du wirst ab nun über neue Beiträge in diesem Thema benachrichtigt."
