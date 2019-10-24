@@ -319,7 +319,7 @@ class Image(Node):
     def prepare_html(self):
         yield build_html_tag(u'img', src=self.href, alt=self.alt, id=self.id,
                              class_=self.class_, style=self.style,
-                             title=self.title)
+                             title=self.title, loading='lazy')
 
     def __setstate__(self, dict):
         self.__dict__ = dict
@@ -596,11 +596,11 @@ class Section(Element):
         class_ = 'section_%d' % self.level
         if self.class_:
             class_ += ' ' + self.class_
-        yield build_html_tag(u'div', id=self.id, style=self.style,
+        yield build_html_tag(u'section', id=self.id, style=self.style,
                              class_=class_)
         for item in Element.prepare_html(self):
             yield item
-        yield u'</div>'
+        yield u'</section>'
 
 
 class Paragraph(Element):

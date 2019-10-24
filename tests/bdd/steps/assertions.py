@@ -78,7 +78,8 @@ def step_impl(context):
 
 @then('I should see a "not-found" message')
 def step_impl(context):
-    assert context.browser.find_element_by_css_selector('.not_found')
+    text = get_plain_text(context.browser.page_source)
+    assert 'Seite nicht gefunden' in text
 
 
 @then('I should see "{value}"')

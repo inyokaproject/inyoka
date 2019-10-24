@@ -398,8 +398,7 @@ class Command(BaseCommand):
                         img('head-right.png'),
                         img('anchor.png'),
                         img('1px.png'),
-                        img('main-sprite.png'),
-                        img('bullet.gif'))
+                        img('main-sprite.png'))
 
         for pth in static_paths:
             _pth = pth[0] if isinstance(pth, _iterables) else pth

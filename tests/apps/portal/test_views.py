@@ -326,6 +326,19 @@ class TestAuthViews(TestCase):
             response = self.client.get('/lost_password/', follow=True)
         self.assertContains(response, 'You are already logged in.')
 
+    def test_reactivate_user_as_authenticated_user(self):
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.get('/confirm/reactivate_user', follow=True)
+        self.assertContains(response, 'You cannot reactivate an account while '
+                            + 'you are logged in.', status_code=403)
+
+    def test_confirm_direct_get_request(self):
+        self.client.login(username='user', password='user')
+        with translation.override('en-us'):
+            response = self.client.get('/confirm/set_new_email/?token=ThisIsAToken')
+        self.assertContains(response, 'ThisIsAToken')
+
     def test_user_deactivate_and_recover(self):
         """Test the user deactivate and recover feature.
         """
@@ -344,7 +357,7 @@ class TestAuthViews(TestCase):
         self.assertIn(u'Deactivation of your account “user”', subject)
         code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
                          mail.outbox[0].body).group(0).strip()
-        postdata = {'data': code}
+        postdata = {'token': code}
         with translation.override('en-us'):
             response = self.client.post('/confirm/reactivate_user/', postdata, follow=True)
         self.assertContains(response, 'The account “user” was reactivated.')
@@ -361,12 +374,20 @@ class TestAuthViews(TestCase):
         self.client.logout()
         self.assertFalse(self.client.user.is_authenticated)
 
+        # Perform mail change with invalid token
+        self.client.login(username='user', password='user')
+        postdata = {'token': 'ThisIsAWrongToken'}
+        with translation.override('en-us'):
+            response = self.client.post('/confirm/set_new_email/', postdata, follow=True)
+        self.assertContains(response, 'The entered token is invalid or has expired.')
+        self.client.logout()
+
         # Perform invalid mail change
         subject = mail.outbox[0].subject
         self.assertIn(u'Confirm email address', subject)
         code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
                          mail.outbox[0].body).group(0).strip()
-        postdata = {'data': code}
+        postdata = {'token': code}
         with translation.override('en-us'):
             response = self.client.post('/confirm/set_new_email/', postdata, follow=True)
         self.assertContains(response, 'You need to be logged in before you can continue.')
@@ -383,7 +404,7 @@ class TestAuthViews(TestCase):
         self.assertIn(u'Email address changed', subject)
         code = re.search(r'^    [a-z0-9_-]+?:[a-z0-9_-]+?:[a-z0-9_-]+?$(?im)',
                          mail.outbox[1].body).group(0).strip()
-        postdata = {'data': code}
+        postdata = {'token': code}
         with translation.override('en-us'):
             response = self.client.post('/confirm/reset_email/', postdata, follow=True)
         self.assertContains(response, 'You need to be logged in before you can continue.')
@@ -391,7 +412,7 @@ class TestAuthViews(TestCase):
         # Perform successful email reset
         self.client.login(username='user', password='user')
         with translation.override('en-us'):
-            response = self.client.post('/confirm/reset_email/', postdata)
+            response = self.client.post('/confirm/reset_email/', postdata, follow=True)
         self.assertContains(response, 'Your email address was reset.')
 
 
