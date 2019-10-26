@@ -9,6 +9,8 @@
     :license: BSD, see LICENSE for more details.
 """
 from collections import OrderedDict
+
+import jinja2
 from datetime import timedelta
 from os.path import dirname, join
 
@@ -425,10 +427,25 @@ TEMPLATE_LOADERS = (
     'inyoka.utils.templating.DjangoLoader',
     'django.template.loaders.app_directories.Loader',
 )
-
 TEMPLATE_CONTEXT_PROCESSORS = ()
-
 TEMPLATE_DIRS = []
+
+TEMPLATES = [
+    {
+        'NAME': 'jinja',
+        'BACKEND': 'inyoka.utils.templating.Jinja2Templates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'inyoka.utils.templating.environment',
+            'autoescape': False,
+            'extensions': ['jinja2.ext.i18n', 'jinja2.ext.do'],
+            'cache_size': -1,
+            'context_processors': ['inyoka.utils.templating.context_data'],
+            'undefined': jinja2.Undefined,
+        }
+    }
+]
 
 ALLOWED_HOSTS = ['.ubuntuusers.de']
 

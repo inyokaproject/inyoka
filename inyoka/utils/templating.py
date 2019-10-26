@@ -13,9 +13,12 @@ import os
 import sys
 from importlib import import_module
 
+import jinja2
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
+from django.template.backends.jinja2 import Jinja2
+from django.template.backends.utils import csrf_input
 from django.template.context_processors import csrf
 from django.forms.widgets import CheckboxInput
 from django.template.base import Context as DjangoContext
@@ -309,3 +312,125 @@ FILTERS = {
 
 # setup the template environment
 jinja_env = InyokaEnvironment()
+
+
+class Jinja2Templates(Jinja2):
+    # TODO: Rename the templates folder in theme to jinja2, then we can drop this class and DjangoLoader
+    app_dirname = 'templates'
+
+
+def environment(**options):
+    env = jinja2.Environment(**options)
+
+    env.globals.update(BASE_DOMAIN_NAME=settings.BASE_DOMAIN_NAME,
+                       INYOKA_VERSION=INYOKA_VERSION,
+                       SETTINGS=settings,
+                       # TODO: Django already passes the request as request, sed over all templates
+                       REQUEST=current_request,
+                       href=href)
+    env.filters.update(FILTERS)
+
+    env.install_gettext_translations(translation, newstyle=True)
+
+    return env
+
+
+def context_data(request):
+    """Fill in context defaults."""
+    from inyoka.forum.models import Topic
+    from inyoka.portal.models import PrivateMessageEntry
+    from inyoka.utils.storage import storage
+    from inyoka.ikhaya.models import Suggestion, Event, Report
+
+    user = request.user
+
+    reported = pms = suggestions = events = reported_articles = 0
+    if user.is_authenticated:
+        can = {'manage_topics': user.has_perm('forum.manage_reported_topic'),
+               'article_edit': user.has_perm('ikhaya.change_article'),
+               'event_edit': user.has_perm('portal.change_event')}
+
+        keys = ['portal/pm_count/%s' % user.id]
+
+        if can['manage_topics']:
+            keys.append('forum/reported_topic_count')
+        if can['article_edit']:
+            keys.append('ikhaya/suggestion_count')
+            keys.append('ikhaya/reported_article_count')
+        if can['event_edit']:
+            keys.append('ikhaya/event_count')
+
+        cached_values = cache.get_many(keys)
+        to_update = {}
+
+        key = 'portal/pm_count/%s' % user.id
+        pms = cached_values.get(key)
+        if pms is None:
+            pms = PrivateMessageEntry.objects \
+                .filter(user__id=user.id, read=False) \
+                .exclude(folder=None).count()
+            to_update[key] = pms
+        if can['manage_topics']:
+            key = 'forum/reported_topic_count'
+            reported = cached_values.get(key)
+            if reported is None:
+                reported = Topic.objects.filter(reporter__id__isnull=False) \
+                                        .count()
+                to_update[key] = reported
+        if can['article_edit']:
+            key = 'ikhaya/suggestion_count'
+            suggestions = cached_values.get(key)
+            if suggestions is None:
+                suggestions = Suggestion.objects.all().count()
+                to_update[key] = suggestions
+            key = 'ikhaya/reported_article_count'
+            reported_articles = cached_values.get(key)
+            if reported_articles is None:
+                reported_articles = Report.objects\
+                    .filter(solved=False, deleted=False).count()
+                to_update[key] = reported_articles
+        if can['event_edit']:
+            key = 'ikhaya/event_count'
+            events = cached_values.get(key)
+            if events is None:
+                events = Event.objects.filter(visible=False).all().count()
+                to_update[key] = events
+
+        if to_update:
+            cache.set_many(to_update)
+
+    # we don't need to use cache here because storage does this for us
+    global_message = storage['global_message_rendered']
+    if global_message:
+        age_global_message = float(storage['global_message_time'] or 0.0)
+        timestamp_user_has_hidden_global_message = user.settings.get(
+            'global_message_hidden', 0)
+        if timestamp_user_has_hidden_global_message > age_global_message:
+            global_message = None
+
+    context = {
+        'CURRENT_URL': request.build_absolute_uri(),
+        'USER': user,
+        'MOBILE': get_flavour() == 'mobile',
+        'special_day_css': check_special_day(),
+        'LANGUAGE_CODE': settings.LANGUAGE_CODE,
+        'MESSAGES': messages.get_messages(request),
+        'GLOBAL_MESSAGE': global_message,
+        'pm_count': pms,
+        'report_count': reported,
+        'article_report_count': reported_articles,
+        'suggestion_count': suggestions,
+        'event_count': events,
+    }
+
+    # TODO: Replace with django builtins
+    context['csrf_token'] = lambda: csrf_input(request)
+
+    if settings.DEBUG:
+        from django.db import connection
+        context.update(
+            sql_queries_count=len(connection.queries),
+            sql_queries_time=sum(float(q['time']) for q in connection.queries),
+        )
+
+    return context
