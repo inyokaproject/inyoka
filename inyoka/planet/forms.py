@@ -18,15 +18,15 @@ from inyoka.planet.models import Blog
 
 class SuggestBlogForm(forms.Form):
     """Form to suggest a new blog url for the planet."""
-    name = forms.CharField(label=ugettext_lazy(u'Name of the blog'))
-    url = forms.URLField(label=ugettext_lazy(u'URL'))
-    feed_url = forms.URLField(label=ugettext_lazy(u'Feed URL'), required=False)
-    description = forms.CharField(label=ugettext_lazy(u'Description'),
+    name = forms.CharField(label=ugettext_lazy('Name of the blog'))
+    url = forms.URLField(label=ugettext_lazy('URL'))
+    feed_url = forms.URLField(label=ugettext_lazy('Feed URL'), required=False)
+    description = forms.CharField(label=ugettext_lazy('Description'),
         widget=forms.Textarea)
-    mine = forms.BooleanField(label=ugettext_lazy(u'This is my own blog'),
+    mine = forms.BooleanField(label=ugettext_lazy('This is my own blog'),
                               required=False)
     contact_email = forms.EmailField(
-        label=ugettext_lazy(u'Email address of the blog author'),
+        label=ugettext_lazy('Email address of the blog author'),
         required=False)
 
 

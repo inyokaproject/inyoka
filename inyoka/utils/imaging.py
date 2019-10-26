@@ -96,7 +96,7 @@ def get_thumbnail(location, destination, width=None, height=None, force=False):
     format = 'png'
     # force unicode because of posixpath
     destination = force_unicode(destination)
-    destination = u'%s.%s' % (destination.rsplit('.', 1)[0], format)
+    destination = '%s.%s' % (destination.rsplit('.', 1)[0], format)
     fn = os.path.join(settings.MEDIA_ROOT, destination)
     if os.path.exists(fn):
         return destination

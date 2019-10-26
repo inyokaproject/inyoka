@@ -55,6 +55,6 @@ class JSONTest(TestCase):
         self.assertEqual(entry.f, {'d': d})
 
     def test_unicode(self):
-        entry = self.manager.create(f={'k': u'åäö'})
+        entry = self.manager.create(f={'k': 'åäö'})
         entry = self.manager.get(pk=entry.pk)
-        self.assertEqual(entry.f, {'k': u'åäö'})
+        self.assertEqual(entry.f, {'k': 'åäö'})

@@ -33,7 +33,7 @@ def send_edit_notifications(user, rev, old_rev):
         'changes_url': url_for(rev.page, action='diff', revision=old_rev.id)
         }
 
-    subject = _(u'The page “{name}” was changed').format(name=data.get('page_title'))
+    subject = _('The page “{name}” was changed').format(name=data.get('page_title'))
     filter = {'content_type_id': ctype(Page).pk, 'object_id': rev.page.id}
 
     queue_notifications.delay(user.id, 'page_edited', subject, data,

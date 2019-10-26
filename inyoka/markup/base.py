@@ -8,7 +8,7 @@
 """
 import unicodedata
 import re
-from urlparse import urlsplit
+from urllib.parse import urlsplit
 from functools import partial
 
 from django.utils.translation import ugettext as _
@@ -67,8 +67,8 @@ def parse(markup, wiki_force_existing=False, catch_stack_errors=True,
         if not catch_stack_errors:
             raise
         return nodes.Paragraph([
-            nodes.Strong([nodes.Text(_(u'Internal error: '))]),
-            nodes.Text(_(u'The parser found too deeply nested elements.'))
+            nodes.Strong([nodes.Text(_('Internal error: '))]),
+            nodes.Text(_('The parser found too deeply nested elements.'))
         ])
 
 
@@ -110,7 +110,7 @@ def unescape_string(string):
         'U': 8
     }
     chariter = iter(string)
-    next_char = chariter.next
+    next_char = chariter.__next__
 
     try:
         for char in chariter:
@@ -119,9 +119,9 @@ def unescape_string(string):
                 if char in simple_escapes:
                     write(simple_escapes[char])
                 elif char in unicode_escapes:
-                    seq = [next_char() for x in xrange(unicode_escapes[char])]
+                    seq = [next_char() for x in range(unicode_escapes[char])]
                     try:
-                        write(unichr(int(''.join(seq), 16)))
+                        write(chr(int(''.join(seq), 16)))
                     except ValueError:
                         pass
                 elif char == 'N' and next_char() != '{':
@@ -132,7 +132,7 @@ def unescape_string(string):
                             break
                         seq.append(char)
                     try:
-                        write(unicodedata.lookup(u''.join(seq)))
+                        write(unicodedata.lookup(''.join(seq)))
                     except KeyError:
                         pass
                 else:
@@ -141,7 +141,7 @@ def unescape_string(string):
                 write(char)
     except StopIteration:
         pass
-    return u''.join(result)
+    return ''.join(result)
 
 
 def _parse_align_args(args, kwargs):
@@ -401,9 +401,9 @@ class Parser(object):
         buffer = []
         while stream.current.type != 'escaped_code_end':
             buffer.append(stream.current.value)
-            stream.next()
+            next(stream)
         stream.expect('escaped_code_end')
-        return nodes.Code([nodes.Text(u''.join(buffer))], class_='notranslate')
+        return nodes.Code([nodes.Text(''.join(buffer))], class_='notranslate')
 
     def parse_code(self, stream):
         """
@@ -415,9 +415,9 @@ class Parser(object):
         buffer = []
         while stream.current.type == 'text':
             buffer.append(stream.current.value)
-            stream.next()
+            next(stream)
         stream.expect('code_end')
-        return nodes.Code([nodes.Text(u''.join(buffer))], class_='notranslate')
+        return nodes.Code([nodes.Text(''.join(buffer))], class_='notranslate')
 
     def parse_underline(self, stream):
         """
@@ -642,13 +642,13 @@ class Parser(object):
                 else:
                     result.children.append(nodes.ListItem([nested_list]))
                 continue
-            stream.next()
+            next(stream)
             children = []
             while stream.current.type != 'list_item_end':
                 children.append(self.parse_node(stream))
             if children:
                 result.children.append(nodes.ListItem(children))
-            stream.next()
+            next(stream)
         return result
 
     def parse_definition(self, stream):
@@ -667,9 +667,9 @@ class Parser(object):
                 children.append(self.parse_node(stream))
             result.children.append(nodes.DefinitionTerm(term, children))
             if stream.current.type == 'definition_end':
-                stream.next()
+                next(stream)
                 if stream.current.type == 'definition_begin':
-                    stream.next()
+                    next(stream)
                 else:
                     break
         return result
@@ -752,14 +752,14 @@ class Parser(object):
         stream.expect('macro_begin')
         name = stream.expect('macro_name').value
         args, kwargs = self.parse_arguments(stream, 'macro_end')
-        stream.next()
+        next(stream)
         # FIXME: Circular Imports
         from inyoka.markup.macros import get_macro
         macro = get_macro(name, args, kwargs)
         if macro is None:
             return nodes.error_box(
-                _(u'Missing macro'),
-                _(u'The macro “%(name)s” does not exist.') % {'name': name})
+                _('Missing macro'),
+                _('The macro “%(name)s” does not exist.') % {'name': name})
         elif macro.is_tree_processor:
             placeholder = nodes.DeferredNode(macro)
             self.deferred_macros[macro.stage].append((placeholder, macro))
@@ -775,7 +775,7 @@ class Parser(object):
         stream.expect('template_begin')
         name = stream.expect('template_name').value
         args, kwargs = self.parse_arguments(stream, 'template_end')
-        stream.next()
+        next(stream)
         return Template((name,) + args, kwargs).build_node()
 
     def parse_pre_block(self, stream):
@@ -793,10 +793,10 @@ class Parser(object):
         stream.expect('pre_begin')
         if stream.current.type == 'parser_begin':
             name = stream.current.value
-            stream.next()
+            next(stream)
             args, kwargs = self.parse_arguments(stream, 'parser_end')
             if stream.current.type != 'pre_end':
-                stream.next()
+                next(stream)
         else:
             name = None
 
@@ -816,7 +816,7 @@ class Parser(object):
         if name is None:
             return nodes.Preformatted(children, class_='notranslate')
 
-        data = u''.join(x.text for x in children)
+        data = ''.join(x.text for x in children)
         parser = get_parser(name, args, kwargs, data)
         if parser is None:
             return nodes.Preformatted([nodes.Text(data)], class_='notranslate')
@@ -835,10 +835,10 @@ class Parser(object):
         """
         def attach_defs():
             if stream.current.type in 'table_def_begin':
-                stream.next()
+                next(stream)
                 args, kwargs = self.parse_arguments(stream, 'table_def_end')
                 if stream.current.type == 'table_def_end':
-                    stream.next()
+                    next(stream)
                 attrs, args = _parse_align_args(args, kwargs)
                 if cell_type == 'tablefirst':
                     table.class_ = attrs.get('tableclass') or None
@@ -846,7 +846,7 @@ class Parser(object):
                 if cell_type in ('tablefirst', 'rowfirst'):
                     row.class_ = attrs.get('rowclass') or None
                     if not row.class_:
-                        row.class_ = u' '.join(args) or None
+                        row.class_ = ' '.join(args) or None
                     row.style = filter_style(attrs.get('rowstyle')) or None
                 cell.class_ = attrs.get('cellclass') or None
                 cell.style = filter_style(attrs.get('cellstyle')) or None
@@ -860,26 +860,26 @@ class Parser(object):
                     cell.valign = None
                 if cell_type == 'normal':
                     if not cell.class_:
-                        cell.class_ = u' '.join(args) or None
+                        cell.class_ = ' '.join(args) or None
 
         table = nodes.Table()
         cell = row = None
         cell_type = 'tablefirst'
         while not stream.eof:
             if stream.current.type == 'table_row_begin':
-                stream.next()
+                next(stream)
                 cell = nodes.TableCell()
                 row = nodes.TableRow([cell])
                 table.children.append(row)
                 attach_defs()
             elif stream.current.type == 'table_col_switch':
-                stream.next()
+                next(stream)
                 cell_type = 'normal'
                 cell = nodes.TableCell()
                 row.children.append(cell)
                 attach_defs()
             elif stream.current.type == 'table_row_end':
-                stream.next()
+                next(stream)
                 cell_type = 'rowfirst'
                 if stream.current.type != 'table_row_begin':
                     break
@@ -897,10 +897,10 @@ class Parser(object):
         box = nodes.Box()
         stream.expect('box_begin')
         if stream.current.type == 'box_def_begin':
-            stream.next()
+            next(stream)
             args, kwargs = self.parse_arguments(stream, 'box_def_end')
             if stream.current.type == 'box_def_end':
-                stream.next()
+                next(stream)
             attrs, args = _parse_align_args(args, kwargs)
             box.align = attrs.get('align')
             if box.align not in ('left', 'right', 'center'):
@@ -910,7 +910,7 @@ class Parser(object):
                 box.valign = None
             box.class_ = attrs.get('klasse')
             if not box.class_:
-                box.class_ = u' '.join(args)
+                box.class_ = ' '.join(args)
             box.style = filter_style(attrs.get('style')) or None
             box.title = attrs.get('title')
             box.class_ = attrs.get('class')
@@ -937,7 +937,7 @@ class Parser(object):
                     value = stream.current.value
                 else:
                     value = unescape_string(stream.current.value[1:-1])
-                stream.next()
+                next(stream)
                 if keywords:
                     for keyword in keywords:
                         kwargs[keyword] = value
@@ -946,12 +946,12 @@ class Parser(object):
                     args.append(value)
             elif stream.current.type == 'text':
                 args.append(stream.current.value)
-                stream.next()
+                next(stream)
             elif stream.current.type == 'func_kwarg':
                 keywords.append(stream.current.value)
-                stream.next()
+                next(stream)
             elif stream.current.type == 'func_argument_delimiter':
-                stream.next()
+                next(stream)
             else:
                 break
         for keyword in keywords:

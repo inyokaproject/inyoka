@@ -140,7 +140,7 @@ class TestViews(TestCase):
                                                         'enddate': datetime.date(2015, 5, 2),
                                                         'name': 'TestEvent',
                                                         'confirm': True})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_enddate_before_startdate(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
@@ -154,7 +154,7 @@ class TestViews(TestCase):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 6, 1),
                                                         'name': 'TestEvent',
                                                         'confirm': True})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_startdatetime_enddatetime_midnight(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
@@ -163,7 +163,7 @@ class TestViews(TestCase):
                                                         'endtime': datetime.time(0, 0, 0),
                                                         'name': 'TestEvent',
                                                         'confirm': True})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_startdatetime_enddatetime(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),
@@ -172,7 +172,7 @@ class TestViews(TestCase):
                                                         'endtime': datetime.time(11, 0, 0),
                                                         'name': 'TestEvent',
                                                         'confirm': True})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     def test_add_event_with_name_enddatetime_before_startdatetime(self):
         response = self.client.post('/event/suggest/', {'date': datetime.date(2015, 5, 1),

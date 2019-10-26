@@ -42,7 +42,7 @@ class QueryCounter(object):
         """
         Returns the value or the unicode string "counting..."
         """
-        return unicode(self.value(default=_(u"counting...")))
+        return str(self.value(default=_("counting...")))
 
     def __call__(self, default=None):
         return self.value(default=default)

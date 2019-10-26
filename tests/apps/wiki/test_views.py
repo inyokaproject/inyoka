@@ -41,15 +41,15 @@ class TestViews(TestCase):
         p100 = Page.objects.create('Testpage100', 'rev 0', user=self.admin, note='rev 0')
         p250 = Page.objects.create('Testpage250', 'rev 0', user=self.admin, note='rev 0')
 
-        for i in xrange(1, 2):
+        for i in range(1, 2):
             p50.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
         p50.save()
 
-        for i in xrange(1, 5):
+        for i in range(1, 5):
             p100.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
         p100.save()
 
-        for i in xrange(1, 12):
+        for i in range(1, 12):
             p250.edit(text='rev %d' % i, user=self.admin, note='rev %d' % i)
         p250.save()
 

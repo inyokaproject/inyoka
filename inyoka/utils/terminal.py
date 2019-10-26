@@ -11,8 +11,8 @@
 import sys
 from itertools import cycle
 
-_color_mapping = zip(xrange(8),
-    ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'))
+_color_mapping = list(zip(list(range(8)),
+    ('black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white')))
 _colors = {code: '3%d' % idx for idx, code in _color_mapping}
 _formats = {
     'bold': '1',
@@ -66,7 +66,7 @@ class FancyPrinter(object):
         return result
 
     def __call__(self, text):
-        if isinstance(text, unicode):
+        if isinstance(text, str):
             encoding = getattr(self._stream, 'encoding', None) or 'latin1'
             text = text.encode(encoding, 'ignore')
         if not (hasattr(self._stream, 'isatty') and self._stream.isatty()):
@@ -75,7 +75,7 @@ class FancyPrinter(object):
             codes = []
             if self._color is not None:
                 codes.append(_colors[self._color])
-            for format, val in _formats.iteritems():
+            for format, val in _formats.items():
                 if getattr(self, '_' + format):
                     codes.append(val)
             self._stream.write('\x1b[%sm%s\x1b[0m' % (';'.join(codes), text))
@@ -91,7 +91,7 @@ class ProgressBar(object):
     def __init__(self, max_width):
         """Prepare the visualization."""
         self.max_width = max_width
-        self.spin = cycle(r'-\|/').next
+        self.spin = cycle(r'-\|/').__next__
         self.tpl = '%-' + str(max_width) + 's ] %c %5.1f%%'
         show(' [ ')
         self.last_output_length = 0

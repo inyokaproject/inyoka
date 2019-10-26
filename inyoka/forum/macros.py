@@ -31,9 +31,9 @@ def build_forum_picture_node(sender, context, format, **kwargs):
         post = forum_post.id if forum_post else None
 
         if context.request and 'attachments' in context.request.POST:
-            att_ids = map(int, filter(
+            att_ids = list(map(int, list(filter(
                 bool, context.request.POST.get('attachments', '').split(',')
-            ))
+            ))))
 
             files = Attachment.objects.filter(name=sender.target,
                     post=post, id__in=att_ids)

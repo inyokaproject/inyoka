@@ -49,7 +49,7 @@ def add_advent_tests(suite):
                           date(2017, 12, 3), date(2018, 12, 2), date(2019, 12, 1),
                           date(2020, 11, 29), date(2021, 11, 28)]
 
-    fourth_advent_dates = map(lambda d: d + timedelta(3 * 7), first_advent_dates)
+    fourth_advent_dates = [d + timedelta(3 * 7) for d in first_advent_dates]
 
     for d in fourth_advent_dates:
         suite.addTest(GeneralEqualTestCase('runTest', d, fourth_advent(d.year)))

@@ -53,7 +53,7 @@ def find_next_increment(model, column, string, **query_opts):
     filter.update(query_opts)
     if not model.objects.filter(**filter).exists():
         return slug
-    filter = {'%s__startswith' % column: slug + u'-'}
+    filter = {'%s__startswith' % column: slug + '-'}
     filter.update(query_opts)
     existing = model.objects.filter(**filter).values_list(column, flat=True)
     # strip of the common prefix
@@ -110,7 +110,7 @@ class LockableObject(object):
     lock_key_base = None
 
     def _get_lock_key(self):
-        return u'/'.join((self.lock_key_base.strip('/'), unicode(self.id)))
+        return '/'.join((self.lock_key_base.strip('/'), str(self.id)))
 
     def lock(self, request):
         """Lock for 15 Minutes"""
@@ -132,7 +132,7 @@ class SimpleDescriptor(object):
     def __get__(self, obj, owner):
         value = obj.__dict__[self.field.name]
         # we don't try to deserialize empty strings
-        if value and isinstance(value, basestring):
+        if value and isinstance(value, str):
             value = self.field.loads(value)
             obj.__dict__[self.field.name] = value
         return value
@@ -150,7 +150,7 @@ class JSONField(models.TextField):
 
     def pre_save(self, obj, add):
         value = obj.__dict__[self.name]
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             value = self.dumps(value)
         return value
 

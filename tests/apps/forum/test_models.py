@@ -90,7 +90,7 @@ class TestForumModel(ForumTestCase):
         cache_key_map = {'forum/forums/category': self.category,
                          'forum/forums/parent': self.parent,
                          'forum/forums/forum': self.forum}
-        cache.delete_many(cache_key_map.keys())
+        cache.delete_many(list(cache_key_map.keys()))
         cache.delete('forum/slugs')
 
         cached_forums = Forum.objects.get_all_forums_cached()
@@ -102,7 +102,7 @@ class TestForumModel(ForumTestCase):
         cache_key_map = {'forum/forums/category': self.category,
                          'forum/forums/parent': self.parent,
                          'forum/forums/forum': self.forum}
-        cache.delete_many(cache_key_map.keys())
+        cache.delete_many(list(cache_key_map.keys()))
         cache.delete('forum/slugs')
         Forum.objects.get_all_forums_cached()
 
@@ -129,7 +129,7 @@ class TestPostModel(ForumTestCase):
 
     @override_settings(BASE_DOMAIN_NAME='inyoka.local')
     def test_url_for_post(self):
-        post = Post(text=u'test1', author=self.user, topic=self.topic)
+        post = Post(text='test1', author=self.user, topic=self.topic)
         post.save()
 
         self.assertEqual(Post.url_for_post(post.pk),
@@ -248,7 +248,7 @@ class PostDeletionTest(ForumTestCase):
         self.last_post = self.topic_posts[-1]
 
     def test_cache_is_cleared_after_deletion(self):
-        forum_cache_keys = Forum.objects.get_all_forums_cached().keys()
+        forum_cache_keys = list(Forum.objects.get_all_forums_cached().keys())
         cached_forums = cache.get_many(forum_cache_keys)
         self.assertEqual(cached_forums['forum/forums/category'].last_post_id, self.last_post.pk)
         self.assertEqual(cached_forums['forum/forums/parent'].last_post_id, self.last_post.pk)
@@ -271,7 +271,7 @@ class PostDeletionTest(ForumTestCase):
 
     def test_post_delete_at_end(self):
         # Warm up cache
-        forum_cache_keys = Forum.objects.get_all_forums_cached().keys()
+        forum_cache_keys = list(Forum.objects.get_all_forums_cached().keys())
         cached_forums = cache.get_many(forum_cache_keys)
         self.assertEqual(cached_forums['forum/forums/category'].last_post_id, self.last_post.pk)
         self.assertEqual(cached_forums['forum/forums/parent'].last_post_id, self.last_post.pk)

@@ -54,4 +54,4 @@ class AtomFeed(AtomFeed):
         ret = []
         for item in self.generate():
             ret.append(force_unicode(item))
-        return u''.join(ret)
+        return ''.join(ret)

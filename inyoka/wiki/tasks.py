@@ -52,7 +52,7 @@ def update_page_by_slug():
     from inyoka.wiki.models import Page, to_page_by_slug_key as to_key
 
     # This sets only the canary, so we don't run more than once at a time.
-    cache.set(u'wiki/page_by_slug_created', True)
+    cache.set('wiki/page_by_slug_created', True)
 
     for page_name in Page.objects._get_object_list(exclude_attachments=True):
         cache.set(to_key(page_name), page_name, settings.WIKI_CACHE_TIMEOUT)
@@ -71,9 +71,9 @@ def update_related_pages(page, update_meta=True):
     linked = MetaData.objects.values_list(*values) \
                      .filter(key__in=('X-Link', 'X-Attach'), value=page.name)
     for value, text_id in linked.all():
-        cache.delete(u'wiki/page/{}'.format(value.lower()))
+        cache.delete('wiki/page/{}'.format(value.lower()))
         related_pages.add(text_id)
-    cache.delete(u'wiki/page/{}'.format(page.name.lower()))
+    cache.delete('wiki/page/{}'.format(page.name.lower()))
 
     if update_meta:
         page.update_meta()

@@ -76,7 +76,7 @@ class InyokaClient(Client):
 
         """
         super(InyokaClient, self).__init__(enforce_csrf_checks, **defaults)
-        if isinstance(host, basestring):
+        if isinstance(host, str):
             self.defaults['HTTP_HOST'] = host
         else:
             self.defaults['HTTP_HOST'] = settings.BASE_DOMAIN_NAME

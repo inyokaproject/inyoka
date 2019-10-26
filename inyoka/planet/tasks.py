@@ -47,7 +47,7 @@ _par_re = re.compile(r'\n{2,}')
 
 def nl2p(s):
     """Add paragraphs to a text."""
-    return u'\n'.join(u'<p>%s</p>' % p for p in _par_re.split(s))
+    return '\n'.join('<p>%s</p>' % p for p in _par_re.split(s))
 
 
 def dateutilDateHandler(aDateString):
@@ -64,16 +64,16 @@ def sync():
     touched anymore.
     """
     for blog in Blog.objects.filter(active=True):
-        logger.debug(u'syncing blog %s' % blog.name)
+        logger.debug('syncing blog %s' % blog.name)
         # parse the feed. feedparser.parse will never given an exception
         # but the bozo bit might be defined.
         try:
             feed = feedparser.parse(blog.feed_url)
         except UnicodeDecodeError:
-            logger.debug(u'UnicodeDecodeError on %s' % blog.feed_url)
+            logger.debug('UnicodeDecodeError on %s' % blog.feed_url)
             continue
         except LookupError:
-            logger.debug(u'LookupError on %s' % blog.feed_url)
+            logger.debug('LookupError on %s' % blog.feed_url)
             continue
 
         blog_author = feed.get('author') or blog.name
@@ -84,7 +84,7 @@ def sync():
             # if none is available we skip the entry.
             guid = entry.get('id') or entry.get('link')
             if not guid:
-                logger.debug(u' no guid found, skipping')
+                logger.debug(' no guid found, skipping')
                 continue
 
             try:
@@ -104,7 +104,7 @@ def sync():
                 else:
                     title = escape(title)
             else:
-                logger.debug(u' no title found for %r, skipping' % guid)
+                logger.debug(' no title found for %r, skipping' % guid)
                 continue
 
             url = entry.get('link') or blog.blog_url
@@ -112,7 +112,7 @@ def sync():
                    entry.get('summary_detail')
 
             if not text:
-                logger.debug(u'no text found for %r, skipping' % guid)
+                logger.debug('no text found for %r, skipping' % guid)
                 continue
 
             # if we have an html text we use that, otherwise we HTML
@@ -134,7 +134,7 @@ def sync():
 
             # if we don't have a pub_date we skip.
             if not pub_date:
-                logger.debug(u' no pub_date for %r found, skipping' % guid)
+                logger.debug(' no pub_date for %r found, skipping' % guid)
                 continue
 
             # convert the time tuples to datetime objects.
@@ -147,7 +147,7 @@ def sync():
             if not author and author_detail:
                 author = author_detail.get('name')
             if not author:
-                logger.debug(u' no author for entry %r found, skipping' % guid)
+                logger.debug(' no author for entry %r found, skipping' % guid)
             author_homepage = author_detail and author_detail.get('href') \
                 or url
 
@@ -160,14 +160,14 @@ def sync():
                     max_length = entry._meta.get_field(n).max_length
                 except AttributeError:
                     max_length = None
-                if isinstance(locals()[n], basestring):
+                if isinstance(locals()[n], str):
                     setattr(entry, n, force_unicode(locals()[n][:max_length]).encode('utf-8'))
                 else:
                     setattr(entry, n, locals()[n])
             try:
                 entry.save()
-                logger.debug(u' synced entry %r' % guid)
+                logger.debug(' synced entry %r' % guid)
             except Exception as exc:
-                logger.debug(u' Error on entry %r: %r' % (guid, exc))
+                logger.debug(' Error on entry %r: %r' % (guid, exc))
         blog.last_sync = datetime.utcnow()
         blog.save()

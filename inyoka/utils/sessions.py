@@ -66,8 +66,8 @@ class SurgeProtectionMixin(object):
 
     surge_protection_timeout = 15
     surge_protection_message = ugettext_lazy(
-        u'You cannot send data that fast in a row. '
-        u'Please wait a bit until you submit the form again.'
+        'You cannot send data that fast in a row. '
+        'Please wait a bit until you submit the form again.'
     )
     surge_protection_identifier = None
 
@@ -108,7 +108,7 @@ def get_user_record(values=None):
 
 def get_sessions(order_by='-last_change'):
     """Get a simple list of active sessions for the portal index."""
-    sessions = [session[1] for session in cache.get_many(cache.keys('sessioninfo:*')).iteritems()]
+    sessions = [session[1] for session in cache.get_many(cache.keys('sessioninfo:*')).items()]
 
     anonymous = sum(x['anonymous'] for x in sessions)
     return {

@@ -132,7 +132,7 @@ class TestEditFileForm(TestCase):
             self.assertTrue(form.is_valid())
 
         # identifier is still from the first image
-        self.assertEquals(StaticFile.objects.all()[0].identifier, 'test_attachment.png')
+        self.assertEqual(StaticFile.objects.all()[0].identifier, 'test_attachment.png')
 
     def test_create_file(self):
         with open(self.path_file1, 'rb') as picture_for_upload:
@@ -147,8 +147,8 @@ class TestEditFileForm(TestCase):
             form = EditFileForm(files={'file': upload_object})
             created_object = form.save()
 
-        self.assertEquals(created_object.identifier, 'test_attachment.png')
-        self.assertEquals(StaticFile.objects.count(), 1)
+        self.assertEqual(created_object.identifier, 'test_attachment.png')
+        self.assertEqual(StaticFile.objects.count(), 1)
 
     def test_create_save_commit_false(self):
         with open(self.path_file1, 'rb') as picture_for_upload:
@@ -156,7 +156,7 @@ class TestEditFileForm(TestCase):
             form = EditFileForm(files={'file': upload_object})
             form.save(commit=False)
 
-        self.assertEquals(StaticFile.objects.count(), 0)
+        self.assertEqual(StaticFile.objects.count(), 0)
 
     def test_create_with_duplicate(self):
         with open(self.path_file1, 'rb') as f:
@@ -165,7 +165,7 @@ class TestEditFileForm(TestCase):
 
             form = EditFileForm(files={'file': upload_object})
             self.assertFalse(form.is_valid())
-            self.assertIn(u'Another file with this name already exists. Please edit this file.', form.errors['file'])
+            self.assertIn('Another file with this name already exists. Please edit this file.', form.errors['file'])
 
     def test_create_with_duplicate_case_insensitive(self):
         with open(self.path_file1, 'rb') as f:
@@ -174,4 +174,4 @@ class TestEditFileForm(TestCase):
 
             form = EditFileForm(files={'file': upload_object})
             self.assertFalse(form.is_valid())
-            self.assertIn(u'Another file with this name already exists. Please edit this file.', form.errors['file'])
+            self.assertIn('Another file with this name already exists. Please edit this file.', form.errors['file'])

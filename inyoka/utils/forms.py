@@ -13,8 +13,8 @@ import re
 import sys
 from hashlib import md5
 from random import randrange
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 
 import pytz
 from django import forms
@@ -56,7 +56,7 @@ def clear_surge_protection(request, form):
 
 def validate_empty_text(value):
     if not value.strip():
-        raise forms.ValidationError(_(u'Text must not be empty'), code='invalid')
+        raise forms.ValidationError(_('Text must not be empty'), code='invalid')
     return value
 
 
@@ -67,22 +67,22 @@ def validate_signature(signature):
             for n in node.children:
                 _walk(n)
         if not node.allowed_in_signatures:
-            raise forms.ValidationError(_(u'Your signature contains illegal elements'))
+            raise forms.ValidationError(_('Your signature contains illegal elements'))
         return node
     try:
         text = _walk(parse(signature, True, False)).text.strip()
     except StackExhaused:
-        raise forms.ValidationError(_(u'Your signature contains too many nested elements'))
+        raise forms.ValidationError(_('Your signature contains too many nested elements'))
 
     sig_len = int(settings.INYOKA_SIGNATURE_MAXIMUM_CHARACTERS)
     sig_lines = int(settings.INYOKA_SIGNATURE_MAXIMUM_LINES)
     if sig_len >= 0 and len(text) > sig_len:
         raise forms.ValidationError(
-            _(u'Your signature is too long, only %(length)s characters '
-              u'allowed') % {'length': sig_len})
+            _('Your signature is too long, only %(length)s characters '
+              'allowed') % {'length': sig_len})
     if sig_lines >= 0 and len(text.splitlines()) > sig_lines:
         raise forms.ValidationError(
-            _(u'Your signature can only contain up to %(num)d lines') % {
+            _('Your signature can only contain up to %(num)d lines') % {
                 'num': sig_lines})
 
 
@@ -135,7 +135,7 @@ class UserField(forms.CharField):
         - an user object, then the username of this user is returned or
         - an user id, then the user is fetched from the database.
         """
-        if isinstance(data, basestring):
+        if isinstance(data, str):
             return data
         elif data is None:
             return ''
@@ -151,7 +151,7 @@ class UserField(forms.CharField):
         try:
             return User.objects.get(username__iexact=value)
         except (User.DoesNotExist, ValueError):
-            raise forms.ValidationError(_(u'This user does not exist'))
+            raise forms.ValidationError(_('This user does not exist'))
 
 
 class DateTimeWidget(Input):
@@ -181,7 +181,7 @@ class DateTimeField(forms.DateTimeField):
     def prepare_value(self, data):
         if data in validators.EMPTY_VALUES:
             return ''
-        if isinstance(data, basestring):
+        if isinstance(data, str):
             return data
         datetime = super(DateTimeField, self).prepare_value(data)
         return datetime_to_timezone(datetime).replace(tzinfo=None)
@@ -206,9 +206,9 @@ class EmailField(forms.EmailField):
         value = super(EmailField, self).clean(value)
         value = value.strip()
         if is_blocked_host(value):
-            raise forms.ValidationError(_(u'The entered e-mail address belongs to a '
-                u'e-mail provider we had to block because of SPAM problems. Please '
-                u'choose another e-mail address'))
+            raise forms.ValidationError(_('The entered e-mail address belongs to a '
+                'e-mail provider we had to block because of SPAM problems. Please '
+                'choose another e-mail address'))
         return value
 
 
@@ -227,8 +227,8 @@ class JabberField(forms.CharField):
             return
         value = value.strip()
         if not may_be_valid_jabber(value):
-            raise forms.ValidationError(_(u'The entered Jabber address is invalid. '
-                u'Please check your input.'))
+            raise forms.ValidationError(_('The entered Jabber address is invalid. '
+                'Please check your input.'))
         return value
 
 
@@ -253,8 +253,8 @@ class HiddenCaptchaField(forms.Field):
             return True
         else:
             raise forms.ValidationError(
-                _(u'You have entered an invisible field '
-                  u'and were therefore classified as a bot.'))
+                _('You have entered an invisible field '
+                  'and were therefore classified as a bot.'))
 
 
 class ImageCaptchaWidget(TextInput):
@@ -278,14 +278,14 @@ class ImageCaptchaField(forms.Field):
         solution = current_request.session.get('captcha_solution')
         if value:
             h = md5(settings.SECRET_KEY)
-            if isinstance(value, unicode):
+            if isinstance(value, str):
                 # md5 doesn't like to have non-ascii containing unicode strings
                 value = value.encode('utf-8')
             if value:
                 h.update(value)
             if h.hexdigest() == solution:
                 return True
-        raise forms.ValidationError(_(u'The entered CAPTCHA was incorrect.'))
+        raise forms.ValidationError(_('The entered CAPTCHA was incorrect.'))
 
 
 class CaptchaWidget(forms.MultiWidget):
@@ -328,12 +328,12 @@ class TopicField(forms.CharField):
 
         # Allow URL based Slugs
         try:
-            slug = urlparse.urlparse(value)[2].split('/')[2]
+            slug = urllib.parse.urlparse(value)[2].split('/')[2]
         except IndexError:
-            slug = urllib.unquote(value)
+            slug = urllib.parse.unquote(value)
 
         try:
             topic = Topic.objects.get(slug=slug)
         except Topic.DoesNotExist:
-            raise forms.ValidationError(_(u'This topic does not exist.'))
+            raise forms.ValidationError(_('This topic does not exist.'))
         return topic

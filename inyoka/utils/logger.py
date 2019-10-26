@@ -12,7 +12,7 @@ import logging
 
 from celery.signals import task_failure
 
-logger = logging.getLogger(u'inyoka')
+logger = logging.getLogger('inyoka')
 
 
 @task_failure.connect

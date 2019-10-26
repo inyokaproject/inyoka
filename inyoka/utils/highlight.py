@@ -122,7 +122,7 @@ class Highlighter(object):
             return (best_start, best_end)
 
         # Next, make sure we found any words at all and sort them.
-        words_found = sorted(chain(*highlight_locations.values()))
+        words_found = sorted(chain(*list(highlight_locations.values())))
 
         if not len(words_found):
             return (best_start, best_end)
@@ -165,7 +165,7 @@ class Highlighter(object):
         # Invert highlight_locations to a location -> term list
         term_list = []
 
-        for term, locations in highlight_locations.items():
+        for term, locations in list(highlight_locations.items()):
             term_list += [(loc - start_offset, term) for loc in locations]
 
         loc_to_term = sorted(term_list)

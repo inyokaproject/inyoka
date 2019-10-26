@@ -29,7 +29,7 @@ def check_for_user_record():
     record = int(storage.get('session_record', 0))
     session_count = len(cache.keys('sessioninfo:*'))
     if session_count > record:
-        storage['session_record'] = unicode(session_count)
+        storage['session_record'] = str(session_count)
         storage['session_record_time'] = int(time())
 
 

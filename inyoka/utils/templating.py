@@ -197,7 +197,7 @@ def ischeckbox_filter(input):
 def csrf_token(context):
     csrf_token = context['_csrf_token']
     if csrf_token == 'NOTPROVIDED':
-        return u''
+        return ''
     else:
         return ("<div style='display:none'><input type='hidden' "
                 "name='csrfmiddlewaretoken' value='%s' /></div>") % csrf_token

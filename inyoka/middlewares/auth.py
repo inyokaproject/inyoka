@@ -47,12 +47,12 @@ class AuthMiddleware(object):
         if user.is_banned or user.is_deleted:
             if user.is_banned:
                 messages.error(request,
-                    _(u'The user “%(name)s” was banned. Your session has ended.') % {
+                    _('The user “%(name)s” was banned. Your session has ended.') % {
                         'name': escape(user.username)})
             elif user.is_deleted:
                 messages.error(request,
-                    _(u'The user “%(name)s” deleted his profile. '
-                        u'Your session has ended.') % {'name': escape(user.username)})
+                    _('The user “%(name)s” deleted his profile. '
+                        'Your session has ended.') % {'name': escape(user.username)})
 
             request.session.pop('_auth_user_id', None)
             user = User.objects.get_anonymous_user()

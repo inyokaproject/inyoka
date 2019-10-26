@@ -37,14 +37,14 @@ def slugify_models(sender, **kwargs):
 def post_save_forum(sender, **kwargs):
     if kwargs['raw']:
         return
-    cache.delete(u'forum/forums/{}'.format(kwargs['instance'].slug))
+    cache.delete('forum/forums/{}'.format(kwargs['instance'].slug))
     if kwargs.get('created', False):
         cache.delete('forum/slugs')
 
 
 @receiver(post_delete, sender=Forum)
 def post_delete_forum(sender, **kwargs):
-    cache.delete(u'forum/forums/{}'.format(kwargs['instance'].slug))
+    cache.delete('forum/forums/{}'.format(kwargs['instance'].slug))
     cache.delete('forum/slugs')
 
 
@@ -104,5 +104,5 @@ def post_save_post(sender, instance, created, raw, **kwargs):
 
         # Invalidate Cache
         instance.topic.forum.invalidate_topic_cache()
-        cache_keys = [u'forum/forums/{}'.format(forum.slug) for forum in parent_forums]
+        cache_keys = ['forum/forums/{}'.format(forum.slug) for forum in parent_forums]
         cache.delete_many(cache_keys)

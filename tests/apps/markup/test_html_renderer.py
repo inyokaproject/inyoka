@@ -82,16 +82,16 @@ class TestHtmlRenderer(unittest.TestCase):
         ))
 
     def test_wikilink_with_anchor_no_description(self):
-        html = render(u'[:foo#anchor:]')
+        html = render('[:foo#anchor:]')
 
-        link = u'<a href="{url}" class="internal missing">foo (section \u201canchor\u201d)</a>'
+        link = '<a href="{url}" class="internal missing">foo (section \u201canchor\u201d)</a>'
         link = link.format(url=href('wiki', 'foo', _anchor='anchor'))
         self.assertEqual(html, link)
 
     @override_settings(LANGUAGE_CODE='de-DE')
     def test_localized_wikilink_with_anchor_no_description(self):
-        html = render(u'[:foo#anchor:]')
+        html = render('[:foo#anchor:]')
 
-        link = u'<a href="{url}" class="internal missing">foo (Abschnitt \u201eanchor\u201c)</a>'
+        link = '<a href="{url}" class="internal missing">foo (Abschnitt \u201eanchor\u201c)</a>'
         link = link.format(url=href('wiki', 'foo', _anchor='anchor'))
         self.assertEqual(html, link)

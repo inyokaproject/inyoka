@@ -38,7 +38,7 @@ def send_newtopic_notifications(user, post, topic, forum):
     }
 
     queue_notifications.delay(user.id, 'user_new_topic',
-        _(u'%(username)s has created a new topic') % {
+        _('%(username)s has created a new topic') % {
             'username': data.get('author_username')},
         data,
         include_notified=True,
@@ -52,7 +52,7 @@ def notify_forum_subscriptions(notified_users, request_user_id, data):
     with translation.override(settings.LANGUAGE_CODE):
         # Inform users who subscribed to the forum
         queue_notifications.delay(request_user_id, 'new_topic', _(
-            u'“%(topic)s” – Topic in forum “%(forum)s”') % {
+            '“%(topic)s” – Topic in forum “%(forum)s”') % {
                 'forum': data.get('forum_name'),
                 'topic': data.get('topic_title')
             },
@@ -80,7 +80,7 @@ def notify_ubuntu_version_subscriptions(notified_users, request_user_id, data):
         if topic_version:
             data['topic_version'] = str(topic_version)
             queue_notifications.delay(request_user_id, 'new_topic_ubuntu_version',
-                _(u'“%(topic)s” – Topic with version %(version)s') % {
+                _('“%(topic)s” – Topic with version %(version)s') % {
                     'version': data.get('topic_version'),
                     'topic': data.get('topic_title')},
                 data,
@@ -104,7 +104,7 @@ def send_edit_notifications(user, post, topic, forum):
 
     # notify about new answer in topic for topic-subscriptions
     queue_notifications.delay(user.id, 'new_post',
-        _(u'“%(topic)s” – Reply from “%(username)s“') % {
+        _('“%(topic)s” – Reply from “%(username)s“') % {
             'topic': data.get('topic_title'),
             'username': data.get('author_username')},
         data,
@@ -119,7 +119,7 @@ def notify_member_subscriptions(notified_users, request_user_id, data):
     queue_notifications.delay(
         request_user_id,
         'user_new_post',
-        _(u'New answer from user „{username}”').format(username=data.get('author_username')),
+        _('New answer from user „{username}”').format(username=data.get('author_username')),
         data, include_notified=True,
         filter={'content_type_id': ctype(User).pk, 'object_id': request_user_id},
         exclude={'user_id__in': notified_users})
@@ -139,7 +139,7 @@ def send_discussion_notification(user, page):
     # also notify if the user has not yet visited the page,
     # since otherwise he would never know about the topic
     queue_notifications.delay(user.id, 'new_page_discussion',
-        _(u'New discussion regarding the page “%(page)s” created') % {
+        _('New discussion regarding the page “%(page)s” created') % {
             'page': data.get('page_title')},
         data,
         filter={'content_type_id': ctype(Page).pk, 'object_id': data.get('page_id')})
@@ -155,7 +155,7 @@ def send_deletion_notification(user, topic, reason):
     }
 
     queue_notifications.delay(user.id, 'topic_deleted',
-        _(u'The topic “%(topic)s” has been deleted') % {
+        _('The topic “%(topic)s” has been deleted') % {
             'topic': data.get('topic_title')},
         data,
         filter={'content_type_id': ctype(Topic).pk, 'object_id': data.get('topic_id')})
@@ -190,7 +190,7 @@ def send_notification_for_topics(request_user_id, template, template_args, subje
 
 
 def notify_reported_topic_subscribers(subject, args):
-    subscribers = storage['reported_topics_subscribers'] or u''
+    subscribers = storage['reported_topics_subscribers'] or ''
     users = (User.objects.get(id=int(i)) for i in subscribers.split(',') if i)
     for user in users:
         if user.has_perm('forum.manage_reported_topic'):

@@ -95,7 +95,7 @@ from hashlib import sha1
 from werkzeug import cached_property
 from werkzeug.utils import secure_filename
 
-import locale
+from . import locale
 from inyoka import default_settings
 from inyoka.markup import nodes, templates, base as markup
 from inyoka.markup.parsertools import MultiMap
@@ -120,7 +120,7 @@ def is_privileged_wiki_page(name):
     return any(name.startswith(n) for n in settings.WIKI_PRIVILEGED_PAGES)
 
 
-to_page_by_slug_key = lambda name: u'wiki/page_by_slug/{}'.format(wiki_slugify(name))
+to_page_by_slug_key = lambda name: 'wiki/page_by_slug/{}'.format(wiki_slugify(name))
 
 
 class PageManager(models.Manager):
@@ -250,11 +250,11 @@ class PageManager(models.Manager):
         make_pagelist = lambda: self._get_object_list(**kwargs)
 
         if cached:
-            key = u'wiki/objects_pages'
+            key = 'wiki/objects_pages'
             if existing_only:
-                key += u'_existing'
+                key += '_existing'
             if exclude_privileged:
-                key += u'_without_privileged'
+                key += '_without_privileged'
             return cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
 
         return make_pagelist()
@@ -265,7 +265,7 @@ class PageManager(models.Manager):
         our parser a lot. Avoids many cache or db hits on big pages/texts.
         """
         make_sluglist = lambda: set([wiki_slugify(name) for name in self._get_object_list(exclude_attachments=True)])
-        key = u'wiki/objects_slugs'
+        key = 'wiki/objects_slugs'
         return cache.get_or_set(key, make_sluglist, settings.WIKI_CACHE_TIMEOUT)
 
     def get_attachment_list(self, parent=None, existing_only=True,
@@ -282,17 +282,17 @@ class PageManager(models.Manager):
         make_pagelist = lambda: self._get_object_list(**kwargs)
 
         if cached:
-            key = u'wiki/objects_attachments'
+            key = 'wiki/objects_attachments'
             if existing_only:
-                key += u'_existing'
+                key += '_existing'
             if exclude_privileged:
-                key += u'_without_privileged'
+                key += '_without_privileged'
             filtered = cache.get_or_set(key, make_pagelist, settings.WIKI_CACHE_TIMEOUT)
         else:
             filtered = make_pagelist()
 
         if parent is not None:
-            parent += u'/'
+            parent += '/'
             parents = set(parent.split('/'))
             filtered = (x for x in filtered if x.startswith(parent) and not
                         set(x.split('/')[:-1]) - parents)
@@ -380,7 +380,7 @@ class PageManager(models.Manager):
         """
         Returns the true page name for `name` after slugification.
         """
-        cache.get_or_set(u'wiki/page_by_slug_created', update_page_by_slug)
+        cache.get_or_set('wiki/page_by_slug_created', update_page_by_slug)
 
         return cache.get(to_page_by_slug_key(name))
 
@@ -397,7 +397,7 @@ class PageManager(models.Manager):
         """
         if exclude_privileged and is_privileged_wiki_page(name):
             raise Page.DoesNotExist()
-        cache_key = u'wiki/page/{}'.format(name.lower())
+        cache_key = 'wiki/page/{}'.format(name.lower())
         rev = cache.get(cache_key) if cached else None
         if rev is None:
             try:
@@ -555,10 +555,10 @@ class PageManager(models.Manager):
         page = Page(name=name)
         if change_date is None:
             change_date = datetime.utcnow()
-        if isinstance(text, basestring):
+        if isinstance(text, str):
             text, created = Text.objects.get_or_create(value=text)
         if note is None:
-            note = _(u'Created')
+            note = _('Created')
         if attachment is not None:
             att = Attachment()
             attachment_filename = secure_filename(attachment_filename)
@@ -581,18 +581,18 @@ class PageManager(models.Manager):
         """Unset the topic from all pages associated with it."""
         pages = Page.objects.filter(topic=topic)
         names = pages.values_list('name', flat=True)
-        keys = [u'wiki/page/{}'.format(n).lower() for n in names]
+        keys = ['wiki/page/{}'.format(n).lower() for n in names]
         if pages.update(topic=None) > 0:
             cache.delete_many(keys)
 
     def clean_cache(self, names=None):
         if names:
-            if isinstance(names, basestring):
+            if isinstance(names, str):
                 names = [names, ]
             lower_names = [name.lower() for name in names]
-            cache.delete_many([u'wiki/page/{}'.format(name) for name in lower_names])
+            cache.delete_many(['wiki/page/{}'.format(name) for name in lower_names])
             cache.delete_many([to_page_by_slug_key(name) for name in lower_names])
-        cache.delete_pattern(u'wiki/objects_*')
+        cache.delete_pattern('wiki/objects_*')
         update_page_by_slug.delay()
 
 
@@ -674,10 +674,10 @@ class Diff(object):
         self.old_rev = old
         self.new_rev = new
         self.udiff = generate_udiff(old.text.value, new.text.value,
-                                    u'%s (%s)' % (
+                                    '%s (%s)' % (
                                         page.name,
                                         format_datetime(old.change_date)
-                                    ), u'%s (%s)' % (
+                                    ), '%s (%s)' % (
                                         page.name,
                                         format_datetime(new.change_date)
                                     ))
@@ -844,7 +844,7 @@ class Page(models.Model):
     def trace(self):
         """The trace of pages to this page."""
         parts = get_pagetitle(self.name, full=True).split('/')
-        return [u'/'.join(parts[:idx + 1]) for idx in xrange(len(parts))]
+        return ['/'.join(parts[:idx + 1]) for idx in range(len(parts))]
 
     @deferred
     def backlinks(self):
@@ -965,7 +965,7 @@ class Page(models.Model):
         raise NotImplementedError('Please use edit(deleted=True) instead.')
 
     def edit(self, text=None, user=None, change_date=None,
-             note=u'', attachment=None, attachment_filename=None,
+             note='', attachment=None, attachment_filename=None,
              deleted=None, remote_addr=None, update_meta=True,
              clean_cache=True):
         """
@@ -1041,8 +1041,8 @@ class Page(models.Model):
         if deleted:
             text = ''
         if text is None:
-            text = rev and rev.text or u''
-        if isinstance(text, basestring):
+            text = rev and rev.text or ''
+        if isinstance(text, str):
             text, created = Text.objects.get_or_create(value=text)
         if attachment_filename is None:
             attachment = rev and rev.attachment or None
@@ -1118,8 +1118,8 @@ class Page(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = ugettext_lazy(u'Wiki page')
-        verbose_name_plural = ugettext_lazy(u'Wiki pages')
+        verbose_name = ugettext_lazy('Wiki page')
+        verbose_name_plural = ugettext_lazy('Wiki pages')
 
 
 class Attachment(models.Model):
@@ -1169,13 +1169,13 @@ class Attachment(models.Model):
         """
         url = escape(self.get_absolute_url())
         if self.mimetype.startswith('image/'):
-            return u'<a href="%s"><img class="attachment" src="%s" ' \
-                   u'alt="%s"></a>' % (url, url, url)
+            return '<a href="%s"><img class="attachment" src="%s" ' \
+                   'alt="%s"></a>' % (url, url, url)
         else:
-            code = u''
+            code = ''
             if self.mimetype.startswith('text/'):
                 code = highlight_code(self.contents, filename=self.filename)
-            return u'%s<a href="%s">%s</a>' % (code, url, _(u'Download attachment'))
+            return '%s<a href="%s">%s</a>' % (code, url, _('Download attachment'))
 
     def open(self, mode='rb'):
         """
@@ -1252,7 +1252,7 @@ class Revision(models.Model):
         The page title plus the revision date.  This is equivalent to
         `Page.full_title`.
         """
-        return _(u'%(rev)s (Revision %(date)s)' % {
+        return _('%(rev)s (Revision %(date)s)' % {
             'rev': self.page.title,
             'date': format_datetime(self.change_date)
         })
@@ -1281,7 +1281,7 @@ class Revision(models.Model):
         """Revert this revision and make it the current one."""
         # no relative date information, because it stays in the note forever
 
-        note = _(u'%(note)s [Revision from %(date)s restored by %(user)s]' %
+        note = _('%(note)s [Revision from %(date)s restored by %(user)s]' %
             {'note': note,
             'date': datetime_to_timezone(self.change_date).strftime(
                 '%d.%m.%Y %H:%M %Z'),
@@ -1300,9 +1300,9 @@ class Revision(models.Model):
     def save(self, *args, **kwargs):
         """Save the revision and invalidate the cache."""
         models.Model.save(self, *args, **kwargs)
-        cache.delete(u'wiki/page/{}'.format(self.page.name.lower()))
-        cache.delete(u'wiki/latest_revisions')
-        cache.delete(u'wiki/latest_revisions/{}'.format(self.page.name))
+        cache.delete('wiki/page/{}'.format(self.page.name.lower()))
+        cache.delete('wiki/latest_revisions')
+        cache.delete('wiki/latest_revisions/{}'.format(self.page.name))
 
     def __unicode__(self):
         return _('Revision %(id)d (%(title)s)') % {

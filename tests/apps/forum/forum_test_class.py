@@ -34,7 +34,7 @@ class ForumTestCase(TestCase):
             topic = self.topic
 
         for post_id in range(number):
-            post = Post(text=u'test%s' % post_id, author=self.user, topic=topic)
+            post = Post(text='test%s' % post_id, author=self.user, topic=topic)
             post.save()
             yield post
 

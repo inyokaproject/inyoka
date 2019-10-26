@@ -16,7 +16,7 @@ import re
 from django.conf import settings
 from django.contrib.auth import hashers
 
-_username_re = re.compile(ur'^[@_\-\.a-z0-9äöüß]{1,30}$', re.I | re.U)
+_username_re = re.compile(r'^[@_\-\.a-z0-9äöüß]{1,30}$', re.I | re.U)
 
 
 def is_valid_username(name):

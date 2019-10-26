@@ -41,7 +41,7 @@
 """
 import re
 from collections import OrderedDict
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.core.cache import cache
@@ -68,8 +68,8 @@ class StorageManager(object):
 
     def clear_cache(self):
         """Clear all active caches."""
-        for obj in self.storages.itervalues():
-            cache.delete(u'wiki/storage/{}'.format(obj.behavior_key))
+        for obj in self.storages.values():
+            cache.delete('wiki/storage/{}'.format(obj.behavior_key))
             try:
                 key = obj.behavior_key.lower().replace('-', '_')
                 delattr(local_cache, key)
@@ -88,7 +88,7 @@ class BaseStorage(object):
     behavior_key = None
 
     def __init__(self):
-        key = u'wiki/storage/{}'.format(self.behavior_key)
+        key = 'wiki/storage/{}'.format(self.behavior_key)
         local_key = self.behavior_key.lower().replace('-', '_')
 
         if not hasattr(local_cache, local_key):
@@ -121,7 +121,7 @@ class BaseStorage(object):
         m = _block_re.search(text)
         if m:
             return m.group(1).strip('\r\n')
-        return u''
+        return ''
 
     def extract_data(self, text):
         """
@@ -182,7 +182,7 @@ class AccessControlList(BaseStorage):
         from inyoka.wiki import acl
         privileges = acl.privilege_map
 
-        pages = [u'*']
+        pages = ['*']
         for line in text.splitlines():
             # comments and empty lines
             line = line.split('#', 1)[0].strip()

@@ -22,7 +22,7 @@ def send_new_suggestion_notifications(user, suggestion):
           'suggestion_url': suggestion.get_absolute_url()}
 
     queue_notifications.delay(user, 'new_suggestion',
-        ugettext(u'New article suggestion “%(suggestion)s”') % {
+        ugettext('New article suggestion “%(suggestion)s”') % {
             'suggestion': data.get('suggestion_title')},
         data,
         filter={'content_type_id': ctype(Suggestion).pk})
@@ -39,7 +39,7 @@ def send_comment_notifications(user, comment, article):
           'comment_url': comment.get_absolute_url()}
 
     queue_notifications.delay(user, 'new_comment',
-        ugettext(u'New comment on article “%(article)s”') % {
+        ugettext('New comment on article “%(article)s”') % {
             'article': data.get('article_subject')},
         data,
         filter={'content_type_id': ctype(Article).pk,

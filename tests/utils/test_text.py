@@ -22,31 +22,31 @@ class TestHumanNumber(TestCase):
 
     @override_settings(LANGUAGE_CODE='de-DE')
     def test_masculine(self):
-        self.assertEqual(human_number(1, 'masculine'), u'ein')
+        self.assertEqual(human_number(1, 'masculine'), 'ein')
 
     @override_settings(LANGUAGE_CODE='de-DE')
     def test_feminine(self):
-        self.assertEqual(human_number(1, 'feminine'), u'eine')
+        self.assertEqual(human_number(1, 'feminine'), 'eine')
 
     @override_settings(LANGUAGE_CODE='de-DE')
     def test_neuter(self):
-        self.assertEqual(human_number(1, 'neuter'), u'ein')
+        self.assertEqual(human_number(1, 'neuter'), 'ein')
 
     @override_settings(LANGUAGE_CODE='de-DE')
     def test_german_without_gender(self):
-        self.assertEqual(human_number(1), u'eins')
+        self.assertEqual(human_number(1), 'eins')
 
     def test_without_gender(self):
-        self.assertEqual(human_number(1), u'one')
+        self.assertEqual(human_number(1), 'one')
 
     def test_text_value(self):
-        self.assertEqual(human_number(10), u'ten')
+        self.assertEqual(human_number(10), 'ten')
 
     def test_text_eleven(self):
-        self.assertEqual(human_number(11), u'eleven')
+        self.assertEqual(human_number(11), 'eleven')
 
     def test_last_text(self):
-        self.assertEqual(human_number(12), u'twelve')
+        self.assertEqual(human_number(12), 'twelve')
 
     def test_regular_number(self):
         self.assertEqual(human_number(13), 13)
@@ -103,22 +103,22 @@ class TestWikiSlugify(TestCase):
         self.assertEqual(wiki_slugify('Test'), 'test')
 
     def test_unicode(self):
-        self.assertEqual(wiki_slugify(u'test'), 'test')
-        self.assertEqual(wiki_slugify(u'test🦄'), 'test')
-        self.assertEqual(wiki_slugify(u'test乸'), 'test')
-        self.assertEqual(wiki_slugify(u'test'), 'test')
+        self.assertEqual(wiki_slugify('test'), 'test')
+        self.assertEqual(wiki_slugify('test🦄'), 'test')
+        self.assertEqual(wiki_slugify('test乸'), 'test')
+        self.assertEqual(wiki_slugify('test'), 'test')
 
     def test_uppercase(self):
-        self.assertEqual(wiki_slugify(u'TEST'), 'test')
+        self.assertEqual(wiki_slugify('TEST'), 'test')
 
     def test_umlauts(self):
-        self.assertEqual(wiki_slugify(u'Exämple'), 'example')
+        self.assertEqual(wiki_slugify('Exämple'), 'example')
 
     def test_whitespaces(self):
-        self.assertEqual(wiki_slugify(u'foo bar'), 'foo_bar')
+        self.assertEqual(wiki_slugify('foo bar'), 'foo_bar')
 
     def test_accents(self):
-        self.assertEqual(wiki_slugify(u'Déjà Dup'), 'deja_dup')
+        self.assertEqual(wiki_slugify('Déjà Dup'), 'deja_dup')
 
     def test_disallowed(self):
-        self.assertEqual(wiki_slugify(u'Ex@mple'), 'exmple')
+        self.assertEqual(wiki_slugify('Ex@mple'), 'exmple')

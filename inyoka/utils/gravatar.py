@@ -10,7 +10,7 @@
 """
 import json
 from hashlib import md5
-from urllib import urlencode
+from urllib.parse import urlencode
 
 import requests
 
@@ -41,7 +41,7 @@ def get_profile(email):
     :return: A dictionary representing the profile or `None` if nothing found.
     """
     profile = None
-    url = u'%s%s.json' % (PROFILE_URL, email_hash(email))
+    url = '%s%s.json' % (PROFILE_URL, email_hash(email))
     response = requests.get(url)
     if response.status_code == 200:
         profile = json.loads(response.content)['entry'][0]

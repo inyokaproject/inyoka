@@ -41,80 +41,80 @@ class TestACLStorage(StorageTest):
         User.objects.register_user('hacker', 'hacker', 'hacker', False)
 
     def test_single_valid(self):
-        self._create_page(u'ACL',
-                          u'#X-Behave: Access-Control-List\n'
-                          u'{{{\n'
-                          u'[*]\n'
-                          u'hacker=none\n'
-                          u'admin=all\n'
-                          u'}}}')
+        self._create_page('ACL',
+                          '#X-Behave: Access-Control-List\n'
+                          '{{{\n'
+                          '[*]\n'
+                          'hacker=none\n'
+                          'admin=all\n'
+                          '}}}')
 
         acl = [(sub, pos, neg) for ptrn, sub, pos, neg in storage.acl]
-        self.assertEqual(sorted(acl), [(u'admin', 63, 0), (u'hacker', 0, 63)])
+        self.assertEqual(sorted(acl), [('admin', 63, 0), ('hacker', 0, 63)])
 
     def test_multiple_valid(self):
-        self._create_page(u'ACL',
-                          u'#X-Behave: Access-Control-List\n'
-                          u'{{{\n'
-                          u'[*]\n'
-                          u'admin=all\n'
-                          u'}}}')
+        self._create_page('ACL',
+                          '#X-Behave: Access-Control-List\n'
+                          '{{{\n'
+                          '[*]\n'
+                          'admin=all\n'
+                          '}}}')
 
-        self._create_page(u'ACL2',
-                          u'#X-Behave: Access-Control-List\n'
-                          u'{{{\n'
-                          u'[*]\n'
-                          u'hacker=none\n'
-                          u'}}}')
+        self._create_page('ACL2',
+                          '#X-Behave: Access-Control-List\n'
+                          '{{{\n'
+                          '[*]\n'
+                          'hacker=none\n'
+                          '}}}')
 
         acl = [(sub, pos, neg) for ptrn, sub, pos, neg in storage.acl]
-        self.assertEqual(sorted(acl), [(u'admin', 63, 0), (u'hacker', 0, 63)])
+        self.assertEqual(sorted(acl), [('admin', 63, 0), ('hacker', 0, 63)])
 
     def test_single_invalid(self):
-        self._create_page(u'ACL',
-                          u'#X-Behave: Access-Control-List\n'
-                          u'{{{\n'
-                          u'[*]\n'
-                          u'hacker=none\n'
-                          u'admin=all\n'
-                          u'}}}')
+        self._create_page('ACL',
+                          '#X-Behave: Access-Control-List\n'
+                          '{{{\n'
+                          '[*]\n'
+                          'hacker=none\n'
+                          'admin=all\n'
+                          '}}}')
 
-        self._create_page(u'ZZZ/ACL',
-                          u'#X-Behave: Access-Control-List\n'
-                          u'{{{\n'
-                          u'[*]\n'
-                          u'admin=none\n'
-                          u'hacker=all\n'
-                          u'}}}')
+        self._create_page('ZZZ/ACL',
+                          '#X-Behave: Access-Control-List\n'
+                          '{{{\n'
+                          '[*]\n'
+                          'admin=none\n'
+                          'hacker=all\n'
+                          '}}}')
 
         acl = [(sub, pos, neg) for ptrn, sub, pos, neg in storage.acl]
-        self.assertEqual(sorted(acl), [(u'admin', 0, 63), (u'admin', 63, 0),
-                                       (u'hacker', 0, 63), (u'hacker', 63, 0)])
+        self.assertEqual(sorted(acl), [('admin', 0, 63), ('admin', 63, 0),
+                                       ('hacker', 0, 63), ('hacker', 63, 0)])
 
 
 class TestInterwikiStorage(StorageTest):
 
     def test_single_valid(self):
-        self._create_page(u'IWM',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'github = https://github.com/\n'
-                          u'}}}')
+        self._create_page('IWM',
+                          '#X-Behave: Interwiki-Map\n'
+                          '{{{\n'
+                          'github = https://github.com/\n'
+                          '}}}')
         self.assertEqual(storage.interwiki.get('github'),
                          'https://github.com/')
 
     def test_multiple_valid(self):
-        self._create_page(u'IWM',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'github = https://github.com/\n'
-                          u'}}}')
+        self._create_page('IWM',
+                          '#X-Behave: Interwiki-Map\n'
+                          '{{{\n'
+                          'github = https://github.com/\n'
+                          '}}}')
 
-        self._create_page(u'IWM2',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'google = https://www.google.com/search?q=\n'
-                          u'}}}')
+        self._create_page('IWM2',
+                          '#X-Behave: Interwiki-Map\n'
+                          '{{{\n'
+                          'google = https://www.google.com/search?q=\n'
+                          '}}}')
 
         self.assertEqual(storage.interwiki.get('github'),
                          'https://github.com/')
@@ -122,17 +122,17 @@ class TestInterwikiStorage(StorageTest):
                          'https://www.google.com/search?q=')
 
     def test_single_invalid(self):
-        self._create_page(u'IWM',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'github = https://github.com/\n'
-                          u'}}}')
+        self._create_page('IWM',
+                          '#X-Behave: Interwiki-Map\n'
+                          '{{{\n'
+                          'github = https://github.com/\n'
+                          '}}}')
 
-        self._create_page(u'IWM/Evil',
-                          u'#X-Behave: Interwiki-Map\n'
-                          u'{{{\n'
-                          u'github = http://evil.com/'
-                          u'}}}')
+        self._create_page('IWM/Evil',
+                          '#X-Behave: Interwiki-Map\n'
+                          '{{{\n'
+                          'github = http://evil.com/'
+                          '}}}')
 
         self.assertEqual(storage.interwiki.get('github'),
                          'http://evil.com/')
