@@ -21,7 +21,7 @@ from django import forms
 from django.conf import settings
 from django.core import validators
 from django.forms import MultipleChoiceField
-from django.forms.widgets import Input
+from django.forms.widgets import Input, TextInput
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext as _
 
@@ -33,7 +33,6 @@ from inyoka.utils.jabber import may_be_valid_jabber
 from inyoka.utils.local import current_request
 from inyoka.utils.mail import is_blocked_host
 from inyoka.utils.sessions import SurgeProtectionMixin
-from inyoka.utils.storage import storage
 from inyoka.utils.text import slugify
 from inyoka.utils.urls import href
 
@@ -159,7 +158,7 @@ class DateTimeWidget(Input):
     input_type = 'text'
     value_type = 'datetime'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if attrs is None:
             attrs = {}
         attrs['valuetype'] = self.value_type
@@ -257,18 +256,15 @@ class HiddenCaptchaField(forms.Field):
                 _(u'You have entered an invisible field '
                   u'and were therefore classified as a bot.'))
 
-class ImageCaptchaWidget(Input):
-    input_type = 'text'
 
-    def render(self, name, value, attrs=None):
-        input_ = Input.render(self, name, u'', attrs)
-        img = '<img src="%s" class="captcha" alt="%s" />' % (
-              href('portal', __service__='portal.get_captcha',
-                   rnd=randrange(1, sys.maxsize)), _('CAPTCHA'))
-        text = '%s:' % _('Please type in the code from the graphic above')
-        input_tag = '%s <input type="submit" name="renew_captcha" value="%s" />' % (
-                    input_, _('Generate new code'))
-        return '<br />'.join([img, text, input_tag])
+class ImageCaptchaWidget(TextInput):
+    template_name = 'forms/widgets/image_captcha.html'
+
+    def get_context(self, name, value, attrs):
+        context = super(Input, self).get_context(name, value, attrs)
+        context['widget']['captcha_url'] = href('portal', __service__='portal.get_captcha',
+                                                rnd=randrange(1, sys.maxsize))
+        return context
 
 
 class ImageCaptchaField(forms.Field):

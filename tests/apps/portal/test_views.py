@@ -297,6 +297,11 @@ class TestAuthViews(TestCase):
         self.assertRedirects(response, href('portal'))
         self.assertContains(response, u'User registration is currently disabled.')
 
+    def test_register_contains_captcha(self):
+        """The captcha is rendered via an own `ImageCaptchaWidget`"""
+        response = self.client.get('/register/')
+        self.assertContains(response, '<img src="' + href('portal', __service__='portal.get_captcha'))
+
     @skip("Should be fixed with https://github.com/inyokaproject/inyoka/issues/971")
     def test_lost_password(self):
         """Test the “lost password” feature.
