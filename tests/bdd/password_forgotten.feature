@@ -7,14 +7,12 @@ Feature: Password forgotten
     Given I am on the "login" page
      Then I should see a link to "BASE_DOMAIN_NAME/lost_password/"
 
-  @skip # https://github.com/inyokaproject/inyoka/issues/971 needs to be fixed
   Scenario: The user opens the lost password page
     Given I am on the "lost_password" page
      Then I should see elements
       | item     |
       | id_email |
 
-  @skip # https://github.com/inyokaproject/inyoka/issues/971 needs to be fixed
   Scenario: The user requests an new password to his mail
     Given I am on the "lost_password" page
      When I fill out the form
