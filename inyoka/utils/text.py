@@ -122,7 +122,7 @@ def wiki_slugify(name):
     an internal representation of a wiki pagename, helpful if someone
     links a wiki pages with little differences like accents.
     """
-    if isinstance(name, str):
+    if isinstance(name, bytes):
         name = name.decode(settings.DEFAULT_CHARSET)
     name = name.lower()
     for rchar, replacement in _wiki_slug_replace_chars.items():
