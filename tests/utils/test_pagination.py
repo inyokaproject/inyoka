@@ -61,7 +61,7 @@ class TestUtilsPagination(unittest.TestCase):
         self.assertEqual(self.p.prev, False)
 
     def test_pagination_next(self):
-        self.assertEqual(self.p.__next__, 'http://localhost/2/')
+        self.assertEqual(self.p.next, 'http://localhost/2/')
 
     def test_pagination_list(self):
         expect = [
