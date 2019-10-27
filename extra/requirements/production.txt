@@ -27,7 +27,7 @@ Pygments==2.2.0
 python-dateutil==2.6.1
 python-magic==0.4.13
 pytz==2017.3
-pyzmq==16.0.3
+pyzmq==16.0.4
 raven==6.3.0
 redis==2.10.6 # django-redis requires redis>=2.10, but redis 3.x is incompatible with django-redis==4.4.4
 requests==2.20.0
