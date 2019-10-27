@@ -57,7 +57,7 @@ def increment_string(s):
 
 def slugify(string, convert_lowercase=True):
     """Slugify a string."""
-    if isinstance(string, str):
+    if isinstance(string, bytes):
         string = string.decode(settings.DEFAULT_CHARSET)
     result = []
     if convert_lowercase:
@@ -67,7 +67,7 @@ def slugify(string, convert_lowercase=True):
             for search, replace in _slugify_replacement_table.items():
                 word = word.replace(search, replace)
             word = normalize('NFKD', word)
-            result.append(word.encode('ascii', 'ignore'))
+            result.append(word)
     return '-'.join(result) or '-'
 
 
