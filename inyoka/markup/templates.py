@@ -876,7 +876,7 @@ class Mul(Bin):
 
 
 class Div(Bin):
-    operation = operator.div
+    operation = operator.truediv
 
 
 class Mod(Bin):
