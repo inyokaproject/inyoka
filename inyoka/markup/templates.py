@@ -29,7 +29,7 @@ import re
 import random
 import operator
 
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 from django.utils.translation import ugettext as _
 
 from inyoka.markup.base import escape, unescape_string
@@ -109,7 +109,7 @@ class Lexer(object):
         return TokenStream.from_tuple_iter(self._tokenize(code))
 
     def _tokenize(self, code):
-        code = '\n'.join(smart_unicode(obj) for obj in code.splitlines())
+        code = '\n'.join(smart_text(obj) for obj in code.splitlines())
         pos = 0
         end = len(code)
         stack = ['root']
