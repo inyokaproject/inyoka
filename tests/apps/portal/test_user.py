@@ -46,7 +46,7 @@ class TestUserModel(TestCase):
 
     def test_user_is_already_reactivated(self):
         with self.assertRaisesMessage(ValidationError,
-                                      'The account \\u201ctesting\\u201d was already reactivated.'):
+                                      'The account “testing” was already reactivated.'):
             reactivate_user(self.user.id, 'test@example.com', self.user.status)
 
     def test_user_reactivate_after_ban_exceeded(self):
