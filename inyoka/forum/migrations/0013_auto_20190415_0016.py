@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='attachment',
             name='file',
-            field=models.FileField(max_length=250, upload_to=b'forum/attachments/temp'),
+            field=models.FileField(max_length=250, upload_to='forum/attachments/temp'),
         ),
     ]

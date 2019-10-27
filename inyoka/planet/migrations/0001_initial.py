@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(null=True, verbose_name='Description', blank=True)),
                 ('blog_url', models.URLField(verbose_name='URL of the blog')),
                 ('feed_url', models.URLField(verbose_name='URL of the feed')),
-                ('icon', models.ImageField(upload_to=b'planet/icons', verbose_name='Icon', blank=True)),
+                ('icon', models.ImageField(upload_to='planet/icons', verbose_name='Icon', blank=True)),
                 ('last_sync', models.DateTimeField(null=True, blank=True)),
                 ('active', models.BooleanField(default=True, verbose_name='Index the blog')),
             ],

@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Attachment',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('file', models.FileField(upload_to=b'forum/attachments/temp')),
+                ('file', models.FileField(upload_to='forum/attachments/temp')),
                 ('name', models.CharField(max_length=255)),
                 ('comment', models.TextField(null=True, blank=True)),
                 ('mimetype', models.CharField(max_length=100, null=True)),
@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                 ('pub_date', models.DateTimeField(default=datetime.datetime.utcnow, db_index=True)),
                 ('hidden', models.BooleanField(default=False)),
                 ('text', inyoka.utils.database.InyokaMarkupField(simplify=False, force_existing=False)),
-                ('rendered_text_old', models.TextField(default=b'', null=True, db_column=b'rendered_text', blank=True)),
+                ('rendered_text_old', models.TextField(default='', null=True, db_column='rendered_text', blank=True)),
                 ('has_revision', models.BooleanField(default=False)),
                 ('has_attachments', models.BooleanField(default=False)),
                 ('is_plaintext', models.BooleanField(default=False)),
@@ -151,7 +151,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('title', models.CharField(max_length=120)),
                 ('text', inyoka.utils.database.InyokaMarkupField(simplify=False, force_existing=False)),
-                ('rendered_text_old', models.TextField(db_column=b'rendered_text')),
+                ('rendered_text_old', models.TextField(db_column='rendered_text')),
             ],
             options={
             },

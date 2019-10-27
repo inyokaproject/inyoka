@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 ('text', inyoka.utils.database.InyokaMarkupField(simplify=False, force_existing=False)),
                 ('pub_date', models.DateTimeField()),
                 ('deleted', models.BooleanField(default=False)),
-                ('rendered_text_old', models.TextField(db_column=b'rendered_text')),
+                ('rendered_text_old', models.TextField(db_column='rendered_text')),
             ],
             options={
             },
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                 ('pub_date', models.DateTimeField()),
                 ('deleted', models.BooleanField(default=False)),
                 ('solved', models.BooleanField(default=False)),
-                ('rendered_text_old', models.TextField(db_column=b'rendered_text')),
+                ('rendered_text_old', models.TextField(db_column='rendered_text')),
             ],
             options={
             },
@@ -82,7 +82,7 @@ class Migration(migrations.Migration):
             name='Suggestion',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('pub_date', models.DateTimeField(default=datetime.datetime.utcnow, verbose_name=b'Datum')),
+                ('pub_date', models.DateTimeField(default=datetime.datetime.utcnow, verbose_name='Datum')),
                 ('title', models.CharField(max_length=100, verbose_name='Title')),
                 ('text', inyoka.utils.database.InyokaMarkupField(simplify=False, verbose_name='Text', force_existing=False)),
                 ('intro', inyoka.utils.database.InyokaMarkupField(simplify=False, verbose_name='Introduction', force_existing=False)),

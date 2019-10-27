@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('yim', models.CharField(max_length=200, verbose_name='Yahoo Messenger', blank=True)),
                 ('skype', models.CharField(max_length=200, verbose_name='Skype', blank=True)),
                 ('wengophone', models.CharField(max_length=200, verbose_name='WengoPhone', blank=True)),
-                ('sip', models.CharField(max_length=200, verbose_name=b'SIP', blank=True)),
+                ('sip', models.CharField(max_length=200, verbose_name='SIP', blank=True)),
                 ('signature', inyoka.utils.database.InyokaMarkupField(simplify=False, verbose_name='Signature', force_existing=False, blank=True)),
                 ('coordinates_long', models.FloatField(null=True, verbose_name='Coordinates (longitude)', blank=True)),
                 ('coordinates_lat', models.FloatField(null=True, verbose_name='Coordinates (latitude)', blank=True)),
@@ -89,10 +89,10 @@ class Migration(migrations.Migration):
             name='Group',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(db_index=True, unique=True, max_length=80, verbose_name='Group name', error_messages={b'unique': 'This group name is already taken. Please choose another one.'})),
+                ('name', models.CharField(db_index=True, unique=True, max_length=80, verbose_name='Group name', error_messages={'unique': 'This group name is already taken. Please choose another one.'})),
                 ('is_public', models.BooleanField(default=False, help_text='Will be shown in the group overview and the user profile', verbose_name='Public profile')),
                 ('permissions', models.IntegerField(default=0, verbose_name='Privileges')),
-                ('icon', models.ImageField(upload_to=b'portal/team_icons', null=True, verbose_name='Team icon', blank=True)),
+                ('icon', models.ImageField(upload_to='portal/team_icons', null=True, verbose_name='Team icon', blank=True)),
             ],
             options={
                 'verbose_name': 'Usergroup',
@@ -119,7 +119,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('read', models.BooleanField(default=False, verbose_name='Read')),
-                ('folder', models.SmallIntegerField(null=True, verbose_name='Folder', choices=[(0, b'sent'), (1, b'inbox'), (2, b'trash'), (3, b'archive')])),
+                ('folder', models.SmallIntegerField(null=True, verbose_name='Folder', choices=[(0, 'sent'), (1, 'inbox'), (2, 'trash'), (3, 'archive')])),
                 ('message', models.ForeignKey(to='portal.PrivateMessage')),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
@@ -149,7 +149,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('identifier', models.CharField(unique=True, max_length=100, verbose_name='Identifier', db_index=True)),
-                ('file', models.FileField(upload_to=b'portal/files', verbose_name='File')),
+                ('file', models.FileField(upload_to='portal/files', verbose_name='File')),
                 ('is_ikhaya_icon', models.BooleanField(default=False, help_text='Choose this if the file should appear as a article or category icon possibility', verbose_name='Is Ikhaya icon')),
             ],
             options={
@@ -201,7 +201,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('content', inyoka.utils.database.InyokaMarkupField(simplify=False, force_existing=False)),
-                ('content_rendered_old', models.TextField(db_column=b'content_rendered')),
+                ('content_rendered_old', models.TextField(db_column='content_rendered')),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -215,7 +215,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='_primary_group',
-            field=models.ForeignKey(related_name='primary_users_set', db_column=b'primary_group_id', blank=True, to='portal.Group', null=True),
+            field=models.ForeignKey(related_name='primary_users_set', db_column='primary_group_id', blank=True, to='portal.Group', null=True),
             preserve_default=True,
         ),
         migrations.AddField(
