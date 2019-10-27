@@ -127,7 +127,7 @@ def wiki_slugify(name):
     name = name.lower()
     for rchar, replacement in _wiki_slug_replace_chars.items():
         name = name.replace(rchar, replacement)
-    name = str(normalize('NFD', name).encode('ascii', 'ignore'))
+    name = str(normalize('NFD', name))
     existing_chars = set(name)
     disallowed_chars = existing_chars - _wiki_slug_allowed_chars
     for char in disallowed_chars:
