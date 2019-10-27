@@ -222,7 +222,7 @@ class Command(BaseCommand):
                 abs_path = path.join(FOLDER, 'files', rel_path)
                 if not path.isfile(abs_path):
                     with open(abs_path, 'w+') as fobj:
-                        fobj.write(storage['markup_styles'].encode('utf-8'))
+                        fobj.write(storage['markup_styles'])
                 tag['href'] = '%s%s' % (pre, rel_path)
                 return
 
