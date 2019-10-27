@@ -165,7 +165,7 @@ class Category(models.Model):
     icon = models.ForeignKey(StaticFile, blank=True, null=True,
                              verbose_name=ugettext_lazy('Icon'), on_delete=models.SET_NULL)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self, action='show'):
@@ -289,7 +289,7 @@ class Article(models.Model, LockableObject):
 
         return href(*links[action if action in list(links.keys()) else 'show'], **query)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.subject
 
     def save(self, *args, **kwargs):
@@ -438,7 +438,7 @@ class Event(models.Model):
                                       blank=True, null=True)
     visible = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self, action='show'):

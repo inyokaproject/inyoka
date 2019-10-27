@@ -696,7 +696,7 @@ class Diff(object):
         """
         return render_template('wiki/_diff.html', {'diff': self})
 
-    def __unicode__(self):
+    def __str__(self):
         return self.render()
 
     def __repr__(self):
@@ -1111,7 +1111,7 @@ class Page(models.Model):
         else:
             return href('wiki', self.name, **query)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def __repr__(self):
@@ -1309,7 +1309,7 @@ class Revision(models.Model):
         cache.delete('wiki/latest_revisions')
         cache.delete('wiki/latest_revisions/{}'.format(self.page.name))
 
-    def __unicode__(self):
+    def __str__(self):
         return _('Revision %(id)d (%(title)s)') % {
             'id': self.id, 'title': self.page.title
         }

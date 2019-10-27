@@ -316,7 +316,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
         cache.delete_many(['portal/user/%s' % self.id,
                            'user_permissions/%s' % self.id])
 
-    def __unicode__(self):
+    def __str__(self):
         return self.username
 
     @transaction.atomic

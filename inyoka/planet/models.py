@@ -51,7 +51,7 @@ class Blog(models.Model):
         self.icon.delete(save=False)
         super(Blog, self).delete()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self, action='show'):
@@ -87,7 +87,7 @@ class Entry(models.Model):
     hidden_by = models.ForeignKey(User, blank=True, null=True,
                                   related_name='hidden_planet_posts')
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s / %s' % (
             self.blog,
             self.title

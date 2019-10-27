@@ -236,7 +236,7 @@ class StaticPage(models.Model):
             self.title,
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def get_absolute_url(self, action='show'):
@@ -261,7 +261,7 @@ class StaticFile(models.Model):
         verbose_name = ugettext_lazy('Static file')
         verbose_name_plural = ugettext_lazy('Static files')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.identifier
 
     def delete(self):

@@ -467,7 +467,7 @@ class Forum(models.Model):
         else:
             return self.support_group.user_set.all()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def __repr__(self):
@@ -721,7 +721,7 @@ class Topic(models.Model):
             query=self.posts.all(),
             use_task=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def __repr__(self):
@@ -1133,7 +1133,7 @@ class Post(models.Model, LockableObject):
 
             topic.save(update_fields=['reported', 'reporter'])
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s - %s' % (
             self.topic.title,
             self.text[0:20]

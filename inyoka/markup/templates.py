@@ -692,7 +692,7 @@ class Value(Expr):
                 pass
         return NoneValue
 
-    def __unicode__(self):
+    def __str__(self):
         if self.value is None:
             return ''
         elif self.value in (True, False):
