@@ -23,7 +23,7 @@ class TestMacros(unittest.TestCase):
             format='html',
         )
 
-        result = '<a href="invalid-url" class="crosslink"><img loading="lazy" class="image-default" alt="Bildname" /></a>'
+        result = '<a href="invalid-url" class="crosslink"><img alt="Bildname" loading="lazy" class="image-default" /></a>'
         self.assertIn(result, html)
 
     def test_toc_indention_ticket_688(self):
