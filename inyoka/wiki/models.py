@@ -88,14 +88,14 @@ from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, Max
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, to_locale, get_language
 from django.utils.translation import ugettext_lazy
 from functools import partial
 from hashlib import sha1
 from werkzeug import cached_property
 from werkzeug.utils import secure_filename
 
-from . import locale
+import locale
 from inyoka import default_settings
 from inyoka.markup import nodes, templates, base as markup
 from inyoka.markup.parsertools import MultiMap
@@ -186,12 +186,17 @@ class PageManager(models.Manager):
         if size_limit is not None:
             tags = tags[:size_limit]
 
-        # set locale, so that the list is being sorted in respect to it
-        locale.setlocale(locale.LC_ALL, default_settings.LC_ALL)
+        try:
+            # user's locale depending on language send by browser
+            locale.setlocale(locale.LC_ALL, to_locale(get_language()))
+        except locale.Error:
+            # use the system's default locale
+            locale.setlocale(locale.LC_ALL, '')
+
         return [{'name': tag[0],
-            'count': tag[1],
-            'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
-            for tag in sorted(tags, cmp=locale.strcoll, key=lambda x: x[0])]
+                 'count': tag[1],
+                 'size': 1 + tag[1] // (1 + tags[0][1] // 10)}
+                for tag in sorted(tags, key=lambda x: locale.strxfrm(x[0]))]
 
     def get_randompages(self, size=10):
         """
