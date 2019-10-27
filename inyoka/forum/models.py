@@ -27,7 +27,7 @@ from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.db import models, transaction
 from django.db.models import F, Count, Max
-from django.utils.encoding import DjangoUnicodeDecodeError, force_unicode
+from django.utils.encoding import DjangoUnicodeDecodeError, force_text
 from django.utils.html import escape, format_html
 from django.utils.translation import ugettext as _
 from django.utils.translation import pgettext, ugettext_lazy
@@ -692,8 +692,8 @@ class Topic(models.Model):
         if self.ubuntu_distro:
             out.append(UBUNTU_DISTROS[self.ubuntu_distro])
         if self.ubuntu_version and self.ubuntu_version != 'none':
-            out.append(force_unicode(self.get_ubuntu_version()))
-        return ' '.join(force_unicode(x) for x in out)
+            out.append(force_text(self.get_ubuntu_version()))
+        return ' '.join(force_text(x) for x in out)
 
     def get_read_status(self, user):
         if user.is_anonymous:
@@ -1327,7 +1327,7 @@ class Attachment(models.Model):
             contents = self.contents
             if contents is not None:
                 try:
-                    highlighted = highlight_code(force_unicode(contents), mimetype=self.mimetype)
+                    highlighted = highlight_code(force_text(contents), mimetype=self.mimetype)
                     return format_html('<div class="code">{}</div>', highlighted)
                 except DjangoUnicodeDecodeError:
                     pass

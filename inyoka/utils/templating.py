@@ -25,7 +25,7 @@ from django.template.base import Context as DjangoContext
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loaders.base import Loader
 from django.utils import six, translation
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.functional import Promise
 from django.utils.timesince import timesince
 from django_mobile import get_flavour
@@ -132,7 +132,7 @@ def populate_context_defaults(context, flash=False):
             CURRENT_URL=request.build_absolute_uri(),
             USER=user,
             MOBILE=get_flavour() == 'mobile',
-            _csrf_token=force_unicode(csrf(request)['csrf_token']),
+            _csrf_token=force_text(csrf(request)['csrf_token']),
             special_day_css=check_special_day(),
             LANGUAGE_CODE=settings.LANGUAGE_CODE
         )
@@ -210,7 +210,7 @@ class LazyJSONEncoder(json.JSONEncoder):
     """
     def default(self, obj):
         if isinstance(obj, Promise):
-            return force_unicode(obj)
+            return force_text(obj)
         return super(LazyJSONEncoder, self).default(obj)
 
 

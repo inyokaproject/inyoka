@@ -12,7 +12,7 @@
 from django.conf import settings
 from django.http import Http404, HttpResponse
 from django.utils.cache import patch_response_headers
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from werkzeug.contrib.atom import AtomFeed
 
 MODES = frozenset(('full', 'short', 'title'))
@@ -53,5 +53,5 @@ class AtomFeed(AtomFeed):
     def to_string(self):
         ret = []
         for item in self.generate():
-            ret.append(force_unicode(item))
+            ret.append(force_text(item))
         return ''.join(ret)

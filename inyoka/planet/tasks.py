@@ -23,7 +23,7 @@ from time import time
 import feedparser
 from celery import shared_task
 from dateutil.parser import parse as dateutil_parse
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.html import escape
 
 # Secure XML libraries till a python solution exists.
@@ -161,7 +161,7 @@ def sync():
                 except AttributeError:
                     max_length = None
                 if isinstance(locals()[n], str):
-                    setattr(entry, n, force_unicode(locals()[n][:max_length]).encode('utf-8'))
+                    setattr(entry, n, force_text(locals()[n][:max_length]).encode('utf-8'))
                 else:
                     setattr(entry, n, locals()[n])
             try:

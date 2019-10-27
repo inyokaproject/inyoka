@@ -10,7 +10,7 @@
 """
 from itertools import chain
 
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy
 
 from django_filters import FilterSet, ChoiceFilter
@@ -31,7 +31,7 @@ SUPPORTED_SUBSCRIPTION_TYPES = {
 class LinkWidget(BaseLinkWidget):
 
     def render_options(self, choices, selected_choices, name):
-        selected_choices = set(force_unicode(v) for v in selected_choices)
+        selected_choices = set(force_text(v) for v in selected_choices)
         output = []
         for option_value, option_label in chain(self.choices, choices):
             if option_label:
@@ -39,7 +39,7 @@ class LinkWidget(BaseLinkWidget):
         return '\n'.join(output)
 
     def render_option(self, name, selected_choices, option_value, option_label):
-        option_value = force_unicode(option_value)
+        option_value = force_text(option_value)
         if option_label == '':
             option_label = ugettext_lazy('All types')
         data = self.data.copy()
@@ -52,7 +52,7 @@ class LinkWidget(BaseLinkWidget):
         return self.option_string() % {
             'attrs': selected and ' class="selected"' or '',
             'query_string': url,
-            'label': force_unicode(option_label)
+            'label': force_text(option_label)
         }
 
     def option_string(self):
