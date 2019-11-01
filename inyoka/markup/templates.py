@@ -703,9 +703,6 @@ class Value(Expr):
             return ', '.join('%s: %s' % x for x in self.value.items())
         return str(self.value)
 
-    def __str__(self):
-        return str(str(self))
-
     def __hash__(self):
         if isinstance(self.value, (list, tuple)):
             return hash(tuple(self.value))
