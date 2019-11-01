@@ -28,7 +28,7 @@ r"""
 import re
 import random
 import operator
-from functools import total_ordering
+from functools import total_ordering, partial
 
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext as _
@@ -422,7 +422,7 @@ class Parser(object):
 
     def subparse(self, test, drop_needle=True):
         result = []
-        next = self.stream.__next__
+        next_token = partial(next, self.stream)
 
         def assemble_compound():
             if len(result) == 1:
@@ -433,10 +433,10 @@ class Parser(object):
             while not self.stream.eof:
                 token_type = self.stream.current.type
                 if token_type == 'tag_begin':
-                    next()
+                    next_token()
                     if test is not None and test():
                         if drop_needle:
-                            next()
+                            next_token()
                         return assemble_compound()
                     if self.stream.current.type == 'raw':
                         handler = self.handlers.get(self.stream.current.value)
@@ -449,10 +449,10 @@ class Parser(object):
                     if not self.stream.test('tag_end'):
                         raise TemplateSyntaxError(
                             _('Too many arguments for this value output'))
-                    next(self.stream)
+                    next_token(self.stream)
                 elif token_type == 'raw':
                     result.append(Data(self.stream.current.value))
-                    next()
+                    next_token()
                 else:
                     assert 0, 'arrrr. the lexer screwed us'
         except TemplateSyntaxError as exc:
