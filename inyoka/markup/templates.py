@@ -28,6 +28,7 @@ r"""
 import re
 import random
 import operator
+from functools import total_ordering
 
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext as _
@@ -643,6 +644,7 @@ class Expr(Node):
         yield str(self.evaluate(context))
 
 
+@total_ordering
 class Value(Expr):
 
     def __init__(self, value):
@@ -731,8 +733,8 @@ class Value(Expr):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def __cmp__(self, other):
-        return cmp(float(self), float(other))
+    def __lt__(self, other):
+        return float(self) < float(other)
 
     def __add__(self, other):
         if isinstance(self.value, (tuple, list)) and \
@@ -764,7 +766,7 @@ class Value(Expr):
             return Value(self.value * other.value)
         return Value(None)
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         try:
             if isinstance(self.value, (int, float)) and \
                isinstance(other.value, (int, float)):
