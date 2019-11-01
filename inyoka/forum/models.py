@@ -1399,7 +1399,7 @@ class ReadStatus(object):
     """
 
     def __init__(self, serialized_data):
-        self.data = pickle.loads(str(serialized_data)) if serialized_data else {}
+        self.data = pickle.loads(serialized_data.encode()) if serialized_data else {}
 
     def __call__(self, item):
         """

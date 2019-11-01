@@ -650,8 +650,8 @@ class UserCPSubscriptions(generic.FilterMixin, generic.OrderedListView):
     def get_queryset(self):
         qs = self.request.user.subscription_set.all()
         qs = qs.filter(ubuntu_version__isnull=True)
-        for filter in self.filtersets:
-            instance = list(filter(self.request.GET or None, queryset=qs))
+        for f in self.filtersets:
+            instance = f(self.request.GET or None, queryset=qs)
             qs = instance.qs
         return qs
 

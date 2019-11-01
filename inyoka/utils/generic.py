@@ -77,14 +77,14 @@ class FilterMixin(object):
 
     def render_to_response(self, context, **kwargs):
         req = self.request
-        filters = [list(filter(req.GET or None)) for filter in self.filtersets]
+        filters = [f(req.GET or None) for f in self.filtersets]
         context['filtersets'] = filters
         return TemplateResponseMixin.render_to_response(self, context, **kwargs)
 
     def get_queryset(self):
         qs = super(FilterMixin, self).get_queryset()
-        for filter in self.filtersets:
-            instance = list(filter(self.request.GET or None, queryset=qs))
+        for f in self.filtersets:
+            instance = f(self.request.GET or None, queryset=qs)
             qs = instance.qs
         return qs
 
