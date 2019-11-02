@@ -1404,7 +1404,7 @@ class ReadStatus(object):
     def __call__(self, item):
         """
         Determine the read status for a forum or topic. If the topic
-        was allready read by the user, True is returned.
+        was already read by the user, True is returned.
         """
         forum_id, post_id = None, None
         is_forum = isinstance(item, Forum)
@@ -1415,7 +1415,7 @@ class ReadStatus(object):
         else:
             raise ValueError('Can\'t determine read status of an unknown type')
         row = self.data.get(forum_id, (None, []))
-        if row[0] >= post_id:
+        if row[0] and row[0] >= post_id:
             return True
         elif is_forum:
             return False
