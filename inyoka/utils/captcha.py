@@ -268,11 +268,11 @@ class GridBackground(Layer):
 
     def render(self, image):
         draw = ImageDraw.Draw(image)
-        for i in range(image.size[0] / self.size + 1):
+        for i in range(int(image.size[0] / self.size + 1)):
             draw.line((i * self.size + self.offset[0], 0,
                        i * self.size + self.offset[0], image.size[1]),
                       fill=self.color)
-        for i in range(image.size[0] / self.size + 1):
+        for i in range(int(image.size[0] / self.size + 1)):
             draw.line(
                 (0, i * self.size + self.offset[1],
                  image.size[0], i * self.size + self.offset[1]),
@@ -349,8 +349,8 @@ class WarpBase(Layer):
 
     def render(self, image):
         r = self.resolution
-        x_points = image.size[0] / r + 2
-        y_points = image.size[1] / r + 2
+        x_points = int(image.size[0] / r + 2)
+        y_points = int(image.size[1] / r + 2)
         f = self.get_transform(image)
 
         # Create a list of arrays with transformed points

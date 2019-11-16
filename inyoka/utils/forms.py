@@ -277,12 +277,9 @@ class ImageCaptchaField(forms.Field):
         value = super(ImageCaptchaField, self).clean(value)
         solution = current_request.session.get('captcha_solution')
         if value:
-            h = md5(settings.SECRET_KEY)
-            if isinstance(value, str):
-                # md5 doesn't like to have non-ascii containing unicode strings
-                value = value.encode('utf-8')
+            h = md5(settings.SECRET_KEY.encode())
             if value:
-                h.update(value)
+                h.update(value.encode())
             if h.hexdigest() == solution:
                 return True
         raise forms.ValidationError(_('The entered CAPTCHA was incorrect.'))
