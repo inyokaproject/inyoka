@@ -26,8 +26,7 @@ class TestUtilsUser(TestCase):
         # user.id and MySQL does not handle primary keys well during
         # unittests runs so that we get the wrong id here everytime.
         # This way we cannot use a pregenerated key :(
-        hash = sha1(('%d%s%s%s' % (self.user.id, self.user.username,
-                                   settings.SECRET_KEY, self.user.email)))
-        hash = hash.digest()[:9].encode('base64') \
-                   .strip('\n=').replace('/', '_').replace('+', '-')
+        to_hash = '%d%s%s%s' % (self.user.id, self.user.username, settings.SECRET_KEY, self.user.email)
+        hash = sha1(to_hash.encode()).hexdigest()  # sha1 needs bytes
+
         self.assertEqual(gen_activation_key(self.user), hash)

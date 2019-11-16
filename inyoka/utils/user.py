@@ -39,8 +39,7 @@ def gen_activation_key(user):
         user.id, user.username,
         settings.SECRET_KEY,
         user.email,
-    )).encode('utf8')).digest()[:9].encode('base64') \
-        .strip('\n=').replace('/', '_').replace('+', '-')
+    )).encode('utf8')).hexdigest()
 
 
 def check_activation_key(user, key):
