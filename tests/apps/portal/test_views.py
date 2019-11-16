@@ -124,16 +124,15 @@ class TestAuthViews(TestCase):
             self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
             self.assertInHTML('<div class="message success">%s</div>'
                               % _('You have successfully logged in.'),
-                              response.content, count=1)
+                              response.content.decode(), count=1)
 
-            self.assertTrue(response.client.session
-                            .get_expire_at_browser_close())
+            self.assertTrue(response.client.session.get_expire_at_browser_close())
 
             response = self.client.get('/login/', follow=True)
             self.assertRedirects(response, 'http://' + settings.BASE_DOMAIN_NAME + '/')
             self.assertInHTML('<div class="message error">%s</div>'
                               % _('You are already logged in.'),
-                              response.content, count=1)
+                              response.content.decode(), count=1)
 
     def test_login_with_permanent_flag(self):
         """Test the “stay logged in” function."""
