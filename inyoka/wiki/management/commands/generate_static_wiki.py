@@ -152,7 +152,7 @@ class Command(BaseCommand):
 
     def _write_file(self, pth, content):
         with open(pth, 'w+') as fobj:
-            fobj.write(content.encode('utf-8'))
+            fobj.write(content)
 
     def save_file(self, url, is_main_page=False, is_static=False):
         if not INCLUDE_IMAGES and not is_static and not is_main_page:
@@ -490,7 +490,7 @@ class Command(BaseCommand):
                                    (m.groups()[0], m.groups()[1]), content)
                 self._write_file(path.join(FOLDER, 'index.html'), content)
 
-        if len(todo) is 0:
+        if len(todo) == 0:
             percents = []
         else:
             percents = list(percentize(len(todo)))
