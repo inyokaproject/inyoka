@@ -23,7 +23,8 @@ DEFAULTS = ('404', 'mm', 'identicon', 'monsterid', 'wavatar', 'retro')
 
 
 def email_hash(string):
-    return md5(string.strip().lower()).hexdigest()
+    string = string.strip().lower().encode()
+    return md5(string).hexdigest()
 
 
 def get_gravatar(email, rating='g', size=80, default='mm'):
