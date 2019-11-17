@@ -298,7 +298,7 @@ class TestLexer(unittest.TestCase):
         expect('text', ']Digital Jockeys[/url]')
 
     def test_basic_unicode_handling(self):
-        expect = lexer.tokenize('some @¹“”¹unicod€ stuff'.encode('utf-8')).expect
+        expect = lexer.tokenize('some @¹“”¹unicod€ stuff').expect
         expect('text', 'some @¹“”¹unicod€ stuff')
 
     def test_escaped_code(self):
