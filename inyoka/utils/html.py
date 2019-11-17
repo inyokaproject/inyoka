@@ -140,7 +140,7 @@ def cleanup_html(string, sanitize=True, fragment=True, stream=False,
     rv = serializer.serialize(walker, 'utf-8')
     if stream:
         return rv
-    return force_text(''.join(rv))
+    return force_text(b''.join(rv))
 
 
 class CleanupFilter(object):
