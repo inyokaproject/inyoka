@@ -1265,10 +1265,10 @@ class Attachment(models.Model):
         """
         Returns the path to the thumbnail file.
         """
-        thumbnail_path = self.file.name.encode('utf-8')
+        thumbnail_path = self.file.name
         img_path = path.join(settings.MEDIA_ROOT,
                              'forum/thumbnails/%s-%s' % (self.id, thumbnail_path.split('/')[-1]))
-        return get_thumbnail(self.file.path.encode('utf-8'), img_path, *settings.FORUM_THUMBNAIL_SIZE)
+        return get_thumbnail(self.file.path, img_path, *settings.FORUM_THUMBNAIL_SIZE)
 
     @property
     def html_representation(self):
