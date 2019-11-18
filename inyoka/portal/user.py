@@ -296,7 +296,7 @@ class User(AbstractBaseUser, PermissionsMixin, GuardianUserMixin):
     settings = JSONField(ugettext_lazy('Settings'), default={})
 
     # forum attribute
-    forum_read_status = models.TextField(ugettext_lazy('Read posts'), blank=True)
+    forum_read_status = models.BinaryField(ugettext_lazy('Read posts'), blank=True)
 
     # member title
     member_title = models.CharField(ugettext_lazy('Team affiliation / Member title'),
