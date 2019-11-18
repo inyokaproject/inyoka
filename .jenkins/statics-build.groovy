@@ -30,7 +30,7 @@ pipeline {
     stage('Build Virtuelenv') {
       steps {
         sh '''
-        virtualenv --no-download venv
+        virtualenv --python=python3 --no-download venv
         . venv/bin/activate
         pip install --upgrade pip --no-cache-dir
         pip install -r inyoka/extra/requirements/production.txt

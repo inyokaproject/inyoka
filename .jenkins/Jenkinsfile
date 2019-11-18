@@ -57,7 +57,7 @@ pipeline {
             sh """
             if [ ! -d ${venv_path} ]
             then
-              virtualenv ${venv_path}
+              virtualenv --python=python3 ${venv_path}
               ${activate_venv}
               pip install -r extra/requirements/development.txt
             fi
