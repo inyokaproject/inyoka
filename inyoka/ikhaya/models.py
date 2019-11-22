@@ -476,13 +476,13 @@ class Event(models.Model):
     @property
     def natural_coordinates(self):
         if self.location_lat and self.location_long:
-            lat = (self.location_lat > 0 and
+            latitude = (self.location_lat > 0 and
                    '%g° N' % self.location_lat or
                    '%g° S' % -self.location_lat)
-            long = (self.location_long > 0 and
+            longitude = (self.location_long > 0 and
                     '%g° O' % self.location_long or
                     '%g° W' % -self.location_long)
-            return '%s, %s' % (lat, int)
+            return '%s, %s' % (latitude, longitude)
         else:
             return ''
 
@@ -492,14 +492,14 @@ class Event(models.Model):
 
     @property
     def coordinates_url(self):
-        lat = (self.location_lat > 0 and
+        latitude = (self.location_lat > 0 and
                '%g_N' % self.location_lat or
                '%g_S' % -self.location_lat)
-        long = (self.location_long > 0 and
+        llongitude = (self.location_long > 0 and
                 '%g_E' % self.location_long or
                 '%g_W' % -self.location_long)
         return 'http://tools.wikimedia.de/~magnus/geo/geohack.php?language' \
-               '=de&params=%s_%s' % (lat, int)
+               '=de&params=%s_%s' % (latitude, longitude)
 
     def _construct_datetimes(self, day, time):
         if not day:
