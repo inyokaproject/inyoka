@@ -31,7 +31,7 @@ pipeline {
         cd /srv/local/ubuntuusers/${params.DEPLOY_SITE}/theme
         if [ -n "${params.THEME_PR_ID}" ]
         then
-            git fetch origin pull/${params.THEME_PR_ID}/head:pr-${params.THEME_PR_ID}
+            git fetch --force origin pull/${params.THEME_PR_ID}/head:pr-${params.THEME_PR_ID}
             git checkout pr-${params.THEME_PR_ID}
         else
             git checkout ${params.DEPLOY_SITE}
