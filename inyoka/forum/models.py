@@ -84,7 +84,7 @@ class ForumManager(models.Manager):
 
     def get_ids(self):
         """Return all forum ids from cache."""
-        return list(self.get_slugs().keys())
+        return self.get_slugs().keys()
 
     def get(self, ident=None, slug=None, id=None):
         """Unified .get method that accepts either a id or a slug.
