@@ -603,7 +603,7 @@ msgid "To"
 msgstr "An"
 
 msgid "Token"
-msgstr "Einmalpasswort"
+msgstr "Kürzel"
 
 msgid "Topic"
 msgstr "Thema"
