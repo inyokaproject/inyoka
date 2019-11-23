@@ -9,7 +9,7 @@ django-guardian==1.4.9
 django-hosts==2.0
 django-mobile==0.7.0
 django-redis==4.10.0
-Django==1.11.25
+Django==1.11.26
 dnspython==1.15.0
 feedparser==5.2.1
 gunicorn==19.7.1
