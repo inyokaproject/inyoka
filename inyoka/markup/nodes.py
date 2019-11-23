@@ -320,7 +320,7 @@ class Image(Node):
     def prepare_html(self):
         yield build_html_tag(u'img', src=self.href, alt=self.alt, id=self.id,
                              class_=self.class_, style=self.style,
-                             title=self.title)
+                             title=self.title, loading='lazy')
 
     def __setstate__(self, dict):
         self.__dict__ = dict

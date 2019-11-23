@@ -160,7 +160,7 @@ msgstr ""
 msgid "No topics selected."
 msgstr ""
 
-msgid "Not specified"
+msgid "No Ubuntu"
 msgstr ""
 
 msgid "Notifications on new posts in this topic will be sent to you."

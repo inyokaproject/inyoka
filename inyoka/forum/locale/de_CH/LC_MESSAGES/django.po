@@ -160,8 +160,8 @@ msgstr "Äs Thema mit däm Slug exischtiert nid"
 msgid "No topics selected."
 msgstr "Keini Themä uusgwäut."
 
-msgid "Not specified"
-msgstr "Kei Aagab"
+msgid "No Ubuntu"
+msgstr "Kei Ubuntu"
 
 msgid "Notifications on new posts in this topic will be sent to you."
 msgstr "Du wirsch ab jiz über nöi Byträg y däm Thema benachrichtigt."
