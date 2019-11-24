@@ -313,17 +313,16 @@ def generate_udiff(old, new, old_title='', new_title='',
     used on the diff.  `context_lines` defaults to 5 and represents the
     number of lines used in an udiff around a changed line.
     """
-    # NOTE: difflib doesn't like unicode filenames!
     udiff = difflib.unified_diff(
         old.splitlines(),
         new.splitlines(),
-        fromfile=old_title.encode('utf-8'),
-        tofile=new_title.encode('utf-8'),
+        fromfile=old_title,
+        tofile=new_title,
         lineterm='',
         n=context_lines)
     try:
-        title_diff_1 = udiff.next().decode('utf-8')
-        title_diff_2 = udiff.next().decode('utf-8')
+        title_diff_1 = next(udiff)
+        title_diff_2 = next(udiff)
         return '\n'.join(itertools.chain([title_diff_1, title_diff_2], udiff))
     except StopIteration:
         # Content did't cange
